@@ -80,6 +80,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0067 | Accepted Email provider-version architecture / executable evidence pending | Email certification records send API/transport + event schema + security profile + region/account scope; SES v2/SendGrid v3/Mailgun mixed endpoint versions/Postmark dated schema represented truthfully; send/event certification may degrade independently |
 | ADR-0068 | Accepted Action Scheduler packaging/coexistence architecture / P-003 pending | WPE Platform/Free owns one bundled candidate if selected; Pro/modules do not duplicate it; newest registered shared runtime may win; only JobService adapter calls AS; secrets/large payloads excluded; WPE idempotency/history independent of AS uniqueness/retention |
 | ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Every scope-aware resource has explicit site/network coordinates; site scope is default; network activation ≠ network-global data; target-site capability + WPE Policy required; cache/jobs/secrets/Membership/Backup/Reset/import are scope-isolated; physical global-vs-per-site DDL remains evidence-gated |
+| ADR-0070 | Accepted commercial/platform architecture / service evidence pending | Product licensing uses opaque installation/network/site-allocation identities and explicit environment classes; hostname is metadata not sole identity; Multisite allocation/site-count policy is explicit; clone/staging/migration/transfer/recovery reconcile safely; service outage ≠ expiry; product license never becomes Membership authorization |
 
 ## Product specification milestone
 
@@ -93,6 +94,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Job Service: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
 - Action Scheduler packaging: `docs/ARCHITECTURE/ACTION-SCHEDULER-PACKAGING-COEXISTENCE-PROFILE.md`
 - Multisite scope: `docs/ARCHITECTURE/MULTISITE-SCOPE-OWNERSHIP-MODEL.md`
+- Multisite future evidence: `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md`
+- Product license allocation/clone/transfer: `docs/ARCHITECTURE/PRODUCT-LICENSE-SITE-ALLOCATION-CLONE-TRANSFER.md`
 - Backup provider/transport docs: corresponding files under `docs/ARCHITECTURE/`
 - Membership billing source/version docs: corresponding `MEMBERSHIP-BILLING-*` files.
 - Email source/version docs: corresponding `EMAIL-*` files.
@@ -109,8 +112,8 @@ ADR-0062/0066/0069 fix source truth, versioning and site-default Multisite scope
 ### Email/notifications
 ADR-0063/0067/0069 fix provider truth/versioning/scope, but **0 Email profiles are ET-certified**. Renderer/runtime/event/security/load/Multisite evidence remains open.
 
-### Remote service/distribution
-ADR-0060/0069 fix privacy plus network/site activation-scope semantics; 30 privacy fixtures remain **0 executed**. OAuth/service/TUF/license allocation/clone/retention implementation remains open.
+### Remote service/distribution/licensing
+ADR-0060/0069/0070 fix privacy, scope, product-allocation, clone/staging/migration and transfer semantics. 30 privacy fixtures remain **0 executed**. OAuth/service/TUF, signed-entitlement/site-allocation API, clone reconciliation, offline grace, site-count race handling, ownership transfer and retention implementation remain open.
 
 ### Backup/operations/security
 ADR-0061/0064/0065/0069 fix provider/transport and site-vs-network Backup/Reset ownership semantics. **34 targets remain, 0 C-certified.** Site/network restore certification and runtime provider/crypto/operations evidence remain open.
