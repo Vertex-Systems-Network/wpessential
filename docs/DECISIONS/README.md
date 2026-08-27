@@ -122,6 +122,11 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0109 | Accepted Builder Widgets adapter certification protocol / execution pending | BW-01…BW-50 + BC0…BC4 fix builder identity/registration/render/dynamic-data/assets/version/upgrade evidence |
 | ADR-0110 | Accepted Status Manager evidence protocol / execution pending | SM-01…SM-48 fix Post Status/domain-state migration/concurrency/history/Workflow/Job/Multisite evidence |
 | ADR-0111 | Accepted XML-RPC Manager evidence protocol / execution pending | XR-01…XR-48 fix layered endpoint/method/auth/rate/parser/compatibility/logging/Multisite evidence |
+| ADR-0112 | Accepted Settings Page evidence protocol / execution pending | ST-01…ST-48 fix scope/inheritance/validation/Vault/REST/cache/import/Multisite evidence |
+| ADR-0113 | Accepted User Profile evidence protocol / execution pending | UP-01…UP-48 fix protected bindings/identity/email/session/privacy/Multisite evidence |
+| ADR-0114 | Accepted Role & Capability evidence protocol / execution pending | RA-01…RA-48 fix native mutation/anti-lockout/recovery/Super Admin/cache evidence |
+| ADR-0115 | Accepted REST API Builder evidence protocol / execution pending | REST-01…REST-52 fix route/auth/scope/schema/idempotency/rate/cache/CORS/fuzz/scale evidence |
+| ADR-0116 | Accepted Import / Export evidence protocol / execution pending | IM-01…IM-56 fix source/archive/map/checkpoint/crash/rollback/export/Multisite/scale evidence |
 
 ## Product specification milestone
 
@@ -131,22 +136,19 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 ## Major supporting architecture/security docs
 
 - Definition/Relations evidence: corresponding `docs/ARCHITECTURE/` + `docs/QUALITY/` P-004/P-010 files.
-- Query/Fields/Custom Tables/Settings/Admin Columns/Listings: corresponding operational/physical profiles under `docs/ARCHITECTURE/`.
-- Membership/Protected Files/Workflow/Job/Notification/Email/Event Inbox/Audit/REST/Import/Backup/Vault: corresponding architecture/security profiles.
-- User Profile: `docs/SECURITY/USER-PROFILE-RUNTIME-AUTHORITY-EVIDENCE-PROFILE.md`.
-- Role & Capability: `docs/SECURITY/ROLE-CAPABILITY-RUNTIME-MUTATION-EVIDENCE-PROFILE.md`.
-- OAuth evidence: `docs/QUALITY/OAUTH-ACCOUNT-LINK-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- TUF updater evidence: `docs/QUALITY/PRO-UPDATE-TUF-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- Dashboard Widgets/Admin Menu/Protector/Reset/Watermarker evidence: corresponding ADR-0103…0107 `docs/QUALITY/` protocols.
-- Frontend Dashboard evidence: `docs/QUALITY/FRONTEND-DASHBOARD-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- Builder adapter evidence: `docs/QUALITY/BUILDER-WIDGETS-ADAPTER-CERTIFICATION-EVIDENCE-PROTOCOL.md`.
-- Status Manager evidence: `docs/QUALITY/STATUS-MANAGER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- XML-RPC evidence: `docs/QUALITY/XML-RPC-MANAGER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Query/Fields/Custom Tables/Admin Columns/Listings: corresponding operational/physical profiles under `docs/ARCHITECTURE/`.
+- Membership/Protected Files/Workflow/Job/Notification/Email/Event Inbox/Audit/Backup/Vault: corresponding architecture/security profiles.
+- OAuth/TUF/Admin Widgets/Admin Menu/Protector/Reset/Watermarker/Frontend Dashboard/Builder Widgets/Status/XML-RPC: corresponding ADR-0101…0111 `docs/QUALITY/` protocols.
+- Settings evidence: `docs/QUALITY/SETTINGS-PAGE-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- User Profile evidence: `docs/QUALITY/USER-PROFILE-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Role & Capability evidence: `docs/QUALITY/ROLE-CAPABILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- REST API evidence: `docs/QUALITY/REST-API-BUILDER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Import / Export evidence: `docs/QUALITY/IMPORT-EXPORT-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Product License remote/API: corresponding files under `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
-P-001…P-013 remain executable gates. ADR-0101…0111 add bounded surface-specific evidence gates but do not authorize or verify any runtime, network/service/update, builder, status or XML-RPC execution.
+P-001…P-013 remain executable gates. ADR-0101…0116 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import execution.
 
 Current certification/evidence remains:
 - Membership: **0 MB-certified**;
@@ -168,6 +170,11 @@ Current certification/evidence remains:
 - Builder Widgets adapters: **0/50 BW fixtures / 0 runtime certifications**;
 - Status Manager: **0/48 SM fixtures**;
 - XML-RPC Manager: **0/48 XR fixtures**;
+- Settings Page: **0/48 ST fixtures**;
+- User Profile: **0/48 UP fixtures**;
+- Role & Capability: **0/48 RA fixtures**;
+- REST API Builder: **0/52 REST fixtures**;
+- Import / Export: **0/56 IM fixtures**;
 - Product License API/service: **0 fixtures**.
 
 No executable evidence may run before explicit owner consent.
