@@ -24,115 +24,121 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0071**.
+Accepted decisions now extend through **ADR-0073**.
 
-Latest planning milestones:
-- ADR-0068 — Action Scheduler packaging/load-order/coexistence profile.
+Latest milestones:
 - ADR-0069 — unified WordPress Multisite scope/ownership/isolation.
-- ADR-0070 — Product License installation/network/site-allocation identity + clone/staging/migration/transfer semantics.
-- **ADR-0071 — Multisite physical data topology classes PT-A…PT-F.**
+- ADR-0070 — Product License installation/network/site-allocation + clone/staging/migration/transfer semantics.
+- ADR-0071 — Multisite physical topology classes PT-A…PT-F.
+- ADR-0072 — Product License remote resource/conflict-state model.
+- **ADR-0073 — Definition Repository PT-C D1 benchmark baseline.**
 
-## Current Multisite logical state
+## Current Multisite state
 
 Authoritative docs:
 - `docs/ARCHITECTURE/MULTISITE-SCOPE-OWNERSHIP-MODEL.md`;
 - `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`;
-- `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md`;
-- ADR-0069.
+- `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md`.
 
-Core accepted rules:
-- site scope default; network scope explicit/privileged;
-- network activation does not make WPE data or permissions network-global;
-- current blog context is not durable ownership;
-- target-site capability + WPE Policy required;
-- caches/jobs/events/Abilities/Vault/Membership/Backup/Reset/Import are scope-isolated;
-- cross-site Relations/Queries off by default;
-- network fan-out bounded through JobService.
+Core accepted rules remain: site scope default, network scope explicit, target-site capability + WPE Policy, cross-site Relations/Queries off by default, bounded JobService network fan-out, cache/Vault/Membership/Backup/Reset/Import scope isolation.
 
-Future Multisite certification: MS0 Static → MS1 Site Isolation → MS2 Scope Runtime → MS3 intentional Network Ops → MS4 Large-Network/Disaster.
+Future Multisite certification: MS0 → MS1 → MS2 → MS3 → MS4. **0 runtime fixtures executed.**
 
-**0 Multisite runtime fixtures executed.**
+## Current physical topology state
 
-## Current physical topology state — ADR-0071
+ADR-0071 topology classes:
+- PT-A native WP site/blog storage;
+- PT-B native WP network/global primitives;
+- PT-C WPE global scoped control-plane;
+- PT-D WPE global scoped high-volume runtime;
+- PT-E WPE per-site custom runtime;
+- PT-F external authority + local scoped references/cache.
 
-Authoritative paper model: `docs/ARCHITECTURE/MULTISITE-PHYSICAL-DATA-TOPOLOGY-CLASSES.md`.
+Current direction:
+- Definition Repository PT-C;
+- Job logical history PT-C/PT-D;
+- Audit PT-D;
+- Relations/Membership/Workflow/Notification/Event Inbox PT-D candidates where documented;
+- Forms/Chat PT-D vs PT-E evidence-gated.
 
-Topology classes:
-- **PT-A** native WordPress site/blog storage;
-- **PT-B** native WordPress network/global primitives;
-- **PT-C** WPE global scoped control-plane tables;
-- **PT-D** WPE global scoped high-volume runtime tables;
-- **PT-E** WPE per-site custom runtime tables;
-- **PT-F** external authoritative state + local scoped references/cache.
+No DDL, migration, table, index or DB benchmark has been executed.
 
-Current preferences/candidates:
-- Definition Repository → **PT-C**;
-- WPE Job logical history → **PT-C/PT-D**;
-- Audit → **PT-D**;
-- Relations → **PT-D candidate, P-010 pending**;
-- Membership Enrollment/Entitlement → **PT-D candidate, P-012 pending**;
-- Workflow runtime → **PT-D candidate, P-011 pending**;
-- Notification/Email operational state → **PT-D candidate**;
-- Event Inbox → **PT-D candidate**;
-- Form Entries → **PT-D vs PT-E evidence-gated**;
-- Chat Messages → **PT-D vs PT-E evidence-gated**;
-- user-created Custom Tables → explicit PT-D/PT-E according to scope/product contract;
-- Support/commercial remote authority → **PT-F**.
+## Definition Repository — ADR-0073
 
-Important safety consequences:
-- native WordPress content stays native rather than duplicated into WPE control tables;
-- physical topology never overrides logical site/network ownership;
-- Site Backup extracts only target-site rows from shared PT-C/PT-D tables;
-- PT-E is not default for control-plane because large networks could create extreme table/migration fan-out;
-- no universal `all shared tables` or `all per-site tables` rule exists.
+Future P-004 baseline **D1** is accepted for comparison only:
+- numeric physical row IDs;
+- transparent textual/ASCII-compatible portable UUID;
+- explicit network/site scope coordinates;
+- bounded normalized Definition Type and Machine Key identifiers;
+- immutable application-validated text revision payload;
+- SHA-256 payload fingerprint representation still evidence-gated;
+- minimal workload-driven indexes;
+- no arbitrary payload/EAV indexes;
+- application same-definition pointer integrity + diagnostics;
+- WordPress-derived charset/collation direction.
 
-**No DDL, migration, index, table or database benchmark has been executed.**
+Comparison profiles remain:
+- D2 binary UUID;
+- D3 native JSON;
+- D4 constraint/FK-enhanced.
 
-## Current Product License / allocation state
+Exact SQL types, lengths, collation, index ordering/prefixes, locking, foreign keys, JSON/UUID/hash representation and performance remain P-001/P-004 evidence.
 
-ADR-0070 accepts opaque Installation/Network/Site Allocation identities; hostname is metadata rather than sole identity. Product Entitlement is separate from Membership authorization. Network-wide/selected-site/hybrid commercial modes, environment classes, clone review, migration/transfer and service-outage-vs-expiry semantics are defined.
+**P-004 executable DDL/benchmark count: 0.**
 
-**0 product-license service/allocation/clone/transfer fixtures executed.**
+## Product License / remote resource state — ADR-0070 + ADR-0072
+
+Product licensing remains separate from WordPress authority and Membership authorization.
+
+Remote resource classes are now explicitly separated:
+- Account;
+- Product Contract;
+- Installation Activation;
+- Network Activation;
+- Site Allocation;
+- independently signed Product Entitlement.
+
+Contract, activation, allocation, environment and conflict state are separate dimensions.
+
+Accepted safety rules:
+- hostname/site ID are metadata, not sole identity;
+- allocation/site mutations require idempotent/concurrency-safe future semantics;
+- unknown remote result enters reconciliation rather than guessing;
+- clone/migration conflict never silently grants second production allocation;
+- service outage ≠ expiry;
+- local option cannot manufacture Pro rights;
+- product expiry/revocation never disables Membership protection or deletes data.
+
+**0 product-license service/OpenAPI/allocation/clone/transfer fixtures executed.**
 
 ## Current JobService / Action Scheduler state
 
-Action Scheduler 4.1.0 remains a reviewed candidate only. WPE JobService semantics/idempotency/history/fairness stay WPE-owned; Pro/modules do not duplicate the WPE bundle if backend is eventually selected.
-
-ADR-0071 currently prefers WPE logical Job history in PT-C/PT-D independent of Action Scheduler physical tables.
-
-**P-003 remains unexecuted.**
+Action Scheduler 4.1.0 remains reviewed candidate only. WPE JobService owns business idempotency/fairness/history semantics. **P-003 unexecuted.**
 
 ## Current Remote Service state
 
-Purpose-scoped privacy/retention accepted. 30 future fixtures documented; **0 executed**. Product License resource/allocation implementation remains open.
+Purpose-scoped privacy/retention accepted; 30 future privacy fixtures documented, **0 executed**. ADR-0072 adds exact future resource/idempotency/conflict/concurrency evidence requirements.
 
 ## Current Backup state
 
-- **34 target destinations / 34 stable provider profiles**;
-- **0 C-certified / 0 C3 Supported destinations**;
-- site/selected-site/network Backup profiles remain separate;
-- shared WPE-table Site Backup requires scoped row extraction under ADR-0071;
-- runtime resume/finalization/restore remains P-013.
+- 34 target destinations / 34 stable profiles;
+- **0 C-certified / 0 C3 Supported**;
+- scoped site-row extraction from shared WPE tables required;
+- P-013 unexecuted.
 
 ## Current Membership billing state
 
-Manual, WooCommerce 11.0.1, Woo Subscriptions 9.1.0, SureCart WP 4.7.0 + hosted API profile remain paper profiles.
+Manual, WooCommerce 11.0.1, Woo Subscriptions 9.1.0, SureCart WP 4.7.0 + hosted API remain paper profiles. **4 BE3 / 0 MB-certified**.
 
-Static maturity: **4 BE3 / 0 MB-certified**.
+## Current Email state
 
-Membership remains site-scoped by default; PT-D is only the current runtime topology candidate, not verified schema.
-
-## Current Email provider state
-
-`wp_mail`, generic SMTP, SES API v2, SendGrid Web API v3, endpoint-specific Mailgun and dated Postmark profiles remain paper profiles.
-
-Static maturity: **6 EE3 / 0 ET-certified**. Delivery operational state currently prefers PT-D, exact schema/indexes unverified.
+`wp_mail`, SMTP, SES, SendGrid, Mailgun, Postmark remain paper profiles. **6 EE3 / 0 ET-certified**.
 
 ## Platform evidence blockers
 
-P-001 compatibility/Multisite; P-002 UI; P-003 Job backend; P-004 Definition PT-C DDL; P-005 Vault; P-006 Free↔Pro/site-allocation; P-007 CI; P-008 build; P-009 Query; P-010 Relations PT-D comparison; P-011 Workflow; P-012 Membership PT-D; P-013 Backup.
+P-001 compatibility/Multisite; P-002 UI; P-003 Job backend; P-004 Definition D1-vs-D2/D3/D4; P-005 Vault; P-006 Free↔Pro/Product Allocation runtime; P-007 CI; P-008 build; P-009 Query; P-010 Relations topology; P-011 Workflow; P-012 Membership; P-013 Backup.
 
-Forms/Chat PT-D-vs-PT-E evidence is also open. **No executable evidence has run.**
+No executable evidence has run.
 
 ## Verification state
 
@@ -140,25 +146,25 @@ Verified planning/documentation only:
 - planning branch isolated from `main`;
 - **31/31 Exhaustive, 0/31 Authorized**;
 - **31/31 Multisite scopes mapped; 0 MS1+ certified**;
-- ADR index/Open Decisions/Readiness/Checkpoint synchronized through **ADR-0071**;
-- Multisite physical topology paper model + ADR-0071 committed;
-- Product License ADR-0070 committed, 0 service fixtures;
-- Action Scheduler P-003 unexecuted;
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through **ADR-0073**;
+- Product License remote state model + ADR-0072 committed;
+- Definition PT-C alternatives + ADR-0073 committed;
+- P-003/P-004/P-012/P-013 unexecuted;
 - Membership 0 MB-certified;
 - Email 0 ET-certified;
 - Backup 0 C-certified;
-- Remote Service privacy fixtures 0 executed;
+- Remote Service fixtures 0 executed;
 - no implementation/test/provider-certification success claimed.
 
 Not performed: dependency installation, Multisite runtime setup, Action Scheduler bootstrap, production source, DB tables/migrations/indexes, queue runs, crypto execution, PHPUnit/Playwright, provider/API/webhook/SMTP calls, commerce transactions, Email sends, WPE account/license calls, Backup/Restore, DB/performance benchmarks, release/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Product License remote resource + allocation conflict-state paper schema.
-2. Definition Repository PT-C exact DDL/index alternatives without executing DDL.
-3. Relations PT-D vs per-site physical comparison on paper.
-4. Site lifecycle coordinator across PT-C/PT-D/PT-E.
-5. Keep P-003/P-012/P-013 executable gates intact.
+1. Relations PT-D vs PT-E/per-site physical comparison.
+2. Site lifecycle coordinator across PT-C/PT-D/PT-E.
+3. Product License OpenAPI candidate shapes without service implementation.
+4. P-004 Definition benchmark fixture design without execution.
+5. Keep P-003/P-012/P-013 gates intact.
 6. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
