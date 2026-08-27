@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-27
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0062**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0063**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -26,7 +26,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - **R-001 / P-010** — Relations indexes/cardinality/concurrency/delete behavior.
 - **WF-001 / P-011** — Workflow waits/parallel/retry/idempotency/cancel/crash + JobService.
 - **F-001/T-001/FE-001** — Field/Table/Form physical storage, migration and runtime evidence.
-- **N-001/C-001/REST-001/E-001** — Notification/Chat/REST/Email persistence, transport, security and performance evidence.
+- **N-001/C-001/REST-001** — Notification/Chat/REST persistence, security and performance evidence.
 - **DA/BW/SET/AM/ST/LIST/IMP** — Dashboard/Blueprint/Settings/Menu/Status/Listings/Import runtime evidence.
 
 ## C. Membership blockers
@@ -42,19 +42,48 @@ Open: Apache/Nginx/PHP/private object storage/CDN/Range delivery evidence.
 
 ### M-006 — provider adapters — ADR-0057 + ADR-0062
 Accepted source profiles:
-- `billing.manual` — explicit WPE-owned grant source;
-- `billing.woocommerce-order` — order + line-item identity; supported Woo paid-state APIs rather than `Completed` alone; refund records required for partial-refund truth;
-- `billing.woocommerce-subscriptions` — pending cancellation is paid-through intent, temporary failure/hold is policy input, and Woo role changes are not WPE authority;
-- `billing.surecart` — Purchase + Subscription source objects, period/cancellation fields, verified webhook ingress, duplicate/out-of-order reconciliation and test/live separation.
+- `billing.manual`;
+- `billing.woocommerce-order`;
+- `billing.woocommerce-subscriptions`;
+- `billing.surecart`.
 
-Static research maturity for the four initial profiles is **BE3**. **Current MB-certified count: 0.**
+Static research maturity for the four profiles is **BE3**. **Current MB-certified count: 0.**
 
-Open future evidence: exact provider/plugin versions, source identity and duplicate handling, current-state reconciliation, cancellation/failure/recovery, refunds/changes, provider→WP-user resolution, restore/clone, migration/privacy and concurrency. No such evidence has been executed.
+Open future evidence: exact provider/plugin versions, source identity and duplicate handling, current-state reconciliation, cancellation/failure/recovery, refunds/changes, provider→WP-user resolution, restore/clone, migration/privacy and concurrency.
 
 ### M-010 — privacy
 Open: exporter/eraser cleanup/runtime/restore verification.
 
-## D. Remote service / commercial distribution
+## D. Email / Notification provider evidence
+
+### E-001 — renderer/runtime — ADR-0029 + ADR-0058
+Open Email IR renderer/inliner/client compatibility, Recipient Delivery/Transport Attempt/Event Ledger physical schema/indexes, attachment/runtime privacy, JobService fan-out/backpressure and deterministic revision rendering.
+
+### E-002 — initial provider profiles — ADR-0058 + ADR-0063
+Accepted source-truth profiles:
+- `email.wordpress-wp-mail`;
+- `email.smtp-generic`;
+- `email.amazon-ses`;
+- `email.twilio-sendgrid`;
+- `email.mailgun`;
+- `email.postmark`.
+
+All six are **EE3 static-paper maturity**. **Current ET-certified provider count: 0.**
+
+Accepted static rules:
+- `wp_mail()` success is local processing only;
+- generic SMTP relay acceptance is not final inbox/receiving-server proof;
+- SES SEND ≠ DELIVERY;
+- SendGrid processed ≠ delivered;
+- Mailgun accepted ≠ delivered;
+- Postmark Delivery means destination server accepted, not inbox placement;
+- late bounce/complaint facts can coexist with earlier delivery evidence;
+- open/click never becomes Read/Human Seen;
+- Postmark is not assigned a fake signed-webhook capability when current docs do not provide one.
+
+Open future evidence: exact API/SMTP adapter versions, credential/rate-limit/outage behavior, provider message correlation, webhook security/replay/duplicate/order, unknown submission outcomes, bounce/complaint/suppression/reconciliation, region/subaccount/stream/config-set isolation, privacy/tag/log redaction, JobService backlog and ET0–ET5 certification.
+
+## E. Remote service / commercial distribution
 
 ### S-001 — OAuth — ADR-0034 + ADR-0060
 Open exact schemas, one-time artifact/token lifecycle, revocation/disconnect, transfer and replay/concurrency evidence.
@@ -68,11 +97,11 @@ Open production verifier/client, TUF metadata/key custody/expiry and conformance
 ### S-004/S-005/S-006 — Support/API/Privacy — ADR-0050 + ADR-0054 + ADR-0060
 Open OpenAPI/problem/scopes/idempotency/rate-limit contracts, Support runtime, diagnostics preview/redaction, retention/export/delete, logging and no-hidden-identifier evidence.
 
-## E. Connections / Integrations — ADR-0040 + ADR-0055
+## F. Connections / Integrations — ADR-0040 + ADR-0055
 
 Accepted Safe HTTP/Webhook/Event Inbox + I0–I5 certification. Open provider adapters, SSRF/signature/replay/idempotency/order evidence, Event Inbox DDL, reconciliation, API-version registry, redaction and multisite.
 
-## F. Backup / Operations
+## G. Backup / Operations
 
 ### B-001 — physical bundle — ADR-0033 / P-013
 Open exact file/DB artifact formats, chunking, compression/hash encoding.
@@ -91,29 +120,29 @@ Open physical schema, commit-unknown reconciliation, re-verification, cleanup, l
 ### B-005 / Protector / Watermark / XML-RPC
 Open documented physical/runtime compatibility/security evidence.
 
-## G. Identity/Admin security
+## H. Identity/Admin security
 
 - **UP-001 / ADR-0030** — protected identity/credential/session/profile evidence.
 - **RC-001 / ADR-0032** — capability classifier, anti-lockout, multisite/Super Admin, CLI recovery.
 - **DW-001 / ADR-0051** — structured remote widget/iframe/XSS/CSP/assets evidence.
 
-## H. Accepted architecture no longer open semantically
+## I. Accepted architecture no longer open semantically
 
-ADRs **0035–0062** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Billing providers cannot directly own WPE authorization; all source facts remain reconciliation/policy inputs.
+ADRs **0035–0063** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Billing providers cannot directly own WPE authorization; provider email terms cannot override WPE delivery truth.
 
 ## Decision-processing rule
 
 1. Inspect repository source of truth and current official standards/docs.
 2. Resolve static semantics in ADR when evidence is sufficient.
 3. If runtime evidence is required, document bounded protocol only.
-4. **Do not install, compile, migrate, benchmark, test, contact providers, run queues or transmit service data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact providers, send mail, run queues or transmit service data before explicit owner consent.**
 5. Synchronize ADR index, Readiness, Checkpoint and Draft PR after planning milestones.
 
 ## Next planning-only priorities
 
-1. Email provider-specific capability matrix.
-2. Remote Service consent-gated privacy/retention evidence protocol.
-3. Refresh remaining low-evidence Backup provider profiles from official docs only.
-4. Membership provider version/evidence matrix refinement without execution.
+1. Remote Service consent-gated privacy/retention evidence protocol.
+2. Refresh remaining low-evidence Backup provider profiles from official docs only.
+3. Membership provider version/evidence matrix refinement without execution.
+4. Email provider version/evidence refinements without execution.
 5. Continue narrowing P-003/provider evidence plans.
 6. Keep governance synchronized.
