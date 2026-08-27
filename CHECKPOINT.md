@@ -6,336 +6,297 @@ Project state: **PARTIALLY COMPLETE — Phase 0 planning only**
 Production development authorization: **NOT GRANTED**
 
 ## Consent gate
-Explicit owner consent is required before any production runtime/source/build/migration work or executable research spike.
+Explicit owner consent is required before runtime/source/build/migration/test implementation or any executable research spike.
 
-Source of truth:
+Authoritative sources:
 - `/DEVELOPMENT-CONSENT.md`
 - `docs/DECISIONS/ADR-0014-development-consent-gate.md`
 
-`continue`, `proceed`, planning approval, ADR acceptance or Phase 0 readiness do **not** authorize development.
+`continue`, `proceed`, planning approval, ADR acceptance, technical readiness or Phase 0 completion do **not** authorize development.
 
-No runtime PHP/React source, production migration, dependency/bootstrap scaffold, implementation test or executable spike has been created in the target repository.
+No WPEssential production runtime PHP/React source, plugin bootstrap, production migration/table, package/dependency scaffold, implementation test or executable spike has been created in the target repository.
 
 ---
 
-# Product/specification coverage
+# Major planning milestone — 31/31 Exhaustive
 
-- **31/31** planned module/platform surfaces have screen/option inventory.
-- **31/31** have Phase 0 behavioral specifications.
-- Membership System is a full Pro module.
-- Detailed specs live under `docs/MODULES/`.
-- `docs/IMPLEMENTATION-READINESS-MATRIX.md` keeps every module blocked until relevant architecture evidence + explicit owner development consent exist.
-- `docs/OPEN-DECISIONS-REGISTER.md` tracks unresolved decisions/evidence.
+`docs/MODULES/OPTION-COVERAGE-MATURITY.md` now records:
+- **31/31** planned module/platform surfaces with option inventory;
+- **31/31** with behavioral specs;
+- **31/31** at **Exhaustive product-option maturity**;
+- **0/31 Authorized** for development.
 
-## Accepted decisions
-- ADR-0001 — WordPress.org Free + separate Pro add-on/trial model.
-- ADR-0003 — typed WordPress Abilities as reusable action contract.
-- ADR-0004 — no standard arbitrary PHP eval/unrestricted destructive SQL.
+Exhaustive means screen-by-screen controls, small options, defaults, conditional visibility, actions, validation, permissions, destructive behavior, failure states, cross-module dependencies, performance safeguards and future acceptance tests are documented at product level.
+
+Exhaustive does **not** mean physical schemas/dependencies/providers/builds/performance/security are proven.
+
+`docs/MODULES/README.md` is synchronized as the detailed spec index.
+
+---
+
+# Newly completed exhaustive module specs
+
+Automation/communication:
+- `FORMS-WORKFLOW-EXHAUSTIVE-SPEC.md`
+- `CRON-JOB-BUILDER-EXHAUSTIVE-SPEC.md`
+- `NOTIFICATION-SYSTEM-EXHAUSTIVE-SPEC.md`
+- `EMAILS-BUILDER-EXHAUSTIVE-SPEC.md`
+- `MESSAGE-CHAT-EXHAUSTIVE-SPEC.md`
+
+Integration/data movement:
+- `REST-API-BUILDER-EXHAUSTIVE-SPEC.md`
+- `WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md`
+- `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md`
+
+Operations/protection:
+- `BACKUP-MANAGER-EXHAUSTIVE-SPEC.md`
+- `RESET-MANAGER-EXHAUSTIVE-SPEC.md`
+- `PROTECTOR-EXHAUSTIVE-SPEC.md`
+- `WATERMARKER-MEDIA-RULES-EXHAUSTIVE-SPEC.md`
+- `XML-RPC-MANAGER-EXHAUSTIVE-SPEC.md`
+
+Previously completed exhaustive specs cover all remaining content/data/admin/identity/builder surfaces.
+
+---
+
+# Accepted ADR state
+
+Accepted product/security/governance decisions:
+- ADR-0001 — Free WordPress.org + separate Pro add-on/trial distribution.
+- ADR-0003 — WordPress Abilities typed action contract.
+- ADR-0004 — no standard arbitrary PHP eval/unrestricted destructive raw SQL.
 - ADR-0007 — Pro expiry preserves data and safe deployed behavior.
-- ADR-0013 — Membership, billing subscription/purchase, WordPress roles and Entitlements are separate domains.
-- ADR-0014 — explicit owner consent required before development/executable spikes.
+- ADR-0013 — Membership/Billing/Role/Entitlement domain separation.
+- ADR-0014 — explicit owner development-consent gate.
+- ADR-0015 — Membership access precedence/specificity/deny semantics.
+- ADR-0016 — Membership Enrollment lifecycle/cancellation semantics.
+- ADR-0017 — signed/site-bound/freshness-aware WPE product entitlement architecture; exact signature profile pending.
+- ADR-0018 — Pro signed supply-chain update architecture; exact updater protocol/client pending.
+- ADR-0019 — Membership Plan revisions + upgrade/downgrade effective-time semantics.
+- ADR-0020 — Membership teams/seats + optional provenance-safe role sync semantics.
+- ADR-0021 — Backup encryption/recovery architecture; exact crypto/container profile pending.
 
-## Proposed platform blockers
-Still need evidence/acceptance:
-- ADR-0002 compatibility floor;
-- ADR-0005 UI/design-system runtime;
-- ADR-0006 concrete Job Service adapter;
-- ADR-0008 Definition Repository physical schema/index benchmark;
-- ADR-0009 Secrets Vault crypto/key/recovery prototype;
-- ADR-0010 Free↔Pro concrete bootstrap/version protocol;
-- ADR-0011 CI execution matrix/tooling;
-- ADR-0012 canonical build toolchain.
+ADR index is synchronized in `docs/DECISIONS/README.md`.
 
 ---
 
-# Current static architecture direction
+# Membership semantic status
 
-## Compatibility
-Proposed only:
-- WordPress minimum candidate **6.9**;
-- primary target **7.1**;
-- PHP minimum candidate **8.3**.
-
-No executable compatibility matrix has run.
-
-## UI
-Proposed only:
-- React + TypeScript;
-- WPEssential wrapper components as canonical domain UI API;
-- stable WordPress Design System/components/DataViews/DataForm behind wrappers;
-- Untitled UI primarily visual/interaction reference;
-- only explicitly MIT Untitled pieces after runtime/license review;
-- no Untitled PRO redistribution by default;
-- Lucide vocabulary behind WPE/WordPress icon abstraction.
-
-No UI spike has run.
-
-## Build
-Candidate order:
-1. `@wordpress/build` stable capabilities;
-2. `@wordpress/scripts` comparison/fallback;
-3. Vite only if WordPress-native tooling fails a demonstrated requirement;
-4. no Laravel Mix carry-forward.
-
-No package install/build ran.
-
-## Background jobs
-Job Service abstraction remains canonical. Action Scheduler is preferred concrete candidate behind it; WP-Cron remains traffic-triggered/non-exact.
-
-No dependency/coexistence/load test ran.
-
----
-
-# Membership planning
-
-Accepted domain split:
+Core product semantics are accepted:
 - User = identity;
 - Role/Capability = WordPress authorization primitive;
-- Plan = configured product/access definition;
-- Enrollment = membership lifecycle interval;
-- external Subscription/Purchase = billing source/reference;
+- Plan = access/product definition;
+- Enrollment = lifecycle interval;
+- Subscription/Purchase = external billing source/reference;
 - Entitlement = normalized grant/benefit;
-- Access Rule/Policy = resource/action decision.
+- Access Rule = resource/action policy.
 
-Detailed planning includes:
-- `docs/MODULES/MEMBERSHIP-SYSTEM.md`
-- `docs/MODULES/MEMBERSHIP-ACCESS-POLICY.md`
-- `docs/MODULES/MEMBERSHIP-ENROLLMENT-STATE-MACHINE.md`
-- `docs/MODULES/MEMBERSHIP-MIGRATION-SEMANTICS.md`
-- runtime schema/index candidates;
-- private-origin protected-file design;
-- billing adapter/reconciliation planning.
+Accepted rules include:
+- outer WordPress/security denial cannot be overridden by Membership;
+- most-specific resource/action rule wins over inherited rules;
+- same-specificity deny wins;
+- valid entitlements union across simultaneous memberships;
+- cancellation-at-period-end is intent, not inactive state;
+- canonical Enrollment states: pending/trialing/active/grace/paused/expired/revoked;
+- provider statuses remain billing facts translated through adapter/Plan policy;
+- draft Plan edits never change live access;
+- published benefit changes explicitly use follow-current/grandfather/scheduled behavior;
+- billing math/proration remains provider responsibility where possible;
+- Membership team roles are separate from WordPress roles;
+- role sync is off by default and must remove only WPE-owned provenance grants.
 
-Key semantics:
-- Membership cannot override an outer WordPress/security denial.
-- Same-specificity deny wins by default.
-- Multiple valid memberships union grants unless an applicable deny/exclusion exists.
-- `cancel_at_period_end` is intent, not an inactive access state.
-- provider statuses are billing facts translated by adapter/Plan policy.
-- stale Entitlement cache after revoke/force-deny is a security defect.
-- protected member files require private origin + controlled delivery, not cosmetic hiding of public `/uploads/` URLs.
-
-Initial billing-adapter priority on paper:
-1. Manual/Free;
-2. WooCommerce one-time purchase mapping;
-3. WooCommerce Subscriptions;
-4. SureCart;
-5. later providers by demand/evidence.
-
-Membership migration source semantics now explicitly cover WooCommerce Memberships/Subscriptions, Paid Memberships Pro and MemberPress. Source membership state and external billing state are never conflated.
-
-No Membership runtime, provider, protected-file or migration executable test has run.
+Still blocked technically:
+- physical Enrollment/Entitlement/index schema benchmark;
+- cache/invalidation and revoke-to-deny proof;
+- group/seat concurrency implementation;
+- protected-file delivery environment certification;
+- WooCommerce/Woo Subscriptions/SureCart integration certification;
+- provider migration fixtures/performance.
 
 ---
 
-# Shared architecture/security contracts
+# Remote WPE service / product licensing
 
-Documented:
-- `docs/ARCHITECTURE/DEFINITION-REPOSITORY-CANDIDATE-SCHEMA.md`
-- `docs/ARCHITECTURE/FREE-PRO-COMPATIBILITY-STATE-MACHINE.md`
-- `docs/ARCHITECTURE/JOB-SERVICE-CONTRACT.md`
-- `docs/SECURITY/SECRETS-VAULT-THREAT-MODEL.md`
-- `docs/ARCHITECTURE/MODULE-DEPENDENCY-AND-DATA-OWNERSHIP.md`
-- `docs/SECURITY/CAPABILITY-POLICY-MATRIX.md`
-- `docs/ARCHITECTURE/EVENT-AND-ABILITY-CATALOG.md`
-- `docs/ARCHITECTURE/PER-MODULE-CAPABILITY-ABILITY-EVENT-REGISTRY.md`
-- `docs/ARCHITECTURE/ERROR-TAXONOMY-AND-FAILURE-UX.md`
-- `docs/MODULE-LIFECYCLE-AND-UNINSTALL.md`
-- `docs/PERFORMANCE-BUDGETS.md`
-- `docs/PRIVACY-DATA-CLASSIFICATION-RETENTION.md`
-- `docs/ARCHITECTURE/EXTENSION-SDK-AND-ADAPTER-CONTRACT.md`
-- `docs/UI/ADMIN-INFORMATION-ARCHITECTURE.md`
-- `docs/ARCHITECTURE/CONTRACT-VERSIONING-AND-DEPRECATION.md`
+Planning source:
+- `docs/PLATFORM/REMOTE-SERVICE-API-CONTRACT.md`
+- `docs/SECURITY/PRODUCT-ENTITLEMENT-SIGNING-OFFLINE-GRACE.md`
+- `docs/SECURITY/PRO-UPDATE-SUPPLY-CHAIN-TRUST-MODEL.md`
 
-## Per-module Capability / Ability / Event registry
-All 31 surfaces now have explicit intended capability classes, typed Ability names and event families.
+Accepted boundaries:
+- Free remains locally useful/account-free;
+- WPE account credentials are not collected by a local WordPress password proxy by default;
+- preferred account-link direction is browser authorization + PKCE, exact callback profile pending;
+- WordPress.org Free plugin does not auto-download/install/update external Pro ZIPs;
+- WPE product-license entitlement is separate from site Membership entitlement;
+- service outage != license expiry;
+- commercial grace must be cryptographically/service-authorized, not locally invented;
+- Pro updates need signed anti-rollback/freeze/compromise-aware trust.
 
-Important rules:
-- UI/menu visibility is never authorization.
-- High-risk restore/reset/force-access/credential/admin-equivalent role changes use dedicated capabilities.
-- Ability registration does not auto-expose it to REST/workflow/CLI/AI.
-- AI mutations are opt-in; destructive/high-risk operations are AI-disabled by default.
-- event delivery assumes at-least-once; consumers require idempotency/duplicate tolerance.
+Still open:
+- exact OAuth return/callback profile;
+- entitlement canonicalization/algorithm/library;
+- exact freshness/grace windows;
+- updater client/metadata role/key custody implementation;
+- executable tamper/update-order evidence.
 
-Concrete JSON schemas/tests remain implementation-spec work and are not authorized yet.
+---
 
-## Contract versioning
-Product Version, Platform API, Definition Schema, runtime DB schema, Ability/Event schema, Source Adapter and SDK compatibility are separate version families.
+# Backup / Reset / Protection planning
 
-Important rules:
-- unknown future definition/package schema fails safe/read-only rather than dropping unknown data;
-- capabilities are treated as security contracts;
-- breaking Ability/Event permission/side-effect changes are breaking even if JSON shape is unchanged;
-- third-party adapters declare SDK compatibility ranges;
-- runtime DB domains keep independent migration versions.
+## Backup
+Current planning includes:
+- 34 target destinations in provider certification matrix;
+- protocol-family adapter strategy rather than 34 duplicate engines;
+- V0 Generated / V1 Local Verified / V2 Remote Verified / V3 Restore Tested confidence tiers;
+- exhaustive Plan/Backup/Destination/Restore UI options;
+- multi-destination Required vs Optional semantics;
+- retention safeguards;
+- restore preflight/verification/recovery states;
+- per-backup DEK + independent recovery wrapping architecture.
+
+Important accepted security rule: WordPress salts are **not** the only backup recovery root. Disaster restore must be able to work when original server/database no longer exists, provided recovery material exists.
+
+Still blocked: exact archive/chunk/KDF/AEAD format and actual provider/restore tests.
+
+## Reset
+Exhaustive options now include scope/preservation, WPE config/runtime separation, content/taxonomy/comments/settings/users, plugin/theme state, verified restore-point requirement, impact fingerprint, Level 1/2/3 confirmations, concurrency locks and recovery states.
+
+No destructive reset implementation exists.
+
+## Protector
+Exhaustive options now include Site Gate, path/resource policies, wp-admin/login controls, rate limits, trusted proxy/CIDR handling, security headers, recovery, REST outer policy, XML-RPC delegation and privacy-safe logging.
+
+## Watermarker
+Exhaustive options preserve original media and generate only WPE-owned derivatives/selected generated sizes. Input/output format support is capability-probed; no format is promised solely by MIME name. Batch/offload/EXIF/animation/failure semantics are documented.
+
+## XML-RPC
+Exhaustive spec explicitly preserves the WordPress distinction:
+- `xmlrpc_enabled` controls authenticated methods;
+- pingback/custom methods are separately governed;
+- granular method policy uses actual registered-method semantics.
+
+WPE will not label XML-RPC “fully disabled” unless the selected enforcement mode is actually verified.
 
 ---
 
 # Migration/import planning
 
-New research/architecture:
-- `docs/RESEARCH/MIGRATION-SOURCE-LANDSCAPE.md`
-- `docs/ARCHITECTURE/MIGRATION-IMPORT-COMPATIBILITY-PLAN.md`
-- `docs/ARCHITECTURE/FIELD-MIGRATION-COMPATIBILITY-MATRIX.md`
-- `docs/ARCHITECTURE/SOURCE-MIGRATION-ADAPTER-REGISTRY.md`
-- `docs/MODULES/MEMBERSHIP-MIGRATION-SEMANTICS.md`
-
-## Current source research
-Static official/current documentation has been reviewed for:
-- ACF / ACF PRO;
-- Secure Custom Fields (SCF);
+Sources planned/researched:
+- ACF/ACF PRO;
+- SCF;
 - Meta Box;
 - JetEngine;
 - CPT UI;
-- WooCommerce Memberships / WooCommerce Subscriptions;
+- WooCommerce Memberships/Subscriptions;
 - Paid Memberships Pro;
 - MemberPress.
 
-## Core migration principle
-Configuration definitions, runtime data, external billing state and presentation artifacts are separate migration domains.
+Canonical migration flow:
+**Discover → Snapshot → Parse → Normalize → Map → Validate → Dry Run → Review → Execute → Verify → Reconcile → Optional Source-Deactivation Readiness**
 
-Examples now explicitly documented:
-- ACF Local JSON can move field groups/CPT/taxonomy/options definitions, not all field values;
-- Meta Box Builder export moves field settings, not stored field values;
-- JetEngine Skins move structures while posts/CCT records/custom-field data have separate data migration needs;
-- Woo Memberships CSV moves user-membership state but not recurring subscription/billing state.
+Fidelity classes:
+- exact;
+- convertible;
+- lossy;
+- external-reference;
+- unsupported;
+- conflict.
 
-## Canonical migration pipeline
-**Discover → Snapshot → Parse → Normalize → Map → Validate → Dry Run → User Review → Execute → Verify → Reconcile → Optional Source Deactivation Readiness**
+Source adapters produce a neutral IR; they do not write target DB tables directly.
 
-No automatic source cleanup/uninstall.
-
-## Fidelity classes
-Every mapping is classified:
-- `exact`
-- `convertible`
-- `lossy`
-- `external-reference`
-- `unsupported`
-- `conflict`
-
-Unknown mappings never default to exact.
-
-## Source-neutral IR
-Source adapters produce a neutral intermediate representation. They do **not** directly write WPE tables. Target writes go through WPE module/Data Source APIs after validation/authorization.
-
-## Source Adapter Registry
-Each source adapter declares:
-- source/version range;
-- detection confidence;
-- accepted artifact/API/storage readers;
-- domains supported;
-- fidelity limits;
-- certification level;
-- fixtures/test version;
-- source-deactivation verification capability.
-
-Automatic conversion is allowed only for certified/confirmed source versions in future implementation.
-
-## Initial migration roadmap
-Structured content:
-1. CPT UI;
-2. ACF/SCF;
-3. Meta Box;
-4. JetEngine after shared module semantics are stable.
-
-Membership adapters only after Membership runtime/access semantics are Accepted:
-5. WooCommerce Memberships + Woo Subscriptions reference mapping;
-6. PMPro;
-7. MemberPress.
-
-Order may change with customer/market evidence.
-
-## Field compatibility matrix
-Field-type mapping now covers scalar, choice, date/time, rich/editor, media, map/icon, WordPress reference, repeater/group/flexible and UI-only concepts across ACF/SCF, Meta Box and JetEngine.
-
-Important rules:
-- matching type name alone is insufficient for `exact` fidelity;
-- return format, storage mode, timestamp/timezone, option source, media identity, reference cardinality and relation semantics matter;
-- null/missing/empty/zero/false distinctions are preserved where source semantics distinguish them;
-- old-site numeric IDs never become target IDs until referenced objects are mapped;
-- imported generated PHP/callback code is never `eval()`ed.
-
-No source adapter, fixture, DB inspection or executable import has run.
+No executable migration/source fixtures have run.
 
 ---
 
-# Commercial planning
+# Shared architecture contracts
 
-`docs/COMMERCIAL-POSITIONING-AND-PACKAGING.md` records current positioning research.
-
-Position:
-> WPEssential is a modular WordPress application platform, not a cheap bundle of unrelated mini-plugins.
-
-Current direction:
-- permanently useful Free CPT + Taxonomy foundation;
-- released Pro capabilities generally packaged by site-count/support tier rather than per-module fragmentation;
-- candidate price bands remain hypotheses, not public commitments;
-- no default WPE transaction fee on customer membership/store revenue;
-- no default lifetime-license assumption;
-- commercial release sequence follows verified capability milestones and reference applications.
-
----
-
-# Quality/CI planning
-
-`docs/QUALITY/CI-TEST-MATRIX-PLAN.md` defines future PR/main/nightly/release lanes, compatibility, Free↔Pro mismatch, migrations, security regressions, E2E reference workflows, performance fixtures, provider/source-adapter certification and installable ZIP validation.
-
-No CI/test implementation exists yet.
+Current planning includes:
+- Module dependency/data ownership;
+- Capability/Policy matrix;
+- Event/Ability catalog + per-module registry;
+- Error taxonomy;
+- Module lifecycle/uninstall;
+- Performance budgets;
+- Privacy/data classification + per-module retention matrix;
+- Extension SDK/adapter contract;
+- Admin IA;
+- Contract versioning/deprecation;
+- Portable WPE configuration package;
+- Source Migration Adapter Registry;
+- CI/test matrix plan.
 
 ---
 
-# Verified
-- Planning branch writes/commits for all documents listed above succeeded.
-- 31/31 surfaces remain behaviorally specified.
-- Consent governance remains active.
-- Static web research was actually performed where recorded.
-- Per-module capability/Ability/event registry exists.
-- Migration source research, semantic pipeline, field compatibility, membership status mapping and source adapter registry now exist.
-- Contract versioning/deprecation architecture exists.
-- No implementation/test success is claimed.
+# Remaining platform blockers requiring executable evidence
 
-# Not verified / intentionally not performed
+- ADR-0002 compatibility floor;
+- ADR-0005 UI/design system runtime;
+- ADR-0006 Job Service adapter;
+- ADR-0008 Definition Repository physical schema;
+- ADR-0009 Secrets Vault exact crypto/key profile;
+- ADR-0010 Free↔Pro executable boot/update compatibility;
+- ADR-0011 CI implementation;
+- ADR-0012 build toolchain/externalization.
+
+These cannot be resolved by claiming paper confidence. The required executable spikes are still **not authorized**.
+
+---
+
+# Verification
+
+## Verified
+- all planning writes/commits listed in repository succeeded;
+- `OPTION-COVERAGE-MATURITY.md` = 31/31 Exhaustive;
+- `IMPLEMENTATION-READINESS-MATRIX.md` = 0/31 Authorized and technically blocked as applicable;
+- ADR index and Open Decisions Register synchronized;
+- current XML-RPC/WordPress image behavior research was checked against official WordPress developer documentation;
+- no implementation/build/test success is claimed.
+
+## Not performed / intentionally blocked
 - Composer/npm install;
-- runtime PHP/TS source/build;
-- plugin bootstrap/activation;
-- DB migrations/tables;
+- runtime PHP/React source;
+- plugin bootstrap;
+- DB tables/migrations;
 - PHPUnit/Playwright;
 - executable compatibility/UI/build spikes;
-- Definition Repository benchmark;
+- Definition benchmark;
 - Action Scheduler coexistence/load test;
-- Secrets crypto prototype;
+- Vault crypto prototype;
 - Free↔Pro boot matrix;
-- Membership entitlement/cache benchmark;
-- protected-file delivery test;
-- billing-provider integration;
-- source-plugin fixture execution/import adapters;
-- backup/restore implementation;
+- Membership cache/provider/protected-file tests;
+- backup/restore/provider tests;
+- Reset execution;
+- Protector security fixture;
+- Watermark media processing;
+- XML-RPC enforcement fixture;
 - deployment/release packaging.
 
-These remain unperformed because development/executable-spike consent has not been granted.
+Reason: explicit development/executable-spike consent has not been granted.
 
 ---
 
-# Next allowed planning actions
-Without development consent:
-1. build per-module data/privacy/retention registry using P0–P4 classes;
-2. define exact Definition/package portability manifest and conflict UX;
-3. deepen backup destination certification + restore matrix;
-4. define release/changelog/support/documentation information architecture;
-5. convert mature Membership access/state and Platform compatibility semantics into ADRs where ready;
-6. define WooCommerce/Elementor/Bricks integration certification policies;
-7. define observability/audit event retention and support-bundle contract;
-8. keep PR/readiness/open-decisions/checkpoint synchronized.
+# Next allowed planning-only work
 
-Before **any** runtime/source/build/migration/executable spike begins, obtain explicit owner consent.
+The broad option-enumeration phase is complete. Highest-value non-executable work now is:
+1. Definition Repository physical-schema alternative review on paper;
+2. Query AST v1 formal schema planning;
+3. Relations physical-schema/cardinality alternative planning;
+4. Workflow graph/run-state schema planning;
+5. Membership privacy/retention operational defaults;
+6. OAuth/product-entitlement/updater protocol candidate refinement;
+7. Backup archive/provider certification protocol refinement;
+8. exact consent-gated spike acceptance criteria for every remaining Proposed ADR;
+9. keep checkpoint/PR synchronized.
+
+Before **any executable work**, request and obtain explicit owner development consent.
 
 ## Resume order
-1. `DEVELOPMENT-CONSENT.md`
+1. `/DEVELOPMENT-CONSENT.md`
 2. `AGENTS.md`
 3. `CHECKPOINT.md`
-4. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-5. `docs/OPEN-DECISIONS-REGISTER.md`
-6. relevant module/architecture/security/ADR docs
+4. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
+5. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+6. `docs/OPEN-DECISIONS-REGISTER.md`
+7. relevant ADR/module/architecture/security docs
 
-Repository evidence overrides conversational memory.
+Repository evidence overrides conversation memory.
