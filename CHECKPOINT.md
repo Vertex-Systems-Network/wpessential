@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before runtime/source/build/migration/test implementation, dependency/package setup, executable spikes/benchmarks, WordPress hook execution, queues, OAuth/service/provider/API calls, TUF/signing-key generation, SMTP/email sends, media/file processing, Backup/Restore, Reset/Protector execution, package staging or release packaging.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, dependency/package setup, executable spikes/benchmarks, WordPress hook execution, queues, OAuth/service/provider/API calls, TUF/signing-key generation, SMTP/email sends, media/file processing, Backup/Restore, Reset/Protector execution, XML-RPC execution, status/state mutation, builder/editor execution, package staging or release packaging.
 
 `continue` and planning acceptance do **not** authorize development.
 
@@ -24,7 +24,7 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0107**.
+Accepted decisions now extend through **ADR-0111**.
 
 Latest planning/evidence milestones:
 - ADR-0098 — Admin Columns AC1 whole-request batching/N+1-safe profile.
@@ -36,7 +36,11 @@ Latest planning/evidence milestones:
 - ADR-0104 — Admin Menu AM-01…AM-40 evidence protocol.
 - ADR-0105 — Protector PR-01…PR-44 evidence protocol.
 - ADR-0106 — Reset Manager RM-01…RM-48 evidence protocol.
-- **ADR-0107 — Watermarker/Media WM-01…WM-48 evidence protocol.**
+- ADR-0107 — Watermarker/Media WM-01…WM-48 evidence protocol.
+- **ADR-0108 — Frontend Dashboard FD-01…FD-48 evidence protocol.**
+- **ADR-0109 — Builder Widgets BW-01…BW-50 adapter certification protocol, BC0…BC4.**
+- **ADR-0110 — Status Manager SM-01…SM-48 evidence protocol.**
+- **ADR-0111 — XML-RPC Manager XR-01…XR-48 evidence protocol.**
 
 Earlier accepted physical/compiler/security baselines remain active: Definition D1, Relations R1, Query QP1–QP4, Field Storage FS1–FS6, Custom Tables CT1/CT2/CT3, Settings ST1/ST2/ST3, Forms/Chat, Membership, Notification/Email, Event Inbox, Audit, Workflow, JobService, REST, Import, Backup Remote Copy, Vault, User/Profile and Role/Capability.
 
@@ -77,38 +81,32 @@ Accepted paper rules:
 ### OAuth — ADR-0101
 First profile: fixed WPE callback + one-time site-bound completion artifact + PKCE S256 + short-lived access token + refresh-token replay detection/rotation profile + signed entitlement retrieval.
 
-OA-01…OA-32 cover replay, wrong verifier, PKCE downgrade, open redirect, issuer mix-up, simultaneous flows, unknown outcome, refresh replay, disconnect, Vault/DB separation, proxy spoof, clone/staging and Device fallback.
-
-**OA executed: 0/32.**
+**OA-01…OA-32 executed: 0/32.**
 
 ### TUF updater — ADR-0102
 TU-01…TU-44 cover Root/Targets/Snapshot/Timestamp trust, threshold signatures, Root rotation, expiry, rollback/freeze/mix-and-match, consistent snapshots, package hash/length, compatibility, CDN/API compromise, archive staging/recovery and key-compromise drills.
 
-TK1 is only first paper custody baseline: 2-of-3 offline Root, 2-of-3 controlled Targets, narrowly scoped online Snapshot/Timestamp. Exact production custody remains security/operations evidence.
-
 **TU executed: 0/44.**
 
-## Dashboard/Admin navigation evidence
+## Admin/security/media evidence
 
 ### Dashboard Widgets — ADR-0103
-DW-01…DW-36 cover Site vs Network Dashboard registration, core/third-party coexistence, per-user layout/dismiss state, XSS/SSRF, remote structured data, shortcode/block behavior, user/site cache isolation, async/Job refresh, iframe sandbox/CSP, asset scoping, Multisite and failure isolation.
+DW-01…DW-36 cover Site/Network Dashboard registration, content trust, XSS/SSRF, remote structured data, user/site cache isolation, async/Job refresh, iframe sandbox/CSP, asset scoping, Multisite and failure isolation.
 
 **DW executed: 0/36.**
 
 ### Admin Menu — ADR-0104
-AM-01…AM-40 cover Site/Network/User Admin context, current WordPress ordering composition, late/unmentioned menu items, rename/reorder/hide/move/add/link, conflicts, direct URL authorization independence, recovery-safe mode, role/user precedence, Multisite same-slug isolation and every-admin-request overhead.
+AM-01…AM-40 cover Site/Network/User Admin context, WordPress ordering composition, third-party conflicts, direct URL authorization independence, recovery-safe mode, role/user precedence, Multisite and every-admin-request overhead.
 
 **AM executed: 0/40.**
 
-## Security/destructive/media evidence
-
 ### Protector — ADR-0105
-PR-01…PR-44 cover trusted proxies, spoofed forwarded headers, atomic rate limits, login/password/XML-RPC/REST throttling, path normalization, redirects, login aliases, security headers, recovery mode, Multisite/network floors and privacy. Protector remains application-layer helper, not a full WAF/DDoS claim.
+PR-01…PR-44 cover trusted proxies, spoofed forwarded headers, atomic rate limits, login/password/XML-RPC/REST throttling, path normalization, redirects, security headers, recovery mode, Multisite/network floors and privacy.
 
 **PR executed: 0/44.**
 
 ### Reset — ADR-0106
-RM-01…RM-48 cover impact fingerprints, recovery principal, mandatory verified restore point, destructive-operation locking, durable stage journal, duplicate Jobs, crash/DB/filesystem/plugin/theme failures, truthful recovery, post-health, Multisite and restored copied active Runs. WordPress Recovery Mode is not treated as data rollback.
+RM-01…RM-48 cover impact fingerprints, recovery principal, mandatory verified restore point, destructive-operation locking, durable stage journal, duplicate Jobs, crash/DB/filesystem/plugin/theme failures, truthful recovery, post-health and Multisite.
 
 **RM executed: 0/48.**
 
@@ -116,6 +114,28 @@ RM-01…RM-48 cover impact fingerprints, recovery principal, mandatory verified 
 WM-01…WM-48 cover original checksum immutability, runtime `WP_Image_Editor` capability, formats/alpha/EXIF/orientation, font/SVG/huge-image safety, deterministic derivative identity, Jobs/concurrency, offload/CDN, protected media and Multisite.
 
 **WM executed: 0/48.**
+
+## Newly accepted site/integration/state/security evidence
+
+### Frontend Dashboard — ADR-0108
+FD-01…FD-48 cover server-side route resolution, route/path normalization, direct-route IDOR, safe intended-return handling, authorization-aware navigation/counts/breadcrumbs, Component Blueprint action boundaries, principal/site/revision/access cache isolation, server/client navigation parity, permalink/collision behavior, SEO/noindex, asset scoping, accessibility/mobile/RTL and Multisite.
+
+**FD executed: 0/48.**
+
+### Builder Widgets adapters — ADR-0109
+BW-01…BW-50 cover shared Component Blueprint invariants plus separate Gutenberg, Elementor, Bricks, WPBakery and Visual Composer Website Builder adapter fixtures. Certification levels are BC0 Detected, BC1 Registration, BC2 Render Certified, BC3 Advanced, BC4 Upgrade/Regression Certified.
+
+**BW executed: 0/50. Builder runtime certifications: 0.**
+
+### Status Manager — ADR-0110
+SM-01…SM-48 preserve the split between WordPress Post Status Adapter and Generic Domain State Machine. Evidence covers core/third-party status preservation, editor/quick/bulk/REST/Form/Dashboard integration, migration-first key changes, concurrency, history/reconciliation, idempotency, storage adapters, Workflow/Job, import and Multisite.
+
+**SM executed: 0/48.**
+
+### XML-RPC Manager — ADR-0111
+XR-01…XR-48 preserve layered semantics: host/WAF → Protector → effective method registry → authenticated-method state → native method authorization. Evidence covers Complete Deny, plugin-added methods, pingback, trusted-proxy rate limiting, parser-element limits, compatibility profiles, logging redaction and Multisite.
+
+**XR executed: 0/48.**
 
 ## Core evidence counters
 
@@ -140,26 +160,39 @@ WM-01…WM-48 cover original checksum immutability, runtime `WP_Image_Editor` ca
 - Remote privacy: **0/30**.
 - Site Lifecycle: **0/40**.
 - Multisite: **0 MS1+**.
+- OA: **0/32**.
+- TU: **0/44**.
+- DW: **0/36**.
+- AM: **0/40**.
+- PR: **0/44**.
+- RM: **0/48**.
+- WM: **0/48**.
+- FD: **0/48**.
+- BW: **0/50**.
+- SM: **0/48**.
+- XR: **0/48**.
 
 ## Verification state
 
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
-- latest directly verified branch head after ADR-0104 was `590c1bbf27896b7049a6fd3753641ae37fcb533c`; subsequent ADR-0105/0106/0107 commits advanced it further;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- accepted architecture/evidence contracts through **ADR-0107**;
+- accepted architecture/evidence contracts through **ADR-0111**;
+- new quality protocols exist for FD/BW/SM/XR;
+- Open Decisions and Implementation Readiness synchronized through ADR-0111;
 - no implementation/build/test/provider/update success claimed.
 
-Not performed: PHP/React source, package installation, DB tables/migrations/indexes, WordPress list/dashboard/menu/security/reset/media hooks, Query/REST runtime, option/user/role writes, Action Scheduler/queue, OAuth/TUF operations, provider/API/webhook/SMTP calls, Email sends, image decode/render/save, archive/hash/compression scan, Backup transfer/Restore, Reset, crypto/KDF, PHPUnit/Playwright, benchmarks or deployment.
+Not performed: PHP/React source, package installation, DB tables/migrations/indexes, WordPress list/dashboard/menu/security/reset/media/status/XML-RPC hooks, builder registration/editor runs, Query/REST runtime, option/user/role writes, Action Scheduler/queue, OAuth/TUF operations, provider/API/webhook/SMTP calls, Email sends, image decode/render/save, archive/hash/compression scan, Backup transfer/Restore, Reset, crypto/KDF, PHPUnit/Playwright, benchmarks or deployment.
 
 ## Next allowed planning-only priorities
 
-1. Synchronize ADR index/Open Decisions/Readiness/Draft PR through ADR-0107.
-2. Dashboard Builder route/navigation/component permission evidence protocol.
-3. Builder Widgets adapter certification evidence protocol across Gutenberg/Elementor/Bricks/WPBakery/Visual Composer.
-4. Status Manager WP-post-status vs domain-state execution protocol.
-5. XML-RPC exact method/parser/compatibility evidence protocol.
-6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM gates intact.
+1. Synchronize ADR index and Draft PR through ADR-0111.
+2. Settings Page ST1/ST2/ST3 executable evidence protocol.
+3. User Profile identity/security executable evidence protocol.
+4. Role & Capability mutation/anti-lockout executable evidence protocol.
+5. REST API Builder operational/fuzz evidence protocol.
+6. Import/Export Run/Map/Journal/recovery evidence protocol.
+7. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR gates intact.
 
 Before any executable work, explicit owner consent is required.
 
