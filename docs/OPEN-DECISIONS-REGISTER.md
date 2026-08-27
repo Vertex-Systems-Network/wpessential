@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0102**.
+This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0111**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -24,7 +24,11 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-011 | ADR-0082 | Workflow runtime/concurrency/recovery — P-011 |
 | D-012 | ADR-0078/0090 | Membership runtime/cache/files/provider evidence — P-012 |
 | D-013 | ADR-0084/0100 | Backup physical/artifact/provider/restore evidence — P-013 |
-| D-014 | ADR-0044/0102 | Pro updater TUF verifier/key custody/metadata/package staging — TU protocol |
+| D-014 | ADR-0044/0102 | Pro updater TUF verifier/key custody/metadata/package staging — TU-01…TU-44 |
+| D-015 | ADR-0031/0108 | Frontend Dashboard routing/IDOR/cache/assets/permalink/Multisite — FD-01…FD-48 |
+| D-016 | ADR-0035/0109 | Builder adapter registration/render/version/upgrade certification — BW-01…BW-50 |
+| D-017 | ADR-0038/0110 | Post Status + generic state-machine execution/concurrency/history/migration — SM-01…SM-48 |
+| D-018 | ADR-0052/0111 | XML-RPC method/parser/rate/compatibility/Multisite evidence — XR-01…XR-48 |
 
 ## B. Current accepted paper baselines
 
@@ -53,6 +57,15 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - Backup artifact H-B1 SHA-256; CMP0 fallback; CMP1 gzip comparison; ZIP convenience only.
 - OAuth Account Link fixed callback + one-time site return + PKCE S256 evidence protocol.
 - Pro updater TUF Root/Targets/Snapshot/Timestamp evidence protocol.
+- Dashboard Widgets DW-01…DW-36 evidence protocol.
+- Admin Menu AM-01…AM-40 evidence protocol.
+- Protector PR-01…PR-44 evidence protocol.
+- Reset Manager RM-01…RM-48 evidence protocol.
+- Watermarker/Media WM-01…WM-48 evidence protocol.
+- Frontend Dashboard FD-01…FD-48 route/navigation/authorization/cache evidence protocol.
+- Builder Widgets BW-01…BW-50 adapter certification protocol with BC0…BC4 levels.
+- Status Manager SM-01…SM-48 split-engine execution protocol.
+- XML-RPC XR-01…XR-48 layered method/parser/compatibility protocol.
 
 All remain paper-only unless separately certified.
 
@@ -133,7 +146,109 @@ Open evidence:
 
 Automated Pro updates stay blocked if this evidence cannot meet the accepted bar.
 
-## G. Other current evidence state
+## G. Admin/security/media protocols — ADR-0103…0107
+
+### Dashboard Widgets — ADR-0103
+DW-01…DW-36 cover Site/Network contexts, content trust, XSS/SSRF, remote structured data, cache isolation, async refresh, iframe/CSP, assets and failure isolation.
+
+**DW executed: 0/36.**
+
+### Admin Menu — ADR-0104
+AM-01…AM-40 cover WordPress ordering composition, late/third-party menu items, rename/reorder/hide/move/add/link, direct URL authority independence, conflicts, safe mode, Multisite and request overhead.
+
+**AM executed: 0/40.**
+
+### Protector — ADR-0105
+PR-01…PR-44 cover trusted proxies, spoof resistance, atomic rate limits, login/password/XML-RPC/REST gates, paths/redirects/headers/recovery/Multisite/privacy.
+
+**PR executed: 0/44.**
+
+### Reset Manager — ADR-0106
+RM-01…RM-48 cover impact fingerprint, recovery principal, verified restore point, destructive lock, durable journal, duplicate Jobs, crash/recovery/post-health and Multisite.
+
+**RM executed: 0/48.**
+
+### Watermarker / Media — ADR-0107
+WM-01…WM-48 cover original checksum immutability, actual image-editor/MIME capability, alpha/orientation/font/SVG safety, deterministic derivative identity, Jobs/concurrency, offload/CDN/private media and Multisite.
+
+**WM executed: 0/48.**
+
+## H. Frontend Dashboard — ADR-0031/0108
+
+FD-01…FD-48 are fixed future fixtures.
+
+Open evidence:
+- actual rewrite/router strategy under supported permalink modes;
+- path normalization/collision behavior;
+- direct-route IDOR and resource authorization;
+- login intended-return safety;
+- navigation count/title leakage prevention;
+- Listing/Form/CRUD/Profile component action boundaries;
+- principal/site/revision/access-generation cache isolation;
+- server/client navigation parity;
+- asset dependency scoping;
+- noindex/sitemap behavior;
+- accessibility/mobile/RTL;
+- Multisite/network floors;
+- large route-graph performance.
+
+**FD executed: 0/48.**
+
+## I. Builder Widgets adapters — ADR-0035/0109
+
+BW-01…BW-50 are fixed future fixtures. BC0…BC4 certification is version/capability scoped.
+
+Open evidence:
+- Gutenberg registration/save/server-render/version regression;
+- Elementor Free widget + edition-gated native Dynamic Tags bridge;
+- Bricks element/control/dynamic data/version behavior;
+- WPBakery shortcode + editor mapping compatibility;
+- Visual Composer Website Builder manifest/editor/prebuilt-runtime prototype;
+- asset isolation;
+- stored-document upgrade/regression behavior;
+- nested/container/repeater advanced certification;
+- cross-builder semantic/security parity.
+
+**BW executed: 0/50. Builder runtime certifications: 0.**
+
+## J. Status Manager — ADR-0038/0110
+
+SM-01…SM-48 are fixed future fixtures.
+
+Open evidence:
+- real WordPress custom status registration/editor/quick/bulk/list behavior;
+- machine-key constraints and recoverable migrations;
+- direct third-party write enforcement coverage;
+- generic Data Source state storage classes;
+- concurrent transitions and stale-state rejection;
+- state/history transaction or reconciliation boundary;
+- duplicate request/Job idempotency;
+- Workflow/timed transition semantics;
+- import/history truth;
+- Multisite and large-history indexes.
+
+**SM executed: 0/48.**
+
+## K. XML-RPC Manager — ADR-0052/0111
+
+XR-01…XR-48 are fixed future fixtures.
+
+Open evidence:
+- effective core/plugin method inventory and filter ordering;
+- `xmlrpc_enabled=false` exact tested behavior;
+- Complete Deny against discovered/late-added methods;
+- Protector endpoint deny + trusted-proxy atomic rate limiting;
+- pingback behavior;
+- `xmlrpc_element_limit` and parser failure behavior;
+- host/PHP request limits as separate environment controls;
+- Jetpack and remote/mobile publishing version-scoped compatibility;
+- Multisite network floors;
+- logging redaction and observability coverage;
+- method inventory drift on plugin/version changes.
+
+**XR executed: 0/48.**
+
+## L. Other current evidence state
 
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
@@ -152,23 +267,23 @@ Automated Pro updates stay blocked if this evidence cannot meet the accepted bar
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## H. Accepted architecture no longer open semantically
+## M. Accepted architecture no longer open semantically
 
-ADRs **0035–0102** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0111** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create archives or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create archives, mutate media/status/XML-RPC runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. Dashboard Widgets content-source/cache/refresh operational evidence profile.
-2. Admin Menu transform conflict/performance evidence protocol.
-3. Protector rate-limit/trusted-proxy execution protocol.
-4. Reset journal/recovery execution protocol.
-5. Watermarker media lifecycle/offload concurrency evidence protocol.
-6. Keep P-001…P-013 and OA/TU gates intact.
+1. Settings Page ST1/ST2/ST3 executable evidence protocol.
+2. User Profile security/runtime executable evidence protocol.
+3. Role & Capability mutation/anti-lockout executable evidence protocol.
+4. REST API Builder route/rate/CORS/cache/idempotency/fuzz evidence protocol.
+5. Import/Export Run/Identity Map/Journal/recovery evidence protocol.
+6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR gates intact.
