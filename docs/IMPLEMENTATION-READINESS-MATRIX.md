@@ -23,43 +23,46 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Free↔Pro runtime | ADR-0010 Proposed | P-006 |
 | CI | ADR-0011 Proposed | P-007 |
 | Build toolchain | ADR-0012 Proposed | P-008 |
+| Multisite runtime certification | ADR-0069 logical scope accepted; MS0–MS4 protocol documented, 0 runtime fixtures executed | P-001 + module-specific gates |
 | Owner consent | ADR-0014 Accepted, consent absent | blocks all |
 
 ## Per-surface readiness
 
+All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as a cross-cutting scope/security contract to every row; `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md` records each surface's site/network behavior.
+
 | # | Surface | Product options | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration semantics | compatibility, Definition DDL, UI/build, fixtures | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration semantics | compatibility, Definition DDL, UI/build, rewrite fixtures | No |
-| 3 | Custom Fields Builder | Exhaustive | ADR-0022 | storage/scale/query/revision/migration/Vault runtime | No |
-| 4 | Relations Builder | Exhaustive | typed edge semantics | indexes/cardinality/concurrency — P-010 | No |
-| 5 | Status Manager | Exhaustive | ADR-0038 | WP UI/migration/state history/concurrency | No |
-| 6 | Custom Query Builder | Exhaustive | Query AST paper model | compiler/cost/cache/security — P-009 | No |
-| 7 | Custom Tables Builder | Exhaustive | ADR-0023 | DB compiler/version/locking/backfill/recovery | No |
-| 8 | Admin Columns Builder | Exhaustive | list/source semantics | adapters/N+1/performance/write proof | No |
-| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0035 + ADR-0039 | Query/protected pagination/cache/builder fixtures | No |
-| 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051 | Dashboard compatibility/remote schema/iframe/XSS/CSP | No |
-| 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037 | hook conflicts/site-network recovery/performance | No |
-| 12 | Settings Page Builder | Exhaustive | ADR-0036 | physical storage/autoload/concurrency/multisite/Vault/REST | No |
-| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031 + ADR-0035 | routing/multisite/IDOR/cache/assets/builder | No |
-| 14 | User Profile Builder | Exhaustive | ADR-0030 | protected meta/identity/credential/session evidence | No |
-| 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 + 0057 + 0062 + 0066 | Enrollment schema/cache/files; version-scoped Manual/Woo/SureCart MB0–MB5 certification; HPOS/API profiles; identity/refunds/reconciliation/concurrency/privacy — P-012 | No |
-| 16 | Builder Widgets Builder | Exhaustive | ADR-0035 | renderer/nesting/bindings/assets/accessibility/certification | No |
-| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 + ADR-0059 + ADR-0068 + Workflow paper runtime | Entry schema/Workflow/Job backend evidence — P-003/P-011 | No |
-| 18 | Cron Job Builder | Exhaustive | ADR-0059 + ADR-0068 + Cron semantics | concrete AS backend/load/coexistence/runner/DST/overlap/fairness — P-003 | No |
-| 19 | Notification System | Exhaustive | ADR-0026 + 0058 + 0059 + 0063 + 0067 + 0068 | persistence/fan-out/dedupe/ET provider/Job backend evidence | No |
-| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 + ADR-0063 + ADR-0067 | renderer/client + Delivery/Attempt/Event schema + version-scoped provider ET0–ET5 runtime evidence | No |
-| 21 | Message & Chat System | Exhaustive | ADR-0027 | indexes/search/transport/private assets/revocation scale | No |
-| 22 | REST API Builder | Exhaustive | ADR-0028 | compiler/auth/rate/CORS/cache/fuzz/scale | No |
-| 23 | Webhooks & Connections | Exhaustive | ADR-0040 + 0055 + 0059 + 0068 | I0–I5 adapters/Event Inbox/Job backend evidence | No |
-| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059/0061/0064/0065/0068 | bundle/Remote Copy/provider registry/C0–C4/Job backend evidence — P-003/P-013 | No |
-| 25 | Reset Manager | Exhaustive | ADR-0047 + 0059 + 0068 | recovery schema/checkpoints/crash/Job backend/adapters/multisite | No |
-| 26 | Import / Export | Exhaustive | ADR-0041 + 0059 + 0068 | run schema/checkpoints/crash/Job backend/source/media evidence | No |
-| 27 | Protector | Exhaustive | ADR-0045 | hook/atomic rate/proxy/login/header evidence | No |
-| 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + 0059 + 0068 | registry/image/offload/concurrency/Job backend/load evidence | No |
-| 29 | XML-RPC Manager | Exhaustive | ADR-0052 | methods/hooks/parser/complete-deny/compatibility/multisite | No |
-| 30 | Role & Capability Manager | Exhaustive | ADR-0032 | classifier/anti-lockout/multisite/CLI recovery | No |
-| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060 | OpenAPI/OAuth/key custody/TUF/support/privacy/retention evidence; 30-fixture future privacy protocol documented but not executed | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration semantics + ADR-0069 scope | compatibility, Definition DDL, UI/build, site/network registration fixtures | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration semantics + ADR-0069 scope | compatibility, Definition DDL, UI/build, site/network rewrite fixtures | No |
+| 3 | Custom Fields Builder | Exhaustive | ADR-0022 + ADR-0069 | storage/scale/query/revision/migration/Vault/runtime scope | No |
+| 4 | Relations Builder | Exhaustive | typed edge semantics + ADR-0069 | indexes/cardinality/concurrency/cross-site deny/default — P-010 | No |
+| 5 | Status Manager | Exhaustive | ADR-0038 + ADR-0069 | WP UI/migration/state history/concurrency/site registry | No |
+| 6 | Custom Query Builder | Exhaustive | Query AST paper model + ADR-0069 | compiler/cost/cache/security/network aggregate — P-009 | No |
+| 7 | Custom Tables Builder | Exhaustive | ADR-0023 + ADR-0069 | DB compiler/version/locking/backfill/recovery/global-vs-site DDL | No |
+| 8 | Admin Columns Builder | Exhaustive | list/source semantics + ADR-0069 | adapters/N+1/performance/write/site-template proof | No |
+| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0035 + ADR-0039 + ADR-0069 | Query/protected pagination/cache/site/network template fixtures | No |
+| 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051 + ADR-0069 | Site vs Network Dashboard compatibility/remote schema/iframe/XSS/CSP | No |
+| 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037 + ADR-0069 | site/network menu hook conflicts/recovery/performance | No |
+| 12 | Settings Page Builder | Exhaustive | ADR-0036 + ADR-0069 | physical storage/autoload/concurrency/network inheritance/Vault/REST | No |
+| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031 + ADR-0035 + ADR-0069 | routing/domain/multisite/IDOR/cache/assets/builder | No |
+| 14 | User Profile Builder | Exhaustive | ADR-0030 + ADR-0069 | protected global identity vs site fields/credential/session evidence | No |
+| 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 + 0057 + 0062 + 0066 + 0069 | Enrollment schema/cache/files; version-scoped MB0–MB5; site/network identity/refunds/reconciliation/concurrency/privacy — P-012 | No |
+| 16 | Builder Widgets Builder | Exhaustive | ADR-0035 + ADR-0069 | renderer/nesting/bindings/assets/accessibility/site-network library certification | No |
+| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 + ADR-0059 + ADR-0068 + ADR-0069 + Workflow paper runtime | Entry schema/Workflow/Job backend/site-network fan-out — P-003/P-011 | No |
+| 18 | Cron Job Builder | Exhaustive | ADR-0059 + ADR-0068 + ADR-0069 + Cron semantics | concrete AS backend/runner/DST/overlap/fairness/network coordinator — P-003 | No |
+| 19 | Notification System | Exhaustive | ADR-0026 + 0058 + 0059 + 0063 + 0067 + 0068 + 0069 | persistence/fan-out/dedupe/ET provider/Job/site-recipient scope evidence | No |
+| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 + ADR-0063 + ADR-0067 + ADR-0069 | renderer/client + Delivery/Attempt/Event schema + version/site scoped ET0–ET5 evidence | No |
+| 21 | Message & Chat System | Exhaustive | ADR-0027 + ADR-0069 | indexes/search/transport/private assets/revocation/site isolation scale | No |
+| 22 | REST API Builder | Exhaustive | ADR-0028 + ADR-0069 | compiler/auth/rate/CORS/cache/fuzz/cross-site IDOR/scale | No |
+| 23 | Webhooks & Connections | Exhaustive | ADR-0040 + 0055 + 0059 + 0068 + 0069 | I0–I5 adapters/Event Inbox/Job backend/network-shared connection isolation | No |
+| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059/0061/0064/0065/0068/0069 | bundle/Remote Copy/provider registry/C0–C4/Job/site+network restore evidence — P-003/P-013 | No |
+| 25 | Reset Manager | Exhaustive | ADR-0047 + 0059 + 0068 + 0069 | recovery schema/checkpoints/crash/Job backend/site vs network reset | No |
+| 26 | Import / Export | Exhaustive | ADR-0041 + 0059 + 0068 + 0069 | run schema/checkpoints/crash/Job backend/source/media/scope remap evidence | No |
+| 27 | Protector | Exhaustive | ADR-0045 + ADR-0069 | hook/atomic rate/proxy/login/header/network security-floor evidence | No |
+| 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + 0059 + 0068 + 0069 | registry/image/offload/concurrency/Job/site media isolation | No |
+| 29 | XML-RPC Manager | Exhaustive | ADR-0052 + ADR-0069 | method/hooks/parser/complete-deny/Jetpack/multisite network-impact evidence | No |
+| 30 | Role & Capability Manager | Exhaustive | ADR-0032 + ADR-0069 | target-site classifier/anti-lockout/Super Admin/network/CLI recovery | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060/0069 | OpenAPI/OAuth/key custody/TUF/support/privacy/network allocation/30 privacy fixtures | No |
 
 ## Cross-cutting accepted architecture that still needs evidence
 
@@ -72,6 +75,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0057/0062/0066 Membership Billing: four version-scoped paper profiles, **0 MB-certified**.
 - ADR-0058/0063/0067 Email: six version-scoped paper profiles, **0 ET-certified**.
 - ADR-0059/0068 Job Service: backend-neutral semantics + Action Scheduler packaging/coexistence accepted; concrete P-003 runtime remains unverified.
+- **ADR-0069 Multisite:** site/network scope, target authorization, cache/job/Vault/Membership/Backup/Reset/import isolation accepted; `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md` defines MS0–MS4 future certification. **0 Multisite runtime fixtures executed; 0 surfaces MS1+ runtime-certified.**
 
 ## Current provider/version snapshots — paper only
 
@@ -101,24 +105,26 @@ These are not runtime support claims.
 
 ## Recommended implementation order after future consent
 
-1. platform prerequisites + P-003 Action Scheduler coexistence/backend proof;
-2. Kernel/Registry/Definition/Policy/Abilities/Assets/Audit/Vault/JobService;
-3. CPT/Taxonomy;
+1. platform prerequisites + P-001 Multisite compatibility + P-003 Action Scheduler coexistence/backend proof;
+2. Kernel/Registry/Definition/Policy/Abilities/Assets/Audit/Vault/JobService with explicit scope context;
+3. CPT/Taxonomy site scope, then network template/rollout evidence;
 4. Fields → Relations → Query → Tables/Columns → Blueprint → Listings/Status;
 5. Settings/Menu/Dashboard/Profile/Roles/Widgets;
-6. Membership runtime → version-scoped Manual/Woo/SureCart MB certification;
+6. Membership runtime → version-scoped Manual/Woo/SureCart MB certification + Multisite isolation;
 7. Forms/Workflow/Jobs → Notifications → Email renderer → version-scoped ET certification;
 8. REST/Connections/Event Inbox/Import;
-9. Backup core → Remote Copy → provider adapters/C3 restore → operations/security modules;
+9. Backup core → Remote Copy → provider adapters/C3 restore → site/network Backup/Restore certification → operations/security modules;
 10. Chat;
-11. Account/Support/Updater under ADR-0060;
-12. AI only over certified platform Abilities/Blueprints;
-13. ecosystem scale.
+11. Account/Support/Updater under ADR-0060/0069;
+12. AI only over certified scope-aware platform Abilities/Blueprints;
+13. ecosystem and large-network scale.
 
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0068; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0069; physical/runtime evidence incomplete.  
+**Multisite product mapping:** 31/31 surfaces documented.  
+**Multisite runtime certification:** 0 surfaces MS1+.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
