@@ -6,188 +6,182 @@ Project state: **PARTIALLY COMPLETE — Phase 0 planning only**
 
 ## Current objective
 
-Complete and review the durable product/architecture plan before production feature development begins.
-
-No WPEssential production plugin source has been implemented in this repository yet.
+Finish evidence-backed architecture decisions after completing option-level behavioral planning for the entire WPEssential product. Production feature development has **not** started.
 
 ## Verified completed work
 
-### Repository / reference audit
-
-- Target repo was verified to contain only its initial minimal README before planning work.
-- Planning work is isolated on `planning/master-architecture`.
-- Legacy reference repo `wpessential/wpessential-dashboard-builder` was inspected for structure, dependencies, recent history and representative module code.
-- Useful legacy areas identified: REST, database migration, backup storage adapters, cron, reset, Elementor, forms/chat assets.
-- Legacy drift recorded: PHP requirement mismatch, PSR-4 `daabase` typo, mixed Laravel Mix/Vite dependencies, unconditional admin timing log, low-information commit history.
+### Repository/reference audit
+- Target repo was verified from its initial minimal state and all planning work is isolated on `planning/master-architecture`.
+- Legacy `wpessential/wpessential-dashboard-builder` was inspected for structure, dependencies, history and representative module code.
+- Useful experiments identified: REST, migrations, backup adapters, cron, reset, Elementor/forms/chat assets.
+- Legacy drift recorded and must not be copied blindly: PHP-version mismatch, `inc/daabase` PSR-4 typo, mixed Laravel Mix/Vite tooling, unconditional admin timing log and weak historical commit messages.
 
 ### Public/current research
+Official/current sources were reviewed for WordPress core/platform APIs, Abilities/AI direction, REST auth, WP-Cron, Action Scheduler, plugin-directory commercial rules, testing/accessibility, UI licenses, page-builder extension APIs and competitor modules.
 
-Official/current sources were reviewed for:
-- WordPress 7.1/current platform
-- WordPress Abilities API and AI/MCP direction
-- REST authentication
-- WP-Cron semantics
-- Action Scheduler
-- WordPress.org trialware/distribution rules
-- WordPress testing/Playground/accessibility
-- Untitled UI/Lucide/WordPress UI packages and licensing
-- CPT UI / SCF / ACF / Meta Box / JetEngine
-- Admin Columns
-- admin menu/dashboard tools
-- roles/capabilities tools
-- Gravity Forms / Fluent Forms / AutomatorWP
-- backup/import tools
-- notification/email/chat tools
-- Gutenberg/Elementor/WPBakery extension APIs
-- settings/profile/status/custom-table/Cron/REST/Reset/Protector/Watermark/XML-RPC benchmark products and APIs
+Membership research now additionally covers official/current documentation from MemberPress, Paid Memberships Pro, WooCommerce Memberships/Subscriptions, SureMembers and Restrict Content Pro.
 
-Research notes live in:
+Research notes:
 - `docs/RESEARCH/COMPETITIVE-LANDSCAPE.md`
 - `docs/RESEARCH/MODULE-BENCHMARK-MATRIX.md`
+- `docs/RESEARCH/MEMBERSHIP-LANDSCAPE.md`
 
-### Product / architecture docs
+## Product scope status
 
-Completed:
-- `README.md`
-- `AGENTS.md`
-- `docs/PRODUCT-MASTER-PLAN.md`
-- `docs/ARCHITECTURE.md`
-- `docs/MODULE-CATALOG.md`
-- `docs/SECURITY.md`
-- `docs/COMMERCIAL-DISTRIBUTION.md`
-- `docs/QUALITY-GATES.md`
-- `docs/ROADMAP.md`
+### 31/31 module/platform surfaces inventoried
+`docs/MODULES/OPTION-INVENTORY.md` records screens and small controls/options for all product surfaces, including:
+- CPT/Taxonomy/Fields/Relations/Status;
+- Query/Tables/Admin Columns/Listings;
+- Dashboard Widgets/Admin Menu/Settings/Dashboard/Builder Widgets;
+- User Profile/**Membership**/Roles;
+- Forms/Workflow/Cron/Notifications/Email/Chat;
+- REST/Webhooks/Import Export;
+- Backup/Reset/Protector/Watermark/XML-RPC;
+- onboarding/Home/Modules/Account/Plans/Docs/Changelog/Support/Diagnostics.
 
-### Accepted architecture/product decisions
+### 31/31 behaviorally specified
+Detailed Phase 0 behavioral specifications exist in:
+- `docs/MODULES/SPECIFICATION-STANDARD.md`
+- `docs/MODULES/COMMON-OPTION-CONTRACTS.md`
+- `docs/MODULES/CONTENT-MODEL-SPECS.md`
+- `docs/MODULES/DATA-QUERY-SPECS.md`
+- `docs/MODULES/ADMIN-EXPERIENCE-SPECS.md`
+- `docs/MODULES/IDENTITY-ACCESS-SPECS.md`
+- `docs/MODULES/MEMBERSHIP-SYSTEM.md`
+- `docs/MODULES/AUTOMATION-COMMUNICATION-SPECS.md`
+- `docs/MODULES/INTEGRATION-DATA-SPECS.md`
+- `docs/MODULES/OPERATIONS-PROTECTION-SPECS.md`
+- `docs/MODULES/PLATFORM-SURFACES-SPEC.md`
 
-- **ADR-0001:** Free WordPress.org plugin + separate Pro add-on; 30-day trial applies to Pro entitlement/add-on.
-- **ADR-0003:** typed WordPress Abilities are the primary reusable action contract where applicable.
-- **ADR-0004:** no standard arbitrary PHP `eval()` / unrestricted destructive SQL primitive.
-- **ADR-0007:** license expiry preserves data and safe deployed runtime; editing/creation/unsafe operations can lock/pause rather than breaking public sites.
+`docs/MODULES/README.md` is the detailed-spec index and maturity ledger.
 
-### Proposed Phase 0 blockers
+### Meaning of “Specified”
+Specified means intended screens, controls, defaults, validation, permissions, lifecycle, dependencies, security/failure behavior, assets and acceptance tests are documented at Phase 0 behavioral level.
 
-Need evidence/acceptance before production source work:
-- **ADR-0002:** compatibility floor
-- **ADR-0005:** UI/design system
-- **ADR-0006:** background job implementation
-- **ADR-0008:** concrete definition storage schema
-- **ADR-0009:** secret/key/recovery model
-- **ADR-0010:** Free↔Pro compatibility protocol
-- **ADR-0011:** CI/test matrix
-- **ADR-0012:** canonical build toolchain
+It does **not** mean:
+- runtime DB schemas are benchmarked;
+- implementation dependencies are accepted;
+- code exists;
+- tests passed;
+- a provider integration works;
+- production readiness is established.
 
-## Product scope captured
+Those require Accepted ADRs, implementation and verification.
 
-All originally requested modules are represented in `MODULE-CATALOG.md`:
+## Membership System added
 
-- Admin Columns Builder
-- Dashboard Widgets Manager
-- Backup Manager
-- Cron Job Builder
-- Custom Admin Menu Builder
-- Custom Fields Builder
-- Custom Query Builder
-- Custom Tables Builder
-- Dashboard Builder
-- Emails Builder
-- Builder Widgets Builder
-- Forms & Workflow Builder
-- Message & Chat System
-- Notification System
-- Custom Post Types Builder
-- Reset Manager
-- REST API Builder
-- Role & Capability Manager
-- Settings Page Builder
-- Status Manager
-- Taxonomy Builder
-- User Profile Builder
-- XML-RPC Manager
-- Import / Export
-- Protector
-- Watermarker / Media Rules
+Membership is a full Pro module, not a role/paywall checkbox.
 
-Strategic gaps added to the product plan:
-- Relations Builder
-- Dynamic Listings / Template Builder
-- Webhooks & Connections Manager
+Accepted product architecture in **ADR-0013**:
+- WordPress User = identity;
+- Role/Capability = WordPress authorization primitive;
+- Membership Plan = configured product/access package;
+- Enrollment = user's membership lifecycle instance;
+- external Subscription/Purchase = billing source/reference;
+- Entitlement = normalized grant/benefit;
+- Access Rule/Policy = resource/action decision logic.
 
-Shared infrastructure (not sold as isolated modules) includes Module Registry, Definition Repository, Data Source/Field/Relation/Query/Condition/Renderer engines, Policies, Abilities, Event Bus, Jobs, Secrets, Integrations, Audit, Assets, Diagnostics, Import/Export package service and extension SDK.
+Consequences:
+- multiple simultaneous memberships can exist where group policy permits;
+- billing providers are adapters, not membership source of truth;
+- role sync is optional side effect and disabled by default;
+- WPEssential does not process/store payment-card credentials;
+- access can consistently protect content, partial components, downloads, dashboards, forms, listings and approved REST/Abilities;
+- WPEssential Pro expiry/module management failure must not expose protected member resources.
 
-## Important decisions / corrections to preserve
+Detailed Membership planning includes plans/groups, enrollment states, free/manual/paid-source grants, eligibility, capacity/approval, lifetime/fixed/source-controlled duration, trial/grace, access rules, unauthorized behavior, partial-content protection, protected downloads, benefits/discount adapters, drip, upgrades/downgrades, billing event mapping, webhooks/reconciliation, members/enrollments, manual overrides, seats/teams, invitation promotions, member pages, role sync, abilities/capabilities, performance/security/audit/import/expiry and acceptance tests.
 
-1. WPEssential is not a loose collection of mini-plugins; modules compose shared engines.
-2. Free CPT + Taxonomy remain permanently available without account creation.
-3. A WordPress.org package must not contain locked trialware premium modules.
-4. Existing safe public output should not disappear on license expiry by default.
-5. User-entered arbitrary PHP execution is not a standard Cron/Workflow feature.
-6. Custom Tables is not an unrestricted embedded phpMyAdmin clone.
-7. Browser page-builder HTML is not automatically a valid cross-client email template.
-8. WP-Cron timing is not exact; scheduling and durable job execution are separate.
-9. AI/MCP is an allowlisted caller of permission-aware abilities, not a privileged backdoor.
-10. Original media is preserved by the Watermarker; derived renditions are regenerated.
-11. Login/admin URL hiding is optional obfuscation/noise reduction, not an authorization boundary.
-12. Definition storage is for configuration, not a universal EAV replacement for WordPress/application data.
-13. Every optional module's CSS/JS must load only on exact screens/runtime paths that use it.
-14. A backup destination is not marketed as supported until upload/download/integrity/restore-related acceptance is verified.
+## Accepted architecture/product decisions
+- **ADR-0001:** Free WordPress.org plugin + separate Pro add-on; Pro trial belongs to external Pro entitlement/add-on.
+- **ADR-0003:** typed WordPress Abilities are reusable action contract where applicable.
+- **ADR-0004:** no standard arbitrary PHP `eval()` or unrestricted destructive SQL primitive.
+- **ADR-0007:** WPE Pro expiry preserves data and safe deployed runtime.
+- **ADR-0013:** Membership, billing subscriptions, roles and entitlements are separate domains.
 
-## Verification performed in this checkpoint
+## Proposed Phase 0 platform blockers
+Need evidence/acceptance before production platform source work:
+- **ADR-0002:** compatibility floor;
+- **ADR-0005:** UI/design system;
+- **ADR-0006:** background job implementation;
+- **ADR-0008:** concrete Definition Repository schema/indexes;
+- **ADR-0009:** secrets/key/recovery model;
+- **ADR-0010:** Free↔Pro compatibility protocol;
+- **ADR-0011:** CI/test matrix;
+- **ADR-0012:** canonical build toolchain.
 
-Because this branch currently contains documentation/planning only:
+## Membership-specific implementation blockers
+Before Membership runtime implementation, resolve through ADR/spikes:
+1. entitlement schema/storage/derivation;
+2. allow/deny precedence and explainability;
+3. enrollment/runtime tables and indexes;
+4. entitlement cache invalidation/revocation latency;
+5. protected-file delivery across Apache/Nginx/CDN/media offload;
+6. initial billing adapter contracts and reconciliation;
+7. role-sync conflict/anti-lockout semantics;
+8. privacy/retention for enrollment and external-event history;
+9. migration fidelity from major membership products;
+10. seat/team concurrency model.
+
+## Important rules to preserve
+1. WPEssential is one platform of shared engines, not isolated mini-plugins.
+2. Free CPT + Taxonomy work permanently without an account.
+3. No WordPress.org locked trialware.
+4. No production module implementation while behavior is only an unresolved feature list.
+5. Every new option discovered during implementation must be documented before/in the same coherent change.
+6. Optional module CSS/JS loads only on exact screens/runtime paths that use it.
+7. Arbitrary PHP/SQL is not a standard power-user primitive.
+8. WP-Cron schedule UI and durable background Job Service remain distinct.
+9. AI/MCP can call permission-aware typed Abilities only; it is not a privileged backdoor.
+10. Definition Repository stores platform configuration, not all WordPress/runtime data.
+11. Secrets use Vault references; no plaintext ordinary config/export.
+12. Backup providers are “supported” only after integrity/restore-oriented adapter tests.
+13. Original media remains unchanged by Watermark standard flow.
+14. Menu visibility/login URL changes are not authorization.
+15. Membership is not a WordPress role and WPEssential is not a card processor.
+16. License/module failure cannot silently expose protected content or files.
+
+## Verification in this checkpoint
 
 ### Verified
-- target and reference repositories accessible through authenticated GitHub integration;
-- branch creation succeeded;
-- all listed planning files were written through GitHub and commits were returned successfully;
-- current external research was actually performed and recorded;
-- no feature implementation/testing was falsely claimed.
+- authenticated target/reference GitHub repositories accessible;
+- planning branch writes/commits succeeded;
+- detailed module option inventory exists;
+- suite/module behavioral specs exist for all 31 surfaces;
+- Membership research/spec/ADR were actually created;
+- no production implementation/testing success is claimed.
 
-### Not Verified / not applicable yet
-- Composer install/build
-- PHP lint/static analysis
-- React/TypeScript build
-- PHPUnit
-- Playwright/E2E
-- database migrations
-- plugin activation
-- WordPress compatibility matrix
-- security test suite
-- Free/Pro artifact packaging
-
-These cannot be executed because production source/tooling intentionally does not exist yet.
-
-## Known risks / unresolved questions
-
-### High
-- Compatibility floor is not accepted; PHP 8.2 vs 8.3 has a security-lifecycle vs installable-market tradeoff.
-- Definition tables/indexes/transaction model are not designed/benchmarked yet.
-- Secrets key separation/migration/recovery is unresolved.
-- Background queue coexistence/version strategy needs an Action Scheduler spike.
-- Free/Pro update-order/bootstrap compatibility needs a concrete protocol proof.
-
-### Medium
-- Untitled UI licensing must be checked component-by-component; only explicitly MIT components are safe without a paid-license redistribution review.
-- Vite vs WordPress scripts/externalization needs a spike to prevent duplicate React/WordPress runtime.
-- Page-builder adapter support versions need a certification matrix.
-- 30+ backup provider catalog is a target list, not implementation commitment; protocol adapters should be proved before expansion.
-- Multisite semantics differ substantially across destructive/data modules and must be designed per module.
+### Not verified / intentionally not applicable yet
+- Composer installation/build;
+- PHP lint/static analysis;
+- React/TypeScript build;
+- PHPUnit;
+- Playwright/E2E;
+- DB migrations;
+- plugin activation;
+- WordPress/PHP compatibility matrix;
+- security test suite;
+- Membership runtime/access checks;
+- billing/webhook integrations;
+- protected-file delivery;
+- backup/restore implementation;
+- Free/Pro artifact packaging.
 
 ## Next recommended action
 
-Remain in **Phase 0**.
+Remain in **Phase 0** and resolve evidence blockers rather than starting feature code.
 
-Perform only architecture evidence spikes required to resolve the blocker ADRs, in this order:
-
-1. **Compatibility + toolchain spike** — WP 6.9/current WP × candidate PHP versions; Vite vs `@wordpress/scripts`; React/WordPress externalization; bundle/asset manifest.
-2. **Definition storage design/benchmark** — concrete schema, revisions, dependency edges, multisite scope, 10k–100k synthetic benchmark.
-3. **Job engine spike** — Action Scheduler coexistence, retries, idempotency, system cron/WP-CLI runner.
-4. **Secrets threat model/prototype** — key separation, migration/salt rotation/recovery; no production claims.
-5. **Free↔Pro bootstrap compatibility spike** — mismatched versions fail safely.
-6. Lock CI matrix based on accepted compatibility/toolchain decisions.
-7. Update ADR statuses + this checkpoint.
-8. Only then begin **Phase 1 — platform kernel + Free CPT/Taxonomy**.
+Order:
+1. Compatibility + toolchain spike.
+2. Definition Repository schema/index benchmark.
+3. Job Service / Action Scheduler coexistence spike.
+4. Secrets threat model/key/recovery prototype.
+5. Free↔Pro bootstrap/update-order compatibility spike.
+6. CI matrix acceptance.
+7. Entitlement/Policy precedence and Membership runtime-data design spike.
+8. Protected-file + billing-adapter/reconciliation threat-model spikes before Membership phase implementation.
+9. Update ADR statuses/checkpoint after evidence.
+10. Only after platform blockers are Accepted begin Phase 1 kernel + Free CPT/Taxonomy.
 
 ## Resume instruction
 
-Any future AI/engineer must read `AGENTS.md`, this checkpoint, the relevant master docs and ADRs before changing code. Do not treat Proposed ADRs as Accepted merely because they are recommended here.
+Future AI/engineer must read `AGENTS.md`, this checkpoint, `docs/PRODUCT-MASTER-PLAN.md`, `docs/MODULES/README.md`, relevant detailed module specs and ADRs before making code changes. Repository evidence overrides conversational memory. Proposed ADRs are not Accepted merely because they are recommended.
