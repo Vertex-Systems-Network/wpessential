@@ -1,8 +1,8 @@
 # WPEssential — Detailed Module Specifications
 
-Status: **Phase 0 — specification before implementation**
+Status: **Phase 0 — option-level behavioral specification complete; technical acceptance blockers remain**
 
-This directory is the detailed source of truth for module behavior. `docs/MODULE-CATALOG.md` remains the high-level product catalog; files here define screens, fields, toggles, actions, validation, permissions, lifecycle, integration and test expectations.
+This directory is the detailed source of truth for module behavior. `docs/MODULE-CATALOG.md` is the high-level product catalog; files here define screens, fields, toggles, actions, validation, permissions, lifecycle, integration and test expectations and take precedence where more specific.
 
 ## Rule: no module implementation before option specification
 
@@ -64,9 +64,36 @@ See `SPECIFICATION-STANDARD.md` for the mandatory format.
 
 ## Detailed planning artifacts
 
+### Rules and inventory
 - `SPECIFICATION-STANDARD.md` — mandatory option-level specification contract.
-- `MEMBERSHIP-SYSTEM.md` — full initial Membership System specification and market-informed architecture.
-- `OPTION-INVENTORY.md` — option/screen inventory for all modules; each item must be resolved before its module is implementation-ready.
+- `COMMON-OPTION-CONTRACTS.md` — shared semantics/defaults for identity, lifecycle, save/list behavior, confirmations, capabilities, secrets, PII, revisions, dependencies, entitlement state, accessibility, assets, audit and inherited tests.
+- `OPTION-INVENTORY.md` — screen/control ledger for all 31 modules/surfaces.
+
+### Detailed module/suite specifications
+- `CONTENT-MODEL-SPECS.md` — CPT, Taxonomy, Fields, Relations, Status.
+- `DATA-QUERY-SPECS.md` — Query, Custom Tables, Admin Columns, Dynamic Listings.
+- `ADMIN-EXPERIENCE-SPECS.md` — Dashboard Widgets, Admin Menu, Settings Page, Dashboard Builder, Builder Widgets.
+- `IDENTITY-ACCESS-SPECS.md` — User Profile, Membership integration, Role & Capability.
+- `MEMBERSHIP-SYSTEM.md` — full Membership plan/enrollment/entitlement/access/billing-adapter/lifecycle specification.
+- `AUTOMATION-COMMUNICATION-SPECS.md` — Forms/Workflow, Cron, Notifications, Email, Chat.
+- `INTEGRATION-DATA-SPECS.md` — REST API Builder, Webhooks/Connections, Import/Export.
+- `OPERATIONS-PROTECTION-SPECS.md` — Backup, Reset, Protector, Watermark, XML-RPC.
+- `PLATFORM-SURFACES-SPEC.md` — onboarding, Home/Modules, Account/License/Plans, Docs, Changelog, Support Tickets and Diagnostics.
+
+### Research
+- `../RESEARCH/COMPETITIVE-LANDSCAPE.md`
+- `../RESEARCH/MODULE-BENCHMARK-MATRIX.md`
+- `../RESEARCH/MEMBERSHIP-LANDSCAPE.md`
+
+## Current coverage
+
+- **31/31 module/platform surfaces:** option/screen inventory present.
+- **31/31 module/platform surfaces:** Phase 0 behavioral specification present through common + suite/module specifications.
+- **Membership System:** dedicated deep specification present.
+- **Production implementation:** not started.
+- **Technical acceptance:** not complete; Proposed ADRs/evidence spikes still block Phase 1.
+
+“Behaviorally Specified” means product semantics are written down. It does **not** mean storage schemas, framework/toolchain choices, provider implementations or performance/security claims have been proven.
 
 ## Specification maturity
 
@@ -77,3 +104,7 @@ See `SPECIFICATION-STANDARD.md` for the mandatory format.
 - **Verified**: implementation has passed the relevant quality gates.
 
 No status may skip directly from Inventory to Implemented.
+
+## Next planning gate
+
+Resolve platform-level Proposed ADRs first, then module-specific implementation blockers referenced in each suite spec. Update an item to **Accepted** only after evidence supports the decision.
