@@ -66,7 +66,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + ADR-0059 composition | registry, image-editor/offload plus chunk/concurrency/load evidence | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052 Accepted layered enforcement | method inventory/hooks/parser/complete-deny/Jetpack/mobile/multisite | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032 Accepted | classifier, self/last-recovery, multisite, WP-CLI recovery | No |
-| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054 Accepted | OpenAPI/service implementation, key custody/rotation, production TUF client, support API/privacy | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060 Accepted | OpenAPI/service implementation, OAuth/token lifecycle, key custody/rotation, production TUF client, support API, privacy/retention/log-redaction/diagnostics evidence | No |
 
 ## Cross-cutting accepted architecture that still needs evidence
 
@@ -79,6 +79,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0057 Membership Billing: verified commercial source facts feed reconciliation + Membership policy; provider status never directly owns Enrollment/Entitlement state.
 - ADR-0058 Email Delivery: submission/transport acceptance, receiving-server delivery, failure/complaint/suppression and engagement are separate evidence; ET0–ET5 provider profiles govern support claims.
 - ADR-0059 Job Service: backend-neutral Job/Attempt/Runner semantics, at-least-once, explicit idempotency, urgency/fairness, resource/concurrency control, chunking/backpressure and cooperative cancellation. Concrete Action Scheduler mapping remains P-003.
+- ADR-0060 Remote Service Privacy: Free activation sends nothing; account link is purpose-scoped and is not telemetry consent; diagnostics require separate approval; RR0–RR6 retention/disconnect/deletion semantics are explicit.
 
 No surface may skip evidence merely because an ADR is Accepted.
 
@@ -94,14 +95,14 @@ No surface may skip evidence merely because an ADR is Accepted.
 8. REST + Connections/Event Inbox + Import;
 9. Backup core → Remote Copy → reference provider adapters → Reset/Protection/Media/XML-RPC;
 10. Chat/realtime adapters;
-11. Account/Support/Updater service integration;
+11. Account/Support/Updater service integration under ADR-0060 privacy/retention contract;
 12. AI composition only over certified Abilities/Blueprints;
 13. ecosystem SDK/provider scale.
 
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0059; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0060; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
