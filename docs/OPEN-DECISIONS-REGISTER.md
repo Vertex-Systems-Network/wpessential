@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0111**.
+This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0116**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -29,6 +29,11 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-016 | ADR-0035/0109 | Builder adapter registration/render/version/upgrade certification — BW-01…BW-50 |
 | D-017 | ADR-0038/0110 | Post Status + generic state-machine execution/concurrency/history/migration — SM-01…SM-48 |
 | D-018 | ADR-0052/0111 | XML-RPC method/parser/rate/compatibility/Multisite evidence — XR-01…XR-48 |
+| D-019 | ADR-0036/0089/0112 | Settings site/network/inheritance/Vault/REST/cache/import evidence — ST-01…ST-48 |
+| D-020 | ADR-0030/0096/0113 | User Profile identity/protected-binding/email/session/privacy/Multisite evidence — UP-01…UP-48 |
+| D-021 | ADR-0032/0097/0114 | Role/capability mutation/anti-lockout/recovery/Super Admin/cache evidence — RA-01…RA-48 |
+| D-022 | ADR-0028/0094/0115 | REST route/auth/scope/schema/idempotency/rate/cache/CORS/fuzz evidence — REST-01…REST-52 |
+| D-023 | ADR-0041/0095/0116 | Import/Export source/archive/map/checkpoint/rollback/export/scale evidence — IM-01…IM-56 |
 
 ## B. Current accepted paper baselines
 
@@ -66,6 +71,11 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - Builder Widgets BW-01…BW-50 adapter certification protocol with BC0…BC4 levels.
 - Status Manager SM-01…SM-48 split-engine execution protocol.
 - XML-RPC XR-01…XR-48 layered method/parser/compatibility protocol.
+- Settings Page ST-01…ST-48 scope/value/Vault/REST evidence protocol.
+- User Profile UP-01…UP-48 identity/security/privacy evidence protocol.
+- Role & Capability RA-01…RA-48 native-authority/anti-lockout evidence protocol.
+- REST API Builder REST-01…REST-52 operational/security evidence protocol.
+- Import / Export IM-01…IM-56 recovery/privacy/scale evidence protocol.
 
 All remain paper-only unless separately certified.
 
@@ -248,7 +258,93 @@ Open evidence:
 
 **XR executed: 0/48.**
 
-## L. Other current evidence state
+## L. Settings Page — ADR-0036/0089/0112
+
+ST-01…ST-48 are fixed future fixtures.
+
+Open evidence:
+- actual Options/Network Options/autoload behavior under supported WordPress versions;
+- ST1/ST2/ST3 site/network/default+override storage behavior;
+- stale/concurrent writes and typed validation;
+- Vault secret reference/redaction;
+- external/native setting write adapters;
+- REST read/write field projection;
+- cache inheritance invalidation;
+- import/export scope/remap;
+- Multisite lifecycle/isolation and scale.
+
+**ST executed: 0/48.**
+
+## M. User Profile — ADR-0030/0096/0113
+
+UP-01…UP-48 are fixed future fixtures.
+
+Open evidence:
+- protected-meta binding registry and mass-assignment denial;
+- self/admin target authority;
+- Field Storage site/global routing;
+- email confirmation/replay/races;
+- recent-auth purpose/expiry;
+- password/session/Application Password actions;
+- public/REST/listing projection leakage;
+- site removal vs network deletion/Super Admin;
+- privacy exporter/eraser;
+- Multisite isolation/scale.
+
+**UP executed: 0/48.**
+
+## N. Role & Capability — ADR-0032/0097/0114
+
+RA-01…RA-48 are fixed future fixtures.
+
+Open evidence:
+- native custom/third-party role mutation compatibility;
+- Change Plan fingerprint/effective-capability simulation;
+- recovery-principal/self-lockout analysis;
+- stale/partial/ambiguous mutation reconciliation;
+- bounded snapshot/reverse-diff recovery;
+- Site vs Network/Super Admin boundaries;
+- capability-dependent cache invalidation;
+- Audit redaction and large-network/bulk behavior.
+
+**RA executed: 0/48.**
+
+## O. REST API Builder — ADR-0028/0094/0115
+
+REST-01…REST-52 are fixed future fixtures.
+
+Open evidence:
+- route registration/conflicts and published-descriptor fail-closed behavior;
+- cookie/nonce, Application Password, anonymous/auth adapter behavior;
+- IDOR/wrong-site/mass-assignment/schema/query fuzzing;
+- RI same-key concurrency/crash/unknown-outcome/degradation;
+- atomic rate-limit/proxy-spoof/site isolation;
+- cache principal/site/revision/revocation safety;
+- exact CORS/error redaction behavior;
+- bounded network operations and load/scale.
+
+**REST executed: 0/52.**
+
+## P. Import / Export — ADR-0041/0095/0116
+
+IM-01…IM-56 are fixed future fixtures.
+
+Open evidence:
+- Dry Run/Plan/source fingerprint execution gates;
+- private source staging/archive traversal/symlink/bomb limits;
+- target mapping/authorization and stable Identity Map;
+- crash windows across target commit/Map/Checkpoint/Job;
+- concurrent same-source duplicate prevention;
+- pause/resume/cancel/lifecycle behavior;
+- R0–R3 rollback truth + Backup separation;
+- Restore revalidation;
+- Safe HTTP/media/offload;
+- authorized/redacted site-scoped export;
+- IR1/IR2 retention/scale/Multisite evidence.
+
+**IM executed: 0/56.**
+
+## Q. Other current evidence state
 
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
@@ -259,31 +355,28 @@ Open evidence:
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected file **0 PC1+**.
 - Email: **6 EE3 / 0 ET-certified**.
 - Event adapters: **0 I4/I5**.
-- REST/Import: **0 runtime fixtures**.
-- User/Profile: **0 runtime fixtures**.
-- Role/Capability: **0 runtime fixtures**.
 - Site Lifecycle: **0/40**.
 - Multisite: **0 MS1+**.
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## M. Accepted architecture no longer open semantically
+## R. Accepted architecture no longer open semantically
 
-ADRs **0035–0111** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0116** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create archives, mutate media/status/XML-RPC runtime or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. Settings Page ST1/ST2/ST3 executable evidence protocol.
-2. User Profile security/runtime executable evidence protocol.
-3. Role & Capability mutation/anti-lockout executable evidence protocol.
-4. REST API Builder route/rate/CORS/cache/idempotency/fuzz evidence protocol.
-5. Import/Export Run/Identity Map/Journal/recovery evidence protocol.
-6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR gates intact.
+1. Forms runtime/storage/submission executable evidence protocol.
+2. Workflow/Cron scheduling/DST/claim execution evidence refinement around P-003/P-011.
+3. Notification fan-out/read/dedupe evidence protocol.
+4. Message & Chat transport/search/private-assets evidence protocol.
+5. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM gates intact.
