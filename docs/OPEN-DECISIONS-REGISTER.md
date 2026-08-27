@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-27
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0057**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0058**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -31,7 +31,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - **N-001** — Notification indexes/fan-out/dedupe/digests/preferences/channel adapters.
 - **C-001** — Chat indexes/search projection/polling-realtime/private attachments/moderation scale.
 - **REST-001** — compiled endpoint runtime, rate-limit/idempotency/cache/CORS/auth attack fixtures.
-- **E-001 / ADR-0029** — Email renderer/inliner/client compatibility/sanitizer/provider delivery.
+- **E-001 / ADR-0029 + ADR-0058** — Email renderer/inliner/client compatibility plus Recipient Delivery/Transport Attempt/Event Ledger schema, ET0–ET5 provider certification, webhook verification, bounce/complaint/suppression/reconciliation and truthful delivery states.
 - **DA-001 / ADR-0031** — Dashboard routing/permalinks/multisite/cache/assets/builder adapters.
 - **BW-001 / ADR-0035** — Component Blueprint renderer/nesting/bindings/cache/assets/builder certification.
 - **SET-001 / ADR-0036** — Settings physical storage/autoload/multisite inheritance/concurrency/Vault/REST.
@@ -124,7 +124,7 @@ Open: actual method inventory/hook priority, complete-deny behavior, `xmlrpc_ele
 
 ## H. Accepted architecture no longer open semantically
 
-ADRs **0035–0057** preserve the accepted core for Component Blueprint, Settings, Admin Menu, Status, Listings, Connections, Import, crypto profiles, Protector, Watermark, Reset, Vault, Definition Repository, Support, Dashboard Widget content trust, XML-RPC, Backup provider certification, remote-service resource separation, integration certification, Remote Copy lifecycle and Membership billing source-fact/reconciliation architecture.
+ADRs **0035–0058** preserve the accepted core for Component Blueprint, Settings, Admin Menu, Status, Listings, Connections, Import, crypto profiles, Protector, Watermark, Reset, Vault, Definition Repository, Support, Dashboard Widget content trust, XML-RPC, Backup provider certification, remote-service resource separation, integration certification, Remote Copy lifecycle, Membership billing source-fact/reconciliation and Email delivery-truth/provider-certification architecture.
 
 Evidence items above may refine implementation but must not silently redesign accepted cores without a superseding ADR.
 
@@ -138,9 +138,9 @@ Evidence items above may refine implementation but must not silently redesign ac
 
 ## Next planning-only priorities
 
-1. Email transport/provider certification contract and delivery/bounce truth model.
-2. Job Service operation classes/priorities/backpressure/fairness/retention paper model.
-3. Remote service field-level privacy/retention matrix.
-4. Backup family-specific capability overrides for the 34 target destinations.
-5. Membership billing provider-specific capability profiles/evidence protocol extending ADR-0057.
+1. Job Service operation classes/priorities/backpressure/fairness/retention paper model.
+2. Remote service field-level privacy/retention matrix.
+3. Backup family-specific capability overrides for the 34 target destinations.
+4. Membership billing provider-specific capability profiles/evidence protocol extending ADR-0057.
+5. Email provider-specific capability matrix extending ADR-0058.
 6. Extend consent-gated evidence protocols without executing them.
