@@ -29,7 +29,7 @@ Exhaustive product specification is not a runtime/security/performance/provider 
 
 ## Accepted ADR state
 
-Accepted decisions now extend through **ADR-0060**.
+Accepted decisions now extend through **ADR-0061**.
 
 Latest additions:
 - **ADR-0053** — Backup provider C0–C4 restore-first certification.
@@ -39,7 +39,8 @@ Latest additions:
 - **ADR-0057** — Membership billing source facts + reconciliation + MB0–MB5 certification.
 - **ADR-0058** — Email delivery truth + ET0–ET5 provider certification.
 - **ADR-0059** — backend-neutral JobService semantics: at-least-once, explicit idempotency, reviewed urgency/fairness, resource/concurrency keys, backpressure/chunking and cooperative cancellation.
-- **ADR-0060** — remote-service transmission is purpose-scoped/minimized; Free activation sends nothing; account link is not telemetry consent; diagnostics require separate approval; retention/disconnect/deletion semantics are explicit.
+- **ADR-0060** — purpose-scoped/minimized Remote Service privacy/retention; Free activation sends nothing; account link is not telemetry consent.
+- **ADR-0061** — semantic `bf.*` Backup family keys are canonical; numeric PF aliases are legacy/ambiguous; provider profiles are separately versioned; SE0–SE3 static research never implies C0–C4 certification.
 
 ADR-0006 remains Proposed/P-003 only for the concrete Action Scheduler backend evidence; ADR-0059 fixes the semantics any backend must satisfy.
 
@@ -58,34 +59,23 @@ ADR-0006 remains Proposed/P-003 only for the concrete Action Scheduler backend e
 - Logical model: `Job Type Registration + Schedule Definition + Job Record + Attempt Record + Runner + Execution Policy`.
 - Mutating work assumes at-least-once execution opportunity, never magical exactly-once external effects.
 - Backend `unique` scheduling is not business idempotency.
-- Urgency classes: restricted system control, security/transactional, interactive, normal, bulk, maintenance.
-- Strict priority alone is insufficient; fairness/age protection prevents sustained starvation.
+- Urgency classes are restricted and fairness/age protection prevents sustained starvation.
 - Resource classes + concurrency keys bound DB/CPU/filesystem/network/provider/destructive work.
-- Large workloads use checkpointed chunks/continuations rather than one enormous PHP process.
-- Backpressure/admission throttles bulk producers instead of allowing unbounded queue fan-out.
-- Cancellation/pause are cooperative and truthful about safe checkpoint boundaries.
-- Queue insertion order/timestamps/priority/groups are not business dependency guarantees.
-- Request-driven WP-Cron is compatible but not exact wall-clock scheduling; WP-CLI/system cron is a future certified runner mode.
-- Action Scheduler remains preferred backend candidate; its raw priority/batch/concurrency/claim/retention values are not stable WPE product semantics.
-- Current Action Scheduler multisite behavior does not provide special network-wide queue orchestration; P-003 must prove WPE site/network isolation/fairness.
-
-### Security/Identity
-- Generic Profile fields cannot mutate passwords/sessions/Application Passwords/roles/Membership authority.
-- Role mutations preserve a real recovery-principal invariant.
-- Vault: random VRK → per-secret DEKs → versioned key slots; no plaintext fallback.
-- Protector uses trusted-proxy-aware identity + atomic Rate Limit service.
-- XML-RPC complete-deny/authenticated-off/pingback/per-method states are separate.
+- Large workloads use checkpointed chunks/continuations and backpressure/admission.
+- Cancellation/pause are cooperative and truthful about checkpoint boundaries.
+- Queue ordering is not a business dependency guarantee.
+- Request-driven WP-Cron is not exact wall-clock scheduling.
+- Action Scheduler remains preferred backend candidate; raw backend priority/batch/claim values are not stable WPE semantics.
 
 ### Integrations/Remote Service
-- Connections: Safe HTTP + verified webhooks + Event Inbox.
-- Integration certification: I0 Configurable → I1 Auth → I2 Read → I3 Write/Action → I4 Events/Reconciliation → I5 Production Profile.
-- Remote service Account/Site/Entitlement/Catalog/Support/Docs/Release resources have separate trust semantics; TUF update metadata is separate authority.
+- Connections: Safe HTTP + verified webhooks + Event Inbox; I0–I5 certification.
+- Remote resource domains have separate trust semantics; TUF update metadata is separate authority.
 - Free activation alone performs no WPE remote transmission.
-- Account connection authorizes only required service/account fields and does not opt the site into telemetry/analytics.
-- Public Catalog/Docs/Release/Status should avoid site/account/install identifiers unless the specific request needs authenticated context.
-- Diagnostics requires separate preview + approval; Support opening/account linking does not imply diagnostics upload.
-- Remote retention uses RR0–RR6 purpose classes rather than one universal duration.
-- Disconnect revokes/removes connection credentials/state but is not falsely represented as WPE-account/support/commercial-history deletion.
+- Account connection is purpose-scoped and does not opt into telemetry.
+- Public Catalog/Docs/Release/Status avoid hidden site/account/install IDs where possible.
+- Diagnostics requires separate preview + approval.
+- RR0–RR6 are purpose-based retention classes.
+- Disconnect is distinct from WPE account/support/commercial-history deletion.
 
 ### Membership billing
 - Billing provider → verified source fact → adapter → reconciliation → Membership policy → Enrollment → Entitlement.
@@ -94,38 +84,42 @@ ADR-0006 remains Proposed/P-003 only for the concrete Action Scheduler backend e
 
 ### Email delivery
 - Notification → Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → derived outcome.
-- `wp_mail()` success = local processing only.
-- provider/API/SMTP acceptance is not automatically receiving-server delivery.
-- receiving-server delivery is not inbox placement/read proof.
-- complaints/suppression/asynchronous failures remain source facts.
+- `wp_mail()`/provider acceptance is not inbox delivery/read proof.
 - ET0–ET5 provider certification governs claims.
 
 ### Backup/Operations
 - manifest-first multipart backup bundle;
 - Sodium/Argon2id accepted encryption profile;
-- **34 provider targets; 0 certified**;
 - C0–C4 restore-first provider certification;
 - durable Remote Copy commit/finalization lifecycle;
+- semantic family keys + separately versioned provider profiles;
 - Reset and Watermark accepted safety architectures.
 
-## Current privacy/service planning snapshot
+## Backup provider identity/capability snapshot
 
 Source:
-- `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
-- `docs/DECISIONS/ADR-0060-remote-service-privacy-retention-boundaries.md`
+- `docs/ARCHITECTURE/BACKUP-PROVIDER-FAMILY-CAPABILITY-REGISTRY.md`
+- `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
+- `docs/DECISIONS/ADR-0061-backup-provider-family-identity-registry.md`
 
-Accepted privacy/retention boundaries include:
-- P0–P4 shared data classification plus RR0–RR6 remote retention classes;
-- account/site link fields are purpose-scoped and minimized;
-- no hidden plugin/theme/site-content/user inventory on ordinary account/entitlement requests;
-- OAuth/access/refresh/completion artifacts are P3 and excluded from generic logs/diagnostics/JS;
-- signed entitlement carries security/commercial claims, not unrelated account PII or telemetry;
-- public catalog/docs/status/release resources should stay unpersonalized where possible;
-- support tickets/messages/attachments are explicit RR5 user-created service records;
-- diagnostics is separate consent and excludes DB dumps/secrets/private content by default;
-- search-query analytics and other telemetry are not assumed from account connection;
-- request/security logs minimize bodies/secrets and use separate retention policy;
-- disconnect, account deletion, support deletion and commercial/security record retention are distinct lifecycle operations.
+Current state:
+- **34 target destinations**;
+- **34/34 have a stable `provider_key` + canonical semantic family assignment**;
+- static official-document maturity is tracked separately with SE0–SE3;
+- **0 providers are C0–C4 certified**.
+
+Canonical families:
+- `bf.local-filesystem`, `bf.browser-export`, `bf.ftp`, `bf.ftps`, `bf.sftp`, `bf.webdav`, `bf.s3`, `bf.gcs`, `bf.azure-blob`, `bf.google-drive`, `bf.msgraph-drive`, `bf.dropbox`, `bf.swift`, `bf.native`.
+
+Important corrections/overrides:
+- earlier numeric PF namespaces collided, so bare PF values are not machine identifiers;
+- `S3 compatible` never means all Amazon features/limits;
+- Scaleway's researched profile documents max 1000 multipart parts and must not inherit Amazon's 10,000-part assumption;
+- generic WebDAV is non-resumable by default; Nextcloud/ownCloud chunking is provider/version-specific;
+- OneDrive Personal and Business/SharePoint remain separate profiles despite shared Graph family;
+- pCloud progress/partial upload is not treated as crash-resumable provider session evidence;
+- `bf.native` inherits no capabilities automatically;
+- Browser/manual export is not a durable remote Backup destination.
 
 ## Platform blockers still requiring executable evidence
 
@@ -145,33 +139,35 @@ Accepted privacy/retention boundaries include:
 
 **None has been executed.**
 
-## Remote-service future evidence highlights
+## Backup future evidence highlights
 
-- concrete OpenAPI schemas/scopes and RFC 9457 problem catalog;
-- OAuth token/completion-artifact lifetime, rotation, revoke/disconnect behavior;
-- actual transmitted-field inspection per endpoint;
-- Free-activation no-call proof;
-- public-resource no-hidden-identifier proof;
-- diagnostics preview/redaction/upload evidence;
-- support/attachment access/export/delete behavior;
-- service/application log redaction;
-- RR0–RR6 resource retention/cleanup implementation;
-- clone/site-transfer behavior;
-- signed entitlement minimized transport/storage;
-- account connection disclosure matching actual behavior.
+- family/provider registry schema and adapter selection;
+- legacy PF source-namespace import handling;
+- auth/least privilege/token/credential rotation;
+- provider-specific multipart/chunk/session limits;
+- process crash/resume/restart;
+- explicit commit + commit-unknown reconciliation;
+- checksum/read-back/corruption evidence;
+- retention/version/Object Lock/trash/delete semantics;
+- external lifecycle/deletion interference;
+- C3 full remote restore;
+- C4 fresh/disaster restore;
+- provider/API-version regression and certification downgrade/expiry behavior.
 
 ## Verification state
 
-### Verified
+### Verified planning/documentation
 - planning branch isolated from `main`;
 - 31/31 Exhaustive;
 - 0/31 Authorized;
-- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0060;
-- Remote Service field-level privacy/retention matrix + ADR-0060 committed;
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0061;
+- Remote Service privacy/retention matrix + ADR-0060 committed;
 - JobService semantic architecture + ADR-0059 committed;
 - Email ET0–ET5 architecture/evidence protocol committed;
 - Membership MB0–MB5 contract committed;
-- Backup matrix remains 34 targets / 0 certified;
+- Backup semantic family/provider registry + ADR-0061 committed;
+- Backup target matrix normalized to stable `bf.*` family keys;
+- 34/34 target profiles recorded; 0 certified;
 - no implementation/build/test success claimed.
 
 ### Not performed / intentionally blocked
@@ -185,6 +181,7 @@ Accepted privacy/retention boundaries include:
 - P-001…P-013 execution;
 - provider/API/webhook/SMTP execution;
 - WPE service/account-link/diagnostics transmission;
+- Backup provider credential/auth/upload/delete/restore probes;
 - performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
@@ -193,10 +190,10 @@ Reason: explicit owner development/executable-spike consent has not been granted
 
 ## Next allowed planning-only priorities
 
-1. Backup family-specific capability overrides for the 34 target destinations.
-2. Membership billing provider-specific capability/evidence profiles.
-3. Email provider-specific capability matrix.
-4. Remote Service consent-gated privacy/retention evidence protocol without executing it.
+1. Membership billing provider-specific capability/evidence profiles.
+2. Email provider-specific capability matrix.
+3. Remote Service consent-gated privacy/retention evidence protocol without executing it.
+4. Refresh remaining SE0/SE1 Backup provider official-doc profiles without API execution.
 5. Continue narrowing provider/P-003 evidence plans without execution.
 6. Keep governance and Draft PR synchronized.
 
