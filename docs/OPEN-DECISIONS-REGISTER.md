@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-27
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0060**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0061**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -90,8 +90,27 @@ Open: exact file-record/DB artifact formats, chunk sizing, compression/hash phys
 ### B-002 — Backup crypto — ADR-0021 + ADR-0043
 Accepted crypto profile. Open: exact frame/AAD bytes, Argon2id performance floor, recovery-kit encoding, chunk/resume boundaries, KMS and fresh-server restore fixtures.
 
-### B-003 — Backup provider certification — ADR-0053 / P-013
-Accepted C0–C4 model; **34 target destinations, 0 certified**. Need protocol adapters, provider version/profile registry, family-specific capability overrides, upload/resume/integrity/finalization/delete/retention/restore evidence.
+### B-003 — Backup provider certification — ADR-0053 + ADR-0061 / P-013
+Accepted:
+- C0–C4 restore-first certification;
+- stable semantic `bf.*` family identifiers;
+- separately versioned provider profiles;
+- legacy numeric PF aliases are non-canonical/ambiguous;
+- static SE0–SE3 evidence is separate from executable certification;
+- **34 target destinations have static capability profiles; 0 are certified**.
+
+Open executable evidence:
+- family adapter implementations;
+- provider-profile schema/registry;
+- legacy PF import/source-namespace mapping;
+- credentials/auth/refresh;
+- multipart/resumable/restart behavior;
+- provider-specific part/chunk limits;
+- integrity/checksum/read-back;
+- commit-unknown reconciliation;
+- retention/version/Object Lock/trash/delete;
+- full restore/C3 and disaster restore/C4;
+- provider/API-version regression/downgrade behavior.
 
 ### B-004 — Remote Copy lifecycle — ADR-0056
 Accepted manifest-last/Commit Point/lifecycle semantics. Open: physical schema/indexes, commit-unknown reconciliation, re-verification, orphan cleanup, lifecycle interference, alternate-copy failover and restore fixtures.
@@ -116,21 +135,21 @@ Open: method inventory/hook priority, complete-deny behavior, element-limit comp
 
 ## H. Accepted architecture no longer open semantically
 
-ADRs **0035–0060** preserve accepted core semantics through remote-service purpose-scoped privacy/retention. ADR-0006 remains open only for concrete backend/Action Scheduler evidence, not for re-opening the accepted JobService semantics without a superseding ADR. Remote-service implementation evidence may refine exact fields/durations but must not silently introduce telemetry or broaden the accepted purpose scope without a superseding decision.
+ADRs **0035–0061** preserve accepted core semantics through Backup provider family identity/capability registry. ADR-0006 remains open only for concrete backend/Action Scheduler evidence. Remote-service runtime evidence may refine exact fields/durations but must not broaden ADR-0060 purpose scope without a superseding decision. Backup provider evidence may refine profile values, but must not restore ambiguous numeric PF identifiers or turn static research into a certification claim.
 
 ## Decision-processing rule
 
 1. Inspect repository source of truth and current official standards/docs.
 2. Resolve static semantics in ADR when evidence is sufficient.
 3. If runtime evidence is required, document bounded protocol only.
-4. **Do not install, compile, migrate, benchmark, test, generate crypto keys, contact provider APIs, create queue actions, run workers or transmit service/diagnostic data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, generate crypto keys, contact provider APIs, create queue actions, run workers, transmit service data or execute backup operations before explicit owner consent.**
 5. Synchronize ADR index, Readiness, Checkpoint and Draft PR after meaningful planning milestones.
 
 ## Next planning-only priorities
 
-1. Backup family-specific capability overrides for the 34 target destinations.
-2. Membership billing provider-specific capability/evidence profiles.
-3. Email provider-specific capability matrix.
-4. Remote Service exact consent-gated privacy/retention evidence protocol without executing it.
-5. Continue narrowing P-003 and provider evidence plans without execution.
+1. Membership billing provider-specific capability/evidence profiles.
+2. Email provider-specific capability matrix.
+3. Remote Service exact consent-gated privacy/retention evidence protocol without executing it.
+4. Backup SE0/SE1 provider research refresh for Box/MEGA/Hetzner/Bunny/Akamai without provider execution.
+5. Continue narrowing P-003/provider evidence plans without execution.
 6. Keep governance synchronized.
