@@ -29,13 +29,14 @@ Exhaustive product specification is not a runtime/security/performance/provider 
 
 ## Accepted ADR state
 
-Accepted decisions now extend through **ADR-0056**.
+Accepted decisions now extend through **ADR-0057**.
 
 Latest additions:
 - **ADR-0053** — Backup providers use protocol-family adapters + provider capability profiles; C0–C4 certification; normal Supported Destination label requires C3 Restore Certified.
 - **ADR-0054** — Remote-service resources and trust domains are separated; RFC 9457 Problem Details baseline; REST account/catalog data cannot replace signed entitlement/TUF authority.
 - **ADR-0055** — Connections are certified by adapter + provider + capability + API version with I0–I5 levels; `Connected` does not imply write/event support.
 - **ADR-0056** — Each Backup destination has durable Remote Copy states, provider Commit Point, manifest-last completion, truthful retention/delete semantics and manifest-bound restore identity.
+- **ADR-0057** — Membership billing integrations produce verified commercial source facts; reconciliation + WPE policy own Enrollment/Entitlement transitions; billing profiles use MB0–MB5 certification.
 
 Earlier ADRs through ADR-0052 preserve Free/Pro distribution, development-consent governance, Abilities, unsafe-code/SQL boundaries, Membership semantics, data/runtime architecture, crypto/update trust, OAuth, Component/Settings/Menu/Status/Listings/Connections/Import, Protector/Watermark/Reset, Vault, Definition Repository, Support, Dashboard Widget content trust and XML-RPC.
 
@@ -62,6 +63,16 @@ Earlier ADRs through ADR-0052 preserve Free/Pro distribution, development-consen
 - Generic integration certification: I0 Configurable → I1 Auth → I2 Read → I3 Write/Action → I4 Events/Reconciliation → I5 Production Profile.
 - Remote service resources: Account, Site Activation, signed Entitlement, Catalog, Support, Docs, Release Notes, Status; TUF update metadata is separate trust authority.
 - Support service is authoritative for tickets/messages/attachments; WP client/cache is capability-checked/minimal.
+
+### Membership billing
+- Billing providers are commercial source-of-fact systems, not direct Membership authorization authority.
+- Canonical path: `Billing Source → verified source fact/event → Billing Adapter → reconciliation → Membership policy → Enrollment → Entitlement`.
+- Cancellation intent such as `pending-cancel` / `set_to_cancel` is not automatic immediate access revocation.
+- Temporary payment failure/on-hold/past-due states are source facts translated through published WPE policy.
+- Duplicate/out-of-order events require idempotency + reconciliation, not duplicate Enrollment creation.
+- Manual/Free, WooCommerce Core, Woo Subscriptions and SureCart are initial adapter priorities.
+- Billing certification: MB0 Detected/Mapping → MB1 Source Read → MB2 Grant → MB3 Renewal/Failure/Cancellation → MB4 Refund/Change/Reconciliation → MB5 Production Profile.
+- Direct card processing is not a Membership v1 requirement; WPE never stores card number/CVC.
 
 ### Backup/Operations
 - Backup bundle: manifest-first multipart logical recovery point.
@@ -117,7 +128,11 @@ Provider evidence contract lives in:
 - revoke-to-deny cache proof;
 - protected-file delivery;
 - team/seat concurrency;
-- WooCommerce/Woo Subscriptions/SureCart billing/reconciliation certification;
+- customer→WP user identity resolution;
+- Manual/WooCommerce/Woo Subscriptions/SureCart MB0–MB5 certification;
+- duplicate/out-of-order billing event + reconciliation behavior;
+- refund/upgrade/downgrade/trial mappings;
+- restore/clone/test-live isolation;
 - migration/provider/privacy fixtures.
 
 ## Verification state
@@ -126,9 +141,11 @@ Provider evidence contract lives in:
 - planning branch isolated from `main`;
 - 31/31 Exhaustive;
 - 0/31 Authorized;
-- ADR index synchronized through ADR-0056;
+- ADR index synchronized through ADR-0057;
+- Open Decisions + Readiness + Checkpoint synchronized through ADR-0057;
 - named Backup target matrix aligned to ADR-0053 C0–C4 model;
 - Remote Service resource schemas and Connection I0–I5 certification docs committed;
+- Membership billing adapter certification contract + ADR-0057 committed;
 - Backup provider evidence protocol documented but not executed;
 - no implementation/build/test success claimed.
 
@@ -140,7 +157,7 @@ Provider evidence contract lives in:
 - crypto key generation/encryption/signing code;
 - PHPUnit/Playwright;
 - P-001…P-013 execution;
-- provider credentials/API calls/uploads;
+- provider credentials/API calls/uploads/webhook tests;
 - performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
@@ -149,11 +166,11 @@ Reason: explicit owner development/executable-spike consent has not been granted
 
 ## Next allowed planning-only priorities
 
-1. Membership billing-provider adapter certification contract (Manual/WooCommerce/Woo Subscriptions/SureCart).
-2. Email transport/provider certification contract and delivery/bounce truth model.
-3. Job Service queues/priorities/backpressure/fairness/retention paper model.
-4. Remote service field-level privacy/retention matrix.
-5. Backup family-specific capability overrides for the 34 target destinations.
+1. Email transport/provider certification contract and delivery/bounce truth model.
+2. Job Service queues/priorities/backpressure/fairness/retention paper model.
+3. Remote service field-level privacy/retention matrix.
+4. Backup family-specific capability overrides for the 34 target destinations.
+5. Membership billing provider-specific capability/evidence profiles.
 6. Keep Open Decisions/Readiness/ADR index/Draft PR synchronized.
 
 Before **any executable work**, obtain explicit owner consent.
