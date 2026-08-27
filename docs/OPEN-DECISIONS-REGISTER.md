@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-27
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0052**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0056**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -51,37 +51,60 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 ## D. Remote service / commercial distribution
 
 ### S-001 — OAuth integration — ADR-0034
-Accepted profile. Still open: endpoint schemas, completion artifact format/lifetime, access/refresh lifetimes, rotation/revocation, site transfer and replay/open-redirect/issuer/concurrency tests.
+Accepted profile. Open: exact endpoint schemas, completion artifact format/lifetime, access/refresh lifetimes, rotation/revocation, site transfer and replay/open-redirect/issuer/concurrency tests.
 
 ### S-002 — Product entitlement — ADR-0017 + ADR-0042
-Accepted: Ed25519, RFC 8785 JCS, domain separation, signer `kid`, root-authorized keysets, freshness/site binding.
-
-Still open: canonicalizer/library interoperability, root threshold/custody, exact envelope/keyset bytes, TTL/skew policy, malformed/rotation/replay fixtures.
+Accepted crypto profile. Open: canonicalizer/library interoperability, root threshold/custody, exact envelope/keyset bytes, TTL/skew policy, malformed/rotation/replay fixtures.
 
 ### S-003 — Pro updater — ADR-0018 + ADR-0044
-Accepted: TUF 1.0-compatible Root/Targets/Snapshot/Timestamp semantics and rollback/freeze/key-rotation defenses.
+Accepted TUF semantics. Open: production-worthy PHP verifier/client, exact metadata/key custody/expiry policy, conformance vectors and Free↔Pro update-order fixtures.
 
-Still open: production-worthy PHP verifier/client, exact repository metadata policy, hardware/key custody, expiry/renewal runbooks, conformance vectors and Free↔Pro update-order fixtures.
+### S-004 — Support service — ADR-0050 + ADR-0054
+Authority/resource model accepted. Open: concrete OpenAPI schemas, ticket/message/attachment service implementation, idempotency, retention/deletion API, malware/content scanning profile, diagnostics limits and outage behavior.
 
-### S-004 — Support service — ADR-0050
-Accepted authority model. Still open: concrete ticket/message/attachment schemas, idempotency keys, pagination/cursors, retention/deletion API, attachment malware/content scanning profile, diagnostics limits and service outage behavior.
+### S-005 — Remote Service API — ADR-0054
+Accepted logical resources and trust separation. Open: OpenAPI contract, RFC 9457 problem-type catalog, pagination/idempotency exact headers, rate-limit policy, compatibility negotiation, service test environment and privacy/retention implementation.
 
-## E. Connections/Webhooks — ADR-0040
+## E. Connections / Integrations — ADR-0040 + ADR-0055
 
-Evidence still required for SSRF IPv4/IPv6/private/link-local/DNS rebinding/redirect behavior, provider-fixed/custom URL policies, raw-body signature/key rotation, replay/idempotency/out-of-order events, Event Inbox indexes, Job crash/reconciliation, OAuth adapters, outbound webhook unknown-outcome handling and multisite isolation.
+Accepted: Safe HTTP/Webhook/Event Inbox architecture and I0–I5 provider capability certification.
 
-## F. Backup/operations
+Still need:
+- provider OAuth/API-key/HMAC adapter implementations;
+- SSRF IPv4/IPv6/private/link-local/DNS rebinding/redirect fixtures;
+- webhook signature/key rotation/replay/idempotency/out-of-order fixtures;
+- Event Inbox physical schema/indexes;
+- outbound unknown-outcome/reconciliation;
+- provider API version/capability registry;
+- privacy/log-redaction fixtures;
+- multisite isolation.
+
+## F. Backup / Operations
 
 ### B-001 — Backup physical bundle — ADR-0033 / P-013
-Open: file-record/DB artifact formats, part/chunk sizing, compression/hash/finalization/resume semantics.
+Open: exact file-record/DB artifact formats, chunk sizing, compression/hash physical encoding.
 
 ### B-002 — Backup crypto — ADR-0021 + ADR-0043
 Accepted crypto profile. Open: exact frame/AAD bytes, Argon2id performance floor, recovery-kit encoding, chunk/resume boundaries, KMS and fresh-server restore fixtures.
 
-### B-003 — Backup provider certification — P-013
-34 target destinations remain **targets, not support claims**. Need protocol-family contract + per-provider capability profile + upload/resume/download/integrity/error/restore certification.
+### B-003 — Backup provider certification — ADR-0053 / P-013
+Accepted: protocol-family + provider capability profiles and C0–C4 certification; public normal Support label requires C3.
 
-### B-004 — Reset — ADR-0047
+Current state: **34 target destinations, 0 certified**.
+
+Evidence remaining:
+- protocol adapters;
+- per-provider version/profile registry;
+- C0–C4 future fixtures from `BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`;
+- S3/GCS/Azure/Drive/Graph/Dropbox/SFTP/WebDAV/Swift/native-provider behavior;
+- provider auth/refresh, upload/resume/integrity/finalization, delete/retention and restore.
+
+### B-004 — Remote Copy lifecycle — ADR-0056
+Accepted: manifest-last, provider Commit Point, durable Remote Copy states, truthful delete/retention/restore-source identity.
+
+Open: physical Remote Copy schema/indexes, commit-unknown reconciliation, re-verification jobs, orphan cleanup, provider lifecycle interference, alternate-copy failover and restore fixtures.
+
+### B-005 — Reset — ADR-0047
 Open: recovery-store schema/location, DB/DDL/filesystem crash behavior, plugin/theme/uploads/offload adapters, multisite and Backup restore integration.
 
 ### P-001 — Protector — ADR-0045
@@ -91,7 +114,7 @@ Open: hook order, proxy fixtures, gate sessions, atomic limiter adapters, login/
 Open: derivative registry/indexes, GD/Imagick/format matrix, EXIF/orientation/animation/SVG policy, concurrency, offload/CDN/private assets and load evidence.
 
 ### X-001 — XML-RPC — ADR-0052
-Accepted layered semantics. Open: actual method inventory/hook priority, complete-deny behavior, `xmlrpc_element_limit` compatibility, Jetpack/mobile/app profiles, Protector endpoint interaction and multisite certification.
+Open: actual method inventory/hook priority, complete-deny behavior, `xmlrpc_element_limit` compatibility, Jetpack/mobile/app profiles, Protector endpoint interaction and multisite certification.
 
 ## G. Identity/Admin security
 
@@ -101,23 +124,23 @@ Accepted layered semantics. Open: actual method inventory/hook priority, complet
 
 ## H. Accepted architecture no longer open semantically
 
-ADRs **0035–0052** preserve the accepted core for Component Blueprint, Settings, Admin Menu, Status, Listings, Connections, Import, entitlement crypto, Backup crypto, Pro update protocol, Protector, Watermark, Reset, Vault hierarchy, Definition Repository shape, Support Tickets, Dashboard Widget content trust and XML-RPC layered enforcement.
+ADRs **0035–0056** preserve the accepted core for Component Blueprint, Settings, Admin Menu, Status, Listings, Connections, Import, crypto profiles, Protector, Watermark, Reset, Vault, Definition Repository, Support, Dashboard Widget content trust, XML-RPC, Backup provider certification, remote-service resource separation, integration certification and Remote Copy lifecycle.
 
-Remaining items above require evidence; future work must not silently redesign accepted cores without a superseding ADR.
+Evidence items above may refine implementation but must not silently redesign accepted cores without a superseding ADR.
 
 ## Decision-processing rule
 
 1. Inspect repository source of truth and current official standards/docs.
-2. Resolve static product/security semantics in ADR where evidence is sufficient.
-3. If runtime evidence is required, prepare/extend a bounded protocol only.
-4. **Do not install, compile, migrate, benchmark, test, generate crypto keys or integrate providers before explicit owner consent.**
+2. Resolve static semantics in ADR when evidence is sufficient.
+3. If runtime evidence is required, document bounded protocol only.
+4. **Do not install, compile, migrate, benchmark, test, generate crypto keys, contact provider APIs or integrate providers before explicit owner consent.**
 5. Synchronize ADR index, Readiness, Checkpoint and Draft PR after meaningful planning milestones.
 
 ## Next planning-only priorities
 
-1. Backup provider certification contract by protocol family.
-2. Provider capability profiles for S3-compatible, Google Drive, OneDrive/SharePoint, Dropbox, SFTP and WebDAV.
-3. Remote Service API schema set for account/site/entitlement/plans/support/release metadata.
-4. Provider-neutral Connection certification levels.
-5. Backup remote-finalization + retention/deletion + restore-source semantics.
+1. Backup family-specific capability profiles for all 34 targets, explicitly inheriting/overriding ADR-0053.
+2. Remote service API field-level privacy/classification matrix and service data-retention boundaries.
+3. Billing-provider adapter certification contract for Membership/Woo/SureCart.
+4. Email transport certification model (SMTP/provider APIs, bounce/delivery events).
+5. Job Service operation classes/priorities/backpressure paper model.
 6. Extend consent-gated evidence protocols without executing them.
