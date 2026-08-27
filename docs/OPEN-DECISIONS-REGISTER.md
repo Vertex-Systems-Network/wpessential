@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-27
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0063**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0064**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -31,54 +31,27 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 
 ## C. Membership blockers
 
-### M-001 / P-012 — Enrollment/Entitlement runtime
-Open: physical schema/indexes/materialization/scale/multisite, source uniqueness and concurrency.
-
-### M-003 / P-012 — authorization cache
-Open: generation/cache/invalidation and revoke-to-deny latency.
-
-### M-005 — protected files
-Open: Apache/Nginx/PHP/private object storage/CDN/Range delivery evidence.
-
-### M-006 — provider adapters — ADR-0057 + ADR-0062
-Accepted source profiles: `billing.manual`, `billing.woocommerce-order`, `billing.woocommerce-subscriptions`, `billing.surecart`.
-
-Static research maturity: **4 BE3 profiles; 0 MB-certified**.
-
-Open future evidence: exact provider/plugin versions, source identity and duplicate handling, current-state reconciliation, cancellation/failure/recovery, refunds/changes, provider→WP-user resolution, restore/clone, migration/privacy and concurrency.
-
-### M-010 — privacy
-Open: exporter/eraser cleanup/runtime/restore verification.
+- **M-001 / P-012** — Enrollment/Entitlement schema/indexes/materialization/scale/multisite and concurrency.
+- **M-003 / P-012** — authorization generation/cache/invalidation and revoke-to-deny latency.
+- **M-005** — protected-file delivery across Apache/Nginx/PHP/private object storage/CDN/Range.
+- **M-006 / ADR-0057 + ADR-0062** — four source profiles (`billing.manual`, Woo order, Woo Subscriptions, SureCart) are **BE3 static-paper / 0 MB-certified**. Exact versions, identity, reconciliation, refunds/changes, recovery, user resolution, clone/migration/privacy and concurrency remain open.
+- **M-010** — exporter/eraser cleanup/runtime/restore verification.
 
 ## D. Email / Notification provider evidence
 
-### E-001 — renderer/runtime — ADR-0029 + ADR-0058
-Open Email IR renderer/inliner/client compatibility, Recipient Delivery/Transport Attempt/Event Ledger physical schema/indexes, attachment/runtime privacy, JobService fan-out/backpressure and deterministic revision rendering.
+- **E-001 / ADR-0029 + ADR-0058** — Email IR renderer/inliner/client compatibility, Recipient Delivery/Transport Attempt/Event Ledger physical schema/indexes, attachment privacy, Job fan-out/backpressure.
+- **E-002 / ADR-0058 + ADR-0063** — six profiles (`wp_mail`, generic SMTP, SES, SendGrid, Mailgun, Postmark) are **EE3 static-paper / 0 ET-certified**. Exact adapter versions, correlation, webhook authenticity/replay/order, unknown outcomes, bounce/complaint/suppression/reconciliation, provider scope isolation, privacy/redaction and ET0–ET5 remain open.
 
-### E-002 — initial provider profiles — ADR-0058 + ADR-0063
-Accepted source-truth profiles: `email.wordpress-wp-mail`, `email.smtp-generic`, `email.amazon-ses`, `email.twilio-sendgrid`, `email.mailgun`, `email.postmark`.
-
-Static research maturity: **6 EE3 profiles; 0 ET-certified**.
-
-Accepted static rules: `wp_mail()` success is local processing only; generic SMTP relay acceptance is not final inbox/receiving-server proof; SES SEND ≠ DELIVERY; SendGrid processed ≠ delivered; Mailgun accepted ≠ delivered; Postmark Delivery means destination server accepted, not inbox placement; late bounce/complaint facts can coexist with earlier delivery evidence; open/click never becomes Read/Human Seen; webhook-security features are provider-specific and never fabricated.
-
-Open future evidence: exact adapters/versions, credential/rate-limit/outage behavior, provider correlation, webhook security/replay/duplicate/order, unknown outcomes, bounce/complaint/suppression/reconciliation, region/subaccount/stream/config-set isolation, privacy/tag/log redaction, JobService backlog and ET0–ET5 certification.
+Provider terms cannot override WPE truth: `wp_mail` success is local only; SES SEND ≠ DELIVERY; SendGrid processed ≠ delivered; Mailgun accepted ≠ delivered; Postmark Delivery ≠ inbox placement; open/click ≠ human read.
 
 ## E. Remote service / commercial distribution
 
-### S-001 — OAuth — ADR-0034 + ADR-0060
-Open exact schemas, one-time artifact/token lifecycle, revocation/disconnect, transfer and replay/concurrency evidence.
+- **S-001 / ADR-0034 + ADR-0060** — OAuth exact schemas, artifact/token lifecycle, revoke/disconnect/transfer/replay/concurrency.
+- **S-002 / ADR-0017 + ADR-0042 + ADR-0060** — entitlement canonicalizer/interoperability/key custody/envelope/freshness/rotation.
+- **S-003 / ADR-0018 + ADR-0044** — production TUF verifier/client, metadata/key custody/expiry/conformance.
+- **S-004/S-005/S-006 / ADR-0050 + ADR-0054 + ADR-0060** — OpenAPI/problem/scopes/idempotency/rate-limit, Support runtime, diagnostics, RR0–RR6 retention/export/delete/logging/no-hidden-identifier evidence.
 
-### S-002 — entitlement — ADR-0017 + ADR-0042 + ADR-0060
-Open canonicalizer/interoperability/key custody/exact envelope/freshness/rotation evidence.
-
-### S-003 — updater — ADR-0018 + ADR-0044
-Open production verifier/client, TUF metadata/key custody/expiry and conformance evidence.
-
-### S-004/S-005/S-006 — Support/API/Privacy — ADR-0050 + ADR-0054 + ADR-0060
-Open OpenAPI/problem/scopes/idempotency/rate-limit contracts, Support runtime, diagnostics preview/redaction, retention/export/delete, logging and no-hidden-identifier evidence.
-
-Future verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`, which defines **30 consent-gated fixtures; 0 executed**.
+Future verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`: **30 fixtures documented, 0 executed**.
 
 ## F. Connections / Integrations — ADR-0040 + ADR-0055
 
@@ -86,22 +59,23 @@ Accepted Safe HTTP/Webhook/Event Inbox + I0–I5 certification. Open provider ad
 
 ## G. Backup / Operations
 
-### B-001 — physical bundle — ADR-0033 / P-013
-Open exact file/DB artifact formats, chunking, compression/hash encoding.
+- **B-001 / ADR-0033 / P-013** — exact file/DB artifact formats, chunking, compression/hash encoding.
+- **B-002 / ADR-0021 + ADR-0043** — exact frame/AAD, Argon2id floor, recovery-kit encoding, resume boundaries and fresh-server restore.
+- **B-003 / ADR-0053 + ADR-0061 + ADR-0064 / P-013** — C0–C4 model + semantic `bf.*` families + versioned provider profiles + versioned static-evidence overlays. **34 target profiles, 0 certified**.
 
-### B-002 — crypto — ADR-0021 + ADR-0043
-Open exact frame/AAD, Argon2id floor, recovery-kit encoding, resume boundaries and fresh-server restore.
+Current static overlay upgrades:
+- Box SE3;
+- MinIO SE3;
+- Rackspace SE2;
+- Akamai/Linode SE2;
+- Hetzner SE3;
+- Bunny Storage SE2 (non-resumable claim until stronger Storage evidence);
+- MEGA SE1.
 
-### B-003 — providers — ADR-0053 + ADR-0061 / P-013
-Accepted C0–C4 model + semantic `bf.*` families + versioned provider profiles + SE0–SE3 static evidence separation. **34 target profiles, 0 certified**.
+Static overlay does not change public support status. Open auth/transfer/limits/integrity/finalization/retention/delete/C3/C4 restore evidence remains.
 
-Open auth, transfer, limits, integrity, finalization, retention/delete and C3/C4 restore evidence.
-
-### B-004 — Remote Copy — ADR-0056
-Open physical schema, commit-unknown reconciliation, re-verification, cleanup, lifecycle interference, alternate-copy failover and restore.
-
-### B-005 / Protector / Watermark / XML-RPC
-Open documented physical/runtime compatibility/security evidence.
+- **B-004 / ADR-0056** — Remote Copy physical schema, commit-unknown reconciliation, re-verification, cleanup, lifecycle interference, alternate-copy failover and restore.
+- **B-005 / Protector / Watermark / XML-RPC** — documented physical/runtime compatibility/security evidence remains open.
 
 ## H. Identity/Admin security
 
@@ -111,7 +85,7 @@ Open documented physical/runtime compatibility/security evidence.
 
 ## I. Accepted architecture no longer open semantically
 
-ADRs **0035–0063** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores.
+ADRs **0035–0064** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Static provider overlays are paper evidence only, never certification.
 
 ## Decision-processing rule
 
@@ -123,8 +97,8 @@ ADRs **0035–0063** preserve accepted core semantics. Evidence may refine versi
 
 ## Next planning-only priorities
 
-1. Refresh low-evidence Backup provider profiles from official docs only.
-2. Membership provider version/evidence refinement without execution.
-3. Email provider version/evidence refinement without execution.
+1. Generic FTP/FTPS/SFTP/local/browser protocol/library evidence without execution.
+2. Membership provider version/evidence refinement.
+3. Email provider version/evidence refinement.
 4. Continue narrowing P-003/provider evidence plans.
-5. Keep governance synchronized.
+5. Consolidate provider overlays only when useful; do not fake SE3 maturity.
