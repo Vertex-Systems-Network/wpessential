@@ -50,7 +50,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 12 | Settings Page Builder | Exhaustive | ADR-0036 Accepted | physical Options strategy, autoload, concurrency, multisite, Vault/REST | No |
 | 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031 + ADR-0035 Accepted | rewrite/permalink/multisite, IDOR/cache/assets/builder fixtures | No |
 | 14 | User Profile Builder | Exhaustive | ADR-0030 Accepted | protected-meta registry, email/password/session/App Password/public profile | No |
-| 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 Accepted | schema/cache/protected files/providers/concurrency/privacy — P-012 | No |
+| 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 Accepted | schema/cache/protected files/billing-provider certification/concurrency/privacy — P-012 | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035 Accepted | renderer/nesting/bindings/assets/accessibility/builder certification | No |
 | 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 Accepted Entry model + Workflow paper runtime | Entry schema/projections, Workflow/Job runtime — P-011 | No |
 | 18 | Cron Job Builder | Exhaustive | Job/Cron product semantics | ADR-0006 Job Service, DST/overlap/runtime fixtures | No |
@@ -58,23 +58,24 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 20 | Emails Builder | Exhaustive | ADR-0029 Accepted | renderer/inliner/client/security/core/provider certification | No |
 | 21 | Message & Chat System | Exhaustive | ADR-0027 Accepted | indexes/search/transport/private assets/revocation scale | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028 Accepted | compiler/auth/rate/CORS/cache/fuzz/scale evidence | No |
-| 23 | Webhooks & Connections | Exhaustive | ADR-0040 Accepted | Safe HTTP/provider OAuth/webhook signature/replay/Event Inbox evidence | No |
-| 24 | Backup Manager | Exhaustive | ADR-0021 + ADR-0033 + ADR-0043 Accepted | physical bundle, KDF/frame profile, provider/restore certification — P-013 | No |
+| 23 | Webhooks & Connections | Exhaustive | ADR-0040 + ADR-0055 Accepted | provider I0–I5 auth/read/write/event certification, Safe HTTP/webhook/Event Inbox evidence | No |
+| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056 Accepted | physical bundle/Remote Copy schema, C0–C4 provider & restore certification — P-013 | No |
 | 25 | Reset Manager | Exhaustive | ADR-0047 Accepted | recovery-store schema, DB/files crash recovery, adapters, multisite | No |
 | 26 | Import / Export | Exhaustive | ADR-0041 Accepted | run schema, crash/resume, source fixtures, media safety | No |
 | 27 | Protector | Exhaustive | ADR-0045 Accepted | hook order, atomic rate store, proxy/login/header fixtures | No |
 | 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 Accepted | registry, image-editor/format/offload/private-media/concurrency/load | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052 Accepted layered enforcement | method inventory/hooks/parser/complete-deny/Jetpack/mobile/multisite | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032 Accepted | classifier, self/last-recovery, multisite, WP-CLI recovery | No |
-| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034 + ADR-0042 + ADR-0044 + ADR-0050 Accepted profiles | remote service schemas, key custody/rotation, production TUF client, support API/attachment/privacy | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054 Accepted | OpenAPI/service implementation, key custody/rotation, production TUF client, support API/privacy | No |
 
 ## Cross-cutting accepted architecture that still needs evidence
 
-- **ADR-0048 Vault:** VRK → per-secret DEK → key slots; no plaintext fallback. Still requires interoperability, key-loss/rotation and restore fixtures.
-- **ADR-0049 Definition Repository:** Definitions + immutable Revisions + revision-aware Dependencies. Still requires exact indexes/locking/multisite benchmarks.
-- **ADR-0050 Support:** remote service authoritative. Still requires service API/schema/attachment/retention implementation evidence.
-- **ADR-0051 Dashboard Widgets:** structured remote data only; no blind remote HTML/JS. Still requires renderer/XSS/iframe/CSP fixtures.
-- **ADR-0052 XML-RPC:** layered endpoint/method/auth semantics. Still requires real hook/integration compatibility evidence.
+- ADR-0048 Vault: VRK → per-secret DEK → key slots; no plaintext fallback.
+- ADR-0049 Definition Repository: Definitions + immutable Revisions + revision-aware Dependencies.
+- ADR-0053 Backup Providers: protocol family + provider capability profile; C3 normal Support gate; current certified count 0.
+- ADR-0054 Remote Service: account/site/entitlement/catalog/support/docs/release resources have separate trust semantics.
+- ADR-0055 Connections: I0–I5 capability certification; `Connected` does not imply writes/events.
+- ADR-0056 Remote Copy: manifest-last, provider Commit Point, truthful retention/delete/restore identity.
 
 No surface may skip evidence merely because an ADR is Accepted.
 
@@ -85,10 +86,10 @@ No surface may skip evidence merely because an ADR is Accepted.
 3. CPT + Taxonomy Free;
 4. Fields → Relations → Query → Tables/Columns → Component Blueprint → Listings/Status;
 5. Settings/Admin Menu/Dashboard/Profile/Roles/Dashboard Widgets;
-6. Membership runtime;
+6. Membership runtime + billing provider certification;
 7. Form Entry + Workflow/Jobs + Notifications/Email;
 8. REST + Connections/Event Inbox + Import;
-9. Backup/Reset/Protection/Media/XML-RPC;
+9. Backup core → Remote Copy → reference provider adapters → Reset/Protection/Media/XML-RPC;
 10. Chat/realtime adapters;
 11. Account/Support/Updater service integration;
 12. AI composition only over certified Abilities/Blueprints;
@@ -97,7 +98,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0052; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0056; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
