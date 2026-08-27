@@ -111,6 +111,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0098 | Accepted Admin Columns operational profile / executable evidence pending | AC1 whole-request Column Execution Plan + batch hydration; real sort/filter before pagination; inline writes use owning API/Policy; N+1 per-row work rejected |
 | ADR-0099 | Accepted Dynamic Listings operational profile / executable evidence pending | DL1 authorization-aware Query + batched hydration + Component Blueprint SSR; protected pagination/count/cache semantics explicit |
 | ADR-0100 | Accepted Backup artifact/container profile / P-013 pending | Manifest-first multipart remains canonical; SHA-256 stored-byte integrity; CMP0 fallback/CMP1 gzip comparison; ZIP convenience only; FR/DB/chunk profiles evidence-gated |
+| ADR-0101 | Accepted OAuth Account-Link evidence protocol / execution pending | OA-01…OA-32 fix PKCE S256, replay, mix-up, refresh rotation, clone/privacy/outage evidence before account-link production readiness |
+| ADR-0102 | Accepted Pro updater TUF evidence protocol / execution pending | TU-01…TU-44 fix Root/Targets/Snapshot/Timestamp, rollback/freeze/key-custody/package-staging evidence before automated Pro updates |
 
 ## Product specification milestone
 
@@ -119,39 +121,30 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Major supporting architecture/security docs
 
-- Definition Repository + P-004: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`, `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Relations + P-010: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`, `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Query: `docs/ARCHITECTURE/QUERY-P009-COMPILER-COST-CACHE-BENCHMARK-PROFILE.md`
-- Field Storage: `docs/ARCHITECTURE/FIELD-STORAGE-PHYSICAL-ROUTING-BENCHMARK-PROFILE.md`
-- Custom Tables: `docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md`
-- Admin Columns: `docs/ARCHITECTURE/ADMIN-COLUMNS-OPERATIONAL-PROFILE.md`
-- Dynamic Listings: `docs/ARCHITECTURE/DYNAMIC-LISTINGS-SSR-PAGINATION-CACHE-PROFILE.md`
-- Settings: `docs/ARCHITECTURE/SETTINGS-PTA-PTB-INHERITANCE-AUTOLOAD-CONCURRENCY-PROFILE.md`
-- Membership/protected files: corresponding files under `docs/ARCHITECTURE/`
-- Workflow/Job/Notification/Email/Event Inbox/Audit: corresponding runtime profiles under `docs/ARCHITECTURE/`
-- REST: `docs/ARCHITECTURE/REST-ENDPOINT-OPERATIONAL-SECURITY-CACHE-RATE-PROFILE.md`
-- Import: `docs/ARCHITECTURE/IMPORT-RUN-PTD-PTE-PHYSICAL-RECOVERY-PROFILE.md`
-- Backup Remote Copy + artifact profile: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-PTC-PTD-PHYSICAL-PROFILE.md`, `docs/ARCHITECTURE/BACKUP-ARTIFACT-CONTAINER-COMPRESSION-HASH-PROFILE.md`
-- Vault: `docs/SECURITY/SECRETS-VAULT-PTC-PHYSICAL-ENVELOPE-PROFILE.md`
-- User Profile: `docs/SECURITY/USER-PROFILE-RUNTIME-AUTHORITY-EVIDENCE-PROFILE.md`
-- Role & Capability: `docs/SECURITY/ROLE-CAPABILITY-RUNTIME-MUTATION-EVIDENCE-PROFILE.md`
+- Definition/Relations evidence: corresponding `docs/ARCHITECTURE/` + `docs/QUALITY/` P-004/P-010 files.
+- Query/Fields/Custom Tables/Settings/Admin Columns/Listings: corresponding operational/physical profiles under `docs/ARCHITECTURE/`.
+- Membership/Protected Files/Workflow/Job/Notification/Email/Event Inbox/Audit/REST/Import/Backup/Vault: corresponding architecture/security profiles.
+- User Profile: `docs/SECURITY/USER-PROFILE-RUNTIME-AUTHORITY-EVIDENCE-PROFILE.md`.
+- Role & Capability: `docs/SECURITY/ROLE-CAPABILITY-RUNTIME-MUTATION-EVIDENCE-PROFILE.md`.
+- OAuth evidence: `docs/QUALITY/OAUTH-ACCOUNT-LINK-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- TUF updater evidence: `docs/QUALITY/PRO-UPDATE-TUF-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Product License remote/API: corresponding files under `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
-### Core platform
-P-001 compatibility/Multisite, P-002 UI, P-003 Job backend/mapping, P-004 Definition DDL, P-005 Vault crypto/runtime, P-006 Free↔Pro/Product License, P-007 CI, P-008 build, P-009 Query, P-010 Relations, P-011 Workflow, P-012 Membership and P-013 Backup remain executable gates.
+P-001…P-013 remain executable gates. ADR-0101/0102 additionally constrain OAuth/TUF evidence but do not authorize or verify any network/service/update runtime.
 
-### Newly narrowed operational profiles
-ADR-0098/0099/0100 resolve static Admin Columns, Listings and Backup artifact semantics. They do not prove WordPress list-table hooks, batching budgets, Listing cache/cursor behavior, compression/container implementations or Restore compatibility.
-
-### Provider certification
-Membership: **0 MB-certified**. Email: **0 ET-certified**. Event adapters: **0 I4/I5 certified**. Backup: **0 C-certified out of 34 targets**. Protected file profiles: **0 PC1+ certified**.
-
-### Multisite/lifecycle
-31/31 product scopes mapped, 40 lifecycle fixtures documented, **0 MS1+ / 0 lifecycle fixtures executed**.
-
-### Remote service/licensing
-Product License HTTP/resource/component principles accepted through ADR-0091, but **0 API/service fixtures** executed. Remote privacy protocol remains **30 fixtures / 0 executed**.
+Current certification/evidence remains:
+- Membership: **0 MB-certified**;
+- Email: **0 ET-certified**;
+- Event adapters: **0 I4/I5**;
+- Backup: **0 C-certified / 34 targets**;
+- Protected files: **0 PC1+**;
+- Multisite: **0 MS1+**;
+- Site lifecycle: **0/40 fixtures**;
+- Remote privacy: **0/30 fixtures**;
+- OAuth Account Link: **0/32 OA fixtures**;
+- Pro updater TUF: **0/44 TU fixtures**;
+- Product License API/service: **0 fixtures**.
 
 No executable evidence may run before explicit owner consent.
