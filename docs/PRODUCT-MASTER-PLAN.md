@@ -5,15 +5,16 @@ Last reviewed: 2026-08-27
 
 ## 1. Product thesis
 
-WPEssential is a modular WordPress application platform that lets site builders model data, construct admin/front-end experiences, automate work, integrate systems, and operate a site without installing a fragmented stack of unrelated plugins.
+WPEssential is a modular WordPress application platform that lets site builders model data, construct admin/front-end experiences, automate work, integrate systems, operate a site, and manage identity/access/membership without installing a fragmented stack of unrelated plugins.
 
-The target is not “more checkboxes than JetEngine/ACF/Gravity Forms.” The target is a **coherent platform** where modules reuse the same schema, query, relation, policy, workflow, rendering, job, audit, and integration primitives.
+The target is not “more checkboxes than JetEngine/ACF/Gravity Forms/MemberPress.” The target is a **coherent platform** where modules reuse the same schema, query, relation, policy, entitlement, workflow, rendering, job, audit, and integration primitives.
 
 A definition created once should be reusable everywhere. Examples:
 
 - A custom field created for a CPT can become a query filter, admin column, form field target, REST field, workflow condition, email token, notification token, dashboard widget value, AI-readable schema, or import/export mapping.
-- A query can power an admin column, listing, table, dashboard card, form options, REST endpoint, scheduled job, email digest, or AI ability.
-- A workflow action can be invoked by a form, cron schedule, webhook, post transition, REST call, manual admin action, or approved AI agent.
+- A query can power an admin column, listing, table, dashboard card, form options, REST endpoint, scheduled job, email digest, membership segment, or AI ability.
+- A workflow action can be invoked by a form, cron schedule, webhook, post transition, membership lifecycle event, REST call, manual admin action, or approved AI agent.
+- A membership entitlement can control content, downloads, dashboard routes, forms, menu visibility, notifications, REST/Ability access, and third-party benefits without being reduced to a WordPress role.
 
 ## 2. Product suites
 
@@ -37,8 +38,12 @@ Individual modules remain independently enable/disable-able, but navigation is g
 - Custom Admin Menu Builder — Pro
 - Settings Page Builder — Pro
 - Dashboard Builder — Pro
-- User Profile Builder — Pro
 - Builder Widgets Builder — Pro
+
+### Identity, Membership & Access
+- User Profile Builder — Pro
+- Membership System — Pro (new; plan/enrollment/entitlement/access lifecycle)
+- Role & Capability Manager — Pro
 
 ### Automation & Communication
 - Forms & Workflow Builder — Pro
@@ -59,6 +64,14 @@ Individual modules remain independently enable/disable-able, but navigation is g
 - Watermarker / Media Rules — Pro
 - XML-RPC Manager — Pro
 
+### Platform surfaces
+- WPEssential Home / Modules
+- Documentation
+- Changelog
+- Support Tickets
+- Account & License
+- System Status / Diagnostics
+
 ## 3. Core services that are not sellable modules
 
 These are platform infrastructure and must not be duplicated per module:
@@ -71,21 +84,26 @@ These are platform infrastructure and must not be duplicated per module:
 6. Renderer / Template Engine
 7. Conditional Logic Engine
 8. Policy / Capability Engine
-9. Ability Registry (WordPress Abilities API)
-10. Event Bus
-11. Workflow Runtime
-12. Job Queue / Scheduler
-13. Credentials / Secrets Vault
-14. Integration Adapter Registry
-15. Audit Log and observability
-16. Definition versioning and migration service
-17. Import / Export package service
-18. Asset Manifest and scoped loader
-19. Feature flags / Labs service
-20. Diagnostics / Site Health integration
-21. Developer SDK / extension contracts
+9. Entitlement Engine
+10. Ability Registry (WordPress Abilities API)
+11. Event Bus
+12. Workflow Runtime
+13. Job Queue / Scheduler
+14. Credentials / Secrets Vault
+15. Integration Adapter Registry
+16. Audit Log and observability
+17. Definition versioning and migration service
+18. Import / Export package service
+19. Asset Manifest and scoped loader
+20. Feature flags / Labs service
+21. Diagnostics / Site Health integration
+22. Developer SDK / extension contracts
 
 A feature that can be expressed through one of these shared primitives must not invent a second incompatible mechanism.
+
+### Entitlement Engine rule
+
+Memberships, trials, complimentary grants, commerce purchases, subscriptions, seat assignments and workflow grants may create entitlements. Consumers ask the Entitlement/Policy layer whether an action/resource is allowed; they do not directly inspect a specific payment plugin or misuse WordPress roles as membership state.
 
 ## 4. Free / Pro model
 
@@ -127,19 +145,19 @@ Forgot password, purchase, renew, plans, account state and support communicate w
 
 ## 5. Entitlement and expiry behavior
 
-Entitlement affects **editing and creation**, not ownership of user data.
+WPEssential product entitlement affects **editing and creation**, not ownership of user data. This product-license entitlement is separate from site-user Membership System entitlements.
 
-On Pro expiry:
+On WPEssential Pro expiry:
 
-- Never delete module definitions, settings, content, custom tables, fields, relations, form entries, backup metadata, or generated assets.
+- Never delete module definitions, settings, content, custom tables, fields, relations, form entries, membership enrollments, backup metadata, or generated assets.
 - Admin definitions become read-only when their module is no longer entitled.
 - Show the exact affected module and a contextual Upgrade/Renew action.
 - Existing public output should continue to render where it is safe and technically possible so a production site does not suddenly break because a billing event occurred.
 - Mutating automations that could keep creating costs/data after expiry should stop safely and be marked “Paused — license required.”
-- Security protections must not be silently removed merely because a license expired. A safe last-known configuration remains active until the administrator changes it or removes Pro.
+- Security and membership access protections must not be silently removed merely because a WPEssential license expired. A safe last-known configuration remains active until the administrator changes it or removes Pro.
 - A site owner can export all WPEssential configuration/data regardless of subscription state.
 
-Any future proposal to blank public output on expiry requires a dedicated ADR and product/legal review.
+Any future proposal to blank public output or expose protected content on expiry requires a dedicated ADR and product/security/legal review.
 
 ## 6. Module lifecycle
 
@@ -173,7 +191,7 @@ States:
 - migration-required
 - unhealthy
 
-Disabling a module unregisters its hooks/assets/background work but preserves data. “Delete module data” is a separate destructive action.
+Disabling a module unregisters nonessential hooks/assets/background work but preserves data. Security/access modules may require a documented minimal enforcement runtime on disable so disabling management UI does not accidentally expose protected resources. “Delete module data” is a separate destructive action.
 
 ## 7. AI-native product definition
 
@@ -224,6 +242,19 @@ Every builder should include, where relevant:
 - dependencies/usage view (“Used by…”) before deletion
 - audit history
 - empty/loading/error/success/offline states
+
+### Option-level planning gate
+
+High-level feature bullets are not implementation specifications.
+
+Before any production module code begins:
+
+1. `docs/MODULES/OPTION-INVENTORY.md` must include every known screen, field, toggle, selector, row action and lifecycle behavior for **every module**.
+2. The module must satisfy `docs/MODULES/SPECIFICATION-STANDARD.md`.
+3. Exact defaults, validation, permissions, data ownership, state transitions, failure behavior, assets, integration contracts and tests must be resolved in the module spec/ADRs.
+4. If implementation discovers an unplanned option, the documentation is updated before or in the same coherent change; implementation must not silently invent product behavior.
+
+The Membership System has the first full detailed module spec at `docs/MODULES/MEMBERSHIP-SYSTEM.md`; the same standard applies to every other module.
 
 ## 9. Design system direction
 
@@ -280,6 +311,7 @@ WPEssential Home contains:
 - enabled modules
 - recent automation failures
 - latest backup status
+- membership/access synchronization warnings when Membership is enabled
 - documentation search
 - changelog
 - account/license state (if connected)
@@ -316,6 +348,12 @@ URL obfuscation can reduce automated noise but is not an authorization boundary.
 ### Reset video recording
 Not a core server reset guarantee. Reset Manager produces a restore point: backup reference, environment snapshot, active plugin/theme inventory, selected settings, checksums and audit record. Optional visual capture can be explored separately.
 
+### Membership = WordPress role
+Rejected. Roles/capabilities and membership entitlements solve different problems. Role synchronization is optional and one of several membership side effects; it is never the canonical membership state.
+
+### WPEssential as payment-card processor
+Rejected. Membership may integrate with billing/commerce systems and consume signed lifecycle events, but WPEssential core does not store/process card credentials.
+
 ## 14. Success metrics
 
 Feature count is not the primary KPI. Track:
@@ -328,6 +366,7 @@ Feature count is not the primary KPI. Track:
 - restore success rate
 - query latency / expensive-query warnings
 - permission/security regression rate
+- membership access-rule explainability and sync failure rate
 - support tickets per active site by module
 - migration success rate
 - upgrade rollback incidents
@@ -336,9 +375,11 @@ Feature count is not the primary KPI. Track:
 
 ## 15. Phase 0 exit gate
 
-Feature coding may start only when:
+Production feature coding may start only when:
 
-- product/module catalog is accepted
+- product/module catalog including Membership is accepted
+- **all modules have option-level inventories and detailed specifications under `docs/MODULES/`**
+- known option semantics/defaults/validation/permissions are resolved or explicitly blocked by ADR
 - core architecture and data ownership boundaries are documented
 - commercial distribution model is accepted
 - security rules are documented
