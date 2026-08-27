@@ -106,6 +106,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0093 | Accepted Relations P-010 evidence protocol / execution pending | RF datasets, RQ1–RQ11 reads, RC1–RC8 cardinality races, endpoint/pivot subtests, N+1/lifecycle/wrong-scope gates fixed before benchmarking |
 | ADR-0094 | Accepted REST operational runtime profile / executable evidence pending | RE1 WP REST + compiled descriptor first; idempotency/rate/cache operational state separate; CORS/auth/projection never replace authorization |
 | ADR-0095 | Accepted Import runtime physical/recovery profile / executable evidence pending | IR1/PT-D first; IR2/PT-E mandatory; Run/Checkpoint/Identity Map/Journal durable truth; crash-after-write reconciles before retry; rollback remains truthful R0–R3 |
+| ADR-0096 | Accepted User Profile runtime authority profile / executable evidence pending | UP1 native WP identity/auth authority; UP2 Field Storage custom data; UP3 minimal security-action state only when needed; protected meta/roles/credentials never generic fields |
+| ADR-0097 | Accepted Role/Capability runtime mutation profile / executable evidence pending | RA1 native WP authorization authority; Change Plan/effective-cap simulation/anti-lockout/recovery around native mutation; no parallel auth DB or anonymous backdoor |
 
 ## Product specification milestone
 
@@ -114,36 +116,29 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Major supporting architecture/security docs
 
-- Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`
-- Definition P-004 evidence: `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Relations: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
-- Relations P-010 evidence: `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Query P-009: `docs/ARCHITECTURE/QUERY-P009-COMPILER-COST-CACHE-BENCHMARK-PROFILE.md`
+- Definition Repository + P-004: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`, `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- Relations + P-010: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`, `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- Query: `docs/ARCHITECTURE/QUERY-P009-COMPILER-COST-CACHE-BENCHMARK-PROFILE.md`
 - Field Storage: `docs/ARCHITECTURE/FIELD-STORAGE-PHYSICAL-ROUTING-BENCHMARK-PROFILE.md`
 - Custom Tables: `docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md`
 - Settings: `docs/ARCHITECTURE/SETTINGS-PTA-PTB-INHERITANCE-AUTOLOAD-CONCURRENCY-PROFILE.md`
-- Forms/Chat: `docs/ARCHITECTURE/FORMS-CHAT-PTD-PTE-TOPOLOGY-COMPARISON.md`
-- Membership: `docs/ARCHITECTURE/MEMBERSHIP-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
-- Protected files: `docs/ARCHITECTURE/MEMBERSHIP-PROTECTED-FILE-DELIVERY-CERTIFICATION-PROFILE.md`
-- Notification/Email: `docs/ARCHITECTURE/NOTIFICATION-EMAIL-PTD-OPERATIONAL-STORAGE-PROFILE.md`
-- Event Inbox: `docs/ARCHITECTURE/EVENT-INBOX-PTD-PHYSICAL-BENCHMARK-PROFILE.md`
-- Audit: `docs/ARCHITECTURE/AUDIT-PTD-RETENTION-INDEX-INTEGRITY-PROFILE.md`
-- Workflow: `docs/ARCHITECTURE/WORKFLOW-PTD-PHYSICAL-BENCHMARK-PROFILE.md`
-- JobService: `docs/ARCHITECTURE/JOB-SERVICE-PTC-PTD-PHYSICAL-MAPPING-PROFILE.md`
-- REST operational: `docs/ARCHITECTURE/REST-ENDPOINT-OPERATIONAL-SECURITY-CACHE-RATE-PROFILE.md`
-- Import runtime: `docs/ARCHITECTURE/IMPORT-RUN-PTD-PTE-PHYSICAL-RECOVERY-PROFILE.md`
+- Membership/protected files: corresponding files under `docs/ARCHITECTURE/`
+- Workflow/Job/Notification/Email/Event Inbox/Audit: corresponding runtime profiles under `docs/ARCHITECTURE/`
+- REST: `docs/ARCHITECTURE/REST-ENDPOINT-OPERATIONAL-SECURITY-CACHE-RATE-PROFILE.md`
+- Import: `docs/ARCHITECTURE/IMPORT-RUN-PTD-PTE-PHYSICAL-RECOVERY-PROFILE.md`
 - Backup Remote Copy: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-PTC-PTD-PHYSICAL-PROFILE.md`
-- Vault physical envelope: `docs/SECURITY/SECRETS-VAULT-PTC-PHYSICAL-ENVELOPE-PROFILE.md`
-- Site Lifecycle: `docs/ARCHITECTURE/MULTISITE-SITE-LIFECYCLE-COORDINATOR.md`
-- Product License remote/API: corresponding files under `docs/PLATFORM/`, including `PRODUCT-LICENSE-OPENAPI-COMPONENT-SCHEMA-PROFILE.md`.
+- Vault: `docs/SECURITY/SECRETS-VAULT-PTC-PHYSICAL-ENVELOPE-PROFILE.md`
+- User Profile: `docs/SECURITY/USER-PROFILE-RUNTIME-AUTHORITY-EVIDENCE-PROFILE.md`
+- Role & Capability: `docs/SECURITY/ROLE-CAPABILITY-RUNTIME-MUTATION-EVIDENCE-PROFILE.md`
+- Product License remote/API: corresponding files under `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
 ### Core platform
 P-001 compatibility/Multisite, P-002 UI, P-003 Job backend/mapping, P-004 Definition DDL, P-005 Vault crypto/runtime, P-006 Free↔Pro/Product License, P-007 CI, P-008 build, P-009 Query, P-010 Relations, P-011 Workflow, P-012 Membership and P-013 Backup remain executable gates.
 
-### Newly narrowed paper/evidence profiles
-ADR-0092/0093 fix exact future P-004/P-010 test contracts. ADR-0094/0095 fix REST operational boundaries and Import physical/recovery semantics. They authorize no executable evidence.
+### Newly narrowed security/runtime profiles
+ADR-0096/0097 resolve static authority boundaries for User Profile and Role Manager. They do not prove current WordPress adapter behavior, recent-auth, email/session/Application Password flows, anti-lockout mutation, Super Admin behavior or recovery-mode execution.
 
 ### Provider certification
 Membership: **0 MB-certified**. Email: **0 ET-certified**. Event adapters: **0 I4/I5 certified**. Backup: **0 C-certified out of 34 targets**. Protected file profiles: **0 PC1+ certified**.
