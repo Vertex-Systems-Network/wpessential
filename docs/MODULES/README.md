@@ -1,40 +1,36 @@
 # WPEssential — Detailed Module Specifications
 
-Status: **Phase 0 — option-level behavioral specification complete; exhaustive module-by-module deepening in progress; technical acceptance blockers remain**
+Status: **Phase 0 — 31/31 product surfaces Exhaustively Specified; technical blockers remain; development not authorized**
 
-This directory is the detailed source of truth for module behavior. `docs/MODULE-CATALOG.md` is the high-level product catalog; files here define screens, fields, toggles, actions, validation, permissions, lifecycle, integration and test expectations and take precedence where more specific.
-
-## Rule: no module implementation before option specification
-
-A module may not enter implementation until its specification covers, at minimum:
-
-- every screen and sub-screen;
-- every visible option, toggle, selector, input and row action;
-- defaults and conditional visibility of options;
-- validation, sanitization and normalization rules;
-- capability/policy requirements for list/read/create/update/delete/run/export/import;
-- empty, loading, success, warning, error, disabled, expired-license and recovery states;
-- owned data, storage, revisions and migration behavior;
-- import/export semantics;
-- module enable/disable behavior;
-- cross-module dependencies and quick actions;
-- REST/Ability/CLI extension surface where applicable;
-- asset-loading boundaries;
-- audit/observability events;
-- performance limits;
-- compatibility risks;
-- destructive-action safeguards;
-- acceptance tests.
-
-See `SPECIFICATION-STANDARD.md` for the mandatory format.
+This directory is the product-behavior source of truth. `docs/MODULE-CATALOG.md` is the high-level catalog; detailed module files here define screens, fields, toggles, actions, defaults, validation, permissions, lifecycle, integration, failure behavior and acceptance-test expectations.
 
 ## Development consent gate
 
-Even when a module reaches **Accepted** specification maturity, production development remains prohibited until the user explicitly authorizes development under `../DEVELOPMENT-CONSENT.md` and ADR-0014.
+Even when a module is Exhaustive or has Accepted semantics, production development remains prohibited until the owner explicitly authorizes development under `/DEVELOPMENT-CONSENT.md` and ADR-0014.
 
-“Continue”, planning approval, ADR approval, research approval, or completion of Phase 0 is not development consent.
+`continue`, planning approval, ADR approval or Phase 0 completion do not count as development consent.
 
-## Modules
+---
+
+# Maturity model
+
+1. Inventory
+2. Behavioral
+3. **Exhaustive Option Spec**
+4. Accepted semantics
+5. Technical Ready
+6. Authorized
+7. Implemented
+8. Verified
+
+Current product-option result: **31/31 surfaces are Exhaustive.**  
+Current development authorization: **0/31 authorized.**
+
+See `OPTION-COVERAGE-MATURITY.md` for the exact ledger.
+
+---
+
+# Product surfaces
 
 1. Custom Post Types Builder — Free
 2. Taxonomy Builder — Free
@@ -48,9 +44,9 @@ Even when a module reaches **Accepted** specification maturity, production devel
 10. Dashboard Widgets Manager — Pro
 11. Custom Admin Menu Builder — Pro
 12. Settings Page Builder — Pro
-13. Dashboard Builder — Pro
+13. Frontend Dashboard Builder — Pro
 14. User Profile Builder — Pro
-15. **Membership System — Pro**
+15. Membership System — Pro
 16. Builder Widgets Builder — Pro
 17. Forms & Workflow Builder — Pro
 18. Cron Job Builder — Pro
@@ -66,70 +62,122 @@ Even when a module reaches **Accepted** specification maturity, production devel
 28. Watermarker / Media Rules — Pro
 29. XML-RPC Manager — Pro
 30. Role & Capability Manager — Pro
-31. Support / Docs / Changelog / Account Center — platform surface
+31. Account / Plans / Docs / Changelog / Support / Diagnostics — Platform surfaces
 
-## Detailed planning artifacts
+---
 
-### Rules and inventory
-- `SPECIFICATION-STANDARD.md` — mandatory option-level specification contract.
-- `COMMON-OPTION-CONTRACTS.md` — shared semantics/defaults for identity, lifecycle, save/list behavior, confirmations, capabilities, secrets, PII, revisions, dependencies, entitlement state, accessibility, assets, audit and inherited tests.
-- `OPTION-INVENTORY.md` — screen/control ledger for all 31 modules/surfaces.
+# Shared specification contracts
 
-### Detailed module/suite specifications
-- `CONTENT-MODEL-SPECS.md` — CPT, Taxonomy, Fields, Relations, Status.
-- `DATA-QUERY-SPECS.md` — Query, Custom Tables, Admin Columns, Dynamic Listings.
-- `ADMIN-EXPERIENCE-SPECS.md` — Dashboard Widgets, Admin Menu, Settings Page, Dashboard Builder, Builder Widgets.
-- `IDENTITY-ACCESS-SPECS.md` — User Profile, Membership integration, Role & Capability.
-- `MEMBERSHIP-SYSTEM.md` — full Membership plan/enrollment/entitlement/access/billing-adapter/lifecycle specification.
-- `AUTOMATION-COMMUNICATION-SPECS.md` — Forms/Workflow, Cron, Notifications, Email, Chat.
-- `INTEGRATION-DATA-SPECS.md` — REST API Builder, Webhooks/Connections, Import/Export.
-- `OPERATIONS-PROTECTION-SPECS.md` — Backup, Reset, Protector, Watermark, XML-RPC.
-- `PLATFORM-SURFACES-SPEC.md` — onboarding, Home/Modules, Account/License/Plans, Docs, Changelog, Support Tickets and Diagnostics.
+- `SPECIFICATION-STANDARD.md`
+- `COMMON-OPTION-CONTRACTS.md`
+- `OPTION-INVENTORY.md`
+- `OPTION-COVERAGE-MATURITY.md`
 
-### Exhaustive module specifications completed so far
+Suite-level behavioral sources remain useful context:
+- `CONTENT-MODEL-SPECS.md`
+- `DATA-QUERY-SPECS.md`
+- `ADMIN-EXPERIENCE-SPECS.md`
+- `IDENTITY-ACCESS-SPECS.md`
+- `AUTOMATION-COMMUNICATION-SPECS.md`
+- `INTEGRATION-DATA-SPECS.md`
+- `OPERATIONS-PROTECTION-SPECS.md`
+- `PLATFORM-SURFACES-SPEC.md`
 
-These files go below suite-level behavior and audit individual WordPress/provider arguments and small controls explicitly:
+---
 
-- `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` — every planned CPT/Taxonomy registration argument, label, support, REST, capability, rewrite, query-var, block-template, callback-adapter, migration and acceptance-test control.
-- `CUSTOM-FIELDS-EXHAUSTIVE-SPEC.md` — field-group contract, shared field options, cardinality/repeatability, field types, option sources, storage/queryability, REST/meta registration, migration and type-specific tests.
-- `QUERY-BUILDER-EXHAUSTIVE-SPEC.md` — typed Query AST, provider capability matrix, WordPress query clauses/operators, parameters, joins, relations, projection, aggregates, sorting, pagination, caching, permissions, diagnostics and provider tests.
-- `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md` — relation endpoint/cardinality/pivot/order/integrity semantics and exact WordPress post-status plus generic state-machine/transition/history behavior.
-- `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md` — schema/types/indexes/migrations/data browser/query-console rules plus complete list-view source, formatting, filter, sort, inline/bulk edit, views, export and performance contracts.
+# Dedicated exhaustive specifications
 
-### Architecture/readiness planning
+## Content model / data
+- `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md`
+- `CUSTOM-FIELDS-EXHAUSTIVE-SPEC.md`
+- `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md`
+- `QUERY-BUILDER-EXHAUSTIVE-SPEC.md`
+- `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md`
+- `DYNAMIC-LISTINGS-EXHAUSTIVE-SPEC.md`
 
-- `../IMPLEMENTATION-READINESS-MATRIX.md` — module-by-module readiness blockers; Specified is not Accepted or Authorized.
-- `../OPEN-DECISIONS-REGISTER.md` — unresolved architecture/product decisions and required evidence.
-- `../DEVELOPMENT-CONSENT.md` — explicit user-consent boundary for all executable development/spikes.
+## Admin / identity / builders
+- `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md`
+- `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md`
+- `BUILDER-WIDGETS-EXHAUSTIVE-SPEC.md`
+- `BUILDER-INTEGRATION-CERTIFICATION.md`
 
-### Research
-- `../RESEARCH/COMPETITIVE-LANDSCAPE.md`
-- `../RESEARCH/MODULE-BENCHMARK-MATRIX.md`
-- `../RESEARCH/MEMBERSHIP-LANDSCAPE.md`
+## Membership
+- `MEMBERSHIP-SYSTEM.md`
+- `MEMBERSHIP-ACCESS-POLICY.md`
+- `MEMBERSHIP-ENROLLMENT-STATE-MACHINE.md`
+- `MEMBERSHIP-PLAN-VERSIONING-UPGRADE-SEMANTICS.md`
+- `MEMBERSHIP-TEAMS-SEATS-ROLE-SYNC.md`
+- `MEMBERSHIP-MIGRATION-SEMANTICS.md`
+- `MEMBERSHIP-SEMANTIC-STATUS.md`
 
-## Current coverage
+Membership core semantics are further locked by ADR-0013, ADR-0015, ADR-0016, ADR-0019 and ADR-0020.
 
-- **31/31 module/platform surfaces:** option/screen inventory present.
-- **31/31 module/platform surfaces:** Phase 0 behavioral specification present through common + suite/module specifications.
-- **Foundation/data exhaustive deep specs:** CPT, Taxonomy, Custom Fields, Relations, Status, Query, Custom Tables and Admin Columns now have dedicated argument/control-level specifications.
-- **Membership System:** dedicated deep specification plus access precedence, enrollment/runtime/protected-file/billing planning artifacts present.
-- **Production implementation:** not started and not authorized.
-- **Technical acceptance:** not complete; Proposed ADRs and future evidence spikes still block Phase 1.
+## Automation / communication
+- `FORMS-WORKFLOW-EXHAUSTIVE-SPEC.md`
+- `CRON-JOB-BUILDER-EXHAUSTIVE-SPEC.md`
+- `NOTIFICATION-SYSTEM-EXHAUSTIVE-SPEC.md`
+- `EMAILS-BUILDER-EXHAUSTIVE-SPEC.md`
+- `MESSAGE-CHAT-EXHAUSTIVE-SPEC.md`
 
-“Behaviorally Specified” means product semantics are written down. It does **not** mean storage schemas, framework/toolchain choices, provider implementations or performance/security claims have been proven.
+## Integration / data movement
+- `REST-API-BUILDER-EXHAUSTIVE-SPEC.md`
+- `WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md`
+- `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md`
 
-## Specification maturity
+## Operations / protection
+- `BACKUP-MANAGER-EXHAUSTIVE-SPEC.md`
+- `BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
+- `BACKUP-RESTORE-SEMANTICS.md`
+- `RESET-MANAGER-EXHAUSTIVE-SPEC.md`
+- `PROTECTOR-EXHAUSTIVE-SPEC.md`
+- `WATERMARKER-MEDIA-RULES-EXHAUSTIVE-SPEC.md`
+- `XML-RPC-MANAGER-EXHAUSTIVE-SPEC.md`
 
-- **Inventory**: screens/options identified, but edge semantics may still be open.
-- **Specified**: defaults, validation, permissions, state transitions and integration semantics are explicit.
-- **Exhaustively Specified**: module-specific current platform/provider arguments and small controls have received a dedicated deep audit; technical evidence blockers may still remain.
-- **Accepted**: blockers resolved by ADR/research/authorized spike and implementation may become technically eligible.
-- **Authorized**: the user has explicitly consented to development; this is separate from Accepted.
-- **Implemented**: code exists but still must pass Definition of Done.
-- **Verified**: implementation has passed the relevant quality gates.
+## Platform surfaces
+- `PLATFORM-SURFACES-SPEC.md`
+- `../PLATFORM/PLATFORM-SURFACE-AMENDMENTS-2026-08-27.md`
+- `../PLATFORM/REMOTE-SERVICE-API-CONTRACT.md`
+- `../PLATFORM/DOCUMENTATION-SUPPORT-RELEASE-IA.md`
 
-No status may skip directly from Inventory/Specified to Implemented, and Accepted never implies Authorized.
+The amendment/Remote Service contract supersede earlier local WPE-account password-form and Free-plugin external Pro auto-install assumptions.
 
-## Next planning gate
+---
 
-Continue exhaustive module-by-module deepening, prioritizing dependency-critical modules first. Resolve platform-level Proposed ADRs through static research where possible. Any evidence requiring executable code/install/build/runtime testing remains blocked until explicit user development consent.
+# Exhaustive-spec rule
+
+Every module must maintain, where applicable:
+- list screen columns/filters/search/sort/bulk actions;
+- create/edit tabs/sections;
+- each field/toggle/selector/action and default;
+- conditional visibility/dependencies;
+- normalization/validation/sanitization;
+- publish/archive/delete/run semantics;
+- permissions/re-auth;
+- revisions/import/export;
+- health/audit/observability;
+- empty/loading/error/offline/degraded/read-only/expired states;
+- cross-module dependencies;
+- asset isolation;
+- accessibility/keyboard behavior;
+- performance safeguards;
+- destructive safeguards;
+- acceptance tests.
+
+If future research or implementation uncovers a missing meaningful option, update the exhaustive spec before or in the same coherent change. The implementation must not silently invent product semantics.
+
+---
+
+# Architecture/readiness sources
+
+- `../IMPLEMENTATION-READINESS-MATRIX.md` — technical blockers; Exhaustive ≠ Technical Ready.
+- `../OPEN-DECISIONS-REGISTER.md` — unresolved decisions and evidence requirements.
+- `/DEVELOPMENT-CONSENT.md` — owner consent boundary.
+- `../DECISIONS/` — Accepted/Proposed ADRs.
+
+# Current conclusion
+
+**Product-option planning gate:** reached for all 31 planned surfaces.  
+**Technical acceptance gate:** not reached globally.  
+**Executable development:** not started, not authorized.
+
+The next Phase 0 work is no longer broad option enumeration. It is resolving/strengthening architecture, schema, compatibility, security, performance, provider-certification and migration evidence plans without executing code.
