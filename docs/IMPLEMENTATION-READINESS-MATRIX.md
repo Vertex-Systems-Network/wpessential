@@ -18,9 +18,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | WP/PHP/DB compatibility | ADR-0002 Proposed | P-001 |
 | UI/design system | ADR-0005 Proposed | P-002 |
 | Job Service concrete backend | ADR-0059 + ADR-0068 semantics/packaging Accepted; Action Scheduler runtime still Proposed | P-003 |
-| Definition Repository physical DDL/indexes | ADR-0049 accepted relational shape; exact DDL pending | P-004 |
-| Secrets Vault implementation | ADR-0048 accepted hierarchy; exact envelope/interoperability pending | P-005 |
-| Free↔Pro runtime | ADR-0010 Proposed | P-006 |
+| Definition Repository physical DDL/indexes | ADR-0049 + ADR-0069 accepted logical shape/scope; exact DDL pending | P-004 |
+| Secrets Vault implementation | ADR-0048 + ADR-0069 accepted hierarchy/scope; exact envelope/interoperability pending | P-005 |
+| Free↔Pro runtime | ADR-0010 + ADR-0070 product allocation semantics; runtime compatibility pending | P-006 |
 | CI | ADR-0011 Proposed | P-007 |
 | Build toolchain | ADR-0012 Proposed | P-008 |
 | Multisite runtime certification | ADR-0069 logical scope accepted; MS0–MS4 protocol documented, 0 runtime fixtures executed | P-001 + module-specific gates |
@@ -62,7 +62,7 @@ All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as a cros
 | 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + 0059 + 0068 + 0069 | registry/image/offload/concurrency/Job/site media isolation | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052 + ADR-0069 | method/hooks/parser/complete-deny/Jetpack/multisite network-impact evidence | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032 + ADR-0069 | target-site classifier/anti-lockout/Super Admin/network/CLI recovery | No |
-| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060/0069 | OpenAPI/OAuth/key custody/TUF/support/privacy/network allocation/30 privacy fixtures | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060/0069/0070 | OpenAPI/OAuth/key custody/TUF/support/privacy/network allocation/clone-transfer/offline-grace/30 privacy fixtures | No |
 
 ## Cross-cutting accepted architecture that still needs evidence
 
@@ -75,7 +75,8 @@ All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as a cros
 - ADR-0057/0062/0066 Membership Billing: four version-scoped paper profiles, **0 MB-certified**.
 - ADR-0058/0063/0067 Email: six version-scoped paper profiles, **0 ET-certified**.
 - ADR-0059/0068 Job Service: backend-neutral semantics + Action Scheduler packaging/coexistence accepted; concrete P-003 runtime remains unverified.
-- **ADR-0069 Multisite:** site/network scope, target authorization, cache/job/Vault/Membership/Backup/Reset/import isolation accepted; `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md` defines MS0–MS4 future certification. **0 Multisite runtime fixtures executed; 0 surfaces MS1+ runtime-certified.**
+- ADR-0069 Multisite: site/network scope, target authorization, cache/job/Vault/Membership/Backup/Reset/import isolation accepted; MS0–MS4 future certification documented. **0 Multisite runtime fixtures executed; 0 surfaces MS1+ runtime-certified.**
+- **ADR-0070 Product License:** opaque installation/network/site-allocation identities, explicit environment classes, clone/staging/migration/transfer and outage/expiry separation accepted. Exact service APIs, allocation races, site-count policies and clone reconciliation remain unverified.
 
 ## Current provider/version snapshots — paper only
 
@@ -115,16 +116,17 @@ These are not runtime support claims.
 8. REST/Connections/Event Inbox/Import;
 9. Backup core → Remote Copy → provider adapters/C3 restore → site/network Backup/Restore certification → operations/security modules;
 10. Chat;
-11. Account/Support/Updater under ADR-0060/0069;
+11. Account/Support/Updater/Product Allocation under ADR-0060/0069/0070;
 12. AI only over certified scope-aware platform Abilities/Blueprints;
 13. ecosystem and large-network scale.
 
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0069; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0070; physical/runtime evidence incomplete.  
 **Multisite product mapping:** 31/31 surfaces documented.  
 **Multisite runtime certification:** 0 surfaces MS1+.  
+**Product-license runtime/service evidence:** 0 fixtures executed.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
