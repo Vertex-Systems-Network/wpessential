@@ -1,77 +1,175 @@
 # ADR-0012 — Canonical Build Toolchain
 
 Status: **Proposed — Phase 0 blocker**  
-Date: 2026-08-27
+Date: 2026-08-27  
+Static research refreshed: 2026-08-27
 
 ## Context
 
 The legacy WPEssential repository contains both Laravel Mix scripts and Vite packages. A new platform should have one explicit, reproducible build path rather than carrying two frontend ecosystems.
 
-WPEssential also needs WordPress-aware dependency handling, route/module code splitting, TypeScript, React, asset manifests and production packaging.
+WPEssential also needs WordPress-aware dependency handling, TypeScript, React, route/module code splitting, scoped styles, asset metadata, translations and production packaging.
 
-## Proposed decision
+Since the earlier planning pass, current WordPress documentation provides an important new option: `@wordpress/build`, an opinionated build system specifically for WordPress plugins. It uses esbuild and includes WordPress package/React externalization plus generated asset/PHP registration metadata.
 
-### PHP
+This materially weakens the earlier assumption that generic Vite should be the default first choice.
+
+Static evidence is recorded in `docs/RESEARCH/COMPATIBILITY-UI-TOOLCHAIN-STATIC-RESEARCH.md`.
+
+## PHP toolchain direction
+
 - Composer-managed PSR-4 autoloading;
 - one root `WPEssential\` namespace with coherent directory mapping;
-- WordPress-compatible coding standards + static analysis;
+- WordPress-compatible coding standards and static analysis;
 - production artifact excludes dev dependencies;
-- Composer platform requirement must match plugin header/CI through an automated consistency check.
+- Composer platform requirement must match plugin header/CI through automated consistency checks;
+- no legacy namespace/path typo or mixed dependency model is carried forward.
 
-### Admin frontend
-Preferred direction: **Vite + React + TypeScript** for the WPEssential admin application, subject to a WordPress package externalization spike.
+## Updated frontend build candidates
 
-Why Vite is preferred over carrying forward Laravel Mix:
-- modern maintained development/build path;
-- straightforward ES modules/code splitting;
-- strong React/TypeScript ecosystem;
-- no Laravel-specific reason exists in the new WordPress repository;
-- easier explicit asset-manifest strategy than preserving legacy Mix assumptions.
+### Candidate 1 — `@wordpress/build` — **preferred first spike candidate**
 
-### WordPress packages
-Do not blindly bundle duplicate React/WordPress runtimes. The acceptance spike must determine which WordPress packages are externalized to WordPress-provided handles and which application libraries are bundled, while preserving the selected minimum WordPress version.
+Current official documentation describes it as a build system designed for WordPress plugins with:
 
-### Asset manifest
-Build outputs must produce a deterministic manifest containing entry/chunk/dependency/hash metadata consumed by the Asset Registry. PHP code must not guess hashed filenames.
+- TypeScript/JSX transpilation;
+- esbuild;
+- CommonJS/ESM/browser outputs;
+- SCSS/CSS Modules;
+- LTR/RTL generation;
+- generated PHP registration files;
+- WordPress asset metadata;
+- third-party plugin namespace support;
+- automatic externalization of `@wordpress/*` packages;
+- automatic externalization of React and common WordPress-provided vendors;
+- watch mode.
 
-### Development structure
-Admin source lives outside built distributable assets, with documented commands for:
-- install dependencies;
-- development/watch;
-- typecheck/lint;
-- production build;
-- test;
-- package.
+This aligns directly with WPEssential's biggest runtime risk: avoiding duplicate/mismatched WordPress and React runtimes.
 
-No source-map or dev-server assumption may be required in a production plugin.
+Important boundary: `@wordpress/build` admin `pages`, routes and widgets features are currently documented as experimental. WPEssential must **not** make its routing/module architecture depend on those experimental facilities unless a later ADR accepts them.
 
-## Alternatives
+The stable build/transpile/externalization capabilities should be evaluated independently of experimental pages/routes/widgets.
+
+### Candidate 2 — `@wordpress/scripts`
+
+Mature WordPress-tailored tooling with:
+- build/watch;
+- WordPress dependency extraction;
+- lint/format;
+- unit/E2E tooling;
+- plugin ZIP;
+- block metadata workflows.
+
+It remains the primary fallback/comparison baseline.
+
+### Candidate 3 — Vite
+
+Vite remains a technically strong generic frontend tool, but it should now be used only if evidence shows WPEssential has requirements that the WordPress-native options cannot satisfy cleanly.
+
+A custom Vite path means WPEssential must own and continuously verify:
+- WordPress package externalization;
+- React runtime compatibility;
+- asset dependency metadata;
+- PHP enqueue manifest integration;
+- translation/build packaging integration.
+
+Given WordPress 7.1's real mixed-React compatibility issues, generic bundler ergonomics are secondary to correct WordPress runtime integration.
 
 ### Laravel Mix
-Rejected as the preferred new architecture unless the spike uncovers a WordPress-specific blocker to Vite. It exists in the legacy project but adds no product value and would preserve historical toolchain drift.
 
-### `@wordpress/scripts` for everything
-A serious alternative because it aligns with WordPress tooling, especially block packages. It may be preferable for Gutenberg-specific generated packages, but the large modular admin SPA needs a spike comparing flexibility, code splitting, dependency externalization and maintenance.
+Rejected as a preferred new architecture. The legacy project provides no WordPress-specific reason to preserve it, and retaining Mix alongside newer tools would reproduce the historical toolchain drift we are trying to eliminate.
 
-### Custom Webpack configuration
-Possible but not preferred unless required by WordPress externals/build constraints; it creates more maintenance surface.
+## Current proposed evaluation order
 
-## Acceptance spike
+1. `@wordpress/build` using only stable build capabilities;
+2. `@wordpress/scripts` on the same representative fixture;
+3. Vite only if the first two fail material WPEssential requirements;
+4. reject Laravel Mix for the new codebase unless extraordinary evidence appears.
 
-Before Accepted:
-1. minimal React/TS WPEssential admin page;
-2. route-level lazy chunk;
-3. import Lucide + one approved MIT Untitled UI component;
-4. import stable WordPress components/DataViews;
-5. verify no duplicate incompatible React runtime;
-6. generate/read PHP asset manifest;
-7. verify scoped CSS does not leak to unrelated wp-admin;
-8. production package works with no Node runtime;
-9. measure baseline admin JS/CSS size;
-10. compare Vite vs `@wordpress/scripts` on the same spike.
+## WordPress/React externalization requirement
 
-## Consequences if Vite is accepted
+WordPress 7.1 uses React 18.3. React 19 was punted because mixing runtime/JSX versions caused real plugin crashes.
 
-- legacy Mix files/config are not migrated unless they contain separately valuable logic;
-- block-builder output may still use WordPress-native build tooling where generated extension packages require it, but core repository scripts must clearly separate those tasks;
-- frontend build/version consistency becomes part of CI/release artifact validation.
+Therefore the accepted toolchain must prove:
+- WPEssential does not ship a competing React runtime on normal wp-admin screens;
+- `@wordpress/*` dependencies resolve to the correct WordPress-provided handles/modules where appropriate;
+- generated chunks preserve dependency loading order;
+- plugin assets remain compatible with the minimum supported WordPress version.
+
+This is a hard acceptance requirement, not an optimization.
+
+## Asset Manifest / Registry contract
+
+Regardless of chosen tool:
+
+- PHP code must never guess hashed filenames;
+- every entry/chunk must have deterministic registration metadata;
+- dependencies and versions must be machine-generated;
+- module assets are loadable only on exact required screens/runtime paths;
+- shared chunks load once;
+- production source maps follow an explicit release policy;
+- translations/RTL outputs are part of the release artifact contract.
+
+The exact metadata format can use WordPress-generated `.asset.php`/registration files where suitable rather than inventing a second custom manifest unnecessarily.
+
+## Development/release commands required after implementation is authorized
+
+The final toolchain must expose documented commands for:
+- dependency install;
+- development/watch;
+- typecheck;
+- JS/style lint;
+- production build;
+- unit tests;
+- E2E tests;
+- plugin ZIP/package;
+- bundle analysis;
+- release artifact verification.
+
+No Node runtime is allowed to be required on end-user WordPress installations.
+
+## Acceptance spike — NOT AUTHORIZED YET
+
+A future bounded executable spike must compare the candidate tools on the same representative WPEssential fixture:
+
+1. React/TypeScript admin entry;
+2. multiple module entries;
+3. lazy chunk;
+4. `@wordpress/components`, `@wordpress/dataviews`, `@wordpress/theme`;
+5. WPEssential wrapper component;
+6. icon abstraction;
+7. CSS Module/scoped style;
+8. RTL output;
+9. translations;
+10. generated WordPress dependency metadata;
+11. no duplicate React/WordPress runtime;
+12. PHP enqueue/registration integration;
+13. production ZIP without Node/dev source;
+14. bundle-size report;
+15. minimum/current WordPress compatibility.
+
+Compare:
+- build correctness;
+- watch speed;
+- chunking;
+- WordPress dependency handling;
+- maintenance/configuration burden;
+- package size;
+- release ergonomics;
+- test integration.
+
+Under ADR-0014 this executable spike **requires explicit owner consent before any scaffold/package install/build is created or run**.
+
+## Consequences if `@wordpress/build` is accepted
+
+- WPEssential uses a WordPress-owned build/externalization model rather than maintaining generic-bundler compatibility glue;
+- stable `@wordpress/build` capabilities become the canonical build layer;
+- experimental page/router/widget features remain unused unless separately accepted;
+- legacy Mix files/config are not migrated;
+- generated Gutenberg/block packages can share the same WordPress-aware ecosystem more naturally;
+- toolchain changes still remain isolated from domain modules through Asset Registry and UI wrapper contracts.
+
+## Current recommendation
+
+**Evaluate `@wordpress/build` first, `@wordpress/scripts` second, and use Vite only if executable evidence proves a real unmet requirement.**
+
+This ADR remains Proposed until the owner authorizes and the project executes the comparison spike.
