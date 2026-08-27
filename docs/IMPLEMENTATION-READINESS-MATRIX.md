@@ -59,7 +59,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 21 | Message & Chat System | Exhaustive | ADR-0027 Accepted | indexes/search/transport/private assets/revocation scale | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028 Accepted | compiler/auth/rate/CORS/cache/fuzz/scale evidence | No |
 | 23 | Webhooks & Connections | Exhaustive | ADR-0040 + ADR-0055 + ADR-0059 composition | provider I0–I5 auth/read/write/event certification, Event Inbox DDL, Job retry/backpressure evidence | No |
-| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059 composition | physical bundle/Remote Copy schema, C0–C4 provider/restore + Job chunk/fairness certification — P-003/P-013 | No |
+| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059/0061 composition | physical bundle/Remote Copy schema, provider-profile registry/legacy PF mapping, C0–C4 provider/restore + Job chunk/fairness certification — P-003/P-013 | No |
 | 25 | Reset Manager | Exhaustive | ADR-0047 + ADR-0059 composition | recovery-store schema, destructive Job checkpoints/crash recovery, adapters, multisite | No |
 | 26 | Import / Export | Exhaustive | ADR-0041 + ADR-0059 composition | run schema, checkpoint Job execution, crash/resume, source/media fixtures | No |
 | 27 | Protector | Exhaustive | ADR-0045 Accepted | hook order, atomic rate store, proxy/login/header fixtures | No |
@@ -80,6 +80,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0058 Email Delivery: submission/transport acceptance, receiving-server delivery, failure/complaint/suppression and engagement are separate evidence; ET0–ET5 provider profiles govern support claims.
 - ADR-0059 Job Service: backend-neutral Job/Attempt/Runner semantics, at-least-once, explicit idempotency, urgency/fairness, resource/concurrency control, chunking/backpressure and cooperative cancellation. Concrete Action Scheduler mapping remains P-003.
 - ADR-0060 Remote Service Privacy: Free activation sends nothing; account link is purpose-scoped and is not telemetry consent; diagnostics require separate approval; RR0–RR6 retention/disconnect/deletion semantics are explicit.
+- ADR-0061 Backup Provider Identity: semantic `bf.*` family keys are canonical; provider keys/profiles are independently versioned; legacy numeric PF aliases are non-canonical; 34 static profiles are documented but **0 are certified**.
 
 No surface may skip evidence merely because an ADR is Accepted.
 
@@ -93,7 +94,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 6. Membership runtime → Manual/Woo one-time → Woo Subscriptions/SureCart MB certification;
 7. Form Entry + Workflow/Jobs → Notifications → Email renderer → ET provider profiles;
 8. REST + Connections/Event Inbox + Import;
-9. Backup core → Remote Copy → reference provider adapters → Reset/Protection/Media/XML-RPC;
+9. Backup core → Remote Copy → semantic family registry → reference provider adapters → C3 restores → Reset/Protection/Media/XML-RPC;
 10. Chat/realtime adapters;
 11. Account/Support/Updater service integration under ADR-0060 privacy/retention contract;
 12. AI composition only over certified Abilities/Blueprints;
@@ -102,7 +103,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0060; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0061; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
