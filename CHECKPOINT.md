@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before runtime/source/build/migration/test implementation, package/dependency setup, crypto key generation, executable benchmark/spike, queue/runner execution, provider/API integration, email/SMTP sends, Backup/Restore execution or release packaging.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, package/dependency setup, crypto key generation, executable benchmark/spike, queue/runner execution, provider/API integration, remote-service transmission/diagnostics upload, email/SMTP sends, Backup/Restore execution or release packaging.
 
 `continue`, `proceed`, planning approval, ADR acceptance, readiness or Phase 0 completion do **not** authorize development.
 
@@ -16,7 +16,7 @@ Source of truth:
 - `AGENTS.md`
 - `docs/DECISIONS/ADR-0014-development-consent-gate.md`
 
-No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, executable test/benchmark, queue execution, provider integration or cryptographic implementation has been created/run.
+No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, executable test/benchmark, queue execution, provider integration, service transmission or cryptographic implementation has been created/run.
 
 ## Product specification milestone
 
@@ -29,7 +29,7 @@ Exhaustive product specification is not a runtime/security/performance/provider 
 
 ## Accepted ADR state
 
-Accepted decisions now extend through **ADR-0059**.
+Accepted decisions now extend through **ADR-0060**.
 
 Latest additions:
 - **ADR-0053** — Backup provider C0–C4 restore-first certification.
@@ -39,6 +39,7 @@ Latest additions:
 - **ADR-0057** — Membership billing source facts + reconciliation + MB0–MB5 certification.
 - **ADR-0058** — Email delivery truth + ET0–ET5 provider certification.
 - **ADR-0059** — backend-neutral JobService semantics: at-least-once, explicit idempotency, reviewed urgency/fairness, resource/concurrency keys, backpressure/chunking and cooperative cancellation.
+- **ADR-0060** — remote-service transmission is purpose-scoped/minimized; Free activation sends nothing; account link is not telemetry consent; diagnostics require separate approval; retention/disconnect/deletion semantics are explicit.
 
 ADR-0006 remains Proposed/P-003 only for the concrete Action Scheduler backend evidence; ADR-0059 fixes the semantics any backend must satisfy.
 
@@ -79,6 +80,12 @@ ADR-0006 remains Proposed/P-003 only for the concrete Action Scheduler backend e
 - Connections: Safe HTTP + verified webhooks + Event Inbox.
 - Integration certification: I0 Configurable → I1 Auth → I2 Read → I3 Write/Action → I4 Events/Reconciliation → I5 Production Profile.
 - Remote service Account/Site/Entitlement/Catalog/Support/Docs/Release resources have separate trust semantics; TUF update metadata is separate authority.
+- Free activation alone performs no WPE remote transmission.
+- Account connection authorizes only required service/account fields and does not opt the site into telemetry/analytics.
+- Public Catalog/Docs/Release/Status should avoid site/account/install identifiers unless the specific request needs authenticated context.
+- Diagnostics requires separate preview + approval; Support opening/account linking does not imply diagnostics upload.
+- Remote retention uses RR0–RR6 purpose classes rather than one universal duration.
+- Disconnect revokes/removes connection credentials/state but is not falsely represented as WPE-account/support/commercial-history deletion.
 
 ### Membership billing
 - Billing provider → verified source fact → adapter → reconciliation → Membership policy → Enrollment → Entitlement.
@@ -101,19 +108,24 @@ ADR-0006 remains Proposed/P-003 only for the concrete Action Scheduler backend e
 - durable Remote Copy commit/finalization lifecycle;
 - Reset and Watermark accepted safety architectures.
 
-## Current Job/Action Scheduler research snapshot
+## Current privacy/service planning snapshot
 
-Official documentation currently establishes:
-- Action Scheduler supports async/single/recurring/cron actions with groups, uniqueness hints and priority 0–255 where lower values take precedence.
-- default web runner claims bounded batches and limits processing by time/memory; concurrency increases can substantially increase server load.
-- WP-CLI can process selected hooks/groups, but official docs warn separate focused runners can violate implicit schedule dependencies.
-- Action Scheduler provides trace/log records and current cleanup/failed-retention behavior, but those backend defaults are not WPE retention promises.
-- Action Scheduler is designed around a single site and documents no special network-wide multisite queue management.
-- WordPress recurring/single cron work fires when a request visits the site after the due time, so nominal schedule time is not exact execution time.
+Source:
+- `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
+- `docs/DECISIONS/ADR-0060-remote-service-privacy-retention-boundaries.md`
 
-Paper source:
-- `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
-- `docs/DECISIONS/ADR-0059-job-service-execution-fairness-backpressure.md`
+Accepted privacy/retention boundaries include:
+- P0–P4 shared data classification plus RR0–RR6 remote retention classes;
+- account/site link fields are purpose-scoped and minimized;
+- no hidden plugin/theme/site-content/user inventory on ordinary account/entitlement requests;
+- OAuth/access/refresh/completion artifacts are P3 and excluded from generic logs/diagnostics/JS;
+- signed entitlement carries security/commercial claims, not unrelated account PII or telemetry;
+- public catalog/docs/status/release resources should stay unpersonalized where possible;
+- support tickets/messages/attachments are explicit RR5 user-created service records;
+- diagnostics is separate consent and excludes DB dumps/secrets/private content by default;
+- search-query analytics and other telemetry are not assumed from account connection;
+- request/security logs minimize bodies/secrets and use separate retention policy;
+- disconnect, account deletion, support deletion and commercial/security record retention are distinct lifecycle operations.
 
 ## Platform blockers still requiring executable evidence
 
@@ -133,22 +145,20 @@ Paper source:
 
 **None has been executed.**
 
-## P-003 future evidence highlights
+## Remote-service future evidence highlights
 
-- Action Scheduler load-order/coexistence/version/features;
-- logical Job/Attempt ↔ backend action mapping;
-- claim/crash/reclaim/lease ambiguity;
-- retry/idempotency/unknown external outcome;
-- mixed urgency fairness/starvation;
-- resource/concurrency keys;
-- backpressure/admission/high backlog;
-- cancellation/chunk checkpoints;
-- WP-Cron stalled/low-traffic behavior;
-- WP-CLI/system cron and group-specific dependency behavior;
-- representative hosting load limits;
-- multisite isolation/fairness;
-- retention/cleanup/upgrade/uninstall;
-- sensitive payload/log redaction.
+- concrete OpenAPI schemas/scopes and RFC 9457 problem catalog;
+- OAuth token/completion-artifact lifetime, rotation, revoke/disconnect behavior;
+- actual transmitted-field inspection per endpoint;
+- Free-activation no-call proof;
+- public-resource no-hidden-identifier proof;
+- diagnostics preview/redaction/upload evidence;
+- support/attachment access/export/delete behavior;
+- service/application log redaction;
+- RR0–RR6 resource retention/cleanup implementation;
+- clone/site-transfer behavior;
+- signed entitlement minimized transport/storage;
+- account connection disclosure matching actual behavior.
 
 ## Verification state
 
@@ -156,7 +166,8 @@ Paper source:
 - planning branch isolated from `main`;
 - 31/31 Exhaustive;
 - 0/31 Authorized;
-- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0059;
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0060;
+- Remote Service field-level privacy/retention matrix + ADR-0060 committed;
 - JobService semantic architecture + ADR-0059 committed;
 - Email ET0–ET5 architecture/evidence protocol committed;
 - Membership MB0–MB5 contract committed;
@@ -173,6 +184,7 @@ Paper source:
 - PHPUnit/Playwright;
 - P-001…P-013 execution;
 - provider/API/webhook/SMTP execution;
+- WPE service/account-link/diagnostics transmission;
 - performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
@@ -181,11 +193,11 @@ Reason: explicit owner development/executable-spike consent has not been granted
 
 ## Next allowed planning-only priorities
 
-1. Remote Service field-level privacy/retention matrix.
-2. Backup family-specific capability overrides for the 34 target destinations.
-3. Membership billing provider-specific capability/evidence profiles.
-4. Email provider-specific capability matrix.
-5. Formalize bounded P-003 consent-gated evidence protocol without executing it.
+1. Backup family-specific capability overrides for the 34 target destinations.
+2. Membership billing provider-specific capability/evidence profiles.
+3. Email provider-specific capability matrix.
+4. Remote Service consent-gated privacy/retention evidence protocol without executing it.
+5. Continue narrowing provider/P-003 evidence plans without execution.
 6. Keep governance and Draft PR synchronized.
 
 Before **any executable work**, obtain explicit owner consent.
