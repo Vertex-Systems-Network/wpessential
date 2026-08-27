@@ -17,6 +17,7 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 4. If external facts may change, include a review trigger/date rather than assuming permanence.
 5. A proposed ADR blocking Phase 0 must be resolved before production implementation begins.
 6. Even after Phase 0 blockers are resolved, production development cannot begin without the explicit owner consent required by ADR-0014 and `/DEVELOPMENT-CONSENT.md`.
+7. An ADR may accept stable product/security semantics while leaving the exact implementation/profile blocked for executable evidence. Those boundaries must be explicit.
 
 ## ADR set
 
@@ -36,6 +37,10 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 | `ADR-0012-build-toolchain.md` | **Proposed / Phase 0 blocker** | `@wordpress/build` first candidate, `@wordpress/scripts` comparison/fallback, Vite only for proven unmet need; executable comparison pending |
 | `ADR-0013-membership-entitlement-model.md` | **Accepted product architecture** | WordPress Role, Membership Plan/Enrollment, billing Subscription and Entitlement are separate domains; billing providers are adapters, not access source of truth |
 | `ADR-0014-development-consent-gate.md` | **Accepted governance rule** | production development and executable research spikes require explicit owner consent; `continue`/planning approval never implies implementation permission |
+| `ADR-0015-membership-access-precedence.md` | **Accepted product semantics** | outer WordPress/security denial cannot be bypassed; resource+action specificity; same-specificity deny wins; valid Membership entitlements union; explainability mandatory |
+| `ADR-0016-membership-enrollment-lifecycle.md` | **Accepted product semantics** | canonical pending/trialing/active/grace/paused/expired/revoked lifecycle; cancellation is intent; provider payment statuses remain source facts |
+| `ADR-0017-product-entitlement-verification.md` | **Accepted architecture / profile pending** | WPE commercial entitlement is signed, site-bound and freshness-aware; outage != expiry; grace is service-signed; product licensing is separate from Membership access |
+| `ADR-0018-pro-update-supply-chain.md` | **Accepted security architecture / protocol pending** | Pro updates require signed supply-chain trust with rollback/freeze/key-rotation defenses; Free never acts as external Pro updater; TUF-compatible profile preferred for evaluation |
 
 ## Phase 0 rule
 
@@ -52,9 +57,39 @@ Current detailed evidence/contracts include:
 - `docs/ARCHITECTURE/FREE-PRO-COMPATIBILITY-STATE-MACHINE.md`
 - `docs/ARCHITECTURE/JOB-SERVICE-CONTRACT.md`
 - `docs/SECURITY/SECRETS-VAULT-THREAT-MODEL.md`
+- `docs/SECURITY/PRODUCT-ENTITLEMENT-SIGNING-OFFLINE-GRACE.md`
+- `docs/SECURITY/PRO-UPDATE-SUPPLY-CHAIN-TRUST-MODEL.md`
 - `docs/QUALITY/CI-TEST-MATRIX-PLAN.md`
 - `docs/MODULES/MEMBERSHIP-ACCESS-POLICY.md`
 - `docs/MODULES/MEMBERSHIP-ENROLLMENT-STATE-MACHINE.md`
+- `docs/MODULES/MEMBERSHIP-SEMANTIC-STATUS.md`
 - `docs/ARCHITECTURE/MEMBERSHIP-RUNTIME-DATA-CANDIDATE.md`
+- `docs/PLATFORM/REMOTE-SERVICE-API-CONTRACT.md`
 
-Membership implementation additionally remains blocked on the follow-up technical decisions named by ADR-0013: entitlement schema/cache benchmark, access-rule precedence acceptance, runtime indexes, protected-file delivery, initial billing adapters, privacy/retention, role-sync conflict semantics and team/seat concurrency.
+## Membership remaining implementation blockers
+
+Accepted semantics do **not** mean Membership is implementation-ready.
+
+Still blocked on:
+- entitlement physical schema/index benchmark;
+- cache/invalidation implementation and revocation latency proof;
+- protected-file delivery environments;
+- Plan benefit/version pinning/follow-current details;
+- initial billing adapter implementations and reconciliation;
+- team/seat concurrency;
+- role-sync conflict semantics;
+- provider migration fidelity;
+- privacy/retention operational defaults.
+
+## Remote service / Pro updater remaining blockers
+
+Accepted architecture does **not** select a cryptographic/updater library yet.
+
+Still blocked on:
+- exact product-entitlement signature profile/canonicalizer/library;
+- signing/public-key rotation fixtures;
+- exact offline-grace/token lifetimes;
+- OAuth callback-registration profile;
+- Pro updater TUF/client/dependency choice;
+- release key custody/threshold/incident runbook;
+- executable tamper/rollback/freeze/update-order tests.
