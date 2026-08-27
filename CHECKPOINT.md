@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before any runtime/source/build/migration/test implementation, package/dependency setup, cryptographic key generation, executable benchmark/spike, provider integration or release packaging.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, package/dependency setup, crypto key generation, executable benchmark/spike, provider/API integration, Backup/Restore execution or release packaging.
 
 `continue`, `proceed`, planning approval, ADR acceptance, readiness or Phase 0 completion do **not** authorize development.
 
@@ -18,113 +18,118 @@ Source of truth:
 
 No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, executable test/benchmark, provider integration or cryptographic implementation has been created/run.
 
-## Product-spec milestone
+## Product specification milestone
 
 - **31/31** surfaces have screen/option inventory.
 - **31/31** have behavioral specification.
 - **31/31** are at **Exhaustive product-option maturity**.
 - **0/31** are Authorized for development.
 
-Primary planning sources:
-- `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
-- `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-- `docs/OPEN-DECISIONS-REGISTER.md`
-- `docs/DECISIONS/README.md`
-
 Exhaustive product specification is not a runtime/security/performance/provider verification claim.
 
 ## Accepted ADR state
 
-Accepted decisions now extend through **ADR-0052**.
+Accepted decisions now extend through **ADR-0056**.
 
-Latest accepted additions:
-- **ADR-0048** — Secrets Vault uses a random Vault Root Key, per-secret DEKs and versioned key slots; external key preferred, WP-derived convenience slot allowed with warnings, no plaintext fallback.
-- **ADR-0049** — Definition Repository relational shape is Definitions + immutable Revisions + revision-aware Dependencies; runtime business data stays outside.
-- **ADR-0050** — Support Ticket authority lives in WPE service; WP is a capability-checked client/minimal cache; diagnostics are previewed/redacted before upload.
-- **ADR-0051** — Dashboard Widgets treat remote content as untrusted data; remote HTML/JS is not injected into wp-admin; arbitrary iframe is off by default.
-- **ADR-0052** — XML-RPC enforcement is layered: endpoint/request gate, registered-method policy, authenticated-method policy and core auth/capability checks are distinct. `xmlrpc_enabled` is not presented as full endpoint disable.
+Latest additions:
+- **ADR-0053** — Backup providers use protocol-family adapters + provider capability profiles; C0–C4 certification; normal Supported Destination label requires C3 Restore Certified.
+- **ADR-0054** — Remote-service resources and trust domains are separated; RFC 9457 Problem Details baseline; REST account/catalog data cannot replace signed entitlement/TUF authority.
+- **ADR-0055** — Connections are certified by adapter + provider + capability + API version with I0–I5 levels; `Connected` does not imply write/event support.
+- **ADR-0056** — Each Backup destination has durable Remote Copy states, provider Commit Point, manifest-last completion, truthful retention/delete semantics and manifest-bound restore identity.
 
-Previously accepted ADRs cover Free/Pro distribution, Abilities, unsafe-code/SQL boundaries, license-expiry continuity, Membership semantics, crypto/update trust, Backup recovery/crypto, Fields/Tables/Forms/Notifications/Chat/REST/Email, Dashboard/Profile/Roles, Component Blueprint, Settings/Admin Menu/Status/Listings, Connections/Webhooks, Import, Protector, Watermark and Reset.
-
-## Platform blockers still requiring executable evidence
-
-- ADR-0002 compatibility floor — P-001.
-- ADR-0005 UI/design system — P-002.
-- ADR-0006 Job Service adapter — P-003.
-- ADR-0010 Free↔Pro executable compatibility — P-006.
-- ADR-0011 CI implementation — P-007.
-- ADR-0012 build toolchain/externalization — P-008.
-- Query/Relations/Workflow/Membership/Backup evidence — P-009…P-013.
-
-ADR-0008 and ADR-0009 have materially narrowed architecture through ADR-0049 and ADR-0048 respectively, but exact DDL/index/crypto interoperability remains evidence-gated.
-
-All future protocols live under `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`; **none has been executed**.
+Earlier ADRs through ADR-0052 preserve Free/Pro distribution, development-consent governance, Abilities, unsafe-code/SQL boundaries, Membership semantics, data/runtime architecture, crypto/update trust, OAuth, Component/Settings/Menu/Status/Listings/Connections/Import, Protector/Watermark/Reset, Vault, Definition Repository, Support, Dashboard Widget content trust and XML-RPC.
 
 ## Current architecture snapshot
 
-### Definition/Data platform
-- Definition Repository: stable identity rows + immutable revision rows + revision-aware dependencies.
-- Query: typed/provider-neutral AST; no raw SQL/PHP node.
-- Relations: typed edge model candidate with reverse lookup/cardinality first-class.
-- Workflow: runs pin published revisions; execution belongs to Job Service; at-least-once/idempotency semantics.
-- Fields: native WP meta/options where natural, Custom Tables for scale/constraints, Relations for relationships, Vault for secrets.
-- Custom Tables: desired schema != observed schema; typed Migration Plan controls change.
+### Platform/Data
+- Definition Repository: stable Definitions + immutable Revisions + revision-aware Dependencies.
+- Query AST typed/provider-neutral; raw SQL/PHP is not a normal node.
+- Relations typed edge model candidate; reverse lookup/cardinality first-class.
+- Workflow runs pin published revision and execute via Job Service contract.
+- Fields use plural storage families: native meta/options, Custom Tables, Relations, Vault.
+- Custom Tables use desired-vs-observed schema + typed Migration Plan.
+- Component Blueprint shared across Listings/Dashboard/Builder Widgets; builders are adapters.
 
-### Presentation/Admin
-- Component Blueprint is shared by Builder Widgets, Dashboard and Listings; third-party builders are adapters.
-- Settings separate Definitions from site/network scoped values.
-- Admin Menu is runtime-discovered/transformed; hiding is not authorization; safe mode restores native navigation.
-- Status Manager separates WordPress Post Status from generic domain state machine.
-- Listings use authorization-aware Query results and SSR Component Blueprint.
-- Dashboard routes always reauthorize server-side on direct access.
-- Dashboard Widgets never trust remote HTML/JS as admin markup.
+### Security/Identity
+- Generic Profile fields cannot mutate passwords/sessions/Application Passwords/roles/Membership authority.
+- Role mutations preserve a real recovery-principal invariant.
+- Vault: random VRK → per-secret DEKs → versioned key slots; no plaintext fallback.
+- Protector uses trusted-proxy-aware identity + atomic Rate Limit service.
+- XML-RPC complete-deny/authenticated-off/pingback/per-method states are separate.
 
-### Identity/Security
-- Generic profile fields cannot mutate passwords, sessions, Application Passwords, roles/caps or Membership authority.
-- Role changes preserve a real recovery-principal invariant.
-- Vault: random VRK → per-secret DEK → key slots; no plaintext fallback; write-only secret UI.
-- Protector: trusted proxy headers only from trusted peers; security rate limiting requires atomic storage semantics.
-- XML-RPC: authenticated-method disabling, per-method policy, pingback policy and complete-deny are separate concepts.
+### Integrations/Remote Service
+- Connections: Safe HTTP + verified webhooks + Event Inbox.
+- Generic integration certification: I0 Configurable → I1 Auth → I2 Read → I3 Write/Action → I4 Events/Reconciliation → I5 Production Profile.
+- Remote service resources: Account, Site Activation, signed Entitlement, Catalog, Support, Docs, Release Notes, Status; TUF update metadata is separate trust authority.
+- Support service is authoritative for tickets/messages/attachments; WP client/cache is capability-checked/minimal.
 
-### Integrations/Import/Support
-- Connections centralizes Safe HTTP, verified webhook ingress and normalized Event Inbox.
-- Import uses reviewed Plan/Dry Run fingerprint, durable checkpoint, identity map, change journal and truthful rollback levels.
-- Support Tickets are WPE-service authoritative; local client stores only safe minimal cache; attachments/diagnostics require policy + redaction.
-
-## Remote service / distribution
-
-### Product entitlement — ADR-0042
-Accepted: Ed25519 + RFC 8785 JCS + WPE domain separation + `kid` + root-authorized signer keysets + freshness/site binding.
-
-Still unverified: canonicalizer/library interoperability, root custody/rotation, exact envelope bytes and operational TTL/skew values.
-
-### Pro updater — ADR-0044
-Accepted: TUF 1.0-compatible Root/Targets/Snapshot/Timestamp semantics, rollback/freeze/key-rotation defenses and signed artifact metadata. Current PHP-TUF remains **not production-selected** while upstream warns against production use.
-
-### OAuth — ADR-0034
-Accepted: public client + Authorization Code/PKCE S256 + fixed WPE callback + one-time site-bound completion artifact. Exact service/token lifecycle remains unimplemented.
-
-## Backup / Operations
-
-- Backup canonical model: manifest-first independently verifiable multipart bundle.
-- Backup crypto: random Backup Set DEK; Sodium secretstream XChaCha20-Poly1305; XChaCha20 DEK wrapping; Argon2id passphrase mode; independent recovery slots; native ext-sodium required for encrypted v1.
+### Backup/Operations
+- Backup bundle: manifest-first multipart logical recovery point.
+- Backup crypto: Sodium secretstream XChaCha20-Poly1305, XChaCha20 DEK wrapping, Argon2id passphrase mode, independent recovery slots; native ext-sodium required for encrypted v1.
+- Provider architecture: protocol families + provider profiles.
+- Named target matrix: **34 destinations; 0 certified**.
+- Certification: C0 Connectable, C1 Upload, C2 Resumable/Integrity (or explicit non-resumable integrity), C3 Restore, C4 Disaster Restore.
+- Normal public Supported Destination label requires C3.
+- Remote Copy: planned/staging/uploading/finalizing/committed/verifying/verified plus explicit degraded/delete states.
+- Manifest/completion marker published last by default; provider Commit Point defines remote transaction boundary.
+- Retention protects the last required verified recovery copy.
 - Reset: reviewed Plan → verified restore point → durable journal → staged execution → health verification.
-- Watermark: original/current source is never overwritten by WPE; versioned derivatives key off source fingerprint + Rule revision + output/engine profile.
-- XML-RPC: layered method/endpoint policy, with compatibility warnings for integrations such as Jetpack.
+- Watermark: WPE original/current source untouched; deterministic versioned derivatives.
 
-## Membership
+## Backup provider research snapshot
 
-Accepted semantics remain: Role ≠ Membership ≠ Billing ≠ Entitlement; outer security deny cannot be bypassed; deterministic access precedence/lifecycle; Plan revision semantics; teams separate from WP roles; privacy-minimized defaults.
+Static official-doc research supports current family planning:
+- Amazon S3: multipart independent parts, completion/abort, checksum APIs; multipart ETag not assumed whole-object MD5.
+- Google Drive: resumable upload sessions with chunk/status/resume and expiry.
+- Google Cloud Storage: resumable uploads intended for large/interrupted transfer; final object only after completion.
+- Microsoft Graph Drives: upload sessions with expiry and expected/missing ranges.
+- Dropbox: upload sessions start/append/finish + content-hash semantics.
+- WebDAV: RFC 4918 does not supply one universal resumable large-upload session profile.
+- SFTP: actual resume/rename semantics require client/server certification; no fictional final SFTP RFC assumption.
 
-Remaining evidence: physical schema/indexes, revoke-to-deny cache, protected-file delivery, seat concurrency, Woo/Woo Subscriptions/SureCart reconciliation, migration/provider/privacy fixtures.
+Provider evidence contract lives in:
+- `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
+- `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
+- `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
+- `docs/QUALITY/BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`
+
+## Platform blockers still requiring executable evidence
+
+- P-001 compatibility;
+- P-002 UI/design system;
+- P-003 Job Service adapter;
+- P-004 Definition Repository exact DDL/indexes;
+- P-005 Vault exact envelope/interoperability;
+- P-006 Free↔Pro runtime compatibility;
+- P-007 CI;
+- P-008 build toolchain;
+- P-009 Query;
+- P-010 Relations;
+- P-011 Workflow;
+- P-012 Membership;
+- P-013 Backup/provider certification.
+
+**None has been executed.**
+
+## Membership remaining evidence
+
+- physical Enrollment/Entitlement schema;
+- revoke-to-deny cache proof;
+- protected-file delivery;
+- team/seat concurrency;
+- WooCommerce/Woo Subscriptions/SureCart billing/reconciliation certification;
+- migration/provider/privacy fixtures.
 
 ## Verification state
 
 ### Verified
 - planning branch isolated from `main`;
-- 31/31 Exhaustive; 0/31 Authorized;
-- ADR files present through ADR-0052;
-- checkpoint synchronized through ADR-0052;
+- 31/31 Exhaustive;
+- 0/31 Authorized;
+- ADR index synchronized through ADR-0056;
+- named Backup target matrix aligned to ADR-0053 C0–C4 model;
+- Remote Service resource schemas and Connection I0–I5 certification docs committed;
+- Backup provider evidence protocol documented but not executed;
 - no implementation/build/test success claimed.
 
 ### Not performed / intentionally blocked
@@ -134,8 +139,8 @@ Remaining evidence: physical schema/indexes, revoke-to-deny cache, protected-fil
 - DB migrations/tables;
 - crypto key generation/encryption/signing code;
 - PHPUnit/Playwright;
-- P-001…P-013 spikes;
-- provider/API implementations;
+- P-001…P-013 execution;
+- provider credentials/API calls/uploads;
 - performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
@@ -144,12 +149,12 @@ Reason: explicit owner development/executable-spike consent has not been granted
 
 ## Next allowed planning-only priorities
 
-1. Backup provider certification contract by protocol family and destination capability profile.
-2. Remote Service API schemas for account, entitlement, site activation, plans, support and signed metadata.
-3. Provider-neutral Connection capability contract and certification states.
-4. Backup restore/provider commit/finalization semantics.
-5. Extend consent-gated spike protocols where new evidence gates are identified.
-6. Keep Readiness/Open Decisions/Draft PR synchronized.
+1. Membership billing-provider adapter certification contract (Manual/WooCommerce/Woo Subscriptions/SureCart).
+2. Email transport/provider certification contract and delivery/bounce truth model.
+3. Job Service queues/priorities/backpressure/fairness/retention paper model.
+4. Remote service field-level privacy/retention matrix.
+5. Backup family-specific capability overrides for the 34 target destinations.
+6. Keep Open Decisions/Readiness/ADR index/Draft PR synchronized.
 
 Before **any executable work**, obtain explicit owner consent.
 
