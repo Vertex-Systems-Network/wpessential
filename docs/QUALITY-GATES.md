@@ -4,9 +4,96 @@ Status: **Phase 0 mandatory engineering policy**
 
 ## 1. Definition
 
-A feature is not complete because it renders correctly once. The applicable gates below must pass, or the task is reported **PARTIALLY COMPLETE** with exact unverified items.
+A feature is not complete because it renders correctly once. The applicable gates below must pass, or the task is reported **PARTIALLY_COMPLETE** with exact unverified items.
 
-## 2. Required toolchain categories
+Planning documents/evidence protocols are not executed test evidence. In `PLANNER_ONLY` mode executable outcomes are `NOT EXECUTED`.
+
+## 2. Two-speed verification
+
+WPEssential uses two verification speeds.
+
+### FAST GATE
+
+Run during a bounded implementation change as applicable:
+- relevant formatter/coding standards;
+- targeted lint;
+- targeted typecheck/static analysis;
+- affected unit tests;
+- affected integration/permission tests;
+- affected production build;
+- targeted static/security checks.
+
+FAST GATE optimizes feedback speed while the change is small.
+
+### FULL GATE
+
+Run at milestone/release boundaries as applicable:
+- broad unit tests;
+- WordPress integration tests;
+- E2E;
+- migration/upgrade/recovery tests;
+- authorization/security regression;
+- compatibility matrix;
+- dependency/security audits;
+- production build/package validation;
+- broader regression/performance evidence.
+
+FAST GATE never substitutes a required FULL GATE.
+
+## 3. Baseline failure policy
+
+A failure verified to predate the current change is labeled:
+
+`BASELINE FAILURE`
+
+Record:
+- check/test name;
+- baseline revision;
+- first observed date;
+- failure signature/summary;
+- blocking/non-blocking classification;
+- linked issue/work item;
+- owner when known.
+
+Do not:
+- blame new work for a verified baseline failure;
+- silently change unrelated code just to make all checks green;
+- hide a baseline failure from milestone/release reporting.
+
+If evidence is insufficient to prove the failure predates the change, classify it `UNKNOWN/INVESTIGATING`, not baseline.
+
+## 4. Flaky-test policy
+
+A test that intermittently fails without an intended state change is a defect.
+
+Forbidden:
+- repeatedly rerunning until green and reporting only the passing run;
+- weakening a correct test solely to reduce flakiness;
+- calling an unstable suite fully green without disclosing instability.
+
+Temporary quarantine, if genuinely necessary, must record:
+- test ID/name;
+- failure signature;
+- evidence of flakiness;
+- linked defect/work item;
+- owner;
+- release-blocking classification;
+- quarantine reason;
+- expiry/review date;
+- replacement verification where required.
+
+## 5. Review evidence classification
+
+Every meaningful implementation review is labeled:
+- `INDEPENDENT REVIEW`
+- `SELF REVIEW`
+- `AUTOMATED REVIEW`
+
+The same AI/person authoring and reviewing the change is `SELF REVIEW`, not independent review.
+
+Automated/static review is useful evidence but is not an independent architectural/security reviewer.
+
+## 6. Required toolchain categories
 
 Final commands are locked after the build ADR, but the repository must provide one canonical command for each applicable category:
 
@@ -24,7 +111,7 @@ Final commands are locked after the build ADR, but the repository must provide o
 
 No hidden “developer machine only” quality step.
 
-## 3. WordPress standards
+## 7. WordPress standards
 
 Follow WordPress coding/security conventions where they apply. WordPress states that new/updated ecosystem interfaces should target WCAG 2.2 Level AA.
 
@@ -32,7 +119,7 @@ References:
 - https://developer.wordpress.org/coding-standards/wordpress-coding-standards/
 - https://developer.wordpress.org/coding-standards/wordpress-coding-standards/accessibility/
 
-## 4. CI matrix direction
+## 8. CI matrix direction
 
 CI must test the selected supported range, not only the author’s current machine.
 
@@ -52,7 +139,7 @@ References:
 
 A second non-Playground environment may still be required for database/filesystem/provider behavior not faithfully represented by Playground.
 
-## 5. Unit tests
+## 9. Unit tests
 
 Use for deterministic domain rules:
 - schema validation
@@ -67,7 +154,7 @@ Use for deterministic domain rules:
 
 Do not mock so aggressively that tests merely repeat implementation.
 
-## 6. WordPress integration tests
+## 10. WordPress integration tests
 
 Cover:
 - hooks/register/unregister behavior
@@ -81,7 +168,7 @@ Cover:
 - activation/deactivation/uninstall behavior
 - WordPress filters/actions used by adapters
 
-## 7. E2E tests
+## 11. E2E tests
 
 Critical user workflows get Playwright/browser tests, for example:
 
@@ -107,7 +194,7 @@ Critical user workflows get Playwright/browser tests, for example:
 
 E2E tests verify behavior; they do not replace lower-level tests.
 
-## 8. Security test cases
+## 12. Security and negative-requirement tests
 
 Applicable modules must test:
 - unauthenticated requests
@@ -123,10 +210,11 @@ Applicable modules must test:
 - duplicate/replay requests
 - secret leakage
 - multisite boundary
+- important `MUST NOT` behavior from the module/milestone specification.
 
-High-risk regressions become permanent automated tests.
+High-risk regressions and critical negative requirements become permanent automated tests where practical.
 
-## 9. Migration tests
+## 13. Migration tests
 
 For each schema migration:
 - fresh install
@@ -136,11 +224,14 @@ For each schema migration:
 - idempotent re-run behavior
 - indexes/constraints
 - large-data strategy
+- deployment ordering/compatibility
 - rollback or documented restore procedure
+
+For risky schema evolution, test any accepted `Expand → Migrate/Backfill → Verify → Contract` sequence where used.
 
 Never mark a DB migration safe from code inspection alone.
 
-## 10. Backup provider acceptance
+## 14. Backup provider acceptance
 
 A provider is not “supported” because authentication succeeds.
 
@@ -158,7 +249,7 @@ Automated/staged acceptance where provider permits:
 
 Restore is tested independently from upload.
 
-## 11. Query performance tests
+## 15. Query performance tests
 
 Representative datasets must test:
 - pagination
@@ -171,7 +262,7 @@ Representative datasets must test:
 
 Track query count, execution time and memory in benchmark fixtures. Performance budgets are module-specific and stored with implementation plans.
 
-## 12. Asset isolation tests
+## 16. Asset isolation tests
 
 Critical WPEssential rule: optional module CSS/JS loads only where used.
 
@@ -186,7 +277,7 @@ Automated assertions should visit:
 
 Verify unexpected WPEssential handles/chunks are absent.
 
-## 13. Accessibility checks
+## 17. Accessibility checks
 
 Automated accessibility checks plus keyboard/manual scenarios for core builder patterns:
 - focus order
@@ -202,7 +293,7 @@ Automated accessibility checks plus keyboard/manual scenarios for core builder p
 
 Automated scans cannot be the only accessibility evidence.
 
-## 14. Compatibility tests
+## 18. Compatibility tests
 
 When adapter is claimed supported, test with its supported version set:
 - Elementor
@@ -215,7 +306,7 @@ When adapter is claimed supported, test with its supported version set:
 
 Do not load/test every integration on every core PR if cost is excessive; maintain smoke/nightly integration suites based on risk.
 
-## 15. Import/export round-trip
+## 19. Import/export round-trip
 
 For each definition type:
 - export
@@ -227,7 +318,7 @@ For each definition type:
 - corrupted checksum/manifest
 - secrets absent by default
 
-## 16. Failure injection
+## 20. Failure injection
 
 External systems must be tested for:
 - timeout
@@ -243,13 +334,26 @@ External systems must be tested for:
 
 UI must expose actionable state rather than infinite spinners/silent failures.
 
-## 17. Static analysis
+## 21. Concurrency/idempotency evidence
+
+Where relevant, test:
+- duplicate requests/jobs;
+- simultaneous updates;
+- stale writes;
+- lease/lock expiry;
+- crash-before/after authoritative mutation;
+- unknown external outcome;
+- retry/reconciliation.
+
+A duplicate delivery/request must not be assumed safe because the queue/client normally sends once.
+
+## 22. Static analysis
 
 Target strong PHP static analysis without allowing a giant permanent baseline to hide new errors. Exact level/tool set by build ADR.
 
 TypeScript runs with strictness appropriate for production and avoids unchecked `any` as the default API/data model.
 
-## 18. Dependency checks
+## 23. Dependency checks
 
 CI checks:
 - Composer dependency audit
@@ -260,7 +364,7 @@ CI checks:
 
 Security advisories are assessed, not blindly auto-fixed through major upgrades.
 
-## 19. Build/package gate
+## 24. Build/package gate
 
 Release artifact must verify:
 - no tests/dev dependencies accidentally packaged
@@ -274,22 +378,24 @@ Release artifact must verify:
 
 The legacy PHP-version mismatch is explicitly prevented by a consistency test.
 
-## 20. Git/PR gate
+## 25. Git/PR gate
 
 Each meaningful PR includes:
-- problem/requirement
+- problem/requirement/work ID where assigned
 - research performed (real links if external decisions mattered)
 - architecture/change impact
 - screenshots/video only when useful, not as test evidence alone
-- tests run and exact results
+- exact FAST/FULL tests run and results
+- baseline/flaky failures disclosed
+- review classification (`INDEPENDENT`, `SELF`, `AUTOMATED`)
 - security considerations
-- migration/rollback
+- migration/rollback/recovery classification
 - known risks
 - documentation/checkpoint update
 
 Commit messages communicate intent. `update`, `fix stuff`, `late work`, `final` are not acceptable commit messages.
 
-## 21. Change impact template
+## 26. Change impact template
 
 For substantial changes record:
 
@@ -297,14 +403,14 @@ For substantial changes record:
 **Unaffected** — explicitly stable areas  
 **Risk** — likely failure modes  
 **Migration** — existing data/code path  
-**Rollback** — recovery mechanism  
-**Verification** — tests/evidence
+**Rollback/Recovery** — recovery mechanism/class  
+**Verification** — FAST/FULL tests/evidence
 
-## 22. Release gate
+## 27. Release gate
 
 Before release:
 - clean checkout build
-- all required CI green
+- all required CI green or explicitly blocked by documented unacceptable failure (which blocks release)
 - release artifact smoke-tested
 - supported upgrade paths tested
 - changelog/release notes
@@ -315,8 +421,9 @@ Before release:
 - no critical/high known defect hidden
 - installation/activation on current stable WordPress
 - uninstall/data preservation behavior verified
+- release state/recovery class recorded per `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`.
 
-## 23. Production-readiness adversarial review
+## 28. Production-readiness adversarial review
 
 Ask:
 
@@ -324,12 +431,27 @@ Ask:
 
 Important findings block “production ready.”
 
-## 24. Reporting language
+## 29. Stop-the-line quality failures
+
+Immediately stop affected work for evidence of:
+- unexpected data loss/corruption;
+- cross-site/user protected data leakage;
+- credentials/secrets exposure;
+- critical authorization bypass;
+- migration corruption;
+- unexplained massive/out-of-scope diff;
+- repository/environment state that cannot be safely identified.
+
+Follow `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`.
+
+## 30. Reporting language
 
 Use when applicable:
 
 - **Verified** — evidence/test executed successfully
 - **Not Verified** — not executed or environment unavailable
+- **Baseline Failure** — verified to predate current change
+- **Flaky / Investigating** — unstable/uncertain failure; not green evidence
 - **Known Risk** — accepted unresolved risk
 - **Next Action** — exact follow-up
 
