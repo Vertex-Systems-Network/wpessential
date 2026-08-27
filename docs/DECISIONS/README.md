@@ -86,6 +86,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0073 | Accepted Definition Repository PT-C benchmark baseline / exact DDL evidence pending | P-004 baseline D1 uses numeric physical IDs, transparent textual UUID, explicit scope coordinates, bounded identity keys, immutable text payload, minimal workload indexes and application integrity diagnostics; binary UUID/native JSON/FKs remain comparison profiles |
 | ADR-0074 | Accepted Relations physical benchmark baseline / P-010 pending | R1 PT-D shared scoped universal edge table is first benchmark profile; R2 PT-E per-site is mandatory comparison; R3 per-relation is exceptional only; topology cannot weaken scope/cardinality/reverse-query/Policy semantics |
 | ADR-0075 | Accepted Multisite lifecycle architecture / runtime evidence pending | One Site Lifecycle Coordinator plans/provisions/drains/reconciles site create/update/uninitialize/delete/clone/transfer across PT-C/PT-D/PT-E/PT-F; WordPress lifecycle facts stay distinct; cleanup is domain-retention-aware and journaled |
+| ADR-0076 | Accepted Product License HTTP/OpenAPI paper architecture / service evidence pending | Resource-oriented versioned API; signed entitlement remains separate authority; ETag/If-Match prevents stale writes; retry-safe mutations use idempotency keys; RFC 9457 Problem Details; bounded pagination/data minimization; no hidden site inventory |
 
 ## Product specification milestone
 
@@ -94,39 +95,29 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Major supporting architecture/security docs
 
-- Definition Repository base: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PHYSICAL-SCHEMA-CANDIDATE.md`
-- Definition Repository PT-C alternatives: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`
-- Relations base alternatives: `docs/ARCHITECTURE/RELATION-RUNTIME-SCHEMA-ALTERNATIVES.md`
-- Relations PT-D/PT-E benchmark: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
-- Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
-- Job Service: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
-- Action Scheduler packaging: `docs/ARCHITECTURE/ACTION-SCHEDULER-PACKAGING-COEXISTENCE-PROFILE.md`
-- Multisite logical scope: `docs/ARCHITECTURE/MULTISITE-SCOPE-OWNERSHIP-MODEL.md`
-- Multisite physical topology classes: `docs/ARCHITECTURE/MULTISITE-PHYSICAL-DATA-TOPOLOGY-CLASSES.md`
-- Multisite site lifecycle: `docs/ARCHITECTURE/MULTISITE-SITE-LIFECYCLE-COORDINATOR.md`
-- Multisite future evidence: `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md`
-- Product license allocation/clone/transfer: `docs/ARCHITECTURE/PRODUCT-LICENSE-SITE-ALLOCATION-CLONE-TRANSFER.md`
-- Product license remote state model: `docs/PLATFORM/PRODUCT-LICENSE-REMOTE-RESOURCE-STATE-MACHINE.md`
-- Backup provider/transport docs: corresponding files under `docs/ARCHITECTURE/`
-- Membership billing source/version docs: corresponding `MEMBERSHIP-BILLING-*` files.
-- Email source/version docs: corresponding `EMAIL-*` files.
-- Remote service schemas/privacy/evidence: files under `docs/PLATFORM/` and `docs/QUALITY/`.
+- Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`
+- Relations: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
+- Site Lifecycle: `docs/ARCHITECTURE/MULTISITE-SITE-LIFECYCLE-COORDINATOR.md`
+- Product License remote state: `docs/PLATFORM/PRODUCT-LICENSE-REMOTE-RESOURCE-STATE-MACHINE.md`
+- Product License HTTP/OpenAPI candidate: `docs/PLATFORM/PRODUCT-LICENSE-OPENAPI-CANDIDATE-CONTRACT.md`
+- Multisite scope/topology/evidence: corresponding files under `docs/ARCHITECTURE/`, `docs/MODULES/` and `docs/QUALITY/`.
+- Provider/integration/runtime contracts: corresponding files under `docs/ARCHITECTURE/` and `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
 ### Platform/runtime/data topology
-Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates. ADR-0068 fixes AS packaging semantics but **P-003 is unexecuted**. ADR-0069 fixes logical Multisite scope. ADR-0071 fixes topology classes. ADR-0073 fixes the D1 Definition benchmark baseline. ADR-0074 fixes R1 as the Relation benchmark baseline, not final storage. ADR-0075 fixes lifecycle coordination semantics, not hooks/runtime. Exact SQL/index/locking/performance and lifecycle integration remain executable evidence.
+Compatibility, UI runtime, Definition exact DDL, Vault, Free↔Pro, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable gates. P-003/P-004/P-010 and site-lifecycle runtime remain unexecuted. ADR-0073/0074 are benchmark baselines only; ADR-0075 is coordination semantics only.
 
 ### Membership
-ADR-0062/0066/0069/0071/0075 fix source truth, versioning, site scope, PT-D candidate topology and teardown coordination, but **0 billing profiles are MB-certified**. Runtime schema/index/cache/files/provider/identity/refund/reconciliation/concurrency/privacy and Multisite fixtures remain open.
+Four billing paper profiles remain **0 MB-certified**. Runtime schema/cache/files/provider/concurrency/privacy/Multisite/lifecycle evidence remains open.
 
 ### Email/notifications
-ADR-0063/0067/0069/0071/0075 fix provider truth/versioning/scope, PT-D operational preference and site lifecycle coordination, but **0 Email profiles are ET-certified**. Renderer/runtime/schema/event/security/load/Multisite evidence remains open.
+Six Email paper profiles remain **0 ET-certified**. Renderer/runtime/schema/event/security/load/Multisite/lifecycle evidence remains open.
 
 ### Remote service/distribution/licensing
-ADR-0060/0069/0070/0072/0075 fix privacy, scope, product-allocation identity, remote lifecycle/conflicts and site-lifecycle reconciliation semantics. 30 privacy fixtures remain **0 executed**. OAuth/service/TUF, exact OpenAPI/resource schemas, signed-entitlement canonicalizer, idempotency/concurrency, clone reconciliation, offline grace, site-count races, ownership transfer and retention implementation remain open.
+ADR-0076 narrows the future HTTP/OpenAPI contract, but **0 API/service fixtures are executed**. Exact OpenAPI schemas, OAuth scopes, idempotency retention, ETag behavior, rate limits, clone/transfer flows, entitlement verification and service persistence remain open. Remote privacy protocol remains 30 fixtures / 0 executed.
 
 ### Backup/operations/security
-ADR-0061/0064/0065/0069/0071/0075 fix provider/transport, site-vs-network ownership, shared-table extraction and destructive site lifecycle coordination. **34 targets remain, 0 C-certified.** Site/network restore certification and runtime provider/crypto/operations evidence remain open.
+34 Backup targets remain **0 C-certified**. Site/network restore, lifecycle recovery, provider/crypto/operations evidence remains open.
 
 No executable evidence may run before explicit owner consent.
