@@ -1,6 +1,6 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-08-27**  
+Checkpoint date: **2026-08-28**  
 Branch: `planning/master-architecture`  
 Project state: **PARTIALLY COMPLETE — Phase 0 planning only**  
 Production development authorization: **NOT GRANTED**
@@ -22,7 +22,7 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0063**.
+Accepted decisions now extend through **ADR-0064**.
 
 Latest planning milestones:
 - ADR-0057 — Membership billing source facts/reconciliation + MB0–MB5.
@@ -32,6 +32,7 @@ Latest planning milestones:
 - ADR-0061 — stable semantic Backup family/provider identity registry.
 - ADR-0062 — Manual/Woo Core/Woo Subscriptions/SureCart billing source-truth profiles.
 - ADR-0063 — wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark email source-truth profiles.
+- ADR-0064 — Backup provider static research evolves through versioned evidence overlays; SE0–SE3 never implies C0–C4 certification.
 
 ## Current JobService state
 
@@ -47,9 +48,24 @@ Future executable verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVAC
 
 ## Current Backup state
 
-Accepted manifest-first bundle, encryption/recovery architecture, Remote Copy lifecycle, C0–C4 restore-first certification, semantic `bf.*` family keys, separately versioned provider profiles, legacy/non-canonical PF aliases, and SE0–SE3 static-evidence separation.
+Accepted manifest-first bundle, encryption/recovery architecture, Remote Copy lifecycle, C0–C4 restore-first certification, semantic `bf.*` family keys, separately versioned provider profiles, legacy/non-canonical PF aliases, SE0–SE3 static-evidence separation and ADR-0064 versioned static-evidence overlays.
 
-Current catalog: **34 target destinations, 34/34 stable profiles, 0 certified**.
+Current catalog:
+- **34 target destinations**;
+- **34/34 stable provider profiles**;
+- **0 C-certified providers**;
+- **0 normal Supported Backup Destinations** under the C3 gate.
+
+Latest static overlay research maturity:
+- Box → SE3;
+- MinIO → SE3;
+- Rackspace Swift → SE2;
+- Akamai/Linode Object Storage → SE2;
+- Hetzner Object Storage → SE3;
+- Bunny Storage → SE2 with no crash-resume claim;
+- MEGA → SE1.
+
+Static evidence can refine a provider profile but cannot create Connected/Upload/Integrity/Restore/Disaster certification.
 
 ## Current Membership billing state
 
@@ -80,9 +96,10 @@ Additional Email and Remote Service runtime evidence remains separately tracked.
 Verified planning/documentation only:
 - planning branch isolated from `main`;
 - **31/31 Exhaustive, 0/31 Authorized**;
-- ADR/governance synchronized through ADR-0063;
-- Remote Service privacy matrix + ADR-0060 + future evidence protocol committed;
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0064;
+- Remote Service privacy matrix + ADR-0060 + future 30-fixture evidence protocol committed;
 - Backup family/provider registry + normalized 34-target matrix + ADR-0061 committed;
+- Backup static evidence overlay + ADR-0064 committed;
 - Membership provider profiles + ADR-0062 committed;
 - Email provider profiles + ADR-0063 committed;
 - Job provider-neutral architecture committed;
@@ -92,11 +109,12 @@ Not performed: installs/package setup, production source/bootstrap, DB migration
 
 ## Next allowed planning-only priorities
 
-1. Refresh low-evidence Backup provider profiles from official docs.
+1. Static protocol profiles for local/browser/FTP/FTPS/SFTP without pretending runtime certification.
 2. Membership provider version/evidence refinements.
 3. Email provider version/evidence refinements.
 4. P-003/provider evidence plan refinement.
-5. Keep governance/Draft PR synchronized.
+5. Remaining platform physical/runtime paper models where static decisions are still useful.
+6. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
 
