@@ -59,14 +59,14 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + 0059 | registry/image/offload/concurrency/load evidence | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052 | methods/hooks/parser/complete-deny/compatibility/multisite | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032 | classifier/anti-lockout/multisite/CLI recovery | No |
-| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060 | OpenAPI/OAuth/key custody/TUF/support/privacy/retention evidence | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060 | OpenAPI/OAuth/key custody/TUF/support/privacy/retention evidence; 30-fixture future privacy protocol documented but not executed | No |
 
 ## Cross-cutting accepted architecture that still needs evidence
 
 - ADR-0048 Vault hierarchy; exact implementation pending.
 - ADR-0049 Definition Repository relational shape; exact DDL pending.
 - ADR-0053/0061 Backup provider model: semantic families + profiles + C3 support gate; 34 targets, 0 certified.
-- ADR-0054/0060 Remote Service trust/privacy boundaries; service runtime pending.
+- ADR-0054/0060 Remote Service trust/privacy boundaries; service runtime pending. Future evidence is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md` and remains unexecuted.
 - ADR-0055 Connections I0–I5; provider evidence pending.
 - ADR-0056 Remote Copy lifecycle; physical/runtime evidence pending.
 - ADR-0057/0062 Membership Billing: four initial profiles are BE3 paper maturity, **0 MB-certified**.
@@ -87,7 +87,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 8. REST/Connections/Event Inbox/Import;
 9. Backup core → Remote Copy → provider adapters/C3 restore → operations/security modules;
 10. Chat;
-11. Account/Support/Updater under ADR-0060;
+11. Account/Support/Updater under ADR-0060 + remote-service privacy evidence protocol;
 12. AI only over certified platform Abilities/Blueprints;
 13. ecosystem scale.
 
