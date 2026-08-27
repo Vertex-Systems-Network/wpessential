@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before any runtime/source/build/migration/test implementation or executable research spike.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, package/dependency setup, executable benchmark or research spike.
 
 Source of truth:
 - `/DEVELOPMENT-CONSENT.md`
@@ -15,238 +15,197 @@ Source of truth:
 
 `continue`, `proceed`, planning approval, ADR acceptance, technical readiness or Phase 0 completion do **not** authorize development.
 
-No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, implementation test, benchmark or executable spike has been created/run in the target repository.
+No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, implementation test, benchmark or provider integration has been created/run.
 
 ---
 
 # Product specification milestone
 
-- **31/31** planned module/platform surfaces have screen/option inventory.
+- **31/31** surfaces have screen/option inventory.
 - **31/31** have behavioral specification.
 - **31/31** are at **Exhaustive product-option maturity**.
 - **0/31** are Authorized for development.
 
-Authoritative planning:
+Primary planning sources:
 - `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
 - `docs/MODULES/README.md`
 - `docs/IMPLEMENTATION-READINESS-MATRIX.md`
 - `docs/OPEN-DECISIONS-REGISTER.md`
+- `docs/DECISIONS/README.md`
 
-Exhaustive product specification does not imply physical schema/provider/performance/security verification.
+Exhaustive specification does not imply physical schema, dependency, provider, performance or security verification.
 
 ---
 
 # Accepted ADR state
 
-Accepted architecture/product/governance decisions now include:
+Accepted decisions now extend through **ADR-0034**.
 
-- ADR-0001 Free WordPress.org + separate Pro distribution.
-- ADR-0003 WordPress Abilities typed action contract.
-- ADR-0004 no standard arbitrary PHP eval/unrestricted destructive SQL.
-- ADR-0007 safe Pro-expiry runtime/data continuity.
-- ADR-0013 Membership/Billing/Role/Entitlement separation.
-- ADR-0014 explicit owner development-consent gate.
-- ADR-0015 Membership access precedence.
-- ADR-0016 Enrollment lifecycle.
-- ADR-0017 signed/site-bound/freshness-aware WPE product entitlement architecture.
-- ADR-0018 signed anti-rollback/freeze-aware Pro update architecture.
-- ADR-0019 Membership Plan revision/upgrade-downgrade semantics.
-- ADR-0020 Membership teams/seats/role-sync semantics.
-- ADR-0021 per-backup DEK + independent recovery wrapping architecture.
-- ADR-0022 plural Custom Fields storage architecture.
-- ADR-0023 typed Custom Tables desired-schema/Migration Plan architecture.
-- ADR-0024 Membership privacy/retention product defaults.
-- ADR-0025 Form Entry runtime architecture.
-- ADR-0026 Notification occurrence/recipient/delivery domain model.
-- ADR-0027 Chat runtime/authorization architecture.
-- ADR-0028 REST compiled runtime descriptor architecture.
+Latest accepted architecture additions:
+- ADR-0029 — Email rendering/delivery separation.
+- ADR-0030 — User/Profile identity-security boundaries.
+- ADR-0031 — Frontend Dashboard compiled route/component runtime.
+- ADR-0032 — Role/capability anti-lockout and WordPress/CLI recovery model.
+- ADR-0033 — Backup manifest-first multipart logical bundle.
+- ADR-0034 — Account-link OAuth fixed WPE callback + one-time site-bound completion artifact + PKCE S256.
 
-Full index: `docs/DECISIONS/README.md`.
+Earlier accepted ADRs cover Free/Pro distribution, Abilities, unsafe code/SQL boundaries, license-expiry runtime, Membership domain/access/lifecycle/change/team semantics, product-entitlement/update trust, Backup encryption/recovery, Field storage, Custom Tables migrations, Membership privacy, Form Entry, Notifications, Chat and REST compiled runtime.
 
-Exact implementation profiles remain pending where each ADR says so.
+Exact implementation profiles remain pending where ADR status says so.
 
 ---
 
-# Platform Proposed blockers still requiring executable evidence
+# Platform blockers still requiring executable evidence
 
 - ADR-0002 compatibility floor — P-001.
-- ADR-0005 UI/design system runtime — P-002.
+- ADR-0005 UI/design-system runtime — P-002.
 - ADR-0006 Job Service concrete adapter — P-003.
-- ADR-0008 Definition Repository exact physical schema/indexes — P-004.
-- ADR-0009 Secrets Vault exact crypto/key/recovery profile — P-005.
-- ADR-0010 Free↔Pro executable boot/update compatibility — P-006.
-- ADR-0011 CI/test implementation — P-007.
+- ADR-0008 Definition Repository exact DDL/indexes — P-004.
+- ADR-0009 Secrets Vault exact crypto/key/recovery — P-005.
+- ADR-0010 Free↔Pro boot/update/downgrade compatibility — P-006.
+- ADR-0011 CI implementation — P-007.
 - ADR-0012 build toolchain/externalization — P-008.
 
-All future protocols live in:
-- `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`
+Additional Query/Relations/Workflow/Membership/Backup protocols are P-009…P-013.
 
-**None has been executed.**
+All protocols live in `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md` and **none has been executed**.
 
 ---
 
-# Technical paper architecture now documented
+# Current technical paper architecture
 
 ## Definition Repository
-- `docs/ARCHITECTURE/DEFINITION-REPOSITORY-SCHEMA-ALTERNATIVES.md`
-
-Paper preference: identity/lifecycle + immutable revisions + revision-aware dependencies; current/published pointers separated; runtime data excluded.
+Stable identity/lifecycle + immutable revisions + current/published pointers + revision-aware dependencies. Runtime data remains separate.
 
 ## Query AST
-- `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
+Typed/provider-neutral AST; no raw SQL/PHP node; typed parameters, joins/relations, aggregates, pagination and security/cost budgets.
 
-Typed/provider-neutral; no raw SQL/PHP node; typed parameters, filters, joins/relations, aggregates, pagination, cost/security budgets.
+## Relations
+Universal typed edge-table family is current paper preference; reverse lookup and concurrency-safe cardinality first-class.
 
-## Relations Runtime
-- `docs/ARCHITECTURE/RELATION-RUNTIME-SCHEMA-ALTERNATIVES.md`
+## Workflow
+`Definition Repository → Workflow Runtime → Job Service`; runs pin published definition revision; waits/approvals/steps durable; at-least-once/idempotency/unknown-outcome semantics.
 
-Paper preference: universal typed edge-table family; reverse lookup first-class; concurrency-safe cardinality; per-relation tables only if evidence justifies.
+## Custom Fields
+ADR-0022: native WP meta/options where natural; Custom Tables for scale/constraints; Relations for relationships; Vault for secrets; no universal EAV/JSON store.
 
-## Workflow Runtime
-- `docs/ARCHITECTURE/WORKFLOW-RUNTIME-DATA-CANDIDATE.md`
+## Custom Tables
+ADR-0023: desired schema and observed schema separate; typed generated Migration Plans with fingerprints/risk/preconditions/recovery/verification. `dbDelta()` is one tool, not universal source of truth.
 
-`Definition Repository → Workflow Runtime → Job Service`; runs pin published revision; waits/approvals/steps durable; at-least-once/idempotency/unknown-outcome semantics.
-
-## Custom Fields storage
-- `docs/ARCHITECTURE/FIELD-STORAGE-ARCHITECTURE-ALTERNATIVES.md`
-- ADR-0022.
-
-Native WP meta/options where natural; Custom Tables for high-scale/query/constraint application data; Relations for relationships; Vault for secrets; structured blobs only for bounded non-query-heavy structures.
-
-## Custom Tables migration
-- `docs/ARCHITECTURE/CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md`
-- ADR-0023.
-
-Desired schema and physical observed schema are separate. Generated typed Migration Plan has fingerprints, risk classes, preconditions, dependency impact, backup/recovery and verification. `dbDelta()` may be a compiler tool for compatible operations, not the universal migration model.
-
-## Form Entry runtime
-- `docs/ARCHITECTURE/FORM-ENTRY-RUNTIME-STORAGE-CANDIDATE.md`
-- ADR-0025.
-
-Normalized Entry core + pinned Form revision + canonical typed value document + selected derived query projections + protected file refs. Workflow state separate. Passwords/tokens never stored in Entry values.
+## Form Entries
+ADR-0025: runtime Entries separate from Form Definitions; pinned revision, typed values, explicit projections, protected file references; passwords/tokens never Entry values.
 
 ## Notifications
-- `docs/ARCHITECTURE/NOTIFICATION-PERSISTENCE-DELIVERY-MODEL.md`
-- ADR-0026.
-
-Notification occurrence, per-recipient/read state and per-channel delivery attempts separated. Provider handoff is not automatically Delivered.
+ADR-0026: occurrence, per-recipient/read state and per-channel delivery attempts separate; provider handoff ≠ delivered.
 
 ## Chat
-- `docs/ARCHITECTURE/CHAT-RUNTIME-STORAGE-INDEX-ALTERNATIVES.md`
-- ADR-0027.
+ADR-0027: canonical runtime independent of transport; private assets; search reauthorizes; Membership/team revocation affects access.
 
-Dedicated conversations/participants/messages/moderation/private assets; server-authoritative message ordering; search reauthorizes; transport is not source of truth; Membership/team revoke affects access.
+## REST
+ADR-0028: published definitions compile to validated descriptors over WordPress REST + Policy + Query/Data Source/Abilities.
 
-## REST Builder
-- `docs/ARCHITECTURE/REST-ENDPOINT-COMPILED-RUNTIME-MODEL.md`
-- ADR-0028.
+## Email
+ADR-0029: `Template → Compiled Descriptor → Authorized Context → Email IR → HTML/Plaintext → Delivery Attempt`. No browser-builder runtime as canonical email renderer. Exact renderer/inliner/client certification pending.
 
-Published Endpoint Definitions compile to validated descriptors using WordPress REST + WPE Policy + Query/Data Source/Abilities. Explicit permission, bounded pagination, restrictive CORS, typed mapping, idempotency/rate/cache descriptors.
+## User/Profile security
+ADR-0030: ordinary profile data, identity changes, credentials, authorization state and protected internals are separate action classes. Generic fields cannot mutate passwords/sessions/Application Passwords/roles/Membership authority.
 
-## Backup container
-- `docs/ARCHITECTURE/BACKUP-ARCHIVE-CONTAINER-ALTERNATIVES.md`
+## Frontend Dashboard
+ADR-0031: `Dashboard Definition → Compiled Route/Component Descriptor → Server Route Resolution → Policy → Renderer`. Client navigation is enhancement only; direct URLs reauthorize server-side.
 
-Current paper preference: provider-neutral manifest + independently verifiable/resumable parts/chunks. Single ZIP may remain small/manual convenience; deduplicated content-addressed store deferred. Exact physical format pending benchmark.
+## Roles/Capabilities
+ADR-0032: high-risk mutations require impact/anti-lockout analysis; WPE does not knowingly leave zero recovery principals. Primary break-glass uses WordPress-authenticated/WP-CLI authority; no anonymous recovery backdoor.
+
+## Backup bundle
+ADR-0033: manifest-first independently verifiable multipart logical bundle. Single ZIP remains optional small/manual convenience. Exact file-record/DB payload/chunk/compression/hash profiles require evidence.
 
 ## OAuth account linking
-- `docs/SECURITY/OAUTH-ACCOUNT-LINK-THREAT-MODEL-ALTERNATIVES.md`
-
-Current paper preference for first evaluation: fixed WPE OAuth callback + one-time transaction-bound return to exact site + PKCE S256. Direct dynamic site redirect registration remains alternative; Device Authorization remains fallback candidate. No final OAuth ADR yet.
+ADR-0034: public client + Authorization Code/PKCE S256, fixed WPE-owned OAuth callback, one-time site-bound completion artifact, no reusable tokens/passwords in browser return URL. Device Authorization fallback.
 
 ---
 
 # Membership status
 
-Accepted product semantics/defaults:
+Accepted semantics/defaults:
 - Role ≠ Membership ≠ Billing Subscription/Purchase ≠ Entitlement.
 - outer WordPress/security deny cannot be bypassed.
-- resource/action specificity; same-specificity deny wins.
-- multiple valid memberships union grants unless applicable deny/exclusion.
-- canonical Enrollment lifecycle pending/trialing/active/grace/paused/expired/revoked.
+- specificity + same-specificity deny-wins.
+- Enrollment lifecycle pending/trialing/active/grace/paused/expired/revoked.
 - cancellation-at-period-end is intent.
-- provider statuses are source facts translated by policy.
-- Plan draft edit never changes live access.
-- follow-current / grandfather / scheduled Plan benefit change modes.
-- team roles separate from WP roles; role sync off by default/provenance-safe.
-- category-level privacy/retention defaults.
+- Plan draft edits do not alter live access.
+- published benefit changes use follow-current/grandfather/scheduled semantics.
+- team roles separate from WordPress roles; role sync off by default/provenance-safe.
+- category-level privacy/retention defaults; raw provider/detailed download/IP logging minimized/off by default.
 
-Privacy defaults:
-- raw provider payload retention off/minimized by default;
-- detailed successful protected-download logging off;
-- IP/device logging off unless explicit purpose;
-- terminal invitation cleanup candidate 30 days;
-- terminal Enrollment/transition history retained by default for explainability, configurable;
-- WordPress exporter/eraser integration required.
-
-Technical blockers:
+Remaining evidence:
 - physical Enrollment/Entitlement schema/indexes;
 - cache/revoke-to-deny proof;
-- protected-file environment certification;
+- protected-file environments;
 - team/seat concurrency;
 - WooCommerce/Woo Subscriptions/SureCart adapters/reconciliation;
 - migration/provider fixtures;
-- exporter/eraser/retention runtime verification.
+- privacy exporter/eraser runtime verification.
 
 ---
 
-# Backup / recovery state
+# Remote service / distribution
+
+Accepted:
+- Free remains account-free/useful locally;
+- local WP is not WPE password proxy;
+- Free does not auto-install/update external Pro ZIPs;
+- product license separate from site Membership access;
+- service outage != expiry;
+- signed product entitlement and signed Pro update trust required;
+- OAuth profile accepted in ADR-0034.
+
+Still open:
+- exact OAuth service/token lifetimes/rotation/revocation implementation;
+- entitlement canonicalization/algorithm/library/freshness windows;
+- updater exact TUF-compatible client/key custody/thresholds.
+
+---
+
+# Backup / recovery
 
 Planning includes:
-- 34 catalog destination targets through shared protocol/provider adapters;
-- V0 Generated / V1 Local Verified / V2 Remote Verified / V3 Restore Tested levels;
-- exhaustive Backup/Plan/Destination/Restore options;
+- 34 destination targets through protocol/provider adapters;
+- V0 Generated / V1 Local Verified / V2 Remote Verified / V3 Restore Tested;
+- exhaustive Backup/Plan/Destination/Restore UI;
 - restore preflight/recovery;
 - ADR-0021 encryption/recovery architecture;
-- manifest/chunk container alternatives.
+- ADR-0033 logical multipart bundle.
 
-Open:
-- exact archive/container/DB artifact format;
+Still open:
+- exact manifest/part physical encodings;
+- DB artifact format;
+- chunk-size/compression/hash defaults;
 - exact AEAD/KDF/recovery key profile;
 - provider certification;
-- large-site streaming/memory performance;
-- actual restore/disaster-recovery proof.
+- encrypted cross-server restore proof.
 
 ---
 
-# Remote service / Pro distribution
-
-Accepted boundaries:
-- Free stays locally useful/account-free;
-- WP site is not default WPE password proxy;
-- Free does not auto-install/update external Pro ZIPs;
-- WPE product entitlement separate from Membership access;
-- service outage != expiry;
-- Pro updater has signed supply-chain trust requirement.
-
-Open:
-- exact OAuth return/callback profile;
-- exact entitlement signature/canonicalizer/library;
-- freshness/grace windows;
-- updater client/TUF-compatible profile/key custody.
-
----
-
-# Verification state
+# Verification
 
 ## Verified
-- planning branch isolated from `main`;
-- 31/31 Exhaustive product-option maturity;
-- 0/31 Authorized;
-- ADR index synchronized through ADR-0028;
-- Open Decisions synchronized through latest accepted architecture;
-- technical paper docs listed above created;
-- static research from primary sources recorded where used;
+- planning branch remains isolated from `main`;
+- 31/31 Exhaustive; 0/31 Authorized;
+- ADR index synchronized through ADR-0034;
+- Open Decisions synchronized;
+- latest Email/Profile/Dashboard/Role/Backup/OAuth architecture docs committed;
+- static primary-source research recorded where used;
 - no implementation/build/test success claimed.
 
 ## Not performed / intentionally blocked
 - Composer/npm install;
-- runtime PHP/React source;
+- production PHP/React source;
 - plugin bootstrap/activation;
-- DB tables/migrations;
+- DB migrations/tables;
 - PHPUnit/Playwright;
-- all P-001…P-013 technical spikes;
-- provider/API integrations;
-- benchmark fixtures;
+- P-001…P-013 spikes;
+- provider/API implementations;
+- performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
 
@@ -256,14 +215,15 @@ Reason: explicit owner development/executable-spike consent has not been granted
 
 # Next allowed planning-only priorities
 
-1. exact Form/Notification/Chat/REST physical-schema alternatives and indexes only to benchmark-ready level;
-2. Backup manifest/chunk format and DB artifact alternatives further narrowed without code;
-3. OAuth fixed-callback vs dynamic-registration static security decision/ADR if evidence becomes sufficient;
-4. Email rendering/delivery provider architecture;
-5. User/Profile protected-meta and identity-change security matrix;
-6. Dashboard/Portal route/component runtime model;
-7. Role anti-lockout/recovery runtime contract;
-8. update Implementation Readiness/PR after each meaningful planning unit.
+1. shared Component Blueprint/runtime schema for Dashboard/Builder Widgets/Listings;
+2. Settings Page storage/site-vs-network scope runtime;
+3. Admin Menu mutation/conflict/safe-mode model;
+4. Status Manager generic state-machine runtime;
+5. Dynamic Listings renderer/cache architecture;
+6. Connections/Webhooks normalized event inbox + SSRF/replay architecture;
+7. Import run/checkpoint/rollback runtime;
+8. entitlement/update exact cryptographic profiles on paper;
+9. keep Readiness/Checkpoint/PR synchronized.
 
 Before **any executable work**, obtain explicit owner consent.
 
