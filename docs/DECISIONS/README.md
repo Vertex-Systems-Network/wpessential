@@ -94,6 +94,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Email provider profiles: `docs/ARCHITECTURE/EMAIL-PROVIDER-CAPABILITY-MATRIX.md`
 - Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
 - Remote service privacy/retention: `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
+- Remote service privacy evidence protocol: `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`
 - Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
 - Provider evidence protocols: corresponding files under `docs/QUALITY/`.
 
@@ -109,7 +110,7 @@ ADR-0062 fixes first provider source-truth profiles, but **0 billing profiles ar
 ADR-0063 fixes initial provider source-truth profiles for `wp_mail`, generic SMTP, SES, SendGrid, Mailgun and Postmark. All six are EE3 static-paper maturity; **0 providers are ET-certified**. Renderer/client compatibility, Delivery/Attempt/Event physical schema, provider send adapters, webhook authenticity/replay/order, unknown-outcome reconciliation, bounce/complaint/suppression truth, JobService load and ET0–ET5 evidence remain open.
 
 ### Remote service/distribution
-ADR-0060 fixes field-level minimization/consent/retention semantics. OAuth endpoint/token lifecycle, exact schemas/OpenAPI, log redaction, diagnostics upload, resource retention/deletion/export, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
+ADR-0060 fixes field-level minimization/consent/retention semantics and the future 30-fixture evidence protocol is documented, but **none has been executed**. OAuth endpoint/token lifecycle, exact schemas/OpenAPI, log redaction, diagnostics upload, RR0–RR6 cleanup, resource retention/deletion/export, clone isolation, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
 
 ### Backup/operations/security
 ADR-0061 fixes family/provider identity and static capability profiles for all 34 targets, but **0 providers are certified**. C0–C4 evidence, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
