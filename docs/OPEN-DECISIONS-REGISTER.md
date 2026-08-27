@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0071**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0073**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -14,13 +14,13 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-001 | ADR-0002 + ADR-0069 | WP/PHP/DB compatibility and Multisite activation/scope/isolation matrix — P-001 + MS protocol |
 | D-002 | ADR-0005 | UI runtime/externalization/accessibility/RTL/bundle — P-002 |
 | D-003 | ADR-0006 + ADR-0059 + ADR-0068 + ADR-0069 + ADR-0071 | Action Scheduler packaging/coexistence; WPE Job/Attempt physical PT-C/PT-D mapping; claims/fairness/concurrency/backpressure/runners/retention + Multisite fan-out/isolation — P-003 |
-| D-004 | ADR-0008 + ADR-0049 + ADR-0069 + ADR-0071 | Definition Repository PT-C preferred topology; exact DDL/index/locking/tombstone/site-network scale — P-004 |
+| D-004 | ADR-0008 + ADR-0049 + ADR-0069 + ADR-0071 + ADR-0073 | Definition Repository PT-C D1 benchmark baseline accepted; exact SQL types/lengths/collation/index plans/UUID/hash/JSON/FK/locking/migration evidence — P-004 |
 | D-005 | ADR-0009 + ADR-0048 + ADR-0069 | Vault envelope/rotation/recovery/interoperability + network-shared/site-private isolation — P-005 |
-| D-006 | ADR-0010 + ADR-0069 + ADR-0070 | Free↔Pro runtime compatibility including Multisite/site-allocation/version-skew lifecycle — P-006 |
+| D-006 | ADR-0010 + ADR-0069 + ADR-0070 + ADR-0072 | Free↔Pro runtime compatibility including Multisite/site-allocation/version-skew and remote allocation/conflict lifecycle — P-006 |
 | D-007 | ADR-0011 | executable CI matrix — P-007 |
 | D-008 | ADR-0012 | build/externalization/toolchain comparison — P-008 |
 
-## B. Physical topology / data-runtime blockers — ADR-0071
+## B. Physical topology / data-runtime blockers — ADR-0071 + ADR-0073
 
 Accepted topology classes:
 - PT-A native WordPress site/blog storage;
@@ -31,7 +31,7 @@ Accepted topology classes:
 - PT-F external authoritative state + local scoped references/cache.
 
 Current paper preferences:
-- Definition Repository → PT-C;
+- Definition Repository → PT-C; D1 future benchmark baseline accepted by ADR-0073;
 - Job logical history → PT-C/PT-D;
 - Audit → PT-D;
 - Relations → PT-D candidate;
@@ -43,6 +43,16 @@ Current paper preferences:
 - Chat Messages → PT-D vs PT-E evidence-gated;
 - Custom Tables → explicit PT-D/PT-E by product scope;
 - Support/commercial authority → PT-F.
+
+Definition D1 baseline:
+- numeric physical IDs;
+- transparent textual UUID;
+- explicit network/site scope coordinates;
+- bounded normalized identity keys;
+- immutable text-document revision payload;
+- minimal workload-driven indexes;
+- application same-definition pointer integrity + diagnostics;
+- binary UUID/native JSON/DB-FK profiles remain P-004 comparisons.
 
 Open evidence:
 - **Q-001 / P-009 + ADR-0069/0071** — Query compiler security/cost/cache/scale plus authorized bounded network aggregation against chosen storage adapters.
@@ -68,22 +78,7 @@ Future certification protocol:
 
 Current state: **0 Multisite runtime fixtures executed; 0 surfaces MS1+ certified**.
 
-Open evidence:
-- subdirectory/subdomain networks;
-- Network Admin/Site Admin/Super Admin target authorization;
-- nested `switch_to_blog()`/restore failure safety;
-- cache isolation;
-- network default/site override/lock behavior;
-- Definition PT-C network template/propagation/conflict;
-- site lifecycle create/archive/delete across PT-C/PT-D/PT-E;
-- JobService network fan-out/fairness/backpressure;
-- Vault shared-use without secret reveal;
-- Membership PT-D candidate site isolation;
-- REST/Ability IDOR;
-- shared-table site-row Backup extraction + selected-site/network Restore;
-- Reset/Import/Uninstall scope;
-- large-network row-growth vs table-count performance;
-- Free↔Pro version skew.
+Open evidence includes network/site authorization, switch/restore safety, cache isolation, network inheritance, PT-C Definition propagation, site lifecycle across PT-C/PT-D/PT-E, JobService fan-out, Vault isolation, Membership site isolation, REST/Ability IDOR, scoped Backup/Restore, Reset/Import/Uninstall, large-network scale and Free↔Pro skew.
 
 Protocol: `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md`.
 
@@ -122,14 +117,14 @@ Open: adapters/ranges, correlation, webhook authenticity/replay/order, schema dr
 ## F. Remote service / commercial distribution / product license
 
 - **S-001 / ADR-0034 + ADR-0060** — OAuth exact schemas, artifact/token lifecycle, revoke/disconnect/transfer/replay/concurrency.
-- **S-002 / ADR-0017 + ADR-0042 + ADR-0060 + ADR-0070** — entitlement canonicalizer/interoperability/key custody/envelope/freshness/rotation plus installation/network/site allocation binding.
+- **S-002 / ADR-0017 + ADR-0042 + ADR-0060 + ADR-0070 + ADR-0072** — entitlement canonicalizer/interoperability/key custody/envelope/freshness/rotation plus installation/network/site-allocation binding and resource-state reconciliation.
 - **S-003 / ADR-0018 + ADR-0044** — production TUF verifier/client, metadata/key custody/expiry/conformance.
 - **S-004/S-005/S-006 / ADR-0050 + ADR-0054 + ADR-0060** — OpenAPI/problem/scopes/idempotency/rate-limit, Support runtime, diagnostics, RR0–RR6 retention/export/delete/logging/no-hidden-identifier evidence.
-- **S-007 / ADR-0070** — exact Installation/Network/Site Allocation service schema, plan site-count policy, staging/dev/DR allowances, clone reconciliation, transfer/migration, allocation races, offline grace, ownership transfer and disaster restore.
+- **S-007 / ADR-0070 + ADR-0072** — exact Account/Contract/Installation/Network/Site Allocation resources, idempotent mutation protocol, expected-version concurrency, allocation capacity races, clone conflicts, transfer/migration, offline grace, local/remote commit-unknown recovery, ownership transfer and disaster restore.
 
 Future Remote Service verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`: **30 fixtures documented, 0 executed**.
 
-Product-license future evidence additionally requires single-site/network activation, selected allocations, site-count races, staging/production clone conflict, domain/host migration, network transfer, restored stale entitlement, outage/expiry/revocation, ownership transfer and no-hidden-inventory proof.
+Product-license future evidence additionally requires OpenAPI/schema conformance, last-seat race, release/reallocate race, timeout ambiguity, remote-success/local-failure recovery, staging/production clone, domain/host migration, network transfer, stale restored entitlement, outage/expiry/revocation, binding mismatch/anti-rollback, ownership transfer and no-hidden-inventory proof.
 
 ## G. Connections / Integrations — ADR-0040 + ADR-0055 + ADR-0069 + ADR-0071
 
@@ -166,9 +161,9 @@ Open P-003: packaging/load order/tables/migrations/logical mapping/claims/crashe
 
 ## K. Accepted architecture no longer open semantically
 
-ADRs **0035–0071** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Provider/version/package/static research is paper evidence only, never runtime certification.
+ADRs **0035–0073** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Provider/version/package/static research is paper evidence only, never runtime certification.
 
-Product license cannot become Membership authorization; Multisite network activation cannot become implicit network-global data authority; clone/staging classification cannot silently grant extra production allocations; physical topology class cannot override logical scope/security semantics.
+Product license cannot become Membership authorization; Multisite network activation cannot become implicit network-global data authority; clone/staging classification cannot silently grant extra production allocations; physical topology class cannot override logical scope/security semantics; D1 is a benchmark baseline, not a pre-approved final DDL.
 
 ## Decision-processing rule
 
@@ -180,8 +175,8 @@ Product license cannot become Membership authorization; Multisite network activa
 
 ## Next planning-only priorities
 
-1. Product-license allocation API/resource paper schemas and conflict state machine, without service calls.
-2. Definition Repository PT-C exact DDL alternatives/index hypotheses without executing DDL.
-3. Relations PT-D vs per-site alternative paper comparison.
-4. Site lifecycle coordinator across PT-C/PT-D/PT-E.
+1. Relations PT-D vs PT-E/per-site physical comparison.
+2. Site lifecycle coordinator across PT-C/PT-D/PT-E.
+3. Product-license exact OpenAPI candidate schema without service implementation.
+4. Continue P-004 Definition benchmark fixture design without execution.
 5. Keep P-003/P-012/P-013 executable gates intact.
