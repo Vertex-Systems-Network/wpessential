@@ -24,15 +24,17 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0095**.
+Accepted decisions now extend through **ADR-0097**.
 
 Latest milestones:
 - ADR-0092 — exact Definition P-004 deterministic evidence protocol.
 - ADR-0093 — exact Relations P-010 deterministic graph/concurrency evidence protocol.
 - ADR-0094 — REST RE1 compiled WordPress REST operational profile; idempotency/rate/cache state separated.
-- **ADR-0095 — Import IR1/PT-D vs IR2/PT-E physical/recovery profile.**
+- ADR-0095 — Import IR1/PT-D vs IR2/PT-E physical/recovery profile.
+- ADR-0096 — User/Profile native WordPress identity/auth authority + protected-meta/security boundaries.
+- **ADR-0097 — Role & Capability native WordPress authority + WPE Change Plan/anti-lockout/recovery layer.**
 
-Immediately preceding static decisions:
+Immediately preceding static decisions remain active:
 - ADR-0086 Query compiler matrix;
 - ADR-0087 Field Storage routing;
 - ADR-0088 Custom Tables CT1/CT2/CT3;
@@ -42,8 +44,8 @@ Immediately preceding static decisions:
 
 ## P-004 Definition evidence — ADR-0092
 
-Future P-004 is now constrained before execution:
-- D1/D2/D3/D4 are compared on identical deterministic data;
+Future P-004 is constrained before execution:
+- D1/D2/D3/D4 on identical deterministic data;
 - DF-S/DF-M/DF-L/DF-N dataset classes;
 - Q1–Q10 lookup/list/dependency/Backup/lifecycle workloads;
 - C1–C7 save/publish/uniqueness/lifecycle races;
@@ -51,13 +53,11 @@ Future P-004 is now constrained before execution:
 - wrong-site/normalization security attacks;
 - correctness/security gates precede speed/storage.
 
-Final P-004 output must include exact DDL/types/lengths/collations/indexes, supported engine matrix, locking/retry policy and migration strategy.
-
 **Executed P-004 cases: 0.**
 
 ## P-010 Relations evidence — ADR-0093
 
-Future P-010 is also constrained:
+Future P-010 is constrained:
 - RF-S/RF-M/RF-L/RF-N/RF-H graph classes;
 - RQ1–RQ11 forward/reverse/pair/order/pivot/nested/Backup/network reads;
 - RC1–RC8 duplicate/cardinality/reassignment/detach/reorder/lifecycle races;
@@ -98,9 +98,41 @@ Accepted paper profile:
 Critical recovery invariant:
 `target mutation committed → Map/Checkpoint not yet committed` must reconcile deterministic source identity + target fingerprint before retry; duplicate target creation is not acceptable.
 
-Rollback remains truthful R0–R3. Full rollback cannot be reported over irreversible/external/newer conflicting changes. Restored copied active Runs require revalidation before resume.
+Rollback remains truthful R0–R3. Restored copied active Runs require revalidation before resume.
 
-**Import physical/recovery fixtures executed: 0. No import/source fetch/archive extraction/target mutation run.**
+**Import physical/recovery fixtures executed: 0.**
+
+## User/Profile security — ADR-0096
+
+WordPress remains authoritative for user identity, password/session state and Application Passwords.
+
+WPE adds typed UI/workflows, Field Storage mappings, Policy, audit and protected-meta registry. Generic profile fields cannot mutate:
+- password/reset/session internals;
+- Application Password storage;
+- role/capability authority;
+- Membership Enrollment/Entitlement authority;
+- Vault/product-account secrets.
+
+Identity-sensitive actions such as email/password/session/Application Password changes stay dedicated actions with stronger policy/re-auth semantics.
+
+**User/Profile runtime fixtures executed: 0.**
+
+## Role & Capability security — ADR-0097
+
+Native WordPress roles/capabilities/Super Admin remain the authorization source of truth.
+
+WPE adds:
+- Change Plan + impact fingerprint;
+- effective-capability simulation;
+- self-lockout/last-recovery-principal checks;
+- bounded pre-change authorization snapshot;
+- post-apply verification/reconciliation;
+- WPE recovery-mode overlay that never bypasses WordPress authentication;
+- documented WordPress/WP-CLI break-glass recovery path.
+
+Ordinary UI cannot knowingly commit a state with zero viable recovery principals or grant network/Super Admin authority beyond native WordPress rules.
+
+**Role/Capability runtime fixtures executed: 0.**
 
 ## Current physical/compiler profile map
 
@@ -122,8 +154,10 @@ Rollback remains truthful R0–R3. Full rollback cannot be reported over irrever
 - Import: IR1/PT-D vs IR2/PT-E — 0 executed.
 - Backup Remote Copy: BR1/PT-D vs BR2 split/BR3 PT-E — 0 executed.
 - Vault: V1/PT-C vs V2 per-site/network — 0 executed.
+- User/Profile: native WordPress identity authority + WPE security workflow layer — 0 executed.
+- Role/Capability: native WordPress auth authority + WPE Change Plan/anti-lockout layer — 0 executed.
 
-No DDL, migration, table, index, compiler, route, option write, Import, file move, cryptographic fixture or database benchmark has been executed.
+No DDL, migration, table, index, compiler, route, option write, Import, file move, auth mutation, cryptographic fixture or database benchmark has been executed.
 
 ## Provider/runtime state
 
@@ -149,22 +183,21 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - **31/31 Multisite scopes mapped / 0 MS1+**;
-- governance synchronized through **ADR-0095**;
-- Definition/Relations evidence protocols + REST/Import paper profiles committed;
+- governance synchronized through **ADR-0097**;
+- Definition/Relations evidence protocols + REST/Import/User/Profile/Role paper profiles committed;
 - all executable evidence remains zero where not separately certified;
 - no implementation/build/test/provider-certification success claimed.
 
-Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, Definition/Relations fixtures, Query compiler/cache, REST route/idempotency/rate limiter, option writes, Import/source fetch/archive extraction/target mutations, protected file moves/server rules/signed URLs/downloads, OpenAPI server/client, provider/API/webhook/SMTP calls, commerce transactions, Email sends, Backup transfer/Restore/prune, crypto/KDF/key generation, PHPUnit/Playwright, DB/performance benchmarks, release/deployment.
+Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, Definition/Relations fixtures, Query compiler/cache, REST route/idempotency/rate limiter, option writes, Import/source fetch/archive extraction/target mutations, user/session/password/Application Password changes, role/capability/Super Admin changes, protected-file moves/server rules/signed URLs/downloads, OpenAPI server/client, provider/API/webhook/SMTP calls, commerce transactions, Email sends, Backup transfer/Restore/prune, crypto/KDF/key generation, PHPUnit/Playwright, DB/performance benchmarks, release/deployment.
 
 ## Next allowed planning-only priorities
 
-1. User Profile identity/session/change runtime security profile.
-2. Role & Capability anti-lockout/Multisite/Super Admin runtime evidence profile.
-3. Admin Columns + Dynamic Listings N+1/write/cache operational profiles.
-4. Backup archive/container exact artifact/chunk/compression/hash paper protocol.
-5. Product Account OAuth/TUF/service evidence protocols where static detail removes ambiguity.
-6. Keep P-001…P-013 executable gates intact.
-7. Keep governance/Draft PR synchronized.
+1. Admin Columns N+1/write/sort/filter operational profile.
+2. Dynamic Listings protected pagination/cache/SSR operational profile.
+3. Backup archive/container exact artifact/chunk/compression/hash paper protocol.
+4. Product Account OAuth/TUF/service evidence protocols where static detail removes ambiguity.
+5. Keep P-001…P-013 executable gates intact.
+6. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
 
