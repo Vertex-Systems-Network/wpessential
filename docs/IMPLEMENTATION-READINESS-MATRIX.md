@@ -5,146 +5,114 @@ Last reviewed: 2026-08-27
 
 ## Global rule
 
-A module does not become implementation-ready because its UI/options are documented.
+A module can be exhaustive and still be technically blocked and unauthorized.
 
-Before production implementation, all applicable gates must hold:
-1. product-option maturity = Exhaustive;
-2. relevant product semantics = Accepted;
-3. shared platform ADRs = Accepted/superseded;
-4. physical data/dependency/runtime strategy = accepted;
-5. security/performance/compatibility evidence = sufficient;
-6. acceptance-test plan exists;
-7. migration/recovery behavior is defined;
-8. **explicit owner development consent exists under ADR-0014**;
-9. bounded implementation milestone is checkpointed.
+Production implementation requires:
+1. exhaustive option specification;
+2. relevant architecture/semantics Accepted;
+3. physical schema/dependency/security/performance evidence accepted;
+4. acceptance-test plan;
+5. compatibility/toolchain gates;
+6. explicit owner development consent under ADR-0014;
+7. bounded implementation checkpoint.
 
-Current fact: **31/31 surfaces are Exhaustive at product-option level, but owner development consent is NOT GRANTED and multiple technical ADRs remain Proposed. Therefore 0/31 surfaces are authorized for implementation.**
+Current owner consent: **NOT GRANTED**. Therefore **0/31 modules/surfaces are Authorized**.
 
----
+## Shared blockers
 
-# Shared platform blockers
-
-| Shared decision/service | State | Blocks |
+| Shared area | Current state | Future protocol |
 |---|---|---|
-| WP/PHP compatibility floor | ADR-0002 Proposed | all runtime modules |
-| Admin UI/design system | ADR-0005 Proposed | React/admin builder surfaces |
-| Job Service/background adapter | ADR-0006 Proposed | workflows, cron, notifications, backup, import, watermark, membership jobs |
-| Definition Repository physical schema | ADR-0008 Proposed | definition-driven modules |
-| Secrets Vault exact crypto/key profile | ADR-0009 Proposed | connections, providers, backup credentials, remote service |
-| Free↔Pro executable compatibility protocol | ADR-0010 Proposed | all Pro modules/mixed update order |
-| CI/test execution matrix | ADR-0011 Proposed | implementation/release |
-| Build toolchain/externalization | ADR-0012 Proposed | React/TS assets/build |
-| Owner consent | ADR-0014 Accepted rule; **consent absent** | every executable task |
+| WP/PHP/DB compatibility | ADR-0002 Proposed | P-001 |
+| Admin UI/design system | ADR-0005 Proposed | P-002 |
+| Job Service adapter | ADR-0006 Proposed | P-003 |
+| Definition Repository physical schema | ADR-0008 Proposed | P-004 |
+| Secrets Vault exact crypto/key profile | ADR-0009 Proposed | P-005 |
+| Free↔Pro compatibility runtime | ADR-0010 Proposed | P-006 |
+| CI execution | ADR-0011 Proposed | P-007 |
+| Build toolchain | ADR-0012 Proposed | P-008 |
+| Owner development consent | ADR-0014 Accepted, consent absent | blocks all |
 
-Accepted but implementation-profile-pending security architectures:
-- ADR-0017 Product entitlement verification;
-- ADR-0018 Pro update supply-chain trust;
-- ADR-0021 Backup encryption/recovery.
+All protocols: `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`.
 
 ---
 
-# Module readiness table
+# Per-surface readiness
 
-| # | Surface | Product option maturity | Accepted semantics | Main technical blockers | Current readiness |
+| # | Surface | Product options | Architecture/semantics | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | CPT Builder | Exhaustive | Core product semantics documented | compatibility, Definition Repository, UI/build, third-party registration/rewrite tests | **BLOCKED** |
-| 2 | Taxonomy Builder | Exhaustive | Core product semantics documented | compatibility, Definition Repository, reserved/default-term/rewrite tests | **BLOCKED** |
-| 3 | Custom Fields | Exhaustive | Behavioral semantics documented | field storage schema, repeaters/flexible normalization, field migration/runtime benchmark, Vault secret fields | **BLOCKED** |
-| 4 | Relations | Exhaustive | Behavioral semantics documented | physical relation schema/indexes, cardinality concurrency, delete policies, cross-source adapters | **BLOCKED** |
-| 5 | Status Manager | Exhaustive | Behavioral semantics documented | WP status compatibility, domain state machine physical model, transition ordering | **BLOCKED** |
-| 6 | Query Builder | Exhaustive | Behavioral semantics documented | Query AST v1, compilers, cost/security budgets, cache/invalidation, remote source policy | **BLOCKED** |
-| 7 | Custom Tables | Exhaustive | Behavioral semantics documented | DDL/migration planner, DB matrix, rollback, large-table operations, backup integration | **BLOCKED** |
-| 8 | Admin Columns | Exhaustive | Behavioral semantics documented | list-table adapters, sortable/filter capability mapping, N+1 budgets, edit/export safety | **BLOCKED** |
-| 9 | Listings/Templates | Exhaustive | Behavioral semantics documented | renderer schema, SSR/cache/access-context behavior, builder adapters | **BLOCKED** |
-| 10 | Dashboard Widgets | Exhaustive | Behavioral semantics documented | WP dashboard adapters, remote/iframe security, state persistence | **BLOCKED** |
-| 11 | Admin Menu | Exhaustive | Behavioral semantics documented | ownership/conflict precedence, destination authorization, safe recovery | **BLOCKED** |
-| 12 | Settings Page | Exhaustive | Behavioral semantics documented | setting storage contract, site/network scope, Vault-backed fields | **BLOCKED** |
-| 13 | Frontend Dashboard | Exhaustive | Behavioral semantics documented | route schema/resolver, policy cache, renderer/builder integrations | **BLOCKED** |
-| 14 | User Profile | Exhaustive | Behavioral semantics documented | protected meta matrix, account-sensitive updates/re-auth, privacy rules | **BLOCKED** |
-| 15 | Membership | Exhaustive | **ADR-0013, 0015, 0016, 0019, 0020 Accepted** | runtime schema/index benchmark, cache/revocation proof, protected files, billing adapters/reconciliation, migration fixtures | **BLOCKED** |
-| 16 | Builder Widgets | Exhaustive | Adapter separation/certification semantics documented | Component Blueprint physical schema/rendering, per-builder version certification | **BLOCKED** |
-| 17 | Forms & Workflow | Exhaustive | Behavioral semantics documented | form/entry/runtime schemas, Job Service, workflow graph persistence, upload/save-resume/anti-spam evidence | **BLOCKED** |
-| 18 | Cron Builder | Exhaustive | Behavioral semantics documented | Job Service adapter, WP-Cron coexistence, overlap/DST/runner evidence | **BLOCKED** |
-| 19 | Notifications | Exhaustive | Behavioral semantics documented | notification/delivery schema, recipient snapshot rules, channel adapters/deduping | **BLOCKED** |
-| 20 | Email Builder | Exhaustive | Behavioral semantics documented | email component renderer, interception matrix, provider/client certification | **BLOCKED** |
-| 21 | Message & Chat | Exhaustive | Behavioral semantics documented | message/conversation schema, transport, search indexing, private attachment storage, load tests | **BLOCKED** |
-| 22 | REST API Builder | Exhaustive | Behavioral semantics documented | endpoint compiler/schema, auth/resource policy, rate-limit persistence, cache/idempotency evidence | **BLOCKED** |
-| 23 | Webhooks & Connections | Exhaustive | Behavioral semantics documented | Vault profile, OAuth lifecycle, signature/replay inbox, SSRF/DNS/redirect defenses, provider tests | **BLOCKED** |
-| 24 | Backup Manager | Exhaustive | Restore semantics + **ADR-0021 encryption architecture Accepted** | archive/container/KDF profile, provider adapters, large-site/resource tests, restore certification | **BLOCKED** |
-| 25 | Reset Manager | Exhaustive | Behavioral/safety semantics documented | Backup restore-point dependency, destructive runtime/rollback limits, multisite/recovery tests | **BLOCKED** |
-| 26 | Import / Export | Exhaustive | Migration/package fidelity model documented | package/source adapter fixtures, parser limits, resumable checkpoints, rollback/deactivation proof | **BLOCKED** |
-| 27 | Protector | Exhaustive | Security semantics documented | request interception, rate-limit storage, trusted-proxy/recovery/login compatibility tests | **BLOCKED** |
-| 28 | Watermarker / Media Rules | Exhaustive | Non-destructive original invariant documented | image-editor/format/offload certification, derivative storage/naming, batch jobs | **BLOCKED** |
-| 29 | XML-RPC Manager | Exhaustive | Granular endpoint/auth/pingback semantics documented | hook-order/complete-disable tests, parser limits, third-party client/network/multisite compatibility | **BLOCKED** |
-| 30 | Role & Capability Manager | Exhaustive | Behavioral semantics documented | admin-equivalent classifier, anti-lockout/recovery, multisite/Super Admin tests | **BLOCKED** |
-| 31 | Platform / Account / Plans / Docs / Support | Exhaustive platform contract | **ADR-0017/0018 architecture accepted where applicable** | OAuth exact profile, service schemas, signing canonicalizer/library, updater client protocol, support API tests | **BLOCKED** |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration semantics specified | compatibility, Definition repo, UI/build, registration fixtures | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration semantics specified | compatibility, Definition repo, UI/build, rewrite fixtures | No |
+| 3 | Custom Fields Builder | Exhaustive | **ADR-0022 Accepted** plural storage | adapter schemas, scale/query/revision/migration benchmark, Vault | No |
+| 4 | Relations Builder | Exhaustive | typed relation semantics + paper edge model | physical indexes/cardinality/concurrency — P-010 | No |
+| 5 | Status Manager | Exhaustive | product semantics specified | WP status compatibility + generic state-machine physical model | No |
+| 6 | Custom Query Builder | Exhaustive | Query AST v1 paper model | provider compiler/cost/cache/security — P-009 | No |
+| 7 | Custom Tables Builder | Exhaustive | **ADR-0023 Accepted** typed Migration Plan | DB compiler/version matrix, locking/backfill/recovery | No |
+| 8 | Admin Columns Builder | Exhaustive | list-view/source semantics specified | target adapters, N+1/performance, inline/bulk write proof | No |
+| 9 | Dynamic Listings/Templates | Exhaustive | renderer semantics specified | renderer schema, SSR/cache/access context, builder adapters | No |
+| 10 | Dashboard Widgets Manager | Exhaustive | product semantics specified | WP Dashboard compatibility, remote-content/iframe safety | No |
+| 11 | Custom Admin Menu Builder | Exhaustive | product semantics specified | conflict precedence, recovery/safe mode, destination policy | No |
+| 12 | Settings Page Builder | Exhaustive | product semantics specified | storage/site-network scope, Vault fields, frontend exposure | No |
+| 13 | Frontend Dashboard Builder | Exhaustive | product semantics specified | route/component runtime, cache/access context | No |
+| 14 | User Profile Builder | Exhaustive | product semantics specified | protected-meta/identity-change security matrix, route runtime | No |
+| 15 | Membership System | Exhaustive | **ADRs 0013/15/16/19/20/24 Accepted** | runtime schema/cache/protected files/providers/concurrency/privacy tests — P-012 | No |
+| 16 | Builder Widgets Builder | Exhaustive | builder certification architecture specified | component blueprint runtime + builder version certification | No |
+| 17 | Forms & Workflow Builder | Exhaustive | **ADR-0025 Accepted** Entry architecture + Workflow paper model | Entry physical schema/projections, Workflow/Job runtime — P-011 | No |
+| 18 | Cron Job Builder | Exhaustive | Job/Cron product semantics specified | ADR-0006 Job Service, DST/overlap/runtime fixtures | No |
+| 19 | Notification System | Exhaustive | **ADR-0026 Accepted** occurrence/recipient/delivery split | tables/indexes/fan-out/channel certification | No |
+| 20 | Emails Builder | Exhaustive | email-safe product semantics specified | email component renderer/provider/delivery/bounce certification | No |
+| 21 | Message & Chat System | Exhaustive | **ADR-0027 Accepted** runtime/authorization architecture | tables/indexes/search/transport/revocation scale proof | No |
+| 22 | REST API Builder | Exhaustive | **ADR-0028 Accepted** compiled descriptor | compiler/auth/rate/CORS/cache/fuzz/scale evidence | No |
+| 23 | Webhooks & Connections | Exhaustive | security/product semantics specified | Vault, OAuth adapters, webhook replay, SSRF/DNS/redirect proof | No |
+| 24 | Backup Manager | Exhaustive | ADR-0021 encryption architecture + manifest/chunk paper model | exact container/crypto/provider/restore certification — P-013 | No |
+| 25 | Reset Manager | Exhaustive | destructive/recovery semantics specified | Backup restore-point runtime, atomicity/recovery, multisite | No |
+| 26 | Import / Export | Exhaustive | neutral IR/package/migration architecture specified | parsers/checkpoints/media safety/rollback/source fixtures | No |
+| 27 | Protector | Exhaustive | policy/recovery semantics specified | interception/rate/proxy/login/header security fixtures | No |
+| 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivative semantics specified | image-editor/offload/format/memory/batch certification | No |
+| 29 | XML-RPC Manager | Exhaustive | endpoint/method distinction specified | method inventory/hooks/parser/Jetpack/mobile/multisite proof | No |
+| 30 | Role & Capability Manager | Exhaustive | capability/policy architecture specified | anti-lockout/admin-equivalent classifier/multisite recovery | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | remote service + licensing/updater architecture specified | OAuth profile, entitlement crypto, support API schemas, service integration | No |
 
 ---
 
-# Membership readiness detail
+# Accepted architecture does not equal technical readiness
 
-## Accepted product semantics
-- Role ≠ Membership ≠ Subscription ≠ Entitlement.
-- Outer WordPress/security denial cannot be bypassed by Membership.
-- Resource/action specificity and same-specificity deny precedence are fixed.
-- Enrollment states are pending/trialing/active/grace/paused/expired/revoked.
-- Cancellation-at-period-end is intent, not a state.
-- Provider payment status remains source fact translated through policy.
-- Plan draft edits never mutate live access.
-- Published benefit changes explicitly select follow-current/grandfather/scheduled behavior.
-- Billing math belongs to provider where possible; WPE controls access effective timestamps.
-- Team roles are Membership-domain roles.
-- WordPress role sync is off by default and provenance-safe.
+Examples:
+- ADR-0022 says **how storage families are separated**, not the final table/index benchmark.
+- ADR-0023 says **how migrations are represented/reviewed**, not the final MySQL/MariaDB compiler.
+- ADR-0025 says **how Form Entry truth is modeled**, not exact DDL.
+- ADR-0026 says **what notification/delivery states mean**, not provider support.
+- ADR-0027 says **how Chat authorization/storage domains separate**, not realtime transport implementation.
+- ADR-0028 says **REST definitions compile before execution**, not that a compiler exists.
 
-## Still technical/evidence blocked
-- Enrollment/Entitlement physical tables/indexes;
-- access generation/cache invalidation and revoke-to-deny guarantee;
-- group/seat locking/concurrency;
-- private-file delivery environments;
-- WooCommerce/Woo Subscriptions/SureCart adapters;
-- reconciliation/idempotency/out-of-order fixtures;
-- migration fidelity/performance.
+No module may skip evidence merely because an ADR is Accepted.
 
 ---
 
-# Operations readiness detail
+# Recommended implementation order after future consent
 
-## Backup
-Accepted architecture does not yet select exact archive/KDF/AEAD container. Provider “support” requires certification; restore capability requires actual restore tests.
+Consent authorizes work; it does not erase dependencies.
 
-## Reset
-No reset implementation can precede a working verified restore-point contract for scopes that require it.
-
-## Protector
-Security enforcement may not depend on React/menu visibility, remote WPE service availability or license freshness. Recovery must exist before high-risk lockout rules ship.
-
-## XML-RPC
-WPE must preserve the WordPress distinction between authenticated-method enablement and pingback/custom methods; “XML-RPC disabled” marketing requires evidence for the exact enforcement mode.
+1. resolve P-001…P-008 platform blockers;
+2. Platform Kernel + Module Registry + Definition Repository + Policy/Abilities/Assets/Audit;
+3. CPT + Taxonomy Free;
+4. Fields → Relations → Query → Tables/Columns → Listings/Status;
+5. Admin/Identity foundations;
+6. Membership runtime after Policy/Entitlement evidence;
+7. Form Entry + Workflow/Job + Notifications/Email;
+8. REST/Connections/Import;
+9. Backup/Reset/Protection/Media;
+10. Chat/realtime adapters;
+11. AI composition layer only over certified Abilities;
+12. ecosystem SDK/provider scale.
 
 ---
-
-# Implementation order after future owner consent
-
-Consent authorizes engineering work; it does not waive dependency gates.
-
-Recommended dependency order:
-1. authorized evidence spikes for platform blockers;
-2. accept compatibility/UI/build/Definition/Job/Vault/Free↔Pro/CI ADRs;
-3. Platform Kernel;
-4. Free CPT + Taxonomy;
-5. Fields → Relations → Query → Columns/Listings/Status;
-6. Admin/Identity foundations;
-7. Membership after Policy/Entitlement runtime proof;
-8. Forms/Workflow/Jobs/Communication;
-9. Integration/Data Movement;
-10. Backup/Reset/Protection/Media/XML-RPC;
-11. Chat/advanced integrations;
-12. AI/MCP composition only over verified typed Abilities.
 
 # Current conclusion
 
-**Product-option planning:** 31/31 Exhaustive.  
-**Accepted semantics:** partial by module; Membership/security/commercial decisions materially advanced.  
-**Technical implementation readiness:** blocked.  
-**Development authorization:** **NOT GRANTED**.  
-**Allowed work now:** documentation/research/architecture only.
+**Product specification:** 31/31 Exhaustive.  
+**Architecture:** many semantics Accepted; physical/runtime evidence incomplete.  
+**Implemented:** none.  
+**Verified runtime:** none.  
+**Authorized:** 0/31.  
+
+Allowed work remains planning/research/documentation only until the owner explicitly authorizes development/executable spikes.
