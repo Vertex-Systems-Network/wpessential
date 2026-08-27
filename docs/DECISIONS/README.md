@@ -68,6 +68,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0055 | Accepted integration architecture / provider evidence pending | Connections are certified by adapter + provider + capability + API version using I0–I5; Connected does not imply read/write/event support |
 | ADR-0056 | Accepted backup lifecycle / provider evidence pending | Each destination has durable Remote Copy commit/verify/retention/delete/restore states; manifest-last and truthful deletion semantics |
 | ADR-0057 | Accepted membership integration architecture / provider evidence pending | Billing integrations emit verified commercial source facts; reconciliation + WPE policy own Enrollment/Entitlement transitions; provider lifecycle certification uses MB0–MB5 |
+| ADR-0058 | Accepted email delivery architecture / provider evidence pending | Email submission, receiving-server delivery, failures/complaints/suppression and engagement are separate evidence; provider profiles use ET0–ET5 and never infer inbox/read truth |
 
 ## Product specification milestone
 
@@ -86,11 +87,13 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
 - Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
 - Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
+- Email transport certification: `docs/ARCHITECTURE/EMAIL-TRANSPORT-PROVIDER-CERTIFICATION.md`
 - Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
 - Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
 - Support Tickets: `docs/PLATFORM/SUPPORT-TICKET-RUNTIME-PRIVACY-MODEL.md`
 - Entitlement/Backup/Vault/Pro-updater/Protector/XML-RPC: corresponding files under `docs/SECURITY/`
-- Provider evidence: `docs/QUALITY/BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`
+- Backup provider evidence: `docs/QUALITY/BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`
+- Email provider evidence: `docs/QUALITY/EMAIL-TRANSPORT-CERTIFICATION-EVIDENCE-PROTOCOL.md`
 - Shared spikes: `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`
 
 ## Remaining evidence blockers
@@ -103,6 +106,9 @@ Query/Relations/Workflow/Fields/Tables/Forms/Notifications/Chat/REST/Email/Dashb
 
 ### Membership
 Enrollment/Entitlement schema, revoke-to-deny cache, protected-file environments, MB0–MB5 billing adapter/provider certification, customer→WP identity resolution, reconciliation, seat concurrency and migration/privacy runtime fixtures remain open.
+
+### Email/notifications
+Recipient Delivery/Transport Attempt/Event Ledger physical schema, ET0–ET5 transport/provider certification, provider webhook verification, bounce/complaint/suppression truth, renderer/client compatibility and high-volume Job Service evidence remain open.
 
 ### Remote service/distribution
 OAuth endpoint/token lifecycle, entitlement canonicalizer/library/keyset rotation, production TUF client/key custody/conformance, support/service schemas and attachment/privacy runtime remain executable.
