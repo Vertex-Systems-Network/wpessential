@@ -33,7 +33,10 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 | `ADR-0010-free-pro-compatibility.md` | **Proposed / Phase 0 blocker** | explicit Platform API compatibility protocol and safe degraded boot |
 | `ADR-0011-ci-test-matrix.md` | **Proposed / Phase 0 blocker** | layered PR/main/nightly/provider CI matrix |
 | `ADR-0012-build-toolchain.md` | **Proposed / Phase 0 blocker** | Composer + React/TS; Vite preferred pending WordPress externals/tooling spike |
+| `ADR-0013-membership-entitlement-model.md` | **Accepted product architecture** | WordPress Role, Membership Plan/Enrollment, billing Subscription and Entitlement are separate domains; billing providers are adapters, not membership source of truth |
 
 ## Phase 0 rule
 
 Production feature implementation does not begin until the Phase 0 blockers relevant to the platform skeleton are accepted or explicitly superseded. A small, isolated **research spike** may be used to collect evidence for a proposed ADR, but it must not silently become production architecture.
+
+Membership implementation additionally remains blocked on the follow-up technical decisions named by ADR-0013: entitlement schema/cache, access-rule precedence, runtime storage/indexes, protected-file delivery, initial billing adapters, privacy/retention and role-sync conflict semantics.
