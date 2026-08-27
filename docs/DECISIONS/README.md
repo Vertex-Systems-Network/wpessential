@@ -70,6 +70,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0057 | Accepted membership integration architecture / provider evidence pending | Billing integrations emit verified commercial source facts; reconciliation + WPE policy own Enrollment/Entitlement transitions; provider lifecycle certification uses MB0–MB5 |
 | ADR-0058 | Accepted email delivery architecture / provider evidence pending | Email submission, receiving-server delivery, failures/complaints/suppression and engagement are separate evidence; provider profiles use ET0–ET5 and never infer inbox/read truth |
 | ADR-0059 | Accepted JobService semantics / adapter evidence pending | Backend-neutral Job Type/Schedule/Job/Attempt/Runner policy; at-least-once, explicit idempotency, reviewed urgency, fairness, resource/concurrency keys, backpressure and cooperative cancellation |
+| ADR-0060 | Accepted platform/privacy architecture / service evidence pending | Remote-service transmission is purpose-scoped/minimized; Free activation sends nothing; account link ≠ telemetry consent; diagnostics require separate approval; retention/disconnect/deletion boundaries are explicit |
 
 ## Product specification milestone
 
@@ -91,6 +92,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
 - Email transport certification: `docs/ARCHITECTURE/EMAIL-TRANSPORT-PROVIDER-CERTIFICATION.md`
 - Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
+- Remote service privacy/retention: `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
 - Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
 - Support Tickets: `docs/PLATFORM/SUPPORT-TICKET-RUNTIME-PRIVACY-MODEL.md`
 - Entitlement/Backup/Vault/Pro-updater/Protector/XML-RPC: corresponding files under `docs/SECURITY/`
@@ -113,7 +115,7 @@ Enrollment/Entitlement schema, revoke-to-deny cache, protected-file environments
 Recipient Delivery/Transport Attempt/Event Ledger physical schema, ET0–ET5 transport/provider certification, provider webhook verification, bounce/complaint/suppression truth, renderer/client compatibility and high-volume Job Service evidence remain open.
 
 ### Remote service/distribution
-OAuth endpoint/token lifecycle, entitlement canonicalizer/library/keyset rotation, production TUF client/key custody/conformance, support/service schemas and attachment/privacy runtime remain executable.
+ADR-0060 fixes field-level minimization/consent/retention semantics. OAuth endpoint/token lifecycle, exact service schemas/OpenAPI, log redaction, diagnostics upload, resource retention/deletion/export, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
 
 ### Backup/operations/security
 Provider C0–C4 certification, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit implementation, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
