@@ -44,6 +44,9 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 | `ADR-0019-membership-plan-revisions-changes.md` | **Accepted product semantics** | Draft Plan edits do not change live access; published benefit changes choose follow-current/grandfather/scheduled semantics; billing math remains provider responsibility |
 | `ADR-0020-membership-teams-seats-role-sync.md` | **Accepted product semantics** | Team owner/manager/member roles are Membership-domain roles; seat changes are concurrency-sensitive; WordPress role sync is optional/off by default and provenance-safe |
 | `ADR-0021-backup-encryption-recovery.md` | **Accepted security architecture / crypto profile pending** | Encrypted backups use per-backup data keys with independent disaster-recovery wrapping; WordPress salts are not the sole recovery root; key loss semantics explicit |
+| `ADR-0022-field-storage-plural-architecture.md` | **Accepted architecture / adapters pending** | Native WP meta/options where natural; Custom Tables for scale/constraints; Relations for relationships; Vault for secrets; no universal EAV/JSON store |
+| `ADR-0023-custom-table-migration-language.md` | **Accepted architecture / compiler pending** | Desired schema + typed generated Migration Plan; risk/precondition/recovery model; `dbDelta()` is one compiler tool, not universal migration source of truth |
+| `ADR-0024-membership-privacy-retention-defaults.md` | **Accepted product defaults / policy override** | Category-level retention; minimize raw provider/log data; detailed download/IP logging off by default; invitation cleanup candidate 30 days; WP privacy integration required |
 
 ---
 
@@ -68,17 +71,25 @@ This is a product-spec milestone, not an implementation-ready claim.
 Key supporting documents include:
 - `docs/RESEARCH/COMPATIBILITY-UI-TOOLCHAIN-STATIC-RESEARCH.md`
 - `docs/ARCHITECTURE/DEFINITION-REPOSITORY-CANDIDATE-SCHEMA.md`
+- `docs/ARCHITECTURE/DEFINITION-REPOSITORY-SCHEMA-ALTERNATIVES.md`
 - `docs/ARCHITECTURE/FREE-PRO-COMPATIBILITY-STATE-MACHINE.md`
 - `docs/ARCHITECTURE/JOB-SERVICE-CONTRACT.md`
+- `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
+- `docs/ARCHITECTURE/RELATION-RUNTIME-SCHEMA-ALTERNATIVES.md`
+- `docs/ARCHITECTURE/WORKFLOW-RUNTIME-DATA-CANDIDATE.md`
+- `docs/ARCHITECTURE/FIELD-STORAGE-ARCHITECTURE-ALTERNATIVES.md`
+- `docs/ARCHITECTURE/CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md`
 - `docs/SECURITY/SECRETS-VAULT-THREAT-MODEL.md`
 - `docs/SECURITY/PRODUCT-ENTITLEMENT-SIGNING-OFFLINE-GRACE.md`
 - `docs/SECURITY/PRO-UPDATE-SUPPLY-CHAIN-TRUST-MODEL.md`
 - `docs/SECURITY/BACKUP-ARCHIVE-ENCRYPTION-KEY-RECOVERY.md`
 - `docs/QUALITY/CI-TEST-MATRIX-PLAN.md`
+- `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`
 - `docs/MODULES/MEMBERSHIP-ACCESS-POLICY.md`
 - `docs/MODULES/MEMBERSHIP-ENROLLMENT-STATE-MACHINE.md`
 - `docs/MODULES/MEMBERSHIP-PLAN-VERSIONING-UPGRADE-SEMANTICS.md`
 - `docs/MODULES/MEMBERSHIP-TEAMS-SEATS-ROLE-SYNC.md`
+- `docs/MODULES/MEMBERSHIP-PRIVACY-RETENTION-DEFAULTS.md`
 - `docs/ARCHITECTURE/MEMBERSHIP-RUNTIME-DATA-CANDIDATE.md`
 - `docs/ARCHITECTURE/MEMBERSHIP-PROTECTED-FILE-ARCHITECTURE.md`
 - `docs/PLATFORM/REMOTE-SERVICE-API-CONTRACT.md`
@@ -87,7 +98,7 @@ Key supporting documents include:
 
 # Remaining Membership technical blockers
 
-Accepted semantics do **not** mean Membership is implementation-ready.
+Accepted semantics/defaults do **not** mean Membership is implementation-ready.
 
 Still blocked on:
 - entitlement/runtime physical schema/index benchmark;
@@ -96,7 +107,7 @@ Still blocked on:
 - initial billing adapter implementation/reconciliation certification;
 - team/seat concurrency implementation evidence;
 - provider migration fidelity fixtures;
-- operational retention defaults and exporter/eraser verification.
+- exporter/eraser/retention job executable verification.
 
 # Remaining remote-service / Pro updater blockers
 
@@ -118,3 +129,14 @@ Still blocked on:
 - archive streaming/chunk format;
 - restore certification with original server/DB unavailable;
 - optional KMS adapter contracts.
+
+# Remaining data architecture blockers
+
+Accepted storage/migration architecture still needs executable evidence for:
+- native metadata vs Custom Table scale/query behavior;
+- repeatable/structured storage performance;
+- Custom Tables DDL compiler and supported MySQL/MariaDB matrix;
+- large-table migration/locking/recovery;
+- Query AST provider compilers/cost budgets;
+- Relation edge schema/cardinality concurrency;
+- Workflow runtime/Job integration.
