@@ -1,7 +1,7 @@
 # WPEssential Architecture Decision Records
 
 Status: **Phase 0 planning / no development authorization**  
-Last synchronized: 2026-08-27
+Last synchronized: 2026-08-28
 
 ADRs preserve long-lived product, architecture, security, data, compatibility and distribution decisions. Accepted ADRs are never silently changed; a reversal requires a superseding ADR. Exact implementation profiles can remain evidence-gated even when architecture is Accepted.
 
@@ -75,6 +75,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0062 | Accepted Membership billing provider profiles / executable evidence pending | Manual/Woo order/Woo Subscriptions/SureCart source-truth profiles are version-scoped; Woo paid truth uses supported APIs not `Completed` alone; pending cancellation/failure/refund/switch/webhook semantics remain reconciliation-driven |
 | ADR-0063 | Accepted Email provider profiles / executable evidence pending | wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark source-truth profiles normalize only verified provider facts; EE0–EE3 static evidence never implies ET0–ET5 certification; no inbox/read inference |
 | ADR-0064 | Accepted Backup evidence-governance architecture / runtime evidence pending | Provider static research may use versioned SE overlays; overlays can supersede paper capabilities but never produce C0–C4 certification; first refresh raises Box/MinIO/Hetzner and selected profiles without runtime claims |
+| ADR-0065 | Accepted Backup transport/security profiles / runtime evidence pending | Local/browser/FTP/FTPS/SFTP semantics are explicit: browser export is delivery not managed remote storage; plain FTP is legacy/insecure; FTPS requires TLS 1.2+ plus protected data channel; SFTP requires host-key trust; resume/finalization remain runtime-certified capabilities |
 
 ## Product specification milestone
 
@@ -88,6 +89,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
 - Backup family/provider registry: `docs/ARCHITECTURE/BACKUP-PROVIDER-FAMILY-CAPABILITY-REGISTRY.md`
 - Backup static evidence overlay: `docs/ARCHITECTURE/BACKUP-PROVIDER-STATIC-EVIDENCE-REFRESH-2026-08-27.md`
+- Backup local/FTP/SFTP profiles: `docs/ARCHITECTURE/BACKUP-LOCAL-FTP-SFTP-STATIC-PROFILES.md`
 - Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
 - Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
 - Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
@@ -115,6 +117,6 @@ ADR-0063 fixes initial provider source-truth profiles for `wp_mail`, generic SMT
 ADR-0060 fixes field-level minimization/consent/retention semantics and the future 30-fixture evidence protocol is documented, but **none has been executed**. OAuth endpoint/token lifecycle, exact schemas/OpenAPI, log redaction, diagnostics upload, RR0–RR6 cleanup, resource retention/deletion/export, clone isolation, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
 
 ### Backup/operations/security
-ADR-0061/0064 fix provider identity plus auditable static-evidence evolution. The first overlay updates Box→SE3, MinIO→SE3, Rackspace→SE2, Akamai/Linode→SE2, Hetzner→SE3, Bunny→SE2 and MEGA→SE1. **34 targets remain, 0 are C0–C4 certified.** Runtime provider evidence, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit, Protector, Watermark, Reset, Dashboard Widget and XML-RPC certification remain open.
+ADR-0061/0064/0065 fix provider identity, auditable static-evidence evolution and local/browser/FTP/FTPS/SFTP product/security semantics. The first overlay updates Box→SE3, MinIO→SE3, Rackspace→SE2, Akamai/Linode→SE2, Hetzner→SE3, Bunny→SE2 and MEGA→SE1. Local is SE2; browser-export semantics SE3; FTP SE2 legacy/insecure; FTPS SE3; SFTP SE2. **34 targets remain, 0 are C0–C4 certified.** Runtime provider evidence, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit, Protector, Watermark, Reset, Dashboard Widget and XML-RPC certification remain open.
 
 No executable evidence may run before explicit owner consent.
