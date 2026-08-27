@@ -47,8 +47,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035 | renderer/nesting/bindings/assets/accessibility/certification | No |
 | 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 + ADR-0059 + Workflow paper runtime | Entry schema/Workflow/Job evidence — P-003/P-011 | No |
 | 18 | Cron Job Builder | Exhaustive | ADR-0059 + Cron semantics | concrete Job backend/runner/DST/overlap/fairness — P-003 | No |
-| 19 | Notification System | Exhaustive | ADR-0026 + 0058 + 0059 | persistence/fan-out/dedupe/ET provider/Job evidence | No |
-| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 | renderer/client + Delivery/Attempt/Event schema + ET0–ET5 evidence | No |
+| 19 | Notification System | Exhaustive | ADR-0026 + 0058 + 0059 + 0063 | persistence/fan-out/dedupe/ET provider/Job evidence | No |
+| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 + ADR-0063 | renderer/client + Delivery/Attempt/Event schema + six initial EE3 provider profiles but ET0–ET5 runtime evidence still absent | No |
 | 21 | Message & Chat System | Exhaustive | ADR-0027 | indexes/search/transport/private assets/revocation scale | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028 | compiler/auth/rate/CORS/cache/fuzz/scale | No |
 | 23 | Webhooks & Connections | Exhaustive | ADR-0040 + 0055 + 0059 | I0–I5 adapters/Event Inbox/Job evidence | No |
@@ -69,8 +69,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0054/0060 Remote Service trust/privacy boundaries; service runtime pending.
 - ADR-0055 Connections I0–I5; provider evidence pending.
 - ADR-0056 Remote Copy lifecycle; physical/runtime evidence pending.
-- ADR-0057/0062 Membership Billing: provider-specific source truth remains reconciliation/policy input; four initial profiles are BE3 paper maturity, **0 MB-certified**.
-- ADR-0058 Email Delivery: transport/delivery/failure/engagement evidence separation; ET provider evidence pending.
+- ADR-0057/0062 Membership Billing: four initial profiles are BE3 paper maturity, **0 MB-certified**.
+- ADR-0058/0063 Email Delivery: six initial provider profiles are EE3 paper maturity, **0 ET-certified**; provider terminology does not override WPE truth.
 - ADR-0059 Job Service semantics accepted; Action Scheduler mapping remains P-003.
 
 No surface may skip evidence merely because an ADR is Accepted.
@@ -83,7 +83,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 4. Fields → Relations → Query → Tables/Columns → Blueprint → Listings/Status;
 5. Settings/Menu/Dashboard/Profile/Roles/Widgets;
 6. Membership runtime → Manual → Woo one-time → Woo Subscriptions/SureCart MB certification;
-7. Forms/Workflow/Jobs → Notifications → Email renderer/ET providers;
+7. Forms/Workflow/Jobs → Notifications → Email renderer → wp_mail/SMTP baseline → selected API providers → ET certification;
 8. REST/Connections/Event Inbox/Import;
 9. Backup core → Remote Copy → provider adapters/C3 restore → operations/security modules;
 10. Chat;
@@ -94,7 +94,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0062; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0063; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
