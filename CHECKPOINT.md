@@ -7,19 +7,18 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before runtime/source/build/migration/test implementation, dependency/package setup, crypto key generation, executable benchmark or provider/API integration.
+Explicit owner consent is required before any runtime/source/build/migration/test implementation, package/dependency setup, cryptographic key generation, executable benchmark/spike, provider integration or release packaging.
 
-`continue`, `proceed`, planning approval, ADR acceptance, technical readiness or Phase 0 completion do **not** authorize development.
+`continue`, `proceed`, planning approval, ADR acceptance, readiness or Phase 0 completion do **not** authorize development.
 
 Source of truth:
 - `/DEVELOPMENT-CONSENT.md`
+- `AGENTS.md`
 - `docs/DECISIONS/ADR-0014-development-consent-gate.md`
 
-No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, implementation test, benchmark, provider integration or cryptographic implementation has been created/run.
+No production PHP/React source, plugin bootstrap, DB migration/table, package scaffold, executable test/benchmark, provider integration or cryptographic implementation has been created/run.
 
----
-
-# Product specification milestone
+## Product-spec milestone
 
 - **31/31** surfaces have screen/option inventory.
 - **31/31** have behavioral specification.
@@ -28,183 +27,129 @@ No production PHP/React source, plugin bootstrap, DB migration/table, package sc
 
 Primary planning sources:
 - `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
-- `docs/MODULES/README.md`
 - `docs/IMPLEMENTATION-READINESS-MATRIX.md`
 - `docs/OPEN-DECISIONS-REGISTER.md`
 - `docs/DECISIONS/README.md`
 
-Exhaustive specification does not imply physical schema, provider, performance or security verification.
+Exhaustive product specification is not a runtime/security/performance/provider verification claim.
 
----
+## Accepted ADR state
 
-# Accepted ADR state
-
-Accepted decisions now extend through **ADR-0047**.
+Accepted decisions now extend through **ADR-0052**.
 
 Latest accepted additions:
-- ADR-0042 — Product entitlement Ed25519 + RFC 8785 JCS + domain-separated/root-authorized signer profile.
-- ADR-0043 — Backup Sodium secretstream/XChaCha20/Argon2id crypto profile; native ext-sodium required for encrypted Backup v1.
-- ADR-0044 — Pro automated updates target TUF 1.0-compatible Root/Targets/Snapshot/Timestamp semantics; current PHP-TUF not production-selected.
-- ADR-0045 — Protector trusted-proxy request identity + shared atomic Rate Limit service + non-authenticating recovery mode.
-- ADR-0046 — Watermark non-destructive derivative identity/storage architecture.
-- ADR-0047 — Reset reviewed Plan + verified restore point + durable execution journal + recovery-principal invariant.
+- **ADR-0048** — Secrets Vault uses a random Vault Root Key, per-secret DEKs and versioned key slots; external key preferred, WP-derived convenience slot allowed with warnings, no plaintext fallback.
+- **ADR-0049** — Definition Repository relational shape is Definitions + immutable Revisions + revision-aware Dependencies; runtime business data stays outside.
+- **ADR-0050** — Support Ticket authority lives in WPE service; WP is a capability-checked client/minimal cache; diagnostics are previewed/redacted before upload.
+- **ADR-0051** — Dashboard Widgets treat remote content as untrusted data; remote HTML/JS is not injected into wp-admin; arbitrary iframe is off by default.
+- **ADR-0052** — XML-RPC enforcement is layered: endpoint/request gate, registered-method policy, authenticated-method policy and core auth/capability checks are distinct. `xmlrpc_enabled` is not presented as full endpoint disable.
 
-ADRs 0035–0041 previously accepted Component Blueprint, Settings, Admin Menu, Status, Listings, Connections/Webhooks and Import runtime architecture.
+Previously accepted ADRs cover Free/Pro distribution, Abilities, unsafe-code/SQL boundaries, license-expiry continuity, Membership semantics, crypto/update trust, Backup recovery/crypto, Fields/Tables/Forms/Notifications/Chat/REST/Email, Dashboard/Profile/Roles, Component Blueprint, Settings/Admin Menu/Status/Listings, Connections/Webhooks, Import, Protector, Watermark and Reset.
 
-Earlier ADRs preserve Free/Pro distribution, Abilities, unsafe-code/SQL boundaries, license-expiry behavior, Membership semantics, Field/Table/Form/Notification/Chat/REST/Email/Dashboard/Profile/Role/Backup/OAuth architecture.
-
----
-
-# Platform blockers still requiring executable evidence
+## Platform blockers still requiring executable evidence
 
 - ADR-0002 compatibility floor — P-001.
 - ADR-0005 UI/design system — P-002.
 - ADR-0006 Job Service adapter — P-003.
-- ADR-0008 Definition Repository exact DDL/indexes — P-004.
-- ADR-0009 Secrets Vault exact crypto/key/recovery — P-005.
 - ADR-0010 Free↔Pro executable compatibility — P-006.
 - ADR-0011 CI implementation — P-007.
 - ADR-0012 build toolchain/externalization — P-008.
 - Query/Relations/Workflow/Membership/Backup evidence — P-009…P-013.
 
-All protocols live under `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`; **none has been executed**.
+ADR-0008 and ADR-0009 have materially narrowed architecture through ADR-0049 and ADR-0048 respectively, but exact DDL/index/crypto interoperability remains evidence-gated.
 
----
+All future protocols live under `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`; **none has been executed**.
 
-# Current shared architecture snapshot
+## Current architecture snapshot
 
-## Definitions/data/runtime
-- Definition Repository: stable identity + immutable revisions + current/published pointers + dependencies.
-- Query AST: typed/provider-neutral; no raw SQL/PHP node.
-- Relations: universal typed edge model paper preference; reverse lookup/cardinality first-class.
-- Workflow: runs pin published revision; Job Service handles execution; at-least-once/idempotency semantics.
-- Fields: native WP meta/options where natural; Custom Tables for scale/constraints; Relations for relationships; Vault for secrets.
-- Custom Tables: desired vs observed schema + typed Migration Plan.
-- Form Entry/Notification/Chat/REST/Email runtime domains are separated and versioned.
+### Definition/Data platform
+- Definition Repository: stable identity rows + immutable revision rows + revision-aware dependencies.
+- Query: typed/provider-neutral AST; no raw SQL/PHP node.
+- Relations: typed edge model candidate with reverse lookup/cardinality first-class.
+- Workflow: runs pin published revisions; execution belongs to Job Service; at-least-once/idempotency semantics.
+- Fields: native WP meta/options where natural, Custom Tables for scale/constraints, Relations for relationships, Vault for secrets.
+- Custom Tables: desired schema != observed schema; typed Migration Plan controls change.
 
-## Presentation/admin
-- Component Blueprint is shared across Builder Widgets, Dashboard and Listings; builders are adapters.
-- Settings have explicit site/network inheritance and separate runtime values.
-- Admin Menu is runtime-discovered/transformed; hide ≠ authorization; safe mode restores native navigation.
-- Status separates WordPress Post Status from generic domain state machine.
-- Listings use authorization-aware Query results + SSR Component Blueprint + optional enhancement.
-- Dashboard routes authorize server-side on direct access.
-- User/Profile identity changes and credentials are separate from generic field mutations.
-- Role mutations preserve a legitimate recovery-principal invariant.
+### Presentation/Admin
+- Component Blueprint is shared by Builder Widgets, Dashboard and Listings; third-party builders are adapters.
+- Settings separate Definitions from site/network scoped values.
+- Admin Menu is runtime-discovered/transformed; hiding is not authorization; safe mode restores native navigation.
+- Status Manager separates WordPress Post Status from generic domain state machine.
+- Listings use authorization-aware Query results and SSR Component Blueprint.
+- Dashboard routes always reauthorize server-side on direct access.
+- Dashboard Widgets never trust remote HTML/JS as admin markup.
 
-## Integrations/import
+### Identity/Security
+- Generic profile fields cannot mutate passwords, sessions, Application Passwords, roles/caps or Membership authority.
+- Role changes preserve a real recovery-principal invariant.
+- Vault: random VRK → per-secret DEK → key slots; no plaintext fallback; write-only secret UI.
+- Protector: trusted proxy headers only from trusted peers; security rate limiting requires atomic storage semantics.
+- XML-RPC: authenticated-method disabling, per-method policy, pingback policy and complete-deny are separate concepts.
+
+### Integrations/Import/Support
 - Connections centralizes Safe HTTP, verified webhook ingress and normalized Event Inbox.
 - Import uses reviewed Plan/Dry Run fingerprint, durable checkpoint, identity map, change journal and truthful rollback levels.
+- Support Tickets are WPE-service authoritative; local client stores only safe minimal cache; attachments/diagnostics require policy + redaction.
 
----
+## Remote service / distribution
 
-# Remote service / distribution security
+### Product entitlement — ADR-0042
+Accepted: Ed25519 + RFC 8785 JCS + WPE domain separation + `kid` + root-authorized signer keysets + freshness/site binding.
 
-## Product entitlement — ADR-0042
-Accepted:
-- Ed25519;
-- RFC 8785 JCS;
-- WPE domain separation;
-- signer `kid` + root-authorized keyset;
-- monotonic sequence/freshness/site binding.
+Still unverified: canonicalizer/library interoperability, root custody/rotation, exact envelope bytes and operational TTL/skew values.
 
-Open executable evidence:
-- canonicalizer/library choice;
-- exact envelope/keyset byte schema;
-- root custody/rotation;
-- TTL/skew values;
-- service↔PHP interoperability/malformed/replay fixtures.
+### Pro updater — ADR-0044
+Accepted: TUF 1.0-compatible Root/Targets/Snapshot/Timestamp semantics, rollback/freeze/key-rotation defenses and signed artifact metadata. Current PHP-TUF remains **not production-selected** while upstream warns against production use.
 
-## Pro updater — ADR-0044
-Accepted:
-- TUF 1.0-compatible Root/Targets/Snapshot/Timestamp semantics;
-- Root 2-of-3 candidate;
-- stable Targets 2-of-3 candidate;
-- short-lived Timestamp/Snapshot direction;
-- consistent snapshots direction;
-- signed target length/hash/product/channel/compatibility metadata.
+### OAuth — ADR-0034
+Accepted: public client + Authorization Code/PKCE S256 + fixed WPE callback + one-time site-bound completion artifact. Exact service/token lifecycle remains unimplemented.
 
-Current PHP-TUF is not production-selected due its upstream pre-release/non-production warning.
+## Backup / Operations
 
-Open: production verifier/client strategy, exact metadata/runbooks/expiry values, conformance/key-compromise/freeze/rollback/update-order fixtures.
+- Backup canonical model: manifest-first independently verifiable multipart bundle.
+- Backup crypto: random Backup Set DEK; Sodium secretstream XChaCha20-Poly1305; XChaCha20 DEK wrapping; Argon2id passphrase mode; independent recovery slots; native ext-sodium required for encrypted v1.
+- Reset: reviewed Plan → verified restore point → durable journal → staged execution → health verification.
+- Watermark: original/current source is never overwritten by WPE; versioned derivatives key off source fingerprint + Rule revision + output/engine profile.
+- XML-RPC: layered method/endpoint policy, with compatibility warnings for integrations such as Jetpack.
 
-## OAuth — ADR-0034
-Fixed WPE callback + one-time site-bound completion artifact + PKCE S256; executable service/token lifecycle still pending.
+## Membership
 
----
+Accepted semantics remain: Role ≠ Membership ≠ Billing ≠ Entitlement; outer security deny cannot be bypassed; deterministic access precedence/lifecycle; Plan revision semantics; teams separate from WP roles; privacy-minimized defaults.
 
-# Backup / recovery / protection
+Remaining evidence: physical schema/indexes, revoke-to-deny cache, protected-file delivery, seat concurrency, Woo/Woo Subscriptions/SureCart reconciliation, migration/provider/privacy fixtures.
 
-## Backup crypto — ADR-0043
-Accepted:
-- random 256-bit Backup Set DEK;
-- secretstream XChaCha20-Poly1305 for encrypted parts;
-- XChaCha20-Poly1305 DEK wrapping;
-- Argon2id passphrase KEK;
-- independent recovery-key slots;
-- native ext-sodium required; no plaintext/weak fallback.
+## Verification state
 
-Open: exact framing/AAD, KDF performance floor, recovery-kit encoding, part/chunk sizing/resume, provider/cross-server restore proof.
-
-## Protector — ADR-0045
-Trusted proxy headers only from configured peers; security rate limiter requires atomic adapter; password gate is not WP login; recovery mode disables WPE overlay without authenticating anyone.
-
-## Watermark — ADR-0046
-Original/current attachment source remains intact; WPE stores versioned derivatives keyed by source fingerprint + Rule revision + output/engine profile. Private source stays private.
-
-## Reset — ADR-0047
-Reset is staged/journaled, not fake global ACID. High-risk reset requires verified restore point. Journal must survive reset scope. Last recovery principal cannot be knowingly removed without replacement.
-
-## XML-RPC
-Product options exhaustive; exact runtime complete-deny/compatibility proof still open.
-
----
-
-# Membership state
-
-Accepted semantics/defaults remain unchanged: Role ≠ Membership ≠ Billing ≠ Entitlement; outer deny cannot be bypassed; deterministic access precedence/lifecycle; Plan revision semantics; separate team roles; privacy-minimized defaults.
-
-Remaining evidence: physical schema/indexes, revoke-to-deny cache, protected files, seat concurrency, Woo/Woo Subscriptions/SureCart reconciliation, migration/provider/privacy fixtures.
-
----
-
-# Verification
-
-## Verified
-- planning branch remains isolated from `main`;
+### Verified
+- planning branch isolated from `main`;
 - 31/31 Exhaustive; 0/31 Authorized;
-- ADR index synchronized through ADR-0047;
-- Open Decisions synchronized through latest crypto/operations profiles;
-- Readiness synchronized through ADR-0047;
-- static primary-source research recorded where used;
+- ADR files present through ADR-0052;
+- checkpoint synchronized through ADR-0052;
 - no implementation/build/test success claimed.
 
-## Not performed / intentionally blocked
+### Not performed / intentionally blocked
 - Composer/npm install;
 - production PHP/React source;
 - plugin activation/bootstrap;
 - DB migrations/tables;
-- cryptographic key generation/encryption/signing code;
+- crypto key generation/encryption/signing code;
 - PHPUnit/Playwright;
 - P-001…P-013 spikes;
-- provider/API implementation;
+- provider/API implementations;
 - performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
 
 Reason: explicit owner development/executable-spike consent has not been granted.
 
----
+## Next allowed planning-only priorities
 
-# Next allowed planning-only priorities
-
-1. Secrets Vault exact envelope/key hierarchy/rotation profile;
-2. Definition Repository physical schema alternatives narrowed against compatibility constraints;
-3. Support Ticket runtime/storage/attachment/privacy model;
-4. Dashboard Widgets remote-content/iframe trust model;
-5. XML-RPC complete-deny/compatibility paper matrix;
-6. Backup provider certification contract per protocol family;
-7. synchronize Draft PR after each milestone.
+1. Backup provider certification contract by protocol family and destination capability profile.
+2. Remote Service API schemas for account, entitlement, site activation, plans, support and signed metadata.
+3. Provider-neutral Connection capability contract and certification states.
+4. Backup restore/provider commit/finalization semantics.
+5. Extend consent-gated spike protocols where new evidence gates are identified.
+6. Keep Readiness/Open Decisions/Draft PR synchronized.
 
 Before **any executable work**, obtain explicit owner consent.
 
