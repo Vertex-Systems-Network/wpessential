@@ -12,200 +12,99 @@ This file contains only decisions that remain unresolved or whose exact implemen
 - **Accepted architecture / profile pending** — architecture accepted, exact library/format/runtime still open.
 - **Deferred** — not blocking current implementation phase.
 
+All future executable evidence protocols are defined in `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`; none are authorized.
+
 ---
 
 # A. Platform technical blockers
 
 ## D-001 — Compatibility floor
-Related: ADR-0002  
-Current candidate: WordPress 6.9 minimum, WordPress 7.1 current target, PHP 8.3 minimum candidate.
+Related: ADR-0002. Candidate: WordPress 6.9 minimum, WordPress 7.1 current target, PHP 8.3 minimum candidate.
 
-Still need:
-- executable WP/PHP/DB activation matrix;
-- Composer/runtime dependency proof;
-- page-builder/WooCommerce integration matrix;
-- multisite support declaration per core surface;
-- final market/security support-window review.
+Need executable WP/PHP/DB activation/dependency/integration matrix, multisite declaration and final support-window review.
 
-**State:** Executable evidence required.  
+**State:** Executable evidence required — P-001.  
 **Consent:** Not granted.
 
 ## D-002 — Admin UI/design-system runtime
-Related: ADR-0005
+Related: ADR-0005.
 
-Paper direction:
-- React + TypeScript;
-- WPE wrapper API;
-- stable WordPress Design System/components/DataViews/DataForm;
-- Untitled UI visual language and only compatibility-reviewed MIT source;
-- Lucide behind icon abstraction.
+Paper direction: React + TypeScript, WPE wrapper API, stable WordPress components/DataViews/DataForm, Untitled-inspired visual language, Lucide behind abstraction.
 
-Still need:
-- representative list/editor/dialog/form spike;
-- React runtime/externalization proof;
-- CSS scoping;
-- RTL/localization;
-- keyboard/screen-reader checks;
-- bundle measurements.
+Need runtime externalization, CSS scoping, accessibility/keyboard, RTL/i18n and bundle evidence.
 
-**State:** Executable evidence required.  
-**Consent:** Not granted.
+**State:** Executable evidence required — P-002.
 
 ## D-003 — Job Service concrete adapter
-Related: ADR-0006
+Related: ADR-0006.
 
-Paper contract accepted at service-interface level; Action Scheduler preferred implementation candidate.
+Action Scheduler remains preferred candidate behind WPE Job Service. Need coexistence, claims/concurrency, idempotency/retry/cancel, pruning, multisite, runner and load/recovery proof.
 
-Need:
-- coexistence/version loading;
-- claims/concurrency;
-- idempotency/retry/cancel;
-- pruning;
-- multisite;
-- WP-CLI/system-cron runner;
-- load/recovery evidence.
-
-**State:** Executable evidence required.
+**State:** Executable evidence required — P-003.
 
 ## D-004 — Definition Repository physical schema
-Related: ADR-0008
+Related: ADR-0008.
 
-Paper candidate:
-- stable UUID identity;
-- immutable revisions;
-- current/published revision pointers;
-- dependency edges;
-- typed versioned payload;
-- normalized proven index fields only.
+Paper preference: stable UUID identity + immutable revisions + current/published pointers + dependency edges + normalized proven indexes.
 
-Need benchmark/DDL evidence:
-- table/index types;
-- transaction/locking;
-- 10k/100k definition behavior;
-- multisite;
-- import remapping;
-- tombstones/deletion.
+Need exact DDL/index/locking/import/multisite/tombstone benchmark.
 
-**State:** Executable evidence required.
+**State:** Executable evidence required — P-004.
 
 ## D-005 — Secrets Vault exact cryptographic/key profile
-Related: ADR-0009
+Related: ADR-0009.
 
-Accepted principles:
-- secrets use references;
-- no plaintext fallback;
-- external key separation preferred;
-- DB-only breach mitigation, not full-server-compromise claim.
+Accepted principles: references, no plaintext fallback, external key separation preferred, honest full-server-compromise limits.
 
-Open:
-- exact AEAD/envelope format;
-- key derivation/wrapping;
-- salt-change behavior;
-- key rotation;
-- multisite isolation;
-- lost-key UX;
-- staging/domain migration.
+Need exact AEAD/envelope, rotation, salt/key loss, multisite and staging/restore behavior.
 
-**State:** Executable crypto/storage evidence required.
+**State:** Executable evidence required — P-005.
 
 ## D-006 — Free ↔ Pro executable compatibility
-Related: ADR-0010
+Related: ADR-0010.
 
-Paper state machine exists.
-Need:
-- exact Platform API version format;
-- boot/update order executable matrix;
-- downgrade behavior;
-- migration ownership;
-- shared dependency collision proof;
-- rollback fixtures.
+Need exact Platform API version format, boot/update/downgrade matrix, migration ownership, dependency collision and rollback fixtures.
 
-**State:** Executable evidence required.
+**State:** Executable evidence required — P-006.
 
 ## D-007 — CI/test implementation
-Related: ADR-0011
+Related: ADR-0011.
 
-Paper lanes/fixtures exist.
-Need executable tooling and final matrix after D-001/D-008.
+Paper lanes exist; executable CI/tooling still required after compatibility/build choices.
 
-**State:** Executable evidence required.
+**State:** Executable evidence required — P-007.
 
 ## D-008 — Build toolchain
-Related: ADR-0012
+Related: ADR-0012.
 
-Current candidate order:
-1. `@wordpress/build`;
-2. `@wordpress/scripts` comparison/fallback;
-3. Vite only for demonstrated unmet need.
+Candidate order: `@wordpress/build` → `@wordpress/scripts` comparison/fallback → Vite only for proven unmet need.
 
-Need:
-- TS/React build;
-- WordPress package/React externalization;
-- chunks/manifests;
-- CSS Modules/scoping/RTL;
-- translation extraction;
-- test integration;
-- production packaging/bundle budgets.
+Need TS/React externalization, chunks/manifests, CSS/RTL, translations, tests and production artifact evidence.
 
-**State:** Executable evidence required.
+**State:** Executable evidence required — P-008.
 
 ---
 
 # B. Remote service / commercial entitlement / Pro update
 
 ## S-001 — OAuth account-link exact profile
-Paper direction: browser Authorization Code + PKCE; plugin is public client; WPE credentials collected on WPE service domain.
+Paper direction: browser Authorization Code + PKCE; plugin is public client; credentials handled on WPE service domain.
 
-Open:
-- exact callback registration/trust model;
-- fixed-service-return vs site-specific redirect registration;
-- token lifetimes/rotation;
-- disconnect/revocation;
-- Device Authorization fallback decision.
+Open: callback trust/registration, token lifetimes/rotation/revocation and Device Authorization fallback.
 
 **State:** Static threat-model + executable integration evidence required.
 
 ## S-002 — Product entitlement signature profile
 Related: ADR-0017 — architecture Accepted.
 
-Accepted:
-- signed;
-- site-bound;
-- issuer/environment bound;
-- freshness-aware;
-- anti-rollback;
-- outage distinct from expiry;
-- grace only if service-signed;
-- WPE license separate from Membership access.
-
-Open:
-- exact serialization/canonicalization;
-- algorithm/library;
-- public key distribution;
-- key rotation/emergency compromise;
-- exact freshness/grace windows;
-- tamper/rollback fixtures.
+Open: serialization/canonicalization, algorithm/library, key distribution/rotation, exact freshness/grace windows and tamper/rollback fixtures.
 
 **State:** Accepted architecture / profile pending.
 
 ## S-003 — Pro updater exact trust/client profile
 Related: ADR-0018 — architecture Accepted.
 
-Accepted:
-- Free plugin is not external Pro updater;
-- signed update trust;
-- package digest/signature;
-- rollback/freeze/compromise defenses;
-- compatibility gating;
-- TUF-compatible design preferred for evaluation.
-
-Open:
-- exact client/library;
-- metadata role thresholds/key custody;
-- release/freshness/root rotation;
-- rollback packages;
-- CDN/cache semantics;
-- update-order/tamper/freeze tests.
+Open: exact TUF-compatible/client/library choice, role thresholds/key custody, root/release/freshness rotation, rollback packages and update-order/tamper/freeze tests.
 
 **State:** Accepted architecture / protocol pending.
 
@@ -213,185 +112,129 @@ Open:
 
 # C. Membership technical blockers
 
-Resolved semantics:
-- M-002 Access precedence → ADR-0015 Accepted.
-- M-004 Enrollment lifecycle → ADR-0016 Accepted.
-- M-007 Plan changes/upgrades/downgrades → ADR-0019 Accepted.
-- M-008 Team/seat product semantics → ADR-0020 Accepted; concurrency implementation still open.
-- M-009 Role-sync semantics → ADR-0020 Accepted; runtime reconciliation still open.
+Resolved product semantics/defaults:
+- access precedence → ADR-0015;
+- Enrollment lifecycle → ADR-0016;
+- Plan revisions/upgrades/downgrades → ADR-0019;
+- team/seat + role-sync semantics → ADR-0020;
+- privacy/retention product defaults → ADR-0024.
 
 ## M-001 — Entitlement/runtime physical schema
-Paper model exists in `ARCHITECTURE/MEMBERSHIP-RUNTIME-DATA-CANDIDATE.md`.
+Need exact tables/types/indexes, current/history split, source reference uniqueness, materialization and scale/multisite evidence.
 
-Need:
-- exact tables/types/indexes;
-- current-vs-history split;
-- source reference uniqueness;
-- entitlement materialization strategy;
-- 100k-user/1M-entitlement benchmark;
-- multisite scope.
-
-**State:** Executable benchmark required.
+**State:** Executable benchmark required — P-012.
 
 ## M-003 — Access cache/invalidation
-Accepted security requirement: stale allow after revocation/hard deny is a bug.
+Accepted security requirement: stale allow after revoke/hard deny is a defect.
 
-Need:
-- request-local vs persistent cache;
-- access generation model;
-- object-cache compatibility;
-- invalidation transaction ordering;
-- stampede control;
-- revoke-to-deny latency tests.
+Need generation/cache model, object-cache behavior, transaction ordering, stampede control and revoke-to-deny tests.
 
-**State:** Executable concurrency/load evidence required.
+**State:** Executable concurrency/load evidence required — P-012.
 
 ## M-005 — Protected file delivery
-Paper architecture: private origin + authorized delivery; ordinary public uploads URL is not protection.
+Paper architecture: private origin + authorized delivery.
 
-Need certify:
-- Apache;
-- Nginx/X-Accel style delivery;
-- PHP streaming fallback;
-- S3/private object storage signed URLs;
-- CDN/media-offload adapters;
-- Range/large-file/cache headers;
-- migration from public media.
+Need Apache/Nginx/PHP streaming/private object storage/CDN/Range/large-file/public-media migration certification.
 
 **State:** Executable environment certification required.
 
 ## M-006 — Billing adapters/reconciliation
-Priority candidate:
-1. Manual/Free;
-2. WooCommerce one-time;
-3. WooCommerce Subscriptions;
-4. SureCart.
+Priority candidate: Manual/Free → WooCommerce one-time → Woo Subscriptions → SureCart.
 
-Need:
-- exact product/plan mapping;
-- webhook/source event verification;
-- idempotency/out-of-order handling;
-- refunds/disputes/cancellations;
-- reconciliation jobs;
-- provider API version compatibility;
-- support/error UX.
+Need source mapping, signatures/events, idempotency/out-of-order handling, refund/dispute/cancel semantics, reconciliation and provider-version certification.
 
 **State:** Executable provider certification required.
 
-## M-010 — Operational privacy/retention defaults
-Architecture/classification exists.
-Need final operational defaults for:
-- Enrollment history;
-- provider event receipts;
-- invitation/team records;
-- protected-download audit;
-- erasure/anonymization;
-- provider references;
-- backup-restoration implications.
+## M-010 — Privacy/retention runtime verification
+Product defaults accepted in ADR-0024.
 
-**State:** Ready for non-executable decision + later tests.
+Still need exporter/eraser batching, cleanup races, user deletion/team ownership, provider-reference and backup-restore privacy tests.
+
+**State:** Accepted product defaults / executable verification required.
 
 ---
 
 # D. Backup / Reset / Protection / Media technical blockers
 
 ## B-001 — Backup archive/container format
-Open:
-- ZIP/TAR/chunk format;
-- streaming manifest layout;
-- checksums;
-- split-part semantics;
-- resumability;
-- corruption/missing-part handling.
+Need exact ZIP/TAR/chunk/manifest/checksum/split/resume/corruption handling.
 
 **State:** Executable evidence required.
 
 ## B-002 — Backup encryption exact profile
-Related: ADR-0021 — architecture Accepted.
+Related: ADR-0021.
 
-Accepted:
-- per-backup DEK;
-- independent disaster-recovery wrapping;
-- WordPress salts not sole recovery root;
-- loss of all recovery material may make restore impossible and must be explicit.
-
-Open:
-- exact AEAD/container;
-- KDF/passphrase thresholds;
-- recovery-key format/export/rotation;
-- optional KMS adapter;
-- streaming encryption/decryption;
-- cross-server disaster restore certification.
+Open: exact AEAD/container/KDF, recovery-key format/rotation, optional KMS, streaming encryption and cross-server restore certification.
 
 **State:** Accepted architecture / crypto profile pending.
 
 ## B-003 — Backup provider certification
-34 named destinations are catalog targets; shared protocol adapters preferred.
-Need actual provider acceptance for each marketed support claim.
+34 destinations are targets, not claims. Each marketed provider requires upload/resume/download/integrity/error/restore certification.
 
-**State:** Executable provider certification required.
+**State:** Executable evidence required — P-013.
 
 ## B-004 — Reset atomicity/recovery limits
-Product options/safety exhaustive.
-Need:
-- actual owner adapters;
-- restore-point integration;
-- mid-run failure recovery;
-- current-admin protections;
-- multisite certification.
+Need restore-point integration, mid-run recovery, admin protection and multisite proof.
 
 **State:** Executable evidence required.
 
-## P-001 — Protector interception/rate/recovery
-Product options exhaustive.
-Need:
-- hook/request interception ordering;
-- rate-limit storage/atomicity;
-- trusted proxy resolution;
-- login alias compatibility;
-- recovery constant/token design;
-- CSP/header conflict tests.
+## P-001 — Protector runtime enforcement
+Need hook ordering, atomic rate limits, proxy resolution, login alias compatibility, recovery mechanism and header/CSP conflict tests.
 
 **State:** Executable security evidence required.
 
 ## W-001 — Watermark media pipeline
-Product options exhaustive.
-Need:
-- derivative naming/storage;
-- active image-editor capabilities;
-- output format matrix;
-- animation/SVG/EXIF behavior;
-- offload adapters;
-- large image memory/load tests.
+Need derivative naming/storage, image-editor format capabilities, animation/SVG/EXIF/offload and memory/load certification.
 
-**State:** Executable certification required.
+**State:** Executable evidence required.
 
 ## X-001 — XML-RPC enforcement profile
-Product options exhaustive.
-Accepted planning distinction: authenticated XML-RPC method enablement is not identical to disabling pingbacks/all custom methods.
-
-Need:
-- exact hook ordering;
-- full method inventory fixture;
-- complete-deny evidence;
-- parser/element-limit hook compatibility;
-- mobile/Jetpack/legacy integration fixtures;
-- network/multisite behavior.
+Need actual method inventory, hook ordering, parser/request-limit compatibility, complete-deny and Jetpack/mobile/multisite fixtures.
 
 **State:** Executable compatibility/security evidence required.
 
 ---
 
-# E. Other module technical queues
+# E. Data / Query / Workflow technical queues
 
-## Content/Data
-- Field storage schema and migration language;
-- Relation storage/index/cardinality transactions;
-- Status domain-state physical model;
-- Query AST/compiler/cost budget;
-- Custom-table DDL planner;
-- list-table adapter API;
-- Listing renderer/cache schema.
+Resolved architecture:
+- plural Field storage architecture → ADR-0022;
+- typed Custom Tables migration language → ADR-0023.
+
+Still open:
+
+## Q-001 — Query AST compiler/cost budgets
+Paper AST exists. Need WP/custom-table compiler security, parameter/identifier handling, explain/cost guard, caching and scale evidence.
+
+**State:** Executable evidence required — P-009.
+
+## R-001 — Relations physical runtime schema
+Paper preference: universal typed edge-table family with first-class reverse lookup/cardinality enforcement.
+
+Need index/cardinality/concurrency/orphan/delete benchmarks and proof whether per-relation tables are ever necessary.
+
+**State:** Executable evidence required — P-010.
+
+## WF-001 — Workflow runtime/Job integration
+Paper architecture: Definition Repository → Workflow Runtime → Job Service; runs pin published revision.
+
+Need retry/idempotency/waits/parallel/cancel/unknown-outcome/worker-crash evidence.
+
+**State:** Executable evidence required — P-011.
+
+## F-001 — Field storage adapter performance/migration
+ADR-0022 accepted architecture. Need native meta vs custom table scale, queryability, repeaters, revisions, migration and privacy-tool evidence.
+
+**State:** Executable evidence required.
+
+## T-001 — Custom Tables DDL compiler/provider profile
+ADR-0023 accepts typed Migration Plan semantics. Need exact MySQL/MariaDB compiler, `dbDelta()` boundaries, large-table locking/copy/backfill/recovery behavior.
+
+**State:** Executable evidence required.
+
+---
+
+# F. Other module technical queues
 
 ## Admin/Identity
 - admin menu conflict/recovery implementation;
@@ -402,36 +245,38 @@ Need:
 
 ## Automation/Communication
 - Form/entry physical schema;
-- Workflow graph/run schema;
 - notification persistence/deduping;
 - email renderer/provider certification;
 - Chat runtime/index/transport model.
 
 ## Integration/Data movement
 - REST endpoint compiler/runtime schema;
-- connection OAuth provider adapters;
+- OAuth provider adapters;
 - SSRF/DNS/redirect executable defenses;
 - source migration adapter fixtures;
-- package compatibility/import rollback evidence.
+- package import rollback evidence.
 
 ---
 
 # Resolved semantic/architecture decisions
 
-Preserved in ADRs rather than remaining “open”:
-- Free/Pro distribution — ADR-0001;
-- Abilities contract — ADR-0003;
-- arbitrary PHP/raw destructive SQL prohibition — ADR-0004;
-- license expiry runtime continuity — ADR-0007;
-- Membership domain separation — ADR-0013;
-- development consent gate — ADR-0014;
-- Membership access precedence — ADR-0015;
-- Enrollment lifecycle — ADR-0016;
-- product-entitlement architecture — ADR-0017;
-- Pro update supply-chain architecture — ADR-0018;
-- Plan revisions/upgrades/downgrades — ADR-0019;
-- teams/seats/role-sync product semantics — ADR-0020;
-- backup encryption/recovery architecture — ADR-0021.
+Preserved in ADRs:
+- ADR-0001 Free/Pro distribution;
+- ADR-0003 Abilities;
+- ADR-0004 unsafe arbitrary code/SQL boundary;
+- ADR-0007 license expiry runtime continuity;
+- ADR-0013 Membership domains;
+- ADR-0014 development consent;
+- ADR-0015 access precedence;
+- ADR-0016 Enrollment lifecycle;
+- ADR-0017 product entitlement architecture;
+- ADR-0018 Pro update supply-chain architecture;
+- ADR-0019 Plan revision/change semantics;
+- ADR-0020 teams/seats/role sync;
+- ADR-0021 backup encryption/recovery architecture;
+- ADR-0022 plural Field storage architecture;
+- ADR-0023 typed Custom Tables migration language;
+- ADR-0024 Membership privacy/retention defaults.
 
 ---
 
@@ -443,15 +288,15 @@ For every unresolved item:
 3. document alternatives/tradeoffs;
 4. identify security/data/performance/compatibility impact;
 5. decide whether static evidence is enough;
-6. if executable evidence is required, prepare protocol only and **do not execute without explicit owner consent**;
+6. if executable evidence is required, use the pre-written spike protocol and **do not execute without explicit owner consent**;
 7. record accepted decision in ADR/spec;
-8. update readiness, checkpoint and PR.
+8. update readiness, checkpoint and Draft PR.
 
 # Current next planning-only priorities
-1. move remaining non-executable semantic decisions to ADR where evidence is sufficient;
-2. specify Definition/Query/Relation/Workflow physical-schema alternatives before benchmarks;
-3. finalize OAuth/signing/updater protocol candidates on paper;
-4. finalize Membership privacy/retention defaults;
-5. refine backup archive/provider certification protocols;
-6. finalize consent-gated spike protocols without executing them;
-7. synchronize checkpoint/PR after every meaningful planning unit.
+1. Form Entry physical storage/privacy schema;
+2. Notification persistence/dedupe model;
+3. Chat runtime/index/attachment storage alternatives;
+4. REST endpoint compiled-runtime model;
+5. Backup archive/container paper alternatives;
+6. OAuth exact static threat-model alternatives;
+7. keep checkpoint/PR synchronized.
