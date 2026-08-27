@@ -50,7 +50,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 12 | Settings Page Builder | Exhaustive | ADR-0036 Accepted | physical Options strategy, autoload, concurrency, multisite, Vault/REST | No |
 | 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031 + ADR-0035 Accepted | rewrite/permalink/multisite, IDOR/cache/assets/builder fixtures | No |
 | 14 | User Profile Builder | Exhaustive | ADR-0030 Accepted | protected-meta registry, email/password/session/App Password/public profile | No |
-| 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 Accepted | schema/cache/protected files/billing-provider certification/concurrency/privacy — P-012 | No |
+| 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 + ADR-0057 Accepted | schema/cache/protected files, MB0–MB5 billing provider certification, reconciliation, identity resolution, concurrency/privacy — P-012 | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035 Accepted | renderer/nesting/bindings/assets/accessibility/builder certification | No |
 | 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 Accepted Entry model + Workflow paper runtime | Entry schema/projections, Workflow/Job runtime — P-011 | No |
 | 18 | Cron Job Builder | Exhaustive | Job/Cron product semantics | ADR-0006 Job Service, DST/overlap/runtime fixtures | No |
@@ -76,6 +76,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0054 Remote Service: account/site/entitlement/catalog/support/docs/release resources have separate trust semantics.
 - ADR-0055 Connections: I0–I5 capability certification; `Connected` does not imply writes/events.
 - ADR-0056 Remote Copy: manifest-last, provider Commit Point, truthful retention/delete/restore identity.
+- ADR-0057 Membership Billing: verified commercial source facts feed reconciliation + Membership policy; provider status never directly owns Enrollment/Entitlement state; recurring lifecycle support requires MB-level evidence.
 
 No surface may skip evidence merely because an ADR is Accepted.
 
@@ -86,7 +87,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 3. CPT + Taxonomy Free;
 4. Fields → Relations → Query → Tables/Columns → Component Blueprint → Listings/Status;
 5. Settings/Admin Menu/Dashboard/Profile/Roles/Dashboard Widgets;
-6. Membership runtime + billing provider certification;
+6. Membership runtime → Manual/Woo one-time → Woo Subscriptions/SureCart MB certification;
 7. Form Entry + Workflow/Jobs + Notifications/Email;
 8. REST + Connections/Event Inbox + Import;
 9. Backup core → Remote Copy → reference provider adapters → Reset/Protection/Media/XML-RPC;
@@ -98,7 +99,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0056; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0057; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
