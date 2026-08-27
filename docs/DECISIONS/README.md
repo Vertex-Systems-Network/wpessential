@@ -67,6 +67,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0054 | Accepted platform architecture / service evidence pending | Account/site/entitlement/catalog/support/docs/release domains are separate trust resources; RFC 9457 errors; TUF remains separate update authority |
 | ADR-0055 | Accepted integration architecture / provider evidence pending | Connections are certified by adapter + provider + capability + API version using I0–I5; Connected does not imply read/write/event support |
 | ADR-0056 | Accepted backup lifecycle / provider evidence pending | Each destination has durable Remote Copy commit/verify/retention/delete/restore states; manifest-last and truthful deletion semantics |
+| ADR-0057 | Accepted membership integration architecture / provider evidence pending | Billing integrations emit verified commercial source facts; reconciliation + WPE policy own Enrollment/Entitlement transitions; provider lifecycle certification uses MB0–MB5 |
 
 ## Product specification milestone
 
@@ -84,6 +85,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
 - Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
 - Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
+- Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
 - Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
 - Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
 - Support Tickets: `docs/PLATFORM/SUPPORT-TICKET-RUNTIME-PRIVACY-MODEL.md`
@@ -100,7 +102,7 @@ Compatibility, UI runtime, Job adapter, Definition exact DDL, Vault envelope/int
 Query/Relations/Workflow/Fields/Tables/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import require physical/runtime/security/performance evidence.
 
 ### Membership
-Enrollment/Entitlement schema, revoke-to-deny cache, protected-file environments, billing reconciliation, seat concurrency, migration/privacy runtime fixtures remain open.
+Enrollment/Entitlement schema, revoke-to-deny cache, protected-file environments, MB0–MB5 billing adapter/provider certification, customer→WP identity resolution, reconciliation, seat concurrency and migration/privacy runtime fixtures remain open.
 
 ### Remote service/distribution
 OAuth endpoint/token lifecycle, entitlement canonicalizer/library/keyset rotation, production TUF client/key custody/conformance, support/service schemas and attachment/privacy runtime remain executable.
