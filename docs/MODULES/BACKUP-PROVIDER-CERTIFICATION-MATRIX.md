@@ -1,340 +1,309 @@
-# WPEssential — Backup Provider Certification Matrix
+# WPEssential — Backup Provider Target & Certification Matrix
 
-Status: **Phase 0 planning — no storage/provider implementation authorized**
+Status: **Phase 0 planning — no storage/provider implementation authorized**  
+Canonical certification architecture: `../ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md` + ADR-0053.  
+Remote copy lifecycle: `../ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md` + ADR-0056.
 
 ## Goal
-Support 25+ destinations without maintaining 25 unrelated upload engines. WPEssential uses protocol-family adapters plus provider profiles, then certifies each named provider independently.
 
-“Listed” means target candidate. “Certified” will mean automated upload/download/integrity/failure/restore-oriented acceptance has passed for a documented provider/API version.
+Target 25+ destinations without building unrelated upload engines, while refusing to call a destination “supported” until restore-oriented certification exists.
+
+**Current target catalog: 34 destinations.**  
+**Current certified provider count: 0.**
+
+A listed provider is a roadmap candidate only. Provider logos do not imply support.
+
+---
+
+# Canonical certification levels
+
+The old B0–B3 planning levels are **superseded** by ADR-0053.
+
+- **C0 — Detected / Connectable**
+- **C1 — Upload Certified**
+- **C2 — Resumable & Integrity Certified** or explicitly `Integrity Certified / Non-resumable`
+- **C3 — Restore Certified**
+- **C4 — Disaster Restore Certified**
+
+Normal public `Supported Backup Destination` labeling requires **C3 or higher**.
+
+C4 corresponds to a repeatable fresh/disaster restore profile and supports the strongest V3 confidence claim.
 
 ---
 
 # Protocol families
 
-## A. Local / browser delivery
+## PF-01 — Local Filesystem / browser delivery
 - Local server filesystem
-- browser/manual download
+- Browser/manual download
 
-## B. FTP family
+Browser/manual download is a delivery mechanism, not durable remote backup storage.
+
+## PF-02 — FTP / FTPS legacy family
 - FTP
 - FTPS
-- SFTP
 
-SFTP is treated as its own SSH file-transfer adapter, not “FTP over SSL.”
+FTP is legacy/insecure without TLS and should be discouraged when stronger alternatives are available. Resume/finalization varies by server/client and must be certified.
 
-## C. WebDAV family
+## PF-03 — SFTP
+- SFTP over SSH
+
+SFTP is not “FTP over SSL”. Host-key verification is mandatory. Resume/rename behavior is certified against actual client/server profile.
+
+## PF-04 — WebDAV
 - generic WebDAV
-- Nextcloud
-- ownCloud
+- Nextcloud profile
+- ownCloud profile
 
-Provider profiles may add path/auth/locking quirks but reuse WebDAV primitives where official provider behavior supports it.
+RFC 4918 does not provide a universal large-file resumable-upload session equivalent to S3 multipart/Drive sessions. Generic WebDAV cannot be marketed resumable without a certified extension/profile.
 
-## D. S3 / S3-compatible object storage
-Core candidate engine:
-- multipart upload;
-- abort/retry/resume by persisted upload ID/parts;
-- object metadata/checksum verification where provider semantics support it;
-- endpoint/region/path-style/virtual-host configuration;
-- TLS required;
-- provider-specific capability profile instead of assuming every S3 feature exists.
+## PF-05 — S3-compatible object storage
+Reference semantics: Amazon S3 multipart.
 
-AWS S3 multipart is the reference semantic model. S3-compatible providers can omit features; certification checks the subset WPE actually depends on.
+Provider profiles may omit AWS features. Required operations/capabilities are declared explicitly rather than inferred from “S3 compatible”.
 
-## E. Native OAuth/file-drive APIs
-- Google Drive
-- Dropbox
-- Microsoft OneDrive / OneDrive Business / SharePoint
-- Box
-- pCloud
-- MEGA candidate
+## PF-06 — Google Cloud Storage native
+Native GCS resumable session semantics when native adapter is selected.
 
-Each provider gets a connection adapter + upload-session strategy. Do not hide provider session expiry/quotas/rate limits behind one fake generic API.
+## PF-07 — Azure Blob Storage
+Block Blob/staged-block semantics when native adapter is selected.
 
-## F. Native cloud object APIs where useful
-- Google Cloud Storage
-- Azure Blob Storage
-- OpenStack Swift
+## PF-08 — Google Drive
+OAuth + resumable Drive upload sessions.
 
-A provider may offer both native and S3-compatible access. Prefer the smallest maintained adapter that satisfies Backup acceptance criteria.
+## PF-09 — Microsoft Graph Drives
+OneDrive Personal, OneDrive Business and SharePoint document libraries via certified Graph Drive profiles.
 
----
+## PF-10 — Dropbox
+OAuth + upload-session append/finalize semantics.
 
-# Current representative research
+## PF-11 — Other provider-native APIs
+Box, pCloud, Bunny Storage, MEGA or future providers where a shared family cannot satisfy requirements.
 
-## AWS S3
-AWS supports multipart upload, independent part retries, completion/abort and checksums. WPE's S3 adapter should model large backup upload around multipart rather than one monolithic PUT.
-
-Official reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html
-
-## Cloudflare R2
-R2 exposes an S3-compatible API but documents operation/feature compatibility individually and does not implement every AWS S3 feature. Therefore `S3-compatible` never means WPE may assume full AWS behavior.
-
-Official reference: https://developers.cloudflare.com/r2/api/s3/api/
-
-## Backblaze B2
-Backblaze offers a documented S3-compatible API, supports common S3 operations including multipart calls, uses SigV4, and documents meaningful differences from AWS S3.
-
-Official reference: https://www.backblaze.com/apidocs/introduction-to-the-s3-compatible-api
-
-## Google Drive
-Drive API supports resumable upload sessions intended for large files/network interruptions. Session URI and byte progress can be queried/resumed; chunk semantics have provider-specific requirements.
-
-Official reference: https://developers.google.com/workspace/drive/api/guides/manage-uploads
-
-## Microsoft OneDrive / SharePoint
-Microsoft Graph upload sessions support sliced/resumable large-file transfer and expose session expiry/next expected ranges.
-
-Official references:
-- https://learn.microsoft.com/graph/api/driveitem-createuploadsession
-- https://learn.microsoft.com/graph/api/resources/uploadsession
-
-## Dropbox
-Dropbox official SDK/API exposes upload-session start/append/finish semantics and concurrent upload-session options in current SDK docs. Provider-specific chunk/session rules must be respected.
-
-Reference: https://dropbox.github.io/dropbox-sdk-js/Dropbox.html
-
-## pCloud
-pCloud exposes authenticated file upload with progress tracking and partial-file behavior controls. Current planning does not assume true resumable multipart parity with S3/Drive; interruption acceptance must be tested before certification.
-
-Official reference: https://docs.pcloud.com/methods/file/uploadfile.html
+## PF-12 — OpenStack Swift family
+OpenStack Swift and selected compatible providers after large-object/auth profile certification.
 
 ---
 
 # Provider target matrix
 
-Legend:
-- **P0** first adapter proofs / highest priority
-- **P1** high-value expansion after protocol proof
-- **P2** later provider/profile expansion
-- **Review** include only after API/library/legal/maintenance evidence
+Priority legend:
+- **P0** — first reference/proof providers
+- **P1** — high-value expansion after family proof
+- **P2** — later expansion
+- **Review** — API/library/legal/maintenance review required before adapter commitment
 
-| # | Destination | Primary adapter family | Large upload strategy candidate | Auth/secret class | Priority | Certification note |
-|---|---|---|---|---|---|---|
-| 1 | Local server | Filesystem | chunked file write/rename | filesystem policy | P0 | atomic-finalization/free-space/permissions tests |
-| 2 | Browser/manual download | HTTP/local temp | generated archive stream/download | WP auth/nonces | P0 | size/time/shared-host limits; not durable remote storage |
-| 3 | FTP | FTP | streamed upload; resume only if proven | P3 credential | P2 | plaintext control/data risk unless TLS; discourage when FTPS/SFTP available |
-| 4 | FTPS | FTP/TLS | streamed/restart/resume where server supports | P3 | P2 | explicit certificate/TLS validation |
-| 5 | SFTP | SSH/SFTP | chunked stream + remote offset resume if library/server proven | P3 key/password | P1 | host-key verification required; never auto-trust changed host key |
-| 6 | WebDAV | WebDAV | PUT/temp-file strategy; chunk extensions only if provider-certified | P3 | P1 | generic WebDAV feature variance; use safe finalization pattern |
-| 7 | Nextcloud | WebDAV/provider profile | WebDAV/provider chunk capability only after tests | P3/OAuth where used | P1 | test locks/path/quota/large uploads/version compatibility |
-| 8 | ownCloud | WebDAV/provider profile | same principle | P3 | P2 | certify separately from Nextcloud |
-| 9 | Amazon S3 | S3 | multipart | P3 access key/role strategy | P0 | reference S3 provider; checksum/multipart/abort/list/download |
-| 10 | Generic S3-compatible | S3 profile | multipart if endpoint supports required subset | P3 | P0/P1 | user-configured endpoint requires SSRF/private-endpoint policy distinction |
-| 11 | Cloudflare R2 | S3 profile | multipart if certified supported ops | P3 API token keys | P1 | feature subset must follow R2 compatibility table |
-| 12 | Backblaze B2 | S3 profile | multipart | P3 app key | P1 | SigV4; provider differences/versions considered |
-| 13 | Wasabi | S3 profile | multipart candidate | P3 | P1 | official S3 compatibility must be refreshed before certification |
-| 14 | DigitalOcean Spaces | S3 profile | multipart candidate | P3 | P1 | endpoint/region/CDN distinctions |
-| 15 | MinIO | S3 profile | multipart candidate | P3 | P1 | self-hosted endpoint/TLS/SSRF/network policy; version variability |
-| 16 | Google Cloud Storage | native GCS or S3 interoperability after decision | resumable/native candidate | P3 OAuth/service account | P1 | native vs S3 path chosen on maintenance/feature evidence |
-| 17 | Google Drive | Google Drive API | resumable session | P3 OAuth refresh token | P0 | session expiry/resume/quota/rate tests |
-| 18 | Dropbox | Dropbox API | upload session | P3 OAuth | P0/P1 | session/chunk/rate-limit tests |
-| 19 | OneDrive Personal | Microsoft Graph | upload session | P3 OAuth | P0/P1 | token refresh/session expiry/conflict tests |
-| 20 | OneDrive Business / SharePoint | Microsoft Graph | upload session | P3 OAuth | P1 | tenant/site/drive permissions and admin-consent scenarios |
-| 21 | Azure Blob Storage | Azure native | block blob staged blocks candidate | P3 SAS/key/OAuth | P1 | exact auth/upload strategy requires dedicated official-doc research before adapter implementation |
-| 22 | Box | Box API | chunked upload session candidate | P3 OAuth/JWT profile | P2 | exact current session limits/API to certify before claim |
-| 23 | pCloud | pCloud API | standard upload/progress; resume unproven | P3 OAuth/token | P2 | do not market resumable until interrupted-upload test proves it |
-| 24 | MEGA | provider/API/library candidate | unknown until maintained API strategy accepted | P3 | Review | licensing/maintenance/security and official API availability review mandatory |
-| 25 | OpenStack Swift | Swift native | segmented object upload candidate | P3 | P2 | authentication variants/large-object semantics certification |
-| 26 | Rackspace/Swift-compatible | Swift profile | segmented candidate | P3 | P2 | legacy/provider viability review before launch claim |
-| 27 | Oracle Object Storage | S3 profile/native | multipart candidate | P3 | P2 | prefer shared S3 path if certified |
-| 28 | Akamai/Linode Object Storage | S3 profile | multipart candidate | P3 | P2 | provider endpoint/profile certification |
-| 29 | Vultr Object Storage | S3 profile | multipart candidate | P3 | P2 | provider endpoint/profile certification |
-| 30 | Scaleway Object Storage | S3 profile | multipart candidate | P3 | P2 | provider endpoint/profile certification |
-| 31 | Hetzner Object Storage | S3 profile | multipart candidate | P3 | P2 | current product/API availability refreshed before certification |
-| 32 | Storj S3-compatible | S3 profile | multipart candidate | P3 | P2 | S3 gateway semantics/performance certification |
-| 33 | IDrive e2 | S3 profile | multipart candidate | P3 | P2 | provider profile certification |
-| 34 | Bunny Storage | Bunny native/API | chunk/standard provider-specific | P3 API key | P2 | not S3 by assumption; dedicated official API acceptance needed |
+Certification state for every row below is currently **Planned / Not Certified**.
 
-The target catalog now exceeds the original 25-provider minimum, but implementation order remains protocol-first.
+| # | Destination | Family | Large-transfer candidate | Auth/secret class | Priority | Key certification concern |
+|---:|---|---|---|---|---|---|
+| 1 | Local server | PF-01 Filesystem | streamed/chunked write + safe finalization | filesystem policy | P0 | disk/free-space/permissions/rename/durability/restore |
+| 2 | Browser/manual download | PF-01 HTTP/local temp | generated archive stream | WP auth/nonces | P0 | size/time/shared-host limits; not durable storage |
+| 3 | FTP | PF-02 FTP | streamed/restart only if proven | P3 | P2 | insecure without TLS; server resume/finalization variance |
+| 4 | FTPS | PF-02 FTP/TLS | streamed/restart only if proven | P3 | P2 | certificate/TLS validation and resume variance |
+| 5 | SFTP | PF-03 SFTP | offset resume if client/server certified | P3 key/password | P1 | host-key verification, resume, temp→final rename |
+| 6 | WebDAV | PF-04 | verified PUT/temp→MOVE; resume only if profile proves | P3 | P1 | no generic resumable claim; TLS/read-back/finalization |
+| 7 | Nextcloud | PF-04 profile | provider chunk extension only after certification | P3/OAuth | P1 | version/chunk/quota/path/lock semantics |
+| 8 | ownCloud | PF-04 profile | provider-specific | P3 | P2 | certify separately from Nextcloud |
+| 9 | Amazon S3 | PF-05 S3 | multipart | P3 key/role | P0 | reference multipart/checksum/abort/list/download/restore |
+| 10 | Generic S3-compatible | PF-05 profile | multipart only if required subset exists | P3 | P0/P1 | custom endpoint SSRF/trust; capability probing |
+| 11 | Cloudflare R2 | PF-05 profile | multipart | P3 | P1 | AWS feature differences; checksum/lifecycle profile |
+| 12 | Backblaze B2 S3 API | PF-05 profile | multipart | P3 | P1 | S3 differences/auth/checksum/profile |
+| 13 | Wasabi | PF-05 profile | multipart candidate | P3 | P1 | current compatibility/retention/provider semantics |
+| 14 | DigitalOcean Spaces | PF-05 profile | multipart candidate | P3 | P1 | region/endpoint/CDN distinction |
+| 15 | MinIO | PF-05 profile | multipart candidate | P3 | P1 | self-hosted endpoint/TLS/version variability |
+| 16 | Google Cloud Storage | PF-06 native or certified interoperability | native resumable | P3 OAuth/service credential | P1 | native-vs-S3 maintenance choice; session/checksum/restore |
+| 17 | Google Drive | PF-08 | resumable session | P3 OAuth refresh | P0 | session expiry/status/resume/quota/read-back/restore |
+| 18 | Dropbox | PF-10 | upload session | P3 OAuth | P0/P1 | append/finalize/session expiry/content hash/restore |
+| 19 | OneDrive Personal | PF-09 Graph | upload session | P3 OAuth | P0/P1 | nextExpectedRanges/expiry/conflicts/token refresh |
+| 20 | OneDrive Business / SharePoint | PF-09 Graph | upload session | P3 OAuth | P1 | tenant/site/drive/admin-consent/profile differences |
+| 21 | Azure Blob Storage | PF-07 | staged blocks + block-list commit | P3 SAS/key/OAuth | P1 | commit/concurrency/checksum/auth/versioning/restore |
+| 22 | Box | PF-11 native | chunk/upload-session candidate | P3 OAuth/JWT profile | P2 | current API/session limits/version/support |
+| 23 | pCloud | PF-11 native | standard/progress; resumability unproven | P3 OAuth/token | P2 | no resumable claim before interruption fixture |
+| 24 | MEGA | PF-11 native/library candidate | undecided | P3 | Review | official API/library/license/maintenance/security |
+| 25 | OpenStack Swift | PF-12 | segmented object candidate | P3 | P2 | auth variants/large object/manifest/restore |
+| 26 | Rackspace/Swift-compatible | PF-12 profile | segmented candidate | P3 | P2 | provider viability/profile refresh |
+| 27 | Oracle Object Storage | PF-05 profile or native | multipart candidate | P3 | P2 | prefer shared S3 only if certified subset works |
+| 28 | Akamai/Linode Object Storage | PF-05 profile | multipart candidate | P3 | P2 | endpoint/region/provider profile |
+| 29 | Vultr Object Storage | PF-05 profile | multipart candidate | P3 | P2 | endpoint/profile certification |
+| 30 | Scaleway Object Storage | PF-05 profile | multipart candidate | P3 | P2 | endpoint/profile certification |
+| 31 | Hetzner Object Storage | PF-05 profile | multipart candidate | P3 | P2 | current product/API/profile refresh |
+| 32 | Storj S3-compatible | PF-05 profile | multipart candidate | P3 | P2 | gateway semantics/performance/restore |
+| 33 | IDrive e2 | PF-05 profile | multipart candidate | P3 | P2 | provider profile/checksum/restore |
+| 34 | Bunny Storage | PF-11 native | provider-specific | P3 API key | P2 | do not assume S3; native API/finalization/restore |
+
+The list exceeds the original 25-destination requirement, but support claims remain certification-driven.
 
 ---
 
-# Connection options by family
+# Static research observations — not certification
 
-## S3 profile options
-Candidate UI fields:
+## Amazon S3
+Official S3 documentation supports independent multipart parts, retry, explicit completion/abort and object checksum mechanisms. Multipart ETag is not necessarily a full-object MD5.
+
+## Google Drive
+Official Drive API supports resumable sessions, byte-range chunk upload, status querying and resume; session expiry is part of provider semantics.
+
+## Google Cloud Storage
+Official GCS documentation recommends resumable uploads for large/unstable transfers. Only a completed resumable upload appears as the final object.
+
+## Microsoft Graph Drives
+Official Graph upload sessions expose expiry and expected/missing byte ranges and can resume interrupted large uploads.
+
+## Dropbox
+Official guidance exposes upload-session start/append/finish and content-hash semantics for large transfers.
+
+## WebDAV
+RFC 4918 defines DAV resource/collection/property/locking extensions, not a universal resumable upload-session protocol.
+
+## SFTP
+SFTP has historic/current Internet-Draft protocol specifications rather than one final IETF SFTP RFC. Common drafts support offset writes, but actual resume/rename durability must be client/server certified.
+
+---
+
+# Family UI contracts
+
+## S3 profile
 - provider preset / Custom S3;
-- endpoint URL;
+- endpoint;
 - region;
 - bucket;
-- base path/prefix;
-- access key reference;
-- secret key reference;
-- session/temporary credential strategy where supported;
-- path-style vs virtual-host style where required;
-- TLS verification (cannot be disabled in ordinary production mode);
-- storage class where provider-certified;
-- server-side encryption mode where provider-certified;
-- multipart threshold;
-- part size (advanced/validated);
-- upload concurrency bounded by host resources;
-- request timeout;
-- retry policy;
+- prefix;
+- access/secret/session credential refs;
+- path-style/virtual-host setting only where needed;
+- mandatory TLS validation;
+- provider-certified storage class/SSE options;
+- multipart threshold/part size/concurrency as bounded Advanced controls;
+- retry/timeouts;
 - retention/delete behavior;
-- object naming template;
-- test connection/write/delete capability.
+- isolated connection/write/read/delete probe.
 
-Do not expose AWS-only options on providers that ignore/reject them without provider-profile filtering.
+AWS-only options are hidden/disabled for profiles that do not support them.
 
-## OAuth Drive options
-- account connection;
-- folder/root selection;
-- base folder creation strategy;
-- filename collision behavior;
-- resumable/chunk settings only when provider supports it;
-- token health/refresh status;
-- connection test;
-- quota/permission diagnostics;
-- disconnect without deleting backups;
-- credential rotation/re-auth.
+## OAuth Drives
+- Connect/Reconnect;
+- safe account identity;
+- target folder/drive ID + display label;
+- token/scopes health;
+- quota/permission diagnostics when available;
+- provider resumable settings only when certified;
+- disconnect without remote deletion.
 
-## SFTP options
-- host;
-- port;
+## SFTP
+- host/port;
 - username;
-- password OR private-key secret reference;
+- password OR private-key Vault ref;
 - private-key passphrase ref;
 - host-key fingerprint/trust policy;
-- remote base directory;
-- timeout;
-- keepalive;
-- resume support only if certified;
-- connection/write/rename/delete tests.
+- base directory;
+- timeouts/keepalive;
+- resume toggle only if certified;
+- isolated write/read/rename/delete probe.
 
-## WebDAV options
-- base HTTPS URL;
-- username/password or provider auth ref;
+## WebDAV
+- HTTPS endpoint;
+- credential ref;
 - base path;
-- timeout;
-- TLS validation;
-- temp upload/finalization strategy;
-- connection/PROPFIND/write/read/delete tests.
+- certificate validation;
+- provider profile;
+- finalization strategy;
+- connection/PROPFIND/write/read/MOVE/delete probes according capability.
 
 ---
 
-# Backup artifact upload state
+# Integrity and Remote Copy truth
 
-Destination transfer record should normalize:
-- transfer ID;
-- backup ID;
-- destination ID;
-- remote object/path ID;
-- state `queued|uploading|paused|retry_wait|completed|verification_failed|failed|cancelled`;
-- bytes total/uploaded;
-- provider upload/session ID encrypted or protected as necessary;
-- part/chunk state;
-- attempt count;
-- next retry;
-- provider-safe error class;
-- remote checksum/etag metadata with provider semantic annotation;
-- completed-at;
-- verify state.
+The provider matrix inherits ADR-0056 Remote Copy states and ADR-0053 certification.
 
-Never assume every provider's `ETag` equals an MD5 checksum.
+Rules:
+- provider API `2xx` alone is not remote verification;
+- final provider Commit Point must be reached;
+- final WPE manifest/completion marker is published last where architecture permits;
+- WPE part hash remains authoritative transport-integrity evidence;
+- provider checksum is recorded with algorithm/semantics;
+- encrypted parts verify ciphertext hash plus AEAD during restore;
+- `remote_verified` is required for V2;
+- C3 requires actual restore fixture;
+- C4 requires disaster/fresh-environment restore fixture.
 
 ---
 
-# Upload integrity verification
+# Acceptance fixtures per provider — future only
 
-Certification must distinguish:
-
-## Local source archive integrity
-WPE manifest contains cryptographic checksum(s) of generated archive/chunks.
-
-## Transport completion
-Provider API reports upload complete.
-
-## Remote verification
-At least one of:
-- provider-supported checksum compared to local using known semantics;
-- download/range-read and verify selected/complete content according to acceptance tier;
-- object size + metadata + stronger provider checksum where available.
-
-“Upload API returned 200” alone is not enough for a verified backup status.
-
----
-
-# Provider certification levels
-
-## B0 — Connection
-Authenticate/list/test target only. Not marketed as backup-supported.
-
-## B1 — Basic Backup
-Upload full archive + list + download + delete + local/remote size/integrity evidence.
-
-## B2 — Resilient Large Backup
-B1 plus interrupted upload recovery/session resume or safe restart, rate-limit/retry, large fixture and low-memory behavior.
-
-## B3 — Restore Certified
-B2 plus automated retrieval feeding verified restore fixture and failure-recovery scenarios.
-
-A provider appears in “Supported Destinations” marketing only at the minimum product certification level defined for launch; current recommendation is at least **B2**, with representative providers reaching **B3** before Backup Manager is marketed as production-ready.
-
----
-
-# Acceptance tests per provider
-
-- bad/missing credentials;
-- read-only credentials;
+Authentication:
+- bad/missing/read-only/revoked credential;
+- token refresh/rotation;
 - wrong bucket/folder/path;
-- quota/full storage;
-- DNS/network interruption;
-- TLS/certificate problem where applicable;
-- timeout;
-- HTTP/API 429/rate limit;
-- provider 5xx;
-- interrupted upload after multiple chunks;
-- expired resumable session;
-- duplicate filename/conflict mode;
-- Unicode/long names;
-- archive larger than single-request threshold;
-- low disk/memory local host;
-- checksum mismatch;
-- remote object deleted externally;
-- retention prune permission denied;
-- credential rotation/re-auth;
-- download/restore retrieval;
-- cancel upload and cleanup orphan multipart/session where provider supports it.
+- host-key/certificate mismatch.
 
-S3 profiles additionally test unsupported AWS features are not sent blindly.
+Transfer:
+- zero/small/large object;
+- network interruption;
+- process crash;
+- resume/new process;
+- 429/rate limit;
+- 5xx/timeout;
+- quota/storage full;
+- session expiry;
+- duplicate/conflict;
+- cancellation/orphan cleanup;
+- unknown commit outcome.
+
+Integrity:
+- size/checksum mismatch;
+- corrupt/missing remote part;
+- stale manifest;
+- encrypted corruption;
+- provider-native checksum interpretation.
+
+Lifecycle:
+- list/discovery;
+- retention prune;
+- delete/trash/versioning/retention lock;
+- external deletion/lifecycle rule;
+- credential reauthorization.
+
+Restore:
+- complete download;
+- interrupted restore/resume;
+- auth refresh mid-restore;
+- encrypted restore;
+- clean/fresh disaster restore for C4;
+- post-restore health verification.
+
+No fixture has been executed.
 
 ---
 
 # Security boundaries
 
-1. Credentials live in Secrets Vault; UI receives masked/reference state only.
-2. OAuth callbacks require state/nonce and exact redirect validation.
-3. Custom endpoints (S3/WebDAV/SFTP) need explicit SSRF/network policy. Private LAN destinations may be a legitimate backup use case, so policy must distinguish intentional private endpoints from user-controlled outbound webhook SSRF risk.
-4. TLS certificate verification is mandatory by default.
-5. SFTP host-key verification is a trust boundary.
-6. Provider error responses are sanitized before user display/logging.
-7. Backup archive encryption is separate from provider transport/server-side encryption.
-8. Disconnecting a provider does not silently delete remote backups.
-9. Remote deletion/pruning is an explicit capability and audited.
-10. Provider SDK dependency choice is reviewed for license, maintenance, bundle size and CVEs.
+1. Credentials are Vault refs and write-only in normal UI.
+2. OAuth callbacks use accepted provider/account-link security profiles.
+3. Custom S3/WebDAV/SFTP endpoints require explicit destination trust/SSRF policy; intentional private backup endpoints are distinguished from arbitrary webhook URLs.
+4. TLS validation is mandatory by default.
+5. SFTP host-key verification is mandatory.
+6. Provider error bodies are sanitized/redacted.
+7. WPE client-side encryption is separate from provider SSE/TLS.
+8. Disconnect never means delete remote backups.
+9. Delete/prune is explicit, audited and provider-semantics-aware.
+10. SDK/library dependencies require license/maintenance/security review.
 
 ---
 
-# Provider implementation strategy
+# Future proof order after development consent
 
-Do not implement 34 destinations independently.
-
-Recommended proof order after future development consent:
+Recommended evidence order, not authorization:
 1. Local filesystem;
-2. AWS S3 reference adapter;
-3. one non-AWS S3 provider (Cloudflare R2 or Backblaze B2) to prove compatibility-profile boundaries;
+2. Amazon S3 reference;
+3. one non-AWS S3 profile to prove compatibility boundaries;
 4. SFTP;
 5. WebDAV/Nextcloud;
-6. Google Drive resumable OAuth;
-7. Microsoft Graph upload session;
-8. Dropbox upload session;
-9. expand S3 provider profiles;
-10. add remaining native providers by demand/support evidence.
+6. Google Drive;
+7. Microsoft Graph Drives;
+8. Dropbox;
+9. Azure/GCS native where justified;
+10. expand S3/provider-native profiles based on demand and evidence.
 
-This order is a planning recommendation, not development authorization.
+## Development gate
 
----
-
-# Development gate
-
-No provider SDK, credential flow, connection test, upload, download or restore code is authorized before explicit owner development consent under ADR-0014.
+**No provider SDK, auth flow, connection test, upload, download, delete, restore or certification fixture is authorized before explicit owner development consent under ADR-0014.**
