@@ -54,8 +54,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035 Accepted | renderer/nesting/bindings/assets/accessibility/builder certification | No |
 | 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 Accepted Entry model + Workflow paper runtime | Entry schema/projections, Workflow/Job runtime — P-011 | No |
 | 18 | Cron Job Builder | Exhaustive | Job/Cron product semantics | ADR-0006 Job Service, DST/overlap/runtime fixtures | No |
-| 19 | Notification System | Exhaustive | ADR-0026 Accepted | tables/indexes/fan-out/dedupe/channel certification | No |
-| 20 | Emails Builder | Exhaustive | ADR-0029 Accepted | renderer/inliner/client/security/core/provider certification | No |
+| 19 | Notification System | Exhaustive | ADR-0026 + ADR-0058 Accepted delivery boundaries | persistence/indexes, fan-out/dedupe, Email ET0–ET5/channel certification, Job backpressure | No |
+| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 Accepted renderer + delivery-truth architecture | renderer/inliner/client compatibility, Delivery/Attempt/Event schema, ET0–ET5 provider certification, webhook/security evidence | No |
 | 21 | Message & Chat System | Exhaustive | ADR-0027 Accepted | indexes/search/transport/private assets/revocation scale | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028 Accepted | compiler/auth/rate/CORS/cache/fuzz/scale evidence | No |
 | 23 | Webhooks & Connections | Exhaustive | ADR-0040 + ADR-0055 Accepted | provider I0–I5 auth/read/write/event certification, Safe HTTP/webhook/Event Inbox evidence | No |
@@ -76,7 +76,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0054 Remote Service: account/site/entitlement/catalog/support/docs/release resources have separate trust semantics.
 - ADR-0055 Connections: I0–I5 capability certification; `Connected` does not imply writes/events.
 - ADR-0056 Remote Copy: manifest-last, provider Commit Point, truthful retention/delete/restore identity.
-- ADR-0057 Membership Billing: verified commercial source facts feed reconciliation + Membership policy; provider status never directly owns Enrollment/Entitlement state; recurring lifecycle support requires MB-level evidence.
+- ADR-0057 Membership Billing: verified commercial source facts feed reconciliation + Membership policy; provider status never directly owns Enrollment/Entitlement state.
+- ADR-0058 Email Delivery: submission/transport acceptance, receiving-server delivery, failure/complaint/suppression and engagement are separate evidence; ET0–ET5 provider profiles govern support claims.
 
 No surface may skip evidence merely because an ADR is Accepted.
 
@@ -88,7 +89,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 4. Fields → Relations → Query → Tables/Columns → Component Blueprint → Listings/Status;
 5. Settings/Admin Menu/Dashboard/Profile/Roles/Dashboard Widgets;
 6. Membership runtime → Manual/Woo one-time → Woo Subscriptions/SureCart MB certification;
-7. Form Entry + Workflow/Jobs + Notifications/Email;
+7. Form Entry + Workflow/Jobs → Notifications → Email renderer → ET provider profiles;
 8. REST + Connections/Event Inbox + Import;
 9. Backup core → Remote Copy → reference provider adapters → Reset/Protection/Media/XML-RPC;
 10. Chat/realtime adapters;
@@ -99,7 +100,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0057; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0058; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
