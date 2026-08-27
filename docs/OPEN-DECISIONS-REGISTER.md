@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-27
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0056**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0057**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -45,7 +45,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - **M-001 / P-012** — Enrollment/Entitlement physical schema/indexes/materialization/scale/multisite.
 - **M-003 / P-012** — access generation/cache/invalidation and revoke-to-deny latency.
 - **M-005** — private file delivery across Apache/Nginx/PHP/private object storage/CDN/Range.
-- **M-006** — Manual/WooCommerce/Woo Subscriptions/SureCart mapping, webhooks, reconciliation and certification.
+- **M-006 / ADR-0057** — billing source-fact adapter runtime + MB0–MB5 certification for Manual/WooCommerce/Woo Subscriptions/SureCart; customer→WP identity resolution, duplicate/out-of-order facts, refund/change/reconciliation, test/live isolation and restore/clone behavior.
 - **M-010** — privacy exporter/eraser cleanup/runtime/restore verification.
 
 ## D. Remote service / commercial distribution
@@ -124,7 +124,7 @@ Open: actual method inventory/hook priority, complete-deny behavior, `xmlrpc_ele
 
 ## H. Accepted architecture no longer open semantically
 
-ADRs **0035–0056** preserve the accepted core for Component Blueprint, Settings, Admin Menu, Status, Listings, Connections, Import, crypto profiles, Protector, Watermark, Reset, Vault, Definition Repository, Support, Dashboard Widget content trust, XML-RPC, Backup provider certification, remote-service resource separation, integration certification and Remote Copy lifecycle.
+ADRs **0035–0057** preserve the accepted core for Component Blueprint, Settings, Admin Menu, Status, Listings, Connections, Import, crypto profiles, Protector, Watermark, Reset, Vault, Definition Repository, Support, Dashboard Widget content trust, XML-RPC, Backup provider certification, remote-service resource separation, integration certification, Remote Copy lifecycle and Membership billing source-fact/reconciliation architecture.
 
 Evidence items above may refine implementation but must not silently redesign accepted cores without a superseding ADR.
 
@@ -138,9 +138,9 @@ Evidence items above may refine implementation but must not silently redesign ac
 
 ## Next planning-only priorities
 
-1. Backup family-specific capability profiles for all 34 targets, explicitly inheriting/overriding ADR-0053.
-2. Remote service API field-level privacy/classification matrix and service data-retention boundaries.
-3. Billing-provider adapter certification contract for Membership/Woo/SureCart.
-4. Email transport certification model (SMTP/provider APIs, bounce/delivery events).
-5. Job Service operation classes/priorities/backpressure paper model.
+1. Email transport/provider certification contract and delivery/bounce truth model.
+2. Job Service operation classes/priorities/backpressure/fairness/retention paper model.
+3. Remote service field-level privacy/retention matrix.
+4. Backup family-specific capability overrides for the 34 target destinations.
+5. Membership billing provider-specific capability profiles/evidence protocol extending ADR-0057.
 6. Extend consent-gated evidence protocols without executing them.
