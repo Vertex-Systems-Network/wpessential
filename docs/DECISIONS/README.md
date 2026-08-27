@@ -113,6 +113,15 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0100 | Accepted Backup artifact/container profile / P-013 pending | Manifest-first multipart remains canonical; SHA-256 stored-byte integrity; CMP0 fallback/CMP1 gzip comparison; ZIP convenience only; FR/DB/chunk profiles evidence-gated |
 | ADR-0101 | Accepted OAuth Account-Link evidence protocol / execution pending | OA-01…OA-32 fix PKCE S256, replay, mix-up, refresh rotation, clone/privacy/outage evidence before account-link production readiness |
 | ADR-0102 | Accepted Pro updater TUF evidence protocol / execution pending | TU-01…TU-44 fix Root/Targets/Snapshot/Timestamp, rollback/freeze/key-custody/package-staging evidence before automated Pro updates |
+| ADR-0103 | Accepted Dashboard Widgets evidence protocol / execution pending | DW-01…DW-36 fix Site/Network registration, content trust, XSS/SSRF, cache, async/iframe/assets/Multisite evidence |
+| ADR-0104 | Accepted Admin Menu evidence protocol / execution pending | AM-01…AM-40 fix menu composition/conflict/direct-URL/safe-mode/Multisite/performance evidence |
+| ADR-0105 | Accepted Protector evidence protocol / execution pending | PR-01…PR-44 fix trusted-proxy/rate/login/XML-RPC/REST/path/header/recovery/Multisite/privacy evidence |
+| ADR-0106 | Accepted Reset Manager evidence protocol / execution pending | RM-01…RM-48 fix restore-point/journal/crash/duplicate-Job/recovery/post-health/Multisite evidence |
+| ADR-0107 | Accepted Watermarker/Media evidence protocol / execution pending | WM-01…WM-48 fix source immutability/image capability/format/SVG/Job/offload/private-media/Multisite evidence |
+| ADR-0108 | Accepted Frontend Dashboard evidence protocol / execution pending | FD-01…FD-48 fix route/IDOR/navigation/cache/assets/permalink/SEO/accessibility/Multisite evidence |
+| ADR-0109 | Accepted Builder Widgets adapter certification protocol / execution pending | BW-01…BW-50 + BC0…BC4 fix builder identity/registration/render/dynamic-data/assets/version/upgrade evidence |
+| ADR-0110 | Accepted Status Manager evidence protocol / execution pending | SM-01…SM-48 fix Post Status/domain-state migration/concurrency/history/Workflow/Job/Multisite evidence |
+| ADR-0111 | Accepted XML-RPC Manager evidence protocol / execution pending | XR-01…XR-48 fix layered endpoint/method/auth/rate/parser/compatibility/logging/Multisite evidence |
 
 ## Product specification milestone
 
@@ -128,11 +137,16 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Role & Capability: `docs/SECURITY/ROLE-CAPABILITY-RUNTIME-MUTATION-EVIDENCE-PROFILE.md`.
 - OAuth evidence: `docs/QUALITY/OAUTH-ACCOUNT-LINK-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - TUF updater evidence: `docs/QUALITY/PRO-UPDATE-TUF-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Dashboard Widgets/Admin Menu/Protector/Reset/Watermarker evidence: corresponding ADR-0103…0107 `docs/QUALITY/` protocols.
+- Frontend Dashboard evidence: `docs/QUALITY/FRONTEND-DASHBOARD-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Builder adapter evidence: `docs/QUALITY/BUILDER-WIDGETS-ADAPTER-CERTIFICATION-EVIDENCE-PROTOCOL.md`.
+- Status Manager evidence: `docs/QUALITY/STATUS-MANAGER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- XML-RPC evidence: `docs/QUALITY/XML-RPC-MANAGER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Product License remote/API: corresponding files under `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
-P-001…P-013 remain executable gates. ADR-0101/0102 additionally constrain OAuth/TUF evidence but do not authorize or verify any network/service/update runtime.
+P-001…P-013 remain executable gates. ADR-0101…0111 add bounded surface-specific evidence gates but do not authorize or verify any runtime, network/service/update, builder, status or XML-RPC execution.
 
 Current certification/evidence remains:
 - Membership: **0 MB-certified**;
@@ -145,6 +159,15 @@ Current certification/evidence remains:
 - Remote privacy: **0/30 fixtures**;
 - OAuth Account Link: **0/32 OA fixtures**;
 - Pro updater TUF: **0/44 TU fixtures**;
+- Dashboard Widgets: **0/36 DW fixtures**;
+- Admin Menu: **0/40 AM fixtures**;
+- Protector: **0/44 PR fixtures**;
+- Reset Manager: **0/48 RM fixtures**;
+- Watermarker / Media: **0/48 WM fixtures**;
+- Frontend Dashboard: **0/48 FD fixtures**;
+- Builder Widgets adapters: **0/50 BW fixtures / 0 runtime certifications**;
+- Status Manager: **0/48 SM fixtures**;
+- XML-RPC Manager: **0/48 XR fixtures**;
 - Product License API/service: **0 fixtures**.
 
 No executable evidence may run before explicit owner consent.
