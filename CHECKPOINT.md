@@ -56,7 +56,12 @@ Accepted:
 - RR0–RR6 retention classes;
 - disconnect is distinct from account/support/commercial-history deletion.
 
-Open: exact OpenAPI/OAuth/logging/retention/runtime evidence.
+Future executable verification is now bounded by:
+`docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`
+
+That protocol defines 30 consent-gated fixtures covering no-call activation, field minimization, OAuth secret handling, telemetry separation, diagnostics redaction, RR0–RR6 cleanup, Support access, export/delete, clone isolation, signed-entitlement/TUF trust separation, outages, rate limits, multisite and documentation truth.
+
+**No fixture has been executed.**
 
 ## Current Backup state
 
@@ -77,36 +82,22 @@ Current catalog:
 ## Current Membership billing state
 
 Canonical path:
-
 `verified source facts → Billing Adapter → reconciliation → Membership policy → Enrollment → Entitlement`
 
-Initial profile keys:
+Initial profiles:
 - `billing.manual`;
 - `billing.woocommerce-order`;
 - `billing.woocommerce-subscriptions`;
 - `billing.surecart`.
 
-Static current research maturity:
-- four initial profiles: **BE3**;
-- **MB-certified profiles: 0**.
-
-Key accepted rules:
-- Woo paid truth does not depend on `Completed` alone;
-- order + line item identity matters;
-- refunds/partial refunds are separate source facts;
-- Woo Subscriptions pending-cancel is paid-through cancellation intent;
-- failed renewal/on-hold remains policy input, not automatic permanent revoke;
-- SureCart Purchase + Subscription + Refund context reconciles together;
-- duplicate/out-of-order provider events are expected and reconciled;
-- test/live sources remain isolated.
+Static maturity: **4 BE3 profiles; 0 MB-certified**.
 
 ## Current Email provider state
 
 Canonical path:
-
 `Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → derived outcome`
 
-Initial profile keys:
+Initial profiles:
 - `email.wordpress-wp-mail`;
 - `email.smtp-generic`;
 - `email.amazon-ses`;
@@ -114,29 +105,24 @@ Initial profile keys:
 - `email.mailgun`;
 - `email.postmark`.
 
-Static current research maturity:
-- six initial profiles: **EE3**;
-- **ET-certified profiles: 0**.
+Static maturity: **6 EE3 profiles; 0 ET-certified**.
 
 Accepted provider rules:
 - `wp_mail()` success means local processing only;
-- generic SMTP relay acceptance is not inbox/final-receiving-server proof;
-- SES SEND is not DELIVERY;
-- SendGrid processed is not delivered;
-- Mailgun accepted is not delivered;
-- Postmark Delivery means destination server accepted and explicitly does not prove inbox placement;
-- SendGrid/Mailgun signed webhook profiles are documented; Postmark is not assigned a fabricated signature capability;
+- SMTP relay acceptance is not inbox/final receiving-server proof;
+- SES SEND ≠ DELIVERY;
+- SendGrid processed ≠ delivered;
+- Mailgun accepted ≠ delivered;
+- Postmark Delivery means destination server accepted, not inbox placement;
+- webhook security capabilities are provider-specific and never fabricated;
 - late bounce/complaint can coexist with earlier delivery evidence;
-- provider suppression/unsubscribe does not automatically mutate unrelated WPE channels/access;
-- open/click observations never become Read/Human Seen/Inbox Confirmed.
-
-Provider-specific paper source: `docs/ARCHITECTURE/EMAIL-PROVIDER-CAPABILITY-MATRIX.md` + ADR-0063.
+- open/click never becomes Read/Human Seen/Inbox Confirmed.
 
 ## Platform evidence blockers
 
 P-001 compatibility; P-002 UI; P-003 Job backend; P-004 Definition DDL; P-005 Vault implementation; P-006 Free↔Pro; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup.
 
-Additional Email/Remote Service provider runtime evidence remains tracked separately.
+Additional Email and Remote Service runtime evidence remains separately tracked.
 
 **None executed.**
 
@@ -146,7 +132,7 @@ Verified planning/documentation only:
 - planning branch isolated from `main`;
 - **31/31 Exhaustive, 0/31 Authorized**;
 - ADR/governance synchronized through ADR-0063;
-- Remote Service privacy matrix/ADR-0060 committed;
+- Remote Service privacy matrix + ADR-0060 + future evidence protocol committed;
 - Backup family/provider registry + normalized 34-target matrix + ADR-0061 committed;
 - Membership provider profiles + ADR-0062 committed;
 - Email provider profiles + ADR-0063 committed;
@@ -163,19 +149,19 @@ Not performed:
 - provider/API/webhook/SMTP calls;
 - billing source objects/transactions;
 - email sends/webhook tests/bounce simulators;
-- WPE service/diagnostics transmission;
+- WPE service/account-link/diagnostics transmission;
+- remote privacy-retention fixtures;
 - Backup uploads/deletes/restores;
 - performance benchmarks;
 - releases/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Remote Service consent-gated privacy/retention evidence protocol.
-2. Refresh remaining low-evidence Backup provider docs.
-3. Membership provider version/evidence refinements.
-4. Email provider version/evidence refinements.
-5. P-003/provider evidence plan refinement.
-6. Keep governance/Draft PR synchronized.
+1. Refresh low-evidence Backup provider profiles from official docs.
+2. Membership provider version/evidence refinements.
+3. Email provider version/evidence refinements.
+4. Continue P-003/provider evidence plan refinement.
+5. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
 
