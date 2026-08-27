@@ -4,17 +4,24 @@ WPEssential is a modular, AI-native WordPress application platform for structure
 
 > **Repository status:** Phase 0 — research, product specification and architecture planning. Production feature development has not started and is **not authorized yet**.
 
+Current canonical project state: `PLANNED_EXISTING_PROJECT`  
+Current execution mode: `PLANNER_ONLY`
+
+See `docs/PROJECT-STATE-AND-ADOPTION.md`.
+
 ## Development consent gate
 
 Production development requires explicit project-owner consent before any runtime/plugin source implementation begins.
 
-Read `/DEVELOPMENT-CONSENT.md` and ADR-0014.
+Read `/DEVELOPMENT-CONSENT.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014.
 
 Important:
 - `continue`, `proceed`, approval of planning, an Accepted ADR, or Phase 0 readiness does **not** authorize coding;
 - executable research spikes also count as development and require explicit consent;
 - planning, research, threat models, specifications, ADRs, acceptance criteria and documentation-only commits may continue;
-- even after owner consent, unresolved Phase 0 blockers must not be bypassed.
+- even after owner consent, unresolved Phase 0 blockers must not be bypassed;
+- implementation approval is scoped (`TASK`, `MODULE`, `MILESTONE`, `PHASE`, `PROJECT`) and recorded durably;
+- ordinary reversible work inside an already approved documented milestone should proceed autonomously without repeatedly asking for approval.
 
 ## Product model
 
@@ -26,33 +33,49 @@ Important:
 
 ## Engineering source of truth
 
-Repository state, tests, documentation, ADRs, checkpoints, and Git history are the source of truth. Chat history is not.
+Repository state, runtime/database/config evidence, executed tests, CI results, documentation/ADRs, checkpoints and VCS history are authoritative in that order defined by the project-state baseline. Chat history is not.
 
 Before implementation, read in this order:
 
 1. `DEVELOPMENT-CONSENT.md`
 2. `AGENTS.md`
 3. `CHECKPOINT.md`
-4. `docs/PRODUCT-MASTER-PLAN.md`
-5. `docs/ARCHITECTURE.md`
-6. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-7. `docs/OPEN-DECISIONS-REGISTER.md`
-8. `docs/MODULES/README.md`
-9. `docs/MODULES/SPECIFICATION-STANDARD.md`
-10. `docs/MODULES/OPTION-INVENTORY.md`
-11. module/suite detailed specifications under `docs/MODULES/`
-12. `docs/MODULE-CATALOG.md` — high-level catalog; detailed specs take precedence when more specific
-13. relevant `docs/ARCHITECTURE/` and `docs/SECURITY/` detail documents
-14. `docs/RESEARCH/`
-15. `docs/SECURITY.md`
-16. `docs/COMMERCIAL-DISTRIBUTION.md`
-17. `docs/QUALITY-GATES.md`
-18. `docs/ROADMAP.md`
-19. `docs/DECISIONS/`
+4. `docs/PROJECT-STATE-AND-ADOPTION.md`
+5. `docs/APPROVAL-LEDGER.md`
+6. `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
+7. `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
+8. `docs/PRODUCT-MASTER-PLAN.md`
+9. `docs/ARCHITECTURE.md`
+10. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+11. `docs/OPEN-DECISIONS-REGISTER.md`
+12. `docs/MODULES/README.md`
+13. `docs/MODULES/SPECIFICATION-STANDARD.md`
+14. `docs/MODULES/OPTION-INVENTORY.md`
+15. module/suite detailed specifications under `docs/MODULES/`
+16. `docs/MODULE-CATALOG.md` — high-level catalog; detailed specs take precedence when more specific
+17. relevant `docs/ARCHITECTURE/` and `docs/SECURITY/` detail documents
+18. `docs/RESEARCH/`
+19. `docs/SECURITY.md`
+20. `docs/COMMERCIAL-DISTRIBUTION.md`
+21. `docs/QUALITY-GATES.md`
+22. `docs/ROADMAP.md`
+23. `docs/DECISIONS/`
+
+## Existing-project adoption rule
+
+WPEssential is currently a planned existing project, not a greenfield blank slate.
+
+Do not restart it, rewrite accepted architecture merely for stylistic preference, discard unknown work or overwrite the existing plan.
+
+Use:
+
+`Inspect → Baseline → Audit Existing Plan → Compare Plan With Reality → Identify Gaps → Amend Plan → Preserve Existing Work → Continue Safely`
+
+Plan/repository drift and gap classifications are defined in `docs/PROJECT-STATE-AND-ADOPTION.md`.
 
 ## Module specification rule
 
-No production module implementation may begin while its product behavior is still only a feature list. Every module must first document every known screen, option, field, toggle, selector, action, default, validation rule, permission boundary, lifecycle state, failure state, dependency, asset boundary, import/export behavior and acceptance test.
+No production module implementation may begin while its product behavior is still only a feature list. Every module must first document every known screen, option, field, toggle, selector, action, default, validation rule, permission boundary, lifecycle state, failure state, dependency, asset boundary, import/export behavior, important negative/MUST-NOT behavior and acceptance test.
 
 If implementation later discovers an unplanned option or behavior, documentation is updated before or in the same coherent change. Development is not allowed to silently invent product semantics.
 
@@ -60,11 +83,40 @@ Current planning coverage: **31/31 module/platform surfaces have option inventor
 
 ## Default engineering lifecycle
 
-Inspect → Understand → Research → Assess → Plan → **Consent Gate** → Implement → Test → Attack → Review → Harden → Document → Commit → Checkpoint → Report.
+Inspect → Understand → Research → Assess → Plan → **Approval/Consent Gate** → Implement → FAST Gate → Review/Attack/Harden → Integrate → FULL Gate when required → Document → Commit → Checkpoint → Report.
 
 The Consent Gate is mandatory and external to technical readiness: a technically ready project still waits for explicit owner authorization.
 
-No feature is complete because its UI works. Completion requires integration, authorization, validation, failure handling, data integrity, tests, observability, documentation, compatibility, rollback/recovery, and meaningful Git history.
+No feature is complete because its UI works. Completion requires integration, authorization, validation, failure handling, data integrity, tests, observability, documentation, compatibility, rollback/recovery, and meaningful VCS history.
+
+## Execution safety
+
+Approved implementation is governed by `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`.
+
+Important rules include:
+- small-batch change budgets;
+- no unrelated cleanup;
+- critical-path prioritization;
+- `PARALLEL_SAFE`, `COORDINATED_PARALLEL`, `SERIALIZE`, `BLOCKED` work classification;
+- shared-surface ownership and WIP limits;
+- baseline-failure and flaky-test truthfulness;
+- `FAST GATE` during bounded implementation and `FULL GATE` at milestone/release boundaries;
+- truthful `INDEPENDENT REVIEW`, `SELF REVIEW`, `AUTOMATED REVIEW` labels;
+- stable work IDs for new execution planning.
+
+## Release/recovery safety
+
+Future release work distinguishes:
+
+`BUILT → DEPLOYED → RELEASED → PRODUCTION_VERIFIED`
+
+Recovery is classified:
+- `SIMPLE_ROLLBACK`
+- `ROLLBACK_WITH_COMPATIBILITY`
+- `FORWARD_FIX_PREFERRED`
+- `IRREVERSIBLE`
+
+Production incidents switch to containment/recovery priority and obey stop-the-line rules in `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`.
 
 ## Compatibility direction
 
@@ -133,5 +185,7 @@ Raw billing-provider statuses/events never directly authorize a request. Provide
 Detailed research and architecture are developed on `planning/master-architecture` and reviewed through draft PR #1.
 
 Production feature development begins only when:
-1. relevant technical planning gates are Accepted; **and**
-2. the project owner gives explicit development consent under ADR-0014.
+1. relevant technical planning gates are Accepted;
+2. the project owner gives explicit scoped development consent under ADR-0014;
+3. the approval is recorded in `docs/APPROVAL-LEDGER.md`; and
+4. the implementation baseline/adoption gate confirms a safe branch/revision/workspace and first bounded milestone.
