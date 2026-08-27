@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0085**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0091**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -16,17 +16,21 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-003 | ADR-0006/0059/0068/0083 | J1/J2/J3 physical mapping, Action Scheduler coexistence/backend, claims/fairness/backpressure/runners/retention/Multisite — P-003 |
 | D-004 | ADR-0008/0049/0073 | Definition D1 vs D2/D3/D4 exact DDL/index/locking/migration — P-004 |
 | D-005 | ADR-0009/0048/0085 | Vault V1 vs V2 exact crypto/envelope/DDL/rotation/recovery/redaction/security review — P-005 |
-| D-006 | ADR-0010/0070/0072/0076 | Free↔Pro/Product License runtime/API/idempotency/ETag/allocation/clone/offline-grace — P-006 |
+| D-006 | ADR-0010/0070/0072/0076/0091 | Free↔Pro/Product License runtime/API/OAuth/idempotency/ETag/allocation/clone/offline-grace/service persistence — P-006 |
 | D-007 | ADR-0011 | executable CI matrix — P-007 |
 | D-008 | ADR-0012 | build/externalization/toolchain comparison — P-008 |
 
-## B. Current physical benchmark baselines
+## B. Current physical/compiler benchmark baselines
 
 Topology classes remain PT-A native site, PT-B native network/global, PT-C scoped WPE control-plane, PT-D scoped shared high-volume runtime, PT-E per-site custom runtime and PT-F external authority.
 
 Current first profiles/comparisons:
 - Definition: **D1/PT-C** first, D2/D3/D4 comparisons — ADR-0073 / P-004;
 - Relations: **R1/PT-D** first, R2/PT-E mandatory, R3 exceptional — ADR-0074 / P-010;
+- Query: **QP1 WordPress-native** first; QP2 Custom Table + QP3 Relations-assisted workload profiles; QP4 remote separately certified — ADR-0086 / P-009;
+- Field Storage: **FS1 native WP default**, FS2 Custom Table escalation, FS3 child rows, FS4 Relations, FS5 Vault refs — ADR-0087;
+- Custom Tables: **CT1/PT-E** first for site-owned tables, CT2/PT-D mandatory large-network comparison, CT3 explicit network-owned — ADR-0088;
+- Settings: **ST1/PT-A** site, **ST2/PT-B** network, ST3 inheritance; ST4 per-field comparison — ADR-0089;
 - Forms: **FRT1/PT-D** first, FRT2/PT-E mandatory — ADR-0077;
 - Chat: **CRT1/PT-D** first, CRT2/PT-E mandatory — ADR-0077;
 - Membership: **M1/PT-D** first, M2/PT-E mandatory — ADR-0078 / P-012;
@@ -38,92 +42,88 @@ Current first profiles/comparisons:
 - Backup Remote Copy: **BR1/PT-D** first, BR2 PT-C-current+PT-D-history mandatory, BR3 PT-E comparison — ADR-0084 / P-013;
 - Vault: **V1/PT-C** favored first, V2 per-site + separate network Vault mandatory comparison — ADR-0085 / P-005.
 
-All are paper profiles. **No DDL/index/database benchmark has executed.**
+All are paper profiles. **No DDL/index/database/compiler benchmark has executed.**
 
-## C. Query / Fields / Tables blockers
+## C. Query — ADR-0086 / P-009
 
-- **Q-001 / P-009** — Query AST compiler security/cost budgets/cache invalidation/storage-adapter plans/network aggregation/IDOR/scale.
-- Field storage adapter exact physical/index/projection/migration rules remain open.
-- Custom Tables desired-schema compiler, PT-D/PT-E selection, online migration/backfill/locking/recovery remain open.
-- Admin Columns/Listings depend on Query/storage evidence and N+1/cache policy.
+Semantic compiler boundaries are now accepted; remaining evidence includes:
+- QP1/QP2/QP3 exact provider compiler behavior;
+- SQL/identifier/order injection corpus;
+- WordPress meta/tax/date and Custom Table query plans;
+- relation N+1 prevention;
+- cursor vs offset correctness/performance;
+- static cost calibration by execution context;
+- persistent-cache key/invalidation and revoke-to-deny isolation;
+- 10k/100k/1M rows and 100/1k/10k-site network aggregation;
+- remote QP4 provider-specific I-certification.
 
-## D. Workflow — ADR-0082 / P-011
+Executed P-009 fixtures: **0**.
 
-WF1/PT-D is first future benchmark, WF2/PT-E mandatory comparison.
+## D. Field Storage / Custom Tables — ADR-0087/0088
+
+Field routing semantics are accepted; no universal field store remains open.
+
+Open Field evidence:
+- FS1 native adapter compatibility/revision/query behavior;
+- FS2/FS3 exact column/child-row physical/index profiles;
+- uniqueness/concurrency;
+- source→target Field Migration Plan crash/resume/fidelity;
+- projection invalidation and privacy/export behavior.
+
+Custom Tables CT1/PT-E vs CT2/PT-D remains a physical evidence comparison:
+- exact DDL/types/indexes/UUID/row identity;
+- MySQL/MariaDB `ALTER`/locking/algorithm behavior;
+- chunked backfill/shadow-copy/swap/recovery;
+- observed-schema drift and stale-plan revalidation;
+- 100/1k/10k-site table proliferation vs shared scope/noisy-neighbor behavior;
+- Backup/site lifecycle/wrong-site destructive attacks.
+
+Executed Field/Custom Table fixtures: **0**.
+
+## E. Settings — ADR-0089
+
+ST1/ST2/ST3 semantics are accepted. Open evidence:
+- grouped option vs ST4 per-field performance/atomicity;
+- supported WordPress autoload behavior;
+- value-version stale-edit/CAS or locking mechanism;
+- network-default cache invalidation/versioning at 100/1k/10k sites;
+- REST read/write site-network attacks;
+- clone/export/delete/Vault-degraded behavior.
+
+Executed Settings fixtures: **0**.
+
+## F. Membership — ADR-0078/0090 / P-012
+
+M1/PT-D vs M2/PT-E remains future runtime comparison. Enrollment authoritative, Entitlements derived, Principal Access Generation supports the paper revoke/cache model.
+
+Protected-file delivery profiles are accepted:
+- PD1 private local/PHP correctness baseline;
+- PD2 server-accelerated local;
+- PD3 private object signed delivery;
+- PD4 future stronger-revocation CDN;
+- PC0–PC4 certification levels.
 
 Open evidence:
-- exact Run/Step/Wait/Approval/branch/context DDL/indexes;
-- trigger idempotency and Job enqueue reconciliation;
-- two-worker/duplicate Job handling;
-- wait registration/event races and duplicate resume;
-- concurrent approval/join;
-- external unknown outcome/reconciliation;
-- cancellation/compensation;
-- site lifecycle/Restore;
-- 100k/1M Runs, 10k/100k waits and large-network/noisy-neighbor evidence.
+- exact Membership DDL/cache/locking/provider reconciliation/refund/identity/privacy/restore;
+- origin-bypass PC1+ tests;
+- Range/cache/CDN/path/header abuse;
+- signed URL expiry/revocation truth;
+- public→private migration;
+- Backup/Restore/clone protected assets.
+
+Billing source profiles remain **4 BE3 / 0 MB-certified**. Protected delivery remains **0 PC1+ certified**.
+
+## G. Workflow — ADR-0082 / P-011
+
+WF1/PT-D first, WF2/PT-E mandatory. Open exact Run/Step/Wait/Approval DDL/indexes, trigger/Job reconciliation, duplicate execution, wait/approval races, external unknown outcome, cancellation/compensation, lifecycle/Restore and large-network evidence.
 
 Executed P-011 benchmarks: **0**.
 
-## E. JobService — ADR-0083 / P-003
+## H. JobService — ADR-0083 / P-003
 
-J1/J2/J3 mapping is accepted for future comparison. Backend action rows never become WPE business truth.
+J1/J2/J3 mapping accepted. Open exact Job/Attempt DDL, claims/leases, backend enqueue reconciliation, fairness/backpressure/admission, schedule overlap, lifecycle/Restore, Action Scheduler 4.1.0 coexistence and 100/1k/10k-site fairness.
 
-Open evidence:
-- exact Job/Attempt DDL/indexes/claims/leases;
-- WPE commit ↔ backend enqueue failure recovery in both directions;
-- worker crash/lease expiry after possible side effect;
-- fairness/starvation/backpressure/admission;
-- recurring schedule occurrence/overlap;
-- site lifecycle/Restore;
-- Action Scheduler 4.1.0 load order/coexistence/schema/version/API/cleanup/runner behavior;
-- 100/1k/10k-site fairness and queue isolation.
-
-Executed P-003 backend/physical evidence: **0**.
-
-## F. Backup — ADR-0084 / P-013
-
-BR1/PT-D first, BR2 split mandatory comparison, BR3 PT-E isolation comparison.
-
-Open evidence:
-- exact Backup Set/Part/Remote Copy/Object/Attempt DDL/indexes;
-- commit-unknown reconciliation;
-- manifest-last crash windows;
-- provider checksum/object identity semantics;
-- delete/trash/version/object-lock truth;
-- only-known-good-copy prune protection;
-- re-verification and alternate-copy failover;
-- site lifecycle and fresh-server Restore;
-- encryption/recovery integration;
-- provider C0–C4 certification.
-
-Backup targets: **34 / 0 C-certified / 0 C3 Supported**. Executed transfers/restores/benchmarks: **0**.
-
-## G. Vault — ADR-0085 / P-005
-
-V1/PT-C is favored first physical profile; V2 per-site + separate network Vault is mandatory comparison.
-
-Accepted store boundaries: Secret Identity/current metadata, immutable Secret Versions, VRK Generations, VRK Key Slots and explicit network-secret Use Grants.
-
-Open evidence:
-- exact DDL/types/indexes and same-scope pointer integrity;
-- XChaCha20-Poly1305/AAD/envelope serialization;
-- external key and WordPress-derived HKDF stability/rotation;
-- recovery/KMS slots;
-- current-secret replace concurrency;
-- resumable VRK rotation crash recovery;
-- use-grant revoke race;
-- clone/staging/lost-key/Backup/Restore;
-- DB/REST/log/support/AI plaintext leakage scans;
-- V1 vs V2 on 100/1k/10k sites;
-- independent security review.
-
-Executed Vault crypto/physical evidence: **0**.
-
-## H. Membership — ADR-0078 / P-012
-
-M1/PT-D vs M2/PT-E remains future comparison. Enrollment authoritative, Entitlements derived, Principal Access Generation provides the paper revoke/cache generation model.
-
-Open exact DDL/cache/locking/files/provider reconciliation/refund/identity/privacy/restore evidence. Billing source profiles remain **4 BE3 / 0 MB-certified**.
+Executed P-003 evidence: **0**.
 
 ## I. Notification / Email — ADR-0079
 
@@ -141,39 +141,66 @@ Open signature/replay/dedupe/claim/routing/retention/large-network/provider evid
 
 AU1/PT-D favored. Exact DDL/index/retention/fail-closed classes/privacy transforms/scale remain open. Local DB is not claimed tamper-proof; any hash-chain/signed/external checkpoint requires separate attacker-model/key-custody evidence.
 
-Executed Audit physical/integrity evidence: **0**.
+Executed Audit evidence: **0**.
 
-## L. Multisite / Site Lifecycle — ADR-0069/0071/0075
+## L. Backup — ADR-0084 / P-013
+
+BR1/PT-D first, BR2 split mandatory, BR3 PT-E comparison. Open exact Backup Set/Part/Remote Copy/Object/Attempt DDL, commit-unknown, manifest-last crash windows, checksum/object identity/delete/version-lock truth, only-known-good-copy pruning, re-verification/failover, site lifecycle/fresh-server Restore, encryption/recovery and provider C0–C4.
+
+Backup targets: **34 / 0 C-certified / 0 C3 Supported**. Executed transfers/restores/benchmarks: **0**.
+
+## M. Vault — ADR-0085 / P-005
+
+V1/PT-C favored first; V2 per-site + network Vault mandatory comparison. Open exact DDL, XChaCha20/AAD serialization, external/WP-derived HKDF stability, key slots, replace/rotation races, use-grant revoke, clone/lost-key/Backup/Restore, plaintext leakage scans, large-network comparison and independent security review.
+
+Executed Vault crypto/physical evidence: **0**.
+
+## N. Multisite / Site Lifecycle — ADR-0069/0071/0075
 
 31/31 scopes mapped. Site Lifecycle protocol has **40 fixtures / 0 executed**. Multisite certification remains **0 MS1+**.
 
-Open: provision/reactivate/delete/uninitialize, Job/Workflow/Notification/Webhook drain, scoped cleanup/retention, Vault grants, Membership revoke, Product License release, Backup recovery, clone/transfer/DR, crash/restart and 100/1k/10k-site evidence.
+Open provision/reactivate/delete/uninitialize, Job/Workflow/Notification/Webhook drain, scoped cleanup/retention, Vault grants, Membership revoke, Product License release, Backup recovery, clone/transfer/DR, crash/restart and 100/1k/10k-site evidence.
 
-## M. Remote service / Product License
+## O. Remote service / Product License — ADR-0076/0091
 
-Accepted OAuth/resource/state/HTTP principles through ADR-0076. Open exact OAuth/OpenAPI/TUF/idempotency/ETag/allocation/clone-transfer/offline-grace/retention/runtime evidence.
+Resource/state/HTTP principles and paper component schemas are now accepted.
+
+Open implementation/service evidence:
+- actual OpenAPI YAML/JSON encoding/lint;
+- exact string/format/length constraints;
+- OAuth scopes/token lifecycle;
+- Idempotency-Key body canonicalization/retention;
+- ETag/If-Match stale mutation behavior;
+- last-seat and release/reallocate races;
+- cursor pagination;
+- RFC 9457 conformance;
+- conflict privacy/resource enumeration;
+- clone/transfer/offline-grace flows;
+- remote-success/local-persist-failure;
+- signed entitlement verification integration;
+- service persistence/operations.
 
 Remote privacy: **30 fixtures / 0 executed**. Product License API/service fixtures: **0**.
 
-## N. Accepted architecture no longer open semantically
+## P. Accepted architecture no longer open semantically
 
-ADRs **0035–0085** preserve accepted core semantics. Evidence can refine implementation/version facts but cannot silently redesign them.
+ADRs **0035–0091** preserve accepted core semantics. Evidence can refine implementation/version facts but cannot silently redesign them.
 
-Benchmark labels D1/R1/FRT1/CRT1/M1/NE1/EI1/WF1/J1/BR1/V1 are not final DDL or runtime certification. AU1 is not a tamper-proof claim. Backend/provider state cannot replace owning WPE domain truth.
+Benchmark/profile labels D1/R1/QP1/FS1/CT1/ST1/FRT1/CRT1/M1/NE1/EI1/WF1/J1/BR1/V1/PD1 are not final implementation certification. AU1 is not a tamper-proof claim. Backend/provider state cannot replace owning WPE domain truth.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when evidence is sufficient.
 3. Document bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact providers/services, send mail, run queues, execute crypto or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact providers/services, send mail, run queues, execute crypto, move protected files or transfer data before explicit owner consent.**
 5. Synchronize governance after meaningful milestones.
 
 ## Next planning-only priorities
 
-1. Query P-009 storage-adapter cost/cache/security benchmark profile without execution.
-2. Field storage + Custom Tables PT-D/PT-E physical/migration profiles without DDL.
-3. Settings PT-A/PT-B runtime inheritance/autoload/concurrency profile.
-4. Membership protected-file delivery topology and authorization/cache evidence paper protocol.
-5. Product License exact OpenAPI component schemas only where static review removes ambiguity.
+1. Definition P-004 exact fixture/query-plan/locking protocol without DDL execution.
+2. Relations P-010 exact endpoint/cardinality/concurrency benchmark protocol without tables.
+3. REST API Builder compiled endpoint auth/rate/CORS/cache physical profile.
+4. Import/Export Run + Identity Map + Journal physical topology/recovery profile.
+5. User Profile + Role/Capability runtime security/anti-lockout evidence profiles.
 6. Keep P-001…P-013 executable gates intact.
