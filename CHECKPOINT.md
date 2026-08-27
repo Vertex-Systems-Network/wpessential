@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before runtime/source/build/migration/test implementation, dependencies, executable spikes/benchmarks, queue execution, provider/API interactions, service transmission, SMTP/email sends, Backup/Restore operations or release packaging.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, dependencies, executable spikes/benchmarks, queue execution, provider/API interactions, service transmission, SMTP/email sends, protected-file moves/downloads, Backup/Restore operations or release packaging.
 
 `continue` and planning acceptance do **not** authorize development.
 
@@ -24,108 +24,117 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0085**.
+Accepted decisions now extend through **ADR-0091**.
 
 Latest milestones:
-- ADR-0081 — Audit AU1/PT-D retention/index/integrity profile.
-- ADR-0082 — Workflow WF1/PT-D first P-011 benchmark; WF2/PT-E mandatory comparison.
-- ADR-0083 — JobService J1/J2/J3 PT-C/PT-D physical mapping for future P-003.
-- ADR-0084 — Backup Remote Copy BR1/BR2/BR3 physical comparison for P-013.
-- **ADR-0085 — Vault V1/PT-C physical envelope profile; V2 Multisite comparison.**
+- ADR-0086 — Query QP1/QP2/QP3/QP4 compiler/cost/cache/security benchmark matrix.
+- ADR-0087 — Field Storage FS1–FS6 physical routing profile.
+- ADR-0088 — Custom Tables CT1/PT-E vs CT2/PT-D physical/migration baseline.
+- ADR-0089 — Settings ST1/PT-A, ST2/PT-B, ST3 inheritance runtime profile.
+- ADR-0090 — Membership Protected File PD1–PD4 + PC0–PC4 certification profile.
+- **ADR-0091 — Product License field-level OpenAPI component schema profile.**
 
-Earlier active physical baselines include Definition D1, Relations R1, Forms FRT1, Chat CRT1, Membership M1, Notification/Email NE1 and Event Inbox EI1.
+Earlier active baselines include Definition D1, Relations R1, Forms FRT1, Chat CRT1, Membership M1, Notification/Email NE1, Event Inbox EI1, Audit AU1, Workflow WF1, Job J1, Backup BR1 and Vault V1.
 
-## Physical benchmark map
+## Physical/compiler profile map
 
 - Definition: D1/PT-C first; D2/D3/D4 comparisons — **0 executed**.
 - Relations: R1/PT-D first; R2/PT-E mandatory; R3 exceptional — **0 executed**.
+- Query: QP1 WordPress-native first; QP2 Custom Table + QP3 Relations-assisted; QP4 remote separately certified — **0 executed**.
+- Field Storage: FS1 native WP default; FS2 typed table; FS3 child; FS4 Relations; FS5 Vault; FS6 derived projection — **0 executed**.
+- Custom Tables: CT1/PT-E first for site-owned; CT2/PT-D mandatory; CT3 network-owned only — **0 executed**.
+- Settings: ST1/PT-A site; ST2/PT-B network; ST3 inheritance; ST4 per-field comparison — **0 executed**.
 - Forms: FRT1/PT-D first; FRT2/PT-E mandatory — **0 executed**.
 - Chat: CRT1/PT-D first; CRT2/PT-E mandatory — **0 executed**.
 - Membership: M1/PT-D first; M2/PT-E mandatory — **0 executed**.
+- Protected files: PD1 correctness baseline; PD2 accelerated; PD3 object signed delivery; PC0–PC4 certification — **0 PC1+**.
 - Notification/Email: NE1/PT-D first; NE2/PT-E mandatory — **0 executed**.
 - Event Inbox: EI1/PT-D first; EI2/PT-E mandatory — **0 executed**.
 - Audit: AU1/PT-D favored — **0 executed**.
 - Workflow: WF1/PT-D first; WF2/PT-E mandatory — **0 executed**.
-- JobService: J1/PT-D Jobs+Attempts first; J2 split mandatory; J3 PT-C low-volume control — **0 executed**.
-- Backup Remote Copy: BR1/PT-D first; BR2 split mandatory; BR3/PT-E comparison — **0 executed**.
-- Vault: V1/PT-C favored first; V2 per-site + separate network Vault mandatory — **0 executed**.
+- JobService: J1/PT-D Jobs+Attempts first; J2 split mandatory; J3 PT-C control — **0 executed**.
+- Backup Remote Copy: BR1/PT-D first; BR2 split mandatory; BR3/PT-E — **0 executed**.
+- Vault: V1/PT-C favored first; V2 per-site + network Vault mandatory — **0 executed**.
 
-No DDL, migration, table, index, cryptographic fixture or database benchmark has been executed.
+No DDL, migration, table, index, compiler, cache, cryptographic fixture or database benchmark has been executed.
 
-## Workflow — ADR-0082
+## Query — ADR-0086
 
-Workflow Runtime remains the durable source of Run/Step/Wait/Approval truth; JobService is execution opportunity only.
+Query AST remains one typed product contract; provider compilers remain capability-scoped.
 
-Future P-011 correctness gates include:
-- duplicate trigger/Job cannot duplicate logical side effect under valid node contract;
-- enqueue failure after committed Workflow state is reconcilable;
-- waits cannot double-resume under at-least-once events;
-- concurrent approval/join cannot commit twice;
-- unknown external outcome is reconciled rather than blindly retried;
-- cancellation/compensation remain explicit states;
-- Restore does not replay terminal Runs or reinterpret pinned revision.
+Accepted future profiles:
+- QP1 WordPress-native;
+- QP2 WPE Custom Table;
+- QP3 Relations-assisted/two-phase;
+- QP4 remote adapter separately certified.
 
-**P-011 executed: 0.**
+Performance cannot override SQL/identifier safety, field/row Policy, site scope, cache isolation or unsupported-node truth. Persistent cache is disallowed when authorization dependencies cannot be represented safely.
 
-## JobService — ADR-0083
+**P-009 executed: 0.**
 
-WPE-owned Job/Attempt history remains independent from Action Scheduler/backend tables.
+## Field Storage / Custom Tables — ADR-0087/0088
 
-Profiles:
-- J1 PT-D Jobs+Attempts;
-- J2 PT-C current Job + PT-D Attempts/history;
-- J3 PT-C all as low-volume control.
+Field values do not use one universal store.
 
-Backend status cannot fabricate WPE success; stale lease never proves no side effect; Action Scheduler `unique` is not business idempotency; Restore does not blindly reactivate copied backend rows.
+- ordinary natural WP values stay native;
+- typed Custom Tables are escalation for scale/constraints/Q3–Q4 queryability;
+- queryable repeaters use child rows;
+- relationships use Relations;
+- secrets use Vault references.
 
-**Action Scheduler 4.1.0 remains reviewed candidate only. P-003 executed: 0.**
+Custom Tables:
+- CT1/PT-E first for ordinary site-owned tables;
+- CT2/PT-D mandatory large-network comparison;
+- CT3 only for genuinely network-owned data.
 
-## Backup Remote Copy — ADR-0084
+Definition publish does not mean physical migration applied. Migration requires observed fingerprint → reviewed typed Plan → revalidation → future execution → verification.
 
-Remote Copy commit, verification and deletion remain separate truth states.
+**Field/Custom Table fixtures executed: 0.**
 
-Profiles:
-- BR1 PT-D shared scoped Backup runtime metadata;
-- BR2 PT-C current Backup/Copy + PT-D parts/objects/attempts;
-- BR3 PT-E per-site comparison where large-network isolation evidence requires.
+## Settings — ADR-0089
 
-Critical gates:
-- `commit_unknown` is reconciled;
-- manifest-last remains required;
-- provider object identity/path cannot bypass WPE manifest/scope/integrity validation;
-- provider delete success maps truthfully to trash/version/lock/delete-confirmed semantics;
-- prune cannot remove only known-good recovery point due to newer unverified backup;
-- Restore validates actual manifest/object/hash/crypto/target scope.
+- ST1/PT-A grouped site document;
+- ST2/PT-B grouped network document;
+- ST3 `site override → network default → Definition default`;
+- non-autoload default;
+- stale high-risk/page-document edit conflict must be visible rather than blind last-write-wins;
+- Vault plaintext never enters Settings storage/history/cache/REST.
 
-**Backup targets: 34 / 0 C-certified / 0 C3 Supported. P-013 executed: 0.**
+**Settings fixtures executed: 0.**
 
-## Vault — ADR-0085
+## Membership Protected Files — ADR-0090
 
-V1/PT-C is the favored first physical profile. V2 per-site Vault + separate network Vault is mandatory Multisite security/operations comparison.
+A protected label requires origin isolation, not merely a hidden/gated link.
 
-V1 separates:
-- Secret Identity/current metadata;
-- immutable encrypted Secret Versions;
-- VRK Generations;
-- VRK Key Slots;
-- explicit network-secret Use Grants/Bindings.
+Delivery profiles:
+- PD1 private local + PHP stream correctness baseline;
+- PD2 certified server-accelerated local;
+- PD3 private object + short-lived signed delivery with truthful bearer-expiry limits;
+- PD4 future provider-specific stronger revocation.
 
-Critical gates:
-- each VRK belongs to explicit site/network Vault Security Domain;
-- no plaintext secret or wrapping key in DB;
-- AAD binds secret identity/version/scope/purpose/key generation;
-- row/ciphertext swap across context must fail authentication;
-- missing/wrong key fails closed and preserves ciphertext;
-- network secret use requires explicit grant + current target-site Policy/Connection authorization;
-- clone/staging does not auto-activate production integrations;
-- normal Backup does not package the only external/recovery wrapping key plaintext beside ciphertext;
-- full PHP/server compromise remains outside DB-only secrecy claim.
+Certification PC0–PC4 covers origin bypass, current authorization, transfer/cache/Range semantics and lifecycle/recovery.
 
-**P-005 crypto/physical evidence: 0. Independent security review not yet executed.**
+**PC1+ certified: 0. No file has been moved/downloaded/signed.**
+
+## Product License API — ADR-0091
+
+Paper component schemas now define:
+- Account/Contract/Capacity;
+- Installation/Network/Site Allocation;
+- reconciliation/review/transfer;
+- signed entitlement/keyset envelope;
+- Problem Details/Field Error;
+- cursor pagination;
+- Idempotency-Key + ETag/If-Match/Retry-After/correlation semantics.
+
+Client cannot directly set server-owned capacity/counting/lifecycle authority. Domain/blog ID remain metadata. API transport still does not replace independent signed entitlement verification.
+
+**0 OpenAPI/server/client/API/service fixtures executed. No YAML/JSON OpenAPI artifact created.**
 
 ## Existing provider/runtime state
 
 - Membership Billing: **4 BE3 / 0 MB-certified**.
+- Protected file delivery: **0 PC1+**.
 - Email: **6 EE3 / 0 ET-certified**.
 - Event adapters: **0 I4/I5 certified**.
 - Backup: **34 / 0 C-certified**.
@@ -144,20 +153,20 @@ Verified planning/documentation only:
 - branch remains `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - **31/31 Multisite scopes mapped / 0 MS1+**;
-- governance synchronized through **ADR-0085**;
-- Workflow/Job/Backup/Vault physical paper profiles committed;
+- governance synchronized through **ADR-0091**;
+- Query/Field/Custom Table/Settings/Protected File/Product License component paper profiles committed;
 - all newly described executable evidence remains zero;
 - no implementation/build/test/provider-certification success claimed.
 
-Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, queue execution, crypto/KDF/key generation, provider/API/webhook/SMTP calls, commerce transactions, Email sends, Backup transfer/Restore/prune, PHPUnit/Playwright, DB/performance benchmarks, release/deployment.
+Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, Query compiler/cache, option writes, protected file moves/server rules/signed URLs/downloads, OpenAPI YAML/JSON/server/client/mock, provider/API/webhook/SMTP calls, commerce transactions, Email sends, Backup transfer/Restore/prune, crypto/KDF/key generation, PHPUnit/Playwright, DB/performance benchmarks, release/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Query P-009 storage-adapter/cost/cache/security benchmark profile without execution.
-2. Field Storage + Custom Tables PT-D/PT-E physical/migration profiles without DDL.
-3. Settings PT-A/PT-B inheritance/autoload/concurrency profile.
-4. Membership protected-file delivery topology/evidence protocol.
-5. Product License exact OpenAPI component schema refinement only where static review reduces ambiguity.
+1. Definition P-004 exact fixture/query-plan/locking protocol without DDL execution.
+2. Relations P-010 exact endpoint/cardinality/concurrency benchmark protocol without tables.
+3. REST API Builder compiled endpoint auth/rate/CORS/cache physical profile.
+4. Import/Export Run + Identity Map + Journal physical topology/recovery profile.
+5. User Profile + Role/Capability runtime security/anti-lockout evidence profiles.
 6. Keep P-001…P-013 executable gates intact.
 7. Keep governance/Draft PR synchronized.
 
