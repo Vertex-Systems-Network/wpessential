@@ -56,7 +56,7 @@ Accepted:
 - RR0–RR6 retention classes;
 - disconnect is distinct from account/support/commercial-history deletion.
 
-Future executable verification is now bounded by:
+Future executable verification is bounded by:
 `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`
 
 That protocol defines 30 consent-gated fixtures covering no-call activation, field minimization, OAuth secret handling, telemetry separation, diagnostics redaction, RR0–RR6 cleanup, Support access, export/delete, clone isolation, signed-entitlement/TUF trust separation, outages, rate limits, multisite and documentation truth.
@@ -160,7 +160,7 @@ Not performed:
 1. Refresh low-evidence Backup provider profiles from official docs.
 2. Membership provider version/evidence refinements.
 3. Email provider version/evidence refinements.
-4. Continue P-003/provider evidence plan refinement.
+4. P-003/provider evidence plan refinement.
 5. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
