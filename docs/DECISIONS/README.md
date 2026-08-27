@@ -16,7 +16,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0003 | Accepted | WordPress Abilities as typed reusable action contract |
 | ADR-0004 | Accepted | No standard arbitrary PHP eval or unrestricted destructive raw-SQL primitive |
 | ADR-0005 | Proposed blocker | WPE UI wrappers + stable WordPress components/DataViews; Untitled visual reference/compatible MIT only |
-| ADR-0006 | Proposed adapter blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate; WPE execution semantics later accepted in ADR-0059 |
+| ADR-0006 | Proposed adapter blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate; WPE execution semantics later accepted in ADR-0059 and packaging profile in ADR-0068 |
 | ADR-0007 | Accepted | Pro expiry preserves data and safe deployed runtime; editing/unsafe operations can lock |
 | ADR-0008 | Proposed physical-evidence blocker | Definition Repository shape later accepted in ADR-0049; exact DDL/index/locking evidence pending |
 | ADR-0009 | Proposed physical-evidence blocker | Secrets Vault hierarchy later accepted in ADR-0048; storage/rotation/interoperability evidence pending |
@@ -74,8 +74,11 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0061 | Accepted backup identity/capability architecture / provider evidence pending | Semantic `bf.*` family keys are canonical; numeric PF aliases are legacy/ambiguous; provider profiles are separately versioned; SE0–SE3 static evidence never implies C0–C4 certification |
 | ADR-0062 | Accepted Membership billing provider profiles / executable evidence pending | Manual/Woo order/Woo Subscriptions/SureCart source-truth profiles are version-scoped; Woo paid truth uses supported APIs not `Completed` alone; pending cancellation/failure/refund/switch/webhook semantics remain reconciliation-driven |
 | ADR-0063 | Accepted Email provider profiles / executable evidence pending | wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark source-truth profiles normalize only verified provider facts; EE0–EE3 static evidence never implies ET0–ET5 certification; no inbox/read inference |
-| ADR-0064 | Accepted Backup evidence-governance architecture / runtime evidence pending | Provider static research may use versioned SE overlays; overlays can supersede paper capabilities but never produce C0–C4 certification; first refresh raises Box/MinIO/Hetzner and selected profiles without runtime claims |
-| ADR-0065 | Accepted Backup transport/security profiles / runtime evidence pending | Local/browser/FTP/FTPS/SFTP semantics are explicit: browser export is delivery not managed remote storage; plain FTP is legacy/insecure; FTPS requires TLS 1.2+ plus protected data channel; SFTP requires host-key trust; resume/finalization remain runtime-certified capabilities |
+| ADR-0064 | Accepted Backup evidence-governance architecture / runtime evidence pending | Provider static research may use versioned SE overlays; overlays can supersede paper capabilities but never produce C0–C4 certification |
+| ADR-0065 | Accepted Backup transport/security profiles / runtime evidence pending | Local/browser/FTP/FTPS/SFTP semantics explicit; browser export is delivery not managed remote storage; FTP legacy/insecure; FTPS TLS 1.2+ protected data; SFTP host-key trust mandatory |
+| ADR-0066 | Accepted Membership provider-version architecture / executable evidence pending | Billing certification is scoped by provider/profile/plugin/API/adapter/environment; Woo HPOS is a compatibility dimension; SureCart plugin and hosted API versions are separate; newer/unpatched provider versions are never auto-certified |
+| ADR-0067 | Accepted Email provider-version architecture / executable evidence pending | Email certification records send API/transport + event schema + security profile + region/account scope; SES v2/SendGrid v3/Mailgun mixed endpoint versions/Postmark dated schema are represented truthfully; send and event certification may degrade independently |
+| ADR-0068 | Accepted Action Scheduler packaging/coexistence architecture / P-003 pending | WPE Platform/Free owns one bundled candidate if selected; Pro/modules do not duplicate it; newest registered shared runtime may win; only JobService adapter calls AS; secrets/large payloads excluded; WPE idempotency/history independent of AS uniqueness/retention |
 
 ## Product specification milestone
 
@@ -86,37 +89,27 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PHYSICAL-SCHEMA-CANDIDATE.md`
 - Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
 - Job Service semantics: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
-- Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
-- Backup family/provider registry: `docs/ARCHITECTURE/BACKUP-PROVIDER-FAMILY-CAPABILITY-REGISTRY.md`
-- Backup static evidence overlay: `docs/ARCHITECTURE/BACKUP-PROVIDER-STATIC-EVIDENCE-REFRESH-2026-08-27.md`
-- Backup local/FTP/SFTP profiles: `docs/ARCHITECTURE/BACKUP-LOCAL-FTP-SFTP-STATIC-PROFILES.md`
-- Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
-- Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
-- Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
-- Membership billing provider profiles: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-PROVIDER-PROFILES.md`
-- Email transport certification: `docs/ARCHITECTURE/EMAIL-TRANSPORT-PROVIDER-CERTIFICATION.md`
-- Email provider profiles: `docs/ARCHITECTURE/EMAIL-PROVIDER-CAPABILITY-MATRIX.md`
-- Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
-- Remote service privacy/retention: `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
-- Remote service privacy evidence protocol: `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`
-- Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
-- Provider evidence protocols: corresponding files under `docs/QUALITY/`.
+- Action Scheduler packaging: `docs/ARCHITECTURE/ACTION-SCHEDULER-PACKAGING-COEXISTENCE-PROFILE.md`
+- Backup provider contract/registry/overlays/local transports: corresponding files under `docs/ARCHITECTURE/`
+- Membership billing certification/profiles/version registry: corresponding `MEMBERSHIP-BILLING-*` files under `docs/ARCHITECTURE/`
+- Email transport/provider/version registries: corresponding `EMAIL-*` files under `docs/ARCHITECTURE/`
+- Remote service schemas/privacy/evidence: files under `docs/PLATFORM/` and `docs/QUALITY/`.
 
 ## Remaining evidence blockers
 
 ### Platform/runtime
-Compatibility, UI runtime, Job adapter, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates.
+Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates. ADR-0068 fixes Action Scheduler packaging semantics but **P-003 is still unexecuted**.
 
 ### Membership
-ADR-0062 fixes first provider source-truth profiles, but **0 billing profiles are MB-certified**. Enrollment/Entitlement physical schema, revoke-to-deny cache, protected-file delivery, Manual/Woo/SureCart MB0–MB5 fixtures, customer→WP identity resolution, refunds/switches/reconciliation, scheduler/webhook failure, seat concurrency and migration/privacy runtime evidence remain open.
+ADR-0062/0066 fix provider source truth and versioning, but **0 billing profiles are MB-certified**. Current paper snapshot: Manual, Woo 11.0.1, Woo Subscriptions 9.1.0, SureCart 4.7.0/current hosted API profile. Enrollment/Entitlement schema, cache, files, provider runtime, identity, refund/switch/reconciliation, concurrency and privacy remain open.
 
 ### Email/notifications
-ADR-0063 fixes initial provider source-truth profiles for `wp_mail`, generic SMTP, SES, SendGrid, Mailgun and Postmark. All six are EE3 static-paper maturity; **0 providers are ET-certified**. Renderer/client compatibility, Delivery/Attempt/Event physical schema, provider send adapters, webhook authenticity/replay/order, unknown-outcome reconciliation, bounce/complaint/suppression truth, JobService load and ET0–ET5 evidence remain open.
+ADR-0063/0067 fix provider truth and versioning, but **0 Email profiles are ET-certified**. Current static provider identities: WordPress/P-001 wp_mail, negotiated SMTP, SES API v2, SendGrid Web API v3, endpoint-specific Mailgun profile, dated Postmark schema. Renderer/runtime/event/security/load evidence remains open.
 
 ### Remote service/distribution
-ADR-0060 fixes field-level minimization/consent/retention semantics and the future 30-fixture evidence protocol is documented, but **none has been executed**. OAuth endpoint/token lifecycle, exact schemas/OpenAPI, log redaction, diagnostics upload, RR0–RR6 cleanup, resource retention/deletion/export, clone isolation, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
+ADR-0060 fixes privacy semantics and 30 future fixtures are documented; **0 executed**. OAuth/service/TUF/retention/diagnostics implementation remains open.
 
 ### Backup/operations/security
-ADR-0061/0064/0065 fix provider identity, auditable static-evidence evolution and local/browser/FTP/FTPS/SFTP product/security semantics. The first overlay updates Box→SE3, MinIO→SE3, Rackspace→SE2, Akamai/Linode→SE2, Hetzner→SE3, Bunny→SE2 and MEGA→SE1. Local is SE2; browser-export semantics SE3; FTP SE2 legacy/insecure; FTPS SE3; SFTP SE2. **34 targets remain, 0 are C0–C4 certified.** Runtime provider evidence, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit, Protector, Watermark, Reset, Dashboard Widget and XML-RPC certification remain open.
+ADR-0061/0064/0065 fix provider identity, evidence governance and local/browser/FTP/FTPS/SFTP semantics. **34 targets remain, 0 C-certified.** Runtime provider/restore/crypto/operations certification remains open.
 
 No executable evidence may run before explicit owner consent.
