@@ -1,6 +1,6 @@
 # WPEssential
 
-WPEssential is a modular, AI-native WordPress application platform for structured content, data, automation, administration, integrations, operations, and frontend experiences.
+WPEssential is a modular, AI-native WordPress application platform for structured content, data, automation, administration, integrations, operations, identity, membership/access, and frontend experiences.
 
 > **Repository status:** Phase 0 — research and architecture planning. Production feature development has not started.
 
@@ -10,7 +10,7 @@ WPEssential is a modular, AI-native WordPress application platform for structure
 - **WPEssential Pro:** premium modules distributed as a separate add-on outside WordPress.org.
 - A Pro trial may unlock the Pro add-on for a limited period, but the WordPress.org Free plugin must not ship locked trialware.
 - Disabling a module never deletes its data unless a user explicitly requests deletion.
-- License expiry preserves configuration/data. Existing public runtime output should degrade safely rather than break a production site.
+- License expiry preserves configuration/data. Existing public runtime output and security/access enforcement should degrade safely rather than break or expose a production site.
 
 ## Engineering source of truth
 
@@ -20,14 +20,24 @@ Before implementation, read in this order:
 
 1. `docs/PRODUCT-MASTER-PLAN.md`
 2. `docs/ARCHITECTURE.md`
-3. `docs/MODULE-CATALOG.md`
-4. `docs/RESEARCH/COMPETITIVE-LANDSCAPE.md`
-5. `docs/SECURITY.md`
-6. `docs/COMMERCIAL-DISTRIBUTION.md`
-7. `docs/QUALITY-GATES.md`
-8. `docs/ROADMAP.md`
-9. `docs/DECISIONS/`
-10. `CHECKPOINT.md`
+3. `docs/MODULES/README.md`
+4. `docs/MODULES/SPECIFICATION-STANDARD.md`
+5. `docs/MODULES/OPTION-INVENTORY.md`
+6. module/suite detailed specifications under `docs/MODULES/`
+7. `docs/MODULE-CATALOG.md` — high-level Phase 0 catalog; detailed specs take precedence when more specific
+8. `docs/RESEARCH/COMPETITIVE-LANDSCAPE.md`
+9. `docs/SECURITY.md`
+10. `docs/COMMERCIAL-DISTRIBUTION.md`
+11. `docs/QUALITY-GATES.md`
+12. `docs/ROADMAP.md`
+13. `docs/DECISIONS/`
+14. `CHECKPOINT.md`
+
+## Module specification rule
+
+No production module implementation may begin while its product behavior is still only a feature list. Every module must first document every known screen, option, field, toggle, selector, action, default, validation rule, permission boundary, lifecycle state, failure state, dependency, asset boundary, import/export behavior and acceptance test.
+
+If implementation discovers an unplanned option or behavior, documentation is updated before or in the same coherent change. Development is not allowed to silently invent product semantics.
 
 ## Default engineering lifecycle
 
@@ -45,7 +55,9 @@ React + TypeScript. Use clearly MIT-licensed Untitled UI React components where 
 
 ## Architecture principle
 
-WPEssential is **not** a collection of isolated mini-plugins. Modules share typed registries and services for entities, fields, queries, relations, rendering, policies, abilities, workflows, jobs, credentials, auditing, integrations, import/export, and module lifecycle.
+WPEssential is **not** a collection of isolated mini-plugins. Modules share typed registries and services for entities, fields, queries, relations, rendering, conditions, policies, entitlements, abilities, workflows, jobs, credentials, auditing, integrations, import/export, and module lifecycle.
+
+Membership is deliberately separated from WordPress roles and billing subscriptions: a membership enrollment may create entitlements, while roles/capabilities remain WordPress authorization primitives and external commerce systems remain billing sources of truth.
 
 ## Planning branch
 
