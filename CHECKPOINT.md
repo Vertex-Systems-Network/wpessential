@@ -178,21 +178,19 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - accepted architecture/evidence contracts through **ADR-0111**;
-- new quality protocols exist for FD/BW/SM/XR;
-- Open Decisions and Implementation Readiness synchronized through ADR-0111;
+- ADR index, Open Decisions, Implementation Readiness, `CHECKPOINT.md` and Draft PR synchronized through ADR-0111;
 - no implementation/build/test/provider/update success claimed.
 
 Not performed: PHP/React source, package installation, DB tables/migrations/indexes, WordPress list/dashboard/menu/security/reset/media/status/XML-RPC hooks, builder registration/editor runs, Query/REST runtime, option/user/role writes, Action Scheduler/queue, OAuth/TUF operations, provider/API/webhook/SMTP calls, Email sends, image decode/render/save, archive/hash/compression scan, Backup transfer/Restore, Reset, crypto/KDF, PHPUnit/Playwright, benchmarks or deployment.
 
 ## Next allowed planning-only priorities
 
-1. Synchronize ADR index and Draft PR through ADR-0111.
-2. Settings Page ST1/ST2/ST3 executable evidence protocol.
-3. User Profile identity/security executable evidence protocol.
-4. Role & Capability mutation/anti-lockout executable evidence protocol.
-5. REST API Builder operational/fuzz evidence protocol.
-6. Import/Export Run/Map/Journal/recovery evidence protocol.
-7. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR gates intact.
+1. Settings Page ST1/ST2/ST3 executable evidence protocol.
+2. User Profile identity/security executable evidence protocol.
+3. Role & Capability mutation/anti-lockout executable evidence protocol.
+4. REST API Builder operational/fuzz evidence protocol.
+5. Import/Export Run/Map/Journal/recovery evidence protocol.
+6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR gates intact.
 
 Before any executable work, explicit owner consent is required.
 
