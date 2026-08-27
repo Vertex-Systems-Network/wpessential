@@ -1,262 +1,109 @@
 # WPEssential — Open Decisions Register
 
 Status: **Phase 0 / planning-only / no development consent**  
-Last reviewed: 2026-08-27
-
-This file lists only unresolved decisions or accepted architectures whose exact implementation profile still requires evidence. Resolved semantics live in ADRs.
-
-All executable protocols are consent-gated by ADR-0014. None is authorized.
-
-## States
-- **Executable evidence required** — implementation/benchmark needed.
-- **Accepted architecture / profile pending** — principle accepted, exact format/library/runtime open.
-- **Deferred** — not blocking current implementation phase.
-
----
-
-# A. Platform blockers
-
-## D-001 Compatibility floor — ADR-0002
-WordPress 6.9 and PHP 8.3 remain current candidates.
-
-Need activation/dependency/integration/multisite/support-window matrix.  
-**State:** Executable evidence required — P-001.
-
-## D-002 UI/design-system runtime — ADR-0005
-Need React/WP package externalization, CSS scoping, keyboard/screen reader, RTL/i18n and bundle evidence.  
-**State:** Executable evidence required — P-002.
-
-## D-003 Job Service adapter — ADR-0006
-Action Scheduler remains preferred candidate. Need coexistence, claims, retries, idempotency, cancellation, pruning, multisite, runner and load/recovery proof.  
-**State:** Executable evidence required — P-003.
-
-## D-004 Definition Repository physical schema — ADR-0008
-Need exact DDL/index/locking/import/multisite/tombstone benchmark.  
-**State:** Executable evidence required — P-004.
-
-## D-005 Secrets Vault crypto/key profile — ADR-0009
-Need exact AEAD/envelope, key separation/rotation/loss, multisite, staging/domain migration and restore behavior.  
-**State:** Executable evidence required — P-005.
-
-## D-006 Free↔Pro compatibility — ADR-0010
-Need Platform API format, boot/update/downgrade order, migration ownership, dependency collision and rollback fixtures.  
-**State:** Executable evidence required — P-006.
-
-## D-007 CI/test implementation — ADR-0011
-Need executable CI/tooling after compatibility/build choices.  
-**State:** Executable evidence required — P-007.
-
-## D-008 Build toolchain — ADR-0012
-Need TS/React build, externalization, chunks/manifests, CSS/RTL, translations, tests and package evidence.  
-**State:** Executable evidence required — P-008.
-
----
-
-# B. Remote service / licensing / distribution
-
-## S-001 OAuth account-link integration — ADR-0034
-Accepted profile:
-- public client;
-- Authorization Code + PKCE S256;
-- fixed WPE-owned OAuth callback;
-- one-time site-bound completion artifact;
-- no reusable token/password in browser return URL;
-- Device Authorization fallback.
-
-Still need:
-- exact service endpoint/schema;
-- token/access/refresh lifetimes;
-- rotation/revocation;
-- return artifact lifetime/encoding/storage;
-- site migration/activation transfer;
-- reverse proxy/callback compatibility;
-- replay/open-redirect/wrong-issuer/concurrent-flow tests.
-
-**State:** Accepted security profile / executable integration required.
-
-## S-002 Product entitlement signature — ADR-0017
-Need exact serialization/canonicalization, algorithm/library, key distribution/rotation, freshness/grace windows and tamper/rollback fixtures.  
-**State:** Accepted architecture / profile pending.
-
-## S-003 Pro updater trust/client — ADR-0018
-Need exact TUF-compatible client/library, role thresholds/key custody, root/release/freshness rotation, rollback packages and update-order/tamper/freeze tests.  
-**State:** Accepted architecture / protocol pending.
-
----
-
-# C. Membership blockers
-
-Resolved semantics/defaults: ADR-0013, 0015, 0016, 0019, 0020, 0024.
-
-## M-001 Enrollment/Entitlement physical schema
-Need exact tables/indexes, source uniqueness, current/history strategy, materialization, scale and multisite evidence.  
-**State:** Executable benchmark — P-012.
-
-## M-003 Access cache/revocation
-Need generation/cache model, object-cache behavior, transaction ordering, stampede control and revoke-to-deny latency proof.  
-**State:** Executable concurrency/load evidence — P-012.
-
-## M-005 Protected file delivery
-Need Apache/Nginx/PHP streaming/private-object/CDN/Range/large-file/public-media migration certification.  
-**State:** Executable environment certification.
-
-## M-006 Billing adapters/reconciliation
-Manual/Free → WooCommerce one-time → Woo Subscriptions → SureCart remains initial priority. Need mapping, event verification, idempotency/order, refunds/disputes/cancellation and reconciliation fixtures.  
-**State:** Executable provider certification.
-
-## M-010 Privacy runtime verification
-Defaults accepted in ADR-0024; exporter/eraser batching, cleanup races, team ownership, provider references and restore implications remain to test.  
-**State:** Accepted defaults / executable verification.
-
----
-
-# D. Data / Query / Workflow
-
-## Q-001 Query AST compiler/cost budgets
-Paper AST exists. Need WP/custom-table compiler security, identifier/parameter handling, cost/explain guards, caching and scale.  
-**State:** Executable evidence — P-009.
-
-## R-001 Relations physical schema
-Need indexes/cardinality/concurrency/orphan/delete benchmarks and proof whether per-relation tables are ever justified.  
-**State:** Executable evidence — P-010.
-
-## WF-001 Workflow runtime/Job integration
-Need waits/parallel/retry/idempotency/cancel/unknown-outcome/worker-crash evidence.  
-**State:** Executable evidence — P-011.
-
-## F-001 Field storage adapters
-ADR-0022 accepted. Need native meta vs custom table scale, repeaters/queryability/revisions/migration/privacy-tool fixtures.  
-**State:** Executable evidence.
-
-## T-001 Custom Tables DDL compiler
-ADR-0023 accepted. Need supported MySQL/MariaDB profile, `dbDelta()` boundaries, large-table locking/copy/backfill/recovery.  
-**State:** Executable evidence.
-
-## FE-001 Form Entry physical schema
-ADR-0025 accepted architecture. Need exact columns/indexes, typed-value encoding, projection strategy, file linkage, retention, duplicate/idempotency and scale evidence.  
-**State:** Executable evidence.
-
----
-
-# E. Admin / Identity / UX runtime
-
-## DA-001 Dashboard router/component runtime — ADR-0031
-Architecture accepted. Need WordPress rewrite/router implementation, permalink/multisite collisions, direct-route IDOR, safe return redirects, cache isolation, assets and builder adapters.  
-**State:** Accepted architecture / executable evidence.
-
-## UP-001 User/Profile identity security — ADR-0030
-Architecture accepted. Need protected-meta registry, email-change confirmation/replay, password/session behavior, Application Password secrecy and public-profile privacy fixtures.  
-**State:** Accepted security architecture / executable evidence.
-
-## RC-001 Role anti-lockout/recovery — ADR-0032
-Architecture accepted. Need effective-cap classifier fixtures, self-lockout/last-recovery-principal, multisite/Super Admin, role deletion, WP-CLI repair and recovery-mode validation.  
-**State:** Accepted security architecture / executable evidence.
-
-## AM-001 Admin menu conflict/recovery
-Product spec exists; exact hook/order/conflict behavior and safe-mode compatibility still need executable proof.  
-**State:** Executable evidence.
-
-## BW-001 Component Blueprint/builder renderer
-Need canonical component descriptor/version, server-render/security model and builder certification fixtures.  
-**State:** Paper architecture still needs further non-executable narrowing + later evidence.
-
----
-
-# F. Automation / Communication
-
-## N-001 Notification runtime/adapters — ADR-0026
-Need exact persistence indexes, recipient fan-out/dedupe, digest/preference races and provider channel adapters.  
-**State:** Accepted architecture / executable evidence.
-
-## E-001 Email renderer/delivery — ADR-0029
-Need exact renderer/CSS-inliner choice, client compatibility, sanitizer/header/link/attachment security, WordPress/third-party email adapters and provider delivery events.  
-**State:** Accepted architecture / executable evidence.
-
-## C-001 Chat runtime — ADR-0027
-Need exact indexes/search projection, polling/realtime transport, private attachment storage, moderation/retention and high-volume tests.  
-**State:** Accepted architecture / executable evidence.
-
----
-
-# G. Integration / Data movement
-
-## REST-001 Compiled REST runtime — ADR-0028
-Need compiler/runtime schema, endpoint registration, rate-limit/idempotency stores, cache isolation, CORS/auth and attack fixtures.  
-**State:** Accepted architecture / executable evidence.
-
-## CONN-001 Connections/Webhooks security
-Need provider OAuth adapters plus SSRF/DNS rebinding/redirect/signature/replay executable defenses.  
-**State:** Executable evidence.
-
-## MIG-001 Source migration adapters
-Need certified fixtures for CPT UI, ACF/SCF, Meta Box, JetEngine and Membership sources.  
-**State:** Executable evidence.
-
----
-
-# H. Backup / Reset / Protection / Media
-
-## B-001 Backup physical bundle profile — ADR-0033
-Accepted logical architecture: manifest-first independently verifiable multipart bundle.
-
-Still open:
-- exact file-record container;
-- exact DB artifact encoding;
-- chunk-size defaults;
-- compression profile;
-- hash/checksum profile finalization;
-- provider finalization/commit mechanics.
-
-**State:** Accepted logical architecture / executable evidence — P-013.
-
-## B-002 Backup encryption profile — ADR-0021
-Need exact AEAD/KDF/recovery-key/KMS/streaming profile and cross-server restore.  
-**State:** Accepted architecture / crypto profile pending.
-
-## B-003 Provider certification
-34 destinations are targets, not claims. Each marketed provider requires upload/resume/download/integrity/error/restore certification.  
-**State:** Executable evidence — P-013.
-
-## B-004 Reset recovery limits
-Need restore-point integration, mid-run failure, current-admin and multisite proof.  
-**State:** Executable evidence.
-
-## P-001 Protector runtime
-Need hook ordering, atomic rate limits, proxy resolution, login alias/recovery and security-header conflicts.  
-**State:** Executable security evidence.
-
-## W-001 Watermark pipeline
-Need derivative storage/naming, active image-editor matrix, animation/SVG/EXIF/offload and load tests.  
-**State:** Executable certification.
-
-## X-001 XML-RPC profile
-Need actual method inventory/hook ordering/parser limits/complete-deny/Jetpack/mobile/multisite fixtures.  
-**State:** Executable compatibility/security evidence.
-
----
-
-# Resolved architecture retained in ADRs
-
-Accepted decisions now extend through **ADR-0034**, including Email, Profile identity security, Frontend Dashboard route runtime, Role anti-lockout/recovery, Backup logical bundle and OAuth account-link profile.
-
-# Decision-processing rule
-
-For unresolved work:
-1. inspect repo source of truth;
-2. research primary/current sources where needed;
-3. document alternatives/tradeoffs;
-4. separate static decision from executable evidence;
-5. never run code/benchmark/install/build without owner development consent;
-6. persist accepted decisions in ADR;
-7. synchronize readiness/checkpoint/PR.
-
-# Next planning-only priorities
-
-1. Component Blueprint/runtime schema shared by Dashboard/Builder Widgets/Listings;
-2. Settings Page storage/scope/runtime model;
-3. Admin Menu mutation/conflict/safe-mode model;
-4. Status Manager generic state-machine runtime model;
-5. Dynamic Listing renderer/cache model;
-6. Connections/Webhooks normalized event inbox and SSRF policy paper architecture;
-7. importer run/checkpoint/rollback runtime model;
-8. refine entitlement/update crypto profiles without executable work.
+Last synchronized: 2026-08-27
+
+This register contains only unresolved implementation profiles/evidence. Product/runtime principles already accepted are preserved in ADRs through **ADR-0041**.
+
+All executable work is blocked by ADR-0014 until explicit owner consent.
+
+## A. Platform executable blockers
+
+| ID | Related ADR | Remaining evidence |
+|---|---|---|
+| D-001 | ADR-0002 | WP/PHP/DB activation/dependency/integration/multisite matrix — P-001 |
+| D-002 | ADR-0005 | React/WP externalization, CSS scoping, accessibility, RTL/i18n, bundle — P-002 |
+| D-003 | ADR-0006 | Action Scheduler coexistence/load/idempotency/cancel/runner/multisite — P-003 |
+| D-004 | ADR-0008 | Definition Repository exact DDL/index/locking/import/multisite/tombstones — P-004 |
+| D-005 | ADR-0009 | Vault AEAD/envelope/key separation/rotation/loss/restore — P-005 |
+| D-006 | ADR-0010 | Free↔Pro boot/update/downgrade/migration/dependency collision — P-006 |
+| D-007 | ADR-0011 | Executable CI/tooling matrix — P-007 |
+| D-008 | ADR-0012 | Build/externalization/chunks/CSS/RTL/i18n/package comparison — P-008 |
+
+## B. Data/runtime blockers
+
+- **Q-001 / P-009** — Query AST compiler security, identifiers/parameters, cost budgets, cache and scale.
+- **R-001 / P-010** — Relation edge physical indexes, cardinality concurrency, orphan/delete behavior.
+- **WF-001 / P-011** — Workflow wait/parallel/retry/idempotency/cancel/worker-crash and Job integration.
+- **F-001** — Field storage adapters: native meta vs Custom Tables scale, repeaters, revisions and migrations.
+- **T-001** — Custom Tables DDL compiler, MySQL/MariaDB capability matrix, large-table locking/copy/backfill/recovery.
+- **FE-001** — Form Entry exact schema/indexes/projections/files/idempotency/retention.
+- **N-001** — Notification indexes/fan-out/dedupe/digests/preferences/provider adapters.
+- **C-001** — Chat indexes/search projection/polling-realtime/private attachments/moderation scale.
+- **REST-001** — compiled endpoint runtime/rate-limit/idempotency/cache/CORS/auth attack fixtures.
+- **E-001 / ADR-0029** — email renderer/inliner/client compatibility/sanitizer/header/link/attachment/provider delivery.
+- **DA-001 / ADR-0031** — WordPress Dashboard routing/permalinks/multisite/cache/assets/builder adapters.
+- **BW-001 / ADR-0035** — Component Blueprint descriptor/renderer/nesting/binding/cache/assets/builder certification.
+- **SET-001 / ADR-0036** — Settings physical grouped storage/autoload/multisite inheritance/concurrency/REST/Vault integration.
+- **AM-001 / ADR-0037** — admin-menu hook/order/plugin conflicts/site-network safe mode and recovery invariants.
+- **ST-001 / ADR-0038** — WordPress post-status UI/migration plus generic state storage/concurrent transitions/history.
+- **LIST-001 / ADR-0039** — Query integration, protected pagination/count correctness, cache invalidation, enhanced navigation and large datasets.
+- **IMP-001 / ADR-0041** — Import Run physical indexes, crash/resume, identity mapping/upserts, rollback conflicts and large source fixtures.
+
+## C. Membership blockers
+
+- **M-001 / P-012** — Enrollment/Entitlement physical schema/indexes/materialization/scale/multisite.
+- **M-003 / P-012** — access generation/cache/invalidation and revoke-to-deny latency.
+- **M-005** — private file delivery across Apache/Nginx/PHP/private object storage/CDN/Range.
+- **M-006** — Manual/WooCommerce/Woo Subscriptions/SureCart mapping, webhooks, reconciliation and provider certification.
+- **M-010** — privacy exporter/eraser cleanup/runtime/restore verification.
+
+## D. Remote service / commercial distribution
+
+### S-001 — OAuth integration — ADR-0034
+Security profile is accepted. Still need exact endpoint schemas, transaction/completion artifact encoding/lifetime, access/refresh lifetimes, rotation/revocation, site migration/transfer and end-to-end replay/open-redirect/issuer/concurrency tests.
+
+### S-002 — Product entitlement signature — ADR-0017
+Still open: exact envelope/serialization, signature algorithm/library, key distribution/rotation, freshness/grace windows and anti-rollback fixtures.
+
+### S-003 — Pro updater — ADR-0018
+Still open: exact TUF-compatible client/library, key-role thresholds/custody, root/targets/snapshot/timestamp metadata policy, rollback packages and tamper/freeze/update-order evidence.
+
+## E. Connections/Webhooks — ADR-0040
+Architecture accepted. Evidence still required for:
+- SSRF IPv4/IPv6/private/link-local/DNS rebinding/redirect behavior;
+- provider-fixed/custom URL policies;
+- raw-body signature profiles and key rotation;
+- replay/idempotency/out-of-order events;
+- normalized Event Inbox physical schema/indexes;
+- Job crash/replay/reconciliation;
+- OAuth provider adapters;
+- outbound webhook retry/unknown outcome;
+- multisite isolation.
+
+## F. Backup/operations
+
+- **B-001 / ADR-0033 / P-013** — physical file-record and DB artifact formats, chunk defaults, compression/hash/finalization/resume.
+- **B-002 / ADR-0021** — exact AEAD/KDF/recovery-key/KMS/streaming profile.
+- **B-003 / P-013** — provider certification for every marketed destination.
+- **B-004** — Reset restore-point/partial-failure/admin/multisite proof.
+- **P-001** — Protector hook ordering, atomic rate limit, proxy, login alias/recovery/header conflicts.
+- **W-001** — Watermark derivative/output/editor/animation/SVG/EXIF/offload/load certification.
+- **X-001** — XML-RPC method inventory/hook/parser/complete-deny/Jetpack/mobile/multisite certification.
+
+## G. Identity/admin security
+
+- **UP-001 / ADR-0030** — protected meta registry, email-change replay, password/session/Application Password/public-profile fixtures.
+- **RC-001 / ADR-0032** — effective-cap classifier, self/last-recovery lockout, role delete, multisite/Super Admin, WP-CLI recovery.
+
+## H. Accepted architecture no longer open semantically
+
+ADR-0035 Component Blueprint, ADR-0036 Settings scope/storage, ADR-0037 Admin Menu transformation, ADR-0038 Status split, ADR-0039 Listings runtime, ADR-0040 Connections/Webhooks and ADR-0041 Import runtime are **accepted architecture**. Their exact executable profiles remain above as evidence items; future AI must not reopen the core decisions without a superseding ADR.
+
+## Decision processing rule
+
+1. Inspect repo source of truth and current official standards/docs.
+2. Resolve static product/security semantics in ADR where evidence is sufficient.
+3. If runtime evidence is required, prepare/extend a bounded protocol only.
+4. **Do not install, compile, migrate, benchmark, test or integrate before explicit owner consent.**
+5. After any accepted decision, synchronize ADR index, Readiness, Checkpoint and Draft PR.
+
+## Next planning-only priorities
+
+- narrow product-entitlement signature envelope/profile;
+- narrow Backup AEAD/KDF/recovery-key profile;
+- narrow Pro updater TUF metadata/key-role policy;
+- paper-design Protector rate-limit/recovery store;
+- paper-design Watermark derivative identity/storage;
+- paper-design Reset execution journal/recovery;
+- synchronize repo after each planning milestone.
