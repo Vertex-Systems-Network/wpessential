@@ -22,7 +22,7 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0062**.
+Accepted decisions now extend through **ADR-0063**.
 
 Latest planning milestones:
 - ADR-0057 — Membership billing source facts/reconciliation + MB0–MB5.
@@ -31,6 +31,7 @@ Latest planning milestones:
 - ADR-0060 — Remote Service purpose-scoped privacy/retention.
 - ADR-0061 — stable semantic Backup family/provider identity registry.
 - ADR-0062 — Manual/Woo Core/Woo Subscriptions/SureCart billing source-truth profiles.
+- ADR-0063 — wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark email source-truth profiles.
 
 ## Current JobService state
 
@@ -73,8 +74,6 @@ Current catalog:
 - **34/34 stable provider/family profiles**;
 - **0 certified**.
 
-Important paper overrides include S3 capability negotiation, generic WebDAV non-resumability, Nextcloud/ownCloud provider extensions, Graph Personal/Business profile split and native-provider no-inheritance.
-
 ## Current Membership billing state
 
 Canonical path:
@@ -87,32 +86,57 @@ Initial profile keys:
 - `billing.woocommerce-subscriptions`;
 - `billing.surecart`.
 
-Accepted provider rules:
-- Manual/Free is explicit WPE source, not a fake commerce record.
-- Woo one-time uses order + line-item identity and supported paid-state APIs; `Completed` alone is not payment truth.
-- Woo partial/full refund truth comes from refund/line evidence, not only order status.
-- Woo Subscriptions `pending-cancel` is paid-through cancellation intent; `on-hold`/failed renewal is a policy input and can recover; role changes are not WPE authority.
-- SureCart uses Purchase + Subscription + Refund context; period end and cancellation intent are separate source facts.
-- SureCart webhook ingress requires verified HMAC/timestamp; duplicates/out-of-order events reconcile against current source objects.
-- test/live source environments remain isolated.
-
 Static current research maturity:
 - four initial profiles: **BE3**;
 - **MB-certified profiles: 0**.
 
-## Email delivery state
+Key accepted rules:
+- Woo paid truth does not depend on `Completed` alone;
+- order + line item identity matters;
+- refunds/partial refunds are separate source facts;
+- Woo Subscriptions pending-cancel is paid-through cancellation intent;
+- failed renewal/on-hold remains policy input, not automatic permanent revoke;
+- SureCart Purchase + Subscription + Refund context reconciles together;
+- duplicate/out-of-order provider events are expected and reconciled;
+- test/live sources remain isolated.
 
-Accepted:
-- Recipient Delivery and Transport Attempt are separate;
-- provider/API/SMTP acceptance is not receiving-server/inbox/read proof;
-- provider Event Ledger preserves bounce/complaint/suppression/engagement evidence;
-- ET0–ET5 governs future provider claims.
+## Current Email provider state
 
-Provider-specific Email capability matrix remains next planning work.
+Canonical path:
+
+`Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → derived outcome`
+
+Initial profile keys:
+- `email.wordpress-wp-mail`;
+- `email.smtp-generic`;
+- `email.amazon-ses`;
+- `email.twilio-sendgrid`;
+- `email.mailgun`;
+- `email.postmark`.
+
+Static current research maturity:
+- six initial profiles: **EE3**;
+- **ET-certified profiles: 0**.
+
+Accepted provider rules:
+- `wp_mail()` success means local processing only;
+- generic SMTP relay acceptance is not inbox/final-receiving-server proof;
+- SES SEND is not DELIVERY;
+- SendGrid processed is not delivered;
+- Mailgun accepted is not delivered;
+- Postmark Delivery means destination server accepted and explicitly does not prove inbox placement;
+- SendGrid/Mailgun signed webhook profiles are documented; Postmark is not assigned a fabricated signature capability;
+- late bounce/complaint can coexist with earlier delivery evidence;
+- provider suppression/unsubscribe does not automatically mutate unrelated WPE channels/access;
+- open/click observations never become Read/Human Seen/Inbox Confirmed.
+
+Provider-specific paper source: `docs/ARCHITECTURE/EMAIL-PROVIDER-CAPABILITY-MATRIX.md` + ADR-0063.
 
 ## Platform evidence blockers
 
 P-001 compatibility; P-002 UI; P-003 Job backend; P-004 Definition DDL; P-005 Vault implementation; P-006 Free↔Pro; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup.
+
+Additional Email/Remote Service provider runtime evidence remains tracked separately.
 
 **None executed.**
 
@@ -120,11 +144,13 @@ P-001 compatibility; P-002 UI; P-003 Job backend; P-004 Definition DDL; P-005 Va
 
 Verified planning/documentation only:
 - planning branch isolated from `main`;
-- ADR/governance synchronized through ADR-0062;
+- **31/31 Exhaustive, 0/31 Authorized**;
+- ADR/governance synchronized through ADR-0063;
 - Remote Service privacy matrix/ADR-0060 committed;
 - Backup family/provider registry + normalized 34-target matrix + ADR-0061 committed;
 - Membership provider profiles + ADR-0062 committed;
-- Job/Email provider-neutral architecture committed;
+- Email provider profiles + ADR-0063 committed;
+- Job provider-neutral architecture committed;
 - no implementation/test/provider certification success claimed.
 
 Not performed:
@@ -136,16 +162,18 @@ Not performed:
 - PHPUnit/Playwright;
 - provider/API/webhook/SMTP calls;
 - billing source objects/transactions;
+- email sends/webhook tests/bounce simulators;
+- WPE service/diagnostics transmission;
 - Backup uploads/deletes/restores;
 - performance benchmarks;
 - releases/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Email provider-specific capability matrix.
-2. Remote Service consent-gated privacy/retention evidence protocol.
-3. Refresh remaining low-evidence Backup provider docs.
-4. Membership provider version/evidence refinements.
+1. Remote Service consent-gated privacy/retention evidence protocol.
+2. Refresh remaining low-evidence Backup provider docs.
+3. Membership provider version/evidence refinements.
+4. Email provider version/evidence refinements.
 5. P-003/provider evidence plan refinement.
 6. Keep governance/Draft PR synchronized.
 
