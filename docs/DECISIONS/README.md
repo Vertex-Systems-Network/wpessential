@@ -47,6 +47,10 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 | `ADR-0022-field-storage-plural-architecture.md` | **Accepted architecture / adapters pending** | Native WP meta/options where natural; Custom Tables for scale/constraints; Relations for relationships; Vault for secrets; no universal EAV/JSON store |
 | `ADR-0023-custom-table-migration-language.md` | **Accepted architecture / compiler pending** | Desired schema + typed generated Migration Plan; risk/precondition/recovery model; `dbDelta()` is one compiler tool, not universal migration source of truth |
 | `ADR-0024-membership-privacy-retention-defaults.md` | **Accepted product defaults / policy override** | Category-level retention; minimize raw provider/log data; detailed download/IP logging off by default; invitation cleanup candidate 30 days; WP privacy integration required |
+| `ADR-0025-form-entry-runtime-model.md` | **Accepted architecture / physical schema pending** | Form runtime separate from definitions; pinned revision; normalized core + canonical typed value document + explicit derived projections; passwords/tokens never stored as entry values |
+| `ADR-0026-notification-delivery-domain-model.md` | **Accepted architecture / adapters pending** | Notification occurrence, per-recipient/read state and per-channel delivery attempts are separate; provider acceptance != delivered confirmation |
+| `ADR-0027-chat-runtime-authorization-model.md` | **Accepted architecture / storage/transport pending** | Dedicated conversation/participant/message runtime; transport independent; private assets; search results reauthorize; Membership/team revoke affects access |
+| `ADR-0028-rest-compiled-runtime-descriptor.md` | **Accepted architecture / compiler pending** | Published REST definitions compile to validated runtime descriptors using WP REST + Policy + Query/Data Source/Abilities; explicit permissions and restrictive defaults |
 
 ---
 
@@ -79,6 +83,12 @@ Key supporting documents include:
 - `docs/ARCHITECTURE/WORKFLOW-RUNTIME-DATA-CANDIDATE.md`
 - `docs/ARCHITECTURE/FIELD-STORAGE-ARCHITECTURE-ALTERNATIVES.md`
 - `docs/ARCHITECTURE/CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md`
+- `docs/ARCHITECTURE/FORM-ENTRY-RUNTIME-STORAGE-CANDIDATE.md`
+- `docs/ARCHITECTURE/NOTIFICATION-PERSISTENCE-DELIVERY-MODEL.md`
+- `docs/ARCHITECTURE/CHAT-RUNTIME-STORAGE-INDEX-ALTERNATIVES.md`
+- `docs/ARCHITECTURE/REST-ENDPOINT-COMPILED-RUNTIME-MODEL.md`
+- `docs/ARCHITECTURE/BACKUP-ARCHIVE-CONTAINER-ALTERNATIVES.md`
+- `docs/SECURITY/OAUTH-ACCOUNT-LINK-THREAT-MODEL-ALTERNATIVES.md`
 - `docs/SECURITY/SECRETS-VAULT-THREAT-MODEL.md`
 - `docs/SECURITY/PRODUCT-ENTITLEMENT-SIGNING-OFFLINE-GRACE.md`
 - `docs/SECURITY/PRO-UPDATE-SUPPLY-CHAIN-TRUST-MODEL.md`
@@ -115,28 +125,32 @@ Still blocked on:
 - exact entitlement signature/canonicalization/library profile;
 - key rotation/compromise fixtures;
 - exact product-license freshness/offline windows;
-- OAuth callback-registration profile;
+- OAuth callback/return profile final acceptance;
 - exact Pro updater metadata/client/dependency choice;
 - release key custody/threshold/incident runbook;
 - executable tamper/rollback/freeze/update-order tests.
 
-# Remaining Backup encryption blockers
+# Remaining Backup encryption/container blockers
 
 Still blocked on:
 - exact AEAD/container/KDF profile;
 - passphrase/recovery-key UX and strength thresholds;
 - recovery-key export/rotation procedure;
-- archive streaming/chunk format;
+- exact manifest/chunk physical format and DB artifact format;
 - restore certification with original server/DB unavailable;
 - optional KMS adapter contracts.
 
-# Remaining data architecture blockers
+# Remaining data/runtime architecture blockers
 
-Accepted storage/migration architecture still needs executable evidence for:
+Accepted architecture still needs executable evidence for:
 - native metadata vs Custom Table scale/query behavior;
 - repeatable/structured storage performance;
 - Custom Tables DDL compiler and supported MySQL/MariaDB matrix;
 - large-table migration/locking/recovery;
+- Form Entry physical schema/projection scale;
+- Notification fan-out/index/channel adapters;
+- Chat indexes/transport/search projection;
+- REST compiled descriptor/compiler/rate-limit/cache isolation;
 - Query AST provider compilers/cost budgets;
 - Relation edge schema/cardinality concurrency;
 - Workflow runtime/Job integration.
