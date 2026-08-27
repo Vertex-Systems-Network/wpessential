@@ -8,13 +8,29 @@ Repository state + tests + documentation + ADRs + Git history + latest `CHECKPOI
 
 Never assume prior work is complete because it was discussed. Verify repository state and tests.
 
+For actual-state conflicts use the authority order defined in `docs/PROJECT-STATE-AND-ADOPTION.md`. Repository/runtime evidence outranks conversational memory.
+
+## Mandatory governance references
+
+Before meaningful engineering work read/apply as relevant:
+
+- `DEVELOPMENT-CONSENT.md`
+- `docs/PROJECT-STATE-AND-ADOPTION.md`
+- `docs/APPROVAL-LEDGER.md`
+- `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
+- `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
+- `docs/QUALITY-GATES.md`
+- latest `CHECKPOINT.md`
+
+These files complement existing architecture/module/security ADRs; they do not replace them.
+
 ## Default lifecycle
 
 For every meaningful task:
 
-**Inspect → Understand → Research → Assess → Plan → Implement → Test → Attack → Review → Harden → Document → Commit → Checkpoint → Report**
+**Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement → Test → Attack → Review → Harden → Document → Commit → Checkpoint → Report**
 
-Do not jump from requirement to code when architecture, data, security, compatibility, dependency, or migration decisions are involved.
+Do not jump from requirement to code when architecture, data, security, compatibility, dependency, migration or approval decisions are involved.
 
 Prefer:
 - correctness over speed
@@ -26,21 +42,61 @@ Prefer:
 - tested behavior over claims
 - stable dependencies over novelty
 - reversible changes over destructive shortcuts
+- small batches over giant AI diffs
+- repository evidence over conversational memory
+
+## Project-state and capability detection
+
+At session start identify the canonical project state from:
+
+- `GREENFIELD`
+- `PLANNED_EXISTING_PROJECT`
+- `ACTIVE_EXISTING_PROJECT`
+- `PRODUCTION_PROJECT`
+- `LEGACY_OR_MIGRATION`
+- `RECOVERY`
+
+Also identify actual execution mode/capabilities. Never claim terminal, database, runtime, CI, deployment, VCS protection or provider abilities that were not verified.
+
+If a provider/tool cannot expose a fact, record `UNKNOWN`/`UNAVAILABLE`; do not infer it.
+
+Current WPEssential baseline is maintained in `docs/PROJECT-STATE-AND-ADOPTION.md`.
 
 ## Start-of-session protocol
 
 Before coding:
 
 1. Read this file.
-2. Read `CHECKPOINT.md`.
-3. Read the relevant product/module/architecture docs.
-4. Read applicable ADRs.
-5. Inspect current Git status/branch and recent commits.
-6. Inspect relevant existing implementation and tests.
-7. Identify unfinished work and known risks.
-8. Verify available build/test commands.
-9. Re-run relevant validation if the checkpoint is stale or uncertain.
-10. Only then plan/implement.
+2. Read `DEVELOPMENT-CONSENT.md` and `docs/APPROVAL-LEDGER.md`.
+3. Read `CHECKPOINT.md` and `docs/PROJECT-STATE-AND-ADOPTION.md`.
+4. Detect actual project state, execution mode and available capabilities.
+5. Read the relevant product/module/architecture docs.
+6. Read applicable ADRs.
+7. Inspect current VCS status/branch/revision and recent relevant history where accessible.
+8. Inspect relevant existing implementation and tests.
+9. Identify unfinished work, baseline failures and known risks.
+10. Verify available build/test commands and applicable FAST/FULL gates.
+11. Re-run relevant validation if the checkpoint is stale or uncertain and execution is authorized.
+12. Only then plan/implement within the approved scope.
+
+## Existing-project adoption protocol
+
+For an existing planned/developed project do not restart or rebuild it from zero.
+
+Use:
+
+**Inspect → Baseline → Audit Existing Plan → Compare Plan With Reality → Identify Gaps → Amend Plan → Preserve Existing Work → Continue Safely**
+
+Maintain Plan→Repository and Repository→Plan status as defined in `docs/PROJECT-STATE-AND-ADOPTION.md`.
+
+Classify newly discovered gaps as:
+- `CORRECTION`
+- `COMPLETION`
+- `HARDENING`
+- `OPTIMIZATION`
+- `NEW_PRODUCT_SCOPE`
+
+`NEW_PRODUCT_SCOPE` is never silently approved merely because it appears useful.
 
 ## Resume protocol
 
@@ -48,11 +104,14 @@ When resuming work:
 
 1. verify latest checkpoint;
 2. inspect commits since it;
-3. verify actual files and tests;
-4. identify partial/failed work;
-5. continue from the safest verified point.
+3. verify actual files and tests/evidence;
+4. verify current approval/work lifecycle state;
+5. identify partial/failed work and baseline failures;
+6. continue from the safest verified point.
 
 Never restart completed work without evidence that it is invalid.
+
+`continue`/`resume` never overrides a pending approval state.
 
 ## External research rule
 
@@ -104,6 +163,8 @@ Do not unnecessarily:
 - discard historical decisions;
 - overwrite configuration blindly.
 
+During feature work also follow the no-unrelated-cleanup and small-batch rules in `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`.
+
 For high-impact/breaking changes document:
 - reason;
 - affected consumers;
@@ -116,7 +177,35 @@ For high-impact/breaking changes document:
 
 For substantial modifications explicitly record:
 
-**Affected → Unaffected → Risk → Migration → Rollback → Verification**
+**Affected → Unaffected → Risk → Migration → Rollback/Recovery → Verification**
+
+If the actual change expands materially beyond the estimated file/module/API/migration/dependency/config budget, stop and reassess rather than letting scope creep become an oversized diff.
+
+## Milestones, work packages and approvals
+
+Use milestone-level approval for substantial systems where practical.
+
+New execution planning should use stable work IDs per `docs/APPROVAL-LEDGER.md`:
+
+`P<phase>-M<milestone>-WP<work-package>-T<task>`
+
+Do not retroactively rename existing ADR/evidence IDs.
+
+Every executable milestone defines goal, included/excluded scope, dependencies, blockers, entry/exit criteria, security/data/test/integration requirements, deployment and rollback/recovery.
+
+Approval scopes are `TASK`, `MODULE`, `MILESTONE`, `PHASE`, or `PROJECT` and must be recorded durably. Once a milestone is approved, ordinary reversible implementation decisions inside documented scope do not require repeated owner approval.
+
+## Safe parallel development
+
+Classify concurrent work:
+- `PARALLEL_SAFE`
+- `COORDINATED_PARALLEL`
+- `SERIALIZE`
+- `BLOCKED`
+
+Follow shared-surface ownership, WIP limits, critical-path classification and merge-order rules in `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`.
+
+Never allow multiple autonomous agents to silently overwrite migrations, lockfiles, authorization core, global configuration, shared API schemas, central routing, CI/build or other serialized shared surfaces.
 
 ## Security contract
 
@@ -157,6 +246,10 @@ Unless a future accepted ADR says otherwise:
 - no global optional-module asset enqueue;
 - no URL hiding presented as authentication/security.
 
+### Negative requirements
+
+Substantial module/milestone specs must state important `MUST NOT` behavior. Critical negative rules become automated/adversarial tests where applicable.
+
 ## Data integrity
 
 Before data/schema changes review:
@@ -171,7 +264,9 @@ Before data/schema changes review:
 - multisite scope;
 - backup implications.
 
-Prefer reversible migrations. When rollback is not practical, document the restore/recovery route before merging.
+Prefer reversible migrations. For risky schema evolution, consider `Expand → Migrate/Backfill → Verify → Contract` when it materially reduces deployment risk.
+
+When rollback is not practical, document the restore/recovery route before merging.
 
 ## Performance
 
@@ -222,7 +317,11 @@ Never log secrets or unnecessary sensitive content.
 
 ## Tests and quality gates
 
-Read `docs/QUALITY-GATES.md`.
+Read `docs/QUALITY-GATES.md` and `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`.
+
+Use two speeds:
+- `FAST GATE` during bounded implementation;
+- `FULL GATE` at milestone/release boundaries.
 
 A meaningful feature is complete only after the applicable checks execute:
 - formatting
@@ -250,8 +349,11 @@ Always include relevant:
 - concurrency/idempotency where relevant
 - recovery/rollback
 - regression scenario
+- important negative/MUST-NOT behavior.
 
 Do not change a correct test merely to accommodate incorrect implementation.
+
+A pre-existing failure is `BASELINE FAILURE`, not automatically a regression. A flaky test is a defect; rerun-until-green is not acceptable evidence.
 
 If a check cannot run, record exactly what, why, and how it will be verified.
 
@@ -291,16 +393,18 @@ Lockfiles are required for distributable builds where applicable.
 Important knowledge must live in the repo, not only in conversation.
 
 Update the relevant:
-- architecture
-- module specification
-- research note
-- ADR
-- security notes
-- API docs
-- migration notes
-- changelog/release notes
-- troubleshooting
-- checkpoint
+- project state/adoption baseline;
+- approval/work lifecycle ledger;
+- architecture;
+- module specification;
+- research note;
+- ADR;
+- security notes;
+- API docs;
+- migration notes;
+- changelog/release notes;
+- troubleshooting;
+- checkpoint.
 
 Do not create documentation for volume; it must help the next engineer make a correct decision.
 
@@ -321,7 +425,7 @@ Create/update an ADR when a decision materially affects:
 
 Accepted ADRs are not silently reversed. Supersede them with a new ADR that explains why.
 
-## Git history
+## Git/VCS history and protection
 
 Commits must be small, coherent and reversible where practical.
 
@@ -334,18 +438,22 @@ Do not use meaningless messages such as `update`, `changes`, `fix stuff`, `late 
 
 Do not rewrite shared history unless explicitly authorized.
 
+Inspect provider protections where accessible: required reviews/checks, CODEOWNERS, rulesets/protected branches, merge queue/train, tags/releases, deployment approvals and security scans. If inaccessible, record `UNKNOWN`; never weaken protection simply to merge faster.
+
 ## Checkpoints
 
 After a meaningful unit of work update `CHECKPOINT.md` with:
-- current branch/phase;
+- current project/execution/work lifecycle state;
+- current branch/phase/work ID where assigned;
 - completed work;
 - verification/tests;
-- known failures/risks;
+- baseline/flaky/known failures;
 - important decisions;
 - active files/areas;
-- next recommended action.
+- approvals/blockers/risks;
+- exact next safe action.
 
-Before a long/risky operation create or confirm a recoverable Git point.
+Before a long/risky operation create or confirm a recoverable VCS point.
 
 ## AI-native rules
 
@@ -365,15 +473,17 @@ Generated destructive changes require preview/diff/confirmation according to pol
 
 ## Autonomy and ambiguity
 
-Make reversible, low-risk decisions independently when requirements and architecture are clear.
+Make reversible, low-risk decisions independently when requirements, approval and architecture are clear.
 
 Do not repeatedly ask questions that repository inspection or legitimate research can answer.
 
 Escalate/ask only when:
 - requirements materially conflict;
+- approved scope materially changes;
 - the decision is irreversible/high-risk;
 - security/legal/data-loss behavior is genuinely ambiguous;
-- external credentials/human approval are necessary.
+- external credentials/human approval are necessary;
+- privileged production action requires explicit authorization.
 
 When minor behavior is unspecified:
 1. inspect conventions/docs;
@@ -392,6 +502,43 @@ Classify discovered debt:
 - Low
 
 Fix Critical/High debt when it directly threatens current work. Record lower debt in the maintained backlog/checkpoint rather than forgetting it.
+
+## Review classification
+
+Every meaningful review must be labeled truthfully:
+- `INDEPENDENT REVIEW`
+- `SELF REVIEW`
+- `AUTOMATED REVIEW`
+
+The same AI/person reviewing its own work is `SELF REVIEW`, not independent review.
+
+## Release and incident safety
+
+Read `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md` before release/high-risk recovery work.
+
+Distinguish:
+- `BUILT`
+- `DEPLOYED`
+- `RELEASED`
+- `PRODUCTION_VERIFIED`
+
+Classify recovery:
+- `SIMPLE_ROLLBACK`
+- `ROLLBACK_WITH_COMPATIBILITY`
+- `FORWARD_FIX_PREFERRED`
+- `IRREVERSIBLE`
+
+On a production incident switch to:
+
+`STABILIZE → CONTAIN → PRESERVE EVIDENCE → DIAGNOSE → RECOVER → VERIFY → ROOT CAUSE → PREVENT RECURRENCE`
+
+Stop affected work immediately for the stop-the-line triggers documented there.
+
+## Planner-only mode
+
+When execution is unavailable or prohibited, set `EXECUTION_MODE = PLANNER_ONLY` and mark code/test/build/deployment outcomes `NOT EXECUTED`.
+
+Planning artifacts never count as runtime evidence.
 
 ## No fake completion
 
@@ -413,21 +560,25 @@ when useful.
 
 ## Definition of Done
 
-A task is **DONE** only when applicable implementation, integration, security, errors, data integrity, performance, tests, documentation, Git history, checkpoint, migration/recovery and observability are complete and verified.
+A task is **DONE** only when applicable approved implementation, integration, security, errors, data integrity, performance, tests, documentation, VCS history, checkpoint, migration/recovery and observability are complete and verified.
 
-Otherwise report **PARTIALLY COMPLETE**.
+Otherwise report `PARTIALLY_COMPLETE`, `VERIFYING`, `BLOCKED` or another truthful lifecycle state.
 
 ## End-of-task engineering report
 
 Concisely report:
-- What changed
-- Why
-- Research performed
-- Tests/checks performed
-- Security considerations
-- Files/components affected
-- Commit/checkpoint
-- Known issues
-- Recommended next action
+- **Status**
+- **Changed**
+- **Why**
+- **Research performed**
+- **Tests/checks**
+- **Security**
+- **Data/migration**
+- **Affected areas**
+- **VCS/commit**
+- **Documentation/Memory updated**
+- **Known issues**
+- **Not verified**
+- **Next safe action**
 
 The goal is a secure, maintainable, testable, observable, documented, recoverable production system with trustworthy engineering history—not merely code that appears to work.
