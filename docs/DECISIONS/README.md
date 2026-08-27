@@ -72,54 +72,41 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0059 | Accepted JobService semantics / adapter evidence pending | Backend-neutral Job Type/Schedule/Job/Attempt/Runner policy; at-least-once, explicit idempotency, reviewed urgency, fairness, resource/concurrency keys, backpressure and cooperative cancellation |
 | ADR-0060 | Accepted platform/privacy architecture / service evidence pending | Remote-service transmission is purpose-scoped/minimized; Free activation sends nothing; account link ≠ telemetry consent; diagnostics require separate approval; retention/disconnect/deletion boundaries are explicit |
 | ADR-0061 | Accepted backup identity/capability architecture / provider evidence pending | Semantic `bf.*` family keys are canonical; numeric PF aliases are legacy/ambiguous; provider profiles are separately versioned; SE0–SE3 static evidence never implies C0–C4 certification |
+| ADR-0062 | Accepted Membership billing provider profiles / executable evidence pending | Manual/Woo order/Woo Subscriptions/SureCart source-truth profiles are version-scoped; Woo paid truth uses supported APIs not `Completed` alone; pending cancellation/failure/refund/switch/webhook semantics remain reconciliation-driven |
 
 ## Product specification milestone
 
-`docs/MODULES/OPTION-COVERAGE-MATURITY.md` records:
-- **31/31** module/platform surfaces at Exhaustive product-option maturity;
-- **0/31** Authorized for development.
+`docs/MODULES/OPTION-COVERAGE-MATURITY.md` records **31/31 Exhaustive** and **0/31 Authorized**.
 
 ## Major supporting architecture/security docs
 
 - Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PHYSICAL-SCHEMA-CANDIDATE.md`
 - Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
-- Relations: `docs/ARCHITECTURE/RELATION-RUNTIME-SCHEMA-ALTERNATIVES.md`
-- Workflow: `docs/ARCHITECTURE/WORKFLOW-RUNTIME-DATA-CANDIDATE.md`
 - Job Service semantics: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
-- Component Blueprint/Settings/Admin Menu/Status/Listings/Import: respective files under `docs/ARCHITECTURE/`
 - Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
 - Backup family/provider registry: `docs/ARCHITECTURE/BACKUP-PROVIDER-FAMILY-CAPABILITY-REGISTRY.md`
 - Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
 - Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
 - Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
+- Membership billing provider profiles: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-PROVIDER-PROFILES.md`
 - Email transport certification: `docs/ARCHITECTURE/EMAIL-TRANSPORT-PROVIDER-CERTIFICATION.md`
 - Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
 - Remote service privacy/retention: `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
 - Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
-- Support Tickets: `docs/PLATFORM/SUPPORT-TICKET-RUNTIME-PRIVACY-MODEL.md`
-- Entitlement/Backup/Vault/Pro-updater/Protector/XML-RPC: corresponding files under `docs/SECURITY/`
-- Backup provider evidence: `docs/QUALITY/BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`
-- Email provider evidence: `docs/QUALITY/EMAIL-TRANSPORT-CERTIFICATION-EVIDENCE-PROTOCOL.md`
-- Shared spikes: `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`
+- Provider evidence protocols: corresponding files under `docs/QUALITY/`.
 
 ## Remaining evidence blockers
 
-### Platform
-Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI and build toolchain remain executable-evidence gates. ADR-0059 fixes JobService semantics, but ADR-0006/P-003 still requires Action Scheduler coexistence/physical mapping/fairness/runner/multisite proof.
-
-### Runtime/data
-Query/Relations/Workflow/Fields/Tables/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import require physical/runtime/security/performance evidence.
+### Platform/runtime
+Compatibility, UI runtime, Job adapter, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates.
 
 ### Membership
-Enrollment/Entitlement schema, revoke-to-deny cache, protected-file environments, MB0–MB5 billing adapter/provider certification, customer→WP identity resolution, reconciliation, seat concurrency and migration/privacy runtime fixtures remain open.
-
-### Email/notifications
-Recipient Delivery/Transport Attempt/Event Ledger physical schema, ET0–ET5 transport/provider certification, provider webhook verification, bounce/complaint/suppression truth, renderer/client compatibility and high-volume Job Service evidence remain open.
+ADR-0062 fixes first provider source-truth profiles, but **0 billing profiles are MB-certified**. Enrollment/Entitlement physical schema, revoke-to-deny cache, protected-file delivery, Manual/Woo/SureCart MB0–MB5 fixtures, customer→WP identity resolution, refunds/switches/reconciliation, scheduler/webhook failure, seat concurrency and migration/privacy runtime evidence remain open.
 
 ### Remote service/distribution
-ADR-0060 fixes field-level minimization/consent/retention semantics. OAuth endpoint/token lifecycle, exact service schemas/OpenAPI, log redaction, diagnostics upload, resource retention/deletion/export, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
+ADR-0060 fixes field-level minimization/consent/retention semantics. OAuth endpoint/token lifecycle, exact schemas/OpenAPI, log redaction, diagnostics upload, resource retention/deletion/export, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
 
 ### Backup/operations/security
-ADR-0061 fixes family/provider identity and static capability profiles for all 34 targets, but **0 providers are certified**. C0–C4 adapter/provider evidence, legacy-family import mapping, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit implementation, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
+ADR-0061 fixes family/provider identity and static capability profiles for all 34 targets, but **0 providers are certified**. C0–C4 evidence, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
 
 No executable evidence may run before explicit owner consent.
