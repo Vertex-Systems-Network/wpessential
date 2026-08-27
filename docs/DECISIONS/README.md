@@ -77,39 +77,42 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0064 | Accepted Backup evidence-governance architecture / runtime evidence pending | Provider static research may use versioned SE overlays; overlays can supersede paper capabilities but never produce C0–C4 certification |
 | ADR-0065 | Accepted Backup transport/security profiles / runtime evidence pending | Local/browser/FTP/FTPS/SFTP semantics explicit; browser export is delivery not managed remote storage; FTP legacy/insecure; FTPS TLS 1.2+ protected data; SFTP host-key trust mandatory |
 | ADR-0066 | Accepted Membership provider-version architecture / executable evidence pending | Billing certification is scoped by provider/profile/plugin/API/adapter/environment; Woo HPOS is a compatibility dimension; SureCart plugin and hosted API versions are separate; newer/unpatched provider versions are never auto-certified |
-| ADR-0067 | Accepted Email provider-version architecture / executable evidence pending | Email certification records send API/transport + event schema + security profile + region/account scope; SES v2/SendGrid v3/Mailgun mixed endpoint versions/Postmark dated schema are represented truthfully; send and event certification may degrade independently |
+| ADR-0067 | Accepted Email provider-version architecture / executable evidence pending | Email certification records send API/transport + event schema + security profile + region/account scope; SES v2/SendGrid v3/Mailgun mixed endpoint versions/Postmark dated schema represented truthfully; send/event certification may degrade independently |
 | ADR-0068 | Accepted Action Scheduler packaging/coexistence architecture / P-003 pending | WPE Platform/Free owns one bundled candidate if selected; Pro/modules do not duplicate it; newest registered shared runtime may win; only JobService adapter calls AS; secrets/large payloads excluded; WPE idempotency/history independent of AS uniqueness/retention |
+| ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Every scope-aware resource has explicit site/network coordinates; site scope is default; network activation ≠ network-global data; target-site capability + WPE Policy required; cache/jobs/secrets/Membership/Backup/Reset/import are scope-isolated; physical global-vs-per-site DDL remains evidence-gated |
 
 ## Product specification milestone
 
-`docs/MODULES/OPTION-COVERAGE-MATURITY.md` records **31/31 Exhaustive** and **0/31 Authorized**.
+- `docs/MODULES/OPTION-COVERAGE-MATURITY.md`: **31/31 Exhaustive, 0/31 Authorized**.
+- `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`: **31/31 surfaces mapped to explicit Multisite scope behavior**.
 
 ## Major supporting architecture/security docs
 
 - Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PHYSICAL-SCHEMA-CANDIDATE.md`
 - Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
-- Job Service semantics: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
+- Job Service: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
 - Action Scheduler packaging: `docs/ARCHITECTURE/ACTION-SCHEDULER-PACKAGING-COEXISTENCE-PROFILE.md`
-- Backup provider contract/registry/overlays/local transports: corresponding files under `docs/ARCHITECTURE/`
-- Membership billing certification/profiles/version registry: corresponding `MEMBERSHIP-BILLING-*` files under `docs/ARCHITECTURE/`
-- Email transport/provider/version registries: corresponding `EMAIL-*` files under `docs/ARCHITECTURE/`
+- Multisite scope: `docs/ARCHITECTURE/MULTISITE-SCOPE-OWNERSHIP-MODEL.md`
+- Backup provider/transport docs: corresponding files under `docs/ARCHITECTURE/`
+- Membership billing source/version docs: corresponding `MEMBERSHIP-BILLING-*` files.
+- Email source/version docs: corresponding `EMAIL-*` files.
 - Remote service schemas/privacy/evidence: files under `docs/PLATFORM/` and `docs/QUALITY/`.
 
 ## Remaining evidence blockers
 
 ### Platform/runtime
-Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates. ADR-0068 fixes Action Scheduler packaging semantics but **P-003 is still unexecuted**.
+Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates. ADR-0068 fixes AS packaging semantics but **P-003 is unexecuted**. ADR-0069 fixes logical Multisite scope but exact table/cache/hook/performance behavior remains executable evidence.
 
 ### Membership
-ADR-0062/0066 fix provider source truth and versioning, but **0 billing profiles are MB-certified**. Current paper snapshot: Manual, Woo 11.0.1, Woo Subscriptions 9.1.0, SureCart 4.7.0/current hosted API profile. Enrollment/Entitlement schema, cache, files, provider runtime, identity, refund/switch/reconciliation, concurrency and privacy remain open.
+ADR-0062/0066/0069 fix source truth, versioning and site-default Multisite scope, but **0 billing profiles are MB-certified**. Runtime schema/cache/files/provider/identity/refund/reconciliation/concurrency/privacy and Multisite fixtures remain open.
 
 ### Email/notifications
-ADR-0063/0067 fix provider truth and versioning, but **0 Email profiles are ET-certified**. Current static provider identities: WordPress/P-001 wp_mail, negotiated SMTP, SES API v2, SendGrid Web API v3, endpoint-specific Mailgun profile, dated Postmark schema. Renderer/runtime/event/security/load evidence remains open.
+ADR-0063/0067/0069 fix provider truth/versioning/scope, but **0 Email profiles are ET-certified**. Renderer/runtime/event/security/load/Multisite evidence remains open.
 
 ### Remote service/distribution
-ADR-0060 fixes privacy semantics and 30 future fixtures are documented; **0 executed**. OAuth/service/TUF/retention/diagnostics implementation remains open.
+ADR-0060/0069 fix privacy plus network/site activation-scope semantics; 30 privacy fixtures remain **0 executed**. OAuth/service/TUF/license allocation/clone/retention implementation remains open.
 
 ### Backup/operations/security
-ADR-0061/0064/0065 fix provider identity, evidence governance and local/browser/FTP/FTPS/SFTP semantics. **34 targets remain, 0 C-certified.** Runtime provider/restore/crypto/operations certification remains open.
+ADR-0061/0064/0065/0069 fix provider/transport and site-vs-network Backup/Reset ownership semantics. **34 targets remain, 0 C-certified.** Site/network restore certification and runtime provider/crypto/operations evidence remain open.
 
 No executable evidence may run before explicit owner consent.
