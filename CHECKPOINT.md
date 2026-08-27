@@ -22,106 +22,105 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0065**.
+Accepted decisions now extend through **ADR-0068**.
 
 Latest planning milestones:
-- ADR-0057 — Membership billing source facts/reconciliation + MB0–MB5.
-- ADR-0058 — Email delivery truth + ET0–ET5.
-- ADR-0059 — JobService at-least-once/idempotency/fairness/backpressure semantics.
-- ADR-0060 — Remote Service purpose-scoped privacy/retention.
 - ADR-0061 — stable semantic Backup family/provider identity registry.
 - ADR-0062 — Manual/Woo Core/Woo Subscriptions/SureCart billing source-truth profiles.
-- ADR-0063 — wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark email source-truth profiles.
+- ADR-0063 — wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark Email source-truth profiles.
 - ADR-0064 — versioned Backup static-evidence overlays.
 - ADR-0065 — Local/browser/FTP/FTPS/SFTP Backup product/security semantics.
+- ADR-0066 — Membership provider/plugin/API/environment version registry.
+- ADR-0067 — Email send/event/security/region profile version registry.
+- ADR-0068 — Action Scheduler packaging/load-order/coexistence profile.
 
-## Current JobService state
+## Current JobService / Action Scheduler state
 
-Accepted paper semantics: Job Type/Schedule/Job/Attempt/Runner separation, explicit business idempotency, reviewed urgency + starvation protection, resource/concurrency keys, checkpointed chunking/backpressure, cooperative cancellation and no business dependency assumption from queue order.
+JobService semantics remain backend-neutral: explicit idempotency, urgency/fairness, resource/concurrency keys, chunks/checkpoints, backpressure and cooperative cancellation.
 
-Concrete Action Scheduler backend remains P-003 Proposed/evidence-gated.
+Static Action Scheduler profile:
+- current reviewed candidate: **4.1.0**;
+- if selected, WPE Platform/Free owns one bundled candidate; Pro/modules do not bundle WPE duplicates;
+- third-party/Woo copies are expected; Action Scheduler newest registered plugin runtime may win;
+- WPE does not force its vendored copy over a newer runtime;
+- registration must occur before `plugins_loaded` priority 0 according to upstream load-order guidance;
+- adapter use waits for AS initialization;
+- only JobService adapter calls `as_*` APIs;
+- WPE secrets/large payloads do not live in Action Scheduler args;
+- WPE business idempotency does not depend on AS unique scheduling;
+- WPE Job/Attempt/Audit retention does not depend on AS action cleanup.
+
+**P-003 remains unexecuted and Action Scheduler is not a Verified backend.**
 
 ## Current Remote Service state
 
-Accepted: Free activation sends nothing to WPE service; account link is purpose-scoped and not telemetry consent; public resources avoid hidden identifiers where possible; diagnostics needs separate preview/approval; RR0–RR6 retention classes; disconnect is distinct from account/support/commercial-history deletion.
-
-Future executable verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`, containing 30 consent-gated fixtures. **No fixture has been executed.**
+Accepted purpose-scoped privacy/retention. Future executable verification is bounded by the 30-fixture Remote Service protocol. **0 fixtures executed.**
 
 ## Current Backup state
 
-Accepted manifest-first bundle, encryption/recovery architecture, Remote Copy lifecycle, C0–C4 restore-first certification, semantic `bf.*` family keys, versioned provider profiles, legacy/non-canonical PF aliases, SE0–SE3 static-evidence separation, versioned evidence overlays and explicit local/browser/FTP/FTPS/SFTP transport profiles.
-
-Current catalog:
-- **34 target destinations**;
-- **34/34 stable provider profiles**;
-- **0 C-certified providers/profiles**;
-- **0 normal Supported Backup Destinations** under the C3 gate.
-
-Latest cloud/provider overlay maturity:
-- Box → SE3;
-- MinIO → SE3;
-- Rackspace Swift → SE2;
-- Akamai/Linode Object Storage → SE2;
-- Hetzner Object Storage → SE3;
-- Bunny Storage → SE2 with no crash-resume claim;
-- MEGA → SE1.
-
-ADR-0065 transport profiles:
-- Local server → SE2; same-host copy is not automatically off-site disaster recovery; staging/hash/manifest-last required.
-- Browser export → SE3 product semantics; manual delivery/export, not managed remote retention.
-- FTP → SE2 legacy/insecure; REST restart is conditional, not integrity/transaction proof.
-- FTPS → SE3; TLS 1.2+, certificate/hostname validation and protected data channel required; restart/finalization separately certified.
-- SFTP → SE2; SSH host-key verification mandatory; offset resume/atomic rename are candidate capabilities only and depend on client/server evidence.
-
-Static evidence cannot create C0–C4 certification.
+- **34 target destinations / 34 stable provider profiles**;
+- **0 C-certified profiles / 0 normal Supported Backup Destinations**;
+- versioned static provider overlays are evidence only;
+- Local SE2; browser export SE3 product semantics; FTP SE2 legacy/insecure; FTPS SE3 with TLS 1.2+/protected data requirement; SFTP SE2 with mandatory host-key trust;
+- runtime resume/finalization/restore certification remains P-013.
 
 ## Current Membership billing state
 
-Canonical path: `verified source facts → Billing Adapter → reconciliation → Membership policy → Enrollment → Entitlement`.
+Canonical path: `verified source facts → adapter → reconciliation → Membership policy → Enrollment → Entitlement`.
 
-Initial profiles: `billing.manual`, `billing.woocommerce-order`, `billing.woocommerce-subscriptions`, `billing.surecart`.
+Provider/profile version identity now includes source plugin/API/adapter/environment.
+
+Current 2026-08-28 static snapshot:
+- Manual — WPE-owned profile;
+- WooCommerce **11.0.1**;
+- Woo Subscriptions **9.1.0**, with Woo 11.0 current compatibility snapshot and HPOS first-class;
+- SureCart WP **4.7.0** + separate hosted API/event profile.
 
 Static maturity: **4 BE3 profiles; 0 MB-certified**.
 
+Newer major provider versions default to unverified rather than automatically Supported. Known vulnerable versions can be security-blocked rather than recommended for compatibility.
+
 ## Current Email provider state
 
-Canonical path: `Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → derived outcome`.
+Provider version identity now separates send API/transport, event schema, security profile, adapter and region/account scope.
 
-Initial profiles: `email.wordpress-wp-mail`, `email.smtp-generic`, `email.amazon-ses`, `email.twilio-sendgrid`, `email.mailgun`, `email.postmark`.
+Current paper identities:
+- `wp_mail` → WordPress/P-001 runtime profile;
+- generic SMTP → negotiated capability/security profile;
+- SES → API v2 + region/account/event profile;
+- SendGrid → Web API v3 + dated Event Webhook/security profile;
+- Mailgun → endpoint-specific path-version family + dated webhook/security + region;
+- Postmark → dated REST/webhook profile; no invented provider-wide v1.
 
 Static maturity: **6 EE3 profiles; 0 ET-certified**.
-
-Accepted provider rules: `wp_mail()` success means local processing only; SMTP relay acceptance is not inbox/final receiving-server proof; SES SEND ≠ DELIVERY; SendGrid processed ≠ delivered; Mailgun accepted ≠ delivered; Postmark Delivery means destination server accepted, not inbox placement; webhook security capabilities are provider-specific and never fabricated; late bounce/complaint can coexist with earlier delivery evidence; open/click never becomes Read/Human Seen/Inbox Confirmed.
 
 ## Platform evidence blockers
 
 P-001 compatibility; P-002 UI; P-003 Job backend; P-004 Definition DDL; P-005 Vault implementation; P-006 Free↔Pro; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup.
 
-Additional Email and Remote Service runtime evidence remains separately tracked. **None executed.**
+Additional Email/Remote Service runtime evidence remains separately tracked. **None executed.**
 
 ## Verification state
 
 Verified planning/documentation only:
 - planning branch isolated from `main`;
 - **31/31 Exhaustive, 0/31 Authorized**;
-- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0065;
-- Remote Service privacy matrix + ADR-0060 + future 30-fixture evidence protocol committed;
-- Backup family/provider registry + normalized 34-target matrix + ADR-0061 committed;
-- Backup static evidence overlay + ADR-0064 committed;
-- local/browser/FTP/FTPS/SFTP static profile contract + ADR-0065 committed;
-- Membership provider profiles + ADR-0062 committed;
-- Email provider profiles + ADR-0063 committed;
-- Job provider-neutral architecture committed;
-- no implementation/test/provider certification success claimed.
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0068;
+- Membership provider source/version registries + ADR-0062/0066 committed;
+- Email provider source/version registries + ADR-0063/0067 committed;
+- Action Scheduler static packaging/coexistence profile + ADR-0068 committed;
+- Backup provider/transport planning committed, 0 certified;
+- Remote Service privacy protocol committed, 0 executed;
+- no implementation/test/provider-certification success claimed.
 
-Not performed: installs/package setup, production source/bootstrap, DB migrations, queue runs, crypto execution, PHPUnit/Playwright, provider/API/webhook/SMTP calls, billing source objects/transactions, email sends/webhook tests/bounce simulators, WPE service/account-link/diagnostics transmission, remote privacy-retention fixtures, Backup filesystem/FTP/FTPS/SFTP connections/uploads/resumes/renames/deletes/restores, performance benchmarks, releases/deployment.
+Not performed: dependency/package installation, Action Scheduler bootstrap, production source, DB migrations, queue runs, crypto execution, PHPUnit/Playwright, provider/API/webhook/SMTP calls, commerce transactions, Email sends, WPE service transmission, Backup transfer/restore, performance benchmarks, release/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Membership provider version/evidence refinements.
-2. Email provider version/evidence refinements.
-3. P-003/provider evidence plan refinement.
-4. Remaining platform physical/runtime paper models where static decisions are useful.
+1. Unified WordPress Multisite scope/ownership architecture.
+2. Remaining physical/runtime paper models where static decisions are useful.
+3. Provider/version refresh only when current official facts materially affect architecture.
+4. Keep P-003/P-012/P-013 executable gates intact.
 5. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
