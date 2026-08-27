@@ -18,9 +18,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | WP/PHP/DB compatibility | ADR-0002 Proposed | P-001 |
 | UI/design system | ADR-0005 Proposed | P-002 |
 | Job Service concrete backend | ADR-0059 + ADR-0068 semantics/packaging Accepted; Action Scheduler runtime still Proposed | P-003 |
-| Definition Repository physical DDL/indexes | ADR-0049/0069/0071 accept logical shape/scope/PT-C preference; exact DDL pending | P-004 |
+| Definition Repository physical DDL/indexes | ADR-0049/0069/0071 logical shape/scope/PT-C accepted; ADR-0073 D1 benchmark baseline accepted; exact DDL still pending | P-004 |
 | Secrets Vault implementation | ADR-0048 + ADR-0069 accepted hierarchy/scope; exact envelope/interoperability pending | P-005 |
-| Free↔Pro runtime | ADR-0010 + ADR-0070 product allocation semantics; runtime compatibility pending | P-006 |
+| Free↔Pro runtime | ADR-0010 + ADR-0070/0072 product allocation/resource semantics; runtime compatibility pending | P-006 |
 | CI | ADR-0011 Proposed | P-007 |
 | Build toolchain | ADR-0012 Proposed | P-008 |
 | Multisite runtime certification | ADR-0069 logical scope + ADR-0071 topology accepted; MS0–MS4 protocol documented, 0 runtime fixtures executed | P-001 + module-specific gates |
@@ -28,14 +28,14 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Per-surface readiness
 
-All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as a cross-cutting scope/security contract to every row; ADR-0071 provides the physical-topology classes that future schemas must use without overriding logical scope.
+All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as cross-cutting scope/security contract; ADR-0071 supplies physical topology classes; ADR-0073 supplies only the future P-004 Definition benchmark baseline, not final SQL.
 
 | # | Surface | Product options | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration semantics + ADR-0069 scope | compatibility, Definition PT-C DDL, UI/build, site/network registration fixtures | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration semantics + ADR-0069 scope | compatibility, Definition PT-C DDL, UI/build, site/network rewrite fixtures | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration semantics + ADR-0069 + Definition PT-C D1 baseline ADR-0073 | compatibility, P-004 DDL, UI/build, site/network registration fixtures | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration semantics + ADR-0069 + Definition PT-C D1 baseline ADR-0073 | compatibility, P-004 DDL, UI/build, site/network rewrite fixtures | No |
 | 3 | Custom Fields Builder | Exhaustive | ADR-0022 + ADR-0069/0071 | storage adapter topology/scale/query/revision/migration/Vault runtime | No |
-| 4 | Relations Builder | Exhaustive | typed edge semantics + ADR-0069 + PT-D candidate ADR-0071 | global-edge vs per-site indexes/cardinality/concurrency — P-010 | No |
+| 4 | Relations Builder | Exhaustive | typed edge semantics + ADR-0069 + PT-D candidate ADR-0071 | PT-D vs PT-E/per-site indexes/cardinality/concurrency — P-010 | No |
 | 5 | Status Manager | Exhaustive | ADR-0038 + ADR-0069 | WP UI/migration/state history/concurrency/site registry | No |
 | 6 | Custom Query Builder | Exhaustive | Query AST + ADR-0069/0071 | compiler/cost/cache/security/network aggregate/storage-adapter scale — P-009 | No |
 | 7 | Custom Tables Builder | Exhaustive | ADR-0023 + ADR-0069/0071 | explicit PT-D/PT-E compiler/version/locking/backfill/recovery | No |
@@ -62,12 +62,12 @@ All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as a cros
 | 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + 0059/0068/0069 | registry/image/offload/concurrency/Job/site media isolation | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052 + ADR-0069 | method/hooks/parser/complete-deny/Jetpack/multisite network-impact evidence | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032 + ADR-0069 | target-site classifier/anti-lockout/Super Admin/network/CLI recovery | No |
-| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060/0069/0070 + PT-F ADR-0071 | OpenAPI/OAuth/key custody/TUF/support/privacy/allocation/clone-transfer/offline-grace | No |
+| 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054/0060/0069/0070/0072 + PT-F ADR-0071 | exact OpenAPI/OAuth/idempotency/concurrency/key custody/TUF/support/privacy/allocation/clone-transfer/offline-grace evidence | No |
 
 ## Cross-cutting accepted architecture that still needs evidence
 
 - ADR-0048 Vault hierarchy; exact implementation pending.
-- ADR-0049 Definition Repository relational shape; ADR-0071 prefers PT-C; exact DDL/indexes pending.
+- ADR-0049 Definition Repository relational shape + ADR-0071 PT-C + ADR-0073 D1 benchmark baseline; exact DDL/indexes remain unverified.
 - ADR-0053/0061/0064/0065 Backup model: 34 targets, 0 C-certified.
 - ADR-0054/0060 Remote Service trust/privacy boundaries; 30 future privacy fixtures remain unexecuted.
 - ADR-0055 Connections I0–I5; provider evidence pending.
@@ -76,8 +76,9 @@ All 31 surfaces remain **Exhaustive / Unauthorized**. ADR-0069 applies as a cros
 - ADR-0058/0063/0067 Email: six version-scoped paper profiles, **0 ET-certified**.
 - ADR-0059/0068 Job Service: backend-neutral semantics + AS packaging accepted; concrete P-003 runtime remains unverified.
 - ADR-0069 Multisite: explicit scope/isolation accepted; MS0–MS4 documented; **0 runtime fixtures / 0 MS1+**.
-- ADR-0070 Product License: opaque installation/network/site-allocation identity + clone/staging/migration/transfer semantics accepted; **0 service fixtures**.
-- **ADR-0071 Physical topology:** PT-A…PT-F accepted. Definition→PT-C; Audit/Relations/Membership/Workflow/Notification/Event Inbox favor PT-D where stated; Forms/Chat remain PT-D vs PT-E evidence-gated. **No DDL or DB benchmark executed.**
+- ADR-0070/0072 Product License: opaque installation/network/site-allocation identity plus versioned remote resource/conflict state semantics accepted; **0 service fixtures**.
+- ADR-0071 Physical topology: PT-A…PT-F accepted; no DDL or DB benchmark executed.
+- **ADR-0073 Definition D1 baseline:** textual UUID, explicit scope, bounded identity keys, text payload, minimal indexes and app integrity diagnostics are the future P-004 baseline; not a final schema claim.
 
 ## Current provider/version snapshots — paper only
 
@@ -91,7 +92,7 @@ These are not runtime support claims.
 
 ## Recommended implementation order after future consent
 
-1. P-001 Multisite + P-003 Job backend + P-004 PT-C Definition DDL evidence;
+1. P-001 Multisite + P-003 Job backend + P-004 Definition D1-vs-D2/D3/D4 evidence;
 2. Kernel/Registry/Definition/Policy/Abilities/Assets/Audit/Vault/JobService with scope context;
 3. CPT/Taxonomy;
 4. Fields → Relations → Query → Tables/Columns → Blueprint → Listings/Status;
@@ -101,17 +102,17 @@ These are not runtime support claims.
 8. REST/Connections/Event Inbox/Import;
 9. Backup core/provider/site-network restore → operations/security modules;
 10. Chat after PT-D/PT-E evidence;
-11. Account/Support/Updater/Product Allocation;
+11. Account/Support/Updater/Product Allocation under ADR-0060/0070/0072;
 12. AI only over certified scope-aware Abilities/Blueprints;
 13. ecosystem/large-network scale.
 
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0071; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0073; physical/runtime evidence incomplete.  
 **Multisite product mapping:** 31/31 surfaces documented.  
 **Multisite runtime certification:** 0 surfaces MS1+.  
-**Physical schema/DB runtime:** none executed.  
+**Definition D1 benchmark execution:** 0.  
 **Product-license runtime/service evidence:** 0 fixtures executed.  
 **Implemented:** none.  
 **Verified runtime:** none.  
