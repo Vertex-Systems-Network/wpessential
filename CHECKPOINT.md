@@ -24,152 +24,142 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0081**.
+Accepted decisions now extend through **ADR-0085**.
 
 Latest milestones:
-- ADR-0077 — Forms FRT1/PT-D and Chat CRT1/PT-D first benchmark baselines; PT-E comparisons mandatory.
-- ADR-0078 — Membership M1/PT-D first P-012 baseline; M2/PT-E mandatory comparison.
-- ADR-0079 — Notification/Email NE1/PT-D operational baseline; NE2/PT-E mandatory comparison.
-- ADR-0080 — Event Inbox EI1/PT-D first baseline; EI2/PT-E mandatory comparison.
-- **ADR-0081 — Audit AU1/PT-D retention/index/integrity profile.**
+- ADR-0081 — Audit AU1/PT-D retention/index/integrity profile.
+- ADR-0082 — Workflow WF1/PT-D first P-011 benchmark; WF2/PT-E mandatory comparison.
+- ADR-0083 — JobService J1/J2/J3 PT-C/PT-D physical mapping for future P-003.
+- ADR-0084 — Backup Remote Copy BR1/BR2/BR3 physical comparison for P-013.
+- **ADR-0085 — Vault V1/PT-C physical envelope profile; V2 Multisite comparison.**
 
-Earlier still-active foundations include ADR-0073 Definition D1, ADR-0074 Relations R1, ADR-0075 Site Lifecycle and ADR-0076 Product License HTTP/OpenAPI principles.
+Earlier active physical baselines include Definition D1, Relations R1, Forms FRT1, Chat CRT1, Membership M1, Notification/Email NE1 and Event Inbox EI1.
 
-## Multisite / Site Lifecycle
+## Physical benchmark map
 
-- 31/31 surface scopes mapped;
-- site scope default, network scope explicit;
-- cross-site Relations/Queries Off by default;
-- Site Lifecycle Coordinator covers provisioning, status changes, destructive Plan/drain, PT-C/PT-D/PT-E cleanup, PT-F reconciliation, clone/transfer and durable lifecycle journal;
-- WordPress site initialization/update/uninitialization/deletion remain distinct lifecycle facts;
-- lifecycle evidence protocol documents **40 fixtures / 0 executed**;
-- **0 WPE lifecycle hooks/fixtures executed; 0 MS1+ certified**.
+- Definition: D1/PT-C first; D2/D3/D4 comparisons — **0 executed**.
+- Relations: R1/PT-D first; R2/PT-E mandatory; R3 exceptional — **0 executed**.
+- Forms: FRT1/PT-D first; FRT2/PT-E mandatory — **0 executed**.
+- Chat: CRT1/PT-D first; CRT2/PT-E mandatory — **0 executed**.
+- Membership: M1/PT-D first; M2/PT-E mandatory — **0 executed**.
+- Notification/Email: NE1/PT-D first; NE2/PT-E mandatory — **0 executed**.
+- Event Inbox: EI1/PT-D first; EI2/PT-E mandatory — **0 executed**.
+- Audit: AU1/PT-D favored — **0 executed**.
+- Workflow: WF1/PT-D first; WF2/PT-E mandatory — **0 executed**.
+- JobService: J1/PT-D Jobs+Attempts first; J2 split mandatory; J3 PT-C low-volume control — **0 executed**.
+- Backup Remote Copy: BR1/PT-D first; BR2 split mandatory; BR3/PT-E comparison — **0 executed**.
+- Vault: V1/PT-C favored first; V2 per-site + separate network Vault mandatory — **0 executed**.
 
-## Physical topology baselines
+No DDL, migration, table, index, cryptographic fixture or database benchmark has been executed.
 
-PT-A…PT-F topology classes remain accepted. Current future benchmark profiles:
+## Workflow — ADR-0082
 
-- Definition Repository: **D1/PT-C** first P-004 baseline; D2 binary UUID, D3 native JSON, D4 constraint/FK comparisons; **0 executed**.
-- Relations: **R1/PT-D** first P-010 baseline; R2/PT-E mandatory comparison; R3 per-relation exceptional; **0 executed**.
-- Forms: **FRT1/PT-D** first baseline; FRT2/PT-E mandatory comparison; **0 executed**.
-- Chat: **CRT1/PT-D** first baseline; CRT2/PT-E mandatory comparison; **0 executed**.
-- Membership: **M1/PT-D** first P-012 baseline; M2/PT-E mandatory comparison; **0 executed**.
-- Notification/Email: **NE1/PT-D** first operational baseline; NE2/PT-E mandatory comparison; **0 executed**.
-- Event Inbox: **EI1/PT-D** first baseline; EI2/PT-E mandatory comparison; **0 executed**.
-- Audit: **AU1/PT-D** favored baseline; exact DDL/retention/integrity evidence pending; **0 executed**.
-- Workflow: PT-D candidate only; P-011 physical profile still open.
-- WPE Job/Attempt/history: PT-C/PT-D mapping still open under P-003.
+Workflow Runtime remains the durable source of Run/Step/Wait/Approval truth; JobService is execution opportunity only.
 
-No DDL, migration, table, index or DB benchmark has been executed.
+Future P-011 correctness gates include:
+- duplicate trigger/Job cannot duplicate logical side effect under valid node contract;
+- enqueue failure after committed Workflow state is reconcilable;
+- waits cannot double-resume under at-least-once events;
+- concurrent approval/join cannot commit twice;
+- unknown external outcome is reconciled rather than blindly retried;
+- cancellation/compensation remain explicit states;
+- Restore does not replay terminal Runs or reinterpret pinned revision.
 
-## Membership — ADR-0078
+**P-011 executed: 0.**
 
-M1 future store family keeps Enrollments authoritative and materialized Entitlements derived/rebuildable. A small scoped Principal Access Generation store is part of the first benchmark profile so committed access-affecting mutations can advance authorization/cache generation without making cache availability part of correctness.
+## JobService — ADR-0083
+
+WPE-owned Job/Attempt history remains independent from Action Scheduler/backend tables.
+
+Profiles:
+- J1 PT-D Jobs+Attempts;
+- J2 PT-C current Job + PT-D Attempts/history;
+- J3 PT-C all as low-volume control.
+
+Backend status cannot fabricate WPE success; stale lease never proves no side effect; Action Scheduler `unique` is not business idempotency; Restore does not blindly reactivate copied backend rows.
+
+**Action Scheduler 4.1.0 remains reviewed candidate only. P-003 executed: 0.**
+
+## Backup Remote Copy — ADR-0084
+
+Remote Copy commit, verification and deletion remain separate truth states.
+
+Profiles:
+- BR1 PT-D shared scoped Backup runtime metadata;
+- BR2 PT-C current Backup/Copy + PT-D parts/objects/attempts;
+- BR3 PT-E per-site comparison where large-network isolation evidence requires.
 
 Critical gates:
-- request-time timestamp expiry even if jobs are late;
-- no provider API call on ordinary access checks;
-- wrong-site Membership access must be zero;
-- committed revoke cannot leave a stale allow path;
-- concurrent Plan Group change cannot violate exclusivity;
-- concurrent last-seat acceptance cannot overbook;
-- restore cannot silently resurrect stale access without reconciliation.
+- `commit_unknown` is reconciled;
+- manifest-last remains required;
+- provider object identity/path cannot bypass WPE manifest/scope/integrity validation;
+- provider delete success maps truthfully to trash/version/lock/delete-confirmed semantics;
+- prune cannot remove only known-good recovery point due to newer unverified backup;
+- Restore validates actual manifest/object/hash/crypto/target scope.
 
-**P-012 executable evidence: 0. Billing profiles: 4 BE3 / 0 MB-certified.**
+**Backup targets: 34 / 0 C-certified / 0 C3 Supported. P-013 executed: 0.**
 
-## Notification / Email — ADR-0079
+## Vault — ADR-0085
 
-Truth remains split between Notification Occurrence, Recipient Notification/read state, Channel Delivery, Email Transport Attempt and verified Delivery Evidence.
+V1/PT-C is the favored first physical profile. V2 per-site Vault + separate network Vault is mandatory Multisite security/operations comparison.
 
-Accepted paper rules:
-- transport/provider acceptance != Delivered;
-- timeout can be `unknown_outcome`;
-- no blind resend where the provider may have accepted;
-- verified Event Inbox facts feed Email-domain evidence;
-- out-of-order provider events cannot regress aggregate state by arrival order alone;
-- Restore does not resend terminal historical messages merely because records were restored.
+V1 separates:
+- Secret Identity/current metadata;
+- immutable encrypted Secret Versions;
+- VRK Generations;
+- VRK Key Slots;
+- explicit network-secret Use Grants/Bindings.
 
-**NE executable evidence: 0. Email profiles: 6 EE3 / 0 ET-certified.**
+Critical gates:
+- each VRK belongs to explicit site/network Vault Security Domain;
+- no plaintext secret or wrapping key in DB;
+- AAD binds secret identity/version/scope/purpose/key generation;
+- row/ciphertext swap across context must fail authentication;
+- missing/wrong key fails closed and preserves ciphertext;
+- network secret use requires explicit grant + current target-site Policy/Connection authorization;
+- clone/staging does not auto-activate production integrations;
+- normal Backup does not package the only external/recovery wrapping key plaintext beside ciphertext;
+- full PHP/server compromise remains outside DB-only secrecy claim.
 
-## Event Inbox — ADR-0080
+**P-005 crypto/physical evidence: 0. Independent security review not yet executed.**
 
-EI1/PT-D is the first future benchmark profile; EI2/PT-E remains mandatory comparison.
+## Existing provider/runtime state
 
-Accepted paper rules:
-- required authenticity/replay checks precede normal processable Event Inbox acceptance/business mutation;
-- trusted endpoint/Connection/delegation determines scope, not attacker payload `site_id`/resource IDs;
-- duplicate provider delivery cannot create a second business transition;
-- Event Inbox dedupe does not replace consumer-domain idempotency;
-- out-of-order/schema-drift events are explicit;
-- raw payload retention is protected/minimized;
-- Restore does not blindly replay historical processed events.
-
-**Event Inbox benchmarks: 0. I4/I5 provider event certifications: 0.**
-
-## Audit — ADR-0081
-
-AU1/PT-D is the favored future physical baseline.
-
-Boundaries:
-- Audit Event != structured domain history != short-lived operational diagnostics != high-volume access analytics;
-- normal application semantics are append-only;
-- corrections are new linked events;
-- retention/privacy transforms are explicit governed operations;
-- no secrets, auth/cookie headers, reset tokens or arbitrary full request/provider payloads by default;
-- retention is classed rather than one universal forever period;
-- Restore cannot erase the fact that Restore occurred and imported historical events preserve provenance.
-
-Critical integrity statement: a local WordPress database Audit table is **not claimed tamper-proof** against a sufficiently privileged DB/server/root actor. Hash-chain/signed/external checkpoint mechanisms remain optional future evidence profiles only if their attacker model and key custody are actually proven.
-
-**Audit physical/integrity benchmarks: 0.**
-
-## Product License remote/API state — ADR-0070/0072/0076
-
-Remote resources remain separate: Account, Product Contract, Installation Activation, Network Activation, Site Allocation, optional Review/Transfer resources and independently signed Product Entitlement.
-
-Accepted paper principles remain resource-oriented versioned API, OAuth separation, signed entitlement authority, idempotent retries, ETag/`If-Match`, RFC 9457-compatible Problem Details, bounded pagination/data minimization and no hidden site/plugin/content inventory.
-
-**0 OpenAPI/server/client/API/service fixtures executed.**
-
-## Provider/runtime state
-
-- Action Scheduler 4.1.0: reviewed candidate only; **P-003 0 executed**.
 - Membership Billing: **4 BE3 / 0 MB-certified**.
 - Email: **6 EE3 / 0 ET-certified**.
 - Event adapters: **0 I4/I5 certified**.
-- Backup: **34 targets / 0 C-certified / 0 C3 Supported**.
-- Remote Service privacy protocol: **30 fixtures / 0 executed**.
+- Backup: **34 / 0 C-certified**.
+- Remote privacy: **30 fixtures / 0 executed**.
+- Product License API/service: **0 fixtures**.
+- Site Lifecycle: **40 fixtures / 0 executed**.
+- Multisite: **0 MS1+**.
 
 ## Platform evidence blockers
 
-P-001 compatibility/Multisite; P-002 UI; P-003 Job backend/history; P-004 Definition; P-005 Vault; P-006 Free↔Pro/Product License runtime; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup; Forms/Chat/NE/EI/Audit physical runtime; Site Lifecycle; Product License API/service.
+P-001 compatibility/Multisite; P-002 UI; P-003 Job; P-004 Definition; P-005 Vault; P-006 Free↔Pro/Product License; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup remain executable blockers.
 
 ## Verification state
 
 Verified planning/documentation only:
-- planning branch isolated from `main`;
-- **31/31 Exhaustive, 0/31 Authorized**;
-- **31/31 Multisite scopes mapped; 0 MS1+**;
-- governance synchronized through **ADR-0081**;
-- ADR-0077 Forms/Chat baselines committed;
-- ADR-0078 Membership physical baseline committed;
-- ADR-0079 Notification/Email operational baseline committed;
-- ADR-0080 Event Inbox physical baseline committed;
-- ADR-0081 Audit retention/integrity profile committed;
-- all executable evidence counts remain 0 unless an older provider static maturity label explicitly says otherwise;
-- no implementation/test/provider-certification success claimed.
+- branch remains `planning/master-architecture`;
+- **31/31 Exhaustive / 0/31 Authorized**;
+- **31/31 Multisite scopes mapped / 0 MS1+**;
+- governance synchronized through **ADR-0085**;
+- Workflow/Job/Backup/Vault physical paper profiles committed;
+- all newly described executable evidence remains zero;
+- no implementation/build/test/provider-certification success claimed.
 
-Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, OpenAPI server/client/mock, provider/service calls, queue runs, crypto execution, PHPUnit/Playwright, webhook/SMTP processing, commerce transactions, Email sends, Backup/Restore, DB/performance benchmarks, release/deployment.
+Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, queue execution, crypto/KDF/key generation, provider/API/webhook/SMTP calls, commerce transactions, Email sends, Backup transfer/Restore/prune, PHPUnit/Playwright, DB/performance benchmarks, release/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Workflow PT-D run/step/wait physical benchmark profile + P-011 protocol, without execution.
-2. WPE Job/Attempt/history PT-C-vs-PT-D physical mapping for P-003, without backend bootstrap.
-3. Backup Remote Copy physical schema/index/commit-unknown profile under P-013, without transfers/restores.
-4. Vault physical envelope/storage/index alternatives under P-005, without crypto execution.
-5. Refine bounded evidence protocols only where they reduce later ambiguity.
-6. Keep P-003/P-005/P-011/P-012/P-013 gates intact.
-7. Keep Draft PR/governance synchronized.
+1. Query P-009 storage-adapter/cost/cache/security benchmark profile without execution.
+2. Field Storage + Custom Tables PT-D/PT-E physical/migration profiles without DDL.
+3. Settings PT-A/PT-B inheritance/autoload/concurrency profile.
+4. Membership protected-file delivery topology/evidence protocol.
+5. Product License exact OpenAPI component schema refinement only where static review reduces ambiguity.
+6. Keep P-001…P-013 executable gates intact.
+7. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
 
