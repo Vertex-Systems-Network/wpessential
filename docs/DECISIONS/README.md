@@ -18,7 +18,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0005 | Proposed blocker | WPE UI wrappers + stable WordPress components/DataViews; Untitled visual reference/compatible MIT only |
 | ADR-0006 | Proposed adapter blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate; WPE execution semantics later accepted in ADR-0059 and packaging profile in ADR-0068 |
 | ADR-0007 | Accepted | Pro expiry preserves data and safe deployed runtime; editing/unsafe operations can lock |
-| ADR-0008 | Proposed physical-evidence blocker | Definition Repository shape later accepted in ADR-0049; exact DDL/index/locking evidence pending |
+| ADR-0008 | Proposed physical-evidence blocker | Definition Repository shape later accepted in ADR-0049/0071; exact DDL/index/locking evidence pending |
 | ADR-0009 | Proposed physical-evidence blocker | Secrets Vault hierarchy later accepted in ADR-0048; storage/rotation/interoperability evidence pending |
 | ADR-0010 | Proposed blocker | Explicit Free↔Pro Platform API compatibility + degraded safe boot |
 | ADR-0011 | Proposed blocker | Layered PR/main/nightly/release CI matrix |
@@ -81,6 +81,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0068 | Accepted Action Scheduler packaging/coexistence architecture / P-003 pending | WPE Platform/Free owns one bundled candidate if selected; Pro/modules do not duplicate it; newest registered shared runtime may win; only JobService adapter calls AS; secrets/large payloads excluded; WPE idempotency/history independent of AS uniqueness/retention |
 | ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Every scope-aware resource has explicit site/network coordinates; site scope is default; network activation ≠ network-global data; target-site capability + WPE Policy required; cache/jobs/secrets/Membership/Backup/Reset/import are scope-isolated; physical global-vs-per-site DDL remains evidence-gated |
 | ADR-0070 | Accepted commercial/platform architecture / service evidence pending | Product licensing uses opaque installation/network/site-allocation identities and explicit environment classes; hostname is metadata not sole identity; Multisite allocation/site-count policy is explicit; clone/staging/migration/transfer/recovery reconcile safely; service outage ≠ expiry; product license never becomes Membership authorization |
+| ADR-0071 | Accepted Multisite physical-topology paper architecture / exact DDL evidence pending | WPE uses PT-A…PT-F storage classes; native WP data stays native; control-plane prefers global scoped PT-C; high-volume runtime can use PT-D/PT-E by evidence; Site Backup extracts site-owned rows from shared tables; no universal all-global/all-per-site rule |
 
 ## Product specification milestone
 
@@ -93,7 +94,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
 - Job Service: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
 - Action Scheduler packaging: `docs/ARCHITECTURE/ACTION-SCHEDULER-PACKAGING-COEXISTENCE-PROFILE.md`
-- Multisite scope: `docs/ARCHITECTURE/MULTISITE-SCOPE-OWNERSHIP-MODEL.md`
+- Multisite logical scope: `docs/ARCHITECTURE/MULTISITE-SCOPE-OWNERSHIP-MODEL.md`
+- Multisite physical topology classes: `docs/ARCHITECTURE/MULTISITE-PHYSICAL-DATA-TOPOLOGY-CLASSES.md`
 - Multisite future evidence: `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md`
 - Product license allocation/clone/transfer: `docs/ARCHITECTURE/PRODUCT-LICENSE-SITE-ALLOCATION-CLONE-TRANSFER.md`
 - Backup provider/transport docs: corresponding files under `docs/ARCHITECTURE/`
@@ -103,19 +105,19 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Remaining evidence blockers
 
-### Platform/runtime
-Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates. ADR-0068 fixes AS packaging semantics but **P-003 is unexecuted**. ADR-0069 fixes logical Multisite scope but exact table/cache/hook/performance behavior remains executable evidence.
+### Platform/runtime/data topology
+Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable-evidence gates. ADR-0068 fixes AS packaging semantics but **P-003 is unexecuted**. ADR-0069 fixes logical Multisite scope. ADR-0071 narrows physical topology classes but exact tables/indexes/locking/global-vs-per-site performance remain executable evidence.
 
 ### Membership
-ADR-0062/0066/0069 fix source truth, versioning and site-default Multisite scope, but **0 billing profiles are MB-certified**. Runtime schema/cache/files/provider/identity/refund/reconciliation/concurrency/privacy and Multisite fixtures remain open.
+ADR-0062/0066/0069/0071 fix source truth, versioning, site scope and PT-D candidate topology, but **0 billing profiles are MB-certified**. Runtime schema/index/cache/files/provider/identity/refund/reconciliation/concurrency/privacy and Multisite fixtures remain open.
 
 ### Email/notifications
-ADR-0063/0067/0069 fix provider truth/versioning/scope, but **0 Email profiles are ET-certified**. Renderer/runtime/event/security/load/Multisite evidence remains open.
+ADR-0063/0067/0069/0071 fix provider truth/versioning/scope and PT-D operational-table preference, but **0 Email profiles are ET-certified**. Renderer/runtime/schema/event/security/load/Multisite evidence remains open.
 
 ### Remote service/distribution/licensing
 ADR-0060/0069/0070 fix privacy, scope, product-allocation, clone/staging/migration and transfer semantics. 30 privacy fixtures remain **0 executed**. OAuth/service/TUF, signed-entitlement/site-allocation API, clone reconciliation, offline grace, site-count race handling, ownership transfer and retention implementation remain open.
 
 ### Backup/operations/security
-ADR-0061/0064/0065/0069 fix provider/transport and site-vs-network Backup/Reset ownership semantics. **34 targets remain, 0 C-certified.** Site/network restore certification and runtime provider/crypto/operations evidence remain open.
+ADR-0061/0064/0065/0069/0071 fix provider/transport, site-vs-network ownership and shared-table extraction semantics. **34 targets remain, 0 C-certified.** Site/network restore certification and runtime provider/crypto/operations evidence remain open.
 
 No executable evidence may run before explicit owner consent.
