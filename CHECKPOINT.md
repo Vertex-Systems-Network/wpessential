@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before runtime/source/build/migration/test implementation, package/dependency setup, crypto key generation, executable benchmark/spike, provider/API integration, Backup/Restore execution or release packaging.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, package/dependency setup, crypto key generation, executable benchmark/spike, provider/API integration, email/SMTP sends, Backup/Restore execution or release packaging.
 
 `continue`, `proceed`, planning approval, ADR acceptance, readiness or Phase 0 completion do **not** authorize development.
 
@@ -29,7 +29,7 @@ Exhaustive product specification is not a runtime/security/performance/provider 
 
 ## Accepted ADR state
 
-Accepted decisions now extend through **ADR-0057**.
+Accepted decisions now extend through **ADR-0058**.
 
 Latest additions:
 - **ADR-0053** — Backup providers use protocol-family adapters + provider capability profiles; C0–C4 certification; normal Supported Destination label requires C3 Restore Certified.
@@ -37,8 +37,7 @@ Latest additions:
 - **ADR-0055** — Connections are certified by adapter + provider + capability + API version with I0–I5 levels; `Connected` does not imply write/event support.
 - **ADR-0056** — Each Backup destination has durable Remote Copy states, provider Commit Point, manifest-last completion, truthful retention/delete semantics and manifest-bound restore identity.
 - **ADR-0057** — Membership billing integrations produce verified commercial source facts; reconciliation + WPE policy own Enrollment/Entitlement transitions; billing profiles use MB0–MB5 certification.
-
-Earlier ADRs through ADR-0052 preserve Free/Pro distribution, development-consent governance, Abilities, unsafe-code/SQL boundaries, Membership semantics, data/runtime architecture, crypto/update trust, OAuth, Component/Settings/Menu/Status/Listings/Connections/Import, Protector/Watermark/Reset, Vault, Definition Repository, Support, Dashboard Widget content trust and XML-RPC.
+- **ADR-0058** — Email transport/API acceptance, receiving-server delivery, failure/complaint/suppression and engagement are separate evidence; provider support uses ET0–ET5 certification and never infers inbox/read truth.
 
 ## Current architecture snapshot
 
@@ -68,41 +67,40 @@ Earlier ADRs through ADR-0052 preserve Free/Pro distribution, development-consen
 - Billing providers are commercial source-of-fact systems, not direct Membership authorization authority.
 - Canonical path: `Billing Source → verified source fact/event → Billing Adapter → reconciliation → Membership policy → Enrollment → Entitlement`.
 - Cancellation intent such as `pending-cancel` / `set_to_cancel` is not automatic immediate access revocation.
-- Temporary payment failure/on-hold/past-due states are source facts translated through published WPE policy.
-- Duplicate/out-of-order events require idempotency + reconciliation, not duplicate Enrollment creation.
-- Manual/Free, WooCommerce Core, Woo Subscriptions and SureCart are initial adapter priorities.
 - Billing certification: MB0 Detected/Mapping → MB1 Source Read → MB2 Grant → MB3 Renewal/Failure/Cancellation → MB4 Refund/Change/Reconciliation → MB5 Production Profile.
-- Direct card processing is not a Membership v1 requirement; WPE never stores card number/CVC.
+
+### Email delivery
+- Canonical path: `Notification Instance → Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → Derived Delivery Outcome`.
+- `wp_mail()` success = local transport processing evidence only.
+- SMTP/API/provider acceptance is not automatically destination-server delivery.
+- WPE `Delivered` is scoped as **Delivered to Receiving Server** only when a certified provider event proves recipient/destination mail-server acceptance.
+- Receiving-server acceptance is not inbox placement, visibility or read proof.
+- Complaint/suppression/asynchronous failures remain append-oriented facts and may coexist with earlier delivery evidence.
+- Open/click are optional telemetry observations, not `Read`.
+- Email provider certification: ET0 Configured → ET1 Submission → ET2 Resilient Submission → ET3 Delivery Truth → ET4 Feedback/Suppression/Reconciliation → ET5 Production Profile.
+- Initial future evidence order: wp_mail, generic SMTP, SES, SendGrid, Mailgun, Postmark.
 
 ### Backup/Operations
 - Backup bundle: manifest-first multipart logical recovery point.
 - Backup crypto: Sodium secretstream XChaCha20-Poly1305, XChaCha20 DEK wrapping, Argon2id passphrase mode, independent recovery slots; native ext-sodium required for encrypted v1.
-- Provider architecture: protocol families + provider profiles.
 - Named target matrix: **34 destinations; 0 certified**.
-- Certification: C0 Connectable, C1 Upload, C2 Resumable/Integrity (or explicit non-resumable integrity), C3 Restore, C4 Disaster Restore.
+- Certification: C0 Connectable → C1 Upload → C2 Resumable/Integrity → C3 Restore → C4 Disaster Restore.
 - Normal public Supported Destination label requires C3.
-- Remote Copy: planned/staging/uploading/finalizing/committed/verifying/verified plus explicit degraded/delete states.
-- Manifest/completion marker published last by default; provider Commit Point defines remote transaction boundary.
-- Retention protects the last required verified recovery copy.
-- Reset: reviewed Plan → verified restore point → durable journal → staged execution → health verification.
-- Watermark: WPE original/current source untouched; deterministic versioned derivatives.
+- Remote Copy uses explicit commit/verify/degraded/delete states; manifest/completion marker is published last by default.
 
-## Backup provider research snapshot
+## Email standards/provider research snapshot
 
-Static official-doc research supports current family planning:
-- Amazon S3: multipart independent parts, completion/abort, checksum APIs; multipart ETag not assumed whole-object MD5.
-- Google Drive: resumable upload sessions with chunk/status/resume and expiry.
-- Google Cloud Storage: resumable uploads intended for large/interrupted transfer; final object only after completion.
-- Microsoft Graph Drives: upload sessions with expiry and expected/missing ranges.
-- Dropbox: upload sessions start/append/finish + content-hash semantics.
-- WebDAV: RFC 4918 does not supply one universal resumable large-upload session profile.
-- SFTP: actual resume/rename semantics require client/server certification; no fictional final SFTP RFC assumption.
+Static official documentation currently supports the accepted truth boundaries:
+- WordPress documents that `wp_mail()` true does not mean the user received the email.
+- RFC 5321 defines 4yz as transient and 5yz as permanent negative completion, and says `250 OK` after DATA transfers delivery/relay responsibility to that SMTP receiver.
+- Amazon SES distinguishes SEND, DELIVERY, BOUNCE, COMPLAINT and DELIVERY_DELAY; DELIVERY is recipient-mail-server delivery.
+- Twilio SendGrid distinguishes processed, delivered, deferred, bounce and dropped; delivered is receiving-server delivery.
+- Mailgun distinguishes accepted/queued from delivered-to-recipient-server and temporary/permanent failures; current webhook security uses signed timestamp/token semantics.
+- Postmark explicitly defines Delivery as receiving-server acceptance and states this does not prove inbox placement.
 
-Provider evidence contract lives in:
-- `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
-- `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
-- `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
-- `docs/QUALITY/BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`
+Evidence contracts:
+- `docs/ARCHITECTURE/EMAIL-TRANSPORT-PROVIDER-CERTIFICATION.md`
+- `docs/QUALITY/EMAIL-TRANSPORT-CERTIFICATION-EVIDENCE-PROTOCOL.md`
 
 ## Platform blockers still requiring executable evidence
 
@@ -122,18 +120,24 @@ Provider evidence contract lives in:
 
 **None has been executed.**
 
-## Membership remaining evidence
+## Remaining evidence highlights
 
-- physical Enrollment/Entitlement schema;
-- revoke-to-deny cache proof;
-- protected-file delivery;
-- team/seat concurrency;
-- customer→WP user identity resolution;
-- Manual/WooCommerce/Woo Subscriptions/SureCart MB0–MB5 certification;
-- duplicate/out-of-order billing event + reconciliation behavior;
-- refund/upgrade/downgrade/trial mappings;
-- restore/clone/test-live isolation;
-- migration/provider/privacy fixtures.
+Membership:
+- physical Enrollment/Entitlement schema, revoke-to-deny cache, protected files, seats/concurrency, MB0–MB5 provider certification, reconciliation/identity/refund/change/restore/privacy fixtures.
+
+Email/Notification:
+- physical Recipient Delivery/Attempt/Event indexes;
+- renderer/inliner/client compatibility;
+- wp_mail/SMTP behavior;
+- ET0–ET5 SES/SendGrid/Mailgun/Postmark certification;
+- webhook signature/replay/rotation;
+- bounce/complaint/suppression/reconciliation;
+- unknown-outcome duplicate prevention;
+- Job Service rate/backpressure behavior;
+- privacy/retention/multisite/restore-clone fixtures.
+
+Backup:
+- physical bundle/Remote Copy schema, provider C0–C4 certification, crypto framing/KDF/recovery kit and fresh-server restore.
 
 ## Verification state
 
@@ -141,12 +145,10 @@ Provider evidence contract lives in:
 - planning branch isolated from `main`;
 - 31/31 Exhaustive;
 - 0/31 Authorized;
-- ADR index synchronized through ADR-0057;
-- Open Decisions + Readiness + Checkpoint synchronized through ADR-0057;
-- named Backup target matrix aligned to ADR-0053 C0–C4 model;
-- Remote Service resource schemas and Connection I0–I5 certification docs committed;
-- Membership billing adapter certification contract + ADR-0057 committed;
-- Backup provider evidence protocol documented but not executed;
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0058;
+- Membership billing contract + MB0–MB5 ADR committed;
+- Email delivery-truth contract + ET0–ET5 ADR/evidence protocol committed;
+- Backup provider matrix remains 34 targets / 0 certified;
 - no implementation/build/test success claimed.
 
 ### Not performed / intentionally blocked
@@ -157,7 +159,7 @@ Provider evidence contract lives in:
 - crypto key generation/encryption/signing code;
 - PHPUnit/Playwright;
 - P-001…P-013 execution;
-- provider credentials/API calls/uploads/webhook tests;
+- SMTP/provider credentials/API/webhook calls or email sends;
 - performance benchmarks;
 - Backup/Restore/Reset execution;
 - release packaging/deployment.
@@ -166,12 +168,12 @@ Reason: explicit owner development/executable-spike consent has not been granted
 
 ## Next allowed planning-only priorities
 
-1. Email transport/provider certification contract and delivery/bounce truth model.
-2. Job Service queues/priorities/backpressure/fairness/retention paper model.
-3. Remote service field-level privacy/retention matrix.
-4. Backup family-specific capability overrides for the 34 target destinations.
-5. Membership billing provider-specific capability/evidence profiles.
-6. Keep Open Decisions/Readiness/ADR index/Draft PR synchronized.
+1. Job Service operation classes/priorities/backpressure/fairness/retention paper model.
+2. Remote service field-level privacy/retention matrix.
+3. Backup family-specific capability overrides for the 34 target destinations.
+4. Membership billing provider-specific capability/evidence profiles.
+5. Email provider-specific capability matrix.
+6. Keep governance and Draft PR synchronized.
 
 Before **any executable work**, obtain explicit owner consent.
 
