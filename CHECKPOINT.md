@@ -35,39 +35,19 @@ Latest planning milestones:
 
 ## Current JobService state
 
-Accepted paper semantics:
-- Job Type/Schedule/Job/Attempt/Runner separation;
-- explicit business idempotency;
-- reviewed urgency + starvation protection;
-- resource/concurrency keys;
-- checkpointed chunking and backpressure;
-- cooperative cancellation;
-- no business dependency assumption from queue order.
+Accepted paper semantics: Job Type/Schedule/Job/Attempt/Runner separation, explicit business idempotency, reviewed urgency + starvation protection, resource/concurrency keys, checkpointed chunking/backpressure, cooperative cancellation and no business dependency assumption from queue order.
 
 Concrete Action Scheduler backend remains P-003 Proposed/evidence-gated.
 
 ## Current Remote Service state
 
-Accepted:
-- Free activation sends nothing to WPE service;
-- account link is purpose-scoped and not telemetry consent;
-- public resources avoid hidden identifiers where possible;
-- diagnostics needs separate preview/approval;
-- RR0–RR6 retention classes;
-- disconnect is distinct from account/support/commercial-history deletion.
+Accepted: Free activation sends nothing to WPE service; account link is purpose-scoped and not telemetry consent; public resources avoid hidden identifiers where possible; diagnostics needs separate preview/approval; RR0–RR6 retention classes; disconnect is distinct from account/support/commercial-history deletion.
 
 Future executable verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`, containing 30 consent-gated fixtures. **No fixture has been executed.**
 
 ## Current Backup state
 
-Accepted:
-- manifest-first bundle;
-- encryption/recovery architecture;
-- Remote Copy commit/verification lifecycle;
-- C0–C4 restore-first provider certification;
-- semantic `bf.*` family keys + separately versioned provider profiles;
-- numeric PF aliases are legacy/ambiguous;
-- static SE0–SE3 evidence never implies C certification.
+Accepted manifest-first bundle, encryption/recovery architecture, Remote Copy lifecycle, C0–C4 restore-first certification, semantic `bf.*` family keys, separately versioned provider profiles, legacy/non-canonical PF aliases, and SE0–SE3 static-evidence separation.
 
 Current catalog: **34 target destinations, 34/34 stable profiles, 0 certified**.
 
@@ -87,24 +67,13 @@ Initial profiles: `email.wordpress-wp-mail`, `email.smtp-generic`, `email.amazon
 
 Static maturity: **6 EE3 profiles; 0 ET-certified**.
 
-Accepted provider rules:
-- `wp_mail()` success means local processing only;
-- SMTP relay acceptance is not inbox/final receiving-server proof;
-- SES SEND ≠ DELIVERY;
-- SendGrid processed ≠ delivered;
-- Mailgun accepted ≠ delivered;
-- Postmark Delivery means destination server accepted, not inbox placement;
-- webhook security capabilities are provider-specific and never fabricated;
-- late bounce/complaint can coexist with earlier delivery evidence;
-- open/click never becomes Read/Human Seen/Inbox Confirmed.
+Accepted provider rules: `wp_mail()` success means local processing only; SMTP relay acceptance is not inbox/final receiving-server proof; SES SEND ≠ DELIVERY; SendGrid processed ≠ delivered; Mailgun accepted ≠ delivered; Postmark Delivery means destination server accepted, not inbox placement; webhook security capabilities are provider-specific and never fabricated; late bounce/complaint can coexist with earlier delivery evidence; open/click never becomes Read/Human Seen/Inbox Confirmed.
 
 ## Platform evidence blockers
 
 P-001 compatibility; P-002 UI; P-003 Job backend; P-004 Definition DDL; P-005 Vault implementation; P-006 Free↔Pro; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup.
 
-Additional Email and Remote Service runtime evidence remains separately tracked.
-
-**None executed.**
+Additional Email and Remote Service runtime evidence remains separately tracked. **None executed.**
 
 ## Verification state
 
@@ -119,21 +88,7 @@ Verified planning/documentation only:
 - Job provider-neutral architecture committed;
 - no implementation/test/provider certification success claimed.
 
-Not performed:
-- installs/package setup;
-- production source/bootstrap;
-- DB migrations;
-- queue runs;
-- crypto execution;
-- PHPUnit/Playwright;
-- provider/API/webhook/SMTP calls;
-- billing source objects/transactions;
-- email sends/webhook tests/bounce simulators;
-- WPE service/account-link/diagnostics transmission;
-- remote privacy-retention fixtures;
-- Backup uploads/deletes/restores;
-- performance benchmarks;
-- releases/deployment.
+Not performed: installs/package setup, production source/bootstrap, DB migrations, queue runs, crypto execution, PHPUnit/Playwright, provider/API/webhook/SMTP calls, billing source objects/transactions, email sends/webhook tests/bounce simulators, WPE service/account-link/diagnostics transmission, remote privacy-retention fixtures, Backup uploads/deletes/restores, performance benchmarks, releases/deployment.
 
 ## Next allowed planning-only priorities
 
