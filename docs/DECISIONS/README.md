@@ -18,8 +18,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0005 | Proposed blocker | WPE UI wrappers + stable WordPress components/DataViews; Untitled visual reference/compatible MIT only |
 | ADR-0006 | Proposed blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate |
 | ADR-0007 | Accepted | Pro expiry preserves data and safe deployed runtime; editing/unsafe operations can lock |
-| ADR-0008 | Proposed physical-evidence blocker | Definition Repository identities + immutable revisions + current/published pointers + dependencies; relational shape later accepted in ADR-0049 |
-| ADR-0009 | Proposed physical-evidence blocker | Centralized Secrets Vault; exact hierarchy narrowed/accepted in ADR-0048; storage/rotation evidence pending |
+| ADR-0008 | Proposed physical-evidence blocker | Definition Repository shape later accepted in ADR-0049; exact DDL/index/locking evidence pending |
+| ADR-0009 | Proposed physical-evidence blocker | Secrets Vault hierarchy later accepted in ADR-0048; storage/rotation/interoperability evidence pending |
 | ADR-0010 | Proposed blocker | Explicit Free↔Pro Platform API compatibility + degraded safe boot |
 | ADR-0011 | Proposed blocker | Layered PR/main/nightly/release CI matrix |
 | ADR-0012 | Proposed blocker | `@wordpress/build` first candidate; `@wordpress/scripts` fallback; Vite only for proven unmet need |
@@ -58,11 +58,15 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0045 | Accepted security architecture / evidence pending | Protector uses trusted-proxy-aware request gating + shared atomic Rate Limit service + non-authenticating recovery mode |
 | ADR-0046 | Accepted media architecture / evidence pending | Watermarker is non-destructive derivative pipeline keyed by source fingerprint + Rule revision + output/engine profile |
 | ADR-0047 | Accepted destructive-workflow architecture / evidence pending | Reset uses reviewed Plan + verified restore point + durable journal + recovery-principal invariant + post-health verification |
-| ADR-0048 | Accepted security architecture / derivation-storage evidence pending | Vault uses random VRK → per-secret DEKs → external/WP-derived/recovery/KMS key slots with XChaCha20-Poly1305 |
-| ADR-0049 | Accepted architecture / exact DDL-multisite evidence pending | Definition Repository relational shape is Definitions + immutable Revisions + revision-aware Dependencies |
-| ADR-0050 | Accepted platform architecture / service evidence pending | Support Ticket authority lives on WPE service; local WP is minimal secure client/cache with private attachments and truthful retention |
-| ADR-0051 | Accepted security architecture / WP adapter evidence pending | Dashboard Widgets use trusted server-rendered content classes; remote response is data, arbitrary iframe/JS/PHP is not normal source |
-| ADR-0052 | Accepted security/compatibility architecture / runtime evidence pending | XML-RPC is layered: host/Protector → effective method registry → authenticated-method state → native WP auth; Complete Deny is not `xmlrpc_enabled=false` |
+| ADR-0048 | Accepted security architecture / evidence pending | Vault uses random VRK → per-secret DEKs → external/WP-derived/recovery/KMS key slots; no plaintext fallback |
+| ADR-0049 | Accepted architecture / exact DDL evidence pending | Definition Repository relational shape is Definitions + immutable Revisions + revision-aware Dependencies |
+| ADR-0050 | Accepted platform architecture / service evidence pending | Support Ticket authority lives on WPE service; local WP is minimal secure client/cache |
+| ADR-0051 | Accepted security architecture / adapter evidence pending | Dashboard Widgets render trusted/local structured content; remote response is data, not arbitrary admin HTML/JS |
+| ADR-0052 | Accepted security/compatibility architecture / runtime evidence pending | XML-RPC is layered: host/Protector → method registry → authenticated-method policy → native WP auth |
+| ADR-0053 | Accepted backup architecture / provider evidence pending | Backup support is protocol-family adapter + provider capability profile with C0–C4 restore-first certification; normal Support label requires C3 |
+| ADR-0054 | Accepted platform architecture / service evidence pending | Account/site/entitlement/catalog/support/docs/release domains are separate trust resources; RFC 9457 errors; TUF remains separate update authority |
+| ADR-0055 | Accepted integration architecture / provider evidence pending | Connections are certified by adapter + provider + capability + API version using I0–I5; Connected does not imply read/write/event support |
+| ADR-0056 | Accepted backup lifecycle / provider evidence pending | Each destination has durable Remote Copy commit/verify/retention/delete/restore states; manifest-last and truthful deletion semantics |
 
 ## Product specification milestone
 
@@ -76,31 +80,32 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
 - Relations: `docs/ARCHITECTURE/RELATION-RUNTIME-SCHEMA-ALTERNATIVES.md`
 - Workflow: `docs/ARCHITECTURE/WORKFLOW-RUNTIME-DATA-CANDIDATE.md`
-- Field storage: `docs/ARCHITECTURE/FIELD-STORAGE-ARCHITECTURE-ALTERNATIVES.md`
-- Custom Tables: `docs/ARCHITECTURE/CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md`
-- Component Blueprint: `docs/ARCHITECTURE/COMPONENT-BLUEPRINT-RUNTIME-MODEL.md`
-- Settings/Admin Menu/Status/Listings/Import: respective files under `docs/ARCHITECTURE/`
-- Backup/Reset/Watermark: respective files under `docs/ARCHITECTURE/`
-- Entitlement/Backup/Vault/Pro-updater/Protector/XML-RPC: corresponding files under `docs/SECURITY/`
+- Component Blueprint/Settings/Admin Menu/Status/Listings/Import: respective files under `docs/ARCHITECTURE/`
+- Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
+- Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
+- Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
+- Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
+- Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
 - Support Tickets: `docs/PLATFORM/SUPPORT-TICKET-RUNTIME-PRIVACY-MODEL.md`
-- Dashboard Widgets trust: `docs/SECURITY/DASHBOARD-WIDGETS-CONTENT-TRUST-RUNTIME.md`
-- Spike protocols: `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`
+- Entitlement/Backup/Vault/Pro-updater/Protector/XML-RPC: corresponding files under `docs/SECURITY/`
+- Provider evidence: `docs/QUALITY/BACKUP-PROVIDER-CERTIFICATION-EVIDENCE-PROTOCOL.md`
+- Shared spikes: `docs/QUALITY/CONSENT-GATED-TECHNICAL-SPIKE-PROTOCOLS.md`
 
 ## Remaining evidence blockers
 
 ### Platform
-ADR-0002, 0005, 0006, 0008, 0009, 0010, 0011 and 0012 remain executable-evidence blockers where their exact runtime profiles are not proven.
+Compatibility, UI runtime, Job adapter, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI and build toolchain remain executable-evidence gates.
 
 ### Runtime/data
-Query compiler/cost budgets, Relation concurrency/indexes, Workflow/Job integration, Field storage scale, Custom Tables compiler/large-table recovery, Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import physical runtime evidence.
+Query/Relations/Workflow/Fields/Tables/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import require physical/runtime/security/performance evidence.
 
 ### Membership
-Enrollment/Entitlement physical schema, revoke-to-deny cache proof, protected-file environments, provider reconciliation, seat concurrency, migration/privacy runtime fixtures.
+Enrollment/Entitlement schema, revoke-to-deny cache, protected-file environments, billing reconciliation, seat concurrency, migration/privacy runtime fixtures remain open.
 
 ### Remote service/distribution
-ADR-0042 canonicalizer/library/keyset rotation/TTL interoperability; ADR-0044 production TUF client/key custody/conformance; ADR-0034 OAuth endpoint/token lifecycle; ADR-0050 Support service API/attachment/privacy runtime.
+OAuth endpoint/token lifecycle, entitlement canonicalizer/library/keyset rotation, production TUF client/key custody/conformance, support/service schemas and attachment/privacy runtime remain executable.
 
 ### Backup/operations/security
-ADR-0043 exact framing/AAD/KDF parameters/recovery-kit encoding and restore performance; provider certification; ADR-0045 Protector hook/rate-store/proxy fixtures; ADR-0046 image-editor/offload certification; ADR-0047 Reset recovery-store/destructive crash/multisite proof; ADR-0048 Vault physical storage/rotation/redaction; ADR-0051 Dashboard Widget adapter/XSS/iframe certification; ADR-0052 XML-RPC method/filter/Jetpack/mobile/multisite certification.
+Provider C0–C4 certification, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit implementation, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
 
 No executable evidence may run before explicit owner consent.
