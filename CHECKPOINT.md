@@ -56,12 +56,7 @@ Accepted:
 - RR0–RR6 retention classes;
 - disconnect is distinct from account/support/commercial-history deletion.
 
-Future executable verification is bounded by:
-`docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`
-
-That protocol defines 30 consent-gated fixtures covering no-call activation, field minimization, OAuth secret handling, telemetry separation, diagnostics redaction, RR0–RR6 cleanup, Support access, export/delete, clone isolation, signed-entitlement/TUF trust separation, outages, rate limits, multisite and documentation truth.
-
-**No fixture has been executed.**
+Future executable verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`, containing 30 consent-gated fixtures. **No fixture has been executed.**
 
 ## Current Backup state
 
@@ -74,36 +69,21 @@ Accepted:
 - numeric PF aliases are legacy/ambiguous;
 - static SE0–SE3 evidence never implies C certification.
 
-Current catalog:
-- **34 target destinations**;
-- **34/34 stable provider/family profiles**;
-- **0 certified**.
+Current catalog: **34 target destinations, 34/34 stable profiles, 0 certified**.
 
 ## Current Membership billing state
 
-Canonical path:
-`verified source facts → Billing Adapter → reconciliation → Membership policy → Enrollment → Entitlement`
+Canonical path: `verified source facts → Billing Adapter → reconciliation → Membership policy → Enrollment → Entitlement`.
 
-Initial profiles:
-- `billing.manual`;
-- `billing.woocommerce-order`;
-- `billing.woocommerce-subscriptions`;
-- `billing.surecart`.
+Initial profiles: `billing.manual`, `billing.woocommerce-order`, `billing.woocommerce-subscriptions`, `billing.surecart`.
 
 Static maturity: **4 BE3 profiles; 0 MB-certified**.
 
 ## Current Email provider state
 
-Canonical path:
-`Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → derived outcome`
+Canonical path: `Recipient Delivery → Rendered Message → Transport Attempt → Provider Message Reference → verified Provider Event Ledger → derived outcome`.
 
-Initial profiles:
-- `email.wordpress-wp-mail`;
-- `email.smtp-generic`;
-- `email.amazon-ses`;
-- `email.twilio-sendgrid`;
-- `email.mailgun`;
-- `email.postmark`.
+Initial profiles: `email.wordpress-wp-mail`, `email.smtp-generic`, `email.amazon-ses`, `email.twilio-sendgrid`, `email.mailgun`, `email.postmark`.
 
 Static maturity: **6 EE3 profiles; 0 ET-certified**.
 
