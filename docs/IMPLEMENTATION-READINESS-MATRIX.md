@@ -24,7 +24,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 |---|---|---|
 | WP/PHP/DB compatibility | ADR-0002 Proposed | P-001 |
 | UI/design system | ADR-0005 Proposed | P-002 |
-| Job Service | ADR-0006 Proposed | P-003 |
+| Job Service concrete backend | ADR-0059 semantics Accepted; ADR-0006 Action Scheduler adapter Proposed | P-003 |
 | Definition Repository physical DDL/indexes | ADR-0049 accepted relational shape; exact DDL pending | P-004 |
 | Secrets Vault crypto implementation | ADR-0048 accepted hierarchy; exact envelope/interoperability pending | P-005 |
 | Free↔Pro compatibility runtime | ADR-0010 Proposed | P-006 |
@@ -52,18 +52,18 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 14 | User Profile Builder | Exhaustive | ADR-0030 Accepted | protected-meta registry, email/password/session/App Password/public profile | No |
 | 15 | Membership System | Exhaustive | ADRs 0013/15/16/19/20/24 + ADR-0057 Accepted | schema/cache/protected files, MB0–MB5 billing provider certification, reconciliation, identity resolution, concurrency/privacy — P-012 | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035 Accepted | renderer/nesting/bindings/assets/accessibility/builder certification | No |
-| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 Accepted Entry model + Workflow paper runtime | Entry schema/projections, Workflow/Job runtime — P-011 | No |
-| 18 | Cron Job Builder | Exhaustive | Job/Cron product semantics | ADR-0006 Job Service, DST/overlap/runtime fixtures | No |
-| 19 | Notification System | Exhaustive | ADR-0026 + ADR-0058 Accepted delivery boundaries | persistence/indexes, fan-out/dedupe, Email ET0–ET5/channel certification, Job backpressure | No |
-| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 Accepted renderer + delivery-truth architecture | renderer/inliner/client compatibility, Delivery/Attempt/Event schema, ET0–ET5 provider certification, webhook/security evidence | No |
+| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025 + ADR-0059 Job semantics + Workflow paper runtime | Entry schema/projections, Workflow state execution, Job adapter/fairness — P-003/P-011 | No |
+| 18 | Cron Job Builder | Exhaustive | ADR-0059 JobService semantics + Cron product semantics | Action Scheduler backend, WP-Cron/WP-CLI runner, DST/overlap/fairness fixtures — P-003 | No |
+| 19 | Notification System | Exhaustive | ADR-0026 + ADR-0058 + ADR-0059 Accepted boundaries | persistence/indexes, fan-out/dedupe, ET provider certification, Job backpressure/fairness | No |
+| 20 | Emails Builder | Exhaustive | ADR-0029 + ADR-0058 Accepted | renderer/inliner/client compatibility, Delivery/Attempt/Event schema, ET0–ET5 provider certification, webhook/security evidence | No |
 | 21 | Message & Chat System | Exhaustive | ADR-0027 Accepted | indexes/search/transport/private assets/revocation scale | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028 Accepted | compiler/auth/rate/CORS/cache/fuzz/scale evidence | No |
-| 23 | Webhooks & Connections | Exhaustive | ADR-0040 + ADR-0055 Accepted | provider I0–I5 auth/read/write/event certification, Safe HTTP/webhook/Event Inbox evidence | No |
-| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056 Accepted | physical bundle/Remote Copy schema, C0–C4 provider & restore certification — P-013 | No |
-| 25 | Reset Manager | Exhaustive | ADR-0047 Accepted | recovery-store schema, DB/files crash recovery, adapters, multisite | No |
-| 26 | Import / Export | Exhaustive | ADR-0041 Accepted | run schema, crash/resume, source fixtures, media safety | No |
+| 23 | Webhooks & Connections | Exhaustive | ADR-0040 + ADR-0055 + ADR-0059 composition | provider I0–I5 auth/read/write/event certification, Event Inbox DDL, Job retry/backpressure evidence | No |
+| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059 composition | physical bundle/Remote Copy schema, C0–C4 provider/restore + Job chunk/fairness certification — P-003/P-013 | No |
+| 25 | Reset Manager | Exhaustive | ADR-0047 + ADR-0059 composition | recovery-store schema, destructive Job checkpoints/crash recovery, adapters, multisite | No |
+| 26 | Import / Export | Exhaustive | ADR-0041 + ADR-0059 composition | run schema, checkpoint Job execution, crash/resume, source/media fixtures | No |
 | 27 | Protector | Exhaustive | ADR-0045 Accepted | hook order, atomic rate store, proxy/login/header fixtures | No |
-| 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 Accepted | registry, image-editor/format/offload/private-media/concurrency/load | No |
+| 28 | Watermarker / Media Rules | Exhaustive | ADR-0046 + ADR-0059 composition | registry, image-editor/offload plus chunk/concurrency/load evidence | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052 Accepted layered enforcement | method inventory/hooks/parser/complete-deny/Jetpack/mobile/multisite | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032 Accepted | classifier, self/last-recovery, multisite, WP-CLI recovery | No |
 | 31 | Platform Account/Docs/Support/Diagnostics | Exhaustive | ADR-0034/0042/0044/0050/0054 Accepted | OpenAPI/service implementation, key custody/rotation, production TUF client, support API/privacy | No |
@@ -78,13 +78,14 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - ADR-0056 Remote Copy: manifest-last, provider Commit Point, truthful retention/delete/restore identity.
 - ADR-0057 Membership Billing: verified commercial source facts feed reconciliation + Membership policy; provider status never directly owns Enrollment/Entitlement state.
 - ADR-0058 Email Delivery: submission/transport acceptance, receiving-server delivery, failure/complaint/suppression and engagement are separate evidence; ET0–ET5 provider profiles govern support claims.
+- ADR-0059 Job Service: backend-neutral Job/Attempt/Runner semantics, at-least-once, explicit idempotency, urgency/fairness, resource/concurrency control, chunking/backpressure and cooperative cancellation. Concrete Action Scheduler mapping remains P-003.
 
 No surface may skip evidence merely because an ADR is Accepted.
 
 ## Recommended implementation order after future consent
 
-1. resolve P-001…P-008 platform blockers;
-2. Platform Kernel + Module Registry + Definition Repository + Policy/Abilities/Assets/Audit + Vault;
+1. resolve P-001/P-002 and P-004…P-008 platform prerequisites plus P-003 Job adapter proof;
+2. Platform Kernel + Module Registry + Definition Repository + Policy/Abilities/Assets/Audit + Vault + JobService;
 3. CPT + Taxonomy Free;
 4. Fields → Relations → Query → Tables/Columns → Component Blueprint → Listings/Status;
 5. Settings/Admin Menu/Dashboard/Profile/Roles/Dashboard Widgets;
@@ -100,7 +101,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0058; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0059; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
