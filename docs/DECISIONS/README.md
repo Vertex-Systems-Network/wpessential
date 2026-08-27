@@ -79,14 +79,19 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0066 | Accepted Membership provider-version architecture / executable evidence pending | Billing certification is scoped by provider/profile/plugin/API/adapter/environment; Woo HPOS is a compatibility dimension; SureCart plugin and hosted API versions are separate; newer/unpatched provider versions are never auto-certified |
 | ADR-0067 | Accepted Email provider-version architecture / executable evidence pending | Email certification records send API/transport + event schema + security profile + region/account scope; SES v2/SendGrid v3/Mailgun mixed endpoint versions/Postmark dated schema represented truthfully; send/event certification may degrade independently |
 | ADR-0068 | Accepted Action Scheduler packaging/coexistence architecture / P-003 pending | WPE Platform/Free owns one bundled candidate if selected; Pro/modules do not duplicate it; newest registered shared runtime may win; only JobService adapter calls AS; secrets/large payloads excluded; WPE idempotency/history independent of AS uniqueness/retention |
-| ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Every scope-aware resource has explicit site/network coordinates; site scope is default; network activation ≠ network-global data; target-site capability + WPE Policy required; cache/jobs/secrets/Membership/Backup/Reset/import are scope-isolated; physical global-vs-per-site DDL remains evidence-gated |
-| ADR-0070 | Accepted commercial/platform architecture / service evidence pending | Product licensing uses opaque installation/network/site-allocation identities and explicit environment classes; hostname is metadata not sole identity; Multisite allocation/site-count policy is explicit; clone/staging/migration/transfer/recovery reconcile safely; service outage ≠ expiry; product license never becomes Membership authorization |
-| ADR-0071 | Accepted Multisite physical-topology paper architecture / exact DDL evidence pending | WPE uses PT-A…PT-F storage classes; native WP data stays native; control-plane prefers global scoped PT-C; high-volume runtime can use PT-D/PT-E by evidence; Site Backup extracts site-owned rows from shared tables; no universal all-global/all-per-site rule |
-| ADR-0072 | Accepted Product License remote-resource paper architecture / service evidence pending | Account/Contract/Installation/Network/Site Allocation/Signed Entitlement are separate resources; allocation lifecycle/conflict codes are explicit; retries/concurrency/unknown outcomes reconcile safely; hostname/site ID are metadata; outage ≠ expiry; product license ≠ Membership authorization |
-| ADR-0073 | Accepted Definition Repository PT-C benchmark baseline / exact DDL evidence pending | P-004 baseline D1 uses numeric physical IDs, transparent textual UUID, explicit scope coordinates, bounded identity keys, immutable text payload, minimal workload indexes and application integrity diagnostics; binary UUID/native JSON/FKs remain comparison profiles |
-| ADR-0074 | Accepted Relations physical benchmark baseline / P-010 pending | R1 PT-D shared scoped universal edge table is first benchmark profile; R2 PT-E per-site is mandatory comparison; R3 per-relation is exceptional only; topology cannot weaken scope/cardinality/reverse-query/Policy semantics |
-| ADR-0075 | Accepted Multisite lifecycle architecture / runtime evidence pending | One Site Lifecycle Coordinator plans/provisions/drains/reconciles site create/update/uninitialize/delete/clone/transfer across PT-C/PT-D/PT-E/PT-F; WordPress lifecycle facts stay distinct; cleanup is domain-retention-aware and journaled |
-| ADR-0076 | Accepted Product License HTTP/OpenAPI paper architecture / service evidence pending | Resource-oriented versioned API; signed entitlement remains separate authority; ETag/If-Match prevents stale writes; retry-safe mutations use idempotency keys; RFC 9457 Problem Details; bounded pagination/data minimization; no hidden site inventory |
+| ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Every scope-aware resource has explicit site/network coordinates; site scope is default; network activation ≠ network-global data; target-site capability + WPE Policy required; cache/jobs/secrets/Membership/Backup/Reset/import are scope-isolated |
+| ADR-0070 | Accepted commercial/platform architecture / service evidence pending | Product licensing uses opaque installation/network/site-allocation identities and explicit environment classes; hostname is metadata not sole identity; Multisite allocation/site-count policy is explicit; clone/staging/migration/transfer/recovery reconcile safely |
+| ADR-0071 | Accepted Multisite physical-topology paper architecture / exact DDL evidence pending | WPE uses PT-A…PT-F storage classes; native WP data stays native; control-plane prefers global scoped PT-C; high-volume runtime can use PT-D/PT-E by evidence; Site Backup extracts site-owned rows from shared tables |
+| ADR-0072 | Accepted Product License remote-resource paper architecture / service evidence pending | Account/Contract/Installation/Network/Site Allocation/Signed Entitlement are separate resources; allocation lifecycle/conflict codes explicit; retries/concurrency/unknown outcomes reconcile safely |
+| ADR-0073 | Accepted Definition Repository PT-C benchmark baseline / exact DDL evidence pending | P-004 baseline D1 uses numeric physical IDs, textual UUID, explicit scope, bounded identity keys, immutable text payload, minimal workload indexes and application integrity diagnostics |
+| ADR-0074 | Accepted Relations physical benchmark baseline / P-010 pending | R1 PT-D shared scoped universal edge table is first benchmark profile; R2 PT-E per-site mandatory comparison; R3 per-relation exceptional only |
+| ADR-0075 | Accepted Multisite lifecycle architecture / runtime evidence pending | One Site Lifecycle Coordinator plans/provisions/drains/reconciles site create/update/uninitialize/delete/clone/transfer across PT-C/PT-D/PT-E/PT-F |
+| ADR-0076 | Accepted Product License HTTP/OpenAPI paper architecture / service evidence pending | Resource-oriented versioned API; signed entitlement remains separate authority; ETag/If-Match stale-write protection; retry-safe idempotency; RFC 9457 Problem Details; bounded pagination/data minimization |
+| ADR-0077 | Accepted Forms & Chat benchmark baselines / physical evidence pending | Forms FRT1/PT-D and Chat CRT1/PT-D are first benchmark profiles; FRT2/CRT2 PT-E are mandatory comparisons; logical privacy/runtime invariants remain unchanged |
+| ADR-0078 | Accepted Membership benchmark baseline / P-012 pending | M1/PT-D shared scoped Membership runtime is first benchmark profile; M2/PT-E mandatory comparison; Enrollment authoritative, Entitlements derived, principal access generation supports revoke-safe cache/version semantics |
+| ADR-0079 | Accepted Notification/Email operational benchmark baseline / provider evidence pending | NE1/PT-D shared scoped Occurrence/Recipient/Channel Delivery/Transport Attempt/Delivery Evidence stores first; NE2/PT-E mandatory comparison; unknown-outcome and provider-truth boundaries explicit |
+| ADR-0080 | Accepted Event Inbox benchmark baseline / provider evidence pending | EI1/PT-D shared scoped verified normalized ingress first; EI2/PT-E mandatory comparison; trusted endpoint/Connection determines scope; dedupe + consumer idempotency + replay/order/restore safety required |
+| ADR-0081 | Accepted Audit PT-D retention/integrity profile / exact evidence pending | AU1/PT-D favored; Audit separate from domain history/diagnostics; append-only application semantics; minimized payloads; classed retention; local DB is not claimed tamper-proof |
 
 ## Product specification milestone
 
@@ -97,27 +102,36 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 - Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`
 - Relations: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
+- Forms/Chat: `docs/ARCHITECTURE/FORMS-CHAT-PTD-PTE-TOPOLOGY-COMPARISON.md`
+- Membership physical profile: `docs/ARCHITECTURE/MEMBERSHIP-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
+- Notification/Email physical profile: `docs/ARCHITECTURE/NOTIFICATION-EMAIL-PTD-OPERATIONAL-STORAGE-PROFILE.md`
+- Event Inbox physical profile: `docs/ARCHITECTURE/EVENT-INBOX-PTD-PHYSICAL-BENCHMARK-PROFILE.md`
+- Audit: `docs/ARCHITECTURE/AUDIT-PTD-RETENTION-INDEX-INTEGRITY-PROFILE.md`
 - Site Lifecycle: `docs/ARCHITECTURE/MULTISITE-SITE-LIFECYCLE-COORDINATOR.md`
-- Product License remote state: `docs/PLATFORM/PRODUCT-LICENSE-REMOTE-RESOURCE-STATE-MACHINE.md`
-- Product License HTTP/OpenAPI candidate: `docs/PLATFORM/PRODUCT-LICENSE-OPENAPI-CANDIDATE-CONTRACT.md`
-- Multisite scope/topology/evidence: corresponding files under `docs/ARCHITECTURE/`, `docs/MODULES/` and `docs/QUALITY/`.
-- Provider/integration/runtime contracts: corresponding files under `docs/ARCHITECTURE/` and `docs/PLATFORM/`.
+- Product License remote/API: files under `docs/PLATFORM/`.
+- Multisite scope/topology/evidence: corresponding files under `docs/ARCHITECTURE/`, `docs/MODULES/`, `docs/QUALITY/`.
 
 ## Remaining evidence blockers
 
 ### Platform/runtime/data topology
-Compatibility, UI runtime, Definition exact DDL, Vault, Free↔Pro, CI/build, Query/Relations/Workflow/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import remain executable gates. P-003/P-004/P-010 and site-lifecycle runtime remain unexecuted. ADR-0073/0074 are benchmark baselines only; ADR-0075 is coordination semantics only.
+Compatibility, UI runtime, Definition exact DDL, Vault, Free↔Pro, CI/build, Query, Relations, Workflow, Forms, Notifications, Chat, REST, Email, Dashboard, Components, Settings, Menu, Status, Listings and Import remain executable gates. ADR-0073/0074/0077/0078/0079/0080 are benchmark baselines, not implementation approval. ADR-0081 fixes Audit semantics but not exact DDL/retention/integrity mechanism.
 
 ### Membership
-Four billing paper profiles remain **0 MB-certified**. Runtime schema/cache/files/provider/concurrency/privacy/Multisite/lifecycle evidence remains open.
+M1/PT-D vs M2/PT-E is now the future P-012 comparison. Four billing paper profiles remain **0 MB-certified**. Exact schema/index/cache/locking/files/provider/identity/refund/reconciliation/Multisite/lifecycle evidence remains open.
 
 ### Email/notifications
-Six Email paper profiles remain **0 ET-certified**. Renderer/runtime/schema/event/security/load/Multisite/lifecycle evidence remains open.
+NE1/PT-D vs NE2/PT-E is now the physical comparison. Six Email paper profiles remain **0 ET-certified**. Renderer/client/provider/webhook/correlation/reconciliation/load/retention evidence remains open.
+
+### Connections/Event Inbox
+EI1/PT-D vs EI2/PT-E is now the Event Inbox comparison. Exact DDL/claim/retention/provider routing evidence and I4/I5 certification remain open.
+
+### Audit
+AU1/PT-D is favored; exact DDL/index/retention/fail-closed classes/privacy transforms and any optional tamper-evidence mechanism remain unexecuted.
 
 ### Remote service/distribution/licensing
-ADR-0076 narrows the future HTTP/OpenAPI contract, but **0 API/service fixtures are executed**. Exact OpenAPI schemas, OAuth scopes, idempotency retention, ETag behavior, rate limits, clone/transfer flows, entitlement verification and service persistence remain open. Remote privacy protocol remains 30 fixtures / 0 executed.
+ADR-0076 narrows future HTTP/OpenAPI contract; **0 API/service fixtures executed**. OAuth/TUF/exact schemas/idempotency/ETag/allocation/clone-transfer/offline-grace/privacy evidence remains open.
 
 ### Backup/operations/security
-34 Backup targets remain **0 C-certified**. Site/network restore, lifecycle recovery, provider/crypto/operations evidence remains open.
+34 Backup targets remain **0 C-certified**. Site/network restore, provider/crypto/operations/lifecycle evidence remains open.
 
 No executable evidence may run before explicit owner consent.
