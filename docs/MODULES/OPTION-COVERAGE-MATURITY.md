@@ -5,9 +5,7 @@ Date: 2026-08-27
 
 ## Purpose
 
-The earlier statement “31/31 behaviorally specified” is not the final planning bar.
-
-The owner requires **every module's smallest practical option to be planned before development**. Therefore the maturity model is now stricter:
+The owner requires **every module's smallest practical option to be planned before development**. The planning maturity model is therefore:
 
 1. **Inventory** — screens/features/options named.
 2. **Behavioral** — defaults, validation, permissions, lifecycle/failure semantics documented.
@@ -18,52 +16,70 @@ The owner requires **every module's smallest practical option to be planned befo
 7. **Implemented** — source exists.
 8. **Verified** — applicable quality gates pass.
 
-A module may be Exhaustive but still BLOCKED technically and unauthorized.
+A module can be **Exhaustive** while still technically BLOCKED and unauthorized.
 
-## Current coverage
+---
 
-| # | Surface | Current option maturity | Primary exhaustive/detailed source | Remaining planning before technical implementation |
+# Current product-option coverage — 31/31 Exhaustive
+
+| # | Surface | Current option maturity | Primary exhaustive/detailed source | Remaining before technical implementation |
 |---:|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` | compatibility/schema/toolchain evidence |
-| 2 | Taxonomy Builder | Exhaustive | `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` | compatibility/schema/toolchain evidence |
-| 3 | Custom Fields Builder | Exhaustive | `CUSTOM-FIELDS-EXHAUSTIVE-SPEC.md` | field storage/migration/runtime benchmark |
-| 4 | Relations Builder | Exhaustive | `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md` | physical relation schema/concurrency benchmark |
-| 5 | Status Manager | Exhaustive | `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md` | WordPress/custom domain-state compatibility tests later |
-| 6 | Custom Query Builder | Exhaustive | `QUERY-BUILDER-EXHAUSTIVE-SPEC.md` | Query AST/compiler/cost benchmark |
-| 7 | Custom Tables Builder | Exhaustive | `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md` | migration/DDL benchmark |
-| 8 | Admin Columns Builder | Exhaustive | `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md` | list-table adapters/performance proof |
-| 9 | Dynamic Listings / Templates | Exhaustive | `DYNAMIC-LISTINGS-EXHAUSTIVE-SPEC.md` | renderer schema/cache/builder adapter evidence |
-| 10 | Dashboard Widgets Manager | Exhaustive | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md` | WP dashboard integration compatibility |
-| 11 | Custom Admin Menu Builder | Exhaustive | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md` | menu conflict/recovery tests later |
-| 12 | Settings Page Builder | Exhaustive | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md` | field/schema + options storage evidence |
-| 13 | Frontend Dashboard Builder | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | route/policy/component renderer evidence |
-| 14 | User Profile Builder | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | protected user-meta matrix/runtime evidence |
-| 15 | Membership System | Exhaustive + Accepted semantics | `MEMBERSHIP-SYSTEM.md` + Membership semantic docs/ADRs | runtime schema/cache/providers/protected-file evidence |
-| 16 | Builder Widgets Builder | Exhaustive | `BUILDER-WIDGETS-EXHAUSTIVE-SPEC.md` | adapter certification/version tests |
-| 17 | Forms & Workflow Builder | Behavioral — exhaustive gap | suite spec | **create exhaustive option spec** |
-| 18 | Cron Job Builder | Behavioral — exhaustive gap | suite spec | **create exhaustive option spec** |
-| 19 | Notification System | Behavioral — exhaustive gap | suite spec | **create exhaustive option spec** |
-| 20 | Emails Builder | Behavioral — exhaustive gap | suite spec | **create exhaustive option spec** |
-| 21 | Message & Chat System | Behavioral — exhaustive gap | suite spec | **create exhaustive option spec** |
-| 22 | REST API Builder | Behavioral — exhaustive gap | integration suite spec | **create exhaustive option spec** |
-| 23 | Webhooks & Connections Manager | Behavioral — exhaustive gap | integration suite spec | **create exhaustive option spec** |
-| 24 | Backup Manager | Detailed semantics, option UI gap | provider matrix + restore semantics | **create exhaustive builder/settings option spec** |
-| 25 | Reset Manager | Behavioral — exhaustive gap | operations suite spec | **create exhaustive option spec** |
-| 26 | Import / Export | Deep migration architecture, option UI gap | migration/package/source-adapter docs | **create exhaustive run/mapping UI option spec** |
-| 27 | Protector | Behavioral — exhaustive gap | operations suite/security docs | **create exhaustive option spec** |
-| 28 | Watermarker / Media Rules | Behavioral — exhaustive gap | operations suite spec | **create exhaustive option spec** |
-| 29 | XML-RPC Manager | Behavioral — exhaustive gap | operations suite spec | **create exhaustive option spec** |
-| 30 | Role & Capability Manager | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | anti-lockout/capability runtime tests later |
-| 31 | Platform surfaces / Account / Support / Docs | Detailed/Exhaustive platform contract | `PLATFORM-SURFACES-SPEC.md`, amendment, Remote Service, Docs/Support IA | service API schemas + executable evidence |
+| 1 | Custom Post Types Builder | **Exhaustive** | `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` | compatibility/schema/toolchain evidence |
+| 2 | Taxonomy Builder | **Exhaustive** | `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` | compatibility/schema/toolchain evidence |
+| 3 | Custom Fields Builder | **Exhaustive** | `CUSTOM-FIELDS-EXHAUSTIVE-SPEC.md` | storage/migration/runtime benchmark |
+| 4 | Relations Builder | **Exhaustive** | `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md` | physical relation schema/concurrency benchmark |
+| 5 | Status Manager | **Exhaustive** | `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md` | WordPress/domain-state compatibility evidence |
+| 6 | Custom Query Builder | **Exhaustive** | `QUERY-BUILDER-EXHAUSTIVE-SPEC.md` | Query AST/compiler/cost benchmark |
+| 7 | Custom Tables Builder | **Exhaustive** | `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md` | migration/DDL benchmark |
+| 8 | Admin Columns Builder | **Exhaustive** | `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md` | list-table adapters/performance proof |
+| 9 | Dynamic Listings / Templates | **Exhaustive** | `DYNAMIC-LISTINGS-EXHAUSTIVE-SPEC.md` | renderer schema/cache/builder evidence |
+| 10 | Dashboard Widgets Manager | **Exhaustive** | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md` | WP dashboard compatibility evidence |
+| 11 | Custom Admin Menu Builder | **Exhaustive** | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md` | conflict/recovery evidence |
+| 12 | Settings Page Builder | **Exhaustive** | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md` | option/storage schema evidence |
+| 13 | Frontend Dashboard Builder | **Exhaustive** | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | route/policy/renderer evidence |
+| 14 | User Profile Builder | **Exhaustive** | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | protected-meta/runtime evidence |
+| 15 | Membership System | **Exhaustive + Accepted core semantics** | `MEMBERSHIP-SYSTEM.md` + Membership semantic docs/ADRs | runtime schema/cache/providers/protected-file evidence |
+| 16 | Builder Widgets Builder | **Exhaustive** | `BUILDER-WIDGETS-EXHAUSTIVE-SPEC.md` | builder adapter certification/version tests |
+| 17 | Forms & Workflow Builder | **Exhaustive** | `FORMS-WORKFLOW-EXHAUSTIVE-SPEC.md` | runtime schemas/job/action evidence |
+| 18 | Cron Job Builder | **Exhaustive** | `CRON-JOB-BUILDER-EXHAUSTIVE-SPEC.md` | Job Service/runner coexistence evidence |
+| 19 | Notification System | **Exhaustive** | `NOTIFICATION-SYSTEM-EXHAUSTIVE-SPEC.md` | channel/provider/runtime persistence evidence |
+| 20 | Emails Builder | **Exhaustive** | `EMAILS-BUILDER-EXHAUSTIVE-SPEC.md` | email renderer/client/provider certification |
+| 21 | Message & Chat System | **Exhaustive** | `MESSAGE-CHAT-EXHAUSTIVE-SPEC.md` | runtime schema/transport/search evidence |
+| 22 | REST API Builder | **Exhaustive** | `REST-API-BUILDER-EXHAUSTIVE-SPEC.md` | endpoint compiler/auth/performance evidence |
+| 23 | Webhooks & Connections Manager | **Exhaustive** | `WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md` | OAuth/provider/SSRF/idempotency evidence |
+| 24 | Backup Manager | **Exhaustive** | `BACKUP-MANAGER-EXHAUSTIVE-SPEC.md` + provider/restore/encryption docs | archive/crypto/provider/restore certification |
+| 25 | Reset Manager | **Exhaustive** | `RESET-MANAGER-EXHAUSTIVE-SPEC.md` | destructive workflow/recovery/multisite evidence |
+| 26 | Import / Export | **Exhaustive** | `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md` + migration/package docs | source-adapter fixtures/rollback evidence |
+| 27 | Protector | **Exhaustive** | `PROTECTOR-EXHAUSTIVE-SPEC.md` | interception/rate-limit/recovery/proxy evidence |
+| 28 | Watermarker / Media Rules | **Exhaustive** | `WATERMARKER-MEDIA-RULES-EXHAUSTIVE-SPEC.md` | image-editor/offload/format certification |
+| 29 | XML-RPC Manager | **Exhaustive** | `XML-RPC-MANAGER-EXHAUSTIVE-SPEC.md` | hook ordering/integration/network evidence |
+| 30 | Role & Capability Manager | **Exhaustive** | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | anti-lockout/capability runtime tests |
+| 31 | Platform surfaces / Account / Support / Docs | **Exhaustive platform contract** | `PLATFORM-SURFACES-SPEC.md` + amendment + Remote Service + Docs/Support IA | service schemas/auth/signing/executable evidence |
 
-## Planning gate
+## Current conclusion
 
-No module may be called **product-spec complete** until it reaches Exhaustive option spec maturity or a documented reason explains why a smaller surface has no further meaningful controls.
+**31/31 planned module/platform surfaces have now reached the Phase 0 Exhaustive product-option bar.**
 
-For every exhaustive spec, cover at minimum:
+This means every known surface has screen/option-level product behavior documented deeply enough that implementation should not need to invent ordinary product semantics ad hoc.
+
+It does **not** mean:
+- all ADR blockers are accepted;
+- DB schemas are benchmarked;
+- runtime dependencies are proven;
+- provider integrations are certified;
+- build/test toolchain has executed;
+- code exists;
+- development is authorized;
+- production readiness exists.
+
+---
+
+# Exhaustive specification minimum
+
+Every module remains responsible for documenting/maintaining:
 - list screen columns/filters/search/sort/bulk actions;
-- create/edit screen tabs/sections;
-- every field/control and default;
+- create/edit tabs/sections;
+- every known field/control and default;
 - conditional visibility/dependencies;
 - validation/sanitization/normalization;
 - save/publish/archive/delete behavior;
@@ -72,30 +88,31 @@ For every exhaustive spec, cover at minimum:
 - revision/import/export;
 - status/health/observability;
 - empty/loading/error/offline/degraded/read-only/expired states;
-- cross-module shortcuts;
+- cross-module shortcuts/dependencies;
 - asset loading;
 - accessibility/keyboard states;
 - performance guardrails;
 - destructive safeguards;
 - future acceptance tests.
 
-## Immediate planning queue
+If future research or implementation discovers a meaningful missing option, the applicable exhaustive spec is updated **before or in the same coherent change**. `31/31 Exhaustive` is not permission to silently invent new semantics later.
 
-Fill exhaustive option specs in this order because dependencies/risks are highest:
-1. Forms & Workflow;
-2. Cron;
-3. Notifications;
-4. Email;
-5. REST API;
-6. Webhooks & Connections;
-7. Import / Export;
-8. Backup;
-9. Reset;
-10. Protector;
-11. Chat;
-12. Watermark;
-13. XML-RPC.
+---
 
-After each spec is added, this ledger must be updated from Behavioral → Exhaustive.
+# Next planning maturity gate
 
-Development remains prohibited until explicit owner consent under ADR-0014 regardless of maturity.
+Product-option enumeration is no longer the main Phase 0 gap. Next planning work focuses on moving critical modules/services from **Exhaustive** toward **Accepted semantics / Technical Ready**, without writing executable implementation.
+
+Priority planning queue:
+1. resolve remaining non-executable semantic ADRs;
+2. maintain exact module dependency/data ownership/capability/event registries;
+3. close remote service/account/entitlement/update schemas on paper;
+4. close Definition Repository/Query/Relation/Workflow schema alternatives enough to prepare consent-gated benchmarks;
+5. close Membership cache/provider/protected-file certification plans;
+6. close Backup archive/provider/restore certification plans;
+7. finalize compatibility/build/CI spike protocols without executing them;
+8. keep readiness/open-decisions/checkpoint/PR synchronized.
+
+## Development gate
+
+**Development remains prohibited until explicit owner consent under ADR-0014, regardless of the 31/31 Exhaustive product-option result.**
