@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0065**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0068**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -13,7 +13,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 |---|---|---|
 | D-001 | ADR-0002 | WP/PHP/DB compatibility and multisite matrix — P-001 |
 | D-002 | ADR-0005 | UI runtime/externalization/accessibility/RTL/bundle — P-002 |
-| D-003 | ADR-0006 + ADR-0059 | Action Scheduler coexistence, Job/Attempt mapping, claim recovery, fairness, concurrency, backpressure, runners, retention and multisite — P-003 |
+| D-003 | ADR-0006 + ADR-0059 + ADR-0068 | Action Scheduler 4.1.x candidate packaging/coexistence; Free/Pro/Woo/third-party load order; Job/Attempt mapping; claim recovery; uniqueness/history separation; fairness/concurrency/backpressure; runners; retention; multisite — P-003 |
 | D-004 | ADR-0008 + ADR-0049 | Definition Repository exact DDL/index/locking evidence — P-004 |
 | D-005 | ADR-0009 + ADR-0048 | Vault exact envelope/rotation/recovery/interoperability — P-005 |
 | D-006 | ADR-0010 | Free↔Pro runtime compatibility — P-006 |
@@ -34,15 +34,32 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - **M-001 / P-012** — Enrollment/Entitlement schema/indexes/materialization/scale/multisite and concurrency.
 - **M-003 / P-012** — authorization generation/cache/invalidation and revoke-to-deny latency.
 - **M-005** — protected-file delivery across Apache/Nginx/PHP/private object storage/CDN/Range.
-- **M-006 / ADR-0057 + ADR-0062** — four source profiles (`billing.manual`, Woo order, Woo Subscriptions, SureCart) are **BE3 static-paper / 0 MB-certified**. Exact versions, identity, reconciliation, refunds/changes, recovery, user resolution, clone/migration/privacy and concurrency remain open.
+- **M-006 / ADR-0057 + ADR-0062 + ADR-0066** — source truth + versioning accepted; four source profiles remain **BE3 static-paper / 0 MB-certified**.
+
+Current 2026-08-28 paper snapshot:
+- `billing.manual` — WPE-owned runtime version pending;
+- `billing.woocommerce-order` — WooCommerce 11.0.1 current snapshot;
+- `billing.woocommerce-subscriptions` — WCS 9.1.0 / Woo 11.0 current snapshot; HPOS first-class;
+- `billing.surecart` — SureCart WP 4.7.0 + separately tracked hosted API/event profile.
+
+Open: exact certified ranges, HPOS/legacy matrix, identity/reconciliation, refunds/changes/recovery, provider upgrade/downgrade/security-advisory behavior, user resolution, clone/migration/privacy and concurrency.
+
 - **M-010** — exporter/eraser cleanup/runtime/restore verification.
 
 ## D. Email / Notification provider evidence
 
 - **E-001 / ADR-0029 + ADR-0058** — Email IR renderer/inliner/client compatibility, Recipient Delivery/Transport Attempt/Event Ledger physical schema/indexes, attachment privacy, Job fan-out/backpressure.
-- **E-002 / ADR-0058 + ADR-0063** — six profiles (`wp_mail`, generic SMTP, SES, SendGrid, Mailgun, Postmark) are **EE3 static-paper / 0 ET-certified**. Exact adapter versions, correlation, webhook authenticity/replay/order, unknown outcomes, bounce/complaint/suppression/reconciliation, provider scope isolation, privacy/redaction and ET0–ET5 remain open.
+- **E-002 / ADR-0058 + ADR-0063 + ADR-0067** — six profiles remain **EE3 static-paper / 0 ET-certified**.
 
-Provider terms cannot override WPE truth: `wp_mail` success is local only; SES SEND ≠ DELIVERY; SendGrid processed ≠ delivered; Mailgun accepted ≠ delivered; Postmark Delivery ≠ inbox placement; open/click ≠ human read.
+Version identities now accepted:
+- `wp_mail` → WordPress/P-001 runtime profile;
+- generic SMTP → negotiated transport/TLS/AUTH capability profile;
+- SES → API v2 + region/account/event-publishing profile;
+- SendGrid → Web API v3 + dated Event Webhook/security profile;
+- Mailgun → endpoint-specific path-version families + dated webhook/security + region profile;
+- Postmark → dated REST/webhook schema + Basic Auth/IP-allowlist security profile, not an invented API-v1 label.
+
+Open: exact adapters/ranges, correlation, webhook authenticity/replay/order, schema drift, unknown outcomes, bounce/complaint/suppression, privacy/redaction and ET0–ET5 certification.
 
 ## E. Remote service / commercial distribution
 
@@ -61,38 +78,32 @@ Accepted Safe HTTP/Webhook/Event Inbox + I0–I5 certification. Open provider ad
 
 - **B-001 / ADR-0033 / P-013** — exact file/DB artifact formats, chunking, compression/hash encoding.
 - **B-002 / ADR-0021 + ADR-0043** — exact frame/AAD, Argon2id floor, recovery-kit encoding, resume boundaries and fresh-server restore.
-- **B-003 / ADR-0053 + ADR-0061 + ADR-0064 + ADR-0065 / P-013** — C0–C4 model + semantic `bf.*` families + versioned provider profiles + versioned static-evidence overlays + explicit local/browser/FTP/FTPS/SFTP transport semantics. **34 target profiles, 0 certified**.
-
-Current static overlay upgrades:
-- Box SE3;
-- MinIO SE3;
-- Rackspace SE2;
-- Akamai/Linode SE2;
-- Hetzner SE3;
-- Bunny Storage SE2 (no crash-resume claim until stronger Storage evidence);
-- MEGA SE1.
-
-Accepted transport-profile paper semantics:
-- `local-server` SE2: staging/hash/manifest-last; same-host failure-domain warning; finalization runtime-gated;
-- `browser-export` SE3 product semantics: manual delivery/export, not managed remote retention;
-- `ftp-generic` SE2: legacy/insecure; REST restart is conditional and not integrity/transaction proof;
-- `ftps-generic` SE3: TLS 1.2+ + certificate/hostname validation + protected data channel; restart/finalization still runtime-gated;
-- `sftp-generic` SE2: SSH host-key verification mandatory; offset resume/atomic rename are candidate capabilities only.
-
-Static maturity does not change public support status. Open auth/transfer/limits/integrity/finalization/retention/delete/C3/C4 restore evidence remains.
-
+- **B-003 / ADR-0053 + ADR-0061 + ADR-0064 + ADR-0065 / P-013** — C0–C4 model + semantic `bf.*` families + versioned provider/static profiles + explicit local/browser/FTP/FTPS/SFTP semantics. **34 targets, 0 certified**.
 - **B-004 / ADR-0056** — Remote Copy physical schema, commit-unknown reconciliation, re-verification, cleanup, lifecycle interference, alternate-copy failover and restore.
 - **B-005 / Protector / Watermark / XML-RPC** — documented physical/runtime compatibility/security evidence remains open.
 
-## H. Identity/Admin security
+## H. Job backend — ADR-0059 + ADR-0068
+
+Accepted static architecture:
+- Action Scheduler is preferred backend candidate, currently reviewed at 4.1.0;
+- WPE Platform/Free owns one bundled candidate if selected; Pro/modules do not bundle duplicates;
+- shared/newest registered runtime may be selected by Action Scheduler; WPE does not force its bundled copy;
+- only JobService adapter uses `as_*` APIs;
+- large/sensitive payloads and secrets stay out of AS action args;
+- WPE business idempotency does not depend on AS unique scheduling;
+- WPE Job/Attempt/Audit retention does not depend on AS cleanup defaults.
+
+Open P-003: packaging mechanism, load-order with Woo/third parties, public capability/runtime detection, tables/migrations, mapping/claims/crashes, fairness/concurrency/backpressure, runners, recurrence, cleanup, multisite, upgrade/downgrade/newer-unverified behavior.
+
+## I. Identity/Admin security
 
 - **UP-001 / ADR-0030** — protected identity/credential/session/profile evidence.
 - **RC-001 / ADR-0032** — capability classifier, anti-lockout, multisite/Super Admin, CLI recovery.
 - **DW-001 / ADR-0051** — structured remote widget/iframe/XSS/CSP/assets evidence.
 
-## I. Accepted architecture no longer open semantically
+## J. Accepted architecture no longer open semantically
 
-ADRs **0035–0065** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Static provider/transport evidence is paper evidence only, never certification.
+ADRs **0035–0068** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Provider/version/package research is paper evidence only, never runtime certification.
 
 ## Decision-processing rule
 
@@ -104,8 +115,7 @@ ADRs **0035–0065** preserve accepted core semantics. Evidence may refine versi
 
 ## Next planning-only priorities
 
-1. Membership provider version/evidence refinement.
-2. Email provider version/evidence refinement.
-3. Continue narrowing P-003/provider evidence plans.
-4. Remaining physical/runtime paper models where static decisions are useful.
-5. Consolidate provider overlays only when useful; do not fake maturity.
+1. Unified WordPress Multisite scope/ownership architecture.
+2. Remaining physical/runtime paper models where static decisions are useful.
+3. Continue refining provider/version evidence only when current official facts materially change architecture.
+4. Keep P-003/P-012/P-013 executable gates intact.
