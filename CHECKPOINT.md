@@ -7,7 +7,7 @@ Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit owner consent is required before runtime/source/build/migration/test implementation, dependencies, executable spikes/benchmarks, queue execution, provider/API interactions, service transmission, SMTP/email sends, protected-file moves/downloads, Import execution, Backup/Restore operations or release packaging.
+Explicit owner consent is required before runtime/source/build/migration/test implementation, dependencies, executable spikes/benchmarks, queue execution, OAuth/service/provider/API interactions, TUF/signing-key generation, SMTP/email sends, protected-file operations, Import, Backup/Restore, package staging or release packaging.
 
 `continue` and planning acceptance do **not** authorize development.
 
@@ -18,186 +18,147 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 - **31/31 Exhaustive product-option maturity**
 - **31/31 Multisite scope behavior mapped**
 - **0/31 Authorized**
-- **0 surfaces Multisite runtime-certified at MS1+**
+- **0 MS1+ runtime-certified surfaces**
 - Implemented: none
 - Runtime verified: none
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0097**.
+Accepted decisions now extend through **ADR-0102**.
 
 Latest milestones:
-- ADR-0092 — exact Definition P-004 deterministic evidence protocol.
-- ADR-0093 — exact Relations P-010 deterministic graph/concurrency evidence protocol.
-- ADR-0094 — REST RE1 compiled WordPress REST operational profile; idempotency/rate/cache state separated.
-- ADR-0095 — Import IR1/PT-D vs IR2/PT-E physical/recovery profile.
-- ADR-0096 — User/Profile native WordPress identity/auth authority + protected-meta/security boundaries.
-- **ADR-0097 — Role & Capability native WordPress authority + WPE Change Plan/anti-lockout/recovery layer.**
+- ADR-0098 — Admin Columns AC1 whole-request batching/N+1-safe profile.
+- ADR-0099 — Dynamic Listings DL1 authorization-aware Query + batched hydration + SSR/cache/pagination profile.
+- ADR-0100 — Backup artifact/container profile: SHA-256 H-B1, CMP0 fallback, CMP1 gzip comparison, ZIP convenience only.
+- ADR-0101 — OAuth Account-Link OA-01…OA-32 future evidence protocol.
+- **ADR-0102 — Pro updater TUF TU-01…TU-44 future evidence protocol.**
 
-Immediately preceding static decisions remain active:
-- ADR-0086 Query compiler matrix;
-- ADR-0087 Field Storage routing;
-- ADR-0088 Custom Tables CT1/CT2/CT3;
-- ADR-0089 Settings ST1/ST2/ST3;
-- ADR-0090 Membership protected file PD/PC profile;
-- ADR-0091 Product License API component schemas.
+Earlier current milestones remain active: Definition P-004, Relations P-010, Query/Fields/Custom Tables/Settings, REST, Import, User/Profile, Role/Capability, Membership, Workflow/Job, Backup/Vault and Product License paper architectures.
 
-## P-004 Definition evidence — ADR-0092
+## Admin Columns — ADR-0098
 
-Future P-004 is constrained before execution:
-- D1/D2/D3/D4 on identical deterministic data;
-- DF-S/DF-M/DF-L/DF-N dataset classes;
-- Q1–Q10 lookup/list/dependency/Backup/lifecycle workloads;
-- C1–C7 save/publish/uniqueness/lifecycle races;
-- exact query-plan/index/storage/migration measurements;
-- wrong-site/normalization security attacks;
-- correctness/security gates precede speed/storage.
+AC1 first operational baseline:
+`Column Set → compiled whole-request execution plan → visible row IDs → batched source hydration → Policy → render`.
 
-**Executed P-004 cases: 0.**
+Non-negotiable:
+- no unbounded per-row Query/Relation/remote/shortcode loop;
+- real sort/filter happens in authoritative backend before pagination;
+- inline/bulk writes use owning Data Source/Field API + per-row Policy;
+- hidden presentation never authorizes hidden data;
+- Multisite scope participates in hydration/cache/write identity.
 
-## P-010 Relations evidence — ADR-0093
+**Runtime cases executed: 0.**
 
-Future P-010 is constrained:
-- RF-S/RF-M/RF-L/RF-N/RF-H graph classes;
-- RQ1–RQ11 forward/reverse/pair/order/pivot/nested/Backup/network reads;
-- RC1–RC8 duplicate/cardinality/reassignment/detach/reorder/lifecycle races;
-- E1/E2/E3 endpoint and PV1/PV2/PV3 pivot subtests;
-- explicit N+1 rejection;
-- R1 vs R2 wrong-scope/prefix/security fixtures;
-- 100/1k/10k-site operational comparison.
+## Dynamic Listings — ADR-0099
 
-**Executed P-010 cases: 0.**
+DL1 first baseline:
+`published Query/Data Source → authorization-aware result semantics → batched hydration → Component Blueprint SSR → optional client transitions`.
 
-## REST runtime — ADR-0094
+Non-negotiable:
+- protected totals/facet counts/cursors cannot leak inaccessible data;
+- persistent cache is proof-based/opt-in;
+- member/authenticated cache includes scope/access generations;
+- stale-while-revalidate cannot preserve revoked visibility where fail-closed access is required;
+- nested listings have bounded depth/result/query budgets;
+- client transitions reuse same server Query/Policy contract.
 
-Accepted paper profile:
-- RE1 WordPress REST + immutable compiled descriptor first;
-- RE2 gateway future comparison only;
-- RI1/PT-D scoped idempotency first persistence candidate vs RI2 atomic service implementation comparison;
-- one shared WPE Rate Limit Service;
-- read response cache only when Policy/scope/generation dependencies are safely representable.
+**Runtime cases executed: 0.**
 
-Security invariants:
-- CORS ≠ authentication;
-- response projection ≠ authorization;
-- anonymous is explicit, not missing permission callback;
-- request site/resource IDs are untrusted selectors;
-- mass assignment is blocked by explicit request mapping;
-- unknown external mutation outcome reconciles rather than blindly retries.
+## Backup artifact profile — ADR-0100
 
-**REST operational fixtures executed: 0. No route registered.**
+Canonical Backup remains a manifest-first independently verifiable multipart logical bundle, not a ZIP contract.
 
-## Import runtime — ADR-0095
+Accepted:
+- SHA-256 over exact stored Part bytes as provider-neutral integrity baseline;
+- AEAD authentication remains distinct from object hash;
+- provider ETag supplemental unless certified semantics prove equivalence;
+- CMP0 no-compression fallback;
+- CMP1 gzip/DEFLATE streaming first general compression comparison where available;
+- ZIP convenience import/export only;
+- FR1 WPE bounded record stream vs FR2 TAR-compatible stream future comparison;
+- DB1 typed rows vs DB2 controlled SQL vs DB3 hybrid future comparison;
+- provider multipart boundaries remain below WPE logical Part identity.
 
-Accepted paper profile:
-- IR1/PT-D shared scoped Run/Checkpoint/Identity Map/Change Journal first;
-- IR2/PT-E per-site mandatory comparison;
-- source/archive bytes in protected bounded temp storage, not DB Run blobs;
-- JobService schedules execution opportunity but does not own Import truth.
+**P-013 artifact/archive/hash/compression/restore cases executed: 0. Backup C-certified: 0/34.**
 
-Critical recovery invariant:
-`target mutation committed → Map/Checkpoint not yet committed` must reconcile deterministic source identity + target fingerprint before retry; duplicate target creation is not acceptable.
+## OAuth Account Link — ADR-0101
 
-Rollback remains truthful R0–R3. Restored copied active Runs require revalidation before resume.
+First profile remains fixed WPE callback + one-time site-bound completion artifact + PKCE S256.
 
-**Import physical/recovery fixtures executed: 0.**
+Future OA protocol contains **32 fixtures**, including state/artifact replay, wrong verifier, PKCE downgrade, open redirect, wrong issuer/mix-up, concurrent admins, unknown remote outcome, refresh-token rotation/replay, disconnect outage, DB theft/Vault separation, proxy callback spoof and staging clone.
 
-## User/Profile security — ADR-0096
+Public-client refresh credential must use replay-detection semantics such as rotation unless a separately accepted sender-constrained profile supersedes it.
 
-WordPress remains authoritative for user identity, password/session state and Application Passwords.
+**OA executed: 0/32. No OAuth endpoint/token/redirect/revoke has run.**
 
-WPE adds typed UI/workflows, Field Storage mappings, Policy, audit and protected-meta registry. Generic profile fields cannot mutate:
-- password/reset/session internals;
-- Application Password storage;
-- role/capability authority;
-- Membership Enrollment/Entitlement authority;
-- Vault/product-account secrets.
+## Pro updater TUF — ADR-0102
 
-Identity-sensitive actions such as email/password/session/Application Password changes stay dedicated actions with stronger policy/re-auth semantics.
+Automated Pro updates remain blocked until future verifier/repository operations pass **TU-01…TU-44**.
 
-**User/Profile runtime fixtures executed: 0.**
+Evidence covers:
+- Root/Targets/Snapshot/Timestamp role trust;
+- threshold signatures/key custody;
+- sequential Root rotation;
+- metadata expiry;
+- rollback/freeze/mix-and-match;
+- consistent snapshots;
+- target SHA-256/length;
+- channel/product/Platform API/WP/PHP compatibility;
+- CDN/API compromise separation;
+- malformed ZIP/path traversal/bomb staging;
+- replacement/migration failure recovery;
+- key-compromise runbook.
 
-## Role & Capability security — ADR-0097
+TK1 is first paper custody baseline: 2-of-3 offline Root, 2-of-3 controlled Targets, narrowly scoped online Snapshot/Timestamp. Exact production custody remains security/operations evidence.
 
-Native WordPress roles/capabilities/Super Admin remain the authorization source of truth.
+**TU executed: 0/44. No TUF metadata/key/repository/verifier/package update exists.**
 
-WPE adds:
-- Change Plan + impact fingerprint;
-- effective-capability simulation;
-- self-lockout/last-recovery-principal checks;
-- bounded pre-change authorization snapshot;
-- post-apply verification/reconciliation;
-- WPE recovery-mode overlay that never bypasses WordPress authentication;
-- documented WordPress/WP-CLI break-glass recovery path.
+## Current evidence counters
 
-Ordinary UI cannot knowingly commit a state with zero viable recovery principals or grant network/Super Admin authority beyond native WordPress rules.
-
-**Role/Capability runtime fixtures executed: 0.**
-
-## Current physical/compiler profile map
-
-- Definition: D1/PT-C first; D2/D3/D4 comparisons — protocol fixed, 0 executed.
-- Relations: R1/PT-D first; R2/PT-E mandatory — protocol fixed, 0 executed.
-- Query: QP1 WordPress-native first; QP2 Custom Table; QP3 Relations-assisted; QP4 remote — 0 executed.
-- Field Storage: FS1 native WP default; FS2 typed table; FS3 child; FS4 Relations; FS5 Vault; FS6 derived — 0 executed.
-- Custom Tables: CT1/PT-E first for site-owned; CT2/PT-D mandatory; CT3 network-owned only — 0 executed.
-- Settings: ST1/PT-A site; ST2/PT-B network; ST3 inheritance — 0 executed.
-- Forms: FRT1/PT-D vs FRT2/PT-E — 0 executed.
-- Chat: CRT1/PT-D vs CRT2/PT-E — 0 executed.
-- Membership: M1/PT-D vs M2/PT-E — 0 executed; protected file PC1+ = 0.
-- Notification/Email: NE1/PT-D vs NE2/PT-E — 0 executed.
-- Event Inbox: EI1/PT-D vs EI2/PT-E — 0 executed.
-- Audit: AU1/PT-D favored — 0 executed.
-- Workflow: WF1/PT-D vs WF2/PT-E — 0 executed.
-- JobService: J1/PT-D vs J2 split/J3 control — 0 executed.
-- REST: RE1 + RI1/RI2 operational profile — 0 executed.
-- Import: IR1/PT-D vs IR2/PT-E — 0 executed.
-- Backup Remote Copy: BR1/PT-D vs BR2 split/BR3 PT-E — 0 executed.
-- Vault: V1/PT-C vs V2 per-site/network — 0 executed.
-- User/Profile: native WordPress identity authority + WPE security workflow layer — 0 executed.
-- Role/Capability: native WordPress auth authority + WPE Change Plan/anti-lockout layer — 0 executed.
-
-No DDL, migration, table, index, compiler, route, option write, Import, file move, auth mutation, cryptographic fixture or database benchmark has been executed.
-
-## Provider/runtime state
-
+- P-003 Job: 0.
+- P-004 Definition: 0.
+- P-005 Vault: 0.
+- P-009 Query: 0.
+- P-010 Relations: 0.
+- P-011 Workflow: 0.
+- P-012 Membership: 0.
+- P-013 Backup: 0.
 - Membership Billing: **4 BE3 / 0 MB-certified**.
-- Protected file delivery: **0 PC1+**.
+- Protected files: **0 PC1+**.
 - Email: **6 EE3 / 0 ET-certified**.
-- Event adapters: **0 I4/I5 certified**.
+- Event adapters: **0 I4/I5**.
 - Backup: **34 targets / 0 C-certified**.
-- Remote privacy: **30 fixtures / 0 executed**.
-- Product License API/service: **0 fixtures**.
-- Site Lifecycle: **40 fixtures / 0 executed**.
+- Admin Columns: 0 runtime.
+- Dynamic Listings: 0 runtime.
+- REST/Import: 0 runtime.
+- User/Profile: 0 runtime.
+- Role/Capability: 0 runtime.
+- OAuth OA: **0/32**.
+- TUF TU: **0/44**.
+- Remote privacy: **0/30**.
+- Product License API/service: 0.
+- Site Lifecycle: **0/40**.
 - Multisite: **0 MS1+**.
-
-## Platform evidence blockers
-
-P-001 compatibility/Multisite; P-002 UI; P-003 Job; P-004 Definition; P-005 Vault; P-006 Free↔Pro/Product License; P-007 CI; P-008 build; P-009 Query; P-010 Relations; P-011 Workflow; P-012 Membership; P-013 Backup remain executable blockers.
-
-P-004 and P-010 now have accepted exact paper execution protocols; that narrows how they can be tested but does not mean evidence exists.
 
 ## Verification state
 
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- **31/31 Multisite scopes mapped / 0 MS1+**;
-- governance synchronized through **ADR-0097**;
-- Definition/Relations evidence protocols + REST/Import/User/Profile/Role paper profiles committed;
-- all executable evidence remains zero where not separately certified;
-- no implementation/build/test/provider-certification success claimed.
+- governance synchronized through **ADR-0102**;
+- no implementation/build/test/provider/update success claimed.
 
-Not performed: dependency installation, Multisite runtime setup, lifecycle hooks, Action Scheduler bootstrap, PHP/React source, DB tables/migrations/indexes, Definition/Relations fixtures, Query compiler/cache, REST route/idempotency/rate limiter, option writes, Import/source fetch/archive extraction/target mutations, user/session/password/Application Password changes, role/capability/Super Admin changes, protected-file moves/server rules/signed URLs/downloads, OpenAPI server/client, provider/API/webhook/SMTP calls, commerce transactions, Email sends, Backup transfer/Restore/prune, crypto/KDF/key generation, PHPUnit/Playwright, DB/performance benchmarks, release/deployment.
+Not performed: PHP/React source, package/dependency installation, DB tables/migrations/indexes, Query/List/REST runtime, option/user/role writes, Action Scheduler/queue, OAuth redirects/token calls, TUF key/metadata/repository/package operations, provider/API/webhook/SMTP calls, Email sends, file capture/compression/archive/hash scan, Backup transfer/Restore, crypto/KDF, PHPUnit/Playwright, benchmarks, deployment/release.
 
 ## Next allowed planning-only priorities
 
-1. Admin Columns N+1/write/sort/filter operational profile.
-2. Dynamic Listings protected pagination/cache/SSR operational profile.
-3. Backup archive/container exact artifact/chunk/compression/hash paper protocol.
-4. Product Account OAuth/TUF/service evidence protocols where static detail removes ambiguity.
-5. Keep P-001…P-013 executable gates intact.
-6. Keep governance/Draft PR synchronized.
+1. Dashboard Widgets content-source/cache/refresh operational evidence profile.
+2. Admin Menu transform/conflict/performance evidence protocol.
+3. Protector rate-limit/trusted-proxy execution protocol.
+4. Reset durable journal/recovery execution protocol.
+5. Watermarker media lifecycle/offload/concurrency evidence protocol.
+6. Keep P-001…P-013 and OA/TU executable gates intact.
+7. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
 
@@ -210,6 +171,6 @@ Before any executable work, explicit owner consent is required.
 6. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
 7. `docs/OPEN-DECISIONS-REGISTER.md`
 8. `docs/DECISIONS/README.md`
-9. relevant architecture/security/module/provider docs
+9. relevant architecture/security/quality/module/provider docs
 
 Repository evidence overrides conversational memory.
