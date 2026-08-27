@@ -97,6 +97,8 @@ Open production verifier/client, TUF metadata/key custody/expiry and conformance
 ### S-004/S-005/S-006 — Support/API/Privacy — ADR-0050 + ADR-0054 + ADR-0060
 Open OpenAPI/problem/scopes/idempotency/rate-limit contracts, Support runtime, diagnostics preview/redaction, retention/export/delete, logging and no-hidden-identifier evidence.
 
+Future verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md`, which defines 30 consent-gated fixtures. **No fixture has been executed.**
+
 ## F. Connections / Integrations — ADR-0040 + ADR-0055
 
 Accepted Safe HTTP/Webhook/Event Inbox + I0–I5 certification. Open provider adapters, SSRF/signature/replay/idempotency/order evidence, Event Inbox DDL, reconciliation, API-version registry, redaction and multisite.
@@ -140,9 +142,8 @@ ADRs **0035–0063** preserve accepted core semantics. Evidence may refine versi
 
 ## Next planning-only priorities
 
-1. Remote Service consent-gated privacy/retention evidence protocol.
-2. Refresh remaining low-evidence Backup provider profiles from official docs only.
-3. Membership provider version/evidence matrix refinement without execution.
-4. Email provider version/evidence refinements without execution.
-5. Continue narrowing P-003/provider evidence plans.
-6. Keep governance synchronized.
+1. Refresh remaining low-evidence Backup provider profiles from official docs only.
+2. Membership provider version/evidence matrix refinement without execution.
+3. Email provider version/evidence refinements without execution.
+4. Continue narrowing P-003/provider evidence plans.
+5. Keep governance synchronized.
