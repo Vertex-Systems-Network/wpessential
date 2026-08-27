@@ -1,6 +1,6 @@
 # WPEssential — Detailed Module Specifications
 
-Status: **Phase 0 — option-level behavioral specification complete; technical acceptance blockers remain**
+Status: **Phase 0 — option-level behavioral specification complete; exhaustive module-by-module deepening in progress; technical acceptance blockers remain**
 
 This directory is the detailed source of truth for module behavior. `docs/MODULE-CATALOG.md` is the high-level product catalog; files here define screens, fields, toggles, actions, validation, permissions, lifecycle, integration and test expectations and take precedence where more specific.
 
@@ -27,6 +27,12 @@ A module may not enter implementation until its specification covers, at minimum
 - acceptance tests.
 
 See `SPECIFICATION-STANDARD.md` for the mandatory format.
+
+## Development consent gate
+
+Even when a module reaches **Accepted** specification maturity, production development remains prohibited until the user explicitly authorizes development under `../DEVELOPMENT-CONSENT.md` and ADR-0014.
+
+“Continue”, planning approval, ADR approval, research approval, or completion of Phase 0 is not development consent.
 
 ## Modules
 
@@ -80,6 +86,22 @@ See `SPECIFICATION-STANDARD.md` for the mandatory format.
 - `OPERATIONS-PROTECTION-SPECS.md` — Backup, Reset, Protector, Watermark, XML-RPC.
 - `PLATFORM-SURFACES-SPEC.md` — onboarding, Home/Modules, Account/License/Plans, Docs, Changelog, Support Tickets and Diagnostics.
 
+### Exhaustive module specifications completed so far
+
+These files go below suite-level behavior and audit individual WordPress/provider arguments and small controls explicitly:
+
+- `FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` — every planned CPT/Taxonomy registration argument, label, support, REST, capability, rewrite, query-var, block-template, callback-adapter, migration and acceptance-test control.
+- `CUSTOM-FIELDS-EXHAUSTIVE-SPEC.md` — field-group contract, shared field options, cardinality/repeatability, field types, option sources, storage/queryability, REST/meta registration, migration and type-specific tests.
+- `QUERY-BUILDER-EXHAUSTIVE-SPEC.md` — typed Query AST, provider capability matrix, WordPress query clauses/operators, parameters, joins, relations, projection, aggregates, sorting, pagination, caching, permissions, diagnostics and provider tests.
+- `RELATIONS-STATUS-EXHAUSTIVE-SPEC.md` — relation endpoint/cardinality/pivot/order/integrity semantics and exact WordPress post-status plus generic state-machine/transition/history behavior.
+- `CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md` — schema/types/indexes/migrations/data browser/query-console rules plus complete list-view source, formatting, filter, sort, inline/bulk edit, views, export and performance contracts.
+
+### Architecture/readiness planning
+
+- `../IMPLEMENTATION-READINESS-MATRIX.md` — module-by-module readiness blockers; Specified is not Accepted or Authorized.
+- `../OPEN-DECISIONS-REGISTER.md` — unresolved architecture/product decisions and required evidence.
+- `../DEVELOPMENT-CONSENT.md` — explicit user-consent boundary for all executable development/spikes.
+
 ### Research
 - `../RESEARCH/COMPETITIVE-LANDSCAPE.md`
 - `../RESEARCH/MODULE-BENCHMARK-MATRIX.md`
@@ -89,9 +111,10 @@ See `SPECIFICATION-STANDARD.md` for the mandatory format.
 
 - **31/31 module/platform surfaces:** option/screen inventory present.
 - **31/31 module/platform surfaces:** Phase 0 behavioral specification present through common + suite/module specifications.
-- **Membership System:** dedicated deep specification present.
-- **Production implementation:** not started.
-- **Technical acceptance:** not complete; Proposed ADRs/evidence spikes still block Phase 1.
+- **Foundation/data exhaustive deep specs:** CPT, Taxonomy, Custom Fields, Relations, Status, Query, Custom Tables and Admin Columns now have dedicated argument/control-level specifications.
+- **Membership System:** dedicated deep specification plus access precedence, enrollment/runtime/protected-file/billing planning artifacts present.
+- **Production implementation:** not started and not authorized.
+- **Technical acceptance:** not complete; Proposed ADRs and future evidence spikes still block Phase 1.
 
 “Behaviorally Specified” means product semantics are written down. It does **not** mean storage schemas, framework/toolchain choices, provider implementations or performance/security claims have been proven.
 
@@ -99,12 +122,14 @@ See `SPECIFICATION-STANDARD.md` for the mandatory format.
 
 - **Inventory**: screens/options identified, but edge semantics may still be open.
 - **Specified**: defaults, validation, permissions, state transitions and integration semantics are explicit.
-- **Accepted**: blockers resolved by ADR/research/spike and implementation may begin.
+- **Exhaustively Specified**: module-specific current platform/provider arguments and small controls have received a dedicated deep audit; technical evidence blockers may still remain.
+- **Accepted**: blockers resolved by ADR/research/authorized spike and implementation may become technically eligible.
+- **Authorized**: the user has explicitly consented to development; this is separate from Accepted.
 - **Implemented**: code exists but still must pass Definition of Done.
 - **Verified**: implementation has passed the relevant quality gates.
 
-No status may skip directly from Inventory to Implemented.
+No status may skip directly from Inventory/Specified to Implemented, and Accepted never implies Authorized.
 
 ## Next planning gate
 
-Resolve platform-level Proposed ADRs first, then module-specific implementation blockers referenced in each suite spec. Update an item to **Accepted** only after evidence supports the decision.
+Continue exhaustive module-by-module deepening, prioritizing dependency-critical modules first. Resolve platform-level Proposed ADRs through static research where possible. Any evidence requiring executable code/install/build/runtime testing remains blocked until explicit user development consent.
