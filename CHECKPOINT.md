@@ -22,7 +22,7 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture
 
-Accepted decisions now extend through **ADR-0064**.
+Accepted decisions now extend through **ADR-0065**.
 
 Latest planning milestones:
 - ADR-0057 — Membership billing source facts/reconciliation + MB0–MB5.
@@ -32,7 +32,8 @@ Latest planning milestones:
 - ADR-0061 — stable semantic Backup family/provider identity registry.
 - ADR-0062 — Manual/Woo Core/Woo Subscriptions/SureCart billing source-truth profiles.
 - ADR-0063 — wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark email source-truth profiles.
-- ADR-0064 — Backup provider static research evolves through versioned evidence overlays; SE0–SE3 never implies C0–C4 certification.
+- ADR-0064 — versioned Backup static-evidence overlays.
+- ADR-0065 — Local/browser/FTP/FTPS/SFTP Backup product/security semantics.
 
 ## Current JobService state
 
@@ -48,15 +49,15 @@ Future executable verification is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVAC
 
 ## Current Backup state
 
-Accepted manifest-first bundle, encryption/recovery architecture, Remote Copy lifecycle, C0–C4 restore-first certification, semantic `bf.*` family keys, separately versioned provider profiles, legacy/non-canonical PF aliases, SE0–SE3 static-evidence separation and ADR-0064 versioned static-evidence overlays.
+Accepted manifest-first bundle, encryption/recovery architecture, Remote Copy lifecycle, C0–C4 restore-first certification, semantic `bf.*` family keys, versioned provider profiles, legacy/non-canonical PF aliases, SE0–SE3 static-evidence separation, versioned evidence overlays and explicit local/browser/FTP/FTPS/SFTP transport profiles.
 
 Current catalog:
 - **34 target destinations**;
 - **34/34 stable provider profiles**;
-- **0 C-certified providers**;
+- **0 C-certified providers/profiles**;
 - **0 normal Supported Backup Destinations** under the C3 gate.
 
-Latest static overlay research maturity:
+Latest cloud/provider overlay maturity:
 - Box → SE3;
 - MinIO → SE3;
 - Rackspace Swift → SE2;
@@ -65,7 +66,14 @@ Latest static overlay research maturity:
 - Bunny Storage → SE2 with no crash-resume claim;
 - MEGA → SE1.
 
-Static evidence can refine a provider profile but cannot create Connected/Upload/Integrity/Restore/Disaster certification.
+ADR-0065 transport profiles:
+- Local server → SE2; same-host copy is not automatically off-site disaster recovery; staging/hash/manifest-last required.
+- Browser export → SE3 product semantics; manual delivery/export, not managed remote retention.
+- FTP → SE2 legacy/insecure; REST restart is conditional, not integrity/transaction proof.
+- FTPS → SE3; TLS 1.2+, certificate/hostname validation and protected data channel required; restart/finalization separately certified.
+- SFTP → SE2; SSH host-key verification mandatory; offset resume/atomic rename are candidate capabilities only and depend on client/server evidence.
+
+Static evidence cannot create C0–C4 certification.
 
 ## Current Membership billing state
 
@@ -96,25 +104,25 @@ Additional Email and Remote Service runtime evidence remains separately tracked.
 Verified planning/documentation only:
 - planning branch isolated from `main`;
 - **31/31 Exhaustive, 0/31 Authorized**;
-- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0064;
+- ADR index/Open Decisions/Readiness/Checkpoint synchronized through ADR-0065;
 - Remote Service privacy matrix + ADR-0060 + future 30-fixture evidence protocol committed;
 - Backup family/provider registry + normalized 34-target matrix + ADR-0061 committed;
 - Backup static evidence overlay + ADR-0064 committed;
+- local/browser/FTP/FTPS/SFTP static profile contract + ADR-0065 committed;
 - Membership provider profiles + ADR-0062 committed;
 - Email provider profiles + ADR-0063 committed;
 - Job provider-neutral architecture committed;
 - no implementation/test/provider certification success claimed.
 
-Not performed: installs/package setup, production source/bootstrap, DB migrations, queue runs, crypto execution, PHPUnit/Playwright, provider/API/webhook/SMTP calls, billing source objects/transactions, email sends/webhook tests/bounce simulators, WPE service/account-link/diagnostics transmission, remote privacy-retention fixtures, Backup uploads/deletes/restores, performance benchmarks, releases/deployment.
+Not performed: installs/package setup, production source/bootstrap, DB migrations, queue runs, crypto execution, PHPUnit/Playwright, provider/API/webhook/SMTP calls, billing source objects/transactions, email sends/webhook tests/bounce simulators, WPE service/account-link/diagnostics transmission, remote privacy-retention fixtures, Backup filesystem/FTP/FTPS/SFTP connections/uploads/resumes/renames/deletes/restores, performance benchmarks, releases/deployment.
 
 ## Next allowed planning-only priorities
 
-1. Static protocol profiles for local/browser/FTP/FTPS/SFTP without pretending runtime certification.
-2. Membership provider version/evidence refinements.
-3. Email provider version/evidence refinements.
-4. P-003/provider evidence plan refinement.
-5. Remaining platform physical/runtime paper models where static decisions are still useful.
-6. Keep governance/Draft PR synchronized.
+1. Membership provider version/evidence refinements.
+2. Email provider version/evidence refinements.
+3. P-003/provider evidence plan refinement.
+4. Remaining platform physical/runtime paper models where static decisions are useful.
+5. Keep governance/Draft PR synchronized.
 
 Before any executable work, explicit owner consent is required.
 
