@@ -102,6 +102,10 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0089 | Accepted Settings PT-A/PT-B runtime profile / evidence pending | ST1/PT-A grouped site document; ST2/PT-B network document; ST3 inheritance; non-autoload default; stale edits require visible conflict semantics |
 | ADR-0090 | Accepted Membership protected-file delivery profile / security evidence pending | PD1 private local correctness baseline; PD2 accelerated; PD3 private object signed delivery; PC0–PC4 origin-bypass/authorization certification |
 | ADR-0091 | Accepted Product License API component schema profile / service evidence pending | Field-level resource schemas, server-owned state, Idempotency-Key, ETag/If-Match, Problem Details and cursor components fixed on paper |
+| ADR-0092 | Accepted Definition P-004 evidence protocol / execution pending | Deterministic Definition datasets, Q1–Q10 workloads, C1–C7 concurrency races, query-plan/storage/migration/scope-security gates fixed before benchmarking |
+| ADR-0093 | Accepted Relations P-010 evidence protocol / execution pending | RF datasets, RQ1–RQ11 reads, RC1–RC8 cardinality races, endpoint/pivot subtests, N+1/lifecycle/wrong-scope gates fixed before benchmarking |
+| ADR-0094 | Accepted REST operational runtime profile / executable evidence pending | RE1 WP REST + compiled descriptor first; idempotency/rate/cache operational state separate; CORS/auth/projection never replace authorization |
+| ADR-0095 | Accepted Import runtime physical/recovery profile / executable evidence pending | IR1/PT-D first; IR2/PT-E mandatory; Run/Checkpoint/Identity Map/Journal durable truth; crash-after-write reconciles before retry; rollback remains truthful R0–R3 |
 
 ## Product specification milestone
 
@@ -111,7 +115,9 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 ## Major supporting architecture/security docs
 
 - Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`
+- Definition P-004 evidence: `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Relations: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
+- Relations P-010 evidence: `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Query P-009: `docs/ARCHITECTURE/QUERY-P009-COMPILER-COST-CACHE-BENCHMARK-PROFILE.md`
 - Field Storage: `docs/ARCHITECTURE/FIELD-STORAGE-PHYSICAL-ROUTING-BENCHMARK-PROFILE.md`
 - Custom Tables: `docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md`
@@ -124,6 +130,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Audit: `docs/ARCHITECTURE/AUDIT-PTD-RETENTION-INDEX-INTEGRITY-PROFILE.md`
 - Workflow: `docs/ARCHITECTURE/WORKFLOW-PTD-PHYSICAL-BENCHMARK-PROFILE.md`
 - JobService: `docs/ARCHITECTURE/JOB-SERVICE-PTC-PTD-PHYSICAL-MAPPING-PROFILE.md`
+- REST operational: `docs/ARCHITECTURE/REST-ENDPOINT-OPERATIONAL-SECURITY-CACHE-RATE-PROFILE.md`
+- Import runtime: `docs/ARCHITECTURE/IMPORT-RUN-PTD-PTE-PHYSICAL-RECOVERY-PROFILE.md`
 - Backup Remote Copy: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-PTC-PTD-PHYSICAL-PROFILE.md`
 - Vault physical envelope: `docs/SECURITY/SECRETS-VAULT-PTC-PHYSICAL-ENVELOPE-PROFILE.md`
 - Site Lifecycle: `docs/ARCHITECTURE/MULTISITE-SITE-LIFECYCLE-COORDINATOR.md`
@@ -134,8 +142,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 ### Core platform
 P-001 compatibility/Multisite, P-002 UI, P-003 Job backend/mapping, P-004 Definition DDL, P-005 Vault crypto/runtime, P-006 Free↔Pro/Product License, P-007 CI, P-008 build, P-009 Query, P-010 Relations, P-011 Workflow, P-012 Membership and P-013 Backup remain executable gates.
 
-### Newly narrowed paper profiles
-ADR-0086–0091 fix Query compiler boundaries, Field routing, Custom Tables topology, Settings storage/inheritance, Membership protected-file delivery and Product License component schemas. They authorize no compiler, DDL, option writes, file-serving runtime, OpenAPI artifact or service call.
+### Newly narrowed paper/evidence profiles
+ADR-0092/0093 fix exact future P-004/P-010 test contracts. ADR-0094/0095 fix REST operational boundaries and Import physical/recovery semantics. They authorize no executable evidence.
 
 ### Provider certification
 Membership: **0 MB-certified**. Email: **0 ET-certified**. Event adapters: **0 I4/I5 certified**. Backup: **0 C-certified out of 34 targets**. Protected file profiles: **0 PC1+ certified**.
