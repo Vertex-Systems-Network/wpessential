@@ -105,9 +105,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0092 | Accepted Definition P-004 evidence protocol / execution pending | Deterministic Definition datasets, Q1–Q10 workloads, C1–C7 concurrency races, query-plan/storage/migration/scope-security gates fixed before benchmarking |
 | ADR-0093 | Accepted Relations P-010 evidence protocol / execution pending | RF datasets, RQ1–RQ11 reads, RC1–RC8 cardinality races, endpoint/pivot subtests, N+1/lifecycle/wrong-scope gates fixed before benchmarking |
 | ADR-0094 | Accepted REST operational runtime profile / executable evidence pending | RE1 WP REST + compiled descriptor first; idempotency/rate/cache operational state separate; CORS/auth/projection never replace authorization |
-| ADR-0095 | Accepted Import runtime physical/recovery profile / executable evidence pending | IR1/PT-D first; IR2/PT-E mandatory; Run/Checkpoint/Identity Map/Journal durable truth; crash-after-write reconciles before retry; rollback remains truthful R0–R3 |
+| ADR-0095 | Accepted Import runtime physical/recovery profile / executable evidence pending | IR1/PT-D first; IR2/PT-E mandatory; Run/Checkpoint/Identity Map/Journal durable truth; crash-after-write reconciles before retry; rollback truthful R0–R3 |
 | ADR-0096 | Accepted User Profile runtime authority profile / executable evidence pending | UP1 native WP identity/auth authority; UP2 Field Storage custom data; UP3 minimal security-action state only when needed; protected meta/roles/credentials never generic fields |
 | ADR-0097 | Accepted Role/Capability runtime mutation profile / executable evidence pending | RA1 native WP authorization authority; Change Plan/effective-cap simulation/anti-lockout/recovery around native mutation; no parallel auth DB or anonymous backdoor |
+| ADR-0098 | Accepted Admin Columns operational profile / executable evidence pending | AC1 whole-request Column Execution Plan + batch hydration; real sort/filter before pagination; inline writes use owning API/Policy; N+1 per-row work rejected |
+| ADR-0099 | Accepted Dynamic Listings operational profile / executable evidence pending | DL1 authorization-aware Query + batched hydration + Component Blueprint SSR; protected pagination/count/cache semantics explicit |
+| ADR-0100 | Accepted Backup artifact/container profile / P-013 pending | Manifest-first multipart remains canonical; SHA-256 stored-byte integrity; CMP0 fallback/CMP1 gzip comparison; ZIP convenience only; FR/DB/chunk profiles evidence-gated |
 
 ## Product specification milestone
 
@@ -121,12 +124,14 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Query: `docs/ARCHITECTURE/QUERY-P009-COMPILER-COST-CACHE-BENCHMARK-PROFILE.md`
 - Field Storage: `docs/ARCHITECTURE/FIELD-STORAGE-PHYSICAL-ROUTING-BENCHMARK-PROFILE.md`
 - Custom Tables: `docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md`
+- Admin Columns: `docs/ARCHITECTURE/ADMIN-COLUMNS-OPERATIONAL-PROFILE.md`
+- Dynamic Listings: `docs/ARCHITECTURE/DYNAMIC-LISTINGS-SSR-PAGINATION-CACHE-PROFILE.md`
 - Settings: `docs/ARCHITECTURE/SETTINGS-PTA-PTB-INHERITANCE-AUTOLOAD-CONCURRENCY-PROFILE.md`
 - Membership/protected files: corresponding files under `docs/ARCHITECTURE/`
 - Workflow/Job/Notification/Email/Event Inbox/Audit: corresponding runtime profiles under `docs/ARCHITECTURE/`
 - REST: `docs/ARCHITECTURE/REST-ENDPOINT-OPERATIONAL-SECURITY-CACHE-RATE-PROFILE.md`
 - Import: `docs/ARCHITECTURE/IMPORT-RUN-PTD-PTE-PHYSICAL-RECOVERY-PROFILE.md`
-- Backup Remote Copy: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-PTC-PTD-PHYSICAL-PROFILE.md`
+- Backup Remote Copy + artifact profile: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-PTC-PTD-PHYSICAL-PROFILE.md`, `docs/ARCHITECTURE/BACKUP-ARTIFACT-CONTAINER-COMPRESSION-HASH-PROFILE.md`
 - Vault: `docs/SECURITY/SECRETS-VAULT-PTC-PHYSICAL-ENVELOPE-PROFILE.md`
 - User Profile: `docs/SECURITY/USER-PROFILE-RUNTIME-AUTHORITY-EVIDENCE-PROFILE.md`
 - Role & Capability: `docs/SECURITY/ROLE-CAPABILITY-RUNTIME-MUTATION-EVIDENCE-PROFILE.md`
@@ -137,16 +142,16 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 ### Core platform
 P-001 compatibility/Multisite, P-002 UI, P-003 Job backend/mapping, P-004 Definition DDL, P-005 Vault crypto/runtime, P-006 Free↔Pro/Product License, P-007 CI, P-008 build, P-009 Query, P-010 Relations, P-011 Workflow, P-012 Membership and P-013 Backup remain executable gates.
 
-### Newly narrowed security/runtime profiles
-ADR-0096/0097 resolve static authority boundaries for User Profile and Role Manager. They do not prove current WordPress adapter behavior, recent-auth, email/session/Application Password flows, anti-lockout mutation, Super Admin behavior or recovery-mode execution.
+### Newly narrowed operational profiles
+ADR-0098/0099/0100 resolve static Admin Columns, Listings and Backup artifact semantics. They do not prove WordPress list-table hooks, batching budgets, Listing cache/cursor behavior, compression/container implementations or Restore compatibility.
 
 ### Provider certification
 Membership: **0 MB-certified**. Email: **0 ET-certified**. Event adapters: **0 I4/I5 certified**. Backup: **0 C-certified out of 34 targets**. Protected file profiles: **0 PC1+ certified**.
 
 ### Multisite/lifecycle
-31/31 product scopes are mapped, 40 lifecycle fixtures are documented, and **0 MS1+ / 0 lifecycle fixtures** have executed.
+31/31 product scopes mapped, 40 lifecycle fixtures documented, **0 MS1+ / 0 lifecycle fixtures executed**.
 
 ### Remote service/licensing
-Product License HTTP/resource/component principles are accepted through ADR-0091, but **0 API/service fixtures** have executed. Remote privacy protocol remains **30 fixtures / 0 executed**.
+Product License HTTP/resource/component principles accepted through ADR-0091, but **0 API/service fixtures** executed. Remote privacy protocol remains **30 fixtures / 0 executed**.
 
 No executable evidence may run before explicit owner consent.
