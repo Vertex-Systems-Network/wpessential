@@ -73,6 +73,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0060 | Accepted platform/privacy architecture / service evidence pending | Remote-service transmission is purpose-scoped/minimized; Free activation sends nothing; account link ≠ telemetry consent; diagnostics require separate approval; retention/disconnect/deletion boundaries are explicit |
 | ADR-0061 | Accepted backup identity/capability architecture / provider evidence pending | Semantic `bf.*` family keys are canonical; numeric PF aliases are legacy/ambiguous; provider profiles are separately versioned; SE0–SE3 static evidence never implies C0–C4 certification |
 | ADR-0062 | Accepted Membership billing provider profiles / executable evidence pending | Manual/Woo order/Woo Subscriptions/SureCart source-truth profiles are version-scoped; Woo paid truth uses supported APIs not `Completed` alone; pending cancellation/failure/refund/switch/webhook semantics remain reconciliation-driven |
+| ADR-0063 | Accepted Email provider profiles / executable evidence pending | wp_mail/SMTP/SES/SendGrid/Mailgun/Postmark source-truth profiles normalize only verified provider facts; EE0–EE3 static evidence never implies ET0–ET5 certification; no inbox/read inference |
 
 ## Product specification milestone
 
@@ -90,6 +91,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
 - Membership billing provider profiles: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-PROVIDER-PROFILES.md`
 - Email transport certification: `docs/ARCHITECTURE/EMAIL-TRANSPORT-PROVIDER-CERTIFICATION.md`
+- Email provider profiles: `docs/ARCHITECTURE/EMAIL-PROVIDER-CAPABILITY-MATRIX.md`
 - Remote service schemas: `docs/PLATFORM/REMOTE-SERVICE-RESOURCE-SCHEMAS.md`
 - Remote service privacy/retention: `docs/PLATFORM/REMOTE-SERVICE-PRIVACY-RETENTION-MATRIX.md`
 - Connection certification: `docs/ARCHITECTURE/CONNECTION-ADAPTER-CERTIFICATION-CONTRACT.md`
@@ -102,6 +104,9 @@ Compatibility, UI runtime, Job adapter, Definition exact DDL, Vault envelope/int
 
 ### Membership
 ADR-0062 fixes first provider source-truth profiles, but **0 billing profiles are MB-certified**. Enrollment/Entitlement physical schema, revoke-to-deny cache, protected-file delivery, Manual/Woo/SureCart MB0–MB5 fixtures, customer→WP identity resolution, refunds/switches/reconciliation, scheduler/webhook failure, seat concurrency and migration/privacy runtime evidence remain open.
+
+### Email/notifications
+ADR-0063 fixes initial provider source-truth profiles for `wp_mail`, generic SMTP, SES, SendGrid, Mailgun and Postmark. All six are EE3 static-paper maturity; **0 providers are ET-certified**. Renderer/client compatibility, Delivery/Attempt/Event physical schema, provider send adapters, webhook authenticity/replay/order, unknown-outcome reconciliation, bounce/complaint/suppression truth, JobService load and ET0–ET5 evidence remain open.
 
 ### Remote service/distribution
 ADR-0060 fixes field-level minimization/consent/retention semantics. OAuth endpoint/token lifecycle, exact schemas/OpenAPI, log redaction, diagnostics upload, resource retention/deletion/export, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
