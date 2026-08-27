@@ -52,7 +52,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 21 | Message & Chat System | Exhaustive | ADR-0027 | indexes/search/transport/private assets/revocation scale | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028 | compiler/auth/rate/CORS/cache/fuzz/scale | No |
 | 23 | Webhooks & Connections | Exhaustive | ADR-0040 + 0055 + 0059 | I0–I5 adapters/Event Inbox/Job evidence | No |
-| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059/0061/0064 | bundle/Remote Copy/provider registry/C0–C4/Job evidence; versioned static overlays improve paper evidence only — P-003/P-013 | No |
+| 24 | Backup Manager | Exhaustive | ADR-0021/0033/0043/0053/0056/0059/0061/0064/0065 | bundle/Remote Copy/provider registry/C0–C4/Job evidence; local/browser/FTP/FTPS/SFTP semantics accepted but transport/runtime fixtures absent — P-003/P-013 | No |
 | 25 | Reset Manager | Exhaustive | ADR-0047 + 0059 | recovery schema/checkpoints/crash/adapters/multisite | No |
 | 26 | Import / Export | Exhaustive | ADR-0041 + 0059 | run schema/checkpoints/crash/source/media evidence | No |
 | 27 | Protector | Exhaustive | ADR-0045 | hook/atomic rate/proxy/login/header evidence | No |
@@ -65,7 +65,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 - ADR-0048 Vault hierarchy; exact implementation pending.
 - ADR-0049 Definition Repository relational shape; exact DDL pending.
-- ADR-0053/0061/0064 Backup provider model: semantic families + provider profiles + versioned static-evidence overlays + C3 support gate; **34 targets, 0 certified**. Static SE evidence is never runtime certification.
+- ADR-0053/0061/0064/0065 Backup provider model: semantic families + provider profiles + auditable static overlays + explicit local/browser/FTP/FTPS/SFTP transport/security semantics + C3 support gate; **34 targets, 0 certified**. Static/protocol evidence is never runtime certification.
 - ADR-0054/0060 Remote Service trust/privacy boundaries; service runtime pending. Future evidence is bounded by `docs/QUALITY/REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md` and remains unexecuted.
 - ADR-0055 Connections I0–I5; provider evidence pending.
 - ADR-0056 Remote Copy lifecycle; physical/runtime evidence pending.
@@ -77,7 +77,7 @@ No surface may skip evidence merely because an ADR is Accepted.
 
 ## Backup static-evidence snapshot
 
-ADR-0064 permits auditable static overlays without rewriting certification truth. Latest documented overlay upgrades:
+Latest documented cloud/provider overlay upgrades:
 - `box` → SE3;
 - `minio` → SE3;
 - `rackspace-swift` → SE2;
@@ -86,7 +86,14 @@ ADR-0064 permits auditable static overlays without rewriting certification truth
 - `bunny-storage` → SE2 with no crash-resume claim;
 - `mega` → SE1.
 
-These are research maturity labels only. **C-certified count remains 0 and normal Supported Backup Destination count remains 0.**
+ADR-0065 transport profiles:
+- `local-server` → SE2, same-host failure-domain warning;
+- `browser-export` → SE3 product semantics, not WPE-managed remote storage;
+- `ftp-generic` → SE2 legacy/insecure compatibility profile;
+- `ftps-generic` → SE3 with TLS 1.2+ and protected data-channel requirement;
+- `sftp-generic` → SE2 with mandatory SSH host-key verification.
+
+These are research maturity/product-semantics labels only. **C-certified count remains 0 and normal Supported Backup Destination count remains 0.**
 
 ## Recommended implementation order after future consent
 
@@ -98,7 +105,7 @@ These are research maturity labels only. **C-certified count remains 0 and norma
 6. Membership runtime → Manual → Woo one-time → Woo Subscriptions/SureCart MB certification;
 7. Forms/Workflow/Jobs → Notifications → Email renderer → wp_mail/SMTP baseline → selected API providers → ET certification;
 8. REST/Connections/Event Inbox/Import;
-9. Backup core → Remote Copy → provider adapters/C3 restore → operations/security modules;
+9. Backup core → Remote Copy → local/S3 reference profiles → provider adapters/C3 restore → operations/security modules;
 10. Chat;
 11. Account/Support/Updater under ADR-0060 + remote-service privacy evidence protocol;
 12. AI only over certified platform Abilities/Blueprints;
@@ -107,7 +114,7 @@ These are research maturity labels only. **C-certified count remains 0 and norma
 ## Current conclusion
 
 **Product specification:** 31/31 Exhaustive.  
-**Architecture:** accepted decisions through ADR-0064; physical/runtime evidence incomplete.  
+**Architecture:** accepted decisions through ADR-0065; physical/runtime evidence incomplete.  
 **Implemented:** none.  
 **Verified runtime:** none.  
 **Authorized:** 0/31.
