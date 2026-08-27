@@ -16,7 +16,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0003 | Accepted | WordPress Abilities as typed reusable action contract |
 | ADR-0004 | Accepted | No standard arbitrary PHP eval or unrestricted destructive raw-SQL primitive |
 | ADR-0005 | Proposed blocker | WPE UI wrappers + stable WordPress components/DataViews; Untitled visual reference/compatible MIT only |
-| ADR-0006 | Proposed blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate |
+| ADR-0006 | Proposed adapter blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate; WPE execution semantics later accepted in ADR-0059 |
 | ADR-0007 | Accepted | Pro expiry preserves data and safe deployed runtime; editing/unsafe operations can lock |
 | ADR-0008 | Proposed physical-evidence blocker | Definition Repository shape later accepted in ADR-0049; exact DDL/index/locking evidence pending |
 | ADR-0009 | Proposed physical-evidence blocker | Secrets Vault hierarchy later accepted in ADR-0048; storage/rotation/interoperability evidence pending |
@@ -69,6 +69,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0056 | Accepted backup lifecycle / provider evidence pending | Each destination has durable Remote Copy commit/verify/retention/delete/restore states; manifest-last and truthful deletion semantics |
 | ADR-0057 | Accepted membership integration architecture / provider evidence pending | Billing integrations emit verified commercial source facts; reconciliation + WPE policy own Enrollment/Entitlement transitions; provider lifecycle certification uses MB0–MB5 |
 | ADR-0058 | Accepted email delivery architecture / provider evidence pending | Email submission, receiving-server delivery, failures/complaints/suppression and engagement are separate evidence; provider profiles use ET0–ET5 and never infer inbox/read truth |
+| ADR-0059 | Accepted JobService semantics / adapter evidence pending | Backend-neutral Job Type/Schedule/Job/Attempt/Runner policy; at-least-once, explicit idempotency, reviewed urgency, fairness, resource/concurrency keys, backpressure and cooperative cancellation |
 
 ## Product specification milestone
 
@@ -82,6 +83,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Query AST: `docs/ARCHITECTURE/QUERY-AST-V1-CANDIDATE-SCHEMA.md`
 - Relations: `docs/ARCHITECTURE/RELATION-RUNTIME-SCHEMA-ALTERNATIVES.md`
 - Workflow: `docs/ARCHITECTURE/WORKFLOW-RUNTIME-DATA-CANDIDATE.md`
+- Job Service semantics: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
 - Component Blueprint/Settings/Admin Menu/Status/Listings/Import: respective files under `docs/ARCHITECTURE/`
 - Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
 - Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
@@ -99,7 +101,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 ## Remaining evidence blockers
 
 ### Platform
-Compatibility, UI runtime, Job adapter, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI and build toolchain remain executable-evidence gates.
+Compatibility, UI runtime, Definition exact DDL, Vault envelope/interoperability, Free↔Pro runtime, CI and build toolchain remain executable-evidence gates. ADR-0059 fixes JobService semantics, but ADR-0006/P-003 still requires Action Scheduler coexistence/physical mapping/fairness/runner/multisite proof.
 
 ### Runtime/data
 Query/Relations/Workflow/Fields/Tables/Forms/Notifications/Chat/REST/Email/Dashboard/Components/Settings/Menu/Status/Listings/Import require physical/runtime/security/performance evidence.
