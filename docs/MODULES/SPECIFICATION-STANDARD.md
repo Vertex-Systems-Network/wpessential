@@ -18,7 +18,9 @@ Every module specification must define:
 - minimum WordPress/PHP/runtime compatibility assumptions;
 - module-specific capabilities;
 - registered Abilities/events/hooks;
-- asset bundles and enqueue conditions.
+- asset bundles and enqueue conditions;
+- applicable project/work lifecycle state;
+- stable work/milestone IDs once execution planning begins.
 
 ## 2. Screen specification format
 
@@ -180,7 +182,30 @@ Each module must explicitly assess, where applicable:
 - supply-chain/dependency risk;
 - destructive data loss.
 
-## 8. UX state contract
+## 8. Negative requirements / MUST NOT contract
+
+Every substantial module must define the important things it **must not** do, especially around authorization, data ownership, scope, retries, destructive behavior and privacy.
+
+At minimum consider:
+- cross-user/cross-site/cross-tenant access that must be impossible;
+- fields/actions that must never mutate protected authority/identity state;
+- data that must never be exposed in UI/API/export/log/cache;
+- dependency failures that must not fail open;
+- retries/duplicate requests that must not repeat committed side effects;
+- scope selectors/IDs that must not become trusted authority;
+- destructive actions that must not run without required preconditions/approval/recovery evidence;
+- caches that must not preserve revoked privileged access;
+- module disable/license expiry behavior that must not expose protected content.
+
+Format important rules explicitly, for example:
+
+`MUST NOT: A site administrator must not enumerate or mutate another site's protected settings.`
+
+`MUST NOT: A generic Profile field must not mutate password, role/capability, session or Application Password internals.`
+
+Each security/data-critical negative requirement must map to an acceptance/security test or evidence fixture where execution is applicable.
+
+## 9. UX state contract
 
 Every primary screen/action must have intentional:
 
@@ -201,7 +226,7 @@ Every primary screen/action must have intentional:
 - Pro-expired/read-only state;
 - incompatible-dependency state.
 
-## 9. Performance contract
+## 10. Performance contract
 
 Specify budgets/limits where relevant:
 
@@ -218,7 +243,7 @@ Specify budgets/limits where relevant:
 - lazy loading thresholds;
 - N+1 avoidance expectations.
 
-## 10. Observability contract
+## 11. Observability contract
 
 Define:
 
@@ -231,7 +256,7 @@ Define:
 - redaction rules;
 - retention policy where sensitive data is involved.
 
-## 11. Import/export/revisions
+## 12. Import/export/revisions
 
 Every configuration definition must answer:
 
@@ -247,7 +272,24 @@ Every configuration definition must answer:
 - restore/rollback behavior;
 - forward/backward compatibility.
 
-## 12. Acceptance-test matrix
+## 13. Change-impact / implementation boundary
+
+Before implementation begins, identify as applicable:
+- affected components;
+- explicitly unaffected areas;
+- expected files/modules/APIs;
+- shared surfaces;
+- dependencies/lockfiles;
+- migrations/schema/configuration;
+- compatibility impact;
+- rollback/recovery class;
+- critical-path class;
+- parallelism class;
+- FAST/FULL test expectations.
+
+If implementation materially exceeds this expected boundary, stop and reassess rather than silently expanding scope.
+
+## 14. Acceptance-test matrix
 
 At minimum plan tests for:
 
@@ -255,6 +297,7 @@ At minimum plan tests for:
 - blank/default configuration;
 - every validation boundary;
 - permission denied;
+- important negative/MUST-NOT rules;
 - capability change mid-session;
 - nonce/CSRF failure;
 - malformed IDs/input;
@@ -263,15 +306,55 @@ At minimum plan tests for:
 - expired Pro entitlement;
 - import of old/newer schema;
 - concurrent update where relevant;
+- duplicate/replay behavior where relevant;
 - background job failure/retry where relevant;
+- crash/reconciliation where relevant;
 - high-volume dataset where relevant;
 - malicious payloads;
 - accessibility keyboard/focus behavior;
 - responsive narrow viewport where UI is user-facing;
 - cleanup/uninstall semantics.
 
-## 13. Option inventory rule
+## 15. Approval-readiness self-audit
+
+Before a module/milestone moves to `AWAITING_DEVELOPMENT_APPROVAL`, review it as:
+- Product Manager;
+- End User;
+- Administrator;
+- Attacker;
+- QA Engineer;
+- Database Engineer;
+- DevOps/Platform Engineer;
+- Support Engineer;
+- Future Maintainer.
+
+Ask:
+- what option is missing?
+- what permission is ambiguous?
+- what happens with no data or huge data?
+- what happens twice or concurrently?
+- what happens when a dependency fails?
+- what happens if execution crashes midway?
+- how is it recovered/audited/deleted?
+- how does unauthorized access behave?
+- can production support diagnose failure?
+
+Update the spec before approval when a real gap is found.
+
+## 16. Option inventory rule
 
 `OPTION-INVENTORY.md` is the planning ledger. An option may be marked `resolved` only when the module specification or ADR defines its semantics, default, validation, permission and side effects.
 
 Implementation work must not silently invent unresolved option behavior. If implementation reveals a missing option or state, update documentation first or in the same coherent change before relying on it.
+
+## 17. Gap classification rule
+
+A missing requirement discovered during audit/implementation is classified using `docs/PROJECT-STATE-AND-ADOPTION.md`:
+
+- `CORRECTION`
+- `COMPLETION`
+- `HARDENING`
+- `OPTIMIZATION`
+- `NEW_PRODUCT_SCOPE`
+
+`NEW_PRODUCT_SCOPE` requires explicit approval before implementation. Do not silently convert a useful idea into approved product behavior.
