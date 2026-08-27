@@ -1,9 +1,9 @@
 # WPEssential — Open Decisions Register
 
 Status: **Phase 0 / planning-only / no development consent**  
-Last synchronized: 2026-08-27
+Last synchronized: 2026-08-28
 
-This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0064**.
+This register contains unresolved implementation profiles/evidence only. Accepted architecture/product/security decisions are preserved in ADRs through **ADR-0065**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -61,7 +61,7 @@ Accepted Safe HTTP/Webhook/Event Inbox + I0–I5 certification. Open provider ad
 
 - **B-001 / ADR-0033 / P-013** — exact file/DB artifact formats, chunking, compression/hash encoding.
 - **B-002 / ADR-0021 + ADR-0043** — exact frame/AAD, Argon2id floor, recovery-kit encoding, resume boundaries and fresh-server restore.
-- **B-003 / ADR-0053 + ADR-0061 + ADR-0064 / P-013** — C0–C4 model + semantic `bf.*` families + versioned provider profiles + versioned static-evidence overlays. **34 target profiles, 0 certified**.
+- **B-003 / ADR-0053 + ADR-0061 + ADR-0064 + ADR-0065 / P-013** — C0–C4 model + semantic `bf.*` families + versioned provider profiles + versioned static-evidence overlays + explicit local/browser/FTP/FTPS/SFTP transport semantics. **34 target profiles, 0 certified**.
 
 Current static overlay upgrades:
 - Box SE3;
@@ -69,10 +69,17 @@ Current static overlay upgrades:
 - Rackspace SE2;
 - Akamai/Linode SE2;
 - Hetzner SE3;
-- Bunny Storage SE2 (non-resumable claim until stronger Storage evidence);
+- Bunny Storage SE2 (no crash-resume claim until stronger Storage evidence);
 - MEGA SE1.
 
-Static overlay does not change public support status. Open auth/transfer/limits/integrity/finalization/retention/delete/C3/C4 restore evidence remains.
+Accepted transport-profile paper semantics:
+- `local-server` SE2: staging/hash/manifest-last; same-host failure-domain warning; finalization runtime-gated;
+- `browser-export` SE3 product semantics: manual delivery/export, not managed remote retention;
+- `ftp-generic` SE2: legacy/insecure; REST restart is conditional and not integrity/transaction proof;
+- `ftps-generic` SE3: TLS 1.2+ + certificate/hostname validation + protected data channel; restart/finalization still runtime-gated;
+- `sftp-generic` SE2: SSH host-key verification mandatory; offset resume/atomic rename are candidate capabilities only.
+
+Static maturity does not change public support status. Open auth/transfer/limits/integrity/finalization/retention/delete/C3/C4 restore evidence remains.
 
 - **B-004 / ADR-0056** — Remote Copy physical schema, commit-unknown reconciliation, re-verification, cleanup, lifecycle interference, alternate-copy failover and restore.
 - **B-005 / Protector / Watermark / XML-RPC** — documented physical/runtime compatibility/security evidence remains open.
@@ -85,7 +92,7 @@ Static overlay does not change public support status. Open auth/transfer/limits/
 
 ## I. Accepted architecture no longer open semantically
 
-ADRs **0035–0064** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Static provider overlays are paper evidence only, never certification.
+ADRs **0035–0065** preserve accepted core semantics. Evidence may refine version-scoped implementation facts but must not silently redesign accepted cores. Static provider/transport evidence is paper evidence only, never certification.
 
 ## Decision-processing rule
 
@@ -97,8 +104,8 @@ ADRs **0035–0064** preserve accepted core semantics. Evidence may refine versi
 
 ## Next planning-only priorities
 
-1. Generic FTP/FTPS/SFTP/local/browser protocol/library evidence without execution.
-2. Membership provider version/evidence refinement.
-3. Email provider version/evidence refinement.
-4. Continue narrowing P-003/provider evidence plans.
-5. Consolidate provider overlays only when useful; do not fake SE3 maturity.
+1. Membership provider version/evidence refinement.
+2. Email provider version/evidence refinement.
+3. Continue narrowing P-003/provider evidence plans.
+4. Remaining physical/runtime paper models where static decisions are useful.
+5. Consolidate provider overlays only when useful; do not fake maturity.
