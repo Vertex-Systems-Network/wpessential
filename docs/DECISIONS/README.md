@@ -96,6 +96,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0083 | Accepted JobService physical mapping baseline / P-003 pending | J1 PT-D Jobs+Attempts first; J2 PT-C current + PT-D history mandatory; J3 PT-C low-volume control; backend rows never WPE truth |
 | ADR-0084 | Accepted Backup Remote Copy physical baseline / P-013 pending | BR1/PT-D first; BR2 PT-C-current + PT-D history mandatory; BR3 PT-E isolation comparison; commit/verify/delete truth preserved |
 | ADR-0085 | Accepted Vault PT-C physical envelope profile / P-005 pending | V1/PT-C favored shared scoped Vault; V2 per-site + network Vault mandatory; Secret versions/VRK generations/key slots/use grants separated; no plaintext fallback |
+| ADR-0086 | Accepted Query compiler benchmark baseline / P-009 pending | QP1 WordPress-native first; QP2 Custom Table + QP3 Relations-assisted required for owned workloads; QP4 remote separately certified; security/cache isolation override speed |
+| ADR-0087 | Accepted Field Storage physical routing profile / evidence pending | FS1 native WP default; FS2 typed Custom Table escalation; FS3 child rows; FS4 Relations; FS5 Vault refs; no universal field store |
+| ADR-0088 | Accepted Custom Tables PT-D/PT-E physical baseline / exact DDL evidence pending | CT1/PT-E first for site-owned tables; CT2/PT-D mandatory large-network comparison; CT3 only for genuinely network-owned data |
+| ADR-0089 | Accepted Settings PT-A/PT-B runtime profile / evidence pending | ST1/PT-A grouped site document; ST2/PT-B network document; ST3 inheritance; non-autoload default; stale edits require visible conflict semantics |
+| ADR-0090 | Accepted Membership protected-file delivery profile / security evidence pending | PD1 private local correctness baseline; PD2 accelerated; PD3 private object signed delivery; PC0–PC4 origin-bypass/authorization certification |
+| ADR-0091 | Accepted Product License API component schema profile / service evidence pending | Field-level resource schemas, server-owned state, Idempotency-Key, ETag/If-Match, Problem Details and cursor components fixed on paper |
 
 ## Product specification milestone
 
@@ -106,8 +112,13 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 - Definition Repository: `docs/ARCHITECTURE/DEFINITION-REPOSITORY-PTC-DDL-INDEX-ALTERNATIVES.md`
 - Relations: `docs/ARCHITECTURE/RELATIONS-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
+- Query P-009: `docs/ARCHITECTURE/QUERY-P009-COMPILER-COST-CACHE-BENCHMARK-PROFILE.md`
+- Field Storage: `docs/ARCHITECTURE/FIELD-STORAGE-PHYSICAL-ROUTING-BENCHMARK-PROFILE.md`
+- Custom Tables: `docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md`
+- Settings: `docs/ARCHITECTURE/SETTINGS-PTA-PTB-INHERITANCE-AUTOLOAD-CONCURRENCY-PROFILE.md`
 - Forms/Chat: `docs/ARCHITECTURE/FORMS-CHAT-PTD-PTE-TOPOLOGY-COMPARISON.md`
 - Membership: `docs/ARCHITECTURE/MEMBERSHIP-PTD-PTE-PHYSICAL-BENCHMARK-PROFILE.md`
+- Protected files: `docs/ARCHITECTURE/MEMBERSHIP-PROTECTED-FILE-DELIVERY-CERTIFICATION-PROFILE.md`
 - Notification/Email: `docs/ARCHITECTURE/NOTIFICATION-EMAIL-PTD-OPERATIONAL-STORAGE-PROFILE.md`
 - Event Inbox: `docs/ARCHITECTURE/EVENT-INBOX-PTD-PHYSICAL-BENCHMARK-PROFILE.md`
 - Audit: `docs/ARCHITECTURE/AUDIT-PTD-RETENTION-INDEX-INTEGRITY-PROFILE.md`
@@ -116,23 +127,23 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Backup Remote Copy: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-PTC-PTD-PHYSICAL-PROFILE.md`
 - Vault physical envelope: `docs/SECURITY/SECRETS-VAULT-PTC-PHYSICAL-ENVELOPE-PROFILE.md`
 - Site Lifecycle: `docs/ARCHITECTURE/MULTISITE-SITE-LIFECYCLE-COORDINATOR.md`
-- Product License remote/API: corresponding files under `docs/PLATFORM/`.
+- Product License remote/API: corresponding files under `docs/PLATFORM/`, including `PRODUCT-LICENSE-OPENAPI-COMPONENT-SCHEMA-PROFILE.md`.
 
 ## Remaining evidence blockers
 
 ### Core platform
 P-001 compatibility/Multisite, P-002 UI, P-003 Job backend/mapping, P-004 Definition DDL, P-005 Vault crypto/runtime, P-006 Free↔Pro/Product License, P-007 CI, P-008 build, P-009 Query, P-010 Relations, P-011 Workflow, P-012 Membership and P-013 Backup remain executable gates.
 
-### Newly narrowed physical profiles
-ADR-0082/0083/0084/0085 fix first future comparison profiles only. No Workflow/Job/Backup/Vault DDL, cryptography, queue, transfer, restore or benchmark has run.
+### Newly narrowed paper profiles
+ADR-0086–0091 fix Query compiler boundaries, Field routing, Custom Tables topology, Settings storage/inheritance, Membership protected-file delivery and Product License component schemas. They authorize no compiler, DDL, option writes, file-serving runtime, OpenAPI artifact or service call.
 
 ### Provider certification
-Membership: **0 MB-certified**. Email: **0 ET-certified**. Event adapters: **0 I4/I5 certified**. Backup: **0 C-certified out of 34 targets**.
+Membership: **0 MB-certified**. Email: **0 ET-certified**. Event adapters: **0 I4/I5 certified**. Backup: **0 C-certified out of 34 targets**. Protected file profiles: **0 PC1+ certified**.
 
 ### Multisite/lifecycle
 31/31 product scopes are mapped, 40 lifecycle fixtures are documented, and **0 MS1+ / 0 lifecycle fixtures** have executed.
 
 ### Remote service/licensing
-Product License HTTP/resource principles are accepted, but **0 API/service fixtures** have executed. Remote privacy protocol remains **30 fixtures / 0 executed**.
+Product License HTTP/resource/component principles are accepted through ADR-0091, but **0 API/service fixtures** have executed. Remote privacy protocol remains **30 fixtures / 0 executed**.
 
 No executable evidence may run before explicit owner consent.
