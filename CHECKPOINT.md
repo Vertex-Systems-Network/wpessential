@@ -5,345 +5,315 @@ Branch: `planning/master-architecture`
 Project state: **PARTIALLY COMPLETE — Phase 0 planning only**  
 Production development authorization: **NOT GRANTED**
 
-## Current objective
+## Consent gate
+The project owner requires explicit consent before any production development or executable spike.
 
-Continue evidence-backed planning, architecture, security and option-level specification without starting production development.
-
-The project owner explicitly requires consent before development. This is persisted in:
+Source of truth:
 - `/DEVELOPMENT-CONSENT.md`
 - `docs/DECISIONS/ADR-0014-development-consent-gate.md`
 
-`continue`, `proceed`, planning approval, ADR acceptance or Phase 0 readiness do **not** authorize implementation. Executable research spikes also require explicit consent.
+`continue`, `proceed`, planning approval, ADR acceptance or Phase 0 readiness do **not** authorize implementation.
 
-No WPEssential runtime PHP/React source, production migration, build scaffold or implementation test has been created in the target repository.
-
----
-
-# Verified completed planning
-
-## Repository/reference audit
-
-- Target repo planning isolated on `planning/master-architecture`.
-- Legacy `wpessential/wpessential-dashboard-builder` inspected for useful experiments and architecture drift.
-- Legacy issues to avoid include PHP-version mismatch, `inc/daabase` PSR-4 typo, mixed Laravel Mix/Vite tooling, unconditional admin timing logging and low-information historical commits.
-
-## Product/module planning
-
-### 31/31 module/platform surfaces inventoried and behaviorally specified
-
-Detailed source:
-- `docs/MODULES/README.md`
-- `docs/MODULES/SPECIFICATION-STANDARD.md`
-- `docs/MODULES/COMMON-OPTION-CONTRACTS.md`
-- `docs/MODULES/OPTION-INVENTORY.md`
-- suite specifications under `docs/MODULES/`
-
-`Specified` means intended screens/options/defaults/validation/permissions/lifecycle/failure/dependencies/assets/tests are documented. It does **not** mean implementation exists or is authorized.
-
-### Implementation readiness audit
-
-`docs/IMPLEMENTATION-READINESS-MATRIX.md` now marks every module individually with:
-- current specification maturity;
-- shared blockers;
-- module-specific blockers;
-- first safe implementation milestone after future consent.
-
-All modules are currently **BLOCKED from implementation**, including Free CPT/Taxonomy, because owner development consent has not been granted and shared ADR blockers remain.
-
-### Open decisions register
-
-`docs/OPEN-DECISIONS-REGISTER.md` records unresolved platform and Membership decisions, the evidence required, and whether executable proof is eventually needed.
+No WPEssential runtime PHP/React source, production migration, dependency/bootstrap scaffold, implementation test or executable research spike has been created in the target repository.
 
 ---
 
-# Membership System planning
+# Current Phase 0 coverage
 
-Membership remains a full Pro module.
+## Product scope
+- 31/31 planned module/platform surfaces have option/screen inventory.
+- 31/31 have Phase 0 behavioral specifications.
+- Membership System is a full Pro module.
+- Detailed specs live under `docs/MODULES/`.
+- `docs/IMPLEMENTATION-READINESS-MATRIX.md` keeps every module individually blocked until its ADR/technical gates and owner consent are satisfied.
 
-Accepted product architecture in ADR-0013:
+## Accepted product/architecture decisions
+- ADR-0001 — WordPress.org Free + separate Pro add-on/trial model.
+- ADR-0003 — typed WordPress Abilities as reusable action contract.
+- ADR-0004 — no standard arbitrary PHP eval/unrestricted destructive SQL.
+- ADR-0007 — Pro expiry preserves data and safe deployed behavior.
+- ADR-0013 — Membership, billing subscription/purchase, WordPress roles and Entitlements are separate domains.
+- ADR-0014 — explicit owner consent required before development/executable spikes.
+
+## Proposed platform blockers
+Still require evidence/acceptance:
+- ADR-0002 compatibility floor;
+- ADR-0005 UI/design-system runtime;
+- ADR-0006 concrete Job Service adapter;
+- ADR-0008 Definition Repository physical schema/index benchmark;
+- ADR-0009 Secrets Vault crypto/key/recovery prototype;
+- ADR-0010 Free↔Pro concrete bootstrap/version protocol;
+- ADR-0011 CI execution matrix/tooling;
+- ADR-0012 canonical build toolchain.
+
+---
+
+# Static research conclusions
+
+## Compatibility
+Current proposed direction:
+- minimum WordPress candidate: **6.9**;
+- primary current target: **7.1**;
+- minimum PHP candidate: **8.3**.
+
+Reasoning is documented in ADR-0002 and `docs/RESEARCH/COMPATIBILITY-UI-TOOLCHAIN-STATIC-RESEARCH.md`. No executable compatibility matrix has run.
+
+## UI
+Current proposed direction:
+- React + TypeScript;
+- WPEssential wrapper components are canonical domain UI API;
+- stable WordPress Design System/components/DataViews/DataForm behind wrappers;
+- Untitled UI primarily as visual/interaction reference;
+- only explicitly MIT Untitled UI pieces after runtime/license review;
+- no Untitled PRO redistribution by default;
+- Lucide vocabulary behind WPE/WordPress icon abstraction.
+
+Reason: WordPress 7.1 remains on React 18.3 while current Untitled UI React targets React 19.2. No UI spike has run.
+
+## Build
+Current proposed candidate order:
+1. `@wordpress/build` stable plugin-build capabilities;
+2. `@wordpress/scripts` comparison/fallback;
+3. Vite only if WordPress-native tooling fails a demonstrated WPE requirement;
+4. no Laravel Mix carry-forward.
+
+No packages were installed and no build ran.
+
+## Background jobs
+Action Scheduler remains preferred concrete candidate behind WPE Job Service because current official behavior supports plugin embedding/coexistence, queued traceability and WP-CLI processing. WP-Cron remains traffic-triggered/non-exact.
+
+No queue dependency/load/coexistence test ran.
+
+---
+
+# Membership planning status
+
+Accepted domain separation:
 - User = identity;
 - Role/Capability = WordPress authorization primitive;
-- Membership Plan = configured access/product definition;
-- Enrollment = membership lifecycle instance;
+- Plan = configured product/access definition;
+- Enrollment = membership lifecycle interval;
 - external Subscription/Purchase = billing source/reference;
 - Entitlement = normalized grant/benefit;
 - Access Rule/Policy = resource/action decision.
 
-Billing providers are adapters, not the access source of truth. Raw provider events never directly authorize a request.
+Detailed planning now includes:
+- `docs/MODULES/MEMBERSHIP-SYSTEM.md`
+- `docs/MODULES/MEMBERSHIP-ACCESS-POLICY.md`
+- `docs/MODULES/MEMBERSHIP-ENROLLMENT-STATE-MACHINE.md`
+- Membership runtime schema/index candidates;
+- protected-file private-origin architecture;
+- initial billing-adapter priority/reconciliation planning.
 
-Additional detailed planning now exists:
+Key semantics:
+- Membership cannot override outer WordPress/security authorization denial.
+- Same-specificity deny wins by default.
+- Multiple valid memberships union grants unless an explicit applicable deny/exclusion applies.
+- `cancel_at_period_end` is intent, not an access state.
+- provider states such as past_due/refunded/disputed are billing facts translated through adapter/plan policy.
+- raw provider events never directly authorize access.
+- stale entitlement cache after revoke/force-deny is a security defect.
+- protected member files cannot be ordinary public `/uploads/` URLs with cosmetic hiding; they require private origin + controlled delivery.
 
-## `docs/MODULES/MEMBERSHIP-ACCESS-POLICY.md`
+Current commercial adapter priority on paper:
+1. Manual/Free enrollment;
+2. WooCommerce one-time purchase mapping;
+3. WooCommerce Subscriptions;
+4. SureCart;
+5. later providers by demand/evidence.
 
-Candidate access semantics include:
-- non-membership WordPress/security authorization remains an outer boundary;
-- Membership cannot override a WordPress-forbidden action;
-- exact-resource rules are more specific than inherited/type/global rules;
-- same-specificity deny wins by default;
-- multiple valid memberships union entitlements unless an explicit applicable deny/exclusion applies;
-- manual `force_allow/force_deny` overrides are exceptional, capability-protected and audited;
-- no applicable Membership rule means Membership does not restrict an otherwise public resource;
-- stale cache after revoke/force-deny is defined as a security bug;
-- admin access bypass uses a dedicated capability, not hard-coded role-name logic;
-- diagnostics must explain why a user can/cannot access a resource.
+Direct card/payment processing inside WPEssential is not an initial goal.
 
-This is a candidate semantic contract, not implemented or Accepted yet.
-
-## `docs/MODULES/MEMBERSHIP-ENROLLMENT-STATE-MACHINE.md`
-
-Candidate canonical states:
-- `pending`
-- `trialing`
-- `active`
-- `grace`
-- `paused`
-- `expired`
-- `revoked`
-
-Important modeling corrections:
-- `cancel_at_period_end` is a cancellation intent/scheduled end, not automatically an access state;
-- provider states such as `past_due`, `payment_failed`, `refunded`, `disputed` are billing facts translated by adapter/plan policy;
-- terminal expired/revoked intervals create a new Enrollment for later reactivation by default rather than rewriting history;
-- authorization state commits before non-critical notification/webhook side effects;
-- external lifecycle events require idempotency/out-of-order handling.
+Membership still needs executable evidence for cache/revocation latency, runtime indexes, protected-file delivery environments, billing adapters/reconciliation, seat concurrency and migration fidelity.
 
 ---
 
-# Static compatibility/UI/toolchain research
+# Shared architecture contracts now documented
 
-New research note:
-- `docs/RESEARCH/COMPATIBILITY-UI-TOOLCHAIN-STATIC-RESEARCH.md`
+## Definitions / compatibility / jobs / secrets
+- `docs/ARCHITECTURE/DEFINITION-REPOSITORY-CANDIDATE-SCHEMA.md`
+- `docs/ARCHITECTURE/FREE-PRO-COMPATIBILITY-STATE-MACHINE.md`
+- `docs/ARCHITECTURE/JOB-SERVICE-CONTRACT.md`
+- `docs/SECURITY/SECRETS-VAULT-THREAT-MODEL.md`
 
-## Compatibility recommendation updated
+## Dependency and ownership
+`docs/ARCHITECTURE/MODULE-DEPENDENCY-AND-DATA-OWNERSHIP.md`
 
-ADR-0002 remains Proposed, but static recommendation is now:
-- minimum WordPress candidate: **6.9**;
-- primary current target: **7.1**;
-- minimum PHP candidate: **8.3**, replacing the earlier PHP 8.2 preference.
+Defines:
+- platform/service/hard/soft/adapter dependency classes;
+- authoritative data owner per module;
+- no hidden cross-module table access;
+- no circular module dependencies;
+- disable != delete;
+- security/access modules cannot silently expose data when disabled/expired.
 
-Reason:
-- Abilities API is native from WordPress 6.9;
-- WordPress currently recommends PHP 8.3+;
-- PHP 8.2 security support ends 2026-12-31;
-- a new long-lived platform should avoid requiring an early PHP-floor raise.
+## Capability and Policy model
+`docs/SECURITY/CAPABILITY-POLICY-MATRIX.md`
 
-Executable compatibility proof has **not** been performed.
+Defines:
+- granular module capabilities;
+- high-risk dedicated capabilities;
+- role presets as convenience only;
+- resource-level Policy Engine;
+- server-side parity across UI/REST/Abilities/CLI/workflow/AI;
+- multisite/re-auth/anti-escalation rules.
 
-## UI direction corrected
+## Event / Ability vocabulary
+`docs/ARCHITECTURE/EVENT-AND-ABILITY-CATALOG.md`
 
-Current official evidence shows:
-- WordPress 7.1 remains on React 18.3;
-- React 19 was punted after mixed runtime/JSX incompatibilities caused plugin failures;
-- current Untitled UI React targets React 19.2;
-- WordPress 7.1 exposes public Design System tokens/ThemeProvider and mature DataViews/DataForm capabilities;
-- Untitled UI PRO source has distribution restrictions; explicitly MIT components are separate.
+Defines:
+- namespaced stable IDs;
+- typed schemas;
+- read/write/destructive annotations;
+- event envelope;
+- **at-least-once** event delivery assumption;
+- duplicate/out-of-order tolerance;
+- AI exposure allowlist separate from Ability registration;
+- compatibility/deprecation rules.
 
-Therefore ADR-0005 now proposes:
-- WPEssential wrapper components as canonical domain API;
-- WordPress Design System / stable `@wordpress/components`, `@wordpress/dataviews`, `@wordpress/theme` behind wrappers;
-- Untitled UI as visual/interaction reference;
-- only explicitly MIT Untitled pieces after runtime/license compatibility review;
-- no Untitled PRO source distribution by default;
-- Lucide visual vocabulary behind a WPEssential/WordPress icon abstraction.
+## Error model
+`docs/ARCHITECTURE/ERROR-TAXONOMY-AND-FAILURE-UX.md`
 
-ADR-0005 remains Proposed pending an authorized executable UI spike.
+Defines stable machine codes and categories for validation, authorization, conflict, dependency, integration, rate/capacity, network, data integrity, migration and internal errors, plus consistent UI/retry/logging behavior.
 
-## Build direction corrected
+## Module lifecycle/uninstall
+`docs/MODULE-LIFECYCLE-AND-UNINSTALL.md`
 
-ADR-0012 no longer assumes Vite should be the first candidate.
+Defines:
+- module canonical states;
+- enable/disable/re-enable;
+- Pro expiry;
+- plugin deactivate vs module disable;
+- uninstall default preserves data;
+- explicit cleanup levels;
+- failed migration safe state;
+- dependency-removal degradation;
+- recovery surface.
 
-Current Proposed order:
-1. `@wordpress/build` stable build capabilities;
-2. `@wordpress/scripts` comparison/fallback;
-3. Vite only if WordPress-native tooling fails a proven WPEssential requirement;
-4. no Laravel Mix carry-forward.
+## Performance
+`docs/PERFORMANCE-BUDGETS.md`
 
-Official `@wordpress/build` currently provides WordPress plugin-focused esbuild/TS/JSX/CSS/RTL/PHP-registration/dependency-externalization behavior. Its experimental pages/routes/widgets are explicitly excluded from foundational assumptions.
+Defines:
+- zero/near-zero unused-module overhead goal;
+- asset isolation;
+- pagination/no-unbounded-list rules;
+- N+1 avoidance;
+- representative/stress fixture sizes;
+- Membership authorization-cache security/performance constraints;
+- future measurable regression gates.
 
-No package was installed and no build was run.
+No fake universal millisecond threshold is asserted before baseline benchmarks.
+
+## Privacy / retention
+`docs/PRIVACY-DATA-CLASSIFICATION-RETENTION.md`
+
+Defines:
+- P0–P4 data classes;
+- minimization;
+- module retention ownership;
+- WordPress personal-data exporter/eraser integration direction;
+- membership/chat/forms/log/backup privacy behavior;
+- support-bundle redaction;
+- no hidden telemetry.
+
+## Extension SDK/adapters
+`docs/ARCHITECTURE/EXTENSION-SDK-AND-ADAPTER-CONTRACT.md`
+
+Defines typed extension categories and certification contracts for fields, data sources, builders, workflows, billing, backup providers, notification channels and other integrations. UI-entered arbitrary code is not an SDK mechanism.
+
+## Admin information architecture
+`docs/UI/ADMIN-INFORMATION-ARCHITECTURE.md`
+
+Defines:
+- one WordPress parent menu: WPEssential;
+- suite-grouped navigation rather than 30+ flat items;
+- normal admin navigation target max 3 levels;
+- common List → Editor → Observe interaction grammar;
+- contextual cross-module creation without duplicate mini-builders;
+- accessible/degraded/expired/mobile behavior;
+- route/module-level asset isolation.
 
 ---
 
-# Shared architecture contracts added
+# Commercial planning
 
-## Definition Repository
+New document:
+- `docs/COMMERCIAL-POSITIONING-AND-PACKAGING.md`
 
-`docs/ARCHITECTURE/DEFINITION-REPOSITORY-CANDIDATE-SCHEMA.md`
+Current position:
+> WPEssential is a modular WordPress application platform, not a cheap bundle of unrelated mini-plugins.
 
-Strongest paper model currently:
-- numeric local primary key;
-- stable UUID portable identity;
-- identity/lifecycle table;
-- immutable revision table;
-- revision-aware dependency-edge table;
-- separate `current_revision_id` and `published_revision_id`;
-- typed versioned JSON/LONGTEXT module payload;
-- only proven list/index fields normalized;
-- optimistic concurrency;
-- site-local storage by default;
-- modules register schemas/migrators/dependency extraction/compilers rather than private revision systems.
+Current official competitor pricing anchors were researched for ACF PRO, JetEngine/Crocoblock, Meta Box, Gravity Forms and MemberPress.
 
-No DB table/migration exists. Benchmark remains required and consent-gated.
+Recommendation:
+- Free permanently useful CPT + Taxonomy foundation;
+- Pro generally includes released Pro modules, with site-count/support tiers rather than recreating per-module fragmentation;
+- candidate annual price bands are only research hypotheses, not final public prices;
+- no default WPE transaction fee on customers' membership/store revenue;
+- lifetime licensing is not a default assumption because platform/provider/security maintenance has ongoing cost;
+- contextual upgrade UX, no admin spam;
+- commercial release sequencing follows verified capability milestones rather than waiting for every module or selling unimplemented promises.
 
-## Free ↔ Pro compatibility
-
-`docs/ARCHITECTURE/FREE-PRO-COMPATIBILITY-STATE-MACHINE.md`
-
-Planning defines:
-- separate Product Version / Platform API Version / migration versions;
-- Free owns platform/kernel contracts;
-- Pro declares Platform API compatibility range;
-- Pro missing Free → inert/degraded, no fatal/migration;
-- too-old/too-new mismatch → fail-safe degraded state;
-- migration-required and migration-failed states;
-- compatibility separate from licensing;
-- shared service/runtime ownership rules;
-- mixed update-order test matrix.
-
-No bootstrap implementation exists.
-
-## Job Service
-
-`docs/ARCHITECTURE/JOB-SERVICE-CONTRACT.md`
-
-Planning defines:
-- canonical job states/payload semantics;
-- typed registered job types;
-- delayed/recurring/manual modes;
-- timing/lag distinction;
-- idempotency;
-- retry/backoff;
-- business concurrency locks;
-- user/system principal behavior;
-- no arbitrary serialized objects/secrets in payload;
-- cancellation/chunking;
-- runner health;
-- normalized observability.
-
-Current preferred concrete candidate remains Action Scheduler behind WPEssential Job Service because official/current evidence shows it is designed for plugin distribution/coexistence, traceable queues and WP-CLI processing. WP-Cron remains non-exact/traffic-triggered.
-
-No dependency installed and no queue run performed.
-
-## Secrets Vault
-
-`docs/SECURITY/SECRETS-VAULT-THREAT-MODEL.md`
-
-Candidate model:
-- protect DB-only disclosure, not claim safety from full server compromise;
-- preferred external 256-bit key outside DB;
-- WordPress-key-derived convenience fallback with explicit salt-rotation/recovery warning;
-- no plaintext fallback;
-- PHP Sodium XChaCha20-Poly1305 AEAD candidate;
-- versioned envelope/per-secret DEK model candidate;
-- write-only saved secret fields;
-- generic REST/Abilities/AI never return secret values;
-- secrets excluded from ordinary config exports/support bundles;
-- fail closed on lost/unavailable key;
-- explicit key rotation/recovery documentation.
-
-No crypto prototype exists and no real credential was used.
+Reference applications are required as reproducible sales proof: directory/real-estate, client portal, approval workflow, membership portal, data app and recovery drill.
 
 ---
 
 # Quality/CI planning
 
-New plan:
-- `docs/QUALITY/CI-TEST-MATRIX-PLAN.md`
+`docs/QUALITY/CI-TEST-MATRIX-PLAN.md` defines future PR/main/nightly/release lanes, compatibility tests, Free↔Pro mismatch tests, migrations, security regressions, E2E reference workflows, performance fixtures, provider certification and installable ZIP validation.
 
-It defines future PR/main/nightly/release lanes, minimum/current compatibility, Free↔Pro mismatch tests, migrations, security regressions, E2E reference workflows, performance fixtures, provider acceptance and installable ZIP validation.
-
-No `.github/workflows` implementation or test scaffold has been created.
+No workflow/test scaffold exists yet.
 
 ---
 
-# Accepted decisions
+# Verified
+- Planning branch writes/commits for the documents above succeeded.
+- 31/31 surfaces remain behaviorally specified.
+- Consent governance remains active.
+- Static research was actually performed where recorded.
+- New dependency/data ownership, capability/policy, event/ability, lifecycle, performance, privacy, error, SDK, admin-IA and commercial contracts now exist.
+- No implementation/test success is claimed.
 
-- ADR-0001 — Free WordPress.org + separate Pro add-on/trial model.
-- ADR-0003 — typed WordPress Abilities as reusable action contract.
-- ADR-0004 — no standard arbitrary PHP eval/unrestricted destructive SQL.
-- ADR-0007 — Pro expiry preserves data and safe deployed behavior.
-- ADR-0013 — Membership/Billing/Role/Entitlement separation.
-- **ADR-0014 — explicit owner consent required before production development/executable spikes.**
-
----
-
-# Proposed Phase 0 blockers
-
-Still require acceptance/evidence:
-- ADR-0002 compatibility floor;
-- ADR-0005 UI/design system runtime;
-- ADR-0006 concrete Job Service adapter;
-- ADR-0008 Definition Repository physical schema/index benchmark;
-- ADR-0009 Secrets Vault cryptographic/key model prototype;
-- ADR-0010 Free↔Pro concrete bootstrap/version protocol;
-- ADR-0011 CI execution matrix/tooling;
-- ADR-0012 canonical build toolchain.
-
-Membership also needs final decisions for entitlement runtime schema/cache, access precedence acceptance, protected file architecture, billing adapters/reconciliation, seats/teams concurrency, role-sync conflict and privacy/retention.
-
----
-
-# Verification
-
-## Verified
-
-- GitHub planning writes/commits listed above succeeded;
-- 31/31 surfaces remain specified;
-- development-consent governance is persisted;
-- static current research was actually performed for WordPress/PHP/React/UI/build/Action Scheduler/crypto primitives;
-- new architecture/security documents are present;
-- no successful implementation/test claim is made.
-
-## Not verified / intentionally not performed
-
+# Not verified / intentionally not performed
 - Composer/npm install;
-- PHP/TS source build;
-- runtime plugin bootstrap;
-- database migrations/tables;
+- runtime PHP/TS source/build;
+- plugin bootstrap/activation;
+- DB migrations/tables;
 - PHPUnit/Playwright;
-- WordPress activation;
-- executable compatibility matrix;
-- UI/build comparison spike;
+- executable compatibility/UI/build spikes;
 - Definition Repository benchmark;
 - Action Scheduler coexistence/load test;
-- Vault crypto prototype;
+- Secrets crypto prototype;
 - Free↔Pro boot matrix;
-- Membership entitlement benchmark;
-- protected-file delivery;
+- Membership entitlement/cache benchmark;
+- protected-file delivery test;
 - billing-provider integration;
 - backup/restore implementation;
 - deployment/release packaging.
 
-These remain unperformed because production/executable development consent has not been granted.
-
-One attempted documentation write for a consolidated future executable-spike proposal file was blocked by the connector's safety classification and was **not** counted as completed work. The actual consent boundary remains fully documented in `/DEVELOPMENT-CONSENT.md`.
+These remain unperformed because development/executable-spike consent has not been granted.
 
 ---
 
 # Next allowed planning actions
+Without development consent:
+1. convert mature paper decisions (Membership access/state, Platform API versioning/deprecation, protected-file model) into Proposed/Accepted ADRs where product semantics are sufficiently clear;
+2. create per-module capability/Ability/event ownership registry from the shared contracts;
+3. create module-by-module data/privacy/retention matrix;
+4. create exact import/migration compatibility plans from ACF/Meta Box/JetEngine/CPT UI/member products;
+5. deepen backup provider certification matrix and restore semantics;
+6. define upgrade/version/deprecation policy for definitions and SDK;
+7. define documentation/support information architecture and release-note policy;
+8. keep PR/readiness/open-decisions/checkpoint synchronized.
 
-Without development consent, continue only non-executable planning such as:
+Before **any** runtime/source/build/migration/executable spike begins, obtain explicit owner consent.
 
-1. finalize Membership access precedence/state semantics into an ADR after product review;
-2. design Membership runtime table/index candidates on paper;
-3. design protected-file deployment matrix on paper;
-4. rank initial billing adapters commercially/technically without integrating them;
-5. refine Definition Repository index/schema alternatives before benchmark;
-6. refine Free↔Pro Platform API versioning/deprecation policy;
-7. refine Secrets Vault recovery/operator UX;
-8. update ADR recommendations using static evidence;
-9. keep PR/checkpoint/readiness matrix synchronized.
+## Resume order
+1. `DEVELOPMENT-CONSENT.md`
+2. `AGENTS.md`
+3. `CHECKPOINT.md`
+4. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+5. `docs/OPEN-DECISIONS-REGISTER.md`
+6. relevant module/architecture/security/ADR docs
 
-Before **any** runtime/source/build/migration/executable spike begins, ask the owner for explicit consent.
-
-## Resume instruction
-
-Future AI/engineer must read, in order:
-1. `DEVELOPMENT-CONSENT.md`;
-2. `AGENTS.md`;
-3. this checkpoint;
-4. `docs/IMPLEMENTATION-READINESS-MATRIX.md`;
-5. `docs/OPEN-DECISIONS-REGISTER.md`;
-6. relevant module/architecture/security specs and ADRs.
-
-Repository evidence overrides conversational memory. Proposed ADRs remain Proposed until evidence and acceptance are recorded.
+Repository evidence overrides conversational memory.
