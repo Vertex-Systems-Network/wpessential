@@ -71,6 +71,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0058 | Accepted email delivery architecture / provider evidence pending | Email submission, receiving-server delivery, failures/complaints/suppression and engagement are separate evidence; provider profiles use ET0–ET5 and never infer inbox/read truth |
 | ADR-0059 | Accepted JobService semantics / adapter evidence pending | Backend-neutral Job Type/Schedule/Job/Attempt/Runner policy; at-least-once, explicit idempotency, reviewed urgency, fairness, resource/concurrency keys, backpressure and cooperative cancellation |
 | ADR-0060 | Accepted platform/privacy architecture / service evidence pending | Remote-service transmission is purpose-scoped/minimized; Free activation sends nothing; account link ≠ telemetry consent; diagnostics require separate approval; retention/disconnect/deletion boundaries are explicit |
+| ADR-0061 | Accepted backup identity/capability architecture / provider evidence pending | Semantic `bf.*` family keys are canonical; numeric PF aliases are legacy/ambiguous; provider profiles are separately versioned; SE0–SE3 static evidence never implies C0–C4 certification |
 
 ## Product specification milestone
 
@@ -87,6 +88,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Job Service semantics: `docs/ARCHITECTURE/JOB-SERVICE-EXECUTION-FAIRNESS-BACKPRESSURE.md`
 - Component Blueprint/Settings/Admin Menu/Status/Listings/Import: respective files under `docs/ARCHITECTURE/`
 - Backup provider contract: `docs/ARCHITECTURE/BACKUP-PROVIDER-CERTIFICATION-CONTRACT.md`
+- Backup family/provider registry: `docs/ARCHITECTURE/BACKUP-PROVIDER-FAMILY-CAPABILITY-REGISTRY.md`
 - Backup remote lifecycle: `docs/ARCHITECTURE/BACKUP-REMOTE-COPY-LIFECYCLE.md`
 - Backup named matrix: `docs/MODULES/BACKUP-PROVIDER-CERTIFICATION-MATRIX.md`
 - Membership billing certification: `docs/ARCHITECTURE/MEMBERSHIP-BILLING-ADAPTER-CERTIFICATION.md`
@@ -118,6 +120,6 @@ Recipient Delivery/Transport Attempt/Event Ledger physical schema, ET0–ET5 tra
 ADR-0060 fixes field-level minimization/consent/retention semantics. OAuth endpoint/token lifecycle, exact service schemas/OpenAPI, log redaction, diagnostics upload, resource retention/deletion/export, entitlement canonicalizer/keyset rotation and production TUF client/key custody/conformance remain executable.
 
 ### Backup/operations/security
-Provider C0–C4 certification, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit implementation, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
+ADR-0061 fixes family/provider identity and static capability profiles for all 34 targets, but **0 providers are certified**. C0–C4 adapter/provider evidence, legacy-family import mapping, Remote Copy schema/finalization/retention, Backup crypto framing/KDF/recovery-kit implementation, Protector, Watermark, Reset, Dashboard Widget and XML-RPC runtime certification remain open.
 
 No executable evidence may run before explicit owner consent.
