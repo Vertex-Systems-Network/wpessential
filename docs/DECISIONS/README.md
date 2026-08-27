@@ -16,6 +16,7 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 3. An ADR records **why**, alternatives, consequences, migration and review triggers—not only the chosen technology.
 4. If external facts may change, include a review trigger/date rather than assuming permanence.
 5. A proposed ADR blocking Phase 0 must be resolved before production implementation begins.
+6. Even after Phase 0 blockers are resolved, production development cannot begin without the explicit owner consent required by ADR-0014 and `/DEVELOPMENT-CONSENT.md`.
 
 ## ADR set
 
@@ -34,9 +35,12 @@ Architecture Decision Records (ADRs) preserve decisions that materially affect l
 | `ADR-0011-ci-test-matrix.md` | **Proposed / Phase 0 blocker** | layered PR/main/nightly/provider CI matrix |
 | `ADR-0012-build-toolchain.md` | **Proposed / Phase 0 blocker** | Composer + React/TS; Vite preferred pending WordPress externals/tooling spike |
 | `ADR-0013-membership-entitlement-model.md` | **Accepted product architecture** | WordPress Role, Membership Plan/Enrollment, billing Subscription and Entitlement are separate domains; billing providers are adapters, not membership source of truth |
+| `ADR-0014-development-consent-gate.md` | **Accepted governance rule** | production development and executable research spikes require explicit owner consent; `continue`/planning approval never implies implementation permission |
 
 ## Phase 0 rule
 
-Production feature implementation does not begin until the Phase 0 blockers relevant to the platform skeleton are accepted or explicitly superseded. A small, isolated **research spike** may be used to collect evidence for a proposed ADR, but it must not silently become production architecture.
+Production feature implementation does not begin until the Phase 0 blockers relevant to the platform skeleton are accepted or explicitly superseded **and** explicit owner development consent has been obtained.
+
+Documentation-only research may continue without development consent. Any research spike that writes or executes implementation code is development under ADR-0014 and requires separate authorization.
 
 Membership implementation additionally remains blocked on the follow-up technical decisions named by ADR-0013: entitlement schema/cache, access-rule precedence, runtime storage/indexes, protected-file delivery, initial billing adapters, privacy/retention and role-sync conflict semantics.
