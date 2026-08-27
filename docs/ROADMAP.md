@@ -26,19 +26,29 @@ Build the shared primitives once, then make later modules composition-heavy rath
 - ADRs
 - checkpoint
 - implementation roadmap
+- detailed module specification standard
+- option-level inventory for every module
+- detailed specification for every module before source implementation
 
 ### Decisions still required before code
 - minimum WordPress/PHP
 - Composer/Node/build toolchain
 - WordPress React-package externalization strategy
 - definition storage schema
+- entitlement/policy boundary
 - background job engine
 - secret encryption/key model
 - Free/Pro compatibility protocol
 - CI matrix
 
+### Module specification gate
+
+Before production source implementation starts, **every module** must move from Inventory → Specified/Accepted under `docs/MODULES/SPECIFICATION-STANDARD.md`.
+
+Each specification must resolve its screens, controls, defaults, validation, permissions, lifecycle, data ownership, cross-module contracts, assets, failure behavior, observability, import/export and acceptance tests. Development must not become the place where product semantics are invented.
+
 ### Exit gate
-All above decisions accepted/documented. No unresolved conflict about distribution, unsafe PHP/SQL features, or license-expiry runtime behavior.
+All above decisions and module specifications accepted/documented. No unresolved conflict about distribution, unsafe PHP/SQL features, license-expiry runtime behavior, membership access safety, or module data ownership.
 
 ---
 
@@ -58,6 +68,8 @@ All above decisions accepted/documented. No unresolved conflict about distributi
 - Module Registry
 - service/contracts layer
 - capability setup
+- Policy baseline
+- Entitlement contract baseline
 - Asset Registry
 - Definition Repository v1
 - definition revisions
@@ -127,7 +139,7 @@ Build a reference application (e.g. directory/real-estate/project database) enti
 
 ---
 
-## Phase 3 — Admin & Portal Experience
+## Phase 3 — Admin, Identity & Portal Experience
 
 Build:
 
@@ -140,11 +152,12 @@ Build:
 7. Builder Widgets Builder — Gutenberg/shortcode first, then adapters
 
 ### Shared work
-- policy/resource rules
+- resource policy rules
 - Component Blueprint
 - dashboard/navigation schema
 - role-aware definition targeting
 - reusable admin DataViews patterns
+- account/profile primitives required by Membership
 
 ### Adapter order
 1. Gutenberg
@@ -162,11 +175,66 @@ Create two reference portals with different roles and prove server-side access c
 
 ---
 
-## Phase 4 — Forms, Automation & Communication
+## Phase 4 — Membership & Entitlements
+
+### 4A. Entitlement / access foundation
+- normalized entitlement model
+- plan/enrollment domain contracts
+- explainable access evaluation
+- entitlement cache/invalidation
+- enrollment status state machine
+- access-rule precedence
+
+### 4B. Membership System core
+- plans
+- plan groups
+- memberships/enrollments
+- manual/complimentary grants
+- content and partial-content restriction
+- protected downloads
+- drip/expiration/grace/trial
+- benefits
+- upgrade/downgrade path model
+- member account/dashboard surfaces
+
+### 4C. Initial grant/billing adapters
+Start with adapter contracts, not a built-in payment processor:
+1. manual/admin grant
+2. Workflow/Form grant
+3. WooCommerce product/order
+4. WooCommerce Subscriptions lifecycle
+5. SureCart purchase/subscription
+6. signed generic webhook
+
+### 4D. Advanced membership
+- seats/teams/corporate memberships
+- role-sync side effects
+- member segmentation via Query
+- commerce benefits/discount adapter
+- migration adapters after stable API/data research
+
+### Security gates
+- no protected-content exposure when module/license state changes
+- direct protected-file URL tests
+- webhook signature/replay/idempotency
+- object-level enrollment authorization
+- stale entitlement cache revocation tests
+- seat-allocation concurrency tests
+- role-sync anti-lockout tests
+
+### Commercial reason
+Membership provides a second major acquisition/conversion pillar beyond structured data. The differentiator is not another isolated paywall: membership entitlements can drive Dashboards, Forms, Listings, Notifications, REST/Abilities, Profiles and Workflows through the same Policy engine.
+
+### Exit gate
+Reference membership application must prove free + paid-source grants, multiple plans, exclusive/multi groups, drip, upgrades, protected files, profile/dashboard access, revocation, Pro-expiry safe enforcement and reconciliation failure recovery.
+
+---
+
+## Phase 5 — Forms, Automation & Communication
 
 Build foundation first:
 
-### 4A. Event / Workflow runtime
+### 5A. Event / Workflow runtime
 - typed events
 - trigger/action registry
 - workflow run persistence
@@ -177,41 +245,43 @@ Build foundation first:
 - failure recovery
 - job abstraction
 
-### 4B. Forms & Workflow Builder
+### 5B. Forms & Workflow Builder
 - forms schema/renderer
 - entry storage
 - CRUD actions
 - relation actions
+- membership grant/revoke/change actions
 - file/spam/security
 
-### 4C. Cron Job Builder
+### 5C. Cron Job Builder
 - WP-Cron inventory
 - WPEssential schedules
 - reliable runner guidance/adapter
 - job/run logs
 
-### 4D. Notification System
+### 5D. Notification System
 - in-app/frontend
 - recipient targeting
+- membership/entitlement targeting
 - preference/digest/logs
 
-### 4E. Emails Builder
+### 5E. Emails Builder
 - email-safe templates
-- WordPress event overrides
+- WordPress and membership event templates
 - test/preview
 
-### 4F. Webhooks & Connections Manager
+### 5F. Webhooks & Connections Manager
 - reusable connections
 - inbound/outbound webhooks
 - OAuth/provider connection lifecycle
 
 ### Exit gate
 Reference workflow must demonstrate:
-form → validated CRUD → relation → conditional branch → delayed job → email/in-app notification → webhook, with retry/audit/idempotency tests.
+form → validated CRUD → relation → membership/entitlement condition or change → conditional branch → delayed job → email/in-app notification → webhook, with retry/audit/idempotency tests.
 
 ---
 
-## Phase 5 — Data movement & Operations
+## Phase 6 — Data movement & Operations
 
 Risk order:
 
@@ -243,12 +313,13 @@ Then expand to provider-specific branded adapters while reusing protocols.
 
 ---
 
-## Phase 6 — Chat & Advanced integration
+## Phase 7 — Chat & Advanced integration
 
 ### Message & Chat System
-Build after notifications, policy, jobs and frontend dashboards exist; it depends on all of them.
+Build after notifications, policy, jobs, membership and frontend dashboards exist; it can depend on all of them.
 
 - conversation/message schema
+- membership/relation-based initiation rules
 - polling fallback
 - optional realtime adapter
 - moderation
@@ -257,27 +328,28 @@ Build after notifications, policy, jobs and frontend dashboards exist; it depend
 - notifications/workflows
 
 ### REST API Builder advanced release
-The low-level REST/Abilities platform exists earlier; the **user-facing no-code endpoint builder** matures here after data source/policy/workflow schemas have proven stable.
+The low-level REST/Abilities platform exists earlier; the **user-facing no-code endpoint builder** matures here after data source/policy/workflow/membership schemas have proven stable.
 
 Add:
 - endpoint versioning
 - schema-driven docs/export
 - advanced rate controls
+- membership/entitlement policies
 - connection/webhook integrations
 
 ### Exit gate
-Security review focused on IDOR, abuse/rate limits, SSRF, endpoint policy and realtime authorization.
+Security review focused on IDOR, abuse/rate limits, SSRF, endpoint policy, membership entitlement bypass and realtime authorization.
 
 ---
 
-## Phase 7 — AI-native experience layer
+## Phase 8 — AI-native experience layer
 
 Abilities are architectural from Phase 1. User-facing AI automation comes later so AI composes mature operations rather than driving unstable internals.
 
 ### Target
 - WPEssential AI command/search assistant
-- natural-language draft of queries/forms/workflows/fields
-- explain existing definitions
+- natural-language draft of queries/forms/workflows/fields/membership rules
+- explain existing definitions and access decisions
 - impact analysis
 - suggested fixes from diagnostics
 - opt-in MCP server/adapter configuration
@@ -292,10 +364,10 @@ Prompt/model output treated as untrusted; permissions and destructive-action pol
 
 ---
 
-## Phase 8 — Ecosystem / SDK / scale
+## Phase 9 — Ecosystem / SDK / scale
 
 - documented extension SDK
-- third-party field/data/query/workflow/provider adapters
+- third-party field/data/query/workflow/membership/provider adapters
 - integration certification suite
 - CLI expansion
 - multisite optimization
@@ -310,10 +382,10 @@ Prompt/model output treated as untrusted; permissions and destructive-action pol
 Runs continuously: dependency advisories, threat model updates, privilege regressions, vulnerability response.
 
 ## Compatibility train
-Test upcoming WordPress/PHP releases before stable release; update builder integrations against current versions.
+Test upcoming WordPress/PHP releases before stable release; update builder and commerce/membership integrations against current versions.
 
 ## Performance train
-Maintain large fixtures and prevent query/asset/job regressions.
+Maintain large fixtures and prevent query/asset/job/access-evaluation regressions.
 
 ## Documentation train
 Every public module ships user docs + developer extension docs where applicable.
@@ -329,7 +401,7 @@ Every release with schema change includes upgrade fixture and recovery notes.
 Commercially attractive, but a weak first proof of the platform and a large integration/support burden. Build adapter correctness first.
 
 ### Full realtime chat
-It introduces storage, privacy, moderation, realtime and scaling concerns. Build after policy/notification/dashboard infrastructure.
+It introduces storage, privacy, moderation, realtime and scaling concerns. Build after policy/notification/dashboard/membership infrastructure.
 
 ### Arbitrary PHP/SQL execution
 Not a “power user shortcut” worth destabilizing the security model.
@@ -340,6 +412,9 @@ Prove Component Blueprint using Gutenberg + Elementor, then expand by demand.
 ### AI-generated mutations before stable abilities
 AI should compose well-tested actions; it should not define the architecture.
 
+### Native payment-card processing
+Membership needs billing adapters, not a new PCI/payment processor.
+
 ---
 
 # Reference demo applications
@@ -348,12 +423,13 @@ Each major phase should ship/test against realistic reference blueprints.
 
 1. **Directory:** CPT + taxonomy + fields + relation + filters + listing
 2. **Client portal:** roles + frontend dashboard + profile + CRUD form + notifications
-3. **Operations workflow:** form → approval → scheduled action → email/webhook
-4. **Data app:** custom table + relation + query + admin columns + REST
-5. **Recovery drill:** backup → destructive fixture change → restore → checksum/data verification
+3. **Membership portal:** plans + entitlements + protected content/downloads + profile + dashboard + external billing source
+4. **Operations workflow:** form → approval → scheduled action → email/webhook
+5. **Data app:** custom table + relation + query + admin columns + REST
+6. **Recovery drill:** backup → destructive fixture change → restore → checksum/data verification
 
 These are QA/reference blueprints, not demo-only shortcuts.
 
 # Roadmap success rule
 
-Do not declare “WPEssential beats X” based on feature count. A module reaches competitive status only after its documented market baseline, WPEssential differentiator, security gate, performance gate and integration/reference workflow are verified.
+Do not declare “WPEssential beats X” based on feature count. A module reaches competitive status only after its documented market baseline, WPEssential differentiator, option-level specification, security gate, performance gate and integration/reference workflow are verified.
