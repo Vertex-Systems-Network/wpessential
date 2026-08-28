@@ -13,11 +13,7 @@ Explicit scoped owner consent is required before runtime/source/build/migration/
 
 `continue`, `resume`, planning acceptance, ADR acceptance and technical readiness do **not** authorize production development.
 
-Source of truth:
-- `DEVELOPMENT-CONSENT.md`
-- `AGENTS.md`
-- `docs/APPROVAL-LEDGER.md`
-- ADR-0014.
+Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md`, ADR-0014.
 
 ## Product milestone
 
@@ -30,7 +26,7 @@ Source of truth:
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions now extend through **ADR-0126**.
+Accepted evidence decisions now extend through **ADR-0128**.
 
 Recent bounded protocols:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -42,67 +38,87 @@ Recent bounded protocols:
 - ADR-0123 — P-001 Compatibility CF-01…CF-112.
 - ADR-0124 — P-005 Vault VT-01…VT-128.
 - ADR-0125 — P-002 UI/Design System UI-01…UI-104.
-- **ADR-0126 — P-008 Build Toolchain BT-01…BT-112.**
+- ADR-0126 — P-008 Build Toolchain BT-01…BT-112.
+- ADR-0127 — P-007 CI/Quality Matrix CI-01…CI-120.
+- **ADR-0128 — P-006 Free↔Pro Compatibility FP-01…FP-144.**
 
-## P-002 UI + P-008 Build planning milestone — COMPLETE
+## WP09 — P-002 UI + P-008 Build — COMPLETE
 
-Work package: **`P0-M00-WP09`**  
-Lifecycle: **DONE (planning/documentation only)**
+Work package: **`P0-M00-WP09`** — DONE planning/documentation only.
+
+- UI documented **104**, executed **0/104**, runtime certification 0.
+- BT documented **112**, executed **0/112**, toolchain certification 0.
+- ADR-0005 remains Proposed.
+- ADR-0012 remains Proposed.
+- canonical production build tool not selected.
+- minimum WP candidate 6.9 cannot depend on WP 7.1-only theme capability just to boot/render.
+- WordPress-provided React is mandatory; duplicate React/ReactDOM/JSX runtime is stop-the-line.
+- experimental `@wordpress/ui` and experimental build pages/routes/widgets are not foundational contracts.
+
+## WP10 — P-007 CI / Quality Matrix — COMPLETE
+
+Work package: **`P0-M00-WP10`** — DONE planning/documentation only.
 
 Created:
-- `docs/QUALITY/P002-UI-DESIGN-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0125-p002-ui-design-system-evidence-protocol.md`
-- `docs/QUALITY/P008-BUILD-TOOLCHAIN-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0126-p008-build-toolchain-evidence-protocol.md`
+- `docs/QUALITY/P007-CI-QUALITY-MATRIX-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0127-p007-ci-quality-matrix-evidence-protocol.md`
 
-Refined:
-- ADR-0005 Admin UI / Design System Strategy;
-- ADR-0012 Canonical Build Toolchain.
+Refined ADR-0011.
 
-Key planning corrections:
-- WP 6.9 remains minimum candidate, so WPE cannot require WP 7.1-only `wp-theme`/ThemeProvider just to boot/render;
-- WPE semantic wrapper/token path must work on the accepted minimum; stable 7.1+ theme capability can enhance it when present;
-- current experimental `@wordpress/ui` is not a 1.0 foundational dependency;
-- WordPress-provided React is mandatory; duplicate React/ReactDOM/JSX runtime is stop-the-line;
-- current authoritative repository branches contain no active root `package.json`/build manifest; historical Mix/Vite references are unverified, not current implementation truth;
-- `@wordpress/build` stable capabilities are first candidate, `@wordpress/scripts` second; Vite only after a documented unmet requirement;
-- experimental build pages/routes/widgets are excluded from canonical architecture;
-- exact-route asset loading, RTL/localization, machine-generated dependency metadata and actual ZIP verification are release requirements.
+Current CI state:
+- CI fixtures documented: **120**
+- executed: **0/120**
+- CI runtime certification: **0**
+- repository workflow implementation verified: **NO**
+- branch protection/rulesets: **UNKNOWN**
+- untrusted PR code must never receive provider/release secrets
+- FAST/FULL, BASELINE FAILURE, flaky quarantine, artifact hash/provenance and release gating are mandatory evidence truths.
 
-Current P-002/P-008 state:
-- UI fixtures documented: **104**; executed **0/104**; runtime certification **0**;
-- BT fixtures documented: **112**; executed **0/112**; toolchain certification **0**;
-- ADR-0005: **Proposed**;
-- ADR-0012: **Proposed**;
-- canonical production build tool: **not selected**.
+## WP11 — P-006 Free↔Pro Compatibility — COMPLETE
 
-## Other current evidence state
+Work package: **`P0-M00-WP11`** — DONE planning/documentation only.
 
-- CF: **0/112**; compatibility floor not certified; ADR-0002 Proposed.
-- VT: **0/128**; Vault runtime/crypto cert 0.
-- WC: **0/156**; I4/I5 0.
-- CH: **0/142**; runtime/realtime/search cert 0.
-- NT: **0/142**.
-- WF: **0/116**.
-- JS: **0/106**.
-- FM: **0/92**.
-- Action Scheduler remains candidate only / not certified.
+Created:
+- `docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0128-p006-free-pro-compatibility-evidence-protocol.md`
+
+Refined ADR-0010.
+
+Current P-006 state:
+- FP fixtures documented: **144**
+- executed: **0/144**
+- P-006 runtime certifications: **0**
+- certified Free↔Pro artifact pairs: **0**
+- Product License remote-service executions under P-006: **0**
+- migrations executed under P-006: **0**
+- ADR-0010 remains Proposed pending executable evidence.
+
+Preserved P-006 truth boundaries:
+- package/binary compatibility;
+- Platform API compatibility;
+- schema compatibility;
+- signed Product Entitlement;
+- remote Product License/account/allocation state;
+- Membership authorization;
+- updater/package trust.
+
+A green state in one domain does not certify another. Entitlement cannot force incompatible Pro to boot; compatible binaries cannot manufacture entitlement; service outage is not expiry; Product License cannot become Membership authorization.
 
 ## Current evidence counters
 
-- P-001 / CF: **0/112**.
+- P-001 / CF: **0/112**; compatibility floor not certified.
 - P-002 / UI: **0/104**.
 - P-003 / JS: **0/106**.
 - P-004: **0 executed**.
 - P-005 / VT: **0/128**.
-- P-006: **0 executed**.
-- P-007: **0 executed**.
+- P-006 / FP: **0/144**.
+- P-007 / CI: **0/120**.
 - P-008 / BT: **0/112**.
 - P-009: **0 executed**.
 - P-010: **0 executed**.
 - P-011 / WF: **0/116**.
 - P-012: **0 executed**.
-- P-013: **0 executed**.
+- P-013: **0 executed; 34 provider targets / 0 C-certified**.
 - WC: **0/156**.
 - CH: **0/142**.
 - NT: **0/142**.
@@ -127,7 +143,6 @@ Current P-002/P-008 state:
 - Protected files: **0 PC1+**.
 - Email: **6 EE3 / 0 ET-certified**.
 - Event/Connection adapters: **0 I4/I5**.
-- Backup: **34 targets / 0 C-certified**.
 - Site Lifecycle: **0/40**.
 - Multisite: **0 MS1+**.
 - Remote privacy: **0/30**.
@@ -137,17 +152,19 @@ Current P-002/P-008 state:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- ADR-0125/0126 accepted as evidence protocols only;
-- ADR-0002/0005/0012 remain Proposed;
-- no package manifest/dependency installation/React runtime/build/browser/accessibility/CI/ZIP execution occurred.
+- evidence contracts accepted through ADR-0128;
+- ADR-0002/0005/0010/0011/0012 remain runtime/toolchain blockers until applicable execution;
+- no package install/build/WordPress runtime/browser/CI/migration/license-service/provider execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP10` — P-007 CI / Quality Matrix executable evidence refinement**.
+Current work package: **`P0-M00-WP12` — P-012 Membership runtime/access/protected-files/provider evidence refinement**.
 
-CI is the next critical foundation because it must consume the now-fixed P-001 compatibility, P-002 UI/accessibility/runtime and P-008 build/artifact contracts together with FAST/FULL, BASELINE FAILURE, flaky-test, security and release gates.
+Reason: Membership is a security-critical shared dependency for frontend access, protected assets, teams, enrollment/entitlement state, Chat authorization and several module policies. Existing M1/M2 physical baselines, protected-file profiles and billing-provider evidence must be reconciled into one fixed adversarial runtime protocol without conflating billing source facts with WPE Enrollment/Entitlement truth.
 
-All evidence gates remain intact. Do not restart from zero. Explicit owner consent is still required before any workflow creation/execution or other executable work.
+After Membership planning closes, reassess **P-013 Backup** and remaining unresolved shared blockers.
+
+All existing evidence gates remain intact. Do not restart from zero. Explicit owner consent is still required before any executable work.
 
 ## Resume order
 
