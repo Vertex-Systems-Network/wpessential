@@ -127,6 +127,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0114 | Accepted Role & Capability evidence protocol / execution pending | RA-01…RA-48 fix native mutation/anti-lockout/recovery/Super Admin/cache evidence |
 | ADR-0115 | Accepted REST API Builder evidence protocol / execution pending | REST-01…REST-52 fix route/auth/scope/schema/idempotency/rate/cache/CORS/fuzz/scale evidence |
 | ADR-0116 | Accepted Import / Export evidence protocol / execution pending | IM-01…IM-56 fix source/archive/map/checkpoint/crash/rollback/export/Multisite/scale evidence |
+| ADR-0117 | Accepted Forms Runtime & Submission evidence protocol / execution pending | FM-01…FM-92 fix Form revision/access/validation/drafts/capacity/spam/uploads/Entry/idempotency/actions/Workflow/privacy/FRT topology evidence |
 
 ## Product specification milestone
 
@@ -144,11 +145,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Role & Capability evidence: `docs/QUALITY/ROLE-CAPABILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - REST API evidence: `docs/QUALITY/REST-API-BUILDER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Import / Export evidence: `docs/QUALITY/IMPORT-EXPORT-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Forms runtime evidence: `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Product License remote/API: corresponding files under `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
-P-001…P-013 remain executable gates. ADR-0101…0116 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import execution.
+P-001…P-013 remain executable gates. ADR-0101…0117 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import/forms execution.
 
 Current certification/evidence remains:
 - Membership: **0 MB-certified**;
@@ -175,6 +177,7 @@ Current certification/evidence remains:
 - Role & Capability: **0/48 RA fixtures**;
 - REST API Builder: **0/52 REST fixtures**;
 - Import / Export: **0/56 IM fixtures**;
+- Forms Runtime: **0/92 FM fixtures / 0 runtime certifications**;
 - Product License API/service: **0 fixtures**.
 
 No executable evidence may run before explicit owner consent.
