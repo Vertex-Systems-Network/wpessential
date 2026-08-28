@@ -11,7 +11,7 @@ WPEssential must not confuse geocoded coordinates with verified address/identity
 
 ## Decision
 
-Accept `docs/QUALITY/GEOSPATIAL-TERRITORY-EXECUTABLE-EVIDENCE-PROTOCOL.md` as the canonical detailed evidence protocol for F11.
+Accept `docs/QUALITY/GEOSPATIAL-TERRITORY-EXECUTABLE-EVIDENCE-PROTOCOL.md` as the canonical detailed evidence protocol for F11. Its group ownership is aligned exactly with `docs/QUALITY/UNIVERSAL-FOUNDATIONS-TECHNICAL-EVIDENCE-MASTER-PLAN.md`.
 
 The protocol fully enumerates:
 
@@ -24,13 +24,15 @@ The protocol fully enumerates:
 - `GEO-067…077` spatial query backend/capability fallback;
 - `GEO-078…088` caching/geocoder terms/freshness/revalidation;
 - `GEO-089…099` privacy/precise location/retention/redaction;
-- `GEO-100…110` routing/matrix provider unknown outcome/limits;
-- `GEO-111…121` import/export CRS/axis/invalid geometry;
-- `GEO-122…132` Policy/site/tenant protected locations;
+- `GEO-100…110` external routing/matrix provider unknown outcome/limits;
+- `GEO-111…121` import/export coordinate systems/invalid geometry;
+- `GEO-122…132` Policy/site/tenant-protected locations;
 - `GEO-133…143` Multisite/network territories/site lifecycle;
-- `GEO-144…154` restore/clone/migration/provider mapping safety;
-- `GEO-155…165` large spatial dataset/query/routing performance;
-- `GEO-166…176` deterministic geocoding/radius/polygon/territory/routing golden regressions.
+- `GEO-144…154` provider/version/data-source drift;
+- `GEO-155…165` large spatial dataset/query performance;
+- `GEO-166…176` delivery/service-area/real-estate/fleet golden regression.
+
+Restore/clone/provider remapping remains a cross-foundation environment-safety boundary, but it does not repurpose the canonical `GEO-144…154` namespace.
 
 ## Non-negotiable boundaries accepted
 
@@ -43,6 +45,7 @@ The protocol fully enumerates:
 - Precise location remains consent/Policy/retention/redaction governed.
 - Unknown geocoder/routing/provider outcome is not automatically failed.
 - Provider credentials remain Vault-owned; provider terms/cache/licensing constraints remain binding.
+- Provider/version/data-source drift must surface explicit compatibility/provenance state rather than silent coercion.
 - Multisite/site/tenant ownership is server-resolved and isolated.
 - Restore/clone/staging cannot blindly reuse production provider tokens/cache/mappings/private-location authority.
 - F10 synchronized location data keeps its source provenance; synchronization does not automatically transfer authority to F11.
