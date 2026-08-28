@@ -46,6 +46,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Role & Capability | ADR-0114 | RA-01…RA-48 |
 | REST API Builder | ADR-0115 | REST-01…REST-52 |
 | Import / Export | ADR-0116 | IM-01…IM-56 |
+| Forms Runtime | ADR-0025/0077/0117 | FM-01…FM-92 + FRT1/FRT2 topology evidence |
 | Owner consent | ADR-0014 | blocks all executable work |
 
 ## Per-surface readiness
@@ -68,7 +69,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113 native WP identity authority | UP-01…UP-48 | No |
 | 15 | Membership System | Exhaustive | M1/M2 + PD/PC protected files | P-012/MB/files/cache/revoke/restore | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109 shared Component Blueprint adapters | BW-01…BW-50; BC0…BC4 | No |
-| 17 | Forms & Workflow Builder | Exhaustive | FRT1/FRT2 + WF1/WF2 | Form storage + P-011 + P-003 | No |
+| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025/0077/0117 Forms FRT1/FRT2 + WF1/WF2 | FM-01…FM-92 + P-011 + P-003; final FRT topology evidence | No |
 | 18 | Cron Job Builder | Exhaustive | JobService + J1/J2/J3 | P-003 recurrence/DST/claims/fairness | No |
 | 19 | Notification System | Exhaustive | NE1/NE2 + JobService | fan-out/dedupe/delivery/ET/lifecycle | No |
 | 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + 0 ET certification | No |
@@ -93,6 +94,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Workflow P-011: **0 executed**.
 - Vault P-005: **0 executed**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
+- Forms Runtime: **0/92 FM fixtures; 0 runtime certifications; FRT topology not final**.
 - Admin Columns AC1: **0 runtime cases**.
 - Dynamic Listings DL1: **0 runtime cases**.
 - Dashboard Widgets: **0/36 DW fixtures**.
@@ -128,7 +130,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 5. admin/site UX modules, using DW/AM/FD/BW/SM/ST/UP/RA/XR evidence gates where applicable;
 6. User/Profile + Role security evidence before privileged management claims;
 7. Membership P-012 + protected files + MB certification;
-8. Forms/Workflow → Notifications/Email;
+8. Forms FM protocol + Workflow P-011/P-003 → Notifications/Email;
 9. REST/Connections/Event Inbox/Import using REST/IM gates;
 10. Backup P-013 + restore certification → Reset/Protector/other destructive operations;
 11. Chat after storage/search/transport evidence;
@@ -138,7 +140,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0116.**  
+**Architecture/evidence contracts accepted through ADR-0117.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
