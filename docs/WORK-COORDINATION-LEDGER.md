@@ -7,6 +7,7 @@ Last reviewed: 2026-08-28
 
 Project state: `PLANNED_EXISTING_PROJECT`  
 Execution mode: `PLANNER_ONLY`  
+Current lifecycle gate: `AWAITING_DEVELOPMENT_APPROVAL`  
 Production implementation WIP: **0**  
 Active implementation approvals: **0**  
 Authorized module/platform surfaces: **0/31**
@@ -75,32 +76,35 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP56` | Membership Billing provider certification refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0173; MB-F 0/176; MB0…MB5 unchanged; 4 BE3 / 0 MB-certified. |
 | `P0-M00-WP57` | Protected-file provider/delivery certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0174; PC-F 0/176; PC0…PC4 and PD1…PD4 preserved; 0 PC1+ runtime-certified. |
 | `P0-M00-WP58` | Backup provider certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0175; BPC-F 0/176; C0…C4/V3 preserved; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0. |
-| `P0-M00-WP59` | Connection adapter I0–I5 provider certification reassessment | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Current planning work; provider/API capability certification remains 0 I4/I5. |
+| `P0-M00-WP59` | Connection adapter I0–I5 provider certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0176; ICP-F 0/176; WC remains 0/156; 0 I4-certified / 0 I5-certified. |
 
 No production implementation work package is active.
 
 ## 3. Current planning queue
 
-| Order | Planning item | State | Dependency / note |
-|---:|---|---|---|
-| 1 | Connection adapter I0–I5 provider certification reassessment | `SPECIFICATION` current | Reconcile exact adapter/provider/API capability evidence with WC/Event Inbox/Vault/Safe HTTP/SSRF/versioning/privacy/idempotency/replay/Multisite and provider degradation/reconciliation. |
+**No queued planning-only refinement package remains.**
+
+Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
+
+The remaining work is implementation and executable evidence, both blocked until explicit scoped owner consent under ADR-0014.
 
 ## 4. Shared foundation truth
 
 - DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
 - KPA/VER/MLC/PDL/ERR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
+- WC **0/156**; ICP-F **0/176**; Connection provider profiles remain **0 I4 / 0 I5 certified**.
 - ET-F **0/176**; Email provider profiles remain **6 EE3 / 0 ET-certified**.
 - MB-F **0/176**; Membership billing provider profiles remain **4 BE3 / 0 MB-certified**.
 - PC-F **0/176**; protected-file profiles remain **0 PC1+**, PD1…PD4 runtime certifications 0.
 - BPC-F **0/176**; Backup providers remain **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
-- Connection adapters remain **0 I4/I5**.
 - WordPress remains native role/capability and identity/auth authority where defined.
 - Component Blueprint remains canonical over builder-private representations.
 - TUF authenticity and OAuth/Account/Product entitlement are independent trust domains.
 - Billing commercial fact, Enrollment, Membership Entitlement, Product Entitlement and WordPress Role remain separate authority domains.
 - Storage possession, signed-link issuance and Backup-provider support never become protected-file authorization/certification shortcuts.
 - Backup successful upload/finalization never substitutes for remote verification/restore certification.
+- Connection authentication/Test Connection never substitutes for granular provider capability certification.
 - Remote privacy/deletion/backup states remain distinct and evidence-scoped.
 - Watermarker original source bytes are immutable under standard processing.
 - current-blog context is never durable ownership or authorization.
@@ -108,7 +112,7 @@ No production implementation work package is active.
 
 ## 5. WIP / coordination rules
 
-Implementation WIP remains **0**. Planning shared-contract WIP is serialized. Material expansion follows:
+Implementation WIP remains **0**. Planning WIP is **0**. Material expansion follows:
 
 `STOP → REASSESS → UPDATE IMPACT → RESCOPE OR SPLIT`
 
@@ -116,6 +120,8 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP59`: inspect the existing Connection Adapter Certification Contract, provider capability/version profiles and Webhooks/Connections/Event Inbox evidence. Preserve I0–I5 provider/profile scoping, Safe HTTP/SSRF/Vault boundaries, verified ingress/replay/idempotency truth, and never promote static provider/API documentation or successful connection to I-level runtime certification.
+Do **not** create new arbitrary planning scope merely to keep work moving. Phase 0 planning/refinement is complete through ADR-0176.
 
-Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
+Next lifecycle transition requires explicit scoped owner development consent. After consent, first execution must still follow the implementation baseline/adoption gate, critical-path ordering, FAST/FULL quality gates, small-batch change budget and evidence protocols; consent does not waive technical safety gates.
+
+Until explicit consent is recorded, remain `PLANNER_ONLY` / `AWAITING_DEVELOPMENT_APPROVAL` with production implementation WIP 0.
