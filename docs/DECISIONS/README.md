@@ -148,6 +148,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0133 | Accepted P-010 Relations evidence refinement / execution pending | Canonical ADR-0093 protocol refined in place to REL-01…REL-160; R1/PT-D first baseline; R2 mandatory; final R/E/PV/DDL open |
 | ADR-0134 | Accepted Field Storage / Custom Fields evidence protocol / execution pending | FST-01…FST-176; FS1–FS6 routing and migration/security evidence; runtime/profile certifications 0 |
 | ADR-0135 | Accepted Custom Tables evidence protocol / execution pending | CTB-01…CTB-184; CT1–CT3 + CM1–CM4; exact DDL/types/indexes/constraints open |
+| ADR-0136 | Accepted Admin Columns evidence protocol / execution pending | AC-01…AC-176; AC1 baseline; target-specific read/sort/filter/search/edit/bulk/export/Multisite/performance certifications 0 |
+| ADR-0137 | Accepted Dynamic Listings evidence protocol / execution pending | DL-01…DL-176; DL1 baseline; authorization/pagination/cache/hydration/interaction/builder/SEO/Multisite certifications 0 |
 
 ## Product specification milestone
 
@@ -167,6 +169,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Relations: `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md` — REL-01…REL-160
 - Field Storage: `docs/QUALITY/FIELD-STORAGE-EXECUTABLE-EVIDENCE-PROTOCOL.md` — FST-01…FST-176
 - Custom Tables: `docs/QUALITY/CUSTOM-TABLES-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CTB-01…CTB-184
+- Admin Columns: `docs/QUALITY/ADMIN-COLUMNS-EXECUTABLE-EVIDENCE-PROTOCOL.md` — AC-01…AC-176
+- Dynamic Listings: `docs/QUALITY/DYNAMIC-LISTINGS-EXECUTABLE-EVIDENCE-PROTOCOL.md` — DL-01…DL-176
 - Membership: `docs/QUALITY/P012-MEMBERSHIP-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Backup/Restore: `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Forms: `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
@@ -185,6 +189,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**, all Field Storage runtime/profile certifications 0.
 - CTB **0/184**, CT1/CT2/CT3 + CM1/CM2/CM3/CM4 certifications 0; exact DDL open.
+- AC **0/176**, AC-R/S/F/Q/E/B/X/M/P certifications 0.
+- DL **0/176**, DL-A1/A2/A3 and DL-R/A/P/F/H/C/I/B/S/M/O certifications 0.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**; DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
 - Membership providers: **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
@@ -195,6 +201,6 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Current planning work
 
-**`P0-M00-WP19` — Admin Columns operational executable-evidence refinement — SPECIFICATION.**
+**`P0-M00-WP21` — Free CPT + Taxonomy runtime registration/rewrite evidence — SPECIFICATION.**
 
 No executable evidence may run before explicit owner consent.
