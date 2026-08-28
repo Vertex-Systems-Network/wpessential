@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0157**. Architecture or protocol acceptance never implies runtime certification or owner development authorization.
+This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0158**. Architecture or protocol acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -30,7 +30,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-017 | ADR-0038/0110 | Status runtime/concurrency/history/migration — SM-01…SM-48 |
 | D-018 | ADR-0052/0111 | XML-RPC compatibility/security — XR-01…XR-48 |
 | D-019 | ADR-0036/0089/0112 | Settings scope/inheritance/Vault/cache/import — ST-01…ST-48 |
-| D-020 | ADR-0030/0096/0113 | User Profile identity/security/privacy — UP-01…UP-48; WP41 canonical refinement current |
+| D-020 | ADR-0030/0096/0113/0158 | User Profile identity/security/privacy/cache/versioning/Multisite — UP-01…UP-176 |
 | D-021 | ADR-0032/0097/0114/0157 | Role/capability native authority/anti-lockout/recovery/cache/Multisite — RA-01…RA-176 |
 | D-022 | ADR-0028/0094/0115/0155 | REST auth/scope/schema/idempotency/RLT/CAC/CORS/async/privacy/versioning — REST-01…REST-176 |
 | D-023 | ADR-0041/0095/0116/0156 | Import/Export package trust/plan/checkpoint/remap/rollback/privacy/scale — IM-01…IM-176 |
@@ -59,6 +59,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-046 | ADR-0152 | Dynamic Value resolver source/typing/escaping/Policy/cache/consumer parity — DVR-01…DVR-176 |
 | D-047 | ADR-0045/0153 | Shared Rate Limit identity/atomicity/window/bypass/failure/Multisite/scale — RLT-01…RLT-176 |
 | D-048 | ADR-0154 | Shared Cache key/auth/generation/TTL/stampede/backend/privacy/Multisite — CAC-01…CAC-176 |
+| D-049 | ADR-0045/0105 | Protector request gating/trusted proxy/path normalization/recovery/headers/RLT/CAC/Multisite — PR-01…PR-44; WP42 refinement current |
 
 ## B. Accepted paper/runtime-baseline summary
 
@@ -80,7 +81,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - readable Data Source never implies write/delete/transaction capability.
 - asset declaration/registration/enqueue/fetch/execution remain separate.
 - condition `true`, DVR success, RLT allow and CAC hit never grant authorization.
-- WordPress remains Role/Capability authority; WPE plans/snapshots are guard/control-plane metadata.
+- WordPress remains native identity/auth and Role/Capability authority where accepted; WPE plans/snapshots are guard/control-plane metadata.
+- generic User Profile fields cannot mutate password/session/Application Password/role/Membership/Vault security state.
 - Import package checksum/signature status never authorizes import and numeric IDs are not portable identity authority.
 
 ## C. Fixed evidence execution truth
@@ -125,7 +127,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | REST | **0/176** |
 | IM | **0/176** |
 | RA | **0/176** |
-| UP | **0/48; WP41 refinement current** |
+| UP | **0/176** |
 | FM | **0/92** |
 | NT | **0/142** |
 | CH | **0/142** |
@@ -139,15 +141,17 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | Connection adapters | **0 I4/I5** |
 | Remote privacy RS | **0/30** |
 
-## D. Current highest-priority planning blocker — User Profile
+## D. Current highest-priority planning blocker — Protector
 
-`P0-M00-WP41` must reconcile the existing UP-01…UP-48 protocol against current FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC and Multisite evidence. The refinement must preserve:
-- native WordPress identity/auth authority;
-- generic profile fields cannot mutate passwords, roles/caps, sessions, Application Passwords, Membership entitlements, Vault/provider secrets or protected security internals;
-- identity-change actions are separate high-risk flows with current auth/recent auth/revalidation where required;
-- global user identity and site-scoped profile/role/Membership facts remain distinct in Multisite;
-- public projection is authorization/privacy-aware and cache-safe;
-- native/third-party/user-meta ownership and mass-assignment boundaries remain explicit.
+`P0-M00-WP42` must reconcile the existing PR-01…PR-44 protocol against current RLT/CAC/KPA/ERR/VER/MLC, REST/XML-RPC/Webhooks, Multisite and recovery evidence. The refinement must preserve:
+- trusted-proxy-aware client identity; untrusted forwarded headers never gain security authority;
+- shared atomic Rate Limit semantics with consumer-specific policy remaining separate;
+- Protector allow never grants a WordPress capability or bypasses endpoint/resource Policy;
+- recovery mode may disable WPE overlays but never authenticate, mint privilege or expose Membership-protected content;
+- path/redirect/header rules remain normalization/conflict safe;
+- application-layer protection is not represented as edge WAF/DDoS prevention;
+- cache/CDN behavior cannot silently bypass protected-content assumptions;
+- network floors and site overrides remain explicit in Multisite.
 
 ## E. Decision-processing rule
 
@@ -161,7 +165,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 
 ## Next planning-only priorities
 
-1. **User Profile canonical evidence refinement — current `P0-M00-WP41`.**
+1. **Protector canonical evidence refinement — current `P0-M00-WP42`.**
 2. Reassess remaining shallow legacy evidence protocols by security/critical-path value.
 
 Production development authorization remains **NOT GRANTED**.
