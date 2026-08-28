@@ -38,7 +38,7 @@ No implementation approval was introduced.
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions now extend through **ADR-0123**.
+Accepted evidence decisions now extend through **ADR-0124**.
 
 Recent bounded protocols:
 - ADR-0117 — Forms Runtime & Submission FM-01…FM-92.
@@ -47,36 +47,43 @@ Recent bounded protocols:
 - ADR-0120 — Notification System NT-01…NT-142.
 - ADR-0121 — Message & Chat CH-01…CH-142.
 - ADR-0122 — Webhooks, Connections & Event Inbox WC-01…WC-156.
-- **ADR-0123 — P-001 Compatibility Floor CF-01…CF-112.**
+- ADR-0123 — P-001 Compatibility Floor CF-01…CF-112.
+- **ADR-0124 — P-005 Secrets Vault VT-01…VT-128.**
 
-## P-001 Compatibility Floor planning milestone — COMPLETE
+## P-005 Secrets Vault planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP07`**  
+Work package: **`P0-M00-WP08`**  
 Lifecycle: **DONE (planning/documentation only)**
 
 Created:
-- `docs/QUALITY/P001-COMPATIBILITY-FLOOR-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0123-p001-compatibility-floor-evidence-protocol.md`
+- `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0124-p005-secrets-vault-evidence-protocol.md`
 
-Updated:
-- `docs/DECISIONS/ADR-0002-compatibility-floor.md`
+P-005 evidence now covers crypto primitive/randomness/nonces, deterministic interoperability fixtures, AAD tamper and row/ciphertext anti-swap, immutable Secret Version lifecycle and pointer concurrency, external/WordPress-derived/recovery/KMS slot behavior, wrapping-key/VRK rotation crash recovery, explicit network Use Grants and revoke races, browser/REST/Abilities/AI/Job/Workflow no-plaintext boundaries, database/filesystem/log/Audit/support redaction scans, Backup/Restore/lost-key truth, clone/staging/transfer safety, deletion/provider outcome separation, Multisite isolation, V1/V2 schema/migration evidence, scale/cache/concurrency, database-only theft/full-server threat-claim validation, fuzzing and independent security review.
 
-P-001 evidence now covers authoritative version/lifecycle refresh, one-source compatibility metadata, unsupported-environment preflight, clean install/activation/deactivation/uninstall, WordPress/PHP floor/current/forward matrix, MySQL/MariaDB/charset/sql-mode/migration evidence, Multisite/Site Lifecycle, Abilities/REST/cache/cron/CLI profiles, existing-project baseline/coexistence safety, Free↔Pro mismatch/rollback and distributable artifact/CI/resource evidence.
+Current P-005 state:
+- VT fixtures documented: **128**
+- VT fixtures executed: **0/128**
+- Vault runtime certifications: **0**
+- Vault crypto interoperability certifications: **0**
+- independent Vault security review executed: **NO**
+- final Vault physical topology: **OPEN / evidence-gated**
+- V1/PT-C: favored first future baseline only
+- V2/PT-E + separate network Vault: mandatory comparison
 
-Current P-001 state:
-- CF fixtures documented: **112**
-- CF fixtures executed: **0/112**
-- compatibility floor certified: **NO**
-- ADR-0002: **Proposed / Phase 0 blocker**
-- WordPress minimum candidate: **6.9**
-- current/reference WordPress planning snapshot: **7.1**
-- PHP minimum candidate: **8.3**
-- database floor: **OPEN / evidence-gated**
+Preserved Vault architecture:
+- random VRK per Vault Security Domain;
+- random per-secret DEK;
+- XChaCha20-Poly1305 IETF AEAD + versioned deterministic AAD under ADR-0048;
+- external / WordPress-derived / recovery / future KMS-HSM VRK slots;
+- immutable encrypted Secret Versions;
+- explicit network-secret Use Grant + current target-site Policy/Connection authorization;
+- no plaintext/weak fallback and no standard reveal after save;
+- DB-only secrecy is a target claim; full arbitrary PHP/server compromise remains outside the standard claim.
 
-The planning snapshot does not create a support claim. Versions and upstream lifecycle evidence must be refreshed again at actual execution and before beta/stable release.
+## Compatibility and communication/integration evidence state
 
-## Recent communication/integration evidence state
-
+- CF: **0/112**; compatibility floor not certified; ADR-0002 remains Proposed.
 - WC: **0/156**; I4/I5 **0**; Event Inbox/Safe HTTP runtime unverified; EI topology open.
 - CH: **0/142**; Chat runtime/realtime/search certifications **0**; CRT topology open.
 - NT: **0/142**; Notification runtime certifications **0**; NE topology open.
@@ -91,7 +98,7 @@ The planning snapshot does not create a support claim. Versions and upstream lif
 - P-002: **0 executed**.
 - P-003 / JS: **0/106**.
 - P-004: **0 executed**.
-- P-005: **0 executed**.
+- P-005 / VT: **0/128; Vault runtime/crypto certifications 0**.
 - P-006: **0 executed**.
 - P-007: **0 executed**.
 - P-008: **0 executed**.
@@ -135,17 +142,19 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - governance hardening complete;
-- ADR-0123 accepted as the fixed P-001 evidence contract;
+- ADR-0124 accepted as the fixed P-005 evidence contract;
 - ADR-0002 remains Proposed rather than being silently accepted from static research;
-- no PHP/React/runtime/build/test/network/provider/deployment work was executed.
+- no PHP/React/runtime/build/test/network/provider/crypto/deployment work was executed.
 
-Not performed: WordPress/PHP/database environment execution, package/dependency installation, plugin activation, DB schema/migrations, WP-CLI, CI runs, release artifact builds, provider calls, benchmarks or deployment.
+Not performed: WordPress/PHP/database environment execution, package/dependency installation, plugin activation, DB schema/migrations, Vault key generation/encryption/KDF/rotation, WP-CLI, CI runs, release artifact builds, provider calls, benchmarks, attack simulations or deployment.
 
 ## Next planning-only priority
 
-The highest-value remaining critical-path bounded-evidence gap is **P-005 Secrets Vault**. The existing generic P-005 spike must be checked against the accepted Vault architecture and refined into a fixed adversarial protocol if no dedicated equivalent already exists.
+Current critical-path planning package is **`P0-M00-WP09` — P-002 UI runtime + P-008 build/externalization evidence refinement**.
 
-All existing P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC/CF gates remain intact.
+Reason: WPE UI wrappers, WordPress-provided React/runtime packages, DataViews/DataForm/design tokens, route-scoped assets, accessibility/RTL/localization and the build/externalization/artifact pipeline form one coupled platform foundation. They should be evidence-planned together while retaining separate P-002 and P-008 pass/fail decisions.
+
+All existing P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC/CF/VT gates remain intact.
 
 Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
 
