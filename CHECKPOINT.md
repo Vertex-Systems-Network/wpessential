@@ -2,16 +2,22 @@
 
 Checkpoint date: **2026-08-28**  
 Branch: `planning/master-architecture`  
-Project state: **PARTIALLY COMPLETE — Phase 0 planning only**  
+Canonical project state: **`PLANNED_EXISTING_PROJECT`**  
+Execution mode: **`PLANNER_ONLY`**  
+Work lifecycle state: **`SPECIFICATION` / Phase 0 planning**  
 Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
 Explicit owner consent is required before runtime/source/build/migration/test implementation, dependency/package setup, executable spikes/benchmarks, WordPress hook execution, queues, OAuth/service/provider/API calls, TUF/signing-key generation, SMTP/email sends, media/file processing, Backup/Restore, Reset/Protector execution, XML-RPC execution, option/user/role/status/state/REST/import mutation, builder/editor execution, package staging or release packaging.
 
-`continue` and planning acceptance do **not** authorize development.
+`continue`, `resume`, planning acceptance, ADR acceptance and a technically ready milestone do **not** authorize production development.
 
-Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
+Source of truth:
+- `/DEVELOPMENT-CONSENT.md`
+- `AGENTS.md`
+- `docs/APPROVAL-LEDGER.md`
+- ADR-0014.
 
 ## Product milestone
 
@@ -24,7 +30,7 @@ Source of truth: `/DEVELOPMENT-CONSENT.md`, `AGENTS.md`, ADR-0014.
 
 ## Accepted architecture/evidence milestone
 
-Accepted decisions now extend through **ADR-0116**.
+Accepted decisions remain through **ADR-0116**.
 
 Latest evidence contracts:
 - ADR-0101 — OAuth Account-Link OA-01…OA-32.
@@ -38,40 +44,128 @@ Latest evidence contracts:
 - ADR-0109 — Builder Widgets BW-01…BW-50, BC0…BC4.
 - ADR-0110 — Status Manager SM-01…SM-48.
 - ADR-0111 — XML-RPC Manager XR-01…XR-48.
-- **ADR-0112 — Settings Page ST-01…ST-48.**
-- **ADR-0113 — User Profile UP-01…UP-48.**
-- **ADR-0114 — Role & Capability RA-01…RA-48.**
-- **ADR-0115 — REST API Builder REST-01…REST-52.**
-- **ADR-0116 — Import / Export IM-01…IM-56.**
+- ADR-0112 — Settings Page ST-01…ST-48.
+- ADR-0113 — User Profile UP-01…UP-48.
+- ADR-0114 — Role & Capability RA-01…RA-48.
+- ADR-0115 — REST API Builder REST-01…REST-52.
+- ADR-0116 — Import / Export IM-01…IM-56.
 
 Earlier accepted physical/compiler/security baselines remain active: Definition D1, Relations R1, Query QP1–QP4, Field Storage FS1–FS6, Custom Tables CT1/CT2/CT3, Settings ST1/ST2/ST3, Forms/Chat, Membership, Notification/Email, Event Inbox, Audit, Workflow, JobService, REST RE1/RI1/RI2, Import IR1/IR2, Backup Remote Copy, Vault, User/Profile and Role/Capability.
 
-## New batch details
+## Universal Master Prompt governance hardening — COMPLETE
 
-### Settings Page — ADR-0112
-ST-01…ST-48 cover Site/Network/default+override semantics, missing vs explicit values, typed validation, stale writes, conditional fields, non-autoload defaults, Vault-backed secrets, external settings, REST projection, cache invalidation, import/export, site lifecycle and Multisite scale.
+Work reference: **`P0-M00-WP01`** — documentation/governance hardening only.
 
-**ST executed: 0/48.**
+The audit additions requested before resuming normal Phase 0 planning are now integrated.
 
-### User Profile — ADR-0113
-UP-01…UP-48 cover self/admin targeting, protected user/auth meta, mass assignment, Field Storage, public/REST/listing projection, email confirmation/replay/races, recent auth, passwords/sessions/Application Passwords, site removal vs global deletion, Super Admin boundaries, privacy exporter/eraser and Multisite isolation.
+### New durable governance artifacts
 
-**UP executed: 0/48.**
+1. `docs/PROJECT-STATE-AND-ADOPTION.md`
+   - canonical project-state taxonomy;
+   - state transitions;
+   - execution modes;
+   - capability detection;
+   - existing-project adoption workflow;
+   - Plan→Repository and Repository→Plan status taxonomy;
+   - current WPEssential adoption baseline;
+   - gap classification;
+   - Implementation Baseline / Adoption Gate;
+   - baseline-failure registry rule;
+   - VCS/protection audit + UNKNOWN fallback.
 
-### Role & Capability — ADR-0114
-RA-01…RA-48 cover native/third-party roles, Change Plans, effective-capability simulation, recovery-principal invariant, self-lockout, stale/partial/ambiguous mutations, bounded snapshots/reverse diffs, native/CLI/recovery-mode repair, Super Admin/network boundaries and revocation cache invalidation.
+2. `docs/APPROVAL-LEDGER.md`
+   - TASK/MODULE/MILESTONE/PHASE/PROJECT approval hierarchy;
+   - durable approval states/records;
+   - current `NOT GRANTED` project consent;
+   - existing-project approval adoption;
+   - work lifecycle state machine;
+   - stable work-ID convention;
+   - milestone contract;
+   - approval autonomy, precedence and revocation.
 
-**RA executed: 0/48.**
+3. `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
+   - critical-path classes;
+   - small-batch change budget / STOP→REASSESS;
+   - no unrelated cleanup;
+   - parallelism classes;
+   - shared-surface ownership;
+   - WIP limits;
+   - frequent integration;
+   - FAST/FULL gates;
+   - flaky-test policy;
+   - baseline failure handling;
+   - negative requirements;
+   - SELF/INDEPENDENT/AUTOMATED review labels;
+   - planner-only/VCS fallback;
+   - end-of-task report contract.
 
-### REST API Builder — ADR-0115
-REST-01…REST-52 cover published-route fail-closed behavior, cookie/nonce/Application Password/anonymous modes, endpoint/resource Policy, wrong-site/IDOR/mass-assignment/fuzz protection, idempotency crash/races, atomic rate limiting, trusted proxy, cache isolation/revocation, CORS, error redaction, Multisite and load evidence.
+4. `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
+   - BUILT/DEPLOYED/RELEASED/PRODUCTION_VERIFIED states;
+   - recovery classifications;
+   - Expand→Migrate→Verify→Contract guidance;
+   - incident mode;
+   - stop-the-line triggers/response;
+   - production verification;
+   - root-cause evidence requirements.
 
-**REST executed: 0/52.**
+### Existing governance integrated
 
-### Import / Export — ADR-0116
-IM-01…IM-56 cover Dry Run/Plan/source fingerprints, private archive staging/traversal/symlink/bomb defense, target authorization, Identity Map concurrency, checkpoint crash windows, duplicate Jobs, pause/resume/cancel, R0–R3 rollback truth, Restore revalidation, Safe HTTP/media, export privacy, IR1/IR2 and large-network scale.
+- `AGENTS.md` now requires the new adoption/approval/execution/release governance and updates session/resume/parallel/review/report behavior.
+- `DEVELOPMENT-CONSENT.md` now formalizes scoped durable approvals and implementation-baseline requirements.
+- `docs/QUALITY-GATES.md` now formalizes FAST/FULL gates, BASELINE FAILURE, flaky-test handling, review classification, concurrency/negative-requirement evidence and stop-the-line quality behavior.
+- `docs/MODULES/SPECIFICATION-STANDARD.md` now requires explicit `MUST NOT` negative requirements, self-audit, gap classification and implementation-boundary/change-budget planning.
+- `README.md` now exposes the canonical project/execution state and new mandatory-read order.
+- `.github/PULL_REQUEST_TEMPLATE.md` now records work/approval IDs, change budget, parallelism/shared surfaces, FAST/FULL gates, baseline/flaky failures, review class, recovery class and release state.
 
-**IM executed: 0/56.**
+## Governance audit mapping status
+
+The previously identified audit gaps are now covered:
+
+- project-state classification + transitions — **ADDED**
+- adoption/baseline ledger — **ADDED**
+- bidirectional plan/repository states — **ADDED**
+- gap classes incl. NEW_PRODUCT_SCOPE approval boundary — **ADDED**
+- approval scope hierarchy + persistent ledger — **ADDED**
+- work lifecycle state machine — **ADDED**
+- stable work IDs + milestone contract — **ADDED**
+- implementation baseline gate — **ADDED**
+- capability detection — **ADDED**
+- BASELINE FAILURE taxonomy — **ADDED**
+- flaky-test policy — **ADDED**
+- FAST/FULL two-speed testing — **ADDED**
+- small-batch scope budget — **ADDED**
+- no unrelated cleanup — **ADDED**
+- parallel work classification/shared-surface ownership/WIP limits — **ADDED**
+- critical-path classes — **ADDED**
+- negative requirements — **ADDED**
+- SELF vs INDEPENDENT review — **ADDED**
+- release state machine — **ADDED**
+- recovery classification — **ADDED**
+- incident mode — **ADDED**
+- stop-the-line — **ADDED**
+- VCS protection audit + provider UNKNOWN fallback — **ADDED**
+- exact end-of-task report — **ADDED**
+- planner-only mode — **ADDED**
+
+## Current capability/protection truth
+
+Latest GitHub-only adoption audit established:
+- GitHub repository read: AVAILABLE;
+- planning documentation writes: AVAILABLE;
+- Draft PR metadata: AVAILABLE;
+- branch protection: **UNKNOWN** because current provider integration returned 403;
+- repository rulesets: **UNKNOWN** due provider/plan access limitation;
+- local filesystem/working tree, terminal, WordPress runtime, database, CI result and deployment: **not established by that GitHub-only audit**.
+
+Do not reinterpret UNKNOWN as configured or unconfigured.
+
+## Current approval ledger
+
+- project development approval: **PENDING / NOT GRANTED**;
+- ACTIVE implementation approvals: **0**;
+- authorized module/platform surfaces: **0/31**.
+
+No implementation authorization was introduced by this governance hardening.
 
 ## Existing critical evidence counters
 
@@ -118,13 +212,18 @@ IM-01…IM-56 cover Dry Run/Plan/source fingerprints, private archive staging/tr
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- accepted architecture/evidence contracts through **ADR-0116**;
-- ADR index, Open Decisions, Implementation Readiness and `CHECKPOINT.md` synchronized through ADR-0116;
-- no implementation/build/test/provider/update/runtime success claimed.
+- accepted architecture/evidence contracts remain through **ADR-0116**;
+- Universal Master Prompt governance gaps above are integrated into durable repo docs and core engineering entry points;
+- original product planning resume point has been preserved;
+- no PHP/React/runtime/build/test/provider/deployment work was executed.
 
 Not performed: PHP/React source, package installation, DB tables/migrations/indexes, WordPress runtime hooks, builder registration/editor runs, option/user/role/status mutations, Query/REST/import runtime, Action Scheduler/queues, OAuth/TUF/provider/API/webhook/SMTP calls, Email sends, image/archive processing, Backup/Restore/Reset, crypto/KDF, PHPUnit/Playwright, benchmarks or deployment.
 
-## Next allowed planning-only priorities
+## Original planning resume point — PRESERVED
+
+The original work was intentionally paused at **ADR-0116** while governance additions were integrated.
+
+After the owner is explicitly informed that the audit points are complete, resume the existing Phase 0 planning sequence from:
 
 1. Forms runtime/storage/submission executable evidence protocol.
 2. Workflow/Cron scheduling/DST/claims executable evidence refinement around P-003/P-011.
@@ -133,17 +232,24 @@ Not performed: PHP/React source, package installation, DB tables/migrations/inde
 5. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
 6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM gates intact.
 
-Before any executable work, explicit owner consent is required.
+**Do not restart planning from zero. Do not repeat the governance audit unless new evidence requires it.**
+
+Before any executable work, explicit owner consent is still required.
 
 ## Resume order
+
 1. `/DEVELOPMENT-CONSENT.md`
 2. `AGENTS.md`
 3. `CHECKPOINT.md`
-4. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
-5. `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`
-6. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-7. `docs/OPEN-DECISIONS-REGISTER.md`
-8. `docs/DECISIONS/README.md`
-9. relevant architecture/security/quality/module/provider docs
+4. `docs/PROJECT-STATE-AND-ADOPTION.md`
+5. `docs/APPROVAL-LEDGER.md`
+6. `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
+7. `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
+8. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
+9. `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`
+10. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+11. `docs/OPEN-DECISIONS-REGISTER.md`
+12. `docs/DECISIONS/README.md`
+13. relevant architecture/security/quality/module/provider docs.
 
 Repository evidence overrides conversational memory.
