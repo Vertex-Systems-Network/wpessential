@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0146**. Architecture acceptance never implies runtime certification or owner development authorization.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0151**. Architecture acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -51,7 +51,12 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-038 | privacy/retention architecture + ADR-0144 | local classification/retention/export-erasure/derived-data/backup-restore/Multisite privacy lifecycle — PDL-01…PDL-176; RS remote privacy remains separate |
 | D-039 | error/failure architecture + ADR-0145 | stable code/envelope/retry/conflict/partial-failure/redaction/accessibility/channel-parity evidence — ERR-01…ERR-176 |
 | D-040 | ADR-0035/0039/0099/0146 | Component Blueprint core compiler/bindings/Policy/renderer/slots/styles/assets/cache/accessibility/Multisite — CBP-01…CBP-176; BW/BC adapter certification separate |
-| D-041 | `CONTRACT-VERSIONING-AND-DEPRECATION.md` | cross-version/deprecation evidence reassessment — WP30 current; reconcile FP/DEF/KPA/IM/CBP/module-specific overlap before freezing protocol |
+| D-041 | contract-versioning architecture + ADR-0147 | shared cross-version/upgrade/downgrade/migrator/deprecation/removal/unknown-future-schema evidence — VER-01…VER-176; domain migration evidence separate |
+| D-042 | module-lifecycle architecture + ADR-0148 | enable/disable/re-enable/dependency loss/expiry/uninstall/cleanup/recovery evidence — MLC-01…MLC-176 |
+| D-043 | Entity/Data Source architecture + ADR-0149 | adapter identity/schema/capabilities/Policy/query/write/delete/transaction/scope/version evidence — DSR-01…DSR-176 |
+| D-044 | Asset Registry architecture + ADR-0150 | descriptor/dependency/scope/WP-handle/build-manifest/loading/cache/lifecycle/security/Multisite evidence — ASR-01…ASR-176 |
+| D-045 | Conditional Logic architecture + ADR-0151 | typed operator/value-source/Policy/boolean/dependency/cache/consumer-parity/Multisite evidence — CLG-01…CLG-176 |
+| D-046 | Dynamic Value / Token Resolver architecture | WP35 current; no dedicated fixed shared resolver protocol yet; reconcile DSR/FST/QRY/REL/CBP/EBR/NT/FM overlap |
 
 ## B. Accepted paper/runtime-baseline summary
 
@@ -71,6 +76,11 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Local privacy: P0–P4 classification, owner-specific retention/export/erase, derived-data cleanup and backup/restore reconciliation are fixed in PDL; remote RS stays separate.
 - Error semantics: stable machine code, category/severity/retryability/disclosure/correlation/partial-failure semantics are fixed in ERR.
 - Component Blueprint: core Definition→Compiled Blueprint→Instance/Bindings→Authorized Context→Renderer→Markup/Assets pipeline is fixed in CBP; builder BW/BC remains separate.
+- Contract Versioning: Product/API/schema/runtime/Ability/Event/SDK/package evolution, deterministic migrator chains and staged deprecation/removal are fixed in VER while domain migrations remain separately certified.
+- Module Lifecycle: availability/enable/disable/degraded/read-only/expiry/uninstall/recovery and ownership-bounded cleanup are fixed in MLC; lifecycle state is not privacy erase.
+- Entity/Data Source Registry: source capability/schema/Policy/scope/transaction semantics are fixed in DSR; readable never implies writable.
+- Asset Registry: platform asset identity/dependencies/scopes/WP-handle coexistence/build-manifest/loading/lifecycle/security are fixed in ASR; consumer certification stays separate.
+- Conditional Logic: typed operator/null/value-source/Policy/dependency/cache/cross-consumer semantics are fixed in CLG; condition truth never authorizes the consumer action.
 - Forms FRT1/PT-D first + FRT2 mandatory; Chat CRT1/PT-D first + CRT2 mandatory; Membership M1/PT-D first + M2 mandatory; Notification/Email NE1/PT-D first + NE2 mandatory; Event Inbox EI1/PT-D first + EI2 mandatory; Workflow WF1/PT-D first + WF2 mandatory.
 - JobService J1/J2/J3; Action Scheduler candidate only.
 - Import IR1/PT-D first + IR2 mandatory; Backup manifest-first BR1/BR2/BR3; Vault V1/PT-C favored first + V2 comparison.
@@ -107,7 +117,12 @@ All remain paper-only until applicable executable evidence certifies them.
 | KPA | **0/176; all shared-platform certification classes 0** |
 | PDL | **0/176; all local privacy/data-lifecycle certification classes 0** |
 | ERR | **0/176; all error/failure-UX certification classes 0** |
-| CBP | **0/176; CBP-D/C/B/R/S/A/K/X/U/O certs 0** |
+| CBP | **0/176; CBP certifications 0** |
+| VER | **0/176; all versioning/deprecation certification classes 0** |
+| MLC | **0/176; all module lifecycle/recovery certification classes 0** |
+| DSR | **0/176; all Data Source Registry certification classes 0** |
+| ASR | **0/176; all Asset Registry certification classes 0** |
+| CLG | **0/176; all Conditional Logic certification classes 0** |
 | FM | **0/92** |
 | NT | **0/142** |
 | CH | **0/142** |
@@ -124,7 +139,7 @@ All remain paper-only until applicable executable evidence certifies them.
 - numeric blog ID, WPE site UUID, network/install identity and commercial Allocation ID stay distinct;
 - Site Admin cannot acquire Network authority through request coordinates;
 - `switch_to_blog()` is context management only;
-- caches/jobs/workflows/provider actions stay target-scope bound;
+- caches/jobs/workflows/provider/actions/conditions/data-source/asset resolution stay target-scope bound;
 - ordinary site Query/Relation/REST/Ability cannot become arbitrary cross-site operation;
 - network secret delegation does not reveal/copy plaintext ownership;
 - global WP user identity does not propagate site roles/Membership access;
@@ -136,30 +151,34 @@ All remain paper-only until applicable executable evidence certifies them.
 
 Current: **MSI 0/160; LC 0/96; 0 MS1+ surfaces; 0 SL runtime certifications**.
 
-## E. Cross-cutting evidence boundaries after ADR-0142…0146
+## E. Cross-cutting evidence boundaries after ADR-0142…0151
 
 - AUD **0/176**; Audit/domain history/diagnostics/security/provider/analytics truths stay distinct; AU1/PT-D remains first future baseline only.
 - KPA **0/176**; registry discovery or UI visibility never grants permission, and invocation channels cannot bypass Capability + target Policy.
 - PDL **0/176**; local live-record erase does not mean backup erase or remote-service deletion; privacy actions are data-owner scoped.
 - ERR **0/176**; retryability and disclosure follow error class and operation idempotency; partial failures remain explicit.
 - CBP **0/176**; core compiler/renderer evidence remains distinct from BW **0/50** builder-adapter evidence.
+- VER **0/176**; package/product/schema/API version equality never substitutes for explicit compatibility/migration evidence.
+- MLC **0/176**; module disable/expiry/uninstall/cleanup/privacy erase stay separate operations.
+- DSR **0/176**; Data Source read/query/write/delete/transaction capabilities are explicit and independently authorized.
+- ASR **0/176**; declaration/registration/enqueue/fetch/execute/certification stay separate truths.
+- CLG **0/176**; condition evaluation is side-effect-free platform truth and cannot grant downstream action authorization.
 
-## F. Current highest-priority planning blocker — Contract Versioning & Deprecation
+## F. Current highest-priority planning blocker — Dynamic Value / Token Resolver
 
-WP30 must reconcile the accepted versioning/deprecation policy against existing executable contracts before freezing any new matrix. Coverage should include only genuinely cross-version behavior:
-- Product Version vs Platform API vs Definition schema vs runtime-data migration version;
-- Ability/Event schema and semantic evolution, including authorization/idempotency/sync-async changes;
-- extension/adapter SDK compatibility ranges and unknown/incompatible versions;
-- Free↔Pro compatible/skewed/degraded boot without duplicating FP fixtures;
-- deterministic version-to-version migrator chains without mutating historical revisions silently;
-- unknown future schema fail-safe/read-only handling;
-- capability split/rename/removal with least-privilege migration;
-- deprecation stages Active → Deprecated → Compatibility-only → Removal eligible → Removed;
-- accelerated security deprecation with explicit recovery/migration behavior;
-- package/import compatibility without duplicating IM package parsing and conflict evidence;
-- runtime DB domain migration state, resumability/failure/degraded mode and rollback/recovery boundaries;
-- Multisite mixed-version/mixed-migration states and network/site coordination;
-- release compatibility report and public-contract regression evidence.
+WP35 must reconcile the platform architecture's shared dynamic value/token resolver against existing executable contracts before freezing any new matrix. Coverage should include only genuinely shared behavior:
+- stable typed value/token descriptor identity and source registration;
+- Data Source/Field/Relation/Query/current-user/current-entity/settings/context resolution without arbitrary callbacks;
+- explicit render contexts: HTML text, HTML attribute, URL, JSON, email HTML, plain text and other approved typed contexts;
+- source value ≠ formatted value ≠ escaped output ≠ trusted markup;
+- Policy/privacy before resolution/disclosure; secret/Vault plaintext denied from generic resolver;
+- null/missing/empty/error/denied semantics;
+- dependency graph/cycle/depth/fan-out/resource budgets;
+- request batching and N+1 prevention where semantics permit;
+- cache identity/invalidation by revision/source/access/scope/locale/timezone/version generation;
+- cross-consumer parity across listings/dashboards/columns/emails/notifications/forms/builder adapters;
+- Multisite target ownership and cross-site denial unless an explicit certified profile exists;
+- performance/scale evidence without duplicating DSR/FST/QRY/REL/CBP/EBR consumer protocols.
 
 ## G. Decision-processing rule
 
@@ -173,7 +192,7 @@ WP30 must reconcile the accepted versioning/deprecation policy against existing 
 
 ## Next planning-only priorities
 
-1. **Contract Versioning & Deprecation executable-evidence reassessment** — current `P0-M00-WP30`.
-2. Reassess remaining unresolved shared/surface blockers after WP30.
+1. **Dynamic Value / Token Resolver executable-evidence reassessment** — current `P0-M00-WP35`.
+2. Reassess remaining unresolved shared/surface blockers after WP35.
 
 Production development authorization remains **NOT GRANTED**.
