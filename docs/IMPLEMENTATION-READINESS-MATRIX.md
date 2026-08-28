@@ -29,7 +29,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Relations | ADR-0074/0093/0133 | REL-01…REL-160; final physical profile open |
 | Workflow | ADR-0082/0118 | WF-01…WF-116 |
 | Membership | ADR-0013…0090/0129/0173/0174 | MBR-01…MBR-160 + MB-F001…MB-F176 + MB0–MB5 + PC-F001…PC-F176 + PC0–PC4 |
-| Backup | ADR-0021…0100/0130 | BK-01…BK-180 + C0–C4/V3 |
+| Backup | ADR-0021…0100/0130/0175 | BK-01…BK-180 + BPC-F001…BPC-F176 + C0–C4/V3 |
 | Field Storage | ADR-0022/0087/0134 | FST-01…FST-176 |
 | Custom Tables | ADR-0023/0088/0135 | CTB-01…CTB-184 |
 | Notification | ADR-0026/0079/0120 | NT-01…NT-142 |
@@ -99,7 +99,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 21 | Message & Chat | Exhaustive | CRT1/CRT2 | CH/DSR/CLG/DVR/CAC/MBR/private-assets/search/realtime/KPA/PDL/ERR/MSI | No |
 | 22 | REST API Builder | Exhaustive | ADR-0155 | REST 0/176 + QRY/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MSI | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP/Gateway/Event Inbox | WC/VT/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/I/EI/MSI | No |
-| 24 | Backup Manager | Exhaustive | ADR-0130 | BK/C0-C4/V3/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
+| 24 | Backup Manager | Exhaustive | ADR-0130/0175 | BK 0/180 + BPC-F 0/176 + C0–C4/V3 + VT/JS/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
 | 25 | Reset Manager | Exhaustive | ADR-0047/0106/0161 | RM 0/176 + BK/RA/UP/JS/DSR/FST/REL/CTB/ERR/PDL/VER/MLC/MSI/LC | No |
 | 26 | Import / Export | Exhaustive | ADR-0156 | IM 0/176 + DEF/FST/REL/CTB/DSR/VER/CAC/PDL/ERR/KPA/MSI/LC | No |
 | 27 | Protector | Exhaustive | ADR-0045/0105/0159 | PR 0/176 + RLT/CAC/KPA/ERR/VER/MLC/REST/XR/WC/MSI | No |
@@ -119,7 +119,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership Billing MB-F **0/176**; provider/source profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime-certified profiles **0**.
-- Backup **34 provider targets / 0 C-certified / 0 C3; V3 0**.
+- Backup provider certification BPC-F **0/176**; **34 provider targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
 - Connection adapters **0 I4/I5**; Multisite **0 MS1+**; Site Lifecycle runtime certs **0**.
 
 ## Recommended implementation order after future consent
@@ -141,9 +141,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0174; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0175; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work after WP57 closure: **`P0-M00-WP58` — Backup provider certification reassessment**.
+Current planning work after WP58 closure: **`P0-M00-WP59` — Connection adapter I0–I5 provider certification reassessment**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
