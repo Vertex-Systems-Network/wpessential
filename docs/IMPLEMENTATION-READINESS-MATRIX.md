@@ -33,8 +33,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Notification | ADR-0026/0079/0120 | NT-01…NT-142 + NE1/NE2/channel evidence |
 | Message & Chat | ADR-0027/0077/0121 | CH-01…CH-142 + CRT1/CRT2/private-asset/search/transport evidence |
 | Webhooks/Connections/Event Inbox | ADR-0040/0055/0080/0122 | WC-01…WC-156 + I0–I5 + EI1/EI2 evidence |
-| Admin Columns | ADR-0098 AC1 | dedicated runtime/list-table evidence — WP19 current |
-| Dynamic Listings | ADR-0099 DL1 | dedicated SSR/cache/pagination evidence |
+| Admin Columns | ADR-0098/0136 | AC-01…AC-176; AC-R/S/F/Q/E/B/X/M/P certifications |
+| Dynamic Listings | ADR-0039/0099/0137 | DL-01…DL-176; DL-A1/A2/A3 + DL-R/A/P/F/H/C/I/B/S/M/O certifications |
+| Free CPT + Taxonomy registration | exhaustive spec + WP native registration architecture | dedicated registration/rewrite lifecycle evidence — WP21 current |
 | Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
 | Admin Menu | ADR-0104 | AM-01…AM-40 |
 | Protector | ADR-0105 | PR-01…PR-44 |
@@ -56,15 +57,15 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 | # | Surface | Product maturity | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1/PT-C | CF + DEF + UI + BT + CI + rewrite runtime evidence | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1/PT-C | CF + DEF + UI + BT + CI + rewrite runtime evidence | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1/PT-C | CF + DEF + UI + BT + CI + dedicated registration/rewrite lifecycle evidence — WP21 | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1/PT-C | CF + DEF + UI + BT + CI + dedicated registration/rewrite/lifecycle evidence — WP21 | No |
 | 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 + ADR-0134 fixed evidence | FST-01…FST-176; FS1–FS6 runtime/profile certification | No |
 | 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + ADR-0133 | REL-01…REL-160; final physical/locking profile | No |
 | 5 | Status Manager | Exhaustive | ADR-0038/0110 | SM-01…SM-48 | No |
 | 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 + ADR-0131 | QRY-01…QRY-168; QP1–QP4 certification | No |
 | 7 | Custom Tables Builder | Exhaustive | ADR-0023 typed migrations + ADR-0088 CT1/CT2/CT3 + ADR-0135 | CTB-01…CTB-184; CT/CM profile certification; exact DDL | No |
-| 8 | Admin Columns Builder | Exhaustive | ADR-0098 AC1 whole-request batch plan | fixed hook/batch/sort/filter/edit/export/N+1 evidence — WP19 | No |
-| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0099 DL1 auth-aware Query + SSR | cursor/count/cache/refill/nesting/builder/SEO evidence + QRY/FST/REL | No |
+| 8 | Admin Columns Builder | Exhaustive | ADR-0098 AC1 + ADR-0136 fixed evidence | AC-01…AC-176; target-specific AC-R/S/F/Q/E/B/X/M/P certification | No |
+| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0039/0099 DL1 + ADR-0137 fixed evidence | DL-01…DL-176; auth/pagination/cache/hydration/interaction/builder/SEO/Multisite certification | No |
 | 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103 | DW-01…DW-36 + UI/BT/CI | No |
 | 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 | AM-01…AM-40 + UI/BT/CI | No |
 | 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112 | ST-01…ST-48 + VT + UI/BT/CI | No |
@@ -105,6 +106,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - BK **0/180**; 34 provider targets / 0 C-certified / 0 C3; V3 0.
 - FST **0/176**; Field Storage runtime/profile certifications 0.
 - CTB **0/184**; CT1/CT2/CT3 + CM1/CM2/CM3/CM4 certifications 0; exact DDL open.
+- AC **0/176**; all AC target/capability certifications 0.
+- DL **0/176**; all DL authorization-strategy/capability certifications 0.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**.
 - DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
@@ -119,7 +122,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 1. CF/UI/BT/CI/JS/DEF/VT/FP shared foundations;
 2. Kernel/Scope/Site Lifecycle/Registry/Definition/Policy/Abilities/Audit/Vault/Job + safe build/UI/Free↔Pro bootstrap;
 3. CPT/Taxonomy;
-4. Field Storage/FST → Relations/REL → Query/QRY → Custom Tables/CTB → Admin Columns → Listings;
+4. Field Storage/FST → Relations/REL → Query/QRY → Custom Tables/CTB → Admin Columns/AC → Listings/DL;
 5. remaining admin/site UX modules;
 6. User/Profile + Role security;
 7. Membership + protected files/provider certification;
@@ -133,9 +136,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0135; all applicable runtime/toolchain/profile decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0137; all applicable runtime/toolchain/profile decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work: **`P0-M00-WP19` — Admin Columns operational executable-evidence refinement**.
+Current planning work: **`P0-M00-WP21` — Free CPT + Taxonomy runtime registration/rewrite evidence**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
