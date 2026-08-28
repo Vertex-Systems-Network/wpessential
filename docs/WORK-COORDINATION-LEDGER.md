@@ -26,7 +26,8 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP09` | P-002 UI + P-008 build evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | UI wrappers/React/assets/build | ADR-0125 UI-01…UI-104 + ADR-0126 BT-01…BT-112; 0 executed. |
 | `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI lanes + FAST/FULL + artifact provenance | ADR-0127; CI-01…CI-120; 0 executed; workflows not verified; protections UNKNOWN. |
 | `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free core + Pro add-on + Platform API + entitlement + migrations/update ordering | ADR-0128; FP-01…FP-144; 0 executed; ADR-0010 remains Proposed. |
-| `P0-M00-WP12` | P-012 Membership runtime/access/protected-files/provider evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership + Policy + Entitlement + protected assets + billing source facts + Jobs/Notifications + Multisite | Current planning work; reconcile M1/M2, Enrollment/Entitlement, protected-file and provider evidence without runtime execution. |
+| `P0-M00-WP12` | P-012 Membership runtime/access/protected-files/provider evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership + Policy + Entitlement + protected assets + billing facts + Jobs/Notifications + Multisite | ADR-0129; MBR-01…MBR-160; 0 executed; 4 BE3 / 0 MB-certified; 0 PC1+. |
+| `P0-M00-WP13` | P-013 Backup/Restore artifact/provider/recovery evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup manifest + crypto + Remote Copy + providers + Vault + JobService + Site Lifecycle + Restore | Current planning work; restore-first evidence only, no runtime execution. |
 
 No production implementation work package is active.
 
@@ -34,9 +35,8 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | P-012 Membership runtime/access/protected-files/provider evidence refinement | `SPECIFICATION` current | Security-critical shared access foundation; billing/provider facts must never directly become access truth |
-| 2 | P-013 Backup executable evidence refinement | `BLOCKED` by sequence | Recovery/destructive-operation foundation; start after Membership planning closes unless new evidence changes priority |
-| 3 | Remaining unresolved shared/surface blockers | `BLOCKED` by sequence | Reassess after P-013 planning |
+| 1 | P-013 Backup/Restore artifact/provider/recovery evidence refinement | `SPECIFICATION` current | Critical recovery foundation for migrations, reset/destructive flows, Vault DR and incidents |
+| 2 | Remaining unresolved shared/surface blockers | `BLOCKED` by sequence | Reassess after Backup planning closes |
 
 Planning documentation work does not create implementation authorization.
 
@@ -48,20 +48,22 @@ Current implementation WIP remains 0. Planning serializes shared contracts. Any 
 
 No active shared-surface implementation reservation exists.
 
-## 5. Shared truth boundaries currently reserved for planning
+## 5. Membership milestone truth preserved
 
-WP12 must preserve:
-- Role ≠ Membership ≠ billing Subscription/Purchase ≠ Product Entitlement;
-- provider billing events are source facts, not direct access truth;
-- Enrollment is authoritative membership lifecycle state;
-- effective Entitlement is derived/policy-controlled and revocation-safe;
-- protected file delivery must reauthorize at request time and prevent origin bypass;
-- cache invalidation/access generation must close stale-access windows;
-- site/network/user/team scope must be explicit;
-- Free/Pro Product License state cannot become Membership authorization.
+- Role ≠ Membership ≠ billing Subscription/Purchase ≠ WPE Product Entitlement.
+- Enrollment is authoritative lifecycle state; Entitlements are derived/current access grants.
+- provider billing facts never directly authorize resources.
+- outer security denial cannot be bypassed.
+- same-specificity deny wins.
+- stale allow after revoke/hard deny is a security defect.
+- ordinary access path performs no provider API call.
+- protected-file certification requires origin isolation.
+- M1/PT-D first baseline; M2/PT-E mandatory comparison.
+- provider BE3 papers do not grant MB certification; current MB-certified = 0.
+- protected-file PC1+ certifications = 0.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP12`: reconcile ADR-0013/0015/0016/0019/0020, Membership M1/M2 runtime baselines, protected-file PD/PC profiles, billing-provider evidence and generic P-012 spike into a fixed adversarial executable-evidence protocol if no dedicated equivalent exists.
+Continue `P0-M00-WP13`: reconcile ADR-0021/0033/0043/0053/0056/0061/0064/0065/0084/0100, provider evidence, Vault recovery interaction, Site Lifecycle and generic P-013 into one fixed restore-first executable-evidence protocol if no dedicated equivalent exists.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
