@@ -51,7 +51,7 @@ Surfaces 44–50 added/expanded market and access/admin/media/code capabilities.
 ADR-0197 added:
 - **56 Theme Workspace, Child Theme & Theme Customization Manager** — declarative/theme-source tooling only; no arbitrary live PHP execution.
 
-Competitive parity work extends canonical owners instead of creating duplicate engines. See `docs/MODULE-CATALOG-EXPANSION-ADR-0195.md`, `docs/MODULE-CATALOG-EXPANSION-ADR-0197.md` and the current maturity ledger.
+Competitive parity work extends canonical owners instead of creating duplicate engines.
 
 ## Solution Blueprint / AI-native direction
 
@@ -70,15 +70,20 @@ Current planning includes:
 
 Detailed exact evidence specifications exist for SBP, ANL, SRH, DEC, LED, RSV, PLC, EXP, DOC, SYN, GEO, AIP and WCA. They are planning-complete but **0 executed** and provide no runtime certification.
 
-ADR-0207 / WP112 final readiness audit found that **33 supplemental/market namespaces still require exact per-fixture expansion: 5,808 fixture definitions total**. Therefore P0 is **not yet ready** to move to `AWAITING_DEVELOPMENT_APPROVAL`.
+ADR-0207 / WP112 found **5,808** exact supplemental fixture definitions missing. ADR-0208 / WP113 has now completed all seven Market Expansion protocols:
+- RDR, SRT, DMY, LNK, DBM, PDO and MIR;
+- **1,232/1,232 exact fixtures documented**;
+- **0 executed**.
 
-The required planning continuation is:
-- **WP113** — Market Expansion exact evidence — 1,232 fixtures;
-- **WP114** — First Competitive exact evidence — 880 fixtures;
-- **WP115** — Second Competitive exact evidence — 1,936 fixtures;
-- **WP116** — Third Competitive exact evidence — 1,760 fixtures.
+Those seven namespaces are now `NO GAP / READY AS PLAN` at the evidence-design layer and remain `RUNTIME EVIDENCE PENDING` operationally.
 
-After WP116, a new final closure audit must decide whether P0 is approval-ready.
+Known remaining planning gap:
+- **WP114 CURRENT** — First Competitive MPR/RPR/ATM/MDP/STM — **880**;
+- WP115 — Second Competitive ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — **1,936**;
+- WP116 — Third Competitive UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — **1,760**;
+- total remaining: **4,576 exact definitions across 26 namespaces**.
+
+P0 remains `SPECIFICATION` and is **not yet approval-ready**. After WP116, a new final closure audit must decide whether P0 may move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
 ## Engineering source of truth
 
@@ -121,8 +126,8 @@ No package/build spike is authorized.
 
 ## Current planning work
 
-WP112 final pre-development closure/readiness audit is **DONE / ADR-0207** and deliberately kept P0 open.
+WP112 final closure/readiness audit is **DONE / ADR-0207**. WP113 Market Expansion exact evidence is **DONE / ADR-0208**.
 
-**Current safe planning package: WP113 — Market Expansion exact executable-evidence specification (`RDR/SRT/DMY/LNK/DBM/PDO/MIR`, 1,232 fixtures).**
+**Current safe planning package: WP114 — First Competitive exact executable-evidence specification (`MPR/RPR/ATM/MDP/STM`, 880 fixtures).**
 
 Production development authorization remains **NOT GRANTED / 0/56**.
