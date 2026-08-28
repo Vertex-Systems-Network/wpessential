@@ -20,7 +20,8 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP01` | Universal Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | AGENTS/governance/quality/spec/checkpoint/PR docs | Documentation-only; governance integrated. |
 | `P0-M00-WP02` | Forms runtime/storage/submission executable evidence protocol | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Forms spec/runtime/topology/quality/ADR/readiness/checkpoint docs | ADR-0117; FM-01…FM-92 documented; 0 executed; FRT topology remains open. |
 | `P0-M00-WP03` | Workflow/Cron scheduling/DST/claims evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Workflow Runtime + JobService + scheduler/cron evidence/governance docs | ADR-0118/0119; WF-01…WF-116 and JS-01…JS-106 documented; 0 executed; Workflow/Job physical/backend choices remain evidence-gated. |
-| `P0-M00-WP04` | Notification fan-out/read/dedupe evidence protocol | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Notification domain + JobService + Email/channel evidence/governance docs | Current next planning work; no runtime execution. |
+| `P0-M00-WP04` | Notification fan-out/read/dedupe evidence protocol | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Notification domain + JobService + Workflow + Email/Connections truth + governance docs | ADR-0120; NT-01…NT-142 documented; 0 executed; NE topology and provider certifications remain evidence-gated. |
+| `P0-M00-WP05` | Message & Chat transport/search/private-assets evidence protocol | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Chat runtime/storage/search/transport/private assets/access + governance docs | Current next planning work; no runtime execution. |
 
 No production implementation work package is active.
 
@@ -30,9 +31,8 @@ Do not restart from zero.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Notification fan-out/read/dedupe evidence protocol | `SPECIFICATION` current | Reconcile ADR-0026/0079 + JobService/Workflow/Email truth boundaries |
-| 2 | Message & Chat transport/search/private-assets evidence protocol | `BLOCKED` by sequence | Later communication/runtime work |
-| 3 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `BLOCKED` by sequence | Provider/event evidence remains unexecuted |
+| 1 | Message & Chat transport/search/private-assets evidence protocol | `SPECIFICATION` current | Reconcile ADR-0027/0077 + Policy/Membership/Job/Notification transport boundaries |
+| 2 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `BLOCKED` by sequence | Provider/event evidence remains unexecuted |
 
 These are planning tasks only, not implementation approvals.
 
@@ -127,6 +127,6 @@ Do not update it for every tiny edit.
 
 ## 10. Current next safe action
 
-Continue `P0-M00-WP04`: reconcile Notification occurrence, recipient/read state, fan-out, dedupe, JobService, channel delivery and Email/provider truth into a bounded executable evidence protocol.
+Continue `P0-M00-WP05`: reconcile Message & Chat canonical runtime, membership/team authorization, search reauthorization, private assets, realtime/transport adapters, Job/Notification integration, retention and CRT1/CRT2 topology into a bounded executable evidence protocol.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
