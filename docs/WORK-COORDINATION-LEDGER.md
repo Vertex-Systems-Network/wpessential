@@ -23,14 +23,17 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP06` | Webhooks/Connections/Event Inbox evidence | `DONE` | `INTEGRATION` | `SERIALIZE` | Safe HTTP/Connections/Event Inbox | ADR-0122; WC-01…WC-156; 0 executed. |
 | `P0-M00-WP07` | P-001 compatibility floor evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP/PHP/DB/Multisite | ADR-0123; CF-01…CF-112; 0 executed. |
 | `P0-M00-WP08` | P-005 Vault evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Vault/security/recovery | ADR-0124; VT-01…VT-128; 0 executed. |
-| `P0-M00-WP09` | P-002 UI + P-008 build evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | UI wrappers/React/assets/build | ADR-0125 UI-01…UI-104 + ADR-0126 BT-01…BT-112; 0 executed. |
-| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI lanes + FAST/FULL + artifact provenance | ADR-0127; CI-01…CI-120; 0 executed; workflows not verified; `main` + planning branch unprotected by direct reads; repo rulesets UNKNOWN (403). |
-| `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free core + Pro add-on + Platform API + entitlement + migrations/update ordering | ADR-0128; FP-01…FP-144; 0 executed. |
-| `P0-M00-WP12` | P-012 Membership runtime/access/protected-files/provider evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership + Policy + Entitlement + protected assets + billing facts + Jobs/Notifications + Multisite | ADR-0129; MBR-01…MBR-160; 0 executed; 4 BE3 / 0 MB-certified; 0 PC1+. |
-| `P0-M00-WP13` | P-013 Backup/Restore artifact/provider/recovery evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup manifest + crypto + Remote Copy + providers + Vault + JobService + Site Lifecycle + Restore | ADR-0130; BK-01…BK-180; 0 executed; 34 targets / 0 C-certified / 0 C3; V3 cert 0. |
-| `P0-M00-WP14` | P-009 Query compiler/cost/cache/security evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query AST/compiler + Policy + Data Sources + Relations + Custom Tables + cache + Multisite | ADR-0131; QRY-01…QRY-168; 0 executed; QP1–QP4 certifications 0. |
-| `P0-M00-WP15` | P-004 Definition Repository evidence completeness / physical proof audit | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Definition Repository + revisions + dependencies + migrations + Multisite + import/export | ADR-0132; canonical ADR-0092 protocol refined in place to DEF-01…DEF-144; 0 executed; final D1–D4/DDL open. |
-| `P0-M00-WP16` | P-010 Relations evidence completeness / physical proof audit | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Relations + Query + Policy + Fields + content lifecycle + Multisite | Current planning work; audit existing canonical/supplementary P-010 evidence before any refinement. |
+| `P0-M00-WP09` | P-002 UI + P-008 build evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | UI/React/assets/build | ADR-0125 UI-01…UI-104 + ADR-0126 BT-01…BT-112; 0 executed. |
+| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI + FAST/FULL + provenance | ADR-0127; CI-01…CI-120; 0 executed; workflows unverified; direct branch reads show main/planning unprotected; rulesets UNKNOWN (403). |
+| `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free/Pro + Platform API + schema + entitlement | ADR-0128; FP-01…FP-144; 0 executed. |
+| `P0-M00-WP12` | P-012 Membership evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership/Policy/protected assets/providers | ADR-0129; MBR-01…MBR-160; 0 executed; 4 BE3 / 0 MB-certified; 0 PC1+. |
+| `P0-M00-WP13` | P-013 Backup/Restore evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup/crypto/providers/Vault/Restore | ADR-0130; BK-01…BK-180; 0 executed; 34 targets / 0 C-certified / 0 C3; V3 cert 0. |
+| `P0-M00-WP14` | P-009 Query evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Data Sources/cache/Multisite | ADR-0131; QRY-01…QRY-168; 0 executed; QP1–QP4 certifications 0. |
+| `P0-M00-WP15` | P-004 Definition Repository audit/refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Definition/revisions/dependencies/migrations | ADR-0132; canonical ADR-0092 protocol refined to DEF-01…DEF-144; 0 executed. |
+| `P0-M00-WP16` | P-010 Relations audit/refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Relations/Query/Policy/Fields/Multisite | ADR-0133; canonical ADR-0093 protocol refined to REL-01…REL-160; 0 executed; R1/PT-D first baseline only. |
+| `P0-M00-WP17` | Field Storage / Custom Fields evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Field Schema/FS1–FS6/Query/Relations/Vault | ADR-0134; FST-01…FST-176; 0 executed; all adapter certifications 0. |
+| `P0-M00-WP18` | Custom Tables physical/DDL/migration evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CT1–CT3/CM1–CM4/Query/Fields/Relations/Backup/Multisite | ADR-0135; CTB-01…CTB-184; 0 executed; all CT/CM certifications 0. |
+| `P0-M00-WP19` | Admin Columns operational evidence refinement | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | Current planning work; ADR-0098 operational profile exists but no dedicated fixed executable protocol found. |
 
 No production implementation work package is active.
 
@@ -38,40 +41,34 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | P-010 Relations evidence completeness / physical proof audit | `SPECIFICATION` current | Shared relation graph contract; existing canonical/supplementary protocols already exist; avoid duplication |
-| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess critical-path value after Relations audit |
+| 1 | Admin Columns operational evidence refinement | `SPECIFICATION` current | Query/Fields/Relations foundations now have fixed protocols; freeze list-table hooks, batching, sort/filter/edit/export/security evidence |
+| 2 | Dynamic Listings SSR/cache/pagination evidence | `QUEUED` | Reuses QRY/FST/REL and Component Blueprint |
+| 3 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP19 |
 
 Planning documentation work does not create implementation authorization.
 
 ## 4. Critical-path/WIP rules
 
-Current implementation WIP remains 0. Planning serializes shared contracts. Any future material implementation expansion follows:
+Current implementation WIP remains 0. Planning serializes shared contracts. Material expansion follows:
 
 `STOP → REASSESS → UPDATE IMPACT → RESCOPE OR SPLIT`
 
 No active shared-surface implementation reservation exists.
 
-## 5. Definition milestone truth preserved
+## 5. Data-foundation truth preserved
 
-- Definition identity, immutable Revision, Dependency edges and compiled cache are separate truths.
-- Draft/current and published revisions can differ without mutating production semantics.
-- historical revisions are immutable and not silently rewritten by migrators.
-- current/published pointers must resolve to revisions belonging to the same Definition.
-- portable identity is UUID/logical reference, never local numeric DB ID.
-- explicit site/network scope remains security truth under shared PT-C storage.
-- unknown future schema is degraded/read-only, not lossy-downgraded.
-- module disable/Pro expiry preserves user configuration.
-- import key collision never establishes identity automatically.
-- archive/tombstone is not purge; purge has separate destructive/dependency/recovery gates.
-- Backup/restore/clone/transfer preserves/remaps scope intentionally.
-- cache/event success follows durable DB commit.
-- D1/PT-C remains first benchmark baseline only; D2/D3/D4 remain evidence candidates.
-- DEF-01…DEF-144 are documentation-only; executed 0/144; physical/runtime certification 0.
+- Definition identity/revision/dependency/cache are separate truths; DEF **0/144**.
+- Query uses typed AST/provider capabilities; QRY **0/168**; QP1–QP4 certs 0.
+- Relations runtime is separate from Relation Definition; REL **0/160**; R1 first baseline, R2 mandatory.
+- Field Definition/editor/storage/presentation/runtime value are separate; FST **0/176**; FS1–FS6 certifications 0.
+- Table Definition/observed schema/Migration Plan/Migration Run/applied fingerprint/runtime rows are separate; CTB **0/184**.
+- CT1/PT-E is first site-owned Custom Tables baseline; CT2/PT-D mandatory comparison; CT3 only genuinely network-owned.
+- `dbDelta()` is not WPE's source-of-truth migration language.
+- Definition publish never implies physical/value migration completion.
+- destructive schema/data work requires truthful verified recovery boundaries.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP16`: audit `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md`, `docs/QUALITY/P010-RELATIONS-PHYSICAL-BENCHMARK-PROTOCOL.md`, ADR-0074/0093, relation physical/runtime architecture, exhaustive Relations spec, Query integration, content deletion/lifecycle, import/restore and Multisite scope behavior.
-
-Do **not** create a second P-010 protocol unless the audit proves no canonical protocol exists. If material gaps exist, refine the existing canonical protocol in place and preserve existing fixture/workload traceability.
+Continue `P0-M00-WP19`: audit `docs/ARCHITECTURE/ADMIN-COLUMNS-OPERATIONAL-PROFILE.md`, ADR-0098, Data & Query exhaustive specifications and Query/Field/Relations/Policy integration. If no dedicated equivalent exists, create one bounded Admin Columns executable evidence protocol; otherwise refine canonical evidence in place.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
