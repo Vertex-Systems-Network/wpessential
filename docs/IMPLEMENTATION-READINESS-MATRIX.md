@@ -34,7 +34,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Custom Tables | ADR-0023/0088/0135 | CTB-01…CTB-184 |
 | Notification | ADR-0026/0079/0120 | NT-01…NT-142 |
 | Message & Chat | ADR-0027/0077/0121 | CH-01…CH-142 |
-| Webhooks/Connections/Event Inbox | ADR-0040/0055/0080/0122 | WC-01…WC-156 + I/EI evidence |
+| Webhooks/Connections/Event Inbox | ADR-0040/0055/0080/0122/0176 | WC-01…WC-156 + ICP-F001…ICP-F176 + I0–I5 |
 | Admin Columns | ADR-0098/0136 | AC-01…AC-176 |
 | Dynamic Listings | ADR-0039/0099/0137 | DL-01…DL-176 |
 | Free CPT + Taxonomy | ADR-0138 | CPTX-01…CPTX-176 |
@@ -98,7 +98,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 20 | Emails Builder | Exhaustive | Email IR + ADR-0139/0172 | EBR 0/176 + ET-F 0/176 + ET0–ET5/VT/DSR/CLG/DVR/ASR/CAC/KPA/PDL/ERR/MSI | No |
 | 21 | Message & Chat | Exhaustive | CRT1/CRT2 | CH/DSR/CLG/DVR/CAC/MBR/private-assets/search/realtime/KPA/PDL/ERR/MSI | No |
 | 22 | REST API Builder | Exhaustive | ADR-0155 | REST 0/176 + QRY/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MSI | No |
-| 23 | Webhooks & Connections | Exhaustive | Safe HTTP/Gateway/Event Inbox | WC/VT/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/I/EI/MSI | No |
+| 23 | Webhooks & Connections | Exhaustive | ADR-0040/0055/0080/0122/0176 | WC 0/156 + ICP-F 0/176 + I0–I5 + VT/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MSI | No |
 | 24 | Backup Manager | Exhaustive | ADR-0130/0175 | BK 0/180 + BPC-F 0/176 + C0–C4/V3 + VT/JS/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
 | 25 | Reset Manager | Exhaustive | ADR-0047/0106/0161 | RM 0/176 + BK/RA/UP/JS/DSR/FST/REL/CTB/ERR/PDL/VER/MLC/MSI/LC | No |
 | 26 | Import / Export | Exhaustive | ADR-0156 | IM 0/176 + DEF/FST/REL/CTB/DSR/VER/CAC/PDL/ERR/KPA/MSI/LC | No |
@@ -116,11 +116,12 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Connection provider certification ICP-F **0/176**; I4-certified profiles **0**; I5-certified profiles **0**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership Billing MB-F **0/176**; provider/source profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime-certified profiles **0**.
 - Backup provider certification BPC-F **0/176**; **34 provider targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
-- Connection adapters **0 I4/I5**; Multisite **0 MS1+**; Site Lifecycle runtime certs **0**.
+- Multisite **0 MS1+**; Site Lifecycle runtime certs **0**.
 
 ## Recommended implementation order after future consent
 
@@ -139,11 +140,11 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 13. OAuth/Product License/Remote service/Platform surfaces; TUF after verifier/key-ops/release provenance bar;
 14. AI only over certified scoped Abilities.
 
-## Current conclusion
+## Phase 0 planning conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0175; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0176. The queued planning-only refinement pass is complete. All runtime/toolchain/provider/Multisite evidence remains unexecuted and consent-gated.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work after WP58 closure: **`P0-M00-WP59` — Connection adapter I0–I5 provider certification reassessment**.
+Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
 
-Planning/research/documentation only remains allowed until explicit owner development consent.
+No production/runtime work may start until explicit scoped owner consent is recorded under ADR-0014.
