@@ -1,195 +1,139 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-08-28**  
+Checkpoint date: **2026-08-29**  
 Branch: `planning/master-architecture`  
 Canonical project state: **`PLANNED_EXISTING_PROJECT`**  
 Execution mode: **`PLANNER_ONLY`**  
-Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**  
+Current planning lifecycle: **`SPECIFICATION`**  
 Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit scoped owner consent is required before runtime/source/build/migration/test implementation, executable spikes/benchmarks, dependency/package setup, WordPress runtime execution, queues, provider/API calls, data mutations, packaging or deployment.
+Explicit scoped owner consent is required before runtime/source/build/migration/test implementation, executable spikes/benchmarks, dependency/package setup, WordPress runtime execution, queues, provider/API/AI calls, MCP sessions, data mutations, packaging or deployment.
 
 `continue`, `resume`, planning acceptance, ADR acceptance and technical readiness do **not** authorize production development.
 
 Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md`, ADR-0014.
 
-## Product milestone
+## Current product milestone
 
-- **31/31 Exhaustive product-option maturity**
-- **31/31 Multisite scope behavior mapped**
-- **0/31 Authorized**
-- **0 MS1+ runtime-certified surfaces**
+ADR-0177 expanded the historical 31-surface scope with 12 reusable universal foundations.
+
+- Original product surfaces: **31/31 Exhaustive**
+- Universal foundations: **12/12 Exhaustive product behavior**
+- Current canonical surfaces: **43/43 Exhaustive**
+- Current logical Multisite scope mapping: **43/43**
+- Module-wide AI Prompt product contract: **43/43 surfaces mapped** under ADR-0178
+- Implementation authorization: **0/43**
 - Implemented: **none**
 - Runtime verified: **none**
 - Production implementation WIP: **0**
-- Queued planning-only refinement packages: **0**
+
+Historical `31/31` and `0/31` statements refer to the pre-ADR-0177 scope only.
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0176**.
+Accepted planning/evidence decisions now extend through **ADR-0181**.
 
-### Fixed evidence sequence
+### Expansion decisions
 
-| ADR | Work | Evidence truth |
+| ADR | Work | Current truth |
 |---|---|---|
-| ADR-0117 | Forms | FM **0/92** |
-| ADR-0118 | Workflow | WF **0/116** |
-| ADR-0119 | Job/Cron | JS **0/106** |
-| ADR-0120 | Notification | NT **0/142** |
-| ADR-0121 | Message & Chat | CH **0/142** |
-| ADR-0122 | Webhooks/Connections/Event Inbox | WC **0/156** |
-| ADR-0123 | Compatibility | CF **0/112** |
-| ADR-0124 | Vault | VT **0/128** |
-| ADR-0125 | UI | UI **0/104** |
-| ADR-0126 | Build | BT **0/112** |
-| ADR-0127 | CI | CI **0/120** |
-| ADR-0128 | Free↔Pro | FP **0/144** |
-| ADR-0129 | Membership core | MBR **0/160** |
-| ADR-0130 | Backup/Restore | BK **0/180** |
-| ADR-0131 | Query | QRY **0/168** |
-| ADR-0132 | Definition | DEF **0/144** |
-| ADR-0133 | Relations | REL **0/160** |
-| ADR-0134 | Field Storage | FST **0/176** |
-| ADR-0135 | Custom Tables | CTB **0/184** |
-| ADR-0136 | Admin Columns | AC **0/176** |
-| ADR-0137 | Dynamic Listings | DL **0/176** |
-| ADR-0138 | Free CPT + Taxonomy | CPTX **0/176** |
-| ADR-0139 | Emails Builder render/composition | EBR **0/176** |
-| ADR-0140 | Platform Account/Docs/Support/Diagnostics | PLT **0/176** |
-| ADR-0141 | Multisite + Site Lifecycle | MSI **0/160**; LC **0/96** |
-| ADR-0142 | Audit & Observability | AUD **0/176** |
-| ADR-0143 | Kernel/Registry/Policy/Abilities/Events/SDK | KPA **0/176** |
-| ADR-0144 | Local Privacy/Data Lifecycle | PDL **0/176** |
-| ADR-0145 | Error Taxonomy/Failure UX | ERR **0/176** |
-| ADR-0146 | Component Blueprint Core | CBP **0/176** |
-| ADR-0147 | Contract Versioning/Deprecation | VER **0/176** |
-| ADR-0148 | Module Lifecycle/Uninstall/Recovery | MLC **0/176** |
-| ADR-0149 | Entity/Data Source Registry | DSR **0/176** |
-| ADR-0150 | Asset Registry/Scoped Loader | ASR **0/176** |
-| ADR-0151 | Conditional Logic Engine | CLG **0/176** |
-| ADR-0152 | Dynamic Value/Token Resolver | DVR **0/176** |
-| ADR-0153 | Shared Rate Limit/Abuse Control | RLT **0/176** |
-| ADR-0154 | Shared Cache/Invalidation | CAC **0/176** |
-| ADR-0155 | REST API Builder refinement | REST **0/176** |
-| ADR-0156 | Import/Export refinement | IM **0/176** |
-| ADR-0157 | Role & Capability refinement | RA **0/176** |
-| ADR-0158 | User Profile refinement | UP **0/176** |
-| ADR-0159 | Protector refinement | PR **0/176** |
-| ADR-0160 | XML-RPC Manager refinement | XR **0/176** |
-| ADR-0161 | Reset Manager refinement | RM **0/176** |
-| ADR-0162 | Settings Page refinement | ST **0/176** |
-| ADR-0163 | Frontend Dashboard refinement | FD **0/176** |
-| ADR-0164 | Admin Menu refinement | AM **0/176** |
-| ADR-0165 | Dashboard Widgets refinement | DW **0/176** |
-| ADR-0166 | Status Manager refinement | SM **0/176** |
-| ADR-0167 | Builder Widgets adapters refinement | BW **0/176**; BC0…BC4 certs 0 |
-| ADR-0168 | Watermarker / Media refinement | WM **0/176** |
-| ADR-0169 | Pro Updater TUF refinement | TU **0/176** |
-| ADR-0170 | OAuth Account-Link refinement | OA **0/176** |
-| ADR-0171 | Remote Service Privacy / Retention refinement | RS **0/176** |
-| ADR-0172 | Email Transport / Provider Certification refinement | ET-F **0/176**; **6 EE3 / 0 ET-certified** |
-| ADR-0173 | Membership Billing Provider Certification refinement | MB-F **0/176**; **4 BE3 / 0 MB-certified** |
-| ADR-0174 | Membership Protected File Delivery Certification refinement | PC-F **0/176**; **0 PC1+**; PD1…PD4 runtime certs 0 |
-| ADR-0175 | Backup Provider Certification refinement | BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0** |
-| ADR-0176 | Connection Adapter Provider Certification refinement | ICP-F **0/176**; **0 I4-certified / 0 I5-certified** |
+| ADR-0177 | Solution Blueprint + universal foundations + Woo domain adapter architecture | 43 surfaces; 160 curated systems; 40 patterns; 268,800 raw primary Blueprint combinations; 0/43 authorized |
+| ADR-0178 | WordPress-native AI Prompt/Requirement Compiler + optional MCP architecture | AI Prompt contract mapped across 43/43 surfaces; no runtime |
+| ADR-0179 | AI Prompt/MCP evidence protocol | AIP **0/176**; AIC certifications 0; MCP certifications 0 |
+| ADR-0180 | Universal foundations + Woo adapter evidence master plan | SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each **0/176** |
+| ADR-0181 | F01 Solution Blueprint detailed executable evidence | SBP **0/176**; F01 runtime certification 0 |
+
+### Previously accepted evidence remains unchanged
+
+- Forms FM **0/92**; Workflow WF **0/116**; Job/Cron JS **0/106**.
+- Notification NT **0/142**; Chat CH **0/142**; Connections WC **0/156**.
+- Compatibility CF **0/112**; Vault VT **0/128**; UI **0/104**; Build BT **0/112**; CI **0/120**; Free↔Pro FP **0/144**.
+- Membership MBR **0/160**; MB-F **0/176**; PC-F **0/176**; all MB/PC runtime certifications zero.
+- Backup BK **0/180**; BPC-F **0/176**; 34 provider targets / 0 C-certified / V3 0.
+- Query QRY **0/168**; Definition DEF **0/144**; Relations REL **0/160**.
+- Field Storage FST **0/176**; Custom Tables CTB **0/184**.
+- AC/DL/CPTX/EBR/PLT/AUD/KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC all remain **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS all remain **0/176**.
+- Email transport ET-F **0/176**; 6 EE3 / 0 ET-certified.
+- Connection provider ICP-F **0/176**; 0 I4 / 0 I5 certified.
+- Multisite MSI **0/160**; Site Lifecycle LC **0/96**; runtime certifications zero.
+
+No paper/static evidence has been promoted to runtime certification.
+
+## AI Prompt / Requirement Compiler current architecture
+
+Canonical flow:
+
+`User Prompt → Requirement IR → capability resolution → gap report → Plan IR → deterministic validation/simulation → approval → typed Ability execution → verification/audit`
+
+Key rules:
+- F12 AI Gateway remains provider/model/task/knowledge/evaluation/usage owner.
+- Every applicable module uses one shared Prompt Runtime; no private per-module chatbot/provider-key stack.
+- WordPress AI Client + Connectors are preferred provider substrate where compatible.
+- WordPress Abilities remain the typed execution boundary.
+- official WordPress MCP Adapter is the preferred optional MCP bridge; WPE does not require MCP for normal use.
+- unsupported requirements are never silently dropped; user receives **Request New Option/System** flow.
+- AI/MCP never bypass Capability + target Policy.
+- no generic arbitrary PHP/SQL/JS/shell tool.
+
+## Solution Blueprint / universal-system current architecture
+
+- `docs/SOLUTIONS/UNIVERSAL-SYSTEM-CATALOG.md`: **160 curated systems** across 20 domains.
+- `REFERENCE-FLOW-AND-OPTION-PATTERNS.md`: **40 reusable patterns**.
+- `100K-SYSTEM-SPACE.md`: **268,800 raw primary combinations** before secondary dimensions/validation.
+- F01–F12 universal foundations have screen/option-level product specs and Multisite mappings.
+- WooCommerce is modeled through the formal Commerce Domain Adapter, not direct generic-module assumptions.
+
+A Solution normally composes canonical modules/foundations/adapters. It is **not** one generated plugin/codebase per system.
+
+## Current work coordination
+
+Completed planning packages now include:
+- `P0-M00-WP60` — universal system/Solution Blueprint expansion — DONE (ADR-0177).
+- `P0-M00-WP61` — module-wide AI Prompt + Requirement Compiler + MCP + gap request — DONE (ADR-0178/0179; AIP 0/176).
+- `P0-M00-WP62` — universal foundations technical evidence master plan — DONE (ADR-0180).
+- `P0-M00-WP63` — F01 Solution Blueprint detailed evidence — DONE (ADR-0181; SBP 0/176).
+- `P0-M00-WP64` — F02 Analytics/Event Tracking/Journey detailed evidence — **SPECIFICATION / current**.
+
+Production implementation WIP remains **0**.
 
 ## Critical preserved truth
 
-- Compatibility floor remains unverified; ADR-0002 stays evidence-gated.
-- Canonical build toolchain/runtime CI implementation remains unverified.
-- Action Scheduler remains a preferred candidate only, not certified.
-- Free owns the shared kernel/registry family; Pro registers into it.
-- Every invocation channel remains Capability + target resource Policy bound.
-- `condition=true`, DVR success, RLT allow, CAC hit, route/menu/widget visibility, CORS/preflight or idempotency never grants authorization.
+- Compatibility floor/runtime toolchain remain unverified.
 - WordPress remains native identity/auth and Role/Capability authority where accepted.
-- Generic User Profile/Settings/Dashboard/builder fields cannot bypass password/session/role/Membership/Vault/security operations.
-- Protector is application-layer hardening, not a complete edge WAF/DDoS product.
-- XML-RPC endpoint reachability, method registry/policy, native auth and outer gating remain distinct.
-- Reset is staged destructive orchestration with verified recoverability; WordPress Recovery Mode is not data rollback.
-- Menu/widget/dashboard presentation never substitutes for direct server-side authorization.
-- Status current state, transition result/history and side effects remain separate; WP Post Status and generic state machine certifications remain separate.
-- Builder-private documents are adapters; Component Blueprint remains canonical.
-- Watermarker/Media original source bytes/checksum remain immutable under standard WPE processing.
-- Account identity, Product entitlement and TUF update authenticity remain separate trust domains.
-- TUF target execution requires a trusted metadata graph + target hash/length + archive/compatibility gates; Account/API/CDN cannot add Root trust.
-- OAuth Account link never grants WordPress/Membership/Product entitlement authority by itself; PKCE S256/exact redirect/issuer binding remain first-profile requirements.
-- Remote disconnect/local erase/remote deletion/provider deletion/backup expiry remain distinct privacy and retention truths.
-- Free local-only activation/use does not contact WPE-controlled remote services solely because WPE is installed/active.
-- Diagnostics upload remains separately previewed/approved and cannot be implied by Account connection.
-- Email renderer success ≠ Transport Attempt ≠ provider accepted ≠ receiving-server delivered ≠ complaint/suppression ≠ engagement.
-- Provider acceptance does not prove mailbox/inbox delivery; open/click never proves human read/view/intent.
-- Static EE3 provider evidence never becomes ET0 runtime certification.
-- Billing commercial source fact ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement ≠ WordPress Role.
-- Static BE3 provider evidence never becomes MB0 runtime certification.
-- Provider hooks/webhooks are freshness/source evidence, not direct Membership authority; ambiguous provider state remains unknown until reconciled.
-- Woo HPOS compatibility is evidence-scoped; direct private order-storage assumptions are not the canonical billing-adapter contract.
-- Protected-file storage possession ≠ authorization; page/button hiding ≠ origin-byte protection.
-- Signed token/URL issuance ≠ durable Membership entitlement; already-issued bearer URL revocation semantics must be stated truthfully.
-- Backup-provider certification ≠ protected-file delivery certification; direct-origin isolation is mandatory before Protected/Supported claims.
-- Backup provider catalog/static SE evidence/connection/upload success never becomes normal Supported Backup status.
-- `remote_committed` ≠ `remote_verified`; provider ETag/checksum is not WPE manifest truth by default.
-- C3 is the minimum normal Supported Backup Destination gate; C4 requires V3 fresh-environment disaster recovery.
-- Connection adapter installed/configured/Test Connection/authenticated never becomes provider capability certification.
-- I2 read ≠ I3 write; one I3 action ≠ every mutation; I4 event authenticity/reconciliation is separate; I5 is exact advertised-capability closure, not a provider-brand badge.
-- Valid webhook signature/receipt does not become owning business-domain truth or authorization.
-- JobService at-least-once execution never becomes exactly-once external mutation.
-- module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
-- live privacy erase ≠ backup erase ≠ remote deletion.
-- cache state ≠ canonical business/Audit/Rate-Limit truth.
-- Multisite current-blog context never becomes durable ownership/authorization.
-- no static/paper evidence is promoted to runtime/provider certification.
+- every invocation channel remains Capability + target resource Policy bound.
+- `condition=true`, AI output, MCP discovery, route/menu/widget visibility, cache hit or CORS success never grants authorization.
+- Billing fact ≠ Membership Enrollment/Entitlement ≠ Product Entitlement ≠ WordPress Role.
+- storage possession/signed URL ≠ protected-resource authorization.
+- JobService at-least-once ≠ exactly-once external mutation.
+- external provider response ≠ owning business truth unless its certified contract says so.
+- Blueprint install ≠ implementation authorization.
+- Prompt/AI structured JSON ≠ valid plan until server validators accept it.
+- MCP server authentication ≠ Ability/resource authorization.
+- module disable ≠ delete ≠ expiry ≠ uninstall ≠ privacy erase.
+- current-blog context never becomes durable ownership/authorization.
 
-## Current evidence/certification counters
-
-Primary/shared:
-- CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
-- QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
-- FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**.
-- MSI **0/160**; LC **0/96**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
-- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
-- REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**; PR **0/176**; XR **0/176**; RM **0/176**; ST **0/176**; FD **0/176**.
-- AM **0/176**; DW **0/176**; SM **0/176**; BW **0/176**; WM **0/176**; TU **0/176**; OA **0/176**; RS **0/176**.
-
-Provider/other evidence truth:
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
-- Connection provider ICP-F **0/176**; I4-certified profiles **0**; I5-certified profiles **0**.
-- Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
-- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
-- Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime-certified profiles **0**.
-- Backup provider BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
-- Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
-
-## Current VCS / verification truth
+## Current VCS / execution truth
 
 - planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after final PR body synchronization.
-- direct GitHub branch reads on 2026-08-28 reported `main` and `planning/master-architecture` unprotected.
-- repository-wide rulesets remain **UNKNOWN** because earlier ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/protected-file/file-move/server-config/signed-URL/download/Backup-provider/upload/multipart/delete/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport/Connection-provider runtime or benchmark execution occurred.
-
-## Phase 0 planning closure
-
-Queued planning-only refinement work is complete through `P0-M00-WP59` / ADR-0176.
-
-Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
-
-Remaining blockers are executable evidence and implementation work, all requiring explicit scoped owner consent. Until that consent is recorded, no production/runtime work starts and the project remains planning-complete but runtime-unverified.
+- Draft PR #1 remains the planning PR; its body/mergeability must be synchronized/reverified after this expanded planning batch.
+- repository-wide rulesets remain UNKNOWN where access is unavailable; do not invent protection state.
+- no package install, build, WordPress runtime, browser, CI, DB/DDL/migration, AI provider call, MCP session, WooCommerce mutation, Blueprint install, analytics collection, search index, ledger movement, reservation, document render, sync, geocoder, runtime test or benchmark occurred.
 
 ## Resume order
 
 1. `DEVELOPMENT-CONSENT.md`
 2. `AGENTS.md`
 3. `CHECKPOINT.md`
-4. `docs/PROJECT-STATE-AND-ADOPTION.md`
-5. `docs/APPROVAL-LEDGER.md`
-6. `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
-7. `docs/WORK-COORDINATION-LEDGER.md`
-8. `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
-9. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-10. `docs/OPEN-DECISIONS-REGISTER.md`
-11. `docs/DECISIONS/README.md`
-12. relevant architecture/security/quality/module/provider docs.
+4. `docs/APPROVAL-LEDGER.md`
+5. `docs/WORK-COORDINATION-LEDGER.md`
+6. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+7. `docs/OPEN-DECISIONS-REGISTER.md`
+8. `docs/DECISIONS/README.md`
+9. `docs/SOLUTIONS/`
+10. `docs/AI/`
+11. relevant architecture/security/quality/module/provider docs.
 
 Repository evidence overrides conversational memory.
