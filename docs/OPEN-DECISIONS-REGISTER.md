@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0158**. Architecture or protocol acceptance never implies runtime certification or owner development authorization.
+This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0170**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -14,26 +14,26 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-001 | ADR-0002/0123 | compatibility floor — CF-01…CF-112 |
 | D-002 | ADR-0005/0125 | UI/accessibility/RTL/scoped assets/React isolation — UI-01…UI-104 |
 | D-003 | ADR-0059/0068/0083/0119 | Job backend/Cron/DST/fairness/claims — JS-01…JS-106 |
-| D-004 | ADR-0073/0092/0132 | Definition D1–D4 exact DDL/index/locking/migration — DEF-01…DEF-144 |
+| D-004 | ADR-0073/0092/0132 | Definition exact DDL/index/locking/migration — DEF-01…DEF-144 |
 | D-005 | ADR-0048/0085/0124 | Vault crypto/envelope/rotation/recovery — VT-01…VT-128 |
 | D-006 | ADR-0010/0070/0072/0076/0091/0128 | Free↔Pro package/API/schema/entitlement compatibility — FP-01…FP-144 |
-| D-007 | ADR-0011/0127 | CI/runtime/release enforcement — CI-01…CI-120; branches directly observed unprotected; rulesets UNKNOWN (403) |
+| D-007 | ADR-0011/0127 | CI/runtime/release enforcement — CI-01…CI-120; branches observed unprotected; rulesets UNKNOWN |
 | D-008 | ADR-0012/0126 | build/externalization/toolchain — BT-01…BT-112 |
-| D-009 | ADR-0086/0131 | Query compiler/cost/cache/security/providers — QRY-01…QRY-168; QP certs separate |
-| D-010 | ADR-0074/0093/0133 | Relations topology/cardinality/concurrency/lifecycle — REL-01…REL-160; final R/E/PV/DDL open |
+| D-009 | ADR-0086/0131 | Query compiler/cost/cache/security/providers — QRY-01…QRY-168 |
+| D-010 | ADR-0074/0093/0133 | Relations topology/cardinality/concurrency/lifecycle — REL-01…REL-160 |
 | D-011 | ADR-0082/0118 | Workflow runtime — WF-01…WF-116 |
-| D-012 | ADR-0013…0090/0129 | Membership runtime/providers/protected files — MBR-01…MBR-160 + MB/PC certs |
-| D-013 | ADR-0021…0100/0130 | Backup artifact/crypto/provider/restore — BK-01…BK-180 + C0–C4/V3 certs |
-| D-014 | ADR-0044/0102 | TUF verifier/key custody/package staging — TU-01…TU-44 |
-| D-015 | ADR-0031/0108 | Frontend Dashboard — FD-01…FD-48 |
-| D-016 | ADR-0035/0109 | Builder adapter certification — BW-01…BW-50 + BC0…BC4 |
-| D-017 | ADR-0038/0110 | Status runtime/concurrency/history/migration — SM-01…SM-48 |
-| D-018 | ADR-0052/0111 | XML-RPC compatibility/security — XR-01…XR-48 |
-| D-019 | ADR-0036/0089/0112 | Settings scope/inheritance/Vault/cache/import — ST-01…ST-48 |
-| D-020 | ADR-0030/0096/0113/0158 | User Profile identity/security/privacy/cache/versioning/Multisite — UP-01…UP-176 |
+| D-012 | ADR-0013…0090/0129 | Membership runtime/providers/protected files — MBR-01…MBR-160 + MB/PC |
+| D-013 | ADR-0021…0100/0130 | Backup artifact/crypto/provider/restore — BK-01…BK-180 + C0–C4/V3 |
+| D-014 | ADR-0044/0102/0169 | TUF verifier/key custody/metadata/package/staging/recovery — TU-01…TU-176 |
+| D-015 | ADR-0031/0108/0163 | Frontend Dashboard routing/auth/cache/browser/Multisite — FD-01…FD-176 |
+| D-016 | ADR-0035/0109/0167 | Builder adapter version/capability/upgrade certification — BW-01…BW-176 + BC0…BC4 |
+| D-017 | ADR-0038/0110/0166 | Status WP adapter/generic engine/concurrency/history/migration — SM-01…SM-176 |
+| D-018 | ADR-0052/0111/0160 | XML-RPC endpoint/method/auth/rate/parser/compatibility — XR-01…XR-176 |
+| D-019 | ADR-0036/0089/0112/0162 | Settings scope/inheritance/Vault/cache/import/adapters — ST-01…ST-176 |
+| D-020 | ADR-0030/0096/0113/0158 | User Profile identity/security/privacy/cache/Multisite — UP-01…UP-176 |
 | D-021 | ADR-0032/0097/0114/0157 | Role/capability native authority/anti-lockout/recovery/cache/Multisite — RA-01…RA-176 |
 | D-022 | ADR-0028/0094/0115/0155 | REST auth/scope/schema/idempotency/RLT/CAC/CORS/async/privacy/versioning — REST-01…REST-176 |
-| D-023 | ADR-0041/0095/0116/0156 | Import/Export package trust/plan/checkpoint/remap/rollback/privacy/scale — IM-01…IM-176 |
+| D-023 | ADR-0041/0095/0116/0156 | Import/Export package trust/checkpoint/remap/rollback/privacy/scale — IM-01…IM-176 |
 | D-024 | ADR-0025/0077/0117 | Forms runtime — FM-01…FM-92 |
 | D-025 | ADR-0026/0079/0120 | Notification fan-out/dedupe/preferences/channel truth — NT-01…NT-142 |
 | D-026 | ADR-0027/0077/0121 | Chat authorization/assets/search/realtime/privacy — CH-01…CH-142 |
@@ -45,13 +45,13 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-032 | ADR-0138 | Free CPT/Taxonomy registration/rewrite/capability/REST/editor/lifecycle — CPTX-01…CPTX-176 |
 | D-033 | ADR-0029/0058/0063/0067/0079/0139 | Emails Builder render/composition — EBR-01…EBR-176; ET transport separate |
 | D-034 | ADR-0140 | Platform Account/Docs/Support/Diagnostics composition — PLT-01…PLT-176 + FP/OA/TU/RS prerequisites |
-| D-035 | ADR-0069/0071/0075/0141 | Multisite scope/isolation + lifecycle — MSI-01…MSI-160 + LC-01…LC-96; runtime certs 0 |
-| D-036 | ADR-0081/0142 | Audit/Observability — AUD-01…AUD-176; AU1/PT-D first baseline; exact physical/integrity choices open |
+| D-035 | ADR-0069/0071/0075/0141 | Multisite scope/isolation + lifecycle — MSI-01…MSI-160 + LC-01…LC-96 |
+| D-036 | ADR-0081/0142 | Audit/Observability — AUD-01…AUD-176; exact physical/integrity choices open |
 | D-037 | ADR-0003/0004/0010/0143 | Kernel/Registry/Policy/Abilities/Events/SDK — KPA-01…KPA-176 |
 | D-038 | ADR-0144 | local privacy/data lifecycle — PDL-01…PDL-176; RS remote privacy separate |
 | D-039 | ADR-0145 | error taxonomy/failure UX — ERR-01…ERR-176 |
-| D-040 | ADR-0035/0039/0099/0146 | Component Blueprint core — CBP-01…CBP-176; BW/BC separate |
-| D-041 | ADR-0147 | shared cross-version/deprecation/migrator evidence — VER-01…VER-176 |
+| D-040 | ADR-0035/0039/0099/0146 | Component Blueprint core — CBP-01…CBP-176; builder adapters separate |
+| D-041 | ADR-0147 | cross-version/deprecation/migrator evidence — VER-01…VER-176 |
 | D-042 | ADR-0148 | enable/disable/dependency loss/expiry/uninstall/recovery — MLC-01…MLC-176 |
 | D-043 | ADR-0149 | Entity/Data Source schema/capability/Policy/query/write/transaction/scope/version — DSR-01…DSR-176 |
 | D-044 | ADR-0150 | Asset Registry descriptor/dependency/scope/WP-handle/build/loading/security — ASR-01…ASR-176 |
@@ -59,101 +59,67 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-046 | ADR-0152 | Dynamic Value resolver source/typing/escaping/Policy/cache/consumer parity — DVR-01…DVR-176 |
 | D-047 | ADR-0045/0153 | Shared Rate Limit identity/atomicity/window/bypass/failure/Multisite/scale — RLT-01…RLT-176 |
 | D-048 | ADR-0154 | Shared Cache key/auth/generation/TTL/stampede/backend/privacy/Multisite — CAC-01…CAC-176 |
-| D-049 | ADR-0045/0105 | Protector request gating/trusted proxy/path normalization/recovery/headers/RLT/CAC/Multisite — PR-01…PR-44; WP42 refinement current |
+| D-049 | ADR-0060 + remote-service privacy protocol | Remote service purpose/minimization/retention/clone/disconnect/deletion/backup/Multisite — RS-01…RS-30; WP54 reassessment current |
 
-## B. Accepted paper/runtime-baseline summary
+## B. Additional canonical refinements now fixed but unexecuted
 
-- Compatibility: WP 6.9 / PHP 8.3 minimum candidates; WP 7.1 planning reference; floor not certified.
-- UI: WPE wrappers + WordPress-provided React; minimum WP cannot hard-depend on newer-only UI capability.
-- Build: `@wordpress/build` first candidate, `@wordpress/scripts` comparison/fallback; final toolchain unverified.
-- CI: provider-neutral FAST/FULL, secret isolation, baseline/flaky truth and provenance; branches directly observed unprotected; rulesets UNKNOWN.
-- Definition D1/PT-C; Query QP1–QP4; Relations R1/PT-D first + R2 mandatory; physical profiles remain evidence-gated.
-- Field Storage FS1–FS6; Custom Tables CT1–CT3 + CM1–CM4; Admin Columns AC1; Dynamic Listings DL1 remain unexecuted.
-- Platform trust domains remain separate: Account/OAuth/Entitlement/Allocation/package/update/support/diagnostics/docs.
-- Multisite current blog is never durable ownership; MS0–MS4 and SL0–SL4 remain runtime-evidence gated.
-- Audit local DB/hash evidence is not called tamper-proof without certified threat/evidence model.
-- Free owns one kernel/registry family; Capability + target Policy apply regardless of UI/REST/CLI/Workflow/AI.
+- ADR-0159 — Protector **PR 0/176**.
+- ADR-0160 — XML-RPC **XR 0/176**.
+- ADR-0161 — Reset Manager **RM 0/176**.
+- ADR-0162 — Settings Page **ST 0/176**.
+- ADR-0163 — Frontend Dashboard **FD 0/176**.
+- ADR-0164 — Admin Menu **AM 0/176**.
+- ADR-0165 — Dashboard Widgets **DW 0/176**.
+- ADR-0166 — Status Manager **SM 0/176**.
+- ADR-0167 — Builder Widgets adapters **BW 0/176**, BC0…BC4 certifications 0.
+- ADR-0168 — Watermarker/Media **WM 0/176**.
+- ADR-0169 — Pro Updater TUF **TU 0/176**.
+- ADR-0170 — OAuth Account-Link **OA 0/176**.
+
+## C. Accepted paper/runtime-baseline summary
+
+- Compatibility: WP/PHP/DB floor remains unverified.
+- UI/build/CI: wrappers + WordPress-provided React; final runtime/build/CI certification pending.
+- Definition/Query/Relations/Field/Custom Table physical profiles remain evidence-gated.
+- Free owns one kernel/registry family; every channel remains Capability + target Policy bound.
+- WordPress remains native identity/auth and Role/Capability authority.
 - Local live erase ≠ backup erase ≠ remote deletion.
-- Error machine codes/retry/disclosure/partial-failure remain explicit.
-- Component Blueprint core and builder adapter certifications remain separate.
-- Product/API/schema/runtime/Ability/Event/SDK/package version equality never substitutes for explicit compatibility/migrator evidence.
-- module disable/expiry/uninstall/cleanup/privacy erase remain separate lifecycle operations.
-- readable Data Source never implies write/delete/transaction capability.
-- asset declaration/registration/enqueue/fetch/execution remain separate.
-- condition `true`, DVR success, RLT allow and CAC hit never grant authorization.
-- WordPress remains native identity/auth and Role/Capability authority where accepted; WPE plans/snapshots are guard/control-plane metadata.
-- generic User Profile fields cannot mutate password/session/Application Password/role/Membership/Vault security state.
-- Import package checksum/signature status never authorizes import and numeric IDs are not portable identity authority.
+- Account/OAuth/Entitlement/Site Allocation/TUF update trust are distinct domains.
+- TUF Root trust cannot be added by Account/API/CDN; target bytes require trusted metadata graph + hash/length + staging/compatibility evidence.
+- OAuth first profile uses public-client PKCE S256/exact redirect/issuer binding; link success does not grant WordPress/Membership/Product entitlement authority.
+- Component Blueprint remains canonical over builder-private representations.
+- Watermarker original source bytes/checksum remain immutable.
+- menu/widget/route/control visibility never becomes authorization.
+- module disable/expiry/uninstall/cleanup/privacy erase remain distinct lifecycle operations.
+- current-blog context never becomes durable ownership/authorization.
 
-## C. Fixed evidence execution truth
+## D. Fixed evidence execution truth
 
-| Protocol | State |
-|---|---|
-| CF | **0/112** |
-| UI | **0/104** |
-| JS | **0/106** |
-| DEF | **0/144** |
-| VT | **0/128** |
-| FP | **0/144** |
-| CI | **0/120** |
-| BT | **0/112** |
-| QRY | **0/168** |
-| REL | **0/160** |
-| WF | **0/116** |
-| MBR | **0/160** |
-| BK | **0/180** |
-| FST | **0/176** |
-| CTB | **0/184** |
-| AC | **0/176** |
-| DL | **0/176** |
-| CPTX | **0/176** |
-| EBR | **0/176** |
-| PLT | **0/176** |
-| MSI | **0/160; 0 MS1+** |
-| LC | **0/96; 0 SL runtime certs** |
-| AUD | **0/176** |
-| KPA | **0/176** |
-| PDL | **0/176** |
-| ERR | **0/176** |
-| CBP | **0/176** |
-| VER | **0/176** |
-| MLC | **0/176** |
-| DSR | **0/176** |
-| ASR | **0/176** |
-| CLG | **0/176** |
-| DVR | **0/176** |
-| RLT | **0/176** |
-| CAC | **0/176** |
-| REST | **0/176** |
-| IM | **0/176** |
-| RA | **0/176** |
-| UP | **0/176** |
-| FM | **0/92** |
-| NT | **0/142** |
-| CH | **0/142** |
-| WC | **0/156** |
-| OA | **0/32** |
-| TU | **0/44** |
-| DW/AM/PR/RM/WM/FD/BW/SM/XR/ST | **all 0 executed at documented counts** |
-| Email transport/provider | **6 EE3 / 0 ET-certified** |
-| Membership billing/protected files | **4 BE3 / 0 MB-certified; 0 PC1+** |
-| Backup providers | **34 targets / 0 C-certified / 0 C3; V3 0** |
-| Connection adapters | **0 I4/I5** |
-| Remote privacy RS | **0/30** |
+- CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
+- QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
+- FST **0/176**; CTB **0/184**; AC/DL/CPTX/EBR/PLT/AUD/KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA are all **0/176**.
+- MSI **0/160; 0 MS1+**; LC **0/96; 0 SL runtime certs**.
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; RS **0/30**.
+- Email transport **6 EE3 / 0 ET-certified**.
+- Membership billing/protected files **4 BE3 / 0 MB-certified; 0 PC1+**.
+- Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
+- Connection adapters **0 I4/I5**.
 
-## D. Current highest-priority planning blocker — Protector
+## E. Current highest-priority planning blocker
 
-`P0-M00-WP42` must reconcile the existing PR-01…PR-44 protocol against current RLT/CAC/KPA/ERR/VER/MLC, REST/XML-RPC/Webhooks, Multisite and recovery evidence. The refinement must preserve:
-- trusted-proxy-aware client identity; untrusted forwarded headers never gain security authority;
-- shared atomic Rate Limit semantics with consumer-specific policy remaining separate;
-- Protector allow never grants a WordPress capability or bypasses endpoint/resource Policy;
-- recovery mode may disable WPE overlays but never authenticate, mint privilege or expose Membership-protected content;
-- path/redirect/header rules remain normalization/conflict safe;
-- application-layer protection is not represented as edge WAF/DDoS prevention;
-- cache/CDN behavior cannot silently bypass protected-content assumptions;
-- network floors and site overrides remain explicit in Multisite.
+`P0-M00-WP54` — **Remote Service Privacy / Retention canonical evidence reassessment**.
 
-## E. Decision-processing rule
+The existing RS-01…RS-30 evidence predates the current Local PDL, Platform, OAuth, Product License, Support, provider, lifecycle and Multisite contracts. Refine in place only if the gap survives. Preserve:
+- purpose-scoped/minimized remote transmission;
+- Free activation sends nothing merely by activation;
+- Account link is not telemetry consent;
+- disconnect/local secret deletion ≠ remote account/service deletion;
+- local privacy erase ≠ remote deletion ≠ provider deletion ≠ backup expiry;
+- clone/staging/environment and Multisite identities remain explicit;
+- legal/security retention exceptions remain truthful and bounded.
+
+## F. Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
@@ -162,10 +128,5 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 5. Do not execute code/build/DDL/migration/benchmark/provider/runtime/data mutations before explicit owner consent.
 6. Never promote paper evidence to runtime/provider certification.
 7. Keep checkpoint/ledger/readiness/open-decisions/ADR index/Draft PR synchronized.
-
-## Next planning-only priorities
-
-1. **Protector canonical evidence refinement — current `P0-M00-WP42`.**
-2. Reassess remaining shallow legacy evidence protocols by security/critical-path value.
 
 Production development authorization remains **NOT GRANTED**.
