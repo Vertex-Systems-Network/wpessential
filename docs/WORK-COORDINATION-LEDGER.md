@@ -38,14 +38,14 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP68 | F06 Resource Scheduling/Reservation detailed evidence | DONE | ADR-0200; RSV 176 documented / 0 executed |
 | WP69 | F07 Placement/Personalization detailed evidence | DONE | ADR-0201; PLC 176 documented / 0 executed |
 | WP70 | F08 Experimentation/Rollout detailed evidence | DONE | ADR-0202; EXP 176 documented / 0 executed |
-| **WP71** | **F09 Documents/Records/Templates detailed evidence** | **DONE** | **ADR-0203; DOC 176 documented / 0 executed** |
-| **WP72** | **F10 Data Sync/ETL detailed evidence** | **SPECIFICATION / CURRENT** | SYN 0/176 envelope |
+| WP71 | F09 Documents/Records/Templates detailed evidence | DONE | ADR-0203; DOC 176 documented / 0 executed |
+| **WP72** | **F10 Data Sync/ETL detailed evidence** | **DONE** | **ADR-0204; SYN 176 documented / 0 executed** |
+| **WP73** | **F11 Geospatial/Territory detailed evidence** | **SPECIFICATION / CURRENT** | GEO 0/176 envelope |
 
-Reserved follow-on IDs:
-- WP73 — F11 Geo/Territory (`GEO`)
+Reserved follow-on ID:
 - WP74 — WooCommerce Commerce Domain Adapter (`WCA`)
 
-These IDs remain reserved and are not repurposed.
+This ID remains reserved and is not repurposed.
 
 ## 4. Market-expansion interrupt WP75…WP82 — DONE
 
@@ -76,46 +76,50 @@ Universal detailed evidence state:
 - RSV 176 documented / 0 executed;
 - PLC 176 documented / 0 executed;
 - EXP 176 documented / 0 executed;
-- **DOC 176 documented / 0 executed**;
-- SYN 0/176 group envelope is the current detailed-enumeration target.
+- DOC 176 documented / 0 executed;
+- **SYN 176 documented / 0 executed**;
+- GEO 0/176 group envelope is the current detailed-enumeration target.
 
 Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
 ## 9. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring can supply derived typed values, but cannot turn generated output into source-domain authority.
-- F05 Ledger and F06 Scheduling remain canonical owners for their own facts; F09 may render references but never becomes ledger/payment/order/reservation truth.
-- F07 Placement and F08 Experimentation may choose presentation/treatment, but F09 record generation is separately Policy-authorized and does not inherit presentation eligibility as document access.
-- F09 owns template/render/artifact/record lifecycle only for explicit document profiles; source data remains canonical at its owner.
-- Template authoring permission is not source-data permission; generation and protected delivery reauthorize every protected binding/resource.
-- Generated artifact is not automatically a legal document, legal signature, trusted timestamp, identity proof, payment/order/ledger fact or authorization.
-- Hash/checksum verifies configured byte-integrity properties only; it is not signer identity/legal intent by itself.
-- Application time is not a trusted timestamp authority token; external signature/timestamp/storage provider facts remain typed external authority state.
-- Immutable issued records are amended/superseded rather than silently overwritten; void/revoke does not erase history automatically.
-- Protected artifact URLs/storage paths/CDN caches cannot bypass Policy, expiry or revocation contracts.
-- Template/HTML/SVG/font/image/remote asset inputs are untrusted; no arbitrary PHP/JS/SQL/shell execution or unrestricted filesystem/network access is created.
-- External signing/storage/timestamp unknown outcomes require reconciliation before replay where duplicate side effects are possible.
-- Multisite record/template/storage/sequence ownership is server-resolved and isolated; identical keys across sites/tenants must not collide.
-- Backup/restore/clone cannot roll back external authorities; cloned provider mappings remain disabled/quarantined until remapped and approved.
-- AI Prompt Runtime remains shared; no hidden privileged document issuance/share/provider path exists.
-- WP72 F10 Data Sync/ETL may move document metadata/artifacts only through declared mappings and must preserve F09 provenance/immutability constraints.
+- F04 Decision/Formula/Scoring can provide typed transformation/decision inputs but cannot become remote-system authority through F10.
+- F05 Ledger, F06 Scheduling, F09 immutable Records and commerce/payment/order owners remain canonical for their own business facts; F10 transports/mirrors only under declared authority contracts.
+- F07/F08 presentation/experiment state may be synchronized only as typed data and does not grant authorization/consent by transfer.
+- F09 immutable artifact/record provenance must survive synchronization; a copied record does not become new legal/source authority.
+- F10 owns pipeline/connection/mapping/checkpoint/reconciliation lifecycle only for explicit sync profiles.
+- Synchronized copy is not source truth unless entity/field authority says so.
+- Transport success is not business acceptance; cursor/checkpoint progress is not proof every item succeeded.
+- Unknown remote outcome is reconciled before unsafe replay; logical operation identity/idempotency persists across attempts.
+- Bidirectional sync requires explicit entity/field authority and conflict policy; implicit universal last-write-wins is not accepted.
+- Delete, archive, tombstone, privacy erasure and immutable-record revoke remain distinct semantics.
+- Duplicate webhook/poll/import events converge through shared source-event/operation identity rather than duplicate side effects.
+- Provider credentials remain Vault-owned; connector targets remain adapter-bounded, SSRF constrained and quota/backoff aware.
+- Provider/schema/API/cursor drift is explicit health/compatibility state; incompatible values or tokens are not silently coerced.
+- Privacy/data-residency/export/erase propagation remains Policy/data-governance controlled.
+- Multisite pipeline identity, idempotency, cursors, identity maps and shared-connection access remain site/tenant isolated and server-resolved.
+- Restore/clone/staging does not blindly activate production schedules, webhooks, cursors, retries, identity maps or provider write authority.
+- F10 does not replace Backup or Staging/Migration and cannot claim atomic rollback across local and external systems.
+- AI Prompt Runtime remains shared; no hidden privileged mapping/conflict/provider path exists.
+- WP73 F11 Geospatial/Territory may consume synchronized address/coordinate/territory data only through declared typed provenance/Policy; F11 does not inherit remote-source authority automatically.
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. F09 completion truth — ADR-0203
+## 10. F10 completion truth — ADR-0204
 
-`docs/QUALITY/DOCUMENTS-RECORDS-TEMPLATES-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `DOC-001…DOC-176`.
+`docs/QUALITY/DATA-SYNC-ETL-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `SYN-001…SYN-176`.
 
-Frozen evidence includes template/version schemas, renderer layout/pagination, fonts/assets/images/SVG safety, Policy-projected dynamic values/redaction, HTML/PDF/text/structured output accuracy, protected storage/delivery, immutable-record amendment/supersession, generation Job idempotency/crash recovery, hash/signing/time provenance, retention/legal-hold handling, share/download access expiry, malicious template/SSRF/resource limits, Multisite isolation, backup/restore/migration portability, 10K/100K/1M scale profiles and deterministic invoice/certificate/contract/report/privacy/AI-adversarial golden regressions.
+Frozen evidence includes connection/pipeline schemas, typed mapping/transformation, initial full sync/checkpoints, incremental poll/webhook/CDC behavior, idempotency/deduplication/replay, create/update/delete/tombstone semantics, bidirectional field authority/conflicts, unknown remote outcome reconciliation, retries/dead-letter/manual replay, Vault/SSRF/provider quotas, schema/API/cursor drift, privacy/PII propagation, Multisite/shared-connection isolation, restore/clone/environment safety, million-record/backpressure evidence and deterministic CRM/ERP/catalog/warehouse/privacy/AI-adversarial golden regressions.
 
-Current DOC truth: **176 documented / 0 executed / runtime certification 0**.
+Current SYN truth: **176 documented / 0 executed / runtime certification 0**.
 
 ## 11. Runtime truth
 
-No F09 feature has executed. Specifically, no template renderer, PDF/HTML/text/structured generation, file write, protected delivery, immutable record issuance/amendment, sequence allocation, checksum/signature/timestamp provider action, remote asset fetch, retention deletion, share/download token, restore/provider reconciliation, AI/MCP session, test or benchmark occurred.
+No F10 feature has executed. Specifically, no connector session, provider read/write request, webhook registration/delivery processing, polling/CDC job, mapping transformation, cursor/checkpoint update, destination create/update/delete, identity-map mutation, conflict resolution, replay/dead-letter action, privacy erase propagation, schema migration, restore/clone reconciliation, AI/MCP session, test or benchmark occurred.
 
 ## 12. Current next safe action
 
-Continue **P0-M00-WP72 — F10 Data Sync & ETL detailed executable-evidence specification (`SYN-001…SYN-176`)**.
+Continue **P0-M00-WP73 — F11 Geospatial & Territory detailed executable-evidence specification (`GEO-001…GEO-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
