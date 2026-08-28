@@ -186,6 +186,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0171 | Accepted Remote Service Privacy / Retention refinement | RS-01…RS-176; original 01…30 preserved |
 | ADR-0172 | Accepted Email Transport / Provider Certification refinement | ET-F001…ET-F176; ET0–ET5 preserved; 6 EE3 / 0 ET-certified |
 | ADR-0173 | Accepted Membership Billing Provider Certification refinement | MB-F001…MB-F176; MB0–MB5 preserved; 4 BE3 / 0 MB-certified |
+| ADR-0174 | Accepted Membership Protected File Delivery Certification refinement | PC-F001…PC-F176; PC0–PC4 + PD1–PD4 preserved; 0 PC1+ runtime-certified |
 
 ## Product specification milestone
 
@@ -202,7 +203,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
-- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**; protected files **0 PC1+**.
+- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
+- Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime certifications **0**.
 - Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
 - Connection adapters **0 I4/I5**.
 
@@ -210,6 +212,6 @@ Canonical protocol paths for ADR-0117 onward are under `docs/QUALITY/` or the ar
 
 ## Current planning work
 
-**`P0-M00-WP57` — Protected-file provider/delivery certification reassessment — SPECIFICATION.**
+**`P0-M00-WP58` — Backup provider certification reassessment — SPECIFICATION.**
 
-Current objective: audit existing PC0–PC4 private-file delivery certification and PD1/PD2/PD3 delivery profiles against Membership Entitlement/Policy, Vault, Safe HTTP/storage/media boundaries, privacy, ERR, VER, RLT, Multisite, Site Lifecycle and Backup. Preserve storage possession ≠ authorization, signed URL issuance ≠ durable entitlement, and never promote paper/provider support to runtime protected-file certification.
+Current objective: audit existing C0–C4/V3/provider-family Backup certification contracts against BK-01…BK-180, Vault/key custody, JobService/at-least-once execution, Remote Copy lifecycle, manifest/integrity/encryption, privacy, ERR, VER, Multisite, Site Lifecycle and restore-first recovery semantics. Preserve successful upload ≠ restorable Backup, static provider evidence ≠ runtime certification, and never promote provider marketing/documentation to Supported Backup status.
