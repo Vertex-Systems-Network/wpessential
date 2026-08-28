@@ -54,16 +54,23 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP35` | Dynamic Value/Token Resolver | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0152; DVR 0/176. |
 | `P0-M00-WP36` | Shared Rate Limit/Abuse Control | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0153; RLT 0/176. |
 | `P0-M00-WP37` | Shared Cache/Invalidation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0154; CAC 0/176. |
-| `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176; original 01…52 preserved. |
-| `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176; original 01…56 preserved. |
-| `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176; original 01…48 preserved. |
-| `P0-M00-WP41` | User Profile canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0158; UP 0/176; original 01…48 preserved. |
-| `P0-M00-WP42` | Protector canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0159; PR 0/176; original 01…44 preserved. |
-| `P0-M00-WP43` | XML-RPC Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0160; XR 0/176; original 01…48 preserved. |
-| `P0-M00-WP44` | Reset Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0161; RM 0/176; original 01…48 preserved. |
-| `P0-M00-WP45` | Settings Page canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0162; ST 0/176; original 01…48 preserved. |
-| `P0-M00-WP46` | Frontend Dashboard canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0163; FD 0/176; original 01…48 preserved. |
-| `P0-M00-WP47` | Admin Menu canonical refinement | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Current planning work; AM 0/40 against KPA/RA/CAC/ASR/ERR/VER/MLC/MSI. |
+| `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176. |
+| `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176. |
+| `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176. |
+| `P0-M00-WP41` | User Profile canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0158; UP 0/176. |
+| `P0-M00-WP42` | Protector canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0159; PR 0/176. |
+| `P0-M00-WP43` | XML-RPC Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0160; XR 0/176. |
+| `P0-M00-WP44` | Reset Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0161; RM 0/176. |
+| `P0-M00-WP45` | Settings Page canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0162; ST 0/176. |
+| `P0-M00-WP46` | Frontend Dashboard canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0163; FD 0/176. |
+| `P0-M00-WP47` | Admin Menu canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0164; AM 0/176. |
+| `P0-M00-WP48` | Dashboard Widgets canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0165; DW 0/176. |
+| `P0-M00-WP49` | Status Manager canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0166; SM 0/176; WP/native and generic engines separate. |
+| `P0-M00-WP50` | Builder Widgets adapter canonical refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0167; BW 0/176; BC0…BC4 certs 0. |
+| `P0-M00-WP51` | Watermarker / Media canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0168; WM 0/176; original-source invariant preserved. |
+| `P0-M00-WP52` | Pro Updater TUF canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0169; TU 0/176; verifier/key/package certs 0. |
+| `P0-M00-WP53` | OAuth Account-Link canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0170; OA 0/176; PKCE/Vault/Account-Link certs 0. |
+| `P0-M00-WP54` | Remote Service Privacy / Retention canonical reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Current planning work; RS 0/30 predates PDL/PLT/OA/Product License/provider/lifecycle refinements. |
 
 No production implementation work package is active.
 
@@ -71,19 +78,20 @@ No production implementation work package is active.
 
 | Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | Admin Menu canonical evidence refinement | `SPECIFICATION` current | Runtime discovery + stable transformations; menu visibility remains presentation only; recovery and Site/Network isolation are mandatory. |
-| 2 | Remaining shallow legacy evidence protocols | `QUEUED` | Reassess by security/critical-path value after WP47; prefer in-place refinement over duplicates. |
+| 1 | Remote Service Privacy / Retention canonical evidence reassessment | `SPECIFICATION` current | Reconcile purpose/data minimization, consent, logs/support, disconnect, remote deletion, backups, clone/staging, Account/OAuth/Product License/provider boundaries and Multisite without duplicating local PDL. |
+| 2 | Remaining provider/service certification protocols | `QUEUED` | Reassess by security/critical-path value after WP54; prefer in-place refinement over duplicates. |
 
 ## 4. Shared foundation truth
 
 - DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
 - KPA/VER/MLC/PDL/ERR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD are all **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA are all **0/176**.
 - WordPress remains native role/capability and identity/auth authority where defined.
-- Protector/XML-RPC/menu/dashboard presentation layers never replace native target authorization.
-- Reset destructive truth requires verified recovery and truthful partial/recovery states.
-- Settings inheritance/secret/external adapter authority remains explicit.
+- Component Blueprint remains canonical over builder-private representations.
+- TUF authenticity and OAuth/Account/Product entitlement are independent trust domains.
+- Watermarker original source bytes are immutable under standard processing.
 - current-blog context is never durable ownership or authorization.
+- destructive schema/data/authority work requires verified recovery and truthful partial-failure semantics.
 
 ## 5. WIP / coordination rules
 
@@ -95,6 +103,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP47`: refine Admin Menu discovery/target identity/rename/reorder/hide/move/add-link/add-page/conflict/role-audience/safe-mode/import/lifecycle/performance evidence against current KPA/RA/CAC/ASR/ERR/VER/MLC/MSI contracts. Preserve that hiding/reordering never changes the owning screen's WordPress capability/resource authorization.
+Continue `P0-M00-WP54`: audit `REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md` against local PDL, Platform surfaces, OAuth, Product License, Support/Docs, provider integrations, lifecycle and Multisite. Preserve the separation of local unlink/disconnect, local privacy erase, remote account/service deletion, provider deletion and immutable/retained backup/audit obligations.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
