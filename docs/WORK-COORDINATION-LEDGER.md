@@ -39,31 +39,22 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP69 | F07 Placement/Personalization detailed evidence | DONE | ADR-0201; PLC 176 documented / 0 executed |
 | WP70 | F08 Experimentation/Rollout detailed evidence | DONE | ADR-0202; EXP 176 documented / 0 executed |
 | WP71 | F09 Documents/Records/Templates detailed evidence | DONE | ADR-0203; DOC 176 documented / 0 executed |
-| **WP72** | **F10 Data Sync/ETL detailed evidence** | **DONE** | **ADR-0204; SYN 176 documented / 0 executed** |
-| **WP73** | **F11 Geospatial/Territory detailed evidence** | **SPECIFICATION / CURRENT** | GEO 0/176 envelope |
+| WP72 | F10 Data Sync/ETL detailed evidence | DONE | ADR-0204; SYN 176 documented / 0 executed |
+| **WP73** | **F11 Geospatial/Territory detailed evidence** | **DONE** | **ADR-0205; GEO 176 documented / 0 executed** |
+| **WP74** | **WooCommerce Commerce Domain Adapter detailed evidence** | **SPECIFICATION / CURRENT** | WCA 0/176 envelope |
 
-Reserved follow-on ID:
-- WP74 — WooCommerce Commerce Domain Adapter (`WCA`)
+WP74 retains its reserved meaning and is not repurposed.
 
-This ID remains reserved and is not repurposed.
+## 4. Completed planning interrupts
 
-## 4. Market-expansion interrupt WP75…WP82 — DONE
+- WP75…WP82 market expansion — DONE.
+- WP83…WP89 first competitive audit — DONE.
+- WP90…WP99 second competitive audit — DONE.
+- WP100…WP111 third competitive audit/governance — DONE.
 
-RDR, SRT, DMY, LNK, DBM, PDO and MIR planning packages remain accepted and unexecuted.
+All remain planning-only and unexecuted unless later evidence explicitly records otherwise.
 
-## 5. First competitive interrupt WP83…WP89 — DONE
-
-Membership, Role/Capability, Admin Theme, Media Performance and Safe Script/Tag parity planning remains accepted and unexecuted.
-
-## 6. Second competitive interrupt WP90…WP99 — DONE
-
-Backup/Staging, Media Replacement, Content Ordering, Security Integrity, Fonts, Profile, JetEngine/User Data Stores, Header/Footer and Link Health parity planning remains accepted and unexecuted.
-
-## 7. Third competitive interrupt WP100…WP111 — DONE
-
-Use Any Font, WP Migrate, white-label/login, duplication, activity/audit, CMB2/Meta Box, Theme Workspace, reset, Redux and CPTUI parity planning remains accepted and unexecuted. Current product denominator remains **56/56; 0/56 authorized**.
-
-## 8. Current scope/evidence truth
+## 5. Current scope/evidence truth
 
 Current module/platform denominator: **56**.
 
@@ -77,49 +68,50 @@ Universal detailed evidence state:
 - PLC 176 documented / 0 executed;
 - EXP 176 documented / 0 executed;
 - DOC 176 documented / 0 executed;
-- **SYN 176 documented / 0 executed**;
-- GEO 0/176 group envelope is the current detailed-enumeration target.
+- SYN 176 documented / 0 executed;
+- **GEO 176 documented / 0 executed**;
+- WCA 0/176 group envelope is the current detailed-enumeration target.
 
 Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
-## 9. Shared-surface reservations
+## 6. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring can provide typed transformation/decision inputs but cannot become remote-system authority through F10.
-- F05 Ledger, F06 Scheduling, F09 immutable Records and commerce/payment/order owners remain canonical for their own business facts; F10 transports/mirrors only under declared authority contracts.
-- F07/F08 presentation/experiment state may be synchronized only as typed data and does not grant authorization/consent by transfer.
-- F09 immutable artifact/record provenance must survive synchronization; a copied record does not become new legal/source authority.
-- F10 owns pipeline/connection/mapping/checkpoint/reconciliation lifecycle only for explicit sync profiles.
-- Synchronized copy is not source truth unless entity/field authority says so.
-- Transport success is not business acceptance; cursor/checkpoint progress is not proof every item succeeded.
-- Unknown remote outcome is reconciled before unsafe replay; logical operation identity/idempotency persists across attempts.
-- Bidirectional sync requires explicit entity/field authority and conflict policy; implicit universal last-write-wins is not accepted.
-- Delete, archive, tombstone, privacy erasure and immutable-record revoke remain distinct semantics.
-- Duplicate webhook/poll/import events converge through shared source-event/operation identity rather than duplicate side effects.
-- Provider credentials remain Vault-owned; connector targets remain adapter-bounded, SSRF constrained and quota/backoff aware.
-- Provider/schema/API/cursor drift is explicit health/compatibility state; incompatible values or tokens are not silently coerced.
-- Privacy/data-residency/export/erase propagation remains Policy/data-governance controlled.
-- Multisite pipeline identity, idempotency, cursors, identity maps and shared-connection access remain site/tenant isolated and server-resolved.
-- Restore/clone/staging does not blindly activate production schedules, webhooks, cursors, retries, identity maps or provider write authority.
-- F10 does not replace Backup or Staging/Migration and cannot claim atomic rollback across local and external systems.
-- AI Prompt Runtime remains shared; no hidden privileged mapping/conflict/provider path exists.
-- WP73 F11 Geospatial/Territory may consume synchronized address/coordinate/territory data only through declared typed provenance/Policy; F11 does not inherit remote-source authority automatically.
+- F04 Decision/Formula/Scoring may consume typed geospatial facts but cannot convert spatial rank/score into authorization.
+- F05 Ledger, F06 Scheduling, F09 immutable Records and commerce/payment/order owners remain canonical for their own business facts.
+- F07 Placement/F08 Experimentation may consume territory/location predicates only through Policy-safe typed interfaces; spatial match does not grant presentation/business authorization.
+- F10 synchronization may move location/address/territory values while preserving source provenance; synchronized data does not automatically become F11 authority.
+- F11 owns typed location/address/coordinate/territory definitions, deterministic spatial evaluation and provider-safe geospatial orchestration for explicit profiles.
+- Geocoded coordinate is not verified address/identity truth by default; provider confidence is not certainty.
+- Spatial match/territory assignment is not authorization, entitlement, ownership or legal jurisdiction.
+- Bounding-box match is not polygon containment; polygon containment is not guaranteed serviceability.
+- Straight-line distance is not travel distance/time; route/matrix estimate is not a delivery or travel guarantee.
+- CRS, axis order, coordinate precision, algorithm/model and provenance remain explicit and versioned.
+- Territory overlaps require deterministic priority/assignment policy; DB row order is not authority.
+- Precise location remains consent/Policy/retention/redaction governed; logs/AI/MCP receive only allowed projection.
+- Geocoder/routing unknown outcomes remain unknown/retryable according to provider semantics rather than false no-result/no-route claims.
+- Provider credentials remain Vault-owned; provider terms, cache limits, quotas and licensing are binding.
+- Spatial backend results are reauthorized before protected location/entity data is exposed.
+- Multisite territory/location/cache/provider ownership is site/tenant isolated and server-resolved.
+- Backup/restore/clone cannot roll back external geocoder/routing state; cloned production provider mappings stay quarantined until remapped/approved.
+- AI Prompt Runtime remains shared; no hidden privileged precise-location, provider or territory mutation path exists.
+- **WP74 WooCommerce Commerce Domain Adapter may consume F03–F11 capabilities only through declared adapter contracts; commerce truth remains with WooCommerce/canonical commerce owners and cannot be redefined by generic foundations.**
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. F10 completion truth — ADR-0204
+## 7. F11 completion truth — ADR-0205
 
-`docs/QUALITY/DATA-SYNC-ETL-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `SYN-001…SYN-176`.
+`docs/QUALITY/GEOSPATIAL-TERRITORY-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `GEO-001…GEO-176`.
 
-Frozen evidence includes connection/pipeline schemas, typed mapping/transformation, initial full sync/checkpoints, incremental poll/webhook/CDC behavior, idempotency/deduplication/replay, create/update/delete/tombstone semantics, bidirectional field authority/conflicts, unknown remote outcome reconciliation, retries/dead-letter/manual replay, Vault/SSRF/provider quotas, schema/API/cursor drift, privacy/PII propagation, Multisite/shared-connection isolation, restore/clone/environment safety, million-record/backpressure evidence and deterministic CRM/ERP/catalog/warehouse/privacy/AI-adversarial golden regressions.
+Frozen evidence includes location/address/coordinate/territory schemas, geocoder provenance/confidence, coordinate precision/CRS/axis order, radius/distance/bounding-box semantics, polygons/holes/boundaries, territory hierarchy/overlap/priority, spatial backend capability/fallback, provider cache/freshness/terms, precise-location privacy, routing/matrix unknown outcomes and quotas, CRS/import invalid-geometry handling, protected-location Policy, Multisite territory lifecycle, restore/clone/provider safety, 100K/1M spatial performance reservations and deterministic store-locator/delivery-zone/territory/routing/privacy/AI-adversarial golden regressions.
 
-Current SYN truth: **176 documented / 0 executed / runtime certification 0**.
+Current GEO truth: **176 documented / 0 executed / runtime certification 0**.
 
-## 11. Runtime truth
+## 8. Runtime truth
 
-No F10 feature has executed. Specifically, no connector session, provider read/write request, webhook registration/delivery processing, polling/CDC job, mapping transformation, cursor/checkpoint update, destination create/update/delete, identity-map mutation, conflict resolution, replay/dead-letter action, privacy erase propagation, schema migration, restore/clone reconciliation, AI/MCP session, test or benchmark occurred.
+No F11 feature has executed. Specifically, no geocoder/routing/provider request, spatial backend query, coordinate mutation, territory assignment, precise-location collection, cache mutation, geometry import/repair, Multisite geospatial operation, restore/provider reconciliation, AI/MCP session, test or benchmark occurred.
 
-## 12. Current next safe action
+## 9. Current next safe action
 
-Continue **P0-M00-WP73 — F11 Geospatial & Territory detailed executable-evidence specification (`GEO-001…GEO-176`)**.
+Continue **P0-M00-WP74 — WooCommerce Commerce Domain Adapter detailed executable-evidence specification (`WCA-001…WCA-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
