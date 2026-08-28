@@ -18,15 +18,15 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | WP/PHP/DB/Multisite compatibility | ADR-0002/0069/0075/0123 | CF-01…CF-112 / P-001 |
 | UI/design system | ADR-0005/0125 | UI-01…UI-104 / P-002 |
 | Job/Action Scheduler/Cron | ADR-0059/0068/0083/0119 | JS-01…JS-106 / P-003 |
-| Definition Repository | ADR-0073/0092 | P-004 |
+| Definition Repository | ADR-0073/0092/0132 | DEF-01…DEF-144 / P-004; final D1–D4/DDL evidence-gated |
 | Vault | ADR-0048/0085/0124 | VT-01…VT-128 / P-005 |
 | Free↔Pro/Product License package boundary | ADR-0010/0070/0072/0076/0091/0128 | FP-01…FP-144 / P-006 |
 | OAuth Account Link | ADR-0034/0101 | OA-01…OA-32 |
 | Pro updater TUF | ADR-0044/0102 | TU-01…TU-44 |
 | CI | ADR-0011/0127 | CI-01…CI-120 / P-007 |
 | Build | ADR-0012/0126 | BT-01…BT-112 / P-008 |
-| Query | ADR-0086 | P-009; dedicated fixed protocol pending WP14 |
-| Relations | ADR-0074/0093 | P-010 |
+| Query | ADR-0086/0131 | QRY-01…QRY-168 / P-009 |
+| Relations | ADR-0074/0093 | existing P-010 evidence; completeness audit current |
 | Workflow | ADR-0082/0118 | WF-01…WF-116 / P-011 |
 | Membership | ADR-0013/0015/0016/0019/0020/0057/0062/0066/0078/0090/0129 | MBR-01…MBR-160 / P-012 + MB/PC profile certification |
 | Backup | ADR-0021/0033/0043/0053/0056/0061/0064/0065/0084/0100/0130 | BK-01…BK-180 / P-013 + exact C0–C4/V3 certification |
@@ -56,15 +56,15 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 | # | Surface | Product maturity | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1 | CF/P-001 + P-004 + UI/P-002 + BT/P-008 + CI + rewrite evidence | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1 | CF/P-001 + P-004 + UI/P-002 + BT/P-008 + CI + rewrite evidence | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1/PT-C | CF/P-001 + DEF/P-004 + UI/P-002 + BT/P-008 + CI + rewrite evidence | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1/PT-C | CF/P-001 + DEF/P-004 + UI/P-002 + BT/P-008 + CI + rewrite evidence | No |
 | 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 | storage/index/projection/migration/VT-P-005 Vault | No |
-| 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + fixed P-010 | P-010 execution | No |
+| 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + fixed P-010 | P-010 completeness audit then execution | No |
 | 5 | Status Manager | Exhaustive | ADR-0038/0110 split Post Status/domain-state evidence | SM-01…SM-48 | No |
-| 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 | P-009 compiler/cost/cache/security; fixed protocol pending | No |
+| 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 + ADR-0131 fixed evidence | QRY-01…QRY-168 execution; QP1–QP4 certifications | No |
 | 7 | Custom Tables Builder | Exhaustive | CT1/PT-E vs CT2/PT-D | DDL/migration/locking/backfill/recovery | No |
 | 8 | Admin Columns Builder | Exhaustive | ADR-0098 AC1 whole-request batch plan | hooks/batch budgets/sort/filter/edit/export/N+1 evidence | No |
-| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0099 DL1 auth-aware Query + SSR | cursor/count/cache/refill/nesting/builder/SEO evidence | No |
+| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0099 DL1 auth-aware Query + SSR | cursor/count/cache/refill/nesting/builder/SEO evidence + QRY | No |
 | 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103 trusted structured-content evidence | DW-01…DW-36 + UI/BT/CI | No |
 | 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 transform + native safe-mode fallback | AM-01…AM-40 + UI/BT/CI | No |
 | 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112 ST1/ST2/ST3 | ST-01…ST-48 + VT + UI/BT/CI | No |
@@ -77,11 +77,11 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 19 | Notification System | Exhaustive | NE1/PT-D vs NE2/PT-E | NT-01…NT-142 + JS/WF + provider evidence | No |
 | 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + ET certification + VT | No |
 | 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH-01…CH-142 + MBR/Protected Asset + search/realtime/transport cert | No |
-| 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST-01…REST-52 | No |
+| 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST-01…REST-52 + QRY where Query-backed | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP + verified Gateway + durable Event Inbox | WC-01…WC-156 + VT; I0–I5; Safe HTTP/EI runtime | No |
-| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 artifact profile + ADR-0130 fixed restore-first evidence | BK-01…BK-180 execution; provider C0–C4 and V3 restore certification; VT/MBR recovery interaction | No |
+| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 + ADR-0130 | BK-01…BK-180; provider C0–C4/V3; VT/MBR recovery interaction | No |
 | 25 | Reset Manager | Exhaustive | Plan + restore point + durable journal | RM-01…RM-48 + certified Backup boundary where required | No |
-| 26 | Import / Export | Exhaustive | IR1/PT-D vs IR2/PT-E | IM-01…IM-56 | No |
+| 26 | Import / Export | Exhaustive | IR1/PT-D vs IR2/PT-E | IM-01…IM-56 + DEF package/revision interactions | No |
 | 27 | Protector | Exhaustive | request gate + atomic rate-limit | PR-01…PR-44 | No |
 | 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivative pipeline | WM-01…WM-48 | No |
 | 29 | XML-RPC Manager | Exhaustive | layered method/endpoint policy | XR-01…XR-48 | No |
@@ -93,13 +93,13 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Compatibility P-001 / CF: **0/112; floor not certified; ADR-0002 Proposed**.
 - UI P-002 / UI: **0/104; runtime certification none; ADR-0005 Proposed**.
 - Job P-003 / JS: **0/106; backend/Cron-DST certifications none**.
-- Definition P-004: **0 executed**.
+- Definition P-004 / DEF: **0/144; physical/runtime certifications 0; final D1–D4/DDL open; independent review not executed**.
 - Vault P-005 / VT: **0/128; runtime/crypto certifications none; security review not executed**.
 - Free↔Pro P-006 / FP: **0/144; certified artifact pairs 0; ADR-0010 Proposed**.
 - CI P-007 / CI: **0/120; CI runtime certification none; workflows not verified; direct branch reads show `main` + `planning/master-architecture` unprotected; repository rulesets UNKNOWN due 403 plan/access limitation**.
 - Build P-008 / BT: **0/112; toolchain certification none; ADR-0012 Proposed; canonical tool not selected**.
-- Query P-009: **0 executed; dedicated fixed protocol not yet accepted**.
-- Relations P-010: **0 executed**.
+- Query P-009 / QRY: **0/168; runtime certifications 0; QP1/QP2/QP3/QP4 certifications all 0; cost/cache/cursor defaults open**.
+- Relations P-010: **0 executed; canonical/supplementary evidence completeness audit current**.
 - Workflow P-011 / WF: **0/116; runtime certification none**.
 - Membership P-012 / MBR: **0/160; runtime certification none; M1/M2 physical benchmarks 0; 4 BE3 / 0 MB-certified; 0 PC1+; independent security review not executed**.
 - Backup P-013 / BK: **0/180; runtime certification none; 34 targets / 0 C-certified / 0 C3 Supported; V3 restore certifications 0; independent disaster-recovery/security review not executed**.
@@ -131,15 +131,15 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Recommended implementation order after future consent
 
-1. P-001/CF + P-002/UI + P-008/BT + P-007/CI + P-003/JS + P-004 + P-005/VT + P-006/FP shared foundations;
+1. P-001/CF + P-002/UI + P-008/BT + P-007/CI + P-003/JS + P-004/DEF + P-005/VT + P-006/FP shared foundations;
 2. Kernel/Scope/Site Lifecycle/Registry/Definition/Policy/Abilities/Audit/Vault/Job + build/UI/assets + safe Free/Pro bootstrap;
 3. CPT/Taxonomy;
-4. Fields → Relations P-010 → Query P-009 → Custom Tables → Admin Columns → Blueprint/Listings;
+4. Fields → Relations P-010 → Query P-009/QRY → Custom Tables → Admin Columns → Blueprint/Listings;
 5. admin/site UX modules using UI/BT/CI and surface gates;
 6. User/Profile + Role security;
 7. Membership P-012/MBR + protected files + MB certification;
 8. Forms/WF/JS → Notification + Email/channel certification;
-9. REST/Connections/Event Inbox/Import using REST/IM/WC/VT;
+9. REST/Connections/Event Inbox/Import using REST/IM/WC/VT/QRY;
 10. Backup P-013/BK + restore certification → Reset/Protector/destructive operations;
 11. Chat after MBR/Protected Asset/Job/Notification prerequisites;
 12. OAuth Account Link + Product License service;
@@ -148,10 +148,10 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0130; runtime/toolchain/blocker ADRs remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0132; runtime/toolchain/blocker ADRs remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
-Current planning work: **P0-M00-WP14 — P-009 Query compiler/cost/cache/security executable evidence refinement**.
+Current planning work: **P0-M00-WP16 — P-010 Relations evidence completeness / physical proof audit**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
