@@ -90,9 +90,10 @@ Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX rem
 - Precise location remains consent/Policy/retention/redaction governed; logs/AI/MCP receive only allowed projection.
 - Geocoder/routing unknown outcomes remain unknown/retryable according to provider semantics rather than false no-result/no-route claims.
 - Provider credentials remain Vault-owned; provider terms, cache limits, quotas and licensing are binding.
+- Provider/version/data-source drift is explicit compatibility/provenance state and cannot be silently coerced.
 - Spatial backend results are reauthorized before protected location/entity data is exposed.
 - Multisite territory/location/cache/provider ownership is site/tenant isolated and server-resolved.
-- Backup/restore/clone cannot roll back external geocoder/routing state; cloned production provider mappings stay quarantined until remapped/approved.
+- Backup/restore/clone cannot roll back external geocoder/routing state; cloned production provider mappings stay quarantined until remapped/approved. This remains a cross-foundation environment-safety rule rather than a GEO namespace reassignment.
 - AI Prompt Runtime remains shared; no hidden privileged precise-location, provider or territory mutation path exists.
 - **WP74 WooCommerce Commerce Domain Adapter may consume F03–F11 capabilities only through declared adapter contracts; commerce truth remains with WooCommerce/canonical commerce owners and cannot be redefined by generic foundations.**
 
@@ -100,15 +101,15 @@ Implementation shared-surface reservations remain **0**.
 
 ## 7. F11 completion truth — ADR-0205
 
-`docs/QUALITY/GEOSPATIAL-TERRITORY-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `GEO-001…GEO-176`.
+`docs/QUALITY/GEOSPATIAL-TERRITORY-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `GEO-001…GEO-176` and preserves the exact canonical evidence-master-plan group ownership.
 
-Frozen evidence includes location/address/coordinate/territory schemas, geocoder provenance/confidence, coordinate precision/CRS/axis order, radius/distance/bounding-box semantics, polygons/holes/boundaries, territory hierarchy/overlap/priority, spatial backend capability/fallback, provider cache/freshness/terms, precise-location privacy, routing/matrix unknown outcomes and quotas, CRS/import invalid-geometry handling, protected-location Policy, Multisite territory lifecycle, restore/clone/provider safety, 100K/1M spatial performance reservations and deterministic store-locator/delivery-zone/territory/routing/privacy/AI-adversarial golden regressions.
+Frozen evidence includes location/address/coordinate/territory schemas, geocoder provenance/confidence, coordinate precision/CRS/axis order, radius/distance/bounding-box semantics, polygons/holes/boundaries, territory hierarchy/overlap/priority, spatial backend capability/fallback, provider cache/freshness/terms, precise-location privacy, routing/matrix unknown outcomes and limits, coordinate-system/invalid-geometry import/export, protected-location Policy, Multisite territory lifecycle, **provider/version/data-source drift**, large spatial dataset/query performance and **delivery/service-area/real-estate/fleet golden regressions**.
 
 Current GEO truth: **176 documented / 0 executed / runtime certification 0**.
 
 ## 8. Runtime truth
 
-No F11 feature has executed. Specifically, no geocoder/routing/provider request, spatial backend query, coordinate mutation, territory assignment, precise-location collection, cache mutation, geometry import/repair, Multisite geospatial operation, restore/provider reconciliation, AI/MCP session, test or benchmark occurred.
+No F11 feature has executed. Specifically, no geocoder/routing/provider request, spatial backend query, coordinate mutation, territory assignment, precise-location collection, cache mutation, geometry import/repair, provider-drift migration, Multisite geospatial operation, AI/MCP session, test or benchmark occurred.
 
 ## 9. Current next safe action
 
