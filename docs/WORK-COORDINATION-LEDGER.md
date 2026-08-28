@@ -33,10 +33,10 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP63 | F01 Solution Blueprint detailed evidence | DONE | ADR-0181; SBP 0/176 |
 | WP64 | F02 Analytics/Event/Journey detailed evidence | DONE | ADR-0182; ANL 0/176 |
 | WP65 | F03 Search & Indexing detailed evidence | DONE | ADR-0196; SRH documented 176 / executed 0/176 |
-| **WP66** | **F04 Decision/Formula/Scoring detailed evidence** | **SPECIFICATION / CURRENT** | DEC 0/176 envelope |
+| WP66 | F04 Decision/Formula/Scoring detailed evidence | DONE | **ADR-0198; DEC documented 176 / executed 0/176** |
+| **WP67** | **F05 Ledger/Balance/Movement detailed evidence** | **SPECIFICATION / CURRENT** | LED 0/176 envelope |
 
 Reserved follow-on IDs:
-- WP67 — F05 Ledger/Balance/Movement (`LED`)
 - WP68 — F06 Resource Scheduling/Reservation (`RSV`)
 - WP69 — F07 Placement/Personalization (`PLC`)
 - WP70 — F08 Experimentation/Rollout (`EXP`)
@@ -113,11 +113,19 @@ Third-audit supplemental namespaces:
 
 Total third-audit reservations: **1,760 fixtures / 0 executed**.
 
+Universal detailed evidence state:
+- SBP 176 documented / 0 executed;
+- ANL 176 documented / 0 executed;
+- SRH 176 documented / 0 executed;
+- **DEC 176 documented / 0 executed**;
+- LED 0/176 group envelope is now the current detailed-enumeration target.
+
 Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
 ## 9. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring owns DEC planning during WP66.
+- F04 Decision/Formula/Scoring is now frozen at fixture level by ADR-0198; derived score/decision/rank remains distinct from Policy or consumer mutation authority.
+- F05 Ledger/Balance/Movement owns WP67 planning; formula outputs may be inputs but F04 never becomes ledger posting truth.
 - Surface 53 owns reusable font assets/delivery; Theme Workspace consumes font references instead of creating another font engine.
 - Surface 55 owns environments/migration; Search/Replace owns serialization-safe transformations; Backup owns recovery artifacts.
 - Surface 49 owns admin/login presentation; Protector owns login security; OAuth owns social login; Membership owns access/onboarding.
@@ -131,12 +139,20 @@ Earlier evidence remains separately authoritative and unexecuted unless explicit
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. Runtime truth
+## 10. F04 completion truth — ADR-0198
 
-No third-audit feature has executed. Specifically, no font conversion/download, migration/export/import/push/pull, login/admin branding application, content clone, audit logger/runtime sink, child-theme file write/package install/activation, DB snapshot/reset, settings compiler, CPT registration, provider call, AI/MCP session, test or benchmark occurred.
+`docs/QUALITY/DECISION-FORMULA-SCORING-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `DEC-001…DEC-176`.
 
-## 11. Current next safe action
+Frozen evidence includes typed AST/parser/versioning, decimal money/rounding, currencies/units/time, null/default/input provenance, lookup versioning, scorecards, decision-table hit policies, deterministic ranking/ties, no-write simulation, high-risk approvals, consumer boundaries, no-eval/execution budgets, cache/Policy isolation, explanations, Multisite and 10K/100K/1M-scale/golden regression profiles.
 
-Continue **P0-M00-WP66 — F04 Decision, Formula, Scoring & Ranking detailed executable-evidence specification (`DEC-001…DEC-176`)**.
+Current DEC truth: **176 documented / 0 executed / runtime certification 0**.
+
+## 11. Runtime truth
+
+No F04 or third-audit feature has executed. Specifically, no parser/evaluator/formula/score/decision/ranking/simulation/benchmark, font conversion/download, migration/export/import/push/pull, login/admin branding application, content clone, audit logger/runtime sink, child-theme file write/package install/activation, DB snapshot/reset, settings compiler, CPT registration, provider call, AI/MCP session, test or benchmark occurred.
+
+## 12. Current next safe action
+
+Continue **P0-M00-WP67 — F05 Ledger, Balance & Movement detailed executable-evidence specification (`LED-001…LED-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
