@@ -1,7 +1,25 @@
 # WPEssential — Market Expansion Executable Evidence Master Plan
 
-Status: **Planning protocol / NOT EXECUTED**
+Status: **Planning protocol / exact fixture expansion complete under ADR-0208 / NOT EXECUTED**
 Date: 2026-08-29
+
+## Current completion note — WP113 / ADR-0208
+
+The original 16-group ownership below remains canonical. WP113 has now expanded every reserved Market Expansion namespace into exact individual fixtures without renumbering or repurposing the groups.
+
+| Namespace | Exact protocol | Documented | Executed |
+|---|---|---:|---:|
+| RDR | `URL-REDIRECTION-ROUTING-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+| SRT | `SEARCH-REPLACE-DATA-TRANSFORMATION-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+| DMY | `DUMMY-DATA-FIXTURE-STUDIO-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+| LNK | `LINK-HEALTH-CRAWL-INTELLIGENCE-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+| DBM | `DATABASE-MAINTENANCE-CLEANUP-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+| PDO | `PRODUCT-DISCOVERY-PLANNING-ORCHESTRATOR-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+| MIR | `MARKET-INTELLIGENCE-RADAR-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
+
+WP113 total: **1,232/1,232 exact fixture definitions documented / 0 executed**.
+
+These namespaces are now planning-complete at the evidence-design layer. This does **not** grant runtime/provider certification or development authorization. ADR-0014 remains the hard consent gate.
 
 ## Purpose
 
@@ -12,7 +30,7 @@ All counters below are **0 executed**. This document authorizes no runtime work.
 ## Fixed protocols
 
 ### RDR — URL Redirection & Routing
-`RDR-001…RDR-176` — **0/176**
+`RDR-001…RDR-176` — **176 exact documented / 0 executed**
 
 16 evidence groups × 11 fixtures:
 1. RDR-001…011 identity/revisions/groups/priority.
@@ -33,7 +51,7 @@ All counters below are **0 executed**. This document authorizes no runtime work.
 16. 166…176 upgrade/failure/recovery/coexistence/security regression.
 
 ### SRT — Search, Replace & Data Transformation
-`SRT-001…SRT-176` — **0/176**
+`SRT-001…SRT-176` — **176 exact documented / 0 executed**
 
 Groups:
 1. literal/case/URL search;
@@ -54,7 +72,7 @@ Groups:
 16. multibyte charset/performance/recovery/adversarial security.
 
 ### DMY — Dummy Data / Fixture Studio
-`DMY-001…DMY-176` — **0/176**
+`DMY-001…DMY-176` — **176 exact documented / 0 executed**
 
 Groups:
 1. posts/pages/CPT;
@@ -75,7 +93,7 @@ Groups:
 16. production guards/no-real-provider-effects/performance/recovery.
 
 ### LNK — Link Health / Crawl Intelligence
-`LNK-001…LNK-176` — **0/176**
+`LNK-001…LNK-176` — **176 exact documented / 0 executed**
 
 Groups:
 1. source discovery/content/field/block adapters;
@@ -96,7 +114,7 @@ Groups:
 16. 1k–1M URLs/10M occurrences/failures/recovery.
 
 ### DBM — Database Maintenance / Cleanup
-`DBM-001…DBM-176` — **0/176**
+`DBM-001…DBM-176` — **176 exact documented / 0 executed**
 
 Groups:
 1. owner/provider registry;
@@ -117,7 +135,7 @@ Groups:
 16. large DB/resource budgets/failure/recovery/security.
 
 ### PDO — Product Discovery & Planning Orchestrator
-`PDO-001…PDO-176` — **0/176**
+`PDO-001…PDO-176` — **176 exact documented / 0 executed**
 
 Groups:
 1. intent recognition;
@@ -138,7 +156,7 @@ Groups:
 16. hallucination/copyright/secrets/failure/regression.
 
 ### MIR — Market Intelligence Radar
-`MIR-001…MIR-176` — **0/176**
+`MIR-001…MIR-176` — **176 exact documented / 0 executed**
 
 Groups:
 1. WordPress.org API popular/new/recommended paging;
