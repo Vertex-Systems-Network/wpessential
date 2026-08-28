@@ -28,7 +28,8 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free core + Pro add-on + Platform API + entitlement + migrations/update ordering | ADR-0128; FP-01…FP-144; 0 executed; ADR-0010 remains Proposed. |
 | `P0-M00-WP12` | P-012 Membership runtime/access/protected-files/provider evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership + Policy + Entitlement + protected assets + billing facts + Jobs/Notifications + Multisite | ADR-0129; MBR-01…MBR-160; 0 executed; 4 BE3 / 0 MB-certified; 0 PC1+. |
 | `P0-M00-WP13` | P-013 Backup/Restore artifact/provider/recovery evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup manifest + crypto + Remote Copy + providers + Vault + JobService + Site Lifecycle + Restore | ADR-0130; BK-01…BK-180; 0 executed; 34 targets / 0 C-certified / 0 C3; V3 cert 0. |
-| `P0-M00-WP14` | P-009 Query compiler/cost/cache/security evidence | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Query AST/compiler + Policy + Data Sources + Relations + Custom Tables + cache + Multisite | Current planning work; no dedicated fixed P-009 protocol found; no runtime execution. |
+| `P0-M00-WP14` | P-009 Query compiler/cost/cache/security evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query AST/compiler + Policy + Data Sources + Relations + Custom Tables + cache + Multisite | ADR-0131; QRY-01…QRY-168; 0 executed; QP1–QP4 certifications 0. |
+| `P0-M00-WP15` | P-004 Definition Repository evidence completeness / physical proof audit | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Definition Repository + revisions + dependencies + migrations + Multisite + import/export | Current planning work; existing fixed P-004 protocols/ADR-0092 must be audited before any refinement. |
 
 No production implementation work package is active.
 
@@ -36,10 +37,9 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | P-009 Query compiler/cost/cache/security evidence refinement | `SPECIFICATION` current | Shared data-plane contract for Query Builder, Listings, Admin Columns, REST, Forms/Dashboard consumers |
-| 2 | P-004 Definition exact physical evidence refinement | `QUEUED` | Shared control-plane definition storage/locking/migration foundation |
-| 3 | P-010 Relations evidence reconciliation | `QUEUED` | Existing fixed protocol/benchmark docs exist; reassess whether canonical sync/refinement is sufficient after Query |
-| 4 | Remaining unresolved shared/surface blockers | `BLOCKED` by sequence | Reassess by dependency/critical-path value after WP14 |
+| 1 | P-004 Definition Repository evidence completeness / physical proof audit | `SPECIFICATION` current | Shared control-plane storage/revision/dependency/migration foundation; avoid duplicate protocol |
+| 2 | P-010 Relations evidence reconciliation | `QUEUED` | Existing fixed relation protocol + physical benchmark already exist; audit completeness after Definition |
+| 3 | Remaining unresolved shared/surface blockers | `BLOCKED` by sequence | Reassess by dependency/critical-path value after WP15 |
 
 Planning documentation work does not create implementation authorization.
 
@@ -51,24 +51,25 @@ Current implementation WIP remains 0. Planning serializes shared contracts. Any 
 
 No active shared-surface implementation reservation exists.
 
-## 5. Backup milestone truth preserved
+## 5. Query milestone truth preserved
 
-- Backup Set, Artifact and Destination Copy are distinct truth domains.
-- generated/uploaded ≠ restore-ready.
-- V2 Remote Verified ≠ V3 Restore Tested.
-- provider/static SE evidence never grants C certification.
-- provider success/checksum cannot replace WPE manifest/integrity/restore verification.
-- key recovery must survive loss of original site/database; the only recovery key cannot be colocated solely with ciphertext.
-- parser/archive/path/symlink/decompression inputs remain hostile until validated and bounded.
-- unknown provider commit/delete outcomes require reconciliation, not fake success/failure.
-- restore/clone reauthorizes Vault/provider/commercial state and cannot resurrect stale Membership access.
-- destructive operations that require a restore point must verify the configured Backup tier before commit.
-- BK-01…BK-180 are documentation-only; executed 0/180; provider C-certified 0; V3 certifications 0.
+- Query Definition/Revision, invocation, compiled provider operation and result/cache entry are separate truths.
+- Draft changes do not mutate live published consumer semantics.
+- no raw SQL/arbitrary callback/eval in normal AST.
+- parameters are typed values; identifiers are registered schema references.
+- unsupported provider semantics fail, not approximate silently.
+- row/resource/field/count/scope authorization remains server-side.
+- persistent shared cache is forbidden when authorization/invalidation dependencies cannot be modeled safely.
+- stale protected cache after committed revoke is a security failure.
+- cursor/page state is untrusted and scope/revision/authorization-bound.
+- QP4 remote results are locally reauthorized and remain under Connections/Safe HTTP/Vault policy.
+- normal relation/list N+1 is a stop-line failure.
+- QRY-01…QRY-168 are documentation-only; executed 0/168; QP1/QP2/QP3/QP4 certifications 0.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP14`: reconcile ADR-0086, Query AST/runtime architecture, Data Source/Policy/Relations/Custom Tables contracts and generic P-009 into one fixed bounded executable-evidence protocol if no dedicated equivalent exists.
+Continue `P0-M00-WP15`: audit `DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md`, `P004-DEFINITION-REPOSITORY-BENCHMARK-PROTOCOL.md`, ADR-0073/0092 and Definition Repository architecture against current governance, Multisite, migration/versioning, package/import/export and dependency contracts.
 
-The protocol must cover at minimum compiler validation, adapter capability negotiation, server-side authorization, cost/budget rejection, stable order/pagination, count leakage, cache scope/key/invalidation, hostile AST/input complexity, SQL/identifier/parameter safety, relation/custom-table/native-WP semantics, remote-source boundaries, Multisite isolation, concurrency/revision behavior, scale and negative requirements.
+Do **not** create a second P-004 protocol unless the audit proves material gaps that cannot be safely incorporated into the existing canonical protocol. If gaps exist, refine the existing protocol or issue a narrowly scoped superseding/refinement ADR with fixed evidence truth.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
