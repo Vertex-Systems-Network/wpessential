@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted evidence decisions are preserved through **ADR-0129**. Architecture acceptance never implies runtime certification or owner development authorization.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions are preserved through **ADR-0130**. Architecture acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -17,13 +17,13 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-004 | ADR-0073/0092 | Definition D1/D2/D3/D4 exact DDL/index/locking/migration — P-004 |
 | D-005 | ADR-0048/0085/0124 | Vault crypto/AAD/envelope/rotation/recovery/redaction/Multisite/security review — VT-01…VT-128 / P-005 |
 | D-006 | ADR-0010/0070/0072/0076/0091/0128 | Free↔Pro package/Platform API/schema boot compatibility — FP-01…FP-144 / P-006; Product License/OAuth remain separately gated |
-| D-007 | ADR-0011/0127 | executable CI matrix, provider-neutral gates, artifact provenance, branch/release enforcement — CI-01…CI-120 / P-007 |
+| D-007 | ADR-0011/0127 | executable CI matrix, provider-neutral gates, artifact provenance, branch/release enforcement — CI-01…CI-120 / P-007; direct branch reads show `main` + planning branch unprotected; repository rulesets UNKNOWN due 403 |
 | D-008 | ADR-0012/0126 | build/externalization/toolchain/package comparison — BT-01…BT-112 / P-008 |
-| D-009 | ADR-0086 | Query compiler/cost/cache/security/storage-adapter evidence — P-009 |
+| D-009 | ADR-0086 | Query compiler/cost/cache/security/storage-adapter evidence — P-009; dedicated fixed protocol pending WP14 |
 | D-010 | ADR-0074/0093 | Relations DDL/cardinality/concurrency/scale — P-010 |
 | D-011 | ADR-0082/0118 | Workflow revision/dedupe/concurrency/waits/approvals/recovery/scale — WF-01…WF-116 / P-011 |
 | D-012 | ADR-0013/0015/0016/0019/0020/0057/0062/0066/0078/0090/0129 | Membership runtime/cache/revoke/teams/provider/protected-files/Multisite — MBR-01…MBR-160 / P-012; MB/PC certifications separate |
-| D-013 | ADR-0021/0033/0043/0053/0056/0061/0064/0065/0084/0100 | Backup artifact/crypto/Remote Copy/provider/restore evidence — P-013 |
+| D-013 | ADR-0021/0033/0043/0053/0056/0061/0064/0065/0084/0100/0130 | Backup artifact/crypto/Remote Copy/provider/restore evidence — BK-01…BK-180 / P-013; provider C0–C4/V3 certifications remain runtime-gated |
 | D-014 | ADR-0044/0102 | Pro updater TUF verifier/key custody/metadata/package staging — TU-01…TU-44 |
 | D-015 | ADR-0031/0108 | Frontend Dashboard routing/IDOR/cache/assets/permalink/Multisite — FD-01…FD-48 |
 | D-016 | ADR-0035/0109 | Builder adapter registration/render/version/upgrade certification — BW-01…BW-50 |
@@ -44,11 +44,11 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Compatibility: WP 6.9 / PHP 8.3 current minimum candidates; WP 7.1 planning reference; CF protocol does not certify the floor.
 - UI: WPE wrappers + WordPress-provided React; WP 6.9 must not hard-depend on WP 7.1-only theme/UI capabilities; experimental WordPress UI/routes/widgets are not foundational.
 - Build: `@wordpress/build` first candidate, `@wordpress/scripts` comparison/fallback, Vite only for proven unmet requirements; BT fixed evidence.
-- CI: layered provider-neutral FAST/FULL gates; untrusted PR secret isolation; BASELINE FAILURE/flaky truth; exact artifact provenance; CI fixed evidence.
+- CI: layered provider-neutral FAST/FULL gates; untrusted PR secret isolation; BASELINE FAILURE/flaky truth; exact artifact provenance; CI fixed evidence. Direct GitHub branch reads currently show `main` and `planning/master-architecture` unprotected; repository rulesets remain UNKNOWN because ruleset reads are plan/access restricted.
 - Free↔Pro: Free kernel + separately distributed Pro; Platform API/schema/package compatibility separate from Product Entitlement/service state; FP fixed evidence.
 - Definition: D1/PT-C first; D2/D3/D4 comparisons.
 - Relations: R1/PT-D first; R2/PT-E mandatory.
-- Query: QP1 native-WP; QP2 Custom Table; QP3 Relations; QP4 remote.
+- Query: QP1 native-WP; QP2 Custom Table; QP3 Relations; QP4 remote. Fixed P-009 adversarial evidence protocol still pending.
 - Field Storage: FS1–FS6.
 - Custom Tables: CT1/PT-E first; CT2/PT-D mandatory; CT3 network-owned only.
 - Settings: ST1/PT-A; ST2/PT-B; ST3 inheritance.
@@ -61,7 +61,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Workflow: WF1/PT-D first; WF2/PT-E mandatory.
 - JobService: J1/J2/J3 physical profiles; Action Scheduler remains candidate only.
 - Import: IR1/PT-D first; IR2/PT-E mandatory.
-- Backup Remote Copy: BR1/BR2/BR3; artifact H-B1 SHA-256 integrity; CMP0 fallback/CMP1 gzip comparison; ZIP convenience only.
+- Backup: manifest-first multipart logical bundle; BR1/BR2/BR3 Remote Copy profiles; H-B1 SHA-256 stored-byte integrity; CMP0 fallback/CMP1 gzip comparison; ZIP convenience only; BK fixed restore-first evidence.
 - Vault: V1/PT-C favored first; V2/PT-E + separate network Vault mandatory; VT fixed evidence.
 - User/Profile and Role/Capability remain native WordPress identity/authorization authority with WPE security workflows.
 
@@ -77,13 +77,13 @@ All are paper-only until their applicable executable evidence certifies them.
 | P-004 Definition | **0 executed** |
 | P-005 Vault VT | **0/128; runtime/crypto certifications 0; security review not executed** |
 | P-006 Free↔Pro FP | **0/144; certified artifact pairs 0** |
-| P-007 CI | **0/120; workflow implementation not verified; branch protection/rulesets UNKNOWN** |
+| P-007 CI | **0/120; workflow implementation not verified; direct branch reads show main + planning unprotected; repository rulesets UNKNOWN (403)** |
 | P-008 Build BT | **0/112; canonical toolchain not selected** |
-| P-009 Query | **0 executed** |
+| P-009 Query | **0 executed; dedicated fixed protocol pending** |
 | P-010 Relations | **0 executed** |
 | P-011 Workflow WF | **0/116; runtime certification 0** |
 | P-012 Membership MBR | **0/160; runtime certification 0; 4 BE3 / 0 MB-certified; 0 PC1+** |
-| P-013 Backup | **0 executed; 34 provider targets / 0 C-certified / 0 C3 Supported** |
+| P-013 Backup BK | **0/180; runtime certification 0; 34 provider targets / 0 C-certified / 0 C3 Supported; V3 certifications 0** |
 | Forms FM | **0/92** |
 | Notification NT | **0/142** |
 | Chat CH | **0/142; realtime/search certifications 0** |
@@ -109,36 +109,51 @@ All are paper-only until their applicable executable evidence certifies them.
 | Multisite | **0 MS1+** |
 | Remote privacy | **0/30** |
 
-## D. P-013 Backup — current highest-priority open blocker
+## D. P-009 Query — current highest-priority open blocker
 
-Accepted architecture already includes:
-- manifest-first independently verifiable multipart logical bundle;
-- per-backup DEK + independent disaster-recovery wrapping boundary;
-- Sodium secretstream/XChaCha20/Argon2id paper crypto profile;
-- Remote Copy durable commit/verify/retention/delete/restore states;
-- provider-family C0–C4 restore-first certification;
-- H-B1 SHA-256 stored-byte integrity distinct from AEAD;
-- CMP0 no-compression fallback and CMP1 gzip first comparison;
-- ZIP is convenience, not canonical backup truth;
-- provider multipart remains below WPE Part identity.
+Accepted paper architecture in ADR-0086 already defines:
+- QP1 WordPress-native query path as first baseline;
+- QP2 Custom Table adapter for owned physical tables;
+- QP3 Relations adapter for relationship predicates/traversal;
+- QP4 remote source path only through separately certified adapters;
+- typed Query AST/compiler direction rather than arbitrary SQL;
+- cost/cache/index behavior as evidence-gated, not assumed.
 
-Still open for P-013 executable evidence:
-- exact artifact bytes/manifest/chunk/compression/parser bounds;
-- path traversal/symlink/archive/decompression-bomb defenses;
-- DB/files stream consistency and crash/final-manifest windows;
-- encryption/wrapping/recovery/lost-key semantics;
-- Backup↔Vault recovery-key separation;
-- restore to clean/different environment;
-- partial/corrupt/missing part and checksum/authentication failure;
-- Remote Copy commit/verify/delete/retention unknown outcomes;
-- provider C0–C4 execution across advertised profiles;
-- site/network scope + Site Lifecycle/clone/restore behavior;
-- migrations/Reset/destructive-operation restore-point proof;
-- scale, concurrency, JobService/backpressure and independent recovery review.
+Still open for a fixed P-009 executable evidence contract:
+- AST/schema validation and version/revision pinning;
+- server-side Policy placement before query/result disclosure;
+- data-source/adapter capability negotiation and unsupported-operator failure;
+- parameter/identifier/operator safety and no raw SQL escape hatch;
+- cost estimation, hard budgets, time/row/scan limits and hostile-complexity rejection;
+- deterministic ordering, tie-breakers, cursor/offset semantics and pagination drift;
+- aggregate/count/facet leakage boundaries;
+- cache-key scope, auth context, invalidation dependencies and stale protected-result prevention;
+- native WP/meta/tax/user/term semantics;
+- Custom Table typed columns/indexes/null/collation behavior;
+- Relations direction/cardinality/pivot metadata/traversal and N+1 avoidance;
+- remote-source pagination/rate/unknown-outcome/secret boundaries;
+- Multisite site/network scope isolation;
+- revision/concurrency/change-between-pages behavior;
+- scale/query-plan/latency/memory benchmarks and negative requirements.
 
-Current Backup truth: **34 provider targets / 0 C-certified / 0 C3 Supported / P-013 executed 0**.
+Current Query truth: **P-009 executed 0; dedicated fixed protocol not yet accepted**.
 
-## E. Membership boundary retained after ADR-0129
+## E. Backup boundary retained after ADR-0130
+
+- generated/uploaded ≠ restore-ready;
+- V2 Remote Verified ≠ V3 Restore Tested;
+- required missing/corrupt data cannot be shown as fully verified;
+- provider success/checksum does not replace WPE manifest/integrity/restore truth;
+- static SE evidence never grants C certification;
+- the only disaster-recovery key cannot exist solely beside/inside ciphertext;
+- hostile archive/parser/path input is bounded before destructive restore;
+- remote commit/delete unknown outcomes require reconciliation;
+- restore/clone reauthorizes Vault/provider/commercial state and cannot resurrect stale Membership access;
+- Reset/migration/destructive flows requiring a restore point must verify the configured tier before commit.
+
+Current: **BK 0/180; 34 targets / 0 C-certified / 0 C3 Supported; V3 certifications 0**.
+
+## F. Membership boundary retained after ADR-0129
 
 - provider billing status/event is source fact, never direct access authority;
 - stale allow after committed revoke/hard deny is a security defect;
@@ -150,7 +165,7 @@ Current Backup truth: **34 provider targets / 0 C-certified / 0 C3 Supported / P
 
 Current: **MBR 0/160; 4 BE3 / 0 MB-certified; 0 PC1+**.
 
-## F. Decision-processing rule
+## G. Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
@@ -161,8 +176,8 @@ Current: **MBR 0/160; 4 BE3 / 0 MB-certified; 0 PC1+**.
 
 ## Next planning-only priorities
 
-1. **P-013 Backup/Restore artifact/provider/recovery evidence refinement** — current `P0-M00-WP13`.
-2. After P-013 closes, reassess remaining P-004/P-009/P-010 and surface-specific runtime gaps by critical-path value.
+1. **P-009 Query compiler/cost/cache/security evidence refinement** — current `P0-M00-WP14`.
+2. Reassess P-004 Definition exact physical evidence and P-010 Relations evidence after Query protocol closes.
 3. Keep all fixed protocols and certification boundaries intact.
 
 Production development authorization remains **NOT GRANTED**.
