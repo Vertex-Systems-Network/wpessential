@@ -7,6 +7,8 @@ Date: 2026-08-29
 
 The original 16-group ownership below remains canonical. WP113 has now expanded every reserved Market Expansion namespace into exact individual fixtures without renumbering or repurposing the groups.
 
+Acceptance decision: `docs/DECISIONS/ADR-0208-market-expansion-exact-executable-evidence-protocols.md`.
+
 | Namespace | Exact protocol | Documented | Executed |
 |---|---|---:|---:|
 | RDR | `URL-REDIRECTION-ROUTING-EXECUTABLE-EVIDENCE-PROTOCOL.md` | 176/176 | 0/176 |
