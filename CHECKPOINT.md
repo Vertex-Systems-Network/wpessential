@@ -44,7 +44,7 @@ No implementation approval was introduced.
 
 ## Accepted architecture/evidence milestone
 
-Accepted decisions now extend through **ADR-0121**.
+Accepted decisions now extend through **ADR-0122**.
 
 Latest bounded evidence protocols:
 - ADR-0101 — OAuth Account-Link OA-01…OA-32.
@@ -67,41 +67,45 @@ Latest bounded evidence protocols:
 - ADR-0118 — Workflow Runtime WF-01…WF-116.
 - ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.
 - ADR-0120 — Notification System NT-01…NT-142.
-- **ADR-0121 — Message & Chat CH-01…CH-142.**
+- ADR-0121 — Message & Chat CH-01…CH-142.
+- **ADR-0122 — Webhooks, Connections & Event Inbox WC-01…WC-156.**
 
-## Message & Chat planning milestone — COMPLETE
+## Webhooks & Connections planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP05`**  
+Work package: **`P0-M00-WP06`**  
 Lifecycle: **DONE (planning/documentation only)**
 
 Created:
-- `docs/QUALITY/MESSAGE-CHAT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0121-message-chat-evidence-protocol.md`
+- `docs/QUALITY/WEBHOOKS-CONNECTIONS-EVENT-INBOX-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0122-webhooks-connections-event-inbox-evidence-protocol.md`
 
-Chat evidence now covers Definition/revision and conversation-creation Policy, participant lifecycle and Membership/team/resource revocation races, deterministic message ordering/idempotency, edit/delete/reply/reaction/mention boundaries, private attachment origin/download/finalization safety, unread/read personal-state concurrency and cache isolation, search-index reauthorization and stale-index handling, polling/realtime reconnect and long-lived authorization refresh, Notification integration, moderation/abuse controls, privacy/retention/anonymization, restore/clone/Site Lifecycle, Multisite isolation and CRT1/CRT2 physical/scale evidence.
+Evidence now covers Connection Definition/revision/dependencies, site/network scope ownership, Vault credential lifecycle, OAuth state/PKCE/issuer/refresh/revoke races, granular I0–I5 provider capability certification, centralized Safe HTTP SSRF/DNS/redirect/TLS/size controls, inbound raw-body signature/replay/key-rotation validation, durable normalized Event Inbox dedupe/concurrency/crash/replay/reconciliation, consumer-specific idempotency, Workflow/Job/domain integration, outbound webhook retry/unknown-outcome truth, pagination/rate limits/Protected Assets, privacy/log redaction/retention, clone/restore/Site Lifecycle, Multisite isolation and EI1/EI2 physical/scale evidence.
 
-Current Message & Chat state:
-- CH fixtures documented: **142**
-- CH fixtures executed: **0/142**
-- Chat runtime certifications: **0**
-- realtime transport certifications: **0**
-- search adapter certifications: **0**
-- final Chat physical topology: **OPEN / evidence-gated**
-- CRT1/PT-D: first future benchmark baseline only
-- CRT2/PT-E: mandatory comparison
+Current Webhooks & Connections state:
+- WC fixtures documented: **156**
+- WC fixtures executed: **0/156**
+- Connection provider I4/I5 certifications: **0**
+- Event Inbox runtime certifications: **0**
+- Safe HTTP runtime certification: **none**
+- final Event Inbox physical topology: **OPEN / evidence-gated**
+- EI1/PT-D: first future benchmark baseline only
+- EI2/PT-E: mandatory comparison
 
-Canonical Chat truth remains transport-independent. Private attachments remain Protected Assets and search candidates require request-time reauthorization.
+Trusted endpoint/Connection binding remains authoritative for site/network scope. Payload fields cannot select scope. Event Inbox remains accepted ingress/source-fact truth, not owning business-domain truth.
 
-## Notification / Workflow / Cron state
+## Recent communication/runtime evidence state
 
-- NT fixtures documented: **142**; executed **0/142**; runtime certifications **0**; NE topology open.
-- WF fixtures documented: **116**; executed **0/116**; runtime certifications **0**; topology open.
-- JS fixtures documented: **106**; executed **0/106**; backend certifications **0**; Cron/DST certifications **0**.
+- CH: **0/142**; Chat runtime/realtime/search certifications **0**; CRT topology open.
+- NT: **0/142**; Notification runtime certifications **0**; NE topology open.
+- WF: **0/116**; Workflow runtime certifications **0**; topology open.
+- JS: **0/106**; Job backend certifications **0**; Cron/DST certifications **0**.
+- FM: **0/92**; Forms runtime certifications **0**; FRT topology open.
 - Action Scheduler remains **preferred candidate adapter only / NOT certified**.
 
 ## Current evidence counters
 
 - P-001…P-013 executable gates remain unexecuted.
+- WC: **0/156**.
 - CH: **0/142**.
 - NT: **0/142**.
 - WF: **0/116**.
@@ -138,16 +142,19 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - governance hardening complete;
-- Forms, Workflow, Job/Cron, Notification and Message & Chat evidence protocols exist with fixed fixture IDs;
-- ADR-0121 accepted as Message & Chat evidence contract;
-- no PHP/React/runtime/build/test/provider/deployment work was executed.
+- Forms, Workflow, Job/Cron, Notification, Message & Chat, and Webhooks/Connections evidence protocols exist with fixed fixture IDs;
+- ADR-0122 accepted as Webhooks/Connections/Event Inbox evidence contract;
+- no PHP/React/runtime/build/test/network/provider/deployment work was executed.
 
-Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Chat Conversation/Participant/Message/Asset/Search mutations, realtime connections, notification/provider sends, Jobs, PHPUnit/Playwright, benchmarks or deployment.
+Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, credential exchange, OAuth flow, DNS/HTTP requests, webhook endpoint requests/subscriptions, provider/API calls, Event Inbox mutations, Jobs, Workflow dispatch, PHPUnit/Playwright, benchmarks or deployment.
 
-## Next planning-only priorities
+## Next planning-only priority
 
-1. **Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.**
-2. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH gates intact.
+The previously queued Forms → Workflow/Cron → Notifications → Message & Chat → Webhooks & Connections evidence sequence is complete through ADR-0122.
+
+**Next safe planning action:** inspect the remaining Open Decisions / Implementation Readiness blockers and select the highest-value unresolved paper/evidence contract without inventing a new priority from conversational memory.
+
+All existing P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC gates remain intact.
 
 Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
 
