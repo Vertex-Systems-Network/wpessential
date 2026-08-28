@@ -2,13 +2,13 @@
 
 Status: **Phase 0 — 56/56 product surfaces Exhaustively specified; exact supplemental evidence planning remains; development not authorized**
 
-This directory is the product-behavior source of truth. `docs/MODULE-CATALOG.md` and its expansion addenda provide the high-level catalog; detailed files here define screens, fields, toggles, actions, defaults, validation, permissions, lifecycle, integrations, failure behavior and evidence expectations.
+This directory is the product-behavior source of truth. `docs/MODULE-CATALOG.md` and its expansion addenda provide high-level catalog context; detailed files here define screens, fields, toggles, actions, defaults, validation, permissions, lifecycle, integrations, failure behavior and evidence expectations.
 
 ## Development consent gate
 
 Even when a module is Exhaustive or has Accepted semantics, production development remains prohibited until the owner explicitly authorizes scoped development under `/DEVELOPMENT-CONSENT.md` and ADR-0014.
 
-`continue`, planning approval, ADR approval or Phase 0 planning completion do not count as development consent.
+`continue`, `resume`, planning approval, ADR approval or Phase 0 planning completion do not count as development consent.
 
 ## Maturity model
 
@@ -35,7 +35,7 @@ See `OPTION-COVERAGE-MATURITY.md` for the exact current ledger.
 - surfaces 51–55: ADR-0195 second competitive expansion;
 - surface 56: ADR-0197 third competitive expansion.
 
-Historical 31-surface files remain valid source material for their original modules; they are not the current project denominator.
+Historical 31/43/48/50/55 statements remain historical snapshots rather than current denominator claims.
 
 ## Current product surfaces
 
@@ -105,20 +105,7 @@ The Free/Pro distribution contract remains governed separately; this list descri
 - `OPTION-INVENTORY.md`
 - `OPTION-COVERAGE-MATURITY.md`
 
-Suite-level behavioral sources remain useful context, including CONTENT-MODEL, DATA-QUERY, ADMIN-EXPERIENCE, IDENTITY-ACCESS, AUTOMATION-COMMUNICATION, INTEGRATION-DATA, OPERATIONS-PROTECTION and PLATFORM surface specifications.
-
-## Dedicated exhaustive specifications
-
-The original module suite retains dedicated exhaustive specs for content models, fields, relations, queries, tables, listings, admin/dashboard/settings, profiles/roles, builder widgets, membership, forms/workflows, jobs, notification/email/chat, REST/connections/import-export, backup/reset/protector/media/XML-RPC and platform surfaces.
-
-Expansion specifications/addenda cover:
-- universal F01–F12;
-- market surfaces 44–48;
-- Membership/Role/Media parity and surfaces 49–50;
-- surfaces 51–55 plus existing-owner supplements;
-- Surface 56 and third competitive parity.
-
-Canonical expansion ownership is preserved in `OPTION-COVERAGE-MATURITY.md`, module-catalog expansion files and accepted ADRs.
+Original and expansion specifications remain authoritative for their owned behavior. Current ownership/counters are reconciled by the maturity ledger, Checkpoint and accepted ADRs.
 
 ## Important ownership boundaries
 
@@ -129,13 +116,27 @@ Canonical expansion ownership is preserved in `OPTION-COVERAGE-MATURITY.md`, mod
 - Backup is not Staging/Migration;
 - Safe Script/Tag remains browser-side and does not permit arbitrary PHP/eval;
 - Theme Workspace may analyze/scaffold/package declarative theme assets but must not become arbitrary live PHP execution;
-- WooCommerce integration remains an adapter, not a second commerce truth engine.
+- WooCommerce integration remains an adapter, not a second commerce truth engine;
+- redirect simulation is not authorization;
+- Search/Replace Dry Run is not mutation;
+- synthetic fixtures are not production truth;
+- inconclusive link checks are not proven broken;
+- cleanup candidates are not deletion authority;
+- market/planning signals are not product acceptance or implementation consent.
 
 ## Evidence-planning status
 
 Exact detailed executable-evidence specifications exist for SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA and many established shared/module protocols.
 
-WP112 / ADR-0207 found **33 market/competitive supplemental namespaces / 5,808 fixtures** still fixed only at group-envelope level. These are genuine exact-specification planning gaps and are assigned to WP113–WP116.
+WP113 / ADR-0208 additionally completed all seven Market Expansion exact protocols:
+- RDR, SRT, DMY, LNK, DBM, PDO, MIR;
+- **1,232/1,232 exact fixtures documented**;
+- **0 executed**.
+
+ADR-0207 originally found 5,808 supplemental exact definitions missing. Current remaining known planning gap is **4,576 definitions across 26 namespaces**:
+- **WP114 CURRENT** — MPR/RPR/ATM/MDP/STM = 880;
+- WP115 = 1,936;
+- WP116 = 1,760.
 
 Therefore the product-option gate is complete, but the overall Phase 0 evidence-planning closure gate is not yet complete.
 
@@ -170,8 +171,9 @@ If future research uncovers a missing meaningful option, update the spec before 
 ## Current conclusion
 
 **Product-option planning:** 56/56 Exhaustive.  
-**Exact supplemental evidence planning:** incomplete; WP113–WP116 required.  
+**Market Expansion exact evidence:** complete / ADR-0208 / 1,232 documented / 0 executed.  
+**Remaining exact supplemental planning:** WP114–WP116 / 4,576 definitions.  
 **Technical/runtime certification:** not reached globally.  
 **Executable development:** not started, not authorized.
 
-Current safe planning work: **WP113 — Market Expansion exact executable-evidence specification**.
+Current safe planning work: **WP114 — First Competitive exact executable-evidence specification (`MPR/RPR/ATM/MDP/STM`, 880 fixtures).**
