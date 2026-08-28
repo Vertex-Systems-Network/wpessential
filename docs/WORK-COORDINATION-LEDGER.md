@@ -36,11 +36,11 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP66 | F04 Decision/Formula/Scoring detailed evidence | DONE | ADR-0198; DEC 176 documented / 0 executed |
 | WP67 | F05 Ledger/Balance/Movement detailed evidence | DONE | ADR-0199; LED 176 documented / 0 executed |
 | WP68 | F06 Resource Scheduling/Reservation detailed evidence | DONE | ADR-0200; RSV 176 documented / 0 executed |
-| **WP69** | **F07 Placement/Personalization detailed evidence** | **DONE** | **ADR-0201; PLC 176 documented / 0 executed** |
-| **WP70** | **F08 Experimentation/Rollout detailed evidence** | **SPECIFICATION / CURRENT** | EXP 0/176 envelope |
+| WP69 | F07 Placement/Personalization detailed evidence | DONE | ADR-0201; PLC 176 documented / 0 executed |
+| **WP70** | **F08 Experimentation/Rollout detailed evidence** | **DONE** | **ADR-0202; EXP 176 documented / 0 executed** |
+| **WP71** | **F09 Documents/Records/Templates detailed evidence** | **SPECIFICATION / CURRENT** | DOC 0/176 envelope |
 
 Reserved follow-on IDs:
-- WP71 — F09 Documents/Records (`DOC`)
 - WP72 — F10 Sync/ETL (`SYN`)
 - WP73 — F11 Geo/Territory (`GEO`)
 - WP74 — WooCommerce Commerce Domain Adapter (`WCA`)
@@ -74,43 +74,48 @@ Universal detailed evidence state:
 - DEC 176 documented / 0 executed;
 - LED 176 documented / 0 executed;
 - RSV 176 documented / 0 executed;
-- **PLC 176 documented / 0 executed**;
-- EXP 0/176 group envelope is the current detailed-enumeration target.
+- PLC 176 documented / 0 executed;
+- **EXP 176 documented / 0 executed**;
+- DOC 0/176 group envelope is the current detailed-enumeration target.
 
 Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
 ## 9. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring can supply derived ranking inputs but cannot authorize a placement candidate.
-- F05 Ledger and F06 Scheduling facts may be displayed only through their declared APIs/Policies; F07 does not own ledger or reservation truth.
-- F07 owns presentation placement eligibility, slot conflict resolution, frequency/dismissal behavior and personalization orchestration for explicit placement profiles.
-- Audience match is not role/capability/membership/entitlement authority.
-- Hidden or not-selected UI neither denies nor grants the underlying action; canonical resource Policy remains authoritative.
-- Component Blueprint data is reauthorized through canonical Query/Data Source/Policy owners at render time.
-- Personalized caches, frequency state and dismissal state must remain isolated by required user/session/site/tenant/consent dimensions.
-- Theme/builder/Woo/domain placement adapters expose bounded certified slot contracts; no arbitrary DOM/PHP/script injection authority is created.
-- F08 experiment assignment may be consumed by F07 but assignment ≠ consent and assignment ≠ qualifying exposure.
-- Exposure/event truth composes F08/F02 contracts; a selected component is not automatically a successful exposure.
-- Safe Script/Tag remains a separate browser-side owner; server executable code remains Extension SDK/VCS/release territory.
-- Multisite placement ownership and overrides are server-resolved and do not imply cross-site data access.
-- AI Prompt Runtime remains shared; no hidden privileged personalization path exists.
+- F04 Decision/Formula/Scoring can supply derived ranking inputs but cannot authorize a placement or experiment treatment.
+- F05 Ledger and F06 Scheduling facts may be displayed only through their declared APIs/Policies; F07/F08 do not own ledger or reservation truth.
+- F07 owns presentation placement eligibility and may consume F08 assignment; F07 does not own experiment allocation/statistical truth.
+- F08 owns experiment definition, deterministic assignment, exposure semantics, metric bindings and staged rollout/kill-switch policy for explicit profiles.
+- Experiment assignment is not authorization, consent or exposure; exposure is not conversion.
+- Observed association/statistical signal is not automatic causal proof; method/design/data-quality caveats remain explicit.
+- F02 Analytics owns canonical event/metric/data-quality semantics consumed by F08; F08 does not silently redefine analytics facts.
+- Primary/guardrail metric bindings and statistical profile are versioned and cannot be silently swapped after observing results.
+- Rollout/feature flag can gate an already-authorized feature but does not grant protected role/capability/membership/entitlement access.
+- Kill switch is a safety control and requires propagation/stale-cache evidence before claiming treatment is disabled everywhere.
+- Personalized/variant caches and assignment identities remain isolated by required user/session/site/tenant/consent/revision dimensions.
+- Anonymous→authenticated identity transition follows an explicit stitching policy and cannot fabricate/double assignment or exposure history.
+- Sensitive segmentation remains Policy/consent/data-minimization governed.
+- Non-experiment rollout/feature flag must not fabricate A/B statistical conclusions.
+- Multisite experiment ownership and assignment namespace are server-resolved; identical IDs across isolated sites/tenants must not collide.
+- AI Prompt Runtime remains shared; no hidden privileged experiment publish/traffic/rollout path exists.
+- WP71 F09 Documents/Records/Templates may consume experiment/result facts only through declared APIs; generated records do not become experiment truth.
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. F07 completion truth — ADR-0201
+## 10. F08 completion truth — ADR-0202
 
-`docs/QUALITY/PLACEMENT-PERSONALIZATION-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `PLC-001…PLC-176`.
+`docs/QUALITY/EXPERIMENTATION-ROLLOUT-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `EXP-001…EXP-176`.
 
-Frozen evidence includes slot/adapter schemas, typed audience resolution, deterministic priority/conflicts/fallback, frequency caps and identity transitions, timezone/campaign lifecycle, Policy-safe Component Blueprint rendering, scoped assets, personalized cache isolation, accessibility/dismissal/preferences, consent/privacy/dark-pattern defense, F08 experiment binding/exposure distinction, theme/builder/Woo adapter conflicts, Multisite overrides, lifecycle/degraded behavior, 10K/100K/1M scale profiles and deterministic popup/banner/portal/cart/AI-adversarial golden regressions.
+Frozen evidence includes experiment/variant/hypothesis/metric schemas, eligibility/exclusions, deterministic hashing/stickiness, allocation/rebalancing, exposure dedupe and contamination detection, primary/guardrail metric contracts, statistical uncertainty/caveats/sample-ratio mismatch, schedule/pause/stop/rollout/kill-switch safety, cache/personalization/identity stitching, versioning/concurrent edits, privacy/consent/sensitive segmentation, non-experiment feature flags, Multisite isolation, late events/refunds/data-quality correction, high-traffic assignment/exposure profiles and deterministic A/B/multivariate/rollout/AI-adversarial golden regressions.
 
-Current PLC truth: **176 documented / 0 executed / runtime certification 0**.
+Current EXP truth: **176 documented / 0 executed / runtime certification 0**.
 
 ## 11. Runtime truth
 
-No F07 feature has executed. Specifically, no slot registry, placement evaluator, audience rule, frequency-cap update, dismissal state mutation, personalized cache, Component Blueprint render, asset enqueue, browser placement, experiment assignment/exposure event, theme/builder/Woo adapter call, AI/MCP session, test or benchmark occurred.
+No F08 feature has executed. Specifically, no experiment evaluator, hashing/bucket assignment, persistent subject assignment, exposure collection/dedupe, metric aggregation/statistical computation, feature-flag/percentage rollout, kill-switch propagation, cache mutation, anonymous-login stitching, provider/edge integration, AI/MCP session, test or benchmark occurred.
 
 ## 12. Current next safe action
 
-Continue **P0-M00-WP70 — F08 Experimentation & Rollout detailed executable-evidence specification (`EXP-001…EXP-176`)**.
+Continue **P0-M00-WP71 — F09 Documents, Records & Templates detailed executable-evidence specification (`DOC-001…DOC-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
