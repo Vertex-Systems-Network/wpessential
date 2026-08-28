@@ -32,11 +32,11 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP62 | Universal foundations + Woo adapter evidence master plan | DONE | ADR-0180 |
 | WP63 | F01 Solution Blueprint detailed evidence | DONE | ADR-0181; SBP 0/176 |
 | WP64 | F02 Analytics/Event/Journey detailed evidence | DONE | ADR-0182; ANL 0/176 |
-| **WP65** | **F03 Search & Indexing detailed evidence** | **SPECIFICATION / CURRENT** | SRH 0/176 envelope; resumed after owner-requested interrupts |
+| WP65 | F03 Search & Indexing detailed evidence | DONE | ADR-0196; SRH documented 176; executed 0/176 |
+| **WP66** | **F04 Decision/Formula/Scoring detailed evidence** | **SPECIFICATION / CURRENT** | DEC 0/176 envelope |
 
 ## 4. Reserved follow-on universal work IDs
 
-- WP66 — F04 Decision/Formula/Scoring (`DEC`)
 - WP67 — F05 Ledger/Balance/Movement (`LED`)
 - WP68 — F06 Resource Scheduling/Reservation (`RSV`)
 - WP69 — F07 Placement/Personalization (`PLC`)
@@ -78,11 +78,11 @@ These stable IDs are not repurposed.
 | WP90 | Backuply/Media Replace/Ordering/HFCM/Sucuri/BLC/BackWPup/Fonts/Profile/WPvivid/Crocoblock source + market audit | DONE | second competitive research record |
 | WP91 | Backup advanced parity + staging/clone/migration domain split | DONE | BKX 0/176 + Surface 55/STG 0/176 |
 | WP92 | Media Asset Replacement Lifecycle parity | DONE | MRL 0/176; extends Surface 28 |
-| WP93 | Content Order & Sequence Manager | DONE | new Surface 51; ORD 0/176 |
-| WP94 | Security Integrity, Malware & Vulnerability Scanner | DONE | new Surface 52; SEC 0/176 |
-| WP95 | Font Library, Typography & Delivery Manager | DONE | new Surface 53; FNT 0/176 |
+| WP93 | Content Order & Sequence Manager | DONE | Surface 51; ORD 0/176 |
+| WP94 | Security Integrity, Malware & Vulnerability Scanner | DONE | Surface 52; SEC 0/176 |
+| WP95 | Font Library, Typography & Delivery Manager | DONE | Surface 53; FNT 0/176 |
 | WP96 | Profile Builder competitive parity across Profile/Membership/Forms/Role/OAuth/Woo | DONE | PBX 0/176 |
-| WP97 | Crocoblock/JetEngine parity + User Data Stores/Favorites | DONE | JEX 0/176 + new Surface 54/UDS 0/176 |
+| WP97 | Crocoblock/JetEngine parity + User Data Stores/Favorites | DONE | JEX 0/176 + Surface 54/UDS 0/176 |
 | WP98 | Header/Footer Code + Link Health parity refinements | DONE | HFC/LHX 0/176 |
 | WP99 | ADR-0195, 55-surface catalog/evidence/checkpoint/PR/Linear governance sync | DONE | current scope **55/55**; **0/55 authorized** |
 
@@ -105,11 +105,18 @@ Supplemental existing-owner evidence added by ADR-0195:
 - LHX 0/176;
 - HFC 0/176.
 
+Universal detailed evidence now also includes:
+- SBP 0/176 — fully documented;
+- ANL 0/176 — fully documented;
+- **SRH 0/176 — fully documented by ADR-0196**;
+- DEC 0/176 — current group envelope awaiting WP66 detailed enumeration.
+
 All earlier evidence namespaces remain separately authoritative and unexecuted. No static plan has been promoted to runtime certification.
 
 ## 9. Shared-surface reservations
 
-- F03 Search owns SRH planning during WP65.
+- F04 Decision/Formula/Scoring owns DEC planning during WP66.
+- Search remains a derived retrieval/index layer; source Policy/business truth remains authoritative.
 - Membership parity composes Forms/Profile/Workflow/Policy rather than creating duplicate auth/membership engines.
 - Role parity preserves native WordPress capability authority; surface-specific visibility/enforcement is delegated to owning modules/Policy.
 - Admin Theme owns admin visual tokens/branding/assignment, not frontend font infrastructure or authorization.
@@ -131,6 +138,6 @@ The planned daily Market Intelligence GitHub Actions shape remains documentation
 
 ## 11. Current next safe action
 
-Resume **P0-M00-WP65 — F03 Search & Indexing detailed executable-evidence specification**.
+Continue **P0-M00-WP66 — F04 Decision, Formula, Scoring & Ranking detailed executable-evidence specification (`DEC-001…DEC-176`)**.
 
-Do not begin production code, install packages, create DB tables, mutate users/roles/memberships, run backup/restore/staging/migration, replace media, reorder content, execute malware scans, download/register fonts, mutate personal stores, inject browser scripts, execute PHP, run tests/benchmarks or call AI/MCP/provider runtimes.
+Do not begin production code, install packages, create DB tables, execute search backends, mutate users/roles/memberships, run backup/restore/staging/migration, replace media, reorder content, execute malware scans, download/register fonts, mutate personal stores, inject browser scripts, execute PHP, run tests/benchmarks or call AI/MCP/provider runtimes.
