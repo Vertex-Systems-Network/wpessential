@@ -28,80 +28,76 @@ Source of truth:
 - Implemented: none
 - Runtime verified: none
 
-## Governance hardening
-
-Universal Master Prompt governance hardening work package `P0-M00-WP01` is **DONE** documentation-only.
-
-Durable governance includes project-state/adoption, approval ledger, engineering execution governance, release/recovery governance, work coordination, baseline-failure handling, FAST/FULL gates, negative requirements, review truth, parallelism/WIP, VCS UNKNOWN fallback and exact end-task reporting.
-
-No implementation approval was introduced.
-
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions now extend through **ADR-0124**.
+Accepted evidence decisions now extend through **ADR-0126**.
 
 Recent bounded protocols:
-- ADR-0117 — Forms Runtime & Submission FM-01…FM-92.
-- ADR-0118 — Workflow Runtime WF-01…WF-116.
-- ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.
-- ADR-0120 — Notification System NT-01…NT-142.
+- ADR-0117 — Forms FM-01…FM-92.
+- ADR-0118 — Workflow WF-01…WF-116.
+- ADR-0119 — Job/Cron JS-01…JS-106.
+- ADR-0120 — Notification NT-01…NT-142.
 - ADR-0121 — Message & Chat CH-01…CH-142.
-- ADR-0122 — Webhooks, Connections & Event Inbox WC-01…WC-156.
-- ADR-0123 — P-001 Compatibility Floor CF-01…CF-112.
-- **ADR-0124 — P-005 Secrets Vault VT-01…VT-128.**
+- ADR-0122 — Webhooks/Connections/Event Inbox WC-01…WC-156.
+- ADR-0123 — P-001 Compatibility CF-01…CF-112.
+- ADR-0124 — P-005 Vault VT-01…VT-128.
+- ADR-0125 — P-002 UI/Design System UI-01…UI-104.
+- **ADR-0126 — P-008 Build Toolchain BT-01…BT-112.**
 
-## P-005 Secrets Vault planning milestone — COMPLETE
+## P-002 UI + P-008 Build planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP08`**  
+Work package: **`P0-M00-WP09`**  
 Lifecycle: **DONE (planning/documentation only)**
 
 Created:
-- `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0124-p005-secrets-vault-evidence-protocol.md`
+- `docs/QUALITY/P002-UI-DESIGN-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0125-p002-ui-design-system-evidence-protocol.md`
+- `docs/QUALITY/P008-BUILD-TOOLCHAIN-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0126-p008-build-toolchain-evidence-protocol.md`
 
-P-005 evidence now covers crypto primitive/randomness/nonces, deterministic interoperability fixtures, AAD tamper and row/ciphertext anti-swap, immutable Secret Version lifecycle and pointer concurrency, external/WordPress-derived/recovery/KMS slot behavior, wrapping-key/VRK rotation crash recovery, explicit network Use Grants and revoke races, browser/REST/Abilities/AI/Job/Workflow no-plaintext boundaries, database/filesystem/log/Audit/support redaction scans, Backup/Restore/lost-key truth, clone/staging/transfer safety, deletion/provider outcome separation, Multisite isolation, V1/V2 schema/migration evidence, scale/cache/concurrency, database-only theft/full-server threat-claim validation, fuzzing and independent security review.
+Refined:
+- ADR-0005 Admin UI / Design System Strategy;
+- ADR-0012 Canonical Build Toolchain.
 
-Current P-005 state:
-- VT fixtures documented: **128**
-- VT fixtures executed: **0/128**
-- Vault runtime certifications: **0**
-- Vault crypto interoperability certifications: **0**
-- independent Vault security review executed: **NO**
-- final Vault physical topology: **OPEN / evidence-gated**
-- V1/PT-C: favored first future baseline only
-- V2/PT-E + separate network Vault: mandatory comparison
+Key planning corrections:
+- WP 6.9 remains minimum candidate, so WPE cannot require WP 7.1-only `wp-theme`/ThemeProvider just to boot/render;
+- WPE semantic wrapper/token path must work on the accepted minimum; stable 7.1+ theme capability can enhance it when present;
+- current experimental `@wordpress/ui` is not a 1.0 foundational dependency;
+- WordPress-provided React is mandatory; duplicate React/ReactDOM/JSX runtime is stop-the-line;
+- current authoritative repository branches contain no active root `package.json`/build manifest; historical Mix/Vite references are unverified, not current implementation truth;
+- `@wordpress/build` stable capabilities are first candidate, `@wordpress/scripts` second; Vite only after a documented unmet requirement;
+- experimental build pages/routes/widgets are excluded from canonical architecture;
+- exact-route asset loading, RTL/localization, machine-generated dependency metadata and actual ZIP verification are release requirements.
 
-Preserved Vault architecture:
-- random VRK per Vault Security Domain;
-- random per-secret DEK;
-- XChaCha20-Poly1305 IETF AEAD + versioned deterministic AAD under ADR-0048;
-- external / WordPress-derived / recovery / future KMS-HSM VRK slots;
-- immutable encrypted Secret Versions;
-- explicit network-secret Use Grant + current target-site Policy/Connection authorization;
-- no plaintext/weak fallback and no standard reveal after save;
-- DB-only secrecy is a target claim; full arbitrary PHP/server compromise remains outside the standard claim.
+Current P-002/P-008 state:
+- UI fixtures documented: **104**; executed **0/104**; runtime certification **0**;
+- BT fixtures documented: **112**; executed **0/112**; toolchain certification **0**;
+- ADR-0005: **Proposed**;
+- ADR-0012: **Proposed**;
+- canonical production build tool: **not selected**.
 
-## Compatibility and communication/integration evidence state
+## Other current evidence state
 
-- CF: **0/112**; compatibility floor not certified; ADR-0002 remains Proposed.
-- WC: **0/156**; I4/I5 **0**; Event Inbox/Safe HTTP runtime unverified; EI topology open.
-- CH: **0/142**; Chat runtime/realtime/search certifications **0**; CRT topology open.
-- NT: **0/142**; Notification runtime certifications **0**; NE topology open.
-- WF: **0/116**; Workflow runtime certifications **0**; topology open.
-- JS: **0/106**; Job backend certifications **0**; Cron/DST certifications **0**.
-- FM: **0/92**; Forms runtime certifications **0**; FRT topology open.
-- Action Scheduler remains **preferred candidate adapter only / NOT certified**.
+- CF: **0/112**; compatibility floor not certified; ADR-0002 Proposed.
+- VT: **0/128**; Vault runtime/crypto cert 0.
+- WC: **0/156**; I4/I5 0.
+- CH: **0/142**; runtime/realtime/search cert 0.
+- NT: **0/142**.
+- WF: **0/116**.
+- JS: **0/106**.
+- FM: **0/92**.
+- Action Scheduler remains candidate only / not certified.
 
 ## Current evidence counters
 
-- P-001 / CF: **0/112; floor not certified**.
-- P-002: **0 executed**.
+- P-001 / CF: **0/112**.
+- P-002 / UI: **0/104**.
 - P-003 / JS: **0/106**.
 - P-004: **0 executed**.
-- P-005 / VT: **0/128; Vault runtime/crypto certifications 0**.
+- P-005 / VT: **0/128**.
 - P-006: **0 executed**.
 - P-007: **0 executed**.
-- P-008: **0 executed**.
+- P-008 / BT: **0/112**.
 - P-009: **0 executed**.
 - P-010: **0 executed**.
 - P-011 / WF: **0/116**.
@@ -119,7 +115,7 @@ Preserved Vault architecture:
 - RM: **0/48**.
 - WM: **0/48**.
 - FD: **0/48**.
-- BW: **0/50; 0 runtime certifications**.
+- BW: **0/50; runtime certifications 0**.
 - SM: **0/48**.
 - XR: **0/48**.
 - ST: **0/48**.
@@ -141,22 +137,17 @@ Preserved Vault architecture:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- governance hardening complete;
-- ADR-0124 accepted as the fixed P-005 evidence contract;
-- ADR-0002 remains Proposed rather than being silently accepted from static research;
-- no PHP/React/runtime/build/test/network/provider/crypto/deployment work was executed.
-
-Not performed: WordPress/PHP/database environment execution, package/dependency installation, plugin activation, DB schema/migrations, Vault key generation/encryption/KDF/rotation, WP-CLI, CI runs, release artifact builds, provider calls, benchmarks, attack simulations or deployment.
+- ADR-0125/0126 accepted as evidence protocols only;
+- ADR-0002/0005/0012 remain Proposed;
+- no package manifest/dependency installation/React runtime/build/browser/accessibility/CI/ZIP execution occurred.
 
 ## Next planning-only priority
 
-Current critical-path planning package is **`P0-M00-WP09` — P-002 UI runtime + P-008 build/externalization evidence refinement**.
+Current work package: **`P0-M00-WP10` — P-007 CI / Quality Matrix executable evidence refinement**.
 
-Reason: WPE UI wrappers, WordPress-provided React/runtime packages, DataViews/DataForm/design tokens, route-scoped assets, accessibility/RTL/localization and the build/externalization/artifact pipeline form one coupled platform foundation. They should be evidence-planned together while retaining separate P-002 and P-008 pass/fail decisions.
+CI is the next critical foundation because it must consume the now-fixed P-001 compatibility, P-002 UI/accessibility/runtime and P-008 build/artifact contracts together with FAST/FULL, BASELINE FAILURE, flaky-test, security and release gates.
 
-All existing P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC/CF/VT gates remain intact.
-
-Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
+All evidence gates remain intact. Do not restart from zero. Explicit owner consent is still required before any workflow creation/execution or other executable work.
 
 ## Resume order
 
