@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions now extend through **ADR-0130**.
+Accepted evidence decisions now extend through **ADR-0131**.
 
 Recent bounded protocols:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -42,7 +42,8 @@ Recent bounded protocols:
 - ADR-0127 — P-007 CI/Quality Matrix CI-01…CI-120.
 - ADR-0128 — P-006 Free↔Pro Compatibility FP-01…FP-144.
 - ADR-0129 — P-012 Membership Runtime/Access/Protected Files/Provider MBR-01…MBR-160.
-- **ADR-0130 — P-013 Backup/Restore Artifact/Provider/Recovery BK-01…BK-180.**
+- ADR-0130 — P-013 Backup/Restore Artifact/Provider/Recovery BK-01…BK-180.
+- **ADR-0131 — P-009 Query Compiler/Cost/Cache/Security QRY-01…QRY-168.**
 
 ## WP09 — P-002 UI + P-008 Build — COMPLETE
 
@@ -145,17 +146,50 @@ Preserved Backup invariants:
 - stale Membership derived/cache state cannot resurrect revoked/expired access;
 - Reset/migration/destructive flows cannot claim a restore point merely because a Backup job started.
 
+## WP14 — P-009 Query — COMPLETE
+
+Work package: **`P0-M00-WP14`** — DONE planning/documentation only.
+
+Created:
+- `docs/QUALITY/P009-QUERY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0131-p009-query-evidence-protocol.md`
+
+Current Query evidence:
+- QRY fixtures documented: **168**
+- executed: **0/168**
+- P-009 runtime certifications: **0**
+- QP1/QP2/QP3/QP4 certified provider/profile counts: **0 / 0 / 0 / 0**
+- independent P-009 security review executed: **NO**
+- final numeric cost thresholds: **OPEN / evidence-gated**
+- final persistent cache backend/default: **OPEN / evidence-gated**
+- final cursor encoding/profile: **OPEN / evidence-gated**
+
+Preserved Query invariants:
+- Query Definition/Revision, invocation, compiled provider operation and result/cache entry are distinct truths;
+- Draft edits cannot silently alter published consumer semantics;
+- no raw SQL/arbitrary PHP callback/eval in normal Query AST;
+- parameters are typed/untrusted values and identifiers are registered schema references;
+- unsupported provider semantics fail before execution rather than silently degrade;
+- row/resource/field/scope authorization is server-side and independent from authentication;
+- count/aggregate metadata cannot leak hidden rows/cohorts;
+- persistent shared cache is disabled when authorization/invalidation dependencies cannot be represented safely;
+- committed revoke/policy-generation change cannot keep serving stale protected results;
+- cursor state is untrusted and bound/revalidated against revision/provider/scope/order/parameters/authorization;
+- remote QP4 results are reauthorized locally through Connections/Safe HTTP/Vault boundaries;
+- normal relation/list execution has zero tolerance for unbounded N+1;
+- performance cannot override correctness, scope or authorization.
+
 ## Current evidence counters
 
 - P-001 / CF: **0/112**; compatibility floor not certified.
 - P-002 / UI: **0/104**.
 - P-003 / JS: **0/106**.
-- P-004: **0 executed**.
+- P-004: **0 executed; existing fixed Definition evidence protocol requires completeness audit**.
 - P-005 / VT: **0/128**.
 - P-006 / FP: **0/144**.
 - P-007 / CI: **0/120**.
 - P-008 / BT: **0/112**.
-- P-009: **0 executed; fixed dedicated protocol not yet accepted**.
+- P-009 / QRY: **0/168; runtime certifications 0**.
 - P-010: **0 executed**.
 - P-011 / WF: **0/116**.
 - P-012 / MBR: **0/160; runtime certifications 0**.
@@ -193,15 +227,15 @@ Preserved Backup invariants:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts accepted through ADR-0130;
+- evidence contracts accepted through ADR-0131;
 - runtime/toolchain blocker ADRs remain unverified until applicable authorized execution;
-- no package install/build/WordPress runtime/browser/CI/migration/license/billing/provider/file-transfer/archive/restore/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/migration/license/billing/provider/file-transfer/archive/restore/query/cache/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP14` — P-009 Query compiler/cost/cache/security executable evidence refinement**.
+Current work package: **`P0-M00-WP15` — P-004 Definition Repository evidence completeness / physical proof audit**.
 
-Reason: Query is a shared data-plane dependency for Custom Query Builder, Dynamic Listings, Admin Columns, REST, Forms/Dashboards and relation/custom-table consumers. ADR-0086 defines QP1–QP4 paper baselines, but no dedicated fixed P-009 executable-evidence protocol exists yet. The next safe task is to reconcile compiler semantics, authorization placement, adapter capability, cost controls, pagination/order stability, cache scope/invalidation, hostile AST/input handling, Multisite isolation and scale into one bounded protocol.
+Reason: Definition Repository is a shared control-plane foundation for versioned module definitions, dependencies, published revisions, imports and migrations. Unlike P-009, an existing fixed P-004 protocol and ADR-0092 already exist, so the next task is to audit that protocol against the accepted Definition Repository relational/physical architecture, Multisite scope, migration/versioning and current governance. Only material gaps should create a refinement/new ADR; duplicate protocols are forbidden.
 
 All existing evidence gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
