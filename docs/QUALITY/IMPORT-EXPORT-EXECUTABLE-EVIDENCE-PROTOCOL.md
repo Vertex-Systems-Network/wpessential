@@ -2,244 +2,282 @@
 
 Status: **Phase 0 consent-gated protocol / 0 fixtures executed**  
 Date: 2026-08-28  
-Related: ADR-0041, ADR-0095, `docs/ARCHITECTURE/IMPORT-RUN-PTD-PTE-PHYSICAL-RECOVERY-PROFILE.md`, JobService, Backup, Safe HTTP, Multisite, ADR-0014.
+Work package refinement: `P0-M00-WP39`  
+Related: ADR-0041, ADR-0095, ADR-0116, VER, MLC, DSR, FST, REL, QRY, CTB, CBP, CLG, DVR, CAC, PDL, ERR, KPA, JobService, Backup, Safe HTTP, Multisite, ADR-0014.
 
 ## 1. Purpose
 
-Define executable evidence required before Import / Export can claim safe planning, parsing, mapping, resumability, identity preservation, crash reconciliation, rollback truth, media handling, export privacy, Multisite or scale support.
+Define executable evidence required before Import / Export can claim safe package parsing, planning, mapping, dependency closure, resumability, identity preservation, crash reconciliation, rollback truth, media handling, privacy, version migration, Multisite or scale support.
 
-The execution invariant is fixed:
+The original **IM-01…IM-56** semantics are preserved. This canonical refinement extends the fixed matrix to **IM-01…IM-176**.
 
-**reviewed Plan/Dry Run + source fingerprint + trusted target scope are pinned before execution; mutable Run/Checkpoint/Identity Map/Journal are separate runtime truth; Job delivery never proves a target mutation did or did not happen.**
+Current execution truth: **0/176 executed**.
 
-## 2. Runtime profile
+The execution invariant remains:
+
+**reviewed Plan/Dry Run + source/package fingerprint + trusted target scope are pinned before execution; mutable Run/Checkpoint/Identity Map/Journal are separate runtime truth; Job delivery never proves a target mutation did or did not happen.**
+
+Shared VER/DSR/FST/REL/CTB/CAC/KPA/PDL evidence never auto-certifies an Import/Export profile.
+
+## 2. Runtime certification profile
 
 Future certification records:
 - WordPress/PHP/database versions;
 - IR1/PT-D and/or IR2/PT-E runtime profile;
 - source adapter/version and source format;
+- package/manifest/schema versions;
 - target Data Source/Definition/schema generations;
+- Field/Relation/Query/Custom-Table/Blueprint adapter versions where present;
 - JobService/backend profile;
 - private temp/artifact storage profile;
-- media/offload/Safe HTTP profile where applicable;
+- media/offload/Safe HTTP/Connection profile where applicable;
 - Backup/restore prerequisite class;
+- CAC cache profile/invalidation generation where applicable;
+- privacy/retention/audit profile;
 - single-site/Multisite topology;
 - rollback coverage/retention profile.
 
-## 3. Plan/source/artifact fixtures
+Certification is scoped to the recorded profile. Unknown future package/source/adapter versions are never silently certified.
 
-### IM-01 — Dry Run/Plan fingerprint
-Reviewed Plan pins immutable mapping/config and current source fingerprint before execution.
+# 3. Original Plan/source/artifact fixtures — IM-01…IM-10
+- **IM-01** — reviewed Dry Run/Plan pins immutable mapping/config and current source fingerprint before execution.
+- **IM-02** — active Run continues against pinned Plan revision; editor changes do not mutate semantics silently.
+- **IM-03** — material source fingerprint drift blocks or requires explicit re-plan/re-review.
+- **IM-04** — unavailable source fingerprint is reported as weaker evidence, never “verified unchanged”.
+- **IM-05** — uploaded/import source stages in private bounded storage, not executable/public plugin/theme path.
+- **IM-06** — `../`, absolute paths and equivalent traversal cannot escape extraction root.
+- **IM-07** — symlink/hardlink archive semantics cannot escape approved staging policy.
+- **IM-08** — archive expanded bytes/file count/depth/compression ratio are bounded before extraction exhaustion.
+- **IM-09** — unsupported/corrupt source fails safely with truthful Run/target state.
+- **IM-10** — file extension alone does not establish parser trust; actual format/profile validation applies.
 
-### IM-02 — Plan edited after Run starts
-Active Run continues against pinned revision; editor changes do not mutate execution semantics silently.
+# 4. Original mapping/authorization/identity fixtures — IM-11…IM-22
+- **IM-11** — source fields map only to registered target fields/relations/actions in reviewed Plan.
+- **IM-12** — source/request data cannot choose arbitrary table/column/class/Ability/direct SQL primitive.
+- **IM-13** — import cannot bypass owning Data Source/domain validation/Policy/integrity for speed.
+- **IM-14** — source numeric/site IDs cannot change trusted target site/network scope.
+- **IM-15** — stable source identity resolves intended target lineage rather than numeric coincidence.
+- **IM-16** — matched preexisting target is distinct from import-created target and update policy is explicit.
+- **IM-17** — concurrent same-source Runs cannot silently create duplicate owned targets.
+- **IM-18** — forward/out-of-order references enter bounded unresolved state and reconcile deterministically.
+- **IM-19** — unsupported reference becomes explicit conflict/skip/error, never guessed by label similarity.
+- **IM-20** — local admin edit after prior import is preserved/conflicted when update-if-unchanged precondition fails.
+- **IM-21** — source omission/deletion never deletes target without explicit high-risk sync-delete semantics.
+- **IM-22** — password/token/Vault/provider credentials are excluded or delegated; never generic Journal/log/export plaintext.
 
-### IM-03 — Source changed after review
-Material source fingerprint drift blocks or requires explicit re-plan/re-review.
+# 5. Original checkpoint/crash/Job fixtures — IM-23…IM-34
+- **IM-23** — checkpoint advances only after target changes and required Identity Map state are durably reconciled.
+- **IM-24** — crash before target mutation retries without phantom success.
+- **IM-25** — crash after target commit before Identity Map detects/adopts valid committed target instead of duplicate.
+- **IM-26** — crash after Identity Map before Checkpoint does not repeat completed mutation.
+- **IM-27** — crash after Checkpoint before continuation enqueue remains discoverable/reconcilable.
+- **IM-28** — duplicate Job delivery cannot duplicate valid target mutation under certified identity/idempotency contract.
+- **IM-29** — expired Job lease does not imply target mutation failed; worker ownership/reconciliation remains explicit.
+- **IM-30** — pause stops new work at safe checkpoint and does not claim rollback.
+- **IM-31** — resume revalidates Run/source/target assumptions and continues from last committed checkpoint.
+- **IM-32** — cancel stops future work according to safe boundary and reports already committed effects.
+- **IM-33** — continuation enqueue failure leaves Run/checkpoint discoverable/reconcilable.
+- **IM-34** — site lifecycle drain prevents unsafe new chunks and reconciles active Run.
 
-### IM-04 — Source fingerprint unavailable
-Weaker evidence is surfaced explicitly and cannot be reported as verified unchanged source.
+# 6. Original rollback/recovery fixtures — IM-35…IM-42
+- **IM-35** — R0 UI/report never promises rollback for irreversible/unsupported effects.
+- **IM-36** — R1 removes only safely import-owned created records; later edits/dependencies block unsafe delete.
+- **IM-37** — R2 mapped-field/relation reversal uses expected post-import fingerprint and preserves newer unrelated edits.
+- **IM-38** — R3 is claimed only for specifically certified bounded transactional reversal.
+- **IM-39** — mixed rollback reports unresolved/conflicted/external effects, never false “fully rolled back”.
+- **IM-40** — broad/high-risk import verifies independent Backup prerequisite; Journal is not disaster backup.
+- **IM-41** — restored active/queued Run becomes revalidation/reconciliation-required; copied Jobs never auto-resume blindly.
+- **IM-42** — restored Identity Map references validate against restored target identities/fingerprints before reuse.
 
-### IM-05 — Private source staging
-Uploaded/import source is staged in private bounded storage, not executable/public plugin/theme path.
+# 7. Original media/export/privacy fixtures — IM-43…IM-50
+- **IM-43** — remote media uses Safe HTTP/Connection policy for scheme/host/size/time/privacy; no SSRF/local-file access.
+- **IM-44** — required media failure does not falsely mark parent item fully successful.
+- **IM-45** — offloaded media is current only after certified upload/commit; credentials never reach client/log/export.
+- **IM-46** — configuration export contains portable config/dependencies/versioning without runtime Run secrets/state by default.
+- **IM-47** — data export reauthorizes rows/fields and cannot leak inaccessible records through counts/relations/media.
+- **IM-48** — secrets/credentials/protected fields are excluded/redacted/placeholdered according to classification.
+- **IM-49** — subsite export cannot include another site's runtime/map/data/network secrets.
+- **IM-50** — missing/incompatible Definition/module/provider dependency is explicit conflict/degraded Plan.
 
-### IM-06 — Archive traversal
-`../`, absolute path and equivalent archive traversal cannot escape approved extraction root.
+# 8. Original scale/topology fixtures — IM-51…IM-56
+- **IM-51** — controlled 100k/1M records measure throughput/memory/checkpoints/write amplification/map/index/temp storage without weakening correctness.
+- **IM-52** — high fan-out references/media remain bounded/resumable with explicit failed/conflict counts.
+- **IM-53** — IR1 noisy-neighbor Multisite cannot create wrong-site rows and uses Job fairness/backpressure.
+- **IM-54** — IR2 per-site table profile proves provisioning/migration/version-skew/site-delete behavior.
+- **IM-55** — 100/1k/10k-site fixture proves Run/Checkpoint/Map/Journal scope-safe identity/indexes.
+- **IM-56** — temp artifacts/item details/Journal/Map have separate retention; cleanup preserves required lineage/recovery state.
 
-### IM-07 — Symlink/hardlink escape
-Archive link semantics cannot write/read outside approved staging policy.
+# 9. Portable package manifest, trust and integrity — IM-57…IM-72
+- **IM-57** — exported package has stable format/version/producer metadata and package UUID.
+- **IM-58** — manifest enumerates all package files/objects with canonical identities and hashes.
+- **IM-59** — manifest hash mismatch blocks import before target mutation.
+- **IM-60** — missing manifest-declared file/object yields explicit invalid package state.
+- **IM-61** — unlisted extra executable/suspicious file is ignored/rejected according to package policy.
+- **IM-62** — package-level signature, when supported, verifies exact manifest bytes/key/profile and signer trust independently of checksum.
+- **IM-63** — unsigned package is not represented as trusted-signed; policy can allow reviewed unsigned import explicitly.
+- **IM-64** — unknown signer/expired/revoked key follows explicit trust policy; no automatic trust by file origin.
+- **IM-65** — package timestamp does not establish freshness/trust by itself.
+- **IM-66** — package filename/extension does not choose privileged parser or owner module.
+- **IM-67** — duplicate package object identity inside manifest is rejected/conflicted deterministically.
+- **IM-68** — object canonical checksum is stable across irrelevant serialization ordering where format promises canonicalization.
+- **IM-69** — corruption of one object cannot be masked by valid outer archive checksum alone.
+- **IM-70** — nested archive/package recursion is bounded and disabled unless explicitly supported.
+- **IM-71** — package metadata cannot inject arbitrary PHP class/function/plugin activation instruction.
+- **IM-72** — package verification result is preserved separately from import authorization and target compatibility.
 
-### IM-08 — Archive bomb/depth/count limits
-Compressed size/expanded bytes/file count/depth are bounded before uncontrolled extraction/resource exhaustion.
+# 10. Package schema/version/dependency closure — IM-73…IM-88
+- **IM-73** — supported current package schema parses into typed intermediate representation before planning.
+- **IM-74** — known older package schema uses deterministic VER migrator chain before target planning.
+- **IM-75** — unknown future package schema fails/read-only/inspection-safe; no permissive field dropping.
+- **IM-76** — package Product Version and Definition schema versions are separate compatibility dimensions.
+- **IM-77** — module/adapter minimum/maximum Platform API ranges are validated before execution.
+- **IM-78** — dependency graph includes required Definitions/modules/adapters/providers/assets explicitly.
+- **IM-79** — dependency closure order is deterministic independent of archive file order.
+- **IM-80** — dependency cycle is detected with useful path before mutation.
+- **IM-81** — optional dependency absence yields declared degraded mapping, not silent semantic substitution.
+- **IM-82** — hard dependency absence blocks affected object or Plan according to declared atomicity group.
+- **IM-83** — deprecated definition/package contract follows VER compatibility stage and warns/blocks according to policy.
+- **IM-84** — removed/incompatible contract cannot be silently accepted because field names still look similar.
+- **IM-85** — source module newer than target module has explicit incompatible/degraded state.
+- **IM-86** — target module newer than source package applies only registered forward migration path.
+- **IM-87** — dependency capability change (read/write/delete/query) re-plans rather than assuming previous behavior.
+- **IM-88** — package compatibility report distinguishes parseable, migratable, executable and fully supported states.
 
-### IM-09 — Unsupported/corrupt source
-Safe failure preserves Run truth and target state; no partial garbage mapping is reported successful.
+# 11. Definition identity, UUID remap and dependency references — IM-89…IM-104
+- **IM-89** — immutable exported Definition UUID is preserved when safe and non-conflicting according to package policy.
+- **IM-90** — UUID collision with semantically different local Definition creates explicit conflict, never overwrite-by-ID.
+- **IM-91** — selected “create as copy” assigns new UUID and rewrites all internal package references consistently.
+- **IM-92** — human slug/name collision does not override UUID identity semantics.
+- **IM-93** — numeric database IDs are never portable cross-environment identity authority.
+- **IM-94** — CPT/taxonomy published runtime key conflicts surface migration-class impact before import.
+- **IM-95** — Field Group/Field stable keys preserve/remap relation/query/form references deterministically.
+- **IM-96** — Relation Definition remap updates both endpoints/pivot references without dangling old UUIDs.
+- **IM-97** — Query Definition remap updates source/field/relation placeholders and dependencies.
+- **IM-98** — Blueprint/listing/dashboard/email/form/workflow dependencies remap by declared typed references only.
+- **IM-99** — unknown opaque string matching a UUID is not rewritten unless schema declares it a reference.
+- **IM-100** — external URL/provider ID is not remapped as local Definition UUID accidentally.
+- **IM-101** — mixed preserve/copy/replace conflict decisions produce deterministic final identity map.
+- **IM-102** — conflict resolution change after Dry Run changes Plan fingerprint and requires re-review.
+- **IM-103** — import replay with same package/Plan reuses lineage and does not fork identities unexpectedly.
+- **IM-104** — identity map corruption/mismatch blocks unsafe continuation and enters recovery state.
 
-### IM-10 — Source MIME/format mismatch
-File extension alone does not grant parser trust; actual supported adapter/profile validation is applied.
+# 12. DSR, fields, relations, custom tables and domain constraints — IM-105…IM-120
+- **IM-105** — target write capability comes from registered DSR adapter, never inferred from readable source.
+- **IM-106** — target schema is pinned/revalidated at Run start; changed schema invalidates stale mapping.
+- **IM-107** — field type conversion uses registered compatibility rules and records lossy/rejected conversions.
+- **IM-108** — missing/null/empty/default semantics are preserved according to FST schema, not collapsed by CSV/JSON parser.
+- **IM-109** — required/enum/range/format validation executes through owning field/domain rules.
+- **IM-110** — unique-field collision under concurrency resolves through target constraint/precondition, not pre-check race only.
+- **IM-111** — relation cardinality tightening/conflict is surfaced before or during bounded mutation with no silent edge loss.
+- **IM-112** — relation delete/cascade semantics are never inferred from source omission.
+- **IM-113** — pivot/relation metadata migration follows relation schema/version rules.
+- **IM-114** — Custom Table desired schema Definition never triggers unreviewed DDL merely because package contains it.
+- **IM-115** — CT schema migration Plan remains separate reviewed high-risk operation using CTB/CM semantics.
+- **IM-116** — target transaction capability is used only where DSR/CTB certifies it; no fake atomicity.
+- **IM-117** — mixed transactional/non-transactional targets produce truthful rollback class.
+- **IM-118** — protected Role/User/Vault/system fields require dedicated certified domain action; generic mapping cannot write them.
+- **IM-119** — WordPress core post/term/user/media invariants/hooks are preserved under certified adapter profile.
+- **IM-120** — DSR/FST/REL/CTB certifications remain independent; passing them does not certify import mapping.
 
-## 4. Mapping/authorization/identity fixtures
+# 13. Query, conditions, dynamic values and component dependencies — IM-121…IM-132
+- **IM-121** — Query Definition import preserves typed AST and cannot smuggle raw SQL/eval through opaque config.
+- **IM-122** — unknown Query provider/operator becomes explicit incompatibility, not guessed equivalent.
+- **IM-123** — CLG condition definitions retain typed operators/value-source references and safe unknown semantics.
+- **IM-124** — DVR token/value source references preserve/remap only registered typed sources.
+- **IM-125** — generic import never materializes resolved dynamic runtime value as canonical Definition unless schema says so.
+- **IM-126** — Component Blueprint import preserves safe control/binding/slot/style/asset schema, not builder-private executable code as core authority.
+- **IM-127** — builder adapter payload is accepted only through certified adapter contract and cannot become generic PHP/JS execution.
+- **IM-128** — imported Definition dependency cache/index is rebuilt/reconciled from canonical imported graph.
+- **IM-129** — imported disabled/draft Definition does not become active merely because a consumer references it.
+- **IM-130** — imported published consumer with unresolved hard dependency cannot execute stale local dependency accidentally.
+- **IM-131** — dependency visibility/authorization for reviewer does not leak secret/private values in Dry Run.
+- **IM-132** — shared CLG/DVR/CBP/QRY evidence never auto-certifies package import/export semantics.
 
-### IM-11 — Declared target mapping only
-Source fields can map only to registered target fields/relations/actions in reviewed Plan.
+# 14. Parser and file-format security — IM-133…IM-144
+- **IM-133** — JSON parser enforces nesting/string/array/object/total-byte limits.
+- **IM-134** — duplicate JSON keys follow deterministic reject/normalization policy; no shadow-key ambiguity.
+- **IM-135** — XML import, if supported, disables external entity/network expansion and bounds entity/depth/size behavior.
+- **IM-136** — YAML or other object-deserializing formats are unsupported unless separately safe-profile certified; no arbitrary object construction.
+- **IM-137** — CSV parser handles quoting/newlines/encoding deterministically and bounds field/row lengths.
+- **IM-138** — CSV exported cells beginning with spreadsheet formula control prefixes are escaped/neutralized according to export profile.
+- **IM-139** — spreadsheet format, if supported, never executes macros/formulas/embedded scripts during import.
+- **IM-140** — Unicode normalization/invalid byte sequences cannot create duplicate/confusable identity bypass silently.
+- **IM-141** — filenames are normalized/sanitized and cannot overwrite staging control files.
+- **IM-142** — MIME/polyglot content cannot be routed to executable/public storage through generic importer.
+- **IM-143** — archive extraction creates files with safe permissions and no executable-bit trust from source archive where host semantics matter.
+- **IM-144** — parser error messages redact local filesystem paths/secrets/raw sensitive payload.
 
-### IM-12 — Raw table/column injection
-Source/request data cannot choose arbitrary database table/column/class/Ability/direct SQL primitive.
+# 15. Remote sources, media and provider unknown outcomes — IM-145…IM-156
+- **IM-145** — remote source fetch uses Safe HTTP allowlist, DNS/IP rebinding protections and redirect policy.
+- **IM-146** — remote source cannot access loopback/link-local/private metadata/file schemes unless explicit certified profile authorizes it.
+- **IM-147** — remote download byte/time/redirect limits prevent resource exhaustion.
+- **IM-148** — authenticated remote source credentials are Vault-backed and excluded from logs/package exports.
+- **IM-149** — remote source changes between Dry Run and Run are detected by ETag/hash/version where available or weaker evidence is explicit.
+- **IM-150** — provider 429/quota response follows adapter scheduling/backoff truth and is not confused with shared RLT abuse bucket.
+- **IM-151** — provider timeout after possible upload/delete/mutation enters unknown-outcome reconciliation state.
+- **IM-152** — provider idempotency key, when available, is stable per logical operation and does not replace local Identity Map.
+- **IM-153** — redirect to disallowed host is rejected before credentials/Authorization forwarding.
+- **IM-154** — media dedupe uses content/reference policy and cannot merge unrelated private assets by filename alone.
+- **IM-155** — private/protected media stays private after import; possession of imported URL/reference never grants access.
+- **IM-156** — provider/Safe HTTP certification remains separate from IM certification.
 
-### IM-13 — Target-domain Policy/invariants
-Import path cannot bypass owning Data Source/domain validation/integrity solely for speed.
+# 16. Cache, audit, privacy and post-import reconciliation — IM-157…IM-168
+- **IM-157** — successful canonical mutation invalidates/versions affected CAC caches after commit.
+- **IM-158** — cache invalidation failure is visible/reconcilable and cannot leave security-sensitive stale privileged access silently.
+- **IM-159** — imported Definition/Relation/Field/Query generation changes invalidate compiled/result/render caches as declared.
+- **IM-160** — Audit records actor, Plan, package/source fingerprint, target scope, item/result class and correlation with sensitive redaction.
+- **IM-161** — Journal is operational lineage, not a substitute for append-only Audit or Backup.
+- **IM-162** — privacy classifications/retention travel only when schema/package policy explicitly supports them and target owner validates them.
+- **IM-163** — export applies row/field/resource Policy at execution time, not only when export Definition was created.
+- **IM-164** — privacy erase after import cleans derived imported data according to owner-specific PDL, not generic blind deletion.
+- **IM-165** — export excludes cache/job/idempotency/rate-limit operational state by default unless explicitly defined and safe.
+- **IM-166** — support/diagnostic export cannot silently include package source or private imported payload.
+- **IM-167** — Pro expiry/module disable after import preserves canonical data/safe output according to MLC and does not orphan ownership invisibly.
+- **IM-168** — post-restore reconciliation treats restored cache/jobs/provider sessions/commercial/access authority as requiring current validation.
 
-### IM-14 — Wrong-site target selector
-Source numeric IDs/site IDs cannot change trusted target scope.
+# 17. Multisite, network packages, performance and final truth — IM-169…IM-176
+- **IM-169** — site-owned package imports only into explicitly authorized target site; current blog is not durable scope authority.
+- **IM-170** — network-owned package requires Network authority and clearly identifies network-scoped Definitions/resources.
+- **IM-171** — multi-site package maps each source tenant to explicit target tenant; no numeric blog-ID coincidence.
+- **IM-172** — network fan-out import is bounded/paged/Job-driven and never one unbounded synchronous all-site mutation.
+- **IM-173** — clone/transfer/migration package does not copy stale OAuth/Site Allocation/provider credential/access-session authority as valid target truth.
+- **IM-174** — controlled 1M-record + large-relations/media workload reports throughput, errors, checkpoints, storage and rollback/reconciliation without unsupported scale claim.
+- **IM-175** — 10k-site planning/metadata workload remains bounded and demonstrates no wrong-site identity leakage/starvation beyond declared profile.
+- **IM-176** — final evidence report scopes certification to exact package/source/target/runtime/topology profile and refuses generic “Import/Export certified” overclaim.
 
-### IM-15 — Stable source identity map
-Repeated deterministic source identity resolves the intended target/lineage rather than numeric coincidence.
+## 18. MUST NOT / stop-the-line gates
 
-### IM-16 — Existing target match
-Matched preexisting target is classified distinctly from import-created target and update policy is explicit.
-
-### IM-17 — Same-source concurrent Runs
-Concurrent import of same source identity cannot silently create duplicate owned targets.
-
-### IM-18 — Source reference forward resolution
-Forward/out-of-order relation references enter bounded unresolved state and reconcile deterministically.
-
-### IM-19 — Unknown relation/reference
-Unsupported reference becomes explicit conflict/skip/error per Plan, never guessed by label similarity.
-
-### IM-20 — Administrator edit after prior import
-`update_if_unchanged_since_prior_import` preserves newer local admin edits when target fingerprint diverged.
-
-### IM-21 — Source deletion
-Source omission/deletion does not delete target unless explicit high-risk sync-delete semantics were pinned/reviewed.
-
-### IM-22 — Sensitive credential material
-Password/token/Vault/provider credentials are excluded or delegated to certified owning workflow; they never enter generic Journal/log/export plaintext.
-
-## 5. Checkpoint/crash/Job fixtures
-
-### IM-23 — Chunk checkpoint commit
-Resume boundary advances only after target changes/Identity Map needed for that checkpoint are durably reconciled.
-
-### IM-24 — Crash before target mutation
-Retry processes item normally without phantom success.
-
-### IM-25 — Crash after target commit before Identity Map
-Recovery detects/adopts valid committed target rather than creating duplicate.
-
-### IM-26 — Crash after Identity Map before Checkpoint
-Resume recognizes completed target/map and does not repeat mutation.
-
-### IM-27 — Crash after Checkpoint before next Job enqueue
-Run reconciler can schedule continuation without reprocessing committed chunk.
-
-### IM-28 — Duplicate Job delivery
-At-least-once delivery cannot duplicate valid target mutations under certified identity/idempotency contract.
-
-### IM-29 — Job lease expiry while work may continue
-New worker does not assume expired lease means target mutation failed; ownership/reconciliation protects duplicates.
-
-### IM-30 — Pause
-Pause stops new work at safe checkpoint and preserves resumable state without claiming rollback.
-
-### IM-31 — Resume
-Resume revalidates Run/source/target fingerprint assumptions and continues from last committed checkpoint.
-
-### IM-32 — Cancel
-Cancel stops future work according to safe boundary and reports already committed effects truthfully.
-
-### IM-33 — Enqueue failure
-Committed Run/checkpoint with failed continuation enqueue remains discoverable/reconcilable.
-
-### IM-34 — Site lifecycle drain
-Deleting/archiving target site prevents new chunks after destructive boundary and reconciles active Run.
-
-## 6. Rollback/recovery fixtures
-
-### IM-35 — R0 no automatic rollback
-UI/report does not promise rollback where effects are irreversible/unsupported.
-
-### IM-36 — R1 remove import-created record
-Only still safely import-owned created records are removed; later unrelated edits/dependencies prevent unsafe deletion.
-
-### IM-37 — R2 restore mapped fields/relations
-Reverse applies only when current target matches expected post-import fingerprint; newer unrelated edits are preserved/conflicted.
-
-### IM-38 — R3 bounded transactional reversal
-Only specifically certified local domain operation is reported R3 and passes atomic reversal fixture.
-
-### IM-39 — Mixed rollback outcome
-Partially reversible import reports unresolved/conflicted/external effects; never `fully rolled back` falsely.
-
-### IM-40 — Backup prerequisite
-Broad/high-risk import requiring Backup verifies the restore-point prerequisite independently; Change Journal is not represented as disaster backup.
-
-### IM-41 — Restore copied active Run
-Restored active/queued Run becomes revalidation/reconciliation-required; copied Job rows cannot auto-resume blindly.
-
-### IM-42 — Restore Identity Map validation
-Restored map references are checked against restored target identities/fingerprints before reuse.
-
-## 7. Media/export/privacy fixtures
-
-### IM-43 — Remote media fetch
-Certified Safe HTTP/Connection adapter enforces scheme/host/size/time/privacy policy; source cannot trigger SSRF/local-file access.
-
-### IM-44 — Media partial failure
-Failed media does not corrupt parent target or falsely mark full item success when media is required.
-
-### IM-45 — Offloaded media commit
-Remote object is marked current only after certified upload/commit semantics; credentials never enter client/log/export.
-
-### IM-46 — Configuration export
-Definition/Plan export contains portable configuration with dependencies/versioning and no runtime Run secrets/state unless explicitly requested.
-
-### IM-47 — Data export authorization
-Export reauthorizes source rows/fields for actor and cannot leak inaccessible records through counts/relations/media.
-
-### IM-48 — Secret/private field export
-Secrets/credentials/protected fields are excluded/redacted/replaced by explicit placeholders according to classification.
-
-### IM-49 — Site export isolation
-One subsite export cannot include another site's runtime/map/data/network secrets through shared IR1 tables.
-
-### IM-50 — Import package dependency conflict
-Missing/incompatible Definition/module/provider dependency yields explicit conflict/degraded Plan rather than arbitrary best-effort execution.
-
-## 8. Scale/topology fixtures
-
-### IM-51 — 100k/1M record profile
-Controlled datasets measure throughput, memory, checkpoint latency/write amplification, map/index contention and temp storage without weakening correctness.
-
-### IM-52 — Large relations/media mix
-High fan-out references/media remain bounded and resumable with explicit failed/conflict counts.
-
-### IM-53 — IR1 noisy-neighbor Multisite
-One large site import does not cause wrong-site rows or unacceptable starvation without JobService fairness/backpressure response.
-
-### IM-54 — IR2 per-site lifecycle/versioning
-Per-site table profile proves provisioning/migration/version-skew/site-delete behavior for advertised scale.
-
-### IM-55 — 100/1k/10k-site isolation
-Run/Checkpoint/Map/Journal identities/indexes remain scope-safe under large-network fixture.
-
-### IM-56 — Retention/cleanup
-Temp artifacts/item details/Journal/Map follow separate retention classes; cleanup cannot destroy still-required lineage/recovery state.
-
-## 9. Pass gates
-
-Certification fails if:
-- archive traversal/symlink/bomb escapes bounded staging;
+Certification fails for affected profile if:
+- archive traversal/symlink/bomb/polyglot escapes bounded private staging;
 - stale changed source executes as reviewed unchanged;
-- source data selects arbitrary target SQL/code primitive;
-- wrong-site row/resource is read/mutated;
-- valid crash/retry creates duplicate target;
-- concurrent same-source import silently creates duplicate ownership;
+- package integrity/signature status is falsely reported;
+- unknown future schema executes permissively;
+- source data selects arbitrary SQL/PHP/class/function/filesystem/Vault secret primitive;
+- wrong-site resource is read/mutated/exported;
+- crash/retry/concurrent same-source Run creates duplicate logical target unexpectedly;
+- UUID/numeric-ID remap corrupts dependency graph or overwrites unrelated local Definition;
 - rollback overwrites newer unrelated edits or falsely claims full success;
-- copied restored active Run auto-resumes without revalidation;
-- export leaks unauthorized rows/secrets/another site's data;
-- remote media path enables SSRF/credential leakage.
+- restored active Run auto-resumes without revalidation;
+- export leaks unauthorized rows/secrets/another site's data or spreadsheet formula payload unsafely;
+- remote source/media enables SSRF/credential forwarding leakage;
+- CT schema/DDL is applied without its separate reviewed Migration Plan;
+- cache remains privileged/stale after security-relevant import change beyond certified correctness profile;
+- passing VER/DSR/FST/REL/CTB/CAC/KPA/shared evidence is used to claim IM certification.
 
-## 10. Required future evidence report
+## 19. Required future evidence report
 
-Include:
-- runtime/source/target/topology profile;
-- IM-01…IM-56 pass/fail;
-- source/archive security evidence;
-- Dry Run/source fingerprint evidence;
-- crash-window/duplicate Job results;
-- Identity Map race/conflict results;
-- rollback R0–R3 truth report;
-- media/Safe HTTP evidence;
-- export privacy/scope tests;
-- IR1/IR2 scale/index/storage/cleanup measurements.
+Include exact runtime/source/package/target/topology profile; IM-01…IM-176 pass/fail/N/A; manifest/hash/signature/parser evidence; Dry Run/source fingerprint/Plan diff evidence; dependency closure and UUID/remap results; DSR/FST/REL/CTB mapping/constraint results; crash-window/duplicate Job/Identity Map results; rollback R0–R3 truth report; Safe HTTP/media/provider reconciliation; cache invalidation; privacy/audit/export tests; Multisite isolation; IR1/IR2 scale/index/storage/cleanup measurements; unsupported/degraded profiles and separate dependency protocol certifications.
 
-## 11. Current state
+## 20. Current state
 
-**IM fixtures executed: 0/56.**
+- IM fixtures documented: **176**.
+- IM fixtures executed: **0/176**.
+- Import/Export runtime certifications: **0**.
+- IR1/IR2 physical profiles remain evidence-gated.
+- Shared/provider certifications remain separate.
 
-No import/export parse, archive extraction, target mutation, DB runtime row, Job, media fetch/upload, rollback, Restore, cleanup or benchmark has been executed.
+No import/export parse, archive extraction, signature verification runtime, target mutation, DDL, DB runtime row, Job, provider/media fetch/upload, cache operation, rollback, Restore, cleanup or benchmark has been executed.
 
-## 12. Development gate
+## 21. Development gate
 
-Execution requires explicit owner consent under ADR-0014.
+Execution requires explicit owner consent under ADR-0014 and the Approval Ledger.
