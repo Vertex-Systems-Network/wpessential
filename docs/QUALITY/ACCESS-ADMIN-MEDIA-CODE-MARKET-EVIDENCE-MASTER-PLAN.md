@@ -1,23 +1,25 @@
 # WPEssential — Access/Admin/Media/Code Market Expansion Evidence Master Plan
 
-Status: **Planning-only executable-evidence contract / NOT EXECUTED**  
+Status: **Planning-only executable-evidence contract / WP114 exact expansion CURRENT / NOT EXECUTED**  
 Date: 2026-08-29
 
 ## 1. Purpose
 
 Reserve bounded, explicit future evidence for the owner-requested competitor parity/expansion work without executing any runtime behavior.
 
-All counters start at zero.
+The 16 group ownership below remains fixed. ADR-0207 identified these five namespaces as exact-fixture planning gaps. After WP113 / ADR-0208 completed Market Expansion, **WP114 is now the current work package** and must expand every namespace below to exact individual fixtures without renumbering or repurposing groups.
+
+All counters remain zero executed.
 
 ## 2. Evidence namespaces
 
-| Namespace | Scope | Fixture envelope | Executed |
-|---|---|---:|---:|
-| `MPR` | Membership competitive parity / registration / private-site / migration presets | MPR-001…MPR-176 | 0/176 |
-| `RPR` | Role hierarchy / rescue / surface-policy integration / compatibility | RPR-001…RPR-176 | 0/176 |
-| `ATM` | Admin Theme, Branding & Experience Manager | ATM-001…ATM-176 | 0/176 |
-| `MDP` | Media Performance, Responsive Delivery & Field Optimization | MDP-001…MDP-176 | 0/176 |
-| `STM` | Safe Script, Tag & Code Injection Manager | STM-001…STM-176 | 0/176 |
+| Namespace | Scope | Fixture envelope | Exact status | Executed |
+|---|---|---:|---|---:|
+| `MPR` | Membership competitive parity / registration / private-site / migration presets | MPR-001…MPR-176 | WP114 exact expansion pending | 0/176 |
+| `RPR` | Role hierarchy / rescue / surface-policy integration / compatibility | RPR-001…RPR-176 | WP114 exact expansion pending | 0/176 |
+| `ATM` | Admin Theme, Branding & Experience Manager | ATM-001…ATM-176 | WP114 exact expansion pending | 0/176 |
+| `MDP` | Media Performance, Responsive Delivery & Field Optimization | MDP-001…MDP-176 | WP114 exact expansion pending | 0/176 |
+| `STM` | Safe Script, Tag & Code Injection Manager | STM-001…STM-176 | WP114 exact expansion pending | 0/176 |
 
 Existing protocols remain separate:
 - Membership core `MBR`, billing `MB-F`, protected files `PC-F`;
@@ -45,8 +47,6 @@ No supplemental evidence namespace upgrades an existing certification automatica
 14. abuse/privacy/retention
 15. Multisite/network/user-identity boundaries
 16. scale/regression/coexistence
-
-Each group reserves eleven fixed cases including happy, boundary, denied, malicious, concurrent, stale/replay, failure/recovery, migration, Multisite and performance variants where meaningful.
 
 ## 4. RPR groups — 16 × 11
 
@@ -124,7 +124,41 @@ Each group reserves eleven fixed cases including happy, boundary, denied, malici
 15. Multisite/network policy/AI/MCP
 16. adversarial security/performance/regression
 
-## 8. Stop-the-line examples
+## 8. WP114 non-negotiable truth boundaries
+
+### Membership / MPR
+- User ≠ Role/Capability ≠ Membership Plan ≠ Enrollment ≠ Entitlement ≠ Access Policy.
+- Navigation/UI restriction ≠ protected-resource authorization.
+- Registration/account creation ≠ verified email/admin approval/active membership/paid entitlement.
+- Billing/provider facts remain external/provider-owned and cannot be fabricated by Membership parity.
+
+### Role / RPR
+- WordPress capabilities/meta-cap/Policy remain authorization authority; role labels/UI hiding are not authority.
+- Target-role hierarchy and rescue mechanisms must not create privilege-escalation/anti-lockout bypass.
+- Rescue tokens are scoped, expiring, single-use/replay-safe and must not permit account enumeration.
+
+### Admin Theme / ATM
+- Branding/theme assignment ≠ authentication/authorization.
+- Accessibility/contrast/focus/recovery/login usability are correctness requirements.
+- User/role/site/network precedence is explicit and cannot hide critical recovery/security controls.
+
+### Media Performance / MDP
+- Performance hint/priority inference ≠ proof of Core Web Vitals improvement until measured.
+- Private/protected media must not leak through preload, metrics, placeholders, CDN or generated URLs.
+- Core/Performance-Team ownership is detected and composed rather than duplicated/conflicted.
+
+### Safe Script/Tag / STM
+- Browser-side snippets only; **no PHP/eval/arbitrary SQL/shell/server code**.
+- Consent/CSP/security-header policy cannot be silently weakened.
+- No Vault/frontend secret interpolation.
+- External origins/URLs/SRI/nonce/hash/environment placement remain typed/bounded.
+
+### Shared
+- Multisite/site/tenant ownership is server-resolved.
+- AI/MCP follows the same Policy/approval gates and cannot create privileged write paths.
+- Exact specification is planning only; execution remains 0 until explicit consent.
+
+## 9. Stop-the-line examples
 
 Future execution must stop on evidence of:
 - protected resource exposed by membership/navigation fallback;
@@ -138,6 +172,6 @@ Future execution must stop on evidence of:
 - frontend secret interpolation;
 - cross-site/network policy leakage.
 
-## 9. Execution gate
+## 10. Execution gate
 
-All five namespaces are **documented only**. No fixture, WordPress request, user/role mutation, registration, rescue email, admin theme, RUM metric, image rewrite, script injection, benchmark or compatibility test has executed. ADR-0014 owner consent remains mandatory.
+All five namespaces are **planning-only and 0 executed**. WP114 may enumerate exact evidence fixtures only. No WordPress request, user/role/membership mutation, registration, rescue email, admin theme runtime, RUM metric, image rewrite, script injection, provider/API/AI/MCP call, test, benchmark or build may execute without explicit scoped owner consent under ADR-0014.
