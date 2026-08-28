@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0151**. Architecture acceptance never implies runtime certification or owner development authorization.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0152**. Architecture acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -56,7 +56,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-043 | Entity/Data Source architecture + ADR-0149 | adapter identity/schema/capabilities/Policy/query/write/delete/transaction/scope/version evidence — DSR-01…DSR-176 |
 | D-044 | Asset Registry architecture + ADR-0150 | descriptor/dependency/scope/WP-handle/build-manifest/loading/cache/lifecycle/security/Multisite evidence — ASR-01…ASR-176 |
 | D-045 | Conditional Logic architecture + ADR-0151 | typed operator/value-source/Policy/boolean/dependency/cache/consumer-parity/Multisite evidence — CLG-01…CLG-176 |
-| D-046 | Dynamic Value / Token Resolver architecture | WP35 current; no dedicated fixed shared resolver protocol yet; reconcile DSR/FST/QRY/REL/CBP/EBR/NT/FM overlap |
+| D-046 | Dynamic Value / Token Resolver architecture + ADR-0152 | provider/source/type/Policy/formatting/escaping/dependency/cache/consumer-parity/Multisite evidence — DVR-01…DVR-176 |
+| D-047 | Shared Rate Limit / Abuse Control architecture | WP36 current; common atomic-counter/request-identity/key/window/fail-policy/privacy/Multisite service evidence not yet frozen |
 
 ## B. Accepted paper/runtime-baseline summary
 
@@ -81,6 +82,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Entity/Data Source Registry: source capability/schema/Policy/scope/transaction semantics are fixed in DSR; readable never implies writable.
 - Asset Registry: platform asset identity/dependencies/scopes/WP-handle coexistence/build-manifest/loading/lifecycle/security are fixed in ASR; consumer certification stays separate.
 - Conditional Logic: typed operator/null/value-source/Policy/dependency/cache/cross-consumer semantics are fixed in CLG; condition truth never authorizes the consumer action.
+- Dynamic Value / Token Resolver: canonical value, formatting, escaping, trusted-markup and cache representations remain separate; source-owner Policy remains authoritative; DVR fixed evidence.
 - Forms FRT1/PT-D first + FRT2 mandatory; Chat CRT1/PT-D first + CRT2 mandatory; Membership M1/PT-D first + M2 mandatory; Notification/Email NE1/PT-D first + NE2 mandatory; Event Inbox EI1/PT-D first + EI2 mandatory; Workflow WF1/PT-D first + WF2 mandatory.
 - JobService J1/J2/J3; Action Scheduler candidate only.
 - Import IR1/PT-D first + IR2 mandatory; Backup manifest-first BR1/BR2/BR3; Vault V1/PT-C favored first + V2 comparison.
@@ -123,6 +125,7 @@ All remain paper-only until applicable executable evidence certifies them.
 | DSR | **0/176; all Data Source Registry certification classes 0** |
 | ASR | **0/176; all Asset Registry certification classes 0** |
 | CLG | **0/176; all Conditional Logic certification classes 0** |
+| DVR | **0/176; all Dynamic Value / Token Resolver certification classes 0** |
 | FM | **0/92** |
 | NT | **0/142** |
 | CH | **0/142** |
@@ -139,7 +142,7 @@ All remain paper-only until applicable executable evidence certifies them.
 - numeric blog ID, WPE site UUID, network/install identity and commercial Allocation ID stay distinct;
 - Site Admin cannot acquire Network authority through request coordinates;
 - `switch_to_blog()` is context management only;
-- caches/jobs/workflows/provider/actions/conditions/data-source/asset resolution stay target-scope bound;
+- caches/jobs/workflows/provider/actions/conditions/data-source/asset/dynamic-value resolution stay target-scope bound;
 - ordinary site Query/Relation/REST/Ability cannot become arbitrary cross-site operation;
 - network secret delegation does not reveal/copy plaintext ownership;
 - global WP user identity does not propagate site roles/Membership access;
@@ -151,7 +154,7 @@ All remain paper-only until applicable executable evidence certifies them.
 
 Current: **MSI 0/160; LC 0/96; 0 MS1+ surfaces; 0 SL runtime certifications**.
 
-## E. Cross-cutting evidence boundaries after ADR-0142…0151
+## E. Cross-cutting evidence boundaries after ADR-0142…0152
 
 - AUD **0/176**; Audit/domain history/diagnostics/security/provider/analytics truths stay distinct; AU1/PT-D remains first future baseline only.
 - KPA **0/176**; registry discovery or UI visibility never grants permission, and invocation channels cannot bypass Capability + target Policy.
@@ -162,23 +165,26 @@ Current: **MSI 0/160; LC 0/96; 0 MS1+ surfaces; 0 SL runtime certifications**.
 - MLC **0/176**; module disable/expiry/uninstall/cleanup/privacy erase stay separate operations.
 - DSR **0/176**; Data Source read/query/write/delete/transaction capabilities are explicit and independently authorized.
 - ASR **0/176**; declaration/registration/enqueue/fetch/execute/certification stay separate truths.
-- CLG **0/176**; condition evaluation is side-effect-free platform truth and cannot grant downstream action authorization.
+- CLG **0/176**; condition evaluation cannot grant downstream action authorization.
+- DVR **0/176**; canonical value/format/escape/trusted-markup/cache stay distinct and source-owner Policy remains authoritative.
 
-## F. Current highest-priority planning blocker — Dynamic Value / Token Resolver
+## F. Current highest-priority planning blocker — Shared Rate Limit / Abuse Control Service
 
-WP35 must reconcile the platform architecture's shared dynamic value/token resolver against existing executable contracts before freezing any new matrix. Coverage should include only genuinely shared behavior:
-- stable typed value/token descriptor identity and source registration;
-- Data Source/Field/Relation/Query/current-user/current-entity/settings/context resolution without arbitrary callbacks;
-- explicit render contexts: HTML text, HTML attribute, URL, JSON, email HTML, plain text and other approved typed contexts;
-- source value ≠ formatted value ≠ escaped output ≠ trusted markup;
-- Policy/privacy before resolution/disclosure; secret/Vault plaintext denied from generic resolver;
-- null/missing/empty/error/denied semantics;
-- dependency graph/cycle/depth/fan-out/resource budgets;
-- request batching and N+1 prevention where semantics permit;
-- cache identity/invalidation by revision/source/access/scope/locale/timezone/version generation;
-- cross-consumer parity across listings/dashboards/columns/emails/notifications/forms/builder adapters;
-- Multisite target ownership and cross-site denial unless an explicit certified profile exists;
-- performance/scale evidence without duplicating DSR/FST/QRY/REL/CBP/EBR consumer protocols.
+WP36 must reconcile common rate/abuse requirements already scattered across Protector, REST, Forms, Webhooks/Event Inbox and other sensitive endpoints before freezing a shared service matrix. Coverage should include only genuinely shared behavior:
+- trusted proxy/request/client identity and anti-spoofing;
+- site/network/principal/IP/resource/provider/operation key dimensions;
+- atomic increments/reservations and concurrency correctness;
+- fixed/sliding/token-bucket/leaky-bucket semantics only after an explicit profile is selected;
+- Retry-After/reset/remaining metadata truth and clock skew;
+- distributed object-cache atomic capability versus DB fallback and failure modes;
+- burst, sustained, concurrency and cost-weighted limits;
+- idempotency/replay interaction without double-charging safe retries incorrectly;
+- exemptions/bypass/allowlist governance with narrow capability/audit boundaries;
+- brute-force, enumeration, IPv6 rotation, NAT/shared-IP and trusted-proxy abuse resistance;
+- privacy/data minimization for IP/fingerprint/log evidence;
+- fail-open/fail-closed/degraded behavior by operation risk during cache/DB outage;
+- consumer parity without replacing Protector/REST/FM/WC module-specific policy;
+- Multisite noisy-neighbor isolation/network floors and scale/observability evidence.
 
 ## G. Decision-processing rule
 
@@ -192,7 +198,7 @@ WP35 must reconcile the platform architecture's shared dynamic value/token resol
 
 ## Next planning-only priorities
 
-1. **Dynamic Value / Token Resolver executable-evidence reassessment** — current `P0-M00-WP35`.
-2. Reassess remaining unresolved shared/surface blockers after WP35.
+1. **Shared Rate Limit / Abuse Control Service executable-evidence reassessment** — current `P0-M00-WP36`.
+2. Reassess remaining unresolved shared/surface blockers after WP36.
 
 Production development authorization remains **NOT GRANTED**.
