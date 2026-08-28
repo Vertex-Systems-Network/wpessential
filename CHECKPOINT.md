@@ -36,133 +36,52 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0204**.
+Accepted planning/evidence decisions extend through **ADR-0205**.
 
 ### Universal foundations
 
 - ADR-0177 — Solution Blueprint + 12 universal foundations + Woo adapter.
 - ADR-0178/0179 — shared AI Prompt / Requirement Compiler / MCP architecture; AIP 0/176.
 - ADR-0180 — universal evidence master plan.
-- ADR-0181 — F01 SBP documented; 0/176 executed.
-- ADR-0182 — F02 ANL documented; 0/176 executed.
-- ADR-0196 — F03 Search & Indexing detailed protocol; **SRH documented 176 / executed 0/176**.
-- ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; **DEC documented 176 / executed 0/176**.
-- ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; **LED documented 176 / executed 0/176**.
-- ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; **RSV documented 176 / executed 0/176**.
-- ADR-0201 — F07 Placement & Personalization detailed protocol; **PLC documented 176 / executed 0/176**.
-- ADR-0202 — F08 Experimentation & Rollout detailed protocol; **EXP documented 176 / executed 0/176**.
-- ADR-0203 — F09 Documents, Records & Templates detailed protocol; **DOC documented 176 / executed 0/176**.
-- **ADR-0204 — F10 Data Sync & ETL detailed protocol; SYN documented 176 / executed 0/176.**
+- ADR-0181 — F01 SBP documented 176 / executed 0/176.
+- ADR-0182 — F02 ANL documented 176 / executed 0/176.
+- ADR-0196 — F03 Search & Indexing; SRH documented 176 / executed 0/176.
+- ADR-0198 — F04 Decision/Formula/Scoring/Ranking; DEC documented 176 / executed 0/176.
+- ADR-0199 — F05 Ledger/Balance/Movement; LED documented 176 / executed 0/176.
+- ADR-0200 — F06 Resource Scheduling/Reservation; RSV documented 176 / executed 0/176.
+- ADR-0201 — F07 Placement/Personalization; PLC documented 176 / executed 0/176.
+- ADR-0202 — F08 Experimentation/Rollout; EXP documented 176 / executed 0/176.
+- ADR-0203 — F09 Documents/Records/Templates; DOC documented 176 / executed 0/176.
+- ADR-0204 — F10 Data Sync/ETL; SYN documented 176 / executed 0/176.
+- **ADR-0205 — F11 Geospatial & Territory; GEO documented 176 / executed 0/176.**
 
-### Market expansion ADR-0183…ADR-0188
-
-RDR, SRT, DMY, LNK, DBM, PDO and MIR remain planning-only; each reserved evidence envelope remains unexecuted. The Market Intelligence scheduled GitHub workflow remains documented but **NOT INSTALLED**.
-
-### Competitive expansion ADR-0189…ADR-0194
-
-- Membership parity — MPR 0/176;
-- Role & Capability parity — RPR 0/176;
-- Surface 49 Admin Theme, Branding & Experience — ATM 0/176;
-- Surface 28 Media Performance expansion — MDP 0/176;
-- Surface 50 Safe Script, Tag & Code Injection — STM 0/176; no PHP/eval.
-
-### Second competitive expansion ADR-0195
-
-New surfaces:
-- 51 Content Order & Sequence — ORD 0/176;
-- 52 Security Integrity/Malware/Vulnerability — SEC 0/176;
-- 53 Font Library/Typography/Delivery — FNT 0/176;
-- 54 User Data Stores/Favorites/Collections — UDS 0/176;
-- 55 Staging/Clone/Migration — STG 0/176.
-
-Existing-owner supplements BKX, MRL, PBX, JEX, LHX and HFC remain 0/176.
-
-### Third competitive expansion ADR-0197
-
-Owner-requested audit covered Use Any Font, WP Migrate DB / WP Migrate, White Label CMS, Post Duplicator, LoginPress, Activity Log, CMB2, Child Theme Configurator, Simple History, WP Reset, WP Activity Log, Meta Box + public wpmetabox repositories, Redux Framework and Custom Post Type UI.
-
-Decision:
-- **new Surface 56 — Theme Workspace, Child Theme & Theme Customization Manager — THM 0/176**;
-- Surface 53 font parity — UAF 0/176;
-- Surface 55 migration parity — MIG 0/176;
-- Surface 49/Admin/Menu/Dashboard/Auth white-label/login parity — WLB 0/176;
-- Surface 51 content duplication parity — DUP 0/176;
-- Audit & Observability activity-console parity — ALX 0/176;
-- CMB2/Meta Box/wpmetabox interoperability parity — MBX 0/176;
-- Reset parity — RSX 0/176;
-- Redux-class settings framework parity — RDX 0/176;
-- CPTUI parity — CPTX 0/176.
-
-Third-audit supplemental reservations: **1,760 fixtures / 0 executed**.
-
-Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPLICATION-AUDIT-FIELDS-THEMES-RESET-2026-08.md`.
+Market and competitive expansions through ADR-0197 remain accepted planning-only state. Current denominator remains **56**. Supplemental namespaces and all previously reserved evidence remain unexecuted unless a later ADR explicitly states otherwise.
 
 ## Important architecture boundaries
 
 - User ≠ Role/Capability ≠ Membership Plan ≠ Enrollment ≠ Entitlement ≠ Access Policy.
 - Search/index result ≠ source truth or authorization.
-- Formula/score/decision/rank ≠ authorization, ledger/payment/order/inventory/reservation mutation or external-fact authority.
-- F04 uses a registered typed grammar/AST; no arbitrary PHP/JavaScript/SQL/shell/provider execution.
-- Ledger movement/balance is canonical only for its explicit ledger profile; it is not payment settlement, bank truth, order truth, entitlement, reservation or Policy.
-- Posted ledger history is append-oriented; correction uses reversal/compensation rather than silent mutation.
-- F05 ledger hold ≠ F06 resource reservation.
-- Availability result ≠ reservation; cache/search availability is advisory and final hold/confirm revalidates current Policy, rules and capacity atomically.
-- Hold ≠ confirmed booking; waitlist position ≠ booking.
-- Reservation ≠ payment settlement, order, entitlement or external-calendar truth.
-- Unknown payment/calendar/provider outcome ≠ failed; reconcile before replay where duplicate effects are possible.
-- Local recurrence requires explicit timezone/DST gap/fold semantics; canonical instants remain deterministic.
-- Shared pools/multi-resource bookings cannot be labelled fully confirmed if any mandatory allocation failed.
-- Backup/restore/clone cannot roll back external calendars/providers; stale external mappings require quarantine/reconciliation before writes.
-- Placement/personalization decides presentation eligibility, not authorization.
-- Audience match ≠ role/capability/membership entitlement.
-- Hidden/not-selected UI does not grant or deny the underlying action; canonical Policy remains authoritative.
-- Selected component ≠ successfully rendered or qualifying exposure.
-- Personalized cache output must not leak across users, sessions, sites, tenants or consent states.
-- Theme/builder/Woo placement adapters expose bounded certified slots; F07 is not arbitrary DOM/PHP/script injection authority.
-- Component data is reauthorized through canonical Query/Data Source/Policy owners at render time.
-- Experiment assignment ≠ authorization, consent or exposure.
-- Exposure ≠ conversion; observed association/statistical signal ≠ automatic causal proof.
-- F02 Analytics owns event/metric/data-quality truth consumed by F08; F08 does not create a second analytics warehouse.
-- Primary/guardrail metric contracts and statistical profile are revision-pinned; post-observation metric swapping is not allowed silently.
-- Rollout/feature flag can gate delivery of an already-authorized capability but cannot grant protected access.
-- Kill switch is operational safety, not experiment-result proof; stale cache/edge propagation must be evidenced before claiming off-state guarantees.
-- Anonymous→authenticated experiment identity stitching is explicit and cannot fabricate/double exposure history.
-- Non-experiment rollout/feature flag must not fabricate A/B causal statistics.
-- Sensitive experiment segmentation remains Policy/consent/data-minimization governed.
-- Generated document/artifact ≠ source business truth, payment/order/ledger truth, authorization, identity proof or legal-signature proof.
-- Template approval ≠ permission to render every bound field; generation and protected delivery reauthorize source data.
-- Hash/checksum ≠ electronic signature; application timestamp ≠ trusted timestamp authority token.
-- Immutable issued record corrections use amendment/supersession; no silent historical overwrite.
-- Protected artifact URL/storage/CDN path cannot bypass Policy; public-looking URL ≠ public authorization.
-- HTML/SVG/fonts/images/remote assets are untrusted; no arbitrary template PHP/JS/SQL/shell or unrestricted network/file authority.
-- Unknown external signing/storage/timestamp outcome ≠ failed; reconcile before replay where duplicate side effects are possible.
-- Backup/restore/clone cannot roll back external signing/storage/timestamp authorities; cloned production provider mappings remain quarantined by default.
-- **Synchronized copy ≠ source truth unless explicit entity/field authority assigns it.**
-- **Transport success ≠ business acceptance; cursor/checkpoint progress ≠ proof every item succeeded.**
-- **Unknown remote sync outcome ≠ failed; reconcile by stable operation/entity identity before unsafe replay.**
-- **Bidirectional sync requires explicit entity/field authority and conflict policy; implicit universal last-write-wins is prohibited.**
-- **Delete/archive/tombstone/privacy erase/immutable-record revoke are distinct semantics and cannot be collapsed silently.**
-- **Replay preserves idempotency identity; duplicate webhook/poll/import events must not duplicate side effects.**
-- **Provider credentials remain Vault-owned; endpoints remain adapter-bounded/SSRF-governed and quota/backoff aware.**
-- **Schema/API/cursor drift must be surfaced; incompatible values/tokens are not silently coerced.**
-- **Multisite sync identity, idempotency, cursors and shared-connection access remain site/tenant isolated and server-resolved.**
-- **Restore/clone/staging cannot blindly reuse production cursors, webhooks, leases, identity maps or provider write authority.**
-- **F10 does not replace Backup, Staging/Migration, F05 Ledger, F06 Scheduling, F09 Records or commerce/payment/order authorities.**
-- Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
-- White-label/menu/plugin hiding ≠ authorization.
-- Login branding ≠ authentication authority.
-- Audit/AI-agent attribution ≠ identity or privilege.
-- Audit Log ≠ ledger movement truth or immutable document record.
-- Clone/duplicate ≠ original entity identity.
-- DB snapshot ≠ full backup.
-- migration replacement ≠ database merge.
-- Surface 55 owns environment migration; Backup owns recovery artifacts; Search/Replace owns serialized transformations.
-- Protector ≠ Security Integrity Scanner ≠ upstream WAF/DDoS provider.
-- Admin Theme ≠ frontend Theme Workspace.
-- Surface 56 may scaffold/analyze/diff/package declarative theme assets but **must not expose arbitrary PHP live execution**.
-- Font self-hosting ≠ automatic legal/GDPR compliance.
-- competitor field formats ≠ WPE canonical schema.
-- Redux-style declarative compiler ≠ arbitrary PHP/eval callback execution.
+- Formula/score/decision/rank ≠ authorization or business mutation authority.
+- Ledger hold ≠ resource reservation; availability ≠ reservation; reservation ≠ payment/order/entitlement/external-calendar truth.
+- Placement/personalization decides presentation eligibility, not authorization; audience match ≠ entitlement; selected component ≠ exposure.
+- Experiment assignment ≠ authorization/consent/exposure; exposure ≠ conversion; statistical signal ≠ automatic causal proof.
+- Generated document/artifact ≠ source business/legal/payment/authorization truth; hash/checksum ≠ legal signature; application timestamp ≠ trusted timestamp.
+- Synchronized copy ≠ source truth unless explicit entity/field authority assigns it; transport success ≠ business acceptance; unknown remote sync outcome ≠ failed.
+- Bidirectional sync requires explicit field/entity authority; delete/archive/tombstone/privacy erase/revoke remain distinct.
+- **Geocoded coordinate ≠ verified physical identity/address truth by default.**
+- **Provider confidence ≠ certainty.**
+- **Spatial match/territory assignment ≠ authorization, entitlement or legal jurisdiction.**
+- **Bounding-box match ≠ polygon containment; polygon containment ≠ guaranteed serviceability.**
+- **Straight-line distance ≠ travel distance/time; routing/matrix estimate ≠ delivery/travel guarantee.**
+- **CRS, axis order, coordinate precision, distance/containment model and provenance are explicit.**
+- **Precise location remains consent/Policy/retention/redaction governed.**
+- **Unknown geocoder/routing/provider outcome ≠ failed; provider terms/cache/licensing constraints remain binding.**
+- **Multisite geospatial ownership is server-resolved and isolated; request scope IDs grant no authority.**
+- **Restore/clone/staging cannot blindly reuse production provider tokens, caches, mappings or precise-location authority.**
+- Backup/restore/clone cannot roll back external provider facts; external mappings require reconciliation.
+- White-label/menu/plugin hiding ≠ authorization; login branding ≠ authentication authority; audit/AI attribution ≠ identity/privilege.
+- DB snapshot ≠ full backup; migration replacement ≠ database merge; clone/duplicate ≠ same entity identity.
+- Surface 56 Theme Workspace must not expose arbitrary PHP live execution.
 - Safe Script/Tag remains browser-side only; PHP/server logic remains Extension SDK/VCS territory.
 - AI/MCP may draft/explain/validate only within Policy; high-risk mutation remains separately approved.
 
@@ -170,27 +89,21 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 
 All evidence remains **documented, not executed**.
 
-Representative counters:
-- FM 0/92; WF 0/116; JS 0/106; NT 0/142; CH 0/142; WC 0/156;
-- CF 0/112; VT 0/128; UI 0/104; BT 0/112; CI 0/120; FP 0/144;
-- MBR 0/160; MB-F 0/176; PC-F 0/176; MPR/PBX 0/176;
-- RA/RPR 0/176;
-- WM/MDP/MRL 0/176;
-- ATM/STM/HFC 0/176;
-- BK 0/180; BPC-F/BKX 0/176;
-- QRY 0/168; DEF 0/144; REL 0/160; CTB 0/184; JEX 0/176;
-- LNK/LHX 0/176;
-- ORD/SEC/FNT/UDS/STG 0/176;
-- **SRH documented 176 / executed 0/176**;
-- **DEC documented 176 / executed 0/176**;
-- **LED documented 176 / executed 0/176**;
-- **RSV documented 176 / executed 0/176**;
-- **PLC documented 176 / executed 0/176**;
-- **EXP documented 176 / executed 0/176**;
-- **DOC documented 176 / executed 0/176**;
-- **SYN documented 176 / executed 0/176**;
-- **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+Current detailed universal counters:
+- SBP 176 documented / 0 executed;
+- ANL 176 documented / 0 executed;
+- SRH 176 documented / 0 executed;
+- DEC 176 documented / 0 executed;
+- LED 176 documented / 0 executed;
+- RSV 176 documented / 0 executed;
+- PLC 176 documented / 0 executed;
+- EXP 176 documented / 0 executed;
+- DOC 176 documented / 0 executed;
+- SYN 176 documented / 0 executed;
+- **GEO 176 documented / 0 executed**;
+- AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+
+Third-audit supplemental UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence namespaces retain their accepted historical counts and remain unexecuted unless explicitly recorded otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -200,32 +113,31 @@ Completed interrupts:
 - WP75…WP82 market expansion — DONE;
 - WP83…WP89 first competitive audit — DONE;
 - WP90…WP99 second competitive audit — DONE;
-- WP100…WP111 third competitive audit/governance sync — DONE.
+- WP100…WP111 third competitive audit/governance — DONE.
 
 Universal detailed evidence sequence:
 - WP63 F01 — DONE;
 - WP64 F02 — DONE;
 - WP65 F03 Search — DONE / ADR-0196;
-- WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176;
-- WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176;
-- WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176;
-- WP69 F07 Placement/Personalization — DONE / ADR-0201; PLC documented 176 / executed 0/176;
-- WP70 F08 Experimentation/Rollout — DONE / ADR-0202; EXP documented 176 / executed 0/176;
-- WP71 F09 Documents/Records/Templates — DONE / ADR-0203; DOC documented 176 / executed 0/176;
-- **WP72 F10 Data Sync/ETL — DONE / ADR-0204; SYN documented 176 / executed 0/176**;
-- **WP73 F11 Geospatial/Territory — SPECIFICATION / CURRENT; GEO 0/176 envelope**.
-
-WP74 retains its reserved WooCommerce Commerce Domain Adapter (`WCA`) meaning.
+- WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198;
+- WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199;
+- WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200;
+- WP69 F07 Placement/Personalization — DONE / ADR-0201;
+- WP70 F08 Experimentation/Rollout — DONE / ADR-0202;
+- WP71 F09 Documents/Records/Templates — DONE / ADR-0203;
+- WP72 F10 Data Sync/ETL — DONE / ADR-0204;
+- **WP73 F11 Geospatial/Territory — DONE / ADR-0205; GEO documented 176 / executed 0/176**;
+- **WP74 WooCommerce Commerce Domain Adapter — SPECIFICATION / CURRENT; WCA 0/176 envelope**.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0204/56-surface/WP73-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0205/56-surface/WP74-current state.
 
-No F10 connector session, source/destination provider request, webhook registration/delivery execution, polling/CDC job, mapping transformation runtime, cursor/checkpoint mutation, destination create/update/delete, identity-map mutation, replay/dead-letter action, bidirectional conflict resolution, privacy erase propagation, schema migration, Multisite sync operation, restore/clone reconciliation, benchmark, F09 renderer execution, experiment runtime, placement runtime, scheduling transaction, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build or test occurred.
+No F11 geocoder/routing/provider request, spatial backend query, coordinate mutation, territory assignment, precise-location collection, cache mutation, geometry import/repair, Multisite geospatial operation, restore/provider reconciliation, benchmark, F10 connector runtime, document render, experiment/placement/scheduling/ledger/formula/search runtime, plugin/theme mutation, provider/AI/MCP call, build or test occurred.
 
 ## Next safe planning action
 
-Continue **WP73 — F11 Geospatial & Territory detailed executable-evidence specification (`GEO-001…GEO-176`)**.
+Continue **WP74 — WooCommerce Commerce Domain Adapter detailed executable-evidence specification (`WCA-001…WCA-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
