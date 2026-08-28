@@ -1,16 +1,11 @@
 # WPEssential — Approval Ledger & Work Lifecycle
 
-Status: **Active governance**
+Status: **Active governance**  
 Last reviewed: 2026-08-29
 
 ## 1. Approval scope hierarchy
 
-Approvals are scoped explicitly as one of:
-- `TASK`
-- `MODULE`
-- `MILESTONE`
-- `PHASE`
-- `PROJECT`
+Approvals are scoped explicitly as `TASK`, `MODULE`, `MILESTONE`, `PHASE`, or `PROJECT`.
 
 An approval applies only to documented scope and inherited reversible engineering decisions. A broader approval does not automatically authorize later destructive/high-risk production work.
 
@@ -45,61 +40,50 @@ Before requesting development approval for a milestone, present scope, exclusion
 
 Move a work unit to `AWAITING_DEVELOPMENT_APPROVAL` only when its planning/audit package is actually ready. Do not start production implementation until unambiguous approval is recorded.
 
-## 6. Approval autonomy
+## 6. Work lifecycle
 
-After scoped approval, ordinary reversible decisions inside approved scope do not require repeated consent. Escalate material scope/risk changes, destructive actions outside scope, breaking changes, major security/legal/privacy impacts and privileged production/deployment actions.
-
-## 7. Work lifecycle states
-
-Primary:
+Primary lifecycle states:
 `SPECIFICATION`, `AUDITING`, `AWAITING_DEVELOPMENT_APPROVAL`, `APPROVED`, `IMPLEMENTING`, `VERIFYING`, `BLOCKED`, `PARTIALLY_COMPLETE`, `DONE`.
 
-Optional:
-`PAUSED`, `RECOVERY`, `CANCELLED`.
+Optional: `PAUSED`, `RECOVERY`, `CANCELLED`.
 
-Transitions remain evidence/approval-gated; ambiguity is never approval.
+Ambiguity is never approval.
 
-## 8. Stable work IDs
+## 7. Stable work IDs
 
-Use:
-`P<phase>-M<milestone>-WP<work-package>-T<task>`
+Use `P<phase>-M<milestone>-WP<work-package>-T<task>`. Accepted ADR/spec IDs remain stable and work IDs are not silently repurposed.
 
-Accepted ADR/spec IDs remain stable. A work ID must not be silently reassigned to unrelated scope.
+## 8. Current WPEssential lifecycle
 
-## 9. Milestone contract
-
-Every executable milestone defines identity, scope/exclusions, dependencies/blockers, entry criteria, approval state, baseline/VCS state, security/negative requirements, data/migration implications, performance/observability, tests/evidence, integrations, exit criteria and rollback/recovery class.
-
-## 10. Approval precedence / revocation
-
-Prefer the narrower, newer explicit owner instruction for the same scope. Destructive/production restrictions remain unless explicitly lifted. Ambiguous consent is not consent.
-
-Owner can revoke approval at any time; after revocation stop new implementation, preserve evidence, reach a safe non-destructive checkpoint and record `REVOKED`.
-
-## 11. Current WPEssential lifecycle
-
-Project state: `PLANNED_EXISTING_PROJECT`
-Execution mode: `PLANNER_ONLY`
-Development approval: `PENDING / NOT GRANTED`
+Project state: `PLANNED_EXISTING_PROJECT`  
+Execution mode: `PLANNER_ONLY`  
+Development approval: `PENDING / NOT GRANTED`  
 Implementation WIP: **0**
 
 Scope history:
-- original pre-ADR-0177: 31 surfaces;
+- original: 31 surfaces;
 - ADR-0177: 43 surfaces;
-- ADR-0188 current: **48 planned module/platform surfaces**.
+- ADR-0188: 48 surfaces;
+- ADR-0194 current: **50 planned module/platform surfaces**.
 
-Current implementation authorization: **0/48**.
+Current implementation authorization: **0/50**.
 
 Logical product planning status:
-- product-option maturity: **48/48 Exhaustive**;
-- logical Multisite mapping: **48/48**;
-- shared AI Prompt product mapping: **48/48**;
+- product-option maturity: **50/50 Exhaustive**;
+- logical Multisite mapping: **50/50**;
+- shared AI Prompt product mapping: **50/50**;
 - runtime certifications: none.
 
-Current planning work remains active at **P0-M00-WP65 — F03 Search & Indexing detailed evidence**, after completion of the owner-requested WP75–WP82 market-expansion interrupt.
+Current planning work is **P0-M00-WP65 — F03 Search & Indexing detailed evidence** after completion of owner-requested WP83–WP89 access/admin/media/code planning interrupt.
 
-## 12. Consent invariant
+## 9. Approval autonomy / revocation
 
-Planning/documentation, ADR acceptance, internet/market research, evidence-protocol design, daily Git-job design, `continue`, `resume`, Solution Blueprint generation and AI Prompt planning do **not** authorize production code, executable workflows/spikes, package installation, WordPress runtime execution, DB/schema mutation, provider calls, MCP sessions, AI calls, crawls, data transforms, fixture generation, cleanup, tests, benchmarks or deployment.
+After scoped approval, ordinary reversible decisions inside approved scope do not require repeated consent. Escalate material scope/risk changes, destructive actions outside scope, breaking changes, major security/legal/privacy impacts and privileged production/deployment actions.
+
+Owner can revoke approval at any time; after revocation stop new implementation, preserve evidence, reach a safe non-destructive checkpoint and record `REVOKED`.
+
+## 10. Consent invariant
+
+Planning/documentation, ADR acceptance, internet/market research, evidence-protocol design, daily Git-job design, `continue`, `resume`, Solution Blueprint generation and AI Prompt planning do **not** authorize production code, executable workflows/spikes, package installation, WordPress runtime execution, DB/schema mutation, user/role/membership mutation, recovery-email execution, admin theme application, media telemetry/rewrite, browser-code injection, provider calls, MCP sessions, AI calls, tests, benchmarks or deployment.
 
 ADR-0014 remains the hard consent gate.
