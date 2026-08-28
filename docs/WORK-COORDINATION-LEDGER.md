@@ -1,100 +1,117 @@
 # WPEssential — Work Coordination Ledger
 
-Status: **Active governance ledger**  
+Status: **Active governance ledger**
 Last reviewed: 2026-08-29
 
 ## 1. Current execution state
 
-Project state: `PLANNED_EXISTING_PROJECT`  
-Execution mode: `PLANNER_ONLY`  
-Current planning lifecycle: `SPECIFICATION`  
-Production implementation WIP: **0**  
-Active implementation approvals: **0**  
-Current planned module/platform surfaces: **43**  
-Authorized module/platform surfaces: **0/43**
+Project state: `PLANNED_EXISTING_PROJECT`
+Execution mode: `PLANNER_ONLY`
+Current planning lifecycle: `SPECIFICATION`
+Production implementation WIP: **0**
+Active implementation approvals: **0**
+Current planned module/platform surfaces: **48**
+Authorized module/platform surfaces: **0/48**
+Current logical Multisite mappings: **48/48**
+Current AI Prompt product mappings: **48/48**
 
-Planning/documentation is allowed. Executable/source/runtime work remains blocked by ADR-0014.
+Planning/documentation/research is allowed. Executable/source/runtime work remains blocked by ADR-0014.
 
-Historical pre-ADR-0177 denominator was 31 surfaces; old `0/31` records remain historical truth only.
+Historical denominators: 31 original; 43 after ADR-0177; current 48 after ADR-0188.
 
 ## 2. Historical planning work
 
-Work packages `P0-M00-WP01…WP59` remain **DONE** and are not superseded. Their detailed scope/evidence is preserved in ADR-0117…ADR-0176, Quality protocols, checkpoints and VCS history.
+Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidence/ADR semantics. They are planning completion records, not implementation/runtime claims.
 
-No historical DONE package is an implementation/runtime claim.
-
-## 3. Expanded-scope work packages
+## 3. Universal-system work packages
 
 | Work ID | Scope | Lifecycle | Class | Parallelism | Evidence / note |
 |---|---|---|---|---|---|
-| `P0-M00-WP60` | Solution Blueprint + universal systems + 12-foundation + Woo adapter product expansion | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0177; 43 surfaces; 160 curated systems; 40 patterns; 268,800 raw primary combinations; 0/43 authorized. |
-| `P0-M00-WP61` | Module-wide AI Prompt / Requirement Compiler / MCP / capability-gap request | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0178/0179; 43/43 Prompt mapping; AIP 0/176; AIC/MCP runtime certs 0. |
-| `P0-M00-WP62` | Universal foundations + Woo adapter technical evidence master plan | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0180; SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each 0/176. |
-| `P0-M00-WP63` | F01 Solution Blueprint & Application Composer detailed evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0181; SBP-001…SBP-176; executed 0/176. |
-| `P0-M00-WP64` | F02 Analytics, Event Tracking & Journey Intelligence detailed evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0182; ANL-001…ANL-176; executed 0/176. |
-| `P0-M00-WP65` | F03 Search & Indexing detailed evidence | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | SRH-001…SRH-176 envelope reserved by ADR-0180; fixture-by-fixture expansion current. |
+| `P0-M00-WP60` | Solution Blueprint + universal systems + 12 foundations + Woo adapter expansion | DONE | SHARED_CONTRACT | SERIALIZE | ADR-0177; 43-surface milestone; 160 curated systems; 40 patterns; 268,800 raw primary combinations |
+| `P0-M00-WP61` | Module-wide AI Prompt / Requirement Compiler / MCP / gap request | DONE | SHARED_CONTRACT | SERIALIZE | ADR-0178/0179; AIP 0/176 |
+| `P0-M00-WP62` | Universal foundations + Woo adapter evidence master plan | DONE | BLOCKING_FOUNDATION | SERIALIZE | ADR-0180; SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA 0/176 |
+| `P0-M00-WP63` | F01 Solution Blueprint detailed evidence | DONE | BLOCKING_FOUNDATION | SERIALIZE | ADR-0181; SBP 0/176 |
+| `P0-M00-WP64` | F02 Analytics/Event/Journey detailed evidence | DONE | BLOCKING_FOUNDATION | SERIALIZE | ADR-0182; ANL 0/176 |
+| `P0-M00-WP65` | F03 Search & Indexing detailed evidence | SPECIFICATION | BLOCKING_FOUNDATION | SERIALIZE | SRH envelope 0/176; **current resume point** after owner-requested market audit |
 
-## 4. Planned follow-on sequence
+## 4. Reserved follow-on universal work IDs
 
-After WP65, unless new evidence changes critical path:
-1. WP66 — F04 Decision/Formula/Scoring (`DEC`).
-2. WP67 — F05 Ledger/Balance/Movement (`LED`).
-3. WP68 — F06 Resource Scheduling/Reservation (`RSV`).
-4. WP69 — F07 Placement/Personalization (`PLC`).
-5. WP70 — F08 Experimentation/Rollout (`EXP`).
-6. WP71 — F09 Documents/Records (`DOC`).
-7. WP72 — F10 Sync/ETL (`SYN`).
-8. WP73 — F11 Geo/Territory (`GEO`).
-9. F12 AI detailed evidence is explicit under ADR-0179 (`AIP`).
-10. WP74 — WooCommerce Commerce Domain Adapter (`WCA`) unless evidence/critical-path analysis moves it earlier.
-11. expanded-scope final consistency/self-audit, then only an honest approval gate can be considered.
+These IDs were reserved before the market-expansion interrupt and must not be reused:
+- WP66 — F04 Decision/Formula/Scoring (`DEC`)
+- WP67 — F05 Ledger/Balance/Movement (`LED`)
+- WP68 — F06 Resource Scheduling/Reservation (`RSV`)
+- WP69 — F07 Placement/Personalization (`PLC`)
+- WP70 — F08 Experimentation/Rollout (`EXP`)
+- WP71 — F09 Documents/Records (`DOC`)
+- WP72 — F10 Sync/ETL (`SYN`)
+- WP73 — F11 Geo/Territory (`GEO`)
+- WP74 — WooCommerce Commerce Domain Adapter (`WCA`)
 
-This is planning order, not implementation authorization.
+Planning order can be reassessed but stable work IDs are not repurposed.
 
-## 5. Evidence truth
+## 5. Owner-requested market-expansion interrupt — DONE
 
-Original/shared evidence remains unexecuted and unchanged as recorded in Checkpoint/Readiness.
+| Work ID | Scope | Lifecycle | Class | Evidence / result |
+|---|---|---|---|---|
+| `P0-M00-WP75` | Redirection/Better Search Replace/fixture + broader WordPress market gap audit | DONE | RESEARCH/SHARED_CONTRACT | market audit; reuse/new-module decisions; source provenance |
+| `P0-M00-WP76` | URL Redirection & Routing Manager | DONE | SHARED_CONTRACT | ADR-0183; RDR 0/176 |
+| `P0-M00-WP77` | Search, Replace & Data Transformation | DONE | HIGH_RISK_DATA | ADR-0184; SRT 0/176 |
+| `P0-M00-WP78` | Dummy Data & Fixture Studio | DONE | DEVELOPER_TOOL | ADR-0185; DMY 0/176 |
+| `P0-M00-WP79` | Link Health & Crawl Intelligence | DONE | INTEGRATION/HTTP | ADR-0186; LNK 0/176 |
+| `P0-M00-WP80` | Database Maintenance & Cleanup | DONE | HIGH_RISK_DATA | ADR-0187; DBM 0/176 |
+| `P0-M00-WP81` | S07 Product Discovery & Pre-Development Planning Orchestrator | DONE | SHARED_CONTRACT | ADR-0188; PDO 0/176 |
+| `P0-M00-WP82` | S08 Market Intelligence Radar + daily Git job design | DONE | SHARED_CONTRACT | ADR-0188; MIR 0/176; executable workflow NOT installed |
 
-Expanded evidence:
-- SBP **0/176**;
-- ANL **0/176**;
-- SRH **0/176**;
-- DEC **0/176**;
-- LED **0/176**;
-- RSV **0/176**;
-- PLC **0/176**;
-- EXP **0/176**;
-- DOC **0/176**;
-- SYN **0/176**;
-- GEO **0/176**;
-- AIP **0/176**;
-- WCA **0/176**.
+## 6. Current scope/evidence expansion
 
-No runtime certifications exist for these expanded foundations/adapters.
+New module surfaces accepted by ADR-0183…0188:
+- 44 URL Redirection & Routing — RDR 0/176;
+- 45 Search/Replace & Data Transformation — SRT 0/176;
+- 46 Dummy Data & Fixture Studio — DMY 0/176;
+- 47 Link Health & Crawl Intelligence — LNK 0/176;
+- 48 Database Maintenance & Cleanup — DBM 0/176.
 
-## 6. Shared-surface reservations
+Shared services outside denominator:
+- S07 Planning Orchestrator — PDO 0/176;
+- S08 Market Radar — MIR 0/176.
 
-Current planning reservations:
-- F03 Search/Index specification owns `SRH` namespace and search-index/backend/relevance/invalidation evidence planning during WP65.
-- F02 Analytics owns `ANL`; Event Bus/Audit remain separate operational/audit domains.
-- AI Prompt Runtime owns `AIP`; consumer modules do not create private AI runtimes.
-- F01 Solution Composer owns Solution install/upgrade/drift semantics; Blueprints do not own duplicated module runtimes.
-- WooCommerce adapter owns Woo domain translation; generic modules do not bypass it with private order-storage assumptions.
+All are planning-only; no fixture is executed.
 
-Implementation shared-surface reservations remain **0** because development is not authorized.
+## 7. Market-driven existing-surface enhancements
 
-## 7. WIP / coordination rules
+Planned without new work-ID/module denominator inflation:
+- deep developer request/query/hook/REST/asset diagnostics → Platform Diagnostics/Audit;
+- isolated Troubleshooting Session Mode → Platform Diagnostics shared service;
+- controlled Support Impersonation → User Profile/Role/Platform Support;
+- native WP-Cron inspector → Cron/JobService;
+- human-readable Activity History → Audit;
+- media replace/regenerate derivatives → Media Rules;
+- generic Code Snippets arbitrary execution → rejected under ADR-0004.
 
-Material expansion follows:
+Detailed source: `docs/MODULES/MARKET-RESEARCH-EXISTING-SURFACE-ENHANCEMENTS.md`.
 
-`STOP → REASSESS → UPDATE IMPACT → RESCOPE OR SPLIT`
+## 8. Shared-surface planning reservations
 
-No unrelated cleanup. Shared-contract planning is serialized where one source-of-truth surface would otherwise race.
+- F03 Search owns SRH planning during WP65.
+- Redirect Manager owns request-time Redirect Definitions/routing, not general crawling.
+- Link Health owns crawl/link inventory/issues, not source mutations.
+- Search/Replace owns planned deterministic transforms; owning module APIs remain mutation authority.
+- Dummy Data owns synthetic fixture Runs/cleanup ownership; it does not become Reset Manager.
+- DB Maintenance owns owner-aware retention/cleanup Plans; no arbitrary SQL cleanup.
+- S07 owns pre-development planning orchestration; S08 owns market signal discovery.
+- AI Prompt Runtime remains shared; no new module gets a private provider stack.
 
-## 8. Current next safe action
+Implementation shared-surface reservations remain **0**.
 
-Continue **WP65 F03 Search & Indexing detailed executable-evidence specification**.
+## 9. Daily market Git job truth
 
-Do not begin production code, install packages, create DB tables, collect analytics events, call AI providers, run MCP, create search indexes, post ledgers, acquire reservations, render documents, sync remote systems or mutate WooCommerce runtime.
+The exact planned GitHub Actions YAML lives in:
+`docs/OPERATIONS/MARKET-INTELLIGENCE-DAILY-GITHUB-JOB.md`.
 
-When the expanded planning sequence is complete, lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`; it must not be moved there prematurely.
+It is intentionally documentation-only. No executable `.github/workflows/market-intelligence*.yml` file is installed/enabled before explicit development authorization and CI/security review.
+
+## 10. Current next safe action
+
+Resume **P0-M00-WP65 — F03 Search & Indexing detailed executable-evidence specification**.
+
+Do not begin production code, install packages, create DB tables, execute Search/Replace/cleanup, create dummy data, crawl URLs, enable scheduled Actions, collect market data automatically, call AI providers/MCP or mutate WordPress runtime.
