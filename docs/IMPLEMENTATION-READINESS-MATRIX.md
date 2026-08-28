@@ -28,7 +28,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Query | ADR-0086/0131 | QRY-01…QRY-168; QP1–QP4 separate |
 | Relations | ADR-0074/0093/0133 | REL-01…REL-160; final physical profile open |
 | Workflow | ADR-0082/0118 | WF-01…WF-116 |
-| Membership | ADR-0013…0090/0129 | MBR-01…MBR-160 + MB/PC |
+| Membership | ADR-0013…0090/0129/0173 | MBR-01…MBR-160 + MB-F001…MB-F176 + MB0–MB5 + PC |
 | Backup | ADR-0021…0100/0130 | BK-01…BK-180 + C0–C4/V3 |
 | Field Storage | ADR-0022/0087/0134 | FST-01…FST-176 |
 | Custom Tables | ADR-0023/0088/0135 | CTB-01…CTB-184 |
@@ -90,7 +90,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112/0162 | ST 0/176 + VT/DSR/CLG/DVR/CAC/KPA/PDL/ERR/VER/UI/BT/CI/MSI | No |
 | 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108/0146/0163 | FD 0/176 + CBP/DSR/QRY/CLG/DVR/ASR/CAC/KPA/RA/UP/MBR/UI/BT/CI/MSI | No |
 | 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113/0158 | UP 0/176 + FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC/UI/BT/CI/MSI | No |
-| 15 | Membership System | Exhaustive | ADR-0013…0090/0129 | MBR + MB/PC + KPA/PDL/ERR/VER/MLC/CLG/DVR/CAC/RA/MSI/LC | No |
+| 15 | Membership System | Exhaustive | ADR-0013…0090/0129/0173 | MBR 0/160 + MB-F 0/176 + MB0–MB5 + PC + KPA/PDL/ERR/VER/MLC/CLG/DVR/CAC/RA/MSI/LC | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109/0146/0167 | CBP/BW 0/176/BC0…BC4 + DSR/CLG/DVR/ASR/CAC/BT/CI/MSI | No |
 | 17 | Forms & Workflow Builder | Exhaustive | FRT/WF baselines | FM/WF/JS/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
 | 18 | Cron Job Builder | Exhaustive | JobService | JS/KPA/ERR/VER/MLC/MSI/LC | No |
@@ -117,7 +117,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
-- Membership Billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
+- Membership Billing MB-F **0/176**; provider/source profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**; protected files **0 PC1+**.
 - Backup **34 provider targets / 0 C-certified / 0 C3; V3 0**.
 - Connection adapters **0 I4/I5**; Multisite **0 MS1+**; Site Lifecycle runtime certs **0**.
 
@@ -140,9 +140,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0172; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0173; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work after WP55 closure: **`P0-M00-WP56` — Membership Billing provider certification reassessment**.
+Current planning work after WP56 closure: **`P0-M00-WP57` — Protected-file provider/delivery certification reassessment**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
