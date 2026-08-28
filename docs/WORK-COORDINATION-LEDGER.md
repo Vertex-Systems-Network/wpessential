@@ -39,7 +39,8 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP22` | Emails Builder renderer/composition evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Email IR/templates/Vault/Policy/Notification/providers/Multisite | ADR-0139; EBR-01…EBR-176; 0 executed; ET separate. |
 | `P0-M00-WP23` | Platform Account / Docs / Support / Diagnostics evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Product Account/OAuth/License/TUF/Support/Docs/Diagnostics/Remote Service/Vault/Privacy | ADR-0140; PLT-01…PLT-176; 0 executed; FP/OA/TU/RS remain separate prerequisites. |
 | `P0-M00-WP24` | Multisite Scope/Isolation + Site Lifecycle evidence refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Scope/Policy/Jobs/Cache/Vault/Membership/Backup/Product License/lifecycle | ADR-0141; MSI-01…MSI-160 + LC-01…LC-96; 0 executed; MS0–MS4/SL0–SL4 preserved. |
-| `P0-M00-WP25` | Audit & Observability executable-evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Audit/AU1/PT-D/retention/integrity/diagnostics/security/event correlation | Current planning work; inspect accepted Audit architecture and existing evidence before creating/refining a canonical fixed protocol. |
+| `P0-M00-WP25` | Audit & Observability evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Audit/AU1/PT-D/retention/integrity/diagnostics/security/event correlation | ADR-0142; AUD-01…AUD-176; 0 executed; AU1/PT-D remains first future baseline only. |
+| `P0-M00-WP26` | Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | bootstrap/kernel/module registry/policy/abilities/events/extension registries/SDK/Free↔Pro/Multisite | Current planning work; reconcile paper contracts before creating/refining a fixed shared-foundation protocol. |
 
 No production implementation work package is active.
 
@@ -47,8 +48,8 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Audit & Observability executable-evidence reassessment | `SPECIFICATION` current | Shared platform service; dedicated fixed protocol not found; inspect architecture/retention/integrity/privacy/diagnostics overlap first |
-| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP25 |
+| 1 | Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK evidence reassessment | `SPECIFICATION` current | Shared platform contract family; paper architecture exists but no dedicated fixed shared-foundation protocol was found in repository quality inventory |
+| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP26 |
 
 Planning documentation work does not create implementation authorization.
 
@@ -69,6 +70,7 @@ No active shared-surface implementation reservation exists.
 - Platform PLT **0/176**; Account connection, entitlement, allocation, update trust, support authority and diagnostics transmission remain separate.
 - Multisite MSI **0/160**; runtime-certified surfaces at MS1+ remain 0.
 - Site Lifecycle LC **0/96**; SL runtime certification remains 0.
+- Audit AUD **0/176**; AU1/PT-D is only a future baseline, and local Audit/hash evidence is not tamper-proof truth.
 - current-blog context is never durable ownership or authorization.
 - site deletion does not imply global-user deletion/billing cancellation/shared-secret deletion/privacy erasure.
 - clone/restore cannot silently resurrect stale commercial/provider/access authority.
@@ -76,6 +78,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP25`: audit Audit PT-D/AU1 architecture, event taxonomy, actor/scope/correlation, append/history integrity, retention/erasure boundaries, privacy/redaction, provider/job/workflow correlation, Multisite isolation, export/support diagnostics, failure/degraded behavior and any existing audit evidence. Prefer canonical in-place refinement and do not duplicate domain-history or diagnostics protocols.
+Continue `P0-M00-WP26`: reconcile bootstrap/kernel/module-manifest lifecycle, dependency DAG/data ownership, granular capability + resource Policy evaluation order, typed Ability registration/invocation/channel parity, Event catalog/envelope/at-least-once semantics, extension registries/SDK namespacing/versioning/failure isolation, Free↔Pro shared ownership, Multisite site/network scope, stale registry/cache behavior, extension collisions and bootstrap/registry performance. Prefer one canonical shared-foundation evidence protocol only if the combined contract remains coherent; split if evidence domains materially diverge.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
