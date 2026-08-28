@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0122**.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions are preserved through **ADR-0124**. ADR-0002 compatibility floor remains Proposed pending executable evidence.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -11,11 +11,11 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 
 | ID | Related ADR | Remaining evidence |
 |---|---|---|
-| D-001 | ADR-0002/0069/0075 | WP/PHP/DB compatibility + Multisite/site lifecycle — P-001 |
+| D-001 | ADR-0002/0069/0075/0123 | WP/PHP/DB compatibility + Multisite/site lifecycle — CF-01…CF-112 / P-001 |
 | D-002 | ADR-0005 | UI runtime/externalization/accessibility/RTL/bundle — P-002 |
 | D-003 | ADR-0059/0068/0083/0119 | Job physical/backend/Action Scheduler/Cron/DST/fairness/claims/Multisite — JS-01…JS-106 / P-003 |
 | D-004 | ADR-0073/0092 | Definition D1/D2/D3/D4 exact DDL/index/locking/migration — P-004 |
-| D-005 | ADR-0048/0085 | Vault crypto/envelope/DDL/rotation/recovery/security review — P-005 |
+| D-005 | ADR-0048/0085/0124 | Vault crypto/AAD/envelope/DDL/rotation/recovery/redaction/Multisite/security review — VT-01…VT-128 / P-005 |
 | D-006 | ADR-0070/0072/0076/0091/0101 | Free↔Pro/Product License/OAuth runtime/service — P-006 + OA protocol |
 | D-007 | ADR-0011 | executable CI matrix — P-007 |
 | D-008 | ADR-0012 | build/externalization/toolchain comparison — P-008 |
@@ -41,6 +41,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 
 ## B. Current accepted paper baselines
 
+- Compatibility floor candidates remain WP 6.9 / PHP 8.3 with current/reference WP snapshot 7.1; CF-01…CF-112 is the fixed evidence protocol and does not itself certify the floor.
 - Definition D1/PT-C; D2/D3/D4 comparisons.
 - Relations R1/PT-D; R2/PT-E mandatory.
 - Query QP1 native-WP; QP2 Custom Table; QP3 Relations; QP4 remote.
@@ -58,7 +59,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - REST RE1 + RI1/RI2.
 - Import IR1/PT-D vs IR2/PT-E.
 - Backup Remote Copy BR1/BR2/BR3.
-- Vault V1/PT-C vs V2.
+- Vault V1/PT-C favored first baseline vs V2/PT-E + separate network Vault mandatory; VT-01…VT-128 fixed P-005 evidence protocol.
 - User/Profile native WordPress identity authority + WPE security workflows.
 - Role/Capability native WordPress authorization authority + WPE anti-lockout/recovery.
 - Admin Columns AC1 whole-request batching.
@@ -487,13 +488,41 @@ Open evidence:
 
 Event Inbox remains accepted ingress/source-fact truth, not owning domain state; provider payload cannot choose WPE site/network scope before trusted mapping.
 
-## W. Other current evidence state
+## W. Secrets Vault — ADR-0048/0085/0124 / P-005
 
+VT-01…VT-128 are fixed future fixtures.
+
+Open evidence:
+- Sodium/XChaCha20-Poly1305 primitive/runtime compatibility on accepted P-001 cells;
+- exact interoperable envelope/AAD byte serialization and anti-swap behavior;
+- secure randomness/nonces and fail-closed primitive failure;
+- Secret Version/current-pointer crash and concurrent replacement semantics;
+- external, WordPress-derived, recovery and future KMS/HSM key-slot behavior;
+- wrapping-key/VRK rotation crash/resume/duplicate-Job/concurrent-write behavior;
+- network Use Grant authorization and revoke races;
+- REST/Abilities/AI/Job/Workflow/browser no-plaintext boundaries;
+- DB/filesystem/log/Audit/support redaction scans;
+- Backup/Restore/lost-key/recovery-kit separation;
+- clone/staging/transfer/environment safety;
+- provider credential rotation/unknown outcome/reconciliation;
+- Multisite isolation/network delegation;
+- V1/PT-C vs V2/PT-E schema/migration/restore/scale evidence;
+- independent security review and exact supported threat claims.
+
+**VT executed: 0/128. Vault runtime certifications: 0. Crypto interoperability certifications: 0. Independent security review: not executed. Final V1/V2 topology: open.**
+
+V1/PT-C remains favored first future baseline only. No plaintext fallback, cross-context ciphertext acceptance, ungranted network-secret use or full-server secrecy overclaim is permissible.
+
+## X. Other current evidence state
+
+- Compatibility P-001 / CF: **0/112; floor not certified; ADR-0002 Proposed**.
+- UI P-002: **0 executed**.
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
 - Query P-009: **0 executed**.
 - Job P-003: **0/106 JS**.
-- Vault P-005: **0 executed**.
+- Vault P-005: **0/128 VT; runtime/crypto certifications 0**.
+- Build P-008: **0 executed**.
 - Workflow P-011: **0/116 WF**.
 - Notification: **0/142 NT**.
 - Message & Chat: **0/142 CH**; runtime/realtime/search certifications **0**.
@@ -506,20 +535,20 @@ Event Inbox remains accepted ingress/source-fact truth, not owning domain state;
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## X. Accepted architecture no longer open semantically
+## Y. Accepted architecture no longer open semantically
 
-ADRs **0035–0122** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0124** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them. ADR-0002 remains Proposed because its compatibility floor itself requires executable proof.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs/notifications/chat/connections/webhook/Event-Inbox runtime or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata/Vault keys, execute OAuth/crypto, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs/notifications/chat/connections/webhook/Event-Inbox runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. **P-001 Compatibility Floor evidence refinement** — convert the existing generic P-001 spike into a fixed, adversarial, environment/adoption-aware executable evidence protocol without executing it.
-2. Then reassess P-002/P-005/P-007/P-008/P-012/P-013 and other remaining blockers by critical-path/dependency value.
-3. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC gates intact.
+1. **P-002 UI runtime + P-008 build/externalization evidence refinement** — reconcile the coupled WPE wrapper/WordPress React/design-system/runtime-asset and build/artifact contracts into fixed bounded protocols without executing them.
+2. Then reassess P-007 CI, P-006 Free↔Pro boot, P-012 Membership, P-013 Backup and remaining blockers by critical-path/dependency value.
+3. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC/CF/VT gates intact.
