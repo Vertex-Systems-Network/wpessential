@@ -103,8 +103,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0089 | Accepted Settings PT-A/PT-B runtime profile / evidence pending | ST1 site doc; ST2 network doc; ST3 inheritance; non-autoload default; stale edits conflict visibly |
 | ADR-0090 | Accepted Membership protected-file delivery profile / security evidence pending | PD1 private local correctness; PD2 accelerated; PD3 private object signed delivery; PC0–PC4 certification |
 | ADR-0091 | Accepted Product License API component schema profile / service evidence pending | Field-level schemas, server-owned state, idempotency, ETag/If-Match, Problem Details, cursor components |
-| ADR-0092 | Accepted Definition P-004 evidence protocol / execution pending | Canonical protocol later refined by ADR-0132 to DEF-01…DEF-144; original Q1–Q10/C1–C7 mappings preserved |
-| ADR-0093 | Accepted Relations P-010 evidence protocol / execution pending | RF datasets, RQ1–RQ11, RC1–RC8, endpoint/pivot/N+1/lifecycle/scope gates |
+| ADR-0092 | Accepted Definition P-004 evidence protocol / execution pending | Canonical protocol refined by ADR-0132 to DEF-01…DEF-144; original Q1–Q10/C1–C7 mappings preserved |
+| ADR-0093 | Accepted Relations P-010 evidence protocol / execution pending | Canonical protocol refined by ADR-0133 to REL-01…REL-160; original RQ1–RQ11/RC1–RC8 mappings preserved |
 | ADR-0094 | Accepted REST operational profile / execution pending | RE1 WP REST + compiled descriptor; idempotency/rate/cache state separate; CORS/auth never replace authorization |
 | ADR-0095 | Accepted Import runtime physical/recovery profile / execution pending | IR1/PT-D first; IR2/PT-E mandatory; checkpoints/map/journal durable; rollback truthful R0–R3 |
 | ADR-0096 | Accepted User Profile runtime authority profile / execution pending | native WP identity/auth authority + Field Storage custom data + minimal security-action state |
@@ -136,14 +136,17 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0122 | Accepted Webhooks/Connections/Event Inbox evidence protocol / execution pending | WC-01…WC-156 |
 | ADR-0123 | Accepted P-001 Compatibility evidence protocol / execution pending | CF-01…CF-112; ADR-0002 remains Proposed |
 | ADR-0124 | Accepted P-005 Secrets Vault evidence protocol / execution pending | VT-01…VT-128; V1/V2 final selection open |
-| ADR-0125 | Accepted P-002 UI/Design System evidence protocol / execution pending | UI-01…UI-104; wrappers/React isolation/accessibility/RTL/assets |
-| ADR-0126 | Accepted P-008 Build Toolchain evidence protocol / execution pending | BT-01…BT-112; WordPress/React externalization/chunks/assets/RTL/i18n/package determinism |
-| ADR-0127 | Accepted P-007 CI/Quality Matrix evidence protocol / execution pending | CI-01…CI-120; FAST/FULL, secret isolation, baseline/flaky truth, artifact provenance, release gates |
-| ADR-0128 | Accepted P-006 Free↔Pro compatibility evidence protocol / execution pending | FP-01…FP-144; package/API/schema/entitlement/update/restore separation |
-| ADR-0129 | Accepted P-012 Membership evidence protocol / execution pending | MBR-01…MBR-160; lifecycle/policy/cache/teams/providers/protected-files/privacy/M1-M2 |
-| ADR-0130 | Accepted P-013 Backup/Restore evidence protocol / execution pending | BK-01…BK-180; artifact/crypto/Remote Copy/provider/restore/Multisite/recovery; C0–C4/V3 separate |
-| ADR-0131 | Accepted P-009 Query evidence protocol / execution pending | QRY-01…QRY-168; QP1–QP4, cost, cursor, count leakage, cache revocation, Multisite/security evidence |
-| ADR-0132 | Accepted P-004 Definition evidence refinement / execution pending | Existing ADR-0092 canonical protocol refined in place to DEF-01…DEF-144; old Q/C mappings preserved; D1/PT-C remains first benchmark baseline only |
+| ADR-0125 | Accepted P-002 UI/Design System evidence protocol / execution pending | UI-01…UI-104 |
+| ADR-0126 | Accepted P-008 Build Toolchain evidence protocol / execution pending | BT-01…BT-112 |
+| ADR-0127 | Accepted P-007 CI/Quality Matrix evidence protocol / execution pending | CI-01…CI-120 |
+| ADR-0128 | Accepted P-006 Free↔Pro compatibility evidence protocol / execution pending | FP-01…FP-144 |
+| ADR-0129 | Accepted P-012 Membership evidence protocol / execution pending | MBR-01…MBR-160; MB/PC certifications separate |
+| ADR-0130 | Accepted P-013 Backup/Restore evidence protocol / execution pending | BK-01…BK-180; C0–C4/V3 certifications separate |
+| ADR-0131 | Accepted P-009 Query evidence protocol / execution pending | QRY-01…QRY-168; QP1–QP4 certifications separate |
+| ADR-0132 | Accepted P-004 Definition evidence refinement / execution pending | Canonical ADR-0092 protocol refined in place to DEF-01…DEF-144; D1/PT-C remains first benchmark baseline only |
+| ADR-0133 | Accepted P-010 Relations evidence refinement / execution pending | Canonical ADR-0093 protocol refined in place to REL-01…REL-160; R1/PT-D first baseline; R2 mandatory; final R/E/PV/DDL open |
+| ADR-0134 | Accepted Field Storage / Custom Fields evidence protocol / execution pending | FST-01…FST-176; FS1–FS6 routing and migration/security evidence; runtime/profile certifications 0 |
+| ADR-0135 | Accepted Custom Tables evidence protocol / execution pending | CTB-01…CTB-184; CT1–CT3 + CM1–CM4; exact DDL/types/indexes/constraints open |
 
 ## Product specification milestone
 
@@ -158,8 +161,11 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - CI: `docs/QUALITY/P007-CI-QUALITY-MATRIX-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Free↔Pro: `docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Vault: `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- **Definition: `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md` — DEF-01…DEF-144**
-- **Query: `docs/QUALITY/P009-QUERY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — QRY-01…QRY-168**
+- Definition: `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md` — DEF-01…DEF-144
+- Query: `docs/QUALITY/P009-QUERY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — QRY-01…QRY-168
+- Relations: `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md` — REL-01…REL-160
+- Field Storage: `docs/QUALITY/FIELD-STORAGE-EXECUTABLE-EVIDENCE-PROTOCOL.md` — FST-01…FST-176
+- Custom Tables: `docs/QUALITY/CUSTOM-TABLES-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CTB-01…CTB-184
 - Membership: `docs/QUALITY/P012-MEMBERSHIP-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Backup/Restore: `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Forms: `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
@@ -172,29 +178,22 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Current execution/certification truth
 
-- CF **0/112**, floor not certified.
-- UI **0/104**, runtime certification 0.
-- JS **0/106**, backend/Cron-DST certifications 0.
-- DEF **0/144**, Definition physical/runtime certification 0; final D1–D4/DDL open.
-- VT **0/128**, runtime/crypto certifications 0; security review not executed.
-- FP **0/144**, certified Free↔Pro artifact pairs 0.
-- CI **0/120**, workflows not verified; direct branch reads show `main` and `planning/master-architecture` unprotected; repository-wide rulesets UNKNOWN due plan/access restriction.
-- BT **0/112**, canonical build tool not selected.
-- QRY **0/168**, Query runtime certification 0; QP1–QP4 certifications 0.
-- P-010 Relations **0 executed; completeness audit current**.
-- WF **0/116**, runtime certification 0.
-- MBR **0/160**, Membership runtime certification 0; **4 BE3 / 0 MB-certified**, **0 PC1+**.
-- BK **0/180**, Backup runtime certification 0; **34 targets / 0 C-certified / 0 C3 Supported**, V3 certifications 0.
+- CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
+- QRY **0/168**, QP1–QP4 certifications 0.
+- REL **0/160**, final R/E/PV/DDL open.
+- WF **0/116**; MBR **0/160**; BK **0/180**.
+- FST **0/176**, all Field Storage runtime/profile certifications 0.
+- CTB **0/184**, CT1/CT2/CT3 + CM1/CM2/CM3/CM4 certifications 0; exact DDL open.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**; DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
-- Email: **6 EE3 / 0 ET-certified**.
-- Connection adapters: **0 I4/I5**.
-- Site Lifecycle: **0/40**.
-- Multisite: **0 MS1+**.
-- Remote privacy: **0/30**.
+- Membership providers: **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
+- Backup: **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
+- Email: **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
+- Site Lifecycle **0/40**; Multisite **0 MS1+**; Remote privacy **0/30**.
+- CI workflow implementation remains unverified; direct branch reads showed `main` + `planning/master-architecture` unprotected; repository-wide rulesets remain UNKNOWN due 403/plan restriction.
 
 ## Current planning work
 
-**`P0-M00-WP16` — P-010 Relations evidence completeness / physical proof audit — SPECIFICATION.**
+**`P0-M00-WP19` — Admin Columns operational executable-evidence refinement — SPECIFICATION.**
 
 No executable evidence may run before explicit owner consent.
