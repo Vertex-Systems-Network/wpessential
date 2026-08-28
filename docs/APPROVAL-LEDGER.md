@@ -1,6 +1,6 @@
 # WPEssential — Approval Ledger & Work Lifecycle
 
-Status: **Active governance**  
+Status: **Active governance**
 Last reviewed: 2026-08-29
 
 ## 1. Approval scope hierarchy
@@ -12,103 +12,94 @@ Approvals are scoped explicitly as one of:
 - `PHASE`
 - `PROJECT`
 
-An approval applies only to the documented scope and inherited reversible engineering decisions within that scope. A broader approval does not automatically authorize a later destructive production action if a separate high-risk approval is required.
+An approval applies only to documented scope and inherited reversible engineering decisions. A broader approval does not automatically authorize later destructive/high-risk production work.
 
 ## 2. Approval states
 
-Use:
-- `PENDING`
-- `ACTIVE`
-- `REVOKED`
-- `EXHAUSTED`
-- `SUPERSEDED`
+Use `PENDING`, `ACTIVE`, `REVOKED`, `EXHAUSTED`, `SUPERSEDED`.
 
-Every durable approval record should include approval ID, scope type, stable work ID, approver/reference, date/time, included/excluded scope, risk exceptions, status and evidence source.
+Every durable approval records approval ID, scope, stable work ID, approver/reference, date/time, included/excluded scope, risk exceptions, status and evidence source.
 
 ## 3. Current approval ledger
 
 | Approval ID | Scope | Work ID | Status | Included | Excluded / notes |
 |---|---|---|---|---|---|
-| GOV-OWNER-CONSENT-000 | PROJECT | WPEssential | PENDING | Production implementation once explicitly granted and technical gates permit | Current owner has **not** granted production development consent. `continue`, planning approval and ADR acceptance are not consent. |
+| GOV-OWNER-CONSENT-000 | PROJECT | WPEssential | PENDING | Production implementation once explicitly granted and technical gates permit | Owner has **not** granted production development consent. `continue`, planning approval, research requests and ADR acceptance are not consent. |
 
-No module, milestone, phase or project implementation approval is currently ACTIVE.
+No module, milestone, phase or project implementation approval is ACTIVE.
 
 ## 4. Existing-project approval adoption
 
-When governance is introduced into existing active work:
+When governance is introduced into active work:
+- recover clear approval evidence where possible;
 - do not retroactively invalidate clearly authorized work;
-- recover approval evidence from repository/issue/PR/checkpoint/project records where possible;
-- backfill a durable ledger entry;
+- backfill durable ledger entries;
 - mark uncertain scope `UNKNOWN/PENDING` rather than inventing approval;
 - request new approval only for materially new scope/risk.
 
-WPEssential remains planning-only; no retrospective implementation approval exists to adopt.
+WPEssential remains planning-only; no retrospective implementation approval exists.
 
 ## 5. Development approval summary
 
-Before requesting development approval for a milestone, present a concise summary covering scope, exclusions, options/behaviors, roles/permissions, workflows/states, data/migrations, integrations, security/negative requirements, tests/evidence, affected existing components, compatibility, risks, sequence and rollback/recovery.
+Before requesting development approval for a milestone, present scope, exclusions, options/behaviors, roles/permissions, states/workflows, data/migrations, integrations, security/negative requirements, tests/evidence, affected components, compatibility, risks, sequence and rollback/recovery.
 
-Set the work state to `AWAITING_DEVELOPMENT_APPROVAL` only when the applicable planning/audit package is actually ready. Do not start production implementation until unambiguous approval is received and recorded.
+Move a work unit to `AWAITING_DEVELOPMENT_APPROVAL` only when its planning/audit package is actually ready. Do not start production implementation until unambiguous approval is recorded.
 
-## 6. Approval autonomy rule
+## 6. Approval autonomy
 
-Once a milestone is approved, do not repeatedly ask approval for ordinary reversible technical decisions already inside documented scope. Escalate when material scope/risk changes, destructive data work exceeds scope, a breaking change becomes necessary, serious security/legal/privacy implications emerge, or privileged production/deployment action requires approval.
+After scoped approval, ordinary reversible decisions inside approved scope do not require repeated consent. Escalate material scope/risk changes, destructive actions outside scope, breaking changes, major security/legal/privacy impacts and privileged production/deployment actions.
 
 ## 7. Work lifecycle states
 
-Primary lifecycle states:
-- `SPECIFICATION`
-- `AUDITING`
-- `AWAITING_DEVELOPMENT_APPROVAL`
-- `APPROVED`
-- `IMPLEMENTING`
-- `VERIFYING`
-- `BLOCKED`
-- `PARTIALLY_COMPLETE`
-- `DONE`
+Primary:
+`SPECIFICATION`, `AUDITING`, `AWAITING_DEVELOPMENT_APPROVAL`, `APPROVED`, `IMPLEMENTING`, `VERIFYING`, `BLOCKED`, `PARTIALLY_COMPLETE`, `DONE`.
 
-Optional: `PAUSED`, `RECOVERY`, `CANCELLED`.
+Optional:
+`PAUSED`, `RECOVERY`, `CANCELLED`.
 
-`SPECIFICATION → AUDITING` when documentation is ready for adversarial/self-audit.  
-`AUDITING → AWAITING_DEVELOPMENT_APPROVAL` only when material documentation gaps are resolved or explicitly blocked.  
-`AWAITING_DEVELOPMENT_APPROVAL → APPROVED` only from explicit scoped owner approval.  
-`APPROVED → IMPLEMENTING` only after entry gates/baseline/VCS safety are confirmed.  
-`IMPLEMENTING → VERIFYING` when bounded implementation is ready for applicable checks.  
-`VERIFYING → DONE` only when Definition of Done is satisfied.
+Transitions remain evidence/approval-gated; ambiguity is never approval.
 
 ## 8. Stable work IDs
 
-New execution/planning work uses:
-
+Use:
 `P<phase>-M<milestone>-WP<work-package>-T<task>`
 
-Do not retroactively rename accepted ADR/spec IDs. The same work ID should be reused across checkpoint/PR/evidence when practical and never silently reassigned to unrelated scope.
+Accepted ADR/spec IDs remain stable. A work ID must not be silently reassigned to unrelated scope.
 
 ## 9. Milestone contract
 
-Every executable milestone defines identity, scope/exclusions, dependencies/blockers, entry criteria, approval state, baseline/VCS state, security/negative requirements, data/migration implications, performance/observability, tests/evidence, integration requirements, exit criteria and rollback/recovery class.
+Every executable milestone defines identity, scope/exclusions, dependencies/blockers, entry criteria, approval state, baseline/VCS state, security/negative requirements, data/migration implications, performance/observability, tests/evidence, integrations, exit criteria and rollback/recovery class.
 
 ## 10. Approval precedence / revocation
 
-Prefer the narrower, newer explicit owner instruction for the same scope; destructive/production-specific restrictions remain unless explicitly lifted; ambiguous consent is not consent. Record supersession rather than deleting history.
+Prefer the narrower, newer explicit owner instruction for the same scope. Destructive/production restrictions remain unless explicitly lifted. Ambiguous consent is not consent.
 
-Owner may revoke approval at any time. After revocation stop new implementation, preserve evidence, reach a safe checkpoint where non-destructive, record `REVOKED`, and return affected work to planning/blocked state.
+Owner can revoke approval at any time; after revocation stop new implementation, preserve evidence, reach a safe non-destructive checkpoint and record `REVOKED`.
 
 ## 11. Current WPEssential lifecycle
 
-Project state: `PLANNED_EXISTING_PROJECT`  
-Execution mode: `PLANNER_ONLY`  
-Development approval: `PENDING / NOT GRANTED`  
-Current canonical product scope after ADR-0177: **43 planned module/platform surfaces**  
-Implementation authorization: **0/43** surfaces  
+Project state: `PLANNED_EXISTING_PROJECT`
+Execution mode: `PLANNER_ONLY`
+Development approval: `PENDING / NOT GRANTED`
 Implementation WIP: **0**
 
-Historical `0/31` statements refer to the original pre-ADR-0177 scope only.
+Scope history:
+- original pre-ADR-0177: 31 surfaces;
+- ADR-0177: 43 surfaces;
+- ADR-0188 current: **48 planned module/platform surfaces**.
 
-Current planning work is active on the expanded universal-foundation evidence sequence after ADR-0181; the project is **not** at a global implementation-approval gate while that newly requested planning work remains open.
+Current implementation authorization: **0/48**.
+
+Logical product planning status:
+- product-option maturity: **48/48 Exhaustive**;
+- logical Multisite mapping: **48/48**;
+- shared AI Prompt product mapping: **48/48**;
+- runtime certifications: none.
+
+Current planning work remains active at **P0-M00-WP65 — F03 Search & Indexing detailed evidence**, after completion of the owner-requested WP75–WP82 market-expansion interrupt.
 
 ## 12. Consent invariant
 
-Planning/documentation, ADR acceptance, internet research, evidence-protocol design, `continue`, `resume` and Solution/AI prompt approval do **not** authorize production code, executable spikes, package installation, WordPress runtime execution, DB/schema mutation, provider calls, MCP sessions, AI calls, migrations, tests, benchmarks or deployment.
+Planning/documentation, ADR acceptance, internet/market research, evidence-protocol design, daily Git-job design, `continue`, `resume`, Solution Blueprint generation and AI Prompt planning do **not** authorize production code, executable workflows/spikes, package installation, WordPress runtime execution, DB/schema mutation, provider calls, MCP sessions, AI calls, crawls, data transforms, fixture generation, cleanup, tests, benchmarks or deployment.
 
 ADR-0014 remains the hard consent gate.
