@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0172**.
+Accepted evidence decisions/refinements now extend through **ADR-0173**.
 
 ### Fixed evidence sequence
 
@@ -44,7 +44,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0172**.
 | ADR-0126 | Build | BT **0/112** |
 | ADR-0127 | CI | CI **0/120** |
 | ADR-0128 | Free↔Pro | FP **0/144** |
-| ADR-0129 | Membership | MBR **0/160** |
+| ADR-0129 | Membership core | MBR **0/160** |
 | ADR-0130 | Backup/Restore | BK **0/180** |
 | ADR-0131 | Query | QRY **0/168** |
 | ADR-0132 | Definition | DEF **0/144** |
@@ -88,6 +88,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0172**.
 | ADR-0170 | OAuth Account-Link refinement | OA **0/176** |
 | ADR-0171 | Remote Service Privacy / Retention refinement | RS **0/176** |
 | ADR-0172 | Email Transport / Provider Certification refinement | ET-F **0/176**; **6 EE3 / 0 ET-certified** |
+| ADR-0173 | Membership Billing Provider Certification refinement | MB-F **0/176**; **4 BE3 / 0 MB-certified** |
 
 ## Critical preserved truth
 
@@ -115,7 +116,11 @@ Accepted evidence decisions/refinements now extend through **ADR-0172**.
 - Email renderer success ≠ Transport Attempt ≠ provider accepted ≠ receiving-server delivered ≠ complaint/suppression ≠ engagement.
 - Provider acceptance does not prove mailbox/inbox delivery; open/click never proves human read/view/intent.
 - Static EE3 provider evidence never becomes ET0 runtime certification.
-- JobService at-least-once execution never becomes an exactly-once email-delivery claim.
+- Billing commercial source fact ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement ≠ WordPress Role.
+- Static BE3 provider evidence never becomes MB0 runtime certification.
+- Provider hooks/webhooks are freshness/source evidence, not direct Membership authority; ambiguous provider state remains unknown until reconciled.
+- Woo HPOS compatibility is evidence-scoped; direct private order-storage assumptions are not the canonical billing-adapter contract.
+- JobService at-least-once execution never becomes exactly-once email, provider or Membership behavior.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
 - cache state ≠ canonical business/Audit/Rate-Limit truth.
@@ -133,10 +138,11 @@ Primary/shared:
 - REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**; PR **0/176**; XR **0/176**; RM **0/176**; ST **0/176**; FD **0/176**.
 - AM **0/176**; DW **0/176**; SM **0/176**; BW **0/176**; WM **0/176**; TU **0/176**; OA **0/176**; RS **0/176**.
 
-Other evidence/provider truth:
+Provider/other evidence truth:
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
-- Membership billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
+- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
+- Membership protected files remain **0 PC1+**.
 - Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
 - Connection adapters **0 I4/I5**.
 - Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
@@ -147,13 +153,13 @@ Other evidence/provider truth:
 - Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after PR body synchronization.
 - direct GitHub branch reads on 2026-08-28 reported `main` and `planning/master-architecture` unprotected.
 - repository-wide rulesets remain **UNKNOWN** because earlier ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP56` — Membership Billing provider certification reassessment — SPECIFICATION**.
+Current work package: **`P0-M00-WP57` — Protected-file provider/delivery certification reassessment — SPECIFICATION**.
 
-Reason: Membership runtime semantics are separately covered by MBR **0/160**, while provider billing remains **4 static BE3 profiles / 0 MB-certified**. WP56 must audit the existing MB0–MB5 provider certification protocol against current Membership, Vault, JobService, Webhooks/Event Inbox, PDL/RS, ERR, VER, RLT, Multisite and lifecycle contracts. Preserve commercial provider facts ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement.
+Reason: Membership billing evidence is now fixed at MB-F **0/176**, while protected files remain **0 PC1+**. WP57 must audit PC0–PC4 and private local/accelerated/object-delivery profiles against current Membership Entitlement/Policy, Vault, Safe HTTP, storage/media boundaries, privacy, ERR, VER, RLT, Multisite, Site Lifecycle, Backup and revoke-safe delivery semantics. Preserve storage possession ≠ authorization and signed URL issuance ≠ durable entitlement.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
