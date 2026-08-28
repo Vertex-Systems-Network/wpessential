@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0170**.
+Accepted evidence decisions/refinements now extend through **ADR-0171**.
 
 ### Fixed evidence sequence
 
@@ -86,6 +86,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0170**.
 | ADR-0168 | Watermarker / Media refinement | WM **0/176** |
 | ADR-0169 | Pro Updater TUF refinement | TU **0/176** |
 | ADR-0170 | OAuth Account-Link refinement | OA **0/176** |
+| ADR-0171 | Remote Service Privacy / Retention refinement | RS **0/176** |
 
 ## Critical preserved truth
 
@@ -107,6 +108,9 @@ Accepted evidence decisions/refinements now extend through **ADR-0170**.
 - Account identity, Product entitlement and TUF update authenticity remain separate trust domains.
 - TUF target execution requires a trusted metadata graph + target hash/length + archive/compatibility gates; Account/API/CDN cannot add Root trust.
 - OAuth Account link never grants WordPress/Membership/Product entitlement authority by itself; PKCE S256/exact redirect/issuer binding remain first-profile requirements.
+- Remote disconnect/local erase/remote deletion/provider deletion/backup expiry remain distinct privacy and retention truths.
+- Free local-only activation/use does not contact WPE-controlled remote services solely because WPE is installed/active.
+- Diagnostics upload remains separately previewed/approved and cannot be implied by Account connection.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
 - cache state ≠ canonical business/Audit/Rate-Limit truth.
@@ -122,28 +126,28 @@ Primary/shared:
 - MSI **0/160**; LC **0/96**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
 - VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
 - REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**; PR **0/176**; XR **0/176**; RM **0/176**; ST **0/176**; FD **0/176**.
-- AM **0/176**; DW **0/176**; SM **0/176**; BW **0/176**; WM **0/176**; TU **0/176**; OA **0/176**.
+- AM **0/176**; DW **0/176**; SM **0/176**; BW **0/176**; WM **0/176**; TU **0/176**; OA **0/176**; RS **0/176**.
 
 Other evidence/provider truth:
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Membership billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Email transport/provider **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
 - Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
-- Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**; Remote privacy RS **0/30**.
+- Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
 
 ## Current VCS / verification truth
 
 - planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; mergeability must be re-verified after this synchronization pass.
+- Draft PR #1 remains the planning PR; latest checked state before this sync was open + draft + mergeable=true; re-verify after PR body synchronization.
 - direct GitHub reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected.
 - repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth runtime or benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service runtime or benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP54` — Remote Service Privacy / Retention canonical evidence reassessment — SPECIFICATION**.
+Current work package: **`P0-M00-WP55` — Email Transport / Provider Certification evidence reassessment — SPECIFICATION**.
 
-Reason: remote-service privacy remains at **RS 0/30** while local PDL, Platform surfaces, OAuth, Product License, Support/Docs and provider-facing contracts have since become much more exhaustive. WP54 should reassess the existing remote privacy protocol in place, without conflating disconnect, local erase, remote account deletion, provider deletion or Backup retention.
+Reason: Email rendering/composition is separately covered by EBR **0/176**, but delivery truth remains **6 static EE3 provider profiles / 0 ET-certified**. WP55 must inspect the existing Email Transport certification protocol and preserve the truth boundary between renderer output, handoff/submission, receiving-server delivery, bounce/complaint/suppression and engagement while deciding whether the provider evidence matrix needs in-place refinement.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
