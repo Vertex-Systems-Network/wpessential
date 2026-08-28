@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0170**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
+This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0172**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -59,7 +59,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-046 | ADR-0152 | Dynamic Value resolver source/typing/escaping/Policy/cache/consumer parity — DVR-01…DVR-176 |
 | D-047 | ADR-0045/0153 | Shared Rate Limit identity/atomicity/window/bypass/failure/Multisite/scale — RLT-01…RLT-176 |
 | D-048 | ADR-0154 | Shared Cache key/auth/generation/TTL/stampede/backend/privacy/Multisite — CAC-01…CAC-176 |
-| D-049 | ADR-0060 + remote-service privacy protocol | Remote service purpose/minimization/retention/clone/disconnect/deletion/backup/Multisite — RS-01…RS-30; WP54 reassessment current |
+| D-049 | ADR-0060/0171 | Remote service purpose/minimization/retention/clone/disconnect/deletion/backup/Multisite — RS-01…RS-176 |
+| D-050 | ADR-0058/0063/0067/0172 | Email Transport exact-profile submission/delivery/feedback/reconciliation/lifecycle certification — ET-F001…ET-F176 + ET0–ET5; 6 EE3 / 0 ET-certified |
 
 ## B. Additional canonical refinements now fixed but unexecuted
 
@@ -75,6 +76,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - ADR-0168 — Watermarker/Media **WM 0/176**.
 - ADR-0169 — Pro Updater TUF **TU 0/176**.
 - ADR-0170 — OAuth Account-Link **OA 0/176**.
+- ADR-0171 — Remote Service Privacy / Retention **RS 0/176**.
+- ADR-0172 — Email Transport / Provider Certification **ET-F 0/176; 6 EE3 / 0 ET-certified**.
 
 ## C. Accepted paper/runtime-baseline summary
 
@@ -92,32 +95,26 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - menu/widget/route/control visibility never becomes authorization.
 - module disable/expiry/uninstall/cleanup/privacy erase remain distinct lifecycle operations.
 - current-blog context never becomes durable ownership/authorization.
+- email renderer success ≠ transport attempt ≠ provider acceptance ≠ receiving-server delivery ≠ complaint/suppression ≠ engagement; open/click ≠ human read.
 
 ## D. Fixed evidence execution truth
 
 - CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC/DL/CPTX/EBR/PLT/AUD/KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA are all **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - MSI **0/160; 0 MS1+**; LC **0/96; 0 SL runtime certs**.
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; RS **0/30**.
-- Email transport **6 EE3 / 0 ET-certified**.
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 runtime certifications **0 each**.
 - Membership billing/protected files **4 BE3 / 0 MB-certified; 0 PC1+**.
 - Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
 - Connection adapters **0 I4/I5**.
 
 ## E. Current highest-priority planning blocker
 
-`P0-M00-WP54` — **Remote Service Privacy / Retention canonical evidence reassessment**.
+`P0-M00-WP56` — **Membership Billing provider certification reassessment**.
 
-The existing RS-01…RS-30 evidence predates the current Local PDL, Platform, OAuth, Product License, Support, provider, lifecycle and Multisite contracts. Refine in place only if the gap survives. Preserve:
-- purpose-scoped/minimized remote transmission;
-- Free activation sends nothing merely by activation;
-- Account link is not telemetry consent;
-- disconnect/local secret deletion ≠ remote account/service deletion;
-- local privacy erase ≠ remote deletion ≠ provider deletion ≠ backup expiry;
-- clone/staging/environment and Multisite identities remain explicit;
-- legal/security retention exceptions remain truthful and bounded.
+Reason: Membership runtime semantics are already covered by MBR **0/160**, but billing-provider evidence remains **4 BE3 static profiles / 0 MB-certified**. Reassess the existing MB0–MB5 provider certification protocol against current Membership, Vault, JobService, Webhooks/Event Inbox, privacy, ERR, VER, RLT, Multisite and lifecycle contracts. Preserve commercial provider facts ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement.
 
 ## F. Decision-processing rule
 
