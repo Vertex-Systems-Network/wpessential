@@ -1,375 +1,471 @@
-# WPEssential — P-003 JobService / Action Scheduler Evidence Protocol
+# WPEssential — P-003 JobService / Cron / Action Scheduler Executable Evidence Protocol
 
-Status: **Phase 0 protocol only / DO NOT EXECUTE without explicit owner consent**  
-Governs: ADR-0006 + ADR-0059.
+Status: **Phase 0 consent-gated protocol / 0 fixtures executed**  
+Date: 2026-08-28  
+Work package: `P0-M00-WP03`  
+Project state: `PLANNED_EXISTING_PROJECT`  
+Execution mode: `PLANNER_ONLY`  
+Governs: ADR-0006, ADR-0059, ADR-0068, ADR-0083, JobService contracts, Cron Job Builder specification, Action Scheduler packaging/coexistence profile, Multisite/Site Lifecycle, ADR-0014.
 
-## Objective
+## 1. Purpose
 
-Determine whether Action Scheduler can serve as WPEssential's initial `JobService` backend without weakening the accepted Job Type/Schedule/Job/Attempt/Runner/Execution Policy semantics.
+Define bounded executable evidence required before WPEssential can claim a production-ready JobService backend, Cron/schedule runtime, runner, claim/lease model, fairness/backpressure policy or Action Scheduler adapter.
 
-This protocol authorizes no package install, DB migration, scheduled action, runner, WP-CLI command, benchmark or provider call.
+This refines the existing P-003 protocol; it does **not** create a second Job execution authority.
 
----
+## 2. Canonical invariants
 
-# 1. Environment matrix
+A future certified implementation must preserve:
 
-Future evidence pins:
-- WordPress minimum/current matrix accepted by P-001;
-- PHP minimum/current matrix;
-- MySQL/MariaDB matrix;
-- single site;
-- multisite subdirectory/subdomain where supported;
-- WP-Cron normal;
-- `DISABLE_WP_CRON` + real system cron/WP-CLI;
-- loopback restricted/degraded host;
-- persistent object cache on/off where relevant;
-- representative shared/managed/high-resource hosting constraints.
+1. **WPE JobService owns stable Job Type / Schedule / Job / Attempt / Runner / Execution Policy semantics.**
+2. **Action Scheduler or another backend is an adapter/execution opportunity, never WPE business-domain truth.**
+3. **Execution is at-least-once; exactly-once execution is never claimed.**
+4. **Idempotency/reconciliation belongs to WPE/domain semantics, not to optimistic assumptions about queue delivery.**
+5. **A stale/expired claim is not proof that a side effect did not occur.**
+6. **Cron calendar recurrence is a product calendar/timezone contract, not whatever recurrence behavior a backend happens to provide.**
+7. **Resource/concurrency keys, fairness and backpressure are WPE policies even when the backend lacks native equivalents.**
+8. **Jobs revalidate current security/business preconditions when delayed execution can outlive the original request.**
+9. **Backend/action rows and logs do not replace WPE durable Job/Attempt truth.**
+10. **Site scope is explicit; same IDs/group names across sites must not collide.**
 
-No P-003 runtime testing begins until P-001 establishes the compatible test floor.
+## 3. Future runtime profile
 
----
+Every evidence run pins:
+- WordPress/PHP/database versions accepted by P-001;
+- single-site/Multisite topology;
+- JobService schema/profile version;
+- candidate backend and exact version;
+- Action Scheduler bundled/standalone/third-party coexistence state where applicable;
+- WP-Cron mode;
+- `DISABLE_WP_CRON` + real cron/WP-CLI runner mode where applicable;
+- loopback/network restrictions;
+- persistent object cache profile;
+- J1/J2/J3 physical profile under test;
+- server/site/network timezone configuration;
+- worker/batch/concurrency/resource limits;
+- retention configuration;
+- representative hosting resource constraints.
 
-# 2. Dependency / load-order / coexistence
+No runtime execution occurs until explicit owner consent and prerequisite environment floors exist.
 
-Fixtures:
-- WPE bundles candidate Action Scheduler version alone;
-- WooCommerce/another plugin loads older compatible version;
-- another plugin loads newer compatible version;
-- plugin/theme load-order variants;
-- Action Scheduler already active as standalone plugin;
-- unsupported/too-old feature set;
-- schema migration in progress/interrupted;
-- deactivate/reactivate WPE while third-party actions exist.
+# 4. Dependency, packaging and coexistence fixtures
 
-Verify:
-- latest-version loader behavior is understood;
-- WPE API calls occur only after initialized state;
-- no third-party action/group mutation;
-- WPE feature-detects required capabilities where supported;
-- incompatible environment degrades visibly rather than fatal/partial-corrupt scheduling;
-- uninstall cleanup owns only WPE data.
+### JS-01 — WPE-only candidate backend load
+WPE-owned adapter/backend initializes once in the supported load order with required API surface available.
 
----
+### JS-02 — Older compatible third-party Action Scheduler
+Coexistence with an older compatible copy preserves WPE behavior and does not mutate third-party actions/groups.
 
-# 3. Logical mapping
+### JS-03 — Newer compatible third-party Action Scheduler
+Coexistence with a newer compatible copy uses verified loader/version semantics rather than assuming the bundled copy wins.
 
-Prove mapping for:
-- WPE Job Type → backend hook;
-- payload/reference → validated args;
-- WPE Job/Attempt ID → backend action/claim/log references;
-- workload/resource family → backend group(s);
-- WPE urgency → backend scheduling hints;
-- due-at/schedule semantics;
-- cancellation/unscheduling;
-- recurring schedule recreation/ensure behavior;
-- progress/checkpoint projection.
+### JS-04 — Standalone Action Scheduler plugin
+Standalone plugin presence does not cause duplicate bootstrap/schema/runner registration or WPE ownership of unrelated actions.
 
-Acceptance requires backend details not leak into stable module/public APIs.
+### JS-05 — Initialization ordering
+WPE calls backend APIs only after the backend is actually initialized in each certified load-order profile.
 
----
+### JS-06 — Unsupported/incompatible backend profile
+Missing/too-old/unsupported features enter explicit degraded state; site/admin does not fatal or partially schedule corrupted work.
 
-# 4. Persistence / ambiguity
+### JS-07 — Third-party ownership isolation
+WPE pause/cancel/cleanup/uninstall never touches actions, logs or groups it does not own.
 
-Crash points:
-- after WPE Job persisted but before backend action persisted;
-- backend action persisted but WPE backend reference not committed;
-- claim acquired before Attempt record update;
-- handler side effect completed before success commit;
-- success committed in one store but not another;
-- retry scheduled but original failure state update lost.
+### JS-08 — Backend schema migration interruption
+Interrupted/in-progress backend migration is detected and surfaced; WPE does not report healthy scheduling until required compatibility exists.
 
-Verify reconciliation detects and repairs or surfaces each ambiguity without duplicate uncontrolled effects.
+# 5. Logical mapping and abstraction fixtures
 
-Exact canonical physical ownership of Job/Attempt vs backend projection is decided from evidence, not assumed by this protocol.
+### JS-09 — Job Type mapping
+Stable WPE Job Type maps deterministically to backend hook/handler without exposing arbitrary callback execution from user data.
 
----
+### JS-10 — Typed payload/reference mapping
+Payload is schema/version validated before enqueue and execution; oversized/malformed payload cannot become arbitrary serialized backend data.
 
-# 5. At-least-once / idempotency
+### JS-11 — WPE Job/Attempt identity
+WPE stable Job/Attempt IDs correlate with backend action/claim/log references without making backend IDs canonical public API.
 
-Representative job classes:
-- pure idempotent cache rebuild;
-- DB state transition with version/CAS;
-- provider API with idempotency key;
-- provider API with unknown outcome/no idempotency;
-- chunked import;
-- notification/email send;
-- backup remote part upload;
-- destructive reset/restore checkpoint.
+### JS-12 — Backend abstraction isolation
+Switching/test-doubling backend does not change module-facing stable JobService contracts.
 
-Crash/retry each immediately before/after domain side effect.
+### JS-13 — Cancellation/unscheduling mapping
+Backend cancellation is projected into WPE requested/effective state without falsely claiming an already-running side effect was undone.
 
-Pass criteria:
-- no claim of exactly-once execution;
-- duplicated worker opportunity does not duplicate protected side effect when certified idempotency strategy exists;
-- unknown-outcome job transitions to reconciliation/manual policy instead of blind infinite retry.
+### JS-14 — Progress/checkpoint projection
+Long-running/chunked jobs expose bounded durable progress/checkpoints independently from ephemeral backend logs.
 
----
+# 6. Cron and recurrence fixtures
 
-# 6. Claims / stale claims / runner crash
+### JS-15 — One-time schedule
+One-time future job becomes eligible at/after its intended instant and does not recreate itself after success unless explicitly rescheduled.
 
-Test:
-- worker killed after claim;
-- worker killed mid-handler;
-- PHP fatal;
-- max execution timeout;
-- memory termination;
-- loopback request failure;
-- stale claim cleanup/reclaim;
-- concurrent runners claim same due population;
-- handler completes after backend considers claim/action timed out.
+### JS-16 — Fixed interval recurrence
+Interval recurrence is based on the accepted elapsed-time semantics and does not silently become wall-clock recurrence.
 
-Record actual Action Scheduler behavior/version.
+### JS-17 — Calendar recurrence in site timezone
+Calendar expression resolves the intended local wall-clock occurrence while durable due instants are represented unambiguously.
 
-WPE must not treat stale claim as proof of no side effect.
+### JS-18 — Site timezone changed after schedule publish
+Defined policy determines whether future occurrences follow the new site timezone or remain pinned; behavior is deterministic and visible.
 
----
+### JS-19 — DST spring-forward gap
+A nonexistent local wall-clock time follows the documented skip/advance policy exactly once; no duplicate or infinite recalculation occurs.
 
-# 7. Urgency / fairness / starvation
+### JS-20 — DST fall-back fold
+An ambiguous repeated local wall-clock time follows the documented once/both occurrence policy without accidental duplicate execution.
 
-Generate sustained mixed workload:
-- security_transactional;
-- interactive;
-- normal;
-- bulk;
-- maintenance.
+### JS-21 — UTC/non-DST timezone baseline
+Equivalent schedule in UTC/non-DST zone remains stable and provides control evidence for timezone logic.
 
-Scenarios:
-- constant high-priority arrivals;
-- huge bulk backlog then interactive request;
-- provider-rate-limited email backlog plus membership reconciliation;
-- maintenance backlog with regular normal jobs;
-- recovery/control work during bulk pressure.
+### JS-22 — Several missed occurrences
+Runner outage followed by recovery applies explicit `skip`, `run_latest`, `catch_up_bounded` or equivalent accepted missed-run policy; backend defaults do not choose product behavior implicitly.
 
-Measure:
-- queue wait/oldest age per class;
-- throughput per class;
+### JS-23 — Long occurrence overlaps next due time
+Accepted overlap policy (`skip_if_running`, `queue_one`, `allow_overlap`, `coalesce`, or future accepted names) is enforced by WPE resource/precondition semantics.
+
+### JS-24 — Next-run calculation truth
+Admin/diagnostic next-run time matches the same calendar engine used for actual eligibility and displays timezone/source clearly.
+
+### JS-25 — Recurrence definition edited
+Published schedule revision/change uses explicit follow-new/pinned semantics; already-created Jobs are not silently reinterpreted.
+
+### JS-26 — Disabled/paused schedule
+No new occurrences are admitted while paused/disabled; existing running Job behavior follows separate cancellation policy.
+
+# 7. Persistence and ambiguity fixtures
+
+### JS-27 — WPE Job committed before backend action
+Crash in this window leaves a discoverable enqueue-pending/reconciliation state, not a lost Job.
+
+### JS-28 — Backend action committed before WPE backend reference
+Reconciliation finds/adopts or safely recreates without uncontrolled duplicate work.
+
+### JS-29 — Claim acquired before Attempt update
+Crash does not make a claimed backend action invisible to WPE reconciliation.
+
+### JS-30 — Handler side effect completes before success commit
+Retry does not blindly repeat a protected side effect; idempotency/reconciliation determines outcome.
+
+### JS-31 — WPE success committed before backend success projection
+Stores reconcile to one truthful logical outcome without reopening completed work.
+
+### JS-32 — Retry scheduled but failure-state update lost
+Recovery reconstructs valid retry/failure state and prevents duplicate unbounded retries.
+
+### JS-33 — Enqueue backend unavailable
+WPE Job remains durable and visibly pending/degraded according to policy; accepted producer request is not falsely reported fully dispatched.
+
+### JS-34 — Restore copied queued/running Job state
+Restored queue/backend rows cannot auto-resume blindly; WPE revalidates environment, Job state and domain preconditions.
+
+# 8. Claims, leases and worker-crash fixtures
+
+### JS-35 — Concurrent runners claim due population
+A due Job receives only the allowed active claim/attempt semantics while unrelated Jobs can progress.
+
+### JS-36 — Worker killed immediately after claim
+Claim eventually becomes recoverable without assuming no side effect occurred.
+
+### JS-37 — Worker killed mid-handler
+Retry/reconciliation follows Job Type idempotency/unknown-outcome policy.
+
+### JS-38 — Lease expires while old worker still runs
+New worker cannot safely assume exclusive ownership merely because lease expired; resource/attempt fencing or equivalent preconditions prevent two protected commits.
+
+### JS-39 — Heartbeat/lease renewal
+Healthy long-running job can maintain ownership within configured bounds without permanent orphan claims.
+
+### JS-40 — Stale-claim cleanup
+Cleanup only releases eligible stale claims and preserves audit/attempt evidence.
+
+### JS-41 — PHP fatal
+Fatal produces recoverable failed/ambiguous Attempt state and does not leave WPE Job permanently invisible.
+
+### JS-42 — Max execution timeout
+Timeout follows same unknown-outcome/idempotency rules rather than automatic blind retry.
+
+### JS-43 — Memory termination
+OOM-style worker loss can be diagnosed/recovered from durable Job state and bounded payload/checkpoints.
+
+### JS-44 — Loopback spawn failure
+Request-driven runner failure is visible in health state and does not imply Job failure when execution never began.
+
+# 9. At-least-once and idempotency fixtures
+
+### JS-45 — Idempotent cache rebuild
+Duplicate opportunity converges on equivalent final state without harmful repeated effect.
+
+### JS-46 — Versioned DB state transition
+CAS/version/precondition prevents duplicate/stale transition commit.
+
+### JS-47 — Provider with idempotency key
+Stable provider idempotency identity is reused across retries and provider outcome is reconciled.
+
+### JS-48 — Provider unknown outcome/no idempotency support
+Timeout after request enters outcome-unknown/manual/reconciliation policy; no blind infinite resend.
+
+### JS-49 — Chunked import
+Duplicate chunk Job does not duplicate owned target mutations due to import identity/checkpoint semantics.
+
+### JS-50 — Notification/email send
+Retry policy acknowledges external duplicate-delivery limits; evidence/attempt truth is not converted into an exactly-once claim.
+
+### JS-51 — Backup remote part upload
+Part identity/checksum/provider semantics prevent incorrect duplicate logical Part commitment.
+
+### JS-52 — Destructive reset/restore checkpoint
+Duplicate Job cannot re-enter an already-completed destructive stage without stage/precondition/recovery checks.
+
+# 10. Urgency, fairness and starvation fixtures
+
+### JS-53 — Mixed urgency steady state
+Security/transactional, interactive, normal, bulk and maintenance classes receive service according to accepted policy.
+
+### JS-54 — Constant high-priority arrivals
+Lower allowed classes do not starve indefinitely under documented healthy capacity/fairness constraints.
+
+### JS-55 — Huge bulk backlog then interactive work
+Interactive work remains within accepted latency budget without violating explicit dependencies.
+
+### JS-56 — Provider-limited backlog plus unrelated critical work
+Email/provider backlog cannot monopolize all workers/connections and block membership/recovery work indefinitely.
+
+### JS-57 — Two hot Multisite sites
+One site cannot consume all fair-share capacity while another eligible site starves indefinitely.
+
+### JS-58 — Fairness with explicit dependency
+Scheduler fairness never executes a dependent Job before its durable predecessor/precondition is satisfied.
+
+# 11. Resource/concurrency key fixtures
+
+### JS-59 — Site-wide backup exclusive key
+Two incompatible backup captures for same protected resource cannot run concurrently.
+
+### JS-60 — Restore/reset destructive-exclusive key
+Mutually destructive operations serialize and stale lease does not silently permit overlap.
+
+### JS-61 — Same import Run key
+Chunks respect declared per-Run concurrency rather than global over-serialization or unsafe overlap.
+
+### JS-62 — Same provider connection key
+Provider concurrency/rate resource cap is enforced independently of unrelated providers.
+
+### JS-63 — Independent keys make progress
+Safe independent resources/sites can run concurrently; exclusive policy is not unnecessarily global.
+
+### JS-64 — Multisite key isolation
+Same local resource identifiers on different sites do not collide accidentally unless a deliberate network-global key is used.
+
+# 12. Backpressure and admission fixtures
+
+### JS-65 — Large import producer
+Producer creates bounded chunks/work windows instead of hundreds of thousands of synchronous backend actions.
+
+### JS-66 — Large notification fan-out
+Recipient expansion is bounded and backpressured; queue DB growth and memory stay within accepted budgets.
+
+### JS-67 — Watermark/backup producer pressure
+Low-urgency producer slows/pauses above high-water policy while critical/recovery work remains admissible.
+
+### JS-68 — Consumer recovers after backlog drain
+Backpressure state clears/reconciles and producers resume without double-generating logical work.
+
+### JS-69 — Persistent overload diagnostics
+Admin/health surfaces show oldest age/backlog/paused producer state instead of silently accepting unbounded work.
+
+# 13. Runner-mode fixtures
+
+### JS-70 — Request-driven low-traffic site
+Due work can be late; UI/docs report best-effort/request-driven semantics truthfully rather than exact timing guarantees.
+
+### JS-71 — No traffic after due time
+No execution until a runner opportunity occurs; Job stays due/past-due, not falsely failed.
+
+### JS-72 — Blocked loopback
+Health detects degraded spawn/runner state and gives safe real-cron/CLI guidance.
+
+### JS-73 — Real system cron/WP-CLI due runner
+Only eligible due work executes under defined scope; recurrence/calendar semantics stay WPE-owned.
+
+### JS-74 — Overlapping system cron invocations
+Concurrent runners preserve claim/resource semantics and do not duplicate protected execution.
+
+### JS-75 — Killed CLI runner
+Claims/Attempts reconcile using same durable rules as web runner loss.
+
+### JS-76 — Focused group runner
+Focused group execution cannot bypass cross-group Workflow/domain dependency/precondition checks.
+
+# 14. Cancellation, pause and manual-control fixtures
+
+### JS-77 — Pending cancel
+Pending Job stops becoming eligible and records requested/effective cancellation truthfully.
+
+### JS-78 — Claimed-before-start cancel race
+Outcome distinguishes cancelled-before-handler from handler-already-started ambiguity.
+
+### JS-79 — Running chunked cooperative cancel
+Handler observes cancellation at safe checkpoints; partial committed work remains truthfully recorded.
+
+### JS-80 — Non-interruptible critical section
+Cancellation stays requested/pending until critical section safely completes; UI does not claim immediate abort.
+
+### JS-81 — Pause/resume parent workload
+No new eligible children execute while paused except explicit recovery/control exceptions; resume does not duplicate prior completed work.
+
+### JS-82 — Manual run/retry
+Operator action reauthorizes current Job/domain preconditions and creates auditable Attempt semantics rather than mutating backend row directly.
+
+# 15. Payload, security and secret fixtures
+
+### JS-83 — Invalid payload at enqueue
+Schema-invalid payload is rejected before durable executable Job is admitted.
+
+### JS-84 — Old payload schema at execution
+Supported migration/compatibility path is explicit; unknown incompatible payload fails safely.
+
+### JS-85 — Secret reference rotated/deleted
+Job resolves current permitted secret reference at execution or enters explicit blocked/degraded state; raw secret is not copied into backend args/logs.
+
+### JS-86 — Capability/entitlement revoked before execution
+Delayed privileged Job revalidates current authority/business policy where action semantics require it.
+
+### JS-87 — Resource deleted/revoked
+Job becomes no-op/cancelled/failed according to explicit domain policy; it does not recreate or act on stale resource blindly.
+
+### JS-88 — Malicious/oversized payload
+Bounded parser/schema rejects payload that could exhaust resources or select arbitrary callbacks/classes/functions.
+
+# 16. Retention, cleanup and observability fixtures
+
+### JS-89 — Completed/cancelled retention
+WPE Job/Attempt retention follows declared policy independently from backend action cleanup.
+
+### JS-90 — Failed-job evidence retention
+Required failure/attempt evidence remains long enough for support/audit while respecting privacy policy.
+
+### JS-91 — Backend log cleanup
+Backend log pruning cannot make WPE UI falsely promise unavailable detailed evidence.
+
+### JS-92 — Parent-domain retained after Job cleanup
+Workflow/import/backup domain truth remains understandable after backend/WPE Job operational records are legitimately pruned.
+
+### JS-93 — Health metrics
+Expose bounded metrics for heartbeat, due/past-due, oldest age, running/claimed, retries/failures, stale claims, throughput and backpressure.
+
+### JS-94 — Alert deduplication
+Runner/backlog alerts do not recursively produce runaway notification/jobs and are rate/dedupe controlled.
+
+### JS-95 — Log redaction
+Backend/WPE logs exclude secrets and unnecessary sensitive payload data.
+
+# 17. Multisite and Site Lifecycle fixtures
+
+### JS-96 — Per-site queue isolation
+Every site-scoped Job resolves only its authoritative site context/resources.
+
+### JS-97 — Site deleted with pending work
+Lifecycle drain blocks/reconciles pending/running site jobs before destructive cleanup; copied Jobs cannot mutate removed site later.
+
+### JS-98 — Network-owned Job
+Explicit network scope requires network authority/storage semantics and cannot be simulated by arbitrary site switching.
+
+### JS-99 — Network activation/deactivation
+Module/adapter lifecycle does not duplicate runners/schedules across sites or delete unrelated data.
+
+### JS-100 — Site clone/restore
+Cloned/restored Jobs/schedules undergo identity/environment revalidation before any automatic execution.
+
+# 18. Physical mapping and scale fixtures
+
+### JS-101 — J1/PT-D Jobs + Attempts baseline
+Measure scoped shared-table writes/claims/history/indexes and validate wrong-site predicates under representative workload.
+
+### JS-102 — J2 PT-C current + PT-D history
+Compare current-state lookup/claim cost vs history-write/retention behavior and migration/reconciliation complexity.
+
+### JS-103 — J3 PT-C low-volume control
+Establish control evidence for low-volume platform jobs; reject J3 for workloads where contention/growth violates budgets.
+
+### JS-104 — 100k/1M Job mixed workload
+Measure admission, claim, retry, cleanup, fairness, oldest-age, DB/CPU/memory and frontend/admin impact.
+
+### JS-105 — 100/1k/10k-site workload
+Measure scope predicates, fairness, lifecycle, diagnostics and migration cost across large networks.
+
+### JS-106 — Backend concurrency/batch tuning
+Benchmark bounded batch/concurrent-runner candidates; no universal high-concurrency default is accepted without resource evidence.
+
+# 19. MUST NOT / stop-the-line gates
+
+P-003 certification fails if any fixture demonstrates:
+- exactly-once execution being claimed without domain evidence;
+- duplicate worker opportunity causing repeated protected side effect contrary to certified idempotency semantics;
+- expired/stale claim treated as proof that prior worker made no side effect;
+- backend row/log used as authoritative Workflow/import/backup/business truth;
+- calendar/DST behavior silently chosen by backend defaults rather than WPE policy;
+- unfair scheduling allowing an eligible lower class/site to starve indefinitely under documented healthy capacity;
+- concurrency/resource key collision across sites;
+- delayed privileged Job executing after required authority/resource revoke without revalidation;
+- raw secret in backend args/searchable logs;
+- WPE cleanup/uninstall deleting third-party actions/groups;
+- restore/clone automatically replaying copied active jobs without revalidation;
+- site lifecycle allowing pending Job to mutate deleted/wrong site.
+
+These are stop-the-line defects for the affected certification scope.
+
+# 20. Performance evidence
+
+Capture at minimum:
+- enqueue/admission latency;
+- due-to-start latency p50/p95/p99 by urgency/site;
+- claim throughput/contention;
+- actions/jobs per second;
+- Attempt write rate;
+- oldest eligible age;
 - starvation duration;
-- DB/CPU/memory pressure;
-- impact of backend priority/group mapping.
+- DB query/lock load;
+- PHP worker/memory/CPU usage;
+- loopback/CLI runner behavior;
+- retry/backoff amplification;
+- queue/table/log growth;
+- cleanup throughput;
+- J1/J2/J3 comparison;
+- 100/1k/10k-site noisy-neighbor/fairness results.
 
-Pass criteria:
-- no lower allowed class can starve indefinitely under configured healthy capacity;
-- interactive/security latency remains bounded by documented policy;
-- fairness mechanism does not violate explicit dependencies.
+Performance optimization must not weaken idempotency, resource exclusion, fairness, security revalidation or site isolation.
 
-If default Action Scheduler runner cannot enforce accepted fairness, evaluate WPE dispatcher/group-runner strategy while preserving adapter boundary.
+# 21. Required future P-003 report
 
----
-
-# 8. Resource / concurrency keys
-
-Test caps for:
-- site-wide backup capture;
-- restore/reset destructive-exclusive;
-- same import run;
-- same provider connection;
-- CPU-heavy watermarks;
-- DB-write-heavy membership/import work.
-
-Verify:
-- no two jobs violating same exclusive key execute concurrently;
-- different safe keys can make progress;
-- stale lock/claim can recover;
-- lock loss does not erase external-side-effect ambiguity;
-- multisite keys cannot collide cross-site accidentally.
-
----
-
-# 9. Backpressure / admission
-
-Producer fixtures:
-- 500k-row logical import;
-- 100k notification recipients;
-- 100k watermark candidates;
-- several large backup destinations;
-- recurring job producing faster than consumer throughput.
-
-Verify:
-- bounded chunk producer rather than unbounded synchronous action creation;
-- low-urgency producer slows/pauses above high-water threshold;
-- required transactional work remains accepted;
-- admin sees backpressure state;
-- queue DB growth remains within evidence budget;
-- recovery after backlog drains.
-
-Exact thresholds require benchmark evidence.
-
----
-
-# 10. Batch / concurrency tuning
-
-Test default then bounded candidates for:
-- Action Scheduler batch size;
-- concurrent batches;
-- web loopback runner;
-- WP-CLI runner;
-- focused groups/hooks runners.
-
-Measure:
-- actions/sec;
-- DB connection/load;
-- lock contention;
-- memory;
-- PHP workers;
-- page/front-end impact;
-- error/retry rate.
-
-Official Action Scheduler warnings about concurrency/site load are treated as a reason to benchmark conservatively, not to expose a universal high-concurrency toggle.
-
----
-
-# 11. Runner modes
-
-## Request-driven/default
-- low traffic;
-- no traffic after due time;
-- blocked loopback;
-- WP-Cron spawn failure;
-- recovery after traffic resumes.
-
-## System cron/WP-CLI
-- due-only recurring execution;
-- focused group runner;
-- catch-all runner;
-- overlapping cron invocations;
-- killed CLI process;
-- cron stops/resumes.
-
-Verify UI truthfully reports runner mode/health and does not promise exact schedule execution in request-driven mode.
-
----
-
-# 12. Group-specific runner ordering
-
-Construct explicit and implicit dependency scenarios across groups.
-
-Verify:
-- WPE never relies on equal timestamps or group speed for required ordering;
-- explicit domain dependency blocks B until A durable state exists;
-- focused group runners cannot bypass precondition;
-- fairness improvements do not corrupt Workflow/import/billing order.
-
----
-
-# 13. Cancellation / pause
-
-Test:
-- pending cancel;
-- claimed-before-start cancel;
-- running chunked job cancel request;
-- non-interruptible critical section;
-- provider upload abort;
-- pause parent Run;
-- resume;
-- emergency service pause with recovery/control exception.
-
-UI/log state must reflect requested vs effective cancellation separately.
-
----
-
-# 14. Recurrence / overlap / missed runs
-
-Profiles:
-- fixed interval;
-- cron-like wall-clock schedule;
-- long-running occurrence overlaps next due time;
-- several missed occurrences during runner outage;
-- DST/timezone edge from Cron Builder policy.
-
-Verify explicit `skip_if_running|queue_one|allow_overlap|coalesce` and missed-run policy.
-
-Backend's automatic recurring behavior cannot silently choose product semantics.
-
----
-
-# 15. Payload / secrecy / authorization
-
-Fixtures:
-- payload schema invalid at enqueue;
-- schema version old at execution;
-- secret reference rotated/deleted;
-- user loses capability before delayed job runs;
-- resource is deleted/revoked;
-- provider credential revoked;
-- malicious oversized/string payload.
-
-Verify:
-- secrets absent from searchable backend args/logs where avoidable;
-- delayed jobs reauthorize relevant security/business preconditions;
-- invalid payload fails safely without executing arbitrary callback;
-- logs redact protected data.
-
----
-
-# 16. Retention / cleanup
-
-Compare WPE policy to actual current backend behavior for:
-- completed/cancelled actions;
-- failed actions;
-- Action Scheduler logs;
-- WPE Job/Attempt projection;
-- parent domain Run/audit references.
-
-Test cleanup while:
-- no active work;
-- related parent Run retained;
-- plugin deactivated/reactivated;
-- AS version changes;
-- WPE uninstall with keep-data vs delete-data policy.
-
-Backend cleanup must not make WPE falsely promise detail it no longer has.
-
----
-
-# 17. Multisite
-
-Future fixtures:
-- per-site queue isolation;
-- switching site context;
-- site deleted while work pending;
-- network-owned job;
-- two high-volume sites competing;
-- per-site fairness;
-- credentials/definitions cannot resolve cross-site;
-- network activation/deactivation.
-
-Since Action Scheduler currently documents no special network-wide multisite handling, a WPE multisite strategy must be proven explicitly.
-
----
-
-# 18. Observability / health
-
-Verify metrics for:
-- last runner heartbeat;
-- due/past-due;
-- oldest eligible age per urgency;
-- claimed/running;
-- retry-wait/final failure;
-- throughput;
-- stale claims;
-- paused/backpressured workloads;
-- runner disabled/degraded.
-
-Health alerts are deduplicated and do not themselves create runaway jobs.
-
----
-
-# 19. Pass/fail artifact
-
-P-003 report must contain:
+Include:
 - environment/version matrix;
-- adapter dependency strategy;
-- logical/physical mapping;
-- fixture IDs/results;
-- measured load/fairness/backlog values;
-- failure/ambiguity observations;
-- unsupported features;
-- multisite result;
-- retention behavior;
-- security/privacy findings;
+- exact backend/Action Scheduler dependency/coexistence strategy;
+- JS-01…JS-106 pass/fail/NA with rationale;
+- Cron timezone/DST/missed/overlap evidence;
+- claim/lease/crash-window evidence;
+- idempotency/unknown-outcome evidence;
+- fairness/backpressure/resource-key evidence;
+- runner-mode health evidence;
+- security/secret/retention findings;
+- Multisite/Site Lifecycle evidence;
+- J1/J2/J3 physical measurements;
 - accepted defaults/limits proposed from evidence;
-- decision whether ADR-0006 can become Accepted for Action Scheduler or requires a different adapter.
+- unsupported/degraded profiles;
+- final backend-adapter recommendation.
 
-## Gate
+## 22. Current state
 
-Do not execute any part of P-003 until explicit owner development/executable-spike consent is granted under ADR-0014 and prerequisite P-001 environment floor is available.
+**JS fixtures documented: 106.**  
+**JS fixtures executed: 0/106.**  
+**JobService backend certified: none.**  
+**Cron/DST runtime certified: none.**
+
+Action Scheduler remains a preferred candidate adapter, not a runtime-certified backend.
+
+No package install, backend schema creation, scheduled action, runner, WP-CLI command, benchmark, cron trigger, Job/Attempt row, queue mutation or provider call has been executed.
+
+## 23. Development gate
+
+Execution requires explicit scoped owner consent under ADR-0014 / `DEVELOPMENT-CONSENT.md` / `docs/APPROVAL-LEDGER.md` and prerequisite P-001 environment floor.
+
+Until then this protocol remains planning evidence only: `NOT EXECUTED`.
