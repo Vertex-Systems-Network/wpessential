@@ -2,7 +2,7 @@
 
 Status: **Phase 0 planning source of truth / no development authorized**  
 Date: 2026-08-29  
-Current scope accepted through: **ADR-0197**. Current closure/readiness audit: **ADR-0207**.
+Current scope accepted through ADR-0197; exact planning evidence accepted through **ADR-0208**.
 
 ## Purpose
 
@@ -22,15 +22,15 @@ A surface can be **Exhaustive** while still technically blocked, unimplemented a
 
 - Original product scope: **31/31 Exhaustive**.
 - ADR-0177 universal-system expansion: **43/43 Exhaustive**.
-- ADR-0188 market expansion: **48/48 Exhaustive**.
-- ADR-0194 access/admin/media/code expansion: **50/50 Exhaustive**.
+- ADR-0183…ADR-0188 market expansion: **48/48 Exhaustive**.
+- ADR-0189…ADR-0194 access/admin/media/code expansion: **50/50 Exhaustive**.
 - ADR-0195 second competitive expansion: **55/55 Exhaustive**.
-- ADR-0197 third competitive expansion: **56/56 Exhaustive**.
+- ADR-0197 third competitive expansion: current **56/56 Exhaustive**.
 - Current canonical denominator: **56 module/platform surfaces**.
 - Implementation authorization: **0/56**.
-- Implemented/runtime verified: **none**.
+- Implemented/runtime verified: **0**.
 
-Historical denominators remain valid snapshots only for their earlier accepted scopes.
+Historical denominators remain historically correct for their earlier scope snapshots.
 
 ## Current product-option coverage — 56/56 Exhaustive
 
@@ -50,81 +50,79 @@ Historical denominators remain valid snapshots only for their earlier accepted s
 | 12 | Settings Page Builder | Exhaustive | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md`; ST evidence |
 | 13 | Frontend Dashboard Builder | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md`; FD evidence |
 | 14 | User Profile Builder | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md`; UP evidence |
-| 15 | Membership System | Exhaustive + parity | membership specs + MPR/MBR/MB-F/PC-F |
-| 16 | Builder Widgets Builder | Exhaustive | `BUILDER-WIDGETS-EXHAUSTIVE-SPEC.md`; BW/CBP |
-| 17 | Forms & Workflow Builder | Exhaustive | `FORMS-WORKFLOW-EXHAUSTIVE-SPEC.md`; FM/WF |
-| 18 | Cron Job Builder | Exhaustive | `CRON-JOB-BUILDER-EXHAUSTIVE-SPEC.md`; JS |
-| 19 | Notification System | Exhaustive | `NOTIFICATION-SYSTEM-EXHAUSTIVE-SPEC.md`; NT |
-| 20 | Emails Builder | Exhaustive | `EMAILS-BUILDER-EXHAUSTIVE-SPEC.md`; EBR/ET-F |
-| 21 | Message & Chat System | Exhaustive | `MESSAGE-CHAT-EXHAUSTIVE-SPEC.md`; CH |
-| 22 | REST API Builder | Exhaustive | `REST-API-BUILDER-EXHAUSTIVE-SPEC.md`; REST |
-| 23 | Webhooks & Connections Manager | Exhaustive | `WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md`; WC/ICP-F |
-| 24 | Backup Manager | Exhaustive | `BACKUP-MANAGER-EXHAUSTIVE-SPEC.md`; BK/BPC-F/BKX |
-| 25 | Reset Manager | Exhaustive | `RESET-MANAGER-EXHAUSTIVE-SPEC.md`; RM/RSX |
-| 26 | Import / Export | Exhaustive | `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md`; IM |
-| 27 | Protector | Exhaustive | `PROTECTOR-EXHAUSTIVE-SPEC.md`; PR/RLT |
-| 28 | Watermarker / Media Rules + Performance Delivery | Exhaustive + parity | media specs; WM/MDP/MRL |
-| 29 | XML-RPC Manager | Exhaustive | `XML-RPC-MANAGER-EXHAUSTIVE-SPEC.md`; XR |
-| 30 | Role & Capability Manager | Exhaustive + parity | role specs; RA/RPR |
-| 31 | Platform Account / Docs / Support / Diagnostics | Exhaustive platform contract | `PLATFORM-SURFACES-SPEC.md`; PLT/RS/OA/TU |
-| 32 | Solution Blueprint & Application Composer | Exhaustive | universal foundation spec; SBP exact protocol |
-| 33 | Analytics, Event Tracking & Journey Intelligence | Exhaustive | ANL exact protocol |
-| 34 | Search & Indexing Engine | Exhaustive | SRH exact protocol |
-| 35 | Decision, Formula, Scoring & Ranking Studio | Exhaustive | DEC exact protocol |
-| 36 | Ledger, Balance & Movement Engine | Exhaustive | LED exact protocol |
-| 37 | Resource Scheduling, Availability & Reservation Engine | Exhaustive | RSV exact protocol |
-| 38 | Experience Placement & Personalization Manager | Exhaustive | PLC exact protocol |
-| 39 | Experimentation & Feature Rollout Manager | Exhaustive | EXP exact protocol |
-| 40 | Documents, Records & Template Generation | Exhaustive | DOC exact protocol |
-| 41 | Data Sync, ETL & Integration Pipelines | Exhaustive | SYN exact protocol |
-| 42 | Geospatial, Location & Territory Engine | Exhaustive | GEO exact protocol |
-| 43 | AI Gateway, Knowledge & Copilot Studio | Exhaustive | AI specs; AIP exact protocol |
-| 44 | URL Redirection & Routing Manager | Exhaustive | `URL-REDIRECTION-ROUTING-EXHAUSTIVE-SPEC.md`; RDR |
-| 45 | Search, Replace & Data Transformation Engine | Exhaustive | `SEARCH-REPLACE-DATA-TRANSFORMATION-EXHAUSTIVE-SPEC.md`; SRT |
-| 46 | Dummy Data, Synthetic Dataset & Fixture Studio | Exhaustive | `DUMMY-DATA-FIXTURE-GENERATOR-EXHAUSTIVE-SPEC.md`; DMY |
-| 47 | Link Health, Broken Link & Crawl Intelligence | Exhaustive | `LINK-HEALTH-BROKEN-LINK-CRAWLER-EXHAUSTIVE-SPEC.md`; LNK/LHX |
-| 48 | Database Maintenance, Cleanup & Storage Health | Exhaustive | `DATABASE-MAINTENANCE-CLEANUP-EXHAUSTIVE-SPEC.md`; DBM |
-| 49 | Admin Theme, Branding & Experience Manager | Exhaustive | `ADMIN-THEME-BRANDING-EXHAUSTIVE-SPEC.md`; ATM/WLB |
-| 50 | Safe Script, Tag & Code Injection Manager | Exhaustive | `SAFE-SCRIPT-TAG-CODE-INJECTION-EXHAUSTIVE-SPEC.md`; STM/HFC; no PHP/eval |
-| 51 | Content Order & Sequence Manager | Exhaustive | second competitive expansion; ORD/DUP |
-| 52 | Security Integrity, Malware & Vulnerability Scanner | Exhaustive | second competitive expansion; SEC |
-| 53 | Font Library, Typography & Delivery Manager | Exhaustive | second/third competitive expansion; FNT/UAF |
-| 54 | User Data Stores, Favorites & Collections | Exhaustive | second competitive expansion; UDS/JEX where applicable |
-| 55 | Staging, Clone & Migration Manager | Exhaustive | second/third competitive expansion; STG/MIG |
-| 56 | Theme Workspace, Child Theme & Theme Customization Manager | Exhaustive | third competitive expansion; THM; no arbitrary live PHP execution |
+| 15 | Membership System | Exhaustive + parity expansion | `MEMBERSHIP-SYSTEM.md` + parity addenda; MBR/MB-F/PC-F/MPR evidence |
+| 16 | Builder Widgets Builder | Exhaustive | `BUILDER-WIDGETS-EXHAUSTIVE-SPEC.md`; BW/CBP evidence |
+| 17 | Forms & Workflow Builder | Exhaustive | `FORMS-WORKFLOW-EXHAUSTIVE-SPEC.md`; FM/WF evidence |
+| 18 | Cron Job Builder | Exhaustive | `CRON-JOB-BUILDER-EXHAUSTIVE-SPEC.md`; JS evidence |
+| 19 | Notification System | Exhaustive | `NOTIFICATION-SYSTEM-EXHAUSTIVE-SPEC.md`; NT evidence |
+| 20 | Emails Builder | Exhaustive | `EMAILS-BUILDER-EXHAUSTIVE-SPEC.md`; EBR/ET-F evidence |
+| 21 | Message & Chat System | Exhaustive | `MESSAGE-CHAT-EXHAUSTIVE-SPEC.md`; CH evidence |
+| 22 | REST API Builder | Exhaustive | `REST-API-BUILDER-EXHAUSTIVE-SPEC.md`; REST evidence |
+| 23 | Webhooks & Connections Manager | Exhaustive | `WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md`; WC/ICP-F evidence |
+| 24 | Backup Manager | Exhaustive | `BACKUP-MANAGER-EXHAUSTIVE-SPEC.md`; BK/BPC-F/BKX evidence |
+| 25 | Reset Manager | Exhaustive | `RESET-MANAGER-EXHAUSTIVE-SPEC.md`; RM/RSX evidence |
+| 26 | Import / Export | Exhaustive | `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md`; IM evidence |
+| 27 | Protector | Exhaustive | `PROTECTOR-EXHAUSTIVE-SPEC.md`; PR/RLT evidence |
+| 28 | Watermarker / Media Rules + Performance Delivery | Exhaustive + parity expansion | media specs; WM/MDP evidence |
+| 29 | XML-RPC Manager | Exhaustive | `XML-RPC-MANAGER-EXHAUSTIVE-SPEC.md`; XR evidence |
+| 30 | Role & Capability Manager | Exhaustive + parity expansion | role specs; RA/RPR evidence |
+| 31 | Platform Account / Docs / Support / Diagnostics | Exhaustive platform contract | `PLATFORM-SURFACES-SPEC.md`; PLT/RS/OA/TU evidence |
+| 32 | Solution Blueprint & Application Composer | Exhaustive | universal foundation spec; SBP exact 176/176 documented / 0 executed |
+| 33 | Analytics, Event Tracking & Journey Intelligence | Exhaustive | ANL exact 176/176 / 0 |
+| 34 | Search & Indexing Engine | Exhaustive | SRH exact 176/176 / 0 |
+| 35 | Decision, Formula, Scoring & Ranking Studio | Exhaustive | DEC exact 176/176 / 0 |
+| 36 | Ledger, Balance & Movement Engine | Exhaustive | LED exact 176/176 / 0 |
+| 37 | Resource Scheduling, Availability & Reservation Engine | Exhaustive | RSV exact 176/176 / 0 |
+| 38 | Experience Placement & Personalization Manager | Exhaustive | PLC exact 176/176 / 0 |
+| 39 | Experimentation & Feature Rollout Manager | Exhaustive | EXP exact 176/176 / 0 |
+| 40 | Documents, Records & Template Generation | Exhaustive | DOC exact 176/176 / 0 |
+| 41 | Data Sync, ETL & Integration Pipelines | Exhaustive | SYN exact 176/176 / 0 |
+| 42 | Geospatial, Location & Territory Engine | Exhaustive | GEO exact 176/176 / 0 |
+| 43 | AI Gateway, Knowledge & Copilot Studio | Exhaustive | AIP exact 176/176 / 0 |
+| 44 | URL Redirection & Routing Manager | Exhaustive | **RDR exact 176/176 documented / 0 executed — ADR-0208** |
+| 45 | Search, Replace & Data Transformation Engine | Exhaustive | **SRT exact 176/176 / 0 — ADR-0208** |
+| 46 | Dummy Data, Synthetic Dataset & Fixture Studio | Exhaustive | **DMY exact 176/176 / 0 — ADR-0208** |
+| 47 | Link Health, Broken Link & Crawl Intelligence | Exhaustive | **LNK exact 176/176 / 0 — ADR-0208** |
+| 48 | Database Maintenance, Cleanup & Storage Health | Exhaustive | **DBM exact 176/176 / 0 — ADR-0208** |
+| 49 | Admin Theme, Branding & Experience Manager | Exhaustive | ATM exact expansion pending WP114 |
+| 50 | Safe Script, Tag & Code Injection Manager | Exhaustive | STM exact expansion pending WP114; no PHP/eval |
+| 51 | Content Order & Sequence Manager | Exhaustive | ORD exact expansion pending WP115 |
+| 52 | Security Integrity, Malware & Vulnerability Scanner | Exhaustive | SEC exact expansion pending WP115 |
+| 53 | Font Library, Typography & Delivery Manager | Exhaustive | FNT/UAF exact expansions pending WP115/WP116 |
+| 54 | User Data Stores, Favorites & Collections | Exhaustive | UDS exact expansion pending WP115 |
+| 55 | Staging, Clone & Migration Manager | Exhaustive | STG/MIG exact expansions pending WP115/WP116 |
+| 56 | Theme Workspace, Child Theme & Theme Customization Manager | Exhaustive | THM exact expansion pending WP116; no arbitrary live PHP execution |
 
-## Shared services/adapters outside denominator
+## Shared planning services outside denominator
 
-Shared architecture also includes Simulation/Historical Replay, Transaction/Saga Coordination, Protected Asset Service, Context Resolver, Money/Decimal/Unit library, Approval Policy Profile, S07 Product Discovery/Planning Orchestrator, S08 Market Intelligence Radar and domain/provider adapter packs including the WooCommerce Commerce Domain Adapter.
+S07 Product Discovery & Planning Orchestrator and S08 Market Intelligence Radar remain shared services rather than numbered product surfaces. Under ADR-0208:
+- PDO 176/176 exact documented / 0 executed;
+- MIR 176/176 exact documented / 0 executed.
 
-## Current Multisite coverage
+Other shared services/adapters retain their accepted ownership and evidence contracts.
 
-Logical Multisite product mapping is **56/56** across the base matrix plus universal, market and competitive addenda. Runtime Multisite certification remains **0** unless explicitly recorded later.
+## Current Multisite and AI coverage
 
-## Current AI Prompt coverage
+- combined logical Multisite scope coverage: **56/56**;
+- combined module-wide AI Prompt product mapping: **56/56**;
+- runtime Multisite certification: **0**;
+- AI Prompt/MCP runtime certifications: **0**.
 
-Module-wide AI Prompt product mapping is **56/56** across the shared standard and expansion addenda. `AIP-001…AIP-176` is exactly specified but **0 executed**; AIC/MCP runtime certifications are **0**.
+## Remaining exact evidence planning
 
-## Evidence-planning closure status
+ADR-0207 identified 5,808 missing exact supplemental fixture definitions. ADR-0208 closed 1,232 Market Expansion definitions.
 
-Exact detailed evidence specifications exist for SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA.
-
-WP112 / ADR-0207 found a separate exact-fixture planning gap in 33 market/competitive supplemental namespaces: **5,808 exact fixture definitions** remain to be enumerated through WP113–WP116.
-
-Therefore **56/56 Exhaustive product-option maturity does not yet mean P0 is approval-ready**.
+Remaining:
+- **WP114 CURRENT** — MPR/RPR/ATM/MDP/STM = 880;
+- WP115 — ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC = 1,936;
+- WP116 — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX = 1,760;
+- total **4,576 / 26 namespaces**.
 
 ## Exhaustive specification minimum
 
-Every surface remains responsible for list/editor states, all controls/defaults, validation, permissions, lifecycle/failure behavior, revisions/import/export, observability, AI Prompt/gap requests, REST/Abilities/MCP/CLI where applicable, Multisite, privacy/retention, scale guardrails, destructive safeguards/recovery and explicit evidence expectations.
+Every surface remains responsible for list/editor UX, every known option/default, conditional behavior, validation, Policy, lifecycle/failure/recovery, dependencies/assets, import/export/revisions, AI/REST/Abilities/MCP/CLI where applicable, Multisite, privacy, performance, destructive safeguards and executable evidence.
 
-A newly discovered meaningful option must be added to the applicable product spec before or with its coherent planning change. Implementation must not silently invent product semantics.
-
-## Current planning work
-
-WP112 — DONE / ADR-0207.  
-**WP113 — Market Expansion exact executable-evidence specification — CURRENT.**
-
-WP114–WP116 are reserved follow-ons. A new closure audit follows WP116.
+A newly discovered meaningful option must be added to the applicable product spec before or with the coherent planning change. `56/56 Exhaustive` never authorizes ad-hoc implementation semantics.
 
 ## Development gate
 
