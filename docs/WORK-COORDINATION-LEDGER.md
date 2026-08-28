@@ -1,127 +1,116 @@
 # WPEssential — Work Coordination Ledger
 
 Status: **Active governance ledger**  
-Last reviewed: 2026-08-28
+Last reviewed: 2026-08-29
 
 ## 1. Current execution state
 
 Project state: `PLANNED_EXISTING_PROJECT`  
 Execution mode: `PLANNER_ONLY`  
-Current lifecycle gate: `AWAITING_DEVELOPMENT_APPROVAL`  
+Current planning lifecycle: `SPECIFICATION`  
 Production implementation WIP: **0**  
 Active implementation approvals: **0**  
-Authorized module/platform surfaces: **0/31**
+Current planned module/platform surfaces: **43**  
+Authorized module/platform surfaces: **0/43**
 
-Planning documentation is allowed. Executable/source/runtime work remains blocked by ADR-0014.
+Planning/documentation is allowed. Executable/source/runtime work remains blocked by ADR-0014.
 
-## 2. Work packages
+Historical pre-ADR-0177 denominator was 31 surfaces; old `0/31` records remain historical truth only.
+
+## 2. Completed historical planning work
+
+Work packages `P0-M00-WP01…WP59` remain **DONE** and are not superseded. Their detailed scope/evidence is preserved in ADR-0117…ADR-0176, the Quality protocols, the previous checkpoint history and Git/VCS history.
+
+Major historical sequence:
+- WP01 governance hardening;
+- WP02–06 Forms/Workflow/Jobs/Notifications/Chat/Connections;
+- WP07–15 compatibility/Vault/UI/Build/CI/Free-Pro/Membership/Backup/Query/Definition;
+- WP16–23 Relations/Fields/Tables/Admin Columns/Listings/CPT-Taxonomy/Emails/Platform;
+- WP24–37 Multisite/Audit/Kernel/Privacy/Error/Blueprint Core/Versioning/Lifecycle/DSR/Assets/Conditions/DVR/Rate/Cache;
+- WP38–54 canonical refinements across REST, Import, Roles, Profile, Protector, XML-RPC, Reset, Settings, Dashboard, Menus, Widgets, Status, Builder adapters, Media, TUF, OAuth and Remote Privacy;
+- WP55–59 Email transport, Membership billing, protected files, Backup providers and Connection provider certification.
+
+No historical DONE package is an implementation/runtime claim.
+
+## 3. Expanded-scope work packages
 
 | Work ID | Scope | Lifecycle | Class | Parallelism | Evidence / note |
 |---|---|---|---|---|---|
-| `P0-M00-WP01` | Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Documentation governance only. |
-| `P0-M00-WP02` | Forms | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0117; FM 0/92. |
-| `P0-M00-WP03` | Workflow + Job/Cron | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0118/0119; WF 0/116; JS 0/106. |
-| `P0-M00-WP04` | Notifications | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0120; NT 0/142. |
-| `P0-M00-WP05` | Message & Chat | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0121; CH 0/142. |
-| `P0-M00-WP06` | Webhooks/Connections/Event Inbox | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0122; WC 0/156. |
-| `P0-M00-WP07` | Compatibility floor | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0123; CF 0/112. |
-| `P0-M00-WP08` | Vault | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0124; VT 0/128. |
-| `P0-M00-WP09` | UI + Build | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0125/0126; UI 0/104; BT 0/112. |
-| `P0-M00-WP10` | CI/Quality Matrix | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0127; CI 0/120. |
-| `P0-M00-WP11` | Free↔Pro compatibility | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0128; FP 0/144. |
-| `P0-M00-WP12` | Membership core | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0129; MBR 0/160. |
-| `P0-M00-WP13` | Backup/Restore | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0130; BK 0/180. |
-| `P0-M00-WP14` | Query | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0131; QRY 0/168. |
-| `P0-M00-WP15` | Definition Repository | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0132; DEF 0/144. |
-| `P0-M00-WP16` | Relations | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0133; REL 0/160. |
-| `P0-M00-WP17` | Field Storage / Custom Fields | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0134; FST 0/176. |
-| `P0-M00-WP18` | Custom Tables | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0135; CTB 0/184. |
-| `P0-M00-WP19` | Admin Columns | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0136; AC 0/176. |
-| `P0-M00-WP20` | Dynamic Listings | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0137; DL 0/176. |
-| `P0-M00-WP21` | Free CPT + Taxonomy | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0138; CPTX 0/176. |
-| `P0-M00-WP22` | Emails Builder renderer/composition | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0139; EBR 0/176; ET separate. |
-| `P0-M00-WP23` | Platform Account/Docs/Support/Diagnostics | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0140; PLT 0/176. |
-| `P0-M00-WP24` | Multisite Scope + Site Lifecycle | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0141; MSI 0/160; LC 0/96. |
-| `P0-M00-WP25` | Audit & Observability | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0142; AUD 0/176. |
-| `P0-M00-WP26` | Kernel/Registry/Policy/Abilities/Events/SDK | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0143; KPA 0/176. |
-| `P0-M00-WP27` | Local Privacy/Data Lifecycle | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0144; PDL 0/176. |
-| `P0-M00-WP28` | Error Taxonomy/Failure UX | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0145; ERR 0/176. |
-| `P0-M00-WP29` | Component Blueprint Core | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0146; CBP 0/176. |
-| `P0-M00-WP30` | Contract Versioning/Deprecation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0147; VER 0/176. |
-| `P0-M00-WP31` | Module Lifecycle/Uninstall/Recovery | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0148; MLC 0/176. |
-| `P0-M00-WP32` | Entity/Data Source Registry | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0149; DSR 0/176. |
-| `P0-M00-WP33` | Asset Registry/Scoped Loader | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0150; ASR 0/176. |
-| `P0-M00-WP34` | Conditional Logic Engine | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0151; CLG 0/176. |
-| `P0-M00-WP35` | Dynamic Value/Token Resolver | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0152; DVR 0/176. |
-| `P0-M00-WP36` | Shared Rate Limit/Abuse Control | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0153; RLT 0/176. |
-| `P0-M00-WP37` | Shared Cache/Invalidation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0154; CAC 0/176. |
-| `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176. |
-| `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176. |
-| `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176. |
-| `P0-M00-WP41` | User Profile canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0158; UP 0/176. |
-| `P0-M00-WP42` | Protector canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0159; PR 0/176. |
-| `P0-M00-WP43` | XML-RPC Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0160; XR 0/176. |
-| `P0-M00-WP44` | Reset Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0161; RM 0/176. |
-| `P0-M00-WP45` | Settings Page canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0162; ST 0/176. |
-| `P0-M00-WP46` | Frontend Dashboard canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0163; FD 0/176. |
-| `P0-M00-WP47` | Admin Menu canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0164; AM 0/176. |
-| `P0-M00-WP48` | Dashboard Widgets canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0165; DW 0/176. |
-| `P0-M00-WP49` | Status Manager canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0166; SM 0/176. |
-| `P0-M00-WP50` | Builder Widgets adapter canonical refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0167; BW 0/176; BC0…BC4 certs 0. |
-| `P0-M00-WP51` | Watermarker / Media canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0168; WM 0/176. |
-| `P0-M00-WP52` | Pro Updater TUF canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0169; TU 0/176. |
-| `P0-M00-WP53` | OAuth Account-Link canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0170; OA 0/176. |
-| `P0-M00-WP54` | Remote Service Privacy / Retention canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0171; RS 0/176. |
-| `P0-M00-WP55` | Email Transport / Provider Certification canonical refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0172; ET-F 0/176; ET0…ET5 unchanged; 6 EE3 / 0 ET-certified. |
-| `P0-M00-WP56` | Membership Billing provider certification refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0173; MB-F 0/176; MB0…MB5 unchanged; 4 BE3 / 0 MB-certified. |
-| `P0-M00-WP57` | Protected-file provider/delivery certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0174; PC-F 0/176; PC0…PC4 and PD1…PD4 preserved; 0 PC1+ runtime-certified. |
-| `P0-M00-WP58` | Backup provider certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0175; BPC-F 0/176; C0…C4/V3 preserved; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0. |
-| `P0-M00-WP59` | Connection adapter I0–I5 provider certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0176; ICP-F 0/176; WC remains 0/156; 0 I4-certified / 0 I5-certified. |
+| `P0-M00-WP60` | Solution Blueprint + universal systems + 12-foundation + Woo adapter product expansion | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0177; 43 current surfaces; 160 curated systems; 40 patterns; 268,800 raw primary combinations; 0/43 authorized. |
+| `P0-M00-WP61` | Module-wide AI Prompt / Requirement Compiler / MCP / capability-gap request | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0178/0179; 43/43 Prompt product mapping; AIP 0/176; AIC/MCP runtime certs 0. |
+| `P0-M00-WP62` | Universal foundations + Woo adapter technical evidence master plan | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0180; SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each 0/176. |
+| `P0-M00-WP63` | F01 Solution Blueprint & Application Composer detailed evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0181; SBP-001…SBP-176; executed 0/176. |
+| `P0-M00-WP64` | F02 Analytics, Event Tracking & Journey Intelligence detailed evidence | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ANL-001…ANL-176 envelope reserved by ADR-0180; fixture-by-fixture expansion current. |
 
-No production implementation work package is active.
+## 4. Planned follow-on sequence
 
-## 3. Current planning queue
+After WP64, unless new evidence changes critical path:
+1. WP65 — F03 Search & Indexing detailed evidence (`SRH`).
+2. WP66 — F04 Decision/Formula/Scoring detailed evidence (`DEC`).
+3. WP67 — F05 Ledger/Balance/Movement detailed evidence (`LED`).
+4. WP68 — F06 Resource Scheduling/Reservation detailed evidence (`RSV`).
+5. WP69 — F07 Placement/Personalization detailed evidence (`PLC`).
+6. WP70 — F08 Experimentation/Rollout detailed evidence (`EXP`).
+7. WP71 — F09 Documents/Records detailed evidence (`DOC`).
+8. WP72 — F10 Sync/ETL detailed evidence (`SYN`).
+9. WP73 — F11 Geo/Territory detailed evidence (`GEO`).
+10. F12 AI detailed evidence is already explicit under ADR-0179 (`AIP`).
+11. WP74 — WooCommerce Commerce Domain Adapter detailed evidence (`WCA`) unless evidence/critical-path analysis moves it earlier.
+12. final expanded-scope consistency/self-audit, then only an honest approval gate can be considered.
 
-**No queued planning-only refinement package remains.**
+This is planning order, not implementation authorization.
 
-Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
+## 5. Shared foundation truth
 
-The remaining work is implementation and executable evidence, both blocked until explicit scoped owner consent under ADR-0014.
+Original/shared evidence remains unexecuted and unchanged. Key current evidence counters include:
+- DEF 0/144; QRY 0/168; REL 0/160; FST 0/176; CTB 0/184; DSR 0/176.
+- KPA/VER/MLC/PDL/ERR/ASR/CLG/DVR/RLT/CAC all 0/176.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS all 0/176.
+- WC 0/156; ICP-F 0/176; 0 I4/I5 certified.
+- ET-F 0/176; 6 EE3 / 0 ET-certified.
+- MB-F 0/176; 4 BE3 / 0 MB-certified.
+- PC-F 0/176; 0 PC1+.
+- BPC-F 0/176; 34 targets / 0 C-certified / V3 0.
 
-## 4. Shared foundation truth
+Expanded evidence:
+- SBP **0/176**;
+- ANL **0/176**;
+- SRH **0/176**;
+- DEC **0/176**;
+- LED **0/176**;
+- RSV **0/176**;
+- PLC **0/176**;
+- EXP **0/176**;
+- DOC **0/176**;
+- SYN **0/176**;
+- GEO **0/176**;
+- AIP **0/176**;
+- WCA **0/176**.
 
-- DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
-- KPA/VER/MLC/PDL/ERR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
-- WC **0/156**; ICP-F **0/176**; Connection provider profiles remain **0 I4 / 0 I5 certified**.
-- ET-F **0/176**; Email provider profiles remain **6 EE3 / 0 ET-certified**.
-- MB-F **0/176**; Membership billing provider profiles remain **4 BE3 / 0 MB-certified**.
-- PC-F **0/176**; protected-file profiles remain **0 PC1+**, PD1…PD4 runtime certifications 0.
-- BPC-F **0/176**; Backup providers remain **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
-- WordPress remains native role/capability and identity/auth authority where defined.
-- Component Blueprint remains canonical over builder-private representations.
-- TUF authenticity and OAuth/Account/Product entitlement are independent trust domains.
-- Billing commercial fact, Enrollment, Membership Entitlement, Product Entitlement and WordPress Role remain separate authority domains.
-- Storage possession, signed-link issuance and Backup-provider support never become protected-file authorization/certification shortcuts.
-- Backup successful upload/finalization never substitutes for remote verification/restore certification.
-- Connection authentication/Test Connection never substitutes for granular provider capability certification.
-- Remote privacy/deletion/backup states remain distinct and evidence-scoped.
-- Watermarker original source bytes are immutable under standard processing.
-- current-blog context is never durable ownership or authorization.
-- destructive schema/data/authority work requires verified recovery and truthful partial-failure semantics.
+No runtime certifications exist for these expanded foundations/adapters.
 
-## 5. WIP / coordination rules
+## 6. Shared-surface reservations / coordination
 
-Implementation WIP remains **0**. Planning WIP is **0**. Material expansion follows:
+Current planning reservations:
+- F02 Analytics/Event/Journey specification/evidence owns ANL namespace and related analytics-store topology planning during WP64.
+- AI Prompt Runtime owns AIP namespace; consumer modules do not create private AI runtimes.
+- F01 Solution Composer owns Solution install/upgrade/drift semantics; Blueprints do not own duplicated module runtimes.
+- WooCommerce adapter owns Woo domain translation; generic modules do not bypass it with private order-storage assumptions.
+
+Implementation shared-surface reservations remain **0** because development is not authorized.
+
+## 7. WIP / coordination rules
+
+Material expansion follows:
 
 `STOP → REASSESS → UPDATE IMPACT → RESCOPE OR SPLIT`
 
-No active shared-surface implementation reservation exists.
+No unrelated cleanup. Shared-contract planning is serialized where one source-of-truth surface would otherwise race.
 
-## 6. Current next safe action
+## 8. Current next safe action
 
-Do **not** create new arbitrary planning scope merely to keep work moving. Phase 0 planning/refinement is complete through ADR-0176.
+Continue **WP64 F02 Analytics/Event Tracking/Journey detailed executable-evidence specification**.
 
-Next lifecycle transition requires explicit scoped owner development consent. After consent, first execution must still follow the implementation baseline/adoption gate, critical-path ordering, FAST/FULL quality gates, small-batch change budget and evidence protocols; consent does not waive technical safety gates.
+Do not begin production code, install packages, create DB tables, collect analytics events, call AI providers, run MCP, create search indexes, post ledgers, acquire reservations, render documents, sync remote systems or mutate WooCommerce runtime.
 
-Until explicit consent is recorded, remain `PLANNER_ONLY` / `AWAITING_DEVELOPMENT_APPROVAL` with production implementation WIP 0.
+When the expanded planning sequence is eventually complete, lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`; it must not be moved there prematurely while material planning requested by the owner remains open.
