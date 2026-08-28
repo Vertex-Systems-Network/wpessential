@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0172**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
+This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0173**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -22,7 +22,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-009 | ADR-0086/0131 | Query compiler/cost/cache/security/providers — QRY-01…QRY-168 |
 | D-010 | ADR-0074/0093/0133 | Relations topology/cardinality/concurrency/lifecycle — REL-01…REL-160 |
 | D-011 | ADR-0082/0118 | Workflow runtime — WF-01…WF-116 |
-| D-012 | ADR-0013…0090/0129 | Membership runtime/providers/protected files — MBR-01…MBR-160 + MB/PC |
+| D-012 | ADR-0013…0090/0129/0173 | Membership core + billing providers + protected files — MBR-01…MBR-160 + MB-F001…MB-F176/MB0–MB5 + PC |
 | D-013 | ADR-0021…0100/0130 | Backup artifact/crypto/provider/restore — BK-01…BK-180 + C0–C4/V3 |
 | D-014 | ADR-0044/0102/0169 | TUF verifier/key custody/metadata/package/staging/recovery — TU-01…TU-176 |
 | D-015 | ADR-0031/0108/0163 | Frontend Dashboard routing/auth/cache/browser/Multisite — FD-01…FD-176 |
@@ -78,6 +78,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - ADR-0170 — OAuth Account-Link **OA 0/176**.
 - ADR-0171 — Remote Service Privacy / Retention **RS 0/176**.
 - ADR-0172 — Email Transport / Provider Certification **ET-F 0/176; 6 EE3 / 0 ET-certified**.
+- ADR-0173 — Membership Billing Provider Certification **MB-F 0/176; 4 BE3 / 0 MB-certified**.
 
 ## C. Accepted paper/runtime-baseline summary
 
@@ -96,6 +97,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - module disable/expiry/uninstall/cleanup/privacy erase remain distinct lifecycle operations.
 - current-blog context never becomes durable ownership/authorization.
 - email renderer success ≠ transport attempt ≠ provider acceptance ≠ receiving-server delivery ≠ complaint/suppression ≠ engagement; open/click ≠ human read.
+- billing provider commercial fact ≠ Enrollment ≠ Membership Entitlement ≠ Product Entitlement ≠ WordPress Role.
+- webhook/hook freshness and Job retries never become provider/Membership authority shortcuts.
 
 ## D. Fixed evidence execution truth
 
@@ -106,15 +109,15 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - MSI **0/160; 0 MS1+**; LC **0/96; 0 SL runtime certs**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 runtime certifications **0 each**.
-- Membership billing/protected files **4 BE3 / 0 MB-certified; 0 PC1+**.
+- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 runtime certifications **0 each**; protected files **0 PC1+**.
 - Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
 - Connection adapters **0 I4/I5**.
 
 ## E. Current highest-priority planning blocker
 
-`P0-M00-WP56` — **Membership Billing provider certification reassessment**.
+`P0-M00-WP57` — **Protected-file provider/delivery certification reassessment**.
 
-Reason: Membership runtime semantics are already covered by MBR **0/160**, but billing-provider evidence remains **4 BE3 static profiles / 0 MB-certified**. Reassess the existing MB0–MB5 provider certification protocol against current Membership, Vault, JobService, Webhooks/Event Inbox, privacy, ERR, VER, RLT, Multisite and lifecycle contracts. Preserve commercial provider facts ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement.
+Reason: Membership billing provider certification evidence is now fixed by ADR-0173, while protected Membership files remain **0 PC1+**. Reassess PC0–PC4 and private local/accelerated/object-delivery profiles against current Membership Entitlement/Policy, Vault, Safe HTTP/Asset/Media boundaries, privacy, ERR, VER, RLT, Multisite, Site Lifecycle, Backup and revoke-safe delivery semantics. Preserve storage possession ≠ authorization and signed URL issuance ≠ durable entitlement.
 
 ## F. Decision-processing rule
 
