@@ -108,6 +108,15 @@ The audit additions requested before resuming normal Phase 0 planning are now in
    - production verification;
    - root-cause evidence requirements.
 
+5. `docs/WORK-COORDINATION-LEDGER.md`
+   - live critical path;
+   - active/recent work packages;
+   - WIP limits/current consumption;
+   - parallelism decisions;
+   - shared-surface reservations/ownership;
+   - change-budget tracking;
+   - preserved ADR-0116 planning resume queue.
+
 ### Existing governance integrated
 
 - `AGENTS.md` now requires the new adoption/approval/execution/release governance and updates session/resume/parallel/review/report behavior.
@@ -116,6 +125,7 @@ The audit additions requested before resuming normal Phase 0 planning are now in
 - `docs/MODULES/SPECIFICATION-STANDARD.md` now requires explicit `MUST NOT` negative requirements, self-audit, gap classification and implementation-boundary/change-budget planning.
 - `README.md` now exposes the canonical project/execution state and new mandatory-read order.
 - `.github/PULL_REQUEST_TEMPLATE.md` now records work/approval IDs, change budget, parallelism/shared surfaces, FAST/FULL gates, baseline/flaky failures, review class, recovery class and release state.
+- `docs/WORK-COORDINATION-LEDGER.md` makes critical path/WIP/shared-surface ownership a live durable record rather than policy only.
 
 ## Governance audit mapping status
 
@@ -136,7 +146,7 @@ The previously identified audit gaps are now covered:
 - small-batch scope budget — **ADDED**
 - no unrelated cleanup — **ADDED**
 - parallel work classification/shared-surface ownership/WIP limits — **ADDED**
-- critical-path classes — **ADDED**
+- critical-path classes + live ledger — **ADDED**
 - negative requirements — **ADDED**
 - SELF vs INDEPENDENT review — **ADDED**
 - release state machine — **ADDED**
@@ -159,11 +169,13 @@ Latest GitHub-only adoption audit established:
 
 Do not reinterpret UNKNOWN as configured or unconfigured.
 
-## Current approval ledger
+## Current approval / coordination ledger
 
 - project development approval: **PENDING / NOT GRANTED**;
 - ACTIVE implementation approvals: **0**;
-- authorized module/platform surfaces: **0/31**.
+- authorized module/platform surfaces: **0/31**;
+- active production implementation work packages: **0**;
+- active shared-surface implementation reservations: **0**.
 
 No implementation authorization was introduced by this governance hardening.
 
@@ -214,6 +226,7 @@ Verified planning/documentation only:
 - **31/31 Exhaustive / 0/31 Authorized**;
 - accepted architecture/evidence contracts remain through **ADR-0116**;
 - Universal Master Prompt governance gaps above are integrated into durable repo docs and core engineering entry points;
+- live work coordination ledger exists and preserves current WIP/critical-path truth;
 - original product planning resume point has been preserved;
 - no PHP/React/runtime/build/test/provider/deployment work was executed.
 
@@ -244,12 +257,13 @@ Before any executable work, explicit owner consent is still required.
 4. `docs/PROJECT-STATE-AND-ADOPTION.md`
 5. `docs/APPROVAL-LEDGER.md`
 6. `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
-7. `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
-8. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
-9. `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`
-10. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-11. `docs/OPEN-DECISIONS-REGISTER.md`
-12. `docs/DECISIONS/README.md`
-13. relevant architecture/security/quality/module/provider docs.
+7. `docs/WORK-COORDINATION-LEDGER.md`
+8. `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
+9. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
+10. `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`
+11. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+12. `docs/OPEN-DECISIONS-REGISTER.md`
+13. `docs/DECISIONS/README.md`
+14. relevant architecture/security/quality/module/provider docs.
 
 Repository evidence overrides conversational memory.
