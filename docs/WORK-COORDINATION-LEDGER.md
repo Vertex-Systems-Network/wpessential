@@ -24,8 +24,9 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP07` | P-001 compatibility floor evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP/PHP/DB/Multisite | ADR-0123; CF-01…CF-112; 0 executed. |
 | `P0-M00-WP08` | P-005 Vault evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Vault/security/recovery | ADR-0124; VT-01…VT-128; 0 executed. |
 | `P0-M00-WP09` | P-002 UI + P-008 build evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | UI wrappers/React/assets/build | ADR-0125 UI-01…UI-104 + ADR-0126 BT-01…BT-112; 0 executed. |
-| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI lanes + FAST/FULL + artifact provenance | ADR-0127; CI-01…CI-120; 0 executed; no workflows verified; branch protection/rulesets UNKNOWN. |
-| `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot / Platform API evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free core + Pro add-on + Platform API + entitlement + migrations + package/update ordering | Current planning work; reconcile ADR-0010 plus Product License/Free-Pro contracts without runtime execution. |
+| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI lanes + FAST/FULL + artifact provenance | ADR-0127; CI-01…CI-120; 0 executed; workflows not verified; protections UNKNOWN. |
+| `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free core + Pro add-on + Platform API + entitlement + migrations/update ordering | ADR-0128; FP-01…FP-144; 0 executed; ADR-0010 remains Proposed. |
+| `P0-M00-WP12` | P-012 Membership runtime/access/protected-files/provider evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership + Policy + Entitlement + protected assets + billing source facts + Jobs/Notifications + Multisite | Current planning work; reconcile M1/M2, Enrollment/Entitlement, protected-file and provider evidence without runtime execution. |
 
 No production implementation work package is active.
 
@@ -33,8 +34,9 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | P-006 Free↔Pro compatibility / boot evidence refinement | `SPECIFICATION` current | Platform/package boundary must fail/degrade safely before premium modules exist |
-| 2 | Reassess P-012 Membership, P-013 Backup and remaining shared blockers | `BLOCKED` by sequence | Choose after P-006 planning closes |
+| 1 | P-012 Membership runtime/access/protected-files/provider evidence refinement | `SPECIFICATION` current | Security-critical shared access foundation; billing/provider facts must never directly become access truth |
+| 2 | P-013 Backup executable evidence refinement | `BLOCKED` by sequence | Recovery/destructive-operation foundation; start after Membership planning closes unless new evidence changes priority |
+| 3 | Remaining unresolved shared/surface blockers | `BLOCKED` by sequence | Reassess after P-013 planning |
 
 Planning documentation work does not create implementation authorization.
 
@@ -46,8 +48,20 @@ Current implementation WIP remains 0. Planning serializes shared contracts. Any 
 
 No active shared-surface implementation reservation exists.
 
-## 5. Current next safe action
+## 5. Shared truth boundaries currently reserved for planning
 
-Continue `P0-M00-WP11`: reconcile ADR-0010 Free↔Pro compatibility, Platform API version handshake, binary/dependency/load order, entitlement-vs-binary compatibility, migration/update/rollback/restore states, Pro absent/expired/deactivated behavior and safe degraded boot into a fixed future evidence protocol.
+WP12 must preserve:
+- Role ≠ Membership ≠ billing Subscription/Purchase ≠ Product Entitlement;
+- provider billing events are source facts, not direct access truth;
+- Enrollment is authoritative membership lifecycle state;
+- effective Entitlement is derived/policy-controlled and revocation-safe;
+- protected file delivery must reauthorize at request time and prevent origin bypass;
+- cache invalidation/access generation must close stale-access windows;
+- site/network/user/team scope must be explicit;
+- Free/Pro Product License state cannot become Membership authorization.
+
+## 6. Current next safe action
+
+Continue `P0-M00-WP12`: reconcile ADR-0013/0015/0016/0019/0020, Membership M1/M2 runtime baselines, protected-file PD/PC profiles, billing-provider evidence and generic P-012 spike into a fixed adversarial executable-evidence protocol if no dedicated equivalent exists.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
