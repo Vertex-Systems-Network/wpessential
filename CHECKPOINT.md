@@ -44,7 +44,7 @@ No implementation approval was introduced.
 
 ## Accepted architecture/evidence milestone
 
-Accepted decisions now extend through **ADR-0120**.
+Accepted decisions now extend through **ADR-0121**.
 
 Latest bounded evidence protocols:
 - ADR-0101 — OAuth Account-Link OA-01…OA-32.
@@ -66,30 +66,35 @@ Latest bounded evidence protocols:
 - ADR-0117 — Forms Runtime & Submission FM-01…FM-92.
 - ADR-0118 — Workflow Runtime WF-01…WF-116.
 - ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.
-- **ADR-0120 — Notification System NT-01…NT-142.**
+- ADR-0120 — Notification System NT-01…NT-142.
+- **ADR-0121 — Message & Chat CH-01…CH-142.**
 
-## Notification planning milestone — COMPLETE
+## Message & Chat planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP04`**  
+Work package: **`P0-M00-WP05`**  
 Lifecycle: **DONE (planning/documentation only)**
 
 Created:
-- `docs/QUALITY/NOTIFICATION-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0120-notification-system-evidence-protocol.md`
+- `docs/QUALITY/MESSAGE-CHAT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0121-message-chat-evidence-protocol.md`
 
-Notification evidence now covers Rule/revision/trigger safety, Occurrence durability/dedupe, recipient resolution/eligibility, preference classification/frequency caps, quiet-hours/timezones/DST, digests, in-app read/unread/dismiss/cache state, safe rendering/action authorization/localization, channel fallback/delivery truth, provider unknown outcomes, large fan-out/JobService backpressure, privacy/redaction/export/erase, restore/clone/site lifecycle, Multisite isolation and NE1/NE2 physical/scale evidence.
+Chat evidence now covers Definition/revision and conversation-creation Policy, participant lifecycle and Membership/team/resource revocation races, deterministic message ordering/idempotency, edit/delete/reply/reaction/mention boundaries, private attachment origin/download/finalization safety, unread/read personal-state concurrency and cache isolation, search-index reauthorization and stale-index handling, polling/realtime reconnect and long-lived authorization refresh, Notification integration, moderation/abuse controls, privacy/retention/anonymization, restore/clone/Site Lifecycle, Multisite isolation and CRT1/CRT2 physical/scale evidence.
 
-Current Notification state:
-- NT fixtures documented: **142**
-- NT fixtures executed: **0/142**
-- Notification runtime certifications: **0**
-- final Notification physical topology: **OPEN / evidence-gated**
-- NE1/PT-D: first future benchmark baseline only
-- NE2/PT-E: mandatory comparison
-- Email/channel provider certification: **not upgraded by Notification protocol**
+Current Message & Chat state:
+- CH fixtures documented: **142**
+- CH fixtures executed: **0/142**
+- Chat runtime certifications: **0**
+- realtime transport certifications: **0**
+- search adapter certifications: **0**
+- final Chat physical topology: **OPEN / evidence-gated**
+- CRT1/PT-D: first future benchmark baseline only
+- CRT2/PT-E: mandatory comparison
 
-## Workflow/Cron state
+Canonical Chat truth remains transport-independent. Private attachments remain Protected Assets and search candidates require request-time reauthorization.
 
+## Notification / Workflow / Cron state
+
+- NT fixtures documented: **142**; executed **0/142**; runtime certifications **0**; NE topology open.
 - WF fixtures documented: **116**; executed **0/116**; runtime certifications **0**; topology open.
 - JS fixtures documented: **106**; executed **0/106**; backend certifications **0**; Cron/DST certifications **0**.
 - Action Scheduler remains **preferred candidate adapter only / NOT certified**.
@@ -97,6 +102,7 @@ Current Notification state:
 ## Current evidence counters
 
 - P-001…P-013 executable gates remain unexecuted.
+- CH: **0/142**.
 - NT: **0/142**.
 - WF: **0/116**.
 - JS: **0/106**.
@@ -132,17 +138,16 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - governance hardening complete;
-- Forms, Workflow, Job/Cron and Notification evidence protocols exist with fixed fixture IDs;
-- ADR-0120 accepted as Notification evidence contract;
+- Forms, Workflow, Job/Cron, Notification and Message & Chat evidence protocols exist with fixed fixture IDs;
+- ADR-0121 accepted as Message & Chat evidence contract;
 - no PHP/React/runtime/build/test/provider/deployment work was executed.
 
-Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Notification Rule/Occurrence/Recipient/Delivery mutations, email/webhook/provider sends, Jobs, PHPUnit/Playwright, benchmarks or deployment.
+Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Chat Conversation/Participant/Message/Asset/Search mutations, realtime connections, notification/provider sends, Jobs, PHPUnit/Playwright, benchmarks or deployment.
 
 ## Next planning-only priorities
 
-1. **Message & Chat transport/search/private-assets evidence protocol.**
-2. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-3. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT gates intact.
+1. **Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.**
+2. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH gates intact.
 
 Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
 
