@@ -117,14 +117,14 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0102 | Accepted Pro updater TUF evidence | TU-01…TU-44 |
 | ADR-0103 | Accepted Dashboard Widgets evidence | DW-01…DW-36 |
 | ADR-0104 | Accepted Admin Menu evidence | AM-01…AM-40 |
-| ADR-0105 | Accepted Protector evidence | PR-01…PR-44; WP42 refinement current |
-| ADR-0106 | Accepted Reset Manager evidence | RM-01…RM-48 |
-| ADR-0107 | Accepted Watermarker/Media evidence | WM-01…WM-48 |
-| ADR-0108 | Accepted Frontend Dashboard evidence | FD-01…FD-48 |
-| ADR-0109 | Accepted Builder Widgets adapter evidence | BW-01…BW-50 + BC0…BC4 |
-| ADR-0110 | Accepted Status Manager evidence | SM-01…SM-48 |
-| ADR-0111 | Accepted XML-RPC evidence | XR-01…XR-48 |
-| ADR-0112 | Accepted Settings Page evidence | ST-01…ST-48 |
+| ADR-0105 | Accepted Protector evidence | PR-01…PR-44; refined by ADR-0159 to PR-01…PR-176 |
+| ADR-0106 | Accepted Reset Manager evidence | RM-01…RM-48; refined by ADR-0161 to RM-01…RM-176 |
+| ADR-0107 | Accepted Watermarker/Media evidence | WM-01…WM-48; refined by ADR-0168 to WM-01…WM-176 |
+| ADR-0108 | Accepted Frontend Dashboard evidence | FD-01…FD-48; refined by ADR-0163 to FD-01…FD-176 |
+| ADR-0109 | Accepted Builder Widgets adapter evidence | BW-01…BW-50 + BC0…BC4; refined by ADR-0167 to BW-01…BW-176 |
+| ADR-0110 | Accepted Status Manager evidence | SM-01…SM-48; refined by ADR-0166 to SM-01…SM-176 |
+| ADR-0111 | Accepted XML-RPC evidence | XR-01…XR-48; refined by ADR-0160 to XR-01…XR-176 |
+| ADR-0112 | Accepted Settings Page evidence | ST-01…ST-48; refined by ADR-0162 to ST-01…ST-176 |
 | ADR-0113 | Accepted User Profile evidence | Originally UP-01…UP-48; refined by ADR-0158 to UP-01…UP-176 |
 | ADR-0114 | Accepted Role & Capability evidence | Originally RA-01…RA-48; refined by ADR-0157 to RA-01…RA-176 |
 | ADR-0115 | Accepted REST API Builder evidence | Originally REST-01…REST-52; refined by ADR-0155 to REST-01…REST-176 |
@@ -171,6 +171,20 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0156 | Accepted Import/Export refinement | IM-01…IM-176; original 01…56 preserved |
 | ADR-0157 | Accepted Role & Capability refinement | RA-01…RA-176; original 01…48 preserved |
 | ADR-0158 | Accepted User Profile refinement | UP-01…UP-176; original 01…48 preserved |
+| ADR-0159 | Accepted Protector refinement | PR-01…PR-176; original 01…44 preserved |
+| ADR-0160 | Accepted XML-RPC Manager refinement | XR-01…XR-176; original 01…48 preserved |
+| ADR-0161 | Accepted Reset Manager refinement | RM-01…RM-176; original 01…48 preserved |
+| ADR-0162 | Accepted Settings Page refinement | ST-01…ST-176; original 01…48 preserved |
+| ADR-0163 | Accepted Frontend Dashboard refinement | FD-01…FD-176; original 01…48 preserved |
+| ADR-0164 | Accepted Admin Menu refinement | AM-01…AM-176; original 01…40 preserved |
+| ADR-0165 | Accepted Dashboard Widgets refinement | DW-01…DW-176; original 01…36 preserved |
+| ADR-0166 | Accepted Status Manager refinement | SM-01…SM-176; original 01…48 preserved |
+| ADR-0167 | Accepted Builder Widgets adapter refinement | BW-01…BW-176; BC0…BC4 remain separate certifications |
+| ADR-0168 | Accepted Watermarker / Media refinement | WM-01…WM-176; original 01…48 preserved |
+| ADR-0169 | Accepted Pro Updater TUF refinement | TU-01…TU-176; original 01…44 preserved |
+| ADR-0170 | Accepted OAuth Account-Link refinement | OA-01…OA-176; original 01…32 preserved |
+| ADR-0171 | Accepted Remote Service Privacy / Retention refinement | RS-01…RS-176; original 01…30 preserved |
+| ADR-0172 | Accepted Email Transport / Provider Certification refinement | ET-F001…ET-F176; ET0–ET5 preserved; 6 EE3 / 0 ET-certified |
 
 ## Product specification milestone
 
@@ -183,18 +197,18 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**.
 - MSI **0/160**; LC **0/96**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
-- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**.
-- RLT **0/176**; CAC **0/176**; REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**.
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; OA **0/32**; TU **0/44**.
-- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**.
+- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership providers **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
-- Email transport **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**; Remote privacy RS **0/30**.
+- Connection adapters **0 I4/I5**.
 
 Canonical protocol paths for ADR-0117 onward are under `docs/QUALITY/`; refinement ADRs identify the exact canonical file. No fixed evidence matrix has been executed unless explicitly stated otherwise (currently none).
 
 ## Current planning work
 
-**`P0-M00-WP42` — Protector canonical evidence refinement — SPECIFICATION.**
+**`P0-M00-WP56` — Membership Billing provider certification reassessment — SPECIFICATION.**
 
-Current objective: audit PR-01…PR-44 against RLT/CAC/KPA/ERR/VER/MLC, REST/XML-RPC/Webhooks, Multisite and recovery. Preserve trusted-proxy spoof resistance, atomic rate limiting, WordPress authorization, path/redirect/header safety, non-authenticating recovery and truthful application-layer—not WAF/DDoS—security claims.
+Current objective: audit the existing MB0–MB5 provider certification protocol and four BE3 static provider profiles against current Membership, Vault, JobService, Webhooks/Event Inbox, local/remote privacy, ERR, VER, RLT, Multisite and Site Lifecycle contracts. Preserve commercial-provider source facts ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement, and never promote BE3 paper evidence to MB runtime certification.
