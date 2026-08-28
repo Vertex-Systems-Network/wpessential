@@ -28,7 +28,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Query | ADR-0086 | P-009 |
 | Relations | ADR-0074/0093 | P-010 |
 | Workflow | ADR-0082/0118 | WF-01…WF-116 / P-011 |
-| Membership | ADR-0078/0090 | P-012 + Membership/provider/protected-file evidence |
+| Membership | ADR-0013/0015/0016/0019/0020/0057/0062/0066/0078/0090/0129 | MBR-01…MBR-160 / P-012 + MB/PC profile certification |
 | Backup | ADR-0084/0100 | P-013 |
 | Notification | ADR-0026/0079/0120 | NT-01…NT-142 + NE1/NE2/channel evidence |
 | Message & Chat | ADR-0027/0077/0121 | CH-01…CH-142 + CRT1/CRT2/private-asset/search/transport evidence |
@@ -68,24 +68,24 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103 trusted structured-content evidence | DW-01…DW-36 + UI/BT/CI | No |
 | 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 transform + native safe-mode fallback | AM-01…AM-40 + UI/BT/CI | No |
 | 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112 ST1/ST2/ST3 | ST-01…ST-48 + VT + UI/BT/CI | No |
-| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108 Dashboard + Blueprint runtime | FD-01…FD-48 + UI/BT/CI | No |
+| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108 Dashboard + Blueprint runtime | FD-01…FD-48 + UI/BT/CI + MBR where Membership protected | No |
 | 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113 native WP identity authority | UP-01…UP-48 + UI/BT/CI | No |
-| 15 | Membership System | Exhaustive | M1/M2 + PD/PC protected files | P-012 + MB provider + protected-file + cache/revoke/restore evidence | No |
+| 15 | Membership System | Exhaustive | ADR-0013/0015/0016/0019/0020 + M1/M2 + PD/PC profiles + ADR-0129 | MBR-01…MBR-160; MB provider + PC profile certification remain separate | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109 shared Component Blueprint adapters | BW-01…BW-50; BC0…BC4 + BT/CI | No |
 | 17 | Forms & Workflow Builder | Exhaustive | Forms FRT1/FRT2 + Workflow WF1/WF2 | FM-01…FM-92 + WF-01…WF-116 + JS/P-003; final topology evidence | No |
 | 18 | Cron Job Builder | Exhaustive | JobService + J1/J2/J3 | JS-01…JS-106 / P-003 | No |
 | 19 | Notification System | Exhaustive | NE1/PT-D vs NE2/PT-E | NT-01…NT-142 + JS/WF + provider evidence | No |
 | 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + ET certification + VT | No |
-| 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH-01…CH-142 + Membership/Protected Asset + search/realtime/transport cert | No |
+| 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH-01…CH-142 + MBR/Protected Asset + search/realtime/transport cert | No |
 | 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST-01…REST-52 | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP + verified Gateway + durable Event Inbox | WC-01…WC-156 + VT; I0–I5; Safe HTTP/EI runtime | No |
-| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 artifact profile | P-013/archive/chunks/crypto/C0–C4 restore + VT recovery interaction | No |
+| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 artifact profile | P-013/archive/chunks/crypto/C0–C4 restore + VT/MBR recovery interaction | No |
 | 25 | Reset Manager | Exhaustive | Plan + restore point + durable journal | RM-01…RM-48 + certified Backup boundary where required | No |
 | 26 | Import / Export | Exhaustive | IR1/PT-D vs IR2/PT-E | IM-01…IM-56 | No |
 | 27 | Protector | Exhaustive | request gate + atomic rate-limit | PR-01…PR-44 | No |
 | 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivative pipeline | WM-01…WM-48 | No |
 | 29 | XML-RPC Manager | Exhaustive | layered method/endpoint policy | XR-01…XR-48 | No |
-| 30 | Role & Capability Manager | Exhaustive | native WP authority + anti-lockout | RA-01…RA-48 | No |
+| 30 | Role & Capability Manager | Exhaustive | native WP authority + anti-lockout | RA-01…RA-48 + MBR role-sync provenance interaction | No |
 | 31 | Account/Docs/Support/Diagnostics | Exhaustive | OAuth/Product License/TUF/remote-service architecture | FP/OA/TU/privacy/service runtime + VT/UI/BT/CI | No |
 
 ## Current evidence/certification counters
@@ -101,8 +101,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Query P-009: **0 executed**.
 - Relations P-010: **0 executed**.
 - Workflow P-011 / WF: **0/116; runtime certification none**.
-- Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
-- Backup P-013: **0 executed**; **34 targets / 0 C-certified**.
+- Membership P-012 / MBR: **0/160; runtime certification none; M1/M2 physical benchmarks 0; 4 BE3 / 0 MB-certified; 0 PC1+; independent security review not executed**.
+- Backup P-013: **0 executed; 34 targets / 0 C-certified**.
 - Notification: **0/142 NT**.
 - Message & Chat: **0/142 CH; runtime/realtime/search cert 0**.
 - Webhooks/Connections/Event Inbox: **0/156 WC; I4/I5 0; Safe HTTP/EI runtime unverified**.
@@ -137,21 +137,21 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 4. Fields → Relations P-010 → Query P-009 → Custom Tables → Admin Columns → Blueprint/Listings;
 5. admin/site UX modules using UI/BT/CI and surface gates;
 6. User/Profile + Role security;
-7. Membership P-012 + protected files + MB certification;
+7. Membership P-012/MBR + protected files + MB certification;
 8. Forms/WF/JS → Notification + Email/channel certification;
 9. REST/Connections/Event Inbox/Import using REST/IM/WC/VT;
 10. Backup P-013 + restore certification → Reset/Protector/destructive operations;
-11. Chat after Membership/Protected Asset/Job/Notification prerequisites;
+11. Chat after MBR/Protected Asset/Job/Notification prerequisites;
 12. OAuth Account Link + Product License service;
 13. TUF updater only after verifier/key-ops bar;
 14. AI only over certified scoped Abilities.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0128; runtime/toolchain/blocker ADRs remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts accepted through ADR-0129; runtime/toolchain/blocker ADRs remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
-Current planning work: **P0-M00-WP12 — P-012 Membership runtime/access/protected-files/provider evidence refinement**.
+Current planning work: **P0-M00-WP13 — P-013 Backup/Restore artifact/provider/recovery evidence refinement**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
