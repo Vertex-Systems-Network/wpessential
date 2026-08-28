@@ -35,9 +35,11 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP18` | Custom Tables physical/DDL/migration evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CT1–CT3/CM1–CM4/Query/Fields/Relations/Backup/Multisite | ADR-0135; CTB-01…CTB-184; 0 executed. |
 | `P0-M00-WP19` | Admin Columns operational evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | ADR-0136; AC-01…AC-176; 0 executed. |
 | `P0-M00-WP20` | Dynamic Listings SSR/cache/pagination evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Fields/Relations/Component Blueprint/cache/builders | ADR-0137; DL-01…DL-176; 0 executed. |
-| `P0-M00-WP21` | Free CPT + Taxonomy runtime registration/rewrite evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP registration/rewrite/REST/Definition/Policy/Multisite | ADR-0138; CPTX-01…CPTX-176; 0 executed; all CPTX certifications 0. |
-| `P0-M00-WP22` | Emails Builder renderer/composition evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Email IR/templates/Vault/Policy/Notification/providers/Multisite | ADR-0139; EBR-01…EBR-176; 0 executed; renderer certifications 0; ET transport truth remains separate. |
-| `P0-M00-WP23` | Platform Account / Docs / Support / Diagnostics consolidated evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Product Account/OAuth/License/TUF/Support/Docs/Diagnostics/Remote Service/Vault/Privacy | Current planning work; verify existing per-domain evidence before creating or refining one consolidated fixed platform-surface protocol. |
+| `P0-M00-WP21` | Free CPT + Taxonomy runtime registration/rewrite evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP registration/rewrite/REST/Definition/Policy/Multisite | ADR-0138; CPTX-01…CPTX-176; 0 executed. |
+| `P0-M00-WP22` | Emails Builder renderer/composition evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Email IR/templates/Vault/Policy/Notification/providers/Multisite | ADR-0139; EBR-01…EBR-176; 0 executed; ET separate. |
+| `P0-M00-WP23` | Platform Account / Docs / Support / Diagnostics evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Product Account/OAuth/License/TUF/Support/Docs/Diagnostics/Remote Service/Vault/Privacy | ADR-0140; PLT-01…PLT-176; 0 executed; FP/OA/TU/RS remain separate prerequisites. |
+| `P0-M00-WP24` | Multisite Scope/Isolation + Site Lifecycle evidence refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Scope/Policy/Jobs/Cache/Vault/Membership/Backup/Product License/lifecycle | ADR-0141; MSI-01…MSI-160 + LC-01…LC-96; 0 executed; MS0–MS4/SL0–SL4 preserved. |
+| `P0-M00-WP25` | Audit & Observability executable-evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Audit/AU1/PT-D/retention/integrity/diagnostics/security/event correlation | Current planning work; inspect accepted Audit architecture and existing evidence before creating/refining a canonical fixed protocol. |
 
 No production implementation work package is active.
 
@@ -45,8 +47,8 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Platform Account / Docs / Support / Diagnostics evidence reassessment | `SPECIFICATION` current | Reconcile existing OA/TU/FP/privacy/service architecture and platform exhaustive spec; avoid duplicating already-fixed sub-protocols |
-| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP23 |
+| 1 | Audit & Observability executable-evidence reassessment | `SPECIFICATION` current | Shared platform service; dedicated fixed protocol not found; inspect architecture/retention/integrity/privacy/diagnostics overlap first |
+| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP25 |
 
 Planning documentation work does not create implementation authorization.
 
@@ -60,22 +62,20 @@ No active shared-surface implementation reservation exists.
 
 ## 5. Foundation/consumer truth preserved
 
-- Definition: DEF **0/144**; Query: QRY **0/168**; Relations: REL **0/160**.
-- Field Storage: FST **0/176**; Custom Tables: CTB **0/184**.
-- Admin Columns: AC **0/176**; displayed cells do not imply real sort/filter/edit/export capability.
-- Dynamic Listings: DL **0/176**; rendered HTML does not imply authorized count/cursor/cache/client-transition correctness.
-- Free CPT/Taxonomy: CPTX **0/176**; stored Definition does not equal effective WordPress registration or rewrite/REST/editor state.
-- Emails Builder: EBR **0/176**; rendered message generation does not imply transport submission, receiving-server delivery, inbox placement, human read or provider certification.
-- Email transport remains **6 EE3 / 0 ET-certified**; EBR does not supersede ET0–ET5.
-- published CPT/taxonomy keys are migration-class identities.
-- rewrite flush is controlled/dirty-generation based, never every request.
-- Definition disable/delete preserves posts/terms/relationships/meta by default.
-- external discovery/collision does not establish WPE ownership.
-- network templates do not make site content shared.
+- Definition DEF **0/144**; Query QRY **0/168**; Relations REL **0/160**.
+- Field Storage FST **0/176**; Custom Tables CTB **0/184**; Admin Columns AC **0/176**; Dynamic Listings DL **0/176**.
+- Free CPT/Taxonomy CPTX **0/176**; stored Definition does not equal effective WP registration/rewrite/REST/editor state.
+- Emails Builder EBR **0/176**; render success never implies ET provider/delivery success.
+- Platform PLT **0/176**; Account connection, entitlement, allocation, update trust, support authority and diagnostics transmission remain separate.
+- Multisite MSI **0/160**; runtime-certified surfaces at MS1+ remain 0.
+- Site Lifecycle LC **0/96**; SL runtime certification remains 0.
+- current-blog context is never durable ownership or authorization.
+- site deletion does not imply global-user deletion/billing cancellation/shared-secret deletion/privacy erasure.
+- clone/restore cannot silently resurrect stale commercial/provider/access authority.
 - destructive schema/data work requires truthful verified recovery boundaries.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP23`: audit Platform Account/Docs/Support/Diagnostics exhaustive surface against Product License, OAuth Account Link, TUF updater, Remote Service, privacy/retention, support-ticket authority, Docs/Changelog/System Status contracts, Multisite scope and existing OA/TU/FP evidence. Prefer existing canonical sub-protocols; create a consolidated platform-surface protocol only for uncovered cross-surface behavior.
+Continue `P0-M00-WP25`: audit Audit PT-D/AU1 architecture, event taxonomy, actor/scope/correlation, append/history integrity, retention/erasure boundaries, privacy/redaction, provider/job/workflow correlation, Multisite isolation, export/support diagnostics, failure/degraded behavior and any existing audit evidence. Prefer canonical in-place refinement and do not duplicate domain-history or diagnostics protocols.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
