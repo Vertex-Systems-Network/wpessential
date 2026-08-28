@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions now extend through **ADR-0129**.
+Accepted evidence decisions now extend through **ADR-0130**.
 
 Recent bounded protocols:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -41,7 +41,8 @@ Recent bounded protocols:
 - ADR-0126 — P-008 Build Toolchain BT-01…BT-112.
 - ADR-0127 — P-007 CI/Quality Matrix CI-01…CI-120.
 - ADR-0128 — P-006 Free↔Pro Compatibility FP-01…FP-144.
-- **ADR-0129 — P-012 Membership Runtime/Access/Protected Files/Provider MBR-01…MBR-160.**
+- ADR-0129 — P-012 Membership Runtime/Access/Protected Files/Provider MBR-01…MBR-160.
+- **ADR-0130 — P-013 Backup/Restore Artifact/Provider/Recovery BK-01…BK-180.**
 
 ## WP09 — P-002 UI + P-008 Build — COMPLETE
 
@@ -62,7 +63,8 @@ Work package: **`P0-M00-WP10`** — DONE planning/documentation only.
 - CI fixtures: **0/120** executed.
 - CI runtime certification: 0.
 - repository workflow implementation verified: NO.
-- branch protection/rulesets: **UNKNOWN**.
+- direct GitHub branch reads on 2026-08-28 report `main` and `planning/master-architecture` branch protection as **disabled/unprotected**.
+- repository-wide rulesets state remains **UNKNOWN** because the rulesets endpoint is plan/access restricted (403).
 - untrusted PR code must never receive provider/release secrets.
 - FAST/FULL, BASELINE FAILURE, flaky quarantine, artifact provenance and release gating remain mandatory.
 
@@ -110,6 +112,39 @@ Preserved Membership invariants:
 - protected-file claims require origin-byte isolation, not merely hidden links/pages;
 - Restore/clone reauthorizes/reconciles before stale access or production provider use resumes.
 
+## WP13 — P-013 Backup / Restore — COMPLETE
+
+Work package: **`P0-M00-WP13`** — DONE planning/documentation only.
+
+Created:
+- `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0130-p013-backup-restore-evidence-protocol.md`
+
+Current Backup evidence:
+- BK fixtures documented: **180**
+- executed: **0/180**
+- Backup/Restore runtime certifications: **0**
+- planned provider targets: **34**
+- provider C-certified: **0**
+- provider C3 Supported: **0**
+- V3 Restore Tested production-profile certifications: **0**
+- independent disaster-recovery/security review executed: **NO**
+
+Preserved Backup invariants:
+- generated/uploaded does not mean restore-ready;
+- V2 Remote Verified does not mean V3 Restore Tested;
+- required missing/corrupt capture cannot be presented as fully verified;
+- provider success/checksum does not replace WPE manifest/integrity/restore truth;
+- static SE evidence never grants C certification;
+- provider certification is exact provider/profile/adapter/environment scoped;
+- the only recovery key cannot live solely beside/inside the ciphertext it unlocks;
+- integrity/authentication failure aborts before destructive restore;
+- hostile archive/parser/path/symlink/decompression input is bounded and fail-safe;
+- unknown remote-delete outcome is not completed deletion;
+- restore/clone must revalidate Vault/provider/commercial state;
+- stale Membership derived/cache state cannot resurrect revoked/expired access;
+- Reset/migration/destructive flows cannot claim a restore point merely because a Backup job started.
+
 ## Current evidence counters
 
 - P-001 / CF: **0/112**; compatibility floor not certified.
@@ -120,11 +155,11 @@ Preserved Membership invariants:
 - P-006 / FP: **0/144**.
 - P-007 / CI: **0/120**.
 - P-008 / BT: **0/112**.
-- P-009: **0 executed**.
+- P-009: **0 executed; fixed dedicated protocol not yet accepted**.
 - P-010: **0 executed**.
 - P-011 / WF: **0/116**.
 - P-012 / MBR: **0/160; runtime certifications 0**.
-- P-013: **0 executed; 34 provider targets / 0 C-certified**.
+- P-013 / BK: **0/180; runtime certifications 0; 34 provider targets / 0 C-certified / 0 C3 Supported; V3 certifications 0**.
 - WC: **0/156**.
 - CH: **0/142**.
 - NT: **0/142**.
@@ -158,15 +193,15 @@ Preserved Membership invariants:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts accepted through ADR-0129;
+- evidence contracts accepted through ADR-0130;
 - runtime/toolchain blocker ADRs remain unverified until applicable authorized execution;
-- no package install/build/WordPress runtime/browser/CI/migration/license/billing/provider/file-transfer/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/migration/license/billing/provider/file-transfer/archive/restore/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP13` — P-013 Backup/Restore artifact/provider/recovery executable evidence refinement**.
+Current work package: **`P0-M00-WP14` — P-009 Query compiler/cost/cache/security executable evidence refinement**.
 
-Reason: Backup is the remaining critical recovery foundation for migrations, Reset Manager, destructive changes, Vault disaster recovery and operational incident recovery. Existing manifest/crypto/remote-copy/provider certification and artifact profiles must be reconciled into a fixed restore-first adversarial protocol.
+Reason: Query is a shared data-plane dependency for Custom Query Builder, Dynamic Listings, Admin Columns, REST, Forms/Dashboards and relation/custom-table consumers. ADR-0086 defines QP1–QP4 paper baselines, but no dedicated fixed P-009 executable-evidence protocol exists yet. The next safe task is to reconcile compiler semantics, authorization placement, adapter capability, cost controls, pagination/order stability, cache scope/invalidation, hostile AST/input handling, Multisite isolation and scale into one bounded protocol.
 
 All existing evidence gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
