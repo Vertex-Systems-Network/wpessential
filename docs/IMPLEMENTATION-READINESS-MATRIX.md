@@ -32,6 +32,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Backup | ADR-0084/0100 | P-013 |
 | Notification | ADR-0026/0079/0120 | NT-01…NT-142 + NE1/NE2/channel evidence |
 | Message & Chat | ADR-0027/0077/0121 | CH-01…CH-142 + CRT1/CRT2/private-asset/search/transport evidence |
+| Webhooks/Connections/Event Inbox | ADR-0040/0055/0080/0122 | WC-01…WC-156 + I0–I5 + EI1/EI2 evidence |
 | Admin Columns | ADR-0098 AC1 | dedicated runtime/list-table evidence |
 | Dynamic Listings | ADR-0099 DL1 | dedicated SSR/cache/pagination evidence |
 | Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
@@ -77,7 +78,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + 0 ET certification | No |
 | 21 | Message & Chat | Exhaustive | ADR-0027/0077/0121 CRT1/PT-D vs CRT2/PT-E; transport-independent canonical runtime | CH-01…CH-142; private-asset/search/realtime/transport certification; final CRT topology | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028/0094/0115 RE1 + RI1/RI2 | REST-01…REST-52 | No |
-| 23 | Webhooks & Connections | Exhaustive | ADR-0040/0055/0080 Safe HTTP + Event Inbox | signature/replay/routing/provider I0–I5 + EI topology evidence | No |
+| 23 | Webhooks & Connections | Exhaustive | ADR-0040/0055/0080/0122 Safe HTTP + verified Gateway + durable Event Inbox; EI1/EI2 | WC-01…WC-156; provider I0–I5; Safe HTTP/Event Inbox runtime; final EI topology | No |
 | 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 artifact profile | P-013/archive/chunks/crypto/C0–C4 restore evidence | No |
 | 25 | Reset Manager | Exhaustive | ADR-0047/0106 Plan + restore point + durable journal | RM-01…RM-48 | No |
 | 26 | Import / Export | Exhaustive | ADR-0041/0095/0116 IR1/PT-D vs IR2/PT-E | IM-01…IM-56 | No |
@@ -96,6 +97,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Workflow P-011 / WF: **0/116 WF fixtures; runtime certification none; final topology open**.
 - Notification: **0/142 NT fixtures; runtime certification none; final NE topology open**.
 - Message & Chat: **0/142 CH fixtures; runtime certification none; realtime transport certification none; search adapter certification none; final CRT topology open**.
+- Webhooks/Connections/Event Inbox: **0/156 WC fixtures; I4/I5 certifications 0; Event Inbox runtime certification 0; Safe HTTP runtime certification none; final EI topology open**.
 - Vault P-005: **0 executed**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Forms Runtime: **0/92 FM fixtures; 0 runtime certifications; FRT topology not final**.
@@ -135,7 +137,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 6. User/Profile + Role security evidence before privileged management claims;
 7. Membership P-012 + protected files + MB certification;
 8. Forms FM + Workflow WF/P-011 + Job JS/P-003 → Notification NT + Email/channel certification;
-9. REST/Connections/Event Inbox/Import using REST/IM and future Webhook/Connection evidence gates;
+9. REST/Connections/Event Inbox/Import using REST/IM/WC evidence gates;
 10. Backup P-013 + restore certification → Reset/Protector/other destructive operations;
 11. Chat using CH protocol after Membership/Protected Asset/Job/Notification prerequisites and storage/search/transport evidence;
 12. OAuth Account Link OA protocol + Product License service;
@@ -144,7 +146,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0121.**  
+**Architecture/evidence contracts accepted through ADR-0122.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
