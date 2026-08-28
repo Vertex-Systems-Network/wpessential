@@ -19,7 +19,8 @@ Authorized module/platform surfaces: **0/31**
 |---|---|---|---|---|---|---|
 | `P0-M00-WP01` | Universal Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | AGENTS/governance/quality/spec/checkpoint/PR docs | Documentation-only; governance integrated. |
 | `P0-M00-WP02` | Forms runtime/storage/submission executable evidence protocol | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Forms spec/runtime/topology/quality/ADR/readiness/checkpoint docs | ADR-0117; FM-01…FM-92 documented; 0 executed; FRT topology remains open. |
-| `P0-M00-WP03` | Workflow/Cron scheduling/DST/claims evidence refinement | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Workflow Runtime + JobService + scheduler/cron evidence/governance docs | Current next planning work; P-003/P-011 remain execution-gated. |
+| `P0-M00-WP03` | Workflow/Cron scheduling/DST/claims evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Workflow Runtime + JobService + scheduler/cron evidence/governance docs | ADR-0118/0119; WF-01…WF-116 and JS-01…JS-106 documented; 0 executed; Workflow/Job physical/backend choices remain evidence-gated. |
+| `P0-M00-WP04` | Notification fan-out/read/dedupe evidence protocol | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Notification domain + JobService + Email/channel evidence/governance docs | Current next planning work; no runtime execution. |
 
 No production implementation work package is active.
 
@@ -29,10 +30,9 @@ Do not restart from zero.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Workflow/Cron scheduling/DST/claims evidence refinement | `SPECIFICATION` current | Reconcile ADR-0059/0068/0082/0083 + P-003/P-011 |
-| 2 | Notification fan-out/read/dedupe evidence protocol | `BLOCKED` by sequence | Depends on stable Job/Workflow semantics |
-| 3 | Message & Chat transport/search/private-assets evidence protocol | `BLOCKED` by sequence | Later communication/runtime work |
-| 4 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `BLOCKED` by sequence | Provider/event evidence remains unexecuted |
+| 1 | Notification fan-out/read/dedupe evidence protocol | `SPECIFICATION` current | Reconcile ADR-0026/0079 + JobService/Workflow/Email truth boundaries |
+| 2 | Message & Chat transport/search/private-assets evidence protocol | `BLOCKED` by sequence | Later communication/runtime work |
+| 3 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `BLOCKED` by sequence | Provider/event evidence remains unexecuted |
 
 These are planning tasks only, not implementation approvals.
 
@@ -127,6 +127,6 @@ Do not update it for every tiny edit.
 
 ## 10. Current next safe action
 
-Continue `P0-M00-WP03`: reconcile Workflow Runtime, JobService, Action Scheduler packaging, Cron/timezone/DST and concurrency/claim semantics into bounded executable evidence protocols.
+Continue `P0-M00-WP04`: reconcile Notification occurrence, recipient/read state, fan-out, dedupe, JobService, channel delivery and Email/provider truth into a bounded executable evidence protocol.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
