@@ -40,7 +40,7 @@ Before requesting development approval for a milestone, present scope, exclusion
 
 Move a work unit to `AWAITING_DEVELOPMENT_APPROVAL` only when its planning/audit package is actually ready. Do not start production implementation until unambiguous approval is recorded.
 
-ADR-0207 explicitly decides that **P0 is not yet ready for this transition**.
+ADR-0207 kept P0 open. ADR-0208 closes the Market Expansion exact-planning tranche only; **P0 still does not move to `AWAITING_DEVELOPMENT_APPROVAL`** because WP114–WP116 remain.
 
 ## 6. Work lifecycle
 
@@ -78,22 +78,22 @@ Logical product planning status:
 - shared AI Prompt product mapping: **56/56**;
 - runtime certifications: **none**.
 
-Accepted exact universal/adapter evidence includes SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA. These plans remain unexecuted and do not grant implementation permission.
+Accepted exact evidence now includes SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA and, under ADR-0208, RDR/SRT/DMY/LNK/DBM/PDO/MIR. All remain unexecuted and grant no implementation permission.
 
-## 9. WP112 / ADR-0207 approval-readiness result
+## 9. Closure/readiness planning state
 
-WP112 is **DONE / ADR-0207**.
+WP112 is **DONE / ADR-0207**. It identified **5,808** exact definitions across 33 supplemental/market namespaces.
 
-Finding: P0 remains in `SPECIFICATION`; it does **not** move to `AWAITING_DEVELOPMENT_APPROVAL` because 33 accepted market/competitive namespaces still need exact individual fixture expansion.
+WP113 is **DONE / ADR-0208**:
+- Market Expansion RDR/SRT/DMY/LNK/DBM/PDO/MIR;
+- **1,232/1,232 exact fixtures documented**;
+- **0 executed**.
 
 Remaining exact planning definitions:
-- WP113 Market Expansion — **1,232**;
-- WP114 First Competitive — **880**;
-- WP115 Second Competitive — **1,936**;
-- WP116 Third Competitive — **1,760**;
-- total: **5,808 fixtures**.
-
-Current planning work: **P0-M00-WP113 — Market Expansion exact executable-evidence specification**.
+- **WP114 CURRENT** — First Competitive MPR/RPR/ATM/MDP/STM — **880**;
+- WP115 — Second Competitive — **1,936**;
+- WP116 — Third Competitive — **1,760**;
+- total remaining: **4,576 / 26 namespaces**.
 
 After WP116, a new closure/readiness audit must decide whether the approval-readiness state can change. That later audit still cannot grant implementation consent by itself.
 
@@ -104,6 +104,8 @@ After WP116, a new closure/readiness audit must decide whether the approval-read
 - `PROVIDER CERTIFICATION PENDING` — provider contract exists; provider/runtime certification does not.
 - `OWNER CONSENT PENDING` — technical plan may exist but implementation permission has not been granted.
 - `NO GAP / READY AS PLAN` — planning layer complete only; not runtime-certified.
+
+RDR/SRT/DMY/LNK/DBM/PDO/MIR are now `NO GAP / READY AS PLAN` for exact evidence design and `RUNTIME EVIDENCE PENDING` operationally.
 
 ## 11. Approval autonomy / revocation
 
