@@ -26,9 +26,9 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0163**.
+Accepted evidence decisions/refinements now extend through **ADR-0170**.
 
-Recent fixed evidence sequence:
+### Fixed evidence sequence
 
 | ADR | Work | Evidence truth |
 |---|---|---|
@@ -79,22 +79,34 @@ Recent fixed evidence sequence:
 | ADR-0161 | Reset Manager refinement | RM **0/176** |
 | ADR-0162 | Settings Page refinement | ST **0/176** |
 | ADR-0163 | Frontend Dashboard refinement | FD **0/176** |
+| ADR-0164 | Admin Menu refinement | AM **0/176** |
+| ADR-0165 | Dashboard Widgets refinement | DW **0/176** |
+| ADR-0166 | Status Manager refinement | SM **0/176** |
+| ADR-0167 | Builder Widgets adapters refinement | BW **0/176**; BC0…BC4 certs 0 |
+| ADR-0168 | Watermarker / Media refinement | WM **0/176** |
+| ADR-0169 | Pro Updater TUF refinement | TU **0/176** |
+| ADR-0170 | OAuth Account-Link refinement | OA **0/176** |
 
 ## Critical preserved truth
 
 - Compatibility floor remains unverified; ADR-0002 stays evidence-gated.
 - Canonical build toolchain/runtime CI implementation remains unverified.
-- Action Scheduler remains preferred candidate only, not certified.
-- Free owns shared kernel/registry family; Pro registers into it.
+- Action Scheduler remains a preferred candidate only, not certified.
+- Free owns the shared kernel/registry family; Pro registers into it.
 - Every invocation channel remains Capability + target resource Policy bound.
-- `condition=true`, DVR success, RLT allow, CAC hit, route visibility, menu visibility, CORS/preflight or idempotency never grants authorization.
+- `condition=true`, DVR success, RLT allow, CAC hit, route/menu/widget visibility, CORS/preflight or idempotency never grants authorization.
 - WordPress remains native identity/auth and Role/Capability authority where accepted.
-- generic User Profile/Settings/Dashboard fields/components cannot bypass dedicated password/session/role/Membership/Vault/security operations.
+- Generic User Profile/Settings/Dashboard/builder fields cannot bypass password/session/role/Membership/Vault/security operations.
 - Protector is application-layer hardening, not a complete edge WAF/DDoS product.
-- `xmlrpc_enabled=false` is not equivalent to endpoint disabled; endpoint, registry, method policy and native auth remain separate.
+- XML-RPC endpoint reachability, method registry/policy, native auth and outer gating remain distinct.
 - Reset is staged destructive orchestration with verified recoverability; WordPress Recovery Mode is not data rollback.
-- Settings Definition ≠ runtime value document ≠ secret plaintext ≠ external setting authority.
-- route/menu visibility never substitutes for direct server-side authorization.
+- Menu/widget/dashboard presentation never substitutes for direct server-side authorization.
+- Status current state, transition result/history and side effects remain separate; WP Post Status and generic state machine certifications remain separate.
+- Builder-private documents are adapters; Component Blueprint remains canonical.
+- Watermarker/Media original source bytes/checksum remain immutable under standard WPE processing.
+- Account identity, Product entitlement and TUF update authenticity remain separate trust domains.
+- TUF target execution requires a trusted metadata graph + target hash/length + archive/compatibility gates; Account/API/CDN cannot add Root trust.
+- OAuth Account link never grants WordPress/Membership/Product entitlement authority by itself; PKCE S256/exact redirect/issuer binding remain first-profile requirements.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
 - cache state ≠ canonical business/Audit/Rate-Limit truth.
@@ -108,13 +120,12 @@ Primary/shared:
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**.
 - MSI **0/160**; LC **0/96**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
-- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**.
-- RLT **0/176**; CAC **0/176**; REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**.
-- PR **0/176**; XR **0/176**; RM **0/176**; ST **0/176**; FD **0/176**.
+- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
+- REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**; PR **0/176**; XR **0/176**; RM **0/176**; ST **0/176**; FD **0/176**.
+- AM **0/176**; DW **0/176**; SM **0/176**; BW **0/176**; WM **0/176**; TU **0/176**; OA **0/176**.
 
-Other existing evidence:
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; OA **0/32**; TU **0/44**.
-- DW **0/36**; AM **0/40**; WM **0/48**; BW **0/50**; SM **0/48**.
+Other evidence/provider truth:
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Membership billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Email transport/provider **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
 - Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
@@ -123,16 +134,16 @@ Other existing evidence:
 ## Current VCS / verification truth
 
 - planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; current mergeability must be re-verified after this sync.
+- Draft PR #1 remains the planning PR; mergeability must be re-verified after this synchronization pass.
 - direct GitHub reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected.
-- repository-wide rulesets remain **UNKNOWN** because ruleset endpoint access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/archive/restore/query/cache/rate-limit/REST/import/role/profile/Protector/XML-RPC/Reset/Settings/Dashboard runtime/benchmark execution occurred.
+- repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth runtime or benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP47` — Admin Menu canonical evidence refinement — SPECIFICATION**.
+Current work package: **`P0-M00-WP54` — Remote Service Privacy / Retention canonical evidence reassessment — SPECIFICATION**.
 
-Reason: Admin Menu remains a recovery-sensitive wp-admin presentation surface at **AM 0/40**. The existing protocol predates KPA/RA/CAC/ASR/ERR/VER/MLC and current Multisite lifecycle contracts. WP47 will preserve the core invariant that menu hiding/reordering never changes screen authorization, while refining runtime discovery, stable target identity, conflict ordering, safe mode/recovery, site/network isolation and performance evidence.
+Reason: remote-service privacy remains at **RS 0/30** while local PDL, Platform surfaces, OAuth, Product License, Support/Docs and provider-facing contracts have since become much more exhaustive. WP54 should reassess the existing remote privacy protocol in place, without conflating disconnect, local erase, remote account deletion, provider deletion or Backup retention.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
