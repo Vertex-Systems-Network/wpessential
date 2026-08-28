@@ -21,9 +21,9 @@ Historical denominators: 31 original; 43 after ADR-0177; 48 after ADR-0188; 50 a
 
 ## 2. Historical planning work
 
-Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidence/ADR semantics. They are planning completion records, not implementation/runtime claims.
+Work packages `P0-M00-WP01…WP59` remain DONE and retain their original planning/evidence semantics.
 
-## 3. Universal-system detailed evidence sequence
+## 3. Universal-system / adapter detailed evidence sequence
 
 | Work ID | Scope | Lifecycle | Evidence / note |
 |---|---|---|---|
@@ -40,10 +40,8 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP70 | F08 Experimentation/Rollout detailed evidence | DONE | ADR-0202; EXP 176 documented / 0 executed |
 | WP71 | F09 Documents/Records/Templates detailed evidence | DONE | ADR-0203; DOC 176 documented / 0 executed |
 | WP72 | F10 Data Sync/ETL detailed evidence | DONE | ADR-0204; SYN 176 documented / 0 executed |
-| **WP73** | **F11 Geospatial/Territory detailed evidence** | **DONE** | **ADR-0205; GEO 176 documented / 0 executed** |
-| **WP74** | **WooCommerce Commerce Domain Adapter detailed evidence** | **SPECIFICATION / CURRENT** | WCA 0/176 envelope |
-
-WP74 retains its reserved meaning and is not repurposed.
+| WP73 | F11 Geospatial/Territory detailed evidence | DONE | ADR-0205; GEO 176 documented / 0 executed |
+| **WP74** | **WooCommerce Commerce Domain Adapter detailed evidence** | **DONE** | **ADR-0206; WCA 176 documented / 0 executed** |
 
 ## 4. Completed planning interrupts
 
@@ -54,11 +52,23 @@ WP74 retains its reserved meaning and is not repurposed.
 
 All remain planning-only and unexecuted unless later evidence explicitly records otherwise.
 
-## 5. Current scope/evidence truth
+## 5. Current planning work
+
+**WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit — AUDITING / CURRENT.**
+
+Purpose:
+- reconcile all current 56-surface governance summaries;
+- remove stale 50/55-surface current-state claims while preserving them only as historical snapshots;
+- reconcile `IMPLEMENTATION-READINESS-MATRIX.md`, `APPROVAL-LEDGER.md`, Draft PR #1, CHECKPOINT and Linear;
+- identify every remaining planning-only/unexpanded/unexecuted evidence namespace, provider certification, compatibility, security, privacy, Multisite, recovery, build/CI and AI/MCP blocker;
+- determine whether any planning gap remains before lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`;
+- do **not** execute tests/benchmarks/providers/runtime or grant implementation consent.
+
+## 6. Current scope/evidence truth
 
 Current module/platform denominator: **56**.
 
-Universal detailed evidence state:
+Detailed universal/adapter evidence state:
 - SBP 176 documented / 0 executed;
 - ANL 176 documented / 0 executed;
 - SRH 176 documented / 0 executed;
@@ -69,50 +79,45 @@ Universal detailed evidence state:
 - EXP 176 documented / 0 executed;
 - DOC 176 documented / 0 executed;
 - SYN 176 documented / 0 executed;
-- **GEO 176 documented / 0 executed**;
-- WCA 0/176 group envelope is the current detailed-enumeration target.
+- GEO 176 documented / 0 executed;
+- **WCA 176 documented / 0 executed**.
 
-Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
+AIP and all supplemental/provider/runtime evidence remain unexecuted unless an accepted later record explicitly says otherwise. Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176.
 
-## 6. Shared-surface reservations
+## 7. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring may consume typed geospatial facts but cannot convert spatial rank/score into authorization.
-- F05 Ledger, F06 Scheduling, F09 immutable Records and commerce/payment/order owners remain canonical for their own business facts.
-- F07 Placement/F08 Experimentation may consume territory/location predicates only through Policy-safe typed interfaces; spatial match does not grant presentation/business authorization.
-- F10 synchronization may move location/address/territory values while preserving source provenance; synchronized data does not automatically become F11 authority.
-- F11 owns typed location/address/coordinate/territory definitions, deterministic spatial evaluation and provider-safe geospatial orchestration for explicit profiles.
-- Geocoded coordinate is not verified address/identity truth by default; provider confidence is not certainty.
-- Spatial match/territory assignment is not authorization, entitlement, ownership or legal jurisdiction.
-- Bounding-box match is not polygon containment; polygon containment is not guaranteed serviceability.
-- Straight-line distance is not travel distance/time; route/matrix estimate is not a delivery or travel guarantee.
-- CRS, axis order, coordinate precision, algorithm/model and provenance remain explicit and versioned.
-- Territory overlaps require deterministic priority/assignment policy; DB row order is not authority.
-- Precise location remains consent/Policy/retention/redaction governed; logs/AI/MCP receive only allowed projection.
-- Geocoder/routing unknown outcomes remain unknown/retryable according to provider semantics rather than false no-result/no-route claims.
-- Provider credentials remain Vault-owned; provider terms, cache limits, quotas and licensing are binding.
-- Provider/version/data-source drift is explicit compatibility/provenance state and cannot be silently coerced.
-- Spatial backend results are reauthorized before protected location/entity data is exposed.
-- Multisite territory/location/cache/provider ownership is site/tenant isolated and server-resolved.
-- Backup/restore/clone cannot roll back external geocoder/routing state; cloned production provider mappings stay quarantined until remapped/approved. This remains a cross-foundation environment-safety rule rather than a GEO namespace reassignment.
-- AI Prompt Runtime remains shared; no hidden privileged precise-location, provider or territory mutation path exists.
-- **WP74 WooCommerce Commerce Domain Adapter may consume F03–F11 capabilities only through declared adapter contracts; commerce truth remains with WooCommerce/canonical commerce owners and cannot be redefined by generic foundations.**
+- F03–F11 and A01 may compose only through declared typed/Policy-safe contracts; none may silently become another domain's source of truth.
+- WCA integrates WooCommerce rather than replacing its product/customer/cart/checkout/order/tax/shipping/payment/refund/inventory truth.
+- Product purchasability, stock, reservation and completed purchase remain distinct.
+- Cart is not order; checkout submission is not payment authorization/capture/settlement.
+- Woo order status is not bank/gateway settlement unless a certified gateway contract explicitly establishes that mapping.
+- Woo refund object/request is not confirmed provider refund.
+- Unknown payment/refund/shipping/provider outcomes require reconciliation before unsafe replay.
+- HPOS certified behavior uses supported Woo APIs/Data Stores; direct private-table order writes/assumptions are prohibited.
+- Stock quantity/hold/decrement/third-party ownership remain distinct; F05 Ledger does not become Woo stock/order/payment truth.
+- Tax/shipping/payment provider facts cannot be fabricated by generic WPE formula/decision logic.
+- My Account/download UI visibility does not authorize protected resources.
+- Hooks/webhooks/Action Scheduler jobs may duplicate/reorder/retry and therefore require explicit event/business-operation idempotency.
+- Multisite store/customer/product/order/provider ownership remains site/tenant isolated and server-resolved.
+- Clone/import/restore/staging cannot blindly activate production gateways, webhooks, scheduled jobs or external provider mappings.
+- AI Prompt Runtime remains shared; no hidden privileged live-commerce path exists.
 
 Implementation shared-surface reservations remain **0**.
 
-## 7. F11 completion truth — ADR-0205
+## 8. WP74 completion truth — ADR-0206
 
-`docs/QUALITY/GEOSPATIAL-TERRITORY-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `GEO-001…GEO-176` and preserves the exact canonical evidence-master-plan group ownership.
+`docs/QUALITY/WOOCOMMERCE-COMMERCE-DOMAIN-ADAPTER-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `WCA-001…WCA-176` with the exact 16 master-plan groups.
 
-Frozen evidence includes location/address/coordinate/territory schemas, geocoder provenance/confidence, coordinate precision/CRS/axis order, radius/distance/bounding-box semantics, polygons/holes/boundaries, territory hierarchy/overlap/priority, spatial backend capability/fallback, provider cache/freshness/terms, precise-location privacy, routing/matrix unknown outcomes and limits, coordinate-system/invalid-geometry import/export, protected-location Policy, Multisite territory lifecycle, **provider/version/data-source drift**, large spatial dataset/query performance and **delivery/service-area/real-estate/fleet golden regressions**.
+Frozen evidence covers Woo capability/bootstrap detection, Product/Variation Data Source, customer/privacy identity, cart/session/concurrency, Checkout Blocks/classic compatibility, HPOS abstraction, order/refund idempotency/payment boundaries, inventory ownership, pricing/coupons/tax, shipping, payment gateways, My Account/download protection, events/Action Scheduler/webhooks, Multisite/clone/restore, high-scale performance reservations and complete product→cart→checkout→order→refund/fulfillment golden regressions.
 
-Current GEO truth: **176 documented / 0 executed / runtime certification 0**.
+Current WCA truth: **176 documented / 0 executed / runtime certification 0**.
 
-## 8. Runtime truth
+## 9. Runtime truth
 
-No F11 feature has executed. Specifically, no geocoder/routing/provider request, spatial backend query, coordinate mutation, territory assignment, precise-location collection, cache mutation, geometry import/repair, provider-drift migration, Multisite geospatial operation, AI/MCP session, test or benchmark occurred.
+No WCA feature has executed. Specifically, no Woo product/customer/cart/checkout/order/refund/stock/tax/shipping/payment/account/event/HPOS/provider operation, Action Scheduler task, webhook processing, AI/MCP session, test or benchmark occurred.
 
-## 9. Current next safe action
+## 10. Current next safe action
 
-Continue **P0-M00-WP74 — WooCommerce Commerce Domain Adapter detailed executable-evidence specification (`WCA-001…WCA-176`)**.
+Continue **P0-M00-WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit**.
 
 Production development remains **NOT GRANTED / 0/56**.
