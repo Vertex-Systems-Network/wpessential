@@ -45,8 +45,10 @@ Ask again only when scope/risk materially changes or a separately privileged/des
 ## Current consent state
 
 Project development approval: **NOT GRANTED / PENDING**  
-Implementation authorization: **0/31 module/platform surfaces**  
+Implementation authorization: **0/48 module/platform surfaces**  
 Execution mode: **PLANNER_ONLY**
+
+Historical `0/31` and `0/43` counters refer to earlier pre-expansion scope snapshots only.
 
 The durable current ledger is `docs/APPROVAL-LEDGER.md`.
 
@@ -92,7 +94,9 @@ Without explicit owner consent, do **not** perform any production-development ac
 - execute implementation migrations;
 - package/install/activate a production WPEssential build;
 - deploy code;
-- merge an implementation PR.
+- merge an implementation PR;
+- install/enable scheduled market-research GitHub workflows;
+- execute crawlers, Search/Replace transformations, fixture generation or DB cleanup against a runtime.
 
 ## Research spike boundary
 
