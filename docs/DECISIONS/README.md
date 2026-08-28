@@ -158,7 +158,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0143 | Accepted Kernel/Module Registry/Capability-Policy/Abilities/Events/Extension SDK evidence protocol / execution pending | KPA-01…KPA-176; shared-platform certification classes 0 |
 | ADR-0144 | Accepted Local Privacy / Data Lifecycle evidence protocol / execution pending | PDL-01…PDL-176; local classification/retention/export-erasure/backup-restore/Multisite evidence; RS remote privacy separate |
 | ADR-0145 | Accepted Error Taxonomy & Failure UX evidence protocol / execution pending | ERR-01…ERR-176; machine-code/envelope/retry/conflict/partial-failure/redaction/accessibility/channel-parity certifications 0 |
-| ADR-0146 | Accepted Component Blueprint Core Runtime evidence protocol / execution pending | CBP-01…CBP-176; CBP-D/C/B/R/S/A/K/X/U/O certifications 0; BW/BC adapter certification separate |
+| ADR-0146 | Accepted Component Blueprint Core Runtime evidence protocol / execution pending | CBP-01…CBP-176; core certifications 0; BW/BC adapter certification separate |
+| ADR-0147 | Accepted Contract Versioning & Deprecation evidence protocol / execution pending | VER-01…VER-176; cross-version/migrator/deprecation/removal evidence; domain migrations remain separate |
+| ADR-0148 | Accepted Module Lifecycle / Disable / Uninstall / Recovery evidence protocol / execution pending | MLC-01…MLC-176; lifecycle/cleanup/recovery certifications 0 |
+| ADR-0149 | Accepted Entity / Data Source Registry evidence protocol / execution pending | DSR-01…DSR-176; source capability/schema/Policy/query/write/transaction/Multisite certifications 0 |
+| ADR-0150 | Accepted Asset Registry & Scoped Loader evidence protocol / execution pending | ASR-01…ASR-176; registry/dependency/scope/WP-handle/build-manifest/loading/security/Multisite certifications 0 |
+| ADR-0151 | Accepted Conditional Logic Engine evidence protocol / execution pending | CLG-01…CLG-176; typed operator/value-source/Policy/cache/consumer-parity/Multisite certifications 0 |
 
 ## Product specification milestone
 
@@ -190,6 +195,11 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Local Privacy/Data Lifecycle: `docs/QUALITY/LOCAL-PRIVACY-DATA-LIFECYCLE-EXECUTABLE-EVIDENCE-PROTOCOL.md` — PDL-01…PDL-176
 - Error Taxonomy/Failure UX: `docs/QUALITY/ERROR-TAXONOMY-FAILURE-UX-EXECUTABLE-EVIDENCE-PROTOCOL.md` — ERR-01…ERR-176
 - Component Blueprint Core: `docs/QUALITY/COMPONENT-BLUEPRINT-CORE-RUNTIME-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CBP-01…CBP-176
+- Contract Versioning/Deprecation: `docs/QUALITY/CONTRACT-VERSIONING-DEPRECATION-EXECUTABLE-EVIDENCE-PROTOCOL.md` — VER-01…VER-176
+- Module Lifecycle/Recovery: `docs/QUALITY/MODULE-LIFECYCLE-UNINSTALL-RECOVERY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — MLC-01…MLC-176
+- Entity/Data Source Registry: `docs/QUALITY/ENTITY-DATA-SOURCE-REGISTRY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — DSR-01…DSR-176
+- Asset Registry/Scoped Loader: `docs/QUALITY/ASSET-REGISTRY-SCOPED-LOADER-EXECUTABLE-EVIDENCE-PROTOCOL.md` — ASR-01…ASR-176
+- Conditional Logic Engine: `docs/QUALITY/CONDITIONAL-LOGIC-ENGINE-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CLG-01…CLG-176
 - Membership: `docs/QUALITY/P012-MEMBERSHIP-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Backup/Restore: `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Forms: `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
@@ -205,6 +215,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
+- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**.
 - MSI **0/160**, 0 surfaces MS1+; LC **0/96**, 0 SL runtime certifications.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**; DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
@@ -216,8 +227,6 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Current planning work
 
-**`P0-M00-WP30` — Contract Versioning & Deprecation executable-evidence reassessment — SPECIFICATION.**
+**`P0-M00-WP35` — Dynamic Value / Token Resolver executable-evidence reassessment — SPECIFICATION.**
 
-The paper policy defines Product/Platform API/Definition/runtime/Ability/Event/adapter/SDK version families, compatibility and deprecation stages, but repository search found no dedicated fixed cross-version executable-evidence protocol. WP30 must reconcile FP/DEF/KPA/IM/CBP/module migration overlap before freezing any canonical bounded matrix.
-
-No executable evidence may run before explicit owner consent.
+Current objective: reconcile the shared token/value resolver described in platform architecture against DSR/FST/QRY/REL/Policy/CBP/EBR/NT/FM. Freeze only genuinely shared typed resolution, escaping-context, authorization/privacy, dependency/cycle/budget, cache/invalidation, cross-consumer parity and Multisite behavior if the repository gap remains after overlap analysis.
