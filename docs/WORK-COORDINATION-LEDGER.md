@@ -24,18 +24,19 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP07` | P-001 compatibility floor evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP/PHP/DB/Multisite | ADR-0123; CF-01…CF-112; 0 executed. |
 | `P0-M00-WP08` | P-005 Vault evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Vault/security/recovery | ADR-0124; VT-01…VT-128; 0 executed. |
 | `P0-M00-WP09` | P-002 UI + P-008 build evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | UI/React/assets/build | ADR-0125 UI-01…UI-104 + ADR-0126 BT-01…BT-112; 0 executed. |
-| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI + FAST/FULL + provenance | ADR-0127; CI-01…CI-120; 0 executed; workflows unverified; direct branch reads show main/planning unprotected; rulesets UNKNOWN (403). |
+| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI + FAST/FULL + provenance | ADR-0127; CI-01…CI-120; 0 executed. |
 | `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free/Pro + Platform API + schema + entitlement | ADR-0128; FP-01…FP-144; 0 executed. |
-| `P0-M00-WP12` | P-012 Membership evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership/Policy/protected assets/providers | ADR-0129; MBR-01…MBR-160; 0 executed; 4 BE3 / 0 MB-certified; 0 PC1+. |
-| `P0-M00-WP13` | P-013 Backup/Restore evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup/crypto/providers/Vault/Restore | ADR-0130; BK-01…BK-180; 0 executed; 34 targets / 0 C-certified / 0 C3; V3 cert 0. |
-| `P0-M00-WP14` | P-009 Query evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Data Sources/cache/Multisite | ADR-0131; QRY-01…QRY-168; 0 executed; QP1–QP4 certifications 0. |
-| `P0-M00-WP15` | P-004 Definition Repository audit/refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Definition/revisions/dependencies/migrations | ADR-0132; canonical ADR-0092 protocol refined to DEF-01…DEF-144; 0 executed. |
-| `P0-M00-WP16` | P-010 Relations audit/refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Relations/Query/Policy/Fields/Multisite | ADR-0133; canonical ADR-0093 protocol refined to REL-01…REL-160; 0 executed; R1/PT-D first baseline only. |
-| `P0-M00-WP17` | Field Storage / Custom Fields evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Field Schema/FS1–FS6/Query/Relations/Vault | ADR-0134; FST-01…FST-176; 0 executed; all adapter certifications 0. |
-| `P0-M00-WP18` | Custom Tables physical/DDL/migration evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CT1–CT3/CM1–CM4/Query/Fields/Relations/Backup/Multisite | ADR-0135; CTB-01…CTB-184; 0 executed; all CT/CM certifications 0. |
-| `P0-M00-WP19` | Admin Columns operational evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | ADR-0136; AC-01…AC-176; 0 executed; all AC capability certifications 0. |
-| `P0-M00-WP20` | Dynamic Listings SSR/cache/pagination evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Fields/Relations/Component Blueprint/cache/builders | ADR-0137; DL-01…DL-176; 0 executed; all DL strategy/capability certifications 0. |
-| `P0-M00-WP21` | Free CPT + Taxonomy runtime registration/rewrite evidence | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP registration/rewrite/REST/Definition/Policy/Multisite | Current planning work; exhaustive spec exists; dedicated fixed executable protocol not found. |
+| `P0-M00-WP12` | P-012 Membership evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership/Policy/protected assets/providers | ADR-0129; MBR-01…MBR-160; 0 executed. |
+| `P0-M00-WP13` | P-013 Backup/Restore evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup/crypto/providers/Vault/Restore | ADR-0130; BK-01…BK-180; 0 executed. |
+| `P0-M00-WP14` | P-009 Query evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Data Sources/cache/Multisite | ADR-0131; QRY-01…QRY-168; 0 executed. |
+| `P0-M00-WP15` | P-004 Definition Repository audit/refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Definition/revisions/dependencies/migrations | ADR-0132; DEF-01…DEF-144; 0 executed. |
+| `P0-M00-WP16` | P-010 Relations audit/refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Relations/Query/Policy/Fields/Multisite | ADR-0133; REL-01…REL-160; 0 executed. |
+| `P0-M00-WP17` | Field Storage / Custom Fields evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Field Schema/FS1–FS6/Query/Relations/Vault | ADR-0134; FST-01…FST-176; 0 executed. |
+| `P0-M00-WP18` | Custom Tables physical/DDL/migration evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CT1–CT3/CM1–CM4/Query/Fields/Relations/Backup/Multisite | ADR-0135; CTB-01…CTB-184; 0 executed. |
+| `P0-M00-WP19` | Admin Columns operational evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | ADR-0136; AC-01…AC-176; 0 executed. |
+| `P0-M00-WP20` | Dynamic Listings SSR/cache/pagination evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Fields/Relations/Component Blueprint/cache/builders | ADR-0137; DL-01…DL-176; 0 executed. |
+| `P0-M00-WP21` | Free CPT + Taxonomy runtime registration/rewrite evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP registration/rewrite/REST/Definition/Policy/Multisite | ADR-0138; CPTX-01…CPTX-176; 0 executed; all CPTX certifications 0. |
+| `P0-M00-WP22` | Emails Builder renderer/composition evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Email IR/templates/Vault/Policy/Notification/providers/Multisite | Current planning work; verify existing renderer evidence before adding/refining a fixed protocol. |
 
 No production implementation work package is active.
 
@@ -43,9 +44,8 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Free CPT + Taxonomy runtime registration/rewrite evidence | `SPECIFICATION` current | Free entry surfaces; freeze registration args, rewrite lifecycle, capability/REST/editor/deletion/upgrade/Multisite evidence |
-| 2 | Emails Builder render/delivery composition evidence reassessment | `QUEUED` | Email transport/provider truth exists; verify whether renderer/module fixed evidence needs consolidation |
-| 3 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP21 |
+| 1 | Emails Builder renderer/composition evidence reassessment | `SPECIFICATION` current | Transport/provider truth exists; inspect template compiler/context/HTML+text/assets/preview/handoff evidence before creating anything new |
+| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP22 |
 
 Planning documentation work does not create implementation authorization.
 
@@ -57,22 +57,22 @@ Current implementation WIP remains 0. Planning serializes shared contracts. Mate
 
 No active shared-surface implementation reservation exists.
 
-## 5. Data-foundation and consumer truth preserved
+## 5. Foundation/consumer truth preserved
 
-- Definition identity/revision/dependency/cache are separate truths; DEF **0/144**.
-- Query uses typed AST/provider capabilities; QRY **0/168**; QP1–QP4 certs 0.
-- Relations runtime is separate from Relation Definition; REL **0/160**; R1 first baseline, R2 mandatory.
-- Field Definition/editor/storage/presentation/runtime value are separate; FST **0/176**; FS1–FS6 certifications 0.
-- Table Definition/observed schema/Migration Plan/Migration Run/applied fingerprint/runtime rows are separate; CTB **0/184**.
-- CT1/PT-E is first site-owned Custom Tables baseline; CT2/PT-D mandatory comparison; CT3 only genuinely network-owned.
-- `dbDelta()` is not WPE's source-of-truth migration language.
-- Definition publish never implies physical/value migration completion.
-- Admin Columns AC **0/176**; displayed cells do not imply real sort/filter/edit/export capability and batch planning remains mandatory.
-- Dynamic Listings DL **0/176**; rendered HTML does not imply authorized count/cursor/cache/client-transition correctness.
+- Definition: DEF **0/144**; Query: QRY **0/168**; Relations: REL **0/160**.
+- Field Storage: FST **0/176**; Custom Tables: CTB **0/184**.
+- Admin Columns: AC **0/176**; displayed cells do not imply real sort/filter/edit/export capability.
+- Dynamic Listings: DL **0/176**; rendered HTML does not imply authorized count/cursor/cache/client-transition correctness.
+- Free CPT/Taxonomy: CPTX **0/176**; stored Definition does not equal effective WordPress registration or rewrite/REST/editor state.
+- published CPT/taxonomy keys are migration-class identities.
+- rewrite flush is controlled/dirty-generation based, never every request.
+- Definition disable/delete preserves posts/terms/relationships/meta by default.
+- external discovery/collision does not establish WPE ownership.
+- network templates do not make site content shared.
 - destructive schema/data work requires truthful verified recovery boundaries.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP21`: audit `docs/MODULES/FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` plus registration/rewrite/REST/Definition/Multisite architecture and existing ADRs. If no equivalent fixed runtime-registration evidence contract exists, create one bounded protocol and decision; otherwise refine canonical evidence in place.
+Continue `P0-M00-WP22`: audit Email architecture, Email IR, template/module exhaustive spec, Notification integration, provider truth profiles and any existing Email evidence protocols. Prefer in-place refinement when an equivalent canonical protocol already exists; create a new fixed renderer/composition protocol only if no equivalent exists.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
