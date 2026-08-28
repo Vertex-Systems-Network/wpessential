@@ -1,7 +1,8 @@
 # WPEssential — Module Option Coverage & Maturity Ledger
 
 Status: **Phase 0 planning source of truth / no development authorized**  
-Date: 2026-08-27
+Date: 2026-08-28  
+Expanded scope accepted by: ADR-0177.
 
 ## Purpose
 
@@ -20,7 +21,11 @@ A module can be **Exhaustive** while still technically BLOCKED and unauthorized.
 
 ---
 
-# Current product-option coverage — 31/31 Exhaustive
+# Current product-option coverage — 43/43 Exhaustive
+
+The original scope reached 31/31 before the universal-system expansion. ADR-0177 added 12 reusable foundation surfaces after the WooCommerce Commerce OS / 100K-system audit. Historical 31/31 statements remain true for the earlier scope; the current canonical product-option denominator is **43**.
+
+## Original 31 surfaces
 
 | # | Surface | Current option maturity | Primary exhaustive/detailed source | Remaining before technical implementation |
 |---:|---|---|---|---|
@@ -48,7 +53,7 @@ A module can be **Exhaustive** while still technically BLOCKED and unauthorized.
 | 22 | REST API Builder | **Exhaustive** | `REST-API-BUILDER-EXHAUSTIVE-SPEC.md` | endpoint compiler/auth/performance evidence |
 | 23 | Webhooks & Connections Manager | **Exhaustive** | `WEBHOOKS-CONNECTIONS-EXHAUSTIVE-SPEC.md` | OAuth/provider/SSRF/idempotency evidence |
 | 24 | Backup Manager | **Exhaustive** | `BACKUP-MANAGER-EXHAUSTIVE-SPEC.md` + provider/restore/encryption docs | archive/crypto/provider/restore certification |
-| 25 | Reset Manager | **Exhaustive** | `RESET-MANAGER-EXHAUSTIVE-SPEC.md` | destructive workflow/recovery/multisite evidence |
+| 25 | Reset Manager | **Exhaustive** | `RESET-MANAGER-EXHAUSTIVE-SPEC.md` | destructive workflow/recovery/Multisite evidence |
 | 26 | Import / Export | **Exhaustive** | `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md` + migration/package docs | source-adapter fixtures/rollback evidence |
 | 27 | Protector | **Exhaustive** | `PROTECTOR-EXHAUSTIVE-SPEC.md` | interception/rate-limit/recovery/proxy evidence |
 | 28 | Watermarker / Media Rules | **Exhaustive** | `WATERMARKER-MEDIA-RULES-EXHAUSTIVE-SPEC.md` | image-editor/offload/format certification |
@@ -56,17 +61,55 @@ A module can be **Exhaustive** while still technically BLOCKED and unauthorized.
 | 30 | Role & Capability Manager | **Exhaustive** | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` | anti-lockout/capability runtime tests |
 | 31 | Platform surfaces / Account / Support / Docs | **Exhaustive platform contract** | `PLATFORM-SURFACES-SPEC.md` + amendment + Remote Service + Docs/Support IA | service schemas/auth/signing/executable evidence |
 
-## Current conclusion
+## Universal foundation expansion — ADR-0177
 
-**31/31 planned module/platform surfaces have now reached the Phase 0 Exhaustive product-option bar.**
+All 12 foundations share the detailed option source:
+`../SOLUTIONS/UNIVERSAL-FOUNDATIONS-EXHAUSTIVE-SPEC.md`.
+Their Multisite behavior is mapped in `../SOLUTIONS/UNIVERSAL-FOUNDATIONS-MULTISITE-SCOPE-MATRIX.md`.
 
-This means every known surface has screen/option-level product behavior documented deeply enough that implementation should not need to invent ordinary product semantics ad hoc.
+| # | Surface | Current option maturity | Strategic role | Remaining before technical implementation |
+|---:|---|---|---|---|
+| 32 | Solution Blueprint & Application Composer | **Exhaustive product behavior** | whole-application composition/install/upgrade/drift | Blueprint physical schema/package/compiler/evidence |
+| 33 | Analytics, Event Tracking & Journey Intelligence | **Exhaustive product behavior** | behavioral/session/metric/funnel/attribution runtime | event-store/topology/privacy/performance evidence |
+| 34 | Search & Indexing Engine | **Exhaustive product behavior** | full-text/facet/ranking/search index | backend/index/security/invalidation certification |
+| 35 | Decision, Formula, Scoring & Ranking Studio | **Exhaustive product behavior** | deterministic typed calculations/scorecards/decision tables | expression/compiler/decimal/performance evidence |
+| 36 | Ledger, Balance & Movement Engine | **Exhaustive product behavior** | immutable balances/movements/holds/reconciliation | physical transaction/concurrency/rebuild evidence |
+| 37 | Resource Scheduling, Availability & Reservation Engine | **Exhaustive product behavior** | availability/capacity/atomic reservation | lock/topology/calendar/DST/concurrency evidence |
+| 38 | Experience Placement & Personalization Manager | **Exhaustive product behavior** | reusable frontend/admin contextual placements | slot adapters/cache/assets/frequency evidence |
+| 39 | Experimentation & Feature Rollout Manager | **Exhaustive product behavior** | assignment/exposure/experiments/rollout | statistics/instrumentation/cache/assignment evidence |
+| 40 | Documents, Records & Template Generation | **Exhaustive product behavior** | governed generated documents/PDF/private records | renderer/font/protected-storage/version evidence |
+| 41 | Data Sync, ETL & Integration Pipelines | **Exhaustive product behavior** | cursor/checkpoint/bidirectional synchronization | connector/idempotency/conflict/scale evidence |
+| 42 | Geospatial, Location & Territory Engine | **Exhaustive product behavior** | geocode/radius/zone/territory semantics | spatial storage/query/provider/privacy evidence |
+| 43 | AI Gateway, Knowledge & Copilot Studio | **Exhaustive product behavior** | provider/model/task/RAG/eval/Ability control plane | provider/runtime/privacy/eval/cost/security evidence |
+
+---
+
+# Expanded shared-service planning
+
+ADR-0177 also accepts six non-sellable platform-service expansions; they are **not** extra module denominator rows:
+
+1. Simulation & Historical Replay Service
+2. Transaction / Saga Coordination Contract
+3. Protected Asset Service generalized beyond Membership
+4. Context Resolver
+5. Money / Decimal / Unit Type Library
+6. Approval Policy Profile
+
+The WooCommerce Commerce Domain Adapter is an adapter pack, not another module denominator row.
+
+---
+
+# Current conclusion
+
+**43/43 planned module/platform surfaces have reached the Phase 0 Exhaustive product-option bar.**
+
+This means every current product surface has screen/option-level product behavior documented deeply enough that ordinary semantics should not need to be invented ad hoc during implementation.
 
 It does **not** mean:
-- all ADR blockers are accepted;
-- DB schemas are benchmarked;
+- all ADR/physical blockers are accepted;
+- DB schemas/indexes/locks are benchmarked;
 - runtime dependencies are proven;
-- provider integrations are certified;
+- provider/domain adapters are certified;
 - build/test toolchain has executed;
 - code exists;
 - development is authorized;
@@ -95,24 +138,23 @@ Every module remains responsible for documenting/maintaining:
 - destructive safeguards;
 - future acceptance tests.
 
-If future research or implementation discovers a meaningful missing option, the applicable exhaustive spec is updated **before or in the same coherent change**. `31/31 Exhaustive` is not permission to silently invent new semantics later.
+If future research or implementation discovers a meaningful missing option, the applicable exhaustive spec is updated **before or in the same coherent change**. `43/43 Exhaustive` is not permission to silently invent new semantics later.
 
 ---
 
-# Next planning maturity gate
+# Current planning expansion artifacts
 
-Product-option enumeration is no longer the main Phase 0 gap. Next planning work focuses on moving critical modules/services from **Exhaustive** toward **Accepted semantics / Technical Ready**, without writing executable implementation.
-
-Priority planning queue:
-1. resolve remaining non-executable semantic ADRs;
-2. maintain exact module dependency/data ownership/capability/event registries;
-3. close remote service/account/entitlement/update schemas on paper;
-4. close Definition Repository/Query/Relation/Workflow schema alternatives enough to prepare consent-gated benchmarks;
-5. close Membership cache/provider/protected-file certification plans;
-6. close Backup archive/provider/restore certification plans;
-7. finalize compatibility/build/CI spike protocols without executing them;
-8. keep readiness/open-decisions/checkpoint/PR synchronized.
+- `docs/SOLUTIONS/README.md` — Solution Blueprint architecture.
+- `docs/SOLUTIONS/FOUNDATIONAL-MODULE-GAP-PLAN.md` — reuse/gap analysis.
+- `docs/SOLUTIONS/COMMERCE-OS-71-SYSTEM-AUDIT.md` — source 71-system buildability map.
+- `docs/SOLUTIONS/REFERENCE-FLOW-AND-OPTION-PATTERNS.md` — 40 reusable system patterns.
+- `docs/SOLUTIONS/UNIVERSAL-SYSTEM-CATALOG.md` — 160 curated reference systems.
+- `docs/SOLUTIONS/100K-SYSTEM-SPACE.md` — 268,800 raw primary Blueprint combinations + validation model.
+- `docs/SOLUTIONS/SYSTEM-BLUEPRINT-SPECIFICATION-STANDARD.md` — full Blueprint documentation bar.
+- `docs/SOLUTIONS/UNIVERSAL-FOUNDATIONS-EXHAUSTIVE-SPEC.md` — F01–F12 options/flows.
+- `docs/SOLUTIONS/UNIVERSAL-FOUNDATIONS-MULTISITE-SCOPE-MATRIX.md` — 12/12 expanded Multisite mapping.
+- `docs/SOLUTIONS/WOOCOMMERCE-COMMERCE-DOMAIN-ADAPTER-EXHAUSTIVE-SPEC.md` — A01 Woo adapter.
 
 ## Development gate
 
-**Development remains prohibited until explicit owner consent under ADR-0014, regardless of the 31/31 Exhaustive product-option result.**
+**Development remains prohibited until explicit owner consent under ADR-0014, regardless of the 43/43 Exhaustive product-option result.**
