@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0135**. Architecture acceptance never implies runtime certification or owner development authorization.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0137**. Architecture acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -40,7 +40,9 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-027 | ADR-0040/0055/0080/0122 | Connections/Safe HTTP/Event Inbox/provider I0–I5 — WC-01…WC-156 |
 | D-028 | ADR-0022/0087/0134 | Field Storage FS1–FS6 type/storage/migration/uniqueness/privacy — FST-01…FST-176 |
 | D-029 | ADR-0023/0088/0135 | Custom Tables CT1–CT3 + CM1–CM4 exact DDL/migration/recovery — CTB-01…CTB-184 |
-| D-030 | ADR-0098 | Admin Columns native hooks/batching/sort/filter/edit/export/Policy/N+1 — dedicated fixed evidence pending WP19 |
+| D-030 | ADR-0098/0136 | Admin Columns hooks/batching/sort/filter/edit/export/Policy/N+1 — AC-01…AC-176 + target capability certification |
+| D-031 | ADR-0039/0099/0137 | Dynamic Listings authorization/pagination/count/cache/hydration/interaction/builders/SEO — DL-01…DL-176 |
+| D-032 | Free CPT/Taxonomy exhaustive spec | native registration/rewrite/capability/REST/editor/lifecycle/Multisite fixed evidence — WP21 current |
 
 ## B. Accepted paper/runtime-baseline summary
 
@@ -53,6 +55,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Relations: R1/PT-D first, R2/PT-E mandatory, R3 exceptional; REL fixed evidence.
 - Field Storage: FS1 native WP; FS2 typed Custom Table; FS3 child rows; FS4 Relations; FS5 Vault; FS6 projection; FST fixed evidence.
 - Custom Tables: CT1/PT-E first for site-owned; CT2/PT-D mandatory comparison; CT3 genuinely network-owned only. Typed desired-schema + Migration Plan; CM1 direct, CM2 backfill, CM3 shadow/swap, CM4 destructive recovery; CTB fixed evidence.
+- Admin Columns: AC1 whole-request Column Execution Plan + bounded batch hydration; capabilities certified independently; AC fixed evidence.
+- Dynamic Listings: DL1 authorization-aware Query + batched hydration + Component Blueprint SSR; DL-A1 preferred, DL-A2 bounded/evidence-gated, DL-A3 unsupported context; DL fixed evidence.
 - Settings ST1/PT-A, ST2/PT-B, ST3 inheritance.
 - Forms FRT1/PT-D first, FRT2/PT-E mandatory.
 - Chat CRT1/PT-D first, CRT2/PT-E mandatory.
@@ -86,6 +90,8 @@ All remain paper-only until their applicable executable evidence certifies them.
 | BK | **0/180; 34 targets / 0 C-certified / 0 C3; V3 0** |
 | FST | **0/176; FS runtime/profile certs 0** |
 | CTB | **0/184; CT1/CT2/CT3 + CM1–CM4 certs 0; exact DDL open** |
+| AC | **0/176; AC-R/S/F/Q/E/B/X/M/P certs 0** |
+| DL | **0/176; DL-A1/A2/A3 + DL-R/A/P/F/H/C/I/B/S/M/O certs 0** |
 | FM | **0/92** |
 | NT | **0/142** |
 | CH | **0/142** |
@@ -126,24 +132,50 @@ Current: **FST 0/176; all runtime/profile certifications 0**.
 
 Current: **CTB 0/184; CT/CM certifications 0; exact DDL open**.
 
-## F. Current highest-priority planning blocker — Admin Columns
+## F. Admin Columns boundary retained after ADR-0136
 
-ADR-0098 already establishes AC1 whole-request execution planning and batch hydration, but no dedicated fixed executable protocol was found by repository search. WP19 must freeze evidence for:
-- core + custom post/user/term/comment/media list-table hook integration;
-- third-party adapter capability/degradation;
-- column-set/audience/Policy resolution;
-- whole-request data plan and bounded batch hydration;
-- N+1 detection and lazy-fetch authorization;
-- correct backend sorting/filtering instead of cosmetic client sort;
-- typed rendering/escaping/media/relationship/query values;
-- inline and bulk edit using owning Data Source/Field APIs;
-- optimistic/conflict semantics where underlying source supports them;
-- CSV/export formula injection and protected-field rules;
-- screen options/column ordering/responsiveness/accessibility;
-- Multisite/network list scope isolation;
-- 100/1k/10k row list workloads and independent security/performance review.
+- Column definition, compiled plan, adapter capability, hydrated data, displayed output, writable source and export capability are distinct.
+- AC1 whole-request planning and source-grouped batch hydration remain first baseline.
+- real sorting/filtering/search execute before pagination in authoritative backend; browser-only behavior is not equivalent.
+- protected data is Policy-gated before hydration.
+- inline/bulk edits use owning APIs and stale-write/conflict semantics.
+- current-page and all-filtered bulk selection are different contracts.
+- export authorization is independent of screen visibility and spreadsheet injection is an explicit security fixture.
+- third-party/Woo/core/DataViews support is version/storage-specific evidence.
 
-## G. Decision-processing rule
+Current: **AC 0/176; all target/capability certifications 0**.
+
+## G. Dynamic Listings boundary retained after ADR-0137
+
+- Listing definition, published revision, compiled descriptor, candidate set, authorized visible set, count/cursor metadata, rendered HTML, cache artifact and client state are distinct.
+- DL1 authorization-aware Query + batched hydration + Component Blueprint SSR remains first baseline.
+- DL-A1 is preferred; DL-A2 must stay bounded and metadata-truthful; DL-A3 blocks/degrades unsupported secure pageable contexts.
+- protected totals/page counts/facets/cursors/cache cannot reveal inaccessible rows.
+- nested listings require depth/result/query budgets and N+1 diagnostics.
+- public persistent cache is only for genuinely public deterministic output; protected cache includes scope/access generations.
+- stale authorization cannot survive revocation where fail-closed semantics apply.
+- enhanced/client transitions use the same compiled server Query/Policy contract.
+- builder adapters reference the canonical Listing rather than creating a second product schema.
+
+Current: **DL 0/176; all strategy/capability certifications 0**.
+
+## H. Current highest-priority planning blocker — Free CPT + Taxonomy
+
+The Free product depends on native WordPress content-model registration, and repository verification found no dedicated fixed `FREE-CPT-TAXONOMY-EXECUTABLE-EVIDENCE-PROTOCOL.md`. WP21 must freeze evidence for:
+- CPT/taxonomy key/slug/reserved-name collisions;
+- registration timing and argument parity;
+- labels/UI/menu/editor/block behavior;
+- rewrite/permastruct/query-var lifecycle and flush boundaries;
+- capability/meta-cap mapping and REST exposure;
+- hierarchical and taxonomy object-type semantics;
+- definition publish/revision/disable/delete degradation;
+- post/term data preservation across definition changes;
+- REST/editor/theme/plugin compatibility at accepted floor;
+- Multisite per-site registration/scope/site lifecycle;
+- import/export/clone/restore dependency identity;
+- activation/deactivation/update/rollback and conflict diagnostics.
+
+## I. Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
@@ -155,8 +187,8 @@ ADR-0098 already establishes AC1 whole-request execution planning and batch hydr
 
 ## Next planning-only priorities
 
-1. **Admin Columns operational executable-evidence refinement** — current `P0-M00-WP19`.
-2. Dynamic Listings SSR/pagination/cache evidence.
-3. Reassess remaining blockers after these data-consumer surfaces.
+1. **Free CPT + Taxonomy runtime registration/rewrite evidence** — current `P0-M00-WP21`.
+2. Emails Builder renderer/delivery composition evidence reassessment.
+3. Reassess remaining blockers by critical-path value after WP21.
 
 Production development authorization remains **NOT GRANTED**.
