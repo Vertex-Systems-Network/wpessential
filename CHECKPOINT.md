@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0135**.
+Accepted evidence decisions/refinements now extend through **ADR-0137**.
 
 Recent bounded protocols/refinements:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -47,7 +47,9 @@ Recent bounded protocols/refinements:
 - ADR-0132 — Definition canonical refinement DEF-01…DEF-144.
 - ADR-0133 — Relations canonical refinement REL-01…REL-160.
 - ADR-0134 — Field Storage / Custom Fields FST-01…FST-176.
-- **ADR-0135 — Custom Tables CTB-01…CTB-184.**
+- ADR-0135 — Custom Tables CTB-01…CTB-184.
+- ADR-0136 — Admin Columns AC-01…AC-176.
+- **ADR-0137 — Dynamic Listings DL-01…DL-176.**
 
 ## Recent completed work packages
 
@@ -115,6 +117,50 @@ Preserved truth:
 - Definition deletion never auto-drops physical data;
 - unknown external drift is not blindly overwritten.
 
+### WP19 — Admin Columns — DONE
+Created:
+- `docs/QUALITY/ADMIN-COLUMNS-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0136-admin-columns-evidence-protocol.md`
+
+Evidence:
+- AC **0/176**.
+- target adapters runtime-certified: 0.
+- `AC-R/AC-S/AC-F/AC-Q/AC-E/AC-B/AC-X/AC-M/AC-P` certifications 0.
+- WordPress core list-table, DataViews and WooCommerce storage compatibility are not runtime verified.
+
+Preserved truth:
+- Column Set Definition ≠ Compiled Column Plan ≠ target capability ≠ hydrated values ≠ displayed cell ≠ writable source ≠ export schema ≠ certification;
+- AC1 whole-request planning + batched hydration remains first baseline;
+- sorting/filtering/search must execute in authoritative backend before pagination to claim real support;
+- protected values are Policy-gated before fetch, not hidden afterward;
+- mutations use owning APIs and concurrency controls;
+- all-filtered bulk selection is an authoritative query contract, not browser ID expansion;
+- export permission is separate from screen visibility and CSV formula injection is explicitly tested;
+- unsupported adapters degrade instead of falling back to raw meta/SQL writes.
+
+### WP20 — Dynamic Listings — DONE
+Created:
+- `docs/QUALITY/DYNAMIC-LISTINGS-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0137-dynamic-listings-evidence-protocol.md`
+
+Evidence:
+- DL **0/176**.
+- `DL-A1/DL-A2/DL-A3` strategy certifications 0.
+- `DL-R/DL-A/DL-P/DL-F/DL-H/DL-C/DL-I/DL-B/DL-S/DL-M/DL-O` certifications 0.
+- WordPress Interactivity API and builder adapter runtime certifications 0/OPEN.
+- exact cache/refill/nesting/performance thresholds OPEN.
+
+Preserved truth:
+- Listing Definition ≠ published revision ≠ compiled descriptor ≠ candidate results ≠ authorized visible results ≠ count/cursor metadata ≠ rendered HTML ≠ cache artifact ≠ client state ≠ certification;
+- DL1 authorization-aware Query + batched hydration + Component Blueprint SSR remains first baseline;
+- protected pagination/count/facet/cursor semantics must not expose inaccessible rows;
+- bounded post-query authorization/refill is allowed only when truth is preserved; otherwise the context is unsupported;
+- public shared cache is only for truly public deterministic output;
+- stale protected cache cannot survive access revocation where fail-closed semantics apply;
+- nested listings have depth/result/query budgets and no ordinary query-per-parent N+1;
+- client transitions use the same server Listing/Query/Policy contract;
+- builder adapters reference canonical Listing definitions rather than becoming competing schemas.
+
 ## Current evidence counters
 
 - P-001 / CF: **0/112**.
@@ -132,6 +178,8 @@ Preserved truth:
 - P-013 / BK: **0/180**.
 - Field Storage / FST: **0/176**.
 - Custom Tables / CTB: **0/184**.
+- Admin Columns / AC: **0/176**.
+- Dynamic Listings / DL: **0/176**.
 - FM: **0/92**; NT: **0/142**; CH: **0/142**; WC: **0/156**.
 - OA: **0/32**; TU: **0/44**.
 - DW: **0/36**; AM: **0/40**; PR: **0/44**; RM: **0/48**; WM: **0/48**; FD: **0/48**; BW: **0/50**; SM: **0/48**; XR: **0/48**; ST: **0/48**; UP: **0/48**; RA: **0/48**; REST: **0/52**; IM: **0/56**.
@@ -149,16 +197,16 @@ Preserved truth:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts/refinements accepted through ADR-0135;
+- evidence contracts/refinements accepted through ADR-0137;
 - direct GitHub branch reads on 2026-08-28 showed `main` and `planning/master-architecture` unprotected;
 - repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation;
 - no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP19` — Admin Columns operational executable-evidence refinement**.
+Current work package: **`P0-M00-WP21` — Free CPT + Taxonomy runtime registration/rewrite evidence**.
 
-Reason: Query, Field Storage, Relations and Custom Tables now have fixed evidence boundaries. Admin Columns is a major consumer of all four and ADR-0098 already defines the AC1 whole-request/batch-hydration direction, but repository search found no dedicated fixed executable evidence protocol. WP19 will reconcile native list-table hooks, batching/N+1 budgets, real sort/filter behavior, inline/bulk edits, Policy, third-party degradation, export/CSV safety and Multisite behavior before defining evidence.
+Reason: CPT and Taxonomy are the Free product's first concrete runtime surfaces and appear early in the future implementation order after shared foundations. Their exhaustive specification exists, but repository verification found no dedicated fixed `FREE-CPT-TAXONOMY-EXECUTABLE-EVIDENCE-PROTOCOL.md`. WP21 will reconcile native registration arguments, rewrite/permalink lifecycle, capability mapping, REST exposure, block/editor compatibility, activation/deactivation/definition revisions, deletion/degradation, Multisite/site lifecycle, collision handling and upgrade/rollback evidence without executing WordPress.
 
 All existing gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
