@@ -19,9 +19,9 @@ Every durable approval records approval ID, scope, stable work ID, approver/refe
 
 | Approval ID | Scope | Work ID | Status | Included | Excluded / notes |
 |---|---|---|---|---|---|
-| GOV-OWNER-CONSENT-000 | PROJECT | WPEssential | PENDING | Production implementation once explicitly granted and technical gates permit | Owner has **not** granted production development consent. `continue`, planning approval, research requests and ADR acceptance are not consent. |
+| GOV-OWNER-CONSENT-000 | PROJECT | WPEssential | PENDING | Production implementation only after explicit grant and applicable technical/planning gates | Owner has **not** granted production development consent. `continue`, `resume`, planning/research approval and ADR acceptance are not consent. |
 
-No module, milestone, phase or project implementation approval is ACTIVE.
+No TASK, MODULE, MILESTONE, PHASE or PROJECT implementation approval is ACTIVE.
 
 ## 4. Existing-project approval adoption
 
@@ -34,11 +34,13 @@ When governance is introduced into active work:
 
 WPEssential remains planning-only; no retrospective implementation approval exists.
 
-## 5. Development approval summary
+## 5. Development approval readiness rule
 
 Before requesting development approval for a milestone, present scope, exclusions, options/behaviors, roles/permissions, states/workflows, data/migrations, integrations, security/negative requirements, tests/evidence, affected components, compatibility, risks, sequence and rollback/recovery.
 
 Move a work unit to `AWAITING_DEVELOPMENT_APPROVAL` only when its planning/audit package is actually ready. Do not start production implementation until unambiguous approval is recorded.
+
+ADR-0207 explicitly decides that **P0 is not yet ready for this transition**.
 
 ## 6. Work lifecycle
 
@@ -61,12 +63,12 @@ Development approval: `PENDING / NOT GRANTED`
 Implementation WIP: **0**
 
 Scope history:
-- original: 31 surfaces;
-- ADR-0177: 43 surfaces;
-- ADR-0188: 48 surfaces;
-- ADR-0194: 50 surfaces;
-- ADR-0195: 55 surfaces;
-- ADR-0197 current: **56 planned module/platform surfaces**.
+- original: 31;
+- ADR-0177: 43;
+- ADR-0188: 48;
+- ADR-0194: 50;
+- ADR-0195: 55;
+- ADR-0197 current: **56 surfaces**.
 
 Current implementation authorization: **0/56**.
 
@@ -76,29 +78,43 @@ Logical product planning status:
 - shared AI Prompt product mapping: **56/56**;
 - runtime certifications: **none**.
 
-Accepted detailed universal/adapter evidence through ADR-0206 includes SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/WCA at **176 documented / 0 executed** for each applicable namespace. AIP and supplemental/provider evidence remain unexecuted according to their own protocols.
+Accepted exact universal/adapter evidence includes SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA. These plans remain unexecuted and do not grant implementation permission.
 
-Current planning work is **P0-M00-WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit**.
+## 9. WP112 / ADR-0207 approval-readiness result
 
-WP112 is not an implementation approval request. Its purpose is to:
-- reconcile all current 56-surface scope/work/governance summaries;
-- remove stale current-state claims while preserving historical snapshots;
-- inventory every remaining planning-only evidence/provider/runtime blocker;
-- verify source-of-truth ownership, security/Policy/privacy/Multisite/recovery/provider boundaries and implementation sequencing are sufficiently planned;
-- determine whether any additional planning packages are required before a later lifecycle move to `AWAITING_DEVELOPMENT_APPROVAL`.
+WP112 is **DONE / ADR-0207**.
 
-The discovery of stale 50-surface/WP65-current claims in this ledger and the readiness matrix demonstrates why WP112 must complete before any development approval request.
+Finding: P0 remains in `SPECIFICATION`; it does **not** move to `AWAITING_DEVELOPMENT_APPROVAL` because 33 accepted market/competitive namespaces still need exact individual fixture expansion.
 
-## 9. Approval autonomy / revocation
+Remaining exact planning definitions:
+- WP113 Market Expansion — **1,232**;
+- WP114 First Competitive — **880**;
+- WP115 Second Competitive — **1,936**;
+- WP116 Third Competitive — **1,760**;
+- total: **5,808 fixtures**.
+
+Current planning work: **P0-M00-WP113 — Market Expansion exact executable-evidence specification**.
+
+After WP116, a new closure/readiness audit must decide whether the approval-readiness state can change. That later audit still cannot grant implementation consent by itself.
+
+## 10. Readiness classes
+
+- `PLANNING GAP` — exact design/evidence decisions still missing.
+- `RUNTIME EVIDENCE PENDING` — exact protocol exists; execution does not.
+- `PROVIDER CERTIFICATION PENDING` — provider contract exists; provider/runtime certification does not.
+- `OWNER CONSENT PENDING` — technical plan may exist but implementation permission has not been granted.
+- `NO GAP / READY AS PLAN` — planning layer complete only; not runtime-certified.
+
+## 11. Approval autonomy / revocation
 
 After scoped approval, ordinary reversible decisions inside approved scope do not require repeated consent. Escalate material scope/risk changes, destructive actions outside scope, breaking changes, major security/legal/privacy impacts and privileged production/deployment actions.
 
 Owner can revoke approval at any time; after revocation stop new implementation, preserve evidence, reach a safe non-destructive checkpoint and record `REVOKED`.
 
-## 10. Consent invariant
+## 12. Consent invariant
 
-Planning/documentation, ADR acceptance, internet/market research, evidence-protocol design, daily Git-job design, `continue`, `resume`, Solution Blueprint generation and AI Prompt planning do **not** authorize production code, executable workflows/spikes, package installation, WordPress runtime execution, DB/schema mutation, user/role/membership mutation, recovery-email execution, admin theme application, media telemetry/rewrite, browser-code injection, provider calls, MCP sessions, AI calls, tests, benchmarks or deployment.
-
-Creating or accepting WCA/commerce evidence does not authorize WooCommerce product/cart/checkout/order/refund/stock/tax/shipping/payment/account/HPOS/provider runtime.
+Planning/documentation, ADR acceptance, internet/market research, evidence-protocol design, daily Git-job design, `continue`, `resume`, Solution Blueprint generation and AI Prompt planning do **not** authorize production code, executable workflows/spikes, package installation, WordPress runtime execution, DB/schema mutation, user/role/membership mutation, recovery-email execution, admin theme application, media telemetry/rewrite, browser-code injection, Woo runtime, provider calls, MCP sessions, AI calls, tests, benchmarks or deployment.
 
 ADR-0014 remains the hard consent gate.
+
+Production development authorization remains **NOT GRANTED / 0/56**.
