@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0174**.
+Accepted evidence decisions/refinements now extend through **ADR-0175**.
 
 ### Fixed evidence sequence
 
@@ -90,6 +90,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0174**.
 | ADR-0172 | Email Transport / Provider Certification refinement | ET-F **0/176**; **6 EE3 / 0 ET-certified** |
 | ADR-0173 | Membership Billing Provider Certification refinement | MB-F **0/176**; **4 BE3 / 0 MB-certified** |
 | ADR-0174 | Membership Protected File Delivery Certification refinement | PC-F **0/176**; **0 PC1+**; PD1…PD4 runtime certs 0 |
+| ADR-0175 | Backup Provider Certification refinement | BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0** |
 
 ## Critical preserved truth
 
@@ -124,7 +125,11 @@ Accepted evidence decisions/refinements now extend through **ADR-0174**.
 - Protected-file storage possession ≠ authorization; page/button hiding ≠ origin-byte protection.
 - Signed token/URL issuance ≠ durable Membership entitlement; already-issued bearer URL revocation semantics must be stated truthfully.
 - Backup-provider certification ≠ protected-file delivery certification; direct-origin isolation is mandatory before Protected/Supported claims.
-- JobService at-least-once execution never becomes exactly-once email, provider or Membership behavior.
+- Backup provider catalog/static SE evidence/connection/upload success never becomes normal Supported Backup status.
+- `remote_committed` ≠ `remote_verified`; provider ETag/checksum is not WPE manifest truth by default.
+- C3 is the minimum normal Supported Backup Destination gate; C4 requires V3 fresh-environment disaster recovery.
+- Delete request accepted ≠ confirmed remote erasure; unknown provider outcomes must reconcile.
+- JobService at-least-once execution never becomes exactly-once email, provider, Membership or Backup behavior.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
 - cache state ≠ canonical business/Audit/Rate-Limit truth.
@@ -147,7 +152,7 @@ Provider/other evidence truth:
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime-certified profiles **0**.
-- Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
+- Backup provider BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
 - Connection adapters **0 I4/I5**.
 - Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
 
@@ -157,13 +162,13 @@ Provider/other evidence truth:
 - Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after PR body synchronization.
 - direct GitHub branch reads on 2026-08-28 reported `main` and `planning/master-architecture` unprotected.
 - repository-wide rulesets remain **UNKNOWN** because earlier ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/protected-file/file-move/server-config/signed-URL/download/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/protected-file/file-move/server-config/signed-URL/download/Backup-provider/upload/multipart/delete/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP58` — Backup provider certification reassessment — SPECIFICATION**.
+Current work package: **`P0-M00-WP59` — Connection adapter I0–I5 provider certification reassessment — SPECIFICATION**.
 
-Reason: protected-file delivery evidence is now fixed at PC-F **0/176**, while Backup provider support remains **34 targets / 0 C-certified / 0 C3 Supported; V3 0**. WP58 must audit C0–C4/V3/provider-family evidence against BK-01…BK-180, Vault, JobService, remote-copy lifecycle, privacy, ERR, VER, Multisite, Site Lifecycle and restore-first certification truth. Static provider evidence must never become runtime Backup support automatically.
+Reason: Backup provider executable evidence is now fixed at BPC-F **0/176**. Connection adapters remain **0 I4/I5** and need exact provider/API capability certification against WC-01…WC-156, Event Inbox, Vault, Safe HTTP/SSRF policy, OAuth/credential lifecycle, idempotency/replay, privacy, ERR, VER, Multisite, provider degradation and reconciliation truth. Static provider/API documentation must never become runtime I-level certification automatically.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
