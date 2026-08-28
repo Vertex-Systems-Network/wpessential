@@ -150,6 +150,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0135 | Accepted Custom Tables evidence protocol / execution pending | CTB-01…CTB-184; CT1–CT3 + CM1–CM4; exact DDL/types/indexes/constraints open |
 | ADR-0136 | Accepted Admin Columns evidence protocol / execution pending | AC-01…AC-176; AC1 baseline; target-specific read/sort/filter/search/edit/bulk/export/Multisite/performance certifications 0 |
 | ADR-0137 | Accepted Dynamic Listings evidence protocol / execution pending | DL-01…DL-176; DL1 baseline; authorization/pagination/cache/hydration/interaction/builder/SEO/Multisite certifications 0 |
+| ADR-0138 | Accepted Free CPT + Taxonomy runtime evidence protocol / execution pending | CPTX-01…CPTX-176; registration/rewrite/REST/capability/editor/lifecycle/Multisite certifications 0 |
+| ADR-0139 | Accepted Emails Builder rendering/composition evidence protocol / execution pending | EBR-01…EBR-176; renderer/composition certifications 0; ET transport remains separate |
+| ADR-0140 | Accepted Platform Account/Docs/Support/Diagnostics evidence protocol / execution pending | PLT-01…PLT-176; FP/OA/TU/remote-service prerequisites remain separate |
+| ADR-0141 | Accepted Multisite Scope/Isolation + Site Lifecycle evidence refinement / execution pending | MSI-01…MSI-160 + LC-01…LC-96; MS0–MS4 and SL0–SL4 preserved |
+| ADR-0142 | Accepted Audit & Observability evidence protocol / execution pending | AUD-01…AUD-176; AU1/PT-D remains first future baseline only |
+| ADR-0143 | Accepted Kernel/Module Registry/Capability-Policy/Abilities/Events/Extension SDK evidence protocol / execution pending | KPA-01…KPA-176; shared-platform certification classes 0 |
 
 ## Product specification milestone
 
@@ -158,12 +164,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Major fixed evidence protocols
 
-- Compatibility: `docs/QUALITY/P001-COMPATIBILITY-FLOOR-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- UI: `docs/QUALITY/P002-UI-DESIGN-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Build: `docs/QUALITY/P008-BUILD-TOOLCHAIN-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- CI: `docs/QUALITY/P007-CI-QUALITY-MATRIX-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Free↔Pro: `docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- Vault: `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- Compatibility: `docs/QUALITY/P001-COMPATIBILITY-FLOOR-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CF-01…CF-112
+- UI: `docs/QUALITY/P002-UI-DESIGN-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md` — UI-01…UI-104
+- Build: `docs/QUALITY/P008-BUILD-TOOLCHAIN-EXECUTABLE-EVIDENCE-PROTOCOL.md` — BT-01…BT-112
+- CI: `docs/QUALITY/P007-CI-QUALITY-MATRIX-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CI-01…CI-120
+- Free↔Pro: `docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — FP-01…FP-144
+- Vault: `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md` — VT-01…VT-128
 - Definition: `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md` — DEF-01…DEF-144
 - Query: `docs/QUALITY/P009-QUERY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — QRY-01…QRY-168
 - Relations: `docs/QUALITY/RELATIONS-P010-EXECUTABLE-EVIDENCE-PROTOCOL.md` — REL-01…REL-160
@@ -171,6 +177,13 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Custom Tables: `docs/QUALITY/CUSTOM-TABLES-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CTB-01…CTB-184
 - Admin Columns: `docs/QUALITY/ADMIN-COLUMNS-EXECUTABLE-EVIDENCE-PROTOCOL.md` — AC-01…AC-176
 - Dynamic Listings: `docs/QUALITY/DYNAMIC-LISTINGS-EXECUTABLE-EVIDENCE-PROTOCOL.md` — DL-01…DL-176
+- Free CPT/Taxonomy: `docs/QUALITY/FREE-CPT-TAXONOMY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — CPTX-01…CPTX-176
+- Emails Builder: `docs/QUALITY/EMAILS-BUILDER-RENDERING-EXECUTABLE-EVIDENCE-PROTOCOL.md` — EBR-01…EBR-176
+- Platform surfaces: `docs/QUALITY/PLATFORM-SURFACES-EXECUTABLE-EVIDENCE-PROTOCOL.md` — PLT-01…PLT-176
+- Multisite scope/isolation: `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md` — MSI-01…MSI-160
+- Site Lifecycle: `docs/QUALITY/MULTISITE-SITE-LIFECYCLE-EVIDENCE-PROTOCOL.md` — LC-01…LC-96
+- Audit & Observability: `docs/QUALITY/AUDIT-OBSERVABILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md` — AUD-01…AUD-176
+- Kernel/Policy/Abilities/Events/SDK: `docs/QUALITY/KERNEL-POLICY-ABILITIES-EVENTS-SDK-EXECUTABLE-EVIDENCE-PROTOCOL.md` — KPA-01…KPA-176
 - Membership: `docs/QUALITY/P012-MEMBERSHIP-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Backup/Restore: `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Forms: `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
@@ -184,23 +197,21 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 ## Current execution/certification truth
 
 - CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
-- QRY **0/168**, QP1–QP4 certifications 0.
-- REL **0/160**, final R/E/PV/DDL open.
-- WF **0/116**; MBR **0/160**; BK **0/180**.
-- FST **0/176**, all Field Storage runtime/profile certifications 0.
-- CTB **0/184**, CT1/CT2/CT3 + CM1/CM2/CM3/CM4 certifications 0; exact DDL open.
-- AC **0/176**, AC-R/S/F/Q/E/B/X/M/P certifications 0.
-- DL **0/176**, DL-A1/A2/A3 and DL-R/A/P/F/H/C/I/B/S/M/O certifications 0.
+- QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
+- FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**; KPA **0/176**.
+- MSI **0/160**, 0 surfaces MS1+; LC **0/96**, 0 SL runtime certifications.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**; DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
 - Membership providers: **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Backup: **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
 - Email: **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
-- Site Lifecycle **0/40**; Multisite **0 MS1+**; Remote privacy **0/30**.
+- Remote privacy **0/30**.
 - CI workflow implementation remains unverified; direct branch reads showed `main` + `planning/master-architecture` unprotected; repository-wide rulesets remain UNKNOWN due 403/plan restriction.
 
 ## Current planning work
 
-**`P0-M00-WP21` — Free CPT + Taxonomy runtime registration/rewrite evidence — SPECIFICATION.**
+**`P0-M00-WP27` — next cross-cutting evidence gap reassessment — SPECIFICATION candidate pending repository audit.**
+
+Priority candidates: local privacy/data-classification/retention/erasure, error-taxonomy/failure UX, and remaining shared contract/versioning surfaces. Select only after confirming existing protocol overlap.
 
 No executable evidence may run before explicit owner consent.
