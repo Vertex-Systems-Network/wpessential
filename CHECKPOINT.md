@@ -36,7 +36,7 @@ Historical denominators remain valid snapshots only for their accepted historica
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0207**.
+Accepted planning/evidence decisions extend through **ADR-0208**.
 
 ### Exact detailed universal/adapter evidence
 
@@ -54,22 +54,31 @@ Accepted planning/evidence decisions extend through **ADR-0207**.
 - AIP — exact 176-fixture protocol / 0 executed;
 - WooCommerce Adapter WCA — ADR-0206 — 176 / 0.
 
-These are planning-complete evidence specifications, not runtime certification.
+### Exact Market Expansion evidence — WP113 / ADR-0208
+
+The seven Market Expansion namespaces now have exact individual fixtures:
+- RDR — 176 documented / 0 executed;
+- SRT — 176 / 0;
+- DMY — 176 / 0;
+- LNK — 176 / 0;
+- DBM — 176 / 0;
+- PDO — 176 / 0;
+- MIR — 176 / 0.
+
+WP113 total: **1,232/1,232 exact fixture definitions documented; 0 executed**.
+
+These namespaces have moved from `PLANNING GAP` to `NO GAP / READY AS PLAN` at the evidence-design layer only. Their runtime state remains `RUNTIME EVIDENCE PENDING`.
 
 ## WP112 final closure/readiness audit — DONE / ADR-0207
 
 Canonical audit: `docs/QUALITY/P0-FINAL-PREDEVELOPMENT-CLOSURE-READINESS-AUDIT.md`.
 
-WP112 result:
-- product-option maturity remains **56/56 Exhaustive**;
-- Multisite mapping remains **56/56**;
-- AI Prompt mapping remains **56/56**;
-- authorization remains **0/56**;
-- P0 is **NOT ready** for `AWAITING_DEVELOPMENT_APPROVAL`;
-- reason: 33 supplemental/market namespaces remain at group-envelope rather than exact fixture level;
-- exact planning gap: **5,808 fixture definitions**.
+WP112 originally found **5,808** exact fixture definitions missing across 33 market/competitive namespaces. WP113/ADR-0208 closed **1,232** of them.
 
-Readiness classes are now fixed as:
+Current remaining exact planning gap:
+- **4,576 fixture definitions across 26 namespaces**.
+
+Readiness classes remain:
 - `PLANNING GAP`;
 - `RUNTIME EVIDENCE PENDING`;
 - `PROVIDER CERTIFICATION PENDING`;
@@ -80,8 +89,8 @@ A zero execution counter is not automatically a planning gap.
 
 ## Remaining exact planning sequence
 
-- **WP113 — CURRENT** — Market Expansion: RDR/SRT/DMY/LNK/DBM/PDO/MIR — **1,232 fixtures**.
-- WP114 — First Competitive: MPR/RPR/ATM/MDP/STM — **880 fixtures**.
+- WP113 — Market Expansion RDR/SRT/DMY/LNK/DBM/PDO/MIR — **DONE / ADR-0208 / 1,232 exact / 0 executed**.
+- **WP114 — CURRENT** — First Competitive: MPR/RPR/ATM/MDP/STM — **880 fixtures**.
 - WP115 — Second Competitive: ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — **1,936 fixtures**.
 - WP116 — Third Competitive: UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — **1,760 fixtures**.
 
@@ -99,45 +108,38 @@ After WP116, run a new final closure/readiness audit. Only that later audit may 
 - Synchronized copy ≠ source truth unless explicit field/entity authority assigns it.
 - Geocoded/spatial match ≠ verified identity/authorization/serviceability/legal jurisdiction.
 - Woo adapter ≠ Woo commerce truth ownership; cart ≠ order; checkout ≠ settlement; refund object ≠ provider refund.
+- Redirect match/simulation ≠ authorization; server export ≠ active server configuration.
+- Search/Replace Dry Run ≠ mutation; mutation ≠ verified rollback.
+- Synthetic data ≠ production/source truth; fixture cleanup requires durable generated ownership.
+- Link scan inconclusive/restricted response ≠ proven broken.
+- Database orphan/candidate suspicion ≠ deletion authority.
+- Market signal/planning output ≠ product acceptance or development approval.
 - Unknown provider outcome ≠ failed; reconcile before unsafe replay.
 - HPOS uses supported Woo APIs/Data Stores; no private-table assumptions/direct writes.
 - Backup ≠ Staging/Migration; DB snapshot ≠ full backup; clone ≠ same entity identity.
 - Safe Script/Tag remains browser-side only; Theme Workspace cannot become arbitrary live PHP execution.
 - AI/MCP has no hidden authorization/provider/mutation bypass.
 
-## Governance reconciliation completed by WP112
-
-Current-state summaries reconciled from stale denominators/work IDs include:
-- `docs/IMPLEMENTATION-READINESS-MATRIX.md`;
-- `docs/APPROVAL-LEDGER.md`;
-- root `README.md`;
-- `docs/PROJECT-STATE-AND-ADOPTION.md`;
-- `docs/OPEN-DECISIONS-REGISTER.md`;
-- `docs/MODULES/OPTION-COVERAGE-MATURITY.md`;
-- `docs/MODULES/README.md`;
-- `docs/DECISIONS/README.md`.
-
-Historical roadmap/catalog/master-plan snapshots retain historical semantics; current authority is this checkpoint plus current ADR/maturity/readiness documents.
-
 ## Work coordination / resume point
 
 Completed:
 - WP63…WP74 detailed universal/adapter sequence — DONE through ADR-0206;
 - WP75…WP111 expansion/competitive planning interrupts — DONE at their accepted planning level;
-- **WP112 final closure/readiness audit — DONE / ADR-0207**.
+- WP112 final closure/readiness audit — DONE / ADR-0207;
+- **WP113 Market Expansion exact evidence — DONE / ADR-0208 / 1,232 exact / 0 executed**.
 
 Current:
-- **WP113 Market Expansion exact executable-evidence specification — SPECIFICATION / CURRENT**.
+- **WP114 First Competitive exact executable-evidence specification — SPECIFICATION / CURRENT**.
 
 ## Current VCS / execution truth
 
 Planning branch: `planning/master-architecture`; Draft PR #1 remains the planning PR.
 
-No WP112/WP113 fixture, WordPress/WooCommerce runtime, provider/API/AI/MCP call, migration, package installation, test, benchmark, build or deployment occurred.
+No WP112/WP113/WP114 fixture, WordPress/WooCommerce runtime, HTTP crawl, DB mutation/cleanup, fixture generation, scheduled workflow, provider/API/AI/MCP call, migration, package installation, test, benchmark, build or deployment occurred.
 
 ## Next safe planning action
 
-Continue **WP113 — Market Expansion exact executable-evidence specification** for `RDR/SRT/DMY/LNK/DBM/PDO/MIR` — **1,232 exact fixture definitions**.
+Continue **WP114 — First Competitive exact executable-evidence specification** for `MPR/RPR/ATM/MDP/STM` — **880 exact fixture definitions**.
 
 Development remains **NOT GRANTED / 0/56**.
 
