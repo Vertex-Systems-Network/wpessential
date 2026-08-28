@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0120**.
+This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0121**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -36,6 +36,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-023 | ADR-0041/0095/0116 | Import/Export source/archive/map/checkpoint/rollback/export/scale evidence — IM-01…IM-56 |
 | D-024 | ADR-0025/0077/0117 | Forms revision/access/storage/idempotency/files/actions/Workflow/privacy/FRT topology evidence — FM-01…FM-92 |
 | D-025 | ADR-0026/0079/0120 | Notification rule/fan-out/dedupe/preferences/inbox/channel truth/NE topology evidence — NT-01…NT-142 |
+| D-026 | ADR-0027/0077/0121 | Chat authorization/revocation/idempotency/private-assets/search/realtime/privacy/CRT topology evidence — CH-01…CH-142 |
 
 ## B. Current accepted paper baselines
 
@@ -46,7 +47,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - Custom Tables CT1/PT-E vs CT2/PT-D; CT3 network-owned.
 - Settings ST1/PT-A; ST2/PT-B; ST3 inheritance.
 - Forms FRT1/PT-D vs FRT2/PT-E; FM-01…FM-92 runtime/submission evidence protocol.
-- Chat CRT1/PT-D vs CRT2/PT-E.
+- Chat CRT1/PT-D vs CRT2/PT-E; CH-01…CH-142 executable evidence protocol.
 - Membership M1/PT-D vs M2/PT-E.
 - Notification/Email NE1/PT-D vs NE2/PT-E; Notification NT-01…NT-142 evidence protocol.
 - Event Inbox EI1/PT-D vs EI2/PT-E.
@@ -434,7 +435,32 @@ Open evidence:
 
 Notification certification cannot upgrade an Email/Connection provider beyond its own ET/adapter certification.
 
-## U. Other current evidence state
+## U. Message & Chat — ADR-0027/0077/0121
+
+CH-01…CH-142 are fixed future fixtures.
+
+Open evidence:
+- exact Conversation/Participant/Message/Moderation/Protected Asset DDL and index profile;
+- conversation creation and participant lifecycle authorization under real WordPress requests;
+- Membership/team/resource revoke races against send/read/search/attachment/realtime operations;
+- server-authoritative per-conversation ordering and concurrent idempotent send admission;
+- edit/delete/tombstone/reply/reaction/mention semantics and user-enumeration boundaries;
+- private attachment MIME/origin/download/finalization/orphan-cleanup safety;
+- last-read/unread-count concurrency and principal/site/access-generation cache isolation;
+- SQL/FULLTEXT/rebuildable search projection behavior with request-time reauthorization and stale-index cleanup;
+- polling/SSE/WebSocket/managed transport comparison, reconnect duplication and long-lived authorization refresh;
+- Notification integration without private-body leakage or rollback of accepted messages;
+- moderation/report/block/rate-limit scope and abuse resistance;
+- privacy export/erase/anonymization and retention/moderation exceptions;
+- clone/restore/Site Lifecycle revalidation;
+- CRT1/PT-D vs CRT2/PT-E wrong-site/noisy-neighbor/provisioning/migration/Backup/scale evidence;
+- 100k-conversation, million-message, 1k-participant, hot-conversation and 100/1k/10k-site workloads.
+
+**CH executed: 0/142. Chat runtime certifications: 0. Realtime transport certifications: 0. Search adapter certifications: 0. Final CRT topology: open.**
+
+Canonical Chat state remains transport-independent. Search/provider ACL is never sole authorization and private attachments remain Protected Assets.
+
+## V. Other current evidence state
 
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
@@ -443,6 +469,7 @@ Notification certification cannot upgrade an Email/Connection provider beyond it
 - Vault P-005: **0 executed**.
 - Workflow P-011: **0/116 WF**.
 - Notification: **0/142 NT**.
+- Message & Chat: **0/142 CH**; runtime/realtime/search certifications **0**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected file **0 PC1+**.
 - Forms Runtime: **0/92 FM fixtures / 0 runtime certifications**.
 - Email: **6 EE3 / 0 ET-certified**.
@@ -452,20 +479,19 @@ Notification certification cannot upgrade an Email/Connection provider beyond it
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## V. Accepted architecture no longer open semantically
+## W. Accepted architecture no longer open semantically
 
-ADRs **0035–0120** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0121** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs/notifications runtime or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs/notifications/chat runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. Message & Chat transport/search/private-assets evidence protocol.
-2. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-3. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT gates intact.
+1. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+2. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH gates intact.
