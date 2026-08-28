@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0203**.
+Accepted planning/evidence decisions extend through **ADR-0204**.
 
 ### Universal foundations
 
@@ -51,7 +51,8 @@ Accepted planning/evidence decisions extend through **ADR-0203**.
 - ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; **RSV documented 176 / executed 0/176**.
 - ADR-0201 — F07 Placement & Personalization detailed protocol; **PLC documented 176 / executed 0/176**.
 - ADR-0202 — F08 Experimentation & Rollout detailed protocol; **EXP documented 176 / executed 0/176**.
-- **ADR-0203 — F09 Documents, Records & Templates detailed protocol; DOC documented 176 / executed 0/176.**
+- ADR-0203 — F09 Documents, Records & Templates detailed protocol; **DOC documented 176 / executed 0/176**.
+- **ADR-0204 — F10 Data Sync & ETL detailed protocol; SYN documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -128,14 +129,25 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 - Anonymous→authenticated experiment identity stitching is explicit and cannot fabricate/double exposure history.
 - Non-experiment rollout/feature flag must not fabricate A/B causal statistics.
 - Sensitive experiment segmentation remains Policy/consent/data-minimization governed.
-- **Generated document/artifact ≠ source business truth, payment/order/ledger truth, authorization, identity proof or legal-signature proof.**
-- **Template approval ≠ permission to render every bound field; generation and protected delivery reauthorize source data.**
-- **Hash/checksum ≠ electronic signature; application timestamp ≠ trusted timestamp authority token.**
-- **Immutable issued record corrections use amendment/supersession; no silent historical overwrite.**
-- **Protected artifact URL/storage/CDN path cannot bypass Policy; public-looking URL ≠ public authorization.**
-- **HTML/SVG/fonts/images/remote assets are untrusted; no arbitrary template PHP/JS/SQL/shell or unrestricted network/file authority.**
-- **Unknown external signing/storage/timestamp outcome ≠ failed; reconcile before replay where duplicate side effects are possible.**
-- **Backup/restore/clone cannot roll back external signing/storage/timestamp authorities; cloned production provider mappings remain quarantined by default.**
+- Generated document/artifact ≠ source business truth, payment/order/ledger truth, authorization, identity proof or legal-signature proof.
+- Template approval ≠ permission to render every bound field; generation and protected delivery reauthorize source data.
+- Hash/checksum ≠ electronic signature; application timestamp ≠ trusted timestamp authority token.
+- Immutable issued record corrections use amendment/supersession; no silent historical overwrite.
+- Protected artifact URL/storage/CDN path cannot bypass Policy; public-looking URL ≠ public authorization.
+- HTML/SVG/fonts/images/remote assets are untrusted; no arbitrary template PHP/JS/SQL/shell or unrestricted network/file authority.
+- Unknown external signing/storage/timestamp outcome ≠ failed; reconcile before replay where duplicate side effects are possible.
+- Backup/restore/clone cannot roll back external signing/storage/timestamp authorities; cloned production provider mappings remain quarantined by default.
+- **Synchronized copy ≠ source truth unless explicit entity/field authority assigns it.**
+- **Transport success ≠ business acceptance; cursor/checkpoint progress ≠ proof every item succeeded.**
+- **Unknown remote sync outcome ≠ failed; reconcile by stable operation/entity identity before unsafe replay.**
+- **Bidirectional sync requires explicit entity/field authority and conflict policy; implicit universal last-write-wins is prohibited.**
+- **Delete/archive/tombstone/privacy erase/immutable-record revoke are distinct semantics and cannot be collapsed silently.**
+- **Replay preserves idempotency identity; duplicate webhook/poll/import events must not duplicate side effects.**
+- **Provider credentials remain Vault-owned; endpoints remain adapter-bounded/SSRF-governed and quota/backoff aware.**
+- **Schema/API/cursor drift must be surfaced; incompatible values/tokens are not silently coerced.**
+- **Multisite sync identity, idempotency, cursors and shared-connection access remain site/tenant isolated and server-resolved.**
+- **Restore/clone/staging cannot blindly reuse production cursors, webhooks, leases, identity maps or provider write authority.**
+- **F10 does not replace Backup, Staging/Migration, F05 Ledger, F06 Scheduling, F09 Records or commerce/payment/order authorities.**
 - Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
@@ -176,8 +188,9 @@ Representative counters:
 - **PLC documented 176 / executed 0/176**;
 - **EXP documented 176 / executed 0/176**;
 - **DOC documented 176 / executed 0/176**;
+- **SYN documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+- GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -198,20 +211,21 @@ Universal detailed evidence sequence:
 - WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176;
 - WP69 F07 Placement/Personalization — DONE / ADR-0201; PLC documented 176 / executed 0/176;
 - WP70 F08 Experimentation/Rollout — DONE / ADR-0202; EXP documented 176 / executed 0/176;
-- **WP71 F09 Documents/Records/Templates — DONE / ADR-0203; DOC documented 176 / executed 0/176**;
-- **WP72 F10 Data Sync/ETL — SPECIFICATION / CURRENT; SYN 0/176 envelope**.
+- WP71 F09 Documents/Records/Templates — DONE / ADR-0203; DOC documented 176 / executed 0/176;
+- **WP72 F10 Data Sync/ETL — DONE / ADR-0204; SYN documented 176 / executed 0/176**;
+- **WP73 F11 Geospatial/Territory — SPECIFICATION / CURRENT; GEO 0/176 envelope**.
 
-WP73…WP74 retain their reserved F11→WooCommerce Adapter meanings.
+WP74 retains its reserved WooCommerce Commerce Domain Adapter (`WCA`) meaning.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0203/56-surface/WP72-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0204/56-surface/WP73-current state.
 
-No F09 renderer/template execution, PDF/HTML/text generation, file write, protected artifact delivery, record issuance/amendment, sequence allocation, checksum/signing/timestamp provider action, remote asset fetch, retention deletion, share/download token execution, Multisite document operation, restore/provider reconciliation, performance benchmark, experiment runtime, placement runtime, scheduling transaction, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build or test occurred.
+No F10 connector session, source/destination provider request, webhook registration/delivery execution, polling/CDC job, mapping transformation runtime, cursor/checkpoint mutation, destination create/update/delete, identity-map mutation, replay/dead-letter action, bidirectional conflict resolution, privacy erase propagation, schema migration, Multisite sync operation, restore/clone reconciliation, benchmark, F09 renderer execution, experiment runtime, placement runtime, scheduling transaction, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build or test occurred.
 
 ## Next safe planning action
 
-Continue **WP72 — F10 Data Sync & ETL detailed executable-evidence specification (`SYN-001…SYN-176`)**.
+Continue **WP73 — F11 Geospatial & Territory detailed executable-evidence specification (`GEO-001…GEO-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
