@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0116**.
+This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0117**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -34,6 +34,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-021 | ADR-0032/0097/0114 | Role/capability mutation/anti-lockout/recovery/Super Admin/cache evidence — RA-01…RA-48 |
 | D-022 | ADR-0028/0094/0115 | REST route/auth/scope/schema/idempotency/rate/cache/CORS/fuzz evidence — REST-01…REST-52 |
 | D-023 | ADR-0041/0095/0116 | Import/Export source/archive/map/checkpoint/rollback/export/scale evidence — IM-01…IM-56 |
+| D-024 | ADR-0025/0077/0117 | Forms revision/access/storage/idempotency/files/actions/Workflow/privacy/FRT topology evidence — FM-01…FM-92 |
 
 ## B. Current accepted paper baselines
 
@@ -43,7 +44,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - Field Storage FS1–FS6.
 - Custom Tables CT1/PT-E vs CT2/PT-D; CT3 network-owned.
 - Settings ST1/PT-A; ST2/PT-B; ST3 inheritance.
-- Forms FRT1/PT-D vs FRT2/PT-E.
+- Forms FRT1/PT-D vs FRT2/PT-E; FM-01…FM-92 runtime/submission evidence protocol.
 - Chat CRT1/PT-D vs CRT2/PT-E.
 - Membership M1/PT-D vs M2/PT-E.
 - Notification/Email NE1/PT-D vs NE2/PT-E.
@@ -344,7 +345,29 @@ Open evidence:
 
 **IM executed: 0/56.**
 
-## Q. Other current evidence state
+## Q. Forms Runtime — ADR-0025/0077/0117
+
+FM-01…FM-92 are fixed future fixtures.
+
+Open evidence:
+- exact Entry/core/canonical-value/projection DDL and migration profile;
+- schema/render/submit Policy and revision pinning under real WordPress requests;
+- save/resume token lifecycle and draft concurrency;
+- capacity/rate/idempotency atomicity and crash reconciliation;
+- spam/CAPTCHA provider failure behavior;
+- private upload/finalize/download/cleanup safety;
+- CRUD/relation/user/membership action authorization;
+- Workflow handoff, duplicate dispatch and no-long-term-storage reconciliation;
+- retention/privacy/admin/export behavior;
+- FRT1/PT-D wrong-site/noisy-neighbor/large-table evidence;
+- FRT2/PT-E provisioning/migration/fan-out/lifecycle evidence;
+- 10k/100k/1M Entry and 100/1k/10k-site scale comparison.
+
+**FM executed: 0/92. Forms runtime certifications: 0. Final FRT topology: open.**
+
+FRT1/PT-D remains first future benchmark baseline. FRT2/PT-E remains mandatory comparison; ADR-0117 does not select a final physical topology.
+
+## R. Other current evidence state
 
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
@@ -353,6 +376,7 @@ Open evidence:
 - Vault P-005: **0 executed**.
 - Workflow P-011: **0 executed**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected file **0 PC1+**.
+- Forms Runtime: **0/92 FM fixtures / 0 runtime certifications**.
 - Email: **6 EE3 / 0 ET-certified**.
 - Event adapters: **0 I4/I5**.
 - Site Lifecycle: **0/40**.
@@ -360,23 +384,22 @@ Open evidence:
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## R. Accepted architecture no longer open semantically
+## S. Accepted architecture no longer open semantically
 
-ADRs **0035–0116** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0117** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import runtime or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. Forms runtime/storage/submission executable evidence protocol.
-2. Workflow/Cron scheduling/DST/claim execution evidence refinement around P-003/P-011.
-3. Notification fan-out/read/dedupe evidence protocol.
-4. Message & Chat transport/search/private-assets evidence protocol.
-5. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-6. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM gates intact.
+1. Workflow/Cron scheduling/DST/claim execution evidence refinement around P-003/P-011.
+2. Notification fan-out/read/dedupe evidence protocol.
+3. Message & Chat transport/search/private-assets evidence protocol.
+4. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+5. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM gates intact.
