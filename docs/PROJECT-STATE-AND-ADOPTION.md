@@ -1,7 +1,7 @@
 # WPEssential — Project State & Adoption Baseline
 
 Status: **Phase 0 governance / planning-only**  
-Last reviewed: 2026-08-28
+Last reviewed: 2026-08-29
 
 ## 1. Canonical project-state taxonomy
 
@@ -19,10 +19,15 @@ Every engineering session must classify the project using exactly one primary st
 `PLANNED_EXISTING_PROJECT`
 
 Reason:
-- 31/31 module/platform surfaces are documented at exhaustive planning maturity;
-- architecture/evidence contracts exist through ADR-0116;
+- **56/56** current module/platform surfaces are documented at Exhaustive product-option maturity;
+- logical Multisite mapping is **56/56**;
+- module-wide AI Prompt mapping is **56/56**;
+- accepted planning/evidence decisions extend through **ADR-0207**;
+- WP112 found additional exact supplemental evidence planning still required before approval-readiness;
 - production implementation has not started;
 - owner development consent has not been granted.
+
+Historical 31/43/48/50/55-surface baselines remain valid snapshots of their earlier planning milestones; they are not current denominators.
 
 ## 2. State-transition rules
 
@@ -30,8 +35,9 @@ Project state changes only from verified evidence, never chat wording alone.
 
 ### PLANNED_EXISTING_PROJECT → ACTIVE_EXISTING_PROJECT
 Requires:
+- Phase 0 planning gaps closed and a later closure audit allows an approval-ready transition;
 - explicit owner development consent under ADR-0014;
-- relevant planning/technical entry gates satisfied;
+- relevant planning/technical entry gates satisfied for the approved milestone;
 - implementation baseline recorded;
 - safe implementation branch/workspace confirmed;
 - first approved implementation milestone entered `IMPLEMENTING`.
@@ -45,21 +51,10 @@ Requires:
 - rollback/recovery route known.
 
 ### Any state → RECOVERY
-Use when:
-- repository state cannot be safely understood;
-- critical data loss/corruption is suspected;
-- deployment is broken or unsafe;
-- migration state is ambiguous;
-- security compromise/bypass requires containment;
-- current authoritative state cannot be established.
+Use when repository/runtime/data/security state cannot be safely established, critical corruption/loss is suspected, deployment is unsafe, or migration/security state is materially ambiguous.
 
 ### RECOVERY → prior normal state
-Only after:
-- evidence preserved;
-- authoritative state re-established;
-- recovery verified;
-- unresolved risks recorded;
-- safe next action checkpointed.
+Only after evidence is preserved, authoritative state re-established, recovery verified, unresolved risks recorded and a safe checkpoint is restored.
 
 ## 3. Execution mode
 
@@ -76,9 +71,24 @@ Track execution mode separately from project state:
 
 `PLANNER_ONLY`
 
-Implementation/test/deployment claims must therefore be recorded `NOT EXECUTED` unless separately authorized and actually performed.
+Implementation/test/deployment/provider/AI claims must therefore be recorded `NOT EXECUTED` unless separately authorized and actually performed.
 
-## 4. Session capability detection
+## 4. Current planning closure state
+
+WP112 / ADR-0207 completed the first final pre-development closure audit and found P0 **not approval-ready**.
+
+The remaining true planning gap is exact fixture expansion for 33 already-reserved market/competitive namespaces:
+- WP113 — 1,232 fixtures;
+- WP114 — 880 fixtures;
+- WP115 — 1,936 fixtures;
+- WP116 — 1,760 fixtures;
+- total: **5,808 exact fixture definitions**.
+
+Current safe planning work: **WP113**.
+
+A later closure audit after WP116 decides whether the lifecycle can move from `SPECIFICATION` to `AWAITING_DEVELOPMENT_APPROVAL`. It must not move automatically.
+
+## 5. Session capability detection
 
 Before meaningful work, record actual available capabilities. Never infer access merely because the platform commonly supports it.
 
@@ -88,55 +98,37 @@ Capability values:
 - `UNAVAILABLE`
 - `UNKNOWN`
 
-Record at minimum:
-- repository/filesystem;
-- terminal/shell;
-- database;
-- WordPress runtime;
-- tests;
-- VCS provider actions;
-- CI/CD;
-- deployment;
-- project planner;
-- internet/current research.
+Record at minimum repository/filesystem, terminal/shell, database, WordPress runtime, tests, VCS provider actions, CI/CD, deployment, project planner and internet/current research when materially relevant.
 
-### Latest adoption-audit observation
+### Latest planning-audit observation
 
 | Capability | Observed state | Evidence/limitation |
 |---|---|---|
 | GitHub repository read | AVAILABLE | repository/docs/PR readable |
-| GitHub documentation writes | AVAILABLE | planning branch documentation can be updated |
+| GitHub planning documentation writes | AVAILABLE | planning branch docs updated |
 | Pull-request metadata | AVAILABLE | Draft PR #1 readable/updateable |
-| Branch protection | UNKNOWN | provider integration returned 403; do not infer configured/not configured |
-| Repository rulesets | UNKNOWN | provider access/plan limitation prevented verification |
-| Local filesystem/working tree | UNKNOWN | not established by this GitHub-only audit |
-| Terminal/shell | UNKNOWN | not established by this GitHub-only audit |
-| WordPress runtime | UNKNOWN | not established; no runtime execution allowed pre-consent |
-| Database | UNKNOWN | not established; no DB execution allowed pre-consent |
-| CI result | UNKNOWN | not established in this audit |
-| Deployment | UNKNOWN | not established; production development not started |
+| Linear planning mirror | AVAILABLE | planning issues/project synchronized |
+| Branch protection/rulesets | UNKNOWN | no current verified provider evidence recorded here |
+| Local filesystem/working tree | UNKNOWN | not established by GitHub planning audit |
+| Terminal/shell | UNKNOWN | not established by GitHub planning audit |
+| WordPress runtime | NOT EXECUTED / capability not relied upon | runtime prohibited pre-consent |
+| Database runtime | NOT EXECUTED / capability not relied upon | DB execution prohibited pre-consent |
+| CI execution result | UNKNOWN / NOT EXECUTED for current planning | no runtime certification claim |
+| Deployment | NOT EXECUTED | production development not started |
 
-This table is a baseline example, not a permanent guarantee. Future sessions must refresh capability state when materially relevant.
+Future sessions refresh capability state when materially relevant.
 
-## 5. Existing-project adoption workflow
+## 6. Existing-project adoption workflow
 
-For an existing project use:
+Use:
 
 `Inspect → Baseline → Audit Existing Plan → Compare Plan With Reality → Identify Gaps → Amend Plan → Preserve Existing Work → Continue Safely`
 
-Do not:
-- restart the project;
-- rebuild from zero;
-- replace architecture merely because another design appears cleaner;
-- overwrite accepted plans/ADRs;
-- discard unknown work;
-- rewrite working code only for stylistic consistency.
+Do not restart the project, rebuild from zero, overwrite accepted ADRs, discard unknown work or rewrite working implementation merely for stylistic consistency.
 
-## 6. Bidirectional adoption ledger
+## 7. Bidirectional adoption ledger
 
-### Plan → Repository statuses
-
-Use one:
+Plan → Repository statuses:
 - `NOT_STARTED`
 - `PARTIALLY_IMPLEMENTED`
 - `IMPLEMENTED_NOT_VERIFIED`
@@ -144,9 +136,7 @@ Use one:
 - `DIFFERS_FROM_PLAN`
 - `UNKNOWN`
 
-### Repository → Plan statuses
-
-Use one:
+Repository → Plan statuses:
 - `DOCUMENTED`
 - `PARTIALLY_DOCUMENTED`
 - `UNDOCUMENTED`
@@ -157,84 +147,45 @@ Use one:
 
 | Area | Plan → Repository | Repository → Plan | Notes |
 |---|---|---|---|
-| 31 module/platform surfaces | NOT_STARTED | DOCUMENTED | exhaustive planning, 0 authorized |
-| Shared platform architecture | NOT_STARTED | DOCUMENTED | paper contracts/ADRs only |
-| Evidence protocols | NOT_STARTED | DOCUMENTED | protocols defined; runtime fixtures 0 |
-| Production PHP/React implementation | NOT_STARTED | N/A | implementation intentionally absent |
+| 56 module/platform surfaces | NOT_STARTED | DOCUMENTED | 56/56 Exhaustive; 0/56 authorized |
+| Shared platform architecture | NOT_STARTED | DOCUMENTED | accepted paper contracts/ADRs only |
+| Detailed universal/adapter evidence | NOT_STARTED | DOCUMENTED | SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA exact; execution 0 |
+| Supplemental market/competitive exact evidence | NOT_STARTED | PARTIALLY_DOCUMENTED | 33 namespaces fixed at group-envelope level; WP113–WP116 must enumerate 5,808 fixtures |
+| Production PHP/React implementation | NOT_STARTED | N/A | intentionally absent |
 | Database/runtime migrations | NOT_STARTED | N/A | no production schema execution |
-| CI/build runtime | NOT_STARTED | PARTIALLY_DOCUMENTED | policy/ADR direction exists; execution pending |
+| CI/build runtime | NOT_STARTED | DOCUMENTED | protocols/plans exist; execution pending |
 | Production deployment | NOT_STARTED | N/A | no production release |
 
-Future implementation must update this ledger or an equivalent maintained implementation-readiness source. Do not create a second conflicting truth source.
+Do not create a second conflicting current-state source; `CHECKPOINT.md`, the readiness matrix and current ADRs must stay synchronized.
 
-## 7. Gap classification
+## 8. Gap classification
 
-Every discovered plan/repository gap must be classified:
+Every discovered plan/repository gap is classified as `CORRECTION`, `COMPLETION`, `HARDENING`, `OPTIMIZATION` or `NEW_PRODUCT_SCOPE`.
 
-- `CORRECTION` — existing plan/implementation is wrong or unsafe.
-- `COMPLETION` — intended scope is incomplete.
-- `HARDENING` — improves security/reliability/recovery/operability without changing intended product scope.
-- `OPTIMIZATION` — improves performance/maintainability/throughput without changing intended behavior.
-- `NEW_PRODUCT_SCOPE` — materially new user-facing capability/business behavior.
+WP112 additionally classifies readiness blockers as:
+- `PLANNING GAP`;
+- `RUNTIME EVIDENCE PENDING`;
+- `PROVIDER CERTIFICATION PENDING`;
+- `OWNER CONSENT PENDING`;
+- `NO GAP / READY AS PLAN`.
 
-Rules:
-- CORRECTION/COMPLETION/HARDENING/OPTIMIZATION may be proposed automatically when clearly necessary.
-- `NEW_PRODUCT_SCOPE` is never silently treated as approved implementation scope.
-- Major new product scope requires explicit owner approval before it enters an implementation milestone.
+New product scope is never silently treated as implementation approval.
 
-## 8. Implementation Baseline / Adoption Gate
+## 9. Implementation Baseline / Adoption Gate
 
-Before the first production code change after consent, create a bounded implementation baseline. Do not redo Phase 0 planning.
+Before the first production code change after explicit consent, create a bounded implementation baseline. Do not redo Phase 0 planning.
 
-Record:
-- exact branch/revision;
-- working-tree/uncommitted/staged/untracked state where accessible;
-- merge/rebase/cherry-pick state;
-- runtime/tool versions;
-- dependency/lockfile state;
-- baseline build/test commands;
-- baseline test failures;
-- current CI status;
-- security-critical open blockers;
-- migrations/schema baseline;
-- environment assumptions;
-- VCS protections actually verified;
-- first approved milestone/work package.
+Record exact branch/revision, worktree state where accessible, runtime/tool versions, dependencies/lockfiles, baseline build/test commands/failures, CI status, security blockers, migration/schema baseline, environment assumptions, verified VCS protections and first approved milestone.
 
-This is the logical `Milestone 0 — Baseline & Adoption` only when no reliable implementation baseline already exists.
+## 10. Baseline failure registry rule
 
-## 9. Baseline failure registry rule
+A failure observed before a current implementation change is `BASELINE FAILURE`. Record check/test, baseline revision, first observation, exact summary, blocking classification, related work item and owner if known. Do not attribute pre-existing failures to new work.
 
-A failure observed before the current change is labeled:
+## 11. VCS/protection audit
 
-`BASELINE FAILURE`
+Before implementation/release, verify where available protected branches/rulesets, required reviews/checks, CODEOWNERS, merge queue/train, tag/release protection, deployment approvals and security scans. Unknown provider state remains `UNKNOWN`; protections must not be weakened merely for speed.
 
-Record:
-- check/test name;
-- baseline revision;
-- first observed date;
-- exact failure summary;
-- blocking/non-blocking classification;
-- related issue/work item;
-- owner if known.
-
-Do not attribute a pre-existing failure to new work and do not modify unrelated code merely to make all checks green.
-
-## 10. VCS/protection audit
-
-Before implementation/release, inspect where available:
-- protected branches/rulesets;
-- required reviews;
-- required checks;
-- CODEOWNERS;
-- merge queue/train;
-- tag/release protection;
-- deployment approvals;
-- security scans.
-
-If provider access cannot verify an item, record `UNKNOWN`. Never weaken protection merely to let AI merge faster.
-
-## 11. Authority order
+## 12. Authority order
 
 For actual state use:
 
@@ -245,7 +196,9 @@ For actual state use:
 5. CI/CD result;
 6. VCS history;
 7. approved documentation/ADRs;
-8. maintained project memory/checkpoint;
+8. maintained project checkpoint/memory;
 9. previous AI conversation.
 
 Conversation memory never overrides repository evidence.
+
+Production development authorization remains **NOT GRANTED / 0/56**.
