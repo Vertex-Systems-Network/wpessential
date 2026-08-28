@@ -1,8 +1,8 @@
 # WPEssential — Module Option Coverage & Maturity Ledger
 
-Status: **Phase 0 planning source of truth / no development authorized**
-Date: 2026-08-29
-Expanded scope accepted by: ADR-0177 + ADR-0183…ADR-0188.
+Status: **Phase 0 planning source of truth / no development authorized**  
+Date: 2026-08-29  
+Expanded scope accepted by: ADR-0177 + ADR-0183…ADR-0188 + ADR-0189…ADR-0194.
 
 ## Purpose
 
@@ -23,14 +23,15 @@ A surface can be **Exhaustive** while still technically blocked, unimplemented a
 - Original product scope: **31/31 Exhaustive**.
 - ADR-0177 universal-system expansion: **43/43 Exhaustive**.
 - ADR-0183…ADR-0188 market expansion: **48/48 Exhaustive**.
-- Current canonical denominator: **48 module/platform surfaces**.
+- ADR-0189…ADR-0194 access/admin/media/code expansion: **50/50 Exhaustive**.
+- Current canonical denominator: **50 module/platform surfaces**.
 - Shared services such as S07 Product Discovery/Planning Orchestrator and S08 Market Intelligence Radar do **not** add denominator rows.
-- Implementation authorization: **0/48**.
+- Implementation authorization: **0/50**.
 - Implemented/runtime verified: **0**.
 
-Historical `31/31`, `43/43`, `0/31` and `0/43` statements remain historically correct for their earlier scope snapshots.
+Historical `31/31`, `43/43`, `48/48`, `0/31`, `0/43` and `0/48` statements remain historically correct for their earlier scope snapshots.
 
-## Current product-option coverage — 48/48 Exhaustive
+## Current product-option coverage — 50/50 Exhaustive
 
 | # | Surface | Option maturity | Primary product specification / evidence direction |
 |---:|---|---|---|
@@ -48,7 +49,7 @@ Historical `31/31`, `43/43`, `0/31` and `0/43` statements remain historically co
 | 12 | Settings Page Builder | Exhaustive | `ADMIN-DASHBOARD-MENU-SETTINGS-EXHAUSTIVE-SPEC.md`; ST evidence |
 | 13 | Frontend Dashboard Builder | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md`; FD evidence |
 | 14 | User Profile Builder | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md`; UP evidence |
-| 15 | Membership System | Exhaustive + accepted core semantics | `MEMBERSHIP-SYSTEM.md`; MBR/MB-F/PC-F evidence |
+| 15 | Membership System | **Exhaustive + competitive expansion** | `MEMBERSHIP-SYSTEM.md` + `MEMBERSHIP-COMPETITIVE-PARITY-EXPANSION.md`; MBR/MB-F/PC-F/MPR evidence |
 | 16 | Builder Widgets Builder | Exhaustive | `BUILDER-WIDGETS-EXHAUSTIVE-SPEC.md`; BW/CBP evidence |
 | 17 | Forms & Workflow Builder | Exhaustive | `FORMS-WORKFLOW-EXHAUSTIVE-SPEC.md`; FM/WF evidence |
 | 18 | Cron Job Builder | Exhaustive | `CRON-JOB-BUILDER-EXHAUSTIVE-SPEC.md`; JS evidence |
@@ -61,9 +62,9 @@ Historical `31/31`, `43/43`, `0/31` and `0/43` statements remain historically co
 | 25 | Reset Manager | Exhaustive | `RESET-MANAGER-EXHAUSTIVE-SPEC.md`; RM evidence |
 | 26 | Import / Export | Exhaustive | `IMPORT-EXPORT-EXHAUSTIVE-SPEC.md`; IM evidence |
 | 27 | Protector | Exhaustive | `PROTECTOR-EXHAUSTIVE-SPEC.md`; PR/RLT evidence |
-| 28 | Watermarker / Media Rules | Exhaustive | `WATERMARKER-MEDIA-RULES-EXHAUSTIVE-SPEC.md`; WM evidence |
+| 28 | Watermarker / Media Rules + Performance Delivery | **Exhaustive + competitive expansion** | `WATERMARKER-MEDIA-RULES-EXHAUSTIVE-SPEC.md` + `MEDIA-PERFORMANCE-DELIVERY-EXPANSION.md`; WM/MDP evidence |
 | 29 | XML-RPC Manager | Exhaustive | `XML-RPC-MANAGER-EXHAUSTIVE-SPEC.md`; XR evidence |
-| 30 | Role & Capability Manager | Exhaustive | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md`; RA evidence |
+| 30 | Role & Capability Manager | **Exhaustive + competitive expansion** | `DASHBOARD-PROFILE-ROLES-EXHAUSTIVE-SPEC.md` + `ROLE-CAPABILITY-COMPETITIVE-PARITY-EXPANSION.md`; RA/RPR evidence |
 | 31 | Platform Account / Docs / Support / Diagnostics | Exhaustive platform contract | `PLATFORM-SURFACES-SPEC.md`; PLT/RS/OA/TU evidence |
 | 32 | Solution Blueprint & Application Composer | Exhaustive product behavior | `../SOLUTIONS/UNIVERSAL-FOUNDATIONS-EXHAUSTIVE-SPEC.md`; SBP 0/176 |
 | 33 | Analytics, Event Tracking & Journey Intelligence | Exhaustive product behavior | universal foundation spec; ANL 0/176 |
@@ -77,11 +78,13 @@ Historical `31/31`, `43/43`, `0/31` and `0/43` statements remain historically co
 | 41 | Data Sync, ETL & Integration Pipelines | Exhaustive product behavior | universal foundation spec; SYN 0/176 envelope |
 | 42 | Geospatial, Location & Territory Engine | Exhaustive product behavior | universal foundation spec; GEO 0/176 envelope |
 | 43 | AI Gateway, Knowledge & Copilot Studio | Exhaustive product behavior | universal foundation spec + `../AI/`; AIP 0/176 |
-| 44 | URL Redirection & Routing Manager | **Exhaustive product behavior** | `URL-REDIRECTION-ROUTING-EXHAUSTIVE-SPEC.md`; RDR 0/176 |
-| 45 | Search, Replace & Data Transformation Engine | **Exhaustive product behavior** | `SEARCH-REPLACE-DATA-TRANSFORMATION-EXHAUSTIVE-SPEC.md`; SRT 0/176 |
-| 46 | Dummy Data, Synthetic Dataset & Fixture Studio | **Exhaustive product behavior** | `DUMMY-DATA-FIXTURE-GENERATOR-EXHAUSTIVE-SPEC.md`; DMY 0/176 |
-| 47 | Link Health, Broken Link & Crawl Intelligence | **Exhaustive product behavior** | `LINK-HEALTH-BROKEN-LINK-CRAWLER-EXHAUSTIVE-SPEC.md`; LNK 0/176 |
-| 48 | Database Maintenance, Cleanup & Storage Health | **Exhaustive product behavior** | `DATABASE-MAINTENANCE-CLEANUP-EXHAUSTIVE-SPEC.md`; DBM 0/176 |
+| 44 | URL Redirection & Routing Manager | Exhaustive product behavior | `URL-REDIRECTION-ROUTING-EXHAUSTIVE-SPEC.md`; RDR 0/176 |
+| 45 | Search, Replace & Data Transformation Engine | Exhaustive product behavior | `SEARCH-REPLACE-DATA-TRANSFORMATION-EXHAUSTIVE-SPEC.md`; SRT 0/176 |
+| 46 | Dummy Data, Synthetic Dataset & Fixture Studio | Exhaustive product behavior | `DUMMY-DATA-FIXTURE-GENERATOR-EXHAUSTIVE-SPEC.md`; DMY 0/176 |
+| 47 | Link Health, Broken Link & Crawl Intelligence | Exhaustive product behavior | `LINK-HEALTH-BROKEN-LINK-CRAWLER-EXHAUSTIVE-SPEC.md`; LNK 0/176 |
+| 48 | Database Maintenance, Cleanup & Storage Health | Exhaustive product behavior | `DATABASE-MAINTENANCE-CLEANUP-EXHAUSTIVE-SPEC.md`; DBM 0/176 |
+| 49 | Admin Theme, Branding & Experience Manager | **Exhaustive product behavior** | `ADMIN-THEME-BRANDING-EXHAUSTIVE-SPEC.md`; ATM 0/176 |
+| 50 | Safe Script, Tag & Code Injection Manager | **Exhaustive product behavior** | `SAFE-SCRIPT-TAG-CODE-INJECTION-EXHAUSTIVE-SPEC.md`; STM 0/176 |
 
 ## Current shared-service planning outside denominator
 
@@ -92,8 +95,8 @@ Accepted/shared architecture currently also includes:
 - Context Resolver;
 - Money / Decimal / Unit Type Library;
 - Approval Policy Profile;
-- **S07 Product Discovery & Pre-Development Planning Orchestrator**;
-- **S08 Market Intelligence & Capability Radar**.
+- S07 Product Discovery & Pre-Development Planning Orchestrator;
+- S08 Market Intelligence & Capability Radar.
 
 Domain/provider adapter packs such as the WooCommerce Commerce Domain Adapter also remain outside the module denominator.
 
@@ -102,14 +105,16 @@ Domain/provider adapter packs such as the WooCommerce Commerce Domain Adapter al
 - surfaces 1–31: `MULTISITE-SCOPE-OPTION-MATRIX.md`;
 - surfaces 32–43: `../SOLUTIONS/UNIVERSAL-FOUNDATIONS-MULTISITE-SCOPE-MATRIX.md`;
 - surfaces 44–48: `MARKET-EXPANSION-MULTISITE-SCOPE-MATRIX.md`;
-- combined logical scope coverage: **48/48**;
+- access/admin/media/code additions and surfaces 49–50: `ACCESS-ADMIN-MEDIA-CODE-MULTISITE-AI-ADDENDUM.md`;
+- combined logical scope coverage: **50/50**;
 - runtime Multisite certification: **0**.
 
 ## Current AI Prompt coverage
 
 - surfaces 1–43: `../AI/MODULE-AI-PROMPT-OPTION-STANDARD.md`;
 - surfaces 44–48: `../AI/MARKET-EXPANSION-AI-PROMPT-MAPPING.md`;
-- combined module-wide AI Prompt product mapping: **48/48**;
+- surfaces 15/28/30 additions and new surfaces 49–50: `ACCESS-ADMIN-MEDIA-CODE-MULTISITE-AI-ADDENDUM.md`;
+- combined module-wide AI Prompt product mapping: **50/50**;
 - AI Prompt/MCP executable evidence AIP: **0/176**;
 - AIC/MCP runtime certifications: **0**.
 
@@ -133,8 +138,8 @@ Every surface remains responsible for:
 - destructive safeguards/recovery;
 - future evidence namespace/protocol.
 
-A newly discovered meaningful option must be added to the applicable product spec before or with the coherent planning change. `48/48 Exhaustive` never authorizes ad-hoc implementation semantics.
+A newly discovered meaningful option must be added to the applicable product spec before or with the coherent planning change. `50/50 Exhaustive` never authorizes ad-hoc implementation semantics.
 
 ## Development gate
 
-**Development remains prohibited until explicit scoped owner consent under ADR-0014. Current implementation authorization is 0/48.**
+**Development remains prohibited until explicit scoped owner consent under ADR-0014. Current implementation authorization is 0/50.**
