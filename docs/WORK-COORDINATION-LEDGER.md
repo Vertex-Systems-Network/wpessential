@@ -17,27 +17,28 @@ Authorized module/platform surfaces: **0/31**
 
 | Work ID | Scope | Lifecycle | Critical-path class | Parallelism | Shared surfaces | Notes |
 |---|---|---|---|---|---|---|
-| `P0-M00-WP01` | Universal Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | AGENTS/governance/quality/spec/checkpoint/PR docs | Documentation-only. Original product planning resume point preserved at ADR-0116. |
+| `P0-M00-WP01` | Universal Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | AGENTS/governance/quality/spec/checkpoint/PR docs | Documentation-only; governance integrated. |
+| `P0-M00-WP02` | Forms runtime/storage/submission executable evidence protocol | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Forms spec/runtime/topology/quality/ADR/readiness/checkpoint docs | ADR-0117; FM-01…FM-92 documented; 0 executed; FRT topology remains open. |
+| `P0-M00-WP03` | Workflow/Cron scheduling/DST/claims evidence refinement | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Workflow Runtime + JobService + scheduler/cron evidence/governance docs | Current next planning work; P-003/P-011 remain execution-gated. |
 
 No production implementation work package is active.
 
-## 3. Original planning resume queue
+## 3. Current planning queue
 
-After the owner is informed that governance hardening is complete, resume the existing Phase 0 planning sequence; do not restart from zero.
+Do not restart from zero.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Forms runtime/storage/submission executable evidence protocol | `SPECIFICATION` next | Continue from ADR-0116 checkpoint |
-| 2 | Workflow/Cron scheduling/DST/claims evidence refinement | `BLOCKED` by sequence | P-003/P-011 contracts remain intact |
-| 3 | Notification fan-out/read/dedupe evidence protocol | `BLOCKED` by sequence | Depends on stable Job/Workflow semantics |
-| 4 | Message & Chat transport/search/private-assets evidence protocol | `BLOCKED` by sequence | Later communication/runtime work |
-| 5 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `BLOCKED` by sequence | Provider/event evidence remains unexecuted |
+| 1 | Workflow/Cron scheduling/DST/claims evidence refinement | `SPECIFICATION` current | Reconcile ADR-0059/0068/0082/0083 + P-003/P-011 |
+| 2 | Notification fan-out/read/dedupe evidence protocol | `BLOCKED` by sequence | Depends on stable Job/Workflow semantics |
+| 3 | Message & Chat transport/search/private-assets evidence protocol | `BLOCKED` by sequence | Later communication/runtime work |
+| 4 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `BLOCKED` by sequence | Provider/event evidence remains unexecuted |
 
 These are planning tasks only, not implementation approvals.
 
 ## 4. Critical-path classes
 
-Use the classes defined in `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`:
+Use:
 - `BLOCKING_FOUNDATION`
 - `SHARED_CONTRACT`
 - `HIGH_RISK_UNKNOWN`
@@ -58,6 +59,8 @@ Default approved implementation limits:
 
 Current implementation WIP is 0, so no limit is consumed.
 
+Planning documentation work may advance serially without creating implementation authorization.
+
 ## 6. Shared-surface reservations
 
 Use this table whenever parallel implementation begins.
@@ -76,6 +79,7 @@ Typical shared surfaces include:
 - global routing;
 - Component Blueprint;
 - JobService;
+- Workflow Runtime;
 - Entitlement engine;
 - global config;
 - CI/build/package/release metadata.
@@ -113,16 +117,16 @@ Material unexplained expansion triggers:
 ## 9. Ledger update rule
 
 Update this ledger when:
-- an implementation work package starts/stops/blocks/completes;
+- a material planning/implementation work package starts/stops/blocks/completes;
 - shared-surface ownership changes;
 - parallelism classification changes;
 - critical path materially changes;
 - WIP limit/exception is intentionally changed.
 
-Do not update it for every tiny code edit.
+Do not update it for every tiny edit.
 
 ## 10. Current next safe action
 
-Governance hardening is complete. The next safe action is to inform the owner that all audited governance points were added; after that, resume the preserved Phase 0 planning queue beginning with the Forms evidence protocol.
+Continue `P0-M00-WP03`: reconcile Workflow Runtime, JobService, Action Scheduler packaging, Cron/timezone/DST and concurrency/claim semantics into bounded executable evidence protocols.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
