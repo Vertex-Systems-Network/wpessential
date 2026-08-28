@@ -40,7 +40,11 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP23` | Platform Account / Docs / Support / Diagnostics evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Product Account/OAuth/License/TUF/Support/Docs/Diagnostics/Remote Service/Vault/Privacy | ADR-0140; PLT-01…PLT-176; 0 executed; FP/OA/TU/RS remain separate prerequisites. |
 | `P0-M00-WP24` | Multisite Scope/Isolation + Site Lifecycle evidence refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Scope/Policy/Jobs/Cache/Vault/Membership/Backup/Product License/lifecycle | ADR-0141; MSI-01…MSI-160 + LC-01…LC-96; 0 executed; MS0–MS4/SL0–SL4 preserved. |
 | `P0-M00-WP25` | Audit & Observability evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Audit/AU1/PT-D/retention/integrity/diagnostics/security/event correlation | ADR-0142; AUD-01…AUD-176; 0 executed; AU1/PT-D remains first future baseline only. |
-| `P0-M00-WP26` | Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | bootstrap/kernel/module registry/policy/abilities/events/extension registries/SDK/Free↔Pro/Multisite | Current planning work; reconcile paper contracts before creating/refining a fixed shared-foundation protocol. |
+| `P0-M00-WP26` | Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | bootstrap/kernel/module registry/policy/abilities/events/extension registries/SDK/Free↔Pro/Multisite | ADR-0143; KPA-01…KPA-176; 0 executed. |
+| `P0-M00-WP27` | Local Privacy / Data Lifecycle evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | privacy/classification/retention/export-erasure/backups/Multisite | ADR-0144; PDL-01…PDL-176; 0 executed; RS remote privacy remains separate. |
+| `P0-M00-WP28` | Error Taxonomy & Failure UX evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | error envelopes/retry/conflict/partial failure/UI/REST/Ability/Jobs/accessibility | ADR-0145; ERR-01…ERR-176; 0 executed. |
+| `P0-M00-WP29` | Component Blueprint Core Runtime evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | compiler/bindings/Policy/renderer/slots/styles/assets/cache/accessibility/Multisite | ADR-0146; CBP-01…CBP-176; 0 executed; BW/BC adapter certification remains separate. |
+| `P0-M00-WP30` | Contract Versioning & Deprecation evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Product/Platform API/Definition/runtime schema/Ability/Event/adapter/package/SDK versions and migrations | Current planning work; reconcile overlap with FP/DEF/KPA/IM/CBP/module migration evidence before freezing a fixed protocol. |
 
 No production implementation work package is active.
 
@@ -48,8 +52,8 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK evidence reassessment | `SPECIFICATION` current | Shared platform contract family; paper architecture exists but no dedicated fixed shared-foundation protocol was found in repository quality inventory |
-| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP26 |
+| 1 | Contract Versioning & Deprecation executable-evidence reassessment | `SPECIFICATION` current | Paper policy exists; repository search found no dedicated fixed cross-version/deprecation protocol. Must avoid duplicating FP/DEF/KPA/IM/CBP evidence. |
+| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP30. |
 
 Planning documentation work does not create implementation authorization.
 
@@ -70,7 +74,11 @@ No active shared-surface implementation reservation exists.
 - Platform PLT **0/176**; Account connection, entitlement, allocation, update trust, support authority and diagnostics transmission remain separate.
 - Multisite MSI **0/160**; runtime-certified surfaces at MS1+ remain 0.
 - Site Lifecycle LC **0/96**; SL runtime certification remains 0.
-- Audit AUD **0/176**; AU1/PT-D is only a future baseline, and local Audit/hash evidence is not tamper-proof truth.
+- Audit AUD **0/176**; AU1/PT-D is only a future baseline; local Audit/hash evidence is not tamper-proof truth.
+- KPA **0/176**; one shared Free-owned kernel/registry family remains the platform authority, and every invocation channel remains Capability + Policy bound.
+- PDL **0/176**; local erase/anonymize/retention is owner-specific, and live erase is distinct from backup/remote deletion.
+- ERR **0/176**; machine codes/retry/disclosure/partial-failure semantics remain explicit and channel-consistent.
+- CBP **0/176**; core Blueprint runtime remains separate from BW **0/50** builder adapter certification.
 - current-blog context is never durable ownership or authorization.
 - site deletion does not imply global-user deletion/billing cancellation/shared-secret deletion/privacy erasure.
 - clone/restore cannot silently resurrect stale commercial/provider/access authority.
@@ -78,6 +86,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP26`: reconcile bootstrap/kernel/module-manifest lifecycle, dependency DAG/data ownership, granular capability + resource Policy evaluation order, typed Ability registration/invocation/channel parity, Event catalog/envelope/at-least-once semantics, extension registries/SDK namespacing/versioning/failure isolation, Free↔Pro shared ownership, Multisite site/network scope, stale registry/cache behavior, extension collisions and bootstrap/registry performance. Prefer one canonical shared-foundation evidence protocol only if the combined contract remains coherent; split if evidence domains materially diverge.
+Continue `P0-M00-WP30`: reconcile Product Version, Platform API range, Definition schema, runtime-data schema, Ability/Event schema, adapter/SDK compatibility, capability evolution, package compatibility, database migration state and deprecation/removal stages. Define evidence only for the cross-version behaviors not already owned by FP/DEF/KPA/IM/CBP/module-specific protocols: supported upgrade paths, version skew, unknown-future schema fail-safe behavior, deterministic migrator chains, deprecated/compatibility-only/removal transitions, security-sensitive accelerated deprecation, rollback/degraded boot, cross-release public-contract reporting and Multisite mixed-state migrations.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
