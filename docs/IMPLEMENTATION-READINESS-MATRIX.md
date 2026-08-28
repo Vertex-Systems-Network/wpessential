@@ -61,8 +61,8 @@ Historical 31-surface readiness records remain valid for the pre-ADR-0177 scope.
 | Area | Accepted paper state | Required evidence |
 |---|---|---|
 | Solution Blueprint/Application Composer | ADR-0177/0180/0181 | SBP-001…SBP-176 |
-| Analytics/Event/Journey | ADR-0177/0180 | ANL-001…ANL-176; detailed fixture expansion current WP64 |
-| Search & Indexing | ADR-0177/0180 | SRH-001…SRH-176 |
+| Analytics/Event/Journey | ADR-0177/0180/0182 | ANL-001…ANL-176 |
+| Search & Indexing | ADR-0177/0180 | SRH-001…SRH-176; detailed fixture expansion current WP65 |
 | Decision/Formula/Scoring | ADR-0177/0180 | DEC-001…DEC-176 |
 | Ledger/Balance/Movement | ADR-0177/0180 | LED-001…LED-176 |
 | Resource Scheduling/Reservation | ADR-0177/0180 | RSV-001…RSV-176 |
@@ -115,8 +115,8 @@ Historical 31-surface readiness records remain valid for the pre-ADR-0177 scope.
 | # | Surface | Product maturity | Accepted architecture | Major remaining blockers | Authorized |
 |---:|---|---|---|---|---|
 | 32 | F01 Solution Blueprint & Application Composer | Exhaustive | ADR-0177/0180/0181 | SBP 0/176 + all referenced component readiness + package/migration/security/Multisite evidence | No |
-| 33 | F02 Analytics, Event Tracking & Journey Intelligence | Exhaustive | ADR-0177/0180 | ANL 0/176 + physical event store/identity/privacy/materialization/scale; detailed fixture spec current | No |
-| 34 | F03 Search & Indexing | Exhaustive | ADR-0177/0180 | SRH 0/176 + backend/index security/invalidation/relevance/performance certification | No |
+| 33 | F02 Analytics, Event Tracking & Journey Intelligence | Exhaustive | ADR-0177/0180/0182 | ANL 0/176 + physical event-store/backend certification | No |
+| 34 | F03 Search & Indexing | Exhaustive | ADR-0177/0180 | SRH 0/176 + backend/index security/invalidation/relevance/performance; detailed fixture spec current | No |
 | 35 | F04 Decision, Formula, Scoring & Ranking | Exhaustive | ADR-0177/0180 | DEC 0/176 + typed compiler/decimal/unit/determinism/performance evidence | No |
 | 36 | F05 Ledger, Balance & Movement | Exhaustive | ADR-0177/0180 | LED 0/176 + physical transaction/lock/idempotency/rebuild/reconciliation evidence | No |
 | 37 | F06 Resource Scheduling/Reservation | Exhaustive | ADR-0177/0180 | RSV 0/176 + calendar/DST/atomic hold/capacity/concurrency evidence | No |
@@ -155,7 +155,8 @@ SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA are each **0/176**. No expan
 - ADR-0178/0179: AI Prompt/Requirement Compiler/MCP architecture + evidence accepted.
 - ADR-0180: universal-foundation/Woo adapter evidence master plan accepted.
 - ADR-0181: F01 SBP detailed fixtures accepted.
-- Current work: `P0-M00-WP64` — F02 Analytics/Event/Journey detailed evidence specification.
+- ADR-0182: F02 ANL detailed fixtures accepted.
+- Current work: `P0-M00-WP65` — F03 Search & Indexing detailed evidence specification.
 
 Current lifecycle is **SPECIFICATION**, not global `AWAITING_DEVELOPMENT_APPROVAL`, because the owner explicitly requested additional pre-planning and that sequence is active.
 
