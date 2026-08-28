@@ -35,11 +35,11 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP65 | F03 Search & Indexing detailed evidence | DONE | ADR-0196; SRH 176 documented / 0 executed |
 | WP66 | F04 Decision/Formula/Scoring detailed evidence | DONE | ADR-0198; DEC 176 documented / 0 executed |
 | WP67 | F05 Ledger/Balance/Movement detailed evidence | DONE | ADR-0199; LED 176 documented / 0 executed |
-| WP68 | F06 Resource Scheduling/Reservation detailed evidence | DONE | **ADR-0200; RSV 176 documented / 0 executed** |
-| **WP69** | **F07 Placement/Personalization detailed evidence** | **SPECIFICATION / CURRENT** | PLC 0/176 envelope |
+| WP68 | F06 Resource Scheduling/Reservation detailed evidence | DONE | ADR-0200; RSV 176 documented / 0 executed |
+| **WP69** | **F07 Placement/Personalization detailed evidence** | **DONE** | **ADR-0201; PLC 176 documented / 0 executed** |
+| **WP70** | **F08 Experimentation/Rollout detailed evidence** | **SPECIFICATION / CURRENT** | EXP 0/176 envelope |
 
 Reserved follow-on IDs:
-- WP70 — F08 Experimentation/Rollout (`EXP`)
 - WP71 — F09 Documents/Records (`DOC`)
 - WP72 — F10 Sync/ETL (`SYN`)
 - WP73 — F11 Geo/Territory (`GEO`)
@@ -73,42 +73,44 @@ Universal detailed evidence state:
 - SRH 176 documented / 0 executed;
 - DEC 176 documented / 0 executed;
 - LED 176 documented / 0 executed;
-- **RSV 176 documented / 0 executed**;
-- PLC 0/176 group envelope is the current detailed-enumeration target.
+- RSV 176 documented / 0 executed;
+- **PLC 176 documented / 0 executed**;
+- EXP 0/176 group envelope is the current detailed-enumeration target.
 
 Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
 ## 9. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring produces derived inputs; it does not become booking authority.
-- F05 Ledger holds are financial/quantity availability semantics, not F06 resource-calendar reservation semantics.
-- F06 owns resource definitions, availability derivation and atomic reservation lifecycle for explicit scheduling profiles.
-- Availability/search/cache output is advisory; final hold/confirmation revalidates current rules, Policy and capacity.
-- Payment, order, entitlement and external-calendar state remain separate source authorities and require typed integration/reconciliation.
-- External-provider unknown outcome requires reconciliation before replay where duplicate effects are possible.
-- Shared pools and multi-resource booking require atomic aggregate semantics or explicit safe compensation; a partial allocation is not fully confirmed.
-- Audit records operation history around reservations but does not replace reservation business truth.
-- Backup/restore cannot roll back external providers; restored/cloned provider mappings require quarantine/reconciliation before writes.
-- Surface 55 environment clone/migration cannot silently activate production calendar/payment connections.
-- AI Prompt Runtime remains shared; no privileged AI booking/provider path exists.
-- WP69 F07 Placement/Personalization may consume resource/availability facts only through their declared APIs; it does not own reservations.
+- F04 Decision/Formula/Scoring can supply derived ranking inputs but cannot authorize a placement candidate.
+- F05 Ledger and F06 Scheduling facts may be displayed only through their declared APIs/Policies; F07 does not own ledger or reservation truth.
+- F07 owns presentation placement eligibility, slot conflict resolution, frequency/dismissal behavior and personalization orchestration for explicit placement profiles.
+- Audience match is not role/capability/membership/entitlement authority.
+- Hidden or not-selected UI neither denies nor grants the underlying action; canonical resource Policy remains authoritative.
+- Component Blueprint data is reauthorized through canonical Query/Data Source/Policy owners at render time.
+- Personalized caches, frequency state and dismissal state must remain isolated by required user/session/site/tenant/consent dimensions.
+- Theme/builder/Woo/domain placement adapters expose bounded certified slot contracts; no arbitrary DOM/PHP/script injection authority is created.
+- F08 experiment assignment may be consumed by F07 but assignment ≠ consent and assignment ≠ qualifying exposure.
+- Exposure/event truth composes F08/F02 contracts; a selected component is not automatically a successful exposure.
+- Safe Script/Tag remains a separate browser-side owner; server executable code remains Extension SDK/VCS/release territory.
+- Multisite placement ownership and overrides are server-resolved and do not imply cross-site data access.
+- AI Prompt Runtime remains shared; no hidden privileged personalization path exists.
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. F06 completion truth — ADR-0200
+## 10. F07 completion truth — ADR-0201
 
-`docs/QUALITY/RESOURCE-SCHEDULING-RESERVATION-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `RSV-001…RSV-176`.
+`docs/QUALITY/PLACEMENT-PERSONALIZATION-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `PLC-001…PLC-176`.
 
-Frozen evidence includes resource/calendar/capacity schemas, timezone/DST/recurrence, blackouts/holidays, availability/buffers, atomic holds/confirmation/release, shared pools/multi-resource transactions, lifecycle changes, payment/approval reconciliation, overbooking/crash defense, waitlists, privacy, provider calendar synchronization, cache invalidation, Multisite isolation, backup/restore/clone safety, 10K/100K/1M scale and deterministic appointment/rental/DST/provider/AI-adversarial golden regressions.
+Frozen evidence includes slot/adapter schemas, typed audience resolution, deterministic priority/conflicts/fallback, frequency caps and identity transitions, timezone/campaign lifecycle, Policy-safe Component Blueprint rendering, scoped assets, personalized cache isolation, accessibility/dismissal/preferences, consent/privacy/dark-pattern defense, F08 experiment binding/exposure distinction, theme/builder/Woo adapter conflicts, Multisite overrides, lifecycle/degraded behavior, 10K/100K/1M scale profiles and deterministic popup/banner/portal/cart/AI-adversarial golden regressions.
 
-Current RSV truth: **176 documented / 0 executed / runtime certification 0**.
+Current PLC truth: **176 documented / 0 executed / runtime certification 0**.
 
 ## 11. Runtime truth
 
-No F06 feature has executed. Specifically, no resource/calendar table, recurrence evaluation, availability search, hold, reservation confirmation, reschedule/cancel/no-show, waitlist promotion, capacity lock, transaction, external calendar/payment/provider request, restore reconciliation, AI/MCP session, test or benchmark occurred.
+No F07 feature has executed. Specifically, no slot registry, placement evaluator, audience rule, frequency-cap update, dismissal state mutation, personalized cache, Component Blueprint render, asset enqueue, browser placement, experiment assignment/exposure event, theme/builder/Woo adapter call, AI/MCP session, test or benchmark occurred.
 
 ## 12. Current next safe action
 
-Continue **P0-M00-WP69 — F07 Placement & Personalization detailed executable-evidence specification (`PLC-001…PLC-176`)**.
+Continue **P0-M00-WP70 — F08 Experimentation & Rollout detailed executable-evidence specification (`EXP-001…EXP-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
