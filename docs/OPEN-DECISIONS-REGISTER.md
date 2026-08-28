@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0117**.
+This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0119**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -13,7 +13,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 |---|---|---|
 | D-001 | ADR-0002/0069/0075 | WP/PHP/DB compatibility + Multisite/site lifecycle — P-001 |
 | D-002 | ADR-0005 | UI runtime/externalization/accessibility/RTL/bundle — P-002 |
-| D-003 | ADR-0059/0068/0083 | Job physical/backend/Action Scheduler/fairness/claims/Multisite — P-003 |
+| D-003 | ADR-0059/0068/0083/0119 | Job physical/backend/Action Scheduler/Cron/DST/fairness/claims/Multisite — JS-01…JS-106 / P-003 |
 | D-004 | ADR-0073/0092 | Definition D1/D2/D3/D4 exact DDL/index/locking/migration — P-004 |
 | D-005 | ADR-0048/0085 | Vault crypto/envelope/DDL/rotation/recovery/security review — P-005 |
 | D-006 | ADR-0070/0072/0076/0091/0101 | Free↔Pro/Product License/OAuth runtime/service — P-006 + OA protocol |
@@ -21,7 +21,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-008 | ADR-0012 | build/externalization/toolchain comparison — P-008 |
 | D-009 | ADR-0086 | Query compiler/cost/cache/security/storage-adapter evidence — P-009 |
 | D-010 | ADR-0074/0093 | Relations DDL/cardinality/concurrency/scale — P-010 |
-| D-011 | ADR-0082 | Workflow runtime/concurrency/recovery — P-011 |
+| D-011 | ADR-0082/0118 | Workflow runtime/revision/dedupe/concurrency/waits/approvals/recovery/scale — WF-01…WF-116 / P-011 |
 | D-012 | ADR-0078/0090 | Membership runtime/cache/files/provider evidence — P-012 |
 | D-013 | ADR-0084/0100 | Backup physical/artifact/provider/restore evidence — P-013 |
 | D-014 | ADR-0044/0102 | Pro updater TUF verifier/key custody/metadata/package staging — TU-01…TU-44 |
@@ -50,8 +50,8 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - Notification/Email NE1/PT-D vs NE2/PT-E.
 - Event Inbox EI1/PT-D vs EI2/PT-E.
 - Audit AU1/PT-D.
-- Workflow WF1/PT-D vs WF2/PT-E.
-- JobService J1/J2/J3.
+- Workflow WF1/PT-D vs WF2/PT-E; WF-01…WF-116 evidence protocol.
+- JobService J1/J2/J3; JS-01…JS-106 evidence protocol; Action Scheduler remains candidate only.
 - REST RE1 + RI1/RI2.
 - Import IR1/PT-D vs IR2/PT-E.
 - Backup Remote Copy BR1/BR2/BR3.
@@ -367,14 +367,56 @@ Open evidence:
 
 FRT1/PT-D remains first future benchmark baseline. FRT2/PT-E remains mandatory comparison; ADR-0117 does not select a final physical topology.
 
-## R. Other current evidence state
+## R. Workflow Runtime — ADR-0082/0118 / P-011
+
+WF-01…WF-116 are fixed future fixtures.
+
+Open evidence:
+- published revision pinning and historical revision retention under real runtime;
+- trigger/event idempotency and concurrent Run-start admission;
+- Run/Step CAS transitions, duplicate/out-of-order workers and crash windows;
+- typed condition/branch behavior and concurrent joins;
+- durable waits/timers and lost-enqueue reconciliation;
+- approval authorization, expiry, quorum and decision races;
+- JobService lease/retry/backpressure integration;
+- action-specific authorization/idempotency and external unknown-outcome reconciliation;
+- cancellation/intervention/compensation truth;
+- security/privacy/log redaction;
+- restore/clone/site lifecycle revalidation;
+- WF1/PT-D vs WF2/PT-E physical/Multisite/scale evidence.
+
+**WF executed: 0/116. Workflow runtime certifications: 0. Final Workflow topology: open.**
+
+## S. JobService / Cron — ADR-0059/0068/0083/0119 / P-003
+
+JS-01…JS-106 are fixed future fixtures.
+
+Open evidence:
+- candidate Action Scheduler version/load-order/coexistence and ownership isolation;
+- backend-neutral Job/Attempt mapping and physical persistence boundaries;
+- one-time/interval/calendar recurrence plus timezone/DST/missed/overlap semantics;
+- enqueue/commit crash ambiguity and reconciliation;
+- at-least-once/idempotency/unknown-outcome behavior;
+- claim/lease expiry and stale-worker races;
+- fairness/starvation/resource-key/backpressure behavior;
+- request-driven/loopback/system-cron/WP-CLI runner modes;
+- current authorization/resource/secret revalidation;
+- retention/observability/log redaction;
+- Multisite/lifecycle/clone/restore safety;
+- J1/J2/J3 physical and large workload/site-count evidence.
+
+**JS executed: 0/106. JobService backend certifications: 0. Cron/DST certifications: 0.**
+
+Action Scheduler remains a preferred candidate adapter only; ADR-0119 does not certify it or select final J1/J2/J3 topology.
+
+## T. Other current evidence state
 
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
 - Query P-009: **0 executed**.
-- Job P-003: **0 executed**.
+- Job P-003: **0/106 JS**.
 - Vault P-005: **0 executed**.
-- Workflow P-011: **0 executed**.
+- Workflow P-011: **0/116 WF**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected file **0 PC1+**.
 - Forms Runtime: **0/92 FM fixtures / 0 runtime certifications**.
 - Email: **6 EE3 / 0 ET-certified**.
@@ -384,22 +426,21 @@ FRT1/PT-D remains first future benchmark baseline. FRT2/PT-E remains mandatory c
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## S. Accepted architecture no longer open semantically
+## U. Accepted architecture no longer open semantically
 
-ADRs **0035–0117** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0119** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms runtime or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. Workflow/Cron scheduling/DST/claim execution evidence refinement around P-003/P-011.
-2. Notification fan-out/read/dedupe evidence protocol.
-3. Message & Chat transport/search/private-assets evidence protocol.
-4. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-5. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM gates intact.
+1. Notification fan-out/read/dedupe evidence protocol.
+2. Message & Chat transport/search/private-assets evidence protocol.
+3. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+4. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS gates intact.
