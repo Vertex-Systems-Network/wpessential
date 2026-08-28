@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0137**. Architecture acceptance never implies runtime certification or owner development authorization.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0139**. Architecture acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -42,7 +42,9 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-029 | ADR-0023/0088/0135 | Custom Tables CT1–CT3 + CM1–CM4 exact DDL/migration/recovery — CTB-01…CTB-184 |
 | D-030 | ADR-0098/0136 | Admin Columns hooks/batching/sort/filter/edit/export/Policy/N+1 — AC-01…AC-176 + target capability certification |
 | D-031 | ADR-0039/0099/0137 | Dynamic Listings authorization/pagination/count/cache/hydration/interaction/builders/SEO — DL-01…DL-176 |
-| D-032 | Free CPT/Taxonomy exhaustive spec | native registration/rewrite/capability/REST/editor/lifecycle/Multisite fixed evidence — WP21 current |
+| D-032 | ADR-0138 | Free CPT/Taxonomy native registration/rewrite/capability/REST/editor/lifecycle/Multisite — CPTX-01…CPTX-176 + CPTX certifications |
+| D-033 | ADR-0029/0058/0063/0067/0079/0139 | Emails Builder compile/context/IR/render/plaintext/adapter/handoff — EBR-01…EBR-176; transport delivery truth remains ET0–ET5 |
+| D-034 | ADR-0034/0044/0050/0054/0060/0070/0072/0076/0091/0101/0102/0128 | Platform Account/Docs/Support/Diagnostics cross-surface service/auth/privacy/status/cache/error/degradation evidence — WP23 current reassessment |
 
 ## B. Accepted paper/runtime-baseline summary
 
@@ -57,6 +59,8 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Custom Tables: CT1/PT-E first for site-owned; CT2/PT-D mandatory comparison; CT3 genuinely network-owned only. Typed desired-schema + Migration Plan; CM1 direct, CM2 backfill, CM3 shadow/swap, CM4 destructive recovery; CTB fixed evidence.
 - Admin Columns: AC1 whole-request Column Execution Plan + bounded batch hydration; capabilities certified independently; AC fixed evidence.
 - Dynamic Listings: DL1 authorization-aware Query + batched hydration + Component Blueprint SSR; DL-A1 preferred, DL-A2 bounded/evidence-gated, DL-A3 unsupported context; DL fixed evidence.
+- Free CPT/Taxonomy: Definition intent, effective registration, rewrite/query state, REST/editor state and persisted content remain separate truths; CPTX fixed evidence.
+- Email Builder: Definition → compiled descriptor → authorized context → Email IR → HTML/plaintext Rendered Message → delivery handoff; EBR fixed evidence; transport/provider truth remains separate ET certification.
 - Settings ST1/PT-A, ST2/PT-B, ST3 inheritance.
 - Forms FRT1/PT-D first, FRT2/PT-E mandatory.
 - Chat CRT1/PT-D first, CRT2/PT-E mandatory.
@@ -92,6 +96,8 @@ All remain paper-only until their applicable executable evidence certifies them.
 | CTB | **0/184; CT1/CT2/CT3 + CM1–CM4 certs 0; exact DDL open** |
 | AC | **0/176; AC-R/S/F/Q/E/B/X/M/P certs 0** |
 | DL | **0/176; DL-A1/A2/A3 + DL-R/A/P/F/H/C/I/B/S/M/O certs 0** |
+| CPTX | **0/176; all CPTX certifications 0** |
+| EBR | **0/176; all renderer/composition certifications 0** |
 | FM | **0/92** |
 | NT | **0/142** |
 | CH | **0/142** |
@@ -99,7 +105,7 @@ All remain paper-only until their applicable executable evidence certifies them.
 | OA | **0/32** |
 | TU | **0/44** |
 | DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM | **all 0 executed at their documented fixture counts** |
-| Email | **6 EE3 / 0 ET-certified** |
+| Email transport/provider | **6 EE3 / 0 ET-certified** |
 | Site Lifecycle | **0/40** |
 | Multisite | **0 MS1+** |
 | Remote privacy | **0/30** |
@@ -159,23 +165,51 @@ Current: **AC 0/176; all target/capability certifications 0**.
 
 Current: **DL 0/176; all strategy/capability certifications 0**.
 
-## H. Current highest-priority planning blocker — Free CPT + Taxonomy
+## H. Free CPT + Taxonomy boundary retained after ADR-0138
 
-The Free product depends on native WordPress content-model registration, and repository verification found no dedicated fixed `FREE-CPT-TAXONOMY-EXECUTABLE-EVIDENCE-PROTOCOL.md`. WP21 must freeze evidence for:
-- CPT/taxonomy key/slug/reserved-name collisions;
-- registration timing and argument parity;
-- labels/UI/menu/editor/block behavior;
-- rewrite/permastruct/query-var lifecycle and flush boundaries;
-- capability/meta-cap mapping and REST exposure;
-- hierarchical and taxonomy object-type semantics;
-- definition publish/revision/disable/delete degradation;
-- post/term data preservation across definition changes;
-- REST/editor/theme/plugin compatibility at accepted floor;
-- Multisite per-site registration/scope/site lifecycle;
-- import/export/clone/restore dependency identity;
-- activation/deactivation/update/rollback and conflict diagnostics.
+- Draft Definition ≠ Published Revision ≠ validated registration descriptor ≠ effective WordPress registration ≠ rewrite/query state ≠ REST/editor state ≠ persisted posts/terms ≠ migration state ≠ certification.
+- external runtime discovery/collision does not establish WPE ownership.
+- published CPT/taxonomy keys are migration-class identities.
+- rewrite changes use dirty-generation + controlled safe flush, never every request.
+- disable/delete preserves posts/terms/relationships/meta by default.
+- capability changes require impact/anti-lockout evidence.
+- CPT↔taxonomy registration association must remain consistent on both surfaces.
+- network template distribution never makes posts/terms network-shared.
 
-## I. Decision-processing rule
+Current: **CPTX 0/176; all CPTX certifications 0**.
+
+## I. Emails Builder boundary retained after ADR-0139
+
+- Template/Layout Definition, compiled descriptor, authorized render context, Email IR, rendered HTML, plaintext, envelope metadata, Rendered Message and Transport Attempt are separate truths.
+- renderer success does not imply transport accepted, receiving-server delivered, inbox placed, opened/read or human viewed.
+- arbitrary browser/frontend builder markup, PHP, JS, iframes and unsafe raw headers are not canonical Email Builder inputs.
+- token providers are typed, privacy-classified and Policy-authorized for the recipient/render context.
+- generic tokens never expose credentials, password/reset/session internals or Vault plaintext.
+- plaintext generation is deterministic from Email IR, not naive HTML stripping.
+- WordPress/third-party overrides require semantic certified adapters and safe fallback; global string-matching interception is not accepted.
+- network templates/layouts do not imply shared sender credentials, recipients or delivery state.
+- ET0–ET5 provider/transport certification remains independent.
+
+Current: **EBR 0/176; all renderer/composition certifications 0; Email transport 6 EE3 / 0 ET-certified**.
+
+## J. Current highest-priority planning blocker — Platform surfaces
+
+WP23 must reconcile the Account/Docs/Support/Diagnostics surface without duplicating already-canonical FP/OA/TU protocols. Cross-surface evidence must cover only gaps such as:
+- account/link/license/catalog/support/docs/status trust-domain boundaries;
+- authentication/session expiry, unlink/relink and wrong-account/site behavior;
+- offline/stale/degraded cache truth and no false entitlement/support/status claims;
+- support ticket create/update/attachment/redaction/idempotency authority;
+- docs/changelog/version/locale cache and integrity behavior;
+- diagnostics consent, minimization, redaction and remote transmission boundaries;
+- remote service rate/error/schema/version degradation;
+- Multisite network/site allocation and site-context isolation;
+- privacy/retention/export/erasure interactions;
+- Vault usage without secret exposure;
+- TUF/update trust remaining separate from general account/service APIs;
+- service unavailable/partial-outage/support escalation UX;
+- no hidden telemetry from Free activation or ordinary local use.
+
+## K. Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
@@ -187,8 +221,7 @@ The Free product depends on native WordPress content-model registration, and rep
 
 ## Next planning-only priorities
 
-1. **Free CPT + Taxonomy runtime registration/rewrite evidence** — current `P0-M00-WP21`.
-2. Emails Builder renderer/delivery composition evidence reassessment.
-3. Reassess remaining blockers by critical-path value after WP21.
+1. **Platform Account / Docs / Support / Diagnostics consolidated evidence reassessment** — current `P0-M00-WP23`.
+2. Reassess remaining unresolved shared/surface blockers by critical-path value after WP23.
 
 Production development authorization remains **NOT GRANTED**.
