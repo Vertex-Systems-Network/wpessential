@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0173**.
+Accepted evidence decisions/refinements now extend through **ADR-0174**.
 
 ### Fixed evidence sequence
 
@@ -89,6 +89,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0173**.
 | ADR-0171 | Remote Service Privacy / Retention refinement | RS **0/176** |
 | ADR-0172 | Email Transport / Provider Certification refinement | ET-F **0/176**; **6 EE3 / 0 ET-certified** |
 | ADR-0173 | Membership Billing Provider Certification refinement | MB-F **0/176**; **4 BE3 / 0 MB-certified** |
+| ADR-0174 | Membership Protected File Delivery Certification refinement | PC-F **0/176**; **0 PC1+**; PD1…PD4 runtime certs 0 |
 
 ## Critical preserved truth
 
@@ -120,6 +121,9 @@ Accepted evidence decisions/refinements now extend through **ADR-0173**.
 - Static BE3 provider evidence never becomes MB0 runtime certification.
 - Provider hooks/webhooks are freshness/source evidence, not direct Membership authority; ambiguous provider state remains unknown until reconciled.
 - Woo HPOS compatibility is evidence-scoped; direct private order-storage assumptions are not the canonical billing-adapter contract.
+- Protected-file storage possession ≠ authorization; page/button hiding ≠ origin-byte protection.
+- Signed token/URL issuance ≠ durable Membership entitlement; already-issued bearer URL revocation semantics must be stated truthfully.
+- Backup-provider certification ≠ protected-file delivery certification; direct-origin isolation is mandatory before Protected/Supported claims.
 - JobService at-least-once execution never becomes exactly-once email, provider or Membership behavior.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
@@ -142,7 +146,7 @@ Provider/other evidence truth:
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
-- Membership protected files remain **0 PC1+**.
+- Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime-certified profiles **0**.
 - Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
 - Connection adapters **0 I4/I5**.
 - Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
@@ -153,13 +157,13 @@ Provider/other evidence truth:
 - Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after PR body synchronization.
 - direct GitHub branch reads on 2026-08-28 reported `main` and `planning/master-architecture` unprotected.
 - repository-wide rulesets remain **UNKNOWN** because earlier ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/protected-file/file-move/server-config/signed-URL/download/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP57` — Protected-file provider/delivery certification reassessment — SPECIFICATION**.
+Current work package: **`P0-M00-WP58` — Backup provider certification reassessment — SPECIFICATION**.
 
-Reason: Membership billing evidence is now fixed at MB-F **0/176**, while protected files remain **0 PC1+**. WP57 must audit PC0–PC4 and private local/accelerated/object-delivery profiles against current Membership Entitlement/Policy, Vault, Safe HTTP, storage/media boundaries, privacy, ERR, VER, RLT, Multisite, Site Lifecycle, Backup and revoke-safe delivery semantics. Preserve storage possession ≠ authorization and signed URL issuance ≠ durable entitlement.
+Reason: protected-file delivery evidence is now fixed at PC-F **0/176**, while Backup provider support remains **34 targets / 0 C-certified / 0 C3 Supported; V3 0**. WP58 must audit C0–C4/V3/provider-family evidence against BK-01…BK-180, Vault, JobService, remote-copy lifecycle, privacy, ERR, VER, Multisite, Site Lifecycle and restore-first certification truth. Static provider evidence must never become runtime Backup support automatically.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
