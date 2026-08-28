@@ -11,83 +11,85 @@ Production implementation WIP: **0**
 Active implementation approvals: **0**  
 Authorized module/platform surfaces: **0/31**
 
-## 2. Current/recent work packages
+Planning documentation is allowed. Executable/source/runtime work remains blocked by ADR-0014.
 
-| Work ID | Scope | Lifecycle | Critical-path class | Parallelism | Shared surfaces | Notes |
-|---|---|---|---|---|---|---|
-| `P0-M00-WP01` | Universal Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | governance/source-of-truth | Documentation-only. |
-| `P0-M00-WP02` | Forms executable evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Forms/Workflow | ADR-0117; FM-01…FM-92; 0 executed. |
-| `P0-M00-WP03` | Workflow + Job/Cron evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Workflow/JobService | ADR-0118/0119; WF 116 + JS 106; 0 executed. |
-| `P0-M00-WP04` | Notification evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Notification/Jobs/providers | ADR-0120; NT-01…NT-142; 0 executed. |
-| `P0-M00-WP05` | Message & Chat evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Chat/search/assets | ADR-0121; CH-01…CH-142; 0 executed. |
-| `P0-M00-WP06` | Webhooks/Connections/Event Inbox evidence | `DONE` | `INTEGRATION` | `SERIALIZE` | Safe HTTP/Connections/Event Inbox | ADR-0122; WC-01…WC-156; 0 executed. |
-| `P0-M00-WP07` | P-001 compatibility floor evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP/PHP/DB/Multisite | ADR-0123; CF-01…CF-112; 0 executed. |
-| `P0-M00-WP08` | P-005 Vault evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Vault/security/recovery | ADR-0124; VT-01…VT-128; 0 executed. |
-| `P0-M00-WP09` | P-002 UI + P-008 build evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | UI/React/assets/build | ADR-0125 UI-01…UI-104 + ADR-0126 BT-01…BT-112; 0 executed. |
-| `P0-M00-WP10` | P-007 CI / Quality Matrix evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CI + FAST/FULL + provenance | ADR-0127; CI-01…CI-120; 0 executed. |
-| `P0-M00-WP11` | P-006 Free↔Pro compatibility / boot evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Free/Pro + Platform API + schema + entitlement | ADR-0128; FP-01…FP-144; 0 executed. |
-| `P0-M00-WP12` | P-012 Membership evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Membership/Policy/protected assets/providers | ADR-0129; MBR-01…MBR-160; 0 executed. |
-| `P0-M00-WP13` | P-013 Backup/Restore evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Backup/crypto/providers/Vault/Restore | ADR-0130; BK-01…BK-180; 0 executed. |
-| `P0-M00-WP14` | P-009 Query evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Data Sources/cache/Multisite | ADR-0131; QRY-01…QRY-168; 0 executed. |
-| `P0-M00-WP15` | P-004 Definition Repository audit/refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Definition/revisions/dependencies/migrations | ADR-0132; DEF-01…DEF-144; 0 executed. |
-| `P0-M00-WP16` | P-010 Relations audit/refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Relations/Query/Policy/Fields/Multisite | ADR-0133; REL-01…REL-160; 0 executed. |
-| `P0-M00-WP17` | Field Storage / Custom Fields evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Field Schema/FS1–FS6/Query/Relations/Vault | ADR-0134; FST-01…FST-176; 0 executed. |
-| `P0-M00-WP18` | Custom Tables physical/DDL/migration evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CT1–CT3/CM1–CM4/Query/Fields/Relations/Backup/Multisite | ADR-0135; CTB-01…CTB-184; 0 executed. |
-| `P0-M00-WP19` | Admin Columns operational evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | ADR-0136; AC-01…AC-176; 0 executed. |
-| `P0-M00-WP20` | Dynamic Listings SSR/cache/pagination evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Fields/Relations/Component Blueprint/cache/builders | ADR-0137; DL-01…DL-176; 0 executed. |
-| `P0-M00-WP21` | Free CPT + Taxonomy runtime registration/rewrite evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP registration/rewrite/REST/Definition/Policy/Multisite | ADR-0138; CPTX-01…CPTX-176; 0 executed. |
-| `P0-M00-WP22` | Emails Builder renderer/composition evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Email IR/templates/Vault/Policy/Notification/providers/Multisite | ADR-0139; EBR-01…EBR-176; 0 executed; ET separate. |
-| `P0-M00-WP23` | Platform Account / Docs / Support / Diagnostics evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Product Account/OAuth/License/TUF/Support/Docs/Diagnostics/Remote Service/Vault/Privacy | ADR-0140; PLT-01…PLT-176; 0 executed; FP/OA/TU/RS remain separate prerequisites. |
-| `P0-M00-WP24` | Multisite Scope/Isolation + Site Lifecycle evidence refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Scope/Policy/Jobs/Cache/Vault/Membership/Backup/Product License/lifecycle | ADR-0141; MSI-01…MSI-160 + LC-01…LC-96; 0 executed; MS0–MS4/SL0–SL4 preserved. |
-| `P0-M00-WP25` | Audit & Observability evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Audit/AU1/PT-D/retention/integrity/diagnostics/security/event correlation | ADR-0142; AUD-01…AUD-176; 0 executed. |
-| `P0-M00-WP26` | Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | kernel/registries/policy/abilities/events/SDK/Free↔Pro/Multisite | ADR-0143; KPA-01…KPA-176; 0 executed. |
-| `P0-M00-WP27` | Local Privacy / Data Lifecycle evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | privacy/classification/retention/export-erasure/backups/Multisite | ADR-0144; PDL-01…PDL-176; 0 executed; RS separate. |
-| `P0-M00-WP28` | Error Taxonomy & Failure UX evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | error envelopes/retry/conflict/partial failure/UI/REST/Ability/Jobs | ADR-0145; ERR-01…ERR-176; 0 executed. |
-| `P0-M00-WP29` | Component Blueprint Core Runtime evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | compiler/bindings/Policy/renderer/slots/styles/assets/cache/Multisite | ADR-0146; CBP-01…CBP-176; 0 executed; BW/BC separate. |
-| `P0-M00-WP30` | Contract Versioning & Deprecation evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Product/API/schema/Ability/Event/adapter/package/SDK versions/migrations | ADR-0147; VER-01…VER-176; 0 executed. |
-| `P0-M00-WP31` | Module Lifecycle / Disable / Uninstall / Recovery evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | module states/dependencies/migrations/security enforcement/cleanup/recovery/Multisite | ADR-0148; MLC-01…MLC-176; 0 executed. |
-| `P0-M00-WP32` | Entity / Data Source Registry evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | adapters/schema/capabilities/Policy/query/write/transactions/Multisite | ADR-0149; DSR-01…DSR-176; 0 executed. |
-| `P0-M00-WP33` | Asset Registry & Scoped Loader evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | assets/dependency graph/WP handles/routes/build manifest/loading/security/Multisite | ADR-0150; ASR-01…ASR-176; 0 executed. |
-| `P0-M00-WP34` | Conditional Logic Engine evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | typed conditions/operators/value sources/Policy/cache/consumers/Multisite | ADR-0151; CLG-01…CLG-176; 0 executed. |
-| `P0-M00-WP35` | Dynamic Value / Token Resolver evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Data Source/Fields/Relations/Query/Policy/escaping/cache/Blueprint/Email/Notification/Forms | ADR-0152; DVR-01…DVR-176; 0 executed; owner/consumer certifications remain separate. |
-| `P0-M00-WP36` | Shared Rate Limit / Abuse Control Service evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Protector/REST/Forms/Webhooks/Auth/provider endpoints/cache/atomic counters/Multisite | Current planning work; rate/abuse semantics exist across consumer protocols but no dedicated shared service protocol was found in QUALITY inventory. |
+## 2. Work packages
+
+| Work ID | Scope | Lifecycle | Class | Parallelism | Evidence / note |
+|---|---|---|---|---|---|
+| `P0-M00-WP01` | Master Prompt governance hardening | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Documentation governance only. |
+| `P0-M00-WP02` | Forms | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0117; FM 0/92. |
+| `P0-M00-WP03` | Workflow + Job/Cron | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0118/0119; WF 0/116; JS 0/106. |
+| `P0-M00-WP04` | Notifications | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0120; NT 0/142. |
+| `P0-M00-WP05` | Message & Chat | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0121; CH 0/142. |
+| `P0-M00-WP06` | Webhooks/Connections/Event Inbox | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0122; WC 0/156. |
+| `P0-M00-WP07` | Compatibility floor | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0123; CF 0/112. |
+| `P0-M00-WP08` | Vault | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0124; VT 0/128. |
+| `P0-M00-WP09` | UI + Build | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0125/0126; UI 0/104; BT 0/112. |
+| `P0-M00-WP10` | CI/Quality Matrix | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0127; CI 0/120. |
+| `P0-M00-WP11` | Free↔Pro compatibility | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0128; FP 0/144. |
+| `P0-M00-WP12` | Membership | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0129; MBR 0/160. |
+| `P0-M00-WP13` | Backup/Restore | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0130; BK 0/180. |
+| `P0-M00-WP14` | Query | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0131; QRY 0/168. |
+| `P0-M00-WP15` | Definition Repository | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0132; DEF 0/144. |
+| `P0-M00-WP16` | Relations | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0133; REL 0/160. |
+| `P0-M00-WP17` | Field Storage / Custom Fields | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0134; FST 0/176. |
+| `P0-M00-WP18` | Custom Tables | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0135; CTB 0/184. |
+| `P0-M00-WP19` | Admin Columns | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0136; AC 0/176. |
+| `P0-M00-WP20` | Dynamic Listings | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0137; DL 0/176. |
+| `P0-M00-WP21` | Free CPT + Taxonomy | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0138; CPTX 0/176. |
+| `P0-M00-WP22` | Emails Builder renderer/composition | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0139; EBR 0/176; ET separate. |
+| `P0-M00-WP23` | Platform Account/Docs/Support/Diagnostics | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0140; PLT 0/176. |
+| `P0-M00-WP24` | Multisite Scope + Site Lifecycle | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0141; MSI 0/160; LC 0/96. |
+| `P0-M00-WP25` | Audit & Observability | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0142; AUD 0/176. |
+| `P0-M00-WP26` | Kernel/Registry/Policy/Abilities/Events/SDK | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0143; KPA 0/176. |
+| `P0-M00-WP27` | Local Privacy/Data Lifecycle | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0144; PDL 0/176. |
+| `P0-M00-WP28` | Error Taxonomy/Failure UX | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0145; ERR 0/176. |
+| `P0-M00-WP29` | Component Blueprint Core | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0146; CBP 0/176. |
+| `P0-M00-WP30` | Contract Versioning/Deprecation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0147; VER 0/176. |
+| `P0-M00-WP31` | Module Lifecycle/Uninstall/Recovery | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0148; MLC 0/176. |
+| `P0-M00-WP32` | Entity/Data Source Registry | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0149; DSR 0/176. |
+| `P0-M00-WP33` | Asset Registry/Scoped Loader | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0150; ASR 0/176. |
+| `P0-M00-WP34` | Conditional Logic Engine | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0151; CLG 0/176. |
+| `P0-M00-WP35` | Dynamic Value/Token Resolver | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0152; DVR 0/176. |
+| `P0-M00-WP36` | Shared Rate Limit/Abuse Control | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0153; RLT 0/176; consumer certs separate. |
+| `P0-M00-WP37` | Shared Cache/Invalidation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0154; CAC 0/176; consumer certs separate. |
+| `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176; original REST-01…52 preserved. |
+| `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176; original IM-01…56 preserved. |
+| `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176; original RA-01…48 preserved. |
+| `P0-M00-WP41` | User Profile canonical evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Current planning work; audit UP 0/48 against FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC/Multisite. |
 
 No production implementation work package is active.
 
 ## 3. Current planning queue
 
-| Order | Planning item | Current state | Dependency / note |
+| Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | Shared Rate Limit / Abuse Control Service executable-evidence reassessment | `SPECIFICATION` current | Isolate atomic counters, key dimensions, trusted proxy/IP identity, windows/token-bucket semantics, Retry-After, distributed cache fallback, exemptions, abuse/privacy, fail policy, consumer parity and Multisite without duplicating Protector/REST/FM/WC. |
-| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP36. |
+| 1 | User Profile canonical evidence refinement | `SPECIFICATION` current | Native identity/auth authority; protected security actions must stay outside generic field mutation. |
+| 2 | Remaining shallow legacy evidence protocols | `QUEUED` | Reassess by security/critical-path value after WP41; prefer in-place refinement over duplicates. |
 
-Planning documentation work does not create implementation authorization.
+## 4. Shared foundation truth
 
-## 4. Critical-path/WIP rules
+- DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
+- KPA **0/176**; VER **0/176**; MLC **0/176**; PDL **0/176**; ERR **0/176**.
+- ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
+- REST **0/176**; IM **0/176**; RA **0/176**.
+- WordPress remains native role/capability and identity/auth authority where defined; WPE adds guarded control-plane semantics rather than weaker parallel authority.
+- a resolved condition/value, rate-limit allow or cache hit never grants downstream authorization.
+- current-blog context is never durable ownership or authorization.
+- clone/restore cannot silently resurrect stale commercial/provider/access authority.
+- destructive schema/data/authority work requires verified recovery and truthful partial-failure semantics.
 
-Current implementation WIP remains 0. Planning serializes shared contracts. Material expansion follows:
+## 5. WIP / coordination rules
+
+Implementation WIP remains **0**. Planning shared-contract WIP is serialized. Material expansion follows:
 
 `STOP → REASSESS → UPDATE IMPACT → RESCOPE OR SPLIT`
 
 No active shared-surface implementation reservation exists.
 
-## 5. Foundation/consumer truth preserved
-
-- DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**.
-- CPTX **0/176**; EBR **0/176**; PLT **0/176**; MSI **0/160**; LC **0/96**; AUD **0/176**.
-- KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
-- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**.
-- Builder adapter BW **0/50** remains separate from CBP/ASR/DVR.
-- readable/queryable/writable Data Source capabilities remain independent.
-- condition truth and resolved dynamic value never grant downstream action authorization.
-- canonical value, formatted value, escaped value and trusted markup remain distinct.
-- current-blog context is never durable ownership or authorization.
-- site deletion does not imply global-user deletion/billing cancellation/shared-secret deletion/privacy erasure.
-- clone/restore cannot silently resurrect stale commercial/provider/access authority.
-- destructive schema/data work requires truthful verified recovery boundaries.
-
 ## 6. Current next safe action
 
-Continue `P0-M00-WP36`: reconcile shared rate/abuse requirements across Protector, REST, Forms, Webhooks/Event Inbox, authentication-like endpoints and provider-facing operations. Freeze only common service evidence if the gap survives: request identity/trusted-proxy handling; site/network/principal/resource/provider key dimensions; atomic increments and distributed-cache/DB fallback; fixed/sliding/token-bucket semantics if selected; Retry-After/reset metadata; concurrency; idempotency interaction; exemptions/bypass governance; brute-force/enumeration resistance; privacy/log minimization; cache outage/fail-open-vs-closed policy by risk; abuse of IPv6/NAT/proxy rotation; Multisite noisy-neighbor isolation; observability/scale.
+Continue `P0-M00-WP41`: reconcile User Profile native identity/profile Field Storage, self/admin edit, identity-change, password/session/Application Password actions, public projection, privacy, cache invalidation, Role Manager separation, Multisite global-user vs site-profile scope and version/lifecycle semantics. Preserve the invariant that generic Profile fields cannot mutate credentials, roles/caps, sessions, Membership entitlement, Vault/provider secrets or other protected security internals.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
