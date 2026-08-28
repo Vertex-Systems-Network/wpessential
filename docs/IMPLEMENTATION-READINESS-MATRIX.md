@@ -21,8 +21,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Definition Repository | ADR-0073/0092/0132 | DEF-01…DEF-144; final DDL evidence-gated |
 | Vault | ADR-0048/0085/0124 | VT-01…VT-128 |
 | Free↔Pro/Product License | ADR-0010/0070/0072/0076/0091/0128 | FP-01…FP-144 |
-| OAuth Account Link | ADR-0034/0101 | OA-01…OA-32 |
-| Pro updater TUF | ADR-0044/0102 | TU-01…TU-44 |
+| OAuth Account Link | ADR-0034/0101/0170 | OA-01…OA-176 |
+| Pro updater TUF | ADR-0044/0102/0169 | TU-01…TU-176 |
 | CI | ADR-0011/0127 | CI-01…CI-120 |
 | Build | ADR-0012/0126 | BT-01…BT-112 |
 | Query | ADR-0086/0131 | QRY-01…QRY-168; QP1–QP4 separate |
@@ -53,20 +53,21 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Dynamic Value Resolver | ADR-0152 | DVR-01…DVR-176 |
 | Shared Rate Limit | ADR-0045/0153 | RLT-01…RLT-176 |
 | Shared Cache | ADR-0154 | CAC-01…CAC-176 |
-| Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
-| Admin Menu | ADR-0037/0104 | AM-01…AM-40; WP47 refinement current |
+| Dashboard Widgets | ADR-0051/0103/0165 | DW-01…DW-176 |
+| Admin Menu | ADR-0037/0104/0164 | AM-01…AM-176 |
 | Protector | ADR-0045/0105/0159 | PR-01…PR-176 |
 | Reset Manager | ADR-0047/0106/0161 | RM-01…RM-176 |
-| Watermarker / Media | ADR-0107 | WM-01…WM-48 |
+| Watermarker / Media | ADR-0046/0107/0168 | WM-01…WM-176 |
 | Frontend Dashboard | ADR-0031/0108/0163 | FD-01…FD-176 |
-| Builder Widgets adapters | ADR-0109 | BW-01…BW-50 + BC0…BC4 |
-| Status Manager | ADR-0110 | SM-01…SM-48 |
+| Builder Widgets adapters | ADR-0035/0109/0167 | BW-01…BW-176 + BC0…BC4 |
+| Status Manager | ADR-0038/0110/0166 | SM-01…SM-176 |
 | XML-RPC Manager | ADR-0052/0111/0160 | XR-01…XR-176 |
 | Settings Page | ADR-0036/0089/0112/0162 | ST-01…ST-176 |
 | User Profile | ADR-0030/0096/0113/0158 | UP-01…UP-176 |
 | Role & Capability | ADR-0032/0097/0114/0157 | RA-01…RA-176 |
 | REST API Builder | ADR-0028/0094/0115/0155 | REST-01…REST-176 |
 | Import / Export | ADR-0041/0095/0116/0156 | IM-01…IM-176 |
+| Remote service privacy/retention | ADR-0060 + existing RS protocol | RS-01…RS-30; WP54 reassessment current |
 | Forms Runtime | ADR-0025/0077/0117 | FM-01…FM-92 |
 | Owner consent | ADR-0014 | blocks all executable work |
 
@@ -78,18 +79,18 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 2 | Taxonomy Builder | Exhaustive | WP registration + ADR-0138 | CF/DEF/KPA/UI/BT/CI/CPTX/VER/MLC/DSR/CAC/MSI/LC | No |
 | 3 | Custom Fields Builder | Exhaustive | ADR-0087/0134 | FST/DSR/CLG/DVR/CAC/KPA/PDL/ERR/VER/MLC/MSI | No |
 | 4 | Relations Builder | Exhaustive | ADR-0074/0093/0133 | REL/DSR/CLG/DVR/CAC/physical/KPA/PDL/ERR/VER/MSI | No |
-| 5 | Status Manager | Exhaustive | ADR-0038/0110 | SM/CLG/DVR/CAC/KPA/ERR/VER/MLC/MSI/LC | No |
+| 5 | Status Manager | Exhaustive | ADR-0038/0110/0166 | SM 0/176 + DSR/CLG/DVR/CAC/KPA/ERR/VER/MLC/WF/JS/MSI/LC | No |
 | 6 | Custom Query Builder | Exhaustive | ADR-0086/0131 | QRY/DSR/CLG/DVR/CAC/QP/KPA/PDL/ERR/VER/MSI | No |
 | 7 | Custom Tables Builder | Exhaustive | ADR-0023/0088/0135 | CTB/DSR/CT-CM/PDL/ERR/VER/MLC/MSI/LC | No |
 | 8 | Admin Columns Builder | Exhaustive | ADR-0098/0136 | AC/DSR/CLG/DVR/CAC/KPA/PDL/ERR/MSI | No |
-| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0039/0099/0137/0146 | DL/CBP/DSR/CLG/DVR/ASR/CAC/auth/builder/SEO/MSI | No |
-| 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103 | DW/KPA/CBP/CLG/DVR/ASR/CAC/UI/BT/CI/MSI | No |
-| 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 | AM 0/40 + KPA/RA/CAC/ASR/ERR/VER/MLC/UI/BT/CI/MSI; WP47 current | No |
+| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0039/0099/0137/0146 | DL/CBP/DSR/CLG/DVR/ASR/CAC/auth/BW/SEO/MSI | No |
+| 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103/0165 | DW 0/176 + KPA/CBP/DSR/QRY/CLG/DVR/ASR/CAC/UI/BT/CI/MSI | No |
+| 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104/0164 | AM 0/176 + KPA/RA/CAC/ASR/ERR/VER/MLC/UI/BT/CI/MSI | No |
 | 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112/0162 | ST 0/176 + VT/DSR/CLG/DVR/CAC/KPA/PDL/ERR/VER/UI/BT/CI/MSI | No |
-| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108/0146/0163 | FD 0/176 + CBP/DSR/CLG/DVR/ASR/CAC/KPA/RA/UP/MBR/UI/BT/CI/MSI | No |
+| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108/0146/0163 | FD 0/176 + CBP/DSR/QRY/CLG/DVR/ASR/CAC/KPA/RA/UP/MBR/UI/BT/CI/MSI | No |
 | 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113/0158 | UP 0/176 + FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC/UI/BT/CI/MSI | No |
 | 15 | Membership System | Exhaustive | ADR-0013…0090/0129 | MBR + MB/PC + KPA/PDL/ERR/VER/MLC/CLG/DVR/CAC/RA/MSI/LC | No |
-| 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109/0146 | CBP/BW/BC/DSR/CLG/DVR/ASR/CAC/BT/CI/MSI | No |
+| 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109/0146/0167 | CBP/BW 0/176/BC0…BC4 + DSR/CLG/DVR/ASR/CAC/BT/CI/MSI | No |
 | 17 | Forms & Workflow Builder | Exhaustive | FRT/WF baselines | FM/WF/JS/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
 | 18 | Cron Job Builder | Exhaustive | JobService | JS/KPA/ERR/VER/MLC/MSI/LC | No |
 | 19 | Notification System | Exhaustive | NE1/NE2 | NT/JS/WF/DSR/CLG/DVR/CAC/KPA/PDL/ERR/provider/MSI | No |
@@ -98,13 +99,13 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 22 | REST API Builder | Exhaustive | ADR-0155 | REST 0/176 + QRY/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MSI | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP/Gateway/Event Inbox | WC/VT/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/I/EI/MSI | No |
 | 24 | Backup Manager | Exhaustive | ADR-0130 | BK/C0-C4/V3/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
-| 25 | Reset Manager | Exhaustive | ADR-0047/0106/0161 | RM 0/176 + Backup/RA/UP/JS/DSR/FST/REL/CTB/ERR/PDL/VER/MLC/MSI/LC | No |
+| 25 | Reset Manager | Exhaustive | ADR-0047/0106/0161 | RM 0/176 + BK/RA/UP/JS/DSR/FST/REL/CTB/ERR/PDL/VER/MLC/MSI/LC | No |
 | 26 | Import / Export | Exhaustive | ADR-0156 | IM 0/176 + DEF/FST/REL/CTB/DSR/VER/CAC/PDL/ERR/KPA/MSI/LC | No |
 | 27 | Protector | Exhaustive | ADR-0045/0105/0159 | PR 0/176 + RLT/CAC/KPA/ERR/VER/MLC/REST/XR/WC/MSI | No |
-| 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivatives | WM/DSR/DVR/ASR/CAC/KPA/PDL/ERR/MLC/MSI | No |
+| 28 | Watermarker / Media Rules | Exhaustive | ADR-0046/0107/0168 | WM 0/176 + DSR/DVR/ASR/CAC/JS/KPA/PDL/ERR/MLC/BK/MSI | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052/0111/0160 | XR 0/176 + PR/RLT/CAC/KPA/ERR/VER/MLC/SafeHTTP/MSI | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0157 | RA 0/176 + KPA/CAC/ERR/VER/MLC/MBR/MSI | No |
-| 31 | Account/Docs/Support/Diagnostics | Exhaustive | ADR-0140 | PLT/FP/OA/TU/RS/VT/KPA/PDL/ERR/VER/MLC/ASR/DVR/CAC/UI/BT/CI/MSI | No |
+| 31 | Account/Docs/Support/Diagnostics | Exhaustive | ADR-0140 | PLT/FP/OA 0/176/TU 0/176/RS 0/30/VT/KPA/PDL/ERR/VER/MLC/ASR/DVR/CAC/UI/BT/CI/MSI | No |
 
 ## Current evidence/certification counters
 
@@ -112,13 +113,12 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**.
 - KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD are all **0/176**.
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; OA **0/32**; TU **0/44**.
-- DW **0/36**; AM **0/40**; WM **0/48**; BW **0/50**; SM **0/48**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA are all **0/176**.
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; RS **0/30**.
 - Email transport/provider **6 EE3 / 0 ET-certified**.
 - Membership Billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Backup **34 provider targets / 0 C-certified / 0 C3; V3 0**.
-- Connection adapters **0 I4/I5**; Multisite **0 MS1+**; Site Lifecycle runtime certs **0**; Remote privacy RS **0/30**.
+- Connection adapters **0 I4/I5**; Multisite **0 MS1+**; Site Lifecycle runtime certs **0**.
 
 ## Recommended implementation order after future consent
 
@@ -131,16 +131,17 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 7. Forms/Workflow/Jobs → Notification/Email;
 8. REST/Connections/Event Inbox/Import;
 9. Protector/XML-RPC request-surface profiles;
-10. Backup certification → Reset/destructive operations;
-11. Chat after Membership/protected assets/jobs/notification;
-12. OAuth/Product License/Platform service surfaces; TUF after verifier/key-ops bar;
-13. AI only over certified scoped Abilities.
+10. Watermarker/Media after source/job/offload/private-delivery foundations;
+11. Backup certification → Reset/destructive operations;
+12. Chat after Membership/protected assets/jobs/notification;
+13. OAuth/Product License/Remote service/Platform surfaces; TUF after verifier/key-ops/release provenance bar;
+14. AI only over certified scoped Abilities.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0163; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0170; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work: **`P0-M00-WP47` — Admin Menu canonical evidence refinement**.
+Current planning work: **`P0-M00-WP54` — Remote Service Privacy / Retention canonical evidence reassessment**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
