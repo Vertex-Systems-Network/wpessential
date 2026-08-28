@@ -68,14 +68,16 @@ WPE intentionally exceeds simple competitor parity through shared platform contr
 
 ## Decision 6 — Work coordination
 
-Record the owner-requested interrupt as planning-only work:
+Owner-requested interrupt planning work is complete:
 - WP83 — source/market audit — DONE;
 - WP84 — Membership parity — DONE;
 - WP85 — Role parity — DONE;
 - WP86 — Admin Theme/Branding — DONE;
 - WP87 — Media Performance/Delivery — DONE;
 - WP88 — Safe Script/Tag — DONE;
-- WP89 — consolidated scope/governance synchronization — DONE when canonical files and Draft PR reflect ADR-0194.
+- WP89 — consolidated scope/governance synchronization — **DONE**.
+
+Canonical Checkpoint, Work Ledger, Option Maturity, Readiness, Open Decisions, ADR index, Approval/Consent summaries, README and Draft PR are synchronized to the 50-surface state.
 
 After this interrupt, resume the pre-existing current planning package:
 **WP65 — F03 Search & Indexing detailed executable-evidence specification**.
