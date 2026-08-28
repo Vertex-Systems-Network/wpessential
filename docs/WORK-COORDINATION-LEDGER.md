@@ -74,7 +74,8 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP55` | Email Transport / Provider Certification canonical refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0172; ET-F 0/176; ET0…ET5 unchanged; 6 EE3 / 0 ET-certified. |
 | `P0-M00-WP56` | Membership Billing provider certification refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0173; MB-F 0/176; MB0…MB5 unchanged; 4 BE3 / 0 MB-certified. |
 | `P0-M00-WP57` | Protected-file provider/delivery certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0174; PC-F 0/176; PC0…PC4 and PD1…PD4 preserved; 0 PC1+ runtime-certified. |
-| `P0-M00-WP58` | Backup provider certification reassessment | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Current planning work; C0…C4/V3/provider-family evidence; 34 targets / 0 C-certified / 0 C3 Supported; V3 0. |
+| `P0-M00-WP58` | Backup provider certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0175; BPC-F 0/176; C0…C4/V3 preserved; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0. |
+| `P0-M00-WP59` | Connection adapter I0–I5 provider certification reassessment | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Current planning work; provider/API capability certification remains 0 I4/I5. |
 
 No production implementation work package is active.
 
@@ -82,8 +83,7 @@ No production implementation work package is active.
 
 | Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | Backup provider certification reassessment | `SPECIFICATION` current | Refine C0–C4/V3/provider-family evidence against BK-01…BK-180, Vault, JobService, remote-copy lifecycle, privacy, ERR, VER, Multisite, Site Lifecycle and restore-first certification semantics without promoting static provider evidence. |
-| 2 | Connection adapter I0–I5 provider certification reassessment | `QUEUED` | Reconcile exact adapter/provider/API capability evidence with WC/Event Inbox/Vault/Safe HTTP/versioning/privacy. |
+| 1 | Connection adapter I0–I5 provider certification reassessment | `SPECIFICATION` current | Reconcile exact adapter/provider/API capability evidence with WC/Event Inbox/Vault/Safe HTTP/SSRF/versioning/privacy/idempotency/replay/Multisite and provider degradation/reconciliation. |
 
 ## 4. Shared foundation truth
 
@@ -93,12 +93,14 @@ No production implementation work package is active.
 - ET-F **0/176**; Email provider profiles remain **6 EE3 / 0 ET-certified**.
 - MB-F **0/176**; Membership billing provider profiles remain **4 BE3 / 0 MB-certified**.
 - PC-F **0/176**; protected-file profiles remain **0 PC1+**, PD1…PD4 runtime certifications 0.
-- Backup providers remain **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
+- BPC-F **0/176**; Backup providers remain **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
+- Connection adapters remain **0 I4/I5**.
 - WordPress remains native role/capability and identity/auth authority where defined.
 - Component Blueprint remains canonical over builder-private representations.
 - TUF authenticity and OAuth/Account/Product entitlement are independent trust domains.
 - Billing commercial fact, Enrollment, Membership Entitlement, Product Entitlement and WordPress Role remain separate authority domains.
 - Storage possession, signed-link issuance and Backup-provider support never become protected-file authorization/certification shortcuts.
+- Backup successful upload/finalization never substitutes for remote verification/restore certification.
 - Remote privacy/deletion/backup states remain distinct and evidence-scoped.
 - Watermarker original source bytes are immutable under standard processing.
 - current-blog context is never durable ownership or authorization.
@@ -114,6 +116,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP58`: audit existing Backup provider-family and C0–C4/V3 certification contracts against BK-01…BK-180, Vault/key custody, JobService/at-least-once execution, Remote Copy lifecycle, manifest/integrity/encryption, privacy, ERR, VER, Multisite/Site Lifecycle, restore-first recovery and provider/version truth. Keep static provider documentation/evidence separate from runtime restore certification and never promote a successful upload to Supported Backup status.
+Continue `P0-M00-WP59`: inspect the existing Connection Adapter Certification Contract, provider capability/version profiles and Webhooks/Connections/Event Inbox evidence. Preserve I0–I5 provider/profile scoping, Safe HTTP/SSRF/Vault boundaries, verified ingress/replay/idempotency truth, and never promote static provider/API documentation or successful connection to I-level runtime certification.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
