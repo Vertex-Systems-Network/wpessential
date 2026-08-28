@@ -30,6 +30,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Workflow | ADR-0082/0118 | WF-01…WF-116 / P-011 |
 | Membership | ADR-0078/0090 | P-012 |
 | Backup | ADR-0084/0100 | P-013 |
+| Notification | ADR-0026/0079/0120 | NT-01…NT-142 + NE1/NE2/channel evidence |
 | Admin Columns | ADR-0098 AC1 | dedicated runtime/list-table evidence |
 | Dynamic Listings | ADR-0099 DL1 | dedicated SSR/cache/pagination evidence |
 | Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
@@ -71,7 +72,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109 shared Component Blueprint adapters | BW-01…BW-50; BC0…BC4 | No |
 | 17 | Forms & Workflow Builder | Exhaustive | ADR-0025/0077/0117 Forms FRT1/FRT2 + ADR-0082/0118 WF1/WF2 | FM-01…FM-92 + WF-01…WF-116 + JS/P-003; final FRT/WF topology evidence | No |
 | 18 | Cron Job Builder | Exhaustive | ADR-0059/0068/0083/0119 JobService + J1/J2/J3 | JS-01…JS-106 / P-003 recurrence/DST/claims/fairness/backend evidence | No |
-| 19 | Notification System | Exhaustive | NE1/NE2 + JobService | fan-out/dedupe/read/delivery/ET/lifecycle evidence | No |
+| 19 | Notification System | Exhaustive | ADR-0026/0079/0120 NE1/PT-D vs NE2/PT-E | NT-01…NT-142 + JS/WF + ET/Connection provider evidence; final NE topology | No |
 | 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + 0 ET certification | No |
 | 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | indexes/search/transport/private assets/revoke | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028/0094/0115 RE1 + RI1/RI2 | REST-01…REST-52 | No |
@@ -92,6 +93,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Query P-009: **0 executed**.
 - Job P-003 / JS: **0/106 JS fixtures; backend certification none; Cron/DST certification none**.
 - Workflow P-011 / WF: **0/116 WF fixtures; runtime certification none; final topology open**.
+- Notification: **0/142 NT fixtures; runtime certification none; final NE topology open**.
 - Vault P-005: **0 executed**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Forms Runtime: **0/92 FM fixtures; 0 runtime certifications; FRT topology not final**.
@@ -130,7 +132,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 5. admin/site UX modules, using DW/AM/FD/BW/SM/ST/UP/RA/XR evidence gates where applicable;
 6. User/Profile + Role security evidence before privileged management claims;
 7. Membership P-012 + protected files + MB certification;
-8. Forms FM protocol + Workflow WF/P-011 + Job JS/P-003 → Notifications/Email;
+8. Forms FM + Workflow WF/P-011 + Job JS/P-003 → Notification NT + Email/channel certification;
 9. REST/Connections/Event Inbox/Import using REST/IM gates;
 10. Backup P-013 + restore certification → Reset/Protector/other destructive operations;
 11. Chat after storage/search/transport evidence;
@@ -140,7 +142,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0119.**  
+**Architecture/evidence contracts accepted through ADR-0120.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
