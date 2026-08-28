@@ -11,8 +11,8 @@ WPEssential spans PHP, React/TypeScript, WordPress APIs, database migrations, RE
 Current repository evidence is important:
 - `.github/` on `planning/master-architecture` currently contains the PR template only;
 - no `.github/workflows/` implementation has been verified;
-- current CI execution capability, branch-protection required checks and repository rulesets are therefore **not established by repository content**;
-- earlier provider/protection reads have been incomplete/permission-limited, so protection state must remain `UNKNOWN` unless directly verified later.
+- direct GitHub branch reads on 2026-08-28 verify **branch protection is disabled** for both `main` and `planning/master-architecture`; required branch status-check enforcement is therefore not active on those branch-protection records;
+- repository-wide rulesets could not be enumerated because the rulesets endpoint returned a plan/access 403, so broader ruleset state remains **UNKNOWN / UNAVAILABLE TO VERIFY** rather than assumed absent.
 
 The CI contract must be semantically provider-neutral even if GitHub Actions becomes the natural first adapter for this GitHub repository. Moving VCS/CI provider must not change what counts as FAST/FULL, compatibility, security or release evidence.
 
@@ -139,7 +139,12 @@ The desired policy is:
 - nightly/trunk/provider informational lanes are not blindly made merge blockers;
 - release gates block release even when they are not PR branch-protection checks.
 
-Current repository branch-protection/ruleset state is **UNKNOWN** and must not be asserted from this ADR.
+Current directly verified state on 2026-08-28:
+- `main`: **branch protection disabled / required branch checks off**;
+- `planning/master-architecture`: **branch protection disabled / required branch checks off**;
+- repository rulesets: **UNKNOWN / not enumerable with current plan-access**, because the rulesets endpoint returned 403.
+
+This is current repository evidence, not the desired release policy. P-007 remains blocked from acceptance until required checks/release gating are implemented, reliable and verified in the future authorized execution environment.
 
 ## Acceptance work
 
@@ -152,6 +157,6 @@ ADR-0011 remains Proposed until authorized future evidence proves:
 6. actual built ZIP is verified, not merely source tree;
 7. execution duration/cost/reliability is measured;
 8. required vs informational checks are explicitly recorded;
-9. branch protection/release gating can be configured and verified when the capability is available.
+9. branch protection/release gating is configured and verified on the protected integration/release path when the capability is available.
 
 No workflow file, runner, test environment, dependency or CI execution is authorized by this ADR.
