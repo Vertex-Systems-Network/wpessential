@@ -44,7 +44,12 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP27` | Local Privacy / Data Lifecycle evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | privacy/classification/retention/export-erasure/backups/Multisite | ADR-0144; PDL-01…PDL-176; 0 executed; RS remote privacy remains separate. |
 | `P0-M00-WP28` | Error Taxonomy & Failure UX evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | error envelopes/retry/conflict/partial failure/UI/REST/Ability/Jobs/accessibility | ADR-0145; ERR-01…ERR-176; 0 executed. |
 | `P0-M00-WP29` | Component Blueprint Core Runtime evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | compiler/bindings/Policy/renderer/slots/styles/assets/cache/accessibility/Multisite | ADR-0146; CBP-01…CBP-176; 0 executed; BW/BC adapter certification remains separate. |
-| `P0-M00-WP30` | Contract Versioning & Deprecation evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Product/Platform API/Definition/runtime schema/Ability/Event/adapter/package/SDK versions and migrations | Current planning work; reconcile overlap with FP/DEF/KPA/IM/CBP/module migration evidence before freezing a fixed protocol. |
+| `P0-M00-WP30` | Contract Versioning & Deprecation evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Product/Platform API/Definition/runtime schema/Ability/Event/adapter/package/SDK versions and migrations | ADR-0147; VER-01…VER-176; 0 executed; domain migration protocols remain separate. |
+| `P0-M00-WP31` | Module Lifecycle / Disable / Uninstall / Recovery evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | module states/dependencies/migrations/security enforcement/cleanup/recovery/Multisite | ADR-0148; MLC-01…MLC-176; 0 executed; disable/expiry/uninstall/privacy erase remain separate. |
+| `P0-M00-WP32` | Entity / Data Source Registry evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | data-source adapters/schema/capabilities/Policy/query/write/transactions/Multisite | ADR-0149; DSR-01…DSR-176; 0 executed; readable never implies writable. |
+| `P0-M00-WP33` | Asset Registry & Scoped Loader evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | asset descriptors/dependency graph/WordPress handles/routes/build manifest/loading/security/Multisite | ADR-0150; ASR-01…ASR-176; 0 executed; UI/BT/CBP/BW certification remains separate. |
+| `P0-M00-WP34` | Conditional Logic Engine evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | typed conditions/operators/value sources/Policy/cache/consumers/Multisite | ADR-0151; CLG-01…CLG-176; 0 executed; condition truth never grants action authorization. |
+| `P0-M00-WP35` | Dynamic Value / Token Resolver evidence reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Data Source/Fields/Relations/Query/Policy/renderer/escaping/cache/Blueprint/Email/Notification/Forms | Current planning work; architecture defines one shared resolver but repository search found no dedicated fixed resolver protocol. Reconcile overlap before freezing evidence. |
 
 No production implementation work package is active.
 
@@ -52,8 +57,8 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Contract Versioning & Deprecation executable-evidence reassessment | `SPECIFICATION` current | Paper policy exists; repository search found no dedicated fixed cross-version/deprecation protocol. Must avoid duplicating FP/DEF/KPA/IM/CBP evidence. |
-| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP30. |
+| 1 | Dynamic Value / Token Resolver executable-evidence reassessment | `SPECIFICATION` current | Shared renderer/value resolver is canonical architecture; isolate resolution, escaping, authorization, dependency/cache and cross-consumer semantics without duplicating DSR/FST/QRY/REL/CBP/EBR/NT/FM. |
+| 2 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP35. |
 
 Planning documentation work does not create implementation authorization.
 
@@ -75,10 +80,15 @@ No active shared-surface implementation reservation exists.
 - Multisite MSI **0/160**; runtime-certified surfaces at MS1+ remain 0.
 - Site Lifecycle LC **0/96**; SL runtime certification remains 0.
 - Audit AUD **0/176**; AU1/PT-D is only a future baseline; local Audit/hash evidence is not tamper-proof truth.
-- KPA **0/176**; one shared Free-owned kernel/registry family remains the platform authority, and every invocation channel remains Capability + Policy bound.
-- PDL **0/176**; local erase/anonymize/retention is owner-specific, and live erase is distinct from backup/remote deletion.
-- ERR **0/176**; machine codes/retry/disclosure/partial-failure semantics remain explicit and channel-consistent.
+- KPA **0/176**; one shared Free-owned kernel/registry family remains platform authority; every invocation channel remains Capability + Policy bound.
+- PDL **0/176**; live erase is distinct from backup/remote deletion.
+- ERR **0/176**; machine codes/retry/disclosure/partial-failure semantics remain explicit.
 - CBP **0/176**; core Blueprint runtime remains separate from BW **0/50** builder adapter certification.
+- VER **0/176**; cross-version compatibility/deprecation is explicit and never inferred from package version alone.
+- MLC **0/176**; module disable ≠ data delete ≠ privacy erase ≠ uninstall.
+- DSR **0/176**; source readability, queryability and mutability are independent declared capabilities.
+- ASR **0/176**; registered/enqueued/fetched/executed/certified asset states remain distinct.
+- CLG **0/176**; a true condition never authorizes an otherwise denied action.
 - current-blog context is never durable ownership or authorization.
 - site deletion does not imply global-user deletion/billing cancellation/shared-secret deletion/privacy erasure.
 - clone/restore cannot silently resurrect stale commercial/provider/access authority.
@@ -86,6 +96,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP30`: reconcile Product Version, Platform API range, Definition schema, runtime-data schema, Ability/Event schema, adapter/SDK compatibility, capability evolution, package compatibility, database migration state and deprecation/removal stages. Define evidence only for the cross-version behaviors not already owned by FP/DEF/KPA/IM/CBP/module-specific protocols: supported upgrade paths, version skew, unknown-future schema fail-safe behavior, deterministic migrator chains, deprecated/compatibility-only/removal transitions, security-sensitive accelerated deprecation, rollback/degraded boot, cross-release public-contract reporting and Multisite mixed-state migrations.
+Continue `P0-M00-WP35`: reconcile the architecture's shared Dynamic Value / Token Resolver against DSR/FST/QRY/REL/Policy/CBP/EBR/NT/FM and consumer-specific evidence. Define only genuinely shared behavior: stable typed token/value descriptors; source resolution without side effects; explicit render/escaping contexts (HTML text/attribute/URL/JSON/plain/email); Policy/privacy before disclosure; null/missing/error semantics; resolver dependency graph/cycles/budgets; request batching; cache identity/invalidation; locale/timezone/versioning; secret denial; cross-consumer parity; Multisite target scope and scale.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
