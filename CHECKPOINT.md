@@ -34,7 +34,7 @@ Historical 31/31, 43/43, 48/48 and 50/50 denominators remain valid historical sc
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions now extend through **ADR-0195**.
+Accepted planning/evidence decisions now extend through **ADR-0196**.
 
 ### Universal-system / AI expansion
 
@@ -44,6 +44,7 @@ Accepted planning/evidence decisions now extend through **ADR-0195**.
 - ADR-0180 — universal foundation/Woo evidence envelopes.
 - ADR-0181 — SBP 0/176.
 - ADR-0182 — ANL 0/176.
+- **ADR-0196 — F03 Search & Indexing detailed evidence protocol; SRH documented 176, executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -92,6 +93,7 @@ Research source: `docs/RESEARCH/SECOND-COMPETITIVE-AUDIT-BACKUP-MEDIA-ORDER-SECU
 - Navigation/menu/widget visibility never substitutes for authorization.
 - Role Manager preserves WordPress native capability authority and target-resource Policy.
 - Administrator Recovery/Rescue is a separately privileged one-time/rate-limited/audited flow.
+- Search index/result/count/facet/suggestion ≠ source business truth or authorization; protected profiles require correct Policy projection/runtime reauthorization.
 - Admin Theme is presentation/version-adaptive theming; it never changes authority.
 - Media performance detects Core ownership and does not blindly duplicate Core-merged behavior.
 - Media replacement delegates broad reference transformation to Search/Replace and preserves explicit asset identity/revision semantics.
@@ -119,44 +121,37 @@ Representative established counters remain unchanged:
 - QRY 0/168; DEF 0/144; REL 0/160; CTB 0/184; JEX 0/176;
 - LNK 0/176; LHX 0/176;
 - ORD/SEC/FNT/UDS/STG all **0/176**;
+- **SRH documented 176 / executed 0/176**;
 - ET-F 0/176; 6 EE3 / 0 ET-certified;
 - ICP-F 0/176; 0 I4 / 0 I5 certified;
 - MSI 0/160; LC 0/96; runtime certifications zero;
-- SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA all remain 0/176 unless a later ADR explicitly records execution (none currently).
+- SBP/ANL/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA all remain 0/176 unless a later ADR explicitly records execution (none currently).
 
 No paper/static evidence has been promoted to runtime certification.
 
 ## Work coordination / resume point
 
-Earlier access/admin/media/code interrupt:
-- WP83…WP89 — DONE.
+Earlier access/admin/media/code interrupt WP83…WP89 — DONE.
 
-Second competitive interrupt:
-- WP90 — second source/market audit — DONE;
-- WP91 — Backup + staging/clone/migration parity — DONE;
-- WP92 — Media Replacement Lifecycle parity — DONE;
-- WP93 — Content Order & Sequence Surface 51 — DONE;
-- WP94 — Security Integrity Surface 52 — DONE;
-- WP95 — Font/Typography Surface 53 — DONE;
-- WP96 — Profile/Registration parity — DONE;
-- WP97 — Crocoblock/JetEngine parity + Surface 54 — DONE;
-- WP98 — Header/Footer Code + Link Health parity — DONE;
-- WP99 — consolidated ADR/evidence/catalog/checkpoint/governance synchronization — DONE.
+Second competitive interrupt WP90…WP99 — DONE.
 
-Current/resumed work returns to:
-- **WP65 — F03 Search & Indexing detailed executable-evidence specification — SPECIFICATION / CURRENT**.
+Universal detailed evidence sequence:
+- WP63 — F01 Solution Blueprint — DONE;
+- WP64 — F02 Analytics/Event/Journey — DONE;
+- **WP65 — F03 Search & Indexing — DONE; ADR-0196; SRH 0/176**;
+- **WP66 — F04 Decision/Formula/Scoring — SPECIFICATION / CURRENT; DEC 0/176 envelope**.
 
-WP66…WP74 retain their previously reserved F04→WooCommerce Adapter meanings and are not reused.
+WP67…WP74 retain their previously reserved F05→WooCommerce Adapter meanings and are not reused.
 
 ## Current VCS / execution truth
 
 - planning branch: `planning/master-architecture`;
-- Draft PR #1 is the planning PR and must reflect ADR-0195/55-surface state;
-- no package install, build, CI, WordPress runtime, DB mutation, backup/restore/staging/migration, media replacement, content reorder, malware/vulnerability scan, font download/registration, user-store mutation, user/role/membership mutation, browser code execution, PHP execution, AI provider call, MCP session, test or benchmark occurred.
+- Draft PR #1 is the planning PR and must reflect ADR-0196/55-surface state;
+- no package install, build, CI, WordPress runtime, DB mutation, search index/backend execution, backup/restore/staging/migration, media replacement, content reorder, malware/vulnerability scan, font download/registration, user-store mutation, user/role/membership mutation, browser code execution, PHP execution, AI provider call, MCP session, test or benchmark occurred.
 
 ## Next safe planning action
 
-Resume **WP65 — F03 Search & Indexing detailed executable-evidence specification**, unless the owner requests another planning audit.
+Continue **WP66 — F04 Decision, Formula, Scoring & Ranking detailed executable-evidence specification (`DEC-001…DEC-176`)**.
 
 Development remains **NOT GRANTED / 0/55**.
 
