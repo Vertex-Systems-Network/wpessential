@@ -44,7 +44,7 @@ No implementation approval was introduced.
 
 ## Accepted architecture/evidence milestone
 
-Accepted decisions now extend through **ADR-0117**.
+Accepted decisions now extend through **ADR-0119**.
 
 Latest bounded evidence protocols:
 - ADR-0101 — OAuth Account-Link OA-01…OA-32.
@@ -63,45 +63,42 @@ Latest bounded evidence protocols:
 - ADR-0114 — Role & Capability RA-01…RA-48.
 - ADR-0115 — REST API Builder REST-01…REST-52.
 - ADR-0116 — Import / Export IM-01…IM-56.
-- **ADR-0117 — Forms Runtime & Submission FM-01…FM-92.**
+- ADR-0117 — Forms Runtime & Submission FM-01…FM-92.
+- **ADR-0118 — Workflow Runtime WF-01…WF-116.**
+- **ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.**
 
-## Forms planning milestone — COMPLETE
+## Workflow/Cron planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP02`**  
+Work package: **`P0-M00-WP03`**  
 Lifecycle: **DONE (planning/documentation only)**
 
-Created:
-- `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0117-forms-runtime-submission-evidence-protocol.md`
+Refined/created:
+- `docs/QUALITY/JOB-SERVICE-ACTION-SCHEDULER-EVIDENCE-PROTOCOL.md`
+- `docs/QUALITY/WORKFLOW-RUNTIME-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0118-workflow-runtime-evidence-protocol.md`
+- `docs/DECISIONS/ADR-0119-jobservice-cron-evidence-protocol.md`
 
-Forms evidence now covers:
-- Form Draft/publish/revision pinning;
-- schema-load/submit Policy, CSRF and IDOR;
-- typed server validation, hidden fields and calculation safety;
-- save/resume tokens and draft concurrency;
-- schedule/capacity/rate/spam/CAPTCHA;
-- upload MIME/script/SVG/private-file safety;
-- Entry canonical data, projections, idempotency and crash windows;
-- CRUD/relation/user/membership action boundaries;
-- Workflow handoff and no-long-term-storage recovery truth;
-- redirect/partial-processing UX;
-- privacy/retention/admin/export;
-- Multisite scope, Backup/lifecycle and FRT topology/scale evidence;
-- explicit MUST-NOT/stop-the-line gates.
+Workflow evidence now covers revision pinning, triggers/dedupe, Run/Step CAS transitions, conditions/branches, fan-out/joins, waits/timers, approvals, Job crash/retry integration, typed side effects, external unknown outcomes, cancellation/intervention/compensation, security/privacy, restore/clone/lifecycle, Multisite and WF1/WF2 topology/scale evidence.
 
-Current Forms state:
-- FM fixtures documented: **92**
-- FM fixtures executed: **0/92**
-- Forms runtime certifications: **0**
-- FRT1/PT-D: **first future benchmark baseline only**
-- FRT2/PT-E: **mandatory comparison**
-- final Forms physical topology: **OPEN / evidence-gated**
+Job/Cron evidence now covers Action Scheduler coexistence/ownership, backend abstraction, timezone/DST/calendar recurrence, missed/overlap policies, persistence/crash ambiguity, at-least-once/idempotency, claim/lease races, fairness/starvation, resource keys, backpressure, runner modes, cancellation, payload/security/secret handling, retention/observability, Multisite/lifecycle and J1/J2/J3 topology/scale evidence.
 
-ADR-0117 does not select FRT1 or FRT2 as final.
+Current Workflow/Job state:
+- WF fixtures documented: **116**
+- WF fixtures executed: **0/116**
+- Workflow runtime certifications: **0**
+- final Workflow topology: **OPEN / evidence-gated**
+- JS fixtures documented: **106**
+- JS fixtures executed: **0/106**
+- JobService backend certifications: **0**
+- Cron/DST runtime certifications: **0**
+- Action Scheduler: **preferred candidate adapter only / NOT certified**
+- J1/J2/J3 final physical selection: **OPEN / evidence-gated**
 
 ## Current evidence counters
 
 - P-001…P-013 executable gates remain unexecuted.
+- WF: **0/116**.
+- JS: **0/106**.
 - FM: **0/92**.
 - OA: **0/32**.
 - TU: **0/44**.
@@ -134,19 +131,19 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - governance hardening complete;
-- ADR index, Implementation Readiness and Open Decisions synchronized through ADR-0117;
-- Forms evidence protocol exists with FM-01…FM-92;
+- Workflow P-011 protocol exists with WF-01…WF-116;
+- Job/Cron P-003 protocol exists with JS-01…JS-106;
+- ADR-0118 and ADR-0119 accepted as evidence contracts;
 - no PHP/React/runtime/build/test/provider/deployment work was executed.
 
-Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Form submission/Entry mutations, uploads, Workflow/Job execution, provider calls, PHPUnit/Playwright, benchmarks or deployment.
+Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Workflow Run/Step/Wait/Approval mutations, Job/Attempt execution, Action Scheduler runtime setup, cron triggers, provider calls, PHPUnit/Playwright, benchmarks or deployment.
 
 ## Next planning-only priorities
 
-1. **Workflow/Cron scheduling/DST/claims executable evidence refinement around P-003/P-011.**
-2. Notification fan-out/read/dedupe evidence protocol.
-3. Message & Chat transport/search/private-assets evidence protocol.
-4. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-5. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM gates intact.
+1. **Notification fan-out/read/dedupe evidence protocol.**
+2. Message & Chat transport/search/private-assets evidence protocol.
+3. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+4. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS gates intact.
 
 Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
 
