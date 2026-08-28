@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0202**.
+Accepted planning/evidence decisions extend through **ADR-0203**.
 
 ### Universal foundations
 
@@ -50,7 +50,8 @@ Accepted planning/evidence decisions extend through **ADR-0202**.
 - ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; **LED documented 176 / executed 0/176**.
 - ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; **RSV documented 176 / executed 0/176**.
 - ADR-0201 — F07 Placement & Personalization detailed protocol; **PLC documented 176 / executed 0/176**.
-- **ADR-0202 — F08 Experimentation & Rollout detailed protocol; EXP documented 176 / executed 0/176.**
+- ADR-0202 — F08 Experimentation & Rollout detailed protocol; **EXP documented 176 / executed 0/176**.
+- **ADR-0203 — F09 Documents, Records & Templates detailed protocol; DOC documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -118,20 +119,28 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 - Personalized cache output must not leak across users, sessions, sites, tenants or consent states.
 - Theme/builder/Woo placement adapters expose bounded certified slots; F07 is not arbitrary DOM/PHP/script injection authority.
 - Component data is reauthorized through canonical Query/Data Source/Policy owners at render time.
-- **Experiment assignment ≠ authorization, consent or exposure.**
-- **Exposure ≠ conversion; observed association/statistical signal ≠ automatic causal proof.**
-- **F02 Analytics owns event/metric/data-quality truth consumed by F08; F08 does not create a second analytics warehouse.**
-- **Primary/guardrail metric contracts and statistical profile are revision-pinned; post-observation metric swapping is not allowed silently.**
-- **Rollout/feature flag can gate delivery of an already-authorized capability but cannot grant protected access.**
-- **Kill switch is operational safety, not experiment-result proof; stale cache/edge propagation must be evidenced before claiming off-state guarantees.**
-- **Anonymous→authenticated experiment identity stitching is explicit and cannot fabricate/double exposure history.**
-- **Non-experiment rollout/feature flag must not fabricate A/B causal statistics.**
-- **Sensitive experiment segmentation remains Policy/consent/data-minimization governed.**
+- Experiment assignment ≠ authorization, consent or exposure.
+- Exposure ≠ conversion; observed association/statistical signal ≠ automatic causal proof.
+- F02 Analytics owns event/metric/data-quality truth consumed by F08; F08 does not create a second analytics warehouse.
+- Primary/guardrail metric contracts and statistical profile are revision-pinned; post-observation metric swapping is not allowed silently.
+- Rollout/feature flag can gate delivery of an already-authorized capability but cannot grant protected access.
+- Kill switch is operational safety, not experiment-result proof; stale cache/edge propagation must be evidenced before claiming off-state guarantees.
+- Anonymous→authenticated experiment identity stitching is explicit and cannot fabricate/double exposure history.
+- Non-experiment rollout/feature flag must not fabricate A/B causal statistics.
+- Sensitive experiment segmentation remains Policy/consent/data-minimization governed.
+- **Generated document/artifact ≠ source business truth, payment/order/ledger truth, authorization, identity proof or legal-signature proof.**
+- **Template approval ≠ permission to render every bound field; generation and protected delivery reauthorize source data.**
+- **Hash/checksum ≠ electronic signature; application timestamp ≠ trusted timestamp authority token.**
+- **Immutable issued record corrections use amendment/supersession; no silent historical overwrite.**
+- **Protected artifact URL/storage/CDN path cannot bypass Policy; public-looking URL ≠ public authorization.**
+- **HTML/SVG/fonts/images/remote assets are untrusted; no arbitrary template PHP/JS/SQL/shell or unrestricted network/file authority.**
+- **Unknown external signing/storage/timestamp outcome ≠ failed; reconcile before replay where duplicate side effects are possible.**
+- **Backup/restore/clone cannot roll back external signing/storage/timestamp authorities; cloned production provider mappings remain quarantined by default.**
 - Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
 - Audit/AI-agent attribution ≠ identity or privilege.
-- Audit Log ≠ ledger movement truth.
+- Audit Log ≠ ledger movement truth or immutable document record.
 - Clone/duplicate ≠ original entity identity.
 - DB snapshot ≠ full backup.
 - migration replacement ≠ database merge.
@@ -166,8 +175,9 @@ Representative counters:
 - **RSV documented 176 / executed 0/176**;
 - **PLC documented 176 / executed 0/176**;
 - **EXP documented 176 / executed 0/176**;
+- **DOC documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+- SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -187,20 +197,21 @@ Universal detailed evidence sequence:
 - WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176;
 - WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176;
 - WP69 F07 Placement/Personalization — DONE / ADR-0201; PLC documented 176 / executed 0/176;
-- **WP70 F08 Experimentation/Rollout — DONE / ADR-0202; EXP documented 176 / executed 0/176**;
-- **WP71 F09 Documents/Records/Templates — SPECIFICATION / CURRENT; DOC 0/176 envelope**.
+- WP70 F08 Experimentation/Rollout — DONE / ADR-0202; EXP documented 176 / executed 0/176;
+- **WP71 F09 Documents/Records/Templates — DONE / ADR-0203; DOC documented 176 / executed 0/176**;
+- **WP72 F10 Data Sync/ETL — SPECIFICATION / CURRENT; SYN 0/176 envelope**.
 
-WP72…WP74 retain their reserved F10→WooCommerce Adapter meanings.
+WP73…WP74 retain their reserved F11→WooCommerce Adapter meanings.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0202/56-surface/WP71-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0203/56-surface/WP72-current state.
 
-No experiment assignment/hash evaluator, subject assignment persistence, exposure collection, statistical result computation, analytics recomputation, feature flag/rollout/kill-switch runtime, placement slot evaluator, browser component render, personalized cache mutation, scheduling transaction, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build, test or benchmark occurred.
+No F09 renderer/template execution, PDF/HTML/text generation, file write, protected artifact delivery, record issuance/amendment, sequence allocation, checksum/signing/timestamp provider action, remote asset fetch, retention deletion, share/download token execution, Multisite document operation, restore/provider reconciliation, performance benchmark, experiment runtime, placement runtime, scheduling transaction, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build or test occurred.
 
 ## Next safe planning action
 
-Continue **WP71 — F09 Documents, Records & Templates detailed executable-evidence specification (`DOC-001…DOC-176`)**.
+Continue **WP72 — F10 Data Sync & ETL detailed executable-evidence specification (`SYN-001…SYN-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
