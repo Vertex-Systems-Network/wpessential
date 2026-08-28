@@ -7,6 +7,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 **Hard rule:** technical acceptance never grants development permission. `/DEVELOPMENT-CONSENT.md` and ADR-0014 require explicit owner consent before source/build/migration/test/benchmark/provider implementation.
 
+> Index maintenance note: ADR-0069 previously appeared twice in this README index as two summary rows for the same Multisite scope decision family. The duplicate summary row was normalized on 2026-08-28; no ADR source file or decision semantics were changed.
+
 ## ADR index
 
 | ADR | Status | Decision |
