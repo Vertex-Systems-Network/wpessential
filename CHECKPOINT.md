@@ -131,6 +131,13 @@ Completed interrupts remain:
 
 **Current: WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit — AUDITING / CURRENT.**
 
+### Initial WP112 findings
+
+- `docs/IMPLEMENTATION-READINESS-MATRIX.md` was stale at **50 surfaces / WP65 current** and has been reconciled to **56 surfaces / WP112 current / 0/56 authorized**.
+- `docs/APPROVAL-LEDGER.md` was stale at **50 surfaces / WP65 current** and has been reconciled to **56 surfaces / 56/56 logical mappings / WP112 current / 0/56 authorized**.
+- These corrections are planning/governance reconciliation only; they do not execute evidence or remove technical blockers.
+- WP112 remains open for repository-wide closure auditing before any later move to `AWAITING_DEVELOPMENT_APPROVAL`.
+
 ## Current VCS / execution truth
 
 Planning branch: `planning/master-architecture`; Draft PR #1 remains the planning PR.
@@ -139,7 +146,7 @@ No WooCommerce product/cart/checkout/order/refund/stock/tax/shipping/payment/acc
 
 ## Next safe planning action
 
-Continue **WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit**. Reconcile stale readiness/approval summaries, current 56-surface scope, remaining unexpanded/unexecuted evidence envelopes and exact blockers before any lifecycle move to `AWAITING_DEVELOPMENT_APPROVAL`.
+Continue **WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit**. Audit remaining repository governance/spec/readiness documents, inventory remaining planning/evidence blockers, and determine whether any additional pre-development planning packages are required.
 
 Development remains **NOT GRANTED / 0/56**.
 
