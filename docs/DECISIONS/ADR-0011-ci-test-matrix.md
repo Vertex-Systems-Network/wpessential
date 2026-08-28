@@ -1,106 +1,157 @@
 # ADR-0011 — CI and Compatibility Test Matrix
 
 Status: **Proposed — Phase 0 blocker**  
-Date: 2026-08-27
+Date: 2026-08-27  
+Static/repository audit refreshed: 2026-08-28
 
 ## Context
 
-WPEssential spans PHP, React/TypeScript, WordPress native APIs, database migrations, REST, background jobs, page-builder adapters, Free/Pro compatibility and destructive operations. A single “latest PHP + latest WordPress” CI job would not prove production compatibility.
+WPEssential spans PHP, React/TypeScript, WordPress APIs, database migrations, REST, jobs, builder adapters, Free/Pro compatibility, external providers and destructive/recovery operations. A single “latest PHP + latest WordPress” job cannot prove production compatibility.
 
-WordPress Playground provides official workflows for clean WordPress environments, PHPUnit and Playwright-style E2E testing and is a useful matrix tool, but some filesystem/database/provider behavior may still need conventional containers/services.
+Current repository evidence is important:
+- `.github/` on `planning/master-architecture` currently contains the PR template only;
+- no `.github/workflows/` implementation has been verified;
+- current CI execution capability, branch-protection required checks and repository rulesets are therefore **not established by repository content**;
+- earlier provider/protection reads have been incomplete/permission-limited, so protection state must remain `UNKNOWN` unless directly verified later.
 
-References:
-- https://developer.wordpress.org/playground/handbook/guides/phpunit-testing/
-- https://developer.wordpress.org/playground/handbook/guides/e2e-testing-with-playwright/
+The CI contract must be semantically provider-neutral even if GitHub Actions becomes the natural first adapter for this GitHub repository. Moving VCS/CI provider must not change what counts as FAST/FULL, compatibility, security or release evidence.
+
+WordPress Playground is a candidate for fast clean environments, but conventional containers/services remain necessary where real database locking/filesystem/network/provider behavior is required. Exact CI/environment tooling remains executable evidence, not a planning claim.
 
 ## Proposed decision
 
-Adopt layered CI rather than running every expensive integration on every commit.
+Adopt layered, risk-based CI with explicit evidence provenance rather than one giant Cartesian matrix.
 
-### Tier A — every pull request
+### Lane A — PR / FAST Gate
 
-- PHP formatting/coding standards
-- PHP static analysis
-- JavaScript/TypeScript formatting/lint
-- TypeScript strict check
-- production frontend build
-- PHP unit tests
-- focused WordPress integration tests
-- REST/authorization regression tests for touched modules
-- dependency vulnerability audit
-- Free artifact package check
-- plugin/composer/package version consistency
-- optional-module asset isolation smoke tests
+Required change-relevant checks after implementation exists:
+- repository/secret hygiene;
+- PHP syntax/coding standards/static analysis;
+- JS/TS/style lint/typecheck;
+- affected unit tests;
+- affected WordPress integration/permission tests;
+- affected production build;
+- P-008 externalization/asset checks;
+- targeted security/negative-requirement tests;
+- minimum/current representative environment smoke where cost permits;
+- install/activate actual built artifact when the change can affect packaging/runtime.
 
-### Tier B — merge/main matrix
+FAST Gate remains change-targeted. It never substitutes a required FULL Gate.
 
-Test combinations based on accepted compatibility ADR:
-- minimum WordPress + minimum PHP
-- minimum WordPress + recommended/current PHP
-- current WordPress + minimum PHP
-- current WordPress + recommended/current PHP
-- current WordPress + newest supported PHP
+### Lane B — main/integration / FULL-contract expansion
 
-Add multisite fixture for modules/platform code that claim multisite support.
+Broader combinations:
+- P-001 selected minimum/current WordPress/PHP/DB profiles;
+- single-site and claimed Multisite paths;
+- broader unit/integration/permission/security suites;
+- migration/upgrade fixtures;
+- Free-only and Free+Pro matrices when artifacts exist;
+- actual ZIP/package install verification;
+- critical E2E paths;
+- UI/build regression gates from P-002/P-008.
 
-### Tier C — scheduled/nightly
+### Lane C — scheduled/nightly / compatibility early warning
 
-- WordPress trunk/nightly compatibility signal
-- page-builder integration versions
-- WooCommerce adapter versions
-- large-data/performance fixtures
-- long-running background job tests
-- Free×Pro compatibility matrix
-- import/export round trips
-- migration historical fixtures
-- accessibility browser suite
+Risk-based extended lanes:
+- WordPress trunk/nightly as informational/early-warning until explicitly promoted;
+- extended supported PHP/DB combinations;
+- persistent cache/cron/large data/background-work profiles;
+- page-builder/WooCommerce/integration-version profiles;
+- performance and long-running regression evidence;
+- historical migration fixtures.
 
-### Tier D — provider/release certification
+Avoid a full Cartesian explosion when pairwise/risk-based coverage proves the same contract more efficiently.
 
-For external storage/API providers:
-- authenticated sandbox/staging integration tests
-- upload/download/checksum/delete
-- token refresh/revoke
-- timeout/rate/failure behavior
-- restore verification where applicable
+### Lane D — provider/certification
 
-Secrets are provided through CI secret management and never available to untrusted pull-request code.
+External provider lanes are isolated from untrusted PR code and ordinary required PR checks.
 
-## Test environment strategy
+They may use dedicated sandbox/test credentials only after the provider integration exists and is authorized.
 
-Use WordPress Playground where it gives fast, reproducible environments. Use containerized MySQL/MariaDB/PHP/WordPress or dedicated provider test sites when the behavior requires real filesystem, networking, cron, database locking or third-party credentials.
+Provider evidence must preserve its own certification model (I0–I5, ET0–ET5, C0–C4, MB0–MB5, etc.); a generic CI green check never upgrades a provider certification.
 
-## Free / Pro matrix
+### Lane E — release candidate/artifact
 
-Once Pro exists, CI must include:
-- current Free + current Pro
-- newest Free + previous supported Pro
-- previous supported Free + newest Pro where compatibility is claimed
-- intentionally incompatible pair verifies safe degraded UX rather than fatal
+Before a releasable claim:
+- required FAST/FULL gates complete;
+- supported compatibility profiles complete;
+- security/migration/recovery gates complete as applicable;
+- built Free/Pro artifact(s) inspected and installed/tested;
+- no dev-only/prohibited/secret material in ZIP;
+- metadata/version/dependency/license/translation/RTL consistency verified;
+- rollback/recovery notes appropriate to release risk exist;
+- signed/update metadata gates are handled by their own accepted protocols where applicable.
 
-## Artifact gates
+## CI trust boundary
 
-Free package must prove:
-- no Pro source/assets
-- no development-only dependencies/files
-- plugin header/version/min requirements match Composer/docs
-- compiled assets referenced by manifest exist
-- translations/text domain valid
-- no secrets/local config
+CI configuration is privileged production infrastructure.
 
-Pro package receives equivalent checks plus platform API compatibility metadata.
+Rules:
+- untrusted fork/PR code never receives production/provider/release secrets;
+- secret-bearing/provider/release jobs run only from trusted refs/approval contexts with explicit environment policy;
+- pull-request event model must be selected so attacker-controlled code cannot execute with privileged repository token merely to obtain test coverage;
+- workflow-generated artifacts/logs are treated as potentially sensitive and scanned/redacted;
+- dependency/install scripts are part of the supply-chain threat model;
+- third-party CI actions/plugins require version/publisher/permission review and preferably immutable pinning according to future policy;
+- CI tokens get minimum permissions by lane;
+- release/signing credentials are separated from normal test credentials;
+- cache keys/content must not allow untrusted branch poisoning to become trusted release input without validation.
 
-## Required reports
+## Baseline, flaky and rerun truth
 
-CI failures must expose actionable logs without leaking secrets. Performance regressions use retained benchmark summaries rather than binary pass/fail alone.
+CI must implement the governance already defined in `docs/QUALITY-GATES.md`:
+
+- verified pre-existing failure → `BASELINE FAILURE` with evidence;
+- insufficient evidence → `UNKNOWN/INVESTIGATING`;
+- flaky tests are defects;
+- rerun-until-green without disclosure is forbidden;
+- quarantine requires issue/owner/reason/expiry/blocking classification/replacement evidence;
+- infrastructure/provider outage is classified separately from product pass/fail;
+- a manually rerun job retains prior failure evidence in the task/release report.
+
+## P-001 / P-002 / P-008 composition
+
+P-007 consumes, but does not replace:
+- P-001/CF environment compatibility contract;
+- P-002/UI runtime/accessibility/RTL/asset-isolation contract;
+- P-008/BT build/externalization/actual-ZIP contract.
+
+CI cannot declare those ADRs accepted simply because some workflow jobs are green. Their fixed fixture evidence remains separately reportable.
+
+## Artifact provenance
+
+Every artifact-bearing CI lane must be able to answer:
+- source commit/ref;
+- workflow/config revision;
+- dependency lock state;
+- build tool/runtime versions;
+- compatibility environment profile;
+- artifact hash/identity;
+- checks actually executed against that exact artifact;
+- whether artifacts came from trusted or untrusted context.
+
+Source-tree tests do not prove a different ZIP.
+
+## Branch protection / required checks
+
+The desired policy is:
+- minimum/current safety and security checks that protect normal merges become required after their reliability/cost are proven;
+- nightly/trunk/provider informational lanes are not blindly made merge blockers;
+- release gates block release even when they are not PR branch-protection checks.
+
+Current repository branch-protection/ruleset state is **UNKNOWN** and must not be asserted from this ADR.
 
 ## Acceptance work
 
-Before accepting:
-1. accept ADR-0002 compatibility floor;
-2. choose PHP/JS tools and build system;
-3. prove a minimal Playground PHPUnit + Playwright pipeline;
-4. prove a conventional database/container integration job;
-5. set required vs informational checks and time budgets;
-6. define branch protection/release gates;
-7. define provider-secret security model.
+ADR-0011 remains Proposed until authorized future evidence proves:
+1. a fixed P-007 protocol passes on the chosen CI adapter(s);
+2. P-001/P-002/P-008 executable commands/artifacts exist sufficiently for CI consumption;
+3. trusted/untrusted secret isolation is verified;
+4. FAST/FULL/baseline/flaky classifications are implemented and observable;
+5. minimum/current environment jobs are reproducible;
+6. actual built ZIP is verified, not merely source tree;
+7. execution duration/cost/reliability is measured;
+8. required vs informational checks are explicitly recorded;
+9. branch protection/release gating can be configured and verified when the capability is available.
+
+No workflow file, runner, test environment, dependency or CI execution is authorized by this ADR.
