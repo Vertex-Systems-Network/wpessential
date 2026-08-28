@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0174**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
+This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0175**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -23,7 +23,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-010 | ADR-0074/0093/0133 | Relations topology/cardinality/concurrency/lifecycle — REL-01…REL-160 |
 | D-011 | ADR-0082/0118 | Workflow runtime — WF-01…WF-116 |
 | D-012 | ADR-0013…0090/0129/0173/0174 | Membership core + billing providers + protected files — MBR-01…MBR-160 + MB-F001…MB-F176/MB0–MB5 + PC-F001…PC-F176/PC0–PC4 |
-| D-013 | ADR-0021…0100/0130 | Backup artifact/crypto/provider/restore — BK-01…BK-180 + C0–C4/V3 |
+| D-013 | ADR-0021…0100/0130/0175 | Backup artifact/crypto/provider/restore — BK-01…BK-180 + BPC-F001…BPC-F176 + C0–C4/V3 |
 | D-014 | ADR-0044/0102/0169 | TUF verifier/key custody/metadata/package/staging/recovery — TU-01…TU-176 |
 | D-015 | ADR-0031/0108/0163 | Frontend Dashboard routing/auth/cache/browser/Multisite — FD-01…FD-176 |
 | D-016 | ADR-0035/0109/0167 | Builder adapter version/capability/upgrade certification — BW-01…BW-176 + BC0…BC4 |
@@ -37,7 +37,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-024 | ADR-0025/0077/0117 | Forms runtime — FM-01…FM-92 |
 | D-025 | ADR-0026/0079/0120 | Notification fan-out/dedupe/preferences/channel truth — NT-01…NT-142 |
 | D-026 | ADR-0027/0077/0121 | Chat authorization/assets/search/realtime/privacy — CH-01…CH-142 |
-| D-027 | ADR-0040/0055/0080/0122 | Connections/Safe HTTP/Event Inbox/provider I0–I5 — WC-01…WC-156 |
+| D-027 | ADR-0040/0055/0080/0122 | Connections/Safe HTTP/Event Inbox/provider I0–I5 — WC-01…WC-156 + I0–I5 provider certification |
 | D-028 | ADR-0022/0087/0134 | Field Storage FS1–FS6 type/storage/migration/uniqueness/privacy — FST-01…FST-176 |
 | D-029 | ADR-0023/0088/0135 | Custom Tables CT1–CT3 + CM1–CM4 DDL/migration/recovery — CTB-01…CTB-184 |
 | D-030 | ADR-0098/0136 | Admin Columns batching/sort/filter/edit/export/Policy/N+1 — AC-01…AC-176 |
@@ -80,6 +80,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - ADR-0172 — Email Transport / Provider Certification **ET-F 0/176; 6 EE3 / 0 ET-certified**.
 - ADR-0173 — Membership Billing Provider Certification **MB-F 0/176; 4 BE3 / 0 MB-certified**.
 - ADR-0174 — Membership Protected File Delivery Certification **PC-F 0/176; 0 PC1+; PD1…PD4 runtime certifications 0**.
+- ADR-0175 — Backup Provider Certification **BPC-F 0/176; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0**.
 
 ## C. Accepted paper/runtime-baseline summary
 
@@ -101,6 +102,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - billing provider commercial fact ≠ Enrollment ≠ Membership Entitlement ≠ Product Entitlement ≠ WordPress Role.
 - webhook/hook freshness and Job retries never become provider/Membership authority shortcuts.
 - protected-file storage possession ≠ authorization; signed URL issuance ≠ durable entitlement; direct-origin isolation is mandatory before Protected/Supported claims.
+- Backup upload/commit/object presence ≠ `remote_verified`; C3 remote restore is minimum normal Supported Backup gate; C4 requires V3 fresh-environment recovery.
 
 ## D. Fixed evidence execution truth
 
@@ -113,14 +115,14 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 runtime certifications **0 each**.
 - Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 runtime certifications **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime certifications **0**; PD1…PD4 runtime certifications **0**.
-- Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
+- Backup provider certification BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
 - Connection adapters **0 I4/I5**.
 
 ## E. Current highest-priority planning blocker
 
-`P0-M00-WP58` — **Backup provider certification reassessment**.
+`P0-M00-WP59` — **Connection adapter I0–I5 provider certification reassessment**.
 
-Reason: protected-file executable evidence is now fixed by ADR-0174 while Backup provider/runtime support remains **34 targets / 0 C-certified / 0 C3; V3 0**. Reassess C0–C4 and V3/provider-family evidence against current BK-01…BK-180, Vault, JobService, remote-copy lifecycle, privacy, ERR, VER, Multisite, Site Lifecycle and restore-first certification semantics without promoting static provider evidence to runtime support.
+Reason: Backup provider evidence is now fixed by ADR-0175. Connections still have provider/API certification truth at **0 I4/I5** and require reconciliation of I0–I5 capability levels with WC-01…WC-156, Event Inbox, Vault, Safe HTTP/SSRF policy, OAuth/credential lifecycle, provider API/version semantics, idempotency/replay, privacy, ERR, VER, Multisite and provider degradation/reconciliation behavior.
 
 ## F. Decision-processing rule
 
