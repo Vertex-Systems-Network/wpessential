@@ -15,7 +15,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 | Area | Current paper state | Required evidence |
 |---|---|---|
-| WP/PHP/DB/Multisite | ADR-0002/0069/0075 | P-001 |
+| WP/PHP/DB/Multisite compatibility | ADR-0002/0069/0075/0123 | CF-01…CF-112 / P-001 |
 | UI/design system | ADR-0005 | P-002 |
 | Job/Action Scheduler/Cron | ADR-0059/0068/0083/0119 | JS-01…JS-106 / P-003 |
 | Definition Repository | ADR-0073/0092 | P-004 |
@@ -56,8 +56,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 | # | Surface | Product maturity | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1 | P-001/P-004/UI/build/rewrite | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1 | P-001/P-004/UI/build/rewrite | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1 | CF/P-001 + P-004/UI/build/rewrite | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1 | CF/P-001 + P-004/UI/build/rewrite | No |
 | 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 | storage/index/projection/migration/Vault | No |
 | 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + fixed P-010 | P-010 execution | No |
 | 5 | Status Manager | Exhaustive | ADR-0038/0110 split Post Status/domain-state evidence | SM-01…SM-48 | No |
@@ -90,6 +90,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current evidence/certification counters
 
+- Compatibility P-001 / CF: **0/112 CF fixtures; floor not certified; ADR-0002 remains Proposed**.
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
 - Query P-009: **0 executed**.
@@ -129,7 +130,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Recommended implementation order after future consent
 
-1. P-001 compatibility + P-003/JS Job + P-004 Definition + P-005 Vault;
+1. P-001/CF compatibility + P-003/JS Job + P-004 Definition + P-005 Vault;
 2. Kernel/Scope/Site Lifecycle/Registry/Definition/Policy/Abilities/Audit/Vault/Job;
 3. CPT/Taxonomy;
 4. Fields → Relations P-010 → Query P-009 → Custom Tables → Admin Columns → Blueprint/Listings;
@@ -146,7 +147,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0122.**  
+**Architecture/evidence contracts accepted through ADR-0123; compatibility floor itself remains Proposed.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
