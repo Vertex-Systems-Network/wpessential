@@ -37,11 +37,11 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP67 | F05 Ledger/Balance/Movement detailed evidence | DONE | ADR-0199; LED 176 documented / 0 executed |
 | WP68 | F06 Resource Scheduling/Reservation detailed evidence | DONE | ADR-0200; RSV 176 documented / 0 executed |
 | WP69 | F07 Placement/Personalization detailed evidence | DONE | ADR-0201; PLC 176 documented / 0 executed |
-| **WP70** | **F08 Experimentation/Rollout detailed evidence** | **DONE** | **ADR-0202; EXP 176 documented / 0 executed** |
-| **WP71** | **F09 Documents/Records/Templates detailed evidence** | **SPECIFICATION / CURRENT** | DOC 0/176 envelope |
+| WP70 | F08 Experimentation/Rollout detailed evidence | DONE | ADR-0202; EXP 176 documented / 0 executed |
+| **WP71** | **F09 Documents/Records/Templates detailed evidence** | **DONE** | **ADR-0203; DOC 176 documented / 0 executed** |
+| **WP72** | **F10 Data Sync/ETL detailed evidence** | **SPECIFICATION / CURRENT** | SYN 0/176 envelope |
 
 Reserved follow-on IDs:
-- WP72 — F10 Sync/ETL (`SYN`)
 - WP73 — F11 Geo/Territory (`GEO`)
 - WP74 — WooCommerce Commerce Domain Adapter (`WCA`)
 
@@ -75,47 +75,47 @@ Universal detailed evidence state:
 - LED 176 documented / 0 executed;
 - RSV 176 documented / 0 executed;
 - PLC 176 documented / 0 executed;
-- **EXP 176 documented / 0 executed**;
-- DOC 0/176 group envelope is the current detailed-enumeration target.
+- EXP 176 documented / 0 executed;
+- **DOC 176 documented / 0 executed**;
+- SYN 0/176 group envelope is the current detailed-enumeration target.
 
 Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
 ## 9. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring can supply derived ranking inputs but cannot authorize a placement or experiment treatment.
-- F05 Ledger and F06 Scheduling facts may be displayed only through their declared APIs/Policies; F07/F08 do not own ledger or reservation truth.
-- F07 owns presentation placement eligibility and may consume F08 assignment; F07 does not own experiment allocation/statistical truth.
-- F08 owns experiment definition, deterministic assignment, exposure semantics, metric bindings and staged rollout/kill-switch policy for explicit profiles.
-- Experiment assignment is not authorization, consent or exposure; exposure is not conversion.
-- Observed association/statistical signal is not automatic causal proof; method/design/data-quality caveats remain explicit.
-- F02 Analytics owns canonical event/metric/data-quality semantics consumed by F08; F08 does not silently redefine analytics facts.
-- Primary/guardrail metric bindings and statistical profile are versioned and cannot be silently swapped after observing results.
-- Rollout/feature flag can gate an already-authorized feature but does not grant protected role/capability/membership/entitlement access.
-- Kill switch is a safety control and requires propagation/stale-cache evidence before claiming treatment is disabled everywhere.
-- Personalized/variant caches and assignment identities remain isolated by required user/session/site/tenant/consent/revision dimensions.
-- Anonymous→authenticated identity transition follows an explicit stitching policy and cannot fabricate/double assignment or exposure history.
-- Sensitive segmentation remains Policy/consent/data-minimization governed.
-- Non-experiment rollout/feature flag must not fabricate A/B statistical conclusions.
-- Multisite experiment ownership and assignment namespace are server-resolved; identical IDs across isolated sites/tenants must not collide.
-- AI Prompt Runtime remains shared; no hidden privileged experiment publish/traffic/rollout path exists.
-- WP71 F09 Documents/Records/Templates may consume experiment/result facts only through declared APIs; generated records do not become experiment truth.
+- F04 Decision/Formula/Scoring can supply derived typed values, but cannot turn generated output into source-domain authority.
+- F05 Ledger and F06 Scheduling remain canonical owners for their own facts; F09 may render references but never becomes ledger/payment/order/reservation truth.
+- F07 Placement and F08 Experimentation may choose presentation/treatment, but F09 record generation is separately Policy-authorized and does not inherit presentation eligibility as document access.
+- F09 owns template/render/artifact/record lifecycle only for explicit document profiles; source data remains canonical at its owner.
+- Template authoring permission is not source-data permission; generation and protected delivery reauthorize every protected binding/resource.
+- Generated artifact is not automatically a legal document, legal signature, trusted timestamp, identity proof, payment/order/ledger fact or authorization.
+- Hash/checksum verifies configured byte-integrity properties only; it is not signer identity/legal intent by itself.
+- Application time is not a trusted timestamp authority token; external signature/timestamp/storage provider facts remain typed external authority state.
+- Immutable issued records are amended/superseded rather than silently overwritten; void/revoke does not erase history automatically.
+- Protected artifact URLs/storage paths/CDN caches cannot bypass Policy, expiry or revocation contracts.
+- Template/HTML/SVG/font/image/remote asset inputs are untrusted; no arbitrary PHP/JS/SQL/shell execution or unrestricted filesystem/network access is created.
+- External signing/storage/timestamp unknown outcomes require reconciliation before replay where duplicate side effects are possible.
+- Multisite record/template/storage/sequence ownership is server-resolved and isolated; identical keys across sites/tenants must not collide.
+- Backup/restore/clone cannot roll back external authorities; cloned provider mappings remain disabled/quarantined until remapped and approved.
+- AI Prompt Runtime remains shared; no hidden privileged document issuance/share/provider path exists.
+- WP72 F10 Data Sync/ETL may move document metadata/artifacts only through declared mappings and must preserve F09 provenance/immutability constraints.
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. F08 completion truth — ADR-0202
+## 10. F09 completion truth — ADR-0203
 
-`docs/QUALITY/EXPERIMENTATION-ROLLOUT-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `EXP-001…EXP-176`.
+`docs/QUALITY/DOCUMENTS-RECORDS-TEMPLATES-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `DOC-001…DOC-176`.
 
-Frozen evidence includes experiment/variant/hypothesis/metric schemas, eligibility/exclusions, deterministic hashing/stickiness, allocation/rebalancing, exposure dedupe and contamination detection, primary/guardrail metric contracts, statistical uncertainty/caveats/sample-ratio mismatch, schedule/pause/stop/rollout/kill-switch safety, cache/personalization/identity stitching, versioning/concurrent edits, privacy/consent/sensitive segmentation, non-experiment feature flags, Multisite isolation, late events/refunds/data-quality correction, high-traffic assignment/exposure profiles and deterministic A/B/multivariate/rollout/AI-adversarial golden regressions.
+Frozen evidence includes template/version schemas, renderer layout/pagination, fonts/assets/images/SVG safety, Policy-projected dynamic values/redaction, HTML/PDF/text/structured output accuracy, protected storage/delivery, immutable-record amendment/supersession, generation Job idempotency/crash recovery, hash/signing/time provenance, retention/legal-hold handling, share/download access expiry, malicious template/SSRF/resource limits, Multisite isolation, backup/restore/migration portability, 10K/100K/1M scale profiles and deterministic invoice/certificate/contract/report/privacy/AI-adversarial golden regressions.
 
-Current EXP truth: **176 documented / 0 executed / runtime certification 0**.
+Current DOC truth: **176 documented / 0 executed / runtime certification 0**.
 
 ## 11. Runtime truth
 
-No F08 feature has executed. Specifically, no experiment evaluator, hashing/bucket assignment, persistent subject assignment, exposure collection/dedupe, metric aggregation/statistical computation, feature-flag/percentage rollout, kill-switch propagation, cache mutation, anonymous-login stitching, provider/edge integration, AI/MCP session, test or benchmark occurred.
+No F09 feature has executed. Specifically, no template renderer, PDF/HTML/text/structured generation, file write, protected delivery, immutable record issuance/amendment, sequence allocation, checksum/signature/timestamp provider action, remote asset fetch, retention deletion, share/download token, restore/provider reconciliation, AI/MCP session, test or benchmark occurred.
 
 ## 12. Current next safe action
 
-Continue **P0-M00-WP71 — F09 Documents, Records & Templates detailed executable-evidence specification (`DOC-001…DOC-176`)**.
+Continue **P0-M00-WP72 — F10 Data Sync & ETL detailed executable-evidence specification (`SYN-001…SYN-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
