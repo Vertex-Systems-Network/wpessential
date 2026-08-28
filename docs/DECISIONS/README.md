@@ -79,8 +79,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0066 | Accepted Membership provider-version architecture / executable evidence pending | Certification scoped by provider/profile/plugin/API/adapter/environment; HPOS first-class dimension |
 | ADR-0067 | Accepted Email provider-version architecture / executable evidence pending | Email certification records transport/API/event schema/security/region/account scope |
 | ADR-0068 | Accepted Action Scheduler packaging/coexistence architecture / P-003 pending | Platform/Free owns one bundled candidate if selected; modules call only JobService adapter |
-| ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Every scope-aware resource has explicit site/network coordinates; target-site capability + WPE Policy required |
-| ADR-0069 | Accepted Multisite scope ownership model | Explicit site/network ownership and target-site authorization remain mandatory across scope-aware resources |
+| ADR-0069 | Accepted Multisite logical/security architecture / physical evidence pending | Explicit site/network ownership and target-site authorization remain mandatory across scope-aware resources; physical topology remains evidence-gated |
 | ADR-0070 | Accepted commercial/platform architecture / service evidence pending | Product licensing uses opaque installation/network/site-allocation identities + explicit environment classes |
 | ADR-0071 | Accepted Multisite physical-topology paper architecture / exact DDL evidence pending | PT-A…PT-F storage classes; control-plane favors scoped PT-C; high-volume may use PT-D/PT-E by evidence |
 | ADR-0072 | Accepted Product License remote-resource architecture / service evidence pending | Account/Contract/Installation/Network/Site Allocation/Signed Entitlement separate; retries/unknown outcomes reconcile |
