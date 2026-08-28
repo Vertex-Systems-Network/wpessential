@@ -35,7 +35,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Webhooks/Connections/Event Inbox | ADR-0040/0055/0080/0122 | WC-01…WC-156 + I0–I5 + EI1/EI2 evidence |
 | Admin Columns | ADR-0098/0136 | AC-01…AC-176; AC-R/S/F/Q/E/B/X/M/P certifications |
 | Dynamic Listings | ADR-0039/0099/0137 | DL-01…DL-176; DL-A1/A2/A3 + DL-R/A/P/F/H/C/I/B/S/M/O certifications |
-| Free CPT + Taxonomy registration | exhaustive spec + WP native registration architecture | dedicated registration/rewrite lifecycle evidence — WP21 current |
+| Free CPT + Taxonomy registration | ADR-0138 | CPTX-01…CPTX-176; CPTX-CPT/TAX/RW/REST/CAP/OWN/LC/MIG/MS/COMP certification |
+| Emails Builder renderer/composition | ADR-0029/0139 | EBR-01…EBR-176; renderer/composition certification; ET0–ET5 remains separate |
 | Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
 | Admin Menu | ADR-0104 | AM-01…AM-40 |
 | Protector | ADR-0105 | PR-01…PR-44 |
@@ -51,14 +52,15 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | REST API Builder | ADR-0115 | REST-01…REST-52 |
 | Import / Export | ADR-0116 | IM-01…IM-56 |
 | Forms Runtime | ADR-0025/0077/0117 | FM-01…FM-92 + FRT1/FRT2 evidence |
+| Platform Account / Docs / Support / Diagnostics | ADR-0034/0044/0050/0054/0060/0070/0072/0076/0091/0101/0102/0128 | FP/OA/TU/remote-privacy/service-runtime evidence; consolidated cross-surface gap reassessment in WP23 |
 | Owner consent | ADR-0014 | blocks all executable work |
 
 ## Per-surface readiness
 
 | # | Surface | Product maturity | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1/PT-C | CF + DEF + UI + BT + CI + dedicated registration/rewrite lifecycle evidence — WP21 | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1/PT-C | CF + DEF + UI + BT + CI + dedicated registration/rewrite/lifecycle evidence — WP21 | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition D1/PT-C + ADR-0138 | CF + DEF + UI + BT + CI + CPTX-01…CPTX-176 + runtime certifications | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition D1/PT-C + ADR-0138 | CF + DEF + UI + BT + CI + CPTX-01…CPTX-176 + runtime certifications | No |
 | 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 + ADR-0134 fixed evidence | FST-01…FST-176; FS1–FS6 runtime/profile certification | No |
 | 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + ADR-0133 | REL-01…REL-160; final physical/locking profile | No |
 | 5 | Status Manager | Exhaustive | ADR-0038/0110 | SM-01…SM-48 | No |
@@ -76,7 +78,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 17 | Forms & Workflow Builder | Exhaustive | FRT1/FRT2 + WF1/WF2 | FM + WF + JS execution/topology evidence | No |
 | 18 | Cron Job Builder | Exhaustive | JobService + J1/J2/J3 | JS-01…JS-106 | No |
 | 19 | Notification System | Exhaustive | NE1/PT-D vs NE2/PT-E | NT-01…NT-142 + JS/WF/provider evidence | No |
-| 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + ET certification + VT | No |
+| 20 | Emails Builder | Exhaustive | Email IR + ADR-0139 renderer protocol + provider profiles | EBR-01…EBR-176 + ET certification + VT + client/adapter evidence | No |
 | 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH-01…CH-142 + MBR/private-asset/search/realtime cert | No |
 | 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST-01…REST-52 + QRY where Query-backed | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP + Gateway + Event Inbox | WC-01…WC-156 + VT + I0–I5 + EI runtime | No |
@@ -87,7 +89,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivative pipeline | WM-01…WM-48 | No |
 | 29 | XML-RPC Manager | Exhaustive | layered method/endpoint policy | XR-01…XR-48 | No |
 | 30 | Role & Capability Manager | Exhaustive | native WP authority + anti-lockout | RA-01…RA-48 + MBR role-sync interaction | No |
-| 31 | Account/Docs/Support/Diagnostics | Exhaustive | OAuth/Product License/TUF/remote architecture | FP/OA/TU/privacy/service runtime + VT/UI/BT/CI | No |
+| 31 | Account/Docs/Support/Diagnostics | Exhaustive | OAuth/Product License/TUF/remote/support architecture | FP/OA/TU/privacy/service runtime + VT/UI/BT/CI + WP23 cross-surface evidence reassessment | No |
 
 ## Current evidence/certification counters
 
@@ -108,10 +110,12 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - CTB **0/184**; CT1/CT2/CT3 + CM1/CM2/CM3/CM4 certifications 0; exact DDL open.
 - AC **0/176**; all AC target/capability certifications 0.
 - DL **0/176**; all DL authorization-strategy/capability certifications 0.
+- CPTX **0/176**; all CPTX certifications 0.
+- EBR **0/176**; all Emails Builder renderer/composition certifications 0.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**.
 - DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
-- Email **6 EE3 / 0 ET-certified**.
+- Email transport/provider **6 EE3 / 0 ET-certified**; EBR does not change this counter.
 - Connection adapters **0 I4/I5**.
 - Site Lifecycle **0/40**.
 - Multisite **0 MS1+**.
@@ -136,9 +140,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0137; all applicable runtime/toolchain/profile decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0139; all applicable runtime/toolchain/profile decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work: **`P0-M00-WP21` — Free CPT + Taxonomy runtime registration/rewrite evidence**.
+Current planning work: **`P0-M00-WP23` — Platform Account / Docs / Support / Diagnostics consolidated executable-evidence reassessment**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
