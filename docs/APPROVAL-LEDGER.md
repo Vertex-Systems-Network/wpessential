@@ -80,7 +80,14 @@ Accepted detailed universal/adapter evidence through ADR-0206 includes SBP/ANL/S
 
 Current planning work is **P0-M00-WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit**.
 
-WP112 is not an implementation approval request. Its purpose is to verify planning completeness, reconcile stale governance summaries, identify remaining planning/evidence blockers and determine whether the project may later move to `AWAITING_DEVELOPMENT_APPROVAL` without introducing new architecture during development.
+WP112 is not an implementation approval request. Its purpose is to:
+- reconcile all current 56-surface scope/work/governance summaries;
+- remove stale current-state claims while preserving historical snapshots;
+- inventory every remaining planning-only evidence/provider/runtime blocker;
+- verify source-of-truth ownership, security/Policy/privacy/Multisite/recovery/provider boundaries and implementation sequencing are sufficiently planned;
+- determine whether any additional planning packages are required before a later lifecycle move to `AWAITING_DEVELOPMENT_APPROVAL`.
+
+The discovery of stale 50-surface/WP65-current claims in this ledger and the readiness matrix demonstrates why WP112 must complete before any development approval request.
 
 ## 9. Approval autonomy / revocation
 
