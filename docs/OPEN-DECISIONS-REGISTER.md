@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0142**. Architecture acceptance never implies runtime certification or owner development authorization.
+This register contains unresolved implementation/evidence only. Accepted evidence decisions/refinements are preserved through **ADR-0146**. Architecture acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -47,7 +47,11 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-034 | ADR-0034/0044/0050/0054/0060/0070/0072/0076/0091/0101/0102/0128/0140 | Platform Account/Docs/Support/Diagnostics composition — PLT-01…PLT-176 + FP/OA/TU/RS dependencies |
 | D-035 | ADR-0069/0071/0075/0141 | Multisite scope/isolation + lifecycle — MSI-01…MSI-160 + LC-01…LC-96; MS/SL runtime certification 0 |
 | D-036 | ADR-0081/0142 | Audit/Observability model/write/auth/privacy/correlation/retention/integrity/Multisite/scale/diagnostics — AUD-01…AUD-176; AU1/PT-D first baseline only; exact DDL/index/retention/fail-policy/integrity profile open |
-| D-037 | shared Kernel/Registry/Policy/Ability/Event/SDK architecture | bootstrap/module registry/dependency DAG/capability-policy/Ability/Event/extension-registry lifecycle + Free↔Pro/Multisite/security evidence — WP26 current reassessment |
+| D-037 | ADR-0003/0004/0010/0143 | Kernel/Module Registry/Capability-Policy/Abilities/Events/Extension SDK — KPA-01…KPA-176; all shared-platform certification classes 0 |
+| D-038 | privacy/retention architecture + ADR-0144 | local classification/retention/export-erasure/derived-data/backup-restore/Multisite privacy lifecycle — PDL-01…PDL-176; RS remote privacy remains separate |
+| D-039 | error/failure architecture + ADR-0145 | stable code/envelope/retry/conflict/partial-failure/redaction/accessibility/channel-parity evidence — ERR-01…ERR-176 |
+| D-040 | ADR-0035/0039/0099/0146 | Component Blueprint core compiler/bindings/Policy/renderer/slots/styles/assets/cache/accessibility/Multisite — CBP-01…CBP-176; BW/BC adapter certification separate |
+| D-041 | `CONTRACT-VERSIONING-AND-DEPRECATION.md` | cross-version/deprecation evidence reassessment — WP30 current; reconcile FP/DEF/KPA/IM/CBP/module-specific overlap before freezing protocol |
 
 ## B. Accepted paper/runtime-baseline summary
 
@@ -63,6 +67,10 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - Multisite: explicit scope + target authorization; current blog is not ownership; MS0–MS4 retained; MSI fixed evidence.
 - Site Lifecycle: provisioning/restrict/reactivate/teardown/clone/transfer/disaster are journaled domain-aware states; SL0–SL4 retained; LC fixed evidence.
 - Audit: AU1/PT-D remains first future baseline; Audit is not domain history/diagnostics/provider truth and local DB/hash evidence is not tamper-proof truth; AUD fixed evidence.
+- Shared platform: Free-owned kernel/registries, explicit Capability + resource Policy, typed Abilities/Events and versioned extension SDK boundaries are fixed in KPA.
+- Local privacy: P0–P4 classification, owner-specific retention/export/erase, derived-data cleanup and backup/restore reconciliation are fixed in PDL; remote RS stays separate.
+- Error semantics: stable machine code, category/severity/retryability/disclosure/correlation/partial-failure semantics are fixed in ERR.
+- Component Blueprint: core Definition→Compiled Blueprint→Instance/Bindings→Authorized Context→Renderer→Markup/Assets pipeline is fixed in CBP; builder BW/BC remains separate.
 - Forms FRT1/PT-D first + FRT2 mandatory; Chat CRT1/PT-D first + CRT2 mandatory; Membership M1/PT-D first + M2 mandatory; Notification/Email NE1/PT-D first + NE2 mandatory; Event Inbox EI1/PT-D first + EI2 mandatory; Workflow WF1/PT-D first + WF2 mandatory.
 - JobService J1/J2/J3; Action Scheduler candidate only.
 - Import IR1/PT-D first + IR2 mandatory; Backup manifest-first BR1/BR2/BR3; Vault V1/PT-C favored first + V2 comparison.
@@ -96,6 +104,10 @@ All remain paper-only until applicable executable evidence certifies them.
 | MSI | **0/160; 0 surfaces MS1+** |
 | LC | **0/96; SL runtime certs 0** |
 | AUD | **0/176; all AUD certification classes 0** |
+| KPA | **0/176; all shared-platform certification classes 0** |
+| PDL | **0/176; all local privacy/data-lifecycle certification classes 0** |
+| ERR | **0/176; all error/failure-UX certification classes 0** |
+| CBP | **0/176; CBP-D/C/B/R/S/A/K/X/U/O certs 0** |
 | FM | **0/92** |
 | NT | **0/142** |
 | CH | **0/142** |
@@ -124,35 +136,30 @@ All remain paper-only until applicable executable evidence certifies them.
 
 Current: **MSI 0/160; LC 0/96; 0 MS1+ surfaces; 0 SL runtime certifications**.
 
-## E. Audit evidence boundary after ADR-0142
+## E. Cross-cutting evidence boundaries after ADR-0142…0146
 
-- AUD **0/176**; no runtime certification.
-- Audit event, domain history, diagnostics, security alerts, traces, Jobs, Workflow, Event Inbox/provider logs and analytics remain separate truths.
-- secret-bearing values/reusable credentials/private URLs cannot enter Audit.
-- current blog cannot become durable scope.
-- retention is classification/purpose based, not an implicit forever log.
-- Restore/import preserves provenance and cannot erase evidence of Restore itself.
-- AU1/PT-D remains the favored first future baseline only.
-- exact DDL/index set, retention durations, mandatory/fail-closed Ability classes, optional tamper-evidence profile and external immutable checkpoint profile remain OPEN.
-- no tamper-proof/non-repudiation claim is permitted beyond a future certified attacker model/profile.
+- AUD **0/176**; Audit/domain history/diagnostics/security/provider/analytics truths stay distinct; AU1/PT-D remains first future baseline only.
+- KPA **0/176**; registry discovery or UI visibility never grants permission, and invocation channels cannot bypass Capability + target Policy.
+- PDL **0/176**; local live-record erase does not mean backup erase or remote-service deletion; privacy actions are data-owner scoped.
+- ERR **0/176**; retryability and disclosure follow error class and operation idempotency; partial failures remain explicit.
+- CBP **0/176**; core compiler/renderer evidence remains distinct from BW **0/50** builder-adapter evidence.
 
-## F. Current highest-priority planning blocker — shared Kernel / Registry / Policy / Abilities / Events / SDK
+## F. Current highest-priority planning blocker — Contract Versioning & Deprecation
 
-WP26 must reconcile the accepted shared platform contracts before freezing evidence. Coverage must include where genuinely shared:
-- bootstrap/kernel lifecycle and fatal-safe degraded boot;
-- one Module Registry and dependency DAG with stable manifests, ownership and no circular hidden dependencies;
-- module enable/disable/degraded/version-skew behavior with data preservation and no cascading deletion;
-- granular WordPress capability class followed by target resource Policy; UI/menu visibility is never authorization;
-- explicit site/network target authorization and no implicit Super Admin bypass;
-- typed Ability registration, schemas, versions, idempotency, dry-run/impact/destructive metadata and channel parity across UI/REST/CLI/Workflow/AI;
-- AI/CLI/REST do not gain alternate authorization channels;
-- typed Event envelope, privacy classification, at-least-once/replay/idempotent consumers, no plaintext secret payloads;
-- extension/adapter registries, vendor namespaces, version compatibility, dependency/capability declaration, failure isolation and safe deprecation;
-- Free owns the shared platform/kernel; Pro registers into it and must not fork/duplicate registries/services/React/runtime;
-- registry/cache invalidation, collisions, unknown/incompatible extension versions and stale descriptors;
-- extension uninstall/disable without silent owned/shared-data deletion;
-- bootstrap/registry/policy overhead and large-network bounded behavior;
-- arbitrary PHP/JS/SQL/eval from UI remains prohibited.
+WP30 must reconcile the accepted versioning/deprecation policy against existing executable contracts before freezing any new matrix. Coverage should include only genuinely cross-version behavior:
+- Product Version vs Platform API vs Definition schema vs runtime-data migration version;
+- Ability/Event schema and semantic evolution, including authorization/idempotency/sync-async changes;
+- extension/adapter SDK compatibility ranges and unknown/incompatible versions;
+- Free↔Pro compatible/skewed/degraded boot without duplicating FP fixtures;
+- deterministic version-to-version migrator chains without mutating historical revisions silently;
+- unknown future schema fail-safe/read-only handling;
+- capability split/rename/removal with least-privilege migration;
+- deprecation stages Active → Deprecated → Compatibility-only → Removal eligible → Removed;
+- accelerated security deprecation with explicit recovery/migration behavior;
+- package/import compatibility without duplicating IM package parsing and conflict evidence;
+- runtime DB domain migration state, resumability/failure/degraded mode and rollback/recovery boundaries;
+- Multisite mixed-version/mixed-migration states and network/site coordination;
+- release compatibility report and public-contract regression evidence.
 
 ## G. Decision-processing rule
 
@@ -166,7 +173,7 @@ WP26 must reconcile the accepted shared platform contracts before freezing evide
 
 ## Next planning-only priorities
 
-1. **Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK executable-evidence reassessment** — current `P0-M00-WP26`.
-2. Reassess remaining unresolved shared/surface blockers after WP26.
+1. **Contract Versioning & Deprecation executable-evidence reassessment** — current `P0-M00-WP30`.
+2. Reassess remaining unresolved shared/surface blockers after WP30.
 
 Production development authorization remains **NOT GRANTED**.
