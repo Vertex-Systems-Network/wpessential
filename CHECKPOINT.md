@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0157**.
+Accepted evidence decisions/refinements now extend through **ADR-0158**.
 
 Recent fixed evidence sequence:
 
@@ -73,6 +73,7 @@ Recent fixed evidence sequence:
 | ADR-0155 | REST API Builder refinement | REST-01…REST-176 / **0/176** |
 | ADR-0156 | Import/Export refinement | IM-01…IM-176 / **0/176** |
 | ADR-0157 | Role & Capability refinement | RA-01…RA-176 / **0/176** |
+| ADR-0158 | User Profile refinement | UP-01…UP-176 / **0/176** |
 
 ## Critical preserved truth
 
@@ -83,7 +84,8 @@ Recent fixed evidence sequence:
 - Every invocation channel remains Capability + target resource Policy bound.
 - Query uses typed AST/provider capabilities; ordinary raw SQL/eval is not canonical behavior.
 - `condition=true`, Dynamic Value resolution, cache hit, rate-limit allow, CORS/preflight, idempotency and route visibility never grant authorization.
-- WordPress remains effective Role/Capability authority; WPE Change Plans/snapshots are guards/metadata, not parallel authority.
+- WordPress remains effective native identity/auth and Role/Capability authority where accepted; WPE Change Plans/snapshots are guards/metadata, not parallel authority.
+- generic User Profile fields cannot mutate passwords, roles/capabilities, sessions, Application Password secrets, Membership entitlements, Vault/provider secrets or other protected security internals.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote-service deletion.
 - package integrity/signature ≠ authorization to import.
@@ -99,11 +101,11 @@ Primary/shared:
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**.
 - MSI **0/160**; LC **0/96**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
 - VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**.
-- RLT **0/176**; CAC **0/176**; REST **0/176**; IM **0/176**; RA **0/176**.
+- RLT **0/176**; CAC **0/176**; REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**.
 
 Other existing evidence:
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; OA **0/32**; TU **0/44**.
-- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**.
+- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**.
 - Membership billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Email transport/provider **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
 - Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
@@ -115,13 +117,13 @@ Other existing evidence:
 - Draft PR #1 remains the planning PR; re-verify after this synchronization pass.
 - direct GitHub reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected.
 - repository-wide rulesets remain **UNKNOWN** because ruleset endpoint access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/archive/restore/query/cache/rate-limit/REST/import/role mutation/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/archive/restore/query/cache/rate-limit/REST/import/role/user-profile mutation/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP41` — User Profile canonical evidence refinement — SPECIFICATION**.
+Current work package: **`P0-M00-WP42` — Protector canonical evidence refinement — SPECIFICATION**.
 
-Reason: User Profile remains a security-sensitive native identity/auth surface at **UP 0/48**. The existing protocol will be audited against current FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC/Multisite contracts. Any refinement must preserve the central invariant that generic profile fields cannot mutate credentials, roles/capabilities, sessions, Membership entitlements, Vault secrets or other protected security internals.
+Reason: Protector remains a security-critical outer request-policy surface at **PR 0/44**. Its existing protocol predates the fixed Shared Rate Limit (`RLT`), Shared Cache/Invalidation (`CAC`), Kernel/Policy (`KPA`), Error (`ERR`), Versioning (`VER`) and Module Lifecycle (`MLC`) contracts. WP42 will refine the existing canonical protocol in place while preserving trusted-proxy identity, atomic limiter, WordPress authorization, non-authenticating recovery and application-layer—not WAF/DDoS—truth.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
