@@ -17,7 +17,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 |---|---|---|
 | WP/PHP/DB/Multisite | ADR-0002/0069/0075 | P-001 |
 | UI/design system | ADR-0005 | P-002 |
-| Job/Action Scheduler | ADR-0059/0068/0083 | P-003 |
+| Job/Action Scheduler/Cron | ADR-0059/0068/0083/0119 | JS-01…JS-106 / P-003 |
 | Definition Repository | ADR-0073/0092 | P-004 |
 | Vault | ADR-0048/0085 | P-005 |
 | Free↔Pro/Product License | ADR-0070/0072/0076/0091 | P-006 |
@@ -27,7 +27,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Build | ADR-0012 | P-008 |
 | Query | ADR-0086 | P-009 |
 | Relations | ADR-0074/0093 | P-010 |
-| Workflow | ADR-0082 | P-011 |
+| Workflow | ADR-0082/0118 | WF-01…WF-116 / P-011 |
 | Membership | ADR-0078/0090 | P-012 |
 | Backup | ADR-0084/0100 | P-013 |
 | Admin Columns | ADR-0098 AC1 | dedicated runtime/list-table evidence |
@@ -69,9 +69,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113 native WP identity authority | UP-01…UP-48 | No |
 | 15 | Membership System | Exhaustive | M1/M2 + PD/PC protected files | P-012/MB/files/cache/revoke/restore | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109 shared Component Blueprint adapters | BW-01…BW-50; BC0…BC4 | No |
-| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025/0077/0117 Forms FRT1/FRT2 + WF1/WF2 | FM-01…FM-92 + P-011 + P-003; final FRT topology evidence | No |
-| 18 | Cron Job Builder | Exhaustive | JobService + J1/J2/J3 | P-003 recurrence/DST/claims/fairness | No |
-| 19 | Notification System | Exhaustive | NE1/NE2 + JobService | fan-out/dedupe/delivery/ET/lifecycle | No |
+| 17 | Forms & Workflow Builder | Exhaustive | ADR-0025/0077/0117 Forms FRT1/FRT2 + ADR-0082/0118 WF1/WF2 | FM-01…FM-92 + WF-01…WF-116 + JS/P-003; final FRT/WF topology evidence | No |
+| 18 | Cron Job Builder | Exhaustive | ADR-0059/0068/0083/0119 JobService + J1/J2/J3 | JS-01…JS-106 / P-003 recurrence/DST/claims/fairness/backend evidence | No |
+| 19 | Notification System | Exhaustive | NE1/NE2 + JobService | fan-out/dedupe/read/delivery/ET/lifecycle evidence | No |
 | 20 | Emails Builder | Exhaustive | Email IR + provider profiles | renderer + 0 ET certification | No |
 | 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | indexes/search/transport/private assets/revoke | No |
 | 22 | REST API Builder | Exhaustive | ADR-0028/0094/0115 RE1 + RI1/RI2 | REST-01…REST-52 | No |
@@ -90,8 +90,8 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
 - Query P-009: **0 executed**.
-- Job P-003: **0 executed**.
-- Workflow P-011: **0 executed**.
+- Job P-003 / JS: **0/106 JS fixtures; backend certification none; Cron/DST certification none**.
+- Workflow P-011 / WF: **0/116 WF fixtures; runtime certification none; final topology open**.
 - Vault P-005: **0 executed**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Forms Runtime: **0/92 FM fixtures; 0 runtime certifications; FRT topology not final**.
@@ -123,14 +123,14 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Recommended implementation order after future consent
 
-1. P-001 compatibility + P-003 Job + P-004 Definition + P-005 Vault;
+1. P-001 compatibility + P-003/JS Job + P-004 Definition + P-005 Vault;
 2. Kernel/Scope/Site Lifecycle/Registry/Definition/Policy/Abilities/Audit/Vault/Job;
 3. CPT/Taxonomy;
 4. Fields → Relations P-010 → Query P-009 → Custom Tables → Admin Columns → Blueprint/Listings;
 5. admin/site UX modules, using DW/AM/FD/BW/SM/ST/UP/RA/XR evidence gates where applicable;
 6. User/Profile + Role security evidence before privileged management claims;
 7. Membership P-012 + protected files + MB certification;
-8. Forms FM protocol + Workflow P-011/P-003 → Notifications/Email;
+8. Forms FM protocol + Workflow WF/P-011 + Job JS/P-003 → Notifications/Email;
 9. REST/Connections/Event Inbox/Import using REST/IM gates;
 10. Backup P-013 + restore certification → Reset/Protector/other destructive operations;
 11. Chat after storage/search/transport evidence;
@@ -140,7 +140,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0117.**  
+**Architecture/evidence contracts accepted through ADR-0119.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
