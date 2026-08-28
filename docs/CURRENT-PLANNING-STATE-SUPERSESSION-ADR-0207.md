@@ -30,10 +30,12 @@ WP113 / ADR-0208 completed RDR/SRT/DMY/LNK/DBM/PDO/MIR exact evidence:
 - **0 executed**.
 
 Known remaining exact planning gap:
-- WP114: 880;
+- **WP114 CURRENT**: MPR/RPR/ATM/MDP/STM = 880;
 - WP115: 1,936;
 - WP116: 1,760;
 - total **4,576 exact definitions across 26 namespaces**.
+
+The WP114 group ownership and hard boundaries are current in `docs/QUALITY/ACCESS-ADMIN-MEDIA-CODE-MARKET-EVIDENCE-MASTER-PLAN.md`.
 
 P0 is not yet approval-ready. After WP116, a new closure/readiness audit must decide whether the lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
