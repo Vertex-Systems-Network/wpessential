@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0198**.
+Accepted planning/evidence decisions extend through **ADR-0199**.
 
 ### Universal foundations
 
@@ -46,7 +46,8 @@ Accepted planning/evidence decisions extend through **ADR-0198**.
 - ADR-0181 — F01 SBP documented; 0/176 executed.
 - ADR-0182 — F02 ANL documented; 0/176 executed.
 - ADR-0196 — F03 Search & Indexing detailed protocol; **SRH documented 176 / executed 0/176**.
-- **ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; DEC documented 176 / executed 0/176.**
+- ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; **DEC documented 176 / executed 0/176**.
+- **ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; LED documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -97,10 +98,14 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 - Search/index result ≠ source truth or authorization.
 - Formula/score/decision/rank ≠ authorization, ledger/payment/order/inventory/reservation mutation or external-fact authority.
 - F04 uses a registered typed grammar/AST; no arbitrary PHP/JavaScript/SQL/shell/provider execution.
+- Ledger movement/balance is canonical only for its explicit ledger profile; it is not payment settlement, bank truth, order truth, entitlement, reservation or Policy.
+- Posted ledger history is append-oriented; correction uses reversal/compensation rather than silent mutation.
+- Hold ≠ final posting; unknown external provider outcome ≠ failure; reconciliation is required before replay.
 - Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
 - Audit/AI-agent attribution ≠ identity or privilege.
+- Audit Log ≠ ledger movement truth.
 - Clone/duplicate ≠ original entity identity.
 - DB snapshot ≠ full backup.
 - migration replacement ≠ database merge.
@@ -131,8 +136,9 @@ Representative counters:
 - ORD/SEC/FNT/UDS/STG 0/176;
 - **SRH documented 176 / executed 0/176**;
 - **DEC documented 176 / executed 0/176**;
+- **LED documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+- RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -148,20 +154,21 @@ Universal detailed evidence sequence:
 - WP63 F01 — DONE;
 - WP64 F02 — DONE;
 - WP65 F03 Search — DONE / ADR-0196;
-- **WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176**;
-- **WP67 F05 Ledger/Balance/Movement — SPECIFICATION / CURRENT; LED 0/176 envelope**.
+- WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176;
+- **WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176**;
+- **WP68 F06 Resource Scheduling/Reservation — SPECIFICATION / CURRENT; RSV 0/176 envelope**.
 
-WP68…WP74 retain their reserved F06→WooCommerce Adapter meanings.
+WP69…WP74 retain their reserved F07→WooCommerce Adapter meanings.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0198/56-surface/WP67-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0199/56-surface/WP68-current state.
 
-No formula/score/decision/ranking runtime, parser/evaluator benchmark, plugin/theme file write, child-theme creation/activation, font conversion/download, migration/push/pull, content duplication, audit runtime logging, DB reset/snapshot, CPT registration, settings compiler execution, backup/restore, search backend, user/role/membership mutation, browser code, PHP execution, provider/AI/MCP call, build, test or benchmark occurred.
+No ledger table/posting/balance/hold/reversal/reconciliation runtime, formula/score/decision/ranking runtime, parser/evaluator benchmark, plugin/theme file write, child-theme creation/activation, font conversion/download, migration/push/pull, content duplication, audit runtime logging, DB reset/snapshot, CPT registration, settings compiler execution, backup/restore, search backend, user/role/membership mutation, browser code, PHP execution, provider/AI/MCP call, build, test or benchmark occurred.
 
 ## Next safe planning action
 
-Continue **WP67 — F05 Ledger, Balance & Movement detailed executable-evidence specification (`LED-001…LED-176`)**.
+Continue **WP68 — F06 Resource Scheduling & Reservation detailed executable-evidence specification (`RSV-001…RSV-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
