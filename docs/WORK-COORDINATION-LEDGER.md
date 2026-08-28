@@ -73,7 +73,8 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP54` | Remote Service Privacy / Retention canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0171; RS 0/176. |
 | `P0-M00-WP55` | Email Transport / Provider Certification canonical refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0172; ET-F 0/176; ET0…ET5 unchanged; 6 EE3 / 0 ET-certified. |
 | `P0-M00-WP56` | Membership Billing provider certification refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0173; MB-F 0/176; MB0…MB5 unchanged; 4 BE3 / 0 MB-certified. |
-| `P0-M00-WP57` | Protected-file provider/delivery certification reassessment | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Current planning work; PC0…PC4 existing ladder/profile semantics; runtime protected-file certifications remain 0 PC1+. |
+| `P0-M00-WP57` | Protected-file provider/delivery certification reassessment | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0174; PC-F 0/176; PC0…PC4 and PD1…PD4 preserved; 0 PC1+ runtime-certified. |
+| `P0-M00-WP58` | Backup provider certification reassessment | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Current planning work; C0…C4/V3/provider-family evidence; 34 targets / 0 C-certified / 0 C3 Supported; V3 0. |
 
 No production implementation work package is active.
 
@@ -81,9 +82,8 @@ No production implementation work package is active.
 
 | Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | Protected-file provider/delivery certification reassessment | `SPECIFICATION` current | Inspect PC0–PC4/private local/accelerated/object delivery against Membership Entitlement/Policy, Vault, Safe HTTP, storage/media, privacy, ERR, VER, RLT, Multisite, lifecycle, Backup and revoke-safe delivery. Preserve storage possession ≠ authorization; signed URL issuance ≠ durable entitlement. |
-| 2 | Backup provider certification reassessment | `QUEUED` | Refine C0–C4/V3 evidence against current Backup, Vault, JobService, privacy, lifecycle and Multisite contracts without promoting static provider evidence. |
-| 3 | Connection adapter I0–I5 provider certification reassessment | `QUEUED` | Reconcile exact adapter/provider/API capability evidence with WC/Event Inbox/Vault/Safe HTTP/versioning/privacy. |
+| 1 | Backup provider certification reassessment | `SPECIFICATION` current | Refine C0–C4/V3/provider-family evidence against BK-01…BK-180, Vault, JobService, remote-copy lifecycle, privacy, ERR, VER, Multisite, Site Lifecycle and restore-first certification semantics without promoting static provider evidence. |
+| 2 | Connection adapter I0–I5 provider certification reassessment | `QUEUED` | Reconcile exact adapter/provider/API capability evidence with WC/Event Inbox/Vault/Safe HTTP/versioning/privacy. |
 
 ## 4. Shared foundation truth
 
@@ -92,11 +92,13 @@ No production implementation work package is active.
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - ET-F **0/176**; Email provider profiles remain **6 EE3 / 0 ET-certified**.
 - MB-F **0/176**; Membership billing provider profiles remain **4 BE3 / 0 MB-certified**.
-- protected files remain **0 PC1+**.
+- PC-F **0/176**; protected-file profiles remain **0 PC1+**, PD1…PD4 runtime certifications 0.
+- Backup providers remain **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
 - WordPress remains native role/capability and identity/auth authority where defined.
 - Component Blueprint remains canonical over builder-private representations.
 - TUF authenticity and OAuth/Account/Product entitlement are independent trust domains.
 - Billing commercial fact, Enrollment, Membership Entitlement, Product Entitlement and WordPress Role remain separate authority domains.
+- Storage possession, signed-link issuance and Backup-provider support never become protected-file authorization/certification shortcuts.
 - Remote privacy/deletion/backup states remain distinct and evidence-scoped.
 - Watermarker original source bytes are immutable under standard processing.
 - current-blog context is never durable ownership or authorization.
@@ -112,6 +114,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP57`: audit the existing protected-file delivery/profile certification contracts and PC0–PC4 semantics. Keep storage/backing-provider facts separate from authorization, prove revoke-safe delivery/token expiry/range/cache/privacy/clone/restore/Multisite behavior on paper first, and never promote static profile support to runtime certification.
+Continue `P0-M00-WP58`: audit existing Backup provider-family and C0–C4/V3 certification contracts against BK-01…BK-180, Vault/key custody, JobService/at-least-once execution, Remote Copy lifecycle, manifest/integrity/encryption, privacy, ERR, VER, Multisite/Site Lifecycle, restore-first recovery and provider/version truth. Keep static provider documentation/evidence separate from runtime restore certification and never promote a successful upload to Supported Backup status.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
