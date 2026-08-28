@@ -2,16 +2,16 @@
 
 WPEssential is a modular, AI-native WordPress application platform for structured content, data, automation, administration, integrations, operations, identity, membership/access, frontend experiences, application composition and developer/operations tooling.
 
-> **Repository status:** Phase 0 — research, product specification and architecture planning. Production feature development has not started and is **not authorized yet**.
+> **Repository status:** Phase 0 — research, product specification, architecture and evidence planning. Production feature development has not started and is **not authorized**.
 
 Current canonical project state: `PLANNED_EXISTING_PROJECT`  
 Current execution mode: `PLANNER_ONLY`
 
 ## Development consent gate
 
-Production development requires explicit project-owner consent. Read `DEVELOPMENT-CONSENT.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014.
+Production development requires explicit scoped project-owner consent. Read `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014.
 
-`continue`, research/planning approval, an Accepted ADR or Phase 0 readiness does **not** authorize coding, executable spikes, package installation, runtime tests, provider calls, AI/MCP execution or deployment.
+`continue`, `resume`, research/planning approval, an Accepted ADR or Phase 0 planning completion does **not** authorize coding, executable spikes, package installation, runtime tests, provider/API/AI/MCP calls, migrations, builds or deployment.
 
 ## Product model
 
@@ -24,44 +24,61 @@ Production development requires explicit project-owner consent. Read `DEVELOPMEN
 
 Scope history:
 - original product scope: **31 surfaces**;
-- ADR-0177: +12 universal foundations → **43**;
-- ADR-0183…ADR-0188: +5 market modules → **48**;
-- ADR-0189…ADR-0194: +2 new surfaces plus competitive expansion of Membership/Role/Media → current **50 module/platform surfaces**.
+- ADR-0177: **43**;
+- ADR-0188: **48**;
+- ADR-0194: **50**;
+- ADR-0195: **55**;
+- ADR-0197: current **56 module/platform surfaces**.
 
 Current product planning truth:
-- option/product behavior: **50/50 Exhaustive**;
-- logical Multisite mapping: **50/50**;
-- shared AI Prompt product mapping: **50/50**;
-- implementation authorization: **0/50**;
-- implemented/runtime verified: **0**.
+- option/product behavior: **56/56 Exhaustive**;
+- logical Multisite mapping: **56/56**;
+- shared AI Prompt product mapping: **56/56**;
+- implementation authorization: **0/56**;
+- implemented/runtime verified: **none**.
 
-Historical 31/31, 43/43 and 48/48 statements remain earlier-scope snapshots.
+Historical 31/31, 43/43, 48/48, 50/50 and 55/55 statements remain valid earlier-scope snapshots when explicitly presented as historical.
 
-### Latest accepted expansions
+## Current expansion state
 
-Existing surfaces expanded rather than duplicated:
-- **15 Membership** — registration/onboarding, verification/approval, private-site profile, restriction defaults, migration/interoperability; MPR 0/176.
-- **28 Media Rules** — field-data/LCP priority, responsive delivery, Core-aware `sizes`/lazy behavior, AVIF/WebP, placeholders and CDN delivery; MDP 0/176.
-- **30 Role & Capability** — target-role hierarchy, Administrator Rescue, capability provenance, surface-policy integrations and network sync; RPR 0/176.
+Surfaces 44–50 added/expanded market and access/admin/media/code capabilities. ADR-0195 then added:
+- **51 Content Order & Sequence Manager**;
+- **52 Security Integrity, Malware & Vulnerability Scanner**;
+- **53 Font Library, Typography & Delivery Manager**;
+- **54 User Data Stores, Favorites & Collections**;
+- **55 Staging, Clone & Migration Manager**.
 
-New user-facing surfaces:
-- **49 Admin Theme, Branding & Experience Manager** — semantic/native admin theming, assignment, accessibility, environment identity and branding; ATM 0/176.
-- **50 Safe Script, Tag & Code Injection Manager** — governed HTML/CSS/JS/meta/link/JSON-LD/external tags with CSP/consent/environment controls; STM 0/176. **No PHP/eval runtime.**
+ADR-0197 added:
+- **56 Theme Workspace, Child Theme & Theme Customization Manager** — declarative/theme-source tooling only; no arbitrary live PHP execution.
 
-High-level catalog addendum: `docs/MODULE-CATALOG-EXPANSION-ADR-0194.md`.
+Competitive parity work extends canonical owners instead of creating duplicate engines. See `docs/MODULE-CATALOG-EXPANSION-ADR-0195.md`, `docs/MODULE-CATALOG-EXPANSION-ADR-0197.md` and the current maturity ledger.
 
 ## Solution Blueprint / AI-native direction
 
-Complete CRM/ERP/LMS/booking/commerce/developer systems normally compose reusable WPE modules/foundations/adapters through Solution Blueprints rather than generating one private plugin/runtime per system.
+Complete CRM/ERP/LMS/booking/commerce/developer systems compose reusable WPE modules/foundations/adapters through Solution Blueprints rather than creating one private runtime per system.
 
 Current planning includes:
 - 160 curated reference systems across 20 domains;
 - 40 reusable application patterns;
 - 268,800 raw primary Blueprint combinations before validation/secondary dimensions;
-- one shared AI Prompt/Requirement Compiler across all **50** surfaces;
+- one shared AI Prompt/Requirement Compiler across all **56** surfaces;
 - optional WordPress MCP/Abilities exposure under Capability + Policy;
 - S07 Product Discovery/Pre-Development Planning Orchestrator;
-- S08 Market Intelligence Radar with a documented daily GitHub job design; executable scheduled workflow remains uninstalled before development consent.
+- S08 Market Intelligence Radar with a documented daily GitHub job design; executable scheduling remains uninstalled before consent.
+
+## Evidence/readiness truth
+
+Detailed exact evidence specifications exist for SBP, ANL, SRH, DEC, LED, RSV, PLC, EXP, DOC, SYN, GEO, AIP and WCA. They are planning-complete but **0 executed** and provide no runtime certification.
+
+ADR-0207 / WP112 final readiness audit found that **33 supplemental/market namespaces still require exact per-fixture expansion: 5,808 fixture definitions total**. Therefore P0 is **not yet ready** to move to `AWAITING_DEVELOPMENT_APPROVAL`.
+
+The required planning continuation is:
+- **WP113** — Market Expansion exact evidence — 1,232 fixtures;
+- **WP114** — First Competitive exact evidence — 880 fixtures;
+- **WP115** — Second Competitive exact evidence — 1,936 fixtures;
+- **WP116** — Third Competitive exact evidence — 1,760 fixtures.
+
+After WP116, a new final closure audit must decide whether P0 is approval-ready.
 
 ## Engineering source of truth
 
@@ -79,13 +96,14 @@ Before implementation, read:
 9. `docs/ARCHITECTURE.md`
 10. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
 11. `docs/OPEN-DECISIONS-REGISTER.md`
-12. module/Solution/AI/Quality/ADR documentation relevant to the selected milestone.
+12. `docs/QUALITY/P0-FINAL-PREDEVELOPMENT-CLOSURE-READINESS-AUDIT.md`
+13. module/Solution/AI/Quality/ADR documentation relevant to the selected milestone.
 
 ## Module specification rule
 
-No production module implementation may begin while its product behavior is only a feature list. Every module first documents screens, options, fields, defaults, validation, permissions, lifecycle/failure states, dependencies, assets, import/export, negative/MUST-NOT behavior, Multisite, AI Prompt behavior and acceptance/evidence requirements.
+No production module implementation may begin while product behavior is only a feature list. Every module first documents screens, options, fields, defaults, validation, permissions, lifecycle/failure states, dependencies, assets, import/export, negative/MUST-NOT behavior, Multisite, AI Prompt behavior and acceptance/evidence requirements.
 
-Current planning coverage: **50/50 module/platform surfaces have reached the Phase 0 Exhaustive product-behavior bar.** This means planned/specified, not implemented, verified, runtime-certified or authorized.
+Current product-option coverage: **56/56 module/platform surfaces meet the Phase 0 Exhaustive product-behavior bar.** This means specified, not implemented, verified, runtime-certified or authorized.
 
 ## Default engineering lifecycle
 
@@ -103,8 +121,8 @@ No package/build spike is authorized.
 
 ## Current planning work
 
-Owner-requested WP83…WP89 access/admin/media/code market audit is complete. Current planning resumes:
+WP112 final pre-development closure/readiness audit is **DONE / ADR-0207** and deliberately kept P0 open.
 
-**P0-M00-WP65 — F03 Search & Indexing detailed executable-evidence specification.**
+**Current safe planning package: WP113 — Market Expansion exact executable-evidence specification (`RDR/SRT/DMY/LNK/DBM/PDO/MIR`, 1,232 fixtures).**
 
-Production development authorization remains **NOT GRANTED / 0/50**.
+Production development authorization remains **NOT GRANTED / 0/56**.
