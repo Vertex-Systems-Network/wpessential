@@ -33,7 +33,9 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP16` | P-010 Relations audit/refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Relations/Query/Policy/Fields/Multisite | ADR-0133; canonical ADR-0093 protocol refined to REL-01…REL-160; 0 executed; R1/PT-D first baseline only. |
 | `P0-M00-WP17` | Field Storage / Custom Fields evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Field Schema/FS1–FS6/Query/Relations/Vault | ADR-0134; FST-01…FST-176; 0 executed; all adapter certifications 0. |
 | `P0-M00-WP18` | Custom Tables physical/DDL/migration evidence | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | CT1–CT3/CM1–CM4/Query/Fields/Relations/Backup/Multisite | ADR-0135; CTB-01…CTB-184; 0 executed; all CT/CM certifications 0. |
-| `P0-M00-WP19` | Admin Columns operational evidence refinement | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | Current planning work; ADR-0098 operational profile exists but no dedicated fixed executable protocol found. |
+| `P0-M00-WP19` | Admin Columns operational evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | WP list tables/Query/Fields/Relations/Policy/export | ADR-0136; AC-01…AC-176; 0 executed; all AC capability certifications 0. |
+| `P0-M00-WP20` | Dynamic Listings SSR/cache/pagination evidence | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Query/Policy/Fields/Relations/Component Blueprint/cache/builders | ADR-0137; DL-01…DL-176; 0 executed; all DL strategy/capability certifications 0. |
+| `P0-M00-WP21` | Free CPT + Taxonomy runtime registration/rewrite evidence | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | WP registration/rewrite/REST/Definition/Policy/Multisite | Current planning work; exhaustive spec exists; dedicated fixed executable protocol not found. |
 
 No production implementation work package is active.
 
@@ -41,9 +43,9 @@ No production implementation work package is active.
 
 | Order | Planning item | Current state | Dependency / note |
 |---:|---|---|---|
-| 1 | Admin Columns operational evidence refinement | `SPECIFICATION` current | Query/Fields/Relations foundations now have fixed protocols; freeze list-table hooks, batching, sort/filter/edit/export/security evidence |
-| 2 | Dynamic Listings SSR/cache/pagination evidence | `QUEUED` | Reuses QRY/FST/REL and Component Blueprint |
-| 3 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP19 |
+| 1 | Free CPT + Taxonomy runtime registration/rewrite evidence | `SPECIFICATION` current | Free entry surfaces; freeze registration args, rewrite lifecycle, capability/REST/editor/deletion/upgrade/Multisite evidence |
+| 2 | Emails Builder render/delivery composition evidence reassessment | `QUEUED` | Email transport/provider truth exists; verify whether renderer/module fixed evidence needs consolidation |
+| 3 | Remaining unresolved shared/surface blockers | `QUEUED` | Reassess by critical-path value after WP21 |
 
 Planning documentation work does not create implementation authorization.
 
@@ -55,7 +57,7 @@ Current implementation WIP remains 0. Planning serializes shared contracts. Mate
 
 No active shared-surface implementation reservation exists.
 
-## 5. Data-foundation truth preserved
+## 5. Data-foundation and consumer truth preserved
 
 - Definition identity/revision/dependency/cache are separate truths; DEF **0/144**.
 - Query uses typed AST/provider capabilities; QRY **0/168**; QP1–QP4 certs 0.
@@ -65,10 +67,12 @@ No active shared-surface implementation reservation exists.
 - CT1/PT-E is first site-owned Custom Tables baseline; CT2/PT-D mandatory comparison; CT3 only genuinely network-owned.
 - `dbDelta()` is not WPE's source-of-truth migration language.
 - Definition publish never implies physical/value migration completion.
+- Admin Columns AC **0/176**; displayed cells do not imply real sort/filter/edit/export capability and batch planning remains mandatory.
+- Dynamic Listings DL **0/176**; rendered HTML does not imply authorized count/cursor/cache/client-transition correctness.
 - destructive schema/data work requires truthful verified recovery boundaries.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP19`: audit `docs/ARCHITECTURE/ADMIN-COLUMNS-OPERATIONAL-PROFILE.md`, ADR-0098, Data & Query exhaustive specifications and Query/Field/Relations/Policy integration. If no dedicated equivalent exists, create one bounded Admin Columns executable evidence protocol; otherwise refine canonical evidence in place.
+Continue `P0-M00-WP21`: audit `docs/MODULES/FREE-CPT-TAXONOMY-EXHAUSTIVE-SPEC.md` plus registration/rewrite/REST/Definition/Multisite architecture and existing ADRs. If no equivalent fixed runtime-registration evidence contract exists, create one bounded protocol and decision; otherwise refine canonical evidence in place.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
