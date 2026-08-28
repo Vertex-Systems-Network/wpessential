@@ -131,6 +131,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0118 | Accepted Workflow Runtime evidence protocol / execution pending | WF-01…WF-116 fix revision/trigger/dedupe/Run-Step/branch-join/wait/approval/Job/reconciliation/security/lifecycle/WF topology evidence |
 | ADR-0119 | Accepted JobService/Cron evidence protocol / execution pending | JS-01…JS-106 fix backend coexistence/Cron-DST/claims/idempotency/fairness/backpressure/runners/security/Multisite/J topology evidence |
 | ADR-0120 | Accepted Notification System evidence protocol / execution pending | NT-01…NT-142 fix Rule/revision/dedupe/recipients/preferences/quiet-hours/digest/inbox/channel-truth/fan-out/privacy/lifecycle/NE topology evidence |
+| ADR-0121 | Accepted Message & Chat evidence protocol / execution pending | CH-01…CH-142 fix conversation/participant authorization, revocation, ordering/idempotency, private assets, read state, search, realtime, moderation, privacy/lifecycle and CRT topology evidence |
 
 ## Product specification milestone
 
@@ -152,11 +153,12 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Workflow runtime evidence: `docs/QUALITY/WORKFLOW-RUNTIME-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - JobService/Cron evidence: `docs/QUALITY/JOB-SERVICE-ACTION-SCHEDULER-EVIDENCE-PROTOCOL.md`.
 - Notification evidence: `docs/QUALITY/NOTIFICATION-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- Message & Chat evidence: `docs/QUALITY/MESSAGE-CHAT-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Product License remote/API: corresponding files under `docs/PLATFORM/`.
 
 ## Remaining evidence blockers
 
-P-001…P-013 remain executable gates. ADR-0101…0120 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import/forms/workflow/job/notification execution.
+P-001…P-013 remain executable gates. ADR-0101…0121 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import/forms/workflow/job/notification/chat execution.
 
 Current certification/evidence remains:
 - Membership: **0 MB-certified**;
@@ -187,6 +189,7 @@ Current certification/evidence remains:
 - Workflow Runtime: **0/116 WF fixtures / 0 runtime certifications**;
 - JobService/Cron: **0/106 JS fixtures / 0 backend certifications / 0 Cron-DST certifications**;
 - Notification System: **0/142 NT fixtures / 0 runtime certifications**;
+- Message & Chat: **0/142 CH fixtures / 0 runtime certifications / 0 realtime transport certifications / 0 search adapter certifications**;
 - Product License API/service: **0 fixtures**.
 
 No executable evidence may run before explicit owner consent.
