@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0141**.
+Accepted evidence decisions/refinements now extend through **ADR-0142**.
 
 Recent bounded protocols/refinements:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -53,7 +53,8 @@ Recent bounded protocols/refinements:
 - ADR-0138 — Free CPT & Taxonomy CPTX-01…CPTX-176.
 - ADR-0139 — Emails Builder rendering/composition EBR-01…EBR-176.
 - ADR-0140 — Platform Account / Docs / Support / Diagnostics PLT-01…PLT-176.
-- **ADR-0141 — Multisite Scope/Isolation MSI-01…MSI-160 + Site Lifecycle LC-01…LC-96 canonical refinement.**
+- ADR-0141 — Multisite Scope/Isolation MSI-01…MSI-160 + Site Lifecycle LC-01…LC-96 canonical refinement.
+- **ADR-0142 — Audit & Observability AUD-01…AUD-176.**
 
 ## Recent completed work packages
 
@@ -115,6 +116,30 @@ Preserved truth:
 - clone/restore cannot silently resurrect production allocation/OAuth/provider/stale access authority;
 - large-network claims require measured executed evidence.
 
+### WP25 — Audit & Observability — DONE
+Created:
+- `docs/QUALITY/AUDIT-OBSERVABILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- `docs/DECISIONS/ADR-0142-audit-observability-evidence-protocol.md`.
+
+Evidence:
+- AUD **0/176**.
+- `AUD-M/AUD-W/AUD-A/AUD-P/AUD-C/AUD-R/AUD-I/AUD-S/AUD-Q/AUD-O` certifications 0.
+- AU1/PT-D remains favored first future baseline only.
+- exact Audit DDL/index set OPEN.
+- exact retention durations OPEN.
+- exact mandatory/fail-closed Ability classes OPEN.
+- optional tamper-evidence profile NONE SELECTED / OPEN.
+- external immutable checkpoint profile NONE SELECTED / OPEN.
+
+Preserved truth:
+- Audit Event ≠ Domain History ≠ Operational Diagnostic ≠ Security Alert ≠ Request Trace ≠ Job Attempt ≠ Workflow Run ≠ Event Inbox record ≠ Provider log ≠ analytics event ≠ immutable external evidence;
+- current blog context never becomes durable Audit ownership;
+- secret-bearing values and reusable security tokens/private URLs never belong in Audit;
+- corrections are new linked events rather than silent historical rewrites;
+- Restore/import preserves origin/provenance and Restore itself remains visible in current chronology;
+- local DB/hash/hash-chain evidence is not described as tamper-proof/non-repudiable without a certified attacker model;
+- local Audit enablement does not imply remote telemetry consent.
+
 ## Current evidence counters
 
 - P-001 / CF: **0/112**.
@@ -130,7 +155,7 @@ Preserved truth:
 - P-011 / WF: **0/116**.
 - P-012 / MBR: **0/160**.
 - P-013 / BK: **0/180**.
-- FST: **0/176**; CTB: **0/184**; AC: **0/176**; DL: **0/176**; CPTX: **0/176**; EBR: **0/176**; PLT: **0/176**.
+- FST: **0/176**; CTB: **0/184**; AC: **0/176**; DL: **0/176**; CPTX: **0/176**; EBR: **0/176**; PLT: **0/176**; AUD: **0/176**.
 - FM: **0/92**; NT: **0/142**; CH: **0/142**; WC: **0/156**.
 - OA: **0/32**; TU: **0/44**.
 - DW: **0/36**; AM: **0/40**; PR: **0/44**; RM: **0/48**; WM: **0/48**; FD: **0/48**; BW: **0/50**; SM: **0/48**; XR: **0/48**; ST: **0/48**; UP: **0/48**; RA: **0/48**; REST: **0/52**; IM: **0/56**.
@@ -148,16 +173,16 @@ Preserved truth:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts/refinements accepted through ADR-0141;
+- evidence contracts/refinements accepted through ADR-0142;
 - direct GitHub branch reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected;
 - repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation;
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/Multisite-site-operation/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/Multisite-site-operation/Audit-runtime/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP25` — Audit & Observability executable-evidence reassessment**.
+Current work package: **`P0-M00-WP26` — Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK executable-evidence reassessment**.
 
-Reason: Audit is an accepted shared platform service (including AU1/PT-D architecture) and is consumed by high-risk modules, lifecycle, Account, Jobs, Membership, Backup and destructive operations, but repository verification found no dedicated `AUDIT-OBSERVABILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`. WP25 must first reconcile the accepted Audit/diagnostics/retention/integrity architecture and create/refine a fixed evidence protocol only for genuinely uncovered behavior.
+Reason: accepted platform architecture already defines bootstrap/kernel ownership, Module Registry/dependency resolution, granular capability + resource Policy evaluation, typed Abilities/Events and public extension registries/SDK boundaries. Repository inspection found these paper contracts but no dedicated fixed shared-foundation executable-evidence protocol. WP26 will reconcile these contracts, Free↔Pro ownership, Multisite scope, extension collision/versioning, degraded module states, cache/registry invalidation, channel parity and security negatives before deciding whether one canonical fixed protocol is required.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
