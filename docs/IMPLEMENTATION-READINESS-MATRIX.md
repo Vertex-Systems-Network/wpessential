@@ -55,7 +55,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Shared Cache / Invalidation | ADR-0154 | CAC-01…CAC-176; consumer certifications separate |
 | Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
 | Admin Menu | ADR-0104 | AM-01…AM-40 |
-| Protector | ADR-0105 | PR-01…PR-44 + RLT shared-service evidence |
+| Protector | ADR-0045/0105 | PR-01…PR-44 + RLT/CAC/KPA/ERR/VER/MLC; WP42 reassessment current |
 | Reset Manager | ADR-0106 | RM-01…RM-48 |
 | Watermarker / Media | ADR-0107 | WM-01…WM-48 |
 | Frontend Dashboard | ADR-0108 | FD-01…FD-48 |
@@ -63,7 +63,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Status Manager | ADR-0110 | SM-01…SM-48 |
 | XML-RPC Manager | ADR-0111 | XR-01…XR-48 |
 | Settings Page | ADR-0112 | ST-01…ST-48 |
-| User Profile | ADR-0030/0096/0113 | UP-01…UP-48; WP41 reassessment current |
+| User Profile | ADR-0030/0096/0113/0158 | UP-01…UP-176 |
 | Role & Capability | ADR-0032/0097/0114/0157 | RA-01…RA-176 |
 | REST API Builder | ADR-0028/0094/0115/0155 | REST-01…REST-176 |
 | Import / Export | ADR-0041/0095/0116/0156 | IM-01…IM-176 |
@@ -87,7 +87,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 | AM + KPA/CLG/DVR/ASR/UI/BT/CI + MLC/MSI | No |
 | 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112 | ST + VT + DSR/CLG/DVR/CAC + KPA/PDL/ERR/VER + UI/BT/CI + MSI | No |
 | 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108/0146 | FD + CBP + DSR/CLG/DVR/ASR/CAC + UI/BT/CI + MBR/MSI | No |
-| 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113 | UP refinement + FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC + UI/BT/CI + MSI | No |
+| 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113/0158 | UP 0/176 + FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC + UI/BT/CI + MSI | No |
 | 15 | Membership System | Exhaustive | ADR-0013…0090/0129 | MBR + MB/PC + KPA/PDL/ERR/VER/MLC/CLG/DVR/CAC/RA + MSI/LC | No |
 | 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109/0146 | CBP + BW/BC + DSR/CLG/DVR/ASR/CAC + BT/CI + MSI | No |
 | 17 | Forms & Workflow Builder | Exhaustive | FRT1/FRT2 + WF1/WF2 | FM + WF + JS + DSR/CLG/DVR/RLT/CAC + KPA/PDL/ERR/VER/MLC + MSI/LC | No |
@@ -100,7 +100,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 24 | Backup Manager | Exhaustive | ADR-0130 | BK + C0–C4/V3 + KPA/PDL/ERR/VER/MLC + MSI/LC | No |
 | 25 | Reset Manager | Exhaustive | Plan + verified restore point + journal | RM + Backup + KPA/PDL/ERR/MLC + MSI/LC | No |
 | 26 | Import / Export | Exhaustive | ADR-0041/0095/0116/0156 | IM 0/176 + DEF/FST/REL/CTB/DSR/VER/CAC/PDL/ERR/KPA + MSI/LC | No |
-| 27 | Protector | Exhaustive | request gate + atomic rate-limit | PR + RLT + KPA/ERR/MLC + MSI network-floor evidence | No |
+| 27 | Protector | Exhaustive | ADR-0045/0105 | PR 0/44 + RLT/CAC/KPA/ERR/VER/MLC + REST/XR/WC compatibility + MSI network-floor evidence; WP42 refinement current | No |
 | 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivatives | WM + DSR/DVR/ASR/CAC + KPA/PDL/ERR/MLC + MSI | No |
 | 29 | XML-RPC Manager | Exhaustive | layered method/endpoint policy | XR + RLT/KPA/ERR/VER/MLC + MSI | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0032/0097/0114/0157 | RA 0/176 + KPA/CAC/ERR/VER/MLC + MBR role-sync + MSI | No |
@@ -113,9 +113,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**.
 - KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
 - VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**.
-- RLT **0/176**; CAC **0/176**; REST **0/176**; IM **0/176**; RA **0/176**.
+- RLT **0/176**; CAC **0/176**; REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; OA **0/32**; TU **0/44**.
-- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**.
+- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**.
 - Email transport/provider **6 EE3 / 0 ET-certified**.
 - Membership Billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Backup **34 provider targets / 0 C-certified / 0 C3; V3 0**.
@@ -131,16 +131,17 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 6. Membership + protected files/provider certification;
 7. Forms/Workflow/Jobs → Notification/Email;
 8. REST/Connections/Event Inbox/Import after their shared dependencies certify;
-9. Backup certification → Reset/destructive operations;
-10. Chat after Membership/protected assets/jobs/notification;
-11. OAuth/Product License/Platform service surfaces; TUF updater after verifier/key-ops bar;
-12. AI only over certified scoped Abilities.
+9. Protector/XML-RPC and other request-surface security profiles after RLT/KPA/ERR/MLC compatibility evidence;
+10. Backup certification → Reset/destructive operations;
+11. Chat after Membership/protected assets/jobs/notification;
+12. OAuth/Product License/Platform service surfaces; TUF updater after verifier/key-ops bar;
+13. AI only over certified scoped Abilities.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0157; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0158; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work: **`P0-M00-WP41` — User Profile canonical evidence refinement**.
+Current planning work: **`P0-M00-WP42` — Protector canonical evidence refinement**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
