@@ -22,17 +22,15 @@ Authorized module/platform surfaces: **0/31**
 | `P0-M00-WP03` | Workflow/Cron scheduling/DST/claims evidence refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Workflow Runtime + JobService + scheduler/cron evidence/governance docs | ADR-0118/0119; WF-01…WF-116 and JS-01…JS-106 documented; 0 executed; Workflow/Job physical/backend choices remain evidence-gated. |
 | `P0-M00-WP04` | Notification fan-out/read/dedupe evidence protocol | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Notification domain + JobService + Workflow + Email/Connections truth + governance docs | ADR-0120; NT-01…NT-142 documented; 0 executed; NE topology and provider certifications remain evidence-gated. |
 | `P0-M00-WP05` | Message & Chat transport/search/private-assets evidence protocol | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | Chat runtime/storage/search/transport/private assets/access + Notification/Membership + governance docs | ADR-0121; CH-01…CH-142 documented; 0 executed; CRT topology, realtime transport and search adapter remain evidence-gated. |
-| `P0-M00-WP06` | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Connection Registry + Safe HTTP + Webhook Gateway + Event Inbox + provider certification + governance docs | Current planning work; reconcile ADR-0040/0055/0080 and provider/event evidence without runtime execution. |
+| `P0-M00-WP06` | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `DONE` | `INTEGRATION` | `SERIALIZE` | Connection Registry + Safe HTTP + Webhook Gateway + Event Inbox + provider certification + governance docs | ADR-0122; WC-01…WC-156 documented; 0 executed; I4/I5=0; Safe HTTP/Event Inbox runtime unverified; EI topology open. |
 
 No production implementation work package is active.
 
 ## 3. Current planning queue
 
-Do not restart from zero.
+The previously ordered communication/integration evidence queue is complete through `P0-M00-WP06`.
 
-| Order | Planning item | Current state | Dependency / note |
-|---:|---|---|---|
-| 1 | Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol | `SPECIFICATION` current | Reconcile Safe HTTP, Webhook Gateway, Connection Registry, Event Inbox, Vault, Policy, Job/Workflow and I0–I5 provider certification boundaries |
+Do not invent the next work item. Select it by reconciling the remaining Open Decisions and Implementation Readiness blockers against critical-path value, missing bounded evidence contracts and dependency order.
 
 These are planning tasks only, not implementation approvals.
 
@@ -127,6 +125,6 @@ Do not update it for every tiny edit.
 
 ## 10. Current next safe action
 
-Continue `P0-M00-WP06`: reconcile Connection Registry, Safe HTTP, Webhook Gateway signature/replay handling, durable Event Inbox, provider capability certification, idempotent event consumption, secrets, Job/Workflow integration, privacy and EI1/EI2 topology into a bounded executable evidence protocol.
+Read and reconcile `docs/OPEN-DECISIONS-REGISTER.md` + `docs/IMPLEMENTATION-READINESS-MATRIX.md`, then open the next planning-only work package for the highest-value unresolved bounded evidence gap. Preserve all existing evidence gates and production implementation WIP=0.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
