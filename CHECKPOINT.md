@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0142**.
+Accepted evidence decisions/refinements now extend through **ADR-0146**.
 
 Recent bounded protocols/refinements:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -54,16 +54,13 @@ Recent bounded protocols/refinements:
 - ADR-0139 — Emails Builder rendering/composition EBR-01…EBR-176.
 - ADR-0140 — Platform Account / Docs / Support / Diagnostics PLT-01…PLT-176.
 - ADR-0141 — Multisite Scope/Isolation MSI-01…MSI-160 + Site Lifecycle LC-01…LC-96 canonical refinement.
-- **ADR-0142 — Audit & Observability AUD-01…AUD-176.**
+- ADR-0142 — Audit & Observability AUD-01…AUD-176.
+- ADR-0143 — Kernel / Module Registry / Capability-Policy / Abilities / Events / Extension SDK KPA-01…KPA-176.
+- ADR-0144 — Local Privacy / Data Lifecycle PDL-01…PDL-176.
+- ADR-0145 — Error Taxonomy & Failure UX ERR-01…ERR-176.
+- **ADR-0146 — Component Blueprint Core Runtime CBP-01…CBP-176.**
 
 ## Recent completed work packages
-
-### WP19 — Admin Columns — DONE
-- AC **0/176**; target adapters runtime-certified 0.
-- `AC-R/AC-S/AC-F/AC-Q/AC-E/AC-B/AC-X/AC-M/AC-P` certifications 0.
-
-### WP20 — Dynamic Listings — DONE
-- DL **0/176**; all strategy/capability certifications 0.
 
 ### WP21 — Free CPT + Taxonomy — DONE
 - CPTX **0/176**; all CPTX certification classes 0.
@@ -79,66 +76,86 @@ Recent bounded protocols/refinements:
 - provider/transport truth remains **6 EE3 / 0 ET-certified**.
 
 ### WP23 — Platform Account / Docs / Support / Diagnostics — DONE
-Created:
-- `docs/QUALITY/PLATFORM-SURFACES-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0140-platform-surfaces-evidence-protocol.md`
-
-Evidence:
-- PLT **0/176**.
-- `PLT-H/PLT-MOD/PLT-A/PLT-D/PLT-S/PLT-X/PLT-R/PLT-MS/PLT-P/PLT-O` certifications 0.
-- FP **0/144**, OA **0/32**, TU **0/44**, Remote privacy **0/30** remain independent prerequisites and were not duplicated/promoted.
-
-Preserved truth:
-- onboarding ≠ Account connection ≠ OAuth validity ≠ Plan/Account state ≠ Site Allocation ≠ signed Product Entitlement ≠ Free/Pro compatibility ≠ update trust ≠ local module health;
-- Support remote service is authoritative for submitted ticket state; local cache/draft is not remote truth;
-- Diagnostics generated ≠ Diagnostics transmitted;
-- remote Docs/Changelog/Support/Status content cannot become arbitrary local HTML/JS/PHP/package/repair authority;
-- service outage ≠ expiry/revocation;
-- Network Account connection ≠ automatic child-site allocation or Network-secret disclosure.
+- PLT **0/176**; all PLT certification classes 0.
+- FP **0/144**, OA **0/32**, TU **0/44**, Remote privacy **0/30** remain independent prerequisites.
+- onboarding, Account connection, OAuth validity, Plan/Account state, Site Allocation, signed Product Entitlement, Free/Pro compatibility, update trust, local module health and Support/Diagnostics state remain separate truths.
 
 ### WP24 — Multisite Scope + Site Lifecycle canonical evidence refinement — DONE
-Refined in place:
-- `docs/QUALITY/MULTISITE-SCOPE-ISOLATION-EVIDENCE-PROTOCOL.md` → MSI **0/160**.
-- `docs/QUALITY/MULTISITE-SITE-LIFECYCLE-EVIDENCE-PROTOCOL.md` → LC **0/96**.
-- `docs/DECISIONS/ADR-0141-multisite-scope-lifecycle-evidence-refinement.md`.
-
-Preserved certification models:
-- MS0–MS4 unchanged; runtime-certified surfaces at MS1+ remain **0**.
-- SL0–SL4 unchanged; runtime lifecycle certifications remain **0**.
-
-Preserved truth:
-- site/network ownership is explicit and cannot fall back to current blog context;
-- `switch_to_blog()` is context management, not authorization;
-- site/network caches/jobs/workflows/provider operations remain scope-bound;
-- shared network secrets can be delegated without plaintext disclosure/ownership transfer;
-- site Membership/roles do not propagate to siblings by global user identity alone;
-- site deletion does not imply global-user deletion, billing cancellation, shared-secret deletion or universal privacy erasure;
-- clone/restore cannot silently resurrect production allocation/OAuth/provider/stale access authority;
-- large-network claims require measured executed evidence.
+- MSI **0/160**; MS0–MS4 preserved; 0 runtime-certified MS1+ surfaces.
+- LC **0/96**; SL0–SL4 preserved; 0 runtime lifecycle certifications.
+- current blog context never becomes durable ownership/authorization; clone/restore cannot silently resurrect stale commercial/provider/access authority.
 
 ### WP25 — Audit & Observability — DONE
+- AUD **0/176**; all AUD certification classes 0.
+- AU1/PT-D remains first future baseline only.
+- exact Audit DDL/index set, retention durations, mandatory/fail-closed Ability classes, optional tamper-evidence profile and external immutable checkpoint profile remain OPEN.
+- local DB/hash evidence is not described as tamper-proof/non-repudiable without a certified attacker model.
+
+### WP26 — Kernel / Registry / Policy / Abilities / Events / SDK — DONE
 Created:
-- `docs/QUALITY/AUDIT-OBSERVABILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- `docs/DECISIONS/ADR-0142-audit-observability-evidence-protocol.md`.
+- `docs/QUALITY/KERNEL-POLICY-ABILITIES-EVENTS-SDK-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- `docs/DECISIONS/ADR-0143-kernel-policy-abilities-events-sdk-evidence-protocol.md`.
 
 Evidence:
-- AUD **0/176**.
-- `AUD-M/AUD-W/AUD-A/AUD-P/AUD-C/AUD-R/AUD-I/AUD-S/AUD-Q/AUD-O` certifications 0.
-- AU1/PT-D remains favored first future baseline only.
-- exact Audit DDL/index set OPEN.
-- exact retention durations OPEN.
-- exact mandatory/fail-closed Ability classes OPEN.
-- optional tamper-evidence profile NONE SELECTED / OPEN.
-- external immutable checkpoint profile NONE SELECTED / OPEN.
+- KPA **0/176**.
+- kernel/module-registry/policy/Ability/Event/extension/SDK certification classes 0.
 
 Preserved truth:
-- Audit Event ≠ Domain History ≠ Operational Diagnostic ≠ Security Alert ≠ Request Trace ≠ Job Attempt ≠ Workflow Run ≠ Event Inbox record ≠ Provider log ≠ analytics event ≠ immutable external evidence;
-- current blog context never becomes durable Audit ownership;
-- secret-bearing values and reusable security tokens/private URLs never belong in Audit;
-- corrections are new linked events rather than silent historical rewrites;
-- Restore/import preserves origin/provenance and Restore itself remains visible in current chronology;
-- local DB/hash/hash-chain evidence is not described as tamper-proof/non-repudiable without a certified attacker model;
-- local Audit enablement does not imply remote telemetry consent.
+- Free owns the shared kernel/registries; Pro registers into them and does not fork shared platform authority.
+- Capability + target resource Policy apply regardless of UI, REST, CLI, Workflow or AI channel.
+- typed Abilities/Events do not become arbitrary PHP/JS/SQL/eval channels.
+- extension namespaces/version ranges/dependencies/failure isolation and Multisite scope remain explicit.
+
+### WP27 — Local Privacy / Data Classification / Retention / Export-Erase — DONE
+Created:
+- `docs/QUALITY/LOCAL-PRIVACY-DATA-LIFECYCLE-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- `docs/DECISIONS/ADR-0144-local-privacy-data-lifecycle-evidence-protocol.md`.
+
+Evidence:
+- PDL **0/176**.
+- local privacy/data-lifecycle certification classes 0.
+- Remote Service privacy remains separate at **RS 0/30**.
+
+Preserved truth:
+- live erase ≠ backup erase ≠ remote-service deletion;
+- module disable/delete or site deletion is not universal privacy erasure;
+- each data owner controls delete/anonymize/retain/unlink behavior through explicit classification/retention rules;
+- derived caches/search indexes and post-restore reconciliation require their own privacy-safe handling.
+
+### WP28 — Error Taxonomy & Failure UX — DONE
+Created:
+- `docs/QUALITY/ERROR-TAXONOMY-FAILURE-UX-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- `docs/DECISIONS/ADR-0145-error-taxonomy-failure-ux-evidence-protocol.md`.
+
+Evidence:
+- ERR **0/176**.
+- error/failure-UX certification classes 0.
+
+Preserved truth:
+- stable machine codes remain independent of localized human text;
+- validation/authorization/conflict/dependency/integration/rate/timeout/integrity/migration/internal errors keep distinct retry and disclosure semantics;
+- raw stack/SQL/secrets/private payloads do not belong in production UI envelopes;
+- partial failure cannot be reported as total success;
+- UI/REST/Ability/Job surfaces preserve semantic parity without requiring identical wire representation.
+
+### WP29 — Component Blueprint Core Runtime — DONE
+Created:
+- `docs/QUALITY/COMPONENT-BLUEPRINT-CORE-RUNTIME-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- `docs/DECISIONS/ADR-0146-component-blueprint-core-runtime-evidence-protocol.md`.
+
+Evidence:
+- CBP **0/176**.
+- `CBP-D/C/B/R/S/A/K/X/U/O` certifications 0.
+- Builder adapter BW **0/50** and BC0…BC4 runtime certifications remain separate and 0.
+
+Preserved truth:
+- Blueprint Definition ≠ Published Compiled Blueprint ≠ Component Instance ≠ Binding Descriptor ≠ Authorized Render Context ≠ Render Tree ≠ Markup/Asset Graph ≠ adapter representation ≠ cached output.
+- editor preview/control visibility/conditions never replace server validation or resource Policy.
+- component data cannot become arbitrary PHP/JS/CSS/remote-code execution.
+- slots/partials/nesting are cycle/depth/size constrained.
+- private bindings/media/user/access state remain protected through render/cache boundaries.
+- WPE Component Blueprint remains canonical; builder private serialization is adapter-owned only.
+- CBP runtime evidence never auto-certifies a builder adapter, and BW adapter evidence never auto-certifies the core runtime.
 
 ## Current evidence counters
 
@@ -155,34 +172,34 @@ Preserved truth:
 - P-011 / WF: **0/116**.
 - P-012 / MBR: **0/160**.
 - P-013 / BK: **0/180**.
-- FST: **0/176**; CTB: **0/184**; AC: **0/176**; DL: **0/176**; CPTX: **0/176**; EBR: **0/176**; PLT: **0/176**; AUD: **0/176**.
-- FM: **0/92**; NT: **0/142**; CH: **0/142**; WC: **0/156**.
-- OA: **0/32**; TU: **0/44**.
-- DW: **0/36**; AM: **0/40**; PR: **0/44**; RM: **0/48**; WM: **0/48**; FD: **0/48**; BW: **0/50**; SM: **0/48**; XR: **0/48**; ST: **0/48**; UP: **0/48**; RA: **0/48**; REST: **0/52**; IM: **0/56**.
+- FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
+- MSI **0/160**; LC **0/96**.
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- OA **0/32**; TU **0/44**.
+- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
 - Membership Billing: **4 BE3 / 0 MB-certified**.
 - Protected files: **0 PC1+**.
 - Email transport/provider: **6 EE3 / 0 ET-certified**.
 - Connection adapters: **0 I4/I5**.
 - Backup providers: **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
-- Multisite Scope/Isolation MSI: **0/160**; runtime surfaces at MS1+: **0**.
-- Site Lifecycle LC: **0/96**; SL runtime certifications: **0**.
-- Remote privacy: **0/30**.
+- Multisite runtime surfaces at MS1+: **0**; Site Lifecycle SL runtime certifications: **0**.
+- Remote privacy RS: **0/30**.
 
 ## VCS / verification state
 
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts/refinements accepted through ADR-0142;
+- evidence contracts/refinements accepted through ADR-0146;
 - direct GitHub branch reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected;
 - repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation;
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/Multisite-site-operation/Audit-runtime/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/Multisite-site-operation/Audit/Privacy/Error/Component-Blueprint runtime/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP26` — Kernel / Module Registry / Capability-Policy / Abilities / Event Registry / Extension SDK executable-evidence reassessment**.
+Current work package: **`P0-M00-WP30` — Contract Versioning & Deprecation executable-evidence reassessment**.
 
-Reason: accepted platform architecture already defines bootstrap/kernel ownership, Module Registry/dependency resolution, granular capability + resource Policy evaluation, typed Abilities/Events and public extension registries/SDK boundaries. Repository inspection found these paper contracts but no dedicated fixed shared-foundation executable-evidence protocol. WP26 will reconcile these contracts, Free↔Pro ownership, Multisite scope, extension collision/versioning, degraded module states, cache/registry invalidation, channel parity and security negatives before deciding whether one canonical fixed protocol is required.
+Reason: `docs/ARCHITECTURE/CONTRACT-VERSIONING-AND-DEPRECATION.md` defines Product Version, Platform API, Definition schema, runtime schema, Ability/Event/adapter versions, Free↔Pro compatibility, migration/deprecation stages and package/SDK rules, but repository search found no dedicated fixed executable-evidence protocol for cross-version upgrade/downgrade/unknown-future-schema/deprecation/removal behavior. WP30 will reconcile overlap with FP/DEF/KPA/IM/CBP/module migration evidence before deciding whether a canonical bounded protocol is required.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
