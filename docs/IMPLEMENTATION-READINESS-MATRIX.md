@@ -25,11 +25,11 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Pro updater TUF | ADR-0044/0102 | TU-01…TU-44 |
 | CI | ADR-0011/0127 | CI-01…CI-120 / P-007 |
 | Build | ADR-0012/0126 | BT-01…BT-112 / P-008 |
-| Query | ADR-0086 | P-009 |
+| Query | ADR-0086 | P-009; dedicated fixed protocol pending WP14 |
 | Relations | ADR-0074/0093 | P-010 |
 | Workflow | ADR-0082/0118 | WF-01…WF-116 / P-011 |
 | Membership | ADR-0013/0015/0016/0019/0020/0057/0062/0066/0078/0090/0129 | MBR-01…MBR-160 / P-012 + MB/PC profile certification |
-| Backup | ADR-0084/0100 | P-013 |
+| Backup | ADR-0021/0033/0043/0053/0056/0061/0064/0065/0084/0100/0130 | BK-01…BK-180 / P-013 + exact C0–C4/V3 certification |
 | Notification | ADR-0026/0079/0120 | NT-01…NT-142 + NE1/NE2/channel evidence |
 | Message & Chat | ADR-0027/0077/0121 | CH-01…CH-142 + CRT1/CRT2/private-asset/search/transport evidence |
 | Webhooks/Connections/Event Inbox | ADR-0040/0055/0080/0122 | WC-01…WC-156 + I0–I5 + EI1/EI2 evidence |
@@ -61,7 +61,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 | storage/index/projection/migration/VT-P-005 Vault | No |
 | 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + fixed P-010 | P-010 execution | No |
 | 5 | Status Manager | Exhaustive | ADR-0038/0110 split Post Status/domain-state evidence | SM-01…SM-48 | No |
-| 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 | P-009 compiler/cost/cache/security | No |
+| 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 | P-009 compiler/cost/cache/security; fixed protocol pending | No |
 | 7 | Custom Tables Builder | Exhaustive | CT1/PT-E vs CT2/PT-D | DDL/migration/locking/backfill/recovery | No |
 | 8 | Admin Columns Builder | Exhaustive | ADR-0098 AC1 whole-request batch plan | hooks/batch budgets/sort/filter/edit/export/N+1 evidence | No |
 | 9 | Dynamic Listings/Templates | Exhaustive | ADR-0099 DL1 auth-aware Query + SSR | cursor/count/cache/refill/nesting/builder/SEO evidence | No |
@@ -79,7 +79,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH-01…CH-142 + MBR/Protected Asset + search/realtime/transport cert | No |
 | 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST-01…REST-52 | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP + verified Gateway + durable Event Inbox | WC-01…WC-156 + VT; I0–I5; Safe HTTP/EI runtime | No |
-| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 artifact profile | P-013/archive/chunks/crypto/C0–C4 restore + VT/MBR recovery interaction | No |
+| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0100 artifact profile + ADR-0130 fixed restore-first evidence | BK-01…BK-180 execution; provider C0–C4 and V3 restore certification; VT/MBR recovery interaction | No |
 | 25 | Reset Manager | Exhaustive | Plan + restore point + durable journal | RM-01…RM-48 + certified Backup boundary where required | No |
 | 26 | Import / Export | Exhaustive | IR1/PT-D vs IR2/PT-E | IM-01…IM-56 | No |
 | 27 | Protector | Exhaustive | request gate + atomic rate-limit | PR-01…PR-44 | No |
@@ -96,13 +96,13 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Definition P-004: **0 executed**.
 - Vault P-005 / VT: **0/128; runtime/crypto certifications none; security review not executed**.
 - Free↔Pro P-006 / FP: **0/144; certified artifact pairs 0; ADR-0010 Proposed**.
-- CI P-007 / CI: **0/120; CI runtime certification none; workflows not verified; branch protection/rulesets UNKNOWN**.
+- CI P-007 / CI: **0/120; CI runtime certification none; workflows not verified; direct branch reads show `main` + `planning/master-architecture` unprotected; repository rulesets UNKNOWN due 403 plan/access limitation**.
 - Build P-008 / BT: **0/112; toolchain certification none; ADR-0012 Proposed; canonical tool not selected**.
-- Query P-009: **0 executed**.
+- Query P-009: **0 executed; dedicated fixed protocol not yet accepted**.
 - Relations P-010: **0 executed**.
 - Workflow P-011 / WF: **0/116; runtime certification none**.
 - Membership P-012 / MBR: **0/160; runtime certification none; M1/M2 physical benchmarks 0; 4 BE3 / 0 MB-certified; 0 PC1+; independent security review not executed**.
-- Backup P-013: **0 executed; 34 targets / 0 C-certified**.
+- Backup P-013 / BK: **0/180; runtime certification none; 34 targets / 0 C-certified / 0 C3 Supported; V3 restore certifications 0; independent disaster-recovery/security review not executed**.
 - Notification: **0/142 NT**.
 - Message & Chat: **0/142 CH; runtime/realtime/search cert 0**.
 - Webhooks/Connections/Event Inbox: **0/156 WC; I4/I5 0; Safe HTTP/EI runtime unverified**.
@@ -140,7 +140,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 7. Membership P-012/MBR + protected files + MB certification;
 8. Forms/WF/JS → Notification + Email/channel certification;
 9. REST/Connections/Event Inbox/Import using REST/IM/WC/VT;
-10. Backup P-013 + restore certification → Reset/Protector/destructive operations;
+10. Backup P-013/BK + restore certification → Reset/Protector/destructive operations;
 11. Chat after MBR/Protected Asset/Job/Notification prerequisites;
 12. OAuth Account Link + Product License service;
 13. TUF updater only after verifier/key-ops bar;
@@ -148,10 +148,10 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts accepted through ADR-0129; runtime/toolchain/blocker ADRs remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts accepted through ADR-0130; runtime/toolchain/blocker ADRs remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized.**  
 **Implemented: none. Runtime verified: none.**
 
-Current planning work: **P0-M00-WP13 — P-013 Backup/Restore artifact/provider/recovery evidence refinement**.
+Current planning work: **P0-M00-WP14 — P-009 Query compiler/cost/cache/security executable evidence refinement**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
