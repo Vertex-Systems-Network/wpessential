@@ -24,6 +24,8 @@ Historical 31-, 43-, 48-, 50- and 55-surface snapshots remain historical truth o
 - Current work: **WP112 — P0 Final Pre-development Closure & Readiness Reconciliation Audit**.
 - Latest accepted planning/evidence decision: **ADR-0206**.
 
+WP112 was opened after WP74 because this matrix and `APPROVAL-LEDGER.md` still contained stale **50-surface / WP65-current** snapshots. Those current-state claims have now been corrected to the 56-surface/WP112 truth. WP112 remains open to find and reconcile any additional stale or incomplete planning/governance surfaces before a later readiness decision.
+
 ## Established shared blockers
 
 | Area | Evidence / certification still required |
