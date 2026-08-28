@@ -188,6 +188,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0173 | Accepted Membership Billing Provider Certification refinement | MB-F001…MB-F176; MB0–MB5 preserved; 4 BE3 / 0 MB-certified |
 | ADR-0174 | Accepted Membership Protected File Delivery Certification refinement | PC-F001…PC-F176; PC0–PC4 + PD1–PD4 preserved; 0 PC1+ runtime-certified |
 | ADR-0175 | Accepted Backup Provider Certification refinement | BPC-F001…BPC-F176; C0–C4/V3 preserved; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0 |
+| ADR-0176 | Accepted Connection Adapter Provider Certification refinement | ICP-F001…ICP-F176; WC remains separate; 0 I4-certified / 0 I5-certified |
 
 ## Product specification milestone
 
@@ -203,16 +204,18 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Connection provider ICP-F **0/176**; I4-certified profiles **0**; I5-certified profiles **0**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime certifications **0**.
 - Backup provider BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0**.
-- Connection adapters **0 I4/I5**.
 
 Canonical protocol paths for ADR-0117 onward are under `docs/QUALITY/` or the architecture/provider contract named by the refinement ADR. No fixed evidence matrix has been executed unless explicitly stated otherwise (currently none).
 
-## Current planning work
+## Phase 0 planning closure
 
-**`P0-M00-WP59` — Connection adapter I0–I5 provider certification reassessment — SPECIFICATION.**
+Queued planning-only refinement work is complete through `P0-M00-WP59` / ADR-0176.
 
-Current objective: inspect and refine the existing Connection Adapter Certification Contract/provider profiles against WC-01…WC-156, Event Inbox, Vault, Safe HTTP/SSRF controls, OAuth/credential lifecycle, idempotency/replay, provider API/version capability truth, privacy, ERR, VER, Multisite and degraded/reconciliation behavior. Preserve successful connection ≠ certified capability, static provider documentation ≠ runtime I-level certification, and exact provider/API/profile scope.
+Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
+
+Remaining work is executable implementation/evidence and cannot begin without explicit scoped owner consent under ADR-0014. A future development authorization does not waive implementation-baseline, recovery, quality, security or evidence gates.
