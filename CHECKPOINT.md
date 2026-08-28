@@ -33,7 +33,7 @@ Historical `31/31` and `0/31` statements refer to the pre-ADR-0177 scope only.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions now extend through **ADR-0181**.
+Accepted planning/evidence decisions now extend through **ADR-0182**.
 
 ### Expansion decisions
 
@@ -44,6 +44,7 @@ Accepted planning/evidence decisions now extend through **ADR-0181**.
 | ADR-0179 | AI Prompt/MCP evidence protocol | AIP **0/176**; AIC certifications 0; MCP certifications 0 |
 | ADR-0180 | Universal foundations + Woo adapter evidence master plan | SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each **0/176** |
 | ADR-0181 | F01 Solution Blueprint detailed executable evidence | SBP **0/176**; F01 runtime certification 0 |
+| ADR-0182 | F02 Analytics/Event Tracking/Journey detailed executable evidence | ANL **0/176**; F02 runtime certification 0; storage topology evidence-gated |
 
 ### Previously accepted evidence remains unchanged
 
@@ -90,12 +91,13 @@ A Solution normally composes canonical modules/foundations/adapters. It is **not
 
 ## Current work coordination
 
-Completed planning packages now include:
+Completed expanded planning packages:
 - `P0-M00-WP60` — universal system/Solution Blueprint expansion — DONE (ADR-0177).
 - `P0-M00-WP61` — module-wide AI Prompt + Requirement Compiler + MCP + gap request — DONE (ADR-0178/0179; AIP 0/176).
 - `P0-M00-WP62` — universal foundations technical evidence master plan — DONE (ADR-0180).
 - `P0-M00-WP63` — F01 Solution Blueprint detailed evidence — DONE (ADR-0181; SBP 0/176).
-- `P0-M00-WP64` — F02 Analytics/Event Tracking/Journey detailed evidence — **SPECIFICATION / current**.
+- `P0-M00-WP64` — F02 Analytics/Event Tracking/Journey detailed evidence — DONE (ADR-0182; ANL 0/176).
+- `P0-M00-WP65` — F03 Search & Indexing detailed evidence — **SPECIFICATION / current**.
 
 Production implementation WIP remains **0**.
 
@@ -112,15 +114,17 @@ Production implementation WIP remains **0**.
 - Blueprint install ≠ implementation authorization.
 - Prompt/AI structured JSON ≠ valid plan until server validators accept it.
 - MCP server authentication ≠ Ability/resource authorization.
+- analytics observation/client event ≠ business authority/authorization.
+- modeled attribution/correlation ≠ causal proof.
 - module disable ≠ delete ≠ expiry ≠ uninstall ≠ privacy erase.
 - current-blog context never becomes durable ownership/authorization.
 
 ## Current VCS / execution truth
 
 - planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; its body/mergeability must be synchronized/reverified after this expanded planning batch.
+- Draft PR #1 remains the planning PR; reverify state after final ADR-0182 synchronization.
 - repository-wide rulesets remain UNKNOWN where access is unavailable; do not invent protection state.
-- no package install, build, WordPress runtime, browser, CI, DB/DDL/migration, AI provider call, MCP session, WooCommerce mutation, Blueprint install, analytics collection, search index, ledger movement, reservation, document render, sync, geocoder, runtime test or benchmark occurred.
+- no package install, build, WordPress runtime, browser, CI, DB/DDL/migration, AI provider call, MCP session, WooCommerce mutation, Blueprint install, analytics collection, cookie/session identifier creation, search index, ledger movement, reservation, document render, sync, geocoder, runtime test or benchmark occurred.
 
 ## Resume order
 
