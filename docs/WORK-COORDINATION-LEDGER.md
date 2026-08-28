@@ -30,14 +30,14 @@ Work packages `P0-M00-WP01…WP59` remain DONE and retain their original evidenc
 | WP60 | Solution Blueprint + universal systems + foundations + Woo adapter expansion | DONE | ADR-0177 |
 | WP61 | Module-wide AI Prompt / Requirement Compiler / MCP / gap request | DONE | ADR-0178/0179 |
 | WP62 | Universal foundations + Woo evidence master plan | DONE | ADR-0180 |
-| WP63 | F01 Solution Blueprint detailed evidence | DONE | ADR-0181; SBP 0/176 |
-| WP64 | F02 Analytics/Event/Journey detailed evidence | DONE | ADR-0182; ANL 0/176 |
-| WP65 | F03 Search & Indexing detailed evidence | DONE | ADR-0196; SRH documented 176 / executed 0/176 |
-| WP66 | F04 Decision/Formula/Scoring detailed evidence | DONE | **ADR-0198; DEC documented 176 / executed 0/176** |
-| **WP67** | **F05 Ledger/Balance/Movement detailed evidence** | **SPECIFICATION / CURRENT** | LED 0/176 envelope |
+| WP63 | F01 Solution Blueprint detailed evidence | DONE | ADR-0181; SBP 176 documented / 0 executed |
+| WP64 | F02 Analytics/Event/Journey detailed evidence | DONE | ADR-0182; ANL 176 documented / 0 executed |
+| WP65 | F03 Search & Indexing detailed evidence | DONE | ADR-0196; SRH 176 documented / 0 executed |
+| WP66 | F04 Decision/Formula/Scoring detailed evidence | DONE | ADR-0198; DEC 176 documented / 0 executed |
+| WP67 | F05 Ledger/Balance/Movement detailed evidence | DONE | **ADR-0199; LED 176 documented / 0 executed** |
+| **WP68** | **F06 Resource Scheduling/Reservation detailed evidence** | **SPECIFICATION / CURRENT** | RSV 0/176 envelope |
 
 Reserved follow-on IDs:
-- WP68 — F06 Resource Scheduling/Reservation (`RSV`)
 - WP69 — F07 Placement/Personalization (`PLC`)
 - WP70 — F08 Experimentation/Rollout (`EXP`)
 - WP71 — F09 Documents/Records (`DOC`)
@@ -53,106 +53,56 @@ RDR, SRT, DMY, LNK, DBM, PDO and MIR planning packages remain accepted and unexe
 
 ## 5. First competitive interrupt WP83…WP89 — DONE
 
-- WP83 source/market audit;
-- WP84 Membership parity — MPR 0/176;
-- WP85 Role & Capability parity — RPR 0/176;
-- WP86 Surface 49 Admin Theme — ATM 0/176;
-- WP87 Media Performance expansion — MDP 0/176;
-- WP88 Surface 50 Safe Script/Tag — STM 0/176;
-- WP89 ADR-0194 / former 50-surface synchronization.
+Membership, Role/Capability, Admin Theme, Media Performance and Safe Script/Tag parity planning remains accepted and unexecuted.
 
 ## 6. Second competitive interrupt WP90…WP99 — DONE
 
-- WP90 source/market audit;
-- WP91 Backup parity + Surface 55 split — BKX/STG;
-- WP92 Media Replacement — MRL;
-- WP93 Surface 51 Content Ordering — ORD;
-- WP94 Surface 52 Security Integrity — SEC;
-- WP95 Surface 53 Fonts — FNT;
-- WP96 Profile parity — PBX;
-- WP97 Crocoblock/JetEngine + Surface 54 User Data Stores — JEX/UDS;
-- WP98 Header/Footer + Link Health — HFC/LHX;
-- WP99 ADR-0195 / 55-surface governance sync.
-
-All evidence remains 0 executed.
+Backup/Staging, Media Replacement, Content Ordering, Security Integrity, Fonts, Profile, JetEngine/User Data Stores, Header/Footer and Link Health parity planning remains accepted and unexecuted.
 
 ## 7. Third competitive interrupt WP100…WP111 — DONE
 
-| Work ID | Scope | Lifecycle | Evidence / decision |
-|---|---|---|---|
-| WP100 | Use Any Font/WP Migrate/White Label/Post Duplicator/LoginPress/Activity/CMB2/Child Theme/Simple History/WP Reset/WP Activity Log/Meta Box/Redux/CPTUI/wpmetabox source audit | DONE | third competitive research record |
-| WP101 | Surface 53 advanced font parity | DONE | UAF 0/176 |
-| WP102 | Surface 55 WP Migrate parity | DONE | MIG 0/176 |
-| WP103 | Surface 49/Admin/Menu/Dashboard/Auth white-label/login parity | DONE | WLB 0/176 |
-| WP104 | Surface 51 content duplication/clone operations | DONE | DUP 0/176 |
-| WP105 | Audit & Observability Activity Timeline/Audit Console parity | DONE | ALX 0/176 |
-| WP106 | CMB2/Meta Box/wpmetabox interoperability parity | DONE | MBX 0/176 |
-| WP107 | Theme Workspace / Child Theme product domain | DONE | **new Surface 56; THM 0/176** |
-| WP108 | Reset Manager parity | DONE | RSX 0/176 |
-| WP109 | Redux-class Settings/Options framework parity | DONE | RDX 0/176 |
-| WP110 | CPTUI parity | DONE | CPTX 0/176 |
-| WP111 | ADR-0197, evidence/catalog/checkpoint/PR/Linear governance sync | DONE | current scope **56/56; 0/56 authorized** |
+Use Any Font, WP Migrate, white-label/login, duplication, activity/audit, CMB2/Meta Box, Theme Workspace, reset, Redux and CPTUI parity planning remains accepted and unexecuted. Current product denominator remains **56/56; 0/56 authorized**.
 
 ## 8. Current scope/evidence truth
 
 Current module/platform denominator: **56**.
 
-New surface accepted by ADR-0197:
-- **Surface 56 Theme Workspace, Child Theme & Theme Customization Manager — THM 0/176**.
-
-Third-audit supplemental namespaces:
-- UAF 0/176;
-- MIG 0/176;
-- WLB 0/176;
-- DUP 0/176;
-- ALX 0/176;
-- MBX 0/176;
-- RSX 0/176;
-- RDX 0/176;
-- CPTX 0/176.
-
-Total third-audit reservations: **1,760 fixtures / 0 executed**.
-
 Universal detailed evidence state:
 - SBP 176 documented / 0 executed;
 - ANL 176 documented / 0 executed;
 - SRH 176 documented / 0 executed;
-- **DEC 176 documented / 0 executed**;
-- LED 0/176 group envelope is now the current detailed-enumeration target.
+- DEC 176 documented / 0 executed;
+- **LED 176 documented / 0 executed**;
+- RSV 0/176 group envelope is the current detailed-enumeration target.
 
-Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
+Third-audit supplemental namespaces UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX remain 0/176. Earlier evidence remains separately authoritative and unexecuted unless explicitly recorded otherwise.
 
 ## 9. Shared-surface reservations
 
-- F04 Decision/Formula/Scoring is now frozen at fixture level by ADR-0198; derived score/decision/rank remains distinct from Policy or consumer mutation authority.
-- F05 Ledger/Balance/Movement owns WP67 planning; formula outputs may be inputs but F04 never becomes ledger posting truth.
-- Surface 53 owns reusable font assets/delivery; Theme Workspace consumes font references instead of creating another font engine.
-- Surface 55 owns environments/migration; Search/Replace owns serialization-safe transformations; Backup owns recovery artifacts.
-- Surface 49 owns admin/login presentation; Protector owns login security; OAuth owns social login; Membership owns access/onboarding.
-- Surface 51 owns ordering plus governed content duplication plans; entity Field/Relation/Media owners determine clone semantics.
-- Audit remains a shared canonical store; Activity Timeline/Reports/External sinks are product views/adapters over it, not a second log truth.
-- CMB2/Meta Box/Redux/CPTUI parity composes existing typed WPE owners rather than competitor-shaped monoliths.
-- Surface 56 owns frontend theme child/workspace lifecycle, not wp-admin branding and not arbitrary PHP execution.
-- Reset DB snapshots are development/recovery artifacts and are not equivalent to full Backup Sets.
-- Safe Script/Tag remains browser-side; PHP/server source remains Extension SDK/VCS territory.
-- AI Prompt Runtime remains shared; new surfaces do not receive private provider stacks.
+- F04 Decision/Formula/Scoring produces derived typed inputs but never becomes F05 posting authority.
+- F05 Ledger owns append-oriented movement history and balance derivation for explicit ledger profiles; payment/provider/order/inventory/reservation/entitlement facts remain owned by their domains.
+- Ledger holds are movement-availability semantics, not the F06 resource-calendar reservation engine.
+- Audit remains operational evidence around ledger actions, not a second ledger truth.
+- Backup/restore cannot roll back external providers; restored ledger state must reconcile post-recovery external facts.
+- Surface 55 owns environment migration; staging/clone must not become a second writable production ledger authority.
+- AI Prompt Runtime remains shared; no private privileged ledger provider/AI path exists.
 
 Implementation shared-surface reservations remain **0**.
 
-## 10. F04 completion truth — ADR-0198
+## 10. F05 completion truth — ADR-0199
 
-`docs/QUALITY/DECISION-FORMULA-SCORING-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `DEC-001…DEC-176`.
+`docs/QUALITY/LEDGER-BALANCE-MOVEMENT-EXECUTABLE-EVIDENCE-PROTOCOL.md` fully enumerates `LED-001…LED-176`.
 
-Frozen evidence includes typed AST/parser/versioning, decimal money/rounding, currencies/units/time, null/default/input provenance, lookup versioning, scorecards, decision-table hit policies, deterministic ranking/ties, no-write simulation, high-risk approvals, consumer boundaries, no-eval/execution budgets, cache/Policy isolation, explanations, Multisite and 10K/100K/1M-scale/golden regression profiles.
+Frozen evidence includes schema/identity, idempotency/source references, balance equations, holds, reversals, concurrency/double-spend defense, crash/unknown outcomes, rebuild/reconciliation, decimal/currency/unit correctness, approvals, import/replay, Audit/privacy, Multisite isolation, backup/restore/clone continuity, 10K/100K/1M scale and end-to-end wallet/loyalty/inventory/commission/provider golden regressions.
 
-Current DEC truth: **176 documented / 0 executed / runtime certification 0**.
+Current LED truth: **176 documented / 0 executed / runtime certification 0**.
 
 ## 11. Runtime truth
 
-No F04 or third-audit feature has executed. Specifically, no parser/evaluator/formula/score/decision/ranking/simulation/benchmark, font conversion/download, migration/export/import/push/pull, login/admin branding application, content clone, audit logger/runtime sink, child-theme file write/package install/activation, DB snapshot/reset, settings compiler, CPT registration, provider call, AI/MCP session, test or benchmark occurred.
+No F05 feature has executed. Specifically, no ledger table, account, movement, posting, hold, reversal, balance materialization, lock, transaction, reconciliation, import, provider request, restore verification, AI/MCP session, test or benchmark occurred.
 
 ## 12. Current next safe action
 
-Continue **P0-M00-WP67 — F05 Ledger, Balance & Movement detailed executable-evidence specification (`LED-001…LED-176`)**.
+Continue **P0-M00-WP68 — F06 Resource Scheduling & Reservation detailed executable-evidence specification (`RSV-001…RSV-176`)**.
 
 Production development remains **NOT GRANTED / 0/56**.
