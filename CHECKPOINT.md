@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0199**.
+Accepted planning/evidence decisions extend through **ADR-0200**.
 
 ### Universal foundations
 
@@ -47,7 +47,8 @@ Accepted planning/evidence decisions extend through **ADR-0199**.
 - ADR-0182 — F02 ANL documented; 0/176 executed.
 - ADR-0196 — F03 Search & Indexing detailed protocol; **SRH documented 176 / executed 0/176**.
 - ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; **DEC documented 176 / executed 0/176**.
-- **ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; LED documented 176 / executed 0/176.**
+- ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; **LED documented 176 / executed 0/176**.
+- **ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; RSV documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -100,7 +101,14 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 - F04 uses a registered typed grammar/AST; no arbitrary PHP/JavaScript/SQL/shell/provider execution.
 - Ledger movement/balance is canonical only for its explicit ledger profile; it is not payment settlement, bank truth, order truth, entitlement, reservation or Policy.
 - Posted ledger history is append-oriented; correction uses reversal/compensation rather than silent mutation.
-- Hold ≠ final posting; unknown external provider outcome ≠ failure; reconciliation is required before replay.
+- F05 ledger hold ≠ F06 resource reservation.
+- **Availability result ≠ reservation; cache/search availability is advisory and final hold/confirm revalidates current Policy, rules and capacity atomically.**
+- **Hold ≠ confirmed booking; waitlist position ≠ booking.**
+- **Reservation ≠ payment settlement, order, entitlement or external-calendar truth.**
+- **Unknown payment/calendar/provider outcome ≠ failed; reconcile before replay where duplicate effects are possible.**
+- **Local recurrence requires explicit timezone/DST gap/fold semantics; canonical instants must remain deterministic.**
+- **Shared pools/multi-resource bookings cannot be labelled fully confirmed if any mandatory allocation failed.**
+- **Backup/restore/clone cannot roll back external calendars/providers; stale external mappings require quarantine/reconciliation before writes.**
 - Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
@@ -137,8 +145,9 @@ Representative counters:
 - **SRH documented 176 / executed 0/176**;
 - **DEC documented 176 / executed 0/176**;
 - **LED documented 176 / executed 0/176**;
+- **RSV documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+- PLC/EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -155,20 +164,21 @@ Universal detailed evidence sequence:
 - WP64 F02 — DONE;
 - WP65 F03 Search — DONE / ADR-0196;
 - WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176;
-- **WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176**;
-- **WP68 F06 Resource Scheduling/Reservation — SPECIFICATION / CURRENT; RSV 0/176 envelope**.
+- WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176;
+- **WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176**;
+- **WP69 F07 Placement/Personalization — SPECIFICATION / CURRENT; PLC 0/176 envelope**.
 
-WP69…WP74 retain their reserved F07→WooCommerce Adapter meanings.
+WP70…WP74 retain their reserved F08→WooCommerce Adapter meanings.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0199/56-surface/WP68-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0200/56-surface/WP69-current state.
 
-No ledger table/posting/balance/hold/reversal/reconciliation runtime, formula/score/decision/ranking runtime, parser/evaluator benchmark, plugin/theme file write, child-theme creation/activation, font conversion/download, migration/push/pull, content duplication, audit runtime logging, DB reset/snapshot, CPT registration, settings compiler execution, backup/restore, search backend, user/role/membership mutation, browser code, PHP execution, provider/AI/MCP call, build, test or benchmark occurred.
+No scheduling resource/table/rule/recurrence evaluator, availability query, hold, confirmed reservation, reschedule/cancel/waitlist transition, provider/calendar/payment request, concurrency benchmark, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build, test or benchmark occurred.
 
 ## Next safe planning action
 
-Continue **WP68 — F06 Resource Scheduling & Reservation detailed executable-evidence specification (`RSV-001…RSV-176`)**.
+Continue **WP69 — F07 Placement & Personalization detailed executable-evidence specification (`PLC-001…PLC-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
