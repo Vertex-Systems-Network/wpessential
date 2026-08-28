@@ -1,15 +1,15 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-08-29**  
-Branch: `planning/master-architecture`  
-Canonical project state: **`PLANNED_EXISTING_PROJECT`**  
-Execution mode: **`PLANNER_ONLY`**  
-Current planning lifecycle: **`SPECIFICATION`**  
+Checkpoint date: **2026-08-29**
+Branch: `planning/master-architecture`
+Canonical project state: **`PLANNED_EXISTING_PROJECT`**
+Execution mode: **`PLANNER_ONLY`**
+Current planning lifecycle: **`SPECIFICATION`**
 Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
 
-Explicit scoped owner consent is required before runtime/source/build/migration/test implementation, executable spikes/benchmarks, dependency/package setup, WordPress runtime execution, queues, provider/API/AI calls, MCP sessions, data mutations, packaging or deployment.
+Explicit scoped owner consent is required before runtime/source/build/migration/test implementation, executable spikes/benchmarks, dependency/package setup, WordPress runtime execution, queues, provider/API/AI calls, MCP sessions, data mutations, scheduled workflow installation, packaging or deployment.
 
 `continue`, `resume`, planning acceptance, ADR acceptance and technical readiness do **not** authorize production development.
 
@@ -17,127 +17,157 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Current product milestone
 
-ADR-0177 expanded the historical 31-surface scope with 12 reusable universal foundations.
+Scope history:
+- original surfaces: **31/31 Exhaustive**;
+- ADR-0177 universal foundations: **+12**;
+- ADR-0183…0188 market expansion: **+5**;
+- current module/platform surfaces: **48/48 Exhaustive**;
+- logical Multisite mapping: **48/48**;
+- module-wide AI Prompt product mapping: **48/48**;
+- implementation authorization: **0/48**;
+- implemented: **none**;
+- runtime verified: **none**;
+- production implementation WIP: **0**.
 
-- Original product surfaces: **31/31 Exhaustive**
-- Universal foundations: **12/12 Exhaustive product behavior**
-- Current canonical surfaces: **43/43 Exhaustive**
-- Current logical Multisite scope mapping: **43/43**
-- Module-wide AI Prompt product contract: **43/43 surfaces mapped** under ADR-0178
-- Implementation authorization: **0/43**
-- Implemented: **none**
-- Runtime verified: **none**
-- Production implementation WIP: **0**
+S07 Product Discovery/Planning Orchestrator and S08 Market Intelligence Radar are shared services and do not add denominator rows.
 
-Historical `31/31` and `0/31` statements refer to the pre-ADR-0177 scope only.
+Historical 31/31, 43/43, 0/31 and 0/43 statements remain historical scope truth only.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions now extend through **ADR-0182**.
+Accepted planning decisions now extend through **ADR-0188**.
 
-### Expansion decisions
+### Universal-system / AI expansion
 
-| ADR | Work | Current truth |
+| ADR | Decision | Current truth |
 |---|---|---|
-| ADR-0177 | Solution Blueprint + universal foundations + Woo domain adapter architecture | 43 surfaces; 160 curated systems; 40 patterns; 268,800 raw primary Blueprint combinations; 0/43 authorized |
-| ADR-0178 | WordPress-native AI Prompt/Requirement Compiler + optional MCP architecture | AI Prompt contract mapped across 43/43 surfaces; no runtime |
-| ADR-0179 | AI Prompt/MCP evidence protocol | AIP **0/176**; AIC certifications 0; MCP certifications 0 |
-| ADR-0180 | Universal foundations + Woo adapter evidence master plan | SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each **0/176** |
-| ADR-0181 | F01 Solution Blueprint detailed executable evidence | SBP **0/176**; F01 runtime certification 0 |
-| ADR-0182 | F02 Analytics/Event Tracking/Journey detailed executable evidence | ANL **0/176**; F02 runtime certification 0; storage topology evidence-gated |
+| ADR-0177 | Solution Blueprint + 12 universal foundations + Woo adapter | 43-surface milestone; 160 curated systems; 40 patterns; 268,800 raw primary combinations |
+| ADR-0178 | shared AI Prompt/Requirement Compiler + optional WordPress MCP | Prompt contract mapped to product surfaces; no runtime |
+| ADR-0179 | AI Prompt/MCP evidence | AIP 0/176; AIC/MCP runtime certs 0 |
+| ADR-0180 | universal foundation/Woo evidence master plan | SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each 0/176 |
+| ADR-0181 | F01 Solution Blueprint detailed evidence | SBP 0/176 |
+| ADR-0182 | F02 Analytics/Journey detailed evidence | ANL 0/176 |
 
-### Previously accepted evidence remains unchanged
+### Market expansion — owner-requested interrupt
 
-- Forms FM **0/92**; Workflow WF **0/116**; Job/Cron JS **0/106**.
-- Notification NT **0/142**; Chat CH **0/142**; Connections WC **0/156**.
-- Compatibility CF **0/112**; Vault VT **0/128**; UI **0/104**; Build BT **0/112**; CI **0/120**; Free↔Pro FP **0/144**.
-- Membership MBR **0/160**; MB-F **0/176**; PC-F **0/176**; all MB/PC runtime certifications zero.
-- Backup BK **0/180**; BPC-F **0/176**; 34 provider targets / 0 C-certified / V3 0.
-- Query QRY **0/168**; Definition DEF **0/144**; Relations REL **0/160**.
-- Field Storage FST **0/176**; Custom Tables CTB **0/184**.
-- AC/DL/CPTX/EBR/PLT/AUD/KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC all remain **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS all remain **0/176**.
-- Email transport ET-F **0/176**; 6 EE3 / 0 ET-certified.
-- Connection provider ICP-F **0/176**; 0 I4 / 0 I5 certified.
-- Multisite MSI **0/160**; Site Lifecycle LC **0/96**; runtime certifications zero.
+| ADR | Surface/service | Current evidence truth |
+|---|---|---|
+| ADR-0183 | URL Redirection & Routing Manager | RDR 0/176 |
+| ADR-0184 | Search, Replace & Data Transformation | SRT 0/176 |
+| ADR-0185 | Dummy Data, Synthetic Dataset & Fixture Studio | DMY 0/176 |
+| ADR-0186 | Link Health, Broken Link & Crawl Intelligence | LNK 0/176 |
+| ADR-0187 | Database Maintenance, Cleanup & Storage Health | DBM 0/176 |
+| ADR-0188 | S07 Autonomous Product Planning + S08 Market Radar + daily Git job plan | PDO 0/176; MIR 0/176; executable Git workflow NOT installed |
 
-No paper/static evidence has been promoted to runtime certification.
+Current scope after ADR-0188: **48 surfaces / 0/48 authorized**.
 
-## AI Prompt / Requirement Compiler current architecture
+### Market-driven existing-surface enhancements
+
+Research also plans these within existing owners rather than creating duplicate modules:
+- Query Monitor-style Request/DB/Hook/REST/Asset diagnostics → Platform Diagnostics + Audit/Observability;
+- Health Check/Troubleshooting Mode → Platform Diagnostics shared service;
+- User Switching → controlled Support Impersonation under User Profile/Role/Platform Support;
+- WP Crontrol-like native cron inspection → Cron Job Builder/JobService;
+- Simple History-like human activity view → Audit/Observability;
+- media source replacement/regenerate thumbnails → Watermarker/Media;
+- generic arbitrary Code Snippets runtime → **rejected** under ADR-0004.
+
+Detailed source: `docs/MODULES/MARKET-RESEARCH-EXISTING-SURFACE-ENHANCEMENTS.md`.
+
+## AI Prompt / Requirement Compiler architecture
 
 Canonical flow:
 
 `User Prompt → Requirement IR → capability resolution → gap report → Plan IR → deterministic validation/simulation → approval → typed Ability execution → verification/audit`
 
-Key rules:
-- F12 AI Gateway remains provider/model/task/knowledge/evaluation/usage owner.
-- Every applicable module uses one shared Prompt Runtime; no private per-module chatbot/provider-key stack.
-- WordPress AI Client + Connectors are preferred provider substrate where compatible.
-- WordPress Abilities remain the typed execution boundary.
-- official WordPress MCP Adapter is the preferred optional MCP bridge; WPE does not require MCP for normal use.
-- unsupported requirements are never silently dropped; user receives **Request New Option/System** flow.
+Rules:
+- F12 AI Gateway owns providers/models/tasks/knowledge/evaluation/usage.
+- shared Prompt Runtime across all 48 surfaces; no module-private provider/key/chat stack.
+- WordPress Abilities remain typed execution boundary.
+- official WordPress MCP Adapter is preferred optional bridge; MCP is not required.
+- unsupported requirement is never silently dropped; **Request New Option/System** is offered.
 - AI/MCP never bypass Capability + target Policy.
 - no generic arbitrary PHP/SQL/JS/shell tool.
 
-## Solution Blueprint / universal-system current architecture
+Coverage:
+- surfaces 1–43: `docs/AI/MODULE-AI-PROMPT-OPTION-STANDARD.md`;
+- surfaces 44–48: `docs/AI/MARKET-EXPANSION-AI-PROMPT-MAPPING.md`;
+- combined: **48/48 mapped**.
 
-- `docs/SOLUTIONS/UNIVERSAL-SYSTEM-CATALOG.md`: **160 curated systems** across 20 domains.
-- `REFERENCE-FLOW-AND-OPTION-PATTERNS.md`: **40 reusable patterns**.
-- `100K-SYSTEM-SPACE.md`: **268,800 raw primary combinations** before secondary dimensions/validation.
-- F01–F12 universal foundations have screen/option-level product specs and Multisite mappings.
-- WooCommerce is modeled through the formal Commerce Domain Adapter, not direct generic-module assumptions.
+## Autonomous planning / market radar
 
-A Solution normally composes canonical modules/foundations/adapters. It is **not** one generated plugin/codebase per system.
+### S07 Product Discovery & Pre-Development Planning Orchestrator
 
-## Current work coordination
+A request such as `ABC system add karna hai` follows:
 
-Completed expanded planning packages:
-- `P0-M00-WP60` — universal system/Solution Blueprint expansion — DONE (ADR-0177).
-- `P0-M00-WP61` — module-wide AI Prompt + Requirement Compiler + MCP + gap request — DONE (ADR-0178/0179; AIP 0/176).
-- `P0-M00-WP62` — universal foundations technical evidence master plan — DONE (ADR-0180).
-- `P0-M00-WP63` — F01 Solution Blueprint detailed evidence — DONE (ADR-0181; SBP 0/176).
-- `P0-M00-WP64` — F02 Analytics/Event Tracking/Journey detailed evidence — DONE (ADR-0182; ANL 0/176).
-- `P0-M00-WP65` — F03 Search & Indexing detailed evidence — **SPECIFICATION / current**.
+`intent → repo audit → source ingestion → public research → competitor audit → capability/dedupe map → architecture classification → exhaustive options/flows → security/privacy/Multisite/AI/MCP → evidence/ADR plan → Draft canonical changes → owner review`.
 
-Production implementation WIP remains **0**.
+It never turns a planning request into implementation approval.
 
-## Critical preserved truth
+### S08 Market Intelligence Radar
 
-- Compatibility floor/runtime toolchain remain unverified.
-- WordPress remains native identity/auth and Role/Capability authority where accepted.
-- every invocation channel remains Capability + target resource Policy bound.
-- `condition=true`, AI output, MCP discovery, route/menu/widget visibility, cache hit or CORS success never grants authorization.
-- Billing fact ≠ Membership Enrollment/Entitlement ≠ Product Entitlement ≠ WordPress Role.
-- storage possession/signed URL ≠ protected-resource authorization.
-- JobService at-least-once ≠ exactly-once external mutation.
-- external provider response ≠ owning business truth unless its certified contract says so.
-- Blueprint install ≠ implementation authorization.
-- Prompt/AI structured JSON ≠ valid plan until server validators accept it.
-- MCP server authentication ≠ Ability/resource authorization.
-- analytics observation/client event ≠ business authority/authorization.
-- modeled attribution/correlation ≠ causal proof.
-- module disable ≠ delete ≠ expiry ≠ uninstall ≠ privacy erase.
-- current-blog context never becomes durable ownership/authorization.
+Daily research design covers WordPress.org plugin/core/source/provider/standards signals, change detection, WPE overlap/dedupe, scoring and S07 Draft-audit handoff.
+
+Exact planned GitHub Actions shape is documented in:
+`docs/OPERATIONS/MARKET-INTELLIGENCE-DAILY-GITHUB-JOB.md`.
+
+The executable `.github/workflows` job is **NOT installed** before development consent.
+
+## Solution Blueprint / universal-system architecture
+
+- 160 curated reference systems across 20 domains;
+- 40 reusable patterns;
+- 268,800 raw primary composition combinations before validation/secondary dimensions;
+- F01–F12 have exhaustive product specs and logical Multisite mappings;
+- WooCommerce is a formal Domain Adapter, not direct private order-storage assumptions;
+- a Solution normally composes canonical modules/foundations/adapters, not one generated plugin per system.
+
+## Previously accepted evidence remains unchanged
+
+All ADR-0117…ADR-0182 protocols remain unexecuted. Representative counters:
+- FM 0/92; WF 0/116; JS 0/106; NT 0/142; CH 0/142; WC 0/156;
+- CF 0/112; VT 0/128; UI 0/104; BT 0/112; CI 0/120; FP 0/144;
+- MBR 0/160; MB-F 0/176; PC-F 0/176;
+- BK 0/180; BPC-F 0/176; QRY 0/168; DEF 0/144; REL 0/160; CTB 0/184;
+- established 176-fixture protocols remain 0/176;
+- ET-F 0/176; 6 EE3 / 0 ET-certified;
+- ICP-F 0/176; 0 I4 / 0 I5 certified;
+- MSI 0/160; LC 0/96; runtime certifications 0.
+
+No paper/static research is promoted to runtime certification.
+
+## Work coordination / resume point
+
+Universal-sequence work:
+- WP60 Solution/Universal expansion — DONE;
+- WP61 AI Prompt/MCP — DONE;
+- WP62 universal evidence master plan — DONE;
+- WP63 F01 SBP — DONE;
+- WP64 F02 ANL — DONE;
+- **WP65 F03 Search & Indexing — SPECIFICATION / current resume point**.
+
+Owner-requested market-expansion interrupt is recorded as:
+- WP75 market/source gap audit — DONE;
+- WP76 URL Redirection — DONE;
+- WP77 Search/Replace — DONE;
+- WP78 Dummy Data — DONE;
+- WP79 Link Health — DONE;
+- WP80 DB Maintenance — DONE;
+- WP81 Autonomous Product Planning Orchestrator — DONE;
+- WP82 Market Intelligence Radar + disabled daily Git job plan — DONE.
+
+WP66–WP74 remain reserved for the previously planned F04→Woo-adapter sequence; IDs are not reused.
 
 ## Current VCS / execution truth
 
-- planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; reverify state after final ADR-0182 synchronization.
-- repository-wide rulesets remain UNKNOWN where access is unavailable; do not invent protection state.
-- no package install, build, WordPress runtime, browser, CI, DB/DDL/migration, AI provider call, MCP session, WooCommerce mutation, Blueprint install, analytics collection, cookie/session identifier creation, search index, ledger movement, reservation, document render, sync, geocoder, runtime test or benchmark occurred.
+- planning branch: `planning/master-architecture`;
+- Draft PR #1 is the planning PR and must be synchronized through ADR-0188;
+- no package install, build, CI, WordPress runtime, DB mutation, redirect hook/log, Search/Replace Run, fixture generation, HTTP crawl, cleanup, market-scan script, GitHub scheduled workflow, AI provider call, MCP session, Woo mutation, test or benchmark occurred.
 
-## Resume order
+## Next safe planning action
 
-1. `DEVELOPMENT-CONSENT.md`
-2. `AGENTS.md`
-3. `CHECKPOINT.md`
-4. `docs/APPROVAL-LEDGER.md`
-5. `docs/WORK-COORDINATION-LEDGER.md`
-6. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-7. `docs/OPEN-DECISIONS-REGISTER.md`
-8. `docs/DECISIONS/README.md`
-9. `docs/SOLUTIONS/`
-10. `docs/AI/`
-11. relevant architecture/security/quality/module/provider docs.
+Resume **WP65 — F03 Search & Indexing detailed executable-evidence specification**, unless owner requests another planning audit.
+
+Development remains **NOT GRANTED / 0/48**.
 
 Repository evidence overrides conversational memory.
