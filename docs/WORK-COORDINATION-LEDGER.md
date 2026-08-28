@@ -58,11 +58,19 @@ All remain planning-only and unexecuted unless later evidence explicitly records
 
 Purpose:
 - reconcile all current 56-surface governance summaries;
-- remove stale 50/55-surface current-state claims while preserving them only as historical snapshots;
-- reconcile `IMPLEMENTATION-READINESS-MATRIX.md`, `APPROVAL-LEDGER.md`, Draft PR #1, CHECKPOINT and Linear;
-- identify every remaining planning-only/unexpanded/unexecuted evidence namespace, provider certification, compatibility, security, privacy, Multisite, recovery, build/CI and AI/MCP blocker;
-- determine whether any planning gap remains before lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`;
+- remove stale current-state claims while preserving historical snapshots;
+- inventory every remaining planning-only/unexpanded/unexecuted evidence namespace, provider certification, compatibility, security, privacy, Multisite, recovery, build/CI and AI/MCP blocker;
+- verify source-of-truth ownership and cross-surface contracts remain non-duplicative;
+- determine whether any further planning work is required before a later lifecycle move to `AWAITING_DEVELOPMENT_APPROVAL`;
 - do **not** execute tests/benchmarks/providers/runtime or grant implementation consent.
+
+### Initial WP112 findings already reconciled
+
+1. `docs/IMPLEMENTATION-READINESS-MATRIX.md` was stale at the 50-surface/WP65 snapshot. It is now synchronized to **56 surfaces / 0/56 authorized / WP112 current** and lists surfaces 51–56 plus ADR-0206/WCA truth.
+2. `docs/APPROVAL-LEDGER.md` was also stale at **50 surfaces / WP65 current**. It is now synchronized to the current 56-surface scope, 56/56 logical mappings, 0/56 authorization and WP112 current state.
+3. These corrections are governance reconciliation only and do not reduce runtime/evidence blockers or grant development permission.
+
+WP112 remains open; additional repository-wide stale/incomplete planning claims may still exist and must be audited before P0 closure.
 
 ## 6. Current scope/evidence truth
 
