@@ -26,9 +26,9 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions now extend through **ADR-0131**.
+Accepted evidence decisions now extend through **ADR-0132**.
 
-Recent bounded protocols:
+Recent bounded protocols/refinements:
 - ADR-0117 — Forms FM-01…FM-92.
 - ADR-0118 — Workflow WF-01…WF-116.
 - ADR-0119 — Job/Cron JS-01…JS-106.
@@ -41,21 +41,10 @@ Recent bounded protocols:
 - ADR-0126 — P-008 Build Toolchain BT-01…BT-112.
 - ADR-0127 — P-007 CI/Quality Matrix CI-01…CI-120.
 - ADR-0128 — P-006 Free↔Pro Compatibility FP-01…FP-144.
-- ADR-0129 — P-012 Membership Runtime/Access/Protected Files/Provider MBR-01…MBR-160.
-- ADR-0130 — P-013 Backup/Restore Artifact/Provider/Recovery BK-01…BK-180.
-- **ADR-0131 — P-009 Query Compiler/Cost/Cache/Security QRY-01…QRY-168.**
-
-## WP09 — P-002 UI + P-008 Build — COMPLETE
-
-Work package: **`P0-M00-WP09`** — DONE planning/documentation only.
-
-- UI: **0/104** executed; runtime certification 0.
-- BT: **0/112** executed; toolchain certification 0.
-- ADR-0005/0012 remain Proposed.
-- canonical production build tool not selected.
-- minimum WP candidate 6.9 cannot hard-depend on WP 7.1-only UI/theme capability.
-- WordPress-provided React is mandatory; duplicate React/ReactDOM/JSX runtime is stop-the-line.
-- experimental WordPress UI/build routing features are not foundational contracts.
+- ADR-0129 — P-012 Membership MBR-01…MBR-160.
+- ADR-0130 — P-013 Backup/Restore BK-01…BK-180.
+- ADR-0131 — P-009 Query QRY-01…QRY-168.
+- **ADR-0132 — P-004 Definition Repository canonical evidence refinement DEF-01…DEF-144.**
 
 ## WP10 — P-007 CI / Quality Matrix — COMPLETE
 
@@ -67,7 +56,6 @@ Work package: **`P0-M00-WP10`** — DONE planning/documentation only.
 - direct GitHub branch reads on 2026-08-28 report `main` and `planning/master-architecture` branch protection as **disabled/unprotected**.
 - repository-wide rulesets state remains **UNKNOWN** because the rulesets endpoint is plan/access restricted (403).
 - untrusted PR code must never receive provider/release secrets.
-- FAST/FULL, BASELINE FAILURE, flaky quarantine, artifact provenance and release gating remain mandatory.
 
 ## WP11 — P-006 Free↔Pro Compatibility — COMPLETE
 
@@ -76,8 +64,6 @@ Work package: **`P0-M00-WP11`** — DONE planning/documentation only.
 - FP fixtures: **0/144** executed.
 - P-006 runtime certifications: 0.
 - certified Free↔Pro artifact pairs: 0.
-- Product License remote-service executions under P-006: 0.
-- migrations executed under P-006: 0.
 - ADR-0010 remains Proposed.
 
 Preserved separation: package/binary compatibility, Platform API, schema, signed Product Entitlement, remote Product License/account/allocation, Membership authorization and updater trust are distinct truth domains.
@@ -86,65 +72,26 @@ Preserved separation: package/binary compatibility, Platform API, schema, signed
 
 Work package: **`P0-M00-WP12`** — DONE planning/documentation only.
 
-Created:
-- `docs/QUALITY/P012-MEMBERSHIP-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0129-p012-membership-evidence-protocol.md`
-
-Current Membership evidence:
-- MBR fixtures documented: **160**
-- executed: **0/160**
-- Membership runtime certifications: **0**
-- M1/PT-D vs M2/PT-E physical benchmarks executed: **0**
-- billing provider profiles: **4 BE3 paper profiles / 0 MB-certified**
-- protected-file certifications: **0 PC1+**
-- independent P-012 security review executed: **NO**
-
-Preserved Membership invariants:
-- Role ≠ Membership ≠ Billing Source ≠ Entitlement ≠ WPE Product License;
-- Enrollment is canonical lifecycle truth and Entitlements are derived/current grants;
-- provider webhook/status never directly authorizes a protected request;
-- outer security denial cannot be bypassed;
-- same-specificity deny wins;
-- stale allow after committed revoke/force-deny is a security failure;
-- timestamp expiry applies even if Cron/Jobs are late;
-- ordinary access hot path makes no provider API call;
-- exclusive Plan Groups and Team seats cannot overbook by race;
-- role sync is optional/provenance-safe;
-- protected-file claims require origin-byte isolation, not merely hidden links/pages;
-- Restore/clone reauthorizes/reconciles before stale access or production provider use resumes.
+- MBR fixtures: **0/160** executed.
+- Membership runtime certifications: **0**.
+- M1/PT-D vs M2/PT-E benchmarks: **0**.
+- billing provider profiles: **4 BE3 paper profiles / 0 MB-certified**.
+- protected-file certifications: **0 PC1+**.
+- independent P-012 security review: **NO**.
 
 ## WP13 — P-013 Backup / Restore — COMPLETE
 
 Work package: **`P0-M00-WP13`** — DONE planning/documentation only.
 
-Created:
-- `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0130-p013-backup-restore-evidence-protocol.md`
+- BK fixtures: **0/180** executed.
+- Backup/Restore runtime certifications: **0**.
+- planned provider targets: **34**.
+- provider C-certified: **0**.
+- provider C3 Supported: **0**.
+- V3 Restore Tested production-profile certifications: **0**.
+- independent disaster-recovery/security review: **NO**.
 
-Current Backup evidence:
-- BK fixtures documented: **180**
-- executed: **0/180**
-- Backup/Restore runtime certifications: **0**
-- planned provider targets: **34**
-- provider C-certified: **0**
-- provider C3 Supported: **0**
-- V3 Restore Tested production-profile certifications: **0**
-- independent disaster-recovery/security review executed: **NO**
-
-Preserved Backup invariants:
-- generated/uploaded does not mean restore-ready;
-- V2 Remote Verified does not mean V3 Restore Tested;
-- required missing/corrupt capture cannot be presented as fully verified;
-- provider success/checksum does not replace WPE manifest/integrity/restore truth;
-- static SE evidence never grants C certification;
-- provider certification is exact provider/profile/adapter/environment scoped;
-- the only recovery key cannot live solely beside/inside the ciphertext it unlocks;
-- integrity/authentication failure aborts before destructive restore;
-- hostile archive/parser/path/symlink/decompression input is bounded and fail-safe;
-- unknown remote-delete outcome is not completed deletion;
-- restore/clone must revalidate Vault/provider/commercial state;
-- stale Membership derived/cache state cannot resurrect revoked/expired access;
-- Reset/migration/destructive flows cannot claim a restore point merely because a Backup job started.
+Preserved Backup truth: generated/uploaded ≠ restore-ready; V2 Remote Verified ≠ V3 Restore Tested; provider success/checksum does not replace WPE manifest/integrity/restore truth; restore/clone revalidates Vault/provider/commercial and Membership authorization state.
 
 ## WP14 — P-009 Query — COMPLETE
 
@@ -155,49 +102,66 @@ Created:
 - `docs/DECISIONS/ADR-0131-p009-query-evidence-protocol.md`
 
 Current Query evidence:
-- QRY fixtures documented: **168**
-- executed: **0/168**
-- P-009 runtime certifications: **0**
-- QP1/QP2/QP3/QP4 certified provider/profile counts: **0 / 0 / 0 / 0**
-- independent P-009 security review executed: **NO**
-- final numeric cost thresholds: **OPEN / evidence-gated**
-- final persistent cache backend/default: **OPEN / evidence-gated**
-- final cursor encoding/profile: **OPEN / evidence-gated**
+- QRY fixtures documented: **168**.
+- executed: **0/168**.
+- P-009 runtime certifications: **0**.
+- QP1/QP2/QP3/QP4 certified provider/profile counts: **0 / 0 / 0 / 0**.
+- independent P-009 security review: **NO**.
+- final numeric cost thresholds, persistent-cache default and cursor profile: **OPEN / evidence-gated**.
 
-Preserved Query invariants:
-- Query Definition/Revision, invocation, compiled provider operation and result/cache entry are distinct truths;
-- Draft edits cannot silently alter published consumer semantics;
-- no raw SQL/arbitrary PHP callback/eval in normal Query AST;
-- parameters are typed/untrusted values and identifiers are registered schema references;
-- unsupported provider semantics fail before execution rather than silently degrade;
-- row/resource/field/scope authorization is server-side and independent from authentication;
-- count/aggregate metadata cannot leak hidden rows/cohorts;
-- persistent shared cache is disabled when authorization/invalidation dependencies cannot be represented safely;
-- committed revoke/policy-generation change cannot keep serving stale protected results;
-- cursor state is untrusted and bound/revalidated against revision/provider/scope/order/parameters/authorization;
-- remote QP4 results are reauthorized locally through Connections/Safe HTTP/Vault boundaries;
-- normal relation/list execution has zero tolerance for unbounded N+1;
-- performance cannot override correctness, scope or authorization.
+Preserved Query truth: no raw SQL/eval in normal AST; typed values + registered identifiers; unsupported semantics fail; authorization/count/scope remain server-side; protected caches are revocation-safe; cursors are untrusted and bound; remote results are locally reauthorized; normal list/relation N+1 is stop-line.
+
+## WP15 — P-004 Definition Repository — COMPLETE
+
+Work package: **`P0-M00-WP15`** — DONE planning/documentation only.
+
+Refined/created:
+- refined existing canonical `docs/QUALITY/DEFINITION-P004-EXECUTABLE-EVIDENCE-PROTOCOL.md` in place;
+- created `docs/DECISIONS/ADR-0132-p004-definition-evidence-refinement.md`.
+
+Current Definition evidence:
+- DEF fixtures documented: **144**.
+- executed: **0/144**.
+- P-004 physical/runtime certifications: **0**.
+- final D1/D2/D3/D4 profile: **OPEN / evidence-gated**.
+- exact DDL/index/types/collations: **OPEN / evidence-gated**.
+- independent P-004 data-integrity/security review: **NO**.
+
+Preserved Definition truth:
+- identity ≠ immutable Revision ≠ Dependency edge ≠ compiled cache;
+- Draft/current and published revisions may differ safely;
+- historical revisions are never silently rewritten;
+- current/published pointers must remain same-Definition valid;
+- portable identity is UUID/logical reference, not local numeric ID;
+- explicit site/network scope remains security truth under PT-C;
+- unknown future schema is degraded/read-only, not lossy-downgraded;
+- module disable/Pro expiry preserves configuration;
+- key collision never proves import identity;
+- archive/tombstone ≠ purge;
+- Backup/restore/clone/transfer must preserve/remap scope intentionally;
+- cache/events become successful only after durable commit.
+
+D1/PT-C remains the **first benchmark baseline only**. D2/D3/D4 remain evidence candidates.
 
 ## Current evidence counters
 
 - P-001 / CF: **0/112**; compatibility floor not certified.
 - P-002 / UI: **0/104**.
 - P-003 / JS: **0/106**.
-- P-004: **0 executed; existing fixed Definition evidence protocol requires completeness audit**.
+- P-004 / DEF: **0/144; physical/runtime certifications 0**.
 - P-005 / VT: **0/128**.
 - P-006 / FP: **0/144**.
 - P-007 / CI: **0/120**.
 - P-008 / BT: **0/112**.
 - P-009 / QRY: **0/168; runtime certifications 0**.
-- P-010: **0 executed**.
+- P-010: **0 executed; existing fixed Relations protocols require completeness audit**.
 - P-011 / WF: **0/116**.
 - P-012 / MBR: **0/160; runtime certifications 0**.
 - P-013 / BK: **0/180; runtime certifications 0; 34 provider targets / 0 C-certified / 0 C3 Supported; V3 certifications 0**.
-- WC: **0/156**.
-- CH: **0/142**.
-- NT: **0/142**.
 - FM: **0/92**.
+- NT: **0/142**.
+- CH: **0/142**.
+- WC: **0/156**.
 - OA: **0/32**.
 - TU: **0/44**.
 - DW: **0/36**.
@@ -227,15 +191,15 @@ Preserved Query invariants:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts accepted through ADR-0131;
+- evidence contracts/refinements accepted through ADR-0132;
 - runtime/toolchain blocker ADRs remain unverified until applicable authorized execution;
-- no package install/build/WordPress runtime/browser/CI/migration/license/billing/provider/file-transfer/archive/restore/query/cache/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/migration/license/billing/provider/file-transfer/archive/restore/query/cache/DDL/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP15` — P-004 Definition Repository evidence completeness / physical proof audit**.
+Current work package: **`P0-M00-WP16` — P-010 Relations evidence completeness / physical proof audit**.
 
-Reason: Definition Repository is a shared control-plane foundation for versioned module definitions, dependencies, published revisions, imports and migrations. Unlike P-009, an existing fixed P-004 protocol and ADR-0092 already exist, so the next task is to audit that protocol against the accepted Definition Repository relational/physical architecture, Multisite scope, migration/versioning and current governance. Only material gaps should create a refinement/new ADR; duplicate protocols are forbidden.
+Reason: Relations is a shared data-plane dependency for Fields, Query, Listings, Admin Columns, Membership and other graph-like consumers. Existing P-010 canonical evidence and benchmark protocols plus ADR-0074/0093 already exist, so WP16 must audit completeness first and refine in place only if material gaps exist. Duplicate protocols are forbidden.
 
 All existing evidence gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
