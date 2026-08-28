@@ -1,11 +1,11 @@
 # WPEssential Architecture Decision Records
 
 Status: **Phase 0 planning / no development authorization**  
-Last synchronized: 2026-08-28
+Last synchronized: 2026-08-29
 
 ADRs preserve long-lived product, architecture, security, data, compatibility and distribution decisions. Accepted ADRs are never silently changed; a reversal requires a superseding ADR. Exact implementation profiles can remain evidence-gated even when architecture is Accepted.
 
-**Hard rule:** technical acceptance never grants development permission. `/DEVELOPMENT-CONSENT.md` and ADR-0014 require explicit owner consent before source/build/migration/test/benchmark/provider implementation.
+**Hard rule:** technical acceptance never grants development permission. `/DEVELOPMENT-CONSENT.md` and ADR-0014 require explicit owner consent before source/build/migration/test/benchmark/provider/AI/MCP implementation.
 
 > ADR-0069 previously appeared twice as a summary row in this index; that duplicate summary was normalized without changing the ADR source or semantics.
 
@@ -189,33 +189,51 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0174 | Accepted Membership Protected File Delivery Certification refinement | PC-F001…PC-F176; PC0–PC4 + PD1–PD4 preserved; 0 PC1+ runtime-certified |
 | ADR-0175 | Accepted Backup Provider Certification refinement | BPC-F001…BPC-F176; C0–C4/V3 preserved; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0 |
 | ADR-0176 | Accepted Connection Adapter Provider Certification refinement | ICP-F001…ICP-F176; WC remains separate; 0 I4-certified / 0 I5-certified |
+| ADR-0177 | Accepted expanded product architecture | Solution Blueprint layer + 12 universal foundations + Woo domain adapter; 43 current surfaces; 160 curated systems; 40 patterns; 268,800 raw primary Blueprint combinations |
+| ADR-0178 | Accepted AI architecture | WordPress-native module-wide AI Prompt/Requirement Compiler + F12 ownership + WordPress AI Client/Connectors + typed Abilities + optional official MCP Adapter + capability-gap requests |
+| ADR-0179 | Accepted AI/MCP evidence | AIP-001…AIP-176; executed 0/176; AIC/MCP runtime certifications 0 |
+| ADR-0180 | Accepted expanded technical-evidence master plan | SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA each fixed 176-fixture envelope, executed 0/176 |
+| ADR-0181 | Accepted F01 Solution Blueprint detailed evidence | SBP-001…SBP-176 explicit fixtures; executed 0/176; runtime certification 0 |
 
 ## Product specification milestone
 
-- `docs/MODULES/OPTION-COVERAGE-MATURITY.md`: **31/31 Exhaustive, 0/31 Authorized**.
-- `docs/MODULES/MULTISITE-SCOPE-OPTION-MATRIX.md`: **31/31 surfaces mapped**.
+- `docs/MODULES/OPTION-COVERAGE-MATURITY.md`: **43/43 Exhaustive, 0/43 Authorized**.
+- Original 31/31 milestone remains historical pre-ADR-0177 truth.
+- Original + universal foundation Multisite option mapping: **43/43**.
+- Module-wide AI Prompt product contract under ADR-0178: **43/43 surfaces mapped**.
+- `docs/SOLUTIONS/UNIVERSAL-SYSTEM-CATALOG.md`: **160 curated systems**.
+- `docs/SOLUTIONS/REFERENCE-FLOW-AND-OPTION-PATTERNS.md`: **40 reusable application patterns**.
+- `docs/SOLUTIONS/100K-SYSTEM-SPACE.md`: **268,800 raw primary Blueprint combinations** before validation/secondary dimensions.
 
 ## Major fixed evidence protocols / current truth
 
-- CF **0/112**; UI **0/104**; JS **0/106**; DEF **0/144**; VT **0/128**; FP **0/144**; CI **0/120**; BT **0/112**.
-- QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
-- FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**.
-- MSI **0/160**; LC **0/96**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
-- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
-- Connection provider ICP-F **0/176**; I4-certified profiles **0**; I5-certified profiles **0**.
-- Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
-- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
-- Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime certifications **0**.
-- Backup provider BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0**.
+Established evidence remains unexecuted:
+- CF 0/112; UI 0/104; JS 0/106; DEF 0/144; VT 0/128; FP 0/144; CI 0/120; BT 0/112.
+- QRY 0/168; REL 0/160; WF 0/116; MBR 0/160; BK 0/180.
+- FST 0/176; CTB 0/184; AC/DL/CPTX/EBR/PLT/AUD/KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC all 0/176.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS all 0/176.
+- MSI 0/160; LC 0/96; FM 0/92; NT 0/142; CH 0/142; WC 0/156.
+- ICP-F 0/176; 0 I4/I5 certified.
+- ET-F 0/176; 6 EE3 / 0 ET-certified.
+- MB-F 0/176; 4 BE3 / 0 MB-certified.
+- PC-F 0/176; 0 PC1+ runtime-certified.
+- BPC-F 0/176; 34 targets / 0 C-certified / V3 0.
 
-Canonical protocol paths for ADR-0117 onward are under `docs/QUALITY/` or the architecture/provider contract named by the refinement ADR. No fixed evidence matrix has been executed unless explicitly stated otherwise (currently none).
+Expanded evidence, all executed **0/176**:
+- SBP; ANL; SRH; DEC; LED; RSV; PLC; EXP; DOC; SYN; GEO; AIP; WCA.
 
-## Phase 0 planning closure
+Canonical protocol paths are under `docs/QUALITY/`, `docs/AI/`, `docs/SOLUTIONS/` or the architecture/provider contract named by the ADR. No fixed evidence matrix has been executed unless explicitly stated otherwise (currently none).
 
-Queued planning-only refinement work is complete through `P0-M00-WP59` / ADR-0176.
+## Current planning state
 
-Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
+Completed expanded packages:
+- WP60 — ADR-0177;
+- WP61 — ADR-0178/0179;
+- WP62 — ADR-0180;
+- WP63 — ADR-0181 / SBP 0/176.
 
-Remaining work is executable implementation/evidence and cannot begin without explicit scoped owner consent under ADR-0014. A future development authorization does not waive implementation-baseline, recovery, quality, security or evidence gates.
+Current: **WP64 — F02 Analytics/Event Tracking/Journey detailed evidence specification**.
+
+The project is therefore in `SPECIFICATION`, not a global implementation-approval gate. When the owner-requested expanded planning sequence is complete and audited, lifecycle can move back to `AWAITING_DEVELOPMENT_APPROVAL`.
+
+Remaining executable implementation/evidence cannot begin without explicit scoped owner consent under ADR-0014. A future development authorization does not waive implementation-baseline, recovery, quality, security or evidence gates.
