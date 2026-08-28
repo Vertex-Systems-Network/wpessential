@@ -52,13 +52,18 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP33` | Asset Registry/Scoped Loader | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0150; ASR 0/176. |
 | `P0-M00-WP34` | Conditional Logic Engine | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0151; CLG 0/176. |
 | `P0-M00-WP35` | Dynamic Value/Token Resolver | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0152; DVR 0/176. |
-| `P0-M00-WP36` | Shared Rate Limit/Abuse Control | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0153; RLT 0/176; consumer certs separate. |
-| `P0-M00-WP37` | Shared Cache/Invalidation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0154; CAC 0/176; consumer certs separate. |
-| `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176; original REST-01…52 preserved. |
-| `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176; original IM-01…56 preserved. |
-| `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176; original RA-01…48 preserved. |
-| `P0-M00-WP41` | User Profile canonical evidence refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0158; UP 0/176; original UP-01…48 preserved. |
-| `P0-M00-WP42` | Protector canonical evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Current planning work; reconcile PR 0/44 against RLT/CAC/KPA/ERR/VER/MLC/Multisite without weakening WordPress auth. |
+| `P0-M00-WP36` | Shared Rate Limit/Abuse Control | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0153; RLT 0/176. |
+| `P0-M00-WP37` | Shared Cache/Invalidation | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0154; CAC 0/176. |
+| `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176; original 01…52 preserved. |
+| `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176; original 01…56 preserved. |
+| `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176; original 01…48 preserved. |
+| `P0-M00-WP41` | User Profile canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0158; UP 0/176; original 01…48 preserved. |
+| `P0-M00-WP42` | Protector canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0159; PR 0/176; original 01…44 preserved. |
+| `P0-M00-WP43` | XML-RPC Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0160; XR 0/176; original 01…48 preserved. |
+| `P0-M00-WP44` | Reset Manager canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0161; RM 0/176; original 01…48 preserved. |
+| `P0-M00-WP45` | Settings Page canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0162; ST 0/176; original 01…48 preserved. |
+| `P0-M00-WP46` | Frontend Dashboard canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0163; FD 0/176; original 01…48 preserved. |
+| `P0-M00-WP47` | Admin Menu canonical refinement | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Current planning work; AM 0/40 against KPA/RA/CAC/ASR/ERR/VER/MLC/MSI. |
 
 No production implementation work package is active.
 
@@ -66,21 +71,19 @@ No production implementation work package is active.
 
 | Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | Protector canonical evidence refinement | `SPECIFICATION` current | Preserve trusted-proxy identity, shared atomic RLT, WordPress authorization, non-authenticating recovery and app-layer—not WAF/DDoS—truth. |
-| 2 | Remaining shallow legacy evidence protocols | `QUEUED` | Reassess by security/critical-path value after WP42; prefer in-place refinement over duplicates. |
+| 1 | Admin Menu canonical evidence refinement | `SPECIFICATION` current | Runtime discovery + stable transformations; menu visibility remains presentation only; recovery and Site/Network isolation are mandatory. |
+| 2 | Remaining shallow legacy evidence protocols | `QUEUED` | Reassess by security/critical-path value after WP47; prefer in-place refinement over duplicates. |
 
 ## 4. Shared foundation truth
 
 - DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
-- KPA **0/176**; VER **0/176**; MLC **0/176**; PDL **0/176**; ERR **0/176**.
-- ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
-- REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**.
-- WordPress remains native role/capability and identity/auth authority where defined; WPE adds guarded control-plane semantics rather than weaker parallel authority.
-- generic Profile field mutation does not own password/session/Application Password/roles/Membership/Vault security actions.
-- a resolved condition/value, rate-limit allow or cache hit never grants downstream authorization.
+- KPA/VER/MLC/PDL/ERR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD are all **0/176**.
+- WordPress remains native role/capability and identity/auth authority where defined.
+- Protector/XML-RPC/menu/dashboard presentation layers never replace native target authorization.
+- Reset destructive truth requires verified recovery and truthful partial/recovery states.
+- Settings inheritance/secret/external adapter authority remains explicit.
 - current-blog context is never durable ownership or authorization.
-- clone/restore cannot silently resurrect stale commercial/provider/access authority.
-- destructive schema/data/authority work requires verified recovery and truthful partial-failure semantics.
 
 ## 5. WIP / coordination rules
 
@@ -92,6 +95,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP42`: refine the existing Protector protocol in place against RLT/CAC/KPA/ERR/VER/MLC, REST/XML-RPC/Webhooks, cache/CDN behavior, Multisite network-floor policy and recovery. Preserve trusted-proxy spoof resistance, atomic limiter semantics, path normalization safety, no open redirects, no anonymous recovery authority and truthful application-layer security limitations.
+Continue `P0-M00-WP47`: refine Admin Menu discovery/target identity/rename/reorder/hide/move/add-link/add-page/conflict/role-audience/safe-mode/import/lifecycle/performance evidence against current KPA/RA/CAC/ASR/ERR/VER/MLC/MSI contracts. Preserve that hiding/reordering never changes the owning screen's WordPress capability/resource authorization.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
