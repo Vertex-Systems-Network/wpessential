@@ -39,6 +39,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Dynamic Listings | ADR-0039/0099/0137 | DL-01…DL-176 |
 | Free CPT + Taxonomy | ADR-0138 | CPTX-01…CPTX-176 |
 | Emails Builder | ADR-0029/0139 | EBR-01…EBR-176; ET separate |
+| Email Transport / Providers | ADR-0058/0063/0067/0172 | ET-F001…ET-F176 + ET0–ET5; 6 EE3 / 0 ET-certified |
 | Platform surfaces | ADR-0140 | PLT-01…PLT-176 + FP/OA/TU/RS prerequisites |
 | Audit / Observability | ADR-0081/0142 | AUD-01…AUD-176 |
 | Kernel/Policy/Abilities/Events/SDK | ADR-0143 | KPA-01…KPA-176 |
@@ -67,7 +68,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Role & Capability | ADR-0032/0097/0114/0157 | RA-01…RA-176 |
 | REST API Builder | ADR-0028/0094/0115/0155 | REST-01…REST-176 |
 | Import / Export | ADR-0041/0095/0116/0156 | IM-01…IM-176 |
-| Remote service privacy/retention | ADR-0060 + existing RS protocol | RS-01…RS-30; WP54 reassessment current |
+| Remote service privacy/retention | ADR-0060/0171 | RS-01…RS-176 |
 | Forms Runtime | ADR-0025/0077/0117 | FM-01…FM-92 |
 | Owner consent | ADR-0014 | blocks all executable work |
 
@@ -94,7 +95,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 17 | Forms & Workflow Builder | Exhaustive | FRT/WF baselines | FM/WF/JS/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MLC/MSI/LC | No |
 | 18 | Cron Job Builder | Exhaustive | JobService | JS/KPA/ERR/VER/MLC/MSI/LC | No |
 | 19 | Notification System | Exhaustive | NE1/NE2 | NT/JS/WF/DSR/CLG/DVR/CAC/KPA/PDL/ERR/provider/MSI | No |
-| 20 | Emails Builder | Exhaustive | Email IR + ADR-0139 | EBR/ET/VT/DSR/CLG/DVR/ASR/CAC/KPA/PDL/ERR/MSI | No |
+| 20 | Emails Builder | Exhaustive | Email IR + ADR-0139/0172 | EBR 0/176 + ET-F 0/176 + ET0–ET5/VT/DSR/CLG/DVR/ASR/CAC/KPA/PDL/ERR/MSI | No |
 | 21 | Message & Chat | Exhaustive | CRT1/CRT2 | CH/DSR/CLG/DVR/CAC/MBR/private-assets/search/realtime/KPA/PDL/ERR/MSI | No |
 | 22 | REST API Builder | Exhaustive | ADR-0155 | REST 0/176 + QRY/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/MSI | No |
 | 23 | Webhooks & Connections | Exhaustive | Safe HTTP/Gateway/Event Inbox | WC/VT/DSR/CLG/DVR/RLT/CAC/KPA/PDL/ERR/VER/I/EI/MSI | No |
@@ -105,7 +106,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | 28 | Watermarker / Media Rules | Exhaustive | ADR-0046/0107/0168 | WM 0/176 + DSR/DVR/ASR/CAC/JS/KPA/PDL/ERR/MLC/BK/MSI | No |
 | 29 | XML-RPC Manager | Exhaustive | ADR-0052/0111/0160 | XR 0/176 + PR/RLT/CAC/KPA/ERR/VER/MLC/SafeHTTP/MSI | No |
 | 30 | Role & Capability Manager | Exhaustive | ADR-0157 | RA 0/176 + KPA/CAC/ERR/VER/MLC/MBR/MSI | No |
-| 31 | Account/Docs/Support/Diagnostics | Exhaustive | ADR-0140 | PLT/FP/OA 0/176/TU 0/176/RS 0/30/VT/KPA/PDL/ERR/VER/MLC/ASR/DVR/CAC/UI/BT/CI/MSI | No |
+| 31 | Account/Docs/Support/Diagnostics | Exhaustive | ADR-0140/0171 | PLT/FP/OA 0/176/TU 0/176/RS 0/176/VT/KPA/PDL/ERR/VER/MLC/ASR/DVR/CAC/UI/BT/CI/MSI | No |
 
 ## Current evidence/certification counters
 
@@ -113,9 +114,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**.
 - KPA/PDL/ERR/CBP/VER/MLC/DSR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA are all **0/176**.
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**; RS **0/30**.
-- Email transport/provider **6 EE3 / 0 ET-certified**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
+- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership Billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
 - Backup **34 provider targets / 0 C-certified / 0 C3; V3 0**.
 - Connection adapters **0 I4/I5**; Multisite **0 MS1+**; Site Lifecycle runtime certs **0**.
@@ -139,9 +140,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0170; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0172; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work: **`P0-M00-WP54` — Remote Service Privacy / Retention canonical evidence reassessment**.
+Current planning work after WP55 closure: **`P0-M00-WP56` — Membership Billing provider certification reassessment**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
