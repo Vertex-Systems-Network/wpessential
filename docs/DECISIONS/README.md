@@ -12,14 +12,14 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR | Status | Decision |
 |---|---|---|
 | ADR-0001 | Accepted | WordPress.org Free + separately distributed Pro; Pro trial belongs to Pro entitlement |
-| ADR-0002 | Proposed blocker | WP 6.9 / PHP 8.3 current minimum candidates; executable compatibility matrix pending |
+| ADR-0002 | Proposed blocker | WP 6.9 / PHP 8.3 current minimum candidates; current/reference planning snapshot WP 7.1; DB floor evidence-gated; executable compatibility matrix pending |
 | ADR-0003 | Accepted | WordPress Abilities as typed reusable action contract |
 | ADR-0004 | Accepted | No standard arbitrary PHP eval or unrestricted destructive raw-SQL primitive |
 | ADR-0005 | Proposed blocker | WPE UI wrappers + stable WordPress components/DataViews; Untitled visual reference/compatible MIT only |
 | ADR-0006 | Proposed adapter blocker | WPE Job Service abstraction; Action Scheduler preferred adapter candidate; semantics later accepted in ADR-0059/0068/0083 |
 | ADR-0007 | Accepted | Pro expiry preserves data and safe deployed runtime; editing/unsafe operations can lock |
 | ADR-0008 | Proposed physical-evidence blocker | Definition Repository shape later accepted in ADR-0049/0071/0073; exact DDL/index/locking evidence pending |
-| ADR-0009 | Proposed physical-evidence blocker | Secrets Vault hierarchy later accepted in ADR-0048/0085; crypto/runtime evidence pending |
+| ADR-0009 | Proposed physical-evidence blocker | Secrets Vault hierarchy later accepted in ADR-0048/0085; exact crypto/runtime evidence pending |
 | ADR-0010 | Proposed blocker | Explicit Free↔Pro Platform API compatibility + degraded safe boot |
 | ADR-0011 | Proposed blocker | Layered PR/main/nightly/release CI matrix |
 | ADR-0012 | Proposed blocker | `@wordpress/build` first candidate; `@wordpress/scripts` fallback; Vite only for proven unmet need |
@@ -133,6 +133,8 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0120 | Accepted Notification System evidence protocol / execution pending | NT-01…NT-142 fix Rule/revision/dedupe/recipients/preferences/quiet-hours/digest/inbox/channel-truth/fan-out/privacy/lifecycle/NE topology evidence |
 | ADR-0121 | Accepted Message & Chat evidence protocol / execution pending | CH-01…CH-142 fix conversation/participant authorization, revocation, ordering/idempotency, private assets, read state, search, realtime, moderation, privacy/lifecycle and CRT topology evidence |
 | ADR-0122 | Accepted Webhooks/Connections/Event Inbox evidence protocol / execution pending | WC-01…WC-156 fix Connection/Vault/OAuth/I0–I5/Safe-HTTP/signature/replay/Event-Inbox/idempotency/outbound-unknown-outcome/privacy/lifecycle/EI topology evidence |
+| ADR-0123 | Accepted P-001 Compatibility Floor evidence protocol / execution pending | CF-01…CF-112 fix authoritative version refresh, environment metadata, WP/PHP/DB/Multisite/Abilities/coexistence/upgrade/artifact evidence; ADR-0002 floor remains Proposed |
+| ADR-0124 | Accepted P-005 Secrets Vault evidence protocol / execution pending | VT-01…VT-128 fix crypto/AAD anti-swap, key slots, rotation/recovery, no-plaintext boundaries, Use Grants, Backup/clone/Multisite/V1-V2/security-review evidence |
 
 ## Product specification milestone
 
@@ -141,9 +143,11 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Major supporting architecture/security docs
 
+- Compatibility evidence: `docs/QUALITY/P001-COMPATIBILITY-FLOOR-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - Definition/Relations evidence: corresponding `docs/ARCHITECTURE/` + `docs/QUALITY/` P-004/P-010 files.
 - Query/Fields/Custom Tables/Admin Columns/Listings: corresponding operational/physical profiles under `docs/ARCHITECTURE/`.
 - Membership/Protected Files/Workflow/Job/Notification/Email/Event Inbox/Audit/Backup/Vault: corresponding architecture/security profiles.
+- Vault evidence: `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - OAuth/TUF/Admin Widgets/Admin Menu/Protector/Reset/Watermarker/Frontend Dashboard/Builder Widgets/Status/XML-RPC: corresponding ADR-0101…0111 `docs/QUALITY/` protocols.
 - Settings evidence: `docs/QUALITY/SETTINGS-PAGE-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
 - User Profile evidence: `docs/QUALITY/USER-PROFILE-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
@@ -160,9 +164,13 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Remaining evidence blockers
 
-P-001…P-013 remain executable gates. ADR-0101…0122 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import/forms/workflow/job/notification/chat/integration execution.
+P-001…P-013 remain executable gates. ADR-0101…0124 add bounded surface-specific evidence gates but do not authorize or verify runtime/network/service/update/builder/user/role/REST/import/forms/workflow/job/notification/chat/integration/Vault execution.
 
 Current certification/evidence remains:
+- Compatibility P-001: **0/112 CF fixtures; floor not certified; ADR-0002 Proposed**;
+- UI P-002: **0 executed**;
+- Build P-008: **0 executed**;
+- Vault P-005: **0/128 VT fixtures / 0 runtime certifications / 0 crypto interoperability certifications / security review not executed**;
 - Membership: **0 MB-certified**;
 - Email: **0 ET-certified**;
 - Event/Connection adapters: **0 I4/I5**;
@@ -194,5 +202,7 @@ Current certification/evidence remains:
 - Notification System: **0/142 NT fixtures / 0 runtime certifications**;
 - Message & Chat: **0/142 CH fixtures / 0 runtime certifications / 0 realtime transport certifications / 0 search adapter certifications**;
 - Product License API/service: **0 fixtures**.
+
+Current planning work: **P0-M00-WP09 — P-002 UI runtime + P-008 build/externalization evidence refinement**.
 
 No executable evidence may run before explicit owner consent.
