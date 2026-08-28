@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0119**.
+This register contains unresolved implementation/evidence only. Accepted decisions are preserved in ADRs through **ADR-0120**.
 
 All executable work remains blocked by ADR-0014 until explicit owner consent.
 
@@ -35,6 +35,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 | D-022 | ADR-0028/0094/0115 | REST route/auth/scope/schema/idempotency/rate/cache/CORS/fuzz evidence — REST-01…REST-52 |
 | D-023 | ADR-0041/0095/0116 | Import/Export source/archive/map/checkpoint/rollback/export/scale evidence — IM-01…IM-56 |
 | D-024 | ADR-0025/0077/0117 | Forms revision/access/storage/idempotency/files/actions/Workflow/privacy/FRT topology evidence — FM-01…FM-92 |
+| D-025 | ADR-0026/0079/0120 | Notification rule/fan-out/dedupe/preferences/inbox/channel truth/NE topology evidence — NT-01…NT-142 |
 
 ## B. Current accepted paper baselines
 
@@ -47,7 +48,7 @@ All executable work remains blocked by ADR-0014 until explicit owner consent.
 - Forms FRT1/PT-D vs FRT2/PT-E; FM-01…FM-92 runtime/submission evidence protocol.
 - Chat CRT1/PT-D vs CRT2/PT-E.
 - Membership M1/PT-D vs M2/PT-E.
-- Notification/Email NE1/PT-D vs NE2/PT-E.
+- Notification/Email NE1/PT-D vs NE2/PT-E; Notification NT-01…NT-142 evidence protocol.
 - Event Inbox EI1/PT-D vs EI2/PT-E.
 - Audit AU1/PT-D.
 - Workflow WF1/PT-D vs WF2/PT-E; WF-01…WF-116 evidence protocol.
@@ -409,7 +410,31 @@ Open evidence:
 
 Action Scheduler remains a preferred candidate adapter only; ADR-0119 does not certify it or select final J1/J2/J3 topology.
 
-## T. Other current evidence state
+## T. Notification System — ADR-0026/0079/0120
+
+NT-01…NT-142 are fixed future fixtures.
+
+Open evidence:
+- Rule publish/revision/trigger behavior and recursive event protection;
+- Occurrence durability, dedupe and concurrent trigger admission;
+- recipient resolution across users/roles/capabilities/Query/relations/Membership/team/external endpoints;
+- trigger-snapshot vs delivery-time eligibility and access revalidation;
+- preference classification, opt-out, frequency caps and required/security controls;
+- quiet hours/timezones/DST/delays/expiry;
+- digest grouping/caps/retries/current eligibility;
+- in-app inbox authorization/read/dismiss/revoke/unread-count/cache correctness;
+- safe tokens/localization/action-target reauthorization;
+- channel fallback and provider acceptance/delivery/unknown-outcome truth;
+- fan-out/JobService crash/backpressure/100k audience behavior;
+- privacy/export/erase/redaction;
+- restore/clone/site-lifecycle and wrong-site provider-reference protection;
+- NE1/PT-D vs NE2/PT-E physical/Multisite/scale evidence.
+
+**NT executed: 0/142. Notification runtime certifications: 0. Final NE topology: open.**
+
+Notification certification cannot upgrade an Email/Connection provider beyond its own ET/adapter certification.
+
+## U. Other current evidence state
 
 - Definition P-004: **0 executed**.
 - Relations P-010: **0 executed**.
@@ -417,6 +442,7 @@ Action Scheduler remains a preferred candidate adapter only; ADR-0119 does not c
 - Job P-003: **0/106 JS**.
 - Vault P-005: **0 executed**.
 - Workflow P-011: **0/116 WF**.
+- Notification: **0/142 NT**.
 - Membership P-012: **0 executed**; billing **4 BE3 / 0 MB-certified**; protected file **0 PC1+**.
 - Forms Runtime: **0/92 FM fixtures / 0 runtime certifications**.
 - Email: **6 EE3 / 0 ET-certified**.
@@ -426,21 +452,20 @@ Action Scheduler remains a preferred candidate adapter only; ADR-0119 does not c
 - Remote privacy: **0/30**.
 - Product License API/service: **0**.
 
-## U. Accepted architecture no longer open semantically
+## V. Accepted architecture no longer open semantically
 
-ADRs **0035–0119** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
+ADRs **0035–0120** preserve accepted core semantics. Evidence can refine exact implementation/version facts but cannot silently redesign them.
 
 ## Decision-processing rule
 
 1. Inspect repository and authoritative evidence.
 2. Resolve static semantics in ADR when sufficient.
 3. Predefine bounded executable protocol when proof is required.
-4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs runtime or transfer data before explicit owner consent.**
+4. **Do not install, compile, migrate, benchmark, test, contact services/providers, send mail, run queues, generate signing keys/TUF metadata, execute OAuth, create/extract archives, mutate options/users/roles/media/status/XML-RPC/REST/import/forms/workflow/jobs/notifications runtime or transfer data before explicit owner consent.**
 5. Keep governance/Draft PR synchronized.
 
 ## Next planning-only priorities
 
-1. Notification fan-out/read/dedupe evidence protocol.
-2. Message & Chat transport/search/private-assets evidence protocol.
-3. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-4. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS gates intact.
+1. Message & Chat transport/search/private-assets evidence protocol.
+2. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+3. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT gates intact.
