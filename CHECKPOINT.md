@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0197**.
+Accepted planning/evidence decisions extend through **ADR-0198**.
 
 ### Universal foundations
 
@@ -46,6 +46,7 @@ Accepted planning/evidence decisions extend through **ADR-0197**.
 - ADR-0181 — F01 SBP documented; 0/176 executed.
 - ADR-0182 — F02 ANL documented; 0/176 executed.
 - ADR-0196 — F03 Search & Indexing detailed protocol; **SRH documented 176 / executed 0/176**.
+- **ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; DEC documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -72,21 +73,7 @@ Existing-owner supplements BKX, MRL, PBX, JEX, LHX and HFC remain 0/176.
 
 ### Third competitive expansion ADR-0197
 
-Owner-requested audit covered:
-- Use Any Font;
-- WP Migrate DB / WP Migrate;
-- White Label CMS;
-- Post Duplicator;
-- LoginPress;
-- Activity Log;
-- CMB2;
-- Child Theme Configurator;
-- Simple History;
-- WP Reset;
-- WP Activity Log;
-- Meta Box + public wpmetabox repositories;
-- Redux Framework;
-- Custom Post Type UI.
+Owner-requested audit covered Use Any Font, WP Migrate DB / WP Migrate, White Label CMS, Post Duplicator, LoginPress, Activity Log, CMB2, Child Theme Configurator, Simple History, WP Reset, WP Activity Log, Meta Box + public wpmetabox repositories, Redux Framework and Custom Post Type UI.
 
 Decision:
 - **new Surface 56 — Theme Workspace, Child Theme & Theme Customization Manager — THM 0/176**;
@@ -108,6 +95,9 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 
 - User ≠ Role/Capability ≠ Membership Plan ≠ Enrollment ≠ Entitlement ≠ Access Policy.
 - Search/index result ≠ source truth or authorization.
+- Formula/score/decision/rank ≠ authorization, ledger/payment/order/inventory/reservation mutation or external-fact authority.
+- F04 uses a registered typed grammar/AST; no arbitrary PHP/JavaScript/SQL/shell/provider execution.
+- Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
 - Audit/AI-agent attribution ≠ identity or privilege.
@@ -140,8 +130,9 @@ Representative counters:
 - LNK/LHX 0/176;
 - ORD/SEC/FNT/UDS/STG 0/176;
 - **SRH documented 176 / executed 0/176**;
+- **DEC documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- all remaining universal namespaces remain unexecuted unless explicitly stated otherwise.
+- LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -151,25 +142,26 @@ Completed interrupts:
 - WP75…WP82 market expansion — DONE;
 - WP83…WP89 first competitive audit — DONE;
 - WP90…WP99 second competitive audit — DONE;
-- **WP100…WP111 third competitive audit/governance sync — DONE**.
+- WP100…WP111 third competitive audit/governance sync — DONE.
 
 Universal detailed evidence sequence:
 - WP63 F01 — DONE;
 - WP64 F02 — DONE;
 - WP65 F03 Search — DONE / ADR-0196;
-- **WP66 F04 Decision/Formula/Scoring — SPECIFICATION / CURRENT; DEC 0/176 envelope**.
+- **WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176**;
+- **WP67 F05 Ledger/Balance/Movement — SPECIFICATION / CURRENT; LED 0/176 envelope**.
 
-WP67…WP74 retain their reserved F05→WooCommerce Adapter meanings.
+WP68…WP74 retain their reserved F06→WooCommerce Adapter meanings.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0197/56-surface state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0198/56-surface/WP67-current state.
 
-No plugin/theme file write, child-theme creation/activation, font conversion/download, migration/push/pull, content duplication, audit runtime logging, DB reset/snapshot, CPT registration, settings compiler execution, backup/restore, search backend, user/role/membership mutation, browser code, PHP execution, provider/AI/MCP call, build, test or benchmark occurred.
+No formula/score/decision/ranking runtime, parser/evaluator benchmark, plugin/theme file write, child-theme creation/activation, font conversion/download, migration/push/pull, content duplication, audit runtime logging, DB reset/snapshot, CPT registration, settings compiler execution, backup/restore, search backend, user/role/membership mutation, browser code, PHP execution, provider/AI/MCP call, build, test or benchmark occurred.
 
 ## Next safe planning action
 
-Continue **WP66 — F04 Decision, Formula, Scoring & Ranking detailed executable-evidence specification (`DEC-001…DEC-176`)**.
+Continue **WP67 — F05 Ledger, Balance & Movement detailed executable-evidence specification (`LED-001…LED-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
