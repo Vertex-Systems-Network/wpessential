@@ -32,69 +32,52 @@ Source of truth:
 
 Universal Master Prompt governance hardening work package `P0-M00-WP01` is **DONE** documentation-only.
 
-Durable governance includes:
-- `docs/PROJECT-STATE-AND-ADOPTION.md`
-- `docs/APPROVAL-LEDGER.md`
-- `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
-- `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
-- `docs/WORK-COORDINATION-LEDGER.md`
-- integrated updates to AGENTS, consent, quality gates, module specification standard, README and PR template.
+Durable governance includes project-state/adoption, approval ledger, engineering execution governance, release/recovery governance, work coordination, baseline-failure handling, FAST/FULL gates, negative requirements, review truth, parallelism/WIP, VCS UNKNOWN fallback and exact end-task reporting.
 
 No implementation approval was introduced.
 
 ## Accepted architecture/evidence milestone
 
-Accepted decisions now extend through **ADR-0122**.
+Accepted evidence decisions now extend through **ADR-0123**.
 
-Latest bounded evidence protocols:
-- ADR-0101 — OAuth Account-Link OA-01…OA-32.
-- ADR-0102 — Pro updater TUF TU-01…TU-44.
-- ADR-0103 — Dashboard Widgets DW-01…DW-36.
-- ADR-0104 — Admin Menu AM-01…AM-40.
-- ADR-0105 — Protector PR-01…PR-44.
-- ADR-0106 — Reset Manager RM-01…RM-48.
-- ADR-0107 — Watermarker/Media WM-01…WM-48.
-- ADR-0108 — Frontend Dashboard FD-01…FD-48.
-- ADR-0109 — Builder Widgets BW-01…BW-50, BC0…BC4.
-- ADR-0110 — Status Manager SM-01…SM-48.
-- ADR-0111 — XML-RPC Manager XR-01…XR-48.
-- ADR-0112 — Settings Page ST-01…ST-48.
-- ADR-0113 — User Profile UP-01…UP-48.
-- ADR-0114 — Role & Capability RA-01…RA-48.
-- ADR-0115 — REST API Builder REST-01…REST-52.
-- ADR-0116 — Import / Export IM-01…IM-56.
+Recent bounded protocols:
 - ADR-0117 — Forms Runtime & Submission FM-01…FM-92.
 - ADR-0118 — Workflow Runtime WF-01…WF-116.
 - ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.
 - ADR-0120 — Notification System NT-01…NT-142.
 - ADR-0121 — Message & Chat CH-01…CH-142.
-- **ADR-0122 — Webhooks, Connections & Event Inbox WC-01…WC-156.**
+- ADR-0122 — Webhooks, Connections & Event Inbox WC-01…WC-156.
+- **ADR-0123 — P-001 Compatibility Floor CF-01…CF-112.**
 
-## Webhooks & Connections planning milestone — COMPLETE
+## P-001 Compatibility Floor planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP06`**  
+Work package: **`P0-M00-WP07`**  
 Lifecycle: **DONE (planning/documentation only)**
 
 Created:
-- `docs/QUALITY/WEBHOOKS-CONNECTIONS-EVENT-INBOX-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0122-webhooks-connections-event-inbox-evidence-protocol.md`
+- `docs/QUALITY/P001-COMPATIBILITY-FLOOR-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0123-p001-compatibility-floor-evidence-protocol.md`
 
-Evidence now covers Connection Definition/revision/dependencies, site/network scope ownership, Vault credential lifecycle, OAuth state/PKCE/issuer/refresh/revoke races, granular I0–I5 provider capability certification, centralized Safe HTTP SSRF/DNS/redirect/TLS/size controls, inbound raw-body signature/replay/key-rotation validation, durable normalized Event Inbox dedupe/concurrency/crash/replay/reconciliation, consumer-specific idempotency, Workflow/Job/domain integration, outbound webhook retry/unknown-outcome truth, pagination/rate limits/Protected Assets, privacy/log redaction/retention, clone/restore/Site Lifecycle, Multisite isolation and EI1/EI2 physical/scale evidence.
+Updated:
+- `docs/DECISIONS/ADR-0002-compatibility-floor.md`
 
-Current Webhooks & Connections state:
-- WC fixtures documented: **156**
-- WC fixtures executed: **0/156**
-- Connection provider I4/I5 certifications: **0**
-- Event Inbox runtime certifications: **0**
-- Safe HTTP runtime certification: **none**
-- final Event Inbox physical topology: **OPEN / evidence-gated**
-- EI1/PT-D: first future benchmark baseline only
-- EI2/PT-E: mandatory comparison
+P-001 evidence now covers authoritative version/lifecycle refresh, one-source compatibility metadata, unsupported-environment preflight, clean install/activation/deactivation/uninstall, WordPress/PHP floor/current/forward matrix, MySQL/MariaDB/charset/sql-mode/migration evidence, Multisite/Site Lifecycle, Abilities/REST/cache/cron/CLI profiles, existing-project baseline/coexistence safety, Free↔Pro mismatch/rollback and distributable artifact/CI/resource evidence.
 
-Trusted endpoint/Connection binding remains authoritative for site/network scope. Payload fields cannot select scope. Event Inbox remains accepted ingress/source-fact truth, not owning business-domain truth.
+Current P-001 state:
+- CF fixtures documented: **112**
+- CF fixtures executed: **0/112**
+- compatibility floor certified: **NO**
+- ADR-0002: **Proposed / Phase 0 blocker**
+- WordPress minimum candidate: **6.9**
+- current/reference WordPress planning snapshot: **7.1**
+- PHP minimum candidate: **8.3**
+- database floor: **OPEN / evidence-gated**
 
-## Recent communication/runtime evidence state
+The planning snapshot does not create a support claim. Versions and upstream lifecycle evidence must be refreshed again at actual execution and before beta/stable release.
 
+## Recent communication/integration evidence state
+
+- WC: **0/156**; I4/I5 **0**; Event Inbox/Safe HTTP runtime unverified; EI topology open.
 - CH: **0/142**; Chat runtime/realtime/search certifications **0**; CRT topology open.
 - NT: **0/142**; Notification runtime certifications **0**; NE topology open.
 - WF: **0/116**; Workflow runtime certifications **0**; topology open.
@@ -104,12 +87,22 @@ Trusted endpoint/Connection binding remains authoritative for site/network scope
 
 ## Current evidence counters
 
-- P-001…P-013 executable gates remain unexecuted.
+- P-001 / CF: **0/112; floor not certified**.
+- P-002: **0 executed**.
+- P-003 / JS: **0/106**.
+- P-004: **0 executed**.
+- P-005: **0 executed**.
+- P-006: **0 executed**.
+- P-007: **0 executed**.
+- P-008: **0 executed**.
+- P-009: **0 executed**.
+- P-010: **0 executed**.
+- P-011 / WF: **0/116**.
+- P-012: **0 executed**.
+- P-013: **0 executed**.
 - WC: **0/156**.
 - CH: **0/142**.
 - NT: **0/142**.
-- WF: **0/116**.
-- JS: **0/106**.
 - FM: **0/92**.
 - OA: **0/32**.
 - TU: **0/44**.
@@ -130,7 +123,7 @@ Trusted endpoint/Connection binding remains authoritative for site/network scope
 - Membership Billing: **4 BE3 / 0 MB-certified**.
 - Protected files: **0 PC1+**.
 - Email: **6 EE3 / 0 ET-certified**.
-- Event adapters: **0 I4/I5**.
+- Event/Connection adapters: **0 I4/I5**.
 - Backup: **34 targets / 0 C-certified**.
 - Site Lifecycle: **0/40**.
 - Multisite: **0 MS1+**.
@@ -142,19 +135,17 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - governance hardening complete;
-- Forms, Workflow, Job/Cron, Notification, Message & Chat, and Webhooks/Connections evidence protocols exist with fixed fixture IDs;
-- ADR-0122 accepted as Webhooks/Connections/Event Inbox evidence contract;
+- ADR-0123 accepted as the fixed P-001 evidence contract;
+- ADR-0002 remains Proposed rather than being silently accepted from static research;
 - no PHP/React/runtime/build/test/network/provider/deployment work was executed.
 
-Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, credential exchange, OAuth flow, DNS/HTTP requests, webhook endpoint requests/subscriptions, provider/API calls, Event Inbox mutations, Jobs, Workflow dispatch, PHPUnit/Playwright, benchmarks or deployment.
+Not performed: WordPress/PHP/database environment execution, package/dependency installation, plugin activation, DB schema/migrations, WP-CLI, CI runs, release artifact builds, provider calls, benchmarks or deployment.
 
 ## Next planning-only priority
 
-The previously queued Forms → Workflow/Cron → Notifications → Message & Chat → Webhooks & Connections evidence sequence is complete through ADR-0122.
+The highest-value remaining critical-path bounded-evidence gap is **P-005 Secrets Vault**. The existing generic P-005 spike must be checked against the accepted Vault architecture and refined into a fixed adversarial protocol if no dedicated equivalent already exists.
 
-**Next safe planning action:** inspect the remaining Open Decisions / Implementation Readiness blockers and select the highest-value unresolved paper/evidence contract without inventing a new priority from conversational memory.
-
-All existing P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC gates remain intact.
+All existing P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT/CH/WC/CF gates remain intact.
 
 Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
 
