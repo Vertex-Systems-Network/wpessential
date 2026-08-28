@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0138**.
+Accepted evidence decisions/refinements now extend through **ADR-0139**.
 
 Recent bounded protocols/refinements:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -50,19 +50,20 @@ Recent bounded protocols/refinements:
 - ADR-0135 — Custom Tables CTB-01…CTB-184.
 - ADR-0136 — Admin Columns AC-01…AC-176.
 - ADR-0137 — Dynamic Listings DL-01…DL-176.
-- **ADR-0138 — Free CPT & Taxonomy CPTX-01…CPTX-176.**
+- ADR-0138 — Free CPT & Taxonomy CPTX-01…CPTX-176.
+- **ADR-0139 — Emails Builder rendering/composition EBR-01…EBR-176.**
 
 ## Recent completed work packages
 
-### WP14 — P-009 Query — DONE
+### WP14 — Query — DONE
 - QRY **0/168**; QP1/QP2/QP3/QP4 certifications **0/0/0/0**.
 - final cost thresholds/cache backend/cursor profile remain evidence-gated.
 
-### WP15 — P-004 Definition Repository — DONE
+### WP15 — Definition Repository — DONE
 - canonical protocol refined in place to DEF **0/144**.
 - D1/PT-C remains first benchmark baseline only; final D1–D4 + exact DDL/index/type/collation remain evidence-gated.
 
-### WP16 — P-010 Relations — DONE
+### WP16 — Relations — DONE
 - canonical protocol refined in place to REL **0/160**.
 - R1/PT-D remains first benchmark baseline only; R2/PT-E mandatory comparison; R3 exceptional.
 
@@ -71,45 +72,52 @@ Recent bounded protocols/refinements:
 - FS1/FS2/FS3/FS6 certified profiles 0; FS4 Relations-gated; FS5 Vault-gated.
 
 ### WP18 — Custom Tables — DONE
-- CTB **0/184**; Custom Tables runtime/DDL/migration certifications 0.
+- CTB **0/184**; runtime/DDL/migration certifications 0.
 - CT1/CT2/CT3 and CM1/CM2/CM3/CM4 certified profiles 0; exact DDL/types/indexes/constraints OPEN.
 
 ### WP19 — Admin Columns — DONE
 - AC **0/176**; target adapters runtime-certified 0.
 - `AC-R/AC-S/AC-F/AC-Q/AC-E/AC-B/AC-X/AC-M/AC-P` certifications 0.
-- core list-table/DataViews/Woo compatibility not runtime verified.
 
 ### WP20 — Dynamic Listings — DONE
 - DL **0/176**.
 - `DL-A1/DL-A2/DL-A3` strategy certifications 0.
 - `DL-R/DL-A/DL-P/DL-F/DL-H/DL-C/DL-I/DL-B/DL-S/DL-M/DL-O` certifications 0.
-- Interactivity API/builder adapters/cache/refill/nesting/performance exact profiles remain evidence-gated.
 
 ### WP21 — Free CPT + Taxonomy — DONE
-Created:
-- `docs/QUALITY/FREE-CPT-TAXONOMY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0138-free-cpt-taxonomy-evidence-protocol.md`
-
-Evidence:
 - CPTX **0/176**.
 - `CPTX-CPT/CPTX-TAX/CPTX-RW/CPTX-REST/CPTX-CAP/CPTX-OWN/CPTX-LC/CPTX-MIG/CPTX-MS/CPTX-COMP` certifications 0.
-- compatibility floor remains runtime-uncertified.
-- exact reserved-name/query-var registry strategy OPEN.
-- exact rewrite-collision completeness OPEN.
-- external takeover/import-to-ownership certification 0 / unsupported by default.
-- post-type/taxonomy key migrations not implemented or executed.
+- published runtime keys remain migration-class identities.
+- rewrite flush remains dirty-generation/controlled, never every request.
+- Definition disable/delete preserves posts/terms/relationships/meta by default.
+- external registration discovery/collision does not establish WPE ownership.
+
+### WP22 — Emails Builder rendering/composition — DONE
+Created:
+- `docs/QUALITY/EMAILS-BUILDER-RENDERING-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0139-emails-builder-rendering-evidence-protocol.md`
+
+Evidence:
+- EBR **0/176**.
+- `EBR-D/EBR-C/EBR-H/EBR-T/EBR-E/EBR-A/EBR-P/EBR-I/EBR-M/EBR-O` certifications 0.
+- exact renderer/CSS inliner dependency OPEN.
+- exact email-client compatibility matrix OPEN.
+- exact email-size/attachment/render budgets OPEN.
+- WordPress core email override adapter certifications 0.
+- third-party email override adapter certifications 0.
+- existing provider/transport truth remains **6 EE3 / 0 ET-certified** and is unchanged.
 
 Preserved truth:
-- Draft Definition ≠ Published Revision ≠ validated registration descriptor ≠ effective WordPress registration ≠ rewrite/query state ≠ REST/editor state ≠ persisted posts/terms ≠ migration state ≠ certification;
-- WPE ownership is not established by discovering or colliding with an external runtime key;
-- published keys are migration-class identities;
-- rewrite changes use dirty generation + controlled safe flush, never every request;
-- disable/delete Definition preserves posts/terms/relationships/meta by default;
-- capability changes require impact/anti-lockout evidence;
-- callbacks/controllers accept registered adapters, not arbitrary executable inputs;
-- CPT↔taxonomy associations must be consistent on both registration surfaces;
-- network templates do not make posts/terms network-shared;
-- runtime health must reflect effective WordPress registration, not stored intent alone.
+- Email Definition ≠ published Template/Layout revisions ≠ compiled descriptor ≠ authorized context ≠ Email IR ≠ HTML/plaintext ≠ envelope ≠ immutable Rendered Message ≠ Transport Attempt ≠ provider/delivery truth;
+- Draft templates/layouts never enter production send path;
+- tokens are typed, privacy-classified, Policy-aware and destination-escaped;
+- browser/page-builder HTML is not canonical email markup;
+- secrets/credentials/protected internals are not generic renderable tokens;
+- private assets/attachments need recipient-specific authorization;
+- preview/test/production are separate modes and test send cannot mutate production business state;
+- deterministic retry reuses frozen Rendered Message unless explicit versioned re-render policy creates a new generation;
+- renderer success never promotes ET submission/delivery/inbox/read state;
+- network/shared templates do not imply shared sender credentials or recipient datasets.
 
 ## Current evidence counters
 
@@ -126,17 +134,13 @@ Preserved truth:
 - P-011 / WF: **0/116**.
 - P-012 / MBR: **0/160**.
 - P-013 / BK: **0/180**.
-- Field Storage / FST: **0/176**.
-- Custom Tables / CTB: **0/184**.
-- Admin Columns / AC: **0/176**.
-- Dynamic Listings / DL: **0/176**.
-- Free CPT/Taxonomy / CPTX: **0/176**.
+- FST: **0/176**; CTB: **0/184**; AC: **0/176**; DL: **0/176**; CPTX: **0/176**; EBR: **0/176**.
 - FM: **0/92**; NT: **0/142**; CH: **0/142**; WC: **0/156**.
 - OA: **0/32**; TU: **0/44**.
 - DW: **0/36**; AM: **0/40**; PR: **0/44**; RM: **0/48**; WM: **0/48**; FD: **0/48**; BW: **0/50**; SM: **0/48**; XR: **0/48**; ST: **0/48**; UP: **0/48**; RA: **0/48**; REST: **0/52**; IM: **0/56**.
 - Membership Billing: **4 BE3 / 0 MB-certified**.
 - Protected files: **0 PC1+**.
-- Email: **6 EE3 / 0 ET-certified**.
+- Email transport/provider: **6 EE3 / 0 ET-certified**.
 - Connection adapters: **0 I4/I5**.
 - Backup providers: **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
 - Site Lifecycle: **0/40**.
@@ -148,19 +152,18 @@ Preserved truth:
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts/refinements accepted through ADR-0138;
-- Draft PR #1 remains open/draft; latest metadata check before this checkpoint reported mergeable true;
-- direct GitHub branch reads on 2026-08-28 showed `main` and `planning/master-architecture` unprotected;
+- evidence contracts/refinements accepted through ADR-0139;
+- direct GitHub branch reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected;
 - repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation;
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP22` — Emails Builder renderer/composition executable-evidence reassessment**.
+Current work package: **`P0-M00-WP23` — Platform Account / Docs / Support / Diagnostics executable-evidence reconciliation**.
 
-Reason: transport/provider delivery truth already has static and ET certification architecture, while the Emails Builder's own template compilation, token/context authorization, HTML/plaintext rendering, asset/link safety, sender/recipient composition, preview/test semantics, Multisite template scope and handoff into delivery attempts need a canonical fixed evidence check. WP22 will first determine whether an equivalent dedicated protocol already exists and refine it in place if so; it will not duplicate evidence unnecessarily.
+Reason: surface #31 is Exhaustive and has OAuth/Product License/TUF/remote-service architecture plus partial protocols, but repository verification found no consolidated `PLATFORM-SURFACES-EXECUTABLE-EVIDENCE-PROTOCOL.md`. WP23 will reconcile account link, installation/network/site allocations, entitlement/display state, docs/changelog/support ticket trust, diagnostics bundle/privacy, remote-service failure/offline modes and Multisite/install scope. Existing FP/OA/TU/privacy/service protocols remain authoritative and will not be duplicated.
 
-All existing gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
+All gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
 ## Resume order
 
