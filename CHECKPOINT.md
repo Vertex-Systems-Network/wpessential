@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0201**.
+Accepted planning/evidence decisions extend through **ADR-0202**.
 
 ### Universal foundations
 
@@ -49,7 +49,8 @@ Accepted planning/evidence decisions extend through **ADR-0201**.
 - ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; **DEC documented 176 / executed 0/176**.
 - ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; **LED documented 176 / executed 0/176**.
 - ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; **RSV documented 176 / executed 0/176**.
-- **ADR-0201 — F07 Placement & Personalization detailed protocol; PLC documented 176 / executed 0/176.**
+- ADR-0201 — F07 Placement & Personalization detailed protocol; **PLC documented 176 / executed 0/176**.
+- **ADR-0202 — F08 Experimentation & Rollout detailed protocol; EXP documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -110,14 +111,22 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 - Local recurrence requires explicit timezone/DST gap/fold semantics; canonical instants remain deterministic.
 - Shared pools/multi-resource bookings cannot be labelled fully confirmed if any mandatory allocation failed.
 - Backup/restore/clone cannot roll back external calendars/providers; stale external mappings require quarantine/reconciliation before writes.
-- **Placement/personalization decides presentation eligibility, not authorization.**
-- **Audience match ≠ role/capability/membership entitlement.**
-- **Hidden/not-selected UI does not grant or deny the underlying action; canonical Policy remains authoritative.**
-- **Selected component ≠ successfully rendered or qualifying exposure.**
-- **Experiment assignment ≠ consent and may not equal exposure.**
-- **Personalized cache output must not leak across users, sessions, sites, tenants or consent states.**
-- **Theme/builder/Woo placement adapters expose bounded certified slots; F07 is not arbitrary DOM/PHP/script injection authority.**
+- Placement/personalization decides presentation eligibility, not authorization.
+- Audience match ≠ role/capability/membership entitlement.
+- Hidden/not-selected UI does not grant or deny the underlying action; canonical Policy remains authoritative.
+- Selected component ≠ successfully rendered or qualifying exposure.
+- Personalized cache output must not leak across users, sessions, sites, tenants or consent states.
+- Theme/builder/Woo placement adapters expose bounded certified slots; F07 is not arbitrary DOM/PHP/script injection authority.
 - Component data is reauthorized through canonical Query/Data Source/Policy owners at render time.
+- **Experiment assignment ≠ authorization, consent or exposure.**
+- **Exposure ≠ conversion; observed association/statistical signal ≠ automatic causal proof.**
+- **F02 Analytics owns event/metric/data-quality truth consumed by F08; F08 does not create a second analytics warehouse.**
+- **Primary/guardrail metric contracts and statistical profile are revision-pinned; post-observation metric swapping is not allowed silently.**
+- **Rollout/feature flag can gate delivery of an already-authorized capability but cannot grant protected access.**
+- **Kill switch is operational safety, not experiment-result proof; stale cache/edge propagation must be evidenced before claiming off-state guarantees.**
+- **Anonymous→authenticated experiment identity stitching is explicit and cannot fabricate/double exposure history.**
+- **Non-experiment rollout/feature flag must not fabricate A/B causal statistics.**
+- **Sensitive experiment segmentation remains Policy/consent/data-minimization governed.**
 - Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
@@ -156,8 +165,9 @@ Representative counters:
 - **LED documented 176 / executed 0/176**;
 - **RSV documented 176 / executed 0/176**;
 - **PLC documented 176 / executed 0/176**;
+- **EXP documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+- DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -176,20 +186,21 @@ Universal detailed evidence sequence:
 - WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176;
 - WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176;
 - WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176;
-- **WP69 F07 Placement/Personalization — DONE / ADR-0201; PLC documented 176 / executed 0/176**;
-- **WP70 F08 Experimentation/Rollout — SPECIFICATION / CURRENT; EXP 0/176 envelope**.
+- WP69 F07 Placement/Personalization — DONE / ADR-0201; PLC documented 176 / executed 0/176;
+- **WP70 F08 Experimentation/Rollout — DONE / ADR-0202; EXP documented 176 / executed 0/176**;
+- **WP71 F09 Documents/Records/Templates — SPECIFICATION / CURRENT; DOC 0/176 envelope**.
 
-WP71…WP74 retain their reserved F09→WooCommerce Adapter meanings.
+WP72…WP74 retain their reserved F10→WooCommerce Adapter meanings.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0201/56-surface/WP70-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0202/56-surface/WP71-current state.
 
-No placement slot registry/evaluator, audience personalization runtime, frequency-cap mutation, browser component render, asset enqueue, personalized cache mutation, experiment assignment/exposure logging, theme/builder/Woo placement adapter execution, scheduling resource/table/rule runtime, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build, test or benchmark occurred.
+No experiment assignment/hash evaluator, subject assignment persistence, exposure collection, statistical result computation, analytics recomputation, feature flag/rollout/kill-switch runtime, placement slot evaluator, browser component render, personalized cache mutation, scheduling transaction, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build, test or benchmark occurred.
 
 ## Next safe planning action
 
-Continue **WP70 — F08 Experimentation & Rollout detailed executable-evidence specification (`EXP-001…EXP-176`)**.
+Continue **WP71 — F09 Documents, Records & Templates detailed executable-evidence specification (`DOC-001…DOC-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
