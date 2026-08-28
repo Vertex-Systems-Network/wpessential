@@ -36,7 +36,7 @@ Historical denominators remain valid planning snapshots.
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0200**.
+Accepted planning/evidence decisions extend through **ADR-0201**.
 
 ### Universal foundations
 
@@ -48,7 +48,8 @@ Accepted planning/evidence decisions extend through **ADR-0200**.
 - ADR-0196 — F03 Search & Indexing detailed protocol; **SRH documented 176 / executed 0/176**.
 - ADR-0198 — F04 Decision, Formula, Scoring & Ranking detailed protocol; **DEC documented 176 / executed 0/176**.
 - ADR-0199 — F05 Ledger, Balance & Movement detailed protocol; **LED documented 176 / executed 0/176**.
-- **ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; RSV documented 176 / executed 0/176.**
+- ADR-0200 — F06 Resource Scheduling & Reservation detailed protocol; **RSV documented 176 / executed 0/176**.
+- **ADR-0201 — F07 Placement & Personalization detailed protocol; PLC documented 176 / executed 0/176.**
 
 ### Market expansion ADR-0183…ADR-0188
 
@@ -102,13 +103,21 @@ Research: `docs/RESEARCH/THIRD-COMPETITIVE-AUDIT-FONTS-MIGRATION-WHITELABEL-DUPL
 - Ledger movement/balance is canonical only for its explicit ledger profile; it is not payment settlement, bank truth, order truth, entitlement, reservation or Policy.
 - Posted ledger history is append-oriented; correction uses reversal/compensation rather than silent mutation.
 - F05 ledger hold ≠ F06 resource reservation.
-- **Availability result ≠ reservation; cache/search availability is advisory and final hold/confirm revalidates current Policy, rules and capacity atomically.**
-- **Hold ≠ confirmed booking; waitlist position ≠ booking.**
-- **Reservation ≠ payment settlement, order, entitlement or external-calendar truth.**
-- **Unknown payment/calendar/provider outcome ≠ failed; reconcile before replay where duplicate effects are possible.**
-- **Local recurrence requires explicit timezone/DST gap/fold semantics; canonical instants must remain deterministic.**
-- **Shared pools/multi-resource bookings cannot be labelled fully confirmed if any mandatory allocation failed.**
-- **Backup/restore/clone cannot roll back external calendars/providers; stale external mappings require quarantine/reconciliation before writes.**
+- Availability result ≠ reservation; cache/search availability is advisory and final hold/confirm revalidates current Policy, rules and capacity atomically.
+- Hold ≠ confirmed booking; waitlist position ≠ booking.
+- Reservation ≠ payment settlement, order, entitlement or external-calendar truth.
+- Unknown payment/calendar/provider outcome ≠ failed; reconcile before replay where duplicate effects are possible.
+- Local recurrence requires explicit timezone/DST gap/fold semantics; canonical instants remain deterministic.
+- Shared pools/multi-resource bookings cannot be labelled fully confirmed if any mandatory allocation failed.
+- Backup/restore/clone cannot roll back external calendars/providers; stale external mappings require quarantine/reconciliation before writes.
+- **Placement/personalization decides presentation eligibility, not authorization.**
+- **Audience match ≠ role/capability/membership entitlement.**
+- **Hidden/not-selected UI does not grant or deny the underlying action; canonical Policy remains authoritative.**
+- **Selected component ≠ successfully rendered or qualifying exposure.**
+- **Experiment assignment ≠ consent and may not equal exposure.**
+- **Personalized cache output must not leak across users, sessions, sites, tenants or consent states.**
+- **Theme/builder/Woo placement adapters expose bounded certified slots; F07 is not arbitrary DOM/PHP/script injection authority.**
+- Component data is reauthorized through canonical Query/Data Source/Policy owners at render time.
 - Canonical money arithmetic is decimal; currency conversion requires explicit rate source/effective time/provenance.
 - White-label/menu/plugin hiding ≠ authorization.
 - Login branding ≠ authentication authority.
@@ -146,8 +155,9 @@ Representative counters:
 - **DEC documented 176 / executed 0/176**;
 - **LED documented 176 / executed 0/176**;
 - **RSV documented 176 / executed 0/176**;
+- **PLC documented 176 / executed 0/176**;
 - **UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX all 0/176**;
-- PLC/EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
+- EXP/DOC/SYN/GEO/AIP/WCA remain unexecuted unless a later ADR explicitly states otherwise.
 
 No paper/static evidence has been promoted to runtime certification.
 
@@ -165,20 +175,21 @@ Universal detailed evidence sequence:
 - WP65 F03 Search — DONE / ADR-0196;
 - WP66 F04 Decision/Formula/Scoring — DONE / ADR-0198; DEC documented 176 / executed 0/176;
 - WP67 F05 Ledger/Balance/Movement — DONE / ADR-0199; LED documented 176 / executed 0/176;
-- **WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176**;
-- **WP69 F07 Placement/Personalization — SPECIFICATION / CURRENT; PLC 0/176 envelope**.
+- WP68 F06 Resource Scheduling/Reservation — DONE / ADR-0200; RSV documented 176 / executed 0/176;
+- **WP69 F07 Placement/Personalization — DONE / ADR-0201; PLC documented 176 / executed 0/176**;
+- **WP70 F08 Experimentation/Rollout — SPECIFICATION / CURRENT; EXP 0/176 envelope**.
 
-WP70…WP74 retain their reserved F08→WooCommerce Adapter meanings.
+WP71…WP74 retain their reserved F09→WooCommerce Adapter meanings.
 
 ## Current VCS / execution truth
 
-Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0200/56-surface/WP69-current state.
+Planning branch: `planning/master-architecture`; Draft PR #1 is the planning PR and must reflect ADR-0201/56-surface/WP70-current state.
 
-No scheduling resource/table/rule/recurrence evaluator, availability query, hold, confirmed reservation, reschedule/cancel/waitlist transition, provider/calendar/payment request, concurrency benchmark, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build, test or benchmark occurred.
+No placement slot registry/evaluator, audience personalization runtime, frequency-cap mutation, browser component render, asset enqueue, personalized cache mutation, experiment assignment/exposure logging, theme/builder/Woo placement adapter execution, scheduling resource/table/rule runtime, ledger runtime, formula/score runtime, search backend, plugin/theme source/runtime mutation, provider/AI/MCP call, build, test or benchmark occurred.
 
 ## Next safe planning action
 
-Continue **WP69 — F07 Placement & Personalization detailed executable-evidence specification (`PLC-001…PLC-176`)**.
+Continue **WP70 — F08 Experimentation & Rollout detailed executable-evidence specification (`EXP-001…EXP-176`)**.
 
 Development remains **NOT GRANTED / 0/56**.
 
