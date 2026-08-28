@@ -45,7 +45,12 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 | Local Privacy / Data Lifecycle | privacy/retention architecture + ADR-0144 | PDL-01…PDL-176; RS remote privacy remains separate |
 | Error Taxonomy / Failure UX | error/failure architecture + ADR-0145 | ERR-01…ERR-176 |
 | Component Blueprint Core Runtime | ADR-0035/0039/0099/0146 | CBP-01…CBP-176; BW/BC builder adapter certification remains separate |
-| Contract Versioning / Deprecation | `CONTRACT-VERSIONING-AND-DEPRECATION.md` | WP30 reassessment current; no fixed dedicated cross-version protocol yet |
+| Contract Versioning / Deprecation | `CONTRACT-VERSIONING-AND-DEPRECATION.md` + ADR-0147 | VER-01…VER-176; domain protocol migrations remain separate |
+| Module Lifecycle / Disable / Uninstall / Recovery | `MODULE-LIFECYCLE-AND-UNINSTALL.md` + ADR-0148 | MLC-01…MLC-176; deletion/privacy/provider cleanup remain owner-specific |
+| Entity / Data Source Registry | platform architecture + ADR-0149 | DSR-01…DSR-176; adapter capability/schema/Policy/scope/runtime certifications |
+| Asset Registry / Scoped Loader | platform architecture + ADR-0150 | ASR-01…ASR-176; UI/BT/CBP/BW certification remains separate |
+| Conditional Logic Engine | platform architecture + ADR-0151 | CLG-01…CLG-176; consumer action/authorization certifications remain separate |
+| Dynamic Value / Token Resolver | platform architecture | WP35 reassessment current; no dedicated fixed shared resolver protocol yet |
 | Dashboard Widgets | ADR-0103 | DW-01…DW-36 |
 | Admin Menu | ADR-0104 | AM-01…AM-40 |
 | Protector | ADR-0105 | PR-01…PR-44 |
@@ -67,37 +72,37 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 | # | Surface | Product maturity | Accepted/paper architecture | Remaining technical blockers | Authorized |
 |---:|---|---|---|---|---|
-| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition + ADR-0138 | CF/DEF/KPA/UI/BT/CI + CPTX + MSI/LC + versioning where migrations apply | No |
-| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition + ADR-0138 | CF/DEF/KPA/UI/BT/CI + CPTX + MSI/LC + versioning where migrations apply | No |
-| 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 + ADR-0134 | FST + FS certification + KPA/PDL/ERR + MSI/LC profile | No |
-| 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + ADR-0133 | REL + final physical/locking + KPA/PDL/ERR + MSI/LC profile | No |
-| 5 | Status Manager | Exhaustive | ADR-0038/0110 | SM + KPA/ERR + MSI/LC profile | No |
-| 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 + ADR-0131 | QRY + QP certification + KPA/PDL/ERR + MSI where network query | No |
-| 7 | Custom Tables Builder | Exhaustive | ADR-0023/0088/0135 | CTB + CT/CM certification + PDL/ERR + MSI/LC | No |
-| 8 | Admin Columns Builder | Exhaustive | ADR-0098/0136 | AC + target certification + KPA/PDL/ERR + MSI | No |
-| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0039/0099/0137/0146 | DL + CBP + authorization/cache/builder/SEO/MSI | No |
-| 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103 | DW + KPA/CBP/UI/BT/CI + MSI | No |
-| 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 | AM + KPA/UI/BT/CI + MSI | No |
-| 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112 | ST + VT + KPA/PDL/ERR + UI/BT/CI + MSI | No |
-| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108/0146 | FD + CBP + UI/BT/CI + MBR/MSI when protected | No |
-| 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113 | UP + KPA/PDL/ERR + UI/BT/CI + MSI identity scope | No |
-| 15 | Membership System | Exhaustive | ADR-0013…0090 + ADR-0129 | MBR + MB/PC + KPA/PDL/ERR + MSI/LC | No |
-| 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109/0146 | CBP + BW + BC0…BC4 + BT/CI + MSI | No |
-| 17 | Forms & Workflow Builder | Exhaustive | FRT1/FRT2 + WF1/WF2 | FM + WF + JS + KPA/PDL/ERR + MSI/LC | No |
-| 18 | Cron Job Builder | Exhaustive | JobService + J1/J2/J3 | JS + KPA/ERR + MSI/LC network coordinator evidence | No |
-| 19 | Notification System | Exhaustive | NE1/PT-D vs NE2/PT-E | NT + JS/WF/KPA/PDL/ERR/provider + MSI/LC | No |
-| 20 | Emails Builder | Exhaustive | Email IR + ADR-0139 | EBR + ET + VT + KPA/PDL/ERR + client/adapters + MSI | No |
-| 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH + MBR/private-asset/search/realtime + KPA/PDL/ERR + MSI/LC | No |
-| 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST + QRY + KPA/PDL/ERR + MSI network route profile | No |
-| 23 | Webhooks & Connections | Exhaustive | Safe HTTP + Gateway + Event Inbox | WC + VT + KPA/PDL/ERR + I0–I5 + EI + MSI/LC | No |
-| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0130 | BK + C0–C4/V3 + KPA/PDL/ERR + MSI/LC network restore | No |
-| 25 | Reset Manager | Exhaustive | Plan + verified restore point + journal | RM + Backup + KPA/PDL/ERR + MSI/LC | No |
-| 26 | Import / Export | Exhaustive | IR1/PT-D vs IR2/PT-E | IM + DEF/FST/CTB + KPA/PDL/ERR + MSI/LC package scope/versioning | No |
-| 27 | Protector | Exhaustive | request gate + atomic rate-limit | PR + KPA/ERR + MSI network-floor evidence | No |
-| 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivative pipeline | WM + KPA/PDL/ERR + MSI site ownership | No |
-| 29 | XML-RPC Manager | Exhaustive | layered method/endpoint policy | XR + KPA/ERR + MSI installation/network semantics | No |
-| 30 | Role & Capability Manager | Exhaustive | native WP authority + anti-lockout | RA + KPA/ERR + MBR role-sync + MSI | No |
-| 31 | Account/Docs/Support/Diagnostics | Exhaustive | platform trust separation + ADR-0140 | PLT + FP/OA/TU/RS/VT/KPA/PDL/ERR/UI/BT/CI + MSI/LC | No |
+| 1 | Custom Post Types Builder | Exhaustive | WP registration + Definition + ADR-0138 | CF/DEF/KPA/UI/BT/CI + CPTX + VER/MLC/DSR + MSI/LC | No |
+| 2 | Taxonomy Builder | Exhaustive | WP registration + Definition + ADR-0138 | CF/DEF/KPA/UI/BT/CI + CPTX + VER/MLC/DSR + MSI/LC | No |
+| 3 | Custom Fields Builder | Exhaustive | ADR-0087 FS1–FS6 + ADR-0134 | FST + DSR/CLG + KPA/PDL/ERR/VER/MLC + MSI/LC | No |
+| 4 | Relations Builder | Exhaustive | R1/PT-D vs R2/PT-E + ADR-0133 | REL + DSR/CLG + final physical/locking + KPA/PDL/ERR/VER + MSI/LC | No |
+| 5 | Status Manager | Exhaustive | ADR-0038/0110 | SM + CLG + KPA/ERR/VER/MLC + MSI/LC | No |
+| 6 | Custom Query Builder | Exhaustive | ADR-0086 QP1–QP4 + ADR-0131 | QRY + DSR/CLG + QP certification + KPA/PDL/ERR/VER + MSI | No |
+| 7 | Custom Tables Builder | Exhaustive | ADR-0023/0088/0135 | CTB + DSR + CT/CM certification + PDL/ERR/VER/MLC + MSI/LC | No |
+| 8 | Admin Columns Builder | Exhaustive | ADR-0098/0136 | AC + DSR/CLG + target certification + KPA/PDL/ERR + MSI | No |
+| 9 | Dynamic Listings/Templates | Exhaustive | ADR-0039/0099/0137/0146 | DL + CBP + DSR/CLG/ASR + authorization/cache/builder/SEO/MSI | No |
+| 10 | Dashboard Widgets Manager | Exhaustive | ADR-0051/0103 | DW + KPA/CBP/CLG/ASR/UI/BT/CI + MSI | No |
+| 11 | Custom Admin Menu Builder | Exhaustive | ADR-0037/0104 | AM + KPA/CLG/ASR/UI/BT/CI + MLC/MSI | No |
+| 12 | Settings Page Builder | Exhaustive | ADR-0036/0089/0112 | ST + VT + DSR/CLG + KPA/PDL/ERR/VER + UI/BT/CI + MSI | No |
+| 13 | Frontend Dashboard Builder | Exhaustive | ADR-0031/0108/0146 | FD + CBP + DSR/CLG/ASR + UI/BT/CI + MBR/MSI | No |
+| 14 | User Profile Builder | Exhaustive | ADR-0030/0096/0113 | UP + DSR/CLG + KPA/PDL/ERR/VER + UI/BT/CI + MSI | No |
+| 15 | Membership System | Exhaustive | ADR-0013…0090 + ADR-0129 | MBR + MB/PC + KPA/PDL/ERR/VER/MLC/CLG + MSI/LC | No |
+| 16 | Builder Widgets Builder | Exhaustive | ADR-0035/0109/0146 | CBP + BW + BC0…BC4 + DSR/CLG/ASR + BT/CI + MSI | No |
+| 17 | Forms & Workflow Builder | Exhaustive | FRT1/FRT2 + WF1/WF2 | FM + WF + JS + DSR/CLG + KPA/PDL/ERR/VER/MLC + MSI/LC | No |
+| 18 | Cron Job Builder | Exhaustive | JobService + J1/J2/J3 | JS + KPA/ERR/VER/MLC + MSI/LC network coordinator evidence | No |
+| 19 | Notification System | Exhaustive | NE1/PT-D vs NE2/PT-E | NT + JS/WF/DSR/CLG/KPA/PDL/ERR/provider + MSI/LC | No |
+| 20 | Emails Builder | Exhaustive | Email IR + ADR-0139 | EBR + ET + VT + DSR/CLG/ASR + KPA/PDL/ERR + client/adapters + MSI | No |
+| 21 | Message & Chat | Exhaustive | CRT1/PT-D vs CRT2/PT-E | CH + DSR/CLG + MBR/private-asset/search/realtime + KPA/PDL/ERR + MSI/LC | No |
+| 22 | REST API Builder | Exhaustive | RE1 + RI1/RI2 | REST + QRY + DSR/CLG + KPA/PDL/ERR/VER + MSI network route profile | No |
+| 23 | Webhooks & Connections | Exhaustive | Safe HTTP + Gateway + Event Inbox | WC + VT + DSR/CLG + KPA/PDL/ERR/VER + I0–I5 + EI + MSI/LC | No |
+| 24 | Backup Manager | Exhaustive | manifest/crypto/providers + ADR-0130 | BK + C0–C4/V3 + KPA/PDL/ERR/VER/MLC + MSI/LC network restore | No |
+| 25 | Reset Manager | Exhaustive | Plan + verified restore point + journal | RM + Backup + KPA/PDL/ERR/MLC + MSI/LC | No |
+| 26 | Import / Export | Exhaustive | IR1/PT-D vs IR2/PT-E | IM + DEF/FST/CTB/DSR + KPA/PDL/ERR/VER/MLC + MSI/LC package scope | No |
+| 27 | Protector | Exhaustive | request gate + atomic rate-limit | PR + KPA/ERR/MLC + MSI network-floor evidence | No |
+| 28 | Watermarker / Media Rules | Exhaustive | non-destructive derivative pipeline | WM + DSR/ASR + KPA/PDL/ERR/MLC + MSI | No |
+| 29 | XML-RPC Manager | Exhaustive | layered method/endpoint policy | XR + KPA/ERR/VER/MLC + MSI installation/network semantics | No |
+| 30 | Role & Capability Manager | Exhaustive | native WP authority + anti-lockout | RA + KPA/ERR/VER/MLC + MBR role-sync + MSI | No |
+| 31 | Account/Docs/Support/Diagnostics | Exhaustive | platform trust separation + ADR-0140 | PLT + FP/OA/TU/RS/VT/KPA/PDL/ERR/VER/MLC/ASR/UI/BT/CI + MSI/LC | No |
 
 ## Current evidence/certification counters
 
@@ -105,6 +110,7 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - QRY **0/168**; REL **0/160**; WF **0/116**; MBR **0/160**; BK **0/180**.
 - FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**.
 - KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
+- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**.
 - DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
@@ -116,14 +122,15 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 - Site Lifecycle LC **0/96; SL runtime certifications 0**.
 - Remote privacy RS **0/30**.
 - Audit `AUD-M/W/A/P/C/R/I/S/Q/O` certifications **0**; exact DDL/index/retention/fail-closed/tamper-evidence selections OPEN.
-- KPA certification classes **0**; PDL certification classes **0**; ERR certification classes **0**; CBP `D/C/B/R/S/A/K/X/U/O` certifications **0**.
+- KPA certification classes **0**; PDL certification classes **0**; ERR certification classes **0**; CBP certifications **0**.
+- VER, MLC, DSR, ASR and CLG certification classes all remain **0**.
 - Builder adapter runtime certifications BC0…BC4 remain **0**; CBP evidence does not promote BW/BC and vice versa.
 
 ## Recommended implementation order after future consent
 
 1. CF/UI/BT/CI/JS/DEF/VT/FP shared foundations;
 2. Kernel/Scope/Site Lifecycle/Registry/Definition/Policy/Abilities/Audit/Vault/Job + safe build/UI/Free↔Pro bootstrap;
-3. establish version/migration/deprecation and ERR/PDL cross-cutting runtime contracts before broad consumer writes;
+3. establish VER/MLC/DSR/ASR/CLG plus ERR/PDL cross-cutting runtime contracts before broad consumer writes;
 4. CPT/Taxonomy;
 5. Field Storage → Relations → Query → Custom Tables → Admin Columns → Component Blueprint/Listings;
 6. remaining admin/site UX modules;
@@ -139,9 +146,9 @@ Current owner consent: **NOT GRANTED**. Therefore **0/31 Authorized**.
 
 ## Current conclusion
 
-**Architecture/evidence contracts/refinements accepted through ADR-0146; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
+**Architecture/evidence contracts/refinements accepted through ADR-0151; all applicable runtime/toolchain/provider/Multisite decisions remain unverified until authorized evidence executes.**  
 **31/31 Exhaustive. 0/31 Authorized. Implemented: none. Runtime verified: none.**
 
-Current planning work: **`P0-M00-WP30` — Contract Versioning & Deprecation executable-evidence reassessment**.
+Current planning work: **`P0-M00-WP35` — Dynamic Value / Token Resolver executable-evidence reassessment**.
 
 Planning/research/documentation only remains allowed until explicit owner development consent.
