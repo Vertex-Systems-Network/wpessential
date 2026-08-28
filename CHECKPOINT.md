@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0171**.
+Accepted evidence decisions/refinements now extend through **ADR-0172**.
 
 ### Fixed evidence sequence
 
@@ -87,6 +87,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0171**.
 | ADR-0169 | Pro Updater TUF refinement | TU **0/176** |
 | ADR-0170 | OAuth Account-Link refinement | OA **0/176** |
 | ADR-0171 | Remote Service Privacy / Retention refinement | RS **0/176** |
+| ADR-0172 | Email Transport / Provider Certification refinement | ET-F **0/176**; **6 EE3 / 0 ET-certified** |
 
 ## Critical preserved truth
 
@@ -111,6 +112,10 @@ Accepted evidence decisions/refinements now extend through **ADR-0171**.
 - Remote disconnect/local erase/remote deletion/provider deletion/backup expiry remain distinct privacy and retention truths.
 - Free local-only activation/use does not contact WPE-controlled remote services solely because WPE is installed/active.
 - Diagnostics upload remains separately previewed/approved and cannot be implied by Account connection.
+- Email renderer success ≠ Transport Attempt ≠ provider accepted ≠ receiving-server delivered ≠ complaint/suppression ≠ engagement.
+- Provider acceptance does not prove mailbox/inbox delivery; open/click never proves human read/view/intent.
+- Static EE3 provider evidence never becomes ET0 runtime certification.
+- JobService at-least-once execution never becomes an exactly-once email-delivery claim.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
 - cache state ≠ canonical business/Audit/Rate-Limit truth.
@@ -130,24 +135,25 @@ Primary/shared:
 
 Other evidence/provider truth:
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
-- Email transport/provider **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
 - Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
+- Connection adapters **0 I4/I5**.
 - Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
 
 ## Current VCS / verification truth
 
 - planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; latest checked state before this sync was open + draft + mergeable=true; re-verify after PR body synchronization.
-- direct GitHub reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected.
-- repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service runtime or benchmark execution occurred.
+- Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after PR body synchronization.
+- direct GitHub branch reads on 2026-08-28 reported `main` and `planning/master-architecture` unprotected.
+- repository-wide rulesets remain **UNKNOWN** because earlier ruleset access returned 403/plan limitation.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP55` — Email Transport / Provider Certification evidence reassessment — SPECIFICATION**.
+Current work package: **`P0-M00-WP56` — Membership Billing provider certification reassessment — SPECIFICATION**.
 
-Reason: Email rendering/composition is separately covered by EBR **0/176**, but delivery truth remains **6 static EE3 provider profiles / 0 ET-certified**. WP55 must inspect the existing Email Transport certification protocol and preserve the truth boundary between renderer output, handoff/submission, receiving-server delivery, bounce/complaint/suppression and engagement while deciding whether the provider evidence matrix needs in-place refinement.
+Reason: Membership runtime semantics are separately covered by MBR **0/160**, while provider billing remains **4 static BE3 profiles / 0 MB-certified**. WP56 must audit the existing MB0–MB5 provider certification protocol against current Membership, Vault, JobService, Webhooks/Event Inbox, PDL/RS, ERR, VER, RLT, Multisite and lifecycle contracts. Preserve commercial provider facts ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
 
