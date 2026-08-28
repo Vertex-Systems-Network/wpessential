@@ -1,80 +1,76 @@
 # WPEssential — Current Planning State Supersession Index
 
-Status: **Current-state navigation / historical documents preserved**  
-Date: **2026-08-29**  
-Accepted by: **ADR-0207**
+Status: **Current-state authority index / planning-only / no development authorization**  
+Date: 2026-08-29  
+Established by: ADR-0207  
+Latest accepted planning/evidence decision: **ADR-0208**
 
 ## Purpose
 
-WPEssential planning evolved through multiple accepted scope milestones. Some long-form master/catalog/roadmap documents intentionally preserve their original historical scope and should not be destructively rewritten merely to replace every old denominator.
+WPEssential has a long Phase 0 planning history. Earlier master plans, catalogs, roadmaps and ADR snapshots intentionally preserve the scope/counters that were correct when they were written. Those historical values must not be silently rewritten.
 
-This index prevents those historical snapshots from being mistaken for the current project state.
+This file identifies the current-state authority so historical 31/43/48/50/55-surface or earlier work-package statements are not misread as present truth.
 
 ## Current canonical state
 
-- project: `PLANNED_EXISTING_PROJECT`
-- execution: `PLANNER_ONLY`
-- lifecycle: `SPECIFICATION`
-- product scope: **56/56 Exhaustive**
-- Multisite mapping: **56/56**
-- AI Prompt mapping: **56/56**
-- implementation authorization: **0/56**
-- latest accepted planning/readiness decision: **ADR-0207**
-- current work: **WP113 — Market Expansion exact executable-evidence specification**
-- P0 approval-readiness: **NOT READY**
-- remaining exact planning gap: **5,808 fixtures across WP113–WP116**
+- Project state: `PLANNED_EXISTING_PROJECT`
+- Execution mode: `PLANNER_ONLY`
+- Lifecycle: `SPECIFICATION`
+- Current surface denominator: **56**
+- Product-option maturity: **56/56 Exhaustive**
+- Logical Multisite mapping: **56/56**
+- Module-wide AI Prompt mapping: **56/56**
+- Implementation authorization: **0/56**
+- Runtime-certified/implemented surfaces: **none**
+- Latest accepted planning/evidence decision: **ADR-0208**
+- Current work: **WP114 — First Competitive exact executable-evidence specification**
+
+WP113 / ADR-0208 completed RDR/SRT/DMY/LNK/DBM/PDO/MIR exact evidence:
+- **1,232/1,232 exact fixtures documented**;
+- **0 executed**.
+
+Known remaining exact planning gap:
+- WP114: 880;
+- WP115: 1,936;
+- WP116: 1,760;
+- total **4,576 exact definitions across 26 namespaces**.
+
+P0 is not yet approval-ready. After WP116, a new closure/readiness audit must decide whether the lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
 ## Current-state authorities
 
-When a historical planning document conflicts with a current denominator/work ID, use this order:
+Use these when determining current status/resume point:
 
 1. `CHECKPOINT.md`
-2. current accepted ADRs, currently through ADR-0207
-3. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
-4. `docs/APPROVAL-LEDGER.md`
-5. `docs/WORK-COORDINATION-LEDGER.md`
-6. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
-7. `docs/OPEN-DECISIONS-REGISTER.md`
-8. this supersession index
-9. older master/catalog/roadmap snapshots for their historical design detail
+2. latest Accepted ADRs, currently through ADR-0208
+3. `docs/WORK-COORDINATION-LEDGER.md`
+4. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
+5. `docs/APPROVAL-LEDGER.md`
+6. `docs/OPEN-DECISIONS-REGISTER.md`
+7. `docs/MODULES/OPTION-COVERAGE-MATURITY.md`
+8. root `README.md`
+9. this supersession index
 
-## Historical documents preserved
+Repository evidence overrides conversation memory.
 
-The following long-form documents may contain denominators/current-work language accurate to their original creation milestone. Their architecture/detail remains useful, but their old denominator must not override current state:
+## Historical files
 
-- `docs/PRODUCT-MASTER-PLAN.md`
-- `docs/MODULE-CATALOG.md`
-- `docs/ROADMAP.md`
-- older module-suite summaries and expansion-era addenda
-- older ADR summaries superseded by later accepted ADRs
+Long-form files such as `docs/PRODUCT-MASTER-PLAN.md`, `docs/MODULE-CATALOG.md`, `docs/ROADMAP.md`, early module indexes and older ADRs may contain earlier denominators/work IDs. Treat those statements as historical snapshots unless explicitly updated by a later addendum/ADR.
 
-Use Git history and the applicable ADR to understand the exact historical scope.
+Do not rewrite accepted historical details merely to change a denominator.
 
-## Scope history
+## Readiness classification
 
-- 31 — original exhaustive product scope
-- 43 — ADR-0177
-- 48 — ADR-0188
-- 50 — ADR-0194
-- 55 — ADR-0195
-- **56 — ADR-0197 current denominator**
+- Exact protocol exists but is 0 executed → `RUNTIME EVIDENCE PENDING`, not automatically planning gap.
+- Provider contract exists but no certified execution → `PROVIDER CERTIFICATION PENDING`.
+- Exact fixture specification is still missing/ambiguous → `PLANNING GAP`.
+- Implementation permission absent → `OWNER CONSENT PENDING`.
+- Exact planning/evidence design complete → `NO GAP / READY AS PLAN` at planning layer only.
 
-No historical milestone is erased by this index.
+RDR/SRT/DMY/LNK/DBM/PDO/MIR are now `NO GAP / READY AS PLAN` for evidence design and `RUNTIME EVIDENCE PENDING` for execution.
 
-## WP112 / ADR-0207 closure result
+## Consent invariant
 
-WP112 found that current product behavior/mapping maturity is strong, but P0 cannot yet move to `AWAITING_DEVELOPMENT_APPROVAL` because exact individual evidence fixtures remain to be enumerated for 33 accepted supplemental/market namespaces.
+No current-state synchronization, ADR acceptance, fixture enumeration, research, planning or `continue/resume` instruction grants development permission.
 
-Required sequence:
-- WP113 — RDR/SRT/DMY/LNK/DBM/PDO/MIR — 1,232
-- WP114 — MPR/RPR/ATM/MDP/STM — 880
-- WP115 — ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — 1,936
-- WP116 — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — 1,760
-
-After WP116, run a new closure/readiness audit.
-
-## Consent truth
-
-This index changes documentation authority only. It grants no permission to implement, test, build, migrate, call providers/APIs/AI/MCP, mutate WordPress/data or deploy.
-
-Production development remains **NOT GRANTED / 0/56**.
+Production development authorization remains **NOT GRANTED / 0/56** under ADR-0014.
