@@ -140,6 +140,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0127 | Accepted P-007 CI/Quality Matrix evidence protocol / execution pending | CI-01…CI-120; FAST/FULL, secret isolation, baseline/flaky truth, artifact provenance, release gates |
 | ADR-0128 | Accepted P-006 Free↔Pro compatibility evidence protocol / execution pending | FP-01…FP-144; package/Platform API/schema/entitlement/update/restore separation; ADR-0010 remains Proposed |
 | ADR-0129 | Accepted P-012 Membership evidence protocol / execution pending | MBR-01…MBR-160; lifecycle/policy/cache/teams/providers/protected-files/privacy/M1-M2 evidence; MB/PC certifications separate |
+| ADR-0130 | Accepted P-013 Backup/Restore evidence protocol / execution pending | BK-01…BK-180; artifact/crypto/Remote Copy/provider/restore/Multisite/recovery evidence; C0–C4/V3 certifications separate |
 
 ## Product specification milestone
 
@@ -155,6 +156,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - Free↔Pro: `docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Vault: `docs/QUALITY/P005-SECRETS-VAULT-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Membership: `docs/QUALITY/P012-MEMBERSHIP-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- Backup/Restore: `docs/QUALITY/P013-BACKUP-RESTORE-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Forms: `docs/QUALITY/FORMS-RUNTIME-SUBMISSION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - Workflow: `docs/QUALITY/WORKFLOW-RUNTIME-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - JobService/Cron: `docs/QUALITY/JOB-SERVICE-ACTION-SCHEDULER-EVIDENCE-PROTOCOL.md`
@@ -171,13 +173,13 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - P-004 **0 executed**.
 - VT **0/128**, runtime/crypto certifications 0, security review not executed.
 - FP **0/144**, certified Free↔Pro artifact pairs 0.
-- CI **0/120**, workflows not verified, branch protection/rulesets UNKNOWN.
+- CI **0/120**, workflows not verified; direct GitHub branch reads show `main` and `planning/master-architecture` unprotected; repository-wide rulesets state remains UNKNOWN because the ruleset endpoint is plan/access restricted.
 - BT **0/112**, canonical build tool not selected.
-- P-009 **0 executed**.
+- P-009 **0 executed; dedicated fixed protocol not yet accepted**.
 - P-010 **0 executed**.
 - WF **0/116**, runtime certification 0.
 - MBR **0/160**, Membership runtime certification 0, M1/M2 benchmarks 0, **4 BE3 / 0 MB-certified**, **0 PC1+**.
-- P-013 Backup **0 executed**, **34 targets / 0 C-certified / 0 C3 Supported**.
+- BK **0/180**, Backup runtime certification 0, **34 targets / 0 C-certified / 0 C3 Supported**, V3 certifications 0.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - OA **0/32**; TU **0/44**; DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
 - Email: **6 EE3 / 0 ET-certified**.
@@ -188,6 +190,6 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 
 ## Current planning work
 
-**`P0-M00-WP13` — P-013 Backup/Restore artifact/provider/recovery evidence refinement — SPECIFICATION.**
+**`P0-M00-WP14` — P-009 Query compiler/cost/cache/security executable evidence refinement — SPECIFICATION.**
 
 No executable evidence may run before explicit owner consent.
