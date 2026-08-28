@@ -48,6 +48,8 @@ New user-facing surfaces:
 - **49 Admin Theme, Branding & Experience Manager** — semantic/native admin theming, assignment, accessibility, environment identity and branding; ATM 0/176.
 - **50 Safe Script, Tag & Code Injection Manager** — governed HTML/CSS/JS/meta/link/JSON-LD/external tags with CSP/consent/environment controls; STM 0/176. **No PHP/eval runtime.**
 
+High-level catalog addendum: `docs/MODULE-CATALOG-EXPANSION-ADR-0194.md`.
+
 ## Solution Blueprint / AI-native direction
 
 Complete CRM/ERP/LMS/booking/commerce/developer systems normally compose reusable WPE modules/foundations/adapters through Solution Blueprints rather than generating one private plugin/runtime per system.
