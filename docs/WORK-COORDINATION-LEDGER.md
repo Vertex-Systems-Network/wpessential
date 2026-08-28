@@ -57,7 +57,8 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP38` | REST API Builder canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0155; REST 0/176; original REST-01…52 preserved. |
 | `P0-M00-WP39` | Import/Export canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0156; IM 0/176; original IM-01…56 preserved. |
 | `P0-M00-WP40` | Role & Capability canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0157; RA 0/176; original RA-01…48 preserved. |
-| `P0-M00-WP41` | User Profile canonical evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Current planning work; audit UP 0/48 against FST/DSR/KPA/RA/PDL/ERR/CAC/VER/MLC/Multisite. |
+| `P0-M00-WP41` | User Profile canonical evidence refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0158; UP 0/176; original UP-01…48 preserved. |
+| `P0-M00-WP42` | Protector canonical evidence refinement | `SPECIFICATION` | `BLOCKING_FOUNDATION` | `SERIALIZE` | Current planning work; reconcile PR 0/44 against RLT/CAC/KPA/ERR/VER/MLC/Multisite without weakening WordPress auth. |
 
 No production implementation work package is active.
 
@@ -65,16 +66,17 @@ No production implementation work package is active.
 
 | Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | User Profile canonical evidence refinement | `SPECIFICATION` current | Native identity/auth authority; protected security actions must stay outside generic field mutation. |
-| 2 | Remaining shallow legacy evidence protocols | `QUEUED` | Reassess by security/critical-path value after WP41; prefer in-place refinement over duplicates. |
+| 1 | Protector canonical evidence refinement | `SPECIFICATION` current | Preserve trusted-proxy identity, shared atomic RLT, WordPress authorization, non-authenticating recovery and app-layer—not WAF/DDoS—truth. |
+| 2 | Remaining shallow legacy evidence protocols | `QUEUED` | Reassess by security/critical-path value after WP42; prefer in-place refinement over duplicates. |
 
 ## 4. Shared foundation truth
 
 - DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
 - KPA **0/176**; VER **0/176**; MLC **0/176**; PDL **0/176**; ERR **0/176**.
 - ASR **0/176**; CLG **0/176**; DVR **0/176**; RLT **0/176**; CAC **0/176**.
-- REST **0/176**; IM **0/176**; RA **0/176**.
+- REST **0/176**; IM **0/176**; RA **0/176**; UP **0/176**.
 - WordPress remains native role/capability and identity/auth authority where defined; WPE adds guarded control-plane semantics rather than weaker parallel authority.
+- generic Profile field mutation does not own password/session/Application Password/roles/Membership/Vault security actions.
 - a resolved condition/value, rate-limit allow or cache hit never grants downstream authorization.
 - current-blog context is never durable ownership or authorization.
 - clone/restore cannot silently resurrect stale commercial/provider/access authority.
@@ -90,6 +92,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP41`: reconcile User Profile native identity/profile Field Storage, self/admin edit, identity-change, password/session/Application Password actions, public projection, privacy, cache invalidation, Role Manager separation, Multisite global-user vs site-profile scope and version/lifecycle semantics. Preserve the invariant that generic Profile fields cannot mutate credentials, roles/caps, sessions, Membership entitlement, Vault/provider secrets or other protected security internals.
+Continue `P0-M00-WP42`: refine the existing Protector protocol in place against RLT/CAC/KPA/ERR/VER/MLC, REST/XML-RPC/Webhooks, cache/CDN behavior, Multisite network-floor policy and recovery. Preserve trusted-proxy spoof resistance, atomic limiter semantics, path normalization safety, no open redirects, no anonymous recovery authority and truthful application-layer security limitations.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
