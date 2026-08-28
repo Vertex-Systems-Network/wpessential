@@ -26,7 +26,7 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0151**.
+Accepted evidence decisions/refinements now extend through **ADR-0152**.
 
 Recent bounded protocols/refinements:
 - ADR-0117 — Forms FM-01…FM-92.
@@ -44,18 +44,18 @@ Recent bounded protocols/refinements:
 - ADR-0129 — Membership MBR-01…MBR-160.
 - ADR-0130 — Backup/Restore BK-01…BK-180.
 - ADR-0131 — Query QRY-01…QRY-168.
-- ADR-0132 — Definition canonical refinement DEF-01…DEF-144.
-- ADR-0133 — Relations canonical refinement REL-01…REL-160.
-- ADR-0134 — Field Storage / Custom Fields FST-01…FST-176.
+- ADR-0132 — Definition DEF-01…DEF-144.
+- ADR-0133 — Relations REL-01…REL-160.
+- ADR-0134 — Field Storage FST-01…FST-176.
 - ADR-0135 — Custom Tables CTB-01…CTB-184.
 - ADR-0136 — Admin Columns AC-01…AC-176.
 - ADR-0137 — Dynamic Listings DL-01…DL-176.
 - ADR-0138 — Free CPT & Taxonomy CPTX-01…CPTX-176.
-- ADR-0139 — Emails Builder rendering/composition EBR-01…EBR-176.
+- ADR-0139 — Emails Builder EBR-01…EBR-176.
 - ADR-0140 — Platform Account / Docs / Support / Diagnostics PLT-01…PLT-176.
-- ADR-0141 — Multisite Scope/Isolation MSI-01…MSI-160 + Site Lifecycle LC-01…LC-96 canonical refinement.
+- ADR-0141 — Multisite MSI-01…MSI-160 + Site Lifecycle LC-01…LC-96.
 - ADR-0142 — Audit & Observability AUD-01…AUD-176.
-- ADR-0143 — Kernel / Module Registry / Capability-Policy / Abilities / Events / Extension SDK KPA-01…KPA-176.
+- ADR-0143 — Kernel / Module Registry / Policy / Abilities / Events / SDK KPA-01…KPA-176.
 - ADR-0144 — Local Privacy / Data Lifecycle PDL-01…PDL-176.
 - ADR-0145 — Error Taxonomy & Failure UX ERR-01…ERR-176.
 - ADR-0146 — Component Blueprint Core Runtime CBP-01…CBP-176.
@@ -63,169 +63,106 @@ Recent bounded protocols/refinements:
 - ADR-0148 — Module Lifecycle / Disable / Uninstall / Recovery MLC-01…MLC-176.
 - ADR-0149 — Entity / Data Source Registry DSR-01…DSR-176.
 - ADR-0150 — Asset Registry & Scoped Loader ASR-01…ASR-176.
-- **ADR-0151 — Conditional Logic Engine CLG-01…CLG-176.**
+- ADR-0151 — Conditional Logic Engine CLG-01…CLG-176.
+- **ADR-0152 — Dynamic Value / Token Resolver DVR-01…DVR-176.**
 
 ## Recent completed work packages
 
 ### WP21 — Free CPT + Taxonomy — DONE
 - CPTX **0/176**; all CPTX certification classes 0.
-- published runtime keys remain migration-class identities.
-- rewrite flush remains dirty-generation/controlled, never every request.
-- Definition disable/delete preserves posts/terms/relationships/meta by default.
-- external registration discovery/collision does not establish WPE ownership.
+- published runtime keys remain migration-class identities; rewrite flush is controlled; Definition disable/delete preserves content by default.
 
 ### WP22 — Emails Builder rendering/composition — DONE
-- EBR **0/176**; all renderer/composition certifications 0.
-- Email Definition, compiled descriptor, authorized context, Email IR, rendered message and Transport Attempt remain distinct truths.
-- renderer success never promotes transport/provider state.
-- provider/transport truth remains **6 EE3 / 0 ET-certified**.
+- EBR **0/176**; renderer/composition certifications 0; transport remains **6 EE3 / 0 ET-certified**.
 
 ### WP23 — Platform Account / Docs / Support / Diagnostics — DONE
-- PLT **0/176**; all PLT certification classes 0.
-- FP **0/144**, OA **0/32**, TU **0/44**, Remote privacy **0/30** remain independent prerequisites.
-- onboarding, Account connection, OAuth validity, Plan/Account state, Site Allocation, signed Product Entitlement, Free/Pro compatibility, update trust, local module health and Support/Diagnostics state remain separate truths.
+- PLT **0/176**; FP **0/144**, OA **0/32**, TU **0/44**, Remote privacy **0/30** remain independent prerequisites.
 
-### WP24 — Multisite Scope + Site Lifecycle canonical evidence refinement — DONE
-- MSI **0/160**; MS0–MS4 preserved; 0 runtime-certified MS1+ surfaces.
-- LC **0/96**; SL0–SL4 preserved; 0 runtime lifecycle certifications.
-- current blog context never becomes durable ownership/authorization; clone/restore cannot silently resurrect stale commercial/provider/access authority.
+### WP24 — Multisite Scope + Site Lifecycle — DONE
+- MSI **0/160**; 0 MS1+ surfaces. LC **0/96**; 0 SL runtime certifications.
+- current blog context never becomes durable ownership/authorization.
 
 ### WP25 — Audit & Observability — DONE
-- AUD **0/176**; all AUD certification classes 0.
-- AU1/PT-D remains first future baseline only.
-- exact Audit DDL/index set, retention durations, mandatory/fail-closed Ability classes, optional tamper-evidence profile and external immutable checkpoint profile remain OPEN.
-- local DB/hash evidence is not described as tamper-proof/non-repudiable without a certified attacker model.
+- AUD **0/176**; AU1/PT-D future baseline only; exact physical/integrity choices remain evidence-gated.
 
 ### WP26 — Kernel / Registry / Policy / Abilities / Events / SDK — DONE
-- KPA **0/176**; all shared-platform certification classes 0.
-- Free owns shared kernel/registries; Pro registers into them rather than forking platform authority.
-- Capability + target resource Policy apply regardless of UI, REST, CLI, Workflow or AI channel.
-- typed Abilities/Events do not become arbitrary PHP/JS/SQL/eval channels.
+- KPA **0/176**; Free owns shared kernel/registries; every channel remains Capability + resource Policy bound.
 
 ### WP27 — Local Privacy / Data Lifecycle — DONE
-- PDL **0/176**; local privacy/data-lifecycle certification classes 0; Remote Service privacy remains **RS 0/30**.
-- live erase ≠ backup erase ≠ remote-service deletion; module/site lifecycle is not universal privacy erasure.
+- PDL **0/176**; live erase ≠ backup erase ≠ remote-service deletion; RS remote privacy remains **0/30**.
 
 ### WP28 — Error Taxonomy & Failure UX — DONE
-- ERR **0/176**; error/failure-UX certification classes 0.
-- stable machine codes remain independent of localized text; partial failure cannot be reported as total success.
+- ERR **0/176**; stable machine semantics remain separate from localized text; partial failure stays explicit.
 
 ### WP29 — Component Blueprint Core Runtime — DONE
-- CBP **0/176**; `CBP-D/C/B/R/S/A/K/X/U/O` certifications 0.
-- Builder adapter BW **0/50** and BC0…BC4 runtime certifications remain separate and 0.
-- Blueprint Definition/compiled descriptor/instance/bindings/authorized context/render tree/markup-assets/cache/adapter representation remain separate truths.
+- CBP **0/176**; BW **0/50** and BC0…BC4 remain separate.
 
 ### WP30 — Contract Versioning & Deprecation — DONE
-Created:
-- `docs/QUALITY/CONTRACT-VERSIONING-DEPRECATION-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- `docs/DECISIONS/ADR-0147-contract-versioning-deprecation-executable-evidence-protocol.md`.
-
-Evidence:
 - VER **0/176**.
-
-Preserved truth:
-- Product Version, Platform API, Definition schema, runtime schema, Ability/Event/adapter/SDK versions and migration/deprecation stages are separate contracts.
-- unknown future schemas fail safe; migrator chains/version skew/downgrade/deprecation/removal remain explicit.
-- VER does not replace FP/DEF/KPA/IM/CBP or domain-specific migration evidence.
+- Product Version/API/schema/runtime/Ability/Event/SDK/package compatibility and migrator/deprecation stages remain separate explicit contracts.
 
 ### WP31 — Module Lifecycle / Disable / Uninstall / Recovery — DONE
-Created:
-- `docs/QUALITY/MODULE-LIFECYCLE-UNINSTALL-RECOVERY-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- `docs/DECISIONS/ADR-0148-module-lifecycle-uninstall-recovery-executable-evidence-protocol.md`.
-
-Evidence:
 - MLC **0/176**.
-
-Preserved truth:
-- module disable ≠ data deletion ≠ Pro expiry ≠ plugin uninstall ≠ privacy erase.
-- security-sensitive/access modules cannot fail-open merely because module/license state changes.
-- cleanup is ownership-bounded, explicit, recovery-aware and separately authorized.
+- module disable ≠ data deletion ≠ Pro expiry ≠ plugin uninstall ≠ privacy erase; security-sensitive disable cannot fail-open.
 
 ### WP32 — Entity / Data Source Registry — DONE
-Created:
-- `docs/QUALITY/ENTITY-DATA-SOURCE-REGISTRY-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- `docs/DECISIONS/ADR-0149-entity-data-source-registry-executable-evidence-protocol.md`.
-
-Evidence:
 - DSR **0/176**.
-
-Preserved truth:
-- source readable ≠ queryable ≠ creatable ≠ updatable ≠ deletable ≠ transactional.
-- adapters declare schema/capabilities/Policy/scope/version semantics; UI/AI never infer mutation rights from read access.
-- current blog context never substitutes for durable site/network ownership.
+- readable ≠ queryable ≠ creatable ≠ updatable ≠ deletable ≠ transactional; adapters declare exact schema/capability/Policy/scope/version semantics.
 
 ### WP33 — Asset Registry & Scoped Loader — DONE
-Created:
-- `docs/QUALITY/ASSET-REGISTRY-SCOPED-LOADER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- `docs/DECISIONS/ADR-0150-asset-registry-scoped-loader-executable-evidence-protocol.md`.
-
-Evidence:
 - ASR **0/176**.
-
-Preserved truth:
-- source asset ≠ built file ≠ manifest entry ≠ registry descriptor ≠ WP handle ≠ resolved load plan ≠ enqueue ≠ browser execution.
-- exact-route/component scope, WordPress runtime coexistence, dependency conflicts, build-manifest mapping, lifecycle and Multisite behavior remain independently evidenced.
-- ASR never substitutes for UI/BT/CBP/BW certification.
+- source/built/manifest/descriptor/WP-handle/load-plan/enqueue/browser-execution/certification remain separate; UI/BT/CBP/BW certifications stay separate.
 
 ### WP34 — Conditional Logic Engine — DONE
+- CLG **0/176**.
+- Condition Definition/revision/compiled predicate/value resolver/authorized context/result/consumer action remain separate; `true` never grants downstream authorization.
+
+### WP35 — Dynamic Value / Token Resolver — DONE
 Created:
-- `docs/QUALITY/CONDITIONAL-LOGIC-ENGINE-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
-- `docs/DECISIONS/ADR-0151-conditional-logic-engine-executable-evidence-protocol.md`.
+- `docs/QUALITY/DYNAMIC-VALUE-TOKEN-RESOLVER-EXECUTABLE-EVIDENCE-PROTOCOL.md`.
+- `docs/DECISIONS/ADR-0152-dynamic-value-token-resolver-executable-evidence-protocol.md`.
 
 Evidence:
-- CLG **0/176**.
+- DVR **0/176**.
 
 Preserved truth:
-- Condition Definition ≠ published revision ≠ compiled predicate ≠ value resolver ≠ authorized context ≠ result ≠ consumer action.
-- condition `true` never grants Capability/Policy authority.
-- missing/null/empty/zero/false/denied/unresolved/error remain distinct where semantics require.
-- arbitrary PHP/JS/raw-SQL/callback execution is not a normal condition type.
-- shared operator semantics remain consistent across consumers while consumer-specific business authorization remains separate.
+- source definition ≠ source value ≠ canonical resolved value ≠ formatted value ≠ escaped value ≠ trusted markup ≠ rendered output ≠ cache.
+- source-owner DSR/FST/REL/QRY/Settings/Membership/media/remote authorization remains authoritative.
+- generic resolver never exposes Vault secrets/passwords/reset/session tokens/private keys.
+- HTML text/attribute/URL/JSON/email/plain/other output contexts remain explicitly escaped/typed.
+- cross-consumer formatting may differ but cannot redefine canonical value/access authority.
+- DVR never substitutes for owner or consumer certification.
 
 ## Current evidence counters
 
-- P-001 / CF: **0/112**.
-- P-002 / UI: **0/104**.
-- P-003 / JS: **0/106**.
-- P-004 / DEF: **0/144**.
-- P-005 / VT: **0/128**.
-- P-006 / FP: **0/144**.
-- P-007 / CI: **0/120**.
-- P-008 / BT: **0/112**.
-- P-009 / QRY: **0/168**.
-- P-010 / REL: **0/160**.
-- P-011 / WF: **0/116**.
-- P-012 / MBR: **0/160**.
-- P-013 / BK: **0/180**.
-- FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**; KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
-- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**.
-- MSI **0/160**; LC **0/96**.
-- FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
-- OA **0/32**; TU **0/44**.
-- DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
-- Membership Billing: **4 BE3 / 0 MB-certified**.
-- Protected files: **0 PC1+**.
-- Email transport/provider: **6 EE3 / 0 ET-certified**.
-- Connection adapters: **0 I4/I5**.
-- Backup providers: **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
-- Multisite runtime surfaces at MS1+: **0**; Site Lifecycle SL runtime certifications: **0**.
-- Remote privacy RS: **0/30**.
+- P-001 / CF **0/112**; P-002 / UI **0/104**; P-003 / JS **0/106**; P-004 / DEF **0/144**.
+- P-005 / VT **0/128**; P-006 / FP **0/144**; P-007 / CI **0/120**; P-008 / BT **0/112**.
+- P-009 / QRY **0/168**; P-010 / REL **0/160**; P-011 / WF **0/116**; P-012 / MBR **0/160**; P-013 / BK **0/180**.
+- FST **0/176**; CTB **0/184**; AC **0/176**; DL **0/176**; CPTX **0/176**; EBR **0/176**; PLT **0/176**; AUD **0/176**.
+- KPA **0/176**; PDL **0/176**; ERR **0/176**; CBP **0/176**.
+- VER **0/176**; MLC **0/176**; DSR **0/176**; ASR **0/176**; CLG **0/176**; DVR **0/176**.
+- MSI **0/160**; LC **0/96**; FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- OA **0/32**; TU **0/44**; DW **0/36**; AM **0/40**; PR **0/44**; RM **0/48**; WM **0/48**; FD **0/48**; BW **0/50**; SM **0/48**; XR **0/48**; ST **0/48**; UP **0/48**; RA **0/48**; REST **0/52**; IM **0/56**.
+- Membership Billing **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
+- Email transport/provider **6 EE3 / 0 ET-certified**; Connection adapters **0 I4/I5**.
+- Backup providers **34 targets / 0 C-certified / 0 C3 Supported; V3 0**.
+- Multisite runtime surfaces at MS1+ **0**; Site Lifecycle SL runtime certifications **0**; Remote privacy RS **0/30**.
 
 ## VCS / verification state
 
 Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
-- evidence contracts/refinements accepted through ADR-0151;
+- evidence contracts/refinements accepted through ADR-0152;
 - direct GitHub branch reads on 2026-08-28 previously showed `main` and `planning/master-architecture` unprotected;
 - repository-wide rulesets remain **UNKNOWN** because ruleset access returned 403/plan limitation;
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/Multisite-site-operation/Audit/Privacy/Error/Blueprint/Versioning/Lifecycle/Data-Source/Asset/Condition runtime/benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/backfill/provider/file-transfer/archive/restore/query/cache/rewrite-flush/email-send/Multisite/Audit/Privacy/Error/Blueprint/Versioning/Lifecycle/Data-Source/Asset/Condition/Dynamic-Value runtime/benchmark execution occurred.
 
 ## Next planning-only priority
 
-Current work package: **`P0-M00-WP35` — Dynamic Value / Token Resolver executable-evidence reassessment**.
+Current work package: **`P0-M00-WP36` — Shared Rate Limit / Abuse Control Service executable-evidence reassessment**.
 
-Reason: platform architecture defines one shared token/value resolver supplying dynamic data to listings, dashboards, columns, emails, notifications, forms and builder adapters, with render-context escaping rules. Repository search found no dedicated fixed shared resolver protocol. WP35 will reconcile overlap with DSR/FST/QRY/REL/Policy/CBP/EBR/NT/FM before deciding/fixing only the genuinely shared source-resolution, escaping, privacy, dependency, cache and cross-consumer behavior.
+Reason: atomic rate/abuse semantics are consumed by Protector, REST, Forms, Webhooks/Event Inbox and other sensitive endpoints, but current QUALITY inventory has no dedicated shared-service protocol. WP36 will reconcile existing consumer evidence and isolate common request-identity, key dimensions, atomicity, windows/buckets, Retry-After, cache/DB fallback, exemptions, privacy, fail policy, concurrency, Multisite noisy-neighbor and scale semantics before freezing any new matrix.
 
 All gates remain intact. Do not restart from zero. Explicit owner consent is still required before executable work.
 
