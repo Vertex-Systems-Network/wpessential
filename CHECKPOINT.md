@@ -4,6 +4,7 @@ Checkpoint date: **2026-08-28**
 Branch: `planning/master-architecture`  
 Canonical project state: **`PLANNED_EXISTING_PROJECT`**  
 Execution mode: **`PLANNER_ONLY`**  
+Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**  
 Production development authorization: **NOT GRANTED**
 
 ## Hard consent gate
@@ -23,10 +24,11 @@ Source of truth: `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md
 - Implemented: **none**
 - Runtime verified: **none**
 - Production implementation WIP: **0**
+- Queued planning-only refinement packages: **0**
 
 ## Accepted architecture/evidence milestone
 
-Accepted evidence decisions/refinements now extend through **ADR-0175**.
+Accepted evidence decisions/refinements now extend through **ADR-0176**.
 
 ### Fixed evidence sequence
 
@@ -91,6 +93,7 @@ Accepted evidence decisions/refinements now extend through **ADR-0175**.
 | ADR-0173 | Membership Billing Provider Certification refinement | MB-F **0/176**; **4 BE3 / 0 MB-certified** |
 | ADR-0174 | Membership Protected File Delivery Certification refinement | PC-F **0/176**; **0 PC1+**; PD1…PD4 runtime certs 0 |
 | ADR-0175 | Backup Provider Certification refinement | BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0** |
+| ADR-0176 | Connection Adapter Provider Certification refinement | ICP-F **0/176**; **0 I4-certified / 0 I5-certified** |
 
 ## Critical preserved truth
 
@@ -128,8 +131,10 @@ Accepted evidence decisions/refinements now extend through **ADR-0175**.
 - Backup provider catalog/static SE evidence/connection/upload success never becomes normal Supported Backup status.
 - `remote_committed` ≠ `remote_verified`; provider ETag/checksum is not WPE manifest truth by default.
 - C3 is the minimum normal Supported Backup Destination gate; C4 requires V3 fresh-environment disaster recovery.
-- Delete request accepted ≠ confirmed remote erasure; unknown provider outcomes must reconcile.
-- JobService at-least-once execution never becomes exactly-once email, provider, Membership or Backup behavior.
+- Connection adapter installed/configured/Test Connection/authenticated never becomes provider capability certification.
+- I2 read ≠ I3 write; one I3 action ≠ every mutation; I4 event authenticity/reconciliation is separate; I5 is exact advertised-capability closure, not a provider-brand badge.
+- Valid webhook signature/receipt does not become owning business-domain truth or authorization.
+- JobService at-least-once execution never becomes exactly-once external mutation.
 - module disable ≠ delete ≠ Pro expiry ≠ uninstall ≠ privacy erase.
 - live privacy erase ≠ backup erase ≠ remote deletion.
 - cache state ≠ canonical business/Audit/Rate-Limit truth.
@@ -149,28 +154,28 @@ Primary/shared:
 
 Provider/other evidence truth:
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Connection provider ICP-F **0/176**; I4-certified profiles **0**; I5-certified profiles **0**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
 - Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime-certified profiles **0**; PD1…PD4 runtime-certified profiles **0**.
 - Backup provider BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
-- Connection adapters **0 I4/I5**.
 - Multisite runtime surfaces at MS1+ **0**; Site Lifecycle runtime certs **0**.
 
 ## Current VCS / verification truth
 
 - planning branch: `planning/master-architecture`.
-- Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after PR body synchronization.
+- Draft PR #1 remains the planning PR; re-verify open/draft/mergeability after final PR body synchronization.
 - direct GitHub branch reads on 2026-08-28 reported `main` and `planning/master-architecture` unprotected.
 - repository-wide rulesets remain **UNKNOWN** because earlier ruleset access returned 403/plan limitation.
-- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/protected-file/file-move/server-config/signed-URL/download/Backup-provider/upload/multipart/delete/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport runtime or benchmark execution occurred.
+- no package install/build/WordPress runtime/browser/CI/DB/DDL/migration/provider/commerce-object/HPOS/webhook/API/Job/Membership-transition/protected-file/file-move/server-config/signed-URL/download/Backup-provider/upload/multipart/delete/archive/restore/query/cache/rate-limit/REST/import/identity/Protector/XML-RPC/Reset/Settings/Dashboard/Menu/Widget/Status/Builder/Media/TUF/OAuth/remote-service/email-transport/Connection-provider runtime or benchmark execution occurred.
 
-## Next planning-only priority
+## Phase 0 planning closure
 
-Current work package: **`P0-M00-WP59` — Connection adapter I0–I5 provider certification reassessment — SPECIFICATION**.
+Queued planning-only refinement work is complete through `P0-M00-WP59` / ADR-0176.
 
-Reason: Backup provider executable evidence is now fixed at BPC-F **0/176**. Connection adapters remain **0 I4/I5** and need exact provider/API capability certification against WC-01…WC-156, Event Inbox, Vault, Safe HTTP/SSRF policy, OAuth/credential lifecycle, idempotency/replay, privacy, ERR, VER, Multisite, provider degradation and reconciliation truth. Static provider/API documentation must never become runtime I-level certification automatically.
+Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
 
-All gates remain intact. Do not restart from zero. Explicit owner consent is required before executable work.
+Remaining blockers are executable evidence and implementation work, all requiring explicit scoped owner consent. Until that consent is recorded, no production/runtime work starts and the project remains planning-complete but runtime-unverified.
 
 ## Resume order
 
