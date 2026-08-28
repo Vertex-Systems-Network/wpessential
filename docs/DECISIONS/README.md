@@ -185,6 +185,7 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 | ADR-0170 | Accepted OAuth Account-Link refinement | OA-01…OA-176; original 01…32 preserved |
 | ADR-0171 | Accepted Remote Service Privacy / Retention refinement | RS-01…RS-176; original 01…30 preserved |
 | ADR-0172 | Accepted Email Transport / Provider Certification refinement | ET-F001…ET-F176; ET0–ET5 preserved; 6 EE3 / 0 ET-certified |
+| ADR-0173 | Accepted Membership Billing Provider Certification refinement | MB-F001…MB-F176; MB0–MB5 preserved; 4 BE3 / 0 MB-certified |
 
 ## Product specification milestone
 
@@ -201,14 +202,14 @@ ADRs preserve long-lived product, architecture, security, data, compatibility an
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 certified profiles **0 each**.
-- Membership providers **4 BE3 / 0 MB-certified**; protected files **0 PC1+**.
+- Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 certified profiles **0 each**; protected files **0 PC1+**.
 - Backup providers **34 targets / 0 C-certified / 0 C3; V3 0**.
 - Connection adapters **0 I4/I5**.
 
-Canonical protocol paths for ADR-0117 onward are under `docs/QUALITY/`; refinement ADRs identify the exact canonical file. No fixed evidence matrix has been executed unless explicitly stated otherwise (currently none).
+Canonical protocol paths for ADR-0117 onward are under `docs/QUALITY/` or the architecture/provider contract named by the refinement ADR. No fixed evidence matrix has been executed unless explicitly stated otherwise (currently none).
 
 ## Current planning work
 
-**`P0-M00-WP56` — Membership Billing provider certification reassessment — SPECIFICATION.**
+**`P0-M00-WP57` — Protected-file provider/delivery certification reassessment — SPECIFICATION.**
 
-Current objective: audit the existing MB0–MB5 provider certification protocol and four BE3 static provider profiles against current Membership, Vault, JobService, Webhooks/Event Inbox, local/remote privacy, ERR, VER, RLT, Multisite and Site Lifecycle contracts. Preserve commercial-provider source facts ≠ WPE Enrollment ≠ Membership Entitlement ≠ Product Entitlement, and never promote BE3 paper evidence to MB runtime certification.
+Current objective: audit existing PC0–PC4 private-file delivery certification and PD1/PD2/PD3 delivery profiles against Membership Entitlement/Policy, Vault, Safe HTTP/storage/media boundaries, privacy, ERR, VER, RLT, Multisite, Site Lifecycle and Backup. Preserve storage possession ≠ authorization, signed URL issuance ≠ durable entitlement, and never promote paper/provider support to runtime protected-file certification.
