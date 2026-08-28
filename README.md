@@ -7,55 +7,65 @@ WPEssential is a modular, AI-native WordPress application platform for structure
 Current canonical project state: `PLANNED_EXISTING_PROJECT`  
 Current execution mode: `PLANNER_ONLY`
 
-See `docs/PROJECT-STATE-AND-ADOPTION.md`.
-
 ## Development consent gate
 
-Production development requires explicit project-owner consent before any runtime/plugin source implementation begins.
+Production development requires explicit project-owner consent. Read `DEVELOPMENT-CONSENT.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014.
 
-Read `/DEVELOPMENT-CONSENT.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014.
-
-Important:
-- `continue`, `proceed`, approval of planning, market research, an Accepted ADR, or Phase 0 readiness does **not** authorize coding;
-- executable research spikes also count as development and require explicit consent;
-- planning, research, threat models, specifications, ADRs, acceptance criteria and documentation-only commits may continue;
-- even after owner consent, unresolved Phase 0 blockers must not be bypassed;
-- implementation approval is scoped (`TASK`, `MODULE`, `MILESTONE`, `PHASE`, `PROJECT`) and recorded durably;
-- ordinary reversible work inside an approved documented milestone should proceed autonomously without repeatedly asking for approval.
+`continue`, research/planning approval, an Accepted ADR or Phase 0 readiness does **not** authorize coding, executable spikes, package installation, runtime tests, provider calls, AI/MCP execution or deployment.
 
 ## Product model
 
 - **WPEssential Free:** Custom Post Types Builder and Taxonomy Builder, permanently available.
 - **WPEssential Pro:** premium modules distributed as a separate add-on outside WordPress.org.
-- A Pro trial may unlock the Pro add-on for a limited period, but the WordPress.org Free plugin must not ship locked trialware.
-- Disabling a module never deletes its data unless a user explicitly requests deletion.
-- License expiry preserves configuration/data. Existing public runtime output and security/access enforcement should degrade safely rather than break or expose a production site.
+- Disabling a module never deletes its data unless explicitly requested.
+- License expiry preserves configuration/data and must not expose protected content or break public output.
 
 ## Current planning scope
 
 Scope history:
 - original product scope: **31 surfaces**;
-- ADR-0177 added **12 universal foundations**, producing 43;
-- ADR-0183…ADR-0188 added **5 market-driven modules**, producing the current **48 module/platform surfaces**.
+- ADR-0177: +12 universal foundations → **43**;
+- ADR-0183…ADR-0188: +5 market modules → **48**;
+- ADR-0189…ADR-0194: +2 new surfaces plus competitive expansion of Membership/Role/Media → current **50 module/platform surfaces**.
 
 Current product planning truth:
-- option/product behavior: **48/48 Exhaustive**;
-- logical Multisite mapping: **48/48**;
-- shared AI Prompt product mapping: **48/48**;
-- implementation authorization: **0/48**;
+- option/product behavior: **50/50 Exhaustive**;
+- logical Multisite mapping: **50/50**;
+- shared AI Prompt product mapping: **50/50**;
+- implementation authorization: **0/50**;
 - implemented/runtime verified: **0**.
 
-The 5 latest surfaces are URL Redirection & Routing, Search/Replace & Data Transformation, Dummy Data & Fixture Studio, Link Health & Crawl Intelligence, and Database Maintenance & Cleanup.
+Historical 31/31, 43/43 and 48/48 statements remain earlier-scope snapshots.
 
-S07 Product Discovery/Planning Orchestrator and S08 Market Intelligence Radar are shared services, not denominator rows.
+### Latest accepted expansions
 
-Historical 31/31 and 43/43 statements remain valid for earlier scope snapshots.
+Existing surfaces expanded rather than duplicated:
+- **15 Membership** — registration/onboarding, verification/approval, private-site profile, restriction defaults, migration/interoperability; MPR 0/176.
+- **28 Media Rules** — field-data/LCP priority, responsive delivery, Core-aware `sizes`/lazy behavior, AVIF/WebP, placeholders and CDN delivery; MDP 0/176.
+- **30 Role & Capability** — target-role hierarchy, Administrator Rescue, capability provenance, surface-policy integrations and network sync; RPR 0/176.
+
+New user-facing surfaces:
+- **49 Admin Theme, Branding & Experience Manager** — semantic/native admin theming, assignment, accessibility, environment identity and branding; ATM 0/176.
+- **50 Safe Script, Tag & Code Injection Manager** — governed HTML/CSS/JS/meta/link/JSON-LD/external tags with CSP/consent/environment controls; STM 0/176. **No PHP/eval runtime.**
+
+## Solution Blueprint / AI-native direction
+
+Complete CRM/ERP/LMS/booking/commerce/developer systems normally compose reusable WPE modules/foundations/adapters through Solution Blueprints rather than generating one private plugin/runtime per system.
+
+Current planning includes:
+- 160 curated reference systems across 20 domains;
+- 40 reusable application patterns;
+- 268,800 raw primary Blueprint combinations before validation/secondary dimensions;
+- one shared AI Prompt/Requirement Compiler across all **50** surfaces;
+- optional WordPress MCP/Abilities exposure under Capability + Policy;
+- S07 Product Discovery/Pre-Development Planning Orchestrator;
+- S08 Market Intelligence Radar with a documented daily GitHub job design; executable scheduled workflow remains uninstalled before development consent.
 
 ## Engineering source of truth
 
-Repository state, runtime/database/config evidence, executed tests, CI results, documentation/ADRs, checkpoints and VCS history are authoritative in the order defined by the project-state baseline. Chat history is not.
+Repository state, runtime/database/config evidence, executed tests, CI results, documentation/ADRs, checkpoints and VCS history are authoritative according to project-state governance. Chat history is not.
 
-Before implementation, read in this order:
+Before implementation, read:
 1. `DEVELOPMENT-CONSENT.md`
 2. `AGENTS.md`
 3. `CHECKPOINT.md`
@@ -67,143 +77,32 @@ Before implementation, read in this order:
 9. `docs/ARCHITECTURE.md`
 10. `docs/IMPLEMENTATION-READINESS-MATRIX.md`
 11. `docs/OPEN-DECISIONS-REGISTER.md`
-12. `docs/MODULES/README.md`
-13. `docs/MODULES/SPECIFICATION-STANDARD.md`
-14. `docs/MODULES/OPTION-INVENTORY.md`
-15. module/suite detailed specifications under `docs/MODULES/`
-16. `docs/MODULE-CATALOG.md`
-17. relevant architecture/security detail documents
-18. `docs/SOLUTIONS/`
-19. `docs/AI/`
-20. `docs/RESEARCH/`
-21. `docs/QUALITY-GATES.md`
-22. `docs/ROADMAP.md`
-23. `docs/DECISIONS/`
-
-## Existing-project adoption rule
-
-WPEssential is currently a planned existing project, not a greenfield blank slate.
-
-Do not restart it, rewrite accepted architecture merely for stylistic preference, discard unknown work or overwrite the existing plan.
-
-Use:
-
-`Inspect → Baseline → Audit Existing Plan → Compare Plan With Reality → Identify Gaps → Amend Plan → Preserve Existing Work → Continue Safely`
-
-Plan/repository drift and gap classifications are defined in `docs/PROJECT-STATE-AND-ADOPTION.md`.
+12. module/Solution/AI/Quality/ADR documentation relevant to the selected milestone.
 
 ## Module specification rule
 
-No production module implementation may begin while its product behavior is still only a feature list. Every module first documents every known screen, option, field, toggle, selector, action, default, validation rule, permission boundary, lifecycle state, failure state, dependency, asset boundary, import/export behavior, important negative/MUST-NOT behavior and acceptance test.
+No production module implementation may begin while its product behavior is only a feature list. Every module first documents screens, options, fields, defaults, validation, permissions, lifecycle/failure states, dependencies, assets, import/export, negative/MUST-NOT behavior, Multisite, AI Prompt behavior and acceptance/evidence requirements.
 
-If implementation later discovers an unplanned option or behavior, documentation is updated before or in the same coherent change. Development is not allowed to silently invent product semantics.
-
-Current planning coverage: **48/48 module/platform surfaces have reached the Phase 0 Exhaustive product-behavior bar.** This means planned/specified, not implemented, verified, runtime-certified or authorized.
-
-## Solution Blueprint / AI-native planning direction
-
-Complete CRM/ERP/LMS/booking/commerce/developer systems normally compose reusable WPE modules/foundations/adapters through the Solution Blueprint layer rather than generating one separate plugin codebase per system.
-
-Current planning includes:
-- 160 curated reference systems across 20 domains;
-- 40 reusable application patterns;
-- 268,800 raw primary Blueprint combinations before validation/secondary dimensions;
-- one shared AI Prompt/Requirement Compiler across all 48 surfaces;
-- optional WordPress MCP/Abilities exposure under the same Capability + Policy rules;
-- S07 autonomous pre-development planning so an owner request such as `ABC system add karna hai` can be researched/audited/planned before code;
-- S08 Market Intelligence Radar with a documented daily GitHub job design. The executable scheduled workflow is not installed before development consent.
+Current planning coverage: **50/50 module/platform surfaces have reached the Phase 0 Exhaustive product-behavior bar.** This means planned/specified, not implemented, verified, runtime-certified or authorized.
 
 ## Default engineering lifecycle
 
-Inspect → Understand → Research → Assess → Plan → **Approval/Consent Gate** → Implement → FAST Gate → Review/Attack/Harden → Integrate → FULL Gate when required → Document → Commit → Checkpoint → Report.
+`Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate → Implement → FAST Gate → Review/Attack/Harden → Integrate → FULL Gate → Document → Commit → Checkpoint → Report`.
 
-The Consent Gate is mandatory and external to technical readiness: a technically ready project still waits for explicit owner authorization.
+The consent gate is mandatory and external to technical readiness.
 
-No feature is complete because its UI works. Completion requires integration, authorization, validation, failure handling, data integrity, tests, observability, documentation, compatibility, rollback/recovery and meaningful VCS history.
+## Compatibility / UI / Build direction
 
-## Execution safety
+Planning target is WordPress 7.1; minimum WordPress candidate remains 6.9 and minimum PHP candidate 8.3 pending executable compatibility evidence.
 
-Approved implementation is governed by `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`.
+React + TypeScript remain product requirements through WPE-owned wrappers over compatible WordPress public primitives and WordPress-provided React. Build evaluation remains `@wordpress/build` → `@wordpress/scripts` → Vite only for proven gaps; Laravel Mix is not carried forward.
 
-Important rules include:
-- small-batch change budgets;
-- no unrelated cleanup;
-- critical-path prioritization;
-- `PARALLEL_SAFE`, `COORDINATED_PARALLEL`, `SERIALIZE`, `BLOCKED` classification;
-- shared-surface ownership and WIP limits;
-- baseline-failure and flaky-test truthfulness;
-- FAST Gate during bounded implementation and FULL Gate at milestone/release boundaries;
-- truthful review labels;
-- stable work IDs.
+No package/build spike is authorized.
 
-## Release/recovery safety
+## Current planning work
 
-Future release work distinguishes:
-`BUILT → DEPLOYED → RELEASED → PRODUCTION_VERIFIED`.
+Owner-requested WP83…WP89 access/admin/media/code market audit is complete. Current planning resumes:
 
-Recovery classes:
-- `SIMPLE_ROLLBACK`
-- `ROLLBACK_WITH_COMPATIBILITY`
-- `FORWARD_FIX_PREFERRED`
-- `IRREVERSIBLE`
+**P0-M00-WP65 — F03 Search & Indexing detailed executable-evidence specification.**
 
-Production incidents switch to containment/recovery priority and obey stop-the-line rules.
-
-## Compatibility direction
-
-Planning target is WordPress 7.1. Current static recommendation is:
-- minimum WordPress candidate: **6.9** because native Abilities API begins there;
-- minimum PHP candidate: **8.3**.
-
-These remain Proposed until executable compatibility evidence is explicitly authorized and completed.
-
-## UI direction
-
-React + TypeScript remain product requirements. WPE uses WPE-owned component wrappers over compatible public WordPress primitives and WordPress-provided React rather than hard-coupling to an incompatible third-party React runtime.
-
-Current Proposed direction:
-- WPE component wrappers;
-- WordPress public design-system/components/DataViews capabilities where compatible;
-- premium visual language without incompatible runtime coupling;
-- Lucide behind a WPE/WordPress icon abstraction.
-
-See ADR-0005 and compatibility research.
-
-## Build direction
-
-Current Proposed evaluation order:
-1. `@wordpress/build` stable capabilities;
-2. `@wordpress/scripts` comparison/fallback;
-3. Vite only if WordPress-native tooling fails proven requirements;
-4. no Laravel Mix carry-forward.
-
-No build spike/package installation is authorized yet. See ADR-0012.
-
-## Architecture principle
-
-WPEssential is **not** a collection of isolated mini-plugins. Modules share typed registries/services for entities, definitions, fields, queries, relations, rendering, conditions, policies, entitlements, abilities, workflows, jobs, credentials, auditing, integrations, import/export, assets, diagnostics, versioning, cache, rate limits, privacy, module lifecycle and AI Prompt orchestration.
-
-Market research must pass a reuse test before adding a new module. Popularity is a demand signal, not architecture authority.
-
-## Membership principle
-
-Membership is deliberately separated from WordPress roles and billing subscriptions:
-- User = identity;
-- Role/Capability = WordPress authorization primitive;
-- Plan = access/product definition;
-- Enrollment = lifecycle instance;
-- Billing Subscription/Purchase = external source/reference;
-- Entitlement = normalized grant;
-- Access Policy = resource/action decision.
-
-Raw billing-provider statuses/events never directly authorize a request.
-
-## Planning branch
-
-Detailed research and architecture are developed on `planning/master-architecture` and reviewed through draft PR #1.
-
-Production feature development begins only when:
-1. relevant technical planning gates are Accepted;
-2. the project owner gives explicit scoped development consent under ADR-0014;
-3. approval is recorded in `docs/APPROVAL-LEDGER.md`; and
-4. the implementation baseline/adoption gate confirms a safe branch/revision/workspace and first bounded milestone.
+Production development authorization remains **NOT GRANTED / 0/50**.
