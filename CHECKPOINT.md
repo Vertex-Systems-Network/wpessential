@@ -32,7 +32,7 @@ Source of truth:
 
 Universal Master Prompt governance hardening work package `P0-M00-WP01` is **DONE** documentation-only.
 
-Durable governance now includes:
+Durable governance includes:
 - `docs/PROJECT-STATE-AND-ADOPTION.md`
 - `docs/APPROVAL-LEDGER.md`
 - `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
@@ -44,7 +44,7 @@ No implementation approval was introduced.
 
 ## Accepted architecture/evidence milestone
 
-Accepted decisions now extend through **ADR-0119**.
+Accepted decisions now extend through **ADR-0120**.
 
 Latest bounded evidence protocols:
 - ADR-0101 — OAuth Account-Link OA-01…OA-32.
@@ -64,39 +64,40 @@ Latest bounded evidence protocols:
 - ADR-0115 — REST API Builder REST-01…REST-52.
 - ADR-0116 — Import / Export IM-01…IM-56.
 - ADR-0117 — Forms Runtime & Submission FM-01…FM-92.
-- **ADR-0118 — Workflow Runtime WF-01…WF-116.**
-- **ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.**
+- ADR-0118 — Workflow Runtime WF-01…WF-116.
+- ADR-0119 — JobService / Cron / Action Scheduler JS-01…JS-106.
+- **ADR-0120 — Notification System NT-01…NT-142.**
 
-## Workflow/Cron planning milestone — COMPLETE
+## Notification planning milestone — COMPLETE
 
-Work package: **`P0-M00-WP03`**  
+Work package: **`P0-M00-WP04`**  
 Lifecycle: **DONE (planning/documentation only)**
 
-Refined/created:
-- `docs/QUALITY/JOB-SERVICE-ACTION-SCHEDULER-EVIDENCE-PROTOCOL.md`
-- `docs/QUALITY/WORKFLOW-RUNTIME-EXECUTABLE-EVIDENCE-PROTOCOL.md`
-- `docs/DECISIONS/ADR-0118-workflow-runtime-evidence-protocol.md`
-- `docs/DECISIONS/ADR-0119-jobservice-cron-evidence-protocol.md`
+Created:
+- `docs/QUALITY/NOTIFICATION-SYSTEM-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `docs/DECISIONS/ADR-0120-notification-system-evidence-protocol.md`
 
-Workflow evidence now covers revision pinning, triggers/dedupe, Run/Step CAS transitions, conditions/branches, fan-out/joins, waits/timers, approvals, Job crash/retry integration, typed side effects, external unknown outcomes, cancellation/intervention/compensation, security/privacy, restore/clone/lifecycle, Multisite and WF1/WF2 topology/scale evidence.
+Notification evidence now covers Rule/revision/trigger safety, Occurrence durability/dedupe, recipient resolution/eligibility, preference classification/frequency caps, quiet-hours/timezones/DST, digests, in-app read/unread/dismiss/cache state, safe rendering/action authorization/localization, channel fallback/delivery truth, provider unknown outcomes, large fan-out/JobService backpressure, privacy/redaction/export/erase, restore/clone/site lifecycle, Multisite isolation and NE1/NE2 physical/scale evidence.
 
-Job/Cron evidence now covers Action Scheduler coexistence/ownership, backend abstraction, timezone/DST/calendar recurrence, missed/overlap policies, persistence/crash ambiguity, at-least-once/idempotency, claim/lease races, fairness/starvation, resource keys, backpressure, runner modes, cancellation, payload/security/secret handling, retention/observability, Multisite/lifecycle and J1/J2/J3 topology/scale evidence.
+Current Notification state:
+- NT fixtures documented: **142**
+- NT fixtures executed: **0/142**
+- Notification runtime certifications: **0**
+- final Notification physical topology: **OPEN / evidence-gated**
+- NE1/PT-D: first future benchmark baseline only
+- NE2/PT-E: mandatory comparison
+- Email/channel provider certification: **not upgraded by Notification protocol**
 
-Current Workflow/Job state:
-- WF fixtures documented: **116**
-- WF fixtures executed: **0/116**
-- Workflow runtime certifications: **0**
-- final Workflow topology: **OPEN / evidence-gated**
-- JS fixtures documented: **106**
-- JS fixtures executed: **0/106**
-- JobService backend certifications: **0**
-- Cron/DST runtime certifications: **0**
-- Action Scheduler: **preferred candidate adapter only / NOT certified**
-- J1/J2/J3 final physical selection: **OPEN / evidence-gated**
+## Workflow/Cron state
+
+- WF fixtures documented: **116**; executed **0/116**; runtime certifications **0**; topology open.
+- JS fixtures documented: **106**; executed **0/106**; backend certifications **0**; Cron/DST certifications **0**.
+- Action Scheduler remains **preferred candidate adapter only / NOT certified**.
 
 ## Current evidence counters
 
 - P-001…P-013 executable gates remain unexecuted.
+- NT: **0/142**.
 - WF: **0/116**.
 - JS: **0/106**.
 - FM: **0/92**.
@@ -131,19 +132,17 @@ Verified planning/documentation only:
 - branch `planning/master-architecture`;
 - **31/31 Exhaustive / 0/31 Authorized**;
 - governance hardening complete;
-- Workflow P-011 protocol exists with WF-01…WF-116;
-- Job/Cron P-003 protocol exists with JS-01…JS-106;
-- ADR-0118 and ADR-0119 accepted as evidence contracts;
+- Forms, Workflow, Job/Cron and Notification evidence protocols exist with fixed fixture IDs;
+- ADR-0120 accepted as Notification evidence contract;
 - no PHP/React/runtime/build/test/provider/deployment work was executed.
 
-Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Workflow Run/Step/Wait/Approval mutations, Job/Attempt execution, Action Scheduler runtime setup, cron triggers, provider calls, PHPUnit/Playwright, benchmarks or deployment.
+Not performed: application source implementation, dependency installation, DB tables/migrations, WordPress runtime hooks, Notification Rule/Occurrence/Recipient/Delivery mutations, email/webhook/provider sends, Jobs, PHPUnit/Playwright, benchmarks or deployment.
 
 ## Next planning-only priorities
 
-1. **Notification fan-out/read/dedupe evidence protocol.**
-2. Message & Chat transport/search/private-assets evidence protocol.
-3. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
-4. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS gates intact.
+1. **Message & Chat transport/search/private-assets evidence protocol.**
+2. Webhooks & Connections signature/replay/Event Inbox/provider evidence protocol.
+3. Keep P-001…P-013 + OA/TU/DW/AM/PR/RM/WM/FD/BW/SM/XR/ST/UP/RA/REST/IM/FM/WF/JS/NT gates intact.
 
 Do not restart planning from zero. Before any executable work, explicit scoped owner consent is still required.
 
