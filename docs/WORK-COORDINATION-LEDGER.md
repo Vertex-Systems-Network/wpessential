@@ -65,12 +65,13 @@ Planning documentation is allowed. Executable/source/runtime work remains blocke
 | `P0-M00-WP46` | Frontend Dashboard canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0163; FD 0/176. |
 | `P0-M00-WP47` | Admin Menu canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0164; AM 0/176. |
 | `P0-M00-WP48` | Dashboard Widgets canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0165; DW 0/176. |
-| `P0-M00-WP49` | Status Manager canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0166; SM 0/176; WP/native and generic engines separate. |
+| `P0-M00-WP49` | Status Manager canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0166; SM 0/176. |
 | `P0-M00-WP50` | Builder Widgets adapter canonical refinement | `DONE` | `INTEGRATION` | `SERIALIZE` | ADR-0167; BW 0/176; BC0…BC4 certs 0. |
-| `P0-M00-WP51` | Watermarker / Media canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0168; WM 0/176; original-source invariant preserved. |
-| `P0-M00-WP52` | Pro Updater TUF canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0169; TU 0/176; verifier/key/package certs 0. |
-| `P0-M00-WP53` | OAuth Account-Link canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0170; OA 0/176; PKCE/Vault/Account-Link certs 0. |
-| `P0-M00-WP54` | Remote Service Privacy / Retention canonical reassessment | `SPECIFICATION` | `SHARED_CONTRACT` | `SERIALIZE` | Current planning work; RS 0/30 predates PDL/PLT/OA/Product License/provider/lifecycle refinements. |
+| `P0-M00-WP51` | Watermarker / Media canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0168; WM 0/176. |
+| `P0-M00-WP52` | Pro Updater TUF canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0169; TU 0/176. |
+| `P0-M00-WP53` | OAuth Account-Link canonical refinement | `DONE` | `BLOCKING_FOUNDATION` | `SERIALIZE` | ADR-0170; OA 0/176. |
+| `P0-M00-WP54` | Remote Service Privacy / Retention canonical refinement | `DONE` | `SHARED_CONTRACT` | `SERIALIZE` | ADR-0171; RS 0/176. |
+| `P0-M00-WP55` | Email Transport / Provider Certification reassessment | `SPECIFICATION` | `INTEGRATION` | `SERIALIZE` | Current planning work; EBR renderer remains separate; 6 EE3 paper profiles / 0 ET-certified. |
 
 No production implementation work package is active.
 
@@ -78,17 +79,18 @@ No production implementation work package is active.
 
 | Order | Planning item | State | Dependency / note |
 |---:|---|---|---|
-| 1 | Remote Service Privacy / Retention canonical evidence reassessment | `SPECIFICATION` current | Reconcile purpose/data minimization, consent, logs/support, disconnect, remote deletion, backups, clone/staging, Account/OAuth/Product License/provider boundaries and Multisite without duplicating local PDL. |
-| 2 | Remaining provider/service certification protocols | `QUEUED` | Reassess by security/critical-path value after WP54; prefer in-place refinement over duplicates. |
+| 1 | Email Transport / Provider Certification evidence reassessment | `SPECIFICATION` current | Inspect ET0–ET5/provider profiles; preserve render/submission/delivery/complaint/suppression/engagement truth boundaries and Vault/Job/Notification/provider version scope. |
+| 2 | Remaining provider/service certification protocols | `QUEUED` | Membership Billing/protected files, Backup providers, Connection I0–I5 and other evidence by critical-path value. |
 
 ## 4. Shared foundation truth
 
 - DEF **0/144**; QRY **0/168**; REL **0/160**; FST **0/176**; CTB **0/184**; DSR **0/176**.
 - KPA/VER/MLC/PDL/ERR/ASR/CLG/DVR/RLT/CAC are all **0/176**.
-- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA are all **0/176**.
+- REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - WordPress remains native role/capability and identity/auth authority where defined.
 - Component Blueprint remains canonical over builder-private representations.
 - TUF authenticity and OAuth/Account/Product entitlement are independent trust domains.
+- Remote privacy/deletion/backup states remain distinct and evidence-scoped.
 - Watermarker original source bytes are immutable under standard processing.
 - current-blog context is never durable ownership or authorization.
 - destructive schema/data/authority work requires verified recovery and truthful partial-failure semantics.
@@ -103,6 +105,6 @@ No active shared-surface implementation reservation exists.
 
 ## 6. Current next safe action
 
-Continue `P0-M00-WP54`: audit `REMOTE-SERVICE-PRIVACY-RETENTION-EVIDENCE-PROTOCOL.md` against local PDL, Platform surfaces, OAuth, Product License, Support/Docs, provider integrations, lifecycle and Multisite. Preserve the separation of local unlink/disconnect, local privacy erase, remote account/service deletion, provider deletion and immutable/retained backup/audit obligations.
+Continue `P0-M00-WP55`: audit `docs/QUALITY/EMAIL-TRANSPORT-CERTIFICATION-EVIDENCE-PROTOCOL.md` and provider/version profiles against EBR, Notification, JobService, Vault, PDL/RS, ERR, VER, RLT and Multisite. Preserve renderer output ≠ transport attempt ≠ provider accepted ≠ delivered ≠ complaint/suppression ≠ engagement; static provider evidence must never become ET runtime certification.
 
 Production implementation remains blocked until explicit scoped owner consent is granted and recorded.
