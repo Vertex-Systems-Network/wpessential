@@ -3,7 +3,7 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-28
 
-This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0175**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
+This register tracks unresolved runtime/physical/provider/evidence decisions. Accepted evidence decisions/refinements are preserved through **ADR-0176**. Architecture/protocol acceptance never implies runtime certification or owner development authorization.
 
 All executable work remains blocked by ADR-0014 until explicit scoped owner consent.
 
@@ -37,7 +37,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 | D-024 | ADR-0025/0077/0117 | Forms runtime — FM-01…FM-92 |
 | D-025 | ADR-0026/0079/0120 | Notification fan-out/dedupe/preferences/channel truth — NT-01…NT-142 |
 | D-026 | ADR-0027/0077/0121 | Chat authorization/assets/search/realtime/privacy — CH-01…CH-142 |
-| D-027 | ADR-0040/0055/0080/0122 | Connections/Safe HTTP/Event Inbox/provider I0–I5 — WC-01…WC-156 + I0–I5 provider certification |
+| D-027 | ADR-0040/0055/0080/0122/0176 | Connections/Safe HTTP/Event Inbox/provider I0–I5 — WC-01…WC-156 + ICP-F001…ICP-F176 |
 | D-028 | ADR-0022/0087/0134 | Field Storage FS1–FS6 type/storage/migration/uniqueness/privacy — FST-01…FST-176 |
 | D-029 | ADR-0023/0088/0135 | Custom Tables CT1–CT3 + CM1–CM4 DDL/migration/recovery — CTB-01…CTB-184 |
 | D-030 | ADR-0098/0136 | Admin Columns batching/sort/filter/edit/export/Policy/N+1 — AC-01…AC-176 |
@@ -81,6 +81,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - ADR-0173 — Membership Billing Provider Certification **MB-F 0/176; 4 BE3 / 0 MB-certified**.
 - ADR-0174 — Membership Protected File Delivery Certification **PC-F 0/176; 0 PC1+; PD1…PD4 runtime certifications 0**.
 - ADR-0175 — Backup Provider Certification **BPC-F 0/176; 34 targets / 0 C-certified / 0 C3 / 0 C4; V3 0**.
+- ADR-0176 — Connection Adapter Provider Certification **ICP-F 0/176; 0 I4-certified / 0 I5-certified**.
 
 ## C. Accepted paper/runtime-baseline summary
 
@@ -103,6 +104,7 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - webhook/hook freshness and Job retries never become provider/Membership authority shortcuts.
 - protected-file storage possession ≠ authorization; signed URL issuance ≠ durable entitlement; direct-origin isolation is mandatory before Protected/Supported claims.
 - Backup upload/commit/object presence ≠ `remote_verified`; C3 remote restore is minimum normal Supported Backup gate; C4 requires V3 fresh-environment recovery.
+- Connection authentication/Test Connection ≠ capability certification; I2 read ≠ I3 write; webhook receipt/signature ≠ owning-domain truth; exact provider/API/capability profile governs I0–I5.
 
 ## D. Fixed evidence execution truth
 
@@ -112,17 +114,19 @@ All executable work remains blocked by ADR-0014 until explicit scoped owner cons
 - REST/IM/RA/UP/PR/XR/RM/ST/FD/AM/DW/SM/BW/WM/TU/OA/RS are all **0/176**.
 - MSI **0/160; 0 MS1+**; LC **0/96; 0 SL runtime certs**.
 - FM **0/92**; NT **0/142**; CH **0/142**; WC **0/156**.
+- Connection provider certification ICP-F **0/176**; **0 I4-certified / 0 I5-certified**.
 - Email transport ET-F **0/176**; provider profiles **6 EE3 / 0 ET-certified**; ET0…ET5 runtime certifications **0 each**.
 - Membership billing MB-F **0/176**; provider profiles **4 BE3 / 0 MB-certified**; MB0…MB5 runtime certifications **0 each**.
 - Membership protected files PC-F **0/176**; PC1+ runtime certifications **0**; PD1…PD4 runtime certifications **0**.
 - Backup provider certification BPC-F **0/176**; **34 targets / 0 C-certified / 0 C3 Supported / 0 C4; V3 0**.
-- Connection adapters **0 I4/I5**.
 
-## E. Current highest-priority planning blocker
+## E. Phase 0 planning closure
 
-`P0-M00-WP59` — **Connection adapter I0–I5 provider certification reassessment**.
+The queued planning-only refinement pass is now complete through ADR-0176. Remaining blockers are **executable/runtime evidence**, not missing queued planning packages.
 
-Reason: Backup provider evidence is now fixed by ADR-0175. Connections still have provider/API certification truth at **0 I4/I5** and require reconciliation of I0–I5 capability levels with WC-01…WC-156, Event Inbox, Vault, Safe HTTP/SSRF policy, OAuth/credential lifecycle, provider API/version semantics, idempotency/replay, privacy, ERR, VER, Multisite and provider degradation/reconciliation behavior.
+Current lifecycle gate: **`AWAITING_DEVELOPMENT_APPROVAL`**.
+
+No execution is authorized. The next transition requires explicit scoped owner consent under ADR-0014; without that consent, project remains planning-complete and runtime-unverified.
 
 ## F. Decision-processing rule
 
