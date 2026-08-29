@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Registrations;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 enum RegistrationKind: string
 {
     case PostType = 'post_type';

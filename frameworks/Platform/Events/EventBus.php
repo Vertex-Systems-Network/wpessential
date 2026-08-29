@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Events;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final class EventBus
 {
     /** @var array<string, list<callable(DomainEvent): void>> */

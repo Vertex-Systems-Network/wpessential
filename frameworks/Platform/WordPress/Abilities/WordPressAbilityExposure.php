@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Abilities;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use InvalidArgumentException;
 
 final readonly class WordPressAbilityExposure

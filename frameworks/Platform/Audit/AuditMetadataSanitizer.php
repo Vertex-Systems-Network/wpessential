@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Audit;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final class AuditMetadataSanitizer
 {
     private const REDACTED = '[REDACTED]';

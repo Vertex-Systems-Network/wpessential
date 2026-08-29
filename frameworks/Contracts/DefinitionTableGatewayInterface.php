@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Contracts;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 interface DefinitionTableGatewayInterface
 {
     /** @return array<string, scalar|null>|null */

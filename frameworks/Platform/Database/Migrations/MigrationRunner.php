@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Database\Migrations;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use RuntimeException;
 use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Contracts\MigrationStateStoreInterface;

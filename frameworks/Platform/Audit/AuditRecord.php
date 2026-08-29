@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Audit;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use DateTimeImmutable;
 use InvalidArgumentException;
 use WPEssential\Platform\Auth\ExecutionContext;

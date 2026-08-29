@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Contracts;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use WPEssential\Platform\Secrets\SecretReference;
 use WPEssential\Platform\Secrets\SensitiveValue;
 

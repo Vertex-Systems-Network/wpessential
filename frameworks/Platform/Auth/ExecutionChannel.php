@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Auth;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 enum ExecutionChannel: string
 {
     case Internal = 'internal';

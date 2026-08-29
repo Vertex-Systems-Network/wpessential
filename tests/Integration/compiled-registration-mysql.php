@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $dsn = getenv('WPE_TEST_MYSQL_DSN') ?: '';
 if ($dsn === '') {
     fwrite(STDOUT, "WPEssential compiled registration MySQL integration SKIP (no DSN)\n");

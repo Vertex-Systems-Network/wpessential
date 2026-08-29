@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Observability;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final class BoundedInMemoryTraceRecorder implements TraceRecorderInterface
 {
     /** @var list<array<string,mixed>> */

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Integrations;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use RuntimeException;
 
 final class IntegrationRegistry

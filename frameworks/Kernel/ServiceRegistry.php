@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Kernel;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use InvalidArgumentException;
 use RuntimeException;
 use WPEssential\Contracts\ServiceRegistryInterface;

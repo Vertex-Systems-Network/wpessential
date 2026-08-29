@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Secrets;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use InvalidArgumentException;
 
 final class SecretMetadataValidator

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Database;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 interface DatabaseAdapterInterface
 {
     public function networkTablePrefix(): string;

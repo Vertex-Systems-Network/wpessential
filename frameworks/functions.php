@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use WPEssential\Bootstrap\Plugin;
 use WPEssential\Platform\WordPress\Hooks\HookNames;
 

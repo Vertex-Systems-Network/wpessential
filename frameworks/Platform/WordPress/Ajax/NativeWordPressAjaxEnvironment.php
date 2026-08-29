@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use RuntimeException;
 
 final class NativeWordPressAjaxEnvironment implements WordPressAjaxEnvironmentInterface

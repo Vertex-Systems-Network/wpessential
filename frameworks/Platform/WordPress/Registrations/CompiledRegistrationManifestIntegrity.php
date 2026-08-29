@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Registrations;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final class CompiledRegistrationManifestIntegrity
 {
     /** @param array<string,array<string,array<string,mixed>>> $entries */

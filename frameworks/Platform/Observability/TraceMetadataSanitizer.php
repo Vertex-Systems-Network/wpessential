@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Observability;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final class TraceMetadataSanitizer
 {
     private const SENSITIVE = '/(?:password|passwd|secret|token|authorization|cookie|api[_-]?key|private[_-]?key|card|nonce|signed[_-]?url)/i';

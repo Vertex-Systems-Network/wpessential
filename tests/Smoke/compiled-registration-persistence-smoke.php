@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 spl_autoload_register(static function (string $class) use ($root): void {
     $prefix = 'WPEssential\\';

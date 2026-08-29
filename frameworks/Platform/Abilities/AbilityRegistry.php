@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Abilities;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use RuntimeException;
 use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Platform\Auth\AuthorizationRequest;

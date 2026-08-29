@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Jobs\Adapters\ActionScheduler;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final readonly class ActionSchedulerCapabilityProbe
 {
     private const REQUIRED_FUNCTIONS = [

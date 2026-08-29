@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 final readonly class AjaxResponse
 {
     /** @param array<string,mixed> $meta */

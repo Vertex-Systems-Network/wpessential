@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Bootstrap;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use WPEssential\Kernel\Kernel;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;

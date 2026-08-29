@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Definitions;
 
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use JsonException;
 use RuntimeException;
 
