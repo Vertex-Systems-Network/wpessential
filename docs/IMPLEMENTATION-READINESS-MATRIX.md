@@ -1,35 +1,50 @@
 # WPEssential — Implementation Readiness Matrix
 
-Status: **Phase 0 planning complete / AWAITING DEVELOPMENT APPROVAL / NO DEVELOPMENT CONSENT**  
+Status: **Planning complete / AWAITING DEVELOPMENT APPROVAL / NO DEVELOPMENT CONSENT**  
 Last synchronized: **2026-08-29**
 
-Scope **56**, Exhaustive **56/56**, Multisite **56/56**, AI Prompt **56/56**, authorized **0/56**, runtime verified **none**, lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**, accepted through **ADR-0212**.
+Scope **56**, Exhaustive **56/56**, Multisite **56/56**, AI Prompt **56/56**, authorized **0/56**, runtime verified **none**, lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**, accepted through **ADR-0213**.
 
 ## Planning closure
 
-WP112 / ADR-0207 identified 5,808 exact definitions / 33 namespaces. WP113–WP116 closed all of them:
-- ADR-0208: 1,232;
-- ADR-0209: 880;
-- ADR-0210: 1,936;
-- ADR-0211: 1,760.
+WP112 / ADR-0207 identified 5,808 exact definitions / 33 namespaces. WP113–WP116 closed all of them. Known remaining exact `PLANNING GAP`: **0 / 0**.
 
-Known remaining `PLANNING GAP`: **0 / 0 namespaces**.
+WP117 / ADR-0212 final Phase 0 closure audit: **PASS**.
 
-WP117 / ADR-0212 final closure audit: **PASS**. Phase 0 is `NO GAP / READY AS PLAN` and may wait for scoped owner development approval.
+WP118 / ADR-0213 post-P0 structural audit then tested module ownership, option ownership, UI mapping, system composition, dependency relations, Ability/Event coverage, data ownership and bypass risk. Consolidation issues found during that audit were remediated and the final result is **PASS after remediation**.
+
+## Current structural planning evidence
+
+- canonical current 56-surface owner registry;
+- 56/56 option ownership/routing index;
+- 56/56 exactly-once Admin IA mapping;
+- 40/40 reusable system patterns mapped to canonical surfaces;
+- current 160/160 reference systems contained through those patterns;
+- dependency/cycle matrix for all 56;
+- Capability/Ability/Event registry completed through Surface56;
+- data ownership/lifecycle completed through Surface56;
+- cross-module no-bypass laws and parity-overlay routing.
 
 ## Still pending
 
 ### RUNTIME EVIDENCE PENDING
-All exact protocols are documentation-only and unexecuted. Compatibility, WordPress integration, security, permissions, storage, concurrency, recovery, Multisite, privacy, performance, E2E, build/CI and other runtime gates must execute later within authorized scope.
+Exact protocols and structural assumptions remain unexecuted. Compatibility, WordPress integration, security, permissions, storage, concurrency, recovery, Multisite, privacy, performance, E2E and build/CI gates execute later only within authorized scope.
 
 ### PROVIDER CERTIFICATION PENDING
-Applicable email, billing, protected-file, backup, connection, builder, geocoder/routing, Woo external payment/tax/shipping/inventory, font/conversion, migration endpoints, SIEM/sinks and other providers remain uncertified unless later evidence explicitly says otherwise.
+Applicable external providers/adapters remain uncertified unless later evidence explicitly proves otherwise.
 
 ### OWNER CONSENT PENDING
-`GOV-OWNER-CONSENT-000` remains PENDING. No implementation action is authorized. `continue`, `resume`, P0 completion and ADR acceptance are not consent.
+`GOV-OWNER-CONSENT-000` remains PENDING. No implementation action is authorized. `continue`, `resume`, audit PASS, P0 closure and ADR acceptance are not consent.
 
-## Implementation entry after future consent
+## Implementation-entry gate after future consent
 
-Before first production code: record ACTIVE scoped approval; refresh exact branch/revision/capabilities; establish Implementation Baseline / Adoption Gate; verify runtime/tool/dependency/lock/build/test baseline; classify baseline failures/UNKNOWNs; refresh relevant external research; select bounded first milestone/change budget; execute only approved spikes/evidence; then enter `IMPLEMENTING` with FAST/FULL gates and recovery governance.
+Before ordinary feature code:
+1. record ACTIVE scoped approval;
+2. refresh branch/revision/runtime/tool/dependency/build/test baseline;
+3. classify baseline failures/UNKNOWNs;
+4. establish machine-readable Surface/Option/Route/Dependency/Ability/Storage ownership manifests;
+5. add route uniqueness, dependency cycle/private-import, cross-module write, Blueprint-owner, parity-overlay, Multisite-scope, invalidation, provider-authority, destructive-operation and AI/MCP allowlist validations;
+6. bind a bounded first implementation milestone/change budget;
+7. execute only approved technical evidence and code.
 
 Production development authorization remains **NOT GRANTED / 0/56**.
