@@ -87,7 +87,7 @@ try {
     $registry->execute('wpessential/fields/update', [], new ExecutionContext(new Principal(7), 1, ExecutionChannel::Ui));
     coreExpect(false, 'registration must not imply UI exposure');
 } catch (RuntimeException $exception) {
-    coreExpect(str_contains($exception->getMessage(), 'not exposed'), 'channel denial should be explicit');
+    coreExpect(str_contains($exception->getMessage(), 'channel_not_exposed'), 'channel denial should expose canonical denial reason');
 }
 
 try {
