@@ -5,7 +5,7 @@ on:
     paths:
       - 'config/architecture/**'
       - 'tools/architecture/**'
-      - 'src/**'
+      - 'frameworks/**'
       - 'tests/Smoke/**'
       - 'wpessential.php'
       - 'composer.json'
@@ -16,7 +16,7 @@ on:
     paths:
       - 'config/architecture/**'
       - 'tools/architecture/**'
-      - 'src/**'
+      - 'frameworks/**'
       - 'tests/Smoke/**'
       - 'wpessential.php'
       - 'composer.json'
@@ -46,8 +46,11 @@ jobs:
       - name: Validate architecture manifests
         run: php tools/architecture/validate.php
 
+      - name: Validate engineering contracts
+        run: php tools/architecture/validate-engineering-contracts.php
+
       - name: PHP syntax
-        run: find src tests/Smoke -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
+        run: find frameworks tests/Smoke -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
 
       - name: Kernel smoke
         run: php tests/Smoke/kernel-smoke.php
@@ -69,3 +72,6 @@ jobs:
 
       - name: WordPress abilities bridge smoke
         run: php tests/Smoke/wordpress-abilities-bridge-smoke.php
+
+      - name: Engineering contracts smoke
+        run: php tests/Smoke/engineering-contracts-smoke.php

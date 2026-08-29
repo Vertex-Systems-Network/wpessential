@@ -16,6 +16,7 @@
   },
   "scripts": {
     "architecture:validate": "php tools/architecture/validate.php",
+    "engineering:validate": "php tools/architecture/validate-engineering-contracts.php",
     "test:smoke:kernel": "php tests/Smoke/kernel-smoke.php",
     "test:smoke:platform-core": "php tests/Smoke/platform-core-smoke.php",
     "test:smoke:audit-jobs": "php tests/Smoke/audit-jobs-smoke.php",
@@ -23,6 +24,7 @@
     "test:smoke:vault-assets-integrations": "php tests/Smoke/vault-assets-integrations-smoke.php",
     "test:smoke:persistence-migrations": "php tests/Smoke/persistence-migrations-smoke.php",
     "test:smoke:wordpress-abilities-bridge": "php tests/Smoke/wordpress-abilities-bridge-smoke.php",
+    "test:smoke:engineering-contracts": "php tests/Smoke/engineering-contracts-smoke.php",
     "test:smoke": [
       "@test:smoke:kernel",
       "@test:smoke:platform-core",
@@ -30,10 +32,12 @@
       "@test:smoke:action-scheduler-probe",
       "@test:smoke:vault-assets-integrations",
       "@test:smoke:persistence-migrations",
-      "@test:smoke:wordpress-abilities-bridge"
+      "@test:smoke:wordpress-abilities-bridge",
+      "@test:smoke:engineering-contracts"
     ],
     "fast": [
       "@architecture:validate",
+      "@engineering:validate",
       "@test:smoke"
     ]
   },
