@@ -61,6 +61,9 @@ $requiredFiles = [
     'frameworks/Platform/WordPress/Security/NonceOperation.php',
     'frameworks/Platform/WordPress/Registrations/RegistrationCompiler.php',
     'frameworks/Platform/WordPress/Registrations/RegistrationRuntimeLoader.php',
+    'frameworks/Platform/WordPress/Registrations/AtomicCompiledRegistrationStore.php',
+    'frameworks/Platform/WordPress/Registrations/WpdbCompiledRegistrationPersistenceGateway.php',
+    'frameworks/Platform/WordPress/Registrations/Migrations/CreateCompiledRegistrationTablesMigration.php',
     'frameworks/Platform/Observability/FlowTrace.php',
     'frameworks/Platform/Observability/TraceMetadataSanitizer.php',
 ];
@@ -108,4 +111,4 @@ fwrite(STDOUT, " - WPEssential\\ => frameworks/\n");
 fwrite(STDOUT, " - exact custom hook/filter prefixes\n");
 fwrite(STDOUT, " - WPE_* bootstrap constants\n");
 fwrite(STDOUT, " - centralized AJAX + nonce contracts\n");
-fwrite(STDOUT, " - compiled registration + observability foundations\n");
+fwrite(STDOUT, " - atomic compiled registration persistence + observability foundations\n");

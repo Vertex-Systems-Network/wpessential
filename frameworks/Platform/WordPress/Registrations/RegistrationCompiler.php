@@ -31,15 +31,18 @@ final class RegistrationCompiler
                 'payload' => self::canonicalize($definition->payload),
             ];
         }
-        ksort($entries);
+        ksort($entries, SORT_STRING);
         foreach ($entries as &$items) {
-            ksort($items);
+            ksort($items, SORT_STRING);
         }
         unset($items);
 
         $generation = ($this->store->active()?->generation ?? 0) + 1;
-        $json = json_encode(['generation' => $generation, 'entries' => $entries], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
-        $manifest = new CompiledRegistrationManifest($generation, $entries, hash('sha256', $json));
+        $manifest = new CompiledRegistrationManifest(
+            $generation,
+            $entries,
+            CompiledRegistrationManifestIntegrity::checksum($generation, $entries),
+        );
         $this->store->publish($manifest);
         return $manifest;
     }
@@ -52,7 +55,7 @@ final class RegistrationCompiler
             }
         }
         if (!array_is_list($value)) {
-            ksort($value);
+            ksort($value, SORT_STRING);
         }
         return $value;
     }

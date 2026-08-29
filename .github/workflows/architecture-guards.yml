@@ -7,6 +7,7 @@ on:
       - 'tools/architecture/**'
       - 'frameworks/**'
       - 'tests/Smoke/**'
+      - 'tests/Integration/**'
       - 'wpessential.php'
       - 'composer.json'
       - '.github/workflows/architecture-guards.yml'
@@ -18,6 +19,7 @@ on:
       - 'tools/architecture/**'
       - 'frameworks/**'
       - 'tests/Smoke/**'
+      - 'tests/Integration/**'
       - 'wpessential.php'
       - 'composer.json'
       - '.github/workflows/architecture-guards.yml'
@@ -29,7 +31,20 @@ permissions:
 jobs:
   validate-architecture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,6 +53,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          extensions: pdo_mysql
           coverage: none
 
       - name: Validate Composer metadata
@@ -50,7 +66,7 @@ jobs:
         run: php tools/architecture/validate-engineering-contracts.php
 
       - name: PHP syntax
-        run: find frameworks tests/Smoke -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
+        run: find frameworks tests/Smoke tests/Integration -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
 
       - name: Run diagnostic smoke suite
         id: smoke
@@ -67,7 +83,8 @@ jobs:
             tests/Smoke/vault-assets-integrations-smoke.php \
             tests/Smoke/persistence-migrations-smoke.php \
             tests/Smoke/wordpress-abilities-bridge-smoke.php \
-            tests/Smoke/engineering-contracts-smoke.php
+            tests/Smoke/engineering-contracts-smoke.php \
+            tests/Smoke/compiled-registration-persistence-smoke.php
           do
             echo "===== ${script} =====" | tee -a smoke-results.log
             php "${script}" >> smoke-results.log 2>&1
@@ -93,3 +110,10 @@ jobs:
       - name: Enforce smoke gate
         if: steps.smoke.outputs.exit_code != '0'
         run: exit 1
+
+      - name: MySQL compiled-registration integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/compiled-registration-mysql.php

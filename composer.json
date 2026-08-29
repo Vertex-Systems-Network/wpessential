@@ -25,6 +25,8 @@
     "test:smoke:persistence-migrations": "php tests/Smoke/persistence-migrations-smoke.php",
     "test:smoke:wordpress-abilities-bridge": "php tests/Smoke/wordpress-abilities-bridge-smoke.php",
     "test:smoke:engineering-contracts": "php tests/Smoke/engineering-contracts-smoke.php",
+    "test:smoke:compiled-registration-persistence": "php tests/Smoke/compiled-registration-persistence-smoke.php",
+    "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
     "test:smoke": [
       "@test:smoke:kernel",
       "@test:smoke:platform-core",
@@ -33,7 +35,8 @@
       "@test:smoke:vault-assets-integrations",
       "@test:smoke:persistence-migrations",
       "@test:smoke:wordpress-abilities-bridge",
-      "@test:smoke:engineering-contracts"
+      "@test:smoke:engineering-contracts",
+      "@test:smoke:compiled-registration-persistence"
     ],
     "fast": [
       "@architecture:validate",
