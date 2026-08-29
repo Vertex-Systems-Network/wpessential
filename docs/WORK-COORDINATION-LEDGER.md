@@ -16,32 +16,29 @@ Current classification: `GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`;
 ### WP119 — Implementation Baseline / Adoption Gate
 **DONE / PASS / ADR-0214**.
 
-Greenfield implementation baseline and compatibility/toolchain direction locked.
-
 ### WP120 — Machine-enforced Architecture Guards
 **DONE / PASS / ADR-0215**.
 
 Machine guards cover canonical 56 surfaces/routes/suites, semantic ownership/no-bypass, P01–P40 routing, Ability/Policy, storage, Multisite, invalidation, provider/unknown-outcome, destructive/recovery and AI/MCP boundaries.
 
-Earlier GitHub-hosted pre-runner dispatch degradation is no longer current evidence. Later hosted WP121 runs have assigned a real runner and executed the validators/smoke chain successfully.
-
 ### WP121 — Milestone 1 Platform Foundation
 **CURRENT / IMPLEMENTING**.
 
-Implemented foundation now includes:
+Implemented shared foundation includes:
 - Bootstrap / Kernel / Service Registry / Module lifecycle;
-- immutable Definition / Context / Policy / Ability / Event core;
+- Definition / Context / Policy / Ability / Event core;
 - Audit foundation;
 - backend-neutral JobService identity/state/idempotency/retry/cancellation;
 - bounded Action Scheduler capability probe;
 - Secrets Vault reference contract;
 - Asset Registry;
 - Integration Registry;
-- persistent Definition repository abstraction + migration contracts/reference gateways;
+- Definition persistence abstraction + migration contracts/reference gateways;
 - WordPress Capability + Abilities API bridge;
-- owner-mandated engineering conventions / **ADR-0216**.
+- owner-mandated engineering conventions / **ADR-0216**;
+- persistent atomic compiled-registration storage / **ADR-0217**.
 
-### ADR-0216 — mandatory engineering contract
+## ADR-0216 — mandatory engineering contract
 
 Future implementation must preserve:
 - namespace `WPEssential`;
@@ -58,41 +55,63 @@ Future implementation must preserve:
 
 The asymmetric `wpesential` filter spelling is intentional public API.
 
+## ADR-0217 — atomic compiled registrations
+
+Accepted implementation:
+- immutable per-scope compiled generation history;
+- separate active/fallback pointer;
+- network/site isolation;
+- InnoDB transaction + CAS publication;
+- deterministic manifest checksums;
+- explicit corruption quarantine;
+- verified last-known-good recovery;
+- historical high-watermark sequence independent of the active pointer;
+- permanent non-reuse of corrupt/quarantined generation IDs;
+- runtime consumption of the active compiled projection rather than historical definition scans.
+
+A recovery may roll the active pointer backward. It may **not** roll the generation sequence backward.
+
 ## Hosted evidence — GREEN
 
-Current branch has successful hosted GitHub Actions evidence. Run **33258502235** / run number **84** completed **SUCCESS** on a real GitHub-hosted runner after the ADR-0216/documentation reconciliation.
+Corrected atomic-store implementation commit:
+`de2bf6ea0299ce3900a0d6dff2d4646066137497`
 
-The validated source chain includes:
-- Composer metadata validation;
-- canonical architecture validator;
+GitHub Actions run **33261866811 / #89** completed **SUCCESS** on a real hosted runner.
+
+PASS evidence:
+- MySQL 8.4 service;
+- Composer metadata;
+- architecture validator;
 - engineering-contract validator;
-- PHP syntax under the configured PHP 8.2 CI baseline;
-- complete smoke chain covering Kernel, platform core, Audit/Jobs, Action Scheduler probe, Vault/Assets/Integrations, persistence/migrations, WordPress Abilities bridge and engineering contracts.
+- PHP 8.2 syntax;
+- **9/9 smoke suites**;
+- real MySQL 8.4 atomic compiled-registration integration.
 
-A prior diagnostic run exposed only a stale smoke assertion (`not exposed` vs canonical `channel_not_exposed`); the assertion was corrected without weakening authorization semantics. Subsequent hosted CI is green.
+Preceding run **33261668224 / #87** failed and stopped before MySQL integration because the initial model could reuse a corrupt generation number after active-pointer recovery. The defect was corrected; no waiver was used.
 
 ## Current non-certifications
 
 Do not overclaim:
-- `InMemoryCompiledRegistrationStore` remains reference/test-only;
-- production atomic compiled-registration persistence is not yet complete;
-- `PersistentDefinitionRepository` is not yet backed by a certified production WordPress/MySQL adapter;
-- persistent/tamper-evident Audit storage is not yet complete;
+- 10K/100K compiled-registration performance evidence remains pending;
+- `NativeWpdbAdapter` is not yet fully WordPress-runtime certified;
+- MySQL CI proves the accepted transactional store contract, not full WordPress integration;
+- production WordPress/MySQL Definition adapter remains pending;
+- persistent/tamper-evident Audit storage remains pending;
 - Action Scheduler capability-ready does not equal coexistence/Multisite/backend certification;
-- real WordPress AJAX/nonce integration fixtures remain pending;
+- real WordPress AJAX/nonce/Policy fixtures remain pending;
 - Runtime Observatory admin graph/Policy/retention UI remains pending;
-- 10K/100K compiled-registration performance evidence remains pending.
+- business-module implementation remains downstream of the foundation gate.
 
 ## Next WP121 bounded sequence
 
-1. persistent atomic compiled-registration generation store + last-known-good/recovery semantics;
-2. production Definition/Audit persistence adapters + bounded migrations;
-3. real WordPress AJAX/nonce/Policy integration fixtures;
-4. Action Scheduler coexistence/backend evidence;
-5. durable Job attempt/lease/checkpoint contracts after backend evidence;
-6. minimal Platform admin shell + Runtime Observatory graph/diagnostics UI;
-7. executable 10K/100K compiled-registration scale evidence;
-8. shared-foundation readiness gate before first business-module tranche.
+1. production Definition/Audit persistence adapters + bounded migrations;
+2. real WordPress AJAX/nonce/Policy integration fixtures;
+3. Action Scheduler coexistence/backend evidence;
+4. durable Job attempt/lease/checkpoint contracts after backend evidence;
+5. minimal Platform admin shell + Runtime Observatory graph/diagnostics UI;
+6. executable 10K/100K compiled-registration scale evidence;
+7. shared-foundation readiness gate;
+8. first business-module tranche after that gate.
 
 ## Privileged exclusions
 
