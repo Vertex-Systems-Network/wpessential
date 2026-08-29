@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -56,6 +55,13 @@ final class AjaxDispatcher
 
         try {
             return AjaxResponse::success($route->handler->handle($payload));
+        } catch (AjaxAuthorizationException $exception) {
+            return AjaxResponse::error(
+                'policy_denied',
+                'The current principal is not authorized for this operation.',
+                403,
+                ['reason' => $exception->reason],
+            );
         } catch (Throwable) {
             return AjaxResponse::error('handler_failure', 'The request could not be completed.', 500);
         }
