@@ -77,16 +77,30 @@ final class ModuleRegistry
 
         foreach ($module->manifest()->dependencies as $dependency) {
             if (!$this->has($dependency)) {
-                $this->states[$id] = ModuleState::Degraded;
-                unset($visiting[$id]);
-                $resolved[$id] = true;
+                $this->markDegraded($id, $resolved, $visiting);
                 return;
             }
+
             $this->visit($dependency, $resolved, $visiting, $order);
+            if ($this->state($dependency) === ModuleState::Degraded) {
+                $this->markDegraded($id, $resolved, $visiting);
+                return;
+            }
         }
 
         unset($visiting[$id]);
         $resolved[$id] = true;
         $order[] = $id;
+    }
+
+    /**
+     * @param array<string, bool> $resolved
+     * @param array<string, bool> $visiting
+     */
+    private function markDegraded(string $id, array &$resolved, array &$visiting): void
+    {
+        $this->states[$id] = ModuleState::Degraded;
+        unset($visiting[$id]);
+        $resolved[$id] = true;
     }
 }
