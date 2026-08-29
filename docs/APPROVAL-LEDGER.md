@@ -36,7 +36,7 @@ Historical scope milestones 31 → 43 → 48 → 50 → 55 → 56 remain preserv
 - WP112 — DONE / ADR-0207 — identified **5,808 exact definitions / 33 namespaces**.
 - WP113 — DONE / ADR-0208 — RDR/SRT/DMY/LNK/DBM/PDO/MIR, **1,232/1,232 documented / 0 executed**.
 - WP114 — DONE / ADR-0209 — MPR/RPR/ATM/MDP/STM, **880/880 documented / 0 executed**.
-- **WP115 — CURRENT** — Second Competitive, **1,936 definitions**.
+- **WP115 — CURRENT** — Second Competitive, **1,936 definitions**; its master plan now explicitly fixes all 11 namespace group ranges, including BKX/MRL/PBX/JEX/LHX/HFC normalization discovered during preflight.
 - WP116 — RESERVED — Third Competitive, **1,760 definitions**.
 
 Known remaining exact planning gap: **3,696 definitions / 21 namespaces**.
