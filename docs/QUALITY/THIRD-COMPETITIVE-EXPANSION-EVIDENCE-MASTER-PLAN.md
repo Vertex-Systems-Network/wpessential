@@ -1,36 +1,28 @@
 # WPEssential — Third Competitive Expansion Evidence Master Plan
 
-Status: **Phase 0 fixed evidence planning / execution pending / no development authorization**  
+Status: **WP116 CURRENT / fixed 10×16 group ownership / exact enumeration pending / 0 executed / no development authorization**  
 Date: **2026-08-29**
 
-## 1. Purpose
+## Purpose and registry
 
-Reserve stable evidence envelopes for the third competitive audit so parity cannot later be claimed from UI checklists alone.
+WP116 is the final known exact-fixture tranche from ADR-0207. Each namespace is fixed at **176 fixtures = 16 groups × 11**, total **1,760**, executed **0/1,760**:
 
-Every supplemental namespace reserves **176 fixtures = 16 groups × 11 fixtures** unless superseded by a later ADR. No fixture has executed.
+- `UAF-001…176` — Use Any Font / advanced font parity on Surface 53;
+- `MIG-001…176` — WP Migrate parity on Surface 55 + Search/Replace/Backup;
+- `WLB-001…176` — White-label/Login UX parity;
+- `DUP-001…176` — Content duplication/clone parity on Surface 51;
+- `ALX-001…176` — Activity Timeline/Audit Console parity;
+- `MBX-001…176` — CMB2/Meta Box/wpmetabox parity;
+- `THM-001…176` — Surface 56 Theme Workspace/Child Theme;
+- `RSX-001…176` — WP Reset parity;
+- `RDX-001…176` — Redux-class Settings/Options parity;
+- `CPTX-001…176` — CPTUI parity.
 
-## 2. Registry
+These supplements do not replace canonical evidence/owners such as AUD, CF, DEF, CTB, REL, ATM, FNT, STG or Reset protocols.
 
-| Scope | Namespace | Planned | Executed |
-|---|---:|---:|---:|
-| Use Any Font / advanced font parity on Surface 53 | `UAF-001…176` | 176 | 0 |
-| WP Migrate parity on Surface 55 + Search/Replace/Backup | `MIG-001…176` | 176 | 0 |
-| White-label/Login UX parity | `WLB-001…176` | 176 | 0 |
-| Content duplication/clone parity on Surface 51 | `DUP-001…176` | 176 | 0 |
-| Activity Timeline/Audit Console parity | `ALX-001…176` | 176 | 0 |
-| CMB2/Meta Box/wpmetabox parity | `MBX-001…176` | 176 | 0 |
-| Surface 56 Theme Workspace/Child Theme | `THM-001…176` | 176 | 0 |
-| WP Reset parity | `RSX-001…176` | 176 | 0 |
-| Redux-class Settings/Options parity | `RDX-001…176` | 176 | 0 |
-| CPTUI parity | `CPTX-001…176` | 176 | 0 |
+## Locked group ownership
 
-Total newly reserved fixture slots: **1,760**.  
-Executed: **0/1,760**.
-
-These supplements do not replace existing canonical evidence such as AUD, CF, DEF, CTB, REL, ATM, FNT, STG or Reset protocols.
-
-## 3. UAF evidence groups
-
+### UAF
 1. upload/MIME/provenance;
 2. TTF/OTF/WOFF/WOFF2 validation;
 3. conversion adapter/output identity;
@@ -48,8 +40,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. performance/CLS/render timing;
 16. golden typography regression.
 
-## 4. MIG evidence groups
-
+### MIG
 1. migration profile schema;
 2. DB export/import;
 3. full-site export;
@@ -67,8 +58,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. large-site throughput/backpressure;
 16. end-to-end source→target verification.
 
-## 5. WLB evidence groups
-
+### WLB
 1. branding profile;
 2. login token/layout rendering;
 3. responsive/accessibility;
@@ -86,8 +76,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. compatibility/conflict/performance;
 16. end-to-end client experience regression.
 
-## 6. DUP evidence groups
-
+### DUP
 1. clone plan schema;
 2. content/title/slug/status;
 3. author/date/permission rules;
@@ -105,8 +94,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. scale/performance;
 16. end-to-end clone integrity regression.
 
-## 7. ALX evidence groups
-
+### ALX
 1. activity-console event rendering;
 2. actor/principal/source attribution;
 3. wp-admin/frontend/REST channels;
@@ -124,8 +112,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. high-volume storage/query performance;
 16. incident reconstruction regression.
 
-## 8. MBX evidence groups
-
+### MBX
 1. CMB2/Meta Box discovery;
 2. field-type mapping;
 3. posts/terms/users/comments/settings contexts;
@@ -143,8 +130,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. schema/performance;
 16. end-to-end migration/interoperability regression.
 
-## 9. THM evidence groups
-
+### THM
 1. theme identity/parent dependency;
 2. static analyzer;
 3. child creation metadata;
@@ -162,8 +148,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. large stylesheet/theme performance;
 16. end-to-end child-theme lifecycle regression.
 
-## 10. RSX evidence groups
-
+### RSX
 1. snapshot identity;
 2. DB snapshot capture;
 3. snapshot compare;
@@ -181,8 +166,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. large DB/reset performance;
 16. destructive-run recovery regression.
 
-## 11. RDX evidence groups
-
+### RDX
 1. declarative settings compiler;
 2. field/control catalog;
 3. sections/tabs/accordion;
@@ -200,8 +184,7 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. rendering/performance;
 16. end-to-end options-panel regression.
 
-## 12. CPTX evidence groups
-
+### CPTX
 1. CPTUI discovery/import;
 2. CPT labels/arguments;
 3. taxonomy labels/arguments;
@@ -219,22 +202,12 @@ These supplements do not replace existing canonical evidence such as AUD, CF, DE
 15. scale/rewrite performance;
 16. end-to-end registration/display regression.
 
-## 13. Stop-the-line classes
+## Stop-the-line classes
 
-Any future certification stops on:
-- cross-user/site/network data leak;
-- arbitrary PHP/eval introduced through parity work;
-- audit attribution falsely granting identity/authority;
-- font licensing/provenance bypass;
-- migration presenting destructive replacement as merge;
-- clone preserving unsafe identity or protected secrets;
-- white-label UI hiding treated as authorization;
-- reset reporting success without recovery/verification truth;
-- child-theme tooling modifying parent theme silently;
-- migration/import silently dropping unsupported field/schema semantics.
+Future exact design/execution must stop on cross-user/site/network leakage; arbitrary PHP/eval; audit attribution treated as identity authority; font-license/provenance bypass; migration destructive replacement presented as merge; clone preserving unsafe identity/secrets; white-label hiding treated as authorization; reset success without recovery/verification truth; child-theme tooling silently modifying parent; or migration/import silently dropping unsupported schema semantics.
 
-## 14. Current truth
+## Current truth / gate
 
-All namespaces are **documented reservations only**.  
-Executed: **0**.  
-Runtime certification: **0**.
+All WP116 namespaces remain exact-enumeration **PLANNING GAP** and **0 executed**. WP116 may write planning/evidence definitions only. No runtime, scan, migration, reset, theme mutation, provider/API/AI/MCP call, test, benchmark, build or deployment is authorized.
+
+After WP116 exact acceptance, run a fresh repository-wide closure/readiness audit before any approval-readiness transition. Production implementation authorization remains **NOT GRANTED / 0/56**.
