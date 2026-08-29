@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Observability;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
-final class BoundedInMemoryTraceRecorder implements TraceRecorderInterface
+final class BoundedInMemoryTraceRecorder implements TraceRecorderInterface, TraceSnapshotReaderInterface
 {
     /** @var list<array<string,mixed>> */
     private array $traces = [];
@@ -29,7 +28,6 @@ final class BoundedInMemoryTraceRecorder implements TraceRecorderInterface
         }
     }
 
-    /** @return list<array<string,mixed>> */
     public function all(): array
     {
         return $this->traces;
