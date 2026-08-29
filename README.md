@@ -2,32 +2,29 @@
 
 WPEssential is a modular, AI-native WordPress application platform.
 
-> **Status:** Phase 0 planning is complete and **awaiting explicit development approval**. Production development has not started and is **not authorized**.
+> **Status:** Planning complete and structurally mapped; production development has not started and is **not authorized**.
 
-Project state `PLANNED_EXISTING_PROJECT`; mode `PLANNER_ONLY`; lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**.
+Project `PLANNED_EXISTING_PROJECT`; execution `PLANNER_ONLY`; lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**.
 
-Current: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, authorization **0/56**, runtime-certified/implemented **none**.
+Current: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, implementation authorization **0/56**, runtime-certified/implemented **none**. Accepted through **ADR-0213**.
 
-## Phase 0 closure
+Phase 0 exact planning gap identified by ADR-0207 is **0/0 remaining** after WP113–WP116. WP117 / ADR-0212 final closure audit passed.
 
-WP112 / ADR-0207 identified 5,808 exact planning definitions across 33 namespaces. These were fully closed by:
-- WP113 / ADR-0208 — 1,232/1,232 exact / 0 executed;
-- WP114 / ADR-0209 — 880/880 / 0;
-- WP115 / ADR-0210 — 1,936/1,936 / 0;
-- WP116 / ADR-0211 — 1,760/1,760 / 0.
+WP118 / ADR-0213 then completed a deeper integration audit and mapping of modules, options, UI, systems, dependencies, Abilities/events, data ownership and duplicate/bypass semantics. Final structural result: **PASS after remediation**.
 
-Known remaining exact planning gap: **0 definitions / 0 namespaces**.
+Current canonical integration maps:
+- `docs/ARCHITECTURE/CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md`
+- `docs/ARCHITECTURE/CROSS-MODULE-OPTION-OWNERSHIP-AND-NO-BYPASS-CONTRACT.md`
+- `docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md`
+- `docs/UI/ADMIN-INFORMATION-ARCHITECTURE-V2-56-SURFACES.md`
+- `docs/SOLUTIONS/SYSTEM-PATTERN-TO-CANONICAL-SURFACE-MAP.md`
+- `docs/ARCHITECTURE/CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md`
+- `docs/ARCHITECTURE/PER-SURFACE-CAPABILITY-ABILITY-EVENT-REGISTRY-32-56.md`
+- `docs/ARCHITECTURE/DATA-OWNERSHIP-LIFECYCLE-REGISTRY-32-56.md`
+- `docs/QUALITY/POST-P0-MODULE-OPTION-UI-SYSTEM-INTEGRITY-AUDIT.md`
 
-WP117 / ADR-0212 fresh repository-wide closure/readiness audit: **PASS**. Canonical audit: `docs/QUALITY/P0-POST-WP116-FINAL-CLOSURE-READINESS-AUDIT.md`.
+Core rule: every business semantic has one canonical owner. UI/REST/Workflow/Cron/CLI/AI are invocation channels and cannot create private duplicate engines or bypass the owner's Policy/Ability/storage. Solution Blueprints compose canonical owners rather than creating private CRM/ERP/LMS/etc. runtimes.
 
-## What remains pending
+`continue`, `resume`, audit PASS, planning closure or ADR acceptance do not authorize development. Explicit scoped owner consent under ADR-0014 is mandatory.
 
-- Runtime evidence: not executed.
-- Provider certification: pending where applicable.
-- Owner development consent: **PENDING / 0/56**.
-
-`AWAITING_DEVELOPMENT_APPROVAL`, `continue`, `resume`, planning completion or an Accepted ADR do not authorize source/runtime work. Explicit scoped owner consent under ADR-0014 and `DEVELOPMENT-CONSENT.md` is mandatory.
-
-After future consent, the first step is the Implementation Baseline / Adoption Gate before any production code: refresh branch/revision/capabilities, inspect implementation baseline, verify runtime/tool/dependency/build/test state, classify baseline failures/UNKNOWNs, refresh relevant external research and bind a bounded implementation milestone.
-
-Repository evidence and current governance override conversational memory.
+After future consent the first work is the **Implementation Baseline / Adoption Gate**, followed by machine-enforced Surface/Option/Route/Dependency/Ability/Storage/Blueprint/Multisite/provider/AI validation from ADR-0213 before ordinary feature implementation.
