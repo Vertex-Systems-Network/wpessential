@@ -7,8 +7,6 @@ Current state `PLANNED_EXISTING_PROJECT`; execution `PLANNER_ONLY`; lifecycle **
 
 Current product truth: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, accepted through **ADR-0213**, implementation authorization **0/56**, runtime-certified/implemented none.
 
-## Planning and structural closure
-
 - WP113–WP116 closed all 5,808 exact definitions identified by WP112 / ADR-0207.
 - WP117 / ADR-0212 final Phase 0 closure audit: PASS; exact planning gap 0/0.
 - WP118 / ADR-0213 deep module/option/UI/system structural audit: PASS after remediation.
@@ -23,13 +21,6 @@ GitHub planning read/write and Draft PR metadata are available; Linear mirrors p
 
 Current safe state: **wait for explicit scoped development approval**.
 
-After approval:
-1. record ACTIVE approval;
-2. refresh branch/revision/capabilities and inspect implementation baseline;
-3. verify runtime/tool/dependency/lock/build/test state;
-4. classify baseline failures/UNKNOWNs;
-5. establish ADR-0213 machine-enforced Surface/Option/Route/Dependency/Ability/Storage/Blueprint/Multisite/invalidation/provider/destructive/AI validation gates;
-6. bind first bounded milestone/change budget;
-7. enter `IMPLEMENTING` only for approved scope.
+After approval: record ACTIVE approval; refresh branch/revision/capabilities and inspect implementation baseline; verify runtime/tool/dependency/lock/build/test state; classify baseline failures/UNKNOWNs; establish ADR-0213 machine-enforced Surface/Option/Route/Dependency/Ability/Storage/Blueprint/Multisite/invalidation/provider/destructive/AI validation gates; bind first bounded milestone/change budget; enter `IMPLEMENTING` only for approved scope.
 
 Development remains **NOT GRANTED / 0/56**. Repository evidence overrides conversational memory.
