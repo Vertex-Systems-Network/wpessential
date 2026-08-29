@@ -59,6 +59,14 @@ $degraded->boot();
 expect($degraded->modules()->state('needs-missing') === ModuleState::Degraded, 'missing dependency should degrade rather than fatal');
 expect($degraded->modules()->state('depends-on-degraded') === ModuleState::Degraded, 'degraded dependency must propagate');
 
+$late = new Kernel();
+$late->registerModule(new SmokeModule(new ModuleManifest('late-child', 'Late Child', '1.0.0', dependencies: ['late-base'])));
+$late->modules()->bootOrder();
+expect($late->modules()->state('late-child') === ModuleState::Degraded, 'missing dependency should degrade during inspection');
+$late->registerModule(new SmokeModule(new ModuleManifest('late-base', 'Late Base', '1.0.0')));
+$lateOrder = array_map(static fn (ModuleInterface $module): string => $module->manifest()->id, $late->modules()->bootOrder());
+expect($lateOrder === ['late-base', 'late-child'], 'late dependency registration should recover degraded state before boot');
+
 $cycle = new Kernel();
 $cycle->registerModule(new SmokeModule(new ModuleManifest('a', 'A', '1.0.0', dependencies: ['b'])));
 $cycle->registerModule(new SmokeModule(new ModuleManifest('b', 'B', '1.0.0', dependencies: ['a'])));
