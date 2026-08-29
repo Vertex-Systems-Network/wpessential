@@ -32,6 +32,8 @@ Known remaining exact planning gap:
 - WP116 = 1,760 across 10;
 - total **3,696 definitions across 21 namespaces**.
 
+WP115 preflight also normalized previously under-specified 16-group ownership for BKX/MRL/PBX/JEX/LHX/HFC in `docs/QUALITY/SECOND-COMPETITIVE-EXPANSION-EVIDENCE-MASTER-PLAN.md`. That normalization is planning work only; exact fixture enumeration and formal WP115 acceptance are still pending.
+
 P0 is not yet approval-ready. After WP116, a fresh closure/readiness audit must decide whether lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
 ## Current-state authorities
@@ -57,7 +59,7 @@ Repository evidence overrides conversation memory.
 - implementation permission absent → `OWNER CONSENT PENDING`;
 - exact planning/evidence design complete → `NO GAP / READY AS PLAN` at planning layer only.
 
-RDR/SRT/DMY/LNK/DBM/PDO/MIR and MPR/RPR/ATM/MDP/STM are now planning-complete at exact evidence-design level and remain unexecuted.
+RDR/SRT/DMY/LNK/DBM/PDO/MIR and MPR/RPR/ATM/MDP/STM are planning-complete at exact evidence-design level and remain unexecuted.
 
 ## Consent invariant
 
