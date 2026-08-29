@@ -1,63 +1,74 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-08-29**  
-Branch: `planning/master-architecture`  
-Project state: `PLANNED_EXISTING_PROJECT`  
-Execution mode: `PLANNER_ONLY`  
-Lifecycle: **`AWAITING_DEVELOPMENT_APPROVAL`**  
-Production development authorization: **NOT GRANTED / 0/56**
+Implementation branch: `implementation/baseline-adoption-gate`  
+Planning authority: `planning/master-architecture` through ADR-0213  
+Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
+Execution mode: **`IMPLEMENTATION_GATED`**  
+Lifecycle: **`IMPLEMENTING_ARCHITECTURE_GUARDS`**  
+Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
-## Consent gate
+## Approval boundary
 
-Explicit scoped owner consent is required before production source/runtime implementation, dependency/package setup, WordPress/WooCommerce/DB/file mutation, executable tests/benchmarks, provider/API/AI/MCP calls, migrations, builds, packaging or deployment. `continue`, `resume`, planning completion, audit PASS or ADR acceptance are not consent.
+Owner explicitly authorized:
+
+`Implementation Baseline / Adoption Gate → Machine-enforced architecture guards → Milestone 1 Platform Foundation → module development`.
+
+Source implementation, development/test tooling, CI and milestone-scoped schemas/tests are authorized. Production deployment, destructive live-site/customer-data operations and chargeable/irreversible real-provider side effects remain separately privileged and are not authorized by this grant.
 
 ## Current product truth
 
-Scope history 31 → 43 → 48 → 50 → 55 → current **56/56 Exhaustive**. Logical Multisite **56/56**; AI Prompt **56/56**; implementation authorization **0/56**; implemented/runtime verified **none**.
+Accepted product scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known planning or semantic-owner gap after WP118 / ADR-0213.
 
-Accepted planning/architecture extends through **ADR-0213**.
+## WP119 — Implementation Baseline / Adoption Gate
 
-## Closure sequence
+**DONE / PASS / ADR-0214**.
 
-- WP112 / ADR-0207 found **5,808 exact definitions / 33 namespaces** remaining.
-- WP113 / ADR-0208 closed **1,232/1,232 / 0 executed**.
-- WP114 / ADR-0209 closed **880/880 / 0**.
-- WP115 / ADR-0210 closed **1,936/1,936 / 0**.
-- WP116 / ADR-0211 closed **1,760/1,760 / 0**.
-- Known ADR-0207 planning gap: **0 / 0**.
-- WP117 / ADR-0212 final closure/readiness audit: **PASS**.
-- WP118 / ADR-0213 Module/Option/UI/System structural-integrity audit: **DONE / PASS after remediation**.
+Verified:
+- default/main branch has no production WPEssential implementation baseline;
+- implementation branch started with docs/governance only and no Composer/npm/source/tests/CI;
+- classification is greenfield implementation against the accepted plan, not a legacy rewrite;
+- minimum WordPress **6.9**;
+- minimum PHP **8.2**, recommended **8.3+**;
+- certified DB baseline MySQL **8.0+** / MariaDB **10.11+**;
+- Composer 2.x + PSR-4 `WPEssential\\`;
+- Node 24 LTS + npm + initial `@wordpress/scripts` direction;
+- PHPCS/WPCS, PHPStan, PHPUnit, TypeScript/ESLint/build, Playwright and compatibility matrix are mandatory quality categories;
+- no third-party DI container at baseline;
+- Action Scheduler remains a preferred JobService backend candidate but runtime adoption is deferred to a bounded coexistence spike.
 
-## WP118 canonical integration maps
+Canonical evidence:
+- `docs/IMPLEMENTATION/IMPLEMENTATION-BASELINE-ADOPTION-GATE.md`;
+- `docs/DECISIONS/ADR-0214-implementation-baseline-build-compatibility-and-toolchain.md`.
 
-- `docs/ARCHITECTURE/CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md`
-- `docs/ARCHITECTURE/CROSS-MODULE-OPTION-OWNERSHIP-AND-NO-BYPASS-CONTRACT.md`
-- `docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md`
-- `docs/UI/ADMIN-INFORMATION-ARCHITECTURE-V2-56-SURFACES.md`
-- `docs/SOLUTIONS/SYSTEM-PATTERN-TO-CANONICAL-SURFACE-MAP.md`
-- `docs/ARCHITECTURE/CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md`
-- `docs/ARCHITECTURE/PER-SURFACE-CAPABILITY-ABILITY-EVENT-REGISTRY-32-56.md`
-- `docs/ARCHITECTURE/DATA-OWNERSHIP-LIFECYCLE-REGISTRY-32-56.md`
-- `docs/QUALITY/POST-P0-MODULE-OPTION-UI-SYSTEM-INTEGRITY-AUDIT.md`
+## WP120 — Machine-enforced Architecture Guards
 
-Outcomes: **56/56 surface owners**, **56/56 exactly-once UI nav owners**, **40/40 system patterns**, current **160/160 curated systems transitively contained**, later 32–56 Ability/Event + data ownership mapped, and known semantic overlap/bypass findings resolved at planning layer.
+**CURRENT — IMPLEMENTED / INDEPENDENT INVARIANTS PASS / HOSTED CI INFRA_BLOCKED**.
 
-Important separations: Query6 vs Search34 vs Order51; Status5 vs Workflow17; Connections23 for external HTTP/webhook transport; Redirect44; Transform45; Backup24 vs Reset25 vs Staging55; Audit vs Analytics33; Theme56 vs AdminTheme49 vs SafeScript50 vs Fonts53 vs Media28.
+Implemented:
+- `config/architecture/surfaces.json`;
+- `config/architecture/ownership-contracts.json`;
+- `config/architecture/system-patterns.json`;
+- `config/architecture/operation-guards.json`;
+- `tools/architecture/validate.php`;
+- `composer.json` architecture validation command;
+- `.github/workflows/architecture-guards.yml`.
 
-## Readiness
+Independent invariant verification passed for 56 surfaces, unique keys, exactly-once suite coverage, P01–P40 pattern range and critical semantic owners.
 
-- `PLANNING GAP`: none known at current accepted scope/integration map.
-- `NO GAP / READY AS PLAN`: Phase 0 + structural integration planning.
-- `RUNTIME EVIDENCE PENDING`: yes.
-- `PROVIDER CERTIFICATION PENDING`: yes where applicable.
-- `OWNER CONSENT PENDING`: yes / 0/56.
+Hosted GitHub Actions is currently blocked before runner assignment. Multiple attempts including explicit `ubuntu-24.04` produced an immediate failed job with no assigned runner, no steps and no logs. Therefore repository validator execution is **NOT certified green** and the failure is classified `EXTERNAL CI RUNNER DISPATCH FAILURE / INFRA_BLOCKED`, not a validator-code failure.
 
-No WP112–WP118 production runtime/provider/test/build/deployment work executed.
+Canonical status: `docs/IMPLEMENTATION/MACHINE-ARCHITECTURE-GUARDS.md`.
 
-## Current safe action
+## Stop line
 
-**Wait for explicit scoped owner development consent.**
+Ordinary Milestone 1 Platform Foundation runtime source does **not** begin until WP120's exact repository validator executes successfully in a faithful environment and WP120 is recorded PASS.
 
-After future explicit consent, first record ACTIVE approval and run the **Implementation Baseline / Adoption Gate**. Before ordinary feature code, establish machine-enforced Surface/Option/Route/Dependency/Ability/Storage/Blueprint/Multisite/Invalidation/Provider/Destructive/AI ownership manifests and validation required by ADR-0213.
+Current safe action:
+1. restore a working runner/faithful checkout;
+2. execute `php tools/architecture/validate.php`;
+3. fix any real guard failure;
+4. record WP120 PASS;
+5. begin Milestone 1 Platform Foundation.
 
 Repository evidence overrides conversational memory.
