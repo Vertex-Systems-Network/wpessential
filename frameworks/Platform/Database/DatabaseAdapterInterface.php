@@ -15,6 +15,9 @@ interface DatabaseAdapterInterface
     /** @return array<string, mixed>|null */
     public function getRow(string $query): ?array;
 
+    /** @return list<array<string, mixed>> */
+    public function getResults(string $query): array;
+
     public function getVar(string $query): mixed;
 
     public function query(string $query): int|bool;
