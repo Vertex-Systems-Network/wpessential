@@ -1,72 +1,62 @@
 # WPEssential
 
-WPEssential is a modular, AI-native WordPress application platform for structured content, data, automation, administration, integrations, operations, identity, membership/access, frontend experiences, application composition and developer/operations tooling.
+WPEssential is a modular, AI-native WordPress application platform.
 
-> **Repository status:** Phase 0 — research, product specification, architecture and evidence planning. Production feature development has not started and is **not authorized**.
+> **Repository status:** Phase 0 research/specification/architecture/evidence planning. Production development has not started and is **not authorized**.
 
-Current canonical project state: `PLANNED_EXISTING_PROJECT`  
-Current execution mode: `PLANNER_ONLY`  
-Current lifecycle: `SPECIFICATION`
+Project state `PLANNED_EXISTING_PROJECT`; mode `PLANNER_ONLY`; lifecycle `SPECIFICATION`.
 
-## Development consent gate
+## Consent gate
 
-Production development requires explicit scoped project-owner consent under `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014.
+Production development requires explicit scoped owner consent under `DEVELOPMENT-CONSENT.md`, `AGENTS.md`, `docs/APPROVAL-LEDGER.md` and ADR-0014. `continue`, `resume`, planning/ADR acceptance or Phase 0 completion do not authorize runtime/source work.
 
-`continue`, `resume`, research/planning approval, an Accepted ADR or Phase 0 planning completion does **not** authorize coding, executable spikes, package installation, runtime tests, provider/API/AI/MCP calls, migrations, builds or deployment.
+## Current planning truth
 
-## Current planning scope
+Historical scope lineage: 31 → 43 → 48 → 50 → 55 → current **56 surfaces**.
 
-Scope lineage: **31 → 43 → 48 → 50 → 55 → current 56 surfaces**. Historical denominators remain valid historical snapshots.
-
-Current truth:
 - product-option maturity: **56/56 Exhaustive**;
-- logical Multisite mapping: **56/56**;
-- shared AI Prompt mapping: **56/56**;
+- Multisite mapping: **56/56**;
+- AI Prompt mapping: **56/56**;
 - implementation authorization: **0/56**;
 - implemented/runtime verified: **none**.
 
-## Exact evidence/readiness truth
+## Exact evidence progress
 
-Universal/adapter evidence SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA is exact and unexecuted.
+Universal/adapter exact evidence: SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA, all unexecuted.
 
-WP112 / ADR-0207 found **5,808 exact supplemental definitions / 33 namespaces** missing.
+WP112 / ADR-0207 found **5,808 / 33 namespaces** missing exact supplemental evidence.
 
-### WP113 — DONE / ADR-0208
-RDR/SRT/DMY/LNK/DBM/PDO/MIR = **1,232/1,232 exact documented / 0 executed**.
+- WP113 / ADR-0208 — RDR/SRT/DMY/LNK/DBM/PDO/MIR — **1,232/1,232 exact / 0 executed**.
+- WP114 / ADR-0209 — MPR/RPR/ATM/MDP/STM — **880/880 exact / 0 executed**.
 
-### WP114 — DONE / ADR-0209
-MPR/RPR/ATM/MDP/STM = **880/880 exact documented / 0 executed**.
+Remaining known planning gap: **3,696 definitions / 21 namespaces**.
 
-These completed namespaces are `NO GAP / READY AS PLAN` at evidence-design level and remain `RUNTIME EVIDENCE PENDING` operationally.
+### WP115 — CURRENT — 1,936
+`ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC`
 
-Known remaining planning gap:
-- **WP115 CURRENT** — ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — **1,936**;
-- WP116 — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — **1,760**;
-- total **3,696 exact definitions / 21 namespaces**.
+All eleven 16×11 group envelopes are now explicit in the Second Competitive evidence master plan. BKX/MRL/PBX/JEX/LHX/HFC ranges were normalized from the accepted existing-surface parity addendum before exact fixture enumeration. Exact `001…176` protocols remain current work.
 
-WP115 preflight found BKX/MRL/PBX/JEX/LHX/HFC had reserved IDs but their explicit 16-group ranges were missing from the Second Competitive master plan. Those ranges have now been normalized from the accepted product addendum before exact fixture enumeration. This is planning work only; these six namespaces are not exact-complete yet.
+### WP116 — RESERVED — 1,760
+`UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX`
 
-P0 remains `SPECIFICATION` and is **not yet approval-ready**. After WP116, a new final closure audit must decide whether P0 may move to `AWAITING_DEVELOPMENT_APPROVAL`.
+After WP116, a fresh closure/readiness audit must decide whether P0 may move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
-## Important ownership boundaries
+## Core ownership boundaries
 
+- UI/branding/navigation hiding ≠ authorization.
 - User ≠ Role/Capability ≠ Plan ≠ Enrollment ≠ Entitlement ≠ Policy.
-- UI/navigation/admin-theme hiding ≠ authorization.
-- WordPress capability/meta-cap + WPE Policy remain role/action authority; Super Admin ≠ ordinary role.
-- Registration/account creation ≠ verified/approved/enrolled/paid entitlement.
-- LCP/priority/viewport inference ≠ measured Core Web Vitals improvement; private media must not leak through optimization.
-- Safe Script/Tag is browser-side/declarative only: no PHP/eval/arbitrary SQL/shell/server code; CSP/consent cannot be silently weakened; Vault secrets are not frontend token sources.
+- WordPress meta-cap + WPE Policy remain permission authority; Super Admin ≠ ordinary role.
+- Media performance hints ≠ measured CWV; private media cannot leak through optimization.
+- Safe Script/Tag is browser-side only; no PHP/eval/arbitrary SQL/shell/server code, CSP/consent weakening or frontend secret interpolation.
 - Backup ≠ Staging/Migration; clone ≠ same identity/environment.
-- Security finding ≠ certainty; font availability/local hosting ≠ redistribution authority; UDS state ≠ Woo cart/order truth.
-- Search/index ≠ source truth; formula/rank ≠ Policy/mutation authority.
-- Woo adapter ≠ second commerce engine.
+- Security finding ≠ certainty; font delivery ≠ license authority; UDS state ≠ Woo cart/order truth.
 - Theme Workspace cannot become arbitrary live PHP execution.
 - AI/MCP cannot create hidden privilege/provider/mutation paths.
 
-## Current planning work
+## Current work
 
 WP112 DONE / ADR-0207; WP113 DONE / ADR-0208; WP114 DONE / ADR-0209.
 
-**Current safe planning package: WP115 — Second Competitive exact executable-evidence specification (`ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC`, 1,936 fixtures).**
+**Current safe package: WP115 — Second Competitive exact executable-evidence specification, 1,936 fixtures.**
 
 Production development authorization remains **NOT GRANTED / 0/56**.
