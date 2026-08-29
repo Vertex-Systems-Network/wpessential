@@ -6,70 +6,54 @@ Current scope accepted through ADR-0197; exact planning evidence accepted throug
 
 ## Current maturity
 
-- Current denominator: **56 module/platform surfaces**.
-- Product-option maturity: **56/56 Exhaustive**.
-- Logical Multisite mapping: **56/56**.
-- Module-wide AI Prompt mapping: **56/56**.
-- Implementation authorization: **0/56**.
-- Implemented/runtime verified: **0**.
+- denominator **56 surfaces**;
+- product-option maturity **56/56 Exhaustive**;
+- Multisite **56/56**;
+- AI Prompt **56/56**;
+- implementation authorization **0/56**;
+- implemented/runtime verified **0**.
 
-Historical scope lineage: 31 → 43 → 48 → 50 → 55 → 56.
+Historical lineage: 31 → 43 → 48 → 50 → 55 → 56.
 
-## Exact evidence effect by current surface families
+## Exact evidence status
 
-- Surfaces 32–43 universal foundations: exact 176-fixture protocols, all unexecuted.
-- Surfaces 44–48: RDR/SRT/DMY/LNK/DBM exact under ADR-0208.
-- Shared S07/S08: PDO/MIR exact under ADR-0208.
-- Surface 15 Membership parity: **MPR exact 176/176 / 0 — ADR-0209**.
-- Surface 30 Role parity: **RPR exact 176/176 / 0 — ADR-0209**.
-- Surface 49 Admin Theme: **ATM exact 176/176 / 0 — ADR-0209**.
-- Surface 28 Media Performance: **MDP exact 176/176 / 0 — ADR-0209**.
-- Surface 50 Safe Script/Tag: **STM exact 176/176 / 0 — ADR-0209**.
-- Surfaces 51–55 plus Second Competitive owner supplements: **WP115 CURRENT**.
-- Surface 56 and Third Competitive supplements: WP116 RESERVED.
+Planning-complete exact evidence:
+- universal/adapter SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA;
+- ADR-0208 RDR/SRT/DMY/LNK/DBM/PDO/MIR;
+- ADR-0209 **MPR/RPR/ATM/MDP/STM**.
 
-All 56 surfaces remain `Exhaustive`; exact supplemental evidence depth is tracked separately from product-option maturity.
+All remain unexecuted.
 
-## WP115 current namespace ownership
+Current surface/parity implications:
+- Membership parity MPR exact;
+- Role parity RPR exact;
+- Admin Theme ATM exact;
+- Media Performance MDP exact;
+- Safe Script/Tag STM exact;
+- Surfaces 51–55 and Second Competitive existing-owner supplements are **WP115 CURRENT**;
+- Surface 56/Third Competitive supplements are WP116.
 
-WP115 target: **1,936 exact definitions** across:
-- ORD — Content Order & Sequence;
-- SEC — Security Integrity/Malware/Vulnerability;
-- FNT — Font Library/Typography/Delivery;
-- UDS — User Data Stores/Favorites/Collections;
-- STG — Staging/Clone/Migration;
-- BKX — Backup advanced/incremental/CLI/MCP parity;
-- MRL — Media Replacement Lifecycle;
-- PBX — Profile/Registration parity;
-- JEX — JetEngine existing-surface parity;
-- LHX — Link Health parity;
-- HFC — Header/Footer Code migration/placement parity.
+## Remaining exact planning
 
-The five new-surface 16-group ranges were already fixed. WP115 preflight normalized explicit 16-group ranges for BKX/MRL/PBX/JEX/LHX/HFC from the accepted product addendum in `SECOND-COMPETITIVE-EXPANSION-EVIDENCE-MASTER-PLAN.md`. This normalization does not make them exact-complete; individual 176-fixture enumeration remains current work.
-
-## Remaining exact evidence planning
-
-ADR-0207 identified **5,808 / 33 namespaces**.
-
-Completed:
-- WP113 / ADR-0208 — **1,232 / 7**;
-- WP114 / ADR-0209 — **880 / 5**.
+ADR-0207: 5,808 / 33 namespaces.  
+WP113 closed 1,232 / 7.  
+WP114 closed 880 / 5.
 
 Remaining:
-- **WP115 CURRENT** = **1,936 / 11**;
-- WP116 = **1,760 / 10**;
-- total **3,696 / 21 namespaces**.
+- **WP115 CURRENT — 1,936 / 11:** ORD, SEC, FNT, UDS, STG, BKX, MRL, PBX, JEX, LHX, HFC.
+- WP116 — 1,760 / 10: UAF, MIG, WLB, DUP, ALX, MBX, THM, RSX, RDX, CPTX.
+- **Total 3,696 / 21 namespaces**.
+
+WP115 master plan now explicitly fixes all eleven 16-group envelopes. BKX/MRL/PBX/JEX/LHX/HFC ranges were normalized from the accepted addendum before exact fixture enumeration; they remain planning gaps until exact `001…176` protocols are written and accepted.
 
 ## Non-negotiable boundaries
 
 - `56/56 Exhaustive` never authorizes implementation.
 - UI/branding/navigation hiding ≠ authorization.
-- WordPress meta-cap + WPE Policy remain role/action authority.
+- WordPress meta-cap + Policy remain role/action authority.
 - Safe Script/Tag remains browser-side only; no PHP/eval/server code.
 - Backup ≠ Staging/Migration; clone ≠ same identity/environment.
-- Security finding ≠ certainty; recovery evidence is required before quarantine/repair claims.
-- Font delivery/local hosting ≠ license/redistribution authority.
-- UDS state ≠ Woo cart/order truth.
+- Security finding ≠ certainty; font delivery ≠ license/redistribution authority; UDS state ≠ Woo cart/order truth.
 - AI/MCP cannot create hidden privilege/provider/mutation paths.
 
 ## Development gate
