@@ -5,153 +5,79 @@ Last synchronized: **2026-08-29**
 
 ## Global rule
 
-A surface may be `Exhaustive` and have accepted architecture/evidence design while remaining technically unverified and unauthorized. Implementation requires applicable runtime evidence, compatibility, security, privacy, recovery, performance, build/CI/provider gates and **explicit owner consent under ADR-0014**.
+An `Exhaustive` surface or exact evidence protocol is not runtime-certified or authorized. Implementation requires applicable compatibility/security/privacy/recovery/performance/build/provider evidence plus explicit owner consent under ADR-0014.
 
-Current owner consent: **NOT GRANTED**.  
-Current canonical scope after ADR-0197: **56 surfaces**.  
-Authorized: **0/56**.  
-Implemented/runtime verified: **none**.
+Current scope: **56 surfaces**  
+Product-option maturity: **56/56 Exhaustive**  
+Multisite mapping: **56/56**  
+AI Prompt mapping: **56/56**  
+Authorized: **0/56**  
+Implemented/runtime verified: **none**  
+Lifecycle: **SPECIFICATION**  
+Latest accepted planning/evidence decision: **ADR-0209**
 
-Historical 31-, 43-, 48-, 50- and 55-surface snapshots remain historical truth only.
+## PLANNING GAP
 
-## Current planning truth
+Known remaining exact fixture expansion:
 
-- Product-option maturity: **56/56 Exhaustive**.
-- Logical Multisite mapping: **56/56**.
-- Shared AI Prompt product mapping: **56/56**.
-- Production implementation WIP: **0**.
-- Current lifecycle: **SPECIFICATION**.
-- Latest accepted planning/evidence decision: **ADR-0208**.
-- WP112 final closure/readiness audit: **DONE / ADR-0207**.
-- WP113 Market Expansion exact evidence: **DONE / ADR-0208**.
-- Current work: **WP114 — First Competitive exact executable-evidence specification**.
-
-P0 remains **not ready** for `AWAITING_DEVELOPMENT_APPROVAL` because WP114–WP116 exact planning gaps remain.
-
-## Readiness classification
-
-### PLANNING GAP
-
-Known remaining exact fixture expansion after ADR-0208:
-
-| Work | Namespaces | Exact definitions remaining |
+| Work | Namespaces | Definitions remaining |
 |---|---|---:|
-| **WP114 CURRENT** | MPR/RPR/ATM/MDP/STM | **880** |
-| WP115 | ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC | 1,936 |
-| WP116 | UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX | 1,760 |
-| **Total** | **26 namespaces** | **4,576** |
+| **WP115 CURRENT** | ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC | **1,936** |
+| WP116 | UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX | **1,760** |
+| **Total** | **21 namespaces** | **3,696** |
 
-The namespace IDs and 16-group ownership are already accepted. The remaining planning work is exact individual fixture enumeration/evidence/boundary detail.
+WP113 and WP114 exact-definition gaps are closed.
 
-### NO GAP / READY AS PLAN — exact evidence design
+## NO GAP / READY AS PLAN — exact evidence design
 
-The following have exact numbered evidence specifications and are therefore planning-complete at the evidence-design layer, despite zero execution:
+Exact numbered evidence now exists for:
+- universal/adapter: SBP, ANL, SRH, DEC, LED, RSV, PLC, EXP, DOC, SYN, GEO, AIP, WCA;
+- Market Expansion / ADR-0208: RDR, SRT, DMY, LNK, DBM, PDO, MIR;
+- First Competitive / ADR-0209: **MPR, RPR, ATM, MDP, STM**.
 
-| Scope | Namespace | Exact documented | Executed |
-|---|---:|---:|---:|
-| F01 Solution Blueprint | SBP | 176/176 | 0/176 |
-| F02 Analytics/Journey | ANL | 176/176 | 0/176 |
-| F03 Search/Indexing | SRH | 176/176 | 0/176 |
-| F04 Decision/Formula | DEC | 176/176 | 0/176 |
-| F05 Ledger | LED | 176/176 | 0/176 |
-| F06 Reservation | RSV | 176/176 | 0/176 |
-| F07 Placement/Personalization | PLC | 176/176 | 0/176 |
-| F08 Experiments/Rollout | EXP | 176/176 | 0/176 |
-| F09 Documents/Records | DOC | 176/176 | 0/176 |
-| F10 Sync/ETL | SYN | 176/176 | 0/176 |
-| F11 Geo/Territory | GEO | 176/176 | 0/176 |
-| F12 AI Gateway/Copilot | AIP | 176/176 | 0/176 |
-| A01 WooCommerce Adapter | WCA | 176/176 | 0/176 |
-| URL Redirection & Routing | RDR | 176/176 | 0/176 |
-| Search/Replace & Transformation | SRT | 176/176 | 0/176 |
-| Dummy/Synthetic Fixture Studio | DMY | 176/176 | 0/176 |
-| Link Health/Crawl Intelligence | LNK | 176/176 | 0/176 |
-| Database Maintenance/Cleanup | DBM | 176/176 | 0/176 |
-| Product Discovery/Planning | PDO | 176/176 | 0/176 |
-| Market Intelligence Radar | MIR | 176/176 | 0/176 |
+Every namespace above is **176/176 documented and 0/176 executed** where the 176-fixture contract applies. `NO GAP / READY AS PLAN` means only that evidence-design planning is exact.
 
-`NO GAP / READY AS PLAN` does not imply executable/runtime readiness.
+## RUNTIME EVIDENCE PENDING
 
-### RUNTIME EVIDENCE PENDING
+All exact protocols above remain unexecuted. Existing compatibility, Multisite, UI/build/CI, Jobs, Definitions/Fields/Relations/Query/Tables, Vault, Workflow, Notifications, Chat, Connections, Audit, Kernel/Policy/Abilities, Privacy/Error/Version/Lifecycle, Data Source/Assets/Conditions/DVR/Rate/Cache, REST/Import-Export, Roles/Users/Protector/XML-RPC/Reset/Settings/Dashboard/Media and related exact protocols remain execution blockers rather than planning gaps.
 
-All exact protocols above remain unexecuted. Established exact/shared protocols also remain pending across compatibility, Multisite/site lifecycle, UI/build/CI, Job/Cron/async, Definition/Fields/Relations/Query/Tables, Vault/Free↔Pro/OAuth/TUF, Workflow/Notification/Chat/Connections, Audit/Kernel/Policy/Abilities/SDK, Privacy/Error/Version/Lifecycle, Data Source/Assets/Conditions/Dynamic Value/Rate/Cache, REST/Import-Export/Roles/Users/Protector/XML-RPC/Reset/Settings/Dashboard/Media and other module-specific evidence.
+## PROVIDER CERTIFICATION PENDING
 
-A zero evidence counter on an exact protocol is a runtime blocker, not automatically a planning blocker.
+Applicable email, billing, protected-file, backup, connection, geocoder/routing, browser/media/CDN, Woo payment/tax/shipping/inventory and other external authorities remain uncertified unless later execution evidence explicitly proves otherwise.
 
-### PROVIDER CERTIFICATION PENDING
-
-Provider contracts/evidence remain unexecuted for applicable external authorities, including:
-- email transport;
-- membership billing;
-- protected-file delivery;
-- backup providers;
-- connection/integration adapters;
-- builder/provider adapters where certification applies;
-- geocoder/routing;
-- Woo payment/tax/shipping/external inventory providers.
-
-No HTTP success, paper contract or static fixture constitutes provider certification.
-
-### OWNER CONSENT PENDING
+## OWNER CONSENT PENDING
 
 ADR-0014 blocks every production source/runtime/build/migration/test/provider/API/AI/MCP activity until explicit scoped owner consent is recorded.
 
-## Per-surface readiness — 56 current surfaces
+## Per-surface effect
 
-All 56 current surfaces are **Exhaustive / Authorized: No**.
+All 56 surfaces are still **Exhaustive / Authorized: No**.
 
-Surfaces 1–43 retain exact/shared module/foundation evidence as accepted. Surfaces 44–48 now have exact RDR/SRT/DMY/LNK/DBM evidence under ADR-0208. S07/S08 planning services now have exact PDO/MIR evidence. Their execution remains zero.
+First Competitive parity is no longer a planning gap:
+- Surface 15 Membership: MPR exact / ADR-0209;
+- Surface 30 Role & Capability: RPR exact / ADR-0209;
+- Surface 49 Admin Theme: ATM exact / ADR-0209;
+- Surface 28 Media Performance: MDP exact / ADR-0209;
+- Surface 50 Safe Script/Tag: STM exact / ADR-0209.
 
-Remaining surface/parity planning gaps:
-- 15/28/30/49/50 parity: MPR/RPR/MDP/ATM/STM — WP114;
-- 51–55 plus second-audit owner supplements: ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — WP115;
-- Surface 56 plus third-audit parity: THM/UAF/MIG/WLB/DUP/ALX/MBX/RSX/RDX/CPTX — WP116.
+Remaining planning gaps are WP115 surfaces/supplements and WP116 third-competitive supplements.
 
-WooCommerce Commerce Domain Adapter is cross-domain, not a numbered product surface; WCA is exact planning evidence and remains 0 executed.
+## Stop-the-line invariants
 
-## Cross-owner stop-the-line conditions
-
-Planning or later implementation must stop on any design that violates:
-- UI hiding ≠ authorization;
-- Search/index ≠ source truth;
-- score/formula/rank ≠ Policy/mutation authority;
-- ledger ≠ payment/order/reservation truth outside explicit profile;
-- reservation ≠ payment/order/entitlement;
-- placement ≠ entitlement;
-- experiment assignment ≠ consent/exposure;
-- generated document ≠ source/legal/payment truth;
-- sync copy ≠ source truth absent explicit authority;
-- geospatial match ≠ verified address/authorization/serviceability;
-- Woo adapter ≠ second commerce engine;
-- redirect match/simulator ≠ authorization; server export ≠ active server state;
-- Search/Replace Dry Run ≠ mutation; mutation ≠ verified rollback;
-- synthetic data ≠ source truth; generated cleanup requires durable ownership;
-- inconclusive/restricted link check ≠ proven broken;
-- cleanup candidate/orphan suspicion ≠ deletion authority;
-- market score/planning output ≠ product acceptance/development approval;
-- Backup ≠ Staging/Migration; clone ≠ same identity;
-- Safe Script/Tag and Theme Workspace ≠ arbitrary PHP/eval/server execution;
+- UI/branding/navigation hiding ≠ authorization.
+- User ≠ Role/Capability ≠ Plan ≠ Enrollment ≠ Entitlement ≠ Policy.
+- WordPress meta-cap + WPE Policy remain role/action authority; Super Admin ≠ ordinary role.
+- Registration/account ≠ verified/approved/enrolled/paid entitlement.
+- LCP/priority inference ≠ measured Core Web Vitals; private media cannot leak through optimization.
+- Safe Script/Tag is browser-side only; no PHP/eval/arbitrary SQL/shell/server code; CSP/consent cannot be silently weakened; Vault secrets cannot become frontend tokens.
+- Search/index ≠ source truth; formula/rank ≠ authorization/mutation authority.
+- Backup ≠ Staging/Migration; clone ≠ same identity.
 - AI/MCP ≠ hidden privilege/provider/mutation path.
 
-## Planned implementation critical path after P0 closure
+## Current work
 
-Planning only; not authorization:
+**P0-M00-WP115 — Second Competitive exact executable-evidence specification (`ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC`, 1,936 fixtures).**
 
-1. explicit owner consent + bounded first milestone;
-2. compatibility/build/CI/kernel/Policy/Vault/module-lifecycle/data-definition/query/relation/storage foundations;
-3. Multisite/privacy/error/version/cache/rate/jobs/recovery foundations;
-4. independent module batches;
-5. provider/adapters after owning contracts stabilize;
-6. sync/geospatial/AI/Woo orchestration after canonical authorities exist;
-7. full regression/migration/recovery/concurrency/performance/provider certification;
-8. packaging/release/deployment after release gates.
+After WP116, a new final closure/readiness audit decides whether P0 may transition to `AWAITING_DEVELOPMENT_APPROVAL`.
 
-## Current planning work
-
-**P0-M00-WP114 — First Competitive exact executable-evidence specification (`MPR/RPR/ATM/MDP/STM`, 880 fixtures).**
-
-After WP116, a new final closure/readiness audit must decide whether P0 may transition to `AWAITING_DEVELOPMENT_APPROVAL`.
-
-## Development gate
-
-No executable evidence or implementation may run until explicit scoped owner consent. Current implementation authorization: **0/56**.
+Production development authorization remains **NOT GRANTED / 0/56**.
