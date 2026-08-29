@@ -1,21 +1,29 @@
 # WPEssential — Open Decisions & Readiness Blocker Register
 
-Status: **Phase 0 / planning-only / no development consent**  
+Status: **Phase 0 planning complete / no development consent**  
 Last synchronized: 2026-08-29
 
-Accepted through **ADR-0210**. Scope **56**, authorized **0/56**, Multisite **56/56**, AI Prompt **56/56**, current work **WP116**.
+Accepted through **ADR-0212**. Scope **56**, authorized **0/56**, Multisite **56/56**, AI Prompt **56/56**, lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**.
 
-## Remaining PLANNING GAP
+## PLANNING GAP
 
-**1,760 exact definitions / 10 namespaces**:
-- **WP116 CURRENT:** UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX.
+**None known at current accepted scope.**
 
-ADR-0210 closes WP115 ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC at exact evidence-design level: **1,936/1,936 documented / 0 executed**.
+WP112 / ADR-0207 identified 5,808 exact definitions / 33 namespaces. WP113–WP116 closed all 5,808 under ADR-0208…ADR-0211. WP117 / ADR-0212 final closure audit passed and confirmed the known exact-planning gap is **0/0**.
 
-Universal/adapter, ADR-0208 Market, ADR-0209 First Competitive and ADR-0210 Second Competitive exact protocols remain `RUNTIME EVIDENCE PENDING`. External authorities remain `PROVIDER CERTIFICATION PENDING`. Owner consent remains PENDING.
+## Remaining blockers
 
-Preserved boundaries: UI/visibility ≠ authorization; Safe Script/HFC/Theme Workspace no arbitrary PHP/eval/server path; Backup ≠ Staging/Migration; security finding ≠ certainty; font provenance ≠ license authority; UDS state ≠ Woo truth; MRL delegates canonical reference mutation; JEX cannot duplicate canonical engines; LHX Safe HTTP/SSRF and inconclusive-result truth; AI/MCP no hidden privilege/provider/mutation path.
+### RUNTIME EVIDENCE PENDING
+All exact protocols remain documentation-only / unexecuted. Runtime compatibility, build/CI, WordPress integration, security, permissions, data, concurrency, recovery, privacy, Multisite, performance and E2E evidence remains pending.
 
-After WP116 a fresh closure/readiness audit decides whether P0 can move to `AWAITING_DEVELOPMENT_APPROVAL`.
+### PROVIDER CERTIFICATION PENDING
+Applicable external transports/providers/adapters remain uncertified unless later execution evidence explicitly records certification.
 
-Production development remains **NOT GRANTED / 0/56**.
+### OWNER CONSENT PENDING
+`GOV-OWNER-CONSENT-000` remains PENDING. No production source/runtime/build/test/provider/API/AI/MCP action is authorized.
+
+## Current decision
+
+P0 planning is `NO GAP / READY AS PLAN` and is **awaiting explicit scoped development approval**. If an implementation baseline later discovers a genuine missing product/architecture decision, affected scope returns to planning rather than being silently invented in code.
+
+ADR-0014 remains the hard gate. Production authorization remains **NOT GRANTED / 0/56**.
