@@ -26,9 +26,8 @@ final class NativeActionSchedulerBackendEnvironment implements ActionSchedulerBa
 
     public function firstScheduledActionId(string $hook, array $args, string $group): ?int
     {
-        $this->requireFunction('as_has_scheduled_action');
-        $id = as_has_scheduled_action($hook, $args, $group);
-        return is_int($id) && $id > 0 ? $id : null;
+        $ids = $this->scheduledActionIds($hook, $args, $group);
+        return $ids[0] ?? null;
     }
 
     public function scheduledActionIds(string $hook, array $args, string $group): array
