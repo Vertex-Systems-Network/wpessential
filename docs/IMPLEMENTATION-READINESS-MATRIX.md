@@ -26,20 +26,20 @@ Known remaining exact fixture expansion:
 | WP116 | UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX | **1,760** |
 | **Total** | **21 namespaces** | **3,696** |
 
-WP113 and WP114 exact-definition gaps are closed.
+WP115 preflight normalized the missing explicit 16-group ownership for BKX/MRL/PBX/JEX/LHX/HFC in the Second Competitive evidence master plan before exact fixture enumeration. Those six namespaces remain planning gaps until all 176 fixtures each are enumerated and accepted.
 
 ## NO GAP / READY AS PLAN — exact evidence design
 
-Exact numbered evidence now exists for:
+Exact numbered evidence exists for:
 - universal/adapter: SBP, ANL, SRH, DEC, LED, RSV, PLC, EXP, DOC, SYN, GEO, AIP, WCA;
 - Market Expansion / ADR-0208: RDR, SRT, DMY, LNK, DBM, PDO, MIR;
 - First Competitive / ADR-0209: **MPR, RPR, ATM, MDP, STM**.
 
-Every namespace above is **176/176 documented and 0/176 executed** where the 176-fixture contract applies. `NO GAP / READY AS PLAN` means only that evidence-design planning is exact.
+Every applicable namespace above is **176/176 documented and 0/176 executed**. `NO GAP / READY AS PLAN` means evidence-design planning is exact only.
 
 ## RUNTIME EVIDENCE PENDING
 
-All exact protocols above remain unexecuted. Existing compatibility, Multisite, UI/build/CI, Jobs, Definitions/Fields/Relations/Query/Tables, Vault, Workflow, Notifications, Chat, Connections, Audit, Kernel/Policy/Abilities, Privacy/Error/Version/Lifecycle, Data Source/Assets/Conditions/DVR/Rate/Cache, REST/Import-Export, Roles/Users/Protector/XML-RPC/Reset/Settings/Dashboard/Media and related exact protocols remain execution blockers rather than planning gaps.
+All exact protocols above remain unexecuted. Existing compatibility, Multisite, UI/build/CI, Jobs, Definitions/Fields/Relations/Query/Tables, Vault, Workflow, Notifications, Chat, Connections, Audit, Kernel/Policy/Abilities, Privacy/Error/Version/Lifecycle, Data Source/Assets/Conditions/DVR/Rate/Cache, REST/Import-Export, Roles/Users/Protector/XML-RPC/Reset/Settings/Dashboard/Media and related protocols remain execution blockers rather than planning gaps.
 
 ## PROVIDER CERTIFICATION PENDING
 
@@ -70,8 +70,11 @@ Remaining planning gaps are WP115 surfaces/supplements and WP116 third-competiti
 - Registration/account ≠ verified/approved/enrolled/paid entitlement.
 - LCP/priority inference ≠ measured Core Web Vitals; private media cannot leak through optimization.
 - Safe Script/Tag is browser-side only; no PHP/eval/arbitrary SQL/shell/server code; CSP/consent cannot be silently weakened; Vault secrets cannot become frontend tokens.
-- Search/index ≠ source truth; formula/rank ≠ authorization/mutation authority.
-- Backup ≠ Staging/Migration; clone ≠ same identity.
+- Backup ≠ Staging/Migration; backup chain/restore confidence must not be fabricated.
+- Staging/clone ≠ same environment/entity identity and cannot cause production side effects.
+- Security scanner finding ≠ certainty without provenance/confidence; quarantine/repair requires recoverable evidence.
+- Font hosting/availability ≠ license/redistribution authority.
+- UDS favorites/wishlist/cart-like state ≠ Woo cart/order truth.
 - AI/MCP ≠ hidden privilege/provider/mutation path.
 
 ## Current work
