@@ -1,13 +1,13 @@
 # WPEssential — Access/Admin/Media/Code Market Expansion Evidence Master Plan
 
-Status: **Planning-only executable-evidence contract / WP114 exact expansion CURRENT / NOT EXECUTED**  
+Status: **Exact evidence expansion COMPLETE / ADR-0209 / NOT EXECUTED**  
 Date: 2026-08-29
 
 ## 1. Purpose
 
-Reserve bounded, explicit future evidence for the owner-requested competitor parity/expansion work without executing any runtime behavior.
+Reserve and now record the exact executable-evidence contract for the owner-requested competitor parity/expansion work without executing runtime behavior.
 
-The 16 group ownership below remains fixed. ADR-0207 identified these five namespaces as exact-fixture planning gaps. After WP113 / ADR-0208 completed Market Expansion, **WP114 is now the current work package** and must expand every namespace below to exact individual fixtures without renumbering or repurposing groups.
+The 16 group ownership below remains fixed. ADR-0207 identified these five namespaces as exact-fixture planning gaps. WP114 has now expanded every namespace below into exact individual fixtures without renumbering or repurposing groups; ADR-0209 accepts those protocols.
 
 All counters remain zero executed.
 
@@ -15,11 +15,20 @@ All counters remain zero executed.
 
 | Namespace | Scope | Fixture envelope | Exact status | Executed |
 |---|---|---:|---|---:|
-| `MPR` | Membership competitive parity / registration / private-site / migration presets | MPR-001…MPR-176 | WP114 exact expansion pending | 0/176 |
-| `RPR` | Role hierarchy / rescue / surface-policy integration / compatibility | RPR-001…RPR-176 | WP114 exact expansion pending | 0/176 |
-| `ATM` | Admin Theme, Branding & Experience Manager | ATM-001…ATM-176 | WP114 exact expansion pending | 0/176 |
-| `MDP` | Media Performance, Responsive Delivery & Field Optimization | MDP-001…MDP-176 | WP114 exact expansion pending | 0/176 |
-| `STM` | Safe Script, Tag & Code Injection Manager | STM-001…STM-176 | WP114 exact expansion pending | 0/176 |
+| `MPR` | Membership competitive parity / registration / private-site / migration presets | MPR-001…MPR-176 | **176/176 exact / ADR-0209** | 0/176 |
+| `RPR` | Role hierarchy / rescue / surface-policy integration / compatibility | RPR-001…RPR-176 | **176/176 exact / ADR-0209** | 0/176 |
+| `ATM` | Admin Theme, Branding & Experience Manager | ATM-001…ATM-176 | **176/176 exact / ADR-0209** | 0/176 |
+| `MDP` | Media Performance, Responsive Delivery & Field Optimization | MDP-001…MDP-176 | **176/176 exact / ADR-0209** | 0/176 |
+| `STM` | Safe Script, Tag & Code Injection Manager | STM-001…STM-176 | **176/176 exact / ADR-0209** | 0/176 |
+
+WP114 total: **880/880 exact individual fixtures documented / 0 executed**.
+
+Canonical exact protocols:
+- `MEMBERSHIP-COMPETITIVE-PARITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `ROLE-CAPABILITY-COMPETITIVE-PARITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `ADMIN-THEME-BRANDING-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `MEDIA-PERFORMANCE-DELIVERY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
+- `SAFE-SCRIPT-TAG-CODE-INJECTION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 
 Existing protocols remain separate:
 - Membership core `MBR`, billing `MB-F`, protected files `PC-F`;
@@ -172,6 +181,14 @@ Future execution must stop on evidence of:
 - frontend secret interpolation;
 - cross-site/network policy leakage.
 
-## 10. Execution gate
+## 10. Readiness effect / next package
 
-All five namespaces are **planning-only and 0 executed**. WP114 may enumerate exact evidence fixtures only. No WordPress request, user/role/membership mutation, registration, rescue email, admin theme runtime, RUM metric, image rewrite, script injection, provider/API/AI/MCP call, test, benchmark or build may execute without explicit scoped owner consent under ADR-0014.
+ADR-0209 moves MPR/RPR/ATM/MDP/STM from `PLANNING GAP` to `NO GAP / READY AS PLAN` at evidence-design level. Operationally they remain `RUNTIME EVIDENCE PENDING`; applicable external authorities remain `PROVIDER CERTIFICATION PENDING`.
+
+Known exact planning gap after WP114 is **3,696 definitions across 21 namespaces**.
+
+Current safe work is **WP115 — Second Competitive exact executable-evidence specification** for `ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC` — **1,936 fixtures**.
+
+## 11. Execution gate
+
+All five namespaces are **planning-only and 0 executed**. No WordPress request, user/role/membership mutation, registration, rescue email, admin theme runtime, RUM metric, image rewrite/regeneration, script injection, provider/API/AI/MCP call, test, benchmark or build may execute without explicit scoped owner consent under ADR-0014.
