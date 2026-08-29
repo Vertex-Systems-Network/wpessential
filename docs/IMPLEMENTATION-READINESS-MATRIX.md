@@ -1,35 +1,35 @@
 # WPEssential — Implementation Readiness Matrix
 
-Status: **Phase 0 planning / NO DEVELOPMENT CONSENT**  
+Status: **Phase 0 planning complete / AWAITING DEVELOPMENT APPROVAL / NO DEVELOPMENT CONSENT**  
 Last synchronized: **2026-08-29**
 
-Scope **56**, Exhaustive **56/56**, Multisite **56/56**, AI Prompt **56/56**, authorized **0/56**, runtime verified **none**, lifecycle `SPECIFICATION`, accepted through **ADR-0210**.
+Scope **56**, Exhaustive **56/56**, Multisite **56/56**, AI Prompt **56/56**, authorized **0/56**, runtime verified **none**, lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**, accepted through **ADR-0212**.
 
-## Planning-complete exact evidence
+## Planning closure
 
-Exact/unexecuted evidence design now includes:
-- universal/adapter SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA;
-- ADR-0208 Market: RDR/SRT/DMY/LNK/DBM/PDO/MIR;
-- ADR-0209 First Competitive: MPR/RPR/ATM/MDP/STM;
-- ADR-0210 Second Competitive: ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC.
+WP112 / ADR-0207 identified 5,808 exact definitions / 33 namespaces. WP113–WP116 closed all of them:
+- ADR-0208: 1,232;
+- ADR-0209: 880;
+- ADR-0210: 1,936;
+- ADR-0211: 1,760.
 
-All remain 0 executed and are `RUNTIME EVIDENCE PENDING`; external/provider profiles remain `PROVIDER CERTIFICATION PENDING` where applicable.
+Known remaining `PLANNING GAP`: **0 / 0 namespaces**.
 
-## Remaining PLANNING GAP
+WP117 / ADR-0212 final closure audit: **PASS**. Phase 0 is `NO GAP / READY AS PLAN` and may wait for scoped owner development approval.
 
-**1,760 exact definitions / 10 namespaces**:
-- **WP116 CURRENT** — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — 1,760.
+## Still pending
 
-No other known exact-fixture planning gap is promoted closed until the post-WP116 closure audit verifies repository-wide consistency.
+### RUNTIME EVIDENCE PENDING
+All exact protocols are documentation-only and unexecuted. Compatibility, WordPress integration, security, permissions, storage, concurrency, recovery, Multisite, privacy, performance, E2E, build/CI and other runtime gates must execute later within authorized scope.
 
-## Stop-the-line boundaries
+### PROVIDER CERTIFICATION PENDING
+Applicable email, billing, protected-file, backup, connection, builder, geocoder/routing, Woo external payment/tax/shipping/inventory, font/conversion, migration endpoints, SIEM/sinks and other providers remain uncertified unless later evidence explicitly says otherwise.
 
-UI hiding ≠ authorization; Safe Script/HFC/Theme Workspace cannot become arbitrary PHP/eval/server execution; Backup ≠ Staging/Migration; security finding ≠ certainty; font provenance/local hosting ≠ license authority; UDS state ≠ Woo cart/order truth; media replacement/reference changes preserve canonical owners; JEX cannot duplicate Fields/Relations/Query/Tables/Listings/DVR; LHX restricted/inconclusive result ≠ proven broken and Safe HTTP/SSRF remains mandatory; AI/MCP has no hidden privilege/provider/mutation path.
+### OWNER CONSENT PENDING
+`GOV-OWNER-CONSENT-000` remains PENDING. No implementation action is authorized. `continue`, `resume`, P0 completion and ADR acceptance are not consent.
 
-## Current work
+## Implementation entry after future consent
 
-**WP116 — Third Competitive exact executable-evidence specification, 1,760 fixtures.**
-
-After WP116, a fresh closure/readiness audit must decide whether P0 may move to `AWAITING_DEVELOPMENT_APPROVAL`.
+Before first production code: record ACTIVE scoped approval; refresh exact branch/revision/capabilities; establish Implementation Baseline / Adoption Gate; verify runtime/tool/dependency/lock/build/test baseline; classify baseline failures/UNKNOWNs; refresh relevant external research; select bounded first milestone/change budget; execute only approved spikes/evidence; then enter `IMPLEMENTING` with FAST/FULL gates and recovery governance.
 
 Production development authorization remains **NOT GRANTED / 0/56**.
