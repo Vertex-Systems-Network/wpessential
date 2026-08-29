@@ -10,7 +10,7 @@ Current: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, impleme
 
 Phase 0 exact planning gap identified by ADR-0207 is **0/0 remaining** after WP113–WP116. WP117 / ADR-0212 final closure audit passed.
 
-WP118 / ADR-0213 then completed a deeper integration audit and mapping of modules, options, UI, systems, dependencies, Abilities/events, data ownership and duplicate/bypass semantics. Final structural result: **PASS after remediation**.
+WP118 / ADR-0213 completed the deeper integration audit and mapping of modules, options, UI, systems, dependencies, Abilities/events, data ownership and duplicate/bypass semantics. Final structural result: **PASS after remediation**.
 
 Current canonical integration maps:
 - `docs/ARCHITECTURE/CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md`
@@ -23,7 +23,7 @@ Current canonical integration maps:
 - `docs/ARCHITECTURE/DATA-OWNERSHIP-LIFECYCLE-REGISTRY-32-56.md`
 - `docs/QUALITY/POST-P0-MODULE-OPTION-UI-SYSTEM-INTEGRITY-AUDIT.md`
 
-Core rule: every business semantic has one canonical owner. UI/REST/Workflow/Cron/CLI/AI are invocation channels and cannot create private duplicate engines or bypass the owner's Policy/Ability/storage. Solution Blueprints compose canonical owners rather than creating private CRM/ERP/LMS/etc. runtimes.
+Core rule: every business semantic has one canonical owner. UI/REST/Workflow/Cron/CLI/AI are invocation channels and cannot create private duplicate engines or bypass owner Policy/Ability/storage. Solution Blueprints compose canonical owners rather than creating private CRM/ERP/LMS/etc. runtimes.
 
 `continue`, `resume`, audit PASS, planning closure or ADR acceptance do not authorize development. Explicit scoped owner consent under ADR-0014 is mandatory.
 
