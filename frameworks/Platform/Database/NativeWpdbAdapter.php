@@ -11,7 +11,7 @@ final class NativeWpdbAdapter implements DatabaseAdapterInterface
 {
     public function __construct(private readonly object $wpdb)
     {
-        foreach (['prepare', 'get_row', 'get_var', 'query', 'insert'] as $method) {
+        foreach (['prepare', 'get_row', 'get_results', 'get_var', 'query', 'insert'] as $method) {
             if (!method_exists($this->wpdb, $method)) {
                 throw new InvalidArgumentException(sprintf('wpdb adapter requires method %s().', $method));
             }
@@ -61,6 +61,27 @@ final class NativeWpdbAdapter implements DatabaseAdapterInterface
             throw new RuntimeException('wpdb returned an invalid row shape.');
         }
         return $row;
+    }
+
+    public function getResults(string $query): array
+    {
+        $rows = $this->wpdb->get_results($query, 'ARRAY_A');
+        $this->assertNoError('read rows');
+        if (!is_array($rows)) {
+            throw new RuntimeException('wpdb returned an invalid result-set shape.');
+        }
+
+        $result = [];
+        foreach ($rows as $row) {
+            if (is_object($row)) {
+                $row = (array) $row;
+            }
+            if (!is_array($row)) {
+                throw new RuntimeException('wpdb returned an invalid result row shape.');
+            }
+            $result[] = $row;
+        }
+        return $result;
     }
 
     public function getVar(string $query): mixed
