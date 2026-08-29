@@ -59,6 +59,11 @@ final class PdoDatabaseAdapter implements DatabaseAdapterInterface
         $row = $statement->fetch(PDO::FETCH_ASSOC);
         return $row === false ? null : $row;
     }
+    public function getResults(string $query): array
+    {
+        $statement = $this->pdo->query($query);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function getVar(string $query): mixed
     {
         $statement = $this->pdo->query($query);
