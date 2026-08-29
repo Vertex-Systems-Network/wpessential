@@ -13,7 +13,11 @@
   },
   "scripts": {
     "architecture:validate": "php tools/architecture/validate.php",
-    "fast": "@architecture:validate"
+    "test:smoke": "php tests/Smoke/kernel-smoke.php",
+    "fast": [
+      "@architecture:validate",
+      "@test:smoke"
+    ]
   },
   "config": {
     "sort-packages": true,
