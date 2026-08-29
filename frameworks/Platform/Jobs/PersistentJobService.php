@@ -86,12 +86,16 @@ final class PersistentJobService implements JobServiceInterface
 
     public function start(string $jobId): void
     {
-        $this->mutate($jobId, static fn (JobRecord $record): null => ($record->start() ?? null));
+        $this->mutate($jobId, static function (JobRecord $record): void {
+            $record->start();
+        });
     }
 
     public function succeed(string $jobId): void
     {
-        $this->mutate($jobId, static fn (JobRecord $record): null => ($record->succeed() ?? null));
+        $this->mutate($jobId, static function (JobRecord $record): void {
+            $record->succeed();
+        });
     }
 
     public function fail(string $jobId, JobFailureClass $failure): void
@@ -110,7 +114,9 @@ final class PersistentJobService implements JobServiceInterface
 
     public function confirmCancellation(string $jobId): void
     {
-        $this->mutate($jobId, static fn (JobRecord $record): null => ($record->confirmCancellation() ?? null));
+        $this->mutate($jobId, static function (JobRecord $record): void {
+            $record->confirmCancellation();
+        });
     }
 
     /** @param callable(JobRecord):mixed $mutation */
