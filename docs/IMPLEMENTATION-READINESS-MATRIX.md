@@ -3,83 +3,45 @@
 Status: **Phase 0 planning / NO DEVELOPMENT CONSENT**  
 Last synchronized: **2026-08-29**
 
-## Global rule
-
-An `Exhaustive` surface or exact evidence protocol is not runtime-certified or authorized. Implementation requires applicable compatibility/security/privacy/recovery/performance/build/provider evidence plus explicit owner consent under ADR-0014.
-
-Current scope: **56 surfaces**  
-Product-option maturity: **56/56 Exhaustive**  
-Multisite mapping: **56/56**  
-AI Prompt mapping: **56/56**  
-Authorized: **0/56**  
-Implemented/runtime verified: **none**  
-Lifecycle: **SPECIFICATION**  
-Latest accepted planning/evidence decision: **ADR-0209**
+Current scope **56 surfaces**, product maturity **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, authorized **0/56**, implemented/runtime verified **none**, lifecycle **SPECIFICATION**, accepted planning/evidence through **ADR-0209**.
 
 ## PLANNING GAP
 
-Known remaining exact fixture expansion:
-
-| Work | Namespaces | Definitions remaining |
+| Work | Namespaces | Remaining |
 |---|---|---:|
 | **WP115 CURRENT** | ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC | **1,936** |
 | WP116 | UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX | **1,760** |
 | **Total** | **21 namespaces** | **3,696** |
 
-WP115 preflight normalized the missing explicit 16-group ownership for BKX/MRL/PBX/JEX/LHX/HFC in the Second Competitive evidence master plan before exact fixture enumeration. Those six namespaces remain planning gaps until all 176 fixtures each are enumerated and accepted.
+WP115 master plan now explicitly fixes all 11 group envelopes; BKX/MRL/PBX/JEX/LHX/HFC ranges were normalized from the accepted addendum. They remain planning gaps until exact 176-fixture protocols are written and accepted.
 
-## NO GAP / READY AS PLAN — exact evidence design
+## NO GAP / READY AS PLAN
 
-Exact numbered evidence exists for:
-- universal/adapter: SBP, ANL, SRH, DEC, LED, RSV, PLC, EXP, DOC, SYN, GEO, AIP, WCA;
-- Market Expansion / ADR-0208: RDR, SRT, DMY, LNK, DBM, PDO, MIR;
-- First Competitive / ADR-0209: **MPR, RPR, ATM, MDP, STM**.
+Exact evidence design exists for SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA; ADR-0208 RDR/SRT/DMY/LNK/DBM/PDO/MIR; ADR-0209 MPR/RPR/ATM/MDP/STM. All remain unexecuted.
 
-Every applicable namespace above is **176/176 documented and 0/176 executed**. `NO GAP / READY AS PLAN` means evidence-design planning is exact only.
+## RUNTIME / PROVIDER / CONSENT blockers
 
-## RUNTIME EVIDENCE PENDING
-
-All exact protocols above remain unexecuted. Existing compatibility, Multisite, UI/build/CI, Jobs, Definitions/Fields/Relations/Query/Tables, Vault, Workflow, Notifications, Chat, Connections, Audit, Kernel/Policy/Abilities, Privacy/Error/Version/Lifecycle, Data Source/Assets/Conditions/DVR/Rate/Cache, REST/Import-Export, Roles/Users/Protector/XML-RPC/Reset/Settings/Dashboard/Media and related protocols remain execution blockers rather than planning gaps.
-
-## PROVIDER CERTIFICATION PENDING
-
-Applicable email, billing, protected-file, backup, connection, geocoder/routing, browser/media/CDN, Woo payment/tax/shipping/inventory and other external authorities remain uncertified unless later execution evidence explicitly proves otherwise.
-
-## OWNER CONSENT PENDING
-
-ADR-0014 blocks every production source/runtime/build/migration/test/provider/API/AI/MCP activity until explicit scoped owner consent is recorded.
+Exact protocols at zero execution remain `RUNTIME EVIDENCE PENDING`. External authorities remain `PROVIDER CERTIFICATION PENDING` until executed certification. All production work remains `OWNER CONSENT PENDING` under ADR-0014.
 
 ## Per-surface effect
 
-All 56 surfaces are still **Exhaustive / Authorized: No**.
-
-First Competitive parity is no longer a planning gap:
-- Surface 15 Membership: MPR exact / ADR-0209;
-- Surface 30 Role & Capability: RPR exact / ADR-0209;
-- Surface 49 Admin Theme: ATM exact / ADR-0209;
-- Surface 28 Media Performance: MDP exact / ADR-0209;
-- Surface 50 Safe Script/Tag: STM exact / ADR-0209.
-
-Remaining planning gaps are WP115 surfaces/supplements and WP116 third-competitive supplements.
+All 56 surfaces remain Exhaustive / Authorized No. First Competitive parity is planning-complete at exact evidence-design level. Second Competitive surfaces/supplements are current WP115 work; third-competitive supplements remain WP116.
 
 ## Stop-the-line invariants
 
 - UI/branding/navigation hiding ≠ authorization.
-- User ≠ Role/Capability ≠ Plan ≠ Enrollment ≠ Entitlement ≠ Policy.
-- WordPress meta-cap + WPE Policy remain role/action authority; Super Admin ≠ ordinary role.
-- Registration/account ≠ verified/approved/enrolled/paid entitlement.
-- LCP/priority inference ≠ measured Core Web Vitals; private media cannot leak through optimization.
-- Safe Script/Tag is browser-side only; no PHP/eval/arbitrary SQL/shell/server code; CSP/consent cannot be silently weakened; Vault secrets cannot become frontend tokens.
-- Backup ≠ Staging/Migration; backup chain/restore confidence must not be fabricated.
-- Staging/clone ≠ same environment/entity identity and cannot cause production side effects.
-- Security scanner finding ≠ certainty without provenance/confidence; quarantine/repair requires recoverable evidence.
-- Font hosting/availability ≠ license/redistribution authority.
-- UDS favorites/wishlist/cart-like state ≠ Woo cart/order truth.
-- AI/MCP ≠ hidden privilege/provider/mutation path.
+- WordPress meta-cap + WPE Policy remain role/action authority.
+- Safe Script/Tag is browser-side only; no PHP/eval/arbitrary SQL/shell/server code, no silent CSP/consent weakening, no frontend Vault secret interpolation.
+- Backup ≠ Staging/Migration; clone ≠ same identity/environment.
+- Security finding ≠ certainty; quarantine/repair requires provenance/recovery evidence.
+- Font delivery/local hosting ≠ license/redistribution authority.
+- UDS state ≠ Woo cart/order truth.
+- JEX refinements compose canonical owners rather than creating parallel engines.
+- AI/MCP cannot create hidden privilege/provider/mutation paths.
 
 ## Current work
 
-**P0-M00-WP115 — Second Competitive exact executable-evidence specification (`ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC`, 1,936 fixtures).**
+**WP115 — Second Competitive exact executable-evidence specification (`ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC`, 1,936 fixtures).**
 
 After WP116, a new final closure/readiness audit decides whether P0 may transition to `AWAITING_DEVELOPMENT_APPROVAL`.
 
