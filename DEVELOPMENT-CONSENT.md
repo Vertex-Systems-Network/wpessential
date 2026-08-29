@@ -19,19 +19,18 @@ Silence, `continue`, `proceed`, `research continue`, `planning continue`, or app
 
 ## Approval scope hierarchy
 
-Every implementation approval is one of `TASK`, `MODULE`, `MILESTONE`, `PHASE`, `PROJECT` and records included/excluded scope, risk exceptions, status and evidence.
+Every implementation approval is one of `TASK`, `MODULE`, `MILESTONE`, `PHASE`, or `PROJECT` and records included/excluded scope, risk exceptions, status and evidence.
 
 Do not repeatedly ask approval for ordinary reversible decisions inside an ACTIVE documented milestone. Ask again when scope/risk materially changes or separately privileged/destructive production action is required.
 
 ## Current consent state
 
 Project development approval: **NOT GRANTED / PENDING**  
-Implementation authorization: **0/50 module/platform surfaces**  
+Current canonical scope: **56 module/platform surfaces**  
+Implementation authorization: **0/56 module/platform surfaces**  
 Execution mode: **PLANNER_ONLY**
 
-Historical `0/31`, `0/43` and `0/48` counters refer to earlier scope snapshots only.
-
-The durable current ledger is `docs/APPROVAL-LEDGER.md`.
+Historical `0/31`, `0/43`, `0/48`, `0/50` and `0/55` counters refer to earlier scope snapshots only. The durable current ledger is `docs/APPROVAL-LEDGER.md`.
 
 ## Allowed before consent
 
