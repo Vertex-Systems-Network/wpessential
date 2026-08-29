@@ -21,10 +21,6 @@ if (!defined('WPE_NONCE_ACTION')) {
     define('WPE_NONCE_ACTION', 'wpessential_request');
 }
 
-$dbName = getenv('WPE_TEST_WP_DB') ?: 'wpessential_test';
-$dbUser = getenv('WPE_TEST_MYSQL_USER') ?: 'root';
-$dbPassword = getenv('WPE_TEST_MYSQL_PASSWORD') ?: 'root';
-$dbHost = getenv('WPE_TEST_WP_DB_HOST') ?: '127.0.0.1:3306';
 $config = <<<'PHP'
 <?php
 define('DB_NAME', getenv('WPE_TEST_WP_DB') ?: 'wpessential_test');
@@ -43,6 +39,7 @@ define('LOGGED_IN_SALT',   'wpessential-test-logged-in-salt');
 define('NONCE_SALT',       'wpessential-test-nonce-salt');
 $table_prefix = 'wpcore_';
 define('WP_DEBUG', false);
+require_once ABSPATH . 'wp-settings.php';
 PHP;
 if (file_put_contents($wpDir . '/wp-config.php', $config . "\n") === false) {
     fwrite(STDERR, "FAIL: unable to create WordPress test configuration\n");
