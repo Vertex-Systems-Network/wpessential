@@ -63,3 +63,6 @@ jobs:
 
       - name: Vault, assets and integrations smoke
         run: php tests/Smoke/vault-assets-integrations-smoke.php
+
+      - name: Persistence and migrations smoke
+        run: php tests/Smoke/persistence-migrations-smoke.php
