@@ -18,6 +18,8 @@ Project website: **https://wpessential.org**
 - Owner engineering contract: **ADR-0216**
 - Atomic compiled-registration persistence: **ADR-0217**
 - Definition + Audit persistence: **ADR-0218**
+- WordPress.org metadata + direct-access security: **ADR-0219**
+- Real WordPress AJAX/nonce/Policy integration: **ADR-0220**
 
 The current implementation branch is `implementation/baseline-adoption-gate`. Draft PR #2 carries the Platform Foundation work.
 
@@ -60,9 +62,9 @@ See `CONTRIBUTING.md` for contribution and WordPress.org release rules. `readme.
 
 ## Current foundation evidence
 
-Hosted CI currently covers Composer metadata, canonical architecture/engineering guards, PHP syntax, smoke tests and MySQL integration fixtures. Accepted runtime evidence includes atomic compiled registrations and scoped Definition/Audit persistence. Evidence for unfinished areas is not promoted to production certification.
+Hosted CI currently covers Composer metadata, canonical architecture/engineering guards, PHP syntax, smoke tests, MySQL integration fixtures, and a pinned real WordPress 7.1 AJAX/nonce/Policy fixture. Accepted runtime evidence includes atomic compiled registrations, scoped Definition/Audit persistence, WordPress.org/direct-access security invariants, and the canonical Ability-backed AJAX path.
 
-Current downstream Platform Foundation work includes real WordPress AJAX/nonce/Policy integration, Action Scheduler coexistence/backend evidence, durable Job persistence, Platform/Runtime Observatory admin surfaces, 10K/100K compiled-registration performance evidence, and the final shared-foundation readiness gate before business-module development.
+Current next Platform Foundation target is **Action Scheduler coexistence/packaging/backend evidence**, followed by durable Job persistence, Platform/Runtime Observatory admin surfaces, 10K/100K compiled-registration performance evidence, and the final shared-foundation readiness gate before business-module development.
 
 ## Canonical planning maps
 
