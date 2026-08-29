@@ -3,7 +3,7 @@
 Checkpoint date: **2026-08-29**  
 Implementation branch: `implementation/baseline-adoption-gate`  
 Planning authority: `planning/master-architecture` through ADR-0213  
-Implementation decisions: through **ADR-0217**  
+Implementation decisions: through **ADR-0218**  
 Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Lifecycle: **`IMPLEMENTING_PLATFORM_FOUNDATION`**  
@@ -42,10 +42,10 @@ Implemented platform foundation now includes:
 - Secrets Vault reference contract;
 - Asset Registry;
 - Integration Registry;
-- Definition persistence abstraction + migration contracts/reference gateways;
 - WordPress Capability + Abilities API bridge;
 - owner-mandated engineering contract / ADR-0216;
-- **persistent atomic compiled-registration generation storage / ADR-0217**.
+- persistent atomic compiled-registration generation storage / ADR-0217;
+- **production-source Definition + Audit MySQL persistence adapters and persistent migration ledger / ADR-0218**.
 
 ## ADR-0216 engineering contract — ACTIVE
 
@@ -67,48 +67,57 @@ The asymmetric filter spelling is intentional public API and must not be silentl
 
 ## ADR-0217 atomic compiled registrations — ACCEPTED
 
-Implemented and accepted boundaries:
-- immutable compiled-generation rows separate from mutable active/fallback scope state;
-- `(network_id, site_id)` storage identity with site/network isolation;
-- transaction + compare-and-swap publication;
-- no partial generation activation;
-- deterministic SHA-256 manifest integrity;
-- explicit corruption quarantine;
-- verified last-known-good recovery;
-- **generation high-watermark independent of active pointer**;
-- corrupt/quarantined generation IDs permanently consumed and never reused;
-- runtime reads the active compiled manifest rather than scanning historical definition populations.
+Accepted boundaries include immutable scope-bound generations, separate active/fallback state, transactional CAS publication, checksum verification, corruption quarantine, last-known-good recovery and a historical generation high-watermark independent of pointer rollback. Corrupt/quarantined generation IDs are never reused.
 
-Recovery may move the active pointer backward, but the immutable generation sequence never rolls backward.
+## ADR-0218 Definition + Audit persistence — ACCEPTED
+
+Implemented and accepted:
+- explicit `DefinitionScope` network/site identity;
+- PT-D Definition and dependency tables;
+- `WpdbDefinitionTableGateway` over the existing canonical `PersistentDefinitionRepository`;
+- transactional Definition row + dependency projection writes;
+- revision CAS conflict rejection;
+- scoped type/dependent queries and checksum verification;
+- persistent `${base_prefix}wpe_migrations` migration state ledger;
+- non-destructive migrations `007.create-definition-persistence` and `008.create-audit-ptd-store`;
+- append-oriented PT-D Audit event store;
+- unique event UUID, structured hot indexes, retention/privacy fields;
+- metadata redaction before persistence;
+- deterministic Audit `content_hash` as a local diagnostic fingerprint only.
+
+The Audit hash does **not** make the database tamper-proof and is not a non-repudiation claim.
 
 ## Hosted evidence — GREEN
 
-Corrected source commit:
-`de2bf6ea0299ce3900a0d6dff2d4646066137497`
+Current source evidence commit:
+`5790ee7b69cb8ec37b17ed5815a2e4551623e248`
 
-GitHub Actions run **33261866811 / #89** completed **SUCCESS** on an actual GitHub-hosted Ubuntu runner.
+GitHub Actions run **33263291359 / #123** completed **SUCCESS** on GitHub-hosted Ubuntu 24.04 with PHP 8.2 and MySQL 8.4.
 
-Hosted PASS:
-- MySQL 8.4 service startup;
+Job-level PASS:
 - Composer metadata validation;
 - canonical architecture validator;
 - engineering-contract validator;
-- PHP 8.2 syntax;
-- **9/9 smoke suites**;
-- real **MySQL 8.4 compiled-registration transactional integration**.
+- PHP syntax;
+- existing **9/9 smoke suites**;
+- MySQL compiled-registration integration;
+- **MySQL Definition/Audit persistence integration**.
 
-The immediately preceding run **33261668224 / #87** failed the smoke gate and stopped the MySQL integration. It exposed a generation-reuse edge case after corruption recovery. The code was corrected so sequencing now uses historical `MAX(generation) + 1`, including quarantined/corrupt generations, before ADR-0217 acceptance.
+The new integration proves migration-ledger idempotency, Definition scope isolation/dependency round-trip/revision CAS behavior, Audit scope persistence, sensitive metadata redaction, deterministic content fingerprinting and duplicate UUID rejection.
+
+Earlier run **33261668224 / #87** remains an important historical failure that exposed generation reuse after compiled-registration corruption recovery; the model was corrected before ADR-0217 acceptance and is not current CI truth.
 
 ## Important non-certifications
 
 Do **not** overclaim:
-- 10K/100K compiled-registration performance certification is still pending;
-- `NativeWpdbAdapter` source exists, but full WordPress runtime certification is pending;
-- MySQL CI evidence certifies transactional storage/recovery behavior, not complete WordPress runtime integration;
-- `PersistentDefinitionRepository` still lacks certified production WordPress/MySQL storage;
-- persistent/tamper-evident Audit storage is pending;
+- no live production WordPress DB migration or rollback was executed;
+- full real-WordPress bootstrap/service wiring of Definition/Audit adapters remains pending;
+- network-owned Audit events without site context are not yet represented because current `ExecutionContext` requires a positive site ID;
+- Audit query/UI authorization, retention purge, privacy erasure/anonymization, exports, legal holds and external/signed tamper-evidence are pending;
+- 10K/100K compiled-registration performance evidence remains pending;
+- large Audit dataset/performance evidence remains pending;
 - Action Scheduler capability-ready ≠ coexistence/Multisite/backend certified;
-- real WordPress AJAX/nonce/Policy integration fixtures remain pending;
+- real WordPress AJAX/nonce/Policy end-to-end fixtures remain pending;
 - Runtime Observatory admin graph/Policy/retention UI remains pending;
 - business-module implementation has not started.
 
@@ -117,13 +126,12 @@ No live provider call, production deployment, destructive live-site/customer-dat
 ## Current next action
 
 Continue WP121 with bounded evidence-backed tranches:
-1. production Definition/Audit persistence adapters + bounded migrations;
-2. real WordPress AJAX/nonce/Policy integration fixtures;
-3. Action Scheduler coexistence/backend evidence;
-4. durable Job attempt/lease/checkpoint contracts after backend evidence;
-5. minimal Platform admin shell + Runtime Observatory graph/diagnostics UI;
-6. executable 10K/100K compiled-registration scale evidence;
-7. shared-foundation readiness gate;
-8. first business-module tranche only after that gate passes.
+1. **real WordPress AJAX/nonce/Policy integration fixtures**;
+2. Action Scheduler coexistence/backend evidence;
+3. durable Job attempt/lease/checkpoint contracts after backend evidence;
+4. minimal Platform admin shell + Runtime Observatory graph/diagnostics UI;
+5. executable 10K/100K compiled-registration scale evidence;
+6. shared-foundation readiness gate;
+7. first business-module tranche only after that gate passes.
 
 Repository evidence overrides conversational memory.
