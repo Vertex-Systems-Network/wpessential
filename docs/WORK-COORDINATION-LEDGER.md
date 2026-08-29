@@ -3,41 +3,36 @@
 Status: **Active governance ledger**  
 Last reviewed: 2026-08-29
 
-Project `PLANNED_EXISTING_PROJECT`; execution `PLANNER_ONLY`; lifecycle `SPECIFICATION`; scope **56**; authorized **0/56**; Multisite **56/56**; AI Prompt **56/56**; implementation WIP **0**.
+Project `PLANNED_EXISTING_PROJECT`; execution `PLANNER_ONLY`; lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**; scope **56**; authorized **0/56**; Multisite **56/56**; AI Prompt **56/56**; implementation WIP **0**.
 
-## Completed planning
+## Completed Phase 0 planning sequence
 
-- WP63…WP74 universal/adapter sequence DONE through ADR-0206.
-- WP112 closure audit DONE / ADR-0207; starting exact gap **5,808 / 33 namespaces**.
-- WP113 Market exact evidence DONE / ADR-0208; **1,232/1,232 / 0 executed**.
-- WP114 First Competitive exact evidence DONE / ADR-0209; **880/880 / 0 executed**.
-- WP115 Second Competitive exact evidence DONE / ADR-0210; **1,936/1,936 / 0 executed**.
+- WP63…WP74 universal/adapter sequence — DONE through ADR-0206.
+- WP112 closure audit — DONE / ADR-0207; starting exact gap **5,808 / 33 namespaces**.
+- WP113 Market exact evidence — DONE / ADR-0208; **1,232/1,232 / 0 executed**.
+- WP114 First Competitive exact evidence — DONE / ADR-0209; **880/880 / 0**.
+- WP115 Second Competitive exact evidence — DONE / ADR-0210; **1,936/1,936 / 0**.
+- WP116 Third Competitive exact evidence — DONE / ADR-0211; **1,760/1,760 / 0**.
+- WP117 post-WP116 final closure/readiness audit — **DONE / PASS / ADR-0212**.
 
-## Current sequence
+Known exact planning gap from ADR-0207: **0 definitions / 0 namespaces remaining**.
 
-| Work | Scope | Definitions | State |
-|---|---|---:|---|
-| WP113 | Market Expansion | 1,232 | DONE / ADR-0208 |
-| WP114 | First Competitive | 880 | DONE / ADR-0209 |
-| WP115 | Second Competitive — ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC | 1,936 | DONE / ADR-0210 |
-| **WP116** | **Third Competitive — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX** | **1,760** | **SPECIFICATION / CURRENT** |
+## Current readiness
 
-Remaining exact planning gap: **1,760 / 10 namespaces**.
+- `PLANNING GAP`: none known at current accepted scope.
+- `NO GAP / READY AS PLAN`: Phase 0 product/architecture/evidence design.
+- `RUNTIME EVIDENCE PENDING`: all exact protocols remain unexecuted.
+- `PROVIDER CERTIFICATION PENDING`: applicable provider/adapters remain uncertified.
+- `OWNER CONSENT PENDING`: all production implementation/runtime actions.
 
-WP115 preflight normalized the six supplemental BKX/MRL/PBX/JEX/LHX/HFC group ranges from the accepted parity addendum before exact enumeration; ADR-0210 now accepts all eleven protocols. They are no longer planning gaps and remain runtime/provider pending as applicable.
+## Current state
 
-Readiness classes remain `PLANNING GAP`, `RUNTIME EVIDENCE PENDING`, `PROVIDER CERTIFICATION PENDING`, `OWNER CONSENT PENDING`, `NO GAP / READY AS PLAN`.
+P0 is planning-complete and **awaiting explicit development approval**. No development work package is ACTIVE.
 
-## Invariants
-
-UI/branding/visibility ≠ authorization; WordPress meta-cap + Policy remain role/action authority; Safe Script/HFC have no PHP/eval/server path; Backup ≠ Staging/Migration; Security finding ≠ certainty; font delivery ≠ license authority; UDS state ≠ Woo cart/order truth; MRL uses canonical reference mutation; JEX cannot duplicate canonical engines; LHX uses Safe HTTP/SSRF; AI/MCP cannot create hidden privilege/provider/mutation paths.
+After future explicit scoped consent, the first safe work is an Implementation Baseline / Adoption Gate: refresh branch/revision/capabilities, inspect production-code baseline, verify runtime/tool/dependency/build/test state, classify baseline failures/UNKNOWNs, refresh first-milestone compatibility/provider research, record the bounded implementation approval, then enter `IMPLEMENTING` only for that approved scope.
 
 ## Runtime truth
 
-No WP112/WP113/WP114/WP115/WP116 fixture or runtime/provider/test/build/deployment work executed.
+No WP112–WP117 fixture or production runtime/provider/test/build/deployment work executed.
 
-## Next safe action
-
-Continue **WP116 — Third Competitive exact executable-evidence specification**, 1,760 exact fixture definitions.
-
-After WP116, run a fresh closure/readiness audit. Production development remains **NOT GRANTED / 0/56**.
+Production development remains **NOT GRANTED / 0/56**.
