@@ -1,7 +1,8 @@
 # WPEssential — Development Consent Gate
 
 Status: **ACTIVE / MANDATORY**  
-Owner instruction recorded: **2026-08-27**
+Owner instruction recorded: **2026-08-27**  
+Explicit development grant recorded: **2026-08-29**
 
 ## Rule
 
@@ -25,12 +26,36 @@ Do not repeatedly ask approval for ordinary reversible decisions inside an ACTIV
 
 ## Current consent state
 
-Project development approval: **NOT GRANTED / PENDING**  
+Project development approval: **GRANTED / ACTIVE**  
+Approval record: **`GOV-OWNER-CONSENT-001`** in `docs/APPROVAL-LEDGER.md`  
 Current canonical scope: **56 module/platform surfaces**  
-Implementation authorization: **0/56 module/platform surfaces**  
-Execution mode: **PLANNER_ONLY**
+Source implementation authorization: **56/56 module/platform surfaces**, executed milestone-by-milestone under accepted architecture and quality gates.  
+Current execution stage: **IMPLEMENTATION BASELINE / ADOPTION GATE**.
 
-Historical `0/31`, `0/43`, `0/48`, `0/50` and `0/55` counters refer to earlier scope snapshots only. The durable current ledger is `docs/APPROVAL-LEDGER.md`.
+The explicit owner instruction authorizes the sequence:
+
+`Implementation Baseline / Adoption Gate → machine-enforced architecture guards → Milestone 1 Platform Foundation → module development`.
+
+Included:
+- repository source implementation;
+- implementation scaffolding/bootstrap/build/test configuration;
+- dependencies justified by accepted architecture and dependency policy;
+- automated tests, static analysis, build/package validation and CI needed for the approved implementation;
+- development/test migrations and schemas within bounded milestone scope;
+- machine-enforced Surface/Option/Route/Dependency/Ability/Storage/Blueprint/Multisite/Invalidation/Provider/Destructive/AI ownership guards;
+- Milestone 1 Platform Foundation;
+- subsequent module development under the accepted 56-surface architecture, milestone gates and change budgets.
+
+Not included in this grant:
+- production deployment/release;
+- destructive mutation of a live production WordPress/WooCommerce site or real customer/business data;
+- live provider operations that can charge money, send real communications, move money, alter authoritative external records or create irreversible external side effects;
+- destructive production reset/restore/migration/rescue operations;
+- merging/releasing changes when a later release/deployment gate requires separate privileged approval.
+
+Those privileged/live actions require their own explicit authorization and recovery evidence.
+
+Historical `0/31`, `0/43`, `0/48`, `0/50`, `0/55` and `0/56` counters refer to earlier pre-consent snapshots only. The durable current ledger is `docs/APPROVAL-LEDGER.md`.
 
 ## Allowed before consent
 
@@ -63,7 +88,7 @@ Any research spike that writes executable code counts as development unless sepa
 
 ## Existing-project approval adoption
 
-Do not retroactively invalidate clearly authorized historical work. Recover/backfill evidence where possible and mark uncertain scope PENDING/UNKNOWN rather than inventing consent. WPEssential currently has no production implementation to adopt.
+Do not retroactively invalidate clearly authorized historical work. Recover/backfill evidence where possible and mark uncertain scope PENDING/UNKNOWN rather than inventing consent. WPEssential had no production implementation before `GOV-OWNER-CONSENT-001`; the implementation baseline must therefore verify whether this remains a greenfield code baseline before ordinary feature code.
 
 ## Start-development protocol after consent
 
@@ -75,7 +100,7 @@ Even after explicit consent:
 5. inspect VCS/workspace/baseline;
 6. establish Implementation Baseline / Adoption Gate and safe branch/checkpoint;
 7. confirm bounded milestone ID, change budget, critical-path/parallelism and FAST/FULL gates;
-8. only then begin code.
+8. only then begin ordinary feature code.
 
 Consent does not bypass technical/security/recovery blockers.
 
