@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__DIR__, 2) . '/');
 }
@@ -19,6 +18,8 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 
+use WPEssential\Platform\Jobs\Adapters\ActionScheduler\ActionSchedulerBackend;
+use WPEssential\Platform\Jobs\Adapters\ActionScheduler\ActionSchedulerBackendEnvironmentInterface;
 use WPEssential\Platform\Jobs\Adapters\ActionScheduler\ActionSchedulerCapabilityProbe;
 use WPEssential\Platform\Jobs\Adapters\ActionScheduler\ActionSchedulerEnvironmentInterface;
 use WPEssential\Platform\Jobs\Adapters\ActionScheduler\ActionSchedulerProbeState;
@@ -45,6 +46,54 @@ final class FakeActionSchedulerEnvironment implements ActionSchedulerEnvironment
     public function supports(string $feature): ?bool
     {
         return $this->featureSupport;
+    }
+}
+
+final class FakeActionSchedulerBackendEnvironment implements ActionSchedulerBackendEnvironmentInterface
+{
+    /** @var array<int, array{hook:string,args:array<string,scalar|null>,group:string}> */
+    private array $actions = [];
+    private int $nextId = 100;
+
+    public function enqueueAsync(string $hook, array $args, string $group, bool $unique): int
+    {
+        return $this->scheduleSingle(time(), $hook, $args, $group, $unique);
+    }
+
+    public function scheduleSingle(int $timestamp, string $hook, array $args, string $group, bool $unique): int
+    {
+        if ($unique && $this->firstScheduledActionId($hook, $args, $group) !== null) {
+            return 0;
+        }
+        $id = $this->nextId++;
+        $this->actions[$id] = ['hook' => $hook, 'args' => $args, 'group' => $group];
+        return $id;
+    }
+
+    public function firstScheduledActionId(string $hook, array $args, string $group): ?int
+    {
+        return $this->scheduledActionIds($hook, $args, $group)[0] ?? null;
+    }
+
+    public function scheduledActionIds(string $hook, array $args, string $group): array
+    {
+        $ids = [];
+        foreach ($this->actions as $id => $action) {
+            if ($action['hook'] === $hook && $action['args'] === $args && $action['group'] === $group) {
+                $ids[] = $id;
+            }
+        }
+        sort($ids);
+        return $ids;
+    }
+
+    public function unschedule(string $hook, array $args, string $group): ?int
+    {
+        $id = $this->firstScheduledActionId($hook, $args, $group);
+        if ($id !== null) {
+            unset($this->actions[$id]);
+        }
+        return $id;
     }
 }
 
@@ -78,6 +127,18 @@ actionSchedulerExpect($notInitialized->state === ActionSchedulerProbeState::NotI
 $ready = (new ActionSchedulerCapabilityProbe(new FakeActionSchedulerEnvironment($required, true, true)))->probe();
 actionSchedulerExpect($ready->state === ActionSchedulerProbeState::Ready, 'Complete initialized API set should be probe-ready.');
 actionSchedulerExpect($ready->features['ensure_recurring_actions_hook'] === true, 'Feature support must remain explicit.');
-actionSchedulerExpect(!$ready->coexistenceCertified && !$ready->multisiteCertified, 'Capability readiness must not fabricate coexistence or Multisite certification.');
+actionSchedulerExpect(!$ready->coexistenceCertified && !$ready->multisiteCertified, 'Runtime capability readiness must not fabricate environment-specific certification.');
 
-fwrite(STDOUT, "WPEssential Action Scheduler probe smoke PASS\n");
+$backend = new ActionSchedulerBackend(new FakeActionSchedulerBackendEnvironment());
+$jobA = '123e4567-e89b-42d3-a456-426614174000';
+$jobB = '223e4567-e89b-42d3-a456-426614174001';
+$actionA = $backend->scheduleJobAt($jobA, time() + 60);
+actionSchedulerExpect($actionA > 0, 'Backend must materialize a valid WPE Job UUID.');
+actionSchedulerExpect($backend->scheduleJobAt($jobA, time() + 60) === $actionA, 'Backend uniqueness may collapse duplicate materialization.');
+$actionB = $backend->enqueueJob($jobB);
+actionSchedulerExpect($actionB > 0 && $actionB !== $actionA, 'Distinct WPE Job UUIDs must remain isolated.');
+actionSchedulerExpect($backend->actionIds($jobA) === [$actionA], 'Backend lookup must use exact WPE hook/group/job-id ownership.');
+actionSchedulerExpect($backend->cancelJob($jobA) === $actionA, 'Exact WPE Job cancellation must return its backend action id.');
+actionSchedulerExpect(!$backend->hasJob($jobA) && $backend->hasJob($jobB), 'Cancelling one WPE Job must not cancel another.');
+
+fwrite(STDOUT, "WPEssential Action Scheduler probe/backend smoke PASS\n");
