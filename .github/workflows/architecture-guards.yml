@@ -31,7 +31,7 @@ permissions:
 jobs:
   validate-architecture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     services:
       mysql:
         image: mysql:8.4
@@ -143,3 +143,42 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/wordpress-ajax-nonce-policy.php
+
+      - name: Prepare pinned Action Scheduler coexistence fixtures
+        shell: bash
+        run: |
+          rm -rf /tmp/as-4.1.0 /tmp/as-3.9.3 /tmp/as-4.1.0.zip /tmp/as-3.9.3.zip
+          mkdir -p /tmp/as-4.1.0 /tmp/as-3.9.3 /tmp/wordpress/wp-content/plugins
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/woocommerce/action-scheduler/releases/download/4.1.0/action-scheduler.zip \
+            --output /tmp/as-4.1.0.zip
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/woocommerce/action-scheduler/releases/download/3.9.3/action-scheduler.zip \
+            --output /tmp/as-3.9.3.zip
+          unzip -q /tmp/as-4.1.0.zip -d /tmp/as-4.1.0
+          unzip -q /tmp/as-3.9.3.zip -d /tmp/as-3.9.3
+          src410="$(dirname "$(find /tmp/as-4.1.0 -name action-scheduler.php -print -quit)")"
+          src393="$(dirname "$(find /tmp/as-3.9.3 -name action-scheduler.php -print -quit)")"
+          test -f "${src410}/action-scheduler.php"
+          test -f "${src393}/action-scheduler.php"
+          rm -rf /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0 /tmp/wordpress/wp-content/plugins/action-scheduler-3.9.3
+          cp -R "${src410}" /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0
+          cp -R "${src393}" /tmp/wordpress/wp-content/plugins/action-scheduler-3.9.3
+
+      - name: Activate Action Scheduler fixture and set coexistence order
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-action-scheduler-setup.php
+
+      - name: Real Action Scheduler coexistence backend integration
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-action-scheduler-coexistence.php
