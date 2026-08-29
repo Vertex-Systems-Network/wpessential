@@ -19,13 +19,15 @@
     "test:smoke:action-scheduler-probe": "php tests/Smoke/action-scheduler-probe-smoke.php",
     "test:smoke:vault-assets-integrations": "php tests/Smoke/vault-assets-integrations-smoke.php",
     "test:smoke:persistence-migrations": "php tests/Smoke/persistence-migrations-smoke.php",
+    "test:smoke:wordpress-abilities-bridge": "php tests/Smoke/wordpress-abilities-bridge-smoke.php",
     "test:smoke": [
       "@test:smoke:kernel",
       "@test:smoke:platform-core",
       "@test:smoke:audit-jobs",
       "@test:smoke:action-scheduler-probe",
       "@test:smoke:vault-assets-integrations",
-      "@test:smoke:persistence-migrations"
+      "@test:smoke:persistence-migrations",
+      "@test:smoke:wordpress-abilities-bridge"
     ],
     "fast": [
       "@architecture:validate",
