@@ -51,3 +51,6 @@ jobs:
 
       - name: Kernel smoke
         run: php tests/Smoke/kernel-smoke.php
+
+      - name: Platform core smoke
+        run: php tests/Smoke/platform-core-smoke.php
