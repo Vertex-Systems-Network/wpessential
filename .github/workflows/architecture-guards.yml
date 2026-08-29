@@ -54,3 +54,6 @@ jobs:
 
       - name: Platform core smoke
         run: php tests/Smoke/platform-core-smoke.php
+
+      - name: Audit and jobs smoke
+        run: php tests/Smoke/audit-jobs-smoke.php
