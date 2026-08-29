@@ -36,7 +36,7 @@ Historical denominators remain valid snapshots only for their accepted historica
 
 ## Accepted architecture/evidence milestone
 
-Accepted planning/evidence decisions extend through **ADR-0208**.
+Accepted planning/evidence decisions extend through **ADR-0209**.
 
 ### Exact detailed universal/adapter evidence
 
@@ -56,7 +56,6 @@ Accepted planning/evidence decisions extend through **ADR-0208**.
 
 ### Exact Market Expansion evidence — WP113 / ADR-0208
 
-The seven Market Expansion namespaces now have exact individual fixtures:
 - RDR — 176 documented / 0 executed;
 - SRT — 176 / 0;
 - DMY — 176 / 0;
@@ -67,16 +66,30 @@ The seven Market Expansion namespaces now have exact individual fixtures:
 
 WP113 total: **1,232/1,232 exact fixture definitions documented; 0 executed**.
 
-These namespaces have moved from `PLANNING GAP` to `NO GAP / READY AS PLAN` at the evidence-design layer only. Their runtime state remains `RUNTIME EVIDENCE PENDING`.
+### Exact First Competitive evidence — WP114 / ADR-0209
+
+- MPR — Membership parity — **176/176 documented / 0 executed**;
+- RPR — Role/Capability parity — **176/176 / 0**;
+- ATM — Admin Theme/Branding — **176/176 / 0**;
+- MDP — Media Performance/Responsive Delivery — **176/176 / 0**;
+- STM — Safe Script/Tag/Code Injection — **176/176 / 0**.
+
+WP114 total: **880/880 exact fixture definitions documented; 0 executed**.
+
+MPR/RPR/ATM/MDP/STM now move from `PLANNING GAP` to `NO GAP / READY AS PLAN` at evidence-design level only. Runtime remains `RUNTIME EVIDENCE PENDING`; applicable provider evidence remains separately pending.
 
 ## WP112 final closure/readiness audit — DONE / ADR-0207
 
 Canonical audit: `docs/QUALITY/P0-FINAL-PREDEVELOPMENT-CLOSURE-READINESS-AUDIT.md`.
 
-WP112 originally found **5,808** exact fixture definitions missing across 33 market/competitive namespaces. WP113/ADR-0208 closed **1,232** of them.
+WP112 originally found **5,808** exact fixture definitions missing across 33 market/competitive namespaces.
+
+Closed since that audit:
+- WP113 / ADR-0208: **1,232 definitions / 7 namespaces**;
+- WP114 / ADR-0209: **880 definitions / 5 namespaces**.
 
 Current remaining exact planning gap:
-- **4,576 fixture definitions across 26 namespaces**.
+- **3,696 fixture definitions across 21 namespaces**.
 
 Readiness classes remain:
 - `PLANNING GAP`;
@@ -90,8 +103,8 @@ A zero execution counter is not automatically a planning gap.
 ## Remaining exact planning sequence
 
 - WP113 — Market Expansion RDR/SRT/DMY/LNK/DBM/PDO/MIR — **DONE / ADR-0208 / 1,232 exact / 0 executed**.
-- **WP114 — CURRENT** — First Competitive: MPR/RPR/ATM/MDP/STM — **880 fixtures**.
-- WP115 — Second Competitive: ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — **1,936 fixtures**.
+- WP114 — First Competitive MPR/RPR/ATM/MDP/STM — **DONE / ADR-0209 / 880 exact / 0 executed**.
+- **WP115 — CURRENT** — Second Competitive: ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — **1,936 fixtures**.
 - WP116 — Third Competitive: UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — **1,760 fixtures**.
 
 After WP116, run a new final closure/readiness audit. Only that later audit may decide whether P0 can move to `AWAITING_DEVELOPMENT_APPROVAL`.
@@ -100,6 +113,14 @@ After WP116, run a new final closure/readiness audit. Only that later audit may 
 
 - User ≠ Role/Capability ≠ Membership Plan ≠ Enrollment ≠ Entitlement ≠ Access Policy.
 - UI hiding ≠ authorization.
+- Registration/account creation ≠ verified/approved/enrolled/paid entitlement.
+- Role label/menu/widget/editor visibility ≠ authorization; WordPress meta-cap + Policy remain authority.
+- Super Admin ≠ ordinary role; rescue ≠ normal role edit; simulation ≠ impersonation.
+- Admin theme/branding/environment identity ≠ authentication/authorization.
+- LCP/priority/viewport inference ≠ measured Core Web Vitals improvement.
+- Private media cannot leak through preload/srcset/placeholder/telemetry/CDN/cache.
+- Safe Script/Tag is browser-side/declarative only: no PHP/eval/arbitrary SQL/shell/server code.
+- Consent/CSP compatibility cannot be used to silently weaken consent/security policy; Vault secrets are not frontend token sources.
 - Search/index ≠ source truth or authorization.
 - score/formula/rank ≠ Policy or business mutation authority.
 - Ledger hold ≠ resource reservation; reservation ≠ payment/order/entitlement.
@@ -117,7 +138,7 @@ After WP116, run a new final closure/readiness audit. Only that later audit may 
 - Unknown provider outcome ≠ failed; reconcile before unsafe replay.
 - HPOS uses supported Woo APIs/Data Stores; no private-table assumptions/direct writes.
 - Backup ≠ Staging/Migration; DB snapshot ≠ full backup; clone ≠ same entity identity.
-- Safe Script/Tag remains browser-side only; Theme Workspace cannot become arbitrary live PHP execution.
+- Theme Workspace cannot become arbitrary live PHP execution.
 - AI/MCP has no hidden authorization/provider/mutation bypass.
 
 ## Work coordination / resume point
@@ -126,20 +147,21 @@ Completed:
 - WP63…WP74 detailed universal/adapter sequence — DONE through ADR-0206;
 - WP75…WP111 expansion/competitive planning interrupts — DONE at their accepted planning level;
 - WP112 final closure/readiness audit — DONE / ADR-0207;
-- **WP113 Market Expansion exact evidence — DONE / ADR-0208 / 1,232 exact / 0 executed**.
+- WP113 Market Expansion exact evidence — DONE / ADR-0208;
+- **WP114 First Competitive exact evidence — DONE / ADR-0209 / 880 exact / 0 executed**.
 
 Current:
-- **WP114 First Competitive exact executable-evidence specification — SPECIFICATION / CURRENT**.
+- **WP115 Second Competitive exact executable-evidence specification — SPECIFICATION / CURRENT**.
 
 ## Current VCS / execution truth
 
 Planning branch: `planning/master-architecture`; Draft PR #1 remains the planning PR.
 
-No WP112/WP113/WP114 fixture, WordPress/WooCommerce runtime, HTTP crawl, DB mutation/cleanup, fixture generation, scheduled workflow, provider/API/AI/MCP call, migration, package installation, test, benchmark, build or deployment occurred.
+No WP112/WP113/WP114/WP115 fixture, WordPress/WooCommerce runtime, user/role/membership mutation, rescue email, admin-theme application, browser-script injection, field-metric collection, media rewrite/regeneration, HTTP crawl, DB mutation/cleanup, scheduled workflow, provider/API/AI/MCP call, migration, package installation, test, benchmark, build or deployment occurred.
 
 ## Next safe planning action
 
-Continue **WP114 — First Competitive exact executable-evidence specification** for `MPR/RPR/ATM/MDP/STM` — **880 exact fixture definitions**.
+Continue **WP115 — Second Competitive exact executable-evidence specification** for `ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC` — **1,936 exact fixture definitions**.
 
 Development remains **NOT GRANTED / 0/56**.
 
