@@ -1,0 +1,24 @@
+{
+  "name": "wpessential/wpessential",
+  "description": "WPEssential WordPress application platform",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "WPEssential\\\\": "src/"
+    }
+  },
+  "scripts": {
+    "architecture:validate": "php tools/architecture/validate.php",
+    "fast": "@architecture:validate"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
