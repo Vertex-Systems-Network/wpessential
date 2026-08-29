@@ -60,3 +60,6 @@ jobs:
 
       - name: Action Scheduler capability probe smoke
         run: php tests/Smoke/action-scheduler-probe-smoke.php
+
+      - name: Vault, assets and integrations smoke
+        run: php tests/Smoke/vault-assets-integrations-smoke.php
