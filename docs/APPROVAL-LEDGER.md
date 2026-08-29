@@ -3,44 +3,32 @@
 Status: **Active governance**  
 Last reviewed: **2026-08-29**
 
-## Approval invariant
-
 Production implementation requires explicit scoped owner consent. Planning/documentation/research, ADR acceptance, `continue`, `resume`, Solution Blueprint generation, AI Prompt planning and exact evidence specification do **not** authorize production source/runtime work.
 
-## Current approval ledger
+## Current approval
 
-| Approval ID | Scope | Work ID | Status | Included | Excluded / notes |
-|---|---|---|---|---|---|
-| GOV-OWNER-CONSENT-000 | PROJECT | WPEssential | PENDING | Production implementation only after explicit grant and applicable gates | Owner has **not** granted production development consent. |
+| Approval ID | Scope | Work ID | Status | Notes |
+|---|---|---|---|---|
+| GOV-OWNER-CONSENT-000 | PROJECT | WPEssential | PENDING | Owner has **not** granted production development consent. |
 
-No TASK, MODULE, MILESTONE, PHASE or PROJECT implementation approval is ACTIVE.
+No implementation approval is ACTIVE.
 
 ## Current lifecycle
 
-Project state `PLANNED_EXISTING_PROJECT`; mode `PLANNER_ONLY`; lifecycle `SPECIFICATION`; implementation WIP **0**; current scope **56**; authorization **0/56**; product-option maturity **56/56 Exhaustive**; Multisite **56/56**; AI Prompt **56/56**; runtime-certified surfaces **none**.
+`PLANNED_EXISTING_PROJECT` / `PLANNER_ONLY` / `SPECIFICATION`; scope **56**, Exhaustive **56/56**, Multisite **56/56**, AI Prompt **56/56**, authorization **0/56**, runtime-certified surfaces **none**.
 
-Historical scope milestones 31 → 43 → 48 → 50 → 55 → 56 remain preserved.
+WP112 DONE / ADR-0207 identified 5,808 exact definitions. WP113 DONE / ADR-0208 closed 1,232. WP114 DONE / ADR-0209 closed 880. **WP115 CURRENT** has 1,936 definitions; WP116 reserved 1,760. Known remaining gap: **3,696 / 21 namespaces**.
 
-## Closure/readiness sequence
+WP115’s eleven group envelopes are now explicit; exact fixture enumeration remains current planning work.
 
-- WP112 — DONE / ADR-0207 — identified **5,808 / 33 namespaces**.
-- WP113 — DONE / ADR-0208 — **1,232/1,232 exact / 0 executed**.
-- WP114 — DONE / ADR-0209 — **880/880 exact / 0 executed**.
-- **WP115 — CURRENT** — Second Competitive — **1,936 definitions**. Its eleven 16-group envelopes are now explicit; exact individual fixture enumeration remains current work.
-- WP116 — RESERVED — **1,760 definitions**.
-
-Known remaining exact planning gap: **3,696 / 21 namespaces**.
-
-P0 remains in `SPECIFICATION`; after WP116, a fresh closure/readiness audit must decide whether it can move to `AWAITING_DEVELOPMENT_APPROVAL`. That audit cannot grant implementation consent itself.
+After WP116, a fresh closure audit must decide whether P0 can move to `AWAITING_DEVELOPMENT_APPROVAL`; it still cannot grant implementation consent by itself.
 
 ## Readiness classes
 
 `PLANNING GAP`, `RUNTIME EVIDENCE PENDING`, `PROVIDER CERTIFICATION PENDING`, `OWNER CONSENT PENDING`, `NO GAP / READY AS PLAN`.
 
-MPR/RPR/ATM/MDP/STM are now exact-planned under ADR-0209 and remain runtime-pending.
-
 ## Consent invariant
 
-Prohibited until explicit scoped consent: production source/runtime changes, dependencies/package setup, WordPress/WooCommerce execution, DB/schema/file mutation, user/role/membership changes, rescue email, admin-theme runtime, browser-code injection, media telemetry/rewrite, reorder, security scan/quarantine, font/provider download, UDS mutation, staging clone/migration, backup run, provider/API/AI/MCP calls, tests, benchmarks, builds, packaging and deployment.
+Until explicit scoped consent is ACTIVE, prohibited work includes production source/runtime changes, package/dependency setup, WordPress/WooCommerce execution, DB/schema/file mutation, user/role/membership changes, browser-code injection, media rewrite, reorder, security scan/quarantine, font/provider download, UDS mutation, staging clone/migration, backup run, provider/API/AI/MCP calls, tests, benchmarks, builds, packaging and deployment.
 
 ADR-0014 remains the hard gate. Production development authorization: **NOT GRANTED / 0/56**.
