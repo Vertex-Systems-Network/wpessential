@@ -1,24 +1,25 @@
 # WPEssential — Module Option Coverage & Maturity Ledger
 
-Status: **Phase 0 planning source of truth / no development authorized**  
+Status: **Planning source of truth / no development authorized**  
 Date: 2026-08-29  
-Accepted exact planning through **ADR-0212**.
+Accepted through **ADR-0213**.
 
-Current: **56 surfaces**, **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, authorization **0/56**, runtime verified **0**, lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**.
+Current: **56 surfaces**, **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, authorization **0/56**, runtime verified **0**.
 
-## Exact planning coverage
+WP113–WP116 closed all exact planning definitions identified by ADR-0207. WP117 / ADR-0212 closure audit passed.
 
-Planning-complete exact evidence includes:
-- universal/adapter protocols;
-- WP113 / ADR-0208 Market — 1,232/1,232;
-- WP114 / ADR-0209 First Competitive — 880/880;
-- WP115 / ADR-0210 Second Competitive — 1,936/1,936;
-- WP116 / ADR-0211 Third Competitive — 1,760/1,760.
+WP118 / ADR-0213 adds current structural integration mapping:
+- 56/56 canonical surface owners;
+- 56/56 option ownership/routing index;
+- 56/56 exactly-once Admin IA;
+- 40/40 system patterns mapped, containing current 160/160 curated systems;
+- 56-surface dependency relationship map;
+- Capability/Ability/Event registry completed through 56;
+- data ownership/lifecycle completed through 56;
+- duplicate semantic/no-bypass rules accepted.
 
-All remain **0 executed**.
+Current detailed option authority is the combination of `CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md` + exhaustive surface specs + exact evidence protocols. Historical `OPTION-INVENTORY.md` remains useful original-module detail but is not the sole current routing authority.
 
-WP117 / ADR-0212 final closure audit confirms the known ADR-0207 exact-planning gap is **0 definitions / 0 namespaces**. Every current surface remains Exhaustive at product-option layer and all supplemental/market namespaces identified by the closure audit now have exact evidence design.
+Known planning/integration semantic-owner gap: **none known**. Runtime/provider evidence remain pending.
 
-This does not imply runtime/provider certification. Current classes: planning `NO GAP / READY AS PLAN`; runtime evidence pending; provider certification pending where applicable; owner consent pending.
-
-`56/56 Exhaustive` and P0 completion never authorize implementation. Development remains prohibited until explicit scoped owner consent under ADR-0014. Current authorization **0/56**.
+`56/56 Exhaustive` and structural audit PASS never authorize implementation. Development remains prohibited until explicit scoped owner consent under ADR-0014. Current authorization **0/56**.
