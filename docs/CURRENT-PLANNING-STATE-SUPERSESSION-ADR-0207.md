@@ -8,12 +8,10 @@ Current: `PLANNED_EXISTING_PROJECT` / `PLANNER_ONLY` / `SPECIFICATION`; 56 surfa
 
 WP113 / ADR-0208 = 1,232/1,232 exact / 0 executed. WP114 / ADR-0209 = 880/880 exact / 0 executed.
 
-Remaining **3,696 / 21 namespaces**: **WP115 CURRENT** 1,936; WP116 1,760.
+Remaining **3,696 / 21 namespaces**: **WP115 CURRENT** 1,936; WP116 1,760. WP115 master plan locks all eleven 16×11 envelopes; exact enumeration/acceptance remains pending.
 
-WP115 master plan now locks all eleven 16×11 envelopes; BKX/MRL/PBX/JEX/LHX/HFC ranges were normalized from the accepted addendum. Exact enumeration/acceptance remains pending.
+Current authorities: CHECKPOINT, Accepted ADRs through ADR-0209, Work Ledger, Readiness Matrix, Approval Ledger, Open Decisions, Option Coverage, README, then this index. Historical master/catalog/roadmap files retain snapshot meanings.
 
-Current authorities: CHECKPOINT, Accepted ADRs through ADR-0209, Work Ledger, Readiness Matrix, Approval Ledger, Open Decisions, Option Coverage, README, this index. Historical master/catalog/roadmap files retain snapshot meanings.
-
-P0 remains not approval-ready. After WP116, a fresh closure audit decides whether lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`.
+P0 remains not approval-ready. After WP116 a fresh closure audit decides whether lifecycle may move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
 No planning/ADR/`continue` action grants development permission. Authorization remains **NOT GRANTED / 0/56**.
