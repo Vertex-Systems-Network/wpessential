@@ -1,25 +1,24 @@
 # WPEssential — Project State & Adoption Baseline
 
-Status: **Phase 0 governance / planning-only**  
+Status: **Phase 0 governance / planning complete / implementation not authorized**  
 Last reviewed: 2026-08-29
 
-Current state `PLANNED_EXISTING_PROJECT`; mode `PLANNER_ONLY`; lifecycle `SPECIFICATION`.
+Current state: `PLANNED_EXISTING_PROJECT`  
+Execution mode: `PLANNER_ONLY`  
+Lifecycle: **`AWAITING_DEVELOPMENT_APPROVAL`**
 
-Current product truth: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, accepted through **ADR-0210**, implementation authorization **0/56**, runtime-certified/implemented none.
+Current product truth: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, accepted through **ADR-0212**, implementation authorization **0/56**, runtime-certified/implemented none.
 
-Exact planning progress:
-- WP113 / ADR-0208 — 1,232/1,232 / 0 executed;
-- WP114 / ADR-0209 — 880/880 / 0 executed;
-- WP115 / ADR-0210 — 1,936/1,936 / 0 executed.
+## Planning closure
 
-Remaining known planning gap: **1,760 / 10 namespaces**, current **WP116 — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX**.
+WP112 / ADR-0207 identified 5,808 exact definitions / 33 namespaces. WP113–WP116 closed all 5,808 under ADR-0208…ADR-0211. WP117 / ADR-0212 final closure audit passed; known planning gap is **0/0**.
 
-`PLANNED_EXISTING_PROJECT → ACTIVE_EXISTING_PROJECT` requires explicit owner consent under ADR-0014, applicable technical/planning gates, a verified implementation baseline and bounded approved implementation scope. Conversation wording cannot change project state.
+`PLANNED_EXISTING_PROJECT → ACTIVE_EXISTING_PROJECT` still requires explicit owner development consent under ADR-0014, an ACTIVE approval ledger entry, a verified Implementation Baseline / Adoption Gate and a bounded approved implementation scope. `AWAITING_DEVELOPMENT_APPROVAL`, `continue`, `resume` or planning completion cannot change project state to active implementation.
 
-GitHub planning read/write and Draft PR metadata are available; Linear mirrors planning with GitHub canonical. WordPress/WooCommerce runtime, DB mutation, runtime tests/build, provider/API/AI/MCP execution and deployment remain NOT EXECUTED unless later evidence proves otherwise.
+GitHub planning read/write and Draft PR metadata are available; Linear mirrors planning with GitHub canonical. WordPress/WooCommerce runtime, DB/file mutation, runtime tests/build, provider/API/AI/MCP execution and deployment remain NOT EXECUTED unless later evidence proves otherwise.
 
-Resume: WP112 DONE / ADR-0207; WP113 DONE / ADR-0208; WP114 DONE / ADR-0209; WP115 DONE / ADR-0210; **WP116 CURRENT — 1,760 definitions**.
+## Implementation entry after future consent
 
-After WP116 a fresh closure audit decides whether P0 may move to `AWAITING_DEVELOPMENT_APPROVAL`.
+Refresh branch/revision/capabilities; inspect actual production-code baseline; verify runtime/tool/dependency/lock/build/test state; classify baseline failures/UNKNOWNs; refresh first-milestone compatibility/provider research; bind scoped approval and change budget; only then enter `IMPLEMENTING` for approved work.
 
 Development remains **NOT GRANTED / 0/56**. Repository evidence overrides conversational memory.
