@@ -15,7 +15,7 @@ Current: `PLANNED_EXISTING_PROJECT` / `PLANNER_ONLY` / **`AWAITING_DEVELOPMENT_A
 - WP117 / ADR-0212 final closure audit = PASS.
 - **WP118 / ADR-0213 module/option/UI/system structural-integrity audit = PASS after remediation.**
 
-Known ADR-0207 exact planning gap: **0 / 0**. Known semantic-owner/integration mapping gap after WP118: **none known**.
+Known ADR-0207 exact planning gap: **0 / 0**. Known semantic-owner/current-integration mapping gap after WP118: **none known**.
 
 ## Current integration authority order
 
