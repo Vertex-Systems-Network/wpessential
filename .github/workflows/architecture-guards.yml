@@ -5,6 +5,9 @@ on:
     paths:
       - 'config/architecture/**'
       - 'tools/architecture/**'
+      - 'src/**'
+      - 'tests/Smoke/**'
+      - 'wpessential.php'
       - 'composer.json'
       - '.github/workflows/architecture-guards.yml'
   push:
@@ -13,6 +16,9 @@ on:
     paths:
       - 'config/architecture/**'
       - 'tools/architecture/**'
+      - 'src/**'
+      - 'tests/Smoke/**'
+      - 'wpessential.php'
       - 'composer.json'
       - '.github/workflows/architecture-guards.yml'
   workflow_dispatch:
@@ -34,5 +40,14 @@ jobs:
           php-version: '8.2'
           coverage: none
 
-      - name: Validate manifests
+      - name: Validate Composer metadata
+        run: composer validate --strict --no-check-lock
+
+      - name: Validate architecture manifests
         run: php tools/architecture/validate.php
+
+      - name: PHP syntax
+        run: find src tests/Smoke -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
+
+      - name: Kernel smoke
+        run: php tests/Smoke/kernel-smoke.php
