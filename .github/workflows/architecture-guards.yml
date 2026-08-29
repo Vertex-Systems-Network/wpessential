@@ -66,3 +66,6 @@ jobs:
 
       - name: Persistence and migrations smoke
         run: php tests/Smoke/persistence-migrations-smoke.php
+
+      - name: WordPress abilities bridge smoke
+        run: php tests/Smoke/wordpress-abilities-bridge-smoke.php
