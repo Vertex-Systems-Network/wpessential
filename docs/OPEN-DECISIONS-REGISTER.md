@@ -3,57 +3,32 @@
 Status: **Phase 0 / planning-only / no development consent**  
 Last synchronized: 2026-08-29
 
-Accepted planning/evidence decisions extend through **ADR-0209**. Architecture/protocol acceptance never implies runtime certification or development authorization.
+Accepted planning/evidence through **ADR-0209**. Current scope **56**, authorization **0/56**, Multisite **56/56**, AI Prompt **56/56**, current work **WP115**.
 
-Current scope **56**, authorized **0/56**, Multisite **56/56**, AI Prompt **56/56**, current work **WP115**.
+## Planning gap
 
-## True planning gaps
+ADR-0207 starting gap **5,808 / 33 namespaces**. WP113 closed 1,232/7; WP114 closed 880/5.
 
-Starting ADR-0207 gap: **5,808 / 33 namespaces**.
+Remaining **3,696 / 21 namespaces**:
+- **WP115 CURRENT:** ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC — 1,936.
+- WP116: UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX — 1,760.
 
-Closed:
-- WP113 / ADR-0208: **1,232 / 7**;
-- WP114 / ADR-0209: **880 / 5**.
-
-Remaining: **3,696 / 21 namespaces**.
-
-### WP115 — CURRENT — 1,936
-ORD, SEC, FNT, UDS, STG, BKX, MRL, PBX, JEX, LHX, HFC.
-
-WP115 master plan now explicitly fixes all eleven 16×11 group ranges. The six existing-surface supplement ranges BKX/MRL/PBX/JEX/LHX/HFC were normalized from the accepted addendum during preflight; exact 176-fixture enumeration is still pending.
-
-### WP116 — RESERVED — 1,760
-UAF, MIG, WLB, DUP, ALX, MBX, THM, RSX, RDX, CPTX.
+WP115 master plan now explicitly fixes all eleven group envelopes; BKX/MRL/PBX/JEX/LHX/HFC ranges were normalized from the accepted existing-surface addendum. Exact 176-fixture protocols remain pending.
 
 ## Planning-complete exact evidence
 
-ADR-0208: RDR/SRT/DMY/LNK/DBM/PDO/MIR.  
-ADR-0209: MPR/RPR/ATM/MDP/STM.  
-Universal/adapter: SBP/ANL/SRH/DEC/LED/RSV/PLC/EXP/DOC/SYN/GEO/AIP/WCA.
+Universal/adapter plus ADR-0208 Market namespaces and ADR-0209 MPR/RPR/ATM/MDP/STM are exact and unexecuted; they are `RUNTIME EVIDENCE PENDING` operationally, not planning gaps.
 
-Exact protocols remain **0 executed** and are `RUNTIME EVIDENCE PENDING` operationally.
-
-## Provider / consent blockers
-
-Applicable external providers remain `PROVIDER CERTIFICATION PENDING` until executed evidence proves them. `GOV-OWNER-CONSENT-000` remains `PENDING`; all production implementation is `OWNER CONSENT PENDING`.
+External authorities remain `PROVIDER CERTIFICATION PENDING`. `GOV-OWNER-CONSENT-000` remains PENDING.
 
 ## Preserved boundaries
 
-- UI/branding/navigation hiding ≠ authorization.
-- WordPress meta-cap + WPE Policy remain role/action authority.
-- Safe Script/Tag has no PHP/eval/server execution path.
-- Backup ≠ Staging/Migration; clone ≠ same identity/environment.
-- Security finding ≠ certainty; quarantine/repair requires recovery evidence.
-- Font hosting ≠ redistribution authority.
-- UDS state ≠ Woo cart/order truth.
-- AI/MCP cannot create hidden privilege/provider/mutation paths.
+UI/branding hiding ≠ authorization; WordPress meta-cap + Policy remain authority; Safe Script/Tag has no PHP/eval/server runtime; Backup ≠ Staging/Migration; Security finding ≠ certainty; font delivery ≠ license authority; UDS state ≠ Woo cart/order truth; AI/MCP cannot create hidden privilege/provider/mutation paths.
 
-## Execution truth / priority
+## Current priority
 
-No WP113/WP114/WP115 fixture has executed.
+**WP115 — Second Competitive exact executable-evidence specification, 1,936 fixtures.**
 
-**Current: P0-M00-WP115 — Second Competitive exact executable-evidence specification (`ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC`, 1,936 fixtures).**
+After WP116, a fresh closure/readiness audit decides whether P0 can move to `AWAITING_DEVELOPMENT_APPROVAL`.
 
-After WP116, a fresh closure/readiness audit must decide whether P0 can move to `AWAITING_DEVELOPMENT_APPROVAL`.
-
-Production development authorization remains **NOT GRANTED / 0/56**.
+No WP115 fixture has executed. Production development remains **NOT GRANTED / 0/56**.
