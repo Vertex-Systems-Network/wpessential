@@ -3,192 +3,62 @@
 Status: **Exact evidence expansion COMPLETE / ADR-0209 / NOT EXECUTED**  
 Date: 2026-08-29
 
-## 1. Purpose
+## Completion summary
 
-Reserve and now record the exact executable-evidence contract for the owner-requested competitor parity/expansion work without executing runtime behavior.
+WP114 has expanded all five fixed First Competitive namespaces into exact individual protocols without renumbering or repurposing group ownership:
 
-The 16 group ownership below remains fixed. ADR-0207 identified these five namespaces as exact-fixture planning gaps. WP114 has now expanded every namespace below into exact individual fixtures without renumbering or repurposing groups; ADR-0209 accepts those protocols.
+| Namespace | Scope | Exact documented | Executed |
+|---|---|---:|---:|
+| MPR | Membership competitive parity | 176/176 | 0/176 |
+| RPR | Role & Capability competitive parity | 176/176 | 0/176 |
+| ATM | Admin Theme, Branding & Experience | 176/176 | 0/176 |
+| MDP | Media Performance, Responsive Delivery & Field Optimization | 176/176 | 0/176 |
+| STM | Safe Script, Tag & Code Injection | 176/176 | 0/176 |
 
-All counters remain zero executed.
+WP114 total: **880/880 exact fixtures documented / 0 executed**.
 
-## 2. Evidence namespaces
-
-| Namespace | Scope | Fixture envelope | Exact status | Executed |
-|---|---|---:|---|---:|
-| `MPR` | Membership competitive parity / registration / private-site / migration presets | MPR-001…MPR-176 | **176/176 exact / ADR-0209** | 0/176 |
-| `RPR` | Role hierarchy / rescue / surface-policy integration / compatibility | RPR-001…RPR-176 | **176/176 exact / ADR-0209** | 0/176 |
-| `ATM` | Admin Theme, Branding & Experience Manager | ATM-001…ATM-176 | **176/176 exact / ADR-0209** | 0/176 |
-| `MDP` | Media Performance, Responsive Delivery & Field Optimization | MDP-001…MDP-176 | **176/176 exact / ADR-0209** | 0/176 |
-| `STM` | Safe Script, Tag & Code Injection Manager | STM-001…STM-176 | **176/176 exact / ADR-0209** | 0/176 |
-
-WP114 total: **880/880 exact individual fixtures documented / 0 executed**.
-
-Canonical exact protocols:
+Canonical protocols:
 - `MEMBERSHIP-COMPETITIVE-PARITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - `ROLE-CAPABILITY-COMPETITIVE-PARITY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - `ADMIN-THEME-BRANDING-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - `MEDIA-PERFORMANCE-DELIVERY-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 - `SAFE-SCRIPT-TAG-CODE-INJECTION-EXECUTABLE-EVIDENCE-PROTOCOL.md`
 
-Existing protocols remain separate:
-- Membership core `MBR`, billing `MB-F`, protected files `PC-F`;
-- Role runtime `RA`;
-- Media derivative/watermark `WM`;
-- UI/Build/Assets/Policy/Privacy/Rate/Cache/Versioning evidence.
+ADR-0209 accepts these protocols. They are `NO GAP / READY AS PLAN` at evidence-design level and remain `RUNTIME EVIDENCE PENDING` operationally.
 
-No supplemental evidence namespace upgrades an existing certification automatically.
+## Fixed 16-group ownership retained
 
-## 3. MPR groups — 16 × 11
+### MPR
+1 site lockdown/public exclusions; 2 registration identity/schema; 3 account/native auth; 4 verification; 5 approval; 6 Plan/enrollment qualification; 7 auth/profile adapters; 8 restriction defaults; 9 teaser safety; 10 navigation vs authorization; 11 messages/email; 12 legacy mapping; 13 migration/replay; 14 abuse/privacy; 15 Multisite/user identity; 16 scale/regression.
 
-1. Site lockdown/public-route exclusions
-2. Registration Flow identity/schema
-3. account creation/native auth boundary
-4. email verification
-5. admin approval
-6. Plan selection/enrollment qualification
-7. login/register/profile rendering adapters
-8. default restrictions/resource overrides
-9. teaser/excerpt safety
-10. navigation visibility vs direct authorization
-11. messages/dialogs/email composition
-12. legacy Members/WP-Members detection and mapping
-13. migration dry-run/replay/recovery
-14. abuse/privacy/retention
-15. Multisite/network/user-identity boundaries
-16. scale/regression/coexistence
+### RPR
+1 Role Admin Policy; 2 target-role enforcement; 3 Users CRUD/bulk; 4 REST/Ability/Workflow; 5 rescue generation; 6 rescue replay/enumeration; 7 capability provenance; 8 snapshots/rollback; 9 UI delegation; 10 object Policy; 11 plugin/form integration; 12 effective capability explain; 13 migration; 14 Multisite/Super Admin; 15 anti-lockout/escalation/concurrency; 16 scale/regression.
 
-## 4. RPR groups — 16 × 11
+### ATM
+1 theme identity; 2 native scheme registration; 3 wp-theme tokens; 4 fallback CSS; 5 palette/state; 6 typography/density; 7 accessibility; 8 assignment precedence; 9 network enforcement; 10 environment identity; 11 branding/admin bar; 12 login presentation; 13 preview/rollback; 14 import/lifecycle; 15 conflicts; 16 performance/RTL/browser/WP-version.
 
-1. Role Administration Policy identity
-2. list/assign/remove/edit target-role enforcement
-3. Users/Add User/Edit User/bulk parity
-4. REST/Ability/Workflow parity
-5. rescue token eligibility/generation
-6. rescue replay/rate/enumeration/recovery
-7. capability provenance/orphan handling
-8. role diff/snapshot/rollback
-9. admin/menu/widget/editor-feature delegation
-10. object-level Policy delegation
-11. plugin/form integration boundaries
-12. effective capability explain/meta-cap mapping
-13. import/export/migration
-14. Multisite role template/sync/Super Admin
-15. anti-lockout/privilege escalation/concurrency
-16. large user/role networks/regression
+### MDP
+1 Core capability detection; 2 field metrics/privacy; 3 viewport confidence; 4 LCP priority/preload; 5 unjustified priority removal; 6 occluded media; 7 lazy/eager; 8 sizes=auto; 9 Picture/art direction; 10 background/video poster; 11 AVIF/WebP; 12 placeholders/CLS; 13 CDN/private media; 14 Core/Performance Team coexistence; 15 regeneration/lifecycle/Multisite; 16 performance/regression.
 
-## 5. ATM groups — 16 × 11
+### STM
+1 types/parser; 2 frontend placements; 3 admin/login placement; 4 dependencies/order; 5 conditions/escaping; 6 external origins/SRI; 7 inline JS privilege/CSP; 8 CSS/HTML/JSON-LD; 9 consent; 10 CSP/nonces/hashes; 11 environment/cache/minifier; 12 preview/diagnostics; 13 revision/kill switch; 14 import/WPCode migration; 15 Multisite/AI/MCP; 16 adversarial security/performance.
 
-1. Theme definition/version profile
-2. native `wp_admin_css_color()` registration
-3. WordPress 7.1 `wp-theme` token integration
-4. legacy/fallback generated CSS
-5. palette/icon/state mapping
-6. typography/geometry/density
-7. accessibility/contrast/focus
-8. user/role/site assignment precedence
-9. network assignment/enforcement
-10. environment identity
-11. branding/admin bar
-12. login presentation
-13. preview/revision/rollback
-14. import/export/lifecycle
-15. third-party admin/style/editor conflicts
-16. performance/RTL/browser/WP-version regression
+## Hard boundaries
 
-## 6. MDP groups — 16 × 11
+- User ≠ Role/Capability ≠ Plan ≠ Enrollment ≠ Entitlement ≠ Policy.
+- UI/navigation/theme visibility ≠ authorization.
+- WordPress meta-cap + WPE Policy remain permission authority; Super Admin ≠ ordinary role.
+- Registration/account ≠ verified/approved/enrolled/paid entitlement.
+- LCP/priority inference ≠ measured CWV; private media cannot leak through optimization.
+- Safe Script/Tag is browser-side/declarative only; no PHP/eval/arbitrary SQL/shell/server code; no silent CSP/consent weakening; no frontend Vault secret interpolation.
+- Multisite scope is server-resolved; AI/MCP uses normal Policy/approval gates.
 
-1. Core capability/version detection
-2. field-metric collection/privacy/sampling
-3. viewport evidence confidence
-4. LCP image prioritization/preload
-5. unjustified priority removal
-6. occluded initial-viewport handling
-7. lazy/eager behavior
-8. `sizes=auto`/responsive sizes
-9. Picture/source/art direction
-10. background-image/video-poster behavior
-11. AVIF/WebP/fallback format generation
-12. placeholder/dominant-color/CLS dimensions
-13. CDN/offload/cache/private media
-14. coexistence with Performance Team/Core features
-15. regeneration/lifecycle/Multisite
-16. performance/regression/large media library
+## Handoff
 
-## 7. STM groups — 16 × 11
+Known planning gap after WP114 is **3,696 exact definitions across 21 namespaces**.
 
-1. snippet definition/type parsing
-2. frontend placements/hook adapters
-3. admin/login advanced placements
-4. ordering/dependency/cycle handling
-5. Conditional Logic/context escaping
-6. external script URL/origin/SRI attributes
-7. inline JavaScript privilege/CSP
-8. CSS/HTML/JSON-LD typed safety
-9. consent category/blocking/withdrawal
-10. CSP/nonces/hashes/security header integration
-11. environment profiles/cache/minifier coexistence
-12. validation/preview/diagnostics
-13. revisions/rollback/emergency kill switch
-14. import/export/WPCode/simple-script migration
-15. Multisite/network policy/AI/MCP
-16. adversarial security/performance/regression
+Current work is **WP115 — Second Competitive exact evidence** for `ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC` — **1,936 fixtures**. Its master plan now has all eleven 16-group envelopes explicitly fixed before exact enumeration.
 
-## 8. WP114 non-negotiable truth boundaries
+## Execution truth
 
-### Membership / MPR
-- User ≠ Role/Capability ≠ Membership Plan ≠ Enrollment ≠ Entitlement ≠ Access Policy.
-- Navigation/UI restriction ≠ protected-resource authorization.
-- Registration/account creation ≠ verified email/admin approval/active membership/paid entitlement.
-- Billing/provider facts remain external/provider-owned and cannot be fabricated by Membership parity.
-
-### Role / RPR
-- WordPress capabilities/meta-cap/Policy remain authorization authority; role labels/UI hiding are not authority.
-- Target-role hierarchy and rescue mechanisms must not create privilege-escalation/anti-lockout bypass.
-- Rescue tokens are scoped, expiring, single-use/replay-safe and must not permit account enumeration.
-
-### Admin Theme / ATM
-- Branding/theme assignment ≠ authentication/authorization.
-- Accessibility/contrast/focus/recovery/login usability are correctness requirements.
-- User/role/site/network precedence is explicit and cannot hide critical recovery/security controls.
-
-### Media Performance / MDP
-- Performance hint/priority inference ≠ proof of Core Web Vitals improvement until measured.
-- Private/protected media must not leak through preload, metrics, placeholders, CDN or generated URLs.
-- Core/Performance-Team ownership is detected and composed rather than duplicated/conflicted.
-
-### Safe Script/Tag / STM
-- Browser-side snippets only; **no PHP/eval/arbitrary SQL/shell/server code**.
-- Consent/CSP/security-header policy cannot be silently weakened.
-- No Vault/frontend secret interpolation.
-- External origins/URLs/SRI/nonce/hash/environment placement remain typed/bounded.
-
-### Shared
-- Multisite/site/tenant ownership is server-resolved.
-- AI/MCP follows the same Policy/approval gates and cannot create privileged write paths.
-- Exact specification is planning only; execution remains 0 until explicit consent.
-
-## 9. Stop-the-line examples
-
-Future execution must stop on evidence of:
-- protected resource exposed by membership/navigation fallback;
-- rescue token replay/account enumeration/admin escalation;
-- target-role hierarchy bypass through direct REST/Ability/bulk request;
-- admin theme breaking recovery/login/admin access or producing inaccessible critical controls;
-- image optimization causing LCP regression through incorrect lazy/priority behavior;
-- private media URL leaked by preload/metric/placeholder;
-- Script Manager executing PHP/server code;
-- CSP/consent silently weakened;
-- frontend secret interpolation;
-- cross-site/network policy leakage.
-
-## 10. Readiness effect / next package
-
-ADR-0209 moves MPR/RPR/ATM/MDP/STM from `PLANNING GAP` to `NO GAP / READY AS PLAN` at evidence-design level. Operationally they remain `RUNTIME EVIDENCE PENDING`; applicable external authorities remain `PROVIDER CERTIFICATION PENDING`.
-
-Known exact planning gap after WP114 is **3,696 definitions across 21 namespaces**.
-
-Current safe work is **WP115 — Second Competitive exact executable-evidence specification** for `ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC` — **1,936 fixtures**.
-
-## 11. Execution gate
-
-All five namespaces are **planning-only and 0 executed**. No WordPress request, user/role/membership mutation, registration, rescue email, admin theme runtime, RUM metric, image rewrite/regeneration, script injection, provider/API/AI/MCP call, test, benchmark or build may execute without explicit scoped owner consent under ADR-0014.
+No WP114 fixture, WordPress runtime, user/role/membership mutation, rescue email, admin-theme application, field-metric collection, media rewrite, browser-code injection, provider/API/AI/MCP call, test, benchmark or build executed. Development authorization remains **NOT GRANTED / 0/56**.
