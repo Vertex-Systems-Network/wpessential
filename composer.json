@@ -15,9 +15,11 @@
     "architecture:validate": "php tools/architecture/validate.php",
     "test:smoke:kernel": "php tests/Smoke/kernel-smoke.php",
     "test:smoke:platform-core": "php tests/Smoke/platform-core-smoke.php",
+    "test:smoke:audit-jobs": "php tests/Smoke/audit-jobs-smoke.php",
     "test:smoke": [
       "@test:smoke:kernel",
-      "@test:smoke:platform-core"
+      "@test:smoke:platform-core",
+      "@test:smoke:audit-jobs"
     ],
     "fast": [
       "@architecture:validate",
