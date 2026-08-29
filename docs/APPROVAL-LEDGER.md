@@ -15,52 +15,32 @@ Production implementation requires explicit scoped owner consent. Planning/docum
 
 No TASK, MODULE, MILESTONE, PHASE or PROJECT implementation approval is ACTIVE.
 
-## Current WPEssential lifecycle
+## Current lifecycle
 
-Project state: `PLANNED_EXISTING_PROJECT`  
-Execution mode: `PLANNER_ONLY`  
-Lifecycle: `SPECIFICATION`  
-Development approval: `PENDING / NOT GRANTED`  
-Implementation WIP: **0**  
-Current scope: **56 surfaces**  
-Authorization: **0/56**  
-Product-option maturity: **56/56 Exhaustive**  
-Multisite mapping: **56/56**  
-AI Prompt mapping: **56/56**  
-Runtime-certified surfaces: **none**
+Project state `PLANNED_EXISTING_PROJECT`; mode `PLANNER_ONLY`; lifecycle `SPECIFICATION`; implementation WIP **0**; current scope **56**; authorization **0/56**; product-option maturity **56/56 Exhaustive**; Multisite **56/56**; AI Prompt **56/56**; runtime-certified surfaces **none**.
 
 Historical scope milestones 31 → 43 → 48 → 50 → 55 → 56 remain preserved.
 
 ## Closure/readiness sequence
 
-- WP112 — DONE / ADR-0207 — identified **5,808 exact definitions / 33 namespaces**.
-- WP113 — DONE / ADR-0208 — RDR/SRT/DMY/LNK/DBM/PDO/MIR, **1,232/1,232 documented / 0 executed**.
-- WP114 — DONE / ADR-0209 — MPR/RPR/ATM/MDP/STM, **880/880 documented / 0 executed**.
-- **WP115 — CURRENT** — Second Competitive, **1,936 definitions**; its master plan now explicitly fixes all 11 namespace group ranges, including BKX/MRL/PBX/JEX/LHX/HFC normalization discovered during preflight.
-- WP116 — RESERVED — Third Competitive, **1,760 definitions**.
+- WP112 — DONE / ADR-0207 — identified **5,808 / 33 namespaces**.
+- WP113 — DONE / ADR-0208 — **1,232/1,232 exact / 0 executed**.
+- WP114 — DONE / ADR-0209 — **880/880 exact / 0 executed**.
+- **WP115 — CURRENT** — Second Competitive — **1,936 definitions**. Its eleven 16-group envelopes are now explicit; exact individual fixture enumeration remains current work.
+- WP116 — RESERVED — **1,760 definitions**.
 
-Known remaining exact planning gap: **3,696 definitions / 21 namespaces**.
+Known remaining exact planning gap: **3,696 / 21 namespaces**.
 
-P0 remains in `SPECIFICATION`; it does **not** move to `AWAITING_DEVELOPMENT_APPROVAL` yet. After WP116, a fresh closure/readiness audit must decide that state separately. That audit still cannot grant implementation consent itself.
+P0 remains in `SPECIFICATION`; after WP116, a fresh closure/readiness audit must decide whether it can move to `AWAITING_DEVELOPMENT_APPROVAL`. That audit cannot grant implementation consent itself.
 
 ## Readiness classes
 
-- `PLANNING GAP` — exact planning/evidence detail still missing.
-- `RUNTIME EVIDENCE PENDING` — exact protocol exists; execution does not.
-- `PROVIDER CERTIFICATION PENDING` — provider contract exists; provider/runtime certification does not.
-- `OWNER CONSENT PENDING` — implementation permission not granted.
-- `NO GAP / READY AS PLAN` — planning layer complete only.
+`PLANNING GAP`, `RUNTIME EVIDENCE PENDING`, `PROVIDER CERTIFICATION PENDING`, `OWNER CONSENT PENDING`, `NO GAP / READY AS PLAN`.
 
-MPR/RPR/ATM/MDP/STM now join the exact-planned namespaces as `NO GAP / READY AS PLAN` at evidence-design level and remain `RUNTIME EVIDENCE PENDING` operationally.
-
-## Development approval readiness rule
-
-Before requesting scoped development approval, the selected work must present scope/exclusions, behaviors/options, roles/permissions, states/workflows, data/migrations, integrations, security/privacy/negative requirements, evidence plan, compatibility, risks and rollback/recovery.
-
-Implementation begins only after unambiguous approval is recorded as ACTIVE for the exact scope.
+MPR/RPR/ATM/MDP/STM are now exact-planned under ADR-0209 and remain runtime-pending.
 
 ## Consent invariant
 
-Until then, prohibited work includes production source/runtime changes, dependency/package setup, WordPress/WooCommerce execution, DB/schema/file mutation, user/role/membership changes, rescue email execution, admin-theme runtime, browser-code injection, media telemetry/rewrite, provider/API/AI/MCP calls, tests, benchmarks, migrations, builds, packaging and deployment.
+Prohibited until explicit scoped consent: production source/runtime changes, dependencies/package setup, WordPress/WooCommerce execution, DB/schema/file mutation, user/role/membership changes, rescue email, admin-theme runtime, browser-code injection, media telemetry/rewrite, reorder, security scan/quarantine, font/provider download, UDS mutation, staging clone/migration, backup run, provider/API/AI/MCP calls, tests, benchmarks, builds, packaging and deployment.
 
 ADR-0014 remains the hard gate. Production development authorization: **NOT GRANTED / 0/56**.
