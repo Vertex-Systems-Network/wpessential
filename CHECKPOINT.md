@@ -5,70 +5,76 @@ Implementation branch: `implementation/baseline-adoption-gate`
 Planning authority: `planning/master-architecture` through ADR-0213  
 Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle: **`IMPLEMENTING_ARCHITECTURE_GUARDS`**  
+Lifecycle: **`IMPLEMENTING_PLATFORM_FOUNDATION`**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
 
-Owner explicitly authorized:
+Owner authorized:
 
 `Implementation Baseline / Adoption Gate → Machine-enforced architecture guards → Milestone 1 Platform Foundation → module development`.
 
-Source implementation, development/test tooling, CI and milestone-scoped schemas/tests are authorized. Production deployment, destructive live-site/customer-data operations and chargeable/irreversible real-provider side effects remain separately privileged and are not authorized by this grant.
+Source implementation, development/test tooling, CI and milestone-scoped schemas/tests are authorized. Production deployment, destructive live-site/customer-data operations and chargeable/irreversible real-provider side effects remain separately privileged.
 
 ## Current product truth
 
-Accepted product scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known planning or semantic-owner gap after WP118 / ADR-0213.
+Accepted scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known planning or semantic-owner gap after WP118 / ADR-0213.
 
-## WP119 — Implementation Baseline / Adoption Gate
+## WP119 — DONE / PASS / ADR-0214
 
-**DONE / PASS / ADR-0214**.
+Greenfield implementation baseline accepted. Minimum WordPress 6.9; PHP 8.2; MySQL 8.0+/MariaDB 10.11+; Composer/PSR-4 and Node/build direction locked; Action Scheduler adoption deferred to bounded coexistence evidence.
 
-Verified:
-- default/main branch has no production WPEssential implementation baseline;
-- implementation branch started with docs/governance only and no Composer/npm/source/tests/CI;
-- classification is greenfield implementation against the accepted plan, not a legacy rewrite;
-- minimum WordPress **6.9**;
-- minimum PHP **8.2**, recommended **8.3+**;
-- certified DB baseline MySQL **8.0+** / MariaDB **10.11+**;
-- Composer 2.x + PSR-4 `WPEssential\\`;
-- Node 24 LTS + npm + initial `@wordpress/scripts` direction;
-- PHPCS/WPCS, PHPStan, PHPUnit, TypeScript/ESLint/build, Playwright and compatibility matrix are mandatory quality categories;
-- no third-party DI container at baseline;
-- Action Scheduler remains a preferred JobService backend candidate but runtime adoption is deferred to a bounded coexistence spike.
+## WP120 — DONE / PASS / ADR-0215 / hosted CI degraded
 
-Canonical evidence:
-- `docs/IMPLEMENTATION/IMPLEMENTATION-BASELINE-ADOPTION-GATE.md`;
-- `docs/DECISIONS/ADR-0214-implementation-baseline-build-compatibility-and-toolchain.md`.
+Machine-readable 56-surface, ownership, P01–P40, Ability/storage/Multisite/invalidation/provider/destructive/AI guards are implemented.
 
-## WP120 — Machine-enforced Architecture Guards
+The implementation-branch manifests and repository validator logic were faithfully materialized into isolated PHP 8.4.23 execution and returned PASS for all declared guard groups. Independent invariants agreed.
 
-**CURRENT — IMPLEMENTED / INDEPENDENT INVARIANTS PASS / HOSTED CI INFRA_BLOCKED**.
+GitHub-hosted Actions remains **`EXTERNAL CI RUNNER DISPATCH FAILURE / INFRA_DEGRADED`**: latest run `33247682122` completed before runner assignment with no steps/logs. Hosted CI is not called green. Any future real validator failure is a stop-line regression.
 
-Implemented:
-- `config/architecture/surfaces.json`;
-- `config/architecture/ownership-contracts.json`;
-- `config/architecture/system-patterns.json`;
-- `config/architecture/operation-guards.json`;
-- `tools/architecture/validate.php`;
-- `composer.json` architecture validation command;
-- `.github/workflows/architecture-guards.yml`.
+## WP121 — CURRENT / IMPLEMENTING
 
-Independent invariant verification passed for 56 surfaces, unique keys, exactly-once suite coverage, P01–P40 pattern range and critical semantic owners.
+Canonical status: `docs/IMPLEMENTATION/PLATFORM-FOUNDATION-WP121.md`.
 
-Hosted GitHub Actions is currently blocked before runner assignment. Multiple attempts including explicit `ubuntu-24.04` produced an immediate failed job with no assigned runner, no steps and no logs. Therefore repository validator execution is **NOT certified green** and the failure is classified `EXTERNAL CI RUNNER DISPATCH FAILURE / INFRA_BLOCKED`, not a validator-code failure.
+### Tranche 1 implemented
+- plugin entry/bootstrap;
+- Service Registry contract/implementation;
+- Module contract, immutable manifest, lifecycle state and Module Registry;
+- Kernel lifecycle;
+- compatibility/autoload fail-safe notices;
+- kernel smoke tests.
 
-Canonical status: `docs/IMPLEMENTATION/MACHINE-ARCHITECTURE-GUARDS.md`.
+Verified locally under PHP 8.4.23:
+- PHP syntax: PASS;
+- kernel smoke: PASS.
 
-## Stop line
+### Tranche 2 implemented
+- immutable/versioned Definition contract + canonical checksum;
+- Definition Repository contract + in-memory reference implementation;
+- Principal / ExecutionContext / explicit execution channels;
+- Capability checker contract + initial Policy engine;
+- Ability descriptor/handler/registry with explicit channel exposure;
+- typed synchronous DomainEvent/EventBus;
+- platform-core smoke tests.
 
-Ordinary Milestone 1 Platform Foundation runtime source does **not** begin until WP120's exact repository validator executes successfully in a faithful environment and WP120 is recorded PASS.
+Verified locally under PHP 8.4.23:
+- PHP syntax: PASS;
+- platform-core smoke: PASS.
 
-Current safe action:
-1. restore a working runner/faithful checkout;
-2. execute `php tools/architecture/validate.php`;
-3. fix any real guard failure;
-4. record WP120 PASS;
-5. begin Milestone 1 Platform Foundation.
+Negative coverage includes stale definition revisions, unauthenticated/capability/channel Ability denials, direct/transitive degraded modules and circular dependencies.
+
+Local Composer CLI was unavailable, so Composer execution is not claimed. Hosted CI remains infra-degraded.
+
+## Current next action
+
+Continue WP121 in bounded tranches:
+1. Audit/Observability contracts;
+2. JobService contracts/idempotency/state/retry semantics;
+3. bounded Action Scheduler coexistence spike before backend adoption;
+4. Vault/Asset/Integration registries;
+5. persistent Definition Repository + migration implementation;
+6. WordPress capability/Abilities adapters;
+7. minimal Platform admin shell;
+8. only then begin first business-module tranche.
 
 Repository evidence overrides conversational memory.
