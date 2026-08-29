@@ -20,91 +20,105 @@ Current classification: `GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`;
 **DONE / PASS / ADR-0215**.
 
 ### WP121 — Milestone 1 Platform Foundation
-**CURRENT / IMPLEMENTING through ADR-0218**.
+**CURRENT / IMPLEMENTING through ADR-0220**.
 
-Implemented shared foundation includes:
-- Bootstrap / Kernel / Service Registry / Module lifecycle;
-- Definition / Context / Policy / Ability / Event core;
+Implemented shared foundation now includes:
+- Kernel / Modules / Service Registry;
+- Definitions / Context / Policy / Abilities / Events;
 - Audit logical foundation;
-- backend-neutral JobService identity/state/idempotency/retry/cancellation;
+- backend-neutral JobService logical contracts;
 - bounded Action Scheduler capability probe;
-- Secrets Vault reference contract;
-- Asset Registry;
-- Integration Registry;
-- WordPress Capability + Abilities API bridge;
-- owner engineering contract / ADR-0216;
-- persistent atomic compiled-registration storage / ADR-0217;
-- **Definition + Audit MySQL persistence adapters, non-destructive schemas and persistent migration ledger / ADR-0218**.
+- Vault / Assets / Integrations;
+- WordPress Capability + Abilities bridge;
+- ADR-0216 engineering conventions;
+- ADR-0217 atomic compiled registrations;
+- ADR-0218 Definition + Audit MySQL persistence;
+- **ADR-0219 WordPress.org release metadata + direct-access ABSPATH security contract**;
+- **ADR-0220 real WordPress AJAX/nonce/Policy + Ability-backed AJAX integration**.
 
-## ADR-0216 — mandatory engineering contract
+## ADR-0216 — Engineering contract
 
-Future implementation preserves canonical `WPEssential`/`frameworks/` architecture, public naming contracts, single typed AJAX gateway, centralized nonce operations, compile-on-write registrations, bounded/redacted Runtime Observatory tracing and machine enforcement.
+Canonical `WPEssential`/`frameworks/` architecture, public hook/filter/global/constant conventions, one typed AJAX front door, centralized nonce operations, compile-on-write registrations, bounded/redacted Runtime Observatory tracing and machine enforcement remain mandatory.
 
-The asymmetric `wpesential/apply_*` filter spelling is intentional public API.
+The asymmetric `wpesential/apply_*` spelling is intentional public API.
 
-## ADR-0217 — atomic compiled registrations
+## ADR-0217 — Atomic compiled registrations
 
-Accepted immutable per-scope compiled generation history, separate active/fallback state, InnoDB transaction + CAS publication, checksums, corruption quarantine, last-known-good recovery and a historical high-watermark independent of the active pointer. Corrupt/quarantined generation IDs are never reused.
+Accepted immutable per-scope generation history, transactional CAS publication, checksum/corruption recovery and historical high-watermark sequencing with no corrupt generation ID reuse.
 
 ## ADR-0218 — Definition + Audit persistence
 
-Accepted implementation:
-- explicit Definition network/site scope;
-- PT-D Definition + dependency tables;
-- canonical `PersistentDefinitionRepository` backed by `WpdbDefinitionTableGateway`;
-- transactional Definition/dependency writes and stale-revision CAS rejection;
-- persistent `${base_prefix}wpe_migrations` ledger;
-- non-destructive migrations 007/008;
-- append-oriented PT-D Audit event storage;
-- unique Audit UUID + structured scope indexes;
-- existing secret-safe metadata sanitizer enforced before storage;
-- deterministic Audit content fingerprint for local integrity diagnostics only.
+Accepted scoped PT-D Definition/dependency storage, revision CAS, persistent migration state, additive migrations 007/008 and append-oriented Audit PT-D storage with secret-safe metadata and diagnostic content fingerprints.
 
-Audit content hashes are **not** a tamper-proof/non-repudiation claim.
+Audit hashes are not tamper-proof/non-repudiation claims.
 
-## Hosted evidence — GREEN
+## ADR-0219 — WordPress.org + direct-access security
 
-Current executable evidence source commit:
-`5790ee7b69cb8ec37b17ed5815a2e4551623e248`
+Accepted:
+- `https://wpessential.org` Plugin/Author URI;
+- Author `VSN Team`;
+- clear plugin description;
+- repository/plugin/Composer/readme GPL v3 metadata alignment;
+- WordPress.org `readme.txt`;
+- `CONTRIBUTING.md` release/contribution checklist;
+- `ABSPATH` fail-closed guard on every production `frameworks/**/*.php` source file;
+- test entrypoint ABSPATH bootstrap;
+- permanent engineering validation of these invariants.
 
-GitHub Actions run **33263291359 / #123** completed **SUCCESS** on GitHub-hosted Ubuntu 24.04 / PHP 8.2 / MySQL 8.4.
+One-time transformer run `33265809474` succeeded and generated source commit `a8e758a70fbdc0f3cf58206bc61350b9cb80f66d`. The temporary write-enabled transformer workflow was removed.
+
+Permanent validation run **33265874634 / #138 SUCCESS**.
+
+## ADR-0220 — Real WordPress AJAX / nonce / Policy
+
+Accepted:
+- canonical AJAX gateway remains sole WPE owner of `wp_ajax_*`/`wp_ajax_nopriv_*` registration;
+- routes remain explicit typed allowlist;
+- `AbilityAjaxHandler` routes AJAX mutations through canonical AbilityRegistry/PolicyEngine;
+- actual AJAX Ability context is `ExecutionChannel::Ui`;
+- Policy denials map to stable 403 `policy_denied` rather than generic handler failure;
+- native WordPress nonce API remains operation/scope-bound CSRF layer, not authorization.
+
+Pinned WordPress 7.1 + MySQL 8.4 fixture executes real core APIs.
+
+Initial run #151 failed due incomplete test `wp-config.php` bootstrap. The fixture was corrected; authorization behavior was not weakened.
+
+Corrected source commit:
+`fdee1aaffe026745283ce03fb63a14af7a7862ba`
+
+Corrected GitHub Actions run **33266232577 / #153 SUCCESS**.
 
 PASS evidence:
+- pinned WordPress 7.1 core bootstrap;
 - Composer metadata;
-- architecture validator;
-- engineering-contract validator;
-- PHP syntax;
+- architecture + engineering validators;
+- PHP 8.2 syntax;
 - **9/9 smoke suites**;
-- MySQL atomic compiled-registration integration;
-- **MySQL Definition/Audit persistence integration**.
-
-The new integration proves ordered/idempotent migration state, Definition scope isolation/dependencies/revision CAS, Audit scope persistence, redaction before storage, deterministic fingerprinting and duplicate UUID rejection.
-
-Historical run #87 remains a legitimate earlier failure for compiled-registration generation reuse; it was corrected before ADR-0217 and is not current health.
+- compiled-registration MySQL integration;
+- Definition/Audit MySQL integration;
+- **real WordPress AJAX/nonce/Policy integration**.
 
 ## Current non-certifications
 
 Do not overclaim:
-- no live production WordPress DB migration/rollback has been executed;
-- real WordPress bootstrap/service wiring of Definition/Audit adapters remains pending;
-- network-only Audit events without site context remain unresolved in current `ExecutionContext`;
-- Audit read/UI Policy, retention purge, privacy erasure/anonymization, export, legal hold and stronger external/signed tamper-evidence remain pending;
-- large Audit dataset/performance evidence remains pending;
-- 10K/100K compiled-registration performance evidence remains pending;
+- WordPress.org submission/stable release not performed;
+- live production DB migration/rollback not performed;
+- Multisite AJAX site-switch/network-admin matrix pending;
 - Action Scheduler capability-ready does not equal coexistence/Multisite/backend certification;
-- real WordPress AJAX/nonce/Policy fixtures remain pending;
-- Runtime Observatory admin graph/Policy/retention UI remains pending;
-- business-module implementation remains downstream of the foundation gate.
+- durable Job attempt/lease/checkpoint persistence pending;
+- Audit UI/retention/privacy/export/legal-hold workflows pending;
+- Runtime Observatory admin graph/Policy/retention UI pending;
+- 10K/100K compiled-registration performance evidence pending;
+- business modules remain downstream of foundation readiness.
 
 ## Next WP121 bounded sequence
 
-1. **real WordPress AJAX/nonce/Policy integration fixtures**;
-2. Action Scheduler coexistence/backend evidence;
-3. durable Job attempt/lease/checkpoint contracts after backend evidence;
-4. minimal Platform admin shell + Runtime Observatory graph/diagnostics UI;
-5. executable 10K/100K compiled-registration scale evidence;
-6. shared-foundation readiness gate;
-7. first business-module tranche after that gate.
+1. **Action Scheduler coexistence/packaging/backend evidence**;
+2. durable Job attempt/lease/checkpoint contracts after backend evidence;
+3. minimal Platform admin shell + Runtime Observatory graph/diagnostics UI;
+4. executable 10K/100K compiled-registration scale evidence;
+5. shared-foundation readiness gate;
+6. first business-module tranche after that gate.
 
 ## Privileged exclusions
 
