@@ -8,12 +8,16 @@ interface CompiledRegistrationPersistenceGatewayInterface
 {
     public function pointer(CompiledRegistrationScope $scope): CompiledRegistrationPointer;
 
+    /** Historical high-watermark, including corrupt/quarantined generations. */
+    public function latestGeneration(CompiledRegistrationScope $scope): ?int;
+
     public function generation(CompiledRegistrationScope $scope, int $generation): ?CompiledRegistrationManifest;
 
     /**
      * Atomically persist the immutable generation and move the active pointer only when
      * the current active generation still equals $expectedActiveGeneration.
-     * Implementations must not expose a partially published generation as active.
+     * Implementations must not expose a partially published generation as active and
+     * must reject generation-number reuse below/equal to the historical high-watermark.
      */
     public function publishAtomically(
         CompiledRegistrationScope $scope,

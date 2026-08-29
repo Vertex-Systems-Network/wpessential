@@ -6,7 +6,7 @@ namespace WPEssential\Platform\WordPress\Registrations;
 
 use RuntimeException;
 
-final class AtomicCompiledRegistrationStore implements CompiledRegistrationStoreInterface
+final class AtomicCompiledRegistrationStore implements CompiledRegistrationStoreInterface, CompiledRegistrationGenerationSequenceInterface
 {
     public function __construct(
         private readonly CompiledRegistrationPersistenceGatewayInterface $gateway,
@@ -19,23 +19,31 @@ final class AtomicCompiledRegistrationStore implements CompiledRegistrationStore
         return $this->resolveActive(true);
     }
 
+    public function nextGeneration(): int
+    {
+        return ($this->gateway->latestGeneration($this->scope) ?? 0) + 1;
+    }
+
     public function publish(CompiledRegistrationManifest $manifest): void
     {
         if (!CompiledRegistrationManifestIntegrity::verify($manifest)) {
             throw new RuntimeException('Compiled registration manifest checksum is invalid.');
         }
 
+        // Resolve/recover the current active pointer first, but generation sequencing is
+        // based on the immutable historical high-watermark, not the potentially rolled-back
+        // active pointer. Corrupt generations therefore remain reserved forever.
         $current = $this->active();
-        $expectedGeneration = $current?->generation;
-        $nextGeneration = ($expectedGeneration ?? 0) + 1;
-        if ($manifest->generation !== $nextGeneration) {
+        $expectedActiveGeneration = $current?->generation;
+        $expectedNextGeneration = $this->nextGeneration();
+        if ($manifest->generation !== $expectedNextGeneration) {
             throw new RuntimeException(sprintf(
-                'Compiled registration generation must be %d for the current scope.',
-                $nextGeneration,
+                'Compiled registration generation must be historical high-watermark + 1 (%d) for the current scope.',
+                $expectedNextGeneration,
             ));
         }
 
-        if (!$this->gateway->publishAtomically($this->scope, $expectedGeneration, $manifest)) {
+        if (!$this->gateway->publishAtomically($this->scope, $expectedActiveGeneration, $manifest)) {
             throw new RuntimeException('Compiled registration publication lost a concurrent compare-and-swap race; recompile from current state.');
         }
     }

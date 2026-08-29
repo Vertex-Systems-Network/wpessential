@@ -110,18 +110,24 @@ $recovered = $store->active();
 mysqlCompiledExpect($recovered?->generation === 1, 'MySQL store must recover a checksum-corrupt active generation to last-known-good');
 $recoveredPointer = $gateway->pointer($scope);
 mysqlCompiledExpect($recoveredPointer->activeGeneration === 1 && $recoveredPointer->fallbackGeneration === null, 'MySQL recovery must atomically update scope pointer');
+mysqlCompiledExpect($gateway->latestGeneration($scope) === 2 && $store->nextGeneration() === 3, 'MySQL recovery must preserve corrupt generation 2 in the historical high-watermark');
 
-$compiler->compileAndPublish([new RegistrationDefinition('pt-1', RegistrationKind::PostType, 'book', ['public' => true], true, 3)]);
+$generation3 = $compiler->compileAndPublish([new RegistrationDefinition('pt-1', RegistrationKind::PostType, 'book', ['public' => true], true, 3)]);
+mysqlCompiledExpect($generation3->generation === 3, 'post-recovery MySQL publication must advance to generation 3 rather than reusing generation 2');
+mysqlCompiledExpect($gateway->pointer($scope)->fallbackGeneration === 1, 'post-recovery MySQL publication must retain recovered active generation as fallback');
+
 $entries = ['post_type' => ['movie' => ['id' => 'pt-2', 'revision' => 1, 'payload' => ['public' => true]]]];
-$manifest3 = new CompiledRegistrationManifest(3, $entries, CompiledRegistrationManifestIntegrity::checksum(3, $entries));
-mysqlCompiledExpect(!$gateway->publishAtomically($scope, 1, $manifest3), 'MySQL compare-and-swap must reject stale writers');
+$staleManifest = new CompiledRegistrationManifest(4, $entries, CompiledRegistrationManifestIntegrity::checksum(4, $entries));
+mysqlCompiledExpect(!$gateway->publishAtomically($scope, 1, $staleManifest), 'MySQL compare-and-swap must reject stale active-pointer writers');
+mysqlCompiledExpect($gateway->latestGeneration($scope) === 3, 'failed stale MySQL CAS must not consume generation 4');
 
-$pdo->exec("UPDATE `{$tables->generations}` SET manifest_json = '{invalid-json' WHERE network_id = 7 AND site_id = 701 AND generation = 2");
+$pdo->exec("UPDATE `{$tables->generations}` SET manifest_json = '{invalid-json' WHERE network_id = 7 AND site_id = 701 AND generation = 3");
 $recoveredAgain = $store->active();
 mysqlCompiledExpect($recoveredAgain?->generation === 1, 'invalid active JSON payload must be quarantined and recover to last-known-good');
+mysqlCompiledExpect($store->nextGeneration() === 4, 'invalid JSON recovery must preserve immutable generation 3 high-watermark');
 
 $generationCount = (int) $pdo->query("SELECT COUNT(*) FROM `{$tables->generations}` WHERE network_id = 7 AND site_id = 701")->fetchColumn();
-mysqlCompiledExpect($generationCount >= 2, 'compiled generations must persist independently of active pointer');
+mysqlCompiledExpect($generationCount === 3, 'MySQL compiled generations must remain immutable, including two quarantined historical generations');
 
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->state}`");
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->generations}`");

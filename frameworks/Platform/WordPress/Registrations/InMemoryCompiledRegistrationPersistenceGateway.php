@@ -24,6 +24,15 @@ final class InMemoryCompiledRegistrationPersistenceGateway implements CompiledRe
         return $this->pointers[$scope->key()] ?? new CompiledRegistrationPointer(null, null);
     }
 
+    public function latestGeneration(CompiledRegistrationScope $scope): ?int
+    {
+        $generations = array_keys($this->generations[$scope->key()] ?? []);
+        if ($generations === []) {
+            return null;
+        }
+        return max($generations);
+    }
+
     public function generation(CompiledRegistrationScope $scope, int $generation): ?CompiledRegistrationManifest
     {
         if (isset($this->corruptions[$scope->key()][$generation])) {
@@ -42,8 +51,13 @@ final class InMemoryCompiledRegistrationPersistenceGateway implements CompiledRe
         if ($pointer->activeGeneration !== $expectedActiveGeneration) {
             return false;
         }
-        if ($manifest->generation !== ($expectedActiveGeneration ?? 0) + 1) {
-            throw new RuntimeException('Atomic registration publication received a non-monotonic generation.');
+
+        $expectedNextGeneration = ($this->latestGeneration($scope) ?? 0) + 1;
+        if ($manifest->generation !== $expectedNextGeneration) {
+            throw new RuntimeException(sprintf(
+                'Atomic registration publication requires historical generation %d; generation numbers are immutable and cannot be reused.',
+                $expectedNextGeneration,
+            ));
         }
         if (isset($this->generations[$key][$manifest->generation])) {
             throw new RuntimeException('Compiled registration generations are immutable.');

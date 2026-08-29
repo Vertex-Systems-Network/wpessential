@@ -34,6 +34,15 @@ final class WpdbCompiledRegistrationPersistenceGateway implements CompiledRegist
         );
     }
 
+    public function latestGeneration(CompiledRegistrationScope $scope): ?int
+    {
+        return self::nullablePositiveInt($this->database->getVar($this->database->prepare(
+            "SELECT MAX(generation) FROM `{$this->tables->generations}` WHERE network_id = %d AND site_id = %d",
+            $scope->networkId,
+            $scope->databaseSiteId(),
+        )));
+    }
+
     public function generation(CompiledRegistrationScope $scope, int $generation): ?CompiledRegistrationManifest
     {
         $row = $this->database->getRow($this->database->prepare(
@@ -72,8 +81,20 @@ final class WpdbCompiledRegistrationPersistenceGateway implements CompiledRegist
                 $this->database->rollBack();
                 return false;
             }
-            if ($manifest->generation !== ($current ?? 0) + 1) {
-                throw new RuntimeException('Database publication received a non-monotonic compiled generation.');
+
+            // The scope state row is locked, serializing WPE writers for this scope. The
+            // immutable generation table remains the sequence authority even after recovery.
+            $latest = self::nullablePositiveInt($this->database->getVar($this->database->prepare(
+                "SELECT MAX(generation) FROM `{$this->tables->generations}` WHERE network_id = %d AND site_id = %d",
+                $scope->networkId,
+                $scope->databaseSiteId(),
+            )));
+            $expectedNext = ($latest ?? 0) + 1;
+            if ($manifest->generation !== $expectedNext) {
+                throw new RuntimeException(sprintf(
+                    'Database publication requires historical generation %d; generation numbers cannot be reused.',
+                    $expectedNext,
+                ));
             }
 
             $json = json_encode(

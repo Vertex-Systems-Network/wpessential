@@ -37,7 +37,10 @@ final class RegistrationCompiler
         }
         unset($items);
 
-        $generation = ($this->store->active()?->generation ?? 0) + 1;
+        $generation = $this->store instanceof CompiledRegistrationGenerationSequenceInterface
+            ? $this->store->nextGeneration()
+            : (($this->store->active()?->generation ?? 0) + 1);
+
         $manifest = new CompiledRegistrationManifest(
             $generation,
             $entries,
