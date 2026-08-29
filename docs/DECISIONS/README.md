@@ -1,23 +1,28 @@
 # WPEssential Architecture Decision Records
 
-Status: **Phase 0 planning complete / no development authorization**  
+Status: **Planning complete / awaiting development approval / no development authorization**  
 Last synchronized: 2026-08-29
 
 Planning acceptance never grants development permission; ADR-0014 remains the hard consent gate. Historical ADRs/scope snapshots retain accepted meanings.
 
 Current product: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, authorization **0/56**, runtime-certified/implemented none, lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**.
 
-## Current closure sequence
+## Current closure/integration decisions
 
-- ADR-0207 — WP112 closure audit; 5,808 missing exact definitions identified.
+- ADR-0207 — WP112 closure audit; identified 5,808 missing exact definitions.
 - ADR-0208 — WP113 Market exact; 1,232/1,232 / 0 executed.
-- ADR-0209 — WP114 First Competitive exact; 880/880 / 0 executed.
-- ADR-0210 — WP115 Second Competitive exact; 1,936/1,936 / 0 executed.
-- ADR-0211 — WP116 Third Competitive exact; 1,760/1,760 / 0 executed.
-- **ADR-0212 — WP117 final closure/readiness audit PASS; known planning gap 0/0; P0 may enter `AWAITING_DEVELOPMENT_APPROVAL`.**
+- ADR-0209 — WP114 First Competitive exact; 880/880 / 0.
+- ADR-0210 — WP115 Second Competitive exact; 1,936/1,936 / 0.
+- ADR-0211 — WP116 Third Competitive exact; 1,760/1,760 / 0.
+- ADR-0212 — WP117 final closure/readiness audit; PASS; known exact planning gap 0/0.
+- **ADR-0213 — WP118 post-P0 Module/Option/UI/System structural integrity mapping; PASS after remediation.**
 
-Exact planning/evidence design is complete for the current accepted scope. Exact protocols remain unexecuted and therefore `RUNTIME EVIDENCE PENDING`; applicable providers remain `PROVIDER CERTIFICATION PENDING`; implementation remains `OWNER CONSENT PENDING`.
+ADR-0213 establishes the current canonical surface owner registry, cross-module option/no-bypass contract, 56-surface option index, Admin IA V2, P01–P40 system pattern map, 56 dependency matrix, Ability/Event registry completion through Surface56 and data-ownership lifecycle completion through Surface56.
 
-P0 planning completion does not change project state to active implementation and does not grant consent. Project remains `PLANNED_EXISTING_PROJECT`, execution `PLANNER_ONLY`, authorization **0/56**.
+Preserved boundaries include Query6 ≠ Search34 ≠ ContentOrder51; Status5 ≠ Workflow17; Connections23 owns Safe HTTP/webhook transport; Redirect44 owns generic routing; Transform45 owns typed data transformations; Audit ≠ Analytics33; Backup24 ≠ Reset25 ≠ Staging55; ThemeWorkspace56 ≠ AdminTheme49 ≠ SafeScript50 ≠ Fonts53 ≠ Media28; parity overlays do not become duplicate modules.
 
-Current safe state: wait for explicit scoped owner development approval. After future approval, establish the Implementation Baseline / Adoption Gate before first production code.
+Known planning/integration semantic-owner gap: **none known** at current accepted scope. Runtime evidence/provider certification remain pending. Owner consent remains PENDING / 0/56.
+
+After future explicit scoped consent, run the Implementation Baseline / Adoption Gate and ADR-0213 machine-enforced ownership/route/dependency/Ability/storage/Blueprint/Multisite/provider/AI validations before ordinary feature code.
+
+Lifecycle `AWAITING_DEVELOPMENT_APPROVAL`; production development authorization **NOT GRANTED / 0/56**.
