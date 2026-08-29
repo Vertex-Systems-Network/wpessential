@@ -1,0 +1,38 @@
+name: Architecture Guards
+
+on:
+  pull_request:
+    paths:
+      - 'config/architecture/**'
+      - 'tools/architecture/**'
+      - 'composer.json'
+      - '.github/workflows/architecture-guards.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'config/architecture/**'
+      - 'tools/architecture/**'
+      - 'composer.json'
+      - '.github/workflows/architecture-guards.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-architecture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Validate manifests
+        run: php tools/architecture/validate.php
