@@ -25,7 +25,8 @@ final class PersistentAuditLogger implements AuditLoggerInterface
         try {
             $row = $this->codec->encode($record);
             $this->database->insert($this->tables->events, $row, [
-                '%s', '%d', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s',
+                '%s', '%d', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%s',
+                '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s',
             ]);
         } catch (Throwable $exception) {
             throw new RuntimeException('Persistent audit append failed.', 0, $exception);
