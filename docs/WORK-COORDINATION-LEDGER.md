@@ -1,33 +1,64 @@
 # WPEssential — Work Coordination Ledger
 
-Status: **Active governance ledger**  
-Last reviewed: 2026-08-29
+Status: **Active implementation governance ledger**  
+Last reviewed: **2026-08-29**
 
-Project `PLANNED_EXISTING_PROJECT`; execution `PLANNER_ONLY`; lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**; scope **56**; authorized **0/56**; Multisite **56/56**; AI Prompt **56/56**; implementation WIP **0**.
+Current classification: `GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`; execution **`IMPLEMENTATION_GATED`**; lifecycle **`IMPLEMENTING_ARCHITECTURE_GUARDS`**; accepted scope **56/56**; source development approval **GOV-OWNER-CONSENT-001 ACTIVE / 56/56 milestone-gated**.
 
-## Completed planning sequence
+## Planning closure retained
 
-- WP63…WP74 universal/adapter sequence — DONE through ADR-0206.
-- WP112 closure audit — DONE / ADR-0207; starting exact gap **5,808 / 33 namespaces**.
-- WP113 Market exact evidence — DONE / ADR-0208; **1,232/1,232 / 0 executed**.
-- WP114 First Competitive exact evidence — DONE / ADR-0209; **880/880 / 0**.
-- WP115 Second Competitive exact evidence — DONE / ADR-0210; **1,936/1,936 / 0**.
-- WP116 Third Competitive exact evidence — DONE / ADR-0211; **1,760/1,760 / 0**.
-- WP117 final closure/readiness audit — **DONE / PASS / ADR-0212**.
-- **WP118 Module/Option/UI/System structural-integrity audit — DONE / PASS after remediation / ADR-0213.**
+- WP113 / ADR-0208 — 1,232 exact evidence definitions closed.
+- WP114 / ADR-0209 — 880 closed.
+- WP115 / ADR-0210 — 1,936 closed.
+- WP116 / ADR-0211 — 1,760 closed.
+- WP117 / ADR-0212 — final planning closure PASS.
+- WP118 / ADR-0213 — Module/Option/UI/System structural-integrity audit PASS after remediation.
 
-Known exact planning gap: **0/0**. Known semantic-owner/current-integration mapping gap: **none known**.
+Known planning/semantic-owner gap: **none known**.
 
-WP118 added current canonical cross-maps for 56 surface identity/ownership, option semantic/storage/execution ownership, 56-surface Admin IA, P01–P40→surface system composition, dependency/cycle relationships, Ability/Event coverage 32–56, data ownership 32–56, parity overlay ownership and no-bypass flows.
+## Implementation sequence
 
-Readiness remains planning-complete but runtime/provider evidence and owner consent pending. No development work package is ACTIVE.
+### WP119 — Implementation Baseline / Adoption Gate
+**DONE / PASS / ADR-0214**.
 
-## Next safe work after future explicit consent
+Locked greenfield baseline, WordPress/PHP/database floor, Composer/PSR-4, Node/build direction, quality gates, packaging direction and dependency constraints.
 
-1. record ACTIVE scoped approval;
-2. run Implementation Baseline / Adoption Gate;
-3. establish machine-readable Surface/Option/Route/Dependency/Ability/Storage ownership manifests and ADR-0213 validation/lint gates;
-4. select bounded first implementation milestone/change budget;
-5. only then enter `IMPLEMENTING` for approved scope.
+### WP120 — Machine-enforced Architecture Guards
+**CURRENT / SOURCE IMPLEMENTED / INDEPENDENT INVARIANTS PASS / HOSTED CI INFRA_BLOCKED**.
 
-No WP112–WP118 production runtime/provider/test/build/deployment work executed. Production development remains **NOT GRANTED / 0/56**.
+Implemented manifests/validator/CI for:
+- canonical 56 surfaces + exactly-once routes/suites;
+- option semantic owners and parity overlay no-bypass;
+- P01–P40 system routing;
+- Ability/Policy ownership;
+- storage ownership;
+- Multisite boundaries;
+- cache/index invalidation ownership;
+- provider/external-authority unknown outcomes;
+- destructive/recovery requirements;
+- AI/MCP restrictions.
+
+Hosted GitHub Actions attempts fail before runner assignment with no steps/logs, including explicit ubuntu-24.04 and retry. This is `EXTERNAL CI RUNNER DISPATCH FAILURE / INFRA_BLOCKED`; no hosted green claim is allowed.
+
+### WP121 — Milestone 1 Platform Foundation
+**BLOCKED / NOT STARTED** by WP120 exact validator execution gate.
+
+Planned first runtime tranche after unblock:
+- plugin bootstrap;
+- Composer/autoload package foundation;
+- Kernel + Contracts;
+- service/module registries;
+- Definition Repository foundation;
+- Context/Policy/Capability foundation;
+- Ability/Event contracts;
+- Audit/Jobs/Vault/Assets/Integration service skeletons;
+- minimal one-shell admin bootstrap;
+- baseline unit/integration/static-analysis/build gates.
+
+## Privileged exclusions
+
+General source-development consent does not authorize production deployment/release, destructive live-site/customer data mutation, live payment/communication/provider-authority operations, irreversible external side effects, or destructive production reset/restore/migration/rescue.
+
+## Current safe action
+
+Execute `php tools/architecture/validate.php` against the exact implementation branch on a faithful working runner/checkout. Only after PASS may WP121 start.
