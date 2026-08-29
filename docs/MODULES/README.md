@@ -2,13 +2,13 @@
 
 Status: **Phase 0 — 56/56 Exhaustively specified; supplemental evidence planning remains; development not authorized**
 
-Current: 56/56 Exhaustive, Multisite 56/56, AI Prompt 56/56, authorization 0/56, runtime certified none. Scope lineage 31 → 43 → 48 → 50 → 55 → 56 remains preserved.
+Current: 56/56 Exhaustive, Multisite 56/56, AI Prompt 56/56, authorization 0/56, runtime certified none.
 
-Exact evidence complete/unexecuted: universal/adapter; WP113/ADR-0208 RDR/SRT/DMY/LNK/DBM/PDO/MIR = 1,232; WP114/ADR-0209 MPR/RPR/ATM/MDP/STM = 880.
+Exact evidence complete/unexecuted: universal/adapter; WP113/ADR-0208 = 1,232; WP114/ADR-0209 = 880.
 
 Remaining **3,696 / 21 namespaces**.
 
-**WP115 CURRENT — 1,936:** ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC. All eleven 16×11 group envelopes are locked in the Second Competitive evidence master plan; BKX/MRL/PBX/JEX/LHX/HFC ranges were normalized from the accepted addendum. Exact `001…176` protocols remain pending.
+**WP115 CURRENT — 1,936:** ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC. All eleven 16×11 group envelopes are locked in the Second Competitive evidence master plan; exact `001…176` protocols remain pending.
 
 WP116 RESERVED — 1,760: UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX.
 
