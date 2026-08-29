@@ -47,6 +47,12 @@ final class ModuleRegistry
     /** @return list<ModuleInterface> */
     public function bootOrder(): array
     {
+        foreach ($this->states as $id => $state) {
+            if ($state === ModuleState::Degraded) {
+                $this->states[$id] = ModuleState::Registered;
+            }
+        }
+
         $resolved = [];
         $visiting = [];
         $order = [];
