@@ -1,12 +1,15 @@
 <?php
 /**
  * Plugin Name: WPEssential
- * Description: Modular WordPress application platform.
+ * Plugin URI: https://wpessential.org
+ * Description: Modular WordPress application platform for structured data, automation, integrations, admin tooling, workflows, and AI-ready operations.
  * Version: 0.1.0-dev
  * Requires at least: 6.9
  * Requires PHP: 8.2
- * Author: WPEssential
- * License: GPL-2.0-or-later
+ * Author: VSN Team
+ * Author URI: https://wpessential.org
+ * License: GPL-3.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: wpessential
  */
 
