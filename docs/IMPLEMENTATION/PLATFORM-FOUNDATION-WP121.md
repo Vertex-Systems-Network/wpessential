@@ -4,7 +4,8 @@ Status: **CURRENT / IMPLEMENTING — shared platform foundation active**
 Date: **2026-08-29**  
 Approval: `GOV-OWNER-CONSENT-001` ACTIVE  
 Predecessors: WP119 PASS / ADR-0214; WP120 PASS / ADR-0215  
-Engineering contract: ADR-0216 ACCEPTED
+Engineering contract: ADR-0216 ACCEPTED  
+Atomic compiled registrations: **ADR-0217 ACCEPTED**
 
 ## Goal
 
@@ -56,13 +57,9 @@ No module may depend directly on Action Scheduler private status/table semantics
 
 ## Tranche 4 — Action Scheduler bounded capability probe
 
-Implemented a bounded adapter capability probe that distinguishes:
-- absent;
-- partially incompatible API surface;
-- loaded but not initialized;
-- capability-ready.
+Implemented a bounded adapter capability probe distinguishing absent, partial/incompatible, not initialized and capability-ready states.
 
-Capability readiness does **not** fabricate coexistence, packaging or Multisite certification. A real WordPress coexistence/backend runtime remains required before adopting Action Scheduler as a certified JobService backend.
+Capability readiness does **not** fabricate coexistence, packaging or Multisite/backend certification.
 
 ## Tranche 5 — Secrets / Assets / Integrations
 
@@ -89,17 +86,17 @@ Implemented:
 - failed migration not marked applied;
 - in-memory table/state gateways for behavioral evidence.
 
-Important: this is the **persistent repository abstraction**, not a certified production WordPress/MySQL table adapter. Real DB migrations/storage remain downstream work.
+This remains the persistence abstraction; certified production WordPress/MySQL Definition storage is still downstream work.
 
 ## Tranche 7 — WordPress Capability / Abilities bridge
 
 Implemented:
 - WordPress capability environment/checker;
-- execution-context factory bound to the actual WordPress principal/site/network context;
+- execution-context factory bound to actual WordPress principal/site/network context;
 - WordPress Abilities API bridge;
 - explicit category and Ability exposure;
 - REST exposure only when descriptor channels allow REST;
-- capability re-check against the current WordPress user;
+- current-user capability re-check;
 - canonical internal-to-core Ability name mapping + collision rejection;
 - registration-hook timing guard.
 
@@ -107,7 +104,7 @@ Request-supplied execution context cannot impersonate a different WordPress prin
 
 ## Tranche 8 — Owner-mandated engineering contract / ADR-0216
 
-Implemented across all future development:
+Implemented across future development:
 - namespace `WPEssential`;
 - canonical PSR-4 production root `frameworks/`;
 - retired legacy parallel `src/` tree;
@@ -117,73 +114,93 @@ Implemented across all future development:
 - exact custom action contract `wpessential/hook_*`;
 - one canonical AJAX action with allowlisted typed dispatcher;
 - common nonce manager for `apply/create/update/reset/delete` operation scopes;
-- compile-on-write WordPress registration model for CPT/taxonomy/metabox/settings-page definitions;
-- bounded/redacted Runtime Observatory flow-trace foundation;
-- machine engineering-contract validator;
-- dedicated engineering-contract smoke suite.
+- compile-on-write WordPress registration model;
+- bounded/redacted Runtime Observatory trace foundation;
+- machine engineering-contract validator and smoke suite.
 
 Canonical architecture detail:
 `docs/ARCHITECTURE/ENGINEERING-CONVENTIONS-AJAX-NONCE-COMPILED-REGISTRATION-OBSERVABILITY.md`.
 
-### Compile-on-write boundary
+The asymmetric `wpesential` filter spelling is intentional public API.
 
-`InMemoryCompiledRegistrationStore` is reference/test-only. Production readiness requires a persistent atomic active-generation store with site/network isolation, last-known-good recovery, checksum/corruption handling and executable 10K/100K performance evidence. Ordinary runtime requests must not scan/compile the historical definition population.
+## Tranche 9 — Persistent atomic compiled registrations / ADR-0217
 
-### Runtime Observatory boundary
+Implemented:
+- `DatabaseAdapterInterface` and `NativeWpdbAdapter` source boundary;
+- explicit `CompiledRegistrationScope` for network/site identity;
+- immutable compiled-generation persistence gateway;
+- separate active/fallback pointer state;
+- deterministic compiled-manifest checksum verification;
+- `AtomicCompiledRegistrationStore`;
+- WordPress `$wpdb`-style compiled registration persistence gateway;
+- bounded non-destructive migration creating network-prefixed InnoDB generation/state tables;
+- corruption quarantine and last-known-good recovery;
+- stale compare-and-swap writer rejection;
+- site isolation and network-vs-site isolation;
+- historical generation high-watermark sequencing.
 
-Current source provides correlation identity, class/component nodes, call/data edges, ordered checkpoints, exact last-successful -> failed boundary and redaction. `WPE_DEBUG` is off by default. The admin graph/chart UI, Policy/retention controls and production diagnostics profile remain to be implemented.
+### Critical high-watermark rule
 
-## Hosted verification
+The active pointer is **not** sequence authority.
 
-GitHub Actions run **33258399467** executed on `ubuntu-24.04` with PHP **8.2** against source commit `8ea9ee13e9081beb4d3599c69051a2144c39dedf` and completed **SUCCESS**.
+After recovery, the active pointer may move backward but new generation allocation remains:
+
+`MAX(all historical generation IDs in scope) + 1`.
+
+Corrupt/quarantined generation IDs remain permanently consumed and are never reused. This preserves immutable history and prevents a recovered pointer from overwriting the identity of a previously failed/corrupt generation.
+
+### Atomicity boundary
+
+Publication locks the scope state, verifies expected active state + historical next generation, persists the complete immutable manifest, changes the active/fallback pointer and commits as one transaction boundary. A partial generation must not become active.
+
+The compiled manifest remains a **derived runtime projection**, not source configuration/business truth. Ordinary runtime loading consumes the active compiled manifest instead of scanning/compiling the historical definition population on every request.
+
+## Hosted verification — current source GREEN
+
+Corrected implementation commit:
+`de2bf6ea0299ce3900a0d6dff2d4646066137497`
+
+GitHub Actions run **33261866811 / #89** executed on a real GitHub-hosted Ubuntu runner and completed **SUCCESS**.
 
 Verified hosted stages:
-- Composer metadata validation: PASS;
-- canonical architecture manifests: PASS;
+- MySQL 8.4 service: ready;
+- Composer metadata: PASS;
+- canonical architecture validator: PASS;
 - engineering-contract validator: PASS;
-- PHP syntax across `frameworks/`, smoke suites and plugin entrypoint: PASS;
-- complete smoke suite: PASS.
+- PHP 8.2 syntax: PASS;
+- **9/9 smoke suites: PASS**;
+- **MySQL 8.4 compiled-registration transactional integration: PASS**.
 
-The complete smoke suite covers:
-1. Kernel/module lifecycle;
-2. Definition/Policy/Ability/Event core;
-3. Audit/JobService;
-4. Action Scheduler capability probe;
-5. Vault/Assets/Integrations;
-6. Definition persistence abstraction/migrations;
-7. WordPress Abilities bridge;
-8. engineering conventions, nonce/AJAX routing, compiled registrations and trace redaction/failure boundary.
+The MySQL integration verifies active/fallback persistence, site/network isolation, checksum-corrupt active recovery, immutable corrupt-generation high-watermark, post-recovery non-reuse, stale CAS rejection, invalid-JSON quarantine/recovery and immutable generation retention.
 
-A prior diagnostic run exposed one stale assertion in `platform-core-smoke.php`: it expected prose `not exposed` while the canonical Policy reason is `channel_not_exposed`. The assertion was corrected without changing or weakening authorization behavior; the subsequent hosted run is green.
-
-Composer execution is now evidenced by hosted CI even though the earlier isolated local environment lacked Composer CLI.
+The immediately preceding run **33261668224 / #87** failed the smoke gate and therefore skipped MySQL integration. It exposed the generation-reuse defect. The implementation was corrected before ADR-0217 acceptance; the failure was not waived or relabeled green.
 
 ## Current exclusions / not yet certified
 
-- production WordPress/MySQL Definition storage adapter + actual schema migrations;
+- 10K/100K compiled-registration performance certification;
+- full WordPress runtime certification of `NativeWpdbAdapter`;
+- production WordPress/MySQL Definition storage adapter + actual schema migration evidence;
 - persistent/tamper-evident Audit PT-D store/index/retention;
-- persistent atomic compiled-registration generation store;
-- 10K/100K registration-definition runtime/performance certification;
+- real WordPress AJAX/nonce/Policy end-to-end fixtures;
 - durable Job attempt journal, leases/claims/heartbeat/fairness/backpressure/checkpoint persistence;
 - Action Scheduler real coexistence/packaging/Multisite backend certification;
-- resource-aware Policy beyond the current capability/context foundation;
-- real WordPress AJAX integration/runtime fixtures for the new central gateway;
+- resource-aware Policy beyond current capability/context foundation;
 - Runtime Observatory admin UI/graph, Policy and retention controls;
 - minimal Platform admin shell;
-- CPT/Taxonomy/Metabox/Settings business-facing builders wired to persistent compiled registrations;
-- any business module production tranche.
+- business-facing CPT/Taxonomy/Metabox/Settings builders wired end-to-end;
+- any business-module production tranche.
 
-No production deployment, live provider call, destructive live-site/customer-data mutation or irreversible external operation was performed.
+No production deployment, live provider call, destructive live-site/customer-data mutation, live production DB migration or irreversible external operation was performed.
 
 ## Next WP121 work
 
-1. implement persistent atomic compiled-registration store + recovery semantics;
-2. implement production Definition/Audit persistence adapters and bounded migrations;
-3. execute real WordPress AJAX/nonce/Policy integration fixtures;
-4. execute bounded Action Scheduler coexistence/backend evidence;
-5. deepen Job attempts/leases/checkpoints after backend evidence;
-6. build minimal Platform admin shell + Runtime Observatory graph/diagnostic surface;
-7. add executable scale evidence for compiled dynamic registrations;
-8. only then gate the first business-module tranche against shared foundation readiness.
+1. production Definition/Audit persistence adapters and bounded migrations;
+2. real WordPress AJAX/nonce/Policy integration fixtures;
+3. bounded Action Scheduler coexistence/backend evidence;
+4. durable Job attempts/leases/checkpoints after backend evidence;
+5. minimal Platform admin shell + Runtime Observatory graph/diagnostic surface;
+6. executable 10K/100K compiled-registration scale evidence;
+7. shared-foundation readiness gate;
+8. first business-module tranche only after that gate passes.
 
 Every next tranche extends FAST/FULL evidence and keeps privileged production/live-provider boundaries intact.
