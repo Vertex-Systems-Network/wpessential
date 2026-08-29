@@ -2,7 +2,7 @@
   "name": "wpessential/wpessential",
   "description": "WPEssential WordPress application platform",
   "type": "wordpress-plugin",
-  "license": "GPL-2.0-or-later",
+  "license": "GPL-3.0-or-later",
   "require": {
     "php": ">=8.2"
   },
