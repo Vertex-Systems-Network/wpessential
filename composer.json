@@ -8,8 +8,11 @@
   },
   "autoload": {
     "psr-4": {
-      "WPEssential\\": "src/"
-    }
+      "WPEssential\\": "frameworks/"
+    },
+    "files": [
+      "frameworks/functions.php"
+    ]
   },
   "scripts": {
     "architecture:validate": "php tools/architecture/validate.php",

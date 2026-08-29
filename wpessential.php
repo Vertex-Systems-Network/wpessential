@@ -16,6 +16,22 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!defined('WPE_VERSION')) {
+    define('WPE_VERSION', '0.1.0-dev');
+}
+
+if (!defined('WPE_AJAX_ACTION')) {
+    define('WPE_AJAX_ACTION', 'wpessential_dispatch');
+}
+
+if (!defined('WPE_NONCE_ACTION')) {
+    define('WPE_NONCE_ACTION', 'wpessential_request');
+}
+
+if (!defined('WPE_DEBUG')) {
+    define('WPE_DEBUG', false);
+}
+
 $compatibilityNotice = static function (string $message): void {
     if (!function_exists('add_action')) {
         return;
