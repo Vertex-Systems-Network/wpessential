@@ -31,7 +31,7 @@ permissions:
 jobs:
   validate-architecture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 10
     services:
       mysql:
         image: mysql:8.4
@@ -53,8 +53,18 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: pdo_mysql
+          extensions: pdo_mysql, mysqli
           coverage: none
+
+      - name: Prepare pinned WordPress 7.1 core fixture
+        shell: bash
+        run: |
+          rm -rf /tmp/wordpress /tmp/wordpress-7.1.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            https://wordpress.org/wordpress-7.1.tar.gz \
+            --output /tmp/wordpress-7.1.tar.gz
+          tar -xzf /tmp/wordpress-7.1.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
 
       - name: Validate Composer metadata
         run: composer validate --strict --no-check-lock
@@ -124,3 +134,12 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/platform-persistence-mysql.php
+
+      - name: Real WordPress AJAX nonce Policy integration
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-ajax-nonce-policy.php
