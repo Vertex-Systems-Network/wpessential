@@ -1,0 +1,51 @@
+name: Apply Direct Access Guards
+
+on:
+  push:
+    branches:
+      - implementation/baseline-adoption-gate
+    paths:
+      - tools/maintenance/apply-direct-access-guards.php
+      - .github/workflows/apply-direct-access-guards.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-guards:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout implementation branch
+        uses: actions/checkout@v4
+        with:
+          ref: implementation/baseline-adoption-gate
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Apply deterministic ABSPATH guards
+        run: php tools/maintenance/apply-direct-access-guards.php
+
+      - name: Validate transformed PHP syntax
+        run: find frameworks tests/Smoke tests/Integration -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Validate patch whitespace
+        run: git diff --check
+
+      - name: Commit transformed source
+        shell: bash
+        run: |
+          if git diff --quiet -- frameworks tests/Smoke tests/Integration; then
+            echo 'No direct-access guard changes required.'
+            exit 0
+          fi
+          git config user.name 'wpessential-ci'
+          git config user.email 'actions@users.noreply.github.com'
+          git add frameworks tests/Smoke tests/Integration
+          git commit -m 'security: enforce ABSPATH direct-access guards'
+          git push origin HEAD:implementation/baseline-adoption-gate
