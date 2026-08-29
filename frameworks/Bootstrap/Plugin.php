@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) {
 }
 
 use WPEssential\Kernel\Kernel;
+use WPEssential\Platform\Admin\AdminAssetManifest;
+use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
@@ -57,6 +60,13 @@ final class Plugin
         $registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
         $traces = $debug ? new BoundedInMemoryTraceRecorder() : new NullTraceRecorder();
 
+        $pluginRoot = dirname(__DIR__, 2);
+        $pluginFile = $pluginRoot . '/wpessential.php';
+        $pluginUrl = function_exists('plugin_dir_url') ? (string) plugin_dir_url($pluginFile) : '';
+        $runtimeDiagnostics = new RuntimeDiagnosticsSnapshot(self::$kernel, $traces, $debug);
+        $adminAssets = new AdminAssetManifest($pluginRoot, $pluginUrl);
+        $adminController = new PlatformAdminController($runtimeDiagnostics, $adminAssets);
+
         $services->set('platform.nonce', $nonceManager);
         $services->set('platform.ajax.routes', $ajaxRoutes);
         $services->set('platform.ajax.dispatcher', $ajaxDispatcher);
@@ -65,9 +75,13 @@ final class Plugin
         $services->set('platform.registrations.compiler', $registrationCompiler);
         $services->set('platform.registrations.runtime', $registrationRuntime);
         $services->set('platform.traces', $traces);
+        $services->set('platform.admin.diagnostics', $runtimeDiagnostics);
+        $services->set('platform.admin.assets', $adminAssets);
+        $services->set('platform.admin.controller', $adminController);
 
         if (function_exists('add_action')) {
             $ajaxGateway->register();
+            $adminController->register();
         }
 
         self::$kernel->boot();
