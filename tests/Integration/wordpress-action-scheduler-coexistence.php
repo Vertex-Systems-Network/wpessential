@@ -8,6 +8,10 @@ if ($wpDir === '' || !is_file($wpDir . '/wp-load.php')) {
     exit(1);
 }
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', $wpDir . '/');
+}
+
 require $wpDir . '/wp-load.php';
 
 $root = dirname(__DIR__, 2);
