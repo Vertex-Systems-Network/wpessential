@@ -13,86 +13,65 @@ Current scope accepted through ADR-0197; exact planning evidence accepted throug
 - Implementation authorization: **0/56**.
 - Implemented/runtime verified: **0**.
 
-Historical scope lineage: 31 → 43 → 48 → 50 → 55 → 56. Historical denominators remain correct for their snapshots.
+Historical scope lineage: 31 → 43 → 48 → 50 → 55 → 56.
 
-## Current surface ledger
+## Exact evidence effect by current surface families
 
-| # | Surface | Maturity / current exact evidence direction |
-|---:|---|---|
-| 1 | Custom Post Types Builder | Exhaustive; CPTX later WP116 supplement |
-| 2 | Taxonomy Builder | Exhaustive; CPTX later WP116 supplement |
-| 3 | Custom Fields Builder | Exhaustive; FST existing evidence |
-| 4 | Relations Builder | Exhaustive; REL existing evidence |
-| 5 | Status Manager | Exhaustive; SM existing evidence |
-| 6 | Custom Query Builder | Exhaustive; QRY existing evidence |
-| 7 | Custom Tables Builder | Exhaustive; CTB existing evidence |
-| 8 | Admin Columns Builder | Exhaustive; AC existing evidence |
-| 9 | Dynamic Listings / Templates | Exhaustive; DL/CBP existing evidence |
-| 10 | Dashboard Widgets Manager | Exhaustive; DW evidence |
-| 11 | Custom Admin Menu Builder | Exhaustive; AM evidence |
-| 12 | Settings Page Builder | Exhaustive; ST evidence |
-| 13 | Frontend Dashboard Builder | Exhaustive; FD evidence |
-| 14 | User Profile Builder | Exhaustive; PBX supplement current WP115 |
-| 15 | Membership System | Exhaustive + parity; **MPR exact 176/176 / 0 — ADR-0209** |
-| 16 | Builder Widgets Builder | Exhaustive; BW/CBP evidence |
-| 17 | Forms & Workflow Builder | Exhaustive; FM/WF evidence |
-| 18 | Cron Job Builder | Exhaustive; JS evidence |
-| 19 | Notification System | Exhaustive; NT evidence |
-| 20 | Emails Builder | Exhaustive; EBR/ET-F evidence |
-| 21 | Message & Chat System | Exhaustive; CH evidence |
-| 22 | REST API Builder | Exhaustive; REST evidence |
-| 23 | Webhooks & Connections Manager | Exhaustive; WC/ICP-F evidence |
-| 24 | Backup Manager | Exhaustive; BK/BPC-F plus BKX supplement current WP115 |
-| 25 | Reset Manager | Exhaustive; RSX supplement WP116 |
-| 26 | Import / Export | Exhaustive; IM evidence |
-| 27 | Protector | Exhaustive; PR/RLT evidence |
-| 28 | Watermarker / Media Rules + Performance Delivery | Exhaustive + parity; **MDP exact 176/176 / 0 — ADR-0209**; MRL current WP115 |
-| 29 | XML-RPC Manager | Exhaustive; XR evidence |
-| 30 | Role & Capability Manager | Exhaustive + parity; **RPR exact 176/176 / 0 — ADR-0209** |
-| 31 | Platform Account / Docs / Support / Diagnostics | Exhaustive platform contract |
-| 32 | Solution Blueprint & Application Composer | Exhaustive; SBP exact 176/176 / 0 |
-| 33 | Analytics, Event Tracking & Journey Intelligence | Exhaustive; ANL exact 176/176 / 0 |
-| 34 | Search & Indexing Engine | Exhaustive; SRH exact 176/176 / 0 |
-| 35 | Decision, Formula, Scoring & Ranking Studio | Exhaustive; DEC exact 176/176 / 0 |
-| 36 | Ledger, Balance & Movement Engine | Exhaustive; LED exact 176/176 / 0 |
-| 37 | Resource Scheduling, Availability & Reservation Engine | Exhaustive; RSV exact 176/176 / 0 |
-| 38 | Experience Placement & Personalization Manager | Exhaustive; PLC exact 176/176 / 0 |
-| 39 | Experimentation & Feature Rollout Manager | Exhaustive; EXP exact 176/176 / 0 |
-| 40 | Documents, Records & Template Generation | Exhaustive; DOC exact 176/176 / 0 |
-| 41 | Data Sync, ETL & Integration Pipelines | Exhaustive; SYN exact 176/176 / 0 |
-| 42 | Geospatial, Location & Territory Engine | Exhaustive; GEO exact 176/176 / 0 |
-| 43 | AI Gateway, Knowledge & Copilot Studio | Exhaustive; AIP exact 176/176 / 0 |
-| 44 | URL Redirection & Routing Manager | Exhaustive; RDR exact / ADR-0208 |
-| 45 | Search, Replace & Data Transformation Engine | Exhaustive; SRT exact / ADR-0208 |
-| 46 | Dummy Data, Synthetic Dataset & Fixture Studio | Exhaustive; DMY exact / ADR-0208 |
-| 47 | Link Health, Broken Link & Crawl Intelligence | Exhaustive; LNK exact / ADR-0208; LHX supplement current WP115 |
-| 48 | Database Maintenance, Cleanup & Storage Health | Exhaustive; DBM exact / ADR-0208 |
-| 49 | Admin Theme, Branding & Experience Manager | Exhaustive; **ATM exact 176/176 / 0 — ADR-0209** |
-| 50 | Safe Script, Tag & Code Injection Manager | Exhaustive; **STM exact 176/176 / 0 — ADR-0209; no PHP/eval/server code**; HFC current WP115 |
-| 51 | Content Order & Sequence Manager | Exhaustive; ORD exact expansion current WP115 |
-| 52 | Security Integrity, Malware & Vulnerability Scanner | Exhaustive; SEC current WP115 |
-| 53 | Font Library, Typography & Delivery Manager | Exhaustive; FNT current WP115; UAF WP116 |
-| 54 | User Data Stores, Favorites & Collections | Exhaustive; UDS current WP115 |
-| 55 | Staging, Clone & Migration Manager | Exhaustive; STG current WP115; MIG WP116 |
-| 56 | Theme Workspace, Child Theme & Theme Customization Manager | Exhaustive; THM WP116; no arbitrary live PHP execution |
+- Surfaces 32–43 universal foundations: exact 176-fixture protocols, all unexecuted.
+- Surfaces 44–48: RDR/SRT/DMY/LNK/DBM exact under ADR-0208.
+- Shared S07/S08: PDO/MIR exact under ADR-0208.
+- Surface 15 Membership parity: **MPR exact 176/176 / 0 — ADR-0209**.
+- Surface 30 Role parity: **RPR exact 176/176 / 0 — ADR-0209**.
+- Surface 49 Admin Theme: **ATM exact 176/176 / 0 — ADR-0209**.
+- Surface 28 Media Performance: **MDP exact 176/176 / 0 — ADR-0209**.
+- Surface 50 Safe Script/Tag: **STM exact 176/176 / 0 — ADR-0209**.
+- Surfaces 51–55 plus Second Competitive owner supplements: **WP115 CURRENT**.
+- Surface 56 and Third Competitive supplements: WP116 RESERVED.
 
-## Shared services outside denominator
+All 56 surfaces remain `Exhaustive`; exact supplemental evidence depth is tracked separately from product-option maturity.
 
-S07 PDO and S08 MIR are shared services, both exact 176/176 documented / 0 executed under ADR-0208.
+## WP115 current namespace ownership
 
-## Exact supplemental evidence progress
+WP115 target: **1,936 exact definitions** across:
+- ORD — Content Order & Sequence;
+- SEC — Security Integrity/Malware/Vulnerability;
+- FNT — Font Library/Typography/Delivery;
+- UDS — User Data Stores/Favorites/Collections;
+- STG — Staging/Clone/Migration;
+- BKX — Backup advanced/incremental/CLI/MCP parity;
+- MRL — Media Replacement Lifecycle;
+- PBX — Profile/Registration parity;
+- JEX — JetEngine existing-surface parity;
+- LHX — Link Health parity;
+- HFC — Header/Footer Code migration/placement parity.
 
-ADR-0207 identified **5,808 missing exact definitions / 33 namespaces**.
+The five new-surface 16-group ranges were already fixed. WP115 preflight normalized explicit 16-group ranges for BKX/MRL/PBX/JEX/LHX/HFC from the accepted product addendum in `SECOND-COMPETITIVE-EXPANSION-EVIDENCE-MASTER-PLAN.md`. This normalization does not make them exact-complete; individual 176-fixture enumeration remains current work.
+
+## Remaining exact evidence planning
+
+ADR-0207 identified **5,808 / 33 namespaces**.
 
 Completed:
-- WP113 / ADR-0208 — 1,232 / 7;
+- WP113 / ADR-0208 — **1,232 / 7**;
 - WP114 / ADR-0209 — **880 / 5**.
 
 Remaining:
-- **WP115 CURRENT** — ORD/SEC/FNT/UDS/STG/BKX/MRL/PBX/JEX/LHX/HFC = **1,936**;
-- WP116 — UAF/MIG/WLB/DUP/ALX/MBX/THM/RSX/RDX/CPTX = **1,760**;
+- **WP115 CURRENT** = **1,936 / 11**;
+- WP116 = **1,760 / 10**;
 - total **3,696 / 21 namespaces**.
+
+## Non-negotiable boundaries
+
+- `56/56 Exhaustive` never authorizes implementation.
+- UI/branding/navigation hiding ≠ authorization.
+- WordPress meta-cap + WPE Policy remain role/action authority.
+- Safe Script/Tag remains browser-side only; no PHP/eval/server code.
+- Backup ≠ Staging/Migration; clone ≠ same identity/environment.
+- Security finding ≠ certainty; recovery evidence is required before quarantine/repair claims.
+- Font delivery/local hosting ≠ license/redistribution authority.
+- UDS state ≠ Woo cart/order truth.
+- AI/MCP cannot create hidden privilege/provider/mutation paths.
 
 ## Development gate
 
-`56/56 Exhaustive` and exact evidence design never authorize implementation. Production development remains prohibited until explicit scoped owner consent under ADR-0014. Current authorization: **0/56**.
+Production development remains prohibited until explicit scoped owner consent under ADR-0014. Current authorization: **0/56**.
