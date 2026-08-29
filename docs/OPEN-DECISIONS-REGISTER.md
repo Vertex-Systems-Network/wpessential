@@ -20,7 +20,9 @@ ADR-0207 identified **5,808 / 33 namespaces**. Closed since then:
 Remaining: **3,696 exact definitions / 21 namespaces**.
 
 ### WP115 — CURRENT — 1,936
-- ORD, SEC, FNT, UDS, STG, BKX, MRL, PBX, JEX, LHX, HFC
+- ORD, SEC, FNT, UDS, STG, BKX, MRL, PBX, JEX, LHX, HFC.
+- The five new-surface group ranges were already explicit.
+- WP115 preflight found the six existing-surface supplements had reserved IDs but not explicit 16-group ranges in the master plan; BKX/MRL/PBX/JEX/LHX/HFC group ownership is now normalized from the accepted product addendum before exact fixture enumeration.
 
 ### WP116 — RESERVED — 1,760
 - UAF, MIG, WLB, DUP, ALX, MBX, THM, RSX, RDX, CPTX
