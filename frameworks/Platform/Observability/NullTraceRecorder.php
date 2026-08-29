@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Observability;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
-final class NullTraceRecorder implements TraceRecorderInterface
+final class NullTraceRecorder implements TraceRecorderInterface, TraceSnapshotReaderInterface
 {
     public function start(string $correlationId): FlowTrace
     {
@@ -17,4 +16,9 @@ final class NullTraceRecorder implements TraceRecorderInterface
     }
 
     public function commit(FlowTrace $trace): void {}
+
+    public function all(): array
+    {
+        return [];
+    }
 }
