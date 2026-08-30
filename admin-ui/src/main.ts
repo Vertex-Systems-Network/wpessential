@@ -50,6 +50,7 @@ function isCptDefinition( value: unknown ): value is CptDefinition {
 	return (
 		typeof value.id === 'string' &&
 		typeof value.status === 'string' &&
+		typeof value.revision === 'number' &&
 		Number.isInteger( value.revision ) &&
 		isBootstrapRecord( value.payload )
 	);
@@ -64,7 +65,10 @@ function isCptRoute( value: unknown ): value is CptRoute {
 }
 
 function parseCptBootstrap( value: unknown ): CptBootstrap | null {
-	if ( ! isBootstrapRecord( value ) || value.surface !== 'custom-post-types' ) {
+	if (
+		! isBootstrapRecord( value ) ||
+		value.surface !== 'custom-post-types'
+	) {
 		return null;
 	}
 	if (
@@ -215,7 +219,8 @@ async function postCptRoute(
 	const envelope = value as AjaxEnvelope;
 	if ( ! response.ok || ! envelope.success ) {
 		throw new Error(
-			envelope.error?.message ?? 'The requested change could not be completed.'
+			envelope.error?.message ??
+				'The requested change could not be completed.'
 		);
 	}
 	return envelope.data;
@@ -251,7 +256,9 @@ function renderCptRows( definitions: CptDefinition[] ): void {
 	if ( definitions.length === 0 ) {
 		const row = document.createElement( 'tr' );
 		row.dataset.wpessentialCptEmpty = '';
-		const cell = createCell( 'No custom post types have been created yet.' );
+		const cell = createCell(
+			'No custom post types have been created yet.'
+		);
 		cell.colSpan = 5;
 		row.append( cell );
 		rows.append( row );
@@ -362,7 +369,11 @@ function editCptDefinition( definition: CptDefinition ): void {
 	setCptFieldValue( 'singular_name', definition.payload.singular_name );
 	setCptFieldValue( 'description', definition.payload.description );
 	setBoolInput( 'wpessential-cpt-public', definition.payload.public, true );
-	setBoolInput( 'wpessential-cpt-rest', definition.payload.show_in_rest, true );
+	setBoolInput(
+		'wpessential-cpt-rest',
+		definition.payload.show_in_rest,
+		true
+	);
 	setBoolInput(
 		'wpessential-cpt-hierarchical',
 		definition.payload.hierarchical
@@ -393,12 +404,19 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 
 	const refresh = async (): Promise< void > => {
 		const data = await postCptRoute( bootstrap, bootstrap.routes.list, {} );
-		if ( ! isBootstrapRecord( data ) || ! Array.isArray( data.definitions ) ) {
-			throw new Error( 'The Custom Post Type list response was invalid.' );
+		if (
+			! isBootstrapRecord( data ) ||
+			! Array.isArray( data.definitions )
+		) {
+			throw new Error(
+				'The Custom Post Type list response was invalid.'
+			);
 		}
 		const next = data.definitions.filter( isCptDefinition );
 		if ( next.length !== data.definitions.length ) {
-			throw new Error( 'The Custom Post Type list contained invalid records.' );
+			throw new Error(
+				'The Custom Post Type list contained invalid records.'
+			);
 		}
 		definitions = next;
 		renderCptRows( definitions );
@@ -452,7 +470,9 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 				};
 				const request: CptPayload = {
 					payload,
-					status: selectInput( 'wpessential-cpt-status' )?.value ?? 'draft',
+					status:
+						selectInput( 'wpessential-cpt-status' )?.value ??
+						'draft',
 				};
 				if ( id !== '' ) {
 					request.id = id;
@@ -462,7 +482,11 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 				await postCptRoute( bootstrap, bootstrap.routes.save, request );
 				await refresh();
 				resetCptForm();
-				setNotice( id === '' ? 'Custom post type created.' : 'Custom post type updated.' );
+				setNotice(
+					id === ''
+						? 'Custom post type created.'
+						: 'Custom post type updated.'
+				);
 			} );
 		} );
 	}
@@ -504,7 +528,10 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 			( candidate ) => candidate.id === id
 		);
 		if ( ! definition ) {
-			setNotice( 'The selected custom post type is no longer available.', true );
+			setNotice(
+				'The selected custom post type is no longer available.',
+				true
+			);
 			return;
 		}
 
