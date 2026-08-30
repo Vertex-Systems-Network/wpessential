@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
 use InvalidArgumentException;
 
-final class WordPressAjaxGateway
+final readonly class WordPressAjaxGateway
 {
     public function __construct(
-        private readonly string $action,
-        private readonly AjaxDispatcher $dispatcher,
-        private readonly WordPressAjaxEnvironmentInterface $environment,
+        private string $action,
+        private AjaxDispatcher $dispatcher,
+        private WordPressAjaxEnvironmentInterface $environment,
     ) {
         if (trim($this->action) === '') {
             throw new InvalidArgumentException('AJAX action cannot be empty.');
         }
+    }
+
+    public function action(): string
+    {
+        return $this->action;
     }
 
     public function register(): void
