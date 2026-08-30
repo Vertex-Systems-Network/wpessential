@@ -137,7 +137,19 @@ jobs:
           retention-days: 7
 
       - name: JavaScript lint
-        run: npm run lint:js
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run lint:js 2>&1 | tee js-lint.log
+
+      - name: Upload JavaScript lint diagnostics
+        if: failure() && hashFiles('js-lint.log') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-js-lint-${{ github.run_id }}
+          path: js-lint.log
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Style lint
         run: npm run lint:css
