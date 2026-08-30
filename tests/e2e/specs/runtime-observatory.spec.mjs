@@ -34,9 +34,12 @@ test.beforeAll(async () => {
     port: 0,
     quiet: true,
     skipBrowser: true,
-    mount: {
-      [pluginDirectory]: '/wordpress/wp-content/plugins/wpessential',
-    },
+    mount: [
+      {
+        hostPath: pluginDirectory,
+        vfsPath: '/wordpress/wp-content/plugins/wpessential',
+      },
+    ],
     blueprint: {
       preferredVersions: {
         php: '8.2',
@@ -46,7 +49,7 @@ test.beforeAll(async () => {
       steps: [
         {
           step: 'activatePlugin',
-          pluginPath: 'wpessential/wpessential.php',
+          pluginPath: '/wordpress/wp-content/plugins/wpessential/wpessential.php',
         },
       ],
     },
