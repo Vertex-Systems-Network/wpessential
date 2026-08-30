@@ -42,6 +42,10 @@ function isBootstrapRecord( value: unknown ): value is BootstrapRecord {
 	);
 }
 
+function isStringValue( value: unknown ): value is string {
+	return typeof value === 'string';
+}
+
 function isCptDefinition( value: unknown ): value is CptDefinition {
 	if ( ! isBootstrapRecord( value ) ) {
 		return false;
@@ -473,10 +477,7 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 				const existingSupports = Array.isArray(
 					existing?.payload.supports
 				)
-					? existing.payload.supports.filter(
-							( support ): support is string =>
-								typeof support === 'string'
-						)
+					? existing.payload.supports.filter( isStringValue )
 					: [];
 				const preservedSupports = existingSupports.filter(
 					( support ) => ! editableSupports.includes( support )
