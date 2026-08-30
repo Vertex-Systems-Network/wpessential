@@ -88,13 +88,15 @@ jobs:
           for script in \
             tests/Smoke/kernel-smoke.php \
             tests/Smoke/platform-core-smoke.php \
+            tests/Smoke/platform-admin-bootstrap-smoke.php \
             tests/Smoke/audit-jobs-smoke.php \
             tests/Smoke/action-scheduler-probe-smoke.php \
             tests/Smoke/vault-assets-integrations-smoke.php \
             tests/Smoke/persistence-migrations-smoke.php \
             tests/Smoke/wordpress-abilities-bridge-smoke.php \
             tests/Smoke/engineering-contracts-smoke.php \
-            tests/Smoke/compiled-registration-persistence-smoke.php
+            tests/Smoke/compiled-registration-persistence-smoke.php \
+            tests/Smoke/compiled-registration-scale-smoke.php
           do
             echo "===== ${script} =====" | tee -a smoke-results.log
             php "${script}" >> smoke-results.log 2>&1
