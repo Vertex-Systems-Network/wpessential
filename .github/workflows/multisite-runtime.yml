@@ -1,0 +1,191 @@
+name: Multisite Runtime Isolation
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Platform/WordPress/Ajax/**'
+      - 'frameworks/Platform/WordPress/Security/**'
+      - 'frameworks/Platform/Jobs/**'
+      - 'frameworks/Platform/Database/**'
+      - 'tests/Integration/wordpress-multisite-isolation.php'
+      - '.github/workflows/multisite-runtime.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'frameworks/Platform/WordPress/Ajax/**'
+      - 'frameworks/Platform/WordPress/Security/**'
+      - 'frameworks/Platform/Jobs/**'
+      - 'frameworks/Platform/Database/**'
+      - 'tests/Integration/wordpress-multisite-isolation.php'
+      - '.github/workflows/multisite-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-multisite-runtime-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  multisite-runtime-isolation:
+    name: WP 7.1 / PHP 8.2 / MySQL 8.4
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_multisite
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, mysqli
+          coverage: none
+
+      - name: Validate source contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/architecture/validate.php
+          php tools/architecture/validate-engineering-contracts.php
+          php -l frameworks/Platform/WordPress/Ajax/AjaxNonceScope.php
+          php -l frameworks/Platform/WordPress/Ajax/AjaxDispatcher.php
+          php -l tests/Integration/wordpress-multisite-isolation.php
+
+      - name: Prepare exact WordPress 7.1 fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress /tmp/wordpress-7.1.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            https://wordpress.org/wordpress-7.1.tar.gz \
+            --output /tmp/wordpress-7.1.tar.gz
+          tar -xzf /tmp/wordpress-7.1.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+
+      - name: Install pinned WP-CLI 2.12.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar \
+            --output /tmp/wp-cli.phar
+          echo 'fe19025cc113142492a3ca68dd93d20ba4164e5ecb3c0a0d86a9db7e06b917201120763fa2b8256addeaa9cb745b2b8bef8e8d74a697230e30ef681f13e09186  /tmp/wp-cli.phar' | sha512sum -c -
+          php /tmp/wp-cli.phar --allow-root cli version
+
+      - name: Install real two-site WordPress Multisite
+        shell: bash
+        run: |
+          set -euo pipefail
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          ${wp} config create \
+            --dbname=wpessential_multisite \
+            --dbuser=root \
+            --dbpass=root \
+            --dbhost=127.0.0.1:3306 \
+            --skip-check \
+            --skip-salts \
+            --force
+          ${wp} config set AUTH_KEY 'wpessential-test-auth-key' --type=constant
+          ${wp} config set SECURE_AUTH_KEY 'wpessential-test-secure-auth-key' --type=constant
+          ${wp} config set LOGGED_IN_KEY 'wpessential-test-logged-in-key' --type=constant
+          ${wp} config set NONCE_KEY 'wpessential-test-nonce-key' --type=constant
+          ${wp} config set AUTH_SALT 'wpessential-test-auth-salt' --type=constant
+          ${wp} config set SECURE_AUTH_SALT 'wpessential-test-secure-auth-salt' --type=constant
+          ${wp} config set LOGGED_IN_SALT 'wpessential-test-logged-in-salt' --type=constant
+          ${wp} config set NONCE_SALT 'wpessential-test-nonce-salt' --type=constant
+          ${wp} core multisite-install \
+            --url=wpessential.test \
+            --title='WPEssential Multisite' \
+            --admin_user=wpessential_admin \
+            --admin_password='test-password-strong' \
+            --admin_email='admin@example.test' \
+            --skip-email
+          ${wp} site create \
+            --slug=site-b \
+            --title='WPEssential Site B' \
+            --email='admin@example.test'
+          ${wp} site list --fields=blog_id,url,registered --format=table
+          test "$(${wp} site list --field=blog_id | wc -l)" -ge 2
+
+      - name: Prepare pinned Action Scheduler 4.1.0 fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/as-4.1.0 /tmp/as-4.1.0.zip /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0
+          mkdir -p /tmp/as-4.1.0 /tmp/wordpress/wp-content/plugins
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/woocommerce/action-scheduler/releases/download/4.1.0/action-scheduler.zip \
+            --output /tmp/as-4.1.0.zip
+          unzip -q /tmp/as-4.1.0.zip -d /tmp/as-4.1.0
+          source_dir="$(dirname "$(find /tmp/as-4.1.0 -name action-scheduler.php -print -quit)")"
+          test -f "${source_dir}/action-scheduler.php"
+          cp -R "${source_dir}" /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0
+          test -f /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0/action-scheduler.php
+
+      - name: Activate Action Scheduler on both sites
+        shell: bash
+        run: |
+          set -euo pipefail
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          ${wp} --url=http://wpessential.test/ plugin activate action-scheduler-4.1.0
+          ${wp} --url=http://wpessential.test/site-b/ plugin activate action-scheduler-4.1.0
+          ${wp} --url=http://wpessential.test/ plugin status action-scheduler-4.1.0
+          ${wp} --url=http://wpessential.test/site-b/ plugin status action-scheduler-4.1.0
+
+      - name: Run real Multisite isolation matrix
+        shell: bash
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_HOST: wpessential.test
+          WPE_MULTISITE_EVIDENCE_PATH: ${{ github.workspace }}/artifacts/multisite/evidence.json
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/multisite
+          php tests/Integration/wordpress-multisite-isolation.php | tee artifacts/multisite/runtime.log
+          test -s artifacts/multisite/evidence.json
+          cat artifacts/multisite/evidence.json
+
+      - name: Upload Multisite runtime evidence
+        if: always() && hashFiles('artifacts/multisite/**') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-multisite-runtime-${{ github.run_id }}
+          path: artifacts/multisite/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"

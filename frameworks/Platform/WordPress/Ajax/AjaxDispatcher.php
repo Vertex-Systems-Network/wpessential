@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use InvalidArgumentException;
 use Throwable;
 use WPEssential\Platform\WordPress\Security\NonceManager;
 
@@ -18,7 +19,21 @@ final class AjaxDispatcher
         private readonly AjaxRouteRegistry $routes,
         private readonly NonceManager $nonces,
         private readonly mixed $capabilityChecker,
+        private readonly AjaxNonceScope $nonceScope = new AjaxNonceScope(),
     ) {}
+
+    public function createNonce(string $type): string
+    {
+        $route = $this->routes->get(trim($type));
+        if ($route === null) {
+            throw new InvalidArgumentException('Cannot create a nonce for an unknown AJAX request type.');
+        }
+        if (!$route->requiresNonce) {
+            throw new InvalidArgumentException('Cannot create a nonce for an AJAX route that does not require one.');
+        }
+
+        return $this->nonces->create($route->operation, $this->nonceScope->forRoute($route->type));
+    }
 
     /** @param array<string,mixed> $request */
     public function dispatch(array $request, bool $authenticated): AjaxResponse
@@ -43,7 +58,8 @@ final class AjaxDispatcher
 
         if ($route->requiresNonce) {
             $nonce = isset($request['nonce']) && is_string($request['nonce']) ? $request['nonce'] : '';
-            if (!$this->nonces->verify($nonce, $route->operation, $route->type)) {
+            $scope = $this->nonceScope->forRoute($route->type);
+            if (!$this->nonces->verify($nonce, $route->operation, $scope)) {
                 return AjaxResponse::error('invalid_nonce', 'Request verification failed.', 403);
             }
         }
