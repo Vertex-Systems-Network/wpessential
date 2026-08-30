@@ -27,7 +27,7 @@ function plugin_dir_url(string $file): string
 
 function current_user_can(string $capability): bool
 {
-    return $capability === PlatformAdminController::CAPABILITY;
+    return $capability === 'manage_options';
 }
 
 function esc_html__(string $text, string $domain = 'default'): string
