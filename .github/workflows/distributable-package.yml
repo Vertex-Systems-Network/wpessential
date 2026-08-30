@@ -1,0 +1,158 @@
+name: Distributable Package
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/**'
+      - 'admin-ui/**'
+      - 'wpessential.php'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tools/release/**'
+      - '.github/workflows/distributable-package.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'frameworks/**'
+      - 'admin-ui/**'
+      - 'wpessential.php'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tools/release/**'
+      - '.github/workflows/distributable-package.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-distributable:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate package manifest
+        run: npm run lint:package
+
+      - name: Build production admin assets
+        run: npm run build:admin
+
+      - name: Verify production admin assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/admin/main.js
+          test -s assets/admin/main.css
+          test -s assets/admin/main.asset.php
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer metadata and packager syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Build first independent distributable
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test -s artifacts/wpessential.zip
+          test -s artifacts/wpessential-package.json
+          cp artifacts/wpessential.zip /tmp/wpessential-first.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/wpessential-first.sha256
+
+      - name: Rebuild and prove byte-for-byte determinism
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test -s artifacts/wpessential.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/wpessential-second.sha256
+          test "$(cut -d' ' -f1 /tmp/wpessential-first.sha256)" = "$(cut -d' ' -f1 /tmp/wpessential-second.sha256)"
+          cmp --silent /tmp/wpessential-first.zip artifacts/wpessential.zip
+
+      - name: Validate ZIP integrity and install root
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -t artifacts/wpessential.zip
+          unzip -Z1 artifacts/wpessential.zip | tee artifacts/wpessential-files.txt
+          test -n "$(cat artifacts/wpessential-files.txt)"
+          if grep -Ev '^wpessential/' artifacts/wpessential-files.txt; then
+            echo 'Archive contains an entry outside wpessential/' >&2
+            exit 1
+          fi
+          for required in \
+            wpessential/wpessential.php \
+            wpessential/readme.txt \
+            wpessential/LICENSE \
+            wpessential/vendor/autoload.php \
+            wpessential/assets/admin/main.js \
+            wpessential/assets/admin/main.css \
+            wpessential/assets/admin/main.asset.php
+          do
+            grep -Fxq "${required}" artifacts/wpessential-files.txt
+          done
+          if grep -E '^wpessential/(\.github|admin-ui|config|docs|node_modules|tests|tools)/' artifacts/wpessential-files.txt; then
+            echo 'Archive contains development-only paths' >&2
+            exit 1
+          fi
+
+      - name: Upload deterministic package evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-distributable-${{ github.run_id }}
+          path: |
+            artifacts/wpessential.zip
+            artifacts/wpessential-package.json
+            artifacts/wpessential-files.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
