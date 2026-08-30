@@ -20,7 +20,7 @@ Current classification: `GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`;
 **DONE / PASS / ADR-0215**.
 
 ### WP121 — Milestone 1 Platform Foundation
-**CURRENT / IMPLEMENTING through ADR-0222**.
+**CURRENT / IMPLEMENTING through ADR-0222 + admin/toolchain readiness closure**.
 
 Accepted shared foundation includes:
 - Kernel / Modules / Service Registry;
@@ -35,6 +35,10 @@ Accepted shared foundation includes:
 - ADR-0220 real WordPress AJAX/nonce/Policy;
 - **ADR-0221 Action Scheduler coexistence/backend profile**;
 - **ADR-0222 durable Job persistence/attempt/lease/checkpoint foundation**.
+- minimal Platform admin shell + Runtime Observatory;
+- 10K/100K compiled-registration scale evidence;
+- locked Composer quality toolchain;
+- Node 24/npm/TypeScript/SCSS admin build baseline and deterministic asset manifest.
 
 ## ADR-0221 — Action Scheduler coexistence/backend
 
@@ -82,16 +86,18 @@ Do not overclaim:
 - queue fairness/resource admission/high-concurrency evidence pending;
 - Job checkpoint retention/privacy workflows pending;
 - Audit UI/retention/privacy/export/legal-hold workflows pending;
-- Runtime Observatory/admin shell pending;
-- 10K/100K compiled-registration performance evidence pending;
+- browser E2E/accessibility baseline pending;
+- deterministic distributable package/license validation pending;
+- locked npm exact-head confirmation pending at this checkpoint projection;
 - business modules remain downstream of foundation readiness.
 
 ## Next WP121 bounded sequence
 
-1. **minimal Platform admin shell + Runtime Observatory diagnostics surface**;
-2. executable 10K/100K compiled-registration scale evidence;
-3. shared-foundation readiness gate;
-4. first business-module tranche after that gate.
+1. verify committed npm lock with hosted `npm ci`;
+2. establish browser E2E/accessibility + distributable package gates;
+3. close or explicitly stage the Multisite-specific runtime matrix;
+4. rerun the shared-foundation readiness gate;
+5. start the first business-module tranche after that gate passes.
 
 ## Privileged exclusions
 

@@ -1,6 +1,6 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-08-29**  
+Checkpoint date: **2026-08-30**
 Implementation branch: `implementation/baseline-adoption-gate`  
 Planning authority: `planning/master-architecture` through ADR-0213  
 Implementation decisions: through **ADR-0222**  
@@ -42,6 +42,23 @@ Implemented/accepted:
 - ADR-0220 real WordPress AJAX/nonce/Policy integration through canonical Ability/Policy;
 - **ADR-0221 Action Scheduler public-API backend + tested 3.9.3/4.1.0 coexistence profile**;
 - **ADR-0222 WPE-owned durable Job persistence, revision CAS, attempts, leases, heartbeat, checkpoints and stale-worker rejection**.
+- minimal Platform admin shell with a server-rendered Runtime Observatory and progressive TypeScript enhancement;
+- deterministic `@wordpress/scripts` admin artifact contract (`main.js`, `main.css`, `main.asset.php`);
+- Composer and Node 24/npm quality toolchains with committed lockfiles;
+- executable 10K/100K compiled-registration scale evidence.
+
+## WP121 admin toolchain closure
+
+Exact source head `8b822655800f1489ec5be611ae0ca8217d7d7bfb` is GREEN in:
+- Architecture Guards push run **33306049048 / #293**;
+- Architecture Guards PR run **33306050305 / #294**;
+- Platform Compatibility Matrix run **33306050296 / #38**.
+
+The run verifies package metadata, full and distributable npm advisory capture, JavaScript lint, Stylelint, strict TypeScript, deterministic admin production artifacts, the locked PHP quality stack, architecture/engineering guards, PHPUnit, smoke/integration suites and the 10-combination WordPress/PHP/MySQL/MariaDB matrix.
+
+The green push run generated canonical `package-lock.json`; GitHub Actions projected it as commit `155390b2ba180020d7a181ae454094dc622cb7ee`. The current documentation projection intentionally triggers one locked-graph `npm ci` exact-head verification.
+
+The npm distributable graph reports **0 vulnerabilities**. The full development toolchain audit still reports upstream transitive advisories from `@wordpress/scripts`; these are retained as diagnostics and are not misrepresented as distributable plugin dependencies.
 
 ## Engineering/public contract
 
@@ -108,8 +125,9 @@ Do not overclaim:
 - automatic Action Scheduler dispatch → Ability → durable attempt lifecycle wiring remains pending;
 - Job checkpoint privacy/retention policy remains pending;
 - Audit read/retention/privacy/export/legal-hold workflows remain pending;
-- Runtime Observatory/admin shell remains pending;
-- 10K/100K compiled-registration scale evidence remains pending;
+- browser E2E/accessibility baseline remains pending before critical interactive admin workflows;
+- deterministic distributable plugin package/license/Free-vs-Pro validation remains pending;
+- upstream development-toolchain npm advisories remain recorded and require periodic reassessment;
 - business-module implementation has not started.
 
 No live provider call, production deployment, destructive live-site/customer-data mutation, live production migration or irreversible external operation occurred.
@@ -117,9 +135,10 @@ No live provider call, production deployment, destructive live-site/customer-dat
 ## Current next action
 
 Continue WP121:
-1. **minimal Platform admin shell + Runtime Observatory diagnostics surface**;
-2. executable 10K/100K compiled-registration scale evidence;
-3. shared-foundation readiness gate;
-4. first business-module tranche only after that gate passes.
+1. certify the committed npm lock through hosted `npm ci` exact-head execution;
+2. establish browser E2E/accessibility and distributable package validation baselines;
+3. close or explicitly stage the Multisite-specific runtime matrix;
+4. rerun the shared-foundation readiness gate;
+5. start the first business-module tranche only after that gate passes.
 
 Repository evidence overrides conversational memory.

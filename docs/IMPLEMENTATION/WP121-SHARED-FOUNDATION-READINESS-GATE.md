@@ -55,43 +55,34 @@ Every matrix job completed SUCCESS. The MySQL jobs include source-contract valid
 
 ## Verified readiness blockers
 
-### R1 — Canonical locked PHP development toolchain — BLOCKED
+### R1 — Canonical locked PHP development toolchain — VERIFIED
 
-Repository root currently has `composer.json` but no committed `composer.lock`. ADR-0214 requires Composer 2.x with a committed lockfile plus the canonical PHP quality stack: PHPCS + WordPress Coding Standards, WordPress-aware PHPStan and PHPUnit.
+Repository root has canonical `composer.json` and committed `composer.lock`, plus PHPCS + WordPress Coding Standards, WordPress-aware PHPStan and PHPUnit commands. Architecture Guards run `33306049048 / #293` installed the locked graph and passed Composer validation/audit, PHPCS, PHPStan and PHPUnit.
 
-Required closure:
-- select/pin the accepted toolchain under the existing build contract;
-- generate and commit the Composer lockfile from Composer, never hand-author it;
-- expose canonical Composer commands;
-- execute them in hosted CI.
+This closes the R1 reproducibility requirement for the current WP121 scope; future dependency changes still require the same locked audit gates.
 
-### R2 — JavaScript/TypeScript/admin build toolchain — BLOCKED
+### R2 — JavaScript/TypeScript/admin build toolchain — VERIFIED / LOCKED-HEAD CONFIRMATION RUNNING
 
-Repository root currently has no `package.json` or npm lockfile, and no canonical compiled admin application source/build graph is present. ADR-0214 requires Node 24 LTS, npm lockfile and `@wordpress/scripts` as the initial WordPress-oriented tooling baseline.
+Repository root now has Node 24/npm contracts, `package.json`, canonical TypeScript/SCSS admin source, `@wordpress/scripts` 34.2.0 and generated `package-lock.json` commit `155390b2ba180020d7a181ae454094dc622cb7ee`.
 
-The Runtime Observatory remains valid because it is intentionally usable server-side. However, the JS/TS formatting, lint, typecheck and production-build categories remain not executable.
+Exact source head `8b822655800f1489ec5be611ae0ca8217d7d7bfb` passed JavaScript lint, Stylelint, strict TypeScript, production build and required `main.js` / `main.css` / `main.asset.php` verification in Architecture Guards runs #293 and #294. The server-rendered Runtime Observatory remains available if progressive assets are absent.
 
-Required closure before a JS/TS business/admin surface depends on it:
-- approved Node 24/npm package graph and lockfile;
-- WordPress scripts/format/lint/typecheck/build commands;
-- deterministic admin asset output/manifest contract;
-- hosted CI execution.
+The documentation projection triggers the final hosted `npm ci` locked-graph confirmation. A failed locked install reopens R2.
 
-### R3 — Unit and browser E2E suites — NOT VERIFIED
+### R3 — Unit VERIFIED; browser E2E/accessibility baseline BLOCKED
 
-Current `tests/` contains `Smoke/` and `Integration/` only. ADR-0214 requires PHPUnit and Playwright categories; no dedicated unit or browser E2E suite is currently present.
+The dedicated PHPUnit unit suite is committed and GREEN. No canonical browser E2E/accessibility baseline is currently present.
 
 Required closure:
 - canonical PHPUnit unit test runner/suite for deterministic domain rules;
 - browser E2E baseline before critical UI/user workflows are claimed ready;
 - accessibility automation may augment but not replace required manual/keyboard evidence where applicable.
 
-### R4 — Dependency/security and package artifact gates — NOT VERIFIED
+### R4 — Dependency/security PARTIALLY VERIFIED; package artifact gate BLOCKED
 
-A canonical dependency/advisory/license gate and distributable package/build-artifact validation are not yet represented as milestone evidence.
+Composer locked audit is GREEN. CI captures the full npm development-toolchain advisory report and separately gates the distributable npm graph; the distributable graph reports 0 vulnerabilities. Upstream transitive `@wordpress/scripts` toolchain advisories remain recorded diagnostics rather than being mislabeled as shipped plugin dependencies.
 
 Required closure:
-- Composer/npm dependency and advisory checks;
 - distributed dependency license inventory where applicable;
 - deterministic distributable plugin package validation;
 - no secrets/dev-only/test artifacts in release package;
@@ -119,9 +110,9 @@ Reason: core runtime, Runtime Observatory, 10K/100K scale evidence and the exact
 
 ## Ordered closure path
 
-1. close R1 reproducible PHP quality toolchain;
-2. close R2 JS/TS/admin build baseline before depending on JS admin surfaces;
-3. establish canonical unit/E2E evidence and dependency/package gates at the minimum depth required for first module development;
+1. finish R2 locked-graph confirmation;
+2. establish canonical browser E2E/accessibility evidence;
+3. close deterministic distributable package/license gates;
 4. close or explicitly stage the Multisite-specific runtime baseline under its accepted ownership;
 5. rerun the complete WP121 FULL readiness gate;
 6. only then change WP121 to PASS and authorize the first business-module tranche.

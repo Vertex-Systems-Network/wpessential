@@ -91,6 +91,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # The first fully green bootstrap creates the lock; every later head must use npm ci.
           if test -f package-lock.json; then
             echo 'mode=locked-install' >> "$GITHUB_OUTPUT"
             npm ci --ignore-scripts
