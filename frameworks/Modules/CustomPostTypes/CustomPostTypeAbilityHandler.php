@@ -85,6 +85,12 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
             throw new InvalidArgumentException('CPT payload requires post_type_key.');
         }
         $key = trim($key);
+        if ($existing instanceof Definition) {
+            $existingKey = $existing->payload['post_type_key'] ?? null;
+            if (!is_string($existingKey) || trim($existingKey) !== $key) {
+                throw new InvalidArgumentException('Existing CPT post_type_key is immutable; create a new definition for a different runtime key.');
+            }
+        }
         $this->assertPostTypeKeyAvailable($key, $existing?->id);
 
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
