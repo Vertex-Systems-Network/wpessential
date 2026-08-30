@@ -84,11 +84,13 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
         if (!is_string($key) || trim($key) === '') {
             throw new InvalidArgumentException('CPT payload requires post_type_key.');
         }
+        $key = trim($key);
+        $this->assertPostTypeKeyAvailable($key, $existing?->id);
 
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
         $candidate = new Definition(
             id: $existing?->id ?? $this->uuid(),
-            slug: $existing?->slug ?? ('cpt-' . str_replace('_', '-', trim($key))),
+            slug: $existing?->slug ?? ('cpt-' . str_replace('_', '-', $key)),
             type: CustomPostTypeDefinitionProjector::DEFINITION_TYPE,
             schemaVersion: $existing?->schemaVersion ?? 1,
             ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
@@ -142,6 +144,25 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
                 $expected,
                 $existing->revision,
             ));
+        }
+    }
+
+    private function assertPostTypeKeyAvailable(string $key, ?string $currentDefinitionId): void
+    {
+        foreach ($this->definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE) as $definition) {
+            if ($definition->ownerSurfaceId !== CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID
+                || $definition->id === $currentDefinitionId
+            ) {
+                continue;
+            }
+
+            $existingKey = $definition->payload['post_type_key'] ?? null;
+            if (is_string($existingKey) && trim($existingKey) === $key) {
+                throw new InvalidArgumentException(sprintf(
+                    'Post type key "%s" is already owned by another canonical CPT definition.',
+                    $key,
+                ));
+            }
         }
     }
 
