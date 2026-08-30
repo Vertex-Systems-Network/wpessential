@@ -1,4 +1,5 @@
 /assets/admin/
+/artifacts/
 /node_modules/
 /js-lint.log
 /npm-audit.json
