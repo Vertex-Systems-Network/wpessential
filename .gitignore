@@ -1,0 +1,5 @@
+/assets/admin/
+/node_modules/
+/js-lint.log
+/npm-audit.json
+/npm-audit-distributable.json

@@ -1,16 +1,21 @@
 import './admin.scss';
 
-type BootstrapRecord = Record<string, unknown>;
+type BootstrapRecord = Record< string, unknown >;
 
 function isBootstrapRecord( value: unknown ): value is BootstrapRecord {
-	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+	return (
+		typeof value === 'object' && value !== null && ! Array.isArray( value )
+	);
 }
 
 function bootRuntimeObservatory(): void {
 	const root = document.getElementById( 'wpessential-admin-root' );
 	const bootstrap = document.getElementById( 'wpessential-admin-bootstrap' );
 
-	if ( ! ( root instanceof HTMLElement ) || ! ( bootstrap instanceof HTMLScriptElement ) ) {
+	if (
+		! ( root instanceof HTMLElement ) ||
+		! ( bootstrap instanceof HTMLScriptElement )
+	) {
 		return;
 	}
 
@@ -25,7 +30,9 @@ function bootRuntimeObservatory(): void {
 		window.dispatchEvent(
 			new CustomEvent( 'wpessential:admin-ready', {
 				detail: {
-					surface: root.dataset.wpessentialSurface ?? 'runtime-observatory',
+					surface:
+						root.dataset.wpessentialSurface ??
+						'runtime-observatory',
 					payload,
 				},
 			} )
@@ -36,7 +43,9 @@ function bootRuntimeObservatory(): void {
 }
 
 if ( document.readyState === 'loading' ) {
-	document.addEventListener( 'DOMContentLoaded', bootRuntimeObservatory, { once: true } );
+	document.addEventListener( 'DOMContentLoaded', bootRuntimeObservatory, {
+		once: true,
+	} );
 } else {
 	bootRuntimeObservatory();
 }

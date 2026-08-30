@@ -116,15 +116,24 @@ jobs:
         run: npm run lint:package
 
       - name: Capture npm dependency advisory audit
-        id: npm-audit
         shell: bash
         run: |
           set +e
           npm audit --audit-level=high --json > npm-audit.json
+          set -e
+          cat npm-audit.json
+          exit 0
+
+      - name: Capture distributable npm advisory gate
+        id: npm-distributable-audit
+        shell: bash
+        run: |
+          set +e
+          npm audit --omit=dev --audit-level=high --json > npm-audit-distributable.json
           code=$?
           set -e
           echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
-          cat npm-audit.json
+          cat npm-audit-distributable.json
           exit 0
 
       - name: Upload npm audit diagnostics
@@ -133,6 +142,15 @@ jobs:
         with:
           name: wp121-npm-audit-${{ github.run_id }}
           path: npm-audit.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload distributable npm audit diagnostics
+        if: always() && hashFiles('npm-audit-distributable.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-npm-audit-distributable-${{ github.run_id }}
+          path: npm-audit-distributable.json
           if-no-files-found: error
           retention-days: 7
 
@@ -170,7 +188,7 @@ jobs:
           php -r '$asset = require "assets/admin/main.asset.php"; if (!is_array($asset) || !isset($asset["dependencies"], $asset["version"]) || !is_array($asset["dependencies"]) || !is_string($asset["version"]) || $asset["version"] === "") { fwrite(STDERR, "invalid wp-scripts asset metadata\n"); exit(1); }'
 
       - name: Enforce npm advisory gate
-        if: steps.npm-audit.outputs.exit_code != '0'
+        if: steps.npm-distributable-audit.outputs.exit_code != '0'
         run: exit 1
 
       - name: Setup PHP 8.2

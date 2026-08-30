@@ -1,13 +1,14 @@
 .wpessential-admin-wrap {
+
 	#wpessential-admin-root {
 		max-width: 72rem;
 	}
 
-	[data-wpessential-enhanced='invalid-bootstrap']::before {
+	[data-wpessential-enhanced="invalid-bootstrap"]::before {
 		display: block;
 		margin: 1rem 0;
 		padding: 0.75rem 1rem;
 		border-left: 4px solid currentcolor;
-		content: 'WPEssential diagnostics enhancement could not read its bootstrap payload. Server-rendered diagnostics remain available below.';
+		content: "WPEssential diagnostics enhancement could not read its bootstrap payload. Server-rendered diagnostics remain available below.";
 	}
 }
