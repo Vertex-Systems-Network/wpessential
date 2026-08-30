@@ -100,7 +100,7 @@ final class PlatformAdminController
         $context = is_array($snapshot['context'] ?? null) ? $snapshot['context'] : [];
 
         echo '<div class="wrap wpessential-admin-wrap">';
-        echo '<div id="wpessential-admin-root" data-wpessential-surface="runtime-observatory">';
+        echo '<main id="wpessential-admin-root" data-wpessential-surface="runtime-observatory">';
         echo '<h1>' . esc_html__('WPEssential', 'wpessential') . '</h1>';
         echo '<h2>' . esc_html__('Runtime Observatory', 'wpessential') . '</h2>';
         echo '<p>' . esc_html__('Read-only bounded diagnostics for the shared WPEssential Platform runtime. No mutation controls are exposed on this surface.', 'wpessential') . '</p>';
@@ -118,7 +118,7 @@ final class PlatformAdminController
         $this->renderDiagnosticRow('Multisite', !empty($context['multisite']) ? 'yes' : 'no');
         echo '</tbody></table>';
         echo '<p><em>' . esc_html__('Trace data is request-bounded and non-authoritative; use canonical persistent evidence for release or incident decisions.', 'wpessential') . '</em></p>';
-        echo '</div>';
+        echo '</main>';
         echo '<script id="wpessential-admin-bootstrap" type="application/json">' . $json . '</script>';
         echo '</div>';
     }
