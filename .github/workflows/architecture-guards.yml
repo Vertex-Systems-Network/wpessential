@@ -46,8 +46,22 @@ jobs:
           --health-timeout=3s
           --health-retries=20
     steps:
-      - name: Checkout
+      - name: Checkout exact source head
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
 
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
