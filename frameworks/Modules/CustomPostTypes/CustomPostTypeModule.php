@@ -135,6 +135,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::LIST,
             ),
             'List custom post types',
@@ -160,6 +161,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::GET,
             ),
             'Get custom post type',
@@ -214,6 +216,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::SAVE,
             ),
             'Save custom post type',
@@ -243,6 +246,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::STATUS,
             ),
             'Change custom post type status',
