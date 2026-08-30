@@ -5,7 +5,8 @@
   "description": "WPEssential WordPress admin application build toolchain",
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24 <25",
+    "npm": ">=10 <12"
   },
   "scripts": {
     "build": "npm run build:admin",
