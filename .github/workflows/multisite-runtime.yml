@@ -100,7 +100,7 @@ jobs:
           curl --fail --silent --show-error --location --retry 3 \
             https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar \
             --output /tmp/wp-cli.phar
-          echo 'fe19025cc113142492a3ca68dd93d20ba4164e5ecb3c0a0d86a9db7e06b917201120763fa2b8256addeaa9cb745b2b8bef8e8d74a697230e30ef681f13e09186  /tmp/wp-cli.phar' | sha512sum -c -
+          echo 'ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c  /tmp/wp-cli.phar' | sha256sum -c -
           php /tmp/wp-cli.phar --allow-root cli version
 
       - name: Install real two-site WordPress Multisite
