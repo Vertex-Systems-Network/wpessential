@@ -36,7 +36,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   validate-architecture:
@@ -91,29 +91,13 @@ jobs:
           tar -xzf /tmp/wordpress-7.1.tar.gz -C /tmp
           test -f /tmp/wordpress/wp-load.php
 
-      - name: Resolve or install PHP quality graph
-        id: composer
+      - name: Install locked PHP quality graph
         shell: bash
         run: |
           set -euo pipefail
-          if test -f composer.lock; then
-            echo 'mode=locked-install' >> "$GITHUB_OUTPUT"
-            composer install --no-interaction --prefer-dist --no-progress
-          else
-            echo 'mode=generated-lock' >> "$GITHUB_OUTPUT"
-            composer update --no-interaction --prefer-dist --no-progress
-          fi
           test -s composer.lock
+          composer install --no-interaction --prefer-dist --no-progress
           composer validate --strict
-
-      - name: Upload generated Composer lock evidence
-        if: steps.composer.outputs.mode == 'generated-lock'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: wp121-generated-composer-lock-${{ github.run_id }}
-          path: composer.lock
-          if-no-files-found: error
-          retention-days: 7
 
       - name: Composer dependency advisory audit
         run: composer audit --locked --no-interaction
@@ -255,20 +239,3 @@ jobs:
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
-
-      - name: Commit generated Composer lock after green bootstrap
-        if: steps.composer.outputs.mode == 'generated-lock' && github.event_name == 'push' && github.ref == 'refs/heads/implementation/baseline-adoption-gate'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          test -s composer.lock
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
-          test "$(git status --porcelain --untracked-files=all composer.lock)" = "?? composer.lock"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- composer.lock
-          git commit -m 'build(wp121): lock PHP quality dependencies'
-          auth="$(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)"
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}" push origin "HEAD:${GITHUB_REF_NAME}"
