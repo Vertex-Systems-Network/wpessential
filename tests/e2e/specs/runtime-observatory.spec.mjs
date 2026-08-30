@@ -14,18 +14,26 @@ if (!pluginDirectory) {
 
 let playground;
 
-async function visitRuntimeObservatory(page) {
+async function visitAdminPage(page, slug) {
   const response = await page.goto(
-    `${playground.serverUrl}/wp-admin/admin.php?page=wpessential`,
+    `${playground.serverUrl}/wp-admin/admin.php?page=${slug}`,
     { waitUntil: 'domcontentloaded' },
   );
 
-  expect(response, 'Runtime Observatory navigation should return a response.').not.toBeNull();
-  expect(response?.ok(), 'Runtime Observatory should return a successful HTTP response.').toBe(true);
+  expect(response, `${slug} navigation should return a response.`).not.toBeNull();
+  expect(response?.ok(), `${slug} should return a successful HTTP response.`).toBe(true);
 
   const root = page.locator('#wpessential-admin-root');
   await expect(root).toBeVisible();
   return root;
+}
+
+async function visitRuntimeObservatory(page) {
+  return visitAdminPage(page, 'wpessential');
+}
+
+async function visitCustomPostTypes(page) {
+  return visitAdminPage(page, 'wpessential-cpt');
 }
 
 test.beforeAll(async () => {
@@ -85,6 +93,28 @@ test('packaged Runtime Observatory renders and progressively enhances', async ({
   expect(pageErrors, `Unexpected browser page errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
+test('packaged Custom Post Types Builder renders canonical management controls', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', (error) => {
+    pageErrors.push(error.message);
+  });
+
+  const root = await visitCustomPostTypes(page);
+
+  await expect(page.getByRole('heading', { name: 'Custom Post Types', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Add custom post type', level: 2 })).toBeVisible();
+  await expect(page.getByLabel('Post type key')).toBeVisible();
+  await expect(page.getByLabel('Plural name')).toBeVisible();
+  await expect(page.getByLabel('Singular name')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Save custom post type' })).toBeVisible();
+  await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
+  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
+
+  await expect(root).toHaveAttribute('data-wpessential-surface', 'custom-post-types');
+  await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
+  expect(pageErrors, `Unexpected CPT Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
+});
+
 test('plugin-owned Runtime Observatory has zero axe violations', async ({ page }) => {
   await visitRuntimeObservatory(page);
 
@@ -110,5 +140,33 @@ test('plugin-owned Runtime Observatory has zero axe violations', async ({ page }
   expect(
     results.violations,
     `Axe violations in WPE-owned Runtime Observatory:\n${JSON.stringify(summary, null, 2)}`,
+  ).toEqual([]);
+});
+
+test('plugin-owned Custom Post Types Builder has zero axe violations', async ({ page }) => {
+  await visitCustomPostTypes(page);
+
+  const results = await new AxeBuilder({ page })
+    .include('#wpessential-admin-root')
+    .analyze();
+
+  const evidenceDirectory = path.resolve(process.cwd(), 'test-results');
+  await fs.mkdir(evidenceDirectory, { recursive: true });
+  await fs.writeFile(
+    path.join(evidenceDirectory, 'axe-custom-post-types.json'),
+    `${JSON.stringify(results, null, 2)}\n`,
+    'utf8',
+  );
+
+  const summary = results.violations.map((violation) => ({
+    id: violation.id,
+    impact: violation.impact,
+    help: violation.help,
+    targets: violation.nodes.map((node) => node.target),
+  }));
+
+  expect(
+    results.violations,
+    `Axe violations in WPE-owned Custom Post Types Builder:\n${JSON.stringify(summary, null, 2)}`,
   ).toEqual([]);
 });
