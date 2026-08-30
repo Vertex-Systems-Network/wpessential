@@ -18,7 +18,12 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
+use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinitionProviderRegistry;
+use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class CustomPostTypeModule implements ModuleInterface
 {
@@ -40,6 +45,8 @@ final class CustomPostTypeModule implements ModuleInterface
         $providers = $services->get('platform.registrations.providers');
         $abilities = $services->get('platform.abilities');
         $abilityBridge = $services->get('platform.abilities.wordpress');
+        $abilityContexts = $services->get('platform.abilities.contexts');
+        $ajaxRoutes = $services->get('platform.ajax.routes');
         if (!$definitions instanceof DefinitionRepositoryInterface) {
             throw new LogicException('Custom Post Types requires the shared Definition Repository.');
         }
@@ -52,6 +59,12 @@ final class CustomPostTypeModule implements ModuleInterface
         if (!$abilityBridge instanceof WordPressAbilityBridge) {
             throw new LogicException('Custom Post Types requires the shared WordPress Ability bridge.');
         }
+        if (!$abilityContexts instanceof WordPressExecutionContextFactory) {
+            throw new LogicException('Custom Post Types requires the shared WordPress execution context factory.');
+        }
+        if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
+            throw new LogicException('Custom Post Types requires the shared AJAX route registry.');
+        }
 
         $projector = new CustomPostTypeDefinitionProjector();
         $provider = new CustomPostTypeRegistrationProvider($definitions, $projector);
@@ -60,6 +73,7 @@ final class CustomPostTypeModule implements ModuleInterface
         $services->set('module.custom-post-types.registration-provider', $provider);
 
         $this->registerAbilities($abilities, $abilityBridge, $definitions, $projector);
+        $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
     }
 
     public function boot(ServiceRegistryInterface $services): void
@@ -195,6 +209,63 @@ final class CustomPostTypeModule implements ModuleInterface
             label: $label,
             description: $description,
             showInRest: true,
+        ));
+    }
+
+    private function registerAjaxRoutes(
+        AjaxRouteRegistry $routes,
+        AbilityRegistry $abilities,
+        WordPressExecutionContextFactory $contexts,
+    ): void {
+        $this->registerAjaxRoute(
+            $routes,
+            $abilities,
+            $contexts,
+            'cpt.list',
+            'wpessential/cpt/list',
+            NonceOperation::Apply,
+        );
+        $this->registerAjaxRoute(
+            $routes,
+            $abilities,
+            $contexts,
+            'cpt.get',
+            'wpessential/cpt/get',
+            NonceOperation::Apply,
+        );
+        $this->registerAjaxRoute(
+            $routes,
+            $abilities,
+            $contexts,
+            'cpt.save',
+            'wpessential/cpt/save',
+            NonceOperation::Update,
+        );
+        $this->registerAjaxRoute(
+            $routes,
+            $abilities,
+            $contexts,
+            'cpt.status',
+            'wpessential/cpt/status',
+            NonceOperation::Update,
+        );
+    }
+
+    private function registerAjaxRoute(
+        AjaxRouteRegistry $routes,
+        AbilityRegistry $abilities,
+        WordPressExecutionContextFactory $contexts,
+        string $type,
+        string $abilityName,
+        NonceOperation $operation,
+    ): void {
+        $routes->register(new AjaxRoute(
+            type: $type,
+            handler: new AbilityAjaxHandler($abilities, $abilityName, $contexts),
+            operation: $operation,
+            capability: self::CAPABILITY,
+            allowGuests: false,
+            requiresNonce: true,
         ));
     }
 }
