@@ -55,6 +55,22 @@ final class CustomPostTypeAbilityHandlerTest extends TestCase
         ], $this->context());
     }
 
+    public function testExistingRuntimeKeyCannotBeRenamedThroughCanonicalSaveAbility(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $created = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'payload' => $this->payload(),
+        ], $this->context())['definition'];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('post_type_key is immutable');
+        $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 1,
+            'payload' => array_merge($this->payload(), ['post_type_key' => 'library_volume']),
+        ], $this->context());
+    }
+
     public function testStatusTransitionRetainsCanonicalDefinition(): void
     {
         $repository = new InMemoryDefinitionRepository();
