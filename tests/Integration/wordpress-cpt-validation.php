@@ -10,6 +10,8 @@ if (!defined('ABSPATH')) {
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeDefinitionProjector;
+use WPEssential\Platform\Definitions\Definition;
+use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 
 function cptValidationExpect(bool $condition, string $message): void
@@ -50,11 +52,11 @@ wp_set_current_user((int) $admin->ID);
 cptValidationExpect(current_user_can('manage_options'), 'validation principal must have manage_options');
 
 $before = count($definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
-$nonce = $ajax->createNonce('cpt.validate');
+$validationNonce = $ajax->createNonce('cpt.validate');
 
 $invalid = $ajax->dispatch([
     'type' => 'cpt.validate',
-    'nonce' => $nonce,
+    'nonce' => $validationNonce,
     'payload' => [
         'payload' => [
             'post_type_key' => 'post',
@@ -71,7 +73,7 @@ register_post_type('external_book', ['public' => true]);
 cptValidationExpect(post_type_exists('external_book'), 'external collision fixture must be active');
 $collision = $ajax->dispatch([
     'type' => 'cpt.validate',
-    'nonce' => $nonce,
+    'nonce' => $validationNonce,
     'payload' => [
         'payload' => [
             'post_type_key' => 'external_book',
@@ -86,7 +88,7 @@ cptValidationExpect(in_array('runtime_registration_collision', cptValidationIssu
 
 $warning = $ajax->dispatch([
     'type' => 'cpt.validate',
-    'nonce' => $nonce,
+    'nonce' => $validationNonce,
     'payload' => [
         'payload' => [
             'post_type_key' => 'catalog_item',
@@ -100,8 +102,58 @@ cptValidationExpect($warning->success, 'missing taxonomy must remain a validatio
 cptValidationExpect(is_array($warning->data) && ($warning->data['valid'] ?? false) === true, 'missing taxonomy must degrade rather than block canonical CPT definition');
 cptValidationExpect(in_array('missing_taxonomy', cptValidationIssueIds($warning->data), true), 'missing taxonomy report must identify degraded dependency');
 
-$after = count($definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
-cptValidationExpect($after === $before, 'validation route must not persist or mutate CPT definitions');
+$afterValidation = count($definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE));
+cptValidationExpect($afterValidation === $before, 'validation route must not persist or mutate CPT definitions');
+
+$saveNonce = $ajax->createNonce('cpt.save');
+$blockedSave = $ajax->dispatch([
+    'type' => 'cpt.save',
+    'nonce' => $saveNonce,
+    'payload' => [
+        'payload' => [
+            'post_type_key' => 'external_book',
+            'name' => 'External Books',
+            'singular_name' => 'External Book',
+        ],
+        'status' => 'draft',
+    ],
+], true);
+cptValidationExpect(!$blockedSave->success && $blockedSave->errorCode === 'handler_failure', 'direct save must not bypass blocking runtime collision validation');
+cptValidationExpect(count($definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE)) === $before, 'blocked direct save must not persist a definition');
+
+$draftSave = $ajax->dispatch([
+    'type' => 'cpt.save',
+    'nonce' => $saveNonce,
+    'payload' => [
+        'payload' => [
+            'post_type_key' => 'publish_probe',
+            'name' => 'Publish Probes',
+            'singular_name' => 'Publish Probe',
+        ],
+        'status' => 'draft',
+    ],
+], true);
+cptValidationExpect($draftSave->success && is_array($draftSave->data), 'non-colliding draft fixture must save through the canonical mutation route');
+$draftData = $draftSave->data['definition'] ?? null;
+cptValidationExpect(is_array($draftData) && is_string($draftData['id'] ?? null), 'draft save must return its canonical definition id');
+$draftId = (string) $draftData['id'];
+
+register_post_type('publish_probe', ['public' => true]);
+cptValidationExpect(post_type_exists('publish_probe'), 'publish collision fixture must be active');
+$statusNonce = $ajax->createNonce('cpt.status');
+$blockedPublish = $ajax->dispatch([
+    'type' => 'cpt.status',
+    'nonce' => $statusNonce,
+    'payload' => [
+        'id' => $draftId,
+        'expected_revision' => 1,
+        'status' => 'published',
+    ],
+], true);
+cptValidationExpect(!$blockedPublish->success && $blockedPublish->errorCode === 'handler_failure', 'Draft to Published transition must not bypass runtime collision validation');
+$retainedDraft = $definitions->get($draftId);
+cptValidationExpect($retainedDraft instanceof Definition, 'blocked publish fixture must remain persisted');
+cptValidationExpect($retainedDraft->status === DefinitionStatus::Draft && $retainedDraft->revision === 1, 'blocked publish must retain the previous draft revision and lifecycle state');
 
 $evidencePath = getenv('WPE_CPT_VALIDATION_EVIDENCE_PATH') ?: '';
 if ($evidencePath !== '') {
@@ -117,9 +169,14 @@ if ($evidencePath !== '') {
         'reserved_key_blocked' => true,
         'unknown_runtime_owner_blocked' => true,
         'missing_taxonomy_degraded' => true,
+        'validation_non_mutating' => $afterValidation === $before,
+        'direct_save_collision_blocked' => true,
+        'publish_transition_collision_blocked' => true,
         'definition_count_before' => $before,
-        'definition_count_after' => $after,
+        'definition_count_after_validation' => $afterValidation,
+        'publish_probe_status' => $retainedDraft->status->value,
+        'publish_probe_revision' => $retainedDraft->revision,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
 }
 
-fwrite(STDOUT, "WPEssential real WordPress CPT validation preflight PASS\n");
+fwrite(STDOUT, "WPEssential real WordPress CPT validation and mutation guard PASS\n");
