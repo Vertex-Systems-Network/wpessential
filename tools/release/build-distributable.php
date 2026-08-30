@@ -316,9 +316,11 @@ try {
     @unlink($stageRoot . '/composer.lock');
     validateStagedPayload($stageRoot);
 
-    $autoloadProbe = escapeshellarg(PHP_BINARY)
-        . ' -r '
-        . escapeshellarg('define("ABSPATH", __DIR__); require ' . var_export($stageRoot . '/vendor/autoload.php', true) . '; if (!class_exists("WPEssential\\\\Bootstrap\\\\Plugin")) { fwrite(STDERR, "autoload probe failed\\n"); exit(1); }');
+    $probeCode = sprintf(
+        'define("ABSPATH", __DIR__); require %s; if (!class_exists("WPEssential\\\\Bootstrap\\\\Plugin")) { fwrite(STDERR, "autoload probe failed\\n"); exit(1); }',
+        var_export($stageRoot . '/vendor/autoload.php', true)
+    );
+    $autoloadProbe = escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg($probeCode);
     runCommand($autoloadProbe);
 
     $artifactDir = $root . '/artifacts';
