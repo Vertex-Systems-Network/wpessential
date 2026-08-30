@@ -74,14 +74,22 @@ final class CustomPostTypeValidationServiceTest extends TestCase
         );
     }
 
+    private function handler(InMemoryDefinitionRepository $repository, string $action): CustomPostTypeAbilityHandler
+    {
+        $projector = new CustomPostTypeDefinitionProjector();
+        return new CustomPostTypeAbilityHandler(
+            $repository,
+            $projector,
+            new CustomPostTypeValidationService($repository, $projector),
+            $action,
+        );
+    }
+
     /** @return array<string,mixed> */
     private function save(InMemoryDefinitionRepository $repository, array $payload): array
     {
-        return (new CustomPostTypeAbilityHandler(
-            $repository,
-            new CustomPostTypeDefinitionProjector(),
-            CustomPostTypeAbilityHandler::SAVE,
-        ))->handle(['payload' => $payload], $this->context())['definition'];
+        return $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)
+            ->handle(['payload' => $payload], $this->context())['definition'];
     }
 
     private function status(
@@ -90,11 +98,7 @@ final class CustomPostTypeValidationServiceTest extends TestCase
         int $revision,
         string $status,
     ): void {
-        (new CustomPostTypeAbilityHandler(
-            $repository,
-            new CustomPostTypeDefinitionProjector(),
-            CustomPostTypeAbilityHandler::STATUS,
-        ))->handle([
+        $this->handler($repository, CustomPostTypeAbilityHandler::STATUS)->handle([
             'id' => $id,
             'expected_revision' => $revision,
             'status' => $status,
