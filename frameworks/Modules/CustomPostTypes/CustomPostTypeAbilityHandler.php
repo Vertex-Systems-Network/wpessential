@@ -88,7 +88,7 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
         $candidate = new Definition(
             id: $existing?->id ?? $this->uuid(),
-            slug: trim($key),
+            slug: $existing?->slug ?? ('cpt-' . str_replace('_', '-', trim($key))),
             type: CustomPostTypeDefinitionProjector::DEFINITION_TYPE,
             schemaVersion: $existing?->schemaVersion ?? 1,
             ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
