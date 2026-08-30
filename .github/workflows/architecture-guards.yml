@@ -6,12 +6,16 @@ on:
       - 'config/architecture/**'
       - 'tools/architecture/**'
       - 'frameworks/**'
+      - 'admin-ui/**'
       - 'tests/Smoke/**'
       - 'tests/Integration/**'
       - 'tests/Unit/**'
       - 'wpessential.php'
       - 'composer.json'
       - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
       - 'phpcs.xml.dist'
       - 'phpstan.neon.dist'
       - 'phpunit.xml.dist'
@@ -23,12 +27,16 @@ on:
       - 'config/architecture/**'
       - 'tools/architecture/**'
       - 'frameworks/**'
+      - 'admin-ui/**'
       - 'tests/Smoke/**'
       - 'tests/Integration/**'
       - 'tests/Unit/**'
       - 'wpessential.php'
       - 'composer.json'
       - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
       - 'phpcs.xml.dist'
       - 'phpstan.neon.dist'
       - 'phpunit.xml.dist'
@@ -36,12 +44,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   validate-architecture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 30
     services:
       mysql:
         image: mysql:8.4
@@ -72,6 +80,65 @@ jobs:
           actual="$(git rev-parse HEAD)"
           test "${actual}" = "${WPE_EXPECTED_SHA}"
           test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Resolve or install locked admin graph
+        id: npm
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f package-lock.json; then
+            echo 'mode=locked-install' >> "$GITHUB_OUTPUT"
+            npm ci --ignore-scripts
+          else
+            echo 'mode=generated-lock' >> "$GITHUB_OUTPUT"
+            npm install --ignore-scripts
+          fi
+          test -s package-lock.json
+
+      - name: Upload generated npm lock evidence
+        if: steps.npm.outputs.mode == 'generated-lock'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-generated-package-lock-${{ github.run_id }}
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify Node and package contracts
+        shell: bash
+        run: |
+          npm run check:engines
+          npm run lint:package
+
+      - name: npm dependency advisory audit
+        shell: bash
+        run: npm audit --audit-level=high
+
+      - name: JavaScript lint
+        run: npm run lint:js
+
+      - name: Style lint
+        run: npm run lint:css
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Build admin application
+        run: npm run build:admin
+
+      - name: Verify wp-scripts admin artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/admin/main.js
+          test -s assets/admin/main.asset.php
+          test -s assets/admin/main.css
+          php -r '$asset = require "assets/admin/main.asset.php"; if (!is_array($asset) || !isset($asset["dependencies"], $asset["version"]) || !is_array($asset["dependencies"]) || !is_string($asset["version"]) || $asset["version"] === "") { fwrite(STDERR, "invalid wp-scripts asset metadata\n"); exit(1); }'
 
       - name: Setup PHP 8.2
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
@@ -239,3 +306,20 @@ jobs:
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Commit generated npm lock after green bootstrap
+        if: steps.npm.outputs.mode == 'generated-lock' && github.event_name == 'push' && github.ref == 'refs/heads/implementation/baseline-adoption-gate'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -s package-lock.json
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git status --porcelain --untracked-files=all package-lock.json)" = "?? package-lock.json"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- package-lock.json
+          git commit -m 'build(wp121): lock admin build dependencies'
+          auth="$(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}" push origin "HEAD:${GITHUB_REF_NAME}"
