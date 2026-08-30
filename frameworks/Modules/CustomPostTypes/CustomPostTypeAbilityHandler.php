@@ -26,6 +26,7 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private CustomPostTypeDefinitionProjector $projector,
+        private CustomPostTypeValidationService $validation,
         private string $action,
     ) {
         if (!in_array($this->action, [self::LIST, self::GET, self::SAVE, self::STATUS], true)) {
@@ -80,18 +81,17 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
             $this->assertExpectedRevision($input, $existing);
         }
 
+        $validationInput = ['payload' => $payload];
+        if ($existing instanceof Definition) {
+            $validationInput['id'] = $existing->id;
+        }
+        $this->assertValidationAllowsMutation($this->validation->validate($validationInput));
+
         $key = $payload['post_type_key'] ?? null;
         if (!is_string($key) || trim($key) === '') {
             throw new InvalidArgumentException('CPT payload requires post_type_key.');
         }
         $key = trim($key);
-        if ($existing instanceof Definition) {
-            $existingKey = $existing->payload['post_type_key'] ?? null;
-            if (!is_string($existingKey) || trim($existingKey) !== $key) {
-                throw new InvalidArgumentException('Existing CPT post_type_key is immutable; create a new definition for a different runtime key.');
-            }
-        }
-        $this->assertPostTypeKeyAvailable($key, $existing?->id);
 
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
         $candidate = new Definition(
@@ -118,6 +118,13 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
         $existing = $this->owned($this->requiredUuid($input, 'id'));
         $this->assertExpectedRevision($input, $existing);
         $status = $this->statusFromInput($input, $existing->status, required: true);
+
+        if ($status === DefinitionStatus::Published) {
+            $this->assertValidationAllowsMutation($this->validation->validate([
+                'id' => $existing->id,
+                'payload' => $existing->payload,
+            ]));
+        }
 
         $candidate = new Definition(
             id: $existing->id,
@@ -153,23 +160,22 @@ final readonly class CustomPostTypeAbilityHandler implements AbilityHandlerInter
         }
     }
 
-    private function assertPostTypeKeyAvailable(string $key, ?string $currentDefinitionId): void
+    /**
+     * @param array{valid:bool,issues:list<array{id:string,severity:string,field:string,message:string}>,candidate:array{post_type_key:?string}} $report
+     */
+    private function assertValidationAllowsMutation(array $report): void
     {
-        foreach ($this->definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE) as $definition) {
-            if ($definition->ownerSurfaceId !== CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID
-                || $definition->id === $currentDefinitionId
-            ) {
-                continue;
-            }
+        if ($report['valid']) {
+            return;
+        }
 
-            $existingKey = $definition->payload['post_type_key'] ?? null;
-            if (is_string($existingKey) && trim($existingKey) === $key) {
-                throw new InvalidArgumentException(sprintf(
-                    'Post type key "%s" is already owned by another canonical CPT definition.',
-                    $key,
-                ));
+        foreach ($report['issues'] as $issue) {
+            if ($issue['severity'] === 'blocked') {
+                throw new InvalidArgumentException($issue['message']);
             }
         }
+
+        throw new InvalidArgumentException('CPT validation blocked the requested mutation.');
     }
 
     /** @param array<string,mixed> $input */
