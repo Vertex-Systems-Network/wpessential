@@ -165,7 +165,7 @@ jobs:
             echo "=== ${mode} ===" | tee -a artifacts/cpt-runtime/runtime.log
             WPE_CPT_TEST_MODE="${mode}" \
             WPE_CPT_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/cpt-runtime/evidence.json" \
-              ${wp} eval-file "${script}" | tee -a artifacts/cpt-runtime/runtime.log
+              ${wp} eval "require '${script}';" | tee -a artifacts/cpt-runtime/runtime.log
           done
           test -s artifacts/cpt-runtime/evidence.json
           jq -e '.result == "PASS" and .module_state == "booted" and .owner_surface_id == 1 and .disabled_definition_retained == true and .compiled_post_type_count == 0' artifacts/cpt-runtime/evidence.json >/dev/null
