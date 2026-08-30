@@ -1,6 +1,6 @@
 # WPEssential — WP121 Platform Foundation
 
-Status: **CURRENT / IMPLEMENTING — readiness-gate entry**  
+Status: **CURRENT / IMPLEMENTING — readiness gate open**  
 Date: **2026-08-30**  
 Approval: `GOV-OWNER-CONSENT-001` ACTIVE  
 Predecessors: WP119 PASS / ADR-0214; WP120 PASS / ADR-0215  
@@ -80,38 +80,51 @@ Implemented the minimal canonical WPEssential wp-admin entry surface as a read-o
 
 The accepted surface exposes only non-mutating runtime facts such as Platform version, WordPress/PHP runtime, kernel boot state, bounded trace status/counts, site/network identity and Multisite state. It explicitly does not promote request-bounded trace data into authoritative release/incident evidence.
 
-Exact implementation/certification head: `8c2744faa722f89a0d78936cbc7053ef673224b0`.
-
-Hosted Architecture Guards run **33301396205 / #243 SUCCESS** executed the Platform admin bootstrap smoke together with the full current MySQL/WordPress/Action Scheduler/JobService integration sequence.
-
 ### 10K / 100K compiled-registration scale certification
 
-Added an executable `compiled-registration-scale-v1` smoke contract covering:
+Added executable `compiled-registration-scale-v1` evidence covering:
 - 10,000 and 100,000 compiled registrations across post types, taxonomies, metaboxes and settings pages;
 - manifest integrity and active-generation correctness;
 - exact runtime entry cardinality;
 - deterministic 10K checksum independent of input iteration order;
 - explicit execution-time and peak-memory budgets.
 
-Exact-head hosted evidence from run **33301396205 / #243 SUCCESS**:
+The authoritative exact-source foundation execution is head **`f15fe7b2d9d0067c90a7e9f23746c002265f8560`**. Architecture Guards run **33301807573 / #249 SUCCESS** explicitly checked out that SHA, verified `git rev-parse HEAD` against the expected PR head and required a tracked-clean tree before testing.
+
+Run #249 executed the Platform admin smoke and compiled-registration scale smoke together with the full current MySQL/WordPress/Action Scheduler/JobService integration sequence. Scale observations from that exact run:
 
 | Case | Result | Time | Peak memory | Distribution |
 | --- | --- | ---: | ---: | --- |
-| 10K | PASS | 0.031407 s | 31,457,280 B | 2,500 per registration kind |
-| 100K | PASS | 0.792474 s | 301,993,984 B | 25,000 per registration kind |
+| 10K | PASS | 0.042631 s | 31,457,280 B | 2,500 per registration kind |
+| 100K | PASS | 0.948230 s | 301,993,984 B | 25,000 per registration kind |
 
 Stable evidence checksums:
 - 10K: `b6cb5afa2be0e66fe1c0ef185d0e3ba60e3b692fa3a048f0c7eedccc1ec2c5cb`;
 - 100K: `699a14393d39ccdd6c7a5220e1e902e60aa70fd2075dfe3984cb0befc1a966db`.
 
-The accepted certification budgets remain materially above these observed results; this evidence proves the bounded in-memory compiler/runtime path exercised by the smoke contract, not every future persistent/high-concurrency production workload.
+The accepted certification budgets remain materially above these observed results; this proves the bounded compiler/runtime path exercised by the contract, not every future persistent/high-concurrency production workload.
+
+### WordPress / PHP / database compatibility baseline
+
+Exact-source Platform Compatibility Matrix run **33301807593 / #6 SUCCESS** used the same head `f15fe7b2d9d0067c90a7e9f23746c002265f8560`. Every matrix job independently checked out and verified the exact expected source SHA before execution.
+
+Verified combinations:
+- WordPress 6.9 × PHP 8.2 / 8.3 / 8.4 / 8.5 on MySQL 8.4;
+- WordPress 7.1 × PHP 8.2 / 8.3 / 8.4 / 8.5 on MySQL 8.4;
+- MariaDB 10.11 × WordPress 6.9 / 7.1 on PHP 8.4.
+
+All **10/10 jobs PASS**. The MySQL matrix executes source contracts, the complete smoke suite, compiled-registration persistence, Definition/Audit persistence, real WordPress AJAX/nonce/Policy and durable JobService integration. The MariaDB baseline executes persistence and WordPress integration paths.
 
 ## Current exclusions / not yet certified
 
+- canonical locked Composer development toolchain and `composer.lock`;
+- canonical Node 24/npm/`@wordpress/scripts` admin build graph and lockfile;
+- dedicated PHPUnit unit suite and browser Playwright E2E baseline;
+- dependency/security/license audit gate and distributable package-artifact validation;
+- Multisite-specific AJAX/queue worker switching and network-admin matrix;
 - WordPress.org stable submission/release;
 - live production DB migration/rollback;
 - final public Action Scheduler vendoring/build mechanism;
-- Multisite-specific AJAX/queue worker switching and network-admin matrix;
 - automatic Action Scheduler dispatch → Ability → attempt lifecycle integration;
 - high-concurrency fairness/resource admission/backpressure performance;
 - Job checkpoint privacy/retention implementation;
@@ -122,8 +135,8 @@ No production deployment, live provider call, destructive live-site/customer-dat
 
 ## Next WP121 work
 
-1. **run the shared-foundation readiness gate against the complete accepted WP121 evidence set**;
-2. reconcile any real readiness blockers without widening business-module scope;
-3. begin the first business-module tranche only after that gate passes.
+1. **close the reproducible FULL-quality/toolchain blockers recorded in `WP121-SHARED-FOUNDATION-READINESS-GATE.md`**;
+2. rerun the complete milestone readiness gate after those blockers have executable evidence;
+3. begin the first business-module tranche only after that gate is PASS.
 
 Every next tranche extends executable evidence and preserves the canonical no-bypass/ownership boundaries.
