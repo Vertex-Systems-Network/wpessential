@@ -60,17 +60,22 @@ final class PlatformAdminController
             return;
         }
 
+        $version = $entry['version'] ?? (defined('WPE_VERSION') ? (string) WPE_VERSION : null);
+
         foreach ($entry['styles'] as $index => $style) {
-            wp_enqueue_style('wpessential-admin-' . $index, $style, [], defined('WPE_VERSION') ? (string) WPE_VERSION : null);
+            wp_enqueue_style('wpessential-admin-' . $index, $style, [], $version);
         }
 
-        if (function_exists('wp_enqueue_script_module')) {
-            wp_enqueue_script_module(
-                'wpessential-admin',
-                $entry['script'],
-                [],
-                defined('WPE_VERSION') ? (string) WPE_VERSION : null,
-            );
+        wp_enqueue_script(
+            'wpessential-admin',
+            $entry['script'],
+            $entry['dependencies'],
+            $version,
+            true,
+        );
+
+        if (function_exists('wp_script_add_data')) {
+            wp_script_add_data('wpessential-admin', 'strategy', 'defer');
         }
     }
 
