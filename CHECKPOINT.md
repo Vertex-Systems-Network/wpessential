@@ -45,7 +45,8 @@ Implemented/accepted:
 - minimal Platform admin shell with a server-rendered Runtime Observatory and progressive TypeScript enhancement;
 - deterministic `@wordpress/scripts` admin artifact contract (`main.js`, `main.css`, `main.asset.php`);
 - Composer and Node 24/npm quality toolchains with committed lockfiles;
-- executable 10K/100K compiled-registration scale evidence.
+- executable 10K/100K compiled-registration scale evidence;
+- deterministic runtime-only WordPress plugin ZIP construction and license/package validation baseline.
 
 ## WP121 admin toolchain closure
 
@@ -59,6 +60,34 @@ The run verifies package metadata, full and distributable npm advisory capture, 
 The earlier green bootstrap generated canonical `package-lock.json`; GitHub Actions projected it as commit `155390b2ba180020d7a181ae454094dc622cb7ee`. The exact locked head above then installed that graph with hosted `npm ci` and passed the complete gate.
 
 The npm distributable graph reports **0 vulnerabilities**. The full development toolchain audit still reports upstream transitive advisories from `@wordpress/scripts`; these are retained as diagnostics and are not misrepresented as distributable plugin dependencies.
+
+## WP121 deterministic distributable package closure
+
+Exact package source head `019f496e10e04455cd939c75383fc41661dd26f7` is GREEN in:
+- Distributable Package run **33307203441 / #3**;
+- Architecture Guards run **33307203442 / #303**;
+- Platform Compatibility Matrix run **33307203444 / #46**, with all 10 matrix jobs successful.
+
+The deterministic package gate now:
+- stages only plugin runtime code, `readme.txt`, GPL license, generated production Composer autoloader and compiled admin assets;
+- excludes repository governance, CI, source-only admin UI, tests, tools, architecture config and Node development dependencies from the installable ZIP;
+- validates plugin/readme/Composer GPL metadata before package construction;
+- fails closed if runtime Composer packages appear until an explicit distribution-license review is added;
+- normalizes ZIP entry ordering, timestamps, Unix file permissions and compression settings;
+- performs two independent staging/package executions and requires byte-for-byte identical output;
+- validates ZIP integrity, single `wpessential/` install root, required runtime files and forbidden development paths;
+- uploads the candidate only as CI evidence; it does not publish or release it.
+
+Verified plugin ZIP evidence:
+- SHA-256 **`a61257866088f5bde5a421cef27f9cf8302062eb74eac7a2ee17171415cbe929`**;
+- **156 files**;
+- **137,667 bytes**;
+- install root **`wpessential/`**;
+- fixed package mtime **`2000-01-01T00:00:00+00:00`**;
+- **0 runtime Composer packages** at this checkpoint;
+- CI evidence artifact ID **9730849701**.
+
+This certifies deterministic development-line packaging for the current base plugin payload. It is not a WordPress.org stable release and does not certify a future Free/Pro split that does not yet exist in this implementation tranche.
 
 ## Engineering/public contract
 
@@ -119,14 +148,14 @@ Run #209 is GREEN across Composer, architecture/engineering guards, PHP syntax, 
 Do not overclaim:
 - no WordPress.org submission/stable release;
 - no live production DB migration/rollback;
-- final public Action Scheduler packaging mechanism remains a release/build decision;
+- final public Action Scheduler bundling/coexistence behavior inside a future stable release remains a release decision even though the base plugin ZIP gate is now deterministic;
 - Multisite-specific AJAX/queue worker matrices remain pending;
 - queue fairness/resource admission/high-concurrency performance is not yet certified;
 - automatic Action Scheduler dispatch → Ability → durable attempt lifecycle wiring remains pending;
 - Job checkpoint privacy/retention policy remains pending;
 - Audit read/retention/privacy/export/legal-hold workflows remain pending;
 - browser E2E/accessibility baseline remains pending before critical interactive admin workflows;
-- deterministic distributable plugin package/license/Free-vs-Pro validation remains pending;
+- future Free/Pro package separation remains uncertified until such a distribution tranche exists;
 - upstream development-toolchain npm advisories remain recorded and require periodic reassessment;
 - business-module implementation has not started.
 
@@ -135,7 +164,7 @@ No live provider call, production deployment, destructive live-site/customer-dat
 ## Current next action
 
 Continue WP121:
-1. establish browser E2E/accessibility and distributable package validation baselines;
+1. establish canonical real-browser E2E/accessibility evidence for the Platform admin/Runtime Observatory surface;
 2. close or explicitly stage the Multisite-specific runtime matrix;
 3. rerun the shared-foundation readiness gate;
 4. start the first business-module tranche only after that gate passes.
