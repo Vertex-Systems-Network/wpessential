@@ -131,6 +131,8 @@ $abilities->register(
                 'network_id' => $context->networkId,
                 'channel' => $context->channel->value,
                 'echo' => $input['echo'] ?? null,
+                'flag' => $input['flag'] ?? null,
+                'revision' => $input['revision'] ?? null,
             ];
         }
     },
@@ -154,6 +156,7 @@ $gateway->register();
 
 wpAjaxPolicyExpect(has_action('wp_ajax_' . WPE_AJAX_ACTION, [$gateway, 'handle']) !== false, 'canonical authenticated wp_ajax hook must be registered');
 wpAjaxPolicyExpect(has_action('wp_ajax_nopriv_' . WPE_AJAX_ACTION, [$gateway, 'handle']) !== false, 'canonical nopriv wp_ajax hook must be registered');
+wpAjaxPolicyExpect($gateway->action() === WPE_AJAX_ACTION, 'gateway must expose the exact configured action to canonical admin adapters');
 wpAjaxPolicyExpect($routes->types() === ['platform.fixture'], 'AJAX type registry must contain only the explicit allowlisted route');
 
 $unknown = $dispatcher->dispatch(['type' => 'platform.unknown'], true);
@@ -204,6 +207,32 @@ wpAjaxPolicyExpect(($success['success'] ?? false) === true, 'real WordPress wp_a
 wpAjaxPolicyExpect(($success['data']['channel'] ?? null) === 'ui', 'AJAX Ability execution must be bound to UI channel');
 wpAjaxPolicyExpect((int) ($success['data']['user_id'] ?? 0) === $adminId, 'Ability context must use actual WordPress current user');
 wpAjaxPolicyExpect((int) ($success['data']['site_id'] ?? 0) === get_current_blog_id(), 'Ability context must use actual WordPress site id');
+
+$typedJson = wp_json_encode([
+    'echo' => 'typed',
+    'flag' => true,
+    'revision' => 7,
+]);
+wpAjaxPolicyExpect(is_string($typedJson), 'typed AJAX fixture payload must encode as JSON');
+$typed = runWpeAjaxGateway($gateway, [
+    'action' => WPE_AJAX_ACTION,
+    'type' => 'platform.fixture',
+    'nonce' => $adminNonce,
+    'payload_json' => $typedJson,
+]);
+wpAjaxPolicyExpect(($typed['success'] ?? false) === true, 'typed JSON AJAX payload must execute authorized request');
+wpAjaxPolicyExpect(($typed['data']['echo'] ?? null) === 'typed', 'typed JSON transport must preserve strings');
+wpAjaxPolicyExpect(($typed['data']['flag'] ?? null) === true, 'typed JSON transport must preserve booleans');
+wpAjaxPolicyExpect(($typed['data']['revision'] ?? null) === 7, 'typed JSON transport must preserve integers');
+
+$invalidTyped = runWpeAjaxGateway($gateway, [
+    'action' => WPE_AJAX_ACTION,
+    'type' => 'platform.fixture',
+    'nonce' => $adminNonce,
+    'payload_json' => '{invalid-json',
+]);
+wpAjaxPolicyExpect(($invalidTyped['success'] ?? true) === false, 'invalid typed JSON payload must fail closed');
+wpAjaxPolicyExpect(($invalidTyped['error']['code'] ?? null) === 'invalid_payload', 'invalid typed JSON must fail as an invalid payload');
 
 $subscriberId = wp_create_user('wpessential_subscriber', 'test-password-strong', 'subscriber@example.test');
 wpAjaxPolicyExpect(!is_wp_error($subscriberId), 'WordPress fixture must create a low-privilege user');
