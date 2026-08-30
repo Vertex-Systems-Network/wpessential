@@ -96,6 +96,28 @@ final class CustomPostTypeAbilityHandlerTest extends TestCase
         ], $this->context());
     }
 
+    public function testDuplicateCanonicalPostTypeKeyIsRejectedAcrossLifecycleStates(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $created = $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'payload' => $this->payload(),
+        ], $this->context())['definition'];
+        $this->handler($repository, CustomPostTypeAbilityHandler::STATUS)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 1,
+            'status' => 'archived',
+        ], $this->context());
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('already owned by another canonical CPT definition');
+        $this->handler($repository, CustomPostTypeAbilityHandler::SAVE)->handle([
+            'payload' => array_merge($this->payload(), [
+                'name' => 'Duplicate Books',
+                'singular_name' => 'Duplicate Book',
+            ]),
+        ], $this->context());
+    }
+
     private function handler(InMemoryDefinitionRepository $repository, string $action): CustomPostTypeAbilityHandler
     {
         return new CustomPostTypeAbilityHandler(
