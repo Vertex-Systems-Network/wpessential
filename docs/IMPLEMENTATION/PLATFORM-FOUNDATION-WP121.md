@@ -1,7 +1,7 @@
 # WPEssential — WP121 Platform Foundation
 
-Status: **CURRENT / IMPLEMENTING — shared platform foundation active**  
-Date: **2026-08-29**  
+Status: **CURRENT / IMPLEMENTING — readiness-gate entry**  
+Date: **2026-08-30**  
 Approval: `GOV-OWNER-CONSENT-001` ACTIVE  
 Predecessors: WP119 PASS / ADR-0214; WP120 PASS / ADR-0215  
 Accepted implementation decisions: **ADR-0216 through ADR-0222**
@@ -74,6 +74,38 @@ Evidence source head `8601d6f17325681c63cdbc97e6b64e1a3892db1e`.
 
 Hosted run **33267525349 / #209 SUCCESS** across all prior guards/integrations plus real durable JobService persistence/lease evidence.
 
+### Platform admin shell + Runtime Observatory
+
+Implemented the minimal canonical WPEssential wp-admin entry surface as a read-only Runtime Observatory. The surface renders useful bounded diagnostics server-side even when no compiled admin application asset is present, while preserving the JSON bootstrap payload for later progressive enhancement.
+
+The accepted surface exposes only non-mutating runtime facts such as Platform version, WordPress/PHP runtime, kernel boot state, bounded trace status/counts, site/network identity and Multisite state. It explicitly does not promote request-bounded trace data into authoritative release/incident evidence.
+
+Exact implementation/certification head: `8c2744faa722f89a0d78936cbc7053ef673224b0`.
+
+Hosted Architecture Guards run **33301396205 / #243 SUCCESS** executed the Platform admin bootstrap smoke together with the full current MySQL/WordPress/Action Scheduler/JobService integration sequence.
+
+### 10K / 100K compiled-registration scale certification
+
+Added an executable `compiled-registration-scale-v1` smoke contract covering:
+- 10,000 and 100,000 compiled registrations across post types, taxonomies, metaboxes and settings pages;
+- manifest integrity and active-generation correctness;
+- exact runtime entry cardinality;
+- deterministic 10K checksum independent of input iteration order;
+- explicit execution-time and peak-memory budgets.
+
+Exact-head hosted evidence from run **33301396205 / #243 SUCCESS**:
+
+| Case | Result | Time | Peak memory | Distribution |
+| --- | --- | ---: | ---: | --- |
+| 10K | PASS | 0.031407 s | 31,457,280 B | 2,500 per registration kind |
+| 100K | PASS | 0.792474 s | 301,993,984 B | 25,000 per registration kind |
+
+Stable evidence checksums:
+- 10K: `b6cb5afa2be0e66fe1c0ef185d0e3ba60e3b692fa3a048f0c7eedccc1ec2c5cb`;
+- 100K: `699a14393d39ccdd6c7a5220e1e902e60aa70fd2075dfe3984cb0befc1a966db`.
+
+The accepted certification budgets remain materially above these observed results; this evidence proves the bounded in-memory compiler/runtime path exercised by the smoke contract, not every future persistent/high-concurrency production workload.
+
 ## Current exclusions / not yet certified
 
 - WordPress.org stable submission/release;
@@ -84,18 +116,14 @@ Hosted run **33267525349 / #209 SUCCESS** across all prior guards/integrations p
 - high-concurrency fairness/resource admission/backpressure performance;
 - Job checkpoint privacy/retention implementation;
 - Audit viewer/retention/privacy/export/legal-hold surfaces;
-- Runtime Observatory admin diagnostics UI;
-- minimal Platform admin shell;
-- executable 10K/100K compiled-registration scale certification;
 - business-facing modules.
 
 No production deployment, live provider call, destructive live-site/customer-data mutation, live production DB migration or irreversible external operation was performed.
 
 ## Next WP121 work
 
-1. **build minimal Platform admin shell + Runtime Observatory diagnostics surface**;
-2. add executable 10K/100K compiled-registration scale evidence;
-3. run shared-foundation readiness gate;
-4. begin first business-module tranche only after that gate passes.
+1. **run the shared-foundation readiness gate against the complete accepted WP121 evidence set**;
+2. reconcile any real readiness blockers without widening business-module scope;
+3. begin the first business-module tranche only after that gate passes.
 
 Every next tranche extends executable evidence and preserves the canonical no-bypass/ownership boundaries.
