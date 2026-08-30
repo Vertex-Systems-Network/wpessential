@@ -61,13 +61,13 @@ Repository root has canonical `composer.json` and committed `composer.lock`, plu
 
 This closes the R1 reproducibility requirement for the current WP121 scope; future dependency changes still require the same locked audit gates.
 
-### R2 — JavaScript/TypeScript/admin build toolchain — VERIFIED / LOCKED-HEAD CONFIRMATION RUNNING
+### R2 — JavaScript/TypeScript/admin build toolchain — VERIFIED
 
 Repository root now has Node 24/npm contracts, `package.json`, canonical TypeScript/SCSS admin source, `@wordpress/scripts` 34.2.0 and generated `package-lock.json` commit `155390b2ba180020d7a181ae454094dc622cb7ee`.
 
 Exact source head `8b822655800f1489ec5be611ae0ca8217d7d7bfb` passed JavaScript lint, Stylelint, strict TypeScript, production build and required `main.js` / `main.css` / `main.asset.php` verification in Architecture Guards runs #293 and #294. The server-rendered Runtime Observatory remains available if progressive assets are absent.
 
-The documentation projection triggers the final hosted `npm ci` locked-graph confirmation. A failed locked install reopens R2.
+Exact locked head `b5b409c58490b179eb1a1f424b952d4a8eceeda1` installed the committed graph with hosted `npm ci` and passed Architecture Guards runs `33306251922 / #296` and `33306254242 / #297`, plus Platform Compatibility Matrix `33306254204 / #40`.
 
 ### R3 — Unit VERIFIED; browser E2E/accessibility baseline BLOCKED
 
@@ -106,15 +106,14 @@ The following are still real planned work but do not automatically become WP121 
 
 `PARTIALLY_COMPLETE / BLOCKED_FOR_MODULE_HANDOFF`
 
-Reason: core runtime, Runtime Observatory, 10K/100K scale evidence and the exact-source compatibility matrix are VERIFIED, but the milestone-level reproducible development/quality/package toolchain is incomplete.
+Reason: core runtime, Runtime Observatory, 10K/100K scale evidence and reproducible PHP/Node quality toolchains are VERIFIED. Browser E2E/accessibility, deterministic distributable package/license validation and Multisite-specific runtime certification remain incomplete.
 
 ## Ordered closure path
 
-1. finish R2 locked-graph confirmation;
-2. establish canonical browser E2E/accessibility evidence;
-3. close deterministic distributable package/license gates;
-4. close or explicitly stage the Multisite-specific runtime baseline under its accepted ownership;
-5. rerun the complete WP121 FULL readiness gate;
-6. only then change WP121 to PASS and authorize the first business-module tranche.
+1. establish canonical browser E2E/accessibility evidence;
+2. close deterministic distributable package/license gates;
+3. close or explicitly stage the Multisite-specific runtime baseline under its accepted ownership;
+4. rerun the complete WP121 FULL readiness gate;
+5. only then change WP121 to PASS and authorize the first business-module tranche.
 
 No business module is authorized by this document while the result remains `BLOCKED_FOR_MODULE_HANDOFF`.

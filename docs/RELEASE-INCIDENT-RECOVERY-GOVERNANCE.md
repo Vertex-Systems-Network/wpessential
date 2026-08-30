@@ -154,7 +154,7 @@ Emergency actions still require the strongest available legitimate authority for
 Release state: **none**  
 Production deployment: **none**  
 Production verification: **none**  
-Current execution mode: `PLANNER_ONLY`  
-Current project state: `PLANNED_EXISTING_PROJECT`
+Current execution mode: `IMPLEMENTATION_GATED`
+Current project state: `ACTIVE_EXISTING_PROJECT` / `IMPLEMENTING_PLATFORM_FOUNDATION`
 
 These rules are predeclared for future implementation/release work and do not imply that any release/incident operation has occurred.

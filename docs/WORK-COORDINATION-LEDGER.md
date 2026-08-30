@@ -1,7 +1,7 @@
 # WPEssential — Work Coordination Ledger
 
 Status: **Active implementation governance ledger**  
-Last reviewed: **2026-08-29**
+Last reviewed: **2026-08-30**
 
 Current classification: `GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`; execution **`IMPLEMENTATION_GATED`**; lifecycle **`IMPLEMENTING_PLATFORM_FOUNDATION`**; accepted scope **56/56**; source development approval **GOV-OWNER-CONSENT-001 ACTIVE / 56/56 milestone-gated**.
 
@@ -88,16 +88,14 @@ Do not overclaim:
 - Audit UI/retention/privacy/export/legal-hold workflows pending;
 - browser E2E/accessibility baseline pending;
 - deterministic distributable package/license validation pending;
-- locked npm exact-head confirmation pending at this checkpoint projection;
 - business modules remain downstream of foundation readiness.
 
 ## Next WP121 bounded sequence
 
-1. verify committed npm lock with hosted `npm ci`;
-2. establish browser E2E/accessibility + distributable package gates;
-3. close or explicitly stage the Multisite-specific runtime matrix;
-4. rerun the shared-foundation readiness gate;
-5. start the first business-module tranche after that gate passes.
+1. establish browser E2E/accessibility + distributable package gates;
+2. close or explicitly stage the Multisite-specific runtime matrix;
+3. rerun the shared-foundation readiness gate;
+4. start the first business-module tranche after that gate passes.
 
 ## Privileged exclusions
 

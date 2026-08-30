@@ -49,14 +49,14 @@ Implemented/accepted:
 
 ## WP121 admin toolchain closure
 
-Exact source head `8b822655800f1489ec5be611ae0ca8217d7d7bfb` is GREEN in:
-- Architecture Guards push run **33306049048 / #293**;
-- Architecture Guards PR run **33306050305 / #294**;
-- Platform Compatibility Matrix run **33306050296 / #38**.
+Exact locked source head `b5b409c58490b179eb1a1f424b952d4a8eceeda1` is GREEN in:
+- Architecture Guards push run **33306251922 / #296**;
+- Architecture Guards PR run **33306254242 / #297**;
+- Platform Compatibility Matrix run **33306254204 / #40**.
 
 The run verifies package metadata, full and distributable npm advisory capture, JavaScript lint, Stylelint, strict TypeScript, deterministic admin production artifacts, the locked PHP quality stack, architecture/engineering guards, PHPUnit, smoke/integration suites and the 10-combination WordPress/PHP/MySQL/MariaDB matrix.
 
-The green push run generated canonical `package-lock.json`; GitHub Actions projected it as commit `155390b2ba180020d7a181ae454094dc622cb7ee`. The current documentation projection intentionally triggers one locked-graph `npm ci` exact-head verification.
+The earlier green bootstrap generated canonical `package-lock.json`; GitHub Actions projected it as commit `155390b2ba180020d7a181ae454094dc622cb7ee`. The exact locked head above then installed that graph with hosted `npm ci` and passed the complete gate.
 
 The npm distributable graph reports **0 vulnerabilities**. The full development toolchain audit still reports upstream transitive advisories from `@wordpress/scripts`; these are retained as diagnostics and are not misrepresented as distributable plugin dependencies.
 
@@ -135,10 +135,9 @@ No live provider call, production deployment, destructive live-site/customer-dat
 ## Current next action
 
 Continue WP121:
-1. certify the committed npm lock through hosted `npm ci` exact-head execution;
-2. establish browser E2E/accessibility and distributable package validation baselines;
-3. close or explicitly stage the Multisite-specific runtime matrix;
-4. rerun the shared-foundation readiness gate;
-5. start the first business-module tranche only after that gate passes.
+1. establish browser E2E/accessibility and distributable package validation baselines;
+2. close or explicitly stage the Multisite-specific runtime matrix;
+3. rerun the shared-foundation readiness gate;
+4. start the first business-module tranche only after that gate passes.
 
 Repository evidence overrides conversational memory.

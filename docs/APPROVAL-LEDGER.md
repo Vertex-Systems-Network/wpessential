@@ -1,7 +1,7 @@
 # WPEssential — Approval Ledger & Work Lifecycle
 
 Status: **Active governance**  
-Last reviewed: **2026-08-29**
+Last reviewed: **2026-08-30**
 
 | Approval ID | Scope | Work ID | Status | Included | Excluded / notes |
 |---|---|---|---|---|---|
@@ -10,13 +10,14 @@ Last reviewed: **2026-08-29**
 
 ## Current lifecycle
 
-Project state: `PLANNED_EXISTING_PROJECT` pending baseline verification.  
-Execution mode: **`IMPLEMENTATION_GATED`**.  
-Lifecycle: **`IMPLEMENTATION_BASELINE_ADOPTION_GATE`**.  
-Accepted product scope: **56/56 surfaces**.  
-Source implementation authorization: **56/56**, but work is executed only through bounded milestone/work-package gates.  
-Current executable work: **WP119 — Implementation Baseline / Adoption Gate**.  
-Ordinary feature/module implementation remains blocked until WP119 passes and machine-enforced ownership guards are established.
+Project state: `ACTIVE_EXISTING_PROJECT`.
+Execution mode: **`IMPLEMENTATION_GATED`**.
+Lifecycle: **`IMPLEMENTING_PLATFORM_FOUNDATION`**.
+Accepted product scope: **56/56 surfaces**.
+Source implementation authorization: **56/56**, executed only through bounded milestone/work-package gates.
+WP119 / ADR-0214 and WP120 / ADR-0215: **DONE / PASS**.
+Current executable work: **WP121 — Milestone 1 Platform Foundation**.
+Business-module handoff remains blocked until the WP121 shared-foundation readiness gate passes.
 
 ## Approval interpretation
 

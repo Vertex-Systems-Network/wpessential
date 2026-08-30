@@ -1,11 +1,11 @@
 # WPEssential — Project State & Adoption Baseline
 
-Status: **Planning complete / awaiting development approval**  
-Last reviewed: 2026-08-29
+Status: **Active implementation / Platform Foundation**
+Last reviewed: 2026-08-30
 
-Current state `PLANNED_EXISTING_PROJECT`; execution `PLANNER_ONLY`; lifecycle **`AWAITING_DEVELOPMENT_APPROVAL`**.
+Current state `ACTIVE_EXISTING_PROJECT`; execution `IMPLEMENTATION_GATED`; lifecycle **`IMPLEMENTING_PLATFORM_FOUNDATION`**.
 
-Current product truth: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, accepted through **ADR-0213**, implementation authorization **0/56**, runtime-certified/implemented none.
+Current product truth: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, planning accepted through **ADR-0213**. `GOV-OWNER-CONSENT-001` authorizes milestone-gated source implementation across 56/56 surfaces; production deployment/release and privileged destructive/live-provider actions remain excluded.
 
 - WP113–WP116 closed all 5,808 exact definitions identified by WP112 / ADR-0207.
 - WP117 / ADR-0212 final Phase 0 closure audit: PASS; exact planning gap 0/0.
@@ -13,14 +13,14 @@ Current product truth: **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56
 
 WP118 establishes current canonical maps for 56 surface owners, option ownership, UI IA, 40 reusable patterns/160 curated systems, dependency relationships, later Ability/Event registry and later data-ownership lifecycle.
 
-`PLANNED_EXISTING_PROJECT → ACTIVE_EXISTING_PROJECT` still requires explicit owner consent under ADR-0014, an ACTIVE approval ledger entry, applicable technical gates, a verified Implementation Baseline / Adoption Gate and bounded approved implementation scope. Conversation wording cannot change project state.
+WP119 / ADR-0214 and WP120 / ADR-0215 are DONE/PASS. WP121 is CURRENT/IMPLEMENTING through ADR-0222 plus the locked admin/quality toolchain readiness closure. Exact locked head `b5b409c58490b179eb1a1f424b952d4a8eceeda1` passed Architecture Guards and the 10-combination Platform Compatibility Matrix.
 
-GitHub planning read/write and Draft PR metadata are available; Linear mirrors planning with GitHub canonical. WordPress/WooCommerce runtime, DB/file mutation, runtime tests/build, provider/API/AI/MCP execution and deployment remain NOT EXECUTED unless later evidence proves otherwise.
+GitHub repository/test evidence remains canonical; Linear is a coordination mirror. Development/test WordPress, MySQL/MariaDB, build and CI execution are verified only where recorded in `CHECKPOINT.md`. No production deployment, live customer-data mutation or privileged provider execution is authorized or claimed.
 
 ## Resume authority
 
-Current safe state: **wait for explicit scoped development approval**.
+Current safe state: **continue WP121 inside `GOV-OWNER-CONSENT-001` and the recorded milestone gates**.
 
-After approval: record ACTIVE approval; refresh branch/revision/capabilities and inspect implementation baseline; verify runtime/tool/dependency/lock/build/test state; classify baseline failures/UNKNOWNs; establish ADR-0213 machine-enforced Surface/Option/Route/Dependency/Ability/Storage/Blueprint/Multisite/invalidation/provider/destructive/AI validation gates; bind first bounded milestone/change budget; enter `IMPLEMENTING` only for approved scope.
+Next: establish browser E2E/accessibility and deterministic distributable package/license gates, close or explicitly stage the Multisite-specific runtime matrix, rerun WP121 FULL readiness, then begin the first business-module tranche only after PASS.
 
-Development remains **NOT GRANTED / 0/56**. Repository evidence overrides conversational memory.
+Development remains milestone-gated; separately privileged production/release/destructive/live-provider actions remain **NOT GRANTED**. Repository evidence overrides conversational memory.
