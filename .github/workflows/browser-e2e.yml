@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   packaged-browser-e2e:
@@ -101,29 +101,14 @@ jobs:
           test -s /tmp/wpessential-e2e/wpessential/vendor/autoload.php
           test -s /tmp/wpessential-e2e/wpessential/assets/admin/main.js
 
-      - name: Install or bootstrap locked E2E graph
-        id: e2e-deps
+      - name: Install locked E2E graph
         shell: bash
         run: |
           set -euo pipefail
-          if test -f tests/e2e/package-lock.json; then
-            npm ci --prefix tests/e2e --ignore-scripts
-            echo 'mode=locked' >> "${GITHUB_OUTPUT}"
-          else
-            npm install --prefix tests/e2e --ignore-scripts
-            test -s tests/e2e/package-lock.json
-            echo 'mode=generated-lock' >> "${GITHUB_OUTPUT}"
-          fi
+          git ls-files --error-unmatch tests/e2e/package-lock.json >/dev/null
+          test -s tests/e2e/package-lock.json
+          npm ci --prefix tests/e2e --ignore-scripts
           node -e "const p=require('./tests/e2e/package.json'); if (p.devDependencies['@playwright/test'] !== '1.62.1' || p.devDependencies['@wp-playground/cli'] !== '3.1.51' || p.devDependencies['@axe-core/playwright'] !== '4.13.0') process.exit(1)"
-
-      - name: Upload generated E2E lock evidence
-        if: steps.e2e-deps.outputs.mode == 'generated-lock'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: wp121-e2e-generated-lock-${{ github.run_id }}
-          path: tests/e2e/package-lock.json
-          if-no-files-found: error
-          retention-days: 7
 
       - name: Install Chromium and runner dependencies
         shell: bash
@@ -150,20 +135,3 @@ jobs:
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
-
-      - name: Commit generated E2E lock after green bootstrap
-        if: steps.e2e-deps.outputs.mode == 'generated-lock' && github.event_name == 'push' && github.ref == 'refs/heads/implementation/baseline-adoption-gate'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          test -s tests/e2e/package-lock.json
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
-          test "$(git status --porcelain --untracked-files=all tests/e2e/package-lock.json)" = "?? tests/e2e/package-lock.json"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- tests/e2e/package-lock.json
-          git commit -m 'build(wp121): lock browser e2e dependencies'
-          auth="$(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)"
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}" push origin "HEAD:${GITHUB_REF_NAME}"
