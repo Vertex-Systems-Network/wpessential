@@ -8,8 +8,13 @@ on:
       - 'frameworks/**'
       - 'tests/Smoke/**'
       - 'tests/Integration/**'
+      - 'tests/Unit/**'
       - 'wpessential.php'
       - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpunit.xml.dist'
       - '.github/workflows/architecture-guards.yml'
   push:
     branches:
@@ -20,8 +25,13 @@ on:
       - 'frameworks/**'
       - 'tests/Smoke/**'
       - 'tests/Integration/**'
+      - 'tests/Unit/**'
       - 'wpessential.php'
       - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpunit.xml.dist'
       - '.github/workflows/architecture-guards.yml'
   workflow_dispatch:
 
@@ -31,7 +41,7 @@ permissions:
 jobs:
   validate-architecture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 14
+    timeout-minutes: 20
     services:
       mysql:
         image: mysql:8.4
@@ -47,7 +57,7 @@ jobs:
           --health-retries=20
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -64,11 +74,12 @@ jobs:
           test -z "$(git status --porcelain=v1 --untracked-files=no)"
 
       - name: Setup PHP 8.2
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
         with:
           php-version: '8.2'
-          extensions: pdo_mysql, mysqli
+          extensions: pdo_mysql, mysqli, dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
           coverage: none
+          tools: composer:v2
 
       - name: Prepare pinned WordPress 7.1 core fixture
         shell: bash
@@ -80,8 +91,32 @@ jobs:
           tar -xzf /tmp/wordpress-7.1.tar.gz -C /tmp
           test -f /tmp/wordpress/wp-load.php
 
-      - name: Validate Composer metadata
-        run: composer validate --strict --no-check-lock
+      - name: Resolve or install PHP quality graph
+        id: composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f composer.lock; then
+            echo 'mode=locked-install' >> "$GITHUB_OUTPUT"
+            composer install --no-interaction --prefer-dist --no-progress
+          else
+            echo 'mode=generated-lock' >> "$GITHUB_OUTPUT"
+            composer update --no-interaction --prefer-dist --no-progress
+          fi
+          test -s composer.lock
+          composer validate --strict
+
+      - name: Upload generated Composer lock evidence
+        if: steps.composer.outputs.mode == 'generated-lock'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-generated-composer-lock-${{ github.run_id }}
+          path: composer.lock
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Composer dependency advisory audit
+        run: composer audit --locked --no-interaction
 
       - name: Validate architecture manifests
         run: php tools/architecture/validate.php
@@ -90,7 +125,16 @@ jobs:
         run: php tools/architecture/validate-engineering-contracts.php
 
       - name: PHP syntax
-        run: find frameworks tests/Smoke tests/Integration -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
+        run: find frameworks tests/Smoke tests/Integration tests/Unit -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
+
+      - name: WordPress Coding Standards
+        run: composer quality:phpcs
+
+      - name: WordPress-aware PHPStan
+        run: composer quality:phpstan
+
+      - name: PHPUnit unit suite
+        run: composer test:unit
 
       - name: Run diagnostic smoke suite
         id: smoke
@@ -126,7 +170,7 @@ jobs:
 
       - name: Upload smoke diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: smoke-results-${{ github.run_id }}
           path: smoke-results.log
@@ -207,3 +251,7 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/wordpress-job-persistence.php
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
