@@ -15,12 +15,28 @@ type CptRoute = {
 	nonce: string;
 };
 
+type CptValidationIssue = {
+	id: string;
+	severity: string;
+	field: string;
+	message: string;
+};
+
+type CptValidationReport = {
+	valid: boolean;
+	issues: CptValidationIssue[];
+	candidate: {
+		post_type_key: string | null;
+	};
+};
+
 type CptBootstrap = {
 	surface: 'custom-post-types';
 	ajaxUrl: string;
 	ajaxAction: string;
 	routes: {
 		list: CptRoute;
+		validate: CptRoute;
 		save: CptRoute;
 		status: CptRoute;
 	};
@@ -34,6 +50,13 @@ type AjaxEnvelope = {
 		code?: string;
 		message?: string;
 	};
+};
+
+type CptEditorRequest = {
+	id: string;
+	revision: number;
+	payload: CptPayload;
+	status: string;
 };
 
 function isBootstrapRecord( value: unknown ): value is BootstrapRecord {
@@ -68,6 +91,39 @@ function isCptRoute( value: unknown ): value is CptRoute {
 	);
 }
 
+function isCptValidationIssue( value: unknown ): value is CptValidationIssue {
+	return (
+		isBootstrapRecord( value ) &&
+		typeof value.id === 'string' &&
+		typeof value.severity === 'string' &&
+		typeof value.field === 'string' &&
+		typeof value.message === 'string'
+	);
+}
+
+function parseCptValidationReport( value: unknown ): CptValidationReport | null {
+	if (
+		! isBootstrapRecord( value ) ||
+		typeof value.valid !== 'boolean' ||
+		! Array.isArray( value.issues ) ||
+		! value.issues.every( isCptValidationIssue ) ||
+		! isBootstrapRecord( value.candidate )
+	) {
+		return null;
+	}
+
+	const key = value.candidate.post_type_key;
+	if ( key !== null && typeof key !== 'string' ) {
+		return null;
+	}
+
+	return {
+		valid: value.valid,
+		issues: value.issues,
+		candidate: { post_type_key: key },
+	};
+}
+
 function parseCptBootstrap( value: unknown ): CptBootstrap | null {
 	if (
 		! isBootstrapRecord( value ) ||
@@ -80,6 +136,7 @@ function parseCptBootstrap( value: unknown ): CptBootstrap | null {
 		typeof value.ajaxAction !== 'string' ||
 		! isBootstrapRecord( value.routes ) ||
 		! isCptRoute( value.routes.list ) ||
+		! isCptRoute( value.routes.validate ) ||
 		! isCptRoute( value.routes.save ) ||
 		! isCptRoute( value.routes.status ) ||
 		! Array.isArray( value.definitions ) ||
@@ -94,6 +151,7 @@ function parseCptBootstrap( value: unknown ): CptBootstrap | null {
 		ajaxAction: value.ajaxAction,
 		routes: {
 			list: value.routes.list,
+			validate: value.routes.validate,
 			save: value.routes.save,
 			status: value.routes.status,
 		},
@@ -203,6 +261,66 @@ function setNotice( message: string, error = false ): void {
 	notice.hidden = message === '';
 	notice.classList.toggle( 'notice-error', error );
 	notice.classList.toggle( 'notice-success', ! error && message !== '' );
+}
+
+function clearValidationReport(): void {
+	const report = document.getElementById( 'wpessential-cpt-validation' );
+	if ( report instanceof HTMLElement ) {
+		report.hidden = true;
+		report.classList.remove( 'notice', 'notice-error', 'notice-warning', 'notice-success' );
+	}
+}
+
+function renderValidationReport( report: CptValidationReport ): void {
+	const container = document.getElementById( 'wpessential-cpt-validation' );
+	if ( ! ( container instanceof HTMLElement ) ) {
+		return;
+	}
+	const summary = container.querySelector(
+		'[data-wpessential-cpt-validation-summary]'
+	);
+	const issues = container.querySelector(
+		'[data-wpessential-cpt-validation-issues]'
+	);
+	if ( ! ( summary instanceof HTMLElement ) || ! ( issues instanceof HTMLElement ) ) {
+		return;
+	}
+
+	issues.replaceChildren();
+	for ( const issue of report.issues ) {
+		const item = document.createElement( 'li' );
+		const severity = issue.severity.replaceAll( '_', ' ' );
+		item.textContent = `${ severity }: ${ issue.message }`;
+		item.dataset.wpessentialCptValidationSeverity = issue.severity;
+		issues.append( item );
+	}
+
+	const warningCount = report.issues.filter(
+		( issue ) => issue.severity !== 'blocked'
+	).length;
+	if ( report.valid ) {
+		summary.textContent =
+			warningCount === 0
+				? 'Validation passed. No blocking issues found.'
+				: `Validation passed with ${ warningCount } warning or informational item(s).`;
+	} else {
+		const blockedCount = report.issues.filter(
+			( issue ) => issue.severity === 'blocked'
+		).length;
+		summary.textContent = `Validation blocked by ${ blockedCount } issue(s). Resolve them before saving.`;
+	}
+
+	container.hidden = false;
+	container.classList.add( 'notice' );
+	container.classList.toggle( 'notice-error', ! report.valid );
+	container.classList.toggle(
+		'notice-warning',
+		report.valid && report.issues.length > 0
+	);
+	container.classList.toggle(
+		'notice-success',
+		report.valid && report.issues.length === 0
+	);
 }
 
 async function postCptRoute(
@@ -364,6 +482,7 @@ function resetCptForm(): void {
 	if ( cancel ) {
 		cancel.hidden = true;
 	}
+	clearValidationReport();
 }
 
 function editCptDefinition( definition: CptDefinition ): void {
@@ -411,7 +530,70 @@ function editCptDefinition( definition: CptDefinition ): void {
 	if ( cancel ) {
 		cancel.hidden = false;
 	}
+	clearValidationReport();
 	textInput( 'wpessential-cpt-name' )?.focus();
+}
+
+function collectCptEditorRequest(
+	definitions: CptDefinition[]
+): CptEditorRequest {
+	const id = textInput( 'wpessential-cpt-id' )?.value ?? '';
+	const revision = Number(
+		textInput( 'wpessential-cpt-revision' )?.value ?? 0
+	);
+	const existing = definitions.find( ( definition ) => definition.id === id );
+	const selectedSupports = supportValues();
+	const editableSupports = visibleSupportKeys();
+	const existingSupports = Array.isArray( existing?.payload.supports )
+		? existing.payload.supports.filter( isStringValue )
+		: [];
+	const preservedSupports = existingSupports.filter(
+		( support ) => ! editableSupports.includes( support )
+	);
+	const archiveEnabled = boolInput( 'wpessential-cpt-archive' );
+	const existingArchive = existing?.payload.has_archive;
+	const archiveValue =
+		archiveEnabled && typeof existingArchive === 'string'
+			? existingArchive
+			: archiveEnabled;
+
+	return {
+		id,
+		revision,
+		status: selectInput( 'wpessential-cpt-status' )?.value ?? 'draft',
+		payload: {
+			...( existing?.payload ?? {} ),
+			post_type_key: cptFieldValue( 'post_type_key' ),
+			name: cptFieldValue( 'name' ),
+			singular_name: cptFieldValue( 'singular_name' ),
+			description: cptFieldValue( 'description' ),
+			public: boolInput( 'wpessential-cpt-public' ),
+			show_in_rest: boolInput( 'wpessential-cpt-rest' ),
+			hierarchical: boolInput( 'wpessential-cpt-hierarchical' ),
+			has_archive: archiveValue,
+			supports: [ ...preservedSupports, ...selectedSupports ],
+		},
+	};
+}
+
+function validationRequest( editor: CptEditorRequest ): CptPayload {
+	const request: CptPayload = { payload: editor.payload };
+	if ( editor.id !== '' ) {
+		request.id = editor.id;
+	}
+	return request;
+}
+
+function saveRequest( editor: CptEditorRequest ): CptPayload {
+	const request: CptPayload = {
+		payload: editor.payload,
+		status: editor.status,
+	};
+	if ( editor.id !== '' ) {
+		request.id = editor.id;
+		request.expected_revision = editor.revision;
+	}
+	return request;
 }
 
 function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
@@ -438,6 +620,22 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		renderCptRows( definitions );
 	};
 
+	const validate = async (
+		editor: CptEditorRequest
+	): Promise< CptValidationReport > => {
+		const data = await postCptRoute(
+			bootstrap,
+			bootstrap.routes.validate,
+			validationRequest( editor )
+		);
+		const report = parseCptValidationReport( data );
+		if ( ! report ) {
+			throw new Error( 'The Custom Post Type validation response was invalid.' );
+		}
+		renderValidationReport( report );
+		return report;
+	};
+
 	const run = async ( operation: () => Promise< void > ): Promise< void > => {
 		if ( busy ) {
 			return;
@@ -462,60 +660,30 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 
 	const form = document.getElementById( 'wpessential-cpt-form' );
 	if ( form instanceof HTMLFormElement ) {
+		form.addEventListener( 'input', clearValidationReport );
+		form.addEventListener( 'change', clearValidationReport );
 		form.addEventListener( 'submit', ( event ) => {
 			event.preventDefault();
 			void run( async () => {
-				const id = textInput( 'wpessential-cpt-id' )?.value ?? '';
-				const revision = Number(
-					textInput( 'wpessential-cpt-revision' )?.value ?? 0
-				);
-				const existing = definitions.find(
-					( definition ) => definition.id === id
-				);
-				const selectedSupports = supportValues();
-				const editableSupports = visibleSupportKeys();
-				const existingSupports = Array.isArray(
-					existing?.payload.supports
-				)
-					? existing.payload.supports.filter( isStringValue )
-					: [];
-				const preservedSupports = existingSupports.filter(
-					( support ) => ! editableSupports.includes( support )
-				);
-				const archiveEnabled = boolInput( 'wpessential-cpt-archive' );
-				const existingArchive = existing?.payload.has_archive;
-				const archiveValue =
-					archiveEnabled && typeof existingArchive === 'string'
-						? existingArchive
-						: archiveEnabled;
-				const payload: CptPayload = {
-					...( existing?.payload ?? {} ),
-					post_type_key: cptFieldValue( 'post_type_key' ),
-					name: cptFieldValue( 'name' ),
-					singular_name: cptFieldValue( 'singular_name' ),
-					description: cptFieldValue( 'description' ),
-					public: boolInput( 'wpessential-cpt-public' ),
-					show_in_rest: boolInput( 'wpessential-cpt-rest' ),
-					hierarchical: boolInput( 'wpessential-cpt-hierarchical' ),
-					has_archive: archiveValue,
-					supports: [ ...preservedSupports, ...selectedSupports ],
-				};
-				const request: CptPayload = {
-					payload,
-					status:
-						selectInput( 'wpessential-cpt-status' )?.value ??
-						'draft',
-				};
-				if ( id !== '' ) {
-					request.id = id;
-					request.expected_revision = revision;
+				const editor = collectCptEditorRequest( definitions );
+				const report = await validate( editor );
+				if ( ! report.valid ) {
+					setNotice(
+						'Custom post type was not saved because validation found blocking issues.',
+						true
+					);
+					return;
 				}
 
-				await postCptRoute( bootstrap, bootstrap.routes.save, request );
+				await postCptRoute(
+					bootstrap,
+					bootstrap.routes.save,
+					saveRequest( editor )
+				);
 				await refresh();
 				resetCptForm();
 				setNotice(
-					id === ''
+					editor.id === ''
 						? 'Custom post type created.'
 						: 'Custom post type updated.'
 				);
@@ -523,6 +691,11 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		} );
 	}
 
+	buttonInput( 'wpessential-cpt-validate' )?.addEventListener( 'click', () => {
+		void run( async () => {
+			await validate( collectCptEditorRequest( definitions ) );
+		} );
+	} );
 	buttonInput( 'wpessential-cpt-cancel' )?.addEventListener( 'click', () => {
 		resetCptForm();
 		setNotice( '' );
