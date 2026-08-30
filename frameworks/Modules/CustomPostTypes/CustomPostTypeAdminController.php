@@ -180,7 +180,12 @@ final class CustomPostTypeAdminController
 
         echo '<p><label for="wpessential-cpt-status"><strong>' . esc_html__('Lifecycle status', 'wpessential') . '</strong></label><br>';
         echo '<select id="wpessential-cpt-status">';
-        foreach (['draft' => __('Draft', 'wpessential'), 'published' => __('Published', 'wpessential'), 'disabled' => __('Disabled', 'wpessential')] as $value => $label) {
+        foreach ([
+            'draft' => __('Draft', 'wpessential'),
+            'published' => __('Published', 'wpessential'),
+            'disabled' => __('Disabled', 'wpessential'),
+            'archived' => __('Archived', 'wpessential'),
+        ] as $value => $label) {
             echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
         }
         echo '</select></p>';
@@ -233,7 +238,10 @@ final class CustomPostTypeAdminController
         } else {
             echo '<button type="button" class="button button-small" data-wpessential-cpt-status="published" data-wpessential-cpt-id="' . esc_attr($id) . '">' . esc_html__('Publish', 'wpessential') . '</button> ';
         }
-        echo '<button type="button" class="button button-small" data-wpessential-cpt-status="archived" data-wpessential-cpt-id="' . esc_attr($id) . '">' . esc_html__('Archive', 'wpessential') . '</button></td>';
+        if ($status !== 'archived') {
+            echo '<button type="button" class="button button-small" data-wpessential-cpt-status="archived" data-wpessential-cpt-id="' . esc_attr($id) . '">' . esc_html__('Archive', 'wpessential') . '</button>';
+        }
+        echo '</td>';
         echo '</tr>';
     }
 
@@ -275,7 +283,15 @@ final class CustomPostTypeAdminController
                 return [[], __('The Custom Post Type list returned an invalid response.', 'wpessential')];
             }
 
-            return [array_values($result['definitions']), null];
+            $definitions = [];
+            foreach ($result['definitions'] as $definition) {
+                if (!is_array($definition)) {
+                    return [[], __('The Custom Post Type list returned an invalid response.', 'wpessential')];
+                }
+                $definitions[] = $definition;
+            }
+
+            return [$definitions, null];
         } catch (Throwable) {
             return [[], __('Custom Post Type definitions could not be loaded.', 'wpessential')];
         }
