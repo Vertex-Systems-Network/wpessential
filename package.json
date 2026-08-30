@@ -1,0 +1,23 @@
+{
+  "name": "wpessential-admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WPEssential WordPress admin application build toolchain",
+  "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "npm run build:admin",
+    "build:admin": "wp-scripts build admin-ui/src/main.ts --output-path=assets/admin",
+    "check:engines": "wp-scripts check-engines",
+    "lint:css": "wp-scripts lint-style 'admin-ui/src/**/*.scss'",
+    "lint:js": "wp-scripts lint-js admin-ui/src",
+    "lint:package": "wp-scripts lint-pkg-json",
+    "typecheck": "tsc --noEmit --project tsconfig.json"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "34.2.0",
+    "typescript": "7.0.2"
+  }
+}
