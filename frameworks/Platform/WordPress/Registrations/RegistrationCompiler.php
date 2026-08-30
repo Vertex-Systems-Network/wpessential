@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Registrations;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -17,6 +16,31 @@ final class RegistrationCompiler
 
     /** @param iterable<RegistrationDefinition> $definitions */
     public function compileAndPublish(iterable $definitions): CompiledRegistrationManifest
+    {
+        return $this->publishEntries($this->buildEntries($definitions));
+    }
+
+    /** @param iterable<RegistrationDefinition> $definitions */
+    public function compileAndPublishIfChanged(iterable $definitions): ?CompiledRegistrationManifest
+    {
+        $entries = $this->buildEntries($definitions);
+        $active = $this->store->active();
+
+        if ($active instanceof CompiledRegistrationManifest && $active->entries === $entries) {
+            return $active;
+        }
+        if ($active === null && $entries === []) {
+            return null;
+        }
+
+        return $this->publishEntries($entries);
+    }
+
+    /**
+     * @param iterable<RegistrationDefinition> $definitions
+     * @return array<string,array<string,array<string,mixed>>>
+     */
+    private function buildEntries(iterable $definitions): array
     {
         $entries = [];
         foreach ($definitions as $definition) {
@@ -41,7 +65,12 @@ final class RegistrationCompiler
             ksort($items, SORT_STRING);
         }
         unset($items);
+        return $entries;
+    }
 
+    /** @param array<string,array<string,array<string,mixed>>> $entries */
+    private function publishEntries(array $entries): CompiledRegistrationManifest
+    {
         $generation = $this->store instanceof CompiledRegistrationGenerationSequenceInterface
             ? $this->store->nextGeneration()
             : (($this->store->active()?->generation ?? 0) + 1);
@@ -55,6 +84,7 @@ final class RegistrationCompiler
         return $manifest;
     }
 
+    /** @param array<string,mixed> $value @return array<string,mixed> */
     private static function canonicalize(array $value): array
     {
         foreach ($value as $key => $item) {

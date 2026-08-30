@@ -4,24 +4,43 @@ declare(strict_types=1);
 
 namespace WPEssential\Bootstrap;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
+use Throwable;
+use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Kernel\Kernel;
+use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
+use WPEssential\Platform\Database\Migrations\MigrationRegistry;
+use WPEssential\Platform\Database\Migrations\MigrationRunner;
+use WPEssential\Platform\Database\Migrations\WpdbMigrationStateStore;
+use WPEssential\Platform\Database\NativeWpdbAdapter;
+use WPEssential\Platform\Definitions\DefinitionScope;
+use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\Definitions\Migrations\CreateDefinitionTablesMigration;
+use WPEssential\Platform\Definitions\PersistentDefinitionRepository;
+use WPEssential\Platform\Definitions\WpdbDefinitionTableGateway;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Ajax\NativeWordPressAjaxEnvironment;
 use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
+use WPEssential\Platform\WordPress\Registrations\AtomicCompiledRegistrationStore;
+use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationScope;
+use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationStoreInterface;
 use WPEssential\Platform\WordPress\Registrations\InMemoryCompiledRegistrationStore;
+use WPEssential\Platform\WordPress\Registrations\Migrations\CreateCompiledRegistrationTablesMigration;
+use WPEssential\Platform\WordPress\Registrations\PostTypeRuntimeRegistrar;
+use WPEssential\Platform\WordPress\Registrations\RegistrationCompilationStatus;
 use WPEssential\Platform\WordPress\Registrations\RegistrationCompiler;
+use WPEssential\Platform\WordPress\Registrations\RegistrationDefinitionProviderRegistry;
 use WPEssential\Platform\WordPress\Registrations\RegistrationRuntimeLoader;
+use WPEssential\Platform\WordPress\Registrations\WpdbCompiledRegistrationPersistenceGateway;
 use WPEssential\Platform\WordPress\Security\NativeWordPressNonceEnvironment;
 use WPEssential\Platform\WordPress\Security\NonceManager;
 
@@ -55,9 +74,12 @@ final class Plugin
         $ajaxDispatcher = new AjaxDispatcher($ajaxRoutes, $nonceManager, [$ajaxEnvironment, 'currentUserCan']);
         $ajaxGateway = new WordPressAjaxGateway($ajaxAction, $ajaxDispatcher, $ajaxEnvironment);
 
-        $registrationStore = new InMemoryCompiledRegistrationStore();
+        [$definitionRepository, $registrationStore, $database] = self::createPersistenceServices();
+        $registrationProviders = new RegistrationDefinitionProviderRegistry();
         $registrationCompiler = new RegistrationCompiler($registrationStore);
         $registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
+        $registrationStatus = new RegistrationCompilationStatus();
+        $postTypeRegistrar = new PostTypeRuntimeRegistrar($registrationRuntime);
         $traces = $debug ? new BoundedInMemoryTraceRecorder() : new NullTraceRecorder();
 
         $pluginRoot = dirname(__DIR__, 2);
@@ -71,13 +93,22 @@ final class Plugin
         $services->set('platform.ajax.routes', $ajaxRoutes);
         $services->set('platform.ajax.dispatcher', $ajaxDispatcher);
         $services->set('platform.ajax.gateway', $ajaxGateway);
+        if ($database instanceof NativeWpdbAdapter) {
+            $services->set('platform.database', $database);
+        }
+        $services->set('platform.definitions', $definitionRepository);
         $services->set('platform.registrations.store', $registrationStore);
+        $services->set('platform.registrations.providers', $registrationProviders);
         $services->set('platform.registrations.compiler', $registrationCompiler);
         $services->set('platform.registrations.runtime', $registrationRuntime);
+        $services->set('platform.registrations.compilation-status', $registrationStatus);
+        $services->set('platform.registrations.post-types', $postTypeRegistrar);
         $services->set('platform.traces', $traces);
         $services->set('platform.admin.diagnostics', $runtimeDiagnostics);
         $services->set('platform.admin.assets', $adminAssets);
         $services->set('platform.admin.controller', $adminController);
+
+        self::$kernel->registerModule(new CustomPostTypeModule());
 
         if (function_exists('add_action')) {
             $ajaxGateway->register();
@@ -85,12 +116,67 @@ final class Plugin
         }
 
         self::$kernel->boot();
+
+        try {
+            $manifest = $registrationCompiler->compileAndPublishIfChanged($registrationProviders->definitions());
+            $registrationStatus->markSuccess($manifest);
+        } catch (Throwable $exception) {
+            $registrationStatus->markFailure($exception);
+        }
+        $postTypeRegistrar->register();
+
         return self::$kernel;
     }
 
     public static function kernel(): ?Kernel
     {
         return self::$kernel;
+    }
+
+    /** @return array{DefinitionRepositoryInterface, CompiledRegistrationStoreInterface, NativeWpdbAdapter|null} */
+    private static function createPersistenceServices(): array
+    {
+        $wpdb = $GLOBALS['wpdb'] ?? null;
+        if (!is_object($wpdb) || !self::supportsMysqlPersistence($wpdb)) {
+            return [new InMemoryDefinitionRepository(), new InMemoryCompiledRegistrationStore(), null];
+        }
+
+        $database = new NativeWpdbAdapter($wpdb);
+        $migrations = new MigrationRegistry();
+        $migrations->register(new CreateCompiledRegistrationTablesMigration($database));
+        $migrations->register(new CreateDefinitionTablesMigration($database));
+        (new MigrationRunner($migrations, new WpdbMigrationStateStore($database)))->runPending();
+
+        $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
+        $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
+        $definitionScope = DefinitionScope::site($networkId, $siteId);
+        $registrationScope = CompiledRegistrationScope::site($networkId, $siteId);
+
+        $definitions = new PersistentDefinitionRepository(new WpdbDefinitionTableGateway($database, $definitionScope));
+        $registrations = new AtomicCompiledRegistrationStore(
+            new WpdbCompiledRegistrationPersistenceGateway($database),
+            $registrationScope,
+        );
+        return [$definitions, $registrations, $database];
+    }
+
+    private static function supportsMysqlPersistence(object $wpdb): bool
+    {
+        $class = strtolower($wpdb::class);
+        if (str_contains($class, 'sqlite')) {
+            return false;
+        }
+        foreach (['SQLITE_DB_DROPIN_VERSION', 'WP_SQLITE_AST_DRIVER_VERSION'] as $constant) {
+            if (defined($constant)) {
+                return false;
+            }
+        }
+        foreach (['prepare', 'get_row', 'get_results', 'get_var', 'query', 'insert'] as $method) {
+            if (!method_exists($wpdb, $method)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static function environmentSupported(): bool
