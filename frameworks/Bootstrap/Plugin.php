@@ -12,9 +12,11 @@ use Throwable;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
+use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
+use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Database\Migrations\MigrationRegistry;
 use WPEssential\Platform\Database\Migrations\MigrationRunner;
 use WPEssential\Platform\Database\Migrations\WpdbMigrationStateStore;
@@ -26,6 +28,10 @@ use WPEssential\Platform\Definitions\PersistentDefinitionRepository;
 use WPEssential\Platform\Definitions\WpdbDefinitionTableGateway;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
+use WPEssential\Platform\WordPress\Abilities\NativeWordPressAbilityEnvironment;
+use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
+use WPEssential\Platform\WordPress\Abilities\WordPressCapabilityChecker;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Ajax\NativeWordPressAjaxEnvironment;
@@ -74,6 +80,12 @@ final class Plugin
         $ajaxDispatcher = new AjaxDispatcher($ajaxRoutes, $nonceManager, [$ajaxEnvironment, 'currentUserCan']);
         $ajaxGateway = new WordPressAjaxGateway($ajaxAction, $ajaxDispatcher, $ajaxEnvironment);
 
+        $abilityEnvironment = new NativeWordPressAbilityEnvironment();
+        $abilityContexts = new WordPressExecutionContextFactory($abilityEnvironment);
+        $abilityPolicy = new PolicyEngine(new WordPressCapabilityChecker($abilityEnvironment));
+        $abilities = new AbilityRegistry($abilityPolicy);
+        $abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
+
         [$definitionRepository, $registrationStore, $database] = self::createPersistenceServices();
         $registrationProviders = new RegistrationDefinitionProviderRegistry();
         $registrationCompiler = new RegistrationCompiler($registrationStore);
@@ -93,6 +105,10 @@ final class Plugin
         $services->set('platform.ajax.routes', $ajaxRoutes);
         $services->set('platform.ajax.dispatcher', $ajaxDispatcher);
         $services->set('platform.ajax.gateway', $ajaxGateway);
+        $services->set('platform.abilities', $abilities);
+        $services->set('platform.abilities.policy', $abilityPolicy);
+        $services->set('platform.abilities.contexts', $abilityContexts);
+        $services->set('platform.abilities.wordpress', $abilityBridge);
         if ($database instanceof NativeWpdbAdapter) {
             $services->set('platform.database', $database);
         }
@@ -113,6 +129,8 @@ final class Plugin
         if (function_exists('add_action')) {
             $ajaxGateway->register();
             $adminController->register();
+            add_action('wp_abilities_api_categories_init', [$abilityBridge, 'registerCategory']);
+            add_action('wp_abilities_api_init', [$abilityBridge, 'registerAbilities']);
         }
 
         self::$kernel->boot();
