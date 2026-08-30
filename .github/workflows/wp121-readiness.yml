@@ -1,22 +1,6 @@
 name: WP121 Shared Foundation Readiness
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/wp121-readiness.yml'
-      - 'tools/quality/wp121-readiness.json'
-      - 'CHECKPOINT.md'
-      - 'docs/IMPLEMENTATION/PLATFORM-FOUNDATION-WP121.md'
-      - 'docs/IMPLEMENTATION/WP121-SHARED-FOUNDATION-READINESS-GATE.md'
-  push:
-    branches:
-      - 'implementation/**'
-    paths:
-      - '.github/workflows/wp121-readiness.yml'
-      - 'tools/quality/wp121-readiness.json'
-      - 'CHECKPOINT.md'
-      - 'docs/IMPLEMENTATION/PLATFORM-FOUNDATION-WP121.md'
-      - 'docs/IMPLEMENTATION/WP121-SHARED-FOUNDATION-READINESS-GATE.md'
   workflow_dispatch:
 
 permissions:
@@ -24,60 +8,34 @@ permissions:
   actions: read
 
 concurrency:
-  group: wp121-readiness-${{ github.event_name }}-${{ github.ref }}
+  group: wp121-readiness-manual-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   aggregate-readiness:
-    name: exact-source hosted evidence aggregation
+    name: historical exact-source hosted evidence verification
     runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
-      - name: Checkout exact readiness head
+      - name: Checkout verification head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Verify readiness head and manifest
+      - name: Verify historical readiness manifest
         shell: bash
-        env:
-          WPE_EXPECTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_HEAD}"
           test -z "$(git status --porcelain=v1 --untracked-files=no)"
           jq -e '.schema == "wp121-shared-foundation-readiness-v1"' tools/quality/wp121-readiness.json >/dev/null
           jq -e '.certified_source_sha | test("^[0-9a-f]{40}$")' tools/quality/wp121-readiness.json >/dev/null
           jq -e '.required_runs | length == 5' tools/quality/wp121-readiness.json >/dev/null
-
-      - name: Prove no implementation drift after certified source
-        shell: bash
-        run: |
-          set -euo pipefail
           source_sha="$(jq -r '.certified_source_sha' tools/quality/wp121-readiness.json)"
           git cat-file -e "${source_sha}^{commit}"
           git merge-base --is-ancestor "${source_sha}" HEAD
-
-          unexpected="$(
-            git diff --name-only "${source_sha}..HEAD" | while IFS= read -r path; do
-              case "${path}" in
-                .github/workflows/wp121-readiness.yml|tools/quality/wp121-readiness.json|CHECKPOINT.md|docs/IMPLEMENTATION/PLATFORM-FOUNDATION-WP121.md|docs/IMPLEMENTATION/WP121-SHARED-FOUNDATION-READINESS-GATE.md)
-                  ;;
-                *)
-                  printf '%s\n' "${path}"
-                  ;;
-              esac
-            done
-          )"
-
-          if [ -n "${unexpected}" ]; then
-            echo "Implementation drift exists after certified source SHA:" >&2
-            printf '%s\n' "${unexpected}" >&2
-            exit 1
-          fi
 
       - name: Verify canonical hosted prerequisite runs
         shell: bash
@@ -133,12 +91,13 @@ jobs:
           jq -n \
             --arg schema 'wp121-shared-foundation-readiness-evidence-v1' \
             --arg result 'PASS' \
+            --arg mode 'historical-read-only' \
             --arg certified_source_sha "${source_sha}" \
-            --arg readiness_head_sha "$(git rev-parse HEAD)" \
+            --arg verification_head_sha "$(git rev-parse HEAD)" \
             --arg branch "${branch}" \
             --argjson pull_request "${pr}" \
             --argjson required_runs "$(cat /tmp/wp121-observed.json)" \
-            '{schema:$schema,result:$result,certified_source_sha:$certified_source_sha,readiness_head_sha:$readiness_head_sha,branch:$branch,pull_request:$pull_request,required_runs:$required_runs}' \
+            '{schema:$schema,result:$result,mode:$mode,certified_source_sha:$certified_source_sha,verification_head_sha:$verification_head_sha,branch:$branch,pull_request:$pull_request,required_runs:$required_runs}' \
             > artifacts/readiness/evidence.json
 
           cat artifacts/readiness/evidence.json
