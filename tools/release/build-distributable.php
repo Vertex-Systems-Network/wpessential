@@ -316,12 +316,13 @@ try {
     @unlink($stageRoot . '/composer.lock');
     validateStagedPayload($stageRoot);
 
-    $probeCode = sprintf(
-        'define("ABSPATH", __DIR__); require %s; if (!class_exists("WPEssential\\\\Bootstrap\\\\Plugin")) { fwrite(STDERR, "autoload probe failed\\n"); exit(1); }',
-        var_export($stageRoot . '/vendor/autoload.php', true)
-    );
-    $autoloadProbe = escapeshellarg(PHP_BINARY) . ' -r ' . escapeshellarg($probeCode);
-    runCommand($autoloadProbe);
+    if (!defined('ABSPATH')) {
+        define('ABSPATH', $stageRoot);
+    }
+    require_once $stageRoot . '/vendor/autoload.php';
+    if (!class_exists(\WPEssential\Bootstrap\Plugin::class)) {
+        fail('Production Composer autoload probe could not resolve WPEssential\\Bootstrap\\Plugin.');
+    }
 
     $artifactDir = $root . '/artifacts';
     ensureDirectory($artifactDir);
