@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
+use JsonException;
 use RuntimeException;
 
 final class NativeWordPressAjaxEnvironment implements WordPressAjaxEnvironmentInterface
@@ -23,7 +23,22 @@ final class NativeWordPressAjaxEnvironment implements WordPressAjaxEnvironmentIn
 
     public function request(): array
     {
-        return is_array($_POST) ? wp_unslash($_POST) : [];
+        $request = is_array($_POST) ? wp_unslash($_POST) : [];
+        $payloadJson = $request['payload_json'] ?? null;
+        if (!is_string($payloadJson)) {
+            return $request;
+        }
+
+        unset($request['payload_json']);
+        try {
+            $payload = json_decode($payloadJson, true, flags: JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            $request['payload'] = null;
+            return $request;
+        }
+
+        $request['payload'] = is_array($payload) ? $payload : null;
+        return $request;
     }
 
     public function isAuthenticated(): bool
