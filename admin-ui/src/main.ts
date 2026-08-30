@@ -155,12 +155,22 @@ function setBoolInput( id: string, value: unknown, fallback = false ): void {
 	}
 }
 
-function supportValues(): string[] {
+function supportInputs(): HTMLInputElement[] {
 	return Array.from(
 		document.querySelectorAll< HTMLInputElement >(
 			'[data-wpessential-cpt-support]'
 		)
-	)
+	);
+}
+
+function visibleSupportKeys(): string[] {
+	return supportInputs()
+		.map( ( input ) => input.dataset.wpessentialCptSupport ?? '' )
+		.filter( ( value ) => value !== '' );
+}
+
+function supportValues(): string[] {
+	return supportInputs()
 		.filter( ( input ) => input.checked )
 		.map( ( input ) => input.dataset.wpessentialCptSupport ?? '' )
 		.filter( ( value ) => value !== '' );
@@ -170,9 +180,7 @@ function setSupportValues( value: unknown ): void {
 	const supports = Array.isArray( value )
 		? value.filter( ( item ): item is string => typeof item === 'string' )
 		: [ 'title', 'editor' ];
-	for ( const input of document.querySelectorAll< HTMLInputElement >(
-		'[data-wpessential-cpt-support]'
-	) ) {
+	for ( const input of supportInputs() ) {
 		input.checked = supports.includes(
 			input.dataset.wpessentialCptSupport ?? ''
 		);
@@ -378,7 +386,11 @@ function editCptDefinition( definition: CptDefinition ): void {
 		'wpessential-cpt-hierarchical',
 		definition.payload.hierarchical
 	);
-	setBoolInput( 'wpessential-cpt-archive', definition.payload.has_archive );
+	const archiveValue = definition.payload.has_archive;
+	setBoolInput(
+		'wpessential-cpt-archive',
+		typeof archiveValue === 'string' ? true : archiveValue
+	);
 	setSupportValues( definition.payload.supports );
 	const status = selectInput( 'wpessential-cpt-status' );
 	if ( status ) {
@@ -456,6 +468,25 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 				const existing = definitions.find(
 					( definition ) => definition.id === id
 				);
+				const selectedSupports = supportValues();
+				const editableSupports = visibleSupportKeys();
+				const existingSupports = Array.isArray(
+					existing?.payload.supports
+				)
+					? existing.payload.supports.filter(
+							( support ): support is string =>
+								typeof support === 'string'
+						)
+					: [];
+				const preservedSupports = existingSupports.filter(
+					( support ) => ! editableSupports.includes( support )
+				);
+				const archiveEnabled = boolInput( 'wpessential-cpt-archive' );
+				const existingArchive = existing?.payload.has_archive;
+				const archiveValue =
+					archiveEnabled && typeof existingArchive === 'string'
+						? existingArchive
+						: archiveEnabled;
 				const payload: CptPayload = {
 					...( existing?.payload ?? {} ),
 					post_type_key: cptFieldValue( 'post_type_key' ),
@@ -465,8 +496,8 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 					public: boolInput( 'wpessential-cpt-public' ),
 					show_in_rest: boolInput( 'wpessential-cpt-rest' ),
 					hierarchical: boolInput( 'wpessential-cpt-hierarchical' ),
-					has_archive: boolInput( 'wpessential-cpt-archive' ),
-					supports: supportValues(),
+					has_archive: archiveValue,
+					supports: [ ...preservedSupports, ...selectedSupports ],
 				};
 				const request: CptPayload = {
 					payload,
