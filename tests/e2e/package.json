@@ -2,16 +2,35 @@
   "name": "wpessential-e2e",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "description": "WPEssential packaged WordPress browser and accessibility evidence toolchain",
+  "author": "VSN Team",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "playwright",
+    "accessibility",
+    "wpessential"
+  ],
+  "homepage": "https://wpessential.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vertex-Systems-Network/wpesssential.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vertex-Systems-Network/wpesssential/issues"
+  },
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24 <25",
+    "npm": ">=10 <12"
   },
-  "scripts": {
-    "test": "playwright test"
-  },
+  "type": "module",
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.62.1",
     "@wp-playground/cli": "3.1.51"
+  },
+  "scripts": {
+    "test": "playwright test"
   }
 }
