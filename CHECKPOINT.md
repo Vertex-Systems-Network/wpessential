@@ -41,12 +41,13 @@ Implemented/accepted:
 - ADR-0219 WordPress.org-facing metadata/contribution/release preparedness + machine-enforced `ABSPATH` guards;
 - ADR-0220 real WordPress AJAX/nonce/Policy integration through canonical Ability/Policy;
 - **ADR-0221 Action Scheduler public-API backend + tested 3.9.3/4.1.0 coexistence profile**;
-- **ADR-0222 WPE-owned durable Job persistence, revision CAS, attempts, leases, heartbeat, checkpoints and stale-worker rejection**.
+- **ADR-0222 WPE-owned durable Job persistence, revision CAS, attempts, leases, heartbeat, checkpoints and stale-worker rejection**;
 - minimal Platform admin shell with a server-rendered Runtime Observatory and progressive TypeScript enhancement;
 - deterministic `@wordpress/scripts` admin artifact contract (`main.js`, `main.css`, `main.asset.php`);
 - Composer and Node 24/npm quality toolchains with committed lockfiles;
 - executable 10K/100K compiled-registration scale evidence;
-- deterministic runtime-only WordPress plugin ZIP construction and license/package validation baseline.
+- deterministic runtime-only WordPress plugin ZIP construction and license/package validation baseline;
+- real-browser packaged Runtime Observatory E2E/accessibility baseline with a committed locked, read-only Playwright/Playground/Axe toolchain.
 
 ## WP121 admin toolchain closure
 
@@ -87,7 +88,48 @@ Verified plugin ZIP evidence:
 - **0 runtime Composer packages** at this checkpoint;
 - CI evidence artifact ID **9730849701**.
 
-This certifies deterministic development-line packaging for the current base plugin payload. It is not a WordPress.org stable release and does not certify a future Free/Pro split that does not yet exist in this implementation tranche.
+This certifies deterministic development-line packaging for the package-gate source head. It is not a WordPress.org stable release and does not certify a future Free/Pro split that does not yet exist in this implementation tranche.
+
+## WP121 real-browser E2E/accessibility closure
+
+WP121.2 is **DONE / PASS**.
+
+Canonical locked/read-only browser source head `9e1039a697db44b6102377eafdf667afdfc79817` is GREEN in:
+- Browser E2E Accessibility run **33308824454 / #11**;
+- Architecture Guards run **33308824404 / #317**;
+- Distributable Package run **33308824442 / #17**;
+- Platform Compatibility Matrix run **33308824465 / #60**.
+
+The browser gate now:
+- requires committed `tests/e2e/package-lock.json` and installs the E2E graph only with hosted `npm ci`;
+- runs with `contents: read`; the temporary bootstrap self-commit/write path has been removed;
+- builds the exact deterministic distributable and mounts that unpacked plugin into WordPress Playground;
+- uses Playwright **1.62.1**, `@wp-playground/cli` **3.1.51** and `@axe-core/playwright` **4.13.0**;
+- navigates the administrator Runtime Observatory in Chromium;
+- asserts semantic headings/table/runtime diagnostics, progressive enhancement `data-wpessential-enhanced="ready"` and zero page errors;
+- scans only the WPE-owned `#wpessential-admin-root` subtree with Axe so WordPress-core admin chrome is not falsely certified;
+- uses a named plugin-owned `<section aria-labelledby="wpessential-admin-title">` inside WordPress admin's existing main landmark, with no Axe-rule suppression.
+
+Hosted browser evidence:
+- **2/2 Playwright tests passed**, 0 unexpected, 0 flaky;
+- Axe **0 violations / 15 passes** in the scoped WPE-owned Runtime Observatory root;
+- locked E2E dependency install reported **0 vulnerabilities**;
+- Chromium for Testing **151.0.7922.34** was installed by the pinned Playwright graph;
+- evidence artifact ID **9731346638**;
+- artifact digest **`sha256:65ec1d2e7ea41e3e4a6f0165a94d6e5a2aa1dcc09b1558c291b6fac2a247b748`**;
+- artifact retention **14 days**.
+
+Exact packaged plugin under the canonical browser run:
+- SHA-256 **`e59e394dd964cad44d81dbfaeddee38d084381bea64d176de89d308fb78fdb66`**;
+- **156 files**;
+- **137,688 bytes**;
+- install root **`wpessential/`**;
+- fixed package mtime **`2000-01-01T00:00:00+00:00`**;
+- **0 runtime Composer packages**.
+
+Bootstrap provenance is retained rather than hidden: source head `e6968acfda59ec926a5c85de61fad62c7f236390` passed Browser E2E #8; push Browser E2E #7 (`33308640794`) then committed the generated E2E lock as `898f51722c89ddfdcab606212b00ee6ccf8ddaba`. The final canonical head above removed that temporary write path and proved the strict locked/read-only workflow.
+
+This certifies the current packaged Runtime Observatory baseline only. It does not certify WordPress-core admin accessibility globally, future interactive WPE admin workflows, Multisite behavior, a stable release, or future Free/Pro packaging.
 
 ## Engineering/public contract
 
@@ -154,7 +196,7 @@ Do not overclaim:
 - automatic Action Scheduler dispatch → Ability → durable attempt lifecycle wiring remains pending;
 - Job checkpoint privacy/retention policy remains pending;
 - Audit read/retention/privacy/export/legal-hold workflows remain pending;
-- browser E2E/accessibility baseline remains pending before critical interactive admin workflows;
+- current browser evidence certifies the Runtime Observatory baseline only; future critical interactive WPE admin workflows require their own browser/accessibility evidence;
 - future Free/Pro package separation remains uncertified until such a distribution tranche exists;
 - upstream development-toolchain npm advisories remain recorded and require periodic reassessment;
 - business-module implementation has not started.
@@ -164,9 +206,8 @@ No live provider call, production deployment, destructive live-site/customer-dat
 ## Current next action
 
 Continue WP121:
-1. establish canonical real-browser E2E/accessibility evidence for the Platform admin/Runtime Observatory surface;
-2. close or explicitly stage the Multisite-specific runtime matrix;
-3. rerun the shared-foundation readiness gate;
-4. start the first business-module tranche only after that gate passes.
+1. close or explicitly stage the Multisite-specific AJAX/queue-worker runtime matrix;
+2. rerun the shared-foundation readiness gate;
+3. start the first business-module tranche only after that gate passes.
 
 Repository evidence overrides conversational memory.
