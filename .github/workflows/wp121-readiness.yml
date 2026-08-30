@@ -1,0 +1,116 @@
+name: WP121 Shared Foundation Readiness
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: wp121-readiness-manual-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  aggregate-readiness:
+    name: historical exact-source hosted evidence verification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout verification head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify historical readiness manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+          jq -e '.schema == "wp121-shared-foundation-readiness-v1"' tools/quality/wp121-readiness.json >/dev/null
+          jq -e '.certified_source_sha | test("^[0-9a-f]{40}$")' tools/quality/wp121-readiness.json >/dev/null
+          jq -e '.required_runs | length == 5' tools/quality/wp121-readiness.json >/dev/null
+          source_sha="$(jq -r '.certified_source_sha' tools/quality/wp121-readiness.json)"
+          git cat-file -e "${source_sha}^{commit}"
+          git merge-base --is-ancestor "${source_sha}" HEAD
+
+      - name: Verify canonical hosted prerequisite runs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/readiness
+          manifest='tools/quality/wp121-readiness.json'
+          source_sha="$(jq -r '.certified_source_sha' "${manifest}")"
+          branch="$(jq -r '.certified_branch' "${manifest}")"
+          pr="$(jq -r '.pull_request' "${manifest}")"
+          printf '[]' > /tmp/wp121-observed.json
+
+          while IFS= read -r required; do
+            name="$(jq -r '.name' <<<"${required}")"
+            workflow_id="$(jq -r '.workflow_id' <<<"${required}")"
+            run_id="$(jq -r '.run_id' <<<"${required}")"
+            url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}"
+
+            response="$(curl --fail --silent --show-error --location \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "${url}")"
+
+            jq -e --arg source "${source_sha}" \
+              --arg branch "${branch}" \
+              --arg name "${name}" \
+              --argjson workflow_id "${workflow_id}" \
+              --argjson pr "${pr}" '
+                .head_sha == $source and
+                .head_branch == $branch and
+                .name == $name and
+                .workflow_id == $workflow_id and
+                .status == "completed" and
+                .conclusion == "success" and
+                ([.pull_requests[].number] | index($pr) != null)
+              ' <<<"${response}" >/dev/null
+
+            observed="$(jq -n \
+              --arg name "${name}" \
+              --argjson workflow_id "${workflow_id}" \
+              --argjson run_id "${run_id}" \
+              --arg head_sha "$(jq -r '.head_sha' <<<"${response}")" \
+              --arg conclusion "$(jq -r '.conclusion' <<<"${response}")" \
+              --arg html_url "$(jq -r '.html_url' <<<"${response}")" \
+              '{name:$name,workflow_id:$workflow_id,run_id:$run_id,head_sha:$head_sha,conclusion:$conclusion,html_url:$html_url}')"
+            jq --argjson item "${observed}" '. + [$item]' /tmp/wp121-observed.json > /tmp/wp121-observed.next.json
+            mv /tmp/wp121-observed.next.json /tmp/wp121-observed.json
+          done < <(jq -c '.required_runs[]' "${manifest}")
+
+          jq -n \
+            --arg schema 'wp121-shared-foundation-readiness-evidence-v1' \
+            --arg result 'PASS' \
+            --arg mode 'historical-read-only' \
+            --arg certified_source_sha "${source_sha}" \
+            --arg verification_head_sha "$(git rev-parse HEAD)" \
+            --arg branch "${branch}" \
+            --argjson pull_request "${pr}" \
+            --argjson required_runs "$(cat /tmp/wp121-observed.json)" \
+            '{schema:$schema,result:$result,mode:$mode,certified_source_sha:$certified_source_sha,verification_head_sha:$verification_head_sha,branch:$branch,pull_request:$pull_request,required_runs:$required_runs}' \
+            > artifacts/readiness/evidence.json
+
+          cat artifacts/readiness/evidence.json
+
+      - name: Upload readiness evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-shared-foundation-readiness-${{ github.run_id }}
+          path: artifacts/readiness/evidence.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"

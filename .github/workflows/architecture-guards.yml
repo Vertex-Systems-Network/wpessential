@@ -1,0 +1,377 @@
+name: Architecture Guards
+
+on:
+  pull_request:
+    paths:
+      - 'config/architecture/**'
+      - 'tools/architecture/**'
+      - 'frameworks/**'
+      - 'admin-ui/**'
+      - 'tests/Smoke/**'
+      - 'tests/Integration/**'
+      - 'tests/Unit/**'
+      - 'wpessential.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'phpcs.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpunit.xml.dist'
+      - '.github/workflows/architecture-guards.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'config/architecture/**'
+      - 'tools/architecture/**'
+      - 'frameworks/**'
+      - 'admin-ui/**'
+      - 'tests/Smoke/**'
+      - 'tests/Integration/**'
+      - 'tests/Unit/**'
+      - 'wpessential.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'phpcs.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpunit.xml.dist'
+      - '.github/workflows/architecture-guards.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate-architecture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Resolve or install locked admin graph
+        id: npm
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The first fully green bootstrap creates the lock; every later head must use npm ci.
+          if test -f package-lock.json; then
+            echo 'mode=locked-install' >> "$GITHUB_OUTPUT"
+            npm ci --ignore-scripts
+          else
+            echo 'mode=generated-lock' >> "$GITHUB_OUTPUT"
+            npm install --ignore-scripts
+          fi
+          test -s package-lock.json
+
+      - name: Upload generated npm lock evidence
+        if: steps.npm.outputs.mode == 'generated-lock'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-generated-package-lock-${{ github.run_id }}
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify Node engine contract
+        run: npm run check:engines
+
+      - name: Verify package manifest contract
+        run: npm run lint:package
+
+      - name: Capture npm dependency advisory audit
+        shell: bash
+        run: |
+          set +e
+          npm audit --audit-level=high --json > npm-audit.json
+          set -e
+          cat npm-audit.json
+          exit 0
+
+      - name: Capture distributable npm advisory gate
+        id: npm-distributable-audit
+        shell: bash
+        run: |
+          set +e
+          npm audit --omit=dev --audit-level=high --json > npm-audit-distributable.json
+          code=$?
+          set -e
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
+          cat npm-audit-distributable.json
+          exit 0
+
+      - name: Upload npm audit diagnostics
+        if: always() && hashFiles('npm-audit.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-npm-audit-${{ github.run_id }}
+          path: npm-audit.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload distributable npm audit diagnostics
+        if: always() && hashFiles('npm-audit-distributable.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-npm-audit-distributable-${{ github.run_id }}
+          path: npm-audit-distributable.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: JavaScript lint
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run lint:js 2>&1 | tee js-lint.log
+
+      - name: Upload JavaScript lint diagnostics
+        if: failure() && hashFiles('js-lint.log') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-js-lint-${{ github.run_id }}
+          path: js-lint.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Style lint
+        run: npm run lint:css
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Build admin application
+        run: npm run build:admin
+
+      - name: Verify wp-scripts admin artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/admin/main.js
+          test -s assets/admin/main.asset.php
+          test -s assets/admin/main.css
+          php -r '$asset = require "assets/admin/main.asset.php"; if (!is_array($asset) || !isset($asset["dependencies"], $asset["version"]) || !is_array($asset["dependencies"]) || !is_string($asset["version"]) || $asset["version"] === "") { fwrite(STDERR, "invalid wp-scripts asset metadata\n"); exit(1); }'
+
+      - name: Enforce npm advisory gate
+        if: steps.npm-distributable-audit.outputs.exit_code != '0'
+        run: exit 1
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, mysqli, dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+
+      - name: Prepare pinned WordPress 7.1 core fixture
+        shell: bash
+        run: |
+          rm -rf /tmp/wordpress /tmp/wordpress-7.1.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            https://wordpress.org/wordpress-7.1.tar.gz \
+            --output /tmp/wordpress-7.1.tar.gz
+          tar -xzf /tmp/wordpress-7.1.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+
+      - name: Install locked PHP quality graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s composer.lock
+          composer install --no-interaction --prefer-dist --no-progress
+          composer validate --strict
+
+      - name: Composer dependency advisory audit
+        run: composer audit --locked --no-interaction
+
+      - name: Validate architecture manifests
+        run: php tools/architecture/validate.php
+
+      - name: Validate engineering contracts
+        run: php tools/architecture/validate-engineering-contracts.php
+
+      - name: PHP syntax
+        run: find frameworks tests/Smoke tests/Integration tests/Unit -name '*.php' -print0 | xargs -0 -n1 php -l && php -l wpessential.php
+
+      - name: WordPress Coding Standards
+        run: composer quality:phpcs
+
+      - name: WordPress-aware PHPStan
+        run: composer quality:phpstan
+
+      - name: PHPUnit unit suite
+        run: composer test:unit
+
+      - name: Run diagnostic smoke suite
+        id: smoke
+        shell: bash
+        run: |
+          set +e
+          : > smoke-results.log
+          overall=0
+          for script in \
+            tests/Smoke/kernel-smoke.php \
+            tests/Smoke/platform-core-smoke.php \
+            tests/Smoke/platform-admin-bootstrap-smoke.php \
+            tests/Smoke/audit-jobs-smoke.php \
+            tests/Smoke/action-scheduler-probe-smoke.php \
+            tests/Smoke/vault-assets-integrations-smoke.php \
+            tests/Smoke/persistence-migrations-smoke.php \
+            tests/Smoke/wordpress-abilities-bridge-smoke.php \
+            tests/Smoke/engineering-contracts-smoke.php \
+            tests/Smoke/compiled-registration-persistence-smoke.php \
+            tests/Smoke/compiled-registration-scale-smoke.php
+          do
+            echo "===== ${script} =====" | tee -a smoke-results.log
+            php "${script}" >> smoke-results.log 2>&1
+            code=$?
+            echo "exit=${code}" | tee -a smoke-results.log
+            if [ "${code}" -ne 0 ]; then
+              overall=1
+            fi
+          done
+          cat smoke-results.log
+          echo "exit_code=${overall}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload smoke diagnostics
+        if: always() && hashFiles('smoke-results.log') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: smoke-results-${{ github.run_id }}
+          path: smoke-results.log
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Enforce smoke gate
+        if: steps.smoke.outputs.exit_code != '0'
+        run: exit 1
+
+      - name: MySQL compiled-registration integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/compiled-registration-mysql.php
+
+      - name: MySQL Definition/Audit persistence integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/platform-persistence-mysql.php
+
+      - name: Real WordPress AJAX nonce Policy integration
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-ajax-nonce-policy.php
+
+      - name: Prepare pinned Action Scheduler coexistence fixtures
+        shell: bash
+        run: |
+          rm -rf /tmp/as-4.1.0 /tmp/as-3.9.3 /tmp/as-4.1.0.zip /tmp/as-3.9.3.zip
+          mkdir -p /tmp/as-4.1.0 /tmp/as-3.9.3 /tmp/wordpress/wp-content/plugins
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/woocommerce/action-scheduler/releases/download/4.1.0/action-scheduler.zip \
+            --output /tmp/as-4.1.0.zip
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/woocommerce/action-scheduler/releases/download/3.9.3/action-scheduler.zip \
+            --output /tmp/as-3.9.3.zip
+          unzip -q /tmp/as-4.1.0.zip -d /tmp/as-4.1.0
+          unzip -q /tmp/as-3.9.3.zip -d /tmp/as-3.9.3
+          src410="$(dirname "$(find /tmp/as-4.1.0 -name action-scheduler.php -print -quit)")"
+          src393="$(dirname "$(find /tmp/as-3.9.3 -name action-scheduler.php -print -quit)")"
+          test -f "${src410}/action-scheduler.php"
+          test -f "${src393}/action-scheduler.php"
+          rm -rf /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0 /tmp/wordpress/wp-content/plugins/action-scheduler-3.9.3
+          cp -R "${src410}" /tmp/wordpress/wp-content/plugins/action-scheduler-4.1.0
+          cp -R "${src393}" /tmp/wordpress/wp-content/plugins/action-scheduler-3.9.3
+
+      - name: Activate Action Scheduler fixture and set coexistence order
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-action-scheduler-setup.php
+
+      - name: Real Action Scheduler coexistence backend integration
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-action-scheduler-coexistence.php
+
+      - name: Real WordPress durable JobService persistence lease integration
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-job-persistence.php
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Commit generated npm lock after green bootstrap
+        if: steps.npm.outputs.mode == 'generated-lock' && github.event_name == 'push' && github.ref == 'refs/heads/implementation/baseline-adoption-gate'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test -s package-lock.json
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git status --porcelain --untracked-files=all package-lock.json)" = "?? package-lock.json"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- package-lock.json
+          git commit -m 'build(wp121): lock admin build dependencies'
+          auth="$(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${auth}" push origin "HEAD:${GITHUB_REF_NAME}"

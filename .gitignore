@@ -1,0 +1,9 @@
+/assets/admin/
+/artifacts/
+/node_modules/
+/tests/e2e/node_modules/
+/tests/e2e/playwright-report/
+/tests/e2e/test-results/
+/js-lint.log
+/npm-audit.json
+/npm-audit-distributable.json

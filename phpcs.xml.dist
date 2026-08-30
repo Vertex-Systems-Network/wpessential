@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ruleset name="WPEssential">
+    <description>WPEssential production PHP coding standard.</description>
+
+    <arg name="basepath" value="." />
+    <arg name="extensions" value="php" />
+    <arg name="parallel" value="4" />
+    <arg value="ps" />
+
+    <config name="installed_paths" value="vendor/wp-coding-standards/wpcs,vendor/phpcsstandards/phpcsextra,vendor/phpcsstandards/phpcsutils" />
+
+    <file>wpessential.php</file>
+    <file>frameworks</file>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <rule ref="WordPress">
+        <!-- ADR-0214 deliberately adopts PSR-4 class files under frameworks/. -->
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+    </rule>
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120" />
+            <property name="absoluteLineLimit" value="160" />
+        </properties>
+    </rule>
+</ruleset>

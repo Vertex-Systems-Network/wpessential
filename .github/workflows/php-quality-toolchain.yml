@@ -1,0 +1,109 @@
+name: PHP Quality Toolchain
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpunit.xml.dist'
+      - 'frameworks/**/*.php'
+      - 'tests/Unit/**/*.php'
+      - '.github/workflows/php-quality-toolchain.yml'
+  push:
+    branches:
+      - 'implementation/baseline-adoption-gate'
+      - main
+    paths:
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'phpunit.xml.dist'
+      - 'frameworks/**/*.php'
+      - 'tests/Unit/**/*.php'
+      - '.github/workflows/php-quality-toolchain.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: php-quality-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php-quality:
+    name: PHPCS / PHPStan / PHPUnit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+
+      - name: Resolve or install locked development graph
+        id: composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f composer.lock; then
+            echo 'mode=locked-install' >> "$GITHUB_OUTPUT"
+            composer install --no-interaction --prefer-dist --no-progress
+          else
+            echo 'mode=generated-lock' >> "$GITHUB_OUTPUT"
+            composer update --no-interaction --prefer-dist --no-progress
+          fi
+          test -s composer.lock
+          composer validate --strict
+
+      - name: Upload generated Composer lock evidence
+        if: steps.composer.outputs.mode == 'generated-lock'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-generated-composer-lock-${{ github.run_id }}
+          path: composer.lock
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Composer dependency advisory audit
+        shell: bash
+        run: composer audit --locked --no-interaction
+
+      - name: WordPress Coding Standards
+        shell: bash
+        run: composer quality:phpcs
+
+      - name: WordPress-aware PHPStan
+        shell: bash
+        run: composer quality:phpstan
+
+      - name: PHPUnit unit suite
+        shell: bash
+        run: composer test:unit
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
