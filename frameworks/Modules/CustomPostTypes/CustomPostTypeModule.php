@@ -14,14 +14,17 @@ use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinitionProviderRegistry;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
@@ -78,6 +81,30 @@ final class CustomPostTypeModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
+        $abilities = $services->get('platform.abilities');
+        $contexts = $services->get('platform.abilities.contexts');
+        $ajax = $services->get('platform.ajax.dispatcher');
+        $gateway = $services->get('platform.ajax.gateway');
+        $assets = $services->get('platform.admin.assets');
+
+        if (!$abilities instanceof AbilityRegistry
+            || !$contexts instanceof WordPressExecutionContextFactory
+            || !$ajax instanceof AjaxDispatcher
+            || !$gateway instanceof WordPressAjaxGateway
+            || !$assets instanceof AdminAssetManifest
+        ) {
+            throw new LogicException('Custom Post Types admin requires the shared admin, Ability, and AJAX services.');
+        }
+
+        $admin = new CustomPostTypeAdminController(
+            abilities: $abilities,
+            contexts: $contexts,
+            ajax: $ajax,
+            assets: $assets,
+            ajaxAction: $gateway->action(),
+        );
+        $services->set('module.custom-post-types.admin', $admin);
+        $admin->register();
     }
 
     private function registerAbilities(
