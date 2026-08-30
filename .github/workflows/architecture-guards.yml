@@ -109,11 +109,11 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Verify Node and package contracts
-        shell: bash
-        run: |
-          npm run check:engines
-          npm run lint:package
+      - name: Verify Node engine contract
+        run: npm run check:engines
+
+      - name: Verify package manifest contract
+        run: npm run lint:package
 
       - name: Capture npm dependency advisory audit
         id: npm-audit
