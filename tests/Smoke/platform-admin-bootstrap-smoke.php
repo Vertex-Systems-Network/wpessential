@@ -25,6 +25,26 @@ function plugin_dir_url(string $file): string
     return 'https://example.test/wp-content/plugins/wpessential/';
 }
 
+function current_user_can(string $capability): bool
+{
+    return $capability === PlatformAdminController::CAPABILITY;
+}
+
+function esc_html__(string $text, string $domain = 'default'): string
+{
+    return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function esc_html(string $text): string
+{
+    return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function wp_json_encode(mixed $value, int $flags = 0, int $depth = 512): string|false
+{
+    return json_encode($value, $flags, $depth);
+}
+
 spl_autoload_register(static function (string $class): void {
     $prefix = 'WPEssential\\';
     if (!str_starts_with($class, $prefix)) {
@@ -68,5 +88,15 @@ $hooks = array_map(
 );
 expect_admin_bootstrap(in_array('admin_menu', $hooks, true), 'Platform admin controller must register admin_menu');
 expect_admin_bootstrap(in_array('admin_enqueue_scripts', $hooks, true), 'Platform admin controller must register admin_enqueue_scripts');
+
+$controller = $services->get('platform.admin.controller');
+ob_start();
+$controller->render();
+$rendered = (string) ob_get_clean();
+expect_admin_bootstrap(str_contains($rendered, 'Runtime Observatory'), 'Platform admin shell must render the Runtime Observatory heading without requiring built assets');
+expect_admin_bootstrap(str_contains($rendered, 'Read-only bounded diagnostics'), 'Platform admin shell must declare the diagnostics surface read-only');
+expect_admin_bootstrap(str_contains($rendered, 'Kernel booted'), 'Platform admin shell must render kernel diagnostics');
+expect_admin_bootstrap(str_contains($rendered, 'wpessential-admin-bootstrap'), 'Platform admin shell must preserve the JSON bootstrap payload for progressive enhancement');
+expect_admin_bootstrap(!str_contains($rendered, 'Loading the Platform diagnostics shell'), 'Platform admin shell must not stall on an asset-dependent loading placeholder');
 
 fwrite(STDOUT, "WPEssential Platform admin bootstrap smoke PASS\n");
