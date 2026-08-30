@@ -84,7 +84,6 @@ final class RegistrationCompiler
         return $manifest;
     }
 
-    /** @param array<string,mixed> $value @return array<string,mixed> */
     private static function canonicalize(array $value): array
     {
         foreach ($value as $key => $item) {
