@@ -140,6 +140,12 @@ final readonly class CustomPostTypeValidationService
             && is_string($currentKey)
             && trim($currentKey) === $key;
         if ($isCurrentPublishedRegistration) {
+            $issues[] = $this->issue(
+                'runtime_registration_present',
+                'info',
+                'post_type_key',
+                sprintf('Post type key "%s" is active at runtime. WordPress does not reliably identify the registering owner, so ownership is not inferred from runtime presence alone.', $key),
+            );
             return;
         }
 
