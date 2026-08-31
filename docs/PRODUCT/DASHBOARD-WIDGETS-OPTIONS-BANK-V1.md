@@ -26,55 +26,47 @@ This branch adds **123 classified discovery records** in four surface-owned shar
 | `dashboard-widgets--preferences-multisite-portability.json` | 30 | presentation visibility, user preferences, role/network presets, multisite, lifecycle and portability |
 | `dashboard-widgets--wpe-exceed.json` | 14 | future exceed/deferred diagnostics and reliability ideas |
 
-All records are already classified; no record is `UNREVIEWED`.
+All records are classified; no record is `UNREVIEWED`. Native `widget_id`/`widget_name` semantics are canonicalized onto `widget.key`/`widget.title` instead of being duplicated as authored controls.
 
-## Native baseline
+## Native audit candidate
 
-Current WordPress evidence covers:
+`config/product/options-bank-audits/dashboard-widgets-native-wordpress.json` contains **24 explicit dispositions**:
 
-- `wp_add_dashboard_widget()` ID, title, render callback, optional control callback, callback arguments, context and priority;
-- site and Network Admin dashboard setup hooks;
-- default/core widget inventory and `remove_meta_box()` removal;
-- Screen Options / hidden meta-box user state;
-- per-user reorder and collapse behavior;
-- four Dashboard meta-box contexts;
-- core nonce/control dispatch behavior;
-- native user preference precedence over programmatic default ordering.
+- 14 `BANK_RECORD`;
+- 4 `PROVIDER_MAPPING`;
+- 6 `SYSTEM_RUNTIME`;
+- 0 unresolved.
 
-The machine-readable native disposition candidate is:
-`config/product/options-bank-audits/dashboard-widgets-native-wordpress.json`.
+It covers `wp_add_dashboard_widget()`, site/network dashboard setup, removal/hide, Screen Options/hidden state, per-user reorder/collapse, four dashboard contexts and core configure-control runtime behavior.
 
-Its status intentionally remains `NATIVE_AUDIT_IN_PROGRESS`: the current shared native-audit smoke contract is Fields-specific and the module worker cannot rewrite shared test wiring.
+Its status intentionally remains `NATIVE_AUDIT_IN_PROGRESS`: Dashboard Widgets does not yet have an executable surface audit contract in shared smoke wiring.
 
-## Market baseline
+## Market audit candidate
 
-Primary current evidence reviewed:
+`config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json` is schema-valid against the latest generic market-audit schema and maps:
 
-- Ultimate Dashboard: custom dashboard widgets, user/role access, global user-derived order, multisite blueprint/exclusions/subsite override/capability controls;
-- WP Adminify: text/HTML, icon, video, shortcode, RSS and Script widget types, position and role targeting;
-- White Label CMS: dashboard cleanup, custom welcome/dashboard panel, RSS and builder-template-backed welcome content.
+- 3 primary providers: Ultimate Dashboard, WP Adminify, White Label CMS;
+- 2 specialists: Dashboard Widgets Suite, Dashboard Welcome for Elementor;
+- 8 required capability families;
+- 4 explicit extra dispositions;
+- 0 unresolved items.
 
-Market-only mechanics are not copied blindly. In particular:
+Its status intentionally remains `MARKET_AUDIT_IN_PROGRESS` until the shared Dashboard Widgets market-audit gate and lifecycle promotion exist.
 
-- WP Adminify's raw Script widget is discovery evidence but is `REJECTED_UNSAFE` for Surface 10; approved browser script execution belongs to Surface 50 Safe Script.
-- Remote/RSS/iframe transport must use Surface 23 Connections/Safe HTTP contracts; Surface 10 stores references and display policy, not credentials/retry/SSRF engines.
-- Query/listing semantics stay with Surfaces 6/9.
-- Global wp-admin branding/styling stays with Surface 49 Admin Theme.
-- Visibility is presentation targeting, never authorization.
+Market-only mechanics are not copied blindly. Raw Script/PHP widgets are rejected for Surface 10; remote transport, Query/Listings, authorization, global admin theme and browser scripts stay with their canonical owners.
 
 ## Lifecycle truth
 
-Current shared truth on the branch base still says Surface 10 is `UNSEEDED / 0`. This branch prepares a **candidate** `BANK_SURFACE_SEEDED` surface but does not edit integrator-owned `config/product/options-bank-progress.json`.
+Latest shared truth still says Surface 10 is `UNSEEDED / 0`. This branch prepares a candidate seed plus native/market audit evidence but does not edit integrator-owned `config/product/options-bank-progress.json`.
 
-No `MARKET_AUDITED`, `BANK_REVIEWED`, UX-contract, implementation-contract or runtime-parity claim is made.
+No `NATIVE_AUDITED`, `MARKET_AUDITED`, `BANK_REVIEWED`, UX-contract, implementation-contract or runtime-parity claim is made.
 
 ## Next gate
 
-After integration of shared progress/test/schema requirements and exact-head certification:
+After integration of shared progress/test wiring and exact-head certification:
 
 1. promote the merged seed truth only if global Bank contracts pass;
 2. certify the native audit;
-3. materialize a schema-valid Dashboard Widgets market provider matrix;
-4. run semantic/ownership duplicate review;
-5. close Bank Review;
-6. only then derive UX projection and the downstream implementation contract.
+3. certify the market audit;
+4. run semantic/ownership Bank Review;
+5. only then derive UX projection and the downstream implementation contract.

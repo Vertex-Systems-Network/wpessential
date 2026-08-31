@@ -248,10 +248,6 @@ foreach ($requiredNativeRecords as $recordId) {
     }
 }
 
-if (count($relationRecordIds) !== 142) {
-    throw new RuntimeException(sprintf('Relations native audit expects 142 Bank records after gap closure; found %d.', count($relationRecordIds)));
-}
-
 $progress = readRelationsNativeAuditJson($progressPath);
 $rows = $progress['surface_status'] ?? null;
 if (!is_array($rows)) {
@@ -264,21 +260,26 @@ foreach ($rows as $row) {
         break;
     }
 }
+$allowedPostNativeStatuses = ['NATIVE_AUDITED', 'MARKET_AUDITED', 'BANK_REVIEWED'];
 if (!is_array($relationsProgress)
-    || ($relationsProgress['status'] ?? null) !== 'NATIVE_AUDITED'
-    || ($relationsProgress['records'] ?? null) !== 142
+    || !in_array($relationsProgress['status'] ?? null, $allowedPostNativeStatuses, true)
+    || ($relationsProgress['records'] ?? null) !== count($relationRecordIds)
 ) {
     throw new RuntimeException('Relations native audit and canonical progress truth disagree.');
 }
 
+// Native certification pins native evidence and the seven native gap records,
+// not the surface's lifetime Bank size. Later market/review stages may add
+// Relations records while preserving this NATIVE_AUDITED certificate.
 fwrite(
     STDOUT,
     sprintf(
-        "Relations native audit contract: PASS (%d dispositions, %d Bank, %d runtime, %d out-of-surface, %d legacy/internal, 0 unresolved).\n",
+        "Relations native audit contract: PASS (%d dispositions, %d Bank, %d runtime, %d out-of-surface, %d legacy/internal, 0 unresolved; %d current Relations records).\n",
         count($items),
         $counts['BANK_RECORD'],
         $counts['SYSTEM_RUNTIME'],
         $counts['OUT_OF_SURFACE'],
         $counts['LEGACY_COMPATIBILITY'] + $counts['CORE_INTERNAL'],
+        count($relationRecordIds),
     ),
 );

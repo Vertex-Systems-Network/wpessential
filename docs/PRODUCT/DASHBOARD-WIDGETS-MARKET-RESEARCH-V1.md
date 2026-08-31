@@ -1,86 +1,65 @@
 # Dashboard Widgets — Market Research V1
 
-Status: **research complete enough for seed; formal market-audit certification blocked by shared schema**
+Status: **research complete enough for a schema-valid market-audit candidate; executable certification pending shared gate**
 Snapshot: **2026-09-01**
 Surface: **10 — `dashboard-widgets`**
 
 ## Accepted benchmark set
 
-The repository's competitor-parity matrix names native WordPress, Ultimate Dashboard, WP Adminify and White Label CMS for this surface. Current primary/public evidence was refreshed on 2026-09-01.
+The repository's competitor-parity matrix names native WordPress, Ultimate Dashboard, WP Adminify and White Label CMS for this surface. Current primary/public evidence was refreshed on 2026-09-01. Specialist coverage was also checked against Dashboard Widgets Suite and Dashboard Welcome for Elementor.
 
 ### Ultimate Dashboard
 
 Evidence:
-- https://ultimatedashboard.io/docs/
+- https://wordpress.org/plugins/ultimate-dashboard/
+- https://ultimatedashboard.io/docs-category/widgets/
 - https://ultimatedashboard.io/docs/user-and-role-access/
+- https://ultimatedashboard.io/docs/position-priority/
 - https://ultimatedashboard.io/docs/global-widget-order/
 - https://ultimatedashboard.io/docs/multisite-support/
+- https://ultimatedashboard.io/docs/export-import/
 
-Material capabilities:
-- custom Dashboard widgets;
-- user and role access targeting;
-- native per-user widget order plus a Pro global-order override based on a selected user's order;
-- multisite blueprint site, excluded sites, subsite override precedence, global widget order and capability controls.
+Material capabilities include custom icon/text/HTML/video/contact widgets, default/third-party widget cleanup, user/role targeting, native/per-user ordering plus a global-order override, multisite blueprint/exclusion/override/capability rules and import/export.
 
 ### WP Adminify
 
 Evidence:
 - https://wpadminify.com/docs/adminify/productivity/create-custom-dashboard-widget
 - https://wpadminify.com/features/custom-dashboard-widget
-- https://wpadminify.com/docs/adminify/productivity
+- https://wpadminify.com/docs/adminify/productivity/create-custom-welcome-widget
 
-Material capabilities:
-- Normal/Side placement;
-- Editor text/HTML, Icon, Video, Shortcode, RSS Feed and Script content types;
-- RSS item count plus excerpt/date/author display controls;
-- role-based widget settings;
-- removal/management of default WordPress widgets.
+Material capabilities include Normal/Side placement, Editor text/HTML, Icon, Video, Shortcode, RSS Feed and Script content types, RSS item/display controls, role targeting, reorder and welcome-widget height/dismissibility.
 
 ### White Label CMS
 
 Evidence:
 - https://wordpress.org/plugins/white-label-cms/
 
-Material capabilities:
-- clear/default-dashboard cleanup;
-- custom dashboard/welcome panel;
-- custom RSS feed;
-- welcome content backed by supported builder templates;
-- client-focused dashboard customization.
+Material capabilities include dashboard cleanup, a custom dashboard/welcome panel, custom RSS content and builder-template-backed welcome content.
 
-## Capability-family mapping
+### Specialist evidence
 
-| Family | Native WP | Ultimate Dashboard | WP Adminify | White Label CMS | WPE disposition |
-| --- | --- | --- | --- | --- | --- |
-| registered widget inventory/hide | strong | strong | strong | strong | Surface 10 |
-| custom text/info | callback provider | strong | strong | strong | Surface 10 renderer |
-| video/icon/links | provider | strong | strong | partial | Surface 10 typed widget types |
-| shortcode/block/builder output | provider | supported patterns | shortcode | builder welcome | registered Renderer/provider only |
-| RSS/remote | native examples/caching | provider-dependent | strong | RSS | Surface 23 transport + Surface 10 presentation |
-| user/role visibility | native user hide only | strong | role-based | client-focused | presentation rule; Policy remains authority |
-| per-user order | native | strong | native drag | native behavior | preserve native state |
-| global/role preset order | limited | strong | product-level | product-level | WPE preset semantics |
-| multisite blueprint | network hook only | strong | product-level | product-level | site/network preset semantics |
-| import/export | no first-class widget package | product feature | product-level | product settings | WPE definition portability |
-| raw script | no authored script type | not required | yes | not benchmark floor | reject in Surface 10; Surface 50 owns safe scripts |
+- Dashboard Widgets Suite: https://wordpress.org/plugins/dashboard-widgets-suite/ — current dashboard widget pack covering notes, RSS, lists, system/debug information and enable/disable controls.
+- Dashboard Welcome for Elementor: https://wordpress.org/plugins/dashboard-welcome-for-elementor/ — builder-template welcome content with per-role selection.
+
+## Machine-readable candidate
+
+`config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json` maps three primary providers and two specialist providers across eight capability families. It contains four explicit extra dispositions and zero unresolved items.
+
+The file is intentionally `MARKET_AUDIT_IN_PROGRESS`, not `MARKET_AUDITED`: the latest `main` generalized the shared market-audit schema to Surfaces 1–56, but Dashboard Widgets still lacks its dedicated executable audit contract/shared smoke wiring and shared lifecycle promotion.
 
 ## Safety and owner resolution
 
 Market parity is use-case parity, not copying unsafe mechanics.
 
-- raw JavaScript/PHP: rejected in this Bank; typed renderer/Ability/Safe Script alternatives only;
-- remote fetch, credentials, retries, signatures, SSRF: Surface 23;
-- structured query semantics: Surface 6;
-- listings/render composition: Surface 9;
-- scheduling engine: Surface 18/Job Service;
+- raw JavaScript/PHP: rejected in Surface 10; typed renderer/Ability/Safe Script alternatives only;
+- remote fetch, credentials, retries, signatures and SSRF policy: Surface 23 Connections/Safe HTTP;
+- structured query semantics: Surface 6 Query;
+- listings/render composition: Surface 9 Listings;
+- scheduling engine: Surface 18 Cron / shared Job Service;
 - authorization: shared Policy / Surface 30 capability definitions;
-- global admin branding/theme: Surface 49;
-- generic experience placement: Surface 38.
-
-## Formal certification blocker
-
-`config/product/options-bank-market-audit.schema.json` is currently hard-coded to Surface 3 (`id = 3`, `key = fields`). A Surface 10 market audit cannot truthfully satisfy that shared schema.
-
-This worker therefore does **not** create a fake `MARKET_AUDITED` artifact or weaken the schema. The integrator must generalize the shared market-audit schema/validator (or introduce an approved surface-specific contract) before formal Dashboard Widgets market certification.
+- platform diagnostics source: Surface 31 Platform;
+- global admin branding/theme: Surface 49 Admin Theme;
+- browser script placement: Surface 50 Safe Script.
 
 No proprietary implementation source was copied.

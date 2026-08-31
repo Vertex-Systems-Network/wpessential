@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {
+    "id": 10,
+    "key": "dashboard-widgets"
+  },
+  "snapshot": {
+    "date": "2026-09-01",
+    "notes": "Three primary dashboard-customization providers are dispositioned across eight canonical capability families; Dashboard Widgets Suite and Dashboard Welcome for Elementor cover specialist widget-pack and builder-template welcome-panel paths. Unsafe raw-script/PHP mechanics are rejected or routed to canonical owners; unresolved coverage is zero."
+  },
+  "status": "MARKET_AUDIT_IN_PROGRESS",
+  "required_families": [
+    "widget_definition_content",
+    "inventory_cleanup",
+    "visibility_targeting",
+    "placement_order",
+    "remote_content",
+    "multisite_presets",
+    "portability",
+    "welcome_onboarding"
+  ],
+  "primary_providers": [
+    {
+      "id": "ultimate_dashboard",
+      "name": "Ultimate Dashboard",
+      "evidence": [
+        "https://wordpress.org/plugins/ultimate-dashboard/",
+        "https://ultimatedashboard.io/docs-category/widgets/",
+        "https://ultimatedashboard.io/docs/user-and-role-access/",
+        "https://ultimatedashboard.io/docs/position-priority/",
+        "https://ultimatedashboard.io/docs/global-widget-order/",
+        "https://ultimatedashboard.io/docs/multisite-support/",
+        "https://ultimatedashboard.io/docs/export-import/"
+      ],
+      "family_map": {
+        "widget_definition_content": [
+          "dashboard-widgets.widget.title",
+          "dashboard-widgets.widget.key",
+          "dashboard-widgets.type.rich_text",
+          "dashboard-widgets.type.icon_link"
+        ],
+        "inventory_cleanup": [
+          "dashboard-widgets.inventory.hide"
+        ],
+        "visibility_targeting": [
+          "dashboard-widgets.visibility.roles",
+          "dashboard-widgets.visibility.users"
+        ],
+        "placement_order": [
+          "dashboard-widgets.presentation.order",
+          "dashboard-widgets.preference.user_reorder"
+        ],
+        "multisite_presets": [
+          "dashboard-widgets.multisite.blueprint_site",
+          "dashboard-widgets.multisite.exclude_sites",
+          "dashboard-widgets.multisite.subsite_override",
+          "dashboard-widgets.multisite.global_order_source_user",
+          "dashboard-widgets.multisite.settings_capability"
+        ],
+        "portability": [
+          "dashboard-widgets.portability.export",
+          "dashboard-widgets.portability.import"
+        ],
+        "welcome_onboarding": [
+          "dashboard-widgets.type.support_onboarding"
+        ]
+      },
+      "non_applicable_families": [
+        "remote_content"
+      ]
+    },
+    {
+      "id": "wp_adminify",
+      "name": "WP Adminify",
+      "evidence": [
+        "https://wpadminify.com/docs/adminify/productivity/create-custom-dashboard-widget",
+        "https://wpadminify.com/features/custom-dashboard-widget",
+        "https://wpadminify.com/docs/adminify/productivity/create-custom-welcome-widget"
+      ],
+      "family_map": {
+        "widget_definition_content": [
+          "dashboard-widgets.widget.title",
+          "dashboard-widgets.type.rich_text",
+          "dashboard-widgets.type.icon_link",
+          "dashboard-widgets.type.video",
+          "dashboard-widgets.type.shortcode",
+          "dashboard-widgets.type.rss"
+        ],
+        "inventory_cleanup": [
+          "dashboard-widgets.inventory.hide"
+        ],
+        "visibility_targeting": [
+          "dashboard-widgets.visibility.roles"
+        ],
+        "placement_order": [
+          "dashboard-widgets.presentation.context",
+          "dashboard-widgets.presentation.order"
+        ],
+        "remote_content": [
+          "dashboard-widgets.remote.rss_url",
+          "dashboard-widgets.remote.rss_item_limit",
+          "dashboard-widgets.remote.rss_show_excerpt",
+          "dashboard-widgets.remote.rss_show_date",
+          "dashboard-widgets.remote.rss_show_author"
+        ],
+        "welcome_onboarding": [
+          "dashboard-widgets.type.support_onboarding",
+          "dashboard-widgets.presentation.dismissible",
+          "dashboard-widgets.presentation.height"
+        ]
+      },
+      "non_applicable_families": [
+        "multisite_presets",
+        "portability"
+      ]
+    },
+    {
+      "id": "white_label_cms",
+      "name": "White Label CMS",
+      "evidence": [
+        "https://wordpress.org/plugins/white-label-cms/"
+      ],
+      "family_map": {
+        "widget_definition_content": [
+          "dashboard-widgets.type.rich_text",
+          "dashboard-widgets.type.rss"
+        ],
+        "inventory_cleanup": [
+          "dashboard-widgets.inventory.hide"
+        ],
+        "remote_content": [
+          "dashboard-widgets.remote.rss_url"
+        ],
+        "welcome_onboarding": [
+          "dashboard-widgets.type.support_onboarding"
+        ]
+      },
+      "non_applicable_families": [
+        "visibility_targeting",
+        "placement_order",
+        "multisite_presets",
+        "portability"
+      ]
+    }
+  ],
+  "specialist_providers": [
+    {
+      "id": "dashboard_widgets_suite",
+      "name": "Dashboard Widgets Suite",
+      "evidence": [
+        "https://wordpress.org/plugins/dashboard-widgets-suite/"
+      ],
+      "bank_record_ids": [
+        "dashboard-widgets.type.rss",
+        "dashboard-widgets.type.quick_links",
+        "dashboard-widgets.type.site_health",
+        "dashboard-widgets.type.activity"
+      ]
+    },
+    {
+      "id": "dashboard_welcome_elementor",
+      "name": "Dashboard Welcome for Elementor",
+      "evidence": [
+        "https://wordpress.org/plugins/dashboard-welcome-for-elementor/"
+      ],
+      "bank_record_ids": [
+        "dashboard-widgets.type.support_onboarding",
+        "dashboard-widgets.type.video",
+        "dashboard-widgets.visibility.roles"
+      ]
+    }
+  ],
+  "extra_dispositions": [
+    {
+      "id": "wp_adminify.raw_script_widget",
+      "provider": "wp_adminify",
+      "disposition": "REJECTED_UNSAFE",
+      "evidence_url": "https://wpadminify.com/docs/adminify/productivity/create-custom-dashboard-widget",
+      "notes": "WP Adminify exposes a raw Script content type. Surface 10 does not store arbitrary executable JavaScript; approved browser script placement is owned by Safe Script under CSP/consent/policy contracts."
+    },
+    {
+      "id": "market.arbitrary_php_widget",
+      "provider": "market_pattern",
+      "disposition": "REJECTED_UNSAFE",
+      "evidence_url": "https://developer.wordpress.org/apis/dashboard-widgets/",
+      "notes": "Executable PHP callbacks are implementation/runtime code, not authored Dashboard Widget options. WPE maps them to registered renderer/Ability providers."
+    },
+    {
+      "id": "ultimate_dashboard.global_admin_branding",
+      "provider": "ultimate_dashboard",
+      "disposition": "OUT_OF_SURFACE",
+      "owner_surface": "admin-theme",
+      "evidence_url": "https://ultimatedashboard.io/pro/",
+      "notes": "Global wp-admin branding, colors and white-label theme controls remain Surface 49 Admin Theme-owned; Surface 10 only stores widget-local presentation references."
+    },
+    {
+      "id": "white_label_cms.admin_menu_restrictions",
+      "provider": "white_label_cms",
+      "disposition": "OUT_OF_SURFACE",
+      "owner_surface": "admin-menu",
+      "evidence_url": "https://wordpress.org/plugins/white-label-cms/",
+      "notes": "Admin menu visibility/restrictions are Surface 11 Admin Menu behavior, not Dashboard Widgets authorization."
+    }
+  ],
+  "coverage": {
+    "primary_providers": 3,
+    "specialist_providers": 2,
+    "family_mappings": 17,
+    "non_applicable_family_cells": 7,
+    "bank_record_references": 47,
+    "extra_dispositions": 4,
+    "unresolved": 0
+  }
+}

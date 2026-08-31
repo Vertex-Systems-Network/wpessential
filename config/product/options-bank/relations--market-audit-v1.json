@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 4, "key": "relations", "name": "Relations"},
+  "snapshot": {
+    "date": "2026-09-01",
+    "native_sources": [],
+    "market_sources": [
+      {"name": "JetEngine Relations", "type": "official_competitor", "url": "https://crocoblock.com/knowledge-base/features/relations-overview/", "verified": true},
+      {"name": "Meta Box Relationships", "type": "official_competitor", "url": "https://docs.metabox.io/extensions/mb-relationships/", "verified": true}
+    ]
+  },
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {
+      "id": "relations.marketaudit.admin_filter",
+      "feature_group": "Admin Editor",
+      "option_path": "admin_filter.enabled",
+      "label": "Admin List Filter By Related Item",
+      "description": "Expose a relation-aware admin list filter that narrows source objects by a selected related item without moving filter semantics into Admin Columns.",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    },
+    {
+      "id": "relations.marketaudit.rest_read_policy",
+      "feature_group": "Permissions",
+      "option_path": "permissions.rest_read",
+      "label": "REST Relation Read / Public Access Policy",
+      "description": "Configure relation-level REST read authorization/public exposure separately from mutation permission so public reads and protected writes cannot be conflated.",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    }
+  ],
+  "coverage": {"records": 2, "unreviewed": 0, "adopted_or_classified": 2, "notes": "Market-audit gaps confirmed independently by JetEngine and Meta Box: relation-specific admin filtering and explicit REST read/public-access policy."}
+}
