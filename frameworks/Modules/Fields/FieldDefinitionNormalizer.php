@@ -28,8 +28,9 @@ final class FieldDefinitionNormalizer
     public function normalize(array $field): array
     {
         $uuid = $this->optionalUuid($field['uuid'] ?? null);
+        $submittedType = $this->requiredMachineKey($field['type'] ?? null, 'Field type');
+        $requestedType = $this->requestedType($submittedType, $field['preset'] ?? null);
         $key = $this->requiredMachineKey($field['key'] ?? null, 'Field key');
-        $requestedType = $this->requiredMachineKey($field['type'] ?? null, 'Field type');
         $label = $field['label'] ?? '';
         if (!is_string($label)) {
             throw new InvalidArgumentException('Field label must be a string.');
@@ -76,12 +77,41 @@ final class FieldDefinitionNormalizer
         ];
     }
 
+    private function requestedType(string $submittedType, mixed $submittedPreset): string
+    {
+        if ($submittedPreset === null) {
+            return $submittedType;
+        }
+        if (!is_string($submittedPreset) || !$this->presets->has($submittedPreset)) {
+            throw new InvalidArgumentException('Field preset must reference a registered preset or be null.');
+        }
+        $preset = $this->presets->get($submittedPreset);
+        if ($preset->canonicalType !== $submittedType) {
+            throw new InvalidArgumentException(sprintf(
+                'Field preset "%s" does not compile to submitted canonical type "%s".',
+                $submittedPreset,
+                $submittedType,
+            ));
+        }
+        return $submittedPreset;
+    }
+
     /**
      * @param array<string,mixed> $field
      * @return array<string,mixed>
      */
     private function repeatability(array $field, FieldTypeDescriptor $descriptor): array
     {
+        $canonical = $field['repeatability'] ?? null;
+        if ($canonical !== null && (!is_array($canonical) || array_is_list($canonical))) {
+            throw new InvalidArgumentException('Canonical repeatability must be a named map when supplied.');
+        }
+        if (is_array($canonical) && isset($canonical['mode'])
+            && (!is_string($canonical['mode']) || $canonical['mode'] !== ($descriptor->managesItsOwnRows() ? 'container_managed' : $descriptor->repeatabilityMode))
+        ) {
+            throw new InvalidArgumentException('Canonical repeatability mode does not match the field type.');
+        }
+
         if ($descriptor->managesItsOwnRows()) {
             if (($field['cloneable'] ?? false) === true || ($field['repeatable'] ?? false) === true) {
                 throw new InvalidArgumentException(sprintf(
@@ -96,11 +126,13 @@ final class FieldDefinitionNormalizer
             ];
         }
 
-        $enabled = $field['cloneable'] ?? ($field['repeatable'] ?? false);
+        $enabled = array_key_exists('cloneable', $field)
+            ? $field['cloneable']
+            : (array_key_exists('repeatable', $field) ? $field['repeatable'] : ($canonical['enabled'] ?? false));
         if (!is_bool($enabled)) {
             throw new InvalidArgumentException('cloneable/repeatable must be boolean.');
         }
-        $sortable = $field['sortable'] ?? false;
+        $sortable = array_key_exists('sortable', $field) ? $field['sortable'] : ($canonical['sortable'] ?? false);
         if (!is_bool($sortable)) {
             throw new InvalidArgumentException('sortable must be boolean.');
         }
@@ -115,8 +147,10 @@ final class FieldDefinitionNormalizer
             throw new InvalidArgumentException(sprintf('Field type "%s" does not support sortable clones.', $descriptor->key));
         }
 
-        $min = $this->nonNegativeInt($field['min_clones'] ?? 0, 'min_clones');
-        $max = $field['max_clones'] ?? null;
+        $minSource = array_key_exists('min_clones', $field) ? $field['min_clones'] : ($canonical['min'] ?? 0);
+        $min = $this->nonNegativeInt($minSource, 'min_clones');
+        $maxSource = array_key_exists('max_clones', $field) ? $field['max_clones'] : ($canonical['max'] ?? null);
+        $max = $maxSource;
         if ($max !== null) {
             $max = $this->positiveInt($max, 'max_clones');
             if ($max < $min) {
@@ -124,16 +158,21 @@ final class FieldDefinitionNormalizer
             }
         }
 
+        $cloneDefault = array_key_exists('clone_default', $field) ? $field['clone_default'] : ($canonical['clone_default'] ?? false);
+        $storeAsMultiple = array_key_exists('clone_as_multiple', $field) ? $field['clone_as_multiple'] : ($canonical['store_as_multiple'] ?? false);
+        $emptyStart = array_key_exists('clone_empty_start', $field) ? $field['clone_empty_start'] : ($canonical['empty_start'] ?? false);
+        $addLabel = array_key_exists('add_button_label', $field) ? $field['add_button_label'] : ($canonical['add_button_label'] ?? null);
+
         return [
             'mode' => $descriptor->repeatabilityMode,
             'enabled' => $enabled,
             'sortable' => $sortable,
-            'clone_default' => $this->boolValue($field['clone_default'] ?? false, 'clone_default'),
-            'store_as_multiple' => $this->boolValue($field['clone_as_multiple'] ?? false, 'clone_as_multiple'),
-            'empty_start' => $this->boolValue($field['clone_empty_start'] ?? false, 'clone_empty_start'),
+            'clone_default' => $this->boolValue($cloneDefault, 'clone_default'),
+            'store_as_multiple' => $this->boolValue($storeAsMultiple, 'clone_as_multiple'),
+            'empty_start' => $this->boolValue($emptyStart, 'clone_empty_start'),
             'min' => $min,
             'max' => $max,
-            'add_button_label' => $this->optionalString($field['add_button_label'] ?? null),
+            'add_button_label' => $this->optionalString($addLabel),
         ];
     }
 
