@@ -140,6 +140,7 @@ final class DefinitionPackageCodec
             }
             $seenIds[$id] = true;
         }
+        $this->verifyPackageGraphAndIdentity($definitions, $seenIds);
 
         $expected = $manifest['definitions_checksum'] ?? null;
         if (!is_string($expected)
@@ -233,6 +234,84 @@ final class DefinitionPackageCodec
             }
             $seenDependencies[$dependency] = true;
         }
+    }
+
+    /**
+     * @param list<array<string,mixed>> $definitions
+     * @param array<string,bool> $packageIds
+     */
+    private function verifyPackageGraphAndIdentity(array $definitions, array $packageIds): void
+    {
+        $runtimeKeys = [];
+        $typeSlugs = [];
+        $graph = [];
+
+        foreach ($definitions as $definition) {
+            $id = (string) $definition['id'];
+            $owner = (int) $definition['owner_surface_id'];
+            $type = (string) $definition['type'];
+            $slug = (string) $definition['slug'];
+            $payload = $definition['payload'];
+            $dependencies = $definition['dependencies'];
+            if (!is_array($payload) || !is_array($dependencies)) {
+                throw new InvalidArgumentException('Definition package graph metadata is invalid.');
+            }
+
+            $keyField = $owner === 1 ? 'post_type_key' : 'taxonomy_key';
+            $runtimeKey = $payload[$keyField] ?? null;
+            if (is_string($runtimeKey) && trim($runtimeKey) !== '') {
+                $runtimeIdentity = $owner . ':' . trim($runtimeKey);
+                if (isset($runtimeKeys[$runtimeIdentity])) {
+                    throw new InvalidArgumentException('Definition package contains duplicate owner runtime keys.');
+                }
+                $runtimeKeys[$runtimeIdentity] = true;
+            }
+
+            $slugIdentity = $type . ':' . $slug;
+            if (isset($typeSlugs[$slugIdentity])) {
+                throw new InvalidArgumentException('Definition package contains duplicate type/slug identities.');
+            }
+            $typeSlugs[$slugIdentity] = true;
+
+            $graph[$id] = [];
+            foreach ($dependencies as $dependency) {
+                if (is_string($dependency) && isset($packageIds[$dependency])) {
+                    $graph[$id][] = $dependency;
+                }
+            }
+        }
+
+        $visiting = [];
+        $visited = [];
+        foreach (array_keys($graph) as $id) {
+            $this->visitDependencyNode($id, $graph, $visiting, $visited);
+        }
+    }
+
+    /**
+     * @param array<string,list<string>> $graph
+     * @param array<string,bool> $visiting
+     * @param array<string,bool> $visited
+     */
+    private function visitDependencyNode(
+        string $id,
+        array $graph,
+        array &$visiting,
+        array &$visited,
+    ): void {
+        if (isset($visited[$id])) {
+            return;
+        }
+        if (isset($visiting[$id])) {
+            throw new InvalidArgumentException('Definition package contains a circular dependency graph.');
+        }
+
+        $visiting[$id] = true;
+        foreach ($graph[$id] ?? [] as $dependency) {
+            $this->visitDependencyNode($dependency, $graph, $visiting, $visited);
+        }
+        unset($visiting[$id]);
+        $visited[$id] = true;
     }
 
     private function checksum(mixed $value): string
