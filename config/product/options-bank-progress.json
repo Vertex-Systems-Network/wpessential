@@ -13,7 +13,7 @@
   "surface_status": [
     {"id":1,"key":"cpt","status":"BANK_SURFACE_SEEDED","records":107,"notes":"Current WordPress register_post_type(), current labels, capability map and native-extra/internal exclusions are seeded. Market evidence enrichment and final native cross-check remain before NATIVE_AUDITED/MARKET_AUDITED."},
     {"id":2,"key":"taxonomy","status":"BANK_SURFACE_SEEDED","records":71,"notes":"Current register_taxonomy(), get_taxonomy_labels() and capability map are seeded. Market evidence enrichment and final native cross-check remain."},
-    {"id":3,"key":"fields","status":"BANK_SURFACE_SEEDED","records":596,"notes":"Broad normalized field/group/control inventory spans mature and long-tail ecosystems. Formal Bank Review V1 identified semantic, native and market review blockers; Semantic Canonicalization V1 closes the six-record semantic consolidation blocker through machine-validated ALIAS/EFFECTIVE_DERIVATION relationships. Native register_meta()/Block Bindings disposition and provider-by-provider market coverage remain open, so keep BANK_SURFACE_SEEDED."},
+    {"id":3,"key":"fields","status":"NATIVE_AUDITED","records":609,"notes":"WordPress 7.1-era native Metadata and Block Bindings contracts are dispositioned through a machine-validated 61-item native audit matrix with zero unresolved items. Thirteen genuine native gaps were added without turning runtime registry helpers or platform-owned block infrastructure into fake Fields options. Semantic canonicalization remains enforced. Provider-by-provider market coverage is still open, so MARKET_AUDITED/BANK_REVIEWED remain unclaimed."},
     {"id":4,"key":"relations","status":"UNSEEDED","records":0},
     {"id":5,"key":"status","status":"UNSEEDED","records":0},
     {"id":6,"key":"query","status":"UNSEEDED","records":0},
@@ -70,9 +70,9 @@
   ],
   "truth": {
     "seeded_surfaces": 3,
-    "native_audited_surfaces": 0,
+    "native_audited_surfaces": 1,
     "market_audited_surfaces": 0,
     "bank_reviewed_surfaces": 0,
-    "total_bank_records": 774
+    "total_bank_records": 787
   }
 }
