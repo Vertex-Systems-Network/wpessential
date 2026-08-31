@@ -182,6 +182,9 @@ function requiredAdminBuildArtifacts(): array
         'assets/admin/taxonomy.js',
         'assets/admin/taxonomy.css',
         'assets/admin/taxonomy.asset.php',
+        'assets/admin/import-export.js',
+        'assets/admin/import-export.css',
+        'assets/admin/import-export.asset.php',
     ];
 }
 
