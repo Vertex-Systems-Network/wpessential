@@ -184,7 +184,7 @@ final class DefinitionPackageCodec
         $dependencies = $record['dependencies'] ?? null;
         $checksum = $record['checksum'] ?? null;
 
-        $supportedOwner = ($ownerSurfaceId === 1 && $type === 'custom-post-type')
+        $supportedOwner = ($ownerSurfaceId === 1 && $type === 'post_type')
             || ($ownerSurfaceId === 2 && $type === 'taxonomy');
         if (!is_string($id)
             || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $id) !== 1
