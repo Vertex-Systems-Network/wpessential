@@ -17,11 +17,11 @@ The canonical owner is Dashboard Widgets Manager: WordPress Dashboard widget inv
 
 ## Candidate Bank
 
-This branch adds **125 classified discovery records** in four surface-owned shards:
+This branch adds **123 classified discovery records** in four surface-owned shards:
 
 | Shard | Records | Boundary |
 | --- | ---: | --- |
-| `dashboard-widgets.json` | 35 | definition, native registration/inventory, dashboard targets, presentation and visible states |
+| `dashboard-widgets.json` | 33 | definition, native registration/inventory, dashboard targets, presentation and visible states |
 | `dashboard-widgets--content-data-actions.json` | 46 | widget types, typed data references, remote-content safety, refresh/cache and Ability-backed actions |
 | `dashboard-widgets--preferences-multisite-portability.json` | 30 | presentation visibility, user preferences, role/network presets, multisite, lifecycle and portability |
 | `dashboard-widgets--wpe-exceed.json` | 14 | future exceed/deferred diagnostics and reliability ideas |

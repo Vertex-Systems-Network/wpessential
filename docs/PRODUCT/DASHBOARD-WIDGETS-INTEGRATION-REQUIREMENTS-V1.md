@@ -16,7 +16,7 @@ Integrator-owned file:
 After reconciling concurrent branches, recompute from repository truth:
 
 - Surface 10 should move from `UNSEEDED / 0` to the verified candidate stage/count only after exact-head contracts pass;
-- candidate local count from this branch: **125**;
+- candidate local count from this branch: **123**;
 - global `seeded_surfaces` and `total_bank_records` must be derived after all active branches are reconciled;
 - do not copy historical totals from this document.
 
