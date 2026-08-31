@@ -30,6 +30,7 @@ final class TaxonomyAdminController
         private readonly WordPressExecutionContextFactory $contexts,
         private readonly AjaxDispatcher $ajax,
         private readonly AdminAssetManifest $assets,
+        private readonly TaxonomyObjectTypeCatalog $objectTypes,
         private readonly string $ajaxAction,
     ) {
         if (trim($this->ajaxAction) === '') {
@@ -101,6 +102,7 @@ final class TaxonomyAdminController
         }
 
         [$definitions, $readError] = $this->readDefinitions();
+        $objectTypes = $this->objectTypes->entries();
         $bootstrap = [
             'surface' => 'taxonomies',
             'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
@@ -112,6 +114,7 @@ final class TaxonomyAdminController
                 'status' => ['type' => 'taxonomy.status', 'nonce' => $this->ajax->createNonce('taxonomy.status')],
             ],
             'definitions' => $definitions,
+            'objectTypes' => $objectTypes,
         ];
         $json = function_exists('wp_json_encode')
             ? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
@@ -121,12 +124,12 @@ final class TaxonomyAdminController
         echo '<div class="wrap wpessential-admin-wrap">';
         echo '<section id="wpessential-taxonomy-root" data-wpessential-surface="taxonomies" aria-labelledby="wpessential-taxonomy-title">';
         echo '<h1 id="wpessential-taxonomy-title">' . esc_html__('Taxonomies', 'wpessential') . '</h1>';
-        echo '<p>' . esc_html__('Create and manage canonical WPEssential taxonomy definitions. This builder uses the same revision-safe Policy and Ability path as runtime registration.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Create and manage canonical WPEssential taxonomy definitions. Taxonomy object-type associations are written only through the Taxonomy definition to preserve one source of truth.', 'wpessential') . '</p>';
         if ($readError !== null) {
             echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html($readError) . '</p></div>';
         }
         echo '<div id="wpessential-taxonomy-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
-        $this->renderEditor();
+        $this->renderEditor($objectTypes);
         $this->renderDefinitions($definitions);
         echo '<noscript><p class="notice notice-warning inline">' . esc_html__('JavaScript is required to create or change Taxonomy definitions. Existing definitions remain readable in the table.', 'wpessential') . '</p></noscript>';
         echo '</section>';
@@ -134,7 +137,8 @@ final class TaxonomyAdminController
         echo '</div>';
     }
 
-    private function renderEditor(): void
+    /** @param list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $objectTypes */
+    private function renderEditor(array $objectTypes): void
     {
         echo '<section class="wpessential-cpt-panel" aria-labelledby="wpessential-taxonomy-editor-title">';
         echo '<h2 id="wpessential-taxonomy-editor-title">' . esc_html__('Add taxonomy', 'wpessential') . '</h2>';
@@ -146,8 +150,9 @@ final class TaxonomyAdminController
         $this->renderTextField('wpessential-taxonomy-name', __('Plural name', 'wpessential'), 'name', 'Genres', true);
         $this->renderTextField('wpessential-taxonomy-singular', __('Singular name', 'wpessential'), 'singular_name', 'Genre', true);
         $this->renderTextField('wpessential-taxonomy-description', __('Description', 'wpessential'), 'description', '', false);
-        $this->renderTextField('wpessential-taxonomy-object-types', __('Object types', 'wpessential'), 'object_types', 'post, book', true, __('Comma-separated WordPress post type keys. Missing runtime object types are reported as compatibility warnings.', 'wpessential'));
         echo '</div>';
+
+        $this->renderObjectTypeSelector($objectTypes);
 
         echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__('Behavior', 'wpessential') . '</legend>';
         $this->renderCheckbox('wpessential-taxonomy-public', __('Public', 'wpessential'), true);
@@ -179,6 +184,40 @@ final class TaxonomyAdminController
         echo '<button type="submit" class="button button-primary" id="wpessential-taxonomy-save">' . esc_html__('Save taxonomy', 'wpessential') . '</button> ';
         echo '<button type="button" class="button" id="wpessential-taxonomy-cancel" hidden>' . esc_html__('Cancel edit', 'wpessential') . '</button>';
         echo '</p></form></section>';
+    }
+
+    /** @param list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $objectTypes */
+    private function renderObjectTypeSelector(array $objectTypes): void
+    {
+        echo '<fieldset class="wpessential-cpt-options" id="wpessential-taxonomy-object-types">';
+        echo '<legend>' . esc_html__('Linked post types', 'wpessential') . '</legend>';
+        echo '<p class="description">' . esc_html__('Select known WordPress or WPEssential post types. Additional external keys are preserved separately and are never removed just because they are not currently registered.', 'wpessential') . '</p>';
+
+        if ($objectTypes === []) {
+            echo '<p data-wpessential-taxonomy-object-types-empty>' . esc_html__('No runtime or WPEssential post types were discovered. You can still enter an external key below.', 'wpessential') . '</p>';
+        } else {
+            echo '<div data-wpessential-taxonomy-object-type-options>';
+            foreach ($objectTypes as $objectType) {
+                $key = $objectType['key'];
+                $label = $objectType['label'];
+                $source = $objectType['source'] === 'wpessential' ? __('WPEssential', 'wpessential') : __('WordPress/runtime', 'wpessential');
+                $status = $objectType['runtime_registered']
+                    ? __('registered', 'wpessential')
+                    : sprintf(__('definition status: %s', 'wpessential'), $objectType['status']);
+                $id = 'wpessential-taxonomy-object-type-' . sanitize_html_class($key);
+                echo '<label for="' . esc_attr($id) . '" class="wpessential-taxonomy-object-type-option">';
+                echo '<input type="checkbox" id="' . esc_attr($id) . '" value="' . esc_attr($key) . '" data-wpessential-taxonomy-object-type> ';
+                echo '<strong>' . esc_html($label) . '</strong> <code>' . esc_html($key) . '</code> ';
+                echo '<span class="description">(' . esc_html($source . '; ' . $status) . ')</span>';
+                echo '</label><br>';
+            }
+            echo '</div>';
+        }
+
+        echo '<p><label for="wpessential-taxonomy-object-types-extra"><strong>' . esc_html__('Additional/external post type keys', 'wpessential') . '</strong></label><br>';
+        echo '<input class="regular-text" type="text" id="wpessential-taxonomy-object-types-extra" placeholder="external_book, legacy_item">';
+        echo '<span class="description">' . esc_html__('Comma-separated keys that are not in the discovered list. Existing unknown keys are placed here automatically while editing.', 'wpessential') . '</span></p>';
+        echo '</fieldset>';
     }
 
     /** @param list<array<string,mixed>> $definitions */
