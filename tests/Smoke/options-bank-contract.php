@@ -10,6 +10,7 @@ $root = dirname(__DIR__, 2);
 $bankDirectory = $root . '/config/product/options-bank';
 $surfaceRegistryPath = $root . '/config/product/competitor-parity-surfaces.json';
 $schemaPath = $root . '/config/product/options-bank.schema.json';
+$semanticSchemaPath = $root . '/config/product/options-bank-semantic-relations.schema.json';
 $semanticRegistryPath = $root . '/config/product/options-bank-semantic-relations.json';
 
 /** @return array<string, mixed> */
@@ -77,9 +78,10 @@ $allowedPriorities = [
 ];
 $allowedSemanticRelations = ['ALIAS', 'EFFECTIVE_DERIVATION'];
 
-// Keep the canonical discovery schema parseable without introducing another
+// Keep the canonical discovery schemas parseable without introducing another
 // runtime dependency merely to validate JSON Schema during a smoke test.
 readJsonObject($schemaPath);
+readJsonObject($semanticSchemaPath);
 
 $registry = readJsonObject($surfaceRegistryPath);
 $registeredSurfaces = $registry['surfaces'] ?? null;
@@ -269,6 +271,10 @@ $semanticRegistry = readJsonObject($semanticRegistryPath);
 if (($semanticRegistry['schema_version'] ?? null) !== 1 || ($semanticRegistry['bank_version'] ?? null) !== 'v1') {
     throw new RuntimeException('Options Bank semantic relationship registry has an unsupported version.');
 }
+requireString(
+    $semanticRegistry['snapshot_date'] ?? null,
+    'Options Bank semantic relationship registry is missing snapshot_date.',
+);
 
 $semanticRelationships = $semanticRegistry['relationships'] ?? null;
 if (!is_array($semanticRelationships)) {
