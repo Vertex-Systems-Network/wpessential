@@ -277,14 +277,12 @@ if (!is_array($fieldsProgress)
     throw new RuntimeException('Fields Bank Review V2 and canonical progress truth disagree.');
 }
 
+// Global Bank counts are intentionally not pinned here. They grow as later
+// canonical surfaces are seeded/audited/reviewed. The dedicated progress
+// contract derives and validates those global counters against all Bank shards.
 $truth = $progress['truth'] ?? null;
-if (!is_array($truth)
-    || ($truth['native_audited_surfaces'] ?? null) !== 1
-    || ($truth['market_audited_surfaces'] ?? null) !== 1
-    || ($truth['bank_reviewed_surfaces'] ?? null) !== 1
-    || ($truth['total_bank_records'] ?? null) !== 796
-) {
-    throw new RuntimeException('Fields Bank Review V2 expects canonical truth at 1 native / 1 market / 1 reviewed / 796 records.');
+if (!is_array($truth)) {
+    throw new RuntimeException('Options Bank progress is missing global truth counters.');
 }
 
 fwrite(
