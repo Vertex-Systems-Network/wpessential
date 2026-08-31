@@ -99,11 +99,15 @@ final class TaxonomyModule implements ModuleInterface
             throw new LogicException('Taxonomy admin requires the shared admin, Ability, and AJAX services.');
         }
 
+        $objectTypes = new TaxonomyObjectTypeCatalog($abilities, $contexts);
+        $services->set('module.taxonomies.object-types', $objectTypes);
+
         $admin = new TaxonomyAdminController(
             abilities: $abilities,
             contexts: $contexts,
             ajax: $ajax,
             assets: $assets,
+            objectTypes: $objectTypes,
             ajaxAction: $gateway->action(),
         );
         $services->set('module.taxonomies.admin', $admin);
