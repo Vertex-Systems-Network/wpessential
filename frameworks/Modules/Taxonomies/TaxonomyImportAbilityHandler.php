@@ -53,7 +53,7 @@ final readonly class TaxonomyImportAbilityHandler implements AbilityHandlerInter
             $this->assertExpectedRevision($input, $existing);
         }
 
-        $this->assertKeyAvailable($source, $existing);
+        $this->assertIdentityAvailable($source, $existing);
         $validationInput = ['payload' => $source->payload];
         if ($existing instanceof Definition) {
             $validationInput['id'] = $existing->id;
@@ -161,7 +161,7 @@ final readonly class TaxonomyImportAbilityHandler implements AbilityHandlerInter
         }
     }
 
-    private function assertKeyAvailable(Definition $source, ?Definition $existing): void
+    private function assertIdentityAvailable(Definition $source, ?Definition $existing): void
     {
         $key = $source->payload['taxonomy_key'] ?? null;
         if (!is_string($key) || trim($key) === '') {
@@ -175,6 +175,12 @@ final readonly class TaxonomyImportAbilityHandler implements AbilityHandlerInter
                 || ($existing instanceof Definition && $candidate->id === $existing->id)
             ) {
                 continue;
+            }
+            if ($candidate->slug === $source->slug) {
+                throw new RuntimeException(sprintf(
+                    'Taxonomy import slug collision: "%s" belongs to a different definition UUID.',
+                    $source->slug,
+                ));
             }
             $candidateKey = $candidate->payload['taxonomy_key'] ?? null;
             if (is_string($candidateKey) && trim($candidateKey) === $key) {
