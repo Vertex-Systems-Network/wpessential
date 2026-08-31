@@ -12,6 +12,7 @@ use Throwable;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
+use WPEssential\Modules\Taxonomies\TaxonomyModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
@@ -46,6 +47,7 @@ use WPEssential\Platform\WordPress\Registrations\RegistrationCompilationStatus;
 use WPEssential\Platform\WordPress\Registrations\RegistrationCompiler;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinitionProviderRegistry;
 use WPEssential\Platform\WordPress\Registrations\RegistrationRuntimeLoader;
+use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeRegistrar;
 use WPEssential\Platform\WordPress\Registrations\WpdbCompiledRegistrationPersistenceGateway;
 use WPEssential\Platform\WordPress\Security\NativeWordPressNonceEnvironment;
 use WPEssential\Platform\WordPress\Security\NonceManager;
@@ -92,6 +94,7 @@ final class Plugin
         $registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
         $registrationStatus = new RegistrationCompilationStatus();
         $postTypeRegistrar = new PostTypeRuntimeRegistrar($registrationRuntime);
+        $taxonomyRegistrar = new TaxonomyRuntimeRegistrar($registrationRuntime);
         $traces = $debug ? new BoundedInMemoryTraceRecorder() : new NullTraceRecorder();
 
         $pluginRoot = dirname(__DIR__, 2);
@@ -119,12 +122,14 @@ final class Plugin
         $services->set('platform.registrations.runtime', $registrationRuntime);
         $services->set('platform.registrations.compilation-status', $registrationStatus);
         $services->set('platform.registrations.post-types', $postTypeRegistrar);
+        $services->set('platform.registrations.taxonomies', $taxonomyRegistrar);
         $services->set('platform.traces', $traces);
         $services->set('platform.admin.diagnostics', $runtimeDiagnostics);
         $services->set('platform.admin.assets', $adminAssets);
         $services->set('platform.admin.controller', $adminController);
 
         self::$kernel->registerModule(new CustomPostTypeModule());
+        self::$kernel->registerModule(new TaxonomyModule());
 
         if (function_exists('add_action')) {
             $ajaxGateway->register();
@@ -142,6 +147,7 @@ final class Plugin
             $registrationStatus->markFailure($exception);
         }
         $postTypeRegistrar->register();
+        $taxonomyRegistrar->register();
 
         return self::$kernel;
     }
