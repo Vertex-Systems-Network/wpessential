@@ -42,9 +42,9 @@
     {
       "id": 5,
       "key": "status",
-      "status": "BANK_SURFACE_SEEDED",
+      "status": "NATIVE_AUDITED",
       "records": 129,
-      "notes": "Stage A integration seeds 129 Status records from PR #33. Native and market research candidates report zero unresolved items, but certification remains pending surface-local executable gates; no NATIVE_AUDITED/MARKET_AUDITED/BANK_REVIEWED claim is made."
+      "notes": "Stage B native promotion certifies the 129-record Status native WordPress audit at 35 dispositions / 0 unresolved after the registered Status native contract and all applicable exact-head workflows passed on synchronized prerequisite head d7783cd97b07dd69a6c901774c9fd9cf4e843c0d. Market certification and Bank Review remain downstream gates."
     },
     {
       "id": 6,
@@ -357,7 +357,7 @@
   ],
   "truth": {
     "seeded_surfaces": 7,
-    "native_audited_surfaces": 4,
+    "native_audited_surfaces": 5,
     "market_audited_surfaces": 2,
     "bank_reviewed_surfaces": 2,
     "total_bank_records": 1406
