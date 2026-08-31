@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use LogicException;
+use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -71,11 +72,13 @@ final class CustomPostTypeModule implements ModuleInterface
 
         $projector = new CustomPostTypeDefinitionProjector();
         $provider = new CustomPostTypeRegistrationProvider($definitions, $projector);
+        $validation = new CustomPostTypeValidationService($definitions, $projector);
         $providers->register($provider);
         $services->set('module.custom-post-types.projector', $projector);
         $services->set('module.custom-post-types.registration-provider', $provider);
+        $services->set('module.custom-post-types.validation', $validation);
 
-        $this->registerAbilities($abilities, $abilityBridge, $definitions, $projector);
+        $this->registerAbilities($abilities, $abilityBridge, $definitions, $projector, $validation);
         $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
     }
 
@@ -112,6 +115,7 @@ final class CustomPostTypeModule implements ModuleInterface
         WordPressAbilityBridge $bridge,
         DefinitionRepositoryInterface $definitions,
         CustomPostTypeDefinitionProjector $projector,
+        CustomPostTypeValidationService $validation,
     ): void {
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $outputSchema = ['type' => 'object'];
@@ -131,6 +135,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::LIST,
             ),
             'List custom post types',
@@ -156,10 +161,35 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::GET,
             ),
             'Get custom post type',
             'Reads one canonical WPEssential Custom Post Type definition by immutable definition id.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: 'wpessential/cpt/validate',
+                ownerSurfaceId: CustomPostTypeDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['payload'],
+                    'properties' => [
+                        'id' => ['type' => 'string'],
+                        'payload' => ['type' => 'object'],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new CustomPostTypeValidationAbilityHandler($validation),
+            'Validate custom post type',
+            'Preflights a Custom Post Type candidate without mutating canonical definitions or runtime registration.',
         );
 
         $this->registerAbility(
@@ -186,6 +216,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::SAVE,
             ),
             'Save custom post type',
@@ -215,6 +246,7 @@ final class CustomPostTypeModule implements ModuleInterface
             new CustomPostTypeAbilityHandler(
                 $definitions,
                 $projector,
+                $validation,
                 CustomPostTypeAbilityHandler::STATUS,
             ),
             'Change custom post type status',
@@ -226,7 +258,7 @@ final class CustomPostTypeModule implements ModuleInterface
         AbilityRegistry $abilities,
         WordPressAbilityBridge $bridge,
         AbilityDescriptor $descriptor,
-        CustomPostTypeAbilityHandler $handler,
+        AbilityHandlerInterface $handler,
         string $label,
         string $description,
     ): void {
@@ -258,6 +290,14 @@ final class CustomPostTypeModule implements ModuleInterface
             $contexts,
             'cpt.get',
             'wpessential/cpt/get',
+            NonceOperation::Apply,
+        );
+        $this->registerAjaxRoute(
+            $routes,
+            $abilities,
+            $contexts,
+            'cpt.validate',
+            'wpessential/cpt/validate',
             NonceOperation::Apply,
         );
         $this->registerAjaxRoute(

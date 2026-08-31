@@ -11,6 +11,7 @@ on:
       - 'tests/Unit/Modules/CustomPostTypes/**'
       - 'tests/Unit/Platform/WordPress/Registrations/**'
       - 'tests/Integration/wordpress-cpt-runtime.php'
+      - 'tests/Integration/wordpress-cpt-validation.php'
       - '.github/workflows/cpt-runtime.yml'
   push:
     branches:
@@ -24,6 +25,7 @@ on:
       - 'tests/Unit/Modules/CustomPostTypes/**'
       - 'tests/Unit/Platform/WordPress/Registrations/**'
       - 'tests/Integration/wordpress-cpt-runtime.php'
+      - 'tests/Integration/wordpress-cpt-validation.php'
       - '.github/workflows/cpt-runtime.yml'
   workflow_dispatch:
 
@@ -90,9 +92,12 @@ jobs:
           composer quality:php
           php -l frameworks/Modules/CustomPostTypes/CustomPostTypeDefinitionProjector.php
           php -l frameworks/Modules/CustomPostTypes/CustomPostTypeRegistrationProvider.php
+          php -l frameworks/Modules/CustomPostTypes/CustomPostTypeValidationService.php
+          php -l frameworks/Modules/CustomPostTypes/CustomPostTypeValidationAbilityHandler.php
           php -l frameworks/Modules/CustomPostTypes/CustomPostTypeModule.php
           php -l frameworks/Platform/WordPress/Registrations/PostTypeRuntimeRegistrar.php
           php -l tests/Integration/wordpress-cpt-runtime.php
+          php -l tests/Integration/wordpress-cpt-validation.php
 
       - name: Prepare exact WordPress 7.1 fixture
         shell: bash
@@ -152,6 +157,19 @@ jobs:
           wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
           ${wp} plugin activate wpessential
           ${wp} plugin status wpessential
+
+      - name: Run CPT validation preflight evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/cpt-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-cpt-validation.php'
+          WPE_CPT_VALIDATION_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/cpt-runtime/validation.json" \
+            ${wp} eval "require '${script}';" | tee artifacts/cpt-runtime/validation.log
+          test -s artifacts/cpt-runtime/validation.json
+          jq -e '.result == "PASS" and .reserved_key_blocked == true and .unknown_runtime_owner_blocked == true and .missing_taxonomy_degraded == true and .validation_non_mutating == true and .direct_save_collision_blocked == true and .publish_transition_collision_blocked == true and .publish_probe_status == "draft" and .publish_probe_revision == 1' artifacts/cpt-runtime/validation.json >/dev/null
+          cat artifacts/cpt-runtime/validation.json
 
       - name: Run CPT definition and runtime lifecycle evidence
         shell: bash

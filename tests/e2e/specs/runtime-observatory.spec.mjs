@@ -106,6 +106,7 @@ test('packaged Custom Post Types Builder renders canonical management controls',
   await expect(page.getByLabel('Post type key')).toBeVisible();
   await expect(page.getByLabel('Plural name')).toBeVisible();
   await expect(page.getByLabel('Singular name')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save custom post type' })).toBeVisible();
   await expect(page.getByRole('table', { name: 'Saved custom post types' })).toBeVisible();
   await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
@@ -113,6 +114,30 @@ test('packaged Custom Post Types Builder renders canonical management controls',
   await expect(root).toHaveAttribute('data-wpessential-surface', 'custom-post-types');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
   expect(pageErrors, `Unexpected CPT Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
+});
+
+test('packaged CPT preflight blocks invalid candidates without persisting and passes valid candidates', async ({ page }) => {
+  await visitCustomPostTypes(page);
+
+  await page.getByLabel('Post type key').fill('post');
+  await page.getByLabel('Plural name').fill('Posts');
+  await page.getByLabel('Singular name').fill('Post');
+  await page.getByRole('button', { name: 'Validate' }).click();
+
+  const validation = page.locator('#wpessential-cpt-validation');
+  await expect(validation).toBeVisible();
+  await expect(validation).toContainText(/Validation blocked by \d+ issue/);
+  await expect(validation).toContainText('reserved by WordPress');
+  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
+
+  await page.getByLabel('Post type key').fill('library_book');
+  await page.getByLabel('Plural name').fill('Books');
+  await page.getByLabel('Singular name').fill('Book');
+  await page.getByRole('button', { name: 'Validate' }).click();
+
+  await expect(validation).toBeVisible();
+  await expect(validation).toContainText('Validation passed. No blocking issues found.');
+  await expect(page.getByText('No custom post types have been created yet.')).toBeVisible();
 });
 
 test('plugin-owned Runtime Observatory has zero axe violations', async ({ page }) => {

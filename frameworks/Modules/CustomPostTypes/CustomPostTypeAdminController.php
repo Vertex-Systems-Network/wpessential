@@ -113,6 +113,7 @@ final class CustomPostTypeAdminController
             'ajaxAction' => $this->ajaxAction,
             'routes' => [
                 'list' => ['type' => 'cpt.list', 'nonce' => $this->ajax->createNonce('cpt.list')],
+                'validate' => ['type' => 'cpt.validate', 'nonce' => $this->ajax->createNonce('cpt.validate')],
                 'save' => ['type' => 'cpt.save', 'nonce' => $this->ajax->createNonce('cpt.save')],
                 'status' => ['type' => 'cpt.status', 'nonce' => $this->ajax->createNonce('cpt.status')],
             ],
@@ -190,7 +191,14 @@ final class CustomPostTypeAdminController
         }
         echo '</select></p>';
 
+        echo '<div id="wpessential-cpt-validation" class="wpessential-cpt-validation" role="status" aria-live="polite" aria-labelledby="wpessential-cpt-validation-title" hidden>';
+        echo '<h3 id="wpessential-cpt-validation-title">' . esc_html__('Validation report', 'wpessential') . '</h3>';
+        echo '<p data-wpessential-cpt-validation-summary></p>';
+        echo '<ul data-wpessential-cpt-validation-issues></ul>';
+        echo '</div>';
+
         echo '<p class="submit">';
+        echo '<button type="button" class="button" id="wpessential-cpt-validate">' . esc_html__('Validate', 'wpessential') . '</button> ';
         echo '<button type="submit" class="button button-primary" id="wpessential-cpt-save">' . esc_html__('Save custom post type', 'wpessential') . '</button> ';
         echo '<button type="button" class="button" id="wpessential-cpt-cancel" hidden>' . esc_html__('Cancel edit', 'wpessential') . '</button>';
         echo '</p>';

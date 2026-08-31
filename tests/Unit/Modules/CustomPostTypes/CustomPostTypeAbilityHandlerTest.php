@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeAbilityHandler;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeDefinitionProjector;
+use WPEssential\Modules\CustomPostTypes\CustomPostTypeValidationService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
@@ -136,9 +137,11 @@ final class CustomPostTypeAbilityHandlerTest extends TestCase
 
     private function handler(InMemoryDefinitionRepository $repository, string $action): CustomPostTypeAbilityHandler
     {
+        $projector = new CustomPostTypeDefinitionProjector();
         return new CustomPostTypeAbilityHandler(
             $repository,
-            new CustomPostTypeDefinitionProjector(),
+            $projector,
+            new CustomPostTypeValidationService($repository, $projector),
             $action,
         );
     }
