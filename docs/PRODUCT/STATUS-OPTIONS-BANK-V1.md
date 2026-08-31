@@ -4,7 +4,7 @@ Snapshot: 2026-09-01
 Surface: 5 — `status`  
 Work mode: **SURFACE_WORK**  
 Branch: `planning/master-options-bank-status-v1`  
-Synced repository base: `8ed1c0389ef314c79a60a6808d232ef625de7b25`
+Synced repository base: `923197edd27ac96a8e7cccc145ab6f139f93b6b9`
 
 Candidate record count: **129**
 
@@ -12,20 +12,28 @@ Candidate record count: **129**
 
 This branch is a **surface-local candidate**, not a shared lifecycle promotion.
 
-At the synced base, `config/product/options-bank-progress.json` still records Surface 5 as `UNSEEDED / 0`. This worker does not edit shared/global progress, README/STATUS rollups, Composer wiring, or shared smoke infrastructure. The candidate shards intentionally use the Bank shard schema so the integrator can promote them without re-transcribing discovery, but they must not be merged until the Integration Requirements are reconciled and exact-head gates pass.
+Canonical shared progress has not yet been reconciled to this candidate by the designated integrator. This worker does not edit shared/global progress, README/STATUS rollups, Composer wiring, generic smoke aggregation, or the cross-surface semantic registry. The candidate shards use the canonical Bank schema so the integrator can certify them without re-transcribing discovery, but lifecycle promotion remains exact-head gated and serialized.
 
 | Gate | Candidate state |
 | --- | --- |
 | Repository/current-state audit | complete |
 | Current WordPress/native research | complete for candidate |
 | Current market/provider research | complete for candidate |
-| Candidate Options Bank | 129 classified records |
+| Candidate Options Bank | 129 classified records / 129 unique option paths |
 | Ownership / duplicate resolution | complete for candidate |
-| Native Audit | `NATIVE_AUDIT_IN_PROGRESS` — zero unresolved research items, executable certification pending |
-| Market Audit | `MARKET_AUDIT_IN_PROGRESS` — zero unresolved research items, sequencing/certification pending |
-| Bank Review | **not started**; blocked on certified Native + Market gates |
-| UX projection | **not started**; Bank Review prerequisite not met |
-| Implementation contract | **not started**; Bank Review prerequisite not met |
+| Native Audit | `NATIVE_AUDIT_IN_PROGRESS` — 35 dispositions, zero unresolved research; surface validator prepared, shared execution/promotion pending |
+| Market Audit | `MARKET_AUDIT_IN_PROGRESS` — nine capability families, zero unresolved research; surface validator prepared, ordered shared execution/promotion pending |
+| Bank Review | `REVIEW_BLOCKED` — 129 records, zero Status semantic relationships, zero unreviewed/deferred records, four explicit safety rejections; two certification gates unresolved |
+| UX projection | **not started**; `BANK_REVIEWED` prerequisite not met |
+| Implementation contract | **not started**; `BANK_REVIEWED` prerequisite not met |
+
+Surface-local executable gates now prepared:
+
+- `tests/Smoke/options-bank-status-native-audit-contract.php`;
+- `tests/Smoke/options-bank-status-market-audit-contract.php`;
+- `tests/Smoke/options-bank-status-review-contract.php`.
+
+The formal review candidate is `config/product/options-bank-reviews/status-bank-review-v1.json`. It must remain `REVIEW_BLOCKED` until native and market certification plus canonical progress agree on the same exact head.
 
 ## Current repository audit
 
@@ -141,6 +149,22 @@ Primary evidence:
 - direct SQL status mutation is rejected;
 - arbitrary executable transition callback text is rejected;
 - plugins may not author Core `_builtin` status semantics.
+
+## Formal Bank Review findings
+
+The current semantic registry contains six relationships, all owned by Fields; Status has **zero** alias/effective-derivation entries. The Status review therefore does not invent semantic registry rows solely to satisfy a review ceremony.
+
+The blocked review also verifies the candidate policy posture:
+
+- zero `UNREVIEWED` records;
+- zero `DEFERRED` records;
+- exactly four explicit `REJECTED_UNSAFE` records;
+- all WPE-exceed adoption is future-only and `P1_EXCEED`;
+- native research unresolved count is zero;
+- market research unresolved count is zero;
+- no record-count inflation occurred after market evidence was attached.
+
+The review remains blocked because research completeness is not equivalent to certification. Native and market gates must execute through the designated shared integration lane, in order, with fresh exact-head CI before the review can be changed to `BANK_REVIEWED`.
 
 ## Candidate design direction
 
