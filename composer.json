@@ -46,6 +46,7 @@
     "test:smoke:options-bank": "php tests/Smoke/options-bank-contract.php",
     "test:smoke:options-bank-progress": "php tests/Smoke/options-bank-progress-contract.php",
     "test:smoke:options-bank-native-audit": "php tests/Smoke/options-bank-native-audit-contract.php",
+    "test:smoke:options-bank-market-audit": "php tests/Smoke/options-bank-market-audit-contract.php",
     "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
     "test:smoke": [
       "@test:smoke:kernel",
@@ -61,7 +62,8 @@
       "@test:smoke:compiled-registration-scale",
       "@test:smoke:options-bank",
       "@test:smoke:options-bank-progress",
-      "@test:smoke:options-bank-native-audit"
+      "@test:smoke:options-bank-native-audit",
+      "@test:smoke:options-bank-market-audit"
     ],
     "quality:php": [
       "@quality:phpcs",
