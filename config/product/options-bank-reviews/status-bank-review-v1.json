@@ -6,7 +6,7 @@
     "key": "status"
   },
   "snapshot_date": "2026-09-01",
-  "decision": "REVIEW_BLOCKED",
+  "decision": "BANK_REVIEWED",
   "record_count": 129,
   "required_artifacts": [
     {
@@ -17,12 +17,12 @@
     {
       "kind": "native_audit",
       "path": "config/product/options-bank-audits/status-native-wordpress.json",
-      "expected_status": "NATIVE_AUDIT_IN_PROGRESS; 35 dispositions and zero unresolved items are present, exact-head Status validator registration/execution and canonical progress promotion pending"
+      "expected_status": "NATIVE_AUDITED; 35 dispositions and zero unresolved items; registered Status native contract exact-head certified"
     },
     {
       "kind": "market_audit",
       "path": "config/product/options-bank-audits/status-market-ecosystem.json",
-      "expected_status": "MARKET_AUDIT_IN_PROGRESS; nine capability families and zero unresolved items are present, exact-head Status validator registration/execution and canonical progress promotion pending"
+      "expected_status": "MARKET_AUDITED; nine capability families and zero unresolved items; registered Status market contract exact-head certified"
     }
   ],
   "semantic_expectations": {
@@ -41,5 +41,5 @@
     "wpe_exceed_shard_future_only": true,
     "record_delta_after_market_audit": 0
   },
-  "unresolved": 2
+  "unresolved": 0
 }
