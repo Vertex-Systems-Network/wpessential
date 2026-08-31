@@ -4,7 +4,7 @@ Snapshot: 2026-09-01
 Surface: 5 — `status`  
 Work mode: **SURFACE_WORK**  
 Branch: `planning/master-options-bank-status-v1`  
-Synced repository base: `5117d151cc7a6d26fa1769e4127e15ed27144550`
+Synced repository base: `923197edd27ac96a8e7cccc145ab6f139f93b6b9`
 
 Candidate record count: **129**
 
