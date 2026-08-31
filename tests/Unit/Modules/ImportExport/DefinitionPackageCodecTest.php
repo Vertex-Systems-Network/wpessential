@@ -49,11 +49,60 @@ final class DefinitionPackageCodecTest extends TestCase
         $codec = new DefinitionPackageCodec();
         $package = $codec->create([$this->record()]);
         $package['definitions'][] = $package['definitions'][0];
-        $package['manifest']['definition_count'] = 2;
-        $package['manifest']['definitions_checksum'] = $this->checksum($package['definitions']);
+        $this->refreshManifest($package);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('duplicate definition UUIDs');
+        $codec->verify($package);
+    }
+
+    public function testDuplicateOwnerRuntimeKeyIsRejectedBeforeApply(): void
+    {
+        $codec = new DefinitionPackageCodec();
+        $package = $codec->create([$this->record()]);
+        $duplicate = $package['definitions'][0];
+        $duplicate['id'] = '22222222-2222-4222-8222-222222222222';
+        $duplicate['slug'] = 'cpt-library-book-copy';
+        $package['definitions'][] = $duplicate;
+        $this->refreshManifest($package);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('duplicate owner runtime keys');
+        $codec->verify($package);
+    }
+
+    public function testDuplicateTypeSlugIdentityIsRejectedBeforePersistence(): void
+    {
+        $codec = new DefinitionPackageCodec();
+        $package = $codec->create([$this->record()]);
+        $duplicate = $package['definitions'][0];
+        $duplicate['id'] = '22222222-2222-4222-8222-222222222222';
+        $duplicate['payload']['post_type_key'] = 'library_volume';
+        $duplicate['checksum'] = $this->checksum($duplicate['payload']);
+        $package['definitions'][] = $duplicate;
+        $this->refreshManifest($package);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('duplicate type/slug identities');
+        $codec->verify($package);
+    }
+
+    public function testCircularPackageDependencyGraphIsRejected(): void
+    {
+        $codec = new DefinitionPackageCodec();
+        $package = $codec->create([$this->record()]);
+        $second = $package['definitions'][0];
+        $second['id'] = '22222222-2222-4222-8222-222222222222';
+        $second['slug'] = 'cpt-library-volume';
+        $second['payload']['post_type_key'] = 'library_volume';
+        $second['checksum'] = $this->checksum($second['payload']);
+        $package['definitions'][0]['dependencies'] = [$second['id']];
+        $second['dependencies'] = [$package['definitions'][0]['id']];
+        $package['definitions'][] = $second;
+        $this->refreshManifest($package);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('circular dependency graph');
         $codec->verify($package);
     }
 
@@ -90,6 +139,13 @@ final class DefinitionPackageCodecTest extends TestCase
             'dependencies' => $definition->dependencies,
             'checksum' => $definition->computedChecksum(),
         ];
+    }
+
+    /** @param array<string,mixed> $package */
+    private function refreshManifest(array &$package): void
+    {
+        $package['manifest']['definition_count'] = count($package['definitions']);
+        $package['manifest']['definitions_checksum'] = $this->checksum($package['definitions']);
     }
 
     private function checksum(mixed $value): string
