@@ -57,17 +57,20 @@ final class FieldsModule implements ModuleInterface
 
         $types = new FieldTypeRegistry();
         $presets = new FieldPresetRegistry($types);
+        $catalog = new FieldCatalogService($types, $presets);
         $fields = new FieldDefinitionNormalizer($types, $presets);
         $groups = new FieldGroupDefinitionNormalizer($fields);
         $validation = new FieldGroupValidationService($definitions, $groups);
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
+        $services->set('module.custom-fields.catalog', $catalog);
         $services->set('module.custom-fields.field-normalizer', $fields);
         $services->set('module.custom-fields.group-normalizer', $groups);
         $services->set('module.custom-fields.group-validation', $validation);
 
         $handlers = [
+            'catalog' => new FieldCatalogAbilityHandler($catalog),
             'list-groups' => new FieldGroupAbilityHandler($definitions, $groups, $validation, FieldGroupAbilityHandler::LIST),
             'get-group' => new FieldGroupAbilityHandler($definitions, $groups, $validation, FieldGroupAbilityHandler::GET),
             'validate-group' => new FieldGroupValidationAbilityHandler($validation),

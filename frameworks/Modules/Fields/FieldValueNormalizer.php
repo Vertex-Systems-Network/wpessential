@@ -36,10 +36,11 @@ final class FieldValueNormalizer
 
         $settings = $field['settings'];
         $required = $this->boolSetting($settings, 'required', false);
-        if ($value === null || $value === '') {
-            if ($required) {
-                throw new InvalidArgumentException(sprintf('Field "%s" is required.', $field['key']));
-            }
+        $emptyScalar = $value === null || $value === '';
+        if ($required && ($emptyScalar || $value === [])) {
+            throw new InvalidArgumentException(sprintf('Field "%s" is required.', $field['key']));
+        }
+        if ($emptyScalar) {
             return null;
         }
 
@@ -293,24 +294,24 @@ final class FieldValueNormalizer
 
     private function validRgbColor(string $value): bool
     {
-        if (preg_match('/^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})(?:\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?))?\s*\)$/', $value, $matches) !== 1) {
-            return false;
+        if (preg_match('/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/', $value, $matches) === 1) {
+            return (int) $matches[1] <= 255 && (int) $matches[2] <= 255 && (int) $matches[3] <= 255;
         }
-        if (str_starts_with($value, 'rgba(') && !isset($matches[4])) {
-            return false;
+        if (preg_match('/^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*\)$/', $value, $matches) === 1) {
+            return (int) $matches[1] <= 255 && (int) $matches[2] <= 255 && (int) $matches[3] <= 255;
         }
-        return (int) $matches[1] <= 255 && (int) $matches[2] <= 255 && (int) $matches[3] <= 255;
+        return false;
     }
 
     private function validHslColor(string $value): bool
     {
-        if (preg_match('/^hsla?\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%(?:\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?))?\s*\)$/', $value, $matches) !== 1) {
-            return false;
+        if (preg_match('/^hsl\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*\)$/', $value, $matches) === 1) {
+            return (float) $matches[2] <= 100.0 && (float) $matches[3] <= 100.0;
         }
-        if (str_starts_with($value, 'hsla(') && !isset($matches[4])) {
-            return false;
+        if (preg_match('/^hsla\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*\)$/', $value, $matches) === 1) {
+            return (float) $matches[2] <= 100.0 && (float) $matches[3] <= 100.0;
         }
-        return (float) $matches[2] <= 100.0 && (float) $matches[3] <= 100.0;
+        return false;
     }
 
     /** @param array<string,mixed> $field */
