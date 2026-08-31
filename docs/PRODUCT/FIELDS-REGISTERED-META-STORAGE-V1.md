@@ -28,6 +28,7 @@ Primary references:
 - https://developer.wordpress.org/reference/functions/register_post_meta/
 - https://developer.wordpress.org/reference/functions/register_meta/
 - https://developer.wordpress.org/reference/classes/wp_rest_meta_fields/get_registered_fields/
+- https://developer.wordpress.org/reference/classes/wp_rest_meta_fields/get_field_schema/
 - https://developer.wordpress.org/reference/functions/update_post_meta/
 
 ## Certified V1 field tranche
@@ -99,7 +100,9 @@ Applicable exact-head CI must pass before merge:
 - Platform Compatibility Matrix
 - Distributable Package
 
-Unit coverage in this slice verifies scalar/list schema compilation, stable-identity requirement, explicit REST schemas, sanitization, repeatable storage shape, revision/custom-fields support guards, WordPress registration failures, and fail-closed unsupported types.
+Unit coverage verifies scalar/list schema compilation, stable-identity requirement, explicit REST schemas, sanitization, repeatable storage shape, revision/custom-fields support guards, WordPress registration failures, and fail-closed unsupported types.
+
+The Platform Compatibility Matrix also executes `tests/Integration/wordpress-fields-meta-registration.php` against real WordPress 6.9 and 7.1 fixtures across PHP 8.2–8.5 plus the MariaDB 10.11 baseline. The integration verifies native subtype registration, public REST meta schema output, explicit authorization callback registration, canonical sanitization through the Metadata API, slash-sensitive scalar/array round trips, non-single REST wrapping, and revision/custom-fields support rejection.
 
 ## Next bounded slice
 
