@@ -64,6 +64,7 @@ final class FieldsModule implements ModuleInterface
         $validation = new FieldGroupValidationService($definitions, $groups);
         $postMetaCompiler = new PostMetaRegistrationCompiler($values);
         $postMetaRegistrar = new WordPressPostMetaRegistrar();
+        $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values);
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
@@ -74,6 +75,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.group-validation', $validation);
         $services->set('module.custom-fields.storage.post-meta.compiler', $postMetaCompiler);
         $services->set('module.custom-fields.storage.post-meta.registrar', $postMetaRegistrar);
+        $services->set('module.custom-fields.storage.post-meta.values', $postMetaValues);
 
         $handlers = [
             'catalog' => new FieldCatalogAbilityHandler($catalog),
@@ -96,7 +98,7 @@ final class FieldsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // Target/location binding, admin rendering, and runtime value writes remain separate bounded Surface 3 slices.
+        // Target/location binding, admin rendering, and runtime value Ability wiring remain separate bounded Surface 3 slices.
     }
 
     private function registerAbility(
