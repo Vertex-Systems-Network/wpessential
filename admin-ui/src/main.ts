@@ -91,7 +91,9 @@ function isCptRoute( value: unknown ): value is CptRoute {
 	);
 }
 
-function isCptValidationIssue( value: unknown ): value is CptValidationIssue {
+function isCptValidationIssue(
+	value: unknown
+): value is CptValidationIssue {
 	return (
 		isBootstrapRecord( value ) &&
 		typeof value.id === 'string' &&
@@ -267,7 +269,12 @@ function clearValidationReport(): void {
 	const report = document.getElementById( 'wpessential-cpt-validation' );
 	if ( report instanceof HTMLElement ) {
 		report.hidden = true;
-		report.classList.remove( 'notice', 'notice-error', 'notice-warning', 'notice-success' );
+		report.classList.remove(
+			'notice',
+			'notice-error',
+			'notice-warning',
+			'notice-success'
+		);
 	}
 }
 
@@ -282,7 +289,10 @@ function renderValidationReport( report: CptValidationReport ): void {
 	const issues = container.querySelector(
 		'[data-wpessential-cpt-validation-issues]'
 	);
-	if ( ! ( summary instanceof HTMLElement ) || ! ( issues instanceof HTMLElement ) ) {
+	if (
+		! ( summary instanceof HTMLElement ) ||
+		! ( issues instanceof HTMLElement )
+	) {
 		return;
 	}
 
@@ -630,7 +640,9 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		);
 		const report = parseCptValidationReport( data );
 		if ( ! report ) {
-			throw new Error( 'The Custom Post Type validation response was invalid.' );
+			throw new Error(
+				'The Custom Post Type validation response was invalid.'
+			);
 		}
 		renderValidationReport( report );
 		return report;
@@ -691,11 +703,14 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 		} );
 	}
 
-	buttonInput( 'wpessential-cpt-validate' )?.addEventListener( 'click', () => {
-		void run( async () => {
-			await validate( collectCptEditorRequest( definitions ) );
-		} );
-	} );
+	buttonInput( 'wpessential-cpt-validate' )?.addEventListener(
+		'click',
+		() => {
+			void run( async () => {
+				await validate( collectCptEditorRequest( definitions ) );
+			} );
+		}
+	);
 	buttonInput( 'wpessential-cpt-cancel' )?.addEventListener( 'click', () => {
 		resetCptForm();
 		setNotice( '' );
