@@ -163,10 +163,10 @@ test('packaged Configuration Packages imports stable identity only after dry run
 
   await page.getByRole('button', { name: 'Generate package' }).click();
   const exported = page.getByLabel('Generated package JSON');
-  await expect(exported).toContainText('55555555-5555-4555-8555-555555555555');
-  await expect(exported).toContainText('portable_book');
-  await expect(exported).toContainText('"runtime_data_included": false');
-  await expect(exported).toContainText('"secret_policy": "excluded"');
+  await expect(exported).toHaveValue(/55555555-5555-4555-8555-555555555555/);
+  await expect(exported).toHaveValue(/portable_book/);
+  await expect(exported).toHaveValue(/"runtime_data_included": false/);
+  await expect(exported).toHaveValue(/"secret_policy": "excluded"/);
 });
 
 test('packaged Configuration Packages has zero axe violations', async ({ page }) => {
