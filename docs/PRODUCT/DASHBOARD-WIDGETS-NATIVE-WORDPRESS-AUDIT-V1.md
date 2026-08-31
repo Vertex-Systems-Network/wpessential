@@ -1,6 +1,6 @@
 # Dashboard Widgets — Native WordPress Audit V1
 
-Status: **candidate native audit / promotion pending executable shared gate**
+Status: **candidate native audit / shared registration and promotion pending integrator**
 Snapshot: **2026-09-01**
 Surface: **10 — `dashboard-widgets`**
 
@@ -41,10 +41,30 @@ Executable callbacks are provider mappings, not arbitrary PHP configuration. Cor
 - Native user preference state is preserved as user state; WPE role/network presets resolve around it explicitly rather than silently overwriting user state.
 - Default core widget IDs are runtime inventory facts; WPE does not pretend to own those definitions.
 
-## Why status is not `NATIVE_AUDITED`
+## Executable surface contract
 
-The repository's JSON schema is generic enough for Surface 10, but current executable shared smoke wiring is not: the generic-named `tests/Smoke/options-bank-native-audit-contract.php` is hard-coded to Fields, while Relations has a dedicated Surface 4 contract.
+The module-local validator now exists at:
 
-Under the multi-agent contract, this worker does not edit shared `composer.json`/global smoke wiring. Therefore this file stays `NATIVE_AUDIT_IN_PROGRESS` even with zero unresolved dispositions.
+`tests/Smoke/dashboard-widgets-native-audit-contract.php`
 
-Promotion requires an integrator-applied Dashboard Widgets native audit gate and green CI on the exact integrated head.
+It verifies:
+
+- canonical Surface 10 ownership;
+- exactly 123 unique Dashboard Widgets Bank records;
+- all 24 mandatory native disposition IDs;
+- Developer.WordPress.org primary evidence;
+- real Bank references for `BANK_RECORD` / `PROVIDER_MAPPING` dispositions;
+- exact disposition/coverage counters;
+- zero unresolved items.
+
+The validator accepts both `NATIVE_AUDIT_IN_PROGRESS` and the later `NATIVE_AUDITED` state so the same test can guard the lifecycle transition without manufacturing it.
+
+Exact-head Architecture Guards at `4aff0c0ae00c59447fe010ce111115bec8c9d694` include this file in the repository-wide PHP syntax scan and report no syntax errors.
+
+## Why status is still not `NATIVE_AUDITED`
+
+The remaining gap is shared registration/lifecycle truth, not absence of a surface validator. The normal smoke aggregation is controlled by integrator-owned `composer.json` / CI wiring, and canonical `options-bank-progress.json` still declares Surface 10 as `UNSEEDED / 0`.
+
+Under the multi-agent contract, this worker does not edit those shared files without integrator assignment. Therefore the audit remains `NATIVE_AUDIT_IN_PROGRESS` even with zero unresolved dispositions and a prepared executable contract.
+
+Promotion requires the integrator to register the Dashboard validator, reconcile the seed/progress truth, execute the applicable exact-head gate, and promote only after it passes.

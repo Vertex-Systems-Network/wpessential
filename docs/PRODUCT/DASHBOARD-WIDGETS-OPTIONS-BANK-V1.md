@@ -13,7 +13,7 @@ Normalize the current Dashboard Widgets discovery space without restarting the a
 - `docs/ARCHITECTURE/CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md`;
 - `docs/ARCHITECTURE/CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md`.
 
-The canonical owner is Dashboard Widgets Manager: WordPress Dashboard widget inventory, presets and custom widget definitions. It does not own generic placement or authorization.
+The canonical owner is Dashboard Widgets Manager: WordPress Dashboard widget inventory, presets and custom widget definitions. It does not own generic placement, transport or authorization.
 
 ## Candidate Bank
 
@@ -39,34 +39,62 @@ All records are classified; no record is `UNREVIEWED`. Native `widget_id`/`widge
 
 It covers `wp_add_dashboard_widget()`, site/network dashboard setup, removal/hide, Screen Options/hidden state, per-user reorder/collapse, four dashboard contexts and core configure-control runtime behavior.
 
-Its status intentionally remains `NATIVE_AUDIT_IN_PROGRESS`: Dashboard Widgets does not yet have an executable surface audit contract in shared smoke wiring.
+The surface-local validator `tests/Smoke/dashboard-widgets-native-audit-contract.php` now exists. Exact-head Architecture Guards confirm that it is syntactically valid. It is intentionally not registered in shared `composer.json` by this module worker, so formal `NATIVE_AUDITED` promotion remains pending integrator registration and exact-head execution.
 
 ## Market audit candidate
 
-`config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json` is schema-valid against the latest generic market-audit schema and maps:
+`config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json` maps:
 
 - 3 primary providers: Ultimate Dashboard, WP Adminify, White Label CMS;
 - 2 specialists: Dashboard Widgets Suite, Dashboard Welcome for Elementor;
 - 8 required capability families;
+- 17 family mappings;
+- 7 non-applicable family cells;
+- 47 real Bank references;
 - 4 explicit extra dispositions;
 - 0 unresolved items.
 
-Its status intentionally remains `MARKET_AUDIT_IN_PROGRESS` until the shared Dashboard Widgets market-audit gate and lifecycle promotion exist.
+The surface-local validator `tests/Smoke/dashboard-widgets-market-audit-contract.php` now exists and is syntax-clean on exact-head CI. The provider-neutral arbitrary-PHP rejection is normalized to provider `ecosystem`, matching the shared market-audit convention.
+
+The audit remains `MARKET_AUDIT_IN_PROGRESS` until shared test registration/lifecycle promotion is integrated and certified.
 
 Market-only mechanics are not copied blindly. Raw Script/PHP widgets are rejected for Surface 10; remote transport, Query/Listings, authorization, global admin theme and browser scripts stay with their canonical owners.
 
+## Current exact-head CI evidence
+
+Exact branch head at this update: `4aff0c0ae00c59447fe010ce111115bec8c9d694`.
+
+Architecture, engineering contracts, PHP syntax (including both new Dashboard validators), PHPCS, PHPStan, PHPUnit, JS/CSS lint, TypeScript and admin build pass. Full smoke stops at the valid shared progress guard because canonical progress still declares Surface 10 as `UNSEEDED / 0` while these shards contain 123 records.
+
+The guard is not weakened or bypassed.
+
+## Bank Review readiness
+
+Formal Bank Review is **not yet certifiable**. The current review contract requires upstream native and market audits to be formally `NATIVE_AUDITED` / `MARKET_AUDITED` and canonical progress to agree with the Bank record count.
+
+Local review evidence is otherwise prepared for the next integrator cycle:
+
+- 123 reviewed records;
+- 0 `UNREVIEWED`;
+- native unresolved: 0;
+- market unresolved: 0;
+- obvious native aliases already collapsed onto canonical controls;
+- unsafe/foreign behaviors explicitly rejected or routed to canonical owners.
+
+Do not create a `BANK_REVIEWED` certificate until the upstream lifecycle gates are actually green.
+
 ## Lifecycle truth
 
-Latest shared truth still says Surface 10 is `UNSEEDED / 0`. This branch prepares a candidate seed plus native/market audit evidence but does not edit integrator-owned `config/product/options-bank-progress.json`.
+Latest shared truth still says Surface 10 is `UNSEEDED / 0`. This branch prepares a candidate seed plus native/market audit evidence and validators but does not edit integrator-owned `config/product/options-bank-progress.json` or shared `composer.json`.
 
 No `NATIVE_AUDITED`, `MARKET_AUDITED`, `BANK_REVIEWED`, UX-contract, implementation-contract or runtime-parity claim is made.
 
 ## Next gate
 
-After integration of shared progress/test wiring and exact-head certification:
+Integrator sequence:
 
-1. promote the merged seed truth only if global Bank contracts pass;
-2. certify the native audit;
-3. certify the market audit;
-4. run semantic/ownership Bank Review;
-5. only then derive UX projection and the downstream implementation contract.
+1. reconcile Surface 10 to the verified 123-record seed in shared progress and derived truth;
+2. register and execute the prepared Dashboard native validator, then promote only if green;
+3. register and execute the prepared Dashboard market validator, then promote only if green;
+4. run formal semantic/ownership Bank Review;
+5. only after `BANK_REVIEWED`, derive UX projection and the downstream implementation contract.

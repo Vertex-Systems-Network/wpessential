@@ -1,6 +1,6 @@
 # Dashboard Widgets — Market Research V1
 
-Status: **research complete enough for a schema-valid market-audit candidate; executable certification pending shared gate**
+Status: **research complete enough for a schema-valid market-audit candidate; shared registration/certification pending integrator**
 Snapshot: **2026-09-01**
 Surface: **10 — `dashboard-widgets`**
 
@@ -44,9 +44,19 @@ Material capabilities include dashboard cleanup, a custom dashboard/welcome pane
 
 ## Machine-readable candidate
 
-`config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json` maps three primary providers and two specialist providers across eight capability families. It contains four explicit extra dispositions and zero unresolved items.
+`config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json` maps three primary providers and two specialist providers across eight capability families. Current coverage is **17 family mappings, 7 non-applicable family cells, 47 Bank references, four explicit extra dispositions and zero unresolved items**.
 
-The file is intentionally `MARKET_AUDIT_IN_PROGRESS`, not `MARKET_AUDITED`: the latest `main` generalized the shared market-audit schema to Surfaces 1–56, but Dashboard Widgets still lacks its dedicated executable audit contract/shared smoke wiring and shared lifecycle promotion.
+The provider-neutral arbitrary-PHP rejection uses provider `ecosystem`, matching the existing shared market-audit convention rather than introducing a synthetic provider identity.
+
+The surface-local validator now exists at:
+
+`tests/Smoke/dashboard-widgets-market-audit-contract.php`
+
+It verifies the exact primary/specialist roster, complete eight-family disposition matrix, real Bank references, evidence URLs, out-of-surface canonical ownership, four reviewed extra dispositions, exact coverage counters and zero unresolved. It accepts both `MARKET_AUDIT_IN_PROGRESS` and the later `MARKET_AUDITED` state without performing the promotion itself.
+
+Exact-head Architecture Guards at `4aff0c0ae00c59447fe010ce111115bec8c9d694` include this file in the PHP syntax scan and report no syntax errors.
+
+The audit remains `MARKET_AUDIT_IN_PROGRESS`: normal smoke registration and lifecycle truth are integrator-owned, and shared progress still declares Surface 10 as `UNSEEDED / 0`.
 
 ## Safety and owner resolution
 
@@ -63,3 +73,7 @@ Market parity is use-case parity, not copying unsafe mechanics.
 - browser script placement: Surface 50 Safe Script.
 
 No proprietary implementation source was copied.
+
+## Next gate
+
+The integrator must register the prepared market validator in shared smoke/CI wiring, reconcile Surface 10's 123-record seed in canonical progress, execute the exact integrated head, and only then promote the audit if green. Formal Bank Review must remain blocked until both native and market audits are certified.
