@@ -61,9 +61,9 @@
     {
       "id": 8,
       "key": "columns",
-      "status": "BANK_SURFACE_SEEDED",
+      "status": "NATIVE_AUDITED",
       "records": 214,
-      "notes": "Stage A integration seeds 214 Admin Columns records from PR #32. Native/market audit candidates and blocked Bank Review are present; registered validators must pass on exact integration heads before lifecycle promotion."
+      "notes": "Stage B certifies the 214-record Admin Columns native WordPress audit at 29 dispositions / 0 unresolved after the registered native contract passed on the exact Stage A integration head. Market certification and Bank Review remain downstream gates."
     },
     {
       "id": 9,
@@ -74,9 +74,9 @@
     {
       "id": 10,
       "key": "dashboard-widgets",
-      "status": "BANK_SURFACE_SEEDED",
+      "status": "NATIVE_AUDITED",
       "records": 123,
-      "notes": "Stage A integration seeds 123 Dashboard Widgets records from PR #30. Native/market audit candidates and blocked Bank Review are present; registered validators must pass on exact integration heads before lifecycle promotion."
+      "notes": "Stage B certifies the 123-record Dashboard Widgets native WordPress audit at 24 dispositions / 0 unresolved after the registered native contract passed on the exact Stage A integration head. Market certification and Bank Review remain downstream gates."
     },
     {
       "id": 11,
@@ -357,7 +357,7 @@
   ],
   "truth": {
     "seeded_surfaces": 7,
-    "native_audited_surfaces": 2,
+    "native_audited_surfaces": 4,
     "market_audited_surfaces": 2,
     "bank_reviewed_surfaces": 2,
     "total_bank_records": 1406
