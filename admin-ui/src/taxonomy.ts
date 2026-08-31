@@ -130,6 +130,14 @@ function parseReport( value: unknown ): ValidationReport | null {
 	};
 }
 
+function parseMutationDefinition( value: unknown ): TaxonomyDefinition | null {
+	if ( ! isRecord( value ) || ! isDefinition( value.definition ) ) {
+		return null;
+	}
+
+	return value.definition;
+}
+
 function textInput( id: string ): HTMLInputElement | null {
 	const element = document.getElementById( id );
 	return element instanceof HTMLInputElement ? element : null;
@@ -322,6 +330,32 @@ function actionButton(
 		button.dataset[ key ] = value;
 	}
 	return button;
+}
+
+function sortedDefinitions(
+	definitions: TaxonomyDefinition[]
+): TaxonomyDefinition[] {
+	return [ ...definitions ].sort( ( left, right ) => {
+		const leftKey =
+			typeof left.payload.taxonomy_key === 'string'
+				? left.payload.taxonomy_key
+				: left.id;
+		const rightKey =
+			typeof right.payload.taxonomy_key === 'string'
+				? right.payload.taxonomy_key
+				: right.id;
+		return leftKey.localeCompare( rightKey );
+	} );
+}
+
+function upsertDefinition(
+	definitions: TaxonomyDefinition[],
+	definition: TaxonomyDefinition
+): TaxonomyDefinition[] {
+	return sortedDefinitions( [
+		...definitions.filter( ( candidate ) => candidate.id !== definition.id ),
+		definition,
+	] );
 }
 
 function renderRows( definitions: TaxonomyDefinition[] ): void {
@@ -571,7 +605,7 @@ function boot(): void {
 		return;
 	}
 
-	let definitions = [ ...bootstrap.definitions ];
+	let definitions = sortedDefinitions( bootstrap.definitions );
 	let busy = false;
 
 	const refresh = async (): Promise< void > => {
@@ -583,7 +617,7 @@ function boot(): void {
 		if ( next.length !== data.definitions.length ) {
 			throw new Error( 'The Taxonomy list contained invalid records.' );
 		}
-		definitions = next;
+		definitions = sortedDefinitions( next );
 		renderRows( definitions );
 	};
 
@@ -641,12 +675,18 @@ function boot(): void {
 					);
 					return;
 				}
-				await postRoute(
+
+				const data = await postRoute(
 					bootstrap,
 					bootstrap.routes.save,
 					mutationRequest( editor )
 				);
-				await refresh();
+				const saved = parseMutationDefinition( data );
+				if ( ! saved ) {
+					throw new Error( 'The Taxonomy save response was invalid.' );
+				}
+				definitions = upsertDefinition( definitions, saved );
+				renderRows( definitions );
 				resetForm();
 				setNotice(
 					editor.id === '' ? 'Taxonomy created.' : 'Taxonomy updated.'
@@ -710,12 +750,17 @@ function boot(): void {
 		}
 
 		void run( async () => {
-			await postRoute( bootstrap, bootstrap.routes.status, {
+			const data = await postRoute( bootstrap, bootstrap.routes.status, {
 				id,
 				expected_revision: definition.revision,
 				status,
 			} );
-			await refresh();
+			const changed = parseMutationDefinition( data );
+			if ( ! changed ) {
+				throw new Error( 'The Taxonomy status response was invalid.' );
+			}
+			definitions = upsertDefinition( definitions, changed );
+			renderRows( definitions );
 			if ( textInput( 'wpessential-taxonomy-id' )?.value === id ) {
 				resetForm();
 			}
