@@ -23,6 +23,83 @@ Project website: **https://wpessential.org**
 
 The current implementation branch is `implementation/baseline-adoption-gate`. Draft PR #2 carries the Platform Foundation work.
 
+## Module progress dashboard
+
+The **56-module master plan is complete**. This dashboard tracks each canonical module/surface through the Master Options Bank certification lifecycle; it does **not** claim runtime implementation or production release completion.
+
+**Progress model:** `UNSEEDED = 0%` → `BANK_SURFACE_SEEDED = 25%` → `NATIVE_AUDITED = 50%` → `MARKET_AUDITED = 75%` → `BANK_REVIEWED = 100%`.
+
+- Canonical modules planned: **56 / 56 (100%)**
+- Modules with Bank work started: **4 / 56**
+- Fully Bank-reviewed modules: **1 / 56**
+- Current Bank records: **938**
+- Weighted Bank-readiness snapshot: **3.6%**
+- Current active surface: **Relations — Market Audit V1**
+- Estimated Bank-review program completion: **~2026-10-26**
+
+> **Date meaning:** “Bank Review Date” is a working estimate for completing planning/research certification for that surface, not a promise of runtime implementation, release, or production deployment. Dates are re-baselined when research, compatibility work, or CI exposes additional gaps.
+
+| # | Module / Surface | Progress | Status | Bank Review Date |
+|---:|---|---|---|---|
+| 1 | CPT | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | ~2026-09-03 |
+| 2 | Taxonomy | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | ~2026-09-04 |
+| 3 | Fields / Field Groups | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
+| 4 | Relations | `█████░░░░░ 50%` | 🟡 NATIVE_AUDITED | ~2026-09-02 |
+| 5 | Status | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-05 |
+| 6 | Query Builder | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-06 |
+| 7 | Custom Tables / Content Tables | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-07 |
+| 8 | Admin Columns | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-08 |
+| 9 | Listings | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-09 |
+| 10 | Dashboard Widgets | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-10 |
+| 11 | Admin Menu | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-11 |
+| 12 | Settings / Options Pages | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-12 |
+| 13 | Frontend Dashboards | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-13 |
+| 14 | User Profiles | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-14 |
+| 15 | Membership | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-15 |
+| 16 | Builder Widgets / Dynamic Components | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-16 |
+| 17 | Forms / Workflows | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-17 |
+| 18 | Cron / Schedules | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-18 |
+| 19 | Notifications | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-19 |
+| 20 | Emails | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-20 |
+| 21 | Chat | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-21 |
+| 22 | REST API Builder | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-22 |
+| 23 | Connections | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-23 |
+| 24 | Backup | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-24 |
+| 25 | Reset | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-25 |
+| 26 | Import / Export | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-26 |
+| 27 | Protector | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-27 |
+| 28 | Media | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-28 |
+| 29 | XML-RPC | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-29 |
+| 30 | Roles | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-30 |
+| 31 | Platform | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-01 |
+| 32 | Solutions | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-02 |
+| 33 | Analytics | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-03 |
+| 34 | Search | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-04 |
+| 35 | Decision / Rules | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-05 |
+| 36 | Ledger / Activity Audit | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-06 |
+| 37 | Reservations | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-07 |
+| 38 | Placement | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-08 |
+| 39 | Experiments | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-09 |
+| 40 | Documents | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-10 |
+| 41 | Sync | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-11 |
+| 42 | Geo | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-12 |
+| 43 | AI Gateway | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-13 |
+| 44 | Redirects | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-14 |
+| 45 | Transform | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-15 |
+| 46 | Fixtures | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-16 |
+| 47 | Link Health | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-17 |
+| 48 | Database Maintenance | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-18 |
+| 49 | Admin Theme | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-19 |
+| 50 | Safe Script | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-20 |
+| 51 | Content Order | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-21 |
+| 52 | Security Scanner | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-22 |
+| 53 | Fonts | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-23 |
+| 54 | User Stores | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-24 |
+| 55 | Staging | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-25 |
+| 56 | Theme Workspace | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-26 |
+
+The machine-readable source of truth for current counts and lifecycle status is `config/product/options-bank-progress.json`. The dates above are README planning estimates and intentionally remain separate from the machine-certified lifecycle state.
+
 ## What WPEssential is
 
 WPEssential is designed as one governed platform rather than a collection of unrelated mini-frameworks. Business modules compose shared contracts for:
