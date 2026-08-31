@@ -91,9 +91,7 @@ function isCptRoute( value: unknown ): value is CptRoute {
 	);
 }
 
-function isCptValidationIssue(
-	value: unknown
-): value is CptValidationIssue {
+function isCptValidationIssue( value: unknown ): value is CptValidationIssue {
 	return (
 		isBootstrapRecord( value ) &&
 		typeof value.id === 'string' &&
@@ -103,7 +101,9 @@ function isCptValidationIssue(
 	);
 }
 
-function parseCptValidationReport( value: unknown ): CptValidationReport | null {
+function parseCptValidationReport(
+	value: unknown
+): CptValidationReport | null {
 	if (
 		! isBootstrapRecord( value ) ||
 		typeof value.valid !== 'boolean' ||
