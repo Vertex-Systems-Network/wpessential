@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 1, "key": "cpt", "name": "Custom Post Types"},
+  "snapshot": {
+    "date": "2026-08-31",
+    "native_sources": [
+      {"name": "WordPress register_post_type()", "type": "wordpress_core", "url": "https://developer.wordpress.org/reference/functions/register_post_type/", "verified": true}
+    ],
+    "market_sources": []
+  },
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"cpt.supports.autosave","feature_group":"Content & Editor","option_path":"supports.autosave","label":"Autosave Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE","notes":"WordPress documents autosave as an explicit support; editor support implies autosave for backward compatibility."},
+    {"id":"cpt.supports.none","feature_group":"Content & Editor","option_path":"supports.__none__","label":"Disable All Core Supports","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE","notes":"Represents register_post_type supports=false rather than a fake individual WordPress feature."},
+    {"id":"cpt.supports.feature_args","feature_group":"Content & Editor","option_path":"supports.__feature_args__","label":"Structured Support Feature Arguments","classification":"EXPERT","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"EXPERT_ONLY","priority":"P1_CORE","notes":"WordPress allows a support feature to be specified with an arguments array. WPE should expose typed/registered feature argument schemas, not arbitrary executable configuration."},
+    {"id":"cpt.internal.builtin","feature_group":"Developer / Compatibility","option_path":"_builtin","label":"Built-in Post Type Flag","classification":"REJECTED_UNSAFE","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"REJECT","priority":"NOT_SCHEDULED","notes":"WordPress marks this argument FOR INTERNAL USE ONLY. Captured in the Bank so it cannot be mistaken for a missing product option."},
+    {"id":"cpt.internal.edit_link","feature_group":"Developer / Compatibility","option_path":"_edit_link","label":"Internal Edit Link Template","classification":"REJECTED_UNSAFE","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"REJECT","priority":"NOT_SCHEDULED","notes":"WordPress marks this argument FOR INTERNAL USE ONLY. Not a normal user-facing WPE option."}
+  ],
+  "coverage": {"records":5,"unreviewed":0,"adopted_or_classified":5,"notes":"Current native extras and internal-only exclusions captured from register_post_type()."}
+}
