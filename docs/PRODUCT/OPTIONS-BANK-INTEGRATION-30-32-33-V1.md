@@ -1,6 +1,6 @@
 # WPEssential — Options Bank Integration Lane #34
 
-Status: **INTEGRATION_WORK / COLUMNS_DASHBOARD_BANK_REVIEW_PROMOTION_CANDIDATE**  
+Status: **INTEGRATION_WORK / BANK_REVIEW_CERTIFIED**  
 Snapshot: **2026-09-01**  
 Integration branch: **`integration/options-bank-shared-certification-30-32-33`**  
 Integration PR: **#37**  
@@ -20,66 +20,21 @@ Existing Surface 3 Fields and Surface 4 Relations Bank certification remains unc
 
 ## Lifecycle invariant
 
-The lane remains fail-closed:
+The lane remained fail-closed throughout:
 
 `BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED`
 
-Every lifecycle-changing commit receives fresh exact-head CI before the next promotion. No force update, rebase, test weakening, or lifecycle leap is permitted.
+Every lifecycle-changing commit received fresh exact-head CI before the next promotion. No force update, rebase, test weakening, semantic-registry noise, or lifecycle leap was used.
 
-## Certified history
+## Final canonical truth
 
-Key certified checkpoints:
+All three integrated surfaces are now `BANK_REVIEWED`:
 
-- Stage A seed integration: `deaf4cfe79ee37386038b61eaa2f1d7ac6acfde7` — all five applicable workflows green;
-- Columns/Dashboard native checkpoint: `d3f43a537a080b7e552ded528ad482999faab446` — all five applicable workflows green;
-- Status Bank Review certification: `ef78556b3e9e3bdeb28817c9e91209dc016b30dc` — all five applicable workflows green;
-- Columns/Dashboard market promotion: `25308ce16bc8df4a5e05b832bb49c81ee4d0c478` — all five applicable workflows green.
+- Surface 5 `status`: `BANK_REVIEWED / 129`;
+- Surface 8 `columns`: `BANK_REVIEWED / 214`;
+- Surface 10 `dashboard-widgets`: `BANK_REVIEWED / 123`.
 
-Current synchronized `main` at the Stage D prerequisite is `b29ff9546a172499dfe3aff02df10ce9de0a4ed7`.
-
-## Exact Stage D prerequisite
-
-Exact certified Stage C head: `25308ce16bc8df4a5e05b832bb49c81ee4d0c478`  
-Exact synchronized main: `b29ff9546a172499dfe3aff02df10ce9de0a4ed7`
-
-All five applicable workflows completed successfully on that exact Stage C head:
-
-- Architecture Guards #595;
-- Platform Compatibility Matrix #300;
-- PHP Quality Toolchain #111;
-- Distributable Package #227;
-- Browser E2E Accessibility #145.
-
-The exact-head repository evidence closes the two remaining review prerequisites:
-
-### Surface 8 Admin Columns
-
-- native: `NATIVE_AUDITED`, 29 dispositions / 214 Bank records / 0 unresolved;
-- market: `MARKET_AUDITED`, 6 canonical capability families / 3 primary providers / 1 specialist / 57 Bank references / 0 unresolved;
-- semantic relationships / aliases / effective derivations: 0 / 0 / 0;
-- policy consistency: 0 unreviewed; rejected/deferred/WPE-exceed consistency closed; future-only WPE-exceed shard closed;
-- post-market record delta: 0.
-
-### Surface 10 Dashboard Widgets
-
-- native: `NATIVE_AUDITED`, 24 dispositions / 123 Bank records / 0 unresolved;
-- market: `MARKET_AUDITED`, 8 canonical capability families / 3 primary providers / 2 specialists / 17 family mappings / 47 Bank references / 0 unresolved;
-- semantic relationships / aliases / effective derivations: 0 / 0 / 0;
-- policy consistency: 0 unreviewed, 2 rejected-unsafe, 2 canonical deferred, 12 future WPE-exceed;
-- post-market record delta: 0.
-
-These prerequisites satisfy Issue #34's Stage D review gate.
-
-## Current Stage D promotion candidate
-
-This changed head promotes **only** the two remaining integrated Bank Reviews:
-
-- Surface 8 `columns`: review decision `BANK_REVIEWED`, unresolved `0`, canonical progress `BANK_REVIEWED / 214`;
-- Surface 10 `dashboard-widgets`: review decision `BANK_REVIEWED`, unresolved `0`, canonical progress `BANK_REVIEWED / 123`.
-
-Surface 5 `status` remains `BANK_REVIEWED / 129`.
-
-Integrated aggregate candidate truth becomes:
+Integrated aggregate truth:
 
 - seeded surfaces: 7;
 - native-audited surfaces: 5;
@@ -87,10 +42,73 @@ Integrated aggregate candidate truth becomes:
 - bank-reviewed surfaces: 5;
 - total Bank records: 1,406.
 
-## Final certification gate
+## Certified history
 
-Because this Stage D promotion changes repository truth, this changed head itself must pass all five applicable exact-head workflows and remain current with `main` before Admin Columns or Dashboard Widgets are claimed as certified `BANK_REVIEWED` surfaces.
+Key lifecycle checkpoints:
 
-Only after that final certification may their downstream UX projection / Atomic Option / implementation contracts be entered or finalized under separately resolved plan/work-package ownership and dependency scope.
+- Stage A seed integration: `deaf4cfe79ee37386038b61eaa2f1d7ac6acfde7` — all five applicable workflows green;
+- Columns/Dashboard native checkpoint: `d3f43a537a080b7e552ded528ad482999faab446` — all five applicable workflows green;
+- Status Bank Review certification: `ef78556b3e9e3bdeb28817c9e91209dc016b30dc` — all five applicable workflows green;
+- Columns/Dashboard market promotion: `25308ce16bc8df4a5e05b832bb49c81ee4d0c478` — all five applicable workflows green;
+- Columns/Dashboard Bank Review promotion: `a9a5b3596de5de5bde5ddbba4efcd42afa3f7612` — all five applicable workflows green.
 
-This integration work does not claim runtime implementation, shipped parity, deployment, or release completion.
+Current synchronized `main` at final lifecycle certification is `b29ff9546a172499dfe3aff02df10ce9de0a4ed7`. Compare from that main to the final lifecycle certification head reports `behind_by=0` and the merge base equals current main.
+
+## Final exact-head Bank Review evidence
+
+Exact lifecycle certification head: `a9a5b3596de5de5bde5ddbba4efcd42afa3f7612`.
+
+All five applicable workflows completed successfully:
+
+- Architecture Guards #601 — success;
+- Platform Compatibility Matrix #305 — success;
+- PHP Quality Toolchain #112 — success;
+- Distributable Package #232 — success;
+- Browser E2E Accessibility #146 — success.
+
+### Surface 5 Status
+
+- native audit: 35 dispositions / 0 unresolved;
+- market audit: 9 capability families / 0 unresolved;
+- Bank Review: 129 records, zero semantic overlaps, zero unresolved review gates;
+- canonical state: `BANK_REVIEWED / 129`.
+
+### Surface 8 Admin Columns
+
+- native audit: `NATIVE_AUDITED`, 29 dispositions / 0 unresolved;
+- market audit: `MARKET_AUDITED`, 6 canonical capability families / 3 primary providers / 1 specialist / 57 Bank references / 0 unresolved;
+- semantic relationships / aliases / effective derivations: 0 / 0 / 0;
+- review policy consistency closed with zero post-market record inflation;
+- Bank Review: unresolved `0`;
+- canonical state: `BANK_REVIEWED / 214`.
+
+### Surface 10 Dashboard Widgets
+
+- native audit: `NATIVE_AUDITED`, 24 dispositions / 0 unresolved;
+- market audit: `MARKET_AUDITED`, 8 canonical capability families / 3 primary providers / 2 specialists / 17 family mappings / 47 Bank references / 0 unresolved;
+- semantic relationships / aliases / effective derivations: 0 / 0 / 0;
+- review policy consistency closed, including 2 rejected-unsafe market mechanics, 2 canonical deferred records, and 12 future WPE-exceed records;
+- Bank Review: unresolved `0`;
+- canonical state: `BANK_REVIEWED / 123`.
+
+## Shared integration requirements resolved
+
+Within Issue #34's bounded integrator authority, this lane resolved the shared requirements for the three worker PRs:
+
+- canonical `options-bank-progress.json` reconciled from integrated tree truth;
+- all nine surface lifecycle validators registered in shared Composer smoke aggregation without replacing Fields/Relations gates;
+- native, market, and Bank Review promotions serialized through exact-head CI;
+- semantic registry left unchanged because no real relationships were proved for Status, Columns, or Dashboard Widgets;
+- concurrent main movement was absorbed without force and re-certified before later promotions.
+
+## Downstream boundary
+
+The Options Bank lifecycle for Status, Admin Columns, and Dashboard Widgets is complete through `BANK_REVIEWED`. These surfaces are eligible to feed downstream UX projection and Atomic Option / implementation-contract work only after that downstream work resolves its own approved plan/work-package ID, canonical owner, dependencies, and allowed write scope from current repository truth.
+
+This integration lane does **not** claim UX projection completion, runtime implementation, shipped parity, deployment, release readiness, or production deployment.
+
+## Privilege boundary
+
+PR #37 remains unmerged unless separately authorized. Merge, release, deployment, destructive production operations, and irreversible external actions are outside this integration certification.
+
+Any later documentation-only or synchronization commit on this branch must preserve exact-head CI and current-main freshness before the integration lane is represented as merge-ready.
