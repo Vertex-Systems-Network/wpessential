@@ -172,15 +172,26 @@ function assertProjectMetadata(string $root): void
     }
 }
 
+/** @return list<string> */
+function requiredAdminBuildArtifacts(): array
+{
+    return [
+        'assets/admin/main.js',
+        'assets/admin/main.css',
+        'assets/admin/main.asset.php',
+        'assets/admin/taxonomy.js',
+        'assets/admin/taxonomy.css',
+        'assets/admin/taxonomy.asset.php',
+    ];
+}
+
 function validateStagedPayload(string $stageRoot): void
 {
     $required = [
         'wpessential.php',
         'readme.txt',
         'LICENSE',
-        'assets/admin/main.js',
-        'assets/admin/main.css',
-        'assets/admin/main.asset.php',
+        ...requiredAdminBuildArtifacts(),
         'vendor/autoload.php',
         'frameworks/Bootstrap/Plugin.php',
     ];
@@ -273,11 +284,7 @@ try {
 
     assertProjectMetadata($root);
 
-    $requiredBuildArtifacts = [
-        'assets/admin/main.js',
-        'assets/admin/main.css',
-        'assets/admin/main.asset.php',
-    ];
+    $requiredBuildArtifacts = requiredAdminBuildArtifacts();
     foreach ($requiredBuildArtifacts as $relative) {
         $path = $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
         if (!is_file($path) || filesize($path) === 0) {
