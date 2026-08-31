@@ -4,14 +4,19 @@ Status: **module-worker handoff**
 Snapshot: **2026-09-01**
 Surface: **10 — `dashboard-widgets`**
 Original base: `eb61c6bfe9d89af949d70e89ba685597d58e2663`
-Latest synchronized main: `8ed1c0389ef314c79a60a6808d232ef625de7b25`
+Latest synchronized main: `88e5e90b273ddc61b4a0e2e36249c541576fc8fc`
 Worker branch: `surface/dashboard-widgets-options-bank-v1`
 
 These are shared-file requirements discovered by the Surface 10 worker. They are intentionally not applied by the module-local worker.
 
-## Upstream change absorbed during stale-branch sync
+## Upstream changes absorbed during stale-branch sync
 
-Latest `main` generalized `config/product/options-bank-market-audit.schema.json` from Fields-specific constants to canonical Surface IDs 1–56 and generic surface keys while certifying Relations market audit. The earlier Dashboard Widgets schema blocker is therefore resolved upstream and must not be reintroduced.
+The branch has absorbed both upstream lifecycle changes that landed after the original base:
+
+- `8ed1c038...` generalized `config/product/options-bank-market-audit.schema.json` from Fields-specific constants to canonical Surface IDs 1–56 and generic surface keys while certifying Relations market audit;
+- `88e5e90b...` certified Relations `BANK_REVIEWED` and updated shared progress/review wiring.
+
+Dashboard Widgets does not overwrite or fork either shared change.
 
 ## IR-DW-001 — global Options Bank progress
 
@@ -25,20 +30,32 @@ After reconciling concurrent branches, recompute from repository truth:
 - global `seeded_surfaces` and `total_bank_records` must be derived from the final integrated tree;
 - synchronize README/STATUS only from verified integrated truth.
 
-The current exact-head smoke failure is expected because this module worker correctly leaves shared progress at `UNSEEDED / 0` while the surface-local shards contain 123 records.
+The current full-smoke failure is expected because this module worker correctly leaves shared progress at `UNSEEDED / 0` while the surface-local shards contain 123 records.
 
-## IR-DW-002 — executable native/market audit validation
+## IR-DW-002 — register the prepared native/market audit contracts
 
-Shared/global areas:
-- `tests/Smoke/*`;
-- `composer.json` smoke wiring;
-- applicable CI workflow/path coverage.
+Module-local validators now exist:
+
+- `tests/Smoke/dashboard-widgets-native-audit-contract.php`;
+- `tests/Smoke/dashboard-widgets-market-audit-contract.php`.
+
+They validate the candidate state without inventing lifecycle completion and remain valid when the corresponding audit status is promoted from `*_IN_PROGRESS` to `*_AUDITED`.
+
+Integrator-owned shared/global areas still required:
+
+- `composer.json` smoke registration/aggregation;
+- applicable CI workflow/path coverage if current aggregation does not execute the new commands;
+- shared lifecycle/progress truth.
 
 Required outcome:
-- add or generalize a Dashboard Widgets native-audit validator that checks Surface 10 canonical ownership, real Bank references, Developer.WordPress.org primary evidence, exact coverage counters and unresolved count;
-- add a Dashboard Widgets market-audit validator against the now-generic shared market-audit schema, including eight required families, primary/specialist evidence, real Bank references, extra dispositions and zero-unresolved certification;
+
+- register both Dashboard Widgets validators in the normal exact-head smoke/architecture gates;
 - retain existing Fields and Relations certifications unchanged;
-- wire both contracts into the normal exact-head smoke/architecture gates.
+- run the native validator against Surface 10 canonical ownership, 123 real Bank records, Developer.WordPress.org evidence, exact disposition counters and zero unresolved;
+- run the market validator against the generic market schema, eight required families, exact primary/specialist rosters, real Bank references, four reviewed extra dispositions and zero unresolved;
+- only then promote the corresponding shared lifecycle state.
+
+The market candidate was also normalized to the existing shared contract convention: the provider-neutral arbitrary-PHP rejection uses provider `ecosystem`, not a synthetic unregistered provider ID.
 
 ## IR-DW-003 — semantic registry only if later review proves a relationship
 
@@ -55,7 +72,7 @@ Do not skip stages:
 
 `BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED → UX projection → implementation contract`
 
-The branch contains native and market audit **candidates** with zero unresolved dispositions, but neither may be promoted until shared progress and executable exact-head gates are integrated and green.
+The branch contains native and market audit **candidates** with zero unresolved dispositions plus executable module-local validators, but neither audit may be promoted until shared progress/registration is integrated and the applicable exact-head gates are green.
 
 ## Cross-surface no-bypass decisions retained
 
