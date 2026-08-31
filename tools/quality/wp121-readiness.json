@@ -1,0 +1,33 @@
+{
+  "schema": "wp121-shared-foundation-readiness-v1",
+  "certified_source_sha": "49abadec09676780680e705ae14f9f092609b348",
+  "certified_branch": "implementation/baseline-adoption-gate",
+  "pull_request": 2,
+  "required_runs": [
+    {
+      "name": "Architecture Guards",
+      "workflow_id": 345222340,
+      "run_id": 33310952677
+    },
+    {
+      "name": "Distributable Package",
+      "workflow_id": 345835323,
+      "run_id": 33310952670
+    },
+    {
+      "name": "Browser E2E Accessibility",
+      "workflow_id": 345839666,
+      "run_id": 33310952675
+    },
+    {
+      "name": "Platform Compatibility Matrix",
+      "workflow_id": 345779727,
+      "run_id": 33310952685
+    },
+    {
+      "name": "Multisite Runtime Isolation",
+      "workflow_id": 345874865,
+      "run_id": 33310952673
+    }
+  ]
+}

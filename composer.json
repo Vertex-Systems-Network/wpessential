@@ -1,0 +1,77 @@
+{
+  "name": "wpessential/wpessential",
+  "description": "WPEssential WordPress application platform",
+  "type": "wordpress-plugin",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "php": ">=8.2"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.2",
+    "phpunit/phpunit": "^11.5",
+    "squizlabs/php_codesniffer": "^3.13.6",
+    "szepeviktor/phpstan-wordpress": "^2.0.4",
+    "wp-coding-standards/wpcs": "^3.4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "WPEssential\\": "frameworks/"
+    },
+    "files": [
+      "frameworks/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WPEssential\\Tests\\Unit\\": "tests/Unit/"
+    }
+  },
+  "scripts": {
+    "architecture:validate": "php tools/architecture/validate.php",
+    "engineering:validate": "php tools/architecture/validate-engineering-contracts.php",
+    "quality:phpcs": "phpcs --standard=phpcs.xml.dist",
+    "quality:phpstan": "phpstan analyse --configuration=phpstan.neon.dist --no-progress",
+    "test:unit": "phpunit --configuration=phpunit.xml.dist",
+    "test:smoke:kernel": "php tests/Smoke/kernel-smoke.php",
+    "test:smoke:platform-core": "php tests/Smoke/platform-core-smoke.php",
+    "test:smoke:platform-admin-bootstrap": "php tests/Smoke/platform-admin-bootstrap-smoke.php",
+    "test:smoke:audit-jobs": "php tests/Smoke/audit-jobs-smoke.php",
+    "test:smoke:action-scheduler-probe": "php tests/Smoke/action-scheduler-probe-smoke.php",
+    "test:smoke:vault-assets-integrations": "php tests/Smoke/vault-assets-integrations-smoke.php",
+    "test:smoke:persistence-migrations": "php tests/Smoke/persistence-migrations-smoke.php",
+    "test:smoke:wordpress-abilities-bridge": "php tests/Smoke/wordpress-abilities-bridge-smoke.php",
+    "test:smoke:engineering-contracts": "php tests/Smoke/engineering-contracts-smoke.php",
+    "test:smoke:compiled-registration-persistence": "php tests/Smoke/compiled-registration-persistence-smoke.php",
+    "test:smoke:compiled-registration-scale": "php tests/Smoke/compiled-registration-scale-smoke.php",
+    "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
+    "test:smoke": [
+      "@test:smoke:kernel",
+      "@test:smoke:platform-core",
+      "@test:smoke:platform-admin-bootstrap",
+      "@test:smoke:audit-jobs",
+      "@test:smoke:action-scheduler-probe",
+      "@test:smoke:vault-assets-integrations",
+      "@test:smoke:persistence-migrations",
+      "@test:smoke:wordpress-abilities-bridge",
+      "@test:smoke:engineering-contracts",
+      "@test:smoke:compiled-registration-persistence",
+      "@test:smoke:compiled-registration-scale"
+    ],
+    "quality:php": [
+      "@quality:phpcs",
+      "@quality:phpstan",
+      "@test:unit"
+    ],
+    "fast": [
+      "@architecture:validate",
+      "@engineering:validate",
+      "@test:smoke"
+    ]
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": false
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

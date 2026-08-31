@@ -1,0 +1,137 @@
+name: Browser E2E Accessibility
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Platform/Admin/**'
+      - 'admin-ui/**'
+      - 'wpessential.php'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tools/release/**'
+      - 'tests/e2e/**'
+      - '.github/workflows/browser-e2e.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'frameworks/Platform/Admin/**'
+      - 'admin-ui/**'
+      - 'wpessential.php'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tools/release/**'
+      - 'tests/e2e/**'
+      - '.github/workflows/browser-e2e.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  packaged-browser-e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate and build production admin assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run lint:package
+          npm run typecheck
+          npm run build:admin
+          test -s assets/admin/main.js
+          test -s assets/admin/main.css
+          test -s assets/admin/main.asset.php
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Build exact distributable under test
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php tools/release/build-distributable.php
+          test -s artifacts/wpessential.zip
+          rm -rf /tmp/wpessential-e2e
+          mkdir -p /tmp/wpessential-e2e
+          unzip -q artifacts/wpessential.zip -d /tmp/wpessential-e2e
+          test -s /tmp/wpessential-e2e/wpessential/wpessential.php
+          test -s /tmp/wpessential-e2e/wpessential/vendor/autoload.php
+          test -s /tmp/wpessential-e2e/wpessential/assets/admin/main.js
+
+      - name: Install locked E2E graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          git ls-files --error-unmatch tests/e2e/package-lock.json >/dev/null
+          test -s tests/e2e/package-lock.json
+          npm ci --prefix tests/e2e --ignore-scripts
+          node -e "const p=require('./tests/e2e/package.json'); if (p.devDependencies['@playwright/test'] !== '1.62.1' || p.devDependencies['@wp-playground/cli'] !== '3.1.51' || p.devDependencies['@axe-core/playwright'] !== '4.13.0') process.exit(1)"
+
+      - name: Install Chromium and runner dependencies
+        shell: bash
+        run: ./tests/e2e/node_modules/.bin/playwright install chromium --with-deps
+
+      - name: Run packaged WordPress browser and accessibility evidence
+        shell: bash
+        env:
+          WPE_E2E_PLUGIN_DIR: /tmp/wpessential-e2e/wpessential
+        run: npm --prefix tests/e2e test
+
+      - name: Upload Playwright and accessibility evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp121-browser-e2e-${{ github.run_id }}
+          path: |
+            tests/e2e/playwright-report/
+            tests/e2e/test-results/
+            artifacts/wpessential-package.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"

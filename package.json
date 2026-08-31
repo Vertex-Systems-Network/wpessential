@@ -1,0 +1,50 @@
+{
+  "name": "wpessential-admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WPEssential WordPress admin application build toolchain",
+  "author": "VSN Team",
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "platform",
+    "wpessential"
+  ],
+  "homepage": "https://wpessential.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vertex-Systems-Network/wpesssential.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vertex-Systems-Network/wpesssential/issues"
+  },
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=10 <12"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "34.2.0",
+    "typescript": "npm:@typescript/typescript6@6.0.2"
+  },
+  "scripts": {
+    "build": "npm run build:admin",
+    "build:admin": "wp-scripts build admin-ui/src/main --output-path=assets/admin",
+    "check:engines": "wp-scripts check-engines",
+    "lint:css": "wp-scripts lint-style 'admin-ui/src/**/*.scss'",
+    "lint:js": "wp-scripts lint-js admin-ui/src",
+    "lint:package": "wp-scripts lint-pkg-json",
+    "typecheck": "tsc6 --noEmit --project tsconfig.json"
+  },
+  "npmpackagejsonlint": {
+    "extends": "@wordpress/npm-package-json-lint-config",
+    "rules": {
+      "valid-values-license": [
+        "error",
+        [
+          "GPL-3.0-or-later"
+        ]
+      ]
+    }
+  }
+}

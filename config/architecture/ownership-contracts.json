@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "semantic_domains": [
+    {"domain":"structured-query","owner":6,"delegates":[]},
+    {"domain":"search-index-relevance","owner":34,"delegates":[6,33]},
+    {"domain":"persistent-content-sequence","owner":51,"delegates":[1,2,6]},
+    {"domain":"state-transition","owner":5,"delegates":[17]},
+    {"domain":"workflow-orchestration","owner":17,"delegates":[5,18,19,20,23]},
+    {"domain":"external-http-oauth-webhook-transport","owner":23,"delegates":[]},
+    {"domain":"generic-url-redirect-routing","owner":44,"delegates":[11,27,34,47]},
+    {"domain":"search-replace-data-transform","owner":45,"delegates":[26,28,47,55]},
+    {"domain":"backup-artifact-restore","owner":24,"delegates":[25,55]},
+    {"domain":"reset-execution","owner":25,"delegates":[24]},
+    {"domain":"staging-clone-migration-lifecycle","owner":55,"delegates":[24,26,45,23]},
+    {"domain":"behavioral-analytics","owner":33,"delegates":[]},
+    {"domain":"role-capability-definition","owner":30,"delegates":[15,27]},
+    {"domain":"membership-entitlement","owner":15,"delegates":[30]},
+    {"domain":"resource-reservation-capacity","owner":37,"delegates":[18,36,42]},
+    {"domain":"ledger-movement-balance","owner":36,"delegates":[35]},
+    {"domain":"font-registry-delivery","owner":53,"delegates":[49,56]},
+    {"domain":"wp-admin-branding","owner":49,"delegates":[53]},
+    {"domain":"frontend-theme-workspace","owner":56,"delegates":[28,53]},
+    {"domain":"browser-script-tag-placement","owner":50,"delegates":[]},
+    {"domain":"media-derivative-replacement-delivery","owner":28,"delegates":[45]},
+    {"domain":"provider-ai-model-prompt-governance","owner":43,"delegates":[]}
+  ],
+  "competitive_overlays": {
+    "MPR":[15,14,17,30,27],
+    "RPR":[30],
+    "ATM":[49],
+    "MDP":[28],
+    "STM":[50],
+    "BKX":[24],
+    "MRL":[28,45],
+    "PBX":[14,17,15,30],
+    "JEX":[3,4,6,7,9,32],
+    "LHX":[47,44,45,28],
+    "HFC":[50],
+    "UAF":[53],
+    "MIG":[55,45,24,26,23],
+    "WLB":[49,10,11,44,27,14,50],
+    "DUP":[1,2,3,4,7,26,28,51],
+    "ALX":[31],
+    "MBX":[3,4,7,12,14,17,22,16],
+    "THM":[56],
+    "RSX":[25,24],
+    "RDX":[12,3,53],
+    "CPTX":[1,2,9,6,8]
+  },
+  "overlay_rules": {
+    "may_register_canonical_surface": false,
+    "may_register_parallel_kernel": false,
+    "may_register_parallel_admin_app": false,
+    "may_bypass_owner_ability": false
+  },
+  "shared_services": [
+    "module-registry","service-registry","definition-repository","data-source-registry","field-schema-registry","policy-capability","ability-registry","event-bus","job-service","audit-observability","secrets-vault","asset-registry","integration-registry","cache","rate-abuse","S01","S02","S03","S04","S05","S06","S07","S08"
+  ],
+  "domain_adapters": {
+    "A01":{"name":"woocommerce","authority":"woocommerce","may_become_second_commerce_engine":false}
+  }
+}
