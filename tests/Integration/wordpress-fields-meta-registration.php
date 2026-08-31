@@ -56,7 +56,6 @@ spl_autoload_register(static function (string $class) use ($root): void {
     }
 });
 
-use InvalidArgumentException;
 use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
 use WPEssential\Modules\Fields\PostMetaRegistrationCompiler;
 use WPEssential\Modules\Fields\WordPressPostMetaRegistrar;
@@ -156,15 +155,17 @@ fieldsMetaExpect(isset($registered['wpe_tags']), 'multiple-row field must be reg
 fieldsMetaExpect($registered['wpe_tags']['type'] === 'string' && $registered['wpe_tags']['single'] === false, 'multiple-row scalar shape must survive native registration');
 
 $restMeta = new WP_REST_Post_Meta_Fields('wpe_meta_book');
-$restFields = $restMeta->get_registered_fields();
+$restSchema = $restMeta->get_field_schema();
+$restFields = $restSchema['properties'] ?? [];
+fieldsMetaExpect(is_array($restFields), 'public REST meta schema must expose a properties map');
 fieldsMetaExpect(isset($restFields['wpe_headline']), 'REST meta schema must include scalar field');
-fieldsMetaExpect($restFields['wpe_headline']['schema']['type'] === 'string', 'single scalar REST schema must remain scalar');
+fieldsMetaExpect($restFields['wpe_headline']['type'] === 'string', 'single scalar REST schema must remain scalar');
 fieldsMetaExpect(isset($restFields['wpe_aliases']), 'REST meta schema must include array-backed repeatable field');
-fieldsMetaExpect($restFields['wpe_aliases']['schema']['type'] === 'array', 'array-backed repeatable REST schema must be an array');
-fieldsMetaExpect(($restFields['wpe_aliases']['schema']['items']['type'] ?? null) === 'string', 'array-backed repeatable REST schema must retain item type');
+fieldsMetaExpect($restFields['wpe_aliases']['type'] === 'array', 'array-backed repeatable REST schema must be an array');
+fieldsMetaExpect(($restFields['wpe_aliases']['items']['type'] ?? null) === 'string', 'array-backed repeatable REST schema must retain item type');
 fieldsMetaExpect(isset($restFields['wpe_tags']), 'REST meta schema must include non-single scalar field');
-fieldsMetaExpect($restFields['wpe_tags']['schema']['type'] === 'array', 'WordPress REST must wrap non-single scalar meta as an array');
-fieldsMetaExpect(($restFields['wpe_tags']['schema']['items']['type'] ?? null) === 'string', 'WordPress REST must retain the scalar item schema for non-single meta');
+fieldsMetaExpect($restFields['wpe_tags']['type'] === 'array', 'WordPress REST must wrap non-single scalar meta as an array');
+fieldsMetaExpect(($restFields['wpe_tags']['items']['type'] ?? null) === 'string', 'WordPress REST must retain the scalar item schema for non-single meta');
 
 $postId = wp_insert_post([
     'post_type' => 'wpe_meta_book',
@@ -189,14 +190,14 @@ fieldsMetaExpect(get_post_meta($postId, 'wpe_aliases', true) === ['One', 'Two\\T
 try {
     $registrar->register($compiler->compile($text, 'wpe_no_revision', revisionsEnabled: true));
     fieldsMetaExpect(false, 'revision-enabled registration must reject a subtype without revisions support');
-} catch (InvalidArgumentException) {
+} catch (\InvalidArgumentException) {
     fieldsMetaExpect(true, 'revision support rejection is expected');
 }
 
 try {
     $registrar->register($compiler->compile($text, 'wpe_no_meta', showInRest: true));
     fieldsMetaExpect(false, 'REST-visible registration must reject a subtype without custom-fields support');
-} catch (InvalidArgumentException) {
+} catch (\InvalidArgumentException) {
     fieldsMetaExpect(true, 'custom-fields support rejection is expected');
 }
 
