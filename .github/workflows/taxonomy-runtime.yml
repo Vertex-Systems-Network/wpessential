@@ -10,6 +10,7 @@ on:
       - 'frameworks/Platform/WordPress/Registrations/**'
       - 'tests/Unit/Modules/Taxonomies/**'
       - 'tests/Integration/wordpress-taxonomy-validation.php'
+      - 'tests/Integration/wordpress-taxonomy-runtime.php'
       - '.github/workflows/taxonomy-runtime.yml'
   push:
     branches:
@@ -22,6 +23,7 @@ on:
       - 'frameworks/Platform/WordPress/Registrations/**'
       - 'tests/Unit/Modules/Taxonomies/**'
       - 'tests/Integration/wordpress-taxonomy-validation.php'
+      - 'tests/Integration/wordpress-taxonomy-runtime.php'
       - '.github/workflows/taxonomy-runtime.yml'
   workflow_dispatch:
 
@@ -94,6 +96,7 @@ jobs:
           php -l frameworks/Modules/Taxonomies/TaxonomyModule.php
           php -l frameworks/Platform/WordPress/Registrations/TaxonomyRuntimeRegistrar.php
           php -l tests/Integration/wordpress-taxonomy-validation.php
+          php -l tests/Integration/wordpress-taxonomy-runtime.php
 
       - name: Prepare exact WordPress 7.1 fixture
         shell: bash
@@ -166,6 +169,24 @@ jobs:
           test -s artifacts/taxonomy-runtime/validation.json
           jq -e '.result == "PASS" and .reserved_key_blocked == true and .unknown_runtime_owner_blocked == true and .missing_object_type_degraded == true and .validation_non_mutating == true and .direct_save_collision_blocked == true and .publish_transition_collision_blocked == true and .publish_probe_status == "draft" and .publish_probe_revision == 1' artifacts/taxonomy-runtime/validation.json >/dev/null
           cat artifacts/taxonomy-runtime/validation.json
+
+      - name: Run Taxonomy definition and runtime lifecycle evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/taxonomy-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-runtime.php'
+          : > artifacts/taxonomy-runtime/runtime.log
+          for mode in seed-active verify-active seed-invalid verify-invalid-fail-closed disable-invalid disable-active verify-disabled; do
+            echo "=== ${mode} ===" | tee -a artifacts/taxonomy-runtime/runtime.log
+            WPE_TAXONOMY_TEST_MODE="${mode}" \
+            WPE_TAXONOMY_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/evidence.json" \
+              ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/runtime.log
+          done
+          test -s artifacts/taxonomy-runtime/evidence.json
+          jq -e '.result == "PASS" and .module_state == "booted" and .owner_surface_id == 2 and .disabled_definition_retained == true and .compiled_taxonomy_count == 0' artifacts/taxonomy-runtime/evidence.json >/dev/null
+          cat artifacts/taxonomy-runtime/evidence.json
 
       - name: Upload Taxonomy runtime evidence
         if: always() && hashFiles('artifacts/taxonomy-runtime/**') != ''
