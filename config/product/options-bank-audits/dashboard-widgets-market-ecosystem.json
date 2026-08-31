@@ -181,7 +181,7 @@
     },
     {
       "id": "market.arbitrary_php_widget",
-      "provider": "market_pattern",
+      "provider": "ecosystem",
       "disposition": "REJECTED_UNSAFE",
       "evidence_url": "https://developer.wordpress.org/apis/dashboard-widgets/",
       "notes": "Executable PHP callbacks are implementation/runtime code, not authored Dashboard Widget options. WPE maps them to registered renderer/Ability providers."
