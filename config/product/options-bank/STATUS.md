@@ -1,8 +1,10 @@
 # Bank Status
 
-Canonical Master Options Bank discovery currently has three seeded surfaces: CPT, Taxonomy, and Fields / Field Groups. The remaining canonical surfaces are unseeded unless `../options-bank-progress.json` says otherwise.
+Canonical Master Options Bank discovery currently has four seeded surfaces: CPT, Taxonomy, Fields / Field Groups, and Relations. The remaining canonical surfaces are unseeded unless `../options-bank-progress.json` says otherwise.
 
-Surface 3 — Fields / Field Groups — is a `BANK_REVIEWED` candidate only when the exact source head passes all applicable CI gates. The closing review binds the semantic registry, native WordPress audit, market ecosystem audit, and WPE-future/exceed consistency into one machine certificate without changing the 618-record Fields count.
+Surface 3 — Fields / Field Groups — is `BANK_REVIEWED` at 618 records after exact-head semantic, native, market, WPE-future policy, compatibility, packaging, and browser/accessibility gates. This is planning readiness for downstream Atomic Option Contracts, not a claim that all records are implemented or shipped.
+
+Surface 4 — Relations — is `BANK_SURFACE_SEEDED` at 135 classified discovery records. Relations owns persistent edge definitions, endpoint/cardinality/direction semantics, storage and indexes, pivot metadata, lifecycle, permissions, relation queries/APIs and integrity. Fields continues to own relationship selector/control configuration; the Relations seed references the Fields Schema Registry rather than duplicating field definitions. Native and provider-by-provider market audits remain open.
 
 `BANK_SURFACE_SEEDED` is discovery truth only. `NATIVE_AUDITED` certifies relevant native WordPress/platform coverage. `MARKET_AUDITED` additionally certifies current competitor/specialist capability coverage. `BANK_REVIEWED` means those layers plus WPE-future semantics, duplicate resolution, rejection/defer policies, and ownership are reviewed enough to feed downstream Atomic Option Contracts.
 
