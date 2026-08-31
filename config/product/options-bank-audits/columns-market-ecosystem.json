@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {
+    "id": 8,
+    "key": "columns"
+  },
+  "snapshot": {
+    "date": "2026-09-01",
+    "notes": "Admin Columns Pro, Meta Box Admin Columns, and JetEngine Admin Columns are mapped across six canonical Surface 8 market capability families. Provider evidence is complete with zero unresolved research dispositions; canonical MARKET_AUDITED promotion remains pending an integrator-owned Surface 8 exact-head gate."
+  },
+  "status": "MARKET_AUDIT_IN_PROGRESS",
+  "required_families": [
+    "column_views_layout",
+    "source_formatting",
+    "sorting_filtering",
+    "editing_workflows",
+    "export_portability",
+    "ecosystem_integrations"
+  ],
+  "primary_providers": [
+    {
+      "id": "admin_columns_pro",
+      "name": "Admin Columns Pro",
+      "evidence": [
+        "https://www.admincolumns.com/features/",
+        "https://www.admincolumns.com/export/",
+        "https://www.admincolumns.com/bulk-editing/",
+        "https://www.admincolumns.com/inline-editing/"
+      ],
+      "family_map": {
+        "column_views_layout": [
+          "columns.view.name",
+          "columns.view.default",
+          "columns.column.order",
+          "columns.column.width",
+          "columns.view.horizontal_scroll"
+        ],
+        "source_formatting": [
+          "columns.source.field",
+          "columns.format.text",
+          "columns.format.image",
+          "columns.format.link"
+        ],
+        "sorting_filtering": [
+          "columns.sort.enabled",
+          "columns.filter.enabled",
+          "columns.filter.operators",
+          "columns.search.inclusion"
+        ],
+        "editing_workflows": [
+          "columns.edit.inline_enabled",
+          "columns.bulk.enabled",
+          "columns.quick_add.enabled",
+          "columns.formatting.conditional"
+        ],
+        "export_portability": [
+          "columns.export.enabled",
+          "columns.export.current_filters",
+          "columns.export.current_sort",
+          "columns.portability.export_definition",
+          "columns.portability.import_definition"
+        ],
+        "ecosystem_integrations": [
+          "columns.adapter.acf",
+          "columns.adapter.metabox",
+          "columns.adapter.jetengine",
+          "columns.adapter.woocommerce"
+        ]
+      },
+      "non_applicable_families": []
+    },
+    {
+      "id": "meta_box",
+      "name": "Meta Box Admin Columns",
+      "evidence": [
+        "https://docs.metabox.io/extensions/mb-admin-columns/"
+      ],
+      "family_map": {
+        "column_views_layout": [
+          "columns.column.label",
+          "columns.column.order",
+          "columns.column.width"
+        ],
+        "source_formatting": [
+          "columns.source.field",
+          "columns.text.prefix",
+          "columns.text.suffix",
+          "columns.link.target"
+        ],
+        "sorting_filtering": [
+          "columns.sort.enabled",
+          "columns.sort.mode",
+          "columns.filter.enabled",
+          "columns.search.inclusion"
+        ],
+        "ecosystem_integrations": [
+          "columns.adapter.metabox",
+          "columns.target.posts",
+          "columns.target.users",
+          "columns.target.terms"
+        ]
+      },
+      "non_applicable_families": [
+        "editing_workflows",
+        "export_portability"
+      ]
+    },
+    {
+      "id": "jetengine",
+      "name": "JetEngine Admin Columns",
+      "evidence": [
+        "https://crocoblock.com/knowledge-base/features/admin-columns-overview/",
+        "https://crocoblock.com/knowledge-base/features/custom-content-type/",
+        "https://crocoblock.com/knowledge-base/jetengine/jetengine-custom-callback-in-admin-columns/",
+        "https://crocoblock.com/knowledge-base/features/relations-overview/"
+      ],
+      "family_map": {
+        "column_views_layout": [
+          "columns.column.label",
+          "columns.column.order"
+        ],
+        "source_formatting": [
+          "columns.source.field",
+          "columns.source.taxonomy",
+          "columns.source.custom_provider",
+          "columns.text.prefix",
+          "columns.text.suffix"
+        ],
+        "sorting_filtering": [
+          "columns.sort.enabled",
+          "columns.sort.mode",
+          "columns.filter.relation_ops"
+        ],
+        "editing_workflows": [
+          "columns.quick_edit.integration"
+        ],
+        "ecosystem_integrations": [
+          "columns.adapter.jetengine",
+          "columns.target.custom_entities",
+          "columns.source.relation"
+        ]
+      },
+      "non_applicable_families": [
+        "export_portability"
+      ]
+    }
+  ],
+  "specialist_providers": [
+    {
+      "id": "admin_columns_acf",
+      "name": "Admin Columns ACF Integration",
+      "evidence": [
+        "https://www.admincolumns.com/advanced-custom-fields/"
+      ],
+      "bank_record_ids": [
+        "columns.adapter.acf",
+        "columns.source.field"
+      ]
+    }
+  ],
+  "extra_dispositions": [
+    {
+      "id": "admin_columns.performance_marketing",
+      "provider": "admin_columns_pro",
+      "disposition": "IMPLEMENTATION_PATTERN",
+      "evidence_url": "https://www.admincolumns.com/features/",
+      "notes": "Provider scale/performance marketing is evidence of product intent, not certification of WPE query budgets, batch hydration, or no-N+1 guarantees."
+    },
+    {
+      "id": "jetengine.custom_callback_execution",
+      "provider": "jetengine",
+      "disposition": "REJECTED_UNSAFE",
+      "evidence_url": "https://crocoblock.com/knowledge-base/jetengine/jetengine-custom-callback-in-admin-columns/",
+      "notes": "Arbitrary executable PHP configured as a column callback is not adopted; Surface 8 exposes registered and allowlisted typed providers instead."
+    },
+    {
+      "id": "jetengine.relation_definition_semantics",
+      "provider": "jetengine",
+      "disposition": "OUT_OF_SURFACE",
+      "owner_surface": "relations",
+      "evidence_url": "https://crocoblock.com/knowledge-base/features/relations-overview/",
+      "notes": "Relation definitions, cardinality, and edge truth remain Surface 4-owned; Admin Columns may only bind relation display/filter presentation."
+    },
+    {
+      "id": "meta_box.field_definition_semantics",
+      "provider": "meta_box",
+      "disposition": "OUT_OF_SURFACE",
+      "owner_surface": "fields",
+      "evidence_url": "https://docs.metabox.io/extensions/mb-admin-columns/",
+      "notes": "Field schema and value ownership remain Surface 3/Data Source-owned; Surface 8 consumes field references for presentation, sorting, filtering, and links."
+    }
+  ],
+  "coverage": {
+    "primary_providers": 3,
+    "specialist_providers": 1,
+    "family_mappings": 15,
+    "non_applicable_family_cells": 3,
+    "bank_record_references": 57,
+    "extra_dispositions": 4,
+    "unresolved": 0
+  }
+}
