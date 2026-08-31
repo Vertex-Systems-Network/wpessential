@@ -12,6 +12,7 @@ use Throwable;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
+use WPEssential\Modules\ImportExport\ImportExportModule;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
@@ -130,6 +131,7 @@ final class Plugin
 
         self::$kernel->registerModule(new CustomPostTypeModule());
         self::$kernel->registerModule(new TaxonomyModule());
+        self::$kernel->registerModule(new ImportExportModule());
 
         if (function_exists('add_action')) {
             $ajaxGateway->register();
