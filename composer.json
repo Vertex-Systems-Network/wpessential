@@ -51,6 +51,12 @@
     "test:smoke:options-bank-relations-review": "php tests/Smoke/options-bank-relations-review-contract.php",
     "test:smoke:options-bank-market-audit": "php tests/Smoke/options-bank-market-audit-contract.php",
     "test:smoke:options-bank-review": "php tests/Smoke/options-bank-review-contract.php",
+    "test:smoke:options-bank-columns-native-audit": "php tests/Smoke/options-bank-columns-native-audit-contract.php",
+    "test:smoke:options-bank-columns-market-audit": "php tests/Smoke/options-bank-columns-market-audit-contract.php",
+    "test:smoke:options-bank-columns-review": "php tests/Smoke/options-bank-columns-review-contract.php",
+    "test:smoke:dashboard-widgets-native-audit": "php tests/Smoke/dashboard-widgets-native-audit-contract.php",
+    "test:smoke:dashboard-widgets-market-audit": "php tests/Smoke/dashboard-widgets-market-audit-contract.php",
+    "test:smoke:dashboard-widgets-review": "php tests/Smoke/dashboard-widgets-review-contract.php",
     "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
     "test:smoke": [
       "@test:smoke:kernel",
@@ -71,7 +77,13 @@
       "@test:smoke:options-bank-relations-market-audit",
       "@test:smoke:options-bank-relations-review",
       "@test:smoke:options-bank-market-audit",
-      "@test:smoke:options-bank-review"
+      "@test:smoke:options-bank-review",
+      "@test:smoke:options-bank-columns-native-audit",
+      "@test:smoke:options-bank-columns-market-audit",
+      "@test:smoke:options-bank-columns-review",
+      "@test:smoke:dashboard-widgets-native-audit",
+      "@test:smoke:dashboard-widgets-market-audit",
+      "@test:smoke:dashboard-widgets-review"
     ],
     "quality:php": [
       "@quality:phpcs",
