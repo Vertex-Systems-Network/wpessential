@@ -7,7 +7,7 @@
   },
   "snapshot_date": "2026-09-01",
   "decision": "REVIEW_BLOCKED",
-  "record_count": 211,
+  "record_count": 214,
   "required_artifacts": [
     {
       "kind": "semantic_registry",
