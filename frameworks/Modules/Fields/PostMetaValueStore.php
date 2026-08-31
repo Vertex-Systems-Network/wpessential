@@ -98,6 +98,9 @@ final class PostMetaValueStore
                 if (!function_exists('wp_slash')) {
                     throw new LogicException('WordPress wp_slash() is unavailable.');
                 }
+                if (!is_string($value) && !is_array($value)) {
+                    return $value;
+                }
                 return wp_slash($value);
             };
     }
@@ -133,15 +136,16 @@ final class PostMetaValueStore
                 return new PostMetaValueWriteResult(PostMetaValueWriteResult::ABSENT, $fieldUuid, $metaKey, null);
             }
 
-            $deleted = ($this->deletePostMeta)($postId, (string) ($this->slash)($metaKey));
-            $stillExists = ($this->metadataExists)($postId, $metaKey);
-            if ($stillExists) {
-                throw new RuntimeException(sprintf('WordPress failed to delete post meta "%s".', $metaKey));
+            $deleteResult = ($this->deletePostMeta)($postId, (string) ($this->slash)($metaKey));
+            if (($this->metadataExists)($postId, $metaKey)) {
+                throw new RuntimeException(sprintf(
+                    'WordPress %s deleting post meta "%s" and the value still exists.',
+                    $deleteResult ? 'reported success' : 'reported failure',
+                    $metaKey,
+                ));
             }
-            if (!$deleted && $exists) {
-                // A concurrent delete or filter may return false while the desired absent state is already true.
-                return new PostMetaValueWriteResult(PostMetaValueWriteResult::DELETED, $fieldUuid, $metaKey, null);
-            }
+
+            // Verified state wins if a concurrent delete/filter returned false after the value disappeared.
             return new PostMetaValueWriteResult(PostMetaValueWriteResult::DELETED, $fieldUuid, $metaKey, null);
         }
 
@@ -149,7 +153,7 @@ final class PostMetaValueStore
             return new PostMetaValueWriteResult(PostMetaValueWriteResult::UNCHANGED, $fieldUuid, $metaKey, $canonical);
         }
 
-        $result = ($this->updatePostMeta)(
+        $nativeResult = ($this->updatePostMeta)(
             $postId,
             (string) ($this->slash)($metaKey),
             ($this->slash)($canonical),
@@ -162,13 +166,14 @@ final class PostMetaValueStore
         }
 
         if (!$this->sameValue($persisted, $canonical)) {
-            throw new RuntimeException(sprintf('WordPress did not persist the canonical value for post meta "%s".', $metaKey));
+            throw new RuntimeException(sprintf(
+                'WordPress %s updating post meta "%s" but canonical verification did not match.',
+                $nativeResult === false ? 'reported failure' : 'reported success',
+                $metaKey,
+            ));
         }
 
-        if ($result === false && !$this->sameValue($persisted, $canonical)) {
-            throw new RuntimeException(sprintf('WordPress reported failure updating post meta "%s".', $metaKey));
-        }
-
+        // update_post_meta() may return false for no-change/filter/concurrency paths; post-write state is authoritative.
         return new PostMetaValueWriteResult(PostMetaValueWriteResult::WRITTEN, $fieldUuid, $metaKey, $persisted);
     }
 
