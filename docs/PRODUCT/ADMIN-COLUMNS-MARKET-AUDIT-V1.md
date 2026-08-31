@@ -4,7 +4,7 @@ Status: **RESEARCH_COMPLETE / MACHINE_CANDIDATE_READY / CERTIFICATION_PENDING**
 Surface: **8 — Admin Columns (`columns`)**  
 Snapshot: **2026-09-01**  
 Original base: **`eb61c6bfe9d89af949d70e89ba685597d58e2663`**  
-Synced main: **`8ed1c0389ef314c79a60a6808d232ef625de7b25`**  
+Synced main: **`88e5e90b273ddc61b4a0e2e36249c541576fc8fc`**  
 Writer branch: **`planning/options-bank-columns-seed-v1`**
 
 ## 1. Scope and current gate
@@ -17,7 +17,11 @@ A Surface 8 machine candidate now exists at:
 
 - `config/product/options-bank-audits/columns-market-ecosystem.json`
 
-Its status is intentionally `MARKET_AUDIT_IN_PROGRESS`, not `MARKET_AUDITED`. Research coverage is complete with zero unresolved dispositions, but canonical promotion still requires an integrator-owned exact-head Surface 8 market-audit gate and shared progress update. Existing generic market-audit smoke coverage remains Fields-specific, while Relations uses a dedicated surface gate.
+A Surface 8-specific executable contract now exists at:
+
+- `tests/Smoke/options-bank-columns-market-audit-contract.php`
+
+Its status is intentionally `MARKET_AUDIT_IN_PROGRESS`, not `MARKET_AUDITED`. Research coverage is complete with zero unresolved dispositions. The local validator enforces the reviewed provider/family/evidence/Bank-reference/ownership counters, but canonical promotion still requires the designated integrator to register and execute that contract through the shared exact-head Composer/CI smoke graph and update canonical progress. Existing generic market-audit smoke coverage remains Fields-specific, while Relations uses a dedicated Surface 4 gate.
 
 ## 2. Canonical product boundary
 
@@ -109,6 +113,8 @@ Coverage:
 - extra dispositions: **4**;
 - unresolved research dispositions: **0**.
 
+`tests/Smoke/options-bank-columns-market-audit-contract.php` mirrors these reviewed invariants, requires real HTTPS evidence, validates every referenced Bank record, dispositions every required family for each primary provider, validates canonical out-of-surface owners and accepts only the lifecycle-safe `MARKET_AUDIT_IN_PROGRESS → MARKET_AUDITED` transition.
+
 ## 7. WPE exceed / safety boundary
 
 The reviewed market evidence does not establish the following as reliable cross-provider guarantees, so they remain explicit WPE-exceed/safety contracts rather than being mislabeled as parity:
@@ -150,17 +156,19 @@ No duplicate Bank IDs or option paths exist in the Surface 8 candidate. No Surfa
 
 Market research is complete and has been normalized into the generalized machine-audit schema. There is no unresolved product decision.
 
-The remaining blocker is shared certification infrastructure, not evidence coverage:
+The remaining blocker is shared certification integration, not evidence coverage or absence of a Surface 8 validator:
 
 - Surface 8 canonical progress is not promoted;
-- a Surface 8 exact-head market-audit test is not wired;
+- the Surface 8 market-audit validator exists locally but is not registered/executed by the shared exact-head smoke graph;
 - therefore `MARKET_AUDITED` is not claimed;
 - Bank Review, UX projection and implementation-contract finalization remain downstream-blocked.
+
+Raw local execution of the validator is not claimed because the available execution sandbox could not resolve `github.com` to clone the repository. Exact-head repository CI remains authoritative; current CI syntax scanning covers the script, while normal contract execution requires integrator registration.
 
 ## 10. Integration Requirements
 
 `IR-COLUMNS-002` — **RESOLVED UPSTREAM** by main `8ed1c0389ef314c79a60a6808d232ef625de7b25`: the shared market-audit schema now supports canonical surfaces 1–56 without weakening the existing Fields contract.
 
-`IR-COLUMNS-003` — **OPEN**: designated integrator must add or generalize exact-head Surface 8 gates for native audit, market audit and Bank Review, and wire them into applicable CI without replacing or weakening existing Fields/Relations coverage.
+`IR-COLUMNS-003` — **PARTIALLY RESOLVED**: Surface 8 native, market and Bank Review validators now exist locally. The designated integrator must register and execute them in shared Composer/CI without replacing or weakening existing Fields/Relations coverage, then promote lifecycle only from the resulting exact certified head.
 
-Until IR-COLUMNS-003 and canonical progress promotion are resolved, keep `columns-market-ecosystem.json` at `MARKET_AUDIT_IN_PROGRESS` and do not mark Surface 8 `BANK_REVIEWED`.
+Until IR-COLUMNS-003 and canonical progress promotion are fully resolved, keep `columns-market-ecosystem.json` at `MARKET_AUDIT_IN_PROGRESS` and do not mark Surface 8 `BANK_REVIEWED`.
