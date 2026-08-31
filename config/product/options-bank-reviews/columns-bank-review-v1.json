@@ -17,12 +17,12 @@
     {
       "kind": "native_audit",
       "path": "config/product/options-bank-audits/columns-native-wordpress.json",
-      "expected_status": "NATIVE_AUDITED after shared progress/test integration"
+      "expected_status": "NATIVE_AUDIT_IN_PROGRESS; research complete with zero unresolved items, exact-head Surface 8 gate and canonical progress promotion pending"
     },
     {
       "kind": "market_audit",
-      "path": "docs/PRODUCT/ADMIN-COLUMNS-MARKET-AUDIT-V1.md",
-      "expected_status": "RESEARCH_COMPLETE / MACHINE_CERTIFICATION_BLOCKED"
+      "path": "config/product/options-bank-audits/columns-market-ecosystem.json",
+      "expected_status": "MARKET_AUDIT_IN_PROGRESS; provider evidence complete with zero unresolved items, exact-head Surface 8 gate and canonical progress promotion pending"
     }
   ],
   "semantic_expectations": {
@@ -41,5 +41,5 @@
     "wpe_exceed_shard_future_only": true,
     "record_delta_after_market_audit": 0
   },
-  "unresolved": 3
+  "unresolved": 2
 }
