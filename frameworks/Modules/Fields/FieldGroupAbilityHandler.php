@@ -23,15 +23,19 @@ final readonly class FieldGroupAbilityHandler implements AbilityHandlerInterface
     public const SAVE = 'save';
     public const STATUS = 'status';
 
+    private FieldIdentityAssigner $identities;
+
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private FieldGroupDefinitionNormalizer $normalizer,
         private FieldGroupValidationService $validation,
         private string $action,
+        ?FieldIdentityAssigner $identities = null,
     ) {
         if (!in_array($this->action, [self::LIST, self::GET, self::SAVE, self::STATUS], true)) {
             throw new InvalidArgumentException('Unsupported Field Group ability action.');
         }
+        $this->identities = $identities ?? new FieldIdentityAssigner($definitions);
     }
 
     public function handle(array $input, ExecutionContext $context): mixed
@@ -81,6 +85,7 @@ final readonly class FieldGroupAbilityHandler implements AbilityHandlerInterface
         }
 
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
+        $payload = $this->identities->assign($payload, $existing?->payload, $existing?->id);
         $validationInput = ['payload' => $payload, 'status' => $status->value];
         if ($existing instanceof Definition) {
             $validationInput['id'] = $existing->id;
@@ -114,12 +119,13 @@ final readonly class FieldGroupAbilityHandler implements AbilityHandlerInterface
         $existing = $this->owned($this->requiredUuid($input, 'id'));
         $this->assertExpectedRevision($input, $existing);
         $status = $this->statusFromInput($input, $existing->status, required: true);
+        $payload = $this->identities->assign($existing->payload, $existing->payload, $existing->id);
         $this->assertValidationAllowsMutation($this->validation->validate([
             'id' => $existing->id,
-            'payload' => $existing->payload,
+            'payload' => $payload,
             'status' => $status->value,
         ]));
-        $normalized = $this->normalizer->normalize($existing->payload, $status === DefinitionStatus::Published);
+        $normalized = $this->normalizer->normalize($payload, $status === DefinitionStatus::Published);
 
         $candidate = new Definition(
             id: $existing->id,
@@ -256,8 +262,13 @@ final readonly class FieldGroupAbilityHandler implements AbilityHandlerInterface
         $bytes[6] = chr((ord($bytes[6]) & 0x0f) | 0x40);
         $bytes[8] = chr((ord($bytes[8]) & 0x3f) | 0x80);
         $hex = bin2hex($bytes);
-        return sprintf('%s-%s-%s-%s-%s',
-            substr($hex, 0, 8), substr($hex, 8, 4), substr($hex, 12, 4), substr($hex, 16, 4), substr($hex, 20, 12),
+        return sprintf(
+            '%s-%s-%s-%s-%s',
+            substr($hex, 0, 8),
+            substr($hex, 8, 4),
+            substr($hex, 12, 4),
+            substr($hex, 16, 4),
+            substr($hex, 20, 12),
         );
     }
 }
