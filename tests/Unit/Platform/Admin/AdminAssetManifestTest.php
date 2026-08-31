@@ -44,6 +44,32 @@ final class AdminAssetManifestTest extends TestCase
         self::assertSame('asset-hash', $entry['version']);
     }
 
+    public function testReadsNamedEntryAndFallsBackToMatchingEntryStyle(): void
+    {
+        file_put_contents($this->root . '/assets/admin/taxonomy.js', 'window.WPETaxonomy=true;');
+        file_put_contents($this->root . '/assets/admin/taxonomy.css', '.wpessential-taxonomy{}');
+        file_put_contents(
+            $this->root . '/assets/admin/taxonomy.asset.php',
+            "<?php return ['dependencies' => ['wp-i18n'], 'version' => 'taxonomy-hash'];",
+        );
+
+        $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
+        $entry = $manifest->entry('taxonomy', 'taxonomy-admin');
+
+        self::assertNotNull($entry);
+        self::assertSame('https://example.test/wpessential/assets/admin/taxonomy.js', $entry['script']);
+        self::assertSame(['https://example.test/wpessential/assets/admin/taxonomy.css'], $entry['styles']);
+        self::assertSame(['wp-i18n'], $entry['dependencies']);
+        self::assertSame('taxonomy-hash', $entry['version']);
+    }
+
+    public function testRejectsUnsafeNamedEntry(): void
+    {
+        $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
+
+        self::assertNull($manifest->entry('../taxonomy'));
+    }
+
     public function testReturnsNullWhenBuildArtifactsAreIncomplete(): void
     {
         $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
