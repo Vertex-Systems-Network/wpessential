@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "snapshot_date": "2026-09-01",
+  "relationships": [
+    {
+      "surface": "fields",
+      "source_id": "fields.behavior.validation_required",
+      "target_id": "fields.field.required",
+      "relation": "ALIAS",
+      "rationale": "The shared validation record and the field-level Required option represent one authored requirement. field.required is the canonical authored contract; validation.required remains discovery evidence and must not become a second independent control."
+    },
+    {
+      "surface": "fields",
+      "source_id": "fields.field.cloneable",
+      "target_id": "fields.behavior.repeat_clone",
+      "relation": "ALIAS",
+      "rationale": "The shared repeatability family is the richer canonical primitive because clone defaults, bounds, storage mode, add-button text and empty-start behavior already depend on it. field.cloneable is retained as a market-facing discovery alias."
+    },
+    {
+      "surface": "fields",
+      "source_id": "fields.field.sortable",
+      "target_id": "fields.behavior.repeat_sort",
+      "relation": "ALIAS",
+      "rationale": "Sortable Values and Sortable Clones represent one repeatability sorting behavior. The shared behavior record is canonical because it belongs to the repeatability family."
+    },
+    {
+      "surface": "fields",
+      "source_id": "fields.behavior.rest_schema",
+      "target_id": "fields.field.rest_schema",
+      "relation": "EFFECTIVE_DERIVATION",
+      "rationale": "field.rest_schema is the authored field/API schema configuration. rest.schema represents the resolved native/effective REST schema emitted after type, registration and provider rules are applied."
+    },
+    {
+      "surface": "fields",
+      "source_id": "fields.behavior.value_escape",
+      "target_id": "fields.field.escape_html",
+      "relation": "EFFECTIVE_DERIVATION",
+      "rationale": "field.escape_html is the authored output-escaping policy. value.escape represents the resolved value-pipeline stage and must not surface as a second configuration control."
+    },
+    {
+      "surface": "fields",
+      "source_id": "fields.behavior.value_formatted",
+      "target_id": "fields.field.format_value",
+      "relation": "EFFECTIVE_DERIVATION",
+      "rationale": "field.format_value is the authored formatting policy. value.formatted represents the resolved formatted-output state produced by that policy and any registered field/provider behavior."
+    }
+  ]
+}

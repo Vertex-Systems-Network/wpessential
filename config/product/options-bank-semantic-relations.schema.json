@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wpessential.local/schema/options-bank-semantic-relations.json",
+  "title": "WPEssential Options Bank Semantic Relationships",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "bank_version", "snapshot_date", "relationships"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "bank_version": {"type": "string", "const": "v1"},
+    "snapshot_date": {"type": "string", "format": "date"},
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surface", "source_id", "target_id", "relation", "rationale"],
+        "properties": {
+          "surface": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+          "source_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+          "target_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+          "relation": {"enum": ["ALIAS", "EFFECTIVE_DERIVATION"]},
+          "rationale": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}
