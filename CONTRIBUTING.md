@@ -16,6 +16,25 @@ Current implementation baseline:
 
 Repository planning and implementation are milestone-gated. A passing unit or smoke test does not authorize a production deployment or a destructive live-site/provider operation.
 
+## Mandatory agent contract
+
+All AI/coding/planning agents working in this repository MUST read and follow root `AGENTS.md` before planning or changing files. `AGENTS.md` is the canonical operating contract for both single-agent and multi-agent work and is mandatory in addition to this contribution guide.
+
+For parallel work in particular:
+
+- use one primary writer per surface/task branch;
+- branch from an explicit current `main` SHA;
+- preserve canonical semantic ownership and the no-bypass contract;
+- do not create peer-private shadow engines or duplicate another surface's storage/runtime semantics;
+- module workers normally edit only module-local artifacts;
+- shared/global truth and registration files are single-writer integrator territory;
+- record required shared changes as Integration Requirements instead of racing other agents on the same global file;
+- sync stale branches to latest `main` before merge certification;
+- treat only exact-head CI as merge evidence;
+- never promote Options Bank lifecycle status from documentation alone.
+
+The detailed coordination, conflict-resolution, Options Bank→UX derivation, branch, merge and coordinator rules are defined in `AGENTS.md` and apply automatically without requiring the repository owner to restate them for every agent.
+
 ## Mandatory engineering conventions
 
 All production contributions must preserve the accepted WPEssential engineering contract:
