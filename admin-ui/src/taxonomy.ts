@@ -353,7 +353,9 @@ function upsertDefinition(
 	definition: TaxonomyDefinition
 ): TaxonomyDefinition[] {
 	return sortedDefinitions( [
-		...definitions.filter( ( candidate ) => candidate.id !== definition.id ),
+		...definitions.filter(
+			( candidate ) => candidate.id !== definition.id
+		),
 		definition,
 	] );
 }
@@ -683,7 +685,9 @@ function boot(): void {
 				);
 				const saved = parseMutationDefinition( data );
 				if ( ! saved ) {
-					throw new Error( 'The Taxonomy save response was invalid.' );
+					throw new Error(
+						'The Taxonomy save response was invalid.'
+					);
 				}
 				definitions = upsertDefinition( definitions, saved );
 				renderRows( definitions );
