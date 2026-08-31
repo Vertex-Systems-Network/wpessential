@@ -13,7 +13,7 @@
   "surface_status": [
     {"id":1,"key":"cpt","status":"BANK_SURFACE_SEEDED","records":107,"notes":"Current WordPress register_post_type(), current labels, capability map and native-extra/internal exclusions are seeded. Market evidence enrichment and final native cross-check remain before NATIVE_AUDITED/MARKET_AUDITED."},
     {"id":2,"key":"taxonomy","status":"BANK_SURFACE_SEEDED","records":71,"notes":"Current register_taxonomy(), get_taxonomy_labels() and capability map are seeded. Market evidence enrichment and final native cross-check remain."},
-    {"id":3,"key":"fields","status":"BANK_SURFACE_SEEDED","records":596,"notes":"Broad normalized field/group/control inventory now spans mature ACF/SCF/Meta Box/JetEngine/Redux patterns and long-tail ecosystems. Long-tail v2 adds register_meta() edge semantics, WordPress Block Bindings server/editor contracts, GraphQL exposure controls, network settings, custom-table/data-object storage details, Redux metabox override semantics and verified CMB2 provider mappings. Keep BANK_SURFACE_SEEDED until native/market deduplication and formal review gates converge."},
+    {"id":3,"key":"fields","status":"BANK_SURFACE_SEEDED","records":596,"notes":"Broad normalized field/group/control inventory spans mature and long-tail ecosystems. Formal Bank Review V1 confirms machine integrity but blocks status promotion on semantic consolidation, explicit register_meta()/Block Bindings native disposition mapping, and a provider-by-provider market capability matrix. Keep BANK_SURFACE_SEEDED until those evidence gates close."},
     {"id":4,"key":"relations","status":"UNSEEDED","records":0},
     {"id":5,"key":"status","status":"UNSEEDED","records":0},
     {"id":6,"key":"query","status":"UNSEEDED","records":0},
