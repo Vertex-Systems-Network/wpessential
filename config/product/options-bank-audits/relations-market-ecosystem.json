@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {
+    "id": 4,
+    "key": "relations"
+  },
+  "snapshot": {
+    "date": "2026-09-01",
+    "notes": "Six primary relation ecosystems are dispositioned across eight canonical capability families; JetFormBuilder covers the specialist front-end relation-form path. Two evidence-backed market gaps were added and unresolved coverage is zero."
+  },
+  "status": "MARKET_AUDITED",
+  "required_families": [
+    "definition_cardinality",
+    "endpoint_direction",
+    "storage_pivot",
+    "editor_permissions",
+    "query_traversal",
+    "api_integration",
+    "lifecycle_integrity",
+    "portability_ecosystem"
+  ],
+  "primary_providers": [
+    {
+      "id": "jetengine",
+      "name": "JetEngine Relations",
+      "evidence": [
+        "https://crocoblock.com/knowledge-base/features/relations-overview/",
+        "https://crocoblock.com/knowledge-base/jetengine/jetengine-getting-and-updating-relation-data-via-rest-api/"
+      ],
+      "family_map": {
+        "definition_cardinality": [
+          "relations.relation.name",
+          "relations.relation.cardinality",
+          "relations.relation.parent_relation",
+          "relations.cardinality.to_min"
+        ],
+        "endpoint_direction": [
+          "relations.side.from.object_type",
+          "relations.side.to.object_type",
+          "relations.object_support.post",
+          "relations.object_support.term",
+          "relations.object_support.user",
+          "relations.object_support.custom_table",
+          "relations.relation.bidirectional_traversal"
+        ],
+        "storage_pivot": [
+          "relations.storage.mode",
+          "relations.storage.separate_table",
+          "relations.pivot.enabled",
+          "relations.pivot.field_schema",
+          "relations.pivot.required_validation"
+        ],
+        "editor_permissions": [
+          "relations.editor.from.enabled",
+          "relations.editor.to.enabled",
+          "relations.marketaudit.admin_filter"
+        ],
+        "query_traversal": [
+          "relations.query.direction",
+          "relations.query.related_ids",
+          "relations.query.related_objects",
+          "relations.query.order_by_edge",
+          "relations.frontend.listings"
+        ],
+        "api_integration": [
+          "relations.api.rest.expose",
+          "relations.api.rest.read",
+          "relations.api.rest.connect",
+          "relations.api.rest.disconnect",
+          "relations.api.rest.pivot",
+          "relations.lifecycle.bulk_replace",
+          "relations.marketaudit.rest_read_policy",
+          "relations.permissions.rest_write"
+        ],
+        "lifecycle_integrity": [
+          "relations.integrity.cardinality_validation",
+          "relations.integrity.endpoint_validation",
+          "relations.lifecycle.bulk_disconnect"
+        ]
+      },
+      "non_applicable_families": [
+        "portability_ecosystem"
+      ]
+    },
+    {
+      "id": "meta_box",
+      "name": "Meta Box Relationships",
+      "evidence": [
+        "https://docs.metabox.io/extensions/mb-relationships/"
+      ],
+      "family_map": {
+        "definition_cardinality": [
+          "relations.relation.key",
+          "relations.relation.cardinality",
+          "relations.relation.reciprocal"
+        ],
+        "endpoint_direction": [
+          "relations.side.from.object_type",
+          "relations.side.to.object_type",
+          "relations.object_support.post",
+          "relations.object_support.term",
+          "relations.object_support.user",
+          "relations.relation.bidirectional_traversal"
+        ],
+        "storage_pivot": [
+          "relations.storage.separate_table",
+          "relations.storage.edge_id",
+          "relations.storage.index_strategy",
+          "relations.edge.ordered_from",
+          "relations.edge.ordered_to"
+        ],
+        "editor_permissions": [
+          "relations.editor.from.enabled",
+          "relations.editor.to.enabled",
+          "relations.editor.from.query_filter",
+          "relations.editor.to.query_filter",
+          "relations.admin_columns",
+          "relations.marketaudit.admin_filter"
+        ],
+        "query_traversal": [
+          "relations.query.direction",
+          "relations.query.related_ids",
+          "relations.query.related_objects",
+          "relations.query.exists",
+          "relations.query.order_by_edge"
+        ],
+        "api_integration": [
+          "relations.api.rest.expose",
+          "relations.api.rest.read",
+          "relations.api.rest.connect",
+          "relations.api.rest.disconnect",
+          "relations.api.rest.exists",
+          "relations.marketaudit.rest_read_policy",
+          "relations.permissions.rest_write"
+        ],
+        "lifecycle_integrity": [
+          "relations.lifecycle.delete_edges",
+          "relations.integrity.unique_edge",
+          "relations.integrity.cardinality_validation"
+        ]
+      },
+      "non_applicable_families": [
+        "portability_ecosystem"
+      ]
+    },
+    {
+      "id": "acf",
+      "name": "Advanced Custom Fields (ACF)",
+      "evidence": [
+        "https://www.advancedcustomfields.com/resources/bidirectional-relationships/"
+      ],
+      "family_map": {
+        "definition_cardinality": [
+          "relations.relation.cardinality",
+          "relations.cardinality.from_max",
+          "relations.cardinality.to_max"
+        ],
+        "endpoint_direction": [
+          "relations.object_support.post",
+          "relations.object_support.user",
+          "relations.object_support.term",
+          "relations.relation.bidirectional_traversal"
+        ],
+        "storage_pivot": [
+          "relations.storage.mode"
+        ],
+        "lifecycle_integrity": [
+          "relations.integrity.endpoint_validation",
+          "relations.integrity.reciprocal_consistency"
+        ]
+      },
+      "non_applicable_families": [
+        "editor_permissions",
+        "query_traversal",
+        "api_integration",
+        "portability_ecosystem"
+      ]
+    },
+    {
+      "id": "pods",
+      "name": "Pods",
+      "evidence": [
+        "https://docs.pods.io/fields/relationship/",
+        "https://docs.pods.io/advanced-topics/using-link-tables-for-multi-field-relationships/",
+        "https://docs.pods.io/advanced-topics/rest-api/"
+      ],
+      "family_map": {
+        "definition_cardinality": [
+          "relations.relation.cardinality"
+        ],
+        "endpoint_direction": [
+          "relations.object_support.post",
+          "relations.object_support.term",
+          "relations.object_support.user",
+          "relations.object_support.custom_table",
+          "relations.object_support.registered_entity"
+        ],
+        "storage_pivot": [
+          "relations.storage.mode",
+          "relations.pivot.enabled",
+          "relations.pivot.field_schema"
+        ],
+        "query_traversal": [
+          "relations.query.related_objects",
+          "relations.frontend.read"
+        ],
+        "lifecycle_integrity": [
+          "relations.integrity.endpoint_validation"
+        ]
+      },
+      "non_applicable_families": [
+        "editor_permissions",
+        "api_integration",
+        "portability_ecosystem"
+      ]
+    },
+    {
+      "id": "toolset",
+      "name": "Toolset Post Relationships",
+      "evidence": [
+        "https://toolset.com/course-lesson/how-to-set-up-post-relationships-in-wordpress/",
+        "https://toolset.com/course-lesson/many-to-many-post-relationships/",
+        "https://toolset.com/documentation/customizing-sites-using-php/post-relationships-api/"
+      ],
+      "family_map": {
+        "definition_cardinality": [
+          "relations.relation.cardinality"
+        ],
+        "endpoint_direction": [
+          "relations.object_support.post",
+          "relations.side.from.object_type",
+          "relations.side.to.object_type",
+          "relations.relation.bidirectional_traversal"
+        ],
+        "storage_pivot": [
+          "relations.pivot.enabled",
+          "relations.pivot.field_schema",
+          "relations.storage.mode"
+        ],
+        "editor_permissions": [
+          "relations.editor.from.enabled",
+          "relations.editor.to.enabled"
+        ],
+        "query_traversal": [
+          "relations.query.related_ids",
+          "relations.query.related_objects",
+          "relations.query.pagination",
+          "relations.query.order_by_edge"
+        ],
+        "lifecycle_integrity": [
+          "relations.lifecycle.bulk_connect",
+          "relations.lifecycle.bulk_disconnect",
+          "relations.integrity.cardinality_validation"
+        ],
+        "portability_ecosystem": [
+          "relations.migration.provider_import"
+        ]
+      },
+      "non_applicable_families": [
+        "api_integration"
+      ]
+    },
+    {
+      "id": "acpt",
+      "name": "ACPT",
+      "evidence": [
+        "https://docs.acpt.io/meta-fields/field-types/relational-field"
+      ],
+      "family_map": {
+        "definition_cardinality": [
+          "relations.relation.cardinality"
+        ],
+        "endpoint_direction": [
+          "relations.side.from.object_type",
+          "relations.side.to.object_type",
+          "relations.relation.bidirectional_traversal"
+        ],
+        "storage_pivot": [
+          "relations.storage.mode"
+        ],
+        "lifecycle_integrity": [
+          "relations.integrity.endpoint_validation",
+          "relations.integrity.reciprocal_consistency"
+        ]
+      },
+      "non_applicable_families": [
+        "editor_permissions",
+        "query_traversal",
+        "api_integration",
+        "portability_ecosystem"
+      ]
+    }
+  ],
+  "specialist_providers": [
+    {
+      "id": "jetformbuilder",
+      "name": "JetFormBuilder",
+      "evidence": [
+        "https://jetformbuilder.com/features/jetformbuilder-connecting-wordpress-related-items-with-post-submit-actions/"
+      ],
+      "bank_record_ids": [
+        "relations.frontend.form_connect",
+        "relations.frontend.form_disconnect",
+        "relations.frontend.edit"
+      ]
+    }
+  ],
+  "extra_dispositions": [
+    {
+      "id": "acf.field_sync_storage",
+      "provider": "acf",
+      "disposition": "IMPLEMENTATION_PATTERN",
+      "evidence_url": "https://www.advancedcustomfields.com/resources/bidirectional-relationships/",
+      "notes": "ACF stores relationship values in ACF fields on both objects; WPE treats this as a provider compatibility/storage pattern, not its canonical persistent edge store."
+    },
+    {
+      "id": "acf.top_level_nonchain_limits",
+      "provider": "acf",
+      "disposition": "IMPLEMENTATION_PATTERN",
+      "evidence_url": "https://www.advancedcustomfields.com/resources/bidirectional-relationships/",
+      "notes": "ACF target fields must be top-level, bidirectional updates do not chain, and reverse-side single/max constraints are not automatically enforced; these are provider behavior limits rather than new WPE relation controls."
+    },
+    {
+      "id": "pods.rest_relationship_field_format",
+      "provider": "pods",
+      "disposition": "OUT_OF_SURFACE",
+      "owner_surface": "fields",
+      "evidence_url": "https://docs.pods.io/advanced-topics/rest-api/",
+      "notes": "Pods REST read/write/response formatting for a relationship field is field-level API behavior owned by Fields; Relations owns canonical edge APIs and relation-level authorization."
+    },
+    {
+      "id": "acpt.field_sync_storage",
+      "provider": "acpt",
+      "disposition": "IMPLEMENTATION_PATTERN",
+      "evidence_url": "https://docs.acpt.io/meta-fields/field-types/relational-field",
+      "notes": "ACPT models relations through relational meta fields and inverse target fields; WPE treats this as provider compatibility rather than canonical relation storage."
+    }
+  ],
+  "coverage": {
+    "primary_providers": 6,
+    "specialist_providers": 1,
+    "family_mappings": 34,
+    "non_applicable_family_cells": 14,
+    "bank_record_references": 120,
+    "extra_dispositions": 4,
+    "unresolved": 0
+  }
+}

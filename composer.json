@@ -47,6 +47,7 @@
     "test:smoke:options-bank-progress": "php tests/Smoke/options-bank-progress-contract.php",
     "test:smoke:options-bank-native-audit": "php tests/Smoke/options-bank-native-audit-contract.php",
     "test:smoke:options-bank-relations-native-audit": "php tests/Smoke/options-bank-relations-native-audit-contract.php",
+    "test:smoke:options-bank-relations-market-audit": "php tests/Smoke/options-bank-relations-market-audit-contract.php",
     "test:smoke:options-bank-market-audit": "php tests/Smoke/options-bank-market-audit-contract.php",
     "test:smoke:options-bank-review": "php tests/Smoke/options-bank-review-contract.php",
     "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
@@ -66,6 +67,7 @@
       "@test:smoke:options-bank-progress",
       "@test:smoke:options-bank-native-audit",
       "@test:smoke:options-bank-relations-native-audit",
+      "@test:smoke:options-bank-relations-market-audit",
       "@test:smoke:options-bank-market-audit",
       "@test:smoke:options-bank-review"
     ],
