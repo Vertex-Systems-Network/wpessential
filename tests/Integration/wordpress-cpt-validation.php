@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+if (!function_exists('get_bloginfo')) {
     fwrite(STDERR, "FAIL: WordPress must be loaded before the CPT validation integration test.\n");
     exit(1);
 }
