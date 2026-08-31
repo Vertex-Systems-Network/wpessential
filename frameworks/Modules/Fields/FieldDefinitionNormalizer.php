@@ -27,6 +27,7 @@ final class FieldDefinitionNormalizer
      */
     public function normalize(array $field): array
     {
+        $uuid = $this->optionalUuid($field['uuid'] ?? null);
         $key = $this->requiredMachineKey($field['key'] ?? null, 'Field key');
         $requestedType = $this->requiredMachineKey($field['type'] ?? null, 'Field type');
         $label = $field['label'] ?? '';
@@ -59,6 +60,7 @@ final class FieldDefinitionNormalizer
         $subfields = $this->subfields($field, $descriptor);
 
         return [
+            'uuid' => $uuid,
             'key' => $key,
             'label' => trim($label),
             'type' => $descriptor->key,
@@ -165,6 +167,17 @@ final class FieldDefinitionNormalizer
             $normalized[] = $item;
         }
         return $normalized;
+    }
+
+    private function optionalUuid(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+        if (!is_string($value) || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) !== 1) {
+            throw new InvalidArgumentException('Field uuid must be a lowercase RFC 4122 UUID or null before first save.');
+        }
+        return $value;
     }
 
     private function requiredMachineKey(mixed $value, string $label): string
