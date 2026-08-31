@@ -59,15 +59,21 @@ final class FieldsModule implements ModuleInterface
         $presets = new FieldPresetRegistry($types);
         $catalog = new FieldCatalogService($types, $presets);
         $fields = new FieldDefinitionNormalizer($types, $presets);
+        $values = new FieldValueNormalizer();
         $groups = new FieldGroupDefinitionNormalizer($fields);
         $validation = new FieldGroupValidationService($definitions, $groups);
+        $postMetaCompiler = new PostMetaRegistrationCompiler($values);
+        $postMetaRegistrar = new WordPressPostMetaRegistrar();
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
         $services->set('module.custom-fields.catalog', $catalog);
         $services->set('module.custom-fields.field-normalizer', $fields);
+        $services->set('module.custom-fields.value-normalizer', $values);
         $services->set('module.custom-fields.group-normalizer', $groups);
         $services->set('module.custom-fields.group-validation', $validation);
+        $services->set('module.custom-fields.storage.post-meta.compiler', $postMetaCompiler);
+        $services->set('module.custom-fields.storage.post-meta.registrar', $postMetaRegistrar);
 
         $handlers = [
             'catalog' => new FieldCatalogAbilityHandler($catalog),
@@ -90,7 +96,7 @@ final class FieldsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // Admin rendering and runtime storage adapters are separate bounded Surface 3 slices.
+        // Target/location binding, admin rendering, and runtime value writes remain separate bounded Surface 3 slices.
     }
 
     private function registerAbility(
