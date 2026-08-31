@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'config/architecture/**'
+      - 'config/product/**'
       - 'tools/architecture/**'
       - 'frameworks/**'
       - 'admin-ui/**'
@@ -25,6 +26,7 @@ on:
       - 'implementation/**'
     paths:
       - 'config/architecture/**'
+      - 'config/product/**'
       - 'tools/architecture/**'
       - 'frameworks/**'
       - 'admin-ui/**'
@@ -257,7 +259,9 @@ jobs:
             tests/Smoke/wordpress-abilities-bridge-smoke.php \
             tests/Smoke/engineering-contracts-smoke.php \
             tests/Smoke/compiled-registration-persistence-smoke.php \
-            tests/Smoke/compiled-registration-scale-smoke.php
+            tests/Smoke/compiled-registration-scale-smoke.php \
+            tests/Smoke/options-bank-contract.php \
+            tests/Smoke/options-bank-progress-contract.php
           do
             echo "===== ${script} =====" | tee -a smoke-results.log
             php "${script}" >> smoke-results.log 2>&1
