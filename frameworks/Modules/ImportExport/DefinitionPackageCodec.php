@@ -101,16 +101,26 @@ final class DefinitionPackageCodec
     {
         $manifest = $package['manifest'] ?? null;
         $definitions = $package['definitions'] ?? null;
-        if (!is_array($manifest) || array_is_list($manifest) || !is_array($definitions)) {
-            throw new InvalidArgumentException('Definition package requires manifest and definitions.');
+        if (!is_array($manifest) || array_is_list($manifest) || !is_array($definitions) || !array_is_list($definitions)) {
+            throw new InvalidArgumentException('Definition package requires a manifest object and definition list.');
         }
+
+        $packageId = $manifest['package_id'] ?? null;
+        $createdAt = $manifest['created_at_utc'] ?? null;
+        $productVersion = $manifest['product_version'] ?? null;
         if (($manifest['format'] ?? null) !== self::FORMAT
             || ($manifest['format_version'] ?? null) !== self::FORMAT_VERSION
             || ($manifest['package_type'] ?? null) !== self::PACKAGE_TYPE
             || ($manifest['secret_policy'] ?? null) !== 'excluded'
             || ($manifest['runtime_data_included'] ?? null) !== false
+            || !is_string($packageId)
+            || !$this->isUuid($packageId)
+            || !is_string($createdAt)
+            || preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $createdAt) !== 1
+            || !is_string($productVersion)
+            || trim($productVersion) === ''
         ) {
-            throw new InvalidArgumentException('Definition package format or security policy is unsupported.');
+            throw new InvalidArgumentException('Definition package format, identity, or security policy is unsupported.');
         }
         if (($manifest['definition_count'] ?? null) !== count($definitions)
             || count($definitions) > self::MAX_DEFINITIONS
@@ -118,11 +128,17 @@ final class DefinitionPackageCodec
             throw new InvalidArgumentException('Definition package count does not match its manifest.');
         }
 
+        $seenIds = [];
         foreach ($definitions as $definition) {
             if (!is_array($definition) || array_is_list($definition)) {
                 throw new InvalidArgumentException('Definition package records must be objects/maps.');
             }
             $this->verifyPortableRecord($definition);
+            $id = $definition['id'];
+            if (isset($seenIds[$id])) {
+                throw new InvalidArgumentException('Definition package contains duplicate definition UUIDs.');
+            }
+            $seenIds[$id] = true;
         }
 
         $expected = $manifest['definitions_checksum'] ?? null;
@@ -146,7 +162,7 @@ final class DefinitionPackageCodec
             'format' => $manifest['format'],
             'format_version' => $manifest['format_version'],
             'package_type' => $manifest['package_type'],
-            'package_id' => $manifest['package_id'] ?? '',
+            'package_id' => $manifest['package_id'],
             'definitions_checksum' => $manifest['definitions_checksum'],
         ]));
     }
@@ -187,7 +203,7 @@ final class DefinitionPackageCodec
         $supportedOwner = ($ownerSurfaceId === 1 && $type === 'post_type')
             || ($ownerSurfaceId === 2 && $type === 'taxonomy');
         if (!is_string($id)
-            || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $id) !== 1
+            || !$this->isUuid($id)
             || !is_string($slug)
             || preg_match('/^[a-z0-9][a-z0-9-]*$/', $slug) !== 1
             || !$supportedOwner
@@ -199,17 +215,23 @@ final class DefinitionPackageCodec
             || !is_int($sourceRevision)
             || $sourceRevision < 1
             || !is_array($dependencies)
+            || !array_is_list($dependencies)
             || !is_string($checksum)
             || preg_match('/^[0-9a-f]{64}$/', $checksum) !== 1
+            || !hash_equals($checksum, $this->checksum($payload))
         ) {
-            throw new InvalidArgumentException('Definition package contains unsupported definition metadata.');
+            throw new InvalidArgumentException('Definition package contains unsupported or checksum-invalid definition metadata.');
         }
+
+        $seenDependencies = [];
         foreach ($dependencies as $dependency) {
-            if (!is_string($dependency)
-                || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $dependency) !== 1
-            ) {
+            if (!is_string($dependency) || !$this->isUuid($dependency)) {
                 throw new InvalidArgumentException('Definition package dependency references must be UUIDs.');
             }
+            if ($dependency === $id || isset($seenDependencies[$dependency])) {
+                throw new InvalidArgumentException('Definition package dependencies must be unique and cannot reference self.');
+            }
+            $seenDependencies[$dependency] = true;
         }
     }
 
@@ -245,11 +267,16 @@ final class DefinitionPackageCodec
         return $value;
     }
 
+    private function isUuid(string $value): bool
+    {
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) === 1;
+    }
+
     private function uuid(): string
     {
         if (function_exists('wp_generate_uuid4')) {
             $uuid = strtolower((string) wp_generate_uuid4());
-            if (preg_match('/^[0-9a-f-]{36}$/', $uuid) === 1) {
+            if ($this->isUuid($uuid)) {
                 return $uuid;
             }
         }
