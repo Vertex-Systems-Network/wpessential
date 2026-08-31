@@ -4,9 +4,11 @@ Snapshot: 2026-09-01
 
 Surface: 3 — Fields / Field Groups / Control Registry
 
-Decision: **`BANK_REVIEWED` candidate — subject to exact-head CI certification**
+Decision: **`BANK_REVIEWED` — certified on its original exact head**
 
-Record count: **618 Fields / 796 total Bank**
+Fields record count: **618**
+
+Original closing-review global snapshot: **796 total Bank records**. That global number was true when Surface 3 was certified, but it is not a permanent Fields invariant: later canonical surfaces are expected to increase the global Bank total.
 
 This is the closing review requested by `FIELDS-BANK-REVIEW-V1.md`. It does not repeat discovery or add count-only records. It verifies that every blocker identified in V1 now has an explicit, machine-enforced resolution and that the WPE-future/exceed layer is internally consistent enough to feed downstream Atomic Option Contracts.
 
@@ -20,7 +22,7 @@ This is the closing review requested by `FIELDS-BANK-REVIEW-V1.md`. It does not 
 | Genuine gaps discovered during audit | `fields--native-audit-v1.json` + `fields--market-audit-v1.json` | CLOSED — only evidence-backed gaps added |
 | WPE exceed layer pending canonical base | all Fields shards + V2 review contract | CLOSED for Bank review — future/exceed semantics remain future, deliberate and non-duplicative under current contracts |
 
-No new capability gap was proven during this closing pass, so the Bank remains at **618 Fields records**.
+No new capability gap was proven during this closing pass, so the Fields Bank remains at **618 records**.
 
 ## 2. Semantic closure
 
@@ -115,7 +117,7 @@ Smoke gate:
 
 `tests/Smoke/options-bank-review-contract.php`
 
-The smoke gate verifies:
+The Fields-local smoke gate verifies:
 
 - the review schema is parseable;
 - Surface 3 / Fields ownership and `BANK_REVIEWED` decision;
@@ -129,13 +131,15 @@ The smoke gate verifies:
 - `DEFERRED` records remain `WPE_FUTURE` / `LATER` / `P3_LATER`;
 - `WPE_EXCEED` records remain `WPE_FUTURE` / `WPE_EXCEED` / `P1_EXCEED`;
 - the dedicated WPE exceed shard contains only canonical exceed records;
-- canonical progress truth says Fields `BANK_REVIEWED`, 618 records, total Bank 796, and one native/market/reviewed surface.
+- canonical progress still records Surface 3 itself as `BANK_REVIEWED` with 618 Fields records.
+
+Global Bank totals and lifecycle counters are **not** permanent Fields-review invariants. They are derived from every canonical surface and are validated exactly by `tests/Smoke/options-bank-progress-contract.php`. This separation allows later surfaces to be seeded/audited/reviewed without invalidating an already-certified Fields snapshot.
 
 The existing Options Bank, progress, semantic, native-audit, and market-audit smoke contracts remain active in the same suite.
 
 ## 8. Lifecycle decision
 
-Candidate status after this review:
+Fields-local review result:
 
 | Gate | Result |
 | --- | --- |
@@ -143,16 +147,18 @@ Candidate status after this review:
 | Semantic canonicalization | PASS dependency |
 | Native audit | PASS dependency |
 | Market audit | PASS dependency |
-| WPE-future/exceed consistency | PASS candidate |
-| Rejected/deferred policy consistency | PASS candidate |
+| WPE-future/exceed consistency | PASS |
+| Rejected/deferred policy consistency | PASS |
 | Unresolved review items | 0 |
 | Fields record count | 618 |
-| Total Bank record count | 796 |
-| `BANK_REVIEWED` | **YES, only after exact-head CI** |
+| Original global Bank snapshot | 796 |
+| `BANK_REVIEWED` | **YES** |
+
+The original 796 global total is historical certification context only; current global truth must always come from `config/product/options-bank-progress.json` and its progress smoke contract.
 
 ## 9. What `BANK_REVIEWED` unlocks
 
-After exact-head CI certification, Surface 3 may feed implementation planning artifacts such as:
+Surface 3 may feed implementation planning artifacts such as:
 
 - canonical Atomic Option Contracts;
 - provider contracts;
@@ -170,8 +176,8 @@ Generation must resolve semantic aliases/effective derivations first and preserv
 - It is not a claim that all WPE-future ideas ship in v1.
 - It is not a production migration certificate.
 - It is not a license to copy competitor implementation code.
-- It does not promote CPT or Taxonomy; their audits remain separate.
+- It does not promote CPT, Taxonomy, Relations, or any later surface; their audits remain separate.
 
-## 11. Next canonical surface
+## 11. Subsequent surfaces
 
-Once this exact head is green and merged, Surface 3 discovery/review is closed for the current snapshot. The next unseeded canonical surface is **Surface 4 — `relations`**. Its work must begin with fresh native/market discovery and its own evidence lifecycle rather than inheriting Fields completeness by assumption.
+Surface 3 discovery/review is closed for this snapshot. Later canonical surfaces must run their own discovery, native audit, market audit and final review lifecycle. Their records and lifecycle promotions may legitimately increase global Bank totals/counters; that growth must not invalidate Surface 3's local 618-record certification.
