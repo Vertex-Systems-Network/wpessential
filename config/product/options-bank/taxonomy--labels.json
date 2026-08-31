@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 2, "key": "taxonomy", "name": "Taxonomies"},
+  "snapshot": {
+    "date": "2026-08-31",
+    "native_sources": [
+      {"name":"WordPress get_taxonomy_labels()","type":"wordpress_core","url":"https://developer.wordpress.org/reference/functions/get_taxonomy_labels/","verified":true}
+    ],
+    "market_sources": []
+  },
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"taxonomy.labels.name","feature_group":"Labels","option_path":"labels.name","label":"Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.singular_name","feature_group":"Labels","option_path":"labels.singular_name","label":"Singular Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.menu_name","feature_group":"Labels","option_path":"labels.menu_name","label":"Menu Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.search_items","feature_group":"Labels","option_path":"labels.search_items","label":"Search Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.popular_items","feature_group":"Labels","option_path":"labels.popular_items","label":"Popular Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.all_items","feature_group":"Labels","option_path":"labels.all_items","label":"All Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.parent_item","feature_group":"Labels","option_path":"labels.parent_item","label":"Parent Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.parent_item_colon","feature_group":"Labels","option_path":"labels.parent_item_colon","label":"Parent Item Colon","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.name_field_description","feature_group":"Labels","option_path":"labels.name_field_description","label":"Name Field Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.slug_field_description","feature_group":"Labels","option_path":"labels.slug_field_description","label":"Slug Field Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.parent_field_description","feature_group":"Labels","option_path":"labels.parent_field_description","label":"Parent Field Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.desc_field_description","feature_group":"Labels","option_path":"labels.desc_field_description","label":"Description Field Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.edit_item","feature_group":"Labels","option_path":"labels.edit_item","label":"Edit Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.view_item","feature_group":"Labels","option_path":"labels.view_item","label":"View Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.update_item","feature_group":"Labels","option_path":"labels.update_item","label":"Update Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.add_new_item","feature_group":"Labels","option_path":"labels.add_new_item","label":"Add New Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.new_item_name","feature_group":"Labels","option_path":"labels.new_item_name","label":"New Item Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.template_name","feature_group":"Labels","option_path":"labels.template_name","label":"Template Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE","notes":"Added by WordPress 6.6."},
+    {"id":"taxonomy.labels.separate_items_with_commas","feature_group":"Labels","option_path":"labels.separate_items_with_commas","label":"Separate Items with Commas","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.add_or_remove_items","feature_group":"Labels","option_path":"labels.add_or_remove_items","label":"Add or Remove Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.choose_from_most_used","feature_group":"Labels","option_path":"labels.choose_from_most_used","label":"Choose from Most Used","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.not_found","feature_group":"Labels","option_path":"labels.not_found","label":"Not Found","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.no_terms","feature_group":"Labels","option_path":"labels.no_terms","label":"No Terms","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.filter_by_item","feature_group":"Labels","option_path":"labels.filter_by_item","label":"Filter by Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.items_list_navigation","feature_group":"Labels","option_path":"labels.items_list_navigation","label":"Items List Navigation","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.items_list","feature_group":"Labels","option_path":"labels.items_list","label":"Items List","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.most_used","feature_group":"Labels","option_path":"labels.most_used","label":"Most Used","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.back_to_items","feature_group":"Labels","option_path":"labels.back_to_items","label":"Back to Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.item_link","feature_group":"Labels","option_path":"labels.item_link","label":"Item Link","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.labels.item_link_description","feature_group":"Labels","option_path":"labels.item_link_description","label":"Item Link Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"}
+  ],
+  "coverage": {"records":30,"unreviewed":0,"adopted_or_classified":30,"notes":"Current get_taxonomy_labels() surface captured, including newer field-description, block-editor and template labels."}
+}
