@@ -35,9 +35,9 @@
     {
       "id": 4,
       "key": "relations",
-      "status": "MARKET_AUDITED",
+      "status": "BANK_REVIEWED",
       "records": 144,
-      "notes": "Relations Market Audit V1 closes current provider/specialist coverage across eight capability families with six primary providers, JetFormBuilder specialist coverage and zero unresolved items. Two evidence-backed market records add relation-specific admin filtering and separate REST read/public-access policy. Native WordPress audit remains certified; formal whole-surface Bank Review is the next gate."
+      "notes": "Relations Bank Review V1 closes native, market, semantic, policy and ownership review at 144 records with zero unresolved items and no post-market count inflation. Surface 4 is ready to feed downstream Atomic Option Contracts; this does not claim runtime implementation, migration readiness or shipped parity."
     },
     {
       "id": 5,
@@ -356,7 +356,7 @@
     "seeded_surfaces": 4,
     "native_audited_surfaces": 2,
     "market_audited_surfaces": 2,
-    "bank_reviewed_surfaces": 1,
+    "bank_reviewed_surfaces": 2,
     "total_bank_records": 940
   }
 }
