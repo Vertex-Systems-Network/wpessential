@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wpessential.local/schema/options-bank-review.json",
+  "title": "WPEssential Options Bank Surface Review Certificate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "bank_version", "surface", "snapshot_date", "decision", "record_count", "required_artifacts", "semantic_expectations", "policy_gates", "unresolved"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "bank_version": {"type": "string", "const": "v1"},
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "key"],
+      "properties": {
+        "id": {"type": "integer", "minimum": 1, "maximum": 56},
+        "key": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"}
+      }
+    },
+    "snapshot_date": {"type": "string", "format": "date"},
+    "decision": {"enum": ["REVIEW_BLOCKED", "BANK_REVIEWED"]},
+    "record_count": {"type": "integer", "minimum": 0},
+    "required_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "path", "expected_status"],
+        "properties": {
+          "kind": {"enum": ["semantic_registry", "native_audit", "market_audit"]},
+          "path": {"type": "string", "minLength": 1},
+          "expected_status": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "semantic_expectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relationships", "aliases", "effective_derivations"],
+      "properties": {
+        "relationships": {"type": "integer", "minimum": 0},
+        "aliases": {"type": "integer", "minimum": 0},
+        "effective_derivations": {"type": "integer", "minimum": 0}
+      }
+    },
+    "policy_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unreviewed_records", "native_unresolved", "market_unresolved", "semantic_sources_are_noncanonical", "rejected_unsafe_consistent", "deferred_consistent", "wpe_exceed_consistent", "wpe_exceed_shard_future_only", "record_delta_after_market_audit"],
+      "properties": {
+        "unreviewed_records": {"type": "integer", "minimum": 0},
+        "native_unresolved": {"type": "integer", "minimum": 0},
+        "market_unresolved": {"type": "integer", "minimum": 0},
+        "semantic_sources_are_noncanonical": {"type": "boolean"},
+        "rejected_unsafe_consistent": {"type": "boolean"},
+        "deferred_consistent": {"type": "boolean"},
+        "wpe_exceed_consistent": {"type": "boolean"},
+        "wpe_exceed_shard_future_only": {"type": "boolean"},
+        "record_delta_after_market_audit": {"type": "integer"}
+      }
+    },
+    "unresolved": {"type": "integer", "minimum": 0}
+  }
+}
