@@ -1,0 +1,203 @@
+name: Taxonomy Runtime
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Bootstrap/Plugin.php'
+      - 'frameworks/Modules/Taxonomies/**'
+      - 'frameworks/Platform/Definitions/**'
+      - 'frameworks/Platform/Database/**'
+      - 'frameworks/Platform/WordPress/Registrations/**'
+      - 'tests/Unit/Modules/Taxonomies/**'
+      - 'tests/Integration/wordpress-taxonomy-validation.php'
+      - 'tests/Integration/wordpress-taxonomy-runtime.php'
+      - '.github/workflows/taxonomy-runtime.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'frameworks/Bootstrap/Plugin.php'
+      - 'frameworks/Modules/Taxonomies/**'
+      - 'frameworks/Platform/Definitions/**'
+      - 'frameworks/Platform/Database/**'
+      - 'frameworks/Platform/WordPress/Registrations/**'
+      - 'tests/Unit/Modules/Taxonomies/**'
+      - 'tests/Integration/wordpress-taxonomy-validation.php'
+      - 'tests/Integration/wordpress-taxonomy-runtime.php'
+      - '.github/workflows/taxonomy-runtime.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-taxonomy-runtime-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  taxonomy-runtime:
+    name: WP 7.1 / PHP 8.2 / MySQL 8.4
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_taxonomy
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: pdo_mysql, mysqli
+          coverage: none
+
+      - name: Install locked PHP toolchain
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520
+        with:
+          dependency-versions: locked
+
+      - name: Validate source and focused tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer fast
+          composer quality:php
+          php -l frameworks/Modules/Taxonomies/TaxonomyDefinitionProjector.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyRegistrationProvider.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyValidationService.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyValidationAbilityHandler.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyModule.php
+          php -l frameworks/Platform/WordPress/Registrations/TaxonomyRuntimeRegistrar.php
+          php -l tests/Integration/wordpress-taxonomy-validation.php
+          php -l tests/Integration/wordpress-taxonomy-runtime.php
+
+      - name: Prepare exact WordPress 7.1 fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress /tmp/wordpress-7.1.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            https://wordpress.org/wordpress-7.1.tar.gz \
+            --output /tmp/wordpress-7.1.tar.gz
+          tar -xzf /tmp/wordpress-7.1.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+
+      - name: Install pinned WP-CLI 2.12.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar \
+            --output /tmp/wp-cli.phar
+          echo 'ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c  /tmp/wp-cli.phar' | sha256sum -c -
+          php /tmp/wp-cli.phar --allow-root cli version
+
+      - name: Install real single-site WordPress
+        shell: bash
+        run: |
+          set -euo pipefail
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          ${wp} config create \
+            --dbname=wpessential_taxonomy \
+            --dbuser=root \
+            --dbpass=root \
+            --dbhost=127.0.0.1:3306 \
+            --skip-check \
+            --skip-salts \
+            --force
+          ${wp} core install \
+            --url=http://wpessential.test \
+            --title='WPEssential Taxonomy Runtime' \
+            --admin_user=wpessential_admin \
+            --admin_password='test-password-strong' \
+            --admin_email='admin@example.test' \
+            --skip-email
+          ${wp} core version
+
+      - name: Install exact WPEssential source fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress/wp-content/plugins/wpessential
+          mkdir -p /tmp/wordpress/wp-content/plugins/wpessential
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='artifacts/' \
+            --exclude='node_modules/' \
+            "${GITHUB_WORKSPACE}/" /tmp/wordpress/wp-content/plugins/wpessential/
+          test -f /tmp/wordpress/wp-content/plugins/wpessential/vendor/autoload.php
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          ${wp} plugin activate wpessential
+          ${wp} plugin status wpessential
+
+      - name: Run Taxonomy validation and mutation guard evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/taxonomy-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-validation.php'
+          WPE_TAXONOMY_VALIDATION_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/validation.json" \
+            ${wp} eval "require '${script}';" | tee artifacts/taxonomy-runtime/validation.log
+          test -s artifacts/taxonomy-runtime/validation.json
+          jq -e '.result == "PASS" and .reserved_key_blocked == true and .unknown_runtime_owner_blocked == true and .missing_object_type_degraded == true and .validation_non_mutating == true and .direct_save_collision_blocked == true and .publish_transition_collision_blocked == true and .publish_probe_status == "draft" and .publish_probe_revision == 1' artifacts/taxonomy-runtime/validation.json >/dev/null
+          cat artifacts/taxonomy-runtime/validation.json
+
+      - name: Run Taxonomy definition and runtime lifecycle evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/taxonomy-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-runtime.php'
+          : > artifacts/taxonomy-runtime/runtime.log
+          for mode in seed-active verify-active seed-invalid verify-invalid-fail-closed disable-invalid disable-active verify-disabled; do
+            echo "=== ${mode} ===" | tee -a artifacts/taxonomy-runtime/runtime.log
+            WPE_TAXONOMY_TEST_MODE="${mode}" \
+            WPE_TAXONOMY_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/evidence.json" \
+              ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/runtime.log
+          done
+          test -s artifacts/taxonomy-runtime/evidence.json
+          jq -e '.result == "PASS" and .module_state == "booted" and .owner_surface_id == 2 and .disabled_definition_retained == true and .compiled_taxonomy_count == 0' artifacts/taxonomy-runtime/evidence.json >/dev/null
+          cat artifacts/taxonomy-runtime/evidence.json
+
+      - name: Upload Taxonomy runtime evidence
+        if: always() && hashFiles('artifacts/taxonomy-runtime/**') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wp122-taxonomy-runtime-${{ github.run_id }}
+          path: artifacts/taxonomy-runtime/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
