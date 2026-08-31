@@ -13,7 +13,7 @@
   "surface_status": [
     {"id":1,"key":"cpt","status":"BANK_SURFACE_SEEDED","records":107,"notes":"Current WordPress register_post_type(), current labels, capability map and native-extra/internal exclusions are seeded. Market evidence enrichment and final native cross-check remain before NATIVE_AUDITED/MARKET_AUDITED."},
     {"id":2,"key":"taxonomy","status":"BANK_SURFACE_SEEDED","records":71,"notes":"Current register_taxonomy(), get_taxonomy_labels() and capability map are seeded. Market evidence enrichment and final native cross-check remain."},
-    {"id":3,"key":"fields","status":"MARKET_AUDITED","records":618,"notes":"Native WordPress 7.1-era Metadata/Block Bindings coverage remains certified. Market Audit V1 adds nine current 2026 gaps and a machine-validated provider matrix covering 12 primary ecosystems across six capability families plus 15 specialist/long-tail ecosystems, with zero unresolved market dispositions. Semantic canonicalization remains enforced. Final BANK_REVIEWED promotion still requires a closing whole-surface review of native + market + WPE-future semantics."},
+    {"id":3,"key":"fields","status":"BANK_REVIEWED","records":618,"notes":"Fields Bank Review V2 closes the original semantic, native and market blockers without adding count-only records. Six semantic relationships remain machine-canonicalized; native WordPress audit and provider-by-provider market audit both have zero unresolved items; all 618 Fields records are classified, and rejected/deferred/WPE-exceed policies are consistency-gated. Surface 3 is ready to feed downstream Atomic Option Contracts, but this does not claim runtime implementation or shipped parity."},
     {"id":4,"key":"relations","status":"UNSEEDED","records":0},
     {"id":5,"key":"status","status":"UNSEEDED","records":0},
     {"id":6,"key":"query","status":"UNSEEDED","records":0},
@@ -72,7 +72,7 @@
     "seeded_surfaces": 3,
     "native_audited_surfaces": 1,
     "market_audited_surfaces": 1,
-    "bank_reviewed_surfaces": 0,
+    "bank_reviewed_surfaces": 1,
     "total_bank_records": 796
   }
 }
