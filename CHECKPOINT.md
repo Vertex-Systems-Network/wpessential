@@ -1,12 +1,12 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-08-30**  
-Implementation branch: `implementation/baseline-adoption-gate`  
+Checkpoint date: **2026-09-01**  
+Canonical implementation source: **`main @ e4499aad6c092644ff08d758629a513f6f08ef8b`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
-Implementation decisions: through **ADR-0222**  
+Implementation decisions: through **ADR-0222** plus bounded Surface 3 implementation contracts  
 Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle: **`PLATFORM_FOUNDATION_READY_FOR_MODULE_HANDOFF`**  
+Lifecycle: **`PHASE_2_CUSTOM_FIELDS_IMPLEMENTATION_ACTIVE`**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
@@ -21,11 +21,93 @@ Source implementation, development/test tooling, CI and milestone-scoped schemas
 
 Accepted scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known planning or semantic-owner gap after WP118 / ADR-0213.
 
+Canonical module sequencing remains repository-owned. `docs/ROADMAP.md` starts Phase 2 Structured Data Pro with **Surface 3 Custom Fields**, followed by Relations, Query, Admin Columns, Dynamic Listings and Status. Surface 3 Options Bank remains **BANK_REVIEWED at 618 records**; runtime implementation consumes that reviewed truth and does not create count-only records for UX aliases/presets.
+
 ## Implementation gates
 
 - WP119 / ADR-0214 — **DONE / PASS** — greenfield Implementation Baseline / Adoption Gate.
 - WP120 / ADR-0215 — **DONE / PASS** — machine-enforced architecture guards.
 - WP121 — **DONE / PASS FOR MODULE HANDOFF** — shared Platform foundation readiness closed by WP121.1 through WP121.4.
+- Phase 2 / Surface 3 Custom Fields — **ACTIVE / BOUNDED IMPLEMENTATION** — first four backend slices merged with exact-head CI; storage/render/admin completion remains open.
+
+## Surface 3 — Custom Fields implementation checkpoint
+
+### Merged slice 1 — canonical type/repeatability foundation — PASS
+
+PR #35, `feat(fields): add canonical type and repeatability foundation`, established:
+- canonical Field Type Registry and UX Preset Registry;
+- logical type / editor control / storage / return-format separation;
+- Meta Box-style common clone/repeatability semantics for compatible fields;
+- sortable clones only when repeatability is enabled and supported;
+- Group recursive subfields and container-owned Repeater/Flexible/Gallery ordering semantics;
+- enhanced WPE editor-control policy for Date/Time/DateTime/Range/Color instead of browser-native picker UX as the product contract;
+- fail-closed Code field policy: stored source text only, never PHP/JavaScript execution.
+
+Exact-head applicable CI passed: Architecture Guards #517, PHP Quality Toolchain #65, Platform Compatibility Matrix #228 and Distributable Package #172.
+
+### Merged slice 2 — Field Group definition lifecycle — PASS
+
+PR #36, `feat(fields): add Field Group definition lifecycle`, established:
+- canonical Surface 3 `field_group` Definitions;
+- recursive normalized fields and unique keys;
+- OR-of-AND location rules;
+- Field Group presentation contract;
+- draft/publish validation;
+- immutable group keys after creation;
+- optimistic `expected_revision` mutation safety;
+- list/get/save/status/validate handlers through the shared Definition Repository;
+- Pro `FieldsModule` module-local Ability/AJAX wiring.
+
+Exact-head applicable CI passed: Architecture Guards #524, PHP Quality Toolchain #69, Platform Compatibility Matrix #235 and Distributable Package #176.
+
+### Merged slice 3 — canonical Field Catalog API — PASS
+
+PR #38, `feat(fields): expose canonical field catalog API`, established a machine-readable backend catalog for future admin/UI consumers so field types and behaviors are not duplicated as hard-coded React truth.
+
+Catalog output includes canonical types, builder-visible presets, logical/editor metadata, modes, clone/sort capability, enhanced-control requirements, no-browser-native-picker policy and code-execution prohibition. Search, Slider, Multi Select, Week, Month, Days/Duration, Section, TinyMCE, color-alpha, local/social Video and WordPress-data selector variants compile to canonical semantics rather than duplicate storage types.
+
+Merged source: `923197edd27ac96a8e7cccc145ab6f139f93b6b9`.  
+Exact-head applicable CI passed: Architecture Guards #530, PHP Quality Toolchain #74, Platform Compatibility Matrix #241 and Distributable Package #181.
+
+### Merged slice 4 — typed Field Value normalization — PASS
+
+PR #39, `feat(fields): add typed value normalization foundation`, established an editor-independent, server-side canonical value boundary covering the first safe type tranche:
+- required/null semantics, including required empty-list rejection;
+- common repeatable/clone value bounds;
+- text/email/URL/number/boolean values;
+- explicit choice membership for single/multiple controls;
+- Date / ISO Week / Month / Time / timezone-explicit DateTime normalized to UTC;
+- strict HEX/HEXA/RGB/RGBA/HSL/HSLA grammar;
+- WordPress-owned media/post/term/user references;
+- recursive Group and Repeater values;
+- unknown subfield rejection;
+- UI-only fields reject persistence;
+- Relationship values fail closed and remain Relations Engine-owned;
+- unsupported provider/complex types fail closed rather than accepting arbitrary blobs.
+
+Merged source: **`e4499aad6c092644ff08d758629a513f6f08ef8b`**.  
+Exact-head applicable CI passed: Architecture Guards #545, PHP Quality Toolchain #81, Platform Compatibility Matrix #256 and Distributable Package #189.
+
+### Surface 3 integration blockers / non-certifications
+
+Custom Fields is **not** runtime/product complete. In particular:
+- no WordPress registered-meta storage adapter has been certified yet;
+- no field value storage migration/rollback implementation has been certified;
+- no complete REST/Ability value mutation path has been certified;
+- no React Field Group builder/renderers have been certified;
+- provider-owned/complex types remain fail-closed until their canonical adapters exist;
+- import/export, compatibility migrations, performance scale evidence and reference workflow evidence remain open;
+- Pro activation is intentionally not wired unconditionally into `frameworks/Bootstrap/Plugin.php`.
+
+The current shared `ModuleRegistry` does not expose a canonical edition/entitlement/module-enable gate. **Do not add a Fields-private licensing bypass.** Shared Free/Pro activation/package ownership must be resolved by its canonical integrator/shared owner before Surface 3 is exposed as an active Pro module.
+
+### Linear coordination status
+
+`CHECKPOINT.md` previously required creating/updating the next module Linear child issue before implementation. A dedicated WPEssential Custom Fields / Surface 3 issue creation was attempted in the connected `VSN — WPEssential` workspace, but Linear rejected the mutation because the workspace has exceeded its free issue limit.
+
+Status: **EXTERNAL COORDINATION UNAVAILABLE / NOT A REPOSITORY IMPLEMENTATION FAILURE**.
+
+No Linear issue ID is invented. Repository planning, source, tests, PRs and this checkpoint remain canonical until Linear write capacity is restored.
 
 ## WP121 accepted foundation
 
@@ -100,13 +182,13 @@ The aggregate gate allows only the readiness workflow/manifest and three canonic
 
 ## Readiness decision
 
-**WP121 shared foundation is PASS for first business-module source development under the existing governance boundary.**
+**WP121 shared foundation remains PASS for business-module source development under the existing governance boundary.**
 
 This is a module-handoff decision, not a stable-release or production-deployment approval.
 
 ## Important staged non-certifications
 
-The following remain real work but do not block the first business-module source tranche unless their owning stage requires them:
+The following remain real work but do not block bounded module source tranches unless their owning stage requires them:
 - WordPress.org submission/stable release;
 - live production DB migration/rollback;
 - final stable-release Action Scheduler packaging/vendoring mechanism;
@@ -115,13 +197,26 @@ The following remain real work but do not block the first business-module source
 - Job checkpoint privacy/retention implementation;
 - Audit read/retention/privacy/export/legal-hold product workflows;
 - browser/accessibility evidence for future critical interactive WPE admin workflows;
-- future Free/Pro package separation;
+- canonical Free/Pro entitlement/module-enable/package separation;
 - periodic reassessment of upstream development-toolchain advisories.
 
 No live provider call, production deployment, destructive live-site/customer-data mutation, live production migration, release or irreversible external operation occurred.
 
 ## Current next action
 
-Begin the first business-module tranche according to canonical planning ownership and dependency order. Before implementation, resolve the next module/work package from repository planning truth, create/update its Linear child issue, and preserve all platform ownership/no-bypass contracts.
+Continue **Surface 3 Custom Fields** as the first Phase 2 Structured Data Pro tranche.
+
+Next bounded implementation target: **WordPress registered-meta storage adapter V1**, initially limited to explicitly compatible post-meta scalar/list schemas. It must:
+- compile normalized field definitions to valid `register_post_meta()` / `register_meta()` arguments;
+- provide explicit server authorization rather than relying on permissive core defaults;
+- provide explicit sanitization/normalization ownership;
+- emit required REST item schema for array meta;
+- enable meta revisions only for compatible revision-supporting post subtypes;
+- preserve single/multiple semantics deliberately;
+- expose unsupported structured/provider/Relations/secret types as fail-closed instead of serializing them opportunistically;
+- account for WordPress slashing/serialization behavior at the persistence boundary;
+- remain module-local until the canonical Pro entitlement/module-enable integration gate exists.
+
+After that slice: value read/write Ability integration, target/location binding, admin renderer/editor integration, portability/migrations and broader field-type adapters according to Surface 3 dependencies.
 
 Repository evidence overrides conversational memory.
