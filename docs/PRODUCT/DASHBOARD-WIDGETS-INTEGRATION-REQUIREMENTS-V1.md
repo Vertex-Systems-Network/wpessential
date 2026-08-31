@@ -13,7 +13,7 @@ These are shared-file requirements discovered by the Surface 10 worker. They are
 
 The branch has absorbed both upstream lifecycle changes that landed after the original base:
 
-- `8ed1c038...` generalized `config/product/options-bank-market-audit.schema.json` from Fields-specific constants to canonical Surface IDs 1–56 and generic surface keys while certifying Relations market audit;
+- `8ed1c038...` generalized `config/product/options-bank-market-audit.schema.json` to canonical Surface IDs 1–56 while certifying Relations market audit;
 - `88e5e90b...` certified Relations `BANK_REVIEWED` and updated shared progress/review wiring.
 
 Dashboard Widgets does not overwrite or fork either shared change.
@@ -25,21 +25,20 @@ Integrator-owned file:
 
 After reconciling concurrent branches, recompute from repository truth:
 
-- Surface 10 should move from `UNSEEDED / 0` to the verified candidate stage/count only after exact-head contracts pass;
-- candidate local Bank count: **123**;
-- global `seeded_surfaces` and `total_bank_records` must be derived from the final integrated tree;
-- synchronize README/STATUS only from verified integrated truth.
+- Surface 10 candidate Bank count remains **123**;
+- local shard count is now five because the two explicit `DEFERRED` records were separated from the canonical WPE-exceed shard during Bank Review preparation;
+- global `seeded_surfaces`, `total_bank_records` and derived README/STATUS values must come from the final integrated tree;
+- do not copy stale global totals from this worker PR.
 
-The current full-smoke failure is expected because this module worker correctly leaves shared progress at `UNSEEDED / 0` while the surface-local shards contain 123 records.
+The current full-smoke failure is expected because this module worker correctly leaves shared progress at `UNSEEDED / 0` while Surface 10 shards contain 123 records.
 
-## IR-DW-002 — register the prepared native/market audit contracts
+## IR-DW-002 — register the prepared Surface 10 lifecycle contracts
 
 Module-local validators now exist:
 
 - `tests/Smoke/dashboard-widgets-native-audit-contract.php`;
-- `tests/Smoke/dashboard-widgets-market-audit-contract.php`.
-
-They validate the candidate state without inventing lifecycle completion and remain valid when the corresponding audit status is promoted from `*_IN_PROGRESS` to `*_AUDITED`.
+- `tests/Smoke/dashboard-widgets-market-audit-contract.php`;
+- `tests/Smoke/dashboard-widgets-review-contract.php`.
 
 Integrator-owned shared/global areas still required:
 
@@ -49,13 +48,13 @@ Integrator-owned shared/global areas still required:
 
 Required outcome:
 
-- register both Dashboard Widgets validators in the normal exact-head smoke/architecture gates;
-- retain existing Fields and Relations certifications unchanged;
-- run the native validator against Surface 10 canonical ownership, 123 real Bank records, Developer.WordPress.org evidence, exact disposition counters and zero unresolved;
-- run the market validator against the generic market schema, eight required families, exact primary/specialist rosters, real Bank references, four reviewed extra dispositions and zero unresolved;
-- only then promote the corresponding shared lifecycle state.
+1. register all three Dashboard Widgets validators in the normal exact-head smoke/architecture gates;
+2. retain existing Fields and Relations certifications unchanged;
+3. execute native and market contracts while their artifacts remain `*_IN_PROGRESS` and promote each only after its exact-head gate passes;
+4. execute the Bank Review contract with `REVIEW_BLOCKED` while prerequisites remain incomplete;
+5. change the review to `BANK_REVIEWED` only when native=`NATIVE_AUDITED`, market=`MARKET_AUDITED`, review unresolved=0 and canonical progress agrees at 123 records.
 
-The market candidate was also normalized to the existing shared contract convention: the provider-neutral arbitrary-PHP rejection uses provider `ecosystem`, not a synthetic unregistered provider ID.
+The review validator deliberately prevents a false `BANK_REVIEWED` promotion.
 
 ## IR-DW-003 — semantic registry only if later review proves a relationship
 
@@ -64,15 +63,26 @@ Shared file:
 
 The obvious native aliases were already resolved locally: WordPress `widget_id` maps to canonical `widget.key`, and `widget_name` maps to canonical `widget.title`; no duplicate authored native controls remain.
 
-Do not add semantic registry noise unless formal Bank Review proves another same-surface alias or effective derivation.
+Current blocked review expects zero Surface 10 alias/effective-derivation entries. Do not add semantic registry noise unless later evidence proves a real relationship.
 
-## IR-DW-004 — lifecycle sequencing after integration
+## IR-DW-004 — lifecycle sequencing
 
 Do not skip stages:
 
 `BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED → UX projection → implementation contract`
 
-The branch contains native and market audit **candidates** with zero unresolved dispositions plus executable module-local validators, but neither audit may be promoted until shared progress/registration is integrated and the applicable exact-head gates are green.
+The branch contains zero-unresolved native/market research plus a **`REVIEW_BLOCKED`** Bank Review certificate. That certificate is evidence of a closed local review pass with unresolved integration gates; it is not a Bank Review completion claim.
+
+## IR-DW-005 — concurrent shared integration coordination
+
+Open PR #32 (`columns` / Surface 8) currently has the same shared integration requirements: canonical progress reconciliation plus registration of surface-local native/market/review contracts.
+
+A designated integrator must avoid two writers racing on `options-bank-progress.json`, `composer.json`, README/STATUS or CI aggregation. Safe choices are:
+
+- serialize integration after each worker head is exact-head stable; or
+- create one designated integration branch that reconciles both exact worker heads and recomputes shared truth once.
+
+Do not independently patch Surface 10 shared counts from stale main while Surface 8 integration is concurrently active.
 
 ## Cross-surface no-bypass decisions retained
 

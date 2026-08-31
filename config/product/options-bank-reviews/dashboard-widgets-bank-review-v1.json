@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {
+    "id": 10,
+    "key": "dashboard-widgets"
+  },
+  "snapshot_date": "2026-09-01",
+  "decision": "REVIEW_BLOCKED",
+  "record_count": 123,
+  "required_artifacts": [
+    {
+      "kind": "semantic_registry",
+      "path": "config/product/options-bank-semantic-relations.json",
+      "expected_status": "0 Surface 10 alias/effective-derivation entries required by current candidate"
+    },
+    {
+      "kind": "native_audit",
+      "path": "config/product/options-bank-audits/dashboard-widgets-native-wordpress.json",
+      "expected_status": "NATIVE_AUDIT_IN_PROGRESS; research complete with zero unresolved items, exact-head Surface 10 registration/execution and canonical progress promotion pending"
+    },
+    {
+      "kind": "market_audit",
+      "path": "config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json",
+      "expected_status": "MARKET_AUDIT_IN_PROGRESS; provider evidence complete with zero unresolved items, exact-head Surface 10 registration/execution and canonical progress promotion pending"
+    }
+  ],
+  "semantic_expectations": {
+    "relationships": 0,
+    "aliases": 0,
+    "effective_derivations": 0
+  },
+  "policy_gates": {
+    "unreviewed_records": 0,
+    "native_unresolved": 0,
+    "market_unresolved": 0,
+    "semantic_sources_are_noncanonical": true,
+    "rejected_unsafe_consistent": true,
+    "deferred_consistent": true,
+    "wpe_exceed_consistent": true,
+    "wpe_exceed_shard_future_only": true,
+    "record_delta_after_market_audit": 0
+  },
+  "unresolved": 2
+}
