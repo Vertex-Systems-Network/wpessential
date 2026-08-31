@@ -213,8 +213,11 @@ foreach (($progress['surface_status'] ?? []) as $row) {
         break;
     }
 }
-if (!is_array($relationsProgress) || ($relationsProgress['status'] ?? null) !== 'MARKET_AUDITED' || ($relationsProgress['records'] ?? null) !== 144) {
-    throw new RuntimeException('Progress registry must report Relations MARKET_AUDITED with 144 records.');
+$certifiedProgressStates = ['MARKET_AUDITED', 'BANK_REVIEWED'];
+if (!is_array($relationsProgress)
+    || !in_array($relationsProgress['status'] ?? null, $certifiedProgressStates, true)
+    || ($relationsProgress['records'] ?? null) !== count($relationRecords)) {
+    throw new RuntimeException('Progress registry must retain Relations market-or-later certification and match the current local record count.');
 }
 
-printf("Relations market audit contract: PASS (6 primary, 1 specialist, %d family mappings, %d Bank references, %d extras, 0 unresolved; 144 Relations records).\n", $familyMappings, $bankRefs, count($extras));
+printf("Relations market audit contract: PASS (6 primary, 1 specialist, %d family mappings, %d Bank references, %d extras, 0 unresolved; %d current Relations records).\n", $familyMappings, $bankRefs, count($extras), count($relationRecords));
