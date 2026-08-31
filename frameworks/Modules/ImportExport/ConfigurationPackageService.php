@@ -67,15 +67,21 @@ final readonly class ConfigurationPackageService
         );
         $targetsById = [];
         $targetsByOwnerKey = [];
+        $targetsByTypeSlug = [];
         foreach ($targets as $target) {
             $id = $target['id'] ?? null;
             $owner = $target['owner_surface_id'] ?? null;
+            $type = $target['type'] ?? null;
+            $slug = $target['slug'] ?? null;
             $key = $this->definitionKey($target);
             if (is_string($id)) {
                 $targetsById[$id] = $target;
             }
             if (is_int($owner) && $key !== null) {
                 $targetsByOwnerKey[$owner . ':' . $key] = $target;
+            }
+            if (is_string($type) && is_string($slug)) {
+                $targetsByTypeSlug[$type . ':' . $slug] = $target;
             }
         }
 
@@ -103,6 +109,7 @@ final readonly class ConfigurationPackageService
                 $strategy,
                 $targetsById,
                 $targetsByOwnerKey,
+                $targetsByTypeSlug,
                 $availableIds,
                 $context,
             );
@@ -201,6 +208,7 @@ final readonly class ConfigurationPackageService
      * @param array<string,mixed> $record
      * @param array<string,array<string,mixed>> $targetsById
      * @param array<string,array<string,mixed>> $targetsByOwnerKey
+     * @param array<string,array<string,mixed>> $targetsByTypeSlug
      * @param array<string,bool> $availableIds
      * @return array<string,mixed>
      */
@@ -209,14 +217,21 @@ final readonly class ConfigurationPackageService
         string $strategy,
         array $targetsById,
         array $targetsByOwnerKey,
+        array $targetsByTypeSlug,
         array $availableIds,
         ExecutionContext $context,
     ): array {
         $id = $record['id'] ?? null;
         $owner = $record['owner_surface_id'] ?? null;
         $type = $record['type'] ?? null;
+        $slug = $record['slug'] ?? null;
         $key = $this->definitionKey($record);
-        if (!is_string($id) || !is_int($owner) || !is_string($type) || $key === null) {
+        if (!is_string($id)
+            || !is_int($owner)
+            || !is_string($type)
+            || !is_string($slug)
+            || $key === null
+        ) {
             return $this->blockedItem($record, 'unsupported_definition', 'Definition metadata is unsupported.');
         }
 
@@ -241,11 +256,23 @@ final readonly class ConfigurationPackageService
             if ($strategy !== 'update_existing') {
                 return $this->blockedItem($record, 'same_uuid_modified', 'Same UUID exists with different content; create-only mode will not overwrite it.');
             }
-        } else {
-            $keyCollision = $targetsByOwnerKey[$owner . ':' . $key] ?? null;
-            if (is_array($keyCollision) && ($keyCollision['id'] ?? null) !== $id) {
-                return $this->blockedItem($record, 'key_collision', sprintf('Runtime key "%s" belongs to a different target UUID.', $key));
-            }
+        }
+
+        $keyCollision = $targetsByOwnerKey[$owner . ':' . $key] ?? null;
+        if (is_array($keyCollision) && ($keyCollision['id'] ?? null) !== $id) {
+            return $this->blockedItem(
+                $record,
+                'key_collision',
+                sprintf('Runtime key "%s" belongs to a different target UUID.', $key),
+            );
+        }
+        $slugCollision = $targetsByTypeSlug[$type . ':' . $slug] ?? null;
+        if (is_array($slugCollision) && ($slugCollision['id'] ?? null) !== $id) {
+            return $this->blockedItem(
+                $record,
+                'slug_collision',
+                sprintf('Definition slug "%s" belongs to a different target UUID.', $slug),
+            );
         }
 
         $validationAbility = match ($owner) {
@@ -270,7 +297,10 @@ final readonly class ConfigurationPackageService
             $message = 'Definition owner validation blocked this package record.';
             if (is_array($validation['issues'] ?? null)) {
                 foreach ($validation['issues'] as $issue) {
-                    if (is_array($issue) && ($issue['severity'] ?? null) === 'blocked' && is_string($issue['message'] ?? null)) {
+                    if (is_array($issue)
+                        && ($issue['severity'] ?? null) === 'blocked'
+                        && is_string($issue['message'] ?? null)
+                    ) {
                         $message = $issue['message'];
                         break;
                     }
@@ -280,9 +310,13 @@ final readonly class ConfigurationPackageService
         }
 
         $action = is_array($existing) ? 'update' : 'create';
-        $item = $this->planItem($record, $action, $action === 'create'
-            ? 'Definition can be created with its portable UUID.'
-            : 'Definition can be updated through its canonical owner.');
+        $item = $this->planItem(
+            $record,
+            $action,
+            $action === 'create'
+                ? 'Definition can be created with its portable UUID.'
+                : 'Definition can be updated through its canonical owner.',
+        );
         if (is_array($existing)) {
             $revision = $existing['revision'] ?? null;
             if (!is_int($revision) || $revision < 1) {
