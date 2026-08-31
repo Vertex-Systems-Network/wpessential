@@ -1,0 +1,398 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wpessential.local/schema/options-bank.json",
+  "title": "WPEssential Master Options & Possibilities Bank Surface",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bank_version",
+    "surface",
+    "snapshot",
+    "status",
+    "records",
+    "coverage"
+  ],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "bank_version": {"type": "string", "const": "v1"},
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "key", "name"],
+      "properties": {
+        "id": {"type": "integer", "minimum": 1, "maximum": 56},
+        "key": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "name": {"type": "string", "minLength": 1}
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "native_sources", "market_sources"],
+      "properties": {
+        "date": {"type": "string", "format": "date"},
+        "native_sources": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/sourceRef"}
+        },
+        "market_sources": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/sourceRef"}
+        }
+      }
+    },
+    "status": {
+      "enum": [
+        "BANK_SURFACE_SEEDED",
+        "BANK_MARKET_RESEARCHED",
+        "BANK_CLASSIFIED",
+        "BANK_REVIEWED"
+      ]
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/bankRecord"}
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "records",
+        "unreviewed",
+        "must_have",
+        "parity",
+        "competitive",
+        "wpe_exceed",
+        "provider",
+        "expert_only",
+        "later",
+        "reject",
+        "unknown_fields"
+      ],
+      "properties": {
+        "records": {"type": "integer", "minimum": 0},
+        "unreviewed": {"type": "integer", "minimum": 0},
+        "must_have": {"type": "integer", "minimum": 0},
+        "parity": {"type": "integer", "minimum": 0},
+        "competitive": {"type": "integer", "minimum": 0},
+        "wpe_exceed": {"type": "integer", "minimum": 0},
+        "provider": {"type": "integer", "minimum": 0},
+        "expert_only": {"type": "integer", "minimum": 0},
+        "later": {"type": "integer", "minimum": 0},
+        "reject": {"type": "integer", "minimum": 0},
+        "unknown_fields": {"type": "integer", "minimum": 0}
+      }
+    }
+  },
+  "$defs": {
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "url", "verified"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "type": {
+          "enum": [
+            "wordpress_core",
+            "wordpress_handbook",
+            "official_competitor",
+            "official_provider",
+            "repository_source",
+            "standard"
+          ]
+        },
+        "url": {"type": "string", "format": "uri"},
+        "verified": {"type": "boolean"},
+        "notes": {"type": "string"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_name", "source_type", "url", "snapshot_date", "research_state"],
+      "properties": {
+        "source_name": {"type": "string", "minLength": 1},
+        "source_type": {
+          "enum": [
+            "native",
+            "competitor",
+            "provider",
+            "compatibility",
+            "internal_architecture"
+          ]
+        },
+        "capability": {"type": "string"},
+        "url": {"type": ["string", "null"], "format": "uri"},
+        "snapshot_date": {"type": "string", "format": "date"},
+        "research_state": {
+          "enum": [
+            "UNVERIFIED",
+            "PRIMARY_SOURCE_VERIFIED",
+            "MULTI_SOURCE_VERIFIED",
+            "STALE_REVIEW_REQUIRED"
+          ]
+        }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record", "relation"],
+      "properties": {
+        "record": {"type": "string", "minLength": 1},
+        "relation": {
+          "enum": [
+            "requires",
+            "enables",
+            "disables",
+            "conflicts",
+            "inherits_from",
+            "overrides",
+            "provider_for",
+            "compatibility_with"
+          ]
+        },
+        "condition": {"type": ["string", "null"]}
+      }
+    },
+    "bankRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "feature_group",
+        "option_path",
+        "label",
+        "classification",
+        "hard_soft",
+        "horizon",
+        "requiredness",
+        "market_prevalence",
+        "adoption",
+        "priority",
+        "value_model",
+        "ux",
+        "validation",
+        "storage_runtime",
+        "security",
+        "performance",
+        "portability",
+        "testing",
+        "evidence"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "parent_id": {"type": ["string", "null"]},
+        "feature_group": {"type": "string", "minLength": 1},
+        "option_path": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "description": {"type": "string"},
+        "classification": {
+          "enum": [
+            "NATIVE_HARD",
+            "WPE_HARD",
+            "SOFT_NATIVE",
+            "PROVIDER_SOFT",
+            "COMPATIBILITY",
+            "EXPERT",
+            "EXPERIMENTAL",
+            "DEFERRED",
+            "REJECTED_UNSAFE",
+            "WPE_EXCEED"
+          ]
+        },
+        "hard_soft": {"enum": ["HARD", "SOFT", "HYBRID"]},
+        "horizon": {"enum": ["CURRENT_NATIVE", "CURRENT_MARKET", "WPE_FUTURE"]},
+        "requiredness": {
+          "enum": [
+            "REQUIRED_CREATE",
+            "REQUIRED_PUBLISH",
+            "OPTIONAL",
+            "CONDITIONAL",
+            "COMPUTED",
+            "PROVIDER_REQUIRED"
+          ]
+        },
+        "market_prevalence": {"enum": ["COMMON", "SPECIALIST", "NICHE", "EMERGING", "UNKNOWN"]},
+        "adoption": {
+          "enum": [
+            "UNREVIEWED",
+            "MUST_HAVE",
+            "PARITY",
+            "COMPETITIVE",
+            "WPE_EXCEED",
+            "PROVIDER",
+            "EXPERT_ONLY",
+            "LATER",
+            "REJECT"
+          ]
+        },
+        "priority": {
+          "enum": [
+            "P0_NATIVE",
+            "P0_PARITY",
+            "P1_CORE",
+            "P1_EXCEED",
+            "P2_COMPETITIVE",
+            "P3_LATER",
+            "NOT_SCHEDULED"
+          ]
+        },
+        "native_source": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "api": {"type": "string"},
+            "key": {"type": "string"},
+            "internal": {"type": "boolean"},
+            "since": {"type": ["string", "null"]}
+          }
+        },
+        "value_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "default_mode"],
+          "properties": {
+            "type": {"type": "string", "minLength": 1},
+            "allowed": {"type": ["array", "null"], "items": {}},
+            "default_mode": {
+              "enum": [
+                "wordpress_default",
+                "inherited",
+                "wpe_default",
+                "computed",
+                "provider_default",
+                "none",
+                "unknown"
+              ]
+            },
+            "default_value": {},
+            "inherits_from": {"type": ["string", "null"]},
+            "units": {"type": ["array", "null"], "items": {"type": "string"}}
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/dependency"}
+        },
+        "ux": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tier", "control", "progressive_disclosure"],
+          "properties": {
+            "tier": {"enum": ["Essential", "Advanced", "Expert", "Provider", "System"]},
+            "group": {"type": "string"},
+            "control": {"type": "string"},
+            "progressive_disclosure": {"type": "string"},
+            "search_terms": {"type": "array", "items": {"type": "string"}},
+            "preview": {"type": ["string", "null"]},
+            "help": {"type": "string"},
+            "danger_level": {"enum": ["none", "low", "medium", "high", "critical"]}
+          }
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["server_authoritative", "rules"],
+          "properties": {
+            "server_authoritative": {"const": true},
+            "rules": {"type": "array", "items": {"type": "string"}},
+            "sanitize": {"type": ["string", "null"]},
+            "collision_checks": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "storage_runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["owner", "storage", "runtime_effect", "mutation_class"],
+          "properties": {
+            "owner": {"type": "string", "minLength": 1},
+            "storage": {"type": "string", "minLength": 1},
+            "runtime_effect": {"type": "string", "minLength": 1},
+            "mutation_class": {
+              "enum": ["reversible", "high_impact", "migration_required", "immutable", "destructive", "read_only", "unknown"]
+            },
+            "side_effects": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "migration": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "impact": {"enum": ["none", "low", "medium", "high", "destructive", "unknown"]},
+            "strategy": {"type": ["string", "null"]},
+            "rollback": {"type": ["string", "null"]}
+          }
+        },
+        "security": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["class", "capability"],
+          "properties": {
+            "class": {"enum": ["normal", "privileged", "expert", "provider_only", "internal", "prohibited"]},
+            "capability": {"type": ["string", "null"]},
+            "notes": {"type": "string"}
+          }
+        },
+        "performance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["class"],
+          "properties": {
+            "class": {"enum": ["P0_CHEAP", "P1_NORMAL", "P2_MODERATE", "P3_EXPENSIVE", "P4_HIGH_RISK", "NOT_APPLICABLE", "UNKNOWN"]},
+            "notes": {"type": "string"}
+          }
+        },
+        "multisite": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "scope": {"enum": ["site", "network", "global", "user", "provider_defined", "unknown"]},
+            "network_override": {"type": "boolean"},
+            "notes": {"type": "string"}
+          }
+        },
+        "portability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["export", "import", "environment_sensitive", "secret"],
+          "properties": {
+            "export": {"type": "boolean"},
+            "import": {"type": "boolean"},
+            "environment_sensitive": {"type": "boolean"},
+            "secret": {"type": "boolean"},
+            "compatibility_adapters": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "testing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required_evidence"],
+          "properties": {
+            "required_evidence": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"enum": ["unit", "integration", "wordpress_runtime", "rest", "browser", "accessibility", "migration", "performance", "security", "compatibility", "portability", "provider"]}
+            },
+            "must_not": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "wpe_exceed": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "opportunity": {"type": "string"},
+            "depends_on": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "notes": {"type": "string"}
+      }
+    }
+  }
+}
