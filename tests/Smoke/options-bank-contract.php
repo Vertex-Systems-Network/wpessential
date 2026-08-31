@@ -57,42 +57,22 @@ function requireInteger($value, string $message): int
 }
 
 $allowedClassifications = [
-    'NATIVE_HARD',
-    'WPE_HARD',
-    'SOFT_NATIVE',
-    'PROVIDER_SOFT',
-    'COMPATIBILITY',
-    'EXPERT',
-    'EXPERIMENTAL',
-    'DEFERRED',
-    'REJECTED_UNSAFE',
-    'WPE_EXCEED',
+    'NATIVE_HARD', 'WPE_HARD', 'SOFT_NATIVE', 'PROVIDER_SOFT', 'COMPATIBILITY',
+    'EXPERT', 'EXPERIMENTAL', 'DEFERRED', 'REJECTED_UNSAFE', 'WPE_EXCEED',
 ];
 $allowedHardSoft = ['HARD', 'SOFT', 'HYBRID'];
 $allowedHorizons = ['CURRENT_NATIVE', 'CURRENT_MARKET', 'WPE_FUTURE'];
 $allowedAdoption = [
-    'UNREVIEWED',
-    'MUST_HAVE',
-    'PARITY',
-    'COMPETITIVE',
-    'WPE_EXCEED',
-    'PROVIDER',
-    'EXPERT_ONLY',
-    'LATER',
-    'REJECT',
+    'UNREVIEWED', 'MUST_HAVE', 'PARITY', 'COMPETITIVE', 'WPE_EXCEED',
+    'PROVIDER', 'EXPERT_ONLY', 'LATER', 'REJECT',
 ];
 $allowedPriorities = [
-    'P0_NATIVE',
-    'P0_PARITY',
-    'P1_CORE',
-    'P1_EXCEED',
-    'P2_COMPETITIVE',
-    'P3_LATER',
-    'NOT_SCHEDULED',
+    'P0_NATIVE', 'P0_PARITY', 'P1_CORE', 'P1_EXCEED',
+    'P2_COMPETITIVE', 'P3_LATER', 'NOT_SCHEDULED',
 ];
 
-// The schema itself must always remain parseable even though this smoke test
-// intentionally validates critical invariants without adding a JSON-Schema dependency.
+// Keep the canonical discovery schema parseable without introducing another
+// runtime dependency merely to validate JSON Schema during a smoke test.
 readJsonObject($schemaPath);
 
 $registry = readJsonObject($surfaceRegistryPath);
@@ -120,10 +100,17 @@ $files = glob($bankDirectory . '/*.json');
 if ($files === false || $files === []) {
     throw new RuntimeException('Master Options Bank has no seeded surface files.');
 }
-
 sort($files, SORT_STRING);
+
+/** @var array<string, array<string, true>> $surfaceRecordIds */
+$surfaceRecordIds = [];
+/** @var array<string, array<string, true>> $surfaceOptionPaths */
+$surfaceOptionPaths = [];
+/** @var list<array{file:string,surface:string,id:string,parent:string}> $parentReferences */
+$parentReferences = [];
+/** @var array<string, true> $seededSurfaces */
+$seededSurfaces = [];
 $totalRecords = 0;
-$validatedSurfaces = [];
 
 foreach ($files as $file) {
     $bank = readJsonObject($file);
@@ -150,77 +137,50 @@ foreach ($files as $file) {
         ));
     }
 
-    if (pathinfo($file, PATHINFO_FILENAME) !== $surfaceKey) {
-        throw new RuntimeException(sprintf('%s filename must match surface key %s.', $file, $surfaceKey));
+    $filename = pathinfo($file, PATHINFO_FILENAME);
+    if ($filename !== $surfaceKey && !str_starts_with($filename, $surfaceKey . '--')) {
+        throw new RuntimeException(sprintf(
+            '%s filename must be %s.json or start with %s--.',
+            $file,
+            $surfaceKey,
+            $surfaceKey,
+        ));
     }
-
-    if (isset($validatedSurfaces[$surfaceKey])) {
-        throw new RuntimeException(sprintf('Surface %s is seeded more than once.', $surfaceKey));
-    }
-    $validatedSurfaces[$surfaceKey] = true;
+    $seededSurfaces[$surfaceKey] = true;
 
     $records = $bank['records'] ?? null;
     if (!is_array($records) || $records === []) {
         throw new RuntimeException(sprintf('%s has no Bank records.', $file));
     }
 
-    /** @var array<string, true> $recordIds */
-    $recordIds = [];
-    /** @var array<string, true> $optionPaths */
-    $optionPaths = [];
     $unreviewed = 0;
-
     foreach ($records as $index => $record) {
         if (!is_array($record)) {
             throw new RuntimeException(sprintf('%s record %d is invalid.', $file, $index));
         }
 
         $recordId = requireString($record['id'] ?? null, sprintf('%s record %d has no id.', $file, $index));
-        $featureGroup = requireString(
-            $record['feature_group'] ?? null,
-            sprintf('%s record %s has no feature_group.', $file, $recordId),
-        );
-        $optionPath = requireString(
-            $record['option_path'] ?? null,
-            sprintf('%s record %s has no option_path.', $file, $recordId),
-        );
+        requireString($record['feature_group'] ?? null, sprintf('%s record %s has no feature_group.', $file, $recordId));
+        $optionPath = requireString($record['option_path'] ?? null, sprintf('%s record %s has no option_path.', $file, $recordId));
         requireString($record['label'] ?? null, sprintf('%s record %s has no label.', $file, $recordId));
 
-        if ($featureGroup === '') {
-            throw new RuntimeException(sprintf('%s record %s has an empty feature group.', $file, $recordId));
-        }
         if (!str_starts_with($recordId, $surfaceKey . '.')) {
             throw new RuntimeException(sprintf('%s record id %s must start with %s.', $file, $recordId, $surfaceKey . '.'));
         }
-        if (isset($recordIds[$recordId])) {
-            throw new RuntimeException(sprintf('%s duplicates record id %s.', $file, $recordId));
+        if (isset($surfaceRecordIds[$surfaceKey][$recordId])) {
+            throw new RuntimeException(sprintf('%s duplicates record id %s across Bank shards.', $file, $recordId));
         }
-        if (isset($optionPaths[$optionPath])) {
-            throw new RuntimeException(sprintf('%s duplicates option_path %s.', $file, $optionPath));
+        if (isset($surfaceOptionPaths[$surfaceKey][$optionPath])) {
+            throw new RuntimeException(sprintf('%s duplicates option_path %s across Bank shards.', $file, $optionPath));
         }
-        $recordIds[$recordId] = true;
-        $optionPaths[$optionPath] = true;
+        $surfaceRecordIds[$surfaceKey][$recordId] = true;
+        $surfaceOptionPaths[$surfaceKey][$optionPath] = true;
 
-        $classification = requireString(
-            $record['classification'] ?? null,
-            sprintf('%s record %s has no classification.', $file, $recordId),
-        );
-        $hardSoft = requireString(
-            $record['hard_soft'] ?? null,
-            sprintf('%s record %s has no hard_soft classification.', $file, $recordId),
-        );
-        $horizon = requireString(
-            $record['horizon'] ?? null,
-            sprintf('%s record %s has no horizon.', $file, $recordId),
-        );
-        $adoption = requireString(
-            $record['adoption'] ?? null,
-            sprintf('%s record %s has no adoption decision.', $file, $recordId),
-        );
-        $priority = requireString(
-            $record['priority'] ?? null,
-            sprintf('%s record %s has no priority.', $file, $recordId),
-        );
+        $classification = requireString($record['classification'] ?? null, sprintf('%s record %s has no classification.', $file, $recordId));
+        $hardSoft = requireString($record['hard_soft'] ?? null, sprintf('%s record %s has no hard_soft.', $file, $recordId));
+        $horizon = requireString($record['horizon'] ?? null, sprintf('%s record %s has no horizon.', $file, $recordId));
+        $adoption = requireString($record['adoption'] ?? null, sprintf('%s record %s has no adoption.', $file, $recordId));
+        $priority = requireString($record['priority'] ?? null, sprintf('%s record %s has no priority.', $file, $recordId));
 
         if (!in_array($classification, $allowedClassifications, true)) {
             throw new RuntimeException(sprintf('%s record %s has invalid classification %s.', $file, $recordId, $classification));
@@ -241,21 +201,18 @@ foreach ($files as $file) {
         if ($adoption === 'UNREVIEWED') {
             ++$unreviewed;
         }
-    }
 
-    // Parent references are checked after all IDs are known so ordering remains free.
-    foreach ($records as $record) {
-        if (!is_array($record)) {
-            continue;
-        }
         $parentId = $record['parent_id'] ?? null;
-        if ($parentId !== null && (!is_string($parentId) || !isset($recordIds[$parentId]))) {
-            throw new RuntimeException(sprintf(
-                '%s record %s references missing parent %s.',
-                $file,
-                (string) ($record['id'] ?? '?'),
-                is_scalar($parentId) ? (string) $parentId : '[invalid]',
-            ));
+        if ($parentId !== null) {
+            if (!is_string($parentId) || trim($parentId) === '') {
+                throw new RuntimeException(sprintf('%s record %s has invalid parent_id.', $file, $recordId));
+            }
+            $parentReferences[] = [
+                'file' => $file,
+                'surface' => $surfaceKey,
+                'id' => $recordId,
+                'parent' => $parentId,
+            ];
         }
     }
 
@@ -264,14 +221,8 @@ foreach ($files as $file) {
         throw new RuntimeException(sprintf('%s is missing coverage.', $file));
     }
 
-    $declaredRecords = requireInteger(
-        $coverage['records'] ?? null,
-        sprintf('%s coverage.records must be an integer.', $file),
-    );
-    $declaredUnreviewed = requireInteger(
-        $coverage['unreviewed'] ?? null,
-        sprintf('%s coverage.unreviewed must be an integer.', $file),
-    );
+    $declaredRecords = requireInteger($coverage['records'] ?? null, sprintf('%s coverage.records must be an integer.', $file));
+    $declaredUnreviewed = requireInteger($coverage['unreviewed'] ?? null, sprintf('%s coverage.unreviewed must be an integer.', $file));
     $declaredClassified = requireInteger(
         $coverage['adopted_or_classified'] ?? null,
         sprintf('%s coverage.adopted_or_classified must be an integer.', $file),
@@ -296,11 +247,24 @@ foreach ($files as $file) {
     $totalRecords += $recordCount;
 }
 
+foreach ($parentReferences as $reference) {
+    if (!isset($surfaceRecordIds[$reference['surface']][$reference['parent']])) {
+        throw new RuntimeException(sprintf(
+            '%s record %s references missing parent %s across surface %s shards.',
+            $reference['file'],
+            $reference['id'],
+            $reference['parent'],
+            $reference['surface'],
+        ));
+    }
+}
+
 fwrite(
     STDOUT,
     sprintf(
-        "Master Options Bank contract: PASS (%d seeded surface(s), %d record(s)).\n",
-        count($validatedSurfaces),
+        "Master Options Bank contract: PASS (%d seeded surface(s), %d shard(s), %d record(s)).\n",
+        count($seededSurfaces),
+        count($files),
         $totalRecords,
     ),
 );
