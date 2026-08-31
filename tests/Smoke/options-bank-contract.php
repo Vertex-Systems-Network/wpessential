@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 $bankDirectory = $root . '/config/product/options-bank';
 $surfaceRegistryPath = $root . '/config/product/competitor-parity-surfaces.json';
