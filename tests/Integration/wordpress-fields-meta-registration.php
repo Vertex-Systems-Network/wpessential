@@ -122,6 +122,15 @@ $text = $definitions->normalize([
 $textRegistration = $compiler->compile($text, 'wpe_meta_book', showInRest: true, revisionsEnabled: true);
 $registrar->register($textRegistration);
 
+$email = $definitions->normalize([
+    'uuid' => '44444444-4444-4444-8444-444444444444',
+    'key' => 'wpe_email',
+    'label' => 'Email',
+    'type' => 'email',
+]);
+$emailRegistration = $compiler->compile($email, 'wpe_meta_book');
+$registrar->register($emailRegistration);
+
 $aliases = $definitions->normalize([
     'uuid' => '22222222-2222-4222-8222-222222222222',
     'key' => 'wpe_aliases',
@@ -149,6 +158,7 @@ fieldsMetaExpect(isset($registered['wpe_headline']), 'scalar field must be regis
 fieldsMetaExpect($registered['wpe_headline']['type'] === 'string', 'scalar field must retain WordPress string type');
 fieldsMetaExpect($registered['wpe_headline']['single'] === true, 'scalar field must be registered single');
 fieldsMetaExpect($registered['wpe_headline']['revisions_enabled'] === true, 'revision-enabled scalar field must retain its native revision flag');
+fieldsMetaExpect(isset($registered['wpe_email']), 'validated scalar field must be registered');
 fieldsMetaExpect(isset($registered['wpe_aliases']), 'array-backed repeatable field must be registered');
 fieldsMetaExpect($registered['wpe_aliases']['type'] === 'array' && $registered['wpe_aliases']['single'] === true, 'repeatable array storage shape must survive native registration');
 fieldsMetaExpect(isset($registered['wpe_tags']), 'multiple-row field must be registered');
@@ -186,6 +196,15 @@ fieldsMetaExpect(get_post_meta($postId, 'wpe_headline', true) === $canonicalText
 $updated = update_post_meta($postId, 'wpe_aliases', wp_slash([' One ', 'Two\\Three']));
 fieldsMetaExpect($updated !== false, 'native array metadata write must succeed');
 fieldsMetaExpect(get_post_meta($postId, 'wpe_aliases', true) === ['One', 'Two\\Three'], 'native array write must preserve normalized slash-sensitive list items');
+
+$updated = update_post_meta($postId, 'wpe_email', wp_slash('person@example.com'));
+fieldsMetaExpect($updated !== false, 'valid registered email metadata write must succeed');
+try {
+    update_post_meta($postId, 'wpe_email', wp_slash('not-an-email'));
+    fieldsMetaExpect(false, 'invalid registered email metadata write must fail closed');
+} catch (\InvalidArgumentException) {
+    fieldsMetaExpect(get_post_meta($postId, 'wpe_email', true) === 'person@example.com', 'failed sanitization must leave the previous metadata value intact');
+}
 
 try {
     $registrar->register($compiler->compile($text, 'wpe_no_revision', revisionsEnabled: true));
