@@ -18,7 +18,7 @@ Repository planning and implementation are milestone-gated. A passing unit or sm
 
 ## Mandatory agent contract
 
-All AI/coding/planning agents working in this repository MUST read and follow root `AGENTS.md` before planning or changing files. `AGENTS.md` is the canonical operating contract for both single-agent and multi-agent work and is mandatory in addition to this contribution guide.
+All AI/coding/planning agents working in this repository MUST read and follow root `AGENTS.md` before planning or changing files. `AGENTS.md` remains the canonical engineering operating contract. Its **Safe parallel development** rules require the coordination model in `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`, including the detailed multi-agent protocol in that document.
 
 For parallel work in particular:
 
@@ -33,7 +33,7 @@ For parallel work in particular:
 - treat only exact-head CI as merge evidence;
 - never promote Options Bank lifecycle status from documentation alone.
 
-The detailed coordination, conflict-resolution, Options Bank→UX derivation, branch, merge and coordinator rules are defined in `AGENTS.md` and apply automatically without requiring the repository owner to restate them for every agent.
+These rules apply automatically without requiring the repository owner to restate them for every module or agent.
 
 ## Mandatory engineering conventions
 
