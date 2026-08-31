@@ -145,7 +145,7 @@ test('packaged Configuration Packages imports stable identity only after dry run
   await visitPackages(page);
 
   const json = JSON.stringify(portablePackage(), null, 2);
-  await page.getByLabel('Package JSON').fill(json);
+  await page.getByLabel('Package JSON', { exact: true }).fill(json);
   await page.getByRole('button', { name: 'Inspect / dry run' }).click();
 
   const report = page.locator('#wpessential-package-report');
