@@ -60,11 +60,12 @@ final class FieldsModule implements ModuleInterface
         $catalog = new FieldCatalogService($types, $presets);
         $fields = new FieldDefinitionNormalizer($types, $presets);
         $values = new FieldValueNormalizer();
+        $persistence = new FieldValuePersistenceGuard();
         $groups = new FieldGroupDefinitionNormalizer($fields);
         $validation = new FieldGroupValidationService($definitions, $groups);
-        $postMetaCompiler = new PostMetaRegistrationCompiler($values);
+        $postMetaCompiler = new PostMetaRegistrationCompiler($values, $persistence);
         $postMetaRegistrar = new WordPressPostMetaRegistrar();
-        $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values);
+        $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
