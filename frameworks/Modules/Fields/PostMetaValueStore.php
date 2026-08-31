@@ -45,6 +45,7 @@ final class PostMetaValueStore
     public function __construct(
         private readonly PostMetaRegistrationCompiler $compiler = new PostMetaRegistrationCompiler(),
         private readonly FieldValueNormalizer $values = new FieldValueNormalizer(),
+        private readonly FieldValuePersistenceGuard $persistence = new FieldValuePersistenceGuard(),
         ?callable $getPostType = null,
         ?callable $metadataExists = null,
         ?callable $getPostMeta = null,
@@ -121,7 +122,7 @@ final class PostMetaValueStore
             throw new LogicException('Multiple-row post-meta replacement is not certified in persistence V1.');
         }
 
-        $canonical = $this->values->normalize($field, $value);
+        $canonical = $this->persistence->assertSafe($this->values->normalize($field, $value));
         $metaKey = $registration['meta_key'];
         $fieldUuid = $registration['field_uuid'];
         if (!is_string($metaKey) || !is_string($fieldUuid)) {
@@ -224,7 +225,7 @@ final class PostMetaValueStore
             $cast = $single
                 ? $this->castNativeValue($raw, $type)
                 : $this->castNativeList($raw, $type);
-            return $this->values->normalize($field, $cast);
+            return $this->persistence->assertSafe($this->values->normalize($field, $cast));
         } catch (InvalidArgumentException $error) {
             throw new RuntimeException(sprintf(
                 'Persisted post meta "%s" is outside the canonical Field value contract.',
@@ -267,21 +268,37 @@ final class PostMetaValueStore
         if (is_int($value)) {
             return $value;
         }
-        if (!is_string($value) || preg_match('/^-?\d+$/', $value) !== 1) {
+        if (!is_string($value)) {
             throw new RuntimeException('Persisted integer meta is not a canonical integer representation.');
         }
-        return (int) $value;
+        $validated = filter_var($value, FILTER_VALIDATE_INT);
+        if ($validated === false) {
+            throw new RuntimeException('Persisted integer meta is outside the platform integer range.');
+        }
+        return $validated;
     }
 
     private function nativeNumber(mixed $value): int|float
     {
-        if (is_int($value) || is_float($value)) {
+        if (is_int($value)) {
+            return $value;
+        }
+        if (is_float($value)) {
+            if (!is_finite($value)) {
+                throw new RuntimeException('Persisted number meta must be finite.');
+            }
             return $value;
         }
         if (!is_string($value) || !is_numeric($value)) {
             throw new RuntimeException('Persisted number meta is not numeric.');
         }
-        return str_contains($value, '.') || stripos($value, 'e') !== false ? (float) $value : (int) $value;
+
+        $integer = filter_var($value, FILTER_VALIDATE_INT);
+        $normalized = $integer !== false ? $integer : (float) $value;
+        if (is_float($normalized) && !is_finite($normalized)) {
+            throw new RuntimeException('Persisted number meta is outside the finite numeric range.');
+        }
+        return $normalized;
     }
 
     private function nativeBoolean(mixed $value): bool
