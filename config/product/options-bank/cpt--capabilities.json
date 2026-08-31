@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 1, "key": "cpt", "name": "Custom Post Types"},
+  "snapshot": {
+    "date": "2026-08-31",
+    "native_sources": [
+      {"name": "WordPress get_post_type_capabilities()", "type": "wordpress_core", "url": "https://developer.wordpress.org/reference/functions/get_post_type_capabilities/", "verified": true}
+    ],
+    "market_sources": []
+  },
+  "status": "BANK_MARKET_RESEARCHED",
+  "records": [
+    {"id":"cpt.capabilities.edit_post","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.edit_post","label":"Edit Post Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.read_post","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.read_post","label":"Read Post Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.delete_post","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.delete_post","label":"Delete Post Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.edit_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.edit_posts","label":"Edit Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.edit_others_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.edit_others_posts","label":"Edit Others Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.delete_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.delete_posts","label":"Delete Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.publish_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.publish_posts","label":"Publish Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.read_private_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.read_private_posts","label":"Read Private Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.create_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.create_posts","label":"Create Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.read","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.read","label":"Read Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.delete_private_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.delete_private_posts","label":"Delete Private Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.delete_published_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.delete_published_posts","label":"Delete Published Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.delete_others_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.delete_others_posts","label":"Delete Others Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.edit_private_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.edit_private_posts","label":"Edit Private Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.capabilities.edit_published_posts","parent_id":"cpt.permissions.capabilities","feature_group":"Permissions","option_path":"capabilities.edit_published_posts","label":"Edit Published Posts Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"}
+  ],
+  "coverage": {"records": 15, "unreviewed": 0, "adopted_or_classified": 15, "notes": "Complete current WordPress post-type capability key inventory, including map_meta_cap-dependent primitives."}
+}
