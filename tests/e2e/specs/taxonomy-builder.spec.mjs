@@ -60,7 +60,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('packaged Taxonomy Builder renders and progressively enhances', async ({ page }) => {
+test('packaged Taxonomy Builder renders object type linking and progressively enhances', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', (error) => {
     pageErrors.push(error.message);
@@ -73,7 +73,9 @@ test('packaged Taxonomy Builder renders and progressively enhances', async ({ pa
   await expect(page.getByLabel('Taxonomy key')).toBeVisible();
   await expect(page.getByLabel('Plural name')).toBeVisible();
   await expect(page.getByLabel('Singular name')).toBeVisible();
-  await expect(page.getByLabel('Object types')).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Linked post types' })).toBeVisible();
+  await expect(page.locator('[data-wpessential-taxonomy-object-type][value="post"]')).toBeVisible();
+  await expect(page.getByLabel('Additional/external post type keys')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save taxonomy' })).toBeVisible();
   await expect(page.getByRole('table', { name: 'Saved taxonomies' })).toBeVisible();
@@ -81,16 +83,21 @@ test('packaged Taxonomy Builder renders and progressively enhances', async ({ pa
 
   await expect(root).toHaveAttribute('data-wpessential-surface', 'taxonomies');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
+  await expect(page.locator('[data-wpessential-taxonomy-object-type][value="post"]')).toBeChecked();
   expect(pageErrors, `Unexpected Taxonomy Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
-test('packaged Taxonomy preflight blocks reserved keys and saves a valid draft', async ({ page }) => {
+test('packaged Taxonomy preflight blocks reserved keys and preserves external associations', async ({ page }) => {
   await visitTaxonomies(page);
+
+  const postType = page.locator('[data-wpessential-taxonomy-object-type][value="post"]');
+  const externalTypes = page.getByLabel('Additional/external post type keys');
 
   await page.getByLabel('Taxonomy key').fill('category');
   await page.getByLabel('Plural name').fill('Categories');
   await page.getByLabel('Singular name').fill('Category');
-  await page.getByLabel('Object types').fill('post');
+  await postType.check();
+  await externalTypes.fill('external_book');
   await page.getByRole('button', { name: 'Validate' }).click();
 
   const validation = page.locator('#wpessential-taxonomy-validation');
@@ -102,14 +109,21 @@ test('packaged Taxonomy preflight blocks reserved keys and saves a valid draft',
   await page.getByLabel('Taxonomy key').fill('library_genre');
   await page.getByLabel('Plural name').fill('Genres');
   await page.getByLabel('Singular name').fill('Genre');
-  await page.getByLabel('Object types').fill('post');
+  await postType.check();
+  await externalTypes.fill('external_book');
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
 
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
-  const row = page.getByRole('row', { name: /Genres library_genre post Draft 1/ });
+  const row = page.getByRole('row', {
+    name: /Genres library_genre post, external_book Draft 1/,
+  });
   await expect(row).toBeVisible();
   await expect(row.getByRole('button', { name: 'Edit' })).toBeVisible();
   await expect(row.getByRole('button', { name: 'Publish' })).toBeVisible();
+
+  await row.getByRole('button', { name: 'Edit' }).click();
+  await expect(postType).toBeChecked();
+  await expect(externalTypes).toHaveValue('external_book');
 });
 
 test('packaged Taxonomy Builder has zero axe violations', async ({ page }) => {

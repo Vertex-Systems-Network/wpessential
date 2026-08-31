@@ -10,6 +10,14 @@ type TaxonomyDefinition = {
 	payload: TaxonomyPayload;
 };
 
+type ObjectTypeOption = {
+	key: string;
+	label: string;
+	source: string;
+	status: string;
+	runtime_registered: boolean;
+};
+
 type Route = { type: string; nonce: string };
 type ValidationIssue = {
 	id: string;
@@ -28,6 +36,7 @@ type Bootstrap = {
 	ajaxAction: string;
 	routes: { list: Route; validate: Route; save: Route; status: Route };
 	definitions: TaxonomyDefinition[];
+	objectTypes: ObjectTypeOption[];
 };
 type EditorRequest = {
 	id: string;
@@ -58,6 +67,17 @@ function isDefinition( value: unknown ): value is TaxonomyDefinition {
 	);
 }
 
+function isObjectTypeOption( value: unknown ): value is ObjectTypeOption {
+	return (
+		isRecord( value ) &&
+		typeof value.key === 'string' &&
+		typeof value.label === 'string' &&
+		typeof value.source === 'string' &&
+		typeof value.status === 'string' &&
+		typeof value.runtime_registered === 'boolean'
+	);
+}
+
 function isRoute( value: unknown ): value is Route {
 	return (
 		isRecord( value ) &&
@@ -78,7 +98,9 @@ function parseBootstrap( value: unknown ): Bootstrap | null {
 		! isRoute( value.routes.save ) ||
 		! isRoute( value.routes.status ) ||
 		! Array.isArray( value.definitions ) ||
-		! value.definitions.every( isDefinition )
+		! value.definitions.every( isDefinition ) ||
+		! Array.isArray( value.objectTypes ) ||
+		! value.objectTypes.every( isObjectTypeOption )
 	) {
 		return null;
 	}
@@ -94,6 +116,7 @@ function parseBootstrap( value: unknown ): Bootstrap | null {
 			status: value.routes.status,
 		},
 		definitions: value.definitions,
+		objectTypes: value.objectTypes,
 	};
 }
 
@@ -180,15 +203,48 @@ function setBoolInput( id: string, value: unknown, fallback = false ): void {
 	}
 }
 
-function objectTypesFromInput(): string[] {
+function objectTypeInputs(): HTMLInputElement[] {
 	return Array.from(
-		new Set(
-			fieldValue( 'object_types' )
-				.split( ',' )
-				.map( ( value ) => value.trim() )
-				.filter( ( value ) => value !== '' )
+		document.querySelectorAll< HTMLInputElement >(
+			'[data-wpessential-taxonomy-object-type]'
 		)
 	);
+}
+
+function splitObjectTypes( value: string ): string[] {
+	return value
+		.split( ',' )
+		.map( ( item ) => item.trim() )
+		.filter( ( item ) => item !== '' );
+}
+
+function objectTypesFromInput(): string[] {
+	const selected = objectTypeInputs()
+		.filter( ( input ) => input.checked )
+		.map( ( input ) => input.value.trim() )
+		.filter( ( value ) => value !== '' );
+	const additional = splitObjectTypes(
+		textInput( 'wpessential-taxonomy-object-types-extra' )?.value ?? ''
+	);
+
+	return Array.from( new Set( [ ...selected, ...additional ] ) );
+}
+
+function setObjectTypes( value: unknown ): void {
+	const values = Array.isArray( value )
+		? value.filter( ( item ): item is string => typeof item === 'string' )
+		: [];
+	const remaining = new Set( values );
+
+	for ( const input of objectTypeInputs() ) {
+		input.checked = remaining.has( input.value );
+		remaining.delete( input.value );
+	}
+
+	const extra = textInput( 'wpessential-taxonomy-object-types-extra' );
+	if ( extra ) {
+		extra.value = Array.from( remaining ).join( ', ' );
+	}
 }
 
 function setNotice( message: string, error = false ): void {
@@ -459,7 +515,7 @@ function resetForm(): void {
 	if ( key ) {
 		key.readOnly = false;
 	}
-	setFieldValue( 'object_types', 'post' );
+	setObjectTypes( [ 'post' ] );
 	const status = selectInput( 'wpessential-taxonomy-status' );
 	if ( status ) {
 		status.value = 'draft';
@@ -491,16 +547,7 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 	setFieldValue( 'name', definition.payload.name );
 	setFieldValue( 'singular_name', definition.payload.singular_name );
 	setFieldValue( 'description', definition.payload.description );
-	setFieldValue(
-		'object_types',
-		Array.isArray( definition.payload.object_types )
-			? definition.payload.object_types
-					.filter(
-						( value ): value is string => typeof value === 'string'
-					)
-					.join( ', ' )
-			: ''
-	);
+	setObjectTypes( definition.payload.object_types );
 	setBoolInput(
 		'wpessential-taxonomy-public',
 		definition.payload.public,
@@ -772,6 +819,7 @@ function boot(): void {
 		} );
 	} );
 
+	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
 	root.dataset.wpessentialEnhanced = 'ready';
 	window.dispatchEvent(
