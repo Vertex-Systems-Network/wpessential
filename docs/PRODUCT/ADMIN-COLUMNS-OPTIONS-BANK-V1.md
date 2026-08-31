@@ -1,35 +1,36 @@
 # WPEssential — Admin Columns Options Bank Lifecycle V1
 
-Status: **SURFACE_WORK / PARTIALLY_COMPLETE — INTEGRATION BLOCKED**  
+Status: **SURFACE_WORK / RESEARCH_COMPLETE / CERTIFICATION_INTEGRATION_BLOCKED**  
 Surface: **8 — Admin Columns (`columns`)**  
 Snapshot: **2026-09-01**  
-Base SHA: **`eb61c6bfe9d89af949d70e89ba685597d58e2663`**  
+Original base SHA: **`eb61c6bfe9d89af949d70e89ba685597d58e2663`**  
+Synced main SHA: **`8ed1c0389ef314c79a60a6808d232ef625de7b25`**  
 Writer branch: **`planning/options-bank-columns-seed-v1`**
 
 ## 1. Work-mode resolution
 
 Detected work mode: `SURFACE_WORK`.
 
-Repository evidence on the base SHA shows:
-- Surface 8 is canonical key `columns`;
-- current global Options Bank progress is `UNSEEDED` with 0 records;
-- there is no active Admin Columns Bank branch, issue or approved numbered implementation work package;
-- the shared Platform Foundation is already certified for business-module handoff by the current checkpoint;
-- the repository already has an exhaustive Admin Columns specification and atomic option inventory, so this work continues the accepted 56-surface Master Options Bank program rather than creating a competing product plan.
+Repository evidence establishes Surface 8 as canonical key `columns`. No approved numbered Admin Columns implementation work package or competing plan exists. This work therefore continues the accepted 56-surface Master Options Bank program.
 
-No `P<phase>-M<milestone>-WP<work-package>-T<task>` ID is recorded for this Surface 8 Bank work. None is invented here.
+No `P<phase>-M<milestone>-WP<work-package>-T<task>` ID is recorded for this Surface 8 Bank work. None is invented.
+
+The branch was created from explicit main `eb61c6bfe9d89af949d70e89ba685597d58e2663`. During work, main advanced by the Relations market-audit certification. The branch was synchronized without force/rebase through merge commit `55b1cb98ecb724a1ab567e66908b8a69689bfd99`, preserving both histories.
 
 ## 2. Canonical ownership and dependency boundary
 
 Canonical owner:
+
 - Surface 8 owns **list-table column/view/filter/edit presentation definitions**.
 
 Shared required contracts:
+
 - Data Source;
 - Renderer;
 - Policy.
 
 Important peer integrations:
+
 - Surface 1 CPT;
 - Surface 2 Taxonomy;
 - Surface 3 Fields;
@@ -38,21 +39,24 @@ Important peer integrations:
 - Surface 7 Custom Tables;
 - Surface 28 Media;
 - Surface 30 Roles;
+- Surface 34 Search;
 - Surface 51 Content Order.
 
 Hard peer boot dependencies: none.
 
 Forbidden coupling:
-- owning displayed source data;
+
+- ownership of displayed source data;
 - private query/search engine;
 - direct peer table/class bypass;
-- visibility as authorization;
-- arbitrary PHP configuration;
-- per-row N+1/remote fan-out without a bounded provider contract.
+- visibility treated as authorization;
+- arbitrary executable PHP configuration;
+- per-row N+1 or remote fan-out without a bounded provider contract.
 
-## 3. Initial audit
+## 3. Governance audit
 
-Authoritative repository material reviewed before the candidate was built:
+Authoritative repository material reviewed before candidate construction included:
+
 - root `AGENTS.md`;
 - `CONTRIBUTING.md`;
 - current `CHECKPOINT.md`;
@@ -71,25 +75,12 @@ Authoritative repository material reviewed before the candidate was built:
 - `docs/MODULES/CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md`;
 - `docs/UI/ADMIN-INFORMATION-ARCHITECTURE-V2-56-SURFACES.md`.
 
-No closer-scoped `AGENTS.md` exists under `config/`, `config/product/`, `config/product/options-bank/`, `docs/`, or `docs/PRODUCT/` on the base SHA.
-
-Existing product truth already required:
-- multiple target list tables and named views;
-- native/field/taxonomy/relation/query/media/status/computed/provider sources;
-- typed display formats;
-- backend sorting/filtering/search;
-- saved segments/preferences;
-- inline/quick/bulk editing;
-- CSV export;
-- conditional formatting/visibility;
-- performance/no-N+1 diagnostics;
-- portability and compatibility adapters.
+No closer-scoped `AGENTS.md` was found under the Surface 8 working paths.
 
 ## 4. Native research
 
-Primary WordPress sources were rechecked on 2026-09-01.
+WordPress-native adapter primitives rechecked for Surface 8 include:
 
-Verified adapter primitives include:
 - `manage_{$screen->id}_columns`;
 - `manage_posts_columns`;
 - `manage_{$post_type}_posts_columns`;
@@ -108,33 +99,49 @@ Verified adapter primitives include:
 - `get_hidden_columns` / `default_hidden_columns` / `hidden_columns`;
 - `list_table_primary_column`.
 
-Key native conclusions:
-1. WordPress provides list-table extension hooks, per-screen hidden preferences, sortable metadata, a primary-column contract and target-specific render/filter integration.
-2. WordPress does **not** supply a reusable WPE-style named column-set/view definition engine.
-3. Sort/filter headers alone do not guarantee backend query correctness; the target/Data Source/Query adapter must alter the canonical query before pagination.
-4. `WP_List_Table` and `_get_list_table()` are documented as private/subject to change; WPE must not build its architecture on direct private core coupling.
-5. native screen visibility is not a source authorization model.
+Conclusions:
+
+1. WordPress supplies list-table extension hooks, hidden preferences, sortable metadata, primary-column behavior and target-specific render/filter integration.
+2. WordPress does not provide a reusable named column-set/view definition engine.
+3. Sorting/filtering must alter canonical backend query semantics before pagination; rendered HTML sorting is not acceptable.
+4. `WP_List_Table` and `_get_list_table()` are private/subject to change and are not canonical WPE architecture dependencies.
+5. List-table visibility is not source authorization.
 
 Machine artifact:
-- `config/product/options-bank-audits/columns-native-wordpress.json`.
 
-Its evidence set has zero unresolved research dispositions, but its status remains `NATIVE_AUDIT_IN_PROGRESS` because canonical shared progress and a Surface 8 audit gate are integrator-owned and are not updated by this worker.
+- `config/product/options-bank-audits/columns-native-wordpress.json`
+
+Native research dispositions: **29 total / 0 unresolved**. The certificate remains `NATIVE_AUDIT_IN_PROGRESS` because canonical progress and a Surface 8 exact-head native-audit gate are shared/integrator-owned.
 
 ## 5. Market research
 
-Current official product documentation was checked for:
+Official current product documentation was checked for:
+
 - Admin Columns Pro;
 - Meta Box Admin Columns;
 - JetEngine Admin Columns/CCT/Relations.
 
-Research artifact:
-- `docs/PRODUCT/ADMIN-COLUMNS-MARKET-AUDIT-V1.md`.
+Research document:
 
-Market research confirms current parity expectations for views, custom-field/source presentation, sorting/filtering, inline/bulk/quick editing, CSV export, conditional formatting, portability and ecosystem integrations.
+- `docs/PRODUCT/ADMIN-COLUMNS-MARKET-AUDIT-V1.md`
 
-The market audit is **research-complete but machine-certification blocked** because `config/product/options-bank-market-audit.schema.json` on current `main` hard-codes `surface.id = 3` and `surface.key = fields`.
+Machine candidate:
 
-The active Relations market-audit branch currently points at the same base SHA and has not yet generalized that shared schema.
+- `config/product/options-bank-audits/columns-market-ecosystem.json`
+
+The upstream Relations certification on main `8ed1c0389ef314c79a60a6808d232ef625de7b25` generalized `config/product/options-bank-market-audit.schema.json`; the former Fields-only schema blocker is therefore resolved.
+
+Surface 8 machine market coverage now records:
+
+- 3 primary providers;
+- 1 specialist provider;
+- 6 required capability families;
+- 15 family mappings;
+- 57 Bank record references;
+- 4 explicit extra dispositions;
+- 0 unresolved research items.
+
+Its status remains `MARKET_AUDIT_IN_PROGRESS` because there is not yet an integrator-owned exact-head Surface 8 market-audit gate. The existing generic market-audit smoke contract remains Fields-specific and Relations has a dedicated Surface 4 gate.
 
 ## 6. Options Bank candidate
 
@@ -150,19 +157,20 @@ Surface-local shards:
 | **Total** | **211** | **unique IDs and unique option paths** |
 
 Candidate policy characteristics:
+
 - 0 `UNREVIEWED` records;
 - 1 explicit `REJECTED_UNSAFE` record for arbitrary PHP configuration;
 - 20 WPE-exceed records, all `WPE_FUTURE / WPE_EXCEED / P1_EXCEED`;
 - no duplicate IDs;
 - no duplicate option paths.
 
-This branch does **not** edit `config/product/options-bank-progress.json`; therefore global canonical status remains unchanged until integration.
+This surface writer does not edit shared `config/product/options-bank-progress.json`; canonical global progress remains integrator-owned.
 
 ## 7. Ownership / duplicate resolution
 
 Resolved no-bypass decisions:
 
-- column source values are references; Data Source/entity owners retain record truth;
+- source values are references; Data Source/entity owners retain record truth;
 - relation display/filter references Surface 4;
 - reusable query AST/filter/sort execution remains Surface 6;
 - full-text relevance/indexing remains Surface 34;
@@ -174,11 +182,12 @@ Resolved no-bypass decisions:
 - custom callbacks are registered/allowlisted provider descriptors, never arbitrary PHP text;
 - hidden columns, role/user conditions and view assignment never grant source access.
 
-No Surface 8 semantic alias/effective-derivation entry is required in the shared semantic registry from the current candidate.
+No Surface 8 semantic alias/effective-derivation entry is required by the current candidate.
 
 ## 8. Native Audit lifecycle gate
 
-Research disposition coverage in `columns-native-wordpress.json`:
+Research coverage in `columns-native-wordpress.json`:
+
 - items: 29;
 - Bank mappings: 16;
 - provider mappings: 4;
@@ -187,36 +196,47 @@ Research disposition coverage in `columns-native-wordpress.json`:
 - core internal: 1;
 - unresolved: 0.
 
-Certification is intentionally not claimed because:
-1. global progress still says Surface 8 is `UNSEEDED / 0`;
-2. existing machine audit tests are surface-specific and no Surface 8 exact-head audit contract is wired;
-3. shared progress/test wiring is integrator-owned.
+Canonical `NATIVE_AUDITED` is not claimed because:
+
+1. shared progress has not been promoted for Surface 8;
+2. a Surface 8 exact-head native-audit gate is not wired;
+3. shared test/progress wiring is integrator-owned.
 
 ## 9. Market Audit lifecycle gate
 
-Research coverage is complete enough for a Surface 8 provider certificate, but the shared market-audit JSON schema is currently Fields-specific.
+Market research is normalized into `columns-market-ecosystem.json` and has zero unresolved research dispositions.
 
-Integration is required before a valid `columns-market-ecosystem.json` can be added and certified.
+The previous schema blocker is resolved upstream. Remaining certification blockers are:
+
+1. no Surface 8 exact-head market-audit gate;
+2. no shared progress promotion for Surface 8.
+
+Therefore canonical `MARKET_AUDITED` is not claimed.
 
 ## 10. Bank Review
 
-A blocked review record is supplied at:
-- `config/product/options-bank-reviews/columns-bank-review-v1.json`.
+Review record:
 
-Decision: `REVIEW_BLOCKED`.
+- `config/product/options-bank-reviews/columns-bank-review-v1.json`
 
-The product research itself has no unresolved ownership decision. Review is blocked by shared certification infrastructure:
-- Surface 8 shared progress has not been promoted;
-- a Surface 8 native exact-head gate is not wired;
-- the shared market-audit schema cannot validate Surface 8;
-- therefore no `MARKET_AUDITED` machine certificate exists.
+Decision: **`REVIEW_BLOCKED`**.
+
+The product research has no unresolved product/ownership decision. The review has two unresolved shared certification dependencies:
+
+1. canonical Surface 8 progress plus exact-head native-audit certification;
+2. exact-head market-audit/Bank-Review certification wiring and resulting progress promotion.
+
+The market-audit required artifact now correctly points to `config/product/options-bank-audits/columns-market-ecosystem.json` rather than the research Markdown.
 
 ## 11. UX projection
 
 **NOT ENTERED / BLOCKED BY BANK REVIEW.**
 
 The canonical IA already reserves:
-`WPEssential → Data & Intelligence → Admin Columns` with primary screens `Column Sets, Columns, Sort/Filter, Inline/Bulk Edit, Export, Conditions, Performance`.
+
+`WPEssential → Data & Intelligence → Admin Columns`
+
+with primary screens `Column Sets, Columns, Sort/Filter, Inline/Bulk Edit, Export, Conditions, Performance`.
 
 A final UX projection must not be frozen until `BANK_REVIEWED` is valid on an exact certified head.
 
@@ -224,9 +244,10 @@ A final UX projection must not be frozen until `BANK_REVIEWED` is valid on an ex
 
 **NOT ENTERED / BLOCKED BY BANK REVIEW.**
 
-Existing exhaustive and atomic inventories remain planning inputs only. Runtime implementation must not start from this branch as though the Bank were certified.
+Existing exhaustive/atomic inventories remain planning inputs only. Runtime implementation must not start from this branch as though the Bank were certified.
 
 When unblocked, the implementation contract must bind:
+
 - canonical Definition persistence/revisions;
 - target adapter registry;
 - Data Source + Query backend execution;
@@ -237,40 +258,43 @@ When unblocked, the implementation contract must bind:
 - Audit/Observability;
 - no-N+1 batch hydration;
 - scoped optional assets;
-- WordPress 7.1 list-table integration and multisite scope.
+- supported WordPress list-table integration and multisite scope.
 
 ## 13. Integration Requirements
 
-### IR-COLUMNS-001 — canonical progress promotion
-The designated integrator must recompute shared Options Bank truth from the then-current `main`, set Surface 8 record count to **211**, and promote only to the lifecycle state whose machine evidence is valid. Do not hard-code global totals from this branch because other surface branches may merge first.
+### IR-COLUMNS-001 — canonical progress promotion — OPEN
+The designated integrator must recompute shared Options Bank truth from then-current main, register Surface 8 record count as **211**, and promote only lifecycle states whose machine evidence is valid. Global totals must be derived at integration time because other surfaces may merge first.
 
-### IR-COLUMNS-002 — market-audit schema
-Generalize or otherwise sanctionedly extend `config/product/options-bank-market-audit.schema.json` so Surface 8 can be validated without weakening the existing Fields contract.
+### IR-COLUMNS-002 — generalized market-audit schema — RESOLVED
+Resolved upstream by main `8ed1c0389ef314c79a60a6808d232ef625de7b25`. The shared schema now supports canonical surfaces 1–56 without weakening existing Fields validation.
 
-### IR-COLUMNS-003 — exact-head Surface 8 gates
-Add/wire shared machine gates for Surface 8 native audit, market audit and Bank Review, or generalize existing surface-specific gates under integrator ownership.
+### IR-COLUMNS-003 — exact-head Surface 8 gates — OPEN
+Add or generalize shared machine gates for Surface 8 native audit, market audit and Bank Review, then wire them into applicable CI. Existing Fields and Relations gates must remain valid and must not be weakened.
 
-### IR-COLUMNS-004 — dashboard/shared docs
-Only after canonical progress is integrated, update README/status/dashboard truth as required from the integrated current totals. The Surface 8 worker must not race those shared files.
+### IR-COLUMNS-004 — dashboard/shared docs — OPEN
+After canonical progress is integrated, update shared README/status/dashboard truth from current derived totals. Surface-local workers must not race those files.
 
-### IR-COLUMNS-005 — lifecycle promotion order
-After IR-COLUMNS-001..003, promote in order:
-`BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED`,
-with exact-head applicable CI at each certification boundary or a single integrated exact-head gate that proves all prerequisites.
+### IR-COLUMNS-005 — lifecycle promotion order — OPEN
+After IR-COLUMNS-001 and IR-COLUMNS-003 are satisfied, promote strictly in order:
 
-## 14. Recovery / migration classification
+`BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED`
 
-Planning/data-file change only. No production deployment, provider mutation, database migration, release, or destructive operation is performed.
+Only then enter/finalize UX projection and implementation-contract work.
 
-Recovery class for this branch: `SIMPLE_ROLLBACK` — remove/revert the Surface 8 planning artifacts before integration if review rejects them.
+## 14. Recovery classification
+
+Planning/data-file change only. No production deployment, provider mutation, database migration, release or destructive operation is performed.
+
+Recovery class: `SIMPLE_ROLLBACK` — revert/remove the Surface 8 planning artifacts before integration if review rejects them.
 
 ## 15. Current safe state
 
-The branch is a Surface 8 candidate, not a certified lifecycle promotion.
+The branch is a synchronized, research-complete Surface 8 candidate with machine native and market evidence, but it is **not a certified completed Options Bank lifecycle**.
 
 Safe next action:
-1. write/validate the local artifacts;
+
+1. verify branch against latest main again;
 2. open a draft PR;
-3. observe exact-head CI without weakening failures;
-4. hand Integration Requirements to the designated integrator;
-5. only then certify downstream lifecycle and enter UX/implementation planning.
+3. inspect exact-head applicable CI without weakening failures;
+4. hand open Integration Requirements to the designated integrator;
+5. after shared certification is valid, promote lifecycle in order and only then enter UX projection / implementation contract.
