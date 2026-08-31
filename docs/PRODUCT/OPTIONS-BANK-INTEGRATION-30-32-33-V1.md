@@ -51,9 +51,22 @@ Stage B promotes only surfaces whose registered native validator executed succes
 - Surface 8 `columns`: `NATIVE_AUDITED` / 214;
 - Surface 10 `dashboard-widgets`: `NATIVE_AUDITED` / 123.
 
-Surface 5 `status` remains `BANK_SURFACE_SEEDED` because its worker candidate does not yet contain a surface-local executable native certification gate. Zero-unresolved research alone is not used as a substitute for the required executable gate.
+The synchronized Stage B checkpoint `d3f43a537a080b7e552ded528ad482999faab446` passed all five applicable workflows after absorbing the non-overlapping Fields catalog API delta. Subsequent repository synchronization and Status gate enablement change the exact head, so that green checkpoint is prerequisite evidence rather than certification for the current changed head.
 
-Stage B candidate truth:
+### Status executable-gate enablement
+
+The latest Surface 5 worker artifacts have now been absorbed without changing canonical lifecycle state:
+
+- native audit candidate: 35 dispositions / 0 unresolved;
+- market audit candidate: 9 required capability families / 0 unresolved;
+- blocked Bank Review: 129 records / 0 Status semantic relationships / 0 unreviewed / 0 deferred / 4 explicit unsafe rejections / 2 certification gates unresolved;
+- `tests/Smoke/options-bank-status-native-audit-contract.php`;
+- `tests/Smoke/options-bank-status-market-audit-contract.php`;
+- `tests/Smoke/options-bank-status-review-contract.php`.
+
+All three Status validators are registered in shared `composer test:smoke`. Surface 5 nevertheless remains `BANK_SURFACE_SEEDED / 129` until a fresh exact integration head executes the native gate successfully. Gate availability is not itself a lifecycle promotion.
+
+Stage B candidate truth therefore remains:
 
 - seeded surfaces: 7;
 - native-audited surfaces: 4;
@@ -61,9 +74,9 @@ Stage B candidate truth:
 - bank-reviewed surfaces: 2;
 - total Bank records: 1,406.
 
-Market audits remain `MARKET_AUDIT_IN_PROGRESS` for Surfaces 8 and 10. Bank Reviews remain `REVIEW_BLOCKED`. No UX projection or implementation-contract readiness is claimed by this stage.
+Market audits remain `MARKET_AUDIT_IN_PROGRESS` for Surfaces 8 and 10. Status native/market audits remain in-progress and its Bank Review remains `REVIEW_BLOCKED`. Admin Columns and Dashboard Widgets Bank Reviews also remain `REVIEW_BLOCKED`. No UX projection or implementation-contract readiness is claimed by this stage.
 
-Stage B is not certified until all applicable CI is green on the exact Stage B head. Earlier Stage A results are prerequisite evidence, not certification for a changed head.
+The current Stage B candidate is not certified until all applicable CI is green on its exact head. Earlier Stage A/Stage B checkpoints are prerequisite evidence only and are not inherited as certification after repository-content changes.
 
 ## Promotion sequence
 
@@ -71,6 +84,11 @@ The integration lane remains fail-closed:
 
 `BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED`
 
-After Stage B exact-head certification, Stage C may promote only the already-registered, zero-unresolved market audits for Surfaces 8 and 10. Stage D Bank Review may occur only after certified native + market states and review/progress invariants agree.
+If the current exact Stage B head is green:
 
-Status cannot be promoted beyond its latest executable evidence. No test weakening, force update, duplicate semantic engine, or runtime/release claim is permitted.
+1. Surface 5 may receive a dedicated native-promotion commit only if its registered native validator passed on that exact prerequisite head.
+2. Surfaces 8 and 10 may proceed to market promotion only through a separate changed head with fresh CI.
+3. Surface 5 market promotion may occur only after its own native promotion is exact-head certified.
+4. Bank Review for any surface may occur only after its certified native + market states and review/progress invariants agree.
+
+No test weakening, force update, duplicate semantic engine, direct lifecycle leap, or runtime/release claim is permitted.
