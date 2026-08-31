@@ -4,34 +4,78 @@
   "title": "WPEssential Options Bank Market Provider Audit",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "bank_version", "surface", "snapshot", "status", "required_families", "primary_providers", "specialist_providers", "extra_dispositions", "coverage"],
+  "required": [
+    "schema_version",
+    "bank_version",
+    "surface",
+    "snapshot",
+    "status",
+    "required_families",
+    "primary_providers",
+    "specialist_providers",
+    "extra_dispositions",
+    "coverage"
+  ],
   "properties": {
-    "schema_version": {"type": "integer", "const": 1},
-    "bank_version": {"type": "string", "const": "v1"},
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "bank_version": {
+      "type": "string",
+      "const": "v1"
+    },
     "surface": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "key"],
+      "required": [
+        "id",
+        "key"
+      ],
       "properties": {
-        "id": {"type": "integer", "const": 3},
-        "key": {"type": "string", "const": "fields"}
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 56
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        }
       }
     },
     "snapshot": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["date", "notes"],
+      "required": [
+        "date",
+        "notes"
+      ],
       "properties": {
-        "date": {"type": "string", "format": "date"},
-        "notes": {"type": "string", "minLength": 1}
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
-    "status": {"enum": ["MARKET_AUDIT_IN_PROGRESS", "MARKET_AUDITED"]},
+    "status": {
+      "enum": [
+        "MARKET_AUDIT_IN_PROGRESS",
+        "MARKET_AUDITED"
+      ]
+    },
     "required_families": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"}
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_]*$"
+      }
     },
     "primary_providers": {
       "type": "array",
@@ -39,15 +83,30 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "name", "evidence", "family_map", "non_applicable_families"],
+        "required": [
+          "id",
+          "name",
+          "evidence",
+          "family_map",
+          "non_applicable_families"
+        ],
         "properties": {
-          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
-          "name": {"type": "string", "minLength": 1},
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
           "evidence": {
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": {"type": "string", "format": "uri"}
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
           },
           "family_map": {
             "type": "object",
@@ -56,13 +115,19 @@
               "type": "array",
               "minItems": 1,
               "uniqueItems": true,
-              "items": {"type": "string", "minLength": 1}
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
             }
           },
           "non_applicable_families": {
             "type": "array",
             "uniqueItems": true,
-            "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"}
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9_]*$"
+            }
           }
         }
       }
@@ -73,21 +138,38 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "name", "evidence", "bank_record_ids"],
+        "required": [
+          "id",
+          "name",
+          "evidence",
+          "bank_record_ids"
+        ],
         "properties": {
-          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
-          "name": {"type": "string", "minLength": 1},
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
           "evidence": {
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": {"type": "string", "format": "uri"}
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
           },
           "bank_record_ids": {
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": {"type": "string", "minLength": 1}
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         }
       }
@@ -97,29 +179,87 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "provider", "disposition", "evidence_url", "notes"],
+        "required": [
+          "id",
+          "provider",
+          "disposition",
+          "evidence_url",
+          "notes"
+        ],
         "properties": {
-          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
-          "provider": {"type": "string", "minLength": 1},
-          "disposition": {"enum": ["OUT_OF_SURFACE", "IMPLEMENTATION_PATTERN", "DEFERRED_WITH_REASON", "REJECTED_UNSAFE", "UNRESOLVED"]},
-          "owner_surface": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
-          "evidence_url": {"type": "string", "format": "uri"},
-          "notes": {"type": "string", "minLength": 1}
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "disposition": {
+            "enum": [
+              "OUT_OF_SURFACE",
+              "IMPLEMENTATION_PATTERN",
+              "DEFERRED_WITH_REASON",
+              "REJECTED_UNSAFE",
+              "UNRESOLVED"
+            ]
+          },
+          "owner_surface": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$"
+          },
+          "evidence_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
     "coverage": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["primary_providers", "specialist_providers", "family_mappings", "non_applicable_family_cells", "bank_record_references", "extra_dispositions", "unresolved"],
+      "required": [
+        "primary_providers",
+        "specialist_providers",
+        "family_mappings",
+        "non_applicable_family_cells",
+        "bank_record_references",
+        "extra_dispositions",
+        "unresolved"
+      ],
       "properties": {
-        "primary_providers": {"type": "integer", "minimum": 0},
-        "specialist_providers": {"type": "integer", "minimum": 0},
-        "family_mappings": {"type": "integer", "minimum": 0},
-        "non_applicable_family_cells": {"type": "integer", "minimum": 0},
-        "bank_record_references": {"type": "integer", "minimum": 0},
-        "extra_dispositions": {"type": "integer", "minimum": 0},
-        "unresolved": {"type": "integer", "minimum": 0}
+        "primary_providers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "specialist_providers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "family_mappings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "non_applicable_family_cells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bank_record_references": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extra_dispositions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     }
   }
