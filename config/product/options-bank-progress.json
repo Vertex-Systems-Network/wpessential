@@ -42,8 +42,9 @@
     {
       "id": 5,
       "key": "status",
-      "status": "UNSEEDED",
-      "records": 0
+      "status": "BANK_SURFACE_SEEDED",
+      "records": 129,
+      "notes": "Stage A integration seeds 129 Status records from PR #33. Native and market research candidates report zero unresolved items, but certification remains pending surface-local executable gates; no NATIVE_AUDITED/MARKET_AUDITED/BANK_REVIEWED claim is made."
     },
     {
       "id": 6,
@@ -60,8 +61,9 @@
     {
       "id": 8,
       "key": "columns",
-      "status": "UNSEEDED",
-      "records": 0
+      "status": "BANK_SURFACE_SEEDED",
+      "records": 214,
+      "notes": "Stage A integration seeds 214 Admin Columns records from PR #32. Native/market audit candidates and blocked Bank Review are present; registered validators must pass on exact integration heads before lifecycle promotion."
     },
     {
       "id": 9,
@@ -72,8 +74,9 @@
     {
       "id": 10,
       "key": "dashboard-widgets",
-      "status": "UNSEEDED",
-      "records": 0
+      "status": "BANK_SURFACE_SEEDED",
+      "records": 123,
+      "notes": "Stage A integration seeds 123 Dashboard Widgets records from PR #30. Native/market audit candidates and blocked Bank Review are present; registered validators must pass on exact integration heads before lifecycle promotion."
     },
     {
       "id": 11,
@@ -353,10 +356,10 @@
     }
   ],
   "truth": {
-    "seeded_surfaces": 4,
+    "seeded_surfaces": 7,
     "native_audited_surfaces": 2,
     "market_audited_surfaces": 2,
     "bank_reviewed_surfaces": 2,
-    "total_bank_records": 940
+    "total_bank_records": 1406
   }
 }
