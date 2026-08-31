@@ -53,7 +53,7 @@ final readonly class CustomPostTypeImportAbilityHandler implements AbilityHandle
             $this->assertExpectedRevision($input, $existing);
         }
 
-        $this->assertKeyAvailable($source, $existing);
+        $this->assertIdentityAvailable($source, $existing);
         $validationInput = ['payload' => $source->payload];
         if ($existing instanceof Definition) {
             $validationInput['id'] = $existing->id;
@@ -161,7 +161,7 @@ final readonly class CustomPostTypeImportAbilityHandler implements AbilityHandle
         }
     }
 
-    private function assertKeyAvailable(Definition $source, ?Definition $existing): void
+    private function assertIdentityAvailable(Definition $source, ?Definition $existing): void
     {
         $key = $source->payload['post_type_key'] ?? null;
         if (!is_string($key) || trim($key) === '') {
@@ -175,6 +175,12 @@ final readonly class CustomPostTypeImportAbilityHandler implements AbilityHandle
                 || ($existing instanceof Definition && $candidate->id === $existing->id)
             ) {
                 continue;
+            }
+            if ($candidate->slug === $source->slug) {
+                throw new RuntimeException(sprintf(
+                    'CPT import slug collision: "%s" belongs to a different definition UUID.',
+                    $source->slug,
+                ));
             }
             $candidateKey = $candidate->payload['post_type_key'] ?? null;
             if (is_string($candidateKey) && trim($candidateKey) === $key) {
