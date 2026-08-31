@@ -111,7 +111,11 @@ Machine artifact:
 
 - `config/product/options-bank-audits/columns-native-wordpress.json`
 
-Native research dispositions: **29 total / 0 unresolved**. The certificate remains `NATIVE_AUDIT_IN_PROGRESS` because canonical progress and a Surface 8 exact-head native-audit gate are shared/integrator-owned.
+Surface-local executable contract:
+
+- `tests/Smoke/options-bank-columns-native-audit-contract.php`
+
+Native research dispositions: **29 total / 0 unresolved**. The certificate remains `NATIVE_AUDIT_IN_PROGRESS` because canonical progress and shared Composer/CI registration/exact-head execution of the Surface 8 contract are integrator-owned.
 
 ## 5. Market research
 
@@ -129,6 +133,10 @@ Machine candidate:
 
 - `config/product/options-bank-audits/columns-market-ecosystem.json`
 
+Surface-local executable contract:
+
+- `tests/Smoke/options-bank-columns-market-audit-contract.php`
+
 The upstream Relations certification on main `8ed1c0389ef314c79a60a6808d232ef625de7b25` generalized `config/product/options-bank-market-audit.schema.json`; the former Fields-only schema blocker is therefore resolved.
 
 Surface 8 machine market coverage now records:
@@ -141,7 +149,7 @@ Surface 8 machine market coverage now records:
 - 4 explicit extra dispositions;
 - 0 unresolved research items.
 
-Its status remains `MARKET_AUDIT_IN_PROGRESS` because there is not yet an integrator-owned exact-head Surface 8 market-audit gate. The existing generic market-audit smoke contract remains Fields-specific and Relations has a dedicated Surface 4 gate.
+Its status remains `MARKET_AUDIT_IN_PROGRESS` because the Surface 8 contract is not yet registered/executed by the shared exact-head smoke graph. The existing generic market-audit smoke contract remains Fields-specific and Relations has a dedicated Surface 4 gate.
 
 ## 6. Options Bank candidate
 
@@ -198,20 +206,24 @@ Research coverage in `columns-native-wordpress.json`:
 - core internal: 1;
 - unresolved: 0.
 
+The Surface 8-specific validator now exists at `tests/Smoke/options-bank-columns-native-audit-contract.php`. It validates the canonical Surface 8 identity, all 214 Bank records, primary Developer.WordPress.org evidence, disposition/mapping ownership rules, exact coverage counters and zero unresolved research. It accepts the lifecycle-safe transition from `NATIVE_AUDIT_IN_PROGRESS` to `NATIVE_AUDITED`; it does not perform that promotion itself.
+
 Canonical `NATIVE_AUDITED` is not claimed because:
 
 1. shared progress has not been promoted for Surface 8;
-2. a Surface 8 exact-head native-audit gate is not wired;
-3. shared test/progress wiring is integrator-owned.
+2. the Surface 8 contract is not yet registered/executed by the shared exact-head smoke graph;
+3. shared Composer/CI/progress wiring is integrator-owned.
 
 ## 9. Market Audit lifecycle gate
 
 Market research is normalized into `columns-market-ecosystem.json` and has zero unresolved research dispositions.
 
+The Surface 8-specific validator now exists at `tests/Smoke/options-bank-columns-market-audit-contract.php`. It validates the reviewed provider rosters, six-family disposition matrix, evidence URLs, Bank references, canonical out-of-surface ownership, exact coverage counters and zero unresolved research. It accepts the lifecycle-safe transition from `MARKET_AUDIT_IN_PROGRESS` to `MARKET_AUDITED`; it does not perform that promotion itself.
+
 The previous schema blocker is resolved upstream. Remaining certification blockers are:
 
-1. no Surface 8 exact-head market-audit gate;
-2. no shared progress promotion for Surface 8.
+1. the Surface 8 contract is not yet registered/executed by the shared exact-head smoke graph;
+2. no shared progress promotion exists for Surface 8.
 
 Therefore canonical `MARKET_AUDITED` is not claimed.
 
@@ -221,12 +233,18 @@ Review record:
 
 - `config/product/options-bank-reviews/columns-bank-review-v1.json`
 
+Surface-local executable contract:
+
+- `tests/Smoke/options-bank-columns-review-contract.php`
+
 Decision: **`REVIEW_BLOCKED`**.
+
+The Bank Review validator is lifecycle-safe: while blocked it requires real unresolved integration gates; a later `BANK_REVIEWED` state is accepted only when native and market audits are certified, review unresolved is zero, canonical progress reports 214 records at `BANK_REVIEWED`, semantic expectations still agree with repository truth, and policy gates remain closed.
 
 The product research has no unresolved product/ownership decision. The review has two unresolved shared certification dependencies:
 
 1. canonical Surface 8 progress plus exact-head native-audit certification;
-2. exact-head market-audit/Bank-Review certification wiring and resulting progress promotion.
+2. shared registration/execution of the market-audit/Bank-Review contracts and resulting progress promotion.
 
 The review record count is **214**, matching the corrected five-shard Bank inventory.
 
@@ -270,8 +288,14 @@ The designated integrator must recompute shared Options Bank truth from then-cur
 ### IR-COLUMNS-002 — generalized market-audit schema — RESOLVED
 Resolved upstream by main `8ed1c0389ef314c79a60a6808d232ef625de7b25`. The shared schema now supports canonical surfaces 1–56 without weakening existing Fields validation.
 
-### IR-COLUMNS-003 — exact-head Surface 8 gates — OPEN
-Add or generalize shared machine gates for Surface 8 native audit, market audit and Bank Review, then wire them into applicable CI. Existing Fields and Relations gates must remain valid and must not be weakened.
+### IR-COLUMNS-003 — exact-head Surface 8 gates — PARTIALLY RESOLVED
+Surface-local native, market and Bank Review validators now exist:
+
+- `tests/Smoke/options-bank-columns-native-audit-contract.php`;
+- `tests/Smoke/options-bank-columns-market-audit-contract.php`;
+- `tests/Smoke/options-bank-columns-review-contract.php`.
+
+The designated integrator must register and execute these contracts through the shared Composer/CI smoke graph without weakening Fields/Relations gates, then promote only from the resulting exact certified head.
 
 ### IR-COLUMNS-004 — dashboard/shared docs — OPEN
 After canonical progress is integrated, update shared README/status/dashboard truth from current derived totals. Surface-local workers must not race those files.
@@ -285,13 +309,15 @@ Only then enter/finalize UX projection and implementation-contract work.
 
 ## 14. Recovery classification
 
-Planning/data-file change only. No production deployment, provider mutation, database migration, release or destructive operation is performed.
+Planning/data/test-contract change only. No production deployment, provider mutation, database migration, release or destructive operation is performed.
 
-Recovery class: `SIMPLE_ROLLBACK` — revert/remove the Surface 8 planning artifacts before integration if review rejects them.
+Recovery class: `SIMPLE_ROLLBACK` — revert/remove the Surface 8 planning/test artifacts before integration if review rejects them.
 
 ## 15. Current safe state
 
-The branch is a synchronized, research-complete Surface 8 candidate with machine native and market evidence, but it is **not a certified completed Options Bank lifecycle**.
+The branch is a synchronized, research-complete Surface 8 candidate with machine native/market evidence and lifecycle-safe Surface 8 certification contracts, but it is **not a certified completed Options Bank lifecycle**.
+
+Raw local execution of the three new contracts is not claimed: the available execution sandbox could not resolve `github.com` to clone the repository. Exact-head repository CI remains authoritative; existing CI syntax scanning will cover the scripts, while normal shared execution of the contracts requires integrator registration.
 
 Safe next action:
 
