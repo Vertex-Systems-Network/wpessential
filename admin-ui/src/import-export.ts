@@ -91,7 +91,11 @@ function parseCounts( value: unknown ): Record< string, number > | null {
 	}
 	const counts: Record< string, number > = {};
 	for ( const [ key, count ] of Object.entries( value ) ) {
-		if ( typeof count !== 'number' || ! Number.isInteger( count ) || count < 0 ) {
+		if (
+			typeof count !== 'number' ||
+			! Number.isInteger( count ) ||
+			count < 0
+		) {
 			return null;
 		}
 		counts[ key ] = count;
@@ -144,7 +148,9 @@ function button( id: string ): HTMLButtonElement | null {
 }
 
 function setNotice( message: string, error = false ): void {
-	const notice = document.getElementById( 'wpessential-import-export-notice' );
+	const notice = document.getElementById(
+		'wpessential-import-export-notice'
+	);
 	if ( ! ( notice instanceof HTMLElement ) ) {
 		return;
 	}
@@ -201,7 +207,10 @@ function renderPreflight( report: Preflight ): void {
 	const items = container.querySelector(
 		'[data-wpessential-package-report-items]'
 	);
-	if ( ! ( summary instanceof HTMLElement ) || ! ( items instanceof HTMLElement ) ) {
+	if (
+		! ( summary instanceof HTMLElement ) ||
+		! ( items instanceof HTMLElement )
+	) {
 		return;
 	}
 
@@ -217,7 +226,9 @@ function renderPreflight( report: Preflight ): void {
 	for ( const item of report.items ) {
 		const row = document.createElement( 'li' );
 		row.dataset.wpessentialPackageAction = item.action;
-		row.textContent = `${ item.action.replaceAll( '_', ' ' ) }: ${ item.type } ${ item.key } — ${ item.message }`;
+		row.textContent = `${ item.action.replaceAll( '_', ' ' ) }: ${
+			item.type
+		} ${ item.key } — ${ item.message }`;
 		items.append( row );
 	}
 	container.hidden = false;
@@ -296,13 +307,25 @@ function boot(): void {
 		'click',
 		() => {
 			void run( async () => {
-				const data = await postRoute( bootstrap, bootstrap.routes.export, {
-					include_cpt: input( 'wpessential-package-export-cpt' )?.checked ?? true,
-					include_taxonomy:
-						input( 'wpessential-package-export-taxonomy' )?.checked ?? true,
-				} );
-				if ( ! isRecord( data ) || typeof data.package_json !== 'string' ) {
-					throw new Error( 'Configuration package export response was invalid.' );
+				const data = await postRoute(
+					bootstrap,
+					bootstrap.routes.export,
+					{
+						include_cpt:
+							input( 'wpessential-package-export-cpt' )
+								?.checked ?? true,
+						include_taxonomy:
+							input( 'wpessential-package-export-taxonomy' )
+								?.checked ?? true,
+					}
+				);
+				if (
+					! isRecord( data ) ||
+					typeof data.package_json !== 'string'
+				) {
+					throw new Error(
+						'Configuration package export response was invalid.'
+					);
 				}
 				if ( exportJson ) {
 					exportJson.value = data.package_json;
@@ -310,7 +333,11 @@ function boot(): void {
 				if ( download ) {
 					download.disabled = false;
 				}
-				setNotice( `Configuration package generated with ${ String( data.definition_count ?? 0 ) } definition(s).` );
+				setNotice(
+					`Configuration package generated with ${ String(
+						data.definition_count ?? 0
+					) } definition(s).`
+				);
 			} );
 		}
 	);
@@ -330,61 +357,81 @@ function boot(): void {
 		URL.revokeObjectURL( url );
 	} );
 
-	input( 'wpessential-package-file' )?.addEventListener( 'change', ( event ) => {
-		const target = event.currentTarget;
-		if ( ! ( target instanceof HTMLInputElement ) ) {
-			return;
-		}
-		const file = target.files?.[ 0 ];
-		if ( ! file ) {
-			return;
-		}
-		if ( file.size > bootstrap.maxBytes ) {
-			setNotice( 'Selected package exceeds the allowed JSON size.', true );
-			target.value = '';
-			return;
-		}
-		void file.text().then( ( json ) => {
-			if ( importJson ) {
-				importJson.value = json;
+	input( 'wpessential-package-file' )?.addEventListener(
+		'change',
+		( event ) => {
+			const target = event.currentTarget;
+			if ( ! ( target instanceof HTMLInputElement ) ) {
+				return;
 			}
-			invalidatePreflight();
-		} );
-	} );
+			const file = target.files?.[ 0 ];
+			if ( ! file ) {
+				return;
+			}
+			if ( file.size > bootstrap.maxBytes ) {
+				setNotice(
+					'Selected package exceeds the allowed JSON size.',
+					true
+				);
+				target.value = '';
+				return;
+			}
+			void file.text().then( ( json ) => {
+				if ( importJson ) {
+					importJson.value = json;
+				}
+				invalidatePreflight();
+			} );
+		}
+	);
 
 	importJson?.addEventListener( 'input', invalidatePreflight );
 	strategy?.addEventListener( 'change', invalidatePreflight );
 
-	button( 'wpessential-package-preflight' )?.addEventListener( 'click', () => {
-		void run( async () => {
-			const json = importJson?.value.trim() ?? '';
-			const selectedStrategy = strategy?.value ?? 'create_only';
-			if ( json === '' ) {
-				throw new Error( 'Paste or load a configuration package before preflight.' );
-			}
-			const data = await postRoute( bootstrap, bootstrap.routes.preflight, {
-				package_json: json,
-				strategy: selectedStrategy,
-			} );
-			const report = parsePreflight( data );
-			if ( ! report ) {
-				throw new Error( 'Configuration package preflight response was invalid.' );
-			}
-			renderPreflight( report );
-			if ( report.valid ) {
-				preflightChecksum = report.package_checksum;
-				preflightJson = json;
-				preflightStrategy = selectedStrategy;
-				if ( apply ) {
-					apply.disabled = false;
+	button( 'wpessential-package-preflight' )?.addEventListener(
+		'click',
+		() => {
+			void run( async () => {
+				const json = importJson?.value.trim() ?? '';
+				const selectedStrategy = strategy?.value ?? 'create_only';
+				if ( json === '' ) {
+					throw new Error(
+						'Paste or load a configuration package before preflight.'
+					);
 				}
-				setNotice( 'Configuration package preflight passed.' );
-			} else {
-				invalidatePreflight();
-				setNotice( 'Configuration package preflight found blocking conflicts.', true );
-			}
-		} );
-	} );
+				const data = await postRoute(
+					bootstrap,
+					bootstrap.routes.preflight,
+					{
+						package_json: json,
+						strategy: selectedStrategy,
+					}
+				);
+				const report = parsePreflight( data );
+				if ( ! report ) {
+					throw new Error(
+						'Configuration package preflight response was invalid.'
+					);
+				}
+				renderPreflight( report );
+				if ( report.valid ) {
+					preflightChecksum = report.package_checksum;
+					preflightJson = json;
+					preflightStrategy = selectedStrategy;
+					if ( apply ) {
+						apply.disabled = false;
+					}
+					setNotice( 'Configuration package preflight passed.' );
+				} else {
+					invalidatePreflight();
+					setNotice(
+						'Configuration package preflight found blocking conflicts.',
+						true
+					);
+				}
+			} );
+		}
+	);
 
 	apply?.addEventListener( 'click', () => {
 		void run( async () => {
@@ -396,7 +443,9 @@ function boot(): void {
 				selectedStrategy !== preflightStrategy
 			) {
 				invalidatePreflight();
-				throw new Error( 'Run a fresh preflight for the exact package and strategy before importing.' );
+				throw new Error(
+					'Run a fresh preflight for the exact package and strategy before importing.'
+				);
 			}
 			const data = await postRoute( bootstrap, bootstrap.routes.import, {
 				package_json: json,
@@ -404,14 +453,20 @@ function boot(): void {
 				expected_package_checksum: preflightChecksum,
 			} );
 			if ( ! isRecord( data ) || ! isRecord( data.counts ) ) {
-				throw new Error( 'Configuration package import response was invalid.' );
+				throw new Error(
+					'Configuration package import response was invalid.'
+				);
 			}
 			const created = data.counts.created ?? 0;
 			const updated = data.counts.updated ?? 0;
 			const noChange = data.counts.no_change ?? 0;
 			invalidatePreflight();
 			setNotice(
-				`Configuration package applied: ${ String( created ) } created, ${ String( updated ) } updated, ${ String( noChange ) } unchanged.`
+				`Configuration package applied: ${ String(
+					created
+				) } created, ${ String( updated ) } updated, ${ String(
+					noChange
+				) } unchanged.`
 			);
 		} );
 	} );
