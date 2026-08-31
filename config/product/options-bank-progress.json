@@ -14,7 +14,7 @@
     {"id":1,"key":"cpt","status":"BANK_SURFACE_SEEDED","records":107,"notes":"Current WordPress register_post_type(), current labels, capability map and native-extra/internal exclusions are seeded. Market evidence enrichment and final native cross-check remain before NATIVE_AUDITED/MARKET_AUDITED."},
     {"id":2,"key":"taxonomy","status":"BANK_SURFACE_SEEDED","records":71,"notes":"Current register_taxonomy(), get_taxonomy_labels() and capability map are seeded. Market evidence enrichment and final native cross-check remain."},
     {"id":3,"key":"fields","status":"BANK_REVIEWED","records":618,"notes":"Fields Bank Review V2 closes the original semantic, native and market blockers without adding count-only records. Six semantic relationships remain machine-canonicalized; native WordPress audit and provider-by-provider market audit both have zero unresolved items; all 618 Fields records are classified, and rejected/deferred/WPE-exceed policies are consistency-gated. Surface 3 is ready to feed downstream Atomic Option Contracts, but this does not claim runtime implementation or shipped parity."},
-    {"id":4,"key":"relations","status":"BANK_SURFACE_SEEDED","records":135,"notes":"Relations V1 seeds persistent edge definitions separately from Fields selector controls: identity, endpoints, cardinality/direction, native object-term/post-parent adapters, table/index strategy, pivot schema references, lifecycle/editor/permissions, query/API/frontend/portability, performance and integrity. All 135 records are classified discovery inputs. Native and provider-by-provider market completeness remain separate audit gates."},
+    {"id":4,"key":"relations","status":"NATIVE_AUDITED","records":142,"notes":"Relations Native Audit V1 closes current WordPress object-term and hierarchical post-parent coverage with 44 explicit dispositions and zero unresolved items. Seven evidence-backed current-native adapter records capture term_taxonomy_id identity, taxonomy-sort ordering dependency, endpoint association validation, hierarchy applicability/loop protection, and native delete cleanup/reparent semantics. Provider-by-provider market audit remains open."},
     {"id":5,"key":"status","status":"UNSEEDED","records":0},
     {"id":6,"key":"query","status":"UNSEEDED","records":0},
     {"id":7,"key":"tables","status":"UNSEEDED","records":0},
@@ -70,9 +70,9 @@
   ],
   "truth": {
     "seeded_surfaces": 4,
-    "native_audited_surfaces": 1,
+    "native_audited_surfaces": 2,
     "market_audited_surfaces": 1,
     "bank_reviewed_surfaces": 1,
-    "total_bank_records": 931
+    "total_bank_records": 938
   }
 }
