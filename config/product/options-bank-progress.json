@@ -13,7 +13,7 @@
   "surface_status": [
     {"id":1,"key":"cpt","status":"BANK_SURFACE_SEEDED","records":107,"notes":"Current WordPress register_post_type(), current labels, capability map and native-extra/internal exclusions are seeded. Market evidence enrichment and final native cross-check remain before NATIVE_AUDITED/MARKET_AUDITED."},
     {"id":2,"key":"taxonomy","status":"BANK_SURFACE_SEEDED","records":71,"notes":"Current register_taxonomy(), get_taxonomy_labels() and capability map are seeded. Market evidence enrichment and final native cross-check remain."},
-    {"id":3,"key":"fields","status":"BANK_SURFACE_SEEDED","records":341,"notes":"Initial normalized field/group/control registry seed covers shared field/group settings, canonical field types, core controls, media/date/map, relational, complex/nested, shared behavior, compatibility and WPE-exceed possibilities. Broad WordPress.org/GitHub/GitLab/SVN competitor sweep and final completeness review remain before MARKET_AUDITED/BANK_REVIEWED."},
+    {"id":3,"key":"fields","status":"BANK_SURFACE_SEEDED","records":544,"notes":"Broad normalized field/group/control inventory now includes mature ACF/SCF/Meta Box/JetEngine/Redux patterns plus Pods, CMB2, Carbon Fields, Fieldmanager, Smart Custom Fields, WCK/CFS-family, Modern/Native Fields, ACFE, Toolset, ACPT and newer WordPress.org field builders. Specialized controls, permissions, unique constraints, schema sync/export, block bindings, scoped values, long-tail targets/media UX, 20 migration adapters and WPE exceed contracts are seeded. Long-tail recheck and machine validation remain before MARKET_AUDITED/BANK_REVIEWED."},
     {"id":4,"key":"relations","status":"UNSEEDED","records":0},
     {"id":5,"key":"status","status":"UNSEEDED","records":0},
     {"id":6,"key":"query","status":"UNSEEDED","records":0},
@@ -73,6 +73,6 @@
     "native_audited_surfaces": 0,
     "market_audited_surfaces": 0,
     "bank_reviewed_surfaces": 0,
-    "total_bank_records": 519
+    "total_bank_records": 722
   }
 }
