@@ -10,6 +10,7 @@ $root = dirname(__DIR__, 2);
 $bankDirectory = $root . '/config/product/options-bank';
 $surfaceRegistryPath = $root . '/config/product/competitor-parity-surfaces.json';
 $schemaPath = $root . '/config/product/options-bank.schema.json';
+$semanticRegistryPath = $root . '/config/product/options-bank-semantic-relations.json';
 
 /** @return array<string, mixed> */
 function readJsonObject(string $path): array
@@ -74,6 +75,7 @@ $allowedPriorities = [
     'P0_NATIVE', 'P0_PARITY', 'P1_CORE', 'P1_EXCEED',
     'P2_COMPETITIVE', 'P3_LATER', 'NOT_SCHEDULED',
 ];
+$allowedSemanticRelations = ['ALIAS', 'EFFECTIVE_DERIVATION'];
 
 // Keep the canonical discovery schema parseable without introducing another
 // runtime dependency merely to validate JSON Schema during a smoke test.
@@ -263,12 +265,108 @@ foreach ($parentReferences as $reference) {
     }
 }
 
+$semanticRegistry = readJsonObject($semanticRegistryPath);
+if (($semanticRegistry['schema_version'] ?? null) !== 1 || ($semanticRegistry['bank_version'] ?? null) !== 'v1') {
+    throw new RuntimeException('Options Bank semantic relationship registry has an unsupported version.');
+}
+
+$semanticRelationships = $semanticRegistry['relationships'] ?? null;
+if (!is_array($semanticRelationships)) {
+    throw new RuntimeException('Options Bank semantic relationship registry is missing relationships.');
+}
+
+/** @var array<string, array<string, true>> $semanticSources */
+$semanticSources = [];
+/** @var array<string, array<string, string>> $aliasTargets */
+$aliasTargets = [];
+foreach ($semanticRelationships as $index => $relationship) {
+    if (!is_array($relationship)) {
+        throw new RuntimeException(sprintf('Semantic relationship %d is invalid.', $index));
+    }
+
+    $surfaceKey = requireString(
+        $relationship['surface'] ?? null,
+        sprintf('Semantic relationship %d has no surface.', $index),
+    );
+    $sourceId = requireString(
+        $relationship['source_id'] ?? null,
+        sprintf('Semantic relationship %d has no source_id.', $index),
+    );
+    $targetId = requireString(
+        $relationship['target_id'] ?? null,
+        sprintf('Semantic relationship %d has no target_id.', $index),
+    );
+    $relation = requireString(
+        $relationship['relation'] ?? null,
+        sprintf('Semantic relationship %d has no relation.', $index),
+    );
+    requireString(
+        $relationship['rationale'] ?? null,
+        sprintf('Semantic relationship %d has no rationale.', $index),
+    );
+
+    if (!in_array($relation, $allowedSemanticRelations, true)) {
+        throw new RuntimeException(sprintf(
+            'Semantic relationship %s -> %s has invalid relation %s.',
+            $sourceId,
+            $targetId,
+            $relation,
+        ));
+    }
+    if (!isset($idsByKey[$surfaceKey])) {
+        throw new RuntimeException(sprintf('Semantic relationship references unknown surface %s.', $surfaceKey));
+    }
+    if ($sourceId === $targetId) {
+        throw new RuntimeException(sprintf('Semantic relationship %s cannot target itself.', $sourceId));
+    }
+    if (!isset($surfaceRecordIds[$surfaceKey][$sourceId])) {
+        throw new RuntimeException(sprintf(
+            'Semantic relationship source %s does not exist on surface %s.',
+            $sourceId,
+            $surfaceKey,
+        ));
+    }
+    if (!isset($surfaceRecordIds[$surfaceKey][$targetId])) {
+        throw new RuntimeException(sprintf(
+            'Semantic relationship target %s does not exist on surface %s.',
+            $targetId,
+            $surfaceKey,
+        ));
+    }
+    if (isset($semanticSources[$surfaceKey][$sourceId])) {
+        throw new RuntimeException(sprintf(
+            'Semantic relationship source %s is mapped more than once on surface %s.',
+            $sourceId,
+            $surfaceKey,
+        ));
+    }
+    $semanticSources[$surfaceKey][$sourceId] = true;
+
+    if ($relation === 'ALIAS') {
+        $aliasTargets[$surfaceKey][$sourceId] = $targetId;
+    }
+}
+
+foreach ($aliasTargets as $surfaceKey => $targets) {
+    foreach ($targets as $sourceId => $targetId) {
+        if (isset($targets[$targetId])) {
+            throw new RuntimeException(sprintf(
+                'Semantic alias %s on surface %s must point directly to a canonical record, not alias %s.',
+                $sourceId,
+                $surfaceKey,
+                $targetId,
+            ));
+        }
+    }
+}
+
 fwrite(
     STDOUT,
     sprintf(
-        "Master Options Bank contract: PASS (%d seeded surface(s), %d shard(s), %d record(s)).\n",
+        "Master Options Bank contract: PASS (%d seeded surface(s), %d shard(s), %d record(s), %d semantic relationship(s)).\n",
         count($seededSurfaces),
         count($files),
         $totalRecords,
+        count($semanticRelationships),
     ),
 );
