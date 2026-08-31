@@ -1,6 +1,6 @@
 # WPEssential — Options Bank Integration Lane #34
 
-Status: **INTEGRATION_WORK / STATUS_BANK_REVIEW_PROMOTION_CANDIDATE**  
+Status: **INTEGRATION_WORK / COLUMNS_DASHBOARD_BANK_REVIEW_PROMOTION_CANDIDATE**  
 Snapshot: **2026-09-01**  
 Integration branch: **`integration/options-bank-shared-certification-30-32-33`**  
 Integration PR: **#37**  
@@ -18,70 +18,79 @@ Integrated surfaces:
 
 Existing Surface 3 Fields and Surface 4 Relations Bank certification remains unchanged.
 
-## Certified lifecycle history
+## Lifecycle invariant
 
-The lane preserves the fail-closed sequence:
+The lane remains fail-closed:
 
 `BANK_SURFACE_SEEDED → NATIVE_AUDITED → MARKET_AUDITED → BANK_REVIEWED`
+
+Every lifecycle-changing commit receives fresh exact-head CI before the next promotion. No force update, rebase, test weakening, or lifecycle leap is permitted.
+
+## Certified history
 
 Key certified checkpoints:
 
 - Stage A seed integration: `deaf4cfe79ee37386038b61eaa2f1d7ac6acfde7` — all five applicable workflows green;
 - Columns/Dashboard native checkpoint: `d3f43a537a080b7e552ded528ad482999faab446` — all five applicable workflows green;
-- Status validator-enablement checkpoint: `b82c48589c1b1955bd24583d5bb0b5483fee3991` — all five applicable workflows green;
-- Status native prerequisite: `d7783cd97b07dd69a6c901774c9fd9cf4e843c0d` — all five applicable workflows green;
-- Status native promotion: `50620289907af7e75d763d2b0619cb6c7c1a9805`;
-- Status native synchronized certification: `9d004c783407fe3ec6892b2e755d373d9b491609` — all five applicable workflows green;
-- Status market promotion: `d55432f701bd76fe2296bcfd232aa29f5040fc92`;
-- Status market synchronized certification prerequisite: `db928cca648a97a76c4fb5554b2b83fd6b7456e6`.
+- Status Bank Review certification: `ef78556b3e9e3bdeb28817c9e91209dc016b30dc` — all five applicable workflows green;
+- Columns/Dashboard market promotion: `25308ce16bc8df4a5e05b832bb49c81ee4d0c478` — all five applicable workflows green.
 
-The latest synchronization absorbed only non-overlapping Surface 3 Fields registered post-meta storage, its Platform Compatibility hook, and checkpoint from current `main` `b29ff9546a172499dfe3aff02df10ce9de0a4ed7` through a normal two-parent merge. No force update or lifecycle leap was used.
+Current synchronized `main` at the Stage D prerequisite is `b29ff9546a172499dfe3aff02df10ce9de0a4ed7`.
 
-## Exact Status Bank Review prerequisite
+## Exact Stage D prerequisite
 
-Exact synchronized head: `db928cca648a97a76c4fb5554b2b83fd6b7456e6`  
+Exact certified Stage C head: `25308ce16bc8df4a5e05b832bb49c81ee4d0c478`  
 Exact synchronized main: `b29ff9546a172499dfe3aff02df10ce9de0a4ed7`
 
-All five applicable workflows completed successfully on that exact head:
+All five applicable workflows completed successfully on that exact Stage C head:
 
-- Architecture Guards #587;
-- Platform Compatibility Matrix #294;
-- PHP Quality Toolchain #109;
-- Distributable Package #221;
-- Browser E2E Accessibility #143.
+- Architecture Guards #595;
+- Platform Compatibility Matrix #300;
+- PHP Quality Toolchain #111;
+- Distributable Package #227;
+- Browser E2E Accessibility #145.
 
-The complete registered Status evidence is closed at:
+The exact-head repository evidence closes the two remaining review prerequisites:
 
-- native: `NATIVE_AUDITED`, 35 dispositions / 32 Bank / 1 runtime / 2 Core-internal / 0 unresolved / 129 records;
-- market: `MARKET_AUDITED`, 9 capability families / 3 primary providers / 4 specialist providers / 13 family mappings / 63 Bank references / 0 unresolved;
-- semantic registry: 0 Surface 5 alias/effective-derivation relationships;
-- Bank records: 129 unique records / 129 unique option paths;
-- policy: 0 UNREVIEWED, exactly 4 rejected-unsafe, 0 deferred, future-only WPE_EXCEED consistency preserved;
+### Surface 8 Admin Columns
+
+- native: `NATIVE_AUDITED`, 29 dispositions / 214 Bank records / 0 unresolved;
+- market: `MARKET_AUDITED`, 6 canonical capability families / 3 primary providers / 1 specialist / 57 Bank references / 0 unresolved;
+- semantic relationships / aliases / effective derivations: 0 / 0 / 0;
+- policy consistency: 0 unreviewed; rejected/deferred/WPE-exceed consistency closed; future-only WPE-exceed shard closed;
 - post-market record delta: 0.
 
-These prerequisites earn a dedicated Status Bank Review promotion.
+### Surface 10 Dashboard Widgets
 
-## Current promotion candidate
+- native: `NATIVE_AUDITED`, 24 dispositions / 123 Bank records / 0 unresolved;
+- market: `MARKET_AUDITED`, 8 canonical capability families / 3 primary providers / 2 specialists / 17 family mappings / 47 Bank references / 0 unresolved;
+- semantic relationships / aliases / effective derivations: 0 / 0 / 0;
+- policy consistency: 0 unreviewed, 2 rejected-unsafe, 2 canonical deferred, 12 future WPE-exceed;
+- post-market record delta: 0.
 
-This changed head promotes **only** Surface 5 Bank Review:
+These prerequisites satisfy Issue #34's Stage D review gate.
 
-- Status review decision: `BANK_REVIEWED`;
-- Status review unresolved gates: `0`;
-- Status canonical progress: `BANK_REVIEWED / 129`;
-- aggregate bank-reviewed surfaces: `3`.
+## Current Stage D promotion candidate
+
+This changed head promotes **only** the two remaining integrated Bank Reviews:
+
+- Surface 8 `columns`: review decision `BANK_REVIEWED`, unresolved `0`, canonical progress `BANK_REVIEWED / 214`;
+- Surface 10 `dashboard-widgets`: review decision `BANK_REVIEWED`, unresolved `0`, canonical progress `BANK_REVIEWED / 123`.
+
+Surface 5 `status` remains `BANK_REVIEWED / 129`.
 
 Integrated aggregate candidate truth becomes:
 
 - seeded surfaces: 7;
 - native-audited surfaces: 5;
-- market-audited surfaces: 3;
-- bank-reviewed surfaces: 3;
+- market-audited surfaces: 5;
+- bank-reviewed surfaces: 5;
 - total Bank records: 1,406.
 
-Surface 8 `columns` and Surface 10 `dashboard-widgets` remain `NATIVE_AUDITED`; their market and Bank Review stages are still downstream and must be promoted separately with fresh exact-head evidence.
+## Final certification gate
 
-## Next gate
+Because this Stage D promotion changes repository truth, this changed head itself must pass all five applicable exact-head workflows and remain current with `main` before Admin Columns or Dashboard Widgets are claimed as certified `BANK_REVIEWED` surfaces.
 
-Because this Bank Review promotion changes repository truth, the changed head itself must pass all applicable exact-head workflows and remain current with `main` before Status may be claimed as a certified `BANK_REVIEWED` surface or feed finalized UX projection / Atomic Option / implementation contracts.
+Only after that final certification may their downstream UX projection / Atomic Option / implementation contracts be entered or finalized under separately resolved plan/work-package ownership and dependency scope.
 
-No test weakening, force update, duplicate semantic engine, direct lifecycle leap, runtime implementation, deployment, or release completion is claimed by this promotion.
+This integration work does not claim runtime implementation, shipped parity, deployment, or release completion.

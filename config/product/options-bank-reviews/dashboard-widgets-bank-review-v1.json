@@ -6,7 +6,7 @@
     "key": "dashboard-widgets"
   },
   "snapshot_date": "2026-09-01",
-  "decision": "REVIEW_BLOCKED",
+  "decision": "BANK_REVIEWED",
   "record_count": 123,
   "required_artifacts": [
     {
@@ -17,12 +17,12 @@
     {
       "kind": "native_audit",
       "path": "config/product/options-bank-audits/dashboard-widgets-native-wordpress.json",
-      "expected_status": "NATIVE_AUDIT_IN_PROGRESS; research complete with zero unresolved items, exact-head Surface 10 registration/execution and canonical progress promotion pending"
+      "expected_status": "NATIVE_AUDITED; 24 dispositions and zero unresolved items; registered Surface 10 native contract exact-head certified"
     },
     {
       "kind": "market_audit",
       "path": "config/product/options-bank-audits/dashboard-widgets-market-ecosystem.json",
-      "expected_status": "MARKET_AUDIT_IN_PROGRESS; provider evidence complete with zero unresolved items, exact-head Surface 10 registration/execution and canonical progress promotion pending"
+      "expected_status": "MARKET_AUDITED; 3 primary providers, 2 specialists, 17 family mappings, 47 Bank references and zero unresolved items; registered Surface 10 market contract exact-head certified"
     }
   ],
   "semantic_expectations": {
@@ -41,5 +41,5 @@
     "wpe_exceed_shard_future_only": true,
     "record_delta_after_market_audit": 0
   },
-  "unresolved": 2
+  "unresolved": 0
 }
