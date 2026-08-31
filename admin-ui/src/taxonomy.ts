@@ -42,7 +42,9 @@ type AjaxEnvelope = {
 };
 
 function isRecord( value: unknown ): value is RecordValue {
-	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+	return (
+		typeof value === 'object' && value !== null && ! Array.isArray( value )
+	);
 }
 
 function isDefinition( value: unknown ): value is TaxonomyDefinition {
@@ -57,7 +59,11 @@ function isDefinition( value: unknown ): value is TaxonomyDefinition {
 }
 
 function isRoute( value: unknown ): value is Route {
-	return isRecord( value ) && typeof value.type === 'string' && typeof value.nonce === 'string';
+	return (
+		isRecord( value ) &&
+		typeof value.type === 'string' &&
+		typeof value.nonce === 'string'
+	);
 }
 
 function parseBootstrap( value: unknown ): Bootstrap | null {
@@ -76,6 +82,7 @@ function parseBootstrap( value: unknown ): Bootstrap | null {
 	) {
 		return null;
 	}
+
 	return {
 		surface: 'taxonomies',
 		ajaxUrl: value.ajaxUrl,
@@ -110,11 +117,17 @@ function parseReport( value: unknown ): ValidationReport | null {
 	) {
 		return null;
 	}
+
 	const key = value.candidate.taxonomy_key;
 	if ( key !== null && typeof key !== 'string' ) {
 		return null;
 	}
-	return { valid: value.valid, issues: value.issues, candidate: { taxonomy_key: key } };
+
+	return {
+		valid: value.valid,
+		issues: value.issues,
+		candidate: { taxonomy_key: key },
+	};
 }
 
 function textInput( id: string ): HTMLInputElement | null {
@@ -175,6 +188,7 @@ function setNotice( message: string, error = false ): void {
 	if ( ! ( notice instanceof HTMLElement ) ) {
 		return;
 	}
+
 	const paragraph = notice.querySelector( 'p' );
 	if ( paragraph ) {
 		paragraph.textContent = message;
@@ -188,41 +202,72 @@ function clearValidation(): void {
 	const report = document.getElementById( 'wpessential-taxonomy-validation' );
 	if ( report instanceof HTMLElement ) {
 		report.hidden = true;
-		report.classList.remove( 'notice', 'notice-error', 'notice-warning', 'notice-success' );
+		report.classList.remove(
+			'notice',
+			'notice-error',
+			'notice-warning',
+			'notice-success'
+		);
 	}
 }
 
 function renderValidation( report: ValidationReport ): void {
-	const container = document.getElementById( 'wpessential-taxonomy-validation' );
+	const container = document.getElementById(
+		'wpessential-taxonomy-validation'
+	);
 	if ( ! ( container instanceof HTMLElement ) ) {
 		return;
 	}
-	const summary = container.querySelector( '[data-wpessential-taxonomy-validation-summary]' );
-	const issues = container.querySelector( '[data-wpessential-taxonomy-validation-issues]' );
-	if ( ! ( summary instanceof HTMLElement ) || ! ( issues instanceof HTMLElement ) ) {
+
+	const summary = container.querySelector(
+		'[data-wpessential-taxonomy-validation-summary]'
+	);
+	const issues = container.querySelector(
+		'[data-wpessential-taxonomy-validation-issues]'
+	);
+	if (
+		! ( summary instanceof HTMLElement ) ||
+		! ( issues instanceof HTMLElement )
+	) {
 		return;
 	}
+
 	issues.replaceChildren();
 	for ( const issue of report.issues ) {
 		const item = document.createElement( 'li' );
-		item.textContent = `${ issue.severity.replaceAll( '_', ' ' ) }: ${ issue.message }`;
+		item.textContent = `${ issue.severity.replaceAll( '_', ' ' ) }: ${
+			issue.message
+		}`;
 		item.dataset.wpessentialTaxonomyValidationSeverity = issue.severity;
 		issues.append( item );
 	}
-	const warningCount = report.issues.filter( ( issue ) => issue.severity !== 'blocked' ).length;
+
+	const warningCount = report.issues.filter(
+		( issue ) => issue.severity !== 'blocked'
+	).length;
 	if ( report.valid ) {
-		summary.textContent = warningCount === 0
-			? 'Validation passed. No blocking issues found.'
-			: `Validation passed with ${ warningCount } warning or informational item(s).`;
+		summary.textContent =
+			warningCount === 0
+				? 'Validation passed. No blocking issues found.'
+				: `Validation passed with ${ warningCount } warning or informational item(s).`;
 	} else {
-		const blockedCount = report.issues.filter( ( issue ) => issue.severity === 'blocked' ).length;
+		const blockedCount = report.issues.filter(
+			( issue ) => issue.severity === 'blocked'
+		).length;
 		summary.textContent = `Validation blocked by ${ blockedCount } issue(s). Resolve them before saving.`;
 	}
+
 	container.hidden = false;
 	container.classList.add( 'notice' );
 	container.classList.toggle( 'notice-error', ! report.valid );
-	container.classList.toggle( 'notice-warning', report.valid && report.issues.length > 0 );
-	container.classList.toggle( 'notice-success', report.valid && report.issues.length === 0 );
+	container.classList.toggle(
+		'notice-warning',
+		report.valid && report.issues.length > 0
+	);
+	container.classList.toggle(
+		'notice-success',
+		report.valid && report.issues.length === 0
+	);
 }
 
 async function postRoute(
@@ -235,19 +280,26 @@ async function postRoute(
 	body.set( 'type', route.type );
 	body.set( 'nonce', route.nonce );
 	body.set( 'payload_json', JSON.stringify( payload ) );
+
 	const response = await fetch( bootstrap.ajaxUrl, {
 		method: 'POST',
 		credentials: 'same-origin',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		},
 		body: body.toString(),
 	} );
 	const value: unknown = await response.json();
 	if ( ! isRecord( value ) || typeof value.success !== 'boolean' ) {
 		throw new Error( 'WPEssential returned an invalid AJAX response.' );
 	}
+
 	const envelope = value as AjaxEnvelope;
 	if ( ! response.ok || ! envelope.success ) {
-		throw new Error( envelope.error?.message ?? 'The requested change could not be completed.' );
+		throw new Error(
+			envelope.error?.message ??
+				'The requested change could not be completed.'
+		);
 	}
 	return envelope.data;
 }
@@ -258,7 +310,10 @@ function cell( text: string ): HTMLTableCellElement {
 	return element;
 }
 
-function actionButton( label: string, attributes: Record< string, string > ): HTMLButtonElement {
+function actionButton(
+	label: string,
+	attributes: Record< string, string >
+): HTMLButtonElement {
 	const button = document.createElement( 'button' );
 	button.type = 'button';
 	button.className = 'button button-small';
@@ -275,6 +330,7 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		return;
 	}
 	rows.replaceChildren();
+
 	if ( definitions.length === 0 ) {
 		const row = document.createElement( 'tr' );
 		row.dataset.wpessentialTaxonomyEmpty = '';
@@ -284,21 +340,37 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		rows.append( row );
 		return;
 	}
+
 	for ( const definition of definitions ) {
 		const row = document.createElement( 'tr' );
 		row.dataset.wpessentialTaxonomyRow = definition.id;
-		const name = typeof definition.payload.name === 'string' ? definition.payload.name : '';
-		const key = typeof definition.payload.taxonomy_key === 'string' ? definition.payload.taxonomy_key : '';
+		const name =
+			typeof definition.payload.name === 'string'
+				? definition.payload.name
+				: '';
+		const key =
+			typeof definition.payload.taxonomy_key === 'string'
+				? definition.payload.taxonomy_key
+				: '';
 		const objectTypes = Array.isArray( definition.payload.object_types )
-			? definition.payload.object_types.filter( ( value ): value is string => typeof value === 'string' ).join( ', ' )
+			? definition.payload.object_types
+					.filter(
+						( value ): value is string => typeof value === 'string'
+					)
+					.join( ', ' )
 			: '';
+
 		row.append(
 			cell( name ),
 			cell( key ),
 			cell( objectTypes ),
-			cell( definition.status.charAt( 0 ).toUpperCase() + definition.status.slice( 1 ) ),
+			cell(
+				definition.status.charAt( 0 ).toUpperCase() +
+					definition.status.slice( 1 )
+			),
 			cell( String( definition.revision ) )
 		);
+
 		const actions = document.createElement( 'td' );
 		actions.append(
 			actionButton( 'Edit', { wpessentialTaxonomyEdit: definition.id } ),
@@ -306,17 +378,28 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		);
 		if ( definition.status === 'published' ) {
 			actions.append(
-				actionButton( 'Disable', { wpessentialTaxonomyStatus: 'disabled', wpessentialTaxonomyId: definition.id } ),
+				actionButton( 'Disable', {
+					wpessentialTaxonomyStatus: 'disabled',
+					wpessentialTaxonomyId: definition.id,
+				} ),
 				document.createTextNode( ' ' )
 			);
 		} else {
 			actions.append(
-				actionButton( 'Publish', { wpessentialTaxonomyStatus: 'published', wpessentialTaxonomyId: definition.id } ),
+				actionButton( 'Publish', {
+					wpessentialTaxonomyStatus: 'published',
+					wpessentialTaxonomyId: definition.id,
+				} ),
 				document.createTextNode( ' ' )
 			);
 		}
 		if ( definition.status !== 'archived' ) {
-			actions.append( actionButton( 'Archive', { wpessentialTaxonomyStatus: 'archived', wpessentialTaxonomyId: definition.id } ) );
+			actions.append(
+				actionButton( 'Archive', {
+					wpessentialTaxonomyStatus: 'archived',
+					wpessentialTaxonomyId: definition.id,
+				} )
+			);
 		}
 		row.append( actions );
 		rows.append( row );
@@ -331,16 +414,30 @@ function resetForm(): void {
 	const id = textInput( 'wpessential-taxonomy-id' );
 	const revision = textInput( 'wpessential-taxonomy-revision' );
 	const key = textInput( 'wpessential-taxonomy-key' );
-	if ( id ) id.value = '';
-	if ( revision ) revision.value = '';
-	if ( key ) key.readOnly = false;
+	if ( id ) {
+		id.value = '';
+	}
+	if ( revision ) {
+		revision.value = '';
+	}
+	if ( key ) {
+		key.readOnly = false;
+	}
 	setFieldValue( 'object_types', 'post' );
 	const status = selectInput( 'wpessential-taxonomy-status' );
-	if ( status ) status.value = 'draft';
-	const title = document.getElementById( 'wpessential-taxonomy-editor-title' );
-	if ( title ) title.textContent = 'Add taxonomy';
+	if ( status ) {
+		status.value = 'draft';
+	}
+	const title = document.getElementById(
+		'wpessential-taxonomy-editor-title'
+	);
+	if ( title ) {
+		title.textContent = 'Add taxonomy';
+	}
 	const cancel = buttonInput( 'wpessential-taxonomy-cancel' );
-	if ( cancel ) cancel.hidden = true;
+	if ( cancel ) {
+		cancel.hidden = true;
+	}
 	clearValidation();
 }
 
@@ -348,8 +445,12 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 	const id = textInput( 'wpessential-taxonomy-id' );
 	const revision = textInput( 'wpessential-taxonomy-revision' );
 	const key = textInput( 'wpessential-taxonomy-key' );
-	if ( id ) id.value = definition.id;
-	if ( revision ) revision.value = String( definition.revision );
+	if ( id ) {
+		id.value = definition.id;
+	}
+	if ( revision ) {
+		revision.value = String( definition.revision );
+	}
 	setFieldValue( 'taxonomy_key', definition.payload.taxonomy_key );
 	setFieldValue( 'name', definition.payload.name );
 	setFieldValue( 'singular_name', definition.payload.singular_name );
@@ -357,28 +458,59 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 	setFieldValue(
 		'object_types',
 		Array.isArray( definition.payload.object_types )
-			? definition.payload.object_types.filter( ( value ): value is string => typeof value === 'string' ).join( ', ' )
+			? definition.payload.object_types
+					.filter(
+						( value ): value is string => typeof value === 'string'
+					)
+					.join( ', ' )
 			: ''
 	);
-	setBoolInput( 'wpessential-taxonomy-public', definition.payload.public, true );
-	setBoolInput( 'wpessential-taxonomy-rest', definition.payload.show_in_rest, true );
-	setBoolInput( 'wpessential-taxonomy-hierarchical', definition.payload.hierarchical );
-	setBoolInput( 'wpessential-taxonomy-admin-column', definition.payload.show_admin_column );
+	setBoolInput(
+		'wpessential-taxonomy-public',
+		definition.payload.public,
+		true
+	);
+	setBoolInput(
+		'wpessential-taxonomy-rest',
+		definition.payload.show_in_rest,
+		true
+	);
+	setBoolInput(
+		'wpessential-taxonomy-hierarchical',
+		definition.payload.hierarchical
+	);
+	setBoolInput(
+		'wpessential-taxonomy-admin-column',
+		definition.payload.show_admin_column
+	);
 	const status = selectInput( 'wpessential-taxonomy-status' );
-	if ( status ) status.value = definition.status;
-	if ( key ) key.readOnly = true;
-	const title = document.getElementById( 'wpessential-taxonomy-editor-title' );
-	if ( title ) title.textContent = 'Edit taxonomy';
+	if ( status ) {
+		status.value = definition.status;
+	}
+	if ( key ) {
+		key.readOnly = true;
+	}
+	const title = document.getElementById(
+		'wpessential-taxonomy-editor-title'
+	);
+	if ( title ) {
+		title.textContent = 'Edit taxonomy';
+	}
 	const cancel = buttonInput( 'wpessential-taxonomy-cancel' );
-	if ( cancel ) cancel.hidden = false;
+	if ( cancel ) {
+		cancel.hidden = false;
+	}
 	clearValidation();
 	textInput( 'wpessential-taxonomy-name' )?.focus();
 }
 
 function collectEditor( definitions: TaxonomyDefinition[] ): EditorRequest {
 	const id = textInput( 'wpessential-taxonomy-id' )?.value ?? '';
-	const revision = Number( textInput( 'wpessential-taxonomy-revision' )?.value ?? 0 );
+	const revision = Number(
+		textInput( 'wpessential-taxonomy-revision' )?.value ?? 0
+	);
 	const existing = definitions.find( ( definition ) => definition.id === id );
+
 	return {
 		id,
 		revision,
@@ -398,12 +530,19 @@ function collectEditor( definitions: TaxonomyDefinition[] ): EditorRequest {
 	};
 }
 
-function mutationRequest( editor: EditorRequest, validationOnly = false ): TaxonomyPayload {
+function mutationRequest(
+	editor: EditorRequest,
+	validationOnly = false
+): TaxonomyPayload {
 	const request: TaxonomyPayload = { payload: editor.payload };
-	if ( ! validationOnly ) request.status = editor.status;
+	if ( ! validationOnly ) {
+		request.status = editor.status;
+	}
 	if ( editor.id !== '' ) {
 		request.id = editor.id;
-		if ( ! validationOnly ) request.expected_revision = editor.revision;
+		if ( ! validationOnly ) {
+			request.expected_revision = editor.revision;
+		}
 	}
 	return request;
 }
@@ -411,7 +550,13 @@ function mutationRequest( editor: EditorRequest, validationOnly = false ): Taxon
 function boot(): void {
 	const root = document.getElementById( 'wpessential-taxonomy-root' );
 	const script = document.getElementById( 'wpessential-taxonomy-bootstrap' );
-	if ( ! ( root instanceof HTMLElement ) || ! ( script instanceof HTMLScriptElement ) ) return;
+	if (
+		! ( root instanceof HTMLElement ) ||
+		! ( script instanceof HTMLScriptElement )
+	) {
+		return;
+	}
+
 	let raw: unknown;
 	try {
 		raw = JSON.parse( script.textContent ?? '{}' );
@@ -419,40 +564,61 @@ function boot(): void {
 		root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 		return;
 	}
+
 	const bootstrap = parseBootstrap( raw );
 	if ( ! bootstrap ) {
 		root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 		return;
 	}
+
 	let definitions = [ ...bootstrap.definitions ];
 	let busy = false;
 
 	const refresh = async (): Promise< void > => {
 		const data = await postRoute( bootstrap, bootstrap.routes.list, {} );
-		if ( ! isRecord( data ) || ! Array.isArray( data.definitions ) ) throw new Error( 'The Taxonomy list response was invalid.' );
+		if ( ! isRecord( data ) || ! Array.isArray( data.definitions ) ) {
+			throw new Error( 'The Taxonomy list response was invalid.' );
+		}
 		const next = data.definitions.filter( isDefinition );
-		if ( next.length !== data.definitions.length ) throw new Error( 'The Taxonomy list contained invalid records.' );
+		if ( next.length !== data.definitions.length ) {
+			throw new Error( 'The Taxonomy list contained invalid records.' );
+		}
 		definitions = next;
 		renderRows( definitions );
 	};
 
-	const validate = async ( editor: EditorRequest ): Promise< ValidationReport > => {
-		const data = await postRoute( bootstrap, bootstrap.routes.validate, mutationRequest( editor, true ) );
+	const validate = async (
+		editor: EditorRequest
+	): Promise< ValidationReport > => {
+		const data = await postRoute(
+			bootstrap,
+			bootstrap.routes.validate,
+			mutationRequest( editor, true )
+		);
 		const report = parseReport( data );
-		if ( ! report ) throw new Error( 'The Taxonomy validation response was invalid.' );
+		if ( ! report ) {
+			throw new Error( 'The Taxonomy validation response was invalid.' );
+		}
 		renderValidation( report );
 		return report;
 	};
 
 	const run = async ( operation: () => Promise< void > ): Promise< void > => {
-		if ( busy ) return;
+		if ( busy ) {
+			return;
+		}
 		busy = true;
 		root.setAttribute( 'aria-busy', 'true' );
 		setNotice( '' );
 		try {
 			await operation();
 		} catch ( error ) {
-			setNotice( error instanceof Error ? error.message : 'The requested change could not be completed.', true );
+			setNotice(
+				error instanceof Error
+					? error.message
+					: 'The requested change could not be completed.',
+				true
+			);
 		} finally {
 			busy = false;
 			root.removeAttribute( 'aria-busy' );
@@ -469,59 +635,101 @@ function boot(): void {
 				const editor = collectEditor( definitions );
 				const report = await validate( editor );
 				if ( ! report.valid ) {
-					setNotice( 'Taxonomy was not saved because validation found blocking issues.', true );
+					setNotice(
+						'Taxonomy was not saved because validation found blocking issues.',
+						true
+					);
 					return;
 				}
-				await postRoute( bootstrap, bootstrap.routes.save, mutationRequest( editor ) );
+				await postRoute(
+					bootstrap,
+					bootstrap.routes.save,
+					mutationRequest( editor )
+				);
 				await refresh();
 				resetForm();
-				setNotice( editor.id === '' ? 'Taxonomy created.' : 'Taxonomy updated.' );
+				setNotice(
+					editor.id === '' ? 'Taxonomy created.' : 'Taxonomy updated.'
+				);
 			} );
 		} );
 	}
 
-	buttonInput( 'wpessential-taxonomy-validate' )?.addEventListener( 'click', () => {
-		void run( async () => { await validate( collectEditor( definitions ) ); } );
-	} );
-	buttonInput( 'wpessential-taxonomy-cancel' )?.addEventListener( 'click', () => {
-		resetForm();
-		setNotice( '' );
-	} );
-	buttonInput( 'wpessential-taxonomy-refresh' )?.addEventListener( 'click', () => {
-		void run( async () => {
-			await refresh();
-			setNotice( 'Taxonomies refreshed.' );
-		} );
-	} );
+	buttonInput( 'wpessential-taxonomy-validate' )?.addEventListener(
+		'click',
+		() => {
+			void run( async () => {
+				await validate( collectEditor( definitions ) );
+			} );
+		}
+	);
+	buttonInput( 'wpessential-taxonomy-cancel' )?.addEventListener(
+		'click',
+		() => {
+			resetForm();
+			setNotice( '' );
+		}
+	);
+	buttonInput( 'wpessential-taxonomy-refresh' )?.addEventListener(
+		'click',
+		() => {
+			void run( async () => {
+				await refresh();
+				setNotice( 'Taxonomies refreshed.' );
+			} );
+		}
+	);
 
 	root.addEventListener( 'click', ( event ) => {
 		const target = event.target;
-		if ( ! ( target instanceof HTMLButtonElement ) ) return;
-		const editId = target.dataset.wpessentialTaxonomyEdit;
-		if ( editId ) {
-			const definition = definitions.find( ( candidate ) => candidate.id === editId );
-			if ( definition ) editDefinition( definition );
+		if ( ! ( target instanceof HTMLButtonElement ) ) {
 			return;
 		}
+		const editId = target.dataset.wpessentialTaxonomyEdit;
+		if ( editId ) {
+			const definition = definitions.find(
+				( candidate ) => candidate.id === editId
+			);
+			if ( definition ) {
+				editDefinition( definition );
+			}
+			return;
+		}
+
 		const status = target.dataset.wpessentialTaxonomyStatus;
 		const id = target.dataset.wpessentialTaxonomyId;
-		if ( ! status || ! id ) return;
-		const definition = definitions.find( ( candidate ) => candidate.id === id );
+		if ( ! status || ! id ) {
+			return;
+		}
+		const definition = definitions.find(
+			( candidate ) => candidate.id === id
+		);
 		if ( ! definition ) {
 			setNotice( 'The selected taxonomy is no longer available.', true );
 			return;
 		}
+
 		void run( async () => {
-			await postRoute( bootstrap, bootstrap.routes.status, { id, expected_revision: definition.revision, status } );
+			await postRoute( bootstrap, bootstrap.routes.status, {
+				id,
+				expected_revision: definition.revision,
+				status,
+			} );
 			await refresh();
-			if ( textInput( 'wpessential-taxonomy-id' )?.value === id ) resetForm();
+			if ( textInput( 'wpessential-taxonomy-id' )?.value === id ) {
+				resetForm();
+			}
 			setNotice( `Taxonomy status changed to ${ status }.` );
 		} );
 	} );
 
 	renderRows( definitions );
 	root.dataset.wpessentialEnhanced = 'ready';
-	window.dispatchEvent( new CustomEvent( 'wpessential:admin-ready', { detail: { surface: 'taxonomies', payload: bootstrap } } ) );
+	window.dispatchEvent(
+		new CustomEvent( 'wpessential:admin-ready', {
+			detail: { surface: 'taxonomies', payload: bootstrap },
+		} )
+	);
 }
 
 if ( document.readyState === 'loading' ) {
