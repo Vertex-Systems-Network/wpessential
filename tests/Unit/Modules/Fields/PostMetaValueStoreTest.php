@@ -269,7 +269,9 @@ final class PostMetaValueStoreTest extends TestCase
             compiler: $compiler,
             values: $values,
             getPostType: static fn (int $postId): string|false => $postType,
-            metadataExists: static fn (int $postId, string $metaKey): bool => array_key_exists($metaKey, $state[$postId] ?? []),
+            metadataExists: static function (int $postId, string $metaKey) use (&$state): bool {
+                return array_key_exists($metaKey, $state[$postId] ?? []);
+            },
             getPostMeta: static function (int $postId, string $metaKey, bool $single) use (&$state): mixed {
                 $value = $state[$postId][$metaKey] ?? null;
                 if ($single) {
