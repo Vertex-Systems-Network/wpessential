@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'frameworks/Platform/Admin/**'
+      - 'frameworks/Modules/Taxonomies/**'
       - 'admin-ui/**'
       - 'wpessential.php'
       - 'readme.txt'
@@ -20,6 +21,7 @@ on:
       - 'implementation/**'
     paths:
       - 'frameworks/Platform/Admin/**'
+      - 'frameworks/Modules/Taxonomies/**'
       - 'admin-ui/**'
       - 'wpessential.php'
       - 'readme.txt'
@@ -77,6 +79,9 @@ jobs:
           test -s assets/admin/main.js
           test -s assets/admin/main.css
           test -s assets/admin/main.asset.php
+          test -s assets/admin/taxonomy.js
+          test -s assets/admin/taxonomy.css
+          test -s assets/admin/taxonomy.asset.php
 
       - name: Set up PHP 8.2 packaging runtime
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
@@ -100,6 +105,8 @@ jobs:
           test -s /tmp/wpessential-e2e/wpessential/wpessential.php
           test -s /tmp/wpessential-e2e/wpessential/vendor/autoload.php
           test -s /tmp/wpessential-e2e/wpessential/assets/admin/main.js
+          test -s /tmp/wpessential-e2e/wpessential/assets/admin/taxonomy.js
+          test -s /tmp/wpessential-e2e/wpessential/assets/admin/taxonomy.asset.php
 
       - name: Install locked E2E graph
         shell: bash
