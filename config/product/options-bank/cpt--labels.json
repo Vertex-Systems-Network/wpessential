@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 1, "key": "cpt", "name": "Custom Post Types"},
+  "snapshot": {
+    "date": "2026-08-31",
+    "native_sources": [
+      {"name": "WordPress get_post_type_labels()", "type": "wordpress_core", "url": "https://developer.wordpress.org/reference/functions/get_post_type_labels/", "verified": true}
+    ],
+    "market_sources": []
+  },
+  "status": "BANK_MARKET_RESEARCHED",
+  "records": [
+    {"id":"cpt.labels.name","feature_group":"Labels","option_path":"labels.name","label":"Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.singular_name","feature_group":"Labels","option_path":"labels.singular_name","label":"Singular Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.add_new","feature_group":"Labels","option_path":"labels.add_new","label":"Add New","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.add_new_item","feature_group":"Labels","option_path":"labels.add_new_item","label":"Add New Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.edit_item","feature_group":"Labels","option_path":"labels.edit_item","label":"Edit Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.new_item","feature_group":"Labels","option_path":"labels.new_item","label":"New Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.view_item","feature_group":"Labels","option_path":"labels.view_item","label":"View Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.view_items","feature_group":"Labels","option_path":"labels.view_items","label":"View Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.search_items","feature_group":"Labels","option_path":"labels.search_items","label":"Search Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.not_found","feature_group":"Labels","option_path":"labels.not_found","label":"Not Found","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.not_found_in_trash","feature_group":"Labels","option_path":"labels.not_found_in_trash","label":"Not Found in Trash","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.parent_item_colon","feature_group":"Labels","option_path":"labels.parent_item_colon","label":"Parent Item Colon","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.all_items","feature_group":"Labels","option_path":"labels.all_items","label":"All Items","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.archives","feature_group":"Labels","option_path":"labels.archives","label":"Archives","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.attributes","feature_group":"Labels","option_path":"labels.attributes","label":"Attributes","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.insert_into_item","feature_group":"Labels","option_path":"labels.insert_into_item","label":"Insert into Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.uploaded_to_this_item","feature_group":"Labels","option_path":"labels.uploaded_to_this_item","label":"Uploaded to This Item","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.featured_image","feature_group":"Labels","option_path":"labels.featured_image","label":"Featured Image","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.set_featured_image","feature_group":"Labels","option_path":"labels.set_featured_image","label":"Set Featured Image","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.remove_featured_image","feature_group":"Labels","option_path":"labels.remove_featured_image","label":"Remove Featured Image","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.use_featured_image","feature_group":"Labels","option_path":"labels.use_featured_image","label":"Use Featured Image","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.menu_name","feature_group":"Labels","option_path":"labels.menu_name","label":"Menu Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.filter_items_list","feature_group":"Labels","option_path":"labels.filter_items_list","label":"Filter Items List","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.filter_by_date","feature_group":"Labels","option_path":"labels.filter_by_date","label":"Filter by Date","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.items_list_navigation","feature_group":"Labels","option_path":"labels.items_list_navigation","label":"Items List Navigation","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.items_list","feature_group":"Labels","option_path":"labels.items_list","label":"Items List","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_published","feature_group":"Labels","option_path":"labels.item_published","label":"Item Published","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_published_privately","feature_group":"Labels","option_path":"labels.item_published_privately","label":"Item Published Privately","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_reverted_to_draft","feature_group":"Labels","option_path":"labels.item_reverted_to_draft","label":"Item Reverted to Draft","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_trashed","feature_group":"Labels","option_path":"labels.item_trashed","label":"Item Trashed","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_scheduled","feature_group":"Labels","option_path":"labels.item_scheduled","label":"Item Scheduled","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_updated","feature_group":"Labels","option_path":"labels.item_updated","label":"Item Updated","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_link","feature_group":"Labels","option_path":"labels.item_link","label":"Item Link","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.item_link_description","feature_group":"Labels","option_path":"labels.item_link_description","label":"Item Link Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.labels.template_name","feature_group":"Labels","option_path":"labels.template_name","label":"Template Name","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"}
+  ],
+  "coverage": {"records": 35, "unreviewed": 0, "adopted_or_classified": 35, "notes": "Complete current WordPress post-type label key inventory, including template_name and item_trashed."}
+}

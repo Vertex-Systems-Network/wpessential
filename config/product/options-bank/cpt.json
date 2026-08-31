@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 1, "key": "cpt", "name": "Custom Post Types"},
+  "snapshot": {
+    "date": "2026-08-31",
+    "native_sources": [
+      {"name": "WordPress register_post_type()", "type": "wordpress_core", "url": "https://developer.wordpress.org/reference/functions/register_post_type/", "verified": true}
+    ],
+    "market_sources": [
+      {"name": "ACF PRO", "type": "official_competitor", "url": "https://www.advancedcustomfields.com/pro/", "verified": true},
+      {"name": "Secure Custom Fields", "type": "wordpress_handbook", "url": "https://developer.wordpress.org/secure-custom-fields/features/", "verified": true},
+      {"name": "CPT UI", "type": "official_competitor", "url": "https://docs.pluginize.com/plugins/custom-post-type-ui/", "verified": true}
+    ]
+  },
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"cpt.identity.key","feature_group":"Identity","option_path":"post_type_key","label":"Post Type Key","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.identity.label","feature_group":"Identity","option_path":"label","label":"Default Label","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.identity.description","feature_group":"Identity","option_path":"description","label":"Description","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.visibility.public","feature_group":"Visibility","option_path":"public","label":"Public","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.hierarchical","feature_group":"Visibility","option_path":"hierarchical","label":"Hierarchical","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.exclude_from_search","parent_id":"cpt.visibility.public","feature_group":"Visibility","option_path":"exclude_from_search","label":"Exclude From Search","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.publicly_queryable","parent_id":"cpt.visibility.public","feature_group":"Visibility","option_path":"publicly_queryable","label":"Publicly Queryable","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.show_ui","parent_id":"cpt.visibility.public","feature_group":"Visibility","option_path":"show_ui","label":"Show Admin UI","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.show_in_menu","parent_id":"cpt.visibility.show_ui","feature_group":"Admin UI","option_path":"show_in_menu","label":"Show in Admin Menu","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.show_in_nav_menus","parent_id":"cpt.visibility.public","feature_group":"Visibility","option_path":"show_in_nav_menus","label":"Show in Navigation Menus","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.visibility.show_in_admin_bar","parent_id":"cpt.visibility.show_ui","feature_group":"Admin UI","option_path":"show_in_admin_bar","label":"Show in Admin Bar","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.admin.menu_position","feature_group":"Admin UI","option_path":"menu_position","label":"Menu Position","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.admin.menu_icon","feature_group":"Admin UI","option_path":"menu_icon","label":"Menu Icon","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.supports.title","feature_group":"Content & Editor","option_path":"supports.title","label":"Title Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.editor","feature_group":"Content & Editor","option_path":"supports.editor","label":"Editor Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.author","feature_group":"Content & Editor","option_path":"supports.author","label":"Author Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.thumbnail","feature_group":"Content & Editor","option_path":"supports.thumbnail","label":"Featured Image Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.excerpt","feature_group":"Content & Editor","option_path":"supports.excerpt","label":"Excerpt Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.trackbacks","feature_group":"Content & Editor","option_path":"supports.trackbacks","label":"Trackbacks Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.custom_fields","feature_group":"Content & Editor","option_path":"supports.custom-fields","label":"Native Custom Fields Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.comments","feature_group":"Content & Editor","option_path":"supports.comments","label":"Comments Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.revisions","feature_group":"Content & Editor","option_path":"supports.revisions","label":"Revisions Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.page_attributes","feature_group":"Content & Editor","option_path":"supports.page-attributes","label":"Page Attributes Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.supports.post_formats","feature_group":"Content & Editor","option_path":"supports.post-formats","label":"Post Formats Support","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.editor.template","feature_group":"Content & Editor","option_path":"template","label":"Block Template","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.editor.template_lock","parent_id":"cpt.editor.template","feature_group":"Content & Editor","option_path":"template_lock","label":"Template Lock","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.relationships.taxonomies","feature_group":"Relationships","option_path":"taxonomies","label":"Taxonomies","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.urls.has_archive","feature_group":"URLs & Rewrite","option_path":"has_archive","label":"Has Archive","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"rewrite","label":"Rewrite Enabled","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.rewrite_slug","parent_id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"rewrite.slug","label":"Rewrite Slug","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.with_front","parent_id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"rewrite.with_front","label":"Use Front Base","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.feeds","parent_id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"rewrite.feeds","label":"Archive Feeds","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.pages","parent_id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"rewrite.pages","label":"Pagination","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.ep_mask","parent_id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"rewrite.ep_mask","label":"Endpoint Mask","classification":"EXPERT","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.urls.query_var","feature_group":"URLs & Rewrite","option_path":"query_var","label":"Query Variable","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.permissions.capability_type","feature_group":"Permissions","option_path":"capability_type","label":"Capability Type","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.permissions.map_meta_cap","parent_id":"cpt.permissions.capability_type","feature_group":"Permissions","option_path":"map_meta_cap","label":"Map Meta Capabilities","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.permissions.capabilities","parent_id":"cpt.permissions.capability_type","feature_group":"Permissions","option_path":"capabilities","label":"Explicit Capability Map","classification":"EXPERT","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.rest.show_in_rest","feature_group":"REST API","option_path":"show_in_rest","label":"Expose in REST API","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.rest.base","parent_id":"cpt.rest.show_in_rest","feature_group":"REST API","option_path":"rest_base","label":"REST Base","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.rest.namespace","parent_id":"cpt.rest.show_in_rest","feature_group":"REST API","option_path":"rest_namespace","label":"REST Namespace","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.rest.controller","parent_id":"cpt.rest.show_in_rest","feature_group":"REST API","option_path":"rest_controller_class","label":"REST Controller Provider","classification":"PROVIDER_SOFT","hard_soft":"HYBRID","horizon":"CURRENT_NATIVE","adoption":"PROVIDER","priority":"P1_CORE"},
+    {"id":"cpt.rest.autosave_controller","parent_id":"cpt.rest.show_in_rest","feature_group":"REST API","option_path":"autosave_rest_controller_class","label":"Autosave REST Controller Provider","classification":"PROVIDER_SOFT","hard_soft":"HYBRID","horizon":"CURRENT_NATIVE","adoption":"PROVIDER","priority":"P2_COMPETITIVE"},
+    {"id":"cpt.rest.revisions_controller","parent_id":"cpt.rest.show_in_rest","feature_group":"REST API","option_path":"revisions_rest_controller_class","label":"Revisions REST Controller Provider","classification":"PROVIDER_SOFT","hard_soft":"HYBRID","horizon":"CURRENT_NATIVE","adoption":"PROVIDER","priority":"P2_COMPETITIVE"},
+    {"id":"cpt.rest.late_route_registration","feature_group":"REST API","option_path":"late_route_registration","label":"Late Route Registration","classification":"EXPERT","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+
+    {"id":"cpt.lifecycle.can_export","feature_group":"Lifecycle","option_path":"can_export","label":"Can Export","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.lifecycle.delete_with_user","feature_group":"Lifecycle","option_path":"delete_with_user","label":"Delete Posts with User","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"cpt.expert.meta_box_callback","feature_group":"Developer / Compatibility","option_path":"register_meta_box_cb","label":"Meta Box Registration Provider","classification":"PROVIDER_SOFT","hard_soft":"HYBRID","horizon":"CURRENT_NATIVE","adoption":"PROVIDER","priority":"P2_COMPETITIVE"},
+
+    {"id":"cpt.soft.labels_autogenerate","feature_group":"Labels","option_path":"soft.labels_autogenerate","label":"Auto-generate Labels","classification":"SOFT_NATIVE","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"WPE_EXCEED","priority":"P1_EXCEED"},
+    {"id":"cpt.soft.effective_args_preview","feature_group":"Diagnostics","option_path":"soft.effective_args_preview","label":"Effective WordPress Args Preview","classification":"WPE_EXCEED","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"WPE_EXCEED","priority":"P1_EXCEED"},
+    {"id":"cpt.soft.url_preview","parent_id":"cpt.urls.rewrite_enabled","feature_group":"URLs & Rewrite","option_path":"soft.url_preview","label":"URL Preview","classification":"SOFT_NATIVE","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"WPE_EXCEED","priority":"P1_EXCEED"},
+    {"id":"cpt.compat.import_cpt_ui","feature_group":"Compatibility","option_path":"compat.cpt_ui_import","label":"CPT UI Import Adapter","classification":"COMPATIBILITY","hard_soft":"SOFT","horizon":"CURRENT_MARKET","adoption":"COMPETITIVE","priority":"P2_COMPETITIVE"}
+  ],
+  "coverage": {
+    "records": 52,
+    "unreviewed": 0,
+    "adopted_or_classified": 52,
+    "notes": "Initial CPT discovery seed. Native/market evidence enrichment continues before BANK_REVIEWED."
+  }
+}

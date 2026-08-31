@@ -43,6 +43,8 @@
     "test:smoke:engineering-contracts": "php tests/Smoke/engineering-contracts-smoke.php",
     "test:smoke:compiled-registration-persistence": "php tests/Smoke/compiled-registration-persistence-smoke.php",
     "test:smoke:compiled-registration-scale": "php tests/Smoke/compiled-registration-scale-smoke.php",
+    "test:smoke:options-bank": "php tests/Smoke/options-bank-contract.php",
+    "test:smoke:options-bank-progress": "php tests/Smoke/options-bank-progress-contract.php",
     "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
     "test:smoke": [
       "@test:smoke:kernel",
@@ -55,7 +57,9 @@
       "@test:smoke:wordpress-abilities-bridge",
       "@test:smoke:engineering-contracts",
       "@test:smoke:compiled-registration-persistence",
-      "@test:smoke:compiled-registration-scale"
+      "@test:smoke:compiled-registration-scale",
+      "@test:smoke:options-bank",
+      "@test:smoke:options-bank-progress"
     ],
     "quality:php": [
       "@quality:phpcs",

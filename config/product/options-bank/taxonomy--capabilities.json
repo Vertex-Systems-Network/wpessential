@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 2, "key": "taxonomy", "name": "Taxonomies"},
+  "snapshot": {
+    "date": "2026-08-31",
+    "native_sources": [
+      {"name":"WordPress register_taxonomy()","type":"wordpress_core","url":"https://developer.wordpress.org/reference/functions/register_taxonomy/","verified":true}
+    ],
+    "market_sources": []
+  },
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"taxonomy.capabilities.manage_terms","feature_group":"Permissions","option_path":"capabilities.manage_terms","label":"Manage Terms Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.capabilities.edit_terms","feature_group":"Permissions","option_path":"capabilities.edit_terms","label":"Edit Terms Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.capabilities.delete_terms","feature_group":"Permissions","option_path":"capabilities.delete_terms","label":"Delete Terms Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"},
+    {"id":"taxonomy.capabilities.assign_terms","feature_group":"Permissions","option_path":"capabilities.assign_terms","label":"Assign Terms Capability","classification":"NATIVE_HARD","hard_soft":"HARD","horizon":"CURRENT_NATIVE","adoption":"MUST_HAVE","priority":"P0_NATIVE"}
+  ],
+  "coverage": {"records":4,"unreviewed":0,"adopted_or_classified":4,"notes":"Complete native taxonomy capability map."}
+}
