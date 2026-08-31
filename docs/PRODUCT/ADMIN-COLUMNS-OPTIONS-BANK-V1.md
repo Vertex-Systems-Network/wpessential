@@ -4,7 +4,7 @@ Status: **SURFACE_WORK / RESEARCH_COMPLETE / CERTIFICATION_INTEGRATION_BLOCKED**
 Surface: **8 — Admin Columns (`columns`)**  
 Snapshot: **2026-09-01**  
 Original base SHA: **`eb61c6bfe9d89af949d70e89ba685597d58e2663`**  
-Synced main SHA: **`8ed1c0389ef314c79a60a6808d232ef625de7b25`**  
+Synced main SHA: **`88e5e90b273ddc61b4a0e2e36249c541576fc8fc`**  
 Writer branch: **`planning/options-bank-columns-seed-v1`**
 
 ## 1. Work-mode resolution
@@ -15,7 +15,7 @@ Repository evidence establishes Surface 8 as canonical key `columns`. No approve
 
 No `P<phase>-M<milestone>-WP<work-package>-T<task>` ID is recorded for this Surface 8 Bank work. None is invented.
 
-The branch was created from explicit main `eb61c6bfe9d89af949d70e89ba685597d58e2663`. During work, main advanced by the Relations market-audit certification. The branch was synchronized without force/rebase through merge commit `55b1cb98ecb724a1ab567e66908b8a69689bfd99`, preserving both histories.
+The branch was created from explicit main `eb61c6bfe9d89af949d70e89ba685597d58e2663`. During work, main advanced through the Relations market-audit and Bank Review certifications. The branch was synchronized without force/rebase through two-parent merge commits, preserving both histories; the latest integrated upstream head for this snapshot is `88e5e90b273ddc61b4a0e2e36249c541576fc8fc`.
 
 ## 2. Canonical ownership and dependency boundary
 
@@ -152,9 +152,11 @@ Surface-local shards:
 | `columns.json` | 60 | view/target/common controls/native adapter primitives |
 | `columns--sources-formatting.json` | 46 | source bindings, display/text/link formats, safe provider extension |
 | `columns--sorting-filtering-editing.json` | 46 | current-market sort/filter/search/edit/segment interactions |
-| `columns--export-performance-portability.json` | 39 | current-market export/performance diagnostics/portability/adapters |
+| `columns--export-performance-portability.json` | 42 | current-market export/performance diagnostics/portability/adapters |
 | `columns--wpe-exceed-market-v1.json` | 20 | future-only WPE exceed/safety guarantees |
-| **Total** | **211** | **unique IDs and unique option paths** |
+| **Total** | **214** | **unique IDs and unique option paths** |
+
+The initial candidate declared the export/performance shard as 39 records. Exact-head CI correctly detected that the array contained 42; the shard metadata and all downstream Surface 8 totals are now reconciled to **214**.
 
 Candidate policy characteristics:
 
@@ -226,7 +228,7 @@ The product research has no unresolved product/ownership decision. The review ha
 1. canonical Surface 8 progress plus exact-head native-audit certification;
 2. exact-head market-audit/Bank-Review certification wiring and resulting progress promotion.
 
-The market-audit required artifact now correctly points to `config/product/options-bank-audits/columns-market-ecosystem.json` rather than the research Markdown.
+The review record count is **214**, matching the corrected five-shard Bank inventory.
 
 ## 11. UX projection
 
@@ -263,7 +265,7 @@ When unblocked, the implementation contract must bind:
 ## 13. Integration Requirements
 
 ### IR-COLUMNS-001 — canonical progress promotion — OPEN
-The designated integrator must recompute shared Options Bank truth from then-current main, register Surface 8 record count as **211**, and promote only lifecycle states whose machine evidence is valid. Global totals must be derived at integration time because other surfaces may merge first.
+The designated integrator must recompute shared Options Bank truth from then-current main, register Surface 8 record count as **214**, and promote only lifecycle states whose machine evidence is valid. Global totals must be derived at integration time because other surfaces may merge first.
 
 ### IR-COLUMNS-002 — generalized market-audit schema — RESOLVED
 Resolved upstream by main `8ed1c0389ef314c79a60a6808d232ef625de7b25`. The shared schema now supports canonical surfaces 1–56 without weakening existing Fields validation.
@@ -294,7 +296,7 @@ The branch is a synchronized, research-complete Surface 8 candidate with machine
 Safe next action:
 
 1. verify branch against latest main again;
-2. open a draft PR;
-3. inspect exact-head applicable CI without weakening failures;
+2. observe exact-head applicable CI and fix only Surface 8-owned defects;
+3. keep the PR draft while shared certification dependencies remain open;
 4. hand open Integration Requirements to the designated integrator;
 5. after shared certification is valid, promote lifecycle in order and only then enter UX projection / implementation contract.
