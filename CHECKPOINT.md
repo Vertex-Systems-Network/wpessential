@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-01**  
-Canonical implementation source: **`main @ e4499aad6c092644ff08d758629a513f6f08ef8b`**  
+Canonical implementation source: **`main @ 697eeffea095d1ddd6fc39c4409aa4290af1941e`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
 Implementation decisions: through **ADR-0222** plus bounded Surface 3 implementation contracts  
 Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
@@ -28,7 +28,7 @@ Canonical module sequencing remains repository-owned. `docs/ROADMAP.md` starts P
 - WP119 / ADR-0214 — **DONE / PASS** — greenfield Implementation Baseline / Adoption Gate.
 - WP120 / ADR-0215 — **DONE / PASS** — machine-enforced architecture guards.
 - WP121 — **DONE / PASS FOR MODULE HANDOFF** — shared Platform foundation readiness closed by WP121.1 through WP121.4.
-- Phase 2 / Surface 3 Custom Fields — **ACTIVE / BOUNDED IMPLEMENTATION** — first four backend slices merged with exact-head CI; storage/render/admin completion remains open.
+- Phase 2 / Surface 3 Custom Fields — **ACTIVE / BOUNDED IMPLEMENTATION** — first six backend slices merged with exact-head CI; value persistence/Ability, target binding, render/admin completion and broader adapters remain open.
 
 ## Surface 3 — Custom Fields implementation checkpoint
 
@@ -88,12 +88,48 @@ PR #39, `feat(fields): add typed value normalization foundation`, established an
 Merged source: **`e4499aad6c092644ff08d758629a513f6f08ef8b`**.  
 Exact-head applicable CI passed: Architecture Guards #545, PHP Quality Toolchain #81, Platform Compatibility Matrix #256 and Distributable Package #189.
 
+### Merged slice 5 — stable per-Field identity — PASS
+
+PR #41, `feat(fields): add stable per-field identity`, established durable Field identity before storage binding:
+- stable RFC4122 Field UUIDs are assigned at persistence/lifecycle boundaries rather than generated during pure normalization;
+- persisted UUIDs survive subsequent normalize/save/status round trips;
+- nested Group/Repeater subfields receive stable identity recursively;
+- in-place replacement of an existing Field UUID is rejected;
+- cross-Field-Group UUID collisions are rejected;
+- canonical repeatability/preset state is consumed during re-normalization so persisted Fields round-trip idempotently instead of losing clone/sort semantics.
+
+Merged source: **`197738bc84b675dd435c3f5eafc9c8df443c66c9`**.  
+Exact-head applicable CI passed: Architecture Guards #566, PHP Quality Toolchain #95, Platform Compatibility Matrix #274 and Distributable Package #206.
+
+### Merged slice 6 — WordPress registered post-meta storage V1 — PASS
+
+PR #42, `feat(fields): add registered post meta storage v1`, established the first native storage-registration boundary for persisted normalized Fields:
+- pure `PostMetaRegistrationCompiler` and thin injectable `WordPressPostMetaRegistrar`;
+- persisted stable Field UUID required before storage compilation;
+- explicit scalar/list registered-meta type mapping for the first certified tranche;
+- deliberate repeatable storage shape: single array value versus non-single scalar rows;
+- explicit `show_in_rest.schema.items` for array meta and native non-single REST wrapping verification;
+- explicit object-level `edit_post` authorization callback instead of permissive unprotected-meta fallback;
+- explicit sanitization through the canonical `FieldValueNormalizer`;
+- revision-enabled meta rejected for post subtypes without revision support;
+- REST-visible meta rejected for post subtypes without `custom-fields` support;
+- structured/provider/Relations/secret/uncertified types fail closed rather than falling back to opportunistic serialization;
+- compiler/registrar/value-normalizer exposed only as module-local services; no automatic boot registration and no Pro activation bypass;
+- real WordPress integration added to the Platform Compatibility Matrix across WP 6.9/7.1 × PHP 8.2–8.5 plus MariaDB 10.11 baselines;
+- native integration proves subtype registration, public REST schema behavior, slash-sensitive scalar/array round trips, explicit auth callback registration, invalid-value sanitization failure with prior-value retention, and revision/custom-fields support guards.
+
+Merged source: **`697eeffea095d1ddd6fc39c4409aa4290af1941e`**.  
+Exact-head applicable CI passed: Architecture Guards #584, PHP Quality Toolchain #106, Platform Compatibility Matrix #291 and Distributable Package #219.
+
 ### Surface 3 integration blockers / non-certifications
 
 Custom Fields is **not** runtime/product complete. In particular:
-- no WordPress registered-meta storage adapter has been certified yet;
-- no field value storage migration/rollback implementation has been certified;
+- registered post-meta compilation/registration V1 is certified only for the bounded compatible scalar/list tranche and is not automatically activated at boot;
+- no canonical field value read/write persistence adapter has been certified yet;
+- no safe multi-row replacement/recovery path has been certified;
+- no field value storage migration/rename/rollback implementation has been certified;
 - no complete REST/Ability value mutation path has been certified;
+- no certified target/location → post subtype registration binding exists yet;
 - no React Field Group builder/renderers have been certified;
 - provider-owned/complex types remain fail-closed until their canonical adapters exist;
 - import/export, compatibility migrations, performance scale evidence and reference workflow evidence remain open;
@@ -206,17 +242,20 @@ No live provider call, production deployment, destructive live-site/customer-dat
 
 Continue **Surface 3 Custom Fields** as the first Phase 2 Structured Data Pro tranche.
 
-Next bounded implementation target: **WordPress registered-meta storage adapter V1**, initially limited to explicitly compatible post-meta scalar/list schemas. It must:
-- compile normalized field definitions to valid `register_post_meta()` / `register_meta()` arguments;
-- provide explicit server authorization rather than relying on permissive core defaults;
-- provide explicit sanitization/normalization ownership;
-- emit required REST item schema for array meta;
-- enable meta revisions only for compatible revision-supporting post subtypes;
-- preserve single/multiple semantics deliberately;
-- expose unsupported structured/provider/Relations/secret types as fail-closed instead of serializing them opportunistically;
-- account for WordPress slashing/serialization behavior at the persistence boundary;
-- remain module-local until the canonical Pro entitlement/module-enable integration gate exists.
+Next bounded implementation target: **normalized WordPress post-meta value persistence adapter V1**, initially consuming the certified registered-meta scalar/list tranche. It must:
+- accept only persisted normalized Fields that compile through the certified post-meta registration contract;
+- normalize incoming values through the canonical `FieldValueNormalizer` before any native mutation;
+- apply WordPress slashing exactly at the Metadata API write boundary and avoid double-slashing/double-unescaping on reads;
+- preserve typed read semantics deliberately instead of leaking WordPress raw scalar-string behavior to product callers;
+- make unchanged/idempotent writes distinguishable from actual persistence failure despite `update_post_meta()` returning `false` in both no-change and failure cases;
+- support single scalar and single-array writes first through native Metadata APIs, with no raw SQL;
+- keep non-single/multiple-row replacement fail-closed until a pre-write snapshot plus compensating restore/recovery contract is implemented and tested;
+- prevent delete-then-partial-add from being reported as success;
+- preserve stable Field UUID ↔ storage-key provenance so future key rename/migration can be explicit rather than identity-destructive;
+- retain explicit resource authorization and expose mutation only through a later typed Ability boundary;
+- remain module-local and non-booted until certified target/location binding and the canonical Pro entitlement/module-enable gate exist;
+- add real WordPress integration evidence for slashing, typed read/write, invalid-value retention, idempotent updates and failure behavior.
 
-After that slice: value read/write Ability integration, target/location binding, admin renderer/editor integration, portability/migrations and broader field-type adapters according to Surface 3 dependencies.
+After the persistence adapter: typed field value read/write Ability integration, certified target/location binding, admin renderer/editor integration, portability/migrations and broader field-type adapters according to Surface 3 dependencies.
 
 Repository evidence overrides conversational memory.
