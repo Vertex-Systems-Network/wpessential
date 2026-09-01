@@ -1,0 +1,101 @@
+.wpessential-fields-wrap {
+
+	#wpessential-fields-root {
+		max-width: 76rem;
+	}
+
+	[data-wpessential-enhanced="invalid-bootstrap"]::before {
+		display: block;
+		margin: 1rem 0;
+		padding: 0.75rem 1rem;
+		border-left: 4px solid currentcolor;
+		content: "WPEssential Custom Fields could not read its bootstrap payload. Server-rendered Field Groups remain available below.";
+	}
+
+	.wpessential-fields-panel {
+		margin: 1.25rem 0;
+		padding: 1rem 1.25rem;
+		border: 1px solid #c3c4c7;
+		background: #fff;
+	}
+
+	.wpessential-fields-grid,
+	.wpessential-fields-row-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 0.75rem 1.25rem;
+	}
+
+	.wpessential-fields-grid .regular-text,
+	.wpessential-fields-row-grid input {
+		width: 100%;
+	}
+
+	.wpessential-fields-grid .description {
+		display: block;
+		margin-top: 0.25rem;
+	}
+
+	.wpessential-fields-list-heading,
+	.wpessential-fields-row-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.wpessential-fields-rows {
+		display: grid;
+		gap: 0.75rem;
+		margin: 1rem 0;
+	}
+
+	.wpessential-fields-row {
+		padding: 0.9rem 1rem;
+		border: 1px solid #dcdcde;
+		background: #f6f7f7;
+	}
+
+	.wpessential-fields-row-grid {
+		margin-top: 0.75rem;
+	}
+
+	.wpessential-fields-row-grid label {
+		font-weight: 600;
+	}
+
+	.wpessential-fields-row-grid input {
+		display: block;
+		margin-top: 0.25rem;
+		font-weight: 400;
+	}
+
+	.wpessential-fields-row-actions {
+		display: flex;
+		gap: 0.4rem;
+		margin-top: 0.75rem;
+	}
+
+	.wpessential-fields-locked {
+		margin: 0.75rem 0 0;
+		padding: 0.6rem 0.75rem;
+		border-left: 4px solid #dba617;
+		background: #fff8e5;
+	}
+
+	#wpessential-fields-notice[hidden],
+	#wpessential-fields-validation[hidden] {
+		display: none;
+	}
+
+	[aria-busy="true"] button,
+	[aria-busy="true"] input,
+	[aria-busy="true"] select {
+		pointer-events: none;
+		opacity: 0.65;
+	}
+
+	#wpessential-fields-definitions td:last-child {
+		white-space: nowrap;
+	}
+}
