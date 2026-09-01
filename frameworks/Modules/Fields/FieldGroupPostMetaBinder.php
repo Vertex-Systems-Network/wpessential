@@ -24,6 +24,39 @@ final readonly class FieldGroupPostMetaBinder
 
     public function bind(Definition $definition): void
     {
+        $this->bindAll([$definition]);
+    }
+
+    /** @param list<Definition> $definitions */
+    public function bindAll(array $definitions): void
+    {
+        if (!array_is_list($definitions)) {
+            throw new InvalidArgumentException('Field Group runtime binding definitions must be a list.');
+        }
+
+        $registrations = [];
+        foreach ($definitions as $definition) {
+            if (!$definition instanceof Definition) {
+                throw new InvalidArgumentException('Field Group runtime binding definitions must contain Definition objects.');
+            }
+            foreach ($this->plan($definition) as $registration) {
+                $registrations[] = $registration;
+            }
+        }
+
+        $this->registrar->registerBatch($registrations);
+    }
+
+    /**
+     * @return list<array{
+     *     post_type:string,
+     *     field_uuid:string,
+     *     meta_key:string,
+     *     args:array<string,mixed>
+     * }>
+     */
+    private function plan(Definition $definition): array
+    {
         $this->assertPublishedFieldGroup($definition);
 
         $group = $this->groups->normalize($definition->payload, true);
@@ -50,7 +83,7 @@ final readonly class FieldGroupPostMetaBinder
             }
         }
 
-        $this->registrar->registerBatch($registrations);
+        return $registrations;
     }
 
     private function assertPublishedFieldGroup(Definition $definition): void
