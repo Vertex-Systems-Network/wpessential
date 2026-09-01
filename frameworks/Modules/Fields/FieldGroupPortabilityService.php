@@ -54,6 +54,7 @@ final readonly class FieldGroupPortabilityService
         $records = $this->validateEnvelope($envelope);
         $prepared = [];
         $bundleIds = [];
+        $bundleSlugs = [];
         $bundleKeys = [];
         $bundleFieldUuids = [];
 
@@ -63,6 +64,11 @@ final readonly class FieldGroupPortabilityService
                 throw new InvalidArgumentException(sprintf('Portable Field Group id "%s" is duplicated in the import bundle.', $candidate->id));
             }
             $bundleIds[$candidate->id] = true;
+
+            if (isset($bundleSlugs[$candidate->slug])) {
+                throw new InvalidArgumentException(sprintf('Portable Field Group slug "%s" is duplicated in the import bundle.', $candidate->slug));
+            }
+            $bundleSlugs[$candidate->slug] = true;
 
             $groupKey = $candidate->payload['group_key'] ?? null;
             if (!is_string($groupKey) || $groupKey === '') {
@@ -83,6 +89,11 @@ final readonly class FieldGroupPortabilityService
             $prepared[] = $candidate;
         }
 
+        $persistedBySlug = [];
+        foreach ($this->definitions->byType(FieldGroupDefinitionNormalizer::DEFINITION_TYPE) as $definition) {
+            $persistedBySlug[$definition->slug] = $definition;
+        }
+
         $created = [];
         $unchanged = [];
         foreach ($prepared as $candidate) {
@@ -93,13 +104,28 @@ final readonly class FieldGroupPortabilityService
                 continue;
             }
 
+            $slugOwner = $persistedBySlug[$candidate->slug] ?? null;
+            if ($slugOwner instanceof Definition && $slugOwner->id !== $candidate->id) {
+                throw new InvalidArgumentException(sprintf(
+                    'Portable Field Group slug "%s" is already owned by definition "%s"; create-only import will not remap it.',
+                    $candidate->slug,
+                    $slugOwner->id,
+                ));
+            }
+
             $this->assertCanCreate($candidate);
         }
 
         foreach ($prepared as $candidate) {
-            if ($this->definitions->get($candidate->id) instanceof Definition) {
+            $existing = $this->definitions->get($candidate->id);
+            if ($existing instanceof Definition) {
+                $this->assertIdenticalExisting($candidate, $existing);
+                if (!in_array($candidate->id, $unchanged, true)) {
+                    $unchanged[] = $candidate->id;
+                }
                 continue;
             }
+
             $this->definitions->save($candidate);
             $created[] = $candidate->id;
         }
@@ -233,7 +259,11 @@ final readonly class FieldGroupPortabilityService
         if ($schemaVersion !== 1) {
             throw new InvalidArgumentException('Unsupported Field Group definition schema version; an explicit compatibility adapter is required.');
         }
-        if (!is_string($statusValue) || !($status = DefinitionStatus::tryFrom($statusValue)) instanceof DefinitionStatus) {
+        if (!is_string($statusValue)) {
+            throw new InvalidArgumentException('Portable Field Group status is invalid.');
+        }
+        $status = DefinitionStatus::tryFrom($statusValue);
+        if (!$status instanceof DefinitionStatus) {
             throw new InvalidArgumentException('Portable Field Group status is invalid.');
         }
         if (!is_array($payload) || array_is_list($payload)) {
