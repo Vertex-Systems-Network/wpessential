@@ -400,10 +400,10 @@ final class PostMetaValueStoreTest extends TestCase
     {
         return $this->field([
             'key' => $key,
-            'type' => 'number',
-            'settings' => ['integer' => true],
+            'type' => $integer ? 'number' : 'text',
+            'settings' => $integer ? ['integer' => true] : [],
             'cloneable' => true,
             'clone_as_multiple' => true,
-        ] + ($integer ? [] : ['type' => 'text', 'settings' => []]));
+        ]);
     }
 }
