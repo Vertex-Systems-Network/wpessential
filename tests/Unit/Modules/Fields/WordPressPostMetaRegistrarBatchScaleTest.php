@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\Fields;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
 use WPEssential\Modules\Fields\FieldGroupDefinitionNormalizer;
 use WPEssential\Modules\Fields\FieldGroupPostMetaBinder;
@@ -18,7 +19,7 @@ use WPEssential\Platform\Definitions\DefinitionStatus;
 
 final class WordPressPostMetaRegistrarBatchScaleTest extends TestCase
 {
-    public function testLargeBindingPlanSnapshotsOwnershipAndSupportsPerUniqueScope(): void
+    public function testLargeBindingPlanReducesFullPlanSnapshotsAndPreservesLiveRevalidation(): void
     {
         $registrationCalls = 0;
         $registeredMetaCalls = [];
@@ -53,18 +54,20 @@ final class WordPressPostMetaRegistrarBatchScaleTest extends TestCase
         self::assertSame(256, $registrationCalls, 'binding must emit one registration per field/post-type tuple');
         ksort($registeredMetaCalls, SORT_STRING);
         self::assertSame([
-            '' => 1,
-            'book' => 1,
-            'event' => 1,
-            'page' => 1,
-            'post' => 1,
-        ], $registeredMetaCalls, 'registered-meta ownership maps must be snapshotted per unique scope, not per registration');
+            '' => 257,
+            'book' => 65,
+            'event' => 65,
+            'page' => 65,
+            'post' => 65,
+        ], $registeredMetaCalls, 'batch preflight must use one shared snapshot phase plus one live ownership recheck per tuple');
+        self::assertSame(517, array_sum($registeredMetaCalls), 'ownership-map reads must be 2N + P + 1 instead of the prior 4N');
 
         ksort($supportCalls, SORT_STRING);
         self::assertCount(8, $supportCalls);
         foreach ($supportCalls as $calls) {
-            self::assertSame(1, $calls, 'post-type feature checks must be cached per unique post-type/feature pair');
+            self::assertSame(65, $calls, 'support checks must be one cached batch check plus one live safety recheck per tuple');
         }
+        self::assertSame(520, array_sum($supportCalls), 'feature checks must be N-per-required-feature plus unique batch pairs instead of two full N passes');
     }
 
     public function testDuplicateBatchTupleFailsBeforeSnapshotsOrMutation(): void
@@ -99,6 +102,57 @@ final class WordPressPostMetaRegistrarBatchScaleTest extends TestCase
 
         self::assertSame(0, $registeredMetaCalls);
         self::assertSame(0, $registrationCalls);
+    }
+
+    public function testLiveRevalidationRejectsForeignOwnershipIntroducedByEarlierRegistrationCallback(): void
+    {
+        $compiler = new PostMetaRegistrationCompiler();
+        $normalizer = new FieldDefinitionNormalizer();
+        $headline = $compiler->compile($normalizer->normalize([
+            'uuid' => '11111111-1111-4111-8111-111111111111',
+            'key' => 'headline',
+            'label' => 'Headline',
+            'type' => 'text',
+        ]), 'book');
+        $rating = $compiler->compile($normalizer->normalize([
+            'uuid' => '22222222-2222-4222-8222-222222222222',
+            'key' => 'rating',
+            'label' => 'Rating',
+            'type' => 'number',
+        ]), 'book');
+        $foreignRating = $rating['args'];
+        $foreignRating['description'] = 'Foreign plugin registration.';
+        $registry = ['' => [], 'book' => []];
+        $registrationCalls = 0;
+
+        $registrar = new WordPressPostMetaRegistrar(
+            static function (string $postType, string $metaKey, array $args) use (
+                &$registry,
+                &$registrationCalls,
+                $foreignRating,
+            ): bool {
+                ++$registrationCalls;
+                $registry[$postType][$metaKey] = $args;
+                if ($metaKey === 'headline') {
+                    $registry[$postType]['rating'] = $foreignRating;
+                }
+                return true;
+            },
+            static fn (string $postType, string $feature): bool => true,
+            static function (string $objectType, string $objectSubtype) use (&$registry): array {
+                return $registry[$objectSubtype] ?? [];
+            },
+        );
+
+        try {
+            $registrar->registerBatch([$headline, $rating]);
+            self::fail('A foreign owner introduced by an earlier registration callback must be detected before overwrite.');
+        } catch (RuntimeException $exception) {
+            self::assertStringContainsString('already owned by another registration', $exception->getMessage());
+        }
+
+        self::assertSame(1, $registrationCalls, 'the later foreign-owned tuple must not reach register_post_meta');
+        self::assertSame('Foreign plugin registration.', $registry['book']['rating']['description']);
     }
 
     /** @param list<string> $postTypes */
