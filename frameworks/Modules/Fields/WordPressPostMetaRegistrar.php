@@ -24,18 +24,23 @@ final class WordPressPostMetaRegistrar
     /** @var Closure(string,string):array<string,array<string,mixed>> */
     private Closure $getRegisteredMetaKeys;
 
+    /** @var Closure(string,string,string):bool */
+    private Closure $unregisterMetaKey;
+
     private PostMetaRegistrationOwnershipGuard $ownership;
 
     /**
      * @param null|callable(string,string,array<string,mixed>):bool $registerPostMeta
      * @param null|callable(string,string):bool $postTypeSupports
      * @param null|callable(string,string):array<string,array<string,mixed>> $getRegisteredMetaKeys
+     * @param null|callable(string,string,string):bool $unregisterMetaKey
      */
     public function __construct(
         ?callable $registerPostMeta = null,
         ?callable $postTypeSupports = null,
         ?callable $getRegisteredMetaKeys = null,
         ?PostMetaRegistrationOwnershipGuard $ownership = null,
+        ?callable $unregisterMetaKey = null,
     ) {
         $this->registerPostMeta = $registerPostMeta !== null
             ? Closure::fromCallable($registerPostMeta)
@@ -62,6 +67,15 @@ final class WordPressPostMetaRegistrar
                     throw new LogicException('WordPress get_registered_meta_keys() is unavailable.');
                 }
                 return get_registered_meta_keys($objectType, $objectSubtype);
+            };
+
+        $this->unregisterMetaKey = $unregisterMetaKey !== null
+            ? Closure::fromCallable($unregisterMetaKey)
+            : static function (string $objectType, string $metaKey, string $objectSubtype): bool {
+                if (!function_exists('unregister_meta_key')) {
+                    throw new LogicException('WordPress unregister_meta_key() is unavailable.');
+                }
+                return unregister_meta_key($objectType, $metaKey, $objectSubtype);
             };
 
         $this->ownership = $ownership ?? new PostMetaRegistrationOwnershipGuard();
@@ -97,12 +111,43 @@ final class WordPressPostMetaRegistrar
             ));
         }
 
-        $globalKeys = ($this->getRegisteredMetaKeys)('post', '');
-        $subtypeKeys = ($this->getRegisteredMetaKeys)('post', $postType);
-        $globalExisting = $this->existingRegistration($globalKeys, $metaKey, 'global post scope');
-        $subtypeExisting = $this->existingRegistration($subtypeKeys, $metaKey, sprintf('post type "%s"', $postType));
+        [$globalExisting, $subtypeExisting] = $this->ownershipState($postType, $metaKey);
 
         return $this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting);
+    }
+
+    /**
+     * @param array{
+     *     post_type:string,
+     *     field_uuid:string,
+     *     meta_key:string,
+     *     args:array<string,mixed>
+     * } $registration
+     */
+    public function assertOwned(array $registration): void
+    {
+        [$postType, $metaKey] = $this->contract($registration);
+        [$globalExisting, $subtypeExisting] = $this->ownershipState($postType, $metaKey);
+
+        if ($subtypeExisting === null) {
+            if ($globalExisting !== null) {
+                $this->ownership->shouldRegister($registration, $globalExisting, null);
+            }
+
+            throw new RuntimeException(sprintf(
+                'Post-meta key "%s" on post type "%s" is not currently registered by WPEssential; refusing destructive retirement.',
+                $metaKey,
+                $postType,
+            ));
+        }
+
+        if ($this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting) !== false) {
+            throw new RuntimeException(sprintf(
+                'Post-meta key "%s" on post type "%s" ownership could not be proven.',
+                $metaKey,
+                $postType,
+            ));
+        }
     }
 
     /**
@@ -130,6 +175,33 @@ final class WordPressPostMetaRegistrar
     }
 
     /**
+     * Retire only a subtype registration whose immutable Field owner and structural shape are still provably WPE-owned.
+     *
+     * @param array{
+     *     post_type:string,
+     *     field_uuid:string,
+     *     meta_key:string,
+     *     args:array<string,mixed>
+     * } $registration
+     */
+    public function retire(array $registration): void
+    {
+        $this->assertOwned($registration);
+        [$postType, $metaKey] = $this->contract($registration);
+
+        $nativeResult = ($this->unregisterMetaKey)('post', $metaKey, $postType);
+        [$globalExisting, $subtypeExisting] = $this->ownershipState($postType, $metaKey);
+        if ($subtypeExisting !== null || $globalExisting !== null) {
+            throw new RuntimeException(sprintf(
+                'WordPress %s unregistering post-meta key "%s" on post type "%s", but registration still exists.',
+                $nativeResult ? 'reported success' : 'reported failure',
+                $metaKey,
+                $postType,
+            ));
+        }
+    }
+
+    /**
      * @param array<string,mixed> $registration
      * @return array{0:string,1:string,2:array<string,mixed>}
      */
@@ -143,6 +215,20 @@ final class WordPressPostMetaRegistrar
         }
 
         return [$postType, $metaKey, $args];
+    }
+
+    /**
+     * @return array{0:null|array<string,mixed>,1:null|array<string,mixed>}
+     */
+    private function ownershipState(string $postType, string $metaKey): array
+    {
+        $globalKeys = ($this->getRegisteredMetaKeys)('post', '');
+        $subtypeKeys = ($this->getRegisteredMetaKeys)('post', $postType);
+
+        return [
+            $this->existingRegistration($globalKeys, $metaKey, 'global post scope'),
+            $this->existingRegistration($subtypeKeys, $metaKey, sprintf('post type "%s"', $postType)),
+        ];
     }
 
     /**
