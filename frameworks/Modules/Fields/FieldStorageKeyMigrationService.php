@@ -172,6 +172,9 @@ final class FieldStorageKeyMigrationService
         if (!is_array($candidateFields) || !array_is_list($candidateFields) || !isset($candidateFields[$fieldIndex]) || !is_array($candidateFields[$fieldIndex])) {
             throw new RuntimeException('Persisted Field Group field ordering no longer matches its canonical normalized form.');
         }
+        if (($candidateFields[$fieldIndex]['uuid'] ?? null) !== $fieldUuid) {
+            throw new RuntimeException('Persisted Field Group field identity no longer matches its canonical normalized position.');
+        }
         $candidateFields[$fieldIndex]['key'] = $destinationKey;
         $candidatePayload['fields'] = $candidateFields;
         $candidateGroup = $this->groups->normalize($candidatePayload, true);
@@ -272,6 +275,22 @@ final class FieldStorageKeyMigrationService
                     throw new RuntimeException(sprintf(
                         'Destination post-meta verification failed for "%s" on post %d.',
                         $destinationKey,
+                        $postId,
+                    ));
+                }
+
+                if (!($this->metadataExists)($postId, $sourceKey)) {
+                    throw new RuntimeException(sprintf(
+                        'Source post-meta key "%s" disappeared from post %d before retirement.',
+                        $sourceKey,
+                        $postId,
+                    ));
+                }
+                $currentSource = $this->values->read($sourceField, $postType, $postId);
+                if ($currentSource !== $value) {
+                    throw new RuntimeException(sprintf(
+                        'Source post-meta key "%s" changed on post %d during migration; refusing destructive retirement.',
+                        $sourceKey,
                         $postId,
                     ));
                 }
@@ -425,8 +444,7 @@ final class FieldStorageKeyMigrationService
             }
         }
 
-        foreach (array_reverse(array_values($destinationTouched)) as [$postType, $postId]) {
-            unset($postType);
+        foreach (array_reverse(array_values($destinationTouched)) as [, $postId]) {
             try {
                 $this->deleteAndVerify($postId, $destinationKey);
             } catch (Throwable $error) {
