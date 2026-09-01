@@ -43,7 +43,11 @@ type AjaxEnvelope = {
 };
 
 function isObject( value: unknown ): value is JsonObject {
-	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		! Array.isArray( value )
+	);
 }
 
 function isRoute( value: unknown ): value is Route {
@@ -202,7 +206,9 @@ function showValidation( report: ValidationReport ): void {
 	list.replaceChildren();
 	for ( const issue of report.issues ) {
 		const item = document.createElement( 'li' );
-		item.textContent = `${ issue.severity.replaceAll( '_', ' ' ) }: ${ issue.message }`;
+		item.textContent = `${ issue.severity.replaceAll( '_', ' ' ) }: ${
+			issue.message
+		}`;
 		list.append( item );
 	}
 	const blocked = report.issues.filter(
@@ -217,7 +223,9 @@ function showValidation( report: ValidationReport ): void {
 		summary.textContent = `Validation blocked by ${ blocked } issue(s).`;
 	}
 	element.hidden = false;
-	element.className = `notice inline ${ report.valid ? 'notice-success' : 'notice-error' }`;
+	element.className = `notice inline ${
+		report.valid ? 'notice-success' : 'notice-error'
+	}`;
 }
 
 async function post(
@@ -246,7 +254,8 @@ async function post(
 	const envelope = decoded as AjaxEnvelope;
 	if ( ! response.ok || ! envelope.success ) {
 		throw new Error(
-			envelope.error?.message ?? 'The requested Field Group change failed.'
+			envelope.error?.message ??
+				'The requested Field Group change failed.'
 		);
 	}
 	return envelope.data;
@@ -269,7 +278,9 @@ function makeActionButton(
 }
 
 function typeMap( bootstrap: Bootstrap ): Map< string, CatalogType > {
-	return new Map( bootstrap.catalog.types.map( ( type ) => [ type.key, type ] ) );
+	return new Map(
+		bootstrap.catalog.types.map( ( type ) => [ type.key, type ] )
+	);
 }
 
 function isEditable(
@@ -291,7 +302,8 @@ function renderFields(
 	if ( fields.length === 0 ) {
 		const empty = document.createElement( 'p' );
 		empty.className = 'description';
-		empty.textContent = 'No fields yet. Select a certified V1 type and add it.';
+		empty.textContent =
+			'No fields yet. Select a certified V1 type and add it.';
 		host.append( empty );
 		return;
 	}
@@ -309,7 +321,9 @@ function renderFields(
 		const title = document.createElement( 'strong' );
 		title.textContent = descriptor?.label ?? ( typeKey || 'Unknown field' );
 		const identity = document.createElement( 'code' );
-		identity.textContent = persistedUuid ? `UUID ${ persistedUuid }` : 'New field';
+		identity.textContent = persistedUuid
+			? `UUID ${ persistedUuid }`
+			: 'New field';
 		heading.append( title, identity );
 		row.append( heading );
 
@@ -320,7 +334,10 @@ function renderFields(
 				descriptor?.admin_unavailable_reason ??
 				'This field type is unavailable in the V1 admin builder and is preserved read-only.';
 			const values = document.createElement( 'p' );
-			values.textContent = `Label: ${ stringValue( field, 'label' ) } · Key: ${ stringValue( field, 'key' ) }`;
+			values.textContent = `Label: ${ stringValue(
+				field,
+				'label'
+			) } · Key: ${ stringValue( field, 'key' ) }`;
 			row.append( warning, values );
 			host.append( row );
 			return;
@@ -362,7 +379,11 @@ function renderFields(
 		up.disabled = index === 0;
 		const down = makeActionButton( 'Down', 'down', index );
 		down.disabled = index === fields.length - 1;
-		actions.append( up, down, makeActionButton( 'Remove', 'remove', index ) );
+		actions.append(
+			up,
+			down,
+			makeActionButton( 'Remove', 'remove', index )
+		);
 		row.append( actions );
 		host.append( row );
 	} );
@@ -457,7 +478,9 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 		if ( status ) {
 			status.value = 'draft';
 		}
-		const heading = document.getElementById( 'wpessential-fields-editor-title' );
+		const heading = document.getElementById(
+			'wpessential-fields-editor-title'
+		);
 		if ( heading ) {
 			heading.textContent = 'Add field group';
 		}
@@ -489,7 +512,10 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 			title.value = stringValue( definition.payload, 'title' );
 		}
 		if ( description ) {
-			description.value = stringValue( definition.payload, 'description' );
+			description.value = stringValue(
+				definition.payload,
+				'description'
+			);
 		}
 		const rest = input( 'wpessential-fields-show-rest' );
 		if ( rest ) {
@@ -501,7 +527,9 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 		}
 		fields = fieldsFrom( definition );
 		renderFields( fields, types );
-		const heading = document.getElementById( 'wpessential-fields-editor-title' );
+		const heading = document.getElementById(
+			'wpessential-fields-editor-title'
+		);
 		if ( heading ) {
 			heading.textContent = 'Edit field group';
 		}
@@ -516,11 +544,15 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 		const existing = current();
 		return {
 			...( existing?.payload ?? {} ),
-			group_key: input( 'wpessential-fields-group-key' )?.value.trim() ?? '',
-			title: input( 'wpessential-fields-group-title' )?.value.trim() ?? '',
+			group_key:
+				input( 'wpessential-fields-group-key' )?.value.trim() ?? '',
+			title:
+				input( 'wpessential-fields-group-title' )?.value.trim() ?? '',
 			description:
-				input( 'wpessential-fields-group-description' )?.value.trim() ?? '',
-			show_in_rest: input( 'wpessential-fields-show-rest' )?.checked ?? false,
+				input( 'wpessential-fields-group-description' )?.value.trim() ??
+				'',
+			show_in_rest:
+				input( 'wpessential-fields-show-rest' )?.checked ?? false,
 			fields: fields.map( copyObject ),
 		};
 	};
@@ -549,7 +581,9 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 			await operation();
 		} catch ( error ) {
 			setNotice(
-				error instanceof Error ? error.message : 'The Field Group request failed.',
+				error instanceof Error
+					? error.message
+					: 'The Field Group request failed.',
 				true
 			);
 		} finally {
@@ -572,7 +606,11 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 	};
 
 	const validate = async (): Promise< ValidationReport > => {
-		const result = await post( bootstrap, bootstrap.routes.validate, request() );
+		const result = await post(
+			bootstrap,
+			bootstrap.routes.validate,
+			request()
+		);
 		const report = parseValidation( result );
 		if ( ! report ) {
 			throw new Error( 'Field Group validation response was invalid.' );
@@ -673,15 +711,19 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 		if ( action === 'remove' ) {
 			fields.splice( index, 1 );
 		} else if ( action === 'up' && index > 0 ) {
-			[ fields[ index - 1 ], fields[ index ] ] = [
-				fields[ index ],
-				fields[ index - 1 ],
-			];
+			const selected = fields[ index ];
+			if ( ! selected ) {
+				return;
+			}
+			fields.splice( index, 1 );
+			fields.splice( index - 1, 0, selected );
 		} else if ( action === 'down' && index < fields.length - 1 ) {
-			[ fields[ index ], fields[ index + 1 ] ] = [
-				fields[ index + 1 ],
-				fields[ index ],
-			];
+			const selected = fields[ index ];
+			if ( ! selected ) {
+				return;
+			}
+			fields.splice( index, 1 );
+			fields.splice( index + 1, 0, selected );
 		} else {
 			return;
 		}
@@ -707,7 +749,9 @@ function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 				await post( bootstrap, bootstrap.routes.save, request() );
 				await refresh();
 				reset();
-				setNotice( editing ? 'Field Group updated.' : 'Field Group created.' );
+				setNotice(
+					editing ? 'Field Group updated.' : 'Field Group created.'
+				);
 			} );
 		} );
 	}
@@ -745,7 +789,9 @@ function boot(): void {
 		return;
 	}
 	try {
-		const bootstrap = parseBootstrap( JSON.parse( script.textContent ?? '{}' ) );
+		const bootstrap = parseBootstrap(
+			JSON.parse( script.textContent ?? '{}' )
+		);
 		if ( ! bootstrap ) {
 			root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 			return;
