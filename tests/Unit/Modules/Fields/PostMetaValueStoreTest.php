@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\Fields;
 
 use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
 use WPEssential\Modules\Fields\FieldValueNormalizer;
+use WPEssential\Modules\Fields\PostMetaRecoveryException;
 use WPEssential\Modules\Fields\PostMetaRegistrationCompiler;
 use WPEssential\Modules\Fields\PostMetaValueStore;
 use WPEssential\Modules\Fields\PostMetaValueWriteResult;
@@ -192,33 +192,124 @@ final class PostMetaValueStoreTest extends TestCase
         $store->write($field, 'book', 41, null);
     }
 
-    public function testMultipleRowReadIsTypedButMutationFailsClosed(): void
+    public function testMultipleRowReplacementPreservesOrderDuplicatesAndIsIdempotent(): void
     {
-        $state = [41 => ['scores' => ['4', '9']]];
-        $updates = 0;
+        $state = [41 => ['rows' => ['One', 'Two']]];
+        $adds = 0;
         $store = $this->store(
             $state,
-            update: static function (int $postId, string $metaKey, mixed $value) use (&$updates): int|bool {
-                ++$updates;
-                return true;
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$state, &$adds): int|false {
+                ++$adds;
+                $state[$postId][$metaKey] ??= [];
+                $state[$postId][$metaKey][] = $value;
+                return $adds;
             },
         );
-        $field = $this->field([
-            'key' => 'scores',
-            'type' => 'number',
-            'settings' => ['integer' => true],
-            'cloneable' => true,
-            'clone_as_multiple' => true,
-        ]);
+        $field = $this->multiRowField('rows');
 
-        self::assertSame([4, 9], $store->read($field, 'book', 41));
+        $written = $store->write($field, 'book', 41, [' Three ', 'Three', 'Four']);
+        self::assertSame(PostMetaValueWriteResult::WRITTEN, $written->status);
+        self::assertSame(['Three', 'Three', 'Four'], $written->value);
+        self::assertSame(['Three', 'Three', 'Four'], $store->read($field, 'book', 41));
+        self::assertSame(3, $adds);
+
+        $unchanged = $store->write($field, 'book', 41, ['Three', 'Three', 'Four']);
+        self::assertSame(PostMetaValueWriteResult::UNCHANGED, $unchanged->status);
+        self::assertSame(3, $adds, 'idempotent multi-row writes must not touch the native row boundary');
+    }
+
+    public function testMultipleRowEmptyListClearsRowsAndThenReportsAbsent(): void
+    {
+        $state = [41 => ['rows' => ['One', 'Two']]];
+        $store = $this->store($state);
+        $field = $this->multiRowField('rows');
+
+        $deleted = $store->write($field, 'book', 41, []);
+        self::assertSame(PostMetaValueWriteResult::DELETED, $deleted->status);
+        self::assertFalse(isset($state[41]['rows']));
+
+        $absent = $store->write($field, 'book', 41, []);
+        self::assertSame(PostMetaValueWriteResult::ABSENT, $absent->status);
+        self::assertFalse($absent->changed());
+    }
+
+    public function testMultipleRowPartialFailureRestoresExactOriginalSnapshot(): void
+    {
+        $state = [41 => ['rows' => ['One', 'One', 'Two']]];
+        $adds = 0;
+        $store = $this->store(
+            $state,
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$state, &$adds): int|false {
+                ++$adds;
+                if ($adds === 2) {
+                    return false;
+                }
+                $state[$postId][$metaKey] ??= [];
+                $state[$postId][$metaKey][] = $value;
+                return $adds;
+            },
+        );
+        $field = $this->multiRowField('rows');
+
+        try {
+            $store->write($field, 'book', 41, ['Three', 'Four']);
+            self::fail('Partial replacement must remain a failed write even after successful compensation.');
+        } catch (RuntimeException $exception) {
+            self::assertNotInstanceOf(PostMetaRecoveryException::class, $exception);
+            self::assertStringContainsString('original row set was verified as restored', $exception->getMessage());
+        }
+
+        self::assertSame(['One', 'One', 'Two'], $state[41]['rows']);
+        self::assertSame(['One', 'One', 'Two'], $store->read($field, 'book', 41));
+    }
+
+    public function testMultipleRowRecoveryFailureSurfacesUncertainState(): void
+    {
+        $state = [41 => ['rows' => ['One', 'Two']]];
+        $adds = 0;
+        $store = $this->store(
+            $state,
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$state, &$adds): int|false {
+                ++$adds;
+                if ($adds === 1) {
+                    $state[$postId][$metaKey] ??= [];
+                    $state[$postId][$metaKey][] = $value;
+                    return 1;
+                }
+                return false;
+            },
+        );
+        $field = $this->multiRowField('rows');
+
+        $this->expectException(PostMetaRecoveryException::class);
+        $this->expectExceptionMessage('state is uncertain');
+        $store->write($field, 'book', 41, ['Three', 'Four']);
+    }
+
+    public function testCorruptMultipleRowSnapshotFailsBeforeDestructiveMutation(): void
+    {
+        $state = [41 => ['scores' => ['not-an-integer']]];
+        $deletes = 0;
+        $adds = 0;
+        $store = $this->store(
+            $state,
+            delete: static function (int $postId, string $metaKey) use (&$deletes): bool {
+                ++$deletes;
+                return true;
+            },
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$adds): int|false {
+                ++$adds;
+                return 1;
+            },
+        );
+        $field = $this->multiRowField('scores', integer: true);
 
         try {
             $store->write($field, 'book', 41, [5, 10]);
-            self::fail('Multiple-row replacement must remain fail-closed.');
-        } catch (LogicException) {
-            self::assertSame(0, $updates);
-            self::assertSame(['4', '9'], $state[41]['scores']);
+            self::fail('Corrupt recovery snapshot must fail before mutation.');
+        } catch (RuntimeException) {
+            self::assertSame(0, $deletes);
+            self::assertSame(0, $adds);
         }
     }
 
@@ -246,11 +337,13 @@ final class PostMetaValueStoreTest extends TestCase
      * @param array<int,array<string,mixed>> $state
      * @param null|callable(int,string,mixed):int|bool $update
      * @param null|callable(int,string):bool $delete
+     * @param null|callable(int,string,mixed):int|false $add
      */
     private function store(
         array &$state,
         ?callable $update = null,
         ?callable $delete = null,
+        ?callable $add = null,
         string $postType = 'book',
     ): PostMetaValueStore {
         $values = new FieldValueNormalizer();
@@ -263,6 +356,14 @@ final class PostMetaValueStoreTest extends TestCase
         $delete ??= static function (int $postId, string $metaKey) use (&$state): bool {
             unset($state[$postId][$metaKey]);
             return true;
+        };
+        $add ??= static function (int $postId, string $metaKey, mixed $value) use (&$state): int|false {
+            $state[$postId][$metaKey] ??= [];
+            if (!is_array($state[$postId][$metaKey]) || !array_is_list($state[$postId][$metaKey])) {
+                return false;
+            }
+            $state[$postId][$metaKey][] = $value;
+            return count($state[$postId][$metaKey]);
         };
 
         return new PostMetaValueStore(
@@ -281,6 +382,7 @@ final class PostMetaValueStoreTest extends TestCase
             },
             updatePostMeta: $update,
             deletePostMeta: $delete,
+            addPostMeta: $add,
             slash: static fn (mixed $value): mixed => $value,
         );
     }
@@ -291,5 +393,17 @@ final class PostMetaValueStoreTest extends TestCase
         $definition['uuid'] = $definition['uuid'] ?? '11111111-1111-4111-8111-111111111111';
         $definition['label'] = $definition['label'] ?? ucfirst((string) ($definition['key'] ?? 'field'));
         return $this->definitions->normalize($definition);
+    }
+
+    /** @return array<string,mixed> */
+    private function multiRowField(string $key, bool $integer = false): array
+    {
+        return $this->field([
+            'key' => $key,
+            'type' => $integer ? 'number' : 'text',
+            'settings' => $integer ? ['integer' => true] : [],
+            'cloneable' => true,
+            'clone_as_multiple' => true,
+        ]);
     }
 }

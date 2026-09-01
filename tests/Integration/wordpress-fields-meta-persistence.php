@@ -57,6 +57,7 @@ spl_autoload_register(static function (string $class) use ($root): void {
 });
 
 use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
+use WPEssential\Modules\Fields\PostMetaRecoveryException;
 use WPEssential\Modules\Fields\PostMetaRegistrationCompiler;
 use WPEssential\Modules\Fields\PostMetaValueStore;
 use WPEssential\Modules\Fields\PostMetaValueWriteResult;
@@ -202,12 +203,46 @@ fieldsPersistenceExpect($store->read($fields['aliases'], 'wpe_value_book', $post
 add_post_meta($postId, 'wpe_value_rows', 'One');
 add_post_meta($postId, 'wpe_value_rows', 'Two');
 fieldsPersistenceExpect($store->read($fields['rows'], 'wpe_value_book', $postId) === ['One', 'Two'], 'multi-row metadata must remain readable as a typed list');
+
+$rowsWrite = $store->write($fields['rows'], 'wpe_value_book', $postId, [' Three ', 'Three', 'Four']);
+fieldsPersistenceExpect($rowsWrite->status === PostMetaValueWriteResult::WRITTEN, 'multi-row replacement must report written');
+fieldsPersistenceExpect($rowsWrite->value === ['Three', 'Three', 'Four'], 'multi-row replacement must preserve requested duplicate multiplicity and order');
+fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === ['Three', 'Three', 'Four'], 'native multi-row order and duplicates must match the canonical desired list');
+
+$rowsUnchanged = $store->write($fields['rows'], 'wpe_value_book', $postId, ['Three', 'Three', 'Four']);
+fieldsPersistenceExpect($rowsUnchanged->status === PostMetaValueWriteResult::UNCHANGED, 'identical multi-row replacement must be idempotent');
+
+$rowsCleared = $store->write($fields['rows'], 'wpe_value_book', $postId, []);
+fieldsPersistenceExpect($rowsCleared->status === PostMetaValueWriteResult::DELETED, 'empty multi-row list must clear all rows');
+fieldsPersistenceExpect(!metadata_exists('post', $postId, 'wpe_value_rows'), 'empty multi-row list must map to native absence');
+$rowsAbsent = $store->write($fields['rows'], 'wpe_value_book', $postId, []);
+fieldsPersistenceExpect($rowsAbsent->status === PostMetaValueWriteResult::ABSENT, 'repeated empty multi-row list must report already absent');
+
+$stableRows = ['One', 'One', 'Two\\Three'];
+$store->write($fields['rows'], 'wpe_value_book', $postId, $stableRows);
+fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === $stableRows, 'stable recovery snapshot must be established exactly');
+
+$faultAdds = 0;
+$faultStore = new PostMetaValueStore(
+    compiler: $compiler,
+    addPostMeta: static function (int $targetPostId, string $metaKey, mixed $value) use (&$faultAdds): int|false {
+        ++$faultAdds;
+        if ($faultAdds === 2) {
+            return false;
+        }
+        return add_post_meta($targetPostId, $metaKey, $value, false);
+    },
+);
 try {
-    $store->write($fields['rows'], 'wpe_value_book', $postId, ['Three', 'Four']);
-    fieldsPersistenceExpect(false, 'multi-row replacement must remain fail closed without recovery semantics');
-} catch (\LogicException) {
-    fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === ['One', 'Two'], 'rejected multi-row replacement must leave prior rows untouched');
+    $faultStore->write($fields['rows'], 'wpe_value_book', $postId, ['Partial', 'Failure']);
+    fieldsPersistenceExpect(false, 'fault-injected multi-row write must remain a failed operation');
+} catch (PostMetaRecoveryException) {
+    fieldsPersistenceExpect(false, 'single injected add failure must be recoverable and must not surface uncertain state');
+} catch (\RuntimeException $error) {
+    fieldsPersistenceExpect(str_contains($error->getMessage(), 'original row set was verified as restored'), 'restored failure must report verified compensation');
 }
+fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === $stableRows, 'fault-injected partial replacement must restore the exact original native row set');
+fieldsPersistenceExpect($store->read($fields['rows'], 'wpe_value_book', $postId) === $stableRows, 'canonical read after compensation must equal the original snapshot');
 
 $deleted = $store->write($fields['headline'], 'wpe_value_book', $postId, null);
 fieldsPersistenceExpect($deleted->status === PostMetaValueWriteResult::DELETED, 'optional null must delete existing metadata');
