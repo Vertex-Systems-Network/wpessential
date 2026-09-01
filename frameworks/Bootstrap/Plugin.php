@@ -21,6 +21,7 @@ use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
 use WPEssential\Platform\Auth\PolicyEngine;
+use WPEssential\Platform\Database\Migrations\MigrationCoordinator;
 use WPEssential\Platform\Database\Migrations\MigrationRegistry;
 use WPEssential\Platform\Database\Migrations\MigrationRunner;
 use WPEssential\Platform\Database\Migrations\WpdbMigrationStateStore;
@@ -110,7 +111,7 @@ final class Plugin
         $abilities = new AbilityRegistry($abilityPolicy);
         $abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
 
-        [$definitionRepository, $registrationStore, $database] = self::createPersistenceServices();
+        [$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
         $registrationProviders = new RegistrationDefinitionProviderRegistry();
         $registrationCompiler = new RegistrationCompiler($registrationStore);
         $registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
@@ -136,6 +137,9 @@ final class Plugin
         $services->set('platform.abilities.wordpress', $abilityBridge);
         if ($database instanceof NativeWpdbAdapter) {
             $services->set('platform.database', $database);
+        }
+        if ($migrationCoordinator instanceof MigrationCoordinator) {
+            $services->set('platform.database.migrations', $migrationCoordinator);
         }
         $services->set('platform.definitions', $definitionRepository);
         $services->set('platform.registrations.store', $registrationStore);
@@ -182,19 +186,28 @@ final class Plugin
         return self::$kernel;
     }
 
-    /** @return array{DefinitionRepositoryInterface, CompiledRegistrationStoreInterface, NativeWpdbAdapter|null} */
+    /**
+     * @return array{
+     *   DefinitionRepositoryInterface,
+     *   CompiledRegistrationStoreInterface,
+     *   NativeWpdbAdapter|null,
+     *   MigrationCoordinator|null
+     * }
+     */
     private static function createPersistenceServices(): array
     {
         $wpdb = $GLOBALS['wpdb'] ?? null;
         if (!is_object($wpdb) || !self::supportsMysqlPersistence($wpdb)) {
-            return [new InMemoryDefinitionRepository(), new InMemoryCompiledRegistrationStore(), null];
+            return [new InMemoryDefinitionRepository(), new InMemoryCompiledRegistrationStore(), null, null];
         }
 
         $database = new NativeWpdbAdapter($wpdb);
-        $migrations = new MigrationRegistry();
-        $migrations->register(new CreateCompiledRegistrationTablesMigration($database));
-        $migrations->register(new CreateDefinitionTablesMigration($database));
-        (new MigrationRunner($migrations, new WpdbMigrationStateStore($database)))->runPending();
+        $migrationRegistry = new MigrationRegistry();
+        $migrationRunner = new MigrationRunner($migrationRegistry, new WpdbMigrationStateStore($database));
+        $migrationCoordinator = new MigrationCoordinator($migrationRegistry, $migrationRunner);
+        $migrationCoordinator->register(new CreateCompiledRegistrationTablesMigration($database));
+        $migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
+        $migrationCoordinator->runPending();
 
         $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
         $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
@@ -206,7 +219,7 @@ final class Plugin
             new WpdbCompiledRegistrationPersistenceGateway($database),
             $registrationScope,
         );
-        return [$definitions, $registrations, $database];
+        return [$definitions, $registrations, $database, $migrationCoordinator];
     }
 
     private static function supportsMysqlPersistence(object $wpdb): bool
