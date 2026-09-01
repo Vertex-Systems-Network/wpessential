@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace WPEssential\Kernel;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
 use LogicException;
+use WPEssential\Contracts\ModuleActivationPolicyInterface;
 use WPEssential\Contracts\ModuleInterface;
+use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
 use WPEssential\Platform\Modules\ModuleRegistry;
 use WPEssential\Platform\Modules\ModuleState;
 
@@ -21,6 +22,7 @@ final class Kernel
     public function __construct(
         private readonly ServiceRegistry $services = new ServiceRegistry(),
         private readonly ModuleRegistry $modules = new ModuleRegistry(),
+        private readonly ModuleActivationPolicyInterface $moduleActivationPolicy = new DefaultModuleActivationPolicy(),
     ) {
         $this->services->set('platform.modules', $this->modules);
     }
@@ -40,6 +42,11 @@ final class Kernel
         if ($this->booted) {
             throw new LogicException('Modules cannot be registered after the kernel has booted.');
         }
+
+        if (!$this->moduleActivationPolicy->allows($module->manifest())) {
+            return;
+        }
+
         $this->modules->register($module);
     }
 
