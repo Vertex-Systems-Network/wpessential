@@ -1,21 +1,20 @@
 import './fields.scss';
 
-type RecordValue = Record< string, unknown >;
+type JsonObject = Record< string, unknown >;
 type Route = { type: string; nonce: string };
-type FieldDefinition = RecordValue;
 type GroupDefinition = {
 	id: string;
 	status: string;
 	revision: number;
-	payload: RecordValue;
+	payload: JsonObject;
 };
-type CatalogType = RecordValue & {
+type CatalogType = JsonObject & {
 	key: string;
 	label: string;
 	admin_available: boolean;
 	admin_unavailable_reason: string | null;
 };
-type FieldsBootstrap = {
+type Bootstrap = {
 	surface: 'custom-fields';
 	ajaxUrl: string;
 	ajaxAction: string;
@@ -27,12 +26,10 @@ type FieldsBootstrap = {
 		status: Route;
 	};
 	definitions: GroupDefinition[];
-	catalog: RecordValue & { types: CatalogType[] };
+	catalog: JsonObject & { types: CatalogType[] };
 };
 type ValidationIssue = {
-	id: string;
 	severity: string;
-	field: string;
 	message: string;
 };
 type ValidationReport = {
@@ -45,13 +42,13 @@ type AjaxEnvelope = {
 	error?: { message?: string };
 };
 
-function isRecord( value: unknown ): value is RecordValue {
+function isObject( value: unknown ): value is JsonObject {
 	return typeof value === 'object' && value !== null && ! Array.isArray( value );
 }
 
 function isRoute( value: unknown ): value is Route {
 	return (
-		isRecord( value ) &&
+		isObject( value ) &&
 		typeof value.type === 'string' &&
 		typeof value.nonce === 'string'
 	);
@@ -59,18 +56,18 @@ function isRoute( value: unknown ): value is Route {
 
 function isDefinition( value: unknown ): value is GroupDefinition {
 	return (
-		isRecord( value ) &&
+		isObject( value ) &&
 		typeof value.id === 'string' &&
 		typeof value.status === 'string' &&
 		typeof value.revision === 'number' &&
 		Number.isInteger( value.revision ) &&
-		isRecord( value.payload )
+		isObject( value.payload )
 	);
 }
 
 function isCatalogType( value: unknown ): value is CatalogType {
 	return (
-		isRecord( value ) &&
+		isObject( value ) &&
 		typeof value.key === 'string' &&
 		typeof value.label === 'string' &&
 		typeof value.admin_available === 'boolean' &&
@@ -79,13 +76,13 @@ function isCatalogType( value: unknown ): value is CatalogType {
 	);
 }
 
-function parseBootstrap( value: unknown ): FieldsBootstrap | null {
+function parseBootstrap( value: unknown ): Bootstrap | null {
 	if (
-		! isRecord( value ) ||
+		! isObject( value ) ||
 		value.surface !== 'custom-fields' ||
 		typeof value.ajaxUrl !== 'string' ||
 		typeof value.ajaxAction !== 'string' ||
-		! isRecord( value.routes ) ||
+		! isObject( value.routes ) ||
 		! isRoute( value.routes.list ) ||
 		! isRoute( value.routes.catalog ) ||
 		! isRoute( value.routes.validate ) ||
@@ -93,49 +90,52 @@ function parseBootstrap( value: unknown ): FieldsBootstrap | null {
 		! isRoute( value.routes.status ) ||
 		! Array.isArray( value.definitions ) ||
 		! value.definitions.every( isDefinition ) ||
-		! isRecord( value.catalog ) ||
+		! isObject( value.catalog ) ||
 		! Array.isArray( value.catalog.types ) ||
 		! value.catalog.types.every( isCatalogType )
 	) {
 		return null;
 	}
 
-	return value as FieldsBootstrap;
+	return value as Bootstrap;
 }
 
-function textInput( id: string ): HTMLInputElement | null {
+function input( id: string ): HTMLInputElement | null {
 	const element = document.getElementById( id );
 	return element instanceof HTMLInputElement ? element : null;
 }
 
-function selectInput( id: string ): HTMLSelectElement | null {
+function select( id: string ): HTMLSelectElement | null {
 	const element = document.getElementById( id );
 	return element instanceof HTMLSelectElement ? element : null;
 }
 
-function buttonInput( id: string ): HTMLButtonElement | null {
+function button( id: string ): HTMLButtonElement | null {
 	const element = document.getElementById( id );
 	return element instanceof HTMLButtonElement ? element : null;
 }
 
-function cloneRecord( value: RecordValue ): RecordValue {
-	return structuredClone( value );
+function copyObject( value: JsonObject ): JsonObject {
+	const copy: unknown = JSON.parse( JSON.stringify( value ) );
+	return isObject( copy ) ? copy : {};
 }
 
-function fieldString( field: FieldDefinition, key: string ): string {
-	return typeof field[ key ] === 'string' ? field[ key ] : '';
+function stringValue( object: JsonObject, key: string ): string {
+	const value = object[ key ];
+	return typeof value === 'string' ? value : '';
 }
 
-function fieldUuid( field: FieldDefinition ): string | null {
-	return typeof field.uuid === 'string' && field.uuid !== '' ? field.uuid : null;
+function uuid( field: JsonObject ): string | null {
+	const value = field.uuid;
+	return typeof value === 'string' && value !== '' ? value : null;
 }
 
-function groupFields( definition: GroupDefinition ): FieldDefinition[] {
-	const fields = definition.payload.fields;
-	if ( ! Array.isArray( fields ) ) {
+function fieldsFrom( definition: GroupDefinition ): JsonObject[] {
+	const value = definition.payload.fields;
+	if ( ! Array.isArray( value ) ) {
 		return [];
 	}
-	return fields.filter( isRecord ).map( cloneRecord );
+	return value.filter( isObject ).map( copyObject );
 }
 
 function setNotice( message: string, error = false ): void {
@@ -153,52 +153,46 @@ function setNotice( message: string, error = false ): void {
 }
 
 function clearValidation(): void {
-	const container = document.getElementById( 'wpessential-fields-validation' );
-	if ( container instanceof HTMLElement ) {
-		container.hidden = true;
-		container.className = '';
+	const element = document.getElementById( 'wpessential-fields-validation' );
+	if ( element instanceof HTMLElement ) {
+		element.hidden = true;
+		element.className = '';
 	}
 }
 
 function parseValidation( value: unknown ): ValidationReport | null {
 	if (
-		! isRecord( value ) ||
+		! isObject( value ) ||
 		typeof value.valid !== 'boolean' ||
 		! Array.isArray( value.issues )
 	) {
 		return null;
 	}
+
 	const issues: ValidationIssue[] = [];
 	for ( const issue of value.issues ) {
 		if (
-			! isRecord( issue ) ||
-			typeof issue.id !== 'string' ||
+			! isObject( issue ) ||
 			typeof issue.severity !== 'string' ||
-			typeof issue.field !== 'string' ||
 			typeof issue.message !== 'string'
 		) {
 			return null;
 		}
-		issues.push( {
-			id: issue.id,
-			severity: issue.severity,
-			field: issue.field,
-			message: issue.message,
-		} );
+		issues.push( { severity: issue.severity, message: issue.message } );
 	}
 	return { valid: value.valid, issues };
 }
 
-function renderValidation( report: ValidationReport ): void {
-	const container = document.getElementById( 'wpessential-fields-validation' );
-	const summary = container?.querySelector(
+function showValidation( report: ValidationReport ): void {
+	const element = document.getElementById( 'wpessential-fields-validation' );
+	const summary = element?.querySelector(
 		'[data-wpessential-fields-validation-summary]'
 	);
-	const list = container?.querySelector(
+	const list = element?.querySelector(
 		'[data-wpessential-fields-validation-issues]'
 	);
 	if (
-		! ( container instanceof HTMLElement ) ||
+		! ( element instanceof HTMLElement ) ||
 		! ( summary instanceof HTMLElement ) ||
 		! ( list instanceof HTMLElement )
 	) {
@@ -214,19 +208,22 @@ function renderValidation( report: ValidationReport ): void {
 	const blocked = report.issues.filter(
 		( issue ) => issue.severity === 'blocked'
 	).length;
-	summary.textContent = report.valid
-		? report.issues.length === 0
-			? 'Validation passed.'
-			: `Validation passed with ${ report.issues.length } warning or informational item(s).`
-		: `Validation blocked by ${ blocked } issue(s).`;
-	container.hidden = false;
-	container.className = `notice inline ${ report.valid ? 'notice-success' : 'notice-error' }`;
+	if ( report.valid ) {
+		summary.textContent =
+			report.issues.length === 0
+				? 'Validation passed.'
+				: `Validation passed with ${ report.issues.length } warning or informational item(s).`;
+	} else {
+		summary.textContent = `Validation blocked by ${ blocked } issue(s).`;
+	}
+	element.hidden = false;
+	element.className = `notice inline ${ report.valid ? 'notice-success' : 'notice-error' }`;
 }
 
-async function postRoute(
-	bootstrap: FieldsBootstrap,
+async function post(
+	bootstrap: Bootstrap,
 	route: Route,
-	payload: RecordValue
+	payload: JsonObject
 ): Promise< unknown > {
 	const body = new URLSearchParams();
 	body.set( 'action', bootstrap.ajaxAction );
@@ -242,11 +239,11 @@ async function postRoute(
 		},
 		body: body.toString(),
 	} );
-	const value: unknown = await response.json();
-	if ( ! isRecord( value ) || typeof value.success !== 'boolean' ) {
+	const decoded: unknown = await response.json();
+	if ( ! isObject( decoded ) || typeof decoded.success !== 'boolean' ) {
 		throw new Error( 'WPEssential returned an invalid AJAX response.' );
 	}
-	const envelope = value as AjaxEnvelope;
+	const envelope = decoded as AjaxEnvelope;
 	if ( ! response.ok || ! envelope.success ) {
 		throw new Error(
 			envelope.error?.message ?? 'The requested Field Group change failed.'
@@ -255,73 +252,77 @@ async function postRoute(
 	return envelope.data;
 }
 
-function catalogMap( bootstrap: FieldsBootstrap ): Map< string, CatalogType > {
+function makeActionButton(
+	label: string,
+	action: string,
+	index: number | null = null
+): HTMLButtonElement {
+	const element = document.createElement( 'button' );
+	element.type = 'button';
+	element.className = 'button button-small';
+	element.textContent = label;
+	element.dataset.wpessentialFieldsAction = action;
+	if ( index !== null ) {
+		element.dataset.wpessentialFieldsIndex = String( index );
+	}
+	return element;
+}
+
+function typeMap( bootstrap: Bootstrap ): Map< string, CatalogType > {
 	return new Map( bootstrap.catalog.types.map( ( type ) => [ type.key, type ] ) );
 }
 
-function fieldTypeAvailable(
-	field: FieldDefinition,
+function isEditable(
+	field: JsonObject,
 	types: Map< string, CatalogType >
 ): boolean {
-	const descriptor = types.get( fieldString( field, 'type' ) );
-	return descriptor?.admin_available === true;
+	return types.get( stringValue( field, 'type' ) )?.admin_available === true;
 }
 
-function actionButton( label: string, action: string, index: number ): HTMLButtonElement {
-	const button = document.createElement( 'button' );
-	button.type = 'button';
-	button.className = 'button button-small';
-	button.textContent = label;
-	button.dataset.wpessentialFieldsAction = action;
-	button.dataset.wpessentialFieldsIndex = String( index );
-	return button;
-}
-
-function renderFieldRows(
-	fields: FieldDefinition[],
+function renderFields(
+	fields: JsonObject[],
 	types: Map< string, CatalogType >
 ): void {
-	const container = document.getElementById( 'wpessential-fields-rows' );
-	if ( ! ( container instanceof HTMLElement ) ) {
+	const host = document.getElementById( 'wpessential-fields-rows' );
+	if ( ! ( host instanceof HTMLElement ) ) {
 		return;
 	}
-	container.replaceChildren();
+	host.replaceChildren();
 	if ( fields.length === 0 ) {
 		const empty = document.createElement( 'p' );
 		empty.className = 'description';
 		empty.textContent = 'No fields yet. Select a certified V1 type and add it.';
-		container.append( empty );
+		host.append( empty );
 		return;
 	}
 
 	fields.forEach( ( field, index ) => {
-		const typeKey = fieldString( field, 'type' );
+		const typeKey = stringValue( field, 'type' );
 		const descriptor = types.get( typeKey );
-		const available = fieldTypeAvailable( field, types );
-		const persisted = fieldUuid( field ) !== null;
+		const persistedUuid = uuid( field );
+		const editable = isEditable( field, types );
 		const row = document.createElement( 'article' );
 		row.className = 'wpessential-fields-row';
-		row.dataset.wpessentialFieldsRow = String( index );
 
 		const heading = document.createElement( 'div' );
 		heading.className = 'wpessential-fields-row-heading';
 		const title = document.createElement( 'strong' );
-		title.textContent = descriptor?.label ?? typeKey || 'Unknown field';
-		const meta = document.createElement( 'code' );
-		meta.textContent = persisted ? `UUID ${ fieldUuid( field ) }` : 'New field';
-		heading.append( title, meta );
+		title.textContent = descriptor?.label ?? ( typeKey || 'Unknown field' );
+		const identity = document.createElement( 'code' );
+		identity.textContent = persistedUuid ? `UUID ${ persistedUuid }` : 'New field';
+		heading.append( title, identity );
 		row.append( heading );
 
-		if ( ! available ) {
-			const locked = document.createElement( 'p' );
-			locked.className = 'wpessential-fields-locked';
-			locked.textContent =
+		if ( ! editable ) {
+			const warning = document.createElement( 'p' );
+			warning.className = 'wpessential-fields-locked';
+			warning.textContent =
 				descriptor?.admin_unavailable_reason ??
 				'This field type is unavailable in the V1 admin builder and is preserved read-only.';
 			const values = document.createElement( 'p' );
-			values.textContent = `Label: ${ fieldString( field, 'label' ) } · Key: ${ fieldString( field, 'key' ) }`;
-			row.append( locked, values );
-			container.append( row );
+			values.textContent = `Label: ${ stringValue( field, 'label' ) } · Key: ${ stringValue( field, 'key' ) }`;
+			row.append( warning, values );
+			host.append( row );
 			return;
 		}
 
@@ -331,7 +332,7 @@ function renderFieldRows(
 		label.textContent = 'Label';
 		const labelInput = document.createElement( 'input' );
 		labelInput.type = 'text';
-		labelInput.value = fieldString( field, 'label' );
+		labelInput.value = stringValue( field, 'label' );
 		labelInput.dataset.wpessentialFieldsField = 'label';
 		labelInput.dataset.wpessentialFieldsIndex = String( index );
 		label.append( labelInput );
@@ -339,15 +340,15 @@ function renderFieldRows(
 		key.textContent = 'Storage key';
 		const keyInput = document.createElement( 'input' );
 		keyInput.type = 'text';
-		keyInput.value = fieldString( field, 'key' );
-		keyInput.readOnly = persisted;
+		keyInput.value = stringValue( field, 'key' );
+		keyInput.readOnly = persistedUuid !== null;
 		keyInput.dataset.wpessentialFieldsField = 'key';
 		keyInput.dataset.wpessentialFieldsIndex = String( index );
 		key.append( keyInput );
 		grid.append( label, key );
 		row.append( grid );
 
-		if ( persisted ) {
+		if ( persistedUuid ) {
 			const immutable = document.createElement( 'p' );
 			immutable.className = 'description';
 			immutable.textContent =
@@ -357,79 +358,80 @@ function renderFieldRows(
 
 		const actions = document.createElement( 'div' );
 		actions.className = 'wpessential-fields-row-actions';
-		const up = actionButton( 'Up', 'up', index );
+		const up = makeActionButton( 'Up', 'up', index );
 		up.disabled = index === 0;
-		const down = actionButton( 'Down', 'down', index );
+		const down = makeActionButton( 'Down', 'down', index );
 		down.disabled = index === fields.length - 1;
-		actions.append( up, down, actionButton( 'Remove', 'remove', index ) );
+		actions.append( up, down, makeActionButton( 'Remove', 'remove', index ) );
 		row.append( actions );
-		container.append( row );
+		host.append( row );
 	} );
 }
 
 function renderDefinitions( definitions: GroupDefinition[] ): void {
-	const body = document.getElementById( 'wpessential-fields-definitions' );
-	if ( ! ( body instanceof HTMLTableSectionElement ) ) {
+	const host = document.getElementById( 'wpessential-fields-definitions' );
+	if ( ! ( host instanceof HTMLTableSectionElement ) ) {
 		return;
 	}
-	body.replaceChildren();
+	host.replaceChildren();
 	if ( definitions.length === 0 ) {
 		const row = document.createElement( 'tr' );
 		const cell = document.createElement( 'td' );
 		cell.colSpan = 6;
 		cell.textContent = 'No Field Groups have been created yet.';
 		row.append( cell );
-		body.append( row );
+		host.append( row );
 		return;
 	}
 
 	for ( const definition of definitions ) {
 		const row = document.createElement( 'tr' );
-		const payload = definition.payload;
-		const fields = Array.isArray( payload.fields ) ? payload.fields.length : 0;
-		for ( const text of [
-			typeof payload.title === 'string' ? payload.title : '',
-			typeof payload.group_key === 'string' ? payload.group_key : '',
-			String( fields ),
+		const rawFields = definition.payload.fields;
+		const values = [
+			stringValue( definition.payload, 'title' ),
+			stringValue( definition.payload, 'group_key' ),
+			String( Array.isArray( rawFields ) ? rawFields.length : 0 ),
 			definition.status,
 			String( definition.revision ),
-		] ) {
+		];
+		for ( const value of values ) {
 			const cell = document.createElement( 'td' );
-			cell.textContent = text;
+			cell.textContent = value;
 			row.append( cell );
 		}
+
 		const actions = document.createElement( 'td' );
-		const edit = actionButton( 'Edit', 'edit-definition', 0 );
+		const edit = makeActionButton( 'Edit', 'edit-definition' );
 		edit.dataset.wpessentialFieldsId = definition.id;
 		actions.append( edit, document.createTextNode( ' ' ) );
-		const toggle = actionButton(
+		const status = makeActionButton(
 			definition.status === 'published' ? 'Disable' : 'Publish',
-			'status-definition',
-			0
+			'status-definition'
 		);
-		toggle.dataset.wpessentialFieldsId = definition.id;
-		toggle.dataset.wpessentialFieldsStatus =
+		status.dataset.wpessentialFieldsId = definition.id;
+		status.dataset.wpessentialFieldsStatus =
 			definition.status === 'published' ? 'disabled' : 'published';
-		actions.append( toggle, document.createTextNode( ' ' ) );
+		actions.append( status );
 		if ( definition.status !== 'archived' ) {
-			const archive = actionButton( 'Archive', 'status-definition', 0 );
+			actions.append( document.createTextNode( ' ' ) );
+			const archive = makeActionButton( 'Archive', 'status-definition' );
 			archive.dataset.wpessentialFieldsId = definition.id;
 			archive.dataset.wpessentialFieldsStatus = 'archived';
 			actions.append( archive );
 		}
 		row.append( actions );
-		body.append( row );
+		host.append( row );
 	}
 }
 
-function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void {
+function bootBuilder( root: HTMLElement, bootstrap: Bootstrap ): void {
 	let definitions = [ ...bootstrap.definitions ];
-	let fields: FieldDefinition[] = [];
+	let fields: JsonObject[] = [];
 	let busy = false;
-	const types = catalogMap( bootstrap );
+	const types = typeMap( bootstrap );
 
-	const currentDefinition = (): GroupDefinition | undefined => {
-		const id = textInput( 'wpessential-fields-id' )?.value ?? '';
+	const current = (): GroupDefinition | undefined => {
+		const id = input( 'wpessential-fields-id' )?.value ?? '';
 		return definitions.find( ( definition ) => definition.id === id );
 	};
 
@@ -439,68 +441,95 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 			form.reset();
 		}
 		fields = [];
-		const id = textInput( 'wpessential-fields-id' );
-		const revision = textInput( 'wpessential-fields-revision' );
-		const groupKey = textInput( 'wpessential-fields-group-key' );
-		if ( id ) id.value = '';
-		if ( revision ) revision.value = '';
-		if ( groupKey ) groupKey.readOnly = false;
-		const status = selectInput( 'wpessential-fields-status' );
-		if ( status ) status.value = 'draft';
-		const title = document.getElementById( 'wpessential-fields-editor-title' );
-		if ( title ) title.textContent = 'Add field group';
-		const cancel = buttonInput( 'wpessential-fields-cancel' );
-		if ( cancel ) cancel.hidden = true;
-		renderFieldRows( fields, types );
+		const id = input( 'wpessential-fields-id' );
+		const revision = input( 'wpessential-fields-revision' );
+		const groupKey = input( 'wpessential-fields-group-key' );
+		if ( id ) {
+			id.value = '';
+		}
+		if ( revision ) {
+			revision.value = '';
+		}
+		if ( groupKey ) {
+			groupKey.readOnly = false;
+		}
+		const status = select( 'wpessential-fields-status' );
+		if ( status ) {
+			status.value = 'draft';
+		}
+		const heading = document.getElementById( 'wpessential-fields-editor-title' );
+		if ( heading ) {
+			heading.textContent = 'Add field group';
+		}
+		const cancel = button( 'wpessential-fields-cancel' );
+		if ( cancel ) {
+			cancel.hidden = true;
+		}
+		renderFields( fields, types );
 		clearValidation();
 	};
 
 	const edit = ( definition: GroupDefinition ): void => {
-		const payload = definition.payload;
-		const id = textInput( 'wpessential-fields-id' );
-		const revision = textInput( 'wpessential-fields-revision' );
-		const groupKey = textInput( 'wpessential-fields-group-key' );
-		const titleInput = textInput( 'wpessential-fields-group-title' );
-		const description = textInput( 'wpessential-fields-group-description' );
-		if ( id ) id.value = definition.id;
-		if ( revision ) revision.value = String( definition.revision );
+		const id = input( 'wpessential-fields-id' );
+		const revision = input( 'wpessential-fields-revision' );
+		const groupKey = input( 'wpessential-fields-group-key' );
+		const title = input( 'wpessential-fields-group-title' );
+		const description = input( 'wpessential-fields-group-description' );
+		if ( id ) {
+			id.value = definition.id;
+		}
+		if ( revision ) {
+			revision.value = String( definition.revision );
+		}
 		if ( groupKey ) {
-			groupKey.value = typeof payload.group_key === 'string' ? payload.group_key : '';
+			groupKey.value = stringValue( definition.payload, 'group_key' );
 			groupKey.readOnly = true;
 		}
-		if ( titleInput ) titleInput.value = typeof payload.title === 'string' ? payload.title : '';
-		if ( description ) description.value = typeof payload.description === 'string' ? payload.description : '';
-		const showRest = textInput( 'wpessential-fields-show-rest' );
-		if ( showRest ) showRest.checked = payload.show_in_rest === true;
-		const status = selectInput( 'wpessential-fields-status' );
-		if ( status ) status.value = definition.status;
-		fields = groupFields( definition );
-		renderFieldRows( fields, types );
+		if ( title ) {
+			title.value = stringValue( definition.payload, 'title' );
+		}
+		if ( description ) {
+			description.value = stringValue( definition.payload, 'description' );
+		}
+		const rest = input( 'wpessential-fields-show-rest' );
+		if ( rest ) {
+			rest.checked = definition.payload.show_in_rest === true;
+		}
+		const status = select( 'wpessential-fields-status' );
+		if ( status ) {
+			status.value = definition.status;
+		}
+		fields = fieldsFrom( definition );
+		renderFields( fields, types );
 		const heading = document.getElementById( 'wpessential-fields-editor-title' );
-		if ( heading ) heading.textContent = 'Edit field group';
-		const cancel = buttonInput( 'wpessential-fields-cancel' );
-		if ( cancel ) cancel.hidden = false;
+		if ( heading ) {
+			heading.textContent = 'Edit field group';
+		}
+		const cancel = button( 'wpessential-fields-cancel' );
+		if ( cancel ) {
+			cancel.hidden = false;
+		}
 		clearValidation();
 	};
 
-	const collectPayload = (): RecordValue => {
-		const existing = currentDefinition();
+	const payload = (): JsonObject => {
+		const existing = current();
 		return {
 			...( existing?.payload ?? {} ),
-			group_key: textInput( 'wpessential-fields-group-key' )?.value.trim() ?? '',
-			title: textInput( 'wpessential-fields-group-title' )?.value.trim() ?? '',
+			group_key: input( 'wpessential-fields-group-key' )?.value.trim() ?? '',
+			title: input( 'wpessential-fields-group-title' )?.value.trim() ?? '',
 			description:
-				textInput( 'wpessential-fields-group-description' )?.value.trim() ?? '',
-			show_in_rest: textInput( 'wpessential-fields-show-rest' )?.checked ?? false,
-			fields: fields.map( cloneRecord ),
+				input( 'wpessential-fields-group-description' )?.value.trim() ?? '',
+			show_in_rest: input( 'wpessential-fields-show-rest' )?.checked ?? false,
+			fields: fields.map( copyObject ),
 		};
 	};
 
-	const request = (): RecordValue => {
-		const existing = currentDefinition();
-		const result: RecordValue = {
-			payload: collectPayload(),
-			status: selectInput( 'wpessential-fields-status' )?.value ?? 'draft',
+	const request = (): JsonObject => {
+		const existing = current();
+		const result: JsonObject = {
+			payload: payload(),
+			status: select( 'wpessential-fields-status' )?.value ?? 'draft',
 		};
 		if ( existing ) {
 			result.id = existing.id;
@@ -510,7 +539,9 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 	};
 
 	const run = async ( operation: () => Promise< void > ): Promise< void > => {
-		if ( busy ) return;
+		if ( busy ) {
+			return;
+		}
 		busy = true;
 		root.setAttribute( 'aria-busy', 'true' );
 		setNotice( '' );
@@ -528,12 +559,12 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 	};
 
 	const refresh = async (): Promise< void > => {
-		const data = await postRoute( bootstrap, bootstrap.routes.list, {} );
-		if ( ! isRecord( data ) || ! Array.isArray( data.definitions ) ) {
+		const result = await post( bootstrap, bootstrap.routes.list, {} );
+		if ( ! isObject( result ) || ! Array.isArray( result.definitions ) ) {
 			throw new Error( 'Field Group list response was invalid.' );
 		}
-		const next = data.definitions.filter( isDefinition );
-		if ( next.length !== data.definitions.length ) {
+		const next = result.definitions.filter( isDefinition );
+		if ( next.length !== result.definitions.length ) {
 			throw new Error( 'Field Group list contained invalid records.' );
 		}
 		definitions = next;
@@ -541,19 +572,18 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 	};
 
 	const validate = async (): Promise< ValidationReport > => {
-		const data = await postRoute( bootstrap, bootstrap.routes.validate, request() );
-		const report = parseValidation( data );
+		const result = await post( bootstrap, bootstrap.routes.validate, request() );
+		const report = parseValidation( result );
 		if ( ! report ) {
 			throw new Error( 'Field Group validation response was invalid.' );
 		}
-		renderValidation( report );
+		showValidation( report );
 		return report;
 	};
 
-	buttonInput( 'wpessential-fields-add' )?.addEventListener( 'click', () => {
-		const select = selectInput( 'wpessential-fields-add-type' );
-		const typeKey = select?.value ?? '';
-		const descriptor = types.get( typeKey );
+	button( 'wpessential-fields-add' )?.addEventListener( 'click', () => {
+		const chooser = select( 'wpessential-fields-add-type' );
+		const descriptor = types.get( chooser?.value ?? '' );
 		if ( ! descriptor?.admin_available ) {
 			setNotice( 'Select an available V1 field type.', true );
 			return;
@@ -567,66 +597,95 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 			show_in_rest: false,
 			rest_schema: 'auto',
 		} );
-		if ( select ) select.value = '';
-		renderFieldRows( fields, types );
+		if ( chooser ) {
+			chooser.value = '';
+		}
+		renderFields( fields, types );
 		clearValidation();
 	} );
 
 	root.addEventListener( 'input', ( event ) => {
-		const input = event.target;
-		if ( ! ( input instanceof HTMLInputElement ) ) return;
-		const key = input.dataset.wpessentialFieldsField;
-		const index = Number( input.dataset.wpessentialFieldsIndex ?? -1 );
-		if ( ! key || ! Number.isInteger( index ) || ! fields[ index ] ) return;
-		if ( key === 'key' && fieldUuid( fields[ index ] ) !== null ) return;
-		fields[ index ][ key ] = input.value;
+		const target = event.target;
+		if ( ! ( target instanceof HTMLInputElement ) ) {
+			return;
+		}
+		const key = target.dataset.wpessentialFieldsField;
+		const index = Number( target.dataset.wpessentialFieldsIndex ?? -1 );
+		if ( ! key || ! Number.isInteger( index ) || ! fields[ index ] ) {
+			return;
+		}
+		if ( key === 'key' && uuid( fields[ index ] ) !== null ) {
+			return;
+		}
+		fields[ index ][ key ] = target.value;
 		clearValidation();
 	} );
 
 	root.addEventListener( 'click', ( event ) => {
 		const target = event.target;
-		if ( ! ( target instanceof HTMLButtonElement ) ) return;
+		if ( ! ( target instanceof HTMLButtonElement ) ) {
+			return;
+		}
 		const action = target.dataset.wpessentialFieldsAction;
-		if ( ! action ) return;
+		if ( ! action ) {
+			return;
+		}
 
 		if ( action === 'edit-definition' ) {
 			const definition = definitions.find(
 				( item ) => item.id === target.dataset.wpessentialFieldsId
 			);
-			if ( definition ) edit( definition );
+			if ( definition ) {
+				edit( definition );
+			}
 			return;
 		}
+
 		if ( action === 'status-definition' ) {
-			const id = target.dataset.wpessentialFieldsId;
+			const definition = definitions.find(
+				( item ) => item.id === target.dataset.wpessentialFieldsId
+			);
 			const status = target.dataset.wpessentialFieldsStatus;
-			const definition = definitions.find( ( item ) => item.id === id );
-			if ( ! definition || ! status ) return;
+			if ( ! definition || ! status ) {
+				return;
+			}
 			void run( async () => {
-				await postRoute( bootstrap, bootstrap.routes.status, {
+				await post( bootstrap, bootstrap.routes.status, {
 					id: definition.id,
 					expected_revision: definition.revision,
 					status,
 				} );
 				await refresh();
-				if ( currentDefinition()?.id === definition.id ) reset();
+				reset();
 				setNotice( `Field Group status changed to ${ status }.` );
 			} );
 			return;
 		}
 
 		const index = Number( target.dataset.wpessentialFieldsIndex ?? -1 );
-		if ( ! Number.isInteger( index ) || ! fields[ index ] ) return;
-		if ( ! fieldTypeAvailable( fields[ index ], types ) ) return;
+		if (
+			! Number.isInteger( index ) ||
+			! fields[ index ] ||
+			! isEditable( fields[ index ], types )
+		) {
+			return;
+		}
 		if ( action === 'remove' ) {
 			fields.splice( index, 1 );
 		} else if ( action === 'up' && index > 0 ) {
-			[ fields[ index - 1 ], fields[ index ] ] = [ fields[ index ], fields[ index - 1 ] ];
+			[ fields[ index - 1 ], fields[ index ] ] = [
+				fields[ index ],
+				fields[ index - 1 ],
+			];
 		} else if ( action === 'down' && index < fields.length - 1 ) {
-			[ fields[ index ], fields[ index + 1 ] ] = [ fields[ index + 1 ], fields[ index ] ];
+			[ fields[ index ], fields[ index + 1 ] ] = [
+				fields[ index + 1 ],
+				fields[ index ],
+			];
 		} else {
 			return;
 		}
-		renderFieldRows( fields, types );
+		renderFields( fields, types );
 		clearValidation();
 	} );
 
@@ -638,11 +697,14 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 			void run( async () => {
 				const report = await validate();
 				if ( ! report.valid ) {
-					setNotice( 'Field Group was not saved because validation found blocking issues.', true );
+					setNotice(
+						'Field Group was not saved because validation found blocking issues.',
+						true
+					);
 					return;
 				}
-				const editing = currentDefinition() !== undefined;
-				await postRoute( bootstrap, bootstrap.routes.save, request() );
+				const editing = current() !== undefined;
+				await post( bootstrap, bootstrap.routes.save, request() );
 				await refresh();
 				reset();
 				setNotice( editing ? 'Field Group updated.' : 'Field Group created.' );
@@ -650,20 +712,20 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 		} );
 	}
 
-	buttonInput( 'wpessential-fields-validate' )?.addEventListener( 'click', () => {
+	button( 'wpessential-fields-validate' )?.addEventListener( 'click', () => {
 		void run( async () => {
 			await validate();
 		} );
 	} );
-	buttonInput( 'wpessential-fields-cancel' )?.addEventListener( 'click', reset );
-	buttonInput( 'wpessential-fields-refresh' )?.addEventListener( 'click', () => {
+	button( 'wpessential-fields-cancel' )?.addEventListener( 'click', reset );
+	button( 'wpessential-fields-refresh' )?.addEventListener( 'click', () => {
 		void run( async () => {
 			await refresh();
 			setNotice( 'Field Groups refreshed.' );
 		} );
 	} );
 
-	renderFieldRows( fields, types );
+	renderFields( fields, types );
 	renderDefinitions( definitions );
 	root.dataset.wpessentialEnhanced = 'ready';
 	window.dispatchEvent(
@@ -676,7 +738,10 @@ function bootFieldsAdmin( root: HTMLElement, bootstrap: FieldsBootstrap ): void 
 function boot(): void {
 	const root = document.getElementById( 'wpessential-fields-root' );
 	const script = document.getElementById( 'wpessential-fields-bootstrap' );
-	if ( ! ( root instanceof HTMLElement ) || ! ( script instanceof HTMLScriptElement ) ) {
+	if (
+		! ( root instanceof HTMLElement ) ||
+		! ( script instanceof HTMLScriptElement )
+	) {
 		return;
 	}
 	try {
@@ -685,7 +750,7 @@ function boot(): void {
 			root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 			return;
 		}
-		bootFieldsAdmin( root, bootstrap );
+		bootBuilder( root, bootstrap );
 	} catch {
 		root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 	}
