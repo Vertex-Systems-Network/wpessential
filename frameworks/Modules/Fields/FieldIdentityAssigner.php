@@ -20,8 +20,10 @@ final readonly class FieldIdentityAssigner
      * Adds/preserves stable UUIDs for every field and nested subfield in a Field Group payload.
      *
      * Existing identity is matched by submitted UUID first and machine key second. A UUID already
-     * attached to the same existing machine key cannot be silently replaced. Missing identities are
-     * generated only in this save-time boundary, never during pure definition normalization.
+     * attached to the same existing machine key cannot be silently replaced. Once a stable UUID is
+     * persisted, its machine/storage key is immutable until an explicit migration workflow exists.
+     * Missing identities are generated only in this save-time boundary, never during pure definition
+     * normalization.
      *
      * @param array<string,mixed> $payload
      * @param array<string,mixed>|null $existingPayload
@@ -88,6 +90,17 @@ final readonly class FieldIdentityAssigner
 
             $existingBySubmittedUuid = is_string($submittedUuid) ? ($existingByUuid[$submittedUuid] ?? null) : null;
             $existingBySameKey = $existingByKey[$key] ?? null;
+            if (is_array($existingBySubmittedUuid)) {
+                $existingKey = $existingBySubmittedUuid['key'] ?? null;
+                if (is_string($existingKey) && $existingKey !== '' && $existingKey !== $key) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Field uuid "%s" is already bound to storage key "%s"; key rename requires an explicit migration workflow.',
+                        $submittedUuid,
+                        $existingKey,
+                    ));
+                }
+            }
+
             $existing = is_array($existingBySubmittedUuid) ? $existingBySubmittedUuid : $existingBySameKey;
             $existingUuid = is_array($existing) && isset($existing['uuid']) && is_string($existing['uuid']) && $this->isUuid($existing['uuid'])
                 ? $existing['uuid']
