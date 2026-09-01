@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-01**  
-Canonical implementation source: **`main @ 697eeffea095d1ddd6fc39c4409aa4290af1941e`**  
+Canonical implementation source: **`main @ f867eb318c3b529b3bf12b8f37873801c15f2b5b`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
 Implementation decisions: through **ADR-0222** plus bounded Surface 3 implementation contracts  
 Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
@@ -28,7 +28,7 @@ Canonical module sequencing remains repository-owned. `docs/ROADMAP.md` starts P
 - WP119 / ADR-0214 — **DONE / PASS** — greenfield Implementation Baseline / Adoption Gate.
 - WP120 / ADR-0215 — **DONE / PASS** — machine-enforced architecture guards.
 - WP121 — **DONE / PASS FOR MODULE HANDOFF** — shared Platform foundation readiness closed by WP121.1 through WP121.4.
-- Phase 2 / Surface 3 Custom Fields — **ACTIVE / BOUNDED IMPLEMENTATION** — first six backend slices merged with exact-head CI; value persistence/Ability, target binding, render/admin completion and broader adapters remain open.
+- Phase 2 / Surface 3 Custom Fields — **ACTIVE / BOUNDED IMPLEMENTATION** — first seven backend slices merged with exact-head CI; value Ability/target binding, multi-row recovery, render/admin completion and broader adapters remain open.
 
 ## Surface 3 — Custom Fields implementation checkpoint
 
@@ -121,15 +121,34 @@ PR #42, `feat(fields): add registered post meta storage v1`, established the fir
 Merged source: **`697eeffea095d1ddd6fc39c4409aa4290af1941e`**.  
 Exact-head applicable CI passed: Architecture Guards #584, PHP Quality Toolchain #106, Platform Compatibility Matrix #291 and Distributable Package #219.
 
+### Merged slice 7 — native post-meta value persistence V1 — PASS
+
+PR #44, `feat(fields): add post meta value persistence v1`, established the first canonical server-side value persistence adapter for the registered-meta tranche:
+- module-local `PostMetaValueStore` with typed native reads and verified single-value writes;
+- write results distinguish `written`, `unchanged`, `deleted` and `absent` while retaining Field UUID/meta-key provenance;
+- requested post subtype is verified against the actual post before storage access;
+- submitted values normalize through the canonical `FieldValueNormalizer` before mutation;
+- `FieldValuePersistenceGuard` rejects non-canonical persistence values and non-finite numeric values (`INF`, `-INF`, `NAN`) through both the store and registered-meta sanitizer path;
+- WordPress slashing is applied at the native write boundary and canonical state is re-read after mutation attempts;
+- idempotent no-change writes avoid native mutation, while native false/success returns are not accepted without verified post-write state;
+- optional null has verified delete/already-absent semantics and boolean false remains distinguishable from absence;
+- native string/integer/finite-number/boolean values are deliberately cast before canonical validation; integer overflow and overflow-to-infinity fail closed;
+- certified single-array repeatable/list values read/write through the native Metadata API;
+- non-single/multi-row metadata remains readable as a typed list but mutation fails before destructive work until snapshot/recovery semantics are certified;
+- no migration, raw SQL, public value Ability, target binding, automatic boot registration, provider/Relations storage or Pro activation bypass was introduced;
+- real WordPress persistence evidence runs across WP 6.9/7.1 × PHP 8.2–8.5 plus MariaDB 10.11 and verifies slash-sensitive round trips, idempotence, typed reads, finite-value failure retention, multi-row no-partial-mutation behavior and delete/absent semantics.
+
+Merged source: **`f867eb318c3b529b3bf12b8f37873801c15f2b5b`**.  
+Exact-head applicable CI passed: Architecture Guards #604, PHP Quality Toolchain #113, Platform Compatibility Matrix #308 and Distributable Package #233.
+
 ### Surface 3 integration blockers / non-certifications
 
 Custom Fields is **not** runtime/product complete. In particular:
-- registered post-meta compilation/registration V1 is certified only for the bounded compatible scalar/list tranche and is not automatically activated at boot;
-- no canonical field value read/write persistence adapter has been certified yet;
-- no safe multi-row replacement/recovery path has been certified;
-- no field value storage migration/rename/rollback implementation has been certified;
-- no complete REST/Ability value mutation path has been certified;
-- no certified target/location → post subtype registration binding exists yet;
+- registered post-meta compilation/registration V1 and bounded single-value/single-array persistence V1 are certified only for the compatible scalar/list tranche and are not automatically activated at boot;
+- no safe `single=false` multi-row replacement/recovery path has been certified;
+- no field value storage key rename/migration/rollback implementation has been certified;
+- no complete REST/Ability value read/write mutation path has been certified;
+- no certified target/location → post subtype registration/value-access binding exists yet;
 - no React Field Group builder/renderers have been certified;
 - provider-owned/complex types remain fail-closed until their canonical adapters exist;
 - import/export, compatibility migrations, performance scale evidence and reference workflow evidence remain open;
@@ -214,7 +233,7 @@ Machine-enforced manifest `tools/quality/wp121-readiness.json` anchors the readi
 
 Readiness artifact ID `9732050946`, digest `sha256:3cc9cffbb159d90d2fbda4274223ffb0ec708dfd56a2707eb59bf418410cf547`, 14-day retention.
 
-The aggregate gate allows only the readiness workflow/manifest and three canonical readiness/checkpoint documents to differ after the certified implementation source. Any production/test/tooling drift outside that allowlist fails closed and requires a new certified implementation source.
+The aggregate gate allows only the readiness workflow/manifest and three canonical readiness/checkpoint documents to differ after the certified source. Any production/test/tooling drift outside that allowlist fails closed and requires a new certified implementation source.
 
 ## Readiness decision
 
@@ -242,20 +261,19 @@ No live provider call, production deployment, destructive live-site/customer-dat
 
 Continue **Surface 3 Custom Fields** as the first Phase 2 Structured Data Pro tranche.
 
-Next bounded implementation target: **normalized WordPress post-meta value persistence adapter V1**, initially consuming the certified registered-meta scalar/list tranche. It must:
-- accept only persisted normalized Fields that compile through the certified post-meta registration contract;
-- normalize incoming values through the canonical `FieldValueNormalizer` before any native mutation;
-- apply WordPress slashing exactly at the Metadata API write boundary and avoid double-slashing/double-unescaping on reads;
-- preserve typed read semantics deliberately instead of leaking WordPress raw scalar-string behavior to product callers;
-- make unchanged/idempotent writes distinguishable from actual persistence failure despite `update_post_meta()` returning `false` in both no-change and failure cases;
-- support single scalar and single-array writes first through native Metadata APIs, with no raw SQL;
-- keep non-single/multiple-row replacement fail-closed until a pre-write snapshot plus compensating restore/recovery contract is implemented and tested;
-- prevent delete-then-partial-add from being reported as success;
-- preserve stable Field UUID ↔ storage-key provenance so future key rename/migration can be explicit rather than identity-destructive;
-- retain explicit resource authorization and expose mutation only through a later typed Ability boundary;
-- remain module-local and non-booted until certified target/location binding and the canonical Pro entitlement/module-enable gate exist;
-- add real WordPress integration evidence for slashing, typed read/write, invalid-value retention, idempotent updates and failure behavior.
+Next bounded implementation target: **typed Field value Ability integration + certified target resolution contract**. Before exposing any read/write route it must:
+- resolve a persisted Field Group and stable Field UUID/key to one canonical Field definition rather than accepting arbitrary client-provided Field schema;
+- resolve the requested post ID to its actual post subtype and prove that the published Field Group location contract permits that target/context;
+- consume the certified `PostMetaValueStore` as the only post-meta mutation path for the bounded tranche;
+- enforce resource-level authorization for every read/write through the shared Policy/ExecutionContext/Ability boundary, with no UI-only or AI/MCP bypass;
+- define typed Ability input/output schemas and distinguish read from mutating operations;
+- reject disabled/draft groups, unknown Field IDs, post-subtype/location mismatch, unsupported storage shapes and Relations/provider-owned values fail-closed;
+- preserve idempotent write results and safe error semantics without leaking stack traces or internal storage detail;
+- remain module-local/non-booted until the canonical Pro entitlement/module-enable integration gate exists;
+- add real WordPress authorization/target-resolution integration evidence before public exposure is certified.
 
-After the persistence adapter: typed field value read/write Ability integration, certified target/location binding, admin renderer/editor integration, portability/migrations and broader field-type adapters according to Surface 3 dependencies.
+`single=false` multi-row replacement/recovery remains a separate high-integrity storage task unless the Ability slice genuinely requires it. Its future implementation must define pre-write snapshots, duplicate/order semantics, partial-failure detection, compensating restore and post-restore verification before any destructive replacement path is enabled.
+
+After the Ability/target-resolution slice: certified target/location runtime registration binding, admin renderer/editor integration, storage-key rename/migrations, portability/import-export and broader field-type/provider adapters according to Surface 3 dependencies.
 
 Repository evidence overrides conversational memory.
