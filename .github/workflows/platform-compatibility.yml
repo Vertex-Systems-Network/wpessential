@@ -150,7 +150,9 @@ jobs:
           WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
-        run: php tests/Integration/wordpress-fields-value-ability.php
+        run: |
+          php tests/Integration/wordpress-fields-value-ability.php
+          php tests/Integration/wordpress-fields-value-ability-core.php
 
       - name: Real WordPress durable JobService integration
         env:
@@ -241,3 +243,4 @@ jobs:
           php tests/Integration/wordpress-fields-meta-registration.php
           php tests/Integration/wordpress-fields-meta-persistence.php
           php tests/Integration/wordpress-fields-value-ability.php
+          php tests/Integration/wordpress-fields-value-ability-core.php
