@@ -67,15 +67,13 @@ final class WpdbRelationEdgeGateway
                 $this->scope->siteId,
                 $relationDefinitionId,
             );
-            $row = $this->database->getRow($selectState);
-            $revision = $this->revisionFromRow($row);
+            $revision = $this->revisionFromRow($this->database->getRow($selectState));
 
             $this->lockedRelationDefinitionId = $relationDefinitionId;
             $this->lockedRevision = $revision;
             return $revision;
         } catch (Throwable $error) {
-            $this->rollbackAfterFailure();
-            throw $error;
+            $this->failMutation($error);
         }
     }
 
@@ -83,21 +81,25 @@ final class WpdbRelationEdgeGateway
     {
         $this->assertMutationOwns($edge->relationDefinitionId);
 
-        if (!$this->database->insert(
-            $this->tables->edges,
-            [
-                'network_id' => $this->scope->networkId,
-                'site_id' => $this->scope->siteId,
-                'edge_id' => $edge->edgeId,
-                'relation_definition_id' => $edge->relationDefinitionId,
-                'from_object_id' => $edge->fromObjectId,
-                'to_object_id' => $edge->toObjectId,
-                'created_at' => $edge->createdAt,
-                'updated_at' => $edge->updatedAt,
-            ],
-            ['%d', '%d', '%s', '%s', '%d', '%d', '%s', '%s'],
-        )) {
-            throw new RuntimeException('Failed to insert Relation edge: ' . $this->database->lastError());
+        try {
+            if (!$this->database->insert(
+                $this->tables->edges,
+                [
+                    'network_id' => $this->scope->networkId,
+                    'site_id' => $this->scope->siteId,
+                    'edge_id' => $edge->edgeId,
+                    'relation_definition_id' => $edge->relationDefinitionId,
+                    'from_object_id' => $edge->fromObjectId,
+                    'to_object_id' => $edge->toObjectId,
+                    'created_at' => $edge->createdAt,
+                    'updated_at' => $edge->updatedAt,
+                ],
+                ['%d', '%d', '%s', '%s', '%d', '%d', '%s', '%s'],
+            )) {
+                throw new RuntimeException('Failed to insert Relation edge: ' . $this->database->lastError());
+            }
+        } catch (Throwable $error) {
+            $this->failMutation($error);
         }
     }
 
@@ -106,21 +108,25 @@ final class WpdbRelationEdgeGateway
         $this->assertMutationOwns($relationDefinitionId);
         $this->assertUuid($edgeId, 'Relation edge id');
 
-        $sql = $this->database->prepare(
-            "DELETE FROM `{$this->tables->edges}`
-             WHERE network_id = %d AND site_id = %d
-               AND relation_definition_id = %s AND edge_id = %s",
-            $this->scope->networkId,
-            $this->scope->siteId,
-            $relationDefinitionId,
-            $edgeId,
-        );
-        $result = $this->database->query($sql);
-        if ($result === false) {
-            throw new RuntimeException('Failed to delete Relation edge: ' . $this->database->lastError());
-        }
+        try {
+            $sql = $this->database->prepare(
+                "DELETE FROM `{$this->tables->edges}`
+                 WHERE network_id = %d AND site_id = %d
+                   AND relation_definition_id = %s AND edge_id = %s",
+                $this->scope->networkId,
+                $this->scope->siteId,
+                $relationDefinitionId,
+                $edgeId,
+            );
+            $result = $this->database->query($sql);
+            if ($result === false) {
+                throw new RuntimeException('Failed to delete Relation edge: ' . $this->database->lastError());
+            }
 
-        return $result > 0;
+            return $result > 0;
+        } catch (Throwable $error) {
+            $this->failMutation($error);
+        }
     }
 
     public function deleteTuple(string $relationDefinitionId, int $fromObjectId, int $toObjectId): bool
@@ -129,62 +135,64 @@ final class WpdbRelationEdgeGateway
         $this->assertObjectId($fromObjectId, 'Relation source object id');
         $this->assertObjectId($toObjectId, 'Relation target object id');
 
-        $sql = $this->database->prepare(
-            "DELETE FROM `{$this->tables->edges}`
-             WHERE network_id = %d AND site_id = %d
-               AND relation_definition_id = %s
-               AND from_object_id = %d AND to_object_id = %d",
-            $this->scope->networkId,
-            $this->scope->siteId,
-            $relationDefinitionId,
-            $fromObjectId,
-            $toObjectId,
-        );
-        $result = $this->database->query($sql);
-        if ($result === false) {
-            throw new RuntimeException('Failed to delete Relation edge tuple: ' . $this->database->lastError());
-        }
+        try {
+            $sql = $this->database->prepare(
+                "DELETE FROM `{$this->tables->edges}`
+                 WHERE network_id = %d AND site_id = %d
+                   AND relation_definition_id = %s
+                   AND from_object_id = %d AND to_object_id = %d",
+                $this->scope->networkId,
+                $this->scope->siteId,
+                $relationDefinitionId,
+                $fromObjectId,
+                $toObjectId,
+            );
+            $result = $this->database->query($sql);
+            if ($result === false) {
+                throw new RuntimeException('Failed to delete Relation edge tuple: ' . $this->database->lastError());
+            }
 
-        return $result > 0;
+            return $result > 0;
+        } catch (Throwable $error) {
+            $this->failMutation($error);
+        }
     }
 
     public function completeRelationMutation(string $relationDefinitionId, int $expectedRevision): int
     {
         $this->assertMutationOwns($relationDefinitionId);
         if ($expectedRevision < 0 || $this->lockedRevision !== $expectedRevision) {
-            $this->rollbackAfterFailure();
-            throw new RuntimeException('Relation edge mutation revision no longer matches the locked revision.');
-        }
-
-        $nextRevision = $expectedRevision + 1;
-        $sql = $this->database->prepare(
-            "UPDATE `{$this->tables->state}`
-             SET mutation_revision = %d, updated_at = %s
-             WHERE network_id = %d AND site_id = %d
-               AND relation_definition_id = %s AND mutation_revision = %d",
-            $nextRevision,
-            $this->now(),
-            $this->scope->networkId,
-            $this->scope->siteId,
-            $relationDefinitionId,
-            $expectedRevision,
-        );
-        $updated = $this->database->query($sql);
-        if ($updated !== 1) {
-            $error = $updated === false ? ': ' . $this->database->lastError() : '';
-            $this->rollbackAfterFailure();
-            throw new RuntimeException('Failed to advance Relation edge mutation revision' . $error . '.');
+            $this->failMutation(new RuntimeException(
+                'Relation edge mutation revision no longer matches the locked revision.',
+            ));
         }
 
         try {
-            $this->database->commit();
-        } catch (Throwable $error) {
-            $this->rollbackAfterFailure();
-            throw new RuntimeException('Failed to commit Relation edge mutation transaction.', 0, $error);
-        }
+            $nextRevision = $expectedRevision + 1;
+            $sql = $this->database->prepare(
+                "UPDATE `{$this->tables->state}`
+                 SET mutation_revision = %d, updated_at = %s
+                 WHERE network_id = %d AND site_id = %d
+                   AND relation_definition_id = %s AND mutation_revision = %d",
+                $nextRevision,
+                $this->now(),
+                $this->scope->networkId,
+                $this->scope->siteId,
+                $relationDefinitionId,
+                $expectedRevision,
+            );
+            $updated = $this->database->query($sql);
+            if ($updated !== 1) {
+                $error = $updated === false ? ': ' . $this->database->lastError() : '';
+                throw new RuntimeException('Failed to advance Relation edge mutation revision' . $error . '.');
+            }
 
-        $this->resetMutationState();
-        return $nextRevision;
+            $this->database->commit();
+            $this->resetMutationState();
+            return $nextRevision;
+        } catch (Throwable $error) {
+            $this->failMutation($error);
+        }
     }
 
     public function rollbackRelationMutation(): void
@@ -265,10 +273,7 @@ final class WpdbRelationEdgeGateway
             $relationDefinitionId,
         );
         $row = $this->database->getRow($sql);
-        if ($row === null) {
-            return 0;
-        }
-        return $this->revisionFromRow($row);
+        return $row === null ? 0 : $this->revisionFromRow($row);
     }
 
     private function assertMutationOwns(string $relationDefinitionId): void
@@ -361,15 +366,23 @@ final class WpdbRelationEdgeGateway
         return $value;
     }
 
-    private function rollbackAfterFailure(): void
+    private function failMutation(Throwable $cause): never
     {
         try {
             if ($this->mutationOpen) {
                 $this->database->rollBack();
             }
-        } finally {
+        } catch (Throwable $rollbackError) {
             $this->resetMutationState();
+            throw new RuntimeException(
+                'Relation edge mutation failed and rollback could not be confirmed: ' . $cause->getMessage(),
+                0,
+                $rollbackError,
+            );
         }
+
+        $this->resetMutationState();
+        throw $cause;
     }
 
     private function resetMutationState(): void
