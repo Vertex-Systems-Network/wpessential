@@ -104,10 +104,11 @@ function columns_contract_require_projection(
 }
 
 $contract = columns_contract_json($contractPath);
+$contractStatus = $contract['status'] ?? null;
 if (($contract['schema_version'] ?? null) !== 1
     || ($contract['surface_id'] ?? null) !== 8
     || ($contract['surface_key'] ?? null) !== 'columns'
-    || ($contract['status'] ?? null) !== 'OPTION_CONTRACT_COMPLETE'
+    || !in_array($contractStatus, ['OPTION_CONTRACT_COMPLETE', 'UX_CONTRACT_COMPLETE'], true)
 ) {
     throw new RuntimeException('Surface 8 Atomic Option contract identity/lifecycle is invalid.');
 }
