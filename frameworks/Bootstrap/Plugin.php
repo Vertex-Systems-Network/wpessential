@@ -8,8 +8,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use LogicException;
 use Throwable;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\ModuleActivationPolicyInterface;
+use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
@@ -27,6 +30,7 @@ use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\Definitions\Migrations\CreateDefinitionTablesMigration;
 use WPEssential\Platform\Definitions\PersistentDefinitionRepository;
 use WPEssential\Platform\Definitions\WpdbDefinitionTableGateway;
+use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
 use WPEssential\Platform\WordPress\Abilities\NativeWordPressAbilityEnvironment;
@@ -59,6 +63,22 @@ final class Plugin
     public const MINIMUM_PHP = '8.2';
 
     private static ?Kernel $kernel = null;
+    private static ?ModuleActivationPolicyInterface $moduleActivationPolicy = null;
+
+    /** @var list<ModuleInterface> */
+    private static array $contributedModules = [];
+
+    public static function setModuleActivationPolicy(ModuleActivationPolicyInterface $policy): void
+    {
+        self::assertPreBootConfigurationOpen();
+        self::$moduleActivationPolicy = $policy;
+    }
+
+    public static function registerModule(ModuleInterface $module): void
+    {
+        self::assertPreBootConfigurationOpen();
+        self::$contributedModules[] = $module;
+    }
 
     public static function boot(): ?Kernel
     {
@@ -69,7 +89,9 @@ final class Plugin
             return null;
         }
 
-        self::$kernel = new Kernel();
+        self::$kernel = new Kernel(
+            moduleActivationPolicy: self::$moduleActivationPolicy ?? new DefaultModuleActivationPolicy(),
+        );
         $services = self::$kernel->services();
 
         $nonceAction = defined('WPE_NONCE_ACTION') ? (string) WPE_NONCE_ACTION : 'wpessential_request';
@@ -130,6 +152,9 @@ final class Plugin
 
         self::$kernel->registerModule(new CustomPostTypeModule());
         self::$kernel->registerModule(new TaxonomyModule());
+        foreach (self::$contributedModules as $module) {
+            self::$kernel->registerModule($module);
+        }
 
         if (function_exists('add_action')) {
             $ajaxGateway->register();
@@ -215,5 +240,12 @@ final class Plugin
             }
         }
         return true;
+    }
+
+    private static function assertPreBootConfigurationOpen(): void
+    {
+        if (self::$kernel instanceof Kernel) {
+            throw new LogicException('Module activation policy and module contributions must be configured before WPEssential boot begins.');
+        }
     }
 }
