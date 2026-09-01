@@ -23,6 +23,7 @@ final class WordPressPostMetaRegistrarTest extends TestCase
             },
             static fn (string $postType, string $feature): bool => $postType === 'book'
                 && in_array($feature, ['revisions', 'custom-fields'], true),
+            static fn (string $objectType, string $objectSubtype): array => [],
         );
 
         $registrar->register($this->registration(showInRest: true, revisionsEnabled: true));
@@ -38,6 +39,7 @@ final class WordPressPostMetaRegistrarTest extends TestCase
         $registrar = new WordPressPostMetaRegistrar(
             static fn (string $postType, string $metaKey, array $args): bool => true,
             static fn (string $postType, string $feature): bool => false,
+            static fn (string $objectType, string $objectSubtype): array => [],
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -49,6 +51,7 @@ final class WordPressPostMetaRegistrarTest extends TestCase
         $registrar = new WordPressPostMetaRegistrar(
             static fn (string $postType, string $metaKey, array $args): bool => true,
             static fn (string $postType, string $feature): bool => $feature === 'revisions',
+            static fn (string $objectType, string $objectSubtype): array => [],
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -60,10 +63,83 @@ final class WordPressPostMetaRegistrarTest extends TestCase
         $registrar = new WordPressPostMetaRegistrar(
             static fn (string $postType, string $metaKey, array $args): bool => false,
             static fn (string $postType, string $feature): bool => true,
+            static fn (string $objectType, string $objectSubtype): array => [],
         );
 
         $this->expectException(RuntimeException::class);
         $registrar->register($this->registration());
+    }
+
+    public function testRejectsForeignSubtypeCollisionBeforeCallingWordPress(): void
+    {
+        $calls = 0;
+        $registrar = new WordPressPostMetaRegistrar(
+            static function (string $postType, string $metaKey, array $args) use (&$calls): bool {
+                ++$calls;
+                return true;
+            },
+            static fn (string $postType, string $feature): bool => true,
+            static fn (string $objectType, string $objectSubtype): array => $objectSubtype === 'book'
+                ? ['headline' => self::existingArgs('Another plugin field.')]
+                : [],
+        );
+
+        try {
+            $registrar->register($this->registration());
+            self::fail('Expected foreign post-meta ownership collision.');
+        } catch (RuntimeException $exception) {
+            self::assertStringContainsString('already owned by another registration', $exception->getMessage());
+        }
+
+        self::assertSame(0, $calls);
+    }
+
+    public function testRejectsGlobalPostScopeCollisionBeforeCallingWordPress(): void
+    {
+        $calls = 0;
+        $registration = $this->registration();
+        $registrar = new WordPressPostMetaRegistrar(
+            static function (string $postType, string $metaKey, array $args) use (&$calls): bool {
+                ++$calls;
+                return true;
+            },
+            static fn (string $postType, string $feature): bool => true,
+            static fn (string $objectType, string $objectSubtype): array => $objectSubtype === ''
+                ? ['headline' => $registration['args']]
+                : [],
+        );
+
+        try {
+            $registrar->register($registration);
+            self::fail('Expected global post-meta ownership collision.');
+        } catch (RuntimeException $exception) {
+            self::assertStringContainsString('global post scope', $exception->getMessage());
+        }
+
+        self::assertSame(0, $calls);
+    }
+
+    public function testMatchingWpeSubtypeRegistrationIsIdempotent(): void
+    {
+        $calls = 0;
+        $registration = $this->registration(showInRest: true, revisionsEnabled: true);
+        $existing = $registration['args'];
+        $existing['label'] = 'Older mutable label';
+
+        $registrar = new WordPressPostMetaRegistrar(
+            static function (string $postType, string $metaKey, array $args) use (&$calls): bool {
+                ++$calls;
+                return true;
+            },
+            static fn (string $postType, string $feature): bool => true,
+            static fn (string $objectType, string $objectSubtype): array => $objectSubtype === 'book'
+                ? ['headline' => $existing]
+                : [],
+        );
+
+        $registrar->register($registration);
+
+        self::assertSame(0, $calls);
     }
 
     /**
@@ -84,5 +160,20 @@ final class WordPressPostMetaRegistrarTest extends TestCase
             showInRest: $showInRest,
             revisionsEnabled: $revisionsEnabled,
         );
+    }
+
+    /** @return array<string,mixed> */
+    private static function existingArgs(string $description): array
+    {
+        return [
+            'type' => 'string',
+            'label' => 'Existing',
+            'description' => $description,
+            'single' => true,
+            'sanitize_callback' => static fn (mixed $value): mixed => $value,
+            'auth_callback' => static fn (): bool => true,
+            'show_in_rest' => false,
+            'revisions_enabled' => false,
+        ];
     }
 }

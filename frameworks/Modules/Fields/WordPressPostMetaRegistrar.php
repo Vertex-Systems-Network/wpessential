@@ -21,12 +21,22 @@ final class WordPressPostMetaRegistrar
     /** @var Closure(string,string):bool */
     private Closure $postTypeSupports;
 
+    /** @var Closure(string,string):array<string,array<string,mixed>> */
+    private Closure $getRegisteredMetaKeys;
+
+    private PostMetaRegistrationOwnershipGuard $ownership;
+
     /**
      * @param null|callable(string,string,array<string,mixed>):bool $registerPostMeta
      * @param null|callable(string,string):bool $postTypeSupports
+     * @param null|callable(string,string):array<string,array<string,mixed>> $getRegisteredMetaKeys
      */
-    public function __construct(?callable $registerPostMeta = null, ?callable $postTypeSupports = null)
-    {
+    public function __construct(
+        ?callable $registerPostMeta = null,
+        ?callable $postTypeSupports = null,
+        ?callable $getRegisteredMetaKeys = null,
+        ?PostMetaRegistrationOwnershipGuard $ownership = null,
+    ) {
         $this->registerPostMeta = $registerPostMeta !== null
             ? Closure::fromCallable($registerPostMeta)
             : static function (string $postType, string $metaKey, array $args): bool {
@@ -44,6 +54,17 @@ final class WordPressPostMetaRegistrar
                 }
                 return post_type_supports($postType, $feature);
             };
+
+        $this->getRegisteredMetaKeys = $getRegisteredMetaKeys !== null
+            ? Closure::fromCallable($getRegisteredMetaKeys)
+            : static function (string $objectType, string $objectSubtype): array {
+                if (!function_exists('get_registered_meta_keys')) {
+                    throw new LogicException('WordPress get_registered_meta_keys() is unavailable.');
+                }
+                return get_registered_meta_keys($objectType, $objectSubtype);
+            };
+
+        $this->ownership = $ownership ?? new PostMetaRegistrationOwnershipGuard();
     }
 
     /**
@@ -79,6 +100,15 @@ final class WordPressPostMetaRegistrar
             ));
         }
 
+        $globalKeys = ($this->getRegisteredMetaKeys)('post', '');
+        $subtypeKeys = ($this->getRegisteredMetaKeys)('post', $postType);
+        $globalExisting = $this->existingRegistration($globalKeys, $metaKey, 'global post scope');
+        $subtypeExisting = $this->existingRegistration($subtypeKeys, $metaKey, sprintf('post type "%s"', $postType));
+
+        if (!$this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting)) {
+            return;
+        }
+
         if (!($this->registerPostMeta)($postType, $metaKey, $args)) {
             throw new RuntimeException(sprintf(
                 'WordPress rejected post-meta registration for "%s" on post type "%s".',
@@ -86,5 +116,27 @@ final class WordPressPostMetaRegistrar
                 $postType,
             ));
         }
+    }
+
+    /**
+     * @param array<string,array<string,mixed>> $registered
+     * @return null|array<string,mixed>
+     */
+    private function existingRegistration(array $registered, string $metaKey, string $scope): ?array
+    {
+        if (!array_key_exists($metaKey, $registered)) {
+            return null;
+        }
+
+        $existing = $registered[$metaKey];
+        if (!is_array($existing)) {
+            throw new RuntimeException(sprintf(
+                'Existing registration for post-meta key "%s" at %s is malformed; refusing to overwrite it.',
+                $metaKey,
+                $scope,
+            ));
+        }
+
+        return $existing;
     }
 }
