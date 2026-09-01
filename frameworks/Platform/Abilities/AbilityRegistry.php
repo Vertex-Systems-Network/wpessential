@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 
 use RuntimeException;
 use WPEssential\Contracts\AbilityHandlerInterface;
+use WPEssential\Contracts\InputAuthorizingAbilityHandlerInterface;
 use WPEssential\Platform\Auth\AuthorizationRequest;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyDecision;
@@ -45,7 +46,8 @@ final class AbilityRegistry
         ));
     }
 
-    public function authorize(string $name, ExecutionContext $context): PolicyDecision
+    /** @param array<string,mixed> $input */
+    public function authorize(string $name, ExecutionContext $context, array $input = []): PolicyDecision
     {
         $entry = $this->abilities[$name] ?? null;
         if ($entry === null) {
@@ -57,11 +59,21 @@ final class AbilityRegistry
             return PolicyDecision::deny('channel_not_exposed');
         }
 
-        return $this->policy->authorize(new AuthorizationRequest(
+        $decision = $this->policy->authorize(new AuthorizationRequest(
             context: $context,
             ability: $descriptor->name,
             capability: $descriptor->capability,
         ));
+        if (!$decision->allowed) {
+            return $decision;
+        }
+
+        $handler = $entry['handler'];
+        if ($handler instanceof InputAuthorizingAbilityHandlerInterface) {
+            return $handler->authorizeInput($input, $context);
+        }
+
+        return $decision;
     }
 
     /** @param array<string, mixed> $input */
@@ -72,7 +84,7 @@ final class AbilityRegistry
             throw new RuntimeException(sprintf('Ability "%s" is not registered.', $name));
         }
 
-        $decision = $this->authorize($name, $context);
+        $decision = $this->authorize($name, $context, $input);
         if (!$decision->allowed) {
             throw new RuntimeException(sprintf('Ability "%s" denied: %s.', $name, $decision->reason));
         }
