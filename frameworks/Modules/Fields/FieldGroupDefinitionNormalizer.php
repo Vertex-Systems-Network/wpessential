@@ -17,6 +17,7 @@ final readonly class FieldGroupDefinitionNormalizer
 
     private const TOP_LEVEL_KEYS = [
         'group_key', 'title', 'description', 'fields', 'locations', 'presentation',
+        'storage', 'show_in_rest', 'revision_policy',
     ];
 
     private const LOCATION_SOURCES = [
@@ -26,6 +27,19 @@ final readonly class FieldGroupDefinitionNormalizer
     ];
 
     private const LOCATION_OPERATORS = ['equals', 'not_equals', 'in', 'not_in'];
+
+    private const STORAGE_MODES = [
+        'unconfigured',
+        'native_post_meta',
+        'native_options',
+        'native_term_meta',
+        'native_user_meta',
+        'native_comment_meta',
+        'custom_table',
+        'registered_provider',
+    ];
+
+    private const REVISION_POLICIES = ['disabled', 'enabled'];
 
     public function __construct(private FieldDefinitionNormalizer $fields = new FieldDefinitionNormalizer()) {}
 
@@ -71,6 +85,11 @@ final readonly class FieldGroupDefinitionNormalizer
             throw new InvalidArgumentException('Field Group description must be a string.');
         }
 
+        $showInRest = $payload['show_in_rest'] ?? false;
+        if (!is_bool($showInRest)) {
+            throw new InvalidArgumentException('Field Group show_in_rest must be boolean.');
+        }
+
         return [
             'group_key' => $groupKey,
             'title' => trim($title),
@@ -78,6 +97,9 @@ final readonly class FieldGroupDefinitionNormalizer
             'fields' => $normalizedFields,
             'locations' => $this->locations($payload['locations'] ?? []),
             'presentation' => $this->presentation($payload['presentation'] ?? []),
+            'storage' => $this->storage($payload['storage'] ?? []),
+            'show_in_rest' => $showInRest,
+            'revision_policy' => $this->revisionPolicy($payload['revision_policy'] ?? 'disabled'),
         ];
     }
 
@@ -183,6 +205,34 @@ final readonly class FieldGroupDefinitionNormalizer
             'collapsible' => $collapsible,
             'collapsed' => $collapsed,
         ];
+    }
+
+    /** @return array{mode:string} */
+    private function storage(mixed $value): array
+    {
+        if (!is_array($value) || array_is_list($value)) {
+            throw new InvalidArgumentException('Field Group storage must be an object/map.');
+        }
+        foreach (array_keys($value) as $key) {
+            if ($key !== 'mode') {
+                throw new InvalidArgumentException(sprintf('Unsupported Field Group storage option "%s".', (string) $key));
+            }
+        }
+
+        $mode = $value['mode'] ?? 'unconfigured';
+        if (!is_string($mode) || !in_array($mode, self::STORAGE_MODES, true)) {
+            throw new InvalidArgumentException('Field Group storage mode is not supported.');
+        }
+
+        return ['mode' => $mode];
+    }
+
+    private function revisionPolicy(mixed $value): string
+    {
+        if (!is_string($value) || !in_array($value, self::REVISION_POLICIES, true)) {
+            throw new InvalidArgumentException('Field Group revision_policy must be disabled or enabled.');
+        }
+        return $value;
     }
 
     private function machineKey(mixed $value, string $label): string
