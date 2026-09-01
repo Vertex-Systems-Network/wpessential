@@ -10,10 +10,11 @@ if (!defined('ABSPATH')) {
 
 use InvalidArgumentException;
 use RuntimeException;
-use WPEssential\Contracts\AbilityHandlerInterface;
+use WPEssential\Contracts\InputAuthorizingAbilityHandlerInterface;
 use WPEssential\Platform\Auth\ExecutionContext;
+use WPEssential\Platform\Auth\PolicyDecision;
 
-final readonly class FieldValueAbilityHandler implements AbilityHandlerInterface
+final readonly class FieldValueAbilityHandler implements InputAuthorizingAbilityHandlerInterface
 {
     public const READ = 'read';
     public const WRITE = 'write';
@@ -29,12 +30,37 @@ final readonly class FieldValueAbilityHandler implements AbilityHandlerInterface
         }
     }
 
+    public function authorizeInput(array $input, ExecutionContext $context): PolicyDecision
+    {
+        $postId = $input['post_id'] ?? null;
+        if (!is_int($postId) || $postId < 1) {
+            return PolicyDecision::deny('field_value_post_invalid');
+        }
+
+        try {
+            if ($this->action === self::READ) {
+                $this->authorization->assertCanRead($context, $postId);
+            } else {
+                $this->authorization->assertCanWrite($context, $postId);
+            }
+        } catch (RuntimeException) {
+            return PolicyDecision::deny(
+                $this->action === self::READ
+                    ? 'field_value_resource_read_denied'
+                    : 'field_value_resource_write_denied',
+            );
+        }
+
+        return PolicyDecision::allow('field_value_resource_allowed');
+    }
+
     public function handle(array $input, ExecutionContext $context): mixed
     {
         $groupId = $this->uuid($input, 'group_id');
         $fieldUuid = $this->uuid($input, 'field_uuid');
         $postId = $this->positiveInt($input, 'post_id');
 
+        // Defense in depth for direct handler callers that bypass AbilityRegistry.
         if ($this->action === self::READ) {
             $this->authorization->assertCanRead($context, $postId);
         } else {
