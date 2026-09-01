@@ -172,6 +172,7 @@ $written = $write->handle([
     'group_id' => $groupId,
     'field_uuid' => $fieldUuid,
     'post_id' => $postId,
+    'expected_group_revision' => 4,
     'value' => '  Ability Value  ',
 ], $adminContext);
 fieldsValueAbilityExpect($written['status'] === 'written', 'authorized value Ability write must report written');
@@ -179,6 +180,19 @@ fieldsValueAbilityExpect($written['value'] === 'Ability Value', 'authorized valu
 fieldsValueAbilityExpect($written['group_revision'] === 4, 'Ability response must retain resolved group revision');
 fieldsValueAbilityExpect($written['field_uuid'] === $fieldUuid, 'Ability response must retain stable Field UUID');
 fieldsValueAbilityExpect(get_post_meta($postId, 'wpe_ability_headline', true) === 'Ability Value', 'Ability write must use native registered post meta');
+
+try {
+    $write->handle([
+        'group_id' => $groupId,
+        'field_uuid' => $fieldUuid,
+        'post_id' => $postId,
+        'expected_group_revision' => 3,
+        'value' => 'Stale Mutation',
+    ], $adminContext);
+    fieldsValueAbilityExpect(false, 'stale Field Group revision must reject value mutation');
+} catch (RuntimeException) {
+    fieldsValueAbilityExpect(get_post_meta($postId, 'wpe_ability_headline', true) === 'Ability Value', 'stale schema write must leave native metadata unchanged');
+}
 
 $readBack = $read->handle([
     'group_id' => $groupId,
@@ -204,6 +218,7 @@ try {
         'group_id' => $groupId,
         'field_uuid' => $fieldUuid,
         'post_id' => $postId,
+        'expected_group_revision' => 4,
         'value' => 'Denied Mutation',
     ], $readerContext);
     fieldsValueAbilityExpect(false, 'reader without edit_post authority must not mutate Field value');
