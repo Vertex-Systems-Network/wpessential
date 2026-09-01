@@ -19,6 +19,12 @@ final readonly class FieldGroupPortabilityService
     public const FORMAT = 'wpessential.fields.field-groups';
     public const FORMAT_VERSION = 1;
 
+    private const ENVELOPE_KEYS = ['format', 'version', 'definitions'];
+    private const RECORD_KEYS = [
+        'id', 'slug', 'type', 'schema_version', 'owner_surface_id', 'status', 'payload',
+        'source_revision', 'dependencies', 'checksum',
+    ];
+
     private FieldIdentityAssigner $identities;
 
     public function __construct(
@@ -168,6 +174,9 @@ final readonly class FieldGroupPortabilityService
     /** @return array<string,mixed> */
     private function exportDefinition(Definition $definition): array
     {
+        if ($definition->schemaVersion !== 1) {
+            throw new RuntimeException('Portable Field Group V1 cannot export a definition schema without an explicit compatibility adapter.');
+        }
         if ($definition->dependencies !== []) {
             throw new RuntimeException('Portable Field Group V1 cannot export definitions with unresolved cross-definition dependencies.');
         }
@@ -211,6 +220,7 @@ final readonly class FieldGroupPortabilityService
     /** @param array<string,mixed> $envelope @return list<array<string,mixed>> */
     private function validateEnvelope(array $envelope): array
     {
+        $this->assertKnownKeys($envelope, self::ENVELOPE_KEYS, 'portability envelope');
         if (($envelope['format'] ?? null) !== self::FORMAT) {
             throw new InvalidArgumentException('Unsupported Custom Fields portability format.');
         }
@@ -233,6 +243,8 @@ final readonly class FieldGroupPortabilityService
     /** @param array<string,mixed> $record */
     private function prepareImport(array $record): Definition
     {
+        $this->assertKnownKeys($record, self::RECORD_KEYS, 'portable Field Group definition');
+
         $id = $record['id'] ?? null;
         $slug = $record['slug'] ?? null;
         $type = $record['type'] ?? null;
@@ -342,6 +354,19 @@ final readonly class FieldGroupPortabilityService
                 'Portable Field Group "%s" collides with an existing non-identical definition; create-only import will not overwrite it.',
                 $candidate->id,
             ));
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $value
+     * @param list<string> $allowed
+     */
+    private function assertKnownKeys(array $value, array $allowed, string $label): void
+    {
+        foreach (array_keys($value) as $key) {
+            if (!in_array($key, $allowed, true)) {
+                throw new InvalidArgumentException(sprintf('Unsupported %s option "%s".', $label, (string) $key));
+            }
         }
     }
 
