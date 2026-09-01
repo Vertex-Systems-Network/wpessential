@@ -250,6 +250,7 @@ final class FieldStorageKeyMigrationService
         $createdDestinationRegistrations = [];
         $sourceRetirementAttempted = [];
         $destinationTouched = [];
+        $sourceTouched = [];
         $candidate = $this->candidateDefinition($definition, $candidateGroup);
 
         try {
@@ -268,7 +269,8 @@ final class FieldStorageKeyMigrationService
                     throw new RuntimeException('Field storage-key migration snapshot is malformed.');
                 }
 
-                $destinationTouched[$postType . ':' . $postId] = [$postType, $postId];
+                $key = $postType . ':' . $postId;
+                $destinationTouched[$key] = [$postType, $postId];
                 $this->values->write($destinationField, $postType, $postId, $value);
                 $persisted = $this->values->read($destinationField, $postType, $postId);
                 if ($persisted !== $value) {
@@ -296,6 +298,7 @@ final class FieldStorageKeyMigrationService
                 }
 
                 $this->deleteAndVerify($postId, $sourceKey);
+                $sourceTouched[$key] = $snapshot;
             }
 
             foreach ($postTypes as $postType) {
@@ -310,7 +313,7 @@ final class FieldStorageKeyMigrationService
                 candidate: $candidate,
                 sourceField: $sourceField,
                 destinationField: $destinationField,
-                snapshots: $snapshots,
+                sourceTouched: $sourceTouched,
                 sourceRegistrations: $sourceRegistrations,
                 destinationRegistrations: $destinationRegistrations,
                 createdDestinationRegistrations: $createdDestinationRegistrations,
@@ -396,7 +399,7 @@ final class FieldStorageKeyMigrationService
     }
 
     /**
-     * @param list<array{post_type:string,post_id:int,value:mixed}> $snapshots
+     * @param array<string,array{post_type:string,post_id:int,value:mixed}> $sourceTouched
      * @param array<string,array<string,mixed>> $sourceRegistrations
      * @param array<string,array<string,mixed>> $destinationRegistrations
      * @param array<string,bool> $createdDestinationRegistrations
@@ -408,7 +411,7 @@ final class FieldStorageKeyMigrationService
         Definition $candidate,
         array $sourceField,
         array $destinationField,
-        array $snapshots,
+        array $sourceTouched,
         array $sourceRegistrations,
         array $destinationRegistrations,
         array $createdDestinationRegistrations,
@@ -418,6 +421,7 @@ final class FieldStorageKeyMigrationService
         string $destinationKey,
         Throwable $failure,
     ): never {
+        unset($destinationField);
         $recoveryErrors = [];
 
         foreach (array_keys($sourceRetirementAttempted) as $postType) {
@@ -428,7 +432,7 @@ final class FieldStorageKeyMigrationService
             }
         }
 
-        foreach (array_reverse($snapshots) as $snapshot) {
+        foreach (array_reverse(array_values($sourceTouched)) as $snapshot) {
             try {
                 $this->values->write(
                     $sourceField,
