@@ -1,279 +1,333 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-01**  
-Canonical implementation source: **`main @ f867eb318c3b529b3bf12b8f37873801c15f2b5b`**  
+Canonical implementation source audited: **`main @ b7b882422f616ee135441c6b52674ff5522a839c`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
-Implementation decisions: through **ADR-0222** plus bounded Surface 3 implementation contracts  
+Implementation decisions: through **ADR-0222** plus certified bounded Surface 3 implementation contracts  
 Project classification: **`GREENFIELD_IMPLEMENTATION_WITH_EXISTING_ACCEPTED_PLAN`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle: **`PHASE_2_CUSTOM_FIELDS_IMPLEMENTATION_ACTIVE`**  
+Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope**  
+Next dependency gate after this checkpoint is promoted: **Surface 4 Relations / Gate B**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
 
-Authorized sequence:
+Authorized sequence remains:
 
-`Implementation Baseline / Adoption Gate → Machine-enforced architecture guards → Milestone 1 Platform Foundation → module development`.
+`Implementation Baseline / Adoption Gate → Machine-enforced architecture guards → Milestone 1 Platform Foundation → dependency-gated module development`.
 
-Source implementation, development/test tooling, CI and milestone-scoped schemas/tests are authorized. Production deployment/release, destructive live-site/customer-data operations, chargeable/irreversible provider side effects and separately privileged merge/release operations remain excluded unless explicitly authorized.
+Phase 2 dependency order is authoritative:
+
+`Fields → Relations → Query → Admin Columns → Dynamic Listings → Status`.
+
+Source implementation, development/test tooling, CI and milestone-scoped schemas/tests are authorized. Production deployment/release, destructive live-site/customer-data operations, chargeable or irreversible provider side effects and separately privileged release operations remain excluded unless explicitly authorized.
 
 ## Product/planning truth
 
-Accepted scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known planning or semantic-owner gap after WP118 / ADR-0213.
+Accepted structural scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known structural planning or semantic-owner gap after WP118 / ADR-0213.
 
-Canonical module sequencing remains repository-owned. `docs/ROADMAP.md` starts Phase 2 Structured Data Pro with **Surface 3 Custom Fields**, followed by Relations, Query, Admin Columns, Dynamic Listings and Status. Surface 3 Options Bank remains **BANK_REVIEWED at 618 records**; runtime implementation consumes that reviewed truth and does not create count-only records for UX aliases/presets.
+Surface 3 Fields Options Bank remains **BANK_REVIEWED at 618 records**. Gate A PASS does **not** mean all 618 Bank records are shipped, runtime implemented or `PRODUCT_PARITY_CERTIFIED`. Runtime certification is deliberately narrower and applies only to the supported native V1 contracts listed below. Provider-owned, Relations-owned and other uncertified storage semantics remain fail-closed.
 
 ## Implementation gates
 
 - WP119 / ADR-0214 — **DONE / PASS** — greenfield Implementation Baseline / Adoption Gate.
 - WP120 / ADR-0215 — **DONE / PASS** — machine-enforced architecture guards.
 - WP121 — **DONE / PASS FOR MODULE HANDOFF** — shared Platform foundation readiness closed by WP121.1 through WP121.4.
-- Phase 2 / Surface 3 Custom Fields — **ACTIVE / BOUNDED IMPLEMENTATION** — first seven backend slices merged with exact-head CI; value Ability/target binding, multi-row recovery, render/admin completion and broader adapters remain open.
+- Phase 2 / Gate A / Surface 3 Custom Fields — **PASS FOR CERTIFIED NATIVE V1 SCOPE** — all #66 Gate A exit criteria are satisfied by merged exact-head evidence summarized below.
+- Phase 2 / Gate B / Surface 4 Relations — **NEXT / NOT YET STARTED AT RUNTIME BY THIS CHECKPOINT**.
+- Gates C–E / Query → Admin Columns → Dynamic Listings — **BLOCKED BY DEPENDENCY ORDER**.
+- Status Manager runtime — **BLOCKED UNTIL GATES A–E ARE COMPLETE**.
 
-## Surface 3 — Custom Fields implementation checkpoint
+## Surface 3 — Custom Fields certified runtime scope
 
-### Merged slice 1 — canonical type/repeatability foundation — PASS
+### Foundation slices 1–7 — PASS
 
-PR #35, `feat(fields): add canonical type and repeatability foundation`, established:
-- canonical Field Type Registry and UX Preset Registry;
-- logical type / editor control / storage / return-format separation;
-- Meta Box-style common clone/repeatability semantics for compatible fields;
-- sortable clones only when repeatability is enabled and supported;
-- Group recursive subfields and container-owned Repeater/Flexible/Gallery ordering semantics;
-- enhanced WPE editor-control policy for Date/Time/DateTime/Range/Color instead of browser-native picker UX as the product contract;
-- fail-closed Code field policy: stored source text only, never PHP/JavaScript execution.
+The earlier checkpointed slices remain accepted:
 
-Exact-head applicable CI passed: Architecture Guards #517, PHP Quality Toolchain #65, Platform Compatibility Matrix #228 and Distributable Package #172.
+1. PR #35 — canonical Field Type / repeatability foundation.
+2. PR #36 — canonical `field_group` Definition lifecycle and module-local Ability/AJAX wiring.
+3. PR #38 — machine-readable canonical Field Catalog API.
+4. PR #39 — typed server-side Field Value normalization.
+5. PR #41 — stable RFC4122 per-Field identity and collision protection.
+6. PR #42 — WordPress registered post-meta storage V1 with explicit auth, sanitization, REST schema and subtype support guards.
+7. PR #44 — native post-meta value persistence V1 with typed reads, idempotent verified writes, deletion semantics and fail-closed unsupported multi-row mutation at that stage.
 
-### Merged slice 2 — Field Group definition lifecycle — PASS
+The source checkpoint after slice 7 was `f867eb318c3b529b3bf12b8f37873801c15f2b5b`. All blocker language tied to that historical point is superseded by the certified closure slices below.
 
-PR #36, `feat(fields): add Field Group definition lifecycle`, established:
-- canonical Surface 3 `field_group` Definitions;
-- recursive normalized fields and unique keys;
-- OR-of-AND location rules;
-- Field Group presentation contract;
-- draft/publish validation;
-- immutable group keys after creation;
-- optimistic `expected_revision` mutation safety;
-- list/get/save/status/validate handlers through the shared Definition Repository;
-- Pro `FieldsModule` module-local Ability/AJAX wiring.
+### Closure slice 8 — Field value Ability + target/resource authorization — PASS
 
-Exact-head applicable CI passed: Architecture Guards #524, PHP Quality Toolchain #69, Platform Compatibility Matrix #235 and Distributable Package #176.
+Promotion PR #57 certified source `5b56f632d8466104c0eefb1c54b6848236ec2997`.
 
-### Merged slice 3 — canonical Field Catalog API — PASS
+Established:
+- typed Field read/write Abilities;
+- persisted Field Group + stable Field UUID target resolution;
+- actual post subtype/status evaluation;
+- V1 location matching for supported target predicates;
+- resource-level WordPress authorization through the shared Policy/ExecutionContext boundary;
+- optimistic group revision protection on value mutation;
+- existing `PostMetaValueStore` as the bounded mutation path;
+- draft/disabled, unknown Field, target mismatch and unsupported owner/storage cases fail closed.
 
-PR #38, `feat(fields): expose canonical field catalog API`, established a machine-readable backend catalog for future admin/UI consumers so field types and behaviors are not duplicated as hard-coded React truth.
+### Closure slice 9 — runtime storage projection — PASS
 
-Catalog output includes canonical types, builder-visible presets, logical/editor metadata, modes, clone/sort capability, enhanced-control requirements, no-browser-native-picker policy and code-execution prohibition. Search, Slider, Multi Select, Week, Month, Days/Duration, Section, TinyMCE, color-alpha, local/social Video and WordPress-data selector variants compile to canonical semantics rather than duplicate storage types.
+Promotion PR #58 certified source `d454956e7768de6bbcf8434753c54d96af020b65`.
 
-Merged source: `923197edd27ac96a8e7cccc145ab6f139f93b6b9`.  
-Exact-head applicable CI passed: Architecture Guards #530, PHP Quality Toolchain #74, Platform Compatibility Matrix #241 and Distributable Package #181.
+Established explicit runtime projection for Field Group native-post-meta mode, REST exposure and revision policy. Omitted/legacy storage does not silently become native storage.
 
-### Merged slice 4 — typed Field Value normalization — PASS
+### Closure slice 10 — finite post-type target compiler — PASS
 
-PR #39, `feat(fields): add typed value normalization foundation`, established an editor-independent, server-side canonical value boundary covering the first safe type tranche:
-- required/null semantics, including required empty-list rejection;
-- common repeatable/clone value bounds;
-- text/email/URL/number/boolean values;
-- explicit choice membership for single/multiple controls;
-- Date / ISO Week / Month / Time / timezone-explicit DateTime normalized to UTC;
-- strict HEX/HEXA/RGB/RGBA/HSL/HSLA grammar;
-- WordPress-owned media/post/term/user references;
-- recursive Group and Repeater values;
-- unknown subfield rejection;
-- UI-only fields reject persistence;
-- Relationship values fail closed and remain Relations Engine-owned;
-- unsupported provider/complex types fail closed rather than accepting arbitrary blobs.
+Promotion PR #59 certified source `d293db195ac0f03eb701ff5ed737dfb1083d77ac`.
 
-Merged source: **`e4499aad6c092644ff08d758629a513f6f08ef8b`**.  
-Exact-head applicable CI passed: Architecture Guards #545, PHP Quality Toolchain #81, Platform Compatibility Matrix #256 and Distributable Package #189.
+Established deterministic finite post-subtype compilation from supported OR-of-AND location rules. Negative-only, unbounded, malformed or unsupported targeting fails closed rather than widening registration scope.
 
-### Merged slice 5 — stable per-Field identity — PASS
+### Closure slice 11 — registered-meta ownership guard — PASS
 
-PR #41, `feat(fields): add stable per-field identity`, established durable Field identity before storage binding:
-- stable RFC4122 Field UUIDs are assigned at persistence/lifecycle boundaries rather than generated during pure normalization;
-- persisted UUIDs survive subsequent normalize/save/status round trips;
-- nested Group/Repeater subfields receive stable identity recursively;
-- in-place replacement of an existing Field UUID is rejected;
-- cross-Field-Group UUID collisions are rejected;
-- canonical repeatability/preset state is consumed during re-normalization so persisted Fields round-trip idempotently instead of losing clone/sort semantics.
+Promotion PR #60 certified source `b1a31ff514237cf5b356f6e7a92c45aec53a26d7`.
 
-Merged source: **`197738bc84b675dd435c3f5eafc9c8df443c66c9`**.  
-Exact-head applicable CI passed: Architecture Guards #566, PHP Quality Toolchain #95, Platform Compatibility Matrix #274 and Distributable Package #206.
+Established fail-closed ownership preflight for global/subtype registered-meta collisions. A foreign same-key registration cannot be silently replaced. Structurally identical WPE registration with the same stable Field identity remains idempotent.
 
-### Merged slice 6 — WordPress registered post-meta storage V1 — PASS
+### Closure slice 12 — Published Field Group post-meta binder — PASS
 
-PR #42, `feat(fields): add registered post meta storage v1`, established the first native storage-registration boundary for persisted normalized Fields:
-- pure `PostMetaRegistrationCompiler` and thin injectable `WordPressPostMetaRegistrar`;
-- persisted stable Field UUID required before storage compilation;
-- explicit scalar/list registered-meta type mapping for the first certified tranche;
-- deliberate repeatable storage shape: single array value versus non-single scalar rows;
-- explicit `show_in_rest.schema.items` for array meta and native non-single REST wrapping verification;
-- explicit object-level `edit_post` authorization callback instead of permissive unprotected-meta fallback;
-- explicit sanitization through the canonical `FieldValueNormalizer`;
-- revision-enabled meta rejected for post subtypes without revision support;
-- REST-visible meta rejected for post subtypes without `custom-fields` support;
-- structured/provider/Relations/secret/uncertified types fail closed rather than falling back to opportunistic serialization;
-- compiler/registrar/value-normalizer exposed only as module-local services; no automatic boot registration and no Pro activation bypass;
-- real WordPress integration added to the Platform Compatibility Matrix across WP 6.9/7.1 × PHP 8.2–8.5 plus MariaDB 10.11 baselines;
-- native integration proves subtype registration, public REST schema behavior, slash-sensitive scalar/array round trips, explicit auth callback registration, invalid-value sanitization failure with prior-value retention, and revision/custom-fields support guards.
+Promotion PR #64 certified source `1508e3722eb55d7a43011067a1a15a7e17f7610`.
 
-Merged source: **`697eeffea095d1ddd6fc39c4409aa4290af1941e`**.  
-Exact-head applicable CI passed: Architecture Guards #584, PHP Quality Toolchain #106, Platform Compatibility Matrix #291 and Distributable Package #219.
+Established canonical Published Field Group → finite target → registered post-meta binding using the certified storage projection/compiler/ownership guard. Draft/unpublished groups cannot bind through this contract.
 
-### Merged slice 7 — native post-meta value persistence V1 — PASS
+### Closure slice 13 — `single=false` multi-row replacement/recovery — PASS
 
-PR #44, `feat(fields): add post meta value persistence v1`, established the first canonical server-side value persistence adapter for the registered-meta tranche:
-- module-local `PostMetaValueStore` with typed native reads and verified single-value writes;
-- write results distinguish `written`, `unchanged`, `deleted` and `absent` while retaining Field UUID/meta-key provenance;
-- requested post subtype is verified against the actual post before storage access;
-- submitted values normalize through the canonical `FieldValueNormalizer` before mutation;
-- `FieldValuePersistenceGuard` rejects non-canonical persistence values and non-finite numeric values (`INF`, `-INF`, `NAN`) through both the store and registered-meta sanitizer path;
-- WordPress slashing is applied at the native write boundary and canonical state is re-read after mutation attempts;
-- idempotent no-change writes avoid native mutation, while native false/success returns are not accepted without verified post-write state;
-- optional null has verified delete/already-absent semantics and boolean false remains distinguishable from absence;
-- native string/integer/finite-number/boolean values are deliberately cast before canonical validation; integer overflow and overflow-to-infinity fail closed;
-- certified single-array repeatable/list values read/write through the native Metadata API;
-- non-single/multi-row metadata remains readable as a typed list but mutation fails before destructive work until snapshot/recovery semantics are certified;
-- no migration, raw SQL, public value Ability, target binding, automatic boot registration, provider/Relations storage or Pro activation bypass was introduced;
-- real WordPress persistence evidence runs across WP 6.9/7.1 × PHP 8.2–8.5 plus MariaDB 10.11 and verifies slash-sensitive round trips, idempotence, typed reads, finite-value failure retention, multi-row no-partial-mutation behavior and delete/absent semantics.
+Promotion PR #65 certified source `a9e713198d55d77cafda61bf143cbf9fffbaef25`.
 
-Merged source: **`f867eb318c3b529b3bf12b8f37873801c15f2b5b`**.  
-Exact-head applicable CI passed: Architecture Guards #604, PHP Quality Toolchain #113, Platform Compatibility Matrix #308 and Distributable Package #233.
+Established:
+- exact row order and duplicate preservation;
+- bounded snapshot before destructive replacement;
+- public WordPress Metadata API mutation only;
+- post-write verification;
+- compensating restore after partial failure;
+- post-restore verification;
+- explicit uncertain-state failure if compensation cannot be proven.
 
-### Surface 3 integration blockers / non-certifications
+This closes the destructive-write/recovery hole that was explicitly open in the seven-slice checkpoint.
 
-Custom Fields is **not** runtime/product complete. In particular:
-- registered post-meta compilation/registration V1 and bounded single-value/single-array persistence V1 are certified only for the compatible scalar/list tranche and are not automatically activated at boot;
-- no safe `single=false` multi-row replacement/recovery path has been certified;
-- no field value storage key rename/migration/rollback implementation has been certified;
-- no complete REST/Ability value read/write mutation path has been certified;
-- no certified target/location → post subtype registration/value-access binding exists yet;
-- no React Field Group builder/renderers have been certified;
-- provider-owned/complex types remain fail-closed until their canonical adapters exist;
-- import/export, compatibility migrations, performance scale evidence and reference workflow evidence remain open;
-- Pro activation is intentionally not wired unconditionally into `frameworks/Bootstrap/Plugin.php`.
+### Closure slice 14 — explicit storage-key migration/rollback — PASS
 
-The current shared `ModuleRegistry` does not expose a canonical edition/entitlement/module-enable gate. **Do not add a Fields-private licensing bypass.** Shared Free/Pro activation/package ownership must be resolved by its canonical integrator/shared owner before Surface 3 is exposed as an active Pro module.
+Issue #68 promoted by PR #70, certified source `1b65e1aa236b125e946391da9eda8f459623d291`.
 
-### Linear coordination status
+Established an explicit migration workflow separate from ordinary Field editing:
+- stable Field UUID retained while storage key changes;
+- finite target compilation;
+- source/destination ownership and collision preflight;
+- scalar/list/multi-row value preservation;
+- destination verification before source retirement;
+- concurrent-source drift protection;
+- ownership-guarded registration retirement;
+- verified compensating rollback;
+- explicit uncertain-state failure when rollback cannot be verified.
 
-`CHECKPOINT.md` previously required creating/updating the next module Linear child issue before implementation. A dedicated WPEssential Custom Fields / Surface 3 issue creation was attempted in the connected `VSN — WPEssential` workspace, but Linear rejected the mutation because the workspace has exceeded its free issue limit.
+Ordinary Field save continues to reject silent persisted storage-key rename.
 
-Status: **EXTERNAL COORDINATION UNAVAILABLE / NOT A REPOSITORY IMPLEMENTATION FAILURE**.
+### Closure slice 15 — shared Pro module activation/admission gate — PASS
 
-No Linear issue ID is invented. Repository planning, source, tests, PRs and this checkpoint remain canonical until Linear write capacity is restored.
+Issue #71 promoted by PR #73, certified source `9834284d6f9237734a195cb05fd644b368a70786`.
 
-## WP121 accepted foundation
+Established a Free-owned neutral pre-registry activation contract:
+- default policy admits Free modules and denies Pro modules;
+- denied Pro modules never enter the registry and cannot execute `register()` / `boot()`;
+- explicit pre-boot `ModuleActivationPolicyInterface` injection can authorize externally supplied modules;
+- explicit pre-boot `Plugin::registerModule()` is the neutral contribution seam;
+- Free bootstrap contains no concrete `FieldsModule` / `Modules\\Fields` source dependency;
+- dependencies on denied modules use the existing degraded path.
 
-Accepted shared production foundation includes:
+This is the canonical shared module/edition admission boundary for current Gate A. It is not a billing/licensing/checkout implementation, and `ModuleManifest::edition` remains classification rather than entitlement by itself.
+
+### Closure slice 16 — catalog-driven Field Group admin builder/rendering — PASS
+
+Issue #74 promoted by PR #76, certified source `08549390abfa76a906557d53c762b6df6fc6c539`.
+
+Established:
+- module-owned Field Group admin builder under the shared WPEssential admin shell;
+- canonical catalog projection rather than duplicated hard-coded field semantics;
+- existing Ability/AJAX/nonce/capability boundaries for reads/writes;
+- stable Field UUID preservation;
+- persisted storage keys read-only in ordinary editing;
+- supported bounded field types editable through canonical semantics;
+- unsupported provider/complex/container types preserved read-only / fail-closed;
+- existing payload sections preserved during ordinary edits.
+
+Exact-head evidence included Architecture #750, PHP Quality #183, Platform Compatibility #433, Browser E2E Accessibility #189 and Distributable Package #352 — all SUCCESS.
+
+### Closure slice 17 — provider/complex owner-boundary certification — PASS
+
+Issue #77 promoted by PR #79, certified source `f8c2f515151f28e757ec6580b15cc44ab4b6ed65`.
+
+Certified that `relationship`, `taxonomy`, `user`, `page_link`, `nav_menu`, `sidebar`, `group`, `repeater`, `flexible_content`, `clone`, `accordion` and `tab` do not silently fall into native post-meta storage when their canonical owner/storage contract is absent. Real WordPress registered-meta evidence proves the same owner-boundary behavior. `post_object` and `posts` remain positive controls for the certified native integer-reference tranche.
+
+Fail-closed unsupported ownership is a deliberate safety boundary, not an unresolved destructive-write hole.
+
+### Closure slice 18 — definition portability / import-export compatibility V1 — PASS
+
+Issue #80 promoted by PR #82, certified source `9e7d07a3acc1b5e289fbe4792db5d64e39284631`.
+
+Exact-head CI: Architecture #770, PHP Quality #195, Platform Compatibility #448 and Distributable #364 — all SUCCESS.
+
+Certified definition-only create-safe portability:
+- versioned Surface 3 Field Group envelope;
+- deterministic export;
+- stable Definition UUID and Field UUID preservation;
+- payload checksum verification;
+- strict known format/schema/type/owner/key boundary;
+- absent definition creates; identical same-ID re-import is idempotent;
+- divergent identity/slug/group-key/Field UUID collisions fail closed;
+- no silent remap or storage-key migration bypass;
+- source revision is provenance only; imported local revision starts at 1.
+
+Values/data import, destructive merge/overwrite, provider/Relations storage and dependency remapping remain explicit non-goals.
+
+### Closure slice 19 — deterministic performance/scale envelope V1 — PASS
+
+Issue #83 promoted by PR #85, certified source `820be13284e684809df1012ef9b9afec915e8a57`.
+
+Exact-head CI: Architecture #782, PHP Quality #201, Platform Compatibility #456 and Distributable #372 — all SUCCESS.
+
+Certified deterministic scale behavior without unstable wall-clock assertions:
+- a 512-Field selected group resolves with one Definition `get()`, zero repository-wide `byType()` scans, one post-type lookup and one post-status lookup;
+- batch registration preserves complete preflight plus live per-tuple ownership/support revalidation;
+- for `N` registration tuples and `P` unique post types, ownership-map reads are bounded at `2N + P + 1` rather than the prior `4N` model;
+- a callback cannot introduce foreign ownership for a later tuple and then be silently overwritten;
+- scalar value IO has a fixed metadata-call budget;
+- multi-row replacement scales linearly with desired rows plus bounded verification.
+
+No arbitrary product caps, direct SQL or cross-request registration cache were introduced.
+
+### Closure slice 20 — automatic runtime binding + composed real-WordPress reference — PASS
+
+Issue #86 promoted by PR #88, certified source `a29c9ba573923203e209bcf967c74f9366c2580d`; merged to `main` as `b7b882422f616ee135441c6b52674ff5522a839c`.
+
+Exact-head CI:
+- Architecture Guards #793 — SUCCESS;
+- PHP Quality Toolchain #205 — SUCCESS;
+- Platform Compatibility Matrix #466 — SUCCESS;
+- Distributable Package #378 — SUCCESS.
+
+Established the final runtime composition required by Gate A:
+- an admitted `FieldsModule` owns a runtime coordinator;
+- compiled CPT runtime registers at WordPress `init` priority 20;
+- Fields runtime binding executes at `init` priority 30;
+- only canonical Surface 3 Published Field Groups are selected;
+- all Published groups compile into one registrar-owned batch;
+- cross-group duplicate `(post_type, meta_key)` fails before the first Field registration mutation;
+- runtime failure is inspectable and non-fatal, with no silent overwrite/remap;
+- denied Pro Fields cannot install the runtime hook because module lifecycle never executes.
+
+Platform Compatibility #466 runs the composed fresh-request reference on:
+- WordPress 6.9 / 7.1 × PHP 8.2 / 8.3 / 8.4 / 8.5 with MySQL 8.4;
+- WordPress 6.9 / 7.1 × PHP 8.4 with MariaDB 10.11.
+
+The composed workflow proves the public pre-boot module admission seam, persistent CPT/Field Group Ability creation, actual `Plugin::boot` lifecycle, automatic native registered-meta binding, REST-visible metadata shape, native/internal Field value Ability IO, non-target rejection, Draft/foreign-owner exclusion and all-groups collision fail-before-mutation behavior.
+
+## Surface 3 Gate A exit audit — PASS
+
+Parent tracker: #66. Closure checkpoint tracker: #89.
+
+### Criterion 1 — no known destructive-write/recovery hole for certified native storage paths — PASS
+
+Evidence:
+- verified single-value persistence from PR #44;
+- `single=false` snapshot/replacement/compensating recovery from #65;
+- explicit storage-key migration with destination verification, source retirement and verified rollback from #70;
+- registration ownership preflight/live revalidation from #60/#85;
+- cross-group combined-plan fail-before-first-mutation from #88.
+
+Unsupported storage owners do not fall through to native post meta; they fail closed.
+
+### Criterion 2 — runtime activation governed by shared module/edition contract — PASS
+
+Evidence:
+- shared activation gate #73 owns admission before registry insertion;
+- default Pro is denied;
+- neutral pre-boot policy + module contribution seam is shared infrastructure;
+- concrete `FieldsModule` activation through that seam is exercised by #88 real-WordPress reference evidence;
+- Free bootstrap remains concrete-Fields-source free;
+- no Fields-private license or activation bypass exists.
+
+Commercial entitlement/billing/provider implementation under ADR-0010/P-006 remains a separate non-goal and is not represented as completed.
+
+### Criterion 3 — admin UX can create/edit/publish the supported canonical Field Group model without duplicate semantics — PASS
+
+Evidence:
+- #76 catalog-driven builder/rendering consumes the canonical Fields catalog and existing Ability/AJAX contracts;
+- stable UUID and storage-key protections are preserved;
+- unsupported owner-bound types are read-only/fail-closed rather than reimplemented locally;
+- Browser E2E Accessibility #189 passed on the certified admin-builder source.
+
+### Criterion 4 — import/export + migration/rollback certified for supported definitions/storage changes — PASS
+
+Evidence:
+- #82 definition portability/import-export V1;
+- #70 explicit native post-meta storage-key migration/rollback V1;
+- ordinary save cannot bypass explicit migration;
+- create-only portability does not claim destructive merge/overwrite or Field value/data import.
+
+### Criterion 5 — real WordPress compatibility, security, accessibility and performance evidence green — PASS
+
+Evidence includes:
+- repeated WordPress 6.9/7.1 × PHP 8.2–8.5 compatibility matrices and MariaDB 10.11 baselines across registered-meta, persistence, migration, value Ability and owner-boundary slices;
+- #88 Platform Compatibility #466 composed lifecycle/reference workflow across MySQL and MariaDB baselines;
+- shared Policy/ExecutionContext + object/resource authorization on Field value operations;
+- registered-meta object-level authorization and ownership protection;
+- #76 Browser E2E Accessibility #189 for the Field Group admin builder;
+- #85 deterministic target/binding/value-IO scale certification.
+
+### Criterion 6 — checkpoint truth accurately reflects current main and explicit non-goals — PASS on promotion of this checkpoint
+
+This checkpoint replaces the obsolete seven-slice blocker list and anchors the audit to `main @ b7b882422f616ee135441c6b52674ff5522a839c`.
+
+## Explicit Surface 3 non-goals after Gate A
+
+Gate A PASS is intentionally scoped. The following are **not** claimed complete:
+- all 618 Fields Bank records as runtime/shipped features;
+- `PRODUCT_PARITY_CERTIFIED` for Surface 3;
+- provider-owned entity/storage adapters without their canonical owner contracts;
+- Relations-owned relationship/cardinality/edge storage;
+- arbitrary provider callbacks or executable PHP/JavaScript configuration;
+- generic custom-table/provider storage for unsupported Field types;
+- destructive definition import merge/overwrite;
+- Field values/data import/export;
+- automatic remapping of conflicting Definition IDs, slugs, group keys, Field UUIDs or storage keys;
+- billing, checkout, licensing or production entitlement-provider implementation;
+- production deployment, stable release or live-site migration;
+- any Query, Admin Columns, Dynamic Listings or Status runtime implementation.
+
+Unsupported provider/Relations/container types remain deliberately fail-closed until their owning surfaces/adapters are certified. This is part of the safety contract.
+
+## Shared WP121 foundation remains accepted
+
+WP121 remains **PASS FOR MODULE HANDOFF**. Accepted shared foundation includes:
 - Bootstrap / Kernel / Service Registry / Module lifecycle;
 - Definition / ExecutionContext / Policy / Ability / Event core;
-- Audit foundation, Vault, Assets and Integrations;
+- Audit, Vault, Assets and Integrations foundations;
 - WordPress Capability + Abilities API bridge;
-- ADR-0216 engineering/public contract;
-- ADR-0217 atomic compiled-registration persistence/recovery;
-- ADR-0218 Definition + Audit MySQL persistence + migration ledger;
-- ADR-0219 WordPress.org-facing metadata/contribution/release preparedness + `ABSPATH` guards;
-- ADR-0220 real WordPress AJAX/nonce/Policy integration;
-- ADR-0221 Action Scheduler public-API backend/coexistence profile;
-- ADR-0222 durable WPE Job persistence, revision CAS, attempts, leases, heartbeat and checkpoints;
-- minimal Platform admin shell + server-rendered Runtime Observatory with progressive TypeScript enhancement;
-- locked Composer and Node 24/npm quality toolchains;
-- deterministic `@wordpress/scripts` admin artifacts;
-- executable 10K/100K compiled-registration scale evidence;
-- deterministic runtime-only distributable plugin package/license gate;
-- packaged real-browser Runtime Observatory Playwright/Axe baseline;
-- real WordPress Multisite two-site AJAX/job/Action Scheduler isolation matrix.
+- atomic compiled-registration persistence/recovery;
+- Definition + Audit MySQL persistence + migration ledger;
+- WordPress.org-facing source/package guards;
+- real WordPress AJAX/nonce/Policy integration;
+- Action Scheduler coexistence profile;
+- durable Job persistence/revision/attempt/lease/checkpoint primitives;
+- Platform admin shell / Runtime Observatory;
+- locked Composer and Node quality toolchains;
+- deterministic distributable package and real-browser accessibility baselines;
+- Multisite runtime isolation evidence.
 
-## WP121 bounded closure evidence
-
-### WP121.1 — deterministic distributable package/license — PASS
-
-Canonical package source `019f496e10e04455cd939c75383fc41661dd26f7` passed Distributable Package #3, Architecture Guards #303 and Platform Compatibility Matrix #46.
-
-Package SHA-256: `a61257866088f5bde5a421cef27f9cf8302062eb74eac7a2ee17171415cbe929`; 156 files; 137,667 bytes; single `wpessential/` root; fixed normalized metadata; 0 runtime Composer packages.
-
-### WP121.2 — real-browser E2E/accessibility — PASS
-
-Canonical locked/read-only browser source `9e1039a697db44b6102377eafdf667afdfc79817` passed Browser E2E #11, Architecture Guards #317, Distributable Package #17 and Platform Compatibility Matrix #60.
-
-Evidence: 2/2 Playwright tests; Runtime Observatory progressive enhancement ready; zero page errors; Axe scoped to WPE-owned root with 0 violations / 15 passes; E2E graph 0 vulnerabilities. Artifact ID `9731346638`, digest `sha256:65ec1d2e7ea41e3e4a6f0165a94d6e5a2aa1dcc09b1558c291b6fac2a247b748`.
-
-### WP121.3 — Multisite AJAX & queue-worker isolation — PASS
-
-Exact implementation source `49abadec09676780680e705ae14f9f092609b348` passed:
-- Multisite Runtime Isolation `33310952673 / #4`;
-- Architecture Guards `33310952677 / #321`;
-- Distributable Package `33310952670 / #21`;
-- Browser E2E Accessibility `33310952675 / #14`;
-- Platform Compatibility Matrix `33310952685 / #64`.
-
-Real WordPress 7.1 / PHP 8.2.33 / MySQL 8.4.11 evidence proves:
-- active site/network AJAX context after blog switching;
-- same-user cross-site nonce replay rejection;
-- durable Job stable-key/read/mutation isolation by explicit network/site scope;
-- lease/checkpoint isolation;
-- shared WPE network tables without accidental per-site duplicates;
-- Action Scheduler 4.1.0 site-store isolation for scheduling/query/cancel.
-
-Artifact ID `9731964919`, digest `sha256:7da43e78c5248cbcf3219b4eef24e0abc6aba312d639ce26e026e433796a4a7b`.
-
-### WP121.4 — aggregate shared-foundation readiness — PASS
-
-Machine-enforced manifest `tools/quality/wp121-readiness.json` anchors the readiness decision to certified implementation source `49abadec09676780680e705ae14f9f092609b348` and exact canonical hosted run IDs/workflow IDs.
-
-`WP121 Shared Foundation Readiness` run `33311289489 / #2` on readiness head `5007de9c84b2b154743b6e50f76cc73e65e6019b` passed:
-- exact readiness head/manifest validation;
-- certified source ancestry;
-- strict no-implementation-drift allowlist after the certified source;
-- exact canonical hosted prerequisite run identity/head/workflow/PR/conclusion checks;
-- tracked-clean verification;
-- machine-readable readiness artifact upload.
-
-Readiness artifact ID `9732050946`, digest `sha256:3cc9cffbb159d90d2fbda4274223ffb0ec708dfd56a2707eb59bf418410cf547`, 14-day retention.
-
-The aggregate gate allows only the readiness workflow/manifest and three canonical readiness/checkpoint documents to differ after the certified source. Any production/test/tooling drift outside that allowlist fails closed and requires a new certified implementation source.
-
-## Readiness decision
-
-**WP121 shared foundation remains PASS for business-module source development under the existing governance boundary.**
-
-This is a module-handoff decision, not a stable-release or production-deployment approval.
-
-## Important staged non-certifications
-
-The following remain real work but do not block bounded module source tranches unless their owning stage requires them:
-- WordPress.org submission/stable release;
-- live production DB migration/rollback;
-- final stable-release Action Scheduler packaging/vendoring mechanism;
-- automatic Action Scheduler dispatch → Ability → durable-attempt lifecycle wiring;
-- high-concurrency fairness/resource admission/backpressure certification;
-- Job checkpoint privacy/retention implementation;
-- Audit read/retention/privacy/export/legal-hold product workflows;
-- browser/accessibility evidence for future critical interactive WPE admin workflows;
-- canonical Free/Pro entitlement/module-enable/package separation;
-- periodic reassessment of upstream development-toolchain advisories.
-
-No live provider call, production deployment, destructive live-site/customer-data mutation, live production migration, release or irreversible external operation occurred.
+This remains a source-development/module-handoff decision, not a stable-release or production-deployment approval.
 
 ## Current next action
 
-Continue **Surface 3 Custom Fields** as the first Phase 2 Structured Data Pro tranche.
+After this checkpoint is promoted, **Surface 3 Gate A is closed/PASS and Surface 4 Relations Gate B becomes the next authorized runtime-development gate**.
 
-Next bounded implementation target: **typed Field value Ability integration + certified target resolution contract**. Before exposing any read/write route it must:
-- resolve a persisted Field Group and stable Field UUID/key to one canonical Field definition rather than accepting arbitrary client-provided Field schema;
-- resolve the requested post ID to its actual post subtype and prove that the published Field Group location contract permits that target/context;
-- consume the certified `PostMetaValueStore` as the only post-meta mutation path for the bounded tranche;
-- enforce resource-level authorization for every read/write through the shared Policy/ExecutionContext/Ability boundary, with no UI-only or AI/MCP bypass;
-- define typed Ability input/output schemas and distinguish read from mutating operations;
-- reject disabled/draft groups, unknown Field IDs, post-subtype/location mismatch, unsupported storage shapes and Relations/provider-owned values fail-closed;
-- preserve idempotent write results and safe error semantics without leaking stack traces or internal storage detail;
-- remain module-local/non-booted until the canonical Pro entitlement/module-enable integration gate exists;
-- add real WordPress authorization/target-resolution integration evidence before public exposure is certified.
-
-`single=false` multi-row replacement/recovery remains a separate high-integrity storage task unless the Ability slice genuinely requires it. Its future implementation must define pre-write snapshots, duplicate/order semantics, partial-failure detection, compensating restore and post-restore verification before any destructive replacement path is enabled.
-
-After the Ability/target-resolution slice: certified target/location runtime registration binding, admin renderer/editor integration, storage-key rename/migrations, portability/import-export and broader field-type/provider adapters according to Surface 3 dependencies.
+Before writing Relations runtime source:
+- audit current `main` for any existing Relations runtime seams so no duplicate engine is created;
+- consume the already `BANK_REVIEWED` Surface 4 Relations planning truth (144 records) rather than reseeding it;
+- preserve Fields ownership of relationship selector/control schema while Relations owns persistent edge/cardinality/direction/storage semantics;
+- define the first bounded Relations runtime slice from #66 Gate B requirements;
+- keep Query, Columns, Listings and Status blocked until their dependency gates open;
+- use exact-head CI and fail-closed ownership/recovery rules for every promoted slice.
 
 Repository evidence overrides conversational memory.
