@@ -66,6 +66,8 @@ final class FieldsModule implements ModuleInterface
         $postMetaCompiler = new PostMetaRegistrationCompiler($values, $persistence);
         $postMetaRegistrar = new WordPressPostMetaRegistrar();
         $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
+        $valueTargets = new FieldValueTargetResolver($definitions, $groups);
+        $valueAuthorization = new WordPressPostResourceAuthorizer();
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
@@ -77,6 +79,8 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.storage.post-meta.compiler', $postMetaCompiler);
         $services->set('module.custom-fields.storage.post-meta.registrar', $postMetaRegistrar);
         $services->set('module.custom-fields.storage.post-meta.values', $postMetaValues);
+        $services->set('module.custom-fields.values.targets', $valueTargets);
+        $services->set('module.custom-fields.values.authorization', $valueAuthorization);
 
         $handlers = [
             'catalog' => new FieldCatalogAbilityHandler($catalog),
@@ -95,11 +99,50 @@ final class FieldsModule implements ModuleInterface
                 operation: in_array($action, ['save-group', 'status-group'], true) ? NonceOperation::Update : NonceOperation::Apply,
             ));
         }
+
+        $valueHandlers = [
+            'read-value' => new FieldValueAbilityHandler(
+                $valueTargets,
+                $postMetaValues,
+                $valueAuthorization,
+                FieldValueAbilityHandler::READ,
+            ),
+            'write-value' => new FieldValueAbilityHandler(
+                $valueTargets,
+                $postMetaValues,
+                $valueAuthorization,
+                FieldValueAbilityHandler::WRITE,
+            ),
+        ];
+        foreach ($valueHandlers as $action => $handler) {
+            $mutates = $action === 'write-value';
+            $descriptor = new AbilityDescriptor(
+                name: 'wpessential/fields/' . $action,
+                ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+                capability: 'read',
+                mutates: $mutates,
+                channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
+                inputSchema: $this->valueInputSchema($mutates),
+                outputSchema: $this->valueOutputSchema(),
+            );
+            $abilities->register($descriptor, $handler);
+            $bridge->expose(new WordPressAbilityExposure(
+                internalName: $descriptor->name,
+                label: 'Custom Fields: ' . str_replace('-', ' ', $action),
+                description: 'Surface 3 Field value operation through certified target resolution and post resource authorization.',
+                showInRest: true,
+            ));
+            $ajaxRoutes->register(new AjaxRoute(
+                type: 'fields.' . str_replace('-', '.', $action),
+                handler: new AbilityAjaxHandler($abilities, $descriptor->name, $contexts),
+                operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
+            ));
+        }
     }
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // Target/location binding, admin rendering, and runtime value Ability wiring remain separate bounded Surface 3 slices.
+        // Automatic Field Group target registration, admin rendering, and Pro activation remain separate bounded slices.
     }
 
     private function registerAbility(
@@ -125,5 +168,56 @@ final class FieldsModule implements ModuleInterface
             description: 'Surface 3 Custom Fields / Field Groups operation.',
             showInRest: true,
         ));
+    }
+
+    /** @return array<string,mixed> */
+    private function valueInputSchema(bool $write): array
+    {
+        $properties = [
+            'group_id' => ['type' => 'string', 'pattern' => '^[0-9a-f-]{36}$'],
+            'field_uuid' => ['type' => 'string', 'pattern' => '^[0-9a-f-]{36}$'],
+            'post_id' => ['type' => 'integer', 'minimum' => 1],
+        ];
+        $required = ['group_id', 'field_uuid', 'post_id'];
+        if ($write) {
+            $properties['value'] = [
+                'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
+                'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
+            ];
+            $required[] = 'value';
+        }
+
+        return [
+            'type' => 'object',
+            'required' => $required,
+            'properties' => $properties,
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function valueOutputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => [
+                'group_id', 'group_revision', 'field_uuid', 'field_key', 'post_id', 'post_type', 'status', 'changed', 'value',
+            ],
+            'properties' => [
+                'group_id' => ['type' => 'string'],
+                'group_revision' => ['type' => 'integer', 'minimum' => 1],
+                'field_uuid' => ['type' => 'string'],
+                'field_key' => ['type' => 'string'],
+                'post_id' => ['type' => 'integer', 'minimum' => 1],
+                'post_type' => ['type' => 'string'],
+                'status' => ['type' => 'string'],
+                'changed' => ['type' => 'boolean'],
+                'value' => [
+                    'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
+                    'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
+                ],
+            ],
+            'additionalProperties' => false,
+        ];
     }
 }
