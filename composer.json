@@ -61,6 +61,7 @@
     "test:smoke:dashboard-widgets-market-audit": "php tests/Smoke/dashboard-widgets-market-audit-contract.php",
     "test:smoke:dashboard-widgets-review": "php tests/Smoke/dashboard-widgets-review-contract.php",
     "test:smoke:option-contracts": "php tests/Smoke/option-contracts-contract.php",
+    "test:smoke:option-contract-relations": "php tests/Smoke/option-contract-relations-contract.php",
     "test:integration:compiled-registration-mysql": "php tests/Integration/compiled-registration-mysql.php",
     "test:smoke": [
       "@test:smoke:kernel",
@@ -91,7 +92,8 @@
       "@test:smoke:dashboard-widgets-native-audit",
       "@test:smoke:dashboard-widgets-market-audit",
       "@test:smoke:dashboard-widgets-review",
-      "@test:smoke:option-contracts"
+      "@test:smoke:option-contracts",
+      "@test:smoke:option-contract-relations"
     ],
     "quality:php": [
       "@quality:phpcs",
