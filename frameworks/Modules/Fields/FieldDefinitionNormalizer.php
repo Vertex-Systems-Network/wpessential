@@ -57,6 +57,16 @@ final class FieldDefinitionNormalizer
             throw new InvalidArgumentException('Code fields store text only and can never enable PHP/JS execution.');
         }
 
+        $showInRest = $field['show_in_rest'] ?? false;
+        if (!is_bool($showInRest)) {
+            throw new InvalidArgumentException('Field show_in_rest must be boolean.');
+        }
+
+        $restSchema = $field['rest_schema'] ?? 'auto';
+        if (!is_string($restSchema) || $restSchema !== 'auto') {
+            throw new InvalidArgumentException('Field rest_schema V1 must be "auto" so the certified compiler derives the native schema.');
+        }
+
         $repeat = $this->repeatability($field, $descriptor);
         $subfields = $this->subfields($field, $descriptor);
 
@@ -71,6 +81,8 @@ final class FieldDefinitionNormalizer
             'editor_strategy' => $descriptor->enhancedControlRequired ? 'enhanced' : 'standard',
             'native_browser_picker' => false,
             'stores_value' => $descriptor->storesValue,
+            'show_in_rest' => $showInRest,
+            'rest_schema' => $restSchema,
             'settings' => $settings,
             'repeatability' => $repeat,
             'subfields' => $subfields,
