@@ -1,0 +1,548 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {
+    "id": 5,
+    "key": "status",
+    "name": "Status"
+  },
+  "snapshot": {
+    "date": "2026-09-01",
+    "native_sources": [
+      {
+        "name": "WordPress register_post_status()",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/functions/register_post_status/",
+        "verified": true
+      },
+      {
+        "name": "WordPress wp_get_db_schema()",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/functions/wp_get_db_schema/",
+        "verified": true
+      },
+      {
+        "name": "WordPress transition_post_status hook",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/hooks/transition_post_status/",
+        "verified": true
+      },
+      {
+        "name": "WordPress REST Post Statuses Controller",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/classes/wp_rest_post_statuses_controller/",
+        "verified": true
+      },
+      {
+        "name": "WordPress REST Posts status handling",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/classes/wp_rest_posts_controller/handle_status_param/",
+        "verified": true
+      },
+      {
+        "name": "WordPress initial built-in post statuses",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/functions/create_initial_post_types/",
+        "verified": true
+      },
+      {
+        "name": "WordPress future-post publication",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/functions/check_and_publish_future_post/",
+        "verified": true
+      },
+      {
+        "name": "WordPress trash / untrash lifecycle",
+        "type": "wordpress_core",
+        "url": "https://developer.wordpress.org/reference/functions/wp_untrash_post/",
+        "verified": true
+      }
+    ],
+    "market_sources": [
+      {
+        "name": "PublishPress Statuses",
+        "type": "official_competitor",
+        "url": "https://publishpress.com/statuses/",
+        "verified": true
+      },
+      {
+        "name": "PublishPress Statuses options",
+        "type": "official_competitor",
+        "url": "https://publishpress.com/knowledge-base/statuses-options/",
+        "verified": true
+      },
+      {
+        "name": "Extended Post Status",
+        "type": "official_competitor",
+        "url": "https://wordpress.org/plugins/extended-post-status/",
+        "verified": true
+      },
+      {
+        "name": "Edit Flow",
+        "type": "official_competitor",
+        "url": "https://wordpress.org/plugins/edit-flow/",
+        "verified": true
+      },
+      {
+        "name": "Oasis Workflow",
+        "type": "official_competitor",
+        "url": "https://wordpress.org/plugins/oasis-workflow/",
+        "verified": true
+      },
+      {
+        "name": "PublishPress Future",
+        "type": "official_competitor",
+        "url": "https://wordpress.org/plugins/post-expirator/",
+        "verified": true
+      },
+      {
+        "name": "WooCommerce Order Status Manager",
+        "type": "official_competitor",
+        "url": "https://woocommerce.com/document/woocommerce-order-status-manager/",
+        "verified": true
+      },
+      {
+        "name": "JetEngine / JetFormBuilder status consumers",
+        "type": "official_competitor",
+        "url": "https://crocoblock.com/knowledge-base/jetengine/post-expiration-period-add-on/",
+        "verified": true
+      }
+    ]
+  },
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {
+      "id": "status.definition.key",
+      "feature_group": "Definition",
+      "option_path": "status.key",
+      "label": "Status Key / Slug",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "$post_status",
+        "internal": false,
+        "since": "3.0.0"
+      },
+      "value_type": "string",
+      "notes": "Sanitize as a WordPress key; persistence compatibility must enforce the wp_posts.post_status storage limit rather than accepting arbitrarily long slugs."
+    },
+    {
+      "id": "status.definition.label",
+      "feature_group": "Definition",
+      "option_path": "status.label",
+      "label": "Status Label",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "label",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.definition.uuid",
+      "feature_group": "Definition",
+      "option_path": "status.uuid",
+      "label": "Stable Status Definition UUID",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    },
+    {
+      "id": "status.definition.description",
+      "feature_group": "Definition",
+      "option_path": "status.description",
+      "label": "Status Description",
+      "classification": "WPE_HARD",
+      "hard_soft": "SOFT",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    },
+    {
+      "id": "status.definition.enabled",
+      "feature_group": "Definition",
+      "option_path": "status.enabled",
+      "label": "Status Definition Enabled",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "PARITY",
+      "priority": "P0_PARITY"
+    },
+    {
+      "id": "status.definition.kind",
+      "feature_group": "Definition",
+      "option_path": "status.kind",
+      "label": "Status Definition Kind",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "PARITY",
+      "priority": "P0_PARITY",
+      "allowed_values": [
+        "custom",
+        "core_read_only",
+        "provider"
+      ]
+    },
+    {
+      "id": "status.labels.count_singular",
+      "feature_group": "Labels",
+      "option_path": "status.labels.count_singular",
+      "label": "Count Label — Singular",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "SOFT",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "label_count singular",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.labels.count_plural",
+      "feature_group": "Labels",
+      "option_path": "status.labels.count_plural",
+      "label": "Count Label — Plural",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "SOFT",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "label_count plural",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.public",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.public",
+      "label": "Public",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "public",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.internal",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.internal",
+      "label": "Internal",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "internal",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.protected",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.protected",
+      "label": "Protected",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "protected",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.private",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.private",
+      "label": "Private",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "private",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.publicly_queryable",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.publicly_queryable",
+      "label": "Publicly Queryable",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "publicly_queryable",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.exclude_from_search",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.exclude_from_search",
+      "label": "Exclude From Search",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "exclude_from_search",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.admin.show_in_all_list",
+      "feature_group": "Admin Lists",
+      "option_path": "status.admin.show_in_all_list",
+      "label": "Show Posts In Admin All List",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "show_in_admin_all_list",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.admin.show_in_status_list",
+      "feature_group": "Admin Lists",
+      "option_path": "status.admin.show_in_status_list",
+      "label": "Show Status Count Link In Admin",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "show_in_admin_status_list",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.dates.floating",
+      "feature_group": "Dates",
+      "option_path": "status.dates.floating",
+      "label": "Floating Creation Date",
+      "classification": "NATIVE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "date_floating",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    },
+    {
+      "id": "status.visibility.core_default_resolution",
+      "feature_group": "Visibility",
+      "option_path": "status.visibility.core_default_resolution",
+      "label": "Core Visibility Default Resolution",
+      "classification": "SOFT_NATIVE",
+      "hard_soft": "HYBRID",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "default_behavior": "wordpress_default",
+      "notes": "Preview WordPress-derived defaults when visibility flags are omitted; do not present derived values as independent persisted settings."
+    },
+    {
+      "id": "status.compatibility.core_builtins",
+      "feature_group": "Compatibility",
+      "option_path": "status.compatibility.core_builtins",
+      "label": "Preserve Core Built-in Status Contracts",
+      "classification": "COMPATIBILITY",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "notes": "Core _builtin is internal-only. WPE treats built-in status definitions as protected compatibility records rather than authorable custom statuses."
+    },
+    {
+      "id": "status.compatibility.key_length",
+      "feature_group": "Compatibility",
+      "option_path": "status.compatibility.key_length",
+      "label": "Persistable Status Key Length Guard",
+      "classification": "COMPATIBILITY",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "notes": "Guard against registered slugs that cannot be persisted in wp_posts.post_status; current WordPress developer notes document the 20-character storage constraint."
+    },
+    {
+      "id": "status.presentation.color",
+      "feature_group": "Presentation",
+      "option_path": "status.presentation.color",
+      "label": "Status Color",
+      "classification": "WPE_HARD",
+      "hard_soft": "SOFT",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "PARITY",
+      "priority": "P0_PARITY"
+    },
+    {
+      "id": "status.presentation.icon",
+      "feature_group": "Presentation",
+      "option_path": "status.presentation.icon",
+      "label": "Status Icon",
+      "classification": "WPE_HARD",
+      "hard_soft": "SOFT",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "PARITY",
+      "priority": "P0_PARITY"
+    },
+    {
+      "id": "status.presentation.admin_order",
+      "feature_group": "Presentation",
+      "option_path": "status.presentation.admin_order",
+      "label": "Status Admin Display Order",
+      "classification": "WPE_HARD",
+      "hard_soft": "SOFT",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    },
+    {
+      "id": "status.applicability.post_types",
+      "feature_group": "Applicability",
+      "option_path": "status.applicability.post_types",
+      "label": "Allowed Post Types",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "PARITY",
+      "priority": "P0_PARITY"
+    },
+    {
+      "id": "status.applicability.external_post_types",
+      "feature_group": "Applicability",
+      "option_path": "status.applicability.external_post_types",
+      "label": "Preserve Temporarily Missing Post Type Keys",
+      "classification": "WPE_HARD",
+      "hard_soft": "HYBRID",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    },
+    {
+      "id": "status.defaults.per_post_type",
+      "feature_group": "Defaults",
+      "option_path": "status.defaults.per_post_type",
+      "label": "Default Status Per Post Type",
+      "classification": "WPE_HARD",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_MARKET",
+      "adoption": "COMPETITIVE",
+      "priority": "P2_COMPETITIVE"
+    },
+    {
+      "id": "status.defaults.create_context",
+      "feature_group": "Defaults",
+      "option_path": "status.defaults.create_context",
+      "label": "Default Status By Creation Context",
+      "classification": "WPE_HARD",
+      "hard_soft": "HYBRID",
+      "horizon": "WPE_FUTURE",
+      "adoption": "WPE_EXCEED",
+      "priority": "P1_EXCEED",
+      "allowed_values": [
+        "admin",
+        "rest",
+        "frontend_form",
+        "import",
+        "provider"
+      ]
+    },
+    {
+      "id": "status.admin.count_mode",
+      "feature_group": "Admin Lists",
+      "option_path": "status.admin.count_mode",
+      "label": "Status Post Count Behavior",
+      "classification": "SOFT_NATIVE",
+      "hard_soft": "HYBRID",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "wp_count_posts",
+        "key": "status count property",
+        "internal": false,
+        "since": "2.5.0"
+      }
+    },
+    {
+      "id": "status.registration.timing",
+      "feature_group": "Native Runtime",
+      "option_path": "status.registration.timing",
+      "label": "Register Status At init Or Later",
+      "classification": "SOFT_NATIVE",
+      "hard_soft": "HARD",
+      "horizon": "CURRENT_NATIVE",
+      "adoption": "MUST_HAVE",
+      "priority": "P0_NATIVE",
+      "native_source": {
+        "api": "register_post_status",
+        "key": "init timing",
+        "internal": false,
+        "since": "3.0.0"
+      }
+    }
+  ],
+  "coverage": {
+    "records": 29,
+    "unreviewed": 0,
+    "adopted_or_classified": 29,
+    "notes": "Candidate seed: definition, native registration/visibility, presentation, applicability and default behavior."
+  }
+}
