@@ -30,11 +30,11 @@ The **56-module master plan is complete**. This dashboard tracks each canonical 
 **Progress model:** `UNSEEDED = 0%` → `BANK_SURFACE_SEEDED = 25%` → `NATIVE_AUDITED = 50%` → `MARKET_AUDITED = 75%` → `BANK_REVIEWED = 100%`.
 
 - Canonical modules planned: **56 / 56 (100%)**
-- Modules with Bank work started: **4 / 56**
-- Fully Bank-reviewed modules: **1 / 56**
-- Current Bank records: **938**
-- Weighted Bank-readiness snapshot: **3.6%**
-- Current active surface: **Relations — Market Audit V1**
+- Modules with Bank work started: **7 / 56**
+- Fully Bank-reviewed modules: **5 / 56**
+- Current Bank records: **1,406**
+- Weighted Bank-readiness snapshot: **9.8%**
+- Current certified Bank checkpoint: **5 surfaces BANK_REVIEWED; Issue #34 integration certification complete**
 - Estimated Bank-review program completion: **~2026-10-26**
 
 > **Date meaning:** “Bank Review Date” is a working estimate for completing planning/research certification for that surface, not a promise of runtime implementation, release, or production deployment. Dates are re-baselined when research, compatibility work, or CI exposes additional gaps.
@@ -44,13 +44,13 @@ The **56-module master plan is complete**. This dashboard tracks each canonical 
 | 1 | CPT | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | ~2026-09-03 |
 | 2 | Taxonomy | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | ~2026-09-04 |
 | 3 | Fields / Field Groups | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 4 | Relations | `█████░░░░░ 50%` | 🟡 NATIVE_AUDITED | ~2026-09-02 |
-| 5 | Status | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-05 |
+| 4 | Relations | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
+| 5 | Status | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 6 | Query Builder | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-06 |
 | 7 | Custom Tables / Content Tables | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-07 |
-| 8 | Admin Columns | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-08 |
+| 8 | Admin Columns | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 9 | Listings | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-09 |
-| 10 | Dashboard Widgets | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-10 |
+| 10 | Dashboard Widgets | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 11 | Admin Menu | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-11 |
 | 12 | Settings / Options Pages | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-12 |
 | 13 | Frontend Dashboards | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-13 |
