@@ -37,7 +37,7 @@ final readonly class AbilityAjaxHandler implements AjaxHandlerInterface
             correlationId: $current->correlationId,
         );
 
-        $decision = $this->abilities->authorize($this->abilityName, $context);
+        $decision = $this->abilities->authorize($this->abilityName, $context, $payload);
         if (!$decision->allowed) {
             throw new AjaxAuthorizationException($decision->reason);
         }
