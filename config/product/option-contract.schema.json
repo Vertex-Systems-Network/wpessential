@@ -47,6 +47,7 @@
       "enum": [
         "BENCHMARKING",
         "CAPABILITY_INVENTORY_COMPLETE",
+        "ATOMIC_INVENTORY_COMPLETE",
         "OPTION_CONTRACT_COMPLETE",
         "UX_CONTRACT_COMPLETE",
         "PRODUCT_PLANNED",
@@ -60,6 +61,7 @@
       "minItems": 1,
       "items": {"$ref": "#/$defs/featureGroup"}
     },
+    "source_projection": {"$ref": "#/$defs/sourceProjection"},
     "coverage_summary": {
       "type": "object",
       "additionalProperties": false,
@@ -84,6 +86,69 @@
     }
   },
   "$defs": {
+    "sourceProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_type", "source_surface_key", "source_review_version", "source_record_count", "entries"],
+      "properties": {
+        "source_type": {"enum": ["options_bank"]},
+        "source_surface_key": {"type": "string", "minLength": 1},
+        "source_review_version": {"type": "string", "minLength": 1},
+        "source_record_count": {"type": "integer", "minimum": 0},
+        "entries": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/sourceProjectionEntry"}
+        }
+      }
+    },
+    "sourceProjectionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_kind", "disposition", "atomic_ids", "owner_surface", "reason", "evidence_refs"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "source_kind": {
+          "enum": [
+            "authored_option",
+            "user_preference",
+            "integration",
+            "native_runtime",
+            "effective_state",
+            "diagnostic",
+            "out_of_surface",
+            "compatibility_provider",
+            "deferred",
+            "rejected_unsafe",
+            "wpe_exceed"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "AUTHORED_ATOMIC",
+            "USER_PREFERENCE_ATOMIC",
+            "INTEGRATION_ATOMIC",
+            "EFFECTIVE_OR_DIAGNOSTIC",
+            "RUNTIME_IMPLEMENTATION_EVIDENCE",
+            "OUT_OF_SURFACE_REFERENCE",
+            "COMPATIBILITY_PROVIDER_MAPPING",
+            "DEFERRED",
+            "REJECTED_UNSAFE",
+            "WPE_EXCEED"
+          ]
+        },
+        "atomic_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"}
+        },
+        "owner_surface": {"type": ["string", "null"]},
+        "reason": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
     "featureGroup": {
       "type": "object",
       "additionalProperties": false,
