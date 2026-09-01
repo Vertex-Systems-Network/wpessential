@@ -163,6 +163,15 @@ jobs:
           php tests/Integration/wordpress-fields-value-ability.php
           php tests/Integration/wordpress-fields-value-ability-core.php
 
+      - name: Real WordPress Fields composed runtime reference integration
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-fields-runtime-reference.php
+
       - name: Real WordPress durable JobService integration
         env:
           WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
@@ -254,3 +263,4 @@ jobs:
           php tests/Integration/wordpress-fields-storage-key-migration.php
           php tests/Integration/wordpress-fields-value-ability.php
           php tests/Integration/wordpress-fields-value-ability-core.php
+          php tests/Integration/wordpress-fields-runtime-reference.php

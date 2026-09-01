@@ -80,6 +80,7 @@ final class FieldsModule implements ModuleInterface
             $postMetaCompiler,
             $postMetaRegistrar,
         );
+        $runtimeRegistrar = new FieldGroupRuntimeRegistrar($definitions, $postMetaBinder);
         $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
         $postMetaMigrations = new FieldStorageKeyMigrationService(
             $definitions,
@@ -103,6 +104,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.portability', $portability);
         $services->set('module.custom-fields.runtime.storage-projection', $groupStorage);
         $services->set('module.custom-fields.runtime.post-type-targets', $groupPostTypes);
+        $services->set('module.custom-fields.runtime.post-meta', $runtimeRegistrar);
         $services->set('module.custom-fields.storage.post-meta.compiler', $postMetaCompiler);
         $services->set('module.custom-fields.storage.post-meta.registrar', $postMetaRegistrar);
         $services->set('module.custom-fields.storage.post-meta.binder', $postMetaBinder);
@@ -200,14 +202,16 @@ final class FieldsModule implements ModuleInterface
         $ajax = $services->get('platform.ajax.dispatcher');
         $gateway = $services->get('platform.ajax.gateway');
         $assets = $services->get('platform.admin.assets');
+        $runtimeRegistrar = $services->get('module.custom-fields.runtime.post-meta');
 
         if (!$abilities instanceof AbilityRegistry
             || !$contexts instanceof WordPressExecutionContextFactory
             || !$ajax instanceof AjaxDispatcher
             || !$gateway instanceof WordPressAjaxGateway
             || !$assets instanceof AdminAssetManifest
+            || !$runtimeRegistrar instanceof FieldGroupRuntimeRegistrar
         ) {
-            throw new LogicException('Custom Fields admin requires the shared admin, Ability, and AJAX services.');
+            throw new LogicException('Custom Fields runtime/admin requires the shared admin, Ability, AJAX, and Field runtime services.');
         }
 
         $admin = new FieldAdminController(
@@ -220,8 +224,7 @@ final class FieldsModule implements ModuleInterface
         );
         $services->set('module.custom-fields.admin', $admin);
         $admin->register();
-
-        // Automatic Field Group target registration remains a separate bounded slice.
+        $runtimeRegistrar->register();
     }
 
     private function registerAbility(
