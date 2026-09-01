@@ -68,6 +68,8 @@ final class WordPressPostMetaRegistrar
     }
 
     /**
+     * Validate one registration contract and its current WordPress ownership state without mutating registration state.
+     *
      * @param array{
      *     post_type:string,
      *     field_uuid:string,
@@ -75,14 +77,9 @@ final class WordPressPostMetaRegistrar
      *     args:array<string,mixed>
      * } $registration
      */
-    public function register(array $registration): void
+    public function preflight(array $registration): bool
     {
-        $postType = $registration['post_type'] ?? null;
-        $metaKey = $registration['meta_key'] ?? null;
-        $args = $registration['args'] ?? null;
-        if (!is_string($postType) || $postType === '' || !is_string($metaKey) || $metaKey === '' || !is_array($args)) {
-            throw new InvalidArgumentException('Post-meta registration contract is malformed.');
-        }
+        [$postType, $metaKey, $args] = $this->contract($registration);
 
         if (($args['revisions_enabled'] ?? false) === true && !($this->postTypeSupports)($postType, 'revisions')) {
             throw new InvalidArgumentException(sprintf(
@@ -105,10 +102,24 @@ final class WordPressPostMetaRegistrar
         $globalExisting = $this->existingRegistration($globalKeys, $metaKey, 'global post scope');
         $subtypeExisting = $this->existingRegistration($subtypeKeys, $metaKey, sprintf('post type "%s"', $postType));
 
-        if (!$this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting)) {
+        return $this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting);
+    }
+
+    /**
+     * @param array{
+     *     post_type:string,
+     *     field_uuid:string,
+     *     meta_key:string,
+     *     args:array<string,mixed>
+     * } $registration
+     */
+    public function register(array $registration): void
+    {
+        if (!$this->preflight($registration)) {
             return;
         }
 
+        [$postType, $metaKey, $args] = $this->contract($registration);
         if (!($this->registerPostMeta)($postType, $metaKey, $args)) {
             throw new RuntimeException(sprintf(
                 'WordPress rejected post-meta registration for "%s" on post type "%s".',
@@ -116,6 +127,22 @@ final class WordPressPostMetaRegistrar
                 $postType,
             ));
         }
+    }
+
+    /**
+     * @param array<string,mixed> $registration
+     * @return array{0:string,1:string,2:array<string,mixed>}
+     */
+    private function contract(array $registration): array
+    {
+        $postType = $registration['post_type'] ?? null;
+        $metaKey = $registration['meta_key'] ?? null;
+        $args = $registration['args'] ?? null;
+        if (!is_string($postType) || $postType === '' || !is_string($metaKey) || $metaKey === '' || !is_array($args)) {
+            throw new InvalidArgumentException('Post-meta registration contract is malformed.');
+        }
+
+        return [$postType, $metaKey, $args];
     }
 
     /**
