@@ -8,6 +8,10 @@ if ($wpDir === '' || !is_file($wpDir . '/wp-load.php')) {
     exit(0);
 }
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', $wpDir . '/');
+}
+
 $fixturePath = (string) getenv('WPE_FIELDS_REFERENCE_FIXTURE');
 $mode = (string) getenv('WPE_FIELDS_REFERENCE_MODE');
 if ($fixturePath === '' || !is_file($fixturePath) || !in_array($mode, ['success', 'collision'], true)) {
