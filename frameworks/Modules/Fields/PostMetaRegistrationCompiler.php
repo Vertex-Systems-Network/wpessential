@@ -22,7 +22,10 @@ final readonly class PostMetaRegistrationCompiler
 
     private const INTEGER_LIST_TYPES = ['gallery', 'file_advanced', 'posts'];
 
-    public function __construct(private FieldValueNormalizer $values = new FieldValueNormalizer()) {}
+    public function __construct(
+        private FieldValueNormalizer $values = new FieldValueNormalizer(),
+        private FieldValuePersistenceGuard $persistence = new FieldValuePersistenceGuard(),
+    ) {}
 
     /**
      * Compile one normalized Field definition into a WordPress post-meta registration contract.
@@ -177,7 +180,9 @@ final readonly class PostMetaRegistrationCompiler
             $field['repeatability']['sortable'] = false;
         }
 
-        return fn (mixed $value): mixed => $this->values->normalize($field, $value);
+        return function (mixed $value) use ($field): mixed {
+            return $this->persistence->assertSafe($this->values->normalize($field, $value));
+        };
     }
 
     /** @param array<string,mixed> $field */
