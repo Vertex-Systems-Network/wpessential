@@ -12,19 +12,24 @@ The goal is deterministic operation-count and complexity evidence rather than CI
 
 ## Audit finding and correction
 
-The previous published-group binder first preflighted every compiled registration and then called `WordPressPostMetaRegistrar::register()` for every registration. `register()` performed the same preflight again. Because each preflight queried both global and subtype registered-meta maps, ownership/support work scaled unnecessarily with the full `post types × stored fields` registration count twice.
+The previous published-group binder first preflighted every compiled registration and then called `WordPressPostMetaRegistrar::register()` for every registration. `register()` performed the same preflight again. Because each preflight queried both global and subtype registered-meta maps, ownership/support work scaled as two full per-registration passes before mutation.
 
-V1 moves the complete two-phase binding plan into `WordPressPostMetaRegistrar::registerBatch()`:
+A first optimization draft reduced this too aggressively to one request-local snapshot. That was rejected during semantic review because WordPress permits later registrations to replace an existing registry slot and registration callbacks/filters can change request-local registry state while a batch is executing. A stale batch snapshot must never authorize a later overwrite.
+
+The certified V1 model therefore combines an optimized **full-plan snapshot preflight** with **live per-tuple revalidation immediately before mutation**:
 
 1. structurally validate every registration;
 2. reject duplicate `(post_type, meta_key)` tuples before snapshots or mutation;
-3. snapshot global registered post-meta once;
-4. snapshot each targeted subtype registered-meta map once;
-5. cache `post_type_supports()` per unique `(post type, feature)` pair;
-6. run ownership checks for the complete plan;
-7. only after the whole plan passes, execute the required WordPress registrations.
+3. snapshot global registered post-meta once for the full-plan phase;
+4. snapshot each targeted subtype registered-meta map once for the full-plan phase;
+5. cache full-plan `post_type_supports()` checks per unique `(post type, feature)` pair;
+6. run ownership/support checks for the complete plan and fail before mutation if any current plan entry is invalid;
+7. for every tuple, re-run the existing live support/ownership preflight immediately before its possible WordPress registration;
+8. register only when the live preflight still authorizes the tuple.
 
-`FieldGroupPostMetaBinder` now submits one complete compiled plan to this registrar-owned batch boundary. It does not receive a raw registration bypass.
+This retains the previous fail-closed defense against a registration callback changing a later key while removing the old expensive full-plan per-registration snapshot pass.
+
+`FieldGroupPostMetaBinder` submits one complete compiled plan to this registrar-owned batch boundary. It does not receive a raw registration bypass.
 
 Standalone `WordPressPostMetaRegistrar::register()` remains available and delegates to the same one-entry batch contract, preserving the existing ownership/support boundary.
 
@@ -47,18 +52,28 @@ Deterministic evidence uses a 512-Field published group and resolves the final F
 
 ### Published-group binding
 
-For `P` unique finite post-type targets and `F` value-storing Fields, the binder compiles `P × F` registration tuples.
+For `P` unique finite post-type targets and `F` value-storing Fields, let `N = P × F` be the compiled registration tuple count.
 
-The batch ownership/support boundary is certified to perform:
+The old binder path performed two complete live preflight passes, each reading global and subtype registered-meta maps for every tuple: `4N` registered-meta map reads before/around registration.
 
-- exactly one global registered-meta snapshot;
-- at most one subtype registered-meta snapshot for each unique targeted post type;
-- at most one required support check for each unique `(post type, feature)` pair;
-- one WordPress registration call for each tuple that is not already an idempotent WPE-owned registration.
+The certified batch path performs:
 
-The scale fixture uses 64 stored Fields across 4 post types (256 registration tuples) and proves registered-meta snapshots are `1 + P`, not proportional to 256 registrations.
+- full-plan snapshot phase: `1 + P` registered-meta map reads;
+- live safety revalidation phase: `2N` registered-meta map reads;
+- total ownership-map reads: `2N + P + 1`;
+- full-plan feature checks cached once per unique `(post type, feature)` pair;
+- live feature revalidation per tuple for required features;
+- one WordPress registration call for each tuple still authorized by the live preflight.
 
-Any malformed registration, duplicate batch tuple, unsupported post-type feature, or ownership collision discovered during preflight occurs before the first registration mutation.
+The deterministic scale fixture uses 64 stored Fields across 4 post types (`N = 256`) and proves:
+
+- exactly 256 registration calls when all tuples are new;
+- exactly `517 = 2(256) + 4 + 1` registered-meta map reads;
+- required feature checks are one cached batch check plus one live recheck per relevant tuple rather than two uncached full-plan passes.
+
+This is intentionally less aggressive than snapshot-only registration because ownership safety is not traded for a lower call count.
+
+Any malformed registration, duplicate batch tuple, unsupported post-type feature, or ownership collision found in the full-plan phase occurs before the first registration mutation. A separate regression fixture proves that if an earlier registration callback introduces foreign ownership for a later tuple, the live revalidation rejects that tuple before `register_post_meta()` can overwrite it.
 
 ### Native value IO
 
@@ -93,7 +108,7 @@ The following remain outside this tranche:
 - Query, Columns, Listings or Status work;
 - production deployment/release.
 
-The registration snapshots are request-local WordPress registry state used for one synchronous two-phase binding operation. This optimization does not make a claim about cross-request caching or distributed shared state.
+The full-plan snapshots and live checks operate only on request-local WordPress registration state. This optimization does not claim cross-request caching or distributed shared state.
 
 ## Evidence
 
