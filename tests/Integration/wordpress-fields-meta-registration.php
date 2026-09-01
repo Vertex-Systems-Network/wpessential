@@ -153,6 +153,53 @@ $rows = $definitions->normalize([
 $rowsRegistration = $compiler->compile($rows, 'wpe_meta_book', showInRest: true);
 $registrar->register($rowsRegistration);
 
+$postObject = $definitions->normalize([
+    'uuid' => '55555555-5555-4555-8555-555555555555',
+    'key' => 'wpe_post_object',
+    'label' => 'Post Object',
+    'type' => 'post_object',
+]);
+$registrar->register($compiler->compile($postObject, 'wpe_meta_book', showInRest: true));
+
+$posts = $definitions->normalize([
+    'uuid' => '66666666-6666-4666-8666-666666666666',
+    'key' => 'wpe_posts',
+    'label' => 'Posts',
+    'type' => 'posts',
+]);
+$registrar->register($compiler->compile($posts, 'wpe_meta_book', showInRest: true));
+
+$ownerBoundTypes = [
+    'relationship',
+    'taxonomy',
+    'user',
+    'page_link',
+    'nav_menu',
+    'sidebar',
+    'group',
+    'repeater',
+    'flexible_content',
+    'clone',
+    'accordion',
+    'tab',
+];
+foreach ($ownerBoundTypes as $index => $type) {
+    $uuidSuffix = str_pad((string) ($index + 1), 12, '0', STR_PAD_LEFT);
+    $field = $definitions->normalize([
+        'uuid' => '77777777-7777-4777-8777-' . $uuidSuffix,
+        'key' => 'wpe_owner_' . $type,
+        'label' => 'Owner Boundary ' . $type,
+        'type' => $type,
+    ]);
+
+    try {
+        $registrar->register($compiler->compile($field, 'wpe_meta_book'));
+        fieldsMetaExpect(false, sprintf('owner-bound type %s must fail before native registration', $type));
+    } catch (\InvalidArgumentException $exception) {
+        fieldsMetaExpect($exception->getMessage() !== '', sprintf('owner-bound type %s must fail with an explicit reason', $type));
+    }
+}
+
 $registered = get_registered_meta_keys('post', 'wpe_meta_book');
 fieldsMetaExpect(isset($registered['wpe_headline']), 'scalar field must be registered for the exact post subtype');
 fieldsMetaExpect($registered['wpe_headline']['type'] === 'string', 'scalar field must retain WordPress string type');
@@ -163,6 +210,13 @@ fieldsMetaExpect(isset($registered['wpe_aliases']), 'array-backed repeatable fie
 fieldsMetaExpect($registered['wpe_aliases']['type'] === 'array' && $registered['wpe_aliases']['single'] === true, 'repeatable array storage shape must survive native registration');
 fieldsMetaExpect(isset($registered['wpe_tags']), 'multiple-row field must be registered');
 fieldsMetaExpect($registered['wpe_tags']['type'] === 'string' && $registered['wpe_tags']['single'] === false, 'multiple-row scalar shape must survive native registration');
+fieldsMetaExpect(isset($registered['wpe_post_object']), 'certified post_object reference must register natively');
+fieldsMetaExpect($registered['wpe_post_object']['type'] === 'integer' && $registered['wpe_post_object']['single'] === true, 'post_object must retain single integer native shape');
+fieldsMetaExpect(isset($registered['wpe_posts']), 'certified posts reference list must register natively');
+fieldsMetaExpect($registered['wpe_posts']['type'] === 'array' && $registered['wpe_posts']['single'] === true, 'posts must retain native integer-list storage shape');
+foreach ($ownerBoundTypes as $type) {
+    fieldsMetaExpect(!isset($registered['wpe_owner_' . $type]), sprintf('owner-bound type %s must not appear in native registered meta', $type));
+}
 
 $restMeta = new WP_REST_Post_Meta_Fields('wpe_meta_book');
 $restSchema = $restMeta->get_field_schema();
@@ -176,6 +230,11 @@ fieldsMetaExpect(($restFields['wpe_aliases']['items']['type'] ?? null) === 'stri
 fieldsMetaExpect(isset($restFields['wpe_tags']), 'REST meta schema must include non-single scalar field');
 fieldsMetaExpect($restFields['wpe_tags']['type'] === 'array', 'WordPress REST must wrap non-single scalar meta as an array');
 fieldsMetaExpect(($restFields['wpe_tags']['items']['type'] ?? null) === 'string', 'WordPress REST must retain the scalar item schema for non-single meta');
+fieldsMetaExpect(isset($restFields['wpe_post_object']), 'REST meta schema must include certified post_object reference');
+fieldsMetaExpect($restFields['wpe_post_object']['type'] === 'integer', 'post_object REST schema must remain integer');
+fieldsMetaExpect(isset($restFields['wpe_posts']), 'REST meta schema must include certified posts reference list');
+fieldsMetaExpect($restFields['wpe_posts']['type'] === 'array', 'posts REST schema must remain an array');
+fieldsMetaExpect(($restFields['wpe_posts']['items']['type'] ?? null) === 'integer', 'posts REST schema must retain integer items');
 
 $postId = wp_insert_post([
     'post_type' => 'wpe_meta_book',
