@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Tests\Unit\Platform;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Contracts\MigrationInterface;
 use WPEssential\Contracts\ModuleActivationPolicyInterface;
@@ -76,16 +77,22 @@ final class MigrationLifecycleModuleFixture implements ModuleInterface
     {
         ++$this->registerCalls;
         $coordinator = $services->get('platform.database.migrations');
-        self::assertInstanceOf(MigrationCoordinator::class, $coordinator);
+        if (!$coordinator instanceof MigrationCoordinator) {
+            throw new LogicException('Migration coordinator fixture service is unavailable.');
+        }
         $coordinator->register($this->migration);
-        self::assertSame(0, $this->migration instanceof LifecycleMigrationFixture ? $this->migration->applyCount : -1);
+        if ($this->migration instanceof LifecycleMigrationFixture && $this->migration->applyCount !== 0) {
+            throw new LogicException('Migration must not apply during module register phase.');
+        }
     }
 
     public function boot(ServiceRegistryInterface $services): void
     {
         ++$this->bootCalls;
         $coordinator = $services->get('platform.database.migrations');
-        self::assertInstanceOf(MigrationCoordinator::class, $coordinator);
+        if (!$coordinator instanceof MigrationCoordinator) {
+            throw new LogicException('Migration coordinator fixture service is unavailable.');
+        }
         $this->bootAppliedIds = $coordinator->runPending();
     }
 }
