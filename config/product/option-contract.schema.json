@@ -89,7 +89,7 @@
     "sourceProjection": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["source_type", "source_surface_key", "source_review_version", "source_record_count", "entries"],
+      "required": ["source_type", "source_surface_key", "source_review_version", "source_record_count"],
       "properties": {
         "source_type": {"enum": ["options_bank"]},
         "source_surface_key": {"type": "string", "minLength": 1},
@@ -98,8 +98,21 @@
         "entries": {
           "type": "array",
           "items": {"$ref": "#/$defs/sourceProjectionEntry"}
+        },
+        "entry_files": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^config/product/option-contract-projections/[a-z0-9][a-z0-9._-]*/[a-z0-9][a-z0-9._-]*\\.json$"
+          }
         }
-      }
+      },
+      "oneOf": [
+        {"required": ["entries"], "not": {"required": ["entry_files"]}},
+        {"required": ["entry_files"], "not": {"required": ["entries"]}}
+      ]
     },
     "sourceProjectionEntry": {
       "type": "object",

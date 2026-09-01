@@ -85,6 +85,60 @@ function oc_identifier(string $value, string $message): string
     return $value;
 }
 
+/**
+ * @param array<string,mixed> $projection
+ * @return list<mixed>
+ */
+function oc_projection_entries(string $root, string $file, int $surfaceId, string $surfaceKey, array $projection): array
+{
+    $hasInline = array_key_exists('entries', $projection);
+    $hasFiles = array_key_exists('entry_files', $projection);
+    if ($hasInline === $hasFiles) {
+        throw new RuntimeException("{$file} source projection must use exactly one of entries or entry_files.");
+    }
+
+    if ($hasInline) {
+        return array_values(oc_array($projection['entries'], "{$file} source entries invalid"));
+    }
+
+    $paths = oc_array($projection['entry_files'], "{$file} source entry_files invalid");
+    if ($paths === []) {
+        throw new RuntimeException("{$file} source entry_files must not be empty.");
+    }
+
+    $seenPaths = [];
+    $entries = [];
+    $prefix = 'config/product/option-contract-projections/' . $surfaceKey . '/';
+    $pathPattern = '#^' . preg_quote($prefix, '#') . '[a-z0-9][a-z0-9._-]*\\.json$#';
+    $sourcePattern = '#^config/product/options-bank/' . preg_quote($surfaceKey, '#') . '(?:--[a-z0-9._-]+)?\\.json$#';
+
+    foreach ($paths as $path) {
+        $path = oc_string($path, "{$file} projection shard path invalid.");
+        if (isset($seenPaths[$path]) || str_contains($path, '..') || preg_match($pathPattern, $path) !== 1) {
+            throw new RuntimeException("{$file} projection shard path is duplicate or outside {$prefix}: {$path}");
+        }
+        $seenPaths[$path] = true;
+
+        $shard = oc_json($root . '/' . $path);
+        if (($shard['schema_version'] ?? null) !== 1
+            || ($shard['surface_id'] ?? null) !== $surfaceId
+            || ($shard['surface_key'] ?? null) !== $surfaceKey
+        ) {
+            throw new RuntimeException("{$file} projection shard identity mismatch: {$path}");
+        }
+        $sourceFile = oc_string($shard['source_file'] ?? null, "{$file} projection shard source_file missing: {$path}");
+        if (preg_match($sourcePattern, $sourceFile) !== 1) {
+            throw new RuntimeException("{$file} projection shard source_file is outside canonical {$surfaceKey} Bank shards: {$path}");
+        }
+
+        foreach (oc_array($shard['entries'] ?? null, "{$file} projection shard entries invalid: {$path}") as $entry) {
+            $entries[] = $entry;
+        }
+    }
+
+    return $entries;
+}
+
 $lifecycle = [
     'BENCHMARKING' => 10,
     'CAPABILITY_INVENTORY_COMPLETE' => 20,
@@ -106,6 +160,19 @@ $projectionDispositions = [
     'EFFECTIVE_OR_DIAGNOSTIC', 'RUNTIME_IMPLEMENTATION_EVIDENCE',
     'OUT_OF_SURFACE_REFERENCE', 'COMPATIBILITY_PROVIDER_MAPPING',
     'DEFERRED', 'REJECTED_UNSAFE', 'WPE_EXCEED',
+];
+$projectionPairs = [
+    'authored_option' => 'AUTHORED_ATOMIC',
+    'user_preference' => 'USER_PREFERENCE_ATOMIC',
+    'integration' => 'INTEGRATION_ATOMIC',
+    'native_runtime' => 'RUNTIME_IMPLEMENTATION_EVIDENCE',
+    'effective_state' => 'EFFECTIVE_OR_DIAGNOSTIC',
+    'diagnostic' => 'EFFECTIVE_OR_DIAGNOSTIC',
+    'out_of_surface' => 'OUT_OF_SURFACE_REFERENCE',
+    'compatibility_provider' => 'COMPATIBILITY_PROVIDER_MAPPING',
+    'deferred' => 'DEFERRED',
+    'rejected_unsafe' => 'REJECTED_UNSAFE',
+    'wpe_exceed' => 'WPE_EXCEED',
 ];
 $optionKinds = [
     'native_option', 'wpe_option', 'capability', 'workflow', 'integration',
@@ -139,6 +206,10 @@ foreach (array_keys($lifecycle) as $status) {
 if (!isset($schema['properties']['source_projection'], $schema['$defs']['sourceProjection'], $schema['$defs']['sourceProjectionEntry'])) {
     throw new RuntimeException('Schema source_projection contract missing.');
 }
+$sourceProjectionSchema = oc_array($schema['$defs']['sourceProjection'], 'Schema sourceProjection missing.');
+if (!isset($sourceProjectionSchema['properties']['entries'], $sourceProjectionSchema['properties']['entry_files'])) {
+    throw new RuntimeException('Schema must support inline and sharded source projections.');
+}
 
 $registry = oc_json($root . '/config/product/competitor-parity-surfaces.json');
 $surfaces = oc_array($registry['surfaces'] ?? null, 'Surface registry missing.');
@@ -151,7 +222,6 @@ foreach ($surfaces as $row) {
     if (!is_array($row)) {
         throw new RuntimeException('Invalid surface row.');
     }
-
     $id = oc_int($row['id'] ?? null, 'Surface id missing.');
     $key = oc_string($row['key'] ?? null, 'Surface key missing.');
     if (isset($byId[$id]) || isset($byKey[$key])) {
@@ -194,14 +264,12 @@ foreach ($rows as $row) {
     if (!is_array($row)) {
         throw new RuntimeException('Invalid Atomic progress row.');
     }
-
     $id = oc_int($row['id'] ?? null, 'Progress id missing.');
     $key = oc_string($row['key'] ?? null, 'Progress key missing.');
     $status = oc_string($row['status'] ?? null, 'Progress status missing.');
     if (($byId[$id] ?? null) !== $key || ($byKey[$key] ?? null) !== $id || !isset($lifecycle[$status]) || isset($progressByKey[$key])) {
         throw new RuntimeException("Invalid Atomic progress identity/lifecycle for {$id}/{$key}.");
     }
-
     $progressByKey[$key] = $status;
     $rank = $lifecycle[$status];
     $counts['atomic_inventory_surfaces'] += (int) ($rank >= 30);
@@ -281,10 +349,7 @@ foreach ($files as $file) {
         if (!is_array($group)) {
             throw new RuntimeException("{$file} invalid feature group.");
         }
-        $groupId = oc_identifier(
-            oc_string($group['id'] ?? null, "{$file} feature group id missing"),
-            "{$file} feature group id invalid",
-        );
+        $groupId = oc_identifier(oc_string($group['id'] ?? null, "{$file} feature group id missing"), "{$file} feature group id invalid");
         if (isset($groupIds[$groupId])) {
             throw new RuntimeException("{$file} duplicate feature group {$groupId}.");
         }
@@ -295,10 +360,7 @@ foreach ($files as $file) {
             if (!is_array($option)) {
                 throw new RuntimeException("{$file} invalid Atomic Option.");
             }
-            $atomicId = oc_identifier(
-                oc_string($option['id'] ?? null, "{$file} option id missing"),
-                "{$file} Atomic Option id invalid",
-            );
+            $atomicId = oc_identifier(oc_string($option['id'] ?? null, "{$file} option id missing"), "{$file} Atomic Option id invalid");
             if (isset($atomicIds[$atomicId])) {
                 throw new RuntimeException("{$file} duplicate Atomic Option {$atomicId}.");
             }
@@ -313,38 +375,31 @@ foreach ($files as $file) {
 
             $defaultBehavior = oc_array($option['default_behavior'] ?? null, "{$file} {$atomicId} default_behavior missing");
             oc_enum($defaultBehavior['mode'] ?? null, $defaultModes, "{$file} {$atomicId} default mode invalid.");
-
             $ui = oc_array($option['ui'] ?? null, "{$file} {$atomicId} ui missing");
             oc_enum($ui['tier'] ?? null, $uiTiers, "{$file} {$atomicId} UI tier invalid.");
             oc_string($ui['group'] ?? null, "{$file} {$atomicId} UI group missing");
             oc_string($ui['control'] ?? null, "{$file} {$atomicId} UI control missing");
-
             $validation = oc_array($option['validation'] ?? null, "{$file} {$atomicId} validation missing");
             if (($validation['server_authoritative'] ?? null) !== true) {
                 throw new RuntimeException("{$file} {$atomicId} must be server-authoritative.");
             }
-
             $storage = oc_array($option['storage'] ?? null, "{$file} {$atomicId} storage missing");
             oc_string($storage['owner'] ?? null, "{$file} {$atomicId} storage owner missing");
             oc_string($storage['mode'] ?? null, "{$file} {$atomicId} storage mode missing");
-
             $runtime = oc_array($option['runtime'] ?? null, "{$file} {$atomicId} runtime missing");
             oc_string($runtime['effect'] ?? null, "{$file} {$atomicId} runtime effect missing");
             oc_enum($runtime['mutation_class'] ?? null, $mutationClasses, "{$file} {$atomicId} mutation class invalid.");
             if (array_key_exists('performance_class', $runtime)) {
                 oc_enum($runtime['performance_class'], $performanceClasses, "{$file} {$atomicId} performance class invalid.");
             }
-
             $security = oc_array($option['security'] ?? null, "{$file} {$atomicId} security missing");
             $securityClass = oc_enum($security['class'] ?? null, $securityClasses, "{$file} {$atomicId} security class invalid.");
             if (!array_key_exists('capability', $security) || (!is_string($security['capability']) && $security['capability'] !== null)) {
                 throw new RuntimeException("{$file} {$atomicId} security capability invalid.");
             }
-
             $portability = oc_array($option['portability'] ?? null, "{$file} {$atomicId} portability missing");
             oc_bool($portability['export'] ?? null, "{$file} {$atomicId} portability.export invalid");
             oc_bool($portability['import'] ?? null, "{$file} {$atomicId} portability.import invalid");
-
             $testing = oc_array($option['testing'] ?? null, "{$file} {$atomicId} testing missing");
             $evidence = oc_array($testing['required_evidence'] ?? null, "{$file} {$atomicId} evidence missing");
             if ($evidence === []) {
@@ -353,9 +408,7 @@ foreach ($files as $file) {
             foreach ($evidence as $evidenceType) {
                 oc_enum($evidenceType, $evidenceTypes, "{$file} {$atomicId} evidence type invalid.");
             }
-
             oc_array($option['competitor_evidence'] ?? null, "{$file} {$atomicId} competitor_evidence missing");
-
             if ($parity === 'REJECTED_UNSAFE' && $securityClass !== 'prohibited') {
                 throw new RuntimeException("{$file} {$atomicId} REJECTED_UNSAFE must use prohibited security class.");
             }
@@ -363,7 +416,6 @@ foreach ($files as $file) {
                 $exceed = oc_array($option['wpe_exceed'] ?? null, "{$file} {$atomicId} EXCEEDS requires wpe_exceed");
                 oc_string($exceed['reason'] ?? null, "{$file} {$atomicId} wpe_exceed reason missing");
             }
-
             $map = [
                 'PARITY' => 'parity',
                 'EXCEEDS' => 'exceeds',
@@ -399,7 +451,7 @@ foreach ($files as $file) {
         }
         oc_string($projection['source_review_version'] ?? null, "{$file} source review version missing");
         $sourceCount = oc_int($projection['source_record_count'] ?? null, "{$file} source count missing");
-        $entries = oc_array($projection['entries'] ?? null, "{$file} source entries missing");
+        $entries = oc_projection_entries($root, $file, $id, $key, $projection);
         if (count($entries) !== $sourceCount) {
             throw new RuntimeException("{$file} source projection count mismatch.");
         }
@@ -412,10 +464,7 @@ foreach ($files as $file) {
             if (!is_array($entry)) {
                 throw new RuntimeException("{$file} invalid projection entry.");
             }
-            $sourceId = oc_identifier(
-                oc_string($entry['source_id'] ?? null, "{$file} projection source_id missing"),
-                "{$file} projection source_id invalid",
-            );
+            $sourceId = oc_identifier(oc_string($entry['source_id'] ?? null, "{$file} projection source_id missing"), "{$file} projection source_id invalid");
             if (isset($sourceIds[$sourceId])) {
                 throw new RuntimeException("{$file} duplicate projection source {$sourceId}.");
             }
@@ -423,14 +472,19 @@ foreach ($files as $file) {
 
             $sourceKind = oc_enum($entry['source_kind'] ?? null, $projectionKinds, "{$file} projection source_kind invalid.");
             $disposition = oc_enum($entry['disposition'] ?? null, $projectionDispositions, "{$file} projection disposition invalid.");
+            if (($projectionPairs[$sourceKind] ?? null) !== $disposition) {
+                throw new RuntimeException("{$file} projection kind/disposition mismatch for {$sourceId}.");
+            }
             if (!array_key_exists('owner_surface', $entry) || (!is_string($entry['owner_surface']) && $entry['owner_surface'] !== null)) {
                 throw new RuntimeException("{$file} projection owner_surface invalid for {$sourceId}.");
             }
-            if ($disposition === 'OUT_OF_SURFACE_REFERENCE' && (!is_string($entry['owner_surface']) || trim($entry['owner_surface']) === '')) {
-                throw new RuntimeException("{$file} out-of-surface projection {$sourceId} requires owner_surface.");
-            }
-            if ($sourceKind === 'out_of_surface' && $disposition !== 'OUT_OF_SURFACE_REFERENCE') {
-                throw new RuntimeException("{$file} out_of_surface source {$sourceId} must use OUT_OF_SURFACE_REFERENCE.");
+            $ownerSurface = $entry['owner_surface'];
+            if ($disposition === 'OUT_OF_SURFACE_REFERENCE') {
+                if (!is_string($ownerSurface) || !isset($byKey[$ownerSurface]) || $ownerSurface === $key) {
+                    throw new RuntimeException("{$file} out-of-surface projection {$sourceId} requires another canonical surface owner.");
+                }
+            } elseif ($ownerSurface !== null && (!is_string($ownerSurface) || !isset($byKey[$ownerSurface]))) {
+                throw new RuntimeException("{$file} projection {$sourceId} references unknown owner_surface.");
             }
 
             oc_string($entry['reason'] ?? null, "{$file} projection reason missing for {$sourceId}");
@@ -439,11 +493,11 @@ foreach ($files as $file) {
             if (count($mapped) !== count(array_unique($mapped))) {
                 throw new RuntimeException("{$file} duplicate projection atomic_ids for {$sourceId}.");
             }
+            if ($disposition === 'OUT_OF_SURFACE_REFERENCE' && $mapped !== []) {
+                throw new RuntimeException("{$file} out-of-surface projection {$sourceId} must not map to a local Atomic Option.");
+            }
             foreach ($mapped as $mappedId) {
-                $mappedId = oc_identifier(
-                    oc_string($mappedId, "{$file} invalid mapped Atomic Option id"),
-                    "{$file} invalid mapped Atomic Option identifier",
-                );
+                $mappedId = oc_identifier(oc_string($mappedId, "{$file} invalid mapped Atomic Option id"), "{$file} invalid mapped Atomic Option identifier");
                 if (!isset($atomicIds[$mappedId])) {
                     throw new RuntimeException("{$file} projection references missing {$mappedId}.");
                 }
