@@ -2,60 +2,278 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 
 /** @return array<string,mixed> */
-function ocj(string $path): array {
-    if (!is_file($path)) throw new RuntimeException("Missing JSON: {$path}");
-    try { $v = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR); }
-    catch (JsonException $e) { throw new RuntimeException("Invalid JSON {$path}: {$e->getMessage()}", 0, $e); }
-    if (!is_array($v)) throw new RuntimeException("JSON root must be object: {$path}");
+function oc_json(string $path): array
+{
+    if (!is_file($path)) {
+        throw new RuntimeException("Missing JSON: {$path}");
+    }
+    try {
+        $data = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        throw new RuntimeException("Invalid JSON {$path}: {$e->getMessage()}", 0, $e);
+    }
+    if (!is_array($data)) {
+        throw new RuntimeException("JSON root must be object: {$path}");
+    }
+    return $data;
+}
+
+/** @param mixed $v */
+function oc_string($v, string $message): string
+{
+    if (!is_string($v) || trim($v) === '') {
+        throw new RuntimeException($message);
+    }
     return $v;
 }
+
 /** @param mixed $v */
-function oca($v, string $m): array { if (!is_array($v)) throw new RuntimeException($m); return $v; }
-/** @param mixed $v */
-function ocs($v, string $m): string { if (!is_string($v) || trim($v)==='') throw new RuntimeException($m); return $v; }
-/** @param mixed $v */
-function oci($v, string $m): int { if (!is_int($v)) throw new RuntimeException($m); return $v; }
-function oce($v, array $allowed, string $m): string { $v=ocs($v,$m); if (!in_array($v,$allowed,true)) throw new RuntimeException("{$m} Got {$v}."); return $v; }
-function ocid(string $v, string $m): string { if (preg_match('/^[a-z0-9][a-z0-9._-]*$/',$v)!==1) throw new RuntimeException($m); return $v; }
-
-$schema = ocj($root.'/config/product/option-contract.schema.json');
-if (($schema['$id']??null)!=='https://wpessential.local/schema/product-option-contract.json') throw new RuntimeException('Atomic Option schema $id mismatch.');
-$p=oca($schema['properties']??null,'Schema missing properties.'); $d=oca($schema['$defs']??null,'Schema missing $defs.');
-if (!isset($p['source_projection'],$d['sourceProjection'],$d['sourceProjectionEntry'])) throw new RuntimeException('Schema missing source_projection provenance.');
-
-$registry=ocj($root.'/config/product/competitor-parity-surfaces.json'); $rows=oca($registry['surfaces']??null,'Registry missing surfaces.');
-if(count($rows)!==56) throw new RuntimeException('Registry must contain 56 surfaces.');
-$keys=[];$ids=[]; foreach($rows as $r){$r=oca($r,'Invalid registry row.');$id=oci($r['id']??null,'Registry id invalid.');$key=ocs($r['key']??null,'Registry key missing.');if(isset($keys[$id])||isset($ids[$key]))throw new RuntimeException("Duplicate registry {$id}/{$key}.");$keys[$id]=$key;$ids[$key]=$id;}
-
-$progressStatuses=['ATOMIC_INVENTORY_COMPLETE','OPTION_CONTRACT_COMPLETE','UX_CONTRACT_COMPLETE','RUNTIME_CERTIFIED','PRODUCT_PARITY_CERTIFIED']; $prank=array_flip($progressStatuses);
-$progress=ocj($root.'/config/product/atomic-option-contract-progress.json'); $prows=oca($progress['surface_status']??null,'Progress missing surface_status.');
-if(count($prows)!==56) throw new RuntimeException('Progress must contain 56 rows.');
-$ps=[];$truth=['capability_matrix_surfaces'=>56,'atomic_inventory_surfaces'=>0,'option_contract_complete_surfaces'=>0,'ux_contract_complete_surfaces'=>0,'runtime_certified_for_full_parity_contract'=>0,'product_parity_certified_surfaces'=>0];
-foreach($prows as $r){$r=oca($r,'Invalid progress row.');$id=oci($r['id']??null,'Progress id invalid.');$key=ocs($r['key']??null,'Progress key missing.');$st=oce($r['status']??null,$progressStatuses,"Invalid progress status {$key}.");if(($keys[$id]??null)!==$key||isset($ps[$key]))throw new RuntimeException("Progress identity mismatch {$id}/{$key}.");$ps[$key]=$st;++$truth['atomic_inventory_surfaces'];if($prank[$st]>=1)++$truth['option_contract_complete_surfaces'];if($prank[$st]>=2)++$truth['ux_contract_complete_surfaces'];if($prank[$st]>=3)++$truth['runtime_certified_for_full_parity_contract'];if($prank[$st]>=4)++$truth['product_parity_certified_surfaces'];}
-$decl=oca($progress['truth']??null,'Progress missing truth.');foreach($truth as $k=>$v)if(($decl[$k]??null)!==$v)throw new RuntimeException("Progress truth.{$k} must be {$v}.");
-
-$bank=ocj($root.'/config/product/options-bank-progress.json');$bp=[];foreach(oca($bank['surface_status']??null,'Bank progress missing surface_status.') as $r){$r=oca($r,'Invalid Bank progress row.');$key=ocs($r['key']??null,'Bank key missing.');$bp[$key]=['status'=>ocs($r['status']??null,"Bank status missing {$key}."),'records'=>oci($r['records']??null,"Bank records invalid {$key}.")];}
-
-$ist=['BENCHMARKING','CAPABILITY_INVENTORY_COMPLETE','OPTION_CONTRACT_COMPLETE','UX_CONTRACT_COMPLETE','PRODUCT_PLANNED','IMPLEMENTING','RUNTIME_CERTIFIED','PRODUCT_PARITY_CERTIFIED'];
-$ir=['BENCHMARKING'=>0,'CAPABILITY_INVENTORY_COMPLETE'=>0,'OPTION_CONTRACT_COMPLETE'=>1,'UX_CONTRACT_COMPLETE'=>2,'PRODUCT_PLANNED'=>2,'IMPLEMENTING'=>2,'RUNTIME_CERTIFIED'=>3,'PRODUCT_PARITY_CERTIFIED'=>4];
-$par=['MISSING','PLANNED_BASELINE','PARITY','EXCEEDS','NOT_APPLICABLE','DEFERRED_WITH_REASON','REJECTED_UNSAFE'];
-$sk=['authored_option','user_preference','integration','native_runtime','effective_state','diagnostic','out_of_surface','compatibility_provider','deferred','rejected_unsafe','wpe_exceed'];
-$disp=['AUTHORED_ATOMIC','USER_PREFERENCE_ATOMIC','INTEGRATION_ATOMIC','EFFECTIVE_OR_DIAGNOSTIC','RUNTIME_IMPLEMENTATION_EVIDENCE','OUT_OF_SURFACE_REFERENCE','COMPATIBILITY_PROVIDER_MAPPING','DEFERRED','REJECTED_UNSAFE','WPE_EXCEED'];
-$dir=$root.'/config/product/option-contracts';$files=is_dir($dir)?glob($dir.'/*.json'):[];if($files===false)throw new RuntimeException('Unable to enumerate instances.');sort($files,SORT_STRING);
-$seen=[];$totalOptions=0;$totalProj=0;
-foreach($files as $file){
-    $in=ocj($file);if(($in['schema_version']??null)!==1)throw new RuntimeException("Unsupported schema_version {$file}.");
-    $sid=oci($in['surface_id']??null,"Missing surface_id {$file}.");$skey=ocs($in['surface_key']??null,"Missing surface_key {$file}.");
-    if(pathinfo($file,PATHINFO_FILENAME)!==$skey||($keys[$sid]??null)!==$skey||isset($seen[$skey]))throw new RuntimeException("Instance identity mismatch {$skey}.");$seen[$skey]=true;
-    $status=oce($in['status']??null,$ist,"Invalid instance status {$skey}.");
-    $bench=oca($in['benchmark_snapshot']??null,"Missing benchmark {$skey}.");if(preg_match('/^\d{4}-\d{2}-\d{2}$/',ocs($bench['date']??null,"Missing benchmark date {$skey}."))!==1||oca($bench['products']??null,"Missing benchmark products {$skey}.")===[])throw new RuntimeException("Invalid benchmark {$skey}.");
-    $groups=oca($in['feature_groups']??null,"Missing groups {$skey}.");if($groups===[])throw new RuntimeException("Empty groups {$skey}.");$gids=[];$opts=[];
-    foreach($groups as $g){$g=oca($g,"Invalid group {$skey}.");$gid=ocid(ocs($g['id']??null,"Group id missing {$skey}."),"Invalid group id {$skey}.");if(isset($gids[$gid]))throw new RuntimeException("Duplicate group {$gid}.");$gids[$gid]=true;ocs($g['label']??null,"Group label missing {$gid}.");foreach(oca($g['options']??null,"Options missing {$gid}.") as $o){$o=oca($o,"Invalid option {$gid}.");$oid=ocid(ocs($o['id']??null,"Option id missing {$gid}."),"Invalid option id {$gid}.");if(isset($opts[$oid]))throw new RuntimeException("Duplicate option {$oid}.");$pst=oce($o['parity_status']??null,$par,"Invalid parity {$oid}.");foreach(['label','kind','requiredness','value_type','default_behavior','ui','validation','storage','runtime','security','portability','testing','competitor_evidence'] as $req)if(!array_key_exists($req,$o))throw new RuntimeException("{$oid} missing {$req}.");if(($o['validation']['server_authoritative']??null)!==true)throw new RuntimeException("{$oid} must be server-authoritative.");if(oca($o['testing']['required_evidence']??null,"Evidence missing {$oid}.")===[])throw new RuntimeException("Evidence empty {$oid}.");if($pst==='REJECTED_UNSAFE'&&($o['security']['class']??null)!=='prohibited')throw new RuntimeException("Unsafe {$oid} must be prohibited.");if($pst==='EXCEEDS'&&!is_array($o['wpe_exceed']??null))throw new RuntimeException("EXCEEDS {$oid} missing wpe_exceed.");$opts[$oid]=$pst;++$totalOptions;}}
-    $cov=oca($in['coverage_summary']??null,"Coverage missing {$skey}.");foreach(['atomic_options','parity','exceeds','deferred','rejected_unsafe','missing','unclassified'] as $k)if(oci($cov[$k]??null,"Coverage {$k} invalid {$skey}.")<0)throw new RuntimeException("Coverage {$k} negative.");$cnt=array_count_values(array_values($opts));$exp=['atomic_options'=>count($opts),'parity'=>$cnt['PARITY']??0,'exceeds'=>$cnt['EXCEEDS']??0,'deferred'=>$cnt['DEFERRED_WITH_REASON']??0,'rejected_unsafe'=>$cnt['REJECTED_UNSAFE']??0];foreach($exp as $k=>$v)if($cov[$k]!==$v)throw new RuntimeException("Coverage {$k} {$skey} must be {$v}.");
-    $proj=$in['source_projection']??null;if($proj!==null){$proj=oca($proj,"Invalid projection {$skey}.");if(($proj['source_type']??null)!=='options_bank'||($proj['source_surface_key']??null)!==$skey)throw new RuntimeException("Projection identity mismatch {$skey}.");ocs($proj['source_review_version']??null,"Projection review version missing {$skey}.");$sc=oci($proj['source_record_count']??null,"Projection count invalid {$skey}.");$entries=oca($proj['entries']??null,"Projection entries missing {$skey}.");if($sc!==count($entries))throw new RuntimeException("Projection count mismatch {$skey}.");$src=[];foreach($entries as $e){$e=oca($e,"Invalid projection entry {$skey}.");$source=ocs($e['source_id']??null,"source_id missing {$skey}.");if(isset($src[$source]))throw new RuntimeException("Duplicate source {$source}.");$src[$source]=true;oce($e['source_kind']??null,$sk,"Invalid source_kind {$source}.");oce($e['disposition']??null,$disp,"Invalid disposition {$source}.");foreach(oca($e['atomic_ids']??null,"atomic_ids missing {$source}.") as $aid){$aid=ocs($aid,"Invalid atomic id {$source}.");if(!isset($opts[$aid]))throw new RuntimeException("{$source} references missing {$aid}.");}if(!array_key_exists('owner_surface',$e)||(!is_string($e['owner_surface'])&&$e['owner_surface']!==null))throw new RuntimeException("Invalid owner_surface {$source}.");ocs($e['reason']??null,"Reason missing {$source}.");oca($e['evidence_refs']??null,"Evidence refs missing {$source}.");}++$totalProj;if(($bp[$skey]['status']??null)==='BANK_REVIEWED'&&($bp[$skey]['records']??null)!==$sc)throw new RuntimeException("BANK_REVIEWED count mismatch {$skey}.");}
-    $rank=$ir[$status];if($rank>=1&&(($cov['missing']??null)!==0||($cov['unclassified']??null)!==0))throw new RuntimeException("{$skey} {$status} has missing/unclassified.");if($rank>=1&&($bp[$skey]['status']??null)==='BANK_REVIEWED'&&$proj===null)throw new RuntimeException("BANK_REVIEWED {$skey} requires projection.");if($prank[$ps[$skey]]>$rank)throw new RuntimeException("Progress {$skey} outruns instance {$status}.");
+function oc_int($v, string $message): int
+{
+    if (!is_int($v)) {
+        throw new RuntimeException($message);
+    }
+    return $v;
 }
-printf("Atomic Option contracts: PASS (%d instance(s), %d option(s), %d projection(s); progress %d/56 option-complete, %d/56 UX-complete).\n",count($files),$totalOptions,$totalProj,$truth['option_contract_complete_surfaces'],$truth['ux_contract_complete_surfaces']);
+
+/** @param mixed $v */
+function oc_array($v, string $message): array
+{
+    if (!is_array($v)) {
+        throw new RuntimeException($message);
+    }
+    return $v;
+}
+
+$lifecycle = [
+    'BENCHMARKING' => 10,
+    'CAPABILITY_INVENTORY_COMPLETE' => 20,
+    'ATOMIC_INVENTORY_COMPLETE' => 30,
+    'OPTION_CONTRACT_COMPLETE' => 40,
+    'UX_CONTRACT_COMPLETE' => 50,
+    'PRODUCT_PLANNED' => 60,
+    'IMPLEMENTING' => 70,
+    'RUNTIME_CERTIFIED' => 80,
+    'PRODUCT_PARITY_CERTIFIED' => 90,
+];
+$projectionDispositions = [
+    'AUTHORED_ATOMIC', 'USER_PREFERENCE_ATOMIC', 'INTEGRATION_ATOMIC',
+    'EFFECTIVE_OR_DIAGNOSTIC', 'RUNTIME_IMPLEMENTATION_EVIDENCE',
+    'OUT_OF_SURFACE_REFERENCE', 'COMPATIBILITY_PROVIDER_MAPPING',
+    'DEFERRED', 'REJECTED_UNSAFE', 'WPE_EXCEED',
+];
+
+$schema = oc_json($root . '/config/product/option-contract.schema.json');
+if (($schema['$id'] ?? null) !== 'https://wpessential.local/schema/product-option-contract.json') {
+    throw new RuntimeException('Unexpected Atomic Option schema id.');
+}
+$schemaStatuses = oc_array($schema['properties']['status']['enum'] ?? null, 'Schema status enum missing.');
+foreach (array_keys($lifecycle) as $status) {
+    if (!in_array($status, $schemaStatuses, true)) {
+        throw new RuntimeException("Schema lifecycle missing {$status}.");
+    }
+}
+if (!isset($schema['properties']['source_projection'], $schema['$defs']['sourceProjection'], $schema['$defs']['sourceProjectionEntry'])) {
+    throw new RuntimeException('Schema source_projection contract missing.');
+}
+
+$registry = oc_json($root . '/config/product/competitor-parity-surfaces.json');
+$surfaces = oc_array($registry['surfaces'] ?? null, 'Surface registry missing.');
+if (count($surfaces) !== 56) {
+    throw new RuntimeException('Surface registry must contain 56 rows.');
+}
+$byId = [];
+$byKey = [];
+foreach ($surfaces as $row) {
+    if (!is_array($row)) {
+        throw new RuntimeException('Invalid surface row.');
+    }
+    $id = oc_int($row['id'] ?? null, 'Surface id missing.');
+    $key = oc_string($row['key'] ?? null, 'Surface key missing.');
+    if (isset($byId[$id]) || isset($byKey[$key])) {
+        throw new RuntimeException("Duplicate surface {$id}/{$key}.");
+    }
+    $byId[$id] = $key;
+    $byKey[$key] = $id;
+}
+
+$progress = oc_json($root . '/config/product/atomic-option-contract-progress.json');
+$rows = oc_array($progress['surface_status'] ?? null, 'Atomic progress rows missing.');
+if (count($rows) !== 56) {
+    throw new RuntimeException('Atomic progress must contain 56 rows.');
+}
+$progressByKey = [];
+$counts = [
+    'atomic_inventory_surfaces' => 0,
+    'option_contract_complete_surfaces' => 0,
+    'ux_contract_complete_surfaces' => 0,
+    'runtime_certified_for_full_parity_contract' => 0,
+    'product_parity_certified_surfaces' => 0,
+];
+foreach ($rows as $row) {
+    if (!is_array($row)) {
+        throw new RuntimeException('Invalid Atomic progress row.');
+    }
+    $id = oc_int($row['id'] ?? null, 'Progress id missing.');
+    $key = oc_string($row['key'] ?? null, 'Progress key missing.');
+    $status = oc_string($row['status'] ?? null, 'Progress status missing.');
+    if (($byId[$id] ?? null) !== $key || ($byKey[$key] ?? null) !== $id || !isset($lifecycle[$status]) || isset($progressByKey[$key])) {
+        throw new RuntimeException("Invalid Atomic progress identity/lifecycle for {$id}/{$key}.");
+    }
+    $progressByKey[$key] = $status;
+    $rank = $lifecycle[$status];
+    $counts['atomic_inventory_surfaces'] += (int) ($rank >= 30);
+    $counts['option_contract_complete_surfaces'] += (int) ($rank >= 40);
+    $counts['ux_contract_complete_surfaces'] += (int) ($rank >= 50);
+    $counts['runtime_certified_for_full_parity_contract'] += (int) ($rank >= 80);
+    $counts['product_parity_certified_surfaces'] += (int) ($rank >= 90);
+}
+$truth = oc_array($progress['truth'] ?? null, 'Atomic progress truth missing.');
+foreach ($counts as $field => $expected) {
+    if (oc_int($truth[$field] ?? null, "truth.{$field} missing") !== $expected) {
+        throw new RuntimeException("truth.{$field} does not match derived state.");
+    }
+}
+if (oc_int($truth['capability_matrix_surfaces'] ?? null, 'capability matrix count missing') !== 56) {
+    throw new RuntimeException('Capability matrix count must be 56.');
+}
+
+$dir = $root . '/config/product/option-contracts';
+$files = is_dir($dir) ? glob($dir . '/*.json') : [];
+if ($files === false) {
+    throw new RuntimeException('Unable to enumerate Atomic Option instances.');
+}
+sort($files, SORT_STRING);
+$seenSurfaces = [];
+foreach ($files as $file) {
+    $instance = oc_json($file);
+    $id = oc_int($instance['surface_id'] ?? null, "{$file} surface_id missing");
+    $key = oc_string($instance['surface_key'] ?? null, "{$file} surface_key missing");
+    $status = oc_string($instance['status'] ?? null, "{$file} status missing");
+    if (($byId[$id] ?? null) !== $key || pathinfo($file, PATHINFO_FILENAME) !== $key || isset($seenSurfaces[$key]) || !isset($lifecycle[$status])) {
+        throw new RuntimeException("Invalid Atomic Option instance identity/status: {$file}");
+    }
+    $seenSurfaces[$key] = true;
+    if ($lifecycle[$progressByKey[$key]] > $lifecycle[$status]) {
+        throw new RuntimeException("Progress outruns {$key} instance status.");
+    }
+    $snapshot = oc_array($instance['benchmark_snapshot'] ?? null, "{$file} benchmark snapshot missing");
+    oc_string($snapshot['date'] ?? null, "{$file} benchmark date missing");
+    if (oc_array($snapshot['products'] ?? null, "{$file} benchmark products missing") === []) {
+        throw new RuntimeException("{$file} benchmark products empty.");
+    }
+
+    $groups = oc_array($instance['feature_groups'] ?? null, "{$file} feature groups missing");
+    if ($groups === []) {
+        throw new RuntimeException("{$file} feature groups empty.");
+    }
+    $groupIds = [];
+    $atomicIds = [];
+    $derived = ['parity' => 0, 'exceeds' => 0, 'deferred' => 0, 'rejected_unsafe' => 0, 'missing' => 0];
+    foreach ($groups as $group) {
+        if (!is_array($group)) {
+            throw new RuntimeException("{$file} invalid feature group.");
+        }
+        $groupId = oc_string($group['id'] ?? null, "{$file} feature group id missing");
+        if (isset($groupIds[$groupId])) {
+            throw new RuntimeException("{$file} duplicate feature group {$groupId}.");
+        }
+        $groupIds[$groupId] = true;
+        oc_string($group['label'] ?? null, "{$file} feature group label missing");
+        foreach (oc_array($group['options'] ?? null, "{$file} group options missing") as $option) {
+            if (!is_array($option)) {
+                throw new RuntimeException("{$file} invalid Atomic Option.");
+            }
+            $atomicId = oc_string($option['id'] ?? null, "{$file} option id missing");
+            if (isset($atomicIds[$atomicId])) {
+                throw new RuntimeException("{$file} duplicate Atomic Option {$atomicId}.");
+            }
+            $atomicIds[$atomicId] = true;
+            foreach (['label', 'kind', 'parity_status', 'requiredness', 'value_type'] as $required) {
+                oc_string($option[$required] ?? null, "{$file} {$atomicId} missing {$required}");
+            }
+            if (($option['validation']['server_authoritative'] ?? null) !== true) {
+                throw new RuntimeException("{$file} {$atomicId} must be server-authoritative.");
+            }
+            $evidence = oc_array($option['testing']['required_evidence'] ?? null, "{$file} {$atomicId} evidence missing");
+            if ($evidence === []) {
+                throw new RuntimeException("{$file} {$atomicId} evidence empty.");
+            }
+            $parity = $option['parity_status'];
+            $map = ['PARITY' => 'parity', 'EXCEEDS' => 'exceeds', 'DEFERRED_WITH_REASON' => 'deferred', 'REJECTED_UNSAFE' => 'rejected_unsafe', 'MISSING' => 'missing'];
+            if (isset($map[$parity])) {
+                ++$derived[$map[$parity]];
+            }
+        }
+    }
+
+    $coverage = oc_array($instance['coverage_summary'] ?? null, "{$file} coverage missing");
+    if (oc_int($coverage['atomic_options'] ?? null, "{$file} atomic_options missing") !== count($atomicIds)) {
+        throw new RuntimeException("{$file} atomic option count mismatch.");
+    }
+    foreach ($derived as $field => $expected) {
+        if (oc_int($coverage[$field] ?? null, "{$file} {$field} missing") !== $expected) {
+            throw new RuntimeException("{$file} coverage {$field} mismatch.");
+        }
+    }
+    $unclassified = oc_int($coverage['unclassified'] ?? null, "{$file} unclassified missing");
+    if ($lifecycle[$status] >= 40 && ($derived['missing'] !== 0 || $unclassified !== 0)) {
+        throw new RuntimeException("{$file} cannot be OPTION_CONTRACT_COMPLETE with missing/unclassified state.");
+    }
+
+    if (isset($instance['source_projection'])) {
+        $projection = oc_array($instance['source_projection'], "{$file} source_projection invalid");
+        if (($projection['source_type'] ?? null) !== 'options_bank' || ($projection['source_surface_key'] ?? null) !== $key) {
+            throw new RuntimeException("{$file} source projection identity mismatch.");
+        }
+        oc_string($projection['source_review_version'] ?? null, "{$file} source review version missing");
+        $sourceCount = oc_int($projection['source_record_count'] ?? null, "{$file} source count missing");
+        $entries = oc_array($projection['entries'] ?? null, "{$file} source entries missing");
+        if (count($entries) !== $sourceCount) {
+            throw new RuntimeException("{$file} source projection count mismatch.");
+        }
+        $sourceIds = [];
+        foreach ($entries as $entry) {
+            if (!is_array($entry)) {
+                throw new RuntimeException("{$file} invalid projection entry.");
+            }
+            $sourceId = oc_string($entry['source_id'] ?? null, "{$file} projection source_id missing");
+            if (isset($sourceIds[$sourceId])) {
+                throw new RuntimeException("{$file} duplicate projection source {$sourceId}.");
+            }
+            $sourceIds[$sourceId] = true;
+            $disposition = oc_string($entry['disposition'] ?? null, "{$file} projection disposition missing");
+            if (!in_array($disposition, $projectionDispositions, true)) {
+                throw new RuntimeException("{$file} invalid projection disposition {$disposition}.");
+            }
+            oc_string($entry['source_kind'] ?? null, "{$file} projection source_kind missing");
+            oc_string($entry['reason'] ?? null, "{$file} projection reason missing");
+            oc_array($entry['evidence_refs'] ?? null, "{$file} projection evidence_refs missing");
+            $mapped = oc_array($entry['atomic_ids'] ?? null, "{$file} projection atomic_ids missing");
+            if (count($mapped) !== count(array_unique($mapped))) {
+                throw new RuntimeException("{$file} duplicate projection atomic_ids for {$sourceId}.");
+            }
+            foreach ($mapped as $mappedId) {
+                $mappedId = oc_string($mappedId, "{$file} invalid mapped Atomic Option id");
+                if (!isset($atomicIds[$mappedId])) {
+                    throw new RuntimeException("{$file} projection references missing {$mappedId}.");
+                }
+            }
+        }
+    }
+}
+
+fwrite(STDOUT, sprintf(
+    "Atomic Option contracts: PASS (%d instance(s), %d inventory, %d option-contract, %d UX-complete).\n",
+    count($files),
+    $counts['atomic_inventory_surfaces'],
+    $counts['option_contract_complete_surfaces'],
+    $counts['ux_contract_complete_surfaces'],
+));
