@@ -68,6 +68,7 @@ final class FieldsModule implements ModuleInterface
         $persistence = new FieldValuePersistenceGuard();
         $groups = new FieldGroupDefinitionNormalizer($fields);
         $validation = new FieldGroupValidationService($definitions, $groups);
+        $portability = new FieldGroupPortabilityService($definitions, $groups, $validation);
         $groupStorage = new FieldGroupRuntimeStorageProjection();
         $groupPostTypes = new FieldGroupPostTypeTargetCompiler();
         $postMetaCompiler = new PostMetaRegistrationCompiler($values, $persistence);
@@ -99,6 +100,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.value-normalizer', $values);
         $services->set('module.custom-fields.group-normalizer', $groups);
         $services->set('module.custom-fields.group-validation', $validation);
+        $services->set('module.custom-fields.portability', $portability);
         $services->set('module.custom-fields.runtime.storage-projection', $groupStorage);
         $services->set('module.custom-fields.runtime.post-type-targets', $groupPostTypes);
         $services->set('module.custom-fields.storage.post-meta.compiler', $postMetaCompiler);
@@ -116,6 +118,8 @@ final class FieldsModule implements ModuleInterface
             'validate-group' => new FieldGroupValidationAbilityHandler($validation),
             'save-group' => new FieldGroupAbilityHandler($definitions, $groups, $validation, FieldGroupAbilityHandler::SAVE),
             'status-group' => new FieldGroupAbilityHandler($definitions, $groups, $validation, FieldGroupAbilityHandler::STATUS),
+            'export-groups' => new FieldGroupPortabilityAbilityHandler($portability, FieldGroupPortabilityAbilityHandler::EXPORT),
+            'import-groups' => new FieldGroupPortabilityAbilityHandler($portability, FieldGroupPortabilityAbilityHandler::IMPORT),
         ];
 
         foreach ($handlers as $action => $handler) {
@@ -123,7 +127,7 @@ final class FieldsModule implements ModuleInterface
             $ajaxRoutes->register(new AjaxRoute(
                 type: 'fields.' . str_replace('-', '.', $action),
                 handler: new AbilityAjaxHandler($abilities, 'wpessential/fields/' . $action, $contexts),
-                operation: in_array($action, ['save-group', 'status-group'], true) ? NonceOperation::Update : NonceOperation::Apply,
+                operation: in_array($action, ['save-group', 'status-group', 'import-groups'], true) ? NonceOperation::Update : NonceOperation::Apply,
             ));
         }
 
@@ -226,7 +230,7 @@ final class FieldsModule implements ModuleInterface
         AbilityHandlerInterface $handler,
         string $action,
     ): void {
-        $mutates = in_array($action, ['save-group', 'status-group'], true);
+        $mutates = in_array($action, ['save-group', 'status-group', 'import-groups'], true);
         $descriptor = new AbilityDescriptor(
             name: 'wpessential/fields/' . $action,
             ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
