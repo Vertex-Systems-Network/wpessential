@@ -94,10 +94,7 @@ final class FieldValueTargetResolver
         }
 
         foreach ($fields as $field) {
-            if (!is_array($field)) {
-                continue;
-            }
-            if (($field['uuid'] ?? null) !== $fieldUuid) {
+            if (!is_array($field) || ($field['uuid'] ?? null) !== $fieldUuid) {
                 continue;
             }
             $fieldKey = $field['key'] ?? null;
@@ -202,10 +199,13 @@ final class FieldValueTargetResolver
             if (is_int($value) && $value > 0) {
                 return $value;
             }
-            if (is_string($value) && preg_match('/^[1-9]\d*$/', $value) === 1) {
-                return (int) $value;
+            if (is_string($value)) {
+                $normalized = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+                if ($normalized !== false) {
+                    return $normalized;
+                }
             }
-            throw new RuntimeException('Field Group entity_id location value must be a positive post ID.');
+            throw new RuntimeException('Field Group entity_id location value must be a positive platform-range post ID.');
         }
         if (!is_string($value) || $value === '') {
             throw new RuntimeException(sprintf('Field Group %s location value must be a non-empty string.', $source));
