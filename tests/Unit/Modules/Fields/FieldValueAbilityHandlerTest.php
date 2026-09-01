@@ -39,6 +39,7 @@ final class FieldValueAbilityHandlerTest extends TestCase
             'group_id' => self::GROUP_ID,
             'field_uuid' => self::FIELD_ID,
             'post_id' => 41,
+            'expected_group_revision' => 3,
             'value' => '  Hello  ',
         ], $this->context());
 
@@ -65,6 +66,31 @@ final class FieldValueAbilityHandlerTest extends TestCase
         self::assertSame('read', $read['status']);
         self::assertFalse($read['changed']);
         self::assertSame('Hello', $read['value']);
+    }
+
+    public function testStaleGroupRevisionRejectsBeforeStoreMutation(): void
+    {
+        $state = [41 => ['headline' => 'Old']];
+        $handler = new FieldValueAbilityHandler(
+            $this->targets($this->repository()),
+            $this->store($state),
+            $this->authorization(read: true, edit: true),
+            FieldValueAbilityHandler::WRITE,
+        );
+
+        try {
+            $handler->handle([
+                'group_id' => self::GROUP_ID,
+                'field_uuid' => self::FIELD_ID,
+                'post_id' => 41,
+                'expected_group_revision' => 2,
+                'value' => 'New',
+            ], $this->context());
+            self::fail('Stale group revision must reject the write.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('schema revision conflict', $error->getMessage());
+            self::assertSame('Old', $state[41]['headline']);
+        }
     }
 
     public function testResourceAuthorizationRunsBeforeTargetResolution(): void
@@ -103,6 +129,7 @@ final class FieldValueAbilityHandlerTest extends TestCase
             'group_id' => self::GROUP_ID,
             'field_uuid' => self::FIELD_ID,
             'post_id' => 41,
+            'expected_group_revision' => 3,
             'value' => 'Denied',
         ], $this->context());
     }
@@ -170,8 +197,12 @@ final class FieldValueAbilityHandlerTest extends TestCase
     {
         return new PostMetaValueStore(
             getPostType: static fn (int $postId): string|false => 'book',
-            metadataExists: static fn (int $postId, string $key): bool => array_key_exists($key, $state[$postId] ?? []),
-            getPostMeta: static fn (int $postId, string $key, bool $single): mixed => $state[$postId][$key] ?? null,
+            metadataExists: static function (int $postId, string $key) use (&$state): bool {
+                return array_key_exists($key, $state[$postId] ?? []);
+            },
+            getPostMeta: static function (int $postId, string $key, bool $single) use (&$state): mixed {
+                return $state[$postId][$key] ?? null;
+            },
             updatePostMeta: static function (int $postId, string $key, mixed $value) use (&$state): int|bool {
                 $state[$postId][$key] = $value;
                 return true;
