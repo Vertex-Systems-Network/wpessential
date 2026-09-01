@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Tests\Unit\Modules\Fields;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\Fields\FieldGroupAbilityHandler;
 use WPEssential\Modules\Fields\FieldGroupDefinitionNormalizer;
@@ -38,6 +39,25 @@ final class FieldGroupAbilityIdentityTest extends TestCase
         self::assertSame($uuid, $updated['payload']['fields'][0]['uuid']);
         self::assertTrue($updated['payload']['fields'][0]['repeatability']['enabled']);
         self::assertTrue($updated['payload']['fields'][0]['repeatability']['sortable']);
+    }
+
+    public function testPersistedFieldUuidCannotSilentlyRenameStorageKey(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $created = $this->handler($repository, FieldGroupAbilityHandler::SAVE)->handle([
+            'payload' => $this->payload(),
+        ], $this->context())['definition'];
+
+        $updatedPayload = $created['payload'];
+        $updatedPayload['fields'][0]['key'] = 'speaker_full_name';
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('key rename requires an explicit migration workflow');
+        $this->handler($repository, FieldGroupAbilityHandler::SAVE)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 1,
+            'payload' => $updatedPayload,
+        ], $this->context());
     }
 
     public function testStatusTransitionPreservesCanonicalRepeatabilityAndIdentity(): void
