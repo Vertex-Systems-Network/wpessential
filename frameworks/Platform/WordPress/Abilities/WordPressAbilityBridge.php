@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 
 use InvalidArgumentException;
 use RuntimeException;
+use Throwable;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
@@ -85,11 +86,21 @@ final class WordPressAbilityBridge
                     if ($input !== null && !is_array($input)) {
                         throw new InvalidArgumentException('WPE WordPress ability input must be an object/array.');
                     }
-                    return $this->registry->execute(
-                        $exposure->internalName,
-                        $input ?? [],
-                        $this->contexts->current(),
-                    );
+                    try {
+                        return $this->registry->execute(
+                            $exposure->internalName,
+                            $input ?? [],
+                            $this->contexts->current(),
+                        );
+                    } catch (Throwable $error) {
+                        if (class_exists('WP_Error')) {
+                            return new \WP_Error(
+                                'wpessential_ability_execution_failed',
+                                'The WPEssential ability could not be completed.',
+                            );
+                        }
+                        throw $error;
+                    }
                 },
                 'permission_callback' => function (mixed $input = null) use ($exposure): bool {
                     if ($input !== null && !is_array($input)) {
