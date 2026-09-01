@@ -98,6 +98,7 @@ final class WordPressAbilityBridge
                     return $this->registry->authorize(
                         $exposure->internalName,
                         $this->contexts->current(),
+                        $input ?? [],
                     )->allowed;
                 },
                 'meta' => [
