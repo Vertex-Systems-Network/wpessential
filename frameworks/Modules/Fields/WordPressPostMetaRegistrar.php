@@ -102,12 +102,13 @@ final class WordPressPostMetaRegistrar
     }
 
     /**
-     * Register a complete plan after one fail-closed preflight phase.
+     * Register a complete plan after one fail-closed batch preflight phase.
      *
-     * Registered-meta maps are snapshots for this synchronous batch: global post scope is read once,
-     * each targeted subtype is read once, and required post-type feature checks are cached per pair.
-     * Duplicate subtype/meta-key tuples are rejected before snapshots or registration mutation so no
-     * intra-batch collision can be hidden by the shared preflight state.
+     * The batch preflight snapshots global post scope once, each targeted subtype once, and caches
+     * required post-type feature checks per pair. Every tuple is then revalidated against live
+     * request-local WordPress registry/support state immediately before its possible mutation.
+     * This preserves the legacy fail-closed behavior when an earlier register_post_meta() callback
+     * changes a later tuple while still removing the previous full-plan per-registration snapshots.
      *
      * @param list<array{
      *     post_type:string,
@@ -153,7 +154,6 @@ final class WordPressPostMetaRegistrar
         $globalKeys = ($this->getRegisteredMetaKeys)('post', '');
         $subtypeKeys = [];
         $supportCache = [];
-        $plan = [];
 
         foreach ($prepared as $entry) {
             $postType = $entry['post_type'];
@@ -173,22 +173,15 @@ final class WordPressPostMetaRegistrar
                 $metaKey,
                 sprintf('post type "%s"', $postType),
             );
-            $plan[] = [
-                'post_type' => $postType,
-                'meta_key' => $metaKey,
-                'args' => $args,
-                'should_register' => $this->ownership->shouldRegister(
-                    $registration,
-                    $globalExisting,
-                    $subtypeExisting,
-                ),
-            ];
+            $this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting);
         }
 
-        foreach ($plan as $entry) {
-            if ($entry['should_register'] !== true) {
+        foreach ($prepared as $entry) {
+            $registration = $entry['registration'];
+            if (!$this->preflight($registration)) {
                 continue;
             }
+
             if (!($this->registerPostMeta)($entry['post_type'], $entry['meta_key'], $entry['args'])) {
                 throw new RuntimeException(sprintf(
                     'WordPress rejected post-meta registration for "%s" on post type "%s".',
