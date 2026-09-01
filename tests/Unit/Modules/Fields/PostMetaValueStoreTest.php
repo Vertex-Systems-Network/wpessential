@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\Fields;
 
 use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Modules\Fields\FieldDefinitionNormalizer;
@@ -192,33 +191,107 @@ final class PostMetaValueStoreTest extends TestCase
         $store->write($field, 'book', 41, null);
     }
 
-    public function testMultipleRowReadIsTypedButMutationFailsClosed(): void
+    public function testMultipleRowReplacementPreservesOrderDuplicatesAndCanonicalTypes(): void
     {
         $state = [41 => ['scores' => ['4', '9']]];
-        $updates = 0;
-        $store = $this->store(
-            $state,
-            update: static function (int $postId, string $metaKey, mixed $value) use (&$updates): int|bool {
-                ++$updates;
-                return true;
-            },
-        );
-        $field = $this->field([
-            'key' => 'scores',
-            'type' => 'number',
-            'settings' => ['integer' => true],
-            'cloneable' => true,
-            'clone_as_multiple' => true,
-        ]);
+        $store = $this->store($state);
+        $field = $this->multipleRowField();
 
         self::assertSame([4, 9], $store->read($field, 'book', 41));
 
+        $written = $store->write($field, 'book', 41, [9, 4, 9]);
+
+        self::assertSame(PostMetaValueWriteResult::WRITTEN, $written->status);
+        self::assertSame([9, 4, 9], $written->value);
+        self::assertSame([9, 4, 9], $store->read($field, 'book', 41));
+    }
+
+    public function testMultipleRowUnchangedWriteAvoidsDestructiveNativeBoundaries(): void
+    {
+        $state = [41 => ['scores' => ['4', '9']]];
+        $deletes = 0;
+        $adds = 0;
+        $store = $this->store(
+            $state,
+            delete: static function (int $postId, string $metaKey) use (&$state, &$deletes): bool {
+                ++$deletes;
+                unset($state[$postId][$metaKey]);
+                return true;
+            },
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$state, &$adds): int|bool {
+                ++$adds;
+                $state[$postId][$metaKey][] = $value;
+                return $adds;
+            },
+        );
+
+        $unchanged = $store->write($this->multipleRowField(), 'book', 41, [4, 9]);
+
+        self::assertSame(PostMetaValueWriteResult::UNCHANGED, $unchanged->status);
+        self::assertSame(0, $deletes);
+        self::assertSame(0, $adds);
+    }
+
+    public function testEmptyMultipleRowListDeletesAllRowsAndThenBecomesAbsent(): void
+    {
+        $state = [41 => ['scores' => ['4', '9']]];
+        $store = $this->store($state);
+        $field = $this->multipleRowField();
+
+        $deleted = $store->write($field, 'book', 41, []);
+        self::assertSame(PostMetaValueWriteResult::DELETED, $deleted->status);
+        self::assertTrue($deleted->changed());
+        self::assertNull($store->read($field, 'book', 41));
+
+        $absent = $store->write($field, 'book', 41, null);
+        self::assertSame(PostMetaValueWriteResult::ABSENT, $absent->status);
+        self::assertFalse($absent->changed());
+    }
+
+    public function testMultipleRowFailureRestoresPreviousCanonicalRows(): void
+    {
+        $state = [41 => ['scores' => ['4', '9']]];
+        $store = $this->store(
+            $state,
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$state): int|bool {
+                if ($value === 10) {
+                    return false;
+                }
+                $state[$postId][$metaKey][] = $value;
+                return count($state[$postId][$metaKey]);
+            },
+        );
+        $field = $this->multipleRowField();
+
         try {
             $store->write($field, 'book', 41, [5, 10]);
-            self::fail('Multiple-row replacement must remain fail-closed.');
-        } catch (LogicException) {
-            self::assertSame(0, $updates);
-            self::assertSame(['4', '9'], $state[41]['scores']);
+            self::fail('A partially persisted multi-row target must fail verification.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('previous canonical rows were restored', $error->getMessage());
+        }
+
+        self::assertSame([4, 9], $store->read($field, 'book', 41));
+    }
+
+    public function testMultipleRowFailureReportsUnrecoverableStateWhenRollbackCannotBeVerified(): void
+    {
+        $state = [41 => ['scores' => ['4', '9']]];
+        $store = $this->store(
+            $state,
+            add: static function (int $postId, string $metaKey, mixed $value) use (&$state): int|bool {
+                if ($value === 10 || $value === 9) {
+                    return false;
+                }
+                $state[$postId][$metaKey][] = $value;
+                return count($state[$postId][$metaKey]);
+            },
+        );
+
+        try {
+            $store->write($this->multipleRowField(), 'book', 41, [5, 10]);
+            self::fail('Failed target and failed rollback must be surfaced.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('could not be restored', $error->getMessage());
         }
     }
 
@@ -246,12 +319,14 @@ final class PostMetaValueStoreTest extends TestCase
      * @param array<int,array<string,mixed>> $state
      * @param null|callable(int,string,mixed):int|bool $update
      * @param null|callable(int,string):bool $delete
+     * @param null|callable(int,string,mixed):int|bool $add
      */
     private function store(
         array &$state,
         ?callable $update = null,
         ?callable $delete = null,
         string $postType = 'book',
+        ?callable $add = null,
     ): PostMetaValueStore {
         $values = new FieldValueNormalizer();
         $compiler = new PostMetaRegistrationCompiler($values);
@@ -263,6 +338,14 @@ final class PostMetaValueStoreTest extends TestCase
         $delete ??= static function (int $postId, string $metaKey) use (&$state): bool {
             unset($state[$postId][$metaKey]);
             return true;
+        };
+        $add ??= static function (int $postId, string $metaKey, mixed $value) use (&$state): int|bool {
+            $state[$postId][$metaKey] ??= [];
+            if (!is_array($state[$postId][$metaKey]) || !array_is_list($state[$postId][$metaKey])) {
+                return false;
+            }
+            $state[$postId][$metaKey][] = $value;
+            return count($state[$postId][$metaKey]);
         };
 
         return new PostMetaValueStore(
@@ -282,7 +365,20 @@ final class PostMetaValueStoreTest extends TestCase
             updatePostMeta: $update,
             deletePostMeta: $delete,
             slash: static fn (mixed $value): mixed => $value,
+            addPostMeta: $add,
         );
+    }
+
+    /** @return array<string,mixed> */
+    private function multipleRowField(): array
+    {
+        return $this->field([
+            'key' => 'scores',
+            'type' => 'number',
+            'settings' => ['integer' => true],
+            'cloneable' => true,
+            'clone_as_multiple' => true,
+        ]);
     }
 
     /** @param array<string,mixed> $definition @return array<string,mixed> */

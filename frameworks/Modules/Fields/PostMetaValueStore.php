@@ -34,6 +34,9 @@ final class PostMetaValueStore
     /** @var Closure(mixed):mixed */
     private Closure $slash;
 
+    /** @var Closure(int,string,mixed):int|bool */
+    private Closure $addPostMeta;
+
     /**
      * @param null|callable(int):string|false $getPostType
      * @param null|callable(int,string):bool $metadataExists
@@ -41,6 +44,7 @@ final class PostMetaValueStore
      * @param null|callable(int,string,mixed):int|bool $updatePostMeta
      * @param null|callable(int,string):bool $deletePostMeta
      * @param null|callable(mixed):mixed $slash
+     * @param null|callable(int,string,mixed):int|bool $addPostMeta
      */
     public function __construct(
         private readonly PostMetaRegistrationCompiler $compiler = new PostMetaRegistrationCompiler(),
@@ -52,6 +56,7 @@ final class PostMetaValueStore
         ?callable $updatePostMeta = null,
         ?callable $deletePostMeta = null,
         ?callable $slash = null,
+        ?callable $addPostMeta = null,
     ) {
         $this->getPostType = $getPostType !== null
             ? Closure::fromCallable($getPostType)
@@ -104,6 +109,14 @@ final class PostMetaValueStore
                 }
                 return wp_slash($value);
             };
+        $this->addPostMeta = $addPostMeta !== null
+            ? Closure::fromCallable($addPostMeta)
+            : static function (int $postId, string $metaKey, mixed $value): int|bool {
+                if (!function_exists('add_post_meta')) {
+                    throw new LogicException('WordPress add_post_meta() is unavailable.');
+                }
+                return add_post_meta($postId, $metaKey, $value, false);
+            };
     }
 
     /** @param array<string,mixed> $field */
@@ -117,12 +130,13 @@ final class PostMetaValueStore
     public function write(array $field, string $postType, int $postId, mixed $value): PostMetaValueWriteResult
     {
         $registration = $this->context($field, $postType, $postId);
+        $canonical = $this->persistence->assertSafe($this->values->normalize($field, $value));
         $args = $registration['args'];
+
         if (($args['single'] ?? null) !== true) {
-            throw new LogicException('Multiple-row post-meta replacement is not certified in persistence V1.');
+            return $this->writeMultipleRows($field, $registration, $postId, $canonical);
         }
 
-        $canonical = $this->persistence->assertSafe($this->values->normalize($field, $value));
         $metaKey = $registration['meta_key'];
         $fieldUuid = $registration['field_uuid'];
         if (!is_string($metaKey) || !is_string($fieldUuid)) {
@@ -176,6 +190,142 @@ final class PostMetaValueStore
 
         // update_post_meta() may return false for no-change/filter/concurrency paths; post-write state is authoritative.
         return new PostMetaValueWriteResult(PostMetaValueWriteResult::WRITTEN, $fieldUuid, $metaKey, $persisted);
+    }
+
+    /**
+     * @param array<string,mixed> $field
+     * @param array{post_type:string,field_uuid:string,meta_key:string,args:array<string,mixed>} $registration
+     */
+    private function writeMultipleRows(
+        array $field,
+        array $registration,
+        int $postId,
+        mixed $canonical,
+    ): PostMetaValueWriteResult {
+        if ($canonical !== null && (!is_array($canonical) || !array_is_list($canonical))) {
+            throw new LogicException('Compiled multiple-row post meta requires a canonical list or null.');
+        }
+
+        $metaKey = $registration['meta_key'];
+        $fieldUuid = $registration['field_uuid'];
+        if (!is_string($metaKey) || !is_string($fieldUuid)) {
+            throw new LogicException('Compiled post-meta provenance is malformed.');
+        }
+
+        $exists = ($this->metadataExists)($postId, $metaKey);
+        $current = $exists ? $this->readRegistration($field, $registration, $postId) : null;
+        if ($current !== null && (!is_array($current) || !array_is_list($current))) {
+            throw new RuntimeException(sprintf('Persisted multiple-row post meta "%s" is not a canonical list.', $metaKey));
+        }
+
+        /** @var list<mixed> $target */
+        $target = $canonical ?? [];
+        /** @var list<mixed> $snapshot */
+        $snapshot = $current ?? [];
+
+        if ($target === [] && !$exists) {
+            return new PostMetaValueWriteResult(PostMetaValueWriteResult::ABSENT, $fieldUuid, $metaKey, null);
+        }
+        if ($target !== [] && $exists && $this->sameValue($snapshot, $target)) {
+            return new PostMetaValueWriteResult(PostMetaValueWriteResult::UNCHANGED, $fieldUuid, $metaKey, $target);
+        }
+
+        try {
+            $this->replaceMultipleRowsNative($postId, $metaKey, $target);
+            $persisted = $this->readMultipleRowsAfterMutation($field, $registration, $postId);
+            if (!$this->sameValue($persisted, $target)) {
+                throw new RuntimeException(sprintf(
+                    'Multiple-row post-meta replacement verification did not match for "%s".',
+                    $metaKey,
+                ));
+            }
+        } catch (Throwable $error) {
+            $recovered = $this->recoverMultipleRows($field, $registration, $postId, $snapshot);
+            throw new RuntimeException(
+                $recovered
+                    ? sprintf('Multiple-row post-meta replacement failed for "%s"; previous canonical rows were restored.', $metaKey)
+                    : sprintf('Multiple-row post-meta replacement failed for "%s" and previous canonical rows could not be restored.', $metaKey),
+                0,
+                $error,
+            );
+        }
+
+        if ($target === []) {
+            return new PostMetaValueWriteResult(PostMetaValueWriteResult::DELETED, $fieldUuid, $metaKey, null);
+        }
+
+        return new PostMetaValueWriteResult(PostMetaValueWriteResult::WRITTEN, $fieldUuid, $metaKey, $persisted);
+    }
+
+    /** @param list<mixed> $rows */
+    private function replaceMultipleRowsNative(int $postId, string $metaKey, array $rows): void
+    {
+        if (($this->metadataExists)($postId, $metaKey)) {
+            ($this->deletePostMeta)($postId, (string) ($this->slash)($metaKey));
+            if (($this->metadataExists)($postId, $metaKey)) {
+                throw new RuntimeException(sprintf(
+                    'WordPress did not clear existing multiple-row post meta "%s" before replacement.',
+                    $metaKey,
+                ));
+            }
+        }
+
+        foreach ($rows as $row) {
+            // Final canonical state is authoritative because metadata filters may return non-standard success values.
+            ($this->addPostMeta)(
+                $postId,
+                (string) ($this->slash)($metaKey),
+                ($this->slash)($row),
+            );
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $field
+     * @param array{post_type:string,field_uuid:string,meta_key:string,args:array<string,mixed>} $registration
+     * @return list<mixed>
+     */
+    private function readMultipleRowsAfterMutation(array $field, array $registration, int $postId): array
+    {
+        $metaKey = $registration['meta_key'];
+        if (!is_string($metaKey)) {
+            throw new LogicException('Compiled post-meta key is malformed.');
+        }
+        if (!($this->metadataExists)($postId, $metaKey)) {
+            return [];
+        }
+
+        $persisted = $this->readRegistration($field, $registration, $postId);
+        if (!is_array($persisted) || !array_is_list($persisted)) {
+            throw new RuntimeException(sprintf('Persisted multiple-row post meta "%s" is not a canonical list.', $metaKey));
+        }
+        return $persisted;
+    }
+
+    /**
+     * Best-effort recovery to the previous canonical row list.
+     *
+     * This deliberately does not claim database-transaction semantics: WordPress metadata hooks and external
+     * persistence filters may have side effects outside the postmeta transaction boundary.
+     *
+     * @param array<string,mixed> $field
+     * @param array{post_type:string,field_uuid:string,meta_key:string,args:array<string,mixed>} $registration
+     * @param list<mixed> $snapshot
+     */
+    private function recoverMultipleRows(array $field, array $registration, int $postId, array $snapshot): bool
+    {
+        $metaKey = $registration['meta_key'];
+        if (!is_string($metaKey)) {
+            return false;
+        }
+
+        try {
+            $this->replaceMultipleRowsNative($postId, $metaKey, $snapshot);
+            $restored = $this->readMultipleRowsAfterMutation($field, $registration, $postId);
+            return $this->sameValue($restored, $snapshot);
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**

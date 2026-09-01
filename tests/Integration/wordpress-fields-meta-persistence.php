@@ -202,12 +202,23 @@ fieldsPersistenceExpect($store->read($fields['aliases'], 'wpe_value_book', $post
 add_post_meta($postId, 'wpe_value_rows', 'One');
 add_post_meta($postId, 'wpe_value_rows', 'Two');
 fieldsPersistenceExpect($store->read($fields['rows'], 'wpe_value_book', $postId) === ['One', 'Two'], 'multi-row metadata must remain readable as a typed list');
-try {
-    $store->write($fields['rows'], 'wpe_value_book', $postId, ['Three', 'Four']);
-    fieldsPersistenceExpect(false, 'multi-row replacement must remain fail closed without recovery semantics');
-} catch (\LogicException) {
-    fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === ['One', 'Two'], 'rejected multi-row replacement must leave prior rows untouched');
-}
+
+$rowsWrite = $store->write($fields['rows'], 'wpe_value_book', $postId, ['Three', 'Four', 'Three']);
+fieldsPersistenceExpect($rowsWrite->status === PostMetaValueWriteResult::WRITTEN, 'multi-row replacement must report written');
+fieldsPersistenceExpect($store->read($fields['rows'], 'wpe_value_book', $postId) === ['Three', 'Four', 'Three'], 'multi-row read must preserve replacement order and duplicates');
+fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === ['Three', 'Four', 'Three'], 'native multi-row storage must match canonical replacement order and duplicates');
+
+$rowsUnchanged = $store->write($fields['rows'], 'wpe_value_book', $postId, ['Three', 'Four', 'Three']);
+fieldsPersistenceExpect($rowsUnchanged->status === PostMetaValueWriteResult::UNCHANGED, 'idempotent multi-row replacement must report unchanged');
+
+$rowsReordered = $store->write($fields['rows'], 'wpe_value_book', $postId, ['Three', 'Three', 'Four']);
+fieldsPersistenceExpect($rowsReordered->status === PostMetaValueWriteResult::WRITTEN, 'reorder-only multi-row replacement must be persisted');
+fieldsPersistenceExpect(get_post_meta($postId, 'wpe_value_rows', false) === ['Three', 'Three', 'Four'], 'reorder-only multi-row replacement must rebuild native row order');
+
+$rowsDeleted = $store->write($fields['rows'], 'wpe_value_book', $postId, []);
+fieldsPersistenceExpect($rowsDeleted->status === PostMetaValueWriteResult::DELETED, 'empty multi-row list must delete all native rows');
+fieldsPersistenceExpect(!metadata_exists('post', $postId, 'wpe_value_rows'), 'empty multi-row list must leave metadata absent');
+fieldsPersistenceExpect($store->read($fields['rows'], 'wpe_value_book', $postId) === null, 'deleted multi-row metadata must read as null/absent');
 
 $deleted = $store->write($fields['headline'], 'wpe_value_book', $postId, null);
 fieldsPersistenceExpect($deleted->status === PostMetaValueWriteResult::DELETED, 'optional null must delete existing metadata');
