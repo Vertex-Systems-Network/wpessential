@@ -36,7 +36,11 @@ final class RelationDefinitionValidationServiceTest extends TestCase
     public function testPublishedUnknownPostSubtypeFailsClosed(): void
     {
         $payload = $this->payload();
-        $payload['from']['object_subtype'] = 'missing_type';
+        $payload['from'] = [
+            'object_type' => 'post',
+            'object_subtype' => 'missing_type',
+            'label' => 'Missing',
+        ];
 
         $report = $this->service()->validate([
             'payload' => $payload,
