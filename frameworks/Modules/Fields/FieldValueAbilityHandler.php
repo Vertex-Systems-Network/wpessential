@@ -51,6 +51,14 @@ final readonly class FieldValueAbilityHandler implements AbilityHandlerInterface
             ));
         }
 
+        $expectedRevision = $this->positiveInt($input, 'expected_group_revision');
+        if ($expectedRevision !== $target->groupRevision) {
+            throw new RuntimeException(sprintf(
+                'Field value schema revision conflict: expected %d, current revision is %d.',
+                $expectedRevision,
+                $target->groupRevision,
+            ));
+        }
         if (!array_key_exists('value', $input)) {
             throw new InvalidArgumentException('Field value write requires a value property; null is allowed for optional deletion.');
         }
