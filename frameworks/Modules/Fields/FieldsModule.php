@@ -15,14 +15,17 @@ use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class FieldsModule implements ModuleInterface
@@ -188,7 +191,33 @@ final class FieldsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // Automatic Field Group target registration, admin rendering, and Pro activation remain separate bounded slices.
+        $abilities = $services->get('platform.abilities');
+        $contexts = $services->get('platform.abilities.contexts');
+        $ajax = $services->get('platform.ajax.dispatcher');
+        $gateway = $services->get('platform.ajax.gateway');
+        $assets = $services->get('platform.admin.assets');
+
+        if (!$abilities instanceof AbilityRegistry
+            || !$contexts instanceof WordPressExecutionContextFactory
+            || !$ajax instanceof AjaxDispatcher
+            || !$gateway instanceof WordPressAjaxGateway
+            || !$assets instanceof AdminAssetManifest
+        ) {
+            throw new LogicException('Custom Fields admin requires the shared admin, Ability, and AJAX services.');
+        }
+
+        $admin = new FieldAdminController(
+            abilities: $abilities,
+            contexts: $contexts,
+            ajax: $ajax,
+            assets: $assets,
+            catalogProjector: new FieldAdminCatalogProjector(),
+            ajaxAction: $gateway->action(),
+        );
+        $services->set('module.custom-fields.admin', $admin);
+        $admin->register();
+
+        // Automatic Field Group target registration remains a separate bounded slice.
     }
 
     private function registerAbility(
