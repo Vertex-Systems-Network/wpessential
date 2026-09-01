@@ -50,13 +50,7 @@ final readonly class FieldGroupPostMetaBinder
             }
         }
 
-        foreach ($registrations as $registration) {
-            $this->registrar->preflight($registration);
-        }
-
-        foreach ($registrations as $registration) {
-            $this->registrar->register($registration);
-        }
+        $this->registrar->registerBatch($registrations);
     }
 
     private function assertPublishedFieldGroup(Definition $definition): void
