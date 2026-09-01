@@ -64,8 +64,17 @@ final class FieldsModule implements ModuleInterface
         $persistence = new FieldValuePersistenceGuard();
         $groups = new FieldGroupDefinitionNormalizer($fields);
         $validation = new FieldGroupValidationService($definitions, $groups);
+        $groupStorage = new FieldGroupRuntimeStorageProjection();
+        $groupPostTypes = new FieldGroupPostTypeTargetCompiler();
         $postMetaCompiler = new PostMetaRegistrationCompiler($values, $persistence);
         $postMetaRegistrar = new WordPressPostMetaRegistrar();
+        $postMetaBinder = new FieldGroupPostMetaBinder(
+            $groups,
+            $groupStorage,
+            $groupPostTypes,
+            $postMetaCompiler,
+            $postMetaRegistrar,
+        );
         $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
         $valueTargets = new FieldValueTargetResolver($definitions, $groups);
         $valueAuthorization = new WordPressPostResourceAuthorizer();
@@ -77,8 +86,11 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.value-normalizer', $values);
         $services->set('module.custom-fields.group-normalizer', $groups);
         $services->set('module.custom-fields.group-validation', $validation);
+        $services->set('module.custom-fields.runtime.storage-projection', $groupStorage);
+        $services->set('module.custom-fields.runtime.post-type-targets', $groupPostTypes);
         $services->set('module.custom-fields.storage.post-meta.compiler', $postMetaCompiler);
         $services->set('module.custom-fields.storage.post-meta.registrar', $postMetaRegistrar);
+        $services->set('module.custom-fields.storage.post-meta.binder', $postMetaBinder);
         $services->set('module.custom-fields.storage.post-meta.values', $postMetaValues);
         $services->set('module.custom-fields.values.targets', $valueTargets);
         $services->set('module.custom-fields.values.authorization', $valueAuthorization);
