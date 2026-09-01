@@ -29,6 +29,7 @@ final class FieldsModule implements ModuleInterface
 {
     private const CAPABILITY = 'manage_options';
     private const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+    private const FIELD_KEY_PATTERN = '^[a-z0-9][a-z0-9_-]{0,63}$';
 
     public function manifest(): ModuleManifest
     {
@@ -76,6 +77,15 @@ final class FieldsModule implements ModuleInterface
             $postMetaRegistrar,
         );
         $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
+        $postMetaMigrations = new FieldStorageKeyMigrationService(
+            $definitions,
+            $groups,
+            $groupStorage,
+            $groupPostTypes,
+            $postMetaCompiler,
+            $postMetaRegistrar,
+            $postMetaValues,
+        );
         $valueTargets = new FieldValueTargetResolver($definitions, $groups);
         $valueAuthorization = new WordPressPostResourceAuthorizer();
 
@@ -92,6 +102,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.storage.post-meta.registrar', $postMetaRegistrar);
         $services->set('module.custom-fields.storage.post-meta.binder', $postMetaBinder);
         $services->set('module.custom-fields.storage.post-meta.values', $postMetaValues);
+        $services->set('module.custom-fields.storage.post-meta.key-migrations', $postMetaMigrations);
         $services->set('module.custom-fields.values.targets', $valueTargets);
         $services->set('module.custom-fields.values.authorization', $valueAuthorization);
 
@@ -151,6 +162,28 @@ final class FieldsModule implements ModuleInterface
                 operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
             ));
         }
+
+        $migrationDescriptor = new AbilityDescriptor(
+            name: 'wpessential/fields/migrate-storage-key',
+            ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+            capability: self::CAPABILITY,
+            mutates: true,
+            channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
+            inputSchema: $this->storageKeyMigrationInputSchema(),
+            outputSchema: $this->storageKeyMigrationOutputSchema(),
+        );
+        $abilities->register($migrationDescriptor, new FieldStorageKeyMigrationAbilityHandler($postMetaMigrations));
+        $bridge->expose(new WordPressAbilityExposure(
+            internalName: $migrationDescriptor->name,
+            label: 'Custom Fields: migrate storage key',
+            description: 'Explicit Surface 3 native post-meta storage-key migration with verified rollback.',
+            showInRest: true,
+        ));
+        $ajaxRoutes->register(new AjaxRoute(
+            type: 'fields.migrate.storage.key',
+            handler: new AbilityAjaxHandler($abilities, $migrationDescriptor->name, $contexts),
+            operation: NonceOperation::Update,
+        ));
     }
 
     public function boot(ServiceRegistryInterface $services): void
@@ -231,6 +264,53 @@ final class FieldsModule implements ModuleInterface
                     'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
                     'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
                 ],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function storageKeyMigrationInputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['group_id', 'expected_group_revision', 'field_uuid', 'destination_key'],
+            'properties' => [
+                'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'expected_group_revision' => ['type' => 'integer', 'minimum' => 1],
+                'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'destination_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function storageKeyMigrationOutputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => [
+                'group_id',
+                'group_revision',
+                'field_uuid',
+                'source_key',
+                'destination_key',
+                'post_types',
+                'migrated_objects',
+                'changed',
+                'definition',
+            ],
+            'properties' => [
+                'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'group_revision' => ['type' => 'integer', 'minimum' => 1],
+                'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'source_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
+                'destination_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
+                'post_types' => ['type' => 'array', 'items' => ['type' => 'string']],
+                'migrated_objects' => ['type' => 'integer', 'minimum' => 0],
+                'changed' => ['type' => 'boolean'],
+                'definition' => ['type' => 'object'],
             ],
             'additionalProperties' => false,
         ];
