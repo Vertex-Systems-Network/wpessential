@@ -28,6 +28,7 @@ use WPEssential\Platform\WordPress\Security\NonceOperation;
 final class FieldsModule implements ModuleInterface
 {
     private const CAPABILITY = 'manage_options';
+    private const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
 
     public function manifest(): ModuleManifest
     {
@@ -174,16 +175,18 @@ final class FieldsModule implements ModuleInterface
     private function valueInputSchema(bool $write): array
     {
         $properties = [
-            'group_id' => ['type' => 'string', 'pattern' => '^[0-9a-f-]{36}$'],
-            'field_uuid' => ['type' => 'string', 'pattern' => '^[0-9a-f-]{36}$'],
+            'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+            'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
             'post_id' => ['type' => 'integer', 'minimum' => 1],
         ];
         $required = ['group_id', 'field_uuid', 'post_id'];
         if ($write) {
+            $properties['expected_group_revision'] = ['type' => 'integer', 'minimum' => 1];
             $properties['value'] = [
                 'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
                 'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
             ];
+            $required[] = 'expected_group_revision';
             $required[] = 'value';
         }
 
@@ -204,9 +207,9 @@ final class FieldsModule implements ModuleInterface
                 'group_id', 'group_revision', 'field_uuid', 'field_key', 'post_id', 'post_type', 'status', 'changed', 'value',
             ],
             'properties' => [
-                'group_id' => ['type' => 'string'],
+                'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
                 'group_revision' => ['type' => 'integer', 'minimum' => 1],
-                'field_uuid' => ['type' => 'string'],
+                'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
                 'field_key' => ['type' => 'string'],
                 'post_id' => ['type' => 'integer', 'minimum' => 1],
                 'post_type' => ['type' => 'string'],
