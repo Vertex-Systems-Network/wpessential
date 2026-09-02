@@ -33,6 +33,85 @@ final class RelationDefinitionValidationServiceTest extends TestCase
         self::assertSame('term', $report['candidate']['to_type']);
     }
 
+    public function testPublishedSafeExplicitRuntimeDefaultsAreAccepted(): void
+    {
+        $payload = $this->payload();
+        $payload['storage_mode'] = 'shared_relation_table';
+        $payload['storage_config'] = [
+            'separate_table' => false,
+            'table_name' => null,
+            'index_strategy' => null,
+            'foreign_keys' => false,
+        ];
+        $payload['pivot_enabled'] = false;
+        $payload['pivot_policy'] = [
+            'required_validation' => false,
+            'queryable' => false,
+            'index_policy' => null,
+        ];
+        $payload['multisite_scope'] = 'site';
+        $payload['portability'] = ['definition' => true, 'edges' => false, 'pivot' => false];
+
+        $report = $this->service()->validate([
+            'payload' => $payload,
+            'status' => 'published',
+        ]);
+
+        self::assertTrue($report['valid']);
+        self::assertSame([], $report['issues']);
+    }
+
+    public function testAdvancedPoliciesMayBeDraftedButUnsupportedRuntimeCannotPublish(): void
+    {
+        $payload = $this->payload();
+        $payload['storage_mode'] = 'native_taxonomy_adapter';
+        $payload['pivot_enabled'] = true;
+        $payload['multisite_scope'] = 'network';
+        $payload['portability'] = ['definition' => true, 'edges' => true, 'pivot' => false];
+
+        $draft = $this->service()->validate([
+            'payload' => $payload,
+            'status' => 'draft',
+        ]);
+        $published = $this->service()->validate([
+            'payload' => $payload,
+            'status' => 'published',
+        ]);
+
+        self::assertTrue($draft['valid']);
+        self::assertFalse($published['valid']);
+        self::assertSame([
+            'relation.runtime.storage_mode.unsupported',
+            'relation.runtime.pivot.unsupported',
+            'relation.runtime.multisite_scope.unsupported',
+            'relation.runtime.portability.unsupported',
+        ], array_column($published['issues'], 'id'));
+    }
+
+    public function testExplicitPoliciesWithoutCertifiedEnforcementFailClosedAtPublish(): void
+    {
+        $payload = $this->payload();
+        $payload['deletion_policy'] = [
+            'delete_edges' => true,
+            'from_object' => 'detach',
+            'to_object' => 'detach',
+        ];
+        $payload['permissions_policy'] = ['connect' => 'edit_posts'];
+        $payload['rest_policy'] = ['expose' => true, 'namespace' => 'wpessential/v1'];
+
+        $report = $this->service()->validate([
+            'payload' => $payload,
+            'status' => 'published',
+        ]);
+
+        self::assertFalse($report['valid']);
+        self::assertSame([
+            'relation.runtime.deletion_policy.unsupported',
+            'relation.runtime.permissions_policy.unsupported',
+            'relation.runtime.rest_policy.unsupported',
+        ], array_column($report['issues'], 'id'));
+    }
+
     public function testPublishedUnknownPostSubtypeFailsClosed(): void
     {
         $payload = $this->payload();

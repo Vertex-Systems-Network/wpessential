@@ -24,6 +24,20 @@ final readonly class RelationDefinitionAbilityHandler implements AbilityHandlerI
     public const SAVE = 'save';
     public const STATUS = 'status';
 
+    private const ADVANCED_POLICY_KEYS = [
+        'edge_ordering',
+        'storage_mode',
+        'storage_config',
+        'pivot_enabled',
+        'pivot_policy',
+        'deletion_policy',
+        'editor_policy',
+        'permissions_policy',
+        'rest_policy',
+        'multisite_scope',
+        'portability',
+    ];
+
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private RelationDefinitionNormalizer $normalizer,
@@ -84,6 +98,7 @@ final readonly class RelationDefinitionAbilityHandler implements AbilityHandlerI
             }
             $existing = $this->owned($id);
             $this->assertExpectedRevision($input, $existing);
+            $payload = $this->preserveOmittedAdvancedPolicies($payload, $existing->payload);
         }
 
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
@@ -152,6 +167,37 @@ final readonly class RelationDefinitionAbilityHandler implements AbilityHandlerI
         $this->definitions->save($candidate);
 
         return ['definition' => $this->serialize($candidate)];
+    }
+
+    /**
+     * Basic editors may submit only currently executable fields. Preserve explicitly authored
+     * advanced policy when omitted, while allowing callers to replace or clear a policy by
+     * sending the corresponding key explicitly.
+     *
+     * @param array<string,mixed> $payload
+     * @param array<string,mixed> $existing
+     * @return array<string,mixed>
+     */
+    private function preserveOmittedAdvancedPolicies(array $payload, array $existing): array
+    {
+        foreach (self::ADVANCED_POLICY_KEYS as $key) {
+            if (!array_key_exists($key, $payload) && array_key_exists($key, $existing)) {
+                $payload[$key] = $existing[$key];
+            }
+        }
+
+        $existingDirection = $existing['direction'] ?? null;
+        $payloadDirection = $payload['direction'] ?? null;
+        if (is_array($existingDirection)
+            && array_key_exists('parent_relation', $existingDirection)
+            && is_array($payloadDirection)
+            && !array_key_exists('parent_relation', $payloadDirection)
+        ) {
+            $payloadDirection['parent_relation'] = $existingDirection['parent_relation'];
+            $payload['direction'] = $payloadDirection;
+        }
+
+        return $payload;
     }
 
     /** @param array<string,mixed> $input */

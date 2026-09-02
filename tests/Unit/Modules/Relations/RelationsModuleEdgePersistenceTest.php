@@ -23,9 +23,10 @@ use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 
 final class RelationsModuleEdgePersistenceTest extends TestCase
 {
-    public function testNativePersistenceRegistersMigrationAndAppliesItDuringBoot(): void
+    public function testNativePersistenceRegistersMigrationsAndAppliesThemDuringBoot(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
+        $database->rowQueue = [['Key_name' => 'scope_relation_edge']];
         $state = new class implements MigrationStateStoreInterface {
             /** @var list<string> */
             public array $ids = [];
@@ -55,13 +56,21 @@ final class RelationsModuleEdgePersistenceTest extends TestCase
 
         $module->boot($services);
 
-        self::assertSame(['010.create-relation-edge-persistence'], $state->ids);
-        self::assertCount(2, $database->queries);
+        self::assertSame([
+            '010.create-relation-edge-persistence',
+            '020.allow-non-unique-relation-edge-tuples',
+        ], $state->ids);
+        self::assertCount(4, $database->queries);
         self::assertStringContainsString('wp_wpe_relation_edges', $database->queries[0]);
         self::assertStringContainsString('wp_wpe_relation_edge_state', $database->queries[1]);
+        self::assertStringStartsWith('SHOW INDEX FROM `wp_wpe_relation_edges`', $database->queries[2]);
+        self::assertSame(
+            'ALTER TABLE `wp_wpe_relation_edges` DROP INDEX `scope_relation_edge`',
+            $database->queries[3],
+        );
 
         $module->boot($services);
-        self::assertCount(2, $database->queries, 'Applied edge migration must remain idempotent.');
+        self::assertCount(4, $database->queries, 'Applied edge migrations must remain idempotent.');
     }
 
     public function testFallbackRegistrationDoesNotRequireNativePersistence(): void

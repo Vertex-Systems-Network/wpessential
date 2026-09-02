@@ -6,10 +6,10 @@ namespace WPEssential\Tests\Unit\Modules\Relations;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use WPEssential\Modules\Relations\RelationDefinitionNormalizer;
 use WPEssential\Modules\Relations\RelationEdgeMutationService;
 use WPEssential\Modules\Relations\RelationEdgeScope;
 use WPEssential\Modules\Relations\RelationEndpointObjectAuthorizer;
-use WPEssential\Modules\Relations\RelationDefinitionNormalizer;
 use WPEssential\Modules\Relations\WpdbRelationEdgeGateway;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
@@ -27,8 +27,7 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testManyToManyConnectIsTransactionalAndAdvancesRevision(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '2']];
-        $database->resultsQueue = [[], []];
+        $database->rowQueue = [['mutation_revision' => '2'], null];
         $service = $this->service($database, $this->definition('many_to_many'));
 
         $result = $service->connect(self::RELATION_ID, 31, 41, $this->context());
@@ -38,6 +37,7 @@ final class RelationEdgeMutationServiceTest extends TestCase
         self::assertSame(3, $result['revision']);
         self::assertSame(1, $database->begins);
         self::assertStringContainsString('FOR UPDATE', $database->prepared[1]['query']);
+        self::assertStringContainsString('LIMIT 1', $database->prepared[2]['query']);
         self::assertSame(1, $database->commits);
         self::assertSame(0, $database->rollbacks);
         self::assertCount(1, $database->inserts);
@@ -46,10 +46,10 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testUniqueTupleConnectIsIdempotentWithoutRevisionAdvance(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '7']];
-        $database->resultsQueue = [[
+        $database->rowQueue = [
+            ['mutation_revision' => '7'],
             $this->edgeRow(self::EXISTING_EDGE_ID, 31, 41),
-        ]];
+        ];
         $service = $this->service($database, $this->definition('many_to_many'));
 
         $result = $service->connect(self::RELATION_ID, 31, 41, $this->context());
@@ -65,10 +65,8 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testOneToOneBlocksSecondSourceEdgeUnderRelationLock(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '0']];
-        $database->resultsQueue = [[
-            $this->edgeRow(self::EXISTING_EDGE_ID, 31, 99),
-        ]];
+        $database->rowQueue = [['mutation_revision' => '0'], null];
+        $database->varQueue = [1];
         $service = $this->service($database, $this->definition('one_to_one'));
 
         $this->expectException(RuntimeException::class);
@@ -84,10 +82,8 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testOneToManyBlocksSecondSourceForSameTarget(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '0']];
-        $database->resultsQueue = [[], [
-            $this->edgeRow(self::EXISTING_EDGE_ID, 99, 41),
-        ]];
+        $database->rowQueue = [['mutation_revision' => '0'], null];
+        $database->varQueue = [1];
         $service = $this->service($database, $this->definition('one_to_many'));
 
         $this->expectException(RuntimeException::class);
@@ -102,10 +98,8 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testManyToOneBlocksSecondTargetForSameSource(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '0']];
-        $database->resultsQueue = [[
-            $this->edgeRow(self::EXISTING_EDGE_ID, 31, 99),
-        ]];
+        $database->rowQueue = [['mutation_revision' => '0'], null];
+        $database->varQueue = [1];
         $service = $this->service($database, $this->definition('many_to_one'));
 
         $this->expectException(RuntimeException::class);
@@ -113,7 +107,7 @@ final class RelationEdgeMutationServiceTest extends TestCase
         $service->connect(self::RELATION_ID, 31, 41, $this->context());
     }
 
-    public function testCustomMaximumIsEnforced(): void
+    public function testCustomMaximumUsesCountQueryWithoutMaterializingEdges(): void
     {
         $definition = $this->definition('many_to_many', [
             'from_min' => 0,
@@ -122,27 +116,27 @@ final class RelationEdgeMutationServiceTest extends TestCase
             'to_max' => null,
         ]);
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '0']];
-        $database->resultsQueue = [[
-            $this->edgeRow('44444444-4444-4444-8444-444444444444', 31, 98),
-            $this->edgeRow('55555555-5555-4555-8555-555555555555', 31, 99),
-        ]];
+        $database->rowQueue = [['mutation_revision' => '0'], null];
+        $database->varQueue = [2];
         $service = $this->service($database, $definition);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('source cardinality limit of 2');
-        $service->connect(self::RELATION_ID, 31, 41, $this->context());
+        try {
+            $service->connect(self::RELATION_ID, 31, 41, $this->context());
+        } finally {
+            self::assertStringContainsString('SELECT COUNT(*)', $database->prepared[3]['query']);
+            self::assertSame([], $database->resultsQueue);
+        }
     }
 
     public function testDisconnectRemovesTupleAndAdvancesRevision(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '4']];
-        $database->resultsQueue = [[
+        $database->rowQueue = [
+            ['mutation_revision' => '4'],
             $this->edgeRow(self::EXISTING_EDGE_ID, 31, 41),
-        ], [
-            $this->edgeRow(self::EXISTING_EDGE_ID, 31, 41),
-        ]];
+        ];
         $service = $this->service($database, $this->definition('many_to_many'));
 
         $result = $service->disconnect(self::RELATION_ID, 31, 41, $this->context());
@@ -151,7 +145,8 @@ final class RelationEdgeMutationServiceTest extends TestCase
         self::assertSame(self::EXISTING_EDGE_ID, $result['edge_id']);
         self::assertSame(5, $result['revision']);
         self::assertSame(1, $database->commits);
-        self::assertStringContainsString('DELETE FROM', $database->prepared[4]['query']);
+        self::assertStringContainsString('DELETE FROM', $database->prepared[3]['query']);
+        self::assertStringContainsString('edge_id = %s', $database->prepared[3]['query']);
     }
 
     public function testDisconnectRejectsSourceMinimumViolation(): void
@@ -163,10 +158,11 @@ final class RelationEdgeMutationServiceTest extends TestCase
             'to_max' => null,
         ]);
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '1']];
-        $database->resultsQueue = [[
+        $database->rowQueue = [
+            ['mutation_revision' => '1'],
             $this->edgeRow(self::EXISTING_EDGE_ID, 31, 41),
-        ]];
+        ];
+        $database->varQueue = [1];
         $service = $this->service($database, $definition);
 
         $this->expectException(RuntimeException::class);
@@ -182,8 +178,7 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testMissingTupleDisconnectIsIdempotent(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '9']];
-        $database->resultsQueue = [[]];
+        $database->rowQueue = [['mutation_revision' => '9'], null];
         $service = $this->service($database, $this->definition('many_to_many'));
 
         $result = $service->disconnect(self::RELATION_ID, 31, 41, $this->context());
@@ -340,8 +335,7 @@ final class RelationEdgeMutationServiceTest extends TestCase
             status: $definition->status,
             payload: $payload,
         );
-        $database->rowQueue = [['mutation_revision' => '0']];
-        $database->resultsQueue = [[], []];
+        $database->rowQueue = [['mutation_revision' => '0'], null];
         $service = $this->service($database, $definition);
 
         $result = $service->connect(self::RELATION_ID, 31, 31, $this->context());
@@ -354,8 +348,7 @@ final class RelationEdgeMutationServiceTest extends TestCase
     public function testGatewayInsertFailureRollsBackExactlyOnce(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '0']];
-        $database->resultsQueue = [[], []];
+        $database->rowQueue = [['mutation_revision' => '0'], null];
         $database->insertResult = false;
         $database->error = 'insert failed';
         $service = $this->service($database, $this->definition('many_to_many'));
@@ -426,7 +419,10 @@ final class RelationEdgeMutationServiceTest extends TestCase
         if ($bounds !== null) {
             $payload['bounds'] = $bounds;
         }
-        $payload = (new RelationDefinitionNormalizer())->normalize($payload, $status === DefinitionStatus::Published);
+        $payload = (new RelationDefinitionNormalizer())->normalize(
+            $payload,
+            $status === DefinitionStatus::Published,
+        );
 
         return new Definition(
             id: self::RELATION_ID,
