@@ -157,14 +157,23 @@ final class RelationsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        if (!$services->has('platform.database.migrations')) {
-            return;
+        if ($services->has('platform.database.migrations')) {
+            $migrations = $services->get('platform.database.migrations');
+            if (!$migrations instanceof MigrationCoordinator) {
+                throw new LogicException('Relations migration service must use the shared MigrationCoordinator.');
+            }
+            $migrations->runPending();
         }
-        $migrations = $services->get('platform.database.migrations');
-        if (!$migrations instanceof MigrationCoordinator) {
-            throw new LogicException('Relations migration service must use the shared MigrationCoordinator.');
+
+        $abilities = $services->get('platform.abilities');
+        $contexts = $services->get('platform.abilities.contexts');
+        if (!$abilities instanceof AbilityRegistry || !$contexts instanceof WordPressExecutionContextFactory) {
+            throw new LogicException('Relations admin requires shared Ability and execution-context services.');
         }
-        $migrations->runPending();
+
+        $admin = new RelationAdminController($abilities, $contexts);
+        $services->set('module.relations.admin', $admin);
+        $admin->register();
     }
 
     private function registerEdgePersistence(ServiceRegistryInterface $services): void
