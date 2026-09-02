@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 
 /** @return array<string, mixed> */
@@ -90,15 +94,11 @@ foreach ($records as $record) {
         $rejectedConsistent = false;
     }
     if (($record['classification'] ?? null) === 'DEFERRED'
-        && !(($record['adoption'] ?? null) === 'LATER'
-            && ($record['priority'] ?? null) === 'P3_LATER'
-            && ($record['horizon'] ?? null) === 'WPE_FUTURE')) {
+        && !(($record['adoption'] ?? null) === 'LATER' && ($record['priority'] ?? null) === 'P3_LATER' && ($record['horizon'] ?? null) === 'WPE_FUTURE')) {
         $deferredConsistent = false;
     }
     if (($record['classification'] ?? null) === 'WPE_EXCEED') {
-        if (!(($record['adoption'] ?? null) === 'WPE_EXCEED'
-            && ($record['priority'] ?? null) === 'P1_EXCEED'
-            && ($record['horizon'] ?? null) === 'WPE_FUTURE')) {
+        if (!(($record['adoption'] ?? null) === 'WPE_EXCEED' && ($record['priority'] ?? null) === 'P1_EXCEED' && ($record['horizon'] ?? null) === 'WPE_FUTURE')) {
             $exceedConsistent = false;
         }
         if (($record['horizon'] ?? null) !== 'WPE_FUTURE') {
@@ -109,15 +109,15 @@ foreach ($records as $record) {
 
 $gates = $review['policy_gates'] ?? [];
 $expectedGates = [
-    'unreviewed_records' => $unreviewed,
-    'native_unresolved' => 0,
-    'market_unresolved' => 0,
-    'semantic_sources_are_noncanonical' => true,
-    'rejected_unsafe_consistent' => $rejectedConsistent,
-    'deferred_consistent' => $deferredConsistent,
-    'wpe_exceed_consistent' => $exceedConsistent,
-    'wpe_exceed_shard_future_only' => $exceedFutureOnly,
-    'record_delta_after_market_audit' => 0,
+    'unreviewed_records'=>$unreviewed,
+    'native_unresolved'=>0,
+    'market_unresolved'=>0,
+    'semantic_sources_are_noncanonical'=>true,
+    'rejected_unsafe_consistent'=>$rejectedConsistent,
+    'deferred_consistent'=>$deferredConsistent,
+    'wpe_exceed_consistent'=>$exceedConsistent,
+    'wpe_exceed_shard_future_only'=>$exceedFutureOnly,
+    'record_delta_after_market_audit'=>0,
 ];
 foreach ($expectedGates as $key => $value) {
     if (($gates[$key] ?? null) !== $value) {
@@ -125,14 +125,13 @@ foreach ($expectedGates as $key => $value) {
     }
 }
 
-$required = $review['required_artifacts'] ?? [];
 $expectedPaths = [
-    'semantic_registry' => 'config/product/options-bank-semantic-relations.json',
-    'native_audit' => 'config/product/options-bank-audits/tables-native-wordpress.json',
-    'market_audit' => 'config/product/options-bank-audits/tables-market-ecosystem.json',
+    'semantic_registry'=>'config/product/options-bank-semantic-relations.json',
+    'native_audit'=>'config/product/options-bank-audits/tables-native-wordpress.json',
+    'market_audit'=>'config/product/options-bank-audits/tables-market-ecosystem.json',
 ];
 $seen = [];
-foreach ($required as $artifact) {
+foreach (($review['required_artifacts'] ?? []) as $artifact) {
     if (!is_array($artifact) || !is_string($artifact['kind'] ?? null) || !is_string($artifact['path'] ?? null)) {
         throw new RuntimeException('Surface 7 Bank Review required artifact is malformed.');
     }
@@ -156,14 +155,11 @@ if (!is_array($progressRow)) {
 
 $decision = $review['decision'] ?? null;
 $unresolved = $review['unresolved'] ?? null;
-if (!in_array($decision, ['REVIEW_BLOCKED', 'BANK_REVIEWED'], true) || !is_int($unresolved) || $unresolved < 0) {
+if (!in_array($decision, ['REVIEW_BLOCKED','BANK_REVIEWED'], true) || !is_int($unresolved) || $unresolved < 0) {
     throw new RuntimeException('Surface 7 review decision/unresolved state is invalid.');
 }
-
 if ($decision === 'BANK_REVIEWED') {
-    if ($unresolved !== 0
-        || ($progressRow['status'] ?? null) !== 'BANK_REVIEWED'
-        || ($progressRow['records'] ?? null) !== 165) {
+    if ($unresolved !== 0 || ($progressRow['status'] ?? null) !== 'BANK_REVIEWED' || ($progressRow['records'] ?? null) !== 165) {
         throw new RuntimeException('Surface 7 BANK_REVIEWED promotion lacks canonical progress prerequisites.');
     }
 } else {
@@ -175,9 +171,4 @@ if ($decision === 'BANK_REVIEWED') {
     }
 }
 
-printf(
-    "Surface 7 Bank Review V1 contract: PASS (%s; 165 records, native/market 0 unresolved; canonical progress=%s/%s).\n",
-    $decision,
-    (string) ($progressRow['status'] ?? 'missing'),
-    (string) ($progressRow['records'] ?? 'missing'),
-);
+printf("Surface 7 Bank Review V1 contract: PASS (%s; 165 records, native/market 0 unresolved; canonical progress=%s/%s).\n", $decision, (string) ($progressRow['status'] ?? 'missing'), (string) ($progressRow['records'] ?? 'missing'));
