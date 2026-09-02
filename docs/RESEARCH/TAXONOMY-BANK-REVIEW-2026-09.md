@@ -2,7 +2,7 @@
 
 Status: **module-local BANK_REVIEWED candidate**  
 Surface: **2 — Taxonomy**  
-Current `main` base: `1687d7f0412051d5a5d8fbbcc1f9e7af64114a15`  
+Current `main` base: `b1d8e4a831b0cf7dbe77909220f20fbe0e553fed`  
 Claim branch: `agent/taxonomy-bank-reconciliation-v1`  
 Recovered from: `planning/options-bank-taxonomy-completion-v1` (stale/diverged history was not merged)
 
