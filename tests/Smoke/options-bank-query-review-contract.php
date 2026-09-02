@@ -25,7 +25,7 @@ foreach (glob($root . '/config/product/options-bank/query*.json') ?: [] as $file
 $native = qrread($root . '/config/product/options-bank-audits/query-native-wordpress.json');
 $market = qrread($root . '/config/product/options-bank-audits/query-market-ecosystem.json');
 $review = qrread($root . '/config/product/options-bank-reviews/query-bank-review-v1.json');
-if ($count !== 166 || ($review['record_count'] ?? null) !== 166) { throw new RuntimeException("Query Bank must contain exactly 166 records; found $count."); }
+if ($count !== 169 || ($review['record_count'] ?? null) !== 169) { throw new RuntimeException("Query Bank must contain exactly 169 records; found $count."); }
 if ($unreviewed !== 0 || ($review['policy_gates']['unreviewed_records'] ?? null) !== 0) { throw new RuntimeException('Query Bank has unreviewed records.'); }
 if (($native['status'] ?? null) !== 'NATIVE_AUDITED' || ($native['coverage']['unresolved'] ?? null) !== 0) { throw new RuntimeException('Native prerequisite incomplete.'); }
 if (($market['status'] ?? null) !== 'MARKET_AUDITED' || ($market['coverage']['unresolved'] ?? null) !== 0) { throw new RuntimeException('Market prerequisite incomplete.'); }
@@ -40,4 +40,7 @@ foreach (['raw_sql_rejected','arbitrary_php_rejected','identifier_injection_reje
     $id = "query.safety.$key";
     if (($ids[$id] ?? false) !== true) { throw new RuntimeException("Required unsafe rejection record missing: $id"); }
 }
-fwrite(STDOUT, "Query Bank review contract: PASS (166 records, 0 duplicates, 0 unreviewed, BANK_REVIEWED candidate).\n");
+foreach (['query.role.owner_contract','query.role.include','query.role.exclude'] as $id) {
+    if (($ids[$id] ?? false) !== true) { throw new RuntimeException("Required role ownership correction missing: $id"); }
+}
+fwrite(STDOUT, "Query Bank review contract: PASS (169 records, 0 duplicates, 0 unreviewed, BANK_REVIEWED candidate).\n");
