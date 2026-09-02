@@ -27,6 +27,9 @@ final class RelationDefinitionNormalizerTest extends TestCase
             'bidirectional_traversal' => true,
         ], $normalized['direction']);
         self::assertTrue($normalized['unique_edge']);
+        self::assertArrayNotHasKey('storage_mode', $normalized);
+        self::assertArrayNotHasKey('pivot_enabled', $normalized);
+        self::assertArrayNotHasKey('multisite_scope', $normalized);
     }
 
     public function testManyToOneDefaultsInvertDirectionalCardinality(): void
@@ -38,6 +41,67 @@ final class RelationDefinitionNormalizerTest extends TestCase
 
         self::assertSame(1, $normalized['bounds']['from_max']);
         self::assertNull($normalized['bounds']['to_max']);
+    }
+
+    public function testCanonicalAdvancedPoliciesNormalizeOnlyWhenAuthored(): void
+    {
+        $payload = $this->payload();
+        $payload['direction']['parent_relation'] = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+        $payload['edge_ordering'] = [
+            'ordered_from' => true,
+            'ordered_to' => false,
+            'order_mode' => 'manual',
+        ];
+        $payload['storage_mode'] = 'provider';
+        $payload['storage_config'] = [
+            'separate_table' => true,
+            'table_name' => 'book_author_edges',
+            'index_strategy' => 'balanced',
+            'foreign_keys' => false,
+        ];
+        $payload['pivot_enabled'] = true;
+        $payload['pivot_policy'] = [
+            'required_validation' => true,
+            'queryable' => true,
+            'index_policy' => 'selected',
+        ];
+        $payload['deletion_policy'] = [
+            'delete_edges' => true,
+            'from_object' => 'restrict',
+            'to_object' => 'cascade_provider',
+        ];
+        $payload['editor_policy'] = [
+            'from' => ['enabled' => true, 'context' => 'side', 'position' => 'high', 'collapsed' => false],
+            'to' => ['enabled' => false, 'context' => null, 'position' => null, 'collapsed' => true],
+            'search' => true,
+            'ajax' => true,
+            'exclude_connected' => true,
+            'show_inverse' => true,
+        ];
+        $payload['permissions_policy'] = [
+            'view' => 'read',
+            'connect' => 'edit_posts',
+            'disconnect' => 'edit_posts',
+            'manage_definition' => 'manage_options',
+            'from_capability' => 'edit_post',
+            'to_capability' => 'edit_user',
+            'rest_write' => 'edit_posts',
+        ];
+        $payload['rest_policy'] = ['expose' => true, 'namespace' => 'wpessential/v1'];
+        $payload['multisite_scope'] = 'network';
+        $payload['portability'] = ['definition' => true, 'edges' => true, 'pivot' => true];
+
+        $normalized = (new RelationDefinitionNormalizer())->normalize($payload);
+
+        self::assertSame('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', $normalized['direction']['parent_relation']);
+        self::assertSame('provider', $normalized['storage_mode']);
+        self::assertSame('book_author_edges', $normalized['storage_config']['table_name']);
+        self::assertTrue($normalized['pivot_enabled']);
+        self::assertSame('restrict', $normalized['deletion_policy']['from_object']);
+        self::assertSame('edit_posts', $normalized['permissions_policy']['connect']);
+        self::assertSame('wpessential/v1', $normalized['rest_policy']['namespace']);
+        self::assertSame('network', $normalized['multisite_scope']);
+        self::assertTrue($normalized['portability']['edges']);
     }
 
     public function testCardinalityCannotBeRelaxedByExplicitBounds(): void
@@ -81,6 +145,16 @@ final class RelationDefinitionNormalizerTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported Relation option');
+        (new RelationDefinitionNormalizer())->normalize($payload);
+    }
+
+    public function testUnknownAdvancedPolicyConfigurationFailsClosed(): void
+    {
+        $payload = $this->payload();
+        $payload['storage_config'] = ['raw_table_sql' => 'unsafe'];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported Relation storage_config option');
         (new RelationDefinitionNormalizer())->normalize($payload);
     }
 
