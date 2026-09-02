@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use RuntimeException;
+use WPEssential\Platform\DataSources\DataSourceAuthorizationMapping;
 use WPEssential\Platform\DataSources\DataSourceAvailability;
 use WPEssential\Platform\DataSources\DataSourceDescriptor;
 use WPEssential\Platform\DataSources\DataSourceRegistry;
@@ -97,6 +98,73 @@ final class DataSourceRegistryTest extends TestCase
             capabilityVersion: 1,
             fieldSchema: ['post.id' => 'integer'],
             policyRequired: false,
+        );
+    }
+
+    public function testLegacyDescriptorRemainsValidButExecutionMappingFailsClosed(): void
+    {
+        $descriptor = $this->descriptor('posts.native');
+
+        self::assertFalse($descriptor->hasAuthorizationMapping());
+        self::assertNull($descriptor->authorization);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('no canonical Policy authorization mapping');
+
+        $descriptor->requireAuthorizationMapping();
+    }
+
+    public function testDescriptorExposesValidatedAuthorizationMapping(): void
+    {
+        $mapping = new DataSourceAuthorizationMapping(
+            ability: 'wpessential/query/execute',
+            capability: 'read',
+            resourceType: 'post',
+        );
+        $descriptor = new DataSourceDescriptor(
+            id: 'wordpress.posts',
+            sourceType: 'wordpress.posts',
+            capabilityVersion: 1,
+            fieldSchema: ['post.id' => 'integer'],
+            authorization: $mapping,
+        );
+
+        self::assertTrue($descriptor->hasAuthorizationMapping());
+        self::assertSame($mapping, $descriptor->authorization);
+        self::assertSame($mapping, $descriptor->requireAuthorizationMapping());
+    }
+
+    public function testMalformedAuthorizationAbilityIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('wpessential/<domain>/<action>');
+
+        new DataSourceAuthorizationMapping(
+            ability: 'query.execute',
+            capability: 'read',
+        );
+    }
+
+    public function testMalformedAuthorizationCapabilityIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('stable WordPress capability key');
+
+        new DataSourceAuthorizationMapping(
+            ability: 'wpessential/query/execute',
+            capability: 'read posts',
+        );
+    }
+
+    public function testMalformedAuthorizationResourceTypeIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('stable semantic identifier');
+
+        new DataSourceAuthorizationMapping(
+            ability: 'wpessential/query/execute',
+            capability: 'read',
+            resourceType: 'Post Type',
         );
     }
 
