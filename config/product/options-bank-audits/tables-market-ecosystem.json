@@ -68,5 +68,5 @@
     {"id":"woocommerce.authority_sync","provider":"woocommerce_hpos","disposition":"IMPLEMENTATION_PATTERN","evidence_url":"https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/","notes":"Authoritative/backup storage roles, compatibility mode and synchronization are useful migration/recovery patterns; WPE must not bypass WooCommerce CRUD/data-store authority."},
     {"id":"pods.storage_tradeoffs","provider":"pods","disposition":"IMPLEMENTATION_PATTERN","evidence_url":"https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/","notes":"Separate table storage carries compatibility and ecosystem tradeoffs; WPE surfaces those constraints rather than presenting custom tables as an unconditional default."}
   ],
-  "coverage": {"primary_providers":4,"specialist_providers":1,"family_mappings":23,"non_applicable_family_cells":8,"bank_record_references":90,"extra_dispositions":6,"unresolved":0}
+  "coverage": {"primary_providers":4,"specialist_providers":1,"family_mappings":19,"non_applicable_family_cells":9,"bank_record_references":80,"extra_dispositions":6,"unresolved":0}
 }
