@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "snapshot_date": "2026-09-02",
+  "queue_anchor_main_sha": "496d01f2406a3973aadf61b1dea75734654868cb",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base.",
+  "auto_assignment": {
+    "enabled": true,
+    "selection_order": "lowest numeric priority first",
+    "selection_rule": "Choose the highest-priority OPEN slot allowed for the agent role whose dependencies are satisfied and whose runtime/planning boundary remains valid on current main.",
+    "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+    "claim_branch_rule": "Use the exact claim_branch declared by the slot. Create that remote branch from the exact current main SHA without force. Successful remote ref creation claims the slot. If the branch already exists or ref creation is rejected, treat the slot as already claimed and immediately evaluate the next eligible slot.",
+    "force_push_forbidden": true,
+    "speculative_branch_creation_forbidden": true,
+    "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
+    "revalidation_before_work": [
+      "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
+      "Read current main SHA and commits since the queue audit anchor.",
+      "Inspect relevant open and merged PRs/MRs and existing branches.",
+      "Verify the selected slot is not already complete, superseded, blocked or claimed.",
+      "Verify canonical ownership, dependency order and allowed write scope.",
+      "Only then create the deterministic claim branch."
+    ],
+    "revalidation_before_merge": [
+      "Absorb latest main using the repository-approved non-destructive strategy.",
+      "Re-check dependency and ownership assumptions.",
+      "Review the intended diff and Integration Requirements.",
+      "Require applicable exact-head CI on the final candidate head.",
+      "Never use stale CI or force overwrite as merge evidence."
+    ]
+  },
+  "roles": {
+    "SUPERVISOR": {
+      "start_mode": "EXPLICIT",
+      "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
+      "must_not": [
+        "Pre-create branches for future slots.",
+        "Merge a branch only because an agent says it is done.",
+        "Treat arrival order as merge order.",
+        "Allow dependency-blocked runtime work to start."
+      ]
+    },
+    "WORKER": {
+      "start_mode": "AUTO",
+      "description": "Workers autonomously inspect current repository truth and claim the next eligible non-overlapping work slot using deterministic remote branch creation.",
+      "may_claim": ["ANY"],
+      "must_not": [
+        "Claim SUPERVISOR_ONLY slots.",
+        "Modify shared/global truth unless the slot explicitly grants that write scope.",
+        "Create a different branch name when the deterministic claim branch is already occupied.",
+        "Start runtime work that the slot marks planning_only or dependency_blocked."
+      ]
+    }
+  },
+  "slots": [
+    {
+      "priority": 5,
+      "slot_id": "shared-state-reconciliation-v1",
+      "title": "Reconcile stale shared checkpoint and project-state truth",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "INTEGRATION_WORK",
+      "parallel_class": "SERIALIZE",
+      "claim_branch": "agent/shared-state-reconciliation-v1",
+      "source": "Repository audit merged by PR #117",
+      "dependencies": [],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "CHECKPOINT.md",
+        "docs/PROJECT-STATE-AND-ADOPTION.md",
+        "directly required shared-state documentation only"
+      ],
+      "completion_condition": "Shared state accurately reflects current main, merged Relations runtime slices, current Bank truth and remaining dependency gates without rewriting historical evidence.",
+      "notes": "Do not combine unrelated runtime implementation with this serialized shared-state write."
+    },
+    {
+      "priority": 10,
+      "slot_id": "relations-gate-b-closure-v1",
+      "title": "Continue Surface 4 Relations Gate B from latest certified main",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "MILESTONE_WORK",
+      "parallel_class": "BLOCKING_FOUNDATION",
+      "claim_branch": "agent/relations-gate-b-closure-v1",
+      "source": "Issue #66 Gate B and current merged Relations slices",
+      "dependencies": [
+        "Fields Gate A PASS"
+      ],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "Relations-owned runtime, tests and surface-local documentation",
+        "shared changes only as Integration Requirements unless explicitly assigned to the Supervisor/Integrator"
+      ],
+      "completion_condition": "Advance the highest-priority remaining Gate B closure item from current main with exact-head evidence; do not claim full Gate B closure unless all Issue #66 criteria are actually satisfied.",
+      "notes": "Current merged foundation includes canonical definition lifecycle, durable edge persistence and transactional connect/disconnect. Query runtime remains blocked until Gate B is stable/closed."
+    },
+    {
+      "priority": 20,
+      "slot_id": "taxonomy-bank-reconciliation-v1",
+      "title": "Recover and reconcile Taxonomy Options Bank completion candidate onto current main",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "INTEGRATION_WORK",
+      "parallel_class": "COORDINATED_PARALLEL",
+      "claim_branch": "agent/taxonomy-bank-reconciliation-v1",
+      "source": "stale branch planning/options-bank-taxonomy-completion-v1",
+      "dependencies": [],
+      "runtime_allowed": false,
+      "planning_only": true,
+      "allowed_scope": [
+        "Taxonomy-local Bank/audit/review artifacts and tests",
+        "Integration Requirements for shared progress/registration changes"
+      ],
+      "completion_condition": "Current-main-synchronized Taxonomy candidate has a bounded PR/MR, correct lifecycle truth and applicable exact-head CI. Do not direct-merge the stale source branch.",
+      "notes": "The stale source branch was audited as diverged and must be recovered non-destructively."
+    },
+    {
+      "priority": 30,
+      "slot_id": "query-bank-reconciliation-v1",
+      "title": "Recover and reconcile Query planning/Options Bank candidate onto current main",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "INTEGRATION_WORK",
+      "parallel_class": "COORDINATED_PARALLEL",
+      "claim_branch": "agent/query-bank-reconciliation-v1",
+      "source": "stale branch planning/options-bank-query-v1",
+      "dependencies": [],
+      "runtime_allowed": false,
+      "planning_only": true,
+      "allowed_scope": [
+        "Query-local Bank/audit/review/planning artifacts and tests",
+        "Integration Requirements for shared progress/registration changes"
+      ],
+      "completion_condition": "Current-main-synchronized Query planning candidate is reviewed and exact-head certified without starting Query runtime.",
+      "notes": "Gate C runtime is dependency-blocked by Relations Gate B. Planning/reconciliation may proceed; runtime implementation may not."
+    },
+    {
+      "priority": 40,
+      "slot_id": "listings-bank-reconciliation-v1",
+      "title": "Recover and reconcile Dynamic Listings planning/Options Bank candidate onto current main",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "INTEGRATION_WORK",
+      "parallel_class": "COORDINATED_PARALLEL",
+      "claim_branch": "agent/listings-bank-reconciliation-v1",
+      "source": "stale branch planning/options-bank-listings-v1",
+      "dependencies": [],
+      "runtime_allowed": false,
+      "planning_only": true,
+      "allowed_scope": [
+        "Listings-local Bank/audit/review/research/UX/planning artifacts",
+        "Integration Requirements for shared progress/registration changes"
+      ],
+      "completion_condition": "Current-main-synchronized Listings planning candidate is reviewed and exact-head certified without starting Listings runtime.",
+      "notes": "Runtime remains blocked by Query and shared renderer/data-source contracts."
+    }
+  ]
+}
