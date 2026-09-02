@@ -60,13 +60,23 @@ final class RelationsModule implements ModuleInterface
         }
 
         $normalizer = new RelationDefinitionNormalizer();
-        $validation = new RelationDefinitionValidationService(
-            $normalizer,
-            new RelationEndpointSupport(),
-        );
+        $endpointSupport = new RelationEndpointSupport();
+        $validation = new RelationDefinitionValidationService($normalizer, $endpointSupport);
+        $portability = new RelationPortabilityService($definitions, $normalizer, $validation);
         $services->set('module.relations.definition-normalizer', $normalizer);
+        $services->set('module.relations.endpoint-support', $endpointSupport);
         $services->set('module.relations.definition-validation', $validation);
+        $services->set('module.relations.portability', $portability);
         $this->registerEdgePersistence($services);
+
+        $gateway = null;
+        if ($services->has('module.relations.edge-gateway')) {
+            $candidateGateway = $services->get('module.relations.edge-gateway');
+            if (!$candidateGateway instanceof WpdbRelationEdgeGateway) {
+                throw new LogicException('Relations edge persistence service must use the canonical edge gateway.');
+            }
+            $gateway = $candidateGateway;
+        }
 
         $handlers = [
             'list-definitions' => new RelationDefinitionAbilityHandler(
@@ -99,13 +109,24 @@ final class RelationsModule implements ModuleInterface
                 $validation,
                 RelationDefinitionAbilityHandler::STATUS,
             ),
+            'export-definitions' => new RelationPortabilityAbilityHandler(
+                $portability,
+                RelationPortabilityAbilityHandler::EXPORT,
+            ),
+            'import-definitions' => new RelationPortabilityAbilityHandler(
+                $portability,
+                RelationPortabilityAbilityHandler::IMPORT,
+            ),
+            'diagnostics' => new RelationDiagnosticsAbilityHandler(
+                $definitions,
+                $normalizer,
+                $validation,
+                $endpointSupport,
+                $gateway,
+            ),
         ];
 
-        if ($services->has('module.relations.edge-gateway')) {
-            $gateway = $services->get('module.relations.edge-gateway');
-            if (!$gateway instanceof WpdbRelationEdgeGateway) {
-                throw new LogicException('Relations edge mutation service requires the canonical edge gateway.');
-            }
+        if ($gateway instanceof WpdbRelationEdgeGateway) {
             $mutations = new RelationEdgeMutationService(
                 $definitions,
                 $normalizer,
@@ -195,14 +216,18 @@ final class RelationsModule implements ModuleInterface
             label: 'Relations: ' . str_replace('-', ' ', $action),
             description: in_array($action, ['connect', 'disconnect'], true)
                 ? 'Surface 4 transactional Relation edge mutation operation.'
-                : 'Surface 4 Relation definition lifecycle operation.',
+                : 'Surface 4 Relation definition lifecycle, portability, or diagnostics operation.',
             showInRest: true,
         ));
     }
 
     private function isMutationAction(string $action): bool
     {
-        return in_array($action, ['save-definition', 'status-definition', 'connect', 'disconnect'], true);
+        return in_array(
+            $action,
+            ['save-definition', 'status-definition', 'import-definitions', 'connect', 'disconnect'],
+            true,
+        );
     }
 
     /** @return array<string,mixed> */
