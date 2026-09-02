@@ -174,23 +174,26 @@ final readonly class RelationDefinitionNormalizer
         }
     }
 
-    /** @return array{reciprocal:bool,bidirectional_traversal:bool,parent_relation:?string} */
+    /** @return array<string,mixed> */
     private function direction(mixed $value): array
     {
         $value = $this->objectMap($value, 'Relation direction');
         $this->assertObjectKeys($value, ['reciprocal', 'bidirectional_traversal', 'parent_relation'], 'Relation direction');
 
-        return [
+        $normalized = [
             'reciprocal' => $this->boolean($value['reciprocal'] ?? false, 'Relation reciprocal'),
             'bidirectional_traversal' => $this->boolean(
                 $value['bidirectional_traversal'] ?? true,
                 'Relation bidirectional_traversal',
             ),
-            'parent_relation' => $this->nullableUuid(
-                $value['parent_relation'] ?? null,
-                'Relation parent_relation',
-            ),
         ];
+        if (array_key_exists('parent_relation', $value)) {
+            $normalized['parent_relation'] = $this->nullableUuid(
+                $value['parent_relation'],
+                'Relation parent_relation',
+            );
+        }
+        return $normalized;
     }
 
     /** @return array{object_type:string,object_subtype:?string,label:string} */
