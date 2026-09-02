@@ -16,6 +16,7 @@ final readonly class RelationDefinitionValidationService
     public function __construct(
         private RelationDefinitionNormalizer $normalizer = new RelationDefinitionNormalizer(),
         private RelationEndpointSupport $endpoints = new RelationEndpointSupport(),
+        private RelationRuntimePolicySupport $runtimePolicies = new RelationRuntimePolicySupport(),
     ) {}
 
     /**
@@ -81,6 +82,14 @@ final readonly class RelationDefinitionValidationService
                         $this->endpoints->unsupportedReason($endpoint),
                     );
                 }
+            }
+
+            foreach ($this->runtimePolicies->issues($normalized) as $runtimeIssue) {
+                $issues[] = $this->issue(
+                    $runtimeIssue['id'],
+                    $runtimeIssue['field'],
+                    $runtimeIssue['message'],
+                );
             }
         }
 

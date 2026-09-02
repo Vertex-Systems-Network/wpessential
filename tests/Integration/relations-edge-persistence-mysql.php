@@ -21,12 +21,22 @@ spl_autoload_register(static function (string $class) use ($root): void {
     if (is_file($path)) require $path;
 });
 
+use WPEssential\Modules\Relations\Migrations\AllowNonUniqueRelationEdgeTuplesMigration;
 use WPEssential\Modules\Relations\Migrations\CreateRelationEdgeTablesMigration;
+use WPEssential\Modules\Relations\RelationDefinitionAbilityHandler;
+use WPEssential\Modules\Relations\RelationDefinitionMutationRepository;
+use WPEssential\Modules\Relations\RelationDefinitionNormalizer;
+use WPEssential\Modules\Relations\RelationDefinitionValidationService;
 use WPEssential\Modules\Relations\RelationEdge;
 use WPEssential\Modules\Relations\RelationEdgeScope;
 use WPEssential\Modules\Relations\RelationEdgeTableNames;
 use WPEssential\Modules\Relations\WpdbRelationEdgeGateway;
+use WPEssential\Platform\Auth\ExecutionContext;
+use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Database\DatabaseAdapterInterface;
+use WPEssential\Platform\Definitions\Definition;
+use WPEssential\Platform\Definitions\DefinitionStatus;
+use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 
 function relationEdgeExpect(bool $condition, string $message): void
 {
@@ -119,13 +129,15 @@ $tables = new RelationEdgeTableNames($database);
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->state}`");
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->edges}`");
 (new CreateRelationEdgeTablesMigration($database))->apply();
+(new AllowNonUniqueRelationEdgeTuplesMigration($database))->apply();
 
 $relationId = '11111111-1111-4111-8111-111111111111';
 $edgeId = '22222222-2222-4222-8222-222222222222';
 $duplicateId = '33333333-3333-4333-8333-333333333333';
 $rollbackId = '44444444-4444-4444-8444-444444444444';
 $now = '2026-09-02 00:00:00.123456';
-$gateway = new WpdbRelationEdgeGateway($database, RelationEdgeScope::site(7, 701), static fn (): string => $now);
+$scope = RelationEdgeScope::site(7, 701);
+$gateway = new WpdbRelationEdgeGateway($database, $scope, static fn (): string => $now);
 
 relationEdgeExpect($gateway->beginRelationMutation($relationId) === 0, 'first mutation revision must start at zero');
 $gateway->insertEdge(new RelationEdge($edgeId, $relationId, 31, 41, $now, $now));
@@ -134,32 +146,117 @@ relationEdgeExpect($gateway->revision($relationId) === 1, 'committed revision mu
 relationEdgeExpect($gateway->findById($edgeId)?->toObjectId === 41, 'edge id lookup must round-trip persisted row');
 relationEdgeExpect(count($gateway->bySource($relationId, 31)) === 1, 'source lookup must return persisted edge');
 relationEdgeExpect(count($gateway->byTarget($relationId, 41)) === 1, 'target lookup must return persisted edge');
-relationEdgeExpect((new WpdbRelationEdgeGateway($database, RelationEdgeScope::site(7, 702)))->findById($edgeId) === null, 'edge rows must be site isolated');
-relationEdgeExpect((new WpdbRelationEdgeGateway($database, RelationEdgeScope::network(7)))->findById($edgeId) === null, 'network scope must not see site edges');
 
-$duplicateRejected = false;
-try {
-    relationEdgeExpect($gateway->beginRelationMutation($relationId) === 1, 'duplicate attempt must lock current revision');
-    $gateway->insertEdge(new RelationEdge($duplicateId, $relationId, 31, 41, $now, $now));
-} catch (Throwable) {
-    $duplicateRejected = true;
-}
-relationEdgeExpect($duplicateRejected, 'duplicate relation/source/target tuple must be rejected by durable uniqueness');
-relationEdgeExpect($gateway->revision($relationId) === 1, 'failed duplicate mutation must not advance revision');
+$otherSite = new WpdbRelationEdgeGateway($database, RelationEdgeScope::site(7, 702), static fn (): string => $now);
+$network = new WpdbRelationEdgeGateway($database, RelationEdgeScope::network(7), static fn (): string => $now);
+relationEdgeExpect($otherSite->findById($edgeId) === null, 'edge rows must be site isolated');
+relationEdgeExpect($network->findById($edgeId) === null, 'network scope must not see site edges');
+relationEdgeExpect($otherSite->revision($relationId) === 0, 'site mutation revisions must be isolated');
+relationEdgeExpect($network->revision($relationId) === 0, 'network mutation revisions must be isolated from site revisions');
+
+relationEdgeExpect($otherSite->beginRelationMutation($relationId) === 0, 'other site must start an independent revision');
+$otherSite->insertEdge(new RelationEdge($edgeId, $relationId, 51, 61, $now, $now));
+relationEdgeExpect($otherSite->completeRelationMutation($relationId, 0) === 1, 'other site revision must advance independently');
+relationEdgeExpect($otherSite->findById($edgeId)?->toObjectId === 61, 'same edge id must resolve inside the second site scope');
+relationEdgeExpect($gateway->findById($edgeId)?->toObjectId === 41, 'second site write must not overwrite first site edge');
+
+relationEdgeExpect($network->beginRelationMutation($relationId) === 0, 'network scope must start an independent revision');
+$network->insertEdge(new RelationEdge($edgeId, $relationId, 71, 81, $now, $now));
+relationEdgeExpect($network->completeRelationMutation($relationId, 0) === 1, 'network revision must advance independently');
+relationEdgeExpect($network->findById($edgeId)?->toObjectId === 81, 'same edge id must resolve inside network scope');
+relationEdgeExpect($otherSite->findById($edgeId)?->toObjectId === 61, 'network write must not overwrite site-scoped edge');
+relationEdgeExpect($gateway->revision($relationId) === 1, 'site 701 revision must remain independent after other scope writes');
+relationEdgeExpect($otherSite->revision($relationId) === 1, 'site 702 revision must remain independent after network write');
+relationEdgeExpect($network->revision($relationId) === 1, 'network revision must remain independently readable');
+
+relationEdgeExpect($gateway->beginRelationMutation($relationId) === 1, 'duplicate tuple mutation must lock current revision');
+$gateway->insertEdge(new RelationEdge($duplicateId, $relationId, 31, 41, $now, $now));
+relationEdgeExpect($gateway->completeRelationMutation($relationId, 1) === 2, 'duplicate tuple commit must advance revision');
 $edgeCount = (int) $pdo->query("SELECT COUNT(*) FROM `{$tables->edges}` WHERE network_id = 7 AND site_id = 701")->fetchColumn();
-relationEdgeExpect($edgeCount === 1, 'failed duplicate mutation must preserve exactly one edge');
+relationEdgeExpect($edgeCount === 2, 'relaxed storage must persist two distinct edges for one tuple');
+relationEdgeExpect($gateway->findById($duplicateId)?->toObjectId === 41, 'duplicate tuple edge must retain independent edge identity');
 
-relationEdgeExpect($gateway->beginRelationMutation($relationId) === 1, 'rollback test must lock revision one');
+$definitionRepository = new InMemoryDefinitionRepository();
+$normalizer = new RelationDefinitionNormalizer();
+$validation = new RelationDefinitionValidationService($normalizer);
+$relationPayload = $normalizer->normalize([
+    'relation_key' => 'book_authors',
+    'title' => 'Book Authors',
+    'cardinality' => 'many_to_many',
+    'from' => [
+        'object_type' => 'post',
+        'object_subtype' => 'book',
+        'label' => 'Books',
+    ],
+    'to' => [
+        'object_type' => 'user',
+        'label' => 'Authors',
+    ],
+    'unique_edge' => false,
+], false);
+$definitionRepository->save(new Definition(
+    id: $relationId,
+    slug: 'relation-book-authors',
+    type: RelationDefinitionNormalizer::DEFINITION_TYPE,
+    schemaVersion: 1,
+    ownerSurfaceId: RelationDefinitionNormalizer::OWNER_SURFACE_ID,
+    status: DefinitionStatus::Draft,
+    payload: $relationPayload,
+    revision: 1,
+));
+$guardedDefinitions = new RelationDefinitionMutationRepository(
+    $definitionRepository,
+    $gateway,
+    $database,
+    $scope,
+);
+$saveDefinition = new RelationDefinitionAbilityHandler(
+    $guardedDefinitions,
+    $normalizer,
+    $validation,
+    RelationDefinitionAbilityHandler::SAVE,
+);
+$upgradePayload = $relationPayload;
+$upgradePayload['unique_edge'] = true;
+$transitionRejected = false;
+try {
+    $saveDefinition->handle([
+        'id' => $relationId,
+        'expected_revision' => 1,
+        'payload' => $upgradePayload,
+    ], new ExecutionContext(new Principal(1), 701));
+} catch (InvalidArgumentException $error) {
+    $transitionRejected = str_contains($error->getMessage(), 'persisted duplicate source/target tuples');
+}
+relationEdgeExpect($transitionRejected, 'false-to-true unique_edge transition must fail closed while duplicate tuples persist');
+$persistedDefinition = $definitionRepository->get($relationId);
+relationEdgeExpect($persistedDefinition?->revision === 1, 'rejected uniqueness transition must not advance definition revision');
+relationEdgeExpect(($persistedDefinition?->payload['unique_edge'] ?? null) === false, 'rejected uniqueness transition must preserve unique_edge=false');
+relationEdgeExpect($gateway->revision($relationId) === 2, 'rejected uniqueness transition must roll back without advancing edge revision');
+
+relationEdgeExpect($gateway->beginRelationMutation($relationId) === 2, 'rollback test must lock revision two');
 $gateway->insertEdge(new RelationEdge($rollbackId, $relationId, 32, 42, $now, $now));
 $gateway->rollbackRelationMutation();
 $edgeCount = (int) $pdo->query("SELECT COUNT(*) FROM `{$tables->edges}` WHERE network_id = 7 AND site_id = 701")->fetchColumn();
-relationEdgeExpect($edgeCount === 1, 'explicit rollback must discard uncommitted edge');
-relationEdgeExpect($gateway->revision($relationId) === 1, 'explicit rollback must preserve mutation revision');
+relationEdgeExpect($edgeCount === 2, 'explicit rollback must discard only the uncommitted edge');
+relationEdgeExpect($gateway->revision($relationId) === 2, 'explicit rollback must preserve mutation revision');
 
-relationEdgeExpect($gateway->beginRelationMutation($relationId) === 1, 'delete mutation must lock revision one');
-relationEdgeExpect($gateway->deleteEdge($relationId, $edgeId), 'delete must remove existing edge');
-relationEdgeExpect($gateway->completeRelationMutation($relationId, 1) === 2, 'delete commit must advance revision to two');
-relationEdgeExpect($gateway->findById($edgeId) === null, 'deleted edge must no longer resolve');
+relationEdgeExpect($gateway->beginRelationMutation($relationId) === 2, 'delete mutation must lock revision two');
+relationEdgeExpect($gateway->deleteEdge($relationId, $edgeId), 'edge-id delete must remove one selected duplicate tuple edge');
+relationEdgeExpect($gateway->completeRelationMutation($relationId, 2) === 3, 'delete commit must advance revision to three');
+relationEdgeExpect($gateway->findById($edgeId) === null, 'selected edge must no longer resolve');
+relationEdgeExpect($gateway->findById($duplicateId)?->toObjectId === 41, 'sibling duplicate tuple edge must remain intact');
+relationEdgeExpect($otherSite->findById($edgeId)?->toObjectId === 61, 'site 701 delete must not remove same edge id from site 702');
+relationEdgeExpect($network->findById($edgeId)?->toObjectId === 81, 'site 701 delete must not remove same edge id from network scope');
+
+$upgraded = $saveDefinition->handle([
+    'id' => $relationId,
+    'expected_revision' => 1,
+    'payload' => $upgradePayload,
+], new ExecutionContext(new Principal(1), 701))['definition'];
+relationEdgeExpect(($upgraded['payload']['unique_edge'] ?? null) === true, 'unique_edge transition must succeed after duplicate tuples are reconciled');
+relationEdgeExpect(($upgraded['revision'] ?? null) === 2, 'successful uniqueness transition must advance definition revision');
+relationEdgeExpect($gateway->revision($relationId) === 4, 'successful uniqueness transition must advance edge mutation revision under the same lock');
 
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->state}`");
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->edges}`");

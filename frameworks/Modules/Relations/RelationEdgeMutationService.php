@@ -33,6 +33,7 @@ final readonly class RelationEdgeMutationService
         private RelationEndpointObjectAuthorizer $objects,
         ?Closure $uuid = null,
         ?Closure $clock = null,
+        private bool $supportsNonUniqueTuples = false,
     ) {
         $this->uuid = $uuid ?? $this->generateUuid(...);
         $this->clock = $clock ?? static fn (): string => gmdate('Y-m-d H:i:s') . '.000000';
@@ -47,26 +48,41 @@ final readonly class RelationEdgeMutationService
     ): array {
         $payload = $this->mutationPayload($relationDefinitionId);
         $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
-
-        if (($payload['unique_edge'] ?? null) !== true) {
-            throw new RuntimeException(
-                'Relation edge mutation currently requires unique_edge=true; non-unique tuples need a later storage contract.',
-            );
+        $uniqueEdge = $payload['unique_edge'] ?? null;
+        if (!is_bool($uniqueEdge)) {
+            throw new RuntimeException('Relation unique edge policy is malformed.');
         }
+        $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
 
         $revision = $this->gateway->beginRelationMutation($relationDefinitionId);
         try {
-            $sourceEdges = $this->gateway->bySource($relationDefinitionId, $fromObjectId);
-            foreach ($sourceEdges as $edge) {
-                if ($edge->toObjectId === $toObjectId) {
+            if ($uniqueEdge) {
+                $existing = $this->gateway->findTuple($relationDefinitionId, $fromObjectId, $toObjectId);
+                if ($existing instanceof RelationEdge) {
                     $this->gateway->rollbackRelationMutation();
-                    return $this->result(false, $relationDefinitionId, $edge->edgeId, $fromObjectId, $toObjectId, $revision);
+                    return $this->result(
+                        false,
+                        $relationDefinitionId,
+                        $existing->edgeId,
+                        $fromObjectId,
+                        $toObjectId,
+                        $revision,
+                    );
                 }
             }
 
-            $this->assertMaximum($sourceEdges, $payload['bounds']['from_max'], 'source');
-            $targetEdges = $this->gateway->byTarget($relationDefinitionId, $toObjectId);
-            $this->assertMaximum($targetEdges, $payload['bounds']['to_max'], 'target');
+            $this->assertMaximum(
+                $relationDefinitionId,
+                $fromObjectId,
+                $payload['bounds']['from_max'],
+                'source',
+            );
+            $this->assertMaximum(
+                $relationDefinitionId,
+                $toObjectId,
+                $payload['bounds']['to_max'],
+                'target',
+            );
 
             $edge = new RelationEdge(
                 $this->edgeUuid(),
@@ -95,38 +111,46 @@ final readonly class RelationEdgeMutationService
     ): array {
         $payload = $this->mutationPayload($relationDefinitionId);
         $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
-
-        if (($payload['unique_edge'] ?? null) !== true) {
-            throw new RuntimeException(
-                'Relation edge mutation currently requires unique_edge=true; non-unique tuples need a later storage contract.',
-            );
+        $uniqueEdge = $payload['unique_edge'] ?? null;
+        if (!is_bool($uniqueEdge)) {
+            throw new RuntimeException('Relation unique edge policy is malformed.');
         }
+        $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
 
         $revision = $this->gateway->beginRelationMutation($relationDefinitionId);
         try {
-            $sourceEdges = $this->gateway->bySource($relationDefinitionId, $fromObjectId);
-            $edgeId = null;
-            foreach ($sourceEdges as $edge) {
-                if ($edge->toObjectId === $toObjectId) {
-                    $edgeId = $edge->edgeId;
-                    break;
-                }
-            }
-            if ($edgeId === null) {
+            $edge = $this->gateway->findTuple($relationDefinitionId, $fromObjectId, $toObjectId);
+            if (!$edge instanceof RelationEdge) {
                 $this->gateway->rollbackRelationMutation();
                 return $this->result(false, $relationDefinitionId, null, $fromObjectId, $toObjectId, $revision);
             }
 
-            $this->assertMinimumAfterRemoval(count($sourceEdges), $payload['bounds']['from_min'], 'source');
-            $targetEdges = $this->gateway->byTarget($relationDefinitionId, $toObjectId);
-            $this->assertMinimumAfterRemoval(count($targetEdges), $payload['bounds']['to_min'], 'target');
+            $this->assertMinimumAfterRemoval(
+                $relationDefinitionId,
+                $fromObjectId,
+                $payload['bounds']['from_min'],
+                'source',
+            );
+            $this->assertMinimumAfterRemoval(
+                $relationDefinitionId,
+                $toObjectId,
+                $payload['bounds']['to_min'],
+                'target',
+            );
 
-            if (!$this->gateway->deleteTuple($relationDefinitionId, $fromObjectId, $toObjectId)) {
-                throw new RuntimeException('Relation edge tuple disappeared during the locked mutation.');
+            if (!$this->gateway->deleteEdge($relationDefinitionId, $edge->edgeId)) {
+                throw new RuntimeException('Relation edge disappeared during the locked mutation.');
             }
             $nextRevision = $this->gateway->completeRelationMutation($relationDefinitionId, $revision);
 
-            return $this->result(true, $relationDefinitionId, $edgeId, $fromObjectId, $toObjectId, $nextRevision);
+            return $this->result(
+                true,
+                $relationDefinitionId,
+                $edge->edgeId,
+                $fromObjectId,
+                $toObjectId,
+                $nextRevision,
+            );
         } catch (Throwable $error) {
             $this->gateway->rollbackRelationMutation();
             throw $error;
@@ -207,16 +231,31 @@ final readonly class RelationEdgeMutationService
         }
     }
 
-    /** @param list<RelationEdge> $edges */
-    private function assertMaximum(array $edges, mixed $maximum, string $side): void
+    private function assertStorageSupportsUniquenessPolicy(bool $uniqueEdge): void
     {
+        if (!$uniqueEdge && !$this->supportsNonUniqueTuples) {
+            throw new RuntimeException(
+                'Relation edge mutation currently requires unique_edge=true; non-unique tuples need a later storage contract.',
+            );
+        }
+    }
+
+    private function assertMaximum(
+        string $relationDefinitionId,
+        int $objectId,
+        mixed $maximum,
+        string $side,
+    ): void {
         if ($maximum === null) {
             return;
         }
         if (!is_int($maximum) || $maximum < 1) {
             throw new RuntimeException(sprintf('Relation %s maximum is malformed.', $side));
         }
-        if (count($edges) >= $maximum) {
+        $count = $side === 'source'
+            ? $this->gateway->countBySource($relationDefinitionId, $objectId)
+            : $this->gateway->countByTarget($relationDefinitionId, $objectId);
+        if ($count >= $maximum) {
             throw new RuntimeException(sprintf(
                 'Relation %s cardinality limit of %d would be exceeded.',
                 $side,
@@ -225,12 +264,22 @@ final readonly class RelationEdgeMutationService
         }
     }
 
-    private function assertMinimumAfterRemoval(int $currentCount, mixed $minimum, string $side): void
-    {
+    private function assertMinimumAfterRemoval(
+        string $relationDefinitionId,
+        int $objectId,
+        mixed $minimum,
+        string $side,
+    ): void {
         if (!is_int($minimum) || $minimum < 0) {
             throw new RuntimeException(sprintf('Relation %s minimum is malformed.', $side));
         }
-        if (($currentCount - 1) < $minimum) {
+        if ($minimum === 0) {
+            return;
+        }
+        $count = $side === 'source'
+            ? $this->gateway->countBySource($relationDefinitionId, $objectId)
+            : $this->gateway->countByTarget($relationDefinitionId, $objectId);
+        if (($count - 1) < $minimum) {
             throw new RuntimeException(sprintf(
                 'Relation %s minimum bound of %d would be violated by disconnect.',
                 $side,

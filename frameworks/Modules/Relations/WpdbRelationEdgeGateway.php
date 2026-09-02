@@ -223,6 +223,63 @@ final class WpdbRelationEdgeGateway
         return $row === null ? null : $this->hydrate($row);
     }
 
+    public function findTuple(string $relationDefinitionId, int $fromObjectId, int $toObjectId): ?RelationEdge
+    {
+        $this->assertUuid($relationDefinitionId, 'Relation definition id');
+        $this->assertObjectId($fromObjectId, 'Relation source object id');
+        $this->assertObjectId($toObjectId, 'Relation target object id');
+        $sql = $this->database->prepare(
+            "SELECT edge_id, relation_definition_id, from_object_id, to_object_id, created_at, updated_at
+             FROM `{$this->tables->edges}`
+             WHERE network_id = %d AND site_id = %d
+               AND relation_definition_id = %s
+               AND from_object_id = %d AND to_object_id = %d
+             ORDER BY created_at ASC, edge_id ASC
+             LIMIT 1",
+            $this->scope->networkId,
+            $this->scope->siteId,
+            $relationDefinitionId,
+            $fromObjectId,
+            $toObjectId,
+        );
+        $row = $this->database->getRow($sql);
+        return $row === null ? null : $this->hydrate($row);
+    }
+
+    public function countBySource(string $relationDefinitionId, int $fromObjectId): int
+    {
+        $this->assertUuid($relationDefinitionId, 'Relation definition id');
+        $this->assertObjectId($fromObjectId, 'Relation source object id');
+        $sql = $this->database->prepare(
+            "SELECT COUNT(*)
+             FROM `{$this->tables->edges}`
+             WHERE network_id = %d AND site_id = %d
+               AND relation_definition_id = %s AND from_object_id = %d",
+            $this->scope->networkId,
+            $this->scope->siteId,
+            $relationDefinitionId,
+            $fromObjectId,
+        );
+        return $this->countFromValue($this->database->getVar($sql));
+    }
+
+    public function countByTarget(string $relationDefinitionId, int $toObjectId): int
+    {
+        $this->assertUuid($relationDefinitionId, 'Relation definition id');
+        $this->assertObjectId($toObjectId, 'Relation target object id');
+        $sql = $this->database->prepare(
+            "SELECT COUNT(*)
+             FROM `{$this->tables->edges}`
+             WHERE network_id = %d AND site_id = %d
+               AND relation_definition_id = %s AND to_object_id = %d",
+            $this->scope->networkId,
+            $this->scope->siteId,
+            $relationDefinitionId,
+            $toObjectId,
+        );
+        return $this->countFromValue($this->database->getVar($sql));
+    }
+
     /** @return list<RelationEdge> */
     public function bySource(string $relationDefinitionId, int $fromObjectId): array
     {
@@ -296,6 +353,21 @@ final class WpdbRelationEdgeGateway
             throw new RuntimeException('Relation edge mutation revision cannot be negative.');
         }
         return $revision;
+    }
+
+    private function countFromValue(mixed $value): int
+    {
+        if (is_int($value)) {
+            $count = $value;
+        } elseif (is_string($value) && ctype_digit($value)) {
+            $count = (int) $value;
+        } else {
+            throw new RuntimeException('Relation edge count query returned malformed data.');
+        }
+        if ($count < 0) {
+            throw new RuntimeException('Relation edge count cannot be negative.');
+        }
+        return $count;
     }
 
     /** @param array<string,mixed> $row */

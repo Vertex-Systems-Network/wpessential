@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\Relations\RelationDefinitionNormalizer;
 use WPEssential\Modules\Relations\RelationDefinitionValidationService;
+use WPEssential\Modules\Relations\RelationEndpointSupport;
+use WPEssential\Modules\Relations\RelationPortabilityService;
 use WPEssential\Modules\Relations\RelationsModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\PolicyEngine;
@@ -47,8 +49,16 @@ final class RelationsModuleRegistrationTest extends TestCase
             $services->get('module.relations.definition-normalizer'),
         );
         self::assertInstanceOf(
+            RelationEndpointSupport::class,
+            $services->get('module.relations.endpoint-support'),
+        );
+        self::assertInstanceOf(
             RelationDefinitionValidationService::class,
             $services->get('module.relations.definition-validation'),
+        );
+        self::assertInstanceOf(
+            RelationPortabilityService::class,
+            $services->get('module.relations.portability'),
         );
 
         $expected = [
@@ -57,6 +67,9 @@ final class RelationsModuleRegistrationTest extends TestCase
             'wpessential/relations/validate-definition' => false,
             'wpessential/relations/save-definition' => true,
             'wpessential/relations/status-definition' => true,
+            'wpessential/relations/export-definitions' => false,
+            'wpessential/relations/import-definitions' => true,
+            'wpessential/relations/diagnostics' => false,
         ];
         self::assertCount(count($expected), $abilities->descriptors());
         foreach ($expected as $name => $mutates) {
@@ -68,7 +81,10 @@ final class RelationsModuleRegistrationTest extends TestCase
         }
 
         self::assertSame([
+            'relations.diagnostics',
+            'relations.export.definitions',
             'relations.get.definition',
+            'relations.import.definitions',
             'relations.list.definitions',
             'relations.save.definition',
             'relations.status.definition',
