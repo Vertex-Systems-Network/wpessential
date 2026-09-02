@@ -1,25 +1,28 @@
 # WPEssential — Project State & Adoption Baseline
 
 Status: **Active implementation / Phase 2 dependency-gated module development**  
-Last reviewed: **2026-09-02**  
-AUTO reconciliation/claim-start anchor: **`main @ 045b941b2ec17174837fa8997087a7753705fe1b`**  
-Current-main synchronization before this state was submitted is recorded by the supervisor PR/merge history; the claim anchor is not a permanent latest-main pointer.
+Last reviewed: **2026-09-03**  
+Current reconciliation anchor: **`main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`**  
+Current project state: **`ACTIVE_EXISTING_PROJECT`**  
+Execution mode: **`IMPLEMENTATION_GATED`**  
+Active lifecycle: **Phase 2 / Gate C — Surface 6 Query prerequisite reconciliation; runtime not started**
 
-Current project state is `ACTIVE_EXISTING_PROJECT`; execution remains **`IMPLEMENTATION_GATED`**. The active lifecycle is **Phase 2 / Gate B — Surface 4 Relations IN PROGRESS** after WP121 shared-foundation handoff and Surface 3 Fields Gate A closure.
+`GOV-OWNER-CONSENT-001` remains ACTIVE and authorizes milestone-gated source implementation across the accepted 56-surface architecture. Production deployment/release, destructive live-site/customer-data operations, chargeable or irreversible provider side effects, and separately privileged release operations remain outside that grant unless explicitly authorized.
 
-Current product truth remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with planning authority through **ADR-0213**. `GOV-OWNER-CONSENT-001` remains ACTIVE and authorizes milestone-gated source implementation across the accepted 56-surface architecture. Production deployment/release, destructive live-site/customer-data operations, chargeable or irreversible provider side effects, and separately privileged release operations remain outside that grant unless explicitly authorized.
+Repository/current-main machine truth and exact-head evidence override stale prose or coordination mirrors.
 
 ## Accepted prerequisite gates
 
-- WP113–WP116 closed the 5,808 exact planning definitions identified by WP112 / ADR-0207.
-- WP117 / ADR-0212 final Phase 0 closure audit: **PASS**; exact planning gap 0/0.
-- WP118 / ADR-0213 structural module/option/UI/system audit: **PASS** after remediation.
-- WP119 / ADR-0214 Implementation Baseline / Adoption Gate: **DONE / PASS**.
-- WP120 / ADR-0215 machine-enforced architecture guards: **DONE / PASS**.
-- WP121 shared Platform foundation: **DONE / PASS FOR MODULE HANDOFF**.
-- Phase 2 Gate A / Surface 3 Fields: **CLOSED / PASS for the certified native V1 scope**.
+- WP113–WP116 — 5,808 exact planning definitions closed.
+- WP117 / ADR-0212 — Phase 0 closure audit **PASS**.
+- WP118 / ADR-0213 — structural module/option/UI/system audit **PASS** after remediation.
+- WP119 / ADR-0214 — Implementation Baseline / Adoption Gate **DONE / PASS**.
+- WP120 / ADR-0215 — machine-enforced architecture guards **DONE / PASS**.
+- WP121 shared Platform foundation — **DONE / PASS FOR MODULE HANDOFF**.
+- Phase 2 Gate A / Surface 3 Fields — **PASS for the certified native V1 scope**.
+- Phase 2 Gate B / Surface 4 Relations — **PASS for the certified native V1 baseline** after merged milestone PR #122 and public Query-consumer contract PR #128.
 
-WP121 remains the accepted shared foundation; it is no longer the active implementation lifecycle. Historical WP121 evidence remains valid and is not reclassified by this state update.
+These PASS decisions are bounded engineering lifecycle claims. They are not `PRODUCT_PARITY_CERTIFIED`, stable-release, deployment, or provider-parity claims.
 
 ## Current Phase 2 dependency state
 
@@ -29,27 +32,43 @@ Canonical dependency order remains:
 
 Current runtime state:
 
-- **Gate A — Fields:** PASS for the explicitly certified native V1 scope; this is not full `PRODUCT_PARITY_CERTIFIED` completion.
-- **Gate B — Relations:** IN PROGRESS. Merged foundations include the Relations Atomic Option Contract, canonical Relation Definition lifecycle/cardinality/direction/endpoint validation, durable scoped edge persistence/recovery, and transactional connect/disconnect mutation with endpoint authorization and cardinality bounds.
-- **Gate C — Query:** runtime **BLOCKED by Gate B**. Planning/Bank reconciliation may proceed only within its planning-only ownership boundary.
+- **Gate A — Fields:** PASS for the explicitly certified native V1 scope.
+- **Gate B — Relations:** PASS for the explicitly certified native V1 baseline required by parent #66.
+- **Gate C — Query:** prerequisite reconciliation **ACTIVE**; Query runtime is still **BLOCKED until its runtime-start gate is explicitly resolved on current main**.
 - **Gate D — Admin Columns:** runtime **BLOCKED by Query runtime**.
 - **Gate E — Dynamic Listings:** runtime **BLOCKED by Query plus shared renderer/data-source dependencies**.
 - **Status Manager:** runtime **BLOCKED until Gates A–E are complete**.
 
-Relations Gate B remains open. The merged transactional edge mutation tranche deliberately does not claim non-unique tuple support, pivot metadata, ordering, cascade execution, Query/Data Source integration, Relations admin editing, import/export, bulk mutation, final reference/performance/scale certification, or Gate B closure.
+Query prerequisite reconciliation must confirm the accepted Relations public contract, Query Bank integration, required shared Data Source/Policy/cache seams, development consent, and a reviewable first runtime slice. The current Query Implementation Contract does not list `OPTION_CONTRACT_COMPLETE` as a runtime-start prerequisite, so that lifecycle state must not be invented as a blocker without new repository evidence.
+
+## Relations Gate B exit truth
+
+Parent #66 requires the following Gate B baseline. Current main satisfies each item for the certified native V1 scope:
+
+1. **Canonical relation definitions/lifecycle — PASS.** Canonical Surface 4 `relation` Definitions, revision/checksum behavior, immutable relation keys, publish-time validation and lifecycle operations are merged.
+2. **Cardinality + directionality — PASS.** One-to-one, one-to-many, many-to-one and many-to-many bounds plus direction/bidirectional traversal semantics are normalized and enforced on certified paths.
+3. **Object-type adapters — PASS for native V1.** Post/media/term/user/comment endpoints are certified; custom-table and registered-entity/provider endpoints remain fail-closed pending owner adapters.
+4. **Safe persistence and recovery — PASS.** Scoped durable edge/state storage, per-relation transaction serialization, revision CAS, rollback/uncertain-state handling, configurable tuple uniqueness and guarded policy transitions are merged.
+5. **Query/Data Source integration contract — PASS.** PR #128 publishes `RelationQueryConsumerInterface` and a bounded storage-opaque Relations read adapter. Query does not need private `WpdbRelationEdgeGateway`, table names, pivot layout or raw storage knowledge.
+6. **Authorization and multisite isolation — PASS for certified paths.** Edge mutation uses endpoint/resource authorization; storage/read paths are explicitly network/site scoped and fail closed on scope mismatch.
+7. **Admin editing UX — PASS for native V1.** Relation definition editing and individual connection management route through shared Ability/Policy/nonce boundaries.
+8. **Import/export + diagnostics — PASS for definition portability V1.** Create-safe deterministic definition portability and health/endpoint/persistence diagnostics are merged.
+9. **Exact-head CI and reference workflow evidence — PASS.** PR #122 exact head `fafa756aa0eedaf445e44309a68ce71fd01d4378` passed Architecture #878, PHP Quality #256, Platform Compatibility #540, Distributable #433 and Relations Edge Persistence #32. PR #128 exact head `de6ff78339a4611f15a2dd865e4aef0ed2385965` passed Architecture #879, PHP Quality #258, Platform Compatibility #541, Distributable #434 and Relations Edge Persistence #33, including the public Query-consumer reference integration on MySQL 8.4 and MariaDB 10.11.
+
+Gate B PASS intentionally does **not** certify every Relations Bank record or every market/provider capability. Unsupported provider/custom-table endpoints, arbitrary pivot metadata, ordering/cascade execution, cross-provider traversal and other richer semantics remain explicit owner-contract-dependent non-goals unless separately certified.
 
 ## Current product-planning / Bank truth
 
-Machine authority is `config/product/options-bank-progress.json` for this reconciliation:
+Machine authority is `config/product/options-bank-progress.json`:
 
 - canonical surfaces: **56**;
-- surfaces with Bank work started: **8**;
-- `BANK_REVIEWED` surfaces: **6**;
-- total Bank records: **1,571**;
-- reviewed surfaces: **Fields 618, Relations 144, Status 129, Custom Tables 165, Admin Columns 214, Dashboard Widgets 123**;
-- CPT remains `BANK_SURFACE_SEEDED / 107` in shared progress truth;
-- Taxonomy remains `BANK_SURFACE_SEEDED / 71`;
-- Query and Listings remain `UNSEEDED / 0` in shared Bank progress until their reconciliation work is accepted and shared truth is promoted by the integrator.
+- surfaces with Bank work started: **10**;
+- `BANK_REVIEWED` surfaces: **9**;
+- total Bank records: **1,890**;
+- reviewed surfaces: **Taxonomy 71, Fields 618, Relations 144, Status 129, Query 169, Custom Tables 165, Admin Columns 214, Dynamic Listings 150, Dashboard Widgets 123**;
+- CPT remains `BANK_SURFACE_SEEDED / 107`.
+
+Query is therefore **BANK_REVIEWED / 169** and its planning Bank integration prerequisite is satisfied. Listings is **BANK_REVIEWED / 150** but remains runtime dependency-blocked.
 
 Machine authority for the later Atomic Option lifecycle is `config/product/atomic-option-contract-progress.json`:
 
@@ -62,28 +81,27 @@ Machine authority for the later Atomic Option lifecycle is `config/product/atomi
 
 Bank certification, bounded runtime certification, Atomic Option lifecycle, full product parity, release readiness, and production deployment are separate claims and must not be collapsed into one status.
 
-## Multi-agent / integration state
+## AUTO multi-agent / integration state
 
-The automatic coordination protocol in `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` is active on current `main`.
+`AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` remain active.
 
-At the 2026-09-02 claim/reconciliation start:
+Current actionable queue after PR #129 contains only:
 
-- Supervisor shared-state lane: `agent/shared-state-reconciliation-v1`;
-- Relations Gate B worker lane: `agent/relations-gate-b-closure-v1`;
-- Taxonomy Bank reconciliation worker lane: `agent/taxonomy-bank-reconciliation-v1`.
+- priority 5 Supervisor-only `gate-b-exit-reconciliation-v1`, claimed on `agent/gate-b-exit-reconciliation-v1` from exact `main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`;
+- priority 10 Supervisor-only `query-gate-c-prerequisite-reconciliation-v1`, dependency-blocked until the Gate B exit reconciliation is promoted.
 
-All three claim branches were created from exact `main @ 045b941b2ec17174837fa8997087a7753705fe1b`. Shared/global writes remain single-writer integrator territory. Worker branches must surface Integration Requirements instead of racing shared progress/governance files, and stale candidates must synchronize to the then-current `main` before final certification/merge.
+Previously promoted deterministic branches remain historical audit evidence and must not be reused or force-moved. Shared/global writes remain single-writer Supervisor/Integrator territory.
 
-Historical open PRs from older planning/integration programs are not automatically merge-ready merely because they remain open. Current AUTO worker submissions must be reconciled against current `main`, current ownership/dependency rules, and exact-head evidence before integration.
+An accidental unclaimed helper ref, if observed outside the declared queue, carries no work authorization and must not be treated as a valid AUTO claim or merge candidate.
 
 ## Repository and Linear authority
 
-GitHub repository state, machine-readable configuration, exact-head CI/test evidence, and current checkpoint documentation remain canonical. Linear is a coordination mirror and may lag repository truth; Linear state must be synchronized from accepted repository evidence rather than used to override newer GitHub evidence.
+GitHub repository state, machine-readable configuration, exact-head CI/test evidence, and accepted current-state documentation are canonical. Linear is a coordination mirror and may lag repository truth; it must be synchronized from accepted repository evidence rather than used to override GitHub.
 
 ## Resume authority
 
-Current safe state: **continue Surface 4 Relations Gate B inside `GOV-OWNER-CONSENT-001` using bounded slices and exact-head gates, while allowing non-runtime planning/Bank reconciliation in explicitly claimed non-overlapping lanes**.
+Current safe state: **finish serialized Gate B exit truth promotion, then execute the declared Query Gate C prerequisite reconciliation.**
 
-The Relations owner must preserve Fields ownership of relationship selector/control schema and Surface 4 ownership of persistent relation/cardinality/direction/storage semantics. Query, Columns, Listings, and Status runtime work must remain blocked until their dependency gates open.
+Do not start Query runtime until that prerequisite reconciliation is accepted. When it is accepted, the first Query runtime tranche must be a new bounded queue slot/branch with explicit scope and exact-head verification.
 
-Development remains milestone-gated; production release/deployment and separately privileged destructive/live-provider actions remain **NOT GRANTED** by this checkpoint. Repository evidence overrides conversational memory.
+Development remains milestone-gated. Production release/deployment and separately privileged destructive/live-provider actions remain **NOT GRANTED** by this checkpoint. Repository evidence overrides conversational memory.
