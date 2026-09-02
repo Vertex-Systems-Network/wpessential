@@ -48,14 +48,17 @@ final readonly class RelationEdgeMutationService
     ): array {
         $payload = $this->mutationPayload($relationDefinitionId);
         $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
-        $uniqueEdge = $payload['unique_edge'] ?? null;
-        if (!is_bool($uniqueEdge)) {
-            throw new RuntimeException('Relation unique edge policy is malformed.');
-        }
-        $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
+        $this->assertStorageSupportsUniquenessPolicy($this->uniqueEdgePolicy($payload));
 
         $revision = $this->gateway->beginRelationMutation($relationDefinitionId);
         try {
+            // Definition saves that can strengthen edge invariants use this same relation lock.
+            // Re-read after acquiring it so a queued writer cannot continue with stale policy.
+            $payload = $this->mutationPayload($relationDefinitionId);
+            $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
+            $uniqueEdge = $this->uniqueEdgePolicy($payload);
+            $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
+
             if ($uniqueEdge) {
                 $existing = $this->gateway->findTuple($relationDefinitionId, $fromObjectId, $toObjectId);
                 if ($existing instanceof RelationEdge) {
@@ -111,14 +114,14 @@ final readonly class RelationEdgeMutationService
     ): array {
         $payload = $this->mutationPayload($relationDefinitionId);
         $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
-        $uniqueEdge = $payload['unique_edge'] ?? null;
-        if (!is_bool($uniqueEdge)) {
-            throw new RuntimeException('Relation unique edge policy is malformed.');
-        }
-        $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
+        $this->assertStorageSupportsUniquenessPolicy($this->uniqueEdgePolicy($payload));
 
         $revision = $this->gateway->beginRelationMutation($relationDefinitionId);
         try {
+            $payload = $this->mutationPayload($relationDefinitionId);
+            $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
+            $this->assertStorageSupportsUniquenessPolicy($this->uniqueEdgePolicy($payload));
+
             $edge = $this->gateway->findTuple($relationDefinitionId, $fromObjectId, $toObjectId);
             if (!$edge instanceof RelationEdge) {
                 $this->gateway->rollbackRelationMutation();
@@ -197,6 +200,16 @@ final readonly class RelationEdgeMutationService
          * } $payload
          */
         return $payload;
+    }
+
+    /** @param array<string,mixed> $payload */
+    private function uniqueEdgePolicy(array $payload): bool
+    {
+        $uniqueEdge = $payload['unique_edge'] ?? null;
+        if (!is_bool($uniqueEdge)) {
+            throw new RuntimeException('Relation unique edge policy is malformed.');
+        }
+        return $uniqueEdge;
     }
 
     /**
