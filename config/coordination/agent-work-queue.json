@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "2b6c1804e9e4d8fe022dcbcceb5965b6d1eeaf4d",
+  "queue_anchor_main_sha": "cccecc08fc1247fa45472ca0ae38ca912cfe1d14",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
@@ -55,31 +55,32 @@
   "slots": [
     {
       "priority": 20,
-      "slot_id": "query-typed-ast-validation-v1",
-      "title": "Start Surface 6 Query with typed AST and validation foundation V1",
+      "slot_id": "query-wordpress-posts-compiler-v1",
+      "title": "Add bounded native WordPress posts provider compiler V1",
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "MILESTONE_WORK",
       "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/query-typed-ast-validation-v1",
-      "source": "Query Implementation Contract V1 plus accepted Gate C prerequisite audit",
+      "claim_branch": "agent/query-wordpress-posts-compiler-v1",
+      "source": "Issue #66 Gate C baseline plus Query Implementation Contract V1 and promoted typed-AST/validation PR #137",
       "dependencies": [
-        "shared-data-source-contract-v1 promoted",
-        "shared-cache-contract-v1 promoted",
-        "Relations Gate B public Query-consumer contract accepted",
-        "Query BANK_REVIEWED / 169"
+        "Query typed AST and structural validation V1 promoted",
+        "shared Data Source contract/registry promoted",
+        "shared Cache contract/service promoted",
+        "Relations public Query-consumer contract accepted"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "Query-owned typed AST/value objects and structural validator",
-        "bounded validation against the shared Data Source contract and public Relations reference types",
+        "Query-owned provider compile contract/value objects and a bounded native wordpress.posts compiler",
+        "finite mapping from validated QueryDefinition semantics to public WP_Query argument semantics",
+        "supported field projection metadata plus sorting/filtering/search/pagination compilation with fail-closed unsupported nodes/operators",
         "Query-local unit/static/architecture tests and surface-local documentation",
-        "no provider SQL compilation/execution",
-        "no REST/admin execution path",
-        "no Query-private Data Source registry or cache engine"
+        "no WP_Query execution or database reads/writes in this slice",
+        "no wpdb/raw SQL/query filters/PHP callbacks/unchecked table or column identifiers",
+        "no REST/admin execution path, no Query-private Data Source registry/cache engine and no relation traversal execution"
       ],
-      "completion_condition": "A reviewable Query V1 typed AST/validator rejects unknown semantic nodes, unsafe SQL/PHP/callback/identifier payloads, malformed types and configured structural-budget violations while resolving source references only through the canonical shared Data Source contract. No query execution is claimed in this slice.",
-      "notes": "This opens Query source development only after both shared foundations are certified. Provider execution remains a later bounded tranche."
+      "completion_condition": "A reviewable Query V1 native posts compiler converts only supported, already-validated wordpress.posts Query definitions into normalized bounded WP_Query argument plans, rejects unsupported or unsafe semantics without approximation, and performs no query execution. Exact-head applicable CI must pass before promotion.",
+      "notes": "This is the first provider slice after the typed-AST foundation. Policy-authorized execution, relation execution, caching behavior, admin UX and public/REST exposure remain separate later Gate C tranches."
     }
   ]
 }
