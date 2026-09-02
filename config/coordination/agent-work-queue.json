@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "snapshot_date": "2026-09-02",
-  "queue_anchor_main_sha": "352520febdf66d742de0a29a1d0b7f4eaa15cf0c",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base.",
+  "snapshot_date": "2026-09-03",
+  "queue_anchor_main_sha": "da2b768b49c49f411ce384c04575b208f664c9a5",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -55,128 +55,52 @@
   "slots": [
     {
       "priority": 5,
-      "slot_id": "shared-state-reconciliation-v1",
-      "title": "Reconcile stale shared checkpoint and project-state truth",
+      "slot_id": "gate-b-exit-reconciliation-v1",
+      "title": "Reconcile Surface 4 Relations Gate B exit truth onto current main",
       "role": "SUPERVISOR_ONLY",
       "status": "OPEN",
       "work_mode": "INTEGRATION_WORK",
       "parallel_class": "SERIALIZE",
-      "claim_branch": "agent/shared-state-reconciliation-v1",
-      "source": "Repository audit merged by PR #117",
-      "dependencies": [],
+      "claim_branch": "agent/gate-b-exit-reconciliation-v1",
+      "source": "Issue #66 Gate B baseline plus merged PR #122 and public Query-consumer contract PR #128",
+      "dependencies": [
+        "Fields Gate A PASS",
+        "Relations public Query-consumer contract merged and exact-head certified"
+      ],
       "runtime_allowed": false,
       "allowed_scope": [
         "CHECKPOINT.md",
         "docs/PROJECT-STATE-AND-ADOPTION.md",
-        "directly required shared-state documentation only"
+        "directly required shared lifecycle/coordination documentation only",
+        "GitHub/Linear coordination mirrors derived from repository truth"
       ],
-      "completion_condition": "Shared state accurately reflects current main, merged Relations runtime slices, current Bank truth and remaining dependency gates without rewriting historical evidence.",
-      "notes": "Do not combine unrelated runtime implementation with this serialized shared-state write."
+      "completion_condition": "Current shared state explicitly audits every Issue #66 Gate B baseline criterion, records PASS only for the certified native V1 scope, preserves unsupported provider/pivot/cascade semantics as explicit non-goals, advances the dependency gate to Query only when justified, and synchronizes current Bank truth without rewriting historical evidence.",
+      "notes": "Do not start Query runtime in this slot. Gate B PASS is a bounded native V1 lifecycle claim, not PRODUCT_PARITY_CERTIFIED or production release approval."
     },
     {
       "priority": 10,
-      "slot_id": "relations-gate-b-closure-v1",
-      "title": "Continue Surface 4 Relations Gate B from latest certified main",
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "MILESTONE_WORK",
-      "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/relations-gate-b-closure-v1",
-      "source": "Issue #66 Gate B and current merged Relations slices",
-      "dependencies": [
-        "Fields Gate A PASS"
-      ],
-      "runtime_allowed": true,
-      "allowed_scope": [
-        "Relations-owned runtime, tests and surface-local documentation",
-        "shared changes only as Integration Requirements unless explicitly assigned to the Supervisor/Integrator"
-      ],
-      "completion_condition": "Advance the highest-priority remaining Gate B closure item from current main with exact-head evidence; do not claim full Gate B closure unless all Issue #66 criteria are actually satisfied.",
-      "notes": "Claim branch was promoted by PR #122 at main 352520febdf66d742de0a29a1d0b7f4eaa15cf0c. Gate B remains open for the public Query-consumer contract and reference evidence; the occupied deterministic branch must not be reused or force-moved."
-    },
-    {
-      "priority": 11,
-      "slot_id": "relations-query-consumer-contract-v1",
-      "title": "Publish Surface 4 public Query-consumer contract and reference evidence",
+      "slot_id": "query-gate-c-prerequisite-reconciliation-v1",
+      "title": "Reconcile Surface 6 Query Gate C runtime prerequisites",
       "role": "SUPERVISOR_ONLY",
       "status": "OPEN",
-      "work_mode": "MILESTONE_WORK",
+      "work_mode": "INTEGRATION_WORK",
       "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/relations-query-consumer-contract-v1",
-      "source": "Issue #66 Gate B baseline plus Query Implementation Contract V1 section 8/27 after PR #122",
+      "claim_branch": "agent/query-gate-c-prerequisite-reconciliation-v1",
+      "source": "Query Implementation Contract V1 runtime start gate after Relations Gate B exit",
       "dependencies": [
-        "Fields Gate A PASS",
-        "Relations milestone PR #122 merged"
+        "Relations Gate B PASS for certified native V1 scope",
+        "Query Options Bank BANK_REVIEWED / 169"
       ],
-      "runtime_allowed": true,
-      "allowed_scope": [
-        "public/shared Relations Query-consumer contract owned by the Supervisor/Integrator",
-        "Relations-owned read adapter/runtime, registration, tests and surface-local documentation",
-        "reference workflow evidence needed to certify the contract",
-        "no Query runtime implementation"
-      ],
-      "completion_condition": "Query can consume Relations through a stable public contract without depending on WpdbRelationEdgeGateway, physical table names, pivot layout or other private Surface 4 implementation details; bounded traversal/capability behavior, authorization/scope semantics, failure modes and reference evidence are exact-head certified.",
-      "notes": "This is the next Gate B blocker after PR #122. Keep Query runtime blocked until this public contract is accepted and any remaining Gate B exit evidence is explicitly reconciled."
-    },
-    {
-      "priority": 20,
-      "slot_id": "taxonomy-bank-reconciliation-v1",
-      "title": "Recover and reconcile Taxonomy Options Bank completion candidate onto current main",
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "INTEGRATION_WORK",
-      "parallel_class": "COORDINATED_PARALLEL",
-      "claim_branch": "agent/taxonomy-bank-reconciliation-v1",
-      "source": "stale branch planning/options-bank-taxonomy-completion-v1",
-      "dependencies": [],
       "runtime_allowed": false,
       "planning_only": true,
       "allowed_scope": [
-        "Taxonomy-local Bank/audit/review artifacts and tests",
-        "Integration Requirements for shared progress/registration changes"
+        "Query-owned planning/contracts/tests needed to reconcile the runtime start gate",
+        "read-only audit of shared Data Source, Policy and cache seams",
+        "shared changes only as serialized Supervisor/Integrator writes",
+        "no Query execution/runtime implementation"
       ],
-      "completion_condition": "Current-main-synchronized Taxonomy candidate has a bounded PR/MR, correct lifecycle truth and applicable exact-head CI. Do not direct-merge the stale source branch.",
-      "notes": "The stale source branch was audited as diverged and must be recovered non-destructively."
-    },
-    {
-      "priority": 30,
-      "slot_id": "query-bank-reconciliation-v1",
-      "title": "Recover and reconcile Query planning/Options Bank candidate onto current main",
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "INTEGRATION_WORK",
-      "parallel_class": "COORDINATED_PARALLEL",
-      "claim_branch": "agent/query-bank-reconciliation-v1",
-      "source": "stale branch planning/options-bank-query-v1",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "planning_only": true,
-      "allowed_scope": [
-        "Query-local Bank/audit/review/planning artifacts and tests",
-        "Integration Requirements for shared progress/registration changes"
-      ],
-      "completion_condition": "Current-main-synchronized Query planning candidate is reviewed and exact-head certified without starting Query runtime.",
-      "notes": "Gate C runtime is dependency-blocked by Relations Gate B. Planning/reconciliation may proceed; runtime implementation may not."
-    },
-    {
-      "priority": 40,
-      "slot_id": "listings-bank-reconciliation-v1",
-      "title": "Recover and reconcile Dynamic Listings planning/Options Bank candidate onto current main",
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "INTEGRATION_WORK",
-      "parallel_class": "COORDINATED_PARALLEL",
-      "claim_branch": "agent/listings-bank-reconciliation-v1",
-      "source": "stale branch planning/options-bank-listings-v1",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "planning_only": true,
-      "allowed_scope": [
-        "Listings-local Bank/audit/review/research/UX/planning artifacts",
-        "Integration Requirements for shared progress/registration changes"
-      ],
-      "completion_condition": "Current-main-synchronized Listings planning candidate is reviewed and exact-head certified without starting Listings runtime.",
-      "notes": "Runtime remains blocked by Query and shared renderer/data-source contracts."
+      "completion_condition": "Query runtime start gate is explicitly resolved from current main: Relations public contract accepted, Query Bank integrated, required shared Data Source/Policy/cache seams confirmed or bounded blockers recorded, consent confirmed, and the first reviewable Gate C runtime slice can be declared without inventing product-lifecycle prerequisites.",
+      "notes": "Do not treat Atomic Option OPTION_CONTRACT_COMPLETE as a hard Query runtime prerequisite unless repository evidence explicitly requires it. Query runtime remains blocked until this prerequisite reconciliation is accepted."
     }
   ]
 }
