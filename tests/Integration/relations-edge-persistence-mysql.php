@@ -136,8 +136,28 @@ relationEdgeExpect($gateway->revision($relationId) === 1, 'committed revision mu
 relationEdgeExpect($gateway->findById($edgeId)?->toObjectId === 41, 'edge id lookup must round-trip persisted row');
 relationEdgeExpect(count($gateway->bySource($relationId, 31)) === 1, 'source lookup must return persisted edge');
 relationEdgeExpect(count($gateway->byTarget($relationId, 41)) === 1, 'target lookup must return persisted edge');
-relationEdgeExpect((new WpdbRelationEdgeGateway($database, RelationEdgeScope::site(7, 702)))->findById($edgeId) === null, 'edge rows must be site isolated');
-relationEdgeExpect((new WpdbRelationEdgeGateway($database, RelationEdgeScope::network(7)))->findById($edgeId) === null, 'network scope must not see site edges');
+
+$otherSite = new WpdbRelationEdgeGateway($database, RelationEdgeScope::site(7, 702), static fn (): string => $now);
+$network = new WpdbRelationEdgeGateway($database, RelationEdgeScope::network(7), static fn (): string => $now);
+relationEdgeExpect($otherSite->findById($edgeId) === null, 'edge rows must be site isolated');
+relationEdgeExpect($network->findById($edgeId) === null, 'network scope must not see site edges');
+relationEdgeExpect($otherSite->revision($relationId) === 0, 'site mutation revisions must be isolated');
+relationEdgeExpect($network->revision($relationId) === 0, 'network mutation revisions must be isolated from site revisions');
+
+relationEdgeExpect($otherSite->beginRelationMutation($relationId) === 0, 'other site must start an independent revision');
+$otherSite->insertEdge(new RelationEdge($edgeId, $relationId, 51, 61, $now, $now));
+relationEdgeExpect($otherSite->completeRelationMutation($relationId, 0) === 1, 'other site revision must advance independently');
+relationEdgeExpect($otherSite->findById($edgeId)?->toObjectId === 61, 'same edge id must resolve inside the second site scope');
+relationEdgeExpect($gateway->findById($edgeId)?->toObjectId === 41, 'second site write must not overwrite first site edge');
+
+relationEdgeExpect($network->beginRelationMutation($relationId) === 0, 'network scope must start an independent revision');
+$network->insertEdge(new RelationEdge($edgeId, $relationId, 71, 81, $now, $now));
+relationEdgeExpect($network->completeRelationMutation($relationId, 0) === 1, 'network revision must advance independently');
+relationEdgeExpect($network->findById($edgeId)?->toObjectId === 81, 'same edge id must resolve inside network scope');
+relationEdgeExpect($otherSite->findById($edgeId)?->toObjectId === 61, 'network write must not overwrite site-scoped edge');
+relationEdgeExpect($gateway->revision($relationId) === 1, 'site 701 revision must remain independent after other scope writes');
+relationEdgeExpect($otherSite->revision($relationId) === 1, 'site 702 revision must remain independent after network write');
+relationEdgeExpect($network->revision($relationId) === 1, 'network revision must remain independently readable');
 
 relationEdgeExpect($gateway->beginRelationMutation($relationId) === 1, 'duplicate tuple mutation must lock current revision');
 $gateway->insertEdge(new RelationEdge($duplicateId, $relationId, 31, 41, $now, $now));
@@ -158,6 +178,8 @@ relationEdgeExpect($gateway->deleteEdge($relationId, $edgeId), 'edge-id delete m
 relationEdgeExpect($gateway->completeRelationMutation($relationId, 2) === 3, 'delete commit must advance revision to three');
 relationEdgeExpect($gateway->findById($edgeId) === null, 'selected edge must no longer resolve');
 relationEdgeExpect($gateway->findById($duplicateId)?->toObjectId === 41, 'sibling duplicate tuple edge must remain intact');
+relationEdgeExpect($otherSite->findById($edgeId)?->toObjectId === 61, 'site 701 delete must not remove same edge id from site 702');
+relationEdgeExpect($network->findById($edgeId)?->toObjectId === 81, 'site 701 delete must not remove same edge id from network scope');
 
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->state}`");
 $pdo->exec("DROP TABLE IF EXISTS `{$tables->edges}`");
