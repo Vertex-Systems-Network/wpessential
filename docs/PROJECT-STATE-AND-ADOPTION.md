@@ -2,7 +2,8 @@
 
 Status: **Active implementation / Phase 2 dependency-gated module development**  
 Last reviewed: **2026-09-02**  
-Current reconciliation anchor: **`main @ 045b941b2ec17174837fa8997087a7753705fe1b`**
+AUTO reconciliation/claim-start anchor: **`main @ 045b941b2ec17174837fa8997087a7753705fe1b`**  
+Current-main synchronization before this state was submitted is recorded by the supervisor PR/merge history; the claim anchor is not a permanent latest-main pointer.
 
 Current project state is `ACTIVE_EXISTING_PROJECT`; execution remains **`IMPLEMENTATION_GATED`**. The active lifecycle is **Phase 2 / Gate B — Surface 4 Relations IN PROGRESS** after WP121 shared-foundation handoff and Surface 3 Fields Gate A closure.
 
@@ -39,7 +40,7 @@ Relations Gate B remains open. The merged transactional edge mutation tranche de
 
 ## Current product-planning / Bank truth
 
-Machine authority is `config/product/options-bank-progress.json` at this reconciliation anchor:
+Machine authority is `config/product/options-bank-progress.json` for this reconciliation:
 
 - canonical surfaces: **56**;
 - surfaces with Bank work started: **8**;
@@ -65,13 +66,13 @@ Bank certification, bounded runtime certification, Atomic Option lifecycle, full
 
 The automatic coordination protocol in `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` is active on current `main`.
 
-At the 2026-09-02 reconciliation anchor:
+At the 2026-09-02 claim/reconciliation start:
 
 - Supervisor shared-state lane: `agent/shared-state-reconciliation-v1`;
 - Relations Gate B worker lane: `agent/relations-gate-b-closure-v1`;
 - Taxonomy Bank reconciliation worker lane: `agent/taxonomy-bank-reconciliation-v1`.
 
-All three claim branches were created from exact current `main @ 045b941b2ec17174837fa8997087a7753705fe1b`. Shared/global writes remain single-writer integrator territory. Worker branches must surface Integration Requirements instead of racing shared progress/governance files, and stale candidates must synchronize to the then-current `main` before final certification/merge.
+All three claim branches were created from exact `main @ 045b941b2ec17174837fa8997087a7753705fe1b`. Shared/global writes remain single-writer integrator territory. Worker branches must surface Integration Requirements instead of racing shared progress/governance files, and stale candidates must synchronize to the then-current `main` before final certification/merge.
 
 Historical open PRs from older planning/integration programs are not automatically merge-ready merely because they remain open. Current AUTO worker submissions must be reconciled against current `main`, current ownership/dependency rules, and exact-head evidence before integration.
 
