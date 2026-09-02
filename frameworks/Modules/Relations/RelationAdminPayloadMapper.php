@@ -12,28 +12,37 @@ use InvalidArgumentException;
 
 final readonly class RelationAdminPayloadMapper
 {
-    /** @param array<string,string> $input @return array<string,mixed> */
-    public function map(array $input): array
+    /**
+     * @param array<string,string> $input
+     * @param array<string,mixed> $existingPayload
+     * @return array<string,mixed>
+     */
+    public function map(array $input, array $existingPayload = []): array
     {
-        return [
-            'relation_key' => $this->required($input, 'relation_key'),
-            'title' => $this->required($input, 'title'),
-            'description' => $input['description'] ?? '',
-            'cardinality' => $this->required($input, 'cardinality'),
-            'direction' => [
-                'reciprocal' => ($input['reciprocal'] ?? '0') === '1',
-                'bidirectional_traversal' => ($input['bidirectional_traversal'] ?? '0') === '1',
-            ],
-            'from' => $this->endpoint($input, 'from'),
-            'to' => $this->endpoint($input, 'to'),
-            'bounds' => [
-                'from_min' => $this->nonNegative($input, 'from_min'),
-                'from_max' => $this->nullablePositive($input, 'from_max'),
-                'to_min' => $this->nonNegative($input, 'to_min'),
-                'to_max' => $this->nullablePositive($input, 'to_max'),
-            ],
-            'unique_edge' => ($input['unique_edge'] ?? '0') === '1',
+        $payload = $existingPayload;
+        $existingDirection = is_array($existingPayload['direction'] ?? null)
+            ? $existingPayload['direction']
+            : [];
+        $direction = $existingDirection;
+        $direction['reciprocal'] = ($input['reciprocal'] ?? '0') === '1';
+        $direction['bidirectional_traversal'] = ($input['bidirectional_traversal'] ?? '0') === '1';
+
+        $payload['relation_key'] = $this->required($input, 'relation_key');
+        $payload['title'] = $this->required($input, 'title');
+        $payload['description'] = $input['description'] ?? '';
+        $payload['cardinality'] = $this->required($input, 'cardinality');
+        $payload['direction'] = $direction;
+        $payload['from'] = $this->endpoint($input, 'from');
+        $payload['to'] = $this->endpoint($input, 'to');
+        $payload['bounds'] = [
+            'from_min' => $this->nonNegative($input, 'from_min'),
+            'from_max' => $this->nullablePositive($input, 'from_max'),
+            'to_min' => $this->nonNegative($input, 'to_min'),
+            'to_max' => $this->nullablePositive($input, 'to_max'),
         ];
+        $payload['unique_edge'] = ($input['unique_edge'] ?? '0') === '1';
+
+        return $payload;
     }
 
     /** @param array<string,string> $input @return array{object_type:string,object_subtype:?string,label:string} */
@@ -45,7 +54,10 @@ final readonly class RelationAdminPayloadMapper
 
         return [
             'object_type' => $type,
-            'object_subtype' => in_array($type, ['post', 'term'], true) && $subtype !== '' ? $subtype : null,
+            'object_subtype' => in_array($type, ['post', 'term', 'custom_table', 'registered_entity'], true)
+                && $subtype !== ''
+                    ? $subtype
+                    : null,
             'label' => $label,
         ];
     }
