@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 7, "key": "tables"},
+  "snapshot": {
+    "date": "2026-09-02",
+    "notes": "WooCommerce HPOS, Meta Box MB Custom Table, JetEngine Custom Content Types and Pods Advanced Content Types/table storage are mapped across seven canonical Surface 7 market capability families. WP Data Access is retained as specialist negative evidence for generic DBA primitives that WPE explicitly rejects. Provider evidence closes with zero unresolved research dispositions."
+  },
+  "status": "MARKET_AUDITED",
+  "required_families": ["definition_storage","columns_indexes","crud_data_source","migration_recovery","admin_api","portability_integrations","security_boundaries"],
+  "primary_providers": [
+    {
+      "id":"woocommerce_hpos","name":"WooCommerce High-Performance Order Storage",
+      "evidence":["https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/","https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/guide-large-store/"],
+      "family_map":{
+        "definition_storage":["tables.definition.storage_mode","tables.definition.desired_schema_version","tables.physical.identifier","tables.compat.woocommerce_hpos"],
+        "columns_indexes":["tables.primary_key.enabled","tables.index.columns","tables.unique.columns"],
+        "crud_data_source":["tables.data_source.get","tables.data_source.list","tables.data_source.create","tables.data_source.update","tables.data_source.delete","tables.data_source.provider_adapter"],
+        "migration_recovery":["tables.migration.plan","tables.migration.backfill.chunk_size","tables.migration.backfill.resume_cursor","tables.migration.post_verify","tables.migration.rollback_mode","tables.migration.revalidate_before_run"],
+        "portability_integrations":["tables.integration.backup","tables.audit.row_mutations"]
+      },
+      "non_applicable_families":["admin_api","security_boundaries"]
+    },
+    {
+      "id":"meta_box","name":"Meta Box MB Custom Table",
+      "evidence":["https://docs.metabox.io/extensions/mb-custom-table/"],
+      "family_map":{
+        "definition_storage":["tables.definition.logical_key","tables.definition.storage_mode","tables.physical.identifier","tables.compat.meta_box"],
+        "columns_indexes":["tables.column.type_family","tables.column.nullable","tables.column.default_kind","tables.index.columns","tables.index.unique","tables.primary_key.enabled"],
+        "crud_data_source":["tables.data_source.get","tables.data_source.create","tables.data_source.update","tables.data_source.delete","tables.data_source.provider_adapter"],
+        "admin_api":["tables.admin.browser.enabled","tables.integration.admin_columns"],
+        "portability_integrations":["tables.column.field_binding","tables.integration.fields","tables.integration.query"]
+      },
+      "non_applicable_families":["migration_recovery","security_boundaries"]
+    },
+    {
+      "id":"jetengine_cct","name":"JetEngine Custom Content Types",
+      "evidence":["https://crocoblock.com/knowledge-base/features/custom-content-type/","https://crocoblock.com/knowledge-base/jetengine/rest-api-custom-content-type-items/","https://crocoblock.com/knowledge-base/features/import-export-custom-content-type/"],
+      "family_map":{
+        "definition_storage":["tables.definition.logical_key","tables.definition.label","tables.definition.storage_mode","tables.compat.jetengine_cct"],
+        "columns_indexes":["tables.column.logical_key","tables.column.label","tables.column.type_family"],
+        "crud_data_source":["tables.data_source.list","tables.data_source.create","tables.data_source.update","tables.data_source.delete"],
+        "admin_api":["tables.admin.browser.enabled","tables.api.rest.read","tables.api.rest.write","tables.permission.row.read","tables.permission.row.update"],
+        "portability_integrations":["tables.portability.definition_export","tables.portability.definition_import","tables.portability.data_export","tables.portability.data_import","tables.integration.import_export","tables.integration.relations"]
+      },
+      "non_applicable_families":["migration_recovery","security_boundaries"]
+    },
+    {
+      "id":"pods","name":"Pods Advanced Content Types / Table Storage",
+      "evidence":["https://docs.pods.io/learn/what-are-advanced-content-types/","https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/","https://docs.pods.io/creating-editing-pods/compare-content-types/"],
+      "family_map":{
+        "definition_storage":["tables.definition.storage_mode","tables.definition.label","tables.compat.pods_act"],
+        "crud_data_source":["tables.data_source.get","tables.data_source.list","tables.data_source.create","tables.data_source.update","tables.data_source.delete"],
+        "admin_api":["tables.admin.browser.enabled","tables.admin.browser.create_row","tables.admin.browser.edit_row"],
+        "portability_integrations":["tables.integration.fields","tables.integration.query"]
+      },
+      "non_applicable_families":["columns_indexes","migration_recovery","security_boundaries"]
+    }
+  ],
+  "specialist_providers": [
+    {"id":"wp_data_access","name":"WP Data Access / Data Explorer","evidence":["https://docs.explorer.wpdataaccess.com/"],"bank_record_ids":["tables.security.generic_sql_console","tables.security.arbitrary_ddl","tables.security.drop_truncate_console","tables.portability.unbounded_export"]}
+  ],
+  "extra_dispositions": [
+    {"id":"wp_data_access.generic_dba","provider":"wp_data_access","disposition":"REJECTED_UNSAFE","evidence_url":"https://docs.explorer.wpdataaccess.com/","notes":"Generic SQL/DDL/drop/truncate primitives are market evidence, not WPE parity requirements. Surface 7 normalizes typed definitions and guarded operations instead."},
+    {"id":"jetengine.relation_semantics","provider":"jetengine_cct","disposition":"OUT_OF_SURFACE","owner_surface":"relations","evidence_url":"https://crocoblock.com/knowledge-base/features/relations-overview/","notes":"Relations may reference CCT/table-backed entities, but cardinality and edge semantics remain Surface 4."},
+    {"id":"meta_box.field_semantics","provider":"meta_box","disposition":"OUT_OF_SURFACE","owner_surface":"fields","evidence_url":"https://docs.metabox.io/extensions/mb-custom-table/","notes":"Field schema/validation remains Surface 3; Surface 7 owns physical table definition and table-backed storage semantics."},
+    {"id":"meta_box.direct_query_example","provider":"meta_box","disposition":"IMPLEMENTATION_PATTERN","evidence_url":"https://docs.metabox.io/extensions/mb-custom-table/","notes":"Provider documentation demonstrates direct database querying, but WPE normalizes product use through bounded Data Source/Query contracts rather than a raw SQL console."},
+    {"id":"woocommerce.authority_sync","provider":"woocommerce_hpos","disposition":"IMPLEMENTATION_PATTERN","evidence_url":"https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/","notes":"Authoritative/backup storage roles, compatibility mode and synchronization are useful migration/recovery patterns; WPE must not bypass WooCommerce CRUD/data-store authority."},
+    {"id":"pods.storage_tradeoffs","provider":"pods","disposition":"IMPLEMENTATION_PATTERN","evidence_url":"https://docs.pods.io/creating-editing-pods/meta-vs-table-storage/","notes":"Separate table storage carries compatibility and ecosystem tradeoffs; WPE surfaces those constraints rather than presenting custom tables as an unconditional default."}
+  ],
+  "coverage": {"primary_providers":4,"specialist_providers":1,"family_mappings":23,"non_applicable_family_cells":8,"bank_record_references":90,"extra_dispositions":6,"unresolved":0}
+}
