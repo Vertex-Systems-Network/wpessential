@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "4b5d56ad71c33d1b9de06f8122967f713e7ddccb",
+  "queue_anchor_main_sha": "183f27aab6758935d5653767e282cc791eb9888c",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
@@ -53,32 +53,6 @@
     }
   },
   "slots": [
-    {
-      "priority": 5,
-      "slot_id": "shared-data-source-contract-v1",
-      "title": "Build the canonical shared Data Source contract and registry foundation",
-      "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
-      "work_mode": "MILESTONE_WORK",
-      "parallel_class": "SHARED_CONTRACT",
-      "claim_branch": "agent/shared-data-source-contract-v1",
-      "source": "Accepted Query Gate C prerequisite audit on main; canonical cross-module ownership requires Surface 6 Query + Data Source Registry",
-      "dependencies": [
-        "Relations Gate B PASS for certified native V1 baseline",
-        "Query prerequisite audit accepted",
-        "Query BANK_REVIEWED / 169"
-      ],
-      "runtime_allowed": true,
-      "allowed_scope": [
-        "shared Data Source contracts and provider-neutral registry/value objects",
-        "bounded Platform service registration required to expose the canonical Data Source seam",
-        "targeted unit/architecture tests and directly required documentation",
-        "no Query module/runtime execution",
-        "no provider SQL, arbitrary identifiers, callbacks, credentials, or peer-private storage access"
-      ],
-      "completion_condition": "A provider-neutral canonical Data Source descriptor/registry seam exists on current main, rejects duplicate/malformed/unsafe capabilities, supports explicit degraded/optional-provider behavior and scope/policy/cache capability metadata, is discoverable through the shared service registry, and passes applicable exact-head quality/architecture evidence without starting Query runtime.",
-      "notes": "This is a shared blocking foundation. Keep it small: contract, registry, registration, tests. Do not add WordPress Query execution/provider compilation in this slot."
-    },
     {
       "priority": 10,
       "slot_id": "shared-cache-contract-v1",
