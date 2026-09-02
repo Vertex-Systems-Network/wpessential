@@ -121,6 +121,22 @@ Before a contribution can be accepted, applicable gates must remain green:
 
 Do not convert a failed executable gate into a documentation-only PASS.
 
+## WordPress.org / Plugin Check compliance gate
+
+`docs/QUALITY/WORDPRESS-ORG-PLUGIN-CHECK-COMPLIANCE.md` is mandatory for WordPress.org-facing code, metadata, packaging, release, updater/uninstall, filesystem, external-service/telemetry, database/settings, enqueue, admin-link/notice, minified/build-artifact, licensing/trademark, or AI-provider changes.
+
+Core rules:
+
+- use the current official WordPress Plugin Check as an executable release/package gate;
+- at stable-release boundaries execute applicable static **and runtime** Plugin Check checks against the exact packaged candidate;
+- do not treat grep/manual review/PHPCS alone as a Plugin Check PASS;
+- do not disable or weaken a valid Plugin Check finding merely to obtain green status;
+- follow the current WordPress.org Detailed Plugin Guidelines in addition to automated Plugin Check output;
+- preserve GPL-compatible licensing, human-readable/build-source transparency, consent-based tracking/privacy, no remote executable-code delivery, safe updater/uninstall/filesystem/database/settings behavior, WordPress default-library expectations, admin UX/link rules, trademark rules, and synchronized release/version metadata;
+- when official rules change, current official/primary sources override stale repository prose and the policy must be refreshed.
+
+If the required Plugin Check environment is unavailable, record `PLUGIN CHECK NOT VERIFIED`; do not claim WordPress.org readiness.
+
 ## WordPress.org release checklist
 
 Before a stable WordPress.org submission or update:
@@ -130,13 +146,19 @@ Before a stable WordPress.org submission or update:
 3. Reconfirm `Requires at least`, `Requires PHP`, and `Tested up to` against the actual release evidence.
 4. Populate `Contributors:` in `readme.txt` with the real WordPress.org usernames of approved contributors. Do not invent usernames.
 5. Keep `Plugin URI` and `Author URI` aligned to `https://wpessential.org` unless an approved release decision changes them.
-6. Keep the repository license, plugin header, Composer metadata, and `readme.txt` license declarations consistent.
+6. Keep the repository license, plugin header, Composer metadata, `readme.txt`, bundled third-party code/assets, and build-source disclosures license-compatible and consistent.
 7. Run WordPress.org readme/header validation and all WPEssential release gates.
-8. Build the production package from an explicit allowlist. Do not assume tests, CI files, internal planning documents, fixtures, or development-only tooling belong in the distributed ZIP.
-9. Verify every shipped PHP source file has the required `ABSPATH` direct-access guard.
-10. Verify the packaged Composer autoloader/runtime dependencies are present and no development-only dependency is shipped accidentally.
-11. Verify migrations on supported clean-install and upgrade fixtures before any production release.
-12. Do not publish, tag, merge, or deploy a stable release unless the applicable release authorization has been granted.
+8. Run the current official WordPress Plugin Check applicable static checks against the exact release candidate/package and resolve or explicitly disposition every finding.
+9. Run applicable Plugin Check runtime checks against the exact release candidate/package; a static-only CLI run is not full stable-release Plugin Check evidence.
+10. Review the current WordPress.org Detailed Plugin Guidelines for the affected release scope, including licensing, source transparency, trialware/SaaS, consent/tracking, remote executable code, external links/admin UX, default libraries, versioning, completeness, and trademark requirements.
+11. Build the production package from an explicit allowlist. Do not assume tests, CI files, internal planning documents, fixtures, or development-only tooling belong in the distributed ZIP.
+12. Verify every shipped PHP source file has the required `ABSPATH` direct-access guard.
+13. Verify the packaged Composer autoloader/runtime dependencies are present and no development-only dependency is shipped accidentally.
+14. For minified/compiled distributed assets, verify corresponding public human-readable source/build instructions are documented as required by WordPress.org.
+15. Verify external-service/telemetry behavior has the required disclosure and consent model, and that no remote executable-code/update bypass is introduced.
+16. Verify updater, uninstall/data retention, filesystem writes/offloading, settings sanitization, database access, enqueue scope/performance, prefixing, admin external links, trademarks, and AI-provider behavior against applicable Plugin Check/Directory rules.
+17. Verify migrations on supported clean-install and upgrade fixtures before any production release.
+18. Do not publish, tag, merge, or deploy a stable release unless the applicable release authorization has been granted.
 
 ## Reporting issues
 
