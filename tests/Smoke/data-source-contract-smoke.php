@@ -70,7 +70,7 @@ dataSourceExpect(!$degraded->isAvailable(), 'degraded optional provider must not
 
 $bootstrap = file_get_contents(dirname(__DIR__, 2) . '/frameworks/Bootstrap/Plugin.php');
 dataSourceExpect(is_string($bootstrap), 'bootstrap source must be readable');
-dataSourceExpect(str_contains($bootstrap, "new DataSourceRegistry()"), 'bootstrap must construct canonical data source registry');
-dataSourceExpect(str_contains($bootstrap, "set('platform.data-sources', $dataSources)"), 'bootstrap must expose canonical data source registry service');
+dataSourceExpect(str_contains($bootstrap, 'new DataSourceRegistry()'), 'bootstrap must construct canonical data source registry');
+dataSourceExpect(str_contains($bootstrap, "set('platform.data-sources', \$dataSources)"), 'bootstrap must expose canonical data source registry service');
 
 fwrite(STDOUT, "WPEssential data source contract smoke PASS\n");
