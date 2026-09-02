@@ -1,13 +1,13 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-02**  
-Canonical repository reconciliation anchor: **`main @ 045b941b2ec17174837fa8997087a7753705fe1b`**  
+Checkpoint date: **2026-09-03**  
+Canonical repository reconciliation anchor: **`main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
 Implementation decisions: through **ADR-0222** plus certified bounded Surface 3 and Surface 4 implementation contracts  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — IN PROGRESS**  
-Current dependency gate: **Surface 4 Relations / Gate B**  
+Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C prerequisite reconciliation — ACTIVE / runtime not started**  
+Current dependency gate: **Surface 6 Query / Gate C prerequisite reconciliation**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
@@ -26,11 +26,15 @@ Source implementation, development/test tooling, CI and milestone-scoped schemas
 
 Accepted structural scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known structural planning or semantic-owner gap after WP118 / ADR-0213.
 
-Current Master Options Bank machine truth from `config/product/options-bank-progress.json` is **8 surfaces started / 6 BANK_REVIEWED / 1,571 records**. The reviewed surfaces are Fields 618, Relations 144, Status 129, Custom Tables 165, Admin Columns 214 and Dashboard Widgets 123. CPT remains `BANK_SURFACE_SEEDED / 107`; Taxonomy remains `BANK_SURFACE_SEEDED / 71`; Query and Listings remain `UNSEEDED / 0` in shared progress until their reconciliation work is accepted and integrated.
+Current Master Options Bank machine truth from `config/product/options-bank-progress.json` is **10 surfaces started / 9 BANK_REVIEWED / 1,890 records**. The reviewed surfaces are Taxonomy 71, Fields 618, Relations 144, Status 129, Query 169, Custom Tables 165, Admin Columns 214, Dynamic Listings 150 and Dashboard Widgets 123. CPT remains `BANK_SURFACE_SEEDED / 107`.
 
 The later Atomic Option lifecycle is separate: `config/product/atomic-option-contract-progress.json` reports **56/56 atomic inventories, only Relations at OPTION_CONTRACT_COMPLETE, 0 UX_CONTRACT_COMPLETE, 0 full-parity RUNTIME_CERTIFIED and 0 PRODUCT_PARITY_CERTIFIED**.
 
 Surface 3 Fields Options Bank remains **BANK_REVIEWED at 618 records**. Gate A PASS does **not** mean all 618 Bank records are shipped, runtime implemented or `PRODUCT_PARITY_CERTIFIED`. Runtime certification is deliberately narrower and applies only to the supported native V1 contracts listed below. Provider-owned, Relations-owned and other uncertified storage semantics remain fail-closed.
+
+Surface 4 Relations Options Bank remains **BANK_REVIEWED at 144 records**. Gate B PASS is likewise bounded to the native V1 baseline required by parent #66; it is not a claim that every Relations Bank record, provider adapter, pivot/cascade semantic or market-parity feature ships.
+
+Surface 6 Query is **BANK_REVIEWED / 169**. Query runtime remains blocked until the declared Gate C prerequisite reconciliation confirms the accepted Relations public contract, required shared Data Source/Policy/cache seams, development consent and a reviewable first runtime slice.
 
 ## Implementation gates
 
@@ -38,8 +42,10 @@ Surface 3 Fields Options Bank remains **BANK_REVIEWED at 618 records**. Gate A P
 - WP120 / ADR-0215 — **DONE / PASS** — machine-enforced architecture guards.
 - WP121 — **DONE / PASS FOR MODULE HANDOFF** — shared Platform foundation readiness closed by WP121.1 through WP121.4.
 - Phase 2 / Gate A / Surface 3 Custom Fields — **PASS FOR CERTIFIED NATIVE V1 SCOPE** — all #66 Gate A exit criteria are satisfied by merged exact-head evidence summarized below.
-- Phase 2 / Gate B / Surface 4 Relations — **IN PROGRESS** — canonical Definition lifecycle, durable edge persistence and transactional connect/disconnect foundations are merged; Gate B closure remains open.
-- Gates C–E / Query → Admin Columns → Dynamic Listings — **BLOCKED BY DEPENDENCY ORDER** at runtime.
+- Phase 2 / Gate B / Surface 4 Relations — **PASS FOR CERTIFIED NATIVE V1 BASELINE** — all #66 Gate B baseline criteria are satisfied by merged exact-head evidence through PR #122 and PR #128, with richer/provider-specific semantics retained as explicit non-goals.
+- Phase 2 / Gate C / Surface 6 Query — **PREREQUISITE RECONCILIATION ACTIVE; RUNTIME NOT STARTED**.
+- Gate D / Admin Columns — **BLOCKED BY QUERY RUNTIME**.
+- Gate E / Dynamic Listings — **BLOCKED BY QUERY PLUS SHARED RENDERER/DATA-SOURCE DEPENDENCIES**.
 - Status Manager runtime — **BLOCKED UNTIL GATES A–E ARE COMPLETE**.
 
 ## Surface 3 — Custom Fields certified runtime scope
@@ -282,7 +288,7 @@ Evidence includes:
 
 ### Criterion 6 — checkpoint truth accurately reflects current main and explicit non-goals — PASS on promotion of the Gate A checkpoint
 
-The Gate A checkpoint replaced the obsolete seven-slice blocker list and anchored that historical audit to `main @ b7b882422f616ee135441c6b52674ff5522a839c`. This 2026-09-02 reconciliation preserves that evidence while advancing the current repository anchor and lifecycle to Relations Gate B.
+The Gate A checkpoint replaced the obsolete seven-slice blocker list and anchored that historical audit to `main @ b7b882422f616ee135441c6b52674ff5522a839c`. This reconciliation preserves that evidence while advancing the dependency lifecycle beyond Relations Gate B.
 
 ## Explicit Surface 3 non-goals after Gate A
 
@@ -290,7 +296,6 @@ Gate A PASS is intentionally scoped. The following are **not** claimed complete:
 - all 618 Fields Bank records as runtime/shipped features;
 - `PRODUCT_PARITY_CERTIFIED` for Surface 3;
 - provider-owned entity/storage adapters without their canonical owner contracts;
-- Relations-owned relationship/cardinality/edge storage;
 - arbitrary provider callbacks or executable PHP/JavaScript configuration;
 - generic custom-table/provider storage for unsupported Field types;
 - destructive definition import merge/overwrite;
@@ -300,11 +305,11 @@ Gate A PASS is intentionally scoped. The following are **not** claimed complete:
 - production deployment, stable release or live-site migration;
 - any Query, Admin Columns, Dynamic Listings or Status runtime implementation.
 
-Unsupported provider/Relations/container types remain deliberately fail-closed until their owning surfaces/adapters are certified. This is part of the safety contract.
+Unsupported provider/container types remain deliberately fail-closed until their owning surfaces/adapters are certified. This is part of the safety contract.
 
-## Surface 4 — Relations Gate B current merged evidence
+## Surface 4 — Relations Gate B certified native V1 evidence
 
-Relations is now the active runtime gate. Surface 4 owns relation/cardinality/direction/persistent-edge semantics. Fields retains relationship selector/control-schema ownership; Query retains structured query semantics; consumers must use typed public contracts instead of peer-private storage/runtime access.
+Surface 4 owns relation/cardinality/direction/persistent-edge semantics. Fields retains relationship selector/control-schema ownership; Query retains structured query semantics; downstream consumers must use typed public contracts instead of peer-private storage/runtime access.
 
 ### Gate B prerequisite — Atomic Option Contract V1 — PASS
 
@@ -314,7 +319,7 @@ PR #100 promoted exact certified source `e3591526d1e2f35c1fbda912b19aa198be03cad
 - Exact source projection is 144/144 Bank IDs across seven validated shards.
 - The surface projects to 18 canonical Relations-owned authored Atomic Options.
 - Missing/unclassified is 0/0.
-- Only Surface 4 is currently `OPTION_CONTRACT_COMPLETE` in shared atomic progress.
+- Surface 4 is `OPTION_CONTRACT_COMPLETE` in shared atomic progress.
 
 This planning/product-contract certification did not itself claim runtime implementation.
 
@@ -338,7 +343,6 @@ PR #112 promoted exact source `67dae2a4a07d990df79ac7e44223205f843a68d1` into me
 Established:
 - Surface 4-owned scoped InnoDB edge and mutation-state persistence;
 - explicit network/site scope on keys and reads/writes;
-- durable unique logical edge tuple for the current certified storage contract;
 - shared MigrationCoordinator contribution instead of request-time lazy DDL;
 - per-relation transaction serialization with `FOR UPDATE` state locking;
 - revision compare-and-swap completion;
@@ -363,21 +367,105 @@ Established:
 
 Exact source `4420f6a00d69dd7b01c8afc7576adc187435cae2` passed Architecture Guards #835, PHP Quality #224, Platform Compatibility #497, Distributable Package #404 and Relations Edge Persistence #7 — all SUCCESS.
 
-The current durable schema permits one logical `(relation_definition_id, from_object_id, to_object_id)` tuple per scope. Therefore `unique_edge=false` definitions deliberately fail closed in this mutation tranche until a later storage contract can represent non-unique tuples safely.
+The historical slice-3 limitation that `unique_edge=false` failed closed is superseded by the later configurable edge-uniqueness milestone below.
 
-### Gate B remains OPEN
+### Gate B runtime slice 4 — configurable edge uniqueness + native admin/portability/diagnostics milestone — PASS
 
-The merged foundations do **not** close Relations Gate B. Remaining bounded work includes, where canonical ownership/contracts require it:
-- broader endpoint/object/provider adapters;
-- Query/Data Source integration without moving Query ownership into Relations;
-- Relations admin editing UX;
-- import/export and diagnostics;
-- pivot metadata, ordering, cascade and non-unique tuple semantics only after explicit owner/storage/recovery contracts;
-- reference workflow / real-WordPress integration evidence for completed Gate B behavior;
-- deterministic performance/scale evidence;
-- final Gate B exit audit against parent #66.
+PR #122 promoted exact certified head `fafa756aa0eedaf445e44309a68ce71fd01d4378` into merge `352520febdf66d742de0a29a1d0b7f4eaa15cf0c`.
 
-Query, Admin Columns, Listings and Status runtime remain blocked until their dependency gates open.
+Established and certified:
+- storage support for non-unique source/target tuples where Relation policy allows it;
+- per-relation lock serialization for mutation writers;
+- guarded `unique_edge=false → true` policy transition so persisted duplicates cannot silently violate the declared invariant;
+- stale-policy refresh after the relation lock so concurrent policy changes cannot admit a duplicate under an obsolete non-unique snapshot;
+- cardinality/uniqueness enforcement on the locked current policy;
+- native Relation definition editing and connection editing through shared Ability/Policy/nonce boundaries;
+- definition portability/import-export V1 and diagnostics;
+- multisite isolation and scale/regression evidence.
+
+Exact-head CI on `fafa756aa0eedaf445e44309a68ce71fd01d4378`:
+- Architecture Guards #878 — SUCCESS;
+- PHP Quality Toolchain #256 — SUCCESS;
+- Platform Compatibility Matrix #540 — SUCCESS;
+- Distributable Package #433 — SUCCESS;
+- Relations Edge Persistence #32 — SUCCESS.
+
+### Gate B runtime slice 5 — public Query-consumer contract + reference evidence — PASS
+
+PR #128 promoted exact certified head `de6ff78339a4611f15a2dd865e4aef0ed2385965` into merge `da2b768b49c49f411ce384c04575b208f664c9a5`.
+
+Established:
+- shared `RelationQueryConsumerInterface` as the stable Surface 4 → Surface 6 consumer seam;
+- Relations-owned bounded read adapter over private persistence;
+- stable relation identity and direction-aware traversal without exposing `WpdbRelationEdgeGateway`, physical table names, pivot layout or raw SQL/storage details;
+- bounded related-ID retrieval, existence, distinct counts, revision and batch-existence primitives;
+- duplicate-capable Relations collapse to distinct object semantics for Query consumption;
+- fail-closed unpublished/invalid definitions, scope mismatch and disallowed reverse traversal;
+- explicit ownership boundary: Query/Data Source policy owns source/row/projection authorization; Relations owns relation definition/scope/storage semantics;
+- batch existence support so Query can avoid per-result N+1 storage checks.
+
+Exact-head CI on `de6ff78339a4611f15a2dd865e4aef0ed2385965`:
+- Architecture Guards #879 — SUCCESS;
+- PHP Quality Toolchain #258 — SUCCESS;
+- Platform Compatibility Matrix #541 — SUCCESS;
+- Distributable Package #434 — SUCCESS;
+- Relations Edge Persistence #33 — SUCCESS.
+
+The Relations Edge Persistence workflow additionally ran the public Query-consumer reference integration successfully on MySQL 8.4 / PHP 8.2 and 8.5 and MariaDB 10.11 / PHP 8.4.
+
+## Surface 4 Gate B exit audit — PASS for certified native V1 baseline
+
+Parent tracker: #66.
+
+### Criterion 1 — canonical relation definitions/lifecycle — PASS
+
+Evidence: #103 canonical Surface 4 `relation` Definition lifecycle, immutable relation key, revision/checksum persistence, lifecycle operations and publish-time validation.
+
+### Criterion 2 — cardinality + directionality — PASS
+
+Evidence: canonical normalization plus transactional enforcement for one-to-one, one-to-many, many-to-one and many-to-many bounds; direction/bidirectional traversal semantics are enforced by mutation and public consumer paths.
+
+### Criterion 3 — object-type adapters — PASS for native V1
+
+Evidence: post, media, term, user and comment endpoint support plus endpoint existence/meta-capability checks. Custom-table and registered-entity/provider endpoints remain fail-closed until their owning adapters are separately certified.
+
+### Criterion 4 — safe persistence and recovery — PASS
+
+Evidence: scoped durable edge/state tables, shared migrations, per-relation `FOR UPDATE` serialization, revision CAS, rollback/uncertain-state handling, configurable tuple uniqueness, guarded uniqueness-policy transitions and stale-policy refresh under the same relation lock.
+
+### Criterion 5 — query/data-source integration contract — PASS
+
+Evidence: #128 publishes the storage-opaque bounded `RelationQueryConsumerInterface`. Query can consume stable Relation semantics without peer-private gateway/table/pivot coupling and can use batch primitives to avoid N+1 checks.
+
+### Criterion 6 — authorization and multisite isolation — PASS for certified paths
+
+Evidence: mutation operations use endpoint existence/resource authorization through shared ExecutionContext/Policy boundaries; persistence/read keys are explicitly network/site scoped; public consumer scope mismatches fail closed before storage reads.
+
+### Criterion 7 — admin editing UX — PASS for native V1
+
+Evidence: #122 Relation definition editor and connection editor execute through canonical Ability/AJAX/nonce/capability boundaries and preserve server-side cardinality/authorization/integrity validation.
+
+### Criterion 8 — import/export + diagnostics — PASS for definition portability V1
+
+Evidence: deterministic create-safe Relation definition portability plus checksum/endpoint/persistence diagnostics. Destructive overwrite/remap and unrelated provider data movement are not claimed.
+
+### Criterion 9 — exact-head CI and reference workflow evidence — PASS
+
+Evidence: #122 and #128 exact certified heads passed all five applicable workflows, including WordPress/PHP/MySQL/MariaDB compatibility and the dedicated durable edge/public-consumer reference integrations.
+
+## Explicit Surface 4 non-goals after Gate B
+
+Gate B PASS is intentionally scoped. The following are **not** claimed complete:
+- all 144 Relations Bank records as shipped/runtime features;
+- `PRODUCT_PARITY_CERTIFIED` for Surface 4;
+- custom-table or registered-provider endpoint adapters without certified owner contracts;
+- arbitrary pivot metadata schemas, ordering models or cascade execution beyond separately certified contracts;
+- unbounded graph traversal, arbitrary joins or raw SQL exposure to Query;
+- cross-site/network traversal without explicit policy/provider capability;
+- destructive portability overwrite/remap;
+- production deployment, stable release or live-site migration.
+
+These boundaries are deliberate fail-closed non-goals and do not invalidate the certified native V1 Gate B exit.
 
 ## Shared WP121 foundation remains accepted
 
@@ -403,21 +491,21 @@ This remains a source-development/module-handoff decision, not a stable-release 
 
 `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` are active on current `main`.
 
-Claim branches observed during this reconciliation:
-- Supervisor shared-state lane — `agent/shared-state-reconciliation-v1`;
-- Relations Gate B continuation — `agent/relations-gate-b-closure-v1`;
-- Taxonomy Bank reconciliation — `agent/taxonomy-bank-reconciliation-v1`.
+Current actionable queue after PR #129:
+- priority 5 Supervisor-only Gate B exit reconciliation — `agent/gate-b-exit-reconciliation-v1`, claimed from exact `main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`;
+- priority 10 Supervisor-only Query Gate C prerequisite reconciliation — `agent/query-gate-c-prerequisite-reconciliation-v1`, dependency-blocked until this Gate B exit reconciliation is promoted.
 
-All three claims were created from exact `main @ 045b941b2ec17174837fa8997087a7753705fe1b`. The supervisor owns the serialized `CHECKPOINT.md` / project-state reconciliation. The Relations worker owns its bounded Surface 4 runtime scope. The Taxonomy worker is planning-only and must surface shared progress changes as Integration Requirements rather than racing integrator-owned shared files.
+Previously promoted deterministic branches remain historical audit evidence and must not be reused or force-moved. Historical open PRs are not automatically current AUTO submissions or merge-ready merely because they remain open. Any candidate must be reconciled against then-current `main`, ownership/dependency rules, Integration Requirements and exact-head applicable CI before integration. Shared/global writes remain serialized; force update/force merge is not a conflict-resolution strategy.
 
-Historical open PRs are not automatically current AUTO submissions or merge-ready merely because they remain open. Any candidate must be reconciled against then-current `main`, ownership/dependency rules, Integration Requirements and exact-head applicable CI before integration. Shared/global writes remain serialized; force update/force merge is not a conflict-resolution strategy.
+Any branch not declared by the current actionable queue carries no AUTO work authorization even if its name starts with `agent/`.
 
 ## Current next action
 
-1. Promote this supervisor shared-state reconciliation only after its exact diff is confirmed to stay within the assigned shared-state scope and applicable exact-head checks are green or truthfully recorded as not path-applicable.
-2. Continue Surface 4 Relations Gate B on the claimed Relations worker lane using bounded slices; do not touch supervisor-owned shared truth from that worker branch.
-3. Continue Taxonomy planning/Bank reconciliation on its claimed surface-local lane; any shared lifecycle/progress promotion remains integrator-owned after accepted evidence.
-4. Keep Query, Admin Columns, Dynamic Listings and Status **runtime blocked**. Planning-only work may proceed only under an explicitly valid queue claim and cannot be reported as runtime progress.
-5. After any accepted worker merge, re-read current `main`, active claims, open submissions and machine progress files before the next shared write or merge-order decision.
+1. Promote this Gate B exit reconciliation only after its exact diff is confirmed to remain within the assigned shared-state scope and applicable exact-head checks are green or truthfully not path-applicable.
+2. Re-read current `main` and the actionable queue after promotion.
+3. Claim `agent/query-gate-c-prerequisite-reconciliation-v1` only if its dependencies remain satisfied.
+4. Resolve Query Implementation Contract V1 runtime-start prerequisites from current main: accepted Relations public contract, Query BANK_REVIEWED / 169, shared Data Source/Policy/cache seams, active development consent and a bounded first runtime tranche.
+5. Do **not** invent `OPTION_CONTRACT_COMPLETE` as a hard Query runtime prerequisite unless repository evidence explicitly requires it.
+6. Keep Query runtime blocked until prerequisite reconciliation is accepted; keep Admin Columns, Dynamic Listings and Status runtime blocked behind their dependency gates.
 
 Repository evidence overrides conversational memory.
