@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-02",
-  "queue_anchor_main_sha": "496d01f2406a3973aadf61b1dea75734654868cb",
+  "queue_anchor_main_sha": "352520febdf66d742de0a29a1d0b7f4eaa15cf0c",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base.",
   "auto_assignment": {
     "enabled": true,
@@ -92,7 +92,31 @@
         "shared changes only as Integration Requirements unless explicitly assigned to the Supervisor/Integrator"
       ],
       "completion_condition": "Advance the highest-priority remaining Gate B closure item from current main with exact-head evidence; do not claim full Gate B closure unless all Issue #66 criteria are actually satisfied.",
-      "notes": "Current merged foundation includes canonical definition lifecycle, durable edge persistence and transactional connect/disconnect. Query runtime remains blocked until Gate B is stable/closed."
+      "notes": "Claim branch was promoted by PR #122 at main 352520febdf66d742de0a29a1d0b7f4eaa15cf0c. Gate B remains open for the public Query-consumer contract and reference evidence; the occupied deterministic branch must not be reused or force-moved."
+    },
+    {
+      "priority": 11,
+      "slot_id": "relations-query-consumer-contract-v1",
+      "title": "Publish Surface 4 public Query-consumer contract and reference evidence",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "MILESTONE_WORK",
+      "parallel_class": "BLOCKING_FOUNDATION",
+      "claim_branch": "agent/relations-query-consumer-contract-v1",
+      "source": "Issue #66 Gate B baseline plus Query Implementation Contract V1 section 8/27 after PR #122",
+      "dependencies": [
+        "Fields Gate A PASS",
+        "Relations milestone PR #122 merged"
+      ],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "public/shared Relations Query-consumer contract owned by the Supervisor/Integrator",
+        "Relations-owned read adapter/runtime, registration, tests and surface-local documentation",
+        "reference workflow evidence needed to certify the contract",
+        "no Query runtime implementation"
+      ],
+      "completion_condition": "Query can consume Relations through a stable public contract without depending on WpdbRelationEdgeGateway, physical table names, pivot layout or other private Surface 4 implementation details; bounded traversal/capability behavior, authorization/scope semantics, failure modes and reference evidence are exact-head certified.",
+      "notes": "This is the next Gate B blocker after PR #122. Keep Query runtime blocked until this public contract is accepted and any remaining Gate B exit evidence is explicitly reconciled."
     },
     {
       "priority": 20,
