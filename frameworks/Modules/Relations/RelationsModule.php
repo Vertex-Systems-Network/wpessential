@@ -13,9 +13,12 @@ use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
+use WPEssential\Modules\Relations\Migrations\CreateRelationEdgeTablesMigration;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
+use WPEssential\Platform\Database\DatabaseAdapterInterface;
+use WPEssential\Platform\Database\Migrations\MigrationCoordinator;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
@@ -62,6 +65,7 @@ final class RelationsModule implements ModuleInterface
         );
         $services->set('module.relations.definition-normalizer', $normalizer);
         $services->set('module.relations.definition-validation', $validation);
+        $this->registerEdgePersistence($services);
 
         $handlers = [
             'list-definitions' => new RelationDefinitionAbilityHandler(
@@ -110,7 +114,41 @@ final class RelationsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // Definition lifecycle has no WordPress runtime hook until edge storage is certified.
+        if (!$services->has('platform.database.migrations')) {
+            return;
+        }
+        $migrations = $services->get('platform.database.migrations');
+        if (!$migrations instanceof MigrationCoordinator) {
+            throw new LogicException('Relations migration service must use the shared MigrationCoordinator.');
+        }
+        $migrations->runPending();
+    }
+
+    private function registerEdgePersistence(ServiceRegistryInterface $services): void
+    {
+        $hasDatabase = $services->has('platform.database');
+        $hasMigrations = $services->has('platform.database.migrations');
+        if (!$hasDatabase && !$hasMigrations) {
+            return;
+        }
+        if (!$hasDatabase || !$hasMigrations) {
+            throw new LogicException('Relations native persistence requires database and migration services together.');
+        }
+
+        $database = $services->get('platform.database');
+        $migrations = $services->get('platform.database.migrations');
+        if (!$database instanceof DatabaseAdapterInterface || !$migrations instanceof MigrationCoordinator) {
+            throw new LogicException('Relations native persistence requires canonical database and migration services.');
+        }
+
+        $migrations->register(new CreateRelationEdgeTablesMigration($database));
+
+        $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
+        $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
+        $services->set(
+            'module.relations.edge-gateway',
+            new WpdbRelationEdgeGateway($database, RelationEdgeScope::site($networkId, $siteId)),
+        );
     }
 
     private function registerAbility(
