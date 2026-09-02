@@ -78,6 +78,24 @@ final class RelationsModule implements ModuleInterface
             $gateway = $candidateGateway;
         }
 
+        $definitionWrites = $definitions;
+        if ($gateway instanceof WpdbRelationEdgeGateway) {
+            $database = $services->get('platform.database');
+            $scope = $services->get('module.relations.edge-scope');
+            if (!$database instanceof DatabaseAdapterInterface || !$scope instanceof RelationEdgeScope) {
+                throw new LogicException(
+                    'Relations definition mutations require canonical edge database and scope services.',
+                );
+            }
+            $definitionWrites = new RelationDefinitionMutationRepository(
+                $definitions,
+                $gateway,
+                $database,
+                $scope,
+            );
+            $services->set('module.relations.definition-writes', $definitionWrites);
+        }
+
         $handlers = [
             'list-definitions' => new RelationDefinitionAbilityHandler(
                 $definitions,
@@ -98,7 +116,7 @@ final class RelationsModule implements ModuleInterface
                 RelationDefinitionAbilityHandler::VALIDATE,
             ),
             'save-definition' => new RelationDefinitionAbilityHandler(
-                $definitions,
+                $definitionWrites,
                 $normalizer,
                 $validation,
                 RelationDefinitionAbilityHandler::SAVE,
@@ -198,9 +216,11 @@ final class RelationsModule implements ModuleInterface
 
         $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
         $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
+        $scope = RelationEdgeScope::site($networkId, $siteId);
+        $services->set('module.relations.edge-scope', $scope);
         $services->set(
             'module.relations.edge-gateway',
-            new WpdbRelationEdgeGateway($database, RelationEdgeScope::site($networkId, $siteId)),
+            new WpdbRelationEdgeGateway($database, $scope),
         );
     }
 
