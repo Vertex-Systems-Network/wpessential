@@ -183,6 +183,10 @@ $relationPayload = $normalizer->normalize([
     'relation_key' => 'book_authors',
     'title' => 'Book Authors',
     'cardinality' => 'many_to_many',
+    'direction' => [
+        'reciprocal' => false,
+        'bidirectional_traversal' => true,
+    ],
     'from' => [
         'object_type' => 'post',
         'object_subtype' => 'book',
@@ -191,6 +195,12 @@ $relationPayload = $normalizer->normalize([
     'to' => [
         'object_type' => 'user',
         'label' => 'Authors',
+    ],
+    'bounds' => [
+        'from_min' => 0,
+        'from_max' => null,
+        'to_min' => 0,
+        'to_max' => null,
     ],
     'unique_edge' => false,
 ], false);
