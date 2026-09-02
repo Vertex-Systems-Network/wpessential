@@ -3,17 +3,21 @@ name: Relations Edge Persistence
 on:
   pull_request:
     paths:
+      - 'frameworks/Contracts/RelationQueryConsumerInterface.php'
       - 'frameworks/Modules/Relations/**'
       - 'tests/Unit/Modules/Relations/**'
       - 'tests/Integration/relations-edge-persistence-mysql.php'
+      - 'tests/Integration/relations-query-consumer-mysql.php'
       - '.github/workflows/relations-edge-persistence.yml'
   push:
     branches:
       - 'implementation/**'
     paths:
+      - 'frameworks/Contracts/RelationQueryConsumerInterface.php'
       - 'frameworks/Modules/Relations/**'
       - 'tests/Unit/Modules/Relations/**'
       - 'tests/Integration/relations-edge-persistence-mysql.php'
+      - 'tests/Integration/relations-query-consumer-mysql.php'
       - '.github/workflows/relations-edge-persistence.yml'
   workflow_dispatch:
 
@@ -73,7 +77,9 @@ jobs:
       - name: Validate integration source
         run: |
           php -l tests/Integration/relations-edge-persistence-mysql.php
+          php -l tests/Integration/relations-query-consumer-mysql.php
           find frameworks/Modules/Relations -name '*.php' -print0 | xargs -0 -n1 php -l
+          php -l frameworks/Contracts/RelationQueryConsumerInterface.php
 
       - name: Run durable edge persistence integration
         env:
@@ -81,6 +87,13 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/relations-edge-persistence-mysql.php
+
+      - name: Run public Query consumer reference integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/relations-query-consumer-mysql.php
 
   mariadb:
     name: MariaDB 10.11 / PHP 8.4
@@ -126,7 +139,9 @@ jobs:
       - name: Validate integration source
         run: |
           php -l tests/Integration/relations-edge-persistence-mysql.php
+          php -l tests/Integration/relations-query-consumer-mysql.php
           find frameworks/Modules/Relations -name '*.php' -print0 | xargs -0 -n1 php -l
+          php -l frameworks/Contracts/RelationQueryConsumerInterface.php
 
       - name: Run durable edge persistence integration
         env:
@@ -134,3 +149,10 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/relations-edge-persistence-mysql.php
+
+      - name: Run public Query consumer reference integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/relations-query-consumer-mysql.php
