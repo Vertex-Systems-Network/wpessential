@@ -100,14 +100,34 @@ final class RelationsModule implements ModuleInterface
             ),
         ];
 
+        if ($services->has('module.relations.edge-gateway')) {
+            $gateway = $services->get('module.relations.edge-gateway');
+            if (!$gateway instanceof WpdbRelationEdgeGateway) {
+                throw new LogicException('Relations edge mutation service requires the canonical edge gateway.');
+            }
+            $mutations = new RelationEdgeMutationService(
+                $definitions,
+                $normalizer,
+                $gateway,
+                new RelationEndpointObjectAuthorizer(),
+            );
+            $services->set('module.relations.edge-mutations', $mutations);
+            $handlers['connect'] = new RelationEdgeMutationAbilityHandler(
+                $mutations,
+                RelationEdgeMutationAbilityHandler::CONNECT,
+            );
+            $handlers['disconnect'] = new RelationEdgeMutationAbilityHandler(
+                $mutations,
+                RelationEdgeMutationAbilityHandler::DISCONNECT,
+            );
+        }
+
         foreach ($handlers as $action => $handler) {
             $this->registerAbility($abilities, $bridge, $handler, $action);
             $ajaxRoutes->register(new AjaxRoute(
                 type: 'relations.' . str_replace('-', '.', $action),
                 handler: new AbilityAjaxHandler($abilities, 'wpessential/relations/' . $action, $contexts),
-                operation: in_array($action, ['save-definition', 'status-definition'], true)
-                    ? NonceOperation::Update
-                    : NonceOperation::Apply,
+                operation: $this->isMutationAction($action) ? NonceOperation::Update : NonceOperation::Apply,
             ));
         }
     }
@@ -161,17 +181,82 @@ final class RelationsModule implements ModuleInterface
             name: 'wpessential/relations/' . $action,
             ownerSurfaceId: RelationDefinitionNormalizer::OWNER_SURFACE_ID,
             capability: self::CAPABILITY,
-            mutates: in_array($action, ['save-definition', 'status-definition'], true),
+            mutates: $this->isMutationAction($action),
             channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
-            inputSchema: ['type' => 'object'],
-            outputSchema: ['type' => 'object'],
+            inputSchema: $this->inputSchema($action),
+            outputSchema: $this->outputSchema($action),
         );
         $abilities->register($descriptor, $handler);
         $bridge->expose(new WordPressAbilityExposure(
             internalName: $descriptor->name,
             label: 'Relations: ' . str_replace('-', ' ', $action),
-            description: 'Surface 4 Relation definition lifecycle operation.',
+            description: in_array($action, ['connect', 'disconnect'], true)
+                ? 'Surface 4 transactional Relation edge mutation operation.'
+                : 'Surface 4 Relation definition lifecycle operation.',
             showInRest: true,
         ));
+    }
+
+    private function isMutationAction(string $action): bool
+    {
+        return in_array($action, ['save-definition', 'status-definition', 'connect', 'disconnect'], true);
+    }
+
+    /** @return array<string,mixed> */
+    private function inputSchema(string $action): array
+    {
+        if (!in_array($action, ['connect', 'disconnect'], true)) {
+            return ['type' => 'object'];
+        }
+
+        return [
+            'type' => 'object',
+            'required' => ['relation_definition_id', 'from_object_id', 'to_object_id'],
+            'properties' => [
+                'relation_definition_id' => [
+                    'type' => 'string',
+                    'pattern' => '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+                ],
+                'from_object_id' => ['type' => 'integer', 'minimum' => 1],
+                'to_object_id' => ['type' => 'integer', 'minimum' => 1],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function outputSchema(string $action): array
+    {
+        if (!in_array($action, ['connect', 'disconnect'], true)) {
+            return ['type' => 'object'];
+        }
+
+        return [
+            'type' => 'object',
+            'required' => ['mutation'],
+            'properties' => [
+                'mutation' => [
+                    'type' => 'object',
+                    'required' => [
+                        'changed',
+                        'relation_definition_id',
+                        'edge_id',
+                        'from_object_id',
+                        'to_object_id',
+                        'revision',
+                    ],
+                    'properties' => [
+                        'changed' => ['type' => 'boolean'],
+                        'relation_definition_id' => ['type' => 'string'],
+                        'edge_id' => ['type' => ['string', 'null']],
+                        'from_object_id' => ['type' => 'integer'],
+                        'to_object_id' => ['type' => 'integer'],
+                        'revision' => ['type' => 'integer', 'minimum' => 0],
+                    ],
+                    'additionalProperties' => false,
+                ],
+            ],
+            'additionalProperties' => false,
+        ];
     }
 }
