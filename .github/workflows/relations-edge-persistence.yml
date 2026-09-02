@@ -1,0 +1,136 @@
+name: Relations Edge Persistence
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Modules/Relations/**'
+      - 'tests/Unit/Modules/Relations/**'
+      - 'tests/Integration/relations-edge-persistence-mysql.php'
+      - '.github/workflows/relations-edge-persistence.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'frameworks/Modules/Relations/**'
+      - 'tests/Unit/Modules/Relations/**'
+      - 'tests/Integration/relations-edge-persistence-mysql.php'
+      - '.github/workflows/relations-edge-persistence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-relations-edge-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mysql:
+    name: MySQL 8.4 / PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.5']
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_mysql
+          coverage: none
+
+      - name: Validate integration source
+        run: |
+          php -l tests/Integration/relations-edge-persistence-mysql.php
+          find frameworks/Modules/Relations -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Run durable edge persistence integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/relations-edge-persistence-mysql.php
+
+  mariadb:
+    name: MariaDB 10.11 / PHP 8.4
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: wpessential_test
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql
+          coverage: none
+
+      - name: Validate integration source
+        run: |
+          php -l tests/Integration/relations-edge-persistence-mysql.php
+          find frameworks/Modules/Relations -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Run durable edge persistence integration
+        env:
+          WPE_TEST_MYSQL_DSN: mysql:host=127.0.0.1;port=3306;dbname=wpessential_test;charset=utf8mb4
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/relations-edge-persistence-mysql.php
