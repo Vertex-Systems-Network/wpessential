@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "da2b768b49c49f411ce384c04575b208f664c9a5",
+  "queue_anchor_main_sha": "4b5d56ad71c33d1b9de06f8122967f713e7ddccb",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
@@ -55,52 +55,81 @@
   "slots": [
     {
       "priority": 5,
-      "slot_id": "gate-b-exit-reconciliation-v1",
-      "title": "Reconcile Surface 4 Relations Gate B exit truth onto current main",
+      "slot_id": "shared-data-source-contract-v1",
+      "title": "Build the canonical shared Data Source contract and registry foundation",
       "role": "SUPERVISOR_ONLY",
       "status": "OPEN",
-      "work_mode": "INTEGRATION_WORK",
-      "parallel_class": "SERIALIZE",
-      "claim_branch": "agent/gate-b-exit-reconciliation-v1",
-      "source": "Issue #66 Gate B baseline plus merged PR #122 and public Query-consumer contract PR #128",
+      "work_mode": "MILESTONE_WORK",
+      "parallel_class": "SHARED_CONTRACT",
+      "claim_branch": "agent/shared-data-source-contract-v1",
+      "source": "Accepted Query Gate C prerequisite audit on main; canonical cross-module ownership requires Surface 6 Query + Data Source Registry",
       "dependencies": [
-        "Fields Gate A PASS",
-        "Relations public Query-consumer contract merged and exact-head certified"
+        "Relations Gate B PASS for certified native V1 baseline",
+        "Query prerequisite audit accepted",
+        "Query BANK_REVIEWED / 169"
       ],
-      "runtime_allowed": false,
+      "runtime_allowed": true,
       "allowed_scope": [
-        "CHECKPOINT.md",
-        "docs/PROJECT-STATE-AND-ADOPTION.md",
-        "directly required shared lifecycle/coordination documentation only",
-        "GitHub/Linear coordination mirrors derived from repository truth"
+        "shared Data Source contracts and provider-neutral registry/value objects",
+        "bounded Platform service registration required to expose the canonical Data Source seam",
+        "targeted unit/architecture tests and directly required documentation",
+        "no Query module/runtime execution",
+        "no provider SQL, arbitrary identifiers, callbacks, credentials, or peer-private storage access"
       ],
-      "completion_condition": "Current shared state explicitly audits every Issue #66 Gate B baseline criterion, records PASS only for the certified native V1 scope, preserves unsupported provider/pivot/cascade semantics as explicit non-goals, advances the dependency gate to Query only when justified, and synchronizes current Bank truth without rewriting historical evidence.",
-      "notes": "Do not start Query runtime in this slot. Gate B PASS is a bounded native V1 lifecycle claim, not PRODUCT_PARITY_CERTIFIED or production release approval."
+      "completion_condition": "A provider-neutral canonical Data Source descriptor/registry seam exists on current main, rejects duplicate/malformed/unsafe capabilities, supports explicit degraded/optional-provider behavior and scope/policy/cache capability metadata, is discoverable through the shared service registry, and passes applicable exact-head quality/architecture evidence without starting Query runtime.",
+      "notes": "This is a shared blocking foundation. Keep it small: contract, registry, registration, tests. Do not add WordPress Query execution/provider compilation in this slot."
     },
     {
       "priority": 10,
-      "slot_id": "query-gate-c-prerequisite-reconciliation-v1",
-      "title": "Reconcile Surface 6 Query Gate C runtime prerequisites",
+      "slot_id": "shared-cache-contract-v1",
+      "title": "Build the canonical shared Cache contract and service foundation",
       "role": "SUPERVISOR_ONLY",
       "status": "OPEN",
-      "work_mode": "INTEGRATION_WORK",
-      "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/query-gate-c-prerequisite-reconciliation-v1",
-      "source": "Query Implementation Contract V1 runtime start gate after Relations Gate B exit",
+      "work_mode": "MILESTONE_WORK",
+      "parallel_class": "SHARED_CONTRACT",
+      "claim_branch": "agent/shared-cache-contract-v1",
+      "source": "Accepted Query Gate C prerequisite audit on main; canonical cross-module ownership declares cache as a shared contract",
       "dependencies": [
-        "Relations Gate B PASS for certified native V1 scope",
-        "Query Options Bank BANK_REVIEWED / 169"
+        "shared-data-source-contract-v1 promoted"
       ],
-      "runtime_allowed": false,
-      "planning_only": true,
+      "runtime_allowed": true,
       "allowed_scope": [
-        "Query-owned planning/contracts/tests needed to reconcile the runtime start gate",
-        "read-only audit of shared Data Source, Policy and cache seams",
-        "shared changes only as serialized Supervisor/Integrator writes",
-        "no Query execution/runtime implementation"
+        "shared Cache contracts/value objects and a bounded correctness-preserving service foundation",
+        "Platform service registration required to expose the canonical cache seam",
+        "targeted unit/architecture tests and directly required documentation",
+        "no Query module/runtime execution",
+        "no distributed cache backend dependency or domain-source ownership"
       ],
-      "completion_condition": "Query runtime start gate is explicitly resolved from current main: Relations public contract accepted, Query Bank integrated, required shared Data Source/Policy/cache seams confirmed or bounded blockers recorded, consent confirmed, and the first reviewable Gate C runtime slice can be declared without inventing product-lifecycle prerequisites.",
-      "notes": "Do not treat Atomic Option OPTION_CONTRACT_COMPLETE as a hard Query runtime prerequisite unless repository evidence explicitly requires it. Query runtime remains blocked until this prerequisite reconciliation is accepted."
+      "completion_condition": "A canonical shared cache seam exists on current main with explicit namespace/key identity, site/network/principal/revision-safe dimensions, TTL and generation/invalidation behavior, correctness-preserving disabled/miss behavior, and applicable exact-head tests demonstrating no cross-context reuse. Query still must not execute until this foundation is promoted.",
+      "notes": "Cache is never source truth. Prefer a bounded in-memory/request-local reference implementation or contract-level service; do not add an external cache dependency in V1."
+    },
+    {
+      "priority": 20,
+      "slot_id": "query-typed-ast-validation-v1",
+      "title": "Start Surface 6 Query with typed AST and validation foundation V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "MILESTONE_WORK",
+      "parallel_class": "BLOCKING_FOUNDATION",
+      "claim_branch": "agent/query-typed-ast-validation-v1",
+      "source": "Query Implementation Contract V1 plus accepted Gate C prerequisite audit",
+      "dependencies": [
+        "shared-data-source-contract-v1 promoted",
+        "shared-cache-contract-v1 promoted",
+        "Relations Gate B public Query-consumer contract accepted",
+        "Query BANK_REVIEWED / 169"
+      ],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "Query-owned typed AST/value objects and structural validator",
+        "bounded validation against the shared Data Source contract and public Relations reference types",
+        "Query-local unit/static/architecture tests and surface-local documentation",
+        "no provider SQL compilation/execution",
+        "no REST/admin execution path",
+        "no Query-private Data Source registry or cache engine"
+      ],
+      "completion_condition": "A reviewable Query V1 typed AST/validator rejects unknown semantic nodes, unsafe SQL/PHP/callback/identifier payloads, malformed types and configured structural-budget violations while resolving source references only through the canonical shared Data Source contract. No query execution is claimed in this slice.",
+      "notes": "This opens Query source development only after both shared foundations are certified. Provider execution remains a later bounded tranche."
     }
   ]
 }
