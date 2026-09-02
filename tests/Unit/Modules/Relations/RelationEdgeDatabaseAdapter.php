@@ -18,6 +18,8 @@ final class RelationEdgeDatabaseAdapter implements DatabaseAdapterInterface
     public array $rowQueue = [];
     /** @var list<list<array<string,mixed>>> */
     public array $resultsQueue = [];
+    /** @var list<int|string|null> */
+    public array $varQueue = [];
     /** @var list<int|bool> */
     public array $queryResultQueue = [];
     public bool $insertResult = true;
@@ -62,7 +64,10 @@ final class RelationEdgeDatabaseAdapter implements DatabaseAdapterInterface
     public function getVar(string $query): mixed
     {
         $this->queries[] = $query;
-        return null;
+        if ($this->varQueue === []) {
+            return 0;
+        }
+        return array_shift($this->varQueue);
     }
 
     public function query(string $query): int|bool

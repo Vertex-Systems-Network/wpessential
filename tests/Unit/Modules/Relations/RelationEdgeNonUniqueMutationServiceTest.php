@@ -21,15 +21,12 @@ final class RelationEdgeNonUniqueMutationServiceTest extends TestCase
     private const RELATION_ID = '11111111-1111-4111-8111-111111111111';
     private const NEW_EDGE_ID = '22222222-2222-4222-8222-222222222222';
     private const FIRST_EDGE_ID = '33333333-3333-4333-8333-333333333333';
-    private const SECOND_EDGE_ID = '44444444-4444-4444-8444-444444444444';
     private const NOW = '2026-09-02 10:00:00.123456';
 
-    public function testNonUniqueConnectCreatesAnotherTupleAndAdvancesRevision(): void
+    public function testNonUniqueConnectCreatesAnotherTupleAndAdvancesRevisionWithoutTupleScan(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
         $database->rowQueue = [['mutation_revision' => '3']];
-        $existing = $this->edgeRow(self::FIRST_EDGE_ID);
-        $database->resultsQueue = [[$existing], [$existing]];
 
         $result = $this->service($database)->connect(self::RELATION_ID, 31, 41, $this->context());
 
@@ -39,23 +36,25 @@ final class RelationEdgeNonUniqueMutationServiceTest extends TestCase
         self::assertCount(1, $database->inserts);
         self::assertSame(1, $database->commits);
         self::assertSame(0, $database->rollbacks);
+        self::assertSame([], $database->resultsQueue);
     }
 
     public function testNonUniqueDisconnectRemovesOneDeterministicEdgeOnly(): void
     {
         $database = new RelationEdgeDatabaseAdapter();
-        $database->rowQueue = [['mutation_revision' => '4']];
-        $first = $this->edgeRow(self::FIRST_EDGE_ID);
-        $second = $this->edgeRow(self::SECOND_EDGE_ID);
-        $database->resultsQueue = [[$first, $second], [$first, $second]];
+        $database->rowQueue = [
+            ['mutation_revision' => '4'],
+            $this->edgeRow(self::FIRST_EDGE_ID),
+        ];
 
         $result = $this->service($database)->disconnect(self::RELATION_ID, 31, 41, $this->context());
 
         self::assertTrue($result['changed']);
         self::assertSame(self::FIRST_EDGE_ID, $result['edge_id']);
         self::assertSame(5, $result['revision']);
-        self::assertStringContainsString('edge_id = %s', $database->prepared[4]['query']);
-        self::assertSame(self::FIRST_EDGE_ID, $database->prepared[4]['args'][3]);
+        self::assertStringContainsString('LIMIT 1', $database->prepared[2]['query']);
+        self::assertStringContainsString('edge_id = %s', $database->prepared[3]['query']);
+        self::assertSame(self::FIRST_EDGE_ID, $database->prepared[3]['args'][3]);
         self::assertSame(1, $database->commits);
     }
 
