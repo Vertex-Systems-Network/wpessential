@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\Relations;
 
 use PHPUnit\Framework\TestCase;
 use WPEssential\Contracts\MigrationStateStoreInterface;
+use WPEssential\Contracts\RelationQueryConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\Relations\RelationsModule;
 use WPEssential\Modules\Relations\WpdbRelationEdgeGateway;
@@ -51,6 +52,10 @@ final class RelationsModuleEdgePersistenceTest extends TestCase
         $module->register($services);
 
         self::assertInstanceOf(WpdbRelationEdgeGateway::class, $services->get('module.relations.edge-gateway'));
+        self::assertInstanceOf(
+            RelationQueryConsumerInterface::class,
+            $services->get('module.relations.query-consumer'),
+        );
         self::assertSame([], $state->ids);
         self::assertSame([], $database->queries);
 
@@ -82,6 +87,7 @@ final class RelationsModuleEdgePersistenceTest extends TestCase
         $module->boot($services);
 
         self::assertFalse($services->has('module.relations.edge-gateway'));
+        self::assertFalse($services->has('module.relations.query-consumer'));
     }
 
     private function services(): ServiceRegistry
