@@ -33,6 +33,7 @@ final readonly class RelationEdgeMutationService
         private RelationEndpointObjectAuthorizer $objects,
         ?Closure $uuid = null,
         ?Closure $clock = null,
+        private bool $supportsNonUniqueTuples = false,
     ) {
         $this->uuid = $uuid ?? $this->generateUuid(...);
         $this->clock = $clock ?? static fn (): string => gmdate('Y-m-d H:i:s') . '.000000';
@@ -47,20 +48,28 @@ final readonly class RelationEdgeMutationService
     ): array {
         $payload = $this->mutationPayload($relationDefinitionId);
         $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
-
-        if (($payload['unique_edge'] ?? null) !== true) {
-            throw new RuntimeException(
-                'Relation edge mutation currently requires unique_edge=true; non-unique tuples need a later storage contract.',
-            );
+        $uniqueEdge = $payload['unique_edge'] ?? null;
+        if (!is_bool($uniqueEdge)) {
+            throw new RuntimeException('Relation unique edge policy is malformed.');
         }
+        $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
 
         $revision = $this->gateway->beginRelationMutation($relationDefinitionId);
         try {
             $sourceEdges = $this->gateway->bySource($relationDefinitionId, $fromObjectId);
-            foreach ($sourceEdges as $edge) {
-                if ($edge->toObjectId === $toObjectId) {
-                    $this->gateway->rollbackRelationMutation();
-                    return $this->result(false, $relationDefinitionId, $edge->edgeId, $fromObjectId, $toObjectId, $revision);
+            if ($uniqueEdge) {
+                foreach ($sourceEdges as $edge) {
+                    if ($edge->toObjectId === $toObjectId) {
+                        $this->gateway->rollbackRelationMutation();
+                        return $this->result(
+                            false,
+                            $relationDefinitionId,
+                            $edge->edgeId,
+                            $fromObjectId,
+                            $toObjectId,
+                            $revision,
+                        );
+                    }
                 }
             }
 
@@ -95,12 +104,11 @@ final readonly class RelationEdgeMutationService
     ): array {
         $payload = $this->mutationPayload($relationDefinitionId);
         $this->assertObjectAccess($payload, $fromObjectId, $toObjectId, $context);
-
-        if (($payload['unique_edge'] ?? null) !== true) {
-            throw new RuntimeException(
-                'Relation edge mutation currently requires unique_edge=true; non-unique tuples need a later storage contract.',
-            );
+        $uniqueEdge = $payload['unique_edge'] ?? null;
+        if (!is_bool($uniqueEdge)) {
+            throw new RuntimeException('Relation unique edge policy is malformed.');
         }
+        $this->assertStorageSupportsUniquenessPolicy($uniqueEdge);
 
         $revision = $this->gateway->beginRelationMutation($relationDefinitionId);
         try {
@@ -121,8 +129,8 @@ final readonly class RelationEdgeMutationService
             $targetEdges = $this->gateway->byTarget($relationDefinitionId, $toObjectId);
             $this->assertMinimumAfterRemoval(count($targetEdges), $payload['bounds']['to_min'], 'target');
 
-            if (!$this->gateway->deleteTuple($relationDefinitionId, $fromObjectId, $toObjectId)) {
-                throw new RuntimeException('Relation edge tuple disappeared during the locked mutation.');
+            if (!$this->gateway->deleteEdge($relationDefinitionId, $edgeId)) {
+                throw new RuntimeException('Relation edge disappeared during the locked mutation.');
             }
             $nextRevision = $this->gateway->completeRelationMutation($relationDefinitionId, $revision);
 
@@ -204,6 +212,15 @@ final readonly class RelationEdgeMutationService
                 'Relation %s endpoint type is not certified for edge mutation.',
                 $side,
             ));
+        }
+    }
+
+    private function assertStorageSupportsUniquenessPolicy(bool $uniqueEdge): void
+    {
+        if (!$uniqueEdge && !$this->supportsNonUniqueTuples) {
+            throw new RuntimeException(
+                'Relation edge mutation currently requires unique_edge=true; non-unique tuples need a later storage contract.',
+            );
         }
     }
 

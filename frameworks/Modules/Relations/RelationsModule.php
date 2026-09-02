@@ -13,6 +13,7 @@ use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
+use WPEssential\Modules\Relations\Migrations\AllowNonUniqueRelationEdgeTuplesMigration;
 use WPEssential\Modules\Relations\Migrations\CreateRelationEdgeTablesMigration;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
@@ -110,6 +111,7 @@ final class RelationsModule implements ModuleInterface
                 $normalizer,
                 $gateway,
                 new RelationEndpointObjectAuthorizer(),
+                supportsNonUniqueTuples: true,
             );
             $services->set('module.relations.edge-mutations', $mutations);
             $handlers['connect'] = new RelationEdgeMutationAbilityHandler(
@@ -162,6 +164,7 @@ final class RelationsModule implements ModuleInterface
         }
 
         $migrations->register(new CreateRelationEdgeTablesMigration($database));
+        $migrations->register(new AllowNonUniqueRelationEdgeTuplesMigration($database));
 
         $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
         $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
