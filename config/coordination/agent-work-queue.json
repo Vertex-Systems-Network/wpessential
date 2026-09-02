@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "183f27aab6758935d5653767e282cc791eb9888c",
+  "queue_anchor_main_sha": "2b6c1804e9e4d8fe022dcbcceb5965b6d1eeaf4d",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
@@ -53,30 +53,6 @@
     }
   },
   "slots": [
-    {
-      "priority": 10,
-      "slot_id": "shared-cache-contract-v1",
-      "title": "Build the canonical shared Cache contract and service foundation",
-      "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
-      "work_mode": "MILESTONE_WORK",
-      "parallel_class": "SHARED_CONTRACT",
-      "claim_branch": "agent/shared-cache-contract-v1",
-      "source": "Accepted Query Gate C prerequisite audit on main; canonical cross-module ownership declares cache as a shared contract",
-      "dependencies": [
-        "shared-data-source-contract-v1 promoted"
-      ],
-      "runtime_allowed": true,
-      "allowed_scope": [
-        "shared Cache contracts/value objects and a bounded correctness-preserving service foundation",
-        "Platform service registration required to expose the canonical cache seam",
-        "targeted unit/architecture tests and directly required documentation",
-        "no Query module/runtime execution",
-        "no distributed cache backend dependency or domain-source ownership"
-      ],
-      "completion_condition": "A canonical shared cache seam exists on current main with explicit namespace/key identity, site/network/principal/revision-safe dimensions, TTL and generation/invalidation behavior, correctness-preserving disabled/miss behavior, and applicable exact-head tests demonstrating no cross-context reuse. Query still must not execute until this foundation is promoted.",
-      "notes": "Cache is never source truth. Prefer a bounded in-memory/request-local reference implementation or contract-level service; do not add an external cache dependency in V1."
-    },
     {
       "priority": 20,
       "slot_id": "query-typed-ast-validation-v1",
