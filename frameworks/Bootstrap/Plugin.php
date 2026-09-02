@@ -21,6 +21,7 @@ use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
 use WPEssential\Platform\Auth\PolicyEngine;
+use WPEssential\Platform\Cache\RequestLocalCache;
 use WPEssential\Platform\Database\Migrations\MigrationCoordinator;
 use WPEssential\Platform\Database\Migrations\MigrationRegistry;
 use WPEssential\Platform\Database\Migrations\MigrationRunner;
@@ -112,6 +113,7 @@ final class Plugin
         $abilities = new AbilityRegistry($abilityPolicy);
         $abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
         $dataSources = new DataSourceRegistry();
+        $cache = new RequestLocalCache();
 
         [$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
         $registrationProviders = new RegistrationDefinitionProviderRegistry();
@@ -138,6 +140,7 @@ final class Plugin
         $services->set('platform.abilities.contexts', $abilityContexts);
         $services->set('platform.abilities.wordpress', $abilityBridge);
         $services->set('platform.data-sources', $dataSources);
+        $services->set('platform.cache', $cache);
         if ($database instanceof NativeWpdbAdapter) {
             $services->set('platform.database', $database);
         }
