@@ -48,6 +48,44 @@ final class RelationDefinitionAbilityHandlerTest extends TestCase
         self::assertSame(2, $updated['revision']);
     }
 
+    public function testPartialBasicUpdatePreservesExplicitAdvancedPolicy(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $advanced = $this->payload();
+        $advanced['direction'] = [
+            'reciprocal' => false,
+            'bidirectional_traversal' => true,
+            'parent_relation' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        ];
+        $advanced['storage_mode'] = 'provider';
+        $advanced['pivot_enabled'] = true;
+        $advanced['multisite_scope'] = 'network';
+        $advanced['portability'] = ['definition' => true, 'edges' => true, 'pivot' => false];
+
+        $created = $this->handler($repository, RelationDefinitionAbilityHandler::SAVE)->handle([
+            'payload' => $advanced,
+            'status' => 'draft',
+        ], $this->context())['definition'];
+
+        $basic = $this->payload();
+        $basic['title'] = 'Updated without advanced controls';
+        $updated = $this->handler($repository, RelationDefinitionAbilityHandler::SAVE)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 1,
+            'payload' => $basic,
+            'status' => 'draft',
+        ], $this->context())['definition'];
+
+        self::assertSame('provider', $updated['payload']['storage_mode']);
+        self::assertTrue($updated['payload']['pivot_enabled']);
+        self::assertSame('network', $updated['payload']['multisite_scope']);
+        self::assertTrue($updated['payload']['portability']['edges']);
+        self::assertSame(
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            $updated['payload']['direction']['parent_relation'],
+        );
+    }
+
     public function testRelationKeyIsImmutableAfterCreation(): void
     {
         $repository = new InMemoryDefinitionRepository();
@@ -115,6 +153,25 @@ final class RelationDefinitionAbilityHandlerTest extends TestCase
 
         self::assertSame('published', $published['status']);
         self::assertSame(2, $published['revision']);
+    }
+
+    public function testStatusTransitionRejectsUncertifiedAdvancedRuntimePolicy(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $payload = $this->payload();
+        $payload['storage_mode'] = 'provider';
+        $created = $this->handler($repository, RelationDefinitionAbilityHandler::SAVE)->handle([
+            'payload' => $payload,
+            'status' => 'draft',
+        ], $this->context())['definition'];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not have a certified runtime adapter');
+        $this->handler($repository, RelationDefinitionAbilityHandler::STATUS)->handle([
+            'id' => $created['id'],
+            'expected_revision' => 1,
+            'status' => 'published',
+        ], $this->context());
     }
 
     public function testOwnerBoundaryRejectsForeignRelationDefinition(): void
