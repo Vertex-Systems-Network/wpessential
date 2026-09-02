@@ -21,6 +21,7 @@ final class RelationAdminController
     public const PAGE_SLUG = 'wpessential-relations';
     public const SAVE_ACTION = 'wpessential_relations_save';
     public const STATUS_ACTION = 'wpessential_relations_status';
+    public const EDGE_ACTION = 'wpessential_relations_edge';
     private const CAPABILITY = 'manage_options';
 
     public function __construct(
@@ -38,6 +39,7 @@ final class RelationAdminController
         add_action('admin_menu', [$this, 'registerMenu']);
         add_action('admin_post_' . self::SAVE_ACTION, [$this, 'handleSave']);
         add_action('admin_post_' . self::STATUS_ACTION, [$this, 'handleStatus']);
+        add_action('admin_post_' . self::EDGE_ACTION, [$this, 'handleEdge']);
     }
 
     public function registerMenu(): void
@@ -75,9 +77,10 @@ final class RelationAdminController
 
         echo '<div class="wrap">';
         echo '<h1>' . esc_html__('Relations', 'wpessential') . '</h1>';
-        echo '<p>' . esc_html__('Create and maintain canonical Surface 4 relation definitions. Runtime writes remain governed by the shared Ability and Policy layer.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Create canonical Surface 4 relation definitions and manage individual edges through the shared Ability and Policy layer.', 'wpessential') . '</p>';
         $this->renderNotice($readError);
         $this->renderEditor($editing);
+        $this->renderConnectionEditor($definitions);
         $this->renderDefinitions($definitions, $diagnostics);
         echo '</div>';
     }
@@ -102,7 +105,10 @@ final class RelationAdminController
             $id = $values['id'];
             if ($id !== '') {
                 $input['id'] = $id;
-                $input['expected_revision'] = $this->positiveRevision($values['expected_revision']);
+                $input['expected_revision'] = $this->positiveInteger(
+                    $values['expected_revision'],
+                    'Relation expected revision',
+                );
             }
 
             $this->abilities->execute('wpessential/relations/save-definition', $input, $this->uiContext());
@@ -126,13 +132,65 @@ final class RelationAdminController
         try {
             $id = $this->requestString(INPUT_POST, 'id');
             $status = $this->requestString(INPUT_POST, 'status');
-            $revision = $this->positiveRevision($this->requestString(INPUT_POST, 'expected_revision'));
+            $revision = $this->positiveInteger(
+                $this->requestString(INPUT_POST, 'expected_revision'),
+                'Relation expected revision',
+            );
             $this->abilities->execute('wpessential/relations/status-definition', [
                 'id' => $id,
                 'status' => $status,
                 'expected_revision' => $revision,
             ], $this->uiContext());
             $this->redirect('saved', __('Relation lifecycle status updated.', 'wpessential'));
+        } catch (Throwable $error) {
+            $this->redirect('error', $error->getMessage());
+        }
+    }
+
+    public function handleEdge(): void
+    {
+        if (!$this->canManage()) {
+            $this->deny();
+            return;
+        }
+        if (!function_exists('check_admin_referer')) {
+            throw new RuntimeException('WordPress nonce verification is unavailable.');
+        }
+        check_admin_referer(self::EDGE_ACTION);
+
+        try {
+            $operation = $this->requestString(INPUT_POST, 'operation');
+            if (!in_array($operation, ['connect', 'disconnect'], true)) {
+                throw new RuntimeException('Relation edge operation is not supported.');
+            }
+            $relationDefinitionId = $this->requestString(INPUT_POST, 'relation_definition_id');
+            $fromObjectId = $this->positiveInteger(
+                $this->requestString(INPUT_POST, 'from_object_id'),
+                'Relation source object id',
+            );
+            $toObjectId = $this->positiveInteger(
+                $this->requestString(INPUT_POST, 'to_object_id'),
+                'Relation target object id',
+            );
+
+            $result = $this->abilities->execute(
+                'wpessential/relations/' . $operation,
+                [
+                    'relation_definition_id' => $relationDefinitionId,
+                    'from_object_id' => $fromObjectId,
+                    'to_object_id' => $toObjectId,
+                ],
+                $this->uiContext(),
+            );
+            $changed = is_array($result)
+                && is_array($result['mutation'] ?? null)
+                && ($result['mutation']['changed'] ?? null) === true;
+            $this->redirect(
+                'saved',
+                $changed
+                    ? __('Relation edge updated.', 'wpessential')
+                    : __('Relation edge was already in the requested state.', 'wpessential'),
+            );
         } catch (Throwable $error) {
             $this->redirect('error', $error->getMessage());
         }
@@ -190,6 +248,45 @@ final class RelationAdminController
             echo ' <a class="button" href="' . esc_url($this->pageUrl()) . '">' . esc_html__('Cancel edit', 'wpessential') . '</a>';
         }
         echo '</p></form></section>';
+    }
+
+    /** @param list<array<string,mixed>> $definitions */
+    private function renderConnectionEditor(array $definitions): void
+    {
+        echo '<section aria-labelledby="wpessential-relations-edge-title">';
+        echo '<h2 id="wpessential-relations-edge-title">' . esc_html__('Manage connection', 'wpessential') . '</h2>';
+        echo '<p>' . esc_html__('Connect or disconnect one source/target pair. Endpoint existence, resource authorization, cardinality and transactional integrity are rechecked server-side.', 'wpessential') . '</p>';
+        if ($definitions === []) {
+            echo '<p><em>' . esc_html__('Create a relation definition first.', 'wpessential') . '</em></p></section>';
+            return;
+        }
+
+        echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+        echo '<input type="hidden" name="action" value="' . esc_attr(self::EDGE_ACTION) . '">';
+        if (function_exists('wp_nonce_field')) {
+            wp_nonce_field(self::EDGE_ACTION);
+        }
+        echo '<table class="form-table" role="presentation"><tbody>';
+        echo '<tr><th scope="row"><label for="wpe-rel-edge-definition">' . esc_html__('Relation', 'wpessential') . '</label></th><td>';
+        echo '<select id="wpe-rel-edge-definition" name="relation_definition_id" required>';
+        foreach ($definitions as $definition) {
+            if (($definition['status'] ?? null) !== 'published') {
+                continue;
+            }
+            $payload = is_array($definition['payload'] ?? null) ? $definition['payload'] : [];
+            $id = is_string($definition['id'] ?? null) ? $definition['id'] : '';
+            $title = is_string($payload['title'] ?? null) ? $payload['title'] : $id;
+            echo '<option value="' . esc_attr($id) . '">' . esc_html($title) . '</option>';
+        }
+        echo '</select></td></tr>';
+        $this->numberRow('from_object_id', __('Source object ID', 'wpessential'), null, 1);
+        $this->numberRow('to_object_id', __('Target object ID', 'wpessential'), null, 1);
+        $this->selectRow('operation', __('Operation', 'wpessential'), 'connect', [
+            'connect' => __('Connect', 'wpessential'),
+            'disconnect' => __('Disconnect', 'wpessential'),
+        ]);
+        echo '</tbody></table><p class="submit"><button type="submit" class="button">' . esc_html__('Apply connection change', 'wpessential') . '</button></p>';
+        echo '</form></section>';
     }
 
     /** @param list<array<string,mixed>> $definitions @param array<string,array<string,mixed>> $diagnostics */
@@ -386,10 +483,10 @@ final class RelationAdminController
         return function_exists('sanitize_text_field') ? sanitize_text_field($value) : trim(strip_tags($value));
     }
 
-    private function positiveRevision(string $value): int
+    private function positiveInteger(string $value, string $label): int
     {
         if (preg_match('/^[1-9]\d*$/', $value) !== 1) {
-            throw new RuntimeException('Relation expected revision must be a positive integer.');
+            throw new RuntimeException($label . ' must be a positive integer.');
         }
         return (int) $value;
     }
