@@ -26,6 +26,7 @@ use WPEssential\Platform\Database\Migrations\MigrationRegistry;
 use WPEssential\Platform\Database\Migrations\MigrationRunner;
 use WPEssential\Platform\Database\Migrations\WpdbMigrationStateStore;
 use WPEssential\Platform\Database\NativeWpdbAdapter;
+use WPEssential\Platform\DataSources\DataSourceRegistry;
 use WPEssential\Platform\Definitions\DefinitionScope;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\Definitions\Migrations\CreateDefinitionTablesMigration;
@@ -110,6 +111,7 @@ final class Plugin
         $abilityPolicy = new PolicyEngine(new WordPressCapabilityChecker($abilityEnvironment));
         $abilities = new AbilityRegistry($abilityPolicy);
         $abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
+        $dataSources = new DataSourceRegistry();
 
         [$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
         $registrationProviders = new RegistrationDefinitionProviderRegistry();
@@ -135,6 +137,7 @@ final class Plugin
         $services->set('platform.abilities.policy', $abilityPolicy);
         $services->set('platform.abilities.contexts', $abilityContexts);
         $services->set('platform.abilities.wordpress', $abilityBridge);
+        $services->set('platform.data-sources', $dataSources);
         if ($database instanceof NativeWpdbAdapter) {
             $services->set('platform.database', $database);
         }
