@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "cccecc08fc1247fa45472ca0ae38ca912cfe1d14",
+  "queue_anchor_main_sha": "6a9e9285fcd4a207634d1a62900626905862fc22",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
@@ -54,33 +54,30 @@
   },
   "slots": [
     {
-      "priority": 20,
-      "slot_id": "query-wordpress-posts-compiler-v1",
-      "title": "Add bounded native WordPress posts provider compiler V1",
-      "role": "ANY",
+      "priority": 5,
+      "slot_id": "shared-data-source-authorization-mapping-v1",
+      "title": "Add explicit Data Source to canonical Policy authorization mapping V1",
+      "role": "SUPERVISOR_ONLY",
       "status": "OPEN",
       "work_mode": "MILESTONE_WORK",
-      "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/query-wordpress-posts-compiler-v1",
-      "source": "Issue #66 Gate C baseline plus Query Implementation Contract V1 and promoted typed-AST/validation PR #137",
+      "parallel_class": "SERIALIZE",
+      "claim_branch": "agent/shared-data-source-authorization-mapping-v1",
+      "source": "Query Implementation Contract V1 sections 14-15 plus current DataSourceDescriptor audit after promoted Query compiler PR #139",
       "dependencies": [
-        "Query typed AST and structural validation V1 promoted",
         "shared Data Source contract/registry promoted",
-        "shared Cache contract/service promoted",
-        "Relations public Query-consumer contract accepted"
+        "canonical PolicyEngine/AuthorizationRequest seam promoted",
+        "Query native wordpress.posts compiler V1 promoted"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "Query-owned provider compile contract/value objects and a bounded native wordpress.posts compiler",
-        "finite mapping from validated QueryDefinition semantics to public WP_Query argument semantics",
-        "supported field projection metadata plus sorting/filtering/search/pagination compilation with fail-closed unsupported nodes/operators",
-        "Query-local unit/static/architecture tests and surface-local documentation",
-        "no WP_Query execution or database reads/writes in this slice",
-        "no wpdb/raw SQL/query filters/PHP callbacks/unchecked table or column identifiers",
-        "no REST/admin execution path, no Query-private Data Source registry/cache engine and no relation traversal execution"
+        "shared Data Source authorization mapping value/contract and backward-compatible descriptor integration",
+        "canonical shared Data Source unit/static/architecture tests and directly required contract documentation",
+        "mapping may name canonical Policy ability/capability/resource type only; it must not grant access by itself",
+        "legacy descriptors without a mapping remain valid for non-executing consumers but must fail closed for future execution",
+        "no Query provider execution, no REST/admin exposure, no capability bypass and no private Query authorization engine"
       ],
-      "completion_condition": "A reviewable Query V1 native posts compiler converts only supported, already-validated wordpress.posts Query definitions into normalized bounded WP_Query argument plans, rejects unsupported or unsafe semantics without approximation, and performs no query execution. Exact-head applicable CI must pass before promotion.",
-      "notes": "This is the first provider slice after the typed-AST foundation. Policy-authorized execution, relation execution, caching behavior, admin UX and public/REST exposure remain separate later Gate C tranches."
+      "completion_condition": "A Data Source descriptor can carry an explicit validated canonical Policy authorization mapping without breaking existing non-executing descriptors, and consumers can distinguish mapped versus unmapped sources so future Query execution can fail closed rather than inventing a capability. Exact-head applicable CI must pass before promotion.",
+      "notes": "The Query contract requires adapter authorization mapping before execution. Current DataSourceDescriptor requires Policy in principle but exposes no ability/capability mapping, so provider execution remains blocked until this shared seam is promoted."
     }
   ]
 }
