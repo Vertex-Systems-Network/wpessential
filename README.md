@@ -14,14 +14,18 @@ Project website: **https://wpessential.org**
 - Planning closure/integration authority: through **ADR-0213**
 - Implementation Baseline: **WP119 / ADR-0214 PASS**
 - Machine-enforced architecture guards: **WP120 / ADR-0215 PASS**
-- Platform Foundation: **WP121 CURRENT / IMPLEMENTING**
+- Platform Foundation: **WP121 DONE / PASS FOR MODULE HANDOFF**
 - Owner engineering contract: **ADR-0216**
 - Atomic compiled-registration persistence: **ADR-0217**
 - Definition + Audit persistence: **ADR-0218**
 - WordPress.org metadata + direct-access security: **ADR-0219**
 - Real WordPress AJAX/nonce/Policy integration: **ADR-0220**
+- Phase 2 Gate A / Fields: **PASS for the certified native V1 scope**
+- Phase 2 Gate B / Relations: **IN PROGRESS** — canonical definition lifecycle, durable edge persistence, and transactional connect/disconnect foundation are merged; Gate B closure criteria remain open
+- Phase 2 Gates C–E / Query → Admin Columns → Dynamic Listings: **dependency-gated after Relations**
+- Status runtime: **blocked until Gates A–E are complete**
 
-The current implementation branch is `implementation/baseline-adoption-gate`. Draft PR #2 carries the Platform Foundation work.
+Audit anchor for this README reconciliation: `main @ ecf18c2e0cab9bd4a9cfd689d1b016babf9f09c0` on **2026-09-02**. Repository/machine evidence remains authoritative if this prose later becomes stale.
 
 ## Module progress dashboard
 
@@ -30,11 +34,11 @@ The **56-module master plan is complete**. This dashboard tracks each canonical 
 **Progress model:** `UNSEEDED = 0%` → `BANK_SURFACE_SEEDED = 25%` → `NATIVE_AUDITED = 50%` → `MARKET_AUDITED = 75%` → `BANK_REVIEWED = 100%`.
 
 - Canonical modules planned: **56 / 56 (100%)**
-- Modules with Bank work started: **7 / 56**
-- Fully Bank-reviewed modules: **5 / 56**
-- Current Bank records: **1,406**
-- Weighted Bank-readiness snapshot: **9.8%**
-- Current certified Bank checkpoint: **5 surfaces BANK_REVIEWED; Issue #34 integration certification complete**
+- Modules with Bank work started: **8 / 56**
+- Fully Bank-reviewed modules: **6 / 56**
+- Current Bank records: **1,571**
+- Weighted Bank-readiness snapshot: **11.6%**
+- Current certified Bank checkpoint: **6 surfaces BANK_REVIEWED** — Fields, Relations, Status, Custom Tables, Admin Columns, Dashboard Widgets
 - Estimated Bank-review program completion: **~2026-10-26**
 
 > **Date meaning:** “Bank Review Date” is a working estimate for completing planning/research certification for that surface, not a promise of runtime implementation, release, or production deployment. Dates are re-baselined when research, compatibility work, or CI exposes additional gaps.
@@ -47,7 +51,7 @@ The **56-module master plan is complete**. This dashboard tracks each canonical 
 | 4 | Relations | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 5 | Status | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 6 | Query Builder | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-06 |
-| 7 | Custom Tables / Content Tables | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-07 |
+| 7 | Custom Tables / Content Tables | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete) |
 | 8 | Admin Columns | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 9 | Listings | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-09 |
 | 10 | Dashboard Widgets | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
@@ -100,6 +104,22 @@ The **56-module master plan is complete**. This dashboard tracks each canonical 
 
 The machine-readable source of truth for current counts and lifecycle status is `config/product/options-bank-progress.json`. The dates above are README planning estimates and intentionally remain separate from the machine-certified lifecycle state.
 
+### Plan vs implementation critical path
+
+Bank certification and runtime implementation are separate gates. Current audited critical-path truth at the README audit anchor is:
+
+| Gate / Surface | Planning / contract state | Runtime / implementation state | Next blocking work |
+|---|---|---|---|
+| A — Fields | Bank reviewed; detailed atomic inventory exists | **PASS for certified native V1 scope**; not full product-parity certification | Preserve fail-closed owner boundaries; broader parity remains separately gated |
+| B — Relations | Bank reviewed; Relations Atomic Option Contract complete | **IN PROGRESS**; definition lifecycle, durable edge persistence, transactional connect/disconnect foundation merged | Remaining object/provider adapters where owned, Query/Data Source integration, admin UX, import/export/diagnostics, reference/performance/scale evidence, final Gate B closure |
+| C — Query | Atomic inventory exists; separate stale planning branch contains unintegrated Bank/audit work | **NOT STARTED / BLOCKED by Gate B** | Rebase/sync planning work from current main, certify Bank lifecycle, then implement typed Query AST/data-source/policy/performance contract after Relations is stable |
+| D — Admin Columns | Bank reviewed; historical Atomic/UX work exists but current shared atomic lifecycle does not certify full UX/runtime completion | **BLOCKED by Query runtime** | Preserve Query ownership of backend semantics; certify edit/export/performance/accessibility only after dependencies |
+| E — Dynamic Listings | Atomic inventory exists; separate stale planning branch contains unintegrated listing/UX research | **NOT STARTED / BLOCKED by Query + shared renderer/data-source contracts** | Rebase/sync planning work, certify Bank lifecycle, then implement safe renderer/query/field/relation integration |
+| Status | Bank reviewed | **RUNTIME BLOCKED** | Start only after Gates A–E complete |
+| Custom Tables | Bank reviewed at 165 records | **Planning-only certification**; no runtime DDL/migration execution authorized by the Bank review merge | Enter a separately approved runtime/migration gate before executable table schema work |
+
+`config/product/atomic-option-contract-progress.json` separately reports 56/56 atomic inventories, only Relations at `OPTION_CONTRACT_COMPLETE`, and zero surfaces at full-parity runtime/product certification. A bounded runtime gate such as Fields Gate A must not be misreported as full `PRODUCT_PARITY_CERTIFIED` completion.
+
 ## Multi-agent work command
 
 Use the following prompt when assigning work to any AI/coding/planning agent. It is intentionally **not module-only**: the agent must first determine whether the request is a surface/module task, existing milestone/work package, shared-foundation task, integration, fix, research/audit, release/QA or recovery work.
@@ -140,20 +160,26 @@ Audit → current WordPress/native research → current market/provider research
 If it is implementation or shared/integration work, follow the repository's approved milestone/work-package lifecycle and dependency order instead of unnecessarily running the Options Bank lifecycle again.
 
 Multi-agent rules are mandatory:
-- dedicated branch from an explicit current main SHA
+- verify current main and repository truth before branch creation
+- create a dedicated branch only for actually assigned/approved work; do not pre-create speculative branches for every future module
 - one primary writer per assigned work scope
 - no overlapping active write ownership
 - canonical owner/no-bypass rules
 - no peer-private storage/runtime access
 - module-local workers do not race on shared/global files
 - shared changes become Integration Requirements unless this agent is the designated integrator
-- stale branch must sync with latest main before final certification
-- exact-head applicable CI only
+- supervisor/integrator serializes shared writes and merge decisions
+- stale branch must sync with latest main before final certification using the repository-approved non-destructive strategy
+- merge readiness requires reviewed intended diff, current-base compatibility, exact-head applicable CI, and no unresolved blocking review/security/migration/ownership issue
+- completion signal must include branch, exact head SHA, PR/MR, tests/CI, remaining risks and the explicit phrase `Work Done and Submitted`
+- after an accepted merge, update durable coordination/progress truth and require affected active branches to absorb current main before their next certification
 - never weaken valid tests or invent completion
 
 Do not ask the repository owner to restate ordinary architecture, UI, options, plan details, or module boundaries when repository evidence can resolve them.
 
 Ask/escalate only if there is a genuinely unresolved product decision, conflicting authoritative contracts, missing authorization/credentials, or another privileged/irreversible action.
+
+If no valid unassigned work slot exists, make no repository changes and report that no work slot is currently available; do not invent a module assignment.
 
 Final report must state:
 - detected work mode
@@ -214,13 +240,13 @@ Production implementation must preserve:
 
 The asymmetric `wpesential` filter spelling is intentional public API.
 
-See `CONTRIBUTING.md` for contribution and WordPress.org release rules. `readme.txt` is the WordPress.org-facing plugin documentation draft for the current development line.
+See `CONTRIBUTING.md` for contribution and WordPress.org release rules. The mandatory WordPress.org/Plugin Check policy is `docs/QUALITY/WORDPRESS-ORG-PLUGIN-CHECK-COMPLIANCE.md`. `readme.txt` is the WordPress.org-facing plugin documentation draft for the current development line.
 
 ## Current foundation evidence
 
-Hosted CI currently covers Composer metadata, canonical architecture/engineering guards, PHP syntax, smoke tests, MySQL integration fixtures, and a pinned real WordPress 7.1 AJAX/nonce/Policy fixture. Accepted runtime evidence includes atomic compiled registrations, scoped Definition/Audit persistence, WordPress.org/direct-access security invariants, and the canonical Ability-backed AJAX path.
+The shared Platform Foundation has passed module handoff, and Surface 3 Fields Gate A has passed for its certified native V1 scope. Surface 4 Relations is now the active serialized runtime critical path: merged evidence includes the Relations Atomic Option Contract, canonical definition lifecycle, durable edge persistence, and transactional connect/disconnect foundation. Gate B is not yet complete; Query runtime must not start until the Relations contract is stable and its required closure evidence is satisfied.
 
-Current next Platform Foundation target is **Action Scheduler coexistence/packaging/backend evidence**, followed by durable Job persistence, Platform/Runtime Observatory admin surfaces, 10K/100K compiled-registration performance evidence, and the final shared-foundation readiness gate before business-module development.
+Hosted CI continues to provide architecture, PHP quality, WordPress/PHP/database compatibility, distributable-package and browser/accessibility evidence on certified exact heads where applicable. WordPress.org release readiness remains a separate gate and now additionally requires the official Plugin Check / Directory compliance policy referenced above.
 
 ## Canonical planning maps
 
