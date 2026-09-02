@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 
 /** @return array<string, mixed> */
@@ -45,14 +49,7 @@ if (!is_array($items) || count($items) !== 20) {
     throw new RuntimeException('Surface 7 native audit must contain exactly 20 dispositions.');
 }
 
-$counts = [
-    'BANK_RECORD' => 0,
-    'PROVIDER_MAPPING' => 0,
-    'SYSTEM_RUNTIME' => 0,
-    'OUT_OF_SURFACE' => 0,
-    'LEGACY_COMPATIBILITY' => 0,
-    'CORE_INTERNAL' => 0,
-];
+$counts = ['BANK_RECORD'=>0,'PROVIDER_MAPPING'=>0,'SYSTEM_RUNTIME'=>0,'OUT_OF_SURFACE'=>0,'LEGACY_COMPATIBILITY'=>0,'CORE_INTERNAL'=>0];
 $ids = [];
 foreach ($items as $item) {
     if (!is_array($item) || !is_string($item['id'] ?? null) || isset($ids[$item['id']])) {
@@ -66,7 +63,7 @@ foreach ($items as $item) {
     ++$counts[$disposition];
     foreach (($item['bank_record_ids'] ?? []) as $recordId) {
         if (!is_string($recordId) || !isset($records[$recordId])) {
-            throw new RuntimeException(sprintf('Native audit item %s references missing Bank record %s.', $item['id'], is_scalar($recordId) ? (string) $recordId : 'value'));
+            throw new RuntimeException(sprintf('Native audit item %s references a missing Bank record.', $item['id']));
         }
     }
     if ($disposition === 'OUT_OF_SURFACE' && !is_string($item['owner_surface'] ?? null)) {
@@ -75,25 +72,13 @@ foreach ($items as $item) {
 }
 
 $coverage = $audit['coverage'] ?? [];
-$expected = [
-    'items' => 20,
-    'bank_record' => 10,
-    'provider_mapping' => 1,
-    'system_runtime' => 2,
-    'out_of_surface' => 7,
-    'legacy_compatibility' => 0,
-    'core_internal' => 0,
-    'unresolved' => 0,
-];
+$expected = ['items'=>20,'bank_record'=>10,'provider_mapping'=>1,'system_runtime'=>2,'out_of_surface'=>7,'legacy_compatibility'=>0,'core_internal'=>0,'unresolved'=>0];
 foreach ($expected as $key => $value) {
     if (($coverage[$key] ?? null) !== $value) {
         throw new RuntimeException(sprintf('Surface 7 native audit coverage %s disagrees with certified truth.', $key));
     }
 }
-if ($counts['BANK_RECORD'] !== 10
-    || $counts['PROVIDER_MAPPING'] !== 1
-    || $counts['SYSTEM_RUNTIME'] !== 2
-    || $counts['OUT_OF_SURFACE'] !== 7) {
+if ($counts['BANK_RECORD'] !== 10 || $counts['PROVIDER_MAPPING'] !== 1 || $counts['SYSTEM_RUNTIME'] !== 2 || $counts['OUT_OF_SURFACE'] !== 7) {
     throw new RuntimeException('Surface 7 native audit disposition counters drifted.');
 }
 
