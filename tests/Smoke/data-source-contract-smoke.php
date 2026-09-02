@@ -18,6 +18,7 @@ spl_autoload_register(static function (string $class): void {
     }
 });
 
+use WPEssential\Platform\DataSources\DataSourceAuthorizationMapping;
 use WPEssential\Platform\DataSources\DataSourceAvailability;
 use WPEssential\Platform\DataSources\DataSourceDescriptor;
 use WPEssential\Platform\DataSources\DataSourceRegistry;
@@ -31,6 +32,11 @@ function dataSourceExpect(bool $condition, string $message): void
 }
 
 $registry = new DataSourceRegistry();
+$authorization = new DataSourceAuthorizationMapping(
+    ability: 'wpessential/query/execute',
+    capability: 'read',
+    resourceType: 'post',
+);
 $descriptor = new DataSourceDescriptor(
     id: 'wordpress.posts',
     sourceType: 'wordpress.posts',
@@ -44,12 +50,29 @@ $descriptor = new DataSourceDescriptor(
     maxBatchSize: 100,
     cacheable: true,
     cacheGenerationKeys: ['posts.generation'],
+    authorization: $authorization,
 );
 $registry->register($descriptor);
 
 dataSourceExpect($registry->require('wordpress.posts') === $descriptor, 'registered source must resolve by stable id');
 dataSourceExpect($descriptor->policyRequired, 'data source must require canonical Policy authorization');
 dataSourceExpect($descriptor->isAvailable(), 'available source must report available');
+dataSourceExpect($descriptor->hasAuthorizationMapping(), 'mapped source must advertise explicit authorization metadata');
+dataSourceExpect($descriptor->requireAuthorizationMapping() === $authorization, 'mapped source must expose its canonical authorization metadata');
+
+$legacy = new DataSourceDescriptor(
+    id: 'legacy.inspectable',
+    sourceType: 'legacy.inspectable',
+    capabilityVersion: 1,
+    fieldSchema: ['record.id' => 'integer'],
+);
+dataSourceExpect(!$legacy->hasAuthorizationMapping(), 'legacy non-executing descriptors must remain constructible without authorization mapping');
+try {
+    $legacy->requireAuthorizationMapping();
+    dataSourceExpect(false, 'future execution must fail closed when a source has no authorization mapping');
+} catch (RuntimeException) {
+    // expected
+}
 
 try {
     $registry->register($descriptor);
