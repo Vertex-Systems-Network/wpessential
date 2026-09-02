@@ -122,88 +122,31 @@ Bank certification and runtime implementation are separate gates. Current audite
 
 ## Multi-agent work command
 
-Use the following prompt when assigning work to any AI/coding/planning agent. It is intentionally **not module-only**: the agent must first determine whether the request is a surface/module task, existing milestone/work package, shared-foundation task, integration, fix, research/audit, release/QA or recovery work.
+### 1. Sabse pehle sirf ek Supervisor start karo
 
-Replace only the text inside `<REQUESTED WORK>` when starting another agent.
+Is message ko Agent 1 ko do:
 
-```text
-Work on the WPEssential repository from current repository truth.
+Start WPEssential Supervisor in AUTO mode.
 
-Repository:
-https://github.com/Vertex-Systems-Network/wpessential
+Read AUTO-AGENT.md and follow it completely.
 
-Before doing anything, read and follow root AGENTS.md, CONTRIBUTING.md, current CHECKPOINT.md, project-state/adoption docs, approval/work lifecycle ledger, engineering execution governance, canonical ownership/dependency contracts, and all files relevant to the requested work.
+Reconcile current main, open PRs/MRs, active claim branches and config/coordination/agent-work-queue.json before changing files.
 
-Requested work:
-<REQUESTED WORK>
+Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 
-Do not assume this is necessarily a single module task.
+Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
 
-First autonomously determine the correct work mode from repository evidence:
-- SURFACE_WORK
-- MILESTONE_WORK
-- WORK_PACKAGE
-- SHARED_FOUNDATION
-- INTEGRATION_WORK
-- REGRESSION_FIX
-- RESEARCH_AUDIT
-- RELEASE_QA
-- RECOVERY
+### 2. Uske baad jitne additional agents chaho start karo
 
-Resolve the exact current plan, milestone/work-package/task ID, canonical owner(s), dependencies, lifecycle state, completed work, active blockers, allowed write scope, and shared/integrator-owned files before making changes.
+Agent 2, Agent 3, Agent 4... sab ko exactly same Worker command do:
 
-If this request corresponds to an existing approved plan/work package, continue that existing plan from its latest verified checkpoint. Do not create a competing plan, restart completed work, or force it into a module workflow.
+Start WPEssential Worker in AUTO mode.
 
-If it is surface/module Options Bank work, follow:
-Audit → current WordPress/native research → current market/provider research → Options Bank → ownership/duplicate resolution → Native Audit → Market Audit → Bank Review → UX projection → implementation contract.
+Read AUTO-AGENT.md and follow it completely.
 
-If it is implementation or shared/integration work, follow the repository's approved milestone/work-package lifecycle and dependency order instead of unnecessarily running the Options Bank lifecycle again.
+Autonomously inspect current main and config/coordination/agent-work-queue.json, then claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
 
-Multi-agent rules are mandatory:
-- verify current main and repository truth before branch creation
-- create a dedicated branch only for actually assigned/approved work; do not pre-create speculative branches for every future module
-- one primary writer per assigned work scope
-- no overlapping active write ownership
-- canonical owner/no-bypass rules
-- no peer-private storage/runtime access
-- module-local workers do not race on shared/global files
-- shared changes become Integration Requirements unless this agent is the designated integrator
-- supervisor/integrator serializes shared writes and merge decisions
-- stale branch must sync with latest main before final certification using the repository-approved non-destructive strategy
-- merge readiness requires reviewed intended diff, current-base compatibility, exact-head applicable CI, and no unresolved blocking review/security/migration/ownership issue
-- completion signal must include branch, exact head SHA, PR/MR, tests/CI, remaining risks and the explicit phrase `Work Done and Submitted`
-- after an accepted merge, update durable coordination/progress truth and require affected active branches to absorb current main before their next certification
-- never weaken valid tests or invent completion
-
-Do not ask the repository owner to restate ordinary architecture, UI, options, plan details, or module boundaries when repository evidence can resolve them.
-
-Ask/escalate only if there is a genuinely unresolved product decision, conflicting authoritative contracts, missing authorization/credentials, or another privileged/irreversible action.
-
-If no valid unassigned work slot exists, make no repository changes and report that no work slot is currently available; do not invent a module assignment.
-
-Final report must state:
-- detected work mode
-- plan/milestone/work-package/task ID if applicable
-- canonical owner/surfaces affected
-- base SHA and branch
-- work completed
-- files changed
-- lifecycle/status changes
-- Integration Requirements
-- tests/CI with exact head SHA
-- unresolved items
-- next safe action
-```
-
-Examples for `<REQUESTED WORK>`:
-
-- `Continue Relations from the latest certified repository checkpoint.`
-- `Continue the current Platform Foundation milestone.`
-- `Continue P2-M4-WP3 from where it stopped.`
-- `Fix the current Options Bank schema problem.`
-- `Audit and implement the approved shared Job Service work package.`
-
-The detailed parallel-development rules remain canonical in root `AGENTS.md` and `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`; this README prompt is only the reusable task-entry command.
+Do not ask me which module to work on unless repository evidence contains a genuine unresolved decision.
 
 ## What WPEssential is
 
