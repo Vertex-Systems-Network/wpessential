@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use InvalidArgumentException;
+use RuntimeException;
 
 final readonly class DataSourceDescriptor
 {
@@ -44,6 +45,7 @@ final readonly class DataSourceDescriptor
         public bool $diagnosticsAvailable = false,
         public DataSourceAvailability $availability = DataSourceAvailability::Available,
         public ?string $degradedReason = null,
+        public ?DataSourceAuthorizationMapping $authorization = null,
     ) {
         $this->assertIdentifier($this->id, 'Data Source id');
         $this->assertIdentifier($this->sourceType, 'Data Source type');
@@ -103,6 +105,19 @@ final readonly class DataSourceDescriptor
     public function isAvailable(): bool
     {
         return $this->availability === DataSourceAvailability::Available;
+    }
+
+    public function hasAuthorizationMapping(): bool
+    {
+        return $this->authorization !== null;
+    }
+
+    public function requireAuthorizationMapping(): DataSourceAuthorizationMapping
+    {
+        return $this->authorization ?? throw new RuntimeException(sprintf(
+            'Data Source "%s" has no canonical Policy authorization mapping.',
+            $this->id,
+        ));
     }
 
     private function assertIdentifier(string $value, string $label): void
