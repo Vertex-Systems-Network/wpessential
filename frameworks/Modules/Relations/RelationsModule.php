@@ -94,6 +94,15 @@ final class RelationsModule implements ModuleInterface
                 $scope,
             );
             $services->set('module.relations.definition-writes', $definitionWrites);
+            $services->set(
+                'module.relations.query-consumer',
+                new RelationQueryConsumer(
+                    $definitions,
+                    $normalizer,
+                    new RelationQueryReadGateway($database, $scope),
+                    $scope,
+                ),
+            );
         }
 
         $handlers = [
