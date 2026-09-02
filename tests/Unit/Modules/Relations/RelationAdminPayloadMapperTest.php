@@ -45,6 +45,54 @@ final class RelationAdminPayloadMapperTest extends TestCase
         self::assertFalse($payload['unique_edge']);
     }
 
+    public function testPreservesAdvancedPoliciesAndDirectionCompositionDuringBasicEdit(): void
+    {
+        $existing = [
+            'relation_key' => 'book_authors',
+            'title' => 'Old title',
+            'direction' => [
+                'reciprocal' => false,
+                'bidirectional_traversal' => true,
+                'parent_relation' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+            ],
+            'storage_mode' => 'provider',
+            'pivot_enabled' => true,
+            'multisite_scope' => 'network',
+            'portability' => ['definition' => true, 'edges' => true, 'pivot' => false],
+        ];
+
+        $payload = (new RelationAdminPayloadMapper())->map([
+            'relation_key' => 'book_authors',
+            'title' => 'Updated title',
+            'description' => '',
+            'cardinality' => 'many_to_many',
+            'reciprocal' => '1',
+            'bidirectional_traversal' => '0',
+            'from_type' => 'custom_table',
+            'from_subtype' => 'books',
+            'from_label' => 'Books',
+            'to_type' => 'registered_entity',
+            'to_subtype' => 'authors',
+            'to_label' => 'Authors',
+            'from_min' => '0',
+            'from_max' => '',
+            'to_min' => '0',
+            'to_max' => '',
+            'unique_edge' => '1',
+        ], $existing);
+
+        self::assertSame('Updated title', $payload['title']);
+        self::assertTrue($payload['direction']['reciprocal']);
+        self::assertFalse($payload['direction']['bidirectional_traversal']);
+        self::assertSame('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', $payload['direction']['parent_relation']);
+        self::assertSame('provider', $payload['storage_mode']);
+        self::assertTrue($payload['pivot_enabled']);
+        self::assertSame('network', $payload['multisite_scope']);
+        self::assertTrue($payload['portability']['edges']);
+        self::assertSame('books', $payload['from']['object_subtype']);
+        self::assertSame('authors', $payload['to']['object_subtype']);
+    }
+
     public function testRejectsInvalidOptionalMaximumInsteadOfCoercingIt(): void
     {
         $this->expectException(InvalidArgumentException::class);
