@@ -19,7 +19,6 @@ final readonly class QueryExecutionResult
         public string $sourceRef,
         public array $projection,
         public array $rows,
-        public int $total,
         public int $returned,
     ) {
     }

@@ -106,9 +106,8 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 
         $native = get_object_vars($query);
         $posts = $native['posts'] ?? null;
-        $foundPosts = $this->nonNegativeIntLike($native['found_posts'] ?? null);
 
-        if (!is_array($posts) || !array_is_list($posts) || $foundPosts === null) {
+        if (!is_array($posts) || !array_is_list($posts)) {
             return $this->providerFailure(
                 '$.execution',
                 'Native WordPress posts provider returned an invalid result shape.',
@@ -124,19 +123,11 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
             $rows[] = $row;
         }
 
-        if ($foundPosts < count($rows)) {
-            return $this->providerFailure(
-                '$.execution.found_posts',
-                'Native WordPress posts provider returned an inconsistent total count.',
-            );
-        }
-
         return new QueryExecutionResult(
             provider: $plan->provider,
             sourceRef: $plan->sourceRef,
             projection: $plan->projection,
             rows: $rows,
-            total: $foundPosts,
             returned: count($rows),
         );
     }

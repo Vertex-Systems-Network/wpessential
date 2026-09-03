@@ -37,7 +37,7 @@ final class WordPressPostsQueryExecutorTest extends TestCase
 
                 return (object) [
                     'posts' => [41, 42],
-                    'found_posts' => 5,
+                    'found_posts' => 999999,
                     'post_count' => 2,
                 ];
             },
@@ -58,7 +58,7 @@ final class WordPressPostsQueryExecutorTest extends TestCase
         self::assertSame('wordpress.posts', $result->sourceRef);
         self::assertSame(['post.id'], $result->projection);
         self::assertSame([['post.id' => 41], ['post.id' => 42]], $result->rows);
-        self::assertSame(5, $result->total);
+        self::assertFalse(property_exists($result, 'total'));
         self::assertSame(2, $result->returned);
     }
 
@@ -68,7 +68,7 @@ final class WordPressPostsQueryExecutorTest extends TestCase
         $provider = new WordPressPostsQueryExecutor(
             static function (array $arguments) use (&$calls): object {
                 ++$calls;
-                return (object) ['posts' => [], 'found_posts' => 0];
+                return (object) ['posts' => []];
             },
         );
         $executor = new QueryAuthorizedExecutor($this->planner(false), $provider);
@@ -87,7 +87,7 @@ final class WordPressPostsQueryExecutorTest extends TestCase
         $provider = new WordPressPostsQueryExecutor(
             static function (array $arguments) use (&$calls): object {
                 ++$calls;
-                return (object) ['posts' => [], 'found_posts' => 0];
+                return (object) ['posts' => []];
             },
         );
         $plan = new QueryProviderPlan(
@@ -118,7 +118,7 @@ final class WordPressPostsQueryExecutorTest extends TestCase
         $provider = new WordPressPostsQueryExecutor(
             static function (array $arguments) use (&$calls): object {
                 ++$calls;
-                return (object) ['posts' => [], 'found_posts' => 0];
+                return (object) ['posts' => []];
             },
         );
         $plan = new QueryProviderPlan(
@@ -152,7 +152,6 @@ final class WordPressPostsQueryExecutorTest extends TestCase
                     'post_author' => '7',
                     'post_parent' => 0,
                 ]],
-                'found_posts' => 1,
                 'post_count' => 1,
             ],
         );
@@ -184,7 +183,6 @@ final class WordPressPostsQueryExecutorTest extends TestCase
         $provider = new WordPressPostsQueryExecutor(
             static fn (array $arguments): object => (object) [
                 'posts' => ['unexpected' => 41],
-                'found_posts' => 1,
             ],
         );
 
