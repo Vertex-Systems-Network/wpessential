@@ -75,9 +75,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -s assets/admin/main.js
-          test -s assets/admin/main.css
-          test -s assets/admin/main.asset.php
+          for entry in main taxonomy fields; do
+            test -s "assets/admin/${entry}.js"
+            test -s "assets/admin/${entry}.css"
+            test -s "assets/admin/${entry}.asset.php"
+          done
 
       - name: Set up PHP 8.2 packaging runtime
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
@@ -94,6 +96,33 @@ jobs:
           composer validate --strict
           php -l tools/release/build-distributable.php
           php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Prove optional admin entry packaging is complete or fail-closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp assets/admin/fields.js assets/admin/query.js
+          if php tools/release/build-distributable.php > /tmp/wpessential-partial-query.log 2>&1; then
+            echo 'Packager accepted a partial optional query triplet' >&2
+            exit 1
+          fi
+          grep -Fq 'Optional admin entry query is only partially built' /tmp/wpessential-partial-query.log
+          rm -f assets/admin/query.js
+
+          cp assets/admin/fields.js assets/admin/query.js
+          cp assets/admin/fields.css assets/admin/query.css
+          cp assets/admin/fields.asset.php assets/admin/query.asset.php
+          php tools/release/build-distributable.php
+          unzip -Z1 artifacts/wpessential.zip > /tmp/wpessential-query-files.txt
+          for required in \
+            wpessential/assets/admin/query.js \
+            wpessential/assets/admin/query.css \
+            wpessential/assets/admin/query.asset.php
+          do
+            grep -Fxq "${required}" /tmp/wpessential-query-files.txt
+          done
+          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
+          rm -f artifacts/wpessential.zip artifacts/wpessential-package.json
 
       - name: Build first independent distributable
         shell: bash
@@ -133,7 +162,13 @@ jobs:
             wpessential/vendor/autoload.php \
             wpessential/assets/admin/main.js \
             wpessential/assets/admin/main.css \
-            wpessential/assets/admin/main.asset.php
+            wpessential/assets/admin/main.asset.php \
+            wpessential/assets/admin/taxonomy.js \
+            wpessential/assets/admin/taxonomy.css \
+            wpessential/assets/admin/taxonomy.asset.php \
+            wpessential/assets/admin/fields.js \
+            wpessential/assets/admin/fields.css \
+            wpessential/assets/admin/fields.asset.php
           do
             grep -Fxq "${required}" artifacts/wpessential-files.txt
           done
