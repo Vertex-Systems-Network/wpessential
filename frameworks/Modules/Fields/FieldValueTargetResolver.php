@@ -85,7 +85,7 @@ final class FieldValueTargetResolver
 
         $this->assertLocationSupported($payload['locations'] ?? []);
         if (!$this->matchesLocation($payload['locations'] ?? [], $postId, $postType, $postStatus)) {
-            throw new RuntimeException('Published Field Group does not target the requested post.');
+            throw new FieldValueTargetMismatchException('Published Field Group does not target the requested post.');
         }
 
         $fields = $payload['fields'] ?? null;

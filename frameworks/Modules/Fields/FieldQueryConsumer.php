@@ -73,11 +73,15 @@ final readonly class FieldQueryConsumer implements FieldQueryConsumerInterface
 
         foreach ($candidatePostIds as $postId) {
             $this->authorization->assertCanRead($context, $postId);
-            $target = $this->targets->resolve(
-                $resolved['definition']->id,
-                $resolved['field_uuid'],
-                $postId,
-            );
+            try {
+                $target = $this->targets->resolve(
+                    $resolved['definition']->id,
+                    $resolved['field_uuid'],
+                    $postId,
+                );
+            } catch (FieldValueTargetMismatchException) {
+                continue;
+            }
             $this->assertTargetStorage($target, $resolved['logical_type']);
             $current = $this->values->read($target->field, $target->postType, $postId);
 
