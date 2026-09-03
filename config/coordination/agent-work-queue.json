@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "ca69567c2aa365169afebe7a7825260575700ffb",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
+  "snapshot_date": "2026-09-04",
+  "queue_anchor_main_sha": "5ffbd806fb67b9cdc552da6649d9bd4f1a7c0270",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. This snapshot reconciles the first bounded Query runtime slice promoted by PR #147 and corrected by PR #148. Current main plus linked GitHub issue/PR evidence overrides stale checkpoint prose until the Supervisor serializes shared checkpoint truth. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -14,16 +14,18 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read current main SHA and commits since the queue audit anchor.",
+      "Read current main SHA and commits since the queue audit anchor, including PR #147 and corrective PR #148.",
       "Inspect relevant open and merged PRs/MRs and existing branches.",
       "Verify the selected slot is not already complete, superseded, blocked or claimed.",
       "Verify canonical ownership, dependency order and allowed write scope.",
+      "Treat stale Query runtime-not-started checkpoint prose as superseded only where current main and this queue explicitly prove the promoted runtime slice; do not infer broader Gate C completion.",
       "Only then create the deterministic claim branch."
     ],
     "revalidation_before_merge": [
       "Absorb latest main using the repository-approved non-destructive strategy.",
       "Re-check dependency and ownership assumptions.",
       "Review the intended diff and Integration Requirements.",
+      "Reject any worker diff that edits another active slot's exclusive write boundary or Supervisor-only shared truth.",
       "Require applicable exact-head CI on the final candidate head.",
       "Never use stale CI or force overwrite as merge evidence."
     ]
@@ -34,10 +36,11 @@
       "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
       "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
-        "Pre-create branches for future slots.",
+        "Pre-create branches for future worker slots.",
         "Merge a branch only because an agent says it is done.",
         "Treat arrival order as merge order.",
-        "Allow dependency-blocked runtime work to start."
+        "Allow dependency-blocked runtime work to start.",
+        "Allow parallel workers to edit config/coordination/agent-work-queue.json, CHECKPOINT.md or other shared project-state truth."
       ]
     },
     "WORKER": {
@@ -48,45 +51,117 @@
         "Claim SUPERVISOR_ONLY slots.",
         "Modify shared/global truth unless the slot explicitly grants that write scope.",
         "Create a different branch name when the deterministic claim branch is already occupied.",
-        "Start runtime work that the slot marks planning_only or dependency_blocked."
+        "Start runtime work that the slot marks planning_only or dependency_blocked.",
+        "Edit files owned exclusively by another OPEN/claimed slot."
       ]
     }
   },
   "slots": [
     {
       "priority": 20,
-      "slot_id": "query-wordpress-posts-execution-v1",
-      "title": "Add Policy-authorized native wordpress.posts execution V1",
+      "slot_id": "query-relations-predicate-execution-v1",
+      "title": "Add bounded Relations predicate execution V1 through the public consumer contract",
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "MILESTONE_WORK",
-      "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/query-wordpress-posts-execution-v1",
-      "source": "Issue #66 Gate C plus Query Implementation Contract V1 and QUERY-WORDPRESS-POSTS-COMPILER-V1 deferred execution tranche after promoted PRs #143 and #145",
+      "parallel_class": "QUERY_RUNTIME_EXCLUSIVE",
+      "claim_branch": "agent/query-relations-predicate-execution-v1",
+      "source": "GitHub Issue #149 and parent Issue #66 Gate C",
       "dependencies": [
         "Query typed AST and structural validation V1 promoted",
-        "Query native wordpress.posts compiler V1 promoted",
-        "shared Data Source authorization mapping V1 promoted",
-        "Query Policy-authorized planning V1 promoted via PR #143",
-        "canonical native wordpress.posts Data Source/module registration V1 promoted via PR #145",
-        "canonical shared Cache seam confirmed; cache behavior remains deferred in this tranche",
+        "Relations public RelationQueryConsumerInterface V1 promoted and bounded to 100",
+        "Query Policy-authorized planning promoted",
+        "Query bounded native wordpress.posts execution promoted by PR #147 and corrected by PR #148",
         "GOV-OWNER-CONSENT-001 remains active for bounded Query runtime implementation"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "Query-owned provider execution interface/service and immutable normalized execution result/error values",
-        "a testable native WordPress posts execution adapter may instantiate WP_Query only from an already-authorized QueryProviderPlan produced by QueryAuthorizedPlanner",
-        "top-level execution orchestration must call QueryAuthorizedPlanner before provider execution and must not accept a provider plan as an authorization substitute",
-        "support only provider wordpress.wp_query.posts and source wordpress.posts from the already-certified native compiler V1",
-        "normalize ID-only WP_Query results and bounded WP_Post-like results into projection-keyed rows without exposing raw WP_Query or SQL diagnostics",
-        "fail closed on provider/source mismatch, malformed provider rows, unsupported projection shapes, unavailable native WP_Query API or provider failure using the stable Query error taxonomy",
-        "wire Query-owned execution services through QueryModule while keeping Bootstrap/Plugin.php untouched",
-        "Query-local unit/static/architecture tests and bounded native-adapter tests",
-        "no raw SQL, wpdb, query-clause filters, arbitrary PHP/callbacks/eval, unchecked identifiers or arbitrary class/function names",
-        "no cache lookup/write/invalidation behavior, relation traversal execution, parameter binding, cursor semantics, aggregation/total-count, REST/AJAX/admin/CLI/workflow/AI exposure or Gate C completion claim"
+        "Query-owned relation predicate planning/execution implementation through WPEssential\\Contracts\\RelationQueryConsumerInterface only",
+        "one explicitly bounded relation predicate runtime tranche with maximum traversal depth 1 and consumer batch/result bounds <= 100",
+        "Query-local new production classes and tests required for the relation execution tranche",
+        "existing Query planner/compiler/executor production classes may be modified only by this slot during this queue generation",
+        "Relations private gateway, persistence, table layout and raw SQL remain inaccessible",
+        "QueryModule.php and shared project-state files are Supervisor-only; report any required wiring as Integration Requirements",
+        "no cache behavior, diagnostics exposure, admin/public execution, parameters/cursors, aggregation/total-count, Columns/Listings runtime or Gate C completion claim"
       ],
-      "completion_condition": "A reviewable Query execution path proves QueryDefinition + ExecutionContext -> canonical QueryAuthorizedPlanner -> bounded wordpress.wp_query.posts executor -> immutable normalized result, with native provider failures normalized safely and no execution possible before canonical Policy authorization. The native adapter may use only public WP_Query arguments already emitted by the certified compiler. Exact-head applicable CI must pass before promotion.",
-      "notes": "This is the first actual native provider-execution slice. Shared cache integration, Relations execution, richer predicates, diagnostics, public/admin exposure, performance/reference evidence and full Query Gate C certification remain separate later tranches."
+      "completion_condition": "A reviewable, Policy-preserving Query relation predicate path uses only RelationQueryConsumerInterface, stays within public contract bounds, fails closed on dependency/scope/direction/size violations, and passes exact-head applicable CI without editing parallel worker or Supervisor-owned files.",
+      "notes": "This is the only current worker slot allowed to edit existing Query PHP planner/compiler/executor production files."
+    },
+    {
+      "priority": 30,
+      "slot_id": "query-native-execution-reference-scale-v1",
+      "title": "Certify native Query execution with deterministic scale and real-WordPress reference evidence",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "EVIDENCE_WORK",
+      "parallel_class": "TESTS_EVIDENCE_ONLY",
+      "claim_branch": "agent/query-native-execution-reference-scale-v1",
+      "source": "GitHub Issue #150 and parent Issue #66 Gate C",
+      "dependencies": [
+        "PR #147 and corrective PR #148 promoted to current main",
+        "current compiler/provider execution semantics remain unchanged by this evidence lane"
+      ],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "Query-specific tests, real-WordPress fixtures, integration scripts/workflow wiring and one new Query execution evidence document",
+        "prove Policy-before-provider ordering, max page size 100, supported compiler argument cases, normalization and safe provider failures",
+        "prefer deterministic call/size bounds over wall-clock performance assertions",
+        "do not modify frameworks/Modules/Query production PHP, Relations production code, shared Platform code, admin-ui, QueryModule.php, queue or CHECKPOINT.md",
+        "do not claim new runtime capability or Gate C completion"
+      ],
+      "completion_condition": "Exact-head evidence executes against the claimed source and certifies the already-promoted native V1 slice across applicable WordPress/PHP coverage with no production semantic changes.",
+      "notes": "Designed to run fully in parallel with the relation runtime writer."
+    },
+    {
+      "priority": 40,
+      "slot_id": "query-cache-diagnostics-contract-v1",
+      "title": "Define bounded Query cache and diagnostics contract V1 without runtime enablement",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "PLANNING_AND_CONTRACT_WORK",
+      "parallel_class": "NEW_FILES_NON_RUNTIME",
+      "claim_branch": "agent/query-cache-diagnostics-contract-v1",
+      "source": "GitHub Issue #151 and parent Issue #66 Gate C",
+      "dependencies": [
+        "shared Platform Cache primitives exist on current main",
+        "wordpress.posts remains cacheable=false and diagnosticsAvailable=false until a later serialized runtime tranche"
+      ],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "new Query-specific cache/diagnostics contract value types, contract/static/unit tests and implementation documentation only when they are not wired into runtime",
+        "define cache eligibility, key inputs, dependency/generation semantics, authorization/scope separation, invalidation requirements and safe diagnostic fields",
+        "do not modify existing Query planner/compiler/executor production classes, QueryModule.php, shared Platform Cache classes, admin-ui, queue or CHECKPOINT.md",
+        "report all future runtime/shared wiring as Integration Requirements",
+        "do not enable cache reads/writes, invalidation hooks or public diagnostics in this slot"
+      ],
+      "completion_condition": "A fail-closed, reviewable Query cache/diagnostics V1 contract and tests exist without runtime enablement or overlap with the runtime worker; exact-head applicable CI passes.",
+      "notes": "This lane intentionally converts a Gate C unknown into a bounded contract while avoiding shared/runtime writes."
+    },
+    {
+      "priority": 50,
+      "slot_id": "query-admin-ux-scaffold-v1",
+      "title": "Build canonical Query admin UX scaffold V1 without execution exposure",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "UX_CONTRACT_WORK",
+      "parallel_class": "ADMIN_UI_EXCLUSIVE",
+      "claim_branch": "agent/query-admin-ux-scaffold-v1",
+      "source": "GitHub Issue #152 and parent Issue #66 Gate C",
+      "dependencies": [
+        "shared admin shell and current Query AST semantics are available",
+        "public/admin Query execution boundary remains intentionally unimplemented"
+      ],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "admin-ui/src Query-owned new components/routes/tests and Query UX documentation",
+        "source/projection/bounded filter/order/offset-pagination authoring or inspection using canonical V1 semantics",
+        "explicit unsupported-state messaging, accessibility, keyboard and safe loading/empty/error behavior",
+        "preview/execute must remain disabled or non-runtime until a separately certified execution boundary exists",
+        "do not modify PHP Query production classes, QueryModule.php, shared Platform PHP, Relations production code, queue or CHECKPOINT.md",
+        "report shared navigation or PHP wiring as Integration Requirements unless an existing module-local extension point avoids shared edits"
+      ],
+      "completion_condition": "A Query-owned accessible admin UX scaffold is reviewable and build/test green without exposing execution or colliding with PHP/runtime/shared-state workers.",
+      "notes": "Admin UI writes are exclusive to this slot during this queue generation."
     }
   ]
 }
