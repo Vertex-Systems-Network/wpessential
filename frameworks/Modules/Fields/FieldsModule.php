@@ -93,6 +93,16 @@ final class FieldsModule implements ModuleInterface
         );
         $valueTargets = new FieldValueTargetResolver($definitions, $groups);
         $valueAuthorization = new WordPressPostResourceAuthorizer();
+        $queryConsumer = new FieldQueryConsumer(
+            $definitions,
+            $groups,
+            $groupStorage,
+            $valueTargets,
+            $postMetaCompiler,
+            $postMetaValues,
+            $values,
+            $valueAuthorization,
+        );
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
@@ -112,6 +122,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.storage.post-meta.key-migrations', $postMetaMigrations);
         $services->set('module.custom-fields.values.targets', $valueTargets);
         $services->set('module.custom-fields.values.authorization', $valueAuthorization);
+        $services->set('module.custom-fields.query-consumer', $queryConsumer);
 
         $handlers = [
             'catalog' => new FieldCatalogAbilityHandler($catalog),
