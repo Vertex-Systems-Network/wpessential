@@ -13,6 +13,7 @@ use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\RelationQueryConsumerInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\DataSources\DataSourceAuthorizationMapping;
 use WPEssential\Platform\DataSources\DataSourceDescriptor;
@@ -66,7 +67,16 @@ final class QueryModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // V1 execution remains an internal service. REST/admin/public exposure is a later tranche.
+        $assets = $services->get('platform.admin.assets');
+        $dataSources = $services->get(self::DATA_SOURCE_SERVICE);
+        if (!$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface) {
+            throw new LogicException('Query admin requires canonical shared admin assets and Data Source Registry.');
+        }
+
+        $admin = new QueryAdminController(new QueryAdminBootstrapProjector($dataSources), $assets);
+        $services->set('module.query.admin', $admin);
+        $admin->register();
+        // Query execution remains an internal service. No REST/AJAX/admin execution endpoint is exposed here.
     }
 
     private function requireDataSources(ServiceRegistryInterface $services): DataSourceRegistryInterface
