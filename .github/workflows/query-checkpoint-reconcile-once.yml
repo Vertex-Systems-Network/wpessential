@@ -1,0 +1,66 @@
+name: Query Checkpoint Reconcile Once
+
+on:
+  push:
+    branches:
+      - 'integrator/query-gate-c-reconciliation-v2'
+    paths:
+      - '.github/workflows/query-checkpoint-reconcile-once.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: query-checkpoint-reconcile-once
+  cancel-in-progress: true
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout supervisor branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: integrator/query-gate-c-reconciliation-v2
+          fetch-depth: 0
+
+      - name: Patch stale Query checkpoint truth
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('CHECKPOINT.md')
+          text = path.read_text()
+
+          replacements = {
+              'Checkpoint date: **2026-09-03**': 'Checkpoint date: **2026-09-04**',
+              'Canonical repository reconciliation anchor: **`main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`**': 'Canonical repository reconciliation anchor: **`main @ b1ce9f08b2c69b3d7efcde75a856331eba70a25e`**',
+              'Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C prerequisite reconciliation — ACTIVE / runtime not started**': 'Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C — ACTIVE / bounded runtime and admin-scaffold slices promoted; NOT PASS**',
+              'Current dependency gate: **Surface 6 Query / Gate C prerequisite reconciliation**': 'Current dependency gate: **Surface 6 Query / Gate C active closure work**',
+              'Surface 6 Query is **BANK_REVIEWED / 169**. Query runtime remains blocked until the declared Gate C prerequisite reconciliation confirms the accepted Relations public contract, required shared Data Source/Policy/cache seams, development consent and a reviewable first runtime slice.': 'Surface 6 Query is **BANK_REVIEWED / 169**. Query runtime has started in bounded certified slices: typed AST/validation and Policy-authorized planning, native `wordpress.posts` compilation/execution, bounded Relations predicate pre-resolution, real-WordPress execution evidence, fail-closed cache/diagnostics rules, and a non-runtime admin authoring scaffold are promoted on current main. Gate C remains **ACTIVE / NOT PASS** because Fields-owned predicate consumption, canonical admin route/bootstrap integration and final criterion-by-criterion closure evidence remain open.',
+              '- Phase 2 / Gate C / Surface 6 Query — **PREREQUISITE RECONCILIATION ACTIVE; RUNTIME NOT STARTED**.': '- Phase 2 / Gate C / Surface 6 Query — **ACTIVE / NOT PASS** — bounded runtime slices are promoted; remaining closure work is explicitly tracked by #161, #162 and #163.',
+          }
+
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing expected checkpoint text: {old}')
+              text = text.replace(old, new, 1)
+
+          marker = '## Surface 3 — Custom Fields certified runtime scope'
+          if marker not in text:
+              raise SystemExit('missing Surface 3 marker')
+
+          section = '''## Surface 6 — Query Gate C active certified slices\n\nGate C is **ACTIVE / NOT PASS**. Current main contains several bounded Query slices, but downstream Admin Columns, Dynamic Listings and Status runtime remain blocked until the Gate C baseline is actually closed.\n\nPromoted Query evidence includes:\n- PR #147 plus corrective PR #148 — Policy-authorized bounded native `wordpress.posts` execution V1; total-count/aggregation semantics remain deliberately outside this slice.\n- PR #154 plus Supervisor wiring PR #156 — bounded Relations predicate pre-resolution through the public Relations consumer contract before native provider compilation.\n- PR #158 — deterministic scale and real-WordPress native execution evidence across the supported WordPress/PHP/MySQL/MariaDB matrix.\n- PR #159 — fail-closed Query cache eligibility/key and safe diagnostic rules without enabling cache reads/writes, invalidation hooks or public diagnostics; current `wordpress.posts` remains non-cacheable.\n- PR #160 — accessible Query-owned admin authoring scaffold with read-only AST preview and execution intentionally unavailable.\n\nRemaining explicit Gate C work at this checkpoint:\n- #161 — Fields-owned bounded public Query consumer contract V1; Query must not infer Field storage/meta ownership.\n- #162 — canonical Query admin route, validated Data Source bootstrap and production build/enqueue integration, with execution still disabled.\n- #163 — exact merged-evidence closure audit against every parent #66 Gate C criterion.\n- Query-side Field predicate runtime resolution remains dependency-blocked until #161 is accepted and must be implemented as a later bounded owner-contract consumer, not a direct storage shortcut.\n\nNo public/admin Query execution endpoint, total-count/aggregation runtime, or cache runtime enablement is implied by this checkpoint.\n\n'''
+          text = text.replace(marker, section + marker, 1)
+          path.write_text(text)
+
+      - name: Remove one-shot workflow and commit reconciliation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/query-checkpoint-reconcile-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add CHECKPOINT.md
+          git commit -m 'docs(checkpoint): reconcile active Query Gate C truth'
+          git push origin HEAD:integrator/query-gate-c-reconciliation-v2
