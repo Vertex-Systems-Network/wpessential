@@ -173,25 +173,58 @@ function assertProjectMetadata(string $root): void
 }
 
 /** @return list<string> */
-function requiredAdminBuildArtifacts(): array
+function adminBuildArtifactTriplet(string $entry): array
 {
     return [
-        'assets/admin/main.js',
-        'assets/admin/main.css',
-        'assets/admin/main.asset.php',
-        'assets/admin/taxonomy.js',
-        'assets/admin/taxonomy.css',
-        'assets/admin/taxonomy.asset.php',
+        "assets/admin/{$entry}.js",
+        "assets/admin/{$entry}.css",
+        "assets/admin/{$entry}.asset.php",
     ];
 }
 
-function validateStagedPayload(string $stageRoot): void
+function artifactExistsAndIsNonEmpty(string $root, string $relative): bool
+{
+    $path = $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
+    return is_file($path) && filesize($path) > 0;
+}
+
+/** @return list<string> */
+function requiredAdminBuildArtifacts(string $root): array
+{
+    $artifacts = [];
+
+    foreach (['main', 'taxonomy', 'fields'] as $entry) {
+        array_push($artifacts, ...adminBuildArtifactTriplet($entry));
+    }
+
+    foreach (['query'] as $entry) {
+        $triplet = adminBuildArtifactTriplet($entry);
+        $present = array_values(array_filter(
+            $triplet,
+            static fn (string $relative): bool => artifactExistsAndIsNonEmpty($root, $relative)
+        ));
+
+        if ($present === []) {
+            continue;
+        }
+
+        if (count($present) !== count($triplet)) {
+            fail("Optional admin entry {$entry} is only partially built; refusing to package an incomplete asset triplet.");
+        }
+
+        array_push($artifacts, ...$triplet);
+    }
+
+    return $artifacts;
+}
+
+function validateStagedPayload(string $stageRoot, array $adminBuildArtifacts): void
 {
     $required = [
         'wpessential.php',
         'readme.txt',
         'LICENSE',
-        ...requiredAdminBuildArtifacts(),
+        ...$adminBuildArtifacts,
         'vendor/autoload.php',
         'frameworks/Bootstrap/Plugin.php',
     ];
@@ -284,10 +317,9 @@ try {
 
     assertProjectMetadata($root);
 
-    $requiredBuildArtifacts = requiredAdminBuildArtifacts();
+    $requiredBuildArtifacts = requiredAdminBuildArtifacts($root);
     foreach ($requiredBuildArtifacts as $relative) {
-        $path = $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relative);
-        if (!is_file($path) || filesize($path) === 0) {
+        if (!artifactExistsAndIsNonEmpty($root, $relative)) {
             fail("Build the admin application before packaging; missing {$relative}");
         }
     }
@@ -321,7 +353,7 @@ try {
 
     @unlink($stageRoot . '/composer.json');
     @unlink($stageRoot . '/composer.lock');
-    validateStagedPayload($stageRoot);
+    validateStagedPayload($stageRoot, $requiredBuildArtifacts);
 
     if (!defined('ABSPATH')) {
         define('ABSPATH', $stageRoot);
