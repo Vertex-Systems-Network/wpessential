@@ -1,13 +1,13 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-03**  
-Canonical repository reconciliation anchor: **`main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`**  
+Checkpoint date: **2026-09-04**  
+Canonical repository reconciliation anchor: **`main @ b1ce9f08b2c69b3d7efcde75a856331eba70a25e`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
 Implementation decisions: through **ADR-0222** plus certified bounded Surface 3 and Surface 4 implementation contracts  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C prerequisite reconciliation — ACTIVE / runtime not started**  
-Current dependency gate: **Surface 6 Query / Gate C prerequisite reconciliation**  
+Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C — ACTIVE / bounded runtime and admin-scaffold slices promoted; NOT PASS**  
+Current dependency gate: **Surface 6 Query / Gate C active closure work**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
@@ -34,7 +34,7 @@ Surface 3 Fields Options Bank remains **BANK_REVIEWED at 618 records**. Gate A P
 
 Surface 4 Relations Options Bank remains **BANK_REVIEWED at 144 records**. Gate B PASS is likewise bounded to the native V1 baseline required by parent #66; it is not a claim that every Relations Bank record, provider adapter, pivot/cascade semantic or market-parity feature ships.
 
-Surface 6 Query is **BANK_REVIEWED / 169**. Query runtime remains blocked until the declared Gate C prerequisite reconciliation confirms the accepted Relations public contract, required shared Data Source/Policy/cache seams, development consent and a reviewable first runtime slice.
+Surface 6 Query is **BANK_REVIEWED / 169**. Query runtime has started in bounded certified slices: typed AST/validation and Policy-authorized planning, native `wordpress.posts` compilation/execution, bounded Relations predicate pre-resolution, real-WordPress execution evidence, fail-closed cache/diagnostics rules, and a non-runtime admin authoring scaffold are promoted on current main. Gate C remains **ACTIVE / NOT PASS** because Fields-owned predicate consumption, canonical admin route/bootstrap integration and final criterion-by-criterion closure evidence remain open.
 
 ## Implementation gates
 
@@ -43,10 +43,29 @@ Surface 6 Query is **BANK_REVIEWED / 169**. Query runtime remains blocked until 
 - WP121 — **DONE / PASS FOR MODULE HANDOFF** — shared Platform foundation readiness closed by WP121.1 through WP121.4.
 - Phase 2 / Gate A / Surface 3 Custom Fields — **PASS FOR CERTIFIED NATIVE V1 SCOPE** — all #66 Gate A exit criteria are satisfied by merged exact-head evidence summarized below.
 - Phase 2 / Gate B / Surface 4 Relations — **PASS FOR CERTIFIED NATIVE V1 BASELINE** — all #66 Gate B baseline criteria are satisfied by merged exact-head evidence through PR #122 and PR #128, with richer/provider-specific semantics retained as explicit non-goals.
-- Phase 2 / Gate C / Surface 6 Query — **PREREQUISITE RECONCILIATION ACTIVE; RUNTIME NOT STARTED**.
+- Phase 2 / Gate C / Surface 6 Query — **ACTIVE / NOT PASS** — bounded runtime slices are promoted; remaining closure work is explicitly tracked by #161, #162 and #163.
 - Gate D / Admin Columns — **BLOCKED BY QUERY RUNTIME**.
 - Gate E / Dynamic Listings — **BLOCKED BY QUERY PLUS SHARED RENDERER/DATA-SOURCE DEPENDENCIES**.
 - Status Manager runtime — **BLOCKED UNTIL GATES A–E ARE COMPLETE**.
+
+## Surface 6 — Query Gate C active certified slices
+
+Gate C is **ACTIVE / NOT PASS**. Current main contains several bounded Query slices, but downstream Admin Columns, Dynamic Listings and Status runtime remain blocked until the Gate C baseline is actually closed.
+
+Promoted Query evidence includes:
+- PR #147 plus corrective PR #148 — Policy-authorized bounded native `wordpress.posts` execution V1; total-count/aggregation semantics remain deliberately outside this slice.
+- PR #154 plus Supervisor wiring PR #156 — bounded Relations predicate pre-resolution through the public Relations consumer contract before native provider compilation.
+- PR #158 — deterministic scale and real-WordPress native execution evidence across the supported WordPress/PHP/MySQL/MariaDB matrix.
+- PR #159 — fail-closed Query cache eligibility/key and safe diagnostic rules without enabling cache reads/writes, invalidation hooks or public diagnostics; current `wordpress.posts` remains non-cacheable.
+- PR #160 — accessible Query-owned admin authoring scaffold with read-only AST preview and execution intentionally unavailable.
+
+Remaining explicit Gate C work at this checkpoint:
+- #161 — Fields-owned bounded public Query consumer contract V1; Query must not infer Field storage/meta ownership.
+- #162 — canonical Query admin route, validated Data Source bootstrap and production build/enqueue integration, with execution still disabled.
+- #163 — exact merged-evidence closure audit against every parent #66 Gate C criterion.
+- Query-side Field predicate runtime resolution remains dependency-blocked until #161 is accepted and must be implemented as a later bounded owner-contract consumer, not a direct storage shortcut.
+
+No public/admin Query execution endpoint, total-count/aggregation runtime, or cache runtime enablement is implied by this checkpoint.
 
 ## Surface 3 — Custom Fields certified runtime scope
 

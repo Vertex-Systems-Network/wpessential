@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-04",
-  "queue_anchor_main_sha": "429d526525d6888db8a4215527755be2ab850461",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. Query native execution is promoted by PR #147/#148 and bounded Relations predicate runtime by PR #154/#156. A hosted Copilot assignment attempt for Issue #150 returned HTTP 403 through the available GitHub connector, so no hosted-agent issue claim is active in this snapshot. The three remaining slots therefore use deterministic remote branch claims. Current main plus linked GitHub issue/PR evidence overrides stale checkpoint prose until the Supervisor serializes shared checkpoint truth. Completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
+  "queue_anchor_main_sha": "b1ce9f08b2c69b3d7efcde75a856331eba70a25e",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. Query bounded native execution, bounded Relations predicate runtime, real-WordPress execution evidence, fail-closed cache/diagnostics rules and the non-runtime admin authoring scaffold are promoted through PR #147/#148, #154/#156, #158, #159 and #160. A hosted Copilot assignment attempt remains unavailable through the connected GitHub route, so no hosted-agent claim is represented as active. The actionable queue therefore uses deterministic remote branch claims. Current main plus linked GitHub issue/PR evidence overrides stale prose until Supervisor reconciliation is promoted. Completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,11 +13,11 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read current main SHA and commits since the queue audit anchor, including PR #147/#148, PR #154/#156 and PR #155.",
-      "Inspect relevant open and merged PRs/MRs and existing branches.",
+      "Read current main SHA and commits since the queue audit anchor, including PR #158, PR #159 and PR #160.",
+      "Inspect relevant open and merged PRs/MRs, issues and existing branches.",
       "Verify the selected slot is not already complete, superseded, blocked or claimed.",
       "Verify canonical ownership, dependency order and allowed write scope.",
-      "Treat stale Query runtime-not-started checkpoint prose as superseded only where current main and this queue explicitly prove promoted runtime slices; do not infer broader Gate C completion.",
+      "Treat stale Query runtime-not-started prose as superseded by current main only for explicitly promoted slices; do not infer Gate C completion.",
       "Only then create the deterministic claim branch."
     ],
     "revalidation_before_merge": [
@@ -34,10 +34,7 @@
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
       "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
-      "may_claim": [
-        "SUPERVISOR_ONLY",
-        "ANY"
-      ],
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create branches for future worker slots.",
         "Merge a branch only because an agent says it is done.",
@@ -49,9 +46,7 @@
     "WORKER": {
       "start_mode": "AUTO",
       "description": "Workers autonomously inspect current repository truth and claim the next eligible non-overlapping work slot using deterministic remote branch creation.",
-      "may_claim": [
-        "ANY"
-      ],
+      "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
         "Modify shared/global truth unless the slot explicitly grants that write scope.",
@@ -64,83 +59,83 @@
   "slots": [
     {
       "priority": 30,
-      "slot_id": "query-native-execution-reference-scale-v1",
-      "title": "Certify native Query execution with deterministic scale and real-WordPress reference evidence",
+      "slot_id": "fields-query-consumer-contract-v1",
+      "title": "Provide the Fields-owned bounded public Query consumer contract V1",
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "EVIDENCE_WORK",
-      "parallel_class": "TESTS_EVIDENCE_ONLY",
+      "work_mode": "RUNTIME_CONTRACT_WORK",
+      "parallel_class": "FIELDS_OWNER_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "GitHub Issue #150 and parent Issue #66 Gate C",
+      "source": "GitHub Issue #161 and parent Issue #66 Gate C",
       "dependencies": [
-        "PR #147 and corrective PR #148 promoted to current main",
-        "bounded Relations runtime PR #154 and Supervisor wiring PR #156 are promoted; this evidence lane must not change their production semantics",
-        "current compiler/provider execution semantics remain unchanged by this evidence lane"
+        "Surface 3 Fields Gate A certified native V1 baseline is promoted on current main",
+        "Query Field predicate grammar exists but native execution remains unsupported until this Fields-owned contract is accepted"
       ],
-      "runtime_allowed": false,
+      "runtime_allowed": true,
       "allowed_scope": [
-        "Query-specific tests, real-WordPress fixtures, integration scripts/workflow wiring and one new Query execution evidence document",
-        "prove Policy-before-provider ordering, max page size 100, supported compiler argument cases, normalization and safe provider failures",
-        "prefer deterministic call/size bounds over wall-clock performance assertions",
-        "do not modify frameworks/Modules/Query production PHP, Relations production code, shared Platform code, admin-ui, QueryModule.php, queue or CHECKPOINT.md",
-        "do not claim new runtime capability or Gate C completion"
+        "new public FieldQueryConsumerInterface under frameworks/Contracts and Fields-owned implementation/service registration",
+        "reuse canonical published Field Group resolution, native V1 storage projection, target compatibility, normalization and authorization-sensitive owner semantics",
+        "finite supported operators/value shapes, bounded candidate post-id input and bounded matching output",
+        "Fields-local unit/reference tests and one Fields Query-consumer implementation document",
+        "do not edit Query compiler/planner/executor/runtime classes, Query admin UI, Relations production, queue or CHECKPOINT.md",
+        "fail closed on unsupported provider/complex/storage modes, unavailable definitions, malformed input, target mismatch or bounds overflow"
       ],
-      "completion_condition": "Exact-head evidence executes against the claimed source and certifies the already-promoted native V1 slice across applicable WordPress/PHP coverage with no production semantic changes.",
-      "notes": "Designed to run fully in parallel with cache/diagnostics contract and admin UX workers. Deterministic remote branch creation is the active claim lock for this snapshot.",
-      "claim_branch": "agent/query-native-execution-reference-scale-v1"
+      "completion_condition": "A bounded Fields-owned public consumer contract is exact-head green and ready for later Query-side Field predicate resolution without leaking storage ownership into Query.",
+      "notes": "May run in parallel with Query admin integration and Gate C closure audit because its write boundary is Fields/Contracts exclusive.",
+      "claim_branch": "agent/fields-query-consumer-contract-v1"
     },
     {
       "priority": 40,
-      "slot_id": "query-cache-diagnostics-contract-v1",
-      "title": "Define bounded Query cache and diagnostics contract V1 without runtime enablement",
+      "slot_id": "query-admin-integration-v1",
+      "title": "Integrate the canonical Query admin route/bootstrap/build V1 with execution disabled",
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "PLANNING_AND_CONTRACT_WORK",
-      "parallel_class": "NEW_FILES_NON_RUNTIME",
+      "work_mode": "ADMIN_INTEGRATION_WORK",
+      "parallel_class": "QUERY_ADMIN_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "GitHub Issue #151 and parent Issue #66 Gate C",
+      "source": "GitHub Issue #162 and parent Issue #66 Gate C",
       "dependencies": [
-        "shared Platform Cache primitives exist on current main",
-        "wordpress.posts remains cacheable=false and diagnosticsAvailable=false until a later serialized runtime tranche"
+        "PR #160 Query non-runtime authoring scaffold is promoted on current main",
+        "public/admin Query execution remains intentionally unavailable"
       ],
-      "runtime_allowed": false,
+      "runtime_allowed": true,
       "allowed_scope": [
-        "new Query-specific cache/diagnostics contract value types, contract/static/unit tests and implementation documentation only when they are not wired into runtime",
-        "define cache eligibility, key inputs, dependency/generation semantics, authorization/scope separation, invalidation requirements and safe diagnostic fields",
-        "do not modify existing Query planner/compiler/executor production classes, QueryModule.php, shared Platform Cache classes, admin-ui, queue or CHECKPOINT.md",
-        "report all future runtime/shared wiring as Integration Requirements",
-        "do not enable cache reads/writes, invalidation hooks or public diagnostics in this slot"
+        "canonical Query admin route/page and validated server-projected Query/Data Source bootstrap under the shared admin shell",
+        "Query production admin build entry and screen-specific enqueue wiring",
+        "existing admin-ui/src/query.ts and query.scss only where integration requires it",
+        "Query admin integration tests, packaged browser/accessibility evidence and one integration document",
+        "do not edit Fields production/runtime, Query compiler/planner/executor execution semantics, Relations production, queue or CHECKPOINT.md",
+        "do not add an execution endpoint or provider invocation; execution preview remains disabled"
       ],
-      "completion_condition": "A fail-closed, reviewable Query cache/diagnostics V1 contract and tests exist without runtime enablement or overlap with other workers; exact-head applicable CI passes.",
-      "notes": "This lane intentionally converts a Gate C unknown into a bounded contract while avoiding shared/runtime writes. Deterministic remote branch creation is the active claim lock for this snapshot.",
-      "claim_branch": "agent/query-cache-diagnostics-contract-v1"
+      "completion_condition": "The Query authoring scaffold is reachable through the canonical packaged WordPress admin route with validated bootstrap and exact-head accessibility/build evidence, while execution remains unavailable.",
+      "notes": "May run in parallel with the Fields contract and closure audit because its write boundary is admin/build integration exclusive.",
+      "claim_branch": "agent/query-admin-integration-v1"
     },
     {
       "priority": 50,
-      "slot_id": "query-admin-ux-scaffold-v1",
-      "title": "Build canonical Query admin UX scaffold V1 without execution exposure",
+      "slot_id": "query-gate-c-closure-audit-v1",
+      "title": "Audit Query Gate C merged evidence and remaining blockers against parent #66",
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "UX_CONTRACT_WORK",
-      "parallel_class": "ADMIN_UI_EXCLUSIVE",
+      "work_mode": "EVIDENCE_WORK",
+      "parallel_class": "DOCS_EVIDENCE_ONLY",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "GitHub Issue #152 and parent Issue #66 Gate C",
+      "source": "GitHub Issue #163 and parent Issue #66 Gate C",
       "dependencies": [
-        "shared admin shell and current Query AST semantics are available",
-        "public/admin Query execution boundary remains intentionally unimplemented"
+        "PR #160 Query admin scaffold is promoted on current main",
+        "audit must distinguish merged evidence from still-open #161/#162 work and must not infer future completion"
       ],
       "runtime_allowed": false,
       "allowed_scope": [
-        "admin-ui/src Query-owned new components/routes/tests and Query UX documentation",
-        "source/projection/bounded filter/order/offset-pagination authoring or inspection using canonical V1 semantics",
-        "explicit unsupported-state messaging, accessibility, keyboard and safe loading/empty/error behavior",
-        "preview/execute must remain disabled or non-runtime until a separately certified execution boundary exists",
-        "do not modify PHP Query production classes, QueryModule.php, shared Platform PHP, Relations production code, queue or CHECKPOINT.md",
-        "report shared navigation or PHP wiring as Integration Requirements unless an existing module-local extension point avoids shared edits"
+        "one new docs/IMPLEMENTATION/QUERY-GATE-C-CLOSURE-AUDIT-V1.md evidence matrix only",
+        "map every #66 Gate C criterion to exact merged PR/code/test evidence or an explicit remaining blocker",
+        "record deferred semantics such as total-count/aggregation, cache runtime enablement, unsupported providers and public execution without misrepresenting them as shipped",
+        "do not edit production code, admin-ui, shared Platform, Fields, Relations, queue or CHECKPOINT.md",
+        "do not claim Gate C PASS unless current merged main independently satisfies every required baseline criterion"
       ],
-      "completion_condition": "A Query-owned accessible admin UX scaffold is reviewable and build/test green without exposing execution or colliding with PHP/runtime/shared-state workers.",
-      "notes": "Admin UI writes are exclusive to this slot during this queue generation. Deterministic remote branch creation is the active claim lock for this snapshot.",
-      "claim_branch": "agent/query-admin-ux-scaffold-v1"
+      "completion_condition": "A reviewable exact-main Gate C evidence matrix identifies certified criteria and remaining blockers without production changes or stale-truth overclaiming.",
+      "notes": "Designed to run fully in parallel with #161 and #162 and to provide independent closure evidence for the Supervisor.",
+      "claim_branch": "agent/query-gate-c-closure-audit-v1"
     }
   ]
 }
