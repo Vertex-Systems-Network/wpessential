@@ -61,9 +61,24 @@ final class QueryFieldPredicateResolverTest extends TestCase
         (new QueryFieldPredicateResolver($this->fields(new ArrayObject(), [])))->resolve($definition, $this->context());
     }
 
-    public function testForeignOrDuplicateOwnerResultsFailClosed(): void
+    public function testOverBudgetFiniteAnchorIsCostBlocked(): void
     {
-        foreach ([[999], [11, 11]] as $matches) {
+        $anchorIds = range(1, FieldQueryConsumerInterface::MAX_CANDIDATE_IDS + 1);
+
+        try {
+            (new QueryFieldPredicateResolver($this->fields(new ArrayObject(), [])))->resolve(
+                $this->definition($anchorIds),
+                $this->context(),
+            );
+            self::fail('Expected over-budget Field anchor to fail closed.');
+        } catch (QueryPlanningException $exception) {
+            self::assertSame('wpe_query_cost_blocked', $exception->errorCode);
+        }
+    }
+
+    public function testForeignDuplicateOrOverLimitOwnerResultsFailClosed(): void
+    {
+        foreach ([[999], [11, 11], [11, 13, 15]] as $matches) {
             try {
                 (new QueryFieldPredicateResolver($this->fields(new ArrayObject(), $matches)))->resolve(
                     $this->definition([11, 13]),
@@ -82,6 +97,7 @@ final class QueryFieldPredicateResolverTest extends TestCase
             public function __construct(private readonly string $fieldRef)
             {
             }
+
             public function describe(string $fieldReference, ExecutionContext $context): array
             {
                 return [
@@ -94,8 +110,15 @@ final class QueryFieldPredicateResolverTest extends TestCase
                     'storage_owner' => 'native_post_meta',
                 ];
             }
-            public function matchingPostIds(string $fieldReference, string $operator, mixed $value, array $candidatePostIds, int $limit, ExecutionContext $context): array
-            {
+
+            public function matchingPostIds(
+                string $fieldReference,
+                string $operator,
+                mixed $value,
+                array $candidatePostIds,
+                int $limit,
+                ExecutionContext $context,
+            ): array {
                 return [];
             }
         };
@@ -103,6 +126,80 @@ final class QueryFieldPredicateResolverTest extends TestCase
         try {
             (new QueryFieldPredicateResolver($fields))->resolve($this->definition([11]), $this->context());
             self::fail('Expected incompatible owner contract to fail closed.');
+        } catch (QueryPlanningException $exception) {
+            self::assertSame('wpe_query_dependency_unavailable', $exception->errorCode);
+        }
+    }
+
+    public function testOwnerBoundsMismatchFailsClosedBeforeMatching(): void
+    {
+        $trace = new ArrayObject();
+        $fields = new class($trace, $this->fieldRef()) implements FieldQueryConsumerInterface {
+            public function __construct(
+                private readonly ArrayObject $trace,
+                private readonly string $fieldRef,
+            ) {
+            }
+
+            public function describe(string $fieldReference, ExecutionContext $context): array
+            {
+                $this->trace[] = 'describe';
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'field_ref' => $this->fieldRef,
+                    'logical_type' => 'string',
+                    'operators' => ['eq'],
+                    'max_candidate_ids' => 1,
+                    'max_result_ids' => 1,
+                    'storage_owner' => 'native_post_meta',
+                ];
+            }
+
+            public function matchingPostIds(
+                string $fieldReference,
+                string $operator,
+                mixed $value,
+                array $candidatePostIds,
+                int $limit,
+                ExecutionContext $context,
+            ): array {
+                $this->trace[] = 'matching';
+                return [];
+            }
+        };
+
+        try {
+            (new QueryFieldPredicateResolver($fields))->resolve($this->definition([11, 13]), $this->context());
+            self::fail('Expected incompatible owner bounds to fail closed.');
+        } catch (QueryPlanningException $exception) {
+            self::assertSame('wpe_query_dependency_unavailable', $exception->errorCode);
+            self::assertSame(['describe'], $trace->getArrayCopy());
+        }
+    }
+
+    public function testOwnerDescribeExceptionFailsDependencyUnavailable(): void
+    {
+        $fields = new class implements FieldQueryConsumerInterface {
+            public function describe(string $fieldReference, ExecutionContext $context): array
+            {
+                throw new \RuntimeException('owner unavailable');
+            }
+
+            public function matchingPostIds(
+                string $fieldReference,
+                string $operator,
+                mixed $value,
+                array $candidatePostIds,
+                int $limit,
+                ExecutionContext $context,
+            ): array {
+                return [];
+            }
+        };
+
+        try {
+            (new QueryFieldPredicateResolver($fields))->resolve($this->definition([11]), $this->context());
+            self::fail('Expected owner exception to fail closed.');
         } catch (QueryPlanningException $exception) {
             self::assertSame('wpe_query_dependency_unavailable', $exception->errorCode);
         }
