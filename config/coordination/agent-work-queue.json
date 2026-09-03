@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-03",
-  "queue_anchor_main_sha": "05a294da2321c95f51519c2ed1aec69358aaee81",
+  "queue_anchor_main_sha": "ca69567c2aa365169afebe7a7825260575700ffb",
   "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
@@ -55,34 +55,38 @@
   "slots": [
     {
       "priority": 20,
-      "slot_id": "query-wordpress-posts-source-registration-v1",
-      "title": "Register the canonical native wordpress.posts Data Source V1",
+      "slot_id": "query-wordpress-posts-execution-v1",
+      "title": "Add Policy-authorized native wordpress.posts execution V1",
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "MILESTONE_WORK",
       "parallel_class": "BLOCKING_FOUNDATION",
-      "claim_branch": "agent/query-wordpress-posts-source-registration-v1",
-      "source": "Issue #66 Gate C plus Query Implementation Contract V1 after promoted typed AST, native posts compiler, shared Data Source authorization mapping, and Policy-authorized planner",
+      "claim_branch": "agent/query-wordpress-posts-execution-v1",
+      "source": "Issue #66 Gate C plus Query Implementation Contract V1 and QUERY-WORDPRESS-POSTS-COMPILER-V1 deferred execution tranche after promoted PRs #143 and #145",
       "dependencies": [
         "Query typed AST and structural validation V1 promoted",
         "Query native wordpress.posts compiler V1 promoted",
         "shared Data Source authorization mapping V1 promoted",
-        "Query Policy-authorized planning V1 promoted",
-        "canonical shared Data Source Registry available during module registration"
+        "Query Policy-authorized planning V1 promoted via PR #143",
+        "canonical native wordpress.posts Data Source/module registration V1 promoted via PR #145",
+        "canonical shared Cache seam confirmed; cache behavior remains deferred in this tranche",
+        "GOV-OWNER-CONSENT-001 remains active for bounded Query runtime implementation"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "Query-owned ModuleInterface lifecycle entrypoint that contributes the canonical wordpress.posts descriptor to platform.data-sources during register()",
-        "descriptor fields, predicates, sorting and pagination must not advertise semantics beyond the already-promoted native posts compiler V1",
-        "descriptor must require canonical Policy and carry the promoted authorization mapping wpessential/query/execute -> read for post resources",
-        "register Query-owned validator, compiler and Policy-authorized planner services only when their canonical shared dependencies are present",
-        "Query-local lifecycle/registry unit or smoke tests and surface-local architecture documentation",
-        "no WP_Query/provider execution, no database reads/writes, no wpdb/raw SQL/query filters/PHP callbacks",
-        "no cache behavior, relation traversal execution, REST/admin execution path or Query-private authorization/Data Source/cache engine",
-        "do not hard-wire Query into Bootstrap/Plugin.php; activation remains through the existing contributed-module lifecycle in this tranche"
+        "Query-owned provider execution interface/service and immutable normalized execution result/error values",
+        "a testable native WordPress posts execution adapter may instantiate WP_Query only from an already-authorized QueryProviderPlan produced by QueryAuthorizedPlanner",
+        "top-level execution orchestration must call QueryAuthorizedPlanner before provider execution and must not accept a provider plan as an authorization substitute",
+        "support only provider wordpress.wp_query.posts and source wordpress.posts from the already-certified native compiler V1",
+        "normalize ID-only WP_Query results and bounded WP_Post-like results into projection-keyed rows without exposing raw WP_Query or SQL diagnostics",
+        "fail closed on provider/source mismatch, malformed provider rows, unsupported projection shapes, unavailable native WP_Query API or provider failure using the stable Query error taxonomy",
+        "wire Query-owned execution services through QueryModule while keeping Bootstrap/Plugin.php untouched",
+        "Query-local unit/static/architecture tests and bounded native-adapter tests",
+        "no raw SQL, wpdb, query-clause filters, arbitrary PHP/callbacks/eval, unchecked identifiers or arbitrary class/function names",
+        "no cache lookup/write/invalidation behavior, relation traversal execution, parameter binding, cursor semantics, aggregation/total-count, REST/AJAX/admin/CLI/workflow/AI exposure or Gate C completion claim"
       ],
-      "completion_condition": "A reviewable Query module registers exactly one bounded wordpress.posts Data Source descriptor into the canonical shared registry, exposes the promoted Query planning services through the shared service registry, fails closed when required shared dependencies are missing, and performs no provider execution. Exact-head applicable CI must pass before promotion.",
-      "notes": "This closes native source discovery/service wiring only. Actual WP_Query execution, cache integration, relation execution, REST/admin exposure and Gate C completion remain later bounded tranches."
+      "completion_condition": "A reviewable Query execution path proves QueryDefinition + ExecutionContext -> canonical QueryAuthorizedPlanner -> bounded wordpress.wp_query.posts executor -> immutable normalized result, with native provider failures normalized safely and no execution possible before canonical Policy authorization. The native adapter may use only public WP_Query arguments already emitted by the certified compiler. Exact-head applicable CI must pass before promotion.",
+      "notes": "This is the first actual native provider-execution slice. Shared cache integration, Relations execution, richer predicates, diagnostics, public/admin exposure, performance/reference evidence and full Query Gate C certification remain separate later tranches."
     }
   ]
 }
