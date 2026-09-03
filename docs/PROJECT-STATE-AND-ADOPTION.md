@@ -2,10 +2,10 @@
 
 Status: **Active implementation / Phase 2 dependency-gated module development**  
 Last reviewed: **2026-09-03**  
-Current reconciliation anchor: **`main @ 9875b85764f786818987124691cde468d9e3090c`**  
+Current reconciliation anchor: **`main @ ca69567c2aa365169afebe7a7825260575700ffb`**  
 Current project state: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Active lifecycle: **Phase 2 / Gate C — Surface 6 Query bounded runtime-source development active; provider execution not yet certified**
+Active lifecycle: **Phase 2 / Gate C — Surface 6 Query bounded native provider execution is next; provider execution not yet certified**
 
 `GOV-OWNER-CONSENT-001` remains ACTIVE and authorizes milestone-gated source implementation across the accepted 56-surface architecture. Production deployment/release, destructive live-site/customer-data operations, chargeable or irreversible provider side effects, and separately privileged release operations remain outside that grant unless explicitly authorized.
 
@@ -23,6 +23,8 @@ Repository/current-main machine truth and exact-head evidence override stale pro
 - Phase 2 Gate B / Surface 4 Relations — **PASS for the certified native V1 baseline** after merged milestone PR #122 and public Query-consumer contract PR #128.
 - Query Gate C prerequisite blockers identified by the September audit — **RESOLVED for bounded Query source development**: shared Data Source and shared Cache foundations are promoted, alongside the accepted Relations public consumer contract, Policy seam, Query Bank and development consent.
 - Shared Data Source authorization mapping required before Query provider execution — **PASS FOR V1 CONTRACT** via PR #141.
+- Policy-before-provider orchestration boundary — **PASS FOR V1 CONTRACT** via PR #143.
+- Canonical native `wordpress.posts` Data Source/module registration — **PASS FOR V1 CONTRACT** via PR #145.
 
 These PASS decisions are bounded engineering lifecycle claims. They are not `PRODUCT_PARITY_CERTIFIED`, stable-release, deployment, or provider-parity claims.
 
@@ -36,7 +38,7 @@ Current runtime state:
 
 - **Gate A — Fields:** PASS for the explicitly certified native V1 scope.
 - **Gate B — Relations:** PASS for the explicitly certified native V1 baseline required by parent #66.
-- **Gate C — Query:** **ACTIVE**. Typed AST/validation, bounded native posts compilation and shared Data Source authorization mapping are promoted. Policy-authorized orchestration, provider execution, cache behavior, richer field/relation predicates, canonical admin UX and full Gate C reference evidence remain incomplete.
+- **Gate C — Query:** **ACTIVE**. Typed AST/validation, bounded native posts compilation, shared Data Source authorization mapping, Policy-authorized planning, and canonical native `wordpress.posts` source/module registration are promoted. Provider execution, normalized runtime results/errors, cache behavior, richer field/relation predicates, diagnostics, canonical admin UX and full Gate C reference evidence remain incomplete.
 - **Gate D — Admin Columns:** runtime **BLOCKED by incomplete Query Gate C**.
 - **Gate E — Dynamic Listings:** runtime **BLOCKED by incomplete Query Gate C plus shared renderer/data-source integration requirements**.
 - **Status Manager:** runtime **BLOCKED until Gates A–E are complete**.
@@ -57,12 +59,14 @@ Current bounded progress:
 6. **Typed AST + structural validation V1 — PASS FOR THIS SLICE.** PR #137 source head `dc74f1151825a2c2f66ca4fbd51398df3bd059f4` was promoted to `main` as `cccecc08fc1247fa45472ca0ae38ca912cfe1d14` after exact-head PHP Quality Toolchain #264, Distributable Package #437, Platform Compatibility Matrix #544 and Architecture Guards #882 all succeeded.
 7. **Native `wordpress.posts` provider compiler V1 — PASS FOR THIS SLICE.** PR #139 source head `c5a8103991ba1068f92f1908f06154770b6d48bd` was promoted as `6a9e9285fcd4a207634d1a62900626905862fc22` after exact-head PHP Quality Toolchain #266, Distributable Package #438, Architecture Guards #883 and Platform Compatibility Matrix #545 all succeeded. The compiler produces finite public `WP_Query` argument plans only; it does not instantiate `WP_Query`, access `$wpdb`, use query filters/callbacks, or execute a provider.
 8. **Shared Data Source → Policy authorization mapping V1 — PASS FOR THIS SLICE.** PR #141 source head `8161d30f99c210a63a033f89d7537f1260080d40` was promoted as `9875b85764f786818987124691cde468d9e3090c` after exact-head PHP Quality Toolchain #268, Distributable Package #439, Architecture Guards #884 and Platform Compatibility Matrix #546 all succeeded. `DataSourceAuthorizationMapping` can name only a canonical Ability, WordPress capability and optional semantic resource type. Legacy descriptors remain inspectable, but an execution consumer requiring a missing mapping fails closed.
+9. **Policy-authorized Query planning V1 — PASS FOR THIS SLICE.** PR #143 source head `9a58745ed4433f4e1130ce7177a2550af8817209` was promoted as `05a294da2321c95f51519c2ed1aec69358aaee81` after exact-head PHP Quality Toolchain #270, Distributable Package #440, Architecture Guards #885 and Platform Compatibility Matrix #547 all succeeded. `QueryAuthorizedPlanner` enforces canonical Data Source revalidation → required shared authorization mapping → canonical `AuthorizationRequest`/`PolicyEngine` decision → certified provider compilation and returns no executable result before Policy allow.
+10. **Canonical native `wordpress.posts` source/module lifecycle V1 — PASS FOR THIS SLICE.** PR #145 source head `9f5a207791fcfd7fbce12b852d35d559aa7bd323` was promoted as `ca69567c2aa365169afebe7a7825260575700ffb` after exact-head PHP Quality Toolchain #272, Distributable Package #441, Architecture Guards #886 and Platform Compatibility Matrix #548 all succeeded. `QueryModule` registers exactly one bounded `wordpress.posts` descriptor and exposes the promoted validator/compiler/authorized-planner services through the shared service registry without Bootstrap hard-wiring or provider execution.
 
-PR #137 establishes the finite semantic grammar and validation boundary. PR #139 establishes a non-executing native provider translation boundary. PR #141 closes the missing shared metadata seam needed to route future execution authorization through canonical Policy rather than inventing a Query-local capability.
+PR #137 establishes the finite semantic grammar and validation boundary. PR #139 establishes a non-executing native provider translation boundary. PR #141 closes the shared authorization-metadata seam. PR #143 establishes Policy-before-compilation orchestration. PR #145 closes native source discovery/module-service wiring while keeping actual provider execution separate.
 
-The next bounded Gate C tranche is **Policy-authorized Query execution planning V1**. It must re-resolve/revalidate the Data Source, require its explicit authorization mapping, construct the canonical `AuthorizationRequest` from caller `ExecutionContext`, obtain an allow decision from `PolicyEngine`, and only then call the certified provider compiler. It must return an immutable authorized provider plan and perform **no provider execution**.
+The next bounded Gate C tranche is **Policy-authorized native `wordpress.posts` provider execution V1 with normalized result/error values**. It must accept a typed `QueryDefinition` plus caller `ExecutionContext`, route through `QueryAuthorizedPlanner` first, execute only the already-certified `wordpress.wp_query.posts` provider plan through a testable native WordPress adapter, and return immutable normalized projection-keyed rows. Provider/source mismatch, malformed provider output, unavailable native APIs and provider failures must fail closed using stable Query errors.
 
-Actual `WP_Query` execution, native source runtime registration, row/projection authorization semantics, cache integration, relation traversal execution, REST/admin exposure and full Gate C certification remain later bounded tranches.
+Shared cache integration, relation traversal execution, parameter binding, cursor semantics, richer field/taxonomy/date predicates, diagnostics, REST/admin/public exposure, performance/reference evidence and full Gate C certification remain later bounded tranches. The first provider-execution slice must not silently absorb any of those responsibilities.
 
 ## Relations Gate B exit truth
 
@@ -108,9 +112,9 @@ Bank certification, bounded runtime certification, Atomic Option lifecycle, full
 
 `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` remain active.
 
-The completed `query-typed-ast-validation-v1`, `query-wordpress-posts-compiler-v1` and `shared-data-source-authorization-mapping-v1` deterministic branches are historical audit evidence and must not be re-claimed or force-moved.
+The completed `query-typed-ast-validation-v1`, `query-wordpress-posts-compiler-v1`, `shared-data-source-authorization-mapping-v1`, `query-policy-authorized-plan-v1` and `query-wordpress-posts-source-registration-v1` deterministic branches are historical audit evidence and must not be re-claimed or force-moved.
 
-The current actionable queue contains only `query-policy-authorized-plan-v1` on deterministic branch `agent/query-policy-authorized-plan-v1`. Shared/global writes remain single-writer Supervisor/Integrator territory; the Query-owned tranche must not mutate unrelated shared truth.
+The current actionable queue contains only `query-wordpress-posts-execution-v1` on deterministic branch `agent/query-wordpress-posts-execution-v1`. Shared/global writes remain single-writer Supervisor/Integrator territory; the Query-owned tranche must not mutate unrelated shared truth.
 
 ## Repository and Linear authority
 
@@ -118,10 +122,10 @@ GitHub repository state, machine-readable configuration, exact-head CI/test evid
 
 ## Resume authority
 
-Current safe state: **claim and execute `query-policy-authorized-plan-v1` from current main**.
+Current safe state: **claim and execute `query-wordpress-posts-execution-v1` from current main after this reconciliation is promoted**.
 
-The tranche must prove source revalidation → required shared authorization mapping → canonical Policy decision → provider compilation ordering. It must not execute `WP_Query`, access `$wpdb`, add raw SQL/query filters/callbacks, introduce cache behavior, execute Relations traversal, expose REST/admin execution, or start Admin Columns runtime.
+The tranche must prove typed `QueryDefinition` + caller `ExecutionContext` → canonical `QueryAuthorizedPlanner` → bounded `wordpress.wp_query.posts` execution adapter → immutable normalized result. It must not accept an authorized plan as a substitute for caller authorization at the top-level execution service, must not execute before Policy allow, and must not add cache behavior, Relations traversal, parameter/cursor semantics, raw SQL/query filters/callbacks, or REST/admin/public exposure.
 
-After that promotion, re-evaluate native source registration and the first actual provider-execution/reference tranche from then-current repository evidence.
+After that promotion, re-evaluate shared cache integration, richer native predicates/reference evidence and the remaining Gate C exit requirements from then-current repository evidence. Admin Columns remains blocked until Query Gate C exit is actually satisfied.
 
 Development remains milestone-gated. Production release/deployment and separately privileged destructive/live-provider actions remain **NOT GRANTED** by this checkpoint. Repository evidence overrides conversational memory.
