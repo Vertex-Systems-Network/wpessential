@@ -124,11 +124,37 @@ final class QueryFieldAwareAstValidatorTest extends TestCase
         self::assertSame('wpe_query_dependency_unavailable', $result->issues[0]->code);
     }
 
+    public function testOwnerDescriptorOutsideNativeScalarContractFailsClosed(): void
+    {
+        foreach ([
+            ['logical_type' => 'object', 'storage_owner' => 'native_post_meta'],
+            ['logical_type' => 'string', 'storage_owner' => 'custom_table'],
+        ] as $descriptor) {
+            $fields = $this->fieldsWithDescriptor($descriptor['logical_type'], $descriptor['storage_owner']);
+            $result = (new QueryFieldAwareAstValidator($this->registry(), null, $fields))->validate(
+                $this->ast(),
+                $this->budget(),
+                $this->context(),
+            );
+
+            self::assertFalse($result->isValid());
+            self::assertSame('wpe_query_dependency_unavailable', $result->issues[0]->code);
+        }
+    }
+
     private function fields(): FieldQueryConsumerInterface
     {
-        return new class($this->fieldRef()) implements FieldQueryConsumerInterface {
-            public function __construct(private readonly string $fieldRef)
-            {
+        return $this->fieldsWithDescriptor('string', 'native_post_meta');
+    }
+
+    private function fieldsWithDescriptor(string $logicalType, string $storageOwner): FieldQueryConsumerInterface
+    {
+        return new class($this->fieldRef(), $logicalType, $storageOwner) implements FieldQueryConsumerInterface {
+            public function __construct(
+                private readonly string $fieldRef,
+                private readonly string $logicalType,
+                private readonly string $storageOwner,
+            ) {
             }
 
             public function describe(string $fieldReference, ExecutionContext $context): array
@@ -138,11 +164,11 @@ final class QueryFieldAwareAstValidatorTest extends TestCase
                     'field_ref' => $this->fieldRef,
                     'group_revision' => 1,
                     'field_uuid' => '01990f6e-1f30-4000-8000-000000000202',
-                    'logical_type' => 'string',
+                    'logical_type' => $this->logicalType,
                     'operators' => ['eq', 'neq', 'in', 'not_in'],
                     'max_candidate_ids' => self::MAX_CANDIDATE_IDS,
                     'max_result_ids' => self::MAX_RESULT_IDS,
-                    'storage_owner' => 'native_post_meta',
+                    'storage_owner' => $this->storageOwner,
                 ];
             }
 
