@@ -1,0 +1,54 @@
+name: Repair Columns Lifecycle Windows V4
+
+on:
+  push:
+    branches:
+      - agent/columns-lifecycle-workbench-windows-v4
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout lifecycle workbench
+        uses: actions/checkout@v4
+        with:
+          ref: agent/columns-lifecycle-workbench-windows-v4
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Apply lifecycle transformation
+        shell: pwsh
+        run: php tools/repair-columns-lifecycle-v4.php
+
+      - name: Prove generic and Surface 8 gates
+        shell: pwsh
+        run: |
+          php tests/Smoke/option-contracts-contract.php
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          php tests/Smoke/option-contract-columns-contract.php
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          php tests/Smoke/option-contract-columns-ux-contract.php
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Commit validated workbench result
+        shell: pwsh
+        run: |
+          git rm .github/workflows/repair-columns-lifecycle-windows-v4.yml tools/repair-columns-lifecycle-v4.php
+          git config user.name "WPEssential"
+          git config user.email "wordpress.essential@gmail.com"
+          git add config/product/atomic-option-contract-progress.json config/product/option-contracts/columns.json tests/Smoke/option-contract-columns-contract.php
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git commit -m "product(columns): promote UX lifecycle truth"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git push origin HEAD:agent/columns-lifecycle-workbench-windows-v4
