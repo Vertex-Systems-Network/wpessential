@@ -1,0 +1,54 @@
+name: Query Admin ESLint Fix
+
+on:
+  push:
+    branches:
+      - 'agent/query-admin-ux-scaffold-v1'
+    paths:
+      - 'admin-ui/src/query.ts'
+      - '.github/workflows/query-admin-eslint-fix.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: query-admin-eslint-fix
+  cancel-in-progress: true
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout worker branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/query-admin-ux-scaffold-v1
+          fetch-depth: 0
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin graph
+        run: npm ci --ignore-scripts
+
+      - name: Apply repository JavaScript lint fixes
+        run: ./node_modules/.bin/wp-scripts lint-js admin-ui/src/query.ts --fix
+
+      - name: Verify Query scaffold lint
+        run: ./node_modules/.bin/wp-scripts lint-js admin-ui/src/query.ts
+
+      - name: Commit repository lint output when needed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- admin-ui/src/query.ts; then
+            echo 'Query scaffold already matches repository lint style.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin-ui/src/query.ts
+          git commit -m 'style(query): apply repository admin lint fixes'
+          git push origin HEAD:agent/query-admin-ux-scaffold-v1
