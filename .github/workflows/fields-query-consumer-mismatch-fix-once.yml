@@ -1,0 +1,98 @@
+name: Fields Query Consumer Mismatch Fix Once
+
+on:
+  push:
+    branches:
+      - agent/fields-query-consumer-contract-v1
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/fields-query-consumer-contract-v1
+          fetch-depth: 0
+      - name: Preserve authorized non-target candidates as non-matches
+        shell: bash
+        run: |
+          cat > frameworks/Modules/Fields/FieldValueTargetMismatchException.php <<'PHP'
+          <?php
+
+          declare(strict_types=1);
+
+          namespace WPEssential\Modules\Fields;
+
+          if (!defined('ABSPATH')) {
+              exit;
+          }
+
+          use RuntimeException;
+
+          final class FieldValueTargetMismatchException extends RuntimeException {}
+          PHP
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          resolver = Path('frameworks/Modules/Fields/FieldValueTargetResolver.php')
+          text = resolver.read_text()
+          old = "            throw new RuntimeException('Published Field Group does not target the requested post.');"
+          new = "            throw new FieldValueTargetMismatchException('Published Field Group does not target the requested post.');"
+          if old not in text:
+              raise SystemExit('target mismatch anchor missing')
+          resolver.write_text(text.replace(old, new, 1))
+
+          consumer = Path('frameworks/Modules/Fields/FieldQueryConsumer.php')
+          text = consumer.read_text()
+          old = "            $target = $this->targets->resolve(\n                $resolved['definition']->id,\n                $resolved['field_uuid'],\n                $postId,\n            );\n            $this->assertTargetStorage($target, $resolved['logical_type']);"
+          new = "            try {\n                $target = $this->targets->resolve(\n                    $resolved['definition']->id,\n                    $resolved['field_uuid'],\n                    $postId,\n                );\n            } catch (FieldValueTargetMismatchException) {\n                continue;\n            }\n            $this->assertTargetStorage($target, $resolved['logical_type']);"
+          if old not in text:
+              raise SystemExit('consumer target resolver anchor missing')
+          consumer.write_text(text.replace(old, new, 1))
+
+          test = Path('tests/Unit/Modules/Fields/FieldQueryConsumerTest.php')
+          text = test.read_text()
+          insert_before = "    public function testCandidateBoundsAndDuplicatesFailClosed(): void\n"
+          test_method = "    public function testAuthorizedCandidateOutsideFieldTargetIsANonMatch(): void\n    {\n        $consumer = $this->consumer(\n            [10 => 'alpha', 20 => 'alpha', 11 => 'alpha'],\n            postTypes: [20 => 'page'],\n        );\n\n        self::assertSame(\n            [10, 11],\n            $consumer->matchingPostIds(self::FIELD_REF, 'eq', 'alpha', [10, 20, 11], 100, $this->context()),\n        );\n    }\n\n"
+          if 'testAuthorizedCandidateOutsideFieldTargetIsANonMatch' not in text:
+              if insert_before not in text:
+                  raise SystemExit('test insertion anchor missing')
+              text = text.replace(insert_before, test_method + insert_before, 1)
+
+          old_sig = "    private function consumer(array $values, ?int $deniedPostId = null, string $fieldType = 'text'): FieldQueryConsumer\n"
+          new_sig = "    private function consumer(\n        array $values,\n        ?int $deniedPostId = null,\n        string $fieldType = 'text',\n        array $postTypes = [],\n    ): FieldQueryConsumer\n"
+          if old_sig not in text:
+              raise SystemExit('consumer helper signature anchor missing')
+          text = text.replace(old_sig, new_sig, 1)
+          old_type = "            getPostType: static fn (int $postId): string => 'book',\n"
+          new_type = "            getPostType: static fn (int $postId): string => $postTypes[$postId] ?? 'book',\n"
+          if text.count(old_type) < 2:
+              raise SystemExit('post type closure anchors missing')
+          text = text.replace(old_type, new_type, 2)
+          test.write_text(text)
+          PY
+
+          python3 - <<'PY'
+          from pathlib import Path
+          doc = Path('docs/IMPLEMENTATION/FIELDS-QUERY-CONSUMER-CONTRACT-V1.md')
+          text = doc.read_text()
+          needle = "Unknown or unpublished definitions, unsupported storage or field shapes, malformed references, target mismatches, unauthorized candidates, duplicate/oversized candidate lists, invalid operators, and invalid operands fail closed.\n\nAn authorization failure fails the complete consumer call rather than silently dropping rows. This prevents a Query consumer from using partial-result behavior as an existence oracle."
+          replacement = "Unknown or unpublished definitions, unsupported storage or field shapes, malformed references, unauthorized candidates, duplicate/oversized candidate lists, invalid operators, and invalid operands fail closed. An authorized candidate that is outside the published Field Group target is a deterministic non-match, not a contract failure.\n\nAuthorization is checked before target evaluation for every candidate. An authorization failure therefore fails the complete consumer call rather than silently dropping rows, preventing partial-result behavior from becoming an existence oracle."
+          if needle not in text:
+              raise SystemExit('documentation mismatch anchor missing')
+          doc.write_text(text.replace(needle, replacement, 1))
+          PY
+
+          rm -f .github/workflows/fields-query-consumer-mismatch-fix-once.yml
+      - name: Commit correction
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frameworks/Modules/Fields/FieldValueTargetMismatchException.php frameworks/Modules/Fields/FieldValueTargetResolver.php frameworks/Modules/Fields/FieldQueryConsumer.php tests/Unit/Modules/Fields/FieldQueryConsumerTest.php docs/IMPLEMENTATION/FIELDS-QUERY-CONSUMER-CONTRACT-V1.md .github/workflows/fields-query-consumer-mismatch-fix-once.yml
+          git commit -m "fix(fields): treat target mismatch as Query non-match"
+          git push origin HEAD:agent/fields-query-consumer-contract-v1
