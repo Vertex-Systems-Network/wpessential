@@ -52,11 +52,12 @@ final class QueryModule implements ModuleInterface
 
         $compiler = new WordPressPostsQueryCompiler();
         $validator = new QueryAstValidator($dataSources, $relations);
-        $planner = new QueryAuthorizedPlanner($dataSources, $policy, $compiler);
+        $relationResolver = $relations !== null ? new QueryRelationPredicateResolver($relations) : null;
+        $planner = new QueryAuthorizedPlanner($dataSources, $policy, $compiler, $relationResolver);
         $providerExecutor = new WordPressPostsQueryExecutor();
         $executor = new QueryAuthorizedExecutor($planner, $providerExecutor);
 
-        $dataSources->register($this->wordpressPostsDescriptor());
+        $dataSources->register($this->wordpressPostsDescriptor($relations !== null));
         $services->set(self::SERVICE_VALIDATOR, $validator);
         $services->set(self::SERVICE_COMPILER, $compiler);
         $services->set(self::SERVICE_PLANNER, $planner);
@@ -126,7 +127,7 @@ final class QueryModule implements ModuleInterface
         }
     }
 
-    private function wordpressPostsDescriptor(): DataSourceDescriptor
+    private function wordpressPostsDescriptor(bool $supportsRelations): DataSourceDescriptor
     {
         return new DataSourceDescriptor(
             id: WordPressPostsQueryCompiler::SOURCE_REF,
@@ -149,7 +150,7 @@ final class QueryModule implements ModuleInterface
             sortModes: ['field'],
             paginationModes: ['offset'],
             aggregationModes: [],
-            supportsRelations: false,
+            supportsRelations: $supportsRelations,
             policyRequired: true,
             scopes: ['site'],
             maxPageSize: 100,
