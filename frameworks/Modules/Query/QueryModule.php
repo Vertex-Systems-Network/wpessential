@@ -23,6 +23,7 @@ final class QueryModule implements ModuleInterface
     public const SERVICE_VALIDATOR = 'module.query.validator';
     public const SERVICE_COMPILER = 'module.query.compiler.wordpress-posts';
     public const SERVICE_PLANNER = 'module.query.authorized-planner';
+    public const SERVICE_EXECUTOR = 'module.query.authorized-executor';
 
     private const DATA_SOURCE_SERVICE = 'platform.data-sources';
     private const POLICY_SERVICE = 'platform.abilities.policy';
@@ -52,16 +53,19 @@ final class QueryModule implements ModuleInterface
         $compiler = new WordPressPostsQueryCompiler();
         $validator = new QueryAstValidator($dataSources, $relations);
         $planner = new QueryAuthorizedPlanner($dataSources, $policy, $compiler);
+        $providerExecutor = new WordPressPostsQueryExecutor();
+        $executor = new QueryAuthorizedExecutor($planner, $providerExecutor);
 
         $dataSources->register($this->wordpressPostsDescriptor());
         $services->set(self::SERVICE_VALIDATOR, $validator);
         $services->set(self::SERVICE_COMPILER, $compiler);
         $services->set(self::SERVICE_PLANNER, $planner);
+        $services->set(self::SERVICE_EXECUTOR, $executor);
     }
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // V1 registers planning contracts only. Provider execution is a later tranche.
+        // V1 execution remains an internal service. REST/admin/public exposure is a later tranche.
     }
 
     private function requireDataSources(ServiceRegistryInterface $services): DataSourceRegistryInterface
@@ -108,7 +112,14 @@ final class QueryModule implements ModuleInterface
 
     private function assertServiceIdsAvailable(ServiceRegistryInterface $services): void
     {
-        foreach ([self::SERVICE_VALIDATOR, self::SERVICE_COMPILER, self::SERVICE_PLANNER] as $serviceId) {
+        foreach (
+            [
+                self::SERVICE_VALIDATOR,
+                self::SERVICE_COMPILER,
+                self::SERVICE_PLANNER,
+                self::SERVICE_EXECUTOR,
+            ] as $serviceId
+        ) {
             if ($services->has($serviceId)) {
                 throw new LogicException(sprintf('Query service "%s" is already registered.', $serviceId));
             }
