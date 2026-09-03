@@ -1,0 +1,161 @@
+name: Query Native Execution Reference
+
+on:
+  pull_request:
+    paths:
+      - 'tests/Integration/wordpress-query-native-execution-reference.php'
+      - 'docs/IMPLEMENTATION/QUERY-NATIVE-EXECUTION-REFERENCE-V1.md'
+      - '.github/workflows/query-native-execution-reference.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-query-native-reference-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wordpress-php-matrix:
+    name: WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: ['6.9', '7.1']
+        php: ['8.2', '8.3', '8.4', '8.5']
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli
+          coverage: none
+
+      - name: Install locked PHP graph
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare exact WordPress fixture
+        shell: bash
+        env:
+          WPE_MATRIX_WORDPRESS: ${{ matrix.wordpress }}
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://wordpress.org/wordpress-${WPE_MATRIX_WORDPRESS}.tar.gz" \
+            --output /tmp/wordpress.tar.gz
+          tar -xzf /tmp/wordpress.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+
+      - name: Validate Query reference source
+        run: php -l tests/Integration/wordpress-query-native-execution-reference.php
+
+      - name: Run real WordPress Query reference
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-query-native-execution-reference.php
+
+  mariadb-baseline:
+    name: MariaDB 10.11 / WP ${{ matrix.wordpress }} / PHP 8.4
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: ['6.9', '7.1']
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: wpessential_test
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mysqli
+          coverage: none
+
+      - name: Install locked PHP graph
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare exact WordPress fixture
+        shell: bash
+        env:
+          WPE_MATRIX_WORDPRESS: ${{ matrix.wordpress }}
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://wordpress.org/wordpress-${WPE_MATRIX_WORDPRESS}.tar.gz" \
+            --output /tmp/wordpress.tar.gz
+          tar -xzf /tmp/wordpress.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+
+      - name: Run real WordPress Query reference
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-query-native-execution-reference.php
