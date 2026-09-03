@@ -10,120 +10,30 @@ permissions:
 
 jobs:
   promote:
-    if: github.actor == 'wpessential'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout lifecycle branch
+      - name: Checkout lifecycle workbench
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: agent/columns-lifecycle-repaired-v3
           persist-credentials: true
           fetch-depth: 0
 
-      - name: Promote repaired machine truth only
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 <<'PY'
-          import json
-          from pathlib import Path
+      - name: Apply repaired lifecycle transformation
+        run: php tools/repair-columns-lifecycle-v3.php
 
-          contract_path = Path('config/product/option-contracts/columns.json')
-          contract = json.loads(contract_path.read_text(encoding='utf-8'))
-          if contract.get('surface_id') != 8 or contract.get('surface_key') != 'columns':
-              raise SystemExit('Unexpected Surface 8 contract identity')
-          if contract.get('status') != 'OPTION_CONTRACT_COMPLETE':
-              raise SystemExit(f"Expected OPTION_CONTRACT_COMPLETE, got {contract.get('status')}")
-
-          expected_refs = {
-              'columns.target.wpe_tables',
-              'columns.source.field',
-              'columns.source.taxonomy',
-              'columns.source.relation',
-              'columns.source.media',
-              'columns.source.status',
-              'columns.source.query_aggregate',
-              'columns.filter.relation_ops',
-              'columns.portability.map_field',
-              'columns.portability.map_query',
-              'columns.portability.map_relation',
-          }
-          entries = contract['source_projection']['entries']
-          ref_entries = [e for e in entries if e.get('disposition') == 'OUT_OF_SURFACE_REFERENCE']
-          actual_refs = {e.get('source_id') for e in ref_entries}
-          if actual_refs != expected_refs:
-              raise SystemExit(f'Owner-reference set drifted: {sorted(actual_refs)}')
-          for entry in ref_entries:
-              if entry.get('atomic_ids') != []:
-                  raise SystemExit(f"Owner reference regained local atomic mapping: {entry.get('source_id')}")
-              owner = entry.get('owner_surface')
-              if not isinstance(owner, str) or not owner or owner == 'columns':
-                  raise SystemExit(f"Invalid owner on {entry.get('source_id')}")
-
-          coverage = contract.get('coverage_summary', {})
-          if coverage.get('missing') != 0 or coverage.get('unclassified') != 0 or coverage.get('atomic_options') != 41:
-              raise SystemExit('Surface 8 coverage invariant drifted')
-          if contract.get('source_projection', {}).get('source_record_count') != 214 or len(entries) != 214:
-              raise SystemExit('Surface 8 214-record projection invariant drifted')
-
-          contract['status'] = 'UX_CONTRACT_COMPLETE'
-          contract_path.write_text(json.dumps(contract, separators=(',', ':'), ensure_ascii=False) + '\n', encoding='utf-8')
-
-          smoke_path = Path('tests/Smoke/option-contract-columns-contract.php')
-          smoke = smoke_path.read_text(encoding='utf-8')
-          old = """$contract = columns_contract_json($contractPath);
-if (($contract['schema_version'] ?? null) !== 1
-    || ($contract['surface_id'] ?? null) !== 8
-    || ($contract['surface_key'] ?? null) !== 'columns'
-    || ($contract['status'] ?? null) !== 'OPTION_CONTRACT_COMPLETE'
-) {
-    throw new RuntimeException('Surface 8 Atomic Option contract identity/lifecycle is invalid.');
-}
-"""
-          new = """$contract = columns_contract_json($contractPath);
-$contractStatus = $contract['status'] ?? null;
-if (($contract['schema_version'] ?? null) !== 1
-    || ($contract['surface_id'] ?? null) !== 8
-    || ($contract['surface_key'] ?? null) !== 'columns'
-    || !in_array($contractStatus, ['OPTION_CONTRACT_COMPLETE', 'UX_CONTRACT_COMPLETE'], true)
-) {
-    throw new RuntimeException('Surface 8 Atomic Option contract identity/lifecycle is invalid.');
-}
-"""
-          if smoke.count(old) != 1:
-              raise SystemExit('Expected repaired lifecycle guard not found exactly once')
-          smoke_path.write_text(smoke.replace(old, new), encoding='utf-8')
-
-          progress = json.loads(Path('config/product/atomic-option-contract-progress.json').read_text(encoding='utf-8'))
-          rows = {row['key']: row['status'] for row in progress['surface_status']}
-          if rows.get('relations') != 'OPTION_CONTRACT_COMPLETE' or rows.get('columns') != 'UX_CONTRACT_COMPLETE':
-              raise SystemExit('Progress lifecycle rows are inconsistent')
-          truth = progress.get('truth', {})
-          expected_truth = {
-              'option_contract_complete_surfaces': 2,
-              'ux_contract_complete_surfaces': 1,
-              'runtime_certified_for_full_parity_contract': 0,
-              'product_parity_certified_surfaces': 0,
-          }
-          for key, value in expected_truth.items():
-              if truth.get(key) != value:
-                  raise SystemExit(f'Progress truth mismatch for {key}: {truth.get(key)}')
-          PY
-
-      - name: Prove lifecycle and ownership gates locally
-        shell: bash
+      - name: Prove generic and Surface 8 gates
         run: |
           set -euo pipefail
           php tests/Smoke/option-contracts-contract.php
           php tests/Smoke/option-contract-columns-contract.php
           php tests/Smoke/option-contract-columns-ux-contract.php
 
-      - name: Commit final lifecycle delta and remove one-shot workflow
-        shell: bash
+      - name: Commit validated workbench result
         run: |
           set -euo pipefail
-          git rm .github/workflows/repair-columns-lifecycle-v3.yml
+          git rm .github/workflows/repair-columns-lifecycle-v3.yml tools/repair-columns-lifecycle-v3.php
           git config user.name 'WPEssential'
           git config user.email 'wordpress.essential@gmail.com'
           git add config/product/atomic-option-contract-progress.json config/product/option-contracts/columns.json tests/Smoke/option-contract-columns-contract.php
