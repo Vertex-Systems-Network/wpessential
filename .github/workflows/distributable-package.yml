@@ -101,6 +101,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          backup_dir="$(mktemp -d)"
+          for suffix in js css asset.php; do
+            source="assets/admin/query.${suffix}"
+            if [ -f "${source}" ]; then
+              cp "${source}" "${backup_dir}/query.${suffix}"
+            fi
+          done
+
+          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
           cp assets/admin/fields.js assets/admin/query.js
           if php tools/release/build-distributable.php > /tmp/wpessential-partial-query.log 2>&1; then
             echo 'Packager accepted a partial optional query triplet' >&2
@@ -121,7 +130,15 @@ jobs:
           do
             grep -Fxq "${required}" /tmp/wpessential-query-files.txt
           done
+
           rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
+          for suffix in js css asset.php; do
+            saved="${backup_dir}/query.${suffix}"
+            if [ -f "${saved}" ]; then
+              cp "${saved}" "assets/admin/query.${suffix}"
+            fi
+          done
+          rm -rf "${backup_dir}"
           rm -f artifacts/wpessential.zip artifacts/wpessential-package.json
 
       - name: Build first independent distributable
