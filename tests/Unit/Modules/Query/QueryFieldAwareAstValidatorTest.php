@@ -44,6 +44,42 @@ final class QueryFieldAwareAstValidatorTest extends TestCase
         self::assertSame('wpe_query_unsupported_operator', $result->issues[0]->code);
     }
 
+    public function testOwnerFieldReferenceCannotEscapeIntoSorting(): void
+    {
+        $ast = $this->ast();
+        $ast['order_by'] = [[
+            'field_ref' => $this->fieldRef(),
+            'direction' => 'asc',
+        ]];
+        $result = (new QueryFieldAwareAstValidator($this->registry(), null, $this->fields()))->validate(
+            $ast,
+            $this->budget(),
+            $this->context(),
+        );
+
+        self::assertFalse($result->isValid());
+        self::assertSame('wpe_query_unsupported_operator', $result->issues[0]->code);
+    }
+
+    public function testOwnerFieldReferenceCannotUseNonFieldPredicateShortcut(): void
+    {
+        $ast = $this->ast();
+        $ast['filter']['children'][] = [
+            'type' => 'comparison',
+            'field_ref' => $this->fieldRef(),
+            'operator' => 'eq',
+            'value' => 'gold',
+        ];
+        $result = (new QueryFieldAwareAstValidator($this->registry(), null, $this->fields()))->validate(
+            $ast,
+            $this->budget(),
+            $this->context(),
+        );
+
+        self::assertFalse($result->isValid());
+        self::assertSame('wpe_query_unsupported_operator', $result->issues[0]->code);
+    }
+
     public function testMalformedOwnerDescriptorFailsClosed(): void
     {
         $fields = new class($this->fieldRef()) implements FieldQueryConsumerInterface {
