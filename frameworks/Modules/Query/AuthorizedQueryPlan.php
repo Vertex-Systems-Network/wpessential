@@ -16,6 +16,7 @@ final readonly class AuthorizedQueryPlan
         public string $capability,
         public ?string $resourceType,
         public string $policyReason,
+        public ?QueryExecutionResult $shortCircuitResult = null,
     ) {
     }
 }

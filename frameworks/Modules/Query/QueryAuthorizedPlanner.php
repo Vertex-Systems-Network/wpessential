@@ -21,6 +21,7 @@ final readonly class QueryAuthorizedPlanner
         private DataSourceRegistryInterface $dataSources,
         private PolicyEngine $policy,
         private QueryProviderCompilerInterface $compiler,
+        private ?QueryRelationPredicateResolver $relationResolver = null,
     ) {
     }
 
@@ -89,7 +90,15 @@ final readonly class QueryAuthorizedPlanner
             );
         }
 
-        if (!$this->compiler->supports($definition)) {
+        $effectiveDefinition = $definition;
+        $shortCircuitEmpty = false;
+        if ($this->relationResolver !== null) {
+            $relationResolution = $this->relationResolver->resolve($definition, $context);
+            $effectiveDefinition = $relationResolution->definition;
+            $shortCircuitEmpty = $relationResolution->shortCircuitEmpty;
+        }
+
+        if (!$this->compiler->supports($effectiveDefinition)) {
             throw new QueryPlanningException(
                 'wpe_query_dependency_unavailable',
                 '$.source',
@@ -98,7 +107,7 @@ final readonly class QueryAuthorizedPlanner
         }
 
         try {
-            $providerPlan = $this->compiler->compile($definition);
+            $providerPlan = $this->compiler->compile($effectiveDefinition);
         } catch (QueryProviderCompilationException $exception) {
             throw $exception;
         } catch (Throwable) {
@@ -117,12 +126,23 @@ final readonly class QueryAuthorizedPlanner
             );
         }
 
+        $shortCircuitResult = $shortCircuitEmpty
+            ? new QueryExecutionResult(
+                provider: $providerPlan->provider,
+                sourceRef: $providerPlan->sourceRef,
+                projection: $providerPlan->projection,
+                rows: [],
+                returned: 0,
+            )
+            : null;
+
         return new AuthorizedQueryPlan(
             providerPlan: $providerPlan,
             ability: $authorization->ability,
             capability: $authorization->capability,
             resourceType: $authorization->resourceType,
             policyReason: $decision->reason,
+            shortCircuitResult: $shortCircuitResult,
         );
     }
 }
