@@ -15,6 +15,7 @@ use WPEssential\Modules\Query\QueryExecutionError;
 use WPEssential\Modules\Query\QueryExecutionResult;
 use WPEssential\Modules\Query\QueryFieldPredicateResolver;
 use WPEssential\Modules\Query\QueryPagination;
+use WPEssential\Modules\Query\QueryPlanningException;
 use WPEssential\Modules\Query\QueryPredicate;
 use WPEssential\Modules\Query\QueryPredicateType;
 use WPEssential\Modules\Query\QueryProviderExecutorInterface;
@@ -65,6 +66,33 @@ final class QueryFieldAuthorizedPlannerTest extends TestCase
         self::assertSame([], $result->rows);
         self::assertSame(0, $result->returned);
         self::assertNotContains('provider', $trace->getArrayCopy());
+    }
+
+    public function testMixedFieldsAndRelationsOwnerPredicatesFailClosedAfterPolicyBeforeOwnerResolution(): void
+    {
+        $trace = new ArrayObject();
+        $definition = $this->definition();
+        $filter = $definition->filter;
+        self::assertInstanceOf(QueryPredicate::class, $filter);
+
+        $children = $filter->children;
+        $children[] = new QueryPredicate(QueryPredicateType::Relation, [
+            'relation_ref' => '01990f6e-1f30-4000-8000-000000000299',
+            'direction' => 'from',
+            'mode' => 'exists',
+            'related_ids' => null,
+        ]);
+
+        try {
+            $this->planner(true, $trace, [13])->plan(
+                $this->withFilter($definition, new QueryPredicate(QueryPredicateType::Group, ['boolean' => 'and'], $children)),
+                $this->context(),
+            );
+            self::fail('Expected mixed owner predicates to fail closed in bounded V1.');
+        } catch (QueryPlanningException $exception) {
+            self::assertSame('wpe_query_unsupported_operator', $exception->errorCode);
+            self::assertSame(['policy'], $trace->getArrayCopy());
+        }
     }
 
     /** @param list<int> $matches */
@@ -188,6 +216,25 @@ final class QueryFieldAuthorizedPlannerTest extends TestCase
             distinct: false,
             executionPolicy: [],
             cachePolicy: [],
+        );
+    }
+
+    private function withFilter(QueryDefinition $definition, QueryPredicate $filter): QueryDefinition
+    {
+        return new QueryDefinition(
+            identity: $definition->identity,
+            astVersion: $definition->astVersion,
+            source: $definition->source,
+            operation: $definition->operation,
+            projection: $definition->projection,
+            parameters: $definition->parameters,
+            filter: $filter,
+            orderBy: $definition->orderBy,
+            pagination: $definition->pagination,
+            distinct: $definition->distinct,
+            executionPolicy: $definition->executionPolicy,
+            cachePolicy: $definition->cachePolicy,
+            metadata: $definition->metadata,
         );
     }
 
