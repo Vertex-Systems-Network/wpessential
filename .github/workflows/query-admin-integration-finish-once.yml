@@ -1,0 +1,447 @@
+name: Query Admin Integration Finish Once
+
+on:
+  push:
+    branches:
+      - agent/query-admin-integration-v1
+
+permissions:
+  contents: write
+
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout claimed branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/query-admin-integration-v1
+          fetch-depth: 0
+      - name: Build Query admin integration source and evidence
+        shell: bash
+        run: |
+          cat > frameworks/Modules/Query/QueryAdminBootstrapProjector.php <<'PHP'
+          <?php
+
+          declare(strict_types=1);
+
+          namespace WPEssential\Modules\Query;
+
+          if (!defined('ABSPATH')) {
+              exit;
+          }
+
+          use WPEssential\Contracts\DataSourceRegistryInterface;
+          use WPEssential\Platform\DataSources\DataSourceDescriptor;
+
+          final readonly class QueryAdminBootstrapProjector
+          {
+              private const DRAFT_UUID = '00000000-0000-4000-8000-000000000006';
+
+              public function __construct(private DataSourceRegistryInterface $dataSources) {}
+
+              /** @return array<string,mixed> */
+              public function project(): array
+              {
+                  $sources = [];
+                  $descriptor = $this->dataSources->find(WordPressPostsQueryCompiler::SOURCE_REF);
+                  if ($descriptor instanceof DataSourceDescriptor && $descriptor->isAvailable()) {
+                      $sources[] = $this->projectSource($descriptor);
+                  }
+
+                  return [
+                      'surface' => 'query',
+                      'identity' => [
+                          'uuid' => self::DRAFT_UUID,
+                          'key' => 'query-admin-draft',
+                          'name' => 'Query admin draft',
+                          'revision' => 1,
+                          'lifecycle' => 'draft',
+                      ],
+                      'sources' => $sources,
+                  ];
+              }
+
+              /** @return array<string,mixed> */
+              private function projectSource(DataSourceDescriptor $descriptor): array
+              {
+                  $schema = $descriptor->fieldSchema;
+                  ksort($schema, SORT_STRING);
+                  $fields = [];
+                  foreach ($schema as $reference => $logicalType) {
+                      $fields[] = [
+                          'ref' => $reference,
+                          'label' => $this->label($reference),
+                          'logicalType' => $logicalType,
+                      ];
+                  }
+
+                  return [
+                      'sourceRef' => $descriptor->id,
+                      'sourceType' => $descriptor->sourceType,
+                      'capabilityVersion' => $descriptor->capabilityVersion,
+                      'label' => $this->label($descriptor->id),
+                      'fields' => $fields,
+                      'predicates' => array_values($descriptor->predicates),
+                      'maxPageSize' => $descriptor->maxPageSize,
+                      'supportsRelations' => $descriptor->supportsRelations,
+                  ];
+              }
+
+              private function label(string $reference): string
+              {
+                  return ucwords(str_replace(['.', '_', '-'], ' ', $reference));
+              }
+          }
+          PHP
+
+          cat > frameworks/Modules/Query/QueryAdminController.php <<'PHP'
+          <?php
+
+          declare(strict_types=1);
+
+          namespace WPEssential\Modules\Query;
+
+          if (!defined('ABSPATH')) {
+              exit;
+          }
+
+          use WPEssential\Platform\Admin\AdminAssetManifest;
+          use WPEssential\Platform\Admin\PlatformAdminController;
+
+          final class QueryAdminController
+          {
+              public const PAGE_SLUG = 'wpessential-query';
+              private const CAPABILITY = 'manage_options';
+
+              private ?string $hookSuffix = null;
+
+              public function __construct(
+                  private readonly QueryAdminBootstrapProjector $bootstrap,
+                  private readonly AdminAssetManifest $assets,
+              ) {}
+
+              public function register(): void
+              {
+                  if (!function_exists('add_action')) {
+                      return;
+                  }
+
+                  add_action('admin_menu', [$this, 'registerMenu']);
+                  add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
+              }
+
+              public function registerMenu(): void
+              {
+                  if (!function_exists('add_submenu_page')) {
+                      return;
+                  }
+
+                  $hook = add_submenu_page(
+                      PlatformAdminController::PAGE_SLUG,
+                      __('Query Builder', 'wpessential'),
+                      __('Query Builder', 'wpessential'),
+                      self::CAPABILITY,
+                      self::PAGE_SLUG,
+                      [$this, 'render'],
+                  );
+                  $this->hookSuffix = is_string($hook) && $hook !== '' ? $hook : null;
+              }
+
+              public function enqueueAssets(string $hookSuffix): void
+              {
+                  if ($this->hookSuffix === null || $hookSuffix !== $this->hookSuffix) {
+                      return;
+                  }
+
+                  $entry = $this->assets->entry('query');
+                  if ($entry === null) {
+                      return;
+                  }
+                  $version = $entry['version'] ?? (defined('WPE_VERSION') ? (string) WPE_VERSION : null);
+                  foreach ($entry['styles'] as $index => $style) {
+                      wp_enqueue_style('wpessential-query-admin-' . $index, $style, [], $version);
+                  }
+                  wp_enqueue_script(
+                      'wpessential-query-admin',
+                      $entry['script'],
+                      $entry['dependencies'],
+                      $version,
+                      true,
+                  );
+                  if (function_exists('wp_script_add_data')) {
+                      wp_script_add_data('wpessential-query-admin', 'strategy', 'defer');
+                  }
+              }
+
+              public function render(): void
+              {
+                  if (!function_exists('current_user_can') || !current_user_can(self::CAPABILITY)) {
+                      if (function_exists('wp_die')) {
+                          wp_die(
+                              esc_html__('You are not allowed to manage WPEssential Queries.', 'wpessential'),
+                              esc_html__('WPEssential', 'wpessential'),
+                              ['response' => 403],
+                          );
+                      }
+                      return;
+                  }
+
+                  $bootstrap = $this->bootstrap->project();
+                  $json = function_exists('wp_json_encode')
+                      ? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+                      : json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+                  $json = is_string($json) ? $json : '{}';
+
+                  echo '<div class="wrap wpessential-query-wrap">';
+                  echo '<section id="wpessential-query-root" data-wpessential-surface="query" aria-labelledby="wpessential-query-page-title">';
+                  echo '<h1 id="wpessential-query-page-title">' . esc_html__('Query Builder', 'wpessential') . '</h1>';
+                  echo '<p>' . esc_html__('Author a bounded Query definition from registered data-source metadata. Execution preview remains unavailable.', 'wpessential') . '</p>';
+                  echo '</section>';
+                  echo '<script id="wpessential-query-bootstrap" type="application/json">' . $json . '</script>';
+                  echo '</div>';
+              }
+          }
+          PHP
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          module = Path('frameworks/Modules/Query/QueryModule.php')
+          text = module.read_text()
+          use_anchor = "use WPEssential\\Platform\\Auth\\PolicyEngine;\n"
+          if "use WPEssential\\Platform\\Admin\\AdminAssetManifest;" not in text:
+              text = text.replace(use_anchor, "use WPEssential\\Platform\\Admin\\AdminAssetManifest;\n" + use_anchor, 1)
+          old = "    public function boot(ServiceRegistryInterface $services): void\n    {\n        // V1 execution remains an internal service. REST/admin/public exposure is a later tranche.\n    }\n"
+          new = "    public function boot(ServiceRegistryInterface $services): void\n    {\n        $assets = $services->get('platform.admin.assets');\n        $dataSources = $services->get(self::DATA_SOURCE_SERVICE);\n        if (!$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface) {\n            throw new LogicException('Query admin requires canonical shared admin assets and Data Source Registry.');\n        }\n\n        $admin = new QueryAdminController(new QueryAdminBootstrapProjector($dataSources), $assets);\n        $services->set('module.query.admin', $admin);\n        $admin->register();\n        // Query execution remains an internal service. No REST/AJAX/admin execution endpoint is exposed here.\n    }\n"
+          if old not in text:
+              raise SystemExit('QueryModule boot anchor missing')
+          text = text.replace(old, new, 1)
+          module.write_text(text)
+
+          package = Path('package.json')
+          data = json.loads(package.read_text())
+          data['scripts']['build:admin'] = 'wp-scripts build admin-ui/src/main admin-ui/src/taxonomy admin-ui/src/fields admin-ui/src/query --output-path=assets/admin'
+          package.write_text(json.dumps(data, indent=2) + '\n')
+          PY
+
+          cat > tests/Unit/Modules/Query/QueryAdminBootstrapProjectorTest.php <<'PHP'
+          <?php
+
+          declare(strict_types=1);
+
+          namespace WPEssential\Tests\Unit\Modules\Query;
+
+          use PHPUnit\Framework\TestCase;
+          use WPEssential\Modules\Query\QueryAdminBootstrapProjector;
+          use WPEssential\Modules\Query\WordPressPostsQueryCompiler;
+          use WPEssential\Platform\DataSources\DataSourceDescriptor;
+          use WPEssential\Platform\DataSources\DataSourceRegistry;
+
+          final class QueryAdminBootstrapProjectorTest extends TestCase
+          {
+              public function testProjectsOnlyCanonicalWordPressPostsSourceWithoutSensitiveRuntimeMetadata(): void
+              {
+                  $registry = new DataSourceRegistry();
+                  $registry->register(new DataSourceDescriptor(
+                      id: WordPressPostsQueryCompiler::SOURCE_REF,
+                      sourceType: WordPressPostsQueryCompiler::SOURCE_REF,
+                      capabilityVersion: 1,
+                      fieldSchema: ['post.title' => 'string', 'post.id' => 'integer'],
+                      predicates: ['eq', 'neq', 'contains'],
+                      sortModes: ['field'],
+                      paginationModes: ['offset'],
+                      supportsRelations: true,
+                      maxPageSize: 100,
+                      maxBatchSize: 100,
+                  ));
+                  $registry->register(new DataSourceDescriptor(
+                      id: 'example.external',
+                      sourceType: 'example.external',
+                      capabilityVersion: 1,
+                      fieldSchema: ['example.id' => 'integer'],
+                  ));
+
+                  $bootstrap = (new QueryAdminBootstrapProjector($registry))->project();
+
+                  self::assertSame('query', $bootstrap['surface']);
+                  self::assertSame('draft', $bootstrap['identity']['lifecycle']);
+                  self::assertCount(1, $bootstrap['sources']);
+                  $source = $bootstrap['sources'][0];
+                  self::assertSame(WordPressPostsQueryCompiler::SOURCE_REF, $source['sourceRef']);
+                  self::assertSame(['post.id', 'post.title'], array_column($source['fields'], 'ref'));
+                  self::assertSame(['eq', 'neq', 'contains'], $source['predicates']);
+                  self::assertTrue($source['supportsRelations']);
+                  self::assertArrayNotHasKey('authorization', $source);
+                  self::assertArrayNotHasKey('cacheGenerationKeys', $source);
+              }
+
+              public function testMissingCanonicalSourceProducesEmptyFailClosedSourceList(): void
+              {
+                  $bootstrap = (new QueryAdminBootstrapProjector(new DataSourceRegistry()))->project();
+                  self::assertSame([], $bootstrap['sources']);
+              }
+          }
+          PHP
+
+          mkdir -p tests/e2e/fixtures
+          cat > tests/e2e/fixtures/query-module-fixture.php <<'PHP'
+          <?php
+          /**
+           * Plugin Name: WPE Query E2E Fixture
+           */
+
+          declare(strict_types=1);
+
+          add_action('plugins_loaded', static function (): void {
+              if (!class_exists(\WPEssential\Bootstrap\Plugin::class)) {
+                  return;
+              }
+
+              \WPEssential\Bootstrap\Plugin::setModuleActivationPolicy(
+                  new class implements \WPEssential\Contracts\ModuleActivationPolicyInterface {
+                      public function allows(\WPEssential\Platform\Modules\ModuleManifest $manifest): bool
+                      {
+                          return $manifest->edition === 'free' || $manifest->id === 'query';
+                      }
+                  },
+              );
+              \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Query\QueryModule());
+          }, -200);
+          PHP
+
+          cat > tests/e2e/specs/query-builder.spec.mjs <<'JS'
+          import fs from 'node:fs/promises';
+          import path from 'node:path';
+          import process from 'node:process';
+
+          import AxeBuilder from '@axe-core/playwright';
+          import { expect, test } from '@playwright/test';
+          import { runCLI } from '@wp-playground/cli';
+
+          const pluginDirectory = process.env.WPE_E2E_PLUGIN_DIR;
+          if (!pluginDirectory) {
+            throw new Error('WPE_E2E_PLUGIN_DIR must point to the unpacked WPEssential distributable.');
+          }
+
+          let playground;
+
+          async function visitQueryBuilder(page) {
+            const response = await page.goto(
+              `${playground.serverUrl}/wp-admin/admin.php?page=wpessential-query`,
+              { waitUntil: 'domcontentloaded' },
+            );
+            expect(response, 'Query Builder navigation should return a response.').not.toBeNull();
+            expect(response?.ok(), 'Query Builder should return a successful HTTP response.').toBe(true);
+            const root = page.locator('#wpessential-query-root');
+            await expect(root).toBeVisible();
+            return root;
+          }
+
+          test.beforeAll(async () => {
+            playground = await runCLI({
+              command: 'server',
+              port: 0,
+              quiet: true,
+              skipBrowser: true,
+              mount: [
+                {
+                  hostPath: pluginDirectory,
+                  vfsPath: '/wordpress/wp-content/plugins/wpessential',
+                },
+                {
+                  hostPath: path.resolve(process.cwd(), 'fixtures/query-module-fixture.php'),
+                  vfsPath: '/wordpress/wp-content/plugins/wpe-query-e2e/wpe-query-e2e.php',
+                },
+              ],
+              blueprint: {
+                preferredVersions: { php: '8.2', wp: '7.1' },
+                login: true,
+                steps: [
+                  { step: 'activatePlugin', pluginPath: '/wordpress/wp-content/plugins/wpe-query-e2e/wpe-query-e2e.php' },
+                  { step: 'activatePlugin', pluginPath: '/wordpress/wp-content/plugins/wpessential/wpessential.php' },
+                ],
+              },
+            });
+          });
+
+          test.afterAll(async () => {
+            await playground?.server?.close();
+          });
+
+          test('packaged Query Builder is reachable, enhanced, bounded, and execution-disabled', async ({ page }) => {
+            const pageErrors = [];
+            page.on('pageerror', (error) => pageErrors.push(error.message));
+
+            const root = await visitQueryBuilder(page);
+            await expect(page.getByRole('heading', { name: 'Query Builder', level: 1 })).toBeVisible();
+            await expect(root).toHaveAttribute('data-wpessential-surface', 'query');
+            await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
+            await expect(page.getByLabel('Data source')).toHaveValue('wordpress.posts');
+            await expect(page.getByLabel('Page size')).toHaveValue('20');
+            const execute = page.getByRole('button', { name: 'Preview execution unavailable' });
+            await expect(execute).toBeDisabled();
+            await expect(page.locator('#wpessential-query-bootstrap')).toContainText('wordpress.posts');
+            expect(pageErrors, `Unexpected Query Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
+          });
+
+          test('packaged Query Builder has zero axe violations', async ({ page }) => {
+            await visitQueryBuilder(page);
+            const results = await new AxeBuilder({ page }).include('#wpessential-query-root').analyze();
+            const evidenceDirectory = path.resolve(process.cwd(), 'test-results');
+            await fs.mkdir(evidenceDirectory, { recursive: true });
+            await fs.writeFile(
+              path.join(evidenceDirectory, 'axe-query-builder.json'),
+              `${JSON.stringify(results, null, 2)}\n`,
+              'utf8',
+            );
+            const summary = results.violations.map((violation) => ({
+              id: violation.id,
+              impact: violation.impact,
+              help: violation.help,
+              targets: violation.nodes.map((node) => node.target),
+            }));
+            expect(
+              results.violations,
+              `Axe violations in WPE-owned Query Builder:\n${JSON.stringify(summary, null, 2)}`,
+            ).toEqual([]);
+          });
+          JS
+
+          cat > docs/IMPLEMENTATION/QUERY-ADMIN-INTEGRATION-V1.md <<'EOF'
+          # Query Admin Integration V1
+
+          Status: canonical packaged admin route for the non-runtime Surface 6 Query authoring scaffold.
+
+          ## Runtime boundary
+
+          The admitted Query module registers a `QueryAdminController` under the shared WPEssential admin shell at `wpessential-query`. The controller uses `QueryAdminBootstrapProjector` to expose only the canonical `wordpress.posts` Data Source metadata required by the existing authoring scaffold.
+
+          The bootstrap includes a server-owned draft identity, semantic field references/logical types, advertised predicates, capability version, page-size bound, and Relations-support flag. Authorization mappings, provider internals, storage identifiers, cache keys, SQL, and executable provider arguments are not projected.
+
+          ## Build and enqueue
+
+          `admin-ui/src/query` is a production `wp-scripts` entry and is enqueued only for the Query admin screen through the shared `AdminAssetManifest`. Other WPEssential admin screens do not receive the Query bundle.
+
+          ## Execution remains disabled
+
+          This tranche does not add REST/AJAX execution, save/status routes, nonce-protected mutations, or provider invocation. The internal `module.query.authorized-executor` remains internal. The rendered UI continues to expose the disabled `Preview execution unavailable` control.
+
+          ## Evidence
+
+          Unit coverage verifies deterministic fail-closed bootstrap projection. Packaged Browser E2E activates the Pro Query module through a test-only pre-boot admission fixture, loads the actual distributable route, requires progressive enhancement, confirms `wordpress.posts` metadata and the page-size bound, asserts execution remains disabled, and captures axe accessibility evidence.
+          EOF
+
+          rm -f .github/workflows/query-admin-integration-finish-once.yml
+      - name: Commit finished Query admin lane
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frameworks/Modules/Query/QueryAdminBootstrapProjector.php frameworks/Modules/Query/QueryAdminController.php frameworks/Modules/Query/QueryModule.php package.json tests/Unit/Modules/Query/QueryAdminBootstrapProjectorTest.php tests/e2e/fixtures/query-module-fixture.php tests/e2e/specs/query-builder.spec.mjs docs/IMPLEMENTATION/QUERY-ADMIN-INTEGRATION-V1.md .github/workflows/query-admin-integration-finish-once.yml
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "feat(query): integrate packaged admin authoring route"
+          git push origin HEAD:agent/query-admin-integration-v1
