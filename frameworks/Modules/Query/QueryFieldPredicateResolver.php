@@ -14,6 +14,9 @@ use WPEssential\Platform\Auth\ExecutionContext;
 
 final readonly class QueryFieldPredicateResolver
 {
+    private const CERTIFIED_LOGICAL_TYPES = ['string', 'boolean', 'integer', 'number'];
+    private const CERTIFIED_STORAGE_OWNER = 'native_post_meta';
+
     public function __construct(private FieldQueryConsumerInterface $fields)
     {
     }
@@ -229,8 +232,11 @@ final readonly class QueryFieldPredicateResolver
 
         $logicalType = $description['logical_type'] ?? null;
         $storageOwner = $description['storage_owner'] ?? null;
-        if (!is_string($logicalType) || $logicalType === '' || !is_string($storageOwner) || $storageOwner === '') {
-            throw $this->dependency('Fields consumer descriptor is missing canonical logical-type or storage-owner metadata.');
+        if (!is_string($logicalType)
+            || !in_array($logicalType, self::CERTIFIED_LOGICAL_TYPES, true)
+            || $storageOwner !== self::CERTIFIED_STORAGE_OWNER
+        ) {
+            throw $this->dependency('Fields consumer descriptor is outside the certified native scalar post-meta V1 contract.');
         }
     }
 
