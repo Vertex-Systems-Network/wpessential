@@ -1,0 +1,130 @@
+name: Repair Columns Reference-Only Projection
+
+on:
+  push:
+    paths:
+      - '.github/workflows/repair-columns-reference-only.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repair branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/columns-contract-current-main-v2
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Normalize out-of-surface projections and local smoke contract
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          contract_path = Path('config/product/option-contracts/columns.json')
+          contract = json.loads(contract_path.read_text(encoding='utf-8'))
+          entries = contract['source_projection']['entries']
+          changed = []
+          for entry in entries:
+              if entry.get('disposition') == 'OUT_OF_SURFACE_REFERENCE':
+                  owner = entry.get('owner_surface')
+                  if not isinstance(owner, str) or not owner or owner == 'columns':
+                      raise SystemExit(f"Invalid owner_surface for {entry.get('source_id')}")
+                  if entry.get('atomic_ids') != []:
+                      entry['atomic_ids'] = []
+                      changed.append(entry.get('source_id'))
+
+          expected = {
+              'columns.target.wpe_tables',
+              'columns.source.field',
+              'columns.source.taxonomy',
+              'columns.source.relation',
+              'columns.source.media',
+              'columns.source.status',
+              'columns.source.query_aggregate',
+              'columns.filter.relation_ops',
+              'columns.portability.map_field',
+              'columns.portability.map_query',
+              'columns.portability.map_relation',
+          }
+          actual = {entry.get('source_id') for entry in entries if entry.get('disposition') == 'OUT_OF_SURFACE_REFERENCE'}
+          if actual != expected:
+              raise SystemExit(f'Unexpected out-of-surface set: {sorted(actual)}')
+          if set(changed) != expected:
+              raise SystemExit(f'Expected all 11 stale local mappings to be repaired, changed={sorted(changed)}')
+
+          contract_path.write_text(json.dumps(contract, separators=(',', ':'), ensure_ascii=False) + '\n', encoding='utf-8')
+
+          smoke_path = Path('tests/Smoke/option-contract-columns-contract.php')
+          smoke = smoke_path.read_text(encoding='utf-8')
+          old = """$ownerAssertions = [
+    'columns.source.field' => ['fields', 'columns.source.owner_reference'],
+    'columns.source.relation' => ['relations', 'columns.source.owner_reference'],
+    'columns.source.query_aggregate' => ['query', 'columns.source.owner_reference'],
+    'columns.target.wpe_tables' => ['tables', 'columns.target.adapter'],
+    'columns.portability.map_field' => ['fields', 'columns.portability.policy'],
+    'columns.portability.map_query' => ['query', 'columns.portability.policy'],
+    'columns.portability.map_relation' => ['relations', 'columns.portability.policy'],
+];
+foreach ($ownerAssertions as $recordId => [$ownerSurface, $atomicId]) {
+    columns_contract_require_projection(
+        $projectionBySource,
+        $recordId,
+        'out_of_surface',
+        'OUT_OF_SURFACE_REFERENCE',
+        [$atomicId],
+        $ownerSurface,
+    );
+}
+"""
+          new = """$ownerAssertions = [
+    'columns.target.wpe_tables' => 'tables',
+    'columns.source.field' => 'fields',
+    'columns.source.taxonomy' => 'taxonomy',
+    'columns.source.relation' => 'relations',
+    'columns.source.media' => 'media',
+    'columns.source.status' => 'status',
+    'columns.source.query_aggregate' => 'query',
+    'columns.filter.relation_ops' => 'relations',
+    'columns.portability.map_field' => 'fields',
+    'columns.portability.map_query' => 'query',
+    'columns.portability.map_relation' => 'relations',
+];
+foreach ($ownerAssertions as $recordId => $ownerSurface) {
+    columns_contract_require_projection(
+        $projectionBySource,
+        $recordId,
+        'out_of_surface',
+        'OUT_OF_SURFACE_REFERENCE',
+        [],
+        $ownerSurface,
+    );
+}
+"""
+          if old not in smoke:
+              raise SystemExit('Expected stale ownerAssertions block not found')
+          smoke_path.write_text(smoke.replace(old, new), encoding='utf-8')
+
+      - name: Prove corrected contract locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tests/Smoke/option-contracts-contract.php
+          php tests/Smoke/option-contract-columns-contract.php
+
+      - name: Commit repair and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/repair-columns-reference-only.yml
+          git config user.name 'WPEssential'
+          git config user.email 'wordpress.essential@gmail.com'
+          git add config/product/option-contracts/columns.json tests/Smoke/option-contract-columns-contract.php
+          git diff --cached --check
+          git commit -m 'fix(columns): keep owner projections reference-only'
+          git push origin HEAD:agent/columns-contract-current-main-v2
