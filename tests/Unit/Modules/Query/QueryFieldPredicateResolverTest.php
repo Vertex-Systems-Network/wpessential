@@ -177,6 +177,64 @@ final class QueryFieldPredicateResolverTest extends TestCase
         }
     }
 
+    public function testOwnerDescriptorOutsideNativeScalarContractFailsBeforeMatching(): void
+    {
+        foreach ([
+            ['logical_type' => 'object', 'storage_owner' => 'native_post_meta'],
+            ['logical_type' => 'string', 'storage_owner' => 'custom_table'],
+        ] as $descriptor) {
+            $trace = new ArrayObject();
+            $fields = new class(
+                $trace,
+                $this->fieldRef(),
+                $descriptor['logical_type'],
+                $descriptor['storage_owner'],
+            ) implements FieldQueryConsumerInterface {
+                public function __construct(
+                    private readonly ArrayObject $trace,
+                    private readonly string $fieldRef,
+                    private readonly string $logicalType,
+                    private readonly string $storageOwner,
+                ) {
+                }
+
+                public function describe(string $fieldReference, ExecutionContext $context): array
+                {
+                    $this->trace[] = 'describe';
+                    return [
+                        'contract_version' => self::CONTRACT_VERSION,
+                        'field_ref' => $this->fieldRef,
+                        'logical_type' => $this->logicalType,
+                        'operators' => ['eq'],
+                        'max_candidate_ids' => self::MAX_CANDIDATE_IDS,
+                        'max_result_ids' => self::MAX_RESULT_IDS,
+                        'storage_owner' => $this->storageOwner,
+                    ];
+                }
+
+                public function matchingPostIds(
+                    string $fieldReference,
+                    string $operator,
+                    mixed $value,
+                    array $candidatePostIds,
+                    int $limit,
+                    ExecutionContext $context,
+                ): array {
+                    $this->trace[] = 'matching';
+                    return [];
+                }
+            };
+
+            try {
+                (new QueryFieldPredicateResolver($fields))->resolve($this->definition([11]), $this->context());
+                self::fail('Expected non-certified Fields owner descriptor to fail closed.');
+            } catch (QueryPlanningException $exception) {
+                self::assertSame('wpe_query_dependency_unavailable', $exception->errorCode);
+                self::assertSame(['describe'], $trace->getArrayCopy());
+            }
+        }
+    }
+
     public function testOwnerDescribeExceptionFailsDependencyUnavailable(): void
     {
         $fields = new class implements FieldQueryConsumerInterface {
