@@ -22,9 +22,9 @@ The implementation reuses the canonical Field Group normalizer/storage projectio
 
 ## Authorization and failure behavior
 
-The caller must provide an authenticated user `ExecutionContext`. Every candidate post is checked through the existing Fields read-authorization boundary before its value is read. Unknown or unpublished definitions, unsupported storage or field shapes, malformed references, unauthorized candidates, duplicate/oversized candidate lists, invalid operators, and invalid operands fail closed. An authorized candidate that is outside the published Field Group target is a deterministic non-match, not a contract failure.
+The caller must provide an authenticated user `ExecutionContext`. Every candidate post is checked through the existing Fields read-authorization boundary before its value is read. Unknown or unpublished definitions, unsupported storage or field shapes, malformed references, target mismatches, unauthorized candidates, duplicate/oversized candidate lists, invalid operators, and invalid operands fail closed.
 
-Authorization is checked before target evaluation for every candidate. An authorization failure therefore fails the complete consumer call rather than silently dropping rows, preventing partial-result behavior from becoming an existence oracle.
+An authorization failure fails the complete consumer call rather than silently dropping rows. This prevents a Query consumer from using partial-result behavior as an existence oracle.
 
 ## Explicit non-goals
 

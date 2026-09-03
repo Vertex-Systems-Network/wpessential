@@ -67,19 +67,6 @@ final class FieldQueryConsumerTest extends TestCase
         );
     }
 
-    public function testAuthorizedCandidateOutsideFieldTargetIsANonMatch(): void
-    {
-        $consumer = $this->consumer(
-            [10 => 'alpha', 20 => 'alpha', 11 => 'alpha'],
-            postTypes: [20 => 'page'],
-        );
-
-        self::assertSame(
-            [10, 11],
-            $consumer->matchingPostIds(self::FIELD_REF, 'eq', 'alpha', [10, 20, 11], 100, $this->context()),
-        );
-    }
-
     public function testCandidateBoundsAndDuplicatesFailClosed(): void
     {
         $consumer = $this->consumer([10 => 'alpha']);
@@ -112,12 +99,7 @@ final class FieldQueryConsumerTest extends TestCase
     }
 
     /** @param array<int,mixed> $values */
-    private function consumer(
-        array $values,
-        ?int $deniedPostId = null,
-        string $fieldType = 'text',
-        array $postTypes = [],
-    ): FieldQueryConsumer
+    private function consumer(array $values, ?int $deniedPostId = null, string $fieldType = 'text'): FieldQueryConsumer
     {
         $repository = new InMemoryDefinitionRepository();
         $groups = new FieldGroupDefinitionNormalizer();
@@ -127,13 +109,13 @@ final class FieldQueryConsumerTest extends TestCase
         $targets = new FieldValueTargetResolver(
             $repository,
             $groups,
-            getPostType: static fn (int $postId): string => $postTypes[$postId] ?? 'book',
+            getPostType: static fn (int $postId): string => 'book',
             getPostStatus: static fn (int $postId): string => 'publish',
         );
         $store = new PostMetaValueStore(
             compiler: $compiler,
             values: $normalizer,
-            getPostType: static fn (int $postId): string => $postTypes[$postId] ?? 'book',
+            getPostType: static fn (int $postId): string => 'book',
             metadataExists: static fn (int $postId, string $metaKey): bool => array_key_exists($postId, $values),
             getPostMeta: static fn (int $postId, string $metaKey, bool $single): mixed => $values[$postId] ?? null,
         );
