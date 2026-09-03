@@ -64,30 +64,31 @@ jobs:
           start = smoke.index('$ownerAssertions = [')
           end_marker = "\n\nforeach (['columns.sort.enabled'"
           end = smoke.index(end_marker, start)
-          replacement = """$ownerAssertions = [
-    'columns.target.wpe_tables' => 'tables',
-    'columns.source.field' => 'fields',
-    'columns.source.taxonomy' => 'taxonomy',
-    'columns.source.relation' => 'relations',
-    'columns.source.media' => 'media',
-    'columns.source.status' => 'status',
-    'columns.source.query_aggregate' => 'query',
-    'columns.filter.relation_ops' => 'relations',
-    'columns.portability.map_field' => 'fields',
-    'columns.portability.map_query' => 'query',
-    'columns.portability.map_relation' => 'relations',
-];
-foreach ($ownerAssertions as $recordId => $ownerSurface) {
-    columns_contract_require_projection(
-        $projectionBySource,
-        $recordId,
-        'out_of_surface',
-        'OUT_OF_SURFACE_REFERENCE',
-        [],
-        $ownerSurface,
-    );
-}
-"""
+          replacement = "\n".join([
+              "$ownerAssertions = [",
+              "    'columns.target.wpe_tables' => 'tables',",
+              "    'columns.source.field' => 'fields',",
+              "    'columns.source.taxonomy' => 'taxonomy',",
+              "    'columns.source.relation' => 'relations',",
+              "    'columns.source.media' => 'media',",
+              "    'columns.source.status' => 'status',",
+              "    'columns.source.query_aggregate' => 'query',",
+              "    'columns.filter.relation_ops' => 'relations',",
+              "    'columns.portability.map_field' => 'fields',",
+              "    'columns.portability.map_query' => 'query',",
+              "    'columns.portability.map_relation' => 'relations',",
+              "];",
+              "foreach ($ownerAssertions as $recordId => $ownerSurface) {",
+              "    columns_contract_require_projection(",
+              "        $projectionBySource,",
+              "        $recordId,",
+              "        'out_of_surface',",
+              "        'OUT_OF_SURFACE_REFERENCE',",
+              "        [],",
+              "        $ownerSurface,",
+              "    );",
+              "}",
+          ])
           smoke_path.write_text(smoke[:start] + replacement + smoke[end:], encoding='utf-8')
           PY
 
