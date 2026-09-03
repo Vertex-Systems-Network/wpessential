@@ -263,21 +263,25 @@ if (($atomicById['columns.preference.runtime']['storage']['mode'] ?? null) !== '
 
 // Canonical peer ownership must remain references rather than shadow engines.
 $ownerAssertions = [
-    'columns.source.field' => ['fields', 'columns.source.owner_reference'],
-    'columns.source.relation' => ['relations', 'columns.source.owner_reference'],
-    'columns.source.query_aggregate' => ['query', 'columns.source.owner_reference'],
-    'columns.target.wpe_tables' => ['tables', 'columns.target.adapter'],
-    'columns.portability.map_field' => ['fields', 'columns.portability.policy'],
-    'columns.portability.map_query' => ['query', 'columns.portability.policy'],
-    'columns.portability.map_relation' => ['relations', 'columns.portability.policy'],
+    'columns.target.wpe_tables' => 'tables',
+    'columns.source.field' => 'fields',
+    'columns.source.taxonomy' => 'taxonomy',
+    'columns.source.relation' => 'relations',
+    'columns.source.media' => 'media',
+    'columns.source.status' => 'status',
+    'columns.source.query_aggregate' => 'query',
+    'columns.filter.relation_ops' => 'relations',
+    'columns.portability.map_field' => 'fields',
+    'columns.portability.map_query' => 'query',
+    'columns.portability.map_relation' => 'relations',
 ];
-foreach ($ownerAssertions as $recordId => [$ownerSurface, $atomicId]) {
+foreach ($ownerAssertions as $recordId => $ownerSurface) {
     columns_contract_require_projection(
         $projectionBySource,
         $recordId,
         'out_of_surface',
         'OUT_OF_SURFACE_REFERENCE',
-        [$atomicId],
+        [],
         $ownerSurface,
     );
 }
