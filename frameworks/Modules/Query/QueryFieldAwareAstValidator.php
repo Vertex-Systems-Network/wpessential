@@ -17,6 +17,9 @@ use WPEssential\Platform\DataSources\DataSourceDescriptor;
 
 final readonly class QueryFieldAwareAstValidator
 {
+    private const CERTIFIED_LOGICAL_TYPES = ['string', 'boolean', 'integer', 'number'];
+    private const CERTIFIED_STORAGE_OWNER = 'native_post_meta';
+
     public function __construct(
         private DataSourceRegistryInterface $dataSources,
         private ?RelationQueryConsumerInterface $relations,
@@ -94,7 +97,7 @@ final readonly class QueryFieldAwareAstValidator
             $storageOwner = $description['storage_owner'] ?? null;
             if (
                 !is_string($logicalType)
-                || preg_match('/^[a-z][a-z0-9._-]{1,127}$/', $logicalType) !== 1
+                || !in_array($logicalType, self::CERTIFIED_LOGICAL_TYPES, true)
                 || !is_array($operators)
                 || !array_is_list($operators)
                 || !is_int($maxCandidateIds)
@@ -103,13 +106,12 @@ final readonly class QueryFieldAwareAstValidator
                 || $maxResultIds < 1
                 || $maxCandidateIds > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS
                 || $maxResultIds > FieldQueryConsumerInterface::MAX_RESULT_IDS
-                || !is_string($storageOwner)
-                || $storageOwner === ''
+                || $storageOwner !== self::CERTIFIED_STORAGE_OWNER
             ) {
                 $issues[] = new QueryValidationIssue(
                     'wpe_query_dependency_unavailable',
                     $node['path'] . '.field_ref',
-                    'Fields consumer descriptor is malformed or outside bounded V1 limits.',
+                    'Fields consumer descriptor is malformed or outside the certified native scalar post-meta V1 contract.',
                 );
                 continue;
             }
