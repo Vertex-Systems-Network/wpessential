@@ -98,10 +98,10 @@ final readonly class QueryAuthorizedPlanner
             $effectiveDefinition = $relationResolution->definition;
             $shortCircuitEmpty = $relationResolution->shortCircuitEmpty;
         }
-        if ($this->fieldResolver !== null) {
+        if (!$shortCircuitEmpty && $this->fieldResolver !== null) {
             $fieldResolution = $this->fieldResolver->resolve($effectiveDefinition, $context);
             $effectiveDefinition = $fieldResolution->definition;
-            $shortCircuitEmpty = $shortCircuitEmpty || $fieldResolution->shortCircuitEmpty;
+            $shortCircuitEmpty = $fieldResolution->shortCircuitEmpty;
         }
 
         if (!$this->compiler->supports($effectiveDefinition)) {
