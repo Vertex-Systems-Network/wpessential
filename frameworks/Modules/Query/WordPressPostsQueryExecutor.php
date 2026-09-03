@@ -217,43 +217,70 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
             );
         }
 
-        if (isset($plan->arguments['p']) && !$this->isPositiveInt($plan->arguments['p'])) {
+        if (
+            array_key_exists('p', $plan->arguments)
+            && !$this->isPositiveInt($plan->arguments['p'])
+        ) {
             return $this->providerFailure('$.execution.arguments.p', 'Post id argument is invalid.');
         }
-        if (isset($plan->arguments['author']) && !$this->isPositiveInt($plan->arguments['author'])) {
+        if (
+            array_key_exists('author', $plan->arguments)
+            && !$this->isPositiveInt($plan->arguments['author'])
+        ) {
             return $this->providerFailure('$.execution.arguments.author', 'Author id argument is invalid.');
         }
-        if (isset($plan->arguments['post_parent']) && !$this->isNonNegativeInt($plan->arguments['post_parent'])) {
+        if (
+            array_key_exists('post_parent', $plan->arguments)
+            && !$this->isNonNegativeInt($plan->arguments['post_parent'])
+        ) {
             return $this->providerFailure('$.execution.arguments.post_parent', 'Parent id argument is invalid.');
         }
 
         foreach (['post__in', 'post__not_in', 'author__in', 'author__not_in'] as $key) {
-            if (isset($plan->arguments[$key]) && !$this->isIntegerList($plan->arguments[$key], false)) {
+            if (
+                array_key_exists($key, $plan->arguments)
+                && !$this->isIntegerList($plan->arguments[$key], false)
+            ) {
                 return $this->providerFailure('$.execution.arguments.' . $key, 'Provider id list argument is invalid.');
             }
         }
         foreach (['post_parent__in', 'post_parent__not_in'] as $key) {
-            if (isset($plan->arguments[$key]) && !$this->isIntegerList($plan->arguments[$key], true)) {
+            if (
+                array_key_exists($key, $plan->arguments)
+                && !$this->isIntegerList($plan->arguments[$key], true)
+            ) {
                 return $this->providerFailure('$.execution.arguments.' . $key, 'Provider parent id list argument is invalid.');
             }
         }
 
         foreach (['post_status', 'post_type'] as $key) {
-            if (isset($plan->arguments[$key]) && !$this->isSlugOrSlugList($plan->arguments[$key])) {
+            if (
+                array_key_exists($key, $plan->arguments)
+                && !$this->isSlugOrSlugList($plan->arguments[$key])
+            ) {
                 return $this->providerFailure('$.execution.arguments.' . $key, 'Provider slug argument is invalid.');
             }
         }
 
-        if (isset($plan->arguments['name']) && !$this->isSlug($plan->arguments['name'])) {
+        if (
+            array_key_exists('name', $plan->arguments)
+            && !$this->isSlug($plan->arguments['name'])
+        ) {
             return $this->providerFailure('$.execution.arguments.name', 'Provider post slug argument is invalid.');
         }
         foreach (['s', 'title'] as $key) {
-            if (isset($plan->arguments[$key]) && !$this->isNonEmptyString($plan->arguments[$key])) {
+            if (
+                array_key_exists($key, $plan->arguments)
+                && !$this->isNonEmptyString($plan->arguments[$key])
+            ) {
                 return $this->providerFailure('$.execution.arguments.' . $key, 'Provider text argument is invalid.');
             }
         }
 
-        if (isset($plan->arguments['orderby']) && !$this->isOrdering($plan->arguments['orderby'])) {
+        if (
+            array_key_exists('orderby', $plan->arguments)
+            && !$this->isOrdering($plan->arguments['orderby'])
+        ) {
             return $this->providerFailure('$.execution.arguments.orderby', 'Provider ordering argument is invalid.');
         }
 
