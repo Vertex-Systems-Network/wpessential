@@ -2,24 +2,31 @@
   "schema_version": 1,
   "snapshot_date": "2026-09-04",
   "queue_anchor_main_sha": "5ffbd806fb67b9cdc552da6649d9bd4f1a7c0270",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. This snapshot reconciles the first bounded Query runtime slice promoted by PR #147 and corrected by PR #148. Current main plus linked GitHub issue/PR evidence overrides stale checkpoint prose until the Supervisor serializes shared checkpoint truth. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. This snapshot reconciles the first bounded Query runtime slice promoted by PR #147 and corrected by PR #148. Current main plus linked GitHub issue/PR evidence overrides stale checkpoint prose until the Supervisor serializes shared checkpoint truth. Slot-level claim_mechanism is authoritative for claiming; GITHUB_AGENT_ISSUE_ASSIGNMENT slots follow docs/GITHUB-CODING-AGENT-CLAIM-V1.md and override only AUTO-AGENT.md deterministic branch-creation steps. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
     "selection_rule": "Choose the highest-priority OPEN slot allowed for the agent role whose dependencies are satisfied and whose runtime/planning boundary remains valid on current main.",
-    "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-    "claim_branch_rule": "Use the exact claim_branch declared by the slot. Create that remote branch from the exact current main SHA without force. Successful remote ref creation claims the slot. If the branch already exists or ref creation is rejected, treat the slot as already claimed and immediately evaluate the next eligible slot.",
+    "claim_mechanism": "SLOT_DECLARED",
+    "default_claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+    "supported_claim_mechanisms": [
+      "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "GITHUB_AGENT_ISSUE_ASSIGNMENT"
+    ],
+    "deterministic_claim_branch_rule": "For DETERMINISTIC_REMOTE_BRANCH_CREATE slots, use the exact claim_branch declared by the slot. Create that remote branch from exact current main without force. Successful remote ref creation claims the slot. If the branch already exists or ref creation is rejected, treat the slot as already claimed and immediately evaluate the next eligible slot.",
+    "github_agent_issue_assignment_rule": "For GITHUB_AGENT_ISSUE_ASSIGNMENT slots, only the Supervisor may start the declared hosted coding agent by assigning claim_issue to claim_assignee after the issue body is complete. The live declared assignee is the claim lock. Do not pre-create a deterministic worker branch. The GitHub-created agent branch/PR is accepted only for that linked issue and remains subject to the slot write boundary, exact-head CI and Supervisor merge review. See docs/GITHUB-CODING-AGENT-CLAIM-V1.md.",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
+      "Read docs/GITHUB-CODING-AGENT-CLAIM-V1.md when the selected slot declares GITHUB_AGENT_ISSUE_ASSIGNMENT.",
       "Read current main SHA and commits since the queue audit anchor, including PR #147 and corrective PR #148.",
-      "Inspect relevant open and merged PRs/MRs and existing branches.",
-      "Verify the selected slot is not already complete, superseded, blocked or claimed.",
+      "Inspect relevant open and merged PRs/MRs, linked issue assignees and existing branches.",
+      "Verify the selected slot is not already complete, superseded, blocked or claimed by its declared branch/issue-assignment lock.",
       "Verify canonical ownership, dependency order and allowed write scope.",
       "Treat stale Query runtime-not-started checkpoint prose as superseded only where current main and this queue explicitly prove the promoted runtime slice; do not infer broader Gate C completion.",
-      "Only then create the deterministic claim branch."
+      "Only then execute the selected slot's declared claim mechanism."
     ],
     "revalidation_before_merge": [
       "Absorb latest main using the repository-approved non-destructive strategy.",
@@ -27,16 +34,18 @@
       "Review the intended diff and Integration Requirements.",
       "Reject any worker diff that edits another active slot's exclusive write boundary or Supervisor-only shared truth.",
       "Require applicable exact-head CI on the final candidate head.",
-      "Never use stale CI or force overwrite as merge evidence."
+      "Never use stale CI, hosted-agent completion status or force overwrite as merge evidence."
     ]
   },
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
+      "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation, hosted-agent issue assignment and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
       "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create branches for future worker slots.",
+        "Assign a hosted coding agent unless the slot explicitly declares GITHUB_AGENT_ISSUE_ASSIGNMENT.",
+        "Assign more than one coding agent to the same slot concurrently.",
         "Merge a branch only because an agent says it is done.",
         "Treat arrival order as merge order.",
         "Allow dependency-blocked runtime work to start.",
@@ -45,12 +54,13 @@
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Workers autonomously inspect current repository truth and claim the next eligible non-overlapping work slot using deterministic remote branch creation.",
+      "description": "Workers autonomously inspect current repository truth and claim the next eligible non-overlapping work slot using that slot's declared claim mechanism. Manual/AUTO workers must skip a hosted-agent slot once its declared issue is assigned to the declared coding agent.",
       "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
+        "Initiate GITHUB_AGENT_ISSUE_ASSIGNMENT; that action is Supervisor-only.",
         "Modify shared/global truth unless the slot explicitly grants that write scope.",
-        "Create a different branch name when the deterministic claim branch is already occupied.",
+        "Create a different branch name when a deterministic claim branch is already occupied.",
         "Start runtime work that the slot marks planning_only or dependency_blocked.",
         "Edit files owned exclusively by another OPEN/claimed slot."
       ]
@@ -65,6 +75,7 @@
       "status": "OPEN",
       "work_mode": "MILESTONE_WORK",
       "parallel_class": "QUERY_RUNTIME_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
       "claim_branch": "agent/query-relations-predicate-execution-v1",
       "source": "GitHub Issue #149 and parent Issue #66 Gate C",
       "dependencies": [
@@ -85,7 +96,7 @@
         "no cache behavior, diagnostics exposure, admin/public execution, parameters/cursors, aggregation/total-count, Columns/Listings runtime or Gate C completion claim"
       ],
       "completion_condition": "A reviewable, Policy-preserving Query relation predicate path uses only RelationQueryConsumerInterface, stays within public contract bounds, fails closed on dependency/scope/direction/size violations, and passes exact-head applicable CI without editing parallel worker or Supervisor-owned files.",
-      "notes": "This is the only current worker slot allowed to edit existing Query PHP planner/compiler/executor production files."
+      "notes": "This is the only current worker slot allowed to edit existing Query PHP planner/compiler/executor production files. It is already claimed when its deterministic branch exists on current repository truth."
     },
     {
       "priority": 30,
@@ -95,7 +106,10 @@
       "status": "OPEN",
       "work_mode": "EVIDENCE_WORK",
       "parallel_class": "TESTS_EVIDENCE_ONLY",
-      "claim_branch": "agent/query-native-execution-reference-scale-v1",
+      "claim_mechanism": "GITHUB_AGENT_ISSUE_ASSIGNMENT",
+      "claim_issue": 150,
+      "claim_assignee": "copilot-swe-agent[bot]",
+      "agent_branch_policy": "GITHUB_MANAGED_FOR_LINKED_ISSUE",
       "source": "GitHub Issue #150 and parent Issue #66 Gate C",
       "dependencies": [
         "PR #147 and corrective PR #148 promoted to current main",
@@ -110,7 +124,7 @@
         "do not claim new runtime capability or Gate C completion"
       ],
       "completion_condition": "Exact-head evidence executes against the claimed source and certifies the already-promoted native V1 slice across applicable WordPress/PHP coverage with no production semantic changes.",
-      "notes": "Designed to run fully in parallel with the relation runtime writer."
+      "notes": "Designed to run fully in parallel with the relation runtime writer. Hosted-agent assignment is an atomic claim for this issue."
     },
     {
       "priority": 40,
@@ -120,7 +134,10 @@
       "status": "OPEN",
       "work_mode": "PLANNING_AND_CONTRACT_WORK",
       "parallel_class": "NEW_FILES_NON_RUNTIME",
-      "claim_branch": "agent/query-cache-diagnostics-contract-v1",
+      "claim_mechanism": "GITHUB_AGENT_ISSUE_ASSIGNMENT",
+      "claim_issue": 151,
+      "claim_assignee": "copilot-swe-agent[bot]",
+      "agent_branch_policy": "GITHUB_MANAGED_FOR_LINKED_ISSUE",
       "source": "GitHub Issue #151 and parent Issue #66 Gate C",
       "dependencies": [
         "shared Platform Cache primitives exist on current main",
@@ -135,7 +152,7 @@
         "do not enable cache reads/writes, invalidation hooks or public diagnostics in this slot"
       ],
       "completion_condition": "A fail-closed, reviewable Query cache/diagnostics V1 contract and tests exist without runtime enablement or overlap with the runtime worker; exact-head applicable CI passes.",
-      "notes": "This lane intentionally converts a Gate C unknown into a bounded contract while avoiding shared/runtime writes."
+      "notes": "This lane intentionally converts a Gate C unknown into a bounded contract while avoiding shared/runtime writes. Hosted-agent assignment is an atomic claim for this issue."
     },
     {
       "priority": 50,
@@ -145,7 +162,10 @@
       "status": "OPEN",
       "work_mode": "UX_CONTRACT_WORK",
       "parallel_class": "ADMIN_UI_EXCLUSIVE",
-      "claim_branch": "agent/query-admin-ux-scaffold-v1",
+      "claim_mechanism": "GITHUB_AGENT_ISSUE_ASSIGNMENT",
+      "claim_issue": 152,
+      "claim_assignee": "copilot-swe-agent[bot]",
+      "agent_branch_policy": "GITHUB_MANAGED_FOR_LINKED_ISSUE",
       "source": "GitHub Issue #152 and parent Issue #66 Gate C",
       "dependencies": [
         "shared admin shell and current Query AST semantics are available",
@@ -161,7 +181,7 @@
         "report shared navigation or PHP wiring as Integration Requirements unless an existing module-local extension point avoids shared edits"
       ],
       "completion_condition": "A Query-owned accessible admin UX scaffold is reviewable and build/test green without exposing execution or colliding with PHP/runtime/shared-state workers.",
-      "notes": "Admin UI writes are exclusive to this slot during this queue generation."
+      "notes": "Admin UI writes are exclusive to this slot during this queue generation. Hosted-agent assignment is an atomic claim for this issue."
     }
   ]
 }
