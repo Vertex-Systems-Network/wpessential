@@ -78,6 +78,18 @@ final readonly class QueryFieldPredicateResolver
             );
         }
 
+        $fieldRef = $field->payload['field_ref'] ?? null;
+        $operator = $field->payload['operator'] ?? null;
+        if (!is_string($fieldRef) || $fieldRef === '') {
+            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.field_ref', 'Field reference is malformed.');
+        }
+        if (!is_string($operator) || $operator === '') {
+            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.operator', 'Field operator is malformed.');
+        }
+        if (!array_key_exists('value', $field->payload)) {
+            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.value', 'Field predicate value is missing.');
+        }
+
         if ($upstreamShortCircuit) {
             $children = $root->children;
             array_splice($children, $fieldIndex, 1);
@@ -89,18 +101,6 @@ final readonly class QueryFieldPredicateResolver
                 ),
                 true,
             );
-        }
-
-        $fieldRef = $field->payload['field_ref'] ?? null;
-        $operator = $field->payload['operator'] ?? null;
-        if (!is_string($fieldRef) || $fieldRef === '') {
-            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.field_ref', 'Field reference is malformed.');
-        }
-        if (!is_string($operator) || $operator === '') {
-            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.operator', 'Field operator is malformed.');
-        }
-        if (!array_key_exists('value', $field->payload)) {
-            throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.value', 'Field predicate value is missing.');
         }
 
         try {
