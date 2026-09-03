@@ -8,8 +8,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use LogicException;
-use RuntimeException;
 use Throwable;
 use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\FieldQueryConsumerInterface;
@@ -58,6 +56,7 @@ final readonly class QueryFieldAwareAstValidator
         }
 
         $fieldSchema = $descriptor->fieldSchema;
+        $ownerRefs = [];
         $issues = [];
         foreach ($fieldNodes as $node) {
             $fieldRef = $node['field_ref'];
@@ -136,10 +135,16 @@ final readonly class QueryFieldAwareAstValidator
             }
 
             $fieldSchema[$fieldRef] = $logicalType;
+            $ownerRefs[$fieldRef] = true;
         }
 
         if ($issues !== []) {
             return new QueryValidationResult(null, $issues);
+        }
+
+        $escapeIssues = $this->ownerReferenceEscapeIssues($ast, $ownerRefs);
+        if ($escapeIssues !== []) {
+            return new QueryValidationResult(null, $escapeIssues);
         }
 
         try {
@@ -183,6 +188,79 @@ final readonly class QueryFieldAwareAstValidator
         }
     }
 
+    /**
+     * @param array<string,mixed> $ast
+     * @param array<string,bool> $ownerRefs
+     * @return list<QueryValidationIssue>
+     */
+    private function ownerReferenceEscapeIssues(array $ast, array $ownerRefs): array
+    {
+        if ($ownerRefs === []) {
+            return [];
+        }
+
+        $issues = [];
+        $projection = $ast['projection'] ?? null;
+        if (is_array($projection) && array_is_list($projection)) {
+            foreach ($projection as $index => $fieldRef) {
+                if (is_string($fieldRef) && isset($ownerRefs[$fieldRef])) {
+                    $issues[] = new QueryValidationIssue(
+                        'wpe_query_unsupported_operator',
+                        '$.projection[' . $index . ']',
+                        'Fields owner references are filter-only in Query Field V1.',
+                    );
+                }
+            }
+        }
+
+        $orderBy = $ast['order_by'] ?? null;
+        if (is_array($orderBy) && array_is_list($orderBy)) {
+            foreach ($orderBy as $index => $clause) {
+                $fieldRef = is_array($clause) ? ($clause['field_ref'] ?? null) : null;
+                if (is_string($fieldRef) && isset($ownerRefs[$fieldRef])) {
+                    $issues[] = new QueryValidationIssue(
+                        'wpe_query_unsupported_operator',
+                        '$.order_by[' . $index . '].field_ref',
+                        'Fields owner references are not sortable in Query Field V1.',
+                    );
+                }
+            }
+        }
+
+        $this->scanFilterForEscapes($ast['filter'] ?? null, '$.filter', $ownerRefs, $issues);
+        return $issues;
+    }
+
+    /**
+     * @param mixed $node
+     * @param array<string,bool> $ownerRefs
+     * @param list<QueryValidationIssue> $issues
+     */
+    private function scanFilterForEscapes(mixed $node, string $path, array $ownerRefs, array &$issues): void
+    {
+        if (!is_array($node)) {
+            return;
+        }
+
+        $type = $node['type'] ?? null;
+        $fieldRef = $node['field_ref'] ?? null;
+        if ($type !== 'field' && is_string($fieldRef) && isset($ownerRefs[$fieldRef])) {
+            $issues[] = new QueryValidationIssue(
+                'wpe_query_unsupported_operator',
+                $path . '.field_ref',
+                'Fields owner references must use the typed Field predicate in Query Field V1.',
+            );
+        }
+
+        $children = $node['children'] ?? null;
+        if (!is_array($children) || !array_is_list($children)) {
+            return;
+        }
+        foreach ($children as $index => $child) {
+            $this->scanFilterForEscapes($child, $path . '.children[' . $index . ']', $ownerRefs, $issues);
+        }
+    }
+
     /** @param array<string,string> $fieldSchema */
     private function withFieldSchema(DataSourceDescriptor $descriptor, array $fieldSchema): DataSourceDescriptor
     {
@@ -212,51 +290,5 @@ final readonly class QueryFieldAwareAstValidator
     private function canonical(DataSourceRegistryInterface $registry): QueryAstValidator
     {
         return new QueryAstValidator($registry, $this->relations);
-    }
-}
-
-final readonly class QueryFieldValidationRegistry implements DataSourceRegistryInterface
-{
-    public function __construct(
-        private DataSourceRegistryInterface $inner,
-        private string $sourceRef,
-        private DataSourceDescriptor $projected,
-    ) {
-    }
-
-    public function register(DataSourceDescriptor $descriptor): void
-    {
-        throw new LogicException('Query Field validation registry is read-only.');
-    }
-
-    public function has(string $id): bool
-    {
-        return $id === $this->sourceRef || $this->inner->has($id);
-    }
-
-    public function find(string $id): ?DataSourceDescriptor
-    {
-        return $id === $this->sourceRef ? $this->projected : $this->inner->find($id);
-    }
-
-    public function require(string $id): DataSourceDescriptor
-    {
-        return $this->find($id) ?? throw new RuntimeException(sprintf('Data Source "%s" is not registered.', $id));
-    }
-
-    public function all(): array
-    {
-        $all = $this->inner->all();
-        $found = false;
-        foreach ($all as $index => $descriptor) {
-            if ($descriptor->id === $this->sourceRef) {
-                $all[$index] = $this->projected;
-                $found = true;
-            }
-        }
-        if (!$found) {
-            $all[] = $this->projected;
-        }
-        return array_values($all);
     }
 }

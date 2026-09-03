@@ -30,6 +30,20 @@ final class QueryFieldAwareAstValidatorTest extends TestCase
         self::assertSame($this->fieldRef(), $result->definition?->filter?->children[1]->payload['field_ref']);
     }
 
+    public function testOwnerFieldReferenceCannotEscapeIntoProjection(): void
+    {
+        $ast = $this->ast();
+        $ast['projection'] = [$this->fieldRef()];
+        $result = (new QueryFieldAwareAstValidator($this->registry(), null, $this->fields()))->validate(
+            $ast,
+            $this->budget(),
+            $this->context(),
+        );
+
+        self::assertFalse($result->isValid());
+        self::assertSame('wpe_query_unsupported_operator', $result->issues[0]->code);
+    }
+
     public function testMalformedOwnerDescriptorFailsClosed(): void
     {
         $fields = new class($this->fieldRef()) implements FieldQueryConsumerInterface {
@@ -156,7 +170,7 @@ final class QueryFieldAwareAstValidatorTest extends TestCase
                 'boolean' => 'and',
                 'children' => [
                     [
-                        'type' => 'set',
+                        'type' => 'set_membership',
                         'field_ref' => 'post.id',
                         'operator' => 'in',
                         'values' => [11, 13],
