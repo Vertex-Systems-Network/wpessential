@@ -10,6 +10,7 @@ use stdClass;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\Query\QueryAstValidator;
+use WPEssential\Modules\Query\QueryAuthorizedExecutor;
 use WPEssential\Modules\Query\QueryAuthorizedPlanner;
 use WPEssential\Modules\Query\QueryDefinition;
 use WPEssential\Modules\Query\QueryModule;
@@ -89,6 +90,7 @@ final class QueryModuleTest extends TestCase
         self::assertInstanceOf(WordPressPostsQueryCompiler::class, $services->get(QueryModule::SERVICE_COMPILER));
         $planner = $services->get(QueryModule::SERVICE_PLANNER);
         self::assertInstanceOf(QueryAuthorizedPlanner::class, $planner);
+        self::assertInstanceOf(QueryAuthorizedExecutor::class, $services->get(QueryModule::SERVICE_EXECUTOR));
 
         $plan = $planner->plan($this->definition(), new ExecutionContext(new Principal(7), 1));
         self::assertSame(WordPressPostsQueryCompiler::PROVIDER, $plan->providerPlan->provider);
@@ -135,6 +137,7 @@ final class QueryModuleTest extends TestCase
             self::assertFalse($services->has(QueryModule::SERVICE_VALIDATOR));
             self::assertFalse($services->has(QueryModule::SERVICE_COMPILER));
             self::assertFalse($services->has(QueryModule::SERVICE_PLANNER));
+            self::assertFalse($services->has(QueryModule::SERVICE_EXECUTOR));
         }
     }
 
@@ -154,6 +157,7 @@ final class QueryModuleTest extends TestCase
             self::assertSame($sentinel, $services->get(QueryModule::SERVICE_VALIDATOR));
             self::assertFalse($services->has(QueryModule::SERVICE_COMPILER));
             self::assertFalse($services->has(QueryModule::SERVICE_PLANNER));
+            self::assertFalse($services->has(QueryModule::SERVICE_EXECUTOR));
         }
     }
 
@@ -183,6 +187,7 @@ final class QueryModuleTest extends TestCase
             self::assertFalse($services->has(QueryModule::SERVICE_VALIDATOR));
             self::assertFalse($services->has(QueryModule::SERVICE_COMPILER));
             self::assertFalse($services->has(QueryModule::SERVICE_PLANNER));
+            self::assertFalse($services->has(QueryModule::SERVICE_EXECUTOR));
         }
     }
 
