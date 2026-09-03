@@ -91,6 +91,18 @@ final readonly class QueryAuthorizedPlanner
             );
         }
 
+        if (
+            $definition->filter !== null
+            && $this->containsPredicateType($definition->filter, QueryPredicateType::Relation)
+            && $this->containsPredicateType($definition->filter, QueryPredicateType::Field)
+        ) {
+            throw new QueryPlanningException(
+                'wpe_query_unsupported_operator',
+                '$.filter',
+                'Combined Relations and Fields owner predicates are not supported by Query execution V1.',
+            );
+        }
+
         $effectiveDefinition = $definition;
         $shortCircuitEmpty = false;
         if ($this->relationResolver !== null) {
@@ -150,5 +162,20 @@ final readonly class QueryAuthorizedPlanner
             policyReason: $decision->reason,
             shortCircuitResult: $shortCircuitResult,
         );
+    }
+
+    private function containsPredicateType(QueryPredicate $predicate, QueryPredicateType $type): bool
+    {
+        if ($predicate->type === $type) {
+            return true;
+        }
+
+        foreach ($predicate->children as $child) {
+            if ($this->containsPredicateType($child, $type)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
