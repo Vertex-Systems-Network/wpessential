@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-04",
-  "queue_anchor_main_sha": "5ffbd806fb67b9cdc552da6649d9bd4f1a7c0270",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. This snapshot reconciles the first bounded Query runtime slice promoted by PR #147 and corrected by PR #148. Current main plus linked GitHub issue/PR evidence overrides stale checkpoint prose until the Supervisor serializes shared checkpoint truth. Slot-level claim_mechanism is authoritative for claiming; GITHUB_AGENT_ISSUE_ASSIGNMENT slots follow docs/GITHUB-CODING-AGENT-CLAIM-V1.md and override only AUTO-AGENT.md deterministic branch-creation steps. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
+  "queue_anchor_main_sha": "b79321a57c4e953b371f3cf1b5e130064201e451",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. This snapshot reconciles Query native execution promoted by PR #147/#148 and bounded Relations predicate runtime promoted by PR #154 plus Supervisor wiring PR #156. Current main plus linked GitHub issue/PR evidence overrides stale checkpoint prose until the Supervisor serializes shared checkpoint truth. Slot-level claim_mechanism is authoritative for claiming; GITHUB_AGENT_ISSUE_ASSIGNMENT slots follow docs/GITHUB-CODING-AGENT-CLAIM-V1.md and override only AUTO-AGENT.md deterministic branch-creation steps. The current snapshot retains only actionable OPEN slots; completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -21,11 +21,11 @@
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
       "Read docs/GITHUB-CODING-AGENT-CLAIM-V1.md when the selected slot declares GITHUB_AGENT_ISSUE_ASSIGNMENT.",
-      "Read current main SHA and commits since the queue audit anchor, including PR #147 and corrective PR #148.",
+      "Read current main SHA and commits since the queue audit anchor, including PR #147/#148, PR #154 and PR #156.",
       "Inspect relevant open and merged PRs/MRs, linked issue assignees and existing branches.",
       "Verify the selected slot is not already complete, superseded, blocked or claimed by its declared branch/issue-assignment lock.",
       "Verify canonical ownership, dependency order and allowed write scope.",
-      "Treat stale Query runtime-not-started checkpoint prose as superseded only where current main and this queue explicitly prove the promoted runtime slice; do not infer broader Gate C completion.",
+      "Treat stale Query runtime-not-started checkpoint prose as superseded only where current main and this queue explicitly prove promoted runtime slices; do not infer broader Gate C completion.",
       "Only then execute the selected slot's declared claim mechanism."
     ],
     "revalidation_before_merge": [
@@ -41,7 +41,10 @@
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
       "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation, hosted-agent issue assignment and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
-      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
+      "may_claim": [
+        "SUPERVISOR_ONLY",
+        "ANY"
+      ],
       "must_not": [
         "Pre-create branches for future worker slots.",
         "Assign a hosted coding agent unless the slot explicitly declares GITHUB_AGENT_ISSUE_ASSIGNMENT.",
@@ -55,7 +58,9 @@
     "WORKER": {
       "start_mode": "AUTO",
       "description": "Workers autonomously inspect current repository truth and claim the next eligible non-overlapping work slot using that slot's declared claim mechanism. Manual/AUTO workers must skip a hosted-agent slot once its declared issue is assigned to the declared coding agent.",
-      "may_claim": ["ANY"],
+      "may_claim": [
+        "ANY"
+      ],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
         "Initiate GITHUB_AGENT_ISSUE_ASSIGNMENT; that action is Supervisor-only.",
@@ -67,37 +72,6 @@
     }
   },
   "slots": [
-    {
-      "priority": 20,
-      "slot_id": "query-relations-predicate-execution-v1",
-      "title": "Add bounded Relations predicate execution V1 through the public consumer contract",
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "MILESTONE_WORK",
-      "parallel_class": "QUERY_RUNTIME_EXCLUSIVE",
-      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "claim_branch": "agent/query-relations-predicate-execution-v1",
-      "source": "GitHub Issue #149 and parent Issue #66 Gate C",
-      "dependencies": [
-        "Query typed AST and structural validation V1 promoted",
-        "Relations public RelationQueryConsumerInterface V1 promoted and bounded to 100",
-        "Query Policy-authorized planning promoted",
-        "Query bounded native wordpress.posts execution promoted by PR #147 and corrected by PR #148",
-        "GOV-OWNER-CONSENT-001 remains active for bounded Query runtime implementation"
-      ],
-      "runtime_allowed": true,
-      "allowed_scope": [
-        "Query-owned relation predicate planning/execution implementation through WPEssential\\Contracts\\RelationQueryConsumerInterface only",
-        "one explicitly bounded relation predicate runtime tranche with maximum traversal depth 1 and consumer batch/result bounds <= 100",
-        "Query-local new production classes and tests required for the relation execution tranche",
-        "existing Query planner/compiler/executor production classes may be modified only by this slot during this queue generation",
-        "Relations private gateway, persistence, table layout and raw SQL remain inaccessible",
-        "QueryModule.php and shared project-state files are Supervisor-only; report any required wiring as Integration Requirements",
-        "no cache behavior, diagnostics exposure, admin/public execution, parameters/cursors, aggregation/total-count, Columns/Listings runtime or Gate C completion claim"
-      ],
-      "completion_condition": "A reviewable, Policy-preserving Query relation predicate path uses only RelationQueryConsumerInterface, stays within public contract bounds, fails closed on dependency/scope/direction/size violations, and passes exact-head applicable CI without editing parallel worker or Supervisor-owned files.",
-      "notes": "This is the only current worker slot allowed to edit existing Query PHP planner/compiler/executor production files. It is already claimed when its deterministic branch exists on current repository truth."
-    },
     {
       "priority": 30,
       "slot_id": "query-native-execution-reference-scale-v1",
@@ -113,6 +87,7 @@
       "source": "GitHub Issue #150 and parent Issue #66 Gate C",
       "dependencies": [
         "PR #147 and corrective PR #148 promoted to current main",
+        "bounded Relations runtime PR #154 and Supervisor wiring PR #156 are promoted; this evidence lane must not change their production semantics",
         "current compiler/provider execution semantics remain unchanged by this evidence lane"
       ],
       "runtime_allowed": false,
@@ -124,7 +99,7 @@
         "do not claim new runtime capability or Gate C completion"
       ],
       "completion_condition": "Exact-head evidence executes against the claimed source and certifies the already-promoted native V1 slice across applicable WordPress/PHP coverage with no production semantic changes.",
-      "notes": "Designed to run fully in parallel with the relation runtime writer. Hosted-agent assignment is an atomic claim for this issue."
+      "notes": "Designed to run fully in parallel with cache/diagnostics contract and admin UX workers. Hosted-agent assignment is an atomic claim for this issue."
     },
     {
       "priority": 40,
@@ -151,7 +126,7 @@
         "report all future runtime/shared wiring as Integration Requirements",
         "do not enable cache reads/writes, invalidation hooks or public diagnostics in this slot"
       ],
-      "completion_condition": "A fail-closed, reviewable Query cache/diagnostics V1 contract and tests exist without runtime enablement or overlap with the runtime worker; exact-head applicable CI passes.",
+      "completion_condition": "A fail-closed, reviewable Query cache/diagnostics V1 contract and tests exist without runtime enablement or overlap with other workers; exact-head applicable CI passes.",
       "notes": "This lane intentionally converts a Gate C unknown into a bounded contract while avoiding shared/runtime writes. Hosted-agent assignment is an atomic claim for this issue."
     },
     {
