@@ -39,6 +39,10 @@ final readonly class QueryAuthorizedExecutor
             );
         }
 
+        if ($authorized->shortCircuitResult !== null) {
+            return $authorized->shortCircuitResult;
+        }
+
         if (!$this->providerExecutor->supports($authorized->providerPlan)) {
             return new QueryExecutionError(
                 errorCode: 'wpe_query_dependency_unavailable',
