@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
 
 use LogicException;
 use WPEssential\Contracts\DataSourceRegistryInterface;
+use WPEssential\Contracts\FieldQueryConsumerInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\RelationQueryConsumerInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -29,6 +30,7 @@ final class QueryModule implements ModuleInterface
     private const DATA_SOURCE_SERVICE = 'platform.data-sources';
     private const POLICY_SERVICE = 'platform.abilities.policy';
     private const RELATIONS_QUERY_CONSUMER_SERVICE = 'module.relations.query-consumer';
+    private const FIELDS_QUERY_CONSUMER_SERVICE = 'module.custom-fields.query-consumer';
 
     public function manifest(): ModuleManifest
     {
@@ -45,6 +47,7 @@ final class QueryModule implements ModuleInterface
         $dataSources = $this->requireDataSources($services);
         $policy = $this->requirePolicy($services);
         $relations = $this->optionalRelationsConsumer($services);
+        $fields = $this->optionalFieldsConsumer($services);
 
         $this->assertServiceIdsAvailable($services);
         if ($dataSources->has(WordPressPostsQueryCompiler::SOURCE_REF)) {
@@ -52,9 +55,12 @@ final class QueryModule implements ModuleInterface
         }
 
         $compiler = new WordPressPostsQueryCompiler();
-        $validator = new QueryAstValidator($dataSources, $relations);
+        $validator = $fields !== null
+            ? new QueryFieldAwareAstValidator($dataSources, $relations, $fields)
+            : new QueryAstValidator($dataSources, $relations);
         $relationResolver = $relations !== null ? new QueryRelationPredicateResolver($relations) : null;
-        $planner = new QueryAuthorizedPlanner($dataSources, $policy, $compiler, $relationResolver);
+        $fieldResolver = $fields !== null ? new QueryFieldPredicateResolver($fields) : null;
+        $planner = new QueryAuthorizedPlanner($dataSources, $policy, $compiler, $relationResolver, $fieldResolver);
         $providerExecutor = new WordPressPostsQueryExecutor();
         $executor = new QueryAuthorizedExecutor($planner, $providerExecutor);
 
@@ -119,6 +125,20 @@ final class QueryModule implements ModuleInterface
         }
 
         return $relations;
+    }
+
+    private function optionalFieldsConsumer(ServiceRegistryInterface $services): ?FieldQueryConsumerInterface
+    {
+        if (!$services->has(self::FIELDS_QUERY_CONSUMER_SERVICE)) {
+            return null;
+        }
+
+        $fields = $services->get(self::FIELDS_QUERY_CONSUMER_SERVICE);
+        if (!$fields instanceof FieldQueryConsumerInterface) {
+            throw new LogicException('Query optional Fields consumer must implement FieldQueryConsumerInterface.');
+        }
+
+        return $fields;
     }
 
     private function assertServiceIdsAvailable(ServiceRegistryInterface $services): void

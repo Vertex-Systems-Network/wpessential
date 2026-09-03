@@ -22,6 +22,7 @@ final readonly class QueryAuthorizedPlanner
         private PolicyEngine $policy,
         private QueryProviderCompilerInterface $compiler,
         private ?QueryRelationPredicateResolver $relationResolver = null,
+        private ?QueryFieldPredicateResolver $fieldResolver = null,
     ) {
     }
 
@@ -93,9 +94,18 @@ final readonly class QueryAuthorizedPlanner
         $effectiveDefinition = $definition;
         $shortCircuitEmpty = false;
         if ($this->relationResolver !== null) {
-            $relationResolution = $this->relationResolver->resolve($definition, $context);
+            $relationResolution = $this->relationResolver->resolve($effectiveDefinition, $context);
             $effectiveDefinition = $relationResolution->definition;
             $shortCircuitEmpty = $relationResolution->shortCircuitEmpty;
+        }
+        if ($this->fieldResolver !== null) {
+            $fieldResolution = $this->fieldResolver->resolve(
+                $effectiveDefinition,
+                $context,
+                $shortCircuitEmpty,
+            );
+            $effectiveDefinition = $fieldResolution->definition;
+            $shortCircuitEmpty = $shortCircuitEmpty || $fieldResolution->shortCircuitEmpty;
         }
 
         if (!$this->compiler->supports($effectiveDefinition)) {
