@@ -18,10 +18,13 @@ final readonly class QueryFieldPredicateResolver
     {
     }
 
-    public function resolve(QueryDefinition $definition, ExecutionContext $context): QueryFieldResolution
-    {
+    public function resolve(
+        QueryDefinition $definition,
+        ExecutionContext $context,
+        bool $upstreamShortCircuit = false,
+    ): QueryFieldResolution {
         if ($definition->filter === null || !$this->containsField($definition->filter)) {
-            return new QueryFieldResolution($definition, false);
+            return new QueryFieldResolution($definition, $upstreamShortCircuit);
         }
 
         $root = $definition->filter;
@@ -72,6 +75,19 @@ final readonly class QueryFieldPredicateResolver
                 'wpe_query_cost_blocked',
                 '$.filter',
                 'Field candidate batch exceeds the public Fields contract limit.',
+            );
+        }
+
+        if ($upstreamShortCircuit) {
+            $children = $root->children;
+            array_splice($children, $fieldIndex, 1);
+
+            return new QueryFieldResolution(
+                $this->withFilter(
+                    $definition,
+                    new QueryPredicate(QueryPredicateType::Group, $root->payload, array_values($children)),
+                ),
+                true,
             );
         }
 
