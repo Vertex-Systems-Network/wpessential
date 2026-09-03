@@ -101,14 +101,51 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          original_query_dir=/tmp/wpessential-query-original
+          rm -rf "${original_query_dir}"
+          mkdir -p "${original_query_dir}"
+          query_triplet=(query.js query.css query.asset.php)
+          had_query_triplet=0
+          present_query_files=0
+
+          for file in "${query_triplet[@]}"; do
+            if test -e "assets/admin/${file}"; then
+              present_query_files=$((present_query_files + 1))
+            fi
+          done
+
+          if [ "${present_query_files}" -ne 0 ] && [ "${present_query_files}" -ne 3 ]; then
+            echo 'Production build emitted a partial optional query triplet' >&2
+            exit 1
+          fi
+
+          if [ "${present_query_files}" -eq 3 ]; then
+            for file in "${query_triplet[@]}"; do
+              test -s "assets/admin/${file}"
+              cp "assets/admin/${file}" "${original_query_dir}/${file}"
+            done
+            had_query_triplet=1
+          fi
+
+          restore_query_triplet() {
+            rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
+            if [ "${had_query_triplet}" -eq 1 ]; then
+              for file in "${query_triplet[@]}"; do
+                cp "${original_query_dir}/${file}" "assets/admin/${file}"
+              done
+            fi
+          }
+          trap restore_query_triplet EXIT
+
+          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
           cp assets/admin/fields.js assets/admin/query.js
           if php tools/release/build-distributable.php > /tmp/wpessential-partial-query.log 2>&1; then
             echo 'Packager accepted a partial optional query triplet' >&2
             exit 1
           fi
           grep -Fq 'Optional admin entry query is only partially built' /tmp/wpessential-partial-query.log
-          rm -f assets/admin/query.js
 
+          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
           cp assets/admin/fields.js assets/admin/query.js
           cp assets/admin/fields.css assets/admin/query.css
           cp assets/admin/fields.asset.php assets/admin/query.asset.php
@@ -121,8 +158,10 @@ jobs:
           do
             grep -Fxq "${required}" /tmp/wpessential-query-files.txt
           done
-          rm -f assets/admin/query.js assets/admin/query.css assets/admin/query.asset.php
+
           rm -f artifacts/wpessential.zip artifacts/wpessential-package.json
+          restore_query_triplet
+          trap - EXIT
 
       - name: Build first independent distributable
         shell: bash
