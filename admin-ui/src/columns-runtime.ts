@@ -84,8 +84,8 @@ function uuidV4(): string {
 	}
 	const bytes = new Uint8Array( 16 );
 	cryptoApi.getRandomValues( bytes );
-	bytes[ 6 ] = ( bytes[ 6 ]! & 0x0f ) | 0x40;
-	bytes[ 8 ] = ( bytes[ 8 ]! & 0x3f ) | 0x80;
+	bytes[ 6 ] = ( bytes[ 6 ]! % 16 ) + 64;
+	bytes[ 8 ] = ( bytes[ 8 ]! % 64 ) + 128;
 	const hex = Array.from( bytes, ( byte ) =>
 		byte.toString( 16 ).padStart( 2, '0' )
 	).join( '' );
@@ -169,7 +169,9 @@ function wireSave(
 
 	const payload = (): JsonObject => {
 		const name = document.getElementById( 'wpessential-columns-view-name' );
-		const targetSelect = document.getElementById( 'wpessential-columns-target' );
+		const targetSelect = document.getElementById(
+			'wpessential-columns-target'
+		);
 		if (
 			! ( name instanceof HTMLInputElement ) ||
 			! ( targetSelect instanceof HTMLSelectElement ) ||
@@ -207,7 +209,9 @@ function wireSave(
 				! ( enabled instanceof HTMLInputElement ) ||
 				labelInput.value.trim() === ''
 			) {
-				throw new Error( 'Every Column requires a valid authored state.' );
+				throw new Error(
+					'Every Column requires a valid authored state.'
+				);
 			}
 			const match = labelInput.id.match( /-(\d+)$/ );
 			const draftId = match ? Number.parseInt( match[ 1 ]!, 10 ) : 0;
