@@ -1,141 +1,165 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-04",
-  "queue_anchor_main_sha": "b1ce9f08b2c69b3d7efcde75a856331eba70a25e",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. queue_anchor_main_sha is an audit anchor, not permission to work from a stale base. Query bounded native execution, bounded Relations predicate runtime, real-WordPress execution evidence, fail-closed cache/diagnostics rules and the non-runtime admin authoring scaffold are promoted through PR #147/#148, #154/#156, #158, #159 and #160. A hosted Copilot assignment attempt remains unavailable through the connected GitHub route, so no hosted-agent claim is represented as active. The actionable queue therefore uses deterministic remote branch claims. Current main plus linked GitHub issue/PR evidence overrides stale prose until Supervisor reconciliation is promoted. Completed/promoted slots remain auditable in Git history and must not be re-claimed or force-moved.",
+  "queue_anchor_main_sha": "c41158f6baf98912ca76108ec74bc685afe802f7",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Query Gate C is PASS for the certified bounded V1 baseline at the queue anchor after PR #166, #184 and #189; Admin Columns Atomic Option + UX lifecycle is authoritative through PR #190. Gate D is therefore the active dependency gate. A queue anchor is evidence, not permission to work from stale history. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
-    "selection_rule": "Choose the highest-priority OPEN slot allowed for the agent role whose dependencies are satisfied and whose runtime/planning boundary remains valid on current main.",
+    "selection_rule": "Choose the highest-priority OPEN slot allowed for the agent role whose dependencies are satisfied and whose exclusive write boundary is not already claimed.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read current main SHA and commits since the queue audit anchor, including PR #158, PR #159 and PR #160.",
-      "Inspect relevant open and merged PRs/MRs, issues and existing branches.",
-      "Verify the selected slot is not already complete, superseded, blocked or claimed.",
-      "Verify canonical ownership, dependency order and allowed write scope.",
-      "Treat stale Query runtime-not-started prose as superseded by current main only for explicitly promoted slices; do not infer Gate C completion.",
-      "Only then create the deterministic claim branch."
+      "Read current main SHA and the final Query Gate C audit; verify PR #166, #184, #189 and #190 remain authoritative.",
+      "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
+      "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files/semantic boundary.",
+      "Preserve Query ownership of backend sort/filter/search, Fields/source-owner mutation semantics and Policy authorization.",
+      "Only then create the exact deterministic claim branch from exact current main."
     ],
     "revalidation_before_merge": [
-      "Absorb latest main using the repository-approved non-destructive strategy.",
-      "Re-check dependency and ownership assumptions.",
-      "Review the intended diff and Integration Requirements.",
-      "Reject any worker diff that edits another active slot's exclusive write boundary or Supervisor-only shared truth.",
-      "Require applicable exact-head CI on the final candidate head.",
-      "Never use stale CI or force overwrite as merge evidence."
+      "Absorb or reconcile latest main without force/history overwrite.",
+      "Re-check dependency, ownership and no-bypass assumptions.",
+      "Review exact diff; reject edits to another active slot's exclusive boundary or Supervisor-only shared truth.",
+      "Require all applicable exact-head CI on the final candidate head and clean review/thread state.",
+      "Never use stale CI or an earlier branch head as merge evidence."
     ],
-    "claim_branch_rule": "For DETERMINISTIC_REMOTE_BRANCH_CREATE slots, use the exact claim_branch declared by the slot. Create that remote branch from exact current main without force. Successful remote ref creation claims the slot. If the branch already exists or ref creation is rejected, treat the slot as already claimed and immediately evaluate the next eligible slot."
+    "claim_branch_rule": "For DETERMINISTIC_REMOTE_BRANCH_CREATE slots, create the exact claim_branch from exact current main without force. If creation fails because the branch exists, treat the slot as claimed and evaluate the next eligible slot."
   },
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "description": "Exactly one user-designated Supervisor/Integrator coordinates shared writes, merge review, queue reconciliation and supervisor-only slots. This role is explicit because independent AI sessions do not have a reliable cross-session lease/heartbeat mechanism.",
-      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
+      "description": "Exactly one Supervisor/Integrator owns shared truth, cross-slot integration and merge serialization.",
+      "may_claim": [
+        "SUPERVISOR_ONLY",
+        "ANY"
+      ],
       "must_not": [
-        "Pre-create branches for future worker slots.",
-        "Merge a branch only because an agent says it is done.",
-        "Treat arrival order as merge order.",
+        "Pre-create worker claim branches before the worker/agent actually starts that slot.",
+        "Merge a branch only because an agent reports completion.",
         "Allow dependency-blocked runtime work to start.",
         "Allow parallel workers to edit config/coordination/agent-work-queue.json, CHECKPOINT.md or other shared project-state truth."
       ]
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Workers autonomously inspect current repository truth and claim the next eligible non-overlapping work slot using deterministic remote branch creation.",
-      "may_claim": ["ANY"],
+      "description": "Workers autonomously inspect current repository truth and claim one eligible non-overlapping slot through deterministic branch creation.",
+      "may_claim": [
+        "ANY"
+      ],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
-        "Modify shared/global truth unless the slot explicitly grants that write scope.",
-        "Create a different branch name when the deterministic claim branch is already occupied.",
-        "Start runtime work that the slot marks planning_only or dependency_blocked.",
-        "Edit files owned exclusively by another OPEN/claimed slot."
+        "Modify shared/global truth unless the slot explicitly grants that scope.",
+        "Create a different branch name when the deterministic branch is already occupied.",
+        "Start dependency-blocked work or edit another active slot's exclusive files."
       ]
     }
   },
   "slots": [
     {
-      "priority": 30,
-      "slot_id": "fields-query-consumer-contract-v1",
-      "title": "Provide the Fields-owned bounded public Query consumer contract V1",
+      "priority": 60,
+      "slot_id": "columns-runtime-definition-foundation-v1",
+      "title": "Establish the Admin Columns runtime definition and module foundation V1",
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "RUNTIME_CONTRACT_WORK",
-      "parallel_class": "FIELDS_OWNER_EXCLUSIVE",
+      "parallel_class": "COLUMNS_CORE_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "GitHub Issue #161 and parent Issue #66 Gate C",
+      "source": "Parent Issue #66 Gate D plus completed Admin Columns contract/UX Issues #48/#49",
       "dependencies": [
-        "Surface 3 Fields Gate A certified native V1 baseline is promoted on current main",
-        "Query Field predicate grammar exists but native execution remains unsupported until this Fields-owned contract is accepted"
+        "Query Gate C PASS is authoritative on current main",
+        "Admin Columns option contract is UX_CONTRACT_COMPLETE with 214/214 Bank mapping and 41 Atomic Options"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "new public FieldQueryConsumerInterface under frameworks/Contracts and Fields-owned implementation/service registration",
-        "reuse canonical published Field Group resolution, native V1 storage projection, target compatibility, normalization and authorization-sensitive owner semantics",
-        "finite supported operators/value shapes, bounded candidate post-id input and bounded matching output",
-        "Fields-local unit/reference tests and one Fields Query-consumer implementation document",
-        "do not edit Query compiler/planner/executor/runtime classes, Query admin UI, Relations production, queue or CHECKPOINT.md",
-        "fail closed on unsupported provider/complex/storage modes, unavailable definitions, malformed input, target mismatch or bounds overflow"
+        "new Admin Columns-owned PHP runtime/definition/module files under a dedicated frameworks/Modules/AdminColumns boundary",
+        "canonical definition identity/lifecycle/normalization and typed runtime value objects required by the bounded baseline",
+        "surface-local unit tests and one implementation document",
+        "consume shared Data Source/Policy/Renderer contracts rather than creating private registries or authorization engines",
+        "do not edit Query, Fields, Relations production code, admin-ui, queue, CHECKPOINT.md or shared Platform implementation",
+        "do not implement inline/bulk mutation, export, performance adapters or product-parity claims in this foundation slot"
       ],
-      "completion_condition": "A bounded Fields-owned public consumer contract is exact-head green and ready for later Query-side Field predicate resolution without leaking storage ownership into Query.",
-      "notes": "May run in parallel with Query admin integration and Gate C closure audit because its write boundary is Fields/Contracts exclusive.",
-      "claim_branch": "agent/fields-query-consumer-contract-v1"
+      "completion_condition": "A fail-closed Admin Columns core definition/module foundation is exact-head green and exposes stable typed seams for later Query read and source-owner mutation integration.",
+      "notes": "May run in parallel with the admin-ui scaffold and docs-only Gate D baseline audit because those slots own disjoint paths.",
+      "claim_branch": "agent/columns-runtime-definition-foundation-v1"
     },
     {
-      "priority": 40,
-      "slot_id": "query-admin-integration-v1",
-      "title": "Integrate the canonical Query admin route/bootstrap/build V1 with execution disabled",
+      "priority": 70,
+      "slot_id": "columns-admin-authoring-scaffold-v1",
+      "title": "Build the non-runtime Admin Columns authoring scaffold from the certified UX contract",
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "ADMIN_INTEGRATION_WORK",
-      "parallel_class": "QUERY_ADMIN_EXCLUSIVE",
+      "work_mode": "ADMIN_UI_WORK",
+      "parallel_class": "COLUMNS_ADMIN_UI_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "GitHub Issue #162 and parent Issue #66 Gate C",
+      "source": "Parent Issue #66 Gate D plus docs/PRODUCT/ADMIN-COLUMNS-UX-CONTRACT-V1.md",
       "dependencies": [
-        "PR #160 Query non-runtime authoring scaffold is promoted on current main",
-        "public/admin Query execution remains intentionally unavailable"
+        "Query Gate C PASS is authoritative on current main",
+        "Admin Columns UX contract is UX_CONTRACT_COMPLETE"
       ],
-      "runtime_allowed": true,
+      "runtime_allowed": false,
       "allowed_scope": [
-        "canonical Query admin route/page and validated server-projected Query/Data Source bootstrap under the shared admin shell",
-        "Query production admin build entry and screen-specific enqueue wiring",
-        "existing admin-ui/src/query.ts and query.scss only where integration requires it",
-        "Query admin integration tests, packaged browser/accessibility evidence and one integration document",
-        "do not edit Fields production/runtime, Query compiler/planner/executor execution semantics, Relations production, queue or CHECKPOINT.md",
-        "do not add an execution endpoint or provider invocation; execution preview remains disabled"
+        "new Admin Columns admin-ui source/style files and surface-local browser/accessibility fixture/spec files only",
+        "project the certified Column Sets/Views, sources/formats, sorting/filtering capability states, editing/export safety messaging and degraded states",
+        "execution/mutation/save/provider calls remain disabled; use a future server-owned bootstrap contract rather than inventing backend semantics",
+        "do not edit PHP runtime, Query/Fields/Relations, shared Platform, package/build registration, queue or CHECKPOINT.md",
+        "emit explicit Integration Requirements for route/bootstrap/build wiring instead of racing shared files"
       ],
-      "completion_condition": "The Query authoring scaffold is reachable through the canonical packaged WordPress admin route with validated bootstrap and exact-head accessibility/build evidence, while execution remains unavailable.",
-      "notes": "May run in parallel with the Fields contract and closure audit because its write boundary is admin/build integration exclusive.",
-      "claim_branch": "agent/query-admin-integration-v1"
+      "completion_condition": "Accessible non-runtime Admin Columns authoring UX is exact-head green and ready for serialized server/bootstrap integration without exposing runtime mutation or execution.",
+      "notes": "Path-exclusive admin-ui lane; safe in parallel with the PHP core foundation.",
+      "claim_branch": "agent/columns-admin-authoring-scaffold-v1"
     },
     {
-      "priority": 50,
-      "slot_id": "query-gate-c-closure-audit-v1",
-      "title": "Audit Query Gate C merged evidence and remaining blockers against parent #66",
+      "priority": 80,
+      "slot_id": "columns-gate-d-baseline-audit-v1",
+      "title": "Audit Admin Columns Gate D baseline evidence and implementation gaps",
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "EVIDENCE_WORK",
       "parallel_class": "DOCS_EVIDENCE_ONLY",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "GitHub Issue #163 and parent Issue #66 Gate C",
+      "source": "Parent Issue #66 Gate D",
       "dependencies": [
-        "PR #160 Query admin scaffold is promoted on current main",
-        "audit must distinguish merged evidence from still-open #161/#162 work and must not infer future completion"
+        "Query Gate C PASS is authoritative on current main",
+        "Admin Columns Atomic Option + UX contracts are authoritative"
       ],
       "runtime_allowed": false,
       "allowed_scope": [
-        "one new docs/IMPLEMENTATION/QUERY-GATE-C-CLOSURE-AUDIT-V1.md evidence matrix only",
-        "map every #66 Gate C criterion to exact merged PR/code/test evidence or an explicit remaining blocker",
-        "record deferred semantics such as total-count/aggregation, cache runtime enablement, unsupported providers and public execution without misrepresenting them as shipped",
-        "do not edit production code, admin-ui, shared Platform, Fields, Relations, queue or CHECKPOINT.md",
-        "do not claim Gate C PASS unless current merged main independently satisfies every required baseline criterion"
+        "one new docs/IMPLEMENTATION/ADMIN-COLUMNS-GATE-D-BASELINE-AUDIT-V1.md evidence matrix only",
+        "map each #66 Gate D requirement to existing contract evidence or a concrete implementation blocker",
+        "identify Query/source-owner/Policy/visibility/export/performance/accessibility boundaries without inventing runtime completion",
+        "do not edit production code, admin-ui, shared Platform, Query, Fields, Relations, queue or CHECKPOINT.md",
+        "do not claim Gate D PASS"
       ],
-      "completion_condition": "A reviewable exact-main Gate C evidence matrix identifies certified criteria and remaining blockers without production changes or stale-truth overclaiming.",
-      "notes": "Designed to run fully in parallel with #161 and #162 and to provide independent closure evidence for the Supervisor.",
-      "claim_branch": "agent/query-gate-c-closure-audit-v1"
+      "completion_condition": "A current-main evidence matrix provides a precise dependency-safe work breakdown for Gate D while other two initial lanes proceed.",
+      "notes": "Docs-only lane designed to run fully in parallel with both implementation writers.",
+      "claim_branch": "agent/columns-gate-d-baseline-audit-v1"
+    },
+    {
+      "priority": 90,
+      "slot_id": "columns-query-source-integration-v1",
+      "title": "Integrate Query-backed read/sort/filter/search adapters for Admin Columns",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "RUNTIME_INTEGRATION_WORK",
+      "parallel_class": "COLUMNS_QUERY_ADAPTER_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Parent Issue #66 Gate D",
+      "dependencies": [
+        "columns-runtime-definition-foundation-v1 is promoted and exposes stable typed seams",
+        "Query Gate C remains authoritative"
+      ],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "Admin Columns-owned Query adapter files only after the foundation is promoted",
+        "consume Query public planner/execution contracts; do not duplicate backend query semantics",
+        "do not edit Query production code or shared truth"
+      ],
+      "completion_condition": "Blocked until the core foundation is merged; then certify Query-owned backend semantics through an Admin Columns adapter without bypasses.",
+      "notes": "Do not claim or branch while BLOCKED.",
+      "claim_branch": "agent/columns-query-source-integration-v1"
     }
   ]
 }
