@@ -8,10 +8,13 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\AdminColumns\AdminColumnsModule;
+use WPEssential\Modules\AdminColumns\AdminColumnsReadAdapter;
 use WPEssential\Modules\AdminColumns\AdminColumnsViewDefinitionNormalizer;
 use WPEssential\Modules\AdminColumns\AdminColumnsViewDefinitionService;
+use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -89,11 +92,14 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
         $service->save($this->payload());
     }
 
-    public function testModuleRegistersOnlyFoundationServicesAndRequiresSharedDefinitions(): void
+    public function testModuleRegistersFoundationAndBoundedReadAdapter(): void
     {
         $services = new ServiceRegistry();
         $services->set('platform.definitions', $this->repository());
+        $services->set('module.query.read-consumer', $this->queryConsumer());
         $module = new AdminColumnsModule();
+
+        self::assertSame(['query'], $module->manifest()->dependencies);
         $module->register($services);
         $module->boot($services);
 
@@ -105,12 +111,70 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
             AdminColumnsViewDefinitionService::class,
             $services->get(AdminColumnsModule::SERVICE_VIEWS),
         );
+        self::assertInstanceOf(
+            AdminColumnsReadAdapter::class,
+            $services->get(AdminColumnsModule::SERVICE_READ_ADAPTER),
+        );
         self::assertFalse($services->has('module.admin-columns.admin'));
-        self::assertFalse($services->has('module.admin-columns.query-adapter'));
+        self::assertFalse($services->has('module.admin-columns.rest'));
+        self::assertFalse($services->has('module.admin-columns.ajax'));
+    }
 
-        $missing = new ServiceRegistry();
-        $this->expectException(\LogicException::class);
-        (new AdminColumnsModule())->register($missing);
+    public function testModuleRequiresSharedDefinitionsAndBoundedQueryConsumer(): void
+    {
+        $missingDefinitions = new ServiceRegistry();
+        $missingDefinitions->set('module.query.read-consumer', $this->queryConsumer());
+        try {
+            (new AdminColumnsModule())->register($missingDefinitions);
+            self::fail('Expected missing Definition repository to fail closed.');
+        } catch (\LogicException) {
+            self::assertFalse($missingDefinitions->has(AdminColumnsModule::SERVICE_READ_ADAPTER));
+        }
+
+        $missingQuery = new ServiceRegistry();
+        $missingQuery->set('platform.definitions', $this->repository());
+        try {
+            (new AdminColumnsModule())->register($missingQuery);
+            self::fail('Expected missing Query read consumer to fail closed.');
+        } catch (\LogicException) {
+            self::assertFalse($missingQuery->has(AdminColumnsModule::SERVICE_NORMALIZER));
+            self::assertFalse($missingQuery->has(AdminColumnsModule::SERVICE_VIEWS));
+            self::assertFalse($missingQuery->has(AdminColumnsModule::SERVICE_READ_ADAPTER));
+        }
+    }
+
+    private function queryConsumer(): QueryReadConsumerInterface
+    {
+        return new class implements QueryReadConsumerInterface {
+            public function describe(string $sourceRef, ExecutionContext $context): array
+            {
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'source_ref' => $sourceRef,
+                    'source_type' => $sourceRef,
+                    'capability_version' => 1,
+                    'available' => true,
+                    'field_schema' => ['post.title' => 'string', 'post.type' => 'string'],
+                    'predicates' => ['eq'],
+                    'sort_modes' => ['field'],
+                    'pagination_modes' => ['offset'],
+                    'max_page_size' => 100,
+                ];
+            }
+
+            public function read(array $request, ExecutionContext $context): array
+            {
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'ok' => true,
+                    'source_ref' => 'wordpress.posts',
+                    'projection' => $request['projection'] ?? [],
+                    'rows' => [],
+                    'returned' => 0,
+                    'error' => null,
+                ];
+            }
+        };
     }
 
     private function repository(): DefinitionRepositoryInterface
