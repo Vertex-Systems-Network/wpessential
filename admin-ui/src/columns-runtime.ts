@@ -509,9 +509,8 @@ function parsePreviewResult(
 			candidate.format === '' ||
 			candidate.format.length > 64 ||
 			typeof candidate.primary !== 'boolean' ||
-			! [ 'native', 'query' ].includes(
-				String( candidate.source_owner )
-			) ||
+			typeof candidate.source_owner !== 'string' ||
+			! [ 'native', 'query' ].includes( candidate.source_owner ) ||
 			columnKeys.has( candidate.key )
 		) {
 			return null;
@@ -522,7 +521,7 @@ function parsePreviewResult(
 			label: candidate.label.trim(),
 			format: candidate.format,
 			primary: candidate.primary,
-			sourceOwner: String( candidate.source_owner ),
+			sourceOwner: candidate.source_owner,
 		} );
 	}
 
@@ -707,6 +706,9 @@ function hydrateDefinition(
 	session.layout = definition.loadedPayload.layout;
 	session.visibility = definition.loadedPayload.visibility;
 	session.columnIdentities = identities;
+	root.dispatchEvent(
+		new CustomEvent( 'wpessential:columns-session-changed' )
+	);
 }
 
 function wireSave(
@@ -885,6 +887,9 @@ function wireSave(
 			}
 			session.definitionId = definition.id;
 			session.revision = definition.revision;
+			root.dispatchEvent(
+				new CustomEvent( 'wpessential:columns-session-changed' )
+			);
 			status.textContent = `Column Set saved as revision ${ session.revision }.`;
 		} catch {
 			status.textContent =
@@ -1134,6 +1139,22 @@ function wirePreview(
 	let offset = 0;
 	let lastReturned = 0;
 	let inFlight = false;
+
+	const resetPreview = (): void => {
+		offset = 0;
+		lastReturned = 0;
+		previous.disabled = true;
+		next.disabled = true;
+		head.replaceChildren();
+		body.replaceChildren();
+		table.hidden = true;
+		previewStatus.textContent =
+			'Current saved View changed. Choose Preview rows to load the active saved revision.';
+	};
+	root.addEventListener(
+		'wpessential:columns-session-changed',
+		resetPreview
+	);
 
 	const render = ( result: PreviewResult ): void => {
 		head.replaceChildren();
