@@ -48,7 +48,11 @@ jobs:
           if s.count(old) != 1:
               raise SystemExit(f'source callback block occurrences: {s.count(old)}')
           s = s.replace(old, new, 1)
-          s = s.replace('owner: candidate.source.owner,\n\t\t\t\treference: candidate.source.reference,', 'owner: candidateSource.owner,\n\t\t\t\treference: candidateSource.reference,', 1)
+          s = s.replace(
+              'owner: candidate.source.owner,\n\t\t\t\treference: candidate.source.reference,',
+              'owner: source.owner,\n\t\t\t\treference: source.reference,',
+              1,
+          )
 
           old = """\t\t\tviewEnabled: true,\n\t\t\tcolumnIdentities: new Map(),\n"""
           new = """\t\t\tviewEnabled: true,\n\t\t\tassignment: undefined,\n\t\t\tlayout: undefined,\n\t\t\tvisibility: undefined,\n\t\t\tcolumnIdentities: new Map(),\n"""
