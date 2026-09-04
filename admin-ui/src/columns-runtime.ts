@@ -15,6 +15,25 @@ type BrowseBootstrap = {
 	ajaxAction: string;
 	routes: { list: AjaxRoute; get: AjaxRoute };
 };
+type ReadBootstrap = {
+	ajaxUrl: string;
+	ajaxAction: string;
+	routes: { read: AjaxRoute };
+};
+type PreviewColumn = {
+	key: string;
+	label: string;
+	format: string;
+	primary: boolean;
+	sourceOwner: string;
+};
+type PreviewResult = {
+	viewId: string;
+	viewRevision: number;
+	columns: PreviewColumn[];
+	rows: Record< string, string | null >[];
+	returned: number;
+};
 type DefinitionStatus = 'draft' | 'published' | 'disabled' | 'archived';
 type DefinitionHeader = {
 	id: string;
@@ -77,6 +96,8 @@ const UUID_PATTERN =
 const MACHINE_KEY_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;
 const MAX_SAVED_VIEWS = 100;
 const MAX_COLUMNS = 100;
+const MAX_PREVIEW_ROWS = 100;
+const MAX_PREVIEW_CELL_TEXT = 500;
 const DEFINITION_TYPE = 'admin_columns_view';
 const OWNER_SURFACE_ID = 8;
 const STATUSES: DefinitionStatus[] = [
@@ -178,6 +199,25 @@ function parseBrowseBootstrap( value: unknown ): BrowseBootstrap | null {
 			list: value.routes.list,
 			get: value.routes.get,
 		},
+	};
+}
+
+function parseReadBootstrap( value: unknown ): ReadBootstrap | null {
+	if (
+		! isObject( value ) ||
+		typeof value.ajaxUrl !== 'string' ||
+		value.ajaxUrl === '' ||
+		typeof value.ajaxAction !== 'string' ||
+		value.ajaxAction === '' ||
+		! isObject( value.routes ) ||
+		! isRoute( value.routes.read, 'admin-columns.read.rows' )
+	) {
+		return null;
+	}
+	return {
+		ajaxUrl: value.ajaxUrl,
+		ajaxAction: value.ajaxAction,
+		routes: { read: value.routes.read },
 	};
 }
 
@@ -415,6 +455,126 @@ async function postRoute(
 	return ( decoded as AjaxEnvelope ).data;
 }
 
+function parsePreviewResult(
+	value: unknown,
+	expectedViewId: string,
+	expectedRevision: number,
+	pageSize: number
+): PreviewResult | null {
+	if (
+		! isObject( value ) ||
+		! hasOnlyKeys( value, [
+			'contract_version',
+			'ok',
+			'view_id',
+			'view_revision',
+			'columns',
+			'rows',
+			'returned',
+			'error',
+		] ) ||
+		value.contract_version !== 1 ||
+		value.ok !== true ||
+		value.view_id !== expectedViewId ||
+		value.view_revision !== expectedRevision ||
+		value.error !== null ||
+		! Array.isArray( value.columns ) ||
+		value.columns.length === 0 ||
+		value.columns.length > MAX_COLUMNS ||
+		! Array.isArray( value.rows ) ||
+		value.rows.length > MAX_PREVIEW_ROWS ||
+		value.rows.length > pageSize ||
+		typeof value.returned !== 'number' ||
+		! Number.isInteger( value.returned ) ||
+		value.returned !== value.rows.length
+	) {
+		return null;
+	}
+
+	const columns: PreviewColumn[] = [];
+	const columnKeys = new Set< string >();
+	for ( const candidate of value.columns ) {
+		if (
+			! isObject( candidate ) ||
+			! hasOnlyKeys( candidate, [
+				'key',
+				'label',
+				'format',
+				'primary',
+				'source_owner',
+			] ) ||
+			! machineKey( candidate.key ) ||
+			! boundedLabel( candidate.label ) ||
+			typeof candidate.format !== 'string' ||
+			candidate.format === '' ||
+			candidate.format.length > 64 ||
+			typeof candidate.primary !== 'boolean' ||
+			typeof candidate.source_owner !== 'string' ||
+			! [ 'native', 'query' ].includes( candidate.source_owner ) ||
+			columnKeys.has( candidate.key )
+		) {
+			return null;
+		}
+		columnKeys.add( candidate.key );
+		columns.push( {
+			key: candidate.key,
+			label: candidate.label.trim(),
+			format: candidate.format,
+			primary: candidate.primary,
+			sourceOwner: candidate.source_owner,
+		} );
+	}
+
+	const allowedRowKeys = columns.map( ( column ) => column.key );
+	const rows: Record< string, string | null >[] = [];
+	for ( const candidate of value.rows ) {
+		if (
+			! isObject( candidate ) ||
+			! hasOnlyKeys( candidate, allowedRowKeys )
+		) {
+			return null;
+		}
+		const row: Record< string, string | null > = {};
+		for ( const column of columns ) {
+			if (
+				! Object.prototype.hasOwnProperty.call( candidate, column.key )
+			) {
+				return null;
+			}
+			const cell = candidate[ column.key ];
+			if ( cell === null ) {
+				row[ column.key ] = null;
+				continue;
+			}
+			if ( typeof cell === 'string' ) {
+				if ( cell.length > MAX_PREVIEW_CELL_TEXT ) {
+					return null;
+				}
+				row[ column.key ] = cell;
+				continue;
+			}
+			if ( typeof cell === 'number' && Number.isFinite( cell ) ) {
+				row[ column.key ] = String( cell );
+				continue;
+			}
+			if ( typeof cell === 'boolean' ) {
+				row[ column.key ] = cell ? 'true' : 'false';
+				continue;
+			}
+			return null;
+		}
+		rows.push( row );
+	}
+
+	return {
+		viewId: expectedViewId,
+		viewRevision: expectedRevision,
+		columns,
+		rows,
+		returned: value.returned,
+	};
+}
+
 function failBootstrap( root: HTMLElement ): void {
 	root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 	root.textContent =
@@ -546,6 +706,9 @@ function hydrateDefinition(
 	session.layout = definition.loadedPayload.layout;
 	session.visibility = definition.loadedPayload.visibility;
 	session.columnIdentities = identities;
+	root.dispatchEvent(
+		new CustomEvent( 'wpessential:columns-session-changed' )
+	);
 }
 
 function wireSave(
@@ -724,6 +887,9 @@ function wireSave(
 			}
 			session.definitionId = definition.id;
 			session.revision = definition.revision;
+			root.dispatchEvent(
+				new CustomEvent( 'wpessential:columns-session-changed' )
+			);
 			status.textContent = `Column Set saved as revision ${ session.revision }.`;
 		} catch {
 			status.textContent =
@@ -885,6 +1051,227 @@ function wireBrowse(
 	} )();
 }
 
+function wirePreview(
+	root: HTMLElement,
+	readBootstrap: ReadBootstrap,
+	session: EditorSession
+): void {
+	const status = root.querySelector( '.wpessential-columns__status' );
+	if ( ! ( status instanceof HTMLElement ) ) {
+		return;
+	}
+
+	const section = document.createElement( 'section' );
+	section.className = 'wpessential-columns__preview';
+	section.setAttribute(
+		'aria-labelledby',
+		'wpessential-columns-preview-title'
+	);
+	const title = document.createElement( 'h2' );
+	title.id = 'wpessential-columns-preview-title';
+	title.textContent = 'Row preview';
+	const description = document.createElement( 'p' );
+	description.textContent =
+		'Preview is read-only and executes only the published saved View through the bounded Query path.';
+
+	const controls = document.createElement( 'div' );
+	controls.className = 'wpessential-columns__preview-controls';
+	const searchLabel = document.createElement( 'label' );
+	searchLabel.htmlFor = 'wpessential-columns-preview-search';
+	searchLabel.textContent = 'Search preview';
+	const search = document.createElement( 'input' );
+	search.id = 'wpessential-columns-preview-search';
+	search.type = 'search';
+	search.maxLength = 200;
+
+	const pageSizeLabel = document.createElement( 'label' );
+	pageSizeLabel.htmlFor = 'wpessential-columns-preview-page-size';
+	pageSizeLabel.textContent = 'Rows per page';
+	const pageSize = document.createElement( 'select' );
+	pageSize.id = 'wpessential-columns-preview-page-size';
+	for ( const size of [ 10, 20, 50, 100 ] ) {
+		pageSize.append(
+			new Option( String( size ), String( size ), false, size === 20 )
+		);
+	}
+
+	const preview = document.createElement( 'button' );
+	preview.type = 'button';
+	preview.className = 'button';
+	preview.textContent = 'Preview rows';
+	const previous = document.createElement( 'button' );
+	previous.type = 'button';
+	previous.className = 'button';
+	previous.textContent = 'Previous';
+	previous.disabled = true;
+	const next = document.createElement( 'button' );
+	next.type = 'button';
+	next.className = 'button';
+	next.textContent = 'Next';
+	next.disabled = true;
+	controls.append(
+		searchLabel,
+		search,
+		pageSizeLabel,
+		pageSize,
+		preview,
+		previous,
+		next
+	);
+
+	const previewStatus = document.createElement( 'p' );
+	previewStatus.id = 'wpessential-columns-preview-status';
+	previewStatus.setAttribute( 'role', 'status' );
+	previewStatus.setAttribute( 'aria-live', 'polite' );
+	previewStatus.textContent =
+		'Save or open a published, enabled Column Set, then choose Preview rows.';
+
+	const table = document.createElement( 'table' );
+	table.className = 'widefat fixed striped';
+	table.setAttribute( 'aria-describedby', previewStatus.id );
+	table.hidden = true;
+	const head = document.createElement( 'thead' );
+	const body = document.createElement( 'tbody' );
+	table.append( head, body );
+	section.append( title, description, controls, previewStatus, table );
+	root.append( section );
+
+	let offset = 0;
+	let lastReturned = 0;
+	let inFlight = false;
+
+	const resetPreview = (): void => {
+		offset = 0;
+		lastReturned = 0;
+		previous.disabled = true;
+		next.disabled = true;
+		head.replaceChildren();
+		body.replaceChildren();
+		table.hidden = true;
+		previewStatus.textContent =
+			'Current saved View changed. Choose Preview rows to load the active saved revision.';
+	};
+	root.addEventListener(
+		'wpessential:columns-session-changed',
+		resetPreview
+	);
+
+	const render = ( result: PreviewResult ): void => {
+		head.replaceChildren();
+		body.replaceChildren();
+		const headerRow = document.createElement( 'tr' );
+		for ( const column of result.columns ) {
+			const cell = document.createElement( 'th' );
+			cell.scope = 'col';
+			cell.textContent = column.label;
+			headerRow.append( cell );
+		}
+		head.append( headerRow );
+		for ( const row of result.rows ) {
+			const tableRow = document.createElement( 'tr' );
+			for ( const column of result.columns ) {
+				const cell = document.createElement( 'td' );
+				cell.textContent = row[ column.key ] ?? '';
+				tableRow.append( cell );
+			}
+			body.append( tableRow );
+		}
+		table.hidden = false;
+	};
+
+	const execute = async ( requestedOffset: number ): Promise< void > => {
+		if ( inFlight ) {
+			return;
+		}
+		if (
+			session.definitionId === null ||
+			session.revision === null ||
+			session.status !== 'published' ||
+			! session.viewEnabled
+		) {
+			previewStatus.textContent =
+				'Preview requires a published, enabled saved Column Set. No Query request was sent.';
+			return;
+		}
+
+		const size = Number.parseInt( pageSize.value, 10 );
+		if ( ! [ 10, 20, 50, 100 ].includes( size ) ) {
+			previewStatus.textContent = 'Preview page size is invalid.';
+			return;
+		}
+		const boundedOffset = Math.max( 0, Math.min( 10000, requestedOffset ) );
+		const request: JsonObject = {
+			view_id: session.definitionId,
+			page_size: size,
+			offset: boundedOffset,
+		};
+		const term = search.value.trim();
+		if ( term !== '' ) {
+			request.search = term;
+		}
+
+		try {
+			inFlight = true;
+			preview.disabled = true;
+			previous.disabled = true;
+			next.disabled = true;
+			previewStatus.textContent = 'Loading bounded row preview…';
+			const data = await postRoute(
+				readBootstrap.ajaxUrl,
+				readBootstrap.ajaxAction,
+				readBootstrap.routes.read,
+				request
+			);
+			const result = parsePreviewResult(
+				data,
+				session.definitionId,
+				session.revision,
+				size
+			);
+			if ( result === null ) {
+				throw new Error( 'Malformed or stale preview response.' );
+			}
+			render( result );
+			offset = boundedOffset;
+			lastReturned = result.returned;
+			previous.disabled = offset === 0;
+			next.disabled =
+				lastReturned < size || offset >= 10000 || offset + size > 10000;
+			previewStatus.textContent = `${ result.returned } row${
+				result.returned === 1 ? '' : 's'
+			} previewed from revision ${
+				result.viewRevision
+			}. Row data was not mutated.`;
+		} catch {
+			previewStatus.textContent =
+				'Row preview is unavailable or stale. No unvalidated response replaced the current preview.';
+		} finally {
+			inFlight = false;
+			preview.disabled = false;
+		}
+	};
+
+	preview.addEventListener( 'click', () => {
+		void execute( 0 );
+	} );
+	search.addEventListener( 'keydown', ( event ) => {
+		if ( event.key === 'Enter' ) {
+			event.preventDefault();
+			void execute( 0 );
+		}
+	} );
+	previous.addEventListener( 'click', () => {
+		const size = Number.parseInt( pageSize.value, 10 );
+		void execute( Math.max( 0, offset - size ) );
+	} );
+	next.addEventListener( 'click', () => {
+		const size = Number.parseInt( pageSize.value, 10 );
+		if ( lastReturned === size && offset < 10000 ) {
+			void execute( Math.min( 10000, offset + size ) );
+		}
+	} );
+}
+
 function boot(): void {
 	const root = document.getElementById( 'wpessential-columns-root' );
 	const script = document.getElementById( 'wpessential-columns-bootstrap' );
@@ -921,6 +1308,10 @@ function boot(): void {
 		const browseBootstrap = parseBrowseBootstrap( raw );
 		if ( browseBootstrap !== null ) {
 			wireBrowse( root, bootstrap, browseBootstrap, session );
+		}
+		const readBootstrap = parseReadBootstrap( raw );
+		if ( readBootstrap !== null ) {
+			wirePreview( root, readBootstrap, session );
 		}
 		window.dispatchEvent(
 			new CustomEvent( 'wpessential:admin-ready', {
