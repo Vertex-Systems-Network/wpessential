@@ -19,6 +19,7 @@ final class AdminColumnsAdminController
     private const LIST_ROUTE = 'admin-columns.list.views';
     private const GET_ROUTE = 'admin-columns.get.view';
     private const SAVE_ROUTE = 'admin-columns.save.view';
+    private const STATUS_ROUTE = 'admin-columns.status.view';
     private const READ_ROUTE = 'admin-columns.read.rows';
 
     private ?string $hookSuffix = null;
@@ -116,6 +117,10 @@ final class AdminColumnsAdminController
                             'type' => self::SAVE_ROUTE,
                             'nonce' => $this->ajax->createNonce(self::SAVE_ROUTE),
                         ],
+                        'status' => [
+                            'type' => self::STATUS_ROUTE,
+                            'nonce' => $this->ajax->createNonce(self::STATUS_ROUTE),
+                        ],
                         'read' => [
                             'type' => self::READ_ROUTE,
                             'nonce' => $this->ajax->createNonce(self::READ_ROUTE),
@@ -133,7 +138,7 @@ final class AdminColumnsAdminController
         echo '<div class="wrap wpessential-columns-wrap">';
         echo '<section id="wpessential-columns-root" data-wpessential-surface="columns" aria-labelledby="wpessential-columns-page-title">';
         echo '<h1 id="wpessential-columns-page-title">' . esc_html__('Admin Columns', 'wpessential') . '</h1>';
-        echo '<p>' . esc_html__('Author and reopen revisioned shared Column Sets from canonical target and source metadata. Published saved Views can be previewed through the bounded Query read path; row mutation and export remain unavailable.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Author, reopen and explicitly manage lifecycle for revisioned shared Column Sets. Published saved Views can be previewed through the bounded Query read path; row mutation and export remain unavailable.', 'wpessential') . '</p>';
         echo '</section>';
         echo '<script id="wpessential-columns-bootstrap" type="application/json">' . $json . '</script>';
         echo '</div>';
