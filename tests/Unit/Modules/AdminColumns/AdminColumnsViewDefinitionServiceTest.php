@@ -10,11 +10,15 @@ use RuntimeException;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
+use WPEssential\Modules\AdminColumns\AdminColumnsAdminController;
 use WPEssential\Modules\AdminColumns\AdminColumnsModule;
 use WPEssential\Modules\AdminColumns\AdminColumnsReadAdapter;
 use WPEssential\Modules\AdminColumns\AdminColumnsViewDefinitionNormalizer;
 use WPEssential\Modules\AdminColumns\AdminColumnsViewDefinitionService;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Auth\ExecutionContext;
+use WPEssential\Platform\DataSources\DataSourceDescriptor;
+use WPEssential\Platform\DataSources\DataSourceRegistry;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -92,11 +96,9 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
         $service->save($this->payload());
     }
 
-    public function testModuleRegistersFoundationAndBoundedReadAdapter(): void
+    public function testModuleRegistersFoundationReadAdapterAndReadOnlyAdmin(): void
     {
-        $services = new ServiceRegistry();
-        $services->set('platform.definitions', $this->repository());
-        $services->set('module.query.read-consumer', $this->queryConsumer());
+        $services = $this->servicesWithRequiredDependencies();
         $module = new AdminColumnsModule();
 
         self::assertSame(['query'], $module->manifest()->dependencies);
@@ -115,9 +117,14 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
             AdminColumnsReadAdapter::class,
             $services->get(AdminColumnsModule::SERVICE_READ_ADAPTER),
         );
-        self::assertFalse($services->has('module.admin-columns.admin'));
+        self::assertInstanceOf(
+            AdminColumnsAdminController::class,
+            $services->get(AdminColumnsModule::SERVICE_ADMIN),
+        );
         self::assertFalse($services->has('module.admin-columns.rest'));
         self::assertFalse($services->has('module.admin-columns.ajax'));
+        self::assertFalse($services->has('module.admin-columns.export'));
+        self::assertFalse($services->has('module.admin-columns.mutation'));
     }
 
     public function testModuleRequiresSharedDefinitionsAndBoundedQueryConsumer(): void
@@ -141,6 +148,47 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
             self::assertFalse($missingQuery->has(AdminColumnsModule::SERVICE_VIEWS));
             self::assertFalse($missingQuery->has(AdminColumnsModule::SERVICE_READ_ADAPTER));
         }
+    }
+
+    public function testAdminBootFailsClosedWithoutSharedAssetsOrDataSources(): void
+    {
+        $services = new ServiceRegistry();
+        $services->set('platform.definitions', $this->repository());
+        $services->set('module.query.read-consumer', $this->queryConsumer());
+        $module = new AdminColumnsModule();
+        $module->register($services);
+
+        try {
+            $module->boot($services);
+            self::fail('Expected missing admin dependencies to fail closed.');
+        } catch (\LogicException) {
+            self::assertFalse($services->has(AdminColumnsModule::SERVICE_ADMIN));
+        }
+    }
+
+    private function servicesWithRequiredDependencies(): ServiceRegistry
+    {
+        $services = new ServiceRegistry();
+        $services->set('platform.definitions', $this->repository());
+        $services->set('module.query.read-consumer', $this->queryConsumer());
+        $services->set('platform.data-sources', $this->dataSources());
+        $services->set('platform.admin.assets', new AdminAssetManifest('/tmp/wpessential-test', 'https://example.test/wpessential'));
+        return $services;
+    }
+
+    private function dataSources(): DataSourceRegistry
+    {
+        $registry = new DataSourceRegistry();
+        $registry->register(new DataSourceDescriptor(
+            id: 'wordpress.posts',
+            sourceType: 'wordpress.posts',
+            capabilityVersion: 1,
+            fieldSchema: ['post.title' => 'string', 'post.type' => 'string'],
+            predicates: ['eq'],
+            sortModes: ['field'],
+            paginationModes: ['offset'],
+        ));
+        return $registry;
     }
 
     private function queryConsumer(): QueryReadConsumerInterface
