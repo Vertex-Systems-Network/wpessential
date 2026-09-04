@@ -1,0 +1,48 @@
+name: Temporary PR197 Columns Formatter
+
+on:
+  push:
+    branches:
+      - agent/columns-admin-authoring-scaffold-v1
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/columns-admin-authoring-scaffold-v1
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+          check-latest: false
+
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Apply repository JavaScript auto-fixes
+        run: npm run lint:js -- --fix
+
+      - name: Commit formatting and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/tmp-format-columns-pr197.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin-ui/src/columns.ts .github/workflows/tmp-format-columns-pr197.yml
+          if git diff --cached --quiet; then
+            echo "No formatter changes produced"
+            exit 1
+          fi
+          git commit -m "style(columns): apply repository formatter"
+          git push origin HEAD:agent/columns-admin-authoring-scaffold-v1
