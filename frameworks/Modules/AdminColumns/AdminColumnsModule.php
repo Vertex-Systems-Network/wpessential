@@ -114,30 +114,27 @@ final class AdminColumnsModule implements ModuleInterface
     {
         $assets = $services->get(self::ADMIN_ASSET_SERVICE);
         $dataSources = $services->get(self::DATA_SOURCE_SERVICE);
-        $ajax = $services->get(self::AJAX_DISPATCHER_SERVICE);
-        $gateway = $services->get(self::AJAX_GATEWAY_SERVICE);
-        if (!$assets instanceof AdminAssetManifest
-            || !$dataSources instanceof DataSourceRegistryInterface
-            || !$ajax instanceof AjaxDispatcher
-            || !$gateway instanceof WordPressAjaxGateway
-        ) {
-            throw new LogicException('Admin Columns admin requires canonical shared admin assets, Data Source Registry, and AJAX runtime services.');
+        if (!$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface) {
+            throw new LogicException('Admin Columns admin requires canonical shared admin assets and Data Source Registry.');
         }
         if ($services->has(self::SERVICE_ADMIN)) {
             throw new LogicException('Admin Columns admin service is already registered.');
         }
 
+        $ajax = $services->get(self::AJAX_DISPATCHER_SERVICE);
+        $gateway = $services->get(self::AJAX_GATEWAY_SERVICE);
         $admin = new AdminColumnsAdminController(
             new AdminColumnsAdminBootstrapProjector($dataSources),
             $assets,
-            $ajax,
-            $gateway->action(),
+            $ajax instanceof AjaxDispatcher ? $ajax : null,
+            $gateway instanceof WordPressAjaxGateway ? $gateway->action() : null,
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
         // View-definition AJAX authoring is registered through the shared Ability
-        // platform. No row/source-data mutation, export, or public REST endpoint
-        // is exposed by Admin Columns in this tranche.
+        // platform. The page remains read-only if the shared dispatcher/gateway is
+        // unavailable. No private fallback endpoint, row mutation, export or REST
+        // exposure is introduced here.
     }
 
     /** @return array<string,mixed> */
