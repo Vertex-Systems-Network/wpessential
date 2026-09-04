@@ -9,10 +9,12 @@ if (!defined('ABSPATH')) {
 }
 
 use LogicException;
+use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Modules\ModuleManifest;
 
 final class AdminColumnsModule implements ModuleInterface
@@ -20,8 +22,11 @@ final class AdminColumnsModule implements ModuleInterface
     public const SERVICE_NORMALIZER = 'module.admin-columns.view-normalizer';
     public const SERVICE_VIEWS = 'module.admin-columns.views';
     public const SERVICE_READ_ADAPTER = 'module.admin-columns.read-adapter';
+    public const SERVICE_ADMIN = 'module.admin-columns.admin';
 
     private const QUERY_READ_SERVICE = 'module.query.read-consumer';
+    private const DATA_SOURCE_SERVICE = 'platform.data-sources';
+    private const ADMIN_ASSET_SERVICE = 'platform.admin.assets';
 
     public function manifest(): ModuleManifest
     {
@@ -61,8 +66,22 @@ final class AdminColumnsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        // Read execution is available only through the internal Admin Columns
-        // adapter over the public Query contract. No route, export, mutation or
-        // source-owner private-storage surface is exposed in this tranche.
+        $assets = $services->get(self::ADMIN_ASSET_SERVICE);
+        $dataSources = $services->get(self::DATA_SOURCE_SERVICE);
+        if (!$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface) {
+            throw new LogicException('Admin Columns admin requires canonical shared admin assets and Data Source Registry.');
+        }
+        if ($services->has(self::SERVICE_ADMIN)) {
+            throw new LogicException('Admin Columns admin service is already registered.');
+        }
+
+        $admin = new AdminColumnsAdminController(
+            new AdminColumnsAdminBootstrapProjector($dataSources),
+            $assets,
+        );
+        $services->set(self::SERVICE_ADMIN, $admin);
+        $admin->register();
+        // The page is read-only scaffolding. No REST/AJAX, persistence, export
+        // or source-owner mutation endpoint is exposed in this tranche.
     }
 }
