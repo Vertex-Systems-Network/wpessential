@@ -10,17 +10,21 @@ if (!defined('ABSPATH')) {
 
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 
 final class AdminColumnsAdminController
 {
     public const PAGE_SLUG = 'wpessential-admin-columns';
     private const CAPABILITY = 'manage_options';
+    private const SAVE_ROUTE = 'admin-columns.save.view';
 
     private ?string $hookSuffix = null;
 
     public function __construct(
         private readonly AdminColumnsAdminBootstrapProjector $bootstrap,
         private readonly AdminAssetManifest $assets,
+        private readonly ?AjaxDispatcher $ajax = null,
+        private readonly ?string $ajaxAction = null,
     ) {}
 
     public function register(): void
@@ -87,6 +91,25 @@ final class AdminColumnsAdminController
         }
 
         $bootstrap = $this->bootstrap->project();
+        if ($this->ajax instanceof AjaxDispatcher
+            && is_string($this->ajaxAction)
+            && trim($this->ajaxAction) !== ''
+        ) {
+            $bootstrap = array_merge(
+                $bootstrap,
+                [
+                    'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
+                    'ajaxAction' => $this->ajaxAction,
+                    'routes' => [
+                        'save' => [
+                            'type' => self::SAVE_ROUTE,
+                            'nonce' => $this->ajax->createNonce(self::SAVE_ROUTE),
+                        ],
+                    ],
+                ],
+            );
+        }
+
         $json = function_exists('wp_json_encode')
             ? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
             : json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
@@ -95,7 +118,7 @@ final class AdminColumnsAdminController
         echo '<div class="wrap wpessential-columns-wrap">';
         echo '<section id="wpessential-columns-root" data-wpessential-surface="columns" aria-labelledby="wpessential-columns-page-title">';
         echo '<h1 id="wpessential-columns-page-title">' . esc_html__('Admin Columns', 'wpessential') . '</h1>';
-        echo '<p>' . esc_html__('Author a bounded shared Column Set from canonical target and source metadata. Save, mutation, export and public execution remain unavailable.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Author revisioned shared Column Sets from canonical target and source metadata. Saving is available only when the shared AJAX runtime is present. Query execution, row mutation and export remain unavailable.', 'wpessential') . '</p>';
         echo '</section>';
         echo '<script id="wpessential-columns-bootstrap" type="application/json">' . $json . '</script>';
         echo '</div>';

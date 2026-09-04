@@ -21,8 +21,10 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class AdminColumnsModule implements ModuleInterface
@@ -38,6 +40,8 @@ final class AdminColumnsModule implements ModuleInterface
     private const ABILITY_SERVICE = 'platform.abilities';
     private const ABILITY_CONTEXT_SERVICE = 'platform.abilities.contexts';
     private const AJAX_ROUTE_SERVICE = 'platform.ajax.routes';
+    private const AJAX_DISPATCHER_SERVICE = 'platform.ajax.dispatcher';
+    private const AJAX_GATEWAY_SERVICE = 'platform.ajax.gateway';
     private const CAPABILITY = 'manage_options';
     private const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
 
@@ -117,15 +121,20 @@ final class AdminColumnsModule implements ModuleInterface
             throw new LogicException('Admin Columns admin service is already registered.');
         }
 
+        $ajax = $services->get(self::AJAX_DISPATCHER_SERVICE);
+        $gateway = $services->get(self::AJAX_GATEWAY_SERVICE);
         $admin = new AdminColumnsAdminController(
             new AdminColumnsAdminBootstrapProjector($dataSources),
             $assets,
+            $ajax instanceof AjaxDispatcher ? $ajax : null,
+            $gateway instanceof WordPressAjaxGateway ? $gateway->action() : null,
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
         // View-definition AJAX authoring is registered through the shared Ability
-        // platform. No row/source-data mutation, export, or public REST endpoint
-        // is exposed by Admin Columns in this tranche.
+        // platform. The page remains read-only if the shared dispatcher/gateway is
+        // unavailable. No private fallback endpoint, row mutation, export or REST
+        // exposure is introduced here.
     }
 
     /** @return array<string,mixed> */
