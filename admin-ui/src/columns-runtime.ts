@@ -316,13 +316,15 @@ function boot(): void {
 	try {
 		const raw: unknown = JSON.parse( script.textContent ?? '{}' );
 		const bootstrap = parseAdminColumnsBootstrap( raw );
-		const saveBootstrap = parseSaveBootstrap( raw );
-		if ( bootstrap === null || saveBootstrap === null ) {
+		if ( bootstrap === null ) {
 			failBootstrap( root );
 			return;
 		}
 		mountAdminColumnsScaffold( root, bootstrap );
-		wireSave( root, bootstrap, saveBootstrap );
+		const saveBootstrap = parseSaveBootstrap( raw );
+		if ( saveBootstrap !== null ) {
+			wireSave( root, bootstrap, saveBootstrap );
+		}
 		window.dispatchEvent(
 			new CustomEvent( 'wpessential:admin-ready', {
 				detail: { surface: 'columns', payload: bootstrap },
