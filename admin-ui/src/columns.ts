@@ -566,19 +566,25 @@ export function mountAdminColumnsScaffold(
 			} );
 			up.addEventListener( 'click', () => {
 				if ( index > 0 ) {
-					[ draft.columns[ index - 1 ], draft.columns[ index ] ] = [
-						draft.columns[ index ],
-						draft.columns[ index - 1 ],
-					];
+					const current = draft.columns[ index ];
+					const previous = draft.columns[ index - 1 ];
+					if ( current === undefined || previous === undefined ) {
+						return;
+					}
+					draft.columns[ index - 1 ] = current;
+					draft.columns[ index ] = previous;
 					renderColumns();
 				}
 			} );
 			down.addEventListener( 'click', () => {
 				if ( index < draft.columns.length - 1 ) {
-					[ draft.columns[ index ], draft.columns[ index + 1 ] ] = [
-						draft.columns[ index + 1 ],
-						draft.columns[ index ],
-					];
+					const current = draft.columns[ index ];
+					const next = draft.columns[ index + 1 ];
+					if ( current === undefined || next === undefined ) {
+						return;
+					}
+					draft.columns[ index ] = next;
+					draft.columns[ index + 1 ] = current;
 					renderColumns();
 				}
 			} );
