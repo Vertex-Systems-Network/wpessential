@@ -1203,7 +1203,8 @@ function wireLifecycle(
 				'Lifecycle status could not be changed. The current saved revision and local lifecycle state were preserved.';
 		} finally {
 			inFlight = false;
-			sync();
+			select.disabled = false;
+			apply.disabled = false;
 		}
 	} );
 }
