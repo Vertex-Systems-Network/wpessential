@@ -46,7 +46,15 @@ type DraftView = {
 	columns: DraftColumn[];
 };
 
-const SAFE_FORMATS = [ 'text', 'number', 'date', 'boolean', 'image', 'badge', 'link' ];
+const SAFE_FORMATS = [
+	'text',
+	'number',
+	'date',
+	'boolean',
+	'image',
+	'badge',
+	'link',
+];
 const SAFE_SOURCE_OWNERS = [
 	'native',
 	'fields',
@@ -60,15 +68,24 @@ const SAFE_SOURCE_OWNERS = [
 ];
 
 function isObject( value: unknown ): value is JsonObject {
-	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+	return (
+		typeof value === 'object' && value !== null && ! Array.isArray( value )
+	);
 }
 
 function identifier( value: unknown ): value is string {
-	return typeof value === 'string' && /^[a-z0-9][a-z0-9._:-]{0,191}$/.test( value );
+	return (
+		typeof value === 'string' &&
+		/^[a-z0-9][a-z0-9._:-]{0,191}$/.test( value )
+	);
 }
 
 function label( value: unknown ): value is string {
-	return typeof value === 'string' && value.trim() !== '' && value.trim().length <= 191;
+	return (
+		typeof value === 'string' &&
+		value.trim() !== '' &&
+		value.trim().length <= 191
+	);
 }
 
 function parseCapabilities( value: unknown ): CapabilitySet | null {
@@ -84,7 +101,12 @@ function parseCapabilities( value: unknown ): CapabilitySet | null {
 }
 
 function parseTarget( value: unknown ): ColumnTarget | null {
-	if ( ! isObject( value ) || ! identifier( value.type ) || ! identifier( value.key ) || ! label( value.label ) ) {
+	if (
+		! isObject( value ) ||
+		! identifier( value.type ) ||
+		! identifier( value.key ) ||
+		! label( value.label )
+	) {
 		return null;
 	}
 	const capabilities = parseCapabilities( value.capabilities );
@@ -107,7 +129,10 @@ function parseSource( value: unknown ): ColumnSource | null {
 		! identifier( value.reference ) ||
 		! label( value.label ) ||
 		! Array.isArray( value.formats ) ||
-		! value.formats.every( ( format ) => typeof format === 'string' && SAFE_FORMATS.includes( format ) ) ||
+		! value.formats.every(
+			( format ) =>
+				typeof format === 'string' && SAFE_FORMATS.includes( format )
+		) ||
 		value.formats.length === 0
 	) {
 		return null;
@@ -125,7 +150,9 @@ function parseSource( value: unknown ): ColumnSource | null {
 	};
 }
 
-export function parseAdminColumnsBootstrap( value: unknown ): AdminColumnsBootstrap | null {
+export function parseAdminColumnsBootstrap(
+	value: unknown
+): AdminColumnsBootstrap | null {
 	if (
 		! isObject( value ) ||
 		value.surface !== 'columns' ||
@@ -183,11 +210,21 @@ function controlLabel( control: HTMLElement, text: string ): HTMLLabelElement {
 	return node;
 }
 
-function sourceByReference( bootstrap: AdminColumnsBootstrap, reference: string ): ColumnSource | null {
-	return bootstrap.sources.find( ( source ) => source.reference === reference ) ?? null;
+function sourceByReference(
+	bootstrap: AdminColumnsBootstrap,
+	reference: string
+): ColumnSource | null {
+	return (
+		bootstrap.sources.find(
+			( source ) => source.reference === reference
+		) ?? null
+	);
 }
 
-function targetByKey( bootstrap: AdminColumnsBootstrap, key: string ): ColumnTarget | null {
+function targetByKey(
+	bootstrap: AdminColumnsBootstrap,
+	key: string
+): ColumnTarget | null {
 	return bootstrap.targets.find( ( target ) => target.key === key ) ?? null;
 }
 
@@ -208,15 +245,15 @@ function initialView( bootstrap: AdminColumnsBootstrap ): DraftView {
 		targetKey: firstTarget?.key ?? '',
 		columns: firstSource
 			? [
-				{
-					id: 1,
-					key: 'column_1',
-					label: firstSource.label,
-					sourceReference: firstSource.reference,
-					format: firstSource.formats[ 0 ] ?? 'text',
-					enabled: true,
-				},
-			]
+					{
+						id: 1,
+						key: 'column_1',
+						label: firstSource.label,
+						sourceReference: firstSource.reference,
+						format: firstSource.formats[ 0 ] ?? 'text',
+						enabled: true,
+					},
+			  ]
 			: [],
 	};
 }
@@ -232,21 +269,33 @@ export function mountAdminColumnsScaffold(
 
 	let nextColumnId = 2;
 	const draft = initialView( bootstrap );
-	const title = element( 'h2', 'wpessential-columns__title', 'Admin Columns' );
+	const title = element(
+		'h2',
+		'wpessential-columns__title',
+		'Admin Columns'
+	);
 	const intro = element(
 		'p',
 		'wpessential-columns__intro',
 		'Author a shared Column Set presentation. Save, Query execution and source-owner mutation remain intentionally unavailable until their certified server integrations exist.'
 	);
 
-	const stateNotice = element( 'div', 'notice notice-info inline wpessential-columns__state-note' );
+	const stateNotice = element(
+		'div',
+		'notice notice-info inline wpessential-columns__state-note'
+	);
 	stateNotice.setAttribute( 'role', 'note' );
 	stateNotice.textContent =
 		'This editor changes authored shared draft state only. Personal preferences, effective runtime capabilities and diagnostics are separate read-only/state-specific contracts.';
 
 	const nav = element( 'nav', 'wpessential-columns__nav' );
 	nav.setAttribute( 'aria-label', 'Admin Columns sections' );
-	for ( const [ index, section ] of [ 'Column Sets', 'Segments', 'Adapters', 'Diagnostics' ].entries() ) {
+	for ( const [ index, section ] of [
+		'Column Sets',
+		'Segments',
+		'Adapters',
+		'Diagnostics',
+	].entries() ) {
 		const button = element( 'button', 'button', section );
 		button.type = 'button';
 		button.disabled = index !== 0;
@@ -275,13 +324,22 @@ export function mountAdminColumnsScaffold(
 		targetSelect.append( option( target.key, target.label ) );
 	}
 	const targetField = element( 'div', 'wpessential-columns__field' );
-	targetField.append( controlLabel( targetSelect, 'Target adapter' ), targetSelect );
-	const targetStatus = element( 'p', 'description wpessential-columns__capabilities' );
+	targetField.append(
+		controlLabel( targetSelect, 'Target adapter' ),
+		targetSelect
+	);
+	const targetStatus = element(
+		'p',
+		'description wpessential-columns__capabilities'
+	);
 	targetStatus.id = 'wpessential-columns-target-capabilities';
 	targetStatus.setAttribute( 'aria-live', 'polite' );
 	general.append( nameField, targetField, targetStatus );
 
-	const columnsSection = element( 'fieldset', 'wpessential-columns__section' );
+	const columnsSection = element(
+		'fieldset',
+		'wpessential-columns__section'
+	);
 	columnsSection.append( element( 'legend', undefined, 'Columns' ) );
 	const columnsList = element( 'div', 'wpessential-columns__list' );
 	const addColumn = element( 'button', 'button', 'Add Column' );
@@ -298,7 +356,10 @@ export function mountAdminColumnsScaffold(
 		)
 	);
 
-	const editingSection = element( 'fieldset', 'wpessential-columns__section' );
+	const editingSection = element(
+		'fieldset',
+		'wpessential-columns__section'
+	);
 	editingSection.append(
 		element( 'legend', undefined, 'Editing & Export' ),
 		element(
@@ -308,7 +369,10 @@ export function mountAdminColumnsScaffold(
 		)
 	);
 
-	const diagnosticSection = element( 'fieldset', 'wpessential-columns__section' );
+	const diagnosticSection = element(
+		'fieldset',
+		'wpessential-columns__section'
+	);
 	diagnosticSection.append(
 		element( 'legend', undefined, 'Effective state & Diagnostics' ),
 		element(
@@ -327,7 +391,11 @@ export function mountAdminColumnsScaffold(
 		'Save is disabled until the canonical server route, bootstrap, Policy and revisioned Definition integration are certified together.'
 	);
 	saveHelp.id = 'wpessential-columns-save-help';
-	const save = element( 'button', 'button button-primary', 'Save unavailable' );
+	const save = element(
+		'button',
+		'button button-primary',
+		'Save unavailable'
+	);
 	save.type = 'button';
 	save.disabled = true;
 	save.setAttribute( 'aria-describedby', saveHelp.id );
@@ -354,15 +422,26 @@ export function mountAdminColumnsScaffold(
 	const renderColumns = (): void => {
 		columnsList.replaceChildren();
 		if ( draft.columns.length === 0 ) {
-			const empty = element( 'p', 'wpessential-columns__empty', 'No Columns in this draft.' );
+			const empty = element(
+				'p',
+				'wpessential-columns__empty',
+				'No Columns in this draft.'
+			);
 			columnsList.append( empty );
 			return;
 		}
 
 		for ( const [ index, column ] of draft.columns.entries() ) {
 			const card = element( 'section', 'wpessential-columns__column' );
-			card.setAttribute( 'aria-label', `Column ${ index + 1 }: ${ column.label || column.key }` );
-			const heading = element( 'h3', 'wpessential-columns__column-title', `Column ${ index + 1 }` );
+			card.setAttribute(
+				'aria-label',
+				`Column ${ index + 1 }: ${ column.label || column.key }`
+			);
+			const heading = element(
+				'h3',
+				'wpessential-columns__column-title',
+				`Column ${ index + 1 }`
+			);
 
 			const labelInput = element( 'input' );
 			labelInput.id = `wpessential-columns-label-${ column.id }`;
@@ -370,21 +449,35 @@ export function mountAdminColumnsScaffold(
 			labelInput.maxLength = 191;
 			labelInput.value = column.label;
 			const labelField = element( 'div', 'wpessential-columns__field' );
-			labelField.append( controlLabel( labelInput, 'Label' ), labelInput );
+			labelField.append(
+				controlLabel( labelInput, 'Label' ),
+				labelInput
+			);
 
 			const sourceSelect = element( 'select' );
 			sourceSelect.id = `wpessential-columns-source-${ column.id }`;
 			for ( const source of bootstrap.sources ) {
-				sourceSelect.append( option( source.reference, `${ source.label } — ${ source.owner }` ) );
+				sourceSelect.append(
+					option(
+						source.reference,
+						`${ source.label } — ${ source.owner }`
+					)
+				);
 			}
 			sourceSelect.value = column.sourceReference;
 			const sourceField = element( 'div', 'wpessential-columns__field' );
-			sourceField.append( controlLabel( sourceSelect, 'Source' ), sourceSelect );
+			sourceField.append(
+				controlLabel( sourceSelect, 'Source' ),
+				sourceSelect
+			);
 
 			const formatSelect = element( 'select' );
 			formatSelect.id = `wpessential-columns-format-${ column.id }`;
 			const renderFormats = (): void => {
-				const source = sourceByReference( bootstrap, column.sourceReference );
+				const source = sourceByReference(
+					bootstrap,
+					column.sourceReference
+				);
 				formatSelect.replaceChildren();
 				for ( const format of source?.formats ?? [ 'text' ] ) {
 					formatSelect.append( option( format, format ) );
@@ -396,13 +489,24 @@ export function mountAdminColumnsScaffold(
 			};
 			renderFormats();
 			const formatField = element( 'div', 'wpessential-columns__field' );
-			formatField.append( controlLabel( formatSelect, 'Display format' ), formatSelect );
+			formatField.append(
+				controlLabel( formatSelect, 'Display format' ),
+				formatSelect
+			);
 
-			const capabilityNote = element( 'p', 'description wpessential-columns__capabilities' );
+			const capabilityNote = element(
+				'p',
+				'description wpessential-columns__capabilities'
+			);
 			const renderCapabilities = (): void => {
-				const source = sourceByReference( bootstrap, column.sourceReference );
+				const source = sourceByReference(
+					bootstrap,
+					column.sourceReference
+				);
 				capabilityNote.textContent = source
-					? `${ capabilitySummary( source.capabilities ) }. Capability badges are effective state, not authorization.`
+					? `${ capabilitySummary(
+							source.capabilities
+					  ) }. Capability badges are effective state, not authorization.`
 					: 'Source unavailable; no capability is inferred.';
 			};
 			renderCapabilities();
@@ -411,7 +515,11 @@ export function mountAdminColumnsScaffold(
 			enabled.type = 'checkbox';
 			enabled.id = `wpessential-columns-enabled-${ column.id }`;
 			enabled.checked = column.enabled;
-			const enabledLabel = element( 'label', 'wpessential-columns__check', ' Visible in shared presentation' );
+			const enabledLabel = element(
+				'label',
+				'wpessential-columns__check',
+				' Visible in shared presentation'
+			);
 			enabledLabel.htmlFor = enabled.id;
 			enabledLabel.prepend( enabled );
 			const authNote = element(
@@ -424,7 +532,11 @@ export function mountAdminColumnsScaffold(
 			const up = element( 'button', 'button button-small', 'Move up' );
 			up.type = 'button';
 			up.disabled = index === 0;
-			const down = element( 'button', 'button button-small', 'Move down' );
+			const down = element(
+				'button',
+				'button button-small',
+				'Move down'
+			);
 			down.type = 'button';
 			down.disabled = index === draft.columns.length - 1;
 			const remove = element( 'button', 'button button-small', 'Remove' );
@@ -433,13 +545,15 @@ export function mountAdminColumnsScaffold(
 
 			labelInput.addEventListener( 'input', () => {
 				column.label = labelInput.value;
-				status.textContent = 'Local authored draft changed. No server mutation occurred.';
+				status.textContent =
+					'Local authored draft changed. No server mutation occurred.';
 			} );
 			sourceSelect.addEventListener( 'change', () => {
 				column.sourceReference = sourceSelect.value;
 				renderFormats();
 				renderCapabilities();
-				status.textContent = 'Source selection changed locally; owner validation remains server-authoritative.';
+				status.textContent =
+					'Source selection changed locally; owner validation remains server-authoritative.';
 			} );
 			formatSelect.addEventListener( 'change', () => {
 				column.format = formatSelect.value;
@@ -447,24 +561,34 @@ export function mountAdminColumnsScaffold(
 			} );
 			enabled.addEventListener( 'change', () => {
 				column.enabled = enabled.checked;
-				status.textContent = 'Presentation visibility changed locally; authorization was not changed.';
+				status.textContent =
+					'Presentation visibility changed locally; authorization was not changed.';
 			} );
 			up.addEventListener( 'click', () => {
 				if ( index > 0 ) {
-					[ draft.columns[ index - 1 ], draft.columns[ index ] ] = [ draft.columns[ index ], draft.columns[ index - 1 ] ];
+					[ draft.columns[ index - 1 ], draft.columns[ index ] ] = [
+						draft.columns[ index ],
+						draft.columns[ index - 1 ],
+					];
 					renderColumns();
 				}
 			} );
 			down.addEventListener( 'click', () => {
 				if ( index < draft.columns.length - 1 ) {
-					[ draft.columns[ index ], draft.columns[ index + 1 ] ] = [ draft.columns[ index + 1 ], draft.columns[ index ] ];
+					[ draft.columns[ index ], draft.columns[ index + 1 ] ] = [
+						draft.columns[ index + 1 ],
+						draft.columns[ index ],
+					];
 					renderColumns();
 				}
 			} );
 			remove.addEventListener( 'click', () => {
-				draft.columns = draft.columns.filter( ( candidate ) => candidate.id !== column.id );
+				draft.columns = draft.columns.filter(
+					( candidate ) => candidate.id !== column.id
+				);
 				renderColumns();
-				status.textContent = 'Column removed from the local authored draft only.';
+				status.textContent =
+					'Column removed from the local authored draft only.';
 			} );
 
 			card.append(
@@ -483,17 +607,20 @@ export function mountAdminColumnsScaffold(
 
 	nameInput.addEventListener( 'input', () => {
 		draft.name = nameInput.value;
-		status.textContent = 'Local authored draft changed. No server mutation occurred.';
+		status.textContent =
+			'Local authored draft changed. No server mutation occurred.';
 	} );
 	targetSelect.addEventListener( 'change', () => {
 		draft.targetKey = targetSelect.value;
 		renderTarget();
-		status.textContent = 'Target changed locally. Server capability re-evaluation is still required before persistence.';
+		status.textContent =
+			'Target changed locally. Server capability re-evaluation is still required before persistence.';
 	} );
 	addColumn.addEventListener( 'click', () => {
 		const source = bootstrap.sources[ 0 ];
 		if ( ! source || draft.columns.length >= 100 ) {
-			status.textContent = 'No certified source is available or the bounded 100-Column draft limit was reached.';
+			status.textContent =
+				'No certified source is available or the bounded 100-Column draft limit was reached.';
 			return;
 		}
 		draft.columns.push( {
@@ -511,5 +638,6 @@ export function mountAdminColumnsScaffold(
 
 	renderTarget();
 	renderColumns();
-	status.textContent = 'Non-runtime scaffold ready. No data has been saved or executed.';
+	status.textContent =
+		'Non-runtime scaffold ready. No data has been saved or executed.';
 }
