@@ -65,6 +65,8 @@ Presentation visibility is explicitly described as non-authorizing.
 
 The TypeScript source is normalized with the repository-owned JavaScript formatter/linter before promotion. Formatting changes do not widen the runtime boundary, add shared build wiring or authorize save/execution behavior.
 
+Reorder actions also guard both indexed draft entries before assignment. This preserves the same local move behavior while satisfying the repository's strict indexed-access TypeScript contract; invalid/stale indices fail closed without mutating the authored draft.
+
 ## Explicit non-goals
 
 - canonical WordPress route or enqueue;
