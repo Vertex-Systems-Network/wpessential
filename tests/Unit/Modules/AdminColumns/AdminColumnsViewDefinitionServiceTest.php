@@ -134,6 +134,7 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
         foreach ([
             'list-views' => false,
             'get-view' => false,
+            'read-rows' => false,
             'save-view' => true,
             'status-view' => true,
         ] as $action => $mutates) {
@@ -147,14 +148,27 @@ final class AdminColumnsViewDefinitionServiceTest extends TestCase
             self::assertFalse($descriptor->allows(ExecutionChannel::Rest));
         }
 
+        $readDescriptor = $abilities->descriptor('wpessential/admin-columns/read-rows');
+        self::assertNotNull($readDescriptor);
+        self::assertSame(['view_id'], $readDescriptor->inputSchema['required']);
+        self::assertFalse($readDescriptor->inputSchema['additionalProperties']);
+        self::assertSame(16, $readDescriptor->inputSchema['properties']['filters']['maxItems']);
+        self::assertSame(200, $readDescriptor->inputSchema['properties']['search']['maxLength']);
+        self::assertSame(4, $readDescriptor->inputSchema['properties']['order_by']['maxItems']);
+        self::assertSame(100, $readDescriptor->inputSchema['properties']['page_size']['maximum']);
+        self::assertSame(10000, $readDescriptor->inputSchema['properties']['offset']['maximum']);
+
         $routes = $services->get('platform.ajax.routes');
         self::assertInstanceOf(AjaxRouteRegistry::class, $routes);
         self::assertSame([
             'admin-columns.get.view',
             'admin-columns.list.views',
+            'admin-columns.read.rows',
             'admin-columns.save.view',
             'admin-columns.status.view',
         ], $routes->types());
+        self::assertFalse($routes->get('admin-columns.read.rows')?->allowGuests ?? true);
+        self::assertTrue($routes->get('admin-columns.read.rows')?->requiresNonce ?? false);
 
         self::assertFalse($services->has('module.admin-columns.rest'));
         self::assertFalse($services->has('module.admin-columns.export'));
