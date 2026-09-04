@@ -53,7 +53,7 @@ final class AdminColumnsAdminController
         if ($this->hookSuffix === null || $hookSuffix !== $this->hookSuffix) {
             return;
         }
-        $entry = $this->assets->entry('columns');
+        $entry = $this->assets->entry('columns-runtime');
         if ($entry === null) {
             return;
         }
