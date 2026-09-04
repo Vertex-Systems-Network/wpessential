@@ -16,6 +16,8 @@ final class AdminColumnsAdminController
 {
     public const PAGE_SLUG = 'wpessential-admin-columns';
     private const CAPABILITY = 'manage_options';
+    private const LIST_ROUTE = 'admin-columns.list.views';
+    private const GET_ROUTE = 'admin-columns.get.view';
     private const SAVE_ROUTE = 'admin-columns.save.view';
 
     private ?string $hookSuffix = null;
@@ -101,6 +103,14 @@ final class AdminColumnsAdminController
                     'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
                     'ajaxAction' => $this->ajaxAction,
                     'routes' => [
+                        'list' => [
+                            'type' => self::LIST_ROUTE,
+                            'nonce' => $this->ajax->createNonce(self::LIST_ROUTE),
+                        ],
+                        'get' => [
+                            'type' => self::GET_ROUTE,
+                            'nonce' => $this->ajax->createNonce(self::GET_ROUTE),
+                        ],
                         'save' => [
                             'type' => self::SAVE_ROUTE,
                             'nonce' => $this->ajax->createNonce(self::SAVE_ROUTE),
@@ -118,7 +128,7 @@ final class AdminColumnsAdminController
         echo '<div class="wrap wpessential-columns-wrap">';
         echo '<section id="wpessential-columns-root" data-wpessential-surface="columns" aria-labelledby="wpessential-columns-page-title">';
         echo '<h1 id="wpessential-columns-page-title">' . esc_html__('Admin Columns', 'wpessential') . '</h1>';
-        echo '<p>' . esc_html__('Author revisioned shared Column Sets from canonical target and source metadata. Saving is available only when the shared AJAX runtime is present. Query execution, row mutation and export remain unavailable.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Author and reopen revisioned shared Column Sets from canonical target and source metadata. Query execution, row mutation and export remain unavailable.', 'wpessential') . '</p>';
         echo '</section>';
         echo '<script id="wpessential-columns-bootstrap" type="application/json">' . $json . '</script>';
         echo '</div>';
