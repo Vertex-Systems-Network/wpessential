@@ -44,6 +44,12 @@ If list/get route metadata is absent or saved-View listing fails, the new unsave
 
 A malformed, cross-surface, incompatible or stale GET response is rejected before hydration and receives bounded generic UI text. No Query execution, row/source-data mutation, inline/bulk editing or export occurs while listing or reopening Views.
 
+## Validation reconciliation
+
+The first exact-head browser/build run correctly exposed strict TypeScript narrowing failures in nested target/source access plus `exactOptionalPropertyTypes` session assignments. The normalization carrier corrected these without changing the feature boundary: target/source values are narrowed through stable local references, canonical source values are written from the validated catalog match, and optional retained metadata uses explicit `undefined` session state.
+
+The repository's own JavaScript formatter and strict TypeScript typecheck passed on the normalized runtime before the temporary carrier removed itself. The final PR diff contains no temporary workflow file; fresh user-authored exact-head repository workflows remain authoritative for merge acceptance.
+
 ## Non-goals
 
 This tranche does not add:
