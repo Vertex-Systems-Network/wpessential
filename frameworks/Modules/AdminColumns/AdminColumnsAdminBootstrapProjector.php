@@ -18,6 +18,7 @@ final readonly class AdminColumnsAdminBootstrapProjector
     private const CONTRACT_VERSION = 1;
     private const MAX_TARGETS = 100;
     private const MAX_SOURCES = 100;
+    private const MAX_LABEL_BYTES = 191;
 
     public function __construct(
         private DataSourceRegistryInterface $dataSources,
@@ -48,9 +49,8 @@ final readonly class AdminColumnsAdminBootstrapProjector
     /** @return list<array<string,mixed>> */
     private function targets(): array
     {
-        $raw = $this->postTypes();
         $targets = [];
-        foreach ($raw as $key => $postType) {
+        foreach ($this->postTypes() as $key => $postType) {
             $name = null;
             $label = null;
             if (is_object($postType)) {
@@ -74,7 +74,7 @@ final readonly class AdminColumnsAdminBootstrapProjector
             $targets[$name] = [
                 'type' => 'post_type',
                 'key' => $name,
-                'label' => mb_substr(trim($label), 0, 191),
+                'label' => $this->boundedLabel(trim($label)),
                 'capabilities' => $this->readOnlyCapabilities(),
             ];
         }
@@ -154,6 +154,11 @@ final readonly class AdminColumnsAdminBootstrapProjector
 
     private function label(string $reference): string
     {
-        return mb_substr(ucwords(str_replace(['.', '_', '-'], ' ', $reference)), 0, 191);
+        return $this->boundedLabel(ucwords(str_replace(['.', '_', '-'], ' ', $reference)));
+    }
+
+    private function boundedLabel(string $label): string
+    {
+        return substr($label, 0, self::MAX_LABEL_BYTES);
     }
 }
