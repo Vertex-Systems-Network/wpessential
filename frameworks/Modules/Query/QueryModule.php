@@ -26,6 +26,7 @@ final class QueryModule implements ModuleInterface
     public const SERVICE_COMPILER = 'module.query.compiler.wordpress-posts';
     public const SERVICE_PLANNER = 'module.query.authorized-planner';
     public const SERVICE_EXECUTOR = 'module.query.authorized-executor';
+    public const SERVICE_READ_CONSUMER = 'module.query.read-consumer';
 
     private const DATA_SOURCE_SERVICE = 'platform.data-sources';
     private const POLICY_SERVICE = 'platform.abilities.policy';
@@ -65,10 +66,13 @@ final class QueryModule implements ModuleInterface
         $executor = new QueryAuthorizedExecutor($planner, $providerExecutor);
 
         $dataSources->register($this->wordpressPostsDescriptor($relations !== null));
+        $readConsumer = new QueryReadConsumer($dataSources, $validator, $executor);
+
         $services->set(self::SERVICE_VALIDATOR, $validator);
         $services->set(self::SERVICE_COMPILER, $compiler);
         $services->set(self::SERVICE_PLANNER, $planner);
         $services->set(self::SERVICE_EXECUTOR, $executor);
+        $services->set(self::SERVICE_READ_CONSUMER, $readConsumer);
     }
 
     public function boot(ServiceRegistryInterface $services): void
@@ -82,7 +86,8 @@ final class QueryModule implements ModuleInterface
         $admin = new QueryAdminController(new QueryAdminBootstrapProjector($dataSources), $assets);
         $services->set('module.query.admin', $admin);
         $admin->register();
-        // Query execution remains an internal service. No REST/AJAX/admin execution endpoint is exposed here.
+        // Cross-surface reads are available only through the bounded Query read-consumer service.
+        // No REST/AJAX/admin execution endpoint is exposed here.
     }
 
     private function requireDataSources(ServiceRegistryInterface $services): DataSourceRegistryInterface
@@ -149,6 +154,7 @@ final class QueryModule implements ModuleInterface
                 self::SERVICE_COMPILER,
                 self::SERVICE_PLANNER,
                 self::SERVICE_EXECUTOR,
+                self::SERVICE_READ_CONSUMER,
             ] as $serviceId
         ) {
             if ($services->has($serviceId)) {
