@@ -1,0 +1,85 @@
+name: Temporary Admin Columns preview session hardening
+
+on:
+  push:
+    branches:
+      - agent/admin-columns-row-preview-v1
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/admin-columns-row-preview-v1
+          fetch-depth: 0
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Harden preview session invalidation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('admin-ui/src/columns-runtime.ts')
+          s = p.read_text()
+
+          def replace_once(old: str, new: str, label: str) -> None:
+              global s
+              count = s.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label} occurrences: {count}')
+              s = s.replace(old, new, 1)
+
+          replace_once(
+              """\t\t\ttypeof candidate.primary !== 'boolean' ||\n\t\t\t! [ 'native', 'query' ].includes(\n\t\t\t\tString( candidate.source_owner )\n\t\t\t) ||\n\t\t\tcolumnKeys.has( candidate.key )\n""",
+              """\t\t\ttypeof candidate.primary !== 'boolean' ||\n\t\t\ttypeof candidate.source_owner !== 'string' ||\n\t\t\t! [ 'native', 'query' ].includes( candidate.source_owner ) ||\n\t\t\tcolumnKeys.has( candidate.key )\n""",
+              'strict source owner validation',
+          )
+          replace_once(
+              """\t\t\tsourceOwner: String( candidate.source_owner ),\n""",
+              """\t\t\tsourceOwner: candidate.source_owner,\n""",
+              'source owner projection',
+          )
+          replace_once(
+              """\tsession.visibility = definition.loadedPayload.visibility;\n\tsession.columnIdentities = identities;\n}\n""",
+              """\tsession.visibility = definition.loadedPayload.visibility;\n\tsession.columnIdentities = identities;\n\troot.dispatchEvent( new CustomEvent( 'wpessential:columns-session-changed' ) );\n}\n""",
+              'hydrate session invalidation',
+          )
+          replace_once(
+              """\t\t\tsession.definitionId = definition.id;\n\t\t\tsession.revision = definition.revision;\n\t\t\tstatus.textContent = `Column Set saved as revision ${ session.revision }.`;\n""",
+              """\t\t\tsession.definitionId = definition.id;\n\t\t\tsession.revision = definition.revision;\n\t\t\troot.dispatchEvent(\n\t\t\t\tnew CustomEvent( 'wpessential:columns-session-changed' )\n\t\t\t);\n\t\t\tstatus.textContent = `Column Set saved as revision ${ session.revision }.`;\n""",
+              'save session invalidation',
+          )
+          replace_once(
+              """\tlet offset = 0;\n\tlet lastReturned = 0;\n\tlet inFlight = false;\n\n\tconst render = ( result: PreviewResult ): void => {\n""",
+              """\tlet offset = 0;\n\tlet lastReturned = 0;\n\tlet inFlight = false;\n\n\tconst resetPreview = (): void => {\n\t\toffset = 0;\n\t\tlastReturned = 0;\n\t\tprevious.disabled = true;\n\t\tnext.disabled = true;\n\t\thead.replaceChildren();\n\t\tbody.replaceChildren();\n\t\ttable.hidden = true;\n\t\tpreviewStatus.textContent =\n\t\t\t'Current saved View changed. Choose Preview rows to load the active saved revision.';\n\t};\n\troot.addEventListener( 'wpessential:columns-session-changed', resetPreview );\n\n\tconst render = ( result: PreviewResult ): void => {\n""",
+              'preview reset wiring',
+          )
+
+          p.write_text(s)
+          PY
+          npm ci --ignore-scripts
+          npm run lint:js -- --fix
+          npm run typecheck
+          npm run build
+      - name: Commit normalized runtime and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/tmp-columns-row-preview-session-v1.yml
+          git add admin-ui/src/columns-runtime.ts
+          git diff --cached --check
+          git commit -m "fix(columns): invalidate stale row previews on session change"
+          git push origin HEAD:agent/admin-columns-row-preview-v1
