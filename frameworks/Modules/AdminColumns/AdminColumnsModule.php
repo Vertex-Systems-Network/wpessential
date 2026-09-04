@@ -108,6 +108,22 @@ final class AdminColumnsModule implements ModuleInterface
                 operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
             ));
         }
+
+        $readDescriptor = new AbilityDescriptor(
+            name: 'wpessential/admin-columns/read-rows',
+            ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+            capability: self::CAPABILITY,
+            mutates: false,
+            channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+            inputSchema: $this->readAbilityInputSchema(),
+            outputSchema: ['type' => 'object'],
+        );
+        $abilities->register($readDescriptor, new AdminColumnsReadAbilityHandler($readAdapter));
+        $ajaxRoutes->register(new AjaxRoute(
+            type: 'admin-columns.read.rows',
+            handler: new AbilityAjaxHandler($abilities, $readDescriptor->name, $contexts),
+            operation: NonceOperation::Apply,
+        ));
     }
 
     public function boot(ServiceRegistryInterface $services): void
@@ -131,10 +147,10 @@ final class AdminColumnsModule implements ModuleInterface
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
-        // View-definition AJAX authoring is registered through the shared Ability
-        // platform. The page remains read-only if the shared dispatcher/gateway is
-        // unavailable. No private fallback endpoint, row mutation, export or REST
-        // exposure is introduced here.
+        // View-definition and bounded row-read AJAX are registered through the
+        // shared Ability platform. The page remains read-only if the shared
+        // dispatcher/gateway is unavailable. No private fallback endpoint, row
+        // mutation, export or REST exposure is introduced here.
     }
 
     /** @return array<string,mixed> */
@@ -167,6 +183,24 @@ final class AdminColumnsModule implements ModuleInterface
             'type' => 'object',
             'required' => $required,
             'properties' => $properties,
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function readAbilityInputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['view_id'],
+            'properties' => [
+                'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'filters' => ['type' => 'array', 'maxItems' => 16],
+                'search' => ['type' => 'string', 'maxLength' => 200],
+                'order_by' => ['type' => 'array', 'maxItems' => 4],
+                'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
+                'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+            ],
             'additionalProperties' => false,
         ];
     }
