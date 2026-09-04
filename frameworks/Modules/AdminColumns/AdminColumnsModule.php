@@ -21,8 +21,10 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class AdminColumnsModule implements ModuleInterface
@@ -38,6 +40,8 @@ final class AdminColumnsModule implements ModuleInterface
     private const ABILITY_SERVICE = 'platform.abilities';
     private const ABILITY_CONTEXT_SERVICE = 'platform.abilities.contexts';
     private const AJAX_ROUTE_SERVICE = 'platform.ajax.routes';
+    private const AJAX_DISPATCHER_SERVICE = 'platform.ajax.dispatcher';
+    private const AJAX_GATEWAY_SERVICE = 'platform.ajax.gateway';
     private const CAPABILITY = 'manage_options';
     private const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
 
@@ -110,8 +114,14 @@ final class AdminColumnsModule implements ModuleInterface
     {
         $assets = $services->get(self::ADMIN_ASSET_SERVICE);
         $dataSources = $services->get(self::DATA_SOURCE_SERVICE);
-        if (!$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface) {
-            throw new LogicException('Admin Columns admin requires canonical shared admin assets and Data Source Registry.');
+        $ajax = $services->get(self::AJAX_DISPATCHER_SERVICE);
+        $gateway = $services->get(self::AJAX_GATEWAY_SERVICE);
+        if (!$assets instanceof AdminAssetManifest
+            || !$dataSources instanceof DataSourceRegistryInterface
+            || !$ajax instanceof AjaxDispatcher
+            || !$gateway instanceof WordPressAjaxGateway
+        ) {
+            throw new LogicException('Admin Columns admin requires canonical shared admin assets, Data Source Registry, and AJAX runtime services.');
         }
         if ($services->has(self::SERVICE_ADMIN)) {
             throw new LogicException('Admin Columns admin service is already registered.');
@@ -120,6 +130,8 @@ final class AdminColumnsModule implements ModuleInterface
         $admin = new AdminColumnsAdminController(
             new AdminColumnsAdminBootstrapProjector($dataSources),
             $assets,
+            $ajax,
+            $gateway->action(),
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
