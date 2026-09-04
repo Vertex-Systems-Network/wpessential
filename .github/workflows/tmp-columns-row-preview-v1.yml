@@ -1,0 +1,87 @@
+name: Temporary Admin Columns row preview patch
+
+on:
+  push:
+    branches:
+      - agent/admin-columns-row-preview-v1
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/admin-columns-row-preview-v1
+          fetch-depth: 0
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Apply bounded preview runtime patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('admin-ui/src/columns-runtime.ts')
+          s = p.read_text()
+
+          def replace_once(old: str, new: str, label: str) -> None:
+              global s
+              count = s.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label} occurrences: {count}')
+              s = s.replace(old, new, 1)
+
+          replace_once(
+              """type BrowseBootstrap = {\n\tajaxUrl: string;\n\tajaxAction: string;\n\troutes: { list: AjaxRoute; get: AjaxRoute };\n};\n""",
+              """type BrowseBootstrap = {\n\tajaxUrl: string;\n\tajaxAction: string;\n\troutes: { list: AjaxRoute; get: AjaxRoute };\n};\ntype ReadBootstrap = {\n\tajaxUrl: string;\n\tajaxAction: string;\n\troutes: { read: AjaxRoute };\n};\ntype PreviewColumn = {\n\tkey: string;\n\tlabel: string;\n\tformat: string;\n\tprimary: boolean;\n\tsourceOwner: string;\n};\ntype PreviewResult = {\n\tviewId: string;\n\tviewRevision: number;\n\tcolumns: PreviewColumn[];\n\trows: Record< string, string | null >[];\n\treturned: number;\n};\n""",
+              'bootstrap preview types',
+          )
+
+          replace_once(
+              """const MAX_SAVED_VIEWS = 100;\nconst MAX_COLUMNS = 100;\n""",
+              """const MAX_SAVED_VIEWS = 100;\nconst MAX_COLUMNS = 100;\nconst MAX_PREVIEW_ROWS = 100;\nconst MAX_PREVIEW_CELL_TEXT = 500;\n""",
+              'preview constants',
+          )
+
+          browse_parser = """function parseBrowseBootstrap( value: unknown ): BrowseBootstrap | null {\n\tif (\n\t\t! isObject( value ) ||\n\t\ttypeof value.ajaxUrl !== 'string' ||\n\t\tvalue.ajaxUrl === '' ||\n\t\ttypeof value.ajaxAction !== 'string' ||\n\t\tvalue.ajaxAction === '' ||\n\t\t! isObject( value.routes ) ||\n\t\t! isRoute( value.routes.list, 'admin-columns.list.views' ) ||\n\t\t! isRoute( value.routes.get, 'admin-columns.get.view' )\n\t) {\n\t\treturn null;\n\t}\n\treturn {\n\t\tajaxUrl: value.ajaxUrl,\n\t\tajaxAction: value.ajaxAction,\n\t\troutes: {\n\t\t\tlist: value.routes.list,\n\t\t\tget: value.routes.get,\n\t\t},\n\t};\n}\n"""
+          read_parser = browse_parser + """\nfunction parseReadBootstrap( value: unknown ): ReadBootstrap | null {\n\tif (\n\t\t! isObject( value ) ||\n\t\ttypeof value.ajaxUrl !== 'string' ||\n\t\tvalue.ajaxUrl === '' ||\n\t\ttypeof value.ajaxAction !== 'string' ||\n\t\tvalue.ajaxAction === '' ||\n\t\t! isObject( value.routes ) ||\n\t\t! isRoute( value.routes.read, 'admin-columns.read.rows' )\n\t) {\n\t\treturn null;\n\t}\n\treturn {\n\t\tajaxUrl: value.ajaxUrl,\n\t\tajaxAction: value.ajaxAction,\n\t\troutes: { read: value.routes.read },\n\t};\n}\n"""
+          replace_once(browse_parser, read_parser, 'read bootstrap parser')
+
+          post_route_tail = """\treturn ( decoded as AjaxEnvelope ).data;\n}\n\nfunction failBootstrap( root: HTMLElement ): void {\n"""
+          preview_parser = """\treturn ( decoded as AjaxEnvelope ).data;\n}\n\nfunction parsePreviewResult(\n\tvalue: unknown,\n\texpectedViewId: string,\n\texpectedRevision: number,\n\tpageSize: number\n): PreviewResult | null {\n\tif (\n\t\t! isObject( value ) ||\n\t\t! hasOnlyKeys( value, [\n\t\t\t'contract_version',\n\t\t\t'ok',\n\t\t\t'view_id',\n\t\t\t'view_revision',\n\t\t\t'columns',\n\t\t\t'rows',\n\t\t\t'returned',\n\t\t\t'error',\n\t\t] ) ||\n\t\tvalue.contract_version !== 1 ||\n\t\tvalue.ok !== true ||\n\t\tvalue.view_id !== expectedViewId ||\n\t\tvalue.view_revision !== expectedRevision ||\n\t\tvalue.error !== null ||\n\t\t! Array.isArray( value.columns ) ||\n\t\tvalue.columns.length === 0 ||\n\t\tvalue.columns.length > MAX_COLUMNS ||\n\t\t! Array.isArray( value.rows ) ||\n\t\tvalue.rows.length > MAX_PREVIEW_ROWS ||\n\t\tvalue.rows.length > pageSize ||\n\t\ttypeof value.returned !== 'number' ||\n\t\t! Number.isInteger( value.returned ) ||\n\t\tvalue.returned !== value.rows.length\n\t) {\n\t\treturn null;\n\t}\n\n\tconst columns: PreviewColumn[] = [];\n\tconst columnKeys = new Set< string >();\n\tfor ( const candidate of value.columns ) {\n\t\tif (\n\t\t\t! isObject( candidate ) ||\n\t\t\t! hasOnlyKeys( candidate, [\n\t\t\t\t'key',\n\t\t\t\t'label',\n\t\t\t\t'format',\n\t\t\t\t'primary',\n\t\t\t\t'source_owner',\n\t\t\t] ) ||\n\t\t\t! machineKey( candidate.key ) ||\n\t\t\t! boundedLabel( candidate.label ) ||\n\t\t\ttypeof candidate.format !== 'string' ||\n\t\t\tcandidate.format === '' ||\n\t\t\tcandidate.format.length > 64 ||\n\t\t\ttypeof candidate.primary !== 'boolean' ||\n\t\t\t! [ 'native', 'query' ].includes( String( candidate.source_owner ) ) ||\n\t\t\tcolumnKeys.has( candidate.key )\n\t\t) {\n\t\t\treturn null;\n\t\t}\n\t\tcolumnKeys.add( candidate.key );\n\t\tcolumns.push( {\n\t\t\tkey: candidate.key,\n\t\t\tlabel: candidate.label.trim(),\n\t\t\tformat: candidate.format,\n\t\t\tprimary: candidate.primary,\n\t\t\tsourceOwner: String( candidate.source_owner ),\n\t\t} );\n\t}\n\n\tconst allowedRowKeys = columns.map( ( column ) => column.key );\n\tconst rows: Record< string, string | null >[] = [];\n\tfor ( const candidate of value.rows ) {\n\t\tif ( ! isObject( candidate ) || ! hasOnlyKeys( candidate, allowedRowKeys ) ) {\n\t\t\treturn null;\n\t\t}\n\t\tconst row: Record< string, string | null > = {};\n\t\tfor ( const column of columns ) {\n\t\t\tif ( ! Object.prototype.hasOwnProperty.call( candidate, column.key ) ) {\n\t\t\t\treturn null;\n\t\t\t}\n\t\t\tconst cell = candidate[ column.key ];\n\t\t\tif ( cell === null ) {\n\t\t\t\trow[ column.key ] = null;\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tif ( typeof cell === 'string' ) {\n\t\t\t\tif ( cell.length > MAX_PREVIEW_CELL_TEXT ) {\n\t\t\t\t\treturn null;\n\t\t\t\t}\n\t\t\t\trow[ column.key ] = cell;\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tif ( typeof cell === 'number' && Number.isFinite( cell ) ) {\n\t\t\t\trow[ column.key ] = String( cell );\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\tif ( typeof cell === 'boolean' ) {\n\t\t\t\trow[ column.key ] = cell ? 'true' : 'false';\n\t\t\t\tcontinue;\n\t\t\t}\n\t\t\treturn null;\n\t\t}\n\t\trows.push( row );\n\t}\n\n\treturn {\n\t\tviewId: expectedViewId,\n\t\tviewRevision: expectedRevision,\n\t\tcolumns,\n\t\trows,\n\t\treturned: value.returned,\n\t};\n}\n\nfunction failBootstrap( root: HTMLElement ): void {\n"""
+          replace_once(post_route_tail, preview_parser, 'preview response parser')
+
+          boot_anchor = """function boot(): void {\n"""
+          wire_preview = """function wirePreview(\n\troot: HTMLElement,\n\treadBootstrap: ReadBootstrap,\n\tsession: EditorSession\n): void {\n\tconst status = root.querySelector( '.wpessential-columns__status' );\n\tif ( ! ( status instanceof HTMLElement ) ) {\n\t\treturn;\n\t}\n\n\tconst section = document.createElement( 'section' );\n\tsection.className = 'wpessential-columns__preview';\n\tsection.setAttribute( 'aria-labelledby', 'wpessential-columns-preview-title' );\n\tconst title = document.createElement( 'h2' );\n\ttitle.id = 'wpessential-columns-preview-title';\n\ttitle.textContent = 'Row preview';\n\tconst description = document.createElement( 'p' );\n\tdescription.textContent =\n\t\t'Preview is read-only and executes only the published saved View through the bounded Query path.';\n\n\tconst controls = document.createElement( 'div' );\n\tcontrols.className = 'wpessential-columns__preview-controls';\n\tconst searchLabel = document.createElement( 'label' );\n\tsearchLabel.htmlFor = 'wpessential-columns-preview-search';\n\tsearchLabel.textContent = 'Search preview';\n\tconst search = document.createElement( 'input' );\n\tsearch.id = 'wpessential-columns-preview-search';\n\tsearch.type = 'search';\n\tsearch.maxLength = 200;\n\n\tconst pageSizeLabel = document.createElement( 'label' );\n\tpageSizeLabel.htmlFor = 'wpessential-columns-preview-page-size';\n\tpageSizeLabel.textContent = 'Rows per page';\n\tconst pageSize = document.createElement( 'select' );\n\tpageSize.id = 'wpessential-columns-preview-page-size';\n\tfor ( const size of [ 10, 20, 50, 100 ] ) {\n\t\tpageSize.append( new Option( String( size ), String( size ), false, size === 20 ) );\n\t}\n\n\tconst preview = document.createElement( 'button' );\n\tpreview.type = 'button';\n\tpreview.className = 'button';\n\tpreview.textContent = 'Preview rows';\n\tconst previous = document.createElement( 'button' );\n\tprevious.type = 'button';\n\tprevious.className = 'button';\n\tprevious.textContent = 'Previous';\n\tprevious.disabled = true;\n\tconst next = document.createElement( 'button' );\n\tnext.type = 'button';\n\tnext.className = 'button';\n\tnext.textContent = 'Next';\n\tnext.disabled = true;\n\tcontrols.append(\n\t\tsearchLabel,\n\t\tsearch,\n\t\tpageSizeLabel,\n\t\tpageSize,\n\t\tpreview,\n\t\tprevious,\n\t\tnext\n\t);\n\n\tconst previewStatus = document.createElement( 'p' );\n\tpreviewStatus.id = 'wpessential-columns-preview-status';\n\tpreviewStatus.setAttribute( 'role', 'status' );\n\tpreviewStatus.setAttribute( 'aria-live', 'polite' );\n\tpreviewStatus.textContent =\n\t\t'Save or open a published, enabled Column Set, then choose Preview rows.';\n\n\tconst table = document.createElement( 'table' );\n\ttable.className = 'widefat fixed striped';\n\ttable.setAttribute( 'aria-describedby', previewStatus.id );\n\ttable.hidden = true;\n\tconst head = document.createElement( 'thead' );\n\tconst body = document.createElement( 'tbody' );\n\ttable.append( head, body );\n\tsection.append( title, description, controls, previewStatus, table );\n\troot.append( section );\n\n\tlet offset = 0;\n\tlet lastReturned = 0;\n\tlet inFlight = false;\n\n\tconst render = ( result: PreviewResult ): void => {\n\t\thead.replaceChildren();\n\t\tbody.replaceChildren();\n\t\tconst headerRow = document.createElement( 'tr' );\n\t\tfor ( const column of result.columns ) {\n\t\t\tconst cell = document.createElement( 'th' );\n\t\t\tcell.scope = 'col';\n\t\t\tcell.textContent = column.label;\n\t\t\theaderRow.append( cell );\n\t\t}\n\t\thead.append( headerRow );\n\t\tfor ( const row of result.rows ) {\n\t\t\tconst tableRow = document.createElement( 'tr' );\n\t\t\tfor ( const column of result.columns ) {\n\t\t\t\tconst cell = document.createElement( 'td' );\n\t\t\t\tcell.textContent = row[ column.key ] ?? '';\n\t\t\t\ttableRow.append( cell );\n\t\t\t}\n\t\t\tbody.append( tableRow );\n\t\t}\n\t\ttable.hidden = false;\n\t};\n\n\tconst execute = async ( requestedOffset: number ): Promise< void > => {\n\t\tif ( inFlight ) {\n\t\t\treturn;\n\t\t}\n\t\tif (\n\t\t\tsession.definitionId === null ||\n\t\t\tsession.revision === null ||\n\t\t\tsession.status !== 'published' ||\n\t\t\t! session.viewEnabled\n\t\t) {\n\t\t\tpreviewStatus.textContent =\n\t\t\t\t'Preview requires a published, enabled saved Column Set. No Query request was sent.';\n\t\t\treturn;\n\t\t}\n\n\t\tconst size = Number.parseInt( pageSize.value, 10 );\n\t\tif ( ! [ 10, 20, 50, 100 ].includes( size ) ) {\n\t\t\tpreviewStatus.textContent = 'Preview page size is invalid.';\n\t\t\treturn;\n\t\t}\n\t\tconst boundedOffset = Math.max( 0, Math.min( 10000, requestedOffset ) );\n\t\tconst request: JsonObject = {\n\t\t\tview_id: session.definitionId,\n\t\t\tpage_size: size,\n\t\t\toffset: boundedOffset,\n\t\t};\n\t\tconst term = search.value.trim();\n\t\tif ( term !== '' ) {\n\t\t\trequest.search = term;\n\t\t}\n\n\t\ttry {\n\t\t\tinFlight = true;\n\t\t\tpreview.disabled = true;\n\t\t\tprevious.disabled = true;\n\t\t\tnext.disabled = true;\n\t\t\tpreviewStatus.textContent = 'Loading bounded row preview…';\n\t\t\tconst data = await postRoute(\n\t\t\t\treadBootstrap.ajaxUrl,\n\t\t\t\treadBootstrap.ajaxAction,\n\t\t\t\treadBootstrap.routes.read,\n\t\t\t\trequest\n\t\t\t);\n\t\t\tconst result = parsePreviewResult(\n\t\t\t\tdata,\n\t\t\t\tsession.definitionId,\n\t\t\t\tsession.revision,\n\t\t\t\tsize\n\t\t\t);\n\t\t\tif ( result === null ) {\n\t\t\t\tthrow new Error( 'Malformed or stale preview response.' );\n\t\t\t}\n\t\t\trender( result );\n\t\t\toffset = boundedOffset;\n\t\t\tlastReturned = result.returned;\n\t\t\tprevious.disabled = offset === 0;\n\t\t\tnext.disabled =\n\t\t\t\tlastReturned < size || offset >= 10000 || offset + size > 10000;\n\t\t\tpreviewStatus.textContent = `${ result.returned } row${\n\t\t\t\tresult.returned === 1 ? '' : 's'\n\t\t\t} previewed from revision ${ result.viewRevision }. Row data was not mutated.`;\n\t\t} catch {\n\t\t\tpreviewStatus.textContent =\n\t\t\t\t'Row preview is unavailable or stale. No unvalidated response replaced the current preview.';\n\t\t} finally {\n\t\t\tinFlight = false;\n\t\t\tpreview.disabled = false;\n\t\t}\n\t};\n\n\tpreview.addEventListener( 'click', () => {\n\t\tvoid execute( 0 );\n\t} );\n\tsearch.addEventListener( 'keydown', ( event ) => {\n\t\tif ( event.key === 'Enter' ) {\n\t\t\tevent.preventDefault();\n\t\t\tvoid execute( 0 );\n\t\t}\n\t} );\n\tprevious.addEventListener( 'click', () => {\n\t\tconst size = Number.parseInt( pageSize.value, 10 );\n\t\tvoid execute( Math.max( 0, offset - size ) );\n\t} );\n\tnext.addEventListener( 'click', () => {\n\t\tconst size = Number.parseInt( pageSize.value, 10 );\n\t\tif ( lastReturned === size && offset < 10000 ) {\n\t\t\tvoid execute( Math.min( 10000, offset + size ) );\n\t\t}\n\t} );\n}\n\nfunction boot(): void {\n"""
+          replace_once(boot_anchor, wire_preview, 'preview wiring')
+
+          boot_wiring = """\t\tconst browseBootstrap = parseBrowseBootstrap( raw );\n\t\tif ( browseBootstrap !== null ) {\n\t\t\twireBrowse( root, bootstrap, browseBootstrap, session );\n\t\t}\n\t\twindow.dispatchEvent(\n"""
+          boot_wiring_new = """\t\tconst browseBootstrap = parseBrowseBootstrap( raw );\n\t\tif ( browseBootstrap !== null ) {\n\t\t\twireBrowse( root, bootstrap, browseBootstrap, session );\n\t\t}\n\t\tconst readBootstrap = parseReadBootstrap( raw );\n\t\tif ( readBootstrap !== null ) {\n\t\t\twirePreview( root, readBootstrap, session );\n\t\t}\n\t\twindow.dispatchEvent(\n"""
+          replace_once(boot_wiring, boot_wiring_new, 'preview boot registration')
+
+          p.write_text(s)
+          PY
+          npm ci --ignore-scripts
+          npm run lint:js -- --fix
+          npm run typecheck
+          npm run build
+      - name: Commit normalized runtime and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/tmp-columns-row-preview-v1.yml
+          git add admin-ui/src/columns-runtime.ts
+          git diff --cached --check
+          git commit -m "feat(columns): render bounded row preview UI"
+          git push origin HEAD:agent/admin-columns-row-preview-v1
