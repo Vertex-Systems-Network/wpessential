@@ -66,9 +66,9 @@ type EditorSession = {
 	viewKey: string | null;
 	status: DefinitionStatus;
 	viewEnabled: boolean;
-	assignment?: JsonObject;
-	layout?: JsonObject;
-	visibility?: JsonObject;
+	assignment: JsonObject | undefined;
+	layout: JsonObject | undefined;
+	visibility: JsonObject | undefined;
 	columnIdentities: Map< number, ColumnIdentity >;
 };
 
@@ -93,7 +93,10 @@ function isObject( value: unknown ): value is JsonObject {
 }
 
 function isStatus( value: unknown ): value is DefinitionStatus {
-	return typeof value === 'string' && STATUSES.includes( value as DefinitionStatus );
+	return (
+		typeof value === 'string' &&
+		STATUSES.includes( value as DefinitionStatus )
+	);
 }
 
 function machineKey( value: unknown ): value is string {
@@ -126,10 +129,7 @@ function boundedObject( value: unknown, maxBytes: number ): JsonObject | null {
 	return value;
 }
 
-function isRoute(
-	value: unknown,
-	expectedType: string
-): value is AjaxRoute {
+function isRoute( value: unknown, expectedType: string ): value is AjaxRoute {
 	return (
 		isObject( value ) &&
 		typeof value.type === 'string' &&
@@ -256,10 +256,11 @@ function parseLoadedDefinition(
 	) {
 		return null;
 	}
+	const payloadTarget = payload.target;
 	const target = bootstrap.targets.find(
 		( candidate ) =>
-			candidate.type === payload.target.type &&
-			candidate.key === payload.target.key
+			candidate.type === payloadTarget.type &&
+			candidate.key === payloadTarget.key
 	);
 	if ( ! target ) {
 		return null;
@@ -297,10 +298,11 @@ function parseLoadedDefinition(
 		) {
 			return null;
 		}
+		const candidateSource = candidate.source;
 		const source = bootstrap.sources.find(
 			( available ) =>
-				available.owner === candidate.source.owner &&
-				available.reference === candidate.source.reference
+				available.owner === candidateSource.owner &&
+				available.reference === candidateSource.reference
 		);
 		if ( ! source || ! source.formats.includes( candidate.format ) ) {
 			return null;
@@ -321,8 +323,8 @@ function parseLoadedDefinition(
 			label: candidate.label.trim(),
 			enabled: candidate.enabled,
 			source: {
-				owner: candidate.source.owner,
-				reference: candidate.source.reference,
+				owner: source.owner,
+				reference: source.reference,
 			},
 			format: candidate.format,
 			primary: candidate.primary,
@@ -463,7 +465,9 @@ function hydrateDefinition(
 	}
 
 	while ( true ) {
-		const card = columnsList.querySelector( '.wpessential-columns__column' );
+		const card = columnsList.querySelector(
+			'.wpessential-columns__column'
+		);
 		if ( ! ( card instanceof HTMLElement ) ) {
 			break;
 		}
@@ -512,7 +516,9 @@ function hydrateDefinition(
 			! ( formatSelect instanceof HTMLSelectElement ) ||
 			! ( enabled instanceof HTMLInputElement )
 		) {
-			throw new Error( 'Admin Columns hydration controls are unavailable.' );
+			throw new Error(
+				'Admin Columns hydration controls are unavailable.'
+			);
 		}
 
 		labelInput.value = column.label;
@@ -738,7 +744,10 @@ function wireBrowse(
 ): void {
 	const form = root.querySelector( '.wpessential-columns__form' );
 	const status = root.querySelector( '.wpessential-columns__status' );
-	if ( ! ( form instanceof HTMLFormElement ) || ! ( status instanceof HTMLElement ) ) {
+	if (
+		! ( form instanceof HTMLFormElement ) ||
+		! ( status instanceof HTMLElement )
+	) {
 		return;
 	}
 
@@ -789,7 +798,10 @@ function wireBrowse(
 			if ( ! isObject( data ) ) {
 				throw new Error( 'Invalid saved View response.' );
 			}
-			const definition = parseLoadedDefinition( data.definition, bootstrap );
+			const definition = parseLoadedDefinition(
+				data.definition,
+				bootstrap
+			);
 			if (
 				definition === null ||
 				definition.id !== summary.id ||
@@ -845,7 +857,9 @@ function wireBrowse(
 				left.name.localeCompare( right.name )
 			);
 			summaries = new Map( valid.map( ( item ) => [ item.id, item ] ) );
-			select.replaceChildren( new Option( 'Select a saved Column Set', '' ) );
+			select.replaceChildren(
+				new Option( 'Select a saved Column Set', '' )
+			);
 			for ( const item of valid ) {
 				select.append(
 					new Option(
@@ -857,7 +871,9 @@ function wireBrowse(
 			status.textContent =
 				valid.length === 0
 					? 'No saved Column Sets are available. The new authored draft remains usable.'
-					: `${ valid.length } saved Column Set${ valid.length === 1 ? '' : 's' } available to reopen.`;
+					: `${ valid.length } saved Column Set${
+							valid.length === 1 ? '' : 's'
+					  } available to reopen.`;
 		} catch {
 			select.disabled = true;
 			load.disabled = true;
@@ -893,6 +909,9 @@ function boot(): void {
 			viewKey: null,
 			status: 'draft',
 			viewEnabled: true,
+			assignment: undefined,
+			layout: undefined,
+			visibility: undefined,
 			columnIdentities: new Map(),
 		};
 		const saveBootstrap = parseSaveBootstrap( raw );
