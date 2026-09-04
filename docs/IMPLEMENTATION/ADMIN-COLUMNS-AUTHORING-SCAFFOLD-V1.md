@@ -61,6 +61,10 @@ Presentation visibility is explicitly described as non-authorizing.
 - 44px minimum mobile action height at the WordPress admin breakpoint;
 - no unsafe HTML injection; user/provider labels are assigned through `textContent`.
 
+## Candidate validation
+
+The TypeScript source is normalized with the repository-owned JavaScript formatter/linter before promotion. Formatting changes do not widen the runtime boundary, add shared build wiring or authorize save/execution behavior.
+
 ## Explicit non-goals
 
 - canonical WordPress route or enqueue;
