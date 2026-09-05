@@ -50,6 +50,19 @@ final class FieldValueWriteConsumerTest extends TestCase
         self::assertArrayNotHasKey('meta_key', $result);
     }
 
+    public function testSameCanonicalValuePreservesOwnerUnchangedSemantics(): void
+    {
+        $state = [41 => ['headline' => 'Hello']];
+        $consumer = $this->consumer($state);
+
+        $result = $consumer->writeValue(self::FIELD_REF, 41, 4, '  Hello  ', $this->context());
+
+        self::assertSame('unchanged', $result['status']);
+        self::assertFalse($result['changed']);
+        self::assertSame('Hello', $result['value']);
+        self::assertSame('Hello', $state[41]['headline']);
+    }
+
     public function testNullPreservesOwnerDeletionAndAbsentSemantics(): void
     {
         $state = [41 => ['headline' => 'Old']];
