@@ -6,7 +6,9 @@ namespace WPEssential\Tests\Unit\Modules\AdminColumns;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\FieldValueReadConsumerInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Modules\AdminColumns\AdminColumnsReadAdapter;
 use WPEssential\Modules\AdminColumns\AdminColumnsViewDefinitionNormalizer;
@@ -18,6 +20,8 @@ use WPEssential\Platform\Definitions\DefinitionStatus;
 
 final class AdminColumnsReadAdapterTest extends TestCase
 {
+    private const FIELD_REF = 'fields.01990f6e-1f30-4000-8000-000000000200.01990f6e-1f30-4000-8000-000000000202';
+
     public function testPublishedPostViewMapsColumnKeysThroughPublicQueryContract(): void
     {
         $query = new class implements QueryReadConsumerInterface {
@@ -100,20 +104,118 @@ final class AdminColumnsReadAdapterTest extends TestCase
         self::assertArrayNotHasKey('wp_query', $query->lastRequest);
     }
 
-    public function testFieldsOwnedColumnFailsClosedInsteadOfReadingPrivateStorage(): void
+    public function testFieldsOnlyColumnUsesInternalPostIdProjectionAndOwnerReadInQueryOrder(): void
     {
-        $query = $this->passiveQuery();
+        $query = new class implements QueryReadConsumerInterface {
+            /** @var array<string,mixed>|null */
+            public ?array $lastRequest = null;
+
+            public function describe(string $sourceRef, ExecutionContext $context): array
+            {
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'source_ref' => 'wordpress.posts',
+                    'source_type' => 'wordpress.posts',
+                    'capability_version' => 1,
+                    'available' => true,
+                    'field_schema' => [
+                        'post.id' => 'integer',
+                        'post.type' => 'string',
+                    ],
+                    'predicates' => ['eq'],
+                    'sort_modes' => ['field'],
+                    'pagination_modes' => ['offset'],
+                    'max_page_size' => 100,
+                ];
+            }
+
+            public function read(array $request, ExecutionContext $context): array
+            {
+                $this->lastRequest = $request;
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'ok' => true,
+                    'source_ref' => 'wordpress.posts',
+                    'projection' => $request['projection'],
+                    'rows' => [
+                        ['post.id' => 22],
+                        ['post.id' => 21],
+                    ],
+                    'returned' => 2,
+                    'error' => null,
+                ];
+            }
+        };
+        $fields = new class implements FieldValueReadConsumerInterface {
+            public ?string $reference = null;
+            /** @var list<int> */
+            public array $postIds = [];
+
+            public function readValues(string $fieldReference, array $postIds, ExecutionContext $context): array
+            {
+                $this->reference = $fieldReference;
+                $this->postIds = $postIds;
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'field_ref' => $fieldReference,
+                    'group_revision' => 4,
+                    'field_uuid' => '01990f6e-1f30-4000-8000-000000000202',
+                    'logical_type' => 'string',
+                    'storage_owner' => 'native_post_meta',
+                    'rows' => [
+                        ['post_id' => 22, 'value' => 'Second'],
+                        ['post_id' => 21, 'value' => 'First'],
+                    ],
+                ];
+            }
+        };
+
         $views = $this->views();
-        $payload = $this->nativePayload();
-        $payload['columns'][1]['source'] = [
-            'owner' => 'fields',
-            'reference' => 'fields.01990f6e-1f30-4000-8000-000000000200.01990f6e-1f30-4000-8000-000000000202',
-        ];
-        $view = $views->save($payload, DefinitionStatus::Published);
+        $view = $views->save($this->fieldsOnlyPayload(), DefinitionStatus::Published);
+        $result = (new AdminColumnsReadAdapter($views, $query, $fields))->read(
+            $view->id,
+            ['page_size' => 2],
+            $this->context(),
+        );
+
+        self::assertTrue($result['ok']);
+        self::assertSame([['headline' => 'Second'], ['headline' => 'First']], $result['rows']);
+        self::assertSame(['post.id'], $query->lastRequest['projection']);
+        self::assertSame(self::FIELD_REF, $fields->reference);
+        self::assertSame([22, 21], $fields->postIds);
+        self::assertSame('fields', $result['columns'][0]['source_owner']);
+    }
+
+    public function testFieldsOwnedColumnFailsClosedWhenOwnerReadServiceIsUnavailable(): void
+    {
+        $views = $this->views();
+        $view = $views->save($this->fieldsOnlyPayload(), DefinitionStatus::Published);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('certified Field value read consumer');
+        (new AdminColumnsReadAdapter($views, $this->passiveQuery()))->read($view->id, [], $this->context());
+    }
+
+    public function testFieldsColumnCannotBeUsedAsQueryOwnedFilterOrOrderInV1(): void
+    {
+        $views = $this->views();
+        $view = $views->save($this->fieldsOnlyPayload(), DefinitionStatus::Published);
+        $fields = $this->passiveFields();
+
+        try {
+            (new AdminColumnsReadAdapter($views, $this->passiveQuery(), $fields))->read($view->id, [
+                'filters' => [['column_key' => 'headline', 'operator' => 'eq', 'value' => 'A']],
+            ], $this->context());
+            self::fail('Fields column filtering must remain locked until Query owns that exact integration.');
+        } catch (InvalidArgumentException $error) {
+            self::assertStringContainsString('without Query-owned V1 filtering', $error->getMessage());
+        }
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('not readable through Query V1');
-        (new AdminColumnsReadAdapter($views, $query))->read($view->id, [], $this->context());
+        $this->expectExceptionMessage('without Query-owned V1 ordering');
+        (new AdminColumnsReadAdapter($views, $this->passiveQuery(), $fields))->read($view->id, [
+            'order_by' => [['column_key' => 'headline', 'direction' => 'asc']],
+        ], $this->context());
     }
 
     public function testDraftOrDisabledViewCannotExecuteRuntimeRead(): void
@@ -227,12 +329,36 @@ final class AdminColumnsReadAdapterTest extends TestCase
         };
     }
 
+    private function passiveFields(): FieldValueReadConsumerInterface
+    {
+        return new class implements FieldValueReadConsumerInterface {
+            public function readValues(string $fieldReference, array $postIds, ExecutionContext $context): array
+            {
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'field_ref' => $fieldReference,
+                    'group_revision' => 4,
+                    'field_uuid' => '01990f6e-1f30-4000-8000-000000000202',
+                    'logical_type' => 'string',
+                    'storage_owner' => 'native_post_meta',
+                    'rows' => array_map(
+                        static fn (int $postId): array => ['post_id' => $postId, 'value' => null],
+                        $postIds,
+                    ),
+                ];
+            }
+        };
+    }
+
     private function views(): AdminColumnsViewDefinitionService
     {
         $uuids = [
             '01990f6e-1f30-4000-8000-000000000398',
             '01990f6e-1f30-4000-8000-000000000399',
             '01990f6e-1f30-4000-8000-000000000397',
+            '01990f6e-1f30-4000-8000-000000000396',
+            '01990f6e-1f30-4000-8000-000000000395',
+            '01990f6e-1f30-4000-8000-000000000394',
         ];
         return new AdminColumnsViewDefinitionService(
             $this->repository(),
@@ -240,7 +366,7 @@ final class AdminColumnsReadAdapterTest extends TestCase
             static function () use (&$uuids): string {
                 $uuid = array_shift($uuids);
                 if (!is_string($uuid)) {
-                    throw new \RuntimeException('Test UUIDs exhausted.');
+                    throw new RuntimeException('Test UUIDs exhausted.');
                 }
                 return $uuid;
             },
@@ -307,6 +433,25 @@ final class AdminColumnsReadAdapterTest extends TestCase
                 'mode' => 'hidden',
                 'reason' => 'Presentation-only preference must not become authorization.',
             ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function fieldsOnlyPayload(): array
+    {
+        return [
+            'view_key' => 'posts_fields_runtime',
+            'name' => 'Posts Fields runtime',
+            'enabled' => true,
+            'target' => ['type' => 'post_type', 'key' => 'post'],
+            'columns' => [[
+                'uuid' => '01990f6e-1f30-4000-8000-000000000303',
+                'key' => 'headline',
+                'label' => 'Headline',
+                'source' => ['owner' => 'fields', 'reference' => self::FIELD_REF],
+                'format' => 'text',
+                'primary' => true,
+            ]],
         ];
     }
 
