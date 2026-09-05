@@ -89,6 +89,9 @@ final class AdminColumnsAdminBootstrapProjectorTest extends TestCase
                         ],
                         'ownerMetadata' => [
                             'groupRevision' => 3,
+                            'fieldUuid' => '22222222-2222-4222-8222-222222222222',
+                            'logicalType' => 'string',
+                            'storageOwner' => 'native_post_meta',
                             'postTypes' => ['post'],
                         ],
                     ],
@@ -109,11 +112,53 @@ final class AdminColumnsAdminBootstrapProjectorTest extends TestCase
 
         self::assertSame(['post.id', 'fields.11111111-1111-4111-8111-111111111111.22222222-2222-4222-8222-222222222222'], array_column($bootstrap['sources'], 'reference'));
         self::assertSame('fields', $bootstrap['sources'][1]['owner']);
-        self::assertSame(['groupRevision' => 3, 'postTypes' => ['post']], $bootstrap['sources'][1]['ownerMetadata']);
+        self::assertSame([
+            'groupRevision' => 3,
+            'fieldUuid' => '22222222-2222-4222-8222-222222222222',
+            'logicalType' => 'string',
+            'storageOwner' => 'native_post_meta',
+            'postTypes' => ['post'],
+        ], $bootstrap['sources'][1]['ownerMetadata']);
     }
 
     public function testMalformedOrThrowingOptionalOwnerCatalogFailsClosedToNativeSources(): void
     {
+        $malformed = new class implements AdminColumnsSourceCatalogInterface {
+            public function adminColumnSources(): array
+            {
+                return [[
+                    'owner' => 'fields',
+                    'reference' => 'fields.11111111-1111-4111-8111-111111111111.22222222-2222-4222-8222-222222222222',
+                    'label' => 'Headline',
+                    'formats' => ['text'],
+                    'capabilities' => [
+                        'sort' => false,
+                        'filter' => false,
+                        'edit' => false,
+                        'export' => false,
+                    ],
+                    'ownerMetadata' => [
+                        'groupRevision' => 3,
+                        'fieldUuid' => '99999999-9999-4999-8999-999999999999',
+                        'logicalType' => 'string',
+                        'storageOwner' => 'native_post_meta',
+                        'postTypes' => ['post'],
+                    ],
+                ]];
+            }
+        };
+        $bootstrap = (new AdminColumnsAdminBootstrapProjector(
+            $this->nativeRegistry(),
+            static fn (): array => [
+                'post' => (object) [
+                    'name' => 'post',
+                    'labels' => (object) ['name' => 'Posts'],
+                ],
+            ],
+            $malformed,
+        ))->project();
+        self::assertSame(['post.id'], array_column($bootstrap['sources'], 'reference'));
+
         $throwing = new class implements AdminColumnsSourceCatalogInterface {
             public function adminColumnSources(): array
             {
