@@ -20,6 +20,11 @@ type ReadBootstrap = {
 	ajaxAction: string;
 	routes: { read: AjaxRoute };
 };
+type StatusBootstrap = {
+	ajaxUrl: string;
+	ajaxAction: string;
+	routes: { status: AjaxRoute };
+};
 type PreviewColumn = {
 	key: string;
 	label: string;
@@ -218,6 +223,25 @@ function parseReadBootstrap( value: unknown ): ReadBootstrap | null {
 		ajaxUrl: value.ajaxUrl,
 		ajaxAction: value.ajaxAction,
 		routes: { read: value.routes.read },
+	};
+}
+
+function parseStatusBootstrap( value: unknown ): StatusBootstrap | null {
+	if (
+		! isObject( value ) ||
+		typeof value.ajaxUrl !== 'string' ||
+		value.ajaxUrl === '' ||
+		typeof value.ajaxAction !== 'string' ||
+		value.ajaxAction === '' ||
+		! isObject( value.routes ) ||
+		! isRoute( value.routes.status, 'admin-columns.status.view' )
+	) {
+		return null;
+	}
+	return {
+		ajaxUrl: value.ajaxUrl,
+		ajaxAction: value.ajaxAction,
+		routes: { status: value.routes.status },
 	};
 }
 
@@ -1051,6 +1075,140 @@ function wireBrowse(
 	} )();
 }
 
+function wireLifecycle(
+	root: HTMLElement,
+	statusBootstrap: StatusBootstrap,
+	session: EditorSession
+): void {
+	const section = document.createElement( 'section' );
+	section.className = 'wpessential-columns__lifecycle';
+	section.setAttribute(
+		'aria-labelledby',
+		'wpessential-columns-lifecycle-title'
+	);
+	const title = document.createElement( 'h2' );
+	title.id = 'wpessential-columns-lifecycle-title';
+	title.textContent = 'View lifecycle';
+	const description = document.createElement( 'p' );
+	description.textContent =
+		'Lifecycle changes update only the saved canonical View definition using optimistic revision control. Row data is never mutated.';
+
+	const label = document.createElement( 'label' );
+	label.htmlFor = 'wpessential-columns-lifecycle-status';
+	label.textContent = 'Lifecycle status';
+	const select = document.createElement( 'select' );
+	select.id = 'wpessential-columns-lifecycle-status';
+	for ( const candidate of STATUSES ) {
+		select.append(
+			new Option(
+				candidate.charAt( 0 ).toUpperCase() + candidate.slice( 1 ),
+				candidate
+			)
+		);
+	}
+	const apply = document.createElement( 'button' );
+	apply.type = 'button';
+	apply.className = 'button';
+	apply.textContent = 'Apply lifecycle status';
+	const lifecycleStatus = document.createElement( 'p' );
+	lifecycleStatus.id = 'wpessential-columns-lifecycle-status-message';
+	lifecycleStatus.setAttribute( 'role', 'status' );
+	lifecycleStatus.setAttribute( 'aria-live', 'polite' );
+	section.append( title, description, label, select, apply, lifecycleStatus );
+	root.append( section );
+
+	let inFlight = false;
+	const sync = (): void => {
+		select.value = session.status;
+		const saved =
+			session.definitionId !== null && session.revision !== null;
+		select.disabled = inFlight || ! saved;
+		apply.disabled = inFlight || ! saved;
+		if ( ! inFlight ) {
+			lifecycleStatus.textContent = saved
+				? `Current lifecycle: ${ session.status } at revision ${ session.revision }.`
+				: 'Save the Column Set before changing lifecycle status.';
+		}
+	};
+	root.addEventListener( 'wpessential:columns-session-changed', sync );
+	sync();
+
+	apply.addEventListener( 'click', async () => {
+		if ( inFlight ) {
+			return;
+		}
+		if (
+			session.definitionId === null ||
+			session.revision === null ||
+			session.viewKey === null
+		) {
+			lifecycleStatus.textContent =
+				'Lifecycle change requires a saved canonical Column Set. No request was sent.';
+			return;
+		}
+		if ( ! isStatus( select.value ) ) {
+			lifecycleStatus.textContent =
+				'Selected lifecycle status is invalid.';
+			return;
+		}
+
+		const requestedStatus = select.value;
+		if ( requestedStatus === session.status ) {
+			lifecycleStatus.textContent = `View is already ${ session.status }. No lifecycle request was sent.`;
+			return;
+		}
+		const previousId = session.definitionId;
+		const previousRevision = session.revision;
+		const previousViewKey = session.viewKey;
+		const previousStatus = session.status;
+
+		try {
+			inFlight = true;
+			select.disabled = true;
+			apply.disabled = true;
+			lifecycleStatus.textContent = `Changing lifecycle from ${ previousStatus } to ${ requestedStatus }…`;
+			const data = await postRoute(
+				statusBootstrap.ajaxUrl,
+				statusBootstrap.ajaxAction,
+				statusBootstrap.routes.status,
+				{
+					id: previousId,
+					expected_revision: previousRevision,
+					status: requestedStatus,
+				}
+			);
+			if ( ! isObject( data ) ) {
+				throw new Error( 'Invalid lifecycle response.' );
+			}
+			const definition = parseDefinitionHeader( data.definition );
+			const returnedViewKey = definition?.payload.view_key;
+			if (
+				definition === null ||
+				definition.id !== previousId ||
+				definition.revision !== previousRevision + 1 ||
+				definition.status !== requestedStatus ||
+				returnedViewKey !== previousViewKey
+			) {
+				throw new Error( 'Lifecycle response is malformed or stale.' );
+			}
+			session.revision = definition.revision;
+			session.status = definition.status;
+			root.dispatchEvent(
+				new CustomEvent( 'wpessential:columns-session-changed' )
+			);
+			lifecycleStatus.textContent = `Lifecycle changed to ${ session.status } at revision ${ session.revision }. Row preview must be requested again.`;
+		} catch {
+			select.value = previousStatus;
+			lifecycleStatus.textContent =
+				'Lifecycle status could not be changed. The current saved revision and local lifecycle state were preserved.';
+		} finally {
+			inFlight = false;
+			select.disabled = false;
+			apply.disabled = false;
+		}
+	} );
+}
+
 function wirePreview(
 	root: HTMLElement,
 	readBootstrap: ReadBootstrap,
@@ -1308,6 +1466,10 @@ function boot(): void {
 		const browseBootstrap = parseBrowseBootstrap( raw );
 		if ( browseBootstrap !== null ) {
 			wireBrowse( root, bootstrap, browseBootstrap, session );
+		}
+		const statusBootstrap = parseStatusBootstrap( raw );
+		if ( statusBootstrap !== null ) {
+			wireLifecycle( root, statusBootstrap, session );
 		}
 		const readBootstrap = parseReadBootstrap( raw );
 		if ( readBootstrap !== null ) {
