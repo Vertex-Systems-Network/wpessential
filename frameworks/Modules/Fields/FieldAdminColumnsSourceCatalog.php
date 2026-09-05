@@ -83,6 +83,7 @@ final readonly class FieldAdminColumnsSourceCatalog implements AdminColumnsSourc
     private function source(Definition $definition, array $field, array $postTypes): ?array
     {
         $uuid = $field['uuid'] ?? null;
+        $fieldType = $field['type'] ?? null;
         $logicalType = $field['logical_type'] ?? null;
         $label = $field['label'] ?? null;
         $repeatability = $field['repeatability'] ?? null;
@@ -90,6 +91,7 @@ final readonly class FieldAdminColumnsSourceCatalog implements AdminColumnsSourc
 
         if (!is_string($uuid)
             || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid) !== 1
+            || !is_string($fieldType)
             || !is_string($logicalType)
             || !is_string($label)
             || trim($label) === ''
@@ -121,7 +123,7 @@ final readonly class FieldAdminColumnsSourceCatalog implements AdminColumnsSourc
             'owner' => 'fields',
             'reference' => sprintf('fields.%s.%s', $definition->id, $uuid),
             'label' => substr(trim($label), 0, self::MAX_LABEL_BYTES),
-            'formats' => $this->formats($args['type']),
+            'formats' => $this->formats($fieldType, $args['type']),
             'capabilities' => $this->readOnlyCapabilities(),
             'ownerMetadata' => [
                 'groupRevision' => $definition->revision,
@@ -134,8 +136,12 @@ final readonly class FieldAdminColumnsSourceCatalog implements AdminColumnsSourc
     }
 
     /** @return list<string> */
-    private function formats(string $storageType): array
+    private function formats(string $fieldType, string $storageType): array
     {
+        if (in_array($fieldType, ['date', 'datetime'], true)) {
+            return ['date', 'text'];
+        }
+
         return match ($storageType) {
             'integer', 'number' => ['number', 'text'],
             'boolean' => ['boolean', 'text'],
