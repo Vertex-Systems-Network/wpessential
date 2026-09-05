@@ -37,6 +37,12 @@ final class FieldAdminColumnsSourceCatalogTest extends TestCase
                     'type' => 'number',
                 ],
                 [
+                    'uuid' => '33333333-3333-4333-8333-333333333334',
+                    'key' => 'published_at',
+                    'label' => 'Published at',
+                    'type' => 'datetime',
+                ],
+                [
                     'uuid' => '44444444-4444-4444-8444-444444444444',
                     'key' => 'gallery',
                     'label' => 'Gallery',
@@ -68,9 +74,11 @@ final class FieldAdminColumnsSourceCatalogTest extends TestCase
         self::assertSame([
             'fields.11111111-1111-4111-8111-111111111111.22222222-2222-4222-8222-222222222222',
             'fields.11111111-1111-4111-8111-111111111111.33333333-3333-4333-8333-333333333333',
+            'fields.11111111-1111-4111-8111-111111111111.33333333-3333-4333-8333-333333333334',
         ], array_column($sources, 'reference'));
         self::assertSame(['text'], $sources[0]['formats']);
         self::assertSame(['number', 'text'], $sources[1]['formats']);
+        self::assertSame(['date', 'text'], $sources[2]['formats']);
         self::assertSame([
             'groupRevision' => 7,
             'fieldUuid' => '22222222-2222-4222-8222-222222222222',
