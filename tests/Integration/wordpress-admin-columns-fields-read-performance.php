@@ -264,6 +264,7 @@ columnsFieldsExpect($wpdb instanceof wpdb, 'WordPress database adapter must be a
 wp_cache_flush();
 $smallBefore = (int) $wpdb->num_queries;
 $small = $adapter->read($view->id, [
+    'search' => 'WPE Columns Fields',
     'page_size' => 5,
     'offset' => 0,
     'order_by' => [['column_key' => 'title', 'direction' => 'asc']],
@@ -276,6 +277,7 @@ columnsFieldsExpect($smallQueries >= 1, 'small mixed read must execute real data
 wp_cache_flush();
 $largeBefore = (int) $wpdb->num_queries;
 $large = $adapter->read($view->id, [
+    'search' => 'WPE Columns Fields',
     'page_size' => 50,
     'offset' => 0,
     'order_by' => [['column_key' => 'title', 'direction' => 'asc']],
