@@ -103,6 +103,12 @@ final class FieldsModule implements ModuleInterface
             $values,
             $valueAuthorization,
         );
+        $valueReadConsumer = new FieldValueReadConsumer(
+            $queryConsumer,
+            $valueTargets,
+            $postMetaValues,
+            $valueAuthorization,
+        );
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
@@ -123,6 +129,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.values.targets', $valueTargets);
         $services->set('module.custom-fields.values.authorization', $valueAuthorization);
         $services->set('module.custom-fields.query-consumer', $queryConsumer);
+        $services->set('module.custom-fields.values.read-consumer', $valueReadConsumer);
 
         $handlers = [
             'catalog' => new FieldCatalogAbilityHandler($catalog),
