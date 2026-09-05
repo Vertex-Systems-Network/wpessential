@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
 }
 
 use Closure;
+use Throwable;
+use WPEssential\Contracts\AdminColumnsSourceCatalogInterface;
 use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Modules\Query\WordPressPostsQueryCompiler;
 use WPEssential\Platform\DataSources\DataSourceDescriptor;
@@ -18,11 +20,15 @@ final readonly class AdminColumnsAdminBootstrapProjector
     private const CONTRACT_VERSION = 1;
     private const MAX_TARGETS = 100;
     private const MAX_SOURCES = 100;
+    private const MAX_OWNER_SOURCES = 100;
     private const MAX_LABEL_BYTES = 191;
+    private const SAFE_FORMATS = ['text', 'number', 'date', 'boolean', 'image', 'badge', 'link'];
+    private const SAFE_OWNERS = ['fields', 'taxonomy', 'relations', 'media', 'status', 'query', 'provider', 'renderer'];
 
     public function __construct(
         private DataSourceRegistryInterface $dataSources,
         private ?Closure $postTypeProvider = null,
+        private ?AdminColumnsSourceCatalogInterface $ownerSources = null,
     ) {}
 
     /** @return array<string,mixed> */
@@ -42,7 +48,7 @@ final readonly class AdminColumnsAdminBootstrapProjector
             'surface' => 'columns',
             'contractVersion' => self::CONTRACT_VERSION,
             'targets' => $this->targets(),
-            'sources' => $this->sources($descriptor),
+            'sources' => [...$this->sources($descriptor), ...$this->optionalOwnerSources()],
         ];
     }
 
@@ -105,6 +111,87 @@ final readonly class AdminColumnsAdminBootstrapProjector
             }
         }
         return $sources;
+    }
+
+    /** @return list<array<string,mixed>> */
+    private function optionalOwnerSources(): array
+    {
+        if (!$this->ownerSources instanceof AdminColumnsSourceCatalogInterface) {
+            return [];
+        }
+
+        try {
+            $candidateSources = $this->ownerSources->adminColumnSources();
+        } catch (Throwable) {
+            return [];
+        }
+
+        $sources = [];
+        foreach ($candidateSources as $candidate) {
+            $source = $this->ownerSource($candidate);
+            if ($source === null) {
+                continue;
+            }
+            $sources[$source['reference']] = $source;
+            if (count($sources) >= self::MAX_OWNER_SOURCES) {
+                break;
+            }
+        }
+        ksort($sources, SORT_STRING);
+        return array_values($sources);
+    }
+
+    /** @param array<string,mixed> $candidate */
+    private function ownerSource(array $candidate): ?array
+    {
+        $owner = $candidate['owner'] ?? null;
+        $reference = $candidate['reference'] ?? null;
+        $label = $candidate['label'] ?? null;
+        $formats = $candidate['formats'] ?? null;
+        $capabilities = $candidate['capabilities'] ?? null;
+
+        if (!is_string($owner)
+            || !in_array($owner, self::SAFE_OWNERS, true)
+            || !$this->identifier($reference)
+            || !is_string($label)
+            || trim($label) === ''
+            || !is_array($formats)
+            || !array_is_list($formats)
+            || $formats === []
+            || !is_array($capabilities)
+            || array_is_list($capabilities)
+        ) {
+            return null;
+        }
+
+        $safeFormats = [];
+        foreach ($formats as $format) {
+            if (!is_string($format) || !in_array($format, self::SAFE_FORMATS, true)) {
+                return null;
+            }
+            $safeFormats[$format] = true;
+        }
+
+        foreach (['sort', 'filter', 'edit', 'export'] as $capability) {
+            if (($capabilities[$capability] ?? null) !== false) {
+                return null;
+            }
+        }
+
+        $source = [
+            'owner' => $owner,
+            'reference' => $reference,
+            'label' => $this->boundedLabel(trim($label)),
+            'formats' => array_keys($safeFormats),
+            'capabilities' => $this->readOnlyCapabilities(),
+        ];
+
+        $ownerMetadata = $candidate['ownerMetadata'] ?? null;
+        if (is_array($ownerMetadata) && !array_is_list($ownerMetadata)) {
+            $source['ownerMetadata'] = $ownerMetadata;
+        }
+
+        return $source;
     }
 
     /** @return array{sort:bool,filter:bool,edit:bool,export:bool} */
