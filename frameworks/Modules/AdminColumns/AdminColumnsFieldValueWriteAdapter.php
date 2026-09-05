@@ -73,7 +73,13 @@ final readonly class AdminColumnsFieldValueWriteAdapter
             $value,
             $context,
         );
-        $this->assertOwnerWriteResult($write, $fieldReference, $postId, $targetKey);
+        $this->assertOwnerWriteResult(
+            $write,
+            $fieldReference,
+            $postId,
+            $targetKey,
+            $expectedGroupRevision,
+        );
 
         return [
             'contract_version' => self::CONTRACT_VERSION,
@@ -155,7 +161,12 @@ final readonly class AdminColumnsFieldValueWriteAdapter
             throw new RuntimeException('Admin Columns mutation target verification failed through the Query owner contract.');
         }
         $rows = $result['rows'] ?? null;
-        if (!is_array($rows) || !array_is_list($rows) || count($rows) !== 1 || !is_array($rows[0])) {
+        if (($result['returned'] ?? null) !== 1
+            || !is_array($rows)
+            || !array_is_list($rows)
+            || count($rows) !== 1
+            || !is_array($rows[0])
+        ) {
             throw new InvalidArgumentException('Admin Columns mutation target row is not available in the selected View target.');
         }
         if (($rows[0]['post.id'] ?? null) !== $postId || ($rows[0]['post.type'] ?? null) !== $targetKey) {
@@ -164,13 +175,18 @@ final readonly class AdminColumnsFieldValueWriteAdapter
     }
 
     /** @param array<string,mixed> $write */
-    private function assertOwnerWriteResult(array $write, string $fieldReference, int $postId, string $targetKey): void
-    {
+    private function assertOwnerWriteResult(
+        array $write,
+        string $fieldReference,
+        int $postId,
+        string $targetKey,
+        int $expectedGroupRevision,
+    ): void {
         if (($write['contract_version'] ?? null) !== FieldValueWriteConsumerInterface::CONTRACT_VERSION
             || ($write['field_ref'] ?? null) !== $fieldReference
+            || ($write['group_revision'] ?? null) !== $expectedGroupRevision
             || ($write['post_id'] ?? null) !== $postId
             || ($write['post_type'] ?? null) !== $targetKey
-            || !is_int($write['group_revision'] ?? null)
             || !is_string($write['status'] ?? null)
             || !is_bool($write['changed'] ?? null)
             || !array_key_exists('value', $write)
