@@ -109,6 +109,12 @@ final class FieldsModule implements ModuleInterface
             $postMetaValues,
             $valueAuthorization,
         );
+        $valueWriteConsumer = new FieldValueWriteConsumer(
+            $queryConsumer,
+            $valueTargets,
+            $postMetaValues,
+            $valueAuthorization,
+        );
         $adminColumnSources = new FieldAdminColumnsSourceCatalog(
             $definitions,
             $groups,
@@ -137,6 +143,7 @@ final class FieldsModule implements ModuleInterface
         $services->set('module.custom-fields.values.authorization', $valueAuthorization);
         $services->set('module.custom-fields.query-consumer', $queryConsumer);
         $services->set('module.custom-fields.values.read-consumer', $valueReadConsumer);
+        $services->set('module.custom-fields.values.write-consumer', $valueWriteConsumer);
         $services->set('module.custom-fields.admin-columns.sources', $adminColumnSources);
 
         $handlers = [
