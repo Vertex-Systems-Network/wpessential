@@ -13,6 +13,7 @@ use WPEssential\Contracts\AdminColumnsSourceCatalogInterface;
 use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\FieldValueReadConsumerInterface;
+use WPEssential\Contracts\FieldValueWriteConsumerInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -34,10 +35,12 @@ final class AdminColumnsModule implements ModuleInterface
     public const SERVICE_NORMALIZER = 'module.admin-columns.view-normalizer';
     public const SERVICE_VIEWS = 'module.admin-columns.views';
     public const SERVICE_READ_ADAPTER = 'module.admin-columns.read-adapter';
+    public const SERVICE_FIELD_WRITE_ADAPTER = 'module.admin-columns.fields-write-adapter';
     public const SERVICE_ADMIN = 'module.admin-columns.admin';
 
     private const QUERY_READ_SERVICE = 'module.query.read-consumer';
     private const FIELD_VALUE_READ_SERVICE = 'module.custom-fields.values.read-consumer';
+    private const FIELD_VALUE_WRITE_SERVICE = 'module.custom-fields.values.write-consumer';
     private const FIELD_SOURCE_CATALOG_SERVICE = 'module.custom-fields.admin-columns.sources';
     private const DATA_SOURCE_SERVICE = 'platform.data-sources';
     private const ADMIN_ASSET_SERVICE = 'platform.admin.assets';
@@ -85,7 +88,21 @@ final class AdminColumnsModule implements ModuleInterface
             $fields = $candidate;
         }
 
-        foreach ([self::SERVICE_NORMALIZER, self::SERVICE_VIEWS, self::SERVICE_READ_ADAPTER] as $serviceId) {
+        $fieldWrites = null;
+        if ($services->has(self::FIELD_VALUE_WRITE_SERVICE)) {
+            $candidate = $services->get(self::FIELD_VALUE_WRITE_SERVICE);
+            if (!$candidate instanceof FieldValueWriteConsumerInterface) {
+                throw new LogicException('Admin Columns optional Fields value write service must implement the certified contract.');
+            }
+            $fieldWrites = $candidate;
+        }
+
+        foreach ([
+            self::SERVICE_NORMALIZER,
+            self::SERVICE_VIEWS,
+            self::SERVICE_READ_ADAPTER,
+            self::SERVICE_FIELD_WRITE_ADAPTER,
+        ] as $serviceId) {
             if ($services->has($serviceId)) {
                 throw new LogicException(sprintf('Admin Columns service "%s" is already registered.', $serviceId));
             }
@@ -97,6 +114,12 @@ final class AdminColumnsModule implements ModuleInterface
         $services->set(self::SERVICE_NORMALIZER, $normalizer);
         $services->set(self::SERVICE_VIEWS, $views);
         $services->set(self::SERVICE_READ_ADAPTER, $readAdapter);
+        if ($fieldWrites instanceof FieldValueWriteConsumerInterface) {
+            $services->set(
+                self::SERVICE_FIELD_WRITE_ADAPTER,
+                new AdminColumnsFieldValueWriteAdapter($views, $query, $fieldWrites),
+            );
+        }
 
         $actions = [
             'list-views' => [AdminColumnsViewAbilityHandler::LIST, false],
@@ -174,9 +197,9 @@ final class AdminColumnsModule implements ModuleInterface
         $admin->register();
         // View-definition and bounded row-read AJAX are registered through the
         // shared Ability platform. The page remains read-only if the shared
-        // dispatcher/gateway is unavailable. Optional Fields composition is an
-        // internal owner-read seam only; no row mutation, export or REST exposure
-        // is introduced here.
+        // dispatcher/gateway is unavailable. Optional Fields composition uses
+        // certified owner read/write seams internally; no row-mutation Ability,
+        // AJAX/UI exposure, export, or REST surface is introduced here.
     }
 
     /** @return array<string,mixed> */
