@@ -4,7 +4,10 @@ on:
   pull_request:
     paths:
       - 'tests/Integration/wordpress-query-native-execution-reference.php'
+      - 'tests/Integration/wordpress-admin-columns-read-performance.php'
+      - 'tests/Unit/Modules/AdminColumns/AdminColumnsReadPerformanceTest.php'
       - 'docs/IMPLEMENTATION/QUERY-NATIVE-EXECUTION-REFERENCE-V1.md'
+      - 'docs/IMPLEMENTATION/ADMIN-COLUMNS-READ-PERFORMANCE-V1.md'
       - '.github/workflows/query-native-execution-reference.yml'
   workflow_dispatch:
 
@@ -78,8 +81,10 @@ jobs:
           tar -xzf /tmp/wordpress.tar.gz -C /tmp
           test -f /tmp/wordpress/wp-load.php
 
-      - name: Validate Query reference source
-        run: php -l tests/Integration/wordpress-query-native-execution-reference.php
+      - name: Validate Query and Admin Columns reference sources
+        run: |
+          php -l tests/Integration/wordpress-query-native-execution-reference.php
+          php -l tests/Integration/wordpress-admin-columns-read-performance.php
 
       - name: Run real WordPress Query reference
         env:
@@ -89,6 +94,15 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/wordpress-query-native-execution-reference.php
+
+      - name: Run real WordPress Admin Columns no-N+1 reference
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-admin-columns-read-performance.php
 
   mariadb-baseline:
     name: MariaDB 10.11 / WP ${{ matrix.wordpress }} / PHP 8.4
@@ -151,6 +165,9 @@ jobs:
           tar -xzf /tmp/wordpress.tar.gz -C /tmp
           test -f /tmp/wordpress/wp-load.php
 
+      - name: Validate Admin Columns reference source
+        run: php -l tests/Integration/wordpress-admin-columns-read-performance.php
+
       - name: Run real WordPress Query reference
         env:
           WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
@@ -159,3 +176,12 @@ jobs:
           WPE_TEST_MYSQL_USER: root
           WPE_TEST_MYSQL_PASSWORD: root
         run: php tests/Integration/wordpress-query-native-execution-reference.php
+
+      - name: Run real WordPress Admin Columns no-N+1 reference
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: php tests/Integration/wordpress-admin-columns-read-performance.php
