@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use LogicException;
+use WPEssential\Contracts\AdminColumnsSourceCatalogInterface;
 use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\FieldValueReadConsumerInterface;
@@ -37,6 +38,7 @@ final class AdminColumnsModule implements ModuleInterface
 
     private const QUERY_READ_SERVICE = 'module.query.read-consumer';
     private const FIELD_VALUE_READ_SERVICE = 'module.custom-fields.values.read-consumer';
+    private const FIELD_SOURCE_CATALOG_SERVICE = 'module.custom-fields.admin-columns.sources';
     private const DATA_SOURCE_SERVICE = 'platform.data-sources';
     private const ADMIN_ASSET_SERVICE = 'platform.admin.assets';
     private const ABILITY_SERVICE = 'platform.abilities';
@@ -148,10 +150,22 @@ final class AdminColumnsModule implements ModuleInterface
             throw new LogicException('Admin Columns admin service is already registered.');
         }
 
+        $ownerSources = null;
+        if ($services->has(self::FIELD_SOURCE_CATALOG_SERVICE)) {
+            $candidate = $services->get(self::FIELD_SOURCE_CATALOG_SERVICE);
+            if (!$candidate instanceof AdminColumnsSourceCatalogInterface) {
+                throw new LogicException('Admin Columns optional owner source catalog must implement the certified discovery contract.');
+            }
+            $ownerSources = $candidate;
+        }
+
         $ajax = $services->get(self::AJAX_DISPATCHER_SERVICE);
         $gateway = $services->get(self::AJAX_GATEWAY_SERVICE);
         $admin = new AdminColumnsAdminController(
-            new AdminColumnsAdminBootstrapProjector($dataSources),
+            new AdminColumnsAdminBootstrapProjector(
+                $dataSources,
+                ownerSources: $ownerSources,
+            ),
             $assets,
             $ajax instanceof AjaxDispatcher ? $ajax : null,
             $gateway instanceof WordPressAjaxGateway ? $gateway->action() : null,
