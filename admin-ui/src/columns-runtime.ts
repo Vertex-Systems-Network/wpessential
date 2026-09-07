@@ -1123,7 +1123,10 @@ function wireSave(
 			if ( ! isObject( data ) ) {
 				throw new Error( 'Invalid save response.' );
 			}
-			const definition = parseLoadedDefinition( data.definition, bootstrap );
+			const definition = parseLoadedDefinition(
+				data.definition,
+				bootstrap
+			);
 			const returnedKey = definition?.loadedPayload.viewKey;
 			if (
 				definition === null ||
@@ -1588,7 +1591,9 @@ function wirePreview(
 						.map( ( [ key ] ) => key );
 		const postIdKey = postIdKeys.length === 1 ? postIdKeys[ 0 ]! : null;
 		const rowPostIds = postIdKey
-			? result.rows.map( ( row ) => positivePostId( row[ postIdKey ] ?? null ) )
+			? result.rows.map( ( row ) =>
+					positivePostId( row[ postIdKey ] ?? null )
+			  )
 			: result.rows.map( () => null );
 		const positiveIds = rowPostIds.filter(
 			( value ): value is number => value !== null
@@ -1600,14 +1605,17 @@ function wirePreview(
 
 		for ( const [ rowIndex, row ] of result.rows.entries() ) {
 			const tableRow = document.createElement( 'tr' );
-			const postId = rowIdentityReady ? rowPostIds[ rowIndex ] ?? null : null;
+			const postId = rowIdentityReady
+				? rowPostIds[ rowIndex ] ?? null
+				: null;
 			for ( const column of result.columns ) {
 				const cell = document.createElement( 'td' );
 				const display = document.createElement( 'span' );
 				display.textContent = row[ column.key ] ?? '';
 				cell.append( display );
 
-				const authoredSource = authoredSources?.get( column.key ) ?? null;
+				const authoredSource =
+					authoredSources?.get( column.key ) ?? null;
 				const metadata =
 					authoredSource?.owner === 'fields'
 						? fieldsMetadata.get( authoredSource.reference ) ?? null
@@ -1644,7 +1652,11 @@ function wirePreview(
 					cell.append( document.createTextNode( ' ' ), edit );
 
 					const restore = (): void => {
-						cell.replaceChildren( display, document.createTextNode( ' ' ), edit );
+						cell.replaceChildren(
+							display,
+							document.createTextNode( ' ' ),
+							edit
+						);
 					};
 
 					edit.addEventListener( 'click', () => {
@@ -1660,21 +1672,27 @@ function wirePreview(
 								new Option( 'True', 'true' ),
 								new Option( 'False', 'false' )
 							);
-							select.value = current === 'true' || current === 'false' ? current : '';
+							select.value =
+								current === 'true' || current === 'false'
+									? current
+									: '';
 							control = select;
 						} else {
 							const input = document.createElement( 'input' );
-							input.type = authoredSource.format === 'number'
-								? 'number'
-								: authoredSource.format === 'date'
-									? 'date'
-									: 'text';
+							let inputType = 'text';
+							if ( authoredSource.format === 'number' ) {
+								inputType = 'number';
+							} else if ( authoredSource.format === 'date' ) {
+								inputType = 'date';
+							}
+							input.type = inputType;
 							input.maxLength = MAX_PREVIEW_CELL_TEXT;
 							if ( authoredSource.format === 'number' ) {
 								input.step = 'any';
 							}
 							input.value =
-								authoredSource.format === 'date' && current !== ''
+								authoredSource.format === 'date' &&
+								current !== ''
 									? current.slice( 0, 10 )
 									: current;
 							control = input;
@@ -1699,7 +1717,8 @@ function wirePreview(
 						cancel.addEventListener( 'click', () => {
 							if ( ! writeInFlight ) {
 								restore();
-								previewStatus.textContent = 'Field edit cancelled. No mutation request was sent.';
+								previewStatus.textContent =
+									'Field edit cancelled. No mutation request was sent.';
 							}
 						} );
 
@@ -1718,28 +1737,49 @@ function wirePreview(
 							}
 							let value: unknown;
 							if ( authoredSource.format === 'boolean' ) {
-								if ( ! ( control instanceof HTMLSelectElement ) || ! [ 'true', 'false' ].includes( control.value ) ) {
-									previewStatus.textContent = 'Choose a valid boolean value.';
+								if (
+									! (
+										control instanceof HTMLSelectElement
+									) ||
+									! [ 'true', 'false' ].includes(
+										control.value
+									)
+								) {
+									previewStatus.textContent =
+										'Choose a valid boolean value.';
 									return;
 								}
 								value = control.value === 'true';
 							} else if ( authoredSource.format === 'number' ) {
-								if ( ! ( control instanceof HTMLInputElement ) || control.value.trim() === '' ) {
-									previewStatus.textContent = 'Enter a bounded numeric value.';
+								if (
+									! ( control instanceof HTMLInputElement ) ||
+									control.value.trim() === ''
+								) {
+									previewStatus.textContent =
+										'Enter a bounded numeric value.';
 									return;
 								}
 								const numeric = Number( control.value );
 								if ( ! Number.isFinite( numeric ) ) {
-									previewStatus.textContent = 'Enter a finite numeric value.';
+									previewStatus.textContent =
+										'Enter a finite numeric value.';
 									return;
 								}
 								value = numeric;
 							} else {
-								if ( ! ( control instanceof HTMLInputElement ) ) {
+								if (
+									! ( control instanceof HTMLInputElement )
+								) {
 									return;
 								}
-								if ( authoredSource.format === 'date' && ! /^\d{4}-\d{2}-\d{2}$/.test( control.value ) ) {
-									previewStatus.textContent = 'Choose a valid date value.';
+								if (
+									authoredSource.format === 'date' &&
+									! /^\d{4}-\d{2}-\d{2}$/.test(
+										control.value
+									)
+								) {
+									previewStatus.textContent =
+										'Choose a valid date value.';
 									return;
 								}
 								value = control.value;
@@ -1762,7 +1802,8 @@ function wirePreview(
 										view_id: expectedViewId,
 										column_key: column.key,
 										post_id: postId,
-										expected_group_revision: metadata.groupRevision,
+										expected_group_revision:
+											metadata.groupRevision,
 										value,
 									}
 								);
@@ -1781,7 +1822,9 @@ function wirePreview(
 										metadata
 									)
 								) {
-									throw new Error( 'Malformed or stale Fields mutation response.' );
+									throw new Error(
+										'Malformed or stale Fields mutation response.'
+									);
 								}
 								resetPreview();
 								previewStatus.textContent =
@@ -1867,7 +1910,11 @@ function wirePreview(
 			previous.disabled = offset === 0;
 			next.disabled =
 				lastReturned < size || offset >= 10000 || offset + size > 10000;
-			if ( previewStatus.textContent?.startsWith( 'Preview loaded read-only.' ) !== true ) {
+			if (
+				previewStatus.textContent?.startsWith(
+					'Preview loaded read-only.'
+				) !== true
+			) {
 				previewStatus.textContent = `${ result.returned } row${
 					result.returned === 1 ? '' : 's'
 				} previewed from revision ${
