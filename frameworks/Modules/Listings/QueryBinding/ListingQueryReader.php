@@ -18,9 +18,7 @@ final readonly class ListingQueryReader
     {
     }
 
-    /**
-     * @param array<string,scalar|null> $parameters
-     */
+    /** @param array<string,mixed> $parameters */
     public function read(ListingQueryBinding $binding, array $parameters, ExecutionContext $context): ListingQueryResultEnvelope
     {
         $description = $this->query->describe($binding->sourceRef, $context);
