@@ -80,6 +80,36 @@ final class ListingQueryReaderTest extends TestCase
         self::assertSame('$.policy', $result->errorPath);
     }
 
+    public function testFailsClosedWhenResultContractVersionDrifts(): void
+    {
+        $query = new ListingQueryTestConsumer();
+        $query->wrongContractVersion = true;
+        $reader = new ListingQueryReader($query);
+        $binding = new ListingQueryBinding('wordpress.posts', ['post_id', 'title']);
+
+        $result = $reader->read($binding, [], $this->context());
+
+        self::assertFalse($result->ok);
+        self::assertSame([], $result->rows);
+        self::assertSame('wpe_listings_query_contract_mismatch', $result->errorCode);
+        self::assertSame('$.contract_version', $result->errorPath);
+    }
+
+    public function testFailsClosedWhenQueryRowContainsUndeclaredField(): void
+    {
+        $query = new ListingQueryTestConsumer();
+        $query->extraField = true;
+        $reader = new ListingQueryReader($query);
+        $binding = new ListingQueryBinding('wordpress.posts', ['post_id', 'title']);
+
+        $result = $reader->read($binding, [], $this->context());
+
+        self::assertFalse($result->ok);
+        self::assertSame([], $result->rows);
+        self::assertSame('wpe_listings_query_contract_mismatch', $result->errorCode);
+        self::assertSame('$.rows', $result->errorPath);
+    }
+
     public function testRejectsRawProviderStyleSemanticReference(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -99,6 +129,8 @@ final class ListingQueryTestConsumer implements QueryReadConsumerInterface
     public array $lastRequest = [];
     public int $readCalls = 0;
     public bool $failure = false;
+    public bool $extraField = false;
+    public bool $wrongContractVersion = false;
 
     public function describe(string $sourceRef, ExecutionContext $context): array
     {
@@ -124,10 +156,11 @@ final class ListingQueryTestConsumer implements QueryReadConsumerInterface
     {
         ++$this->readCalls;
         $this->lastRequest = $request;
+        $contractVersion = $this->wrongContractVersion ? self::CONTRACT_VERSION + 1 : self::CONTRACT_VERSION;
 
         if ($this->failure) {
             return [
-                'contract_version' => self::CONTRACT_VERSION,
+                'contract_version' => $contractVersion,
                 'ok' => false,
                 'source_ref' => 'wordpress.posts',
                 'projection' => [],
@@ -141,12 +174,17 @@ final class ListingQueryTestConsumer implements QueryReadConsumerInterface
             ];
         }
 
+        $row = ['post_id' => 42, 'title' => 'Hello'];
+        if ($this->extraField) {
+            $row['secret_column'] = 'should-not-leak';
+        }
+
         return [
-            'contract_version' => self::CONTRACT_VERSION,
+            'contract_version' => $contractVersion,
             'ok' => true,
             'source_ref' => 'wordpress.posts',
             'projection' => $request['projection'],
-            'rows' => [['post_id' => 42, 'title' => 'Hello']],
+            'rows' => [$row],
             'returned' => 1,
             'error' => null,
         ];
