@@ -81,11 +81,19 @@ final readonly class ListingQueryReader
             'offset' => $offset,
         ], $context);
 
+        if (($result['contract_version'] ?? null) !== QueryReadConsumerInterface::CONTRACT_VERSION) {
+            return $this->contractMismatch(
+                $binding->sourceRef,
+                '$.contract_version',
+                'Query result contract version did not match the declared Listing binding.',
+            );
+        }
+
         if (($result['ok'] ?? false) !== true) {
             $error = is_array($result['error'] ?? null) ? $result['error'] : [];
             return new ListingQueryResultEnvelope(
                 ok: false,
-                sourceRef: is_string($result['source_ref'] ?? null) ? $result['source_ref'] : $binding->sourceRef,
+                sourceRef: $binding->sourceRef,
                 projection: [],
                 rows: [],
                 returned: 0,
@@ -109,30 +117,48 @@ final readonly class ListingQueryReader
             || $returned > $binding->pageSize
             || ($result['source_ref'] ?? null) !== $binding->sourceRef
         ) {
-            return new ListingQueryResultEnvelope(
-                ok: false,
-                sourceRef: $binding->sourceRef,
-                projection: [],
-                rows: [],
-                returned: 0,
-                errorCode: 'wpe_listings_query_contract_mismatch',
-                errorPath: '$.result',
-                errorMessage: 'Query result did not match the declared Listing binding.',
+            return $this->contractMismatch(
+                $binding->sourceRef,
+                '$.result',
+                'Query result did not match the declared Listing binding.',
             );
         }
 
         foreach ($rows as $row) {
             if (!is_array($row) || array_is_list($row)) {
-                return new ListingQueryResultEnvelope(
-                    ok: false,
-                    sourceRef: $binding->sourceRef,
-                    projection: [],
-                    rows: [],
-                    returned: 0,
-                    errorCode: 'wpe_listings_query_contract_mismatch',
-                    errorPath: '$.rows',
-                    errorMessage: 'Query rows must be object/maps for Listing consumption.',
+                return $this->contractMismatch(
+                    $binding->sourceRef,
+                    '$.rows',
+                    'Query rows must be object/maps for Listing consumption.',
                 );
+            }
+
+            if (count($row) !== count($binding->projection)) {
+                return $this->contractMismatch(
+                    $binding->sourceRef,
+                    '$.rows',
+                    'Query row fields must exactly match the declared Listing projection.',
+                );
+            }
+
+            foreach ($binding->projection as $fieldRef) {
+                if (!array_key_exists($fieldRef, $row)) {
+                    return $this->contractMismatch(
+                        $binding->sourceRef,
+                        '$.rows',
+                        'Query row fields must exactly match the declared Listing projection.',
+                    );
+                }
+            }
+
+            foreach (array_keys($row) as $fieldRef) {
+                if (!is_string($fieldRef) || !in_array($fieldRef, $binding->projection, true)) {
+                    return $this->contractMismatch(
+                        $binding->sourceRef,
+                        '$.rows',
+                        'Query row fields must exactly match the declared Listing projection.',
+                    );
+                }
             }
         }
 
@@ -168,5 +194,19 @@ final readonly class ListingQueryReader
         if (!is_int($maxPageSize) || $binding->pageSize > $maxPageSize) {
             throw new InvalidArgumentException('Listing Query page size exceeds the source capability.');
         }
+    }
+
+    private function contractMismatch(string $sourceRef, string $path, string $message): ListingQueryResultEnvelope
+    {
+        return new ListingQueryResultEnvelope(
+            ok: false,
+            sourceRef: $sourceRef,
+            projection: [],
+            rows: [],
+            returned: 0,
+            errorCode: 'wpe_listings_query_contract_mismatch',
+            errorPath: $path,
+            errorMessage: $message,
+        );
     }
 }
