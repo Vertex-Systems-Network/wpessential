@@ -1,0 +1,69 @@
+name: Repair PR 237
+
+on:
+  push:
+    branches:
+      - agent/columns-fields-inline-edit-ui-v1
+    paths:
+      - .github/workflows/repair-pr237.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout claimed branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/columns-fields-inline-edit-ui-v1
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "wpessential-repair"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Reconcile latest main without force
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git merge --no-ff --no-edit origin/main
+
+      - name: Remove nested ternary lint violation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('admin-ui/src/columns-runtime.ts')
+          text = path.read_text()
+          old = """\t\t\t\t\t\t\tinput.type = authoredSource.format === 'number'\n\t\t\t\t\t\t\t\t? 'number'\n\t\t\t\t\t\t\t\t: authoredSource.format === 'date'\n\t\t\t\t\t\t\t\t\t? 'date'\n\t\t\t\t\t\t\t\t\t: 'text';"""
+          new = """\t\t\t\t\t\t\tlet inputType = 'text';\n\t\t\t\t\t\t\tif ( authoredSource.format === 'number' ) {\n\t\t\t\t\t\t\t\tinputType = 'number';\n\t\t\t\t\t\t\t} else if ( authoredSource.format === 'date' ) {\n\t\t\t\t\t\t\t\tinputType = 'date';\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\tinput.type = inputType;"""
+          if old not in text:
+              raise SystemExit('Expected nested ternary not found; refusing broad rewrite')
+          path.write_text(text.replace(old, new, 1))
+          PY
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+
+      - name: Install locked admin graph
+        run: npm ci --ignore-scripts
+
+      - name: Apply scoped JavaScript lint fixes
+        run: npm run lint:js -- --fix
+
+      - name: Verify JavaScript lint
+        run: npm run lint:js
+
+      - name: Remove temporary repair workflow and commit
+        run: |
+          set -euo pipefail
+          rm .github/workflows/repair-pr237.yml
+          git add -A
+          git diff --cached --check
+          git commit -m "Repair #237: reconcile main and fix JavaScript lint"
+          git push origin HEAD:agent/columns-fields-inline-edit-ui-v1
