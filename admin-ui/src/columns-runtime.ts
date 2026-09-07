@@ -534,7 +534,9 @@ function parsePreviewResult(
 			candidate.format.length > 64 ||
 			typeof candidate.primary !== 'boolean' ||
 			typeof candidate.source_owner !== 'string' ||
-			! [ 'native', 'query' ].includes( candidate.source_owner ) ||
+			! [ 'native', 'query', 'fields' ].includes(
+				candidate.source_owner
+			) ||
 			columnKeys.has( candidate.key )
 		) {
 			return null;
