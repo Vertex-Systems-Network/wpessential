@@ -36,6 +36,9 @@ final class AdminColumnsModule implements ModuleInterface
     public const SERVICE_VIEWS = 'module.admin-columns.views';
     public const SERVICE_READ_ADAPTER = 'module.admin-columns.read-adapter';
     public const SERVICE_FIELD_WRITE_ADAPTER = 'module.admin-columns.fields-write-adapter';
+    public const SERVICE_CSV_EXPORT = 'module.admin-columns.csv-export';
+    public const SERVICE_PERSONAL_PREFERENCES = 'module.admin-columns.personal-preferences';
+    public const SERVICE_VIEW_IMPORT = 'module.admin-columns.view-import';
     public const SERVICE_ADMIN = 'module.admin-columns.admin';
 
     private const QUERY_READ_SERVICE = 'module.query.read-consumer';
@@ -103,6 +106,9 @@ final class AdminColumnsModule implements ModuleInterface
             self::SERVICE_VIEWS,
             self::SERVICE_READ_ADAPTER,
             self::SERVICE_FIELD_WRITE_ADAPTER,
+            self::SERVICE_CSV_EXPORT,
+            self::SERVICE_PERSONAL_PREFERENCES,
+            self::SERVICE_VIEW_IMPORT,
         ] as $serviceId) {
             if ($services->has($serviceId)) {
                 throw new LogicException(sprintf('Admin Columns service "%s" is already registered.', $serviceId));
@@ -112,9 +118,25 @@ final class AdminColumnsModule implements ModuleInterface
         $normalizer = new AdminColumnsViewDefinitionNormalizer();
         $views = new AdminColumnsViewDefinitionService($definitions, $normalizer);
         $readAdapter = new AdminColumnsReadAdapter($views, $query, $fields);
+        $csvExport = new AdminColumnsCsvExportService(
+            $readAdapter,
+            new AdminColumnsCsvExportEncoder(),
+            views: $views,
+            scopePolicy: new AdminColumnsCsvExportScopePolicy(),
+        );
+        $personalPreferences = new AdminColumnsPersonalPreferenceStore(
+            new AdminColumnsPersonalPreferenceResolver(),
+        );
+        $viewImport = new AdminColumnsViewImportService(
+            new AdminColumnsViewPortabilityCodec($normalizer),
+            $views,
+        );
         $services->set(self::SERVICE_NORMALIZER, $normalizer);
         $services->set(self::SERVICE_VIEWS, $views);
         $services->set(self::SERVICE_READ_ADAPTER, $readAdapter);
+        $services->set(self::SERVICE_CSV_EXPORT, $csvExport);
+        $services->set(self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences);
+        $services->set(self::SERVICE_VIEW_IMPORT, $viewImport);
 
         $fieldWriteAdapter = null;
         if ($fieldWrites instanceof FieldValueWriteConsumerInterface) {
@@ -160,6 +182,83 @@ final class AdminColumnsModule implements ModuleInterface
             type: 'admin-columns.read.rows',
             handler: new AbilityAjaxHandler($abilities, $readDescriptor->name, $contexts),
             operation: NonceOperation::Apply,
+        ));
+
+        $exportDescriptor = new AbilityDescriptor(
+            name: AdminColumnsCsvExportAbilityHandler::ABILITY,
+            ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+            capability: self::CAPABILITY,
+            mutates: false,
+            channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+            inputSchema: $this->exportAbilityInputSchema(),
+            outputSchema: $this->exportAbilityOutputSchema(),
+        );
+        $abilities->register($exportDescriptor, new AdminColumnsCsvExportAbilityHandler($csvExport));
+        $ajaxRoutes->register(new AjaxRoute(
+            type: AdminColumnsCsvExportAbilityHandler::AJAX_TYPE,
+            handler: new AbilityAjaxHandler($abilities, $exportDescriptor->name, $contexts),
+            operation: NonceOperation::Apply,
+        ));
+
+        $preferenceActions = [
+            AdminColumnsPersonalPreferenceAbilityHandler::LOAD => [
+                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_LOAD,
+                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_LOAD,
+                false,
+                NonceOperation::Apply,
+            ],
+            AdminColumnsPersonalPreferenceAbilityHandler::SAVE => [
+                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_SAVE,
+                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_SAVE,
+                true,
+                NonceOperation::Update,
+            ],
+            AdminColumnsPersonalPreferenceAbilityHandler::RESET => [
+                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_RESET,
+                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_RESET,
+                true,
+                NonceOperation::Update,
+            ],
+        ];
+        foreach ($preferenceActions as $preferenceAction => [$abilityName, $ajaxType, $mutates, $operation]) {
+            $preferenceDescriptor = new AbilityDescriptor(
+                name: $abilityName,
+                ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: $mutates,
+                channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+                inputSchema: $this->personalPreferenceAbilityInputSchema($preferenceAction),
+                outputSchema: ['type' => 'object'],
+            );
+            $abilities->register(
+                $preferenceDescriptor,
+                new AdminColumnsPersonalPreferenceAbilityHandler(
+                    $views,
+                    $personalPreferences,
+                    $preferenceAction,
+                ),
+            );
+            $ajaxRoutes->register(new AjaxRoute(
+                type: $ajaxType,
+                handler: new AbilityAjaxHandler($abilities, $preferenceDescriptor->name, $contexts),
+                operation: $operation,
+            ));
+        }
+
+        $importDescriptor = new AbilityDescriptor(
+            name: AdminColumnsViewImportAbilityHandler::ABILITY,
+            ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+            capability: self::CAPABILITY,
+            mutates: true,
+            channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+            inputSchema: $this->viewImportAbilityInputSchema(),
+            outputSchema: ['type' => 'object'],
+        );
+        $abilities->register($importDescriptor, new AdminColumnsViewImportAbilityHandler($viewImport));
+        $ajaxRoutes->register(new AjaxRoute(
+            type: AdminColumnsViewImportAbilityHandler::AJAX_TYPE,
+            handler: new AbilityAjaxHandler($abilities, $importDescriptor->name, $contexts),
+            operation: NonceOperation::Update,
         ));
 
         if ($fieldWriteAdapter instanceof AdminColumnsFieldValueWriteAdapter) {
@@ -217,10 +316,10 @@ final class AdminColumnsModule implements ModuleInterface
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
-        // View-definition, bounded row-read, and optional owner-routed Fields
-        // mutation AJAX are registered through the shared Ability platform. The
-        // mutation route exists only when the certified Fields write seam is
-        // present. Inline/bulk UI, export and REST mutation remain non-scope.
+        // View-definition, bounded row-read, CSV export, personal preference,
+        // create-only View import, and optional owner-routed Fields mutation AJAX
+        // are registered through the shared Ability platform. Browser file/download/
+        // preference UI, inline/bulk integration and REST mutation remain gated.
     }
 
     /** @return array<string,mixed> */
@@ -270,6 +369,131 @@ final class AdminColumnsModule implements ModuleInterface
                 'order_by' => ['type' => 'array', 'maxItems' => 4],
                 'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
                 'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function exportAbilityInputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['view_id', 'expected_view_revision', 'scope_request', 'controls', 'runtime'],
+            'properties' => [
+                'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
+                'scope_request' => [
+                    'type' => 'object',
+                    'required' => ['scope', 'selected_row_ids', 'selected_columns', 'respect_filters', 'respect_sort'],
+                    'properties' => [
+                        'scope' => ['type' => 'string', 'enum' => ['current_page', 'selected_rows', 'all_matching']],
+                        'selected_row_ids' => ['type' => 'array', 'maxItems' => 100, 'items' => ['type' => 'integer', 'minimum' => 1]],
+                        'selected_columns' => ['type' => 'array', 'minItems' => 1, 'maxItems' => 100, 'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN]],
+                        'respect_filters' => ['type' => 'boolean'],
+                        'respect_sort' => ['type' => 'boolean'],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                'controls' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'filters' => ['type' => 'array', 'maxItems' => 16],
+                        'search' => ['type' => 'string', 'maxLength' => 200],
+                        'order_by' => ['type' => 'array', 'maxItems' => 4],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                'runtime' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
+                        'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+                    ],
+                    'additionalProperties' => false,
+                ],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function exportAbilityOutputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['contract_version', 'content_type', 'filename', 'bytes', 'csv'],
+            'properties' => [
+                'contract_version' => ['type' => 'integer', 'enum' => [1]],
+                'content_type' => ['type' => 'string', 'enum' => [AdminColumnsCsvExportAbilityHandler::CONTENT_TYPE]],
+                'filename' => ['type' => 'string', 'enum' => [AdminColumnsCsvExportAbilityHandler::FILENAME]],
+                'bytes' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 8388608],
+                'csv' => ['type' => 'string', 'maxLength' => 8388608],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function personalPreferenceAbilityInputSchema(string $action): array
+    {
+        if (!in_array($action, [
+            AdminColumnsPersonalPreferenceAbilityHandler::LOAD,
+            AdminColumnsPersonalPreferenceAbilityHandler::SAVE,
+            AdminColumnsPersonalPreferenceAbilityHandler::RESET,
+        ], true)) {
+            throw new LogicException('Admin Columns personal preference schema action is unsupported.');
+        }
+
+        $properties = [
+            'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+            'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
+        ];
+        $required = ['view_id', 'expected_view_revision'];
+
+        if ($action === AdminColumnsPersonalPreferenceAbilityHandler::SAVE) {
+            $properties['preference'] = [
+                'type' => 'object',
+                'properties' => [
+                    'chosen_view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                    'temporary_sort' => ['type' => 'array', 'maxItems' => 5],
+                    'temporary_filters' => ['type' => 'array', 'maxItems' => 20],
+                    'hidden_columns' => ['type' => 'array', 'maxItems' => 100, 'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN]],
+                    'density' => ['type' => 'string', 'enum' => ['compact', 'comfortable']],
+                    'saved_filter_state' => ['type' => ['object', 'null']],
+                ],
+                'additionalProperties' => false,
+            ];
+            $required[] = 'preference';
+        }
+
+        return [
+            'type' => 'object',
+            'required' => $required,
+            'properties' => $properties,
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function viewImportAbilityInputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['document', 'remaps'],
+            'properties' => [
+                'document' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 262144],
+                'remaps' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'target_keys' => ['type' => 'object', 'maxProperties' => 200],
+                        'source_references' => ['type' => 'object', 'maxProperties' => 200],
+                        'assignment_roles' => ['type' => 'object', 'maxProperties' => 200],
+                        'assignment_users' => ['type' => 'object', 'maxProperties' => 200],
+                        'assignment_capabilities' => ['type' => 'object', 'maxProperties' => 200],
+                    ],
+                    'additionalProperties' => false,
+                ],
             ],
             'additionalProperties' => false,
         ];
