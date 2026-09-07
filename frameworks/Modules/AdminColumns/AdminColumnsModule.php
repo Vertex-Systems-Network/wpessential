@@ -51,6 +51,7 @@ final class AdminColumnsModule implements ModuleInterface
     private const AJAX_GATEWAY_SERVICE = 'platform.ajax.gateway';
     private const CAPABILITY = 'manage_options';
     private const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+    private const COLUMN_KEY_PATTERN = '^[a-z0-9][a-z0-9_-]{0,63}$';
 
     public function manifest(): ModuleManifest
     {
@@ -114,11 +115,11 @@ final class AdminColumnsModule implements ModuleInterface
         $services->set(self::SERVICE_NORMALIZER, $normalizer);
         $services->set(self::SERVICE_VIEWS, $views);
         $services->set(self::SERVICE_READ_ADAPTER, $readAdapter);
+
+        $fieldWriteAdapter = null;
         if ($fieldWrites instanceof FieldValueWriteConsumerInterface) {
-            $services->set(
-                self::SERVICE_FIELD_WRITE_ADAPTER,
-                new AdminColumnsFieldValueWriteAdapter($views, $query, $fieldWrites),
-            );
+            $fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter($views, $query, $fieldWrites);
+            $services->set(self::SERVICE_FIELD_WRITE_ADAPTER, $fieldWriteAdapter);
         }
 
         $actions = [
@@ -160,6 +161,27 @@ final class AdminColumnsModule implements ModuleInterface
             handler: new AbilityAjaxHandler($abilities, $readDescriptor->name, $contexts),
             operation: NonceOperation::Apply,
         ));
+
+        if ($fieldWriteAdapter instanceof AdminColumnsFieldValueWriteAdapter) {
+            $writeDescriptor = new AbilityDescriptor(
+                name: AdminColumnsFieldValueWriteAbilityHandler::ABILITY,
+                ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: true,
+                channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+                inputSchema: $this->writeAbilityInputSchema(),
+                outputSchema: ['type' => 'object'],
+            );
+            $abilities->register(
+                $writeDescriptor,
+                new AdminColumnsFieldValueWriteAbilityHandler($fieldWriteAdapter),
+            );
+            $ajaxRoutes->register(new AjaxRoute(
+                type: AdminColumnsFieldValueWriteAbilityHandler::AJAX_TYPE,
+                handler: new AbilityAjaxHandler($abilities, $writeDescriptor->name, $contexts),
+                operation: NonceOperation::Update,
+            ));
+        }
     }
 
     public function boot(ServiceRegistryInterface $services): void
@@ -195,11 +217,10 @@ final class AdminColumnsModule implements ModuleInterface
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
-        // View-definition and bounded row-read AJAX are registered through the
-        // shared Ability platform. The page remains read-only if the shared
-        // dispatcher/gateway is unavailable. Optional Fields composition uses
-        // certified owner read/write seams internally; no row-mutation Ability,
-        // AJAX/UI exposure, export, or REST surface is introduced here.
+        // View-definition, bounded row-read, and optional owner-routed Fields
+        // mutation AJAX are registered through the shared Ability platform. The
+        // mutation route exists only when the certified Fields write seam is
+        // present. Inline/bulk UI, export and REST mutation remain non-scope.
     }
 
     /** @return array<string,mixed> */
@@ -249,6 +270,23 @@ final class AdminColumnsModule implements ModuleInterface
                 'order_by' => ['type' => 'array', 'maxItems' => 4],
                 'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
                 'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function writeAbilityInputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['view_id', 'column_key', 'post_id', 'expected_group_revision', 'value'],
+            'properties' => [
+                'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'column_key' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN],
+                'post_id' => ['type' => 'integer', 'minimum' => 1],
+                'expected_group_revision' => ['type' => 'integer', 'minimum' => 1],
+                'value' => [],
             ],
             'additionalProperties' => false,
         ];
