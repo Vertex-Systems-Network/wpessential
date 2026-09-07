@@ -55,9 +55,6 @@ final class ListingPublicStateCodec
             if (!is_scalar($value)) {
                 throw new InvalidArgumentException('Listing public filter values must be scalar.');
             }
-            if (is_string($value) && strlen($value) > 512) {
-                throw new InvalidArgumentException('Listing public filter value exceeds the bounded V1 limit.');
-            }
             $parameters[$parameter] = $value;
             $encoded[$key] = $this->encodeScalar($value);
         }
@@ -89,10 +86,15 @@ final class ListingPublicStateCodec
             }
         }
 
+        $queryString = http_build_query($encoded, '', '&', PHP_QUERY_RFC3986);
+        if (strlen($queryString) > QueryReadConsumerInterface::MAX_REQUEST_BYTES) {
+            throw new InvalidArgumentException('Listing public state exceeds the Query consumer request-size contract.');
+        }
+
         return new ListingPublicState(
             namespace: $namespace,
             parameters: $parameters,
-            queryString: http_build_query($encoded, '', '&', PHP_QUERY_RFC3986),
+            queryString: $queryString,
         );
     }
 
