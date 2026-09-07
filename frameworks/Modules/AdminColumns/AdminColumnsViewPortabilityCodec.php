@@ -227,12 +227,15 @@ final readonly class AdminColumnsViewPortabilityCodec
             $normalized = [];
             $destinations = [];
             foreach ($value as $from => $to) {
+                if ($key === 'assignment_users' && is_int($from) && $from > 0) {
+                    $from = (string) $from;
+                }
                 if (!is_string($from) || $from === '' || strlen($from) > 384) {
                     throw new InvalidArgumentException(sprintf('Portable View remap set "%s" contains an invalid source key.', $key));
                 }
                 if ($key === 'assignment_users') {
-                    if (!is_int($to) || $to < 1) {
-                        throw new InvalidArgumentException('Portable View assignment user remap destinations must be positive integers.');
+                    if (preg_match('/^[1-9][0-9]*$/', $from) !== 1 || !is_int($to) || $to < 1) {
+                        throw new InvalidArgumentException('Portable View assignment user remaps require positive integer source/destination ids.');
                     }
                     $destinationKey = (string) $to;
                 } else {
