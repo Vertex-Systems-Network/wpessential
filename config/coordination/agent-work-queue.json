@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-07",
-  "queue_anchor_main_sha": "92b4d3d6a3187c1f377616c60ef192ac6e5afe17",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D is ACTIVE after merged revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read composition/source discovery, owner-routed Fields write Ability/AJAX, preview compatibility through PR #231, remaining-gap audit PR #236, bounded CSV export encoder PR #235 and bounded internal export orchestration PR #240. PR #237 remains unmergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Three path-disjoint Gate D foundations (#242 personal preferences, #243 primary/row-action policy, #244 View portability) are dependency-ready and may run in parallel. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
+  "queue_anchor_main_sha": "1771247331b2f29bd4f1d1337bba7603a316eaed",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D remains ACTIVE / NOT PASS. Current main includes the revisioned View lifecycle, Query-backed reads, no-N+1 evidence, Fields-owned read/write foundations, preview compatibility, CSV export encoder/orchestration, personal preference resolver PR #246, primary/row-action policy PR #247 and View portability/remap PR #248. PR #237 remains unmergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Fields bulk edit remains blocked behind #237. Effective/degraded-state projection #249 is dependency-ready and path-disjoint. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue/README truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,10 +13,10 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main and verify merged PR #235/#236/#240 evidence plus open PR #237 before selecting work.",
+      "Resolve exact current main and verify merged PR #235/#236/#240/#246/#247/#248 evidence plus open PR #237 before selecting work.",
       "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
       "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files or semantic boundary.",
-      "Preserve Query ownership of backend row selection/sort/filter/search, Fields ownership of Field mutation semantics and Policy authorization.",
+      "Preserve Query ownership of backend row selection/sort/filter/search, source-owner mutation semantics, Policy authorization, and authored/personal/effective/diagnostic state separation.",
       "Only then create the exact deterministic claim branch from exact current main."
     ],
     "revalidation_before_merge": [
@@ -65,7 +65,7 @@
       "source": "Issue #232 / open PR #237 under parent #66",
       "dependencies": [
         "Admin Columns owner-routed Fields write Ability/AJAX is merged and remains optional/fail-closed",
-        "Fields-owned preview compatibility through PR #231 is authoritative on current main"
+        "Fields-owned preview compatibility through PR #231 is authoritative"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
@@ -76,7 +76,7 @@
         "do not edit Query, Fields or Relations production internals, bulk mutation, export, queue, CHECKPOINT.md or README.md"
       ],
       "completion_condition": "A published/enabled View can edit one certified Fields scalar cell only through the existing owner-routed Ability/AJAX seam, with explicit post.id identity, stale/failure preservation, preview invalidation after success and exact-head green evidence.",
-      "notes": "Claim branch is active and PR #237 is open. PHP Quality, Package, Platform Matrix and Browser E2E are green on head 7b40055921d7ec6ceec39aa94b23c61f0fadf391, but Architecture Guards fails at JavaScript lint with Prettier formatting errors plus one no-nested-ternary violation in columns-runtime.ts. Do not merge until a new exact head makes Architecture Guards green.",
+      "notes": "Claim branch is active and PR #237 is open on head 7b40055921d7ec6ceec39aa94b23c61f0fadf391. PHP Quality, Package, Platform Matrix and Browser E2E are green, but Architecture Guards fails JavaScript lint with 22 Prettier errors plus one no-nested-ternary violation in columns-runtime.ts. Do not merge until a new exact head makes all applicable checks green.",
       "claim_branch": "agent/columns-fields-inline-edit-ui-v1"
     },
     {
@@ -92,7 +92,7 @@
       "dependencies": ["Admin Columns Gate D remains ACTIVE"],
       "runtime_allowed": true,
       "allowed_scope": ["Historical completed boundary only"],
-      "completion_condition": "Satisfied by merged PR #235 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
+      "completion_condition": "Satisfied by merged PR #235 with exact-head green evidence.",
       "notes": "Completed claim branch is historical and must not be re-used or force-moved.",
       "claim_branch": "agent/columns-csv-export-encoder-v1"
     },
@@ -146,8 +146,8 @@
       "dependencies": ["PR #235 and PR #236 are promoted"],
       "runtime_allowed": true,
       "allowed_scope": ["Historical completed boundary only"],
-      "completion_condition": "Satisfied by merged PR #240 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
-      "notes": "Internal orchestration is promoted. HTTP/download/UI export transport remains a separately gated later tranche; completed claim branch must not be re-used or force-moved.",
+      "completion_condition": "Satisfied by merged PR #240 with exact-head green evidence.",
+      "notes": "Internal orchestration is promoted. HTTP/download/UI export transport remains separately gated.",
       "claim_branch": "agent/columns-export-orchestration-v1"
     },
     {
@@ -155,21 +155,16 @@
       "slot_id": "columns-personal-preference-resolver-v1",
       "title": "Build bounded personal preference resolver foundation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "PERSONAL_STATE_FOUNDATION",
       "parallel_class": "COLUMNS_PERSONAL_PREFERENCE_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #242 under parent #66 and UX personal-state separation contract",
-      "dependencies": ["Admin Columns revisioned View contract is promoted", "Gate D remains ACTIVE / NOT PASS"],
+      "source": "Issue #242 / merged PR #246",
+      "dependencies": ["Admin Columns revisioned View contract is promoted"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "new AdminColumns personal preference resolver/normalizer file only",
-        "new focused personal preference unit tests and one implementation document",
-        "chosen View, temporary sort/filter, personal column visibility/density and personal saved-filter state normalization/resolution only",
-        "no persistence/user-meta, UI, controller, Query/Fields/Relations internals, authorization, export, shared queue, CHECKPOINT.md or README.md"
-      ],
-      "completion_condition": "A pure bounded resolver proves personal state remains separate from shared View payloads and cannot grant authorization; persistence stays separately gated.",
-      "notes": "Path-disjoint from #237, row-action and portability lanes.",
+      "allowed_scope": ["Historical completed boundary only"],
+      "completion_condition": "Satisfied by merged PR #246 with exact-head green evidence; user-scoped persistence remains separately gated.",
+      "notes": "Pure resolver is promoted; no persistence or authorization grant was introduced.",
       "claim_branch": "agent/columns-personal-preference-resolver-v1"
     },
     {
@@ -177,21 +172,16 @@
       "slot_id": "columns-row-action-policy-v1",
       "title": "Build primary column and row-action policy foundation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "EFFECTIVE_POLICY_FOUNDATION",
       "parallel_class": "COLUMNS_ROW_ACTION_POLICY_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #243 under parent #66 and Gate D primary/row-action criterion",
-      "dependencies": ["Admin Columns View/column identities are promoted", "Gate D remains ACTIVE / NOT PASS"],
+      "source": "Issue #243 / merged PR #247",
+      "dependencies": ["Admin Columns View/column identities are promoted"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "new AdminColumns row-action policy/effective resolver file only",
-        "new focused row-action policy unit tests and one implementation document",
-        "explicit primary eligibility and allowlisted target action capability resolution only",
-        "no implicit action fallback, UI/controller, Query/Fields/Relations internals, authorization grants, shared queue, CHECKPOINT.md or README.md"
-      ],
-      "completion_condition": "A side-effect-free policy resolves primary/action effective state only from explicit canonical metadata and advertised capabilities, failing closed otherwise.",
-      "notes": "Path-disjoint from #237, personal preference and portability lanes.",
+      "allowed_scope": ["Historical completed boundary only"],
+      "completion_condition": "Satisfied by merged PR #247 after latest-main reconciliation and exact-head green evidence.",
+      "notes": "Effective availability remains distinct from Policy authorization and no implicit primary/action fallback was added.",
       "claim_branch": "agent/columns-row-action-policy-v1"
     },
     {
@@ -199,22 +189,44 @@
       "slot_id": "columns-view-portability-v1",
       "title": "Build View definition portability/remap foundation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "DEFINITION_PORTABILITY_FOUNDATION",
       "parallel_class": "COLUMNS_PORTABILITY_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #244 under parent #66 and Gate D portability criterion",
-      "dependencies": ["Admin Columns normalized revisioned View payload contract is promoted", "Gate D remains ACTIVE / NOT PASS"],
+      "source": "Issue #244 / merged PR #248",
+      "dependencies": ["Admin Columns normalized revisioned View payload contract is promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": ["Historical completed boundary only"],
+      "completion_condition": "Satisfied by merged PR #248 after latest-main reconciliation and exact-head green evidence.",
+      "notes": "Pure portability/remap codec is promoted; persistence/import commit workflow remains separately gated.",
+      "claim_branch": "agent/columns-view-portability-v1"
+    },
+    {
+      "priority": 180,
+      "slot_id": "columns-effective-state-projector-v1",
+      "title": "Build effective capability and degraded-state projector V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "EFFECTIVE_DIAGNOSTIC_STATE_FOUNDATION",
+      "parallel_class": "COLUMNS_EFFECTIVE_STATE_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Issue #249 under parent #66 and Gate D effective/diagnostic state criterion",
+      "dependencies": [
+        "Admin Columns authored View foundation is promoted",
+        "personal preference and row-action effective-state foundations are promoted",
+        "Gate D remains ACTIVE / NOT PASS"
+      ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "new AdminColumns View portability/remap codec file only",
-        "new focused portability unit tests and one implementation document",
-        "versioned normalized View payload round-trip, stable IDs/order and explicit environment-sensitive reference remap/reject behavior only",
-        "no persistence write, site/network/user scope trust, row-data export, UI/controller, Query/Fields/Relations internals, shared queue, CHECKPOINT.md or README.md"
+        "new AdminColumns effective/degraded-state projector file only",
+        "new focused effective-state unit tests and one implementation document",
+        "derive finite availability/degraded/expensive/provider-required states and bounded diagnostic evidence only from supplied canonical owner/adapter evidence",
+        "reject contradictory/unknown/secret-bearing evidence fail-closed",
+        "no persistence, provider discovery, Query execution, UI/controller, authorization grants, source-owner mutation, shared queue, CHECKPOINT.md or README.md"
       ],
-      "completion_condition": "A pure bounded portability codec preserves stable authored identity/order and requires explicit deterministic remaps for environment-sensitive references without importing trusted execution scope.",
-      "notes": "Path-disjoint from #237, personal preference and row-action lanes.",
-      "claim_branch": "agent/columns-view-portability-v1"
+      "completion_condition": "A pure bounded projector separates effective/diagnostic state from authored and personal state, exposes only allowlisted bounded evidence, and never converts availability into authorization.",
+      "notes": "Path-disjoint from #237 and from all completed foundation files.",
+      "claim_branch": "agent/columns-effective-state-projector-v1"
     }
   ]
 }
