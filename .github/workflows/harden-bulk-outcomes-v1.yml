@@ -78,12 +78,14 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install locked admin graph
         run: npm ci
-      - name: Format and validate runtime
-        run: |
-          npx prettier --write admin-ui/src/columns-runtime.ts
-          npm run lint:js
-          npm run typecheck
-          npm run build
+      - name: Format runtime
+        run: npx prettier --write admin-ui/src/columns-runtime.ts
+      - name: JavaScript lint
+        run: npm run lint:js
+      - name: TypeScript typecheck
+        run: npm run typecheck
+      - name: Admin build
+        run: npm run build
       - name: Remove helper and commit
         run: |
           git rm .github/workflows/harden-bulk-outcomes-v1.yml
