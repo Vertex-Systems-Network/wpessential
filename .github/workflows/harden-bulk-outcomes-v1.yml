@@ -39,18 +39,15 @@ jobs:
           runtime = Path('admin-ui/src/columns-runtime.ts')
           source = runtime.read_text()
           runtime_replacements = [
-              ('failedPostIds', 'unverifiedPostIds', 4),
+              ('failedPostIds', 'unverifiedPostIds', 5),
               ('failureDetail', 'unverifiedDetail', 2),
               ('Failed post IDs:', 'Unverified post IDs:', 1),
               ('${ unverifiedPostIds.length } failed,', '${ unverifiedPostIds.length } unverified,', 1),
-              ('${ unverifiedPostIds.join( \' , \' ) }.', '${ unverifiedPostIds.join( \' , \' ) }. Server state may have changed; refresh before retrying.', 0),
           ]
           for old, new, expected in runtime_replacements:
               count = source.count(old)
-              if expected != 0 and count != expected:
+              if count != expected:
                   raise SystemExit(f'unexpected runtime fragment count for {old!r}: {count}')
-              if expected == 0:
-                  continue
               source = source.replace(old, new)
           warning_anchor = "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }.`"
           warning_value = "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Server state may have changed; refresh before retrying.`"
