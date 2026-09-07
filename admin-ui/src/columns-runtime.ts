@@ -25,6 +25,22 @@ type StatusBootstrap = {
 	ajaxAction: string;
 	routes: { status: AjaxRoute };
 };
+type WriteBootstrap = {
+	ajaxUrl: string;
+	ajaxAction: string;
+	routes: { writeFieldValue: AjaxRoute };
+};
+type FieldsSourceMetadata = {
+	groupRevision: number;
+	fieldUuid: string;
+	logicalType: string;
+	postTypes: string[];
+};
+type AuthoredColumnSource = {
+	owner: string;
+	reference: string;
+	format: string;
+};
 type PreviewColumn = {
 	key: string;
 	label: string;
@@ -90,6 +106,7 @@ type EditorSession = {
 	viewKey: string | null;
 	status: DefinitionStatus;
 	viewEnabled: boolean;
+	authoredDirty: boolean;
 	assignment: JsonObject | undefined;
 	layout: JsonObject | undefined;
 	visibility: JsonObject | undefined;
@@ -99,6 +116,8 @@ type EditorSession = {
 const UUID_PATTERN =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const MACHINE_KEY_PATTERN = /^[a-z0-9][a-z0-9_-]{0,63}$/;
+const FIELD_REFERENCE_PATTERN =
+	/^fields\.[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const MAX_SAVED_VIEWS = 100;
 const MAX_COLUMNS = 100;
 const MAX_PREVIEW_ROWS = 100;
@@ -243,6 +262,90 @@ function parseStatusBootstrap( value: unknown ): StatusBootstrap | null {
 		ajaxAction: value.ajaxAction,
 		routes: { status: value.routes.status },
 	};
+}
+
+function parseWriteBootstrap( value: unknown ): WriteBootstrap | null {
+	if (
+		! isObject( value ) ||
+		typeof value.ajaxUrl !== 'string' ||
+		value.ajaxUrl === '' ||
+		typeof value.ajaxAction !== 'string' ||
+		value.ajaxAction === '' ||
+		! isObject( value.routes ) ||
+		! isRoute(
+			value.routes.writeFieldValue,
+			'admin-columns.write.field-value'
+		)
+	) {
+		return null;
+	}
+	return {
+		ajaxUrl: value.ajaxUrl,
+		ajaxAction: value.ajaxAction,
+		routes: { writeFieldValue: value.routes.writeFieldValue },
+	};
+}
+
+function parseFieldsSourceMetadata(
+	value: unknown,
+	bootstrap: NonNullable< ReturnType< typeof parseAdminColumnsBootstrap > >
+): Map< string, FieldsSourceMetadata > {
+	const parsed = new Map< string, FieldsSourceMetadata >();
+	if ( ! isObject( value ) || ! Array.isArray( value.sources ) ) {
+		return parsed;
+	}
+	for ( const candidate of value.sources ) {
+		if (
+			! isObject( candidate ) ||
+			candidate.owner !== 'fields' ||
+			typeof candidate.reference !== 'string' ||
+			! FIELD_REFERENCE_PATTERN.test( candidate.reference ) ||
+			! bootstrap.sources.some(
+				( source ) =>
+					source.owner === 'fields' &&
+					source.reference === candidate.reference
+			)
+		) {
+			continue;
+		}
+		const metadata = candidate.ownerMetadata;
+		if (
+			! isObject( metadata ) ||
+			! hasOnlyKeys( metadata, [
+				'groupRevision',
+				'fieldUuid',
+				'logicalType',
+				'storageOwner',
+				'postTypes',
+			] ) ||
+			typeof metadata.groupRevision !== 'number' ||
+			! Number.isInteger( metadata.groupRevision ) ||
+			metadata.groupRevision < 1 ||
+			typeof metadata.fieldUuid !== 'string' ||
+			! UUID_PATTERN.test( metadata.fieldUuid ) ||
+			typeof metadata.logicalType !== 'string' ||
+			! /^[a-z0-9][a-z0-9_|<>.-]{0,63}$/.test( metadata.logicalType ) ||
+			metadata.storageOwner !== 'native_post_meta' ||
+			! Array.isArray( metadata.postTypes ) ||
+			metadata.postTypes.length === 0 ||
+			metadata.postTypes.length > 100 ||
+			! metadata.postTypes.every(
+				( postType ) =>
+					typeof postType === 'string' &&
+					/^[a-z0-9][a-z0-9_-]{0,19}$/.test( postType )
+			) ||
+			! candidate.reference.endsWith( `.${ metadata.fieldUuid }` )
+		) {
+			continue;
+		}
+		parsed.set( candidate.reference, {
+			groupRevision: metadata.groupRevision,
+			fieldUuid: metadata.fieldUuid,
+			logicalType: metadata.logicalType,
+			postTypes: Array.from( new Set( metadata.postTypes as string[] ) ),
+		} );
+	}
+	return parsed;
 }
 
 function parseDefinitionHeader( value: unknown ): DefinitionHeader | null {
@@ -601,6 +704,66 @@ function parsePreviewResult(
 	};
 }
 
+function parseFieldWriteResult(
+	value: unknown,
+	expectedViewId: string,
+	expectedViewRevision: number,
+	expectedColumnKey: string,
+	expectedSourceReference: string,
+	expectedPostId: number,
+	expectedPostType: string,
+	metadata: FieldsSourceMetadata
+): boolean {
+	if (
+		! isObject( value ) ||
+		! hasOnlyKeys( value, [
+			'contract_version',
+			'view_id',
+			'view_revision',
+			'column_key',
+			'source_owner',
+			'write',
+		] ) ||
+		value.contract_version !== 1 ||
+		value.view_id !== expectedViewId ||
+		value.view_revision !== expectedViewRevision ||
+		value.column_key !== expectedColumnKey ||
+		value.source_owner !== 'fields' ||
+		! isObject( value.write )
+	) {
+		return false;
+	}
+	const write = value.write;
+	return (
+		hasOnlyKeys( write, [
+			'contract_version',
+			'field_ref',
+			'group_revision',
+			'field_uuid',
+			'logical_type',
+			'storage_owner',
+			'post_id',
+			'post_type',
+			'status',
+			'changed',
+			'value',
+		] ) &&
+		write.contract_version === 1 &&
+		write.field_ref === expectedSourceReference &&
+		write.group_revision === metadata.groupRevision &&
+		write.field_uuid === metadata.fieldUuid &&
+		write.logical_type === metadata.logicalType &&
+		write.storage_owner === 'native_post_meta' &&
+		write.post_id === expectedPostId &&
+		write.post_type === expectedPostType &&
+		typeof write.status === 'string' &&
+		write.status !== '' &&
+		write.status.length <= 64 &&
+		typeof write.changed === 'boolean' &&
+		Object.prototype.hasOwnProperty.call( write, 'value' )
+	);
+}
+
 function failBootstrap( root: HTMLElement ): void {
 	root.dataset.wpessentialEnhanced = 'invalid-bootstrap';
 	root.textContent =
@@ -620,6 +783,68 @@ function columnDraftId( card: HTMLElement ): number | null {
 	}
 	const id = Number.parseInt( match[ 1 ]!, 10 );
 	return Number.isInteger( id ) && id > 0 ? id : null;
+}
+
+function authoredSourceByColumnKey(
+	root: HTMLElement,
+	bootstrap: NonNullable< ReturnType< typeof parseAdminColumnsBootstrap > >,
+	session: EditorSession
+): Map< string, AuthoredColumnSource > | null {
+	if ( session.authoredDirty ) {
+		return null;
+	}
+	const sources = new Map< string, AuthoredColumnSource >();
+	for ( const card of root.querySelectorAll< HTMLElement >(
+		'.wpessential-columns__column'
+	) ) {
+		const draftId = columnDraftId( card );
+		const sourceSelect = card.querySelector(
+			'select[id^="wpessential-columns-source-"]'
+		);
+		const formatSelect = card.querySelector(
+			'select[id^="wpessential-columns-format-"]'
+		);
+		const enabled = card.querySelector(
+			'input[type="checkbox"][id^="wpessential-columns-enabled-"]'
+		);
+		if (
+			draftId === null ||
+			! ( sourceSelect instanceof HTMLSelectElement ) ||
+			! ( formatSelect instanceof HTMLSelectElement ) ||
+			! ( enabled instanceof HTMLInputElement )
+		) {
+			return null;
+		}
+		if ( ! enabled.checked ) {
+			continue;
+		}
+		const identity = session.columnIdentities.get( draftId );
+		const source = bootstrap.sources.find(
+			( candidate ) => candidate.reference === sourceSelect.value
+		);
+		if (
+			! identity ||
+			! source ||
+			! source.formats.includes( formatSelect.value ) ||
+			sources.has( identity.key )
+		) {
+			return null;
+		}
+		sources.set( identity.key, {
+			owner: source.owner,
+			reference: source.reference,
+			format: formatSelect.value,
+		} );
+	}
+	return sources;
+}
+
+function positivePostId( value: string | null ): number | null {
+	if ( typeof value !== 'string' || ! /^[1-9][0-9]*$/.test( value ) ) {
+		return null;
+	}
+	const parsed = Number.parseInt( value, 10 );
+	return Number.isSafeInteger( parsed ) && parsed > 0 ? parsed : null;
 }
 
 function hydrateDefinition(
@@ -728,6 +953,7 @@ function hydrateDefinition(
 	session.viewKey = definition.loadedPayload.viewKey;
 	session.status = definition.status;
 	session.viewEnabled = definition.loadedPayload.enabled;
+	session.authoredDirty = false;
 	session.assignment = definition.loadedPayload.assignment;
 	session.layout = definition.loadedPayload.layout;
 	session.visibility = definition.loadedPayload.visibility;
@@ -897,8 +1123,11 @@ function wireSave(
 			if ( ! isObject( data ) ) {
 				throw new Error( 'Invalid save response.' );
 			}
-			const definition = parseDefinitionHeader( data.definition );
-			const returnedKey = definition?.payload.view_key;
+			const definition = parseLoadedDefinition(
+				data.definition,
+				bootstrap
+			);
+			const returnedKey = definition?.loadedPayload.viewKey;
 			if (
 				definition === null ||
 				typeof returnedKey !== 'string' ||
@@ -913,6 +1142,7 @@ function wireSave(
 			}
 			session.definitionId = definition.id;
 			session.revision = definition.revision;
+			session.authoredDirty = false;
 			root.dispatchEvent(
 				new CustomEvent( 'wpessential:columns-session-changed' )
 			);
@@ -1213,7 +1443,10 @@ function wireLifecycle(
 
 function wirePreview(
 	root: HTMLElement,
+	bootstrap: NonNullable< ReturnType< typeof parseAdminColumnsBootstrap > >,
 	readBootstrap: ReadBootstrap,
+	writeBootstrap: WriteBootstrap | null,
+	fieldsMetadata: Map< string, FieldsSourceMetadata >,
 	session: EditorSession
 ): void {
 	const status = root.querySelector( '.wpessential-columns__status' );
@@ -1231,8 +1464,9 @@ function wirePreview(
 	title.id = 'wpessential-columns-preview-title';
 	title.textContent = 'Row preview';
 	const description = document.createElement( 'p' );
-	description.textContent =
-		'Preview is read-only and executes only the published saved View through the bounded Query path.';
+	description.textContent = writeBootstrap
+		? 'Preview executes only the published saved View through the bounded Query path. Certified Fields cells can be edited one row at a time only when the saved View contains an explicit post.id column.'
+		: 'Preview is read-only and executes only the published saved View through the bounded Query path.';
 
 	const controls = document.createElement( 'div' );
 	controls.className = 'wpessential-columns__preview-controls';
@@ -1299,6 +1533,7 @@ function wirePreview(
 	let offset = 0;
 	let lastReturned = 0;
 	let inFlight = false;
+	let writeInFlight = false;
 
 	const resetPreview = (): void => {
 		offset = 0;
@@ -1327,30 +1562,308 @@ function wirePreview(
 			headerRow.append( cell );
 		}
 		head.append( headerRow );
-		for ( const row of result.rows ) {
+
+		const authoredSources = authoredSourceByColumnKey(
+			root,
+			bootstrap,
+			session
+		);
+		const targetSelect = document.getElementById(
+			'wpessential-columns-target'
+		);
+		const targetKey =
+			targetSelect instanceof HTMLSelectElement ? targetSelect.value : '';
+		const postIdKeys =
+			authoredSources === null
+				? []
+				: Array.from( authoredSources.entries() )
+						.filter(
+							( [ key, source ] ) =>
+								( source.owner === 'native' ||
+									source.owner === 'query' ) &&
+								source.reference === 'post.id' &&
+								result.columns.some(
+									( column ) =>
+										column.key === key &&
+										column.sourceOwner === source.owner
+								)
+						)
+						.map( ( [ key ] ) => key );
+		const postIdKey = postIdKeys.length === 1 ? postIdKeys[ 0 ]! : null;
+		const rowPostIds = postIdKey
+			? result.rows.map( ( row ) =>
+					positivePostId( row[ postIdKey ] ?? null )
+			  )
+			: result.rows.map( () => null );
+		const positiveIds = rowPostIds.filter(
+			( value ): value is number => value !== null
+		);
+		const rowIdentityReady =
+			postIdKey !== null &&
+			positiveIds.length === result.rows.length &&
+			new Set( positiveIds ).size === positiveIds.length;
+
+		for ( const [ rowIndex, row ] of result.rows.entries() ) {
 			const tableRow = document.createElement( 'tr' );
+			const postId = rowIdentityReady
+				? rowPostIds[ rowIndex ] ?? null
+				: null;
 			for ( const column of result.columns ) {
 				const cell = document.createElement( 'td' );
-				cell.textContent = row[ column.key ] ?? '';
+				const display = document.createElement( 'span' );
+				display.textContent = row[ column.key ] ?? '';
+				cell.append( display );
+
+				const authoredSource =
+					authoredSources?.get( column.key ) ?? null;
+				const metadata =
+					authoredSource?.owner === 'fields'
+						? fieldsMetadata.get( authoredSource.reference ) ?? null
+						: null;
+				const editableFormat =
+					authoredSource !== null &&
+					[ 'text', 'number', 'boolean', 'date' ].includes(
+						authoredSource.format
+					);
+				const canEdit =
+					writeBootstrap !== null &&
+					postId !== null &&
+					session.definitionId !== null &&
+					session.revision !== null &&
+					session.status === 'published' &&
+					session.viewEnabled &&
+					! session.authoredDirty &&
+					column.sourceOwner === 'fields' &&
+					authoredSource?.owner === 'fields' &&
+					authoredSource.format === column.format &&
+					metadata !== null &&
+					metadata.postTypes.includes( targetKey ) &&
+					editableFormat;
+
+				if ( canEdit && authoredSource && metadata && writeBootstrap ) {
+					const edit = document.createElement( 'button' );
+					edit.type = 'button';
+					edit.className = 'button button-small';
+					edit.textContent = 'Edit';
+					edit.setAttribute(
+						'aria-label',
+						`Edit ${ column.label } for post ${ postId }`
+					);
+					cell.append( document.createTextNode( ' ' ), edit );
+
+					const restore = (): void => {
+						cell.replaceChildren(
+							display,
+							document.createTextNode( ' ' ),
+							edit
+						);
+					};
+
+					edit.addEventListener( 'click', () => {
+						if ( writeInFlight ) {
+							return;
+						}
+						const current = row[ column.key ] ?? '';
+						let control: HTMLInputElement | HTMLSelectElement;
+						if ( authoredSource.format === 'boolean' ) {
+							const select = document.createElement( 'select' );
+							select.append(
+								new Option( 'Choose value', '' ),
+								new Option( 'True', 'true' ),
+								new Option( 'False', 'false' )
+							);
+							select.value =
+								current === 'true' || current === 'false'
+									? current
+									: '';
+							control = select;
+						} else {
+							const input = document.createElement( 'input' );
+							let inputType = 'text';
+							if ( authoredSource.format === 'number' ) {
+								inputType = 'number';
+							} else if ( authoredSource.format === 'date' ) {
+								inputType = 'date';
+							}
+							input.type = inputType;
+							input.maxLength = MAX_PREVIEW_CELL_TEXT;
+							if ( authoredSource.format === 'number' ) {
+								input.step = 'any';
+							}
+							input.value =
+								authoredSource.format === 'date' &&
+								current !== ''
+									? current.slice( 0, 10 )
+									: current;
+							control = input;
+						}
+						control.setAttribute(
+							'aria-label',
+							`New ${ column.label } value for post ${ postId }`
+						);
+						const saveValue = document.createElement( 'button' );
+						saveValue.type = 'button';
+						saveValue.className = 'button button-small';
+						saveValue.textContent = 'Save value';
+						const cancel = document.createElement( 'button' );
+						cancel.type = 'button';
+						cancel.className = 'button button-small';
+						cancel.textContent = 'Cancel';
+						cell.replaceChildren( control, saveValue, cancel );
+						control.focus();
+						previewStatus.textContent =
+							'Editing one Fields-owned value. The owner Ability remains authoritative.';
+
+						cancel.addEventListener( 'click', () => {
+							if ( ! writeInFlight ) {
+								restore();
+								previewStatus.textContent =
+									'Field edit cancelled. No mutation request was sent.';
+							}
+						} );
+
+						saveValue.addEventListener( 'click', async () => {
+							if (
+								writeInFlight ||
+								session.definitionId === null ||
+								session.revision === null ||
+								session.status !== 'published' ||
+								! session.viewEnabled ||
+								session.authoredDirty
+							) {
+								previewStatus.textContent =
+									'Field edit is no longer valid for the current saved View. Re-preview before retrying.';
+								return;
+							}
+							let value: unknown;
+							if ( authoredSource.format === 'boolean' ) {
+								if (
+									! (
+										control instanceof HTMLSelectElement
+									) ||
+									! [ 'true', 'false' ].includes(
+										control.value
+									)
+								) {
+									previewStatus.textContent =
+										'Choose a valid boolean value.';
+									return;
+								}
+								value = control.value === 'true';
+							} else if ( authoredSource.format === 'number' ) {
+								if (
+									! ( control instanceof HTMLInputElement ) ||
+									control.value.trim() === ''
+								) {
+									previewStatus.textContent =
+										'Enter a bounded numeric value.';
+									return;
+								}
+								const numeric = Number( control.value );
+								if ( ! Number.isFinite( numeric ) ) {
+									previewStatus.textContent =
+										'Enter a finite numeric value.';
+									return;
+								}
+								value = numeric;
+							} else {
+								if (
+									! ( control instanceof HTMLInputElement )
+								) {
+									return;
+								}
+								if (
+									authoredSource.format === 'date' &&
+									! /^\d{4}-\d{2}-\d{2}$/.test(
+										control.value
+									)
+								) {
+									previewStatus.textContent =
+										'Choose a valid date value.';
+									return;
+								}
+								value = control.value;
+							}
+
+							const expectedViewId = session.definitionId;
+							const expectedViewRevision = session.revision;
+							try {
+								writeInFlight = true;
+								control.disabled = true;
+								saveValue.disabled = true;
+								cancel.disabled = true;
+								previewStatus.textContent =
+									'Saving one Fields-owned value through the certified owner Ability…';
+								const data = await postRoute(
+									writeBootstrap.ajaxUrl,
+									writeBootstrap.ajaxAction,
+									writeBootstrap.routes.writeFieldValue,
+									{
+										view_id: expectedViewId,
+										column_key: column.key,
+										post_id: postId,
+										expected_group_revision:
+											metadata.groupRevision,
+										value,
+									}
+								);
+								if (
+									session.definitionId !== expectedViewId ||
+									session.revision !== expectedViewRevision ||
+									session.authoredDirty ||
+									! parseFieldWriteResult(
+										data,
+										expectedViewId,
+										expectedViewRevision,
+										column.key,
+										authoredSource.reference,
+										postId,
+										targetKey,
+										metadata
+									)
+								) {
+									throw new Error(
+										'Malformed or stale Fields mutation response.'
+									);
+								}
+								resetPreview();
+								previewStatus.textContent =
+									'Fields value mutation verified. Preview was invalidated; choose Preview rows to read authoritative owner state again.';
+							} catch {
+								restore();
+								previewStatus.textContent =
+									'Fields value could not be changed or the owner state is stale. The current preview was not replaced by an unvalidated response.';
+							} finally {
+								writeInFlight = false;
+							}
+						} );
+					} );
+				}
 				tableRow.append( cell );
 			}
 			body.append( tableRow );
 		}
 		table.hidden = false;
+		if ( writeBootstrap !== null && ! rowIdentityReady ) {
+			previewStatus.textContent =
+				'Preview loaded read-only. Single-row Fields edit V1 requires exactly one explicit enabled post.id column with unique positive ids on this page.';
+		}
 	};
 
 	const execute = async ( requestedOffset: number ): Promise< void > => {
-		if ( inFlight ) {
+		if ( inFlight || writeInFlight ) {
 			return;
 		}
 		if (
 			session.definitionId === null ||
 			session.revision === null ||
 			session.status !== 'published' ||
-			! session.viewEnabled
+			! session.viewEnabled ||
+			session.authoredDirty
 		) {
-			previewStatus.textContent =
-				'Preview requires a published, enabled saved Column Set. No Query request was sent.';
+			previewStatus.textContent = session.authoredDirty
+				? 'Save the current authored changes before previewing the canonical View.'
+				: 'Preview requires a published, enabled saved Column Set. No Query request was sent.';
 			return;
 		}
 
@@ -1388,7 +1901,7 @@ function wirePreview(
 				session.revision,
 				size
 			);
-			if ( result === null ) {
+			if ( result === null || session.authoredDirty ) {
 				throw new Error( 'Malformed or stale preview response.' );
 			}
 			render( result );
@@ -1397,11 +1910,17 @@ function wirePreview(
 			previous.disabled = offset === 0;
 			next.disabled =
 				lastReturned < size || offset >= 10000 || offset + size > 10000;
-			previewStatus.textContent = `${ result.returned } row${
-				result.returned === 1 ? '' : 's'
-			} previewed from revision ${
-				result.viewRevision
-			}. Row data was not mutated.`;
+			if (
+				previewStatus.textContent?.startsWith(
+					'Preview loaded read-only.'
+				) !== true
+			) {
+				previewStatus.textContent = `${ result.returned } row${
+					result.returned === 1 ? '' : 's'
+				} previewed from revision ${
+					result.viewRevision
+				}. Row data was not mutated.`;
+			}
 		} catch {
 			previewStatus.textContent =
 				'Row preview is unavailable or stale. No unvalidated response replaced the current preview.';
@@ -1456,11 +1975,57 @@ function boot(): void {
 			viewKey: null,
 			status: 'draft',
 			viewEnabled: true,
+			authoredDirty: true,
 			assignment: undefined,
 			layout: undefined,
 			visibility: undefined,
 			columnIdentities: new Map(),
 		};
+
+		const markAuthoredDirty = (): void => {
+			if ( ! session.authoredDirty ) {
+				session.authoredDirty = true;
+				root.dispatchEvent(
+					new CustomEvent( 'wpessential:columns-session-changed' )
+				);
+			}
+		};
+		root.addEventListener( 'input', ( event ) => {
+			const target = event.target;
+			if (
+				target instanceof HTMLElement &&
+				( target.id === 'wpessential-columns-view-name' ||
+					target.closest( '.wpessential-columns__column' ) !== null )
+			) {
+				markAuthoredDirty();
+			}
+		} );
+		root.addEventListener( 'change', ( event ) => {
+			const target = event.target;
+			if (
+				target instanceof HTMLElement &&
+				( target.id === 'wpessential-columns-target' ||
+					target.closest( '.wpessential-columns__column' ) !== null )
+			) {
+				markAuthoredDirty();
+			}
+		} );
+		root.addEventListener( 'click', ( event ) => {
+			const target = event.target;
+			if ( ! ( target instanceof HTMLButtonElement ) ) {
+				return;
+			}
+			if (
+				target.closest( '.wpessential-columns__actions' ) !== null ||
+				( target.textContent === 'Add Column' &&
+					target.previousElementSibling?.classList.contains(
+						'wpessential-columns__list'
+					) === true )
+			) {
+				markAuthoredDirty();
+			}
+		} );
+
 		const saveBootstrap = parseSaveBootstrap( raw );
 		if ( saveBootstrap !== null ) {
 			wireSave( root, bootstrap, saveBootstrap, session );
@@ -1475,7 +2040,14 @@ function boot(): void {
 		}
 		const readBootstrap = parseReadBootstrap( raw );
 		if ( readBootstrap !== null ) {
-			wirePreview( root, readBootstrap, session );
+			wirePreview(
+				root,
+				bootstrap,
+				readBootstrap,
+				parseWriteBootstrap( raw ),
+				parseFieldsSourceMetadata( raw, bootstrap ),
+				session
+			);
 		}
 		window.dispatchEvent(
 			new CustomEvent( 'wpessential:admin-ready', {
