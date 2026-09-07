@@ -59,6 +59,7 @@ final readonly class ListingServerRenderer
             return $this->failure($queryResult->errorCode ?? 'query_failure');
         }
 
+        /** @var array<string,true> $assets */
         $assets = [];
         foreach (array_merge($descriptor->assetHandles, $blueprint->assetHandles) as $handle) {
             $assets[$handle] = true;
@@ -73,14 +74,17 @@ final readonly class ListingServerRenderer
             );
         }
 
+        /** @var list<string> $items */
         $items = [];
         foreach ($queryResult->rows as $row) {
+            /** @var array<string, scalar|list<scalar>|null> $bindings */
             $bindings = [];
             foreach ($binding->projection as $fieldRef) {
                 $value = $row[$fieldRef] ?? null;
                 if (!$this->isRenderValue($value)) {
                     return $this->failure('unsupported_render_value');
                 }
+                /** @var scalar|list<scalar>|null $value */
                 $bindings[$fieldRef] = $value;
             }
 
