@@ -34,7 +34,28 @@ final class ListingDefinitionCompilerTest extends TestCase
         self::assertSame('wordpress.posts', $first->querySourceRef);
         self::assertSame(self::BLUEPRINT_ID, $first->blueprintId);
         self::assertSame(['wpe-listing-card'], $first->assetHandles);
+        self::assertSame(['post_id', 'title'], array_map(static fn ($binding): string => $binding->bindingKey, $first->renderBindings));
         self::assertSame($first->compatibilityFingerprint, $second->compatibilityFingerprint);
+    }
+
+    public function testBindingSemanticChangeChangesFingerprint(): void
+    {
+        $compiler = new ListingDefinitionCompiler($this->blueprints(), new AssetRegistry());
+        $first = $compiler->compile($this->definition());
+        $payload = $this->payload();
+        $payload['bindings'][1]['query_field_ref'] = 'post_title';
+        $second = $compiler->compile($this->definition($payload));
+
+        self::assertNotSame($first->compatibilityFingerprint, $second->compatibilityFingerprint);
+    }
+
+    public function testRejectsMissingBlueprintBindingMapping(): void
+    {
+        $payload = $this->payload();
+        array_pop($payload['bindings']);
+        $this->expectException(InvalidArgumentException::class);
+
+        (new ListingDefinitionCompiler($this->blueprints(), new AssetRegistry()))->compile($this->definition($payload));
     }
 
     public function testRejectsExecutableOrPrivateBuilderPayloadKeys(): void
@@ -129,6 +150,10 @@ final class ListingDefinitionCompilerTest extends TestCase
             'blueprint' => ['id' => self::BLUEPRINT_ID, 'revision' => 2],
             'layout' => ['mode' => 'grid', 'columns' => 3],
             'assets' => [],
+            'bindings' => [
+                ['kind' => 'query_field', 'binding_key' => 'title', 'query_field_ref' => 'title'],
+                ['kind' => 'query_field', 'binding_key' => 'post_id', 'query_field_ref' => 'post_id'],
+            ],
         ];
     }
 }
