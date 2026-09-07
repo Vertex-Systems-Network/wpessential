@@ -15,13 +15,13 @@ final class AdminColumnsFrontendFieldsInlineEditContractTest extends TestCase
 
         self::assertIsString($source);
         self::assertStringContainsString(
-            "private const WRITE_FIELD_ROUTE = AdminColumnsFieldValueWriteAbilityHandler::AJAX_TYPE;",
+            'private const WRITE_FIELD_ROUTE = AdminColumnsFieldValueWriteAbilityHandler::AJAX_TYPE;',
             $source,
         );
-        self::assertStringContainsString("$routes['writeFieldValue']", $source);
+        self::assertStringContainsString("\$routes['writeFieldValue']", $source);
         self::assertStringContainsString('catch (InvalidArgumentException)', $source);
         self::assertStringContainsString(
-            "'nonce' => $this->ajax->createNonce(self::WRITE_FIELD_ROUTE)",
+            "'nonce' => \$this->ajax->createNonce(self::WRITE_FIELD_ROUTE)",
             $source,
         );
     }
