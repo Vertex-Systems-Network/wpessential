@@ -1,0 +1,167 @@
+name: Harden Bulk Outcomes V1
+
+on:
+  push:
+    branches:
+      - agent/columns-fields-bulk-edit-v1
+    paths:
+      - '.github/workflows/harden-bulk-outcomes-v1.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    if: github.ref == 'refs/heads/agent/columns-fields-bulk-edit-v1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout branch head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Classify ambiguous attempted writes as unverified
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          runtime = Path('admin-ui/src/columns-runtime.ts')
+          source = runtime.read_text()
+          if source.count('failedPostIds') != 5:
+              raise SystemExit(f'unexpected failedPostIds count: {source.count("failedPostIds")}')
+          if source.count('failureDetail') != 2:
+              raise SystemExit(f'unexpected failureDetail count: {source.count("failureDetail")}')
+          source = source.replace('failedPostIds', 'unverifiedPostIds')
+          source = source.replace('failureDetail', 'unverifiedDetail')
+          old_detail = "? ` Failed post IDs: ${ unverifiedPostIds.join( ', ' ) }.`"
+          new_detail = "? ` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Refresh before retrying because the owner may have applied the attempted write.`"
+          if source.count(old_detail) != 1:
+              raise SystemExit('expected failed detail fragment exactly once')
+          source = source.replace(old_detail, new_detail, 1)
+          old_summary = "${ unverifiedPostIds.length } failed, ${ notAttemptedIds.length } not attempted."
+          new_summary = "${ unverifiedPostIds.length } unverified, ${ notAttemptedIds.length } not attempted."
+          if source.count(old_summary) != 1:
+              raise SystemExit('expected failed summary fragment exactly once')
+          source = source.replace(old_summary, new_summary, 1)
+          runtime.write_text(source)
+
+          test = Path('tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php')
+          test_source = test.read_text()
+          replacements = [
+              (
+                  'testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview',
+                  'testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview',
+              ),
+              (
+                  "self::assertStringContainsString('const failedPostIds: number[] = [];', $source);",
+                  "self::assertStringContainsString('const unverifiedPostIds: number[] = [];', $source);",
+              ),
+              (
+                  "self::assertStringContainsString('failedPostIds.push( postId );', $source);",
+                  "self::assertStringContainsString('unverifiedPostIds.push( postId );', $source);\n        self::assertStringContainsString('Unverified post IDs:', $source);\n        self::assertStringContainsString('unverified,', $source);",
+              ),
+          ]
+          for old, new in replacements:
+              if test_source.count(old) != 1:
+                  raise SystemExit(f'unexpected test fragment count for {old!r}: {test_source.count(old)}')
+              test_source = test_source.replace(old, new, 1)
+          test.write_text(test_source)
+
+          doc = Path('docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md')
+          doc_source = doc.read_text()
+          old_paragraph = 'A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:'
+          new_paragraph = 'An attempted row without a complete validated owner response is not treated as a verified failure: its outcome is unverified because the owner may have committed the write before the browser lost or rejected the response. Previous verified successes remain authoritative. The operator receives a bounded summary containing:'
+          if doc_source.count(old_paragraph) != 1:
+              raise SystemExit('expected execution paragraph exactly once')
+          doc_source = doc_source.replace(old_paragraph, new_paragraph, 1)
+          old_bullet = '- failed post ids;'
+          new_bullet = '- unverified post ids for attempted writes that did not return a complete validated owner response;'
+          if doc_source.count(old_bullet) != 1:
+              raise SystemExit('expected failed ids bullet exactly once')
+          doc_source = doc_source.replace(old_bullet, new_bullet, 1)
+          old_preview = 'all-success, partial failure, or all-failure.'
+          new_preview = 'all-success, mixed verified/unverified, or all-unverified.'
+          if doc_source.count(old_preview) != 1:
+              raise SystemExit('expected preview outcome wording exactly once')
+          doc_source = doc_source.replace(old_preview, new_preview, 1)
+          doc.write_text(doc_source)
+          PY
+
+      - name: Install locked admin graph
+        run: npm ci --ignore-scripts
+
+      - name: Format runtime
+        run: npx prettier --write admin-ui/src/columns-runtime.ts
+
+      - name: Formatter gate
+        run: npx prettier --check admin-ui/src/columns-runtime.ts
+
+      - name: JavaScript lint gate
+        run: npm run lint:js
+
+      - name: TypeScript gate
+        run: npm run typecheck
+
+      - name: Admin build gate
+        run: npm run build:admin
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+
+      - name: Install locked PHP graph
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Focused bulk contract
+        run: vendor/bin/phpunit tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php
+
+      - name: Enforce three-file scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only)
+          expected=(
+            'admin-ui/src/columns-runtime.ts'
+            'docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md'
+            'tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php'
+          )
+          if [ "${#changed[@]}" -ne 3 ]; then
+            printf 'Expected exactly 3 modified files, got %s:\n' "${#changed[@]}"
+            printf '%s\n' "${changed[@]}"
+            exit 1
+          fi
+          for path in "${expected[@]}"; do
+            printf '%s\n' "${changed[@]}" | grep -Fx -- "$path" >/dev/null || {
+              printf 'Missing expected modified path: %s\n' "$path"
+              exit 1
+            }
+          done
+
+      - name: Commit hardened three-file tranche
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            admin-ui/src/columns-runtime.ts \
+            docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md \
+            tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php
+          git diff --cached --check
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: classify uncertain bulk writes as unverified'
+          git push origin HEAD:agent/columns-fields-bulk-edit-v1
