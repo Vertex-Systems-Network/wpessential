@@ -2191,7 +2191,9 @@ function wirePreview(
 			if ( attempted > 0 ) {
 				const unverifiedDetail =
 					unverifiedPostIds.length > 0
-						? ` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Refresh before retrying because the owner may have applied the attempted write.`
+						? ` Unverified post IDs: ${ unverifiedPostIds.join(
+								', '
+						  ) }. Refresh before retrying because the owner may have applied the attempted write.`
 						: '';
 				const notAttemptedDetail =
 					notAttemptedIds.length > 0
