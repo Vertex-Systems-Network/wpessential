@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
 use WPEssential\Modules\Listings\Definition\ListingDefinitionCompiler;
+use WPEssential\Modules\Listings\Definition\ListingRenderBinding;
 use WPEssential\Platform\Assets\AssetDescriptor;
 use WPEssential\Platform\Assets\AssetRegistry;
 use WPEssential\Platform\Assets\AssetScope;
@@ -23,9 +24,7 @@ final class ListingDefinitionCompilerTest extends TestCase
 
     public function testCompilesCanonicalPublishedListingDeterministically(): void
     {
-        $assets = new AssetRegistry();
-        $assets->register(new AssetDescriptor('wpe-listing-card', 9, AssetScope::Frontend));
-        $compiler = new ListingDefinitionCompiler($this->blueprints(), $assets);
+        $compiler = new ListingDefinitionCompiler($this->blueprints(), $this->assets());
         $definition = $this->definition();
 
         $first = $compiler->compile($definition);
@@ -34,7 +33,28 @@ final class ListingDefinitionCompilerTest extends TestCase
         self::assertSame('wordpress.posts', $first->querySourceRef);
         self::assertSame(self::BLUEPRINT_ID, $first->blueprintId);
         self::assertSame(['wpe-listing-card'], $first->assetHandles);
+        self::assertSame(['post_id', 'title'], array_map(static fn (ListingRenderBinding $binding): string => $binding->bindingKey, $first->renderBindings));
         self::assertSame($first->compatibilityFingerprint, $second->compatibilityFingerprint);
+    }
+
+    public function testBindingSemanticChangeChangesFingerprint(): void
+    {
+        $compiler = new ListingDefinitionCompiler($this->blueprints(), $this->assets());
+        $first = $compiler->compile($this->definition());
+        $payload = $this->payload();
+        $payload['bindings'][1]['query_field_ref'] = 'post_title';
+        $second = $compiler->compile($this->definition($payload));
+
+        self::assertNotSame($first->compatibilityFingerprint, $second->compatibilityFingerprint);
+    }
+
+    public function testRejectsMissingBlueprintBindingMapping(): void
+    {
+        $payload = $this->payload();
+        array_pop($payload['bindings']);
+        $this->expectException(InvalidArgumentException::class);
+
+        (new ListingDefinitionCompiler($this->blueprints(), new AssetRegistry()))->compile($this->definition($payload));
     }
 
     public function testRejectsExecutableOrPrivateBuilderPayloadKeys(): void
@@ -85,6 +105,13 @@ final class ListingDefinitionCompilerTest extends TestCase
         (new ListingDefinitionCompiler($this->blueprints(), new AssetRegistry()))->compile($definition);
     }
 
+    private function assets(): AssetRegistry
+    {
+        $assets = new AssetRegistry();
+        $assets->register(new AssetDescriptor('wpe-listing-card', 9, AssetScope::Frontend));
+        return $assets;
+    }
+
     private function blueprints(): ComponentBlueprintRegistryInterface
     {
         return new class implements ComponentBlueprintRegistryInterface {
@@ -129,6 +156,10 @@ final class ListingDefinitionCompilerTest extends TestCase
             'blueprint' => ['id' => self::BLUEPRINT_ID, 'revision' => 2],
             'layout' => ['mode' => 'grid', 'columns' => 3],
             'assets' => [],
+            'bindings' => [
+                ['kind' => 'query_field', 'binding_key' => 'title', 'query_field_ref' => 'title'],
+                ['kind' => 'query_field', 'binding_key' => 'post_id', 'query_field_ref' => 'post_id'],
+            ],
         ];
     }
 }
