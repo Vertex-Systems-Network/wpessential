@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-07",
-  "queue_anchor_main_sha": "9755c6a37aa7482494411c1ed44be7ec707153ac",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D is ACTIVE after merged revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read composition/source discovery, owner-routed Fields write Ability/AJAX, preview compatibility through PR #231, remaining-gap audit PR #236 and bounded CSV export encoder PR #235. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
+  "queue_anchor_main_sha": "f253f9ed653e8aadf05a52420ce87436e44a9990",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D is ACTIVE after merged revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read composition/source discovery, owner-routed Fields write Ability/AJAX, preview compatibility through PR #231, remaining-gap audit PR #236, bounded CSV export encoder PR #235 and bounded internal export orchestration PR #240. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,7 +13,7 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main and verify merged PR #235/#236 evidence plus the currently claimed #232 branch before selecting work.",
+      "Resolve exact current main and verify merged PR #235/#236/#240 evidence plus the currently claimed #232/#237 branch before selecting work.",
       "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
       "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files or semantic boundary.",
       "Preserve Query ownership of backend row selection/sort/filter/search, Fields ownership of Field mutation semantics and Policy authorization.",
@@ -62,7 +62,7 @@
       "work_mode": "ADMIN_UI_MUTATION_INTEGRATION",
       "parallel_class": "COLUMNS_INLINE_EDIT_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #232 under parent #66 after #228/#229 and #230/#231",
+      "source": "Issue #232 / open PR #237 under parent #66",
       "dependencies": [
         "Admin Columns owner-routed Fields write Ability/AJAX is merged and remains optional/fail-closed",
         "Fields-owned preview compatibility through PR #231 is authoritative on current main"
@@ -76,7 +76,7 @@
         "do not edit Query, Fields or Relations production internals, bulk mutation, export, queue, CHECKPOINT.md or README.md"
       ],
       "completion_condition": "A published/enabled View can edit one certified Fields scalar cell only through the existing owner-routed Ability/AJAX seam, with explicit post.id identity, stale/failure preservation, preview invalidation after success and exact-head green evidence.",
-      "notes": "Claim branch already exists and is active. It remains path-exclusive from the export orchestration core.",
+      "notes": "Claim branch is active and PR #237 is open. PHP Quality, Package, Platform Matrix and Browser E2E are green on head 7b40055921d7ec6ceec39aa94b23c61f0fadf391, but Architecture Guards fails at JavaScript lint with Prettier formatting errors plus one no-nested-ternary violation in columns-runtime.ts. Do not merge until a new exact head makes Architecture Guards green.",
       "claim_branch": "agent/columns-fields-inline-edit-ui-v1"
     },
     {
@@ -156,11 +156,11 @@
       "slot_id": "columns-export-orchestration-v1",
       "title": "Integrate authorized bounded Admin Columns export orchestration core V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "EXPORT_RUNTIME_INTEGRATION",
       "parallel_class": "COLUMNS_EXPORT_RUNTIME_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #238 under parent #66 after merged PR #235/#236",
+      "source": "Issue #238 / merged PR #240 under parent #66",
       "dependencies": [
         "columns-csv-export-encoder-v1 is promoted and exact-head certified by PR #235",
         "fresh Gate D remaining-gap audit V2 is merged by PR #236"
@@ -173,8 +173,8 @@
         "no AdminColumnsAdminController.php, admin-ui, Query/Fields/Relations production internals, AJAX/REST/download transport, background jobs, temp files, shared queue, CHECKPOINT.md or README.md",
         "AdminColumnsModule.php only if minimal internal service registration is necessary and non-overlapping; otherwise leave transport/wiring serialized"
       ],
-      "completion_condition": "An internal bounded export service can compose already-authorized Admin Columns read pages into certified CSV without a second query/source engine, with exact-head green evidence and no transport/UI exposure.",
-      "notes": "Path- and semantic-exclusive from active #232 inline-edit UI. HTTP/download/UI export transport remains a later serialized tranche.",
+      "completion_condition": "Satisfied by merged PR #240 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
+      "notes": "Internal orchestration is promoted. HTTP/download/UI export transport remains a separately gated later tranche; completed claim branch must not be re-used or force-moved.",
       "claim_branch": "agent/columns-export-orchestration-v1"
     }
   ]
