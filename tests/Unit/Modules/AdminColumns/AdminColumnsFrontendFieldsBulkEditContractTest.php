@@ -45,14 +45,16 @@ final class AdminColumnsFrontendFieldsBulkEditContractTest extends TestCase
         }
     }
 
-    public function testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview(): void
+    public function testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview(): void
     {
         $path = dirname(__DIR__, 4) . '/admin-ui/src/columns-runtime.ts';
         $source = file_get_contents($path);
 
         self::assertIsString($source);
-        self::assertStringContainsString('const failedPostIds: number[] = [];', $source);
-        self::assertStringContainsString('failedPostIds.push( postId );', $source);
+        self::assertStringContainsString('const unverifiedPostIds: number[] = [];', $source);
+        self::assertStringContainsString('unverifiedPostIds.push( postId );', $source);
+        self::assertStringContainsString('Unverified post IDs:', $source);
+        self::assertStringContainsString('unverified,', $source);
         self::assertStringContainsString('const notAttemptedIds = selectedIds.slice( attempted );', $source);
         self::assertStringContainsString('if ( attempted > 0 ) {', $source);
         self::assertStringContainsString('resetPreview();', $source);

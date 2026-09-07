@@ -55,17 +55,17 @@ The bulk value editor remains type-aware and validates finite numeric, explicit 
 
 Selected rows are executed sequentially through the existing one-row route. For each attempted row the browser validates the complete owner response with the same `parseFieldWriteResult()` contract used by one-row editing.
 
-A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:
+An attempted row without a complete validated owner response is not treated as a verified failure: its outcome is unverified because the owner may have committed the write before the browser lost or rejected the response. Previous verified successes remain authoritative. The operator receives a bounded summary containing:
 
 - verified success count;
-- failed post ids;
+- unverified post ids for attempted writes that did not return a complete validated owner response;
 - any post ids not attempted because the saved View identity/revision became stale or authored state became dirty during the operation.
 
 No atomic rollback claim is made. Owner writes already verified as successful remain owner truth.
 
 ## Preview invalidation
 
-If at least one row mutation request was attempted, the entire preview is invalidated after the batch completes, regardless of whether the outcome was all-success, partial failure, or all-failure. The operator must choose **Preview rows** again before seeing authoritative current values.
+If at least one row mutation request was attempted, the entire preview is invalidated after the batch completes, regardless of whether the outcome was all-success, mixed verified/unverified, or all-unverified. The operator must choose **Preview rows** again before seeing authoritative current values.
 
 This prevents optimistic local patching and ensures visible state comes back through Query + source-owner reads.
 

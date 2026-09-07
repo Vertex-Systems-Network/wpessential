@@ -2124,7 +2124,7 @@ function wirePreview(
 		const expectedViewRevision = session.revision;
 		let attempted = 0;
 		let succeeded = 0;
-		const failedPostIds: number[] = [];
+		const unverifiedPostIds: number[] = [];
 
 		try {
 			writeInFlight = true;
@@ -2182,16 +2182,16 @@ function wirePreview(
 					}
 					succeeded += 1;
 				} catch {
-					failedPostIds.push( postId );
+					unverifiedPostIds.push( postId );
 				}
 			}
 		} finally {
 			writeInFlight = false;
 			const notAttemptedIds = selectedIds.slice( attempted );
 			if ( attempted > 0 ) {
-				const failureDetail =
-					failedPostIds.length > 0
-						? ` Failed post IDs: ${ failedPostIds.join( ', ' ) }.`
+				const unverifiedDetail =
+					unverifiedPostIds.length > 0
+						? ` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Refresh before retrying because the owner may have applied the attempted write.`
 						: '';
 				const notAttemptedDetail =
 					notAttemptedIds.length > 0
@@ -2201,8 +2201,8 @@ function wirePreview(
 						: '';
 				resetPreview();
 				previewStatus.textContent =
-					`Bulk Fields edit finished: ${ succeeded } verified, ${ failedPostIds.length } failed, ${ notAttemptedIds.length } not attempted.` +
-					failureDetail +
+					`Bulk Fields edit finished: ${ succeeded } verified, ${ unverifiedPostIds.length } unverified, ${ notAttemptedIds.length } not attempted.` +
+					unverifiedDetail +
 					notAttemptedDetail +
 					' Preview was invalidated; choose Preview rows to read authoritative owner state again.';
 			} else {
