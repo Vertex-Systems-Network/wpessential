@@ -92,3 +92,9 @@ Changes to the View name, target, column label/source/format/visibility, add/rem
 ## Next gates
 
 After exact-head CI and review promote this tranche, bounded bulk mutation may be designed from the proven one-row owner contract. Export work remains separately serialized behind the conflict-free CSV security encoder foundation in #233 and a later authorized orchestration contract.
+
+## Reconciliation repair evidence
+
+The claimed branch was non-force reconciled with `main@1131227c7e92468011ed9203e744de011543ea9e`. The scoped repair removed the single nested-ternary lint violation and applied the repository JavaScript formatter/autofix only to the affected Admin Columns runtime source. The one-shot repair workflow verified `npm run lint:js` successfully and removed itself before the repaired branch was pushed.
+
+This repair evidence is not merge certification by itself; promotion still requires fresh exact-head PR CI and clean review threads.
