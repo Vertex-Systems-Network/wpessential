@@ -1,0 +1,34 @@
+name: Reconcile Fields Bulk Edit V1
+
+on:
+  push:
+    branches:
+      - agent/columns-fields-bulk-edit-v1
+    paths:
+      - .github/workflows/reconcile-bulk-edit-v1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout claimed branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/columns-fields-bulk-edit-v1
+          fetch-depth: 0
+      - name: Configure Git identity
+        run: |
+          git config user.name "wpessential-worker"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Reconcile latest main without force
+        run: |
+          git fetch origin main
+          git merge --no-edit origin/main
+      - name: Remove temporary reconciliation workflow and commit
+        run: |
+          git rm .github/workflows/reconcile-bulk-edit-v1.yml
+          git commit -m "Gate D: reconcile bulk edit V1 with latest main"
+          git push origin HEAD:agent/columns-fields-bulk-edit-v1
