@@ -21,11 +21,13 @@ Project website: **https://wpessential.org**
 - WordPress.org metadata + direct-access security: **ADR-0219**
 - Real WordPress AJAX/nonce/Policy integration: **ADR-0220**
 - Phase 2 Gate A / Fields: **PASS for the certified native V1 scope**
-- Phase 2 Gate B / Relations: **IN PROGRESS** — canonical definition lifecycle, durable edge persistence, and transactional connect/disconnect foundation are merged; Gate B closure criteria remain open
-- Phase 2 Gates C–E / Query → Admin Columns → Dynamic Listings: **dependency-gated after Relations**
+- Phase 2 Gate B / Relations: **PASS for the certified native V1 baseline**
+- Phase 2 Gate C / Query: **PASS for the certified bounded V1 baseline**
+- Phase 2 Gate D / Admin Columns: **ACTIVE / NOT PASS** — revisioned View lifecycle, Query-backed bounded reads, admin authoring/preview/lifecycle UI, deterministic no-N+1 evidence, Fields-owned value reads/source discovery, owner-routed Fields write Ability/AJAX and Fields preview compatibility are merged; bounded single-row Fields edit UI and export security remain current closure work
+- Phase 2 Gate E / Dynamic Listings: **blocked until Gate D and its required shared renderer/data-source boundaries are ready**
 - Status runtime: **blocked until Gates A–E are complete**
 
-Audit anchor for this README reconciliation: `main @ ecf18c2e0cab9bd4a9cfd689d1b016babf9f09c0` on **2026-09-02**. Repository/machine evidence remains authoritative if this prose later becomes stale.
+Audit anchor for this README reconciliation: `main @ a20d8ed8ca1ee72b07c7de6a55386f6635da75b0` on **2026-09-07**. Repository/machine evidence remains authoritative if this prose later becomes stale.
 
 ## Module progress dashboard
 
@@ -34,26 +36,27 @@ The **56-module master plan is complete**. This dashboard tracks each canonical 
 **Progress model:** `UNSEEDED = 0%` → `BANK_SURFACE_SEEDED = 25%` → `NATIVE_AUDITED = 50%` → `MARKET_AUDITED = 75%` → `BANK_REVIEWED = 100%`.
 
 - Canonical modules planned: **56 / 56 (100%)**
-- Modules with Bank work started: **8 / 56**
-- Fully Bank-reviewed modules: **6 / 56**
-- Current Bank records: **1,571**
-- Weighted Bank-readiness snapshot: **11.6%**
-- Current certified Bank checkpoint: **6 surfaces BANK_REVIEWED** — Fields, Relations, Status, Custom Tables, Admin Columns, Dashboard Widgets
+- Modules with Bank work started: **10 / 56**
+- Fully Bank-reviewed modules: **9 / 56**
+- Current Bank records: **1,890**
+- Weighted Bank-readiness snapshot: **16.5%**
+- Current certified Bank checkpoint: **9 surfaces BANK_REVIEWED** — Taxonomy, Fields, Relations, Status, Query, Custom Tables, Admin Columns, Dynamic Listings, Dashboard Widgets
+- CPT remains **BANK_SURFACE_SEEDED / 107**
 - Estimated Bank-review program completion: **~2026-10-26**
 
-> **Date meaning:** “Bank Review Date” is a working estimate for completing planning/research certification for that surface, not a promise of runtime implementation, release, or production deployment. Dates are re-baselined when research, compatibility work, or CI exposes additional gaps.
+> **Date meaning:** “Bank Review Date” is a working estimate for completing planning/research certification for that surface, not a promise of runtime implementation, release, or production deployment. Dates are re-baselined when research, compatibility work, or CI exposes additional gaps. Machine lifecycle state takes precedence over an old estimate.
 
 | # | Module / Surface | Progress | Status | Bank Review Date |
 |---:|---|---|---|---|
-| 1 | CPT | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | ~2026-09-03 |
-| 2 | Taxonomy | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | ~2026-09-04 |
+| 1 | CPT | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | in progress |
+| 2 | Taxonomy | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete by current machine snapshot) |
 | 3 | Fields / Field Groups | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 4 | Relations | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 5 | Status | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 6 | Query Builder | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-06 |
+| 6 | Query Builder | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete by current machine snapshot) |
 | 7 | Custom Tables / Content Tables | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete) |
 | 8 | Admin Columns | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 9 | Listings | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-09 |
+| 9 | Listings | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete by current machine snapshot) |
 | 10 | Dashboard Widgets | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
 | 11 | Admin Menu | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-11 |
 | 12 | Settings / Options Pages | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-12 |
@@ -111,16 +114,18 @@ Bank certification and runtime implementation are separate gates. Current audite
 | Gate / Surface | Planning / contract state | Runtime / implementation state | Next blocking work |
 |---|---|---|---|
 | A — Fields | Bank reviewed; detailed atomic inventory exists | **PASS for certified native V1 scope**; not full product-parity certification | Preserve fail-closed owner boundaries; broader parity remains separately gated |
-| B — Relations | Bank reviewed; Relations Atomic Option Contract complete | **IN PROGRESS**; definition lifecycle, durable edge persistence, transactional connect/disconnect foundation merged | Remaining object/provider adapters where owned, Query/Data Source integration, admin UX, import/export/diagnostics, reference/performance/scale evidence, final Gate B closure |
-| C — Query | Atomic inventory exists; separate stale planning branch contains unintegrated Bank/audit work | **NOT STARTED / BLOCKED by Gate B** | Rebase/sync planning work from current main, certify Bank lifecycle, then implement typed Query AST/data-source/policy/performance contract after Relations is stable |
-| D — Admin Columns | Bank reviewed; historical Atomic/UX work exists but current shared atomic lifecycle does not certify full UX/runtime completion | **BLOCKED by Query runtime** | Preserve Query ownership of backend semantics; certify edit/export/performance/accessibility only after dependencies |
-| E — Dynamic Listings | Atomic inventory exists; separate stale planning branch contains unintegrated listing/UX research | **NOT STARTED / BLOCKED by Query + shared renderer/data-source contracts** | Rebase/sync planning work, certify Bank lifecycle, then implement safe renderer/query/field/relation integration |
-| Status | Bank reviewed | **RUNTIME BLOCKED** | Start only after Gates A–E complete |
+| B — Relations | Bank reviewed; Relations Atomic Option Contract complete | **PASS for certified native V1 baseline** | Preserve the accepted public Query/Data Source consumer seam and owner boundaries; provider/richer parity remains separately gated |
+| C — Query | Bank reviewed / 169; typed bounded contract and canonical admin route are merged | **PASS for certified bounded V1 baseline** | Preserve Query ownership of backend semantics; public execution/full parity remain separate gates |
+| D — Admin Columns | Bank reviewed / 214; **UX_CONTRACT_COMPLETE** with 41 Atomic Options | **ACTIVE / NOT PASS**; revisioned View definition/lifecycle, Query read adapter, admin UI, no-N+1 evidence, Fields read composition/source discovery, Fields write adapter + Ability/AJAX, and preview compatibility are merged | #232 bounded one-row Fields edit UI and #233 isolated CSV export-security encoder can proceed in parallel; bulk mutation/export orchestration remain dependency-blocked behind those foundations |
+| E — Dynamic Listings | Bank reviewed / 150 | **RUNTIME BLOCKED by Gate D** | Start only after Gate D and required renderer/data-source ownership contracts are certified |
+| Status | Bank reviewed / 129 | **RUNTIME BLOCKED** | Start only after Gates A–E complete |
 | Custom Tables | Bank reviewed at 165 records | **Planning-only certification**; no runtime DDL/migration execution authorized by the Bank review merge | Enter a separately approved runtime/migration gate before executable table schema work |
 
-`config/product/atomic-option-contract-progress.json` separately reports 56/56 atomic inventories, only Relations at `OPTION_CONTRACT_COMPLETE`, and zero surfaces at full-parity runtime/product certification. A bounded runtime gate such as Fields Gate A must not be misreported as full `PRODUCT_PARITY_CERTIFIED` completion.
+`config/product/atomic-option-contract-progress.json` separately reports 56/56 atomic inventories, Relations at `OPTION_CONTRACT_COMPLETE`, Admin Columns at `UX_CONTRACT_COMPLETE`, and zero surfaces at full-parity `RUNTIME_CERTIFIED` / `PRODUCT_PARITY_CERTIFIED`. Bounded Gate A/B/C runtime passes must not be misreported as full product-parity completion.
 
 ## Multi-agent work command
+
+The current conflict-safe queue is `config/coordination/agent-work-queue.json`. Its **2026-09-07** reconciliation exposes two independent code lanes plus one evidence-only lane; later bulk mutation and export orchestration stay blocked until their prerequisites merge. Workers must still refresh current `main` before claiming anything.
 
 ### 1. Sabse pehle sirf ek Supervisor start karo
 
@@ -187,7 +192,9 @@ See `CONTRIBUTING.md` for contribution and WordPress.org release rules. The mand
 
 ## Current foundation evidence
 
-The shared Platform Foundation has passed module handoff, and Surface 3 Fields Gate A has passed for its certified native V1 scope. Surface 4 Relations is now the active serialized runtime critical path: merged evidence includes the Relations Atomic Option Contract, canonical definition lifecycle, durable edge persistence, and transactional connect/disconnect foundation. Gate B is not yet complete; Query runtime must not start until the Relations contract is stable and its required closure evidence is satisfied.
+The shared Platform Foundation has passed module handoff. Surface 3 Fields Gate A, Surface 4 Relations Gate B and Surface 6 Query Gate C have each passed their explicitly bounded V1 baseline gates; none of those passes means full product parity. Surface 8 Admin Columns Gate D is the active serialized dependency gate. Current merged Gate D evidence includes revisioned shared View definitions and lifecycle, Query-owned bounded row reads, canonical admin authoring/save/reopen/preview/lifecycle UI, deterministic real-WordPress no-N+1 evidence, Fields-owned bounded value reads and source discovery, an owner-routed Fields write adapter + Ability/AJAX seam, and browser/backend preview-owner compatibility through PR #231.
+
+The next conflict-safe code tranches are bounded single-row Fields edit UI (#232) and the isolated CSV export security encoder foundation (#233). Bulk mutation and export orchestration remain blocked until those narrower foundations are exact-head certified. Gate E Dynamic Listings and Status runtime must not start early.
 
 Hosted CI continues to provide architecture, PHP quality, WordPress/PHP/database compatibility, distributable-package and browser/accessibility evidence on certified exact heads where applicable. WordPress.org release readiness remains a separate gate and now additionally requires the official Plugin Check / Directory compliance policy referenced above.
 
