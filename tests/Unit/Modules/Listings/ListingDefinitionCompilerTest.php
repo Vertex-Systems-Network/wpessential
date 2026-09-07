@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\Listings;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
 use WPEssential\Modules\Listings\Definition\ListingDefinitionCompiler;
 use WPEssential\Platform\Assets\AssetDescriptor;
@@ -18,7 +19,7 @@ use WPEssential\Platform\Definitions\DefinitionStatus;
 final class ListingDefinitionCompilerTest extends TestCase
 {
     private const LISTING_ID = '123e4567-e89b-42d3-a456-426614174010';
-    private const BLUEPRINT_ID = '123e4567-e89b-42d3-a456-426614174011';
+    public const BLUEPRINT_ID = '123e4567-e89b-42d3-a456-426614174011';
 
     public function testCompilesCanonicalPublishedListingDeterministically(): void
     {
@@ -61,7 +62,7 @@ final class ListingDefinitionCompilerTest extends TestCase
 
     public function testRejectsUnregisteredAssetHandle(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $payload = $this->payload();
         $payload['assets'] = ['wpe-missing-asset'];
