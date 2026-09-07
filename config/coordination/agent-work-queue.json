@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-07",
-  "queue_anchor_main_sha": "f253f9ed653e8aadf05a52420ce87436e44a9990",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D is ACTIVE after merged revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read composition/source discovery, owner-routed Fields write Ability/AJAX, preview compatibility through PR #231, remaining-gap audit PR #236, bounded CSV export encoder PR #235 and bounded internal export orchestration PR #240. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
+  "queue_anchor_main_sha": "92b4d3d6a3187c1f377616c60ef192ac6e5afe17",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D is ACTIVE after merged revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read composition/source discovery, owner-routed Fields write Ability/AJAX, preview compatibility through PR #231, remaining-gap audit PR #236, bounded CSV export encoder PR #235 and bounded internal export orchestration PR #240. PR #237 remains unmergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Three path-disjoint Gate D foundations (#242 personal preferences, #243 primary/row-action policy, #244 View portability) are dependency-ready and may run in parallel. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,7 +13,7 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main and verify merged PR #235/#236/#240 evidence plus the currently claimed #232/#237 branch before selecting work.",
+      "Resolve exact current main and verify merged PR #235/#236/#240 evidence plus open PR #237 before selecting work.",
       "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
       "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files or semantic boundary.",
       "Preserve Query ownership of backend row selection/sort/filter/search, Fields ownership of Field mutation semantics and Policy authorization.",
@@ -89,17 +89,9 @@
       "parallel_class": "COLUMNS_EXPORT_ENCODER_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
       "source": "Issue #233 / merged PR #235",
-      "dependencies": [
-        "Admin Columns Gate D remains ACTIVE",
-        "No export runtime/orchestration is currently authoritative"
-      ],
+      "dependencies": ["Admin Columns Gate D remains ACTIVE"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "new Admin Columns-owned CSV encoder/service files only",
-        "new focused Admin Columns export unit tests and one implementation document",
-        "formula-injection neutralization, deterministic CSV quoting and finite scalar/size budgets only",
-        "no AdminColumnsModule.php, controller, admin-ui, Query/Fields/Relations code, route/download orchestration, queue, CHECKPOINT.md or README.md"
-      ],
+      "allowed_scope": ["Historical completed boundary only"],
       "completion_condition": "Satisfied by merged PR #235 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
       "notes": "Completed claim branch is historical and must not be re-used or force-moved.",
       "claim_branch": "agent/columns-csv-export-encoder-v1"
@@ -114,17 +106,9 @@
       "parallel_class": "DOCS_EVIDENCE_ONLY",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
       "source": "Merged PR #236 under parent #66",
-      "dependencies": [
-        "Current main includes PR #231",
-        "Gate D remains ACTIVE / NOT PASS"
-      ],
+      "dependencies": ["Gate D remains ACTIVE / NOT PASS"],
       "runtime_allowed": false,
-      "allowed_scope": [
-        "one new docs/IMPLEMENTATION/ADMIN-COLUMNS-GATE-D-REMAINING-GAP-AUDIT-V2.md file only",
-        "map already-certified View lifecycle, Query reads, accessibility/performance, Fields reads/writes and remaining mutation/export/preferences/primary-row-action/portability/provider blockers",
-        "do not edit production code, admin-ui, shared Platform, queue, CHECKPOINT.md or README.md",
-        "do not claim Gate D PASS"
-      ],
+      "allowed_scope": ["Historical completed boundary only"],
       "completion_condition": "Satisfied by merged PR #236.",
       "notes": "Completed evidence branch is historical and must not be re-used or force-moved.",
       "claim_branch": "agent/columns-gate-d-remaining-gap-audit-v2"
@@ -144,9 +128,7 @@
         "single-row mutation failure/revision behavior is accepted as the baseline"
       ],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "Do not claim or branch while BLOCKED. Reconcile a finite bulk owner contract only after single-row mutation is promoted."
-      ],
+      "allowed_scope": ["Do not claim or branch while BLOCKED. Reconcile a finite bulk owner contract only after single-row mutation is promoted."],
       "completion_condition": "Blocked until the single-row mutation path is certified.",
       "notes": "Bulk mutation must not be parallelized ahead of the one-row owner contract.",
       "claim_branch": "agent/columns-fields-bulk-edit-v1"
@@ -161,21 +143,78 @@
       "parallel_class": "COLUMNS_EXPORT_RUNTIME_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
       "source": "Issue #238 / merged PR #240 under parent #66",
-      "dependencies": [
-        "columns-csv-export-encoder-v1 is promoted and exact-head certified by PR #235",
-        "fresh Gate D remaining-gap audit V2 is merged by PR #236"
-      ],
+      "dependencies": ["PR #235 and PR #236 are promoted"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "new Admin Columns CSV export orchestration service file(s) only plus focused new service tests and one implementation document",
-        "consume AdminColumnsReadAdapter for every authorized page read and AdminColumnsCsvExportEncoder for all serialization",
-        "bounded page size <=100 and finite total V1 row ceiling with fail-closed contract/view/revision/column drift",
-        "no AdminColumnsAdminController.php, admin-ui, Query/Fields/Relations production internals, AJAX/REST/download transport, background jobs, temp files, shared queue, CHECKPOINT.md or README.md",
-        "AdminColumnsModule.php only if minimal internal service registration is necessary and non-overlapping; otherwise leave transport/wiring serialized"
-      ],
+      "allowed_scope": ["Historical completed boundary only"],
       "completion_condition": "Satisfied by merged PR #240 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
       "notes": "Internal orchestration is promoted. HTTP/download/UI export transport remains a separately gated later tranche; completed claim branch must not be re-used or force-moved.",
       "claim_branch": "agent/columns-export-orchestration-v1"
+    },
+    {
+      "priority": 150,
+      "slot_id": "columns-personal-preference-resolver-v1",
+      "title": "Build bounded personal preference resolver foundation V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "PERSONAL_STATE_FOUNDATION",
+      "parallel_class": "COLUMNS_PERSONAL_PREFERENCE_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Issue #242 under parent #66 and UX personal-state separation contract",
+      "dependencies": ["Admin Columns revisioned View contract is promoted", "Gate D remains ACTIVE / NOT PASS"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "new AdminColumns personal preference resolver/normalizer file only",
+        "new focused personal preference unit tests and one implementation document",
+        "chosen View, temporary sort/filter, personal column visibility/density and personal saved-filter state normalization/resolution only",
+        "no persistence/user-meta, UI, controller, Query/Fields/Relations internals, authorization, export, shared queue, CHECKPOINT.md or README.md"
+      ],
+      "completion_condition": "A pure bounded resolver proves personal state remains separate from shared View payloads and cannot grant authorization; persistence stays separately gated.",
+      "notes": "Path-disjoint from #237, row-action and portability lanes.",
+      "claim_branch": "agent/columns-personal-preference-resolver-v1"
+    },
+    {
+      "priority": 160,
+      "slot_id": "columns-row-action-policy-v1",
+      "title": "Build primary column and row-action policy foundation V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "EFFECTIVE_POLICY_FOUNDATION",
+      "parallel_class": "COLUMNS_ROW_ACTION_POLICY_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Issue #243 under parent #66 and Gate D primary/row-action criterion",
+      "dependencies": ["Admin Columns View/column identities are promoted", "Gate D remains ACTIVE / NOT PASS"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "new AdminColumns row-action policy/effective resolver file only",
+        "new focused row-action policy unit tests and one implementation document",
+        "explicit primary eligibility and allowlisted target action capability resolution only",
+        "no implicit action fallback, UI/controller, Query/Fields/Relations internals, authorization grants, shared queue, CHECKPOINT.md or README.md"
+      ],
+      "completion_condition": "A side-effect-free policy resolves primary/action effective state only from explicit canonical metadata and advertised capabilities, failing closed otherwise.",
+      "notes": "Path-disjoint from #237, personal preference and portability lanes.",
+      "claim_branch": "agent/columns-row-action-policy-v1"
+    },
+    {
+      "priority": 170,
+      "slot_id": "columns-view-portability-v1",
+      "title": "Build View definition portability/remap foundation V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "DEFINITION_PORTABILITY_FOUNDATION",
+      "parallel_class": "COLUMNS_PORTABILITY_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Issue #244 under parent #66 and Gate D portability criterion",
+      "dependencies": ["Admin Columns normalized revisioned View payload contract is promoted", "Gate D remains ACTIVE / NOT PASS"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "new AdminColumns View portability/remap codec file only",
+        "new focused portability unit tests and one implementation document",
+        "versioned normalized View payload round-trip, stable IDs/order and explicit environment-sensitive reference remap/reject behavior only",
+        "no persistence write, site/network/user scope trust, row-data export, UI/controller, Query/Fields/Relations internals, shared queue, CHECKPOINT.md or README.md"
+      ],
+      "completion_condition": "A pure bounded portability codec preserves stable authored identity/order and requires explicit deterministic remaps for environment-sensitive references without importing trusted execution scope.",
+      "notes": "Path-disjoint from #237, personal preference and row-action lanes.",
+      "claim_branch": "agent/columns-view-portability-v1"
     }
   ]
 }
