@@ -44,18 +44,30 @@ jobs:
 
           test = Path('tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php')
           text = test.read_text()
-          text = text.replace('testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview', 'testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview')
-          text = text.replace("'const failedPostIds: number[] = [];',", "'const unverifiedPostIds: number[] = [];',")
-          text = text.replace("'failedPostIds.push( postId );',", "'unverifiedPostIds.push( postId );',")
-          text = text.replace("'Bulk Fields edit finished:',", "'Unverified post IDs:',")
+          replacements = {
+              'testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview': 'testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview',
+              "'const failedPostIds: number[] = [];',": "'const unverifiedPostIds: number[] = [];',",
+              "'failedPostIds.push( postId );',": "'unverifiedPostIds.push( postId );',",
+              "'Bulk Fields edit finished:',": "'Unverified post IDs:',",
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing test anchor: {old}')
+              text = text.replace(old, new)
           test.write_text(text)
 
           doc = Path('docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md')
           text = doc.read_text()
-          text = text.replace('## Execution and partial failures', '## Execution and partial or ambiguous outcomes')
-          text = text.replace('A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:', 'A row without fully verified client evidence is never reported as success. This includes explicit owner rejection as well as transport/stale/malformed-response cases where the browser cannot prove whether a server-side mutation committed. The operator receives a bounded summary containing:')
-          text = text.replace('- failed post ids;', '- unverified post ids (not asserted as definitely unchanged);')
-          text = text.replace('partial failure, or all-failure', 'partial/unverified outcomes, or no verified successes')
+          replacements = {
+              '## Execution and partial failures': '## Execution and partial or ambiguous outcomes',
+              'A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:': 'A row without fully verified client evidence is never reported as success. This includes explicit owner rejection as well as transport/stale/malformed-response cases where the browser cannot prove whether a server-side mutation committed. The operator receives a bounded summary containing:',
+              '- failed post ids;': '- unverified post ids (not asserted as definitely unchanged);',
+              'partial failure, or all-failure': 'partial/unverified outcomes, or no verified successes',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing doc anchor: {old}')
+              text = text.replace(old, new)
           doc.write_text(text)
           PY
       - name: Set up Node 24
@@ -63,14 +75,12 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-          cache-dependency-path: admin-ui/package-lock.json
+          cache-dependency-path: package-lock.json
       - name: Install locked admin graph
-        working-directory: admin-ui
         run: npm ci
       - name: Format and validate runtime
-        working-directory: admin-ui
         run: |
-          npx prettier --write src/columns-runtime.ts
+          npx prettier --write admin-ui/src/columns-runtime.ts
           npm run lint:js
           npm run typecheck
           npm run build
