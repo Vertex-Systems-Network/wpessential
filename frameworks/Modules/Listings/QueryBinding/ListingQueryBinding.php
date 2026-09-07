@@ -33,7 +33,7 @@ final readonly class ListingQueryBinding
         $seenProjection = [];
         foreach ($this->projection as $fieldRef) {
             $this->assertSemanticReference($fieldRef, 'Listing Query projection field');
-            if (isset($seenProjection[$fieldRef])) {
+            if (is_string($fieldRef) && isset($seenProjection[$fieldRef])) {
                 throw new InvalidArgumentException('Listing Query projection fields must be unique.');
             }
             $seenProjection[$fieldRef] = true;
@@ -76,7 +76,7 @@ final readonly class ListingQueryBinding
             if (!is_string($direction) || !in_array($direction, ['asc', 'desc'], true)) {
                 throw new InvalidArgumentException('Listing Query order direction must be asc or desc.');
             }
-            if (isset($seenOrder[$fieldRef])) {
+            if (is_string($fieldRef) && isset($seenOrder[$fieldRef])) {
                 throw new InvalidArgumentException('Listing Query order fields must be unique.');
             }
             $seenOrder[$fieldRef] = true;
@@ -87,9 +87,9 @@ final readonly class ListingQueryBinding
         }
     }
 
-    private function assertParameterName(string $parameter): void
+    private function assertParameterName(mixed $parameter): void
     {
-        if (!preg_match('/^[a-z][a-z0-9_]{0,63}$/', $parameter) || $parameter === 'offset') {
+        if (!is_string($parameter) || !preg_match('/^[a-z][a-z0-9_]{0,63}$/', $parameter) || $parameter === 'offset') {
             throw new InvalidArgumentException('Listing Query public parameter name is unsupported or reserved.');
         }
     }
