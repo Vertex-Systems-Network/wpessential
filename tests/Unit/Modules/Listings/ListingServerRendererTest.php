@@ -70,6 +70,24 @@ final class ListingServerRendererTest extends TestCase
         self::assertStringContainsString('role="status"', $result->html);
     }
 
+    public function testFailsClosedBeforeRendererWhenBlueprintBindingTypeDrifts(): void
+    {
+        $query = new ListingSsrQueryConsumer();
+        $query->wrongType = true;
+        $renderer = new ListingSsrRenderer();
+        $service = new ListingServerRenderer(
+            new ListingQueryReader($query),
+            new ListingSsrBlueprintRegistry(),
+            $renderer,
+        );
+
+        $result = $service->render($this->descriptor(), $this->binding(), [], $this->context());
+
+        self::assertFalse($result->success);
+        self::assertSame('blueprint_binding_type_mismatch', $result->failureCode);
+        self::assertSame(0, $renderer->calls);
+    }
+
     private function descriptor(): ListingCompiledDescriptor
     {
         return new ListingCompiledDescriptor(
@@ -99,6 +117,7 @@ final class ListingServerRendererTest extends TestCase
 final class ListingSsrQueryConsumer implements QueryReadConsumerInterface
 {
     public bool $empty = false;
+    public bool $wrongType = false;
 
     public function describe(string $sourceRef, ExecutionContext $context): array
     {
@@ -118,7 +137,7 @@ final class ListingSsrQueryConsumer implements QueryReadConsumerInterface
 
     public function read(array $request, ExecutionContext $context): array
     {
-        $rows = $this->empty ? [] : [['title' => 'Hello']];
+        $rows = $this->empty ? [] : [['title' => $this->wrongType ? 42 : 'Hello']];
         return [
             'contract_version' => self::CONTRACT_VERSION,
             'ok' => true,
@@ -153,8 +172,11 @@ final class ListingSsrBlueprintRegistry implements ComponentBlueprintRegistryInt
 
 final class ListingSsrRenderer implements RendererInterface
 {
+    public int $calls = 0;
+
     public function render(RenderInput $input, ExecutionContext $context): RenderOutput
     {
+        ++$this->calls;
         return new RenderOutput(true, '<strong>' . (string) ($input->bindings['title'] ?? '') . '</strong>', ['wpe-card']);
     }
 }
