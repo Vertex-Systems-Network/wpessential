@@ -200,24 +200,50 @@ final class AdminColumnsModule implements ModuleInterface
             operation: NonceOperation::Apply,
         ));
 
-        $preferenceDescriptor = new AbilityDescriptor(
-            name: AdminColumnsPersonalPreferenceAbilityHandler::ABILITY,
-            ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
-            capability: self::CAPABILITY,
-            mutates: true,
-            channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
-            inputSchema: $this->personalPreferenceAbilityInputSchema(),
-            outputSchema: ['type' => 'object'],
-        );
-        $abilities->register(
-            $preferenceDescriptor,
-            new AdminColumnsPersonalPreferenceAbilityHandler($views, $personalPreferences),
-        );
-        $ajaxRoutes->register(new AjaxRoute(
-            type: AdminColumnsPersonalPreferenceAbilityHandler::AJAX_TYPE,
-            handler: new AbilityAjaxHandler($abilities, $preferenceDescriptor->name, $contexts),
-            operation: NonceOperation::Update,
-        ));
+        $preferenceActions = [
+            AdminColumnsPersonalPreferenceAbilityHandler::LOAD => [
+                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_LOAD,
+                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_LOAD,
+                false,
+                NonceOperation::Apply,
+            ],
+            AdminColumnsPersonalPreferenceAbilityHandler::SAVE => [
+                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_SAVE,
+                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_SAVE,
+                true,
+                NonceOperation::Update,
+            ],
+            AdminColumnsPersonalPreferenceAbilityHandler::RESET => [
+                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_RESET,
+                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_RESET,
+                true,
+                NonceOperation::Update,
+            ],
+        ];
+        foreach ($preferenceActions as $preferenceAction => [$abilityName, $ajaxType, $mutates, $operation]) {
+            $preferenceDescriptor = new AbilityDescriptor(
+                name: $abilityName,
+                ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: $mutates,
+                channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+                inputSchema: $this->personalPreferenceAbilityInputSchema($preferenceAction),
+                outputSchema: ['type' => 'object'],
+            );
+            $abilities->register(
+                $preferenceDescriptor,
+                new AdminColumnsPersonalPreferenceAbilityHandler(
+                    $views,
+                    $personalPreferences,
+                    $preferenceAction,
+                ),
+            );
+            $ajaxRoutes->register(new AjaxRoute(
+                type: $ajaxType,
+                handler: new AbilityAjaxHandler($abilities, $preferenceDescriptor->name, $contexts),
+                operation: $operation,
+            ));
+        }
 
         $importDescriptor = new AbilityDescriptor(
             name: AdminColumnsViewImportAbilityHandler::ABILITY,
@@ -409,28 +435,42 @@ final class AdminColumnsModule implements ModuleInterface
     }
 
     /** @return array<string,mixed> */
-    private function personalPreferenceAbilityInputSchema(): array
+    private function personalPreferenceAbilityInputSchema(string $action): array
     {
+        if (!in_array($action, [
+            AdminColumnsPersonalPreferenceAbilityHandler::LOAD,
+            AdminColumnsPersonalPreferenceAbilityHandler::SAVE,
+            AdminColumnsPersonalPreferenceAbilityHandler::RESET,
+        ], true)) {
+            throw new LogicException('Admin Columns personal preference schema action is unsupported.');
+        }
+
+        $properties = [
+            'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+            'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
+        ];
+        $required = ['view_id', 'expected_view_revision'];
+
+        if ($action === AdminColumnsPersonalPreferenceAbilityHandler::SAVE) {
+            $properties['preference'] = [
+                'type' => 'object',
+                'properties' => [
+                    'chosen_view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                    'temporary_sort' => ['type' => 'array', 'maxItems' => 5],
+                    'temporary_filters' => ['type' => 'array', 'maxItems' => 20],
+                    'hidden_columns' => ['type' => 'array', 'maxItems' => 100, 'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN]],
+                    'density' => ['type' => 'string', 'enum' => ['compact', 'comfortable']],
+                    'saved_filter_state' => ['type' => ['object', 'null']],
+                ],
+                'additionalProperties' => false,
+            ];
+            $required[] = 'preference';
+        }
+
         return [
             'type' => 'object',
-            'required' => ['action', 'view_id', 'expected_view_revision'],
-            'properties' => [
-                'action' => ['type' => 'string', 'enum' => ['load', 'save', 'reset']],
-                'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-                'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
-                'preference' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'chosen_view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-                        'temporary_sort' => ['type' => 'array', 'maxItems' => 5],
-                        'temporary_filters' => ['type' => 'array', 'maxItems' => 20],
-                        'hidden_columns' => ['type' => 'array', 'maxItems' => 100, 'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN]],
-                        'density' => ['type' => 'string', 'enum' => ['compact', 'comfortable']],
-                        'saved_filter_state' => ['type' => ['object', 'null']],
-                    ],
-                    'additionalProperties' => false,
-                ],
-            ],
+            'required' => $required,
+            'properties' => $properties,
             'additionalProperties' => false,
         ];
     }
