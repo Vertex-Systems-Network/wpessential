@@ -155,6 +155,10 @@ final readonly class ListingServerRenderer
 
     private function failure(string $code): ListingRenderResult
     {
+        if (!preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $code)) {
+            $code = 'listing_failure';
+        }
+
         return new ListingRenderResult(false, '', [], 0, $code);
     }
 }
