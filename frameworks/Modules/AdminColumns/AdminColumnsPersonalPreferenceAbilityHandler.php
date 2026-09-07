@@ -16,26 +16,34 @@ use WPEssential\Platform\Definitions\Definition;
 
 final readonly class AdminColumnsPersonalPreferenceAbilityHandler implements AbilityHandlerInterface
 {
-    public const ABILITY = 'wpessential/admin-columns/personal-preference';
-    public const AJAX_TYPE = 'admin-columns.personal.preference';
+    public const LOAD = 'load';
+    public const SAVE = 'save';
+    public const RESET = 'reset';
 
-    private const INPUT_KEYS = ['action', 'view_id', 'expected_view_revision', 'preference'];
-    private const ACTIONS = ['load', 'save', 'reset'];
+    public const ABILITY_LOAD = 'wpessential/admin-columns/personal-preference/load';
+    public const ABILITY_SAVE = 'wpessential/admin-columns/personal-preference/save';
+    public const ABILITY_RESET = 'wpessential/admin-columns/personal-preference/reset';
+
+    public const AJAX_LOAD = 'admin-columns.personal.preference.load';
+    public const AJAX_SAVE = 'admin-columns.personal.preference.save';
+    public const AJAX_RESET = 'admin-columns.personal.preference.reset';
+
+    private const ACTIONS = [self::LOAD, self::SAVE, self::RESET];
 
     public function __construct(
         private AdminColumnsViewDefinitionService $views,
         private AdminColumnsPersonalPreferenceStore $preferences,
+        private string $action,
     ) {
+        if (!in_array($this->action, self::ACTIONS, true)) {
+            throw new InvalidArgumentException('Personal preference handler action is unsupported.');
+        }
     }
 
     public function handle(array $input, ExecutionContext $context): mixed
     {
         $this->assertKnownKeys($input);
         $userId = $this->authenticatedUserId($context);
-        $action = $input['action'] ?? null;
-        if (!is_string($action) || !in_array($action, self::ACTIONS, true)) {
-            throw new InvalidArgumentException('Personal preference action is unsupported.');
-        }
 
         $viewId = $input['view_id'] ?? null;
         if (!is_string($viewId)) {
@@ -50,17 +58,11 @@ final readonly class AdminColumnsPersonalPreferenceAbilityHandler implements Abi
         $this->assertRevision($view, $expectedRevision);
         $columns = $this->columns($view);
 
-        if ($action === 'load') {
-            if (array_key_exists('preference', $input)) {
-                throw new InvalidArgumentException('Personal preference load does not accept preference payload.');
-            }
+        if ($this->action === self::LOAD) {
             return $this->preferences->load($userId, $view->id, $view->revision, $columns);
         }
 
-        if ($action === 'reset') {
-            if (array_key_exists('preference', $input)) {
-                throw new InvalidArgumentException('Personal preference reset does not accept preference payload.');
-            }
+        if ($this->action === self::RESET) {
             $this->preferences->reset($userId, $view->id);
             return $this->preferences->load($userId, $view->id, $view->revision, $columns);
         }
@@ -127,10 +129,17 @@ final readonly class AdminColumnsPersonalPreferenceAbilityHandler implements Abi
         if (array_is_list($input)) {
             throw new InvalidArgumentException('Personal preference input must be an object/map.');
         }
+
+        $allowed = ['view_id', 'expected_view_revision'];
+        if ($this->action === self::SAVE) {
+            $allowed[] = 'preference';
+        }
+
         foreach (array_keys($input) as $key) {
-            if (!in_array($key, self::INPUT_KEYS, true)) {
+            if (!in_array($key, $allowed, true)) {
                 throw new InvalidArgumentException(sprintf(
-                    'Personal preference input contains unsupported key "%s".',
+                    'Personal preference %s input contains unsupported key "%s".',
+                    $this->action,
                     (string) $key,
                 ));
             }
