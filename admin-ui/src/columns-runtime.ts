@@ -41,6 +41,12 @@ type AuthoredColumnSource = {
 	reference: string;
 	format: string;
 };
+type BulkTarget = {
+	column: PreviewColumn;
+	source: AuthoredColumnSource;
+	metadata: FieldsSourceMetadata;
+	postType: string;
+};
 type PreviewColumn = {
 	key: string;
 	label: string;
@@ -121,6 +127,7 @@ const FIELD_REFERENCE_PATTERN =
 const MAX_SAVED_VIEWS = 100;
 const MAX_COLUMNS = 100;
 const MAX_PREVIEW_ROWS = 100;
+const MAX_BULK_FIELD_ROWS = 20;
 const MAX_PREVIEW_CELL_TEXT = 500;
 const DEFINITION_TYPE = 'admin_columns_view';
 const OWNER_SURFACE_ID = 8;
@@ -1465,7 +1472,7 @@ function wirePreview(
 	title.textContent = 'Row preview';
 	const description = document.createElement( 'p' );
 	description.textContent = writeBootstrap
-		? 'Preview executes only the published saved View through the bounded Query path. Certified Fields cells can be edited one row at a time only when the saved View contains an explicit post.id column.'
+		? 'Preview executes only the published saved View through the bounded Query path. Certified Fields cells support one-row editing and explicit bulk editing of at most 20 visible rows when the saved View contains an explicit post.id column.'
 		: 'Preview is read-only and executes only the published saved View through the bounded Query path.';
 
 	const controls = document.createElement( 'div' );
@@ -1513,6 +1520,35 @@ function wirePreview(
 		next
 	);
 
+	const bulkControls = document.createElement( 'fieldset' );
+	bulkControls.className = 'wpessential-columns__preview-controls';
+	bulkControls.hidden = true;
+	const bulkLegend = document.createElement( 'legend' );
+	bulkLegend.textContent = 'Bulk Fields edit';
+	const bulkColumnLabel = document.createElement( 'label' );
+	bulkColumnLabel.htmlFor = 'wpessential-columns-bulk-field';
+	bulkColumnLabel.textContent = 'Fields column';
+	const bulkColumn = document.createElement( 'select' );
+	bulkColumn.id = 'wpessential-columns-bulk-field';
+	bulkColumn.append( new Option( 'Choose Fields column', '' ) );
+	const bulkValueLabel = document.createElement( 'label' );
+	bulkValueLabel.htmlFor = 'wpessential-columns-bulk-value';
+	bulkValueLabel.textContent = 'New value';
+	const bulkValueHost = document.createElement( 'span' );
+	const bulkApply = document.createElement( 'button' );
+	bulkApply.type = 'button';
+	bulkApply.className = 'button';
+	bulkApply.textContent = 'Apply to selected rows';
+	bulkApply.disabled = true;
+	bulkControls.append(
+		bulkLegend,
+		bulkColumnLabel,
+		bulkColumn,
+		bulkValueLabel,
+		bulkValueHost,
+		bulkApply
+	);
+
 	const previewStatus = document.createElement( 'p' );
 	previewStatus.id = 'wpessential-columns-preview-status';
 	previewStatus.setAttribute( 'role', 'status' );
@@ -1527,13 +1563,117 @@ function wirePreview(
 	const head = document.createElement( 'thead' );
 	const body = document.createElement( 'tbody' );
 	table.append( head, body );
-	section.append( title, description, controls, previewStatus, table );
+	section.append(
+		title,
+		description,
+		controls,
+		bulkControls,
+		previewStatus,
+		table
+	);
 	root.append( section );
 
 	let offset = 0;
 	let lastReturned = 0;
 	let inFlight = false;
 	let writeInFlight = false;
+	let bulkValueControl: HTMLInputElement | HTMLSelectElement | null = null;
+	const selectedPostIds = new Set< number >();
+	const bulkTargets = new Map< string, BulkTarget >();
+
+	const syncBulkApply = (): void => {
+		bulkApply.disabled =
+			writeInFlight ||
+			selectedPostIds.size === 0 ||
+			selectedPostIds.size > MAX_BULK_FIELD_ROWS ||
+			! bulkTargets.has( bulkColumn.value );
+	};
+
+	const renderBulkValueControl = (): void => {
+		bulkValueHost.replaceChildren();
+		bulkValueControl = null;
+		const target = bulkTargets.get( bulkColumn.value ) ?? null;
+		if ( target === null ) {
+			syncBulkApply();
+			return;
+		}
+
+		let control: HTMLInputElement | HTMLSelectElement;
+		if ( target.source.format === 'boolean' ) {
+			const select = document.createElement( 'select' );
+			select.append(
+				new Option( 'Choose value', '' ),
+				new Option( 'True', 'true' ),
+				new Option( 'False', 'false' )
+			);
+			control = select;
+		} else {
+			const input = document.createElement( 'input' );
+			let inputType = 'text';
+			if ( target.source.format === 'number' ) {
+				inputType = 'number';
+			} else if ( target.source.format === 'date' ) {
+				inputType = 'date';
+			}
+			input.type = inputType;
+			input.maxLength = MAX_PREVIEW_CELL_TEXT;
+			if ( target.source.format === 'number' ) {
+				input.step = 'any';
+			}
+			control = input;
+		}
+		control.id = 'wpessential-columns-bulk-value';
+		control.setAttribute(
+			'aria-label',
+			`New ${ target.column.label } value for selected rows`
+		);
+		bulkValueHost.append( control );
+		bulkValueControl = control;
+		syncBulkApply();
+	};
+
+	const readBulkValue = (
+		target: BulkTarget
+	): { ok: true; value: unknown } | { ok: false; message: string } => {
+		const control = bulkValueControl;
+		if ( control === null ) {
+			return { ok: false, message: 'Choose a Fields column and value.' };
+		}
+		if ( target.source.format === 'boolean' ) {
+			if (
+				! ( control instanceof HTMLSelectElement ) ||
+				! [ 'true', 'false' ].includes( control.value )
+			) {
+				return { ok: false, message: 'Choose a valid boolean value.' };
+			}
+			return { ok: true, value: control.value === 'true' };
+		}
+		if ( ! ( control instanceof HTMLInputElement ) ) {
+			return { ok: false, message: 'Bulk value control is invalid.' };
+		}
+		if ( target.source.format === 'number' ) {
+			if ( control.value.trim() === '' ) {
+				return { ok: false, message: 'Enter a bounded numeric value.' };
+			}
+			const numeric = Number( control.value );
+			if ( ! Number.isFinite( numeric ) ) {
+				return { ok: false, message: 'Enter a finite numeric value.' };
+			}
+			return { ok: true, value: numeric };
+		}
+		if (
+			target.source.format === 'date' &&
+			! /^\d{4}-\d{2}-\d{2}$/.test( control.value )
+		) {
+			return { ok: false, message: 'Choose a valid date value.' };
+		}
+		if ( control.value.length > MAX_PREVIEW_CELL_TEXT ) {
+			return { ok: false, message: 'Bulk value is too long.' };
+		}
+		return { ok: true, value: control.value };
+	};
+
+	bulkColumn.addEventListener( 'change', renderBulkValueControl );
 
 	const resetPreview = (): void => {
 		offset = 0;
@@ -1542,6 +1682,14 @@ function wirePreview(
 		next.disabled = true;
 		head.replaceChildren();
 		body.replaceChildren();
+		selectedPostIds.clear();
+		bulkTargets.clear();
+		bulkColumn.replaceChildren( new Option( 'Choose Fields column', '' ) );
+		bulkColumn.disabled = false;
+		bulkValueHost.replaceChildren();
+		bulkValueControl = null;
+		bulkControls.hidden = true;
+		syncBulkApply();
 		table.hidden = true;
 		previewStatus.textContent =
 			'Current saved View changed. Choose Preview rows to load the active saved revision.';
@@ -1554,6 +1702,13 @@ function wirePreview(
 	const render = ( result: PreviewResult ): void => {
 		head.replaceChildren();
 		body.replaceChildren();
+		selectedPostIds.clear();
+		bulkTargets.clear();
+		bulkColumn.replaceChildren( new Option( 'Choose Fields column', '' ) );
+		bulkValueHost.replaceChildren();
+		bulkValueControl = null;
+		bulkControls.hidden = true;
+		syncBulkApply();
 		const headerRow = document.createElement( 'tr' );
 		for ( const column of result.columns ) {
 			const cell = document.createElement( 'th' );
@@ -1603,11 +1758,92 @@ function wirePreview(
 			positiveIds.length === result.rows.length &&
 			new Set( positiveIds ).size === positiveIds.length;
 
+		if (
+			writeBootstrap !== null &&
+			rowIdentityReady &&
+			session.definitionId !== null &&
+			session.revision !== null &&
+			session.status === 'published' &&
+			session.viewEnabled &&
+			! session.authoredDirty
+		) {
+			for ( const column of result.columns ) {
+				const source = authoredSources?.get( column.key ) ?? null;
+				const metadata =
+					source?.owner === 'fields'
+						? fieldsMetadata.get( source.reference ) ?? null
+						: null;
+				const editableFormat =
+					source !== null &&
+					[ 'text', 'number', 'boolean', 'date' ].includes(
+						source.format
+					);
+				if (
+					column.sourceOwner === 'fields' &&
+					source?.owner === 'fields' &&
+					source.format === column.format &&
+					metadata !== null &&
+					metadata.postTypes.includes( targetKey ) &&
+					editableFormat
+				) {
+					bulkTargets.set( column.key, {
+						column,
+						source,
+						metadata,
+						postType: targetKey,
+					} );
+				}
+			}
+		}
+
+		if ( bulkTargets.size > 0 ) {
+			const selectionHeader = document.createElement( 'th' );
+			selectionHeader.scope = 'col';
+			selectionHeader.textContent = 'Bulk select';
+			headerRow.prepend( selectionHeader );
+			for ( const target of bulkTargets.values() ) {
+				bulkColumn.append(
+					new Option( target.column.label, target.column.key )
+				);
+			}
+			bulkControls.hidden = false;
+		}
+		renderBulkValueControl();
+
 		for ( const [ rowIndex, row ] of result.rows.entries() ) {
 			const tableRow = document.createElement( 'tr' );
 			const postId = rowIdentityReady
 				? rowPostIds[ rowIndex ] ?? null
 				: null;
+			if ( postId !== null && bulkTargets.size > 0 ) {
+				const selectionCell = document.createElement( 'td' );
+				const checkbox = document.createElement( 'input' );
+				checkbox.type = 'checkbox';
+				checkbox.setAttribute(
+					'aria-label',
+					`Select post ${ postId } for bulk Fields edit`
+				);
+				checkbox.addEventListener( 'change', () => {
+					if ( writeInFlight ) {
+						checkbox.checked = selectedPostIds.has( postId );
+						return;
+					}
+					if ( checkbox.checked ) {
+						if ( selectedPostIds.size >= MAX_BULK_FIELD_ROWS ) {
+							checkbox.checked = false;
+							previewStatus.textContent = `Select at most ${ MAX_BULK_FIELD_ROWS } visible rows for one bulk Fields edit.`;
+							return;
+						}
+						selectedPostIds.add( postId );
+					} else {
+						selectedPostIds.delete( postId );
+					}
+					syncBulkApply();
+					previewStatus.textContent = `${ selectedPostIds.size } row(s) selected for bounded bulk Fields edit.`;
+				} );
+				selectionCell.append( checkbox );
+				tableRow.append( selectionCell );
+			}
 			for ( const column of result.columns ) {
 				const cell = document.createElement( 'td' );
 				const display = document.createElement( 'span' );
@@ -1846,9 +2082,140 @@ function wirePreview(
 		table.hidden = false;
 		if ( writeBootstrap !== null && ! rowIdentityReady ) {
 			previewStatus.textContent =
-				'Preview loaded read-only. Single-row Fields edit V1 requires exactly one explicit enabled post.id column with unique positive ids on this page.';
+				'Preview loaded read-only. Fields edit V1 requires exactly one explicit enabled post.id column with unique positive ids on this page.';
 		}
 	};
+
+	bulkApply.addEventListener( 'click', async () => {
+		if ( writeInFlight ) {
+			return;
+		}
+		const target = bulkTargets.get( bulkColumn.value ) ?? null;
+		const selectedIds = Array.from( selectedPostIds ).sort(
+			( left, right ) => left - right
+		);
+		if (
+			target === null ||
+			selectedIds.length === 0 ||
+			selectedIds.length > MAX_BULK_FIELD_ROWS
+		) {
+			previewStatus.textContent = `Choose one eligible Fields column and 1-${ MAX_BULK_FIELD_ROWS } visible rows.`;
+			return;
+		}
+		if (
+			session.definitionId === null ||
+			session.revision === null ||
+			session.status !== 'published' ||
+			! session.viewEnabled ||
+			session.authoredDirty ||
+			writeBootstrap === null
+		) {
+			previewStatus.textContent =
+				'Bulk Fields edit is no longer valid for the current saved View. Re-preview before retrying.';
+			return;
+		}
+		const parsedValue = readBulkValue( target );
+		if ( ! parsedValue.ok ) {
+			previewStatus.textContent = parsedValue.message;
+			return;
+		}
+
+		const expectedViewId = session.definitionId;
+		const expectedViewRevision = session.revision;
+		let attempted = 0;
+		let succeeded = 0;
+		const unverifiedPostIds: number[] = [];
+
+		try {
+			writeInFlight = true;
+			bulkColumn.disabled = true;
+			if ( bulkValueControl !== null ) {
+				bulkValueControl.disabled = true;
+			}
+			syncBulkApply();
+			previewStatus.textContent = `Applying one Fields-owned value to ${ selectedIds.length } selected row(s) through the certified owner Ability…`;
+
+			for ( const postId of selectedIds ) {
+				if (
+					session.definitionId !== expectedViewId ||
+					session.revision !== expectedViewRevision ||
+					session.status !== 'published' ||
+					! session.viewEnabled ||
+					session.authoredDirty
+				) {
+					break;
+				}
+
+				attempted += 1;
+				try {
+					const data = await postRoute(
+						writeBootstrap.ajaxUrl,
+						writeBootstrap.ajaxAction,
+						writeBootstrap.routes.writeFieldValue,
+						{
+							view_id: expectedViewId,
+							column_key: target.column.key,
+							post_id: postId,
+							expected_group_revision:
+								target.metadata.groupRevision,
+							value: parsedValue.value,
+						}
+					);
+					if (
+						session.definitionId !== expectedViewId ||
+						session.revision !== expectedViewRevision ||
+						session.authoredDirty ||
+						! parseFieldWriteResult(
+							data,
+							expectedViewId,
+							expectedViewRevision,
+							target.column.key,
+							target.source.reference,
+							postId,
+							target.postType,
+							target.metadata
+						)
+					) {
+						throw new Error(
+							'Malformed or stale Fields mutation response.'
+						);
+					}
+					succeeded += 1;
+				} catch {
+					unverifiedPostIds.push( postId );
+				}
+			}
+		} finally {
+			writeInFlight = false;
+			const notAttemptedIds = selectedIds.slice( attempted );
+			if ( attempted > 0 ) {
+				const unverifiedDetail =
+					unverifiedPostIds.length > 0
+						? ` Unverified post IDs: ${ unverifiedPostIds.join(
+								', '
+						  ) }. Refresh before retrying because the owner may have applied the attempted write.`
+						: '';
+				const notAttemptedDetail =
+					notAttemptedIds.length > 0
+						? ` Not attempted post IDs: ${ notAttemptedIds.join(
+								', '
+						  ) }.`
+						: '';
+				resetPreview();
+				previewStatus.textContent =
+					`Bulk Fields edit finished: ${ succeeded } verified, ${ unverifiedPostIds.length } unverified, ${ notAttemptedIds.length } not attempted.` +
+					unverifiedDetail +
+					notAttemptedDetail +
+					' Preview was invalidated; choose Preview rows to read authoritative owner state again.';
+			} else {
+				bulkColumn.disabled = false;
+				if ( bulkValueControl !== null ) {
+					bulkValueControl.disabled = false;
+				}
+				syncBulkApply();
+			}
+		}
+	} );
 
 	const execute = async ( requestedOffset: number ): Promise< void > => {
 		if ( inFlight || writeInFlight ) {
