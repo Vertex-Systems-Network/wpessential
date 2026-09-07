@@ -81,8 +81,9 @@ final readonly class ListingServerRenderer
             $bindings = [];
             foreach ($binding->projection as $fieldRef) {
                 $value = $row[$fieldRef] ?? null;
-                if (!$this->isRenderValue($value)) {
-                    return $this->failure('unsupported_render_value');
+                $expectedType = $blueprint->bindingSchema[$fieldRef];
+                if (!$this->matchesBindingType($value, $expectedType)) {
+                    return $this->failure('blueprint_binding_type_mismatch');
                 }
                 /** @var scalar|list<scalar>|null $value */
                 $bindings[$fieldRef] = $value;
@@ -122,16 +123,30 @@ final readonly class ListingServerRenderer
         );
     }
 
-    private function isRenderValue(mixed $value): bool
+    private function matchesBindingType(mixed $value, string $type): bool
     {
-        if ($value === null || is_scalar($value)) {
+        if ($value === null) {
             return true;
         }
+
+        return match ($type) {
+            'string' => is_string($value),
+            'int' => is_int($value),
+            'float' => is_float($value),
+            'bool' => is_bool($value),
+            'string_list' => $this->isTypedList($value, 'string'),
+            'int_list' => $this->isTypedList($value, 'int'),
+            default => false,
+        };
+    }
+
+    private function isTypedList(mixed $value, string $type): bool
+    {
         if (!is_array($value) || !array_is_list($value)) {
             return false;
         }
         foreach ($value as $item) {
-            if (!is_scalar($item)) {
+            if (($type === 'string' && !is_string($item)) || ($type === 'int' && !is_int($item))) {
                 return false;
             }
         }
