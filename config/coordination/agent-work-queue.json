@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-07",
-  "queue_anchor_main_sha": "20ec75cafc24123214e0b11e5412093f379b91de",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D remains ACTIVE / NOT PASS. Current main includes revisioned View lifecycle, Query-backed reads, no-N+1 evidence, Fields-owned read/write foundations, preview compatibility, CSV export encoder/orchestration, personal preference resolver PR #246, primary/row-action policy PR #247, View portability/remap PR #248 and effective/degraded-state projector PR #251. PR #237 remains unmergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Fields bulk edit remains blocked behind #237. View dependency manifest #252 and CSV export scope policy #253 are dependency-ready and path-disjoint. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue/README truth remains Supervisor-only.",
+  "queue_anchor_main_sha": "22387705232dab6fe7148e58a84b3287bce585c3",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D remains ACTIVE / NOT PASS. Current main includes revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read/write foundations, preview compatibility, CSV export encoder/orchestration, personal preference resolver PR #246, primary/row-action policy PR #247, View portability/remap PR #248, effective/degraded-state projector PR #251, View dependency manifest PR #255 and bounded CSV export scope policy PR #256. PR #237 remains an existing active claim and is not mergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Fields bulk edit remains blocked behind #237. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue/README truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,7 +13,7 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main and verify merged PR #235/#236/#240/#246/#247/#248/#251 evidence plus open PR #237 before selecting work.",
+      "Resolve exact current main and verify merged PR #235/#236/#240/#246/#247/#248/#251/#255/#256 evidence plus open PR #237 before selecting work.",
       "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
       "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files or semantic boundary.",
       "Preserve Query ownership of backend row selection/sort/filter/search, source-owner mutation semantics, Policy authorization, and authored/personal/effective/diagnostic state separation.",
@@ -76,7 +76,7 @@
         "do not edit Query, Fields or Relations production internals, bulk mutation, export, queue, CHECKPOINT.md or README.md"
       ],
       "completion_condition": "A published/enabled View can edit one certified Fields scalar cell only through the existing owner-routed Ability/AJAX seam, with explicit post.id identity, stale/failure preservation, preview invalidation after success and exact-head green evidence.",
-      "notes": "Claim branch is active and PR #237 is open on head 7b40055921d7ec6ceec39aa94b23c61f0fadf391. PHP Quality, Package, Platform Matrix and Browser E2E are green, but Architecture Guards fails JavaScript lint with 22 Prettier errors plus one no-nested-ternary violation in columns-runtime.ts. Do not merge until a new exact head makes all applicable checks green.",
+      "notes": "Claim branch is active and PR #237 remains on head 7b40055921d7ec6ceec39aa94b23c61f0fadf391. PHP Quality, Package, Platform Matrix and Browser E2E are green on that head, but Architecture Guards fails JavaScript lint with 22 Prettier errors plus one no-nested-ternary violation in columns-runtime.ts. The deterministic branch is already another active claim and must not be reused or force-moved. Do not merge until a new exact head makes all applicable checks green.",
       "claim_branch": "agent/columns-fields-inline-edit-ui-v1"
     },
     {
@@ -223,24 +223,16 @@
       "slot_id": "columns-view-dependency-manifest-v1",
       "title": "Build View dependency manifest projector V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "DEPENDENCY_MANIFEST_FOUNDATION",
       "parallel_class": "COLUMNS_DEPENDENCY_MANIFEST_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #252 under parent #66 and Admin Columns Used By / Dependencies UX contract",
-      "dependencies": [
-        "Admin Columns normalized revisioned View payload contract is promoted",
-        "Gate D remains ACTIVE / NOT PASS"
-      ],
+      "source": "Issue #252 / merged PR #255 under parent #66",
+      "dependencies": ["Admin Columns normalized revisioned View payload contract is promoted"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "new AdminColumns View dependency manifest projector file only",
-        "new focused dependency-manifest unit tests and one implementation document",
-        "project typed target/source/assignment references from a canonical normalized View only",
-        "no provider discovery, persistence, UI/controller, Query execution, peer-private reads, authorization grants, shared queue, CHECKPOINT.md or README.md"
-      ],
-      "completion_condition": "A deterministic bounded manifest exposes typed View dependencies for later Used By/import-review integration without resolving peer-private runtime state.",
-      "notes": "Path-disjoint from #237 and the export-scope lane.",
+      "allowed_scope": ["Historical completed boundary only"],
+      "completion_condition": "Satisfied by merged PR #255 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
+      "notes": "Deterministic typed target/source/assignment dependency manifest is promoted; runtime discovery and reverse-index persistence remain separately gated.",
       "claim_branch": "agent/columns-view-dependency-manifest-v1"
     },
     {
@@ -248,24 +240,16 @@
       "slot_id": "columns-csv-export-scope-policy-v1",
       "title": "Build bounded CSV export scope policy V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "EXPORT_SCOPE_POLICY_FOUNDATION",
       "parallel_class": "COLUMNS_EXPORT_SCOPE_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #253 under parent #66 and Admin Columns export UX contract",
-      "dependencies": [
-        "CSV export encoder and bounded internal orchestration are promoted",
-        "Gate D remains ACTIVE / NOT PASS"
-      ],
+      "source": "Issue #253 / merged PR #256 under parent #66",
+      "dependencies": ["CSV export encoder and bounded internal orchestration are promoted"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "new AdminColumns CSV export scope policy file only",
-        "new focused export-scope policy unit tests and one implementation document",
-        "normalize current_page/selected_rows/all_matching scope, finite selected IDs and explicit enabled-column subset against advertised target scopes only",
-        "no existing CSV encoder/orchestration edits, Query execution, authorization, UI/controller/download transport, source-owner mutation, shared queue, CHECKPOINT.md or README.md"
-      ],
-      "completion_condition": "A pure bounded policy normalizes explicit supported export scope/row/column selection without becoming a query, authorization or transport engine.",
-      "notes": "Path-disjoint from #237 and the dependency-manifest lane.",
+      "allowed_scope": ["Historical completed boundary only"],
+      "completion_condition": "Satisfied by merged PR #256 after latest-main reconciliation with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
+      "notes": "Explicit current_page/selected_rows/all_matching scope policy is promoted; Query execution, authorization, CSV encoding and HTTP/download transport remain outside this foundation.",
       "claim_branch": "agent/columns-csv-export-scope-policy-v1"
     }
   ]
