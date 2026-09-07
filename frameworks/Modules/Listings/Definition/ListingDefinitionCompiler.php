@@ -173,8 +173,8 @@ final readonly class ListingDefinitionCompiler
 
     private function semanticReference(mixed $value, string $label): string
     {
-        if (!is_string($value) || !preg_match('/^[a-z][a-z0-9_.:-]{0,159}$/', $value)) {
-            throw new InvalidArgumentException($label . ' must be a bounded semantic reference.');
+        if (!is_string($value) || !preg_match('/^[a-z][a-z0-9._-]{0,127}$/', $value)) {
+            throw new InvalidArgumentException($label . ' must match the canonical Query semantic reference format.');
         }
 
         return $value;
