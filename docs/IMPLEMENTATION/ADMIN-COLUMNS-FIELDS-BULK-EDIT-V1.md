@@ -51,7 +51,7 @@ One Fields-owned scalar Column is edited per operation. A Column is eligible onl
 
 The bulk value editor remains type-aware and validates finite numeric, explicit boolean, ISO `YYYY-MM-DD` date, and bounded text inputs before any request is sent.
 
-## Execution and partial failures
+## Execution and uncertain outcomes
 
 Selected rows are executed sequentially through the existing one-row route. For each attempted row the browser validates the complete owner response with the same `parseFieldWriteResult()` contract used by one-row editing.
 
