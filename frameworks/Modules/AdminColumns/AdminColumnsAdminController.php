@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use InvalidArgumentException;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
@@ -21,6 +22,7 @@ final class AdminColumnsAdminController
     private const SAVE_ROUTE = 'admin-columns.save.view';
     private const STATUS_ROUTE = 'admin-columns.status.view';
     private const READ_ROUTE = 'admin-columns.read.rows';
+    private const WRITE_FIELD_ROUTE = AdminColumnsFieldValueWriteAbilityHandler::AJAX_TYPE;
 
     private ?string $hookSuffix = null;
 
@@ -99,33 +101,46 @@ final class AdminColumnsAdminController
             && is_string($this->ajaxAction)
             && trim($this->ajaxAction) !== ''
         ) {
+            $routes = [
+                'list' => [
+                    'type' => self::LIST_ROUTE,
+                    'nonce' => $this->ajax->createNonce(self::LIST_ROUTE),
+                ],
+                'get' => [
+                    'type' => self::GET_ROUTE,
+                    'nonce' => $this->ajax->createNonce(self::GET_ROUTE),
+                ],
+                'save' => [
+                    'type' => self::SAVE_ROUTE,
+                    'nonce' => $this->ajax->createNonce(self::SAVE_ROUTE),
+                ],
+                'status' => [
+                    'type' => self::STATUS_ROUTE,
+                    'nonce' => $this->ajax->createNonce(self::STATUS_ROUTE),
+                ],
+                'read' => [
+                    'type' => self::READ_ROUTE,
+                    'nonce' => $this->ajax->createNonce(self::READ_ROUTE),
+                ],
+            ];
+
+            try {
+                $routes['writeFieldValue'] = [
+                    'type' => self::WRITE_FIELD_ROUTE,
+                    'nonce' => $this->ajax->createNonce(self::WRITE_FIELD_ROUTE),
+                ];
+            } catch (InvalidArgumentException) {
+                // The Fields mutation route is intentionally optional. If the
+                // certified owner write seam was not admitted/registered, no
+                // browser mutation capability or nonce is projected.
+            }
+
             $bootstrap = array_merge(
                 $bootstrap,
                 [
                     'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
                     'ajaxAction' => $this->ajaxAction,
-                    'routes' => [
-                        'list' => [
-                            'type' => self::LIST_ROUTE,
-                            'nonce' => $this->ajax->createNonce(self::LIST_ROUTE),
-                        ],
-                        'get' => [
-                            'type' => self::GET_ROUTE,
-                            'nonce' => $this->ajax->createNonce(self::GET_ROUTE),
-                        ],
-                        'save' => [
-                            'type' => self::SAVE_ROUTE,
-                            'nonce' => $this->ajax->createNonce(self::SAVE_ROUTE),
-                        ],
-                        'status' => [
-                            'type' => self::STATUS_ROUTE,
-                            'nonce' => $this->ajax->createNonce(self::STATUS_ROUTE),
-                        ],
-                        'read' => [
-                            'type' => self::READ_ROUTE,
-                            'nonce' => $this->ajax->createNonce(self::READ_ROUTE),
-                        ],
-                    ],
+                    'routes' => $routes,
                 ],
             );
         }
@@ -138,7 +153,7 @@ final class AdminColumnsAdminController
         echo '<div class="wrap wpessential-columns-wrap">';
         echo '<section id="wpessential-columns-root" data-wpessential-surface="columns" aria-labelledby="wpessential-columns-page-title">';
         echo '<h1 id="wpessential-columns-page-title">' . esc_html__('Admin Columns', 'wpessential') . '</h1>';
-        echo '<p>' . esc_html__('Author, reopen and explicitly manage lifecycle for revisioned shared Column Sets. Published saved Views can be previewed through the bounded Query read path; row mutation and export remain unavailable.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Author, reopen and explicitly manage lifecycle for revisioned shared Column Sets. Published saved Views can be previewed through the bounded Query read path. A certified Fields single-row edit path is exposed only when the owner write route is available; bulk mutation and export remain unavailable.', 'wpessential') . '</p>';
         echo '</section>';
         echo '<script id="wpessential-columns-bootstrap" type="application/json">' . $json . '</script>';
         echo '</div>';
