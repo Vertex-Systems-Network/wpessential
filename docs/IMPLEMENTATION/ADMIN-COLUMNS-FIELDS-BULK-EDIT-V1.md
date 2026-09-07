@@ -65,7 +65,7 @@ No atomic rollback claim is made. Owner writes already verified as successful re
 
 ## Preview invalidation
 
-If at least one row mutation request was attempted, the entire preview is invalidated after the batch completes, regardless of whether the outcome was all-success, mixed verified/unverified, or all-unverified. The operator must choose **Preview rows** again before seeing authoritative current values.
+If at least one row mutation request was attempted, the entire preview is invalidated after the batch completes, regardless of whether the outcome was all-success, mixed verified/unverified, or all-unverified. The operator must choose **Preview rows** again before treating any visible value as authoritative current owner state.
 
 This prevents optimistic local patching and ensures visible state comes back through Query + source-owner reads.
 
