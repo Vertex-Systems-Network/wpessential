@@ -1,0 +1,134 @@
+name: Patch Fields Bulk Edit V1
+
+on:
+  push:
+    branches:
+      - agent/columns-fields-bulk-edit-v1
+    paths:
+      - .github/workflows/patch-fields-bulk-edit-v1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout claimed branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/columns-fields-bulk-edit-v1
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "wpessential-worker"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Apply bounded browser bulk-edit patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('admin-ui/src/columns-runtime.ts')
+          text = path.read_text()
+
+          def replace_once(old: str, new: str, label: str) -> None:
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one anchor, found {count}')
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              """type AuthoredColumnSource = {\n\towner: string;\n\treference: string;\n\tformat: string;\n};\ntype PreviewColumn = {""",
+              """type AuthoredColumnSource = {\n\towner: string;\n\treference: string;\n\tformat: string;\n};\ntype BulkTarget = {\n\tcolumn: PreviewColumn;\n\tsource: AuthoredColumnSource;\n\tmetadata: FieldsSourceMetadata;\n\tpostType: string;\n};\ntype PreviewColumn = {""",
+              'bulk target type',
+          )
+
+          replace_once(
+              """const MAX_PREVIEW_ROWS = 100;\nconst MAX_PREVIEW_CELL_TEXT = 500;""",
+              """const MAX_PREVIEW_ROWS = 100;\nconst MAX_BULK_FIELD_ROWS = 20;\nconst MAX_PREVIEW_CELL_TEXT = 500;""",
+              'bulk row budget',
+          )
+
+          replace_once(
+              """\tdescription.textContent = writeBootstrap\n\t\t? 'Preview executes only the published saved View through the bounded Query path. Certified Fields cells can be edited one row at a time only when the saved View contains an explicit post.id column.'\n\t\t: 'Preview is read-only and executes only the published saved View through the bounded Query path.';""",
+              """\tdescription.textContent = writeBootstrap\n\t\t? 'Preview executes only the published saved View through the bounded Query path. Certified Fields cells support one-row editing and explicit bulk editing of at most 20 visible rows when the saved View contains an explicit post.id column.'\n\t\t: 'Preview is read-only and executes only the published saved View through the bounded Query path.';""",
+              'preview description',
+          )
+
+          replace_once(
+              """\tcontrols.append(\n\t\tsearchLabel,\n\t\tsearch,\n\t\tpageSizeLabel,\n\t\tpageSize,\n\t\tpreview,\n\t\tprevious,\n\t\tnext\n\t);\n\n\tconst previewStatus = document.createElement( 'p' );""",
+              """\tcontrols.append(\n\t\tsearchLabel,\n\t\tsearch,\n\t\tpageSizeLabel,\n\t\tpageSize,\n\t\tpreview,\n\t\tprevious,\n\t\tnext\n\t);\n\n\tconst bulkControls = document.createElement( 'fieldset' );\n\tbulkControls.className = 'wpessential-columns__preview-controls';\n\tbulkControls.hidden = true;\n\tconst bulkLegend = document.createElement( 'legend' );\n\tbulkLegend.textContent = 'Bulk Fields edit';\n\tconst bulkColumnLabel = document.createElement( 'label' );\n\tbulkColumnLabel.htmlFor = 'wpessential-columns-bulk-field';\n\tbulkColumnLabel.textContent = 'Fields column';\n\tconst bulkColumn = document.createElement( 'select' );\n\tbulkColumn.id = 'wpessential-columns-bulk-field';\n\tbulkColumn.append( new Option( 'Choose Fields column', '' ) );\n\tconst bulkValueLabel = document.createElement( 'label' );\n\tbulkValueLabel.htmlFor = 'wpessential-columns-bulk-value';\n\tbulkValueLabel.textContent = 'New value';\n\tconst bulkValueHost = document.createElement( 'span' );\n\tconst bulkApply = document.createElement( 'button' );\n\tbulkApply.type = 'button';\n\tbulkApply.className = 'button';\n\tbulkApply.textContent = 'Apply to selected rows';\n\tbulkApply.disabled = true;\n\tbulkControls.append(\n\t\tbulkLegend,\n\t\tbulkColumnLabel,\n\t\tbulkColumn,\n\t\tbulkValueLabel,\n\t\tbulkValueHost,\n\t\tbulkApply\n\t);\n\n\tconst previewStatus = document.createElement( 'p' );""",
+              'bulk controls',
+          )
+
+          replace_once(
+              """\tsection.append( title, description, controls, previewStatus, table );""",
+              """\tsection.append(\n\t\ttitle,\n\t\tdescription,\n\t\tcontrols,\n\t\tbulkControls,\n\t\tpreviewStatus,\n\t\ttable\n\t);""",
+              'section composition',
+          )
+
+          replace_once(
+              """\tlet offset = 0;\n\tlet lastReturned = 0;\n\tlet inFlight = false;\n\tlet writeInFlight = false;\n\n\tconst resetPreview = (): void => {""",
+              """\tlet offset = 0;\n\tlet lastReturned = 0;\n\tlet inFlight = false;\n\tlet writeInFlight = false;\n\tlet bulkValueControl: HTMLInputElement | HTMLSelectElement | null = null;\n\tconst selectedPostIds = new Set< number >();\n\tconst bulkTargets = new Map< string, BulkTarget >();\n\n\tconst syncBulkApply = (): void => {\n\t\tbulkApply.disabled =\n\t\t\twriteInFlight ||\n\t\t\tselectedPostIds.size === 0 ||\n\t\t\tselectedPostIds.size > MAX_BULK_FIELD_ROWS ||\n\t\t\t! bulkTargets.has( bulkColumn.value );\n\t};\n\n\tconst renderBulkValueControl = (): void => {\n\t\tbulkValueHost.replaceChildren();\n\t\tbulkValueControl = null;\n\t\tconst target = bulkTargets.get( bulkColumn.value ) ?? null;\n\t\tif ( target === null ) {\n\t\t\tsyncBulkApply();\n\t\t\treturn;\n\t\t}\n\n\t\tlet control: HTMLInputElement | HTMLSelectElement;\n\t\tif ( target.source.format === 'boolean' ) {\n\t\t\tconst select = document.createElement( 'select' );\n\t\t\tselect.append(\n\t\t\t\tnew Option( 'Choose value', '' ),\n\t\t\t\tnew Option( 'True', 'true' ),\n\t\t\t\tnew Option( 'False', 'false' )\n\t\t\t);\n\t\t\tcontrol = select;\n\t\t} else {\n\t\t\tconst input = document.createElement( 'input' );\n\t\t\tlet inputType = 'text';\n\t\t\tif ( target.source.format === 'number' ) {\n\t\t\t\tinputType = 'number';\n\t\t\t} else if ( target.source.format === 'date' ) {\n\t\t\t\tinputType = 'date';\n\t\t\t}\n\t\t\tinput.type = inputType;\n\t\t\tinput.maxLength = MAX_PREVIEW_CELL_TEXT;\n\t\t\tif ( target.source.format === 'number' ) {\n\t\t\t\tinput.step = 'any';\n\t\t\t}\n\t\t\tcontrol = input;\n\t\t}\n\t\tcontrol.id = 'wpessential-columns-bulk-value';\n\t\tcontrol.setAttribute(\n\t\t\t'aria-label',\n\t\t\t`New ${ target.column.label } value for selected rows`\n\t\t);\n\t\tbulkValueHost.append( control );\n\t\tbulkValueControl = control;\n\t\tsyncBulkApply();\n\t};\n\n\tconst readBulkValue = (\n\t\ttarget: BulkTarget\n\t):\n\t\t| { ok: true; value: unknown }\n\t\t| { ok: false; message: string } => {\n\t\tconst control = bulkValueControl;\n\t\tif ( control === null ) {\n\t\t\treturn { ok: false, message: 'Choose a Fields column and value.' };\n\t\t}\n\t\tif ( target.source.format === 'boolean' ) {\n\t\t\tif (\n\t\t\t\t! ( control instanceof HTMLSelectElement ) ||\n\t\t\t\t! [ 'true', 'false' ].includes( control.value )\n\t\t\t) {\n\t\t\t\treturn { ok: false, message: 'Choose a valid boolean value.' };\n\t\t\t}\n\t\t\treturn { ok: true, value: control.value === 'true' };\n\t\t}\n\t\tif ( ! ( control instanceof HTMLInputElement ) ) {\n\t\t\treturn { ok: false, message: 'Bulk value control is invalid.' };\n\t\t}\n\t\tif ( target.source.format === 'number' ) {\n\t\t\tif ( control.value.trim() === '' ) {\n\t\t\t\treturn { ok: false, message: 'Enter a bounded numeric value.' };\n\t\t\t}\n\t\t\tconst numeric = Number( control.value );\n\t\t\tif ( ! Number.isFinite( numeric ) ) {\n\t\t\t\treturn { ok: false, message: 'Enter a finite numeric value.' };\n\t\t\t}\n\t\t\treturn { ok: true, value: numeric };\n\t\t}\n\t\tif (\n\t\t\ttarget.source.format === 'date' &&\n\t\t\t! /^\\d{4}-\\d{2}-\\d{2}$/.test( control.value )\n\t\t) {\n\t\t\treturn { ok: false, message: 'Choose a valid date value.' };\n\t\t}\n\t\tif ( control.value.length > MAX_PREVIEW_CELL_TEXT ) {\n\t\t\treturn { ok: false, message: 'Bulk value is too long.' };\n\t\t}\n\t\treturn { ok: true, value: control.value };\n\t};\n\n\tbulkColumn.addEventListener( 'change', renderBulkValueControl );\n\n\tconst resetPreview = (): void => {""",
+              'bulk state and helpers',
+          )
+
+          replace_once(
+              """\t\thead.replaceChildren();\n\t\tbody.replaceChildren();\n\t\ttable.hidden = true;\n\t\tpreviewStatus.textContent =""",
+              """\t\thead.replaceChildren();\n\t\tbody.replaceChildren();\n\t\tselectedPostIds.clear();\n\t\tbulkTargets.clear();\n\t\tbulkColumn.replaceChildren(\n\t\t\tnew Option( 'Choose Fields column', '' )\n\t\t);\n\t\tbulkColumn.disabled = false;\n\t\tbulkValueHost.replaceChildren();\n\t\tbulkValueControl = null;\n\t\tbulkControls.hidden = true;\n\t\tsyncBulkApply();\n\t\ttable.hidden = true;\n\t\tpreviewStatus.textContent =""",
+              'reset bulk state',
+          )
+
+          replace_once(
+              """\tconst render = ( result: PreviewResult ): void => {\n\t\thead.replaceChildren();\n\t\tbody.replaceChildren();\n\t\tconst headerRow = document.createElement( 'tr' );""",
+              """\tconst render = ( result: PreviewResult ): void => {\n\t\thead.replaceChildren();\n\t\tbody.replaceChildren();\n\t\tselectedPostIds.clear();\n\t\tbulkTargets.clear();\n\t\tbulkColumn.replaceChildren(\n\t\t\tnew Option( 'Choose Fields column', '' )\n\t\t);\n\t\tbulkValueHost.replaceChildren();\n\t\tbulkValueControl = null;\n\t\tbulkControls.hidden = true;\n\t\tsyncBulkApply();\n\t\tconst headerRow = document.createElement( 'tr' );""",
+              'render bulk reset',
+          )
+
+          replace_once(
+              """\t\tconst rowIdentityReady =\n\t\t\tpostIdKey !== null &&\n\t\t\tpositiveIds.length === result.rows.length &&\n\t\t\tnew Set( positiveIds ).size === positiveIds.length;\n\n\t\tfor ( const [ rowIndex, row ] of result.rows.entries() ) {""",
+              """\t\tconst rowIdentityReady =\n\t\t\tpostIdKey !== null &&\n\t\t\tpositiveIds.length === result.rows.length &&\n\t\t\tnew Set( positiveIds ).size === positiveIds.length;\n\n\t\tif (\n\t\t\twriteBootstrap !== null &&\n\t\t\trowIdentityReady &&\n\t\t\tsession.definitionId !== null &&\n\t\t\tsession.revision !== null &&\n\t\t\tsession.status === 'published' &&\n\t\t\tsession.viewEnabled &&\n\t\t\t! session.authoredDirty\n\t\t) {\n\t\t\tfor ( const column of result.columns ) {\n\t\t\t\tconst source = authoredSources?.get( column.key ) ?? null;\n\t\t\t\tconst metadata =\n\t\t\t\t\tsource?.owner === 'fields'\n\t\t\t\t\t\t? fieldsMetadata.get( source.reference ) ?? null\n\t\t\t\t\t\t: null;\n\t\t\t\tconst editableFormat =\n\t\t\t\t\tsource !== null &&\n\t\t\t\t\t[ 'text', 'number', 'boolean', 'date' ].includes(\n\t\t\t\t\t\tsource.format\n\t\t\t\t\t);\n\t\t\t\tif (\n\t\t\t\t\tcolumn.sourceOwner === 'fields' &&\n\t\t\t\t\tsource?.owner === 'fields' &&\n\t\t\t\t\tsource.format === column.format &&\n\t\t\t\t\tmetadata !== null &&\n\t\t\t\t\tmetadata.postTypes.includes( targetKey ) &&\n\t\t\t\t\teditableFormat\n\t\t\t\t) {\n\t\t\t\t\tbulkTargets.set( column.key, {\n\t\t\t\t\t\tcolumn,\n\t\t\t\t\t\tsource,\n\t\t\t\t\t\tmetadata,\n\t\t\t\t\t\tpostType: targetKey,\n\t\t\t\t\t} );\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\tif ( bulkTargets.size > 0 ) {\n\t\t\tconst selectionHeader = document.createElement( 'th' );\n\t\t\tselectionHeader.scope = 'col';\n\t\t\tselectionHeader.textContent = 'Bulk select';\n\t\t\theaderRow.prepend( selectionHeader );\n\t\t\tfor ( const target of bulkTargets.values() ) {\n\t\t\t\tbulkColumn.append(\n\t\t\t\t\tnew Option( target.column.label, target.column.key )\n\t\t\t\t);\n\t\t\t}\n\t\t\tbulkControls.hidden = false;\n\t\t}\n\t\trenderBulkValueControl();\n\n\t\tfor ( const [ rowIndex, row ] of result.rows.entries() ) {""",
+              'bulk targets',
+          )
+
+          replace_once(
+              """\t\t\tconst postId = rowIdentityReady\n\t\t\t\t? rowPostIds[ rowIndex ] ?? null\n\t\t\t\t: null;\n\t\t\tfor ( const column of result.columns ) {""",
+              """\t\t\tconst postId = rowIdentityReady\n\t\t\t\t? rowPostIds[ rowIndex ] ?? null\n\t\t\t\t: null;\n\t\t\tif ( postId !== null && bulkTargets.size > 0 ) {\n\t\t\t\tconst selectionCell = document.createElement( 'td' );\n\t\t\t\tconst checkbox = document.createElement( 'input' );\n\t\t\t\tcheckbox.type = 'checkbox';\n\t\t\t\tcheckbox.setAttribute(\n\t\t\t\t\t'aria-label',\n\t\t\t\t\t`Select post ${ postId } for bulk Fields edit`\n\t\t\t\t);\n\t\t\t\tcheckbox.addEventListener( 'change', () => {\n\t\t\t\t\tif ( writeInFlight ) {\n\t\t\t\t\t\tcheckbox.checked = selectedPostIds.has( postId );\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\t\t\t\t\tif ( checkbox.checked ) {\n\t\t\t\t\t\tif ( selectedPostIds.size >= MAX_BULK_FIELD_ROWS ) {\n\t\t\t\t\t\t\tcheckbox.checked = false;\n\t\t\t\t\t\t\tpreviewStatus.textContent = `Select at most ${ MAX_BULK_FIELD_ROWS } visible rows for one bulk Fields edit.`;\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\tselectedPostIds.add( postId );\n\t\t\t\t\t} else {\n\t\t\t\t\t\tselectedPostIds.delete( postId );\n\t\t\t\t\t}\n\t\t\t\t\tsyncBulkApply();\n\t\t\t\t\tpreviewStatus.textContent = `${ selectedPostIds.size } row(s) selected for bounded bulk Fields edit.`;\n\t\t\t\t} );\n\t\t\t\tselectionCell.append( checkbox );\n\t\t\t\ttableRow.append( selectionCell );\n\t\t\t}\n\t\t\tfor ( const column of result.columns ) {""",
+              'row selection',
+          )
+
+          replace_once(
+              """\t\tif ( writeBootstrap !== null && ! rowIdentityReady ) {\n\t\t\tpreviewStatus.textContent =\n\t\t\t\t'Preview loaded read-only. Single-row Fields edit V1 requires exactly one explicit enabled post.id column with unique positive ids on this page.';\n\t\t}\n\t};\n\n\tconst execute = async ( requestedOffset: number ): Promise< void > => {""",
+              """\t\tif ( writeBootstrap !== null && ! rowIdentityReady ) {\n\t\t\tpreviewStatus.textContent =\n\t\t\t\t'Preview loaded read-only. Fields edit V1 requires exactly one explicit enabled post.id column with unique positive ids on this page.';\n\t\t}\n\t};\n\n\tbulkApply.addEventListener( 'click', async () => {\n\t\tif ( writeInFlight ) {\n\t\t\treturn;\n\t\t}\n\t\tconst target = bulkTargets.get( bulkColumn.value ) ?? null;\n\t\tconst selectedIds = Array.from( selectedPostIds ).sort(\n\t\t\t( left, right ) => left - right\n\t\t);\n\t\tif (\n\t\t\ttarget === null ||\n\t\t\tselectedIds.length === 0 ||\n\t\t\tselectedIds.length > MAX_BULK_FIELD_ROWS\n\t\t) {\n\t\t\tpreviewStatus.textContent = `Choose one eligible Fields column and 1-${ MAX_BULK_FIELD_ROWS } visible rows.`;\n\t\t\treturn;\n\t\t}\n\t\tif (\n\t\t\tsession.definitionId === null ||\n\t\t\tsession.revision === null ||\n\t\t\tsession.status !== 'published' ||\n\t\t\t! session.viewEnabled ||\n\t\t\tsession.authoredDirty ||\n\t\t\twriteBootstrap === null\n\t\t) {\n\t\t\tpreviewStatus.textContent =\n\t\t\t\t'Bulk Fields edit is no longer valid for the current saved View. Re-preview before retrying.';\n\t\t\treturn;\n\t\t}\n\t\tconst parsedValue = readBulkValue( target );\n\t\tif ( ! parsedValue.ok ) {\n\t\t\tpreviewStatus.textContent = parsedValue.message;\n\t\t\treturn;\n\t\t}\n\n\t\tconst expectedViewId = session.definitionId;\n\t\tconst expectedViewRevision = session.revision;\n\t\tlet attempted = 0;\n\t\tlet succeeded = 0;\n\t\tconst failedPostIds: number[] = [];\n\n\t\ttry {\n\t\t\twriteInFlight = true;\n\t\t\tbulkColumn.disabled = true;\n\t\t\tif ( bulkValueControl !== null ) {\n\t\t\t\tbulkValueControl.disabled = true;\n\t\t\t}\n\t\t\tsyncBulkApply();\n\t\t\tpreviewStatus.textContent = `Applying one Fields-owned value to ${ selectedIds.length } selected row(s) through the certified owner Ability…`;\n\n\t\t\tfor ( const postId of selectedIds ) {\n\t\t\t\tif (\n\t\t\t\t\tsession.definitionId !== expectedViewId ||\n\t\t\t\t\tsession.revision !== expectedViewRevision ||\n\t\t\t\t\tsession.status !== 'published' ||\n\t\t\t\t\t! session.viewEnabled ||\n\t\t\t\t\tsession.authoredDirty\n\t\t\t\t) {\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\n\t\t\t\tattempted += 1;\n\t\t\t\ttry {\n\t\t\t\t\tconst data = await postRoute(\n\t\t\t\t\t\twriteBootstrap.ajaxUrl,\n\t\t\t\t\t\twriteBootstrap.ajaxAction,\n\t\t\t\t\t\twriteBootstrap.routes.writeFieldValue,\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\tview_id: expectedViewId,\n\t\t\t\t\t\t\tcolumn_key: target.column.key,\n\t\t\t\t\t\t\tpost_id: postId,\n\t\t\t\t\t\t\texpected_group_revision:\n\t\t\t\t\t\t\t\ttarget.metadata.groupRevision,\n\t\t\t\t\t\t\tvalue: parsedValue.value,\n\t\t\t\t\t\t}\n\t\t\t\t\t);\n\t\t\t\t\tif (\n\t\t\t\t\t\tsession.definitionId !== expectedViewId ||\n\t\t\t\t\t\tsession.revision !== expectedViewRevision ||\n\t\t\t\t\t\tsession.authoredDirty ||\n\t\t\t\t\t\t! parseFieldWriteResult(\n\t\t\t\t\t\t\tdata,\n\t\t\t\t\t\t\texpectedViewId,\n\t\t\t\t\t\t\texpectedViewRevision,\n\t\t\t\t\t\t\ttarget.column.key,\n\t\t\t\t\t\t\ttarget.source.reference,\n\t\t\t\t\t\t\tpostId,\n\t\t\t\t\t\t\ttarget.postType,\n\t\t\t\t\t\t\ttarget.metadata\n\t\t\t\t\t\t)\n\t\t\t\t\t) {\n\t\t\t\t\t\tthrow new Error(\n\t\t\t\t\t\t\t'Malformed or stale Fields mutation response.'\n\t\t\t\t\t\t);\n\t\t\t\t\t}\n\t\t\t\t\tsucceeded += 1;\n\t\t\t\t} catch {\n\t\t\t\t\tfailedPostIds.push( postId );\n\t\t\t\t}\n\t\t\t}\n\t\t} finally {\n\t\t\twriteInFlight = false;\n\t\t\tconst notAttemptedIds = selectedIds.slice( attempted );\n\t\t\tif ( attempted > 0 ) {\n\t\t\t\tconst failureDetail =\n\t\t\t\t\tfailedPostIds.length > 0\n\t\t\t\t\t\t? ` Failed post IDs: ${ failedPostIds.join( ', ' ) }.`\n\t\t\t\t\t\t: '';\n\t\t\t\tconst notAttemptedDetail =\n\t\t\t\t\tnotAttemptedIds.length > 0\n\t\t\t\t\t\t? ` Not attempted post IDs: ${ notAttemptedIds.join( ', ' ) }.`\n\t\t\t\t\t\t: '';\n\t\t\t\tresetPreview();\n\t\t\t\tpreviewStatus.textContent =\n\t\t\t\t\t`Bulk Fields edit finished: ${ succeeded } verified, ${ failedPostIds.length } failed, ${ notAttemptedIds.length } not attempted.` +\n\t\t\t\t\tfailureDetail +\n\t\t\t\t\tnotAttemptedDetail +\n\t\t\t\t\t' Preview was invalidated; choose Preview rows to read authoritative owner state again.';\n\t\t\t} else {\n\t\t\t\tbulkColumn.disabled = false;\n\t\t\t\tif ( bulkValueControl !== null ) {\n\t\t\t\t\tbulkValueControl.disabled = false;\n\t\t\t\t}\n\t\t\t\tsyncBulkApply();\n\t\t\t}\n\t\t}\n\t} );\n\n\tconst execute = async ( requestedOffset: number ): Promise< void > => {""",
+              'bulk execution',
+          )
+
+          path.write_text(text)
+          PY
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+
+      - name: Install locked admin graph
+        run: npm ci --ignore-scripts
+
+      - name: Format and validate admin runtime
+        run: |
+          npm run lint:js -- --fix
+          npm run lint:js
+          npm run typecheck
+          npm run build
+
+      - name: Remove patch carrier and commit
+        run: |
+          set -euo pipefail
+          rm .github/workflows/patch-fields-bulk-edit-v1.yml
+          git add -A
+          git diff --cached --check
+          git commit -m "Gate D: add bounded Fields bulk edit UI V1"
+          git push origin HEAD:agent/columns-fields-bulk-edit-v1
