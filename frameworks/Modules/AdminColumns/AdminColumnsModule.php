@@ -36,6 +36,7 @@ final class AdminColumnsModule implements ModuleInterface
     public const SERVICE_VIEWS = 'module.admin-columns.views';
     public const SERVICE_READ_ADAPTER = 'module.admin-columns.read-adapter';
     public const SERVICE_FIELD_WRITE_ADAPTER = 'module.admin-columns.fields-write-adapter';
+    public const SERVICE_CSV_EXPORT = 'module.admin-columns.csv-export';
     public const SERVICE_ADMIN = 'module.admin-columns.admin';
 
     private const QUERY_READ_SERVICE = 'module.query.read-consumer';
@@ -103,6 +104,7 @@ final class AdminColumnsModule implements ModuleInterface
             self::SERVICE_VIEWS,
             self::SERVICE_READ_ADAPTER,
             self::SERVICE_FIELD_WRITE_ADAPTER,
+            self::SERVICE_CSV_EXPORT,
         ] as $serviceId) {
             if ($services->has($serviceId)) {
                 throw new LogicException(sprintf('Admin Columns service "%s" is already registered.', $serviceId));
@@ -112,9 +114,16 @@ final class AdminColumnsModule implements ModuleInterface
         $normalizer = new AdminColumnsViewDefinitionNormalizer();
         $views = new AdminColumnsViewDefinitionService($definitions, $normalizer);
         $readAdapter = new AdminColumnsReadAdapter($views, $query, $fields);
+        $csvExport = new AdminColumnsCsvExportService(
+            $readAdapter,
+            new AdminColumnsCsvExportEncoder(),
+            views: $views,
+            scopePolicy: new AdminColumnsCsvExportScopePolicy(),
+        );
         $services->set(self::SERVICE_NORMALIZER, $normalizer);
         $services->set(self::SERVICE_VIEWS, $views);
         $services->set(self::SERVICE_READ_ADAPTER, $readAdapter);
+        $services->set(self::SERVICE_CSV_EXPORT, $csvExport);
 
         $fieldWriteAdapter = null;
         if ($fieldWrites instanceof FieldValueWriteConsumerInterface) {
@@ -159,6 +168,22 @@ final class AdminColumnsModule implements ModuleInterface
         $ajaxRoutes->register(new AjaxRoute(
             type: 'admin-columns.read.rows',
             handler: new AbilityAjaxHandler($abilities, $readDescriptor->name, $contexts),
+            operation: NonceOperation::Apply,
+        ));
+
+        $exportDescriptor = new AbilityDescriptor(
+            name: AdminColumnsCsvExportAbilityHandler::ABILITY,
+            ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+            capability: self::CAPABILITY,
+            mutates: false,
+            channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+            inputSchema: $this->exportAbilityInputSchema(),
+            outputSchema: $this->exportAbilityOutputSchema(),
+        );
+        $abilities->register($exportDescriptor, new AdminColumnsCsvExportAbilityHandler($csvExport));
+        $ajaxRoutes->register(new AjaxRoute(
+            type: AdminColumnsCsvExportAbilityHandler::AJAX_TYPE,
+            handler: new AbilityAjaxHandler($abilities, $exportDescriptor->name, $contexts),
             operation: NonceOperation::Apply,
         ));
 
@@ -217,10 +242,10 @@ final class AdminColumnsModule implements ModuleInterface
         );
         $services->set(self::SERVICE_ADMIN, $admin);
         $admin->register();
-        // View-definition, bounded row-read, and optional owner-routed Fields
-        // mutation AJAX are registered through the shared Ability platform. The
-        // mutation route exists only when the certified Fields write seam is
-        // present. Inline/bulk UI, export and REST mutation remain non-scope.
+        // View-definition, bounded row-read, CSV export, and optional owner-routed
+        // Fields mutation AJAX are registered through the shared Ability platform.
+        // Browser download/UI construction, inline/bulk integration and REST
+        // mutation remain separately gated.
     }
 
     /** @return array<string,mixed> */
@@ -270,6 +295,84 @@ final class AdminColumnsModule implements ModuleInterface
                 'order_by' => ['type' => 'array', 'maxItems' => 4],
                 'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
                 'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function exportAbilityInputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['view_id', 'expected_view_revision', 'scope_request', 'controls', 'runtime'],
+            'properties' => [
+                'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+                'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
+                'scope_request' => [
+                    'type' => 'object',
+                    'required' => [
+                        'scope',
+                        'selected_row_ids',
+                        'selected_columns',
+                        'respect_filters',
+                        'respect_sort',
+                    ],
+                    'properties' => [
+                        'scope' => [
+                            'type' => 'string',
+                            'enum' => ['current_page', 'selected_rows', 'all_matching'],
+                        ],
+                        'selected_row_ids' => [
+                            'type' => 'array',
+                            'maxItems' => 100,
+                            'items' => ['type' => 'integer', 'minimum' => 1],
+                        ],
+                        'selected_columns' => [
+                            'type' => 'array',
+                            'minItems' => 1,
+                            'maxItems' => 100,
+                            'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN],
+                        ],
+                        'respect_filters' => ['type' => 'boolean'],
+                        'respect_sort' => ['type' => 'boolean'],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                'controls' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'filters' => ['type' => 'array', 'maxItems' => 16],
+                        'search' => ['type' => 'string', 'maxLength' => 200],
+                        'order_by' => ['type' => 'array', 'maxItems' => 4],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                'runtime' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
+                        'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+                    ],
+                    'additionalProperties' => false,
+                ],
+            ],
+            'additionalProperties' => false,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function exportAbilityOutputSchema(): array
+    {
+        return [
+            'type' => 'object',
+            'required' => ['contract_version', 'content_type', 'filename', 'bytes', 'csv'],
+            'properties' => [
+                'contract_version' => ['type' => 'integer', 'enum' => [1]],
+                'content_type' => ['type' => 'string', 'enum' => [AdminColumnsCsvExportAbilityHandler::CONTENT_TYPE]],
+                'filename' => ['type' => 'string', 'enum' => [AdminColumnsCsvExportAbilityHandler::FILENAME]],
+                'bytes' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 8388608],
+                'csv' => ['type' => 'string', 'maxLength' => 8388608],
             ],
             'additionalProperties' => false,
         ];
