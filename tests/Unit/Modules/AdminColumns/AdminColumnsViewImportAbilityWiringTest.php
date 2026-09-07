@@ -62,7 +62,7 @@ final class AdminColumnsViewImportAbilityWiringTest extends TestCase
 
         self::assertStringContainsString('->commitCreate(', $source);
         self::assertStringContainsString('DefinitionStatus::Draft', $source);
-        self::assertStringNotContainsString("$input['status']", $source);
+        self::assertStringNotContainsString("\$input['status']", $source);
         self::assertStringNotContainsString('->save(', $source);
         self::assertStringNotContainsString('->changeStatus(', $source);
     }
