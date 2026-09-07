@@ -29,7 +29,7 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
-      - name: Apply conservative bulk-outcome hardening
+      - name: Apply conservative bulk-outcome wording
         shell: bash
         run: |
           set -euo pipefail
@@ -38,61 +38,22 @@ jobs:
 
           runtime = Path('admin-ui/src/columns-runtime.ts')
           source = runtime.read_text()
-          runtime_replacements = [
-              ('failedPostIds', 'unverifiedPostIds', 5),
-              ('failureDetail', 'unverifiedDetail', 2),
-              ('Failed post IDs:', 'Unverified post IDs:', 1),
-              ('${ unverifiedPostIds.length } failed,', '${ unverifiedPostIds.length } unverified,', 1),
+          replacements = [
+              (
+                  "? ` Failed post IDs: ${ failedPostIds.join( ', ' ) }.`",
+                  "? ` Unverified post IDs: ${ failedPostIds.join( ', ' ) }. Server state may have changed; refresh before retrying.`",
+              ),
+              (
+                  "`Bulk Fields edit finished: ${ succeeded } verified, ${ failedPostIds.length } failed, ${ notAttemptedIds.length } not attempted.` +",
+                  "`Bulk Fields edit finished: ${ succeeded } verified, ${ failedPostIds.length } unverified, ${ notAttemptedIds.length } not attempted.` +",
+              ),
           ]
-          for old, new, expected in runtime_replacements:
+          for old, new in replacements:
               count = source.count(old)
-              if count != expected:
+              if count != 1:
                   raise SystemExit(f'unexpected runtime fragment count for {old!r}: {count}')
-              source = source.replace(old, new)
-          warning_anchor = "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }.`"
-          warning_value = "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Server state may have changed; refresh before retrying.`"
-          if source.count(warning_anchor) != 1:
-              raise SystemExit('missing unverified warning anchor')
-          source = source.replace(warning_anchor, warning_value, 1)
+              source = source.replace(old, new, 1)
           runtime.write_text(source)
-
-          contract = Path('tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php')
-          source = contract.read_text()
-          contract_replacements = [
-              ('testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview', 'testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview'),
-              ('const failedPostIds: number[] = [];', 'const unverifiedPostIds: number[] = [];'),
-              ('failedPostIds.push( postId );', 'unverifiedPostIds.push( postId );'),
-          ]
-          for old, new in contract_replacements:
-              if source.count(old) != 1:
-                  raise SystemExit(f'unexpected contract fragment count for {old!r}: {source.count(old)}')
-              source = source.replace(old, new, 1)
-          anchor = "        self::assertStringContainsString('Bulk Fields edit finished:', $source);"
-          extra = [
-              "        self::assertStringContainsString('Unverified post IDs:', $source);",
-              "        self::assertStringContainsString('Server state may have changed; refresh before retrying.', $source);",
-              "        self::assertStringContainsString('unverified, ${ notAttemptedIds.length } not attempted.', $source);",
-              "        self::assertStringNotContainsString('const failedPostIds: number[] = [];', $source);",
-          ]
-          if source.count(anchor) != 1:
-              raise SystemExit('missing bulk summary contract anchor')
-          source = source.replace(anchor, anchor + chr(10) + chr(10).join(extra), 1)
-          contract.write_text(source)
-
-          doc = Path('docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md')
-          source = doc.read_text()
-          doc_replacements = [
-              ('## Execution and partial failures', '## Execution and partial outcomes'),
-              ('A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:', 'An attempted row is reported as verified only after that complete owner response passes validation. The shared request seam currently collapses transport, HTTP/server-envelope, decode, malformed, and stale-response errors into the same exception boundary, so a caught attempted row is conservatively reported as **unverified** rather than being misreported as failed or successful. The operator receives a bounded summary containing:'),
-              ('- failed post ids;', '- unverified post ids, with an explicit refresh-before-retry warning;'),
-              ('No atomic rollback claim is made. Owner writes already verified as successful remain owner truth.', 'No atomic rollback claim is made. Owner writes already verified as successful remain owner truth, and unverified rows must be re-read through Preview before any retry decision.'),
-              ('regardless of whether the outcome was all-success, partial failure, or all-failure.', 'regardless of whether the outcome was all-verified, mixed/unverified, or no verified writes.'),
-          ]
-          for old, new in doc_replacements:
-              if source.count(old) != 1:
-                  raise SystemExit(f'unexpected doc fragment count for {old!r}: {source.count(old)}')
-              source = source.replace(old, new, 1)
-          doc.write_text(source)
           PY
 
       - name: Install locked admin graph
@@ -127,14 +88,24 @@ jobs:
       - name: Focused bulk contract
         run: vendor/bin/phpunit tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php
 
-      - name: Commit hardened patch and self-remove helper
+      - name: Enforce narrow patch scope
         shell: bash
         run: |
           set -euo pipefail
-          rm .github/workflows/harden-bulk-outcomes-v1.yml
+          unexpected="$(git diff --name-only | grep -v '^admin-ui/src/columns-runtime.ts$' || true)"
+          if [ -n "$unexpected" ]; then
+            printf 'Unexpected modified paths:\n%s\n' "$unexpected"
+            exit 1
+          fi
+
+      - name: Commit hardened runtime
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add admin-ui/src/columns-runtime.ts tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md .github/workflows/harden-bulk-outcomes-v1.yml
+          git add admin-ui/src/columns-runtime.ts
           git diff --cached --check
+          git diff --cached --quiet && exit 0
           git commit -m 'fix: classify uncertain bulk writes as unverified'
           git push origin HEAD:agent/columns-fields-bulk-edit-v1
