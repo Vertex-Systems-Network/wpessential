@@ -28,7 +28,6 @@ final readonly class AdminColumnsViewImportAbilityHandler implements AbilityHand
     public function handle(array $input, ExecutionContext $context): mixed
     {
         $this->assertKnownKeys($input);
-        $context->principal;
 
         $document = $input['document'] ?? null;
         if (!is_string($document)) {
