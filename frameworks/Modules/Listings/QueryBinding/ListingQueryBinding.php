@@ -26,9 +26,7 @@ final readonly class ListingQueryBinding
         public array $orderBy = [],
         public int $pageSize = 20,
     ) {
-        if (!preg_match('/^[a-z][a-z0-9_.:-]{0,159}$/', $this->sourceRef)) {
-            throw new InvalidArgumentException('Listing Query source reference must be bounded and semantic.');
-        }
+        $this->assertSemanticReference($this->sourceRef, 'Listing Query source reference');
         if ($this->projection === [] || count($this->projection) > QueryReadConsumerInterface::MAX_PROJECTION_FIELDS) {
             throw new InvalidArgumentException('Listing Query projection must be non-empty and bounded.');
         }
@@ -51,8 +49,8 @@ final readonly class ListingQueryBinding
 
         if ($this->searchParameter !== null) {
             $this->assertParameterName($this->searchParameter);
-            if (array_key_exists($this->searchParameter, $this->filterParameters) || $this->searchParameter === 'offset') {
-                throw new InvalidArgumentException('Listing Query search parameter must not collide with another public parameter.');
+            if (array_key_exists($this->searchParameter, $this->filterParameters)) {
+                throw new InvalidArgumentException('Listing Query search parameter must not collide with a filter parameter.');
             }
         }
 
@@ -61,13 +59,21 @@ final readonly class ListingQueryBinding
         }
         $seenOrder = [];
         foreach ($this->orderBy as $order) {
-            if (!is_array($order) || array_keys($order) !== ['field_ref', 'direction']) {
-                throw new InvalidArgumentException('Listing Query order entries must use field_ref and direction only.');
+            if (!is_array($order) || array_is_list($order)) {
+                throw new InvalidArgumentException('Listing Query order entries must be object/maps.');
+            }
+            foreach (array_keys($order) as $key) {
+                if (!is_string($key) || !in_array($key, ['field_ref', 'direction'], true)) {
+                    throw new InvalidArgumentException('Listing Query order entries contain an unsupported key.');
+                }
+            }
+            if (!array_key_exists('field_ref', $order) || !array_key_exists('direction', $order)) {
+                throw new InvalidArgumentException('Listing Query order entries require field_ref and direction.');
             }
             $fieldRef = $order['field_ref'];
             $direction = $order['direction'];
             $this->assertSemanticReference($fieldRef, 'Listing Query order field');
-            if (!in_array($direction, ['asc', 'desc'], true)) {
+            if (!is_string($direction) || !in_array($direction, ['asc', 'desc'], true)) {
                 throw new InvalidArgumentException('Listing Query order direction must be asc or desc.');
             }
             if (isset($seenOrder[$fieldRef])) {
@@ -90,8 +96,8 @@ final readonly class ListingQueryBinding
 
     private function assertSemanticReference(mixed $value, string $label): void
     {
-        if (!is_string($value) || !preg_match('/^[a-z][a-z0-9_.:-]{0,159}$/', $value)) {
-            throw new InvalidArgumentException($label . ' must be a bounded semantic reference.');
+        if (!is_string($value) || !preg_match('/^[a-z][a-z0-9._-]{0,127}$/', $value)) {
+            throw new InvalidArgumentException($label . ' must match the canonical Query semantic reference format.');
         }
     }
 }
