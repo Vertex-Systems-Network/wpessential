@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use JsonException;
 use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
 use WPEssential\Platform\Assets\AssetRegistry;
+use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -23,13 +24,16 @@ final readonly class ListingDefinitionCompiler
     private const MAX_ASSETS = 32;
 
     /** @var list<string> */
-    private const PAYLOAD_KEYS = ['query_source_ref', 'blueprint', 'layout', 'assets'];
+    private const PAYLOAD_KEYS = ['query_source_ref', 'blueprint', 'layout', 'assets', 'bindings'];
 
     /** @var list<string> */
     private const BLUEPRINT_KEYS = ['id', 'revision'];
 
     /** @var list<string> */
     private const LAYOUT_KEYS = ['mode', 'columns'];
+
+    /** @var list<string> */
+    private const BINDING_KEYS = ['kind', 'binding_key', 'query_field_ref', 'source_ref', 'value_ref', 'resource_type', 'resource_id_field_ref'];
 
     public function __construct(
         private ComponentBlueprintRegistryInterface $blueprints,
@@ -65,6 +69,7 @@ final readonly class ListingDefinitionCompiler
         if ($blueprintDescriptor === null) {
             throw new InvalidArgumentException('Listing references an unavailable Component Blueprint revision.');
         }
+        $renderBindings = $this->renderBindings($payload['bindings'] ?? null, $blueprintDescriptor);
 
         $assetHandles = array_values(array_unique(array_merge($blueprintDescriptor->assetHandles, $listingAssets)));
         if (count($assetHandles) > self::MAX_ASSETS) {
@@ -84,6 +89,7 @@ final readonly class ListingDefinitionCompiler
             'blueprint_component_type' => $blueprintDescriptor->componentType,
             'blueprint_binding_schema' => $blueprintDescriptor->bindingSchema,
             'blueprint_dependencies' => $blueprintDescriptor->dependencyIds,
+            'render_bindings' => array_map(static fn (ListingRenderBinding $binding): array => $binding->fingerprintData(), $renderBindings),
             'layout' => $layout,
             'assets' => $assetHandles,
         ];
@@ -101,7 +107,51 @@ final readonly class ListingDefinitionCompiler
                 'sha256',
                 json_encode($fingerprintPayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             ),
+            renderBindings: $renderBindings,
         );
+    }
+
+    /** @return list<ListingRenderBinding> */
+    private function renderBindings(mixed $value, ComponentBlueprintDescriptor $blueprint): array
+    {
+        if (!is_array($value) || !array_is_list($value) || count($value) > 128) {
+            throw new InvalidArgumentException('Listing render bindings must be a bounded list.');
+        }
+        $bindings = [];
+        $seen = [];
+        foreach ($value as $entry) {
+            if (!is_array($entry) || array_is_list($entry)) {
+                throw new InvalidArgumentException('Listing render binding entries must be object/maps.');
+            }
+            $this->assertKnownKeys($entry, self::BINDING_KEYS, 'Listing render binding');
+            $kind = $entry['kind'] ?? null;
+            $bindingKey = $entry['binding_key'] ?? null;
+            if (!is_string($kind) || !is_string($bindingKey) || !array_key_exists($bindingKey, $blueprint->bindingSchema)) {
+                throw new InvalidArgumentException('Listing render binding must target an exact Blueprint binding key.');
+            }
+            if (isset($seen[$bindingKey])) {
+                throw new InvalidArgumentException('Listing render binding keys must be unique.');
+            }
+            $seen[$bindingKey] = true;
+            $bindings[] = new ListingRenderBinding(
+                kind: $kind,
+                bindingKey: $bindingKey,
+                expectedType: $blueprint->bindingSchema[$bindingKey],
+                queryFieldRef: is_string($entry['query_field_ref'] ?? null) ? $entry['query_field_ref'] : null,
+                sourceRef: is_string($entry['source_ref'] ?? null) ? $entry['source_ref'] : null,
+                valueRef: is_string($entry['value_ref'] ?? null) ? $entry['value_ref'] : null,
+                resourceType: is_string($entry['resource_type'] ?? null) ? $entry['resource_type'] : null,
+                resourceIdFieldRef: is_string($entry['resource_id_field_ref'] ?? null) ? $entry['resource_id_field_ref'] : null,
+            );
+        }
+
+        foreach (array_keys($blueprint->bindingSchema) as $requiredKey) {
+            if (!isset($seen[$requiredKey])) {
+                throw new InvalidArgumentException('Every Blueprint binding requires one explicit Listing render mapping.');
+            }
+        }
+        usort($bindings, static fn (ListingRenderBinding $a, ListingRenderBinding $b): int => $a->bindingKey <=> $b->bindingKey);
+        return $bindings;
     }
 
     /** @return array{id:string,revision:int} */
