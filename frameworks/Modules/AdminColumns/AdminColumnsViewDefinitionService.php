@@ -43,6 +43,49 @@ final readonly class AdminColumnsViewDefinitionService
     }
 
     /**
+     * Create one imported View with an explicit stable destination id.
+     *
+     * This is intentionally create-only. Existing ids or owned View keys fail
+     * closed instead of being overwritten or treated as optimistic-lock updates.
+     *
+     * @param array<string,mixed> $payload
+     */
+    public function importCreate(
+        array $payload,
+        string $id,
+        DefinitionStatus $status = DefinitionStatus::Draft,
+    ): Definition {
+        if (!$this->isUuid($id)) {
+            throw new InvalidArgumentException('Imported Admin Columns View id must be a lowercase RFC 4122 UUID.');
+        }
+        if ($this->definitions->get($id) instanceof Definition) {
+            throw new RuntimeException('Imported Admin Columns View id already exists.');
+        }
+
+        $normalized = $this->normalizer->normalize($payload);
+        $viewKey = $normalized['view_key'] ?? null;
+        if (!is_string($viewKey)) {
+            throw new RuntimeException('Normalized imported Admin Columns View key is missing.');
+        }
+        $this->assertKeyAvailable($viewKey, null);
+
+        $candidate = new Definition(
+            id: $id,
+            slug: 'admin-columns-' . str_replace('_', '-', $viewKey),
+            type: AdminColumnsViewDefinitionNormalizer::DEFINITION_TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
+            status: $status,
+            payload: $normalized,
+            revision: 1,
+            dependencies: [],
+        );
+        $candidate = $this->withChecksum($candidate);
+        $this->definitions->save($candidate);
+        return $candidate;
+    }
+
+    /**
      * @param array<string,mixed> $payload
      */
     public function save(
