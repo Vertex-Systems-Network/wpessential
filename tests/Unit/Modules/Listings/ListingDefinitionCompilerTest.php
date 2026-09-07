@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
 use WPEssential\Modules\Listings\Definition\ListingDefinitionCompiler;
+use WPEssential\Modules\Listings\Definition\ListingRenderBinding;
 use WPEssential\Platform\Assets\AssetDescriptor;
 use WPEssential\Platform\Assets\AssetRegistry;
 use WPEssential\Platform\Assets\AssetScope;
@@ -23,9 +24,7 @@ final class ListingDefinitionCompilerTest extends TestCase
 
     public function testCompilesCanonicalPublishedListingDeterministically(): void
     {
-        $assets = new AssetRegistry();
-        $assets->register(new AssetDescriptor('wpe-listing-card', 9, AssetScope::Frontend));
-        $compiler = new ListingDefinitionCompiler($this->blueprints(), $assets);
+        $compiler = new ListingDefinitionCompiler($this->blueprints(), $this->assets());
         $definition = $this->definition();
 
         $first = $compiler->compile($definition);
@@ -34,13 +33,13 @@ final class ListingDefinitionCompilerTest extends TestCase
         self::assertSame('wordpress.posts', $first->querySourceRef);
         self::assertSame(self::BLUEPRINT_ID, $first->blueprintId);
         self::assertSame(['wpe-listing-card'], $first->assetHandles);
-        self::assertSame(['post_id', 'title'], array_map(static fn ($binding): string => $binding->bindingKey, $first->renderBindings));
+        self::assertSame(['post_id', 'title'], array_map(static fn (ListingRenderBinding $binding): string => $binding->bindingKey, $first->renderBindings));
         self::assertSame($first->compatibilityFingerprint, $second->compatibilityFingerprint);
     }
 
     public function testBindingSemanticChangeChangesFingerprint(): void
     {
-        $compiler = new ListingDefinitionCompiler($this->blueprints(), new AssetRegistry());
+        $compiler = new ListingDefinitionCompiler($this->blueprints(), $this->assets());
         $first = $compiler->compile($this->definition());
         $payload = $this->payload();
         $payload['bindings'][1]['query_field_ref'] = 'post_title';
@@ -104,6 +103,13 @@ final class ListingDefinitionCompilerTest extends TestCase
             payload: $this->payload(),
         );
         (new ListingDefinitionCompiler($this->blueprints(), new AssetRegistry()))->compile($definition);
+    }
+
+    private function assets(): AssetRegistry
+    {
+        $assets = new AssetRegistry();
+        $assets->register(new AssetDescriptor('wpe-listing-card', 9, AssetScope::Frontend));
+        return $assets;
     }
 
     private function blueprints(): ComponentBlueprintRegistryInterface
