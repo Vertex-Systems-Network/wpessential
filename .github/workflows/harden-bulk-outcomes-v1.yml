@@ -38,82 +38,63 @@ jobs:
 
           runtime = Path('admin-ui/src/columns-runtime.ts')
           source = runtime.read_text()
-          replacements = [
-              ('const failedPostIds: number[] = [];', 'const unverifiedPostIds: number[] = [];'),
-              ('failedPostIds.push( postId );', 'unverifiedPostIds.push( postId );'),
-              ('''const failureDetail =
-					failedPostIds.length > 0
-						? ` Failed post IDs: ${ failedPostIds.join( ', ' ) }.`
-						: '';''', '''const unverifiedDetail =
-					unverifiedPostIds.length > 0
-						? ` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Server state may have changed; refresh before retrying.`
-						: '';'''),
-              ('`${ succeeded } verified, ${ failedPostIds.length } failed, ${ notAttemptedIds.length } not attempted.`', '`${ succeeded } verified, ${ unverifiedPostIds.length } unverified, ${ notAttemptedIds.length } not attempted.`'),
-              ('failureDetail +', 'unverifiedDetail +'),
+          runtime_replacements = [
+              ('failedPostIds', 'unverifiedPostIds', 4),
+              ('failureDetail', 'unverifiedDetail', 2),
+              ('Failed post IDs:', 'Unverified post IDs:', 1),
+              ('${ unverifiedPostIds.length } failed,', '${ unverifiedPostIds.length } unverified,', 1),
+              ('${ unverifiedPostIds.join( \' , \' ) }.', '${ unverifiedPostIds.join( \' , \' ) }. Server state may have changed; refresh before retrying.', 0),
           ]
-          for old, new in replacements:
-              if source.count(old) != 1:
-                  raise SystemExit(f'expected exactly one runtime fragment, found {source.count(old)}: {old[:80]!r}')
-              source = source.replace(old, new, 1)
+          for old, new, expected in runtime_replacements:
+              count = source.count(old)
+              if expected != 0 and count != expected:
+                  raise SystemExit(f'unexpected runtime fragment count for {old!r}: {count}')
+              if expected == 0:
+                  continue
+              source = source.replace(old, new)
+          warning_anchor = "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }.`"
+          warning_value = "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }. Server state may have changed; refresh before retrying.`"
+          if source.count(warning_anchor) != 1:
+              raise SystemExit('missing unverified warning anchor')
+          source = source.replace(warning_anchor, warning_value, 1)
           runtime.write_text(source)
 
           contract = Path('tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php')
           source = contract.read_text()
-          replacements = [
+          contract_replacements = [
               ('testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview', 'testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview'),
-              ("self::assertStringContainsString('const failedPostIds: number[] = [];', $source);", "self::assertStringContainsString('const unverifiedPostIds: number[] = [];', $source);"),
-              ("self::assertStringContainsString('failedPostIds.push( postId );', $source);", "self::assertStringContainsString('unverifiedPostIds.push( postId );', $source);"),
+              ('const failedPostIds: number[] = [];', 'const unverifiedPostIds: number[] = [];'),
+              ('failedPostIds.push( postId );', 'unverifiedPostIds.push( postId );'),
           ]
-          for old, new in replacements:
+          for old, new in contract_replacements:
               if source.count(old) != 1:
-                  raise SystemExit(f'expected exactly one contract fragment, found {source.count(old)}: {old!r}')
+                  raise SystemExit(f'unexpected contract fragment count for {old!r}: {source.count(old)}')
               source = source.replace(old, new, 1)
-          anchor = "        self::assertStringContainsString('Bulk Fields edit finished:', $source);\n"
-          addition = (
-              anchor
-              + "        self::assertStringContainsString('Unverified post IDs:', $source);\n"
-              + "        self::assertStringContainsString('Server state may have changed; refresh before retrying.', $source);\n"
-              + "        self::assertStringContainsString('unverified, ${ notAttemptedIds.length } not attempted.', $source);\n"
-              + "        self::assertStringNotContainsString('const failedPostIds: number[] = [];', $source);\n"
-          )
+          anchor = "        self::assertStringContainsString('Bulk Fields edit finished:', $source);"
+          extra = [
+              "        self::assertStringContainsString('Unverified post IDs:', $source);",
+              "        self::assertStringContainsString('Server state may have changed; refresh before retrying.', $source);",
+              "        self::assertStringContainsString('unverified, ${ notAttemptedIds.length } not attempted.', $source);",
+              "        self::assertStringNotContainsString('const failedPostIds: number[] = [];', $source);",
+          ]
           if source.count(anchor) != 1:
-              raise SystemExit('expected exactly one bulk summary contract anchor')
-          contract.write_text(source.replace(anchor, addition, 1))
+              raise SystemExit('missing bulk summary contract anchor')
+          source = source.replace(anchor, anchor + chr(10) + chr(10).join(extra), 1)
+          contract.write_text(source)
 
           doc = Path('docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md')
           source = doc.read_text()
-          old = '''## Execution and partial failures
-
-Selected rows are executed sequentially through the existing one-row route. For each attempted row the browser validates the complete owner response with the same `parseFieldWriteResult()` contract used by one-row editing.
-
-A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:
-
-- verified success count;
-- failed post ids;
-- any post ids not attempted because the saved View identity/revision became stale or authored state became dirty during the operation.
-
-No atomic rollback claim is made. Owner writes already verified as successful remain owner truth.
-'''
-          new = '''## Execution and partial outcomes
-
-Selected rows are executed sequentially through the existing one-row route. For each attempted row the browser validates the complete owner response with the same `parseFieldWriteResult()` contract used by one-row editing.
-
-An attempted row is reported as verified only after that complete owner response passes validation. The shared request seam currently collapses transport, HTTP/server-envelope, decode, malformed, and stale-response errors into the same exception boundary, so a caught attempted row is conservatively reported as **unverified** rather than being misreported as failed or successful. The operator receives a bounded summary containing:
-
-- verified success count;
-- unverified post ids, with an explicit refresh-before-retry warning;
-- any post ids not attempted because the saved View identity/revision became stale or authored state became dirty during the operation.
-
-No atomic rollback claim is made. Owner writes already verified as successful remain owner truth, and unverified rows must be re-read through Preview before any retry decision.
-'''
-          if source.count(old) != 1:
-              raise SystemExit('expected exactly one execution/partial-failures doc section')
-          source = source.replace(old, new, 1)
-          source = source.replace(
-              'regardless of whether the outcome was all-success, partial failure, or all-failure.',
-              'regardless of whether the outcome was all-verified, mixed/unverified, or no verified writes.',
-              1,
-          )
+          doc_replacements = [
+              ('## Execution and partial failures', '## Execution and partial outcomes'),
+              ('A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:', 'An attempted row is reported as verified only after that complete owner response passes validation. The shared request seam currently collapses transport, HTTP/server-envelope, decode, malformed, and stale-response errors into the same exception boundary, so a caught attempted row is conservatively reported as **unverified** rather than being misreported as failed or successful. The operator receives a bounded summary containing:'),
+              ('- failed post ids;', '- unverified post ids, with an explicit refresh-before-retry warning;'),
+              ('No atomic rollback claim is made. Owner writes already verified as successful remain owner truth.', 'No atomic rollback claim is made. Owner writes already verified as successful remain owner truth, and unverified rows must be re-read through Preview before any retry decision.'),
+              ('regardless of whether the outcome was all-success, partial failure, or all-failure.', 'regardless of whether the outcome was all-verified, mixed/unverified, or no verified writes.'),
+          ]
+          for old, new in doc_replacements:
+              if source.count(old) != 1:
+                  raise SystemExit(f'unexpected doc fragment count for {old!r}: {source.count(old)}')
+              source = source.replace(old, new, 1)
           doc.write_text(source)
           PY
 
