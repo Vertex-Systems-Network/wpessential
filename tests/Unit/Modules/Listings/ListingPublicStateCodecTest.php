@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\Listings;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Modules\Listings\QueryBinding\ListingQueryBinding;
 use WPEssential\Modules\Listings\State\ListingPublicStateCodec;
 
@@ -68,6 +69,20 @@ final class ListingPublicStateCodecTest extends TestCase
 
         (new ListingPublicStateCodec())->normalize($binding, 'posts', [
             'wpe_posts_offset' => '10001',
+        ]);
+    }
+
+    public function testRejectsStateBeyondQueryRequestSizeContract(): void
+    {
+        $binding = new ListingQueryBinding(
+            sourceRef: 'wordpress.posts',
+            projection: ['post_id'],
+            filterParameters: ['status' => 'post_status'],
+        );
+        $this->expectException(InvalidArgumentException::class);
+
+        (new ListingPublicStateCodec())->normalize($binding, 'posts', [
+            'wpe_posts_status' => str_repeat('x', QueryReadConsumerInterface::MAX_REQUEST_BYTES),
         ]);
     }
 }
