@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "snapshot_date": "2026-09-04",
-  "queue_anchor_main_sha": "c41158f6baf98912ca76108ec74bc685afe802f7",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Query Gate C is PASS for the certified bounded V1 baseline at the queue anchor after PR #166, #184 and #189; Admin Columns Atomic Option + UX lifecycle is authoritative through PR #190. Gate D is therefore the active dependency gate. A queue anchor is evidence, not permission to work from stale history. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
+  "snapshot_date": "2026-09-07",
+  "queue_anchor_main_sha": "a20d8ed8ca1ee72b07c7de6a55386f6635da75b0",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D is ACTIVE after merged revisioned View lifecycle, Query-backed reads, real-WordPress no-N+1 evidence, Fields-owned read composition/source discovery, owner-routed Fields write Ability/AJAX and preview compatibility through PR #231. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,10 +13,10 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read current main SHA and the final Query Gate C audit; verify PR #166, #184, #189 and #190 remain authoritative.",
+      "Resolve exact current main and verify PR #231 remains authoritative for the latest accepted Gate D browser/backend preview contract.",
       "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
-      "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files/semantic boundary.",
-      "Preserve Query ownership of backend sort/filter/search, Fields/source-owner mutation semantics and Policy authorization.",
+      "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files or semantic boundary.",
+      "Preserve Query ownership of backend row selection/sort/filter/search, Fields ownership of Field mutation semantics and Policy authorization.",
       "Only then create the exact deterministic claim branch from exact current main."
     ],
     "revalidation_before_merge": [
@@ -32,23 +32,18 @@
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
       "description": "Exactly one Supervisor/Integrator owns shared truth, cross-slot integration and merge serialization.",
-      "may_claim": [
-        "SUPERVISOR_ONLY",
-        "ANY"
-      ],
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create worker claim branches before the worker/agent actually starts that slot.",
         "Merge a branch only because an agent reports completion.",
         "Allow dependency-blocked runtime work to start.",
-        "Allow parallel workers to edit config/coordination/agent-work-queue.json, CHECKPOINT.md or other shared project-state truth."
+        "Allow parallel workers to edit config/coordination/agent-work-queue.json, CHECKPOINT.md, README lifecycle truth or other shared project-state truth."
       ]
     },
     "WORKER": {
       "start_mode": "AUTO",
       "description": "Workers autonomously inspect current repository truth and claim one eligible non-overlapping slot through deterministic branch creation.",
-      "may_claim": [
-        "ANY"
-      ],
+      "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
         "Modify shared/global truth unless the slot explicitly grants that scope.",
@@ -59,107 +54,124 @@
   },
   "slots": [
     {
-      "priority": 60,
-      "slot_id": "columns-runtime-definition-foundation-v1",
-      "title": "Establish the Admin Columns runtime definition and module foundation V1",
+      "priority": 100,
+      "slot_id": "columns-fields-inline-edit-ui-v1",
+      "title": "Expose bounded single-row Fields inline edit UI V1",
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "RUNTIME_CONTRACT_WORK",
-      "parallel_class": "COLUMNS_CORE_EXCLUSIVE",
+      "work_mode": "ADMIN_UI_MUTATION_INTEGRATION",
+      "parallel_class": "COLUMNS_INLINE_EDIT_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Parent Issue #66 Gate D plus completed Admin Columns contract/UX Issues #48/#49",
+      "source": "Issue #232 under parent #66 after #228/#229 and #230/#231",
       "dependencies": [
-        "Query Gate C PASS is authoritative on current main",
-        "Admin Columns option contract is UX_CONTRACT_COMPLETE with 214/214 Bank mapping and 41 Atomic Options"
+        "Admin Columns owner-routed Fields write Ability/AJAX is merged and remains optional/fail-closed",
+        "Fields-owned preview compatibility through PR #231 is authoritative on current main"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "new Admin Columns-owned PHP runtime/definition/module files under a dedicated frameworks/Modules/AdminColumns boundary",
-        "canonical definition identity/lifecycle/normalization and typed runtime value objects required by the bounded baseline",
-        "surface-local unit tests and one implementation document",
-        "consume shared Data Source/Policy/Renderer contracts rather than creating private registries or authorization engines",
-        "do not edit Query, Fields, Relations production code, admin-ui, queue, CHECKPOINT.md or shared Platform implementation",
-        "do not implement inline/bulk mutation, export, performance adapters or product-parity claims in this foundation slot"
+        "frameworks/Modules/AdminColumns/AdminColumnsAdminController.php only for conditional projection of the already-registered Fields write route nonce",
+        "admin-ui/src/columns-runtime.ts only for bounded single-row Fields edit controls and exact response validation",
+        "focused Admin Columns tests/source-contract evidence and one implementation document",
+        "require an explicit authored post.id column for V1 row identity rather than widening the read contract",
+        "do not edit Query, Fields or Relations production internals, bulk mutation, export, queue, CHECKPOINT.md or README.md"
       ],
-      "completion_condition": "A fail-closed Admin Columns core definition/module foundation is exact-head green and exposes stable typed seams for later Query read and source-owner mutation integration.",
-      "notes": "May run in parallel with the admin-ui scaffold and docs-only Gate D baseline audit because those slots own disjoint paths.",
-      "claim_branch": "agent/columns-runtime-definition-foundation-v1"
+      "completion_condition": "A published/enabled View can edit one certified Fields scalar cell only through the existing owner-routed Ability/AJAX seam, with explicit post.id identity, stale/failure preservation, preview invalidation after success and exact-head green evidence.",
+      "notes": "May run fully in parallel with the export encoder and remaining-gap evidence lanes because their write boundaries do not overlap.",
+      "claim_branch": "agent/columns-fields-inline-edit-ui-v1"
     },
     {
-      "priority": 70,
-      "slot_id": "columns-admin-authoring-scaffold-v1",
-      "title": "Build the non-runtime Admin Columns authoring scaffold from the certified UX contract",
+      "priority": 110,
+      "slot_id": "columns-csv-export-encoder-v1",
+      "title": "Build bounded CSV export security encoder foundation V1",
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "ADMIN_UI_WORK",
-      "parallel_class": "COLUMNS_ADMIN_UI_EXCLUSIVE",
+      "work_mode": "EXPORT_SECURITY_FOUNDATION",
+      "parallel_class": "COLUMNS_EXPORT_ENCODER_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Parent Issue #66 Gate D plus docs/PRODUCT/ADMIN-COLUMNS-UX-CONTRACT-V1.md",
+      "source": "Issue #233 under parent #66 and the Gate D baseline export-safety criterion",
       "dependencies": [
-        "Query Gate C PASS is authoritative on current main",
-        "Admin Columns UX contract is UX_CONTRACT_COMPLETE"
+        "Admin Columns Gate D remains ACTIVE",
+        "No export runtime/orchestration is currently authoritative"
       ],
-      "runtime_allowed": false,
+      "runtime_allowed": true,
       "allowed_scope": [
-        "new Admin Columns admin-ui source/style files and surface-local browser/accessibility fixture/spec files only",
-        "project the certified Column Sets/Views, sources/formats, sorting/filtering capability states, editing/export safety messaging and degraded states",
-        "execution/mutation/save/provider calls remain disabled; use a future server-owned bootstrap contract rather than inventing backend semantics",
-        "do not edit PHP runtime, Query/Fields/Relations, shared Platform, package/build registration, queue or CHECKPOINT.md",
-        "emit explicit Integration Requirements for route/bootstrap/build wiring instead of racing shared files"
+        "new Admin Columns-owned CSV encoder/service files only",
+        "new focused Admin Columns export unit tests and one implementation document",
+        "formula-injection neutralization, deterministic CSV quoting and finite scalar/size budgets only",
+        "no AdminColumnsModule.php, controller, admin-ui, Query/Fields/Relations code, route/download orchestration, queue, CHECKPOINT.md or README.md"
       ],
-      "completion_condition": "Accessible non-runtime Admin Columns authoring UX is exact-head green and ready for serialized server/bootstrap integration without exposing runtime mutation or execution.",
-      "notes": "Path-exclusive admin-ui lane; safe in parallel with the PHP core foundation.",
-      "claim_branch": "agent/columns-admin-authoring-scaffold-v1"
+      "completion_condition": "A side-effect-free bounded CSV encoder is exact-head green and ready for a later separately-authorized export orchestration lane without performing source reads, authorization or transport.",
+      "notes": "Path- and semantic-exclusive from the inline-edit lane.",
+      "claim_branch": "agent/columns-csv-export-encoder-v1"
     },
     {
-      "priority": 80,
-      "slot_id": "columns-gate-d-baseline-audit-v1",
-      "title": "Audit Admin Columns Gate D baseline evidence and implementation gaps",
+      "priority": 120,
+      "slot_id": "columns-gate-d-remaining-gap-audit-v2",
+      "title": "Refresh the exact-main Gate D remaining-gap matrix after PR #231",
       "role": "ANY",
       "status": "OPEN",
       "work_mode": "EVIDENCE_WORK",
       "parallel_class": "DOCS_EVIDENCE_ONLY",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Parent Issue #66 Gate D",
+      "source": "Parent #66 plus merged Gate D evidence through PR #231",
       "dependencies": [
-        "Query Gate C PASS is authoritative on current main",
-        "Admin Columns Atomic Option + UX contracts are authoritative"
+        "Current main includes PR #231",
+        "Gate D remains ACTIVE / NOT PASS"
       ],
       "runtime_allowed": false,
       "allowed_scope": [
-        "one new docs/IMPLEMENTATION/ADMIN-COLUMNS-GATE-D-BASELINE-AUDIT-V1.md evidence matrix only",
-        "map each #66 Gate D requirement to existing contract evidence or a concrete implementation blocker",
-        "identify Query/source-owner/Policy/visibility/export/performance/accessibility boundaries without inventing runtime completion",
-        "do not edit production code, admin-ui, shared Platform, Query, Fields, Relations, queue or CHECKPOINT.md",
+        "one new docs/IMPLEMENTATION/ADMIN-COLUMNS-GATE-D-REMAINING-GAP-AUDIT-V2.md file only",
+        "map already-certified View lifecycle, Query reads, accessibility/performance, Fields reads/writes and remaining mutation/export/preferences/primary-row-action/portability/provider blockers",
+        "do not edit production code, admin-ui, shared Platform, queue, CHECKPOINT.md or README.md",
         "do not claim Gate D PASS"
       ],
-      "completion_condition": "A current-main evidence matrix provides a precise dependency-safe work breakdown for Gate D while other two initial lanes proceed.",
-      "notes": "Docs-only lane designed to run fully in parallel with both implementation writers.",
-      "claim_branch": "agent/columns-gate-d-baseline-audit-v1"
+      "completion_condition": "A fresh exact-main evidence matrix prevents completed Gate D tranches from being reworked and identifies only still-open dependency-safe closure work.",
+      "notes": "Third conflict-free lane; evidence-only by design because additional runtime semantics are not yet sufficiently resolved for another safe writer.",
+      "claim_branch": "agent/columns-gate-d-remaining-gap-audit-v2"
     },
     {
-      "priority": 90,
-      "slot_id": "columns-query-source-integration-v1",
-      "title": "Integrate Query-backed read/sort/filter/search adapters for Admin Columns",
+      "priority": 130,
+      "slot_id": "columns-fields-bulk-edit-v1",
+      "title": "Add bounded owner-routed Fields bulk edit V1",
       "role": "ANY",
       "status": "BLOCKED",
-      "work_mode": "RUNTIME_INTEGRATION_WORK",
-      "parallel_class": "COLUMNS_QUERY_ADAPTER_EXCLUSIVE",
+      "work_mode": "RUNTIME_MUTATION_WORK",
+      "parallel_class": "COLUMNS_BULK_MUTATION_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Parent Issue #66 Gate D",
+      "source": "Parent #66 Gate D mutation criterion",
       "dependencies": [
-        "columns-runtime-definition-foundation-v1 is promoted and exposes stable typed seams",
-        "Query Gate C remains authoritative"
+        "columns-fields-inline-edit-ui-v1 is promoted and exact-head certified",
+        "single-row mutation failure/revision behavior is accepted as the baseline"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "Admin Columns-owned Query adapter files only after the foundation is promoted",
-        "consume Query public planner/execution contracts; do not duplicate backend query semantics",
-        "do not edit Query production code or shared truth"
+        "Do not claim or branch while BLOCKED. Reconcile a finite bulk owner contract only after single-row mutation is promoted."
       ],
-      "completion_condition": "Blocked until the core foundation is merged; then certify Query-owned backend semantics through an Admin Columns adapter without bypasses.",
-      "notes": "Do not claim or branch while BLOCKED.",
-      "claim_branch": "agent/columns-query-source-integration-v1"
+      "completion_condition": "Blocked until the single-row mutation path is certified.",
+      "notes": "Bulk mutation must not be parallelized ahead of the one-row owner contract.",
+      "claim_branch": "agent/columns-fields-bulk-edit-v1"
+    },
+    {
+      "priority": 140,
+      "slot_id": "columns-export-orchestration-v1",
+      "title": "Integrate authorized bounded Admin Columns export orchestration V1",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "EXPORT_RUNTIME_INTEGRATION",
+      "parallel_class": "COLUMNS_EXPORT_RUNTIME_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Parent #66 Gate D export criterion",
+      "dependencies": [
+        "columns-csv-export-encoder-v1 is promoted and exact-head certified",
+        "fresh Gate D evidence defines the authorized row/source/redaction boundary"
+      ],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "Do not claim or branch while BLOCKED. Later orchestration must consume Query/source-owner/Policy seams and the certified encoder rather than inventing a second read engine."
+      ],
+      "completion_condition": "Blocked until export encoding and authorization boundaries are separately certified.",
+      "notes": "Transport/download/UI must remain serialized behind the encoder and authorization design.",
+      "claim_branch": "agent/columns-export-orchestration-v1"
     }
   ]
 }
