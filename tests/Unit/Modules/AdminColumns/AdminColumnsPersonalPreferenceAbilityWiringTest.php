@@ -42,8 +42,8 @@ final class AdminColumnsPersonalPreferenceAbilityWiringTest extends TestCase
         );
 
         self::assertStringContainsString('personalPreferenceAbilityInputSchema($preferenceAction)', $module);
-        self::assertStringContainsString("$required = ['view_id', 'expected_view_revision'];", $module);
-        self::assertStringContainsString("$required[] = 'preference';", $module);
+        self::assertStringContainsString("\$required = ['view_id', 'expected_view_revision'];", $module);
+        self::assertStringContainsString("\$required[] = 'preference';", $module);
         self::assertStringNotContainsString(
             "'action' => ['type' => 'string', 'enum' => ['load', 'save', 'reset']]",
             $module,
@@ -64,9 +64,9 @@ final class AdminColumnsPersonalPreferenceAbilityWiringTest extends TestCase
         self::assertStringContainsString('private string $action', $handler);
         self::assertStringContainsString('$context->principal->userId', $handler);
         self::assertStringContainsString("actorType !== 'user'", $handler);
-        self::assertStringContainsString("$allowed = ['view_id', 'expected_view_revision'];", $handler);
-        self::assertStringContainsString("$allowed[] = 'preference';", $handler);
-        self::assertStringNotContainsString("$input['action']", $handler);
-        self::assertStringNotContainsString("$input['user_id']", $handler);
+        self::assertStringContainsString("\$allowed = ['view_id', 'expected_view_revision'];", $handler);
+        self::assertStringContainsString("\$allowed[] = 'preference';", $handler);
+        self::assertStringNotContainsString("\$input['action']", $handler);
+        self::assertStringNotContainsString("\$input['user_id']", $handler);
     }
 }
