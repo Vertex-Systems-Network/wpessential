@@ -1,13 +1,13 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-04**  
-Canonical repository reconciliation anchor: **`main @ c41158f6baf98912ca76108ec74bc685afe802f7`**  
+Checkpoint date: **2026-09-08**  
+Canonical repository reconciliation anchor: **`main @ ca8954f3294c9d98a822c67b98eb7f8069a354c1`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
-Implementation decisions: through **ADR-0222** plus certified bounded Surface 3 and Surface 4 implementation contracts  
+Implementation decisions: through **ADR-0222** plus certified bounded Surface 3, Surface 4, Surface 6 and Surface 8 implementation contracts  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C — PASS for the certified bounded V1 baseline; Surface 8 Admin Columns Gate D — ACTIVE**  
-Current dependency gate: **Surface 8 Admin Columns / Gate D baseline implementation**  
+Lifecycle decision: **Surface 3 Custom Fields Gate A — PASS for the certified native V1 scope; Surface 4 Relations Gate B — PASS for the certified native V1 baseline; Surface 6 Query Gate C — PASS for the certified bounded V1 baseline; Surface 8 Admin Columns Gate D — PASS for the certified bounded V1 baseline; Surface 9 Dynamic Listings Gate E — ACTIVE at dependency-safe V1 start**  
+Current dependency gate: **Surface 9 Dynamic Listings / Gate E bounded V1 implementation**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
@@ -36,6 +36,10 @@ Surface 4 Relations Options Bank remains **BANK_REVIEWED at 144 records**. Gate 
 
 Surface 6 Query is **BANK_REVIEWED / 169** and Gate C is **PASS FOR THE CERTIFIED BOUNDED V1 BASELINE**. Current main contains typed AST/validation, Policy-authorized native `wordpress.posts` execution, bounded Relations predicates, bounded Fields-owned predicate resolution through the public Surface 3 consumer, deterministic scale/reference evidence, fail-closed cache/diagnostics rules, and the canonical packaged admin authoring route/bootstrap with execution still disabled. This Gate C pass is a bounded implementation baseline, not full Query Options Bank parity or `PRODUCT_PARITY_CERTIFIED`.
 
+Surface 8 Admin Columns is **BANK_REVIEWED / 214** and Gate D is **PASS FOR THE CERTIFIED BOUNDED V1 BASELINE**. Final exact-main composed reference/closure evidence was promoted by PR #287 / Issue #285 after the bounded single-row and visible-page bulk Fields editing path, export safety, no-N+1/performance and accessibility evidence were certified. This pass does not claim provider-wide mutation parity, unbounded mass editing, `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`.
+
+Surface 9 Dynamic Listings is **BANK_REVIEWED / 150**. Exact-main prerequisite audit PR #291 / Issue #289 identified the missing shared Renderer, Dynamic Value and Component Blueprint plane. PR #293 / Issue #292 promoted those shared contracts/models with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green. Gate E may now begin only through dependency-safe bounded consumers; composed SSR and Status remain later gates.
+
 ## Implementation gates
 
 - WP119 / ADR-0214 — **DONE / PASS** — greenfield Implementation Baseline / Adoption Gate.
@@ -44,13 +48,54 @@ Surface 6 Query is **BANK_REVIEWED / 169** and Gate C is **PASS FOR THE CERTIFIE
 - Phase 2 / Gate A / Surface 3 Custom Fields — **PASS FOR CERTIFIED NATIVE V1 SCOPE** — all #66 Gate A exit criteria are satisfied by merged exact-head evidence summarized below.
 - Phase 2 / Gate B / Surface 4 Relations — **PASS FOR CERTIFIED NATIVE V1 BASELINE** — all #66 Gate B baseline criteria are satisfied by merged exact-head evidence through PR #122 and PR #128, with richer/provider-specific semantics retained as explicit non-goals.
 - Phase 2 / Gate C / Surface 6 Query — **PASS FOR CERTIFIED BOUNDED V1 BASELINE** — all #66 Gate C baseline criteria are satisfied by merged owner-backed runtime/admin evidence through PR #189 and the final exact-main audit.
-- Gate D / Admin Columns — **ACTIVE** — the certified Atomic Option + UX contract may now enter dependency-ordered baseline implementation; runtime/product parity is not yet claimed.
-- Gate E / Dynamic Listings — **BLOCKED UNTIL GATE D AND ITS SHARED RENDERER/DATA-SOURCE DEPENDENCIES ARE READY**.
-- Status Manager runtime — **BLOCKED UNTIL GATES A–E ARE COMPLETE**.
+- Phase 2 / Gate D / Surface 8 Admin Columns — **PASS FOR CERTIFIED BOUNDED V1 BASELINE** — final closure evidence is promoted through PR #287 / Issue #285; broader provider/unbounded parity remains explicitly separate.
+- Gate E / Dynamic Listings — **ACTIVE AT DEPENDENCY-SAFE V1 START** — prerequisite audit #291 and shared render/value/component contracts #293 are promoted. Two path-disjoint workers may now proceed after this Supervisor reconciliation is promoted: Listing definition/compiler descriptor V1 and Listing Query-binding/authorized result-envelope V1.
+- Status Manager runtime — **BLOCKED UNTIL GATE E IS COMPLETE**.
+
+## Surface 8 — Admin Columns Gate D certified bounded V1 baseline
+
+Gate D closes only the bounded baseline required by parent #66. Promoted evidence includes the certified Atomic Option + UX lifecycle, Query-owned bounded sort/filter/search/read semantics, owner-routed Fields validation/mutation paths, bounded single-row and visible-page bulk editing, export safety, deterministic no-N+1/performance evidence, accessibility evidence, effective/degraded state projection, portability/import boundaries and final composed reference/closure evidence through PR #287.
+
+Gate D non-goals remain explicit:
+- no provider-wide mutation parity;
+- no unbounded mass editing;
+- no authorization derived from presentation visibility;
+- no Query ownership transfer to Columns;
+- no source-owner storage/validation duplication;
+- no `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim;
+- no production deployment or release approval.
+
+## Surface 9 — Dynamic Listings Gate E prerequisite state
+
+Exact-main audit PR #291 established the following dependency truth:
+- Query read/parameter/result consumer boundary — ready for bounded consumption;
+- Data Source Registry — ready as a shared descriptor foundation;
+- Policy, Asset Registry and multisite ExecutionContext — ready foundations;
+- generic Definition identity/revision foundation — available for bounded consumer work;
+- shared Renderer, Dynamic Value and Component Blueprint contracts were the hard blockers.
+
+PR #293 / Issue #292 promoted the smallest shared contract plane required to remove that blocker:
+- `RendererInterface` with typed `RenderInput`/`RenderOutput` and deterministic fail-closed output semantics;
+- `DynamicValueResolverInterface` with typed request/result evidence and no direct storage ownership;
+- `ComponentBlueprintRegistryInterface` plus stable descriptor identity/revision/dependency/asset/binding schema;
+- shared safe failure taxonomy for invalid input, missing blueprint, unsupported value source and dependency mismatch;
+- focused tests rejecting executable authored channels and failure paths that would leak partial HTML/value state.
+
+PR #293 exact source head `28a9d03fc4338797088369976141114157a67156` passed:
+- PHP Quality Toolchain #432 — SUCCESS;
+- Architecture Guards #1037 — SUCCESS;
+- Platform Compatibility Matrix #655 — SUCCESS;
+- Distributable Package #586 — SUCCESS.
+
+After this Supervisor reconciliation is promoted, two disjoint Gate E workers are authorized concurrently:
+1. Issue #294 — Listings definition + compiler descriptor V1. Own only Listing definition/compiler/model paths and focused tests; no Query execution or Renderer implementation.
+2. Issue #295 — Listings Query binding + authorized result envelope V1. Consume `QueryReadConsumerInterface` only; no definition persistence/compiler ownership or rendering.
+
+Composed server-first Listings SSR remains blocked until both workers are promoted. It must consume the shared Renderer + Component Blueprint + Dynamic Value contracts, preserve Query/source authorization, use registered assets only and fail closed on missing/mismatched dependencies. Progressive filters/load-more/infinite-scroll, portability remapping, Status runtime and product-parity remain later gates.
 
 ## Surface 6 — Query Gate C certified bounded V1 baseline
 
-Gate C is **PASS FOR CERTIFIED BOUNDED V1 BASELINE** at `main @ c41158f6baf98912ca76108ec74bc685afe802f7`. Downstream Admin Columns Gate D may now begin under the repository dependency order; Dynamic Listings and Status remain blocked by their later gates.
+Gate C is **PASS FOR CERTIFIED BOUNDED V1 BASELINE** at `main @ c41158f6baf98912ca76108ec74bc685afe802f7`. Downstream Admin Columns Gate D was subsequently completed; Dynamic Listings now owns the active dependency gate.
 
 Promoted Query evidence includes:
 - PR #147 plus corrective PR #148 — Policy-authorized bounded native `wordpress.posts` execution V1; total-count/aggregation semantics remain deliberately outside this slice.
@@ -310,7 +355,7 @@ Evidence includes:
 
 ### Criterion 6 — checkpoint truth accurately reflects current main and explicit non-goals — PASS on promotion of the Gate A checkpoint
 
-The Gate A checkpoint replaced the obsolete seven-slice blocker list and anchored that historical audit to `main @ b7b882422f616ee135441c6b52674ff5522a839c`. This reconciliation preserves that evidence while advancing the dependency lifecycle beyond Relations Gate B.
+The Gate A checkpoint replaced the obsolete seven-slice blocker list and anchored that historical audit to `main @ b7b882422f616ee135441c6b52674ff5522a839c`. This reconciliation preserves that evidence while advancing the dependency lifecycle through Gate D and into Gate E.
 
 ## Explicit Surface 3 non-goals after Gate A
 
@@ -325,7 +370,7 @@ Gate A PASS is intentionally scoped. The following are **not** claimed complete:
 - automatic remapping of conflicting Definition IDs, slugs, group keys, Field UUIDs or storage keys;
 - billing, checkout, licensing or production entitlement-provider implementation;
 - production deployment, stable release or live-site migration;
-- any Query, Admin Columns, Dynamic Listings or Status runtime implementation.
+- any uncertified broader Query, Admin Columns, Dynamic Listings or Status product-parity behavior.
 
 Unsupported provider/container types remain deliberately fail-closed until their owning surfaces/adapters are certified. This is part of the safety contract.
 
@@ -513,21 +558,26 @@ This remains a source-development/module-handoff decision, not a stable-release 
 
 `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` are active on current `main`.
 
-Current actionable queue after PR #129:
-- priority 5 Supervisor-only Gate B exit reconciliation — `agent/gate-b-exit-reconciliation-v1`, claimed from exact `main @ 60c837c485d0a1adbc04f22f351e53a717be01ff`;
-- priority 10 Supervisor-only Query Gate C prerequisite reconciliation — `agent/query-gate-c-prerequisite-reconciliation-v1`, dependency-blocked until this Gate B exit reconciliation is promoted.
+Current actionable state at the reconciliation anchor:
+- Gate D final composed evidence #287 / Issue #285 — promoted;
+- Gate E exact-main prerequisite audit #291 / Issue #289 — promoted;
+- shared Renderer + Dynamic Value + Component Blueprint prerequisite #293 / Issue #292 — promoted and exact-head green;
+- Supervisor Issue #288 — this shared-truth reconciliation; must be promoted before worker claims are created;
+- Issue #294 — next dependency-ready ANY lane after #288: Listings definition + compiler descriptor V1;
+- Issue #295 — next dependency-ready ANY lane after #288: Listings Query binding + authorized result envelope V1.
 
-Previously promoted deterministic branches remain historical audit evidence and must not be reused or force-moved. Historical open PRs are not automatically current AUTO submissions or merge-ready merely because they remain open. Any candidate must be reconciled against then-current `main`, ownership/dependency rules, Integration Requirements and exact-head applicable CI before integration. Shared/global writes remain serialized; force update/force merge is not a conflict-resolution strategy.
+#294 and #295 are explicitly path-disjoint and may run concurrently after #288 merges. Deterministic remote branch creation remains the claim lock. No force/reuse. Shared/global writes remain serialized. Workers must not edit README/CHECKPOINT/queue or start composed SSR/Status/product-parity work early.
 
-Any branch not declared by the current actionable queue carries no AUTO work authorization even if its name starts with `agent/`.
+Previously promoted deterministic branches remain historical audit evidence and must not be reused or force-moved. Historical open PRs are not automatically current AUTO submissions or merge-ready merely because they remain open. Any candidate must be reconciled against then-current `main`, ownership/dependency rules, Integration Requirements and exact-head applicable CI before integration.
 
 ## Current next action
 
-1. Promote this Gate B exit reconciliation only after its exact diff is confirmed to remain within the assigned shared-state scope and applicable exact-head checks are green or truthfully not path-applicable.
-2. Re-read current `main` and the actionable queue after promotion.
-3. Claim `agent/query-gate-c-prerequisite-reconciliation-v1` only if its dependencies remain satisfied.
-4. Resolve Query Implementation Contract V1 runtime-start prerequisites from current main: accepted Relations public contract, Query BANK_REVIEWED / 169, shared Data Source/Policy/cache seams, active development consent and a bounded first runtime tranche.
-5. Do **not** invent `OPTION_CONTRACT_COMPLETE` as a hard Query runtime prerequisite unless repository evidence explicitly requires it.
-6. Keep Query runtime blocked until prerequisite reconciliation is accepted; keep Admin Columns, Dynamic Listings and Status runtime blocked behind their dependency gates.
+1. Promote Supervisor #288 shared-truth reconciliation with README/CHECKPOINT/queue exact-main accurate and Gate D marked PASS only for the certified bounded V1 baseline.
+2. Re-read exact current `main` after promotion.
+3. Deterministically create two disjoint claims from that exact main: Issue #294 and Issue #295.
+4. Run #294 and #295 concurrently without overlapping paths or shared truth.
+5. Merge each only after latest-main reconciliation, applicable exact-head CI green and clean review threads.
+6. Only after both are promoted, authorize a composed server-first Listings SSR tranche through the shared Renderer/Dynamic Value/Component Blueprint contracts.
+7. Keep progressive async UX, portability remapping, Status runtime, `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment and release blocked behind their later gates.
 
 Repository evidence overrides conversational memory.
