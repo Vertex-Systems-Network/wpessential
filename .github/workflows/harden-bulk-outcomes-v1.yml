@@ -1,0 +1,82 @@
+name: Harden Bulk Outcomes V1
+
+on:
+  push:
+    branches:
+      - agent/columns-fields-bulk-edit-v1
+    paths:
+      - .github/workflows/harden-bulk-outcomes-v1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout claimed branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/columns-fields-bulk-edit-v1
+          fetch-depth: 0
+      - name: Configure Git identity
+        run: |
+          git config user.name "wpessential-worker"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Harden ambiguous outcomes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          runtime = Path('admin-ui/src/columns-runtime.ts')
+          text = runtime.read_text()
+          replacements = {
+              'const failedPostIds: number[] = [];': 'const unverifiedPostIds: number[] = [];',
+              'failedPostIds.push( postId );': 'unverifiedPostIds.push( postId );',
+              'failedPostIds.length > 0': 'unverifiedPostIds.length > 0',
+              "` Failed post IDs: ${ failedPostIds.join( ', ' ) }.`": "` Unverified post IDs: ${ unverifiedPostIds.join( ', ' ) }.`",
+              '${ failedPostIds.length } failed': '${ unverifiedPostIds.length } unverified',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'missing runtime anchor: {old}')
+              text = text.replace(old, new)
+          runtime.write_text(text)
+
+          test = Path('tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php')
+          text = test.read_text()
+          text = text.replace('testAttemptedBulkMutationReportsPartialFailuresAndInvalidatesPreview', 'testAttemptedBulkMutationReportsUnverifiedOutcomesAndInvalidatesPreview')
+          text = text.replace("'const failedPostIds: number[] = [];',", "'const unverifiedPostIds: number[] = [];',")
+          text = text.replace("'failedPostIds.push( postId );',", "'unverifiedPostIds.push( postId );',")
+          text = text.replace("'Bulk Fields edit finished:',", "'Unverified post IDs:',")
+          test.write_text(text)
+
+          doc = Path('docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md')
+          text = doc.read_text()
+          text = text.replace('## Execution and partial failures', '## Execution and partial or ambiguous outcomes')
+          text = text.replace('A failed row does not make previous successful owner writes disappear and is never misreported as success. The operator receives a bounded summary containing:', 'A row without fully verified client evidence is never reported as success. This includes explicit owner rejection as well as transport/stale/malformed-response cases where the browser cannot prove whether a server-side mutation committed. The operator receives a bounded summary containing:')
+          text = text.replace('- failed post ids;', '- unverified post ids (not asserted as definitely unchanged);')
+          text = text.replace('partial failure, or all-failure', 'partial/unverified outcomes, or no verified successes')
+          doc.write_text(text)
+          PY
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: admin-ui/package-lock.json
+      - name: Install locked admin graph
+        working-directory: admin-ui
+        run: npm ci
+      - name: Format and validate runtime
+        working-directory: admin-ui
+        run: |
+          npx prettier --write src/columns-runtime.ts
+          npm run lint:js
+          npm run typecheck
+          npm run build
+      - name: Remove helper and commit
+        run: |
+          git rm .github/workflows/harden-bulk-outcomes-v1.yml
+          git add admin-ui/src/columns-runtime.ts tests/Unit/Modules/AdminColumns/AdminColumnsFrontendFieldsBulkEditContractTest.php docs/IMPLEMENTATION/ADMIN-COLUMNS-FIELDS-BULK-EDIT-V1.md
+          git commit -m "Harden bulk edit ambiguous outcome reporting"
+          git push origin HEAD:agent/columns-fields-bulk-edit-v1
