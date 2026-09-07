@@ -86,7 +86,7 @@ final readonly class AdminColumnsCsvExportAbilityHandler implements AbilityHandl
     /** @return array<string,mixed> */
     private function objectMap(mixed $value, string $label): array
     {
-        if (!is_array($value) || array_is_list($value)) {
+        if (!is_array($value) || ($value !== [] && array_is_list($value))) {
             throw new InvalidArgumentException(sprintf('%s must be an object/map.', $label));
         }
 
