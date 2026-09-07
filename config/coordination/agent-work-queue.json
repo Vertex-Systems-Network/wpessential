@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-07",
-  "queue_anchor_main_sha": "1771247331b2f29bd4f1d1337bba7603a316eaed",
-  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D remains ACTIVE / NOT PASS. Current main includes the revisioned View lifecycle, Query-backed reads, no-N+1 evidence, Fields-owned read/write foundations, preview compatibility, CSV export encoder/orchestration, personal preference resolver PR #246, primary/row-action policy PR #247 and View portability/remap PR #248. PR #237 remains unmergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Fields bulk edit remains blocked behind #237. Effective/degraded-state projection #249 is dependency-ready and path-disjoint. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue/README truth remains Supervisor-only.",
+  "queue_anchor_main_sha": "20ec75cafc24123214e0b11e5412093f379b91de",
+  "authoritative_rule": "Agents MUST refresh current main and repository evidence before selecting or claiming a slot. Fields Gate A, Relations Gate B and Query Gate C are PASS for their certified bounded V1 baselines. Admin Columns Gate D remains ACTIVE / NOT PASS. Current main includes revisioned View lifecycle, Query-backed reads, no-N+1 evidence, Fields-owned read/write foundations, preview compatibility, CSV export encoder/orchestration, personal preference resolver PR #246, primary/row-action policy PR #247, View portability/remap PR #248 and effective/degraded-state projector PR #251. PR #237 remains unmergeable until its exact-head Architecture Guards JavaScript lint failure is repaired. Fields bulk edit remains blocked behind #237. View dependency manifest #252 and CSV export scope policy #253 are dependency-ready and path-disjoint. Dynamic Listings Gate E and Status runtime remain dependency-blocked. Deterministic remote branch creation is the claim lock; completed/superseded claims must not be re-used or force-moved. Shared checkpoint/queue/README truth remains Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
@@ -13,7 +13,7 @@
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main and verify merged PR #235/#236/#240/#246/#247/#248 evidence plus open PR #237 before selecting work.",
+      "Resolve exact current main and verify merged PR #235/#236/#240/#246/#247/#248/#251 evidence plus open PR #237 before selecting work.",
       "Inspect open/merged PRs, issues and deterministic claim branches before claiming a slot.",
       "Verify the selected slot is still needed, dependencies are satisfied and no other active slot owns the same files or semantic boundary.",
       "Preserve Query ownership of backend row selection/sort/filter/search, source-owner mutation semantics, Policy authorization, and authored/personal/effective/diagnostic state separation.",
@@ -206,27 +206,67 @@
       "slot_id": "columns-effective-state-projector-v1",
       "title": "Build effective capability and degraded-state projector V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "DONE",
       "work_mode": "EFFECTIVE_DIAGNOSTIC_STATE_FOUNDATION",
       "parallel_class": "COLUMNS_EFFECTIVE_STATE_EXCLUSIVE",
       "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
-      "source": "Issue #249 under parent #66 and Gate D effective/diagnostic state criterion",
+      "source": "Issue #249 / merged PR #251",
+      "dependencies": ["Admin Columns authored/personal/effective-state foundations are promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": ["Historical completed boundary only"],
+      "completion_condition": "Satisfied by merged PR #251 with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green.",
+      "notes": "Pure effective/degraded-state projector is promoted; no discovery, persistence or authorization grant was introduced.",
+      "claim_branch": "agent/columns-effective-state-projector-v1"
+    },
+    {
+      "priority": 190,
+      "slot_id": "columns-view-dependency-manifest-v1",
+      "title": "Build View dependency manifest projector V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "DEPENDENCY_MANIFEST_FOUNDATION",
+      "parallel_class": "COLUMNS_DEPENDENCY_MANIFEST_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Issue #252 under parent #66 and Admin Columns Used By / Dependencies UX contract",
       "dependencies": [
-        "Admin Columns authored View foundation is promoted",
-        "personal preference and row-action effective-state foundations are promoted",
+        "Admin Columns normalized revisioned View payload contract is promoted",
         "Gate D remains ACTIVE / NOT PASS"
       ],
       "runtime_allowed": true,
       "allowed_scope": [
-        "new AdminColumns effective/degraded-state projector file only",
-        "new focused effective-state unit tests and one implementation document",
-        "derive finite availability/degraded/expensive/provider-required states and bounded diagnostic evidence only from supplied canonical owner/adapter evidence",
-        "reject contradictory/unknown/secret-bearing evidence fail-closed",
-        "no persistence, provider discovery, Query execution, UI/controller, authorization grants, source-owner mutation, shared queue, CHECKPOINT.md or README.md"
+        "new AdminColumns View dependency manifest projector file only",
+        "new focused dependency-manifest unit tests and one implementation document",
+        "project typed target/source/assignment references from a canonical normalized View only",
+        "no provider discovery, persistence, UI/controller, Query execution, peer-private reads, authorization grants, shared queue, CHECKPOINT.md or README.md"
       ],
-      "completion_condition": "A pure bounded projector separates effective/diagnostic state from authored and personal state, exposes only allowlisted bounded evidence, and never converts availability into authorization.",
-      "notes": "Path-disjoint from #237 and from all completed foundation files.",
-      "claim_branch": "agent/columns-effective-state-projector-v1"
+      "completion_condition": "A deterministic bounded manifest exposes typed View dependencies for later Used By/import-review integration without resolving peer-private runtime state.",
+      "notes": "Path-disjoint from #237 and the export-scope lane.",
+      "claim_branch": "agent/columns-view-dependency-manifest-v1"
+    },
+    {
+      "priority": 200,
+      "slot_id": "columns-csv-export-scope-policy-v1",
+      "title": "Build bounded CSV export scope policy V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "EXPORT_SCOPE_POLICY_FOUNDATION",
+      "parallel_class": "COLUMNS_EXPORT_SCOPE_EXCLUSIVE",
+      "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
+      "source": "Issue #253 under parent #66 and Admin Columns export UX contract",
+      "dependencies": [
+        "CSV export encoder and bounded internal orchestration are promoted",
+        "Gate D remains ACTIVE / NOT PASS"
+      ],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "new AdminColumns CSV export scope policy file only",
+        "new focused export-scope policy unit tests and one implementation document",
+        "normalize current_page/selected_rows/all_matching scope, finite selected IDs and explicit enabled-column subset against advertised target scopes only",
+        "no existing CSV encoder/orchestration edits, Query execution, authorization, UI/controller/download transport, source-owner mutation, shared queue, CHECKPOINT.md or README.md"
+      ],
+      "completion_condition": "A pure bounded policy normalizes explicit supported export scope/row/column selection without becoming a query, authorization or transport engine.",
+      "notes": "Path-disjoint from #237 and the dependency-manifest lane.",
+      "claim_branch": "agent/columns-csv-export-scope-policy-v1"
     }
   ]
 }
