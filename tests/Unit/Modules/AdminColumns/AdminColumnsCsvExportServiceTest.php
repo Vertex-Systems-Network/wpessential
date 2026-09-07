@@ -89,7 +89,7 @@ final class AdminColumnsCsvExportServiceTest extends TestCase
         self::assertCount(2, $query->requests);
         self::assertSame(100, $query->requests[0]['page_size']);
         self::assertSame(0, $query->requests[0]['offset']);
-        self::assertSame(50, $query->requests[1]['returned'] ?? 50);
+        self::assertSame(100, $query->requests[1]['page_size']);
         self::assertSame(100, $query->requests[1]['offset']);
     }
 
