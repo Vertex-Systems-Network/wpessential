@@ -37,6 +37,6 @@ final class AdminColumnsPersonalPreferenceAbilityWiringTest extends TestCase
         self::assertStringContainsString('$context->principal->userId', $handler);
         self::assertStringContainsString("actorType !== 'user'", $handler);
         self::assertStringContainsString("private const INPUT_KEYS = ['action', 'view_id', 'expected_view_revision', 'preference']", $handler);
-        self::assertStringNotContainsString("$input['user_id']", $handler);
+        self::assertStringNotContainsString('$input[\'user_id\']', $handler);
     }
 }
