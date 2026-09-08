@@ -75,6 +75,16 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
         self::assertStringNotContainsString('wp_9_wpe_orders', $wpdb->prepared[0]['query']);
     }
 
+    public function testExistingTableWithoutColumnMetadataFailsClosedAsPartialObservation(): void
+    {
+        $responses = $this->supportedMetadataResponses('wp_wpe_orders');
+        $responses['columns'] = [];
+        $wpdb = new FakeCt1Wpdb('wp_', $responses);
+
+        $this->expectException(RuntimeException::class);
+        (new WordPressCt1SchemaIntrospector($wpdb))->observe($this->descriptor());
+    }
+
     public function testSupportedPhysicalMetadataNormalizesToNoOpDesiredPlan(): void
     {
         $wpdb = new FakeCt1Wpdb('wp_2_', $this->supportedMetadataResponses('wp_2_wpe_orders'));
