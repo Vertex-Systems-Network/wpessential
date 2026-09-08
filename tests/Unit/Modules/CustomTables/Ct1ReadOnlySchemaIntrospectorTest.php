@@ -13,6 +13,7 @@ use WPEssential\Modules\CustomTables\Migration\MigrationRisk;
 use WPEssential\Modules\CustomTables\Migration\TableSchemaDiffPlanner;
 use WPEssential\Modules\CustomTables\Schema\Ct1ManagedTableIdentity;
 use WPEssential\Modules\CustomTables\Schema\Ct1ManagedTableIdentityResolver;
+use WPEssential\Modules\CustomTables\Schema\SchemaObservationFinding;
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
@@ -117,7 +118,7 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 
         $observed = (new WordPressCt1SchemaIntrospector($wpdb))->observe($this->descriptor());
         $codes = array_map(
-            static fn ($finding): string => $finding->code,
+            static fn (SchemaObservationFinding $finding): string => $finding->code,
             $observed->findings,
         );
 
@@ -128,7 +129,7 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
     public function testMalformedIndexSequenceFailsClosedInsteadOfGuessingOrder(): void
     {
         $responses = $this->supportedMetadataResponses('wp_wpe_orders');
-        $responses['indexes'][4]['seq_in_index'] = '3';
+        $responses['indexes'][2]['seq_in_index'] = '3';
         $wpdb = new FakeCt1Wpdb('wp_', $responses);
 
         $this->expectException(RuntimeException::class);
@@ -314,14 +315,6 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
                     'non_unique' => '0',
                     'seq_in_index' => '1',
                     'column_name' => 'reference',
-                    'sub_part' => null,
-                    'index_type' => 'BTREE',
-                ],
-                [
-                    'index_name' => 'amount_active',
-                    'non_unique' => '1',
-                    'seq_in_index' => '2',
-                    'column_name' => 'active',
                     'sub_part' => null,
                     'index_type' => 'BTREE',
                 ],
