@@ -95,8 +95,12 @@ final class WordPressCt1SchemaIntrospector
         $dataType = strtolower($this->requiredString($row, 'data_type'));
         $columnType = strtolower($this->requiredString($row, 'column_type'));
         $extra = strtolower(trim($this->nullableString($row, 'extra') ?? ''));
-        $nullable = strtoupper($this->requiredString($row, 'is_nullable')) === 'YES';
-        $autoIncrement = str_contains($extra, 'auto_increment');
+        $isNullable = strtoupper($this->requiredString($row, 'is_nullable'));
+        if (!in_array($isNullable, ['YES', 'NO'], true)) {
+            throw new RuntimeException('CT1 schema observation returned unsupported nullability metadata.');
+        }
+        $nullable = $isNullable === 'YES';
+        $autoIncrement = $extra === 'auto_increment';
 
         $type = $this->boundedType($dataType, $columnType, $extra);
         $column = [
@@ -126,11 +130,16 @@ final class WordPressCt1SchemaIntrospector
 
     private function boundedType(string $dataType, string $columnType, string $extra): string
     {
-        if (str_contains($extra, 'generated')) {
-            return 'unsupported_generated_' . $dataType;
+        $safeType = preg_replace('/[^a-z0-9_]/', '_', $dataType);
+        if (!is_string($safeType) || $safeType === '') {
+            $safeType = 'unknown';
+        }
+
+        if ($extra !== '' && $extra !== 'auto_increment') {
+            return 'unsupported_extra_' . $safeType;
         }
         if (preg_match('/\bunsigned\b/', $columnType) === 1) {
-            return 'unsupported_unsigned_' . $dataType;
+            return 'unsupported_unsigned_' . $safeType;
         }
 
         return match ($dataType) {
@@ -142,9 +151,11 @@ final class WordPressCt1SchemaIntrospector
             'decimal' => 'decimal',
             'varchar' => 'varchar',
             'text' => 'text',
-            'datetime' => 'datetime',
+            'datetime' => preg_match('/^datetime(?:\(0\))?$/', $columnType) === 1
+                ? 'datetime'
+                : 'unsupported_datetime_precision',
             'json' => 'json',
-            default => 'unsupported_' . preg_replace('/[^a-z0-9_]/', '_', $dataType),
+            default => 'unsupported_' . $safeType,
         };
     }
 
@@ -224,6 +235,14 @@ final class WordPressCt1SchemaIntrospector
         ksort($groups, SORT_STRING);
         foreach ($groups as $key => $group) {
             ksort($group['columns'], SORT_NUMERIC);
+            $expectedSequence = 1;
+            foreach (array_keys($group['columns']) as $sequence) {
+                if ($sequence !== $expectedSequence) {
+                    throw new RuntimeException('CT1 schema observation returned non-contiguous index sequence metadata.');
+                }
+                ++$expectedSequence;
+            }
+
             $columns = array_values($group['columns']);
             if ($key === 'PRIMARY') {
                 $primaryKey = $columns;
