@@ -343,7 +343,9 @@ final class StatusTransitionExecutorTest extends TestCase
             policy: $policy,
             resources: $resources,
             capabilities: $capabilities,
-            readPostStatus: static fn (int $postId): string => $state,
+            readPostStatus: static function (int $postId) use (&$state): string {
+                return $state;
+            },
             readPostType: static fn (int $postId): string => 'post',
             statusRegistered: static fn (string $status): bool => in_array($status, $registeredStatuses, true),
             updatePostStatus: static function (int $postId, string $targetStatus) use (&$state, &$mutations, $invalidMutationResult, $preserveStateAfterMutation): mixed {
@@ -389,11 +391,14 @@ final class StatusTransitionExecutorTest extends TestCase
 
 final class StatusExecutionCapabilityChecker implements CapabilityCheckerInterface
 {
+    /** @var list<string> */
+    private array $calls;
+
     /** @param list<string> $calls */
-    public function __construct(
-        private array &$calls,
-        private readonly bool $allowed,
-    ) {}
+    public function __construct(array &$calls, private readonly bool $allowed)
+    {
+        $this->calls =& $calls;
+    }
 
     public function can(ExecutionContext $context, string $capability): bool
     {
