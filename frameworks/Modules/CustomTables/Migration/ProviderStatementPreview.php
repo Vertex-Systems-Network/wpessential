@@ -41,8 +41,13 @@ final readonly class ProviderStatementPreview
         ], true)) {
             throw new InvalidArgumentException('Custom Tables provider lock classification is invalid.');
         }
-        if ($this->sql === '' || strlen($this->sql) > 65535 || str_contains($this->sql, ';')) {
-            throw new InvalidArgumentException('Custom Tables provider statement preview SQL is invalid.');
+        if ($this->sql === ''
+            || strlen($this->sql) > 65535
+            || str_contains($this->sql, ';')
+            || str_contains($this->sql, '\\')
+            || preg_match('/[\x00-\x1F\x7F]/', $this->sql) === 1
+        ) {
+            throw new InvalidArgumentException('Custom Tables provider statement preview SQL is invalid or ambiguous across SQL modes.');
         }
         if (preg_match('/^[0-9a-f]{64}$/', $this->fingerprint) !== 1) {
             throw new InvalidArgumentException('Custom Tables provider statement fingerprint must be SHA-256 hex.');
