@@ -34,7 +34,29 @@ final class ListingDefinitionCompilerTest extends TestCase
         self::assertSame(self::BLUEPRINT_ID, $first->blueprintId);
         self::assertSame(['wpe-listing-card'], $first->assetHandles);
         self::assertSame(['post_id', 'title'], array_map(static fn (ListingRenderBinding $binding): string => $binding->bindingKey, $first->renderBindings));
+        self::assertSame('Posts Grid', $first->presentation?->label);
+        self::assertSame('grid', $first->presentation?->mode);
+        self::assertSame(['base' => 1, 'lg' => 3], $first->presentation?->responsiveColumns);
         self::assertSame($first->compatibilityFingerprint, $second->compatibilityFingerprint);
+    }
+
+    public function testAuthoredPresentationChangesFingerprintAndCompilesSafeStateText(): void
+    {
+        $compiler = new ListingDefinitionCompiler($this->blueprints(), $this->assets());
+        $baseline = $compiler->compile($this->definition());
+        $payload = $this->payload();
+        $payload['presentation'] = [
+            'label' => 'Featured posts',
+            'responsive_columns' => ['lg' => 3, 'base' => 1, 'md' => 2],
+            'empty_message' => 'No featured posts.',
+            'error_message' => 'Featured posts are unavailable.',
+        ];
+        $compiled = $compiler->compile($this->definition($payload));
+
+        self::assertSame('Featured posts', $compiled->presentation?->label);
+        self::assertSame(['base' => 1, 'lg' => 3, 'md' => 2], $compiled->presentation?->responsiveColumns);
+        self::assertSame('No featured posts.', $compiled->presentation?->emptyMessage);
+        self::assertNotSame($baseline->compatibilityFingerprint, $compiled->compatibilityFingerprint);
     }
 
     public function testBindingSemanticChangeChangesFingerprint(): void
