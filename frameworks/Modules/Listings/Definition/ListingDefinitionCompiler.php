@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 use InvalidArgumentException;
 use JsonException;
 use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
+use WPEssential\Modules\Listings\Presentation\ListingPresentationDescriptor;
 use WPEssential\Platform\Assets\AssetRegistry;
 use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
 use WPEssential\Platform\Definitions\Definition;
@@ -24,13 +25,16 @@ final readonly class ListingDefinitionCompiler
     private const MAX_ASSETS = 32;
 
     /** @var list<string> */
-    private const PAYLOAD_KEYS = ['query_source_ref', 'blueprint', 'layout', 'assets', 'bindings'];
+    private const PAYLOAD_KEYS = ['query_source_ref', 'blueprint', 'layout', 'assets', 'bindings', 'presentation'];
 
     /** @var list<string> */
     private const BLUEPRINT_KEYS = ['id', 'revision'];
 
     /** @var list<string> */
     private const LAYOUT_KEYS = ['mode', 'columns'];
+
+    /** @var list<string> */
+    private const PRESENTATION_KEYS = ['label', 'responsive_columns', 'empty_message', 'error_message'];
 
     /** @var list<string> */
     private const BINDING_KEYS = ['kind', 'binding_key', 'query_field_ref', 'source_ref', 'value_ref', 'resource_type', 'resource_id_field_ref'];
@@ -63,6 +67,7 @@ final readonly class ListingDefinitionCompiler
         $querySourceRef = $this->semanticReference($payload['query_source_ref'] ?? null, 'Listing query source reference');
         $blueprint = $this->blueprint($payload['blueprint'] ?? null);
         $layout = $this->layout($payload['layout'] ?? null);
+        $presentation = $this->presentation($payload['presentation'] ?? null, $definition, $layout);
         $listingAssets = $this->assetHandles($payload['assets'] ?? []);
 
         $blueprintDescriptor = $this->blueprints->get($blueprint['id'], $blueprint['revision']);
@@ -91,6 +96,13 @@ final readonly class ListingDefinitionCompiler
             'blueprint_dependencies' => $blueprintDescriptor->dependencyIds,
             'render_bindings' => array_map(static fn (ListingRenderBinding $binding): array => $binding->fingerprintData(), $renderBindings),
             'layout' => $layout,
+            'presentation' => [
+                'mode' => $presentation->mode,
+                'label' => $presentation->label,
+                'responsive_columns' => $presentation->responsiveColumns,
+                'empty_message' => $presentation->emptyMessage,
+                'error_message' => $presentation->errorMessage,
+            ],
             'assets' => $assetHandles,
         ];
 
@@ -108,6 +120,7 @@ final readonly class ListingDefinitionCompiler
                 json_encode($fingerprintPayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             ),
             renderBindings: $renderBindings,
+            presentation: $presentation,
         );
     }
 
@@ -195,6 +208,41 @@ final readonly class ListingDefinitionCompiler
         }
 
         return ['mode' => $mode, 'columns' => $columns];
+    }
+
+    /** @param array{mode:string,columns:int} $layout */
+    private function presentation(mixed $value, Definition $definition, array $layout): ListingPresentationDescriptor
+    {
+        if ($value !== null && (!is_array($value) || array_is_list($value))) {
+            throw new InvalidArgumentException('Listing presentation must be an object/map when provided.');
+        }
+        $presentation = is_array($value) ? $value : [];
+        $this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Listing presentation');
+
+        $label = $presentation['label'] ?? ucwords(str_replace('-', ' ', $definition->slug));
+        $responsiveColumns = $presentation['responsive_columns'] ?? (
+            $layout['mode'] === 'grid' ? ['base' => 1, 'lg' => $layout['columns']] : ['base' => 1]
+        );
+        $emptyMessage = $presentation['empty_message'] ?? 'No results.';
+        $errorMessage = $presentation['error_message'] ?? 'Results are temporarily unavailable.';
+
+        if (
+            !is_string($label)
+            || !is_array($responsiveColumns) || array_is_list($responsiveColumns)
+            || !is_string($emptyMessage)
+            || !is_string($errorMessage)
+        ) {
+            throw new InvalidArgumentException('Listing presentation values have invalid types.');
+        }
+        ksort($responsiveColumns, SORT_STRING);
+
+        return new ListingPresentationDescriptor(
+            mode: $layout['mode'],
+            label: $label,
+            responsiveColumns: $responsiveColumns,
+            emptyMessage: $emptyMessage,
+            errorMessage: $errorMessage,
+        );
     }
 
     /** @return list<string> */

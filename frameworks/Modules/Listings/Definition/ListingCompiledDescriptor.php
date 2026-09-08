@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use InvalidArgumentException;
+use WPEssential\Modules\Listings\Presentation\ListingPresentationDescriptor;
 
 final readonly class ListingCompiledDescriptor
 {
@@ -27,6 +28,7 @@ final readonly class ListingCompiledDescriptor
         public array $assetHandles,
         public string $compatibilityFingerprint,
         public array $renderBindings = [],
+        public ?ListingPresentationDescriptor $presentation = null,
     ) {
         if ($this->revision < 1 || $this->blueprintRevision < 1) {
             throw new InvalidArgumentException('Listing and blueprint revisions must be positive.');
@@ -36,6 +38,9 @@ final readonly class ListingCompiledDescriptor
         }
         if ($this->columns < 1 || $this->columns > 6) {
             throw new InvalidArgumentException('Listing grid columns must be within 1..6.');
+        }
+        if ($this->presentation !== null && $this->presentation->mode !== $this->layoutMode) {
+            throw new InvalidArgumentException('Compiled Listing presentation mode must match the runtime layout mode.');
         }
         if (!preg_match('/^[0-9a-f]{64}$/', $this->compatibilityFingerprint)) {
             throw new InvalidArgumentException('Listing compatibility fingerprint must be SHA-256 hex.');

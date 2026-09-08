@@ -15,8 +15,10 @@ use WPEssential\Contracts\DynamicValueResolverInterface;
 use WPEssential\Contracts\RendererInterface;
 use WPEssential\Modules\Listings\Definition\ListingCompiledDescriptor;
 use WPEssential\Modules\Listings\Definition\ListingRenderBinding;
+use WPEssential\Modules\Listings\Presentation\ListingPresentationDescriptor;
 use WPEssential\Modules\Listings\QueryBinding\ListingQueryBinding;
 use WPEssential\Modules\Listings\QueryBinding\ListingQueryReader;
+use WPEssential\Modules\Listings\State\ListingRuntimeState;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\DynamicValues\DynamicValueRequest;
 use WPEssential\Platform\Rendering\RenderInput;
@@ -84,12 +86,15 @@ final readonly class ListingServerRenderer
             $assets[$handle] = true;
         }
 
+        $presentation = $descriptor->presentation;
         if ($queryResult->rows === []) {
+            $emptyMessage = $presentation?->emptyMessage ?? 'No results.';
             return new ListingRenderResult(
                 success: true,
-                html: '<p class="wpe-listing__empty" role="status">No results.</p>',
+                html: '<p class="wpe-listing__empty" role="status">' . $this->escape($emptyMessage) . '</p>',
                 assetHandles: array_keys($assets),
                 returned: 0,
+                state: ListingRuntimeState::Empty,
             );
         }
 
@@ -130,9 +135,10 @@ final readonly class ListingServerRenderer
             $items[] = $output->html;
         }
 
+        $attributes = $this->presentationAttributes($presentation);
         $html = $descriptor->layoutMode === 'list'
-            ? '<ul class="wpe-listing wpe-listing--list"><li class="wpe-listing__item">' . implode('</li><li class="wpe-listing__item">', $items) . '</li></ul>'
-            : '<div class="wpe-listing wpe-listing--grid">' . implode('', array_map(
+            ? '<ul class="wpe-listing wpe-listing--list"' . $attributes . '><li class="wpe-listing__item">' . implode('</li><li class="wpe-listing__item">', $items) . '</li></ul>'
+            : '<div class="wpe-listing wpe-listing--grid"' . $attributes . '>' . implode('', array_map(
                 static fn (string $item): string => '<div class="wpe-listing__item">' . $item . '</div>',
                 $items,
             )) . '</div>';
@@ -142,6 +148,7 @@ final readonly class ListingServerRenderer
             html: $html,
             assetHandles: array_keys($assets),
             returned: count($items),
+            state: ListingRuntimeState::Content,
         );
     }
 
@@ -223,12 +230,51 @@ final readonly class ListingServerRenderer
         return true;
     }
 
+    private function presentationAttributes(?ListingPresentationDescriptor $presentation): string
+    {
+        if ($presentation === null) {
+            return '';
+        }
+
+        $attributes = ' aria-label="' . $this->escape($presentation->label) . '"';
+        $columns = $presentation->responsiveColumns;
+        ksort($columns, SORT_STRING);
+        foreach ($columns as $breakpoint => $count) {
+            $attributes .= ' data-wpe-columns-' . $breakpoint . '="' . $count . '"';
+        }
+        return $attributes;
+    }
+
+    private function escape(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
     private function failure(string $code): ListingRenderResult
     {
         if (!preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $code)) {
             $code = 'listing_failure';
         }
 
-        return new ListingRenderResult(false, '', [], 0, $code);
+        $state = in_array(
+            $code,
+            [
+                'missing_blueprint',
+                'unsupported_value_source',
+                'dependency_mismatch',
+                'dynamic_value_failure',
+                'renderer_failure',
+            ],
+            true,
+        ) ? ListingRuntimeState::Degraded : ListingRuntimeState::Error;
+
+        return new ListingRenderResult(
+            false,
+            '',
+            [],
+            0,
+            $code,
+            $state,
+        );
     }
 }

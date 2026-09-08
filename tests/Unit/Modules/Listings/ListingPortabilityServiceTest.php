@@ -25,6 +25,8 @@ final class ListingPortabilityServiceTest extends TestCase
 
         self::assertSame('wordpress.posts', $data['dependencies']['query_source_ref']);
         self::assertSame(ListingPortableBlueprints::ID, $data['dependencies']['blueprint']['id']);
+        self::assertSame('Portfolio', $data['payload']['presentation']['label']);
+        self::assertSame(['base' => 1], $data['payload']['presentation']['responsive_columns']);
         self::assertArrayNotHasKey('rows', $data);
         self::assertArrayNotHasKey('credentials', $data);
     }
@@ -72,6 +74,12 @@ final class ListingPortabilityServiceTest extends TestCase
                 'blueprint' => ['id' => ListingPortableBlueprints::ID, 'revision' => 1],
                 'layout' => ['mode' => 'list', 'columns' => 1],
                 'assets' => [],
+                'presentation' => [
+                    'label' => 'Portfolio',
+                    'responsive_columns' => ['base' => 1],
+                    'empty_message' => 'Nothing to show.',
+                    'error_message' => 'Results are unavailable.',
+                ],
             ],
             2,
         );
