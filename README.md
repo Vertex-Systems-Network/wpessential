@@ -4,7 +4,7 @@ WPEssential is a modular WordPress application platform for structured data, aut
 
 Project website: **https://wpessential.org**
 
-> **Status:** Phase 0 planning is complete. Source development is active under explicit `GOV-OWNER-CONSENT-001` and remains milestone-gated. Production deployment and separately privileged destructive/live-provider operations are not implied by source-development approval.
+> **Status:** Source development is active under explicit `GOV-OWNER-CONSENT-001` and remains milestone-gated. Production deployment, destructive live-provider operations, full runtime certification and product-parity certification are separate gates.
 
 ## Current lifecycle
 
@@ -23,137 +23,89 @@ Project website: **https://wpessential.org**
 - Phase 2 Gate A / Fields: **PASS for the certified native V1 scope**
 - Phase 2 Gate B / Relations: **PASS for the certified native V1 baseline**
 - Phase 2 Gate C / Query: **PASS for the certified bounded V1 baseline**
-- Phase 2 Gate D / Admin Columns: **PASS for the certified bounded V1 baseline** — final exact-main reference/closure evidence was promoted by PR #287 / Issue #285 after the bounded single-row and visible-page bulk Fields editing path, export safety, no-N+1/performance and accessibility evidence were certified. This is not `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`, does not claim provider-wide mutation parity, and does not authorize unbounded mass editing.
-- Phase 2 Gate E / Dynamic Listings: **PASS for the certified bounded V1 baseline** — final shared-truth reconciliation was promoted by PR #344.
-- Status Manager: **PASS for the certified bounded V1 baseline once Issue #378 / this final Supervisor reconciliation is promoted** — the promoted chain through PR #377 includes canonical Definitions, native registration, fail-closed transition execution, admin authoring, deterministic portability, canonical shared Event/Audit composition and production real-WordPress evidence.
-- Next runtime/dependency gate: **not yet authorized**. After the Status final reconciliation promotes, development resumes with a fresh exact-main Supervisor entry audit; Options Bank ordering alone does not authorize the next runtime module.
+- Phase 2 Gate D / Admin Columns: **PASS for the certified bounded V1 baseline**
+- Phase 2 Gate E / Dynamic Listings: **PASS for the certified bounded V1 baseline**
+- Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
+- Active dependency gate: **Surface 7 — Custom Tables**.
 
-Audit anchor for this README reconciliation: `main @ 6d57041df6746a6a83ca5af0aea71f97fa21e429` on **2026-09-08**. Repository/machine evidence remains authoritative if this prose later becomes stale.
+README reconciliation anchor: `main @ 9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
-## Module progress dashboard
+## Current Custom Tables state
 
-The **56-module master plan is complete**. This dashboard tracks each canonical module/surface through the Master Options Bank certification lifecycle; it does **not** claim runtime implementation or production release completion.
+Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promoted:
 
-**Progress model:** `UNSEEDED = 0%` → `BANK_SURFACE_SEEDED = 25%` → `NATIVE_AUDITED = 50%` → `MARKET_AUDITED = 75%` → `BANK_REVIEWED = 100%`.
+1. **Canonical table Definition + schema descriptor V1** — Issue #382 / merged PR #383.
+2. **Observed schema normalization + pure Migration Plan V1** — Issue #385 / merged PR #387.
+3. **Post-plan dependency audit** — Issue #388 / merged PR #390.
+4. **Trusted CT1/PT-E physical identity + strictly read-only schema introspection V1** — Issue #389 / merged PR #391.
 
-- Canonical modules planned: **56 / 56 (100%)**
-- Modules with Bank work started: **10 / 56**
-- Fully Bank-reviewed modules: **9 / 56**
-- Current Bank records: **1,890**
-- Weighted Bank-readiness snapshot: **16.5%**
-- Current certified Bank checkpoint: **9 surfaces BANK_REVIEWED** — Taxonomy, Fields, Relations, Status, Query, Custom Tables, Admin Columns, Dynamic Listings, Dashboard Widgets
-- CPT remains **BANK_SURFACE_SEEDED / 107**
-- Estimated Bank-review program completion: **~2026-10-26**
+The promoted read-only introspection lane derives managed physical identity from trusted current-site WordPress context plus canonical Definition identity, observes `INFORMATION_SCHEMA` metadata without database mutation, normalizes supported MySQL/MariaDB schema facts, and fails closed on unsupported or partial metadata. PR #391's final exact head passed PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package workflows.
 
-> **Date meaning:** “Bank Review Date” is a working estimate for completing planning/research certification for that surface, not a promise of runtime implementation, release, or production deployment. Dates are re-baselined when research, compatibility work, or CI exposes additional gaps. Machine lifecycle state takes precedence over an old estimate.
+### Still blocked
 
-| # | Module / Surface | Progress | Status | Bank Review Date |
-|---:|---|---|---|---|
-| 1 | CPT | `██░░░░░░░░ 25%` | 🟠 BANK_SURFACE_SEEDED | in progress |
-| 2 | Taxonomy | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete by current machine snapshot) |
-| 3 | Fields / Field Groups | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 4 | Relations | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 5 | Status | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 6 | Query Builder | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete by current machine snapshot) |
-| 7 | Custom Tables / Content Tables | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete) |
-| 8 | Admin Columns | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 9 | Listings | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-02** (complete by current machine snapshot) |
-| 10 | Dashboard Widgets | `██████████ 100%` | ✅ BANK_REVIEWED | **2026-09-01** (complete) |
-| 11 | Admin Menu | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-11 |
-| 12 | Settings / Options Pages | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-12 |
-| 13 | Frontend Dashboards | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-13 |
-| 14 | User Profiles | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-14 |
-| 15 | Membership | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-15 |
-| 16 | Builder Widgets / Dynamic Components | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-16 |
-| 17 | Forms / Workflows | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-17 |
-| 18 | Cron / Schedules | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-18 |
-| 19 | Notifications | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-19 |
-| 20 | Emails | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-20 |
-| 21 | Chat | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-21 |
-| 22 | REST API Builder | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-22 |
-| 23 | Connections | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-23 |
-| 24 | Backup | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-24 |
-| 25 | Reset | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-25 |
-| 26 | Import / Export | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-26 |
-| 27 | Protector | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-27 |
-| 28 | Media | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-28 |
-| 29 | XML-RPC | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-29 |
-| 30 | Roles | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-09-30 |
-| 31 | Platform | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-01 |
-| 32 | Solutions | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-02 |
-| 33 | Analytics | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-03 |
-| 34 | Search | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-04 |
-| 35 | Decision / Rules | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-05 |
-| 36 | Ledger / Activity Audit | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-06 |
-| 37 | Reservations | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-07 |
-| 38 | Placement | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-08 |
-| 39 | Experiments | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-09 |
-| 40 | Documents | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-10 |
-| 41 | Sync | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-11 |
-| 42 | Geo | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-12 |
-| 43 | AI Gateway | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-13 |
-| 44 | Redirects | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-14 |
-| 45 | Transform | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-15 |
-| 46 | Fixtures | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-16 |
-| 47 | Link Health | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-17 |
-| 48 | Database Maintenance | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-18 |
-| 49 | Admin Theme | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-19 |
-| 50 | Safe Script | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-20 |
-| 51 | Content Order | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-21 |
-| 52 | Security Scanner | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-22 |
-| 53 | Fonts | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-23 |
-| 54 | User Stores | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-24 |
-| 55 | Staging | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-25 |
-| 56 | Theme Workspace | `░░░░░░░░░░ 0%` | ⚪ UNSEEDED | ~2026-10-26 |
+The current Custom Tables foundation does **not** authorize:
 
-The machine-readable source of truth for current counts and lifecycle status is `config/product/options-bank-progress.json`. The dates above are README planning estimates and intentionally remain separate from the machine-certified lifecycle state.
+- physical `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` execution;
+- generic DDL dispatch through `$wpdb->query()` or shared database mutation interfaces;
+- row `INSERT`, `UPDATE`, `DELETE` or CRUD/Data Source runtime;
+- migration run/applied-generation persistence, leases or retry state;
+- Backup/restore execution;
+- data precondition scans, backfill, deduplication, shadow-copy or swap flows;
+- CT2/PT-D or CT3 runtime/topology conversion;
+- external-table adoption;
+- Custom Tables admin/REST/Ability/public mutation surfaces;
+- `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release approval.
 
-### Plan vs implementation critical path
+## Next dependency gate
 
-Bank certification and runtime implementation are separate gates. Current audited critical-path truth at the README audit anchor is:
+Issue #392 owns the exact-main **Custom Tables post-introspection next-lane audit V1**. Its proposed next serialized worker lane is Issue #393: **server-selected provider capability profile + pure DDL compiler preview V1**.
 
-| Gate / Surface | Planning / contract state | Runtime / implementation state | Next blocking work |
-|---|---|---|---|
-| A — Fields | Bank reviewed; detailed atomic inventory exists | **PASS for certified native V1 scope**; not full product-parity certification | Preserve fail-closed owner boundaries; broader parity remains separately gated |
-| B — Relations | Bank reviewed; Relations Atomic Option Contract complete | **PASS for certified native V1 baseline** | Preserve the accepted public Query/Data Source consumer seam and owner boundaries; provider/richer parity remains separately gated |
-| C — Query | Bank reviewed / 169; typed bounded contract and canonical admin route are merged | **PASS for certified bounded V1 baseline** | Preserve Query ownership of backend semantics; public execution/full parity remain separate gates |
-| D — Admin Columns | Bank reviewed / 214; **UX_CONTRACT_COMPLETE** with 41 Atomic Options | **PASS for certified bounded V1 baseline**; final closure evidence through PR #287 is promoted | Preserve Query/source-owner authorization and mutation ownership; broader provider/unbounded parity remains separately gated |
-| E — Dynamic Listings | Bank reviewed / 150; final closure audit V3 promoted by PR #344 | **PASS for certified bounded V1 baseline** | Preserve canonical Query/source-owner/shared-renderer boundaries; richer/async/builder parity remains separately gated |
-| Status | Bank reviewed / 129; final closure audit V3 reconciles promoted chain through PR #377 | **PASS for certified bounded V1 baseline once Issue #378 / this reconciliation promotes** | Preserve canonical Definition/Auth/Event/Audit/Core lifecycle ownership; richer workflow/provider/bulk parity remains separately gated |
-| Next dependency gate | Must be selected from current architecture/roadmap, not Bank order alone | **BLOCKED pending fresh exact-main Supervisor audit after Status closure** | Open/claim a separately scoped post-Status entry audit only after #378 promotion |
-| Custom Tables | Bank reviewed at 165 records | **Planning-only certification**; no runtime DDL/migration execution authorized by the Bank review merge | A future exact-main audit must explicitly authorize runtime/migration work before executable table schema work |
+That proposed compiler is deliberately execution-free. It may convert trusted desired/observed/MigrationPlan state into deterministic typed provider statement previews, while blocked/manual-drift/R3-R4 operations remain non-executable. Physical DDL execution remains separately gated and requires another exact-main Supervisor audit after the pure compiler lane is promoted.
 
-`config/product/atomic-option-contract-progress.json` separately reports 56/56 atomic inventories and zero surfaces at full-parity `RUNTIME_CERTIFIED` / `PRODUCT_PARITY_CERTIFIED`. Bounded Gate A/B/C/D/E/Status runtime passes must not be misreported as full product-parity completion.
+## Planning / Bank snapshot
 
-## Multi-agent work command
+Planning certification and runtime implementation are separate lifecycle dimensions.
 
-The conflict-safe queue is `config/coordination/agent-work-queue.json`. Status implementation/reference lanes through PR #377 are historical once this Supervisor reconciliation promotes. No post-Status worker runtime slot is currently authorized. After promotion, the first valid development action is a separately scoped exact-main Supervisor entry audit; Workers must report `NO_VALID_WORK_SLOT` until that audit opens a dependency-safe `ANY` lane.
+- Canonical modules planned: **56 / 56**
+- Current Options Bank and Atomic Option lifecycle truth: `config/product/options-bank-progress.json` and `config/product/atomic-option-contract-progress.json`
+- Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
+- No bounded module pass in this README implies full product parity or release readiness.
 
-### 1. Sabse pehle sirf ek Supervisor start karo
+The Options Bank currently identifies Taxonomy, Fields, Relations, Status, Query, Custom Tables, Admin Columns, Dynamic Listings and Dashboard Widgets as Bank-reviewed surfaces, while CPT remains partially seeded. Machine-readable files are authoritative for current counts and state.
 
-Is message ko Agent 1 ko do:
+## Certified runtime / implementation gates
+
+| Gate / Surface | Certified implementation state | Current boundary |
+|---|---|---|
+| A — Fields | **PASS — certified native V1 scope** | Broader provider/full parity remains gated |
+| B — Relations | **PASS — certified native V1 baseline** | Richer provider/parity remains gated |
+| C — Query | **PASS — certified bounded V1 baseline** | Public execution/full parity remains gated |
+| D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
+| E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
+| Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
+| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan and read-only CT1 introspection foundations promoted; mutation still blocked |
+
+`config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
+
+## Multi-agent development
+
+WPEssential uses one Supervisor plus as many conflict-safe Workers as the dependency graph allows.
+
+The authoritative queue is `config/coordination/agent-work-queue.json`.
+
+### Supervisor
 
 Start WPEssential Supervisor in AUTO mode.
 
-Read AUTO-AGENT.md and follow it completely.
+Read `AUTO-AGENT.md` completely. Reconcile current `main`, open PRs/MRs, active deterministic claim branches and the coordination queue before changing files. Take the highest-priority dependency-ready `SUPERVISOR_ONLY` slot first; if none exists, take the highest-priority valid `ANY` slot. The Supervisor owns shared truth, audit gates and merge serialization.
 
-Reconcile current main, open PRs/MRs, active claim branches and config/coordination/agent-work-queue.json before changing files.
-
-Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
-
-Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
-
-### 2. Uske baad jitne additional agents chaho start karo
-
-Agent 2, Agent 3, Agent 4... sab ko exactly same Worker command do:
+### Workers
 
 Start WPEssential Worker in AUTO mode.
 
-Read AUTO-AGENT.md and follow it completely.
+Read `AUTO-AGENT.md` completely. Inspect exact current `main` and the coordination queue, then claim only a dependency-ready free `ANY` slot using its deterministic remote branch. An existing claim branch means the slot is already owned. Workers must not invent speculative branches or edit Supervisor-owned shared truth.
 
-Autonomously inspect current main and config/coordination/agent-work-queue.json, then claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
-
-Do not ask me which module to work on unless repository evidence contains a genuine unresolved decision.
+Parallelism is encouraged only for non-overlapping dependency-safe lanes. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
 
 ## What WPEssential is
 
@@ -194,15 +146,18 @@ See `CONTRIBUTING.md` for contribution and WordPress.org release rules. The mand
 
 ## Current foundation evidence
 
-The shared Platform Foundation has passed module handoff. Surface 3 Fields Gate A, Surface 4 Relations Gate B, Surface 6 Query Gate C, Surface 8 Admin Columns Gate D and Surface 9 Dynamic Listings Gate E have each passed explicitly bounded V1 baseline gates; none of those passes means full product parity.
+Dynamic Listings final bounded closure: `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`.
 
-Dynamic Listings closure evidence is layered rather than inflated into one claim: earlier Definition/Query/state/scope/portability/accessibility/reference slices established the bounded common path; PRs #332–#335 promoted the production Component Blueprint Registry, Dynamic Value Router, Blueprint Renderer Dispatcher and presentation/runtime-state composition; PR #338 registered the neutral shared rendering services; PR #340 promoted the Pro `ListingsModule` on the existing activation/dependency lifecycle; PR #342 converted the real WordPress reference to the production shared runtime/module graph; PR #344 promoted the final bounded Gate E reconciliation. The final audit is `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`.
+Status Manager final bounded closure: `docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md`.
 
-Status closure evidence is similarly layered: PRs #349/#350/#353/#354/#356/#360/#362/#363 established the canonical bounded runtime graph; PR #370 added deterministic create-safe portability; PR #371 published the neutral shared Event/Audit services; PR #372 proved the production Status graph on the supported WordPress/PHP/MySQL/MariaDB matrix; PR #373 closed canonical admin authoring/accessibility; PR #375 added verified post-commit Status Event/Audit composition with retry-safe committed-observation semantics; PR #377 proved the final Event + persistent Audit composition on real WordPress. The final exact-main audit is `docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md`.
+Custom Tables dependency evidence currently includes:
 
-Deferred async/nested/builder/provider semantics, full Options Bank parity, workflow routing, notifications, Cron/Jobs ownership, provider-domain Status semantics, bulk Status transitions and release/deployment certification remain separate gates. No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim follows from these bounded passes.
+- `docs/IMPLEMENTATION/POST-STATUS-NEXT-GATE-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md` once Issue #392 is promoted.
 
-Hosted CI continues to provide architecture, PHP quality, WordPress/PHP/database compatibility, distributable-package and browser/accessibility evidence on certified exact heads where applicable. WordPress.org release readiness remains a separate gate and additionally requires the official Plugin Check / Directory compliance policy referenced above.
+Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
 ## Canonical planning maps
 

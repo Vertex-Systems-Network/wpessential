@@ -1,28 +1,28 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-08",
-  "queue_anchor_main_sha": "29c8a22b04f8fee64848f60161fc2e4eccab5b14",
-  "authoritative_rule": "Refresh exact main before selecting work. Fields/Relations/Query/Admin Columns/Dynamic Listings/Status remain PASS only for their explicitly certified bounded baselines. Surface 7 Custom Tables is the active dependency gate. Issue #382 / merged PR #383 promoted the DDL-free canonical table Definition + schema descriptor. Issue #385 / merged PR #387 promoted normalized observed schema plus pure desired-to-observed Migration Plan semantics. Issue #388 owns the post-plan exact-main audit. When this audit reconciliation promotes, the only authorized ANY implementation slot is custom-tables-readonly-introspection-v1 from Issue #389: trusted CT1/PT-E physical identity plus strictly read-only real schema observation. Physical SQL/DDL generation or execution, migration-run mutation, row CRUD/Data Source runtime, CT2/PT-D/CT3 runtime, external adoption, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README/CHECKPOINT/queue remain Supervisor-owned shared truth.",
+  "queue_anchor_main_sha": "9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6",
+  "authoritative_rule": "Refresh exact main before selecting work. Fields, Relations, Query, Admin Columns, Dynamic Listings and Status retain only their explicitly certified bounded baseline PASS claims. Surface 7 Custom Tables is ACTIVE / NOT PASS. PR #383 promoted the DDL-free canonical table Definition and descriptor, PR #387 promoted deterministic observed schema plus pure Migration Plan semantics, PR #390 promoted the post-plan audit, and PR #391 promoted trusted CT1/PT-E physical identity plus strictly read-only schema introspection. This Supervisor reconciliation authorizes only Issue #393 as the next ANY implementation lane: server-selected provider capability profile plus pure DDL compiler preview with zero database execution. Physical DDL execution, migration-run mutation, row CRUD/Data Source runtime, CT2/PT-D/CT3 runtime, external adoption, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README, CHECKPOINT and this queue are Supervisor-owned shared truth.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
-    "selection_rule": "Select only dependency-ready OPEN slots after exact-main/open-PR/remote-claim revalidation. While #388 is unpromoted, only the Custom Tables post-plan Supervisor audit is actionable. After #388 promotes, custom-tables-readonly-introspection-v1 is the only authorized ANY implementation slot. Do not infer a provider DDL compiler, migration executor, row runtime or another module from Options Bank order.",
+    "selection_rule": "Select only dependency-ready OPEN slots after exact-main, open-PR and remote-claim revalidation. After this Issue #392 reconciliation promotes, custom-tables-provider-ddl-compiler-v1 from Issue #393 is the only authorized ANY implementation slot. Do not infer a DDL executor, migration runner, precondition scanner, row runtime or another module from Options Bank order.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main at or after 29c8a22b04f8fee64848f60161fc2e4eccab5b14.",
-      "Read docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md, POST-STATUS-NEXT-GATE-AUDIT-V1.md, CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md and, after #388 promotion, CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md.",
+      "Resolve exact current main at or after 9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6.",
+      "Read docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md, docs/IMPLEMENTATION/POST-STATUS-NEXT-GATE-AUDIT-V1.md, docs/IMPLEMENTATION/CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md, docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md and docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md.",
       "For Custom Tables work, read CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md, CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md, CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md, CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md and CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md.",
       "Inspect deterministic claim branches before creating any claim."
     ],
     "revalidation_before_merge": [
-      "Reconcile latest main without force/history overwrite.",
-      "Reject overlap with another active slot or Supervisor-only shared truth.",
+      "Reconcile latest main without force or history overwrite.",
+      "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
-      "For the read-only introspection tranche, verify trusted CT1 per-site identity, no caller-controlled physical identifier/provider widening, and zero DDL/data-mutation path."
+      "For Issue #393 verify provider/version facts are trusted server inputs, identifiers come only from canonical descriptors/CT1 identity, blocked/R3/R4 plans cannot become executable statements, and the compiler path contains zero database execution or mutation primitive."
     ],
     "claim_branch_rule": "Create the exact claim_branch from exact current main without force; an existing branch means claimed."
   },
@@ -35,7 +35,7 @@
         "Pre-create blocked worker claims.",
         "Merge from agent report alone.",
         "Let workers edit shared truth.",
-        "Authorize physical Custom Tables DDL without separately audited observation, recovery and security boundaries."
+        "Authorize Custom Tables physical DDL execution without a separately promoted exact-main audit covering recovery, revalidation, authorization and execution semantics."
       ]
     },
     "WORKER": {
@@ -45,10 +45,9 @@
       "must_not": [
         "Claim SUPERVISOR_ONLY.",
         "Edit shared truth.",
-        "Invent another branch when a claim exists.",
-        "Add raw SQL/DDL/callback channels to Custom Tables.",
-        "Generate or execute physical DDL while only the read-only introspection lane is authorized.",
-        "Accept caller-controlled physical table names, prefixes, databases or provider selection."
+        "Invent another branch when a deterministic claim exists.",
+        "Execute provider SQL/DDL or data mutation while only the pure compiler preview lane is authorized.",
+        "Accept caller-controlled provider, version, database/schema, physical table name or raw SQL."
       ]
     }
   },
@@ -62,244 +61,6 @@
   ],
   "slots": [
     {
-      "priority": 450,
-      "slot_id": "status-entry-audit-v1",
-      "title": "Status Manager exact-main entry audit V1",
-      "role": "SUPERVISOR_ONLY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL_EVIDENCE",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #345 / merged PR #348",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "completion_condition": "Status bounded V1 entry matrix and first safe worker tranche promoted.",
-      "claim_branch": "supervisor/status-entry-audit-v1"
-    },
-    {
-      "priority": 460,
-      "slot_id": "status-definition-compiler-v1",
-      "title": "Status canonical definition + registration descriptor V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #346 / merged PR #349",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Canonical bounded Status definition/compiler descriptor promoted.",
-      "claim_branch": "agent/status-definition-compiler-v1"
-    },
-    {
-      "priority": 470,
-      "slot_id": "status-transition-policy-v1",
-      "title": "Status bounded pure transition policy model V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #347 / merged PR #350",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Fail-closed pure transition-policy model promoted.",
-      "claim_branch": "agent/status-transition-policy-v1"
-    },
-    {
-      "priority": 480,
-      "slot_id": "status-native-registration-v1",
-      "title": "Status native WordPress registration runtime V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #351 / merged PR #353",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Fail-closed native Status registrar promoted.",
-      "claim_branch": "agent/status-native-registration-v1"
-    },
-    {
-      "priority": 490,
-      "slot_id": "shared-post-resource-auth-v1",
-      "title": "Neutral WordPress post-resource authorization V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #352 / merged PR #354",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Shared object-level post authorization seam promoted.",
-      "claim_branch": "agent/shared-post-resource-auth-v1"
-    },
-    {
-      "priority": 500,
-      "slot_id": "status-transition-executor-v1",
-      "title": "Authorized Status transition executor V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #355 / merged PR #356",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Authorized stale-safe verified Status mutation promoted.",
-      "claim_branch": "agent/status-transition-executor-v1"
-    },
-    {
-      "priority": 510,
-      "slot_id": "status-transition-policy-definition-v1",
-      "title": "Persisted transition-policy Definition compiler/resolver V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #359 / merged PR #360",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Canonical persisted transition-policy resolver promoted.",
-      "claim_branch": "agent/status-transition-policy-definition-v1"
-    },
-    {
-      "priority": 520,
-      "slot_id": "shared-wordpress-auth-services-v1",
-      "title": "Publish shared WordPress authorization services V1",
-      "role": "SUPERVISOR_ONLY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #361 / merged PR #362",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Canonical capability-checker/post-resource services promoted.",
-      "claim_branch": "supervisor/shared-wordpress-auth-services-v1"
-    },
-    {
-      "priority": 530,
-      "slot_id": "status-module-ability-v1",
-      "title": "Status Pro module + transition Ability composition V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #357 / merged PR #363",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Production Status module/Ability/runtime graph promoted.",
-      "claim_branch": "agent/status-module-ability-v1"
-    },
-    {
-      "priority": 540,
-      "slot_id": "status-post-composition-audit-v2",
-      "title": "Status post-composition closure audit V2",
-      "role": "SUPERVISOR_ONLY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL_EVIDENCE",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #364 / merged PR #369",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "completion_condition": "Remaining bounded Status closure classes and safe parallel tranche promoted.",
-      "claim_branch": "supervisor/status-post-composition-audit-v2"
-    },
-    {
-      "priority": 550,
-      "slot_id": "status-admin-authoring-v1",
-      "title": "Status canonical admin authoring + accessibility V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #365 / merged PR #373",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Canonical accessible bounded Status admin authoring path promoted exact-head green.",
-      "claim_branch": "agent/status-admin-authoring-v1"
-    },
-    {
-      "priority": 560,
-      "slot_id": "status-portability-v1",
-      "title": "Status deterministic definition portability V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #366 / merged PR #370",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Create-safe deterministic Status portability promoted exact-head green.",
-      "claim_branch": "agent/status-portability-v1"
-    },
-    {
-      "priority": 570,
-      "slot_id": "status-production-reference-v1",
-      "title": "Status production real-WordPress reference evidence V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL_EVIDENCE",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #367 / merged PR #372",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "completion_condition": "Production Status runtime reference matrix promoted exact-head green.",
-      "claim_branch": "agent/status-production-reference-v1"
-    },
-    {
-      "priority": 580,
-      "slot_id": "shared-event-audit-services-v1",
-      "title": "Publish shared Event + Audit services V1",
-      "role": "SUPERVISOR_ONLY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #368 / merged PR #371",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Neutral canonical EventBus/AuditLogger production services promoted exact-head green.",
-      "claim_branch": "supervisor/shared-event-audit-services-v1"
-    },
-    {
-      "priority": 590,
-      "slot_id": "status-transition-event-audit-v1",
-      "title": "Status verified transition Event + Audit composition V1",
-      "role": "SUPERVISOR_ONLY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #374 / merged PR #375",
-      "dependencies": [],
-      "runtime_allowed": true,
-      "completion_condition": "Status consumes canonical Event/Audit services only after verified transition commits with retry-safe failure semantics.",
-      "claim_branch": "agent/status-transition-event-audit-v1"
-    },
-    {
-      "priority": 600,
-      "slot_id": "status-production-event-audit-reference-v1",
-      "title": "Status production Event + persistent Audit reference evidence V1",
-      "role": "ANY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL_EVIDENCE",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #376 / merged PR #377",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "completion_condition": "Real WordPress reference proves exactly-one Event/Audit success evidence and zero failure evidence on production services.",
-      "claim_branch": "agent/status-production-event-audit-reference-v1"
-    },
-    {
-      "priority": 610,
-      "slot_id": "status-final-closure-audit-v3",
-      "title": "Status V1 final exact-main closure audit + shared-truth reconciliation",
-      "role": "SUPERVISOR_ONLY",
-      "status": "DONE",
-      "work_mode": "HISTORICAL_EVIDENCE",
-      "parallel_class": "HISTORICAL_COMPLETED",
-      "source": "Issue #378 / merged PR #379",
-      "dependencies": [],
-      "runtime_allowed": false,
-      "completion_condition": "Status PASS FOR CERTIFIED BOUNDED V1 BASELINE and shared truth synchronized.",
-      "claim_branch": "supervisor/status-v1-final-closure-audit-v3"
-    },
-    {
       "priority": 620,
       "slot_id": "post-status-next-gate-entry-audit-v1",
       "title": "Post-Status exact-main next dependency gate audit V1",
@@ -310,7 +71,7 @@
       "source": "Issue #380 / merged PR #381",
       "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Surface 7 Custom Tables selected as next gate and first DDL-free Definition/compiler tranche explicitly authorized.",
+      "completion_condition": "Surface 7 Custom Tables selected as next dependency gate and first DDL-free Definition/compiler tranche authorized.",
       "claim_branch": "supervisor/post-status-next-gate-entry-audit-v1"
     },
     {
@@ -324,7 +85,7 @@
       "source": "Issue #382 / merged PR #383",
       "dependencies": [],
       "runtime_allowed": true,
-      "completion_condition": "Canonical Surface 7 table Definition compiler/descriptor promoted exact-head green with deterministic fingerprint and proof that Definition publication performs zero physical DDL.",
+      "completion_condition": "Canonical Surface 7 table Definition compiler/descriptor promoted exact-head green with deterministic fingerprint and zero physical DDL.",
       "claim_branch": "agent/custom-tables-definition-compiler-v1"
     },
     {
@@ -338,7 +99,7 @@
       "source": "Issue #384 / merged PR #386",
       "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Observed-schema + pure Migration Plan prerequisite selected as the only next Custom Tables lane; physical DDL remained blocked.",
+      "completion_condition": "Observed-schema plus pure Migration Plan prerequisite selected; physical DDL remained blocked.",
       "claim_branch": "supervisor/custom-tables-post-definition-audit-v1"
     },
     {
@@ -361,16 +122,12 @@
       "title": "Custom Tables post-plan next-lane audit V1",
       "role": "SUPERVISOR_ONLY",
       "status": "DONE",
-      "work_mode": "EVIDENCE_AND_COORDINATION",
-      "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Issue #388 / supervisor/custom-tables-post-plan-audit-v1; DONE when this reconciliation is promoted",
+      "work_mode": "HISTORICAL_EVIDENCE",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #388 / merged PR #390",
       "dependencies": [],
       "runtime_allowed": false,
-      "allowed_scope": [
-        "docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md",
-        "config/coordination/agent-work-queue.json"
-      ],
-      "completion_condition": "Trusted CT1 physical identity + strictly read-only real schema introspection selected as the only next Custom Tables lane; physical DDL remains blocked.",
+      "completion_condition": "Trusted CT1 physical identity plus strictly read-only real schema introspection selected; physical DDL remained blocked.",
       "claim_branch": "supervisor/custom-tables-post-plan-audit-v1"
     },
     {
@@ -378,31 +135,68 @@
       "slot_id": "custom-tables-readonly-introspection-v1",
       "title": "Custom Tables trusted CT1 identity + read-only schema introspection V1",
       "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #389 / merged PR #391",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Trusted per-site/per-Definition CT1 identity and real read-only MySQL/MariaDB schema observation feed the promoted normalizer deterministically, with missing/partial/unsupported metadata fail-closed and zero DDL/data mutation paths.",
+      "claim_branch": "agent/custom-tables-readonly-introspection-v1"
+    },
+    {
+      "priority": 680,
+      "slot_id": "custom-tables-post-introspection-audit-v1",
+      "title": "Custom Tables post-introspection next-lane audit V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "DONE",
+      "work_mode": "EVIDENCE_AND_COORDINATION",
+      "parallel_class": "SUPERVISOR_SERIALIZED",
+      "source": "Issue #392 / supervisor/custom-tables-post-introspection-audit-v1; DONE when this reconciliation is promoted",
+      "dependencies": [],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md",
+        "config/coordination/agent-work-queue.json",
+        "README.md",
+        "CHECKPOINT.md"
+      ],
+      "completion_condition": "Server-selected provider capability profile plus pure execution-free DDL compiler preview selected as the next serialized lane; physical mutation remains blocked.",
+      "claim_branch": "supervisor/custom-tables-post-introspection-audit-v1"
+    },
+    {
+      "priority": 690,
+      "slot_id": "custom-tables-provider-ddl-compiler-v1",
+      "title": "Custom Tables provider capability profile + pure DDL compiler preview V1",
+      "role": "ANY",
       "status": "OPEN",
       "work_mode": "IMPLEMENTATION",
       "parallel_class": "CUSTOM_TABLES_SERIALIZED_FOUNDATION",
-      "source": "Issue #389",
-      "dependencies": ["Issue #388 post-plan audit reconciliation promoted"],
+      "source": "Issue #393",
+      "dependencies": ["Issue #392 post-introspection audit reconciliation promoted"],
       "runtime_allowed": true,
       "allowed_scope": [
-        "frameworks/Modules/CustomTables/Schema/**",
+        "frameworks/Modules/CustomTables/Migration/**",
+        "narrowly scoped Custom Tables provider/compiler namespace",
         "tests/Unit/Modules/CustomTables/**",
-        "narrowly scoped Custom Tables real-database reference/integration tests and focused docs"
+        "focused non-shared implementation docs"
       ],
       "forbidden_scope": [
-        "provider SQL/DDL generation or CREATE/ALTER/DROP/RENAME/TRUNCATE/dbDelta execution",
-        "INSERT/UPDATE/DELETE/REPLACE row mutation",
-        "migration run persistence/execution/lease/applied-generation state",
+        "CREATE/ALTER/DROP/RENAME/TRUNCATE/dbDelta execution or generic DDL dispatch",
+        "database query execution from compiler output",
+        "migration run/applied-state persistence, leases or retry mutation",
+        "precondition data scans, backfill, deduplication, shadow-copy or swap",
+        "Backup/restore execution",
         "shared Platform database interface changes",
         "row CRUD/Data Source/Query provider runtime",
         "CT2/PT-D or CT3 runtime/topology conversion",
         "external table adoption",
-        "admin/REST/Backup integration",
-        "caller-controlled physical table/prefix/database/provider selection",
+        "admin/REST/Ability mutation surfaces",
+        "caller-controlled provider/version/database/schema/physical table name/raw SQL",
         "shared truth files"
       ],
-      "completion_condition": "Trusted per-site CT1 identity and real read-only MySQL/MariaDB schema observation feed the promoted normalizer deterministically, with missing-table and unsupported-metadata fail-closed evidence and zero DDL/data mutation paths.",
-      "claim_branch": "agent/custom-tables-readonly-introspection-v1"
+      "completion_condition": "Deterministic trusted MySQL/MariaDB capability profiles and pure provider statement previews/fingerprints compile only safe unblocked MigrationPlan operations, while blocked/manual-drift/R3-R4/unsupported semantics fail closed and no database execution dependency exists.",
+      "claim_branch": "agent/custom-tables-provider-ddl-compiler-v1"
     }
   ]
 }
