@@ -20,6 +20,10 @@ use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
+use WPEssential\Platform\Audit\AuditServices;
+use WPEssential\Platform\Audit\InMemoryAuditLogger;
+use WPEssential\Platform\Audit\Migrations\CreateAuditEventsTableMigration;
+use WPEssential\Platform\Audit\PersistentAuditLogger;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Cache\RequestLocalCache;
 use WPEssential\Platform\Database\Migrations\MigrationCoordinator;
@@ -33,6 +37,8 @@ use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\Definitions\Migrations\CreateDefinitionTablesMigration;
 use WPEssential\Platform\Definitions\PersistentDefinitionRepository;
 use WPEssential\Platform\Definitions\WpdbDefinitionTableGateway;
+use WPEssential\Platform\Events\EventBus;
+use WPEssential\Platform\Events\EventServices;
 use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
@@ -121,6 +127,10 @@ final class Plugin
         $cache = new RequestLocalCache();
 
         [$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
+        $events = new EventBus();
+        $audit = $database instanceof NativeWpdbAdapter
+            ? new PersistentAuditLogger($database)
+            : new InMemoryAuditLogger();
         $registrationProviders = new RegistrationDefinitionProviderRegistry();
         $registrationCompiler = new RegistrationCompiler($registrationStore);
         $registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
@@ -146,6 +156,8 @@ final class Plugin
         $services->set('platform.abilities.wordpress', $abilityBridge);
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
         $services->set(WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer);
+        $services->set(EventServices::BUS, $events);
+        $services->set(AuditServices::LOGGER, $audit);
         $services->set('platform.data-sources', $dataSources);
         $services->set('platform.cache', $cache);
         (new RenderingServiceRegistrar())->register($services);
@@ -221,6 +233,7 @@ final class Plugin
         $migrationCoordinator = new MigrationCoordinator($migrationRegistry, $migrationRunner);
         $migrationCoordinator->register(new CreateCompiledRegistrationTablesMigration($database));
         $migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
+        $migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
         $migrationCoordinator->runPending();
 
         $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
