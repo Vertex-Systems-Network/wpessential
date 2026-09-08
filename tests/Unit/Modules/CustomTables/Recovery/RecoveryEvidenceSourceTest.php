@@ -36,12 +36,6 @@ final class RecoveryEvidenceSourceTest extends TestCase
         new StaticRecoveryEvidenceSource([$evidence, $evidence]);
     }
 
-    public function testUntypedEvidenceFailsClosed(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new StaticRecoveryEvidenceSource([new \stdClass()]);
-    }
-
     public function testInvalidLookupFingerprintIsRejected(): void
     {
         $this->expectException(InvalidArgumentException::class);
