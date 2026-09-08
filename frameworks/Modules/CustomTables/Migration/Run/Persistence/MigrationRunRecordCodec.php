@@ -31,18 +31,16 @@ final class MigrationRunRecordCodec
     /** @return array<string,int|string> */
     public function encode(MigrationRun $run): array
     {
-        $canonical = $run->canonical();
-
         return [
             'storage_version' => self::STORAGE_VERSION,
-            'id' => $canonical['id'],
-            'plan_fingerprint' => $canonical['plan_fingerprint'],
-            'table_key' => $canonical['table_key'],
-            'target_definition_id' => $canonical['target_definition_id'],
-            'target_revision' => $canonical['target_revision'],
-            'target_schema_version' => $canonical['target_schema_version'],
-            'state' => $canonical['state'],
-            'state_revision' => $canonical['state_revision'],
+            'id' => strtolower($run->id),
+            'plan_fingerprint' => $run->planFingerprint,
+            'table_key' => $run->tableKey,
+            'target_definition_id' => strtolower($run->targetDefinitionId),
+            'target_revision' => $run->targetRevision,
+            'target_schema_version' => $run->targetSchemaVersion,
+            'state' => $run->state->value,
+            'state_revision' => $run->stateRevision,
         ];
     }
 
