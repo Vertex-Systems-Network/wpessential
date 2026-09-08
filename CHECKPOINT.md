@@ -1,23 +1,23 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-08**  
-Canonical audited base anchor: **`main @ cac9387f621d18ac03fc34d0f8724661f682d189`**  
+Canonical audited base anchor: **`main @ 18165d325dd97d6346ad2982a8464b450eb8273d`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 
 ## AI-Native mandatory work-cycle order
 
-Issue #415 / merged PR #416 promoted the canonical work-cycle rule in `AUTO-AGENT.md`, `AGENTS.md` and README:
+Issue #415 / merged PR #416 remains canonical:
 
 1. resolve exact current `main`;
 2. inspect and triage **OPEN Issues first**;
 3. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
-4. re-read active deterministic claim branches and `config/coordination/agent-work-queue.json`;
+4. re-read deterministic claim branches and `config/coordination/agent-work-queue.json`;
 5. only then claim/start new dependency-ready development;
 6. after meaningful completed work reaches a stable final state, the Supervisor reconciles README current status and its module-wise progress table/progress bars before reporting completion.
 
-Accepted issue/PR work must not be bypassed by speculative replacement branches. Merge order still follows dependencies, exact-head CI, review-thread cleanliness and shared-truth safety.
+Accepted issue/PR work must not be bypassed by speculative replacement branches. Merge order follows dependencies, latest-main reconciliation, exact-head CI, review-thread cleanliness and shared-truth safety.
 
 README percentages measure the currently approved/certified **bounded implementation milestone**, never full product parity unless machine-readable lifecycle state explicitly promotes that claim.
 
@@ -29,7 +29,7 @@ README percentages measure the currently approved/certified **bounded implementa
 - Admin Columns / Surface 8 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Dynamic Listings / Surface 9 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Status Manager / Surface 5 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**, final closure Issue #378 / merged PR #379.
-- Custom Tables / Surface 7 — **ACTIVE / NOT PASS**, bounded foundation/composition runway **90%** after Issue #431 / PR #432 promotes.
+- Custom Tables / Surface 7 — **ACTIVE / NOT PASS**, bounded runway **90%**. The post-hardening wave advances evidence but does not define a new percentage milestone.
 
 These bounded passes/progress values do not imply full Options Bank parity, `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release certification.
 
@@ -44,44 +44,63 @@ Promoted Surface 7 evidence includes:
 5. Issue #399 / PR #402 — immutable Migration Run state machine V1.
 6. Issue #400 / PR #403 — typed Precondition Contract V1.
 7. Issue #401 / PR #404 — Recovery + reviewed-source Revalidation V1.
-8. Issue #405 / PR #406 — post-prerequisite exact-main Supervisor audit.
-9. Issue #407 / PR #410 — Migration Run Repository Contract V1.
-10. Issue #408 / PR #411 — Precondition Evaluator V1.
-11. Issue #409 / PR #412 — Recovery Readiness V1.
-12. Issue #413 / PR #414 — post-contract-wave exact-main Supervisor audit and composition-wave coordination.
-13. Issue #415 / PR #416 — AI-Native issue-first/PR-second startup + README progress closeout governance.
-14. Issue #423 / PR #427 — Migration Run Transition Service V1.
-15. Issue #420 / PR #428 — Precondition Probe Registry V1.
-16. Issue #421 / PR #429 — Recovery Evidence Source Contract V1.
-17. Issue #422 / PR #430 — Migration Execution Readiness V1.
-18. Issue #431 / PR #432 — post-composition exact-main audit and shared-truth reconciliation; effective on promotion.
+8. Issue #407 / PR #410 — Migration Run Repository Contract V1.
+9. Issue #408 / PR #411 — Precondition Evaluator V1.
+10. Issue #409 / PR #412 — Recovery Readiness V1.
+11. Issue #413 / PR #414 — post-contract-wave exact-main audit.
+12. Issue #415 / PR #416 — AI-Native issue-first/PR-second startup + README progress closeout governance.
+13. Issue #423 / PR #427 — Migration Run Transition Service V1.
+14. Issue #420 / PR #428 — Precondition Probe Registry V1.
+15. Issue #421 / PR #429 — Recovery Evidence Source Contract V1.
+16. Issue #422 / PR #430 — Migration Execution Readiness V1.
+17. Issue #431 / merged PR #432 — post-composition exact-main audit and hardening-wave authorization.
+18. PR #437 — Migration Run Persistence Record Codec V1.
+19. PR #438 — Precondition Read-Only Probe Plan V1.
+20. Issue #435 / PR #439 — Recovery Evidence Binding/Freshness V1, promoted at `08f91e5c617b4e2b8de1f253568f3ddfc0802f96`.
+21. Issue #436 / PR #440 — Execution Authorization Envelope V1, promoted at `18165d325dd97d6346ad2982a8464b450eb8273d` after latest-main reconciliation and 4/4 exact-head CI.
+22. Issue #441 — post-hardening exact-main audit and shared-truth reconciliation; effective when promoted.
 
-Provider statements remain immutable review previews with `execution_allowed=false`. The promoted repository/transition/evaluator/registry/recovery/readiness contracts remain execution-free and contain no database-backed Custom Tables run persistence, direct row scanning, jobs/leases, Backup-provider calls or provider DDL dispatch.
+Provider statements remain immutable review previews with `execution_allowed=false`. The hardening wave adds deterministic run-record serialization, bounded precondition probe plans, recovery evidence binding/freshness and a post-readiness authorization envelope. It still does not execute provider DDL, scan live row data, trigger Backup side effects, schedule migration work or mutate managed target tables.
 
-The latest composition wave was serialized through latest-main reconciliation and exact-head CI: PR #427 merged at `de421bdf55779a5d9e5a5012e844668f302a0425`, PR #428 at `c89707662cc5f05edb836e04ac15e0d4d3f31b23`, PR #429 at `acffcab0dd2ad1bdbddc8fc34bb416dc64a232f3`, and PR #430 at `cac9387f621d18ac03fc34d0f8724661f682d189`.
+`frameworks/Platform/Database/Migrations/**` is the canonical generic Platform migration boundary. Custom Tables must compose `MigrationRegistry`, `MigrationRunner`, `MigrationCoordinator` and migration-state infrastructure rather than build a duplicate private migration engine.
 
-## Next authorized parallel wave
+## Next authorized work after Issue #441 promotes
 
-Issue #431 / PR #432 authorizes exactly four non-overlapping **execution-free hardening prerequisites**, only after this reconciliation promotes:
+### A — Internal Migration Run Store Schema + WPDB Repository V1 — serialized Supervisor integration
 
-1. **Run Persistence Record Codec V1** — deterministic immutable storage-row encode/decode with explicit versioning and invariant validation. No database adapter, table migration, SQL, jobs or leases.
-2. **Precondition Read-Only Probe Plan V1** — allowlisted typed bounded read-only probe-plan descriptors. No database execution, live row scan, raw user SQL, backfill or deduplication.
-3. **Recovery Evidence Binding/Freshness V1** — deterministic plan/provider binding and freshness/expiry decisions. No Backup provider calls, snapshot/restore or persistence.
-4. **Execution Authorization Envelope V1** — pure post-readiness authorization request/decision over bounded actor/capability/confirmation/risk facts. No Policy bypass, statement ownership, database access, jobs/leases or public endpoint.
+- internal WPE metadata table only;
+- bootstrap/versioning through canonical Platform migration infrastructure;
+- canonical `MigrationRunRepositoryInterface` create/get/CAS semantics;
+- use promoted persistence record codec for storage validation;
+- explicit site/network scope;
+- prepared values and controlled identifiers;
+- focused MySQL/MariaDB integration evidence.
 
-These lanes are conflict-safe because they own separate namespaces/responsibilities. `frameworks/Platform/Database/Migrations/**` is the canonical generic platform migration infrastructure; Custom Tables must compose with it rather than build a duplicate private migration engine.
+This lane may not execute a generated Custom Tables provider migration preview or mutate a managed target table.
 
-### Physical mutation remains blocked
+### B — Metadata-Only Precondition Probe Adapters V1 — parallel Worker
+
+Allowed first concrete probes are metadata-only: table existence/non-existence, trusted schema/column metadata match and already-observable provider capability facts. Live row-count/null/duplicate/range/max-length scans remain blocked.
+
+### C — Recovery Verification Provider Port V1 — parallel Worker
+
+Read/verify-only integration for an already-existing recovery artifact may produce bounded verification facts for the promoted binding/freshness model. Snapshot creation, chargeable provider side effects, restore and secret/provider payload persistence remain blocked.
+
+### D — Execution Authorization Policy Adapter V1 — parallel Worker
+
+Compose canonical WPE Policy/capability evaluation into the promoted execution authorization envelope so production boundaries do not trust caller-supplied authorization booleans. The adapter only produces bounded facts and cannot dispatch SQL, mutate capabilities, schedule jobs, expose public mutation or override R3/R4 denial.
+
+### Physical managed-table mutation remains blocked
 
 The current gate does not authorize:
 
-- dispatching `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` statements;
-- generic DDL execution through `$wpdb->query()` or shared database mutation APIs;
-- database-backed Custom Tables migration-run/applied-generation persistence;
-- leases/locks/retry workers or Action Scheduler execution;
-- direct row-count/null/duplicate/range/max-length precondition scans;
+- dispatching `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` against managed Custom Tables;
+- generic managed-table DDL execution through `$wpdb->query()` or shared database mutation APIs;
+- R3/R4 execution;
+- live row-count/null/duplicate/range/max-length scans;
+- Backup creation or restore side effects;
+- leases/locks/retry workers or Action Scheduler migration execution;
 - backfill, deduplication, shadow-copy or swap;
-- Backup creation/verification provider calls or restore execution;
 - row CRUD/Data Source/Query provider runtime;
 - CT2/PT-D or CT3 runtime/topology conversion;
 - external-table adoption;
@@ -99,16 +118,9 @@ At every invocation:
 - re-read current main/claims/queue;
 - only then claim dependency-ready work.
 
-After PR #432 promotes, the next dependency-ready deterministic worker branches are:
+After Issue #441 reconciliation promotes, Lane A is serialized/Supervisor-owned because it touches durable storage ownership and Platform migration composition. Lanes B, C and D are non-overlapping Worker lanes and may run in parallel.
 
-- `agent/custom-tables-run-persistence-record-codec-v1`;
-- `agent/custom-tables-precondition-readonly-probe-plan-v1`;
-- `agent/custom-tables-recovery-evidence-binding-freshness-v1`;
-- `agent/custom-tables-execution-authorization-envelope-v1`.
-
-No physical DDL executor, database-backed run repository, direct live scanner/backfill, lease/job runner or Backup execution branch may be speculatively pre-created.
-
-Workers may run in parallel only on non-overlapping owned namespaces. An existing deterministic claim branch means the slot is already owned. Shared truth files remain Supervisor-only.
+No managed-table DDL executor branch may be speculatively pre-created. Another exact-main Supervisor audit is mandatory after A–D promote before an R1/R2-only managed-table execution coordinator may open.
 
 ## Product / planning truth
 
@@ -123,11 +135,11 @@ The reviewed Bank surfaces and record counts are planning/research state and mus
 
 ## Current next action
 
-1. Promote Issue #431 / PR #432 after exact-head CI and review cleanliness.
-2. Re-read exact `main`, OPEN Issues and OPEN PRs/MRs.
-3. Claim only the four hardening branches authorized by the promoted post-composition audit.
-4. Develop and certify the four execution-free lanes independently in parallel.
-5. Merge each only after exact-head CI/review clean and latest-main reconciliation.
-6. After the wave promotes, update README module-wise progress again and run another exact-main Supervisor audit before concrete database-backed persistence, direct scans, Backup-provider integration, jobs/leases or physical DDL execution is authorized.
+1. Promote Issue #441 shared-truth reconciliation after exact-head review/CI requirements.
+2. Re-run mandatory exact-main → Issues → PR/MR preflight.
+3. Claim Lane A only as serialized Supervisor integration and Lanes B/C/D only on their deterministic non-overlapping branches.
+4. Merge each only after latest-main reconciliation, exact-head CI and clean review threads.
+5. Reconcile README module progress again after the next stable cycle.
+6. Run another exact-main Supervisor audit before any managed-table DDL execution coordinator is authorized.
 
 Repository evidence overrides conversational memory.
