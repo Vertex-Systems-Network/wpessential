@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Closure;
 use LogicException;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
@@ -28,6 +29,17 @@ final class StatusModule implements ModuleInterface
 {
     public const SERVICE_TRANSITION_EXECUTOR = 'module.status.transition-executor';
     public const ABILITY_TRANSITION = 'wpessential/status/transition';
+
+    /** @var Closure(DefinitionRepositoryInterface):StatusNativeRegistrar */
+    private Closure $registrarFactory;
+
+    /** @param null|callable(DefinitionRepositoryInterface):StatusNativeRegistrar $registrarFactory */
+    public function __construct(?callable $registrarFactory = null)
+    {
+        $this->registrarFactory = $registrarFactory !== null
+            ? Closure::fromCallable($registrarFactory)
+            : static fn (DefinitionRepositoryInterface $definitions): StatusNativeRegistrar => new StatusNativeRegistrar($definitions);
+    }
 
     public function manifest(): ModuleManifest
     {
@@ -61,7 +73,10 @@ final class StatusModule implements ModuleInterface
             resources: $resources,
             capabilities: $capabilities,
         );
-        $registrar = new StatusNativeRegistrar($definitions);
+        $registrar = ($this->registrarFactory)($definitions);
+        if (!$registrar instanceof StatusNativeRegistrar) {
+            throw new LogicException('Status registrar factory must return the canonical native registrar.');
+        }
         $handler = new StatusTransitionAbilityHandler($executor);
         $descriptor = new AbilityDescriptor(
             name: self::ABILITY_TRANSITION,
@@ -88,8 +103,8 @@ final class StatusModule implements ModuleInterface
             ],
         );
 
-        // Install the native registrar before publishing execution surfaces. Immediate hook
-        // installation failure is inspectable and must fail module boot without partial services.
+        // Hook installation occurs before execution surfaces are published. Immediate
+        // registration failure therefore leaves neither the Ability nor executor service visible.
         $registrar->register();
         if ($registrar->errors() !== []) {
             throw new LogicException('Status native registration hook could not be installed.');
