@@ -19,6 +19,9 @@ final class StaticRecoveryEvidenceSource implements RecoveryEvidenceSourceInterf
     public function __construct(array $evidence = [])
     {
         foreach ($evidence as $item) {
+            if (!$item instanceof RecoveryEvidence) {
+                throw new InvalidArgumentException('Custom Tables recovery evidence source requires typed evidence.');
+            }
             if (isset($this->evidenceByPlan[$item->planFingerprint])) {
                 throw new InvalidArgumentException('Custom Tables recovery evidence source contains duplicate plan evidence.');
             }
