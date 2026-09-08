@@ -1,27 +1,28 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-08",
-  "queue_anchor_main_sha": "6d57041df6746a6a83ca5af0aea71f97fa21e429",
-  "authoritative_rule": "Refresh exact main before selecting work. Gates A/B/C/D/E remain PASS only for their explicitly certified bounded baselines. Status Manager qualifies for PASS FOR CERTIFIED BOUNDED V1 BASELINE only when Issue #378 / the final Supervisor reconciliation is promoted. All Status implementation/reference lanes through PR #377 are historical completed work. No worker or Supervisor may infer the next runtime module from Options Bank ordering alone. After #378 promotes, the next development lane is a separately scoped exact-main Supervisor entry audit; until that audit is opened and authorized, there is NO_VALID_WORK_SLOT. RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README/CHECKPOINT/queue remain Supervisor-owned shared truth.",
+  "queue_anchor_main_sha": "cbd2b898847e206538086bd5033161caa506a8fb",
+  "authoritative_rule": "Refresh exact main before selecting work. Fields/Relations/Query/Admin Columns/Dynamic Listings/Status remain PASS only for their explicitly certified bounded baselines. Issue #380 selects Surface 7 Custom Tables as the next dependency-gated surface from exact main after Status closure. The only initial post-Status implementation lane authorized after #380 promotion is the DDL-free canonical table Definition + schema descriptor tranche. Physical table creation, schema migration execution, row CRUD/Data Source runtime and all destructive migration behavior remain separately serialized and blocked. RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README/CHECKPOINT/queue remain Supervisor-owned shared truth.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
-    "selection_rule": "Select only dependency-ready OPEN slots for the agent role after revalidating exact main, open PRs and remote claim branches. At this snapshot no post-Status implementation slot is authorized. A future post-Status entry audit must first be opened by the Supervisor from exact main after #378 promotion.",
+    "selection_rule": "Select only dependency-ready OPEN slots after exact-main/open-PR/remote-claim revalidation. Once Issue #380 promotes, custom-tables-definition-compiler-v1 is the only authorized ANY implementation slot. Do not infer another post-Status module or a physical DDL lane from Options Bank order.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
-      "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main at or after 6d57041df6746a6a83ca5af0aea71f97fa21e429.",
-      "Read docs/IMPLEMENTATION/STATUS-MANAGER-ENTRY-AUDIT-V1.md, STATUS-MANAGER-POST-COMPOSITION-AUDIT-V2.md and STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md when promoted.",
-      "Verify Status closure PRs #349, #350, #353, #354, #356, #360, #362, #363, #370, #371, #372, #373, #375 and #377 are promoted.",
+      "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
+      "Resolve exact current main at or after cbd2b898847e206538086bd5033161caa506a8fb.",
+      "Read docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md and, after #380 promotion, POST-STATUS-NEXT-GATE-AUDIT-V1.md.",
+      "For Custom Tables work, read CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md, CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md, CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md, CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md and CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md.",
       "Inspect deterministic claim branches before creating any claim."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force/history overwrite.",
       "Reject overlap with another active slot or Supervisor-only shared truth.",
-      "Require all applicable exact-head CI green and clean review threads."
+      "Require all applicable exact-head CI green and clean review threads.",
+      "For the first Custom Tables tranche, verify no physical DDL/table mutation path was introduced."
     ],
     "claim_branch_rule": "Create the exact claim_branch from exact current main without force; an existing branch means claimed."
   },
@@ -29,59 +30,34 @@
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
       "description": "Owns shared truth, exact-main audits, shared Platform integration and merge serialization.",
-      "may_claim": [
-        "SUPERVISOR_ONLY",
-        "ANY"
-      ],
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create blocked worker claims.",
         "Merge from agent report alone.",
         "Let workers edit shared truth.",
-        "Infer a new runtime dependency from Options Bank ordering without an exact-main entry audit."
+        "Authorize physical Custom Tables DDL without a separately audited recovery/security boundary."
       ]
     },
     "WORKER": {
       "start_mode": "AUTO",
       "description": "Claims one eligible non-overlapping ANY slot only after dependencies promote.",
-      "may_claim": [
-        "ANY"
-      ],
+      "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY.",
         "Edit shared truth.",
         "Invent another branch when a claim exists.",
-        "Widen Status into Workflow, Notifications, Cron/Jobs, Analytics, Ledger or provider-domain ownership.",
-        "Invent post-Status runtime work while the next entry audit is blocked."
+        "Add raw SQL/DDL/callback channels to the first Custom Tables Definition tranche.",
+        "Create/alter/drop a physical table while only the Definition/compiler lane is authorized."
       ]
     }
   },
   "historical_gate_evidence": [
-    {
-      "gate": "A",
-      "surface": "Fields",
-      "status": "PASS_CERTIFIED_NATIVE_V1"
-    },
-    {
-      "gate": "B",
-      "surface": "Relations",
-      "status": "PASS_CERTIFIED_NATIVE_V1"
-    },
-    {
-      "gate": "C",
-      "surface": "Query",
-      "status": "PASS_CERTIFIED_BOUNDED_V1"
-    },
-    {
-      "gate": "D",
-      "surface": "Admin Columns",
-      "status": "PASS_CERTIFIED_BOUNDED_V1"
-    },
-    {
-      "gate": "E",
-      "surface": "Dynamic Listings",
-      "status": "PASS_CERTIFIED_BOUNDED_V1",
-      "closure": "Issue #343 / merged PR #344"
-    }
+    {"gate":"A","surface":"Fields","status":"PASS_CERTIFIED_NATIVE_V1"},
+    {"gate":"B","surface":"Relations","status":"PASS_CERTIFIED_NATIVE_V1"},
+    {"gate":"C","surface":"Query","status":"PASS_CERTIFIED_BOUNDED_V1"},
+    {"gate":"D","surface":"Admin Columns","status":"PASS_CERTIFIED_BOUNDED_V1"},
+    {"gate":"E","surface":"Dynamic Listings","status":"PASS_CERTIFIED_BOUNDED_V1","closure":"Issue #343 / merged PR #344"},
+    {"gate":"STATUS","surface":"Status Manager","status":"PASS_CERTIFIED_BOUNDED_V1","closure":"Issue #378 / merged PR #379"}
   ],
   "slots": [
     {
@@ -314,18 +290,12 @@
       "title": "Status V1 final exact-main closure audit + shared-truth reconciliation",
       "role": "SUPERVISOR_ONLY",
       "status": "DONE",
-      "work_mode": "EVIDENCE_AND_COORDINATION",
-      "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Issue #378 / supervisor/status-v1-final-closure-audit-v3; DONE when this reconciliation is promoted",
+      "work_mode": "HISTORICAL_EVIDENCE",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #378 / merged PR #379",
       "dependencies": [],
       "runtime_allowed": false,
-      "allowed_scope": [
-        "docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md",
-        "config/coordination/agent-work-queue.json",
-        "README.md",
-        "CHECKPOINT.md"
-      ],
-      "completion_condition": "Status PASS FOR CERTIFIED BOUNDED V1 BASELINE and shared truth synchronized on promoted exact main.",
+      "completion_condition": "Status PASS FOR CERTIFIED BOUNDED V1 BASELINE and shared truth synchronized.",
       "claim_branch": "supervisor/status-v1-final-closure-audit-v3"
     },
     {
@@ -333,17 +303,46 @@
       "slot_id": "post-status-next-gate-entry-audit-v1",
       "title": "Post-Status exact-main next dependency gate audit V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "BLOCKED",
+      "status": "DONE",
       "work_mode": "EVIDENCE_AND_COORDINATION",
       "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Open a fresh Supervisor issue only after Issue #378 final reconciliation is promoted",
-      "dependencies": [
-        "Issue #378 final Status closure reconciliation promoted",
-        "Fresh exact-main Supervisor issue opened for the next dependency gate"
-      ],
+      "source": "Issue #380 / supervisor/post-status-next-gate-entry-audit-v1; DONE when this audit reconciliation is promoted",
+      "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Current architecture/roadmap is audited and the next dependency-safe tranche is explicitly authorized without inferring runtime order from Bank sequence.",
+      "allowed_scope": [
+        "docs/IMPLEMENTATION/POST-STATUS-NEXT-GATE-AUDIT-V1.md",
+        "config/coordination/agent-work-queue.json",
+        "CHECKPOINT.md"
+      ],
+      "completion_condition": "Surface 7 Custom Tables selected as next gate and first DDL-free Definition/compiler tranche explicitly authorized.",
       "claim_branch": "supervisor/post-status-next-gate-entry-audit-v1"
+    },
+    {
+      "priority": 630,
+      "slot_id": "custom-tables-definition-compiler-v1",
+      "title": "Custom Tables canonical table Definition + schema descriptor V1",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "IMPLEMENTATION",
+      "parallel_class": "CUSTOM_TABLES_SERIALIZED_FOUNDATION",
+      "source": "Open worker issue after Issue #380 audit promotion",
+      "dependencies": ["Issue #380 post-Status/Custom Tables entry audit promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "frameworks/Modules/CustomTables/Definition/**",
+        "tests/Unit/Modules/CustomTables/**",
+        "focused Custom Tables definition documentation only"
+      ],
+      "forbidden_scope": [
+        "physical CREATE/ALTER/DROP/rename/dbDelta execution",
+        "shared Platform database/migration implementation changes",
+        "row CRUD/Data Source runtime",
+        "external table adoption",
+        "admin/REST/portability/Backup integration",
+        "shared truth files"
+      ],
+      "completion_condition": "Canonical Surface 7 table Definition compiler/descriptor promoted exact-head green with deterministic fingerprint and proof that Definition publication performs zero physical DDL.",
+      "claim_branch": "agent/custom-tables-definition-compiler-v1"
     }
   ]
 }
