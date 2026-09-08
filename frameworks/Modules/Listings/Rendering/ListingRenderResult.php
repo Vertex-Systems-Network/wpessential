@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use InvalidArgumentException;
+use WPEssential\Modules\Listings\State\ListingRuntimeState;
 
 final readonly class ListingRenderResult
 {
@@ -19,6 +20,7 @@ final readonly class ListingRenderResult
         public array $assetHandles,
         public int $returned,
         public ?string $failureCode = null,
+        public ListingRuntimeState $state = ListingRuntimeState::Content,
     ) {
         if ($this->returned < 0) {
             throw new InvalidArgumentException('Listing render returned count must be non-negative.');
