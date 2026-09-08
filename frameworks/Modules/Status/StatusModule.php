@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
 
 use Closure;
 use LogicException;
+use WPEssential\Contracts\AuditLoggerInterface;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
@@ -18,13 +19,17 @@ use WPEssential\Modules\Status\Abilities\StatusTransitionAbilityHandler;
 use WPEssential\Modules\Status\Admin\StatusAdminAuthoringHandler;
 use WPEssential\Modules\Status\Admin\StatusAdminFallbackRenderer;
 use WPEssential\Modules\Status\Definition\StatusDefinitionCompiler;
+use WPEssential\Modules\Status\Events\StatusTransitionEvidencePublisher;
 use WPEssential\Modules\Status\Execution\StatusTransitionExecutor;
 use WPEssential\Modules\Status\Registration\StatusNativeRegistrar;
 use WPEssential\Modules\Status\Transition\Definition\PublishedStatusTransitionPolicyResolver;
 use WPEssential\Modules\Status\Transition\Definition\StatusTransitionPolicyDefinitionCompiler;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Auth\ExecutionChannel;
+use WPEssential\Platform\Events\EventBus;
+use WPEssential\Platform\Events\EventServices;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
@@ -77,6 +82,7 @@ final class StatusModule implements ModuleInterface
     {
         $this->assertOutputAvailable($services);
         [$definitions, $abilities, $capabilities, $resources] = $this->requireSharedServices($services);
+        [$events, $audit] = $this->requireObservationServices($services);
 
         if ($abilities->descriptor(self::ABILITY_TRANSITION) !== null) {
             throw new LogicException('Status transition Ability is already registered.');
@@ -88,6 +94,7 @@ final class StatusModule implements ModuleInterface
             policy: $policy,
             resources: $resources,
             capabilities: $capabilities,
+            evidence: new StatusTransitionEvidencePublisher($events, $audit),
         );
         $registrar = ($this->registrarFactory)($definitions);
         if (!$registrar instanceof StatusNativeRegistrar) {
@@ -237,6 +244,27 @@ final class StatusModule implements ModuleInterface
             ],
             default => throw new LogicException('Unsupported Status admin schema action.'),
         };
+    }
+
+    /** @return array{EventBus,AuditLoggerInterface} */
+    private function requireObservationServices(ServiceRegistryInterface $services): array
+    {
+        foreach ([EventServices::BUS, AuditServices::LOGGER] as $serviceId) {
+            if (!$services->has($serviceId)) {
+                throw new LogicException(sprintf('Status transitions require canonical shared service "%s".', $serviceId));
+            }
+        }
+
+        $events = $services->get(EventServices::BUS);
+        $audit = $services->get(AuditServices::LOGGER);
+        if (!$events instanceof EventBus) {
+            throw new LogicException('Status transitions require the canonical Platform EventBus.');
+        }
+        if (!$audit instanceof AuditLoggerInterface) {
+            throw new LogicException('Status transitions require the canonical Platform Audit logger contract.');
+        }
+
+        return [$events, $audit];
     }
 
     private function assertOutputAvailable(ServiceRegistryInterface $services): void

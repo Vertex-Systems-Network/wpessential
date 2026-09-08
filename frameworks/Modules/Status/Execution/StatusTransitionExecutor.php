@@ -16,6 +16,7 @@ use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Modules\Status\Definition\StatusDefinitionCompiler;
 use WPEssential\Modules\Status\Definition\StatusRegistrationDescriptor;
+use WPEssential\Modules\Status\Events\StatusTransitionEvidencePublisher;
 use WPEssential\Modules\Status\Transition\StatusTransitionPolicy;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\DefinitionStatus;
@@ -63,6 +64,7 @@ final class StatusTransitionExecutor
         ?callable $readPostType = null,
         ?callable $statusRegistered = null,
         ?callable $updatePostStatus = null,
+        private readonly ?StatusTransitionEvidencePublisher $evidence = null,
     ) {
         $this->readPostStatus = $readPostStatus !== null
             ? Closure::fromCallable($readPostStatus)
@@ -185,8 +187,7 @@ final class StatusTransitionExecutor
         }
 
         $normalizedReason = $reason === null ? null : trim($reason);
-
-        return new StatusTransitionExecutionResult(
+        $result = new StatusTransitionExecutionResult(
             postId: $postId,
             fromStatus: $currentStatus,
             toStatus: $targetStatus,
@@ -194,6 +195,10 @@ final class StatusTransitionExecutor
             reason: $normalizedReason,
             programmatic: $programmatic,
         );
+
+        $this->evidence?->publish($context, $result);
+
+        return $result;
     }
 
     /** @return array{string,string} */
