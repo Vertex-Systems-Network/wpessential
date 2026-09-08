@@ -28,7 +28,7 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README reconciliation anchor: `main @ bc82c77b84241b9b1ef86da39c31cf4c982658a1` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ e4cd9f0d3c1edd33836fb628c6958731bb252ecc` on **2026-09-08**. Issue #417 is a shared-truth reconciliation only; it does not change module percentages. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress
 
@@ -51,7 +51,7 @@ The Custom Tables 80% value is a bounded-track progress indicator for the curren
 
 ## AI-Native work-cycle order
 
-Every Supervisor/Worker cycle now follows this mandatory order from `AUTO-AGENT.md`:
+Every Supervisor/Worker cycle now follows this mandatory order from `AUTO-AGENT.md` and `AGENTS.md`:
 
 1. refresh exact current `main`;
 2. inspect and triage **OPEN Issues first**;
@@ -60,7 +60,7 @@ Every Supervisor/Worker cycle now follows this mandatory order from `AUTO-AGENT.
 5. only then start or claim new dependency-ready development;
 6. after the cycle reaches a stable final state, update this README status and module progress dashboard before reporting completion.
 
-This prevents accepted issue/PR work from being bypassed by newly invented branches and makes README progress reconciliation part of Definition of Done.
+Issue #415 / merged PR #416 promoted this rule. This prevents accepted issue/PR work from being bypassed by newly invented branches and makes README progress reconciliation part of Definition of Done.
 
 ## Current Custom Tables state
 
@@ -81,10 +81,11 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 13. **Precondition Evaluator V1** — Issue #408 / merged PR #411.
 14. **Recovery Readiness V1** — Issue #409 / merged PR #412.
 15. **Post-contract-wave exact-main audit V1** — Issue #413 / merged PR #414.
+16. **AI-Native issue-first/PR-second + README closeout governance** — Issue #415 / merged PR #416.
 
 The provider compiler still produces deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`; generated statements remain review-only and are never dispatched to the database by the certified bounded code. The promoted Run repository adds deterministic create/get/compare-and-swap semantics with optimistic `stateRevision` protection in an in-memory reference implementation only. The Precondition Evaluator composes typed injected probe results without direct database reads. Recovery Readiness evaluates bounded recovery evidence without invoking a Backup provider.
 
-The most recent contract wave was serialized through latest-main reconciliation and all applicable exact-head CI before merge. PR #410 promoted at `c140a2665a8ac0040dd923c707bf7315983350de`; PR #411 at `7ebc340d96c852dd3591686cf574cdf126ed9c97`; PR #412 at `f4c86e00ab71aa93032a13e7f506a01ee54b59a4`; Supervisor audit PR #414 then promoted at `bc82c77b84241b9b1ef86da39c31cf4c982658a1`.
+The most recent contract wave was serialized through latest-main reconciliation and all applicable exact-head CI before merge. PR #410 promoted at `c140a2665a8ac0040dd923c707bf7315983350de`; PR #411 at `7ebc340d96c852dd3591686cf574cdf126ed9c97`; PR #412 at `f4c86e00ab71aa93032a13e7f506a01ee54b59a4`; Supervisor audit PR #414 then promoted at `bc82c77b84241b9b1ef86da39c31cf4c982658a1`; AI-Native governance PR #416 promoted at `e4cd9f0d3c1edd33836fb628c6958731bb252ecc`.
 
 ### Still blocked
 
