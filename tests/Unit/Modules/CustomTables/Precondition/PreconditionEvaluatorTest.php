@@ -28,7 +28,7 @@ final class PreconditionEvaluatorTest extends TestCase
 
         $report = (new PreconditionEvaluator($probe))->evaluate([
             new PreconditionRequirement('table_exists', PreconditionKind::TableExists, 'table.orders'),
-            new PreconditionRequirement('row_limit', PreconditionKind::RowCountUnderThreshold, 'table.orders', ['max' => 10]),
+            new PreconditionRequirement('row_limit', PreconditionKind::RowCountRange, 'table.orders', ['max' => 10]),
         ]);
 
         self::assertSame(PreconditionOutcome::Blocked, $report->outcome());
