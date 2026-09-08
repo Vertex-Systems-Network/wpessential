@@ -12,6 +12,8 @@ use InvalidArgumentException;
 
 final readonly class Ct1ManagedTableIdentity
 {
+    private const NAMESPACE = 'wpe_';
+
     public function __construct(
         public string $tableKey,
         public string $sitePrefix,
@@ -32,8 +34,10 @@ final readonly class Ct1ManagedTableIdentity
         ) {
             throw new InvalidArgumentException('CT1 managed physical table name is invalid.');
         }
-        if (!str_starts_with($this->physicalName, $this->sitePrefix . 'wpe_')) {
-            throw new InvalidArgumentException('CT1 managed physical table name is outside the trusted WPE namespace.');
+
+        $expected = $this->sitePrefix . self::NAMESPACE . $this->tableKey;
+        if (!hash_equals($expected, $this->physicalName)) {
+            throw new InvalidArgumentException('CT1 managed physical table name does not match the canonical trusted mapping.');
         }
     }
 }
