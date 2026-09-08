@@ -47,33 +47,42 @@ $root = dirname(__DIR__, 4);
 require_once $root . '/vendor/autoload.php';
 
 use InvalidArgumentException;
+use LogicException;
 use WPEssential\Contracts\CapabilityCheckerInterface;
-use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
 use WPEssential\Contracts\DynamicValueResolverInterface;
+use WPEssential\Contracts\ModuleActivationPolicyInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\RendererInterface;
+use WPEssential\Kernel\Kernel;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\Listings\Definition\ListingDefinitionCompiler;
+use WPEssential\Modules\Listings\ListingsModule;
 use WPEssential\Modules\Listings\Presentation\ListingNoJsNavigation;
 use WPEssential\Modules\Listings\QueryBinding\ListingQueryBinding;
-use WPEssential\Modules\Listings\QueryBinding\ListingQueryReader;
 use WPEssential\Modules\Listings\Rendering\ListingServerRenderer;
 use WPEssential\Modules\Listings\Scope\ListingScopeGuard;
 use WPEssential\Modules\Listings\State\ListingPublicStateCodec;
 use WPEssential\Modules\Query\QueryModule;
+use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Assets\AssetRegistry;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
+use WPEssential\Platform\Components\ComponentBlueprintRegistry;
 use WPEssential\Platform\DataSources\DataSourceRegistry;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\DynamicValues\DynamicValueRequest;
 use WPEssential\Platform\DynamicValues\DynamicValueResult;
+use WPEssential\Platform\DynamicValues\DynamicValueRouter;
+use WPEssential\Platform\Modules\ModuleManifest;
+use WPEssential\Platform\Modules\ModuleState;
+use WPEssential\Platform\Rendering\BlueprintRendererDispatcher;
 use WPEssential\Platform\Rendering\RenderFailureCode;
 use WPEssential\Platform\Rendering\RenderInput;
 use WPEssential\Platform\Rendering\RenderOutput;
+use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 
 function listingsReferenceExpect(bool $condition, string $message): void
 {
@@ -137,31 +146,37 @@ $checker = new class($policyState) implements CapabilityCheckerInterface {
         return $this->state->allow && current_user_can($capability);
     }
 };
+$activationPolicy = new class implements ModuleActivationPolicyInterface {
+    public function allows(ModuleManifest $manifest): bool
+    {
+        return in_array($manifest->id, ['query', 'listings'], true);
+    }
+};
 
 $services = new ServiceRegistry();
 $dataSources = new DataSourceRegistry();
 $services->set('platform.data-sources', $dataSources);
 $services->set('platform.abilities.policy', new PolicyEngine($checker));
-(new QueryModule())->register($services);
+$services->set('platform.admin.assets', new AdminAssetManifest($root, 'https://example.test/wpessential'));
+(new RenderingServiceRegistrar())->register($services);
 
-$realQuery = $services->get(QueryModule::SERVICE_READ_CONSUMER);
-listingsReferenceExpect($realQuery instanceof QueryReadConsumerInterface, 'canonical Query read consumer must register');
-$trackedQuery = new class($realQuery) implements QueryReadConsumerInterface {
-    public int $readCalls = 0;
-
-    public function __construct(private QueryReadConsumerInterface $inner) {}
-
-    public function describe(string $sourceRef, ExecutionContext $context): array
-    {
-        return $this->inner->describe($sourceRef, $context);
-    }
-
-    public function read(array $request, ExecutionContext $context): array
-    {
-        ++$this->readCalls;
-        return $this->inner->read($request, $context);
-    }
-};
+$assets = $services->get(RenderingServiceRegistrar::SERVICE_ASSETS);
+$blueprints = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
+$dynamicValues = $services->get(RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES);
+$renderer = $services->get(RenderingServiceRegistrar::SERVICE_RENDERER);
+listingsReferenceExpect($assets instanceof AssetRegistry, 'production shared Asset Registry must be registered');
+listingsReferenceExpect(
+    $blueprints instanceof ComponentBlueprintRegistry,
+    'production shared Component Blueprint Registry must be registered',
+);
+listingsReferenceExpect(
+    $dynamicValues instanceof DynamicValueRouter,
+    'production shared Dynamic Value Router must be registered',
+);
+listingsReferenceExpect(
+    $renderer instanceof BlueprintRendererDispatcher,
+    'production shared Blueprint Renderer Dispatcher must be registered',
+);
 
 $blueprint = new ComponentBlueprintDescriptor(
     id: '22222222-2222-4222-8222-222222222222',
@@ -173,18 +188,9 @@ $blueprint = new ComponentBlueprintDescriptor(
         'badge' => 'string',
     ],
 );
-$blueprints = new class($blueprint) implements ComponentBlueprintRegistryInterface {
-    public function __construct(private ComponentBlueprintDescriptor $blueprint) {}
+$blueprints->register($blueprint);
 
-    public function get(string $blueprintId, int $revision): ?ComponentBlueprintDescriptor
-    {
-        return $blueprintId === $this->blueprint->id && $revision === $this->blueprint->revision
-            ? $this->blueprint
-            : null;
-    }
-};
-
-$dynamicValues = new class implements DynamicValueResolverInterface {
+$dynamicValueDelegate = new class implements DynamicValueResolverInterface {
     public bool $fail = false;
     public int $calls = 0;
 
@@ -209,8 +215,9 @@ $dynamicValues = new class implements DynamicValueResolverInterface {
         return new DynamicValueResult(true, $value, sourceEvidence: 'wordpress.post-meta');
     }
 };
+$dynamicValues->register('wordpress.post-meta', $dynamicValueDelegate);
 
-$renderer = new class implements RendererInterface {
+$rendererDelegate = new class implements RendererInterface {
     public bool $fail = false;
     public int $calls = 0;
 
@@ -229,6 +236,25 @@ $renderer = new class implements RendererInterface {
         );
     }
 };
+$renderer->register('listing.card', $rendererDelegate);
+
+$kernel = new Kernel(
+    services: $services,
+    moduleActivationPolicy: $activationPolicy,
+);
+$kernel->registerModule(new QueryModule());
+$kernel->registerModule(new ListingsModule());
+$kernel->boot();
+listingsReferenceExpect($kernel->modules()->state('query') === ModuleState::Booted, 'Query module must boot');
+listingsReferenceExpect($kernel->modules()->state('listings') === ModuleState::Booted, 'Listings module must boot');
+
+$realQuery = $services->get(QueryModule::SERVICE_READ_CONSUMER);
+listingsReferenceExpect($realQuery instanceof QueryReadConsumerInterface, 'canonical Query read consumer must register');
+$serverRenderer = $services->get(ListingsModule::SERVICE_SERVER_RENDERER);
+listingsReferenceExpect(
+    $serverRenderer instanceof ListingServerRenderer,
+    'Listings module must publish the production composed server renderer',
+);
 
 $definition = new Definition(
     id: '11111111-1111-4111-8111-111111111111',
@@ -260,7 +286,7 @@ $definition = new Definition(
     ],
     revision: 3,
 );
-$compiled = (new ListingDefinitionCompiler($blueprints, new AssetRegistry()))->compile($definition);
+$compiled = (new ListingDefinitionCompiler($blueprints, $assets))->compile($definition);
 listingsReferenceExpect(count($compiled->renderBindings) === 2, 'Published Listing must compile an explicit two-binding plan');
 listingsReferenceExpect(strlen($compiled->compatibilityFingerprint) === 64, 'compiled Listing fingerprint must be deterministic SHA-256 evidence');
 
@@ -288,12 +314,6 @@ $scopeGuard = new ListingScopeGuard();
 $scope = $scopeGuard->fromContext($context, $state->parameters);
 $scopeGuard->assertMatches($scope, $context);
 
-$serverRenderer = new ListingServerRenderer(
-    new ListingQueryReader($trackedQuery),
-    $blueprints,
-    $renderer,
-    $dynamicValues,
-);
 $result = $serverRenderer->render($compiled, $binding, $state->parameters, $context);
 listingsReferenceExpect($result->success, 'real WordPress Listings composed SSR must succeed');
 listingsReferenceExpect($result->returned === 2, 'published filter must return exactly the two published reference posts');
@@ -302,10 +322,14 @@ listingsReferenceExpect(str_contains($result->html, 'Beta Listing'), 'SSR must i
 listingsReferenceExpect(!str_contains($result->html, 'Draft Listing'), 'SSR must exclude draft WordPress rows through canonical Query authorization/filtering');
 listingsReferenceExpect(str_contains($result->html, 'Gold &amp; Verified'), 'shared Renderer must escape real WordPress Dynamic Value content');
 listingsReferenceExpect($result->assetHandles === ['wpe-card'], 'renderer asset evidence must remain deterministic');
-listingsReferenceExpect($renderer->calls === 2 && $dynamicValues->calls === 2, 'each authorized row must resolve and render exactly once');
-listingsReferenceExpect($trackedQuery->readCalls === 1, 'one Listing render must execute exactly one canonical Query consumer read');
+listingsReferenceExpect(
+    $rendererDelegate->calls === 2 && $dynamicValueDelegate->calls === 2,
+    'each authorized row must resolve and render exactly once through production dispatchers',
+);
 
-$beforeScopeRead = $trackedQuery->readCalls;
+$policyEventsBeforeScope = count($policyState->events);
+$dynamicCallsBeforeScope = $dynamicValueDelegate->calls;
+$rendererCallsBeforeScope = $rendererDelegate->calls;
 $scopeRejected = false;
 try {
     $scopeGuard->fromContext($context, ['site_id' => 999]);
@@ -313,7 +337,12 @@ try {
     $scopeRejected = true;
 }
 listingsReferenceExpect($scopeRejected, 'public site scope injection must fail closed');
-listingsReferenceExpect($trackedQuery->readCalls === $beforeScopeRead, 'scope injection must fail before Query execution');
+listingsReferenceExpect(
+    count($policyState->events) === $policyEventsBeforeScope
+    && $dynamicValueDelegate->calls === $dynamicCallsBeforeScope
+    && $rendererDelegate->calls === $rendererCallsBeforeScope,
+    'scope injection must fail before Query Policy, Dynamic Value or Renderer execution',
+);
 
 $policyState->allow = false;
 $policyState->events = [];
@@ -322,16 +351,31 @@ listingsReferenceExpect(!$denied->success && $denied->html === '' && $denied->re
 listingsReferenceExpect(in_array('policy:read', $policyState->events, true), 'canonical Query Policy must be consulted on denied Listing execution');
 $policyState->allow = true;
 
-$dynamicValues->fail = true;
-$rendererCallsBeforeDynamicFailure = $renderer->calls;
+$dynamicValueDelegate->fail = true;
+$rendererCallsBeforeDynamicFailure = $rendererDelegate->calls;
 $dynamicFailure = $serverRenderer->render($compiled, $binding, $state->parameters, $context);
 listingsReferenceExpect(!$dynamicFailure->success && $dynamicFailure->html === '' && $dynamicFailure->returned === 0, 'unresolved Dynamic Value must fail the whole Listing closed');
-listingsReferenceExpect($renderer->calls === $rendererCallsBeforeDynamicFailure, 'unresolved Dynamic Value must fail before shared Renderer invocation');
-$dynamicValues->fail = false;
+listingsReferenceExpect($rendererDelegate->calls === $rendererCallsBeforeDynamicFailure, 'unresolved Dynamic Value must fail before shared Renderer invocation');
+$dynamicValueDelegate->fail = false;
 
-$renderer->fail = true;
+$rendererDelegate->fail = true;
 $renderFailure = $serverRenderer->render($compiled, $binding, $state->parameters, $context);
 listingsReferenceExpect(!$renderFailure->success && $renderFailure->html === '' && $renderFailure->returned === 0, 'shared Renderer failure must not leak partial Listing HTML');
-$renderer->fail = false;
+$rendererDelegate->fail = false;
 
-fwrite(STDOUT, "WPEssential Listings real-WordPress reference application PASS\n");
+$missingRuntimeServices = new ServiceRegistry();
+$missingRuntimeServices->set(QueryModule::SERVICE_READ_CONSUMER, $realQuery);
+$missingRuntimeRejected = false;
+try {
+    (new ListingsModule())->register($missingRuntimeServices);
+} catch (LogicException) {
+    $missingRuntimeRejected = true;
+}
+listingsReferenceExpect($missingRuntimeRejected, 'missing production shared runtime must reject Listings registration');
+listingsReferenceExpect(
+    !$missingRuntimeServices->has(ListingsModule::SERVICE_QUERY_READER)
+    && !$missingRuntimeServices->has(ListingsModule::SERVICE_SERVER_RENDERER),
+    'missing shared runtime must not publish a private Listings fallback',
+);
+
+fwrite(STDOUT, "WPEssential Listings real-WordPress production-runtime reference application PASS\n");
