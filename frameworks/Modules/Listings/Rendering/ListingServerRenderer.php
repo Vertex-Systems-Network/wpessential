@@ -256,13 +256,25 @@ final readonly class ListingServerRenderer
             $code = 'listing_failure';
         }
 
+        $state = in_array(
+            $code,
+            [
+                'missing_blueprint',
+                'unsupported_value_source',
+                'dependency_mismatch',
+                'dynamic_value_failure',
+                'renderer_failure',
+            ],
+            true,
+        ) ? ListingRuntimeState::Degraded : ListingRuntimeState::Error;
+
         return new ListingRenderResult(
             false,
             '',
             [],
             0,
             $code,
-            ListingRuntimeState::Error,
+            $state,
         );
     }
 }
