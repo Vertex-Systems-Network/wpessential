@@ -71,8 +71,12 @@ final readonly class StatusTransitionPolicy
         return true;
     }
 
-    public function acceptsReason(StatusTransitionRule $rule, ?string $reason): bool
+    public function acceptsReason(string $from, string $to, ?string $reason): bool
     {
+        $rule = $this->ruleFor($from, $to);
+        if ($rule === null) {
+            return false;
+        }
         if ($reason === null) {
             return !$rule->reasonRequired;
         }
