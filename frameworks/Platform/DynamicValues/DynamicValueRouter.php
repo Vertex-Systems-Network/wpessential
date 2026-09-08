@@ -25,8 +25,8 @@ final class DynamicValueRouter implements DynamicValueResolverInterface
         if ($sourceRef === '' || strlen($sourceRef) > 160 || !preg_match('/^[a-zA-Z0-9_.:-]+$/', $sourceRef)) {
             throw new InvalidArgumentException('Dynamic Value source reference is invalid.');
         }
-        if ($resolver === $this) {
-            throw new InvalidArgumentException('Dynamic Value router cannot register itself as a source resolver.');
+        if ($resolver instanceof self) {
+            throw new InvalidArgumentException('Dynamic Value routers cannot be chained as source resolvers.');
         }
         if (isset($this->resolvers[$sourceRef])) {
             throw new RuntimeException('Dynamic Value source resolver is already registered.');
