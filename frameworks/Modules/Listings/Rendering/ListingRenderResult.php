@@ -28,8 +28,14 @@ final readonly class ListingRenderResult
         if ($this->success && $this->failureCode !== null) {
             throw new InvalidArgumentException('Successful Listing render cannot carry a failure code.');
         }
+        if ($this->success && !in_array($this->state, [ListingRuntimeState::Content, ListingRuntimeState::Empty], true)) {
+            throw new InvalidArgumentException('Successful Listing render must use a content or empty runtime state.');
+        }
         if (!$this->success && ($this->html !== '' || $this->assetHandles !== [] || $this->returned !== 0 || $this->failureCode === null)) {
             throw new InvalidArgumentException('Failed Listing render must fail closed.');
+        }
+        if (!$this->success && !in_array($this->state, [ListingRuntimeState::Error, ListingRuntimeState::Degraded], true)) {
+            throw new InvalidArgumentException('Failed Listing render must use an error or degraded runtime state.');
         }
         if ($this->failureCode !== null && !preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $this->failureCode)) {
             throw new InvalidArgumentException('Listing render failure code must be a safe semantic identifier.');
