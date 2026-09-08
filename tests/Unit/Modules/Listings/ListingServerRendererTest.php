@@ -14,6 +14,7 @@ use WPEssential\Modules\Listings\Definition\ListingRenderBinding;
 use WPEssential\Modules\Listings\QueryBinding\ListingQueryBinding;
 use WPEssential\Modules\Listings\QueryBinding\ListingQueryReader;
 use WPEssential\Modules\Listings\Rendering\ListingServerRenderer;
+use WPEssential\Modules\Listings\State\ListingRuntimeState;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
@@ -33,6 +34,7 @@ final class ListingServerRendererTest extends TestCase
         $result = $service->render($this->descriptor(), $this->binding(), [], $this->context());
 
         self::assertTrue($result->success);
+        self::assertSame(ListingRuntimeState::Content, $result->state);
         self::assertSame(1, $result->returned);
         self::assertStringContainsString('<strong>Hello:VIP-7</strong>', $result->html);
         self::assertSame(['wpe-listing', 'wpe-card'], $result->assetHandles);
@@ -47,6 +49,7 @@ final class ListingServerRendererTest extends TestCase
         $result = $service->render($this->descriptor(), $binding, [], $this->context());
 
         self::assertFalse($result->success);
+        self::assertSame(ListingRuntimeState::Error, $result->state);
         self::assertSame('query_projection_binding_mismatch', $result->failureCode);
     }
 
@@ -60,8 +63,28 @@ final class ListingServerRendererTest extends TestCase
         $result = $service->render($this->descriptor(), $this->binding(), [], $this->context());
 
         self::assertFalse($result->success);
+        self::assertSame(ListingRuntimeState::Degraded, $result->state);
         self::assertSame(RenderFailureCode::UnsupportedValueSource->value, $result->failureCode);
         self::assertSame(0, $renderer->calls);
+    }
+
+    public function testEmptyAuthorizedResultUsesExplicitEmptyState(): void
+    {
+        $query = new ListingPlanQueryConsumer();
+        $query->emptyRows = true;
+        $service = new ListingServerRenderer(
+            new ListingQueryReader($query),
+            new ListingPlanBlueprintRegistry(),
+            new ListingPlanRenderer(),
+            new ListingPlanDynamicValues(),
+        );
+
+        $result = $service->render($this->descriptor(), $this->binding(), [], $this->context());
+
+        self::assertTrue($result->success);
+        self::assertSame(ListingRuntimeState::Empty, $result->state);
+        self::assertSame(0, $result->returned);
+        self::assertStringContainsString('role="status"', $result->html);
     }
 
     public function testFailsClosedWhenResourceIdRowFieldIsMissing(): void
@@ -78,6 +101,7 @@ final class ListingServerRendererTest extends TestCase
         $result = $service->render($this->descriptor(), $this->binding(), [], $this->context());
 
         self::assertFalse($result->success);
+        self::assertSame(ListingRuntimeState::Error, $result->state);
         self::assertSame('missing_dynamic_resource_id', $result->failureCode);
     }
 
@@ -95,6 +119,7 @@ final class ListingServerRendererTest extends TestCase
         $result = $service->render($this->descriptor(), $this->binding(), [], $this->context());
 
         self::assertTrue($result->success);
+        self::assertSame(ListingRuntimeState::Content, $result->state);
         self::assertSame(2, $result->returned);
         self::assertStringContainsString('<strong>Hello:VIP-7</strong>', $result->html);
         self::assertStringContainsString('<strong>World:VIP-8</strong>', $result->html);
@@ -157,6 +182,7 @@ final class ListingPlanQueryConsumer implements QueryReadConsumerInterface
 {
     public bool $omitId = false;
     public bool $twoRows = false;
+    public bool $emptyRows = false;
 
     public function describe(string $sourceRef, ExecutionContext $context): array
     {
@@ -176,11 +202,11 @@ final class ListingPlanQueryConsumer implements QueryReadConsumerInterface
 
     public function read(array $request, ExecutionContext $context): array
     {
-        $rows = [['title' => 'Hello', 'id' => 7]];
+        $rows = $this->emptyRows ? [] : [['title' => 'Hello', 'id' => 7]];
         if ($this->twoRows) {
             $rows[] = ['title' => 'World', 'id' => 8];
         }
-        if ($this->omitId) {
+        if ($this->omitId && isset($rows[0])) {
             unset($rows[0]['id']);
         }
         return [
