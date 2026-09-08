@@ -28,7 +28,7 @@ These files complement existing architecture/module/security ADRs; they do not r
 
 For every meaningful task:
 
-**Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement → Test → Attack → Review → Harden → Document → Commit → Checkpoint → Report**
+**Refresh Main → Issues First → PRs/MRs Second → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement → Test → Attack → Review → Harden → Document → Commit → Checkpoint → README Progress Reconciliation → Report**
 
 Do not jump from requirement to code when architecture, data, security, compatibility, dependency, migration or approval decisions are involved.
 
@@ -72,12 +72,17 @@ Before coding:
 4. Detect actual project state, execution mode and available capabilities.
 5. Read the relevant product/module/architecture docs.
 6. Read applicable ADRs.
-7. Inspect current VCS status/branch/revision and recent relevant history where accessible.
-8. Inspect relevant existing implementation and tests.
-9. Identify unfinished work, baseline failures and known risks.
-10. Verify available build/test commands and applicable FAST/FULL gates.
-11. Re-run relevant validation if the checkpoint is stale or uncertain and execution is authorized.
-12. Only then plan/implement within the approved scope.
+7. Resolve exact current `main`/VCS revision and inspect recent relevant history where accessible.
+8. **Inspect OPEN Issues first.** Triage dependency-ready/accepted unfinished issues and continue/solve them before inventing new work.
+9. **Inspect OPEN PRs/MRs second.** Review mergeability, exact-head CI, review threads, conflicts and dependencies; fix stale/failing accepted PRs and merge merge-ready work before starting new implementation.
+10. Re-read active deterministic claim branches and `config/coordination/agent-work-queue.json` after issue/PR reconciliation.
+11. Inspect relevant existing implementation and tests.
+12. Identify unfinished work, baseline failures and known risks.
+13. Verify available build/test commands and applicable FAST/FULL gates.
+14. Re-run relevant validation if the checkpoint is stale or uncertain and execution is authorized.
+15. Only then plan/implement within the approved scope.
+
+An issue already represented by an open PR/MR must not be duplicated by a new branch unless repository evidence explicitly supersedes the existing path. PR/MR-first cleanup after issue triage does not authorize unsafe merges; all dependency, review and exact-head gates remain mandatory.
 
 ## Existing-project adoption protocol
 
@@ -102,12 +107,15 @@ Classify newly discovered gaps as:
 
 When resuming work:
 
-1. verify latest checkpoint;
-2. inspect commits since it;
-3. verify actual files and tests/evidence;
-4. verify current approval/work lifecycle state;
-5. identify partial/failed work and baseline failures;
-6. continue from the safest verified point.
+1. verify latest checkpoint and exact current main;
+2. inspect OPEN Issues first;
+3. inspect/fix/merge eligible OPEN PRs/MRs second;
+4. inspect commits since the checkpoint and queue anchor;
+5. verify actual files and tests/evidence;
+6. verify current approval/work lifecycle state;
+7. identify partial/failed work and baseline failures;
+8. re-read active deterministic claims/queue after any accepted merge;
+9. continue from the safest verified point.
 
 Never restart completed work without evidence that it is invalid.
 
@@ -404,9 +412,12 @@ Update the relevant:
 - migration notes;
 - changelog/release notes;
 - troubleshooting;
-- checkpoint.
+- checkpoint;
+- README current module progress/status dashboard after meaningful completed work cycles.
 
 Do not create documentation for volume; it must help the next engineer make a correct decision.
+
+README progress percentages must be evidence-based and scoped to the currently approved/certified bounded implementation milestone. Do not present a bounded baseline percentage as full product parity. Planning-only modules without a defined implementation baseline must not receive fabricated percentages.
 
 ## ADR policy
 
@@ -453,11 +464,17 @@ After a meaningful unit of work update `CHECKPOINT.md` with:
 - approvals/blockers/risks;
 - exact next safe action.
 
+At stable cycle closeout the Supervisor also updates README current main/status and its module-wise progress table/progress bars. A Worker that cannot edit shared truth reports this as an Integration Requirement rather than skipping it.
+
 Before a long/risky operation create or confirm a recoverable VCS point.
 
 ## AI-native rules
 
 AI must compose approved WPEssential actions; it must not become a privileged execution channel.
+
+AI-Native work control also obeys the mandatory operational order:
+
+**Exact Main → OPEN Issues → OPEN PRs/MRs → Claims/Queue → New Development → Exact-Head Verification/Merge → README Module Progress Reconciliation → Report**
 
 Where practical expose operations as typed WordPress Abilities with:
 - stable name;
@@ -562,6 +579,8 @@ when useful.
 
 A task is **DONE** only when applicable approved implementation, integration, security, errors, data integrity, performance, tests, documentation, VCS history, checkpoint, migration/recovery and observability are complete and verified.
 
+For a meaningful completed work cycle, Definition of Done also includes Supervisor reconciliation of README current status and module-wise progress bars/table, or an explicit durable blocker explaining why that shared-truth update could not be made.
+
 Otherwise report `PARTIALLY_COMPLETE`, `VERIFYING`, `BLOCKED` or another truthful lifecycle state.
 
 ## End-of-task engineering report
@@ -577,6 +596,7 @@ Concisely report:
 - **Affected areas**
 - **VCS/commit**
 - **Documentation/Memory updated**
+- **README module progress updated**
 - **Known issues**
 - **Not verified**
 - **Next safe action**

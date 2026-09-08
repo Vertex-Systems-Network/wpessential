@@ -28,7 +28,39 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README reconciliation anchor: `main @ f4c86e00ab71aa93032a13e7f506a01ee54b59a4` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README reconciliation anchor: `main @ bc82c77b84241b9b1ef86da39c31cf4c982658a1` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+
+## Module implementation progress
+
+This dashboard is mandatory AI-Native closeout truth. It is updated after meaningful completed work cycles.
+
+**Progress percentages below measure the currently approved/certified bounded implementation milestone for that module, not full product parity.** A 100% row means its explicitly named bounded/native baseline is certified; it does **not** imply `PRODUCT_PARITY_CERTIFIED`, deployment or release readiness. Planning-only surfaces without a defined implementation baseline are intentionally not assigned fabricated percentages here.
+
+| Module / Surface | Lifecycle | Progress | Latest evidence | Next gate |
+|---|---|---:|---|---|
+| Platform Foundation | PASS for module handoff | `██████████ 100%` | WP121 / foundation evidence | Broader platform work only when a dependent module requires it |
+| Fields / Surface 3 | PASS — certified native V1 | `██████████ 100%` | Gate A | Broader provider/full parity remains gated |
+| Relations / Surface 4 | PASS — certified native V1 | `██████████ 100%` | Gate B | Richer provider/full parity remains gated |
+| Status Manager / Surface 5 | PASS — certified bounded V1 | `██████████ 100%` | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
+| Query / Surface 6 | PASS — certified bounded V1 | `██████████ 100%` | Gate C | Public execution/full parity remains gated |
+| Custom Tables / Surface 7 | ACTIVE / NOT PASS | `████████░░ 80%` | through Issue #413 / PR #414 | Four execution-free composition lanes; physical mutation remains blocked |
+| Admin Columns / Surface 8 | PASS — certified bounded V1 | `██████████ 100%` | Gate D | No unbounded mass-edit/provider-wide parity claim |
+| Dynamic Listings / Surface 9 | PASS — certified bounded V1 | `██████████ 100%` | Issue #343 / PR #344 | Richer async/builder parity remains gated |
+
+The Custom Tables 80% value is a bounded-track progress indicator for the currently authorized V1 foundation/composition runway; it is not a claim that 80% of all future Custom Tables product parity is implemented.
+
+## AI-Native work-cycle order
+
+Every Supervisor/Worker cycle now follows this mandatory order from `AUTO-AGENT.md`:
+
+1. refresh exact current `main`;
+2. inspect and triage **OPEN Issues first**;
+3. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
+4. re-read active deterministic claims and the coordination queue;
+5. only then start or claim new dependency-ready development;
+6. after the cycle reaches a stable final state, update this README status and module progress dashboard before reporting completion.
+
+This prevents accepted issue/PR work from being bypassed by newly invented branches and makes README progress reconciliation part of Definition of Done.
 
 ## Current Custom Tables state
 
@@ -48,11 +80,11 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 12. **Migration Run Repository Contract V1** — Issue #407 / merged PR #410.
 13. **Precondition Evaluator V1** — Issue #408 / merged PR #411.
 14. **Recovery Readiness V1** — Issue #409 / merged PR #412.
-15. **Post-contract-wave exact-main audit V1** — Issue #413; this Supervisor reconciliation authorizes the next bounded execution-free composition wave when promoted.
+15. **Post-contract-wave exact-main audit V1** — Issue #413 / merged PR #414.
 
 The provider compiler still produces deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`; generated statements remain review-only and are never dispatched to the database by the certified bounded code. The promoted Run repository adds deterministic create/get/compare-and-swap semantics with optimistic `stateRevision` protection in an in-memory reference implementation only. The Precondition Evaluator composes typed injected probe results without direct database reads. Recovery Readiness evaluates bounded recovery evidence without invoking a Backup provider.
 
-The most recent contract wave was serialized through latest-main reconciliation and all applicable exact-head CI before merge. PR #410 promoted at `c140a2665a8ac0040dd923c707bf7315983350de`; PR #411 at `7ebc340d96c852dd3591686cf574cdf126ed9c97`; PR #412 at `f4c86e00ab71aa93032a13e7f506a01ee54b59a4` after its final exact head `cb4d92bbe94ed5c18aa7f8cde4ce5c48734f1d20` passed PHP Quality Toolchain, Architecture Guards, Platform Compatibility Matrix and Distributable Package with zero review threads.
+The most recent contract wave was serialized through latest-main reconciliation and all applicable exact-head CI before merge. PR #410 promoted at `c140a2665a8ac0040dd923c707bf7315983350de`; PR #411 at `7ebc340d96c852dd3591686cf574cdf126ed9c97`; PR #412 at `f4c86e00ab71aa93032a13e7f506a01ee54b59a4`; Supervisor audit PR #414 then promoted at `bc82c77b84241b9b1ef86da39c31cf4c982658a1`.
 
 ### Still blocked
 
@@ -73,7 +105,7 @@ The current Custom Tables foundation does **not** authorize:
 
 ## Next dependency gate
 
-When Issue #413's Supervisor reconciliation is promoted, four **execution-free, non-overlapping** contract workers are authorized in parallel:
+Issue #413 / merged PR #414 authorizes four **execution-free, non-overlapping** contract workers in parallel:
 
 1. `custom-tables-run-transition-service-v1` — canonical repository-backed state transition service using existing in-memory/interface semantics only; no concrete DB persistence/jobs/leases.
 2. `custom-tables-precondition-probe-registry-v1` — explicit allowlisted kind-to-probe registry/dispatch; no direct database reads/scans.
@@ -117,13 +149,13 @@ The authoritative queue is `config/coordination/agent-work-queue.json`.
 
 Start WPEssential Supervisor in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Reconcile current `main`, open PRs/MRs, active deterministic claim branches and the coordination queue before changing files. Take the highest-priority dependency-ready `SUPERVISOR_ONLY` slot first; if none exists, take the highest-priority valid `ANY` slot. The Supervisor owns shared truth, audit gates and merge serialization.
+Read `AUTO-AGENT.md` completely. Refresh exact current main, check OPEN Issues first, then OPEN PRs/MRs, then active deterministic claim branches and the coordination queue before starting new work. Take the highest-priority dependency-ready `SUPERVISOR_ONLY` slot first; if none exists, take the highest-priority valid `ANY` slot. The Supervisor owns shared truth, audit gates, merge serialization and end-of-cycle README progress reconciliation.
 
 ### Workers
 
 Start WPEssential Worker in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Inspect exact current `main` and the coordination queue, then claim only a dependency-ready free `ANY` slot using its deterministic remote branch. An existing claim branch means the slot is already owned. Workers must not invent speculative branches or edit Supervisor-owned shared truth.
+Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue and claim only a dependency-ready free `ANY` slot using its deterministic remote branch. An existing claim branch means the slot is already owned. Workers must not invent speculative branches or edit Supervisor-owned shared truth. README progress changes are reported as an Integration Requirement when Workers cannot own shared truth.
 
 Parallelism is encouraged only for non-overlapping dependency-safe lanes. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
 
