@@ -1,28 +1,28 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-08",
-  "queue_anchor_main_sha": "9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6",
-  "authoritative_rule": "Refresh exact main before selecting work. Fields, Relations, Query, Admin Columns, Dynamic Listings and Status retain only their explicitly certified bounded baseline PASS claims. Surface 7 Custom Tables is ACTIVE / NOT PASS. PR #383 promoted the DDL-free canonical table Definition and descriptor, PR #387 promoted deterministic observed schema plus pure Migration Plan semantics, PR #390 promoted the post-plan audit, and PR #391 promoted trusted CT1/PT-E physical identity plus strictly read-only schema introspection. This Supervisor reconciliation authorizes only Issue #393 as the next ANY implementation lane: server-selected provider capability profile plus pure DDL compiler preview with zero database execution. Physical DDL execution, migration-run mutation, row CRUD/Data Source runtime, CT2/PT-D/CT3 runtime, external adoption, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README, CHECKPOINT and this queue are Supervisor-owned shared truth.",
+  "queue_anchor_main_sha": "b0419289a7f4f205e1fa40dd5c3158b4927badd6",
+  "authoritative_rule": "Refresh exact main before selecting work. Fields, Relations, Query, Admin Columns, Dynamic Listings and Status retain only their explicitly certified bounded baseline PASS claims. Surface 7 Custom Tables is ACTIVE / NOT PASS. PR #395 promoted the server-selected MySQL/MariaDB provider capability profile plus pure execution-free DDL preview compiler. Issue #397 is the Supervisor post-provider audit. Once #397 reconciliation is promoted, exactly three execution-free non-overlapping ANY lanes are authorized in parallel: Migration Run State V1, Precondition Contract V1, and Recovery + Revalidation V1. Physical DDL execution, migration persistence/leases, row scans/backfills, Backup/restore execution, row CRUD/Data Source runtime, CT2/PT-D/CT3 runtime, external adoption, admin/REST mutation, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README, CHECKPOINT and this queue are Supervisor-owned shared truth.",
   "auto_assignment": {
     "enabled": true,
-    "selection_order": "lowest numeric priority first",
-    "selection_rule": "Select only dependency-ready OPEN slots after exact-main, open-PR and remote-claim revalidation. After this Issue #392 reconciliation promotes, custom-tables-provider-ddl-compiler-v1 from Issue #393 is the only authorized ANY implementation slot. Do not infer a DDL executor, migration runner, precondition scanner, row runtime or another module from Options Bank order.",
+    "selection_order": "lowest numeric priority first among dependency-ready OPEN slots",
+    "selection_rule": "After Issue #397 promotes, Workers may independently claim the three post-provider prerequisite slots because their owned namespaces do not overlap. Do not infer a DDL executor, migration persistence, precondition scanner, Backup executor, row runtime or another module from Options Bank order.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main at or after 9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6.",
-      "Read docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md, docs/IMPLEMENTATION/POST-STATUS-NEXT-GATE-AUDIT-V1.md, docs/IMPLEMENTATION/CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md, docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md and docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md.",
-      "For Custom Tables work, read CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md, CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md, CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md, CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md and CUSTOM-TABLES-ADMIN-COLUMNS-EXHAUSTIVE-SPEC.md.",
+      "Resolve exact current main at or after b0419289a7f4f205e1fa40dd5c3158b4927badd6.",
+      "Read docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PROVIDER-AUDIT-V1.md and prior Custom Tables audit evidence.",
+      "Read docs/ARCHITECTURE/CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md and docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md.",
       "Inspect deterministic claim branches before creating any claim."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
-      "For Issue #393 verify provider/version facts are trusted server inputs, identifiers come only from canonical descriptors/CT1 identity, blocked/R3/R4 plans cannot become executable statements, and the compiler path contains zero database execution or mutation primitive."
+      "Verify the post-provider prerequisite path contains zero SQL/DDL execution, database persistence, row scanning/backfill or Backup provider invocation."
     ],
     "claim_branch_rule": "Create the exact claim_branch from exact current main without force; an existing branch means claimed."
   },
@@ -35,7 +35,7 @@
         "Pre-create blocked worker claims.",
         "Merge from agent report alone.",
         "Let workers edit shared truth.",
-        "Authorize Custom Tables physical DDL execution without a separately promoted exact-main audit covering recovery, revalidation, authorization and execution semantics."
+        "Authorize Custom Tables physical DDL execution without a separately promoted exact-main audit covering persistence, concurrency, authorization, recovery, preconditions, revalidation and verification semantics."
       ]
     },
     "WORKER": {
@@ -46,8 +46,8 @@
         "Claim SUPERVISOR_ONLY.",
         "Edit shared truth.",
         "Invent another branch when a deterministic claim exists.",
-        "Execute provider SQL/DDL or data mutation while only the pure compiler preview lane is authorized.",
-        "Accept caller-controlled provider, version, database/schema, physical table name or raw SQL."
+        "Execute provider SQL/DDL or data mutation while only execution-free prerequisites are authorized.",
+        "Add database persistence, row scans, Backup provider calls or public mutation surfaces to the post-provider prerequisite lanes."
       ]
     }
   },
@@ -71,7 +71,6 @@
       "source": "Issue #380 / merged PR #381",
       "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Surface 7 Custom Tables selected as next dependency gate and first DDL-free Definition/compiler tranche authorized.",
       "claim_branch": "supervisor/post-status-next-gate-entry-audit-v1"
     },
     {
@@ -85,7 +84,6 @@
       "source": "Issue #382 / merged PR #383",
       "dependencies": [],
       "runtime_allowed": true,
-      "completion_condition": "Canonical Surface 7 table Definition compiler/descriptor promoted exact-head green with deterministic fingerprint and zero physical DDL.",
       "claim_branch": "agent/custom-tables-definition-compiler-v1"
     },
     {
@@ -99,7 +97,6 @@
       "source": "Issue #384 / merged PR #386",
       "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Observed-schema plus pure Migration Plan prerequisite selected; physical DDL remained blocked.",
       "claim_branch": "supervisor/custom-tables-post-definition-audit-v1"
     },
     {
@@ -113,7 +110,6 @@
       "source": "Issue #385 / merged PR #387",
       "dependencies": [],
       "runtime_allowed": true,
-      "completion_condition": "Deterministic observed normalization/fingerprint and pure bounded desired-to-observed Migration Plan/risk classification promoted exact-head green with zero DDL/database mutation primitives.",
       "claim_branch": "agent/custom-tables-observed-schema-plan-v1"
     },
     {
@@ -127,7 +123,6 @@
       "source": "Issue #388 / merged PR #390",
       "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Trusted CT1 physical identity plus strictly read-only real schema introspection selected; physical DDL remained blocked.",
       "claim_branch": "supervisor/custom-tables-post-plan-audit-v1"
     },
     {
@@ -141,7 +136,6 @@
       "source": "Issue #389 / merged PR #391",
       "dependencies": [],
       "runtime_allowed": true,
-      "completion_condition": "Trusted per-site/per-Definition CT1 identity and real read-only MySQL/MariaDB schema observation feed the promoted normalizer deterministically, with missing/partial/unsupported metadata fail-closed and zero DDL/data mutation paths.",
       "claim_branch": "agent/custom-tables-readonly-introspection-v1"
     },
     {
@@ -150,18 +144,11 @@
       "title": "Custom Tables post-introspection next-lane audit V1",
       "role": "SUPERVISOR_ONLY",
       "status": "DONE",
-      "work_mode": "EVIDENCE_AND_COORDINATION",
-      "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Issue #392 / supervisor/custom-tables-post-introspection-audit-v1; DONE when this reconciliation is promoted",
+      "work_mode": "HISTORICAL_EVIDENCE",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #392 / merged PR #394",
       "dependencies": [],
       "runtime_allowed": false,
-      "allowed_scope": [
-        "docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md",
-        "config/coordination/agent-work-queue.json",
-        "README.md",
-        "CHECKPOINT.md"
-      ],
-      "completion_condition": "Server-selected provider capability profile plus pure execution-free DDL compiler preview selected as the next serialized lane; physical mutation remains blocked.",
       "claim_branch": "supervisor/custom-tables-post-introspection-audit-v1"
     },
     {
@@ -169,34 +156,109 @@
       "slot_id": "custom-tables-provider-ddl-compiler-v1",
       "title": "Custom Tables provider capability profile + pure DDL compiler preview V1",
       "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #393 / merged PR #395",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "claim_branch": "agent/custom-tables-provider-ddl-compiler-v1"
+    },
+    {
+      "priority": 700,
+      "slot_id": "custom-tables-post-provider-audit-v1",
+      "title": "Custom Tables post-provider exact-main next-lane audit V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "IN_PROGRESS",
+      "work_mode": "EVIDENCE_AND_COORDINATION",
+      "parallel_class": "SUPERVISOR_SERIALIZED",
+      "source": "Issue #397 / supervisor/custom-tables-post-provider-audit-v1",
+      "dependencies": [],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PROVIDER-AUDIT-V1.md",
+        "config/coordination/agent-work-queue.json",
+        "README.md",
+        "CHECKPOINT.md"
+      ],
+      "claim_branch": "supervisor/custom-tables-post-provider-audit-v1"
+    },
+    {
+      "priority": 710,
+      "slot_id": "custom-tables-migration-run-state-v1",
+      "title": "Custom Tables immutable Migration Run state machine V1",
+      "role": "ANY",
       "status": "OPEN",
       "work_mode": "IMPLEMENTATION",
-      "parallel_class": "CUSTOM_TABLES_SERIALIZED_FOUNDATION",
-      "source": "Issue #393",
-      "dependencies": ["Issue #392 post-introspection audit reconciliation promoted"],
+      "parallel_class": "CUSTOM_TABLES_POST_PROVIDER_PARALLEL_A",
+      "source": "Authorized by Issue #397 once promoted",
+      "dependencies": ["Issue #397 post-provider audit reconciliation promoted"],
       "runtime_allowed": true,
       "allowed_scope": [
-        "frameworks/Modules/CustomTables/Migration/**",
-        "narrowly scoped Custom Tables provider/compiler namespace",
-        "tests/Unit/Modules/CustomTables/**",
+        "frameworks/Modules/CustomTables/Migration/Run/**",
+        "tests/Unit/Modules/CustomTables/Run/**",
         "focused non-shared implementation docs"
       ],
       "forbidden_scope": [
-        "CREATE/ALTER/DROP/RENAME/TRUNCATE/dbDelta execution or generic DDL dispatch",
-        "database query execution from compiler output",
-        "migration run/applied-state persistence, leases or retry mutation",
-        "precondition data scans, backfill, deduplication, shadow-copy or swap",
-        "Backup/restore execution",
-        "shared Platform database interface changes",
-        "row CRUD/Data Source/Query provider runtime",
-        "CT2/PT-D or CT3 runtime/topology conversion",
-        "external table adoption",
-        "admin/REST/Ability mutation surfaces",
-        "caller-controlled provider/version/database/schema/physical table name/raw SQL",
+        "database persistence",
+        "SQL/DDL execution",
+        "jobs/Action Scheduler",
+        "leases/locks",
         "shared truth files"
       ],
-      "completion_condition": "Deterministic trusted MySQL/MariaDB capability profiles and pure provider statement previews/fingerprints compile only safe unblocked MigrationPlan operations, while blocked/manual-drift/R3-R4/unsupported semantics fail closed and no database execution dependency exists.",
-      "claim_branch": "agent/custom-tables-provider-ddl-compiler-v1"
+      "claim_branch": "agent/custom-tables-migration-run-state-v1"
+    },
+    {
+      "priority": 720,
+      "slot_id": "custom-tables-precondition-contract-v1",
+      "title": "Custom Tables typed precondition contract V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "IMPLEMENTATION",
+      "parallel_class": "CUSTOM_TABLES_POST_PROVIDER_PARALLEL_B",
+      "source": "Authorized by Issue #397 once promoted",
+      "dependencies": ["Issue #397 post-provider audit reconciliation promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "frameworks/Modules/CustomTables/Migration/Precondition/**",
+        "tests/Unit/Modules/CustomTables/Precondition/**",
+        "focused non-shared implementation docs"
+      ],
+      "forbidden_scope": [
+        "database reads/scans",
+        "row values",
+        "Query runtime",
+        "backfill/deduplication",
+        "SQL/DDL execution",
+        "shared truth files"
+      ],
+      "claim_branch": "agent/custom-tables-precondition-contract-v1"
+    },
+    {
+      "priority": 730,
+      "slot_id": "custom-tables-recovery-revalidation-v1",
+      "title": "Custom Tables recovery + reviewed-source revalidation contract V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "IMPLEMENTATION",
+      "parallel_class": "CUSTOM_TABLES_POST_PROVIDER_PARALLEL_C",
+      "source": "Authorized by Issue #397 once promoted",
+      "dependencies": ["Issue #397 post-provider audit reconciliation promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "frameworks/Modules/CustomTables/Migration/Recovery/**",
+        "tests/Unit/Modules/CustomTables/Recovery/**",
+        "focused non-shared implementation docs"
+      ],
+      "forbidden_scope": [
+        "Backup provider calls",
+        "restore execution",
+        "database persistence",
+        "leases/locks",
+        "SQL/DDL execution",
+        "shared truth files"
+      ],
+      "claim_branch": "agent/custom-tables-recovery-revalidation-v1"
     }
   ]
 }
