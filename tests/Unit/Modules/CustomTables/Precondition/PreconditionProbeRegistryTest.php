@@ -54,6 +54,22 @@ final class PreconditionProbeRegistryTest extends TestCase
         );
     }
 
+    public function testRegisteredProbeDoesNotActAsFallbackForAnotherKind(): void
+    {
+        $registry = new PreconditionProbeRegistry();
+        $registry->register(PreconditionKind::TableExists, new class implements PreconditionProbeInterface {
+            public function evaluate(PreconditionRequirement $requirement): PreconditionEvaluation
+            {
+                return new PreconditionEvaluation($requirement->id, PreconditionOutcome::Satisfied);
+            }
+        });
+
+        $this->expectException(RuntimeException::class);
+        $registry->evaluate(
+            new PreconditionRequirement('table_missing', PreconditionKind::TableMissing, 'table.orders'),
+        );
+    }
+
     public function testMismatchedProbeEvidenceFailsClosed(): void
     {
         $registry = new PreconditionProbeRegistry();
