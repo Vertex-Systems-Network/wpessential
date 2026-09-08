@@ -89,6 +89,15 @@ final class StatusDefinitionCompilerTest extends TestCase
         (new StatusDefinitionCompiler())->compile($this->definition($payload));
     }
 
+    public function testRejectsExecutableLabelChannel(): void
+    {
+        $payload = $this->payload();
+        $payload['labels']['label'] = '<script>alert(1)</script>';
+        $this->expectException(InvalidArgumentException::class);
+
+        (new StatusDefinitionCompiler())->compile($this->definition($payload));
+    }
+
     public function testRejectsDraftDefinition(): void
     {
         $this->expectException(InvalidArgumentException::class);
