@@ -62,6 +62,10 @@ final class WordPressCt1SchemaIntrospector
             . 'WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s ORDER BY ORDINAL_POSITION',
             $identity->physicalName,
         );
+        if ($columnRows === [] || count($columnRows) > 128) {
+            throw new RuntimeException('CT1 schema observation returned an invalid column metadata count.');
+        }
+
         $indexRows = $this->readRows(
             'SELECT INDEX_NAME AS index_name, NON_UNIQUE AS non_unique, SEQ_IN_INDEX AS seq_in_index, '
             . 'COLUMN_NAME AS column_name, SUB_PART AS sub_part, INDEX_TYPE AS index_type '
