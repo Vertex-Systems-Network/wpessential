@@ -44,19 +44,7 @@ final readonly class TableSchemaDiffPlanner
         $this->sortOperations($operations);
         $this->sortFindings($findings);
 
-        $risk = MigrationRisk::R0;
-        $blocked = false;
-        $recoveryRequired = false;
-        foreach ($operations as $operation) {
-            $risk = MigrationRisk::max($risk, $operation->risk);
-            $blocked = $blocked || $operation->blocked;
-            $recoveryRequired = $recoveryRequired || $operation->recoveryRequired;
-        }
-        foreach ($findings as $finding) {
-            $risk = MigrationRisk::max($risk, $finding->risk);
-            $blocked = $blocked || $finding->blocking;
-            $recoveryRequired = $recoveryRequired || $finding->risk->value >= MigrationRisk::R3->value;
-        }
+        [$risk, $blocked, $recoveryRequired] = $this->aggregatePlanState($operations, $findings);
 
         $semantic = [
             'table_key' => $desired->tableKey,
@@ -117,10 +105,12 @@ final readonly class TableSchemaDiffPlanner
         foreach ($columnKeys as $key) {
             $target = $desiredColumns[$key] ?? null;
             $source = $observedColumns[$key] ?? null;
+
             if ($target instanceof TableColumnDescriptor && !$source instanceof TableColumnDescriptor) {
                 $operations[] = $this->addColumnOperation($target);
                 continue;
             }
+
             if ($source instanceof TableColumnDescriptor && !$target instanceof TableColumnDescriptor) {
                 $operations[] = new MigrationOperation(
                     type: 'drop_column',
@@ -132,10 +122,10 @@ final readonly class TableSchemaDiffPlanner
                 );
                 continue;
             }
-            if (!$source instanceof TableColumnDescriptor || !$target instanceof TableColumnDescriptor) {
-                continue;
+
+            if ($source instanceof TableColumnDescriptor && $target instanceof TableColumnDescriptor) {
+                $this->planColumnChange($source, $target, $operations, $findings);
             }
-            $this->planColumnChange($source, $target, $operations, $findings);
         }
 
         if ($desired->primaryKey !== $observed->primaryKey) {
@@ -181,6 +171,7 @@ final readonly class TableSchemaDiffPlanner
         if (!$this->sameTypeShape($source, $target)) {
             $operations[] = $this->typeChangeOperation($source, $target);
         }
+
         if ($source->nullable !== $target->nullable) {
             $operations[] = new MigrationOperation(
                 type: 'alter_column_nullability',
@@ -189,6 +180,7 @@ final readonly class TableSchemaDiffPlanner
                 preconditions: $target->nullable ? [] : ['no_null_values'],
             );
         }
+
         if ($source->hasDefault !== $target->hasDefault || $source->defaultValue !== $target->defaultValue) {
             $operations[] = new MigrationOperation(
                 type: 'alter_column_default',
@@ -201,6 +193,7 @@ final readonly class TableSchemaDiffPlanner
     private function addColumnOperation(TableColumnDescriptor $column): MigrationOperation
     {
         $safeAdditive = $column->nullable || $column->hasDefault || $column->autoIncrement;
+
         return new MigrationOperation(
             type: 'add_column',
             target: 'columns.' . $column->key,
@@ -215,20 +208,18 @@ final readonly class TableSchemaDiffPlanner
         TableColumnDescriptor $target,
     ): MigrationOperation {
         $path = 'columns.' . $target->key;
+
         if ($source->type !== $target->type) {
-            return new MigrationOperation(
-                type: 'alter_column_type',
-                target: $path,
-                risk: MigrationRisk::R3,
-                preconditions: ['conversion_strategy_required', 'verified_restore_point_required'],
-                recoveryRequired: true,
-                blocked: true,
+            return $this->blockedTypeChange(
+                $path,
+                ['conversion_strategy_required', 'verified_restore_point_required'],
             );
         }
 
         if ($target->type === 'varchar') {
             $sourceLength = (int) $source->length;
             $targetLength = (int) $target->length;
+
             if ($targetLength >= $sourceLength) {
                 return new MigrationOperation(
                     type: 'alter_column_type',
@@ -237,44 +228,61 @@ final readonly class TableSchemaDiffPlanner
                     preconditions: ['provider_capability_required'],
                 );
             }
-            return new MigrationOperation(
-                type: 'alter_column_type',
-                target: $path,
-                risk: MigrationRisk::R3,
-                preconditions: ['max_length_fits_target', 'verified_restore_point_required'],
-                recoveryRequired: true,
-                blocked: true,
+
+            return $this->blockedTypeChange(
+                $path,
+                ['max_length_fits_target', 'verified_restore_point_required'],
             );
         }
 
         if ($target->type === 'decimal') {
-            $sourcePrecision = (int) $source->precision;
-            $sourceScale = $source->scale ?? 0;
-            $targetPrecision = (int) $target->precision;
-            $targetScale = $target->scale ?? 0;
-            if ($targetPrecision >= $sourcePrecision && $targetScale >= $sourceScale) {
-                return new MigrationOperation(
-                    type: 'alter_column_type',
-                    target: $path,
-                    risk: MigrationRisk::R2,
-                    preconditions: ['provider_capability_required'],
-                );
-            }
+            return $this->decimalTypeChangeOperation($source, $target, $path);
+        }
+
+        return $this->blockedTypeChange(
+            $path,
+            ['provider_capability_required', 'verified_restore_point_required'],
+        );
+    }
+
+    private function decimalTypeChangeOperation(
+        TableColumnDescriptor $source,
+        TableColumnDescriptor $target,
+        string $path,
+    ): MigrationOperation {
+        $sourcePrecision = (int) $source->precision;
+        $sourceScale = $source->scale ?? 0;
+        $targetPrecision = (int) $target->precision;
+        $targetScale = $target->scale ?? 0;
+
+        $sourceIntegerDigits = $sourcePrecision - $sourceScale;
+        $targetIntegerDigits = $targetPrecision - $targetScale;
+        $preservesIntegerCapacity = $targetIntegerDigits >= $sourceIntegerDigits;
+        $preservesFractionalCapacity = $targetScale >= $sourceScale;
+
+        if ($preservesIntegerCapacity && $preservesFractionalCapacity) {
             return new MigrationOperation(
                 type: 'alter_column_type',
                 target: $path,
-                risk: MigrationRisk::R3,
-                preconditions: ['decimal_values_fit_target', 'verified_restore_point_required'],
-                recoveryRequired: true,
-                blocked: true,
+                risk: MigrationRisk::R2,
+                preconditions: ['provider_capability_required'],
             );
         }
 
+        return $this->blockedTypeChange(
+            $path,
+            ['decimal_values_fit_target', 'verified_restore_point_required'],
+        );
+    }
+
+    /** @param list<string> $preconditions */
+    private function blockedTypeChange(string $path, array $preconditions): MigrationOperation
+    {
         return new MigrationOperation(
             type: 'alter_column_type',
             target: $path,
             risk: MigrationRisk::R3,
-            preconditions: ['provider_capability_required', 'verified_restore_point_required'],
+            preconditions: $preconditions,
             recoveryRequired: true,
             blocked: true,
         );
@@ -300,6 +308,7 @@ final readonly class TableSchemaDiffPlanner
         foreach ($keys as $key) {
             $target = $targetIndexes[$key] ?? null;
             $source = $sourceIndexes[$key] ?? null;
+
             if ($target instanceof TableIndexDescriptor && !$source instanceof TableIndexDescriptor) {
                 $operations[] = new MigrationOperation(
                     type: $target->unique ? 'add_unique_constraint' : 'add_index',
@@ -309,6 +318,7 @@ final readonly class TableSchemaDiffPlanner
                 );
                 continue;
             }
+
             if ($source instanceof TableIndexDescriptor && !$target instanceof TableIndexDescriptor) {
                 $operations[] = new MigrationOperation(
                     type: $source->unique ? 'drop_unique_constraint' : 'drop_index',
@@ -320,10 +330,11 @@ final readonly class TableSchemaDiffPlanner
                 );
                 continue;
             }
-            if (!$source instanceof TableIndexDescriptor || !$target instanceof TableIndexDescriptor) {
-                continue;
-            }
-            if ($source->canonical() !== $target->canonical()) {
+
+            if ($source instanceof TableIndexDescriptor
+                && $target instanceof TableIndexDescriptor
+                && $source->canonical() !== $target->canonical()
+            ) {
                 $findings[] = new MigrationFinding(
                     code: 'index_semantics_change_deferred',
                     path: 'indexes.' . $key,
@@ -350,6 +361,7 @@ final readonly class TableSchemaDiffPlanner
         foreach ($columns as $column) {
             $map[$column->key] = $column;
         }
+
         return $map;
     }
 
@@ -360,6 +372,7 @@ final readonly class TableSchemaDiffPlanner
         foreach ($indexes as $index) {
             $map[$index->key] = $index;
         }
+
         return $map;
     }
 
@@ -372,6 +385,32 @@ final readonly class TableSchemaDiffPlanner
             blocking: true,
             detail: $finding->observed,
         );
+    }
+
+    /**
+     * @param list<MigrationOperation> $operations
+     * @param list<MigrationFinding> $findings
+     * @return array{MigrationRisk,bool,bool}
+     */
+    private function aggregatePlanState(array $operations, array $findings): array
+    {
+        $risk = MigrationRisk::R0;
+        $blocked = false;
+        $recoveryRequired = false;
+
+        foreach ($operations as $operation) {
+            $risk = MigrationRisk::max($risk, $operation->risk);
+            $blocked = $blocked || $operation->blocked;
+            $recoveryRequired = $recoveryRequired || $operation->recoveryRequired;
+        }
+
+        foreach ($findings as $finding) {
+            $risk = MigrationRisk::max($risk, $finding->risk);
+            $blocked = $blocked || $finding->blocking;
+            $recoveryRequired = $recoveryRequired || $finding->risk->value >= MigrationRisk::R3->value;
+        }
+
+        return [$risk, $blocked, $recoveryRequired];
     }
 
     /** @param list<MigrationOperation> $operations */
@@ -390,6 +429,7 @@ final readonly class TableSchemaDiffPlanner
             'drop_unique_constraint' => 100,
             'drop_column' => 110,
         ];
+
         usort(
             $operations,
             static fn (MigrationOperation $a, MigrationOperation $b): int =>
@@ -413,6 +453,7 @@ final readonly class TableSchemaDiffPlanner
         $hex[12] = '5';
         $variant = hexdec($hex[16]);
         $hex[16] = dechex(($variant & 0x3) | 0x8);
+
         return sprintf(
             '%s-%s-%s-%s-%s',
             substr($hex, 0, 8),
