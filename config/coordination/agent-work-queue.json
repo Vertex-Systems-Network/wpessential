@@ -1,23 +1,22 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-08",
-  "queue_anchor_main_sha": "67dbcbb1bcae5bd5c0580f9c947762d418f5be5f",
-  "authoritative_rule": "Refresh exact main before selecting work. Gates A/B/C/D/E are PASS only for their explicitly certified bounded baselines. Dynamic Listings Gate E final Supervisor reconciliation PR #344 is promoted and parent #66 is closed. Status Manager now owns the active dependency gate through Supervisor Issue #345. Until #345 promotes, no Status runtime worker claim is valid. After #345 promotion, only Issues #346 and #347 are immediately dependency-ready and may run concurrently on their path-exclusive branches. Transition mutation, native registration composition, module/Ability wiring, admin/portability, reference evidence and closure remain later dependency-gated slices. RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. Queue/README/CHECKPOINT are Supervisor-only.",
+  "queue_anchor_main_sha": "699b74382b92e0725bc364e723b5bc12bf8ce4e1",
+  "authoritative_rule": "Refresh exact main before selecting work. Gates A/B/C/D/E are PASS only for their explicitly certified bounded baselines. Status owns the active dependency gate. Status foundations and production composition through PR #363 are promoted, but Status remains ACTIVE / NOT PASS. Supervisor Issue #364 now owns the exact-main post-composition closure audit. Until #364 promotes, Issues #365/#366/#367/#368 are BLOCKED and their deterministic branches must not be created. After #364 promotion, #365 Admin, #366 Portability, #367 production WordPress reference and Supervisor #368 shared Event/Audit services are the authorized path-disjoint closure tranche. RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. Queue/README/CHECKPOINT are Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
-    "selection_rule": "While #345 is unpromoted, only the Status entry audit Supervisor slot is actionable and workers have NO_VALID_WORK_SLOT. After #345 promotes, #346 and #347 become the only immediately valid ANY slots and may be claimed concurrently if their deterministic branches do not already exist. Later Status slices must be authorized from promoted dependency outputs rather than invented in advance.",
+    "selection_rule": "While #364 is unpromoted, only the Status post-composition Supervisor audit is actionable. After #364 promotes, #365/#366/#367 are valid ANY worker slots and #368 is the valid SUPERVISOR_ONLY shared-service slot; they are path-disjoint and may proceed concurrently if their deterministic claim branches do not already exist.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main at or after 67dbcbb1bcae5bd5c0580f9c947762d418f5be5f.",
-      "Verify Dynamic Listings final reconciliation PR #344 is promoted and parent #66 is closed.",
-      "Read docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md.",
-      "Before Status worker claims, verify #345 is promoted and read docs/IMPLEMENTATION/STATUS-MANAGER-ENTRY-AUDIT-V1.md.",
-      "Inspect deterministic claim branches before creating any new claim."
+      "Resolve exact current main at or after 699b74382b92e0725bc364e723b5bc12bf8ce4e1.",
+      "Read docs/IMPLEMENTATION/STATUS-MANAGER-ENTRY-AUDIT-V1.md and, after #364 promotion, STATUS-MANAGER-POST-COMPOSITION-AUDIT-V2.md.",
+      "Verify Status production chain PRs #349, #350, #353, #354, #356, #360, #362 and #363 are promoted.",
+      "Inspect deterministic claim branches before creating any claim."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force/history overwrite.",
@@ -29,24 +28,24 @@
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "description": "Owns shared truth, entry audits, integration and merge serialization.",
+      "description": "Owns shared truth, audits, shared Platform integration and merge serialization.",
       "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create blocked worker claims.",
         "Merge from agent report alone.",
-        "Start Status runtime workers before the Status entry audit promotes.",
-        "Let workers edit shared truth."
+        "Let workers edit shared truth.",
+        "Allow Status-private Event/Audit infrastructure when a shared Platform plane is required."
       ]
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Claims one eligible non-overlapping ANY slot only after its dependencies are promoted.",
+      "description": "Claims one eligible non-overlapping ANY slot only after dependencies promote.",
       "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY.",
         "Edit shared truth.",
         "Invent another branch when a claim exists.",
-        "Claim Status work before #345 promotion or invent later Status slices before their dependencies promote."
+        "Widen Status into Workflow, Notifications, Cron/Jobs, Analytics or provider-domain ownership."
       ]
     }
   },
@@ -194,7 +193,7 @@
     {
       "priority": 400,
       "slot_id": "listings-presentation-state-composition-v1",
-      "title": "Listings Presentation + runtime-state composition V1",
+      "title": "Listings Presentation + runtime state composition V1",
       "role": "ANY",
       "status": "DONE",
       "work_mode": "HISTORICAL",
@@ -244,7 +243,7 @@
       "source": "Issue #341 / merged PR #342",
       "dependencies": [],
       "runtime_allowed": false,
-      "completion_condition": "Production shared runtime/module reference promoted with all 10 dedicated matrix jobs green.",
+      "completion_condition": "Production shared runtime/module reference promoted with all dedicated matrix jobs green.",
       "claim_branch": "agent/listings-production-reference-v1"
     },
     {
@@ -266,18 +265,13 @@
       "slot_id": "status-entry-audit-v1",
       "title": "Status Manager exact-main entry audit V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
-      "work_mode": "EVIDENCE_AND_COORDINATION",
-      "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Issue #345",
-      "dependencies": ["PR #344 promoted", "parent #66 closed"],
+      "status": "DONE",
+      "work_mode": "HISTORICAL_EVIDENCE",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #345 / merged PR #348",
+      "dependencies": [],
       "runtime_allowed": false,
-      "allowed_scope": [
-        "docs/IMPLEMENTATION/STATUS-MANAGER-ENTRY-AUDIT-V1.md",
-        "config/coordination/agent-work-queue.json"
-      ],
-      "completion_condition": "Exact-main Status prerequisites/gaps and first dependency-safe worker tranche are promoted without starting runtime inside the audit.",
-      "notes": "#346 and #347 remain blocked until this audit promotes.",
+      "completion_condition": "Status bounded V1 entry matrix and first foundation tranche promoted.",
       "claim_branch": "supervisor/status-entry-audit-v1"
     },
     {
@@ -285,18 +279,13 @@
       "slot_id": "status-definition-compiler-v1",
       "title": "Status canonical definition + registration descriptor V1",
       "role": "ANY",
-      "status": "BLOCKED",
-      "work_mode": "IMPLEMENTATION",
-      "parallel_class": "STATUS_FOUNDATION_PARALLEL",
-      "source": "Issue #346",
-      "dependencies": ["Issue #345 audit reconciliation promoted"],
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #346 / merged PR #349",
+      "dependencies": [],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "frameworks/Modules/Status/Definition/**",
-        "focused Status Definition tests"
-      ],
-      "completion_condition": "Canonical bounded Status definition/compiler descriptor promoted exact-head green.",
-      "notes": "Do not create the branch before #345 promotion. No WordPress registration mutation or shared truth.",
+      "completion_condition": "Canonical bounded Status definition/compiler descriptor promoted.",
       "claim_branch": "agent/status-definition-compiler-v1"
     },
     {
@@ -304,19 +293,172 @@
       "slot_id": "status-transition-policy-v1",
       "title": "Status bounded pure transition policy model V1",
       "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #347 / merged PR #350",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Fail-closed pure transition-policy model promoted.",
+      "claim_branch": "agent/status-transition-policy-v1"
+    },
+    {
+      "priority": 480,
+      "slot_id": "status-native-registration-v1",
+      "title": "Status native WordPress registration runtime V1",
+      "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #351 / merged PR #353",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Fail-closed native Status registrar promoted.",
+      "claim_branch": "agent/status-native-registration-v1"
+    },
+    {
+      "priority": 490,
+      "slot_id": "shared-post-resource-auth-v1",
+      "title": "Neutral WordPress post-resource authorization V1",
+      "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #352 / merged PR #354",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Shared object-level post authorization seam promoted.",
+      "claim_branch": "agent/shared-post-resource-auth-v1"
+    },
+    {
+      "priority": 500,
+      "slot_id": "status-transition-executor-v1",
+      "title": "Authorized native Status transition executor V1",
+      "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #355 / merged PR #356",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Authorized verified native transition executor promoted.",
+      "claim_branch": "agent/status-transition-executor-v1"
+    },
+    {
+      "priority": 510,
+      "slot_id": "status-transition-policy-definition-v1",
+      "title": "Persisted Status transition-policy Definition V1",
+      "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #359 / merged PR #360",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Canonical transition-policy Definition compiler/resolver promoted.",
+      "claim_branch": "agent/status-transition-policy-definition-v1"
+    },
+    {
+      "priority": 520,
+      "slot_id": "shared-wordpress-auth-services-v1",
+      "title": "Publish shared WordPress authorization services V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #361 / merged PR #362",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Canonical capability-checker/post-resource services promoted.",
+      "claim_branch": "supervisor/shared-wordpress-auth-services-v1"
+    },
+    {
+      "priority": 530,
+      "slot_id": "status-module-ability-v1",
+      "title": "Status Pro module + transition Ability composition V1",
+      "role": "ANY",
+      "status": "DONE",
+      "work_mode": "HISTORICAL",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #357 / merged PR #363",
+      "dependencies": [],
+      "runtime_allowed": true,
+      "completion_condition": "Production Status module/Ability/runtime graph promoted.",
+      "claim_branch": "agent/status-module-ability-v1"
+    },
+    {
+      "priority": 540,
+      "slot_id": "status-post-composition-audit-v2",
+      "title": "Status post-composition closure audit V2",
+      "role": "SUPERVISOR_ONLY",
+      "status": "IN_PROGRESS",
+      "work_mode": "EVIDENCE_AND_COORDINATION",
+      "parallel_class": "SUPERVISOR_SERIALIZED",
+      "source": "Issue #364",
+      "dependencies": ["PR #363 promoted"],
+      "runtime_allowed": false,
+      "allowed_scope": [
+        "docs/IMPLEMENTATION/STATUS-MANAGER-POST-COMPOSITION-AUDIT-V2.md",
+        "config/coordination/agent-work-queue.json"
+      ],
+      "completion_condition": "Remaining bounded Status closure classes and maximum safe parallel tranche are promoted.",
+      "claim_branch": "supervisor/status-post-composition-audit-v2"
+    },
+    {
+      "priority": 550,
+      "slot_id": "status-admin-authoring-v1",
+      "title": "Status canonical admin authoring + accessibility V1",
+      "role": "ANY",
       "status": "BLOCKED",
       "work_mode": "IMPLEMENTATION",
-      "parallel_class": "STATUS_FOUNDATION_PARALLEL",
-      "source": "Issue #347",
-      "dependencies": ["Issue #345 audit reconciliation promoted"],
+      "parallel_class": "STATUS_CLOSURE_PARALLEL",
+      "source": "Issue #365",
+      "dependencies": ["Issue #364 audit reconciliation promoted"],
       "runtime_allowed": true,
-      "allowed_scope": [
-        "frameworks/Modules/Status/Transition/**",
-        "focused pure Status Transition tests"
-      ],
-      "completion_condition": "Fail-closed pure transition-policy model promoted exact-head green.",
-      "notes": "Do not create the branch before #345 promotion. No WordPress mutation, resource authorization, events/audit or shared truth.",
-      "claim_branch": "agent/status-transition-policy-v1"
+      "completion_condition": "Canonical accessible bounded Status admin authoring path promoted exact-head green.",
+      "claim_branch": "agent/status-admin-authoring-v1"
+    },
+    {
+      "priority": 560,
+      "slot_id": "status-portability-v1",
+      "title": "Status deterministic definition portability V1",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "IMPLEMENTATION",
+      "parallel_class": "STATUS_CLOSURE_PARALLEL",
+      "source": "Issue #366",
+      "dependencies": ["Issue #364 audit reconciliation promoted"],
+      "runtime_allowed": true,
+      "completion_condition": "Create-safe deterministic Status portability promoted exact-head green.",
+      "claim_branch": "agent/status-portability-v1"
+    },
+    {
+      "priority": 570,
+      "slot_id": "status-production-reference-v1",
+      "title": "Status production real-WordPress reference evidence V1",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "EVIDENCE",
+      "parallel_class": "STATUS_CLOSURE_PARALLEL",
+      "source": "Issue #367",
+      "dependencies": ["Issue #364 audit reconciliation promoted"],
+      "runtime_allowed": false,
+      "completion_condition": "Production Status runtime reference matrix promoted exact-head green.",
+      "claim_branch": "agent/status-production-reference-v1"
+    },
+    {
+      "priority": 580,
+      "slot_id": "shared-event-audit-services-v1",
+      "title": "Publish shared Event + Audit services V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "BLOCKED",
+      "work_mode": "SHARED_PLATFORM_IMPLEMENTATION",
+      "parallel_class": "STATUS_CLOSURE_PARALLEL",
+      "source": "Issue #368",
+      "dependencies": ["Issue #364 audit reconciliation promoted"],
+      "runtime_allowed": true,
+      "completion_condition": "Neutral canonical EventBus/AuditLogger production services promoted exact-head green.",
+      "claim_branch": "supervisor/shared-event-audit-services-v1"
     }
   ]
 }
