@@ -36,6 +36,7 @@ use WPEssential\Platform\Definitions\WpdbDefinitionTableGateway;
 use WPEssential\Platform\Modules\DefaultModuleActivationPolicy;
 use WPEssential\Platform\Observability\BoundedInMemoryTraceRecorder;
 use WPEssential\Platform\Observability\NullTraceRecorder;
+use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 use WPEssential\Platform\WordPress\Abilities\NativeWordPressAbilityEnvironment;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressCapabilityChecker;
@@ -141,6 +142,7 @@ final class Plugin
         $services->set('platform.abilities.wordpress', $abilityBridge);
         $services->set('platform.data-sources', $dataSources);
         $services->set('platform.cache', $cache);
+        (new RenderingServiceRegistrar())->register($services);
         if ($database instanceof NativeWpdbAdapter) {
             $services->set('platform.database', $database);
         }
