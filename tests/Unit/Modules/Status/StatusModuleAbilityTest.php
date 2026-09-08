@@ -18,11 +18,15 @@ use WPEssential\Modules\Status\StatusModule;
 use WPEssential\Modules\Status\Transition\StatusTransitionPolicy;
 use WPEssential\Modules\Status\Transition\StatusTransitionRule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Audit\AuditServices;
+use WPEssential\Platform\Audit\InMemoryAuditLogger;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\Events\EventBus;
+use WPEssential\Platform\Events\EventServices;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
@@ -203,6 +207,8 @@ final class StatusModuleAbilityTest extends TestCase
         $services->set('platform.ajax.routes', new AjaxRouteRegistry());
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilities);
         $services->set(WordPressAuthorizationServices::POST_RESOURCES, $resources);
+        $services->set(EventServices::BUS, new EventBus());
+        $services->set(AuditServices::LOGGER, new InMemoryAuditLogger());
 
         return [$services, $definitions, $abilities];
     }
