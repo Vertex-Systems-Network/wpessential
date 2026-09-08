@@ -36,12 +36,19 @@ final readonly class ProviderCapabilityProfile
         if ($serverInfo === '' || strlen($serverInfo) > 255) {
             throw new InvalidArgumentException('Trusted database server information is invalid.');
         }
-        if (preg_match('/(\d+)\.(\d+)\.(\d+)/', $serverInfo, $matches) !== 1) {
+
+        $provider = stripos($serverInfo, 'mariadb') !== false ? self::MARIADB : self::MYSQL;
+        if (preg_match_all('/(\d+)\.(\d+)\.(\d+)/', $serverInfo, $matches, PREG_SET_ORDER) < 1) {
             throw new InvalidArgumentException('Trusted database server version could not be resolved.');
         }
 
-        $version = sprintf('%d.%d.%d', (int) $matches[1], (int) $matches[2], (int) $matches[3]);
-        $provider = stripos($serverInfo, 'mariadb') !== false ? self::MARIADB : self::MYSQL;
+        $versionMatch = $provider === self::MARIADB ? $matches[array_key_last($matches)] : $matches[0];
+        $version = sprintf(
+            '%d.%d.%d',
+            (int) $versionMatch[1],
+            (int) $versionMatch[2],
+            (int) $versionMatch[3],
+        );
 
         if ($provider === self::MYSQL) {
             if (version_compare($version, '8.0.12', '<')) {
