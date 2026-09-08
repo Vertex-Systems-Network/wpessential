@@ -16,6 +16,7 @@ final readonly class TableColumnDescriptor
         public string $key,
         public string $type,
         public bool $nullable,
+        public bool $hasDefault,
         public mixed $defaultValue,
         public bool $autoIncrement,
         public ?int $length = null,
@@ -34,6 +35,9 @@ final readonly class TableColumnDescriptor
         if ($this->autoIncrement && $this->nullable) {
             throw new InvalidArgumentException('Auto-increment Custom Tables columns cannot be nullable.');
         }
+        if (!$this->hasDefault && $this->defaultValue !== null) {
+            throw new InvalidArgumentException('Custom Tables descriptor default state is inconsistent.');
+        }
     }
 
     /** @return array<string,mixed> */
@@ -43,6 +47,7 @@ final readonly class TableColumnDescriptor
             'key' => $this->key,
             'type' => $this->type,
             'nullable' => $this->nullable,
+            'has_default' => $this->hasDefault,
             'default' => $this->defaultValue,
             'auto_increment' => $this->autoIncrement,
             'length' => $this->length,
