@@ -312,25 +312,21 @@ final class WordPressCt1SchemaIntrospector
 
     private function serverFlavor(): string
     {
-        $rows = $this->readRows(
-            'SELECT VERSION() AS server_version, @@version_comment AS version_comment',
-        );
-        if (count($rows) !== 1) {
-            throw new RuntimeException('CT1 schema observation could not resolve the database provider identity.');
+        if (method_exists($this->wpdb, 'db_server_info')) {
+            $serverInfo = $this->wpdb->db_server_info();
+        } elseif (method_exists($this->wpdb, 'db_version')) {
+            $serverInfo = $this->wpdb->db_version();
+        } else {
+            throw new RuntimeException('CT1 schema observation cannot resolve the trusted database provider identity.');
         }
 
-        $serverVersion = strtolower($this->requiredString($rows[0], 'server_version'));
-        $versionComment = strtolower($this->requiredString($rows[0], 'version_comment'));
-        $identity = $serverVersion . ' ' . $versionComment;
-
-        if (str_contains($identity, 'mariadb')) {
-            return self::SERVER_MARIADB;
-        }
-        if (str_contains($identity, 'mysql')) {
-            return self::SERVER_MYSQL;
+        if (!is_string($serverInfo) || trim($serverInfo) === '') {
+            throw new RuntimeException('CT1 schema observation returned an invalid database provider identity.');
         }
 
-        throw new RuntimeException('CT1 schema observation encountered an unsupported database provider.');
+        return str_contains(strtolower($serverInfo), 'mariadb')
+            ? self::SERVER_MARIADB
+            : self::SERVER_MYSQL;
     }
 
     private function expectedCollation(): string
