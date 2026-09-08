@@ -31,6 +31,7 @@ final class StatusTransitionPolicyTest extends TestCase
 
         self::assertFalse($policy->allows('draft', 'draft'));
         self::assertNull($policy->ruleFor('draft', 'draft'));
+        self::assertFalse($policy->acceptsReason('draft', 'draft', 'reason'));
     }
 
     public function testRejectsSameStatusAndReservedCoreLifecycleEdges(): void
@@ -76,16 +77,18 @@ final class StatusTransitionPolicyTest extends TestCase
         self::assertFalse($policy->allows('draft', 'review-ready', programmatic: true));
     }
 
-    public function testReasonContractIsBoundedAndFailClosed(): void
+    public function testReasonContractIsBoundedAndBoundToDeclaredEdge(): void
     {
-        $rule = new StatusTransitionRule('draft', 'review-ready', reasonRequired: true);
-        $policy = new StatusTransitionPolicy([$rule]);
+        $policy = new StatusTransitionPolicy([
+            new StatusTransitionRule('draft', 'review-ready', reasonRequired: true),
+        ]);
 
-        self::assertFalse($policy->acceptsReason($rule, null));
-        self::assertFalse($policy->acceptsReason($rule, '   '));
-        self::assertTrue($policy->acceptsReason($rule, 'Ready for editorial review.'));
-        self::assertFalse($policy->acceptsReason($rule, str_repeat('x', 501)));
-        self::assertFalse($policy->acceptsReason($rule, "bad\x00reason"));
+        self::assertFalse($policy->acceptsReason('draft', 'review-ready', null));
+        self::assertFalse($policy->acceptsReason('draft', 'review-ready', '   '));
+        self::assertTrue($policy->acceptsReason('draft', 'review-ready', 'Ready for editorial review.'));
+        self::assertFalse($policy->acceptsReason('draft', 'review-ready', str_repeat('x', 501)));
+        self::assertFalse($policy->acceptsReason('draft', 'review-ready', "bad\x00reason"));
+        self::assertFalse($policy->acceptsReason('review-ready', 'draft', 'not declared'));
     }
 
     public function testFingerprintAndOrderAreDeterministic(): void
