@@ -39,8 +39,14 @@ final readonly class StatusRegistrationDescriptor
             throw new InvalidArgumentException('Status descriptor key must be canonical and fit the WordPress 20-character storage bound.');
         }
         foreach ([$this->label, $this->countSingular, $this->countPlural] as $label) {
-            if ($label === '' || strlen($label) > 160) {
-                throw new InvalidArgumentException('Status descriptor labels must be non-empty and bounded.');
+            if (
+                $label === ''
+                || strlen($label) > 160
+                || str_contains($label, '<')
+                || str_contains($label, '>')
+                || preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $label)
+            ) {
+                throw new InvalidArgumentException('Status descriptor labels must be bounded plain text.');
             }
         }
         if (count(array_filter([$this->public, $this->internal, $this->protected, $this->private])) > 1) {
