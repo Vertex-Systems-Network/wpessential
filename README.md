@@ -24,10 +24,10 @@ Project website: **https://wpessential.org**
 - Phase 2 Gate B / Relations: **PASS for the certified native V1 baseline**
 - Phase 2 Gate C / Query: **PASS for the certified bounded V1 baseline**
 - Phase 2 Gate D / Admin Columns: **PASS for the certified bounded V1 baseline** — final exact-main reference/closure evidence was promoted by PR #287 / Issue #285 after the bounded single-row and visible-page bulk Fields editing path, export safety, no-N+1/performance and accessibility evidence were certified. This is not `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`, does not claim provider-wide mutation parity, and does not authorize unbounded mass editing.
-- Phase 2 Gate E / Dynamic Listings: **ACTIVE at dependency-safe V1 start** — exact-main prerequisite audit PR #291 identified the missing shared render/value/component plane; shared Renderer + Dynamic Value + Component Blueprint contracts V1 were promoted by PR #293 / Issue #292 with PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package green. Listings definition/compiler and Query-binding/result-envelope are the next disjoint bounded workers; composed SSR remains later and must consume those shared contracts.
-- Status runtime: **blocked until Gate E is complete**
+- Phase 2 Gate E / Dynamic Listings: **PASS for the certified bounded V1 baseline, pending promotion of the final Supervisor truth reconciliation** — exact-main implementation and production-reference evidence through PRs #332–#342 closes the V2 runtime/module blockers. This remains a bounded baseline, not `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`.
+- Status runtime: **eligible to enter its own separately scoped implementation gate only after the final Gate E Supervisor reconciliation is promoted**
 
-Audit anchor for this README reconciliation: `main @ ca8954f3294c9d98a822c67b98eb7f8069a354c1` on **2026-09-08**. Repository/machine evidence remains authoritative if this prose later becomes stale.
+Audit anchor for this README reconciliation: `main @ d0fc48168519f0e7260ba9fba64057bcb4218e00` on **2026-09-08**. Repository/machine evidence remains authoritative if this prose later becomes stale.
 
 ## Module progress dashboard
 
@@ -117,15 +117,15 @@ Bank certification and runtime implementation are separate gates. Current audite
 | B — Relations | Bank reviewed; Relations Atomic Option Contract complete | **PASS for certified native V1 baseline** | Preserve the accepted public Query/Data Source consumer seam and owner boundaries; provider/richer parity remains separately gated |
 | C — Query | Bank reviewed / 169; typed bounded contract and canonical admin route are merged | **PASS for certified bounded V1 baseline** | Preserve Query ownership of backend semantics; public execution/full parity remain separate gates |
 | D — Admin Columns | Bank reviewed / 214; **UX_CONTRACT_COMPLETE** with 41 Atomic Options | **PASS for certified bounded V1 baseline**; final closure evidence through PR #287 is promoted | Preserve Query/source-owner authorization and mutation ownership; broader provider/unbounded parity remains separately gated |
-| E — Dynamic Listings | Bank reviewed / 150; prerequisite audit #291 complete | **ACTIVE / bounded V1 start authorized after shared prerequisite #293** | Run definition/compiler and Query-binding/result-envelope as disjoint workers; compose server-first SSR only after both are promoted |
-| Status | Bank reviewed / 129 | **RUNTIME BLOCKED** | Start only after Gate E completes |
+| E — Dynamic Listings | Bank reviewed / 150; final closure audit V3 reconciles promoted production runtime/reference evidence | **PASS for certified bounded V1 baseline once this Supervisor reconciliation promotes** | Preserve canonical Query/source-owner/shared-renderer boundaries; richer/async/builder parity remains separately gated |
+| Status | Bank reviewed / 129 | **ENTRY GATE NEXT** | Start a separately scoped Status runtime audit/implementation gate only after this Gate E reconciliation is merged |
 | Custom Tables | Bank reviewed at 165 records | **Planning-only certification**; no runtime DDL/migration execution authorized by the Bank review merge | Enter a separately approved runtime/migration gate before executable table schema work |
 
-`config/product/atomic-option-contract-progress.json` separately reports 56/56 atomic inventories, Relations at `OPTION_CONTRACT_COMPLETE`, Admin Columns at `UX_CONTRACT_COMPLETE`, and zero surfaces at full-parity `RUNTIME_CERTIFIED` / `PRODUCT_PARITY_CERTIFIED`. Bounded Gate A/B/C/D runtime passes must not be misreported as full product-parity completion.
+`config/product/atomic-option-contract-progress.json` separately reports 56/56 atomic inventories, Relations at `OPTION_CONTRACT_COMPLETE`, Admin Columns at `UX_CONTRACT_COMPLETE`, and zero surfaces at full-parity `RUNTIME_CERTIFIED` / `PRODUCT_PARITY_CERTIFIED`. Bounded Gate A/B/C/D/E runtime passes must not be misreported as full product-parity completion.
 
 ## Multi-agent work command
 
-The conflict-safe queue is `config/coordination/agent-work-queue.json`. Current reconciliation records Gate D final evidence #287, the Gate E prerequisite audit #291 and shared render/value/component contracts #293 as promoted. After the Supervisor reconciliation is merged, the next two valid dependency-ready worker lanes are intentionally path-disjoint: Issue #294 (Listings definition + compiler descriptor V1) and Issue #295 (Listings Query binding + authorized result envelope V1). They may be claimed concurrently on deterministic remote branches. Workers must not start composed SSR, Status, shared-truth edits or product-parity work early.
+The conflict-safe queue is `config/coordination/agent-work-queue.json`. Gate E implementation/reference lanes are historical once this Supervisor reconciliation promotes. Until then, workers must not begin Status runtime. After promotion, the next valid work is the separately scoped Status entry/audit lane recorded by the queue; no worker may invent a Status implementation branch before that dependency is satisfied.
 
 ### 1. Sabse pehle sirf ek Supervisor start karo
 
@@ -192,9 +192,11 @@ See `CONTRIBUTING.md` for contribution and WordPress.org release rules. The mand
 
 ## Current foundation evidence
 
-The shared Platform Foundation has passed module handoff. Surface 3 Fields Gate A, Surface 4 Relations Gate B, Surface 6 Query Gate C and Surface 8 Admin Columns Gate D have each passed explicitly bounded V1 baseline gates; none of those passes means full product parity. Gate D final closure evidence is promoted through PR #287 / Issue #285. Dynamic Listings Gate E prerequisite audit #291 classified Query/Data Source/Policy/Assets foundations as usable while identifying the missing shared Renderer/Dynamic Value/Component Blueprint plane. PR #293 / Issue #292 then promoted that shared plane with exact-head PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package all green.
+The shared Platform Foundation has passed module handoff. Surface 3 Fields Gate A, Surface 4 Relations Gate B, Surface 6 Query Gate C, Surface 8 Admin Columns Gate D and Surface 9 Dynamic Listings Gate E have each passed explicitly bounded V1 baseline gates once this Supervisor reconciliation promotes; none of those passes means full product parity.
 
-The next code tranches are therefore two disjoint bounded Gate E workers: Listings definition/compiler descriptor V1 (#294) and Listings Query-binding/authorized result-envelope V1 (#295). Neither may implement a private renderer, raw provider query language, direct Fields/meta reads, private builder document, composed SSR, Status runtime or product-parity claim. Composed server-first Listings SSR becomes eligible only after both workers are promoted and must consume the shared contracts rather than invent duplicate ownership.
+Dynamic Listings closure evidence is layered rather than inflated into one claim: earlier Definition/Query/state/scope/portability/accessibility/reference slices established the bounded common path; PRs #332–#335 promoted the production Component Blueprint Registry, Dynamic Value Router, Blueprint Renderer Dispatcher and presentation/runtime-state composition; PR #338 registered the neutral shared rendering services; PR #340 promoted the Pro `ListingsModule` on the existing activation/dependency lifecycle; PR #342 converted the real WordPress reference to the production shared runtime/module graph. The final exact-main audit is `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`.
+
+Deferred async interaction, nested Listings, Search-backed/network aggregate semantics, builder-native parity, cache runtime, richer provider/relation traversal, unsupported table runtime and full Options Bank parity remain separate gates. No `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release claim follows from the bounded Gate E pass.
 
 Hosted CI continues to provide architecture, PHP quality, WordPress/PHP/database compatibility, distributable-package and browser/accessibility evidence on certified exact heads where applicable. WordPress.org release readiness remains a separate gate and additionally requires the official Plugin Check / Directory compliance policy referenced above.
 
