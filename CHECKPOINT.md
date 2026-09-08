@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-08**  
-Canonical reconciliation anchor: **`main @ 9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6`**  
+Canonical reconciliation anchor: **`main @ b0419289a7f4f205e1fa40dd5c3158b4927badd6`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -20,61 +20,66 @@ These bounded passes do not imply full Options Bank parity, `RUNTIME_CERTIFIED`,
 
 ## Current dependency gate — Custom Tables
 
-The promoted Surface 7 foundation now contains:
+Promoted Surface 7 evidence now includes:
 
 1. Issue #382 / PR #383 — canonical DDL-free table Definition + deterministic schema descriptor.
 2. Issue #385 / PR #387 — deterministic observed-schema normalization + pure desired-to-observed Migration Plan with R0-R4 risk/blocking semantics.
 3. Issue #388 / PR #390 — post-plan next-lane audit.
 4. Issue #389 / PR #391 — trusted CT1/PT-E physical identity + strictly read-only MySQL/MariaDB schema introspection.
+5. Issue #392 / PR #394 — post-introspection next-lane audit.
+6. Issue #393 / PR #395 — trusted provider capability profile + deterministic execution-free provider DDL preview compiler.
+7. Issue #396 — README reconciliation after provider-preview promotion.
 
-PR #391's final exact head `4dd7a01cf823da4ce4ace97dcee071645ffb02c3` completed all applicable hosted gates successfully:
+PR #395's final exact head completed all applicable hosted gates successfully:
 
 - PHP Quality Toolchain — PASS;
 - Architecture Guards — PASS;
 - Platform Compatibility Matrix — PASS;
 - Distributable Package — PASS;
-- inline review threads — none.
+- inline review threads — none before merge.
 
-The promoted introspection path is observation-only: trusted current-site/per-Definition CT1 identity, prepared `INFORMATION_SCHEMA` reads, deterministic normalization, supported MySQL/MariaDB metadata handling and fail-closed partial/unsupported observations. It contains no physical DDL or row mutation execution.
+Provider statements remain immutable review previews with `execution_allowed=false`. They are not a database execution surface.
 
-## Post-introspection audit decision
+## Post-provider audit decision
 
-Issue #392 / `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md` selects the next serialized lane as:
+Issue #397 / `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PROVIDER-AUDIT-V1.md` authorizes exactly three non-overlapping execution-free prerequisites when this Supervisor reconciliation is promoted:
 
-**Issue #393 — server-selected provider capability profile + pure DDL compiler preview V1.**
+1. **Migration Run State V1** — immutable run envelope, canonical lifecycle states and legal transition guards.
+2. **Precondition Contract V1** — typed allowlisted precondition descriptors and deterministic aggregate verdicts.
+3. **Recovery + Revalidation V1** — recovery classification and reviewed-source fingerprint/revision/provider-profile revalidation decisions.
 
-This lane may create immutable provider capability facts and deterministic typed statement previews from the promoted MigrationPlan + desired descriptor + trusted CT1 identity. The compiler must remain execution-free.
+These lanes may run in parallel because they own separate namespaces and must not execute SQL, persist migration state, read/scan row data, invoke Backup providers or expose public mutation surfaces.
 
 ### Physical mutation remains blocked
 
-Issue #392 does not authorize:
+Issue #397 does not authorize:
 
 - dispatching `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` statements;
 - generic DDL execution through `$wpdb->query()` or shared database mutation APIs;
 - migration run/applied-generation persistence, leases or retry state;
 - data precondition scans, backfill, deduplication, shadow-copy or swap;
-- Backup/restore execution;
+- Backup creation/verification/restore execution;
 - row CRUD/Data Source/Query runtime;
 - CT2/PT-D or CT3 runtime/topology conversion;
 - external-table adoption;
 - Custom Tables admin/REST/Ability mutation surfaces;
 - product parity, deployment or release.
 
-Blocked/manual-drift/R3-R4 plan operations must not become executable statements in the pure compiler lane.
-
 ## Multi-agent coordination
 
 `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` are the claim authority.
 
-When this Issue #392 reconciliation is promoted:
+When Issue #397 reconciliation is promoted:
 
-- `custom-tables-readonly-introspection-v1` becomes historical DONE evidence;
-- `custom-tables-post-introspection-audit-v1` is DONE;
-- the only dependency-ready `ANY` implementation slot is `custom-tables-provider-ddl-compiler-v1` from Issue #393;
-- deterministic claim branch: `agent/custom-tables-provider-ddl-compiler-v1`;
-- no later mutation/executor branch may be speculatively pre-created.
+- `custom-tables-provider-ddl-compiler-v1` is historical DONE evidence;
+- `custom-tables-post-provider-audit-v1` is DONE;
+- the following three `ANY` implementation slots become dependency-ready in parallel:
+  - `agent/custom-tables-migration-run-state-v1`;
+  - `agent/custom-tables-precondition-contract-v1`;
+  - `agent/custom-tables-recovery-revalidation-v1`;
+- no DDL executor, persistence, scan/backfill, lease or Backup execution branch may be speculatively pre-created.
 
-Workers may run in parallel only on non-overlapping dependency-safe slots. An existing deterministic claim branch means the slot is already owned. Shared truth files remain Supervisor-only.
+Workers may run in parallel only on their non-overlapping owned namespaces. An existing deterministic claim branch means the slot is already owned. Shared truth files remain Supervisor-only.
 
 ## Product / planning truth
 
@@ -89,10 +94,11 @@ The reviewed Bank surfaces and record counts are planning/research state and mus
 
 ## Current next action
 
-1. Promote Issue #392 shared-truth reconciliation from `supervisor/custom-tables-post-introspection-audit-v1` with exact-main review clean.
+1. Promote Issue #397 shared-truth reconciliation from `supervisor/custom-tables-post-provider-audit-v1` with exact-main review clean.
 2. Re-read exact `main` after that merge.
-3. Let one Worker atomically claim `agent/custom-tables-provider-ddl-compiler-v1` for Issue #393.
-4. Develop and certify only the pure provider capability/DDL preview compiler scope.
-5. After #393 promotes, run another exact-main Supervisor audit before any database execution, migration-run persistence or recovery/precondition lane is authorized.
+3. Atomically claim all three dependency-ready execution-free worker branches from the promoted main.
+4. Develop and certify the three prerequisite contracts independently in parallel.
+5. Merge each only after exact-head CI/review clean and latest-main reconciliation.
+6. After all three promote, run another exact-main Supervisor audit before any database execution, persistence, scanning, lease or recovery-provider lane is authorized.
 
 Repository evidence overrides conversational memory.

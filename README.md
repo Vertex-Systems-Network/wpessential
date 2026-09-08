@@ -28,7 +28,7 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README reconciliation anchor: `main @ 2d6b81994b7f3d0ba6a7e044b6283e2fe79dfb29` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README reconciliation anchor: `main @ b0419289a7f4f205e1fa40dd5c3158b4927badd6` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Current Custom Tables state
 
@@ -40,6 +40,7 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 4. **Trusted CT1/PT-E physical identity + strictly read-only schema introspection V1** — Issue #389 / merged PR #391.
 5. **Post-introspection next-lane audit V1** — Issue #392 / merged PR #394.
 6. **Server-selected provider capability profile + pure DDL compiler preview V1** — Issue #393 / merged PR #395.
+7. **Post-provider exact-main prerequisite audit V1** — Issue #397; this Supervisor reconciliation makes its bounded decision authoritative when promoted to `main`.
 
 The promoted provider compiler consumes trusted CT1 identity, canonical desired schema and the reviewed Migration Plan to produce deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`. Blocked, recovery-required, R3/R4, finding-bearing and uncertified operation families fail closed. PR #395's final exact head passed PHP Quality Toolchain, Architecture Guards, Platform Compatibility Matrix and Distributable Package.
 
@@ -60,9 +61,13 @@ The current Custom Tables foundation does **not** authorize:
 
 ## Next dependency gate
 
-The provider-preview lane is promoted. **No physical DDL executor or next worker lane is automatically authorized.** A fresh exact-main Supervisor audit must choose the next dependency-safe prerequisite from migration-state persistence, precondition scanning, recovery/restore integration, execution authorization/lease semantics or another proven blocker.
+Once Issue #397's Supervisor reconciliation is promoted, three **execution-free, non-overlapping** prerequisite workers are authorized in parallel:
 
-Until that audit is promoted, provider SQL remains review-only preview data and no generated statement may be dispatched to the database.
+1. `custom-tables-migration-run-state-v1` — immutable Migration Run envelope/state machine only; no persistence/jobs/execution.
+2. `custom-tables-precondition-contract-v1` — typed precondition descriptors and aggregate verdicts only; no database reads/scans or row values.
+3. `custom-tables-recovery-revalidation-v1` — recovery classification plus reviewed-source fingerprint/revision revalidation only; no Backup provider calls or SQL execution.
+
+These lanes are intentionally parallel because their namespaces and responsibilities do not overlap. Provider SQL remains review-only preview data and no generated statement may be dispatched to the database. A later exact-main Supervisor audit is mandatory before any execution, persistence, lease, scan/backfill or recovery-provider lane can open.
 
 ## Planning / Bank snapshot
 
@@ -85,7 +90,7 @@ The Options Bank currently identifies Taxonomy, Fields, Relations, Status, Query
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
-| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan, read-only CT1 introspection and pure provider DDL preview foundations promoted; mutation still blocked |
+| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan, read-only CT1 introspection and pure provider DDL preview foundations promoted; execution-free run/precondition/recovery prerequisites are the next gated work |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
@@ -158,6 +163,7 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PROVIDER-AUDIT-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
