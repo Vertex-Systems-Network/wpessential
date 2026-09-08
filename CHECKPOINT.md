@@ -1,36 +1,38 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-08**  
-Canonical repository reconciliation anchor: **`main @ d0fc48168519f0e7260ba9fba64057bcb4218e00`**  
+Canonical repository reconciliation anchor: **`main @ 6d57041df6746a6a83ca5af0aea71f97fa21e429`**  
 Planning authority: `planning/master-architecture` through ADR-0213  
-Implementation decisions: through **ADR-0222** plus certified bounded Surface 3, Surface 4, Surface 6, Surface 8 and Surface 9 implementation contracts  
+Implementation decisions: through **ADR-0222** plus certified bounded Surface 3, Surface 4, Surface 6, Surface 8, Surface 9 and Surface 5 Status implementation contracts  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
-Lifecycle decision: **Surface 3 Fields Gate A — PASS for certified native V1; Surface 4 Relations Gate B — PASS for certified native V1; Surface 6 Query Gate C — PASS for certified bounded V1; Surface 8 Admin Columns Gate D — PASS for certified bounded V1; Surface 9 Dynamic Listings Gate E — PASS for certified bounded V1 once this Supervisor reconciliation is promoted**  
-Current dependency gate: **Status Manager entry gate — blocked until the final Gate E Supervisor reconciliation is merged**  
+Lifecycle decision: **Fields Gate A — PASS certified native V1; Relations Gate B — PASS certified native V1; Query Gate C — PASS certified bounded V1; Admin Columns Gate D — PASS certified bounded V1; Dynamic Listings Gate E — PASS certified bounded V1; Status Manager — PASS certified bounded V1 once Issue #378 / this Supervisor reconciliation is promoted**  
+Current dependency gate: **post-Status next dependency audit — BLOCKED until the Status final shared-truth reconciliation is promoted**  
 Development approval: **GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56**
 
 ## Approval boundary
 
-Authorized sequence remains:
+Authorized source-development sequence remains:
 
-`Implementation Baseline / Adoption Gate → Machine-enforced architecture guards → Milestone 1 Platform Foundation → dependency-gated module development`.
+`Implementation Baseline / Adoption Gate → machine-enforced architecture guards → shared Platform foundation → dependency-gated module development`.
 
-Phase 2 dependency order remains authoritative:
+The completed Phase 2 critical path through Status is:
 
 `Fields → Relations → Query → Admin Columns → Dynamic Listings → Status`.
 
-Source implementation, development/test tooling, CI and milestone-scoped schemas/tests are authorized. Production deployment/release, destructive live-site/customer-data operations, chargeable or irreversible provider side effects and separately privileged release operations remain excluded unless separately authorized.
+The sequence above does **not** authorize a next runtime module automatically. After the Status final reconciliation promotes, a fresh exact-main Supervisor audit must read the current ownership/dependency maps and explicitly authorize the next development tranche.
+
+Source implementation, development/test tooling, CI and milestone-scoped schemas/tests remain authorized. Production deployment/release, destructive live-site/customer-data operations, chargeable or irreversible provider side effects and separately privileged release operations remain excluded unless separately authorized.
 
 A bounded implementation-gate PASS does not imply full Options Bank parity, `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment certification or release certification.
 
 ## Product/planning truth
 
-Accepted structural scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**, with no known structural planning or semantic-owner gap after WP118 / ADR-0213.
+Accepted structural scope remains **56/56 Exhaustive**, Multisite **56/56**, AI Prompt **56/56**.
 
-Current Master Options Bank machine truth from `config/product/options-bank-progress.json` remains **10 surfaces started / 9 BANK_REVIEWED / 1,890 records**. The reviewed surfaces are Taxonomy 71, Fields 618, Relations 144, Status 129, Query 169, Custom Tables 165, Admin Columns 214, Dynamic Listings 150 and Dashboard Widgets 123. CPT remains `BANK_SURFACE_SEEDED / 107`.
+Current Master Options Bank machine truth from `config/product/options-bank-progress.json` remains **10 surfaces started / 9 BANK_REVIEWED / 1,890 records**. The reviewed surfaces are Taxonomy, Fields, Relations, Status, Query, Custom Tables, Admin Columns, Dynamic Listings and Dashboard Widgets. CPT remains `BANK_SURFACE_SEEDED / 107`.
 
-`config/product/atomic-option-contract-progress.json` remains the separate Atomic Option lifecycle source. Certified bounded implementation gates below must not be inflated into full product-parity lifecycle states.
+`config/product/atomic-option-contract-progress.json` remains the separate Atomic Option lifecycle source. Certified bounded implementation gates must not be inflated into full product-parity lifecycle states.
 
 ## Implementation gates
 
@@ -41,148 +43,162 @@ Current Master Options Bank machine truth from `config/product/options-bank-prog
 - Phase 2 / Gate B / Surface 4 Relations — **PASS FOR CERTIFIED NATIVE V1 BASELINE**.
 - Phase 2 / Gate C / Surface 6 Query — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Phase 2 / Gate D / Surface 8 Admin Columns — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
-- Phase 2 / Gate E / Surface 9 Dynamic Listings — **PASS FOR CERTIFIED BOUNDED V1 BASELINE once this final Supervisor reconciliation is promoted**.
-- Status Manager runtime — **ENTRY GATE NEXT; implementation remains blocked until this Gate E reconciliation itself is merged**.
+- Phase 2 / Gate E / Surface 9 Dynamic Listings — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**; final reconciliation promoted by PR #344.
+- Surface 5 / Status Manager — **PASS FOR CERTIFIED BOUNDED V1 BASELINE once Issue #378 / this final Supervisor reconciliation is promoted**.
+- Post-Status runtime work — **NOT YET AUTHORIZED**; a new exact-main Supervisor entry audit is required after Status closure promotion.
 
-## Surface 3 — Custom Fields Gate A certified native V1
+## Status Manager — certified bounded V1
 
-Gate A closure remains accepted from the historical exact-head evidence through the composed real-WordPress runtime reference. The certified native V1 scope includes:
+Final audit: `docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md`  
+Exact-main audit anchor: `6d57041df6746a6a83ca5af0aea71f97fa21e429`.
 
-- canonical Field Group/Field definitions and catalog-driven admin authoring;
-- shared module/edition admission through `ModuleActivationPolicyInterface`;
-- native registered post-meta projection and owner/collision guards;
-- typed value normalization and authorized read/write Abilities;
-- verified scalar and `single=false` mutation/recovery;
-- explicit storage-key migration/rollback;
-- deterministic definition portability;
-- provider/complex owner boundaries that fail closed instead of silently using native post meta;
-- deterministic performance/scale evidence;
-- automatic runtime binding through the admitted Fields module and composed real-WordPress reference.
+### Canonical runtime foundation — PASS
 
-Historical closure evidence is preserved in PRs #35–#88 and the Gate A checkpoint/audit history. Gate A does not claim all 618 Bank records, provider-wide storage parity, destructive definition merge/import, value-data portability, commercial entitlement implementation, `PRODUCT_PARITY_CERTIFIED`, deployment or release readiness.
+Promoted Status runtime evidence includes:
 
-## Surface 4 — Relations Gate B certified native V1
+- PR #349 — canonical Surface 5 Status Definition/compiler and registration descriptor;
+- PR #350 — explicit-edge fail-closed transition policy;
+- PR #353 — native WordPress Status registrar;
+- PR #354 — neutral WordPress post-resource authorization seam;
+- PR #356 — object/capability-authorized stale-safe verified transition executor;
+- PR #360 — persisted transition-policy Definition compiler/resolver;
+- PR #362 — shared WordPress capability checker and post-resource authorization services;
+- PR #363 — Pro `StatusModule`, production registrar lifecycle and canonical `wpessential/status/transition` Ability composition.
 
-Gate B closure remains accepted through the promoted Relations definition, durable edge persistence, transactional mutation, native admin/portability/diagnostics and public Query-consumer reference evidence.
+The certified path consumes shared Definition, Ability, Policy and WordPress authorization services. It contains no Status-private licensing, Policy plane, post-resource authorization engine or request-selectable site/network/provider implementation.
 
-Certified native V1 includes:
+### Admin authoring + accessibility — PASS
 
-- canonical Relation definition/cardinality/direction lifecycle;
-- scoped durable edge/state persistence and shared migrations;
-- serialized connect/disconnect with bounds, uniqueness policy and recovery;
-- native post/media/term/user/comment endpoint authorization;
-- native Relation admin definition/connection editing;
-- deterministic definition portability and diagnostics;
-- public storage-opaque `RelationQueryConsumerInterface` with batch primitives and multisite confinement.
+PR #373 closes the bounded admin path for canonical `status` and `status-transition-policy` Definitions.
 
-Historical closure evidence is preserved through PRs #100, #103, #112, #114, #122 and #128. Gate B does not claim arbitrary provider/custom-table endpoints, arbitrary pivot schemas/cascade execution, unbounded graph traversal, cross-site traversal without capability, destructive portability remap, full product parity, deployment or release readiness.
+Certified behavior includes:
 
-## Surface 6 — Query Gate C certified bounded V1
+- shared Definition repository persistence only;
+- optimistic revision conflict failure;
+- immutable identity/type and authored Status key protections;
+- server-side reuse of the promoted Status and transition-policy compilers;
+- explicit effective visibility/admin and edge previews;
+- Core lifecycle-reserved transitions visibly non-authorable through the generic transition path;
+- shared Ability/capability/AJAX/nonce infrastructure;
+- no public scope/provider/implementation selectors;
+- semantic escaped server/no-JS fallback with accessible labels/errors/focus guidance.
 
-Gate C remains **PASS FOR THE CERTIFIED BOUNDED V1 BASELINE**. Promoted evidence includes typed Query AST/validation, Policy-authorized native `wordpress.posts` execution, Relations predicate pre-resolution through the public owner seam, Fields-owned predicate resolution, deterministic scale/reference evidence, fail-closed cache/diagnostics rules and the canonical packaged Query admin authoring route with execution still disabled.
+UI visibility is never an authorization grant.
 
-Key closure references include PRs #147/#148, #154/#156, #158, #159, #160, #166, #184 and #189. Query remains the canonical owner of backend filter/search/order/pagination semantics consumed by downstream Columns/Listings. No public/admin arbitrary Query execution, total-count/aggregation runtime, cache-runtime enablement, arbitrary provider execution or Query product-parity claim follows from Gate C.
+### Deterministic portability — PASS
 
-## Surface 8 — Admin Columns Gate D certified bounded V1
+PR #370 closes create-safe deterministic Status Definition portability.
 
-Gate D remains **PASS FOR THE CERTIFIED BOUNDED V1 BASELINE**. Final composed reference/closure evidence was promoted by PR #287 / Issue #285 after certified Query-owned sort/filter/search/read semantics, owner-routed Fields mutation, bounded single-row and visible-page bulk editing, export safety, no-N+1/performance, accessibility, effective/degraded state projection and portability/import boundaries.
+The bounded package:
 
-Gate D does not claim provider-wide mutation parity, unbounded mass editing, authorization from presentation visibility, source-owner storage duplication, full product parity, deployment or release readiness.
+- contains canonical Status and transition-policy Definitions only;
+- uses deterministic ordering/version/checksum semantics;
+- preserves stable Definition identity and authored semantic keys;
+- validates owner/type/schema and compiler-backed semantics before persistence;
+- preflights conflicts before the first write;
+- treats semantically identical same-ID re-import as idempotent;
+- rejects divergent identity/key/edge/checksum/executable conflicts;
+- performs no silent UUID/key/site/network/provider remap;
+- excludes post rows, credentials, caches and audit history.
 
-## Surface 9 — Dynamic Listings Gate E certified bounded V1
+This is not content/status-row migration or destructive merge/import certification.
 
-Final audit: `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`  
-Exact-main audit anchor: `d0fc48168519f0e7260ba9fba64057bcb4218e00`.
+### Canonical Event + Audit composition — PASS
 
-### Bounded common path — PASS
+PR #371 publishes neutral shared Platform services:
 
-Promoted Gate E evidence now includes:
+- `platform.events` -> canonical `EventBus`;
+- `platform.audit` -> canonical `AuditLoggerInterface` implementation;
+- production MySQL/MariaDB persistence -> `PersistentAuditLogger` and shared Audit migration;
+- unsupported/no-database bootstrap paths -> the existing explicit in-memory persistence semantics.
 
-- canonical Published Listing definition/compiler and deterministic compatibility fingerprint;
-- explicit query-field / Dynamic Value render-binding plan;
-- bounded Query consumer binding with canonical Query ownership of validation, authorization, filtering, search, ordering and offset pagination;
-- namespaced deterministic public filter/search/offset state and no-JS navigation;
-- server-owned multisite scope guard that rejects public site/network widening;
-- deterministic portability package with explicit Query/Blueprint/provider/scope dependency evidence;
-- server-first SSR with whole-result fail-closed behavior;
-- semantic list/grid presentation, public-safe labels/empty state, bounded responsive metadata and explicit Content/Empty/Error/Degraded runtime-state classification;
-- exact Component Blueprint revision consumption and registered-asset evidence.
+PR #375 composes Status transition observation onto those services only after the WordPress mutation has been re-read and verified.
 
-### Production shared runtime — PASS
+Certified behavior includes:
 
-The V2 shared-runtime blockers are closed by promoted production implementations:
+- one Surface 5 `status.transition` success Audit record for an observed verified transition;
+- one `status.transition.completed` Event with bounded server/context facts;
+- authored reason excluded from Event payload and Audit metadata, while the bounded normalized reason remains in the Audit record's dedicated reason field;
+- authorization, stale-state, same-status, undeclared edge, reason-policy, capability, applicability, mutation and verification failures create no Status transition evidence;
+- Audit precedes Event listener dispatch;
+- committed observation failure carries the verified result and explicitly forbids mutation retry;
+- retry with the original expected Status fails stale and cannot double-transition.
 
-- PR #332 — concrete shared `ComponentBlueprintRegistry` with exact id/revision lookup, duplicate rejection and dependency-graph validation;
-- PR #333 — fail-closed shared `DynamicValueRouter` limited to server-registered source resolvers;
-- PR #334 — shared `BlueprintRendererDispatcher` resolving exact Blueprints and trusted component Renderers;
-- PR #335 — compiled presentation/runtime-state composition into the server-first Listings path;
-- PR #338 — neutral `RenderingServiceRegistrar` publishing one shared Asset Registry, Blueprint Registry, Dynamic Value Router and Renderer Dispatcher before contributed modules, without auto-enabling a Pro module;
-- PR #340 — Pro `ListingsModule` through the existing shared activation/dependency lifecycle, consuming only canonical Query/shared runtime services and publishing the Listings Query Reader/server Renderer only after Blueprint graph certification.
-
-Missing/malformed shared services or invalid Blueprint graphs fail before Listings runtime publication. The default Free activation policy does not admit the Pro Listings module. No Listings-private licensing, Policy, Query provider, Renderer or Dynamic Value runtime exists.
+Status does not thereby own Workflow, Notifications, Cron/Jobs, Ledger or provider-domain orchestration.
 
 ### Production real-WordPress reference — PASS
 
-PR #342 updated the dedicated reference application to consume the production shared registry/router/dispatcher and the Kernel-admitted Query/Listings module lifecycle rather than private runtime substitutes.
+PR #372 proves the production Status module graph on a fresh real-WordPress lifecycle using production Kernel/module/Definition/Ability/authorization services.
 
-Exact source head `b9c33e964dd6507598e0df51ab2027d809f3e2b0` passed:
+The dedicated reference matrix covers:
 
-- Architecture Guards #1096 — SUCCESS;
-- Platform Compatibility Matrix #714 — SUCCESS;
-- Listings Reference Application #20 — SUCCESS.
+- WordPress 6.9 / 7.1 × PHP 8.2 / 8.3 / 8.4 / 8.5 on MySQL 8.4;
+- WordPress 6.9 / 7.1 × PHP 8.4 on MariaDB 10.11.
 
-The dedicated reference completed all 10 jobs successfully:
+The reference proves native registration/discovery, Ability-only transition execution, verified `wp_update_post()` persistence, object authorization, site-scope confinement, stale-state failure, undeclared-edge failure, post-type applicability and Core lifecycle non-regression.
 
-- WordPress 6.9 / 7.1 × PHP 8.2 / 8.3 / 8.4 / 8.5 with MySQL 8.4;
-- WordPress 6.9 / 7.1 × PHP 8.4 with MariaDB 10.11.
+PR #377 extends the same production reference to the final Event/Audit graph. It proves:
 
-The reference preserves canonical Query Policy authorization/native `WP_Query`, published-row filtering, public-state/no-JS behavior, server-owned scope rejection, trusted Dynamic Value routing, exact Blueprint Renderer dispatch, and fail-closed Policy/Dynamic Value/Renderer failures. Missing shared runtime is also proven not to publish a private Listings fallback.
+- production `EventBus` and `PersistentAuditLogger` composition;
+- exactly one Event + one persistent Audit row for the successful verified transition;
+- bounded/correlation-consistent evidence with no authored reason in Event/Audit metadata;
+- zero additional Event/Audit evidence across stale, undeclared, Core lifecycle, applicability, authorization and scope-denial paths.
 
-### Gate E explicit non-goals
+The exact PR #377 head completed Status Reference Application, Platform Compatibility Matrix and Architecture Guards successfully, including PHP syntax, WPCS, PHPStan, PHPUnit, smoke and persistence/integration checks.
+
+### Status explicit non-goals
 
 The bounded PASS does **not** claim:
 
-- async filters, Load More or Infinite Scroll;
-- nested Listings/repeaters without depth/cycle/row-budget/batching contracts;
-- Search-index-backed Listings before the Search owner contract exists;
-- network aggregate Listings without explicit Query/Data Source capability;
-- builder-native Renderer parity;
-- cache storage/invalidation runtime;
-- richer relation-backed collection traversal beyond capabilities already exposed/certified by canonical Query;
-- arbitrary custom-table/provider adapters not registered through owner contracts;
-- unsupported table SSR semantics;
-- all 150 Dynamic Listings Bank records as shipped/runtime features;
-- `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`;
-- production deployment or release approval.
+- all 129 Status Bank records as shipped runtime;
+- full Atomic Option / Options Bank product parity;
+- arbitrary conditional/role/user workflow expression engines;
+- workflow routing, approvals inboxes or task ownership;
+- notification/email/chat delivery;
+- Cron/Jobs scheduling, delayed/expiration transitions;
+- analytics/reporting/payment status semantics;
+- arbitrary provider/domain Status adapters;
+- replacement of WordPress built-in statuses;
+- generic reimplementation of future/trash/untrash/attachment-inherit lifecycle;
+- bulk Status transition runtime without a separately certified authorization/recovery envelope;
+- content/status-row migration through portability;
+- `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release readiness.
 
-Unsupported semantics remain fail-closed rather than silently widening the certified bounded Listing contract.
+Unsupported semantics remain fail-closed or visibly deferred.
+
+## Earlier bounded gates remain accepted
+
+Fields Gate A, Relations Gate B, Query Gate C, Admin Columns Gate D and Dynamic Listings Gate E remain accepted only for their previously certified bounded/native V1 scopes. Their detailed historical evidence remains in the existing gate-specific implementation/audit documents and merged PR history; this checkpoint does not widen those claims.
+
+Dynamic Listings final audit remains `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`.
 
 ## Shared WP121 foundation remains accepted
 
 WP121 remains **PASS FOR MODULE HANDOFF**. Accepted shared foundation includes Bootstrap/Kernel/Service Registry/module lifecycle, Definition/ExecutionContext/Policy/Ability/Event core, Audit/Vault/Assets/Integrations foundations, WordPress bridges, atomic compiled-registration persistence/recovery, Definition/Audit persistence, migrations, Action Scheduler coexistence, durable Job primitives, Platform admin/diagnostics, locked PHP/Node quality graphs, deterministic packaging, browser/accessibility baselines and Multisite isolation evidence.
 
-This remains a source-development/module-handoff decision, not deployment/release approval.
+This is source-development/module-handoff evidence, not deployment/release approval.
 
 ## AUTO multi-agent coordination state
 
 `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` remain authoritative for claims.
 
-At the exact audit anchor:
+At this audit anchor:
 
-- all Dynamic Listings Gate E implementation/reference lanes through #342 are promoted;
-- Issue #343 owns the final Supervisor-only Gate E audit/shared-truth reconciliation;
-- workers must not create a Status runtime branch while #343 is unpromoted;
-- after the final Supervisor reconciliation merges, Status becomes the next dependency gate and must begin with a fresh exact-main entry/audit lane before parallel runtime work is authorized.
+- all Status implementation/reference lanes through PR #377 are promoted;
+- Issue #378 / branch `supervisor/status-v1-final-closure-audit-v3` owns the final Supervisor-only Status shared-truth reconciliation;
+- the queue records this final closure as DONE only on promotion of the reconciliation;
+- no post-Status worker runtime slot is currently authorized;
+- after #378 promotes, a fresh exact-main Supervisor issue/audit must determine the next dependency-safe development tranche;
+- Workers must report `NO_VALID_WORK_SLOT` until that audit opens an eligible `ANY` slot.
 
-Deterministic remote branch creation remains the claim lock. No force/reuse. Shared/global truth remains Supervisor-only. Historical completed branches/PRs are evidence and must not be reused or treated as active AUTO claims.
+Deterministic remote branch creation remains the claim lock. No force/reuse. Shared/global truth remains Supervisor-only. Historical completed branches/PRs are evidence and must not be reused as active AUTO claims.
 
 ## Current next action
 
-1. Promote Supervisor #343 with the final Gate E V3 audit, README/CHECKPOINT/queue synchronized to exact-main truth, applicable exact-head CI green and clean review threads.
+1. Promote Issue #378 / the final Status V3 audit with README/CHECKPOINT/queue synchronized to exact-main truth, applicable exact-head CI green and clean review threads.
 2. Re-read exact `main` after that merge.
-3. Close parent #66 as completed only after the shared-truth reconciliation is promoted.
-4. Open/claim a separately scoped Status entry audit from the new exact main.
-5. Let that audit determine dependency-safe, path-disjoint Status implementation lanes before parallel workers are started.
-6. Keep `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment and release separately gated.
+3. Open a separately scoped **post-Status exact-main next dependency gate audit** as a Supervisor-only issue.
+4. Let that audit read current architecture/ownership/dependency maps and authorize the next safe tranche; do not infer the next runtime module from Bank order alone.
+5. Keep `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment and release separately gated.
 
 Repository evidence overrides conversational memory.
