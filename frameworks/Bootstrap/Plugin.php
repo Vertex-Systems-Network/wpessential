@@ -45,6 +45,8 @@ use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Ajax\NativeWordPressAjaxEnvironment;
 use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
+use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
+use WPEssential\Platform\WordPress\Auth\WordPressPostResourceAuthorizer;
 use WPEssential\Platform\WordPress\Registrations\AtomicCompiledRegistrationStore;
 use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationScope;
 use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationStoreInterface;
@@ -110,7 +112,9 @@ final class Plugin
 
         $abilityEnvironment = new NativeWordPressAbilityEnvironment();
         $abilityContexts = new WordPressExecutionContextFactory($abilityEnvironment);
-        $abilityPolicy = new PolicyEngine(new WordPressCapabilityChecker($abilityEnvironment));
+        $capabilityChecker = new WordPressCapabilityChecker($abilityEnvironment);
+        $postResourceAuthorizer = new WordPressPostResourceAuthorizer();
+        $abilityPolicy = new PolicyEngine($capabilityChecker);
         $abilities = new AbilityRegistry($abilityPolicy);
         $abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
         $dataSources = new DataSourceRegistry();
@@ -140,6 +144,8 @@ final class Plugin
         $services->set('platform.abilities.policy', $abilityPolicy);
         $services->set('platform.abilities.contexts', $abilityContexts);
         $services->set('platform.abilities.wordpress', $abilityBridge);
+        $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+        $services->set(WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer);
         $services->set('platform.data-sources', $dataSources);
         $services->set('platform.cache', $cache);
         (new RenderingServiceRegistrar())->register($services);
