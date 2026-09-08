@@ -1,21 +1,22 @@
 {
   "schema_version": 1,
   "snapshot_date": "2026-09-08",
-  "queue_anchor_main_sha": "d0fc48168519f0e7260ba9fba64057bcb4218e00",
-  "authoritative_rule": "Refresh exact main before selecting work. Gates A/B/C/D are already PASS only for their explicitly certified bounded baselines. Dynamic Listings Gate E implementation and production-reference lanes through PR #342 are promoted; Gate E becomes PASS only when Supervisor Issue #343 final audit/shared-truth reconciliation is itself promoted. Until then Status runtime remains blocked. After #343 promotion, begin Status with a separate exact-main Supervisor entry audit before authorizing runtime workers. RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. Queue/README/CHECKPOINT are Supervisor-only.",
+  "queue_anchor_main_sha": "67dbcbb1bcae5bd5c0580f9c947762d418f5be5f",
+  "authoritative_rule": "Refresh exact main before selecting work. Gates A/B/C/D/E are PASS only for their explicitly certified bounded baselines. Dynamic Listings Gate E final Supervisor reconciliation PR #344 is promoted and parent #66 is closed. Status Manager now owns the active dependency gate through Supervisor Issue #345. Until #345 promotes, no Status runtime worker claim is valid. After #345 promotion, only Issues #346 and #347 are immediately dependency-ready and may run concurrently on their path-exclusive branches. Transition mutation, native registration composition, module/Ability wiring, admin/portability, reference evidence and closure remain later dependency-gated slices. RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. Queue/README/CHECKPOINT are Supervisor-only.",
   "auto_assignment": {
     "enabled": true,
     "selection_order": "lowest numeric priority first",
-    "selection_rule": "While #343 is unpromoted, only the final Supervisor reconciliation is actionable; workers have NO_VALID_WORK_SLOT for Status runtime. After #343 promotes, the Status entry audit becomes the next valid SUPERVISOR_ONLY slot. Runtime worker lanes must be derived by that audit rather than invented in advance.",
+    "selection_rule": "While #345 is unpromoted, only the Status entry audit Supervisor slot is actionable and workers have NO_VALID_WORK_SLOT. After #345 promotes, #346 and #347 become the only immediately valid ANY slots and may be claimed concurrently if their deterministic branches do not already exist. Later Status slices must be authorized from promoted dependency outputs rather than invented in advance.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Resolve exact current main at or after d0fc48168519f0e7260ba9fba64057bcb4218e00.",
-      "Verify Dynamic Listings production runtime/reference PRs #332, #333, #334, #335, #338, #340 and #342 are promoted.",
-      "Read docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md after #343 promotion before starting Status work.",
+      "Resolve exact current main at or after 67dbcbb1bcae5bd5c0580f9c947762d418f5be5f.",
+      "Verify Dynamic Listings final reconciliation PR #344 is promoted and parent #66 is closed.",
+      "Read docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md.",
+      "Before Status worker claims, verify #345 is promoted and read docs/IMPLEMENTATION/STATUS-MANAGER-ENTRY-AUDIT-V1.md.",
       "Inspect deterministic claim branches before creating any new claim."
     ],
     "revalidation_before_merge": [
@@ -33,7 +34,7 @@
       "must_not": [
         "Pre-create blocked worker claims.",
         "Merge from agent report alone.",
-        "Start Status runtime before Gate E final reconciliation promotes.",
+        "Start Status runtime workers before the Status entry audit promotes.",
         "Let workers edit shared truth."
       ]
     },
@@ -45,7 +46,7 @@
         "Claim SUPERVISOR_ONLY.",
         "Edit shared truth.",
         "Invent another branch when a claim exists.",
-        "Invent Status runtime lanes before the Status entry audit authorizes them."
+        "Claim Status work before #345 promotion or invent later Status slices before their dependencies promote."
       ]
     }
   },
@@ -126,7 +127,7 @@
       "title": "Real WordPress Listings reference application evidence V1",
       "role": "ANY",
       "status": "DONE",
-      "work_mode": "HISTORICAL",
+      "work_mode": "HISTORICAL_EVIDENCE",
       "parallel_class": "HISTORICAL_COMPLETED",
       "source": "Issue #314 / merged PR #326",
       "dependencies": [],
@@ -251,19 +252,13 @@
       "slot_id": "listings-gate-e-final-closure",
       "title": "Final exact-main Gate E closure audit + shared-truth reconciliation",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
-      "work_mode": "EVIDENCE_AND_SHARED_TRUTH",
-      "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Issue #343 / parent #66",
-      "dependencies": ["PR #342 promoted"],
+      "status": "DONE",
+      "work_mode": "HISTORICAL_EVIDENCE",
+      "parallel_class": "HISTORICAL_COMPLETED",
+      "source": "Issue #343 / merged PR #344 / parent #66 closed",
+      "dependencies": [],
       "runtime_allowed": false,
-      "allowed_scope": [
-        "docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md",
-        "README.md",
-        "CHECKPOINT.md",
-        "config/coordination/agent-work-queue.json"
-      ],
-      "completion_condition": "Final bounded Gate E PASS evidence and repository shared truth are promoted exact-head clean.",
+      "completion_condition": "Gate E PASS for the certified bounded V1 baseline promoted and shared truth synchronized.",
       "claim_branch": "supervisor/listings-gate-e-final-closure"
     },
     {
@@ -271,16 +266,57 @@
       "slot_id": "status-entry-audit-v1",
       "title": "Status Manager exact-main entry audit V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "BLOCKED",
-      "work_mode": "EVIDENCE",
+      "status": "IN_PROGRESS",
+      "work_mode": "EVIDENCE_AND_COORDINATION",
       "parallel_class": "SUPERVISOR_SERIALIZED",
-      "source": "Phase 2 parent #66 successor gate",
-      "dependencies": ["Issue #343 reconciliation promoted", "parent #66 closed after Gate E truth sync"],
+      "source": "Issue #345",
+      "dependencies": ["PR #344 promoted", "parent #66 closed"],
       "runtime_allowed": false,
-      "allowed_scope": ["Status planning/runtime inventory evidence and Supervisor shared truth only"],
-      "completion_condition": "Exact-main Status prerequisites/gaps are classified into dependency-safe worker lanes without starting runtime in the audit itself.",
-      "notes": "Do not claim or create Status runtime worker branches before this entry audit promotes.",
+      "allowed_scope": [
+        "docs/IMPLEMENTATION/STATUS-MANAGER-ENTRY-AUDIT-V1.md",
+        "config/coordination/agent-work-queue.json"
+      ],
+      "completion_condition": "Exact-main Status prerequisites/gaps and first dependency-safe worker tranche are promoted without starting runtime inside the audit.",
+      "notes": "#346 and #347 remain blocked until this audit promotes.",
       "claim_branch": "supervisor/status-entry-audit-v1"
+    },
+    {
+      "priority": 460,
+      "slot_id": "status-definition-compiler-v1",
+      "title": "Status canonical definition + registration descriptor V1",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "IMPLEMENTATION",
+      "parallel_class": "STATUS_FOUNDATION_PARALLEL",
+      "source": "Issue #346",
+      "dependencies": ["Issue #345 audit reconciliation promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "frameworks/Modules/Status/Definition/**",
+        "focused Status Definition tests"
+      ],
+      "completion_condition": "Canonical bounded Status definition/compiler descriptor promoted exact-head green.",
+      "notes": "Do not create the branch before #345 promotion. No WordPress registration mutation or shared truth.",
+      "claim_branch": "agent/status-definition-compiler-v1"
+    },
+    {
+      "priority": 470,
+      "slot_id": "status-transition-policy-v1",
+      "title": "Status bounded pure transition policy model V1",
+      "role": "ANY",
+      "status": "BLOCKED",
+      "work_mode": "IMPLEMENTATION",
+      "parallel_class": "STATUS_FOUNDATION_PARALLEL",
+      "source": "Issue #347",
+      "dependencies": ["Issue #345 audit reconciliation promoted"],
+      "runtime_allowed": true,
+      "allowed_scope": [
+        "frameworks/Modules/Status/Transition/**",
+        "focused pure Status Transition tests"
+      ],
+      "completion_condition": "Fail-closed pure transition-policy model promoted exact-head green.",
+      "notes": "Do not create the branch before #345 promotion. No WordPress mutation, resource authorization, events/audit or shared truth.",
+      "claim_branch": "agent/status-transition-policy-v1"
     }
   ]
 }
