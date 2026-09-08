@@ -15,6 +15,9 @@ use WPEssential\Modules\CustomTables\Definition\TableSchemaDescriptor;
 
 final class WordPressCt1SchemaIntrospector
 {
+    private const SERVER_MYSQL = 'mysql';
+    private const SERVER_MARIADB = 'mariadb';
+
     private readonly Ct1ManagedTableIdentityResolver $identityResolver;
     private readonly ObservedTableSchemaNormalizer $normalizer;
 
@@ -53,6 +56,7 @@ final class WordPressCt1SchemaIntrospector
             throw new RuntimeException('CT1 schema observation returned a different physical table identity.');
         }
 
+        $serverFlavor = $this->serverFlavor();
         $columnRows = $this->readRows(
             'SELECT COLUMN_NAME AS column_name, DATA_TYPE AS data_type, COLUMN_TYPE AS column_type, '
             . 'IS_NULLABLE AS is_nullable, COLUMN_DEFAULT AS column_default, EXTRA AS extra, '
@@ -82,7 +86,10 @@ final class WordPressCt1SchemaIntrospector
             $identity->tableKey,
             [
                 'exists' => true,
-                'columns' => array_map(fn (array $row): array => $this->column($row), $columnRows),
+                'columns' => array_map(
+                    fn (array $row): array => $this->column($row, $serverFlavor),
+                    $columnRows,
+                ),
                 'primary_key' => $primaryKey,
                 'indexes' => $indexes,
                 'charset_collation' => strcasecmp($tableCollation, $expectedCollation) === 0
@@ -93,7 +100,7 @@ final class WordPressCt1SchemaIntrospector
     }
 
     /** @return array<string,mixed> */
-    private function column(array $row): array
+    private function column(array $row, string $serverFlavor): array
     {
         $key = $this->requiredString($row, 'column_name');
         $dataType = strtolower($this->requiredString($row, 'data_type'));
@@ -125,7 +132,7 @@ final class WordPressCt1SchemaIntrospector
             $rawDefault = $row['column_default'] ?? null;
             if ($rawDefault !== null || $nullable) {
                 $column['has_default'] = true;
-                $column['default'] = $this->defaultValue($type, $rawDefault);
+                $column['default'] = $this->defaultValue($type, $rawDefault, $serverFlavor);
             }
         }
 
@@ -163,7 +170,7 @@ final class WordPressCt1SchemaIntrospector
         };
     }
 
-    private function defaultValue(string $type, mixed $value): mixed
+    private function defaultValue(string $type, mixed $value, string $serverFlavor): mixed
     {
         if ($value === null) {
             return null;
@@ -173,6 +180,18 @@ final class WordPressCt1SchemaIntrospector
         }
 
         $string = (string) $value;
+        if ($serverFlavor === self::SERVER_MARIADB) {
+            if ($string === 'NULL') {
+                return null;
+            }
+
+            $literal = $this->mariaDbLiteral($string);
+            if ($literal !== null) {
+                $string = $literal;
+            } elseif (in_array($type, ['varchar', 'datetime'], true)) {
+                return ['unsupported_default_expression' => substr($string, 0, 191)];
+            }
+        }
 
         if (in_array($type, ['bigint', 'integer'], true)) {
             if (preg_match('/^-?(?:0|[1-9]\d*)$/', $string) !== 1) {
@@ -190,6 +209,35 @@ final class WordPressCt1SchemaIntrospector
         }
 
         return $string;
+    }
+
+    private function mariaDbLiteral(string $value): ?string
+    {
+        $length = strlen($value);
+        if ($length < 2 || $value[0] !== "'" || $value[$length - 1] !== "'") {
+            return null;
+        }
+
+        $body = substr($value, 1, -1);
+        $decoded = '';
+        $bodyLength = strlen($body);
+        for ($offset = 0; $offset < $bodyLength; ++$offset) {
+            $character = $body[$offset];
+            if ($character === '\\') {
+                return null;
+            }
+            if ($character !== "'") {
+                $decoded .= $character;
+                continue;
+            }
+            if ($offset + 1 >= $bodyLength || $body[$offset + 1] !== "'") {
+                return null;
+            }
+            $decoded .= "'";
+            ++$offset;
+        }
+
+        return $decoded;
     }
 
     /**
@@ -260,6 +308,29 @@ final class WordPressCt1SchemaIntrospector
         }
 
         return [$primaryKey, $indexes];
+    }
+
+    private function serverFlavor(): string
+    {
+        $rows = $this->readRows(
+            'SELECT VERSION() AS server_version, @@version_comment AS version_comment',
+        );
+        if (count($rows) !== 1) {
+            throw new RuntimeException('CT1 schema observation could not resolve the database provider identity.');
+        }
+
+        $serverVersion = strtolower($this->requiredString($rows[0], 'server_version'));
+        $versionComment = strtolower($this->requiredString($rows[0], 'version_comment'));
+        $identity = $serverVersion . ' ' . $versionComment;
+
+        if (str_contains($identity, 'mariadb')) {
+            return self::SERVER_MARIADB;
+        }
+        if (str_contains($identity, 'mysql')) {
+            return self::SERVER_MYSQL;
+        }
+
+        throw new RuntimeException('CT1 schema observation encountered an unsupported database provider.');
     }
 
     private function expectedCollation(): string
