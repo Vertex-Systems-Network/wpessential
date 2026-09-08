@@ -57,6 +57,14 @@ final class DynamicValueRouterTest extends TestCase
         $router->register('router.self', $router);
     }
 
+    public function testRejectsRouterChainingToPreventCycles(): void
+    {
+        $router = new DynamicValueRouter();
+
+        $this->expectException(InvalidArgumentException::class);
+        $router->register('router.other', new DynamicValueRouter());
+    }
+
     public function testDelegateExceptionNormalizesToSafeFailure(): void
     {
         $delegate = new DynamicValueRouterDelegate();
