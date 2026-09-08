@@ -29,8 +29,8 @@ final class BlueprintRendererDispatcher implements RendererInterface
         if (!preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $componentType)) {
             throw new InvalidArgumentException('Renderer component type must be a bounded semantic identifier.');
         }
-        if ($renderer === $this) {
-            throw new InvalidArgumentException('Blueprint Renderer dispatcher cannot register itself.');
+        if ($renderer instanceof self) {
+            throw new InvalidArgumentException('Blueprint Renderer dispatchers cannot be chained as component renderers.');
         }
         if (isset($this->renderers[$componentType])) {
             throw new RuntimeException('Renderer component type is already registered.');
