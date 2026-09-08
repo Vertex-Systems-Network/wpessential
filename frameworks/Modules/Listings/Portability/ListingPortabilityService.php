@@ -22,7 +22,7 @@ final readonly class ListingPortabilityService
     private const MAX_PACKAGE_BYTES = 65536;
 
     /** @var list<string> */
-    private const PAYLOAD_KEYS = ['query_source_ref', 'blueprint', 'layout', 'assets', 'bindings'];
+    private const PAYLOAD_KEYS = ['query_source_ref', 'blueprint', 'layout', 'assets', 'bindings', 'presentation'];
 
     public function __construct(
         private QueryReadConsumerInterface $query,
