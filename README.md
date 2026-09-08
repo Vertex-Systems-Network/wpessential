@@ -28,7 +28,7 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README reconciliation anchor: `main @ 9e9d5028d08321dbfbc741ae4a87ae9c4bb006c6` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README reconciliation anchor: `main @ 2d6b81994b7f3d0ba6a7e044b6283e2fe79dfb29` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Current Custom Tables state
 
@@ -38,8 +38,10 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 2. **Observed schema normalization + pure Migration Plan V1** — Issue #385 / merged PR #387.
 3. **Post-plan dependency audit** — Issue #388 / merged PR #390.
 4. **Trusted CT1/PT-E physical identity + strictly read-only schema introspection V1** — Issue #389 / merged PR #391.
+5. **Post-introspection next-lane audit V1** — Issue #392 / merged PR #394.
+6. **Server-selected provider capability profile + pure DDL compiler preview V1** — Issue #393 / merged PR #395.
 
-The promoted read-only introspection lane derives managed physical identity from trusted current-site WordPress context plus canonical Definition identity, observes `INFORMATION_SCHEMA` metadata without database mutation, normalizes supported MySQL/MariaDB schema facts, and fails closed on unsupported or partial metadata. PR #391's final exact head passed PHP Quality, Architecture Guards, Platform Compatibility Matrix and Distributable Package workflows.
+The promoted provider compiler consumes trusted CT1 identity, canonical desired schema and the reviewed Migration Plan to produce deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`. Blocked, recovery-required, R3/R4, finding-bearing and uncertified operation families fail closed. PR #395's final exact head passed PHP Quality Toolchain, Architecture Guards, Platform Compatibility Matrix and Distributable Package.
 
 ### Still blocked
 
@@ -58,9 +60,9 @@ The current Custom Tables foundation does **not** authorize:
 
 ## Next dependency gate
 
-Issue #392 owns the exact-main **Custom Tables post-introspection next-lane audit V1**. Its proposed next serialized worker lane is Issue #393: **server-selected provider capability profile + pure DDL compiler preview V1**.
+The provider-preview lane is promoted. **No physical DDL executor or next worker lane is automatically authorized.** A fresh exact-main Supervisor audit must choose the next dependency-safe prerequisite from migration-state persistence, precondition scanning, recovery/restore integration, execution authorization/lease semantics or another proven blocker.
 
-That proposed compiler is deliberately execution-free. It may convert trusted desired/observed/MigrationPlan state into deterministic typed provider statement previews, while blocked/manual-drift/R3-R4 operations remain non-executable. Physical DDL execution remains separately gated and requires another exact-main Supervisor audit after the pure compiler lane is promoted.
+Until that audit is promoted, provider SQL remains review-only preview data and no generated statement may be dispatched to the database.
 
 ## Planning / Bank snapshot
 
@@ -83,7 +85,7 @@ The Options Bank currently identifies Taxonomy, Fields, Relations, Status, Query
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
-| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan and read-only CT1 introspection foundations promoted; mutation still blocked |
+| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan, read-only CT1 introspection and pure provider DDL preview foundations promoted; mutation still blocked |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
@@ -155,7 +157,7 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/POST-STATUS-NEXT-GATE-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md`
-- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md` once Issue #392 is promoted.
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
