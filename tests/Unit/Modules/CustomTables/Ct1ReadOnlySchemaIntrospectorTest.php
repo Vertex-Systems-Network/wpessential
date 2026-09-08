@@ -21,19 +21,26 @@ use WPEssential\Platform\Definitions\DefinitionStatus;
 final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 {
     private const ID = '74444444-4444-4444-8444-444444444444';
+    private const OTHER_ID = '75555555-5555-4555-8555-555555555555';
+    private const ORDERS_TOKEN = '928100d80041aeb330b611ed';
+    private const OTHER_ORDERS_TOKEN = 'd61be6e69d1f02d131baaf68';
 
-    public function testTrustedCurrentSitePrefixProducesIsolatedCanonicalCt1Identity(): void
+    public function testTrustedSiteAndDefinitionIdentityProduceIsolatedCanonicalCt1Identity(): void
     {
         $descriptor = $this->descriptor();
-        $siteOne = new Ct1ManagedTableIdentityResolver(new FakeCt1Wpdb('wp_'));
-        $siteSeven = new Ct1ManagedTableIdentityResolver(new FakeCt1Wpdb('wp_7_'));
+        $siteOneResolver = new Ct1ManagedTableIdentityResolver(new FakeCt1Wpdb('wp_'));
+        $siteSevenResolver = new Ct1ManagedTableIdentityResolver(new FakeCt1Wpdb('wp_7_'));
 
-        $first = $siteOne->resolve($descriptor);
-        $seventh = $siteSeven->resolve($descriptor);
+        $first = $siteOneResolver->resolve($descriptor);
+        $seventh = $siteSevenResolver->resolve($descriptor);
+        $otherDefinition = $siteOneResolver->resolve($this->descriptor('orders', self::OTHER_ID));
 
-        self::assertSame('wp_wpe_orders', $first->physicalName);
-        self::assertSame('wp_7_wpe_orders', $seventh->physicalName);
+        self::assertSame('wp_wpe_ct_' . self::ORDERS_TOKEN, $first->physicalName);
+        self::assertSame('wp_7_wpe_ct_' . self::ORDERS_TOKEN, $seventh->physicalName);
+        self::assertSame('wp_wpe_ct_' . self::OTHER_ORDERS_TOKEN, $otherDefinition->physicalName);
         self::assertNotSame($first->physicalName, $seventh->physicalName);
+        self::assertNotSame($first->physicalName, $otherDefinition->physicalName);
+        self::assertSame(self::ID, $first->definitionId);
         self::assertSame('orders', $seventh->tableKey);
     }
 
@@ -42,17 +49,17 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         new Ct1ManagedTableIdentity(
+            definitionId: self::ID,
             tableKey: 'orders',
             sitePrefix: 'wp_2_',
-            physicalName: 'wp_2_wpe_users',
+            physicalName: 'wp_2_wpe_ct_000000000000000000000000',
         );
     }
 
     public function testResolverFailsClosedWhenCanonicalPhysicalNameExceedsDatabaseLimit(): void
     {
-        $tableKey = 'a' . str_repeat('b', 47);
-        $descriptor = $this->descriptor($tableKey);
-        $resolver = new Ct1ManagedTableIdentityResolver(new FakeCt1Wpdb('wordpress_site_12_'));
+        $descriptor = $this->descriptor();
+        $resolver = new Ct1ManagedTableIdentityResolver(new FakeCt1Wpdb(str_repeat('p', 34)));
 
         $this->expectException(RuntimeException::class);
         $resolver->resolve($descriptor);
@@ -60,6 +67,7 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 
     public function testMissingTableReturnsExplicitMissingObservationAfterOneMetadataRead(): void
     {
+        $physicalName = 'wp_9_wpe_ct_' . self::ORDERS_TOKEN;
         $wpdb = new FakeCt1Wpdb('wp_9_', ['tables' => []]);
         $observed = (new WordPressCt1SchemaIntrospector($wpdb))->observe($this->descriptor());
 
@@ -70,14 +78,15 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
         self::assertSame('unknown', $observed->charsetCollation);
         self::assertCount(1, $wpdb->queries);
         self::assertCount(1, $wpdb->prepared);
-        self::assertSame(['wp_9_wpe_orders'], $wpdb->prepared[0]['args']);
+        self::assertSame([$physicalName], $wpdb->prepared[0]['args']);
         self::assertStringContainsString('TABLE_NAME = %s', $wpdb->prepared[0]['query']);
-        self::assertStringNotContainsString('wp_9_wpe_orders', $wpdb->prepared[0]['query']);
+        self::assertStringNotContainsString($physicalName, $wpdb->prepared[0]['query']);
     }
 
     public function testExistingTableWithoutColumnMetadataFailsClosedAsPartialObservation(): void
     {
-        $responses = $this->supportedMetadataResponses('wp_wpe_orders');
+        $physicalName = 'wp_wpe_ct_' . self::ORDERS_TOKEN;
+        $responses = $this->supportedMetadataResponses($physicalName);
         $responses['columns'] = [];
         $wpdb = new FakeCt1Wpdb('wp_', $responses);
 
@@ -87,7 +96,8 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 
     public function testSupportedPhysicalMetadataNormalizesToNoOpDesiredPlan(): void
     {
-        $wpdb = new FakeCt1Wpdb('wp_2_', $this->supportedMetadataResponses('wp_2_wpe_orders'));
+        $physicalName = 'wp_2_wpe_ct_' . self::ORDERS_TOKEN;
+        $wpdb = new FakeCt1Wpdb('wp_2_', $this->supportedMetadataResponses($physicalName));
         $desired = $this->descriptor();
         $observed = (new WordPressCt1SchemaIntrospector($wpdb))->observe($desired);
         $plan = (new TableSchemaDiffPlanner())->plan($desired, $observed);
@@ -104,15 +114,16 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 
         self::assertCount(3, $wpdb->prepared);
         foreach ($wpdb->prepared as $prepared) {
-            self::assertSame(['wp_2_wpe_orders'], $prepared['args']);
+            self::assertSame([$physicalName], $prepared['args']);
             self::assertStringContainsString('TABLE_NAME = %s', $prepared['query']);
-            self::assertStringNotContainsString('wp_2_wpe_orders', $prepared['query']);
+            self::assertStringNotContainsString($physicalName, $prepared['query']);
         }
     }
 
     public function testFractionalDatetimeMetadataBecomesBlockingUnsupportedDrift(): void
     {
-        $responses = $this->supportedMetadataResponses('wp_wpe_orders');
+        $physicalName = 'wp_wpe_ct_' . self::ORDERS_TOKEN;
+        $responses = $this->supportedMetadataResponses($physicalName);
         $responses['columns'][1] = [
             'column_name' => 'reference',
             'data_type' => 'datetime',
@@ -138,7 +149,8 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 
     public function testMalformedIndexSequenceFailsClosedInsteadOfGuessingOrder(): void
     {
-        $responses = $this->supportedMetadataResponses('wp_wpe_orders');
+        $physicalName = 'wp_wpe_ct_' . self::ORDERS_TOKEN;
+        $responses = $this->supportedMetadataResponses($physicalName);
         $responses['indexes'][2]['seq_in_index'] = '3';
         $wpdb = new FakeCt1Wpdb('wp_', $responses);
 
@@ -148,7 +160,8 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
 
     public function testObservationExecutesMetadataSelectsOnlyAndContainsNoMutationPrimitive(): void
     {
-        $wpdb = new FakeCt1Wpdb('wp_', $this->supportedMetadataResponses('wp_wpe_orders'));
+        $physicalName = 'wp_wpe_ct_' . self::ORDERS_TOKEN;
+        $wpdb = new FakeCt1Wpdb('wp_', $this->supportedMetadataResponses($physicalName));
         (new WordPressCt1SchemaIntrospector($wpdb))->observe($this->descriptor());
 
         foreach ($wpdb->queries as $query) {
@@ -178,10 +191,12 @@ final class Ct1ReadOnlySchemaIntrospectorTest extends TestCase
         }
     }
 
-    private function descriptor(string $tableKey = 'orders'): TableSchemaDescriptor
-    {
+    private function descriptor(
+        string $tableKey = 'orders',
+        string $definitionId = self::ID,
+    ): TableSchemaDescriptor {
         $definition = new Definition(
-            id: self::ID,
+            id: $definitionId,
             slug: $tableKey,
             type: 'table',
             schemaVersion: 1,
