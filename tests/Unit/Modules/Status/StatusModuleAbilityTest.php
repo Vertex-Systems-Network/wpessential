@@ -11,6 +11,7 @@ use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\Status\Abilities\StatusTransitionAbilityHandler;
+use WPEssential\Modules\Status\Admin\StatusAdminFallbackRenderer;
 use WPEssential\Modules\Status\Execution\StatusTransitionExecutor;
 use WPEssential\Modules\Status\Registration\StatusNativeRegistrar;
 use WPEssential\Modules\Status\StatusModule;
@@ -22,6 +23,10 @@ use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
+use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
 use WPEssential\Platform\WordPress\Auth\WordPressPostResourceAuthorizer;
 
@@ -45,10 +50,11 @@ final class StatusModuleAbilityTest extends TestCase
             $module->register($services);
         } finally {
             self::assertFalse($services->has(StatusModule::SERVICE_TRANSITION_EXECUTOR));
+            self::assertFalse($services->has(StatusModule::SERVICE_ADMIN_FALLBACK));
         }
     }
 
-    public function testModulePublishesResolverBackedExecutorAndTransitionAbility(): void
+    public function testModulePublishesResolverBackedExecutorTransitionAndAdminAbilities(): void
     {
         [$services, $definitions, $abilities] = $this->sharedServices();
         $hookInstalled = false;
@@ -66,6 +72,15 @@ final class StatusModuleAbilityTest extends TestCase
         );
 
         $module->register($services);
+        foreach (['list', 'get', 'save', 'status'] as $action) {
+            $admin = $abilities->descriptor('wpessential/status/admin/' . $action);
+            self::assertNotNull($admin);
+            self::assertSame(5, $admin->ownerSurfaceId);
+            self::assertSame('manage_options', $admin->capability);
+            self::assertSame(in_array($action, ['save', 'status'], true), $admin->mutates);
+        }
+        self::assertInstanceOf(StatusAdminFallbackRenderer::class, $services->get(StatusModule::SERVICE_ADMIN_FALLBACK));
+
         $module->boot($services);
 
         self::assertTrue($hookInstalled);
@@ -166,9 +181,26 @@ final class StatusModuleAbilityTest extends TestCase
             currentNetworkId: static fn (): ?int => 1,
             currentUserCan: static fn (string $capability, int $postId): bool => true,
         );
+        $environment = new class implements WordPressAbilityEnvironmentInterface {
+            public function abilitiesApiAvailable(): bool { return false; }
+            public function doingAction(string $hook): bool { return false; }
+            public function currentUserId(): ?int { return 1; }
+            public function currentSiteId(): int { return 1; }
+            public function currentNetworkId(): ?int { return 1; }
+            public function currentUserCan(string $capability): bool { return true; }
+            public function isRestRequest(): bool { return false; }
+            public function isCli(): bool { return false; }
+            public function registerCategory(string $slug, array $args): bool { return true; }
+            public function registerAbility(string $name, array $args): bool { return true; }
+        };
+        $contexts = new WordPressExecutionContextFactory($environment);
+        $bridge = new WordPressAbilityBridge($abilities, $environment, $contexts);
 
         $services->set('platform.definitions', $definitions);
         $services->set('platform.abilities', $abilities);
+        $services->set('platform.abilities.wordpress', $bridge);
+        $services->set('platform.abilities.contexts', $contexts);
+        $services->set('platform.ajax.routes', new AjaxRouteRegistry());
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilities);
         $services->set(WordPressAuthorizationServices::POST_RESOURCES, $resources);
 
