@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Tests\Unit\Modules\CustomTables\Run;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Modules\CustomTables\Migration\Run\InMemoryMigrationRunRepository;
@@ -56,6 +57,35 @@ final class MigrationRunTransitionServiceTest extends TestCase
             1,
             MigrationRunState::AwaitingReview,
         );
+    }
+
+    public function testNonPositiveExpectedRevisionIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new MigrationRunTransitionService(new InMemoryMigrationRunRepository()))->transition(
+            '11111111-1111-4111-8111-111111111111',
+            0,
+            MigrationRunState::AwaitingReview,
+        );
+    }
+
+    public function testIllegalTransitionFailsWithoutChangingStoredRun(): void
+    {
+        $repository = new InMemoryMigrationRunRepository();
+        $run = self::run();
+        $repository->create($run);
+
+        $this->expectException(InvalidArgumentException::class);
+        try {
+            (new MigrationRunTransitionService($repository))->transition(
+                $run->id,
+                1,
+                MigrationRunState::Running,
+            );
+        } finally {
+            self::assertSame(MigrationRunState::Planned, $repository->get($run->id)?->state);
+            self::assertSame(1, $repository->get($run->id)?->stateRevision);
+        }
     }
 
     private static function run(): MigrationRun
