@@ -14,8 +14,6 @@ use WPEssential\Modules\CustomTables\Definition\TableSchemaDescriptor;
 
 final readonly class Ct1ManagedTableIdentityResolver
 {
-    private const NAMESPACE = 'wpe_';
-
     public function __construct(private object $wpdb)
     {
         if (!property_exists($this->wpdb, 'prefix')) {
@@ -37,15 +35,14 @@ final readonly class Ct1ManagedTableIdentityResolver
             throw new RuntimeException('Trusted current-site WordPress table prefix is invalid.');
         }
 
-        $physicalName = $sitePrefix . self::NAMESPACE . $descriptor->tableKey;
-        if (strlen($physicalName) > 64) {
-            throw new RuntimeException('Managed CT1 physical table identity exceeds the database identifier limit.');
+        try {
+            return Ct1ManagedTableIdentity::derive(
+                definitionId: $descriptor->definitionId,
+                tableKey: $descriptor->tableKey,
+                sitePrefix: $sitePrefix,
+            );
+        } catch (InvalidArgumentException $exception) {
+            throw new RuntimeException('Managed CT1 physical table identity is invalid for the trusted site context.', 0, $exception);
         }
-
-        return new Ct1ManagedTableIdentity(
-            tableKey: $descriptor->tableKey,
-            sitePrefix: $sitePrefix,
-            physicalName: $physicalName,
-        );
     }
 }
