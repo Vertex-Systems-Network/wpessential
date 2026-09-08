@@ -75,6 +75,15 @@ final class BlueprintRendererDispatcherTest extends TestCase
         $dispatcher->register('listing.self', $dispatcher);
     }
 
+    public function testRejectsDispatcherChainingToPreventCycles(): void
+    {
+        $dispatcher = new BlueprintRendererDispatcher(new BlueprintDispatcherRegistry($this->blueprint()));
+        $other = new BlueprintRendererDispatcher(new BlueprintDispatcherRegistry($this->blueprint()));
+
+        $this->expectException(InvalidArgumentException::class);
+        $dispatcher->register('listing.other', $other);
+    }
+
     public function testDelegateExceptionNormalizesToSafeFailure(): void
     {
         $blueprint = $this->blueprint();
