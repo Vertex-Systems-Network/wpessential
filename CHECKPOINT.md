@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-08**  
-Canonical audited base anchor: **`main @ e4cd9f0d3c1edd33836fb628c6958731bb252ecc`**  
+Canonical audited base anchor: **`main @ cac9387f621d18ac03fc34d0f8724661f682d189`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -29,9 +29,9 @@ README percentages measure the currently approved/certified **bounded implementa
 - Admin Columns / Surface 8 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Dynamic Listings / Surface 9 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Status Manager / Surface 5 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**, final closure Issue #378 / merged PR #379.
-- Custom Tables / Surface 7 — **ACTIVE / NOT PASS**.
+- Custom Tables / Surface 7 — **ACTIVE / NOT PASS**, bounded foundation/composition runway **90%** after Issue #431 / PR #432 promotes.
 
-These bounded passes do not imply full Options Bank parity, `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release certification.
+These bounded passes/progress values do not imply full Options Bank parity, `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release certification.
 
 ## Current dependency gate — Custom Tables
 
@@ -48,21 +48,28 @@ Promoted Surface 7 evidence includes:
 9. Issue #407 / PR #410 — Migration Run Repository Contract V1.
 10. Issue #408 / PR #411 — Precondition Evaluator V1.
 11. Issue #409 / PR #412 — Recovery Readiness V1.
-12. Issue #413 / PR #414 — post-contract-wave exact-main Supervisor audit and 4-lane coordination.
+12. Issue #413 / PR #414 — post-contract-wave exact-main Supervisor audit and composition-wave coordination.
 13. Issue #415 / PR #416 — AI-Native issue-first/PR-second startup + README progress closeout governance.
+14. Issue #423 / PR #427 — Migration Run Transition Service V1.
+15. Issue #420 / PR #428 — Precondition Probe Registry V1.
+16. Issue #421 / PR #429 — Recovery Evidence Source Contract V1.
+17. Issue #422 / PR #430 — Migration Execution Readiness V1.
+18. Issue #431 / PR #432 — post-composition exact-main audit and shared-truth reconciliation; effective on promotion.
 
-Provider statements remain immutable review previews with `execution_allowed=false`. The promoted repository/evaluator/readiness contracts remain execution-free and contain no database-backed Custom Tables run persistence, direct row scanning, jobs/leases or Backup-provider calls.
+Provider statements remain immutable review previews with `execution_allowed=false`. The promoted repository/transition/evaluator/registry/recovery/readiness contracts remain execution-free and contain no database-backed Custom Tables run persistence, direct row scanning, jobs/leases, Backup-provider calls or provider DDL dispatch.
 
-## Current authorized parallel wave
+The latest composition wave was serialized through latest-main reconciliation and exact-head CI: PR #427 merged at `de421bdf55779a5d9e5a5012e844668f302a0425`, PR #428 at `c89707662cc5f05edb836e04ac15e0d4d3f31b23`, PR #429 at `acffcab0dd2ad1bdbddc8fc34bb416dc64a232f3`, and PR #430 at `cac9387f621d18ac03fc34d0f8724661f682d189`.
 
-Issue #413 / merged PR #414 authorizes exactly four non-overlapping execution-free contracts:
+## Next authorized parallel wave
 
-1. **Run Transition Service V1** — load through `MigrationRunRepositoryInterface`, transition only through canonical `MigrationRun::transition()`, and persist replacement only through repository compare-and-swap; no concrete database store/jobs/leases.
-2. **Precondition Probe Registry V1** — explicit allowlisted `PreconditionKind` to typed probe registration/dispatch; missing probes fail closed; no direct database reads/scans.
-3. **Recovery Evidence Source Contract V1** — typed evidence source plus deterministic static/in-memory reference source; no Backup-provider call, snapshot or restore.
-4. **Migration Execution Readiness V1** — pure aggregate decision across existing immutable Run, Precondition, Revalidation, Recovery and provider-preview facts; no statement dispatch.
+Issue #431 / PR #432 authorizes exactly four non-overlapping **execution-free hardening prerequisites**, only after this reconciliation promotes:
 
-These four lanes are conflict-safe in parallel because they own separate namespaces/responsibilities and are execution-free.
+1. **Run Persistence Record Codec V1** — deterministic immutable storage-row encode/decode with explicit versioning and invariant validation. No database adapter, table migration, SQL, jobs or leases.
+2. **Precondition Read-Only Probe Plan V1** — allowlisted typed bounded read-only probe-plan descriptors. No database execution, live row scan, raw user SQL, backfill or deduplication.
+3. **Recovery Evidence Binding/Freshness V1** — deterministic plan/provider binding and freshness/expiry decisions. No Backup provider calls, snapshot/restore or persistence.
+4. **Execution Authorization Envelope V1** — pure post-readiness authorization request/decision over bounded actor/capability/confirmation/risk facts. No Policy bypass, statement ownership, database access, jobs/leases or public endpoint.
+
+These lanes are conflict-safe because they own separate namespaces/responsibilities. `frameworks/Platform/Database/Migrations/**` is the canonical generic platform migration infrastructure; Custom Tables must compose with it rather than build a duplicate private migration engine.
 
 ### Physical mutation remains blocked
 
@@ -92,16 +99,16 @@ At every invocation:
 - re-read current main/claims/queue;
 - only then claim dependency-ready work.
 
-Current dependency-ready deterministic worker branches are:
+After PR #432 promotes, the next dependency-ready deterministic worker branches are:
 
-- `agent/custom-tables-run-transition-service-v1`;
-- `agent/custom-tables-precondition-probe-registry-v1`;
-- `agent/custom-tables-recovery-evidence-source-v1`;
-- `agent/custom-tables-execution-readiness-v1`.
+- `agent/custom-tables-run-persistence-record-codec-v1`;
+- `agent/custom-tables-precondition-readonly-probe-plan-v1`;
+- `agent/custom-tables-recovery-evidence-binding-freshness-v1`;
+- `agent/custom-tables-execution-authorization-envelope-v1`.
 
-No physical DDL executor, database-backed run store, direct scanner/backfill, lease/job or Backup execution branch may be speculatively pre-created.
+No physical DDL executor, database-backed run repository, direct live scanner/backfill, lease/job runner or Backup execution branch may be speculatively pre-created.
 
-Workers may run in parallel only on their non-overlapping owned namespaces. An existing deterministic claim branch means the slot is already owned. Shared truth files remain Supervisor-only.
+Workers may run in parallel only on non-overlapping owned namespaces. An existing deterministic claim branch means the slot is already owned. Shared truth files remain Supervisor-only.
 
 ## Product / planning truth
 
@@ -116,11 +123,11 @@ The reviewed Bank surfaces and record counts are planning/research state and mus
 
 ## Current next action
 
-1. Complete this post-AI-Native shared-truth reconciliation.
+1. Promote Issue #431 / PR #432 after exact-head CI and review cleanliness.
 2. Re-read exact `main`, OPEN Issues and OPEN PRs/MRs.
-3. Atomically claim all four dependency-ready execution-free worker branches from that exact main.
-4. Develop and certify Run Transition Service, Precondition Probe Registry, Recovery Evidence Source and Migration Execution Readiness independently in parallel.
+3. Claim only the four hardening branches authorized by the promoted post-composition audit.
+4. Develop and certify the four execution-free lanes independently in parallel.
 5. Merge each only after exact-head CI/review clean and latest-main reconciliation.
-6. After the wave promotes, update README module-wise progress and run another exact-main Supervisor audit before database-backed persistence, direct scans, Backup-provider integration, jobs/leases or any physical DDL execution is authorized.
+6. After the wave promotes, update README module-wise progress again and run another exact-main Supervisor audit before concrete database-backed persistence, direct scans, Backup-provider integration, jobs/leases or physical DDL execution is authorized.
 
 Repository evidence overrides conversational memory.
