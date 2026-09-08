@@ -28,7 +28,7 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README reconciliation anchor: `main @ b0419289a7f4f205e1fa40dd5c3158b4927badd6` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README reconciliation anchor: `main @ 2da5340ef6888ebdf103cd06319bb09ff23a4048` on **2026-09-08**. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Current Custom Tables state
 
@@ -40,9 +40,15 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 4. **Trusted CT1/PT-E physical identity + strictly read-only schema introspection V1** — Issue #389 / merged PR #391.
 5. **Post-introspection next-lane audit V1** — Issue #392 / merged PR #394.
 6. **Server-selected provider capability profile + pure DDL compiler preview V1** — Issue #393 / merged PR #395.
-7. **Post-provider exact-main prerequisite audit V1** — Issue #397; this Supervisor reconciliation makes its bounded decision authoritative when promoted to `main`.
+7. **Post-provider exact-main prerequisite audit V1** — Issue #397 / merged PR #398.
+8. **Immutable Migration Run state machine V1** — Issue #399 / merged PR #402.
+9. **Typed Precondition Contract V1** — Issue #400 / merged PR #403.
+10. **Recovery + reviewed-source Revalidation V1** — Issue #401 / merged PR #404.
+11. **Post-prerequisite exact-main audit V1** — Issue #405; this Supervisor reconciliation makes its bounded next-wave decision authoritative when promoted to `main`.
 
-The promoted provider compiler consumes trusted CT1 identity, canonical desired schema and the reviewed Migration Plan to produce deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`. Blocked, recovery-required, R3/R4, finding-bearing and uncertified operation families fail closed. PR #395's final exact head passed PHP Quality Toolchain, Architecture Guards, Platform Compatibility Matrix and Distributable Package.
+The promoted provider compiler still produces deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`; generated statements remain review-only and are not dispatched to a database. The promoted Run, Precondition and Recovery contracts add immutable lifecycle, typed fail-closed precondition semantics, recovery classification and stale-source/provider revalidation without adding execution, persistence, scans or provider calls.
+
+PR #404's final reconciled exact head `615f3816e81f4987534ae6257d9edc2ffe6a4d9b` passed PHP Quality Toolchain, Architecture Guards, Platform Compatibility Matrix and Distributable Package with zero review threads before merge. Its promoted main merge anchor is `2da5340ef6888ebdf103cd06319bb09ff23a4048`.
 
 ### Still blocked
 
@@ -51,9 +57,10 @@ The current Custom Tables foundation does **not** authorize:
 - physical `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` execution;
 - generic DDL dispatch through `$wpdb->query()` or shared database mutation interfaces;
 - row `INSERT`, `UPDATE`, `DELETE` or CRUD/Data Source runtime;
-- migration run/applied-generation persistence, leases or retry state;
-- Backup/restore execution;
-- data precondition scans, backfill, deduplication, shadow-copy or swap flows;
+- database-backed migration run/applied-generation persistence, leases, retry workers or Action Scheduler execution;
+- direct row-count/null/duplicate/range/max-length precondition scans;
+- Backup creation/verification provider calls or restore execution;
+- backfill, deduplication, shadow-copy or swap flows;
 - CT2/PT-D or CT3 runtime/topology conversion;
 - external-table adoption;
 - Custom Tables admin/REST/Ability/public mutation surfaces;
@@ -61,13 +68,13 @@ The current Custom Tables foundation does **not** authorize:
 
 ## Next dependency gate
 
-Once Issue #397's Supervisor reconciliation is promoted, three **execution-free, non-overlapping** prerequisite workers are authorized in parallel:
+Once Issue #405's Supervisor reconciliation is promoted, three **execution-free, non-overlapping** contract workers are authorized in parallel:
 
-1. `custom-tables-migration-run-state-v1` — immutable Migration Run envelope/state machine only; no persistence/jobs/execution.
-2. `custom-tables-precondition-contract-v1` — typed precondition descriptors and aggregate verdicts only; no database reads/scans or row values.
-3. `custom-tables-recovery-revalidation-v1` — recovery classification plus reviewed-source fingerprint/revision revalidation only; no Backup provider calls or SQL execution.
+1. `custom-tables-run-repository-contract-v1` — repository interface + optimistic state-revision/CAS semantics with deterministic in-memory reference only; no database persistence/jobs/leases.
+2. `custom-tables-precondition-evaluator-v1` — deterministic evaluator over an injected typed probe contract; no direct database adapter, scans or row payloads.
+3. `custom-tables-recovery-readiness-v1` — typed recovery evidence + deterministic readiness decision; no Backup provider invocation, snapshot creation or restore execution.
 
-These lanes are intentionally parallel because their namespaces and responsibilities do not overlap. Provider SQL remains review-only preview data and no generated statement may be dispatched to the database. A later exact-main Supervisor audit is mandatory before any execution, persistence, lease, scan/backfill or recovery-provider lane can open.
+These lanes are intentionally parallel because their namespaces and responsibilities do not overlap. Provider SQL remains review-only preview data and no generated statement may be dispatched to the database. A later exact-main Supervisor audit is mandatory before database-backed migration persistence, direct precondition scanning, Backup-provider integration, jobs/leases or any physical DDL execution can open.
 
 ## Planning / Bank snapshot
 
@@ -90,7 +97,7 @@ The Options Bank currently identifies Taxonomy, Fields, Relations, Status, Query
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
-| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan, read-only CT1 introspection and pure provider DDL preview foundations promoted; execution-free run/precondition/recovery prerequisites are the next gated work |
+| Custom Tables | **ACTIVE / NOT PASS** | Definition, observed-plan, CT1 read-only introspection, pure provider preview, Run state, Precondition and Recovery/Revalidation contracts promoted; repository/evaluator/readiness contracts are the next gated work |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
@@ -164,6 +171,7 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PROVIDER-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PREREQUISITE-AUDIT-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
