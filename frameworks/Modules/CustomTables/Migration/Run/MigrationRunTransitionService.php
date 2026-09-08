@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use InvalidArgumentException;
 use RuntimeException;
 
 final readonly class MigrationRunTransitionService
@@ -21,6 +22,10 @@ final readonly class MigrationRunTransitionService
         int $expectedStateRevision,
         MigrationRunState $nextState,
     ): MigrationRun {
+        if ($expectedStateRevision < 1) {
+            throw new InvalidArgumentException('Custom Tables migration run expected state revision must be positive.');
+        }
+
         $current = $this->repository->get($runId);
         if ($current === null) {
             throw new RuntimeException('Custom Tables migration run was not found.');
