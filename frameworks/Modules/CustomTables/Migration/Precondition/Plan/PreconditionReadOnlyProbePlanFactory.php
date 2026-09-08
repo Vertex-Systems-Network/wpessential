@@ -66,16 +66,31 @@ final class PreconditionReadOnlyProbePlanFactory
             }
         }
 
-        match ($requirement->kind) {
-            PreconditionKind::ColumnMatchesFingerprint => $this->requireString($requirement, 'fingerprint'),
-            PreconditionKind::RowCountRange => $this->validateRange($requirement),
-            PreconditionKind::MaxValueFits => $this->requireScalar($requirement, 'max'),
-            PreconditionKind::MaxStringLengthFits => $this->requirePositiveInt($requirement, 'max'),
-            PreconditionKind::DatabaseFeatureAvailable => $this->requireString($requirement, 'feature'),
-            PreconditionKind::CapacityAvailable => $this->requireNonNegativeInt($requirement, 'estimate_bytes'),
-            PreconditionKind::BackupTierAvailable => $this->requireString($requirement, 'tier'),
-            default => null,
-        };
+        switch ($requirement->kind) {
+            case PreconditionKind::ColumnMatchesFingerprint:
+                $this->requireString($requirement, 'fingerprint');
+                break;
+            case PreconditionKind::RowCountRange:
+                $this->validateRange($requirement);
+                break;
+            case PreconditionKind::MaxValueFits:
+                $this->requireScalar($requirement, 'max');
+                break;
+            case PreconditionKind::MaxStringLengthFits:
+                $this->requirePositiveInt($requirement, 'max');
+                break;
+            case PreconditionKind::DatabaseFeatureAvailable:
+                $this->requireString($requirement, 'feature');
+                break;
+            case PreconditionKind::CapacityAvailable:
+                $this->requireNonNegativeInt($requirement, 'estimate_bytes');
+                break;
+            case PreconditionKind::BackupTierAvailable:
+                $this->requireString($requirement, 'tier');
+                break;
+            default:
+                break;
+        }
     }
 
     private function validateRange(PreconditionRequirement $requirement): void
