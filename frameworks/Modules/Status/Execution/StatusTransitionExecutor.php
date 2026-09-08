@@ -121,6 +121,10 @@ final class StatusTransitionExecutor
         $this->assertNotReservedLifecycle($expectedFromStatus);
         $this->assertNotReservedLifecycle($targetStatus);
 
+        // Object authorization precedes server-state-specific errors so denied callers cannot
+        // probe current status/post-type details through transition error differences.
+        $this->resources->assertCanEdit($context, $postId);
+
         [$currentStatus, $postType] = $this->serverState($postId);
         if ($currentStatus !== $expectedFromStatus) {
             throw new RuntimeException('Status transition rejected because the current status is stale.');
@@ -144,7 +148,6 @@ final class StatusTransitionExecutor
         $this->assertApplicable($descriptors[$currentStatus] ?? null, $postType, 'current');
         $this->assertApplicable($descriptors[$targetStatus] ?? null, $postType, 'target');
 
-        $this->resources->assertCanEdit($context, $postId);
         if ($rule->capability !== null) {
             try {
                 $allowed = $this->capabilities->can($context, $rule->capability);
@@ -154,6 +157,13 @@ final class StatusTransitionExecutor
             if (!$allowed) {
                 throw new RuntimeException('Status transition additional capability is denied.');
             }
+        }
+
+        // Re-read immediately before mutation. WordPress does not offer a status CAS primitive,
+        // so this bounded V1 guard rejects drift observed during authorization/policy evaluation.
+        [$revalidatedStatus, $revalidatedPostType] = $this->serverState($postId);
+        if ($revalidatedStatus !== $currentStatus || $revalidatedPostType !== $postType) {
+            throw new RuntimeException('Status transition rejected because server state changed before mutation.');
         }
 
         try {
