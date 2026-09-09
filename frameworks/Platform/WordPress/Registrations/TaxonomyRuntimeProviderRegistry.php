@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Closure;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -16,17 +17,20 @@ final class TaxonomyRuntimeProviderRegistry
     /** @var array<string, class-string> */
     private array $restControllers = [];
 
-    /** @var array<string, callable|false> */
+    /** @var array<string, mixed> */
     private array $metaBoxCallbacks = [];
 
-    /** @var array<string, callable> */
+    /** @var array<string, mixed> */
     private array $metaBoxSanitizeCallbacks = [];
 
-    /** @var array<string, callable> */
+    /** @var array<string, mixed> */
     private array $termCountCallbacks = [];
 
     public function __construct()
     {
+        // Store trusted WordPress callable identifiers without requiring the related
+        // admin/runtime function to be loaded at registry-construction time. Actual
+        // callability is checked fail-closed immediately before register_taxonomy().
         $this->registerRestController('wordpress.terms', 'WP_REST_Terms_Controller');
         $this->registerMetaBoxProvider('wordpress.categories', 'post_categories_meta_box');
         $this->registerMetaBoxProvider('wordpress.tags', 'post_tags_meta_box');
@@ -47,30 +51,33 @@ final class TaxonomyRuntimeProviderRegistry
         $this->restControllers[$id] = $className;
     }
 
-    public function registerMetaBoxProvider(string $id, callable|false $callback): void
+    public function registerMetaBoxProvider(string $id, mixed $callback): void
     {
         $id = $this->providerId($id);
-        if (isset($this->metaBoxCallbacks[$id])) {
+        if (array_key_exists($id, $this->metaBoxCallbacks)) {
             throw new InvalidArgumentException('Taxonomy meta-box provider id is already registered.');
         }
+        $this->assertTrustedCallbackDescriptor($callback, true, 'Taxonomy meta-box provider');
         $this->metaBoxCallbacks[$id] = $callback;
     }
 
-    public function registerMetaBoxSanitizeProvider(string $id, callable $callback): void
+    public function registerMetaBoxSanitizeProvider(string $id, mixed $callback): void
     {
         $id = $this->providerId($id);
-        if (isset($this->metaBoxSanitizeCallbacks[$id])) {
+        if (array_key_exists($id, $this->metaBoxSanitizeCallbacks)) {
             throw new InvalidArgumentException('Taxonomy meta-box sanitizer provider id is already registered.');
         }
+        $this->assertTrustedCallbackDescriptor($callback, false, 'Taxonomy meta-box sanitizer provider');
         $this->metaBoxSanitizeCallbacks[$id] = $callback;
     }
 
-    public function registerTermCountProvider(string $id, callable $callback): void
+    public function registerTermCountProvider(string $id, mixed $callback): void
     {
         $id = $this->providerId($id);
-        if (isset($this->termCountCallbacks[$id])) {
+        if (array_key_exists($id, $this->termCountCallbacks)) {
             throw new InvalidArgumentException('Taxonomy term-count provider id is already registered.');
         }
+        $this->assertTrustedCallbackDescriptor($callback, false, 'Taxonomy term-count provider');
         $this->termCountCallbacks[$id] = $callback;
     }
 
@@ -86,16 +93,20 @@ final class TaxonomyRuntimeProviderRegistry
 
     public function hasMetaBoxSanitizeProvider(string $id): bool
     {
-        return isset($this->metaBoxSanitizeCallbacks[$id]);
+        return array_key_exists($id, $this->metaBoxSanitizeCallbacks);
     }
 
     public function hasTermCountProvider(string $id): bool
     {
-        return isset($this->termCountCallbacks[$id]);
+        return array_key_exists($id, $this->termCountCallbacks);
     }
 
     /**
      * Resolve persisted provider IDs at the last responsible runtime boundary.
+     *
+     * Compiled registration manifests remain JSON-safe because only provider IDs are
+     * persisted. Native PHP callables/classes are introduced here, after loading the
+     * compiled manifest and immediately before invoking register_taxonomy().
      *
      * @param array<string,mixed> $args
      * @param array<string,mixed> $providerIds
@@ -172,5 +183,41 @@ final class TaxonomyRuntimeProviderRegistry
     private function className(string $className): bool
     {
         return preg_match('/^[A-Za-z_\\][A-Za-z0-9_\\]*$/', $className) === 1;
+    }
+
+    private function assertTrustedCallbackDescriptor(mixed $callback, bool $allowFalse, string $label): void
+    {
+        if ($callback === false) {
+            if ($allowFalse) {
+                return;
+            }
+            throw new InvalidArgumentException($label . ' cannot be disabled with false.');
+        }
+
+        if ($callback instanceof Closure || is_object($callback) && is_callable($callback)) {
+            return;
+        }
+
+        if (is_string($callback)) {
+            if (preg_match('/^[A-Za-z_\\][A-Za-z0-9_\\]*(?:::[A-Za-z_][A-Za-z0-9_]*)?$/', $callback) === 1) {
+                return;
+            }
+            throw new InvalidArgumentException($label . ' string has an invalid callable identifier shape.');
+        }
+
+        if (is_array($callback) && array_is_list($callback) && count($callback) === 2 && is_string($callback[1])) {
+            [$target, $method] = $callback;
+            if (preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $method) !== 1) {
+                throw new InvalidArgumentException($label . ' method name has an invalid shape.');
+            }
+            if (is_object($target)) {
+                return;
+            }
+            if (is_string($target) && $this->className($target)) {
+                return;
+            }
+        }
+
+        throw new InvalidArgumentException($label . ' must be a trusted callable descriptor.');
     }
 }
