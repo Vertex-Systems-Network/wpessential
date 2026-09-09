@@ -20,7 +20,7 @@ After startup, the agent must:
 8. work only inside that slot's allowed scope;
 9. submit a PR/MR with exact-head evidence;
 10. let the Supervisor/Integrator decide merge order from dependencies and current main;
-11. at the end of the completed work cycle, reconcile README status including the module-wise progress table/progress bars.
+11. at the end of the completed work cycle, reconcile README status including the module-wise progress/timeline dashboard before the engineering query/cycle is reported final.
 
 ## Mandatory issue-first / PR-second preflight
 
@@ -41,16 +41,19 @@ Rules:
 
 ## Mandatory end-of-cycle README reconciliation
 
-After a meaningful work cycle reaches a stable final state (merged work, resolved issue, completed audit, or an explicitly documented blocked state), the Supervisor must update `README.md` before reporting the cycle complete.
+After a meaningful work cycle reaches a stable final state (merged work, resolved issue, completed audit, or an explicitly documented blocked state), the Supervisor must update `README.md` before reporting the engineering query/cycle final.
 
 README closeout must include:
 
 - current reconciliation/main anchor where appropriate;
 - current active module/dependency gate;
-- a **module-wise progress table**;
-- for every implementation module shown: lifecycle/status, progress bar, percentage, latest evidence and next gate;
+- a **module-wise progress and timeline table**;
+- for every implementation module shown: lifecycle/status, progress bar, percentage, start date/time, estimated completion date/time, actual completion date/time, latest evidence and next gate;
 - explicit wording that percentages measure the **currently approved/certified bounded implementation milestone**, not full product parity unless `PRODUCT_PARITY_CERTIFIED` is actually promoted;
-- no fabricated percentage for planning-only modules without a defined implementation baseline.
+- no fabricated percentage for planning-only modules without a defined implementation baseline;
+- no fabricated historical or future timestamps.
+
+The authoritative timeline rules are in `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`.
 
 Canonical progress-bar form:
 
@@ -59,7 +62,22 @@ Canonical progress-bar form:
 ████████░░ 80%
 ```
 
-The README update is part of engineering completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports the README reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
+Canonical timestamp form is ISO-8601 UTC:
+
+```text
+2026-09-10T14:30:00Z
+```
+
+Timeline rules:
+
+- **Start date/time** comes from the earliest repository-verifiable accepted implementation signal for the bounded module track.
+- **Estimated completion date/time** is a non-binding engineering forecast based on current scope, dependencies, blockers and evidence. It is not a delivery promise, SLA, release date or certification date. Recompute it when those inputs materially change.
+- **Actual completion date/time** is populated only from promoted repository evidence such as an accepted merge, issue closure or bounded certification transition.
+- Active/incomplete modules use `—` for actual completion.
+- If an exact historical timestamp has not been audited, use `UNKNOWN / pending evidence audit`.
+- If a defensible completion forecast cannot be produced, use an explicit state such as `FORECAST PENDING / post-audit scope required` rather than inventing a date.
+
+The README update is part of engineering completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports the README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
 
 ## Important role rule
 
@@ -81,7 +99,7 @@ Read AUTO-AGENT.md and follow it completely.
 Refresh exact current main; check and resolve OPEN Issues first, then inspect/fix/merge OPEN PRs/MRs, then reconcile active claim branches and config/coordination/agent-work-queue.json before starting new work.
 Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
-At the end of the completed work cycle, update README current status and its module-wise progress bars/table before reporting completion.
+At the end of the completed work cycle, update README current status and its module-wise progress/timeline table — including progress bar, status, start time, completion forecast and actual completion time — before reporting the engineering query/cycle final.
 ```
 
 The Supervisor must not pre-create worker branches. Workers claim their own slots.
@@ -184,7 +202,7 @@ The Supervisor performs the mandatory issue-first / PR-second preflight, then:
 9. applies serialized shared-file Integration Requirements;
 10. merges only merge-ready exact heads;
 11. reconciles queue/shared progress after accepted merges;
-12. updates README module-wise progress/status before final cycle reporting.
+12. updates README module-wise progress/status/timeline before final query/cycle reporting, including evidence-backed start time, non-binding completion forecast and actual completion time.
 
 A Worker finishing first does not automatically mean it merges first. Merge order follows dependency and shared-truth safety.
 
@@ -225,7 +243,7 @@ only together with:
 - unresolved items and risks;
 - next safe action.
 
-A Worker must additionally identify whether README/shared progress reconciliation is required. The Supervisor may call a work cycle fully complete only after the README module-wise progress table/status is current or the inability to update it is explicitly recorded as a blocker.
+A Worker must additionally identify whether README/shared progress/timeline reconciliation is required. The Supervisor may call a work cycle fully complete only after the README module-wise progress/timeline table is current or the inability to update it is explicitly recorded as a blocker.
 
 The Supervisor must review evidence rather than trusting the phrase itself.
 
@@ -235,7 +253,7 @@ After a Worker PR/MR is merged:
 
 - authoritative current main changes;
 - the Supervisor reconciles durable progress/queue truth when needed;
-- the Supervisor updates README module progress/status as part of cycle closeout;
+- the Supervisor updates README module progress/status/timeline as part of cycle closeout;
 - other active agents must incorporate relevant new main changes before final certification;
 - old exact-head CI does not certify a new synchronized head;
 - no branch may be force-rewritten to hide integration conflicts.
