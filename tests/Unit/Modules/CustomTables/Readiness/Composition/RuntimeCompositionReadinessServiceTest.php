@@ -16,6 +16,7 @@ use WPEssential\Modules\CustomTables\Migration\ProviderStatementPreview;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\ExecutionActorType;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\Policy\MigrationExecutionAuthorizationPolicyAdapter;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\BoundMigrationExecutionConfirmation;
+use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\RuntimeCompositionReadinessPackage;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\RuntimeCompositionReadinessService;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\StaticMigrationExecutionConfirmationProvider;
 use WPEssential\Modules\CustomTables\Migration\Recovery\Binding\BoundRecoveryEvidence;
@@ -132,8 +133,10 @@ final class RuntimeCompositionReadinessServiceTest extends TestCase
         self::assertFalse($package->executionAllowed);
     }
 
-    private static function evaluate(RuntimeCompositionReadinessService $service, MigrationRun $run): object
-    {
+    private static function evaluate(
+        RuntimeCompositionReadinessService $service,
+        MigrationRun $run,
+    ): RuntimeCompositionReadinessPackage {
         return $service->evaluate(
             run: $run,
             requirements: [new PreconditionRequirement('table_exists', PreconditionKind::TableExists, 'orders')],
