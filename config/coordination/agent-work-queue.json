@@ -1,8 +1,8 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "snapshot_date": "2026-09-09",
-  "queue_anchor_main_sha": "755f4063e477e37195a85ec1df5765749806d024",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. README closeout must retain all 56 canonical surfaces. Fields, Relations, Query, Admin Columns, Listings and Status retain only their explicitly certified bounded baseline PASS claims. Surface 7 Custom Tables remains ACTIVE / NOT PASS at the evidence-backed bounded runway indicator of 90%. The concrete adapter wave is promoted through PR #450 and the post-adapter exact-main audit is promoted through PR #454. That audit keeps managed-table execution blocked and authorizes only Runtime Composition Readiness V1: trusted production bootstrap/composition of the already-promoted persistence, metadata-probe, recovery-verification and Policy/confirmation facts, with no managed-table DDL dispatch. Managed-table physical DDL, R3/R4 execution, live row scans, Backup creation/restore side effects, migration jobs/leases, row CRUD/Data Source runtime, CT2/PT-D/CT3 runtime, external adoption, public mutation, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README, CHECKPOINT and this queue are Supervisor-owned shared truth.",
+  "queue_anchor_main_sha": "56cbcce2da90a11232fd65b374ad237fc1c67fb0",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. README closeout must retain all 56 canonical surfaces. Fields, Relations, Query, Admin Columns, Listings and Status retain only their explicitly certified bounded baseline PASS claims. Surface 7 Custom Tables remains ACTIVE / NOT PASS at the evidence-backed bounded runway indicator of 90%. Runtime Composition Readiness V1 is promoted through Issue #459 / PR #460 and passes as a bounded no-dispatch composition foundation, but the post-runtime exact-main audit in Issue #461 keeps managed-table execution blocked because metadata-facts, recovery-provider and confirmation-provider trust provenance is not yet fully server-owned. The next authorized lane is Trusted Runtime Evidence Sources V1 with execution_allowed=false. Managed-table physical DDL, R1/R2 statement dispatch, R3/R4 execution, live row scans, Backup creation/restore side effects, migration jobs/leases, row CRUD/Data Source runtime, CT2/PT-D/CT3 runtime, external adoption, public mutation, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README, CHECKPOINT and this queue are Supervisor-owned shared truth.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,7 +14,7 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots",
-    "selection_rule": "Priority 940 Runtime Composition Readiness V1 is the next authorized Supervisor-only Custom Tables lane. It must prove trusted production composition/bootstrap while keeping execution_allowed=false/no-dispatch semantics. Do not infer or pre-create a managed-table DDL executor, R3/R4 executor, live row scanner, Backup creator/restorer, migration job/lease runner, row runtime or another module from Options Bank order.",
+    "selection_rule": "Priority 960 Trusted Runtime Evidence Sources V1 is the next authorized Supervisor-only Custom Tables lane after Issue #461 promotes. It must make metadata facts, recovery verification provider selection and confirmation provenance server-owned while preserving execution_allowed=false and zero managed-table dispatch. Do not infer or pre-create a managed-table DDL executor, R1/R2 statement dispatcher, R3/R4 executor, live row scanner, Backup creator/restorer, migration job/lease runner, row runtime or another module from Options Bank order.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
@@ -25,17 +25,17 @@
       "List and reconcile eligible OPEN PRs/MRs before selecting new work; fix/merge accepted merge-ready work in dependency-safe order.",
       "Do not start new development while an accepted actionable Issue or PR/MR path is being bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read docs/IMPLEMENTATION/CUSTOM-TABLES-POST-ADAPTER-EXACT-MAIN-AUDIT-V1.md and prior Custom Tables audit evidence.",
-      "Read docs/ARCHITECTURE/CUSTOM-TABLES-DDL-MIGRATION-LANGUAGE.md and docs/ARCHITECTURE/CUSTOM-TABLES-PTD-PTE-PHYSICAL-MIGRATION-PROFILE.md.",
-      "Inspect canonical Platform migration/bootstrap composition, durable run repository construction, metadata probe composition, recovery verification composition and Policy/confirmation binding before Runtime Composition Readiness work.",
+      "Read docs/IMPLEMENTATION/CUSTOM-TABLES-POST-RUNTIME-COMPOSITION-EXACT-MAIN-AUDIT-V1.md and prior Custom Tables audit evidence.",
+      "Inspect WordPressCt1SchemaIntrospector and existing recovery/confirmation contracts before introducing any trusted-facts source so existing read-only primitives are composed rather than duplicated.",
       "Inspect deterministic claim branches before creating any claim."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
-      "Verify Runtime Composition Readiness contains zero generated managed-table DDL dispatch, zero managed target-table mutation, zero R3/R4 execution, zero live row scans, zero Backup creation/restore side effects, zero migration jobs/leases and zero public mutation bypass.",
-      "Verify all readiness facts bind to the same reviewed plan/run/readiness revision and fail closed on missing/stale/mismatched evidence."
+      "Verify Trusted Runtime Evidence Sources contains zero generated managed-table DDL dispatch, zero managed target-table mutation, zero R1/R2 statement execution, zero R3/R4 execution, zero live row scans, zero Backup creation/restore side effects, zero migration jobs/leases and zero public mutation bypass.",
+      "Verify production metadata facts are derived from canonical trusted read-only sources, recovery provider selection is server-owned/allowlisted, confirmation provenance is server-owned/scoped/revision-bound, and arbitrary caller provider substitution cannot manufacture readiness.",
+      "Verify the returned readiness package remains execution_allowed=false."
     ],
     "cycle_closeout": [
       "Reconcile README current status after meaningful completed work.",
@@ -48,14 +48,14 @@
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "description": "Owns Issues/PR preflight, shared truth, exact-main audits, Platform/runtime composition integration, merge serialization and complete 56-surface README closeout reconciliation.",
+      "description": "Owns Issues/PR preflight, shared truth, exact-main audits, Platform/runtime trust composition, merge serialization and complete 56-surface README closeout reconciliation.",
       "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create blocked worker claims.",
         "Start new development before accepted OPEN Issues and eligible OPEN PRs/MRs are reconciled.",
         "Merge from agent report alone.",
         "Let workers edit shared truth.",
-        "Authorize managed-table physical DDL execution from Runtime Composition Readiness V1."
+        "Authorize managed-table physical DDL or R1/R2 statement dispatch from Trusted Runtime Evidence Sources V1."
       ]
     },
     "WORKER": {
@@ -114,6 +114,8 @@
     {"priority":910,"slot_id":"custom-tables-recovery-verification-provider-port-v1","title":"Custom Tables Recovery verification provider port V1","role":"ANY","status":"DONE","source":"Issue #445 / merged PR #448","runtime_allowed":true,"claim_branch":"agent/custom-tables-recovery-verification-provider-port-v1"},
     {"priority":920,"slot_id":"custom-tables-execution-authorization-policy-adapter-v1","title":"Custom Tables execution authorization Policy adapter V1","role":"ANY","status":"DONE","source":"Issue #446 / merged PR #449","runtime_allowed":true,"claim_branch":"agent/custom-tables-execution-authorization-policy-adapter-v1"},
     {"priority":930,"slot_id":"custom-tables-post-adapter-audit-v1","title":"Custom Tables post-adapter exact-main audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #453 / merged PR #454","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-adapter-audit-v1"},
-    {"priority":940,"slot_id":"custom-tables-runtime-composition-readiness-v1","title":"Custom Tables Runtime Composition Readiness V1","role":"SUPERVISOR_ONLY","status":"OPEN","work_mode":"PLATFORM_RUNTIME_COMPOSITION","parallel_class":"CUSTOM_TABLES_RUNTIME_COMPOSITION_SERIAL_A","source":"Issue #453 / merged PR #454 post-adapter audit","dependencies":["custom-tables-wpdb-run-store-v1","custom-tables-metadata-precondition-probes-v1","custom-tables-recovery-verification-provider-port-v1","custom-tables-execution-authorization-policy-adapter-v1","custom-tables-post-adapter-audit-v1"],"runtime_allowed":true,"execution_allowed":false,"allowed_scope":["canonical Custom Tables production composition/bootstrap for promoted migration-run persistence","explicit site/network-scoped WpdbMigrationRunRepository construction","metadata-only Precondition probe registry/adapters composition","trusted read/verify RecoveryVerificationProvider composition","canonical Policy-derived authorization composition","trusted confirmation source and readiness revision binding","pure immutable no-dispatch readiness package/envelope","focused unit/integration tests proving same plan/run/revision binding and fail-closed behavior","canonical Platform migration registration/bootstrap strictly as required"],"forbidden_scope":["generated managed-table DDL dispatch","managed target-table mutation","CREATE/ALTER/DROP/RENAME/TRUNCATE/dbDelta against managed Custom Tables","R3/R4 execution","live row scans","Backup creation or restore","jobs/leases/retries/Action Scheduler migration execution","row CRUD/Data Source runtime","CT2/PT-D/CT3 runtime conversion","external-table adoption","public admin/REST/Ability mutation endpoints","deployment/release"],"claim_branch":"supervisor/custom-tables-runtime-composition-readiness-v1"}
+    {"priority":940,"slot_id":"custom-tables-runtime-composition-readiness-v1","title":"Custom Tables Runtime Composition Readiness V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #459 / merged PR #460","runtime_allowed":true,"execution_allowed":false,"claim_branch":"supervisor/custom-tables-runtime-composition-readiness-v1"},
+    {"priority":950,"slot_id":"custom-tables-post-runtime-composition-audit-v1","title":"Custom Tables post-Runtime Composition exact-main audit + shared-truth reconciliation V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #461 / this audit PR","runtime_allowed":false,"execution_allowed":false,"claim_branch":"supervisor/custom-tables-post-runtime-composition-audit-v1"},
+    {"priority":960,"slot_id":"custom-tables-trusted-runtime-evidence-sources-v1","title":"Custom Tables Trusted Runtime Evidence Sources V1","role":"SUPERVISOR_ONLY","status":"OPEN","work_mode":"TRUST_BOUNDARY_INTEGRATION","parallel_class":"CUSTOM_TABLES_TRUSTED_RUNTIME_EVIDENCE_SERIAL_A","source":"Issue #461 post-Runtime Composition audit","dependencies":["custom-tables-runtime-composition-readiness-v1","custom-tables-post-runtime-composition-audit-v1"],"runtime_allowed":true,"execution_allowed":false,"allowed_scope":["typed MetadataPreconditionFacts provider port and canonical read-only production implementation using existing CT1/schema/provider metadata primitives","server-owned/allowlisted RecoveryVerificationProvider construction or registry using existing typed recovery contracts","server-owned scoped revision-bound confirmation source or equivalent canonical provider construction boundary","tighten CustomTablesRuntimeCompositionFactory so arbitrary runtime callers cannot substitute trust providers","focused fail-closed composition attack tests for plan/run/revision/site/network/actor/capability/recovery/provider mismatch and R3/R4","immutable no-dispatch readiness package with execution_allowed=false"],"forbidden_scope":["generated managed-table DDL dispatch","managed target-table mutation","CREATE/ALTER/DROP/RENAME/TRUNCATE/dbDelta against managed Custom Tables","R1/R2 statement execution","R3/R4 execution","live row scans or row payload reads","Backup creation or restore","jobs/leases/retries/Action Scheduler migration execution","row CRUD/Data Source runtime","backfill/dedup/shadow-copy/swap","CT2/PT-D/CT3 runtime conversion","external-table adoption","public admin/REST/Ability mutation endpoints","deployment/release"],"claim_branch":"supervisor/custom-tables-trusted-runtime-evidence-sources-v1"}
   ]
 }
