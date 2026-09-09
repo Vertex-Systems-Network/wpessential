@@ -23,13 +23,18 @@ final class TaxonomyRuntimeRegistrar
     /** @var array<string, string> */
     private array $errors = [];
 
-    private readonly TaxonomyRuntimeProviderRegistry $providers;
+    private readonly TaxonomyRuntimeProviderRegistry $providerRegistry;
 
     public function __construct(
         private readonly RegistrationRuntimeLoader $runtime,
         ?TaxonomyRuntimeProviderRegistry $providers = null,
     ) {
-        $this->providers = $providers ?? new TaxonomyRuntimeProviderRegistry();
+        $this->providerRegistry = $providers ?? new TaxonomyRuntimeProviderRegistry();
+    }
+
+    public function providers(): TaxonomyRuntimeProviderRegistry
+    {
+        return $this->providerRegistry;
     }
 
     public function register(): void
@@ -77,7 +82,7 @@ final class TaxonomyRuntimeRegistrar
             }
 
             try {
-                $args = $this->providers->apply($args, $providerIds);
+                $args = $this->providerRegistry->apply($args, $providerIds);
             } catch (Throwable $exception) {
                 $this->errors[$key] = $exception->getMessage();
                 continue;
