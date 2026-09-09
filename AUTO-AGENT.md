@@ -11,33 +11,36 @@ A newly started agent should not need the repository owner to manually choose `T
 After startup, the agent must:
 
 1. refresh exact current repository truth;
-2. inspect and triage **OPEN Issues first**;
-3. inspect, repair and merge eligible **OPEN PRs/MRs second**;
+2. inspect, triage and continue/solve accepted **OPEN Issues first**;
+3. inspect, repair, review and merge eligible **OPEN PRs/MRs second**;
 4. determine its role;
 5. read `config/coordination/agent-work-queue.json` and active deterministic claim branches;
-6. select the highest-priority valid free work slot only after existing issue/PR work is reconciled;
+6. select the highest-priority valid free work slot only after existing Issue/PR/MR work is reconciled;
 7. claim it without racing another agent;
 8. work only inside that slot's allowed scope;
 9. submit a PR/MR with exact-head evidence;
 10. let the Supervisor/Integrator decide merge order from dependencies and current main;
-11. at the end of the completed work cycle, reconcile README status including the module-wise progress/timeline dashboard before the engineering query/cycle is reported final.
+11. at the end of the completed work cycle, reconcile README status including the complete **56 / 56 canonical module** progress/timeline dashboard before the engineering query/cycle is reported final.
 
-## Mandatory issue-first / PR-second preflight
+## Mandatory Issues-first / PR-MR-second preflight
 
-Every Supervisor and Worker work cycle, including `continue`/`resume`, starts in this exact order:
+Every Supervisor and Worker work cycle, including `start`, `continue` and `resume`, starts in this exact order:
 
 1. **Resolve exact current `main`.** Never start from conversational memory or an old branch.
-2. **Issues first.** List OPEN repository Issues, read dependency-ready/active issue bodies, and continue or solve accepted unfinished issue work before inventing a new task.
+2. **Issues first.** List OPEN repository Issues, read dependency-ready/active issue bodies, and continue or solve accepted unfinished Issue work before inventing a new task.
 3. **PRs/MRs second.** List OPEN PRs/MRs, inspect mergeability, exact-head CI, review threads, conflicts and dependency order. Fix failing or stale accepted PRs and merge merge-ready PRs before opening new implementation work.
-4. **Claims/queue third.** Re-read deterministic claim branches and `config/coordination/agent-work-queue.json` after issue/PR reconciliation because merges may have changed dependencies.
-5. **New development last.** Only then claim a dependency-ready free slot or create a new issue authorized by the current exact-main audit.
+4. **Claims/queue third.** Re-read deterministic claim branches and `config/coordination/agent-work-queue.json` after Issue/PR reconciliation because merges may have changed dependencies.
+5. **New development last.** Only then claim a dependency-ready free slot or create a new implementation Issue authorized by the current exact-main audit.
+
+This is a **hard development gate**. New feature/module development is forbidden while an accepted actionable OPEN Issue or PR/MR path is being bypassed. The only exception is repository-evidenced blocked or superseded work, and that state must be explicit before another development path starts.
 
 Rules:
 
-- An OPEN issue that is already represented by an OPEN PR is not duplicate work; finish/review that PR path.
+- An OPEN Issue that is already represented by an OPEN PR/MR is not duplicate work; finish/review that PR/MR path.
 - Do not bypass a failing accepted PR by creating a replacement feature branch unless the existing PR is explicitly superseded/closed with repository evidence.
+- Do not treat "not yet reviewed" or "CI still running" as permission to invent unrelated development that violates dependency/shared-write safety.
 - Merge order remains dependency-safe and exact-head certified; "PRs second" does not mean blindly merging every PR.
-- Critical/security/recovery incidents may stop the line under existing governance, but their issue/PR evidence must still be reconciled durably.
+- Critical/security/recovery incidents may stop the line under existing governance, but their Issue/PR evidence must still be reconciled durably.
 
 ## Mandatory end-of-cycle README reconciliation
 
@@ -47,13 +50,18 @@ README closeout must include:
 
 - current reconciliation/main anchor where appropriate;
 - current active module/dependency gate;
-- a **module-wise progress and timeline table**;
-- for every implementation module shown: lifecycle/status, progress bar, percentage, start date/time, estimated completion date/time, actual completion date/time, latest evidence and next gate;
+- a **complete 56 / 56 canonical surface progress and timeline table**;
+- canonical surface number and name from `docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md`;
+- for every canonical surface: lifecycle/status, progress bar/percentage when an evidence-backed implementation baseline exists, start date/time, estimated completion date/time, actual completion date/time, latest evidence and next gate;
+- planning-only/not-yet-baselined surfaces must remain visible with explicit non-fabricated values;
 - explicit wording that percentages measure the **currently approved/certified bounded implementation milestone**, not full product parity unless `PRODUCT_PARITY_CERTIFIED` is actually promoted;
 - no fabricated percentage for planning-only modules without a defined implementation baseline;
-- no fabricated historical or future timestamps.
+- no fabricated historical or future timestamps;
+- no missing or duplicated canonical surface rows.
 
-The authoritative timeline rules are in `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`.
+Closeout fails if the README table does not visibly contain **56 / 56 modules listed**.
+
+The authoritative rules are in `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md` and `config/coordination/ai-native-readme-closeout.json`.
 
 Canonical progress-bar form:
 
@@ -71,13 +79,15 @@ Canonical timestamp form is ISO-8601 UTC:
 Timeline rules:
 
 - **Start date/time** comes from the earliest repository-verifiable accepted implementation signal for the bounded module track.
+- A planning-only surface with no promoted implementation start uses `— / no implementation start promoted`.
 - **Estimated completion date/time** is a non-binding engineering forecast based on current scope, dependencies, blockers and evidence. It is not a delivery promise, SLA, release date or certification date. Recompute it when those inputs materially change.
+- If an implementation baseline has not been promoted, use `FORECAST PENDING / implementation baseline not promoted` rather than inventing a date.
 - **Actual completion date/time** is populated only from promoted repository evidence such as an accepted merge, issue closure or bounded certification transition.
-- Active/incomplete modules use `—` for actual completion.
+- Active/incomplete/planning-only modules use `—` for actual completion.
 - If an exact historical timestamp has not been audited, use `UNKNOWN / pending evidence audit`.
-- If a defensible completion forecast cannot be produced, use an explicit state such as `FORECAST PENDING / post-audit scope required` rather than inventing a date.
+- Planning lifecycle labels such as `ATOMIC_INVENTORY_COMPLETE` are not implementation percentages.
 
-The README update is part of engineering completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports the README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
+The README update is part of engineering completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports complete 56-module README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
 
 ## Important role rule
 
@@ -96,10 +106,11 @@ Use exactly this intent:
 ```text
 Start WPEssential Supervisor in AUTO mode.
 Read AUTO-AGENT.md and follow it completely.
-Refresh exact current main; check and resolve OPEN Issues first, then inspect/fix/merge OPEN PRs/MRs, then reconcile active claim branches and config/coordination/agent-work-queue.json before starting new work.
+Refresh exact current main; solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then reconcile active claim branches and config/coordination/agent-work-queue.json before starting any new development.
+Do not start new development while an accepted actionable Issue or PR/MR path is being bypassed.
 Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
-At the end of the completed work cycle, update README current status and its module-wise progress/timeline table — including progress bar, status, start time, completion forecast and actual completion time — before reporting the engineering query/cycle final.
+At the end of the completed work cycle, update README current status and its complete 56 / 56 canonical module progress/timeline table — including progress/status, start time, completion forecast, actual completion time, evidence and next gate — before reporting the engineering query/cycle final.
 ```
 
 The Supervisor must not pre-create worker branches. Workers claim their own slots.
@@ -111,7 +122,7 @@ Use exactly this intent:
 ```text
 Start WPEssential Worker in AUTO mode.
 Read AUTO-AGENT.md and follow it completely.
-Refresh exact current main; inspect OPEN Issues first and OPEN PRs/MRs second. Do not duplicate accepted work already represented there.
+Refresh exact current main; inspect/continue accepted OPEN Issues first and inspect/fix eligible OPEN PRs/MRs second. Do not duplicate accepted work already represented there and do not start new development while an actionable accepted path is being bypassed.
 Then inspect config/coordination/agent-work-queue.json and claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
 Do not ask me which module to work on unless repository evidence contains a genuine unresolved decision.
 ```
@@ -127,8 +138,9 @@ Every Worker executes this sequence:
 Before branch creation:
 
 - resolve the exact current `main` SHA;
-- list/read relevant OPEN Issues first;
-- list/read relevant OPEN PRs/MRs second and do not duplicate their accepted work;
+- list/read relevant OPEN Issues first and continue accepted work where actionable;
+- list/read relevant OPEN PRs/MRs second, repair accepted work where permitted and do not duplicate it;
+- stop new-development selection if an accepted actionable Issue/PR/MR path still requires reconciliation;
 - read root `AGENTS.md`;
 - read `CONTRIBUTING.md`;
 - read current `CHECKPOINT.md`;
@@ -143,7 +155,7 @@ Never assume the queue snapshot is newer than repository truth.
 
 ### B. Revalidate queue entries
 
-Process OPEN `ANY` slots in ascending numeric priority.
+Process OPEN `ANY` slots in ascending numeric priority only after the Issues/PR-MR gate is clear.
 
 For each candidate, verify:
 
@@ -189,20 +201,21 @@ Make no repository changes. Do not invent work merely to keep the agent busy.
 
 ## Supervisor algorithm
 
-The Supervisor performs the mandatory issue-first / PR-second preflight, then:
+The Supervisor performs the mandatory Issues-first / PR-MR-second hard preflight, then:
 
-1. resolves/triages OPEN Issues and continues accepted unfinished issue work;
+1. resolves/triages OPEN Issues and continues accepted unfinished Issue work;
 2. reviews/fixes OPEN PRs/MRs and merges only merge-ready exact heads in dependency-safe order;
-3. re-reads current main, claim branches and queue after those merges;
-4. takes the highest-priority valid `SUPERVISOR_ONLY` slot, if any;
-5. otherwise may claim the highest-priority valid `ANY` slot;
-6. does not create branches for Workers;
-7. periodically re-reads current issue/PR/MR/main state when the user invokes or continues the Supervisor session;
-8. reviews submitted work against current main and dependency order;
-9. applies serialized shared-file Integration Requirements;
-10. merges only merge-ready exact heads;
-11. reconciles queue/shared progress after accepted merges;
-12. updates README module-wise progress/status/timeline before final query/cycle reporting, including evidence-backed start time, non-binding completion forecast and actual completion time.
+3. confirms no accepted actionable Issue/PR/MR path is being bypassed;
+4. re-reads current main, claim branches and queue after those reconciliations;
+5. takes the highest-priority valid `SUPERVISOR_ONLY` slot, if any;
+6. otherwise may claim the highest-priority valid `ANY` slot;
+7. does not create branches for Workers;
+8. periodically re-reads current Issue/PR/MR/main state when the user invokes or continues the Supervisor session;
+9. reviews submitted work against current main and dependency order;
+10. applies serialized shared-file Integration Requirements;
+11. merges only merge-ready exact heads;
+12. reconciles queue/shared progress after accepted merges;
+13. updates README complete 56 / 56 module progress/status/timeline before final query/cycle reporting, including evidence-backed start time where known, non-binding completion forecast, actual completion time, latest evidence and next gate.
 
 A Worker finishing first does not automatically mean it merges first. Merge order follows dependency and shared-truth safety.
 
@@ -243,7 +256,7 @@ only together with:
 - unresolved items and risks;
 - next safe action.
 
-A Worker must additionally identify whether README/shared progress/timeline reconciliation is required. The Supervisor may call a work cycle fully complete only after the README module-wise progress/timeline table is current or the inability to update it is explicitly recorded as a blocker.
+A Worker must additionally identify whether complete 56-module README/shared progress/timeline reconciliation is required. The Supervisor may call a work cycle fully complete only after the README has all 56 canonical module rows current or the inability to update it is explicitly recorded as a blocker.
 
 The Supervisor must review evidence rather than trusting the phrase itself.
 
@@ -253,7 +266,7 @@ After a Worker PR/MR is merged:
 
 - authoritative current main changes;
 - the Supervisor reconciles durable progress/queue truth when needed;
-- the Supervisor updates README module progress/status/timeline as part of cycle closeout;
+- the Supervisor updates the complete 56 / 56 README module progress/status/timeline dashboard as part of cycle closeout;
 - other active agents must incorporate relevant new main changes before final certification;
 - old exact-head CI does not certify a new synchronized head;
 - no branch may be force-rewritten to hide integration conflicts.
@@ -264,8 +277,9 @@ The queue is the machine-readable authority for dependency-ready work and is int
 
 At every invocation:
 
-- Issues and PRs/MRs are reconciled before queue selection;
-- the queue is re-read from current main;
+- accepted OPEN Issues are reconciled first;
+- eligible OPEN PRs/MRs are reconciled second;
+- the queue is re-read from current main only after those gates;
 - only dependency-ready conflict-safe slots may run in parallel;
 - Supervisor/shared-truth lanes remain serialized;
 - no module is selected merely from Options Bank ordering.
@@ -283,4 +297,4 @@ Agent 3: Start WPEssential Worker in AUTO mode. Read AUTO-AGENT.md and follow it
 Agent 4: Start WPEssential Worker in AUTO mode. Read AUTO-AGENT.md and follow it completely.
 ```
 
-Each session independently re-checks exact current main, OPEN Issues, OPEN PRs/MRs and the coordination queue before accepting an assignment. The repository evidence at that moment—not this example or chat memory—determines the safe work.
+Each session independently re-checks exact current main, accepted OPEN Issues, OPEN PRs/MRs and the coordination queue in that order before accepting an assignment. The repository evidence at that moment—not this example or chat memory—determines the safe work.

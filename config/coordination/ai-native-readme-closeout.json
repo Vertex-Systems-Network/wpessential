@@ -1,22 +1,47 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "status": "ACTIVE",
-  "source_issue": 451,
+  "source_issues": [451, 455],
   "scope": "AI_NATIVE_ENGINEERING_QUERY_CLOSEOUT",
   "owner": "SUPERVISOR",
   "trigger": "before_final_response_when_meaningful_repository_state_changed",
+  "work_order": {
+    "hard_gate": true,
+    "sequence": [
+      "resolve_exact_current_main",
+      "reconcile_open_issues_first",
+      "reconcile_open_prs_mrs_second",
+      "reread_claims_queue_shared_truth",
+      "new_development_last"
+    ],
+    "development_while_actionable_accepted_issue_or_pr_exists": false,
+    "exception": "explicit_repository_evidence_that_prior_path_is_blocked_or_superseded",
+    "duplicate_replacement_branch_for_existing_accepted_pr_forbidden": true
+  },
   "readme_table": {
     "required": true,
+    "canonical_surface_count": 56,
+    "required_surface_count": 56,
+    "canonical_surface_source": "docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md",
+    "must_list_all_canonical_surfaces": true,
+    "missing_surface_allowed": false,
+    "duplicate_surface_allowed": false,
+    "visible_count_marker": "56 / 56 modules listed",
     "fields": [
+      "surface_number",
       "module_surface",
       "lifecycle_status",
-      "progress_bar_percentage",
+      "progress_bar_percentage_or_explicit_no_baseline",
       "start_datetime_utc",
       "estimated_completion_datetime_utc",
       "actual_completion_datetime_utc",
       "latest_evidence",
       "next_gate"
     ],
+    "planning_only_rows_must_remain_visible": true,
+    "planning_status_is_not_implementation_percentage": true,
+    "no_implementation_baseline_value": "— / no implementation baseline",
+    "no_implementation_start_value": "— / no implementation start promoted",
     "timestamp_format": "ISO_8601_UTC",
     "unknown_historical_value": "UNKNOWN / pending evidence audit",
     "active_actual_completion_value": "—",
@@ -44,11 +69,12 @@
   "progress_contract": {
     "semantic": "currently_approved_or_certified_bounded_implementation_milestone",
     "full_product_parity_implied": false,
-    "raise_without_promoted_milestone": false
+    "raise_without_promoted_milestone": false,
+    "planning_lifecycle_must_not_be_converted_to_fake_percentage": true
   },
   "worker_contract": {
     "may_edit_supervisor_shared_truth": false,
-    "required_output_when_reconciliation_needed": "README timeline reconciliation Integration Requirement"
+    "required_output_when_reconciliation_needed": "Complete 56-module README progress/timeline reconciliation Integration Requirement"
   },
   "runtime_authorization_changed": false
 }
