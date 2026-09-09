@@ -28,7 +28,7 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README audited base anchor: `main @ 755f4063e477e37195a85ec1df5765749806d024` on **2026-09-09 UTC**. The Custom Tables post-adapter exact-main audit is promoted via Issue #453 / merged PR #454; Issue #457 reconciles the coordination queue to that promoted truth before Runtime Composition Readiness V1 begins. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 56cbcce2da90a11232fd65b374ad237fc1c67fb0` on **2026-09-09 UTC**. Runtime Composition Readiness V1 is promoted through Issue #459 / merged PR #460. Issue #461 is the exact-main post-Runtime Composition audit and keeps managed-table execution blocked while opening only the narrower Trusted Runtime Evidence Sources V1 trust-boundary lane. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -48,7 +48,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | 4 | Relations | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
 | 5 | Status | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
 | 6 | Query | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate C | Public execution/full parity remains gated |
-| 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / Runtime Composition Readiness V1 not yet promoted | — | Issue #453 / merged PR #454 | Runtime Composition Readiness V1; managed-table DDL remains blocked |
+| 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / Trusted Runtime Evidence Sources V1 not yet promoted | — | Issue #459 / merged PR #460 + Issue #461 exact-main audit | Trusted Runtime Evidence Sources V1; managed-table DDL and R1/R2 statement dispatch remain blocked |
 | 8 | Admin Columns | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate D | No unbounded mass-edit/provider-wide parity claim |
 | 9 | Listings | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #343 / PR #344 | Richer async/builder parity remains gated |
 | 10 | Dashboard Widgets | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
@@ -99,7 +99,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | 55 | Staging/Clone/Migration | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 | 56 | Theme Workspace | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 
-The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. The post-adapter audit does not invent a higher percentage because the repository defines no new percentage milestone for this wave.
+The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. Runtime Composition Readiness V1 and the post-Runtime Composition audit do not invent a higher percentage because the repository defines no new percentage milestone for this wave.
 
 ## AI-Native work-cycle order
 
@@ -152,10 +152,12 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 29. **Execution Authorization Policy Adapter V1** — Issue #446 / merged PR #449.
 30. **Internal Migration Run Store Schema + WPDB Repository V1** — Issue #443 / merged PR #450.
 31. **Post-adapter exact-main audit V1** — Issue #453 / merged PR #454.
+32. **Runtime Composition Readiness V1** — Issue #459 / merged PR #460.
+33. **Post-Runtime Composition exact-main audit V1** — Issue #461 / this audit PR.
 
-The provider compiler still produces deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`; generated managed-table statements remain review-only and are never dispatched by the certified bounded code. Run persistence includes the promoted record codec plus a durable site-scoped internal WPE Migration Run repository. Metadata-only precondition probes, recovery verification provider facts and canonical Policy-derived execution authorization facts are promoted. Live row scans, Backup creation/restore side effects and managed-table physical mutation remain blocked.
+Runtime Composition V1 registers the internal Migration Run store through canonical Platform migrations, constructs the site/network-scoped durable repository, composes metadata-only precondition semantics, recovery verification/freshness, canonical Policy authorization and revision-bound confirmation, and returns an immutable package with `execution_allowed=false`.
 
-The post-adapter exact-main audit concluded that the promoted primitives are bounded and fail-closed individually, but a trusted production composition/bootstrap boundary has not yet been proven. Therefore an R1/R2 managed-table execution coordinator remains **BLOCKED / NOT AUTHORIZED**.
+The post-Runtime Composition audit accepts that bounded no-dispatch foundation but finds production trust provenance incomplete: metadata facts are still caller-supplied, recovery verification provider selection is caller-injected, and confirmation provider selection is caller-injected/static. Therefore an R1/R2 managed-table execution coordinator remains **BLOCKED / NOT AUTHORIZED**.
 
 ### Still blocked
 
@@ -163,6 +165,7 @@ The current Custom Tables foundation does **not** authorize:
 
 - physical `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` execution against managed Custom Tables;
 - generic managed-table DDL dispatch through `$wpdb->query()` or shared database mutation interfaces;
+- R1/R2 managed-table statement execution;
 - row `INSERT`, `UPDATE`, `DELETE` or CRUD/Data Source runtime;
 - R3/R4 managed-table execution;
 - leases, retry workers or Action Scheduler migration execution;
@@ -176,23 +179,22 @@ The current Custom Tables foundation does **not** authorize:
 
 ## Next dependency gate
 
-Issue #453 / merged PR #454 authorizes the next bounded Supervisor-only work package:
+Issue #461 authorizes the next bounded Supervisor-only trust-boundary work package after this audit promotes:
 
-### Custom Tables — Runtime Composition Readiness V1
+### Custom Tables — Trusted Runtime Evidence Sources V1
 
-Goal: prove the production composition/bootstrap path for already-promoted Custom Tables safety primitives **without executing managed-table DDL**.
+Goal: make production Runtime Composition obtain readiness facts only from canonical server-owned sources while **keeping `execution_allowed=false` and executing no managed-table DDL**.
 
 Allowed bounded scope includes:
 
-1. canonical registration/bootstrap of the internal Migration Run store through `frameworks/Platform/Database/Migrations/**`;
-2. construction/wiring of `WpdbMigrationRunRepository` with explicit site/network scope;
-3. composition of metadata-only probe registry/adapters;
-4. composition of read/verify recovery verification facts;
-5. composition of canonical Policy-derived authorization facts plus trusted confirmation binding;
-6. same reviewed plan/run/readiness-revision binding across the readiness package;
-7. deterministic fail-closed tests and a no-dispatch readiness envelope.
+1. typed metadata-facts provider port + read-only production implementation using existing trusted CT1/schema/provider metadata primitives;
+2. server-owned/allowlisted recovery verification provider construction or registry using existing typed recovery contracts;
+3. server-owned, scoped, revision-bound confirmation provenance or equivalent canonical provider construction boundary;
+4. tightening `CustomTablesRuntimeCompositionFactory` so arbitrary runtime callers cannot substitute trusted providers;
+5. focused fail-closed tests for plan/run/revision/site/network/actor/capability/recovery/provider mismatch and R3/R4;
+6. immutable no-dispatch readiness output with `execution_allowed=false`.
 
-Managed-table DDL dispatch, R3/R4 execution, live row scans, Backup creation/restore, migration jobs/leases, row CRUD, public mutation, deployment and release remain forbidden.
+Managed-table DDL dispatch, R1/R2 statement execution, R3/R4 execution, live row scans, Backup creation/restore, migration jobs/leases, row CRUD, public mutation, deployment and release remain forbidden.
 
 `frameworks/Platform/Database/Migrations/**` remains the canonical generic Platform migration infrastructure; Custom Tables must compose it rather than create a duplicate private migration engine.
 
@@ -218,7 +220,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
-| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Post-adapter audit promoted; Runtime Composition Readiness V1 is next; physical managed-table DDL remains blocked |
+| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Runtime Composition no-dispatch foundation promoted; Trusted Runtime Evidence Sources V1 is next; physical managed-table DDL and R1/R2 statement dispatch remain blocked |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
@@ -297,6 +299,7 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-COMPOSITION-WAVE-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-HARDENING-WAVE-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-ADAPTER-EXACT-MAIN-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-RUNTIME-COMPOSITION-EXACT-MAIN-AUDIT-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 

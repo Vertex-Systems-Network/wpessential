@@ -1,25 +1,26 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-08**  
-Canonical audited base anchor: **`main @ 18165d325dd97d6346ad2982a8464b450eb8273d`**  
+Checkpoint date: **2026-09-09 UTC**  
+Canonical audited base anchor: **`main @ 56cbcce2da90a11232fd65b374ad237fc1c67fb0`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 
 ## AI-Native mandatory work-cycle order
 
-Issue #415 / merged PR #416 remains canonical:
+Every Supervisor/Worker `start`, `continue` and `resume` cycle is hard-gated in this order:
 
 1. resolve exact current `main`;
-2. inspect and triage **OPEN Issues first**;
+2. inspect/continue/solve accepted **OPEN Issues first**;
 3. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
-4. re-read deterministic claim branches and `config/coordination/agent-work-queue.json`;
-5. only then claim/start new dependency-ready development;
-6. after meaningful completed work reaches a stable final state, the Supervisor reconciles README current status and its module-wise progress table/progress bars before reporting completion.
+4. confirm no accepted actionable Issue/PR/MR path is being bypassed;
+5. re-read deterministic claims and `config/coordination/agent-work-queue.json`;
+6. only then claim/start dependency-ready development;
+7. after a meaningful stable cycle, reconcile README and shared truth before reporting completion.
 
-Accepted issue/PR work must not be bypassed by speculative replacement branches. Merge order follows dependencies, latest-main reconciliation, exact-head CI, review-thread cleanliness and shared-truth safety.
+Accepted issue/PR work must not be bypassed by speculative replacement branches. Merge order follows dependencies, latest-main reconciliation, exact-head CI, clean review threads and shared-truth safety.
 
-README percentages measure the currently approved/certified **bounded implementation milestone**, never full product parity unless machine-readable lifecycle state explicitly promotes that claim.
+README closeout must retain the complete canonical **56 / 56 module table**. Planning-only modules remain visible without fabricated implementation percentages or timestamps. Percentages measure only the currently approved/certified bounded milestone and never imply full product parity unless machine-readable lifecycle truth explicitly promotes that state.
 
 ## Certified bounded implementation gates
 
@@ -27,15 +28,15 @@ README percentages measure the currently approved/certified **bounded implementa
 - Relations / Surface 4 — **PASS FOR CERTIFIED NATIVE V1 BASELINE**.
 - Query / Surface 6 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Admin Columns / Surface 8 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
-- Dynamic Listings / Surface 9 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
-- Status Manager / Surface 5 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**, final closure Issue #378 / merged PR #379.
-- Custom Tables / Surface 7 — **ACTIVE / NOT PASS**, bounded runway **90%**. The post-hardening wave advances evidence but does not define a new percentage milestone.
+- Listings / Surface 9 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
+- Status / Surface 5 — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**, final closure Issue #378 / merged PR #379.
+- Custom Tables / Surface 7 — **ACTIVE / NOT PASS**, bounded runway **90%**. Runtime Composition and the post-Runtime audit do not define a higher percentage milestone.
 
-These bounded passes/progress values do not imply full Options Bank parity, `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release certification.
+These claims do not imply `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release certification.
 
 ## Current dependency gate — Custom Tables
 
-Promoted Surface 7 evidence includes:
+Promoted Surface 7 evidence now includes:
 
 1. Issue #382 / PR #383 — canonical DDL-free table Definition + deterministic schema descriptor.
 2. Issue #385 / PR #387 — observed-schema normalization + pure Migration Plan with R0-R4 risk/blocking semantics.
@@ -48,56 +49,84 @@ Promoted Surface 7 evidence includes:
 9. Issue #408 / PR #411 — Precondition Evaluator V1.
 10. Issue #409 / PR #412 — Recovery Readiness V1.
 11. Issue #413 / PR #414 — post-contract-wave exact-main audit.
-12. Issue #415 / PR #416 — AI-Native issue-first/PR-second startup + README progress closeout governance.
+12. Issue #415 / PR #416 — AI-Native Issues-first/PR-second + README closeout governance.
 13. Issue #423 / PR #427 — Migration Run Transition Service V1.
 14. Issue #420 / PR #428 — Precondition Probe Registry V1.
 15. Issue #421 / PR #429 — Recovery Evidence Source Contract V1.
 16. Issue #422 / PR #430 — Migration Execution Readiness V1.
-17. Issue #431 / merged PR #432 — post-composition exact-main audit and hardening-wave authorization.
+17. Issue #431 / PR #432 — post-composition-wave exact-main audit.
 18. PR #437 — Migration Run Persistence Record Codec V1.
 19. PR #438 — Precondition Read-Only Probe Plan V1.
-20. Issue #435 / PR #439 — Recovery Evidence Binding/Freshness V1, promoted at `08f91e5c617b4e2b8de1f253568f3ddfc0802f96`.
-21. Issue #436 / PR #440 — Execution Authorization Envelope V1, promoted at `18165d325dd97d6346ad2982a8464b450eb8273d` after latest-main reconciliation and 4/4 exact-head CI.
-22. Issue #441 — post-hardening exact-main audit and shared-truth reconciliation; effective when promoted.
+20. Issue #435 / PR #439 — Recovery Evidence Binding/Freshness V1.
+21. Issue #436 / PR #440 — Execution Authorization Envelope V1.
+22. Issue #441 / PR #442 — post-hardening exact-main audit.
+23. PR #447 — Metadata-only Precondition Probe Adapters V1.
+24. Issue #445 / PR #448 — Recovery Verification Provider Port V1.
+25. Issue #446 / PR #449 — Execution Authorization Policy Adapter V1.
+26. Issue #443 / PR #450 — internal Migration Run Store Schema + WPDB Repository V1.
+27. Issue #453 / PR #454 — post-adapter exact-main audit.
+28. Issue #459 / PR #460 — Runtime Composition Readiness V1, merged as `56cbcce2da90a11232fd65b374ad237fc1c67fb0`.
+29. Issue #461 — post-Runtime Composition exact-main audit and shared-truth reconciliation in the current audit PR.
 
-Provider statements remain immutable review previews with `execution_allowed=false`. The hardening wave adds deterministic run-record serialization, bounded precondition probe plans, recovery evidence binding/freshness and a post-readiness authorization envelope. It still does not execute provider DDL, scan live row data, trigger Backup side effects, schedule migration work or mutate managed target tables.
+## Runtime Composition audit result
 
-`frameworks/Platform/Database/Migrations/**` is the canonical generic Platform migration boundary. Custom Tables must compose `MigrationRegistry`, `MigrationRunner`, `MigrationCoordinator` and migration-state infrastructure rather than build a duplicate private migration engine.
+Runtime Composition Readiness V1 is accepted as a bounded **no-dispatch composition foundation**.
 
-## Next authorized work after Issue #441 promotes
+Promoted evidence proves:
 
-### A — Internal Migration Run Store Schema + WPDB Repository V1 — serialized Supervisor integration
+- internal Migration Run store registration through canonical Platform migrations;
+- durable site-scoped `WpdbMigrationRunRepository` construction;
+- site/network execution-context checks and persisted-run identity binding;
+- metadata-only precondition allowlisting with row-scan kinds failing closed;
+- reviewed/current generation and preview plan/provider binding;
+- recovery verification + provider/version/freshness binding;
+- canonical Policy-derived capability/actor facts;
+- confirmation binding to the same run, plan, readiness revision and actor;
+- immutable readiness output with `execution_allowed=false`;
+- exact-head PR #460 CI green across PHP Quality, Architecture Guards, Platform Compatibility, Distributable Package, CPT Runtime, Taxonomy Runtime and Status Reference Application;
+- clean PR #460 review threads at promotion.
 
-- internal WPE metadata table only;
-- bootstrap/versioning through canonical Platform migration infrastructure;
-- canonical `MigrationRunRepositoryInterface` create/get/CAS semantics;
-- use promoted persistence record codec for storage validation;
-- explicit site/network scope;
-- prepared values and controlled identifiers;
-- focused MySQL/MariaDB integration evidence.
+### R1/R2 execution coordinator decision
 
-This lane may not execute a generated Custom Tables provider migration preview or mutate a managed target table.
+**BLOCKED / NOT AUTHORIZED.**
 
-### B — Metadata-Only Precondition Probe Adapters V1 — parallel Worker
+The remaining blocker is production trust provenance, not basic readiness composition logic:
 
-Allowed first concrete probes are metadata-only: table existence/non-existence, trusted schema/column metadata match and already-observable provider capability facts. Live row-count/null/duplicate/range/max-length scans remain blocked.
+1. `MetadataPreconditionFacts` are still supplied to the composition service by its caller instead of being obtained from a canonical server-owned read-only facts source.
+2. `CustomTablesRuntimeCompositionFactory::create()` accepts caller-supplied `RecoveryVerificationProviderInterface`; provider selection is not yet constrained by a canonical server-owned/allowlisted construction boundary.
+3. The factory likewise accepts caller-supplied `MigrationExecutionConfirmationProviderInterface`; the promoted concrete implementation is static/reference-oriented rather than a server-owned durable scoped confirmation source.
+4. The exact composition attack matrix should be expanded before any mutation boundary consumes readiness.
 
-### C — Recovery Verification Provider Port V1 — parallel Worker
+An execution dispatcher must not become the place where these upstream trust questions are solved.
 
-Read/verify-only integration for an already-existing recovery artifact may produce bounded verification facts for the promoted binding/freshness model. Snapshot creation, chargeable provider side effects, restore and secret/provider payload persistence remain blocked.
+## Next authorized work — Trusted Runtime Evidence Sources V1
 
-### D — Execution Authorization Policy Adapter V1 — parallel Worker
+Queue priority: **960**  
+Role: **SUPERVISOR_ONLY / serialized trust-boundary integration**  
+Execution allowed: **false**
 
-Compose canonical WPE Policy/capability evaluation into the promoted execution authorization envelope so production boundaries do not trust caller-supplied authorization booleans. The adapter only produces bounded facts and cannot dispatch SQL, mutate capabilities, schedule jobs, expose public mutation or override R3/R4 denial.
+Goal: make production Runtime Composition obtain its readiness facts only from canonical server-owned sources while preserving zero managed-table mutation.
 
-### Physical managed-table mutation remains blocked
+Allowed scope:
 
-The current gate does not authorize:
+- typed metadata-facts provider port;
+- canonical read-only production metadata-facts implementation composed from existing `WordPressCt1SchemaIntrospector`, CT1 identity/schema metadata and already-trusted provider facts;
+- no row payload reads, row aggregates or row scans;
+- server-owned/allowlisted recovery verification provider construction/registry using existing typed recovery contracts;
+- server-owned scoped revision-bound confirmation source or equivalent canonical construction boundary that arbitrary runtime callers cannot substitute;
+- tighten `CustomTablesRuntimeCompositionFactory` around trusted provider ownership;
+- focused attack tests for missing/mismatched plan/run/revision/site/network/actor/capability/recovery/provider facts and R3/R4;
+- preserve immutable `execution_allowed=false` output.
 
-- dispatching `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` against managed Custom Tables;
-- generic managed-table DDL execution through `$wpdb->query()` or shared database mutation APIs;
+## Physical managed-table mutation remains blocked
+
+The current gate does **not** authorize:
+
+- `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` against managed Custom Tables;
+- generic managed-table DDL dispatch through `$wpdb->query()` or shared mutation APIs;
+- R1/R2 statement execution;
 - R3/R4 execution;
-- live row-count/null/duplicate/range/max-length scans;
+- live row-count/null/duplicate/range/max-length scans or row payload reads;
 - Backup creation or restore side effects;
 - leases/locks/retry workers or Action Scheduler migration execution;
 - backfill, deduplication, shadow-copy or swap;
@@ -107,20 +136,20 @@ The current gate does not authorize:
 - Custom Tables admin/REST/Ability mutation surfaces;
 - product parity, deployment or release.
 
+`frameworks/Platform/Database/Migrations/**` remains the canonical generic Platform migration boundary. Custom Tables must compose shared Platform infrastructure rather than create a duplicate private engine.
+
 ## Multi-agent coordination
 
 `AUTO-AGENT.md` and `config/coordination/agent-work-queue.json` are the claim authority.
 
 At every invocation:
 
-- reconcile OPEN Issues first;
-- reconcile OPEN PRs/MRs second;
-- re-read current main/claims/queue;
+- reconcile accepted OPEN Issues first;
+- reconcile eligible OPEN PRs/MRs second;
+- re-read exact current main, claims and queue third;
 - only then claim dependency-ready work.
 
-After Issue #441 reconciliation promotes, Lane A is serialized/Supervisor-owned because it touches durable storage ownership and Platform migration composition. Lanes B, C and D are non-overlapping Worker lanes and may run in parallel.
-
-No managed-table DDL executor branch may be speculatively pre-created. Another exact-main Supervisor audit is mandatory after A–D promote before an R1/R2-only managed-table execution coordinator may open.
+Priority 960 is Supervisor-only because it changes the production trust/composition boundary. No managed-table executor branch may be speculatively pre-created. Another exact-main Supervisor audit remains mandatory after trusted evidence provenance promotes before any R1/R2 statement execution lane can be considered.
 
 ## Product / planning truth
 
@@ -135,11 +164,11 @@ The reviewed Bank surfaces and record counts are planning/research state and mus
 
 ## Current next action
 
-1. Promote Issue #441 shared-truth reconciliation after exact-head review/CI requirements.
-2. Re-run mandatory exact-main → Issues → PR/MR preflight.
-3. Claim Lane A only as serialized Supervisor integration and Lanes B/C/D only on their deterministic non-overlapping branches.
-4. Merge each only after latest-main reconciliation, exact-head CI and clean review threads.
-5. Reconcile README module progress again after the next stable cycle.
-6. Run another exact-main Supervisor audit before any managed-table DDL execution coordinator is authorized.
+1. Promote Issue #461 audit/shared-truth PR only after current-main reconciliation and applicable exact-head review/CI gates.
+2. Re-run exact-main → Issues → PR/MR preflight after that merge.
+3. Only then claim priority 960 `custom-tables-trusted-runtime-evidence-sources-v1` on its deterministic Supervisor branch.
+4. Keep `execution_allowed=false` and all managed-table statement dispatch blocked throughout that lane.
+5. Reconcile the complete README 56/56 dashboard again after the next stable cycle.
+6. Run another exact-main Supervisor audit before any R1/R2 execution coordinator can be authorized.
 
 Repository evidence overrides conversational memory.
