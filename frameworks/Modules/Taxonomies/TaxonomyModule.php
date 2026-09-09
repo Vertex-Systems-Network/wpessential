@@ -27,6 +27,7 @@ use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinitionProviderRegistry;
+use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeRegistrar;
 use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class TaxonomyModule implements ModuleInterface
@@ -47,6 +48,7 @@ final class TaxonomyModule implements ModuleInterface
     {
         $definitions = $services->get('platform.definitions');
         $providers = $services->get('platform.registrations.providers');
+        $taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
         $abilities = $services->get('platform.abilities');
         $abilityBridge = $services->get('platform.abilities.wordpress');
         $abilityContexts = $services->get('platform.abilities.contexts');
@@ -56,6 +58,9 @@ final class TaxonomyModule implements ModuleInterface
         }
         if (!$providers instanceof RegistrationDefinitionProviderRegistry) {
             throw new LogicException('Taxonomies requires the shared registration provider registry.');
+        }
+        if (!$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar) {
+            throw new LogicException('Taxonomies requires the shared Taxonomy runtime registrar.');
         }
         if (!$abilities instanceof AbilityRegistry) {
             throw new LogicException('Taxonomies requires the shared Ability Registry.');
@@ -70,7 +75,7 @@ final class TaxonomyModule implements ModuleInterface
             throw new LogicException('Taxonomies requires the shared AJAX route registry.');
         }
 
-        $projector = new TaxonomyDefinitionProjector();
+        $projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
         $provider = new TaxonomyRegistrationProvider($definitions, $projector);
         $validation = new TaxonomyValidationService($definitions, $projector);
         $providers->register($provider);
