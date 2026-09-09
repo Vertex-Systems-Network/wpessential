@@ -15,8 +15,13 @@ use WPEssential\Contracts\ModuleActivationPolicyInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\CustomPostTypes\CustomPostTypeModule;
+use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\WordPressMetadataPreconditionFactsProvider;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\CustomTablesRuntimeCompositionFactory;
+use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\CreateMigrationExecutionConfirmationStoreMigration;
+use WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence\WpdbMigrationExecutionConfirmationProvider;
+use WPEssential\Modules\CustomTables\Migration\Recovery\Provider\FailClosedRecoveryVerificationProvider;
 use WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRunStoreMigration;
+use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
@@ -167,10 +172,25 @@ final class Plugin
             $services->set('platform.database', $database);
             $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
             $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
-            $services->set(
-                'custom-tables.runtime-composition.factory',
-                new CustomTablesRuntimeCompositionFactory($database, $abilityPolicy, $networkId, $siteId),
-            );
+            $wpdb = $GLOBALS['wpdb'] ?? null;
+            if (is_object($wpdb)) {
+                $metadataFacts = new WordPressMetadataPreconditionFactsProvider(
+                    new WordPressCt1SchemaIntrospector($wpdb),
+                );
+                $confirmations = new WpdbMigrationExecutionConfirmationProvider($database, $siteId);
+                $services->set(
+                    'custom-tables.runtime-composition.factory',
+                    CustomTablesRuntimeCompositionFactory::production(
+                        database: $database,
+                        policy: $abilityPolicy,
+                        metadataFacts: $metadataFacts,
+                        recoveryVerification: new FailClosedRecoveryVerificationProvider(),
+                        confirmations: $confirmations,
+                        networkId: $networkId,
+                        siteId: $siteId,
+                    ),
+                );
+            }
         }
         if ($migrationCoordinator instanceof MigrationCoordinator) {
             $services->set('platform.database.migrations', $migrationCoordinator);
@@ -243,6 +263,7 @@ final class Plugin
         $migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
         $migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
         $migrationCoordinator->register(new CreateMigrationRunStoreMigration($database));
+        $migrationCoordinator->register(new CreateMigrationExecutionConfirmationStoreMigration($database));
         $migrationCoordinator->runPending();
 
         $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
