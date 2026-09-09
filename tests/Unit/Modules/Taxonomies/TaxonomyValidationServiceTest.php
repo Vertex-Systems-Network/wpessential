@@ -10,6 +10,8 @@ use WPEssential\Modules\Taxonomies\TaxonomyDefinitionProjector;
 use WPEssential\Modules\Taxonomies\TaxonomyValidationService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
+use WPEssential\Platform\Definitions\Definition;
+use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 
 final class TaxonomyValidationServiceTest extends TestCase
@@ -22,6 +24,82 @@ final class TaxonomyValidationServiceTest extends TestCase
         self::assertTrue($report['valid']);
         self::assertSame([], $report['issues']);
         self::assertSame('library_genre', $report['candidate']['taxonomy_key']);
+        self::assertIsArray($report['diagnostics']);
+        self::assertSame([], $repository->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE));
+    }
+
+    public function testDiagnosticsExposeCanonicalEffectiveArgsOverridesAndSafePreviews(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $payload = array_merge($this->payload(), [
+            'labels' => ['menu_name' => 'Book Genres'],
+            'rest_base' => 'genres',
+            'rewrite' => ['slug' => 'library/genre', 'hierarchical' => true],
+            'default_term' => ['name' => 'General'],
+            'runtime_providers' => [
+                'rest_controller' => 'wordpress.terms',
+                'meta_box' => 'wordpress.disabled',
+            ],
+        ]);
+
+        $report = $this->validation($repository)->validate(['payload' => $payload]);
+        $diagnostics = $report['diagnostics'];
+
+        self::assertTrue($report['valid']);
+        self::assertIsArray($diagnostics);
+        self::assertSame('Book Genres', $diagnostics['effective_args']['labels']['menu_name']);
+        self::assertSame(['name' => 'General'], $diagnostics['effective_args']['default_term']);
+        self::assertSame('Book Genres', $diagnostics['overrides']['labels']['menu_name']);
+        self::assertSame(['slug' => 'library/genre', 'hierarchical' => true], $diagnostics['overrides']['rewrite']);
+        self::assertSame([
+            'meta_box' => 'wordpress.disabled',
+            'rest_controller' => 'wordpress.terms',
+        ], $diagnostics['provider_ids']);
+        self::assertSame('/wp/v2/genres', $diagnostics['previews']['rest']['route']);
+        self::assertSame('/library/genre/{parent/.../}{term-slug}/', $diagnostics['previews']['rewrite']['path_pattern']);
+        self::assertSame([], $repository->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE));
+    }
+
+    public function testInvalidCandidateDoesNotExposeMisleadingDiagnostics(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $report = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), ['taxonomy_key' => 'category']),
+        ]);
+
+        self::assertFalse($report['valid']);
+        self::assertNull($report['diagnostics']);
+        self::assertSame([], $repository->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE));
+    }
+
+    public function testAssociationHealthClassifiesCanonicalDisabledPostTypeWithoutMutation(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $repository->save(new Definition(
+            id: '33333333-3333-4333-8333-333333333333',
+            slug: 'library-book',
+            type: 'post_type',
+            schemaVersion: 1,
+            ownerSurfaceId: 1,
+            status: DefinitionStatus::Disabled,
+            payload: [
+                'post_type_key' => 'library_book',
+                'name' => 'Books',
+                'singular_name' => 'Book',
+            ],
+        ));
+
+        $report = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), ['object_types' => ['library_book']]),
+        ]);
+
+        self::assertTrue($report['valid']);
+        self::assertIsArray($report['diagnostics']);
+        self::assertSame('library_book', $report['diagnostics']['association_health'][0]['key']);
+        self::assertSame('disabled', $report['diagnostics']['association_health'][0]['state']);
+        self::assertTrue($report['diagnostics']['association_health'][0]['canonical']);
+        self::assertSame('disabled', $report['diagnostics']['association_health'][0]['canonical_status']);
+        self::assertCount(1, $repository->byType('post_type'));
         self::assertSame([], $repository->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE));
     }
 
