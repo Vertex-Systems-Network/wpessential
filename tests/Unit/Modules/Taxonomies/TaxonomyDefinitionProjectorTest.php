@@ -12,6 +12,7 @@ use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\WordPress\Registrations\RegistrationKind;
+use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeProviderRegistry;
 
 final class TaxonomyDefinitionProjectorTest extends TestCase
 {
@@ -41,6 +42,10 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
                 'order' => 'desc',
                 'fields' => 'ids',
             ],
+            'runtime_providers' => [
+                'rest_controller' => 'wordpress.terms',
+                'meta_box' => 'wordpress.disabled',
+            ],
         ]);
 
         $registration = (new TaxonomyDefinitionProjector())->project($definition);
@@ -68,6 +73,54 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
             'order' => 'DESC',
             'fields' => 'ids',
         ], $registration->payload['args']['args']);
+        self::assertSame([
+            'rest_controller' => 'wordpress.terms',
+            'meta_box' => 'wordpress.disabled',
+        ], $registration->payload['provider_ids']);
+        self::assertArrayNotHasKey('rest_controller_class', $registration->payload['args']);
+        self::assertArrayNotHasKey('meta_box_cb', $registration->payload['args']);
+    }
+
+    public function testProjectsTrustedCustomProviderIdsWithoutPersistingCallbacks(): void
+    {
+        $registry = new TaxonomyRuntimeProviderRegistry();
+        $registry->registerMetaBoxProvider('vendor.genre.editor', static function (): void {});
+        $registry->registerMetaBoxSanitizeProvider('vendor.genre.sanitize', static fn (mixed $terms): mixed => $terms);
+        $registry->registerTermCountProvider('vendor.genre.count', static function (): void {});
+
+        $registration = (new TaxonomyDefinitionProjector($registry))->project($this->definition(DefinitionStatus::Published, [
+            'taxonomy_key' => 'genre',
+            'object_types' => ['post'],
+            'name' => 'Genres',
+            'singular_name' => 'Genre',
+            'runtime_providers' => [
+                'meta_box' => 'vendor.genre.editor',
+                'meta_box_sanitize' => 'vendor.genre.sanitize',
+                'term_count' => 'vendor.genre.count',
+            ],
+        ]));
+
+        self::assertSame([
+            'meta_box' => 'vendor.genre.editor',
+            'meta_box_sanitize' => 'vendor.genre.sanitize',
+            'term_count' => 'vendor.genre.count',
+        ], $registration->payload['provider_ids']);
+        self::assertArrayNotHasKey('meta_box_cb', $registration->payload['args']);
+        self::assertArrayNotHasKey('meta_box_sanitize_cb', $registration->payload['args']);
+        self::assertArrayNotHasKey('update_count_callback', $registration->payload['args']);
+        self::assertIsString(json_encode($registration->payload, JSON_THROW_ON_ERROR));
+    }
+
+    public function testRejectsUnknownRuntimeProviderId(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new TaxonomyDefinitionProjector())->project($this->definition(DefinitionStatus::Published, [
+            'taxonomy_key' => 'genre',
+            'object_types' => ['post'],
+            'name' => 'Genres',
+            'singular_name' => 'Genre',
+            'runtime_providers' => ['term_count' => 'user.supplied.callback'],
+        ]));
     }
 
     public function testRejectsReservedCoreTaxonomyKey(): void
@@ -101,6 +154,18 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
             'name' => 'Genres',
             'singular_name' => 'Genre',
             'meta_box_cb' => 'dangerous_callback',
+        ]));
+    }
+
+    public function testRejectsRawRestControllerClassField(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new TaxonomyDefinitionProjector())->project($this->definition(DefinitionStatus::Published, [
+            'taxonomy_key' => 'genre',
+            'object_types' => ['post'],
+            'name' => 'Genres',
+            'singular_name' => 'Genre',
+            'rest_controller_class' => 'Dangerous_User_Class',
         ]));
     }
 
