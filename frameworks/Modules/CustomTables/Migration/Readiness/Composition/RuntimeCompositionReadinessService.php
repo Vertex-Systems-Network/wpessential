@@ -10,6 +10,8 @@ if (!defined('ABSPATH')) {
 
 use InvalidArgumentException;
 use RuntimeException;
+use Throwable;
+use WPEssential\Modules\CustomTables\Definition\TableSchemaDescriptor;
 use WPEssential\Modules\CustomTables\Migration\MigrationRisk;
 use WPEssential\Modules\CustomTables\Migration\Precondition\PreconditionEvaluation;
 use WPEssential\Modules\CustomTables\Migration\Precondition\PreconditionKind;
@@ -18,6 +20,7 @@ use WPEssential\Modules\CustomTables\Migration\Precondition\PreconditionProbeReg
 use WPEssential\Modules\CustomTables\Migration\Precondition\PreconditionReport;
 use WPEssential\Modules\CustomTables\Migration\Precondition\PreconditionRequirement;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\MetadataPreconditionFacts;
+use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\MetadataPreconditionFactsProviderInterface;
 use WPEssential\Modules\CustomTables\Migration\Precondition\Probe\MetadataPreconditionProbe;
 use WPEssential\Modules\CustomTables\Migration\ProviderMigrationPreview;
 use WPEssential\Modules\CustomTables\Migration\Readiness\Authorization\ExecutionActorType;
@@ -38,6 +41,7 @@ final readonly class RuntimeCompositionReadinessService
 {
     public function __construct(
         private MigrationRunRepositoryInterface $runs,
+        private MetadataPreconditionFactsProviderInterface $metadataFacts,
         private RecoveryVerificationProviderInterface $recoveryVerification,
         private MigrationExecutionConfirmationProviderInterface $confirmations,
         private MigrationExecutionAuthorizationPolicyAdapter $authorizationPolicy,
@@ -49,13 +53,11 @@ final readonly class RuntimeCompositionReadinessService
         }
     }
 
-    /**
-     * @param list<PreconditionRequirement> $requirements
-     */
+    /** @param list<PreconditionRequirement> $requirements */
     public function evaluate(
         MigrationRun $run,
         array $requirements,
-        MetadataPreconditionFacts $metadataFacts,
+        TableSchemaDescriptor $descriptor,
         MigrationGenerationStamp $reviewedGeneration,
         MigrationGenerationStamp $currentGeneration,
         RecoveryRequirement $recoveryRequirement,
@@ -70,7 +72,12 @@ final readonly class RuntimeCompositionReadinessService
         }
 
         $reasons = [];
-        $stored = $this->runs->get($run->id);
+        $stored = null;
+        try {
+            $stored = $this->runs->get($run->id);
+        } catch (RuntimeException) {
+            $reasons[] = 'run_repository_failed';
+        }
         if (!$stored instanceof MigrationRun) {
             $reasons[] = 'run_not_persisted';
         } elseif ($stored->fingerprint() !== $run->fingerprint()) {
@@ -84,6 +91,11 @@ final readonly class RuntimeCompositionReadinessService
             $reasons[] = 'network_scope_missing';
         } elseif ($context->networkId !== $this->networkId) {
             $reasons[] = 'network_scope_mismatch';
+        }
+
+        $descriptorMatches = $this->descriptorMatchesRun($descriptor, $run);
+        if (!$descriptorMatches) {
+            $reasons[] = 'descriptor_run_mismatch';
         }
 
         if (!$this->generationMatchesRun($reviewedGeneration, $run)) {
@@ -102,13 +114,21 @@ final readonly class RuntimeCompositionReadinessService
             $reasons[] = 'preview_execution_enabled';
         }
 
+        $metadataFacts = new MetadataPreconditionFacts(false);
+        if ($descriptorMatches) {
+            try {
+                $metadataFacts = $this->metadataFacts->facts($descriptor, $preview->capabilities);
+            } catch (Throwable) {
+                $reasons[] = 'metadata_facts_unavailable';
+            }
+        }
         $preconditions = $this->evaluateMetadataPreconditions($requirements, $metadataFacts, $reasons);
         $revalidation = MigrationRevalidationDecision::evaluate($reviewedGeneration, $currentGeneration);
 
         $boundRecovery = null;
         try {
             $boundRecovery = $this->recoveryVerification->verify($recoveryArtifactId, $run->planFingerprint);
-        } catch (RuntimeException) {
+        } catch (Throwable) {
             $reasons[] = 'recovery_verification_failed';
         }
 
@@ -148,7 +168,12 @@ final readonly class RuntimeCompositionReadinessService
             $reasons[] = 'readiness_incomplete';
         }
 
-        $confirmation = $this->confirmations->confirmationFor($run->id);
+        $confirmation = null;
+        try {
+            $confirmation = $this->confirmations->confirmationFor($run->id);
+        } catch (Throwable) {
+            $reasons[] = 'confirmation_source_failed';
+        }
         $confirmationValid = $this->confirmationMatches($confirmation, $run, $context, $reasons);
 
         $authorizationRequest = $this->authorizationPolicy->request(
@@ -242,6 +267,14 @@ final readonly class RuntimeCompositionReadinessService
             PreconditionKind::ColumnMatchesFingerprint,
             PreconditionKind::DatabaseFeatureAvailable,
         ];
+    }
+
+    private function descriptorMatchesRun(TableSchemaDescriptor $descriptor, MigrationRun $run): bool
+    {
+        return strtolower($descriptor->definitionId) === strtolower($run->targetDefinitionId)
+            && $descriptor->revision === $run->targetRevision
+            && $descriptor->tableKey === $run->tableKey
+            && $descriptor->desiredSchemaVersion === $run->targetSchemaVersion;
     }
 
     private function generationMatchesRun(MigrationGenerationStamp $generation, MigrationRun $run): bool
