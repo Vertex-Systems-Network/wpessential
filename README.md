@@ -28,7 +28,7 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README audited base anchor: `main @ b14d0c9cb4a40105a1c7f7d61c5d1ad878087203` on **2026-09-09 UTC**. The Custom Tables post-adapter exact-main audit is promoted via Issue #453 / merged PR #454. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 755f4063e477e37195a85ec1df5765749806d024` on **2026-09-09 UTC**. The Custom Tables post-adapter exact-main audit is promoted via Issue #453 / merged PR #454; Issue #457 reconciles the coordination queue to that promoted truth before Runtime Composition Readiness V1 begins. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -115,7 +115,7 @@ Every Supervisor/Worker `start`, `continue` or `resume` cycle follows this manda
 
 New development is forbidden while an accepted actionable Issue or PR/MR path is being bypassed unless repository evidence explicitly marks that path blocked or superseded.
 
-Issue #415 / merged PR #416 promoted issue-first/PR-second README closeout. Issue #451 added timeline/forecast reconciliation. Issue #455 extends the Definition of Done to the complete canonical 56-surface dashboard and hard-gates new development behind Issues and PRs/MRs.
+Issue #415 / merged PR #416 promoted issue-first/PR-second README closeout. Issue #451 added timeline/forecast reconciliation. Issue #455 / merged PR #456 extends the Definition of Done to the complete canonical 56-surface dashboard and hard-gates new development behind Issues and PRs/MRs.
 
 ## Current Custom Tables state
 
