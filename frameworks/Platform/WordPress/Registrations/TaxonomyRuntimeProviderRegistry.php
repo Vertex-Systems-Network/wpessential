@@ -176,7 +176,28 @@ final class TaxonomyRuntimeProviderRegistry
 
     private function className(string $className): bool
     {
-        return preg_match('/^[A-Za-z_\\][A-Za-z0-9_\\]*$/', $className) === 1;
+        return $this->qualifiedName($className);
+    }
+
+    private function qualifiedName(string $name): bool
+    {
+        $name = ltrim($name, '\\');
+        if ($name === '') {
+            return false;
+        }
+
+        foreach (explode('\\', $name) as $segment) {
+            if ($segment === '' || preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $segment) !== 1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function methodName(string $method): bool
+    {
+        return preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $method) === 1;
     }
 
     private function assertTrustedCallbackDescriptor(mixed $callback, bool $allowFalse, string $label): void
@@ -193,7 +214,11 @@ final class TaxonomyRuntimeProviderRegistry
         }
 
         if (is_string($callback)) {
-            if (preg_match('/^[A-Za-z_\\][A-Za-z0-9_\\]*(?:::[A-Za-z_][A-Za-z0-9_]*)?$/', $callback) === 1) {
+            $parts = explode('::', $callback);
+            if (count($parts) === 1 && $this->qualifiedName($parts[0])) {
+                return;
+            }
+            if (count($parts) === 2 && $this->className($parts[0]) && $this->methodName($parts[1])) {
                 return;
             }
             throw new InvalidArgumentException($label . ' string has an invalid callable identifier shape.');
@@ -201,7 +226,7 @@ final class TaxonomyRuntimeProviderRegistry
 
         if (is_array($callback) && array_is_list($callback) && count($callback) === 2 && is_string($callback[1])) {
             [$target, $method] = $callback;
-            if (preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $method) !== 1) {
+            if (!$this->methodName($method)) {
                 throw new InvalidArgumentException($label . ' method name has an invalid shape.');
             }
             if (is_object($target)) {
