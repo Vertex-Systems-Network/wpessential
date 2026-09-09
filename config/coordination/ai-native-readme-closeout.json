@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "status": "ACTIVE",
+  "source_issue": 451,
+  "scope": "AI_NATIVE_ENGINEERING_QUERY_CLOSEOUT",
+  "owner": "SUPERVISOR",
+  "trigger": "before_final_response_when_meaningful_repository_state_changed",
+  "readme_table": {
+    "required": true,
+    "fields": [
+      "module_surface",
+      "lifecycle_status",
+      "progress_bar_percentage",
+      "start_datetime_utc",
+      "estimated_completion_datetime_utc",
+      "actual_completion_datetime_utc",
+      "latest_evidence",
+      "next_gate"
+    ],
+    "timestamp_format": "ISO_8601_UTC",
+    "unknown_historical_value": "UNKNOWN / pending evidence audit",
+    "active_actual_completion_value": "—",
+    "unknown_forecast_value": "FORECAST PENDING / reason required"
+  },
+  "forecast_contract": {
+    "binding": false,
+    "delivery_promise": false,
+    "release_date": false,
+    "inputs": [
+      "current_repository_scope",
+      "dependency_gates",
+      "known_blockers",
+      "active_work_packages",
+      "observed_implementation_evidence"
+    ],
+    "recompute_when": [
+      "scope_materially_changes",
+      "dependencies_materially_change",
+      "blockers_materially_change",
+      "milestone_state_materially_changes"
+    ],
+    "fabrication_forbidden": true
+  },
+  "progress_contract": {
+    "semantic": "currently_approved_or_certified_bounded_implementation_milestone",
+    "full_product_parity_implied": false,
+    "raise_without_promoted_milestone": false
+  },
+  "worker_contract": {
+    "may_edit_supervisor_shared_truth": false,
+    "required_output_when_reconciliation_needed": "README timeline reconciliation Integration Requirement"
+  },
+  "runtime_authorization_changed": false
+}
