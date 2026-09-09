@@ -22,10 +22,25 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
             'object_types' => ['post', 'library_book', 'post'],
             'name' => 'Genres',
             'singular_name' => 'Genre',
-            'labels' => ['add_new_item' => 'Add Genre', 'not_found' => ''],
+            'labels' => [
+                'add_new_item' => 'Add Genre',
+                'menu_name' => 'Book Genres',
+                'template_name' => 'Genre Pattern',
+                'not_found' => '',
+            ],
             'hierarchical' => true,
             'publicly_queryable' => null,
             'rewrite' => ['slug' => 'library/genre', 'with_front' => false, 'hierarchical' => true],
+            'default_term' => [
+                'name' => 'General',
+                'slug' => 'general',
+                'description' => 'Fallback genre.',
+            ],
+            'args' => [
+                'orderby' => 'term_order',
+                'order' => 'desc',
+                'fields' => 'ids',
+            ],
         ]);
 
         $registration = (new TaxonomyDefinitionProjector())->project($definition);
@@ -38,9 +53,21 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
         self::assertTrue($registration->payload['args']['hierarchical']);
         self::assertSame('Genres', $registration->payload['args']['labels']['name']);
         self::assertSame('Add Genre', $registration->payload['args']['labels']['add_new_item']);
+        self::assertSame('Book Genres', $registration->payload['args']['labels']['menu_name']);
+        self::assertSame('Genre Pattern', $registration->payload['args']['labels']['template_name']);
         self::assertArrayNotHasKey('not_found', $registration->payload['args']['labels']);
         self::assertArrayNotHasKey('publicly_queryable', $registration->payload['args']);
         self::assertSame('library/genre', $registration->payload['args']['rewrite']['slug']);
+        self::assertSame([
+            'name' => 'General',
+            'slug' => 'general',
+            'description' => 'Fallback genre.',
+        ], $registration->payload['args']['default_term']);
+        self::assertSame([
+            'orderby' => 'term_order',
+            'order' => 'DESC',
+            'fields' => 'ids',
+        ], $registration->payload['args']['args']);
     }
 
     public function testRejectsReservedCoreTaxonomyKey(): void
@@ -74,6 +101,42 @@ final class TaxonomyDefinitionProjectorTest extends TestCase
             'name' => 'Genres',
             'singular_name' => 'Genre',
             'meta_box_cb' => 'dangerous_callback',
+        ]));
+    }
+
+    public function testRejectsMalformedDefaultTerm(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new TaxonomyDefinitionProjector())->project($this->definition(DefinitionStatus::Published, [
+            'taxonomy_key' => 'genre',
+            'object_types' => ['post'],
+            'name' => 'Genres',
+            'singular_name' => 'Genre',
+            'default_term' => ['slug' => 'general'],
+        ]));
+    }
+
+    public function testRejectsUnboundedObjectTermArgument(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new TaxonomyDefinitionProjector())->project($this->definition(DefinitionStatus::Published, [
+            'taxonomy_key' => 'genre',
+            'object_types' => ['post'],
+            'name' => 'Genres',
+            'singular_name' => 'Genre',
+            'args' => ['meta_query' => [['key' => 'unsafe-expensive-query']]],
+        ]));
+    }
+
+    public function testRejectsInvalidObjectTermArgumentValue(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new TaxonomyDefinitionProjector())->project($this->definition(DefinitionStatus::Published, [
+            'taxonomy_key' => 'genre',
+            'object_types' => ['post'],
+            'name' => 'Genres',
+            'singular_name' => 'Genre',
+            'args' => ['order' => 'random'],
         ]));
     }
 
