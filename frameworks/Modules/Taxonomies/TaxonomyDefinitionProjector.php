@@ -25,15 +25,15 @@ final class TaxonomyDefinitionProjector
         'public', 'publicly_queryable', 'hierarchical', 'show_ui', 'show_in_menu',
         'show_in_nav_menus', 'show_tagcloud', 'show_in_quick_edit', 'show_admin_column',
         'show_in_rest', 'rest_base', 'rest_namespace', 'query_var', 'rewrite', 'sort',
-        'capabilities',
+        'capabilities', 'default_term', 'args',
     ];
 
     /** @var list<string> */
     private const LABEL_KEYS = [
-        'search_items', 'popular_items', 'all_items', 'parent_item', 'parent_item_colon',
+        'menu_name', 'search_items', 'popular_items', 'all_items', 'parent_item', 'parent_item_colon',
         'name_field_description', 'slug_field_description', 'parent_field_description',
         'desc_field_description', 'edit_item', 'view_item', 'update_item', 'add_new_item',
-        'new_item_name', 'separate_items_with_commas', 'add_or_remove_items',
+        'new_item_name', 'template_name', 'separate_items_with_commas', 'add_or_remove_items',
         'choose_from_most_used', 'not_found', 'no_terms', 'filter_by_item', 'items_list_navigation',
         'items_list', 'most_used', 'back_to_items', 'item_link', 'item_link_description',
     ];
@@ -42,6 +42,20 @@ final class TaxonomyDefinitionProjector
     private const RESERVED_TAXONOMIES = [
         'category', 'post_tag', 'nav_menu', 'link_category', 'post_format', 'wp_theme',
         'wp_template_part_area', 'wp_pattern_category',
+    ];
+
+    /** @var list<string> */
+    private const OBJECT_TERM_ARG_KEYS = ['orderby', 'order', 'fields'];
+
+    /** @var list<string> */
+    private const OBJECT_TERM_ORDERBY_VALUES = [
+        'name', 'slug', 'term_group', 'term_id', 'id', 'description', 'parent', 'term_order',
+        'count', 'include', 'none',
+    ];
+
+    /** @var list<string> */
+    private const OBJECT_TERM_FIELDS_VALUES = [
+        'all', 'all_with_object_id', 'ids', 'tt_ids', 'names', 'slugs',
     ];
 
     public function project(Definition $definition): RegistrationDefinition
@@ -93,6 +107,12 @@ final class TaxonomyDefinitionProjector
         }
         if (array_key_exists('capabilities', $payload)) {
             $args['capabilities'] = $this->capabilities($payload['capabilities']);
+        }
+        if (array_key_exists('default_term', $payload) && $payload['default_term'] !== null) {
+            $args['default_term'] = $this->defaultTerm($payload['default_term']);
+        }
+        if (array_key_exists('args', $payload) && $payload['args'] !== null) {
+            $args['args'] = $this->objectTermArgs($payload['args']);
         }
 
         return new RegistrationDefinition(
@@ -299,6 +319,80 @@ final class TaxonomyDefinitionProjector
             $this->assertMachineKey($capability, 64, 'capability name');
             $normalized[$key] = $capability;
         }
+        return $normalized;
+    }
+
+    /** @return array{name:string,slug?:string,description?:string} */
+    private function defaultTerm(mixed $value): array
+    {
+        if (!is_array($value) || array_is_list($value)) {
+            throw new InvalidArgumentException('default_term must be a typed object/map.');
+        }
+        foreach (array_keys($value) as $key) {
+            if (!is_string($key) || !in_array($key, ['name', 'slug', 'description'], true)) {
+                throw new InvalidArgumentException(sprintf('Unsupported default_term option "%s".', (string) $key));
+            }
+        }
+
+        $name = $value['name'] ?? null;
+        if (!is_string($name) || trim($name) === '') {
+            throw new InvalidArgumentException('default_term.name is required and must be a non-empty string.');
+        }
+        $normalized = ['name' => trim($name)];
+
+        if (array_key_exists('slug', $value) && $value['slug'] !== null && $value['slug'] !== '') {
+            if (!is_string($value['slug'])) {
+                throw new InvalidArgumentException('default_term.slug must be a string.');
+            }
+            $this->assertMachineKey($value['slug'], 200, 'default_term.slug');
+            $normalized['slug'] = $value['slug'];
+        }
+        if (array_key_exists('description', $value) && $value['description'] !== null) {
+            if (!is_string($value['description'])) {
+                throw new InvalidArgumentException('default_term.description must be a string.');
+            }
+            $normalized['description'] = trim($value['description']);
+        }
+
+        return $normalized;
+    }
+
+    /** @return array<string,string> */
+    private function objectTermArgs(mixed $value): array
+    {
+        if (!is_array($value) || array_is_list($value)) {
+            throw new InvalidArgumentException('args must be a bounded object/map.');
+        }
+        foreach (array_keys($value) as $key) {
+            if (!is_string($key) || !in_array($key, self::OBJECT_TERM_ARG_KEYS, true)) {
+                throw new InvalidArgumentException(sprintf('Unsupported object-term argument "%s".', (string) $key));
+            }
+        }
+
+        $normalized = [];
+        if (array_key_exists('orderby', $value)) {
+            if (!is_string($value['orderby']) || !in_array($value['orderby'], self::OBJECT_TERM_ORDERBY_VALUES, true)) {
+                throw new InvalidArgumentException('args.orderby must be an allowlisted term-order field.');
+            }
+            $normalized['orderby'] = $value['orderby'];
+        }
+        if (array_key_exists('order', $value)) {
+            if (!is_string($value['order'])) {
+                throw new InvalidArgumentException('args.order must be ASC or DESC.');
+            }
+            $order = strtoupper($value['order']);
+            if (!in_array($order, ['ASC', 'DESC'], true)) {
+                throw new InvalidArgumentException('args.order must be ASC or DESC.');
+            }
+            $normalized['order'] = $order;
+        }
+        if (array_key_exists('fields', $value)) {
+            if (!is_string($value['fields']) || !in_array($value['fields'], self::OBJECT_TERM_FIELDS_VALUES, true)) {
+                throw new InvalidArgumentException('args.fields must be an allowlisted wp_get_object_terms fields mode.');
+            }
+            $normalized['fields'] = $value['fields'];
+        }
+
         return $normalized;
     }
 }
