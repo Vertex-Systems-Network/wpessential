@@ -26,9 +26,10 @@ Project website: **https://wpessential.org**
 - Phase 2 Gate D / Admin Columns: **PASS for the certified bounded V1 baseline**
 - Phase 2 Gate E / Dynamic Listings: **PASS for the certified bounded V1 baseline**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
-- Active dependency gate: **Surface 7 — Custom Tables**.
+- Surface 7 / Custom Tables: **ACTIVE / NOT PASS — bounded runway 90%**, safe-paused with managed-table execution blocked after Issue #463 / merged PR #464.
+- Owner-directed next product-completion wave: **Surface 1 CPT Builder + Surface 2 Taxonomy Builder**, through their required planning → runtime → parity gates.
 
-README audited base anchor: `main @ 56cbcce2da90a11232fd65b374ad237fc1c67fb0` on **2026-09-09 UTC**. Runtime Composition Readiness V1 is promoted through Issue #459 / merged PR #460. Issue #461 is the exact-main post-Runtime Composition audit and keeps managed-table execution blocked while opening only the narrower Trusted Runtime Evidence Sources V1 trust-boundary lane. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 62240fc03b8e6b91e720f6845bbdaee584151f9f` on **2026-09-09 UTC**. Trusted Runtime Evidence Sources V1 is promoted through Issue #463 / merged PR #464. Issue #465 is the exact-main post-trust audit: it accepts the hardening evidence, keeps Custom Tables managed-table execution blocked, and authorizes non-overlapping CPT Bank-closure and Taxonomy Option-Contract/UX-closure planning lanes. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -42,13 +43,13 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 
 | # | Module / Surface | Lifecycle / Status | Progress | Start date/time (UTC) | Estimated completion date/time (UTC) | Actual completion date/time (UTC) | Latest evidence | Next gate |
 |---:|---|---|---|---|---|---|---|---|
-| 1 | CPT Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
-| 2 | Taxonomy Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
+| 1 | CPT Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE; Options Bank BANK_SURFACE_SEEDED (107); existing runtime baseline present / full-parity lifecycle not promoted | — / no full-parity percentage milestone | — / full-final program lane not yet promoted | FORECAST PENDING / Bank audit closure | — | Options Bank + existing CPT runtime + Issue #465 audit | CPT Builder Options Bank Audit Closure V1 |
+| 2 | Taxonomy Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE; Options Bank BANK_REVIEWED (71); existing runtime baseline present / full-parity lifecycle not promoted | — / no full-parity percentage milestone | — / full-final program lane not yet promoted | FORECAST PENDING / Option Contract + UX closure | — | Taxonomy Bank Review + existing Taxonomy runtime + Issue #465 audit | Taxonomy Builder Atomic Option Contract + UX Closure V1 |
 | 3 | Fields | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate A | Broader provider/full parity remains gated |
 | 4 | Relations | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
 | 5 | Status | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
 | 6 | Query | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate C | Public execution/full parity remains gated |
-| 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / Trusted Runtime Evidence Sources V1 not yet promoted | — | Issue #459 / merged PR #460 + Issue #461 exact-main audit | Trusted Runtime Evidence Sources V1; managed-table DDL and R1/R2 statement dispatch remain blocked |
+| 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / safe-paused; execution trust activation not authorized | — | Issue #463 / merged PR #464 + Issue #465 exact-main audit | Managed-table execution remains blocked; later explicit trust-activation audit required |
 | 8 | Admin Columns | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate D | No unbounded mass-edit/provider-wide parity claim |
 | 9 | Listings | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #343 / PR #344 | Richer async/builder parity remains gated |
 | 10 | Dashboard Widgets | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
@@ -99,7 +100,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | 55 | Staging/Clone/Migration | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 | 56 | Theme Workspace | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 
-The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. Runtime Composition Readiness V1 and the post-Runtime Composition audit do not invent a higher percentage because the repository defines no new percentage milestone for this wave.
+The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. Trusted Runtime Evidence Sources V1 and the post-trust audit do not invent a higher percentage because the repository defines no new percentage milestone for this wave.
 
 ## AI-Native work-cycle order
 
@@ -153,11 +154,13 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 30. **Internal Migration Run Store Schema + WPDB Repository V1** — Issue #443 / merged PR #450.
 31. **Post-adapter exact-main audit V1** — Issue #453 / merged PR #454.
 32. **Runtime Composition Readiness V1** — Issue #459 / merged PR #460.
-33. **Post-Runtime Composition exact-main audit V1** — Issue #461 / this audit PR.
+33. **Post-Runtime Composition exact-main audit V1** — Issue #461 / merged PR #462.
+34. **Trusted Runtime Evidence Sources V1** — Issue #463 / merged PR #464.
+35. **Post-Trusted Runtime Evidence exact-main audit V1** — Issue #465 / current audit PR.
 
-Runtime Composition V1 registers the internal Migration Run store through canonical Platform migrations, constructs the site/network-scoped durable repository, composes metadata-only precondition semantics, recovery verification/freshness, canonical Policy authorization and revision-bound confirmation, and returns an immutable package with `execution_allowed=false`.
+PR #464 moves metadata-fact derivation behind a typed server-side provider, composes the existing read-only CT1 schema introspector, binds descriptors to persisted run identity/revision/schema, adds a site-scoped internal WPE confirmation metadata store + read-only confirmation source, removes provider arguments from canonical `create()`, and converts source failures into deterministic fail-closed readiness reasons. Its exact head passed all seven applicable workflows, including CPT Runtime and Taxonomy Runtime.
 
-The post-Runtime Composition audit accepts that bounded no-dispatch foundation but finds production trust provenance incomplete: metadata facts are still caller-supplied, recovery verification provider selection is caller-injected, and confirmation provider selection is caller-injected/static. Therefore an R1/R2 managed-table execution coordinator remains **BLOCKED / NOT AUTHORIZED**.
+The post-trust audit accepts this hardening evidence but **does not authorize managed-table execution**. Public factory construction can still receive trusted-marker implementations, production recovery is intentionally fail-closed with no real allowlisted verifier, and no trusted confirmation issuance lifecycle has been promoted. Therefore R1/R2 execution remains **BLOCKED / NOT AUTHORIZED**.
 
 ### Still blocked
 
@@ -169,34 +172,63 @@ The current Custom Tables foundation does **not** authorize:
 - row `INSERT`, `UPDATE`, `DELETE` or CRUD/Data Source runtime;
 - R3/R4 managed-table execution;
 - leases, retry workers or Action Scheduler migration execution;
-- live row-count/null/duplicate/range/max-length precondition scans;
+- live row-count/null/duplicate/range/max-length precondition scans or row payload reads;
 - Backup creation or restore side effects;
 - backfill, deduplication, shadow-copy or swap flows;
 - CT2/PT-D or CT3 runtime/topology conversion;
 - external-table adoption;
-- Custom Tables admin/REST/Ability/public mutation surfaces;
+- Custom Tables admin/REST/Ability/public execution mutation surfaces;
 - `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release approval.
 
-## Next dependency gate
+Custom Tables is safe-paused at its current bounded milestone until a later explicit trust-activation/hardening audit authorizes another lane.
 
-Issue #461 authorizes the next bounded Supervisor-only trust-boundary work package after this audit promotes:
+## Owner-directed CPT + Taxonomy full-final program
 
-### Custom Tables — Trusted Runtime Evidence Sources V1
+The target for Surfaces 1 and 2 is **PARITY_OR_EXCEED**. Existing runtime code is preserved and gap-audited rather than rebuilt speculatively. A green CPT Runtime or Taxonomy Runtime workflow proves regression health of the current baseline; it does not by itself prove full product parity.
 
-Goal: make production Runtime Composition obtain readiness facts only from canonical server-owned sources while **keeping `execution_allowed=false` and executing no managed-table DDL**.
+### Surface 1 — CPT Builder
 
-Allowed bounded scope includes:
+Current machine truth:
 
-1. typed metadata-facts provider port + read-only production implementation using existing trusted CT1/schema/provider metadata primitives;
-2. server-owned/allowlisted recovery verification provider construction or registry using existing typed recovery contracts;
-3. server-owned, scoped, revision-bound confirmation provenance or equivalent canonical provider construction boundary;
-4. tightening `CustomTablesRuntimeCompositionFactory` so arbitrary runtime callers cannot substitute trusted providers;
-5. focused fail-closed tests for plan/run/revision/site/network/actor/capability/recovery/provider mismatch and R3/R4;
-6. immutable no-dispatch readiness output with `execution_allowed=false`.
+- `ATOMIC_INVENTORY_COMPLETE`;
+- Options Bank `BANK_SURFACE_SEEDED`, 107 records;
+- existing Definition projection, validation, admin, Ability and registration/runtime baseline;
+- CPT Runtime workflow green on PR #464;
+- native cross-check + market audit + Bank Review remain before downstream option-contract promotion.
 
-Managed-table DDL dispatch, R1/R2 statement execution, R3/R4 execution, live row scans, Backup creation/restore, migration jobs/leases, row CRUD, public mutation, deployment and release remain forbidden.
+Next lane: **CPT Builder Options Bank Audit Closure V1** (queue priority 980).
 
-`frameworks/Platform/Database/Migrations/**` remains the canonical generic Platform migration infrastructure; Custom Tables must compose it rather than create a duplicate private migration engine.
+Exit requires current WordPress native audit, approved market/specialist audit, all 107 records classified, ownership/semantic/policy consistency, zero unresolved items, and evidence-backed `BANK_REVIEWED` promotion. This lane does not claim runtime or product-parity certification.
+
+### Surface 2 — Taxonomy Builder
+
+Current machine truth:
+
+- `ATOMIC_INVENTORY_COMPLETE`;
+- Options Bank `BANK_REVIEWED`, 71 records, zero unresolved review items;
+- existing Definition projection, validation, admin, Ability, object-type catalog and registration/runtime baseline;
+- Taxonomy Runtime workflow green on PR #464;
+- no schema-valid Taxonomy option-contract file is promoted yet.
+
+Next lane: **Taxonomy Builder Atomic Option Contract + UX Closure V1** (queue priority 990).
+
+Exit requires projection of the reviewed Bank + Wave-1 taxonomy inventory into schema-valid machine contracts, `missing=0`, `unclassified=0`, reviewed Essential/Advanced/Expert UX information architecture, deterministic source projection/ownership, and an exhaustive gap matrix against current runtime including Multisite, security, REST/Ability, import/export/migration, accessibility and compatibility requirements.
+
+### What “full final” means
+
+Neither CPT nor Taxonomy may be reported fully final until that surface explicitly promotes all of the following:
+
+1. reviewed Options Bank with zero unresolved native/market/semantic items;
+2. schema-valid Atomic Option Contract with `missing=0` and `unclassified=0`;
+3. reviewed UX contract;
+4. exhaustive existing-runtime gap matrix;
+5. implementation of every accepted missing behavior through canonical owners;
+6. applicable Multisite, security, REST/Ability, import/export/migration, accessibility, compatibility and performance evidence;
+7. exact-head required runtime/browser/security/parity tests;
+8. machine lifecycle `RUNTIME_CERTIFIED`;
+9. competitor-parity acceptance `PRODUCT_PARITY_CERTIFIED`.
+
+Priority 980 and 990 are non-overlapping planning lanes and may run in parallel after Issue #465 promotes.
 
 ## Planning / Bank snapshot
 
@@ -205,6 +237,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 - Canonical modules planned: **56 / 56**
 - README closeout dashboard: **56 / 56 modules listed**
 - Current Options Bank and Atomic Option lifecycle truth: `config/product/options-bank-progress.json` and `config/product/atomic-option-contract-progress.json`
+- Product-parity targets: `config/product/competitor-parity-surfaces.json`
 - Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
 - No bounded module pass in this README implies full product parity or release readiness.
 
@@ -220,7 +253,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
-| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Runtime Composition no-dispatch foundation promoted; Trusted Runtime Evidence Sources V1 is next; physical managed-table DDL and R1/R2 statement dispatch remain blocked |
+| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Trusted evidence hardening promoted; managed-table execution remains blocked and Surface 7 is safe-paused |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
@@ -242,7 +275,7 @@ Start WPEssential Worker in AUTO mode.
 
 Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
 
-Parallelism is encouraged only for non-overlapping dependency-safe lanes. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
+Parallelism is encouraged only for non-overlapping dependency-safe lanes. The CPT Bank-closure and Taxonomy Contract/UX-closure planning lanes are explicitly non-overlapping after Issue #465 promotion. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
 
 ## What WPEssential is
 
@@ -300,6 +333,7 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-HARDENING-WAVE-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-ADAPTER-EXACT-MAIN-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-RUNTIME-COMPOSITION-EXACT-MAIN-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-TRUSTED-RUNTIME-EVIDENCE-EXACT-MAIN-AUDIT-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
