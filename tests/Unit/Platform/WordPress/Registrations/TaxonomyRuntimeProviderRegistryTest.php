@@ -21,6 +21,33 @@ final class TaxonomyRuntimeProviderRegistryTest extends TestCase
         self::assertFalse($registry->hasTermCountProvider('wordpress.post_terms'));
     }
 
+    public function testAcceptsQualifiedClassAndStaticCallbackDescriptorShapesWithoutResolvingThemEarly(): void
+    {
+        $registry = new TaxonomyRuntimeProviderRegistry();
+
+        $registry->registerRestController('vendor.rest', 'Vendor\\Package\\TermsController');
+        $registry->registerTermCountProvider('vendor.counter', 'Vendor\\Package\\TermCounter::update');
+
+        self::assertTrue($registry->hasRestController('vendor.rest'));
+        self::assertTrue($registry->hasTermCountProvider('vendor.counter'));
+    }
+
+    public function testRejectsMalformedQualifiedClassName(): void
+    {
+        $registry = new TaxonomyRuntimeProviderRegistry();
+
+        $this->expectException(InvalidArgumentException::class);
+        $registry->registerRestController('vendor.bad-rest', 'Vendor\\\\BrokenController');
+    }
+
+    public function testRejectsMalformedStaticCallbackDescriptor(): void
+    {
+        $registry = new TaxonomyRuntimeProviderRegistry();
+
+        $this->expectException(InvalidArgumentException::class);
+        $registry->registerTermCountProvider('vendor.bad-counter', 'Vendor\\Counter::bad-method!');
+    }
+
     public function testAppliesRegisteredProviderIdsOnlyAtRuntimeBoundary(): void
     {
         $registry = new TaxonomyRuntimeProviderRegistry();
