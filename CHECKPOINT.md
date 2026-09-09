@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-09 UTC**  
-Canonical audited base anchor: **`main @ 62240fc03b8e6b91e720f6845bbdaee584151f9f`**  
+Canonical audited base anchor: **`main @ 7630ca9f06e609617e70a6db1b2eee8cff9daf19`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -34,7 +34,7 @@ These bounded states do not imply `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED
 
 ## Surface 7 — Custom Tables current state
 
-Promoted through Issue #463 / merged PR #464:
+Promoted through Issue #463 / merged PR #464, with the post-trust exact-main audit promoted through Issue #465 / merged PR #466:
 
 - typed server-side metadata-facts provider boundary;
 - production metadata derived through existing CT1 identity + read-only `WordPressCt1SchemaIntrospector`;
@@ -48,7 +48,7 @@ Promoted through Issue #463 / merged PR #464:
 - immutable readiness package remains `execution_allowed=false`;
 - PR #464 passed all seven applicable exact-head workflows with clean review state.
 
-Issue #465 / current audit accepts this as **trust-boundary hardening evidence**, but managed-table execution stays blocked.
+The exact-main post-trust audit accepts this as **trust-boundary hardening evidence**, but managed-table execution stays blocked.
 
 ### Remaining Custom Tables blockers
 
@@ -72,65 +72,61 @@ Still forbidden:
 
 Custom Tables is safe-paused at the current bounded milestone until a later explicit trust-activation/hardening lane is promoted.
 
-## Owner-directed next wave — CPT Builder + Taxonomy Builder full-final program
+## Owner-directed current wave — CPT Builder + Taxonomy Builder full-final program
 
 The owner explicitly requested that Surfaces 1 and 2 be taken to genuine full-final completion. Existing code is preserved and gap-audited; it is not replaced speculatively.
 
 ### Surface 1 — CPT Builder
 
-Current machine truth:
+Current machine truth after Issue #467 / merged PR #469:
 
-- Atomic inventory: **`ATOMIC_INVENTORY_COMPLETE`**;
-- Options Bank: **`BANK_SURFACE_SEEDED`**, **107 records**;
+- Atomic lifecycle: **`ATOMIC_INVENTORY_COMPLETE`**;
+- Options Bank: **`BANK_REVIEWED`**, **107 records**, zero unresolved native/market/review gates;
 - existing runtime baseline includes Definition projection, validation, admin controller, Ability handler and registration provider;
 - dedicated CPT Runtime regression workflow is green;
-- full-parity planning prerequisites are **not yet closed**.
+- full-parity Option Contract + UX prerequisite is not yet promoted.
 
-Next authorized lane — queue priority **980**:
+Next authorized lane — queue priority **1000**:
 
-**CPT Builder Options Bank Audit Closure V1**
+**CPT Builder Atomic Option Contract + UX Closure V1**
 
 Required exit:
 
-- exhaustive current WordPress native cross-check;
-- approved market/specialist benchmark audit;
-- all 107 records classified;
-- duplicates/ownership/deferred/rejected-unsafe/WPE-exceed consistency resolved;
-- zero unresolved review items;
-- promote Surface 1 Bank to `BANK_REVIEWED` only with evidence.
+- project the reviewed 107-record CPT Bank into `config/product/option-contract.schema.json` compliant machine contracts;
+- deterministic 107-record source projection with zero duplicate/missing records;
+- `missing=0`, `unclassified=0`;
+- reviewed Essential / Advanced / Expert information architecture and interaction contract;
+- exhaustive gap matrix against existing CustomPostTypes runtime;
+- explicit implementation requirements for security, REST/Ability, import/export/migration, accessibility, compatibility and performance.
 
 No runtime/product-parity certification is claimed by this lane.
 
 ### Surface 2 — Taxonomy Builder
 
-Current machine truth:
+Current machine truth after Issue #468 / merged PR #470:
 
-- Atomic inventory: **`ATOMIC_INVENTORY_COMPLETE`**;
 - Options Bank: **`BANK_REVIEWED`**, **71 records**, zero unresolved items;
-- existing runtime baseline includes Definition projection, validation, admin controller, Ability handler, object-type catalog and registration provider;
-- dedicated Taxonomy Runtime regression workflow is green;
-- no schema-valid Taxonomy option-contract file exists yet.
+- Atomic lifecycle: **`UX_CONTRACT_COMPLETE`**;
+- schema-valid Taxonomy contract: **20 normalized atomic options**;
+- deterministic Bank projection: **71 / 71** records;
+- coverage: **`missing=0`, `unclassified=0`**;
+- reviewed Essential / Advanced / Expert UX contract;
+- accepted runtime gap matrix against the existing Taxonomies baseline;
+- dedicated Taxonomy Runtime regression workflow is green, but this does not equal full parity.
 
-Next authorized lane — queue priority **990**:
+Next authorized lane — queue priority **1010**:
 
-**Taxonomy Builder Atomic Option Contract + UX Closure V1**
+**Taxonomy Builder Runtime Gap Closure V1**
 
-Required exit:
+Required scope is bounded by the accepted V1 contract/UX/gap matrix and includes focused closure of currently missing/partial behavior such as complete label UX, allowlisted REST/editor/count providers, default-term support, bounded object-term args, effective-args/association diagnostics, compatibility import, guarded key-migration workflow and required runtime/browser/accessibility/security/compatibility/portability evidence.
 
-- project all reviewed Bank records + Wave-1 taxonomy inventory into `config/product/option-contract.schema.json` compliant contracts;
-- `missing=0`, `unclassified=0`;
-- reviewed Essential / Advanced / Expert information architecture and interaction contract;
-- deterministic source projection/ownership consistency;
-- exhaustive gap matrix against the existing Taxonomy runtime baseline;
-- implementation requirements for Multisite, security, REST/Ability, import/export/migration, accessibility and compatibility.
-
-No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is allowed yet.
+No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is allowed until the accepted gaps and required exact-head evidence are actually closed.
 
 ## Parallelism
 
-Priority 980 CPT Bank closure and priority 990 Taxonomy Contract/UX closure are **non-overlapping and dependency-safe** after Issue #465 promotes. They may be claimed in parallel on deterministic branches.
+Priority 1000 CPT Contract/UX closure and priority 1010 Taxonomy Runtime Gap Closure are **non-overlapping and dependency-safe** after Issue #471 promotes. They may be claimed in parallel on deterministic branches.
 
-After each planning lane promotes, exact-main Issues → PRs → queue preflight runs again before that surface's implementation/parity lane opens.
+After each lane promotes, exact-main Issues → PRs → queue preflight runs again before the next certification lane opens.
 
 ## Definition of “full final” for CPT / Taxonomy
 
@@ -141,7 +137,7 @@ A surface is not full-final merely because its runtime workflow is green. Full-f
 3. reviewed UX contract;
 4. exhaustive existing-runtime gap matrix;
 5. implementation of all accepted missing behavior through canonical owners;
-6. Multisite, security, REST/Ability, import/export/migration, accessibility and compatibility evidence as applicable;
+6. Multisite, security, REST/Ability, import/export/migration, accessibility, compatibility and performance evidence as applicable;
 7. exact-head required runtime/browser/security/parity tests;
 8. machine state `RUNTIME_CERTIFIED`;
 9. machine state `PRODUCT_PARITY_CERTIFIED`.
@@ -162,9 +158,9 @@ Authoritative machine files:
 
 ## Current next action
 
-1. Promote Issue #465 audit/shared-truth PR after latest-main, exact-head applicable CI and review checks.
+1. Promote Issue #471 shared-truth transition audit after latest-main, exact-head applicable CI and review checks.
 2. Re-run exact-main → Issues → PR/MR preflight.
-3. Claim priority 980 CPT Bank closure and priority 990 Taxonomy Option Contract/UX closure on their deterministic non-overlapping branches.
+3. Claim priority 1000 CPT Contract/UX closure and priority 1010 Taxonomy Runtime Gap Closure on their deterministic non-overlapping branches.
 4. Continue each surface gate-by-gate until runtime and product-parity machine certification is actually earned.
 5. Keep Custom Tables execution blocked unless a later explicit exact-main audit authorizes a separate bounded lane.
 
