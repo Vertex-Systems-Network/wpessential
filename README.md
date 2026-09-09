@@ -28,26 +28,28 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Active dependency gate: **Surface 7 — Custom Tables**.
 
-README audited base anchor: `main @ 18165d325dd97d6346ad2982a8464b450eb8273d` on **2026-09-08**. Issue #441 is the current post-hardening shared-truth reconciliation. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 209f1288cefb9e94af1d0f7e79915673054eb0ce` on **2026-09-09 UTC**. The concrete Custom Tables post-hardening adapter wave is promoted through merged PR #450. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress
 
-This dashboard is mandatory AI-Native closeout truth. It is updated after meaningful completed work cycles.
+This dashboard is mandatory AI-Native closeout truth. It is updated before a meaningful engineering query/work cycle is reported final when repository state changed.
 
 **Progress percentages below measure the currently approved/certified bounded implementation milestone for that module, not full product parity.** A 100% row means its explicitly named bounded/native baseline is certified; it does **not** imply `PRODUCT_PARITY_CERTIFIED`, deployment or release readiness. Planning-only surfaces without a defined implementation baseline are intentionally not assigned fabricated percentages here.
 
-| Module / Surface | Lifecycle | Progress | Latest evidence | Next gate |
-|---|---|---:|---|---|
-| Platform Foundation | PASS for module handoff | `██████████ 100%` | WP121 / foundation evidence | Broader platform work only when a dependent module requires it |
-| Fields / Surface 3 | PASS — certified native V1 | `██████████ 100%` | Gate A | Broader provider/full parity remains gated |
-| Relations / Surface 4 | PASS — certified native V1 | `██████████ 100%` | Gate B | Richer provider/full parity remains gated |
-| Status Manager / Surface 5 | PASS — certified bounded V1 | `██████████ 100%` | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
-| Query / Surface 6 | PASS — certified bounded V1 | `██████████ 100%` | Gate C | Public execution/full parity remains gated |
-| Custom Tables / Surface 7 | ACTIVE / NOT PASS | `█████████░ 90%` | Issue #441 after merged PRs #437–#440 | Durable run-store integration + bounded metadata/recovery/Policy adapters; managed-table mutation remains blocked |
-| Admin Columns / Surface 8 | PASS — certified bounded V1 | `██████████ 100%` | Gate D | No unbounded mass-edit/provider-wide parity claim |
-| Dynamic Listings / Surface 9 | PASS — certified bounded V1 | `██████████ 100%` | Issue #343 / PR #344 | Richer async/builder parity remains gated |
+Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Timestamps use ISO-8601 UTC when repository evidence proves an exact value. Historical dates are never reconstructed from chat memory: `UNKNOWN / pending evidence audit` means the timeline fact has not yet been proven. Estimated completion is a non-binding engineering forecast, not a delivery promise or release date.
 
-The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. The post-hardening audit does not invent a higher percentage because the repository defines no new percentage milestone for this wave.
+| Module / Surface | Lifecycle / Status | Progress | Start date/time (UTC) | Estimated completion date/time (UTC) | Actual completion date/time (UTC) | Latest evidence | Next gate |
+|---|---|---:|---|---|---|---|---|
+| Platform Foundation | PASS for module handoff | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | WP121 / foundation evidence | Broader platform work only when a dependent module requires it |
+| Fields / Surface 3 | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate A | Broader provider/full parity remains gated |
+| Relations / Surface 4 | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
+| Status Manager / Surface 5 | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
+| Query / Surface 6 | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate C | Public execution/full parity remains gated |
+| Custom Tables / Surface 7 | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / post-adapter exact-main audit required | — | Issue #441 + merged PRs #447, #448, #449, #450 | Exact-main Supervisor audit; managed-table mutation remains blocked |
+| Admin Columns / Surface 8 | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate D | No unbounded mass-edit/provider-wide parity claim |
+| Dynamic Listings / Surface 9 | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #343 / PR #344 | Richer async/builder parity remains gated |
+
+The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. The concrete adapter wave does not invent a higher percentage because the repository defines no new percentage milestone for this wave.
 
 ## AI-Native work-cycle order
 
@@ -58,9 +60,9 @@ Every Supervisor/Worker cycle follows this mandatory order from `AUTO-AGENT.md` 
 3. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
 4. re-read active deterministic claims and the coordination queue;
 5. only then start or claim new dependency-ready development;
-6. after the cycle reaches a stable final state, update this README status and module progress dashboard before reporting completion.
+6. after the cycle reaches a stable final state, reconcile this README module dashboard — lifecycle/status, progress, start timestamp, completion forecast, actual completion timestamp, latest evidence and next gate — before reporting completion.
 
-Issue #415 / merged PR #416 promoted this rule. This prevents accepted issue/PR work from being bypassed by newly invented branches and makes README progress reconciliation part of Definition of Done.
+Issue #415 / merged PR #416 promoted issue-first/PR-second README closeout. Issue #451 extends that Definition of Done with module timeline and forecast reconciliation. This prevents accepted issue/PR work from being bypassed and prevents final engineering reports from drifting away from repository delivery evidence.
 
 ## Current Custom Tables state
 
@@ -91,11 +93,15 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 23. **Precondition Read-Only Probe Plan V1** — merged PR #438.
 24. **Recovery Evidence Binding/Freshness V1** — Issue #435 / merged PR #439.
 25. **Execution Authorization Envelope V1** — Issue #436 / merged PR #440.
-26. **Post-hardening-wave exact-main audit** — Issue #441; effective when its reconciliation promotes.
+26. **Post-hardening-wave exact-main audit** — Issue #441 / merged PR #442.
+27. **Metadata-only Precondition Probe Adapters V1** — merged PR #447.
+28. **Recovery Verification Provider Port V1** — Issue #445 / merged PR #448.
+29. **Execution Authorization Policy Adapter V1** — Issue #446 / merged PR #449.
+30. **Internal Migration Run Store Schema + WPDB Repository V1** — Issue #443 / merged PR #450.
 
-The provider compiler still produces deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`; generated statements remain review-only and are never dispatched to the database by the certified bounded code. Run persistence now has a deterministic record codec but no durable Custom Tables run repository yet. Precondition planning can describe bounded read-only probes but live row scans remain blocked. Recovery evidence can be bound to reviewed plan/provider freshness without invoking Backup side effects. Execution Authorization consumes bounded Policy/capability/confirmation facts but cannot dispatch statements or override R3/R4 denial.
+The provider compiler still produces deterministic MySQL/MariaDB statement previews and fingerprints with `execution_allowed=false`; generated managed-table statements remain review-only and are never dispatched by the certified bounded code. Run persistence now includes the promoted record codec plus a durable site-scoped internal WPE Migration Run repository composed with canonical Platform migration infrastructure. Metadata-only precondition probes, recovery verification provider facts and canonical Policy-derived execution authorization facts are promoted. Live row scans, Backup creation/restore side effects and managed-table physical mutation remain blocked.
 
-The latest hardening wave was serialized through latest-main reconciliation and applicable exact-head CI. PR #439 promoted at `08f91e5c617b4e2b8de1f253568f3ddfc0802f96`; PR #440 was reconciled without force, passed Architecture Guards, PHP Quality Toolchain, Platform Compatibility Matrix and Distributable Package, and promoted at `18165d325dd97d6346ad2982a8464b450eb8273d`.
+The concrete post-hardening adapter wave was serialized through latest-main reconciliation and exact-head CI. PR #448 promoted at `42f4fc646e3b7796b8ca200a89bf1b849967c25d`; PR #449 promoted at `25c5cb0ee640689b04fd0477f710f303ea32f9c2`; PR #450 was reconciled to latest main, passed Architecture Guards, PHP Quality Toolchain, Platform Compatibility Matrix and Distributable Package, and promoted at `209f1288cefb9e94af1d0f7e79915673054eb0ce`.
 
 ### Still blocked
 
@@ -116,14 +122,16 @@ The current Custom Tables foundation does **not** authorize:
 
 ## Next dependency gate
 
-Issue #441 authorizes, **only after its reconciliation promotes**, the following narrower next work. These are prerequisites for any future managed-table execution coordinator and do not authorize physical target-table mutation:
+The concrete post-hardening adapter wave authorized by Issue #441 is now promoted through PR #450:
 
-1. **Internal Migration Run Store Schema + WPDB Repository V1 — serialized Supervisor integration.** Durable Custom Tables run persistence may be implemented for an internal WPE metadata table only. Bootstrap/versioning must compose `frameworks/Platform/Database/Migrations/**`, repository behavior must preserve canonical create/get/CAS semantics and the promoted record codec, and supported MySQL/MariaDB integration must be tested. This lane may not execute a generated Custom Tables provider preview.
-2. **Metadata-Only Precondition Probe Adapters V1 — parallel Worker.** Initial concrete read-only probes are limited to trusted schema/provider metadata facts such as table existence, schema/column metadata match and already-observable provider feature availability. No row scans, arbitrary SQL, payload reads or mutation.
-3. **Recovery Verification Provider Port V1 — parallel Worker.** Read/verify-only provider integration may convert verification facts for an already-existing recovery artifact into the promoted bound/freshness evidence model. No snapshot creation, chargeable provider side effect, restore or secret payload persistence.
-4. **Execution Authorization Policy Adapter V1 — parallel Worker.** Canonical WPE Policy/capability evaluation may be composed into the promoted authorization envelope so production code does not trust caller-supplied authorization booleans. It produces bounded facts only; no SQL, capability mutation, public mutation endpoint, jobs or R3/R4 override.
+1. **Internal Migration Run Store Schema + WPDB Repository V1** — promoted via Issue #443 / PR #450.
+2. **Metadata-Only Precondition Probe Adapters V1** — promoted via PR #447.
+3. **Recovery Verification Provider Port V1** — promoted via Issue #445 / PR #448.
+4. **Execution Authorization Policy Adapter V1** — promoted via Issue #446 / PR #449.
 
-`frameworks/Platform/Database/Migrations/**` remains the canonical generic Platform migration infrastructure; Custom Tables must compose it rather than create a duplicate private migration engine. Another exact-main Supervisor audit is mandatory after these concrete adapters promote before an R1/R2-only managed-table execution coordinator may be opened.
+The next product-development action is a **new exact-main Supervisor audit** over the combined adapter wave. That audit must reconcile shared truth and explicitly decide whether an R1/R2-only managed-table execution coordinator may be opened. Until that audit promotes, managed-table physical DDL dispatch remains blocked.
+
+`frameworks/Platform/Database/Migrations/**` remains the canonical generic Platform migration infrastructure; Custom Tables must compose it rather than create a duplicate private migration engine.
 
 ## Planning / Bank snapshot
 
@@ -146,7 +154,7 @@ The Options Bank currently identifies Taxonomy, Fields, Relations, Status, Query
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
-| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Definition/plan/introspection/provider preview, Run lifecycle/repository/transition/codec, Precondition contract/evaluator/registry/plan, Recovery/Revalidation/readiness/evidence binding and execution readiness/authorization are promoted; concrete persistence and bounded adapters are next |
+| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Definition/plan/introspection/provider preview, Run lifecycle/repository/transition/codec/durable internal store, Precondition contract/evaluator/registry/plan/metadata probes, Recovery/Revalidation/readiness/evidence binding/provider verification and execution readiness/authorization/Policy composition are promoted; exact-main post-adapter audit is next |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
@@ -160,13 +168,13 @@ The authoritative queue is `config/coordination/agent-work-queue.json`.
 
 Start WPEssential Supervisor in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Refresh exact current main, check OPEN Issues first, then OPEN PRs/MRs, then active deterministic claim branches and the coordination queue before starting new work. Take the highest-priority dependency-ready `SUPERVISOR_ONLY` slot first; if none exists, take the highest-priority valid `ANY` slot. The Supervisor owns shared truth, audit gates, merge serialization and end-of-cycle README progress reconciliation.
+Read `AUTO-AGENT.md` completely. Refresh exact current main, check OPEN Issues first, then OPEN PRs/MRs, then active deterministic claim branches and the coordination queue before starting new work. Take the highest-priority dependency-ready `SUPERVISOR_ONLY` slot first; if none exists, take the highest-priority valid `ANY` slot. The Supervisor owns shared truth, audit gates, merge serialization and end-of-cycle README progress/timeline reconciliation.
 
 ### Workers
 
 Start WPEssential Worker in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue and claim only a dependency-ready free `ANY` slot using its deterministic remote branch. An existing claim branch means the slot is already owned. Workers must not invent speculative branches or edit Supervisor-owned shared truth. README progress changes are reported as an Integration Requirement when Workers cannot own shared truth.
+Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue and claim only a dependency-ready free `ANY` slot using its deterministic remote branch. An existing claim branch means the slot is already owned. Workers must not invent speculative branches or edit Supervisor-owned shared truth. README progress/timeline changes are reported as an Integration Requirement when Workers cannot own shared truth.
 
 Parallelism is encouraged only for non-overlapping dependency-safe lanes. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
 
