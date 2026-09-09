@@ -28,17 +28,11 @@ final class TaxonomyRuntimeProviderRegistry
 
     public function __construct()
     {
-        // Store trusted WordPress callable identifiers without requiring the related
-        // admin/runtime function to be loaded at registry-construction time. Actual
-        // callability is checked fail-closed immediately before register_taxonomy().
+        // Only lifecycle-safe defaults are registered here. Admin-only WordPress callback
+        // functions are not guaranteed to be loaded during frontend init, so explicit
+        // editor/count providers are registered by trusted PHP modules when needed.
         $this->registerRestController('wordpress.terms', 'WP_REST_Terms_Controller');
-        $this->registerMetaBoxProvider('wordpress.categories', 'post_categories_meta_box');
-        $this->registerMetaBoxProvider('wordpress.tags', 'post_tags_meta_box');
         $this->registerMetaBoxProvider('wordpress.disabled', false);
-        $this->registerMetaBoxSanitizeProvider('wordpress.checkboxes', 'taxonomy_meta_box_sanitize_cb_checkboxes');
-        $this->registerMetaBoxSanitizeProvider('wordpress.input', 'taxonomy_meta_box_sanitize_cb_input');
-        $this->registerTermCountProvider('wordpress.post_terms', '_update_post_term_count');
-        $this->registerTermCountProvider('wordpress.generic_terms', '_update_generic_term_count');
     }
 
     /** @param class-string $className */
