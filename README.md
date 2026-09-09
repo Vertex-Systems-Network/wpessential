@@ -26,10 +26,10 @@ Project website: **https://wpessential.org**
 - Phase 2 Gate D / Admin Columns: **PASS for the certified bounded V1 baseline**
 - Phase 2 Gate E / Dynamic Listings: **PASS for the certified bounded V1 baseline**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
-- Surface 7 / Custom Tables: **ACTIVE / NOT PASS — bounded runway 90%**, safe-paused with managed-table execution blocked after Issue #463 / merged PR #464.
-- Owner-directed next product-completion wave: **Surface 1 CPT Builder + Surface 2 Taxonomy Builder**, through their required planning → runtime → parity gates.
+- Surface 7 / Custom Tables: **ACTIVE / NOT PASS — bounded runway 90%**, safe-paused with managed-table execution blocked after Issue #463 / merged PR #464 and Issue #465 / merged PR #466.
+- Owner-directed current product-completion wave: **Surface 1 CPT Builder Contract/UX closure + Surface 2 Taxonomy Runtime Gap Closure**, continuing toward explicit runtime and product-parity certification.
 
-README audited base anchor: `main @ 62240fc03b8e6b91e720f6845bbdaee584151f9f` on **2026-09-09 UTC**. Trusted Runtime Evidence Sources V1 is promoted through Issue #463 / merged PR #464. Issue #465 is the exact-main post-trust audit: it accepts the hardening evidence, keeps Custom Tables managed-table execution blocked, and authorizes non-overlapping CPT Bank-closure and Taxonomy Option-Contract/UX-closure planning lanes. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 7630ca9f06e609617e70a6db1b2eee8cff9daf19` on **2026-09-09 UTC**. CPT Bank Review closure is promoted through Issue #467 / merged PR #469. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470. Issue #471 is the exact-main post-planning transition audit that reconciles shared truth and authorizes the next non-overlapping CPT Contract/UX and Taxonomy Runtime Gap Closure lanes. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -43,13 +43,13 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 
 | # | Module / Surface | Lifecycle / Status | Progress | Start date/time (UTC) | Estimated completion date/time (UTC) | Actual completion date/time (UTC) | Latest evidence | Next gate |
 |---:|---|---|---|---|---|---|---|---|
-| 1 | CPT Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE; Options Bank BANK_SURFACE_SEEDED (107); existing runtime baseline present / full-parity lifecycle not promoted | — / no full-parity percentage milestone | — / full-final program lane not yet promoted | FORECAST PENDING / Bank audit closure | — | Options Bank + existing CPT runtime + Issue #465 audit | CPT Builder Options Bank Audit Closure V1 |
-| 2 | Taxonomy Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE; Options Bank BANK_REVIEWED (71); existing runtime baseline present / full-parity lifecycle not promoted | — / no full-parity percentage milestone | — / full-final program lane not yet promoted | FORECAST PENDING / Option Contract + UX closure | — | Taxonomy Bank Review + existing Taxonomy runtime + Issue #465 audit | Taxonomy Builder Atomic Option Contract + UX Closure V1 |
+| 1 | CPT Builder | PLANNED — ATOMIC_INVENTORY_COMPLETE; Options Bank BANK_REVIEWED (107); existing runtime baseline present / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:34Z | FORECAST PENDING / Atomic Option Contract + UX closure required | — | Issue #467 / merged PR #469 + reviewed 107-record CPT Bank | CPT Builder Atomic Option Contract + UX Closure V1 |
+| 2 | Taxonomy Builder | PLANNED — UX_CONTRACT_COMPLETE; Options Bank BANK_REVIEWED (71); 20 atomic contracts + deterministic 71/71 projection; runtime baseline gap-audited / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:50Z | FORECAST PENDING / Runtime Gap Closure V1 evidence required | — | Issue #468 / merged PR #470 + Taxonomy contract/UX/runtime gap matrix | Taxonomy Builder Runtime Gap Closure V1 |
 | 3 | Fields | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate A | Broader provider/full parity remains gated |
 | 4 | Relations | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
 | 5 | Status | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
 | 6 | Query | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate C | Public execution/full parity remains gated |
-| 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / safe-paused; execution trust activation not authorized | — | Issue #463 / merged PR #464 + Issue #465 exact-main audit | Managed-table execution remains blocked; later explicit trust-activation audit required |
+| 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / safe-paused; execution trust activation not authorized | — | Issue #463 / merged PR #464 + Issue #465 / merged PR #466 | Managed-table execution remains blocked; later explicit trust-activation audit required |
 | 8 | Admin Columns | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate D | No unbounded mass-edit/provider-wide parity claim |
 | 9 | Listings | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #343 / PR #344 | Richer async/builder parity remains gated |
 | 10 | Dashboard Widgets | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
@@ -156,7 +156,7 @@ Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promot
 32. **Runtime Composition Readiness V1** — Issue #459 / merged PR #460.
 33. **Post-Runtime Composition exact-main audit V1** — Issue #461 / merged PR #462.
 34. **Trusted Runtime Evidence Sources V1** — Issue #463 / merged PR #464.
-35. **Post-Trusted Runtime Evidence exact-main audit V1** — Issue #465 / current audit PR.
+35. **Post-Trusted Runtime Evidence exact-main audit V1** — Issue #465 / merged PR #466.
 
 PR #464 moves metadata-fact derivation behind a typed server-side provider, composes the existing read-only CT1 schema introspector, binds descriptors to persisted run identity/revision/schema, adds a site-scoped internal WPE confirmation metadata store + read-only confirmation source, removes provider arguments from canonical `create()`, and converts source failures into deterministic fail-closed readiness reasons. Its exact head passed all seven applicable workflows, including CPT Runtime and Taxonomy Runtime.
 
@@ -188,31 +188,34 @@ The target for Surfaces 1 and 2 is **PARITY_OR_EXCEED**. Existing runtime code i
 
 ### Surface 1 — CPT Builder
 
-Current machine truth:
+Current machine truth after Issue #467 / merged PR #469:
 
 - `ATOMIC_INVENTORY_COMPLETE`;
-- Options Bank `BANK_SURFACE_SEEDED`, 107 records;
+- Options Bank `BANK_REVIEWED`, 107 records, zero unresolved review gates;
 - existing Definition projection, validation, admin, Ability and registration/runtime baseline;
-- CPT Runtime workflow green on PR #464;
-- native cross-check + market audit + Bank Review remain before downstream option-contract promotion.
+- dedicated CPT Runtime regression workflow green;
+- schema-valid CPT Atomic Option Contract + reviewed UX are not yet promoted.
 
-Next lane: **CPT Builder Options Bank Audit Closure V1** (queue priority 980).
+Next lane: **CPT Builder Atomic Option Contract + UX Closure V1** (queue priority 1000).
 
-Exit requires current WordPress native audit, approved market/specialist audit, all 107 records classified, ownership/semantic/policy consistency, zero unresolved items, and evidence-backed `BANK_REVIEWED` promotion. This lane does not claim runtime or product-parity certification.
+Exit requires projection of the reviewed 107-record Bank + Wave-1 CPT inventory into schema-valid machine contracts, deterministic source projection, `missing=0`, `unclassified=0`, reviewed Essential/Advanced/Expert UX information architecture, and an exhaustive gap matrix against current CustomPostTypes runtime including security, REST/Ability, import/export/migration, accessibility, compatibility and performance requirements. This lane does not claim runtime or product-parity certification.
 
 ### Surface 2 — Taxonomy Builder
 
-Current machine truth:
+Current machine truth after Issue #468 / merged PR #470:
 
-- `ATOMIC_INVENTORY_COMPLETE`;
 - Options Bank `BANK_REVIEWED`, 71 records, zero unresolved review items;
-- existing Definition projection, validation, admin, Ability, object-type catalog and registration/runtime baseline;
-- Taxonomy Runtime workflow green on PR #464;
-- no schema-valid Taxonomy option-contract file is promoted yet.
+- lifecycle `UX_CONTRACT_COMPLETE`;
+- 20 normalized atomic contracts;
+- deterministic 71/71 Bank source projection;
+- `missing=0`, `unclassified=0`;
+- reviewed Essential/Advanced/Expert UX contract;
+- accepted runtime gap matrix against existing Taxonomies baseline;
+- dedicated Taxonomy Runtime regression workflow green, but full parity is not certified.
 
-Next lane: **Taxonomy Builder Atomic Option Contract + UX Closure V1** (queue priority 990).
+Next lane: **Taxonomy Builder Runtime Gap Closure V1** (queue priority 1010).
 
-Exit requires projection of the reviewed Bank + Wave-1 taxonomy inventory into schema-valid machine contracts, `missing=0`, `unclassified=0`, reviewed Essential/Advanced/Expert UX information architecture, deterministic source projection/ownership, and an exhaustive gap matrix against current runtime including Multisite, security, REST/Ability, import/export/migration, accessibility and compatibility requirements.
+Exit requires implementation of the accepted missing/partial contract groups through canonical owners, including complete label UX, allowlisted REST/editor/count providers, default-term and bounded object-term args support, diagnostics, CPT UI compatibility import mapping, guarded key-migration workflow, plus focused runtime/browser/accessibility/security/compatibility/portability and applicable performance evidence. This lane cannot claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` until every accepted gap/evidence requirement closes.
 
 ### What “full final” means
 
@@ -228,7 +231,7 @@ Neither CPT nor Taxonomy may be reported fully final until that surface explicit
 8. machine lifecycle `RUNTIME_CERTIFIED`;
 9. competitor-parity acceptance `PRODUCT_PARITY_CERTIFIED`.
 
-Priority 980 and 990 are non-overlapping planning lanes and may run in parallel after Issue #465 promotes.
+Priority 1000 and 1010 are non-overlapping lanes and may run in parallel after Issue #471 promotes.
 
 ## Planning / Bank snapshot
 
@@ -241,7 +244,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 - Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
 - No bounded module pass in this README implies full product parity or release readiness.
 
-`config/product/atomic-option-contract-progress.json` currently records all 56 surfaces in the atomic inventory, with full-parity runtime certification still at zero. Machine-readable files are authoritative for planning lifecycle counts.
+`config/product/atomic-option-contract-progress.json` currently records all 56 surfaces in the atomic inventory, with Surface 2 Taxonomy at `UX_CONTRACT_COMPLETE` and full-parity runtime certification still at zero. Machine-readable files are authoritative for planning lifecycle counts.
 
 ## Certified runtime / implementation gates
 
@@ -275,7 +278,7 @@ Start WPEssential Worker in AUTO mode.
 
 Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
 
-Parallelism is encouraged only for non-overlapping dependency-safe lanes. The CPT Bank-closure and Taxonomy Contract/UX-closure planning lanes are explicitly non-overlapping after Issue #465 promotion. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
+Parallelism is encouraged only for non-overlapping dependency-safe lanes. CPT Contract/UX closure and Taxonomy Runtime Gap Closure are explicitly non-overlapping after Issue #471 promotion. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
 
 ## What WPEssential is
 
@@ -334,6 +337,13 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-ADAPTER-EXACT-MAIN-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-RUNTIME-COMPOSITION-EXACT-MAIN-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-TRUSTED-RUNTIME-EVIDENCE-EXACT-MAIN-AUDIT-V1.md`
+
+CPT and Taxonomy full-final planning evidence currently includes:
+
+- `docs/PRODUCT/CPT-BUILDER-OPTIONS-BANK-AUDIT-CLOSURE-V1.md`
+- `config/product/option-contracts/taxonomy.json`
+- `docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
