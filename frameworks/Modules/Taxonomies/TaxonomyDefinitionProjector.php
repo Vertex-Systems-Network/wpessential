@@ -13,6 +13,7 @@ use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\WordPress\Registrations\RegistrationDefinition;
 use WPEssential\Platform\WordPress\Registrations\RegistrationKind;
+use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeProviderRegistry;
 
 final class TaxonomyDefinitionProjector
 {
@@ -25,7 +26,7 @@ final class TaxonomyDefinitionProjector
         'public', 'publicly_queryable', 'hierarchical', 'show_ui', 'show_in_menu',
         'show_in_nav_menus', 'show_tagcloud', 'show_in_quick_edit', 'show_admin_column',
         'show_in_rest', 'rest_base', 'rest_namespace', 'query_var', 'rewrite', 'sort',
-        'capabilities', 'default_term', 'args',
+        'capabilities', 'default_term', 'args', 'runtime_providers',
     ];
 
     /** @var list<string> */
@@ -57,6 +58,13 @@ final class TaxonomyDefinitionProjector
     private const OBJECT_TERM_FIELDS_VALUES = [
         'all', 'all_with_object_id', 'ids', 'tt_ids', 'names', 'slugs',
     ];
+
+    private readonly TaxonomyRuntimeProviderRegistry $runtimeProviders;
+
+    public function __construct(?TaxonomyRuntimeProviderRegistry $runtimeProviders = null)
+    {
+        $this->runtimeProviders = $runtimeProviders ?? new TaxonomyRuntimeProviderRegistry();
+    }
 
     public function project(Definition $definition): RegistrationDefinition
     {
@@ -115,14 +123,22 @@ final class TaxonomyDefinitionProjector
             $args['args'] = $this->objectTermArgs($payload['args']);
         }
 
+        $registrationPayload = [
+            'object_types' => $objectTypes,
+            'args' => $args,
+        ];
+        if (array_key_exists('runtime_providers', $payload)) {
+            $providerIds = $this->runtimeProviderIds($payload['runtime_providers']);
+            if ($providerIds !== []) {
+                $registrationPayload['provider_ids'] = $providerIds;
+            }
+        }
+
         return new RegistrationDefinition(
             id: $definition->id,
             kind: RegistrationKind::Taxonomy,
             key: $key,
-            payload: [
-                'object_types' => $objectTypes,
-                'args' => $args,
-            ],
+            payload: $registrationPayload,
             enabled: true,
             revision: $definition->revision,
         );
@@ -215,7 +231,7 @@ final class TaxonomyDefinitionProjector
     /** @return array<string,string> */
     private function labels(string $name, string $singularName, mixed $overrides): array
     {
-        if (!is_array($overrides)) {
+        if (!is_array($overrides) || array_is_list($overrides) && $overrides !== []) {
             throw new InvalidArgumentException('Taxonomy labels must be an object/map.');
         }
         $labels = ['name' => $name, 'singular_name' => $singularName];
@@ -393,6 +409,34 @@ final class TaxonomyDefinitionProjector
             $normalized['fields'] = $value['fields'];
         }
 
+        return $normalized;
+    }
+
+    /** @return array<string,string> */
+    private function runtimeProviderIds(mixed $value): array
+    {
+        if (!is_array($value) || array_is_list($value) && $value !== []) {
+            throw new InvalidArgumentException('runtime_providers must be an object/map of registered provider IDs.');
+        }
+
+        $allowed = ['rest_controller', 'meta_box', 'meta_box_sanitize', 'term_count'];
+        $normalized = [];
+        foreach ($value as $slot => $providerId) {
+            if (!is_string($slot) || !in_array($slot, $allowed, true) || !is_string($providerId) || trim($providerId) === '') {
+                throw new InvalidArgumentException('runtime_providers contains an unsupported slot or invalid provider ID.');
+            }
+            $providerId = trim($providerId);
+            $available = match ($slot) {
+                'rest_controller' => $this->runtimeProviders->hasRestController($providerId),
+                'meta_box' => $this->runtimeProviders->hasMetaBoxProvider($providerId),
+                'meta_box_sanitize' => $this->runtimeProviders->hasMetaBoxSanitizeProvider($providerId),
+                'term_count' => $this->runtimeProviders->hasTermCountProvider($providerId),
+            };
+            if (!$available) {
+                throw new InvalidArgumentException(sprintf('Taxonomy runtime provider "%s" is not registered for slot "%s".', $providerId, $slot));
+            }
+            $normalized[$slot] = $providerId;
+        }
         return $normalized;
     }
 }
