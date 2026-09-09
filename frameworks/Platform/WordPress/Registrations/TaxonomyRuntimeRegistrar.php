@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Throwable;
+
 final class TaxonomyRuntimeRegistrar
 {
     private bool $processed = false;
@@ -21,7 +23,14 @@ final class TaxonomyRuntimeRegistrar
     /** @var array<string, string> */
     private array $errors = [];
 
-    public function __construct(private readonly RegistrationRuntimeLoader $runtime) {}
+    private readonly TaxonomyRuntimeProviderRegistry $providers;
+
+    public function __construct(
+        private readonly RegistrationRuntimeLoader $runtime,
+        ?TaxonomyRuntimeProviderRegistry $providers = null,
+    ) {
+        $this->providers = $providers ?? new TaxonomyRuntimeProviderRegistry();
+    }
 
     public function register(): void
     {
@@ -51,12 +60,26 @@ final class TaxonomyRuntimeRegistrar
 
             $objectTypes = $payload['object_types'] ?? null;
             $args = $payload['args'] ?? null;
-            if (!is_array($objectTypes) || !array_is_list($objectTypes) || $objectTypes === [] || !is_array($args)) {
+            $providerIds = $payload['provider_ids'] ?? [];
+            if (!is_array($objectTypes)
+                || !array_is_list($objectTypes)
+                || $objectTypes === []
+                || !is_array($args)
+                || !is_array($providerIds)
+                || ($providerIds !== [] && array_is_list($providerIds))
+            ) {
                 $this->errors[$key] = 'Compiled taxonomy registration contract is invalid.';
                 continue;
             }
             if (taxonomy_exists($key)) {
                 $this->conflicts[] = $key;
+                continue;
+            }
+
+            try {
+                $args = $this->providers->apply($args, $providerIds);
+            } catch (Throwable $exception) {
+                $this->errors[$key] = $exception->getMessage();
                 continue;
             }
 
