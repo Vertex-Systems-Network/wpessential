@@ -28,9 +28,9 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Surface 7 / Custom Tables: **ACTIVE / NOT PASS — bounded runway 90%**, safe-paused with managed-table execution blocked after Issue #463 / merged PR #464 and Issue #465 / merged PR #466.
 - Surface 1 / CPT Builder: **UX_CONTRACT_COMPLETE / NOT RUNTIME CERTIFIED** through Issue #473 / merged PR #477.
-- Surface 2 / Taxonomy Builder: **UX_CONTRACT_COMPLETE / Runtime Gap Closure V1 ACTIVE**, with bounded Definition, provider-ID and read-only diagnostics slices promoted through PRs #478, #479 and #480; full runtime/product parity remains unpromoted.
+- Surface 2 / Taxonomy Builder: **UX_CONTRACT_COMPLETE / Runtime Gap Closure V1 ACTIVE**, with bounded Definition, provider-ID, read-only diagnostics backend and diagnostics admin rendering slices promoted through PRs #478, #479, #480 and #483; full runtime/product parity remains unpromoted.
 
-README audited base anchor: `main @ ca365820ff14db83ebaf3e4ddea87e9c0714364a` on **2026-09-09 UTC**. CPT Options Bank closure is promoted through Issue #467 / merged PR #469 and CPT Atomic Option Contract + UX Closure through Issue #473 / merged PR #477. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470; bounded Runtime Gap Closure evidence is promoted through merged PRs #478, #479 and #480 while Issue #474 remains open. Issue #481 reconciles this shared truth. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ c14f0e5e54c65456d1f4afbd9bd1048722d292ca` on **2026-09-10 UTC**. CPT Options Bank closure is promoted through Issue #467 / merged PR #469 and CPT Atomic Option Contract + UX Closure through Issue #473 / merged PR #477. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470; bounded Runtime Gap Closure evidence is promoted through merged PRs #478, #479, #480 and #483 while Issue #474 remains open. Issue #484 reconciles the post-diagnostics-UI shared truth. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -45,7 +45,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | # | Module / Surface | Lifecycle / Status | Progress | Start date/time (UTC) | Estimated completion date/time (UTC) | Actual completion date/time (UTC) | Latest evidence | Next gate |
 |---:|---|---|---|---|---|---|---|---|
 | 1 | CPT Builder | PLANNED — UX_CONTRACT_COMPLETE; Options Bank BANK_REVIEWED (107); 23 atomic contracts + deterministic 107/107 projection; runtime baseline gap-audited / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:34Z | FORECAST PENDING / later exact-main CPT runtime transition audit required | — | Issue #473 / merged PR #477 + CPT contract/UX/runtime gap matrix | No CPT runtime-gap lane currently authorized; exact-main transition audit required |
-| 2 | Taxonomy Builder | ACTIVE — UX_CONTRACT_COMPLETE; Runtime Gap Closure V1 in progress; Definition completeness + allowlisted provider IDs + read-only diagnostics promoted / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:50Z | FORECAST PENDING / tiered UX, portability, guarded migration planning and certification remain | — | Issue #474 + merged PRs #478, #479, #480 | Diagnostics/tiered UX + adaptive labels, then portability/compatibility and safety-gated migration planning |
+| 2 | Taxonomy Builder | ACTIVE — UX_CONTRACT_COMPLETE; Runtime Gap Closure V1 in progress; Definition completeness + allowlisted provider IDs + read-only diagnostics backend/admin rendering promoted / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:50Z | FORECAST PENDING / tiered UX, portability, guarded migration planning and certification remain | — | Issue #474 + merged PRs #478, #479, #480, #483 | Tiered editor + adaptive labels, then portability/compatibility and safety-gated migration planning |
 | 3 | Fields | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate A | Broader provider/full parity remains gated |
 | 4 | Relations | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
 | 5 | Status | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
@@ -204,7 +204,7 @@ No CPT runtime-gap implementation lane is authorized by the current queue. The n
 
 ### Surface 2 — Taxonomy Builder
 
-Current machine truth after merged PR #480:
+Current machine truth after merged PR #483:
 
 - Options Bank `BANK_REVIEWED`, 71 records, zero unresolved review items;
 - lifecycle `UX_CONTRACT_COMPLETE`;
@@ -215,12 +215,13 @@ Current machine truth after merged PR #480:
 - accepted live runtime gap matrix against the existing Taxonomies baseline;
 - Definition completeness promoted through PR #478: complete reviewed labels, typed default term and bounded object-term args;
 - allowlisted runtime provider-ID architecture promoted through PR #479 with JSON-safe persistence and last-responsible runtime resolution;
-- read-only effective args, overrides, association health and REST/rewrite preview diagnostics promoted through PR #480;
+- read-only effective args, overrides, association health and REST/rewrite preview diagnostics backend promoted through PR #480;
+- read-only diagnostics admin rendering promoted through PR #483, including valid/invalid visibility, stale-state clearing, packaged browser behavior and visible-panel axe accessibility evidence;
 - dedicated Taxonomy Runtime and broad exact-head regression workflows are green for the promoted slices, but full runtime/product parity is not certified.
 
 Current lane: **Taxonomy Builder Runtime Gap Closure V1** (Issue #474 / queue priority 1010).
 
-Remaining work includes rendering the diagnostics in the reviewed tiered admin UX, adaptive label generation, complete Essential/Advanced/Expert controls and provider selectors, portability/CPT UI compatibility mapping, separately safety-gated taxonomy-key migration planning, and final runtime/browser/accessibility/security/compatibility/portability/performance certification evidence. This lane cannot claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` until every accepted gap/evidence requirement closes.
+Remaining work includes adaptive label generation, complete Essential/Advanced/Expert controls and provider selectors, inherited/default/dormant visibility semantics, capabilities/default-term/term-query UX, portability/CPT UI compatibility mapping, separately safety-gated taxonomy-key migration planning, and final runtime/browser/accessibility/security/compatibility/portability/performance certification evidence. This lane cannot claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` until every accepted gap/evidence requirement closes.
 
 ### What “full final” means
 
