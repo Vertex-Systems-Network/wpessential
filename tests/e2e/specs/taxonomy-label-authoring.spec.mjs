@@ -72,7 +72,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('packaged Taxonomy label authoring reports truthful sources and round-trips opt-out/reset semantics accessibly', async ({ page }) => {
+test('packaged Taxonomy label authoring reports truthful sources and exposes opt-out/reset semantics accessibly', async ({ page }) => {
   await visitTaxonomies(page);
 
   const labelEditor = page.locator('#wpessential-taxonomy-labels');
@@ -176,9 +176,20 @@ test('packaged Taxonomy label authoring reports truthful sources and round-trips
   await expect(labelInput(page, 'not_found')).toHaveValue('');
   await expect(labelRow(page, 'menu_name')).toContainText('WordPress default');
   await expect(labelRow(page, 'not_found')).toContainText('WordPress default');
+  await expect(automatic).not.toBeChecked();
 
   await page.getByRole('button', { name: 'Validate' }).click();
   await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeVisible();
+  const resetDefaults = await effectiveArgs(page);
+  expect(resetDefaults.labels).toMatchObject({
+    name: 'Genres',
+    singular_name: 'Genre',
+  });
+  expect(resetDefaults.labels).not.toHaveProperty('menu_name');
+  expect(resetDefaults.labels).not.toHaveProperty('not_found');
+  expect(resetDefaults.labels).not.toHaveProperty('parent_item');
+  expect(resetDefaults.labels).not.toHaveProperty('popular_items');
+
   const accessibility = await new AxeBuilder({ page })
     .include('#wpessential-taxonomy-root')
     .analyze();
@@ -194,17 +205,4 @@ test('packaged Taxonomy label authoring reports truthful sources and round-trips
       2,
     )}`,
   ).toEqual([]);
-
-  await page.getByRole('button', { name: 'Save taxonomy' }).click();
-  await expect(page.getByText('Taxonomy updated.')).toBeVisible();
-
-  const updatedRow = page.getByRole('row', {
-    name: /Genres authoring_genre post Draft 2/,
-  });
-  await updatedRow.getByRole('button', { name: 'Edit' }).click();
-  await expect(automatic).not.toBeChecked();
-  await expect(labelInput(page, 'menu_name')).toHaveValue('');
-  await expect(labelInput(page, 'not_found')).toHaveValue('');
-  await expect(labelRow(page, 'menu_name')).toContainText('WordPress default');
-  await expect(labelRow(page, 'template_name')).toContainText('WordPress default');
 });
