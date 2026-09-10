@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-10 UTC**  
-Canonical audited base anchor: **`main @ 6ee2a39ff84bdcbb0584efd03a9db4bd620a6a35`**  
+Canonical audited base anchor: **`main @ 3b36bd4fb6c7d5d7240745bc489f3f6b0bba369e`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -34,54 +34,51 @@ Issue #473 / merged PR #477 remains the latest CPT planning closure: Bank `BANK_
 
 Parent implementation program: **Issue #474 / queue priority 1010 / OPEN**. Planning lifecycle remains **`UX_CONTRACT_COMPLETE`**; runtime/product parity are not certified.
 
-Promoted bounded slices now include merged PRs **#478, #479, #480, #483, #486, #489 and #503**.
+Promoted bounded slices now include merged PRs **#478, #479, #480, #483, #486, #489, #503 and #506**.
 
-### PR #503 — tiered visibility authoring — PROMOTED
+### PR #506 — accessible Find Setting search — PROMOTED
 
-Merged as **`6ee2a39ff84bdcbb0584efd03a9db4bd620a6a35`** from exact head **`98cc8317f3cfcf83cff5f93f32ab8d33ec9ee667`** after latest-main reconciliation.
+Merged as **`3b36bd4fb6c7d5d7240745bc489f3f6b0bba369e`** from exact head **`1da78f03f2d6951deb0d9e01125c5e6a8accd9bd`** after latest-main reconciliation.
 
 Promoted behavior:
 
-- keyboard-reachable Essential / Advanced / Expert tier navigation;
-- authoring for existing canonical optional visibility booleans;
-- truthful `Default / inherited`, `Explicit: enabled`, and `Explicit: disabled` state;
-- inherited optional values are omitted rather than replaced by guessed defaults;
-- hidden Advanced values survive tier changes;
-- Expert boundary remains visible while provider/migration execution stays separately gated;
-- server-authoritative Validate diagnostics remain the source of effective `register_taxonomy()` arguments;
-- packaged Browser E2E proves tier behavior, explicit/inherited values, hidden-value preservation and axe accessibility.
+- searchable index over existing server-rendered Taxonomy setting labels and IDs;
+- matched Advanced controls automatically promote the required editor tier;
+- matched controls inside collapsed `<details>` sections are revealed before focus;
+- Enter activates the first result and focus moves to the canonical existing control;
+- search excludes its own `Find setting` input from the setting index;
+- label result names use the visible strong label while technical key/ID text remains searchable;
+- no Taxonomy payload, provider execution, Definition persistence or runtime mutation semantics changed;
+- packaged Playwright/axe evidence covers tier reveal, collapsed label reveal, keyboard navigation, no-match status and accessibility.
 
-Exact head `98cc8317...` passed all six applicable workflows before merge:
+Exact head `1da78f03...` passed all three applicable workflows before merge:
 
 1. Architecture Guards — PASS;
 2. Browser E2E Accessibility — PASS;
-3. PHP Quality Toolchain — PASS;
-4. Taxonomy Runtime — PASS;
-5. Distributable Package — PASS;
-6. Platform Compatibility Matrix — PASS.
+3. Distributable Package — PASS.
 
-Review threads were empty before merge. The initial Architecture Guards failure was limited to JavaScript lint in the new visibility helper; commit `98cc8317...` removed nested ternaries/Prettier violations without changing behavior, then all six workflows passed.
+Review threads were empty and the PR was mergeable before exact-head merge. Earlier CI failures were repaired on the same branch: Prettier-only Architecture failures, then a result-label extraction mismatch, then an ambiguous test locator; no failed head was used as merge evidence.
 
 ### Remaining Taxonomy Runtime Gap Closure
 
-Issue #474 remains open. Remaining accepted families include broader help/search/reset behavior, provider selector/health UX, capabilities/effective-map UX, default-term and bounded term-query UX, rewrite/REST collision diagnostics, portability/CPT UI compatibility mapping, and separately safety-gated taxonomy-key migration planning. No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is authorized yet.
+Issue #474 remains open. Remaining accepted families include provider selector/health UX, capabilities/effective-map UX, default-term and bounded term-query UX, rewrite/REST collision diagnostics, portability/CPT UI compatibility mapping, and separately safety-gated taxonomy-key migration planning. No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is authorized yet.
 
 ## Owner-directed ten-worker topology
 
 Supervisor Issue #492 established ten distinct non-overlapping module lanes. Surface 2 remains the only runtime implementation lane; Surfaces 10–18 remain planning/contract-only.
 
-1. **Worker-01 — Taxonomy / Surface 2 / Issue #474** — PR #503 promoted; broader runtime-gap program remains open.
-2. **Worker-02 — Dashboard Widgets / Surface 10 / Issue #493** — Bank is already `BANK_REVIEWED` with 123 records and zero unresolved. Branch now contains a 123-record projection plan, Essential/Advanced/Expert UX contract and no-runtime-baseline gap matrix. Machine 123-record Atomic Option Contract remains the next gate.
-3. **Worker-03 — Admin Menu / Surface 11 / Issue #494** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized `BANK_SURFACE_SEEDED` candidate shard. Records remain unreviewed.
-4. **Worker-04 — Settings Pages / Surface 12 / Issue #495** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed.
-5. **Worker-05 — Frontend Dashboard / Surface 13 / Issue #496** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed.
-6. **Worker-06 — User Profile / Surface 14 / Issue #497** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed.
-7. **Worker-07 — Membership / Surface 15 / Issue #498** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed; payment execution is not authorized.
-8. **Worker-08 — Builder Widgets / Surface 16 / Issue #499** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed.
-9. **Worker-09 — Forms & Workflows / Surface 17 / Issue #500** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed; workflow execution is not authorized.
-10. **Worker-10 — Cron / Surface 18 / Issue #501** — main Bank remains `UNSEEDED / 0`; branch contains evidence-entry audit, Bank seed plan and an 8-record normalized seed candidate. Records remain unreviewed; WP-Cron is not represented as guaranteed wall-clock execution.
+1. **Worker-01 — Taxonomy / Surface 2 / Issue #474** — PR #506 promoted; broader runtime-gap program remains OPEN.
+2. **Worker-02 — Dashboard Widgets / Surface 10 / Issue #493** — Bank `BANK_REVIEWED` 123 / zero unresolved. Branch contains a schema contract candidate with **18 normalized Atomic Option Contracts**, deterministic five-shard **123-record source projection**, reviewed Essential/Advanced/Expert UX contract and no-runtime-baseline gap matrix. Branch was reconciled to `main @ 3b36bd4f...` without force; PR #508 exact head is now `56c94e3c...`, with Architecture Guards and Platform Compatibility Matrix both PASS after correcting one invalid canonical owner key. PR remains OPEN pending Supervisor shared-truth merge order and subsequent latest-main revalidation; runtime remains unauthorized.
+3. **Worker-03 — Admin Menu / Surface 11 / Issue #494** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Official-source evidence matrix commit `0695290557715b1a697b4a6a805381623798238e` is branch-local evidence only.
+4. **Worker-04 — Settings Pages / Surface 12 / Issue #495** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Official-source evidence matrix commit `4a7e69242cce4c48498318401018f5775319dc83` is branch-local evidence only.
+5. **Worker-05 — Frontend Dashboard / Surface 13 / Issue #496** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `75fccc4c874fe261e5b414d9858343b05d8cf034` is branch-local evidence only.
+6. **Worker-06 — User Profile / Surface 14 / Issue #497** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `1be3ed3229f0f2c6e372993cdb1cc431dd642d06` is branch-local evidence only.
+7. **Worker-07 — Membership / Surface 15 / Issue #498** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `23e143ab795ef18b0eb8e0abc0e9646c99ef3752` is branch-local evidence only; payment execution remains unauthorized.
+8. **Worker-08 — Builder Widgets / Surface 16 / Issue #499** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `268f41a66adbb0d6f8b448d2fdfb3bff9bef044d` is branch-local evidence only.
+9. **Worker-09 — Forms & Workflows / Surface 17 / Issue #500** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `deb5aba409d979efcb6a38d89b0a14462629e997` is branch-local evidence only; workflow execution remains unauthorized.
+10. **Worker-10 — Cron / Surface 18 / Issue #501** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `cfd7678698b4ccd8ac310143d3cca2eca36a4629` is branch-local evidence only; WP-Cron is explicitly not represented as guaranteed wall-clock execution.
 
-Branch-local seed candidates do **not** promote `config/product/options-bank-progress.json` on main. Each requires native/market evidence, semantic/policy review and a reviewed worker PR before Supervisor may promote Bank lifecycle truth.
+Branch-local seed candidates and contract candidates do **not** promote main lifecycle truth until their reviewed PR evidence merges and Supervisor reconciliation is completed.
 
 ## Planning-worker constraints
 
@@ -93,13 +90,15 @@ Workers 02–10 may produce Bank/Atomic audits, normalized Bank records, schema-
 - Multisite planning: **56 / 56**.
 - AI Prompt planning: **56 / 56**.
 - README closeout must remain **56 / 56 modules listed**.
-- Current authoritative queue anchor: `6ee2a39ff84bdcbb0584efd03a9db4bd620a6a35`.
+- Current shared-truth reconciliation: **Issue #507 / supervisor branch `supervisor/taxonomy-post-find-setting-reconciliation-v1`**.
+- Current audited main anchor for this reconciliation: **`3b36bd4fb6c7d5d7240745bc489f3f6b0bba369e`**.
 
 ## Next work
 
-1. Finish Supervisor Issue #504 closeout and preserve README 56/56.
-2. Worker-02: deterministically map all 123 reviewed Dashboard Widgets Bank records to a schema-valid Atomic Option Contract with `missing=0`, `unclassified=0` before any lifecycle promotion.
-3. Workers 03–10: add current native/platform and market evidence to their branch-local seed candidates; do not call them `BANK_REVIEWED` until zero unresolved is proven.
-4. Worker-01 / Issue #474: after shared-truth closeout, continue the next accepted Taxonomy gap without destructive key migration or certification claims.
+1. Complete Supervisor Issue #507 by reconciling README 56/56 and coordination queue to `main @ 3b36bd4f...`; do not close #474 or promote runtime/product parity.
+2. Reconcile OPEN PR #508 from exact head `56c94e3c...`: both currently applicable workflows pass and review threads are clean, but latest-main reconciliation must be repeated after Issue #507 promotion before merge.
+3. Worker-02 / Issue #493: only after #508 evidence proves the contract may Surface 10 planning lifecycle be promoted; runtime remains a separate later gate.
+4. Workers 03–10: continue native/platform + market evidence expansion; no `BANK_REVIEWED` claim until zero unresolved is proven and reviewed/merged.
+5. Worker-01 / Issue #474: after accepted Issue/PR/shared-truth gates, continue the next bounded Taxonomy runtime gap without destructive key migration or certification claims.
 
 Repository evidence overrides conversational memory.
