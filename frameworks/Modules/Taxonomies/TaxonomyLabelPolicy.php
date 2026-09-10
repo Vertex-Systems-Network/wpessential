@@ -97,42 +97,89 @@ final class TaxonomyLabelPolicy
     /** @return array<string,string> */
     private static function generated(string $name, string $singularName, bool $hierarchical): array
     {
+        $templates = self::templates();
         $labels = [
             'name' => $name,
             'singular_name' => $singularName,
             'menu_name' => $name,
-            'search_items' => self::format('Search %s', $name),
-            'all_items' => self::format('All %s', $name),
-            'edit_item' => self::format('Edit %s', $singularName),
-            'view_item' => self::format('View %s', $singularName),
-            'update_item' => self::format('Update %s', $singularName),
-            'add_new_item' => self::format('Add New %s', $singularName),
-            'new_item_name' => self::format('New %s Name', $singularName),
-            'not_found' => self::format('No %s found', $name),
-            'no_terms' => self::format('No %s', $name),
-            'items_list_navigation' => self::format('%s list navigation', $name),
-            'items_list' => self::format('%s list', $name),
-            'back_to_items' => self::format('Go to %s', $name),
-            'item_link' => self::format('%s Link', $singularName),
-            'item_link_description' => self::format('A link to a %s', $singularName),
+            'search_items' => sprintf($templates['search_items'], $name),
+            'all_items' => sprintf($templates['all_items'], $name),
+            'edit_item' => sprintf($templates['edit_item'], $singularName),
+            'view_item' => sprintf($templates['view_item'], $singularName),
+            'update_item' => sprintf($templates['update_item'], $singularName),
+            'add_new_item' => sprintf($templates['add_new_item'], $singularName),
+            'new_item_name' => sprintf($templates['new_item_name'], $singularName),
+            'not_found' => sprintf($templates['not_found'], $name),
+            'no_terms' => sprintf($templates['no_terms'], $name),
+            'items_list_navigation' => sprintf($templates['items_list_navigation'], $name),
+            'items_list' => sprintf($templates['items_list'], $name),
+            'back_to_items' => sprintf($templates['back_to_items'], $name),
+            'item_link' => sprintf($templates['item_link'], $singularName),
+            'item_link_description' => sprintf($templates['item_link_description'], $singularName),
         ];
 
         if ($hierarchical) {
-            $labels['parent_item'] = self::format('Parent %s', $singularName);
-            $labels['parent_item_colon'] = self::format('Parent %s:', $singularName);
+            $labels['parent_item'] = sprintf($templates['parent_item'], $singularName);
+            $labels['parent_item_colon'] = sprintf($templates['parent_item_colon'], $singularName);
             return $labels;
         }
 
-        $labels['popular_items'] = self::format('Popular %s', $name);
-        $labels['separate_items_with_commas'] = self::format('Separate %s with commas', $name);
-        $labels['add_or_remove_items'] = self::format('Add or remove %s', $name);
-        $labels['choose_from_most_used'] = self::format('Choose from the most used %s', $name);
+        $labels['popular_items'] = sprintf($templates['popular_items'], $name);
+        $labels['separate_items_with_commas'] = sprintf($templates['separate_items_with_commas'], $name);
+        $labels['add_or_remove_items'] = sprintf($templates['add_or_remove_items'], $name);
+        $labels['choose_from_most_used'] = sprintf($templates['choose_from_most_used'], $name);
         return $labels;
     }
 
-    private static function format(string $template, string $value): string
+    /** @return array<string,string> */
+    private static function templates(): array
     {
-        $translated = function_exists('__') ? __($template, 'wpessential') : $template;
-        return sprintf($translated, $value);
+        if (!function_exists('__')) {
+            return [
+                'search_items' => 'Search %s',
+                'all_items' => 'All %s',
+                'edit_item' => 'Edit %s',
+                'view_item' => 'View %s',
+                'update_item' => 'Update %s',
+                'add_new_item' => 'Add New %s',
+                'new_item_name' => 'New %s Name',
+                'not_found' => 'No %s found',
+                'no_terms' => 'No %s',
+                'items_list_navigation' => '%s list navigation',
+                'items_list' => '%s list',
+                'back_to_items' => 'Go to %s',
+                'item_link' => '%s Link',
+                'item_link_description' => 'A link to a %s',
+                'parent_item' => 'Parent %s',
+                'parent_item_colon' => 'Parent %s:',
+                'popular_items' => 'Popular %s',
+                'separate_items_with_commas' => 'Separate %s with commas',
+                'add_or_remove_items' => 'Add or remove %s',
+                'choose_from_most_used' => 'Choose from the most used %s',
+            ];
+        }
+
+        return [
+            'search_items' => __('Search %s', 'wpessential'),
+            'all_items' => __('All %s', 'wpessential'),
+            'edit_item' => __('Edit %s', 'wpessential'),
+            'view_item' => __('View %s', 'wpessential'),
+            'update_item' => __('Update %s', 'wpessential'),
+            'add_new_item' => __('Add New %s', 'wpessential'),
+            'new_item_name' => __('New %s Name', 'wpessential'),
+            'not_found' => __('No %s found', 'wpessential'),
+            'no_terms' => __('No %s', 'wpessential'),
+            'items_list_navigation' => __('%s list navigation', 'wpessential'),
+            'items_list' => __('%s list', 'wpessential'),
+            'back_to_items' => __('Go to %s', 'wpessential'),
+            'item_link' => __('%s Link', 'wpessential'),
+            'item_link_description' => __('A link to a %s', 'wpessential'),
+            'parent_item' => __('Parent %s', 'wpessential'),
+            'parent_item_colon' => __('Parent %s:', 'wpessential'),
+            'popular_items' => __('Popular %s', 'wpessential'),
+            'separate_items_with_commas' => __('Separate %s with commas', 'wpessential'),
+            'add_or_remove_items' => __('Add or remove %s', 'wpessential'),
+            'choose_from_most_used' => __('Choose from the most used %s', 'wpessential'),
+        ];
     }
 }
