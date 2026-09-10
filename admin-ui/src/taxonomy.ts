@@ -456,7 +456,12 @@ function clearDiagnostics(): void {
 	}
 
 	panel.hidden = true;
-	for ( const name of [ 'runtime', 'rest-route', 'rewrite-path', 'providers' ] ) {
+	for ( const name of [
+		'runtime',
+		'rest-route',
+		'rewrite-path',
+		'providers',
+	] ) {
 		const value = diagnosticsValue( panel, name );
 		if ( value ) {
 			value.textContent = '';
@@ -504,12 +509,13 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 
 	const runtime = diagnosticsValue( panel, 'runtime' );
 	if ( runtime ) {
-		runtime.textContent =
-			diagnostics.runtime.registered === null
-				? 'Unavailable'
-				: diagnostics.runtime.registered
-					? 'Registered'
-					: 'Not registered';
+		let runtimeState = 'Unavailable';
+		if ( diagnostics.runtime.registered === true ) {
+			runtimeState = 'Registered';
+		} else if ( diagnostics.runtime.registered === false ) {
+			runtimeState = 'Not registered';
+		}
+		runtime.textContent = runtimeState;
 	}
 	const restRoute = diagnosticsValue( panel, 'rest-route' );
 	if ( restRoute ) {
@@ -534,7 +540,10 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 			entries.length === 0
 				? 'WordPress defaults'
 				: entries
-						.map( ( [ slot, providerId ] ) => `${ slot }: ${ providerId }` )
+						.map(
+							( [ slot, providerId ] ) =>
+								`${ slot }: ${ providerId }`
+						)
 						.join( ', ' );
 	}
 
@@ -554,7 +563,9 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 				const canonical =
 					association.canonical_status === null
 						? ''
-						: `; canonical ${ association.canonical_status }`;
+						: `; canonical ${
+								association.canonical_status
+						  }`;
 				item.textContent = `${ association.key }: ${ association.state }${ canonical }`;
 				associations.append( item );
 			}
@@ -575,7 +586,11 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 		'[data-wpessential-taxonomy-overrides]'
 	);
 	if ( overrides instanceof HTMLElement ) {
-		overrides.textContent = JSON.stringify( diagnostics.overrides, null, 2 );
+		overrides.textContent = JSON.stringify(
+			diagnostics.overrides,
+			null,
+			2
+		);
 	}
 	panel.hidden = false;
 }
