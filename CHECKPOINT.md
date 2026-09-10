@@ -68,7 +68,7 @@ Issue #474 remains open. Remaining accepted families include provider selector/h
 Supervisor Issue #492 established ten distinct non-overlapping module lanes. Surface 2 remains the only runtime implementation lane; Surfaces 10–18 remain planning/contract-only.
 
 1. **Worker-01 — Taxonomy / Surface 2 / Issue #474** — PR #506 promoted; broader runtime-gap program remains OPEN.
-2. **Worker-02 — Dashboard Widgets / Surface 10 / Issue #493** — Bank `BANK_REVIEWED` 123 / zero unresolved. Branch now contains a schema contract candidate with **18 normalized Atomic Option Contracts**, deterministic five-shard **123-record source projection**, reviewed Essential/Advanced/Expert UX contract and no-runtime-baseline gap matrix. Branch reconciled to `main @ 3b36bd4f...` without force as two-parent merge `fd23ae2c...`. PR #508 is OPEN for exact-head machine validation/review; runtime remains unauthorized.
+2. **Worker-02 — Dashboard Widgets / Surface 10 / Issue #493** — Bank `BANK_REVIEWED` 123 / zero unresolved. Branch contains a schema contract candidate with **18 normalized Atomic Option Contracts**, deterministic five-shard **123-record source projection**, reviewed Essential/Advanced/Expert UX contract and no-runtime-baseline gap matrix. Branch was reconciled to `main @ 3b36bd4f...` without force; PR #508 exact head is now `56c94e3c...`, with Architecture Guards and Platform Compatibility Matrix both PASS after correcting one invalid canonical owner key. PR remains OPEN pending Supervisor shared-truth merge order and subsequent latest-main revalidation; runtime remains unauthorized.
 3. **Worker-03 — Admin Menu / Surface 11 / Issue #494** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Official-source evidence matrix commit `0695290557715b1a697b4a6a805381623798238e` is branch-local evidence only.
 4. **Worker-04 — Settings Pages / Surface 12 / Issue #495** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Official-source evidence matrix commit `4a7e69242cce4c48498318401018f5775319dc83` is branch-local evidence only.
 5. **Worker-05 — Frontend Dashboard / Surface 13 / Issue #496** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `75fccc4c874fe261e5b414d9858343b05d8cf034` is branch-local evidence only.
@@ -96,7 +96,7 @@ Workers 02–10 may produce Bank/Atomic audits, normalized Bank records, schema-
 ## Next work
 
 1. Complete Supervisor Issue #507 by reconciling README 56/56 and coordination queue to `main @ 3b36bd4f...`; do not close #474 or promote runtime/product parity.
-2. Reconcile OPEN PR #508 from exact head `fd23ae2c...`: machine validators, clean review threads and latest-main reconciliation are required before merge.
+2. Reconcile OPEN PR #508 from exact head `56c94e3c...`: both currently applicable workflows pass and review threads are clean, but latest-main reconciliation must be repeated after Issue #507 promotion before merge.
 3. Worker-02 / Issue #493: only after #508 evidence proves the contract may Surface 10 planning lifecycle be promoted; runtime remains a separate later gate.
 4. Workers 03–10: continue native/platform + market evidence expansion; no `BANK_REVIEWED` claim until zero unresolved is proven and reviewed/merged.
 5. Worker-01 / Issue #474: after accepted Issue/PR/shared-truth gates, continue the next bounded Taxonomy runtime gap without destructive key migration or certification claims.
