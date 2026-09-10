@@ -1,8 +1,8 @@
 type RecordValue = Record< string, unknown >;
 
 type LabelEditorPayload = {
-	automatic_labels: boolean;
-	labels: Record< string, string >;
+	automatic_labels?: boolean;
+	labels?: Record< string, string >;
 };
 
 function isRecord( value: unknown ): value is RecordValue {
@@ -35,6 +35,23 @@ function hierarchicalInput(): HTMLInputElement | null {
 
 function labelKey( input: HTMLInputElement ): string {
 	return input.dataset.wpessentialTaxonomyLabelField ?? '';
+}
+
+function isGeneratedLabel(
+	input: HTMLInputElement,
+	automatic: boolean,
+	hierarchical: boolean
+): boolean {
+	if ( ! automatic ) {
+		return false;
+	}
+
+	const mode = input.dataset.wpessentialTaxonomyLabelGeneration ?? 'wordpress';
+	return (
+		mode === 'common' ||
+		( hierarchical && mode === 'hierarchical' ) ||
+		( ! hierarchical && mode === 'flat' )
+	);
 }
 
 function setState( key: string, state: string ): void {
@@ -73,18 +90,19 @@ export function updateTaxonomyLabelStates(): void {
 		if ( key === '' ) {
 			continue;
 		}
-		setState(
-			key,
-			input.value.trim() !== ''
-				? 'Explicit override'
-				: automatic
-					? 'Generated'
-					: 'WordPress default'
-		);
+		let state = 'WordPress default';
+		if ( input.value.trim() !== '' ) {
+			state = 'Explicit override';
+		} else if ( isGeneratedLabel( input, automatic, hierarchical ) ) {
+			state = 'Generated';
+		}
+		setState( key, state );
 	}
 }
 
-export function collectTaxonomyLabels(): LabelEditorPayload {
+export function collectTaxonomyLabels(
+	existingPayload: RecordValue | null = null
+): LabelEditorPayload {
 	const labels: Record< string, string > = {};
 	for ( const input of labelInputs() ) {
 		const key = labelKey( input );
@@ -94,10 +112,16 @@ export function collectTaxonomyLabels(): LabelEditorPayload {
 		}
 	}
 
-	return {
-		automatic_labels: automaticLabelsInput()?.checked ?? true,
-		labels,
-	};
+	const result: LabelEditorPayload = {};
+	const automatic = automaticLabelsInput()?.checked ?? true;
+	const existingAutomatic = existingPayload?.automatic_labels;
+	if ( typeof existingAutomatic === 'boolean' || automatic === false ) {
+		result.automatic_labels = automatic;
+	}
+	if ( Object.keys( labels ).length > 0 ) {
+		result.labels = labels;
+	}
+	return result;
 }
 
 export function setTaxonomyLabels( payload: RecordValue ): void {
