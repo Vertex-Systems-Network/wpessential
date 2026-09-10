@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 12, "key": "settings", "name": "Settings Pages"},
+  "snapshot": {"date": "2026-09-10", "native_sources": [], "market_sources": []},
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"settings.page.identity","feature_group":"Page identity","option_path":"page.identity","label":"Settings page identity and navigation","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"settings.page.scope","feature_group":"Scope","option_path":"page.scope","label":"Site network or user scope","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","security_hint":"privileged","research_state":"UNVERIFIED"},
+    {"id":"settings.structure.tabs","feature_group":"Structure","option_path":"structure.tabs_sections","label":"Tabs sections and panels","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"settings.storage.mode","feature_group":"Storage","option_path":"storage.mode","label":"Grouped individual site network or user storage","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"settings.storage.autoload","feature_group":"Storage","option_path":"storage.autoload","label":"Autoload policy","classification":"EXPERT","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Expert","performance_hint":"moderate","research_state":"UNVERIFIED"},
+    {"id":"settings.values.inheritance","feature_group":"Values","option_path":"values.inheritance","label":"Defaults inheritance and effective values","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"settings.controls.registry","feature_group":"Controls","option_path":"controls.registry","label":"Fields Control Registry composition","classification":"WPE_HARD","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"settings.safety.secrets","feature_group":"Safety","option_path":"safety.secret_routing","label":"Route secret values to Vault","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"System","security_hint":"privileged","portability_hint":"secret","research_state":"UNVERIFIED"}
+  ],
+  "coverage": {"records": 8, "unreviewed": 8, "adopted_or_classified": 0, "notes":"Initial normalized seed only; native and market verification are separate gates."}
+}
