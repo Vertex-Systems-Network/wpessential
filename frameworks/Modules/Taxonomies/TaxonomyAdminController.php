@@ -145,6 +145,9 @@ final class TaxonomyAdminController
         echo '<form id="wpessential-taxonomy-form">';
         echo '<input type="hidden" id="wpessential-taxonomy-id" value="">';
         echo '<input type="hidden" id="wpessential-taxonomy-revision" value="">';
+
+        $this->renderTierNavigation();
+
         echo '<div class="wpessential-cpt-grid">';
         $this->renderTextField('wpessential-taxonomy-key', __('Taxonomy key', 'wpessential'), 'taxonomy_key', 'book_genre', true, __('Lowercase; maximum 32 characters. Existing runtime keys are immutable.', 'wpessential'));
         $this->renderTextField('wpessential-taxonomy-name', __('Plural name', 'wpessential'), 'name', 'Genres', true);
@@ -154,14 +157,22 @@ final class TaxonomyAdminController
 
         $this->renderObjectTypeSelector($objectTypes);
 
-        echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__('Behavior', 'wpessential') . '</legend>';
+        echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__('Essential behavior', 'wpessential') . '</legend>';
         $this->renderCheckbox('wpessential-taxonomy-public', __('Public', 'wpessential'), true);
         $this->renderCheckbox('wpessential-taxonomy-rest', __('Show in REST API', 'wpessential'), true);
         $this->renderCheckbox('wpessential-taxonomy-hierarchical', __('Hierarchical', 'wpessential'), false);
         $this->renderCheckbox('wpessential-taxonomy-admin-column', __('Show admin column', 'wpessential'), false);
+        $this->renderOptionalBooleanSelect(
+            'wpessential-taxonomy-show-ui',
+            __('Show Admin UI', 'wpessential'),
+            'show_ui',
+            __('Default inherits from the Public setting in WordPress.', 'wpessential'),
+        );
         echo '</fieldset>';
 
         $this->renderLabelEditor();
+        $this->renderAdvancedVisibility();
+        $this->renderExpertBoundary();
 
         echo '<p><label for="wpessential-taxonomy-status"><strong>' . esc_html__('Lifecycle status', 'wpessential') . '</strong></label><br>';
         echo '<select id="wpessential-taxonomy-status">';
@@ -186,6 +197,61 @@ final class TaxonomyAdminController
         echo '<button type="submit" class="button button-primary" id="wpessential-taxonomy-save">' . esc_html__('Save taxonomy', 'wpessential') . '</button> ';
         echo '<button type="button" class="button" id="wpessential-taxonomy-cancel" hidden>' . esc_html__('Cancel edit', 'wpessential') . '</button>';
         echo '</p></form></section>';
+    }
+
+    private function renderTierNavigation(): void
+    {
+        echo '<div class="wpessential-taxonomy-tier-navigation" role="group" aria-label="' . esc_attr__('Editor level', 'wpessential') . '">';
+        foreach ([
+            'essential' => __('Essential', 'wpessential'),
+            'advanced' => __('Advanced', 'wpessential'),
+            'expert' => __('Expert', 'wpessential'),
+        ] as $tier => $label) {
+            $active = $tier === 'essential';
+            echo '<button type="button" class="button' . ($active ? ' button-primary' : '') . '" data-wpessential-taxonomy-tier="' . esc_attr($tier) . '" aria-pressed="' . ($active ? 'true' : 'false') . '">' . esc_html($label) . '</button> ';
+        }
+        echo '</div>';
+        echo '<p id="wpessential-taxonomy-tier-status" class="description" aria-live="polite">' . esc_html__('Essential controls are shown. Stored Advanced and Expert values remain preserved.', 'wpessential') . '</p>';
+    }
+
+    private function renderAdvancedVisibility(): void
+    {
+        echo '<section id="wpessential-taxonomy-tier-advanced" data-wpessential-taxonomy-tier-min="advanced" aria-labelledby="wpessential-taxonomy-advanced-title" hidden>';
+        echo '<h3 id="wpessential-taxonomy-advanced-title">' . esc_html__('Advanced visibility & admin policy', 'wpessential') . '</h3>';
+        echo '<p class="description">' . esc_html__('Default keeps the field absent so WordPress inheritance remains authoritative. Explicit choices are preserved even when this section is hidden.', 'wpessential') . '</p>';
+        echo '<fieldset class="wpessential-cpt-options"><legend class="screen-reader-text">' . esc_html__('Advanced visibility controls', 'wpessential') . '</legend>';
+        $this->renderOptionalBooleanSelect('wpessential-taxonomy-publicly-queryable', __('Publicly queryable', 'wpessential'), 'publicly_queryable', __('Default inherits from Public.', 'wpessential'));
+        $this->renderOptionalBooleanSelect('wpessential-taxonomy-show-in-menu', __('Show in menu', 'wpessential'), 'show_in_menu', __('Default inherits from Show Admin UI.', 'wpessential'));
+        $this->renderOptionalBooleanSelect('wpessential-taxonomy-show-in-nav-menus', __('Show in navigation menus', 'wpessential'), 'show_in_nav_menus', __('Default inherits from Public.', 'wpessential'));
+        $this->renderOptionalBooleanSelect('wpessential-taxonomy-show-tagcloud', __('Show tag cloud', 'wpessential'), 'show_tagcloud', __('Default inherits from Show Admin UI.', 'wpessential'));
+        $this->renderOptionalBooleanSelect('wpessential-taxonomy-show-in-quick-edit', __('Show in quick edit', 'wpessential'), 'show_in_quick_edit', __('Default inherits from Show Admin UI.', 'wpessential'));
+        echo '</fieldset>';
+        echo '</section>';
+    }
+
+    private function renderExpertBoundary(): void
+    {
+        echo '<section id="wpessential-taxonomy-tier-expert" data-wpessential-taxonomy-tier-min="expert" aria-labelledby="wpessential-taxonomy-expert-title" hidden>';
+        echo '<h3 id="wpessential-taxonomy-expert-title">' . esc_html__('Expert controls', 'wpessential') . '</h3>';
+        echo '<p class="description">' . esc_html__('Controlled providers, bounded runtime defaults, portability and guarded key migration are introduced only through their separately reviewed implementation slices. Existing stored values remain preserved by ordinary edits.', 'wpessential') . '</p>';
+        echo '</section>';
+    }
+
+    private function renderOptionalBooleanSelect(
+        string $id,
+        string $label,
+        string $field,
+        string $help,
+    ): void {
+        $stateId = $id . '-state';
+        echo '<p><label for="' . esc_attr($id) . '"><strong>' . esc_html($label) . '</strong></label><br>';
+        echo '<select id="' . esc_attr($id) . '" data-wpessential-taxonomy-optional-bool="' . esc_attr($field) . '" aria-describedby="' . esc_attr($stateId) . '">';
+        echo '<option value="inherit">' . esc_html__('Default / inherit', 'wpessential') . '</option>';
+        echo '<option value="true">' . esc_html__('Enabled', 'wpessential') . '</option>';
+        echo '<option value="false">' . esc_html__('Disabled', 'wpessential') . '</option>';
+        echo '</select> ';
+        echo '<span id="' . esc_attr($stateId) . '" class="description" data-wpessential-taxonomy-inheritance-state="' . esc_attr($field) . '">' . esc_html__('Default / inherited', 'wpessential') . '</span><br>';
+        echo '<span class="description">' . esc_html($help) . '</span></p>';
     }
 
     private function renderLabelEditor(): void
