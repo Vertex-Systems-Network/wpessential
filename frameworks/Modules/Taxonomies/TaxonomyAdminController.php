@@ -161,6 +161,8 @@ final class TaxonomyAdminController
         $this->renderCheckbox('wpessential-taxonomy-admin-column', __('Show admin column', 'wpessential'), false);
         echo '</fieldset>';
 
+        $this->renderLabelEditor();
+
         echo '<p><label for="wpessential-taxonomy-status"><strong>' . esc_html__('Lifecycle status', 'wpessential') . '</strong></label><br>';
         echo '<select id="wpessential-taxonomy-status">';
         foreach ([
@@ -184,6 +186,65 @@ final class TaxonomyAdminController
         echo '<button type="submit" class="button button-primary" id="wpessential-taxonomy-save">' . esc_html__('Save taxonomy', 'wpessential') . '</button> ';
         echo '<button type="button" class="button" id="wpessential-taxonomy-cancel" hidden>' . esc_html__('Cancel edit', 'wpessential') . '</button>';
         echo '</p></form></section>';
+    }
+
+    private function renderLabelEditor(): void
+    {
+        echo '<details id="wpessential-taxonomy-labels">';
+        echo '<summary><strong>' . esc_html__('Customize labels', 'wpessential') . '</strong></summary>';
+        echo '<p class="description">' . esc_html__('Adaptive labels follow Hierarchical mode. Validate to preview the exact server-compiled labels. Explicit overrides always win.', 'wpessential') . '</p>';
+        echo '<fieldset class="wpessential-cpt-options"><legend class="screen-reader-text">' . esc_html__('Adaptive label generation', 'wpessential') . '</legend>';
+        $this->renderCheckbox('wpessential-taxonomy-automatic-labels', __('Generate adaptive labels automatically', 'wpessential'), true);
+        echo ' <span class="description" data-wpessential-taxonomy-label-generation-state aria-live="polite"></span>';
+        echo '</fieldset>';
+        echo '<div class="wpessential-cpt-grid" data-wpessential-taxonomy-label-fields>';
+        foreach ($this->labelFields() as $key => $label) {
+            $id = 'wpessential-taxonomy-label-' . str_replace('_', '-', $key);
+            echo '<p data-wpessential-taxonomy-label-row="' . esc_attr($key) . '">';
+            echo '<label for="' . esc_attr($id) . '"><strong>' . esc_html($label) . '</strong> <code>' . esc_html($key) . '</code></label><br>';
+            echo '<input class="regular-text" type="text" id="' . esc_attr($id) . '" data-wpessential-taxonomy-label-field="' . esc_attr($key) . '"> ';
+            echo '<button type="button" class="button-link" data-wpessential-taxonomy-label-reset="' . esc_attr($key) . '">' . esc_html__('Reset', 'wpessential') . '</button><br>';
+            echo '<span class="description" data-wpessential-taxonomy-label-state="' . esc_attr($key) . '"></span>';
+            echo '</p>';
+        }
+        echo '</div>';
+        echo '<p><button type="button" class="button" id="wpessential-taxonomy-label-reset-all">' . esc_html__('Reset all label overrides', 'wpessential') . '</button></p>';
+        echo '</details>';
+    }
+
+    /** @return array<string,string> */
+    private function labelFields(): array
+    {
+        return [
+            'menu_name' => __('Menu name', 'wpessential'),
+            'search_items' => __('Search items', 'wpessential'),
+            'popular_items' => __('Popular items', 'wpessential'),
+            'all_items' => __('All items', 'wpessential'),
+            'parent_item' => __('Parent item', 'wpessential'),
+            'parent_item_colon' => __('Parent item with colon', 'wpessential'),
+            'name_field_description' => __('Name field description', 'wpessential'),
+            'slug_field_description' => __('Slug field description', 'wpessential'),
+            'parent_field_description' => __('Parent field description', 'wpessential'),
+            'desc_field_description' => __('Description field description', 'wpessential'),
+            'edit_item' => __('Edit item', 'wpessential'),
+            'view_item' => __('View item', 'wpessential'),
+            'update_item' => __('Update item', 'wpessential'),
+            'add_new_item' => __('Add new item', 'wpessential'),
+            'new_item_name' => __('New item name', 'wpessential'),
+            'template_name' => __('Template name', 'wpessential'),
+            'separate_items_with_commas' => __('Separate items with commas', 'wpessential'),
+            'add_or_remove_items' => __('Add or remove items', 'wpessential'),
+            'choose_from_most_used' => __('Choose from most used', 'wpessential'),
+            'not_found' => __('Not found', 'wpessential'),
+            'no_terms' => __('No terms', 'wpessential'),
+            'filter_by_item' => __('Filter by item', 'wpessential'),
+            'items_list_navigation' => __('Items list navigation', 'wpessential'),
+            'items_list' => __('Items list', 'wpessential'),
+            'most_used' => __('Most used', 'wpessential'),
+            'back_to_items' => __('Back to items', 'wpessential'),
+            'item_link' => __('Item link', 'wpessential'),
+            'item_link_description' => __('Item link description', 'wpessential'),
+        ];
     }
 
     /** @param list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $objectTypes */
