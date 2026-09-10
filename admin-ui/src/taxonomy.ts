@@ -1,4 +1,10 @@
 import './admin.scss';
+import {
+	bindTaxonomyLabelEditor,
+	collectTaxonomyLabels,
+	resetTaxonomyLabels,
+	setTaxonomyLabels,
+} from './taxonomy-labels';
 
 type RecordValue = Record< string, unknown >;
 type TaxonomyPayload = RecordValue;
@@ -850,6 +856,7 @@ function resetForm(): void {
 		key.readOnly = false;
 	}
 	setObjectTypes( [ 'post' ] );
+	resetTaxonomyLabels();
 	const status = selectInput( 'wpessential-taxonomy-status' );
 	if ( status ) {
 		status.value = 'draft';
@@ -900,6 +907,7 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 		'wpessential-taxonomy-admin-column',
 		definition.payload.show_admin_column
 	);
+	setTaxonomyLabels( definition.payload );
 	const status = selectInput( 'wpessential-taxonomy-status' );
 	if ( status ) {
 		status.value = definition.status;
@@ -939,6 +947,7 @@ function collectEditor( definitions: TaxonomyDefinition[] ): EditorRequest {
 			name: fieldValue( 'name' ),
 			singular_name: fieldValue( 'singular_name' ),
 			description: fieldValue( 'description' ),
+			...collectTaxonomyLabels(),
 			public: boolInput( 'wpessential-taxonomy-public' ),
 			show_in_rest: boolInput( 'wpessential-taxonomy-rest' ),
 			hierarchical: boolInput( 'wpessential-taxonomy-hierarchical' ),
@@ -1154,6 +1163,7 @@ function boot(): void {
 	} );
 
 	ensureDiagnosticsPanel();
+	bindTaxonomyLabelEditor();
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
 	root.dataset.wpessentialEnhanced = 'ready';
