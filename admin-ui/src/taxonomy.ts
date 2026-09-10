@@ -559,13 +559,12 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 		} else {
 			for ( const association of diagnostics.association_health ) {
 				const item = document.createElement( 'li' );
-				item.dataset.wpessentialTaxonomyAssociationState = association.state;
+				item.dataset.wpessentialTaxonomyAssociationState =
+					association.state;
 				const canonical =
 					association.canonical_status === null
 						? ''
-						: `; canonical ${
-								association.canonical_status
-						  }`;
+						: `; canonical ${ association.canonical_status }`;
 				item.textContent = `${ association.key }: ${ association.state }${ canonical }`;
 				associations.append( item );
 			}
