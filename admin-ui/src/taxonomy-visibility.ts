@@ -43,6 +43,46 @@ function isTier( value: string | undefined ): value is TaxonomyTier {
 	return value === 'essential' || value === 'advanced' || value === 'expert';
 }
 
+function inheritanceStateLabel( value: string ): string {
+	if ( value === 'true' ) {
+		return 'Explicit: enabled';
+	}
+	if ( value === 'false' ) {
+		return 'Explicit: disabled';
+	}
+	return 'Default / inherited';
+}
+
+function tierStatusMessage( tier: TaxonomyTier ): string {
+	if ( tier === 'essential' ) {
+		return 'Essential controls are shown. Stored Advanced and Expert values remain preserved.';
+	}
+	if ( tier === 'advanced' ) {
+		return 'Essential and Advanced controls are shown. Stored Expert values remain preserved.';
+	}
+	return 'Essential, Advanced and currently promoted Expert information are shown.';
+}
+
+function visibilityValue( value: string ): boolean | undefined {
+	if ( value === 'true' ) {
+		return true;
+	}
+	if ( value === 'false' ) {
+		return false;
+	}
+	return undefined;
+}
+
+function visibilitySelectValue( value: unknown ): 'true' | 'false' | 'inherit' {
+	if ( value === true ) {
+		return 'true';
+	}
+	if ( value === false ) {
+		return 'false';
+	}
+	return 'inherit';
+}
+
 function updateInheritanceState( field: string, value: string ): void {
 	const state = document.querySelector(
 		`[data-wpessential-taxonomy-inheritance-state="${ field }"]`
@@ -51,12 +91,7 @@ function updateInheritanceState( field: string, value: string ): void {
 		return;
 	}
 
-	state.textContent =
-		value === 'true'
-			? 'Explicit: enabled'
-			: value === 'false'
-				? 'Explicit: disabled'
-				: 'Default / inherited';
+	state.textContent = inheritanceStateLabel( value );
 }
 
 function updateInheritanceStates(): void {
@@ -88,14 +123,11 @@ export function setTaxonomyTier( tier: TaxonomyTier ): void {
 			! isTier( minimum ) || TIER_RANK[ minimum ] > TIER_RANK[ tier ];
 	}
 
-	const status = document.getElementById( 'wpessential-taxonomy-tier-status' );
+	const status = document.getElementById(
+		'wpessential-taxonomy-tier-status'
+	);
 	if ( status instanceof HTMLElement ) {
-		status.textContent =
-			tier === 'essential'
-				? 'Essential controls are shown. Stored Advanced and Expert values remain preserved.'
-				: tier === 'advanced'
-					? 'Essential and Advanced controls are shown. Stored Expert values remain preserved.'
-					: 'Essential, Advanced and currently promoted Expert information are shown.';
+		status.textContent = tierStatusMessage( tier );
 	}
 }
 
@@ -103,8 +135,7 @@ export function collectTaxonomyVisibility(): RecordValue {
 	const result: RecordValue = {};
 	for ( const option of OPTIONAL_VISIBILITY_FIELDS ) {
 		const value = selectInput( option.id )?.value ?? 'inherit';
-		result[ option.field ] =
-			value === 'true' ? true : value === 'false' ? false : undefined;
+		result[ option.field ] = visibilityValue( value );
 	}
 	return result;
 }
@@ -115,9 +146,7 @@ export function setTaxonomyVisibility( payload: RecordValue ): void {
 		if ( ! input ) {
 			continue;
 		}
-		const value = payload[ option.field ];
-		input.value =
-			typeof value === 'boolean' ? ( value ? 'true' : 'false' ) : 'inherit';
+		input.value = visibilitySelectValue( payload[ option.field ] );
 	}
 	updateInheritanceStates();
 }
