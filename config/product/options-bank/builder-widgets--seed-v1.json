@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 16, "key": "builder-widgets", "name": "Builder Widgets"},
+  "snapshot": {"date": "2026-09-10", "native_sources": [], "market_sources": []},
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"builder-widgets.blueprint.identity","feature_group":"Blueprint","option_path":"blueprint.identity","label":"Component blueprint identity and version","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.controls.schema","feature_group":"Controls","option_path":"controls.schema","label":"Reusable component control schema","classification":"WPE_HARD","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.render.mode","feature_group":"Rendering","option_path":"render.mode","label":"Server or registered client rendering mode","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","security_hint":"provider_only","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.dynamic.bindings","feature_group":"Bindings","option_path":"dynamic.bindings","label":"Dynamic Query Listing Relation and Ability bindings","classification":"COMPATIBILITY","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.style.bindings","feature_group":"Style","option_path":"style.bindings","label":"Validated responsive style and theme bindings","classification":"WPE_HARD","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P2_COMPETITIVE","ux_tier":"Advanced","security_hint":"expert","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.adapter.registry","feature_group":"Adapters","option_path":"adapter.registry","label":"Registered builder adapter registry","classification":"COMPATIBILITY","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Expert","security_hint":"provider_only","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.adapter.parity","feature_group":"Adapters","option_path":"adapter.parity_gaps","label":"Adapter parity gap diagnostics","classification":"WPE_EXCEED","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_EXCEED","ux_tier":"Expert","research_state":"UNVERIFIED"},
+    {"id":"builder-widgets.portability.blueprint","feature_group":"Portability","option_path":"portability.blueprint","label":"Versioned blueprint import and export","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P2_COMPETITIVE","ux_tier":"Expert","portability_hint":"portable","research_state":"UNVERIFIED"}
+  ],
+  "coverage": {"records": 8, "unreviewed": 8, "adopted_or_classified": 0, "notes":"Initial normalized seed only; builder ecosystem and WordPress evidence remain pending."}
+}
