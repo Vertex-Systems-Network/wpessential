@@ -127,7 +127,7 @@ function settingEntries(): TaxonomySettingEntry[] {
 		form.querySelectorAll< HTMLLabelElement >( 'label[for]' )
 	) ) {
 		const id = label.htmlFor;
-		if ( id === '' || seen.has( id ) ) {
+		if ( id === '' || id === SETTING_SEARCH_ID || seen.has( id ) ) {
 			continue;
 		}
 		const control = document.getElementById( id );
@@ -141,7 +141,8 @@ function settingEntries(): TaxonomySettingEntry[] {
 		) {
 			continue;
 		}
-		const labelText = label.textContent?.replace( /\s+/g, ' ' ).trim() ?? '';
+		const labelText =
+			label.textContent?.replace( /\s+/g, ' ' ).trim() ?? '';
 		if ( labelText === '' ) {
 			continue;
 		}
@@ -220,7 +221,9 @@ function renderSettingSearchResults( entries: TaxonomySettingEntry[] ): void {
 		return;
 	}
 
-	const matches = entries.filter( ( entry ) => entry.searchText.includes( query ) );
+	const matches = entries.filter( ( entry ) =>
+		entry.searchText.includes( query )
+	);
 	if ( matches.length === 0 ) {
 		results.hidden = true;
 		status.textContent = 'No taxonomy settings matched your search.';
@@ -277,7 +280,13 @@ function ensureTaxonomySettingSearch(): void {
 	const results = document.createElement( 'ul' );
 	results.id = SETTING_SEARCH_RESULTS_ID;
 	results.hidden = true;
-	container.append( label, document.createElement( 'br' ), input, status, results );
+	container.append(
+		label,
+		document.createElement( 'br' ),
+		input,
+		status,
+		results
+	);
 	tierNavigation.insertAdjacentElement( 'beforebegin', container );
 }
 
