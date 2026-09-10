@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-10 UTC**  
-Canonical audited base anchor: **`main @ 4655cf878a5abb220a4e9cfd4b87f4a4633aa36a`**  
+Canonical audited base anchor: **`main @ 7fb7cdd0fde2ea97f11290bdc8af55887d03685e`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -32,30 +32,9 @@ No force/reuse of deterministic claim branches. Latest-main reconciliation, exac
 
 These bounded states do not imply `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release readiness.
 
-## Surface 7 — Custom Tables current state
+## Surface 7 — Custom Tables safety boundary
 
-Promoted through Issue #463 / merged PR #464, with the post-trust exact-main audit promoted through Issue #465 / merged PR #466:
-
-- typed server-side metadata-facts provider boundary;
-- production metadata derived through existing CT1 identity + read-only `WordPressCt1SchemaIntrospector`;
-- descriptor/run identity + revision + target schema binding before metadata evaluation;
-- internal site-scoped WPE confirmation metadata table through canonical Platform migrations;
-- read-only revision/actor-bound confirmation lookup;
-- production bootstrap owns the canonical registered runtime-composition factory instance;
-- `CustomTablesRuntimeCompositionFactory::create()` accepts zero arguments and constructor is private;
-- source failures become deterministic fail-closed reasons;
-- expanded mismatch/R3/row-scan attack coverage;
-- immutable readiness package remains `execution_allowed=false`.
-
-The post-trust audit accepts this as trust-boundary hardening evidence, but managed-table execution stays blocked.
-
-### Remaining Custom Tables blockers
-
-1. Public `CustomTablesRuntimeCompositionFactory::production(...)` still accepts trusted-provider interface instances, so the factory API itself is not yet an exclusive intrinsic trust root even though canonical Plugin bootstrap owns the registered instance.
-2. Production recovery verification is intentionally `FailClosedRecoveryVerificationProvider`; no real allowlisted recovery-artifact verifier is active.
-3. Confirmation storage has a read-only runtime source but no trusted issuance/write workflow in the promoted lane.
-
-Therefore **R1/R2 execution coordinator remains BLOCKED / NOT AUTHORIZED**.
+Promoted through Issue #463 / merged PR #464 and Issue #465 / merged PR #466. Trust-boundary hardening is accepted, but managed-table execution remains blocked.
 
 Still forbidden:
 
@@ -68,21 +47,20 @@ Still forbidden:
 - CT2/PT-D/CT3 conversion, external adoption or public execution mutation;
 - deployment/release/product-parity claims.
 
-Custom Tables is safe-paused at the current bounded milestone until a later explicit trust-activation/hardening lane is promoted.
+Custom Tables remains safe-paused at the evidence-backed 90% bounded runway indicator.
 
 ## Surface 1 — CPT Builder
 
 Current machine truth through Issue #473 / merged PR #477:
 
-- Options Bank **`BANK_REVIEWED`**, 107 records;
-- lifecycle **`UX_CONTRACT_COMPLETE`**;
+- Options Bank `BANK_REVIEWED`, 107 records;
+- lifecycle `UX_CONTRACT_COMPLETE`;
 - 23 normalized Atomic Option Contracts;
-- deterministic 107/107 Bank source projection with `missing=0`, `unclassified=0`;
+- deterministic 107/107 projection with `missing=0`, `unclassified=0`;
 - reviewed Essential / Advanced / Expert UX contract;
-- accepted runtime gap matrix against the existing CustomPostTypes baseline;
-- current Definition projection, validation, admin, Ability and runtime registration baseline remains preserved.
+- accepted runtime gap matrix.
 
-CPT is **NOT `RUNTIME_CERTIFIED`** and **NOT `PRODUCT_PARITY_CERTIFIED`**. No new CPT runtime-gap implementation lane is authorized by the current queue; a later exact-main Supervisor transition audit must explicitly open one.
+CPT is not `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`. No CPT runtime lane is opened by the current ten-worker wave.
 
 ## Surface 2 — Taxonomy Builder
 
@@ -90,62 +68,85 @@ Parent implementation program: **Issue #474 — Taxonomy Builder Runtime Gap Clo
 Queue slot: **priority 1010 / OPEN**.  
 Planning lifecycle: **`UX_CONTRACT_COMPLETE`**, not runtime/product parity certified.
 
-Current machine truth:
+Promoted bounded evidence through merged PRs #478, #479, #480, #483, #486 and #489 includes Definition completeness, allowlisted runtime provider identities, read-only diagnostics, diagnostics admin rendering, adaptive label generation and the reviewed 28-label authoring UX with MySQL-backed revision/CAS persistence evidence.
 
-- Options Bank **`BANK_REVIEWED`**, 71 records, zero unresolved reviewed items;
-- 20 normalized Atomic Option Contracts;
-- deterministic 71/71 Bank source projection with `missing=0`, `unclassified=0`;
+### Current unmerged Taxonomy slice
+
+Deterministic branch: `agent/taxonomy-runtime-gap-closure-v1`  
+Current branch head: **`591987e470d4cbe12e9ae1071c2b15a8c4cb83e4`**  
+Base lineage: exact audited `main @ 7fb7cdd0fde2ea97f11290bdc8af55887d03685e`.
+
+Bounded scope in progress:
+
+- keyboard-reachable Essential / Advanced / Expert tier navigation;
+- native visibility/admin authoring for existing canonical optional boolean fields;
+- truthful Default/inherit versus explicit state;
+- removing inherited optional keys from authored payload rather than writing guessed defaults;
+- preserving hidden existing payload values across tier switches;
+- Expert tier remains visible but provider/migration execution controls stay gated.
+
+Current commits on the claim branch include:
+
+- `0da4b2042dcbccf27b7978d6d711acd0b33af97b` — taxonomy visibility/tier helper;
+- `9c36e93bb073f017219d9b6735eb9491361a94a7` — server-rendered tier and inheritance controls;
+- `591987e470d4cbe12e9ae1071c2b15a8c4cb83e4` — TypeScript collection/hydration/reset wiring.
+
+This slice is **not yet promoted**. Browser/axe evidence, focused tests, gap-matrix reconciliation, exact-head CI and clean review state remain required before merge.
+
+## Owner-directed ten-worker parallel wave
+
+Supervisor Issue **#492** records the owner direction to run a minimum of ten workers on different modules. The wave is intentionally split into one runtime implementation lane plus nine planning/contract-only lanes so repository lifecycle gates are not fabricated.
+
+### Active worker topology
+
+1. **Worker-01 / Taxonomy Builder (Surface 2)** — Issue #474 — `agent/taxonomy-runtime-gap-closure-v1` — runtime gap closure allowed inside existing accepted contract only.
+2. **Worker-02 / Dashboard Widgets (Surface 10)** — Issue #493 — `agent/dashboard-widgets-option-contract-ux-v1` — planning/contract only.
+3. **Worker-03 / Admin Menu (Surface 11)** — Issue #494 — `agent/admin-menu-option-contract-ux-v1` — planning/contract only.
+4. **Worker-04 / Settings Pages (Surface 12)** — Issue #495 — `agent/settings-pages-option-contract-ux-v1` — planning/contract only.
+5. **Worker-05 / Frontend Dashboard (Surface 13)** — Issue #496 — `agent/frontend-dashboard-option-contract-ux-v1` — planning/contract only.
+6. **Worker-06 / User Profile (Surface 14)** — Issue #497 — `agent/user-profile-option-contract-ux-v1` — planning/contract only.
+7. **Worker-07 / Membership (Surface 15)** — Issue #498 — `agent/membership-option-contract-ux-v1` — planning/contract only.
+8. **Worker-08 / Builder Widgets (Surface 16)** — Issue #499 — `agent/builder-widgets-option-contract-ux-v1` — planning/contract only.
+9. **Worker-09 / Forms & Workflows (Surface 17)** — Issue #500 — `agent/forms-workflows-option-contract-ux-v1` — planning/contract only.
+10. **Worker-10 / Cron (Surface 18)** — Issue #501 — `agent/cron-option-contract-ux-v1` — planning/contract only.
+
+### Planning-worker contract
+
+Workers 02–10 must begin from current repository evidence for their own surface and may produce only:
+
+- Options Bank / Atomic Inventory audit evidence;
+- schema-valid Atomic Option Contract where prerequisites support it;
 - reviewed Essential / Advanced / Expert UX contract;
-- accepted live runtime gap matrix against the existing Taxonomies baseline;
-- PR #478 promoted Definition completeness: complete reviewed label projection, typed default term and bounded object-term args;
-- PR #479 promoted allowlisted runtime provider IDs with JSON-safe persisted identities and last-responsible runtime resolution;
-- PR #480 promoted read-only effective args, overrides, association health and REST/rewrite preview diagnostics backend;
-- PR #483 promoted diagnostics admin rendering with packaged browser + visible-panel axe evidence;
-- PR #486 promoted typed adaptive label generation, hierarchy-aware category-like/tag-like families, explicit override precedence and opt-out validation;
-- PR #489 promoted the reviewed label-authoring UX: canonical server-owned `TaxonomyLabelPolicy`, complete 28-label inventory, truthful `Generated` / `WordPress default` / `Explicit override` states, accessible reset controls and reset-one/reset-all semantics;
-- PR #489 packaged Browser E2E proves source-state, effective-args reset behavior and axe accessibility without pretending WordPress Playground's SQLite/in-memory Definition fallback provides cross-request durability;
-- dedicated real WordPress 7.1 + MySQL 8.4 evidence proves canonical Taxonomy create → `expected_revision=1` CAS update → persisted revision 2 with `automatic_labels=false` and cleared label overrides;
-- PR #489 exact head **`dd63e0147ffeea4fe43794dc3e3f7535bbc973f1`** passed all six applicable exact-head workflows: Architecture Guards, Browser E2E Accessibility, PHP Quality Toolchain, Taxonomy Runtime, Distributable Package and Platform Compatibility Matrix;
-- PR #489 merged to `main` as **`4655cf878a5abb220a4e9cfd4b87f4a4633aa36a`** with clean review state.
+- current-runtime gap matrix;
+- security, capability/Ability, Multisite, portability, compatibility, accessibility and performance requirements.
 
-### Remaining Taxonomy Runtime Gap Closure work
+They may not:
 
-The reviewed Labels family is promoted. The next bounded implementation sequence is:
+- edit README, CHECKPOINT or the coordination queue directly;
+- write runtime implementation before a later explicit gate;
+- claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`;
+- perform destructive provider/database/content/user mutation;
+- deploy or release.
 
-1. **Broader tiered editor + complete option UX** — Essential / Advanced / Expert navigation, inheritance/search/help, visibility policy, controlled provider selectors, default-term, capabilities and bounded term-query controls.
-2. **Portability & Compatibility** — declarative Taxonomy Definition import/export and CPT UI compatibility mapping with revision/CAS conflict reporting.
-3. **Guarded taxonomy-key migration planning/workflow** — dry-run, dependency impact and recovery design first. Destructive term/key mutation is not authorized by this checkpoint.
-4. **Runtime certification audit** — only after accepted gaps and required runtime/browser/accessibility/security/compatibility/portability/performance evidence are actually closed.
-5. **Product-parity acceptance** — separate machine promotion after runtime certification.
+Each worker is isolated to one module and one deterministic branch. Shared-truth requirements return to Supervisor.
 
-Issue #474 remains OPEN. This checkpoint does not authorize a certification claim or destructive taxonomy migration.
+## Queue state after Supervisor wave
 
-## Evidence boundary for PR #489
+- Priority 1010 remains OPEN: Taxonomy Runtime Gap Closure V1 / Issue #474 / runtime allowed.
+- Priorities 1020–1100 are OPEN planning/contract lanes for Surfaces 10–18 / Issues #493–#501 / runtime disallowed.
+- All nine planning lanes are independent and may progress in parallel with Taxonomy because they do not own Taxonomy runtime code.
+- No CPT runtime lane or Custom Tables execution lane is opened.
 
-The packaged Browser E2E environment intentionally uses WordPress Playground's SQLite/in-memory Definition fallback. It proves the packaged admin behavior, label-source states, reset effective args and accessibility, but does not claim cross-request Definition durability. Durable save/update/reset behavior is independently enforced by the real WordPress 7.1 + MySQL 8.4 Taxonomy Runtime workflow through canonical Definition persistence and expected-revision CAS semantics.
+## Definition of “full final”
 
-This separation is intentional evidence accounting, not a reduced product requirement.
-
-## Definition of “full final” for CPT / Taxonomy
-
-A surface is not full-final merely because a runtime workflow is green. Full-final requires explicit promotion of:
-
-1. reviewed Options Bank;
-2. schema-valid Atomic Option Contract with zero missing/unclassified;
-3. reviewed UX contract;
-4. exhaustive existing-runtime gap matrix;
-5. implementation of all accepted missing behavior through canonical owners;
-6. applicable Multisite, security, REST/Ability, import/export/migration, accessibility, compatibility and performance evidence;
-7. exact-head required runtime/browser/security/parity tests;
-8. machine state `RUNTIME_CERTIFIED`;
-9. machine state `PRODUCT_PARITY_CERTIFIED`.
+A surface is not full-final because a planning document, branch or regression workflow exists. Full-final requires explicit evidence-backed promotion of the applicable Bank, Atomic contract, UX contract, runtime gap closure, Multisite/security/Ability/portability/accessibility/compatibility/performance evidence, exact-head tests, `RUNTIME_CERTIFIED`, and finally `PRODUCT_PARITY_CERTIFIED`.
 
 ## Product truth
 
 - Accepted structural scope: **56 / 56 Exhaustive**.
 - Multisite planning: **56 / 56**.
 - AI Prompt planning: **56 / 56**.
-- Product parity target for Surfaces 1 and 2: **PARITY_OR_EXCEED**.
+- README module dashboard must remain **56 / 56 listed**.
 
 Authoritative machine/shared-truth files:
 
@@ -155,16 +156,12 @@ Authoritative machine/shared-truth files:
 - `config/coordination/agent-work-queue.json`;
 - `README.md`.
 
-## Current reconciliation and next action
+## Current next action
 
-Issue #490 is the mandatory Supervisor shared-truth reconciliation after merged PR #489. It contains no runtime implementation and must preserve the complete README 56/56 dashboard, bounded PASS semantics and all Custom Tables execution blocks.
-
-After #490 promotes:
-
-1. refresh exact current `main`;
-2. reconcile accepted OPEN Issues first — Issue #474 remains the expected active Taxonomy program issue;
-3. reconcile OPEN PRs/MRs second;
-4. read priority 1010 and the live Taxonomy runtime gap matrix;
-5. continue the next bounded **broader tiered editor + complete option UX** slice on the existing deterministic Taxonomy claim path without destructive key migration or certification claims.
+1. Promote Supervisor Issue #492 shared-truth PR after exact-main, review and applicable CI gates.
+2. Fast-forward untouched planning-worker branches to the promoted Supervisor merge without force.
+3. Keep Worker-01 on the existing Taxonomy branch; finish focused tier/visibility tests and exact-head promotion gates.
+4. Workers 02–10 audit their module evidence and produce contract/UX/gap artifacts only.
+5. Reconcile every merged worker result through Issues → PRs → queue → README 56/56 before opening any runtime implementation for Surfaces 10–18.
 
 Repository evidence overrides conversational memory.
