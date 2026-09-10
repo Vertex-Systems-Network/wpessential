@@ -80,6 +80,7 @@ test('packaged Taxonomy Builder renders object type linking and progressively en
   await expect(page.getByRole('button', { name: 'Save taxonomy' })).toBeVisible();
   await expect(page.getByRole('table', { name: 'Saved taxonomies' })).toBeVisible();
   await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
+  await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeHidden();
 
   await expect(root).toHaveAttribute('data-wpessential-surface', 'taxonomies');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
@@ -87,11 +88,12 @@ test('packaged Taxonomy Builder renders object type linking and progressively en
   expect(pageErrors, `Unexpected Taxonomy Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
-test('packaged Taxonomy preflight blocks reserved keys and preserves external associations', async ({ page }) => {
+test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and preserves external associations', async ({ page }) => {
   await visitTaxonomies(page);
 
   const postType = page.locator('[data-wpessential-taxonomy-object-type][value="post"]');
   const externalTypes = page.getByLabel('Additional/external post type keys');
+  const diagnostics = page.locator('#wpessential-taxonomy-diagnostics');
 
   await page.getByLabel('Taxonomy key').fill('category');
   await page.getByLabel('Plural name').fill('Categories');
@@ -104,6 +106,7 @@ test('packaged Taxonomy preflight blocks reserved keys and preserves external as
   await expect(validation).toBeVisible();
   await expect(validation).toContainText(/Validation blocked by \d+ issue/);
   await expect(validation).toContainText('reserved by WordPress');
+  await expect(diagnostics).toBeHidden();
   await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
 
   await page.getByLabel('Taxonomy key').fill('library_genre');
@@ -111,9 +114,23 @@ test('packaged Taxonomy preflight blocks reserved keys and preserves external as
   await page.getByLabel('Singular name').fill('Genre');
   await postType.check();
   await externalTypes.fill('external_book');
+  await page.getByRole('button', { name: 'Validate' }).click();
+
+  await expect(diagnostics).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Diagnostics preview', level: 3 })).toBeVisible();
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="runtime"]')).toHaveText('Not registered');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="rest-route"]')).toHaveText('/wp/v2/library_genre');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="rewrite-path"]')).toHaveText('/library_genre/{term-slug}/');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="providers"]')).toHaveText('WordPress defaults');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-association-state="healthy"]')).toContainText('post: healthy');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-association-state="missing"]')).toContainText('external_book: missing');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-effective-args]')).toContainText('"show_in_rest": true');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-overrides]')).toContainText('"public": true');
+
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
 
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
+  await expect(diagnostics).toBeHidden();
   const row = page.getByRole('row', {
     name: /Genres library_genre post, external_book Draft 1/,
   });
@@ -126,8 +143,14 @@ test('packaged Taxonomy preflight blocks reserved keys and preserves external as
   await expect(externalTypes).toHaveValue('external_book');
 });
 
-test('packaged Taxonomy Builder has zero axe violations', async ({ page }) => {
+test('packaged Taxonomy Builder diagnostics have zero axe violations', async ({ page }) => {
   await visitTaxonomies(page);
+
+  await page.getByLabel('Taxonomy key').fill('accessibility_genre');
+  await page.getByLabel('Plural name').fill('Accessibility Genres');
+  await page.getByLabel('Singular name').fill('Accessibility Genre');
+  await page.getByRole('button', { name: 'Validate' }).click();
+  await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeVisible();
 
   const results = await new AxeBuilder({ page })
     .include('#wpessential-taxonomy-root')
