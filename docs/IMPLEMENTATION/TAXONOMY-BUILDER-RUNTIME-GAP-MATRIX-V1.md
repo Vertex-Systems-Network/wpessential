@@ -71,18 +71,31 @@ Promoted on six green applicable exact-head workflows:
 - invalid/unprojectable candidates return no diagnostics rather than presenting misleading effective state;
 - focused tests prove diagnostics remain non-mutating and canonical disabled CPT associations remain visible.
 
-### Diagnostics admin rendering slice — current #474 branch
+### Diagnostics admin rendering slice — merged PR #483
 
-This bounded UI slice consumes the promoted validation diagnostics without adding another writer or compiler:
+Promoted after exact-head Architecture Guards, Distributable Package and Browser E2E Accessibility all passed:
 
 - `admin-ui/src/taxonomy.ts` parses diagnostics fail-closed and creates one accessible read-only diagnostics region inside the existing Taxonomy editor;
 - successful validation renders runtime registration state, REST route, rewrite path, provider IDs, association-health states, effective arguments and explicit overrides;
 - all dynamic values are rendered through DOM `textContent`; no diagnostic value is executed or injected as HTML;
 - invalid candidates keep diagnostics hidden, and any editor change or successful save clears stale diagnostics;
 - packaged Playwright coverage proves valid/invalid visibility behavior, healthy/missing associations, deterministic route/path/effective-args output and stale-state clearing;
-- the axe run now exercises the diagnostics region while it is visible rather than testing only the baseline hidden state.
+- the axe run exercises the diagnostics region while visible and reports zero violations in the WPE-owned Taxonomy Builder region.
 
-This diagnostics UI slice is not promoted until its own exact-head CI and review gates pass.
+### Adaptive label generation slice — current #474 branch
+
+Current bounded implementation, pending its own exact-head promotion gates:
+
+- `TaxonomyDefinitionProjector` accepts typed boolean `automatic_labels`, defaulting to enabled;
+- hierarchical definitions receive deterministic category-like generated labels, while flat definitions receive tag-like generated labels;
+- authored `labels` overrides retain final precedence over every generated value;
+- `automatic_labels=false` suppresses generated convenience labels while retaining canonical `name`, `singular_name` and authored overrides;
+- non-boolean `automatic_labels` values fail closed through the canonical projector;
+- dedicated unit coverage proves hierarchical/flat generation, override precedence, explicit opt-out and type rejection;
+- packaged Playwright coverage drives the existing Hierarchical editor control through server-authoritative validation and proves the effective args switch between category-like and tag-like label families;
+- no new mutation route, callback/class input, DOM surface or secondary compiler is introduced in this slice.
+
+The reviewed admin toggle, override/default badges and reset semantics remain explicit UX gaps; this slice must not be presented as complete label-editor parity before those controls and their browser/accessibility evidence promote.
 
 ## Atomic contract gap status
 
@@ -91,32 +104,32 @@ This diagnostics UI slice is not promoted until its own exact-head CI and review
 | `taxonomy.definition.key` | **PARTIAL** | Ordinary edits correctly block key changes. Add separate guarded key-migration workflow, impact preview and recovery evidence before any rename execution. |
 | `taxonomy.definition.naming` | **BASELINE PRESENT** | Core name/singular/description project. Add full UX reset/default state and validation/help contract. |
 | `taxonomy.definition.lifecycle` | **BASELINE PRESENT / UX PARTIAL** | Status UI and status Ability exist. Prove revision history/diff and deeper dependency behavior across lifecycle states. |
-| `taxonomy.definition.object_types` | **BASELINE PRESENT / HEALTH UI CURRENT SLICE** | Canonical list + external-key preservation exist; promoted diagnostics classify association health and the current UI slice renders it. Search/grouping and deeper dependency impact remain. |
-| `taxonomy.diagnostics.association_health` | **CURRENT SLICE — UI + BROWSER EVIDENCE PENDING CI** | Backend health classification is promoted; current UI renders healthy/missing/external/disabled states with packaged browser + axe coverage pending exact-head promotion. |
+| `taxonomy.definition.object_types` | **BASELINE PRESENT / HEALTH UI PROMOTED** | Canonical list + external-key preservation exist; promoted diagnostics classify and render association health. Search/grouping and deeper dependency impact remain. |
+| `taxonomy.diagnostics.association_health` | **PROMOTED BACKEND + UI** | Backend health classification and read-only admin rendering are promoted through PRs #480/#483 with packaged browser + axe evidence. Deeper dependency-impact UX remains. |
 | `taxonomy.labels.overrides` | **BASELINE PRESENT / UX PARTIAL** | Complete reviewed label family projects after PR #478. Full label editor, reset/default badges and browser evidence remain. |
-| `taxonomy.labels.autogenerate` | **PARTIAL / WORDPRESS DEFAULT ONLY** | Current projector supplies name/singular and lets WordPress fill defaults. Add WPE adaptive tag/category-style generation, explicit override badges and reset behavior. |
+| `taxonomy.labels.autogenerate` | **CURRENT SLICE — RUNTIME/BROWSER EVIDENCE PENDING CI** | Hierarchy-aware deterministic generation, explicit-override precedence and typed opt-out are implemented on the active branch. Reviewed admin toggle, badges and reset behavior remain after this slice. |
 | `taxonomy.visibility.policy` | **BASELINE PRESENT** | Native values compile. Add inherited/default/explicit/dormant UI semantics and full browser tests. |
-| `taxonomy.rewrite.policy` | **BASELINE PRESENT / PREVIEW UI CURRENT SLICE** | Structured rewrite/query_var compile and promoted diagnostics compute a read-only path preview; current UI renders it. Reserved/collision diagnostics and controlled rewrite-flush evidence remain. |
+| `taxonomy.rewrite.policy` | **BASELINE PRESENT / PREVIEW UI PROMOTED** | Structured rewrite/query_var compile and promoted diagnostics compute/render a read-only path preview. Reserved/collision diagnostics and controlled rewrite-flush evidence remain. |
 | `taxonomy.permissions.capabilities` | **BASELINE PRESENT** | Four native capability names compile. Add effective map, role-impact read model, lockout diagnostics and reset UX; Roles remains grant owner. |
-| `taxonomy.rest.policy` | **PROVIDER-ID PATH PRESENT / PREVIEW UI CURRENT SLICE** | REST exposure/base/namespace and allowlisted controller IDs compile; promoted diagnostics provide route preview and current UI renders it. Route-collision/block-editor diagnostics remain. |
+| `taxonomy.rest.policy` | **PROVIDER-ID PATH + PREVIEW UI PROMOTED** | REST exposure/base/namespace and allowlisted controller IDs compile; diagnostics provide and render route preview. Route-collision/block-editor diagnostics remain. |
 | `taxonomy.default_term.policy` | **BASELINE PRESENT** | Typed default-term projection merged in PR #478. Full editor/help/reset and deeper WordPress behavior evidence remain. |
 | `taxonomy.runtime.term_query_policy` | **BOUNDED BASELINE PRESENT** | `sort` plus allowlisted `orderby`/`order`/`fields` defaults compile. Add cost/help UX and ownership guidance with Content Order. |
 | `taxonomy.providers.editor` | **PROVIDER-ID RUNTIME PATH PRESENT / UX MISSING** | Shared trusted registry + JSON-safe meta-box/sanitizer IDs + runtime resolution promoted in PR #479. Provider selector/health UX remains. |
 | `taxonomy.providers.term_count` | **PROVIDER-ID RUNTIME PATH PRESENT / UX MISSING** | Shared trusted registry + JSON-safe term-count provider IDs + runtime resolution promoted in PR #479. Selector/compatibility UX remains. |
 | `taxonomy.workflow.key_migration` | **MISSING / BLOCKED BY DESIGN** | Existing validation makes keys immutable, which is safe. A separate previewed migration workflow is required; ordinary save must remain unable to rename. |
 | `taxonomy.portability.definition` | **PARTIAL VIA SHARED DEFINITION INFRASTRUCTURE** | Canonical Definition persistence exists. Add explicit Taxonomy export/import mapping, create-only/update CAS, environment conflict report and portability tests. |
-| `taxonomy.diagnostics.effective_args` | **CURRENT SLICE — UI + BROWSER EVIDENCE PENDING CI** | Backend effective args/overrides/provider evidence is promoted; current UI renders it through a read-only panel with packaged browser + axe coverage pending exact-head promotion. |
+| `taxonomy.diagnostics.effective_args` | **PROMOTED BACKEND + UI** | Effective args/overrides/provider evidence is promoted through PRs #480/#483 and rendered through a read-only panel with packaged browser + axe evidence. |
 | `taxonomy.compatibility.cpt_ui_import` | **MISSING** | Add declarative CPT UI import adapter into canonical Taxonomy Definition; no provider shadow storage. |
 | `taxonomy.internal.builtin` | **PASS — REJECTED** | `_builtin` is not in accepted top-level Definition keys. Preserve this prohibition and explicit regression evidence. |
 
 ## UX gap summary
 
-Current admin UI is a safe baseline plus the current read-only diagnostics rendering slice; it is not the reviewed full UX contract.
+Current admin UI is a safe baseline with promoted read-only diagnostics. The active adaptive-label slice extends canonical runtime behavior but does not yet add the reviewed label-authoring controls.
 
 Remaining UX families include:
 
 - Essential / Advanced / Expert modes;
-- complete label editor + adaptive generation;
+- complete label editor + `automatic_labels` toggle, override/default badges and reset semantics;
 - inheritance/default/dormant badges;
 - complete visibility controls;
 - rewrite/REST collision and dependency diagnostics beyond the current previews;
@@ -128,7 +141,7 @@ Remaining UX families include:
 - reset field/section/all;
 - guarded key-migration wizard;
 - portability/compatibility workflows;
-- browser/accessibility evidence for the complete reviewed contract beyond the current diagnostics panel.
+- browser/accessibility evidence for the complete reviewed contract beyond the promoted diagnostics panel.
 
 ## Cross-surface ownership constraints
 
@@ -146,9 +159,9 @@ Taxonomy owns the Definition and its native registration semantics; integrations
 
 ## Remaining implementation lane shape
 
-After the current diagnostics admin rendering slice promotes, Runtime Gap Closure remains dependency-safe:
+After the current adaptive-label runtime slice promotes, Runtime Gap Closure remains dependency-safe:
 
-1. **Tiered editor + complete option UX** — Essential/Advanced/Expert controls, adaptive labels, inheritance/reset/search/help, provider selectors, default term, capabilities and bounded term-query controls.
+1. **Tiered editor + complete option UX** — Essential/Advanced/Expert controls, reviewed adaptive-label toggle/editor/reset/badges, inheritance/search/help, provider selectors, default term, capabilities and bounded term-query controls.
 2. **Portability & Compatibility** — declarative Definition import/export + CPT UI adapter with revision/CAS conflict reporting.
 3. **Guarded Key Migration** — separately safety-gated planning/workflow with dry-run, dependency impact and recovery evidence; destructive term mutation remains unauthorized without an explicit later gate.
 4. **Runtime certification audit** — exact-head PHP/architecture/WordPress runtime/browser/accessibility/security/compatibility/portability/performance evidence and explicit remaining-gap zeroing before any `RUNTIME_CERTIFIED` promotion.
