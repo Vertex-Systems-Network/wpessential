@@ -83,7 +83,7 @@ test('Find Setting reveals tiered and collapsed Taxonomy controls accessibly', a
   await expect(labels).not.toHaveAttribute('open', '');
   await page.getByRole('button', { name: 'Search items', exact: true }).click();
   await expect(labels).toHaveAttribute('open', '');
-  await expect(page.getByLabel('Search items')).toBeFocused();
+  await expect(page.locator('#wpessential-taxonomy-label-search-items')).toBeFocused();
 
   await search.fill('lifecycle status');
   await search.press('Enter');
