@@ -49,7 +49,8 @@ function isGeneratedLabel(
 		return false;
 	}
 
-	const mode = input.dataset.wpessentialTaxonomyLabelGeneration ?? 'wordpress';
+	const mode =
+		input.dataset.wpessentialTaxonomyLabelGeneration ?? 'wordpress';
 	return (
 		mode === 'common' ||
 		( hierarchical && mode === 'hierarchical' ) ||
@@ -173,8 +174,14 @@ function notifyFormChanged( source: HTMLElement ): void {
 }
 
 export function bindTaxonomyLabelEditor(): void {
-	automaticLabelsInput()?.addEventListener( 'change', updateTaxonomyLabelStates );
-	hierarchicalInput()?.addEventListener( 'change', updateTaxonomyLabelStates );
+	automaticLabelsInput()?.addEventListener(
+		'change',
+		updateTaxonomyLabelStates
+	);
+	hierarchicalInput()?.addEventListener(
+		'change',
+		updateTaxonomyLabelStates
+	);
 	for ( const input of labelInputs() ) {
 		input.addEventListener( 'input', updateTaxonomyLabelStates );
 	}
