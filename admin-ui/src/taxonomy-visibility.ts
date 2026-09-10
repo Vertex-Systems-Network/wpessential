@@ -141,17 +141,22 @@ function settingEntries(): TaxonomySettingEntry[] {
 		) {
 			continue;
 		}
-		const labelText =
+		const fullLabelText =
 			label.textContent?.replace( /\s+/g, ' ' ).trim() ?? '';
-		if ( labelText === '' ) {
+		const visibleLabel =
+			label
+				.querySelector( 'strong' )
+				?.textContent?.replace( /\s+/g, ' ' )
+				.trim() ?? fullLabelText;
+		if ( visibleLabel === '' ) {
 			continue;
 		}
 		seen.add( id );
 		entries.push( {
 			control,
 			id,
-			label: labelText,
-			searchText: normalizeSearchText( `${ labelText } ${ id }` ),
+			label: visibleLabel,
+			searchText: normalizeSearchText( `${ fullLabelText } ${ id }` ),
 		} );
 	}
 	return entries;
