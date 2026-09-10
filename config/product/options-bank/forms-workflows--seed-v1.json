@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 17, "key": "forms-workflows", "name": "Forms & Workflows"},
+  "snapshot": {"date": "2026-09-10", "native_sources": [], "market_sources": []},
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"forms-workflows.form.identity","feature_group":"Form definition","option_path":"form.identity","label":"Form identity lifecycle and revisions","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.fields.configuration","feature_group":"Fields","option_path":"fields.configuration","label":"Form field configuration and validation","classification":"COMPATIBILITY","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.calculation.server","feature_group":"Calculations","option_path":"calculation.server_authority","label":"Server-authoritative calculation policy","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.submission.policy","feature_group":"Submission","option_path":"submission.policy","label":"Submission authorization abuse and duplicate policy","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","security_hint":"privileged","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.entry.storage","feature_group":"Entries","option_path":"entry.storage","label":"Entry storage retention and privacy","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","security_hint":"privileged","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.action.mapping","feature_group":"Workflow actions","option_path":"action.mapping","label":"Canonical action and target-owner mapping","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Expert","security_hint":"provider_only","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.run.reliability","feature_group":"Workflow runtime","option_path":"run.reliability","label":"Idempotency retry checkpoint and replay policy","classification":"EXPERT","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Expert","security_hint":"expert","research_state":"UNVERIFIED"},
+    {"id":"forms-workflows.secrets.references","feature_group":"Security","option_path":"secrets.references","label":"Vault-backed secret references","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"System","security_hint":"privileged","portability_hint":"secret","research_state":"UNVERIFIED"}
+  ],
+  "coverage": {"records": 8, "unreviewed": 8, "adopted_or_classified": 0, "notes":"Initial normalized seed only. No workflow execution is authorized and all evidence remains unreviewed."}
+}
