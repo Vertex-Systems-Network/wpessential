@@ -1,24 +1,14 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-10 UTC**  
-Canonical audited base anchor: **`main @ 7fb7cdd0fde2ea97f11290bdc8af55887d03685e`**  
+Canonical audited base anchor: **`main @ 7e9c5af1bf6c90b934f1c5587b263c429f758558`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 
 ## Mandatory work-cycle order
 
-Every `start`, `continue` and `resume` cycle must:
-
-1. resolve exact current `main`;
-2. reconcile accepted **OPEN Issues first**;
-3. reconcile eligible **OPEN PRs/MRs second**;
-4. confirm no accepted actionable path is being bypassed;
-5. read deterministic claims + `config/coordination/agent-work-queue.json`;
-6. only then claim/start dependency-ready work;
-7. reconcile README + shared truth before final reporting.
-
-No force/reuse of deterministic claim branches. Latest-main reconciliation, exact-head CI and clean review threads are required before promotion.
+Every `start`, `continue` and `resume` cycle must resolve exact current `main`, reconcile accepted OPEN Issues first, reconcile eligible OPEN PRs/MRs second, inspect deterministic claims + the coordination queue, and only then continue dependency-ready work. No force/reuse of deterministic claim branches. Exact-head applicable CI, latest-main reconciliation and clean review threads are required before promotion.
 
 ## Certified bounded implementation gates
 
@@ -34,134 +24,100 @@ These bounded states do not imply `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED
 
 ## Surface 7 — Custom Tables safety boundary
 
-Promoted through Issue #463 / merged PR #464 and Issue #465 / merged PR #466. Trust-boundary hardening is accepted, but managed-table execution remains blocked.
-
-Still forbidden:
-
-- managed-table `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE`, `dbDelta()` or generic DDL dispatch;
-- R1/R2, R3 or R4 managed-table statement execution;
-- live row scans or row payload reads;
-- Backup create/restore side effects;
-- jobs/leases/retries/Action Scheduler migration execution;
-- CRUD/Data Source/backfill/dedup/shadow-copy/swap;
-- CT2/PT-D/CT3 conversion, external adoption or public execution mutation;
-- deployment/release/product-parity claims.
-
-Custom Tables remains safe-paused at the evidence-backed 90% bounded runway indicator.
+Promoted through Issue #463 / merged PR #464 and Issue #465 / merged PR #466. Managed-table execution remains blocked. Still forbidden: managed-target physical DDL; R1/R2/R3/R4 statement execution; live row scans; Backup create/restore side effects; migration jobs/leases/retries; CRUD/Data Source/backfill/dedup/shadow-copy/swap; CT2/PT-D/CT3 conversion; external adoption; public execution mutation; deployment/release/certification claims.
 
 ## Surface 1 — CPT Builder
 
-Current machine truth through Issue #473 / merged PR #477:
-
-- Options Bank `BANK_REVIEWED`, 107 records;
-- lifecycle `UX_CONTRACT_COMPLETE`;
-- 23 normalized Atomic Option Contracts;
-- deterministic 107/107 projection with `missing=0`, `unclassified=0`;
-- reviewed Essential / Advanced / Expert UX contract;
-- accepted runtime gap matrix.
-
-CPT is not `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`. No CPT runtime lane is opened by the current ten-worker wave.
+Issue #473 / merged PR #477 remains the latest CPT planning closure: Bank `BANK_REVIEWED` 107, 23 normalized Atomic Option Contracts, deterministic 107/107 projection with `missing=0` and `unclassified=0`, reviewed UX contract and runtime gap matrix. No CPT runtime lane is authorized.
 
 ## Surface 2 — Taxonomy Builder
 
-Parent implementation program: **Issue #474 — Taxonomy Builder Runtime Gap Closure V1**.  
-Queue slot: **priority 1010 / OPEN**.  
-Planning lifecycle: **`UX_CONTRACT_COMPLETE`**, not runtime/product parity certified.
+Parent implementation program: **Issue #474 / queue priority 1010 / OPEN**. Planning lifecycle remains **`UX_CONTRACT_COMPLETE`**; runtime/product parity are not certified.
 
-Promoted bounded evidence through merged PRs #478, #479, #480, #483, #486 and #489 includes Definition completeness, allowlisted runtime provider identities, read-only diagnostics, diagnostics admin rendering, adaptive label generation and the reviewed 28-label authoring UX with MySQL-backed revision/CAS persistence evidence.
+Promoted bounded slices now include merged PRs **#478, #479, #480, #483, #486, #489, #503 and #506**.
 
-### Current unmerged Taxonomy slice
+### PR #506 — accessible Find Setting search — PROMOTED
 
-Deterministic branch: `agent/taxonomy-runtime-gap-closure-v1`  
-Current branch head: **`591987e470d4cbe12e9ae1071c2b15a8c4cb83e4`**  
-Base lineage: exact audited `main @ 7fb7cdd0fde2ea97f11290bdc8af55887d03685e`.
+Merged as **`3b36bd4fb6c7d5d7240745bc489f3f6b0bba369e`** from exact head **`1da78f03f2d6951deb0d9e01125c5e6a8accd9bd`** after latest-main reconciliation.
 
-Bounded scope in progress:
+Promoted behavior:
 
-- keyboard-reachable Essential / Advanced / Expert tier navigation;
-- native visibility/admin authoring for existing canonical optional boolean fields;
-- truthful Default/inherit versus explicit state;
-- removing inherited optional keys from authored payload rather than writing guessed defaults;
-- preserving hidden existing payload values across tier switches;
-- Expert tier remains visible but provider/migration execution controls stay gated.
+- searchable index over existing server-rendered Taxonomy setting labels and IDs;
+- matched Advanced controls automatically promote the required editor tier;
+- matched controls inside collapsed `<details>` sections are revealed before focus;
+- Enter activates the first result and focus moves to the canonical existing control;
+- search excludes its own `Find setting` input from the setting index;
+- label result names use the visible strong label while technical key/ID text remains searchable;
+- no Taxonomy payload, provider execution, Definition persistence or runtime mutation semantics changed;
+- packaged Playwright/axe evidence covers tier reveal, collapsed label reveal, keyboard navigation, no-match status and accessibility.
 
-Current commits on the claim branch include:
+Exact head `1da78f03...` passed all three applicable workflows before merge:
 
-- `0da4b2042dcbccf27b7978d6d711acd0b33af97b` — taxonomy visibility/tier helper;
-- `9c36e93bb073f017219d9b6735eb9491361a94a7` — server-rendered tier and inheritance controls;
-- `591987e470d4cbe12e9ae1071c2b15a8c4cb83e4` — TypeScript collection/hydration/reset wiring.
+1. Architecture Guards — PASS;
+2. Browser E2E Accessibility — PASS;
+3. Distributable Package — PASS.
 
-This slice is **not yet promoted**. Browser/axe evidence, focused tests, gap-matrix reconciliation, exact-head CI and clean review state remain required before merge.
+Review threads were empty and the PR was mergeable before exact-head merge. Earlier CI failures were repaired on the same branch: Prettier-only Architecture failures, then a result-label extraction mismatch, then an ambiguous test locator; no failed head was used as merge evidence.
 
-## Owner-directed ten-worker parallel wave
+### Remaining Taxonomy Runtime Gap Closure
 
-Supervisor Issue **#492** records the owner direction to run a minimum of ten workers on different modules. The wave is intentionally split into one runtime implementation lane plus nine planning/contract-only lanes so repository lifecycle gates are not fabricated.
+Issue #474 remains open. Remaining accepted families include provider selector/health UX, capabilities/effective-map UX, default-term and bounded term-query UX, rewrite/REST collision diagnostics, portability/CPT UI compatibility mapping, and separately safety-gated taxonomy-key migration planning. No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is authorized yet.
 
-### Active worker topology
+## Surface 10 — Dashboard Widgets planning closure
 
-1. **Worker-01 / Taxonomy Builder (Surface 2)** — Issue #474 — `agent/taxonomy-runtime-gap-closure-v1` — runtime gap closure allowed inside existing accepted contract only.
-2. **Worker-02 / Dashboard Widgets (Surface 10)** — Issue #493 — `agent/dashboard-widgets-option-contract-ux-v1` — planning/contract only.
-3. **Worker-03 / Admin Menu (Surface 11)** — Issue #494 — `agent/admin-menu-option-contract-ux-v1` — planning/contract only.
-4. **Worker-04 / Settings Pages (Surface 12)** — Issue #495 — `agent/settings-pages-option-contract-ux-v1` — planning/contract only.
-5. **Worker-05 / Frontend Dashboard (Surface 13)** — Issue #496 — `agent/frontend-dashboard-option-contract-ux-v1` — planning/contract only.
-6. **Worker-06 / User Profile (Surface 14)** — Issue #497 — `agent/user-profile-option-contract-ux-v1` — planning/contract only.
-7. **Worker-07 / Membership (Surface 15)** — Issue #498 — `agent/membership-option-contract-ux-v1` — planning/contract only.
-8. **Worker-08 / Builder Widgets (Surface 16)** — Issue #499 — `agent/builder-widgets-option-contract-ux-v1` — planning/contract only.
-9. **Worker-09 / Forms & Workflows (Surface 17)** — Issue #500 — `agent/forms-workflows-option-contract-ux-v1` — planning/contract only.
-10. **Worker-10 / Cron (Surface 18)** — Issue #501 — `agent/cron-option-contract-ux-v1` — planning/contract only.
+Issue **#493** is completed through merged PR **#508**. The merged planning evidence contains:
 
-### Planning-worker contract
+- reviewed Options Bank `BANK_REVIEWED` with **123** records and zero unresolved Bank review items;
+- **18 normalized Atomic Option Contracts**;
+- deterministic five-shard **123/123 source projection** with reviewed dispositions;
+- reviewed Essential/Advanced/Expert UX contract;
+- no-runtime-baseline runtime gap matrix and entry audit;
+- unsafe raw script/arbitrary PHP inputs rejected and cross-surface ownership preserved.
 
-Workers 02–10 must begin from current repository evidence for their own surface and may produce only:
+PR #508 was reconciled to `main @ cdc4454b8223eca0e499814f38617081a8e32f88` without force. Exact reconciled head **`ae0416783370adcf2463c7644facf4a0fe0c8f56`** passed:
 
-- Options Bank / Atomic Inventory audit evidence;
-- schema-valid Atomic Option Contract where prerequisites support it;
-- reviewed Essential / Advanced / Expert UX contract;
-- current-runtime gap matrix;
-- security, capability/Ability, Multisite, portability, compatibility, accessibility and performance requirements.
+1. Architecture Guards **#1202 — PASS**;
+2. Platform Compatibility Matrix **#813 — PASS**.
 
-They may not:
+Review threads were empty before squash merge as **`7e9c5af1bf6c90b934f1c5587b263c429f758558`**. Planning lifecycle is promoted to **`UX_CONTRACT_COMPLETE`** by Supervisor Issue #510. Dashboard Widgets runtime remains **unpromoted and unauthorized**; no runtime/product-parity/deployment claim follows from this closure.
 
-- edit README, CHECKPOINT or the coordination queue directly;
-- write runtime implementation before a later explicit gate;
-- claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`;
-- perform destructive provider/database/content/user mutation;
-- deploy or release.
+## Owner-directed ten-worker topology
 
-Each worker is isolated to one module and one deterministic branch. Shared-truth requirements return to Supervisor.
+Supervisor Issue #492 established ten distinct non-overlapping module lanes. Surface 2 remains the only runtime implementation lane. Surface 10 has completed its planning/contract gate; Surfaces 11–18 remain planning/contract-only.
 
-## Queue state after Supervisor wave
+1. **Worker-01 — Taxonomy / Surface 2 / Issue #474** — PR #506 promoted; broader runtime-gap program remains OPEN.
+2. **Worker-02 — Dashboard Widgets / Surface 10 / Issue #493** — **planning/contract gate complete** via merged PR #508; lifecycle `UX_CONTRACT_COMPLETE`; runtime remains unauthorized and no new runtime lane is opened.
+3. **Worker-03 — Admin Menu / Surface 11 / Issue #494** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Official-source evidence matrix commit `0695290557715b1a697b4a6a805381623798238e` is branch-local evidence only.
+4. **Worker-04 — Settings Pages / Surface 12 / Issue #495** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Official-source evidence matrix commit `4a7e69242cce4c48498318401018f5775319dc83` is branch-local evidence only.
+5. **Worker-05 — Frontend Dashboard / Surface 13 / Issue #496** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `75fccc4c874fe261e5b414d9858343b05d8cf034` is branch-local evidence only.
+6. **Worker-06 — User Profile / Surface 14 / Issue #497** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `1be3ed3229f0f2c6e372993cdb1cc431dd642d06` is branch-local evidence only.
+7. **Worker-07 — Membership / Surface 15 / Issue #498** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `23e143ab795ef18b0eb8e0abc0e9646c99ef3752` is branch-local evidence only; payment execution remains unauthorized.
+8. **Worker-08 — Builder Widgets / Surface 16 / Issue #499** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `268f41a66adbb0d6f8b448d2fdfb3bff9bef044d` is branch-local evidence only.
+9. **Worker-09 — Forms & Workflows / Surface 17 / Issue #500** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `deb5aba409d979efcb6a38d89b0a14462629e997` is branch-local evidence only; workflow execution remains unauthorized.
+10. **Worker-10 — Cron / Surface 18 / Issue #501** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Evidence matrix commit `cfd7678698b4ccd8ac310143d3cca2eca36a4629` is branch-local evidence only; WP-Cron is explicitly not represented as guaranteed wall-clock execution.
 
-- Priority 1010 remains OPEN: Taxonomy Runtime Gap Closure V1 / Issue #474 / runtime allowed.
-- Priorities 1020–1100 are OPEN planning/contract lanes for Surfaces 10–18 / Issues #493–#501 / runtime disallowed.
-- All nine planning lanes are independent and may progress in parallel with Taxonomy because they do not own Taxonomy runtime code.
-- No CPT runtime lane or Custom Tables execution lane is opened.
+Branch-local seed candidates do **not** promote main lifecycle truth until reviewed PR evidence merges and Supervisor reconciliation is completed.
 
-## Definition of “full final”
+## Planning-worker constraints
 
-A surface is not full-final because a planning document, branch or regression workflow exists. Full-final requires explicit evidence-backed promotion of the applicable Bank, Atomic contract, UX contract, runtime gap closure, Multisite/security/Ability/portability/accessibility/compatibility/performance evidence, exact-head tests, `RUNTIME_CERTIFIED`, and finally `PRODUCT_PARITY_CERTIFIED`.
+Workers 03–10 may produce Bank/Atomic audits, normalized Bank records, schema-valid contracts where prerequisites support them, reviewed UX contracts and runtime gap matrices. They may not edit Supervisor-owned README/CHECKPOINT/queue directly; implement runtime code; promote runtime/product-parity certification; perform destructive provider/database/content/user mutation; or deploy/release.
 
 ## Product truth
 
 - Accepted structural scope: **56 / 56 Exhaustive**.
 - Multisite planning: **56 / 56**.
 - AI Prompt planning: **56 / 56**.
-- README module dashboard must remain **56 / 56 listed**.
+- README closeout must remain **56 / 56 modules listed**.
+- Surface 10 machine planning lifecycle: **`UX_CONTRACT_COMPLETE`** after Issue #493 / merged PR #508.
+- Current shared-truth reconciliation: **Issue #510 / supervisor branch `supervisor/dashboard-widgets-post-contract-reconciliation-v1`**.
+- Current audited main anchor for this reconciliation: **`7e9c5af1bf6c90b934f1c5587b263c429f758558`**.
 
-Authoritative machine/shared-truth files:
+## Next work
 
-- `config/product/options-bank-progress.json`;
-- `config/product/atomic-option-contract-progress.json`;
-- `config/product/competitor-parity-surfaces.json`;
-- `config/coordination/agent-work-queue.json`;
-- `README.md`.
-
-## Current next action
-
-1. Promote Supervisor Issue #492 shared-truth PR after exact-main, review and applicable CI gates.
-2. Fast-forward untouched planning-worker branches to the promoted Supervisor merge without force.
-3. Keep Worker-01 on the existing Taxonomy branch; finish focused tier/visibility tests and exact-head promotion gates.
-4. Workers 02–10 audit their module evidence and produce contract/UX/gap artifacts only.
-5. Reconcile every merged worker result through Issues → PRs → queue → README 56/56 before opening any runtime implementation for Surfaces 10–18.
+1. Complete Supervisor Issue #510 by reconciling machine lifecycle, README 56/56, CHECKPOINT and coordination queue to `main @ 7e9c5af1...`; keep Dashboard Widgets runtime unpromoted.
+2. After #510 promotion, reconcile Worker-01 and Workers 03–10 deterministic branches to exact latest main without force before further work.
+3. Workers 03–10: continue native/platform + market evidence expansion; no `BANK_REVIEWED` claim until zero unresolved is proven and reviewed/merged.
+4. Worker-01 / Issue #474: after accepted Issue/PR/shared-truth gates, continue the next bounded Taxonomy runtime gap without destructive key migration or certification claims.
+5. Dashboard Widgets has no authorized runtime lane; any runtime transition requires a later exact-main Supervisor gate.
 
 Repository evidence overrides conversational memory.

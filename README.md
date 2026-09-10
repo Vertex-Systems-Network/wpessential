@@ -28,10 +28,11 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Surface 7 / Custom Tables: **ACTIVE / NOT PASS — bounded runway 90%**, safe-paused with managed-table execution blocked after Issue #463 / merged PR #464 and Issue #465 / merged PR #466.
 - Surface 1 / CPT Builder: **UX_CONTRACT_COMPLETE / NOT RUNTIME CERTIFIED** through Issue #473 / merged PR #477.
-- Surface 2 / Taxonomy Builder: **UX_CONTRACT_COMPLETE / Runtime Gap Closure V1 ACTIVE**, with bounded Definition, provider-ID, diagnostics backend/admin rendering, adaptive hierarchy-aware label-generation and reviewed 28-label authoring UX slices promoted through PRs #478, #479, #480, #483, #486 and #489; full runtime/product parity remains unpromoted.
-- Surfaces 10–18: **planning/contract wave ACTIVE only** under owner-directed Supervisor Issue #492 and Issues #493–#501; runtime implementation remains unpromoted for all nine surfaces.
+- Surface 2 / Taxonomy Builder: **UX_CONTRACT_COMPLETE / Runtime Gap Closure V1 ACTIVE**, with bounded Definition, provider-ID, diagnostics backend/admin rendering, adaptive hierarchy-aware label-generation, reviewed 28-label authoring UX, tiered visibility authoring and accessible Find Setting search promoted through PRs #478, #479, #480, #483, #486, #489, #503 and #506; full runtime/product parity remains unpromoted.
+- Surface 10 / Dashboard Widgets: **UX_CONTRACT_COMPLETE / NOT RUNTIME CERTIFIED** through Issue #493 / merged PR #508; reviewed 123-record Bank, 18 normalized contracts, deterministic 123/123 projection, reviewed UX contract and runtime gap matrix are promoted as planning truth only.
+- Surfaces 11–18: **planning/contract wave ACTIVE only** under owner-directed Supervisor Issue #492 and Issues #494–#501; runtime implementation remains unpromoted for all eight surfaces.
 
-README audited base anchor: `main @ 7fb7cdd0fde2ea97f11290bdc8af55887d03685e` on **2026-09-10 UTC**. CPT Options Bank closure is promoted through Issue #467 / merged PR #469 and CPT Atomic Option Contract + UX Closure through Issue #473 / merged PR #477. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470; bounded Runtime Gap Closure evidence is promoted through merged PRs #478, #479, #480, #483, #486 and #489 while Issue #474 remains open. Issue #492 records the owner-directed ten-worker parallel wave: Taxonomy remains the only runtime lane; Surfaces 10–18 are planning/contract-only. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 7e9c5af1bf6c90b934f1c5587b263c429f758558` on **2026-09-10 UTC**. CPT Options Bank closure is promoted through Issue #467 / merged PR #469 and CPT Atomic Option Contract + UX Closure through Issue #473 / merged PR #477. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470; bounded Runtime Gap Closure evidence is promoted through merged PRs #478, #479, #480, #483, #486, #489, #503 and #506 while Issue #474 remains open. Dashboard Widgets planning closure is promoted through Issue #493 / merged PR #508 while runtime remains unpromoted. Issue #492 records the owner-directed ten-worker wave: Taxonomy remains the only runtime lane; Dashboard Widgets has completed its planning/contract gate; Surfaces 11–18 remain planning/contract-only. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -46,7 +47,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | # | Module / Surface | Lifecycle / Status | Progress | Start date/time (UTC) | Estimated completion date/time (UTC) | Actual completion date/time (UTC) | Latest evidence | Next gate |
 |---:|---|---|---|---|---|---|---|---|
 | 1 | CPT Builder | PLANNED — UX_CONTRACT_COMPLETE; Options Bank BANK_REVIEWED (107); 23 atomic contracts + deterministic 107/107 projection; runtime baseline gap-audited / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:34Z | FORECAST PENDING / later exact-main CPT runtime transition audit required | — | Issue #473 / merged PR #477 + CPT contract/UX/runtime gap matrix | No CPT runtime-gap lane currently authorized; exact-main transition audit required |
-| 2 | Taxonomy Builder | ACTIVE — UX_CONTRACT_COMPLETE; Runtime Gap Closure V1 in progress; Definition completeness + allowlisted provider IDs + read-only diagnostics backend/admin rendering + adaptive hierarchy-aware label generation + reviewed 28-label authoring UX promoted / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:50Z | FORECAST PENDING / broader tiered option UX, portability/compatibility, guarded migration planning and certification remain | — | Issue #474 + merged PRs #478, #479, #480, #483, #486, #489 | Broader Essential/Advanced/Expert editor + complete option UX, then portability/compatibility and separately gated key-migration planning |
+| 2 | Taxonomy Builder | ACTIVE — UX_CONTRACT_COMPLETE; Runtime Gap Closure V1 in progress; Definition + provider-ID + diagnostics + adaptive labels + reviewed 28-label authoring + tiered visibility/inheritance UX + accessible Find Setting promoted / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:50Z | FORECAST PENDING / remaining provider/capability/default-term/term-query UX, portability/compatibility, guarded migration planning and certification evidence | — | Issue #474 + merged PRs #478, #479, #480, #483, #486, #489, #503, #506; #506 exact head `1da78f03...` passed all 3 applicable workflows | Continue provider selector/health, capability/effective-map, default-term/term-query UX and collision diagnostics; then portability/CPT compatibility and separately gated key-migration planning |
 | 3 | Fields | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate A | Broader provider/full parity remains gated |
 | 4 | Relations | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
 | 5 | Status | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
@@ -54,15 +55,15 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | 7 | Custom Tables | ACTIVE / NOT PASS | `█████████░ 90%` | UNKNOWN / pending evidence audit | FORECAST PENDING / safe-paused; execution trust activation not authorized | — | Issue #463 / merged PR #464 + Issue #465 / merged PR #466 | Managed-table execution remains blocked; later explicit trust-activation audit required |
 | 8 | Admin Columns | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate D | No unbounded mass-edit/provider-wide parity claim |
 | 9 | Listings | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #343 / PR #344 | Richer async/builder parity remains gated |
-| 10 | Dashboard Widgets | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:46:54Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #493 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 11 | Admin Menu | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:04Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #494 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 12 | Settings Pages | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:14Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #495 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 13 | Frontend Dashboard | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:23Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #496 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 14 | User Profile | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:33Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #497 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 15 | Membership | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:51Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #498 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 16 | Builder Widgets | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:48:05Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #499 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 17 | Forms & Workflows | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:48:14Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #500 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
-| 18 | Cron | PLANNED — ATOMIC_INVENTORY_COMPLETE; Atomic Option Contract + UX Closure V1 ACTIVE (planning-only) / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:48:26Z | FORECAST PENDING / contract + UX + runtime-gap evidence not yet promoted | — | Issue #501 / Supervisor Issue #492 | Audit Bank/atomic evidence; produce contract + Essential/Advanced/Expert UX + runtime gap matrix; implementation authorization later |
+| 10 | Dashboard Widgets | PLANNED — UX_CONTRACT_COMPLETE; Bank BANK_REVIEWED (123); 18 normalized Atomic Option Contracts + deterministic 123/123 projection; reviewed UX contract + runtime gap matrix / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:46:54Z | FORECAST PENDING / later exact-main runtime transition audit required | — | Issue #493 / merged PR #508; exact reconciled head `ae041678...` passed Architecture Guards #1202 + Platform Compatibility Matrix #813 before squash merge `7e9c5af1...` | No Dashboard Widgets runtime lane currently authorized; later exact-main transition audit required |
+| 11 | Admin Menu | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:04Z | FORECAST PENDING / native + market Bank review required | — | Issue #494; branch-local official-source evidence matrix commit `06952905...` + 8 normalized unreviewed candidate records | Verify native/market evidence, expand normalized Bank, resolve semantic/policy items; no BANK_REVIEWED claim yet |
+| 12 | Settings Pages | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:14Z | FORECAST PENDING / native + market Bank review required | — | Issue #495; branch-local official-source evidence matrix commit `4a7e6924...` + 8 normalized unreviewed candidate records | Verify Settings/Options/Network/User semantics + market evidence; no BANK_REVIEWED claim yet |
+| 13 | Frontend Dashboard | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:23Z | FORECAST PENDING / native + market Bank review required | — | Issue #496; branch-local evidence matrix commit `75fccc4c...` + 8 normalized unreviewed candidate records | Verify route/account/dashboard market evidence and ownership boundaries; no BANK_REVIEWED claim yet |
+| 14 | User Profile | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:33Z | FORECAST PENDING / native + market Bank review required | — | Issue #497; branch-local evidence matrix commit `1be3ed32...` + 8 normalized unreviewed candidate records | Verify WordPress user/profile/privacy + market evidence and ownership boundaries; no BANK_REVIEWED claim yet |
+| 15 | Membership | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:47:51Z | FORECAST PENDING / native/platform + market Bank review required | — | Issue #498; branch-local evidence matrix commit `23e143ab...` + 8 normalized unreviewed candidate records | Verify membership/subscription/payment-provider evidence; payment execution remains unauthorized |
+| 16 | Builder Widgets | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:48:05Z | FORECAST PENDING / WordPress + builder ecosystem Bank review required | — | Issue #499; branch-local evidence matrix commit `268f41a6...` + 8 normalized unreviewed candidate records | Verify block/builder adapters and ownership; no arbitrary executable provider/CSS input |
+| 17 | Forms & Workflows | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:48:14Z | FORECAST PENDING / platform + forms/workflow market Bank review required | — | Issue #500; branch-local evidence matrix commit `deb5aba4...` + 8 normalized unreviewed candidate records | Verify form/workflow/action ownership and evidence; workflow execution remains unauthorized |
+| 18 | Cron | PLANNED — ATOMIC_INVENTORY_COMPLETE; main Bank remains UNSEEDED; worker seed candidate ACTIVE / implementation baseline not promoted | — / no implementation baseline | 2026-09-10T19:48:26Z | FORECAST PENDING / WP-Cron/provider + market Bank review required | — | Issue #501; branch-local evidence matrix commit `cfd76786...` + 8 normalized unreviewed candidate records | Verify WP-Cron/Action Scheduler/provider semantics; never claim exact wall-clock execution |
 | 19 | Notifications | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 | 20 | Emails | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 | 21 | Chat | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
@@ -104,7 +105,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 
 The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. Trusted Runtime Evidence Sources V1 and the post-trust audit do not invent a higher percentage because the repository defines no new percentage milestone for this wave.
 
-The owner-directed Surfaces 10–18 wave is **planning/contract-only**. Its OPEN Issues and deterministic branches are evidence of started planning work, not implementation progress. Those rows therefore retain `— / no implementation baseline` until a later repository-defined implementation milestone is explicitly promoted.
+The owner-directed Surfaces 10–18 wave is **planning/contract-only**. Surface 10 Dashboard Widgets has completed and promoted its planning/contract gate through Issue #493 / merged PR #508, but still has no implementation baseline or authorized runtime lane. For Surfaces 11–18, worker-branch seed candidates remain active-work evidence only and main `options-bank-progress.json` remains `UNSEEDED / 0` until reviewed worker PR evidence is merged and Supervisor reconciles that machine truth. Rows therefore retain `— / no implementation baseline` until a later repository-defined implementation milestone is explicitly promoted.
 
 ## AI-Native work-cycle order
 
@@ -207,44 +208,44 @@ No CPT runtime-gap implementation lane is authorized by the current queue. The n
 
 ### Surface 2 — Taxonomy Builder
 
-Current machine truth after merged PR #489:
+Current machine truth after merged PR #506:
 
 - Options Bank `BANK_REVIEWED`, 71 records, zero unresolved review items;
 - lifecycle `UX_CONTRACT_COMPLETE`;
-- 20 normalized atomic contracts;
-- deterministic 71/71 Bank source projection;
+- 20 normalized atomic contracts with deterministic 71/71 Bank source projection;
 - `missing=0`, `unclassified=0`;
-- reviewed Essential/Advanced/Expert UX contract;
-- accepted live runtime gap matrix against the existing Taxonomies baseline;
-- Definition completeness promoted through PR #478: complete reviewed labels, typed default term and bounded object-term args;
-- allowlisted runtime provider-ID architecture promoted through PR #479 with JSON-safe persistence and last-responsible runtime resolution;
+- reviewed Essential/Advanced/Expert UX contract and accepted live runtime gap matrix;
+- Definition completeness promoted through PR #478;
+- allowlisted runtime provider-ID architecture promoted through PR #479;
 - read-only effective args, overrides, association health and REST/rewrite preview diagnostics backend promoted through PR #480;
-- read-only diagnostics admin rendering promoted through PR #483, including valid/invalid visibility, stale-state clearing, packaged browser behavior and visible-panel axe accessibility evidence;
-- adaptive label-generation runtime promoted through PR #486: typed `automatic_labels`, hierarchy-aware category-like/tag-like defaults, explicit override precedence, opt-out validation and packaged browser evidence through server-authoritative diagnostics;
-- reviewed label-authoring UX promoted through PR #489: canonical server-owned `TaxonomyLabelPolicy`, complete 28-label inventory, Generated/WordPress-default/Explicit-override source states, accessible reset controls and reset-one/reset-all behavior;
-- PR #489 packaged browser evidence proves UI/source-state/reset-effective-args and axe behavior, while real WordPress 7.1 + MySQL 8.4 evidence separately proves canonical create → expected-revision CAS update → revision 2 with `automatic_labels=false` and reset-all persistence;
-- PR #489 exact head `dd63e0147ffeea4fe43794dc3e3f7535bbc973f1` passed all six applicable exact-head workflows before merge to `4655cf878a5abb220a4e9cfd4b87f4a4633aa36a`; full runtime/product parity is not certified.
+- diagnostics admin rendering promoted through PR #483;
+- adaptive hierarchy-aware label-generation runtime promoted through PR #486;
+- reviewed complete 28-label authoring UX promoted through PR #489;
+- tiered visibility authoring promoted through PR #503: Essential/Advanced/Expert navigation, truthful default/inherited/explicit states, inherited-key omission, hidden-value preservation and Expert boundary;
+- accessible Find Setting search promoted through PR #506: searchable existing setting labels/IDs, automatic tier reveal, collapsed-section reveal, keyboard-first-result activation and canonical-control focus with no Taxonomy payload/provider/persistence/runtime semantic change;
+- PR #506 exact head `1da78f03f2d6951deb0d9e01125c5e6a8accd9bd` passed Architecture Guards, Browser E2E Accessibility and Distributable Package before merge as `3b36bd4fb6c7d5d7240745bc489f3f6b0bba369e`;
+- full runtime/product parity is not certified.
 
 Current lane: **Taxonomy Builder Runtime Gap Closure V1** (Issue #474 / queue priority 1010).
 
-Remaining work includes broader Essential/Advanced/Expert controls and provider selectors, inherited/default/dormant visibility semantics, capabilities/default-term/term-query UX, portability/CPT UI compatibility mapping, separately safety-gated taxonomy-key migration planning, and final runtime/browser/accessibility/security/compatibility/portability/performance certification evidence. This lane cannot claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` until every accepted gap/evidence requirement closes.
+Remaining work includes controlled provider selector/health UX, capabilities/effective-map UX, default-term and bounded term-query UX, rewrite/REST collision diagnostics, portability/CPT UI compatibility mapping, separately safety-gated taxonomy-key migration planning, and final runtime/browser/accessibility/security/compatibility/portability/performance certification evidence. This lane cannot claim `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` until every accepted gap/evidence requirement closes.
 
 ## Owner-directed ten-worker parallel wave
 
-Supervisor Issue #492 authorizes ten distinct non-overlapping module claim lanes. Surface 2 / Taxonomy remains the only runtime implementation lane. Surfaces 10–18 are planning/contract-only and cannot write runtime code until a later explicit gate.
+Supervisor Issue #492 established ten distinct non-overlapping module claim lanes. Surface 2 / Taxonomy remains the only runtime implementation lane. Surface 10 / Dashboard Widgets has completed its planning/contract gate; Surfaces 11–18 remain planning/contract-only and cannot write runtime code until a later explicit gate.
 
-- Worker 01: Surface 2 Taxonomy — Issue #474 / `agent/taxonomy-runtime-gap-closure-v1`.
-- Worker 02: Surface 10 Dashboard Widgets — Issue #493 / `agent/dashboard-widgets-option-contract-ux-v1`.
-- Worker 03: Surface 11 Admin Menu — Issue #494 / `agent/admin-menu-option-contract-ux-v1`.
-- Worker 04: Surface 12 Settings Pages — Issue #495 / `agent/settings-pages-option-contract-ux-v1`.
-- Worker 05: Surface 13 Frontend Dashboard — Issue #496 / `agent/frontend-dashboard-option-contract-ux-v1`.
-- Worker 06: Surface 14 User Profile — Issue #497 / `agent/user-profile-option-contract-ux-v1`.
-- Worker 07: Surface 15 Membership — Issue #498 / `agent/membership-option-contract-ux-v1`.
-- Worker 08: Surface 16 Builder Widgets — Issue #499 / `agent/builder-widgets-option-contract-ux-v1`.
-- Worker 09: Surface 17 Forms & Workflows — Issue #500 / `agent/forms-workflows-option-contract-ux-v1`.
-- Worker 10: Surface 18 Cron — Issue #501 / `agent/cron-option-contract-ux-v1`.
+- Worker 01: Surface 2 Taxonomy — Issue #474 / `agent/taxonomy-runtime-gap-closure-v1`; PR #506 promoted, broader program remains open.
+- Worker 02: Surface 10 Dashboard Widgets — Issue #493 / merged PR #508; reviewed Bank 123, 18 normalized Atomic Option Contracts, deterministic five-shard 123/123 projection, reviewed Essential/Advanced/Expert UX contract and runtime gap matrix are promoted at `UX_CONTRACT_COMPLETE`; runtime remains unpromoted and no new runtime lane is opened.
+- Worker 03: Surface 11 Admin Menu — Issue #494 / `agent/admin-menu-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local official-source evidence matrix commit `0695290557715b1a697b4a6a805381623798238e`.
+- Worker 04: Surface 12 Settings Pages — Issue #495 / `agent/settings-pages-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local official-source evidence matrix commit `4a7e69242cce4c48498318401018f5775319dc83`.
+- Worker 05: Surface 13 Frontend Dashboard — Issue #496 / `agent/frontend-dashboard-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local evidence matrix commit `75fccc4c874fe261e5b414d9858343b05d8cf034`.
+- Worker 06: Surface 14 User Profile — Issue #497 / `agent/user-profile-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local evidence matrix commit `1be3ed3229f0f2c6e372993cdb1cc431dd642d06`.
+- Worker 07: Surface 15 Membership — Issue #498 / `agent/membership-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local evidence matrix commit `23e143ab795ef18b0eb8e0abc0e9646c99ef3752`; payment execution remains unauthorized.
+- Worker 08: Surface 16 Builder Widgets — Issue #499 / `agent/builder-widgets-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local evidence matrix commit `268f41a66adbb0d6f8b448d2fdfb3bff9bef044d`.
+- Worker 09: Surface 17 Forms & Workflows — Issue #500 / `agent/forms-workflows-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local evidence matrix commit `deb5aba409d979efcb6a38d89b0a14462629e997`; workflow execution remains unauthorized.
+- Worker 10: Surface 18 Cron — Issue #501 / `agent/cron-option-contract-ux-v1`; 8 normalized unreviewed candidate records plus branch-local evidence matrix commit `cfd7678698b4ccd8ac310143d3cca2eca36a4629`; WP-Cron is not represented as guaranteed wall-clock execution.
 
-Workers 02–10 must audit existing Bank/Atomic evidence first and produce contract, UX and runtime-gap artifacts only. They must not edit README/CHECKPOINT/queue directly; any shared-truth requirement returns to Supervisor.
+Workers 03–10 must continue evidence-first planning and must not edit README/CHECKPOINT/queue directly; any shared-truth lifecycle promotion returns to Supervisor. Branch-local normalized seed records do not themselves promote main Options Bank or Atomic Option lifecycle truth.
 
 ### What “full final” means
 
@@ -260,7 +261,7 @@ Neither CPT nor Taxonomy may be reported fully final until that surface explicit
 8. machine lifecycle `RUNTIME_CERTIFIED`;
 9. competitor-parity acceptance `PRODUCT_PARITY_CERTIFIED`.
 
-CPT Contract/UX planning is complete; Taxonomy Runtime Gap Closure remains the current authorized runtime lane. No new CPT runtime lane exists until a later exact-main transition audit explicitly opens one.
+CPT Contract/UX planning is complete; Taxonomy Runtime Gap Closure remains the current authorized runtime lane. Dashboard Widgets Contract/UX planning is complete but no runtime lane is authorized. No new CPT or Dashboard Widgets runtime lane exists until a later exact-main transition audit explicitly opens one.
 
 ## Planning / Bank snapshot
 
@@ -273,7 +274,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 - Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
 - No bounded module pass in this README implies full product parity or release readiness.
 
-`config/product/atomic-option-contract-progress.json` currently records all 56 surfaces in the atomic inventory, with Surface 1 CPT and Surface 2 Taxonomy at `UX_CONTRACT_COMPLETE` and full-parity runtime certification still at zero. Machine-readable files are authoritative for planning lifecycle counts.
+`config/product/atomic-option-contract-progress.json` currently records all 56 surfaces in the atomic inventory, with **4 surfaces at `UX_CONTRACT_COMPLETE`** (CPT Builder, Taxonomy Builder, Admin Columns and Dashboard Widgets), **5 surfaces at or beyond `OPTION_CONTRACT_COMPLETE`**, and full-parity runtime/product certification still at zero. Machine-readable files are authoritative for planning lifecycle counts.
 
 ## Certified runtime / implementation gates
 
@@ -307,7 +308,7 @@ Start WPEssential Worker in AUTO mode.
 
 Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
 
-Parallelism is encouraged only for non-overlapping dependency-safe lanes. Under owner-directed Issue #492, ten module lanes are claimed: Taxonomy runtime plus nine planning/contract-only lanes for Surfaces 10–18. Planning workers may not promote runtime code or certification. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
+Parallelism is encouraged only for non-overlapping dependency-safe lanes. Under owner-directed Issue #492, ten module lanes were established: Taxonomy runtime plus nine planning/contract-only lanes for Surfaces 10–18. Dashboard Widgets has now completed its planning/contract gate; the continuing active topology is Taxonomy runtime plus eight planning lanes for Surfaces 11–18. Planning workers may not promote runtime code or certification. Multiple workers must not independently modify the same runtime owner or bypass serialized safety gates.
 
 ## What WPEssential is
 
@@ -367,7 +368,7 @@ Custom Tables dependency evidence currently includes:
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-RUNTIME-COMPOSITION-EXACT-MAIN-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-TRUSTED-RUNTIME-EVIDENCE-EXACT-MAIN-AUDIT-V1.md`
 
-CPT and Taxonomy full-final planning/runtime evidence currently includes:
+CPT, Taxonomy and Dashboard Widgets planning/runtime evidence currently includes:
 
 - `docs/PRODUCT/CPT-BUILDER-OPTIONS-BANK-AUDIT-CLOSURE-V1.md`
 - `config/product/option-contracts/cpt.json`
@@ -376,6 +377,9 @@ CPT and Taxonomy full-final planning/runtime evidence currently includes:
 - `config/product/option-contracts/taxonomy.json`
 - `docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md`
 - `docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md`
+- `config/product/option-contracts/dashboard-widgets.json`
+- `docs/UI/DASHBOARD-WIDGETS-UX-CONTRACT-V1.md`
+- `docs/IMPLEMENTATION/DASHBOARD-WIDGETS-RUNTIME-GAP-MATRIX-V1.md`
 
 Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
 
