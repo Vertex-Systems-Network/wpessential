@@ -2,7 +2,7 @@
 
 Surface: **18 / Cron**  
 Issue: **#501**  
-Research anchor: **`main @ fad3b2f37bd44a01d77438e71877d7990b4bfe2c`**  
+Research anchor: **`main @ 42303a97938f1a80f9c1c9088fa70d40ba359279`**  
 Mode: planning/contract only; `runtime_allowed=false`; `product_parity_allowed=false`.
 
 ## Verified primary sources
@@ -10,9 +10,19 @@ Mode: planning/contract only; `runtime_allowed=false`; `product_parity_allowed=f
 | Source | Evidence | Seed families informed |
 |---|---|---|
 | WordPress Cron Handbook | https://developer.wordpress.org/plugins/cron/ | page-load-triggered scheduling model and non-exact execution timing |
-| WordPress Scheduling WP-Cron Events | https://developer.wordpress.org/plugins/cron/scheduling-wp-cron-events/ | hook-backed scheduling/unscheduling lifecycle |
-| WordPress WP-Cron Scheduling | https://developer.wordpress.org/plugins/cron/understanding-wp-cron-scheduling/ | recurrence intervals and custom schedule semantics |
-| Action Scheduler API | https://actionscheduler.org/api/ | single/recurring async actions, action IDs and a traceable queue-provider model |
+| WordPress `wp_schedule_event()` | https://developer.wordpress.org/reference/functions/wp_schedule_event/ | recurring event identity from hook + args, recurrence/start semantics and duplicate-scheduling risk |
+| WordPress `wp_next_scheduled()` | https://developer.wordpress.org/reference/functions/wp_next_scheduled/ | next-occurrence inspection keyed by hook + matching args |
+| WordPress WP-Cron Scheduling | https://developer.wordpress.org/plugins/cron/understanding-wp-cron-scheduling/ | interval-based simulated cron and custom schedule semantics rather than guaranteed wall-clock execution |
+| Action Scheduler API | https://actionscheduler.org/api/ | single/recurring async actions, action IDs, groups and traceable queue-provider model |
+
+## Native/provider decisions added in this pass
+
+- Native WP-Cron event identity includes both hook and arguments. WPE schedule deduplication/inspection must preserve that tuple instead of treating hook name alone as unique.
+- `wp_schedule_event()` documentation explicitly recommends checking existing schedules to prevent duplicate events; duplicate-policy and idempotency therefore belong in the planning Bank.
+- `wp_next_scheduled()` is read-only timing evidence, not a promise that the event will run at that timestamp.
+- WP-Cron execution is request-driven and can be late. WPE must distinguish **desired due time**, **next native scheduled time**, and **observed execution time** in diagnostics.
+- Action Scheduler is a separate queue provider with action/group identities and richer execution history. WPE may adapt to it through a provider contract but must not silently equate its guarantees/retries with native WP-Cron.
+- Operational run/cancel/retry/reschedule controls are mutations and remain blocked until a later Policy/Ability/runtime gate.
 
 ## Seed disposition evidence
 
@@ -27,8 +37,8 @@ Mode: planning/contract only; `runtime_allowed=false`; `product_parity_allowed=f
 
 ## Timing truth
 
-WordPress documents that WP-Cron checks due events on page load. A task scheduled for a specific clock time can therefore run later if no request occurs at that time. WPE UX/contracts must expose this truth explicitly and may distinguish provider guarantees rather than promising exact execution from WP-Cron.
+WordPress documents that WP-Cron checks due events in response to site activity rather than acting as a traditional system cron. A task whose due time has passed can therefore execute later. WPE UX/contracts must expose this truth explicitly and may distinguish provider guarantees rather than promising exact execution from WP-Cron.
 
 ## Remaining gates
 
-This matrix does **not** promote `BANK_REVIEWED`. Native event argument identity, duplicate scheduling semantics, unscheduling, Action Scheduler groups/claims/failures, system-cron/CLI adapters, multisite, observability/security/performance and zero-unresolved review remain open. No scheduling or queue mutation runtime is authorized.
+This matrix does **not** promote `BANK_REVIEWED`. Unscheduling APIs, custom recurrence registration, Action Scheduler claim/failure/cancel semantics, system-cron/CLI adapters, multisite schedule ownership, observability/security/performance and zero-unresolved review remain open. No scheduling or queue mutation runtime is authorized.
