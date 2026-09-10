@@ -72,7 +72,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('packaged Taxonomy label authoring round-trips overrides, reset states, and adaptive opt-out accessibly', async ({ page }) => {
+test('packaged Taxonomy label authoring reports truthful sources and round-trips opt-out/reset semantics accessibly', async ({ page }) => {
   await visitTaxonomies(page);
 
   const labelEditor = page.locator('#wpessential-taxonomy-labels');
@@ -81,16 +81,31 @@ test('packaged Taxonomy label authoring round-trips overrides, reset states, and
   const generationState = page.locator(
     '[data-wpessential-taxonomy-label-generation-state]',
   );
+  const labelFields = page.locator('[data-wpessential-taxonomy-label-field]');
 
   await expect(labelEditor).not.toHaveAttribute('open', '');
   await page.getByText('Customize labels', { exact: true }).click();
   await expect(labelEditor).toHaveAttribute('open', '');
+  await expect(labelFields).toHaveCount(28);
   await expect(automatic).toBeChecked();
   await expect(generationState).toContainText('tag-like');
+
   await expect(labelRow(page, 'menu_name')).toContainText('Generated');
+  await expect(labelRow(page, 'popular_items')).toContainText('Generated');
+  await expect(labelRow(page, 'parent_item')).toContainText('WordPress default');
+  await expect(labelRow(page, 'template_name')).toContainText('WordPress default');
+  await expect(labelRow(page, 'name_field_description')).toContainText('WordPress default');
+  await expect(labelInput(page, 'menu_name')).toHaveAttribute(
+    'aria-describedby',
+    'wpessential-taxonomy-label-menu-name-state',
+  );
+  await expect(page.getByRole('button', { name: 'Reset Menu name' })).toBeVisible();
 
   await hierarchical.check();
   await expect(generationState).toContainText('category-like');
+  await expect(labelRow(page, 'parent_item')).toContainText('Generated');
+  await expect(labelRow(page, 'popular_items')).toContainText('WordPress default');
+  await expect(labelRow(page, 'template_name')).toContainText('WordPress default');
 
   await page.getByLabel('Taxonomy key').fill('authoring_genre');
   await page.getByLabel('Plural name').fill('Genres');
@@ -109,33 +124,32 @@ test('packaged Taxonomy label authoring round-trips overrides, reset states, and
     parent_item: 'Parent Genre',
     parent_item_colon: 'Parent Genre:',
   });
+  expect(overridden.labels).not.toHaveProperty('popular_items');
+  expect(overridden.labels).not.toHaveProperty('template_name');
 
-  await labelRow(page, 'menu_name').getByRole('button', { name: 'Reset' }).click();
+  await page.getByRole('button', { name: 'Reset Menu name' }).click();
   await expect(labelInput(page, 'menu_name')).toHaveValue('');
   await expect(labelRow(page, 'menu_name')).toContainText('Generated');
   await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeHidden();
 
-  await labelInput(page, 'menu_name').fill('Library Genres');
-  await page.getByRole('button', { name: 'Reset all label overrides' }).click();
-  await expect(labelInput(page, 'menu_name')).toHaveValue('');
-  await expect(labelInput(page, 'not_found')).toHaveValue('');
-  await expect(labelRow(page, 'menu_name')).toContainText('Generated');
-  await expect(labelRow(page, 'not_found')).toContainText('Generated');
-
   await automatic.uncheck();
   await expect(generationState).toContainText('WordPress defaults');
   await expect(labelRow(page, 'menu_name')).toContainText('WordPress default');
+  await expect(labelRow(page, 'parent_item')).toContainText('WordPress default');
+  await labelInput(page, 'menu_name').fill('Saved Genres');
+  await expect(labelRow(page, 'menu_name')).toContainText('Explicit override');
+
   await page.getByRole('button', { name: 'Validate' }).click();
   const defaultsOnly = await effectiveArgs(page);
   expect(defaultsOnly.labels).toMatchObject({
     name: 'Genres',
     singular_name: 'Genre',
+    menu_name: 'Saved Genres',
+    not_found: 'No library genres found',
   });
-  expect(defaultsOnly.labels).not.toHaveProperty('menu_name');
   expect(defaultsOnly.labels).not.toHaveProperty('parent_item');
+  expect(defaultsOnly.labels).not.toHaveProperty('popular_items');
 
-  await automatic.check();
-  await labelInput(page, 'menu_name').fill('Saved Genres');
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
   await expect(labelEditor).not.toHaveAttribute('open', '');
@@ -147,9 +161,21 @@ test('packaged Taxonomy label authoring round-trips overrides, reset states, and
   await row.getByRole('button', { name: 'Edit' }).click();
 
   await expect(labelEditor).toHaveAttribute('open', '');
-  await expect(automatic).toBeChecked();
+  await expect(automatic).not.toBeChecked();
   await expect(labelInput(page, 'menu_name')).toHaveValue('Saved Genres');
+  await expect(labelInput(page, 'not_found')).toHaveValue('No library genres found');
   await expect(labelRow(page, 'menu_name')).toContainText('Explicit override');
+  await expect(labelRow(page, 'template_name')).toContainText('WordPress default');
+
+  await page.getByRole('button', { name: 'Reset Menu name' }).click();
+  await expect(labelInput(page, 'menu_name')).toHaveValue('');
+  await expect(labelRow(page, 'menu_name')).toContainText('WordPress default');
+  await labelInput(page, 'menu_name').fill('Temporary Genres');
+  await page.getByRole('button', { name: 'Reset all label overrides' }).click();
+  await expect(labelInput(page, 'menu_name')).toHaveValue('');
+  await expect(labelInput(page, 'not_found')).toHaveValue('');
+  await expect(labelRow(page, 'menu_name')).toContainText('WordPress default');
+  await expect(labelRow(page, 'not_found')).toContainText('WordPress default');
 
   await page.getByRole('button', { name: 'Validate' }).click();
   await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeVisible();
@@ -169,7 +195,6 @@ test('packaged Taxonomy label authoring round-trips overrides, reset states, and
     )}`,
   ).toEqual([]);
 
-  await labelRow(page, 'menu_name').getByRole('button', { name: 'Reset' }).click();
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
   await expect(page.getByText('Taxonomy updated.')).toBeVisible();
 
@@ -177,6 +202,9 @@ test('packaged Taxonomy label authoring round-trips overrides, reset states, and
     name: /Genres authoring_genre post Draft 2/,
   });
   await updatedRow.getByRole('button', { name: 'Edit' }).click();
+  await expect(automatic).not.toBeChecked();
   await expect(labelInput(page, 'menu_name')).toHaveValue('');
-  await expect(labelRow(page, 'menu_name')).toContainText('Generated');
+  await expect(labelInput(page, 'not_found')).toHaveValue('');
+  await expect(labelRow(page, 'menu_name')).toContainText('WordPress default');
+  await expect(labelRow(page, 'template_name')).toContainText('WordPress default');
 });
