@@ -162,6 +162,53 @@ $retainedDraft = $definitions->get($draftId);
 taxonomyValidationExpect($retainedDraft instanceof Definition, 'blocked publish fixture must remain persisted');
 taxonomyValidationExpect($retainedDraft->status === DefinitionStatus::Draft && $retainedDraft->revision === 1, 'blocked publish must retain the previous draft revision and lifecycle state');
 
+$labelCreate = $ajax->dispatch([
+    'type' => 'taxonomy.save',
+    'nonce' => $saveNonce,
+    'payload' => [
+        'payload' => [
+            'taxonomy_key' => 'label_roundtrip_tax',
+            'object_types' => ['post'],
+            'name' => 'Label Taxonomies',
+            'singular_name' => 'Label Taxonomy',
+            'automatic_labels' => false,
+            'labels' => [
+                'menu_name' => 'Curated Labels',
+                'not_found' => 'No curated labels found',
+            ],
+        ],
+        'status' => 'draft',
+    ],
+], true);
+taxonomyValidationExpect($labelCreate->success && is_array($labelCreate->data), 'label authoring fixture must create through canonical Taxonomy save');
+$labelCreated = $labelCreate->data['definition'] ?? null;
+taxonomyValidationExpect(is_array($labelCreated) && is_string($labelCreated['id'] ?? null), 'label authoring create must return canonical definition id');
+$labelId = (string) $labelCreated['id'];
+
+$labelUpdate = $ajax->dispatch([
+    'type' => 'taxonomy.save',
+    'nonce' => $saveNonce,
+    'payload' => [
+        'id' => $labelId,
+        'expected_revision' => 1,
+        'payload' => [
+            'taxonomy_key' => 'label_roundtrip_tax',
+            'object_types' => ['post'],
+            'name' => 'Label Taxonomies',
+            'singular_name' => 'Label Taxonomy',
+            'automatic_labels' => false,
+            'labels' => [],
+        ],
+        'status' => 'draft',
+    ],
+], true);
+taxonomyValidationExpect($labelUpdate->success && is_array($labelUpdate->data), 'label reset must update through revision/CAS Taxonomy save');
+$labelUpdated = $definitions->get($labelId);
+taxonomyValidationExpect($labelUpdated instanceof Definition, 'label reset definition must remain persisted');
+taxonomyValidationExpect($labelUpdated->revision === 2, 'label reset update must advance persisted revision to 2');
+taxonomyValidationExpect(($labelUpdated->payload['automatic_labels'] ?? null) === false, 'adaptive-label opt-out must persist across update');
+taxonomyValidationExpect(array_key_exists('labels', $labelUpdated->payload) && $labelUpdated->payload['labels'] === [], 'reset-all must persist an empty labels map and clear prior overrides');
+
 $evidencePath = getenv('WPE_TAXONOMY_VALIDATION_EVIDENCE_PATH') ?: '';
 if ($evidencePath !== '') {
     $directory = dirname($evidencePath);
@@ -183,6 +230,10 @@ if ($evidencePath !== '') {
         'definition_count_after_validation' => $afterValidation,
         'publish_probe_status' => $retainedDraft->status->value,
         'publish_probe_revision' => $retainedDraft->revision,
+        'label_reset_cas_persisted' => true,
+        'label_reset_revision' => $labelUpdated->revision,
+        'automatic_labels_opt_out_persisted' => $labelUpdated->payload['automatic_labels'] === false,
+        'label_overrides_cleared' => $labelUpdated->payload['labels'] === [],
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
 }
 
