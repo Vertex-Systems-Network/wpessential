@@ -25,10 +25,26 @@ type ValidationIssue = {
 	field: string;
 	message: string;
 };
+type AssociationHealth = {
+	key: string;
+	state: string;
+	canonical: boolean;
+	canonical_status: string | null;
+	runtime_registered: boolean | null;
+};
+type TaxonomyDiagnostics = {
+	effective_args: RecordValue;
+	overrides: RecordValue;
+	provider_ids: Record< string, string >;
+	association_health: AssociationHealth[];
+	runtime: { registered: boolean | null };
+	previews: { rest: RecordValue; rewrite: RecordValue };
+};
 type ValidationReport = {
 	valid: boolean;
 	issues: ValidationIssue[];
 	candidate: { taxonomy_key: string | null };
+	diagnostics: TaxonomyDiagnostics | null;
 };
 type Bootstrap = {
 	surface: 'taxonomies';
@@ -130,6 +146,74 @@ function isIssue( value: unknown ): value is ValidationIssue {
 	);
 }
 
+function isNullableBoolean( value: unknown ): value is boolean | null {
+	return value === null || typeof value === 'boolean';
+}
+
+function isAssociationHealth( value: unknown ): value is AssociationHealth {
+	return (
+		isRecord( value ) &&
+		typeof value.key === 'string' &&
+		typeof value.state === 'string' &&
+		typeof value.canonical === 'boolean' &&
+		( value.canonical_status === null ||
+			typeof value.canonical_status === 'string' ) &&
+		isNullableBoolean( value.runtime_registered )
+	);
+}
+
+function parseProviderIds( value: unknown ): Record< string, string > | null {
+	if ( Array.isArray( value ) ) {
+		return value.length === 0 ? {} : null;
+	}
+	if ( ! isRecord( value ) ) {
+		return null;
+	}
+
+	const providers: Record< string, string > = {};
+	for ( const [ slot, providerId ] of Object.entries( value ) ) {
+		if ( typeof providerId !== 'string' ) {
+			return null;
+		}
+		providers[ slot ] = providerId;
+	}
+	return providers;
+}
+
+function parseDiagnostics( value: unknown ): TaxonomyDiagnostics | null {
+	if (
+		! isRecord( value ) ||
+		! isRecord( value.effective_args ) ||
+		! isRecord( value.overrides ) ||
+		! Array.isArray( value.association_health ) ||
+		! value.association_health.every( isAssociationHealth ) ||
+		! isRecord( value.runtime ) ||
+		! isNullableBoolean( value.runtime.registered ) ||
+		! isRecord( value.previews ) ||
+		! isRecord( value.previews.rest ) ||
+		! isRecord( value.previews.rewrite )
+	) {
+		return null;
+	}
+
+	const providerIds = parseProviderIds( value.provider_ids );
+	if ( providerIds === null ) {
+		return null;
+	}
+
+	return {
+		effective_args: value.effective_args,
+		overrides: value.overrides,
+		provider_ids: providerIds,
+		association_health: value.association_health,
+		runtime: { registered: value.runtime.registered },
+		previews: {
+			rest: value.previews.rest,
+			rewrite: value.previews.rewrite,
+		},
+	};
+}
+
 function parseReport( value: unknown ): ValidationReport | null {
 	if (
 		! isRecord( value ) ||
@@ -146,10 +230,19 @@ function parseReport( value: unknown ): ValidationReport | null {
 		return null;
 	}
 
+	let diagnostics: TaxonomyDiagnostics | null = null;
+	if ( value.diagnostics !== null ) {
+		diagnostics = parseDiagnostics( value.diagnostics );
+		if ( diagnostics === null ) {
+			return null;
+		}
+	}
+
 	return {
 		valid: value.valid,
 		issues: value.issues,
 		candidate: { taxonomy_key: key },
+		diagnostics,
 	};
 }
 
@@ -262,6 +355,231 @@ function setNotice( message: string, error = false ): void {
 	notice.classList.toggle( 'notice-success', ! error && message !== '' );
 }
 
+function diagnosticsValue(
+	container: HTMLElement,
+	name: string
+): HTMLElement | null {
+	const value = container.querySelector(
+		`[data-wpessential-taxonomy-diagnostic="${ name }"]`
+	);
+	return value instanceof HTMLElement ? value : null;
+}
+
+function createDiagnosticsValue(
+	list: HTMLDListElement,
+	label: string,
+	name: string
+): void {
+	const term = document.createElement( 'dt' );
+	term.textContent = label;
+	const value = document.createElement( 'dd' );
+	value.dataset.wpessentialTaxonomyDiagnostic = name;
+	list.append( term, value );
+}
+
+function ensureDiagnosticsPanel(): HTMLElement | null {
+	const existing = document.getElementById(
+		'wpessential-taxonomy-diagnostics'
+	);
+	if ( existing instanceof HTMLElement ) {
+		return existing;
+	}
+
+	const validation = document.getElementById(
+		'wpessential-taxonomy-validation'
+	);
+	if ( ! ( validation instanceof HTMLElement ) ) {
+		return null;
+	}
+
+	const panel = document.createElement( 'section' );
+	panel.id = 'wpessential-taxonomy-diagnostics';
+	panel.className = 'wpessential-cpt-validation';
+	panel.hidden = true;
+	panel.setAttribute(
+		'aria-labelledby',
+		'wpessential-taxonomy-diagnostics-title'
+	);
+	panel.setAttribute( 'aria-live', 'polite' );
+
+	const heading = document.createElement( 'h3' );
+	heading.id = 'wpessential-taxonomy-diagnostics-title';
+	heading.textContent = 'Diagnostics preview';
+	const intro = document.createElement( 'p' );
+	intro.textContent =
+		'Read-only effective runtime state compiled by the canonical Taxonomy definition. Nothing in this panel changes WordPress.';
+
+	const summary = document.createElement( 'dl' );
+	summary.dataset.wpessentialTaxonomyDiagnosticsSummary = '';
+	createDiagnosticsValue( summary, 'Runtime registration', 'runtime' );
+	createDiagnosticsValue( summary, 'REST route', 'rest-route' );
+	createDiagnosticsValue( summary, 'Rewrite preview', 'rewrite-path' );
+	createDiagnosticsValue( summary, 'Runtime providers', 'providers' );
+
+	const associationHeading = document.createElement( 'h4' );
+	associationHeading.textContent = 'Association health';
+	const associations = document.createElement( 'ul' );
+	associations.dataset.wpessentialTaxonomyAssociationHealth = '';
+
+	const effective = document.createElement( 'details' );
+	effective.open = true;
+	const effectiveSummary = document.createElement( 'summary' );
+	effectiveSummary.textContent = 'Effective register_taxonomy() arguments';
+	const effectiveArgs = document.createElement( 'pre' );
+	effectiveArgs.dataset.wpessentialTaxonomyEffectiveArgs = '';
+	effective.append( effectiveSummary, effectiveArgs );
+
+	const overrides = document.createElement( 'details' );
+	const overridesSummary = document.createElement( 'summary' );
+	overridesSummary.textContent = 'Explicit overrides';
+	const overrideArgs = document.createElement( 'pre' );
+	overrideArgs.dataset.wpessentialTaxonomyOverrides = '';
+	overrides.append( overridesSummary, overrideArgs );
+
+	panel.append(
+		heading,
+		intro,
+		summary,
+		associationHeading,
+		associations,
+		effective,
+		overrides
+	);
+	validation.insertAdjacentElement( 'afterend', panel );
+	return panel;
+}
+
+function clearDiagnostics(): void {
+	const panel = document.getElementById( 'wpessential-taxonomy-diagnostics' );
+	if ( ! ( panel instanceof HTMLElement ) ) {
+		return;
+	}
+
+	panel.hidden = true;
+	for ( const name of [ 'runtime', 'rest-route', 'rewrite-path', 'providers' ] ) {
+		const value = diagnosticsValue( panel, name );
+		if ( value ) {
+			value.textContent = '';
+		}
+	}
+	const associations = panel.querySelector(
+		'[data-wpessential-taxonomy-association-health]'
+	);
+	if ( associations instanceof HTMLElement ) {
+		associations.replaceChildren();
+	}
+	const effective = panel.querySelector(
+		'[data-wpessential-taxonomy-effective-args]'
+	);
+	if ( effective instanceof HTMLElement ) {
+		effective.textContent = '';
+	}
+	const overrides = panel.querySelector(
+		'[data-wpessential-taxonomy-overrides]'
+	);
+	if ( overrides instanceof HTMLElement ) {
+		overrides.textContent = '';
+	}
+}
+
+function diagnosticString(
+	record: RecordValue,
+	key: string,
+	fallback: string
+): string {
+	const value = record[ key ];
+	return typeof value === 'string' && value !== '' ? value : fallback;
+}
+
+function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
+	if ( diagnostics === null ) {
+		clearDiagnostics();
+		return;
+	}
+
+	const panel = ensureDiagnosticsPanel();
+	if ( ! panel ) {
+		return;
+	}
+
+	const runtime = diagnosticsValue( panel, 'runtime' );
+	if ( runtime ) {
+		runtime.textContent =
+			diagnostics.runtime.registered === null
+				? 'Unavailable'
+				: diagnostics.runtime.registered
+					? 'Registered'
+					: 'Not registered';
+	}
+	const restRoute = diagnosticsValue( panel, 'rest-route' );
+	if ( restRoute ) {
+		restRoute.textContent = diagnosticString(
+			diagnostics.previews.rest,
+			'route',
+			'Disabled'
+		);
+	}
+	const rewritePath = diagnosticsValue( panel, 'rewrite-path' );
+	if ( rewritePath ) {
+		rewritePath.textContent = diagnosticString(
+			diagnostics.previews.rewrite,
+			'path_pattern',
+			'Disabled'
+		);
+	}
+	const providers = diagnosticsValue( panel, 'providers' );
+	if ( providers ) {
+		const entries = Object.entries( diagnostics.provider_ids );
+		providers.textContent =
+			entries.length === 0
+				? 'WordPress defaults'
+				: entries
+						.map( ( [ slot, providerId ] ) => `${ slot }: ${ providerId }` )
+						.join( ', ' );
+	}
+
+	const associations = panel.querySelector(
+		'[data-wpessential-taxonomy-association-health]'
+	);
+	if ( associations instanceof HTMLElement ) {
+		associations.replaceChildren();
+		if ( diagnostics.association_health.length === 0 ) {
+			const empty = document.createElement( 'li' );
+			empty.textContent = 'No object-type associations selected.';
+			associations.append( empty );
+		} else {
+			for ( const association of diagnostics.association_health ) {
+				const item = document.createElement( 'li' );
+				item.dataset.wpessentialTaxonomyAssociationState = association.state;
+				const canonical =
+					association.canonical_status === null
+						? ''
+						: `; canonical ${ association.canonical_status }`;
+				item.textContent = `${ association.key }: ${ association.state }${ canonical }`;
+				associations.append( item );
+			}
+		}
+	}
+
+	const effective = panel.querySelector(
+		'[data-wpessential-taxonomy-effective-args]'
+	);
+	if ( effective instanceof HTMLElement ) {
+		effective.textContent = JSON.stringify(
+			diagnostics.effective_args,
+			null,
+			2
+		);
+	}
+	const overrides = panel.querySelector(
+		'[data-wpessential-taxonomy-overrides]'
+	);
+	if ( overrides instanceof HTMLElement ) {
+		overrides.textContent = JSON.stringify( diagnostics.overrides, null, 2 );
+	}
+	panel.hidden = false;
+}
+
 function clearValidation(): void {
 	const report = document.getElementById( 'wpessential-taxonomy-validation' );
 	if ( report instanceof HTMLElement ) {
@@ -273,6 +591,7 @@ function clearValidation(): void {
 			'notice-success'
 		);
 	}
+	clearDiagnostics();
 }
 
 function renderValidation( report: ValidationReport ): void {
@@ -332,6 +651,7 @@ function renderValidation( report: ValidationReport ): void {
 		'notice-success',
 		report.valid && report.issues.length === 0
 	);
+	renderDiagnostics( report.diagnostics );
 }
 
 async function postRoute(
@@ -819,6 +1139,7 @@ function boot(): void {
 		} );
 	} );
 
+	ensureDiagnosticsPanel();
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
 	root.dataset.wpessentialEnhanced = 'ready';
