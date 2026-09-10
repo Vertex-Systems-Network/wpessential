@@ -200,11 +200,14 @@ final class TaxonomyAdminController
         echo '<div class="wpessential-cpt-grid" data-wpessential-taxonomy-label-fields>';
         foreach ($this->labelFields() as $key => $label) {
             $id = 'wpessential-taxonomy-label-' . str_replace('_', '-', $key);
+            $stateId = $id . '-state';
+            $generationMode = TaxonomyLabelPolicy::generationMode($key);
+            $resetLabel = sprintf(__('Reset %s', 'wpessential'), $label);
             echo '<p data-wpessential-taxonomy-label-row="' . esc_attr($key) . '">';
             echo '<label for="' . esc_attr($id) . '"><strong>' . esc_html($label) . '</strong> <code>' . esc_html($key) . '</code></label><br>';
-            echo '<input class="regular-text" type="text" id="' . esc_attr($id) . '" data-wpessential-taxonomy-label-field="' . esc_attr($key) . '"> ';
-            echo '<button type="button" class="button-link" data-wpessential-taxonomy-label-reset="' . esc_attr($key) . '">' . esc_html__('Reset', 'wpessential') . '</button><br>';
-            echo '<span class="description" data-wpessential-taxonomy-label-state="' . esc_attr($key) . '"></span>';
+            echo '<input class="regular-text" type="text" id="' . esc_attr($id) . '" data-wpessential-taxonomy-label-field="' . esc_attr($key) . '" data-wpessential-taxonomy-label-generation="' . esc_attr($generationMode) . '" aria-describedby="' . esc_attr($stateId) . '"> ';
+            echo '<button type="button" class="button-link" data-wpessential-taxonomy-label-reset="' . esc_attr($key) . '" aria-controls="' . esc_attr($id) . '" aria-label="' . esc_attr($resetLabel) . '">' . esc_html__('Reset', 'wpessential') . '</button><br>';
+            echo '<span id="' . esc_attr($stateId) . '" class="description" data-wpessential-taxonomy-label-state="' . esc_attr($key) . '"></span>';
             echo '</p>';
         }
         echo '</div>';
@@ -215,7 +218,7 @@ final class TaxonomyAdminController
     /** @return array<string,string> */
     private function labelFields(): array
     {
-        return [
+        $labels = [
             'menu_name' => __('Menu name', 'wpessential'),
             'search_items' => __('Search items', 'wpessential'),
             'popular_items' => __('Popular items', 'wpessential'),
@@ -245,6 +248,12 @@ final class TaxonomyAdminController
             'item_link' => __('Item link', 'wpessential'),
             'item_link_description' => __('Item link description', 'wpessential'),
         ];
+
+        $ordered = [];
+        foreach (TaxonomyLabelPolicy::overrideKeys() as $key) {
+            $ordered[$key] = $labels[$key] ?? ucwords(str_replace('_', ' ', $key));
+        }
+        return $ordered;
     }
 
     /** @param list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $objectTypes */
