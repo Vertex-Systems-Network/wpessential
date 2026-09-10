@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 13, "key": "dashboard", "name": "Frontend Dashboard"},
+  "snapshot": {"date": "2026-09-10", "native_sources": [], "market_sources": []},
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"dashboard.identity.route","feature_group":"Identity","option_path":"identity.route","label":"Dashboard identity route and host","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"dashboard.access.policy","feature_group":"Access","option_path":"access.policy","label":"Login role membership and capability access policy","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","security_hint":"privileged","research_state":"UNVERIFIED"},
+    {"id":"dashboard.navigation.tree","feature_group":"Navigation","option_path":"navigation.tree","label":"Navigation groups and endpoint tree","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"dashboard.endpoint.type","feature_group":"Endpoints","option_path":"endpoint.type","label":"Canonical endpoint type","classification":"WPE_HARD","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"dashboard.content.ownership","feature_group":"Content","option_path":"content.ownership_policy","label":"User content ownership and permissions","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","security_hint":"privileged","research_state":"UNVERIFIED"},
+    {"id":"dashboard.presentation.layout","feature_group":"Presentation","option_path":"presentation.layout","label":"Responsive dashboard layout","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P2_COMPETITIVE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"dashboard.integration.references","feature_group":"Integrations","option_path":"integration.references","label":"Profile Forms Listings Membership and Documents references","classification":"COMPATIBILITY","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Expert","research_state":"UNVERIFIED"},
+    {"id":"dashboard.accessibility.navigation","feature_group":"Accessibility","option_path":"accessibility.navigation","label":"Landmarks focus and keyboard navigation","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"System","research_state":"UNVERIFIED"}
+  ],
+  "coverage": {"records": 8, "unreviewed": 8, "adopted_or_classified": 0, "notes":"Initial normalized seed; all records remain unreviewed pending native and market evidence."}
+}
