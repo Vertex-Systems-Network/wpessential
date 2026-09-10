@@ -102,9 +102,7 @@ function visibilityValue( value: string ): boolean | undefined {
 	return undefined;
 }
 
-function visibilitySelectValue(
-	value: unknown
-): 'true' | 'false' | 'inherit' {
+function visibilitySelectValue( value: unknown ): 'true' | 'false' | 'inherit' {
 	if ( value === true ) {
 		return 'true';
 	}
@@ -423,7 +421,9 @@ function ensureRuntimeDefaults(): void {
 	if ( document.getElementById( RUNTIME_DEFAULTS_ID ) ) {
 		return;
 	}
-	const expert = document.getElementById( 'wpessential-taxonomy-tier-expert' );
+	const expert = document.getElementById(
+		'wpessential-taxonomy-tier-expert'
+	);
 	if ( ! ( expert instanceof HTMLElement ) ) {
 		return;
 	}
