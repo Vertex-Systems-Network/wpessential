@@ -7,6 +7,11 @@ type TaxonomySettingEntry = {
 	searchText: string;
 };
 
+type SelectOption = {
+	value: string;
+	label: string;
+};
+
 const OPTIONAL_VISIBILITY_FIELDS = [
 	{
 		field: 'show_ui',
@@ -43,10 +48,24 @@ const TIER_RANK: Record< TaxonomyTier, number > = {
 const SETTING_SEARCH_ID = 'wpessential-taxonomy-find-setting';
 const SETTING_SEARCH_RESULTS_ID = 'wpessential-taxonomy-setting-results';
 const SETTING_SEARCH_STATUS_ID = 'wpessential-taxonomy-setting-search-status';
+const RUNTIME_DEFAULTS_ID = 'wpessential-taxonomy-runtime-defaults';
+const DEFAULT_TERM_NAME_ID = 'wpessential-taxonomy-default-term-name';
+const DEFAULT_TERM_SLUG_ID = 'wpessential-taxonomy-default-term-slug';
+const DEFAULT_TERM_DESCRIPTION_ID =
+	'wpessential-taxonomy-default-term-description';
+const SORT_ID = 'wpessential-taxonomy-sort';
+const ARGS_ORDERBY_ID = 'wpessential-taxonomy-args-orderby';
+const ARGS_ORDER_ID = 'wpessential-taxonomy-args-order';
+const ARGS_FIELDS_ID = 'wpessential-taxonomy-args-fields';
 
 function selectInput( id: string ): HTMLSelectElement | null {
 	const element = document.getElementById( id );
 	return element instanceof HTMLSelectElement ? element : null;
+}
+
+function textInput( id: string ): HTMLInputElement | null {
+	const element = document.getElementById( id );
+	return element instanceof HTMLInputElement ? element : null;
 }
 
 function isTier( value: string | undefined ): value is TaxonomyTier {
@@ -70,7 +89,7 @@ function tierStatusMessage( tier: TaxonomyTier ): string {
 	if ( tier === 'advanced' ) {
 		return 'Essential and Advanced controls are shown. Stored Expert values remain preserved.';
 	}
-	return 'Essential, Advanced and currently promoted Expert information are shown.';
+	return 'Essential, Advanced and currently promoted Expert controls are shown.';
 }
 
 function visibilityValue( value: string ): boolean | undefined {
@@ -83,7 +102,9 @@ function visibilityValue( value: string ): boolean | undefined {
 	return undefined;
 }
 
-function visibilitySelectValue( value: unknown ): 'true' | 'false' | 'inherit' {
+function visibilitySelectValue(
+	value: unknown
+): 'true' | 'false' | 'inherit' {
 	if ( value === true ) {
 		return 'true';
 	}
@@ -333,6 +354,268 @@ function bindTaxonomySettingSearch(): void {
 	resetTaxonomySettingSearch();
 }
 
+function appendTextField(
+	container: HTMLElement,
+	id: string,
+	labelText: string,
+	help: string,
+	placeholder = ''
+): void {
+	const paragraph = document.createElement( 'p' );
+	const label = document.createElement( 'label' );
+	label.htmlFor = id;
+	const strong = document.createElement( 'strong' );
+	strong.textContent = labelText;
+	label.append( strong );
+	const input = document.createElement( 'input' );
+	input.type = 'text';
+	input.id = id;
+	input.className = 'regular-text';
+	input.placeholder = placeholder;
+	const description = document.createElement( 'span' );
+	description.className = 'description';
+	description.textContent = help;
+	paragraph.append(
+		label,
+		document.createElement( 'br' ),
+		input,
+		document.createElement( 'br' ),
+		description
+	);
+	container.append( paragraph );
+}
+
+function appendSelectField(
+	container: HTMLElement,
+	id: string,
+	labelText: string,
+	help: string,
+	options: SelectOption[]
+): void {
+	const paragraph = document.createElement( 'p' );
+	const label = document.createElement( 'label' );
+	label.htmlFor = id;
+	const strong = document.createElement( 'strong' );
+	strong.textContent = labelText;
+	label.append( strong );
+	const select = document.createElement( 'select' );
+	select.id = id;
+	for ( const option of options ) {
+		const element = document.createElement( 'option' );
+		element.value = option.value;
+		element.textContent = option.label;
+		select.append( element );
+	}
+	const description = document.createElement( 'span' );
+	description.className = 'description';
+	description.textContent = help;
+	paragraph.append(
+		label,
+		document.createElement( 'br' ),
+		select,
+		document.createElement( 'br' ),
+		description
+	);
+	container.append( paragraph );
+}
+
+function ensureRuntimeDefaults(): void {
+	if ( document.getElementById( RUNTIME_DEFAULTS_ID ) ) {
+		return;
+	}
+	const expert = document.getElementById( 'wpessential-taxonomy-tier-expert' );
+	if ( ! ( expert instanceof HTMLElement ) ) {
+		return;
+	}
+
+	const section = document.createElement( 'section' );
+	section.id = RUNTIME_DEFAULTS_ID;
+	section.setAttribute(
+		'aria-labelledby',
+		'wpessential-taxonomy-runtime-defaults-title'
+	);
+	const heading = document.createElement( 'h4' );
+	heading.id = 'wpessential-taxonomy-runtime-defaults-title';
+	heading.textContent = 'Bounded runtime defaults';
+	const intro = document.createElement( 'p' );
+	intro.className = 'description';
+	intro.textContent =
+		'These controls author only existing canonical Taxonomy fields. Blank or Default values remove the authored override. Term ordering itself remains owned by Content Order.';
+	section.append( heading, intro );
+
+	appendTextField(
+		section,
+		DEFAULT_TERM_NAME_ID,
+		'Default term name',
+		'Optional. WordPress may create this term when the taxonomy is registered. A name is required whenever default-term details are authored.',
+		'General'
+	);
+	appendTextField(
+		section,
+		DEFAULT_TERM_SLUG_ID,
+		'Default term slug',
+		'Optional lowercase machine slug for the default term.',
+		'general'
+	);
+	appendTextField(
+		section,
+		DEFAULT_TERM_DESCRIPTION_ID,
+		'Default term description',
+		'Optional description stored with the default term.'
+	);
+	appendSelectField(
+		section,
+		SORT_ID,
+		'Preserve object-term sort order',
+		'Default removes the authored sort key. This does not create a persistent term-ordering engine.',
+		[
+			{ value: 'inherit', label: 'Default / disabled' },
+			{ value: 'true', label: 'Enabled' },
+			{ value: 'false', label: 'Explicitly disabled' },
+		]
+	);
+	appendSelectField(
+		section,
+		ARGS_ORDERBY_ID,
+		'Object-term order by',
+		'Optional allowlisted wp_get_object_terms() ordering field.',
+		[
+			{ value: '', label: 'Default' },
+			{ value: 'name', label: 'Name' },
+			{ value: 'slug', label: 'Slug' },
+			{ value: 'term_group', label: 'Term group' },
+			{ value: 'term_id', label: 'Term ID' },
+			{ value: 'id', label: 'ID' },
+			{ value: 'description', label: 'Description' },
+			{ value: 'parent', label: 'Parent' },
+			{ value: 'term_order', label: 'Term order' },
+			{ value: 'count', label: 'Count' },
+			{ value: 'include', label: 'Include order' },
+			{ value: 'none', label: 'None' },
+		]
+	);
+	appendSelectField(
+		section,
+		ARGS_ORDER_ID,
+		'Object-term order direction',
+		'Optional direction used only with the bounded object-term argument map.',
+		[
+			{ value: '', label: 'Default' },
+			{ value: 'ASC', label: 'Ascending' },
+			{ value: 'DESC', label: 'Descending' },
+		]
+	);
+	appendSelectField(
+		section,
+		ARGS_FIELDS_ID,
+		'Object-term fields mode',
+		'Optional allowlisted result shape for wp_get_object_terms().',
+		[
+			{ value: '', label: 'Default' },
+			{ value: 'all', label: 'All term objects' },
+			{ value: 'all_with_object_id', label: 'All with object ID' },
+			{ value: 'ids', label: 'Term IDs' },
+			{ value: 'tt_ids', label: 'Term taxonomy IDs' },
+			{ value: 'names', label: 'Names' },
+			{ value: 'slugs', label: 'Slugs' },
+		]
+	);
+
+	expert.append( section );
+}
+
+function defaultTermFromInputs(): RecordValue | undefined {
+	const name = textInput( DEFAULT_TERM_NAME_ID )?.value.trim() ?? '';
+	const slug = textInput( DEFAULT_TERM_SLUG_ID )?.value.trim() ?? '';
+	const description =
+		textInput( DEFAULT_TERM_DESCRIPTION_ID )?.value.trim() ?? '';
+	if ( name === '' && slug === '' && description === '' ) {
+		return undefined;
+	}
+
+	const value: RecordValue = { name };
+	if ( slug !== '' ) {
+		value.slug = slug;
+	}
+	if ( description !== '' ) {
+		value.description = description;
+	}
+	return value;
+}
+
+function objectTermArgsFromInputs(): RecordValue | undefined {
+	const orderby = selectInput( ARGS_ORDERBY_ID )?.value ?? '';
+	const order = selectInput( ARGS_ORDER_ID )?.value ?? '';
+	const fields = selectInput( ARGS_FIELDS_ID )?.value ?? '';
+	if ( orderby === '' && order === '' && fields === '' ) {
+		return undefined;
+	}
+
+	const value: RecordValue = {};
+	if ( orderby !== '' ) {
+		value.orderby = orderby;
+	}
+	if ( order !== '' ) {
+		value.order = order;
+	}
+	if ( fields !== '' ) {
+		value.fields = fields;
+	}
+	return value;
+}
+
+function setTextValue( id: string, value: unknown ): void {
+	const input = textInput( id );
+	if ( input ) {
+		input.value = typeof value === 'string' ? value : '';
+	}
+}
+
+function setSelectValue( id: string, value: unknown ): void {
+	const input = selectInput( id );
+	if ( input ) {
+		input.value = typeof value === 'string' ? value : '';
+	}
+}
+
+function setRuntimeDefaults( payload: RecordValue ): void {
+	const defaultTerm = isRecord( payload.default_term )
+		? payload.default_term
+		: {};
+	setTextValue( DEFAULT_TERM_NAME_ID, defaultTerm.name );
+	setTextValue( DEFAULT_TERM_SLUG_ID, defaultTerm.slug );
+	setTextValue( DEFAULT_TERM_DESCRIPTION_ID, defaultTerm.description );
+
+	const args = isRecord( payload.args ) ? payload.args : {};
+	setSelectValue( ARGS_ORDERBY_ID, args.orderby );
+	setSelectValue( ARGS_ORDER_ID, args.order );
+	setSelectValue( ARGS_FIELDS_ID, args.fields );
+
+	const sort = selectInput( SORT_ID );
+	if ( sort ) {
+		sort.value = visibilitySelectValue( payload.sort );
+	}
+}
+
+function resetRuntimeDefaults(): void {
+	setTextValue( DEFAULT_TERM_NAME_ID, '' );
+	setTextValue( DEFAULT_TERM_SLUG_ID, '' );
+	setTextValue( DEFAULT_TERM_DESCRIPTION_ID, '' );
+	setSelectValue( ARGS_ORDERBY_ID, '' );
+	setSelectValue( ARGS_ORDER_ID, '' );
+	setSelectValue( ARGS_FIELDS_ID, '' );
+	const sort = selectInput( SORT_ID );
+	if ( sort ) {
+		sort.value = 'inherit';
+	}
+}
+
+function isRecord( value: unknown ): value is RecordValue {
+	return (
+		typeof value === 'object' && value !== null && ! Array.isArray( value )
+	);
+}
+
 export function setTaxonomyTier( tier: TaxonomyTier ): void {
 	for ( const button of Array.from(
 		document.querySelectorAll< HTMLButtonElement >(
@@ -369,6 +652,9 @@ export function collectTaxonomyVisibility(): RecordValue {
 		const value = selectInput( option.id )?.value ?? 'inherit';
 		result[ option.field ] = visibilityValue( value );
 	}
+	result.default_term = defaultTermFromInputs();
+	result.args = objectTermArgsFromInputs();
+	result.sort = visibilityValue( selectInput( SORT_ID )?.value ?? 'inherit' );
 	return result;
 }
 
@@ -380,6 +666,7 @@ export function setTaxonomyVisibility( payload: RecordValue ): void {
 		}
 		input.value = visibilitySelectValue( payload[ option.field ] );
 	}
+	setRuntimeDefaults( payload );
 	updateInheritanceStates();
 }
 
@@ -390,12 +677,14 @@ export function resetTaxonomyVisibility(): void {
 			input.value = 'inherit';
 		}
 	}
+	resetRuntimeDefaults();
 	updateInheritanceStates();
 	setTaxonomyTier( 'essential' );
 	resetTaxonomySettingSearch();
 }
 
 export function bindTaxonomyVisibility(): void {
+	ensureRuntimeDefaults();
 	for ( const button of Array.from(
 		document.querySelectorAll< HTMLButtonElement >(
 			'[data-wpessential-taxonomy-tier]'
