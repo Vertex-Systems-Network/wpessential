@@ -95,23 +95,36 @@ Promoted after six applicable exact-head workflows passed:
 - packaged Playwright coverage drives the existing Hierarchical editor control through server-authoritative validation and proves the effective args switch between category-like and tag-like label families;
 - no new mutation route, callback/class input, DOM compiler or secondary runtime owner was introduced.
 
-### Reviewed label-authoring UX slice — current #474 branch
+### Reviewed label-authoring UX slice — merged PR #489
 
-Current bounded implementation, pending its own exact-head promotion gates:
+Promoted after all six applicable exact-head workflows passed:
 
 - the editor renders a collapsed-by-default `Customize labels` section with the complete reviewed 28-label override inventory;
 - a reviewed `Generate adaptive labels automatically` toggle authors only the typed canonical `automatic_labels` field;
-- per-label state is explicit as `Generated`, `WordPress default`, or `Explicit override` without attempting to duplicate server label compilation in the browser;
+- per-label state is explicit as `Generated`, `WordPress default`, or `Explicit override` without duplicating server label compilation in the browser;
 - per-label reset and reset-all clear authored overrides and reuse the existing form change path so stale validation/diagnostics are removed;
 - edit hydration preserves and exposes stored `automatic_labels` plus explicit label overrides; create/reset returns to adaptive generation enabled with zero explicit overrides;
 - exact generated values continue to come only from server-authoritative Validate diagnostics and the canonical projector;
-- the existing save/validate/status Ability, Policy, revision and CAS routes remain unchanged;
-- packaged Playwright evidence exercises collapsed/default state, hierarchy family preview, explicit override validation, reset-one/reset-all, adaptive opt-out, create/edit hydration, post-reset effective args and the open label editor with axe accessibility analysis;
-- durable label reset persistence is enforced separately in real WordPress 7.1 + MySQL 8.4 validation evidence through canonical create → `expected_revision=1` CAS update → revision 2 read-back with `automatic_labels=false` and an empty labels map;
-- WordPress Playground uses the repository's intentional SQLite/in-memory Definition fallback, so browser evidence does not claim cross-request Definition durability;
-- no raw callbacks/classes, HTML injection, alternate Definition store or new mutation route are added.
+- packaged Playwright evidence exercises collapsed/default state, hierarchy family preview, explicit override validation, reset-one/reset-all, adaptive opt-out, create/edit hydration, post-reset effective args and axe accessibility;
+- durable label reset persistence is enforced separately in real WordPress 7.1 + MySQL 8.4 evidence through canonical create → `expected_revision=1` CAS update → revision 2 read-back with `automatic_labels=false` and an empty labels map;
+- WordPress Playground's SQLite/in-memory Definition fallback is not misrepresented as cross-request durability;
+- no raw callbacks/classes, HTML injection, alternate Definition store or new mutation route were added.
 
-This slice completes the reviewed Labels-family authoring surface only if its exact-head CI and browser/accessibility evidence pass. It does not complete the broader Essential/Advanced/Expert editor or certify runtime/product parity.
+### Tier navigation + native visibility inheritance slice — current #474 branch
+
+Current bounded implementation, pending exact-head promotion gates:
+
+- adds keyboard-reachable native button controls for Essential / Advanced / Expert disclosure without changing authorization;
+- Essential is the default tier; Advanced and Expert sections are progressively revealed while stored hidden values remain preserved;
+- authors the existing canonical optional booleans `show_ui`, `publicly_queryable`, `show_in_menu`, `show_in_nav_menus`, `show_tagcloud` and `show_in_quick_edit` through explicit `Default / inherit`, `Enabled`, and `Disabled` choices;
+- `Default / inherit` removes the optional key from the outgoing JSON payload so WordPress/projector inheritance remains authoritative instead of materializing guessed values;
+- source state is visible as `Default / inherited`, `Explicit: enabled`, or `Explicit: disabled`;
+- no secondary visibility compiler is added: Validate diagnostics continue to prove the canonical projector's effective `register_taxonomy()` arguments;
+- packaged Playwright coverage exercises tier state, hidden-value preservation, explicit/inherited source state, effective-args inclusion/omission and axe accessibility with the Expert boundary visible;
+- Expert disclosure is informational in this slice; provider selectors, portability and key-migration execution are not silently introduced;
+- dormant-parent diagnostics beyond preservation of stored explicit values remain a later UX gap.
+
+This slice does not complete broader Advanced/Expert option authoring and does not certify runtime/product parity.
 
 ## Atomic contract gap status
 
@@ -122,12 +135,12 @@ This slice completes the reviewed Labels-family authoring surface only if its ex
 | `taxonomy.definition.lifecycle` | **BASELINE PRESENT / UX PARTIAL** | Status UI and status Ability exist. Prove revision history/diff and deeper dependency behavior across lifecycle states. |
 | `taxonomy.definition.object_types` | **BASELINE PRESENT / HEALTH UI PROMOTED** | Canonical list + external-key preservation exist; promoted diagnostics classify and render association health. Search/grouping and deeper dependency impact remain. |
 | `taxonomy.diagnostics.association_health` | **PROMOTED BACKEND + UI** | Backend health classification and read-only admin rendering are promoted through PRs #480/#483 with packaged browser + axe evidence. Deeper dependency-impact UX remains. |
-| `taxonomy.labels.overrides` | **CURRENT SLICE — COMPLETE REVIEWED EDITOR PENDING CI** | All reviewed override fields, explicit-state display, reset-one/reset-all, create/edit hydration and reset-effective-args behavior are implemented on the active branch. Durable opt-out/reset persistence is enforced by real WordPress 7.1 + MySQL 8.4 CAS evidence; promotion still requires exact-head browser/accessibility + regression gates. |
-| `taxonomy.labels.autogenerate` | **RUNTIME PROMOTED / AUTHORING UX CURRENT SLICE PENDING CI** | PR #486 promoted hierarchy-aware runtime generation. The active branch adds the reviewed toggle, Generated/WordPress-default/Explicit states and reset semantics while exact values remain server-authoritative. |
-| `taxonomy.visibility.policy` | **BASELINE PRESENT** | Native values compile. Add inherited/default/explicit/dormant UI semantics and full browser tests. |
-| `taxonomy.rewrite.policy` | **BASELINE PRESENT / PREVIEW UI PROMOTED** | Structured rewrite/query_var compile and promoted diagnostics compute/render a read-only path preview. Reserved/collision diagnostics and controlled rewrite-flush evidence remain. |
+| `taxonomy.labels.overrides` | **PROMOTED REVIEWED AUTHORING UX** | PR #489 promotes all reviewed override fields, source-state display, reset-one/reset-all, create/edit hydration, reset-effective-args behavior and separate MySQL CAS persistence evidence. |
+| `taxonomy.labels.autogenerate` | **PROMOTED RUNTIME + AUTHORING UX** | PR #486 promotes hierarchy-aware runtime generation and PR #489 promotes the reviewed authoring toggle/source/reset semantics while exact values remain server-authoritative. |
+| `taxonomy.visibility.policy` | **CURRENT SLICE — NATIVE INHERITANCE UX PENDING CI** | Native values already compile. Current branch adds tiered authoring and truthful optional-key inheritance/explicit semantics with packaged browser/axe evidence; dormant-parent diagnostics and other visibility help remain later gaps. |
+| `taxonomy.rewrite.policy` | **BASELINE PRESENT / PREVIEW UI PROMOTED** | Structured rewrite/query_var compile and promoted diagnostics compute/render a read-only path preview. Full editor controls, reserved/collision diagnostics and controlled rewrite-flush evidence remain. |
 | `taxonomy.permissions.capabilities` | **BASELINE PRESENT** | Four native capability names compile. Add effective map, role-impact read model, lockout diagnostics and reset UX; Roles remains grant owner. |
-| `taxonomy.rest.policy` | **PROVIDER-ID PATH + PREVIEW UI PROMOTED** | REST exposure/base/namespace and allowlisted controller IDs compile; diagnostics provide and render route preview. Route-collision/block-editor diagnostics remain. |
+| `taxonomy.rest.policy` | **PROVIDER-ID PATH + PREVIEW UI PROMOTED** | REST exposure/base/namespace and allowlisted controller IDs compile; diagnostics provide and render route preview. Full authoring controls and route-collision/block-editor diagnostics remain. |
 | `taxonomy.default_term.policy` | **BASELINE PRESENT** | Typed default-term projection merged in PR #478. Full editor/help/reset and deeper WordPress behavior evidence remain. |
 | `taxonomy.runtime.term_query_policy` | **BOUNDED BASELINE PRESENT** | `sort` plus allowlisted `orderby`/`order`/`fields` defaults compile. Add cost/help UX and ownership guidance with Content Order. |
 | `taxonomy.providers.editor` | **PROVIDER-ID RUNTIME PATH PRESENT / UX MISSING** | Shared trusted registry + JSON-safe meta-box/sanitizer IDs + runtime resolution promoted in PR #479. Provider selector/health UX remains. |
@@ -140,23 +153,23 @@ This slice completes the reviewed Labels-family authoring surface only if its ex
 
 ## UX gap summary
 
-Current admin UI is a safe baseline with promoted read-only diagnostics and promoted adaptive-label runtime. The active slice implements the reviewed Labels authoring family, pending exact-head promotion evidence.
+Promoted UX now includes read-only diagnostics, adaptive labels and the reviewed complete Labels-family authoring controls. The current slice adds the first broader tiered editor behavior and native visibility inheritance controls, pending exact-head promotion evidence.
 
-Remaining UX families after this label slice include:
+Remaining UX families after the current slice include:
 
-- Essential / Advanced / Expert modes and keyboard-reachable tier navigation;
-- inheritance/default/dormant badges beyond the Labels family;
-- complete visibility controls;
-- rewrite/REST collision and dependency diagnostics beyond the current previews;
-- capabilities editor/effective map;
+- dormant-parent state diagnostics beyond preserved stored values;
+- rewrite/query-var authoring and collision/help UX beyond current previews;
+- REST authoring controls and collision/block-editor diagnostics;
+- capabilities editor/effective map/lockout diagnostics;
 - default-term editor;
-- controlled provider selectors;
-- term-query defaults;
+- controlled provider selectors and health/compatibility UX;
+- bounded term-query defaults authoring;
 - Find Setting search;
-- reset field/section/all outside the Labels family;
+- reset field/section/all outside the Labels/current visibility families;
+- deeper object-type search/grouping and dependency impact;
 - guarded key-migration wizard;
 - portability/compatibility workflows;
-- browser/accessibility evidence for the complete reviewed contract beyond the promoted diagnostics/Labels surfaces.
+- browser/accessibility evidence for the remaining reviewed contract.
 
 ## Cross-surface ownership constraints
 
@@ -174,9 +187,9 @@ Taxonomy owns the Definition and its native registration semantics; integrations
 
 ## Remaining implementation lane shape
 
-After the current reviewed label-authoring slice promotes, Runtime Gap Closure remains dependency-safe:
+After the current tier/visibility slice promotes, Runtime Gap Closure remains dependency-safe:
 
-1. **Broader tiered editor + complete option UX** — Essential/Advanced/Expert navigation, inheritance/search/help, visibility policy, provider selectors, default term, capabilities and bounded term-query controls.
+1. **Remaining Advanced/Expert option UX** — rewrite/query-var, REST, capabilities, default term, controlled providers, bounded term-query controls, Find Setting/help and deeper dependency/dormant diagnostics.
 2. **Portability & Compatibility** — declarative Definition import/export + CPT UI adapter with revision/CAS conflict reporting.
 3. **Guarded Key Migration** — separately safety-gated planning/workflow with dry-run, dependency impact and recovery evidence; destructive term mutation remains unauthorized without an explicit later gate.
 4. **Runtime certification audit** — exact-head PHP/architecture/WordPress runtime/browser/accessibility/security/compatibility/portability/performance evidence and explicit remaining-gap zeroing before any `RUNTIME_CERTIFIED` promotion.
