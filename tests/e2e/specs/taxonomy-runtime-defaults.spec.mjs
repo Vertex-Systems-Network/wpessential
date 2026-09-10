@@ -130,6 +130,7 @@ test('packaged Taxonomy Expert UX authors, resets and searches bounded runtime d
     },
   });
 
+  await page.getByText('Explicit overrides', { exact: true }).click();
   const authored = await diagnosticJson(
     page,
     '[data-wpessential-taxonomy-overrides]',
