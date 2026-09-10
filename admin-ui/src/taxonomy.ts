@@ -5,6 +5,12 @@ import {
 	resetTaxonomyLabels,
 	setTaxonomyLabels,
 } from './taxonomy-labels';
+import {
+	bindTaxonomyVisibility,
+	collectTaxonomyVisibility,
+	resetTaxonomyVisibility,
+	setTaxonomyVisibility,
+} from './taxonomy-visibility';
 
 type RecordValue = Record< string, unknown >;
 type TaxonomyPayload = RecordValue;
@@ -857,6 +863,7 @@ function resetForm(): void {
 	}
 	setObjectTypes( [ 'post' ] );
 	resetTaxonomyLabels();
+	resetTaxonomyVisibility();
 	const status = selectInput( 'wpessential-taxonomy-status' );
 	if ( status ) {
 		status.value = 'draft';
@@ -908,6 +915,7 @@ function editDefinition( definition: TaxonomyDefinition ): void {
 		definition.payload.show_admin_column
 	);
 	setTaxonomyLabels( definition.payload );
+	setTaxonomyVisibility( definition.payload );
 	const status = selectInput( 'wpessential-taxonomy-status' );
 	if ( status ) {
 		status.value = definition.status;
@@ -948,6 +956,7 @@ function collectEditor( definitions: TaxonomyDefinition[] ): EditorRequest {
 			singular_name: fieldValue( 'singular_name' ),
 			description: fieldValue( 'description' ),
 			...collectTaxonomyLabels(),
+			...collectTaxonomyVisibility(),
 			public: boolInput( 'wpessential-taxonomy-public' ),
 			show_in_rest: boolInput( 'wpessential-taxonomy-rest' ),
 			hierarchical: boolInput( 'wpessential-taxonomy-hierarchical' ),
@@ -1164,6 +1173,7 @@ function boot(): void {
 
 	ensureDiagnosticsPanel();
 	bindTaxonomyLabelEditor();
+	bindTaxonomyVisibility();
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
 	root.dataset.wpessentialEnhanced = 'ready';
