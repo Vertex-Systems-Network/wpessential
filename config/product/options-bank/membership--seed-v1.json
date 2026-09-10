@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 15, "key": "membership", "name": "Membership"},
+  "snapshot": {"date": "2026-09-10", "native_sources": [], "market_sources": []},
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"membership.plan.identity","feature_group":"Plan","option_path":"plan.identity","label":"Membership plan identity and lifecycle","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"membership.pricing.model","feature_group":"Pricing","option_path":"pricing.model","label":"Free one-time or recurring pricing model","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Essential","research_state":"UNVERIFIED"},
+    {"id":"membership.state.lifecycle","feature_group":"State","option_path":"state.lifecycle","label":"Membership lifecycle and expiration states","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"membership.change.policy","feature_group":"Plan changes","option_path":"change.policy","label":"Upgrade downgrade and scheduled change policy","classification":"WPE_HARD","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P2_COMPETITIVE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"membership.restriction.rules","feature_group":"Restrictions","option_path":"restriction.rules","label":"Content and access restriction rules","classification":"WPE_HARD","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Advanced","security_hint":"privileged","research_state":"UNVERIFIED"},
+    {"id":"membership.discount.policy","feature_group":"Discounts","option_path":"discount.policy","label":"Coupon and discount policy","classification":"WPE_HARD","hard_soft":"HYBRID","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P2_COMPETITIVE","ux_tier":"Advanced","research_state":"UNVERIFIED"},
+    {"id":"membership.transaction.reference","feature_group":"Transactions","option_path":"transaction.reference","label":"Provider transaction and reconciliation reference","classification":"COMPATIBILITY","hard_soft":"HARD","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P1_CORE","ux_tier":"Expert","security_hint":"provider_only","research_state":"UNVERIFIED"},
+    {"id":"membership.reporting.summary","feature_group":"Reporting","option_path":"reporting.summary","label":"Membership and revenue reporting summary","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"WPE_FUTURE","adoption":"UNREVIEWED","priority":"P2_COMPETITIVE","ux_tier":"Advanced","research_state":"UNVERIFIED"}
+  ],
+  "coverage": {"records": 8, "unreviewed": 8, "adopted_or_classified": 0, "notes":"Initial normalized seed only. Payment/provider behavior remains unverified and runtime execution is not authorized."}
+}
