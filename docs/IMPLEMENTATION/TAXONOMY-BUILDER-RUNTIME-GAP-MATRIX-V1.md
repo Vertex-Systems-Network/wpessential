@@ -82,9 +82,9 @@ Promoted after exact-head Architecture Guards, Distributable Package and Browser
 - packaged Playwright coverage proves valid/invalid visibility behavior, healthy/missing associations, deterministic route/path/effective-args output and stale-state clearing;
 - the axe run exercises the diagnostics region while visible and reports zero violations in the WPE-owned Taxonomy Builder region.
 
-### Adaptive label generation slice — current #474 branch
+### Adaptive label generation slice — merged PR #486
 
-Current bounded implementation, pending its own exact-head promotion gates:
+Promoted after six applicable exact-head workflows passed:
 
 - `TaxonomyDefinitionProjector` accepts typed boolean `automatic_labels`, defaulting to enabled;
 - hierarchical definitions receive deterministic category-like generated labels, while flat definitions receive tag-like generated labels;
@@ -93,21 +93,37 @@ Current bounded implementation, pending its own exact-head promotion gates:
 - non-boolean `automatic_labels` values fail closed through the canonical projector;
 - dedicated unit coverage proves hierarchical/flat generation, override precedence, explicit opt-out and type rejection;
 - packaged Playwright coverage drives the existing Hierarchical editor control through server-authoritative validation and proves the effective args switch between category-like and tag-like label families;
-- no new mutation route, callback/class input, DOM surface or secondary compiler is introduced in this slice.
+- no new mutation route, callback/class input, DOM compiler or secondary runtime owner was introduced.
 
-The reviewed admin toggle, override/default badges and reset semantics remain explicit UX gaps; this slice must not be presented as complete label-editor parity before those controls and their browser/accessibility evidence promote.
+### Reviewed label-authoring UX slice — current #474 branch
+
+Current bounded implementation, pending its own exact-head promotion gates:
+
+- the editor renders a collapsed-by-default `Customize labels` section with the complete reviewed 28-label override inventory;
+- a reviewed `Generate adaptive labels automatically` toggle authors only the typed canonical `automatic_labels` field;
+- per-label state is explicit as `Generated`, `WordPress default`, or `Explicit override` without attempting to duplicate server label compilation in the browser;
+- per-label reset and reset-all clear authored overrides and reuse the existing form change path so stale validation/diagnostics are removed;
+- edit hydration preserves and exposes stored `automatic_labels` plus explicit label overrides; create/reset returns to adaptive generation enabled with zero explicit overrides;
+- exact generated values continue to come only from server-authoritative Validate diagnostics and the canonical projector;
+- the existing save/validate/status Ability, Policy, revision and CAS routes remain unchanged;
+- packaged Playwright evidence exercises collapsed/default state, hierarchy family preview, explicit override validation, reset-one/reset-all, adaptive opt-out, create/edit hydration, post-reset effective args and the open label editor with axe accessibility analysis;
+- durable label reset persistence is enforced separately in real WordPress 7.1 + MySQL 8.4 validation evidence through canonical create → `expected_revision=1` CAS update → revision 2 read-back with `automatic_labels=false` and an empty labels map;
+- WordPress Playground uses the repository's intentional SQLite/in-memory Definition fallback, so browser evidence does not claim cross-request Definition durability;
+- no raw callbacks/classes, HTML injection, alternate Definition store or new mutation route are added.
+
+This slice completes the reviewed Labels-family authoring surface only if its exact-head CI and browser/accessibility evidence pass. It does not complete the broader Essential/Advanced/Expert editor or certify runtime/product parity.
 
 ## Atomic contract gap status
 
 | Atomic contract | Current state | Gap / next implementation evidence |
 |---|---|---|
 | `taxonomy.definition.key` | **PARTIAL** | Ordinary edits correctly block key changes. Add separate guarded key-migration workflow, impact preview and recovery evidence before any rename execution. |
-| `taxonomy.definition.naming` | **BASELINE PRESENT** | Core name/singular/description project. Add full UX reset/default state and validation/help contract. |
+| `taxonomy.definition.naming` | **BASELINE PRESENT** | Core name/singular/description project. Add broader field reset/default state and validation/help contract. |
 | `taxonomy.definition.lifecycle` | **BASELINE PRESENT / UX PARTIAL** | Status UI and status Ability exist. Prove revision history/diff and deeper dependency behavior across lifecycle states. |
 | `taxonomy.definition.object_types` | **BASELINE PRESENT / HEALTH UI PROMOTED** | Canonical list + external-key preservation exist; promoted diagnostics classify and render association health. Search/grouping and deeper dependency impact remain. |
 | `taxonomy.diagnostics.association_health` | **PROMOTED BACKEND + UI** | Backend health classification and read-only admin rendering are promoted through PRs #480/#483 with packaged browser + axe evidence. Deeper dependency-impact UX remains. |
-| `taxonomy.labels.overrides` | **BASELINE PRESENT / UX PARTIAL** | Complete reviewed label family projects after PR #478. Full label editor, reset/default badges and browser evidence remain. |
-| `taxonomy.labels.autogenerate` | **CURRENT SLICE — RUNTIME/BROWSER EVIDENCE PENDING CI** | Hierarchy-aware deterministic generation, explicit-override precedence and typed opt-out are implemented on the active branch. Reviewed admin toggle, badges and reset behavior remain after this slice. |
+| `taxonomy.labels.overrides` | **CURRENT SLICE — COMPLETE REVIEWED EDITOR PENDING CI** | All reviewed override fields, explicit-state display, reset-one/reset-all, create/edit hydration and reset-effective-args behavior are implemented on the active branch. Durable opt-out/reset persistence is enforced by real WordPress 7.1 + MySQL 8.4 CAS evidence; promotion still requires exact-head browser/accessibility + regression gates. |
+| `taxonomy.labels.autogenerate` | **RUNTIME PROMOTED / AUTHORING UX CURRENT SLICE PENDING CI** | PR #486 promoted hierarchy-aware runtime generation. The active branch adds the reviewed toggle, Generated/WordPress-default/Explicit states and reset semantics while exact values remain server-authoritative. |
 | `taxonomy.visibility.policy` | **BASELINE PRESENT** | Native values compile. Add inherited/default/explicit/dormant UI semantics and full browser tests. |
 | `taxonomy.rewrite.policy` | **BASELINE PRESENT / PREVIEW UI PROMOTED** | Structured rewrite/query_var compile and promoted diagnostics compute/render a read-only path preview. Reserved/collision diagnostics and controlled rewrite-flush evidence remain. |
 | `taxonomy.permissions.capabilities` | **BASELINE PRESENT** | Four native capability names compile. Add effective map, role-impact read model, lockout diagnostics and reset UX; Roles remains grant owner. |
@@ -124,13 +140,12 @@ The reviewed admin toggle, override/default badges and reset semantics remain ex
 
 ## UX gap summary
 
-Current admin UI is a safe baseline with promoted read-only diagnostics. The active adaptive-label slice extends canonical runtime behavior but does not yet add the reviewed label-authoring controls.
+Current admin UI is a safe baseline with promoted read-only diagnostics and promoted adaptive-label runtime. The active slice implements the reviewed Labels authoring family, pending exact-head promotion evidence.
 
-Remaining UX families include:
+Remaining UX families after this label slice include:
 
-- Essential / Advanced / Expert modes;
-- complete label editor + `automatic_labels` toggle, override/default badges and reset semantics;
-- inheritance/default/dormant badges;
+- Essential / Advanced / Expert modes and keyboard-reachable tier navigation;
+- inheritance/default/dormant badges beyond the Labels family;
 - complete visibility controls;
 - rewrite/REST collision and dependency diagnostics beyond the current previews;
 - capabilities editor/effective map;
@@ -138,10 +153,10 @@ Remaining UX families include:
 - controlled provider selectors;
 - term-query defaults;
 - Find Setting search;
-- reset field/section/all;
+- reset field/section/all outside the Labels family;
 - guarded key-migration wizard;
 - portability/compatibility workflows;
-- browser/accessibility evidence for the complete reviewed contract beyond the promoted diagnostics panel.
+- browser/accessibility evidence for the complete reviewed contract beyond the promoted diagnostics/Labels surfaces.
 
 ## Cross-surface ownership constraints
 
@@ -159,9 +174,9 @@ Taxonomy owns the Definition and its native registration semantics; integrations
 
 ## Remaining implementation lane shape
 
-After the current adaptive-label runtime slice promotes, Runtime Gap Closure remains dependency-safe:
+After the current reviewed label-authoring slice promotes, Runtime Gap Closure remains dependency-safe:
 
-1. **Tiered editor + complete option UX** — Essential/Advanced/Expert controls, reviewed adaptive-label toggle/editor/reset/badges, inheritance/search/help, provider selectors, default term, capabilities and bounded term-query controls.
+1. **Broader tiered editor + complete option UX** — Essential/Advanced/Expert navigation, inheritance/search/help, visibility policy, provider selectors, default term, capabilities and bounded term-query controls.
 2. **Portability & Compatibility** — declarative Definition import/export + CPT UI adapter with revision/CAS conflict reporting.
 3. **Guarded Key Migration** — separately safety-gated planning/workflow with dry-run, dependency impact and recovery evidence; destructive term mutation remains unauthorized without an explicit later gate.
 4. **Runtime certification audit** — exact-head PHP/architecture/WordPress runtime/browser/accessibility/security/compatibility/portability/performance evidence and explicit remaining-gap zeroing before any `RUNTIME_CERTIFIED` promotion.

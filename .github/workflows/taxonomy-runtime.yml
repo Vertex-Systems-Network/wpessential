@@ -167,7 +167,7 @@ jobs:
           WPE_TAXONOMY_VALIDATION_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/validation.json" \
             ${wp} eval "require '${script}';" | tee artifacts/taxonomy-runtime/validation.log
           test -s artifacts/taxonomy-runtime/validation.json
-          jq -e '.result == "PASS" and .reserved_key_blocked == true and .unknown_runtime_owner_blocked == true and .missing_object_type_degraded == true and .validation_non_mutating == true and .direct_save_collision_blocked == true and .publish_transition_collision_blocked == true and .publish_probe_status == "draft" and .publish_probe_revision == 1' artifacts/taxonomy-runtime/validation.json >/dev/null
+          jq -e '.result == "PASS" and .reserved_key_blocked == true and .unknown_runtime_owner_blocked == true and .missing_object_type_degraded == true and .validation_non_mutating == true and .direct_save_collision_blocked == true and .publish_transition_collision_blocked == true and .publish_probe_status == "draft" and .publish_probe_revision == 1 and .label_reset_cas_persisted == true and .label_reset_revision == 2 and .automatic_labels_opt_out_persisted == true and .label_overrides_cleared == true' artifacts/taxonomy-runtime/validation.json >/dev/null
           cat artifacts/taxonomy-runtime/validation.json
 
       - name: Run Taxonomy definition and runtime lifecycle evidence

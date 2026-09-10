@@ -30,16 +30,6 @@ final class TaxonomyDefinitionProjector
     ];
 
     /** @var list<string> */
-    private const LABEL_KEYS = [
-        'menu_name', 'search_items', 'popular_items', 'all_items', 'parent_item', 'parent_item_colon',
-        'name_field_description', 'slug_field_description', 'parent_field_description',
-        'desc_field_description', 'edit_item', 'view_item', 'update_item', 'add_new_item',
-        'new_item_name', 'template_name', 'separate_items_with_commas', 'add_or_remove_items',
-        'choose_from_most_used', 'not_found', 'no_terms', 'filter_by_item', 'items_list_navigation',
-        'items_list', 'most_used', 'back_to_items', 'item_link', 'item_link_description',
-    ];
-
-    /** @var list<string> */
     private const RESERVED_TAXONOMIES = [
         'category', 'post_tag', 'nav_menu', 'link_category', 'post_format', 'wp_theme',
         'wp_template_part_area', 'wp_pattern_category',
@@ -84,7 +74,7 @@ final class TaxonomyDefinitionProjector
         $hierarchical = $this->boolValue($payload, 'hierarchical', false);
         $automaticLabels = $this->boolValue($payload, 'automatic_labels', true);
         $args = [
-            'labels' => $this->labels(
+            'labels' => TaxonomyLabelPolicy::compile(
                 $name,
                 $singularName,
                 $hierarchical,
@@ -234,72 +224,6 @@ final class TaxonomyDefinitionProjector
             throw new InvalidArgumentException(sprintf('%s must be boolean or inherit/null.', $field));
         }
         $target[$field] = $source[$field];
-    }
-
-    /** @return array<string,string> */
-    private function labels(
-        string $name,
-        string $singularName,
-        bool $hierarchical,
-        bool $automaticLabels,
-        mixed $overrides,
-    ): array {
-        if (!is_array($overrides) || array_is_list($overrides) && $overrides !== []) {
-            throw new InvalidArgumentException('Taxonomy labels must be an object/map.');
-        }
-
-        $labels = $automaticLabels
-            ? $this->generatedLabels($name, $singularName, $hierarchical)
-            : ['name' => $name, 'singular_name' => $singularName];
-        foreach ($overrides as $key => $value) {
-            if (!is_string($key) || !in_array($key, self::LABEL_KEYS, true)) {
-                throw new InvalidArgumentException(sprintf('Unsupported Taxonomy label "%s".', (string) $key));
-            }
-            if (!is_string($value)) {
-                throw new InvalidArgumentException(sprintf('Taxonomy label "%s" must be a string.', $key));
-            }
-            $value = trim($value);
-            if ($value !== '') {
-                $labels[$key] = $value;
-            }
-        }
-        return $labels;
-    }
-
-    /** @return array<string,string> */
-    private function generatedLabels(string $name, string $singularName, bool $hierarchical): array
-    {
-        $labels = [
-            'name' => $name,
-            'singular_name' => $singularName,
-            'menu_name' => $name,
-            'search_items' => sprintf('Search %s', $name),
-            'all_items' => sprintf('All %s', $name),
-            'edit_item' => sprintf('Edit %s', $singularName),
-            'view_item' => sprintf('View %s', $singularName),
-            'update_item' => sprintf('Update %s', $singularName),
-            'add_new_item' => sprintf('Add New %s', $singularName),
-            'new_item_name' => sprintf('New %s Name', $singularName),
-            'not_found' => sprintf('No %s found', $name),
-            'no_terms' => sprintf('No %s', $name),
-            'items_list_navigation' => sprintf('%s list navigation', $name),
-            'items_list' => sprintf('%s list', $name),
-            'back_to_items' => sprintf('Go to %s', $name),
-            'item_link' => sprintf('%s Link', $singularName),
-            'item_link_description' => sprintf('A link to a %s', $singularName),
-        ];
-
-        if ($hierarchical) {
-            $labels['parent_item'] = sprintf('Parent %s', $singularName);
-            $labels['parent_item_colon'] = sprintf('Parent %s:', $singularName);
-            return $labels;
-        }
-
-        $labels['popular_items'] = sprintf('Popular %s', $name);
-        $labels['separate_items_with_commas'] = sprintf('Separate %s with commas', $name);
-        $labels['add_or_remove_items'] = sprintf('Add or remove %s', $name);
-        $labels['choose_from_most_used'] = sprintf('Choose from the most used %s', $name);
-        return $labels;
     }
 
     /** @return bool|array<string,bool|int|string> */
