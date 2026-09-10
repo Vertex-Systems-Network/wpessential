@@ -5,6 +5,9 @@ type LabelEditorPayload = {
 	labels?: Record< string, string >;
 };
 
+let loadedAutomaticLabels: boolean | undefined;
+let loadedHadLabels = false;
+
 function isRecord( value: unknown ): value is RecordValue {
 	return (
 		typeof value === 'object' && value !== null && ! Array.isArray( value )
@@ -100,9 +103,7 @@ export function updateTaxonomyLabelStates(): void {
 	}
 }
 
-export function collectTaxonomyLabels(
-	existingPayload: RecordValue | null = null
-): LabelEditorPayload {
+export function collectTaxonomyLabels(): LabelEditorPayload {
 	const labels: Record< string, string > = {};
 	for ( const input of labelInputs() ) {
 		const key = labelKey( input );
@@ -114,23 +115,25 @@ export function collectTaxonomyLabels(
 
 	const result: LabelEditorPayload = {};
 	const automatic = automaticLabelsInput()?.checked ?? true;
-	const existingAutomatic = existingPayload?.automatic_labels;
-	if ( typeof existingAutomatic === 'boolean' || automatic === false ) {
+	if ( loadedAutomaticLabels !== undefined || automatic === false ) {
 		result.automatic_labels = automatic;
 	}
-	if ( Object.keys( labels ).length > 0 ) {
+	if ( Object.keys( labels ).length > 0 || loadedHadLabels ) {
 		result.labels = labels;
 	}
 	return result;
 }
 
 export function setTaxonomyLabels( payload: RecordValue ): void {
+	loadedAutomaticLabels =
+		typeof payload.automatic_labels === 'boolean'
+			? payload.automatic_labels
+			: undefined;
+	loadedHadLabels = isRecord( payload.labels );
+
 	const automatic = automaticLabelsInput();
 	if ( automatic ) {
-		automatic.checked =
-			typeof payload.automatic_labels === 'boolean'
-				? payload.automatic_labels
-				: true;
+		automatic.checked = loadedAutomaticLabels ?? true;
 	}
 
 	const labels = isRecord( payload.labels ) ? payload.labels : {};
@@ -149,6 +152,8 @@ export function setTaxonomyLabels( payload: RecordValue ): void {
 }
 
 export function resetTaxonomyLabels(): void {
+	loadedAutomaticLabels = undefined;
+	loadedHadLabels = false;
 	const automatic = automaticLabelsInput();
 	if ( automatic ) {
 		automatic.checked = true;
