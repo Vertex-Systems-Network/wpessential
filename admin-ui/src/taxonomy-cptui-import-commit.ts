@@ -150,7 +150,12 @@ function currentEditorTarget(): {
 		textInput( 'wpessential-taxonomy-revision' )?.value ?? 0
 	);
 	const key = textInput( 'wpessential-taxonomy-key' )?.value.trim() ?? '';
-	if ( id === '' || ! Number.isInteger( revision ) || revision < 1 || key === '' ) {
+	if (
+		id === '' ||
+		! Number.isInteger( revision ) ||
+		revision < 1 ||
+		key === ''
+	) {
 		return null;
 	}
 	return { id, revision, key };
@@ -192,7 +197,9 @@ function updateCommitControls(): void {
 	);
 }
 
-async function requestCommit( payload: RecordValue ): Promise< TaxonomyDefinition > {
+async function requestCommit(
+	payload: RecordValue
+): Promise< TaxonomyDefinition > {
 	const main = mainBootstrap();
 	const route = commitRoute();
 	if ( ! main || ! route ) {
@@ -247,7 +254,9 @@ function announceCommitted( definition: TaxonomyDefinition ): void {
 async function commitCreate(): Promise< void > {
 	const source = sourceObject();
 	if ( ! previewIsValid() || ! source ) {
-		setImportStatus( 'Preview the current CPT UI source successfully before importing.' );
+		setImportStatus(
+			'Preview the current CPT UI source successfully before importing.'
+		);
 		return;
 	}
 	const create = button( CREATE_ID );
@@ -262,10 +271,14 @@ async function commitCreate(): Promise< void > {
 	try {
 		const definition = await requestCommit( { source } );
 		announceCommitted( definition );
-		setImportStatus( 'Taxonomy imported as a new draft through the canonical save path.' );
+		setImportStatus(
+			'Taxonomy imported as a new draft through the canonical save path.'
+		);
 	} catch ( error ) {
 		setImportStatus(
-			error instanceof Error ? error.message : 'CPT UI import commit failed.'
+			error instanceof Error
+				? error.message
+				: 'CPT UI import commit failed.'
 		);
 	} finally {
 		if ( create ) {
@@ -316,7 +329,9 @@ async function commitUpdate(): Promise< void > {
 		);
 	} catch ( error ) {
 		setImportStatus(
-			error instanceof Error ? error.message : 'CPT UI import update failed.'
+			error instanceof Error
+				? error.message
+				: 'CPT UI import update failed.'
 		);
 	} finally {
 		if ( create ) {
@@ -386,9 +401,14 @@ function ensureCommitControls(): void {
 	document.getElementById( SOURCE_ID )?.addEventListener( 'input', () => {
 		create.hidden = true;
 		update.hidden = true;
-		setImportStatus( 'Source changed. Preview the current JSON again before importing.' );
+		setImportStatus(
+			'Source changed. Preview the current JSON again before importing.'
+		);
 	} );
-	window.addEventListener( 'wpessential:taxonomy-editor-changed', updateCommitControls );
+	window.addEventListener(
+		'wpessential:taxonomy-editor-changed',
+		updateCommitControls
+	);
 	updateCommitControls();
 }
 
