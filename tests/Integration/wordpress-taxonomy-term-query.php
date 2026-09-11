@@ -123,20 +123,27 @@ if ($mode === 'verify') {
 
     $setTerms = wp_set_object_terms($postId, $expectedOrder, $taxonomy, false);
     taxonomyTermQueryExpect(!is_wp_error($setTerms) && is_array($setTerms), 'ordered term assignment must succeed through native WordPress');
+    taxonomyTermQueryExpect(count($setTerms) === 3, 'ordered term assignment must return all three probe relationship IDs');
+    $probeTtIds = array_map('intval', $setTerms);
 
-    $storedRows = $wpdb->get_results(
+    $allRelationshipRows = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT term_taxonomy_id, term_order FROM {$wpdb->term_relationships} WHERE object_id = %d ORDER BY term_order ASC",
             $postId,
         ),
         ARRAY_A,
     );
-    taxonomyTermQueryExpect(is_array($storedRows) && count($storedRows) === 3, 'native relationship table must contain three ordered probe relationships');
+    taxonomyTermQueryExpect(is_array($allRelationshipRows), 'native relationship table query must return an array');
+    $storedRows = array_values(array_filter(
+        $allRelationshipRows,
+        static fn (array $row): bool => in_array((int) $row['term_taxonomy_id'], $probeTtIds, true),
+    ));
+    taxonomyTermQueryExpect(count($storedRows) === 3, 'native relationship table must contain all three probe taxonomy relationships');
     $storedOrders = array_map(static fn (array $row): int => (int) $row['term_order'], $storedRows);
     taxonomyTermQueryExpect($storedOrders === [1, 2, 3], 'sort=true must persist sequential native term_order values');
     $storedTtIds = array_map(static fn (array $row): int => (int) $row['term_taxonomy_id'], $storedRows);
     taxonomyTermQueryExpect(
-        $storedTtIds === array_map('intval', $setTerms),
+        $storedTtIds === $probeTtIds,
         'persisted term_order sequence must match the supplied wp_set_object_terms relationship order',
     );
 
