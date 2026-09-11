@@ -22,6 +22,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
     public const GET = 'get';
     public const SAVE = 'save';
     public const STATUS = 'status';
+    public const IMPORT = 'import';
 
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
@@ -30,7 +31,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         private string $action,
         private ?TaxonomyRewriteRefreshCoordinator $rewriteRefresh = null,
     ) {
-        if (!in_array($this->action, [self::LIST, self::GET, self::SAVE, self::STATUS], true)) {
+        if (!in_array($this->action, [self::LIST, self::GET, self::SAVE, self::STATUS, self::IMPORT], true)) {
             throw new InvalidArgumentException('Unsupported Taxonomy ability action.');
         }
     }
@@ -42,6 +43,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             self::GET => $this->get($input),
             self::SAVE => $this->save($input),
             self::STATUS => $this->changeStatus($input),
+            self::IMPORT => $this->importDefinition($input),
             default => throw new RuntimeException('Unsupported Taxonomy ability action.'),
         };
     }
@@ -88,11 +90,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         }
         $this->assertValidationAllowsMutation($this->validation->validate($validationInput));
 
-        $key = $payload['taxonomy_key'] ?? null;
-        if (!is_string($key) || trim($key) === '') {
-            throw new InvalidArgumentException('Taxonomy payload requires taxonomy_key.');
-        }
-        $key = trim($key);
+        $key = $this->requiredTaxonomyKey($payload);
         if ($existing instanceof Definition) {
             $this->assertTaxonomyKeyUnchanged($existing, $key);
         }
@@ -109,10 +107,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             revision: ($existing?->revision ?? 0) + 1,
             dependencies: $existing?->dependencies ?? [],
         );
-        $this->validatePayload($candidate);
-        $candidate = $this->withChecksum($candidate);
-        $this->definitions->save($candidate);
-        $this->rewriteRefresh?->scheduleForMutation($existing, $candidate);
+        $candidate = $this->persistMutation($existing, $candidate);
 
         return ['definition' => $this->serialize($candidate)];
     }
@@ -142,12 +137,173 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             revision: $existing->revision + 1,
             dependencies: $existing->dependencies,
         );
-        $this->validatePayload($candidate);
-        $candidate = $this->withChecksum($candidate);
-        $this->definitions->save($candidate);
-        $this->rewriteRefresh?->scheduleForMutation($existing, $candidate);
+        $candidate = $this->persistMutation($existing, $candidate);
 
         return ['definition' => $this->serialize($candidate)];
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array{action:'created'|'updated'|'no_change',definition:array<string,mixed>}
+     */
+    private function importDefinition(array $input): array
+    {
+        $record = $input['definition'] ?? null;
+        if (!is_array($record) || array_is_list($record)) {
+            throw new InvalidArgumentException('Imported Taxonomy definition must be an object/map.');
+        }
+
+        $strategy = $input['strategy'] ?? 'create_only';
+        if (!is_string($strategy) || !in_array($strategy, ['create_only', 'update_existing'], true)) {
+            throw new InvalidArgumentException('Taxonomy import strategy must be create_only or update_existing.');
+        }
+
+        $source = $this->importedDefinition($record);
+        $found = $this->definitions->get($source->id);
+        $existing = null;
+        if ($found instanceof Definition) {
+            if ($found->type !== TaxonomyDefinitionProjector::DEFINITION_TYPE
+                || $found->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+            ) {
+                throw new RuntimeException('Taxonomy import UUID is already owned by another canonical definition surface.');
+            }
+            $existing = $found;
+        }
+
+        if ($existing instanceof Definition && $this->sameSemanticDefinition($existing, $source)) {
+            return [
+                'action' => 'no_change',
+                'definition' => $this->serialize($existing),
+            ];
+        }
+
+        if ($existing instanceof Definition) {
+            if ($strategy !== 'update_existing') {
+                throw new RuntimeException('Taxonomy import found the same UUID with different target content.');
+            }
+            $this->assertExpectedRevision($input, $existing);
+            if ($existing->slug !== $source->slug) {
+                throw new InvalidArgumentException('Taxonomy definition slug cannot be changed through portability import.');
+            }
+        }
+
+        $this->assertPortableIdentityAvailable($source);
+        $key = $this->requiredTaxonomyKey($source->payload);
+        if ($existing instanceof Definition) {
+            $this->assertTaxonomyKeyUnchanged($existing, $key);
+        }
+
+        $validationInput = ['payload' => $source->payload];
+        if ($existing instanceof Definition) {
+            $validationInput['id'] = $existing->id;
+        }
+        $this->assertValidationAllowsMutation($this->validation->validate($validationInput));
+
+        $candidate = new Definition(
+            id: $source->id,
+            slug: $source->slug,
+            type: TaxonomyDefinitionProjector::DEFINITION_TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+            status: $source->status,
+            payload: $source->payload,
+            revision: ($existing?->revision ?? 0) + 1,
+            dependencies: $source->dependencies,
+        );
+        $candidate = $this->persistMutation($existing, $candidate);
+
+        return [
+            'action' => $existing instanceof Definition ? 'updated' : 'created',
+            'definition' => $this->serialize($candidate),
+        ];
+    }
+
+    /** @param array<string,mixed> $record */
+    private function importedDefinition(array $record): Definition
+    {
+        $id = $record['id'] ?? null;
+        $slug = $record['slug'] ?? null;
+        $type = $record['type'] ?? null;
+        $schemaVersion = $record['schema_version'] ?? null;
+        $ownerSurfaceId = $record['owner_surface_id'] ?? null;
+        $statusValue = $record['status'] ?? null;
+        $payload = $record['payload'] ?? null;
+        $revision = $record['revision'] ?? null;
+        $dependencies = $record['dependencies'] ?? null;
+        $checksum = $record['checksum'] ?? null;
+
+        if (!is_string($id)
+            || !is_string($slug)
+            || $type !== TaxonomyDefinitionProjector::DEFINITION_TYPE
+            || $schemaVersion !== 1
+            || $ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+            || !is_string($statusValue)
+            || !is_array($payload)
+            || array_is_list($payload)
+            || !is_int($revision)
+            || $revision < 1
+            || !is_array($dependencies)
+            || !array_is_list($dependencies)
+            || !is_string($checksum)
+        ) {
+            throw new InvalidArgumentException('Imported Taxonomy definition metadata is invalid or unsupported.');
+        }
+
+        $status = DefinitionStatus::tryFrom($statusValue);
+        if (!$status instanceof DefinitionStatus) {
+            throw new InvalidArgumentException('Imported Taxonomy definition status is invalid.');
+        }
+
+        $source = new Definition(
+            id: $id,
+            slug: $slug,
+            type: TaxonomyDefinitionProjector::DEFINITION_TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+            status: $status,
+            payload: $payload,
+            revision: $revision,
+            dependencies: $dependencies,
+            checksum: $checksum,
+        );
+        if (!hash_equals($source->computedChecksum(), $checksum)) {
+            throw new InvalidArgumentException('Imported Taxonomy definition checksum does not match its payload.');
+        }
+
+        return $source;
+    }
+
+    private function assertPortableIdentityAvailable(Definition $source): void
+    {
+        $key = $this->requiredTaxonomyKey($source->payload);
+        foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $candidate) {
+            if ($candidate->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+                || $candidate->id === $source->id
+            ) {
+                continue;
+            }
+            if ($candidate->slug === $source->slug) {
+                throw new RuntimeException(sprintf(
+                    'Taxonomy import slug collision: "%s" belongs to a different definition UUID.',
+                    $source->slug,
+                ));
+            }
+            $candidateKey = $candidate->payload['taxonomy_key'] ?? null;
+            if (is_string($candidateKey) && trim($candidateKey) === $key) {
+                throw new RuntimeException(sprintf(
+                    'Taxonomy import key collision: "%s" belongs to a different definition UUID.',
+                    $key,
+                ));
+            }
+        }
+    }
+
+    private function sameSemanticDefinition(Definition $target, Definition $source): bool
+    {
+        return $target->slug === $source->slug
+            && $target->status === $source->status
+            && $target->dependencies === $source->dependencies
+            && hash_equals($target->computedChecksum(), $source->computedChecksum());
     }
 
     /** @param array<string,mixed> $input */
@@ -174,6 +330,16 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
                 'Taxonomy key cannot be changed through the canonical save path; use the separately authorized key-migration workflow.',
             );
         }
+    }
+
+    /** @param array<string,mixed> $payload */
+    private function requiredTaxonomyKey(array $payload): string
+    {
+        $key = $payload['taxonomy_key'] ?? null;
+        if (!is_string($key) || trim($key) === '') {
+            throw new InvalidArgumentException('Taxonomy payload requires taxonomy_key.');
+        }
+        return trim($key);
     }
 
     /**
@@ -224,6 +390,15 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             throw new RuntimeException('Taxonomy definition was not found in the canonical Surface 2 owner.');
         }
         return $definition;
+    }
+
+    private function persistMutation(?Definition $existing, Definition $candidate): Definition
+    {
+        $this->validatePayload($candidate);
+        $candidate = $this->withChecksum($candidate);
+        $this->definitions->save($candidate);
+        $this->rewriteRefresh?->scheduleForMutation($existing, $candidate);
+        return $candidate;
     }
 
     private function validatePayload(Definition $definition): void
