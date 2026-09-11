@@ -167,7 +167,7 @@ function ensureRoutingPolicy(): void {
 	appendSelectField(
 		section,
 		REWRITE_HIERARCHICAL_ID,
-		'Hierarchical rewrite path',
+		'Rewrite path hierarchy',
 		'Used only in Custom mode. This controls hierarchical URL paths, not whether the taxonomy itself is hierarchical.',
 		[
 			{ value: '', label: 'Default' },
