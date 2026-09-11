@@ -107,6 +107,43 @@ taxonomyValidationExpect($warning->success, 'missing object type must remain a v
 taxonomyValidationExpect(is_array($warning->data) && ($warning->data['valid'] ?? false) === true, 'missing object type must degrade rather than block canonical Taxonomy definition');
 taxonomyValidationExpect(in_array('missing_object_type', taxonomyValidationIssueIds($warning->data), true), 'missing object type report must identify degraded dependency');
 
+taxonomyValidationExpect(!is_admin(), 'native query-var normalization evidence requires a non-admin WordPress request context');
+register_taxonomy('native_dormant_probe', ['post'], [
+    'public' => false,
+    'show_ui' => false,
+    'show_in_menu' => true,
+    'publicly_queryable' => false,
+    'query_var' => 'native_dormant_query',
+    'rewrite' => false,
+]);
+$nativeDormant = get_taxonomy('native_dormant_probe');
+taxonomyValidationExpect($nativeDormant instanceof WP_Taxonomy, 'native dormant-policy probe taxonomy must register');
+taxonomyValidationExpect($nativeDormant->show_ui === false, 'native dormant-policy probe must retain show_ui=false');
+taxonomyValidationExpect($nativeDormant->show_in_menu === false, 'WordPress must force show_in_menu=false when show_ui=false');
+taxonomyValidationExpect($nativeDormant->publicly_queryable === false, 'native dormant-policy probe must retain publicly_queryable=false');
+taxonomyValidationExpect($nativeDormant->query_var === false, 'WordPress must force front-end query_var=false when publicly_queryable=false');
+
+$dormantWarning = $ajax->dispatch([
+    'type' => 'taxonomy.validate',
+    'nonce' => $validationNonce,
+    'payload' => [
+        'payload' => [
+            'taxonomy_key' => 'diagnostic_dormant_probe',
+            'object_types' => ['post'],
+            'name' => 'Diagnostic Dormant Probes',
+            'singular_name' => 'Diagnostic Dormant Probe',
+            'public' => false,
+            'show_in_menu' => true,
+            'query_var' => 'diagnostic_dormant_query',
+        ],
+    ],
+], true);
+taxonomyValidationExpect($dormantWarning->success, 'dormant parent-state validation must remain a structured non-blocking report');
+taxonomyValidationExpect(is_array($dormantWarning->data) && ($dormantWarning->data['valid'] ?? false) === true, 'dormant parent-state warnings must not block a valid Taxonomy definition');
+$dormantIssueIds = taxonomyValidationIssueIds($dormantWarning->data);
+taxonomyValidationExpect(in_array('show_in_menu_dormant', $dormantIssueIds, true), 'server validation must warn about native show_in_menu normalization');
+taxonomyValidationExpect(in_array('query_var_dormant', $dormantIssueIds, true), 'server validation must warn about native front-end query_var normalization');
+
 $afterValidation = count($definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE));
 taxonomyValidationExpect($afterValidation === $before, 'validation route must not persist or mutate Taxonomy definitions');
 
@@ -224,6 +261,10 @@ if ($evidencePath !== '') {
         'unknown_runtime_owner_blocked' => true,
         'missing_object_type_degraded' => true,
         'validation_non_mutating' => $afterValidation === $before,
+        'native_show_in_menu_forced_false' => $nativeDormant->show_in_menu === false,
+        'native_frontend_query_var_forced_false' => $nativeDormant->query_var === false,
+        'dormant_show_in_menu_warning' => in_array('show_in_menu_dormant', $dormantIssueIds, true),
+        'dormant_query_var_warning' => in_array('query_var_dormant', $dormantIssueIds, true),
         'direct_save_collision_blocked' => true,
         'publish_transition_collision_blocked' => true,
         'definition_count_before' => $before,
