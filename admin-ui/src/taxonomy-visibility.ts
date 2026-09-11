@@ -594,10 +594,10 @@ function selectedProviderOption(
 
 function updateRuntimeProviderState( slot: string ): void {
 	const select = providerSelect( slot );
-	const state = providerState( slot );
 	if ( ! select ) {
 		return;
 	}
+	const state = providerState( slot );
 
 	if ( select.value === '' ) {
 		select.setCustomValidity( '' );
