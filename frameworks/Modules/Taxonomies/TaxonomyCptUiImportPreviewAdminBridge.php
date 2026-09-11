@@ -34,16 +34,10 @@ final readonly class TaxonomyCptUiImportPreviewAdminBridge
         }
 
         $bootstrap = [
-            'routes' => [
-                'preview' => [
-                    'type' => 'taxonomy.import_preview',
-                    'nonce' => $this->ajax->createNonce('taxonomy.import_preview'),
-                ],
-                'commit' => [
-                    'type' => 'taxonomy.import_commit',
-                    'nonce' => $this->ajax->createNonce('taxonomy.import_commit'),
-                ],
-            ],
+            'type' => 'taxonomy.import_preview',
+            'nonce' => $this->ajax->createNonce('taxonomy.import_preview'),
+            'commit_type' => 'taxonomy.import_commit',
+            'commit_nonce' => $this->ajax->createNonce('taxonomy.import_commit'),
         ];
         $json = function_exists('wp_json_encode')
             ? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
