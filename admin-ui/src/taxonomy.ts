@@ -115,7 +115,10 @@ function isNullableString( value: unknown ): value is string | null {
 }
 
 function isNullableNumber( value: unknown ): value is number | null {
-	return value === null || ( typeof value === 'number' && Number.isInteger( value ) );
+	return (
+		value === null ||
+		( typeof value === 'number' && Number.isInteger( value ) )
+	);
 }
 
 function isNullableBoolean( value: unknown ): value is boolean | null {
@@ -661,7 +664,9 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 	}
 	const dependencyCount = diagnosticsValue( panel, 'dependency-count' );
 	if ( dependencyCount ) {
-		dependencyCount.textContent = String( diagnostics.dependency_usage.count );
+		dependencyCount.textContent = String(
+			diagnostics.dependency_usage.count
+		);
 	}
 
 	const associations = panel.querySelector(
@@ -922,9 +927,8 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		runtimeHealth.dataset.wpessentialTaxonomyRuntimeHealth = runtimeState;
 		const dependencyCount = definition.read_model.dependency_usage.count;
 		const dependencies = cell( String( dependencyCount ) );
-		dependencies.dataset.wpessentialTaxonomyDependencyCount = String(
-			dependencyCount
-		);
+		dependencies.dataset.wpessentialTaxonomyDependencyCount =
+			String( dependencyCount );
 
 		row.append(
 			cell( name ),
