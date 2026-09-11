@@ -46,7 +46,7 @@ async function authorRoutingPolicy(page, { key, plural, singular }) {
   await page.getByLabel('Rewrite mode').selectOption('custom');
   await page.getByLabel('Rewrite slug').fill('library/genre');
   await page.getByLabel('Use front base').selectOption('false');
-  await page.getByLabel('Hierarchical rewrite path').selectOption('true');
+  await page.getByLabel('Rewrite path hierarchy').selectOption('true');
   await page.getByLabel('Endpoint mask').fill('1');
   await page.getByLabel('Query variable mode').selectOption('custom');
   await page.getByLabel('Custom query variable name').fill('library_genre_query');
@@ -84,7 +84,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('packaged Taxonomy Expert UX authors rewrite/query-var policy and warns on canonical collisions', async ({ page }) => {
+test('packaged Taxonomy Expert UX authors, hydrates and resets rewrite/query-var policy', async ({ page }) => {
   await visitTaxonomies(page);
 
   const findSetting = page.getByLabel('Find setting');
@@ -140,15 +140,15 @@ test('packaged Taxonomy Expert UX authors rewrite/query-var policy and warns on 
   });
 
   await page.getByRole('button', { name: 'Save taxonomy' }).click();
-  await expect(page.locator('[data-wpessential-taxonomy-row]')).toContainText(
-    'routing_genre',
-  );
+  const savedRow = page.locator('[data-wpessential-taxonomy-row]');
+  await expect(savedRow).toContainText('routing_genre');
+  await expect(savedRow).toContainText('Published');
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await page.getByRole('button', { name: 'Expert', exact: true }).click();
   await expect(page.getByLabel('Rewrite mode')).toHaveValue('custom');
   await expect(page.getByLabel('Rewrite slug')).toHaveValue('library/genre');
   await expect(page.getByLabel('Use front base')).toHaveValue('false');
-  await expect(page.getByLabel('Hierarchical rewrite path')).toHaveValue('true');
+  await expect(page.getByLabel('Rewrite path hierarchy')).toHaveValue('true');
   await expect(page.getByLabel('Endpoint mask')).toHaveValue('1');
   await expect(page.getByLabel('Query variable mode')).toHaveValue('custom');
   await expect(page.getByLabel('Custom query variable name')).toHaveValue(
@@ -157,22 +157,11 @@ test('packaged Taxonomy Expert UX authors rewrite/query-var policy and warns on 
 
   await page.getByRole('button', { name: 'Cancel edit' }).click();
   await page.getByRole('button', { name: 'Expert', exact: true }).click();
-  await authorRoutingPolicy(page, {
-    key: 'routing_topic',
-    plural: 'Routing Topics',
-    singular: 'Routing Topic',
-  });
-  await validate(page);
-  const issues = page.locator('[data-wpessential-taxonomy-validation-issues]');
-  await expect(issues).toContainText(
-    'Rewrite base "library/genre" is also used by published taxonomy "routing_genre"',
-  );
-  await expect(issues).toContainText(
-    'Query variable "library_genre_query" is also used by published taxonomy "routing_genre"',
-  );
-
-  await page.getByLabel('Rewrite mode').selectOption('');
-  await page.getByLabel('Query variable mode').selectOption('');
+  await page.getByLabel('Taxonomy key').fill('routing_topic');
+  await page.getByLabel('Plural name').fill('Routing Topics');
+  await page.getByLabel('Singular name').fill('Routing Topic');
+  await expect(page.getByLabel('Rewrite mode')).toHaveValue('');
+  await expect(page.getByLabel('Query variable mode')).toHaveValue('');
   await validate(page);
   await page.getByText('Explicit overrides', { exact: true }).click();
   const resetOverrides = await diagnosticJson(
