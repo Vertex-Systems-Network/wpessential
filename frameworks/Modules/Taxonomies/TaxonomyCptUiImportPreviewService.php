@@ -26,7 +26,7 @@ final readonly class TaxonomyCptUiImportPreviewService
      *   diagnostics:?array<string,mixed>
      * }
      */
-    public function preview(array $source): array
+    public function preview(array $source, ?string $definitionId = null): array
     {
         $mapped = $this->mapper->map($source);
         $issues = $mapped['issues'];
@@ -55,7 +55,11 @@ final readonly class TaxonomyCptUiImportPreviewService
             }
         }
 
-        $validation = $this->validation->validate(['payload' => $mapped['payload']]);
+        $validationInput = ['payload' => $mapped['payload']];
+        if ($definitionId !== null && $definitionId !== '') {
+            $validationInput['id'] = $definitionId;
+        }
+        $validation = $this->validation->validate($validationInput);
         return [
             'valid' => $validation['valid'],
             'payload' => $mapped['payload'],

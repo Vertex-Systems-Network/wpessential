@@ -92,6 +92,9 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             throw new InvalidArgumentException('Taxonomy payload requires taxonomy_key.');
         }
         $key = trim($key);
+        if ($existing instanceof Definition) {
+            $this->assertTaxonomyKeyUnchanged($existing, $key);
+        }
 
         $status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
         $candidate = new Definition(
@@ -157,6 +160,16 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
                 $expected,
                 $existing->revision,
             ));
+        }
+    }
+
+    private function assertTaxonomyKeyUnchanged(Definition $existing, string $candidateKey): void
+    {
+        $existingKey = $existing->payload['taxonomy_key'] ?? null;
+        if (!is_string($existingKey) || trim($existingKey) !== $candidateKey) {
+            throw new InvalidArgumentException(
+                'Taxonomy key cannot be changed through the canonical save path; use the separately authorized key-migration workflow.',
+            );
         }
     }
 
