@@ -276,6 +276,37 @@ final class TaxonomyModule implements ModuleInterface
             $abilities,
             $bridge,
             new AbilityDescriptor(
+                name: 'wpessential/taxonomy/import-definition',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: true,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['definition'],
+                    'properties' => [
+                        'definition' => ['type' => 'object'],
+                        'strategy' => ['type' => 'string', 'enum' => ['create_only', 'update_existing']],
+                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyAbilityHandler(
+                $definitions,
+                $projector,
+                $validation,
+                TaxonomyAbilityHandler::IMPORT,
+                $rewriteRefresh,
+            ),
+            'Import taxonomy definition',
+            'Imports one portable Taxonomy definition through Surface 2 create-only or explicit revision-safe update semantics.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
                 name: 'wpessential/taxonomy/save',
                 ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
                 capability: self::CAPABILITY,
