@@ -59,7 +59,10 @@ function catalogEntries(): ObjectTypeEntry[] {
 
 	try {
 		const bootstrap: unknown = JSON.parse( script.textContent ?? '{}' );
-		if ( ! isRecord( bootstrap ) || ! Array.isArray( bootstrap.objectTypes ) ) {
+		if (
+			! isRecord( bootstrap ) ||
+			! Array.isArray( bootstrap.objectTypes )
+		) {
 			return [];
 		}
 		return bootstrap.objectTypes.filter( isObjectTypeEntry );
@@ -175,7 +178,9 @@ function preservedRow(
 }
 
 function bindTaxonomyObjectTypeDiscovery(): void {
-	const fieldset = document.getElementById( 'wpessential-taxonomy-object-types' );
+	const fieldset = document.getElementById(
+		'wpessential-taxonomy-object-types'
+	);
 	const options = fieldset?.querySelector(
 		'[data-wpessential-taxonomy-object-type-options]'
 	);
@@ -330,7 +335,9 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 			( key ) => ! knownKeys.has( key )
 		);
 		for ( const key of preservedKeys ) {
-			preservedOptions.append( preservedRow( key, extra, syncPreserved ) );
+			preservedOptions.append(
+				preservedRow( key, extra, syncPreserved )
+			);
 		}
 		applyFilter();
 	};
