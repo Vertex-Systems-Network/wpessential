@@ -80,6 +80,7 @@ final class TaxonomyModule implements ModuleInterface
         $validation = new TaxonomyValidationService($definitions, $projector);
         $cptUiMapper = new TaxonomyCptUiImportMapper();
         $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
+        $keyMigrationPreview = new TaxonomyKeyMigrationPreviewService($definitions, $projector);
         $rewriteRefresh = new TaxonomyRewriteRefreshCoordinator();
         $providers->register($provider);
         $services->set('module.taxonomies.projector', $projector);
@@ -87,6 +88,7 @@ final class TaxonomyModule implements ModuleInterface
         $services->set('module.taxonomies.validation', $validation);
         $services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
         $services->set('module.taxonomies.cptui-preview', $cptUiPreview);
+        $services->set('module.taxonomies.key-migration-preview', $keyMigrationPreview);
         $services->set('module.taxonomies.rewrite-refresh', $rewriteRefresh);
 
         $this->registerAbilities(
@@ -96,6 +98,7 @@ final class TaxonomyModule implements ModuleInterface
             $projector,
             $validation,
             $cptUiPreview,
+            $keyMigrationPreview,
             $rewriteRefresh,
         );
         $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
@@ -150,6 +153,7 @@ final class TaxonomyModule implements ModuleInterface
         TaxonomyDefinitionProjector $projector,
         TaxonomyValidationService $validation,
         TaxonomyCptUiImportPreviewService $cptUiPreview,
+        TaxonomyKeyMigrationPreviewService $keyMigrationPreview,
         TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
     ): void {
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
@@ -222,6 +226,30 @@ final class TaxonomyModule implements ModuleInterface
             new TaxonomyValidationAbilityHandler($validation),
             'Validate taxonomy',
             'Preflights a Taxonomy candidate without mutating canonical definitions or runtime registration.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: 'wpessential/taxonomy/key-migration-preview',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['id', 'target_key'],
+                    'properties' => [
+                        'id' => ['type' => 'string'],
+                        'target_key' => ['type' => 'string'],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyKeyMigrationPreviewAbilityHandler($keyMigrationPreview),
+            'Preview taxonomy-key migration',
+            'Builds a read-only taxonomy-key migration impact and recovery plan without changing Definitions, terms, relationships, or rewrite rules.',
         );
 
         $this->registerAbility(
@@ -386,6 +414,7 @@ final class TaxonomyModule implements ModuleInterface
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.list', 'wpessential/taxonomy/list', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.get', 'wpessential/taxonomy/get', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.validate', 'wpessential/taxonomy/validate', NonceOperation::Apply);
+        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.key_migration_preview', 'wpessential/taxonomy/key-migration-preview', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_preview', 'wpessential/taxonomy/import-preview', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_commit', 'wpessential/taxonomy/import-commit', NonceOperation::Update);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update);
