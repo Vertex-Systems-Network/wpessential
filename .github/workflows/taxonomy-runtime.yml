@@ -12,6 +12,7 @@ on:
       - 'tests/Integration/wordpress-taxonomy-validation.php'
       - 'tests/Integration/wordpress-taxonomy-default-term.php'
       - 'tests/Integration/wordpress-taxonomy-term-query.php'
+      - 'tests/Integration/wordpress-taxonomy-key-migration-preview.php'
       - 'tests/Integration/wordpress-taxonomy-runtime.php'
       - '.github/workflows/taxonomy-runtime.yml'
   push:
@@ -27,6 +28,7 @@ on:
       - 'tests/Integration/wordpress-taxonomy-validation.php'
       - 'tests/Integration/wordpress-taxonomy-default-term.php'
       - 'tests/Integration/wordpress-taxonomy-term-query.php'
+      - 'tests/Integration/wordpress-taxonomy-key-migration-preview.php'
       - 'tests/Integration/wordpress-taxonomy-runtime.php'
       - '.github/workflows/taxonomy-runtime.yml'
   workflow_dispatch:
@@ -97,11 +99,14 @@ jobs:
           php -l frameworks/Modules/Taxonomies/TaxonomyValidationService.php
           php -l frameworks/Modules/Taxonomies/TaxonomyValidationAbilityHandler.php
           php -l frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyKeyMigrationPreviewService.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyKeyMigrationPreviewAbilityHandler.php
           php -l frameworks/Modules/Taxonomies/TaxonomyModule.php
           php -l frameworks/Platform/WordPress/Registrations/TaxonomyRuntimeRegistrar.php
           php -l tests/Integration/wordpress-taxonomy-validation.php
           php -l tests/Integration/wordpress-taxonomy-default-term.php
           php -l tests/Integration/wordpress-taxonomy-term-query.php
+          php -l tests/Integration/wordpress-taxonomy-key-migration-preview.php
           php -l tests/Integration/wordpress-taxonomy-runtime.php
 
       - name: Prepare exact WordPress 7.1 fixture
@@ -211,6 +216,24 @@ jobs:
           test -s artifacts/taxonomy-runtime/term-query.json
           jq -e '.schema == "wpessential-taxonomy-term-query-evidence-v2" and .result == "PASS" and .taxonomy_key == "library_order_genre" and .probe_term_count == 3 and .sort_enabled == true and .term_order_persisted == true and .registered_args_applied == true and .registered_args_override_conflicting_call_args == true and .bounded_fields_ids == true and .performance_small_relationship_count == 3 and .performance_large_relationship_count == 35 and (.performance_small_sql_queries | numbers) > 0 and (.performance_small_sql_queries | numbers) <= 4 and (.performance_large_sql_queries | numbers) > 0 and (.performance_large_sql_queries | numbers) <= 4 and .performance_fixed_query_budget == true and .performance_query_count_stable == true and .performance_no_termmeta_sql == true and .fixture_definition_disabled == true' artifacts/taxonomy-runtime/term-query.json >/dev/null
           cat artifacts/taxonomy-runtime/term-query.json
+
+      - name: Run Taxonomy key-migration read-only preview evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/taxonomy-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-key-migration-preview.php'
+          : > artifacts/taxonomy-runtime/key-migration-preview.log
+          for mode in seed verify; do
+            echo "=== ${mode} ===" | tee -a artifacts/taxonomy-runtime/key-migration-preview.log
+            WPE_TAXONOMY_KEY_MIGRATION_PREVIEW_MODE="${mode}" \
+            WPE_TAXONOMY_KEY_MIGRATION_PREVIEW_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/key-migration-preview.json" \
+              ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/key-migration-preview.log
+          done
+          test -s artifacts/taxonomy-runtime/key-migration-preview.json
+          jq -e '.schema == "wpessential-taxonomy-key-migration-preview-evidence-v1" and .result == "PASS" and .preview_only == true and .execution_authorized == false and .definition_unchanged == true and .source_taxonomy_present == true and .target_taxonomy_absent == true and .term_unchanged == true and .relationship_unchanged == true and .rewrite_rules_unchanged == true and .term_url_impact_reported == true and .rest_route_impact_reported == true and .query_var_impact_reported == true and .object_associations_unchanged == true and .fixture_definition_disabled == true' artifacts/taxonomy-runtime/key-migration-preview.json >/dev/null
+          cat artifacts/taxonomy-runtime/key-migration-preview.json
 
       - name: Run Taxonomy definition and runtime lifecycle evidence
         shell: bash
