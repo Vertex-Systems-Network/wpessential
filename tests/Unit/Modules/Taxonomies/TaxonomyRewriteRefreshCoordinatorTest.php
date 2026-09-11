@@ -201,7 +201,9 @@ final class TaxonomyRewriteRefreshCoordinatorTest extends TestCase
         bool &$flushSucceeds = true,
     ): TaxonomyRewriteRefreshCoordinator {
         return new TaxonomyRewriteRefreshCoordinator(
-            readPending: static fn (string $key): mixed => $state[$key] ?? false,
+            readPending: static function (string $key) use (&$state): mixed {
+                return $state[$key] ?? false;
+            },
             writePending: static function (string $key) use (&$state, &$writes): bool {
                 ++$writes;
                 $state[$key] = 1;
