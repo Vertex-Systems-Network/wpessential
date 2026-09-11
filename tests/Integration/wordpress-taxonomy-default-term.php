@@ -269,10 +269,30 @@ if ($mode === 'verify-disabled-retention') {
         'disabling WPE runtime registration must not destructively remove the WordPress default-term option',
     );
 
-    $retainedTerm = get_term($defaultTermId);
-    taxonomyDefaultTermExpect($retainedTerm instanceof WP_Term, 'disabling WPE runtime registration must not destructively remove the native default term row');
-    taxonomyDefaultTermExpect($retainedTerm->taxonomy === $taxonomy, 'retained native default term row must keep its taxonomy identity');
-    taxonomyDefaultTermExpect($retainedTerm->slug === $defaultSlug, 'retained native default term row must keep its configured slug');
+    global $wpdb;
+    $retainedTermRow = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT t.slug, tt.taxonomy
+            FROM {$wpdb->terms} AS t
+            INNER JOIN {$wpdb->term_taxonomy} AS tt ON tt.term_id = t.term_id
+            WHERE t.term_id = %d AND tt.taxonomy = %s",
+            $defaultTermId,
+            $taxonomy,
+        ),
+        ARRAY_A,
+    );
+    taxonomyDefaultTermExpect(
+        is_array($retainedTermRow),
+        'disabling WPE runtime registration must not destructively remove the native default term row',
+    );
+    taxonomyDefaultTermExpect(
+        ($retainedTermRow['taxonomy'] ?? null) === $taxonomy,
+        'retained native default term row must keep its taxonomy identity',
+    );
+    taxonomyDefaultTermExpect(
+        ($retainedTermRow['slug'] ?? null) === $defaultSlug,
+        'retained native default term row must keep its configured slug',
+    );
 
     if ($evidencePath !== '') {
         $directory = dirname($evidencePath);
