@@ -134,12 +134,14 @@ function updateCapabilityState(): void {
 	const authored = CAPABILITY_FIELDS.filter(
 		( field ) => ( textInput( field.id )?.value.trim() ?? '' ) !== ''
 	);
-	state.textContent =
-		authored.length === 0
-			? 'WordPress default capability map is active. Validate to inspect the effective server-side map.'
-			: `${ authored.length } native capability map entr${
-					authored.length === 1 ? 'y is' : 'ies are'
-				} explicitly authored. Validate for effective-map and current-user lockout diagnostics.`;
+	if ( authored.length === 0 ) {
+		state.textContent =
+			'WordPress default capability map is active. Validate to inspect the effective server-side map.';
+		return;
+	}
+
+	const entryState = authored.length === 1 ? 'entry is' : 'entries are';
+	state.textContent = `${ authored.length } native capability map ${ entryState } explicitly authored. Validate for effective-map and current-user lockout diagnostics.`;
 }
 
 export function collectTaxonomyCapabilities(): RecordValue | undefined {
@@ -180,7 +182,10 @@ export function resetTaxonomyCapabilities(): void {
 export function bindTaxonomyCapabilities(): void {
 	ensureCapabilityPolicy();
 	for ( const field of CAPABILITY_FIELDS ) {
-		textInput( field.id )?.addEventListener( 'input', updateCapabilityState );
+		textInput( field.id )?.addEventListener(
+			'input',
+			updateCapabilityState
+		);
 	}
 	updateCapabilityState();
 }
