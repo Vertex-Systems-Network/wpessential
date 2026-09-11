@@ -22,6 +22,10 @@ final readonly class TaxonomyCptUiImportPreviewAbilityHandler implements Ability
         if (!is_array($source) || array_is_list($source)) {
             throw new InvalidArgumentException('CPT UI import preview source must be an object/map.');
         }
-        return $this->preview->preview($source);
+        $id = $input['id'] ?? null;
+        if ($id !== null && !is_string($id)) {
+            throw new InvalidArgumentException('CPT UI import preview id must be a string when provided.');
+        }
+        return $this->preview->preview($source, $id);
     }
 }
