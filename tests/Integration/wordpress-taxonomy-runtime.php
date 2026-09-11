@@ -75,8 +75,14 @@ $genrePayload = [
     'rewrite' => ['slug' => 'library/genres', 'with_front' => false, 'hierarchical' => true],
     'query_var' => 'library_genre',
     'show_admin_column' => true,
+    'default_term' => [
+        'name' => 'General',
+        'slug' => 'general',
+        'description' => 'Default library genre',
+    ],
 ];
 $mode = getenv('WPE_TAXONOMY_TEST_MODE') ?: '';
+$evidencePath = getenv('WPE_TAXONOMY_EVIDENCE_PATH') ?: '';
 
 if ($mode === 'seed-active') {
     taxonomyRuntimeExpect($definitions->get($genreId) === null, 'taxonomy fixture must start absent');
@@ -128,6 +134,82 @@ if ($mode === 'verify-active') {
     taxonomyRuntimeExpect(in_array('post', $object->object_type, true), 'Taxonomy object-type association must survive projection');
     taxonomyRuntimeExpect(is_array($object->rewrite) && ($object->rewrite['slug'] ?? null) === 'library/genres', 'Taxonomy rewrite slug must survive projection');
     taxonomyRuntimeExpect(isset($runtime->forKind(RegistrationKind::Taxonomy)['library_genre']), 'compiled manifest must contain the Taxonomy');
+
+    $defaultTermId = (int) get_option('default_term_library_genre', 0);
+    taxonomyRuntimeExpect($defaultTermId > 0, 'WordPress must persist the custom taxonomy default term id');
+    $defaultTerm = get_term($defaultTermId, 'library_genre');
+    taxonomyRuntimeExpect($defaultTerm instanceof WP_Term, 'WordPress must create the projected custom taxonomy default term');
+    taxonomyRuntimeExpect($defaultTerm->name === 'General', 'default term name must survive native registration');
+    taxonomyRuntimeExpect($defaultTerm->slug === 'general', 'default term slug must survive native registration');
+    taxonomyRuntimeExpect($defaultTerm->description === 'Default library genre', 'default term description must survive native registration');
+
+    $postId = wp_insert_post([
+        'post_title' => 'Taxonomy default term runtime fixture',
+        'post_status' => 'publish',
+        'post_type' => 'post',
+    ], true);
+    taxonomyRuntimeExpect(is_int($postId) && $postId > 0, 'default term fixture post must be created');
+
+    $alternate = wp_insert_term('Mystery', 'library_genre', ['slug' => 'mystery']);
+    taxonomyRuntimeExpect(!is_wp_error($alternate) && is_array($alternate), 'alternate taxonomy term must be created');
+    $alternateTermId = (int) ($alternate['term_id'] ?? 0);
+    taxonomyRuntimeExpect($alternateTermId > 0, 'alternate taxonomy term must have an id');
+
+    $assigned = wp_set_object_terms($postId, [$alternateTermId], 'library_genre', false);
+    taxonomyRuntimeExpect(is_array($assigned), 'alternate taxonomy term must assign through WordPress core');
+    taxonomyRuntimeExpect(
+        wp_delete_term($alternateTermId, 'library_genre') === true,
+        'deleting the sole non-default term must succeed through WordPress core',
+    );
+    $fallbackTerms = wp_get_object_terms($postId, 'library_genre', [
+        'fields' => 'ids',
+        'orderby' => 'none',
+    ]);
+    taxonomyRuntimeExpect(is_array($fallbackTerms), 'fallback object terms must be readable');
+    taxonomyRuntimeExpect(
+        array_map('intval', $fallbackTerms) === [$defaultTermId],
+        'WordPress must reassign the configured custom taxonomy default when the sole assigned term is deleted',
+    );
+
+    taxonomyRuntimeExpect(
+        wp_remove_object_terms($postId, $defaultTermId, 'library_genre') === true,
+        'direct WordPress relationship removal must succeed for the assigned default term',
+    );
+    $termsAfterDirectRemoval = wp_get_object_terms($postId, 'library_genre', [
+        'fields' => 'ids',
+        'orderby' => 'none',
+    ]);
+    taxonomyRuntimeExpect(
+        is_array($termsAfterDirectRemoval) && $termsAfterDirectRemoval === [],
+        'direct relationship removal must preserve native semantics and may leave a custom taxonomy object term-less',
+    );
+
+    taxonomyRuntimeExpect(
+        wp_delete_term($defaultTermId, 'library_genre') === 0,
+        'WordPress must protect the configured custom taxonomy default term from direct deletion',
+    );
+    taxonomyRuntimeExpect(
+        get_term($defaultTermId, 'library_genre') instanceof WP_Term,
+        'protected default term must remain present after blocked deletion',
+    );
+
+    if ($evidencePath !== '') {
+        $directory = dirname($evidencePath);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        file_put_contents($evidencePath, json_encode([
+            'schema' => 'wpessential-taxonomy-runtime-evidence-v2',
+            'result' => 'PARTIAL',
+            'default_term_id' => $defaultTermId,
+            'default_term_created' => true,
+            'default_term_option_tracks_id' => true,
+            'native_delete_fallback_reassigned_default' => true,
+            'direct_remove_can_leave_termless' => true,
+            'default_term_delete_protected' => true,
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+    }
+
     fwrite(STDOUT, "Taxonomy verify-active PASS\n");
     return;
 }
@@ -195,14 +277,47 @@ if ($mode === 'verify-disabled') {
     taxonomyRuntimeExpect($retained->payload === $genrePayload, 'disable must retain canonical Taxonomy configuration payload');
     taxonomyRuntimeExpect($runtime->forKind(RegistrationKind::Taxonomy) === [], 'compiled Taxonomy manifest must be empty after disable');
 
-    $evidencePath = getenv('WPE_TAXONOMY_EVIDENCE_PATH') ?: '';
+    $priorEvidence = [];
+    if ($evidencePath !== '' && is_file($evidencePath)) {
+        $rawEvidence = file_get_contents($evidencePath);
+        if (is_string($rawEvidence)) {
+            $decodedEvidence = json_decode($rawEvidence, true);
+            if (is_array($decodedEvidence)) {
+                $priorEvidence = $decodedEvidence;
+            }
+        }
+    }
+    taxonomyRuntimeExpect(($priorEvidence['default_term_created'] ?? false) === true, 'default term creation evidence must survive lifecycle requests');
+    taxonomyRuntimeExpect(($priorEvidence['default_term_option_tracks_id'] ?? false) === true, 'default term option evidence must survive lifecycle requests');
+    taxonomyRuntimeExpect(($priorEvidence['native_delete_fallback_reassigned_default'] ?? false) === true, 'native delete fallback evidence must survive lifecycle requests');
+    taxonomyRuntimeExpect(($priorEvidence['direct_remove_can_leave_termless'] ?? false) === true, 'native direct-removal evidence must survive lifecycle requests');
+    taxonomyRuntimeExpect(($priorEvidence['default_term_delete_protected'] ?? false) === true, 'default term protection evidence must survive lifecycle requests');
+
+    $defaultTermId = (int) ($priorEvidence['default_term_id'] ?? 0);
+    taxonomyRuntimeExpect($defaultTermId > 0, 'default term evidence must retain the native term id');
+    taxonomyRuntimeExpect(
+        (int) get_option('default_term_library_genre', 0) === $defaultTermId,
+        'disabling WPE runtime registration must not destructively remove the native default-term option',
+    );
+
+    global $wpdb;
+    $defaultTermRows = (int) $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE term_id = %d AND taxonomy = %s",
+        $defaultTermId,
+        'library_genre',
+    ));
+    taxonomyRuntimeExpect(
+        $defaultTermRows === 1,
+        'disabling WPE runtime registration must not destructively remove the native default term row',
+    );
+
     if ($evidencePath !== '') {
         $directory = dirname($evidencePath);
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
-        $evidence = [
-            'schema' => 'wpessential-taxonomy-runtime-evidence-v1',
+        $evidence = array_merge($priorEvidence, [
+            'schema' => 'wpessential-taxonomy-runtime-evidence-v2',
             'result' => 'PASS',
             'wordpress_version' => get_bloginfo('version'),
             'php_version' => PHP_VERSION,
@@ -212,7 +327,9 @@ if ($mode === 'verify-disabled') {
             'taxonomy_key' => 'library_genre',
             'disabled_definition_retained' => true,
             'compiled_taxonomy_count' => count($runtime->forKind(RegistrationKind::Taxonomy)),
-        ];
+            'disabled_default_term_row_retained' => true,
+            'disabled_default_term_option_retained' => true,
+        ]);
         file_put_contents($evidencePath, json_encode(
             $evidence,
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
