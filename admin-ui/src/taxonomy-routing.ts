@@ -398,12 +398,15 @@ function setRoutingPolicy( payload: RecordValue ): void {
 function setRestPolicy( payload: RecordValue ): void {
 	const restBase = textInput( REST_BASE_ID );
 	if ( restBase ) {
-		restBase.value = typeof payload.rest_base === 'string' ? payload.rest_base : '';
+		restBase.value =
+			typeof payload.rest_base === 'string' ? payload.rest_base : '';
 	}
 	const restNamespace = textInput( REST_NAMESPACE_ID );
 	if ( restNamespace ) {
 		restNamespace.value =
-			typeof payload.rest_namespace === 'string' ? payload.rest_namespace : '';
+			typeof payload.rest_namespace === 'string'
+				? payload.rest_namespace
+				: '';
 	}
 	updateRestState();
 }
