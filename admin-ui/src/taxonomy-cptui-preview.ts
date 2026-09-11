@@ -1,8 +1,19 @@
 type RecordValue = Record< string, unknown >;
 
-type RouteBootstrap = { type: string; nonce: string };
-type MainBootstrap = { ajaxUrl: string; ajaxAction: string };
-type PreviewIssue = { id: string; severity: string; field: string; message: string };
+type RouteBootstrap = {
+	type: string;
+	nonce: string;
+};
+type MainBootstrap = {
+	ajaxUrl: string;
+	ajaxAction: string;
+};
+type PreviewIssue = {
+	id: string;
+	severity: string;
+	field: string;
+	message: string;
+};
 type PreviewReport = {
 	valid: boolean;
 	payload: RecordValue;
@@ -22,7 +33,9 @@ const ISSUES_ID = 'wpessential-taxonomy-cptui-preview-issues';
 let lastReport: PreviewReport | null = null;
 
 function isRecord( value: unknown ): value is RecordValue {
-	return typeof value === 'object' && value !== null && ! Array.isArray( value );
+	return (
+		typeof value === 'object' && value !== null && ! Array.isArray( value )
+	);
 }
 
 function textInput( id: string ): HTMLInputElement | null {
@@ -50,34 +63,64 @@ function parseScript( id: string ): RecordValue | null {
 
 function mainBootstrap(): MainBootstrap | null {
 	const value = parseScript( 'wpessential-taxonomy-bootstrap' );
-	return value && typeof value.ajaxUrl === 'string' && typeof value.ajaxAction === 'string'
-		? { ajaxUrl: value.ajaxUrl, ajaxAction: value.ajaxAction }
-		: null;
+	if (
+		! value ||
+		typeof value.ajaxUrl !== 'string' ||
+		typeof value.ajaxAction !== 'string'
+	) {
+		return null;
+	}
+	return { ajaxUrl: value.ajaxUrl, ajaxAction: value.ajaxAction };
 }
 
 function routeBootstrap(): RouteBootstrap | null {
-	const value = parseScript( 'wpessential-taxonomy-import-preview-bootstrap' );
-	return value && typeof value.type === 'string' && typeof value.nonce === 'string'
-		? { type: value.type, nonce: value.nonce }
-		: null;
+	const value = parseScript(
+		'wpessential-taxonomy-import-preview-bootstrap'
+	);
+	if (
+		! value ||
+		typeof value.type !== 'string' ||
+		typeof value.nonce !== 'string'
+	) {
+		return null;
+	}
+	return { type: value.type, nonce: value.nonce };
+}
+
+function stringList( value: unknown ): string[] | null {
+	if ( ! Array.isArray( value ) ) {
+		return null;
+	}
+	if ( ! value.every( ( item ) => typeof item === 'string' ) ) {
+		return null;
+	}
+	return value as string[];
 }
 
 function parseReport( value: unknown ): PreviewReport | null {
-	if ( ! isRecord( value ) || typeof value.valid !== 'boolean' || ! isRecord( value.payload ) ) {
+	if (
+		! isRecord( value ) ||
+		typeof value.valid !== 'boolean' ||
+		! isRecord( value.payload ) ||
+		! Array.isArray( value.issues )
+	) {
 		return null;
 	}
-	if ( ! Array.isArray( value.rejected_fields ) || ! value.rejected_fields.every( ( item ) => typeof item === 'string' ) ) {
+	const rejectedFields = stringList( value.rejected_fields );
+	const unsupportedFields = stringList( value.unsupported_fields );
+	if ( rejectedFields === null || unsupportedFields === null ) {
 		return null;
 	}
-	if ( ! Array.isArray( value.unsupported_fields ) || ! value.unsupported_fields.every( ( item ) => typeof item === 'string' ) ) {
-		return null;
-	}
-	if ( ! Array.isArray( value.issues ) ) {
-		return null;
-	}
+
 	const issues: PreviewIssue[] = [];
 	for ( const issue of value.issues ) {
-		if ( ! isRecord( issue ) || typeof issue.id !== 'string' || typeof issue.severity !== 'string' || typeof issue.field !== 'string' || typeof issue.message !== 'string' ) {
+		if (
+			! isRecord( issue ) ||
+			typeof issue.id !== 'string' ||
+			typeof issue.severity !== 'string' ||
+			typeof issue.field !== 'string' ||
+			typeof issue.message !== 'string'
+		) {
 			return null;
 		}
 		issues.push( {
@@ -87,11 +130,12 @@ function parseReport( value: unknown ): PreviewReport | null {
 			message: issue.message,
 		} );
 	}
+
 	return {
 		valid: value.valid,
 		payload: value.payload,
-		rejected_fields: value.rejected_fields as string[],
-		unsupported_fields: value.unsupported_fields as string[],
+		rejected_fields: rejectedFields,
+		unsupported_fields: unsupportedFields,
 		issues,
 	};
 }
@@ -102,6 +146,7 @@ async function requestPreview( source: RecordValue ): Promise< PreviewReport > {
 	if ( ! main || ! route ) {
 		throw new Error( 'CPT UI import preview is unavailable on this page.' );
 	}
+
 	const body = new URLSearchParams();
 	body.set( 'action', main.ajaxAction );
 	body.set( 'type', route.type );
@@ -110,19 +155,33 @@ async function requestPreview( source: RecordValue ): Promise< PreviewReport > {
 	const response = await fetch( main.ajaxUrl, {
 		method: 'POST',
 		credentials: 'same-origin',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		},
 		body: body.toString(),
 	} );
 	const envelope: unknown = await response.json();
-	if ( ! isRecord( envelope ) || envelope.success !== true || ! isRecord( envelope.data ) ) {
-		const message = isRecord( envelope ) && isRecord( envelope.error ) && typeof envelope.error.message === 'string'
-			? envelope.error.message
-			: 'CPT UI import preview failed.';
+	if (
+		! isRecord( envelope ) ||
+		envelope.success !== true ||
+		! isRecord( envelope.data )
+	) {
+		let message = 'CPT UI import preview failed.';
+		if (
+			isRecord( envelope ) &&
+			isRecord( envelope.error ) &&
+			typeof envelope.error.message === 'string'
+		) {
+			message = envelope.error.message;
+		}
 		throw new Error( message );
 	}
+
 	const report = parseReport( envelope.data );
 	if ( ! report ) {
-		throw new Error( 'CPT UI import preview returned an invalid response.' );
+		throw new Error(
+			'CPT UI import preview returned an invalid response.'
+		);
 	}
 	return report;
 }
@@ -133,10 +192,15 @@ function renderReport( report: PreviewReport ): void {
 	const payload = document.getElementById( PAYLOAD_ID );
 	const issues = document.getElementById( ISSUES_ID );
 	const apply = document.getElementById( APPLY_ID );
+
 	if ( status ) {
-		status.textContent = report.valid
-			? 'Preview passed canonical Taxonomy validation. Nothing has been saved.'
-			: 'Preview is blocked. Resolve rejected or invalid source fields before applying.';
+		if ( report.valid ) {
+			status.textContent =
+				'Preview passed canonical Taxonomy validation. Nothing has been saved.';
+		} else {
+			status.textContent =
+				'Preview is blocked. Resolve rejected or invalid source fields before applying.';
+		}
 	}
 	if ( payload ) {
 		payload.textContent = JSON.stringify( report.payload, null, 2 );
@@ -145,7 +209,9 @@ function renderReport( report: PreviewReport ): void {
 		issues.replaceChildren();
 		for ( const issue of report.issues ) {
 			const item = document.createElement( 'li' );
-			item.textContent = `${ issue.severity.replaceAll( '_', ' ' ) }: ${ issue.message }`;
+			item.textContent = `${ issue.severity.replaceAll( '_', ' ' ) }: ${
+				issue.message
+			}`;
 			issues.append( item );
 		}
 	}
@@ -161,11 +227,54 @@ function setCheckbox( id: string, value: unknown ): void {
 	}
 }
 
+function optionalBooleanValue( value: unknown ): string {
+	if ( value === true ) {
+		return 'true';
+	}
+	if ( value === false ) {
+		return 'false';
+	}
+	return '';
+}
+
 function setOptionalBoolean( id: string, value: unknown ): void {
 	const select = selectInput( id );
 	if ( select ) {
-		select.value = value === true ? 'true' : value === false ? 'false' : '';
+		select.value = optionalBooleanValue( value );
 	}
+}
+
+function setStringInput( id: string, value: unknown ): void {
+	const input = textInput( id );
+	if ( input ) {
+		input.value = typeof value === 'string' ? value : '';
+	}
+}
+
+function rewriteModeValue( value: unknown ): string {
+	if ( value === true ) {
+		return 'true';
+	}
+	if ( value === false ) {
+		return 'false';
+	}
+	if ( isRecord( value ) ) {
+		return 'custom';
+	}
+	return '';
+}
+
+function queryModeValue( value: unknown ): string {
+	if ( value === true ) {
+		return 'true';
+	}
+	if ( value === false ) {
+		return 'false';
+	}
+	if ( typeof value === 'string' ) {
+		return 'custom';
+	}
+	return '';
 }
 
 function applyPayload( payload: RecordValue ): void {
@@ -176,17 +285,20 @@ function applyPayload( payload: RecordValue ): void {
 		description: 'wpessential-taxonomy-description',
 	};
 	for ( const [ key, id ] of Object.entries( fields ) ) {
-		const input = textInput( id );
-		if ( input ) {
-			input.value = typeof payload[ key ] === 'string' ? payload[ key ] as string : '';
-		}
+		setStringInput( id, payload[ key ] );
 	}
 
 	const objectTypes = Array.isArray( payload.object_types )
-		? payload.object_types.filter( ( item ): item is string => typeof item === 'string' )
+		? payload.object_types.filter(
+				( item ): item is string => typeof item === 'string'
+		  )
 		: [];
 	const remaining = new Set( objectTypes );
-	for ( const input of Array.from( document.querySelectorAll< HTMLInputElement >( '[data-wpessential-taxonomy-object-type]' ) ) ) {
+	for ( const input of Array.from(
+		document.querySelectorAll< HTMLInputElement >(
+			'[data-wpessential-taxonomy-object-type]'
+		)
+	) ) {
 		input.checked = remaining.has( input.value );
 		remaining.delete( input.value );
 	}
@@ -219,42 +331,117 @@ function applyPayload( payload: RecordValue ): void {
 		automatic.checked = payload.automatic_labels;
 	}
 	const labels = isRecord( payload.labels ) ? payload.labels : {};
-	for ( const input of Array.from( document.querySelectorAll< HTMLInputElement >( '[data-wpessential-taxonomy-label-field]' ) ) ) {
+	for ( const input of Array.from(
+		document.querySelectorAll< HTMLInputElement >(
+			'[data-wpessential-taxonomy-label-field]'
+		)
+	) ) {
 		const key = input.dataset.wpessentialTaxonomyLabelField ?? '';
-		input.value = typeof labels[ key ] === 'string' ? labels[ key ] as string : '';
+		input.value = typeof labels[ key ] === 'string' ? labels[ key ] : '';
 	}
 
-	const restBase = textInput( 'wpessential-taxonomy-rest-base' );
-	const restNamespace = textInput( 'wpessential-taxonomy-rest-namespace' );
-	if ( restBase ) restBase.value = typeof payload.rest_base === 'string' ? payload.rest_base : '';
-	if ( restNamespace ) restNamespace.value = typeof payload.rest_namespace === 'string' ? payload.rest_namespace : '';
+	setStringInput( 'wpessential-taxonomy-rest-base', payload.rest_base );
+	setStringInput(
+		'wpessential-taxonomy-rest-namespace',
+		payload.rest_namespace
+	);
 
 	const rewriteMode = selectInput( 'wpessential-taxonomy-rewrite-mode' );
 	if ( rewriteMode ) {
-		rewriteMode.value = payload.rewrite === true ? 'true' : payload.rewrite === false ? 'false' : isRecord( payload.rewrite ) ? 'custom' : '';
+		rewriteMode.value = rewriteModeValue( payload.rewrite );
 	}
 	const rewrite = isRecord( payload.rewrite ) ? payload.rewrite : {};
-	const rewriteSlug = textInput( 'wpessential-taxonomy-rewrite-slug' );
-	if ( rewriteSlug ) rewriteSlug.value = typeof rewrite.slug === 'string' ? rewrite.slug : '';
-	setOptionalBoolean( 'wpessential-taxonomy-rewrite-with-front', rewrite.with_front );
-	setOptionalBoolean( 'wpessential-taxonomy-rewrite-hierarchical', rewrite.hierarchical );
+	setStringInput( 'wpessential-taxonomy-rewrite-slug', rewrite.slug );
+	setOptionalBoolean(
+		'wpessential-taxonomy-rewrite-with-front',
+		rewrite.with_front
+	);
+	setOptionalBoolean(
+		'wpessential-taxonomy-rewrite-hierarchical',
+		rewrite.hierarchical
+	);
 
 	const queryMode = selectInput( 'wpessential-taxonomy-query-var-mode' );
 	if ( queryMode ) {
-		queryMode.value = payload.query_var === true ? 'true' : payload.query_var === false ? 'false' : typeof payload.query_var === 'string' ? 'custom' : '';
+		queryMode.value = queryModeValue( payload.query_var );
 	}
-	const queryName = textInput( 'wpessential-taxonomy-query-var-name' );
-	if ( queryName ) queryName.value = typeof payload.query_var === 'string' ? payload.query_var : '';
+	setStringInput(
+		'wpessential-taxonomy-query-var-name',
+		payload.query_var
+	);
 
 	const form = document.getElementById( 'wpessential-taxonomy-form' );
 	form?.dispatchEvent( new Event( 'input', { bubbles: true } ) );
 	form?.dispatchEvent( new Event( 'change', { bubbles: true } ) );
 }
 
+function previewSource(): HTMLTextAreaElement | null {
+	const source = document.getElementById( SOURCE_ID );
+	return source instanceof HTMLTextAreaElement ? source : null;
+}
+
+function previewStatus(): HTMLElement | null {
+	const status = document.getElementById( STATUS_ID );
+	return status instanceof HTMLElement ? status : null;
+}
+
+function hideApplyButton(): void {
+	const apply = document.getElementById( APPLY_ID );
+	if ( apply instanceof HTMLButtonElement ) {
+		apply.hidden = true;
+	}
+}
+
+async function handlePreview(): Promise< void > {
+	const source = previewSource();
+	if ( ! source ) {
+		return;
+	}
+	const status = previewStatus();
+	if ( status ) {
+		status.textContent = 'Validating CPT UI mapping…';
+	}
+	try {
+		const raw: unknown = JSON.parse( source.value );
+		if ( ! isRecord( raw ) ) {
+			throw new Error( 'CPT UI source must be one JSON object.' );
+		}
+		renderReport( await requestPreview( raw ) );
+	} catch ( error ) {
+		lastReport = null;
+		hideApplyButton();
+		if ( status ) {
+			status.textContent =
+				error instanceof Error
+					? error.message
+					: 'CPT UI preview failed.';
+		}
+	}
+}
+
+function handleApply(): void {
+	if ( ! lastReport?.valid ) {
+		return;
+	}
+	applyPayload( lastReport.payload );
+	const status = previewStatus();
+	if ( status ) {
+		status.textContent =
+			'Preview values applied to local editor controls. Nothing has been saved.';
+	}
+}
+
 function ensureSection(): void {
-	if ( document.getElementById( SECTION_ID ) ) return;
-	const advanced = document.getElementById( 'wpessential-taxonomy-tier-advanced' );
-	if ( ! ( advanced instanceof HTMLElement ) ) return;
+	if ( document.getElementById( SECTION_ID ) ) {
+		return;
+	}
+	const advanced = document.getElementById(
+		'wpessential-taxonomy-tier-advanced'
+	);
+	if ( ! ( advanced instanceof HTMLElement ) ) {
+		return;
+	}
+
 	const section = document.createElement( 'section' );
 	section.id = SECTION_ID;
 	section.setAttribute( 'aria-labelledby', `${ SECTION_ID }-title` );
@@ -269,29 +456,9 @@ function ensureSection(): void {
 	advanced.append( section );
 
 	document.getElementById( PREVIEW_ID )?.addEventListener( 'click', () => {
-		void ( async () => {
-			const source = document.getElementById( SOURCE_ID );
-			const status = document.getElementById( STATUS_ID );
-			if ( ! ( source instanceof HTMLTextAreaElement ) ) return;
-			if ( status ) status.textContent = 'Validating CPT UI mapping…';
-			try {
-				const raw: unknown = JSON.parse( source.value );
-				if ( ! isRecord( raw ) ) throw new Error( 'CPT UI source must be one JSON object.' );
-				renderReport( await requestPreview( raw ) );
-			} catch ( error ) {
-				lastReport = null;
-				const apply = document.getElementById( APPLY_ID );
-				if ( apply instanceof HTMLButtonElement ) apply.hidden = true;
-				if ( status ) status.textContent = error instanceof Error ? error.message : 'CPT UI preview failed.';
-			}
-		} )();
+		void handlePreview();
 	} );
-	document.getElementById( APPLY_ID )?.addEventListener( 'click', () => {
-		if ( ! lastReport?.valid ) return;
-		applyPayload( lastReport.payload );
-		const status = document.getElementById( STATUS_ID );
-		if ( status ) status.textContent = 'Preview values applied to local editor controls. Nothing has been saved.';
-	} );
+	document.getElementById( APPLY_ID )?.addEventListener( 'click', handleApply );
 }
 
 export function bindTaxonomyCptUiPreview(): void {
