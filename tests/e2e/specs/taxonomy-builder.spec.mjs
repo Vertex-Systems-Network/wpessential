@@ -60,7 +60,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('packaged Taxonomy Builder renders object type linking and progressively enhances', async ({ page }) => {
+test('packaged Taxonomy Builder renders searchable grouped object type linking and progressively enhances', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', (error) => {
     pageErrors.push(error.message);
@@ -84,7 +84,35 @@ test('packaged Taxonomy Builder renders object type linking and progressively en
 
   await expect(root).toHaveAttribute('data-wpessential-surface', 'taxonomies');
   await expect(root).toHaveAttribute('data-wpessential-enhanced', 'ready');
-  await expect(page.locator('[data-wpessential-taxonomy-object-type][value="post"]')).toBeChecked();
+
+  const postType = page.locator('[data-wpessential-taxonomy-object-type][value="post"]');
+  const postRow = page.locator(
+    '[data-wpessential-taxonomy-object-type-key="post"]',
+  );
+  const pageRow = page.locator(
+    '[data-wpessential-taxonomy-object-type-key="page"]',
+  );
+  const coreGroup = page.locator(
+    '[data-wpessential-taxonomy-object-type-group="wordpress"]',
+  );
+  const search = page.getByLabel('Search linked post types');
+
+  await expect(coreGroup).toBeVisible();
+  await expect(coreGroup.getByRole('heading', { name: 'Core WordPress post types' })).toBeVisible();
+  await expect(postRow).toContainText('healthy');
+  await expect(postType).toBeChecked();
+
+  await search.fill('page');
+  await expect(pageRow).toBeVisible();
+  await expect(postRow).toBeHidden();
+  await expect(postType).toBeChecked();
+  await expect(page.locator('#wpessential-taxonomy-object-type-search-status')).toContainText(
+    /Showing \d+ of \d+ linked post types\./,
+  );
+
+  await search.fill('');
+  await expect(postRow).toBeVisible();
+  await expect(postType).toBeChecked();
   expect(pageErrors, `Unexpected Taxonomy Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
@@ -94,12 +122,29 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   const postType = page.locator('[data-wpessential-taxonomy-object-type][value="post"]');
   const externalTypes = page.getByLabel('Additional/external post type keys');
   const diagnostics = page.locator('#wpessential-taxonomy-diagnostics');
+  const preservedGroup = page.locator(
+    '[data-wpessential-taxonomy-object-type-group="preserved"]',
+  );
 
   await page.getByLabel('Taxonomy key').fill('category');
   await page.getByLabel('Plural name').fill('Categories');
   await page.getByLabel('Singular name').fill('Category');
   await postType.check();
   await externalTypes.fill('external_book');
+  await expect(preservedGroup).toBeVisible();
+  await expect(
+    page.locator('[data-wpessential-taxonomy-object-type-key="external_book"]'),
+  ).toContainText('missing');
+  await page.getByLabel('Search linked post types').fill('external_book');
+  await expect(
+    page.locator('[data-wpessential-taxonomy-object-type-key="external_book"]'),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-wpessential-taxonomy-object-type-key="post"]'),
+  ).toBeHidden();
+  await page.getByLabel('Search linked post types').fill('');
+  await expect(postType).toBeChecked();
+
   await page.getByRole('button', { name: 'Validate' }).click();
 
   const validation = page.locator('#wpessential-taxonomy-validation');
@@ -141,6 +186,10 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await row.getByRole('button', { name: 'Edit' }).click();
   await expect(postType).toBeChecked();
   await expect(externalTypes).toHaveValue('external_book');
+  await expect(preservedGroup).toBeVisible();
+  await expect(
+    page.locator('[data-wpessential-taxonomy-object-type-key="external_book"]'),
+  ).toBeVisible();
 });
 
 test('packaged Taxonomy Builder diagnostics have zero axe violations', async ({ page }) => {
