@@ -134,7 +134,7 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await expect(preservedGroup).toBeVisible();
   await expect(
     page.locator('[data-wpessential-taxonomy-object-type-key="external_book"]'),
-  ).toContainText('missing');
+  ).toContainText('preserved');
   await page.getByLabel('Search linked post types').fill('external_book');
   await expect(
     page.locator('[data-wpessential-taxonomy-object-type-key="external_book"]'),
