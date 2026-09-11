@@ -71,6 +71,9 @@ final readonly class TaxonomyValidationService
             $this->validateRuntimeOwnership($key, $current, $issues);
         }
         $this->validateObjectTypeDependencies($payload, $issues);
+        if ($registration instanceof RegistrationDefinition) {
+            $this->validateRoutingCollisions($candidate, $registration, $issues);
+        }
 
         return $this->report(
             $key,
@@ -195,6 +198,91 @@ final readonly class TaxonomyValidationService
                 );
             }
         }
+    }
+
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateRoutingCollisions(
+        Definition $candidate,
+        RegistrationDefinition $candidateRegistration,
+        array &$issues,
+    ): void {
+        $candidateRewriteBase = $this->effectiveRewriteBase($candidateRegistration);
+        $candidateQueryVar = $this->effectiveQueryVar($candidateRegistration);
+
+        foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $definition) {
+            if ($definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+                || $definition->id === $candidate->id
+                || $definition->status !== DefinitionStatus::Published
+            ) {
+                continue;
+            }
+
+            try {
+                $registration = $this->projector->project($definition);
+            } catch (InvalidArgumentException) {
+                continue;
+            }
+
+            if ($candidateRewriteBase !== null
+                && $candidateRewriteBase === $this->effectiveRewriteBase($registration)
+            ) {
+                $issues[] = $this->issue(
+                    'rewrite_route_collision',
+                    'compatibility_warning',
+                    'rewrite',
+                    sprintf(
+                        'Rewrite base "%s" is also used by published taxonomy "%s"; route resolution may be ambiguous.',
+                        $candidateRewriteBase,
+                        $registration->key,
+                    ),
+                );
+            }
+
+            if ($candidateQueryVar !== null
+                && $candidateQueryVar === $this->effectiveQueryVar($registration)
+            ) {
+                $issues[] = $this->issue(
+                    'query_var_collision',
+                    'compatibility_warning',
+                    'query_var',
+                    sprintf(
+                        'Query variable "%s" is also used by published taxonomy "%s"; requests may be ambiguous.',
+                        $candidateQueryVar,
+                        $registration->key,
+                    ),
+                );
+            }
+        }
+    }
+
+    private function effectiveRewriteBase(RegistrationDefinition $registration): ?string
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $rewrite = $args['rewrite'] ?? true;
+        if ($rewrite === false) {
+            return null;
+        }
+        if (is_array($rewrite) && is_string($rewrite['slug'] ?? null) && trim($rewrite['slug']) !== '') {
+            return trim($rewrite['slug'], '/');
+        }
+        return $registration->key;
+    }
+
+    private function effectiveQueryVar(RegistrationDefinition $registration): ?string
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        if (!array_key_exists('query_var', $args)) {
+            return $registration->key;
+        }
+
+        $queryVar = $args['query_var'];
+        if ($queryVar === false) {
+            return null;
+        }
+        if ($queryVar === true) {
+            return $registration->key;
+        }
+        return is_string($queryVar) && $queryVar !== '' ? $queryVar : null;
     }
 
     /** @return array<string,mixed> */
