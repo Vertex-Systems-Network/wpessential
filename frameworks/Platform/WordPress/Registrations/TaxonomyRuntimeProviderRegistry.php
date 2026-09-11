@@ -96,6 +96,25 @@ final class TaxonomyRuntimeProviderRegistry
     }
 
     /**
+     * Returns a JSON-safe, deterministic provider inventory for diagnostics/admin UX.
+     *
+     * Provider implementation descriptors are intentionally never exposed. Callers receive
+     * only registered IDs plus whether the descriptor is resolvable at the current runtime
+     * boundary. The registry remains the single authority for actual callback/class lookup.
+     *
+     * @return array<string,list<array{id:string,available:bool}>>
+     */
+    public function catalog(): array
+    {
+        return [
+            'rest_controller' => $this->catalogEntries('rest_controller', $this->restControllers),
+            'meta_box' => $this->catalogEntries('meta_box', $this->metaBoxCallbacks),
+            'meta_box_sanitize' => $this->catalogEntries('meta_box_sanitize', $this->metaBoxSanitizeCallbacks),
+            'term_count' => $this->catalogEntries('term_count', $this->termCountCallbacks),
+        ];
+    }
+
+    /**
      * Resolve persisted provider IDs at the last responsible runtime boundary.
      *
      * Compiled registration manifests remain JSON-safe because only provider IDs are
@@ -155,6 +174,34 @@ final class TaxonomyRuntimeProviderRegistry
         }
 
         return $args;
+    }
+
+    /**
+     * @param array<string,mixed> $providers
+     * @return list<array{id:string,available:bool}>
+     */
+    private function catalogEntries(string $slot, array $providers): array
+    {
+        ksort($providers, SORT_STRING);
+        $entries = [];
+        foreach ($providers as $id => $descriptor) {
+            $entries[] = [
+                'id' => $id,
+                'available' => $this->descriptorAvailable($slot, $descriptor),
+            ];
+        }
+        return $entries;
+    }
+
+    private function descriptorAvailable(string $slot, mixed $descriptor): bool
+    {
+        if ($slot === 'rest_controller') {
+            return is_string($descriptor) && class_exists($descriptor);
+        }
+        if ($slot === 'meta_box') {
+            return $descriptor === false || is_callable($descriptor);
+        }
+        return is_callable($descriptor);
     }
 
     private function providerId(string $id): string
