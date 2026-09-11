@@ -17,8 +17,6 @@ use WPEssential\Platform\WordPress\Registrations\RegistrationDefinition;
 final readonly class TaxonomyValidationService
 {
     private const PREVIEW_ID = '00000000-0000-4000-8000-000000000002';
-    private const POST_TYPE_DEFINITION_TYPE = 'post_type';
-    private const POST_TYPE_OWNER_SURFACE_ID = 1;
 
     /** @var array<string,string> */
     private const DEFAULT_CAPABILITIES = [
@@ -461,12 +459,14 @@ final readonly class TaxonomyValidationService
         $providerIds = is_array($registrationPayload['provider_ids'] ?? null)
             ? $registrationPayload['provider_ids']
             : [];
+        $readModel = new TaxonomyDefinitionReadModel($this->definitions);
 
         return [
             'effective_args' => $effectiveArgs,
             'overrides' => $this->explicitOverrides($candidate->payload, $args, $providerIds),
             'provider_ids' => $providerIds,
-            'association_health' => $this->associationHealth($objectTypes),
+            'association_health' => $readModel->associationHealth($objectTypes),
+            'dependency_usage' => $readModel->dependencyUsage($candidate),
             'runtime' => [
                 'registered' => function_exists('taxonomy_exists') ? taxonomy_exists($registration->key) : null,
             ],
@@ -520,63 +520,6 @@ final readonly class TaxonomyValidationService
         }
         ksort($overrides, SORT_STRING);
         return $overrides;
-    }
-
-    /**
-     * @param list<string> $objectTypes
-     * @return list<array{key:string,state:string,canonical:bool,canonical_status:?string,runtime_registered:?bool}>
-     */
-    private function associationHealth(array $objectTypes): array
-    {
-        /** @var array<string,Definition> $canonical */
-        $canonical = [];
-        foreach ($this->definitions->byType(self::POST_TYPE_DEFINITION_TYPE) as $definition) {
-            if ($definition->ownerSurfaceId !== self::POST_TYPE_OWNER_SURFACE_ID) {
-                continue;
-            }
-            $key = $definition->payload['post_type_key'] ?? null;
-            if (is_string($key) && trim($key) !== '') {
-                $canonical[trim($key)] = $definition;
-            }
-        }
-
-        $health = [];
-        foreach ($objectTypes as $key) {
-            $definition = $canonical[$key] ?? null;
-            $runtimeRegistered = function_exists('post_type_exists') ? post_type_exists($key) : null;
-            $canonicalStatus = $definition instanceof Definition ? $definition->status->value : null;
-
-            if ($definition instanceof Definition && $definition->status !== DefinitionStatus::Published) {
-                $state = 'disabled';
-            } elseif ($runtimeRegistered === false) {
-                $state = 'missing';
-            } elseif ($definition instanceof Definition) {
-                $state = $runtimeRegistered === null ? 'unavailable' : 'healthy';
-            } elseif ($runtimeRegistered === true) {
-                $state = $this->isBuiltInPostType($key) ? 'healthy' : 'external';
-            } else {
-                $state = 'unavailable';
-            }
-
-            $health[] = [
-                'key' => $key,
-                'state' => $state,
-                'canonical' => $definition instanceof Definition,
-                'canonical_status' => $canonicalStatus,
-                'runtime_registered' => $runtimeRegistered,
-            ];
-        }
-
-        return $health;
-    }
-
-    private function isBuiltInPostType(string $key): bool
-    {
-        if (!function_exists('get_post_type_object')) {
-            return false;
-        }
-        $object = get_post_type_object($key);
-        return is_object($object) && ($object->_builtin ?? false) === true;
     }
 
     /** @param array<string,mixed> $args @return array<string,mixed> */

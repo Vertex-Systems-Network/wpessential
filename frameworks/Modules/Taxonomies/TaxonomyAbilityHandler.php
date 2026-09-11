@@ -56,8 +56,12 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             static fn (Definition $definition): bool => $definition->ownerSurfaceId === TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
         ));
         usort($definitions, static fn (Definition $left, Definition $right): int => [$left->slug, $left->id] <=> [$right->slug, $right->id]);
+        $readModel = new TaxonomyDefinitionReadModel($this->definitions);
 
-        return ['definitions' => array_map($this->serialize(...), $definitions)];
+        return ['definitions' => array_map(
+            fn (Definition $definition): array => $this->serialize($definition, $readModel),
+            $definitions,
+        )];
     }
 
     /** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */
@@ -433,8 +437,12 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
     }
 
     /** @return array<string,mixed> */
-    private function serialize(Definition $definition): array
-    {
+    private function serialize(
+        Definition $definition,
+        ?TaxonomyDefinitionReadModel $readModel = null,
+    ): array {
+        $readModel ??= new TaxonomyDefinitionReadModel($this->definitions);
+
         return [
             'id' => $definition->id,
             'slug' => $definition->slug,
@@ -446,6 +454,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             'revision' => $definition->revision,
             'dependencies' => $definition->dependencies,
             'checksum' => $definition->checksum,
+            'read_model' => $readModel->summary($definition),
         ];
     }
 

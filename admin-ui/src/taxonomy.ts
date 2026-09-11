@@ -15,11 +15,43 @@ import {
 type RecordValue = Record< string, unknown >;
 type TaxonomyPayload = RecordValue;
 
+type DefinitionReference = {
+	id: string;
+	resolved: boolean;
+	slug: string | null;
+	type: string | null;
+	owner_surface_id: number | null;
+	status: string | null;
+};
+type AssociationHealth = {
+	key: string;
+	state: string;
+	canonical: boolean;
+	canonical_definition_id: string | null;
+	canonical_status: string | null;
+	runtime_registered: boolean | null;
+};
+type DependencyUsage = {
+	count: number;
+	declared: DefinitionReference[];
+	dependents: DefinitionReference[];
+	object_types: AssociationHealth[];
+};
+type RuntimeHealth = {
+	state: string;
+	registered: boolean | null;
+	definition_status: string;
+};
+type TaxonomyReadModel = {
+	runtime_health: RuntimeHealth;
+	dependency_usage: DependencyUsage;
+};
 type TaxonomyDefinition = {
 	id: string;
 	status: string;
 	revision: number;
 	payload: TaxonomyPayload;
+	read_model: TaxonomyReadModel;
 };
 
 type ObjectTypeOption = {
@@ -37,18 +69,12 @@ type ValidationIssue = {
 	field: string;
 	message: string;
 };
-type AssociationHealth = {
-	key: string;
-	state: string;
-	canonical: boolean;
-	canonical_status: string | null;
-	runtime_registered: boolean | null;
-};
 type TaxonomyDiagnostics = {
 	effective_args: RecordValue;
 	overrides: RecordValue;
 	provider_ids: Record< string, string >;
 	association_health: AssociationHealth[];
+	dependency_usage: DependencyUsage;
 	runtime: { registered: boolean | null };
 	previews: { rest: RecordValue; rewrite: RecordValue };
 };
@@ -84,6 +110,77 @@ function isRecord( value: unknown ): value is RecordValue {
 	);
 }
 
+function isNullableString( value: unknown ): value is string | null {
+	return value === null || typeof value === 'string';
+}
+
+function isNullableNumber( value: unknown ): value is number | null {
+	return (
+		value === null ||
+		( typeof value === 'number' && Number.isInteger( value ) )
+	);
+}
+
+function isNullableBoolean( value: unknown ): value is boolean | null {
+	return value === null || typeof value === 'boolean';
+}
+
+function isDefinitionReference( value: unknown ): value is DefinitionReference {
+	return (
+		isRecord( value ) &&
+		typeof value.id === 'string' &&
+		typeof value.resolved === 'boolean' &&
+		isNullableString( value.slug ) &&
+		isNullableString( value.type ) &&
+		isNullableNumber( value.owner_surface_id ) &&
+		isNullableString( value.status )
+	);
+}
+
+function isAssociationHealth( value: unknown ): value is AssociationHealth {
+	return (
+		isRecord( value ) &&
+		typeof value.key === 'string' &&
+		typeof value.state === 'string' &&
+		typeof value.canonical === 'boolean' &&
+		isNullableString( value.canonical_definition_id ) &&
+		isNullableString( value.canonical_status ) &&
+		isNullableBoolean( value.runtime_registered )
+	);
+}
+
+function isDependencyUsage( value: unknown ): value is DependencyUsage {
+	return (
+		isRecord( value ) &&
+		typeof value.count === 'number' &&
+		Number.isInteger( value.count ) &&
+		value.count >= 0 &&
+		Array.isArray( value.declared ) &&
+		value.declared.every( isDefinitionReference ) &&
+		Array.isArray( value.dependents ) &&
+		value.dependents.every( isDefinitionReference ) &&
+		Array.isArray( value.object_types ) &&
+		value.object_types.every( isAssociationHealth )
+	);
+}
+
+function isRuntimeHealth( value: unknown ): value is RuntimeHealth {
+	return (
+		isRecord( value ) &&
+		typeof value.state === 'string' &&
+		isNullableBoolean( value.registered ) &&
+		typeof value.definition_status === 'string'
+	);
+}
+
+function isTaxonomyReadModel( value: unknown ): value is TaxonomyReadModel {
+	return (
+		isRecord( value ) &&
+		isRuntimeHealth( value.runtime_health ) &&
+		isDependencyUsage( value.dependency_usage )
+	);
+}
+
 function isDefinition( value: unknown ): value is TaxonomyDefinition {
 	return (
 		isRecord( value ) &&
@@ -91,7 +188,8 @@ function isDefinition( value: unknown ): value is TaxonomyDefinition {
 		typeof value.status === 'string' &&
 		typeof value.revision === 'number' &&
 		Number.isInteger( value.revision ) &&
-		isRecord( value.payload )
+		isRecord( value.payload ) &&
+		isTaxonomyReadModel( value.read_model )
 	);
 }
 
@@ -158,22 +256,6 @@ function isIssue( value: unknown ): value is ValidationIssue {
 	);
 }
 
-function isNullableBoolean( value: unknown ): value is boolean | null {
-	return value === null || typeof value === 'boolean';
-}
-
-function isAssociationHealth( value: unknown ): value is AssociationHealth {
-	return (
-		isRecord( value ) &&
-		typeof value.key === 'string' &&
-		typeof value.state === 'string' &&
-		typeof value.canonical === 'boolean' &&
-		( value.canonical_status === null ||
-			typeof value.canonical_status === 'string' ) &&
-		isNullableBoolean( value.runtime_registered )
-	);
-}
-
 function parseProviderIds( value: unknown ): Record< string, string > | null {
 	if ( Array.isArray( value ) ) {
 		return value.length === 0 ? {} : null;
@@ -199,6 +281,7 @@ function parseDiagnostics( value: unknown ): TaxonomyDiagnostics | null {
 		! isRecord( value.overrides ) ||
 		! Array.isArray( value.association_health ) ||
 		! value.association_health.every( isAssociationHealth ) ||
+		! isDependencyUsage( value.dependency_usage ) ||
 		! isRecord( value.runtime ) ||
 		! isNullableBoolean( value.runtime.registered ) ||
 		! isRecord( value.previews ) ||
@@ -218,6 +301,7 @@ function parseDiagnostics( value: unknown ): TaxonomyDiagnostics | null {
 		overrides: value.overrides,
 		provider_ids: providerIds,
 		association_health: value.association_health,
+		dependency_usage: value.dependency_usage,
 		runtime: { registered: value.runtime.registered },
 		previews: {
 			rest: value.previews.rest,
@@ -427,11 +511,23 @@ function ensureDiagnosticsPanel(): HTMLElement | null {
 	createDiagnosticsValue( summary, 'REST route', 'rest-route' );
 	createDiagnosticsValue( summary, 'Rewrite preview', 'rewrite-path' );
 	createDiagnosticsValue( summary, 'Runtime providers', 'providers' );
+	createDiagnosticsValue(
+		summary,
+		'Dependency / usage references',
+		'dependency-count'
+	);
 
 	const associationHeading = document.createElement( 'h4' );
 	associationHeading.textContent = 'Association health';
 	const associations = document.createElement( 'ul' );
 	associations.dataset.wpessentialTaxonomyAssociationHealth = '';
+
+	const dependencyDetails = document.createElement( 'details' );
+	const dependencySummary = document.createElement( 'summary' );
+	dependencySummary.textContent = 'Dependency / usage summary';
+	const dependencyUsage = document.createElement( 'pre' );
+	dependencyUsage.dataset.wpessentialTaxonomyDependencyUsage = '';
+	dependencyDetails.append( dependencySummary, dependencyUsage );
 
 	const effective = document.createElement( 'details' );
 	effective.open = true;
@@ -454,6 +550,7 @@ function ensureDiagnosticsPanel(): HTMLElement | null {
 		summary,
 		associationHeading,
 		associations,
+		dependencyDetails,
 		effective,
 		overrides
 	);
@@ -473,6 +570,7 @@ function clearDiagnostics(): void {
 		'rest-route',
 		'rewrite-path',
 		'providers',
+		'dependency-count',
 	] ) {
 		const value = diagnosticsValue( panel, name );
 		if ( value ) {
@@ -484,6 +582,12 @@ function clearDiagnostics(): void {
 	);
 	if ( associations instanceof HTMLElement ) {
 		associations.replaceChildren();
+	}
+	const dependencyUsage = panel.querySelector(
+		'[data-wpessential-taxonomy-dependency-usage]'
+	);
+	if ( dependencyUsage instanceof HTMLElement ) {
+		dependencyUsage.textContent = '';
 	}
 	const effective = panel.querySelector(
 		'[data-wpessential-taxonomy-effective-args]'
@@ -558,6 +662,12 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 						)
 						.join( ', ' );
 	}
+	const dependencyCount = diagnosticsValue( panel, 'dependency-count' );
+	if ( dependencyCount ) {
+		dependencyCount.textContent = String(
+			diagnostics.dependency_usage.count
+		);
+	}
 
 	const associations = panel.querySelector(
 		'[data-wpessential-taxonomy-association-health]'
@@ -583,6 +693,16 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 		}
 	}
 
+	const dependencyUsage = panel.querySelector(
+		'[data-wpessential-taxonomy-dependency-usage]'
+	);
+	if ( dependencyUsage instanceof HTMLElement ) {
+		dependencyUsage.textContent = JSON.stringify(
+			diagnostics.dependency_usage,
+			null,
+			2
+		);
+	}
 	const effective = panel.querySelector(
 		'[data-wpessential-taxonomy-effective-args]'
 	);
@@ -762,6 +882,11 @@ function upsertDefinition(
 	] );
 }
 
+function humanizeState( value: string ): string {
+	const label = value.replaceAll( '_', ' ' );
+	return label.charAt( 0 ).toUpperCase() + label.slice( 1 );
+}
+
 function renderRows( definitions: TaxonomyDefinition[] ): void {
 	const rows = document.getElementById( 'wpessential-taxonomy-rows' );
 	if ( ! ( rows instanceof HTMLTableSectionElement ) ) {
@@ -773,7 +898,7 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 		const row = document.createElement( 'tr' );
 		row.dataset.wpessentialTaxonomyEmpty = '';
 		const empty = cell( 'No taxonomies have been created yet.' );
-		empty.colSpan = 6;
+		empty.colSpan = 8;
 		row.append( empty );
 		rows.append( row );
 		return;
@@ -797,6 +922,13 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 					)
 					.join( ', ' )
 			: '';
+		const runtimeState = definition.read_model.runtime_health.state;
+		const runtimeHealth = cell( humanizeState( runtimeState ) );
+		runtimeHealth.dataset.wpessentialTaxonomyRuntimeHealth = runtimeState;
+		const dependencyCount = definition.read_model.dependency_usage.count;
+		const dependencies = cell( String( dependencyCount ) );
+		dependencies.dataset.wpessentialTaxonomyDependencyCount =
+			String( dependencyCount );
 
 		row.append(
 			cell( name ),
@@ -806,7 +938,9 @@ function renderRows( definitions: TaxonomyDefinition[] ): void {
 				definition.status.charAt( 0 ).toUpperCase() +
 					definition.status.slice( 1 )
 			),
-			cell( String( definition.revision ) )
+			cell( String( definition.revision ) ),
+			runtimeHealth,
+			dependencies
 		);
 
 		const actions = document.createElement( 'td' );
@@ -1164,6 +1298,9 @@ function boot(): void {
 			}
 			definitions = upsertDefinition( definitions, changed );
 			renderRows( definitions );
+			if ( status === 'published' ) {
+				await refresh();
+			}
 			if ( textInput( 'wpessential-taxonomy-id' )?.value === id ) {
 				resetForm();
 			}
