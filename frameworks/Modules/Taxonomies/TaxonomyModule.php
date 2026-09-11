@@ -78,12 +78,23 @@ final class TaxonomyModule implements ModuleInterface
         $projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
         $provider = new TaxonomyRegistrationProvider($definitions, $projector);
         $validation = new TaxonomyValidationService($definitions, $projector);
+        $cptUiMapper = new TaxonomyCptUiImportMapper();
+        $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
         $providers->register($provider);
         $services->set('module.taxonomies.projector', $projector);
         $services->set('module.taxonomies.registration-provider', $provider);
         $services->set('module.taxonomies.validation', $validation);
+        $services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
+        $services->set('module.taxonomies.cptui-preview', $cptUiPreview);
 
-        $this->registerAbilities($abilities, $abilityBridge, $definitions, $projector, $validation);
+        $this->registerAbilities(
+            $abilities,
+            $abilityBridge,
+            $definitions,
+            $projector,
+            $validation,
+            $cptUiPreview,
+        );
         $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
     }
 
@@ -128,6 +139,7 @@ final class TaxonomyModule implements ModuleInterface
         DefinitionRepositoryInterface $definitions,
         TaxonomyDefinitionProjector $projector,
         TaxonomyValidationService $validation,
+        TaxonomyCptUiImportPreviewService $cptUiPreview,
     ): void {
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $outputSchema = ['type' => 'object'];
@@ -192,6 +204,29 @@ final class TaxonomyModule implements ModuleInterface
             new TaxonomyValidationAbilityHandler($validation),
             'Validate taxonomy',
             'Preflights a Taxonomy candidate without mutating canonical definitions or runtime registration.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: 'wpessential/taxonomy/import-preview',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['source'],
+                    'properties' => [
+                        'source' => ['type' => 'object'],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyCptUiImportPreviewAbilityHandler($cptUiPreview),
+            'Preview CPT UI taxonomy import',
+            'Maps one CPT UI taxonomy record into a canonical Taxonomy payload and validates it without persisting a Definition.',
         );
 
         $this->registerAbility(
@@ -271,6 +306,7 @@ final class TaxonomyModule implements ModuleInterface
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.list', 'wpessential/taxonomy/list', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.get', 'wpessential/taxonomy/get', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.validate', 'wpessential/taxonomy/validate', NonceOperation::Apply);
+        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_preview', 'wpessential/taxonomy/import-preview', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.status', 'wpessential/taxonomy/status', NonceOperation::Update);
     }
