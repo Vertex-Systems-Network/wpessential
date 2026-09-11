@@ -129,8 +129,11 @@ final class TaxonomyModule implements ModuleInterface
             runtimeProviders: $taxonomyRegistrar->providers(),
             ajaxAction: $gateway->action(),
         );
+        $previewBridge = new TaxonomyCptUiImportPreviewAdminBridge($ajax);
         $services->set('module.taxonomies.admin', $admin);
+        $services->set('module.taxonomies.cptui-preview-admin', $previewBridge);
         $admin->register();
+        $previewBridge->register();
     }
 
     private function registerAbilities(
