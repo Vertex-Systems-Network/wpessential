@@ -44,6 +44,37 @@ function taxonomyTermQueryDefinition(
     );
 }
 
+/**
+ * Run the native object-term read from a cold relationship cache while capturing only SQL emitted by the read itself.
+ *
+ * @return array{terms:list<int>,queries:list<string>}
+ */
+function taxonomyTermQueryCapture(int $postId, string $taxonomy): array
+{
+    clean_object_term_cache($postId, 'post');
+    wp_cache_delete($postId, $taxonomy . '_relationships');
+
+    $queries = [];
+    $capture = static function (string $query) use (&$queries): string {
+        $queries[] = $query;
+        return $query;
+    };
+
+    add_filter('query', $capture);
+    try {
+        $terms = wp_get_object_terms($postId, $taxonomy);
+    } finally {
+        remove_filter('query', $capture);
+    }
+
+    taxonomyTermQueryExpect(!is_wp_error($terms) && is_array($terms), 'captured native object-term query must succeed');
+
+    return [
+        'terms' => array_map('intval', $terms),
+        'queries' => $queries,
+    ];
+}
+
 $kernel = \WPEssential\Bootstrap\Plugin::kernel();
 taxonomyTermQueryExpect($kernel instanceof Kernel && $kernel->isBooted(), 'production plugin kernel must be booted');
 $services = $kernel->services();
@@ -176,6 +207,44 @@ if ($mode === 'verify') {
     taxonomyTermQueryExpect(($observedArgs['order'] ?? null) === 'ASC', 'final native query args must retain registered order=ASC');
     taxonomyTermQueryExpect(($observedArgs['fields'] ?? null) === 'ids', 'final native query args must retain registered fields=ids');
 
+    $smallPerformance = taxonomyTermQueryCapture($postId, $taxonomy);
+    taxonomyTermQueryExpect($smallPerformance['terms'] === $expectedOrder, 'small performance probe must retain native ordered ID output');
+    $smallQueryCount = count($smallPerformance['queries']);
+    taxonomyTermQueryExpect($smallQueryCount > 0 && $smallQueryCount <= 4, 'small bounded term query must stay inside the fixed SQL budget');
+
+    $performanceTermIds = [];
+    for ($index = 1; $index <= 32; ++$index) {
+        $inserted = wp_insert_term(
+            sprintf('Performance Genre %02d', $index),
+            $taxonomy,
+            ['slug' => sprintf('performance-genre-%02d', $index)],
+        );
+        taxonomyTermQueryExpect(!is_wp_error($inserted), 'performance probe terms must be created through native WordPress');
+        $performanceTermIds[] = (int) $inserted['term_id'];
+    }
+
+    $largeExpectedOrder = array_merge($expectedOrder, $performanceTermIds);
+    $largeSetTerms = wp_set_object_terms($postId, $largeExpectedOrder, $taxonomy, false);
+    taxonomyTermQueryExpect(!is_wp_error($largeSetTerms) && is_array($largeSetTerms), 'large ordered term assignment must succeed through native WordPress');
+    taxonomyTermQueryExpect(count($largeSetTerms) === count($largeExpectedOrder), 'large ordered assignment must retain every probe relationship');
+
+    $largePerformance = taxonomyTermQueryCapture($postId, $taxonomy);
+    taxonomyTermQueryExpect($largePerformance['terms'] === $largeExpectedOrder, 'large performance probe must retain native ordered ID output');
+    $largeQueryCount = count($largePerformance['queries']);
+    taxonomyTermQueryExpect($largeQueryCount > 0 && $largeQueryCount <= 4, 'large bounded term query must stay inside the fixed SQL budget');
+    taxonomyTermQueryExpect(
+        $largeQueryCount <= $smallQueryCount + 1,
+        'native bounded term-query SQL count must remain stable as relationship count grows',
+    );
+
+    $performanceQueries = array_merge($smallPerformance['queries'], $largePerformance['queries']);
+    $termMetaTable = (string) $wpdb->termmeta;
+    $termMetaQueries = array_values(array_filter(
+        $performanceQueries,
+        static fn (string $query): bool => stripos($query, $termMetaTable) !== false || stripos($query, 'termmeta') !== false,
+    ));
+    taxonomyTermQueryExpect($termMetaQueries === [], 'bounded fields=ids reads must not introduce term-meta SQL');
+
     $existing = $definitions->get($definitionId);
     taxonomyTermQueryExpect($existing instanceof Definition && $existing->status === DefinitionStatus::Published, 'term-query fixture must remain published until runtime evidence completes');
     $definitions->save(taxonomyTermQueryDefinition(
@@ -189,7 +258,7 @@ if ($mode === 'verify') {
     taxonomyTermQueryExpect($disabled->revision === 2, 'term-query fixture disable transition must advance its revision');
 
     wp_delete_post($postId, true);
-    foreach ([$alphaId, $betaId, $gammaId] as $termId) {
+    foreach (array_merge([$alphaId, $betaId, $gammaId], $performanceTermIds) as $termId) {
         taxonomyTermQueryExpect(wp_delete_term($termId, $taxonomy) === true, 'term-query probe terms must clean up through native WordPress');
     }
 
@@ -200,7 +269,7 @@ if ($mode === 'verify') {
             mkdir($directory, 0777, true);
         }
         file_put_contents($evidencePath, json_encode([
-            'schema' => 'wpessential-taxonomy-term-query-evidence-v1',
+            'schema' => 'wpessential-taxonomy-term-query-evidence-v2',
             'result' => 'PASS',
             'wordpress_version' => get_bloginfo('version'),
             'php_version' => PHP_VERSION,
@@ -211,11 +280,18 @@ if ($mode === 'verify') {
             'registered_args_applied' => true,
             'registered_args_override_conflicting_call_args' => true,
             'bounded_fields_ids' => true,
+            'performance_small_relationship_count' => count($expectedOrder),
+            'performance_large_relationship_count' => count($largeExpectedOrder),
+            'performance_small_sql_queries' => $smallQueryCount,
+            'performance_large_sql_queries' => $largeQueryCount,
+            'performance_fixed_query_budget' => $smallQueryCount <= 4 && $largeQueryCount <= 4,
+            'performance_query_count_stable' => $largeQueryCount <= $smallQueryCount + 1,
+            'performance_no_termmeta_sql' => $termMetaQueries === [],
             'fixture_definition_disabled' => true,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     }
 
-    fwrite(STDOUT, "Taxonomy bounded term-query runtime PASS\n");
+    fwrite(STDOUT, "Taxonomy bounded term-query runtime and performance PASS\n");
     return;
 }
 

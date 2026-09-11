@@ -209,7 +209,7 @@ jobs:
               ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/term-query.log
           done
           test -s artifacts/taxonomy-runtime/term-query.json
-          jq -e '.result == "PASS" and .taxonomy_key == "library_order_genre" and .probe_term_count == 3 and .sort_enabled == true and .term_order_persisted == true and .registered_args_applied == true and .registered_args_override_conflicting_call_args == true and .bounded_fields_ids == true and .fixture_definition_disabled == true' artifacts/taxonomy-runtime/term-query.json >/dev/null
+          jq -e '.schema == "wpessential-taxonomy-term-query-evidence-v2" and .result == "PASS" and .taxonomy_key == "library_order_genre" and .probe_term_count == 3 and .sort_enabled == true and .term_order_persisted == true and .registered_args_applied == true and .registered_args_override_conflicting_call_args == true and .bounded_fields_ids == true and .performance_small_relationship_count == 3 and .performance_large_relationship_count == 35 and (.performance_small_sql_queries | numbers) > 0 and (.performance_small_sql_queries | numbers) <= 4 and (.performance_large_sql_queries | numbers) > 0 and (.performance_large_sql_queries | numbers) <= 4 and .performance_fixed_query_budget == true and .performance_query_count_stable == true and .performance_no_termmeta_sql == true and .fixture_definition_disabled == true' artifacts/taxonomy-runtime/term-query.json >/dev/null
           cat artifacts/taxonomy-runtime/term-query.json
 
       - name: Run Taxonomy definition and runtime lifecycle evidence
