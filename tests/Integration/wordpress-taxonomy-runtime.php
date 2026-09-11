@@ -13,6 +13,7 @@ if (!function_exists('get_bloginfo')) {
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Kernel\Kernel;
 use WPEssential\Modules\Taxonomies\TaxonomyDefinitionProjector;
+use WPEssential\Modules\Taxonomies\TaxonomyRewriteRefreshCoordinator;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Modules\ModuleState;
@@ -55,9 +56,11 @@ $services = $kernel->services();
 $definitions = $services->get('platform.definitions');
 $status = $services->get('platform.registrations.compilation-status');
 $runtime = $services->get('platform.registrations.runtime');
+$rewriteRefresh = $services->get('module.taxonomies.rewrite-refresh');
 taxonomyRuntimeExpect($definitions instanceof DefinitionRepositoryInterface, 'shared Definition Repository must be available');
 taxonomyRuntimeExpect($status instanceof RegistrationCompilationStatus, 'registration compilation status must be available');
 taxonomyRuntimeExpect($runtime instanceof RegistrationRuntimeLoader, 'compiled registration runtime must be available');
+taxonomyRuntimeExpect($rewriteRefresh instanceof TaxonomyRewriteRefreshCoordinator, 'Taxonomy rewrite refresh coordinator must be available');
 
 $genreId = '33333333-3333-4333-8333-333333333333';
 $conflictId = '44444444-4444-4444-8444-444444444444';
@@ -77,12 +80,21 @@ $mode = getenv('WPE_TAXONOMY_TEST_MODE') ?: '';
 
 if ($mode === 'seed-active') {
     taxonomyRuntimeExpect($definitions->get($genreId) === null, 'taxonomy fixture must start absent');
-    $definitions->save(taxonomyRuntimeDefinition(
+    $definition = taxonomyRuntimeDefinition(
         $genreId,
         'library-genre-definition',
         DefinitionStatus::Published,
         $genrePayload,
-    ));
+    );
+    $definitions->save($definition);
+    taxonomyRuntimeExpect(
+        $rewriteRefresh->scheduleForMutation(null, $definition),
+        'publishing a new routed Taxonomy must schedule a rewrite refresh',
+    );
+    taxonomyRuntimeExpect(
+        in_array(get_option(TaxonomyRewriteRefreshCoordinator::OPTION_KEY, false), [1, '1', true], true),
+        'rewrite refresh marker must persist for the next WordPress request',
+    );
     fwrite(STDOUT, "Taxonomy seed-active PASS\n");
     return;
 }
@@ -90,6 +102,21 @@ if ($mode === 'seed-active') {
 if ($mode === 'verify-active') {
     taxonomyRuntimeExpect($status->passed(), 'active Taxonomy definition compilation must pass');
     taxonomyRuntimeExpect(taxonomy_exists('library_genre'), 'published Taxonomy must register on the next real WordPress request');
+    taxonomyRuntimeExpect(
+        get_option(TaxonomyRewriteRefreshCoordinator::OPTION_KEY, false) === false,
+        'wp_loaded rewrite refresh must clear the pending marker after successful soft flush',
+    );
+    $rewriteRules = get_option('rewrite_rules', []);
+    taxonomyRuntimeExpect(is_array($rewriteRules), 'WordPress rewrite rule cache must be available after refresh');
+    $libraryRewriteFound = false;
+    foreach (array_keys($rewriteRules) as $pattern) {
+        if (is_string($pattern) && str_contains($pattern, 'library/genres')) {
+            $libraryRewriteFound = true;
+            break;
+        }
+    }
+    taxonomyRuntimeExpect($libraryRewriteFound, 'soft refresh must persist the registered library/genres taxonomy rewrite rules');
+
     $object = get_taxonomy('library_genre');
     taxonomyRuntimeExpect($object instanceof WP_Taxonomy, 'registered Taxonomy object must be available');
     taxonomyRuntimeExpect($object->public === true && $object->show_in_rest === true, 'public + REST semantics must survive projection');
