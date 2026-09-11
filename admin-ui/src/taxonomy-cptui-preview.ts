@@ -365,10 +365,7 @@ function applyPayload( payload: RecordValue ): void {
 	if ( queryMode ) {
 		queryMode.value = queryModeValue( payload.query_var );
 	}
-	setStringInput(
-		'wpessential-taxonomy-query-var-name',
-		payload.query_var
-	);
+	setStringInput( 'wpessential-taxonomy-query-var-name', payload.query_var );
 
 	const form = document.getElementById( 'wpessential-taxonomy-form' );
 	form?.dispatchEvent( new Event( 'input', { bubbles: true } ) );
@@ -458,7 +455,9 @@ function ensureSection(): void {
 	document.getElementById( PREVIEW_ID )?.addEventListener( 'click', () => {
 		void handlePreview();
 	} );
-	document.getElementById( APPLY_ID )?.addEventListener( 'click', handleApply );
+	document
+		.getElementById( APPLY_ID )
+		?.addEventListener( 'click', handleApply );
 }
 
 export function bindTaxonomyCptUiPreview(): void {
