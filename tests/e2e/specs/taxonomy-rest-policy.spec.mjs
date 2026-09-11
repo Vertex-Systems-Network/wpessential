@@ -41,11 +41,19 @@ async function ensureDetailsOpen(page, label) {
   await expect(details).toHaveAttribute('open', '');
 }
 
+async function waitForIdle(page) {
+  await expect(page.locator('#wpessential-taxonomy-root')).not.toHaveAttribute(
+    'aria-busy',
+    'true',
+  );
+}
+
 async function validate(page) {
   await page.getByRole('button', { name: 'Validate' }).click();
   await expect(
     page.locator('[data-wpessential-taxonomy-validation-summary]'),
   ).toContainText('Validation passed');
+  await waitForIdle(page);
 }
 
 test.beforeAll(async () => {
@@ -142,6 +150,7 @@ test('packaged Taxonomy Advanced UX authors, diagnoses, hydrates and resets REST
   const savedRow = page.locator('[data-wpessential-taxonomy-row]');
   await expect(savedRow).toContainText('rest_genre');
   await expect(savedRow).toContainText('Published');
+  await waitForIdle(page);
 
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await page.getByRole('button', { name: 'Advanced', exact: true }).click();
