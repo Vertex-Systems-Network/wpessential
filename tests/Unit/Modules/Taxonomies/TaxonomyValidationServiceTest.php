@@ -60,6 +60,41 @@ final class TaxonomyValidationServiceTest extends TestCase
         self::assertSame([], $repository->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE));
     }
 
+    public function testDiagnosticsMaterializeEffectiveCapabilityDefaultsAndPartialOverrides(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $defaults = $this->validation($repository)->validate(['payload' => $this->payload()]);
+
+        self::assertSame([
+            'manage_terms' => 'manage_categories',
+            'edit_terms' => 'manage_categories',
+            'delete_terms' => 'manage_categories',
+            'assign_terms' => 'edit_posts',
+        ], $defaults['diagnostics']['effective_args']['capabilities']);
+        self::assertArrayNotHasKey('capabilities', $defaults['diagnostics']['overrides']);
+
+        $custom = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), [
+                'capabilities' => [
+                    'manage_terms' => 'manage_library_genres',
+                    'assign_terms' => 'assign_library_genres',
+                ],
+            ]),
+        ]);
+
+        self::assertTrue($custom['valid']);
+        self::assertSame([
+            'manage_terms' => 'manage_library_genres',
+            'edit_terms' => 'manage_categories',
+            'delete_terms' => 'manage_categories',
+            'assign_terms' => 'assign_library_genres',
+        ], $custom['diagnostics']['effective_args']['capabilities']);
+        self::assertSame([
+            'manage_terms' => 'manage_library_genres',
+            'assign_terms' => 'assign_library_genres',
+        ], $custom['diagnostics']['overrides']['capabilities']);
+    }
+
     public function testInvalidCandidateDoesNotExposeMisleadingDiagnostics(): void
     {
         $repository = new InMemoryDefinitionRepository();
