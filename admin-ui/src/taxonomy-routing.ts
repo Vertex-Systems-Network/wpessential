@@ -1,3 +1,10 @@
+import {
+	bindTaxonomyCapabilities,
+	collectTaxonomyCapabilities,
+	resetTaxonomyCapabilities,
+	setTaxonomyCapabilities,
+} from './taxonomy-capabilities';
+
 type RecordValue = Record< string, unknown >;
 
 const ROUTING_POLICY_ID = 'wpessential-taxonomy-routing-policy';
@@ -480,22 +487,26 @@ export function collectTaxonomyRouting(): RecordValue {
 		query_var: queryVarFromInputs(),
 		rest_base: optionalTextValue( REST_BASE_ID ),
 		rest_namespace: optionalTextValue( REST_NAMESPACE_ID ),
+		capabilities: collectTaxonomyCapabilities(),
 	};
 }
 
 export function setTaxonomyRouting( payload: RecordValue ): void {
 	setRoutingPolicy( payload );
 	setRestPolicy( payload );
+	setTaxonomyCapabilities( payload );
 }
 
 export function resetTaxonomyRouting(): void {
 	resetRoutingPolicy();
 	resetRestPolicy();
+	resetTaxonomyCapabilities();
 }
 
 export function bindTaxonomyRouting(): void {
 	ensureRestPolicy();
 	ensureRoutingPolicy();
+	bindTaxonomyCapabilities();
 	for ( const id of [
 		REWRITE_MODE_ID,
 		REWRITE_WITH_FRONT_ID,

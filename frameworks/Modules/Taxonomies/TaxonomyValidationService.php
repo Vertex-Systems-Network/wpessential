@@ -20,6 +20,14 @@ final readonly class TaxonomyValidationService
     private const POST_TYPE_DEFINITION_TYPE = 'post_type';
     private const POST_TYPE_OWNER_SURFACE_ID = 1;
 
+    /** @var array<string,string> */
+    private const DEFAULT_CAPABILITIES = [
+        'manage_terms' => 'manage_categories',
+        'edit_terms' => 'manage_categories',
+        'delete_terms' => 'manage_categories',
+        'assign_terms' => 'edit_posts',
+    ];
+
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private TaxonomyDefinitionProjector $projector,
@@ -74,6 +82,7 @@ final readonly class TaxonomyValidationService
         if ($registration instanceof RegistrationDefinition) {
             $this->validateRoutingCollisions($candidate, $registration, $issues);
             $this->validateBlockEditorCompatibility($registration, $issues);
+            $this->validateCapabilityLockoutRisk($registration, $issues);
         }
 
         return $this->report(
@@ -309,6 +318,36 @@ final readonly class TaxonomyValidationService
         );
     }
 
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateCapabilityLockoutRisk(
+        RegistrationDefinition $registration,
+        array &$issues,
+    ): void {
+        if (!function_exists('current_user_can')) {
+            return;
+        }
+
+        $missing = [];
+        foreach ($this->effectiveCapabilities($registration) as $operation => $capability) {
+            if (!current_user_can($capability)) {
+                $missing[] = $operation . '=' . $capability;
+            }
+        }
+        if ($missing === []) {
+            return;
+        }
+
+        $issues[] = $this->issue(
+            'capability_lockout_risk',
+            'compatibility_warning',
+            'capabilities',
+            sprintf(
+                'Current WordPress user does not have effective taxonomy capability check(s) "%s". Saving this map does not grant capabilities; review grants in Roles & Capabilities to avoid losing taxonomy actions.',
+                implode(', ', $missing),
+            ),
+        );
+    }
+
     private function effectiveRestRoute(RegistrationDefinition $registration): ?string
     {
         $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
@@ -351,11 +390,28 @@ final readonly class TaxonomyValidationService
         return is_string($queryVar) && $queryVar !== '' ? $queryVar : null;
     }
 
+    /** @return array<string,string> */
+    private function effectiveCapabilities(RegistrationDefinition $registration): array
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $effective = self::DEFAULT_CAPABILITIES;
+        $authored = is_array($args['capabilities'] ?? null) ? $args['capabilities'] : [];
+        foreach (array_keys(self::DEFAULT_CAPABILITIES) as $key) {
+            $capability = $authored[$key] ?? null;
+            if (is_string($capability) && $capability !== '') {
+                $effective[$key] = $capability;
+            }
+        }
+        return $effective;
+    }
+
     /** @return array<string,mixed> */
     private function diagnostics(Definition $candidate, RegistrationDefinition $registration): array
     {
         $registrationPayload = $registration->payload;
         $args = is_array($registrationPayload['args'] ?? null) ? $registrationPayload['args'] : [];
+        $effectiveArgs = $args;
+        $effectiveArgs['capabilities'] = $this->effectiveCapabilities($registration);
         $objectTypes = is_array($registrationPayload['object_types'] ?? null)
             ? array_values(array_filter($registrationPayload['object_types'], 'is_string'))
             : [];
@@ -364,7 +420,7 @@ final readonly class TaxonomyValidationService
             : [];
 
         return [
-            'effective_args' => $args,
+            'effective_args' => $effectiveArgs,
             'overrides' => $this->explicitOverrides($candidate->payload, $args, $providerIds),
             'provider_ids' => $providerIds,
             'association_health' => $this->associationHealth($objectTypes),
