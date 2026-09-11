@@ -73,6 +73,7 @@ $payload = [
     ],
 ];
 $mode = getenv('WPE_TAXONOMY_DEFAULT_TERM_MODE') ?: '';
+$evidencePath = getenv('WPE_TAXONOMY_DEFAULT_TERM_EVIDENCE_PATH') ?: '';
 
 if ($mode === 'seed') {
     taxonomyDefaultTermExpect($definitions->get($definitionId) === null, 'default-term fixture must start absent');
@@ -168,6 +169,34 @@ if ($mode === 'verify-reuse-and-behavior') {
         'WordPress must block deletion of the configured custom taxonomy default term',
     );
 
+    $alternate = wp_insert_term('Mystery Library Genre', $taxonomy, ['slug' => 'mystery-library-genre']);
+    taxonomyDefaultTermExpect(!is_wp_error($alternate) && is_array($alternate), 'alternate default-term probe taxonomy term must be created');
+    $alternateTermId = (int) ($alternate['term_id'] ?? 0);
+    taxonomyDefaultTermExpect($alternateTermId > 0, 'alternate default-term probe taxonomy term must have an id');
+
+    $alternateAssignment = wp_set_object_terms($postId, [$alternateTermId], $taxonomy, false);
+    taxonomyDefaultTermExpect(!is_wp_error($alternateAssignment), 'alternate default-term probe assignment must succeed');
+    taxonomyDefaultTermExpect(
+        wp_delete_term($alternateTermId, $taxonomy) === true,
+        'deleting the sole assigned non-default term must succeed through WordPress core',
+    );
+    $fallbackTermIds = wp_get_object_terms($postId, $taxonomy, ['fields' => 'ids']);
+    taxonomyDefaultTermExpect(!is_wp_error($fallbackTermIds), 'native delete fallback term lookup must succeed');
+    taxonomyDefaultTermExpect(
+        is_array($fallbackTermIds) && array_map('intval', $fallbackTermIds) === [$defaultTermId],
+        'WordPress must reassign the configured custom taxonomy default when the sole assigned term is deleted',
+    );
+
+    taxonomyDefaultTermExpect(
+        wp_remove_object_terms($postId, $defaultTermId, $taxonomy) === true,
+        'direct WordPress relationship removal must succeed for the assigned default term',
+    );
+    $afterDirectRemoval = wp_get_object_terms($postId, $taxonomy, ['fields' => 'ids']);
+    taxonomyDefaultTermExpect(
+        !is_wp_error($afterDirectRemoval) && $afterDirectRemoval === [],
+        'direct relationship removal must preserve WordPress core semantics and may leave a custom taxonomy object term-less',
+    );
+
     $existing = $definitions->get($definitionId);
     taxonomyDefaultTermExpect($existing instanceof Definition && $existing->status === DefinitionStatus::Published, 'default-term fixture must remain published until behavior evidence completes');
     $definitions->save(taxonomyDefaultTermDefinition(
@@ -182,15 +211,14 @@ if ($mode === 'verify-reuse-and-behavior') {
 
     wp_delete_post($postId, true);
 
-    $evidencePath = getenv('WPE_TAXONOMY_DEFAULT_TERM_EVIDENCE_PATH') ?: '';
     if ($evidencePath !== '') {
         $directory = dirname($evidencePath);
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
         file_put_contents($evidencePath, json_encode([
-            'schema' => 'wpessential-taxonomy-default-term-evidence-v1',
-            'result' => 'PASS',
+            'schema' => 'wpessential-taxonomy-default-term-evidence-v2',
+            'result' => 'PARTIAL',
             'wordpress_version' => get_bloginfo('version'),
             'php_version' => PHP_VERSION,
             'taxonomy_key' => $taxonomy,
@@ -201,11 +229,70 @@ if ($mode === 'verify-reuse-and-behavior') {
             'insert_default_assigned' => true,
             'publish_default_restored' => true,
             'default_term_deletion_blocked' => true,
+            'delete_term_fallback_assigned' => true,
+            'direct_remove_can_leave_termless' => true,
             'fixture_definition_disabled' => true,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
     }
 
-    fwrite(STDOUT, "Taxonomy native default-term lifecycle PASS\n");
+    fwrite(STDOUT, "Taxonomy native default-term behavior PASS\n");
+    return;
+}
+
+if ($mode === 'verify-disabled-retention') {
+    taxonomyDefaultTermExpect($status->passed(), 'disabled default-term Definition set must compile successfully');
+    taxonomyDefaultTermExpect(!taxonomy_exists($taxonomy), 'disabled default-term Taxonomy must not register on the next WordPress request');
+
+    $disabled = $definitions->get($definitionId);
+    taxonomyDefaultTermExpect($disabled instanceof Definition, 'disabled default-term Definition must remain persisted');
+    taxonomyDefaultTermExpect($disabled->status === DefinitionStatus::Disabled, 'default-term Definition must remain disabled');
+    taxonomyDefaultTermExpect($disabled->revision === 2, 'disabled default-term Definition must retain revision 2');
+    taxonomyDefaultTermExpect($disabled->payload === $payload, 'disabled default-term Definition must retain its canonical payload');
+
+    $priorEvidence = [];
+    if ($evidencePath !== '' && is_file($evidencePath)) {
+        $rawEvidence = file_get_contents($evidencePath);
+        if (is_string($rawEvidence)) {
+            $decodedEvidence = json_decode($rawEvidence, true);
+            if (is_array($decodedEvidence)) {
+                $priorEvidence = $decodedEvidence;
+            }
+        }
+    }
+    taxonomyDefaultTermExpect(($priorEvidence['delete_term_fallback_assigned'] ?? false) === true, 'delete fallback evidence must survive into the disabled request');
+    taxonomyDefaultTermExpect(($priorEvidence['direct_remove_can_leave_termless'] ?? false) === true, 'direct relationship-removal evidence must survive into the disabled request');
+
+    $defaultTermId = (int) ($priorEvidence['default_term_id'] ?? 0);
+    taxonomyDefaultTermExpect($defaultTermId > 0, 'disabled-request evidence must retain the native default term id');
+    taxonomyDefaultTermExpect(
+        (int) get_option('default_term_' . $taxonomy, 0) === $defaultTermId,
+        'disabling WPE runtime registration must not destructively remove the WordPress default-term option',
+    );
+
+    $retainedTerm = get_term($defaultTermId);
+    taxonomyDefaultTermExpect($retainedTerm instanceof WP_Term, 'disabling WPE runtime registration must not destructively remove the native default term row');
+    taxonomyDefaultTermExpect($retainedTerm->taxonomy === $taxonomy, 'retained native default term row must keep its taxonomy identity');
+    taxonomyDefaultTermExpect($retainedTerm->slug === $defaultSlug, 'retained native default term row must keep its configured slug');
+
+    if ($evidencePath !== '') {
+        $directory = dirname($evidencePath);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        $evidence = array_merge($priorEvidence, [
+            'schema' => 'wpessential-taxonomy-default-term-evidence-v2',
+            'result' => 'PASS',
+            'taxonomy_runtime_absent_after_disable' => true,
+            'default_term_option_retained_after_disable' => true,
+            'default_term_row_retained_after_disable' => true,
+        ]);
+        file_put_contents($evidencePath, json_encode(
+            $evidence,
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
+        ));
+    }
+
+    fwrite(STDOUT, "Taxonomy disabled default-term retention PASS\n");
     return;
 }
 
