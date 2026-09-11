@@ -39,10 +39,7 @@ function appendLabel(
 	paragraph.append( label, document.createElement( 'br' ) );
 }
 
-function appendHelp(
-	paragraph: HTMLParagraphElement,
-	help: string
-): void {
+function appendHelp( paragraph: HTMLParagraphElement, help: string ): void {
 	paragraph.append( document.createElement( 'br' ) );
 	const description = document.createElement( 'span' );
 	description.className = 'description';
@@ -279,7 +276,13 @@ function setBooleanSelect( id: string, value: unknown ): void {
 	if ( ! select ) {
 		return;
 	}
-	select.value = value === true ? 'true' : value === false ? 'false' : '';
+	if ( value === true ) {
+		select.value = 'true';
+	} else if ( value === false ) {
+		select.value = 'false';
+	} else {
+		select.value = '';
+	}
 }
 
 function setRoutingPolicy( payload: RecordValue ): void {
