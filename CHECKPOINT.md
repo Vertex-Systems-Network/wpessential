@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-10 UTC**  
-Canonical audited base anchor: **`main @ d2594d3be0e5c9c0b3968fd9693f2e1538211263`**  
+Canonical audited base anchor: **`main @ d9204049a163bd79e41ad989af6d66c87e5388ae`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -34,7 +34,7 @@ Issue #473 / merged PR #477 remains the latest CPT planning closure: Bank `BANK_
 
 Parent implementation program: **Issue #474 / queue priority 1010 / OPEN**. Planning lifecycle remains **`UX_CONTRACT_COMPLETE`**; runtime/product parity are not certified.
 
-Promoted bounded slices now include merged PRs **#478, #479, #480, #483, #486, #489, #503, #506 and #512**.
+Promoted bounded slices now include merged PRs **#478, #479, #480, #483, #486, #489, #503, #506, #512 and #515**.
 
 ### PR #506 — accessible Find Setting search — PROMOTED
 
@@ -82,9 +82,34 @@ Exact head `c06001d7...` passed all three applicable workflows before merge:
 
 Earlier current-lane failures were repaired rather than bypassed: a Prettier-only Architecture failure and a Playwright visibility assertion against a closed diagnostics disclosure. The final test opens the disclosure through the user-facing interaction before retaining the same JSON assertion.
 
+### PR #515 — redacted runtime-provider catalog health — PROMOTED
+
+Merged as **`d9204049a163bd79e41ad989af6d66c87e5388ae`** from exact head **`b5753db7963fbf963e7ddbeaf6fcc6ffbeeba29d`**, with `behind=0`, exactly two changed files and no unresolved review threads.
+
+Promoted behavior:
+
+- adds a read-only `TaxonomyRuntimeProviderRegistry::catalog()` inventory for the accepted `rest_controller`, `meta_box`, `meta_box_sanitize` and `term_count` slots;
+- exposes only deterministic provider IDs plus a boolean current-runtime availability state;
+- keeps implementation class/callback descriptors redacted from catalog output;
+- does not execute a provider while computing the catalog;
+- preserves the existing last-responsible runtime `apply()` resolution and provider-ID persistence semantics unchanged;
+- focused PHPUnit evidence proves deterministic ordering, JSON-safe output, availability reporting and descriptor redaction;
+- this is a backend prerequisite only: no raw provider-ID authoring field or admin provider selector UI was introduced.
+
+Exact head `b5753db7...` passed all six applicable workflows before merge:
+
+1. Architecture Guards **#1208 — PASS**;
+2. PHP Quality Toolchain **#635 — PASS**;
+3. Taxonomy Runtime **#59 — PASS**;
+4. CPT Runtime **#112 — PASS**;
+5. Platform Compatibility Matrix **#816 — PASS**;
+6. Distributable Package **#741 — PASS**.
+
+Review threads were empty and the PR was mergeable before squash merge. The cross-surface CPT and Platform regressions are material because the changed registry is a shared WordPress registration component. No lifecycle/certification promotion follows from this green evidence.
+
 ### Remaining Taxonomy Runtime Gap Closure
 
-Issue #474 remains open. Remaining accepted families include provider selector/health UX, capabilities/effective-map UX, rewrite/REST collision diagnostics, portability/CPT UI compatibility mapping, and separately safety-gated taxonomy-key migration planning. No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is authorized yet.
+Issue #474 remains open. Remaining accepted families include controlled provider selector UX using only the redacted registered catalog, capabilities/effective-map UX, rewrite/REST collision diagnostics, portability/CPT UI compatibility mapping, and separately safety-gated taxonomy-key migration planning. No `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` claim is authorized yet.
 
 ## Surface 10 — Dashboard Widgets planning closure
 
@@ -108,18 +133,18 @@ Review threads were empty before squash merge as **`7e9c5af1bf6c90b934f1c5587b26
 
 Supervisor Issue #492 established ten distinct non-overlapping module lanes. Surface 2 remains the only runtime implementation lane. Surface 10 has completed its planning/contract gate; Surfaces 11–18 remain planning/contract-only.
 
-1. **Worker-01 — Taxonomy / Surface 2 / Issue #474** — PR #512 promoted; broader runtime-gap program remains OPEN.
+1. **Worker-01 — Taxonomy / Surface 2 / Issue #474** — PR #515 promoted; broader runtime-gap program remains OPEN and provider selector UI is still outstanding.
 2. **Worker-02 — Dashboard Widgets / Surface 10 / Issue #493** — **planning/contract gate complete** via merged PR #508; lifecycle `UX_CONTRACT_COMPLETE`; runtime remains unauthorized and no new runtime lane is opened.
-3. **Worker-03 — Admin Menu / Surface 11 / Issue #494** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `06952905...` is preserved and branch reconciled non-force to `main @ e45f21d4...` as `f61a4edd738a9a4ab731f5cfadb46467b0fe1c45` before PR #512 moved main.
-4. **Worker-04 — Settings Pages / Surface 12 / Issue #495** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `4a7e6924...` is preserved and branch reconciled non-force as `5e3a76f8ea6ad1e9087a350e956717d26bfbf9fb`.
-5. **Worker-05 — Frontend Dashboard / Surface 13 / Issue #496** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `75fccc4c...` is preserved and branch reconciled non-force as `b9e311faa07062e889aab8a939702233b0c2af11`.
-6. **Worker-06 — User Profile / Surface 14 / Issue #497** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `1be3ed32...` is preserved and branch reconciled non-force as `d0fc7b87d078cb89bc5f8ca1a8e3a9a7d10fb42b`.
-7. **Worker-07 — Membership / Surface 15 / Issue #498** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `23e143ab...` is preserved and branch reconciled non-force as `b720c516fc7fdc1137c89664ee4af6002c0630cf`; payment execution remains unauthorized.
-8. **Worker-08 — Builder Widgets / Surface 16 / Issue #499** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `268f41a6...` is preserved and branch reconciled non-force as `c0c0d0bcfb0ca4f0c57caf0d50464c720d8e8c1c`.
-9. **Worker-09 — Forms & Workflows / Surface 17 / Issue #500** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `deb5aba4...` is preserved and branch reconciled non-force as `5ce6a6288a57baca46801aea75e9c6dad7e91b99`; workflow execution remains unauthorized.
-10. **Worker-10 — Cron / Surface 18 / Issue #501** — main Bank remains `UNSEEDED / 0`; branch seed remains unreviewed. Original evidence head `cfd76786...` is preserved and branch reconciled non-force as `ec21d742c5d7104571ab8b44ed5afd2ee8b5351e`; WP-Cron is explicitly not represented as guaranteed wall-clock execution.
+3. **Worker-03 — Admin Menu / Surface 11 / Issue #494** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. Native/menu/admin-bar evidence was expanded on branch head `ed2df4e182d8c1f850c2f730d301bb1f9434c258`; no lifecycle promotion.
+4. **Worker-04 — Settings Pages / Surface 12 / Issue #495** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. Site/network/user persistence evidence was expanded on branch head `9642872f1876e84b7af7a83492ce62b7eab25f20`; no lifecycle promotion.
+5. **Worker-05 — Frontend Dashboard / Surface 13 / Issue #496** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. Native routing/auth ownership evidence was expanded on branch head `70c6bc4eed72db86a839f015f06c53fe02990109`; no lifecycle promotion.
+6. **Worker-06 — User Profile / Surface 14 / Issue #497** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. User-meta/profile lifecycle and authorization evidence was expanded on branch head `076f898f003d4fdfe63ca3ad4e43b5b87e38b64d`; no lifecycle promotion.
+7. **Worker-07 — Membership / Surface 15 / Issue #498** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. User/role plus membership plan/enrollment/payment-boundary evidence was expanded on branch head `5d6bab5899e86ebc7d1a2c7d4f64bf21a9d41aee`; payment execution remains unauthorized.
+8. **Worker-08 — Builder Widgets / Surface 16 / Issue #499** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. Block metadata/context/dynamic-render and adapter-boundary evidence was expanded on branch head `d5631be6157ddcf284cf7aa319fb0b1e5206e459`; runtime adapter registration remains unauthorized.
+9. **Worker-09 — Forms & Workflows / Surface 17 / Issue #500** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. Submission authorization/validation/lifecycle evidence was expanded on branch head `11144f3931e1913e1136135b6167b293fbf588ed`; workflow execution remains unauthorized.
+10. **Worker-10 — Cron / Surface 18 / Issue #501** — main Bank remains `UNSEEDED / 0`; 8-record branch seed remains unreviewed. Hook+args event identity, duplicate scheduling and timing/provider truth were expanded on branch head `8421c401b2c2723952bda787a413198f9b53cab9`; WP-Cron is explicitly not represented as guaranteed wall-clock execution.
 
-PR #512 moved main after those reconciliations, so Workers 03–10 must merge/reconcile current `main @ d2594d3b...` again without force immediately before their next writes or PR promotion. Branch-local seed candidates do **not** promote main lifecycle truth until reviewed PR evidence merges and Supervisor reconciliation is completed.
+Workers 03–10 were cleanly reconciled to `main @ 42303a97...` before these evidence writes and each remained limited to exactly four surface-local planning artifacts. PR #515 then moved main to `d9204049...`, so Worker-01 and Workers 03–10 must be reconciled again without force after this Supervisor shared-truth closeout before their next writes or PR promotion. Branch-local seed candidates do **not** promote main lifecycle truth until reviewed PR evidence merges and Supervisor reconciliation is completed.
 
 ## Planning-worker constraints
 
@@ -131,17 +156,17 @@ Workers 03–10 may produce Bank/Atomic audits, normalized Bank records, schema-
 - Multisite planning: **56 / 56**.
 - AI Prompt planning: **56 / 56**.
 - README closeout must remain **56 / 56 modules listed**.
-- Surface 2 machine planning lifecycle remains **`UX_CONTRACT_COMPLETE`**; PR #512 adds a bounded runtime-gap implementation slice but does not promote certification.
+- Surface 2 machine planning lifecycle remains **`UX_CONTRACT_COMPLETE`**; PRs #512 and #515 add bounded runtime-gap implementation evidence but do not promote certification.
 - Surface 10 machine planning lifecycle remains **`UX_CONTRACT_COMPLETE`** after Issue #493 / merged PR #508 and Supervisor Issue #510 / PR #511.
-- Current shared-truth reconciliation: **Issue #513 / supervisor branch `supervisor/taxonomy-runtime-defaults-reconciliation-v1`**.
-- Current audited main anchor for this reconciliation: **`d2594d3be0e5c9c0b3968fd9693f2e1538211263`**.
+- Current shared-truth reconciliation: **Issue #516 / supervisor branch `supervisor/taxonomy-provider-catalog-reconciliation-v1`**.
+- Current audited main anchor for this reconciliation: **`d9204049a163bd79e41ad989af6d66c87e5388ae`**.
 
 ## Next work
 
-1. Complete Supervisor Issue #513 by reconciling README, CHECKPOINT and coordination queue to merged PR #512 while keeping Taxonomy lifecycle/certification boundaries unchanged.
-2. Reconcile Worker-01 and Workers 03–10 deterministic branches to exact latest main without force before further writes; Dashboard Widgets remains completed planning truth only.
+1. Complete Supervisor Issue #516 by reconciling README, CHECKPOINT and coordination queue to merged PR #515 while keeping Taxonomy lifecycle/certification boundaries unchanged.
+2. Reconcile Worker-01 and Workers 03–10 deterministic branches to exact latest main without force after #516 promotion; Dashboard Widgets remains completed planning truth only.
 3. Workers 03–10: continue native/platform + market evidence expansion; main Bank is still `UNSEEDED / 0` for Surfaces 11–18, so no `BANK_REVIEWED` or option-contract promotion is valid until zero unresolved is proven and reviewed/merged.
-4. Worker-01 / Issue #474: after Issue #513 shared-truth promotion, continue the next bounded Taxonomy runtime gap without destructive key migration or certification claims.
+4. Worker-01 / Issue #474: after Issue #516 shared-truth promotion, continue the controlled provider selector/health UX using only the registered redacted catalog; do not expose raw callbacks/classes or destructive key migration.
 5. Dashboard Widgets has no authorized runtime lane; any runtime transition requires a later exact-main Supervisor gate.
 
 Repository evidence overrides conversational memory.
