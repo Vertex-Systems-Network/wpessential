@@ -146,6 +146,12 @@ final class TaxonomyModule implements ModuleInterface
     ): void {
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $outputSchema = ['type' => 'object'];
+        $saveHandler = new TaxonomyAbilityHandler(
+            $definitions,
+            $projector,
+            $validation,
+            TaxonomyAbilityHandler::SAVE,
+        );
 
         $this->registerAbility(
             $abilities,
@@ -236,6 +242,31 @@ final class TaxonomyModule implements ModuleInterface
             $abilities,
             $bridge,
             new AbilityDescriptor(
+                name: 'wpessential/taxonomy/import-commit',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: true,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['source'],
+                    'properties' => [
+                        'source' => ['type' => 'object'],
+                        'id' => ['type' => 'string'],
+                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyCptUiImportCommitAbilityHandler($cptUiPreview, $saveHandler),
+            'Commit CPT UI taxonomy import',
+            'Remaps and validates one CPT UI taxonomy record before delegating create or revision-safe update to the canonical Surface 2 save path.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
                 name: 'wpessential/taxonomy/save',
                 ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
                 capability: self::CAPABILITY,
@@ -253,7 +284,7 @@ final class TaxonomyModule implements ModuleInterface
                 ],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyAbilityHandler($definitions, $projector, $validation, TaxonomyAbilityHandler::SAVE),
+            $saveHandler,
             'Save taxonomy',
             'Creates or revision-safely updates a canonical Taxonomy definition through Surface 2.',
         );
@@ -310,6 +341,7 @@ final class TaxonomyModule implements ModuleInterface
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.get', 'wpessential/taxonomy/get', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.validate', 'wpessential/taxonomy/validate', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_preview', 'wpessential/taxonomy/import-preview', NonceOperation::Apply);
+        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_commit', 'wpessential/taxonomy/import-commit', NonceOperation::Update);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.status', 'wpessential/taxonomy/status', NonceOperation::Update);
     }
