@@ -25,14 +25,14 @@ final class TaxonomyRewriteRefreshCoordinator
     /** @var Closure(string):bool */
     private readonly Closure $deletePending;
 
-    /** @var Closure():bool */
-    private readonly Closure $softFlush;
+    /** @var Closure(bool):bool */
+    private readonly Closure $flushRewriteRules;
 
     public function __construct(
         ?Closure $readPending = null,
         ?Closure $writePending = null,
         ?Closure $deletePending = null,
-        ?Closure $softFlush = null,
+        ?Closure $flushRewriteRules = null,
     ) {
         $this->readPending = $readPending ?? static function (string $key): mixed {
             if (!function_exists('get_option')) {
@@ -55,12 +55,12 @@ final class TaxonomyRewriteRefreshCoordinator
 
             return delete_option($key);
         };
-        $this->softFlush = $softFlush ?? static function (): bool {
+        $this->flushRewriteRules = $flushRewriteRules ?? static function (bool $hard): bool {
             if (!function_exists('flush_rewrite_rules')) {
                 return false;
             }
 
-            flush_rewrite_rules(false);
+            flush_rewrite_rules($hard);
 
             return true;
         };
@@ -83,7 +83,7 @@ final class TaxonomyRewriteRefreshCoordinator
         if (!$this->isPending()) {
             return false;
         }
-        if (!(($this->softFlush)())) {
+        if (!(($this->flushRewriteRules)(false))) {
             return false;
         }
         if (!(($this->deletePending)(self::OPTION_KEY))) {
