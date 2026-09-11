@@ -32,6 +32,40 @@ final class TaxonomyRuntimeProviderRegistryTest extends TestCase
         self::assertTrue($registry->hasTermCountProvider('vendor.counter'));
     }
 
+    public function testProviderCatalogIsDeterministicJsonSafeAndDescriptorRedacted(): void
+    {
+        $registry = new TaxonomyRuntimeProviderRegistry();
+        $registry->registerRestController('test.rest', TaxonomyRuntimeProviderTestController::class);
+        $registry->registerMetaBoxProvider('test.editor', static function (): void {});
+        $registry->registerMetaBoxSanitizeProvider('test.sanitize', static fn (mixed $terms): mixed => $terms);
+        $registry->registerTermCountProvider('vendor.counter', 'Vendor\\Package\\TermCounter::update');
+
+        $catalog = $registry->catalog();
+
+        self::assertSame(['rest_controller', 'meta_box', 'meta_box_sanitize', 'term_count'], array_keys($catalog));
+        self::assertContains(['id' => 'test.rest', 'available' => true], $catalog['rest_controller']);
+        self::assertContains(['id' => 'wordpress.disabled', 'available' => true], $catalog['meta_box']);
+        self::assertContains(['id' => 'test.editor', 'available' => true], $catalog['meta_box']);
+        self::assertContains(['id' => 'test.sanitize', 'available' => true], $catalog['meta_box_sanitize']);
+        self::assertSame([['id' => 'vendor.counter', 'available' => false]], $catalog['term_count']);
+
+        $encoded = json_encode($catalog, JSON_THROW_ON_ERROR);
+        self::assertStringNotContainsString('TaxonomyRuntimeProviderTestController', $encoded);
+        self::assertStringNotContainsString('Vendor\\Package\\TermCounter::update', $encoded);
+    }
+
+    public function testProviderCatalogSortsIdsWithinEachSlot(): void
+    {
+        $registry = new TaxonomyRuntimeProviderRegistry();
+        $registry->registerMetaBoxProvider('vendor.zeta', false);
+        $registry->registerMetaBoxProvider('vendor.alpha', false);
+
+        self::assertSame(
+            ['vendor.alpha', 'vendor.zeta', 'wordpress.disabled'],
+            array_column($registry->catalog()['meta_box'], 'id'),
+        );
+    }
+
     public function testRejectsMalformedQualifiedClassName(): void
     {
         $registry = new TaxonomyRuntimeProviderRegistry();
