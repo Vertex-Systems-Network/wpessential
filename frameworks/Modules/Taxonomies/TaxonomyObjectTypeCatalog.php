@@ -40,7 +40,7 @@ final readonly class TaxonomyObjectTypeCatalog
                     $entries[$key] = [
                         'key' => $key,
                         'label' => $label,
-                        'source' => 'runtime',
+                        'source' => $this->runtimeSource($object),
                         'status' => 'registered',
                         'runtime_registered' => true,
                     ];
@@ -97,6 +97,11 @@ final readonly class TaxonomyObjectTypeCatalog
         } catch (Throwable) {
             return [];
         }
+    }
+
+    private function runtimeSource(object $object): string
+    {
+        return ($object->_builtin ?? false) === true ? 'wordpress' : 'runtime';
     }
 
     private function runtimeLabel(object $object, string $fallback): string
