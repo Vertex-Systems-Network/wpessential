@@ -1,3 +1,10 @@
+import {
+	bindTaxonomyRouting,
+	collectTaxonomyRouting,
+	resetTaxonomyRouting,
+	setTaxonomyRouting,
+} from './taxonomy-routing';
+
 type RecordValue = Record< string, unknown >;
 type TaxonomyTier = 'essential' | 'advanced' | 'expert';
 type TaxonomySettingEntry = {
@@ -797,6 +804,7 @@ export function collectTaxonomyVisibility(): RecordValue {
 	result.args = objectTermArgsFromInputs();
 	result.sort = visibilityValue( selectInput( SORT_ID )?.value ?? 'inherit' );
 	result.runtime_providers = runtimeProvidersFromInputs();
+	Object.assign( result, collectTaxonomyRouting() );
 	return result;
 }
 
@@ -810,6 +818,7 @@ export function setTaxonomyVisibility( payload: RecordValue ): void {
 	}
 	setRuntimeDefaults( payload );
 	setRuntimeProviders( payload );
+	setTaxonomyRouting( payload );
 	updateInheritanceStates();
 }
 
@@ -822,12 +831,14 @@ export function resetTaxonomyVisibility(): void {
 	}
 	resetRuntimeDefaults();
 	resetRuntimeProviders();
+	resetTaxonomyRouting();
 	updateInheritanceStates();
 	setTaxonomyTier( 'essential' );
 	resetTaxonomySettingSearch();
 }
 
 export function bindTaxonomyVisibility(): void {
+	bindTaxonomyRouting();
 	ensureRuntimeDefaults();
 	bindRuntimeProviders();
 	for ( const button of Array.from(
