@@ -94,14 +94,16 @@ final class TaxonomyModule implements ModuleInterface
         $ajax = $services->get('platform.ajax.dispatcher');
         $gateway = $services->get('platform.ajax.gateway');
         $assets = $services->get('platform.admin.assets');
+        $taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
 
         if (!$abilities instanceof AbilityRegistry
             || !$contexts instanceof WordPressExecutionContextFactory
             || !$ajax instanceof AjaxDispatcher
             || !$gateway instanceof WordPressAjaxGateway
             || !$assets instanceof AdminAssetManifest
+            || !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar
         ) {
-            throw new LogicException('Taxonomy admin requires the shared admin, Ability, and AJAX services.');
+            throw new LogicException('Taxonomy admin requires the shared admin, Ability, AJAX, and Taxonomy runtime services.');
         }
 
         $objectTypes = new TaxonomyObjectTypeCatalog($abilities, $contexts);
@@ -113,6 +115,7 @@ final class TaxonomyModule implements ModuleInterface
             ajax: $ajax,
             assets: $assets,
             objectTypes: $objectTypes,
+            runtimeProviders: $taxonomyRegistrar->providers(),
             ajaxAction: $gateway->action(),
         );
         $services->set('module.taxonomies.admin', $admin);

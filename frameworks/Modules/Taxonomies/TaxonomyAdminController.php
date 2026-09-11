@@ -17,6 +17,7 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\WordPress\Registrations\TaxonomyRuntimeProviderRegistry;
 
 final class TaxonomyAdminController
 {
@@ -31,6 +32,7 @@ final class TaxonomyAdminController
         private readonly AjaxDispatcher $ajax,
         private readonly AdminAssetManifest $assets,
         private readonly TaxonomyObjectTypeCatalog $objectTypes,
+        private readonly TaxonomyRuntimeProviderRegistry $runtimeProviders,
         private readonly string $ajaxAction,
     ) {
         if (trim($this->ajaxAction) === '') {
@@ -234,6 +236,45 @@ final class TaxonomyAdminController
         echo '<section id="wpessential-taxonomy-tier-expert" data-wpessential-taxonomy-tier-min="expert" aria-labelledby="wpessential-taxonomy-expert-title" hidden>';
         echo '<h3 id="wpessential-taxonomy-expert-title">' . esc_html__('Expert controls', 'wpessential') . '</h3>';
         echo '<p class="description">' . esc_html__('Controlled providers, bounded runtime defaults, portability and guarded key migration are introduced only through their separately reviewed implementation slices. Existing stored values remain preserved by ordinary edits.', 'wpessential') . '</p>';
+        $this->renderRuntimeProviderSelectors();
+        echo '</section>';
+    }
+
+    private function renderRuntimeProviderSelectors(): void
+    {
+        $catalog = $this->runtimeProviders->catalog();
+        $slots = [
+            'rest_controller' => __('REST controller provider', 'wpessential'),
+            'meta_box' => __('Meta-box provider', 'wpessential'),
+            'meta_box_sanitize' => __('Meta-box sanitizer provider', 'wpessential'),
+            'term_count' => __('Term-count provider', 'wpessential'),
+        ];
+
+        echo '<section id="wpessential-taxonomy-runtime-providers" aria-labelledby="wpessential-taxonomy-runtime-providers-title">';
+        echo '<h4 id="wpessential-taxonomy-runtime-providers-title">' . esc_html__('Controlled runtime providers', 'wpessential') . '</h4>';
+        echo '<p class="description">' . esc_html__('Only trusted provider IDs registered by PHP modules are shown. Implementation classes and callbacks are never exposed. Unavailable providers remain visible for health diagnostics but cannot be newly selected.', 'wpessential') . '</p>';
+
+        foreach ($slots as $slot => $label) {
+            $id = 'wpessential-taxonomy-provider-' . str_replace('_', '-', $slot);
+            $stateId = $id . '-state';
+            $entries = is_array($catalog[$slot] ?? null) ? $catalog[$slot] : [];
+            echo '<p><label for="' . esc_attr($id) . '"><strong>' . esc_html($label) . '</strong></label><br>';
+            echo '<select id="' . esc_attr($id) . '" data-wpessential-taxonomy-runtime-provider="' . esc_attr($slot) . '" aria-describedby="' . esc_attr($stateId) . '">';
+            echo '<option value="">' . esc_html__('WordPress default', 'wpessential') . '</option>';
+            foreach ($entries as $entry) {
+                $providerId = is_string($entry['id'] ?? null) ? $entry['id'] : '';
+                if ($providerId === '') {
+                    continue;
+                }
+                $available = ($entry['available'] ?? false) === true;
+                $health = $available ? __('available', 'wpessential') : __('unavailable', 'wpessential');
+                echo '<option value="' . esc_attr($providerId) . '" data-wpessential-taxonomy-provider-available="' . ($available ? 'true' : 'false') . '"' . ($available ? '' : ' disabled') . '>';
+                echo esc_html($providerId . ' — ' . $health);
+                echo '</option>';
+            }
+            echo '</select><br>';
+            echo '<span id="' . esc_attr($stateId) . '" class="description" data-wpessential-taxonomy-provider-state="' . esc_attr($slot) . '" role="status" aria-live="polite">' . esc_html__('WordPress default', 'wpessential') . '</span></p>';
+        }
         echo '</section>';
     }
 
