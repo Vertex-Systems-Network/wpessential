@@ -144,6 +144,61 @@ final class TaxonomyValidationServiceTest extends TestCase
         self::assertSame(1, $repository->get($created['id'])?->revision);
     }
 
+    public function testPublishedCanonicalRoutingCollisionsAreCompatibilityWarnings(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $created = $this->save($repository, array_merge($this->payload(), [
+            'rewrite' => ['slug' => 'shared/topic'],
+            'query_var' => 'shared_topic',
+        ]));
+        $this->status($repository, $created['id'], 1, 'published');
+
+        $report = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), [
+                'taxonomy_key' => 'library_topic',
+                'name' => 'Topics',
+                'singular_name' => 'Topic',
+                'rewrite' => ['slug' => 'shared/topic'],
+                'query_var' => 'shared_topic',
+            ]),
+        ]);
+
+        self::assertTrue($report['valid']);
+        $issuesById = [];
+        foreach ($report['issues'] as $issue) {
+            $issuesById[$issue['id']] = $issue;
+        }
+        self::assertArrayHasKey('rewrite_route_collision', $issuesById);
+        self::assertArrayHasKey('query_var_collision', $issuesById);
+        self::assertSame('compatibility_warning', $issuesById['rewrite_route_collision']['severity']);
+        self::assertSame('compatibility_warning', $issuesById['query_var_collision']['severity']);
+        self::assertSame('rewrite', $issuesById['rewrite_route_collision']['field']);
+        self::assertSame('query_var', $issuesById['query_var_collision']['field']);
+    }
+
+    public function testDisabledCanonicalTaxonomyDoesNotCreateRoutingCollisionWarning(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $this->save($repository, array_merge($this->payload(), [
+            'rewrite' => ['slug' => 'shared/topic'],
+            'query_var' => 'shared_topic',
+        ]));
+
+        $report = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), [
+                'taxonomy_key' => 'library_topic',
+                'name' => 'Topics',
+                'singular_name' => 'Topic',
+                'rewrite' => ['slug' => 'shared/topic'],
+                'query_var' => 'shared_topic',
+            ]),
+        ]);
+
+        $ids = array_column($report['issues'], 'id');
+        self::assertNotContains('rewrite_route_collision', $ids);
+        self::assertNotContains('query_var_collision', $ids);
+    }
+
     private function validation(InMemoryDefinitionRepository $repository): TaxonomyValidationService
     {
         return new TaxonomyValidationService(
