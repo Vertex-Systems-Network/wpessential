@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Tests\Unit\Modules\Taxonomies;
 
+use Closure;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\Taxonomies\TaxonomyAbilityHandler;
 use WPEssential\Modules\Taxonomies\TaxonomyDefinitionProjector;
@@ -111,7 +112,9 @@ final class TaxonomyRewriteRefreshCoordinatorTest extends TestCase
             $state,
             $writes,
             $flushModes,
-            $flushSucceeds,
+            static function (bool $hard) use (&$flushSucceeds): bool {
+                return $flushSucceeds;
+            },
         );
         $before = $this->definition(DefinitionStatus::Published);
         $after = $this->definition(DefinitionStatus::Published, [
@@ -198,7 +201,7 @@ final class TaxonomyRewriteRefreshCoordinatorTest extends TestCase
         array &$state,
         int &$writes,
         array &$flushModes,
-        bool &$flushSucceeds = true,
+        ?Closure $flushDecision = null,
     ): TaxonomyRewriteRefreshCoordinator {
         return new TaxonomyRewriteRefreshCoordinator(
             readPending: static function (string $key) use (&$state): mixed {
@@ -215,10 +218,10 @@ final class TaxonomyRewriteRefreshCoordinatorTest extends TestCase
 
                 return true;
             },
-            flushRewriteRules: static function (bool $hard) use (&$flushModes, &$flushSucceeds): bool {
+            flushRewriteRules: static function (bool $hard) use (&$flushModes, $flushDecision): bool {
                 $flushModes[] = $hard;
 
-                return $flushSucceeds;
+                return $flushDecision instanceof Closure ? $flushDecision($hard) : true;
             },
         );
     }
