@@ -22,11 +22,11 @@ final readonly class TaxonomyObjectTypeCatalog
     ) {}
 
     /**
-     * @return list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}>
+     * @return list<array{key:string,label:string,source:string,status:string,runtime_registered:bool,state:string}>
      */
     public function entries(): array
     {
-        /** @var array<string,array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $entries */
+        /** @var array<string,array{key:string,label:string,source:string,status:string,runtime_registered:bool,state:string}> $entries */
         $entries = [];
 
         if (function_exists('get_post_types')) {
@@ -36,13 +36,14 @@ final readonly class TaxonomyObjectTypeCatalog
                     if (!is_string($key) || $key === '' || !is_object($object)) {
                         continue;
                     }
-                    $label = $this->runtimeLabel($object, $key);
+                    $source = $this->runtimeSource($object);
                     $entries[$key] = [
                         'key' => $key,
-                        'label' => $label,
-                        'source' => 'runtime',
+                        'label' => $this->runtimeLabel($object, $key),
+                        'source' => $source,
                         'status' => 'registered',
                         'runtime_registered' => true,
+                        'state' => $source === 'wordpress' ? 'healthy' : 'external',
                     ];
                 }
             }
@@ -63,6 +64,7 @@ final readonly class TaxonomyObjectTypeCatalog
                 'source' => 'wpessential',
                 'status' => $status,
                 'runtime_registered' => $registered,
+                'state' => $status !== 'published' ? 'disabled' : ($registered ? 'healthy' : 'missing'),
             ];
         }
 
@@ -97,6 +99,12 @@ final readonly class TaxonomyObjectTypeCatalog
         } catch (Throwable) {
             return [];
         }
+    }
+
+    private function runtimeSource(object $object): string
+    {
+        $properties = get_object_vars($object);
+        return ($properties['_builtin'] ?? false) === true ? 'wordpress' : 'runtime';
     }
 
     private function runtimeLabel(object $object, string $fallback): string

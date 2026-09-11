@@ -1,5 +1,6 @@
 import { bindTaxonomyCptUiImportCommit } from './taxonomy-cptui-import-commit';
 import { bindTaxonomyCptUiPreview } from './taxonomy-cptui-preview';
+import './taxonomy-object-types';
 
 type RecordValue = Record< string, unknown >;
 
