@@ -73,6 +73,7 @@ final readonly class TaxonomyValidationService
         $this->validateObjectTypeDependencies($payload, $issues);
         if ($registration instanceof RegistrationDefinition) {
             $this->validateRoutingCollisions($candidate, $registration, $issues);
+            $this->validateBlockEditorCompatibility($registration, $issues);
         }
 
         return $this->report(
@@ -206,6 +207,7 @@ final readonly class TaxonomyValidationService
         RegistrationDefinition $candidateRegistration,
         array &$issues,
     ): void {
+        $candidateRestRoute = $this->effectiveRestRoute($candidateRegistration);
         $candidateRewriteBase = $this->effectiveRewriteBase($candidateRegistration);
         $candidateQueryVar = $this->effectiveQueryVar($candidateRegistration);
 
@@ -221,6 +223,21 @@ final readonly class TaxonomyValidationService
                 $registration = $this->projector->project($definition);
             } catch (InvalidArgumentException) {
                 continue;
+            }
+
+            if ($candidateRestRoute !== null
+                && $candidateRestRoute === $this->effectiveRestRoute($registration)
+            ) {
+                $issues[] = $this->issue(
+                    'rest_route_collision',
+                    'compatibility_warning',
+                    'rest_base',
+                    sprintf(
+                        'REST route "%s" is also used by published taxonomy "%s"; REST requests may be ambiguous.',
+                        $candidateRestRoute,
+                        $registration->key,
+                    ),
+                );
             }
 
             if ($candidateRewriteBase !== null
@@ -253,6 +270,55 @@ final readonly class TaxonomyValidationService
                 );
             }
         }
+    }
+
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateBlockEditorCompatibility(
+        RegistrationDefinition $registration,
+        array &$issues,
+    ): void {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        if (($args['show_in_rest'] ?? false) === true || !function_exists('use_block_editor_for_post_type')) {
+            return;
+        }
+
+        $objectTypes = is_array($registration->payload['object_types'] ?? null)
+            ? array_values(array_filter($registration->payload['object_types'], 'is_string'))
+            : [];
+        $blockEditorTypes = [];
+        foreach ($objectTypes as $objectType) {
+            if (function_exists('post_type_exists') && !post_type_exists($objectType)) {
+                continue;
+            }
+            if (use_block_editor_for_post_type($objectType)) {
+                $blockEditorTypes[] = $objectType;
+            }
+        }
+        if ($blockEditorTypes === []) {
+            return;
+        }
+
+        $issues[] = $this->issue(
+            'block_editor_rest_disabled',
+            'compatibility_warning',
+            'show_in_rest',
+            sprintf(
+                'REST exposure is disabled while block-editor object type(s) "%s" are associated; REST-backed taxonomy controls will be unavailable there.',
+                implode(', ', $blockEditorTypes),
+            ),
+        );
+    }
+
+    private function effectiveRestRoute(RegistrationDefinition $registration): ?string
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        if (($args['show_in_rest'] ?? false) !== true) {
+            return null;
+        }
+
+        $namespace = is_string($args['rest_namespace'] ?? null) ? trim($args['rest_namespace'], '/') : 'wp/v2';
+        $base = is_string($args['rest_base'] ?? null) ? trim($args['rest_base'], '/') : $registration->key;
+        return '/' . $namespace . '/' . $base;
     }
 
     private function effectiveRewriteBase(RegistrationDefinition $registration): ?string

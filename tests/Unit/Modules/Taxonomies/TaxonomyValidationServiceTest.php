@@ -176,12 +176,44 @@ final class TaxonomyValidationServiceTest extends TestCase
         self::assertSame('query_var', $issuesById['query_var_collision']['field']);
     }
 
+    public function testPublishedCanonicalRestRouteCollisionIsCompatibilityWarning(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $created = $this->save($repository, array_merge($this->payload(), [
+            'rest_base' => 'shared-terms',
+            'rest_namespace' => 'acme/v1',
+        ]));
+        $this->status($repository, $created['id'], 1, 'published');
+
+        $report = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), [
+                'taxonomy_key' => 'library_topic',
+                'name' => 'Topics',
+                'singular_name' => 'Topic',
+                'rest_base' => 'shared-terms',
+                'rest_namespace' => 'acme/v1',
+            ]),
+        ]);
+
+        self::assertTrue($report['valid']);
+        $issuesById = [];
+        foreach ($report['issues'] as $issue) {
+            $issuesById[$issue['id']] = $issue;
+        }
+        self::assertArrayHasKey('rest_route_collision', $issuesById);
+        self::assertSame('compatibility_warning', $issuesById['rest_route_collision']['severity']);
+        self::assertSame('rest_base', $issuesById['rest_route_collision']['field']);
+        self::assertStringContainsString('/acme/v1/shared-terms', $issuesById['rest_route_collision']['message']);
+    }
+
     public function testDisabledCanonicalTaxonomyDoesNotCreateRoutingCollisionWarning(): void
     {
         $repository = new InMemoryDefinitionRepository();
         $this->save($repository, array_merge($this->payload(), [
             'rewrite' => ['slug' => 'shared/topic'],
             'query_var' => 'shared_topic',
+            'rest_base' => 'shared-terms',
+            'rest_namespace' => 'acme/v1',
         ]));
 
         $report = $this->validation($repository)->validate([
@@ -191,12 +223,38 @@ final class TaxonomyValidationServiceTest extends TestCase
                 'singular_name' => 'Topic',
                 'rewrite' => ['slug' => 'shared/topic'],
                 'query_var' => 'shared_topic',
+                'rest_base' => 'shared-terms',
+                'rest_namespace' => 'acme/v1',
             ]),
         ]);
 
         $ids = array_column($report['issues'], 'id');
         self::assertNotContains('rewrite_route_collision', $ids);
         self::assertNotContains('query_var_collision', $ids);
+        self::assertNotContains('rest_route_collision', $ids);
+    }
+
+    public function testPublishedTaxonomyWithoutRestExposureDoesNotOwnRestRoute(): void
+    {
+        $repository = new InMemoryDefinitionRepository();
+        $created = $this->save($repository, array_merge($this->payload(), [
+            'show_in_rest' => false,
+            'rest_base' => 'shared-terms',
+            'rest_namespace' => 'acme/v1',
+        ]));
+        $this->status($repository, $created['id'], 1, 'published');
+
+        $report = $this->validation($repository)->validate([
+            'payload' => array_merge($this->payload(), [
+                'taxonomy_key' => 'library_topic',
+                'name' => 'Topics',
+                'singular_name' => 'Topic',
+                'rest_base' => 'shared-terms',
+                'rest_namespace' => 'acme/v1',
+            ]),
+        ]);
+
+        self::assertNotContains('rest_route_collision', array_column($report['issues'], 'id'));
     }
 
     private function validation(InMemoryDefinitionRepository $repository): TaxonomyValidationService
