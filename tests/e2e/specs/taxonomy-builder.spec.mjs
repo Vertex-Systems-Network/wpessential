@@ -79,6 +79,8 @@ test('packaged Taxonomy Builder renders searchable grouped object type linking a
   await expect(page.getByRole('button', { name: 'Validate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Save taxonomy' })).toBeVisible();
   await expect(page.getByRole('table', { name: 'Saved taxonomies' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Runtime health' })).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'Dependencies' })).toBeVisible();
   await expect(page.getByText('No taxonomies have been created yet.')).toBeVisible();
   await expect(page.locator('#wpessential-taxonomy-diagnostics')).toBeHidden();
 
@@ -167,8 +169,10 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="rest-route"]')).toHaveText('/wp/v2/library_genre');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="rewrite-path"]')).toHaveText('/library_genre/{term-slug}/');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="providers"]')).toHaveText('WordPress defaults');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-diagnostic="dependency-count"]')).toHaveText('2');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-association-state="healthy"]')).toContainText('post: healthy');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-association-state="missing"]')).toContainText('external_book: missing');
+  await expect(diagnostics.locator('[data-wpessential-taxonomy-dependency-usage]')).toContainText('"object_types"');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-effective-args]')).toContainText('"show_in_rest": true');
   await expect(diagnostics.locator('[data-wpessential-taxonomy-overrides]')).toContainText('"public": true');
 
@@ -177,9 +181,11 @@ test('packaged Taxonomy preflight blocks reserved keys, renders diagnostics, and
   await expect(page.getByText('Taxonomy created.')).toBeVisible();
   await expect(diagnostics).toBeHidden();
   const row = page.getByRole('row', {
-    name: /Genres library_genre post, external_book Draft 1/,
+    name: /Genres library_genre post, external_book Draft 1 Inactive 2/,
   });
   await expect(row).toBeVisible();
+  await expect(row.locator('[data-wpessential-taxonomy-runtime-health="inactive"]')).toHaveText('Inactive');
+  await expect(row.locator('[data-wpessential-taxonomy-dependency-count="2"]')).toHaveText('2');
   await expect(row.getByRole('button', { name: 'Edit' })).toBeVisible();
   await expect(row.getByRole('button', { name: 'Publish' })).toBeVisible();
 
