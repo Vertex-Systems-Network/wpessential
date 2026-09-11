@@ -6,6 +6,7 @@ type ObjectTypeEntry = {
 	source: string;
 	status: string;
 	runtime_registered: boolean;
+	state: string;
 };
 
 type ObjectTypeGroup = {
@@ -45,7 +46,8 @@ function isObjectTypeEntry( value: unknown ): value is ObjectTypeEntry {
 		typeof value.label === 'string' &&
 		typeof value.source === 'string' &&
 		typeof value.status === 'string' &&
-		typeof value.runtime_registered === 'boolean'
+		typeof value.runtime_registered === 'boolean' &&
+		typeof value.state === 'string'
 	);
 }
 
@@ -75,22 +77,6 @@ function splitKeys( value: string ): string[] {
 				.filter( ( key ) => key !== '' )
 		)
 	);
-}
-
-function catalogState( entry: ObjectTypeEntry ): string {
-	if ( entry.source === 'wordpress' ) {
-		return 'healthy';
-	}
-	if ( entry.source === 'runtime' ) {
-		return 'external';
-	}
-	if ( entry.source === 'wpessential' ) {
-		if ( entry.status !== 'published' ) {
-			return 'disabled';
-		}
-		return entry.runtime_registered ? 'healthy' : 'missing';
-	}
-	return entry.runtime_registered ? 'healthy' : 'missing';
 }
 
 function createGroup( key: string, label: string ): HTMLElement {
@@ -123,7 +109,7 @@ function createKnownRow(
 ): HTMLElement {
 	label.querySelector( '.description' )?.remove();
 	label.classList.add( 'wpessential-taxonomy-object-type-option' );
-	label.append( document.createTextNode( ' ' ), createBadge( catalogState( entry ) ) );
+	label.append( document.createTextNode( ' ' ), createBadge( entry.state ) );
 
 	const row = document.createElement( 'div' );
 	row.className = 'wpessential-taxonomy-object-type-discovery-option';
@@ -134,7 +120,7 @@ function createKnownRow(
 		entry.key,
 		entry.source,
 		entry.status,
-		catalogState( entry ),
+		entry.state,
 	]
 		.join( ' ' )
 		.toLowerCase();
@@ -152,7 +138,7 @@ function preservedRow(
 	row.className = 'wpessential-taxonomy-object-type-discovery-option';
 	row.dataset.wpessentialTaxonomyObjectTypeDiscoveryOption = '';
 	row.dataset.wpessentialTaxonomyObjectTypeKey = key;
-	row.dataset.wpessentialTaxonomyObjectTypeSearch = `${ key } preserved missing external`;
+	row.dataset.wpessentialTaxonomyObjectTypeSearch = `${ key } preserved external missing`;
 
 	const label = document.createElement( 'label' );
 	label.className = 'wpessential-taxonomy-object-type-option';
@@ -169,14 +155,16 @@ function preservedRow(
 	label.append(
 		checkbox,
 		document.createTextNode( ` ${ key } ` ),
-		createBadge( 'missing' )
+		createBadge( 'preserved' )
 	);
 
 	checkbox.addEventListener( 'change', () => {
 		if ( checkbox.checked ) {
 			return;
 		}
-		const next = splitKeys( extra.value ).filter( ( candidate ) => candidate !== key );
+		const next = splitKeys( extra.value ).filter(
+			( candidate ) => candidate !== key
+		);
 		extra.value = next.join( ', ' );
 		extra.dispatchEvent( new Event( 'input', { bubbles: true } ) );
 		onChange();
@@ -226,8 +214,14 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 	search.type = 'search';
 	search.className = 'regular-text';
 	search.id = 'wpessential-taxonomy-object-type-search';
-	search.setAttribute( 'aria-controls', 'wpessential-taxonomy-object-type-options' );
-	search.setAttribute( 'aria-describedby', 'wpessential-taxonomy-object-type-search-status' );
+	search.setAttribute(
+		'aria-controls',
+		'wpessential-taxonomy-object-type-options'
+	);
+	search.setAttribute(
+		'aria-describedby',
+		'wpessential-taxonomy-object-type-search-status'
+	);
 	search.placeholder = 'Search by name, key, origin, or state';
 	searchLabel.append( searchStrong, document.createElement( 'br' ), search );
 	const searchStatus = document.createElement( 'span' );
@@ -239,7 +233,6 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 	options.before( searchWrap );
 
 	const knownGroups = new Map< string, HTMLElement >();
-	const knownGroupOptions = new Map< string, HTMLElement >();
 	const originalLabels = new Map< string, HTMLLabelElement >();
 	for ( const [ key, input ] of inputs ) {
 		const label = input.closest( 'label' );
@@ -250,7 +243,9 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 
 	options.replaceChildren();
 	for ( const group of groups ) {
-		const matching = entries.filter( ( entry ) => group.sources.includes( entry.source ) );
+		const matching = entries.filter( ( entry ) =>
+			group.sources.includes( entry.source )
+		);
 		if ( matching.length === 0 ) {
 			continue;
 		}
@@ -270,7 +265,6 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 		}
 		if ( groupOptions.children.length > 0 ) {
 			knownGroups.set( group.key, section );
-			knownGroupOptions.set( group.key, groupOptions );
 			options.append( section );
 		}
 	}
@@ -341,9 +335,7 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 		applyFilter();
 	};
 
-	search.addEventListener( 'input', () => {
-		syncPreserved();
-	} );
+	search.addEventListener( 'input', syncPreserved );
 	extra.addEventListener( 'input', syncPreserved );
 	root.addEventListener( 'click', ( event ) => {
 		const target = event.target;
@@ -364,7 +356,6 @@ function bindTaxonomyObjectTypeDiscovery(): void {
 	} ).observe( root, { attributes: true, attributeFilter: [ 'aria-busy' ] } );
 
 	fieldset.dataset.wpessentialTaxonomyObjectTypeDiscovery = 'ready';
-	void knownGroupOptions;
 	syncPreserved();
 }
 
