@@ -404,13 +404,13 @@ final class TaxonomyAdminController
         echo '<div class="wpessential-cpt-list-heading"><h2 id="wpessential-taxonomy-list-title">' . esc_html__('Saved taxonomies', 'wpessential') . '</h2>';
         echo '<button type="button" class="button" id="wpessential-taxonomy-refresh">' . esc_html__('Refresh', 'wpessential') . '</button></div>';
         echo '<table class="widefat striped" id="wpessential-taxonomy-table" aria-label="' . esc_attr__('Saved taxonomies', 'wpessential') . '">';
-        echo '<thead><tr><th scope="col">' . esc_html__('Name', 'wpessential') . '</th><th scope="col">' . esc_html__('Key', 'wpessential') . '</th><th scope="col">' . esc_html__('Object types', 'wpessential') . '</th><th scope="col">' . esc_html__('Status', 'wpessential') . '</th><th scope="col">' . esc_html__('Revision', 'wpessential') . '</th><th scope="col">' . esc_html__('Actions', 'wpessential') . '</th></tr></thead>';
+        echo '<thead><tr><th scope="col">' . esc_html__('Name', 'wpessential') . '</th><th scope="col">' . esc_html__('Key', 'wpessential') . '</th><th scope="col">' . esc_html__('Object types', 'wpessential') . '</th><th scope="col">' . esc_html__('Status', 'wpessential') . '</th><th scope="col">' . esc_html__('Revision', 'wpessential') . '</th><th scope="col">' . esc_html__('Runtime health', 'wpessential') . '</th><th scope="col">' . esc_html__('Dependencies', 'wpessential') . '</th><th scope="col">' . esc_html__('Actions', 'wpessential') . '</th></tr></thead>';
         echo '<tbody id="wpessential-taxonomy-rows">';
         foreach ($definitions as $definition) {
             $this->renderDefinitionRow($definition);
         }
         if ($definitions === []) {
-            echo '<tr data-wpessential-taxonomy-empty><td colspan="6">' . esc_html__('No taxonomies have been created yet.', 'wpessential') . '</td></tr>';
+            echo '<tr data-wpessential-taxonomy-empty><td colspan="8">' . esc_html__('No taxonomies have been created yet.', 'wpessential') . '</td></tr>';
         }
         echo '</tbody></table></section>';
     }
@@ -427,10 +427,18 @@ final class TaxonomyAdminController
             : '';
         $status = is_string($definition['status'] ?? null) ? $definition['status'] : '';
         $revision = is_int($definition['revision'] ?? null) ? $definition['revision'] : 0;
+        $readModel = is_array($definition['read_model'] ?? null) ? $definition['read_model'] : [];
+        $runtimeHealth = is_array($readModel['runtime_health'] ?? null) ? $readModel['runtime_health'] : [];
+        $runtimeState = is_string($runtimeHealth['state'] ?? null) ? $runtimeHealth['state'] : 'unavailable';
+        $dependencyUsage = is_array($readModel['dependency_usage'] ?? null) ? $readModel['dependency_usage'] : [];
+        $dependencyCount = is_int($dependencyUsage['count'] ?? null) ? $dependencyUsage['count'] : 0;
+        $runtimeLabel = ucwords(str_replace('_', ' ', $runtimeState));
 
         echo '<tr data-wpessential-taxonomy-row="' . esc_attr($id) . '">';
         echo '<td><strong>' . esc_html($name) . '</strong></td><td><code>' . esc_html($key) . '</code></td>';
         echo '<td>' . esc_html($objectTypes) . '</td><td>' . esc_html(ucfirst($status)) . '</td><td>' . esc_html((string) $revision) . '</td>';
+        echo '<td data-wpessential-taxonomy-runtime-health="' . esc_attr($runtimeState) . '">' . esc_html($runtimeLabel) . '</td>';
+        echo '<td data-wpessential-taxonomy-dependency-count="' . esc_attr((string) $dependencyCount) . '">' . esc_html((string) $dependencyCount) . '</td>';
         echo '<td><button type="button" class="button button-small" data-wpessential-taxonomy-edit="' . esc_attr($id) . '">' . esc_html__('Edit', 'wpessential') . '</button> ';
         if ($status === 'published') {
             echo '<button type="button" class="button button-small" data-wpessential-taxonomy-status="disabled" data-wpessential-taxonomy-id="' . esc_attr($id) . '">' . esc_html__('Disable', 'wpessential') . '</button> ';
