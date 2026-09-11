@@ -56,7 +56,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('CPT UI import preview maps safely, applies locally and never persists by itself', async ({ page }) => {
+test('CPT UI import preview maps safely and commits only after explicit valid preview', async ({ page }) => {
   await visitTaxonomies(page);
   await page.getByRole('button', { name: 'Advanced', exact: true }).click();
 
@@ -69,7 +69,13 @@ test('CPT UI import preview maps safely, applies locally and never persists by i
     'No taxonomies have been created yet.',
   );
 
-  await page.getByLabel('CPT UI taxonomy JSON').fill(
+  const createImport = page.getByRole('button', { name: 'Import as new draft' });
+  const updateImport = page.getByRole('button', { name: 'Update current definition' });
+  await expect(createImport).toBeHidden();
+  await expect(updateImport).toBeHidden();
+
+  const source = page.getByLabel('CPT UI taxonomy JSON');
+  await source.fill(
     JSON.stringify({
       name: 'book_genre',
       label: 'Book Genres',
@@ -93,6 +99,7 @@ test('CPT UI import preview maps safely, applies locally and never persists by i
   await page.getByRole('button', { name: 'Preview mapping' }).click();
 
   const status = page.locator('#wpessential-taxonomy-cptui-preview-status');
+  const commitStatus = page.locator('#wpessential-taxonomy-cptui-import-status');
   await expect(status).toContainText('Preview passed canonical Taxonomy validation');
   await expect(page.locator('#wpessential-taxonomy-cptui-preview-issues')).toContainText(
     'Unsupported CPT UI field(s) were not mapped: future_cptui_field.',
@@ -100,6 +107,9 @@ test('CPT UI import preview maps safely, applies locally and never persists by i
   await expect(page.locator('#wpessential-taxonomy-cptui-preview-payload')).toContainText(
     '"taxonomy_key": "book_genre"',
   );
+  await expect(createImport).toBeVisible();
+  await expect(updateImport).toBeHidden();
+  await expect(commitStatus).toContainText('imported as a new draft');
 
   const apply = page.getByRole('button', { name: 'Apply preview to editor' });
   await expect(apply).toBeVisible();
@@ -114,7 +124,24 @@ test('CPT UI import preview maps safely, applies locally and never persists by i
     'No taxonomies have been created yet.',
   );
 
-  await page.getByLabel('CPT UI taxonomy JSON').fill(
+  await createImport.click();
+  await expect(commitStatus).toContainText(
+    'Taxonomy imported as a new draft through the canonical save path.',
+  );
+
+  await source.fill(
+    JSON.stringify({
+      name: 'changed_without_preview',
+      label: 'Changed Without Preview',
+      singular_label: 'Changed Without Preview',
+      object_types: ['post'],
+    }),
+  );
+  await expect(createImport).toBeHidden();
+  await expect(updateImport).toBeHidden();
+  await expect(commitStatus).toContainText('Source changed');
+
+  await source.fill(
     JSON.stringify({
       name: 'unsafe_genre',
       label: 'Unsafe Genres',
@@ -129,16 +156,15 @@ test('CPT UI import preview maps safely, applies locally and never persists by i
     'executable callback/class input',
   );
   await expect(apply).toBeHidden();
-  await expect(page.locator('[data-wpessential-taxonomy-empty]')).toContainText(
-    'No taxonomies have been created yet.',
-  );
+  await expect(createImport).toBeHidden();
+  await expect(updateImport).toBeHidden();
 
   const accessibility = await new AxeBuilder({ page })
     .include('#wpessential-taxonomy-root')
     .analyze();
   expect(
     accessibility.violations,
-    `Axe violations with CPT UI import preview visible: ${JSON.stringify(
+    `Axe violations with CPT UI import commit controls visible: ${JSON.stringify(
       accessibility.violations.map((violation) => ({
         id: violation.id,
         impact: violation.impact,
