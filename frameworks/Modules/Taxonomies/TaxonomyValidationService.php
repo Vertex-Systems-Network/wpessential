@@ -80,6 +80,7 @@ final readonly class TaxonomyValidationService
         }
         $this->validateObjectTypeDependencies($payload, $issues);
         if ($registration instanceof RegistrationDefinition) {
+            $this->validateDormantPolicyCompatibility($candidate, $registration, $issues);
             $this->validateRoutingCollisions($candidate, $registration, $issues);
             $this->validateBlockEditorCompatibility($registration, $issues);
             $this->validateCapabilityLockoutRisk($registration, $issues);
@@ -207,6 +208,41 @@ final readonly class TaxonomyValidationService
                     sprintf('Object type "%s" is not currently registered; the Taxonomy can remain defined but this relationship is degraded.', $objectType),
                 );
             }
+        }
+    }
+
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateDormantPolicyCompatibility(
+        Definition $candidate,
+        RegistrationDefinition $registration,
+        array &$issues,
+    ): void {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $public = ($args['public'] ?? true) === true;
+        $showUi = is_bool($args['show_ui'] ?? null) ? $args['show_ui'] : $public;
+        $publiclyQueryable = is_bool($args['publicly_queryable'] ?? null)
+            ? $args['publicly_queryable']
+            : $public;
+
+        if (($candidate->payload['show_in_menu'] ?? null) === true && !$showUi) {
+            $issues[] = $this->issue(
+                'show_in_menu_dormant',
+                'compatibility_warning',
+                'show_in_menu',
+                'Show in menu is explicitly enabled while effective show_ui is false. WordPress forces show_in_menu=false in this state; enable Show Admin UI or reset/disable Show in menu.',
+            );
+        }
+
+        if (array_key_exists('query_var', $candidate->payload)
+            && ($candidate->payload['query_var'] ?? false) !== false
+            && !$publiclyQueryable
+        ) {
+            $issues[] = $this->issue(
+                'query_var_dormant',
+                'compatibility_warning',
+                'query_var',
+                'Query variable is explicitly enabled while effective publicly_queryable is false. WordPress forces the front-end query_var to false; enable public querying or reset/disable Query variable.',
+            );
         }
     }
 
@@ -376,6 +412,13 @@ final readonly class TaxonomyValidationService
     private function effectiveQueryVar(RegistrationDefinition $registration): ?string
     {
         $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $public = ($args['public'] ?? true) === true;
+        $publiclyQueryable = is_bool($args['publicly_queryable'] ?? null)
+            ? $args['publicly_queryable']
+            : $public;
+        if (!$publiclyQueryable) {
+            return null;
+        }
         if (!array_key_exists('query_var', $args)) {
             return $registration->key;
         }
