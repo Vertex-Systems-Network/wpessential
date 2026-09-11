@@ -140,18 +140,25 @@ function parseReport( value: unknown ): PreviewReport | null {
 	};
 }
 
-async function requestPreview( source: RecordValue ): Promise< PreviewReport > {
+async function requestPreview(
+	source: RecordValue,
+	definitionId: string
+): Promise< PreviewReport > {
 	const main = mainBootstrap();
 	const route = routeBootstrap();
 	if ( ! main || ! route ) {
 		throw new Error( 'CPT UI import preview is unavailable on this page.' );
 	}
 
+	const request: RecordValue = { source };
+	if ( definitionId !== '' ) {
+		request.id = definitionId;
+	}
 	const body = new URLSearchParams();
 	body.set( 'action', main.ajaxAction );
 	body.set( 'type', route.type );
 	body.set( 'nonce', route.nonce );
-	body.set( 'payload_json', JSON.stringify( { source } ) );
+	body.set( 'payload_json', JSON.stringify( request ) );
 	const response = await fetch( main.ajaxUrl, {
 		method: 'POST',
 		credentials: 'same-origin',
@@ -389,6 +396,11 @@ function hideApplyButton(): void {
 	}
 }
 
+function invalidatePreview(): void {
+	lastReport = null;
+	hideApplyButton();
+}
+
 async function handlePreview(): Promise< void > {
 	const source = previewSource();
 	if ( ! source ) {
@@ -403,10 +415,11 @@ async function handlePreview(): Promise< void > {
 		if ( ! isRecord( raw ) ) {
 			throw new Error( 'CPT UI source must be one JSON object.' );
 		}
-		renderReport( await requestPreview( raw ) );
+		const definitionId =
+			textInput( 'wpessential-taxonomy-id' )?.value.trim() ?? '';
+		renderReport( await requestPreview( raw, definitionId ) );
 	} catch ( error ) {
-		lastReport = null;
-		hideApplyButton();
+		invalidatePreview();
 		if ( status ) {
 			status.textContent =
 				error instanceof Error
@@ -458,6 +471,14 @@ function ensureSection(): void {
 	document
 		.getElementById( APPLY_ID )
 		?.addEventListener( 'click', handleApply );
+	document.getElementById( SOURCE_ID )?.addEventListener( 'input', () => {
+		invalidatePreview();
+		const status = previewStatus();
+		if ( status ) {
+			status.textContent =
+				'Source changed. Preview the current JSON before applying or importing.';
+		}
+	} );
 }
 
 export function bindTaxonomyCptUiPreview(): void {
