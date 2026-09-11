@@ -20,6 +20,14 @@ final readonly class TaxonomyValidationService
     private const POST_TYPE_DEFINITION_TYPE = 'post_type';
     private const POST_TYPE_OWNER_SURFACE_ID = 1;
 
+    /** @var array<string,string> */
+    private const DEFAULT_CAPABILITIES = [
+        'manage_terms' => 'manage_categories',
+        'edit_terms' => 'manage_categories',
+        'delete_terms' => 'manage_categories',
+        'assign_terms' => 'edit_posts',
+    ];
+
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private TaxonomyDefinitionProjector $projector,
@@ -71,6 +79,12 @@ final readonly class TaxonomyValidationService
             $this->validateRuntimeOwnership($key, $current, $issues);
         }
         $this->validateObjectTypeDependencies($payload, $issues);
+        if ($registration instanceof RegistrationDefinition) {
+            $this->validateDormantPolicyCompatibility($candidate, $registration, $issues);
+            $this->validateRoutingCollisions($candidate, $registration, $issues);
+            $this->validateBlockEditorCompatibility($registration, $issues);
+            $this->validateCapabilityLockoutRisk($registration, $issues);
+        }
 
         return $this->report(
             $key,
@@ -197,11 +211,250 @@ final readonly class TaxonomyValidationService
         }
     }
 
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateDormantPolicyCompatibility(
+        Definition $candidate,
+        RegistrationDefinition $registration,
+        array &$issues,
+    ): void {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $public = ($args['public'] ?? true) === true;
+        $showUi = is_bool($args['show_ui'] ?? null) ? $args['show_ui'] : $public;
+        $publiclyQueryable = is_bool($args['publicly_queryable'] ?? null)
+            ? $args['publicly_queryable']
+            : $public;
+
+        if (($candidate->payload['show_in_menu'] ?? null) === true && !$showUi) {
+            $issues[] = $this->issue(
+                'show_in_menu_dormant',
+                'compatibility_warning',
+                'show_in_menu',
+                'Show in menu is explicitly enabled while effective show_ui is false. WordPress forces show_in_menu=false in this state; enable Show Admin UI or reset/disable Show in menu.',
+            );
+        }
+
+        if (array_key_exists('query_var', $candidate->payload)
+            && ($candidate->payload['query_var'] ?? false) !== false
+            && !$publiclyQueryable
+        ) {
+            $issues[] = $this->issue(
+                'query_var_dormant',
+                'compatibility_warning',
+                'query_var',
+                'Query variable is explicitly enabled while effective publicly_queryable is false. WordPress forces the front-end query_var to false; enable public querying or reset/disable Query variable.',
+            );
+        }
+    }
+
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateRoutingCollisions(
+        Definition $candidate,
+        RegistrationDefinition $candidateRegistration,
+        array &$issues,
+    ): void {
+        $candidateRestRoute = $this->effectiveRestRoute($candidateRegistration);
+        $candidateRewriteBase = $this->effectiveRewriteBase($candidateRegistration);
+        $candidateQueryVar = $this->effectiveQueryVar($candidateRegistration);
+
+        foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $definition) {
+            if ($definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+                || $definition->id === $candidate->id
+                || $definition->status !== DefinitionStatus::Published
+            ) {
+                continue;
+            }
+
+            try {
+                $registration = $this->projector->project($definition);
+            } catch (InvalidArgumentException) {
+                continue;
+            }
+
+            if ($candidateRestRoute !== null
+                && $candidateRestRoute === $this->effectiveRestRoute($registration)
+            ) {
+                $issues[] = $this->issue(
+                    'rest_route_collision',
+                    'compatibility_warning',
+                    'rest_base',
+                    sprintf(
+                        'REST route "%s" is also used by published taxonomy "%s"; REST requests may be ambiguous.',
+                        $candidateRestRoute,
+                        $registration->key,
+                    ),
+                );
+            }
+
+            if ($candidateRewriteBase !== null
+                && $candidateRewriteBase === $this->effectiveRewriteBase($registration)
+            ) {
+                $issues[] = $this->issue(
+                    'rewrite_route_collision',
+                    'compatibility_warning',
+                    'rewrite',
+                    sprintf(
+                        'Rewrite base "%s" is also used by published taxonomy "%s"; route resolution may be ambiguous.',
+                        $candidateRewriteBase,
+                        $registration->key,
+                    ),
+                );
+            }
+
+            if ($candidateQueryVar !== null
+                && $candidateQueryVar === $this->effectiveQueryVar($registration)
+            ) {
+                $issues[] = $this->issue(
+                    'query_var_collision',
+                    'compatibility_warning',
+                    'query_var',
+                    sprintf(
+                        'Query variable "%s" is also used by published taxonomy "%s"; requests may be ambiguous.',
+                        $candidateQueryVar,
+                        $registration->key,
+                    ),
+                );
+            }
+        }
+    }
+
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateBlockEditorCompatibility(
+        RegistrationDefinition $registration,
+        array &$issues,
+    ): void {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        if (($args['show_in_rest'] ?? false) === true || !function_exists('use_block_editor_for_post_type')) {
+            return;
+        }
+
+        $objectTypes = is_array($registration->payload['object_types'] ?? null)
+            ? array_values(array_filter($registration->payload['object_types'], 'is_string'))
+            : [];
+        $blockEditorTypes = [];
+        foreach ($objectTypes as $objectType) {
+            if (function_exists('post_type_exists') && !post_type_exists($objectType)) {
+                continue;
+            }
+            if (use_block_editor_for_post_type($objectType)) {
+                $blockEditorTypes[] = $objectType;
+            }
+        }
+        if ($blockEditorTypes === []) {
+            return;
+        }
+
+        $issues[] = $this->issue(
+            'block_editor_rest_disabled',
+            'compatibility_warning',
+            'show_in_rest',
+            sprintf(
+                'REST exposure is disabled while block-editor object type(s) "%s" are associated; REST-backed taxonomy controls will be unavailable there.',
+                implode(', ', $blockEditorTypes),
+            ),
+        );
+    }
+
+    /** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
+    private function validateCapabilityLockoutRisk(
+        RegistrationDefinition $registration,
+        array &$issues,
+    ): void {
+        if (!function_exists('current_user_can')) {
+            return;
+        }
+
+        $missing = [];
+        foreach ($this->effectiveCapabilities($registration) as $operation => $capability) {
+            if (!current_user_can($capability)) {
+                $missing[] = $operation . '=' . $capability;
+            }
+        }
+        if ($missing === []) {
+            return;
+        }
+
+        $issues[] = $this->issue(
+            'capability_lockout_risk',
+            'compatibility_warning',
+            'capabilities',
+            sprintf(
+                'Current WordPress user does not have effective taxonomy capability check(s) "%s". Saving this map does not grant capabilities; review grants in Roles & Capabilities to avoid losing taxonomy actions.',
+                implode(', ', $missing),
+            ),
+        );
+    }
+
+    private function effectiveRestRoute(RegistrationDefinition $registration): ?string
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        if (($args['show_in_rest'] ?? false) !== true) {
+            return null;
+        }
+
+        $namespace = is_string($args['rest_namespace'] ?? null) ? trim($args['rest_namespace'], '/') : 'wp/v2';
+        $base = is_string($args['rest_base'] ?? null) ? trim($args['rest_base'], '/') : $registration->key;
+        return '/' . $namespace . '/' . $base;
+    }
+
+    private function effectiveRewriteBase(RegistrationDefinition $registration): ?string
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $rewrite = $args['rewrite'] ?? true;
+        if ($rewrite === false) {
+            return null;
+        }
+        if (is_array($rewrite) && is_string($rewrite['slug'] ?? null) && trim($rewrite['slug']) !== '') {
+            return trim($rewrite['slug'], '/');
+        }
+        return $registration->key;
+    }
+
+    private function effectiveQueryVar(RegistrationDefinition $registration): ?string
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $public = ($args['public'] ?? true) === true;
+        $publiclyQueryable = is_bool($args['publicly_queryable'] ?? null)
+            ? $args['publicly_queryable']
+            : $public;
+        if (!$publiclyQueryable) {
+            return null;
+        }
+        if (!array_key_exists('query_var', $args)) {
+            return $registration->key;
+        }
+
+        $queryVar = $args['query_var'];
+        if ($queryVar === false) {
+            return null;
+        }
+        if ($queryVar === true) {
+            return $registration->key;
+        }
+        return is_string($queryVar) && $queryVar !== '' ? $queryVar : null;
+    }
+
+    /** @return array<string,string> */
+    private function effectiveCapabilities(RegistrationDefinition $registration): array
+    {
+        $args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
+        $effective = self::DEFAULT_CAPABILITIES;
+        $authored = is_array($args['capabilities'] ?? null) ? $args['capabilities'] : [];
+        foreach (array_keys(self::DEFAULT_CAPABILITIES) as $key) {
+            $capability = $authored[$key] ?? null;
+            if (is_string($capability) && $capability !== '') {
+                $effective[$key] = $capability;
+            }
+        }
+        return $effective;
+    }
+
     /** @return array<string,mixed> */
     private function diagnostics(Definition $candidate, RegistrationDefinition $registration): array
     {
         $registrationPayload = $registration->payload;
         $args = is_array($registrationPayload['args'] ?? null) ? $registrationPayload['args'] : [];
+        $effectiveArgs = $args;
+        $effectiveArgs['capabilities'] = $this->effectiveCapabilities($registration);
         $objectTypes = is_array($registrationPayload['object_types'] ?? null)
             ? array_values(array_filter($registrationPayload['object_types'], 'is_string'))
             : [];
@@ -210,7 +463,7 @@ final readonly class TaxonomyValidationService
             : [];
 
         return [
-            'effective_args' => $args,
+            'effective_args' => $effectiveArgs,
             'overrides' => $this->explicitOverrides($candidate->payload, $args, $providerIds),
             'provider_ids' => $providerIds,
             'association_health' => $this->associationHealth($objectTypes),

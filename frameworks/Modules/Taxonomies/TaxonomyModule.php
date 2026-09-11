@@ -78,12 +78,29 @@ final class TaxonomyModule implements ModuleInterface
         $projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
         $provider = new TaxonomyRegistrationProvider($definitions, $projector);
         $validation = new TaxonomyValidationService($definitions, $projector);
+        $cptUiMapper = new TaxonomyCptUiImportMapper();
+        $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
+        $keyMigrationPreview = new TaxonomyKeyMigrationPreviewService($definitions, $projector);
+        $rewriteRefresh = new TaxonomyRewriteRefreshCoordinator();
         $providers->register($provider);
         $services->set('module.taxonomies.projector', $projector);
         $services->set('module.taxonomies.registration-provider', $provider);
         $services->set('module.taxonomies.validation', $validation);
+        $services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
+        $services->set('module.taxonomies.cptui-preview', $cptUiPreview);
+        $services->set('module.taxonomies.key-migration-preview', $keyMigrationPreview);
+        $services->set('module.taxonomies.rewrite-refresh', $rewriteRefresh);
 
-        $this->registerAbilities($abilities, $abilityBridge, $definitions, $projector, $validation);
+        $this->registerAbilities(
+            $abilities,
+            $abilityBridge,
+            $definitions,
+            $projector,
+            $validation,
+            $cptUiPreview,
+            $keyMigrationPreview,
+            $rewriteRefresh,
+        );
         $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
     }
 
@@ -94,15 +111,21 @@ final class TaxonomyModule implements ModuleInterface
         $ajax = $services->get('platform.ajax.dispatcher');
         $gateway = $services->get('platform.ajax.gateway');
         $assets = $services->get('platform.admin.assets');
+        $taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
+        $rewriteRefresh = $services->get('module.taxonomies.rewrite-refresh');
 
         if (!$abilities instanceof AbilityRegistry
             || !$contexts instanceof WordPressExecutionContextFactory
             || !$ajax instanceof AjaxDispatcher
             || !$gateway instanceof WordPressAjaxGateway
             || !$assets instanceof AdminAssetManifest
+            || !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar
+            || !$rewriteRefresh instanceof TaxonomyRewriteRefreshCoordinator
         ) {
-            throw new LogicException('Taxonomy admin requires the shared admin, Ability, and AJAX services.');
+            throw new LogicException('Taxonomy admin requires the shared admin, Ability, AJAX, and Taxonomy runtime services.');
         }
+
+        add_action('wp_loaded', $rewriteRefresh->flushPending(...), 99);
 
         $objectTypes = new TaxonomyObjectTypeCatalog($abilities, $contexts);
         $services->set('module.taxonomies.object-types', $objectTypes);
@@ -113,10 +136,14 @@ final class TaxonomyModule implements ModuleInterface
             ajax: $ajax,
             assets: $assets,
             objectTypes: $objectTypes,
+            runtimeProviders: $taxonomyRegistrar->providers(),
             ajaxAction: $gateway->action(),
         );
+        $previewBridge = new TaxonomyCptUiImportPreviewAdminBridge($ajax);
         $services->set('module.taxonomies.admin', $admin);
+        $services->set('module.taxonomies.cptui-preview-admin', $previewBridge);
         $admin->register();
+        $previewBridge->register();
     }
 
     private function registerAbilities(
@@ -125,9 +152,19 @@ final class TaxonomyModule implements ModuleInterface
         DefinitionRepositoryInterface $definitions,
         TaxonomyDefinitionProjector $projector,
         TaxonomyValidationService $validation,
+        TaxonomyCptUiImportPreviewService $cptUiPreview,
+        TaxonomyKeyMigrationPreviewService $keyMigrationPreview,
+        TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
     ): void {
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $outputSchema = ['type' => 'object'];
+        $saveHandler = new TaxonomyAbilityHandler(
+            $definitions,
+            $projector,
+            $validation,
+            TaxonomyAbilityHandler::SAVE,
+            $rewriteRefresh,
+        );
 
         $this->registerAbility(
             $abilities,
@@ -195,6 +232,109 @@ final class TaxonomyModule implements ModuleInterface
             $abilities,
             $bridge,
             new AbilityDescriptor(
+                name: 'wpessential/taxonomy/key-migration-preview',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['id', 'target_key'],
+                    'properties' => [
+                        'id' => ['type' => 'string'],
+                        'target_key' => ['type' => 'string'],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyKeyMigrationPreviewAbilityHandler($keyMigrationPreview),
+            'Preview taxonomy-key migration',
+            'Builds a read-only taxonomy-key migration impact and recovery plan without changing Definitions, terms, relationships, or rewrite rules.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: 'wpessential/taxonomy/import-preview',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['source'],
+                    'properties' => [
+                        'source' => ['type' => 'object'],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyCptUiImportPreviewAbilityHandler($cptUiPreview),
+            'Preview CPT UI taxonomy import',
+            'Maps one CPT UI taxonomy record into a canonical Taxonomy payload and validates it without persisting a Definition.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: 'wpessential/taxonomy/import-commit',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: true,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['source'],
+                    'properties' => [
+                        'source' => ['type' => 'object'],
+                        'id' => ['type' => 'string'],
+                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyCptUiImportCommitAbilityHandler($cptUiPreview, $saveHandler),
+            'Commit CPT UI taxonomy import',
+            'Remaps and validates one CPT UI taxonomy record before delegating create or revision-safe update to the canonical Surface 2 save path.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: 'wpessential/taxonomy/import-definition',
+                ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: true,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['definition'],
+                    'properties' => [
+                        'definition' => ['type' => 'object'],
+                        'strategy' => ['type' => 'string', 'enum' => ['create_only', 'update_existing']],
+                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    ],
+                ],
+                outputSchema: $outputSchema,
+            ),
+            new TaxonomyAbilityHandler(
+                $definitions,
+                $projector,
+                $validation,
+                TaxonomyAbilityHandler::IMPORT,
+                $rewriteRefresh,
+            ),
+            'Import taxonomy definition',
+            'Imports one portable Taxonomy definition through Surface 2 create-only or explicit revision-safe update semantics.',
+        );
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
                 name: 'wpessential/taxonomy/save',
                 ownerSurfaceId: TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
                 capability: self::CAPABILITY,
@@ -212,7 +352,7 @@ final class TaxonomyModule implements ModuleInterface
                 ],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyAbilityHandler($definitions, $projector, $validation, TaxonomyAbilityHandler::SAVE),
+            $saveHandler,
             'Save taxonomy',
             'Creates or revision-safely updates a canonical Taxonomy definition through Surface 2.',
         );
@@ -237,7 +377,13 @@ final class TaxonomyModule implements ModuleInterface
                 ],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyAbilityHandler($definitions, $projector, $validation, TaxonomyAbilityHandler::STATUS),
+            new TaxonomyAbilityHandler(
+                $definitions,
+                $projector,
+                $validation,
+                TaxonomyAbilityHandler::STATUS,
+                $rewriteRefresh,
+            ),
             'Change taxonomy status',
             'Changes Taxonomy lifecycle status without deleting its canonical persisted definition.',
         );
@@ -268,6 +414,9 @@ final class TaxonomyModule implements ModuleInterface
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.list', 'wpessential/taxonomy/list', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.get', 'wpessential/taxonomy/get', NonceOperation::Apply);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.validate', 'wpessential/taxonomy/validate', NonceOperation::Apply);
+        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.key_migration_preview', 'wpessential/taxonomy/key-migration-preview', NonceOperation::Apply);
+        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_preview', 'wpessential/taxonomy/import-preview', NonceOperation::Apply);
+        $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.import_commit', 'wpessential/taxonomy/import-commit', NonceOperation::Update);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.save', 'wpessential/taxonomy/save', NonceOperation::Update);
         $this->registerAjaxRoute($routes, $abilities, $contexts, 'taxonomy.status', 'wpessential/taxonomy/status', NonceOperation::Update);
     }

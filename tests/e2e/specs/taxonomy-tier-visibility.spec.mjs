@@ -180,3 +180,69 @@ test('packaged Taxonomy tier navigation preserves hidden values and authors trut
     )}`,
   ).toEqual([]);
 });
+
+test('packaged Taxonomy validation explains dormant child policies without discarding authored values', async ({ page }) => {
+  await visitTaxonomies(page);
+
+  await page.getByLabel('Taxonomy key').fill('dormant_policy_genre');
+  await page.getByLabel('Plural name').fill('Dormant Policy Genres');
+  await page.getByLabel('Singular name').fill('Dormant Policy Genre');
+
+  await page.getByRole('button', { name: 'Advanced', exact: true }).click();
+  const showUi = page.getByLabel('Show Admin UI');
+  const publiclyQueryable = page.getByLabel('Publicly queryable');
+  const showInMenu = page.getByLabel('Show in menu');
+  await showUi.selectOption('false');
+  await showInMenu.selectOption('true');
+  await publiclyQueryable.selectOption('false');
+
+  await page.getByRole('button', { name: 'Expert', exact: true }).click();
+  const queryVarMode = page.getByLabel('Query variable mode');
+  const queryVarName = page.getByLabel('Custom query variable name');
+  await queryVarMode.selectOption('custom');
+  await queryVarName.fill('dormant_policy_query');
+
+  await page.getByRole('button', { name: 'Validate' }).click();
+  await expect(
+    page.locator('[data-wpessential-taxonomy-validation-summary]'),
+  ).toContainText('Validation passed with');
+  const warnings = page.locator(
+    '[data-wpessential-taxonomy-validation-severity="compatibility_warning"]',
+  );
+  await expect(warnings).toHaveCount(2);
+  await expect(warnings.filter({ hasText: 'WordPress forces show_in_menu=false' })).toHaveCount(1);
+  await expect(warnings.filter({ hasText: 'front-end query_var to false' })).toHaveCount(1);
+
+  await expect(showInMenu).toHaveValue('true');
+  await expect(queryVarMode).toHaveValue('custom');
+  await expect(queryVarName).toHaveValue('dormant_policy_query');
+
+  await showUi.selectOption('true');
+  await publiclyQueryable.selectOption('true');
+  await page.getByRole('button', { name: 'Validate' }).click();
+  await expect(
+    page.locator('[data-wpessential-taxonomy-validation-summary]'),
+  ).toHaveText('Validation passed. No blocking issues found.');
+  await expect(
+    page.locator('[data-wpessential-taxonomy-validation-severity="compatibility_warning"]'),
+  ).toHaveCount(0);
+  await expect(showInMenu).toHaveValue('true');
+  await expect(queryVarMode).toHaveValue('custom');
+  await expect(queryVarName).toHaveValue('dormant_policy_query');
+
+  const accessibility = await new AxeBuilder({ page })
+    .include('#wpessential-taxonomy-root')
+    .analyze();
+  expect(
+    accessibility.violations,
+    `Axe violations with dormant-policy diagnostics visible: ${JSON.stringify(
+      accessibility.violations.map((violation) => ({
+        id: violation.id,
+        impact: violation.impact,
+        targets: violation.nodes.map((node) => node.target),
+      })),
+      null,
+      2,
+    )}`,
+  ).toEqual([]);
+});

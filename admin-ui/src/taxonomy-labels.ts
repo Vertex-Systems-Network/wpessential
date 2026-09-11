@@ -1,3 +1,7 @@
+import { bindTaxonomyCptUiImportCommit } from './taxonomy-cptui-import-commit';
+import { bindTaxonomyCptUiPreview } from './taxonomy-cptui-preview';
+import './taxonomy-object-types';
+
 type RecordValue = Record< string, unknown >;
 
 type LabelEditorPayload = {
@@ -174,6 +178,8 @@ function notifyFormChanged( source: HTMLElement ): void {
 }
 
 export function bindTaxonomyLabelEditor(): void {
+	bindTaxonomyCptUiPreview();
+	bindTaxonomyCptUiImportCommit();
 	automaticLabelsInput()?.addEventListener(
 		'change',
 		updateTaxonomyLabelStates

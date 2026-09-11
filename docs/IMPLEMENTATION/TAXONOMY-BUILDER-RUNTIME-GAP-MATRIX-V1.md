@@ -2,174 +2,104 @@
 
 Surface: **2 / Taxonomy Builder**  
 Active implementation issue: **#474**  
+Current reconciliation issue: **#581**  
 Planning source: **Issue #468 / merged PR #470**  
 Reference contract: `config/product/option-contracts/taxonomy.json`  
-Current runtime owner: `frameworks/Modules/Taxonomies/**`
+Current runtime owner: `frameworks/Modules/Taxonomies/**`  
+Reconciled implementation anchor: `main @ 55fb91dde92abdf2f5c2b9a22b488131ff85578e`
 
-This matrix compares the Taxonomy runtime to the reviewed 71-record Bank + Atomic Option/UX contract. It is live implementation accounting, not runtime certification.
+This document is implementation accounting, not certification. A row marked promoted means the bounded implementation and evidence named here are present on the reconciled `main`; it does **not** promote Surface 2 to `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`.
 
-## Existing baseline that must be preserved
+## Canonical ownership baseline
 
-The current module provides production-shaped foundations and bounded Runtime Gap Closure slices extend them:
+The current Taxonomy module remains the single Surface 2 owner for:
 
-- canonical Surface 2 Definition ownership;
-- `TaxonomyDefinitionProjector` → compiled WordPress registration;
-- taxonomy-key safety, reserved-key rejection and runtime collision validation;
-- object-type association normalization and missing-object diagnostics;
-- name/singular/description projection;
-- complete reviewed WordPress label override projection;
-- public/hierarchical/show_* visibility controls;
-- structured rewrite + query_var validation;
-- show_in_rest / rest_base / rest_namespace;
-- native capability-map projection;
-- `sort` plus bounded object-term `args` projection;
-- typed `default_term` projection;
-- JSON-safe allowlisted runtime provider IDs with last-responsible runtime resolution;
-- revision-aware save/status Ability flows;
-- nonce/Policy-backed admin invocation through the shared platform;
-- object-type catalog that preserves external/missing keys;
-- accessible baseline admin form, validation region and saved-definition table;
-- dedicated Taxonomy Runtime CI regression workflow.
+- revisioned canonical Taxonomy Definitions;
+- Definition validation and `TaxonomyDefinitionProjector` compilation;
+- WordPress taxonomy registration through the shared runtime registrar;
+- taxonomy-key safety, reserved-key rejection and immutable-key enforcement;
+- object-type associations and association-health diagnostics;
+- native labels, visibility, rewrite/query-var, REST, capability-map, default-term and bounded term-query policy;
+- allowlisted runtime provider IDs resolved at the last responsible runtime moment;
+- revision-safe save/status/import mutation paths;
+- deferred soft rewrite refresh scheduling for routing-relevant changes;
+- read-only taxonomy-key migration impact/recovery planning;
+- nonce/Policy-backed admin invocation and the WordPress Ability bridge.
 
-Full-final work extends this owner; it does not replace it.
+Runtime Gap Closure must continue this owner. It must not create a parallel Definition store, compiler, authorization engine, rewrite engine, role-grant engine, term-order engine or generic package orchestrator inside Surface 2.
 
-## Runtime Gap Closure evidence
+## Promoted Runtime Gap Closure evidence
 
-### Definition Completeness slice — merged PR #478
+| Slice | Promoted evidence |
+|---|---|
+| **Definition completeness — PR #478** | Reviewed `menu_name`/`template_name` labels, typed `default_term`, bounded `args.orderby/order/fields`, fail-closed rejection of unbounded query structures. |
+| **Allowlisted runtime providers — PR #479** | JSON-safe provider IDs only; runtime registry resolution immediately before registration; raw callbacks/classes remain rejected. |
+| **Read-only diagnostics — PRs #480/#483** | Server-authoritative effective args, explicit overrides, association health, REST/rewrite previews and accessible packaged UI rendering without a browser-side compiler. |
+| **Adaptive + reviewed labels — PRs #486/#489** | Hierarchy-aware generated labels, full reviewed override inventory, source-state UX, reset/hydration and persistence evidence. |
+| **Tier navigation / visibility inheritance — PR #503** | Essential/Advanced/Expert authoring, truthful inherit/default semantics and packaged accessibility evidence. |
+| **Find Setting — PR #506** | Accessible setting search that reveals the canonical control/tier without duplicating payload semantics. |
+| **Default-term + bounded term-query authoring — PR #512** | Expert controls for typed `default_term`, `sort` and bounded object-term args with omit/reset semantics. |
+| **Provider catalog + selector — PRs #515/#545** | Redacted provider inventory, current-runtime availability, controlled provider-ID selectors and stale-ID preservation. |
+| **Rewrite/query-var authoring — PR #547** | Typed modes, rewrite details, hydration/reset, server preview and canonical collision diagnostics. |
+| **REST authoring/compatibility — PR #549** | `rest_base`/`rest_namespace`, canonical route warnings, observable block-editor compatibility diagnostics and provider-ID controller ownership. |
+| **Capability-map authoring — PR #551** | Four native capability names, effective native defaults and current-user lockout warning without role-grant ownership. |
+| **CPT UI compatibility — PRs #553/#555** | Fail-closed preview mapping plus canonical create/update-CAS commit; executable callback/class source input remains rejected. |
+| **Deferred soft rewrite refresh — PR #559** | Site-scoped one-shot pending marker, routing-relevant scheduling only, `wp_loaded` soft flush, retry on failure and real-WordPress lifecycle evidence. No hard/unconditional flush path. |
+| **Native default-term lifecycle — PRs #561/#569** | Real WordPress create/reuse, option tracking, insert/publish defaulting, protected default deletion, sole-term deletion fallback, direct-remove termless semantics and non-destructive retention after Definition disable. |
+| **Bounded native term-query semantics — PR #563** | Real WordPress term-order persistence, registered-args precedence and bounded `fields=ids` behavior without adding a private ordering engine. |
+| **Dormant visibility/query diagnostics — PR #570** | Non-blocking warnings for explicit `show_in_menu` under effective `show_ui=false` and enabled/custom `query_var` under effective `publicly_queryable=false`; collision ownership follows effective public-queryability while authored values remain preserved. |
+| **Owner-specific Definition portability seam — PR #572** | `wpessential/taxonomy/import-definition` accepts canonical serialized Taxonomy Definitions, preserves portable UUID/slug/status/dependencies, validates checksum/metadata, supports create-only/no-change plus explicit update-CAS, blocks identity/key/slug conflicts, and persists through the same canonical mutation implementation with rewrite-refresh scheduling. |
+| **Bounded term-query performance evidence — PR #576** | Real WordPress SQL-query-count evidence compares 3 vs 35 relationships, stays within a fixed four-statement budget, proves stable query-count shape and confirms bounded `fields=ids` reads introduce no term-meta SQL. No wall-clock SLA or private query engine was added. |
+| **Guarded taxonomy-key migration planning preview — PR #580** | Read-only `wpessential/taxonomy/key-migration-preview` validates proposed target ownership/schema, reports term URL/rewrite, REST, query-var, object-association and dependent-Definition impact, supplies recovery guidance, and real WordPress evidence proves Definition/term/relationship/rewrite-rule state is unchanged. **Execution remains unavailable and separately safety-gated.** |
 
-Promoted on exact-head green evidence:
+## Atomic contract status at `main @ 55fb91dd…`
 
-- reviewed `menu_name` and `template_name` label support;
-- typed `default_term` (`name`, optional `slug`, optional `description`);
-- deliberately bounded object-term `args` allowlist (`orderby`, `order`, `fields`);
-- explicit rejection of unbounded query structures such as authored `meta_query`;
-- focused positive and fail-closed unit coverage;
-- all applicable exact-head workflows green, including Taxonomy Runtime and Browser E2E Accessibility.
-
-### Runtime provider-ID slice — merged PR #479
-
-Promoted after exact-head repair and seven green applicable workflows:
-
-- Definitions author only registered provider ID strings inside `runtime_providers`;
-- `TaxonomyDefinitionProjector` validates IDs against the shared trusted registry and compiles only JSON-safe `provider_ids`;
-- compiled registration generations never persist PHP callables or executable class input;
-- `TaxonomyRuntimeRegistrar` resolves IDs through `TaxonomyRuntimeProviderRegistry` immediately before `register_taxonomy()`;
-- missing/unavailable runtime providers fail closed and prevent that taxonomy registration;
-- direct `rest_controller_class`, `meta_box_cb`, `meta_box_sanitize_cb` and `update_count_callback` authoring remains rejected by the canonical Definition field allowlist;
-- provider identifier parsing is deterministic and regression-tested after the original malformed-regex CI failure;
-- only lifecycle-safe built-ins are registered by default; trusted PHP modules may register explicit editor/sanitizer/count implementations into the shared registry.
-
-### Read-only diagnostics backend slice — merged PR #480
-
-Promoted on six green applicable exact-head workflows:
-
-- successful server validation exposes the canonical projector's effective `register_taxonomy()` args;
-- an overrides-only view distinguishes authored/effective fields from the broader compiled payload;
-- provider evidence remains ID-only and JSON-safe in diagnostics;
-- association health classifies canonical/runtime relationships as `healthy`, `missing`, `external`, `disabled`, or technical `unavailable` when the runtime API cannot be observed;
-- REST route and rewrite path previews are computed without flushing rules or mutating WordPress state;
-- invalid/unprojectable candidates return no diagnostics rather than presenting misleading effective state;
-- focused tests prove diagnostics remain non-mutating and canonical disabled CPT associations remain visible.
-
-### Diagnostics admin rendering slice — merged PR #483
-
-Promoted after exact-head Architecture Guards, Distributable Package and Browser E2E Accessibility all passed:
-
-- `admin-ui/src/taxonomy.ts` parses diagnostics fail-closed and creates one accessible read-only diagnostics region inside the existing Taxonomy editor;
-- successful validation renders runtime registration state, REST route, rewrite path, provider IDs, association-health states, effective arguments and explicit overrides;
-- all dynamic values are rendered through DOM `textContent`; no diagnostic value is executed or injected as HTML;
-- invalid candidates keep diagnostics hidden, and any editor change or successful save clears stale diagnostics;
-- packaged Playwright coverage proves valid/invalid visibility behavior, healthy/missing associations, deterministic route/path/effective-args output and stale-state clearing;
-- the axe run exercises the diagnostics region while visible and reports zero violations in the WPE-owned Taxonomy Builder region.
-
-### Adaptive label generation slice — merged PR #486
-
-Promoted after six applicable exact-head workflows passed:
-
-- `TaxonomyDefinitionProjector` accepts typed boolean `automatic_labels`, defaulting to enabled;
-- hierarchical definitions receive deterministic category-like generated labels, while flat definitions receive tag-like generated labels;
-- authored `labels` overrides retain final precedence over every generated value;
-- `automatic_labels=false` suppresses generated convenience labels while retaining canonical `name`, `singular_name` and authored overrides;
-- non-boolean `automatic_labels` values fail closed through the canonical projector;
-- dedicated unit coverage proves hierarchical/flat generation, override precedence, explicit opt-out and type rejection;
-- packaged Playwright coverage drives the existing Hierarchical editor control through server-authoritative validation and proves the effective args switch between category-like and tag-like label families;
-- no new mutation route, callback/class input, DOM compiler or secondary runtime owner was introduced.
-
-### Reviewed label-authoring UX slice — merged PR #489
-
-Promoted after all six applicable exact-head workflows passed:
-
-- the editor renders a collapsed-by-default `Customize labels` section with the complete reviewed 28-label override inventory;
-- a reviewed `Generate adaptive labels automatically` toggle authors only the typed canonical `automatic_labels` field;
-- per-label state is explicit as `Generated`, `WordPress default`, or `Explicit override` without duplicating server label compilation in the browser;
-- per-label reset and reset-all clear authored overrides and reuse the existing form change path so stale validation/diagnostics are removed;
-- edit hydration preserves and exposes stored `automatic_labels` plus explicit label overrides; create/reset returns to adaptive generation enabled with zero explicit overrides;
-- exact generated values continue to come only from server-authoritative Validate diagnostics and the canonical projector;
-- packaged Playwright evidence exercises collapsed/default state, hierarchy family preview, explicit override validation, reset-one/reset-all, adaptive opt-out, create/edit hydration, post-reset effective args and axe accessibility;
-- durable label reset persistence is enforced separately in real WordPress 7.1 + MySQL 8.4 evidence through canonical create → `expected_revision=1` CAS update → revision 2 read-back with `automatic_labels=false` and an empty labels map;
-- WordPress Playground's SQLite/in-memory Definition fallback is not misrepresented as cross-request durability;
-- no raw callbacks/classes, HTML injection, alternate Definition store or new mutation route were added.
-
-### Tier navigation + native visibility inheritance slice — current #474 branch
-
-Current bounded implementation, pending exact-head promotion gates:
-
-- adds keyboard-reachable native button controls for Essential / Advanced / Expert disclosure without changing authorization;
-- Essential is the default tier; Advanced and Expert sections are progressively revealed while stored hidden values remain preserved;
-- authors the existing canonical optional booleans `show_ui`, `publicly_queryable`, `show_in_menu`, `show_in_nav_menus`, `show_tagcloud` and `show_in_quick_edit` through explicit `Default / inherit`, `Enabled`, and `Disabled` choices;
-- `Default / inherit` removes the optional key from the outgoing JSON payload so WordPress/projector inheritance remains authoritative instead of materializing guessed values;
-- source state is visible as `Default / inherited`, `Explicit: enabled`, or `Explicit: disabled`;
-- no secondary visibility compiler is added: Validate diagnostics continue to prove the canonical projector's effective `register_taxonomy()` arguments;
-- packaged Playwright coverage exercises tier state, hidden-value preservation, explicit/inherited source state, effective-args inclusion/omission and axe accessibility with the Expert boundary visible;
-- Expert disclosure is informational in this slice; provider selectors, portability and key-migration execution are not silently introduced;
-- dormant-parent diagnostics beyond preservation of stored explicit values remain a later UX gap.
-
-This slice does not complete broader Advanced/Expert option authoring and does not certify runtime/product parity.
-
-## Atomic contract gap status
-
-| Atomic contract | Current state | Gap / next implementation evidence |
+| Atomic contract | Current state | Remaining boundary |
 |---|---|---|
-| `taxonomy.definition.key` | **PARTIAL** | Ordinary edits correctly block key changes. Add separate guarded key-migration workflow, impact preview and recovery evidence before any rename execution. |
-| `taxonomy.definition.naming` | **BASELINE PRESENT** | Core name/singular/description project. Add broader field reset/default state and validation/help contract. |
-| `taxonomy.definition.lifecycle` | **BASELINE PRESENT / UX PARTIAL** | Status UI and status Ability exist. Prove revision history/diff and deeper dependency behavior across lifecycle states. |
-| `taxonomy.definition.object_types` | **BASELINE PRESENT / HEALTH UI PROMOTED** | Canonical list + external-key preservation exist; promoted diagnostics classify and render association health. Search/grouping and deeper dependency impact remain. |
-| `taxonomy.diagnostics.association_health` | **PROMOTED BACKEND + UI** | Backend health classification and read-only admin rendering are promoted through PRs #480/#483 with packaged browser + axe evidence. Deeper dependency-impact UX remains. |
-| `taxonomy.labels.overrides` | **PROMOTED REVIEWED AUTHORING UX** | PR #489 promotes all reviewed override fields, source-state display, reset-one/reset-all, create/edit hydration, reset-effective-args behavior and separate MySQL CAS persistence evidence. |
-| `taxonomy.labels.autogenerate` | **PROMOTED RUNTIME + AUTHORING UX** | PR #486 promotes hierarchy-aware runtime generation and PR #489 promotes the reviewed authoring toggle/source/reset semantics while exact values remain server-authoritative. |
-| `taxonomy.visibility.policy` | **CURRENT SLICE — NATIVE INHERITANCE UX PENDING CI** | Native values already compile. Current branch adds tiered authoring and truthful optional-key inheritance/explicit semantics with packaged browser/axe evidence; dormant-parent diagnostics and other visibility help remain later gaps. |
-| `taxonomy.rewrite.policy` | **BASELINE PRESENT / PREVIEW UI PROMOTED** | Structured rewrite/query_var compile and promoted diagnostics compute/render a read-only path preview. Full editor controls, reserved/collision diagnostics and controlled rewrite-flush evidence remain. |
-| `taxonomy.permissions.capabilities` | **BASELINE PRESENT** | Four native capability names compile. Add effective map, role-impact read model, lockout diagnostics and reset UX; Roles remains grant owner. |
-| `taxonomy.rest.policy` | **PROVIDER-ID PATH + PREVIEW UI PROMOTED** | REST exposure/base/namespace and allowlisted controller IDs compile; diagnostics provide and render route preview. Full authoring controls and route-collision/block-editor diagnostics remain. |
-| `taxonomy.default_term.policy` | **BASELINE PRESENT** | Typed default-term projection merged in PR #478. Full editor/help/reset and deeper WordPress behavior evidence remain. |
-| `taxonomy.runtime.term_query_policy` | **BOUNDED BASELINE PRESENT** | `sort` plus allowlisted `orderby`/`order`/`fields` defaults compile. Add cost/help UX and ownership guidance with Content Order. |
-| `taxonomy.providers.editor` | **PROVIDER-ID RUNTIME PATH PRESENT / UX MISSING** | Shared trusted registry + JSON-safe meta-box/sanitizer IDs + runtime resolution promoted in PR #479. Provider selector/health UX remains. |
-| `taxonomy.providers.term_count` | **PROVIDER-ID RUNTIME PATH PRESENT / UX MISSING** | Shared trusted registry + JSON-safe term-count provider IDs + runtime resolution promoted in PR #479. Selector/compatibility UX remains. |
-| `taxonomy.workflow.key_migration` | **MISSING / BLOCKED BY DESIGN** | Existing validation makes keys immutable, which is safe. A separate previewed migration workflow is required; ordinary save must remain unable to rename. |
-| `taxonomy.portability.definition` | **PARTIAL VIA SHARED DEFINITION INFRASTRUCTURE** | Canonical Definition persistence exists. Add explicit Taxonomy export/import mapping, create-only/update CAS, environment conflict report and portability tests. |
-| `taxonomy.diagnostics.effective_args` | **PROMOTED BACKEND + UI** | Effective args/overrides/provider evidence is promoted through PRs #480/#483 and rendered through a read-only panel with packaged browser + axe evidence. |
-| `taxonomy.compatibility.cpt_ui_import` | **MISSING** | Add declarative CPT UI import adapter into canonical Taxonomy Definition; no provider shadow storage. |
-| `taxonomy.internal.builtin` | **PASS — REJECTED** | `_builtin` is not in accepted top-level Definition keys. Preserve this prohibition and explicit regression evidence. |
+| `taxonomy.definition.key` | **SAFE BASELINE + IMMUTABILITY + READ-ONLY MIGRATION PLANNING** | Ordinary save, CPT UI import and portable Definition import cannot rename a taxonomy key. PR #580 adds impact/recovery preview only; migration execution remains separately safety-gated and unavailable. |
+| `taxonomy.definition.naming` | **BASELINE PRESENT / UX RESIDUAL** | Name/singular/description projection and editing exist. Broader help/default-state and generic reset semantics are potential UX work only where the reviewed contract demonstrably requires them. |
+| `taxonomy.definition.lifecycle` | **BASELINE PRESENT / UX RESIDUAL** | Revision-aware save/status mutation is present. Revision-history/diff presentation and deeper dependency-impact UX remain separate potential work rather than a registration gap. |
+| `taxonomy.definition.object_types` | **BASELINE + HEALTH DIAGNOSTICS PROMOTED** | Canonical associations, missing/external preservation and health rendering exist. Deeper search/grouping/dependency-impact UX remains a residual, not a runtime registration gap. |
+| `taxonomy.diagnostics.association_health` | **PROMOTED BACKEND + UI** | PRs #480/#483 remain authoritative; only deeper dependency-impact presentation is potentially open. |
+| `taxonomy.labels.overrides` | **PROMOTED** | Reviewed authoring/reset/hydration and server-authoritative compilation are present. |
+| `taxonomy.labels.autogenerate` | **PROMOTED** | Hierarchy-aware generated labels and explicit override precedence are present. |
+| `taxonomy.visibility.policy` | **PROMOTED + DORMANT DIAGNOSTICS** | PR #503 authoring plus PR #570 native dormant-parent diagnostics close the reviewed WordPress-forced normalization gap. |
+| `taxonomy.rewrite.policy` | **PROMOTED AUTHORING + COLLISION + REFRESH LIFECYCLE** | PR #547 authoring/collision plus PR #559 deferred soft refresh evidence are present. External rewrite ownership remains intentionally not inferred. |
+| `taxonomy.permissions.capabilities` | **PROMOTED AUTHORING + CURRENT-USER WARNING** | Broader read-only role-impact presentation is optional residual work only if the reviewed contract still requires it; grants stay with Roles & Capabilities. |
+| `taxonomy.rest.policy` | **PROMOTED** | Authoring, canonical route collisions and block-editor compatibility diagnostics are present. External route ownership remains intentionally not inferred. |
+| `taxonomy.default_term.policy` | **PROMOTED AUTHORING + REAL WP LIFECYCLE EVIDENCE** | PRs #478/#512/#561/#569 cover typed projection, UX and native behavior. No custom auto-assignment layer was introduced. |
+| `taxonomy.runtime.term_query_policy` | **PROMOTED AUTHORING + REAL WP SEMANTICS + PERFORMANCE EVIDENCE** | PRs #512/#563/#576 cover bounded policy, native precedence/order behavior and deterministic SQL-budget/no-termmeta evidence. Persistent manual ordering stays with Content Order. |
+| `taxonomy.providers.editor` | **PROMOTED** | Allowlisted provider-ID runtime, catalog, selector/reset/hydration and redaction are present. |
+| `taxonomy.providers.term_count` | **PROMOTED** | Same bounded provider-ID ownership path is present for term-count behavior. |
+| `taxonomy.workflow.key_migration` | **READ-ONLY PLANNING PREVIEW PROMOTED / EXECUTION BLOCKED** | PR #580 provides target validation, conflict/impact reporting and recovery planning without mutation. No rename executor is authorized; any future execution requires separate explicit safety approval and migration/recovery evidence. |
+| `taxonomy.portability.definition` | **OWNER SEAM PROMOTED / PACKAGE ORCHESTRATION OUTSIDE SURFACE 2** | PR #572 closes the Taxonomy owner-specific import mutation seam. Canonical list/get already expose portable Definition records. Generic package envelope, multi-owner preflight, environment conflict planning and import/export UI remain the Configuration Packages / Import-Export owner’s responsibility. |
+| `taxonomy.diagnostics.effective_args` | **PROMOTED** | Server-authoritative effective args/overrides/route previews are rendered without a second compiler. |
+| `taxonomy.compatibility.cpt_ui_import` | **PROMOTED** | Preview plus canonical create/update-CAS commit are present. |
+| `taxonomy.internal.builtin` | **PASS — REJECTED** | `_builtin` remains non-authorable. |
 
-## UX gap summary
+## Closed residuals that must not be re-opened as duplicate work
 
-Promoted UX now includes read-only diagnostics, adaptive labels and the reviewed complete Labels-family authoring controls. The current slice adds the first broader tiered editor behavior and native visibility inheritance controls, pending exact-head promotion evidence.
+The following are no longer valid “remaining gap” claims on this anchor:
 
-Remaining UX families after the current slice include:
+- controlled rewrite-rule refresh/flush lifecycle evidence;
+- deeper native default-term behavior evidence for create/reuse/defaulting/deletion/disable retention;
+- native bounded term-query ordering/precedence evidence;
+- bounded term-query deterministic performance evidence for the reviewed allowlisted path;
+- dormant-parent diagnostics for WordPress-forced `show_in_menu` and front-end `query_var` normalization;
+- the Surface 2 owner-specific portable Definition import mutation seam;
+- guarded taxonomy-key migration **planning/preview** with impact and recovery evidence.
 
-- dormant-parent state diagnostics beyond preserved stored values;
-- rewrite/query-var authoring and collision/help UX beyond current previews;
-- REST authoring controls and collision/block-editor diagnostics;
-- capabilities editor/effective map/lockout diagnostics;
-- default-term editor;
-- controlled provider selectors and health/compatibility UX;
-- bounded term-query defaults authoring;
-- Find Setting search;
-- reset field/section/all outside the Labels/current visibility families;
-- deeper object-type search/grouping and dependency impact;
-- guarded key-migration wizard;
-- portability/compatibility workflows;
-- browser/accessibility evidence for the remaining reviewed contract.
+## Genuine remaining implementation areas / boundaries
+
+At this anchor the remaining Surface 2 lane is materially narrower:
+
+1. **Naming/help/reset UX residuals** — only where the reviewed contract demonstrably requires semantics not already covered by promoted family-specific resets.
+2. **Lifecycle history/diff and dependency-impact presentation** — potential read-model/UX work around revision and lifecycle consequences; canonical mutation semantics already exist.
+3. **Object-type discovery/dependency-impact UX** — potential deeper search/grouping or impact presentation without changing canonical association ownership.
+4. **Optional broader capability role-impact read model** — only by consuming Roles & Capabilities truth; Taxonomy must not grant or assign roles.
+5. **Taxonomy-key migration execution boundary** — planning is promoted, but execution is not an active authorized lane. It remains blocked unless separately and explicitly safety-approved.
+6. **Generic package orchestration** — package envelope, multi-owner preflight/conflict plan and import/export UI belong to Configuration Packages / Import-Export, not Surface 2. Surface 2 exposes its owner mutation seam through PR #572.
+7. **Final exact-main certification audit** — a later accounting/evidence exercise only; no certification claim is made by this matrix.
 
 ## Cross-surface ownership constraints
 
@@ -180,19 +110,11 @@ Do not absorb these into Taxonomy:
 - automatic term assignment/rules → **Decision**;
 - synonym/index/search behavior → **Search**;
 - taxonomy archive rendering → **Listings**;
-- role grants → **Roles & Capabilities**;
-- generic package orchestration → **Import/Export / Platform**.
+- role grants / role membership → **Roles & Capabilities**;
+- generic package envelope/orchestration → **Configuration Packages / Import-Export / Platform owner**.
 
-Taxonomy owns the Definition and its native registration semantics; integrations reference that owner.
+Taxonomy owns the Definition, validation/projection, native registration semantics and owner-specific canonical mutation path. Cross-surface integrations must invoke that owner instead of writing Surface 2 storage directly.
 
-## Remaining implementation lane shape
+## Safety boundary
 
-After the current tier/visibility slice promotes, Runtime Gap Closure remains dependency-safe:
-
-1. **Remaining Advanced/Expert option UX** — rewrite/query-var, REST, capabilities, default term, controlled providers, bounded term-query controls, Find Setting/help and deeper dependency/dormant diagnostics.
-2. **Portability & Compatibility** — declarative Definition import/export + CPT UI adapter with revision/CAS conflict reporting.
-3. **Guarded Key Migration** — separately safety-gated planning/workflow with dry-run, dependency impact and recovery evidence; destructive term mutation remains unauthorized without an explicit later gate.
-4. **Runtime certification audit** — exact-head PHP/architecture/WordPress runtime/browser/accessibility/security/compatibility/portability/performance evidence and explicit remaining-gap zeroing before any `RUNTIME_CERTIFIED` promotion.
-5. **Product-parity acceptance** — separate competitor-parity evidence and machine promotion after runtime certification.
-
-No line in this matrix authorizes destructive taxonomy-key migration or claims `RUNTIME_CERTIFIED` / `PRODUCT_PARITY_CERTIFIED`.
+Taxonomy-key migration remains intentionally stronger than ordinary editing: current save/import paths reject key changes. PR #580 adds a read-only planner only. No destructive rename, term rewrite, relationship rewrite, option rewrite, rewrite flush or recovery execution is authorized by this reconciliation. Any future migration execution requires its own separately approved safety scope and exact evidence plan.

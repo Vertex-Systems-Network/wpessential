@@ -1,3 +1,10 @@
+import {
+	bindTaxonomyRouting,
+	collectTaxonomyRouting,
+	resetTaxonomyRouting,
+	setTaxonomyRouting,
+} from './taxonomy-routing';
+
 type RecordValue = Record< string, unknown >;
 type TaxonomyTier = 'essential' | 'advanced' | 'expert';
 type TaxonomySettingEntry = {
@@ -37,6 +44,13 @@ const OPTIONAL_VISIBILITY_FIELDS = [
 		field: 'show_in_quick_edit',
 		id: 'wpessential-taxonomy-show-in-quick-edit',
 	},
+] as const;
+
+const RUNTIME_PROVIDER_SLOTS = [
+	'rest_controller',
+	'meta_box',
+	'meta_box_sanitize',
+	'term_count',
 ] as const;
 
 const TIER_RANK: Record< TaxonomyTier, number > = {
@@ -564,6 +578,140 @@ function objectTermArgsFromInputs(): RecordValue | undefined {
 	return value;
 }
 
+function providerSelect( slot: string ): HTMLSelectElement | null {
+	const select = document.querySelector< HTMLSelectElement >(
+		`[data-wpessential-taxonomy-runtime-provider="${ slot }"]`
+	);
+	return select instanceof HTMLSelectElement ? select : null;
+}
+
+function providerState( slot: string ): HTMLElement | null {
+	const state = document.querySelector(
+		`[data-wpessential-taxonomy-provider-state="${ slot }"]`
+	);
+	return state instanceof HTMLElement ? state : null;
+}
+
+function selectedProviderOption(
+	select: HTMLSelectElement
+): HTMLOptionElement | null {
+	const option = select.selectedOptions.item( 0 );
+	return option instanceof HTMLOptionElement ? option : null;
+}
+
+function updateRuntimeProviderState( slot: string ): void {
+	const select = providerSelect( slot );
+	if ( ! select ) {
+		return;
+	}
+	const state = providerState( slot );
+
+	if ( select.value === '' ) {
+		select.setCustomValidity( '' );
+		if ( state ) {
+			state.textContent = 'WordPress default';
+		}
+		return;
+	}
+
+	const option = selectedProviderOption( select );
+	const available = option?.dataset.wpessentialTaxonomyProviderAvailable;
+	if ( available === 'true' ) {
+		select.setCustomValidity( '' );
+		if ( state ) {
+			state.textContent = 'Available registered provider.';
+		}
+		return;
+	}
+
+	select.setCustomValidity(
+		'This stored runtime provider is unavailable. Choose WordPress default or an available registered provider.'
+	);
+	if ( state ) {
+		state.textContent =
+			'Unavailable. Choose WordPress default or an available registered provider before saving.';
+	}
+}
+
+function runtimeProvidersFromInputs(): RecordValue | undefined {
+	const providers: RecordValue = {};
+	for ( const slot of RUNTIME_PROVIDER_SLOTS ) {
+		const value = providerSelect( slot )?.value.trim() ?? '';
+		if ( value !== '' ) {
+			providers[ slot ] = value;
+		}
+	}
+	return Object.keys( providers ).length === 0 ? undefined : providers;
+}
+
+function removeStaleProviderOption( select: HTMLSelectElement ): void {
+	select
+		.querySelectorAll< HTMLOptionElement >(
+			'[data-wpessential-taxonomy-provider-stale]'
+		)
+		.forEach( ( option ) => option.remove() );
+}
+
+function setRuntimeProviders( payload: RecordValue ): void {
+	const providers = isRecord( payload.runtime_providers )
+		? payload.runtime_providers
+		: {};
+
+	for ( const slot of RUNTIME_PROVIDER_SLOTS ) {
+		const select = providerSelect( slot );
+		if ( ! select ) {
+			continue;
+		}
+		removeStaleProviderOption( select );
+		const stored = providers[ slot ];
+		if ( typeof stored !== 'string' || stored.trim() === '' ) {
+			select.value = '';
+			updateRuntimeProviderState( slot );
+			continue;
+		}
+
+		const providerId = stored.trim();
+		const known = Array.from( select.options ).find(
+			( option ) => option.value === providerId
+		);
+		if ( known ) {
+			select.value = providerId;
+			updateRuntimeProviderState( slot );
+			continue;
+		}
+
+		const stale = document.createElement( 'option' );
+		stale.value = providerId;
+		stale.textContent = `${ providerId } — not registered`;
+		stale.dataset.wpessentialTaxonomyProviderAvailable = 'false';
+		stale.dataset.wpessentialTaxonomyProviderStale = '';
+		select.append( stale );
+		select.value = providerId;
+		updateRuntimeProviderState( slot );
+	}
+}
+
+function resetRuntimeProviders(): void {
+	for ( const slot of RUNTIME_PROVIDER_SLOTS ) {
+		const select = providerSelect( slot );
+		if ( ! select ) {
+			continue;
+		}
+		removeStaleProviderOption( select );
+		select.value = '';
+		updateRuntimeProviderState( slot );
+	}
+}
+
+function bindRuntimeProviders(): void {
+	for ( const slot of RUNTIME_PROVIDER_SLOTS ) {
+		providerSelect( slot )?.addEventListener( 'change', () => {
+			updateRuntimeProviderState( slot );
+		} );
+		updateRuntimeProviderState( slot );
+	}
+}
+
 function setTextValue( id: string, value: unknown ): void {
 	const input = textInput( id );
 	if ( input ) {
@@ -655,6 +803,8 @@ export function collectTaxonomyVisibility(): RecordValue {
 	result.default_term = defaultTermFromInputs();
 	result.args = objectTermArgsFromInputs();
 	result.sort = visibilityValue( selectInput( SORT_ID )?.value ?? 'inherit' );
+	result.runtime_providers = runtimeProvidersFromInputs();
+	Object.assign( result, collectTaxonomyRouting() );
 	return result;
 }
 
@@ -667,6 +817,8 @@ export function setTaxonomyVisibility( payload: RecordValue ): void {
 		input.value = visibilitySelectValue( payload[ option.field ] );
 	}
 	setRuntimeDefaults( payload );
+	setRuntimeProviders( payload );
+	setTaxonomyRouting( payload );
 	updateInheritanceStates();
 }
 
@@ -678,13 +830,17 @@ export function resetTaxonomyVisibility(): void {
 		}
 	}
 	resetRuntimeDefaults();
+	resetRuntimeProviders();
+	resetTaxonomyRouting();
 	updateInheritanceStates();
 	setTaxonomyTier( 'essential' );
 	resetTaxonomySettingSearch();
 }
 
 export function bindTaxonomyVisibility(): void {
+	bindTaxonomyRouting();
 	ensureRuntimeDefaults();
+	bindRuntimeProviders();
 	for ( const button of Array.from(
 		document.querySelectorAll< HTMLButtonElement >(
 			'[data-wpessential-taxonomy-tier]'

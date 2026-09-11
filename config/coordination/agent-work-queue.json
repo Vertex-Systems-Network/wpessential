@@ -1,8 +1,8 @@
 {
-  "schema_version": 4,
-  "snapshot_date": "2026-09-10",
-  "queue_anchor_main_sha": "d9204049a163bd79e41ad989af6d66c87e5388ae",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. README closeout must retain all 56 canonical surfaces. Fields, Relations, Query, Admin Columns, Listings and Status retain only their explicitly certified bounded baseline PASS claims. Surface 7 Custom Tables remains ACTIVE / NOT PASS at the evidence-backed bounded runway indicator of 90%; managed-table execution remains blocked. Surface 1 CPT Builder remains UX_CONTRACT_COMPLETE without runtime/product parity certification. Surface 2 Taxonomy Builder remains the only active runtime implementation lane under Issue #474. Surface 10 Dashboard Widgets planning/contract closure is complete through Issue #493 / merged PR #508 and remains runtime-unpromoted. Owner-directed priorities 1030-1100 remain eight conflict-safe planning/contract-only lanes for Surfaces 11-18, each runtime_allowed=false and product_parity_allowed=false. No CPT/Taxonomy/Dashboard Widgets surface may be reported full-final until runtime evidence and PRODUCT_PARITY_CERTIFIED machine state are explicitly promoted. Managed-table DDL, R1/R2/R3/R4 execution, live row scans, Backup side effects, migration jobs/leases, public mutation, deployment and release remain separately gated. Deterministic remote branch creation is the claim lock; no force/reuse. README, CHECKPOINT and this queue are Supervisor-owned shared truth.",
+  "schema_version": 7,
+  "snapshot_date": "2026-09-12",
+  "queue_anchor_main_sha": "faec9ef5bbe799b3d89e7e13b7756772b16bda1b",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Completed slots are removed from the actionable queue and remain auditable in Git history. Surface 2 Taxonomy Builder under Issue #474 is the only currently actionable runtime lane. The owner-directed 11-worker Supervisor wave #583 is complete: Taxonomy residual audit #584 / PR #597 and Surfaces 19-28 planning Issues #585-#594 / PRs #598-#607 all merged and closed. Those planning outputs do not promote their Master Options Banks, Atomic Option Contracts, runtime or product-parity lifecycle. Surfaces 11-18 planning Issues #494-#501 / PRs #527-#534 are likewise complete and non-actionable. Hosted-agent assignment was attempted during #583 but the available GitHub connector returned HTTP 403; no hosted claim was falsely recorded, and deterministic branch claims were used under merged coordination PR #596. Managed-table execution, destructive taxonomy migration, Backup/Reset side effects, public mutation, provider/network side effects, deployment and release remain separately gated.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -13,66 +13,58 @@
       "new_development_last"
     ],
     "hard_issue_pr_gate": true,
-    "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent claimed lanes allow the next non-overlapping OPEN slot to be claimed in parallel",
-    "selection_rule": "Priority 1010 Taxonomy Builder Runtime Gap Closure V1 remains OPEN under Issue #474 and is the only runtime implementation lane. Priority 1020 Dashboard Widgets is DONE through Issue #493 / merged PR #508 with UX_CONTRACT_COMPLETE planning truth only. Owner-directed priorities 1030-1100 remain eight independent planning/contract-only lanes for Surfaces 11-18; these may run in parallel because they do not share runtime owners and cannot edit Supervisor-owned shared truth. Workers must stay inside their single surface, must not promote runtime/product parity, and must report shared-truth changes as Integration Requirements. Custom Tables managed-table execution remains blocked and no CPT or Dashboard Widgets runtime lane is opened by this wave.",
+    "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
+    "selection_rule": "Priority 1010 is the only actionable slot in this snapshot: Taxonomy Runtime Gap Closure under Issue #474. Completed planning waves for Surfaces 11-28 must not be reclaimed from stale branches/issues. New work for those surfaces requires a new accepted issue/queue slot and must respect the current Master Options Bank and lifecycle gates.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
+    "claim_branch_rule": "Create the exact claim_branch from exact current main without force; an existing branch means claimed. If branch creation is rejected, skip the slot and reconcile rather than invent another branch.",
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
-      "Resolve exact current main.",
-      "List and reconcile accepted OPEN Issues before selecting new work.",
-      "List and reconcile eligible OPEN PRs/MRs before selecting new work; fix/merge accepted merge-ready work in dependency-safe order.",
-      "Do not start new development while an accepted actionable Issue or PR/MR path is being bypassed.",
+      "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
+      "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read docs/IMPLEMENTATION/CUSTOM-TABLES-POST-TRUSTED-RUNTIME-EVIDENCE-EXACT-MAIN-AUDIT-V1.md before opening any further Custom Tables execution-related work.",
-      "For CPT read config/product/options-bank-progress.json, config/product/options-bank-reviews/cpt-bank-review-v1.json, config/product/atomic-option-contract-progress.json, config/product/option-contract.schema.json, config/product/option-contracts/cpt.json, docs/PRODUCT/CPT-BUILDER-UX-CONTRACT-V1.md, docs/IMPLEMENTATION/CPT-BUILDER-RUNTIME-GAP-MATRIX-V1.md and current CustomPostTypes runtime/tests before any later runtime transition audit.",
-      "For Taxonomy read config/product/option-contracts/taxonomy.json, docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md and current Taxonomies runtime/tests before runtime gap closure.",
-      "For owner-directed Surfaces 10-18 read that surface's entries in config/product/options-bank-progress.json, config/product/atomic-option-contract-progress.json, canonical option ownership/UX maps and existing module/runtime code before writing a contract or gap matrix.",
-      "Inspect deterministic claim branches before creating any claim."
+      "For Taxonomy read config/product/option-contracts/taxonomy.json, docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-POST-OBJECT-DISCOVERY-RESIDUAL-AUDIT-V1.md and current Taxonomies runtime/tests.",
+      "Verify the selected slot is not already complete, superseded, blocked or claimed by its exact remote branch.",
+      "Verify the proposed diff stays inside the slot's declared write boundary."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
-      "For Taxonomy runtime gap closure require the merged 20-option / 71-record contract to remain canonical, no raw callback execution, no destructive term migration, focused tests for each implemented gap, and explicit remaining-gap accounting before any runtime certification claim.",
-      "For Surfaces 10-18 planning lanes require runtime_allowed=false, product_parity_allowed=false, no shared-truth edits, and evidence-backed contract/UX/gap outputs only.",
-      "Keep Custom Tables managed-table execution forbidden unless a later explicit exact-main audit authorizes a separate bounded lane."
+      "For Taxonomy preserve canonical Ability/Policy, revision/CAS and Definition ownership.",
+      "Do not infer destructive taxonomy-key migration authorization from planning evidence.",
+      "Do not promote RUNTIME_CERTIFIED or PRODUCT_PARITY_CERTIFIED from bounded slices or green regressions alone."
     ],
     "cycle_closeout": [
       "Reconcile README current status after meaningful completed work.",
       "Keep the README complete 56 / 56 canonical module progress/timeline dashboard current from repository evidence.",
       "Do not fabricate a higher progress percentage without a repository-defined milestone.",
       "Do not present planning, bounded runtime or green regression workflows as full product parity."
-    ],
-    "claim_branch_rule": "Create the exact claim_branch from exact current main without force; an existing branch means claimed."
+    ]
   },
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "description": "Owns Issues/PR preflight, shared truth, exact-main audits, Platform/runtime trust composition, product-lifecycle serialization and complete 56-surface README closeout reconciliation.",
+      "description": "Exactly one user-designated Supervisor/Integrator coordinates issue/PR preflight, shared truth, claim review, merge review and closeout.",
       "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
-        "Pre-create blocked claims.",
-        "Start new development before accepted OPEN Issues and eligible OPEN PRs/MRs are reconciled.",
-        "Merge from agent report alone.",
-        "Let workers edit shared truth.",
-        "Call CPT or Taxonomy full-final before machine product-parity certification.",
-        "Authorize managed-table physical DDL or R1/R2 statement dispatch from the post-trust audit."
+        "Pre-create future worker branches before the queue authorizes them.",
+        "Force or reuse a claimed branch.",
+        "Merge from worker report alone.",
+        "Allow workers to edit shared project-state truth."
       ]
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Reconciles Issues/PRs first, then claims one eligible non-overlapping ANY slot only after dependencies promote.",
+      "description": "Workers reconcile issues/PRs first, then claim one eligible non-overlapping slot through the exact deterministic branch declared here.",
       "may_claim": ["ANY"],
       "must_not": [
-        "Claim SUPERVISOR_ONLY.",
-        "Edit shared truth.",
+        "Claim SUPERVISOR_ONLY slots.",
+        "Edit README, CHECKPOINT, config/coordination/agent-work-queue.json or another slot's files.",
         "Invent another branch when a deterministic claim exists.",
-        "Duplicate accepted Issue/PR work already in progress.",
-        "Skip prerequisite Bank/Atomic/UX evidence for the assigned surface.",
-        "Execute generated managed-table SQL/DDL or destructive data mutation.",
-        "Add live row scans, Backup creation/restore side effects, migration jobs/leases or public mutation surfaces to planning-only lanes."
+        "Start runtime work from planning-only historical evidence.",
+        "Execute destructive provider/database/user/content mutation, Backup/Reset side effects, deployment or release without a separately accepted gate."
       ]
     }
   },
@@ -82,58 +74,59 @@
     {"gate":"C","surface":"Query","status":"PASS_CERTIFIED_BOUNDED_V1"},
     {"gate":"D","surface":"Admin Columns","status":"PASS_CERTIFIED_BOUNDED_V1"},
     {"gate":"E","surface":"Listings","status":"PASS_CERTIFIED_BOUNDED_V1","closure":"Issue #343 / merged PR #344"},
-    {"gate":"STATUS","surface":"Status","status":"PASS_CERTIFIED_BOUNDED_V1","closure":"Issue #378 / merged PR #379"}
+    {"gate":"STATUS","surface":"Status","status":"PASS_CERTIFIED_BOUNDED_V1","closure":"Issue #378 / merged PR #379"},
+    {"surface":"Admin Menu","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #494 / merged PR #527"},
+    {"surface":"Settings Pages","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #495 / merged PR #528"},
+    {"surface":"Frontend Dashboard","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #496 / merged PR #529"},
+    {"surface":"User Profile","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #497 / merged PR #530"},
+    {"surface":"Membership","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #498 / merged PR #531"},
+    {"surface":"Builder Widgets","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #499 / merged PR #532"},
+    {"surface":"Forms & Workflows","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #500 / merged PR #533"},
+    {"surface":"Cron","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #501 / merged PR #534"},
+    {"coordination":"hosted_agent_fallback","status":"HTTP_403_NO_CLAIM","evidence":"Issue #584 assignment attempt after PR #595; deterministic fallback promoted by PR #596; repository precedent PR #157"},
+    {"surface":"Taxonomy post-discovery audit","status":"EVIDENCE_ACCOUNTING_COMPLETE","closure":"Issue #584 / merged PR #597"},
+    {"surface":"Notifications","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #585 / merged PR #598"},
+    {"surface":"Emails","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #586 / merged PR #599"},
+    {"surface":"Chat","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #587 / merged PR #600"},
+    {"surface":"REST API","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #588 / merged PR #601"},
+    {"surface":"Connections/Webhooks","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #589 / merged PR #602"},
+    {"surface":"Backup","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #590 / merged PR #603"},
+    {"surface":"Reset","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #591 / merged PR #604"},
+    {"surface":"Import/Export","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #592 / merged PR #605"},
+    {"surface":"Protector","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #593 / merged PR #606"},
+    {"surface":"Media Operations","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #594 / merged PR #607"}
   ],
   "slots": [
-    {"priority":620,"slot_id":"post-status-next-gate-entry-audit-v1","title":"Post-Status exact-main next dependency gate audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #380 / merged PR #381","runtime_allowed":false,"claim_branch":"supervisor/post-status-next-gate-entry-audit-v1"},
-    {"priority":630,"slot_id":"custom-tables-definition-compiler-v1","title":"Custom Tables canonical table Definition + schema descriptor V1","role":"ANY","status":"DONE","source":"Issue #382 / merged PR #383","runtime_allowed":true,"claim_branch":"agent/custom-tables-definition-compiler-v1"},
-    {"priority":640,"slot_id":"custom-tables-post-definition-audit-v1","title":"Custom Tables post-Definition next-lane audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #384 / merged PR #386","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-definition-audit-v1"},
-    {"priority":650,"slot_id":"custom-tables-observed-schema-plan-v1","title":"Custom Tables observed schema + pure Migration Plan V1","role":"ANY","status":"DONE","source":"Issue #385 / merged PR #387","runtime_allowed":true,"claim_branch":"agent/custom-tables-observed-schema-plan-v1"},
-    {"priority":660,"slot_id":"custom-tables-post-plan-audit-v1","title":"Custom Tables post-plan next-lane audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #388 / merged PR #390","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-plan-audit-v1"},
-    {"priority":670,"slot_id":"custom-tables-readonly-introspection-v1","title":"Custom Tables trusted CT1 identity + read-only schema introspection V1","role":"ANY","status":"DONE","source":"Issue #389 / merged PR #391","runtime_allowed":true,"claim_branch":"agent/custom-tables-readonly-introspection-v1"},
-    {"priority":680,"slot_id":"custom-tables-post-introspection-audit-v1","title":"Custom Tables post-introspection next-lane audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #392 / merged PR #394","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-introspection-audit-v1"},
-    {"priority":690,"slot_id":"custom-tables-provider-ddl-compiler-v1","title":"Custom Tables provider capability profile + pure DDL compiler preview V1","role":"ANY","status":"DONE","source":"Issue #393 / merged PR #395","runtime_allowed":true,"claim_branch":"agent/custom-tables-provider-ddl-compiler-v1"},
-    {"priority":700,"slot_id":"custom-tables-post-provider-audit-v1","title":"Custom Tables post-provider exact-main prerequisite audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #397 / merged PR #398","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-provider-audit-v1"},
-    {"priority":710,"slot_id":"custom-tables-migration-run-state-v1","title":"Custom Tables immutable Migration Run state machine V1","role":"ANY","status":"DONE","source":"Issue #399 / merged PR #402","runtime_allowed":true,"claim_branch":"agent/custom-tables-migration-run-state-v1"},
-    {"priority":720,"slot_id":"custom-tables-precondition-contract-v1","title":"Custom Tables typed precondition contract V1","role":"ANY","status":"DONE","source":"Issue #400 / merged PR #403","runtime_allowed":true,"claim_branch":"agent/custom-tables-precondition-contract-v1"},
-    {"priority":730,"slot_id":"custom-tables-recovery-revalidation-v1","title":"Custom Tables recovery + reviewed-source revalidation contract V1","role":"ANY","status":"DONE","source":"Issue #401 / merged PR #404","runtime_allowed":true,"claim_branch":"agent/custom-tables-recovery-revalidation-v1"},
-    {"priority":740,"slot_id":"custom-tables-post-prerequisite-audit-v1","title":"Custom Tables post-prerequisite exact-main audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #405 / merged PR #406","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-prerequisite-audit-v1"},
-    {"priority":750,"slot_id":"custom-tables-run-repository-contract-v1","title":"Custom Tables Migration Run repository contract V1","role":"ANY","status":"DONE","source":"Issue #407 / merged PR #410","runtime_allowed":true,"claim_branch":"agent/custom-tables-run-repository-contract-v1"},
-    {"priority":760,"slot_id":"custom-tables-precondition-evaluator-v1","title":"Custom Tables Precondition evaluator contract V1","role":"ANY","status":"DONE","source":"Issue #408 / merged PR #411","runtime_allowed":true,"claim_branch":"agent/custom-tables-precondition-evaluator-v1"},
-    {"priority":770,"slot_id":"custom-tables-recovery-readiness-v1","title":"Custom Tables Recovery readiness contract V1","role":"ANY","status":"DONE","source":"Issue #409 / merged PR #412","runtime_allowed":true,"claim_branch":"agent/custom-tables-recovery-readiness-v1"},
-    {"priority":780,"slot_id":"custom-tables-post-contract-wave-audit-v1","title":"Custom Tables post-contract-wave exact-main audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #413 / merged PR #414","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-contract-wave-audit-v1"},
-    {"priority":785,"slot_id":"ai-native-issue-pr-readme-closeout-v1","title":"AI-Native issue-first/PR-second startup + README progress closeout","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #415 / merged PR #416","runtime_allowed":false,"claim_branch":"supervisor/ai-native-workflow-readme-progress-v1"},
-    {"priority":790,"slot_id":"custom-tables-run-transition-service-v1","title":"Custom Tables Migration Run transition service V1","role":"ANY","status":"DONE","source":"Issue #423 / merged PR #427","runtime_allowed":true,"claim_branch":"agent/custom-tables-run-transition-service-v1"},
-    {"priority":800,"slot_id":"custom-tables-precondition-probe-registry-v1","title":"Custom Tables Precondition probe registry V1","role":"ANY","status":"DONE","source":"Issue #420 / merged PR #428","runtime_allowed":true,"claim_branch":"agent/custom-tables-precondition-probe-registry-v1"},
-    {"priority":810,"slot_id":"custom-tables-recovery-evidence-source-v1","title":"Custom Tables Recovery evidence source contract V1","role":"ANY","status":"DONE","source":"Issue #421 / merged PR #429","runtime_allowed":true,"claim_branch":"agent/custom-tables-recovery-evidence-source-v1"},
-    {"priority":820,"slot_id":"custom-tables-execution-readiness-v1","title":"Custom Tables pure Migration execution-readiness decision V1","role":"ANY","status":"DONE","source":"Issue #422 / merged PR #430","runtime_allowed":true,"claim_branch":"agent/custom-tables-execution-readiness-v1"},
-    {"priority":830,"slot_id":"custom-tables-post-composition-wave-audit-v1","title":"Custom Tables post-composition-wave exact-main audit + shared-truth reconciliation V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #431 / merged PR #432","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-composition-wave-audit-v1"},
-    {"priority":840,"slot_id":"custom-tables-run-persistence-record-codec-v1","title":"Custom Tables Migration Run persistence record codec V1","role":"ANY","status":"DONE","source":"merged PR #437","runtime_allowed":true,"claim_branch":"agent/custom-tables-run-persistence-record-codec-v1"},
-    {"priority":850,"slot_id":"custom-tables-precondition-readonly-probe-plan-v1","title":"Custom Tables Precondition read-only probe plan V1","role":"ANY","status":"DONE","source":"merged PR #438","runtime_allowed":true,"claim_branch":"agent/custom-tables-precondition-readonly-probe-plan-v1"},
-    {"priority":860,"slot_id":"custom-tables-recovery-evidence-binding-freshness-v1","title":"Custom Tables Recovery evidence binding and freshness V1","role":"ANY","status":"DONE","source":"Issue #435 / merged PR #439","runtime_allowed":true,"claim_branch":"agent/custom-tables-recovery-evidence-binding-freshness-v1"},
-    {"priority":870,"slot_id":"custom-tables-execution-authorization-envelope-v1","title":"Custom Tables execution authorization envelope V1","role":"ANY","status":"DONE","source":"Issue #436 / merged PR #440","runtime_allowed":true,"claim_branch":"agent/custom-tables-execution-authorization-envelope-v1"},
-    {"priority":880,"slot_id":"custom-tables-post-hardening-wave-audit-v1","title":"Custom Tables post-hardening-wave exact-main audit + shared-truth reconciliation V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #441 / merged PR #442","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-hardening-wave-audit-v1"},
-    {"priority":890,"slot_id":"custom-tables-wpdb-run-store-v1","title":"Custom Tables internal Migration Run store schema + WPDB repository V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #443 / merged PR #450","runtime_allowed":true,"claim_branch":"supervisor/custom-tables-wpdb-run-store-v1"},
-    {"priority":900,"slot_id":"custom-tables-metadata-precondition-probes-v1","title":"Custom Tables metadata-only Precondition probe adapters V1","role":"ANY","status":"DONE","source":"merged PR #447","runtime_allowed":true,"claim_branch":"agent/custom-tables-metadata-precondition-probes-v1"},
-    {"priority":910,"slot_id":"custom-tables-recovery-verification-provider-port-v1","title":"Custom Tables Recovery verification provider port V1","role":"ANY","status":"DONE","source":"Issue #445 / merged PR #448","runtime_allowed":true,"claim_branch":"agent/custom-tables-recovery-verification-provider-port-v1"},
-    {"priority":920,"slot_id":"custom-tables-execution-authorization-policy-adapter-v1","title":"Custom Tables execution authorization Policy adapter V1","role":"ANY","status":"DONE","source":"Issue #446 / merged PR #449","runtime_allowed":true,"claim_branch":"agent/custom-tables-execution-authorization-policy-adapter-v1"},
-    {"priority":930,"slot_id":"custom-tables-post-adapter-audit-v1","title":"Custom Tables post-adapter exact-main audit V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #453 / merged PR #454","runtime_allowed":false,"claim_branch":"supervisor/custom-tables-post-adapter-audit-v1"},
-    {"priority":940,"slot_id":"custom-tables-runtime-composition-readiness-v1","title":"Custom Tables Runtime Composition Readiness V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #459 / merged PR #460","runtime_allowed":true,"execution_allowed":false,"claim_branch":"supervisor/custom-tables-runtime-composition-readiness-v1"},
-    {"priority":950,"slot_id":"custom-tables-post-runtime-composition-audit-v1","title":"Custom Tables post-Runtime Composition exact-main audit + shared-truth reconciliation V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #461 / merged PR #462","runtime_allowed":false,"execution_allowed":false,"claim_branch":"supervisor/custom-tables-post-runtime-composition-audit-v1"},
-    {"priority":960,"slot_id":"custom-tables-trusted-runtime-evidence-sources-v1","title":"Custom Tables Trusted Runtime Evidence Sources V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #463 / merged PR #464","runtime_allowed":true,"execution_allowed":false,"claim_branch":"supervisor/custom-tables-trusted-runtime-evidence-sources-v1"},
-    {"priority":970,"slot_id":"custom-tables-post-trusted-runtime-evidence-audit-v1","title":"Custom Tables post-Trusted Runtime Evidence exact-main audit + Surface 1/2 eligibility V1","role":"SUPERVISOR_ONLY","status":"DONE","source":"Issue #465 / merged PR #466","runtime_allowed":false,"execution_allowed":false,"claim_branch":"supervisor/custom-tables-post-trusted-runtime-evidence-audit-v1"},
-    {"priority":980,"slot_id":"cpt-options-bank-audit-closure-v1","title":"CPT Builder Options Bank Audit Closure V1","role":"ANY","status":"DONE","work_mode":"PRODUCT_BANK_AUDIT","parallel_class":"SURFACE_1_CPT_PRODUCT_PLANNING","source":"Issue #467 / merged PR #469","dependencies":["custom-tables-post-trusted-runtime-evidence-audit-v1"],"runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/cpt-options-bank-audit-closure-v1"},
-    {"priority":990,"slot_id":"taxonomy-option-contract-ux-closure-v1","title":"Taxonomy Builder Atomic Option Contract + UX Closure V1","role":"ANY","status":"DONE","work_mode":"PRODUCT_CONTRACT_UX","parallel_class":"SURFACE_2_TAXONOMY_PRODUCT_PLANNING","source":"Issue #468 / merged PR #470","dependencies":["custom-tables-post-trusted-runtime-evidence-audit-v1"],"runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/taxonomy-option-contract-ux-closure-v1"},
-    {"priority":1000,"slot_id":"cpt-option-contract-ux-closure-v1","title":"CPT Builder Atomic Option Contract + UX Closure V1","role":"ANY","status":"DONE","work_mode":"PRODUCT_CONTRACT_UX","parallel_class":"SURFACE_1_CPT_PRODUCT_PLANNING","source":"Issue #473 / merged PR #477","dependencies":["cpt-options-bank-audit-closure-v1"],"runtime_allowed":false,"product_parity_allowed":false,"allowed_scope":["project reviewed 107-record CPT Bank into schema-valid Atomic Option Contracts","deterministic 107-record source projection with zero duplicates/missing records","missing=0 and unclassified=0","reviewed Essential Advanced Expert UX information architecture","gap matrix against existing CustomPostTypes runtime baseline","security REST Ability import/export migration accessibility compatibility and performance implementation requirements"],"forbidden_scope":["claiming runtime certification","claiming product parity","destructive post-type migration","raw PHP callbacks or arbitrary executable class names","deployment/release"],"claim_branch":"agent/cpt-option-contract-ux-closure-v1"},
-    {"priority":1010,"slot_id":"taxonomy-runtime-gap-closure-v1","title":"Taxonomy Builder Runtime Gap Closure V1","role":"ANY","status":"OPEN","work_mode":"PRODUCT_RUNTIME_GAP_CLOSURE","parallel_class":"SURFACE_2_TAXONOMY_RUNTIME","source":"Issue #474; promoted slices: merged PRs #478, #479, #480, #483, #486, #489, #503, #506, #512, #515","dependencies":["taxonomy-option-contract-ux-closure-v1"],"runtime_allowed":true,"product_parity_allowed":false,"allowed_scope":["implement accepted missing/partial Taxonomy contract groups from the V1 runtime gap matrix","complete remaining reviewed Essential Advanced Expert tiered admin UX beyond the promoted label-authoring slice","allowlisted REST/editor/count provider identities with no raw callbacks","default-term and bounded object-term args support","effective-args and association diagnostics","CPT UI compatibility import mapping","guarded taxonomy-key migration planning and explicitly authorized reversible execution only where governance permits","focused unit integration WordPress runtime browser accessibility security compatibility portability and applicable performance evidence","maintain canonical Ability/Policy and Definition ownership"],"forbidden_scope":["raw PHP or arbitrary callbacks","destructive bulk term mutation without separate explicit authorization","bypassing revision/CAS or Policy","claiming RUNTIME_CERTIFIED before all accepted gaps/evidence close","claiming PRODUCT_PARITY_CERTIFIED","production deployment/release"],"claim_branch":"agent/taxonomy-runtime-gap-closure-v1"},
-    {"priority":1020,"slot_id":"dashboard-widgets-option-contract-ux-v1","title":"Dashboard Widgets Atomic Option Contract + UX Closure V1","surface_id":10,"role":"ANY","status":"DONE","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_10_DASHBOARD_WIDGETS_PLANNING","source":"Issue #493 / merged PR #508","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/dashboard-widgets-option-contract-ux-v1"},
-    {"priority":1030,"slot_id":"admin-menu-option-contract-ux-v1","title":"Admin Menu Atomic Option Contract + UX Closure V1","surface_id":11,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_11_ADMIN_MENU_PLANNING","source":"Issue #494 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/admin-menu-option-contract-ux-v1"},
-    {"priority":1040,"slot_id":"settings-pages-option-contract-ux-v1","title":"Settings Pages Atomic Option Contract + UX Closure V1","surface_id":12,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_12_SETTINGS_PAGES_PLANNING","source":"Issue #495 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/settings-pages-option-contract-ux-v1"},
-    {"priority":1050,"slot_id":"frontend-dashboard-option-contract-ux-v1","title":"Frontend Dashboard Atomic Option Contract + UX Closure V1","surface_id":13,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_13_FRONTEND_DASHBOARD_PLANNING","source":"Issue #496 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/frontend-dashboard-option-contract-ux-v1"},
-    {"priority":1060,"slot_id":"user-profile-option-contract-ux-v1","title":"User Profile Atomic Option Contract + UX Closure V1","surface_id":14,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_14_USER_PROFILE_PLANNING","source":"Issue #497 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/user-profile-option-contract-ux-v1"},
-    {"priority":1070,"slot_id":"membership-option-contract-ux-v1","title":"Membership Atomic Option Contract + UX Closure V1","surface_id":15,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_15_MEMBERSHIP_PLANNING","source":"Issue #498 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/membership-option-contract-ux-v1"},
-    {"priority":1080,"slot_id":"builder-widgets-option-contract-ux-v1","title":"Builder Widgets Atomic Option Contract + UX Closure V1","surface_id":16,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_16_BUILDER_WIDGETS_PLANNING","source":"Issue #499 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/builder-widgets-option-contract-ux-v1"},
-    {"priority":1090,"slot_id":"forms-workflows-option-contract-ux-v1","title":"Forms & Workflows Atomic Option Contract + UX Closure V1","surface_id":17,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_17_FORMS_WORKFLOWS_PLANNING","source":"Issue #500 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/forms-workflows-option-contract-ux-v1"},
-    {"priority":1100,"slot_id":"cron-option-contract-ux-v1","title":"Cron Atomic Option Contract + UX Closure V1","surface_id":18,"role":"ANY","status":"OPEN","work_mode":"PRODUCT_CONTRACT_UX_PLANNING","parallel_class":"SURFACE_18_CRON_PLANNING","source":"Issue #501 / Supervisor Issue #492","runtime_allowed":false,"product_parity_allowed":false,"claim_branch":"agent/cron-option-contract-ux-v1"}
+    {
+      "priority": 1010,
+      "slot_id": "taxonomy-runtime-gap-closure-v1",
+      "title": "Taxonomy Builder Runtime Gap Closure V1",
+      "surface_id": 2,
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "PRODUCT_RUNTIME_GAP_CLOSURE",
+      "parallel_class": "SURFACE_2_TAXONOMY_RUNTIME",
+      "source": "Issue #474; post-object-discovery accounting Issue #584 / merged PR #597",
+      "runtime_allowed": true,
+      "product_parity_allowed": false,
+      "allowed_scope": [
+        "implement only evidence-backed genuine Taxonomy residuals under Issue #474",
+        "prioritize one canonical read-only dependency/usage model that can drive diagnostics plus Definition-list runtime health/dependency count and object-type dependency impact",
+        "add the reviewed read-only capability role-impact preview only through canonical Roles & Capabilities truth; no role grants or parallel role engine",
+        "preserve canonical Ability/Policy, revision/CAS and Definition ownership",
+        "maintain explicit exact-main remaining-gap accounting and focused evidence"
+      ],
+      "forbidden_scope": [
+        "reopening object-type search/grouping or Definition-list Revision, which are already closed",
+        "raw PHP or arbitrary callbacks/classes",
+        "taxonomy-key migration execution without separate explicit safety authorization",
+        "generic package/import-export orchestration",
+        "role grants or membership mutation",
+        "bypassing revision/CAS/Policy",
+        "RUNTIME_CERTIFIED or PRODUCT_PARITY_CERTIFIED promotion without later exact-main certification",
+        "deployment/release"
+      ],
+      "claim_branch": "agent/taxonomy-runtime-gap-closure-v1"
+    }
   ]
 }
