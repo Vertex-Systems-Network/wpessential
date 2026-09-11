@@ -80,12 +80,14 @@ final class TaxonomyModule implements ModuleInterface
         $validation = new TaxonomyValidationService($definitions, $projector);
         $cptUiMapper = new TaxonomyCptUiImportMapper();
         $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
+        $rewriteRefresh = new TaxonomyRewriteRefreshCoordinator();
         $providers->register($provider);
         $services->set('module.taxonomies.projector', $projector);
         $services->set('module.taxonomies.registration-provider', $provider);
         $services->set('module.taxonomies.validation', $validation);
         $services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
         $services->set('module.taxonomies.cptui-preview', $cptUiPreview);
+        $services->set('module.taxonomies.rewrite-refresh', $rewriteRefresh);
 
         $this->registerAbilities(
             $abilities,
@@ -94,6 +96,7 @@ final class TaxonomyModule implements ModuleInterface
             $projector,
             $validation,
             $cptUiPreview,
+            $rewriteRefresh,
         );
         $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
     }
@@ -106,6 +109,7 @@ final class TaxonomyModule implements ModuleInterface
         $gateway = $services->get('platform.ajax.gateway');
         $assets = $services->get('platform.admin.assets');
         $taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
+        $rewriteRefresh = $services->get('module.taxonomies.rewrite-refresh');
 
         if (!$abilities instanceof AbilityRegistry
             || !$contexts instanceof WordPressExecutionContextFactory
@@ -113,9 +117,12 @@ final class TaxonomyModule implements ModuleInterface
             || !$gateway instanceof WordPressAjaxGateway
             || !$assets instanceof AdminAssetManifest
             || !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar
+            || !$rewriteRefresh instanceof TaxonomyRewriteRefreshCoordinator
         ) {
             throw new LogicException('Taxonomy admin requires the shared admin, Ability, AJAX, and Taxonomy runtime services.');
         }
+
+        add_action('wp_loaded', $rewriteRefresh->flushPending(...), 99);
 
         $objectTypes = new TaxonomyObjectTypeCatalog($abilities, $contexts);
         $services->set('module.taxonomies.object-types', $objectTypes);
@@ -143,6 +150,7 @@ final class TaxonomyModule implements ModuleInterface
         TaxonomyDefinitionProjector $projector,
         TaxonomyValidationService $validation,
         TaxonomyCptUiImportPreviewService $cptUiPreview,
+        TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
     ): void {
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $outputSchema = ['type' => 'object'];
@@ -151,6 +159,7 @@ final class TaxonomyModule implements ModuleInterface
             $projector,
             $validation,
             TaxonomyAbilityHandler::SAVE,
+            $rewriteRefresh,
         );
 
         $this->registerAbility(
@@ -309,7 +318,13 @@ final class TaxonomyModule implements ModuleInterface
                 ],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyAbilityHandler($definitions, $projector, $validation, TaxonomyAbilityHandler::STATUS),
+            new TaxonomyAbilityHandler(
+                $definitions,
+                $projector,
+                $validation,
+                TaxonomyAbilityHandler::STATUS,
+                $rewriteRefresh,
+            ),
             'Change taxonomy status',
             'Changes Taxonomy lifecycle status without deleting its canonical persisted definition.',
         );
