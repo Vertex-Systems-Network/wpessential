@@ -10,6 +10,7 @@ on:
       - 'frameworks/Platform/WordPress/Registrations/**'
       - 'tests/Unit/Modules/Taxonomies/**'
       - 'tests/Integration/wordpress-taxonomy-validation.php'
+      - 'tests/Integration/wordpress-taxonomy-default-term.php'
       - 'tests/Integration/wordpress-taxonomy-runtime.php'
       - '.github/workflows/taxonomy-runtime.yml'
   push:
@@ -23,6 +24,7 @@ on:
       - 'frameworks/Platform/WordPress/Registrations/**'
       - 'tests/Unit/Modules/Taxonomies/**'
       - 'tests/Integration/wordpress-taxonomy-validation.php'
+      - 'tests/Integration/wordpress-taxonomy-default-term.php'
       - 'tests/Integration/wordpress-taxonomy-runtime.php'
       - '.github/workflows/taxonomy-runtime.yml'
   workflow_dispatch:
@@ -96,6 +98,7 @@ jobs:
           php -l frameworks/Modules/Taxonomies/TaxonomyModule.php
           php -l frameworks/Platform/WordPress/Registrations/TaxonomyRuntimeRegistrar.php
           php -l tests/Integration/wordpress-taxonomy-validation.php
+          php -l tests/Integration/wordpress-taxonomy-default-term.php
           php -l tests/Integration/wordpress-taxonomy-runtime.php
 
       - name: Prepare exact WordPress 7.1 fixture
@@ -169,6 +172,24 @@ jobs:
           test -s artifacts/taxonomy-runtime/validation.json
           jq -e '.result == "PASS" and .reserved_key_blocked == true and .unknown_runtime_owner_blocked == true and .missing_object_type_degraded == true and .validation_non_mutating == true and .direct_save_collision_blocked == true and .publish_transition_collision_blocked == true and .publish_probe_status == "draft" and .publish_probe_revision == 1 and .label_reset_cas_persisted == true and .label_reset_revision == 2 and .automatic_labels_opt_out_persisted == true and .label_overrides_cleared == true' artifacts/taxonomy-runtime/validation.json >/dev/null
           cat artifacts/taxonomy-runtime/validation.json
+
+      - name: Run native Taxonomy default-term lifecycle evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/taxonomy-runtime
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-default-term.php'
+          : > artifacts/taxonomy-runtime/default-term.log
+          for mode in seed verify-created verify-reuse-and-behavior; do
+            echo "=== ${mode} ===" | tee -a artifacts/taxonomy-runtime/default-term.log
+            WPE_TAXONOMY_DEFAULT_TERM_MODE="${mode}" \
+            WPE_TAXONOMY_DEFAULT_TERM_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/default-term.json" \
+              ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/default-term.log
+          done
+          test -s artifacts/taxonomy-runtime/default-term.json
+          jq -e '.result == "PASS" and .taxonomy_key == "library_default_genre" and (.default_term_id | numbers) > 0 and .default_term_created == true and .default_term_reused_without_duplicate == true and .native_option_tracked == true and .insert_default_assigned == true and .publish_default_restored == true and .default_term_deletion_blocked == true and .fixture_definition_disabled == true' artifacts/taxonomy-runtime/default-term.json >/dev/null
+          cat artifacts/taxonomy-runtime/default-term.json
 
       - name: Run Taxonomy definition and runtime lifecycle evidence
         shell: bash
