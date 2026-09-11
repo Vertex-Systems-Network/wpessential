@@ -9,6 +9,11 @@ const REWRITE_EP_MASK_ID = 'wpessential-taxonomy-rewrite-ep-mask';
 const QUERY_VAR_MODE_ID = 'wpessential-taxonomy-query-var-mode';
 const QUERY_VAR_NAME_ID = 'wpessential-taxonomy-query-var-name';
 const ROUTING_STATE_ID = 'wpessential-taxonomy-routing-policy-state';
+const REST_POLICY_ID = 'wpessential-taxonomy-rest-policy';
+const REST_BASE_ID = 'wpessential-taxonomy-rest-base';
+const REST_NAMESPACE_ID = 'wpessential-taxonomy-rest-namespace';
+const REST_STATE_ID = 'wpessential-taxonomy-rest-policy-state';
+const REST_TOGGLE_ID = 'wpessential-taxonomy-rest';
 
 function isRecord( value: unknown ): value is RecordValue {
 	return (
@@ -106,6 +111,56 @@ function appendNumberField(
 	paragraph.append( input );
 	appendHelp( paragraph, help );
 	container.append( paragraph );
+}
+
+function ensureRestPolicy(): void {
+	if ( document.getElementById( REST_POLICY_ID ) ) {
+		return;
+	}
+	const advanced = document.getElementById(
+		'wpessential-taxonomy-tier-advanced'
+	);
+	if ( ! ( advanced instanceof HTMLElement ) ) {
+		return;
+	}
+
+	const section = document.createElement( 'section' );
+	section.id = REST_POLICY_ID;
+	section.setAttribute(
+		'aria-labelledby',
+		'wpessential-taxonomy-rest-policy-title'
+	);
+	const heading = document.createElement( 'h4' );
+	heading.id = 'wpessential-taxonomy-rest-policy-title';
+	heading.textContent = 'REST API policy';
+	const intro = document.createElement( 'p' );
+	intro.className = 'description';
+	intro.textContent =
+		'The Essential “Show in REST API” control remains the exposure switch. These Advanced fields author only the canonical REST base and namespace overrides. Controller implementations remain restricted to trusted provider IDs.';
+	section.append( heading, intro );
+
+	appendTextField(
+		section,
+		REST_BASE_ID,
+		'REST base',
+		'Leave blank for the WordPress default taxonomy key. Use a safe lowercase route segment only.',
+		'genres'
+	);
+	appendTextField(
+		section,
+		REST_NAMESPACE_ID,
+		'REST namespace',
+		'Leave blank for the WordPress default wp/v2 namespace. Custom values must be versioned safe paths such as acme/v1.',
+		'wp/v2'
+	);
+
+	const state = document.createElement( 'p' );
+	state.id = REST_STATE_ID;
+	state.className = 'description';
+	state.setAttribute( 'role', 'status' );
+	state.setAttribute( 'aria-live', 'polite' );
+	section.append( state );
+	advanced.append( section );
 }
 
 function ensureRoutingPolicy(): void {
@@ -271,6 +326,11 @@ function queryVarFromInputs(): boolean | string | undefined {
 	return textInput( QUERY_VAR_NAME_ID )?.value.trim() ?? '';
 }
 
+function optionalTextValue( id: string ): string | undefined {
+	const value = textInput( id )?.value.trim() ?? '';
+	return value === '' ? undefined : value;
+}
+
 function setBooleanSelect( id: string, value: unknown ): void {
 	const select = selectInput( id );
 	if ( ! select ) {
@@ -335,6 +395,19 @@ function setRoutingPolicy( payload: RecordValue ): void {
 	updateRoutingState();
 }
 
+function setRestPolicy( payload: RecordValue ): void {
+	const restBase = textInput( REST_BASE_ID );
+	if ( restBase ) {
+		restBase.value = typeof payload.rest_base === 'string' ? payload.rest_base : '';
+	}
+	const restNamespace = textInput( REST_NAMESPACE_ID );
+	if ( restNamespace ) {
+		restNamespace.value =
+			typeof payload.rest_namespace === 'string' ? payload.rest_namespace : '';
+	}
+	updateRestState();
+}
+
 function resetRoutingPolicy(): void {
 	const rewriteMode = selectInput( REWRITE_MODE_ID );
 	const queryMode = selectInput( QUERY_VAR_MODE_ID );
@@ -361,6 +434,18 @@ function resetRoutingPolicy(): void {
 	updateRoutingState();
 }
 
+function resetRestPolicy(): void {
+	const restBase = textInput( REST_BASE_ID );
+	const restNamespace = textInput( REST_NAMESPACE_ID );
+	if ( restBase ) {
+		restBase.value = '';
+	}
+	if ( restNamespace ) {
+		restNamespace.value = '';
+	}
+	updateRestState();
+}
+
 function updateRoutingState(): void {
 	const state = document.getElementById( ROUTING_STATE_ID );
 	if ( ! ( state instanceof HTMLElement ) ) {
@@ -373,22 +458,40 @@ function updateRoutingState(): void {
 	state.textContent = `Rewrite: ${ rewriteLabel }; query variable: ${ queryLabel }. Validate for server-authoritative effective routing and collision diagnostics.`;
 }
 
+function updateRestState(): void {
+	const state = document.getElementById( REST_STATE_ID );
+	if ( ! ( state instanceof HTMLElement ) ) {
+		return;
+	}
+	const restEnabled = textInput( REST_TOGGLE_ID )?.checked ?? false;
+	const base = optionalTextValue( REST_BASE_ID ) ?? 'taxonomy key';
+	const namespace = optionalTextValue( REST_NAMESPACE_ID ) ?? 'wp/v2';
+	state.textContent = restEnabled
+		? `REST exposure enabled. Candidate route: /${ namespace }/${ base }. Validate for server-authoritative route and compatibility diagnostics.`
+		: `REST exposure disabled. Authored base/namespace values are preserved but inactive. Validate for block-editor compatibility diagnostics.`;
+}
+
 export function collectTaxonomyRouting(): RecordValue {
 	return {
 		rewrite: rewriteFromInputs(),
 		query_var: queryVarFromInputs(),
+		rest_base: optionalTextValue( REST_BASE_ID ),
+		rest_namespace: optionalTextValue( REST_NAMESPACE_ID ),
 	};
 }
 
 export function setTaxonomyRouting( payload: RecordValue ): void {
 	setRoutingPolicy( payload );
+	setRestPolicy( payload );
 }
 
 export function resetTaxonomyRouting(): void {
 	resetRoutingPolicy();
+	resetRestPolicy();
 }
 
 export function bindTaxonomyRouting(): void {
+	ensureRestPolicy();
 	ensureRoutingPolicy();
 	for ( const id of [
 		REWRITE_MODE_ID,
@@ -405,5 +508,10 @@ export function bindTaxonomyRouting(): void {
 	] ) {
 		textInput( id )?.addEventListener( 'input', updateRoutingState );
 	}
+	for ( const id of [ REST_BASE_ID, REST_NAMESPACE_ID ] ) {
+		textInput( id )?.addEventListener( 'input', updateRestState );
+	}
+	textInput( REST_TOGGLE_ID )?.addEventListener( 'change', updateRestState );
 	updateRoutingState();
+	updateRestState();
 }
