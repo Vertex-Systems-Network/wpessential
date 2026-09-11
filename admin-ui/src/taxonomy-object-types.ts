@@ -87,7 +87,7 @@ function createGroup( key: string, label: string ): HTMLElement {
 	section.className = 'wpessential-taxonomy-object-type-group';
 	section.dataset.wpessentialTaxonomyObjectTypeGroup = key;
 
-	const heading = document.createElement( 'h4' );
+	const heading = document.createElement( 'h3' );
 	heading.textContent = label;
 	const options = document.createElement( 'div' );
 	options.className = 'wpessential-taxonomy-object-type-group-options';
