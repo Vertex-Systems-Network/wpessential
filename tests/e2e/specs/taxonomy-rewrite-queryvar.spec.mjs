@@ -32,6 +32,15 @@ async function diagnosticJson(page, selector) {
   return JSON.parse(value ?? '{}');
 }
 
+async function ensureDetailsOpen(page, label) {
+  const summary = page.getByText(label, { exact: true });
+  const details = summary.locator('..');
+  if ((await details.getAttribute('open')) === null) {
+    await summary.click();
+  }
+  await expect(details).toHaveAttribute('open', '');
+}
+
 async function validate(page) {
   await page.getByRole('button', { name: 'Validate' }).click();
   await expect(
@@ -124,7 +133,7 @@ test('packaged Taxonomy Expert UX authors, hydrates and resets rewrite/query-var
     page.locator('[data-wpessential-taxonomy-diagnostic="rewrite-path"]'),
   ).toHaveText('/library/genre/{parent/.../}{term-slug}/');
 
-  await page.getByText('Explicit overrides', { exact: true }).click();
+  await ensureDetailsOpen(page, 'Explicit overrides');
   const authored = await diagnosticJson(
     page,
     '[data-wpessential-taxonomy-overrides]',
@@ -163,7 +172,7 @@ test('packaged Taxonomy Expert UX authors, hydrates and resets rewrite/query-var
   await expect(page.getByLabel('Rewrite mode')).toHaveValue('');
   await expect(page.getByLabel('Query variable mode')).toHaveValue('');
   await validate(page);
-  await page.getByText('Explicit overrides', { exact: true }).click();
+  await ensureDetailsOpen(page, 'Explicit overrides');
   const resetOverrides = await diagnosticJson(
     page,
     '[data-wpessential-taxonomy-overrides]',
