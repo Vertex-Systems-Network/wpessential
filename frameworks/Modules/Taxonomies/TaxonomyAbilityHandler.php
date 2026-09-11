@@ -28,6 +28,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         private TaxonomyDefinitionProjector $projector,
         private TaxonomyValidationService $validation,
         private string $action,
+        private ?TaxonomyRewriteRefreshCoordinator $rewriteRefresh = null,
     ) {
         if (!in_array($this->action, [self::LIST, self::GET, self::SAVE, self::STATUS], true)) {
             throw new InvalidArgumentException('Unsupported Taxonomy ability action.');
@@ -111,6 +112,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         $this->validatePayload($candidate);
         $candidate = $this->withChecksum($candidate);
         $this->definitions->save($candidate);
+        $this->rewriteRefresh?->scheduleForMutation($existing, $candidate);
 
         return ['definition' => $this->serialize($candidate)];
     }
@@ -143,6 +145,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         $this->validatePayload($candidate);
         $candidate = $this->withChecksum($candidate);
         $this->definitions->save($candidate);
+        $this->rewriteRefresh?->scheduleForMutation($existing, $candidate);
 
         return ['definition' => $this->serialize($candidate)];
     }
