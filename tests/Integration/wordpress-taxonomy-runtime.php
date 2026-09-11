@@ -80,6 +80,10 @@ $mode = getenv('WPE_TAXONOMY_TEST_MODE') ?: '';
 
 if ($mode === 'seed-active') {
     taxonomyRuntimeExpect($definitions->get($genreId) === null, 'taxonomy fixture must start absent');
+    taxonomyRuntimeExpect(
+        update_option('permalink_structure', '/%postname%/'),
+        'rewrite refresh fixture must enable pretty permalinks before the next WordPress request',
+    );
     $definition = taxonomyRuntimeDefinition(
         $genreId,
         'library-genre-definition',
