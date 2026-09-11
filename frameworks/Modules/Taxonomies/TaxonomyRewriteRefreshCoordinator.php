@@ -99,7 +99,7 @@ final class TaxonomyRewriteRefreshCoordinator
     }
 
     /**
-     * Mirrors only the WordPress taxonomy inputs that can change cached rewrite rules.
+     * Mirrors only the WordPress taxonomy inputs that change persisted rewrite rules.
      * Validation/projector ownership remains elsewhere; this signature decides whether a refresh is necessary.
      *
      * @return array<string,mixed>|null
@@ -114,7 +114,7 @@ final class TaxonomyRewriteRefreshCoordinator
         $key = is_string($payload['taxonomy_key'] ?? null) ? trim($payload['taxonomy_key']) : '';
         $rewrite = $payload['rewrite'] ?? true;
         if ($rewrite === false) {
-            return ['rewrite' => false];
+            return null;
         }
 
         $rewriteMap = is_array($rewrite) && !array_is_list($rewrite) ? $rewrite : [];
@@ -131,24 +131,24 @@ final class TaxonomyRewriteRefreshCoordinator
             $effectiveQueryVar = is_string($queryVar) ? trim($queryVar) : $key;
         }
 
+        $taxonomyHierarchical = is_bool($payload['hierarchical'] ?? null)
+            ? $payload['hierarchical']
+            : false;
+        $rewriteHierarchical = is_bool($rewriteMap['hierarchical'] ?? null)
+            ? $rewriteMap['hierarchical']
+            : false;
+
         return [
-            'rewrite' => [
-                'slug' => is_string($rewriteMap['slug'] ?? null)
-                    ? trim($rewriteMap['slug'], '/')
-                    : $key,
-                'with_front' => is_bool($rewriteMap['with_front'] ?? null)
-                    ? $rewriteMap['with_front']
-                    : true,
-                'hierarchical' => is_bool($rewriteMap['hierarchical'] ?? null)
-                    ? $rewriteMap['hierarchical']
-                    : false,
-                'ep_mask' => is_int($rewriteMap['ep_mask'] ?? null)
-                    ? $rewriteMap['ep_mask']
-                    : 0,
-            ],
-            'taxonomy_hierarchical' => is_bool($payload['hierarchical'] ?? null)
-                ? $payload['hierarchical']
-                : false,
+            'slug' => is_string($rewriteMap['slug'] ?? null)
+                ? trim($rewriteMap['slug'], '/')
+                : $key,
+            'with_front' => is_bool($rewriteMap['with_front'] ?? null)
+                ? $rewriteMap['with_front']
+                : true,
+            'hierarchical_tag' => $taxonomyHierarchical && $rewriteHierarchical,
+            'ep_mask' => is_int($rewriteMap['ep_mask'] ?? null)
+                ? $rewriteMap['ep_mask']
+                : 0,
             'query_var' => $effectiveQueryVar,
         ];
     }
