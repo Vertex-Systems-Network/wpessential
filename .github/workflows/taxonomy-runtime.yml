@@ -185,7 +185,7 @@ jobs:
               ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/runtime.log
           done
           test -s artifacts/taxonomy-runtime/evidence.json
-          jq -e '.result == "PASS" and .module_state == "booted" and .owner_surface_id == 2 and .disabled_definition_retained == true and .compiled_taxonomy_count == 0' artifacts/taxonomy-runtime/evidence.json >/dev/null
+          jq -e '.schema == "wpessential-taxonomy-runtime-evidence-v2" and .result == "PASS" and .module_state == "booted" and .owner_surface_id == 2 and .disabled_definition_retained == true and .compiled_taxonomy_count == 0 and .default_term_created == true and .default_term_option_tracks_id == true and .native_delete_fallback_reassigned_default == true and .direct_remove_can_leave_termless == true and .default_term_delete_protected == true and .disabled_default_term_row_retained == true and .disabled_default_term_option_retained == true' artifacts/taxonomy-runtime/evidence.json >/dev/null
           cat artifacts/taxonomy-runtime/evidence.json
 
       - name: Upload Taxonomy runtime evidence
