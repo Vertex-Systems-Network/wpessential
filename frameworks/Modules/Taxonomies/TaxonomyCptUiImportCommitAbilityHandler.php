@@ -26,7 +26,12 @@ final readonly class TaxonomyCptUiImportCommitAbilityHandler implements AbilityH
             throw new InvalidArgumentException('CPT UI import source must be an object/map.');
         }
 
-        $report = $this->preview->preview($source);
+        $id = $input['id'] ?? null;
+        if ($id !== null && !is_string($id)) {
+            throw new InvalidArgumentException('CPT UI import id must be a string when provided.');
+        }
+
+        $report = $this->preview->preview($source, $id);
         if (!$report['valid']) {
             foreach ($report['issues'] as $issue) {
                 if ($issue['severity'] === 'blocked') {
@@ -37,7 +42,6 @@ final readonly class TaxonomyCptUiImportCommitAbilityHandler implements AbilityH
         }
 
         $request = ['payload' => $report['payload']];
-        $id = $input['id'] ?? null;
         $expectedRevision = $input['expected_revision'] ?? null;
 
         if ($id === null) {
