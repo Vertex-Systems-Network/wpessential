@@ -184,14 +184,14 @@ jobs:
           wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
           script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-default-term.php'
           : > artifacts/taxonomy-runtime/default-term.log
-          for mode in seed verify-created verify-reuse-and-behavior; do
+          for mode in seed verify-created verify-reuse-and-behavior verify-disabled-retention; do
             echo "=== ${mode} ===" | tee -a artifacts/taxonomy-runtime/default-term.log
             WPE_TAXONOMY_DEFAULT_TERM_MODE="${mode}" \
             WPE_TAXONOMY_DEFAULT_TERM_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-runtime/default-term.json" \
               ${wp} eval "require '${script}';" | tee -a artifacts/taxonomy-runtime/default-term.log
           done
           test -s artifacts/taxonomy-runtime/default-term.json
-          jq -e '.result == "PASS" and .taxonomy_key == "library_default_genre" and (.default_term_id | numbers) > 0 and .default_term_created == true and .default_term_reused_without_duplicate == true and .native_option_tracked == true and .insert_default_assigned == true and .publish_default_restored == true and .default_term_deletion_blocked == true and .fixture_definition_disabled == true' artifacts/taxonomy-runtime/default-term.json >/dev/null
+          jq -e '.schema == "wpessential-taxonomy-default-term-evidence-v2" and .result == "PASS" and .taxonomy_key == "library_default_genre" and (.default_term_id | numbers) > 0 and .default_term_created == true and .default_term_reused_without_duplicate == true and .native_option_tracked == true and .insert_default_assigned == true and .publish_default_restored == true and .default_term_deletion_blocked == true and .delete_term_fallback_assigned == true and .direct_remove_can_leave_termless == true and .fixture_definition_disabled == true and .taxonomy_runtime_absent_after_disable == true and .default_term_option_retained_after_disable == true and .default_term_row_retained_after_disable == true' artifacts/taxonomy-runtime/default-term.json >/dev/null
           cat artifacts/taxonomy-runtime/default-term.json
 
       - name: Run bounded Taxonomy term-query runtime evidence
