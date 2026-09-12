@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -17,14 +18,18 @@ final readonly class TaxonomyDefinitionReadModel
     private const POST_TYPE_DEFINITION_TYPE = 'post_type';
     private const POST_TYPE_OWNER_SURFACE_ID = 1;
 
-    public function __construct(private DefinitionRepositoryInterface $definitions) {}
+    public function __construct(
+        private DefinitionRepositoryInterface $definitions,
+        private ?TaxonomyRoleImpactReadModel $roleImpact = null,
+    ) {}
 
     /** @return array<string,mixed> */
-    public function summary(Definition $definition): array
+    public function summary(Definition $definition, ?ExecutionContext $context = null): array
     {
         return [
             'runtime_health' => $this->runtimeHealth($definition),
             'dependency_usage' => $this->dependencyUsage($definition),
+            'role_impact' => ($this->roleImpact ?? new TaxonomyRoleImpactReadModel())->forDefinition($definition, $context),
         ];
     }
 
