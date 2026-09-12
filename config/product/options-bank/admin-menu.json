@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 11, "key": "admin-menu", "name": "Admin Menu"},
+  "snapshot": {"date": "2026-09-12", "native_sources": [], "market_sources": []},
+  "status": "BANK_SURFACE_SEEDED",
+  "records": [
+    {"id":"admin-menu.transform.target","feature_group":"Transformation Rule","option_path":"transform.target","label":"Target Original Menu/Submenu","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.transform.rename","feature_group":"Transformation Rule","option_path":"transform.rename","label":"Rename Menu Item","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.transform.order","feature_group":"Transformation Rule","option_path":"transform.order","label":"Menu Order","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.transform.parent","feature_group":"Transformation Rule","option_path":"transform.parent","label":"Parent Reassignment","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.transform.visibility","feature_group":"Transformation Rule","option_path":"transform.visibility","label":"Hide/Show Presentation Rule","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.transform.role-capability","feature_group":"Visibility","option_path":"transform.role_capability","label":"Role / Capability Visibility References","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.transform.network","feature_group":"Visibility","option_path":"transform.network","label":"Super Admin / Network Visibility","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.custom.route","feature_group":"Custom Menu Item","option_path":"custom.route","label":"Internal WPE Route","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.custom.safe-url","feature_group":"Custom Menu Item","option_path":"custom.safe_url","label":"Validated Admin / External URL","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.custom.group","feature_group":"Custom Menu Item","option_path":"custom.group","label":"Separator / Group / Submenu Composition","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.profile.definition","feature_group":"Profiles","option_path":"profile.definition","label":"Named Menu Profile","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.profile.assignment","feature_group":"Profiles","option_path":"profile.assignment","label":"Role / User / Site / Network Assignment","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.profile.preview","feature_group":"Profiles","option_path":"profile.preview","label":"Preview as Role/User","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.admin-bar.transform","feature_group":"Admin Bar","option_path":"admin_bar.transform","label":"Admin Bar Transform / Custom Item","classification":"WPE_HARD","hard_soft":"SOFT","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.safety.recovery","feature_group":"Safety","option_path":"safety.recovery","label":"Recovery Route / Missing Target / Conflict Handling","classification":"WPE_HARD","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"UNREVIEWED","priority":"P1_CORE"},
+    {"id":"admin-menu.safety.unsafe-url","feature_group":"Safety","option_path":"safety.unsafe_url","label":"Unsafe URL Scheme","classification":"REJECTED_UNSAFE","hard_soft":"HARD","horizon":"CURRENT_MARKET","adoption":"REJECT","priority":"NOT_SCHEDULED"}
+  ],
+  "coverage": {"records":16,"unreviewed":15,"adopted_or_classified":1,"notes":"Primary family-covering discovery seed from accepted Admin Menu inventory and seed plan. Native/market audits and semantic review remain separate gates."}
+}
