@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "bank_version": "v1",
+  "surface": {"id": 11, "key": "admin-menu"},
+  "snapshot": {"date": "2026-09-13", "notes": "Admin Menu Editor Pro, WP Adminify and Ultimate Dashboard PRO reconcile all 16 current Surface 11 records with zero unresolved market research. Visibility remains presentation-only; Roles/Policy retains authorization truth and unsafe URL schemes remain rejected."},
+  "status": "MARKET_AUDITED",
+  "required_families": ["transformations", "targeting", "custom_items", "profiles", "safety_adminbar"],
+  "primary_providers": [
+    {"id": "admin_menu_editor_pro", "name": "Admin Menu Editor Pro", "evidence": ["https://adminmenueditor.com/home/", "https://adminmenueditor.com/free-version-docs/how-to-add-new-menu/", "https://adminmenueditor.com/notes/"], "family_map": {
+      "transformations": ["admin-menu.transform.target", "admin-menu.transform.rename", "admin-menu.transform.order", "admin-menu.transform.parent", "admin-menu.transform.visibility"],
+      "targeting": ["admin-menu.transform.role-capability", "admin-menu.transform.network"],
+      "custom_items": ["admin-menu.custom.route", "admin-menu.custom.safe-url", "admin-menu.custom.group"],
+      "profiles": ["admin-menu.profile.definition", "admin-menu.profile.assignment", "admin-menu.profile.preview"],
+      "safety_adminbar": ["admin-menu.admin-bar.transform", "admin-menu.safety.recovery", "admin-menu.safety.unsafe-url"]
+    }, "non_applicable_families": []},
+    {"id": "wp_adminify", "name": "WP Adminify Admin Menu Editor", "evidence": ["https://wpadminify.com/features/admin-menu-editor", "https://wpadminify.com/docs/adminify/admin-menu/admin-menu-editor"], "family_map": {
+      "transformations": ["admin-menu.transform.target", "admin-menu.transform.rename", "admin-menu.transform.order", "admin-menu.transform.parent", "admin-menu.transform.visibility"],
+      "targeting": ["admin-menu.transform.role-capability", "admin-menu.transform.network"],
+      "custom_items": ["admin-menu.custom.route", "admin-menu.custom.safe-url", "admin-menu.custom.group"],
+      "profiles": ["admin-menu.profile.definition", "admin-menu.profile.assignment", "admin-menu.profile.preview"],
+      "safety_adminbar": ["admin-menu.admin-bar.transform", "admin-menu.safety.recovery", "admin-menu.safety.unsafe-url"]
+    }, "non_applicable_families": []}
+  ],
+  "specialist_providers": [
+    {"id": "ultimate_dashboard_pro", "name": "Ultimate Dashboard PRO Admin Menu Editor", "evidence": ["https://ultimatedashboard.io/docs/admin-menu-editor/"], "bank_record_ids": ["admin-menu.transform.order", "admin-menu.transform.visibility", "admin-menu.profile.assignment"]}
+  ],
+  "extra_dispositions": [
+    {"id": "admin_menu.authorization_truth", "provider": "ecosystem", "disposition": "OUT_OF_SURFACE", "owner_surface": "roles", "evidence_url": "https://adminmenueditor.com/notes/", "notes": "Menu visibility and role-targeted presentation do not replace canonical role/capability authorization."},
+    {"id": "admin_menu.unsafe_url_scheme", "provider": "admin_menu_editor_pro", "disposition": "REJECTED_UNSAFE", "evidence_url": "https://adminmenueditor.com/free-version-docs/how-to-add-new-menu/", "notes": "Market custom-link flexibility is not evidence to accept javascript:, executable HTML or other unsafe schemes."}
+  ],
+  "coverage": {"primary_providers": 2, "specialist_providers": 1, "family_mappings": 10, "non_applicable_family_cells": 0, "bank_record_references": 35, "extra_dispositions": 2, "unresolved": 0}
+}
