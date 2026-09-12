@@ -2,7 +2,7 @@
   "schema_version": 16,
   "snapshot_date": "2026-09-12",
   "queue_anchor_main_sha": "4543ff50b92a2726cce93d8359749506bba2b6fe",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Surface 30 Issue #618 / merged PR #620 provides the canonical read-only role/capability seam and Taxonomy Issue #621 / merged PR #623 consumes it. Exact-main audit Issue #626 / merged PR #628 identified exactly three reviewed admin-UX gaps; Issue #629 / merged PR #631 closed those gaps with exact-head Architecture, Distributable Package and Browser E2E Accessibility evidence green. Fresh exact-main audit Issue #632 / merged PR #634 independently certifies the accepted Surface 2 V1 owner-runtime scope as RUNTIME_CERTIFIED. PRODUCT_PARITY_CERTIFIED is not promoted. Taxonomy-key migration execution, role/capability/user mutation, generic package orchestration, deployment and release remain separately gated. No dependency-ready worker slot is authorized by this snapshot.",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Surface 30 Issue #618 / merged PR #620 provides the canonical read-only role/capability seam and Taxonomy Issue #621 / merged PR #623 consumes it. Exact-main audit Issue #626 / merged PR #628 identified exactly three reviewed admin-UX gaps; Issue #629 / merged PR #631 closed those gaps with exact-head Architecture, Distributable Package and Browser E2E Accessibility evidence green. Fresh exact-main audit Issue #632 / merged PR #634 independently certifies the accepted Surface 2 V1 owner-runtime scope as a bounded V1 PASS. The machine full-parity contract lifecycle remains UX_CONTRACT_COMPLETE because PRODUCT_PARITY_CERTIFIED and separately gated taxonomy-key migration execution are not promoted. Role/capability/user mutation, generic package orchestration, deployment and release also remain separately gated. No dependency-ready worker slot is authorized by this snapshot.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,7 +14,7 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "There is no dependency-ready OPEN worker slot in this snapshot. Taxonomy accepted V1 owner-runtime certification is complete through Issue #632 / merged PR #634. Do not invent follow-up Taxonomy implementation merely because product parity, taxonomy-key migration execution, Surface 30 full runtime, generic package orchestration, deployment or release remain separately gated.",
+    "selection_rule": "There is no dependency-ready OPEN worker slot in this snapshot. Taxonomy accepted V1 owner-runtime bounded certification is complete through Issue #632 / merged PR #634. Do not invent follow-up Taxonomy implementation merely because the machine full-parity contract remains UX_CONTRACT_COMPLETE, product parity and taxonomy-key migration execution remain separate, Surface 30 full runtime is unpromoted, or generic package orchestration/deployment/release remain separately gated.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
@@ -24,22 +24,22 @@
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Treat docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V2.md as the accepted Surface 2 V1 runtime certification boundary after merged PR #634.",
-      "Keep PRODUCT_PARITY_CERTIFIED, taxonomy-key migration execution, generic package orchestration, deployment/release and full Surface 30 runtime certification as separate gates.",
+      "Treat docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V2.md as the accepted bounded Surface 2 V1 owner-runtime certification boundary after merged PR #634; do not reinterpret it as full-parity machine lifecycle promotion.",
+      "Keep machine full-parity RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, taxonomy-key migration execution, generic package orchestration, deployment/release and full Surface 30 runtime certification as separate gates.",
       "If no new accepted dependency-ready Issue exists, do not create speculative worker branches."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
-      "Do not convert bounded V1 runtime certification into product-parity, destructive migration, package-owner, deployment or release authority.",
-      "Do not reopen already-certified Taxonomy V1 rows without new exact-main regression evidence."
+      "Do not convert bounded V1 owner-runtime certification into full-parity machine lifecycle, product-parity, destructive migration, package-owner, deployment or release authority.",
+      "Do not reopen already-certified bounded Taxonomy V1 rows without new exact-main regression evidence."
     ],
     "cycle_closeout": [
       "Reconcile README current status after meaningful completed work.",
       "Keep the README complete 56 / 56 canonical module progress/timeline dashboard current from repository evidence.",
       "Do not fabricate a higher progress percentage without a repository-defined milestone.",
-      "Do not present bounded runtime certification as full product parity."
+      "Do not present bounded runtime certification as full product parity or as machine full-parity RUNTIME_CERTIFIED."
     ]
   },
   "roles": {
@@ -103,7 +103,7 @@
     {"surface":"Taxonomy role-impact shared-truth closeout","status":"SHARED_TRUTH_RECONCILED","closure":"Issue #624 / merged PR #625"},
     {"surface":"Taxonomy exact-main runtime certification audit V1","status":"NOT_CERTIFIED_THREE_ADMIN_UX_GAPS","closure":"Issue #626 / merged PR #628","evidence":"Role-impact backend existed but visual preview missing; reviewed unsaved-change guard missing; sticky Validate/Save behavior missing. Surface 2 remained UX_CONTRACT_COMPLETE and parent #474 remained open."},
     {"surface":"Taxonomy final admin UX closure V1","status":"THREE_REVIEWED_ADMIN_UX_GAPS_CLOSED","closure":"Issue #629 / merged PR #631","evidence":"Accessible canonical role-impact preview, deterministic unsaved-change guard lifecycle, and sticky Validate/Save command behavior implemented; exact PR head 7c49f294557b4a4e73ac7fc374e61558e61ffdc4 had Architecture Guards, Distributable Package and Browser E2E Accessibility green."},
-    {"surface":"Taxonomy exact-main runtime certification audit V2","status":"RUNTIME_CERTIFIED_ACCEPTED_V1_OWNER_RUNTIME","closure":"Issue #632 / merged PR #634","evidence":"Fresh exact-main contract-by-contract audit at 327351fb1531f59aee893322fdfb1f3d9d00609e found no remaining accepted V1 blocker. Product parity, taxonomy-key migration execution, generic package orchestration, deployment/release and full Surface 30 runtime remain separate gates."}
+    {"surface":"Taxonomy exact-main runtime certification audit V2","status":"PASS_CERTIFIED_BOUNDED_V1_OWNER_RUNTIME","closure":"Issue #632 / merged PR #634","evidence":"Fresh exact-main contract-by-contract audit at 327351fb1531f59aee893322fdfb1f3d9d00609e found no remaining accepted V1 owner-runtime blocker. The full-parity Atomic Option Contract machine lifecycle intentionally remains UX_CONTRACT_COMPLETE; product parity, taxonomy-key migration execution, generic package orchestration, deployment/release and full Surface 30 runtime remain separate gates."}
   ],
   "slots": []
 }
