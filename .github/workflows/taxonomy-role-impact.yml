@@ -1,0 +1,136 @@
+name: Taxonomy Role Impact
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Modules/Taxonomies/**'
+      - 'frameworks/Modules/Roles/**'
+      - 'tests/Unit/Modules/Taxonomies/TaxonomyRoleImpactReadModelTest.php'
+      - 'tests/Integration/wordpress-taxonomy-role-impact.php'
+      - '.github/workflows/taxonomy-role-impact.yml'
+  push:
+    branches:
+      - 'implementation/**'
+    paths:
+      - 'frameworks/Modules/Taxonomies/**'
+      - 'frameworks/Modules/Roles/**'
+      - 'tests/Unit/Modules/Taxonomies/TaxonomyRoleImpactReadModelTest.php'
+      - 'tests/Integration/wordpress-taxonomy-role-impact.php'
+      - '.github/workflows/taxonomy-role-impact.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-taxonomy-role-impact-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  taxonomy-role-impact:
+    name: WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress: ['6.9', '7.1']
+        php: ['8.2', '8.5']
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_mysql, mysqli
+          coverage: none
+
+      - name: Install locked PHP toolchain
+        uses: ramsey/composer-install@3cf229dc2919194e9e36783941438d17239e8520
+        with:
+          dependency-versions: locked
+
+      - name: Validate focused source and unit evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -l frameworks/Modules/Taxonomies/TaxonomyRoleImpactReadModel.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyDefinitionReadModel.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyValidationAbilityHandler.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
+          php -l frameworks/Modules/Taxonomies/TaxonomyModule.php
+          php -l tests/Integration/wordpress-taxonomy-role-impact.php
+          vendor/bin/phpunit tests/Unit/Modules/Taxonomies/TaxonomyRoleImpactReadModelTest.php
+
+      - name: Prepare exact WordPress fixture
+        shell: bash
+        env:
+          WPE_MATRIX_WORDPRESS: ${{ matrix.wordpress }}
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://wordpress.org/wordpress-${WPE_MATRIX_WORDPRESS}.tar.gz" \
+            --output /tmp/wordpress.tar.gz
+          tar -xzf /tmp/wordpress.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+
+      - name: Run canonical Surface 30-backed Taxonomy role-impact evidence
+        shell: bash
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_DB: wpessential_test
+          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+          WPE_TEST_MYSQL_USER: root
+          WPE_TEST_MYSQL_PASSWORD: root
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/taxonomy-role-impact
+          export WPE_TAXONOMY_ROLE_IMPACT_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-role-impact/evidence.json"
+          php tests/Integration/wordpress-taxonomy-role-impact.php | tee artifacts/taxonomy-role-impact/run.log
+          test -s artifacts/taxonomy-role-impact/evidence.json
+          jq -e '.schema == "wpessential-taxonomy-role-impact-evidence-v1" and .result == "PASS" and .canonical_surface30_service_consumed == true and .validation_role_impact_state == "healthy" and .definition_role_impact_state == "healthy" and .explicit_allow_preserved == true and .explicit_deny_preserved == true and .absent_preserved == true and .meta_context_reported == true and .diagnostic_not_final_authorization == true and .role_registry_unchanged == true' artifacts/taxonomy-role-impact/evidence.json >/dev/null
+          cat artifacts/taxonomy-role-impact/evidence.json
+
+      - name: Upload Taxonomy role-impact evidence
+        if: always() && hashFiles('artifacts/taxonomy-role-impact/**') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: taxonomy-role-impact-${{ matrix.wordpress }}-php-${{ matrix.php }}-${{ github.run_id }}
+          path: artifacts/taxonomy-role-impact/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
