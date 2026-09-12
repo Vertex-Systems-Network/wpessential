@@ -13,8 +13,6 @@ use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
-use WPEssential\Modules\Roles\RolesModule;
-use WPEssential\Modules\Roles\RolesReadService;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
@@ -43,7 +41,6 @@ final class TaxonomyModule implements ModuleInterface
             name: 'Taxonomy Builder',
             version: '0.1.0',
             edition: 'free',
-            dependencies: ['roles'],
         );
     }
 
@@ -56,7 +53,6 @@ final class TaxonomyModule implements ModuleInterface
         $abilityBridge = $services->get('platform.abilities.wordpress');
         $abilityContexts = $services->get('platform.abilities.contexts');
         $ajaxRoutes = $services->get('platform.ajax.routes');
-        $rolesRead = $services->get(RolesModule::SERVICE_READ);
         if (!$definitions instanceof DefinitionRepositoryInterface) {
             throw new LogicException('Taxonomies requires the shared Definition Repository.');
         }
@@ -78,14 +74,11 @@ final class TaxonomyModule implements ModuleInterface
         if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
             throw new LogicException('Taxonomies requires the shared AJAX route registry.');
         }
-        if (!$rolesRead instanceof RolesReadService) {
-            throw new LogicException('Taxonomies requires the canonical Surface 30 Roles read service.');
-        }
 
         $projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
         $provider = new TaxonomyRegistrationProvider($definitions, $projector);
         $validation = new TaxonomyValidationService($definitions, $projector);
-        $roleImpact = new TaxonomyRoleImpactReadModel($rolesRead);
+        $roleImpact = new TaxonomyRoleImpactReadModel(services: $services);
         $cptUiMapper = new TaxonomyCptUiImportMapper();
         $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
         $keyMigrationPreview = new TaxonomyKeyMigrationPreviewService($definitions, $projector);
