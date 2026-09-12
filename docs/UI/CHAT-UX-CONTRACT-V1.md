@@ -1,312 +1,91 @@
-# Chat — Provisional UX Contract V1
+# Chat — UX Contract V1
 
 Surface: **21 / Chat**  
-Planning issue: **#587**  
-Supervisor wave: **#583**  
-Exact-main claim anchor: `b48f83f346293690e4f76d8b8ade082a22db1dee`
-
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 21 remains `UNSEEDED / 0` in the Master Options Bank. This document guides later review; it does not promote `UX_CONTRACT_COMPLETE` or authorize message persistence/realtime transport.
-
-## Product model
-
-The UI keeps these concepts separate:
-
-- **Conversation Definition** — reusable policy for who can start/join/chat and which features are available;
-- **Conversation** — one active resource/team/direct/support thread;
-- **Participant** — authorized member with current conversation/resource policy;
-- **Message** — immutable identity plus current safe body/state and optional bounded edit history;
-- **Attachment** — protected file reference, never assumed public media;
-- **Read state** — per-participant cursor/unread state;
-- **Report / Moderation action** — scoped safety workflow, not blanket admin access.
-
-## Information architecture
-
-Primary surfaces:
-
-1. Conversation Definitions
-2. Conversations
-3. Conversation detail
-4. Messages / Moderation
-5. Settings
-6. Diagnostics
-7. Frontend conversation widget / Dashboard route
-
-## Progressive disclosure
-
-### Essential
-
-Conversation Definition editor exposes:
-
-- name/key/type/status;
-- who may start;
-- participant source/limits;
-- linked resource/surface;
-- message composer mode;
-- attachment enabled + safe limits;
-- edit/delete policy;
-- notifications/mute baseline;
-- retention preset;
-- Validate / Preview / Save.
+Machine source: `config/product/option-contracts/chat.json`  
+Lifecycle: **UX certification candidate**. Machine truth is `OPTION_CONTRACT_COMPLETE`; this contract does not authorize message delivery, moderation execution or realtime-provider operations.
 
-No arbitrary HTML/JS, executable callbacks, public-file bypass or unbounded participant/message controls.
+## Lifecycle preconditions
 
-### Advanced
+- Machine status must remain `OPTION_CONTRACT_COMPLETE` or later with `missing=0` and `unclassified=0`.
+- All 17 current Atomic Option IDs are mapped exactly once below.
+- Conversation, participant, message, read-state, moderation and provider behavior remains server-authoritative and authorization-aware.
 
-Adds:
+## Canonical route and information architecture
 
-- duplicate prevention / one-conversation-per-resource rules;
-- approval/operating-hours options for support mode;
-- participant invitation/add/remove/leave rules;
-- mentions/reactions/reply-to;
-- read receipts/privacy;
-- search scope;
-- moderation/report configuration;
-- membership/team access history policy;
-- conversation state transitions;
-- per-definition abuse/rate ceilings;
-- dependency/usage summary.
+Canonical admin location: **WPEssential → Communication → Chat**.
 
-### Expert
+The IA separates **Conversation Definition**, **Creation & Participants**, **Conversation State**, **Composer & Message Policy**, **Message Schema & Reliability**, **Read & Presence**, **Transport & Notifications**, **Moderation & Safety**, **Search/Privacy/Portability**, and **Safety**. Authored policy is distinct from realtime/provider observations.
 
-Adds declarative operational controls:
+## UX state classes
 
-- registered transport profile;
-- polling/reconnect/backoff/offline-send behavior;
-- attachment scanner/storage-provider health refs;
-- search-index adapter ref;
-- retention/anonymization details;
-- bounded edit-history retention;
-- event payload privacy profile;
-- diagnostics/log verbosity;
-- import/export dependency refs.
+### Authored definition
+Conversation/creation/participant/lifecycle policy, safe message format, edit/reaction policy, reliability, read/presence privacy and moderation policy are revisioned Chat-owned definitions.
 
-Expert must not expose raw SQL, callbacks, JS, unrestricted moderator search or secret/provider credentials.
+### Effective/runtime state
+Conversation membership, message delivery/order, unread counts, read receipts, presence, typing and moderation results are effective runtime state and never locally fabricated.
 
-### System / Diagnostics
+### Diagnostic/provider state
+Media attachments, realtime transport, notification routing, authorized Search and Privacy/portability owners are canonical references with explicit available/degraded/offline state.
 
-Read-only diagnostics show:
+### Deferred / prohibited state
+Arbitrary HTML/script in message bodies is prohibited. Realtime failure must degrade honestly; polling fallback, delivery/read state and presence cannot be claimed unless supported by actual provider/runtime evidence.
 
-- Definition revision;
-- storage/index health;
-- transport capability and actual mode (polling vs realtime adapter);
-- Notification dependency health;
-- protected attachment provider health;
-- membership/role/resource-policy dependency state;
-- queue/event errors;
-- retention cleanup health;
-- rate-limit/abuse subsystem health;
-- current compatibility/degraded state.
+## Atomic Option → UX map
 
-## Conversations list
+- `chat.conversation.definition` — Conversation Definition → conversation type/lifecycle/linked-resource definition.
+- `chat.creation.policy` — Creation & Participants → creation eligibility/duplicate-prevention policy.
+- `chat.participant.policy` — Creation & Participants → participant derivation/invite/leave/maximum policy.
+- `chat.state.lifecycle` — Conversation State → active/closed/archived/moderation-hold policy and effective state.
+- `chat.message.format` — Composer & Message Policy → safe text/Markdown/link/emoji policy with sanitized preview.
+- `chat.message.mentions-attachments` — Composer & Message Policy → mention policy plus Media/File-owned attachment references.
+- `chat.message.edit-delete` — Composer & Message Policy → edit/delete/redaction windows and permission policy.
+- `chat.message.reply-reactions` — Composer & Message Policy → reply-to/reaction policy and accessibility behavior.
+- `chat.schema.reliability` — Message Schema & Reliability → schema version/idempotency/concurrency/pagination policy and diagnostics.
+- `chat.read.state` — Read & Presence → last-read cursor/unread/read-receipt policy and effective state.
+- `chat.presence.typing` — Read & Presence → presence/typing privacy policy with unsupported/degraded state.
+- `chat.transport.profile` — Transport & Notifications → polling/realtime provider profile, reconnect policy and explicit offline/degraded status.
+- `chat.notification.policy` — Transport & Notifications → Notifications-owned mute/digest/routing reference.
+- `chat.moderation.safety` — Moderation & Safety → reporting/moderation/blocking/rate-limit policy; actions remain separately authorized/audited.
+- `chat.attachment.authorization` — Moderation & Safety → private attachment authorization state rechecked against conversation/resource access.
+- `chat.search-privacy-portability` — Search/Privacy/Portability → authorized Search, retention/erasure, diagnostics and definition-portability owner references.
+- `chat.safety.raw-html` — Safety → prohibited arbitrary HTML/script message-body evidence; never an authored control.
 
-Columns:
+## Interaction and persistence
 
-- conversation/title;
-- type;
-- linked resource;
-- participant count;
-- last activity;
-- unread/admin-attention state;
-- status;
-- moderation flags;
-- retention policy;
-- owner/module;
-- actions.
+Definition editing uses draft → validate → save revision. Conversation/message previews are non-delivering simulations. Participant and moderation actions display target/current scope and require separate authorized runtime actions. Realtime UI switches to explicit reconnecting/offline/degraded states and never marks unsent local content as delivered.
 
-Filters include lifecycle, type, linked module/resource, membership/team, reported, participant/user, date and retention state.
+## Loading, empty, validation, conflict and recovery
 
-High-privilege filters/search must not leak private conversation existence/content to unauthorized admins.
+Required states include no conversations, conversation loading, participant source unavailable, attachment authorization denied, send pending/failed/unknown, realtime reconnecting/offline, presence unsupported, unread/read state stale, moderation pending/failed, search/privacy provider unavailable, stale revision, saved and recovery. Unknown delivery/read state remains unknown.
 
-## Conversation detail
+## Security and ownership
 
-Show:
-
-- title/resource context;
-- participant summary;
-- current access/degraded state;
-- paginated messages;
-- unread marker;
-- composer if allowed;
-- attachment/reaction/reply controls if enabled;
-- moderation/close/archive controls only with Policy;
-- deterministic empty/error/access-revoked states.
-
-Never load the entire conversation by default.
-
-## Participant UX
-
-Participant picker only searches users visible/eligible under current policy.
-
-Actions:
-
-- add/invite;
-- remove;
-- leave;
-- assignment/staff pool where supported.
-
-Before removal, show consequences for access/unread/notifications. Guard against removing the last required owner/staff principal.
-
-Stored participant membership alone does not override a newly revoked hard resource/membership access rule.
-
-## Composer UX
-
-Controls are definition-driven:
-
-- plain/rich safe text;
-- emoji;
-- links;
-- mentions;
-- attachments;
-- reply/quote;
-- reactions;
-- edit/delete windows;
-- send-on-enter user preference.
-
-Show remaining length/attachment limits before send. Offline/unknown-send state must distinguish pending, confirmed and retryable without duplicate-send ambiguity.
-
-## Attachments
-
-Attachment UI shows:
-
-- allowed MIME/type;
-- size/count limits;
-- upload/scan state only if real scanner exists;
-- private-access warning;
-- failed/retry state.
-
-Every download is re-authorized against conversation access. Public media URLs are not presented as secure private-chat storage.
-
-## Read/unread
-
-Per participant:
-
-- unread count;
-- last-read cursor;
-- mark read/unread;
-- optional per-message receipts.
-
-Read receipts default toward privacy-preserving behavior and can be disabled per definition/site/user where the later contract allows.
-
-Read-state mutation never grants conversation access.
-
-## Presence and typing
-
-Off by default candidate. If enabled, UI clearly labels ephemeral status and privacy preference. Do not expose precise long-term activity history by default.
-
-## Transport/realtime UX
-
-The UI must state the actual transport mode:
-
-- polling;
-- Heartbeat-like baseline;
-- WebSocket/SSE/provider adapter where genuinely available.
-
-Do not label slow polling as realtime. On disconnect show degraded state, reconnect policy and pending-send state without duplicating messages.
-
-## Notifications and mute
-
-Per conversation/definition user controls may include:
-
-- every message;
-- mentions only;
-- digest;
-- mute;
-- mute until.
-
-Notifications remain Surface 19. Private message bodies are hidden/redacted in notification preview unless explicit site/user policy permits disclosure.
-
-Mandatory security/system messages can bypass mute only under narrowly defined policy.
-
-## Mentions
-
-Mention search is restricted to visible/eligible users. `@everyone` is off by default and separately permissioned.
-
-A mention cannot silently add an unauthorized participant. If invitation semantics exist, they require explicit policy/action.
-
-## Search
-
-Scopes:
-
-- current conversation;
-- user's accessible conversations;
-- dedicated admin moderation search.
-
-Search results are authorization-filtered at retrieval time. Index presence is never itself authorization.
-
-## Moderation and reports
-
-Participant report flow:
-
-- reason category;
-- optional note;
-- rate limit;
-- acknowledgement.
-
-Moderator UX:
-
-- scoped queue;
-- assigned moderator;
-- open/reviewing/actioned/dismissed;
-- message hide/redact where authorized;
-- user warn/block-from-conversation;
-- close conversation;
-- Workflow escalation;
-- internal note/audit.
-
-Report/moderation privileges do not automatically unlock unrelated conversations.
-
-## Membership/team access
-
-Show the entitlement/team dependency and what happens after access expires. Default candidate for protected membership channels: deny new and historical access after expiry unless explicit policy states otherwise.
-
-Seat/member removal should invalidate access promptly and visibly.
-
-## Retention/privacy UX
-
-Definition editor exposes an understandable retention summary and impact:
-
-- indefinite;
-- N days/months;
-- after-close retention;
-- attachment retention;
-- edit-history/moderation retention;
-- anonymization behavior.
-
-Admin diagnostics must distinguish policy from actual cleanup health.
-
-Privacy export/erase behavior should explain when shared history is anonymized rather than deleted because other participants/audit obligations exist.
+Media/File owns protected attachment authorization. Notifications owns notification routing/digest semantics. Search and Privacy owners retain search/retention/erasure behavior. Chat owns conversation/message policy and durable chat state. Arbitrary HTML/script message bodies are prohibited. Client state cannot grant participation, moderation authority, attachment access, delivery or read truth.
 
 ## Accessibility
 
-Required:
+Conversation/message lists expose semantic structure and keyboard navigation. Composer controls have labels and visible focus. New-message announcements are rate-limited and respect user preferences. Reactions and reply context are screen-reader understandable. Offline/reconnecting state is textual, not color-only, and focus is not stolen by incoming events.
 
-- keyboard-operable conversation list/composer/actions;
-- no drag-only participant/message interactions;
-- semantic message list and status labels;
-- accessible unread announcements without noise;
-- focus after send/edit/delete/report/moderation actions;
-- error messages linked to composer/upload controls;
-- mobile keyboard-safe composer/layout;
-- no color-only moderation/unread/status indicators;
-- sufficient touch target sizes.
+## Multisite and scope
 
-## Multisite
+Conversation, linked-resource and provider scope are explicit. Network/global scope is server-derived. Imports cannot silently move private conversations, participant policies or provider references across sites.
 
-Future normalized contract must explicitly define:
+## Portability and reference remapping
 
-- site-local vs network conversation definitions;
-- user vs site-membership participant eligibility;
-- network moderation boundaries;
-- attachment/storage scope;
-- notification scope;
-- export/retention/privacy behavior across sites.
+Exports are definition-only and secret-free unless a separately scoped data-export workflow owns message data. Imports validate linked resource, Media, Notifications, Search, Privacy and transport-provider references before save. Presence/read/runtime observations are never imported as authored configuration.
 
-No cross-site access may be inferred from Super Admin UI alone.
+## Performance and scale
 
-## Portability
+Conversation/message history paginates with stable cursors. Realtime/polling updates are bounded and back off under failure. Attachments and presence avoid N+1 authorization/provider checks. Admin configuration assets remain scoped.
 
-Definition import/export may contain configuration and dependency references, never private conversation/message bodies by default. Data export/migration is a separately governed Surface 26/owner operation with privacy/retention safeguards.
+## Degraded/provider states
 
-## Lifecycle decision
+Missing realtime, Media, Notifications, Search or Privacy providers show explicit unavailable/degraded states. Polling fallback is labeled when used. The surface never fabricates participant access, attachment authorization, presence, message delivery, receipt, read state or moderation success.
 
-This is implementation-ready interaction guidance only. Because exact-main Master Options Bank status is still `UNSEEDED / 0`, it must be re-reviewed after Bank review and schema-valid Atomic Option Contracts. No runtime or product-parity certification follows from this document.
+## UX lifecycle exit criteria
+
+Certification requires complete 17-ID mapping, zero missing/unclassified machine semantics, raw-HTML/script rejection, truthful realtime/delivery/read semantics, owner/provider/accessibility/portability/performance/degraded states and exact-head validator CI. Shared lifecycle promotion remains Supervisor-only.
+
+## Non-certifications
+
+Runtime implementation is not certified by this document. Product parity is not certified. Production deployment or release is not verified. No message send, participant/moderation mutation, realtime-provider action, attachment mutation or external dispatch is authorized by this UX contract.
