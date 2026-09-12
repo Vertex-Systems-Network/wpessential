@@ -8,12 +8,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use WPEssential\Bootstrap\Plugin;
-use WPEssential\Modules\Roles\RolesModule;
 use WPEssential\Modules\Roles\RolesReadService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
-use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 
 final readonly class TaxonomyRoleImpactReadModel
 {
@@ -49,9 +46,7 @@ final readonly class TaxonomyRoleImpactReadModel
      */
     public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
     {
-        $service = $this->roles ?? $this->canonicalRolesService();
-        $context ??= $this->currentExecutionContext();
-        if (!$service instanceof RolesReadService || !$context instanceof ExecutionContext) {
+        if (!$this->roles instanceof RolesReadService || !$context instanceof ExecutionContext) {
             return [
                 'state' => 'unavailable',
                 'operations' => array_map(
@@ -80,7 +75,7 @@ final readonly class TaxonomyRoleImpactReadModel
         $byCapability = [];
         foreach ($capabilities as $capability) {
             if (!isset($byCapability[$capability])) {
-                $byCapability[$capability] = $service->capabilityImpact($capability, $context);
+                $byCapability[$capability] = $this->roles->capabilityImpact($capability, $context);
             }
         }
 
@@ -141,37 +136,5 @@ final readonly class TaxonomyRoleImpactReadModel
         }
 
         return $effective;
-    }
-
-    private function canonicalRolesService(): ?RolesReadService
-    {
-        $kernel = Plugin::kernel();
-        if ($kernel === null) {
-            return null;
-        }
-
-        $services = $kernel->services();
-        if (!$services->has(RolesModule::SERVICE_READ)) {
-            return null;
-        }
-
-        $service = $services->get(RolesModule::SERVICE_READ);
-        return $service instanceof RolesReadService ? $service : null;
-    }
-
-    private function currentExecutionContext(): ?ExecutionContext
-    {
-        $kernel = Plugin::kernel();
-        if ($kernel === null) {
-            return null;
-        }
-
-        $services = $kernel->services();
-        if (!$services->has('platform.abilities.contexts')) {
-            return null;
-        }
-
-        $factory = $services->get('platform.abilities.contexts');
-        return $factory instanceof WordPressExecutionContextFactory ? $factory->current() : null;
     }
 }
