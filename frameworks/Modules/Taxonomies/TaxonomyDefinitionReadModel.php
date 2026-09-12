@@ -17,7 +17,10 @@ final readonly class TaxonomyDefinitionReadModel
     private const POST_TYPE_DEFINITION_TYPE = 'post_type';
     private const POST_TYPE_OWNER_SURFACE_ID = 1;
 
-    public function __construct(private DefinitionRepositoryInterface $definitions) {}
+    public function __construct(
+        private DefinitionRepositoryInterface $definitions,
+        private ?TaxonomyRoleImpactReadModel $roleImpact = null,
+    ) {}
 
     /** @return array<string,mixed> */
     public function summary(Definition $definition): array
@@ -25,6 +28,7 @@ final readonly class TaxonomyDefinitionReadModel
         return [
             'runtime_health' => $this->runtimeHealth($definition),
             'dependency_usage' => $this->dependencyUsage($definition),
+            'role_impact' => ($this->roleImpact ?? new TaxonomyRoleImpactReadModel())->forDefinition($definition),
         ];
     }
 
