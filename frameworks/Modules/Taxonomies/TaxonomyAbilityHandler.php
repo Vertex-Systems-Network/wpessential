@@ -30,6 +30,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         private TaxonomyValidationService $validation,
         private string $action,
         private ?TaxonomyRewriteRefreshCoordinator $rewriteRefresh = null,
+        private ?TaxonomyRoleImpactReadModel $roleImpact = null,
     ) {
         if (!in_array($this->action, [self::LIST, self::GET, self::SAVE, self::STATUS, self::IMPORT], true)) {
             throw new InvalidArgumentException('Unsupported Taxonomy ability action.');
@@ -39,39 +40,42 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
     public function handle(array $input, ExecutionContext $context): mixed
     {
         return match ($this->action) {
-            self::LIST => $this->list(),
-            self::GET => $this->get($input),
-            self::SAVE => $this->save($input),
-            self::STATUS => $this->changeStatus($input),
-            self::IMPORT => $this->importDefinition($input),
+            self::LIST => $this->list($context),
+            self::GET => $this->get($input, $context),
+            self::SAVE => $this->save($input, $context),
+            self::STATUS => $this->changeStatus($input, $context),
+            self::IMPORT => $this->importDefinition($input, $context),
             default => throw new RuntimeException('Unsupported Taxonomy ability action.'),
         };
     }
 
     /** @return array{definitions:list<array<string,mixed>>} */
-    private function list(): array
+    private function list(ExecutionContext $context): array
     {
         $definitions = array_values(array_filter(
             $this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE),
             static fn (Definition $definition): bool => $definition->ownerSurfaceId === TaxonomyDefinitionProjector::OWNER_SURFACE_ID,
         ));
         usort($definitions, static fn (Definition $left, Definition $right): int => [$left->slug, $left->id] <=> [$right->slug, $right->id]);
-        $readModel = new TaxonomyDefinitionReadModel($this->definitions);
+        $readModel = new TaxonomyDefinitionReadModel($this->definitions, $this->roleImpact);
 
         return ['definitions' => array_map(
-            fn (Definition $definition): array => $this->serialize($definition, $readModel),
+            fn (Definition $definition): array => $this->serialize($definition, $readModel, $context),
             $definitions,
         )];
     }
 
     /** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */
-    private function get(array $input): array
+    private function get(array $input, ExecutionContext $context): array
     {
-        return ['definition' => $this->serialize($this->owned($this->requiredUuid($input, 'id')))];
+        return ['definition' => $this->serialize(
+            $this->owned($this->requiredUuid($input, 'id')),
+            context: $context,
+        )];
     }
 
     /** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */
-    private function save(array $input): array
+    private function save(array $input, ExecutionContext $context): array
     {
         $payload = $input['payload'] ?? null;
         if (!is_array($payload) || array_is_list($payload)) {
@@ -113,11 +117,11 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         );
         $candidate = $this->persistMutation($existing, $candidate);
 
-        return ['definition' => $this->serialize($candidate)];
+        return ['definition' => $this->serialize($candidate, context: $context)];
     }
 
     /** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */
-    private function changeStatus(array $input): array
+    private function changeStatus(array $input, ExecutionContext $context): array
     {
         $existing = $this->owned($this->requiredUuid($input, 'id'));
         $this->assertExpectedRevision($input, $existing);
@@ -143,14 +147,14 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         );
         $candidate = $this->persistMutation($existing, $candidate);
 
-        return ['definition' => $this->serialize($candidate)];
+        return ['definition' => $this->serialize($candidate, context: $context)];
     }
 
     /**
      * @param array<string,mixed> $input
      * @return array{action:'created'|'updated'|'no_change',definition:array<string,mixed>}
      */
-    private function importDefinition(array $input): array
+    private function importDefinition(array $input, ExecutionContext $context): array
     {
         $record = $input['definition'] ?? null;
         if (!is_array($record) || array_is_list($record)) {
@@ -177,7 +181,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
         if ($existing instanceof Definition && $this->sameSemanticDefinition($existing, $source)) {
             return [
                 'action' => 'no_change',
-                'definition' => $this->serialize($existing),
+                'definition' => $this->serialize($existing, context: $context),
             ];
         }
 
@@ -218,7 +222,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
 
         return [
             'action' => $existing instanceof Definition ? 'updated' : 'created',
-            'definition' => $this->serialize($candidate),
+            'definition' => $this->serialize($candidate, context: $context),
         ];
     }
 
@@ -440,8 +444,9 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
     private function serialize(
         Definition $definition,
         ?TaxonomyDefinitionReadModel $readModel = null,
+        ?ExecutionContext $context = null,
     ): array {
-        $readModel ??= new TaxonomyDefinitionReadModel($this->definitions);
+        $readModel ??= new TaxonomyDefinitionReadModel($this->definitions, $this->roleImpact);
 
         return [
             'id' => $definition->id,
@@ -454,7 +459,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
             'revision' => $definition->revision,
             'dependencies' => $definition->dependencies,
             'checksum' => $definition->checksum,
-            'read_model' => $readModel->summary($definition),
+            'read_model' => $readModel->summary($definition, $context),
         ];
     }
 
