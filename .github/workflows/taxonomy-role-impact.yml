@@ -104,19 +104,63 @@ jobs:
           tar -xzf /tmp/wordpress.tar.gz -C /tmp
           test -f /tmp/wordpress/wp-load.php
 
+      - name: Install pinned WP-CLI 2.12.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 \
+            https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar \
+            --output /tmp/wp-cli.phar
+          echo 'ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c  /tmp/wp-cli.phar' | sha256sum -c -
+          php /tmp/wp-cli.phar --allow-root cli version
+
+      - name: Install real single-site WordPress
+        shell: bash
+        run: |
+          set -euo pipefail
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          ${wp} config create \
+            --dbname=wpessential_test \
+            --dbuser=root \
+            --dbpass=root \
+            --dbhost=127.0.0.1:3306 \
+            --skip-check \
+            --skip-salts \
+            --force
+          ${wp} core install \
+            --url=http://wpessential.test \
+            --title='WPEssential Taxonomy Role Impact' \
+            --admin_user=wpessential_tax_role_admin \
+            --admin_password='test-password-strong' \
+            --admin_email='tax-role-admin@example.test' \
+            --skip-email
+          ${wp} core version
+
+      - name: Install exact WPEssential source fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress/wp-content/plugins/wpessential
+          mkdir -p /tmp/wordpress/wp-content/plugins/wpessential
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='artifacts/' \
+            --exclude='node_modules/' \
+            "${GITHUB_WORKSPACE}/" /tmp/wordpress/wp-content/plugins/wpessential/
+          test -f /tmp/wordpress/wp-content/plugins/wpessential/vendor/autoload.php
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          ${wp} plugin activate wpessential
+          ${wp} plugin status wpessential
+
       - name: Run canonical Surface 30-backed Taxonomy role-impact evidence
         shell: bash
-        env:
-          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
-          WPE_TEST_WP_DB: wpessential_test
-          WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
-          WPE_TEST_MYSQL_USER: root
-          WPE_TEST_MYSQL_PASSWORD: root
         run: |
           set -euo pipefail
           mkdir -p artifacts/taxonomy-role-impact
-          export WPE_TAXONOMY_ROLE_IMPACT_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-role-impact/evidence.json"
-          php tests/Integration/wordpress-taxonomy-role-impact.php | tee artifacts/taxonomy-role-impact/run.log
+          wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
+          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-role-impact.php'
+          WPE_TAXONOMY_ROLE_IMPACT_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-role-impact/evidence.json" \
+            ${wp} eval "require '${script}';" | tee artifacts/taxonomy-role-impact/run.log
           test -s artifacts/taxonomy-role-impact/evidence.json
           jq -e '.schema == "wpessential-taxonomy-role-impact-evidence-v1" and .result == "PASS" and .canonical_surface30_service_consumed == true and .validation_role_impact_state == "healthy" and .definition_role_impact_state == "healthy" and .explicit_allow_preserved == true and .explicit_deny_preserved == true and .absent_preserved == true and .meta_context_reported == true and .diagnostic_not_final_authorization == true and .role_registry_unchanged == true' artifacts/taxonomy-role-impact/evidence.json >/dev/null
           cat artifacts/taxonomy-role-impact/evidence.json
