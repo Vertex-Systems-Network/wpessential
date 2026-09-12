@@ -1,8 +1,8 @@
 {
-  "schema_version": 14,
+  "schema_version": 15,
   "snapshot_date": "2026-09-12",
-  "queue_anchor_main_sha": "29d73f456da2c24e12e8512c6ef2974832a9393b",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Surface 30 Issue #618 / merged PR #620 provides the canonical read-only role/capability seam and Taxonomy Issue #621 / merged PR #623 consumes it. Exact-main audit Issue #626 / merged PR #628 did not certify Surface 2 and identified exactly three reviewed admin-UX gaps: visual role-impact preview, unsaved-change guard, and sticky Validate/Save commands. Parent Taxonomy Issue #474 remains OPEN. Owner-authorized Issue #629 now opens exactly one bounded Surface 2 UI closure slot for those three gaps. Taxonomy-key migration execution, role/capability/user mutation, generic package orchestration, deployment, release and runtime/product certification remain separately gated.",
+  "queue_anchor_main_sha": "2b36cb3f56ea853766249eb960d94d6b379dc24b",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Surface 30 Issue #618 / merged PR #620 provides the canonical read-only role/capability seam and Taxonomy Issue #621 / merged PR #623 consumes it. Exact-main audit Issue #626 / merged PR #628 did not certify Surface 2 and identified exactly three reviewed admin-UX gaps. Issue #629 / merged PR #631 closed those three bounded admin-UX gaps with exact-head Architecture, Distributable Package and Browser E2E Accessibility evidence green. Parent Taxonomy Issue #474 remains OPEN. Owner-authorized Issue #632 now opens exactly one evidence-only exact-main certification audit slot. Taxonomy-key migration execution, role/capability/user mutation, generic package orchestration, deployment and release remain separately gated; PRODUCT_PARITY_CERTIFIED remains forbidden.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,7 +14,7 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "Priority 1000 is the only dependency-ready OPEN slot in this snapshot: Taxonomy Final Admin UX Closure V1 under Issue #629, contributing to parent Issue #474. Scope is limited to rendering the already-canonical role-impact payload, deterministic unsaved-change protection, sticky Validate/Save commands, and focused browser/accessibility evidence. Certification is explicitly forbidden from the implementation slice itself; a fresh exact-main audit is required afterward.",
+    "selection_rule": "Priority 1000 is the only dependency-ready OPEN slot in this snapshot: Taxonomy Exact-Main Runtime Certification Audit V2 under Issue #632, contributing to parent Issue #474. Scope is evidence-accounting only: re-audit every accepted Surface 2 V1 exit requirement on exact main after merged PR #631, explicitly verify the three previously failing admin-UX rows, and produce either RUNTIME_CERTIFIED or NOT_CERTIFIED from evidence. Runtime/product implementation is forbidden in this audit slot and PRODUCT_PARITY_CERTIFIED is not allowed.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
@@ -24,21 +24,21 @@
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "For Issue #629 read docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V1.md, docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md, docs/IMPLEMENTATION/TAXONOMY-ROLE-IMPACT-CONSUMER-V1.md, current admin-ui/src/taxonomy.ts, admin-ui/src/admin.scss and packaged Taxonomy browser specs.",
-      "Consume only the existing canonical role-impact payload; do not modify Surface 30 ownership or add direct WordPress role-store access.",
-      "Keep taxonomy-key migration execution separately gated and generic package orchestration outside Surface 2.",
-      "Verify the selected implementation slot is not already complete, superseded or claimed by its exact remote branch."
+      "For Issue #632 read docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V1.md, docs/IMPLEMENTATION/TAXONOMY-FINAL-ADMIN-UX-CLOSURE-V1.md, docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md, the accepted Taxonomy runtime gap matrix/evidence docs, current admin-ui/src/taxonomy.ts and packaged Taxonomy browser specs.",
+      "Re-account the previously failing role-impact preview, unsaved-change guard and sticky Validate/Save rows from exact-main implementation and packaged browser/accessibility evidence.",
+      "Keep taxonomy-key migration execution separately gated, history/diff outside V1 exit unless the reviewed contract says otherwise, and generic package orchestration outside Surface 2.",
+      "Verify the selected audit slot is not already complete, superseded or claimed by its exact remote branch."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
-      "Require packaged browser/accessibility evidence for role-impact rendering, dirty-state guard lifecycle and sticky command behavior.",
-      "Do not add direct WordPress role-store inspection, a parallel role/capability engine, role/capability/user mutation, taxonomy-key migration execution or package-owner behavior.",
-      "Do not promote RUNTIME_CERTIFIED or PRODUCT_PARITY_CERTIFIED from this implementation slice."
+      "Require the audit document to account every accepted V1 exit row and cite exact-main repository evidence rather than infer certification from PR #631 alone.",
+      "Do not add runtime/product implementation, direct WordPress role-store inspection, a parallel role/capability engine, role/capability/user mutation, taxonomy-key migration execution or package-owner behavior.",
+      "Do not promote PRODUCT_PARITY_CERTIFIED. Promote RUNTIME_CERTIFIED only if the evidence-only audit independently proves every accepted V1 exit requirement."
     ],
     "cycle_closeout": [
-      "Reconcile README current status after meaningful completed work.",
+      "Reconcile README current status after meaningful completed work from a Supervisor-owned closeout branch.",
       "Keep the README complete 56 / 56 canonical module progress/timeline dashboard current from repository evidence.",
       "Do not fabricate a higher progress percentage without a repository-defined milestone.",
       "Do not present bounded implementation or green regression workflows as full product parity."
@@ -103,39 +103,40 @@
     {"surface":"Taxonomy capability role-impact dependency","status":"DEPENDENCY_SATISFIED","dependency":"Issue #618 / merged PR #620"},
     {"surface":"Taxonomy capability role-impact consumer","status":"BOUNDED_READ_ONLY_PEER_CONSUMER_ACCEPTED_NOT_CERTIFIED","closure":"Issue #621 / merged PR #623","evidence":"Canonical Surface 30 RolesReadService consumer; explicit allow/deny/absent preserved; degraded/unavailable/meta-context caveats; no direct role-store fallback; unit + real WordPress + WP 6.9/7.1 × PHP 8.2/8.5 + Taxonomy Runtime + Platform Compatibility + Architecture Guards + package + browser evidence green at exact PR head; no runtime/product certification promoted"},
     {"surface":"Taxonomy role-impact shared-truth closeout","status":"SHARED_TRUTH_RECONCILED","closure":"Issue #624 / merged PR #625"},
-    {"surface":"Taxonomy exact-main runtime certification audit","status":"NOT_CERTIFIED_THREE_ADMIN_UX_GAPS","closure":"Issue #626 / merged PR #628","evidence":"Role-impact backend exists but visual preview missing; reviewed unsaved-change guard missing; sticky Validate/Save behavior missing. Surface 2 remains UX_CONTRACT_COMPLETE and parent #474 remains open."}
+    {"surface":"Taxonomy exact-main runtime certification audit V1","status":"NOT_CERTIFIED_THREE_ADMIN_UX_GAPS","closure":"Issue #626 / merged PR #628","evidence":"Role-impact backend existed but visual preview missing; reviewed unsaved-change guard missing; sticky Validate/Save behavior missing. Surface 2 remained UX_CONTRACT_COMPLETE and parent #474 remained open."},
+    {"surface":"Taxonomy final admin UX closure V1","status":"THREE_REVIEWED_ADMIN_UX_GAPS_IMPLEMENTED_AWAITING_FRESH_CERTIFICATION_AUDIT","closure":"Issue #629 / merged PR #631","evidence":"Accessible canonical role-impact preview, deterministic unsaved-change guard lifecycle, and sticky Validate/Save command behavior implemented; exact PR head 7c49f294557b4a4e73ac7fc374e61558e61ffdc4 had Architecture Guards, Distributable Package and Browser E2E Accessibility green; no certification promoted from implementation slice."}
   ],
   "slots": [
     {
       "priority": 1000,
-      "slot_id": "taxonomy-final-admin-ux-closure-v1",
-      "title": "Taxonomy Final Admin UX Closure V1",
+      "slot_id": "taxonomy-runtime-certification-audit-v2",
+      "title": "Taxonomy Exact-Main Runtime Certification Audit V2",
       "surface_id": 2,
       "role": "ANY",
       "status": "OPEN",
-      "work_mode": "BOUNDED_ADMIN_UX_IMPLEMENTATION",
-      "parallel_class": "SURFACE_2_TAXONOMY_ADMIN_UX",
-      "source": "Issue #629; audit Issue #626 / merged PR #628; parent Issue #474",
-      "runtime_allowed": true,
-      "runtime_scope": "ADMIN_UI_ONLY_WITH_EXISTING_READ_MODEL",
+      "work_mode": "EVIDENCE_ONLY_CERTIFICATION_AUDIT",
+      "parallel_class": "SURFACE_2_TAXONOMY_CERTIFICATION_AUDIT",
+      "source": "Issue #632; prior audit Issue #626 / merged PR #628; final UX closure Issue #629 / merged PR #631; parent Issue #474",
+      "runtime_allowed": false,
+      "runtime_scope": "NONE_EVIDENCE_ONLY",
       "product_parity_allowed": false,
       "allowed_scope": [
-        "render existing canonical diagnostics.role_impact/read_model.role_impact as an accessible read-only preview",
-        "add deterministic Taxonomy editor dirty-state and unsaved-navigation guard lifecycle",
-        "make existing Validate/Save command area sticky without accessibility or layout regression",
-        "add focused TypeScript/browser/accessibility evidence for all three behaviors",
-        "record exact remaining parent #474 truth after the slice"
+        "re-audit every accepted Surface 2 V1 UX/runtime exit requirement on exact current main",
+        "verify exact-main evidence for role-impact preview, unsaved-change guard lifecycle and sticky Validate/Save behavior",
+        "reconcile previously accepted lifecycle, Definition, Ability/Policy, revision/CAS, option UX, diagnostics, portability, compatibility, performance and security evidence",
+        "classify reviewed V1 blockers separately from non-blocking future work and separately gated destructive taxonomy-key migration execution",
+        "produce an explicit evidence-based RUNTIME_CERTIFIED or NOT_CERTIFIED decision without product-parity promotion"
       ],
       "forbidden_scope": [
+        "runtime/product implementation changes on the audit branch",
         "direct wp_roles/get_role/raw role-option inspection inside Taxonomy",
         "parallel role/capability engine or role/capability/user mutation",
-        "taxonomy-key migration execution",
+        "taxonomy-key migration execution or destructive term/content mutation",
         "generic package orchestration",
-        "unrelated admin redesign or broad reset project",
-        "RUNTIME_CERTIFIED or PRODUCT_PARITY_CERTIFIED promotion from this implementation slice",
+        "PRODUCT_PARITY_CERTIFIED promotion",
         "deployment/release"
       ],
-      "claim_branch": "agent/taxonomy-final-admin-ux-closure-v1"
+      "claim_branch": "agent/taxonomy-runtime-certification-audit-v2"
     }
   ]
 }
