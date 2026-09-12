@@ -1,10 +1,21 @@
 import './admin.scss';
 import {
+	bindTaxonomyEditorSafety,
+	type TaxonomyEditorSafety,
+} from './taxonomy-editor-safety';
+import {
 	bindTaxonomyLabelEditor,
 	collectTaxonomyLabels,
 	resetTaxonomyLabels,
 	setTaxonomyLabels,
 } from './taxonomy-labels';
+import {
+	clearTaxonomyRoleImpactPreview,
+	ensureTaxonomyRoleImpactPreview,
+	isTaxonomyRoleImpact,
+	renderTaxonomyRoleImpactPreview,
+	type TaxonomyRoleImpact,
+} from './taxonomy-role-impact-preview';
 import {
 	bindTaxonomyVisibility,
 	collectTaxonomyVisibility,
@@ -45,6 +56,7 @@ type RuntimeHealth = {
 type TaxonomyReadModel = {
 	runtime_health: RuntimeHealth;
 	dependency_usage: DependencyUsage;
+	role_impact: TaxonomyRoleImpact;
 };
 type TaxonomyDefinition = {
 	id: string;
@@ -75,6 +87,7 @@ type TaxonomyDiagnostics = {
 	provider_ids: Record< string, string >;
 	association_health: AssociationHealth[];
 	dependency_usage: DependencyUsage;
+	role_impact: TaxonomyRoleImpact;
 	runtime: { registered: boolean | null };
 	previews: { rest: RecordValue; rewrite: RecordValue };
 };
@@ -177,7 +190,8 @@ function isTaxonomyReadModel( value: unknown ): value is TaxonomyReadModel {
 	return (
 		isRecord( value ) &&
 		isRuntimeHealth( value.runtime_health ) &&
-		isDependencyUsage( value.dependency_usage )
+		isDependencyUsage( value.dependency_usage ) &&
+		isTaxonomyRoleImpact( value.role_impact )
 	);
 }
 
@@ -282,6 +296,7 @@ function parseDiagnostics( value: unknown ): TaxonomyDiagnostics | null {
 		! Array.isArray( value.association_health ) ||
 		! value.association_health.every( isAssociationHealth ) ||
 		! isDependencyUsage( value.dependency_usage ) ||
+		! isTaxonomyRoleImpact( value.role_impact ) ||
 		! isRecord( value.runtime ) ||
 		! isNullableBoolean( value.runtime.registered ) ||
 		! isRecord( value.previews ) ||
@@ -302,6 +317,7 @@ function parseDiagnostics( value: unknown ): TaxonomyDiagnostics | null {
 		provider_ids: providerIds,
 		association_health: value.association_health,
 		dependency_usage: value.dependency_usage,
+		role_impact: value.role_impact,
 		runtime: { registered: value.runtime.registered },
 		previews: {
 			rest: value.previews.rest,
@@ -554,6 +570,7 @@ function ensureDiagnosticsPanel(): HTMLElement | null {
 		effective,
 		overrides
 	);
+	ensureTaxonomyRoleImpactPreview( panel, summary );
 	validation.insertAdjacentElement( 'afterend', panel );
 	return panel;
 }
@@ -601,6 +618,7 @@ function clearDiagnostics(): void {
 	if ( overrides instanceof HTMLElement ) {
 		overrides.textContent = '';
 	}
+	clearTaxonomyRoleImpactPreview( panel );
 }
 
 function diagnosticString(
@@ -723,6 +741,7 @@ function renderDiagnostics( diagnostics: TaxonomyDiagnostics | null ): void {
 			2
 		);
 	}
+	renderTaxonomyRoleImpactPreview( panel, diagnostics.role_impact );
 	panel.hidden = false;
 }
 
@@ -1142,6 +1161,7 @@ function boot(): void {
 
 	let definitions = sortedDefinitions( bootstrap.definitions );
 	let busy = false;
+	let editorSafety: TaxonomyEditorSafety | null = null;
 
 	const refresh = async (): Promise< void > => {
 		const data = await postRoute( bootstrap, bootstrap.routes.list, {} );
@@ -1196,6 +1216,11 @@ function boot(): void {
 
 	const form = document.getElementById( 'wpessential-taxonomy-form' );
 	if ( form instanceof HTMLFormElement ) {
+		editorSafety = bindTaxonomyEditorSafety(
+			root,
+			form,
+			() => JSON.stringify( collectEditor( definitions ) )
+		);
 		form.addEventListener( 'input', clearValidation );
 		form.addEventListener( 'change', clearValidation );
 		form.addEventListener( 'submit', ( event ) => {
@@ -1225,6 +1250,7 @@ function boot(): void {
 				definitions = upsertDefinition( definitions, saved );
 				renderRows( definitions );
 				resetForm();
+				editorSafety?.acceptBaseline();
 				setNotice(
 					editor.id === '' ? 'Taxonomy created.' : 'Taxonomy updated.'
 				);
@@ -1244,6 +1270,7 @@ function boot(): void {
 		'click',
 		() => {
 			resetForm();
+			editorSafety?.acceptBaseline();
 			setNotice( '' );
 		}
 	);
@@ -1269,6 +1296,7 @@ function boot(): void {
 			);
 			if ( definition ) {
 				editDefinition( definition );
+				editorSafety?.acceptBaseline();
 			}
 			return;
 		}
@@ -1303,6 +1331,7 @@ function boot(): void {
 			}
 			if ( textInput( 'wpessential-taxonomy-id' )?.value === id ) {
 				resetForm();
+				editorSafety?.acceptBaseline();
 			}
 			setNotice( `Taxonomy status changed to ${ status }.` );
 		} );
@@ -1313,6 +1342,7 @@ function boot(): void {
 	bindTaxonomyVisibility();
 	setObjectTypes( [ 'post' ] );
 	renderRows( definitions );
+	editorSafety?.acceptBaseline();
 	root.dataset.wpessentialEnhanced = 'ready';
 	window.dispatchEvent(
 		new CustomEvent( 'wpessential:admin-ready', {
