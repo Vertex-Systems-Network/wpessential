@@ -97,6 +97,22 @@ final class TaxonomyRoleImpactReadModelTest extends TestCase
         self::assertSame([], $impact['operations'][0]['impact']['absent_roles']);
     }
 
+    public function testMissingCanonicalServiceFailsVisibleWithoutWordPressFallback(): void
+    {
+        $impact = (new TaxonomyRoleImpactReadModel())->forCapabilities(
+            ['manage_terms' => 'manage_categories'],
+            new ExecutionContext(new Principal(8), 1),
+        );
+
+        self::assertSame('unavailable', $impact['state']);
+        self::assertSame('manage_categories', $impact['operations'][0]['capability']);
+        self::assertSame([], $impact['operations'][0]['impact']['explicit_allow_roles']);
+        self::assertStringContainsString(
+            'does not fall back to direct WordPress role-store inspection',
+            implode(' ', $impact['caveats']),
+        );
+    }
+
     private function roles(RoleRuntimeEnvironmentInterface $environment): RolesReadService
     {
         $checker = new class implements CapabilityCheckerInterface {
