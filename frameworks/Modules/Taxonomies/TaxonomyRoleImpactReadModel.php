@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use WPEssential\Contracts\ServiceRegistryInterface;
+use WPEssential\Modules\Roles\RolesModule;
 use WPEssential\Modules\Roles\RolesReadService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
@@ -22,7 +24,10 @@ final readonly class TaxonomyRoleImpactReadModel
         'assign_terms' => 'edit_posts',
     ];
 
-    public function __construct(private ?RolesReadService $roles = null) {}
+    public function __construct(
+        private ?RolesReadService $roles = null,
+        private ?ServiceRegistryInterface $services = null,
+    ) {}
 
     /**
      * @return array{
@@ -46,7 +51,8 @@ final readonly class TaxonomyRoleImpactReadModel
      */
     public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
     {
-        if (!$this->roles instanceof RolesReadService || !$context instanceof ExecutionContext) {
+        $service = $this->roles ?? $this->rolesFromRegistry();
+        if (!$service instanceof RolesReadService || !$context instanceof ExecutionContext) {
             return [
                 'state' => 'unavailable',
                 'operations' => array_map(
@@ -75,7 +81,7 @@ final readonly class TaxonomyRoleImpactReadModel
         $byCapability = [];
         foreach ($capabilities as $capability) {
             if (!isset($byCapability[$capability])) {
-                $byCapability[$capability] = $this->roles->capabilityImpact($capability, $context);
+                $byCapability[$capability] = $service->capabilityImpact($capability, $context);
             }
         }
 
@@ -136,5 +142,17 @@ final readonly class TaxonomyRoleImpactReadModel
         }
 
         return $effective;
+    }
+
+    private function rolesFromRegistry(): ?RolesReadService
+    {
+        if (!$this->services instanceof ServiceRegistryInterface
+            || !$this->services->has(RolesModule::SERVICE_READ)
+        ) {
+            return null;
+        }
+
+        $service = $this->services->get(RolesModule::SERVICE_READ);
+        return $service instanceof RolesReadService ? $service : null;
     }
 }
