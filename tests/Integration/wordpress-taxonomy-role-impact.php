@@ -9,6 +9,14 @@ if (!function_exists('get_bloginfo')) {
         exit(0);
     }
 
+    $_SERVER['HTTP_HOST'] ??= 'localhost';
+    $_SERVER['SERVER_NAME'] ??= 'localhost';
+    $_SERVER['SERVER_PORT'] ??= '80';
+    $_SERVER['REQUEST_URI'] ??= '/';
+    $_SERVER['REQUEST_METHOD'] ??= 'GET';
+    $_SERVER['SERVER_PROTOCOL'] ??= 'HTTP/1.1';
+    $_SERVER['REMOTE_ADDR'] ??= '127.0.0.1';
+
     if (!defined('ABSPATH')) {
         define('ABSPATH', $wpDir . '/');
     }
@@ -22,6 +30,8 @@ define('DB_PASSWORD', getenv('WPE_TEST_MYSQL_PASSWORD') ?: 'root');
 define('DB_HOST', getenv('WPE_TEST_WP_DB_HOST') ?: '127.0.0.1:3306');
 define('DB_CHARSET', 'utf8mb4');
 define('DB_COLLATE', '');
+define('WP_HOME', 'http://localhost');
+define('WP_SITEURL', 'http://localhost');
 define('AUTH_KEY',         'wpessential-tax-role-impact-auth-key');
 define('SECURE_AUTH_KEY',  'wpessential-tax-role-impact-secure-auth-key');
 define('LOGGED_IN_KEY',    'wpessential-tax-role-impact-logged-in-key');
