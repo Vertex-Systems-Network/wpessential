@@ -1216,10 +1216,8 @@ function boot(): void {
 
 	const form = document.getElementById( 'wpessential-taxonomy-form' );
 	if ( form instanceof HTMLFormElement ) {
-		editorSafety = bindTaxonomyEditorSafety(
-			root,
-			form,
-			() => JSON.stringify( collectEditor( definitions ) )
+		editorSafety = bindTaxonomyEditorSafety( root, form, () =>
+			JSON.stringify( collectEditor( definitions ) )
 		);
 		form.addEventListener( 'input', clearValidation );
 		form.addEventListener( 'change', clearValidation );
