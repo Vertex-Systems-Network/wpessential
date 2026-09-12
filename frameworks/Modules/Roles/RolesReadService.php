@@ -199,7 +199,11 @@ final readonly class RolesReadService
         foreach ($roles as $role) {
             foreach ($role['capabilities'] as $capability => $granted) {
                 $counts[$capability] ??= ['allow' => 0, 'deny' => 0];
-                $granted ? $counts[$capability]['allow']++ : $counts[$capability]['deny']++;
+                if ($granted) {
+                    $counts[$capability]['allow']++;
+                } else {
+                    $counts[$capability]['deny']++;
+                }
             }
         }
         ksort($counts, SORT_STRING);
