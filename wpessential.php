@@ -70,5 +70,6 @@ if (!is_readable($autoload)) {
 require_once $autoload;
 
 add_action('plugins_loaded', static function (): void {
+    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Roles\RolesModule());
     \WPEssential\Bootstrap\Plugin::boot();
 }, -100);
