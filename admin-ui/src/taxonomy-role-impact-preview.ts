@@ -19,7 +19,10 @@ function isRecord( value: unknown ): value is RecordValue {
 }
 
 function isStringArray( value: unknown ): value is string[] {
-	return Array.isArray( value ) && value.every( ( item ) => typeof item === 'string' );
+	return (
+		Array.isArray( value ) &&
+		value.every( ( item ) => typeof item === 'string' )
+	);
 }
 
 function isOperation( value: unknown ): value is TaxonomyRoleImpactOperation {
@@ -88,9 +91,9 @@ export function ensureTaxonomyRoleImpactPreview(
 	caveats.dataset.wpessentialTaxonomyRoleImpactCaveats = '';
 	details.append( detailsSummary, intro, operations, caveatHeading, caveats );
 
-	const dependency = panel.querySelector(
-		'[data-wpessential-taxonomy-dependency-usage]'
-	)?.closest( 'details' );
+	const dependency = panel
+		.querySelector( '[data-wpessential-taxonomy-dependency-usage]' )
+		?.closest( 'details' );
 	if ( dependency instanceof HTMLDetailsElement ) {
 		dependency.insertAdjacentElement( 'beforebegin', details );
 	} else {
@@ -150,8 +153,11 @@ export function renderTaxonomyRoleImpactPreview(
 		operations.replaceChildren();
 		for ( const operation of roleImpact.operations ) {
 			const item = document.createElement( 'li' );
-			item.dataset.wpessentialTaxonomyRoleImpactOperation = operation.operation;
-			item.textContent = `${ operation.operation }: ${ operation.capability }. Allow: ${ listValue(
+			item.dataset.wpessentialTaxonomyRoleImpactOperation =
+				operation.operation;
+			item.textContent = `${ operation.operation }: ${
+				operation.capability
+			}. Allow: ${ listValue(
 				operation.impact.explicit_allow_roles
 			) }; explicit deny: ${ listValue(
 				operation.impact.explicit_deny_roles
@@ -164,9 +170,10 @@ export function renderTaxonomyRoleImpactPreview(
 	);
 	if ( caveats instanceof HTMLElement ) {
 		caveats.replaceChildren();
-		const values = roleImpact.caveats.length > 0
-			? roleImpact.caveats
-			: [ 'No additional role-impact caveats were reported.' ];
+		const values =
+			roleImpact.caveats.length > 0
+				? roleImpact.caveats
+				: [ 'No additional role-impact caveats were reported.' ];
 		for ( const caveat of values ) {
 			const item = document.createElement( 'li' );
 			item.textContent = caveat;
