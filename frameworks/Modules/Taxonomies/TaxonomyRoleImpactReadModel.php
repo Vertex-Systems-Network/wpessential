@@ -8,9 +8,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use WPEssential\Bootstrap\Plugin;
+use WPEssential\Modules\Roles\RolesModule;
 use WPEssential\Modules\Roles\RolesReadService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
+use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 
 final readonly class TaxonomyRoleImpactReadModel
 {
@@ -22,7 +25,7 @@ final readonly class TaxonomyRoleImpactReadModel
         'assign_terms' => 'edit_posts',
     ];
 
-    public function __construct(private RolesReadService $roles) {}
+    public function __construct(private ?RolesReadService $roles = null) {}
 
     /**
      * @return array{
@@ -31,7 +34,7 @@ final readonly class TaxonomyRoleImpactReadModel
      *   caveats:list<string>
      * }
      */
-    public function forDefinition(Definition $definition, ExecutionContext $context): array
+    public function forDefinition(Definition $definition, ?ExecutionContext $context = null): array
     {
         return $this->forCapabilities($this->effectiveCapabilities($definition->payload), $context);
     }
@@ -44,13 +47,40 @@ final readonly class TaxonomyRoleImpactReadModel
      *   caveats:list<string>
      * }
      */
-    public function forCapabilities(array $capabilities, ExecutionContext $context): array
+    public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
     {
+        $service = $this->roles ?? $this->canonicalRolesService();
+        $context ??= $this->currentExecutionContext();
+        if (!$service instanceof RolesReadService || !$context instanceof ExecutionContext) {
+            return [
+                'state' => 'unavailable',
+                'operations' => array_map(
+                    static fn (string $operation, string $capability): array => [
+                        'operation' => $operation,
+                        'capability' => $capability,
+                        'impact' => [
+                            'state' => 'unavailable',
+                            'capability' => $capability,
+                            'explicit_allow_roles' => [],
+                            'explicit_deny_roles' => [],
+                            'absent_roles' => [],
+                            'caveats' => ['Canonical Surface 30 role-impact service or execution context is unavailable.'],
+                        ],
+                    ],
+                    array_keys($capabilities),
+                    array_values($capabilities),
+                ),
+                'caveats' => [
+                    'Canonical Surface 30 role-impact service or execution context is unavailable; Taxonomy does not fall back to direct WordPress role-store inspection.',
+                ],
+            ];
+        }
+
         /** @var array<string,array<string,mixed>> $byCapability */
         $byCapability = [];
         foreach ($capabilities as $capability) {
             if (!isset($byCapability[$capability])) {
-                $byCapability[$capability] = $this->roles->capabilityImpact($capability, $context);
+                $byCapability[$capability] = $service->capabilityImpact($capability, $context);
             }
         }
 
@@ -111,5 +141,37 @@ final readonly class TaxonomyRoleImpactReadModel
         }
 
         return $effective;
+    }
+
+    private function canonicalRolesService(): ?RolesReadService
+    {
+        $kernel = Plugin::kernel();
+        if ($kernel === null) {
+            return null;
+        }
+
+        $services = $kernel->services();
+        if (!$services->has(RolesModule::SERVICE_READ)) {
+            return null;
+        }
+
+        $service = $services->get(RolesModule::SERVICE_READ);
+        return $service instanceof RolesReadService ? $service : null;
+    }
+
+    private function currentExecutionContext(): ?ExecutionContext
+    {
+        $kernel = Plugin::kernel();
+        if ($kernel === null) {
+            return null;
+        }
+
+        $services = $kernel->services();
+        if (!$services->has('platform.abilities.contexts')) {
+            return null;
+        }
+
+        $factory = $services->get('platform.abilities.contexts');
+        return $factory instanceof WordPressExecutionContextFactory ? $factory->current() : null;
     }
 }
