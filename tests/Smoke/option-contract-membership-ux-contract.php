@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 $contract = json_decode((string) file_get_contents($root . '/config/product/option-contracts/membership.json'), true, 512, JSON_THROW_ON_ERROR);
 $ux = (string) file_get_contents($root . '/docs/UI/MEMBERSHIP-UX-CONTRACT-V1.md');
