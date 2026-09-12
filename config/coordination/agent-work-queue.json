@@ -1,8 +1,8 @@
 {
-  "schema_version": 7,
+  "schema_version": 8,
   "snapshot_date": "2026-09-12",
-  "queue_anchor_main_sha": "faec9ef5bbe799b3d89e7e13b7756772b16bda1b",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Completed slots are removed from the actionable queue and remain auditable in Git history. Surface 2 Taxonomy Builder under Issue #474 is the only currently actionable runtime lane. The owner-directed 11-worker Supervisor wave #583 is complete: Taxonomy residual audit #584 / PR #597 and Surfaces 19-28 planning Issues #585-#594 / PRs #598-#607 all merged and closed. Those planning outputs do not promote their Master Options Banks, Atomic Option Contracts, runtime or product-parity lifecycle. Surfaces 11-18 planning Issues #494-#501 / PRs #527-#534 are likewise complete and non-actionable. Hosted-agent assignment was attempted during #583 but the available GitHub connector returned HTTP 403; no hosted claim was falsely recorded, and deterministic branch claims were used under merged coordination PR #596. Managed-table execution, destructive taxonomy migration, Backup/Reset side effects, public mutation, provider/network side effects, deployment and release remain separately gated.",
+  "queue_anchor_main_sha": "b68f2637dfac757b89c6f2309c8fcec7fe0108fb",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active claims and this queue third, and only then starts new development. Completed or dependency-blocked work is removed from the actionable slots and remains auditable in Git history. Issue #474 remains OPEN, but after Issue #609 / merged PR #610 closed the Taxonomy dependency/runtime-health read-model residual and Issue #611 / merged PR #612 proved the final role-impact residual depends on a canonical Surface 30 Roles & Capabilities read seam that exact main does not provide, there are zero dependency-ready actionable queue slots in this snapshot. Surface 30 remains Master Options Bank UNSEEDED / 0 and lifecycle ATOMIC_INVENTORY_COMPLETE with no authorized runtime module/read seam. The owner-directed planning waves for Surfaces 11-28 remain complete and non-actionable. Hosted-agent assignment during Supervisor wave #583 returned HTTP 403, so no hosted claim was falsely recorded and deterministic branch claims were used under merged coordination PR #596. Managed-table execution, destructive taxonomy migration, Backup/Reset side effects, public mutation, provider/network side effects, deployment and release remain separately gated.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,17 +14,18 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "Priority 1010 is the only actionable slot in this snapshot: Taxonomy Runtime Gap Closure under Issue #474. Completed planning waves for Surfaces 11-28 must not be reclaimed from stale branches/issues. New work for those surfaces requires a new accepted issue/queue slot and must respect the current Master Options Bank and lifecycle gates.",
+    "selection_rule": "There are zero dependency-ready OPEN slots in this snapshot. Issue #474 is accepted but dependency-blocked on a future canonical read-only Surface 30 Roles & Capabilities impact seam; it must not be converted into direct WordPress role-store inspection inside Surface 2. Completed planning waves for Surfaces 11-28 must not be reclaimed from stale branches/issues. New work requires a new accepted issue/queue slot and must respect current Master Options Bank, ownership and lifecycle gates.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Create the exact claim_branch from exact current main without force; an existing branch means claimed. If branch creation is rejected, skip the slot and reconcile rather than invent another branch.",
+    "claim_branch_rule": "Create the exact claim_branch from exact current main without force only for a dependency-ready slot declared in this queue; an existing branch means claimed. If no valid slot exists, do not create speculative branches.",
     "no_valid_slot_behavior": "Make no repository changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "For Taxonomy read config/product/option-contracts/taxonomy.json, docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-POST-OBJECT-DISCOVERY-RESIDUAL-AUDIT-V1.md and current Taxonomies runtime/tests.",
+      "For Taxonomy read config/product/option-contracts/taxonomy.json, docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md, docs/IMPLEMENTATION/TAXONOMY-BUILDER-POST-OBJECT-DISCOVERY-RESIDUAL-AUDIT-V1.md, docs/IMPLEMENTATION/TAXONOMY-CAPABILITY-ROLE-IMPACT-DEPENDENCY-AUDIT-V1.md and current Taxonomies runtime/tests.",
+      "Treat Issue #474 as dependency-blocked unless exact-main evidence first promotes a canonical read-only Surface 30 role/capability impact seam through its own accepted authorization.",
       "Verify the selected slot is not already complete, superseded, blocked or claimed by its exact remote branch.",
       "Verify the proposed diff stays inside the slot's declared write boundary."
     ],
@@ -33,6 +34,7 @@
       "Reject overlap with another active slot or Supervisor-owned shared truth.",
       "Require all applicable exact-head CI green and clean review threads.",
       "For Taxonomy preserve canonical Ability/Policy, revision/CAS and Definition ownership.",
+      "Do not implement or infer a parallel role/capability engine inside Taxonomy while Surface 30 canonical read truth is absent.",
       "Do not infer destructive taxonomy-key migration authorization from planning evidence.",
       "Do not promote RUNTIME_CERTIFIED or PRODUCT_PARITY_CERTIFIED from bounded slices or green regressions alone."
     ],
@@ -62,8 +64,8 @@
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
         "Edit README, CHECKPOINT, config/coordination/agent-work-queue.json or another slot's files.",
-        "Invent another branch when a deterministic claim exists.",
-        "Start runtime work from planning-only historical evidence.",
+        "Invent another branch when no dependency-ready deterministic claim exists.",
+        "Start runtime work from planning-only or dependency-blocked evidence.",
         "Execute destructive provider/database/user/content mutation, Backup/Reset side effects, deployment or release without a separately accepted gate."
       ]
     }
@@ -94,39 +96,9 @@
     {"surface":"Reset","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #591 / merged PR #604"},
     {"surface":"Import/Export","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #592 / merged PR #605"},
     {"surface":"Protector","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #593 / merged PR #606"},
-    {"surface":"Media Operations","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #594 / merged PR #607"}
+    {"surface":"Media Operations","status":"PLANNING_COMPLETE_BANK_UNSEEDED_RUNTIME_UNPROMOTED","closure":"Issue #594 / merged PR #607"},
+    {"surface":"Taxonomy dependency/runtime-health read model","status":"BOUNDED_RUNTIME_RESIDUAL_CLOSED_NOT_CERTIFIED","closure":"Issue #609 / merged PR #610"},
+    {"surface":"Taxonomy capability role-impact preview","status":"DEPENDENCY_BLOCKED_SURFACE_30_READ_SEAM","closure":"Issue #611 / merged PR #612","dependency_truth":"Surface 30 Roles & Capabilities Bank UNSEEDED / 0; lifecycle ATOMIC_INVENTORY_COMPLETE; no authorized canonical runtime read seam on exact main"}
   ],
-  "slots": [
-    {
-      "priority": 1010,
-      "slot_id": "taxonomy-runtime-gap-closure-v1",
-      "title": "Taxonomy Builder Runtime Gap Closure V1",
-      "surface_id": 2,
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "PRODUCT_RUNTIME_GAP_CLOSURE",
-      "parallel_class": "SURFACE_2_TAXONOMY_RUNTIME",
-      "source": "Issue #474; post-object-discovery accounting Issue #584 / merged PR #597",
-      "runtime_allowed": true,
-      "product_parity_allowed": false,
-      "allowed_scope": [
-        "implement only evidence-backed genuine Taxonomy residuals under Issue #474",
-        "prioritize one canonical read-only dependency/usage model that can drive diagnostics plus Definition-list runtime health/dependency count and object-type dependency impact",
-        "add the reviewed read-only capability role-impact preview only through canonical Roles & Capabilities truth; no role grants or parallel role engine",
-        "preserve canonical Ability/Policy, revision/CAS and Definition ownership",
-        "maintain explicit exact-main remaining-gap accounting and focused evidence"
-      ],
-      "forbidden_scope": [
-        "reopening object-type search/grouping or Definition-list Revision, which are already closed",
-        "raw PHP or arbitrary callbacks/classes",
-        "taxonomy-key migration execution without separate explicit safety authorization",
-        "generic package/import-export orchestration",
-        "role grants or membership mutation",
-        "bypassing revision/CAS/Policy",
-        "RUNTIME_CERTIFIED or PRODUCT_PARITY_CERTIFIED promotion without later exact-main certification",
-        "deployment/release"
-      ],
-      "claim_branch": "agent/taxonomy-runtime-gap-closure-v1"
-    }
-  ]
+  "slots": []
 }
