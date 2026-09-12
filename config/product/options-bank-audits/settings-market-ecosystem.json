@@ -1,0 +1,20 @@
+{
+  "schema_version":1,"bank_version":"v1","surface":{"id":12,"key":"settings"},
+  "snapshot":{"date":"2026-09-13","notes":"Meta Box Settings Page, ACF Options Pages and Carbon Fields reconcile all 17 Surface 12 records. WordPress Settings/Options/User Meta remain canonical storage substrate; Fields and Vault ownership boundaries are preserved and reset/migration/import stay privileged."},
+  "status":"MARKET_AUDITED",
+  "required_families":["page_layout","storage_scope","lifecycle_portability","composition_security"],
+  "primary_providers":[
+    {"id":"meta_box","name":"Meta Box / MB Settings Page","evidence":["https://docs.metabox.io/extensions/mb-settings-page/","https://docs.metabox.io/field-settings/"],"family_map":{
+      "page_layout":["settings.page.identity","settings.page.navigation","settings.page.capability","settings.page.scope","settings.layout.tabs-sections","settings.layout.columns"],
+      "storage_scope":["settings.storage.mode","settings.storage.autoload-defaults","settings.storage.owner","settings.storage.inheritance","settings.value.registration","settings.feedback.errors"],
+      "lifecycle_portability":["settings.lifecycle.reset","settings.lifecycle.migration","settings.history.portability"],
+      "composition_security":["settings.composition.fields","settings.security.secret-ref"]},"non_applicable_families":[]},
+    {"id":"acf_options","name":"Advanced Custom Fields Options Pages","evidence":["https://www.advancedcustomfields.com/resources/options-page/","https://www.advancedcustomfields.com/resources/acf-add-options-page/"],"family_map":{
+      "page_layout":["settings.page.identity","settings.page.navigation","settings.page.capability","settings.layout.tabs-sections","settings.layout.columns"],
+      "storage_scope":["settings.storage.mode","settings.storage.owner","settings.value.registration"],
+      "composition_security":["settings.composition.fields","settings.security.secret-ref"]},"non_applicable_families":["lifecycle_portability"]}
+  ],
+  "specialist_providers":[{"id":"carbon_fields","name":"Carbon Fields Theme / Network Options","evidence":["https://docs.carbonfields.net/learn/containers/theme-options.html","https://docs.carbonfields.net/learn/containers/network.html","https://docs.carbonfields.net/learn/containers/condition-types.html"],"bank_record_ids":["settings.page.scope","settings.storage.owner","settings.layout.columns"]}],
+  "extra_dispositions":[{"id":"settings.raw_secret_serialization","provider":"ecosystem","disposition":"REJECTED_UNSAFE","evidence_url":"https://www.advancedcustomfields.com/resources/options-page/","notes":"Market password/API-key style fields do not justify serializing provider credentials in portable Settings definitions; Vault references remain canonical."}],
+  "coverage":{"primary_providers":2,"specialist_providers":1,"family_mappings":7,"non_applicable_family_cells":1,"bank_record_references":30,"extra_dispositions":1,"unresolved":0}
+}
