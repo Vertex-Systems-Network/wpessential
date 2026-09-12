@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $root = dirname(__DIR__, 2);
 $contractPath = $root . '/config/product/option-contracts/admin-menu.json';
 $uxPath = $root . '/docs/UI/ADMIN-MENU-UX-CONTRACT-V1.md';
