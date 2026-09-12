@@ -1,314 +1,90 @@
-# Emails — Provisional UX Contract V1
+# Emails — UX Contract V1
 
 Surface: **20 / Emails**  
-Planning issue: **#586**  
-Supervisor wave: **#583**  
-Exact-main claim anchor: `40a56e1da1ae59c4441176eda59d43eabe0cd8bc`
+Machine source: `config/product/option-contracts/emails.json`  
+Lifecycle: **UX certification candidate**. Machine truth is `OPTION_CONTRACT_COMPLETE`; preview/configuration does not authorize external email dispatch.
 
-Lifecycle status: **PROVISIONAL PLANNING ONLY**. Surface 20 remains `UNSEEDED / 0` in the Master Options Bank. This document guides later review; it does not promote `UX_CONTRACT_COMPLETE` or authorize mail delivery.
-
-## Product boundary
-
-Email Builder owns **email-safe template/rendering semantics**. It is not a generic webpage builder and it does not own Notification recipient/event policy, transport credentials or provider delivery truth.
-
-The UI must never imply that arbitrary frontend HTML/CSS/JS can be pasted into a template and rendered reliably in all clients.
-
-## Information architecture
-
-Primary screens:
+## Lifecycle preconditions
 
-1. Templates
-2. Create/Edit Template
-3. Layouts / Headers & Footers
-4. WordPress Email Overrides
-5. Branding
-6. Preview / Test
-7. Sender Profiles — dependency shortcut/read-only health
-8. Diagnostics
+- Machine status must remain `OPTION_CONTRACT_COMPLETE` or later with `missing=0` and `unclassified=0`.
+- All 16 current Atomic Option IDs are mapped exactly once below.
+- Template validation, sender/provider state, attachment authorization and token resolution remain server-authoritative.
 
-Delivery logs link to the owning Notification/transport evidence surface rather than creating a second delivery ledger.
-
-## Progressive disclosure
-
-### Essential
-
-Default template authoring exposes:
-
-- Name / stable key;
-- Draft / Published / Archived;
-- purpose/category;
-- default locale;
-- optional base layout;
-- subject;
-- preheader;
-- email-safe canvas;
-- plaintext preview/state;
-- Validate / Preview / Save.
-
-The block chooser contains only approved email-safe blocks. Unsupported browser widgets, scripts, forms, iframes and arbitrary frontend components are absent rather than merely warned.
-
-### Advanced
-
-Adds:
-
-- locale variants and fallback;
-- reusable layout revision behavior;
-- brand preset;
-- conditional blocks;
-- token formatting/fallbacks;
-- bounded Query/repeater data;
-- responsive/mobile safe controls;
-- attachments as authorized references;
-- optional tracking policy;
-- preferences/unsubscribe block;
-- dependency/usage summary;
-- import/export preview when later contracted.
-
-### Expert
-
-Adds high-impact but still declarative controls:
-
-- registered custom email block providers;
-- registered token/data providers;
-- sender profile reference;
-- WordPress/third-party override adapter bindings;
-- strict sanitizer/renderer profile;
-- source/generated HTML **read-only developer view** behind capability;
-- client-compatibility warnings;
-- renderer/template health details;
-- revision pin/follow-current policy.
+## Canonical route and information architecture
 
-No Expert field accepts raw executable PHP/JS/callback/class input or transport secrets.
+Canonical admin location: **WPEssential → Communication → Emails**.
 
-### System / Diagnostics
+The IA separates **Template Identity**, **Metadata & Layout**, **Branding**, **Email-Safe Blocks**, **Dynamic & Localization**, **Overrides**, **Sender & Attachments**, **Preview & Diagnostics**, **Portability & Performance**, and **Safety**. Definition/editing is distinct from provider transport and non-dispatching preview.
 
-Read-only system diagnostics show:
+## UX state classes
 
-- template/layout revision;
-- renderer/sanitizer version;
-- missing token/layout/brand dependencies;
-- sender profile health without credentials;
-- linked rules/events count;
-- unsupported/degraded override adapters;
-- HTML/plaintext size;
-- bounded repeater/query warnings;
-- attachment totals;
-- accessibility warnings;
-- generated output/source only where Policy allows.
+### Authored definition
+Template identity, metadata/layout, branding, safe blocks, typed tokens, locale/plaintext and portability/cache policy are revisioned Emails-owned definitions.
 
-## Templates list
+### Effective/runtime state
+Rendered preview, resolved tokens, locale fallback, plaintext result and compile/preflight diagnostics are effective/read-only context. Preview is not dispatch.
 
-Columns:
+### Diagnostic/provider state
+WordPress event adapters, certified third-party adapters, sender profiles and attachment references are provider/canonical-owner references with explicit health/certification state.
 
-- Name;
-- Key;
-- Status;
-- Purpose/category;
-- linked events/rules count;
-- Base layout;
-- locale variants;
-- Updated;
-- Revision;
-- Health;
-- Actions.
+### Deferred / prohibited state
+Raw PHP, script and untrusted executable HTML are prohibited. Sender credentials remain Vault/provider-owned and are never exposed or exported.
 
-Filters: lifecycle, default-override/custom, category, locale, linked/unlinked, needs-attention.
+## Atomic Option → UX map
 
-Actions: Edit, Preview, Test, Duplicate, Publish/Unpublish, Usage, Revisions, Export, Archive/Delete subject to later reviewed contracts.
+- `emails.template.identity` — Template Identity → template category/key/lifecycle/revision definition.
+- `emails.metadata.message` — Metadata & Layout → subject/preheader/locale/HTML-plaintext mode editor.
+- `emails.layout.shell` — Metadata & Layout → reusable email-safe shell/header/footer composition.
+- `emails.brand.tokens` — Branding → logo/color/typography/contact reference policy.
+- `emails.block.structure` — Email-Safe Blocks → section/columns/text/heading structure.
+- `emails.block.actions-media` — Email-Safe Blocks → button/image/divider/spacer controls with safe URL/media validation.
+- `emails.block.dynamic` — Email-Safe Blocks → bounded repeater/legal/dynamic/conditional blocks using registered providers/tokens only.
+- `emails.token.schema` — Dynamic & Localization → typed allowlisted token schema and deterministic null fallback.
+- `emails.locale.plaintext` — Dynamic & Localization → locale fallback plus deterministic plaintext generation/override.
+- `emails.override.wordpress` — Overrides → reviewed WordPress email-event adapter reference.
+- `emails.override.third-party` — Overrides → separately certified third-party compatibility-provider mapping and health state.
+- `emails.sender.profile` — Sender & Attachments → sender metadata/profile reference; credentials/verification remain provider/Vault-owned.
+- `emails.attachment.policy` — Sender & Attachments → Media/File-owned authorized attachment references plus count/size/MIME policy.
+- `emails.preview.diagnostics` — Preview & Diagnostics → non-dispatching preview/test/preflight diagnostics.
+- `emails.portability.performance` — Portability & Performance → secret-free import/export, revision conflict and bounded compile-cache policy.
+- `emails.safety.raw-executable` — Safety → prohibited raw PHP/script/untrusted executable markup evidence; never an authored control.
 
-## Canvas contract
+## Interaction and persistence
 
-Approved core blocks:
+Template editing uses draft → validate → preview → save revision. Preview shows exact locale/token fallbacks and validation diagnostics but does not send email. Adapter/sender changes require provider validation before save. Attachment selections are authorization-checked references; inaccessible items remain blocked.
 
-- Section/container;
-- Columns;
-- Text;
-- Heading;
-- Button;
-- Image;
-- Divider;
-- Spacer;
-- List;
-- bounded data/key-value table;
-- bounded repeater/list;
-- logo/brand block;
-- social links;
-- legal/preferences footer;
-- dynamic token/text;
-- conditional block;
-- registered email-safe custom block.
+## Loading, empty, validation, conflict and recovery
 
-The editor may look visual, but its source of truth is a structured email schema, not arbitrary browser DOM.
+Required states include no templates, preview loading, missing token/provider, invalid safe URL, unsupported block, adapter unavailable/uncertified, sender unverified/unknown, attachment denied/too large/unsupported MIME, locale fallback, stale revision, saved and recovery. Test-send is not inferred from preview and requires a separate authorized runtime gate.
 
-## Block editing rules
+## Security and ownership
 
-Every control must reflect renderer/client support. If a property is unreliable, hide it or mark its compatibility rather than promising universal output.
-
-Examples:
-
-- width/padding/border/radius use bounded email-safe values;
-- columns use supported table/email rendering and bounded mobile stacking;
-- text uses allowlisted semantic formatting;
-- URLs validate schemes and dynamic URL providers;
-- image alt text is required unless explicitly decorative;
-- repeaters/tables have hard row limits;
-- responsive options are limited to renderer-supported behavior.
-
-## Tokens
-
-Token browser groups approved providers such as Site, Recipient, Event, Entity, Form Entry, Membership, Query and Date/Time.
-
-Each token displays:
-
-- type;
-- source;
-- privacy classification;
-- escaping mode;
-- nullable fallback;
-- available safe formatters.
-
-Never expose password hashes, app passwords, OAuth/API credentials, secrets, raw user meta or arbitrary object dumps.
-
-Preview distinguishes missing, redacted, unauthorized and resolved tokens.
-
-## Conditional content
-
-Conditional blocks use shared declarative conditions. No raw PHP/template language.
-
-Conditions may reference only schema-approved recipient/event/entity/membership/query/locale facts and must render deterministically from the chosen template revision/context.
-
-## Metadata and sender boundary
-
-Template controls subject/preheader and may **reference** an allowed sender profile. Sender profile management, transport credentials and provider verification remain with the connection/transport owner.
-
-Safe sender display may include From name/address/domain, Reply-To and provider health. Credentials never appear.
-
-SPF/DKIM/DMARC status is shown only when a real diagnostic provider can verify it; configuration alone is not “verified”.
-
-## Layouts and branding
-
-Reusable layout supports outer shell, header, body slot and footer. Template can follow current published layout revision or explicitly pin a revision where deterministic requirements justify it.
-
-Changing a published layout shows impacted templates before publish.
-
-Branding controls are structured tokens (logo/colors/type/contact/social), not remote HTML/CSS imports.
-
-## Plaintext
-
-Every send-ready template exposes a plaintext preview.
-
-Modes:
-
-- auto-generate from structured blocks;
-- custom plaintext override.
-
-Auto-generation removes decorative-only content and converts buttons/images/tables/lists into readable text/link forms without raw HTML remnants.
-
-## WordPress email overrides
-
-Overrides screen lists **registered stable event adapters**, not all `wp_mail()` traffic.
-
-Per adapter:
-
-- event name/owner/version;
-- Default / WPE Override state;
-- template selection;
-- supported subject override;
-- recipient-ownership explanation;
-- sample/test context;
-- restore default;
-- health state: supported / partial / unavailable.
-
-If WordPress lacks a stable semantic override, mark it Partial/Unsupported. Do not intercept mail by fragile string matching.
-
-## Third-party adapters
-
-Only certified adapters appear. Each shows supported plugin versions, event schema, override scope and fallback-to-original behavior.
-
-Missing/outdated adapters degrade safely instead of breaking the plugin's native mail path.
-
-## Attachments
-
-Attachment slots reference approved static media, generated documents or event/form files under Policy.
-
-Show count, total size, MIME restrictions and private-file exposure warnings. Prefer secure expiring links for large/private files where the owning resource supports them.
-
-No attachment resolution bypasses file/resource authorization.
-
-## Tracking and preferences
-
-Open/click tracking is privacy-sensitive and defaults to off at planning level unless a later reviewed policy says otherwise.
-
-When enabled, show provider capability and privacy implication; never claim perfect accuracy because image blocking/privacy proxies distort signals.
-
-Optional/subscription templates can include unsubscribe/manage-preferences blocks. Required transactional/security messages remain separately classified by Notifications policy.
-
-## Preview and test
-
-Preview modes:
-
-- Desktop width;
-- Mobile width;
-- Plaintext;
-- token/context inspector;
-- generated HTML/source developer view where capability permits.
-
-Preview is approximate client rendering, not proof of Gmail/Outlook parity.
-
-Test-send preflight surfaces:
-
-- missing/unauthorized tokens;
-- invalid URLs;
-- unsupported blocks;
-- sender/connection health;
-- HTML/plaintext size;
-- attachment size;
-- alt-text/accessibility warnings.
-
-A test send is clearly labelled in evidence and must not mutate real business workflow state.
-
-## Revisions
-
-Published revisions are immutable. A delivery/notification occurrence must be able to identify which template/layout revision rendered it.
-
-Editing a draft does not silently change deterministic already-queued output where the Rule pinned a revision.
+Vault/provider owns sender credentials and verification. Media/File owners authorize protected attachments. Event/third-party adapters own integration execution. Emails owns template/rendering definitions only. Raw PHP/script/untrusted executable markup is prohibited. Preview/preflight is non-dispatching, and UI state never fabricates provider verification or successful delivery.
 
 ## Accessibility
 
-The editor must provide:
+Template editor controls require labels, keyboard operation and visible focus. Block reordering has keyboard alternatives. Preview exposes text/plaintext alternatives. Validation summaries link to offending controls. Provider/attachment status is textual and not color-only.
 
-- semantic block labels and keyboard reordering/actions;
-- focus management for block add/delete/move dialogs;
-- error summary linked to block/control;
-- heading-hierarchy guidance;
-- alt/decorative image control;
-- contrast/font-size guidance without pretending all client CSS is controllable;
-- no color/image-only essential meaning;
-- accessible preview modes;
-- no drag-only required interaction.
+## Multisite and scope
 
-Output renderer should preserve meaningful headings, alt text, link/button purpose and readable plaintext fallback within email-client limitations.
+Template/sender/adapter scope is explicit. Network/global context is server-derived. Imports cannot silently bind a site template to a network sender or unrelated third-party adapter.
 
-## Multisite
+## Portability and reference remapping
 
-A later normalized contract must define:
+Exports are definition-only and secret-free. Imports validate sender, adapter, Media/File and token-provider references, report unresolved mappings and never include credentials. Preview/runtime observations are not imported as authored state.
 
-- site-local vs network templates/layouts/brands;
-- inheritance/override rules;
-- sender profile scope;
-- core email override scope;
-- network user/site locale behavior;
-- import/export dependency mapping;
-- who may view/test sensitive templates across sites.
+## Performance and scale
 
-The UX must display scope explicitly and never infer cross-site access from presentation alone.
+Large template libraries paginate/filter. Dynamic preview is bounded and avoids N+1 token/provider resolution. Compile caches are revision-addressed and invalidated deterministically. Admin assets load only on relevant Email screens.
 
-## Portability
+## Degraded/provider states
 
-Exports include structured template schema, layout/brand/token dependencies, locale variants and revision policy, **never sender credentials**.
+Missing/uncertified adapter, sender provider, token source or attachment owner produces explicit unavailable/degraded state. The surface never fabricates sender verification, attachment authorization, dispatch, provider acceptance, delivery or receipt.
 
-Import preflight reports missing providers/layouts/connections, version incompatibilities and conflicts. Generic package orchestration remains Surface 26.
+## UX lifecycle exit criteria
 
-## Lifecycle decision
+Certification requires complete 16-ID mapping, zero missing/unclassified machine semantics, raw-executable rejection, non-dispatching preview truth, provider/attachment ownership review, accessibility/portability/performance/degraded states and exact-head validator CI. Shared lifecycle promotion remains Supervisor-only.
 
-This is a provisional interaction contract only. Because Surface 20 is still `UNSEEDED / 0`, it must be re-reviewed after Bank review and schema-valid Atomic Option Contracts. No lifecycle or runtime certification follows from this document.
+## Non-certifications
+
+Runtime implementation is not certified by this document. Product parity is not certified. Production deployment or release is not verified. No external email dispatch, sender credential operation, provider execution or protected-file mutation is authorized by this UX contract.
