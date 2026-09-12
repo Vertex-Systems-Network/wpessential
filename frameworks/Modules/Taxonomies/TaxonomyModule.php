@@ -13,6 +13,8 @@ use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
+use WPEssential\Modules\Roles\RolesModule;
+use WPEssential\Modules\Roles\RolesReadService;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Admin\AdminAssetManifest;
@@ -41,6 +43,7 @@ final class TaxonomyModule implements ModuleInterface
             name: 'Taxonomy Builder',
             version: '0.1.0',
             edition: 'free',
+            dependencies: ['roles'],
         );
     }
 
@@ -53,6 +56,7 @@ final class TaxonomyModule implements ModuleInterface
         $abilityBridge = $services->get('platform.abilities.wordpress');
         $abilityContexts = $services->get('platform.abilities.contexts');
         $ajaxRoutes = $services->get('platform.ajax.routes');
+        $rolesRead = $services->get(RolesModule::SERVICE_READ);
         if (!$definitions instanceof DefinitionRepositoryInterface) {
             throw new LogicException('Taxonomies requires the shared Definition Repository.');
         }
@@ -74,10 +78,14 @@ final class TaxonomyModule implements ModuleInterface
         if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
             throw new LogicException('Taxonomies requires the shared AJAX route registry.');
         }
+        if (!$rolesRead instanceof RolesReadService) {
+            throw new LogicException('Taxonomies requires the canonical Surface 30 Roles read service.');
+        }
 
         $projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
         $provider = new TaxonomyRegistrationProvider($definitions, $projector);
         $validation = new TaxonomyValidationService($definitions, $projector);
+        $roleImpact = new TaxonomyRoleImpactReadModel($rolesRead);
         $cptUiMapper = new TaxonomyCptUiImportMapper();
         $cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
         $keyMigrationPreview = new TaxonomyKeyMigrationPreviewService($definitions, $projector);
@@ -86,6 +94,7 @@ final class TaxonomyModule implements ModuleInterface
         $services->set('module.taxonomies.projector', $projector);
         $services->set('module.taxonomies.registration-provider', $provider);
         $services->set('module.taxonomies.validation', $validation);
+        $services->set('module.taxonomies.role-impact', $roleImpact);
         $services->set('module.taxonomies.cptui-mapper', $cptUiMapper);
         $services->set('module.taxonomies.cptui-preview', $cptUiPreview);
         $services->set('module.taxonomies.key-migration-preview', $keyMigrationPreview);
@@ -97,6 +106,7 @@ final class TaxonomyModule implements ModuleInterface
             $definitions,
             $projector,
             $validation,
+            $roleImpact,
             $cptUiPreview,
             $keyMigrationPreview,
             $rewriteRefresh,
@@ -152,6 +162,7 @@ final class TaxonomyModule implements ModuleInterface
         DefinitionRepositoryInterface $definitions,
         TaxonomyDefinitionProjector $projector,
         TaxonomyValidationService $validation,
+        TaxonomyRoleImpactReadModel $roleImpact,
         TaxonomyCptUiImportPreviewService $cptUiPreview,
         TaxonomyKeyMigrationPreviewService $keyMigrationPreview,
         TaxonomyRewriteRefreshCoordinator $rewriteRefresh,
@@ -164,6 +175,7 @@ final class TaxonomyModule implements ModuleInterface
             $validation,
             TaxonomyAbilityHandler::SAVE,
             $rewriteRefresh,
+            $roleImpact,
         );
 
         $this->registerAbility(
@@ -178,7 +190,13 @@ final class TaxonomyModule implements ModuleInterface
                 inputSchema: ['type' => 'object'],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyAbilityHandler($definitions, $projector, $validation, TaxonomyAbilityHandler::LIST),
+            new TaxonomyAbilityHandler(
+                $definitions,
+                $projector,
+                $validation,
+                TaxonomyAbilityHandler::LIST,
+                roleImpact: $roleImpact,
+            ),
             'List taxonomies',
             'Lists canonical WPEssential Taxonomy definitions for the current site scope.',
         );
@@ -199,7 +217,13 @@ final class TaxonomyModule implements ModuleInterface
                 ],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyAbilityHandler($definitions, $projector, $validation, TaxonomyAbilityHandler::GET),
+            new TaxonomyAbilityHandler(
+                $definitions,
+                $projector,
+                $validation,
+                TaxonomyAbilityHandler::GET,
+                roleImpact: $roleImpact,
+            ),
             'Get taxonomy',
             'Reads one canonical WPEssential Taxonomy definition by immutable definition id.',
         );
@@ -223,7 +247,7 @@ final class TaxonomyModule implements ModuleInterface
                 ],
                 outputSchema: $outputSchema,
             ),
-            new TaxonomyValidationAbilityHandler($validation),
+            new TaxonomyValidationAbilityHandler($validation, $roleImpact),
             'Validate taxonomy',
             'Preflights a Taxonomy candidate without mutating canonical definitions or runtime registration.',
         );
@@ -326,6 +350,7 @@ final class TaxonomyModule implements ModuleInterface
                 $validation,
                 TaxonomyAbilityHandler::IMPORT,
                 $rewriteRefresh,
+                $roleImpact,
             ),
             'Import taxonomy definition',
             'Imports one portable Taxonomy definition through Surface 2 create-only or explicit revision-safe update semantics.',
@@ -383,6 +408,7 @@ final class TaxonomyModule implements ModuleInterface
                 $validation,
                 TaxonomyAbilityHandler::STATUS,
                 $rewriteRefresh,
+                $roleImpact,
             ),
             'Change taxonomy status',
             'Changes Taxonomy lifecycle status without deleting its canonical persisted definition.',
