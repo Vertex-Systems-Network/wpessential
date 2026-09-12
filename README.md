@@ -28,13 +28,13 @@ Project website: **https://wpessential.org**
 - Status Manager: **PASS for the certified bounded V1 baseline** via Issue #378 / merged PR #379.
 - Surface 7 / Custom Tables: **ACTIVE / NOT PASS — bounded runway 90%**, safe-paused with managed-table execution blocked after Issue #463 / merged PR #464 and Issue #465 / merged PR #466.
 - Surface 1 / CPT Builder: **UX_CONTRACT_COMPLETE / NOT RUNTIME CERTIFIED** through Issue #473 / merged PR #477.
-- Surface 2 / Taxonomy Builder: **UX_CONTRACT_COMPLETE / Runtime Gap Closure V1 ROLE-IMPACT CONSUMER COMPLETE / NOT RUNTIME CERTIFIED** under Issue #474. Searchable/grouped object-type discovery is promoted through Issue #577 / merged PR #578. Issue #609 / merged PR #610 closes the read-only dependency/usage, Definition-list runtime-health/dependency-count and diagnostics residual. Surface 30 Issue #618 / merged PR #620 provides the canonical read-only role/capability impact seam, and Taxonomy Issue #621 / merged PR #623 consumes it without direct WordPress role-store inspection while preserving explicit allow/deny/absent and contextual caveats. Full runtime/product parity remains unpromoted and a later exact-main residual/certification audit is still required.
+- Surface 2 / Taxonomy Builder: **RUNTIME_CERTIFIED for the accepted V1 owner-runtime scope** through Issue #632 / merged PR #634. The V1 audit Issue #626 / merged PR #628 isolated three final admin-UX blockers; Issue #629 / merged PR #631 closed canonical role-impact preview, unsaved-change guard and sticky Validate/Save behavior with exact-head Architecture Guards, Distributable Package and Browser E2E/Accessibility green. `PRODUCT_PARITY_CERTIFIED` remains unpromoted, taxonomy-key migration execution remains separately safety-gated, and generic package orchestration remains outside Surface 2.
 - Surface 10 / Dashboard Widgets: **UX_CONTRACT_COMPLETE / NOT RUNTIME CERTIFIED** through Issue #493 / merged PR #508; reviewed 123-record Bank, 18 normalized contracts, deterministic 123/123 projection, reviewed UX contract and runtime gap matrix are promoted as planning truth only.
 - Surfaces 11–18: **planning worker wave COMPLETE / runtime unpromoted** through Issues #494–#501 / merged PRs #527–#534. Their Master Options Banks remain `UNSEEDED / 0`; branch planning evidence did not promote canonical Bank/runtime lifecycle.
 - Surfaces 19–28: **planning/readiness wave COMPLETE / runtime unpromoted** through Issues #585–#594 / merged PRs #598–#607. Each surface now has an evidence-backed Bank-entry/readiness decision, provisional UX contract and runtime-gap/prerequisite matrix, while each Master Options Bank remains `UNSEEDED / 0`; no schema-valid option-contract, UX lifecycle, runtime or product-parity promotion is implied.
 - Surface 30 / Roles & Capabilities: **UX_CONTRACT_COMPLETE / bounded canonical read-only runtime seam accepted / NOT RUNTIME CERTIFIED** through Issue #615 / merged PR #617 and Issue #618 / merged PR #620. The Bank is `BANK_REVIEWED / 68` with 19 normalized Atomic Option Contracts and deterministic 68/68 projection. The accepted runtime seam is policy-gated and read-only; broader role/capability/user mutation and full runtime/product parity remain unpromoted.
 
-README audited base anchor: `main @ 53a8589247703014fbd2fd9a720fcaf20665f5fa` on **2026-09-12 UTC**. CPT Options Bank closure is promoted through Issue #467 / merged PR #469 and CPT Atomic Option Contract + UX Closure through Issue #473 / merged PR #477. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470; searchable/grouped object-type discovery through Issue #577 / merged PR #578; post-discovery residual accounting through Issue #584 / merged PR #597; read-only dependency/runtime-health closure through Issue #609 / merged PR #610; the role-impact prerequisite audit through Issue #611 / merged PR #612; the canonical Surface 30 read seam through Issue #618 / merged PR #620; and the thin Taxonomy role-impact consumer through Issue #621 / merged PR #623 while parent Issue #474 stays open for later exact-main residual/certification accounting. Dashboard Widgets planning closure remains Issue #493 / merged PR #508. Surfaces 11–18 planning Issues #494–#501 are closed by PRs #527–#534. Supervisor Issue #583 records the owner-directed 11-worker wave; Issues #584–#594 are closed through PRs #597–#607. Hosted-agent assignment was attempted during that wave but the available connector returned HTTP 403, so repository-precedent deterministic branch claims were used without pretending a hosted claim existed. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README audited base anchor: `main @ 4543ff50b92a2726cce93d8359749506bba2b6fe` on **2026-09-12 UTC**. CPT Options Bank closure is promoted through Issue #467 / merged PR #469 and CPT Atomic Option Contract + UX Closure through Issue #473 / merged PR #477. Taxonomy Atomic Option Contract + UX closure is promoted through Issue #468 / merged PR #470; searchable/grouped object-type discovery through Issue #577 / merged PR #578; post-discovery residual accounting through Issue #584 / merged PR #597; read-only dependency/runtime-health closure through Issue #609 / merged PR #610; the canonical Surface 30 read seam through Issue #618 / merged PR #620; the thin Taxonomy role-impact consumer through Issue #621 / merged PR #623; V1 non-certification audit through Issue #626 / merged PR #628; final admin UX closure through Issue #629 / merged PR #631; and fresh exact-main V2 runtime certification through Issue #632 / merged PR #634. Dashboard Widgets planning closure remains Issue #493 / merged PR #508. Surfaces 11–18 planning Issues #494–#501 are closed by PRs #527–#534. Supervisor Issue #583 records the owner-directed 11-worker wave; Issues #584–#594 are closed through PRs #597–#607. Hosted-agent assignment was attempted during that wave but the available connector returned HTTP 403, so repository-precedent deterministic branch claims were used without pretending a hosted claim existed. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -49,7 +49,7 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | # | Module / Surface | Lifecycle / Status | Progress | Start date/time (UTC) | Estimated completion date/time (UTC) | Actual completion date/time (UTC) | Latest evidence | Next gate |
 |---:|---|---|---|---|---|---|---|---|
 | 1 | CPT Builder | PLANNED — UX_CONTRACT_COMPLETE; Options Bank BANK_REVIEWED (107); 23 atomic contracts + deterministic 107/107 projection; runtime baseline gap-audited / full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:34Z | FORECAST PENDING / later exact-main CPT runtime transition audit required | — | Issue #473 / merged PR #477 + CPT contract/UX/runtime gap matrix | No CPT runtime-gap lane currently authorized; exact-main transition audit required |
-| 2 | Taxonomy Builder | ACTIVE RESIDUAL ACCOUNTING — UX_CONTRACT_COMPLETE; bounded dependency/runtime-health and canonical Surface 30-backed role-impact consumer residuals closed; full-parity lifecycle not promoted | — / no full-parity percentage milestone | 2026-09-09T21:03:50Z | FORECAST PENDING / later exact-main residual/certification audit required | — | Issue #474; #577 / PR #578; #584 / PR #597; #609 / PR #610; #611 / PR #612; Surface 30 #618 / PR #620; #621 / PR #623 | No dependency-ready implementation slot currently authorized. Run a separately accepted exact-main residual/certification audit before Issue #474 closure or any runtime-certification claim; taxonomy-key migration execution remains separately gated |
+| 2 | Taxonomy Builder | PASS — `RUNTIME_CERTIFIED` for accepted V1 owner-runtime; full product parity not promoted | `██████████ 100%` for certified V1 runtime milestone | 2026-09-09T21:03:50Z | — completed | 2026-09-12T12:52:35Z | Issue #632 / merged PR #634; final UX closure #629 / PR #631; canonical role-impact seam #618 / PR #620 + consumer #621 / PR #623 | Product-parity acceptance is separate; taxonomy-key migration execution remains separately safety-gated; no current Surface 2 worker slot |
 | 3 | Fields | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate A | Broader provider/full parity remains gated |
 | 4 | Relations | PASS — certified native V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Gate B | Richer provider/full parity remains gated |
 | 5 | Status | PASS — certified bounded V1 | `██████████ 100%` | UNKNOWN / pending evidence audit | — completed | UNKNOWN / pending evidence audit | Issue #378 / PR #379 | Workflow/provider/bulk parity remains gated |
@@ -212,10 +212,10 @@ No CPT runtime-gap implementation lane is authorized by the current queue. The n
 
 ### Surface 2 — Taxonomy Builder
 
-Current machine truth through Issue #621 / merged PR #623:
+Current machine truth through Issue #632 / merged PR #634:
 
 - Options Bank `BANK_REVIEWED`, 71 records, zero unresolved review items;
-- lifecycle `UX_CONTRACT_COMPLETE`;
+- lifecycle `RUNTIME_CERTIFIED` for the accepted V1 owner-runtime scope;
 - 20 normalized atomic contracts with deterministic 71/71 Bank source projection;
 - `missing=0`, `unclassified=0`;
 - reviewed Essential/Advanced/Expert UX contract and accepted runtime gap matrix;
@@ -227,14 +227,14 @@ Current machine truth through Issue #621 / merged PR #623:
 - Surface 30 Issue #615 / merged PR #617 promotes `BANK_REVIEWED / 68`, 19 normalized Atomic Option Contracts, deterministic 68/68 projection and `UX_CONTRACT_COMPLETE` planning truth;
 - Surface 30 Issue #618 / merged PR #620 promotes a bounded canonical policy-gated read-only role catalog/capability-impact seam with explicit true/false/absent semantics, scoped degraded/unavailable states, site/network context and Super Admin caveats; this does not certify the whole Surface 30 product;
 - Taxonomy Issue #621 / merged PR #623 consumes only that canonical Surface 30 seam for Definition `read_model.role_impact` and validation `diagnostics.role_impact`, preserves explicit allow/deny/absent and contextual/meta-capability caveats, deduplicates repeated capability queries, and fails visibly unavailable instead of scanning WordPress role storage directly;
-- PR #623 exact head passed PHP Quality, Distributable Package, Taxonomy Runtime, the dedicated WP 6.9/7.1 × PHP 8.2/8.5 Taxonomy Role Impact matrix, Platform Compatibility Matrix, Architecture Guards and packaged Browser E2E/Accessibility;
+- Issue #626 / merged PR #628 independently audited exact main and identified exactly three remaining reviewed admin-UX blockers: visual role-impact preview, unsaved-change guard and sticky Validate/Save;
+- Issue #629 / merged PR #631 closes those three blockers and its final head `7c49f294...` passed Architecture Guards, Distributable Package and Browser E2E Accessibility, including packaged role-impact/dirty-state/sticky-command/Axe evidence;
+- Issue #632 / merged PR #634 performs the fresh exact-main contract-by-contract V2 audit and finds no remaining accepted V1 blocker, promoting the accepted Surface 2 V1 owner-runtime scope to `RUNTIME_CERTIFIED`;
 - taxonomy-key migration planning exists, but **execution remains blocked by design** pending separate explicit safety authorization;
 - generic package/import-export orchestration remains Surface 26-owned;
-- full runtime/product parity is not certified.
+- `PRODUCT_PARITY_CERTIFIED` remains unpromoted.
 
-Current lane: **Taxonomy Builder Runtime Gap Closure V1 — bounded residual implementation/evidence complete through the role-impact consumer; exact-main residual/certification audit pending** (Issue #474).
-
-There is no dependency-ready Surface 2 implementation slice in the current queue. The role-impact dependency is satisfied and its thin consumer is complete, but Issue #474 must remain open until a separately accepted exact-main audit verifies that every accepted V1 residual is evidence-accounted and determines whether parent closure is justified. Taxonomy-key migration execution remains separately gated and is not implicitly authorized by that audit. No current evidence promotes `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`.
+Current lane: **Taxonomy Builder Runtime Gap Closure V1 is complete and runtime-certified for the accepted V1 owner-runtime scope**. No dependency-ready Surface 2 implementation slice remains in the current queue. Taxonomy-key migration execution and product-parity acceptance are separate gates and are not implicitly authorized by V1 certification.
 
 ## Owner-directed planning waves
 
@@ -270,7 +270,7 @@ Neither CPT nor Taxonomy may be reported fully final until that surface explicit
 8. machine lifecycle `RUNTIME_CERTIFIED`;
 9. competitor-parity acceptance `PRODUCT_PARITY_CERTIFIED`.
 
-CPT Contract/UX planning is complete. Taxonomy Runtime Gap Closure remains open under Issue #474 for exact-main residual/certification accounting; the former Surface 30 role-impact dependency is satisfied and its bounded consumer is complete through Issue #621 / merged PR #623. Dashboard Widgets Contract/UX planning is complete but no runtime lane is authorized. No new CPT, Taxonomy or Dashboard Widgets runtime implementation lane exists until separately accepted exact-main evidence authorizes a dependency-ready next step.
+CPT Contract/UX planning is complete. Taxonomy has now promoted item 8 for the accepted V1 owner-runtime scope through Issue #632 / merged PR #634, but item 9 remains unpromoted; taxonomy-key migration execution also remains separately safety-gated and is not required merely to preserve the V1 runtime certification boundary. Dashboard Widgets Contract/UX planning is complete but no runtime lane is authorized. No new CPT, Taxonomy or Dashboard Widgets runtime implementation lane exists until separately accepted exact-main evidence authorizes a dependency-ready next step.
 
 ## Planning / Bank snapshot
 
@@ -283,7 +283,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 - Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
 - No bounded module pass in this README implies full product parity or release readiness.
 
-`config/product/atomic-option-contract-progress.json` currently records all 56 surfaces in the atomic inventory, with **4 surfaces at `UX_CONTRACT_COMPLETE`** (CPT Builder, Taxonomy Builder, Admin Columns and Dashboard Widgets), **5 surfaces at or beyond `OPTION_CONTRACT_COMPLETE`**, and full-parity runtime/product certification still at zero. Machine-readable files are authoritative for planning lifecycle counts.
+`config/product/atomic-option-contract-progress.json` records all 56 surfaces in the atomic inventory, with **4 surfaces exactly at `UX_CONTRACT_COMPLETE` plus Taxonomy at `RUNTIME_CERTIFIED` (5 surfaces at or beyond UX completion)**, **6 surfaces at or beyond `OPTION_CONTRACT_COMPLETE`**, **1 surface at `RUNTIME_CERTIFIED`**, and **0 surfaces at `PRODUCT_PARITY_CERTIFIED`**. Machine-readable files are authoritative for lifecycle counts.
 
 ## Certified runtime / implementation gates
 
@@ -295,9 +295,10 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 | D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
 | E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
 | Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
+| Taxonomy Builder | **PASS — `RUNTIME_CERTIFIED` accepted V1 owner-runtime scope** | Product parity and taxonomy-key migration execution remain separate gates |
 | Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Trusted evidence hardening promoted; managed-table execution remains blocked and Surface 7 is safe-paused |
 
-`config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
+`config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS must never be reported as `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted.
 
 ## Multi-agent development
 
@@ -317,7 +318,7 @@ Start WPEssential Worker in AUTO mode.
 
 Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
 
-Parallelism is encouraged only for non-overlapping dependency-safe lanes. The owner-directed Surfaces 11–28 planning waves are complete and non-actionable in the current queue. **There are currently zero dependency-ready actionable queue slots.** Issue #474 remains open for a later separately accepted exact-main residual/certification audit, but it does not authorize speculative implementation or reuse of historical branches. Until accepted exact-main evidence opens a new dependency-ready slot, the deterministic behavior is `NO_VALID_WORK_SLOT`.
+Parallelism is encouraged only for non-overlapping dependency-safe lanes. The owner-directed Surfaces 11–28 planning waves are complete and non-actionable in the current queue. **There are currently zero dependency-ready actionable queue slots.** Surface 2 Taxonomy accepted V1 owner-runtime certification is complete through Issue #632 / merged PR #634; product parity and taxonomy-key migration execution remain separately gated and do not authorize speculative implementation. Until a new accepted exact-main Issue opens a dependency-ready slot, the deterministic behavior is `NO_VALID_WORK_SLOT`.
 
 ## What WPEssential is
 
@@ -390,6 +391,9 @@ CPT, Taxonomy and Dashboard Widgets planning/runtime evidence currently includes
 - `docs/IMPLEMENTATION/TAXONOMY-CAPABILITY-ROLE-IMPACT-DEPENDENCY-AUDIT-V1.md`
 - `docs/IMPLEMENTATION/TAXONOMY-ROLE-IMPACT-CONSUMER-V1.md`
 - `docs/IMPLEMENTATION/ROLES-CAPABILITIES-READ-SEAM-RUNTIME-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-FINAL-ADMIN-UX-CLOSURE-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V2.md`
 - `config/product/option-contracts/dashboard-widgets.json`
 - `docs/UI/DASHBOARD-WIDGETS-UX-CONTRACT-V1.md`
 - `docs/IMPLEMENTATION/DASHBOARD-WIDGETS-RUNTIME-GAP-MATRIX-V1.md`
