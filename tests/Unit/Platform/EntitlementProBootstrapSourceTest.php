@@ -27,14 +27,15 @@ final class EntitlementProBootstrapSourceTest extends TestCase
         self::assertLessThan($contribution, $policy);
     }
 
-    public function testProAutoloadIsFailClosedUntilCompatibilityPasses(): void
+    public function testProAutoloadIsFailClosedUntilCanonicalRequestLocalCompatibilityPasses(): void
     {
         $source = file_get_contents(dirname(__DIR__, 3) . '/wpessential-pro.php');
         self::assertIsString($source);
 
         self::assertStringContainsString("WPEssential\\\\Modules\\\\Compatibility\\\\", $source);
-        self::assertStringContainsString('WPE_PRO_COMPATIBILITY_STATE', $source);
-        self::assertStringContainsString("WPE_PRO_COMPATIBILITY_STATE !== 'compatible'", $source);
+        self::assertStringContainsString("$GLOBALS['wpe_pro_compatibility_result']", $source);
+        self::assertStringContainsString("($compatibility['state'] ?? '') !== 'compatible'", $source);
+        self::assertStringContainsString("$GLOBALS['wpe_pro_compatibility_result'] = $result", $source);
     }
 
     public function testBootstrapContainsNoRemoteLicenseOrBillingTransport(): void
