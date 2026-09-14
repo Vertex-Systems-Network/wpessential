@@ -18,6 +18,16 @@ use WPEssential\Platform\Observability\NullTraceRecorder;
 
 final class RuntimeDiagnosticsModuleInventoryTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        unset($GLOBALS['wpe_pro_compatibility_result']);
+    }
+
+    protected function tearDown(): void
+    {
+        unset($GLOBALS['wpe_pro_compatibility_result']);
+    }
+
     public function testInventoryUsesCanonicalRegistryAndEntitlementTruth(): void
     {
         $entitlements = new LocalProductEntitlementProvider(
@@ -61,6 +71,39 @@ final class RuntimeDiagnosticsModuleInventoryTest extends TestCase
             'compatibility_state_unavailable_adr_0010_not_certified',
             $inventory[1]['compatibility'],
         );
+    }
+
+    public function testProInventoryConsumesCanonicalCompatiblePairResult(): void
+    {
+        $GLOBALS['wpe_pro_compatibility_result'] = [
+            'state' => 'compatible',
+            'dimension' => 'pair',
+            'reason' => 'compatible_local_pair',
+            'remediation' => 'none',
+            'free_version' => '0.1.0-dev',
+            'platform_api' => '0.1.0',
+            'platform_schema' => 1,
+            'pro_schema' => 1,
+            'premium_boot_allowed' => true,
+            'premium_migrations_allowed' => true,
+        ];
+
+        $entitlements = new LocalProductEntitlementProvider(
+            new ProductEntitlementSnapshot(ProductEntitlementState::ProActive),
+        );
+        $kernel = new Kernel(
+            moduleActivationPolicy: new EntitlementAwareModuleActivationPolicy($entitlements),
+        );
+        $kernel->registerModule($this->module('pro-inventory', 'Pro Inventory', 'pro'));
+        $kernel->modules()->markBooted('pro-inventory');
+
+        $modules = (new RuntimeDiagnosticsSnapshot($kernel, new NullTraceRecorder(), false))->build()['modules'];
+
+        self::assertSame('compatible', $modules['pro_compatibility']['state']);
+        self::assertSame('compatible_local_pair', $modules['pro_compatibility']['reason']);
+        self::assertTrue($modules['pro_compatibility']['premium_boot_allowed']);
+        self::assertSame('compatible_adr_0010_not_certified', $modules['inventory'][0]['compatibility']);
+        self::assertSame('pro_active', $modules['inventory'][0]['entitlement']);
     }
 
     public function testDegradedModuleReportsCanonicalRegistryStateAndReason(): void
