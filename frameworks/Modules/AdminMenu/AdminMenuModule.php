@@ -33,7 +33,7 @@ final class AdminMenuModule implements ModuleInterface
             id: 'admin-menu',
             name: 'Admin Menu',
             version: '0.1.0',
-            edition: 'free',
+            edition: 'pro',
         );
     }
 
