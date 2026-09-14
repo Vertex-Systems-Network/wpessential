@@ -1,10 +1,10 @@
 # WPEssential — P-006 / P-001 Environment-Floor Dependency Reconciliation
 
-Status: **DEPENDENCY RECONCILIATION ONLY — NO P-001 OR P-006 FIXTURE EXECUTION**  
-Issue: **#949**  
-Parent: **#939**  
-Queue: **v40**  
-Exact assessment base: **`main @ 199fbcfe58b1517d2ce680a28579fc5a2b58585e`**  
+Status: **DEPENDENCY RECONCILIATION ONLY — NO P-001 OR P-006 FIXTURE EXECUTION**
+Issue: **#949**
+Parent: **#939**
+Queue: **v40**
+Exact assessment base: **`main @ 199fbcfe58b1517d2ce680a28579fc5a2b58585e`**
 Claim branch: **`agent/p006-p001-environment-floor-reconciliation-v1`**
 
 ## 1. Purpose and hard boundary
