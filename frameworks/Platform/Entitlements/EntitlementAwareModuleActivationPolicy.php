@@ -26,4 +26,9 @@ final readonly class EntitlementAwareModuleActivationPolicy implements ModuleAct
 
         return $this->entitlements->snapshot()->permitsPremiumModuleActivation();
     }
+
+    public function entitlementSnapshot(): ProductEntitlementSnapshot
+    {
+        return $this->entitlements->snapshot();
+    }
 }
