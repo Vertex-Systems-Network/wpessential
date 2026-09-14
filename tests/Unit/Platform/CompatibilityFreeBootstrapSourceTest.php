@@ -18,9 +18,9 @@ final class CompatibilityFreeBootstrapSourceTest extends TestCase
         $body = substr($source, $method, 1800);
 
         self::assertStringContainsString('WPE_PRO_PACKAGE_ACTIVE', $body);
-        self::assertStringContainsString('WPE_PRO_COMPATIBILITY_STATE', $body);
-        self::assertStringContainsString("WPE_PRO_COMPATIBILITY_STATE !== 'compatible'", $body);
-        self::assertStringContainsString('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED', $body);
+        self::assertStringContainsString('$GLOBALS[\'wpe_pro_compatibility_result\']', $body);
+        self::assertStringContainsString("(\$compatibility['state'] ?? '') !== 'compatible'", $body);
+        self::assertStringContainsString("(\$compatibility['premium_boot_allowed'] ?? false) !== true", $body);
         self::assertStringContainsString('WordPressMetadataPreconditionFactsProvider::class', $body);
     }
 
@@ -30,6 +30,6 @@ final class CompatibilityFreeBootstrapSourceTest extends TestCase
         self::assertIsString($source);
 
         self::assertStringContainsString('if (self::proCustomTablesMigrationsAllowed())', $source);
-        self::assertStringContainsString('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED', $source);
+        self::assertStringContainsString("(\$compatibility['premium_migrations_allowed'] ?? false) === true", $source);
     }
 }
