@@ -98,6 +98,8 @@ final class PlatformAdminController
         $runtime = is_array($snapshot['runtime'] ?? null) ? $snapshot['runtime'] : [];
         $observability = is_array($snapshot['observability'] ?? null) ? $snapshot['observability'] : [];
         $context = is_array($snapshot['context'] ?? null) ? $snapshot['context'] : [];
+        $modules = is_array($snapshot['modules'] ?? null) ? $snapshot['modules'] : [];
+        $moduleInventory = is_array($modules['inventory'] ?? null) ? $modules['inventory'] : [];
 
         echo '<div class="wrap wpessential-admin-wrap">';
         echo '<section id="wpessential-admin-root" aria-labelledby="wpessential-admin-title" data-wpessential-surface="runtime-observatory">';
@@ -118,6 +120,11 @@ final class PlatformAdminController
         $this->renderDiagnosticRow('Multisite', !empty($context['multisite']) ? 'yes' : 'no');
         echo '</tbody></table>';
         echo '<p><em>' . esc_html__('Trace data is request-bounded and non-authoritative; use canonical persistent evidence for release or incident decisions.', 'wpessential') . '</em></p>';
+
+        echo '<h2>' . esc_html__('Modules', 'wpessential') . '</h2>';
+        echo '<p>' . esc_html__('Read-only commercial and runtime inventory for modules known to the current kernel. Compatibility reflects local prerequisites only; ADR-0010 certified Free/Pro version pairs are not claimed here.', 'wpessential') . '</p>';
+        $this->renderModuleInventory($moduleInventory);
+
         echo '</section>';
         echo '<script id="wpessential-admin-bootstrap" type="application/json">' . $json . '</script>';
         echo '</div>';
@@ -126,5 +133,34 @@ final class PlatformAdminController
     private function renderDiagnosticRow(string $label, string $value): void
     {
         echo '<tr><th scope="row">' . esc_html__($label, 'wpessential') . '</th><td><code>' . esc_html($value) . '</code></td></tr>';
+    }
+
+    /** @param array<int,mixed> $inventory */
+    private function renderModuleInventory(array $inventory): void
+    {
+        echo '<table class="widefat striped" aria-label="' . esc_html__('WPEssential module commercial inventory', 'wpessential') . '">';
+        echo '<caption class="screen-reader-text">' . esc_html__('WPEssential module edition, package, compatibility, entitlement and runtime state.', 'wpessential') . '</caption>';
+        echo '<thead><tr>';
+        foreach (['Module', 'Edition', 'Package', 'Compatibility', 'Entitlement', 'Runtime state', 'Reason'] as $heading) {
+            echo '<th scope="col">' . esc_html__($heading, 'wpessential') . '</th>';
+        }
+        echo '</tr></thead><tbody>';
+
+        if ($inventory === []) {
+            echo '<tr><td colspan="7">' . esc_html__('No runtime-known modules are available.', 'wpessential') . '</td></tr>';
+        } else {
+            foreach ($inventory as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                echo '<tr>';
+                foreach (['module', 'edition', 'package', 'compatibility', 'entitlement', 'runtime_state', 'reason'] as $key) {
+                    echo '<td><code>' . esc_html((string) ($row[$key] ?? 'unknown')) . '</code></td>';
+                }
+                echo '</tr>';
+            }
+        }
+
+        echo '</tbody></table>';
     }
 }
