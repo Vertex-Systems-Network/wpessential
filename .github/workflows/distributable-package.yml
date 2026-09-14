@@ -99,6 +99,7 @@ jobs:
           php -l wpessential.php
           php -l wpessential-pro.php
           php -l frameworks/Bootstrap/Plugin.php
+          php -l frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php
           php -l tools/release/build-distributable.php
           php -l tools/release/build-free-pro-distributables.php
           php -l tools/release/verify-free-pro-bootstrap.php
@@ -206,7 +207,7 @@ jobs:
           cmp --silent /tmp/wpessential-first.zip artifacts/wpessential.zip
           cmp --silent /tmp/wpessential-pro-first.zip artifacts/wpessential-pro.zip
 
-      - name: Verify packaged Free and Pro bootstrap load order
+      - name: Verify packaged Free and Pro compatibility bootstrap behavior
         shell: bash
         run: |
           set -euo pipefail
@@ -226,6 +227,16 @@ jobs:
             free-first
           php tools/release/verify-free-pro-bootstrap.php \
             free-pro \
+            "${verify_root}/free/wpessential" \
+            "${verify_root}/pro/wpessential-pro" \
+            pro-first
+          php tools/release/verify-free-pro-bootstrap.php \
+            free-pro-incompatible \
+            "${verify_root}/free/wpessential" \
+            "${verify_root}/pro/wpessential-pro" \
+            free-first
+          php tools/release/verify-free-pro-bootstrap.php \
+            free-pro-incompatible \
             "${verify_root}/free/wpessential" \
             "${verify_root}/pro/wpessential-pro" \
             pro-first
@@ -295,6 +306,7 @@ jobs:
           for required in \
             wpessential-pro/wpessential-pro.php \
             wpessential-pro/LICENSE \
+            wpessential-pro/frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php \
             wpessential-pro/frameworks/Modules/Roles/RolesModule.php \
             wpessential-pro/frameworks/Modules/Membership/MembershipModule.php \
             wpessential-pro/frameworks/Modules/Chat/ChatModule.php \
