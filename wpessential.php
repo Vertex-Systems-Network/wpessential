@@ -23,6 +23,14 @@ if (!defined('WPE_VERSION')) {
     define('WPE_VERSION', '0.1.0-dev');
 }
 
+if (!defined('WPE_PLATFORM_API_VERSION')) {
+    define('WPE_PLATFORM_API_VERSION', '0.1.0');
+}
+
+if (!defined('WPE_PLATFORM_SCHEMA_GENERATION')) {
+    define('WPE_PLATFORM_SCHEMA_GENERATION', 1);
+}
+
 if (!defined('WPE_AJAX_ACTION')) {
     define('WPE_AJAX_ACTION', 'wpessential_dispatch');
 }
@@ -68,6 +76,10 @@ if (!is_readable($autoload)) {
 }
 
 require_once $autoload;
+
+if (!defined('WPE_FREE_BOOTSTRAP_READY')) {
+    define('WPE_FREE_BOOTSTRAP_READY', true);
+}
 
 add_action('plugins_loaded', static function (): void {
     \WPEssential\Bootstrap\Plugin::boot();
