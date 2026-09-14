@@ -262,7 +262,7 @@ final class Plugin
         $migrationCoordinator->register(new CreateCompiledRegistrationTablesMigration($database));
         $migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
         $migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
-        if (self::proCustomTablesRuntimeAvailable()) {
+        if (self::proCustomTablesMigrationsAllowed()) {
             $migrationCoordinator->register(new CreateMigrationRunStoreMigration($database));
             $migrationCoordinator->register(new CreateMigrationExecutionConfirmationStoreMigration($database));
         }
@@ -283,7 +283,14 @@ final class Plugin
 
     private static function proCustomTablesRuntimeAvailable(): bool
     {
-        if (!defined('WPE_PRO_PACKAGE_ACTIVE') || WPE_PRO_PACKAGE_ACTIVE !== true) {
+        if (
+            !defined('WPE_PRO_PACKAGE_ACTIVE')
+            || WPE_PRO_PACKAGE_ACTIVE !== true
+            || !defined('WPE_PRO_COMPATIBILITY_STATE')
+            || WPE_PRO_COMPATIBILITY_STATE !== 'compatible'
+            || !defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED')
+            || WPE_PRO_COMPATIBILITY_BOOT_ALLOWED !== true
+        ) {
             return false;
         }
 
@@ -302,6 +309,13 @@ final class Plugin
         }
 
         return true;
+    }
+
+    private static function proCustomTablesMigrationsAllowed(): bool
+    {
+        return self::proCustomTablesRuntimeAvailable()
+            && defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED')
+            && WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED === true;
     }
 
     private static function supportsMysqlPersistence(object $wpdb): bool
