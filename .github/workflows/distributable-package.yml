@@ -101,6 +101,7 @@ jobs:
           php -l frameworks/Bootstrap/Plugin.php
           php -l tools/release/build-distributable.php
           php -l tools/release/build-free-pro-distributables.php
+          php -l tools/release/verify-free-pro-bootstrap.php
           php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
 
       - name: Prove optional Pro admin entry packaging is complete or fail-closed
@@ -205,6 +206,30 @@ jobs:
           cmp --silent /tmp/wpessential-first.zip artifacts/wpessential.zip
           cmp --silent /tmp/wpessential-pro-first.zip artifacts/wpessential-pro.zip
 
+      - name: Verify packaged Free and Pro bootstrap load order
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_root=/tmp/wpessential-package-bootstrap
+          rm -rf "${verify_root}"
+          mkdir -p "${verify_root}/free" "${verify_root}/pro"
+          unzip -q artifacts/wpessential.zip -d "${verify_root}/free"
+          unzip -q artifacts/wpessential-pro.zip -d "${verify_root}/pro"
+
+          php tools/release/verify-free-pro-bootstrap.php \
+            free \
+            "${verify_root}/free/wpessential"
+          php tools/release/verify-free-pro-bootstrap.php \
+            free-pro \
+            "${verify_root}/free/wpessential" \
+            "${verify_root}/pro/wpessential-pro" \
+            free-first
+          php tools/release/verify-free-pro-bootstrap.php \
+            free-pro \
+            "${verify_root}/free/wpessential" \
+            "${verify_root}/pro/wpessential-pro" \
+            pro-first
+
       - name: Validate Free ZIP integrity and package boundary
         shell: bash
         run: |
@@ -237,7 +262,13 @@ jobs:
             echo 'Free archive contains development-only paths' >&2
             exit 1
           fi
-          if grep -E '^wpessential/frameworks/Modules/(?!CustomPostTypes/|Taxonomies/)' artifacts/wpessential-files.txt >/dev/null 2>&1; then
+          unexpected_free_modules="$(
+            grep -E '^wpessential/frameworks/Modules/' artifacts/wpessential-files.txt \
+              | grep -Ev '^wpessential/frameworks/Modules/(CustomPostTypes|Taxonomies)/' \
+              || true
+          )"
+          if [ -n "${unexpected_free_modules}" ]; then
+            printf '%s\n' "${unexpected_free_modules}" >&2
             echo 'Free archive contains Pro module implementation source' >&2
             exit 1
           fi
