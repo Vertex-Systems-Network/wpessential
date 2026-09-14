@@ -201,58 +201,52 @@ final readonly class RuntimeDiagnosticsSnapshot
      */
     private function proCompatibility(): array
     {
+        $result = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
+        if (!is_array($result)) {
+            $result = [];
+        }
+
         return [
-            'state' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_STATE', 'unavailable'),
-            'dimension' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_DIMENSION', 'unavailable'),
-            'reason' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_REASON', 'unavailable'),
-            'remediation' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_REMEDIATION', 'unavailable'),
-            'free_version' => $this->safeCompatibilityVersion('WPE_PRO_COMPATIBILITY_FREE_VERSION'),
-            'platform_api' => $this->safeCompatibilityVersion('WPE_PRO_COMPATIBILITY_PLATFORM_API'),
-            'platform_schema' => $this->safeCompatibilityGeneration('WPE_PRO_COMPATIBILITY_PLATFORM_SCHEMA'),
-            'pro_schema' => $this->safeCompatibilityGeneration('WPE_PRO_COMPATIBILITY_PRO_SCHEMA'),
-            'premium_boot_allowed' => defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED')
-                && WPE_PRO_COMPATIBILITY_BOOT_ALLOWED === true,
-            'premium_migrations_allowed' => defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED')
-                && WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED === true,
+            'state' => $this->safeCompatibilityToken($result['state'] ?? null, 'unavailable'),
+            'dimension' => $this->safeCompatibilityToken($result['dimension'] ?? null, 'unavailable'),
+            'reason' => $this->safeCompatibilityToken($result['reason'] ?? null, 'unavailable'),
+            'remediation' => $this->safeCompatibilityToken($result['remediation'] ?? null, 'unavailable'),
+            'free_version' => $this->safeCompatibilityVersion($result['free_version'] ?? null),
+            'platform_api' => $this->safeCompatibilityVersion($result['platform_api'] ?? null),
+            'platform_schema' => $this->safeCompatibilityGeneration($result['platform_schema'] ?? null),
+            'pro_schema' => $this->safeCompatibilityGeneration($result['pro_schema'] ?? null),
+            'premium_boot_allowed' => ($result['premium_boot_allowed'] ?? false) === true,
+            'premium_migrations_allowed' => ($result['premium_migrations_allowed'] ?? false) === true,
             'certification' => 'adr_0010_not_certified',
         ];
     }
 
-    private function safeCompatibilityToken(string $constant, string $fallback): string
+    private function safeCompatibilityToken(mixed $value, string $fallback): string
     {
-        if (!defined($constant)) {
+        if (!is_string($value)) {
             return $fallback;
         }
-
-        $value = constant($constant);
-        if (!is_string($value) || preg_match('/^[a-z0-9_]+$/', $value) !== 1) {
+        if (preg_match('/^[a-z0-9_]+$/', $value) !== 1) {
             return 'invalid';
         }
 
         return $value;
     }
 
-    private function safeCompatibilityVersion(string $constant): string
+    private function safeCompatibilityVersion(mixed $value): string
     {
-        if (!defined($constant)) {
+        if (!is_string($value)) {
             return 'unknown';
         }
-
-        $value = constant($constant);
-        if (!is_string($value) || preg_match('/^[0-9A-Za-z.-]+$/', $value) !== 1) {
+        if (preg_match('/^[0-9A-Za-z.-]+$/', $value) !== 1) {
             return 'invalid';
         }
 
         return $value;
     }
 
-    private function safeCompatibilityGeneration(string $constant): int|string
+    private function safeCompatibilityGeneration(mixed $value): int|string
     {
-        if (!defined($constant)) {
-            return 'unknown';
-        }
-
-        $value = constant($constant);
-        return is_int($value) && $value >= 0 ? $value : 'invalid';
+        return is_int($value) && $value >= 0 ? $value : 'unknown';
     }
 }
