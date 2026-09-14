@@ -173,7 +173,7 @@ final class Plugin
             $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
             $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
             $wpdb = $GLOBALS['wpdb'] ?? null;
-            if (is_object($wpdb)) {
+            if (is_object($wpdb) && self::proCustomTablesRuntimeAvailable()) {
                 $metadataFacts = new WordPressMetadataPreconditionFactsProvider(
                     new WordPressCt1SchemaIntrospector($wpdb),
                 );
@@ -262,8 +262,10 @@ final class Plugin
         $migrationCoordinator->register(new CreateCompiledRegistrationTablesMigration($database));
         $migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
         $migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
-        $migrationCoordinator->register(new CreateMigrationRunStoreMigration($database));
-        $migrationCoordinator->register(new CreateMigrationExecutionConfirmationStoreMigration($database));
+        if (self::proCustomTablesRuntimeAvailable()) {
+            $migrationCoordinator->register(new CreateMigrationRunStoreMigration($database));
+            $migrationCoordinator->register(new CreateMigrationExecutionConfirmationStoreMigration($database));
+        }
         $migrationCoordinator->runPending();
 
         $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
@@ -277,6 +279,29 @@ final class Plugin
             $registrationScope,
         );
         return [$definitions, $registrations, $database, $migrationCoordinator];
+    }
+
+    private static function proCustomTablesRuntimeAvailable(): bool
+    {
+        if (!defined('WPE_PRO_PACKAGE_ACTIVE') || WPE_PRO_PACKAGE_ACTIVE !== true) {
+            return false;
+        }
+
+        foreach ([
+            WordPressMetadataPreconditionFactsProvider::class,
+            CustomTablesRuntimeCompositionFactory::class,
+            CreateMigrationExecutionConfirmationStoreMigration::class,
+            WpdbMigrationExecutionConfirmationProvider::class,
+            FailClosedRecoveryVerificationProvider::class,
+            CreateMigrationRunStoreMigration::class,
+            WordPressCt1SchemaIntrospector::class,
+        ] as $class) {
+            if (!class_exists($class)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static function supportsMysqlPersistence(object $wpdb): bool
