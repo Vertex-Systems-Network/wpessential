@@ -459,7 +459,7 @@ $fp11 = p006bFixture(
 $fixtures = [$fp03, $fp10, $fp11];
 $passed = count(array_filter($fixtures, static fn (array $fixture): bool => ($fixture['status'] ?? null) === 'PASS'));
 $failed = count($fixtures) - $passed;
-$pairId = hash('sha256', $freeHash . ':' . $proHash);
+$pairId = hash('sha256', "free:{$freeHash}\npro:{$proHash}\n");
 
 $evidence = [
     'protocol' => 'P-006',
