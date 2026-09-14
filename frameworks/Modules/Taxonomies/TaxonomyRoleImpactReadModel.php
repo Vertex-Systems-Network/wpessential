@@ -8,9 +8,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use WPEssential\Contracts\RoleImpactReadServiceInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
-use WPEssential\Modules\Roles\RolesModule;
-use WPEssential\Modules\Roles\RolesReadService;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Definitions\Definition;
 
@@ -25,7 +24,7 @@ final readonly class TaxonomyRoleImpactReadModel
     ];
 
     public function __construct(
-        private ?RolesReadService $roles = null,
+        private ?RoleImpactReadServiceInterface $roles = null,
         private ?ServiceRegistryInterface $services = null,
     ) {}
 
@@ -52,7 +51,7 @@ final readonly class TaxonomyRoleImpactReadModel
     public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
     {
         $service = $this->roles ?? $this->rolesFromRegistry();
-        if (!$service instanceof RolesReadService || !$context instanceof ExecutionContext) {
+        if (!$service instanceof RoleImpactReadServiceInterface || !$context instanceof ExecutionContext) {
             return [
                 'state' => 'unavailable',
                 'operations' => array_map(
@@ -144,15 +143,15 @@ final readonly class TaxonomyRoleImpactReadModel
         return $effective;
     }
 
-    private function rolesFromRegistry(): ?RolesReadService
+    private function rolesFromRegistry(): ?RoleImpactReadServiceInterface
     {
         if (!$this->services instanceof ServiceRegistryInterface
-            || !$this->services->has(RolesModule::SERVICE_READ)
+            || !$this->services->has(RoleImpactReadServiceInterface::SERVICE_ID)
         ) {
             return null;
         }
 
-        $service = $this->services->get(RolesModule::SERVICE_READ);
-        return $service instanceof RolesReadService ? $service : null;
+        $service = $this->services->get(RoleImpactReadServiceInterface::SERVICE_ID);
+        return $service instanceof RoleImpactReadServiceInterface ? $service : null;
     }
 }

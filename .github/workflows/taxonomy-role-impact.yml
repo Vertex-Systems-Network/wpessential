@@ -3,8 +3,11 @@ name: Taxonomy Role Impact
 on:
   pull_request:
     paths:
+      - 'frameworks/Contracts/RoleImpactReadServiceInterface.php'
       - 'frameworks/Modules/Taxonomies/**'
       - 'frameworks/Modules/Roles/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
       - 'tests/Unit/Modules/Taxonomies/TaxonomyRoleImpactReadModelTest.php'
       - 'tests/Integration/wordpress-taxonomy-role-impact.php'
       - '.github/workflows/taxonomy-role-impact.yml'
@@ -12,8 +15,11 @@ on:
     branches:
       - 'implementation/**'
     paths:
+      - 'frameworks/Contracts/RoleImpactReadServiceInterface.php'
       - 'frameworks/Modules/Taxonomies/**'
       - 'frameworks/Modules/Roles/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
       - 'tests/Unit/Modules/Taxonomies/TaxonomyRoleImpactReadModelTest.php'
       - 'tests/Integration/wordpress-taxonomy-role-impact.php'
       - '.github/workflows/taxonomy-role-impact.yml'
@@ -83,11 +89,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          php -l frameworks/Contracts/RoleImpactReadServiceInterface.php
+          php -l frameworks/Modules/Roles/RolesReadService.php
+          php -l frameworks/Modules/Roles/RolesModule.php
           php -l frameworks/Modules/Taxonomies/TaxonomyRoleImpactReadModel.php
           php -l frameworks/Modules/Taxonomies/TaxonomyDefinitionReadModel.php
           php -l frameworks/Modules/Taxonomies/TaxonomyValidationAbilityHandler.php
           php -l frameworks/Modules/Taxonomies/TaxonomyAbilityHandler.php
           php -l frameworks/Modules/Taxonomies/TaxonomyModule.php
+          php -l wpessential.php
+          php -l wpessential-pro.php
           php -l tests/Integration/wordpress-taxonomy-role-impact.php
           vendor/bin/phpunit tests/Unit/Modules/Taxonomies/TaxonomyRoleImpactReadModelTest.php
 
@@ -136,21 +147,50 @@ jobs:
             --skip-email
           ${wp} core version
 
-      - name: Install exact WPEssential source fixture
+      - name: Install separated Free and Pro source fixtures
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf /tmp/wordpress/wp-content/plugins/wpessential
-          mkdir -p /tmp/wordpress/wp-content/plugins/wpessential
-          rsync -a \
-            --exclude='.git/' \
-            --exclude='artifacts/' \
-            --exclude='node_modules/' \
-            "${GITHUB_WORKSPACE}/" /tmp/wordpress/wp-content/plugins/wpessential/
-          test -f /tmp/wordpress/wp-content/plugins/wpessential/vendor/autoload.php
+          plugin_root=/tmp/wordpress/wp-content/plugins
+          free_root="${plugin_root}/wpessential"
+          pro_root="${plugin_root}/wpessential-pro"
+          rm -rf "${free_root}" "${pro_root}"
+          mkdir -p \
+            "${free_root}/frameworks/Modules" \
+            "${pro_root}/frameworks/Modules"
+
+          for shared in Bootstrap Contracts Kernel Platform; do
+            cp -a "${GITHUB_WORKSPACE}/frameworks/${shared}" "${free_root}/frameworks/${shared}"
+          done
+          cp -a "${GITHUB_WORKSPACE}/frameworks/functions.php" "${free_root}/frameworks/functions.php"
+          cp -a "${GITHUB_WORKSPACE}/frameworks/Modules/CustomPostTypes" "${free_root}/frameworks/Modules/CustomPostTypes"
+          cp -a "${GITHUB_WORKSPACE}/frameworks/Modules/Taxonomies" "${free_root}/frameworks/Modules/Taxonomies"
+          cp -a "${GITHUB_WORKSPACE}/vendor" "${free_root}/vendor"
+          cp -a "${GITHUB_WORKSPACE}/wpessential.php" "${free_root}/wpessential.php"
+          cp -a "${GITHUB_WORKSPACE}/readme.txt" "${free_root}/readme.txt"
+          cp -a "${GITHUB_WORKSPACE}/LICENSE" "${free_root}/LICENSE"
+
+          for module_dir in "${GITHUB_WORKSPACE}"/frameworks/Modules/*; do
+            module_name="$(basename "${module_dir}")"
+            case "${module_name}" in
+              CustomPostTypes|Taxonomies) continue ;;
+            esac
+            cp -a "${module_dir}" "${pro_root}/frameworks/Modules/${module_name}"
+          done
+          cp -a "${GITHUB_WORKSPACE}/wpessential-pro.php" "${pro_root}/wpessential-pro.php"
+          cp -a "${GITHUB_WORKSPACE}/LICENSE" "${pro_root}/LICENSE"
+
+          test -f "${free_root}/vendor/autoload.php"
+          test -f "${free_root}/frameworks/Contracts/RoleImpactReadServiceInterface.php"
+          test ! -e "${free_root}/frameworks/Modules/Roles"
+          test -f "${pro_root}/frameworks/Modules/Roles/RolesModule.php"
+          test ! -e "${pro_root}/frameworks/Kernel"
+
           wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
           ${wp} plugin activate wpessential
+          ${wp} plugin activate wpessential-pro
           ${wp} plugin status wpessential
+          ${wp} plugin status wpessential-pro
 
       - name: Run canonical Surface 30-backed Taxonomy role-impact evidence
         shell: bash
@@ -158,7 +198,7 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts/taxonomy-role-impact
           wp='php /tmp/wp-cli.phar --allow-root --path=/tmp/wordpress'
-          script='/tmp/wordpress/wp-content/plugins/wpessential/tests/Integration/wordpress-taxonomy-role-impact.php'
+          script="${GITHUB_WORKSPACE}/tests/Integration/wordpress-taxonomy-role-impact.php"
           WPE_TAXONOMY_ROLE_IMPACT_EVIDENCE_PATH="${GITHUB_WORKSPACE}/artifacts/taxonomy-role-impact/evidence.json" \
             ${wp} eval "require '${script}';" | tee artifacts/taxonomy-role-impact/run.log
           test -s artifacts/taxonomy-role-impact/evidence.json

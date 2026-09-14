@@ -57,7 +57,9 @@ require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 require_once ABSPATH . 'wp-admin/includes/user.php';
 
 $root = dirname(__DIR__, 2);
-require_once $root . '/vendor/autoload.php';
+if (!class_exists(\WPEssential\Bootstrap\Plugin::class)) {
+    require_once $root . '/vendor/autoload.php';
+}
 
 use WPEssential\Bootstrap\Plugin;
 use WPEssential\Kernel\Kernel;

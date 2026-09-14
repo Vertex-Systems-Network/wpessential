@@ -70,17 +70,5 @@ if (!is_readable($autoload)) {
 require_once $autoload;
 
 add_action('plugins_loaded', static function (): void {
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Roles\RolesModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\AdminMenu\AdminMenuModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Settings\SettingsModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Dashboard\DashboardModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Profiles\ProfilesModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Membership\MembershipModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\BuilderWidgets\BuilderWidgetsModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\FormsWorkflows\FormsWorkflowsModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Cron\CronModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Notifications\NotificationsModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Emails\EmailsModule());
-    \WPEssential\Bootstrap\Plugin::registerModule(new \WPEssential\Modules\Chat\ChatModule());
     \WPEssential\Bootstrap\Plugin::boot();
 }, -100);

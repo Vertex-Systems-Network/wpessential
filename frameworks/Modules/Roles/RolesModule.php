@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 use LogicException;
 use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\ModuleInterface;
+use WPEssential\Contracts\RoleImpactReadServiceInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
@@ -22,7 +23,7 @@ use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 
 final class RolesModule implements ModuleInterface
 {
-    public const SERVICE_READ = 'module.roles.read-service';
+    public const SERVICE_READ = RoleImpactReadServiceInterface::SERVICE_ID;
     public const SERVICE_ENVIRONMENT = 'module.roles.runtime-environment';
 
     public function manifest(): ModuleManifest

@@ -66,7 +66,7 @@ test.afterAll(async () => {
   await playground?.server?.close();
 });
 
-test('packaged Taxonomy final admin UX renders canonical role impact and protects dirty editor state', async ({ page }) => {
+test('packaged Free Taxonomy final admin UX truthfully degrades role impact and protects dirty editor state', async ({ page }) => {
   const root = await visitTaxonomies(page);
   await expect(root).toHaveAttribute('data-wpessential-taxonomy-dirty', 'false');
 
@@ -90,7 +90,7 @@ test('packaged Taxonomy final admin UX renders canonical role impact and protect
   await expect(diagnostics).toBeVisible();
   await expect(
     diagnostics.locator('[data-wpessential-taxonomy-diagnostic="role-impact-state"]'),
-  ).toHaveAttribute('data-wpessential-taxonomy-role-impact-state', 'healthy');
+  ).toHaveAttribute('data-wpessential-taxonomy-role-impact-state', 'unavailable');
   await expect(
     diagnostics.locator('[data-wpessential-taxonomy-role-impact-operation="manage_terms"]'),
   ).toContainText('manage_categories');
@@ -105,7 +105,7 @@ test('packaged Taxonomy final admin UX renders canonical role impact and protect
   ).toContainText('absent:');
   await expect(
     diagnostics.locator('[data-wpessential-taxonomy-role-impact-caveats]'),
-  ).toContainText('not final user authorization');
+  ).toContainText('Canonical Surface 30 role-impact service or execution context is unavailable');
 
   const accessibility = await new AxeBuilder({ page })
     .include('#wpessential-taxonomy-root')
