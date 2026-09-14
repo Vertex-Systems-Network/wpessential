@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-14 UTC**  
-Canonical audited base anchor: **`main @ f06bdfb20d17d1ce313560a774e9f3b8655961cc`**  
+Canonical audited base anchor: **`main @ 2c9c32665557eb9855c31406dad20c7f72d0ff50`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -12,12 +12,13 @@ Every `start`, `continue` and `resume` cycle must resolve exact current `main`, 
 
 ## Current commercial state
 
-The commercial runtime/distribution foundation now has four accepted bounded gates:
+The commercial runtime/distribution foundation now has five accepted bounded gates:
 
 1. **Commercial matrix V1** — Issue #902 / merged PR #903: canonical **2 Free / 1 Platform Core / 53 Pro** surface split.
 2. **Physical Package Boundary V1** — Issue #904 / merged PR #905, merge `4cc04111831895e1b07b3480ae2957d70d7d0f8d`: Free and Pro are deterministic physically separate artifacts; Free contains shared Platform/Kernel/Contracts/Bootstrap plus CPT + Taxonomy implementation, while premium implementation/assets are Pro-owned.
 3. **Canonical Edition Metadata + Local Entitlement Domain V1** — Issue #908 / merged PR #909, merge `b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d`: provider-neutral local entitlement states, entitlement-aware Pro activation policy, separate premium operation authority, and canonical `edition: 'pro'` metadata for the 12 currently implemented premium modules.
-4. **Read-only Modules Commercial Inventory V1** — Issue #912 / merged PR #913, merge **`f06bdfb20d17d1ce313560a774e9f3b8655961cc`**: the existing Platform Runtime Observatory exposes server-generated, read-only commercial/runtime inventory for modules known to the current kernel.
+4. **Read-only Modules Commercial Inventory V1** — Issue #912 / merged PR #913, merge `f06bdfb20d17d1ce313560a774e9f3b8655961cc`: the existing Platform Runtime Observatory exposes server-generated, read-only commercial/runtime inventory for modules known to the current kernel.
+5. **ADR-0010 Compatibility Preflight Execution Readiness V1** — Issue #916 / merged PR #917, merge **`2c9c32665557eb9855c31406dad20c7f72d0ff50`**: docs-only reconciliation defines the future local metadata/result/bootstrap/CustomTables/diagnostics contract while preserving ADR-0010 as Proposed and preserving P-006 evidence at 0/144 executed with 0 certified pairs.
 
 ## Entitlement Domain V1 truth
 
@@ -48,7 +49,7 @@ This gate models authority for current and future integration but does **not** c
 
 ## Modules Commercial Inventory V1 truth
 
-The existing Platform Runtime Observatory now exposes a read-only table with the bounded fields:
+The existing Platform Runtime Observatory exposes a read-only table with the bounded fields:
 
 `Module | Edition | Package | Compatibility | Entitlement | Runtime state | Reason`
 
@@ -65,7 +66,33 @@ Inventory semantics are intentionally non-mutating and non-certifying:
 
 This inventory is observability, not a commercial control plane. It does not activate modules, verify remote licenses, process billing, grant mutation authority or certify compatibility pairs.
 
-## Exact-head evidence for PR #913
+## ADR-0010 Compatibility Preflight Readiness V1 truth
+
+`docs/PRODUCT/ADR-0010-COMPATIBILITY-PREFLIGHT-READINESS-V1.md` is the current execution-readiness authority for the still-Proposed ADR-0010 runtime gate.
+
+The readiness audit records these current blockers precisely:
+
+- Free exposes `WPE_VERSION` but no dedicated `WPE_PLATFORM_API_VERSION` contract.
+- Pro exposes `WPE_PRO_VERSION` but no canonical supported Free version range, Platform API range or platform-schema range.
+- Pro currently checks Free `Plugin` presence and then references Free-owned entitlement/platform classes; that is not a complete independently-versioned pair preflight.
+- `WPE_PRO_PACKAGE_ACTIVE` means package presence only and must never be treated as compatibility PASS.
+- Free `Plugin::proCustomTablesRuntimeAvailable()` currently uses Pro-package presence + class availability, so a future compatibility implementation must additionally require canonical compatibility PASS before Pro-owned CustomTables runtime or migration eligibility.
+- Modules diagnostics currently report local prerequisite compatibility and must consume the future canonical pair result instead of becoming a second compatibility authority.
+
+The readiness contract fixes a future local-only metadata/result shape and fail-closed sequencing but implements none of it. Compatibility must remain distinct from product entitlement, remote Product License/account/allocation, Membership authorization and updater/package trust.
+
+P-006 evidence remains exactly:
+
+- FP documented: **144**;
+- FP executed: **0/144**;
+- FP passed: **0**;
+- FP failed: **0**;
+- certified Free↔Pro artifact pairs: **0**;
+- P-006 runtime certifications: **0**.
+
+No runtime compatibility source slot is implied by the readiness document.
+
+## Exact-head evidence for PR #913 and docs-only #917
 
 Exact PR #913 head **`1be9ca7cf19fd65b83899fd269f72d0ba225178b`** passed all five applicable workflows before merge:
 
@@ -75,7 +102,9 @@ Exact PR #913 head **`1be9ca7cf19fd65b83899fd269f72d0ba225178b`** passed all fiv
 4. Platform Compatibility Matrix — PASS across the applicable WordPress/PHP/database matrix;
 5. Browser E2E Accessibility — PASS against the exact packaged WordPress distributable and accessibility evidence.
 
-The merged gate adds no module activation controls, secrets, live license/billing/provider calls, remote entitlement verification, ADR-0010 certified-pair claim, multisite entitlement allocation, deployment or release authority.
+PR #917 was a one-file docs-only readiness change. No runtime workflow was applicable to that exact head; merge authority therefore came from exact one-file scope, zero main drift, mergeability, and clean review/review-thread state. It did not execute P-006 fixtures or certify a Free↔Pro pair.
+
+The merged commercial/readiness gates add no module activation controls, secrets, live license/billing/provider calls, remote entitlement verification, ADR-0010 certified-pair claim, multisite entitlement allocation, deployment or release authority.
 
 ## Commercial architecture authority
 
@@ -86,10 +115,12 @@ Accepted authority:
 - `docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md` — canonical 56-surface commercial split and bounded implementation gates.
 - `docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md` — accepted V1 local entitlement/edition semantics and explicit non-goals.
 - Issue #912 / merged PR #913 — accepted read-only Modules commercial/runtime diagnostics over canonical registry and entitlement-provider truth.
+- `docs/PRODUCT/ADR-0010-COMPATIBILITY-PREFLIGHT-READINESS-V1.md` / Issue #916 / merged PR #917 — execution-readiness truth only for the future compatibility preflight gate.
 
 Still separate / not certified:
 
-- `docs/DECISIONS/ADR-0010-free-pro-compatibility.md` remains a later executable compatibility gate; certified Free/Pro version pairs remain unpromoted.
+- `docs/DECISIONS/ADR-0010-free-pro-compatibility.md` remains **Proposed**; no runtime preflight implementation or certified Free/Pro version pair is promoted.
+- P-006 FP-01…FP-144 remains unexecuted and cannot be promoted from documentation or unit-level design alone.
 - multisite entitlement allocation, clone/restore and network/site semantics remain separately gated.
 - remote license-server, billing/provider integration, secrets/credential persistence and live verification remain unauthorized in the current state.
 - broad activation/deactivation controls and universal premium mutation enforcement remain separately gated.
@@ -97,7 +128,7 @@ Still separate / not certified:
 
 ## Full-parity lifecycle truth remains unchanged
 
-Commercial packaging, entitlement infrastructure and read-only inventory are not lifecycle-certification promotions. Canonical machine truth remains:
+Commercial packaging, entitlement infrastructure, read-only inventory and compatibility readiness are not lifecycle-certification promotions. Canonical machine truth remains:
 
 - **17** surfaces at or beyond `OPTION_CONTRACT_COMPLETE`;
 - **16** surfaces exactly at `UX_CONTRACT_COMPLETE`;
@@ -106,7 +137,7 @@ Commercial packaging, entitlement infrastructure and read-only inventory are not
 
 Options Bank truth remains **22 seeded / 22 NATIVE_AUDITED / 22 MARKET_AUDITED / 22 BANK_REVIEWED / 2139 records**.
 
-The complete 56-surface dashboard remains mandatory in `README.md`; machine-readable lifecycle files remain authoritative for counts.
+The complete 56-surface dashboard remains mandatory in `README.md`; machine-readable lifecycle files remain authoritative for counts. The #918 closeout re-audited the README dashboard and confirmed Surfaces **1 through 56** remain present; no lifecycle row required promotion from #916/#917.
 
 ## Existing bounded implementation states
 
@@ -126,9 +157,9 @@ No bounded state above implies deployment/release readiness.
 
 ## Current queue and security residual
 
-`config/coordination/agent-work-queue.json` v34 is the authoritative conflict-safe queue and is anchored to `main @ f06bdfb20d17d1ce313560a774e9f3b8655961cc`.
+`config/coordination/agent-work-queue.json` v35 is the authoritative conflict-safe queue and is anchored to `main @ 2c9c32665557eb9855c31406dad20c7f72d0ff50`.
 
-After Modules Commercial Inventory V1 there is **no dependency-ready source-development slot**. Completed branches must not be reused. Deterministic behavior is therefore `NO_VALID_WORK_SLOT` unless a separate accepted fresh-main issue explicitly opens another bounded gate.
+After ADR-0010 Compatibility Preflight Execution Readiness V1 there is **no dependency-ready source-development slot**. Completed branches must not be reused. Deterministic behavior is therefore `NO_VALID_WORK_SLOT` unless a separate accepted fresh-main issue explicitly opens another bounded gate and satisfies the applicable decision/evidence prerequisites.
 
 Issue **#858** remains the repository-admin security residual: `main` branch protection/ruleset is still not enabled. This must be fixed through GitHub repository administration; no source-code workaround is authorized and the project must not claim it fixed without fresh branch/ruleset evidence.
 
@@ -136,12 +167,15 @@ Issue **#858** remains the repository-admin security residual: `main` branch pro
 
 Possible later commercial gates remain independent unless a fresh accepted Issue explicitly authorizes one:
 
-- ADR-0010 executable Free/Pro compatibility preflight and certified version pairs;
+- ADR-0010 local runtime compatibility metadata/preflight/fail-closed bootstrap + diagnostics single-truth implementation;
+- P-006 executable Free/Pro compatibility fixtures and certified version pairs after their own authorization/evidence prerequisites;
 - multisite entitlement allocation, site/network scope, clone/restore behavior;
 - remote entitlement verification and provider/billing integration;
 - module activation/deactivation commercial controls, if product requirements later authorize them;
 - explicit wiring of premium mutation policies into future mutating premium surfaces as those surfaces are authorized;
 - deployment/release certification.
+
+The readiness document does not itself authorize any of these runtime gates.
 
 ## Closeout rule
 
