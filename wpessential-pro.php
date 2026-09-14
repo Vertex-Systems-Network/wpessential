@@ -81,6 +81,31 @@ add_action('plugins_loaded', static function () use ($proNotice): void {
         return;
     }
 
+    $configuredState = defined('WPE_PRO_LOCAL_ENTITLEMENT_STATE')
+        ? (string) WPE_PRO_LOCAL_ENTITLEMENT_STATE
+        : \WPEssential\Platform\Entitlements\ProductEntitlementState::VerificationUnavailable->value;
+    $state = \WPEssential\Platform\Entitlements\ProductEntitlementState::tryFrom($configuredState)
+        ?? \WPEssential\Platform\Entitlements\ProductEntitlementState::VerificationUnavailable;
+    $reason = $state->value === $configuredState ? null : 'invalid_local_entitlement_state';
+    $entitlements = new \WPEssential\Platform\Entitlements\LocalProductEntitlementProvider(
+        new \WPEssential\Platform\Entitlements\ProductEntitlementSnapshot($state, $reason),
+    );
+    $operations = new \WPEssential\Platform\Entitlements\PremiumOperationPolicy($entitlements);
+
+    \WPEssential\Bootstrap\Plugin::setModuleActivationPolicy(
+        new \WPEssential\Platform\Entitlements\EntitlementAwareModuleActivationPolicy($entitlements),
+    );
+
+    if (!defined('WPE_PRO_ENTITLEMENT_STATE')) {
+        define('WPE_PRO_ENTITLEMENT_STATE', $entitlements->snapshot()->state->value);
+    }
+    if (!defined('WPE_PRO_PREMIUM_READS_ALLOWED')) {
+        define('WPE_PRO_PREMIUM_READS_ALLOWED', $operations->allowsRead());
+    }
+    if (!defined('WPE_PRO_PREMIUM_MUTATIONS_ALLOWED')) {
+        define('WPE_PRO_PREMIUM_MUTATIONS_ALLOWED', $operations->allowsMutation());
+    }
+
     $moduleClasses = [
         \WPEssential\Modules\Roles\RolesModule::class,
         \WPEssential\Modules\AdminMenu\AdminMenuModule::class,
