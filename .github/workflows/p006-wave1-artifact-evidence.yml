@@ -1,0 +1,164 @@
+name: P-006 Wave 1 Static Artifact Evidence
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/**'
+      - 'admin-ui/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tools/release/**'
+      - '.github/workflows/p006-wave1-artifact-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p006-wave1-static-artifact-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate package manifest
+        run: npm run lint:package
+
+      - name: Build production admin assets
+        run: npm run build:admin
+
+      - name: Set up PHP 8.2 evidence runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate metadata and evidence harness syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l wpessential.php
+          php -l wpessential-pro.php
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/release/p006-wave1-artifact-evidence.php
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Build first immutable Free and Pro candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          for artifact in \
+            artifacts/wpessential.zip \
+            artifacts/wpessential-package.json \
+            artifacts/wpessential-pro.zip \
+            artifacts/wpessential-pro-package.json
+          do
+            test -s "${artifact}"
+          done
+          cp artifacts/wpessential.zip /tmp/p006-wpessential-first.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-wpessential-pro-first.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/p006-free-first.sha256
+          sha256sum artifacts/wpessential-pro.zip | tee /tmp/p006-pro-first.sha256
+
+      - name: Rebuild and prove byte-for-byte determinism
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test -s artifacts/wpessential.zip
+          test -s artifacts/wpessential-pro.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/p006-free-second.sha256
+          sha256sum artifacts/wpessential-pro.zip | tee /tmp/p006-pro-second.sha256
+
+          free_first="$(cut -d' ' -f1 /tmp/p006-free-first.sha256)"
+          free_second="$(cut -d' ' -f1 /tmp/p006-free-second.sha256)"
+          pro_first="$(cut -d' ' -f1 /tmp/p006-pro-first.sha256)"
+          pro_second="$(cut -d' ' -f1 /tmp/p006-pro-second.sha256)"
+
+          test "${free_first}" = "${free_second}"
+          test "${pro_first}" = "${pro_second}"
+          cmp --silent /tmp/p006-wpessential-first.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-wpessential-pro-first.zip artifacts/wpessential-pro.zip
+
+          php -r '
+            $payload = [
+              "source_sha" => getenv("WPE_P006_SOURCE_SHA"),
+              "free_first" => getenv("P006_FREE_FIRST"),
+              "free_second" => getenv("P006_FREE_SECOND"),
+              "pro_first" => getenv("P006_PRO_FIRST"),
+              "pro_second" => getenv("P006_PRO_SECOND"),
+            ];
+            file_put_contents("artifacts/p006-wave1-determinism.json", json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+          ' \
+            P006_FREE_FIRST="${free_first}" \
+            P006_FREE_SECOND="${free_second}" \
+            P006_PRO_FIRST="${pro_first}" \
+            P006_PRO_SECOND="${pro_second}"
+          test -s artifacts/p006-wave1-determinism.json
+          cat artifacts/p006-wave1-determinism.json
+
+      - name: Execute authorized P-006 Wave 1A fixtures
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          php tools/release/p006-wave1-artifact-evidence.php
+          test -s artifacts/p006-wave1-evidence.json
+          cat artifacts/p006-wave1-evidence.json
+
+      - name: Upload immutable candidates and P-006 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1-static-artifact-evidence-${{ github.run_id }}
+          path: |
+            artifacts/wpessential.zip
+            artifacts/wpessential-package.json
+            artifacts/wpessential-pro.zip
+            artifacts/wpessential-pro-package.json
+            artifacts/p006-wave1-determinism.json
+            artifacts/p006-wave1-evidence.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
