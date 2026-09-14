@@ -249,7 +249,11 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
     private function authorize(ExecutionContext $context, string $ability): void
     {
         $decision = $this->policy->authorize(
-            new AuthorizationRequest($ability, self::CAPABILITY, $context, mutates: false),
+            new AuthorizationRequest(
+                context: $context,
+                ability: $ability,
+                capability: self::CAPABILITY,
+            ),
         );
         if (!$decision->allowed) {
             throw new RuntimeException($decision->reason);
