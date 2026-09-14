@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Modules;
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -39,6 +38,12 @@ final class ModuleRegistry
     public function state(string $id): ?ModuleState
     {
         return $this->states[$id] ?? null;
+    }
+
+    /** @return list<ModuleInterface> */
+    public function all(): array
+    {
+        return array_values($this->modules);
     }
 
     public function markBooted(string $id): void

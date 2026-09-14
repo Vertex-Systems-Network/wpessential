@@ -37,6 +37,11 @@ final class Kernel
         return $this->modules;
     }
 
+    public function moduleActivationPolicy(): ModuleActivationPolicyInterface
+    {
+        return $this->moduleActivationPolicy;
+    }
+
     public function registerModule(ModuleInterface $module): void
     {
         if ($this->booted) {
