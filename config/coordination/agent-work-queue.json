@@ -1,8 +1,8 @@
 {
-  "schema_version": 38,
+  "schema_version": 39,
   "snapshot_date": "2026-09-15",
-  "queue_anchor_main_sha": "6889876786c6e6383783532d43ccc1ebb1e10478",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Issue #904 / PR #905 completed the physical Free/Pro package-boundary gate. Issue #908 / PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1. Issue #912 / PR #913 completed read-only Modules commercial/runtime inventory. Issue #916 / PR #917 completed ADR-0010 compatibility-preflight execution-readiness reconciliation. Issue #920 / PR #921 completed bounded local fail-closed Free/Pro compatibility preflight Gates A-C. Issues #925-#929 / PRs #932-#936 completed the P-006 planning/evidence-design wave for FP-01..FP-144 without executing any FP fixture. ADR-0010 remains Proposed; P-006 remains 144 documented, 0/144 executed, 0 passed, 0 failed, 0 certified Free/Pro artifact pairs and 0 runtime certifications. Issue #924 remains the active P-006 authorization gate and requires explicit P-006-scoped ADR-0014 owner consent before executable work. No dependency-ready source/worker slot is currently open. Security residual #858 remains a repository-admin branch-protection action and does not create a source-development slot.",
+  "queue_anchor_main_sha": "4a005b34db7168bf4e31f85450d7b48a53fede0c",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Commercial/package/preflight/planning gates #904/#908/#912/#916/#920 and #925-#929 remain historical evidence. Explicit P-006-scoped ADR-0014 owner authorization is active as GOV-OWNER-CONSENT-P006-001 through PR #944. P-006 Wave 1A merged through PR #946 with FP-01/02/05/07/08 PASS: 144 documented, 5 executed, 5 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. Queue v39 exposes only Issues #947-#949 as bounded non-overlapping worker lanes. Production deploy/release, live authoritative provider/billing/payment/license/allocation side effects, production credentials/data and irreversible/destructive operations remain separately gated. Security residual #858 remains repository-admin-only.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,55 +14,49 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "No dependency-ready OPEN worker slot exists in queue v38. The five P-006 planning lanes #925-#929 are completed and their docs are merged through PRs #932-#936. Executable P-006/certification, ADR-0010 acceptance, multisite allocation, remote entitlement/provider, activation-control, broader premium-mutation, updater/TUF, destructive migration, deployment and release work remain blocked until a fresh-main accepted issue explicitly authorizes a bounded tranche and all applicable technical/security/evidence gates are satisfied.",
+    "selection_rule": "Queue v39 exposes exactly three dependency-ready ANY slots under Issues #947-#949. #947 is docs-only independent Wave 1A evidence review; #948 is disposable harness-only FP-03/10/11 local-compatibility evidence in two new isolated files; #949 is docs-only P-001 environment-floor dependency reconciliation. No other executable P-006/runtime/module/provider/deploy slot is open.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches must never be reused. With no OPEN queue slot, Workers must not create a claim branch. Any future executable P-006/certification, ADR-0010 acceptance, multisite-allocation, remote-entitlement/provider, activation-control, broader premium-mutation, updater/TUF, migration or deeper module-runtime tranche must declare a new exact claim_branch from its accepted fresh-main authorization anchor.",
+    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches. Workers may claim only the exact branch declared by an OPEN v39 slot, created from queue anchor main without force. Any additional tranche requires a new accepted fresh-main issue and a new exact claim branch.",
     "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Treat ADR-0001, ADR-0007, docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md, docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md, merged Modules inventory evidence #912/#913, docs/PRODUCT/ADR-0010-COMPATIBILITY-PREFLIGHT-READINESS-V1.md and bounded runtime implementation #920/#921 as current commercial/runtime-boundary truth.",
-      "Read the five merged P-006 planning maps before proposing executable evidence: docs/QUALITY/P006-PLANNING-LANE-A-ARTIFACT-BOOTSTRAP.md, docs/QUALITY/P006-PLANNING-LANE-B-UPDATE-API-RANGES.md, docs/QUALITY/P006-PLANNING-LANE-C-SCHEMA-MIGRATIONS.md, docs/QUALITY/P006-PLANNING-LANE-D-ENTITLEMENT-MULTISITE.md and docs/QUALITY/P006-PLANNING-LANE-E-SECURITY-OBSERVABILITY.md.",
-      "ADR-0010 remains Proposed. Do not infer decision acceptance, P-006 execution or certified Free/Pro artifact pairs from the local preflight implementation, planning documents or ordinary CI regression evidence.",
+      "Read GOV-OWNER-CONSENT-P006-001 in docs/APPROVAL-LEDGER.md and preserve its disposable/sandbox-only execution boundary.",
+      "Read docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md and all five P-006 planning maps before executing or reviewing a fixture.",
+      "Treat merged PR #946 as exact Wave 1A evidence only: FP-01/02/05/07/08 PASS against source head ea1988cfd6aefd0aabdc6703a6f0763d12123c08, Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80 and Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363.",
+      "Keep current P-006 truth at 144 documented / 5 executed / 5 passed / 0 failed / 0 certified pairs / 0 runtime certifications until new authorized exact-head evidence is accepted.",
+      "ADR-0010 remains Proposed; do not infer decision acceptance from local preflight implementation, passing fixtures or ordinary CI.",
       "Preserve the distinction between package presence, binary compatibility, Platform API compatibility, observed schema state, migration markers, product entitlement, remote Product License/allocation, Membership/user authorization and updater/package trust.",
-      "Use the canonical request-local compatibility result as the runtime pair authority for premium loading, optional Pro runtime/migrations and diagnostics. Compatibility mirror constants, WPE_PRO_PACKAGE_ACTIVE, class presence, marketing-version equality or entitlement state are not substitutes for canonical compatibility PASS.",
-      "Preserve non-destructive expiry/degraded semantics: verification_stale and verification_unavailable are not equivalent to expired; owned definitions/data/history are not deleted merely because premium mutation authority is unavailable.",
-      "Treat Modules commercial inventory and pair diagnostics as read-only observability; they must not become implicit activation, licensing or provider-execution controls.",
-      "Require an explicit OPEN issue/queue slot naming exact bounded source/test paths, environment, artifact hashes, dependency boundaries, authorization capability, allowed side effects, stop-the-line rules and forbidden side effects before additional executable P-006 work or runtime code is started.",
-      "P-006 executable work additionally requires explicit P-006-scoped ADR-0014 owner authorization recorded in the governing evidence before FP-01..FP-144 are run.",
-      "Do not infer RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, universal premium-mutation enforcement, live provider execution, destructive mutation, production migration, P-006 compatibility certification, deployment or release authority from the completed commercial/preflight/planning gates.",
-      "Keep P-006 truth unchanged until authorized executable evidence exists: documented 144, executed 0/144, passed 0, failed 0, certified Free/Pro pairs 0 and runtime certifications 0."
+      "Use canonical request-local compatibility truth for premium loading where runtime fixtures apply; mirror constants, package presence, class presence, marketing-version equality or entitlement are not substitutes.",
+      "Do not run FP-13+ real WordPress/runtime fixtures until the P-001 environment-floor dependency is accepted or a separately authorized exception/gate records exact environment semantics.",
+      "Require exact artifact hashes, environment identity, expected/actual outcome, stop-the-line handling and terminal fixture state for every executable P-006 result.",
+      "Do not promote pair/runtime/product-parity certification, adjacent evidence domains, deployment or release from partial P-006 results."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
-      "Require every diff to remain inside its declared write boundary and preserve shared-owner/provider seams.",
-      "Require exact-head tests appropriate to the authorized tranche, including security, multisite/scope, portability, recovery, concurrency and performance evidence where applicable.",
-      "Require Free/Pro package boundaries to remain fail-closed and deterministic when package/distribution code is touched.",
-      "Require compatibility changes to preserve canonical local pair truth before premium module/service/migration eligibility and to preserve entitlement/Membership/updater truth separation.",
-      "Require migration evidence to keep binary-declared generation, applied markers and observed durable schema/data facts separate.",
-      "Require read-only commercial diagnostics to preserve authority, escaping, no-secret, no-mutation and non-certifying semantics.",
-      "Require all path-applicable exact-head workflows to pass before merge; absence of a triggered workflow is not a green status claim."
+      "Require every diff to remain inside its declared issue/queue write boundary.",
+      "Require exact-head tests/workflows applicable to the slot; absence of a triggered workflow is not a green status claim.",
+      "For #947 and #949 require exactly one declared docs/QUALITY file and zero executable/runtime/package mutation.",
+      "For #948 require only the two declared new evidence files, exact immutable base artifact identity, harness-only FP-03/10/11 execution, and zero WordPress/DB/network/provider/Membership side effects.",
+      "Require fail-closed compatibility semantics and preserve entitlement/Membership/updater truth separation.",
+      "Require read-only evidence to contain no production secrets or private provider/account material.",
+      "Do not merge a failing or inconclusive executable fixture as PASS; link a defect/stop-the-line result instead."
     ],
     "cycle_closeout": [
-      "Issue #904 / merged PR #905 completed physical Free/Pro Package Boundary Gate V1.",
-      "Issue #908 / merged PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1.",
-      "Issue #912 / merged PR #913 completed read-only Modules Commercial Inventory V1.",
-      "Issue #916 / merged PR #917 completed docs-only ADR-0010 Compatibility Preflight Execution Readiness V1.",
-      "Issue #920 / merged PR #921 completed Local Free/Pro Compatibility Preflight V1 Gates A-C on main 647ba6c14c4e485406be68a145ae940369200087.",
-      "Issue #925 / merged PR #932 completed P-006 Lane A planning for FP-01..FP-44 artifact/package/bootstrap/preflight evidence.",
-      "Issue #926 / merged PR #933 completed P-006 Lane B planning for FP-45..FP-76 update order, interruption, Platform API ranges and deprecation evidence.",
-      "Issue #927 / merged PR #934 completed P-006 Lane C planning for FP-77..FP-94 schema, migration, interruption, reconciliation, concurrency and recovery evidence.",
-      "Issue #928 / merged PR #935 completed P-006 Lane D planning for FP-95..FP-128 entitlement, Membership, Multisite, allocation, clone and restore evidence.",
-      "Issue #929 / merged PR #936 completed P-006 Lane E planning for FP-129..FP-144 security, observability, fuzzing, concurrency, evidence integrity and independent adversarial review.",
-      "The five planning documents are evidence-design artifacts only and execute no P-006 fixture.",
-      "P-006 truth remains FP documented 144, executed 0/144, passed 0, failed 0, certified Free/Pro pairs 0 and runtime certifications 0; ADR-0010 remains Proposed.",
-      "No module lifecycle, universal premium-operation enforcement, remote licensing/provider execution, multisite allocation, updater/TUF, destructive migration, deployment or release promotion follows from the planning wave.",
-      "Security residual #858 remains admin-only and main branch protection is still not claimed fixed.",
-      "Issue #924 remains open as the sole P-006 execution-authorization gate. Executable FP-01..FP-144 activity remains blocked until explicit P-006-scoped ADR-0014 owner authorization is recorded and a fresh-main bounded execution issue/branch is opened.",
-      "Until then AUTO Workers have NO_VALID_WORK_SLOT."
+      "Issue #904 / PR #905 completed physical Free/Pro Package Boundary Gate V1.",
+      "Issue #908 / PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1.",
+      "Issue #912 / PR #913 completed read-only Modules Commercial Inventory V1.",
+      "Issue #916 / PR #917 completed ADR-0010 Compatibility Preflight Execution Readiness V1.",
+      "Issue #920 / PR #921 completed Local Free/Pro Compatibility Preflight Gates A-C.",
+      "Issues #925-#929 / PRs #932-#936 completed planning maps for FP-01..FP-144.",
+      "Issue #924 authorization gate closed after explicit owner authorization was recorded as GOV-OWNER-CONSENT-P006-001 through PR #944.",
+      "Issue #945 / PR #946 completed P-006 Wave 1A exact-head evidence: FP-01/02/05/07/08 PASS, three applicable workflows successful, no pair/runtime certification.",
+      "Wave 1A tested Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80 and Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363; pair id 39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea.",
+      "Current P-006 truth is 144 documented, 5 executed, 5 passed, 0 failed, 0 certified pairs and 0 runtime certifications; ADR-0010 remains Proposed.",
+      "Queue v39 opens worker Issues #947-#949 only. Security residual #858 remains admin-only."
     ]
   },
   "roles": {
@@ -82,16 +76,16 @@
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Workers may claim only dependency-ready ANY slots through the deterministic branch declared by the current queue. Queue v38 exposes no OPEN worker slot.",
+      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v39.",
       "may_claim": [
         "ANY"
       ],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
-        "Create a branch when no dependency-ready OPEN slot exists.",
+        "Create any branch other than the exact branch of a dependency-ready OPEN slot.",
         "Edit wpessential.php, wpessential-pro.php, Bootstrap Plugin, composer/shared registries/Atomic lifecycle/progress/shared truth without an explicit worker slot.",
-        "Implement writes, AJAX routes, entitlement/provider/runtime side effects, activation controls or compatibility/certification claims without an explicit bounded source slot.",
-        "Execute destructive provider/database/user/content mutation, role/capability/user mutation, billing/payment/license-provider calls, external dispatch, jobs/schedules, deployment or release without a separately accepted gate."
+        "Implement writes, AJAX routes, entitlement/provider/runtime side effects, activation controls or compatibility/certification claims outside the exact slot.",
+        "Execute destructive provider/database/user/content mutation, billing/payment/license-provider calls, deployment or release."
       ]
     }
   },
@@ -99,7 +93,7 @@
     {
       "coordination": "surfaces-11-21-read-only-module-ability-exposure-v1",
       "status": "COMPLETED_BOUNDED_READ_ONLY_MODULE_ABILITY_ACTIVATED_NOT_CERTIFIED",
-      "closure": "Issues #873-#883 / merged PRs #886-#896; original central activation Issue #897 / merged PR #898; physical Pro move Issue #904 / PR #905",
+      "closure": "Issues #873-#883 / merged PRs #886-#896; central activation #897/#898; physical Pro move #904/#905",
       "evidence": "Read-only get/catalog exposure remains bounded and does not promote full-parity runtime/product certification."
     },
     {
@@ -138,7 +132,7 @@
       "source": "Issue #916",
       "closure": "merged PR #917",
       "merge_sha": "2c9c32665557eb9855c31406dad20c7f72d0ff50",
-      "evidence": "Readiness contract fixed metadata/result/bootstrap/CustomTables/diagnostics boundaries while preserving ADR-0010 Proposed and formal P-006 counters at zero."
+      "evidence": "Readiness contract fixed metadata/result/bootstrap/CustomTables/diagnostics boundaries while preserving ADR-0010 Proposed."
     },
     {
       "coordination": "local-free-pro-compatibility-preflight-v1",
@@ -146,14 +140,13 @@
       "source": "Issue #920",
       "closure": "merged PR #921",
       "merge_sha": "647ba6c14c4e485406be68a145ae940369200087",
-      "evidence": "Bootstrap-safe Free/Pro metadata, strict local fail-closed compatibility evaluator, canonical request-local pair truth gating premium loading and optional Pro runtime/migrations, and Runtime Observatory single-truth diagnostics. Exact PR head passed 9/9 applicable workflows including deterministic packaged compatible/incompatible both-order evidence. ADR-0010 remains Proposed; P-006 stays 0/144 executed and 0 certified pairs."
+      "evidence": "Bootstrap-safe metadata, strict local fail-closed compatibility evaluator, canonical request-local pair truth gating premium contribution and read-only diagnostics. Historical regression evidence is not relabeled as P-006 fixture execution."
     },
     {
-      "coordination": "p006-planning-authorization-gate-v1",
-      "status": "ACTIVE_AUTHORIZATION_ONLY_EXECUTION_BLOCKED_PLANNING_COMPLETE",
-      "source": "Issue #924",
-      "planning_coordination": "Issue #930 / merged PR #931",
-      "planning_children": "Issues #925-#929",
+      "coordination": "p006-planning-wave-v1",
+      "status": "COMPLETED_PLANNING_FP01_FP144",
+      "source": "Issues #924-#930",
+      "closure": "PRs #931-#936 and authorization PR #944",
       "planning_merges": [
         "#932 @ ab17df289d2f4063542951c7e7e6f4d68659339c",
         "#933 @ e3689f6f853408e0bc956f3f1557c098a6fb0233",
@@ -161,9 +154,113 @@
         "#935 @ 63629d754a51af3ecc03709139a42d8dd97eb3f7",
         "#936 @ 6889876786c6e6383783532d43ccc1ebb1e10478"
       ],
-      "evidence": "Five merged planning maps now cover FP-01..FP-144: artifact/bootstrap, update/API ranges, schema/migrations, entitlement/Multisite, and security/observability/adversarial review. No FP fixture has been executed. Executable P-006 remains blocked pending explicit P-006-scoped ADR-0014 owner authorization and a fresh-main bounded execution gate."
+      "evidence": "Five planning maps cover FP-01..FP-144. Explicit scoped owner authorization is now durably recorded as GOV-OWNER-CONSENT-P006-001."
+    },
+    {
+      "coordination": "p006-wave1a-static-artifact-evidence-v1",
+      "status": "COMPLETED_5_FIXTURES_PASS_NOT_CERTIFIED",
+      "source": "Issue #939 / child #945",
+      "closure": "merged PR #946",
+      "merge_sha": "4a005b34db7168bf4e31f85450d7b48a53fede0c",
+      "exact_head_sha": "ea1988cfd6aefd0aabdc6703a6f0763d12123c08",
+      "workflow_runs": [
+        "34902018141 P-006 Wave 1 Static Artifact Evidence SUCCESS",
+        "34902018018 Distributable Package SUCCESS",
+        "34902018017 Browser E2E Accessibility SUCCESS"
+      ],
+      "artifact_id": "10370662942",
+      "artifact_archive_sha256": "763d73755e13eb3f3f21f7c248756f59eaf9bc15ac8b80ef75110712d5a06654",
+      "free_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
+      "pro_sha256": "771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363",
+      "pair_id_sha256": "39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea",
+      "fixtures": [
+        "FP-01 PASS",
+        "FP-02 PASS",
+        "FP-05 PASS",
+        "FP-07 PASS",
+        "FP-08 PASS"
+      ],
+      "evidence": "5/144 executed and passed. P-006 runtime certification false; pair certification false; no adjacent certifications promoted."
     }
   ],
-  "historical_queue_note": "Queue v37 planning slots #925-#929 completed through PRs #932-#936 and are preserved in git history. Queue v38 intentionally exposes no OPEN worker slot. Earlier completed commercial/worker histories remain preserved in git history.",
-  "slots": []
+  "historical_queue_note": "Queue v38 intentionally had no OPEN worker slots after planning closeout. Queue v39 preserves earlier commercial/planning evidence, records scoped owner authorization and Wave 1A execution, and opens only Issues #947-#949 with non-overlapping deterministic claim branches.",
+  "slots": [
+    {
+      "priority": 1650,
+      "slot_id": "p006-wave1a-independent-evidence-review-v1",
+      "title": "P-006 Wave 1A Independent Evidence Integrity Review",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "P006_INDEPENDENT_EVIDENCE_REVIEW_ONLY",
+      "parallel_class": "P006_WAVE1_POST_STATIC_V1",
+      "source": "Issue #947; parent #939; coordination #941",
+      "runtime_allowed": false,
+      "product_parity_allowed": false,
+      "allowed_scope": [
+        "create docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"
+      ],
+      "forbidden_scope": [
+        "FP fixture execution",
+        "runtime/source/test/workflow/package mutation",
+        "database/provider/network mutation",
+        "certification promotion",
+        "deployment/release"
+      ],
+      "claim_branch": "agent/p006-wave1a-independent-evidence-review-v1"
+    },
+    {
+      "priority": 1651,
+      "slot_id": "p006-wave1b-local-compatibility-variants-v1",
+      "title": "P-006 Wave 1B Local Compatibility Variants FP-03/10/11",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "P006_DISPOSABLE_HARNESS_EXECUTION_ONLY",
+      "parallel_class": "P006_WAVE1_POST_STATIC_V1",
+      "source": "Issue #948; parent #939; coordination #941",
+      "runtime_allowed": false,
+      "harness_execution_allowed": true,
+      "product_parity_allowed": false,
+      "executable_fixtures": [
+        "FP-03",
+        "FP-10",
+        "FP-11"
+      ],
+      "allowed_scope": [
+        "create tools/release/p006-wave1b-local-compatibility-evidence.php",
+        "create .github/workflows/p006-wave1b-local-compatibility.yml"
+      ],
+      "forbidden_scope": [
+        "edit existing runtime/source/workflow/package behavior",
+        "WordPress activation/request-context execution",
+        "database/migration mutation",
+        "provider/entitlement/Membership/network side effects",
+        "certification promotion",
+        "deployment/release"
+      ],
+      "claim_branch": "agent/p006-wave1b-local-compatibility-variants-v1"
+    },
+    {
+      "priority": 1652,
+      "slot_id": "p006-p001-environment-floor-reconciliation-v1",
+      "title": "P-006 P-001 Environment Floor Dependency Reconciliation",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "P006_P001_DEPENDENCY_RECONCILIATION_ONLY",
+      "parallel_class": "P006_WAVE1_POST_STATIC_V1",
+      "source": "Issue #949; parent #939; coordination #941",
+      "runtime_allowed": false,
+      "product_parity_allowed": false,
+      "allowed_scope": [
+        "create docs/QUALITY/P006-P001-ENVIRONMENT-FLOOR-RECONCILIATION.md only"
+      ],
+      "forbidden_scope": [
+        "P-001 or P-006 fixture execution",
+        "runtime/source/test/workflow/package mutation",
+        "environment or certification promotion",
+        "database/provider/network mutation",
+        "deployment/release"
+      ],
+      "claim_branch": "agent/p006-p001-environment-floor-reconciliation-v1"
+    }
+  ]
 }
