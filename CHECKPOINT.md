@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-14 UTC**  
-Canonical audited base anchor: **`main @ b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d`**  
+Canonical audited base anchor: **`main @ f06bdfb20d17d1ce313560a774e9f3b8655961cc`**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
 Execution mode: **`IMPLEMENTATION_GATED`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -12,11 +12,12 @@ Every `start`, `continue` and `resume` cycle must resolve exact current `main`, 
 
 ## Current commercial state
 
-The commercial runtime/distribution foundation now has three accepted gates:
+The commercial runtime/distribution foundation now has four accepted bounded gates:
 
 1. **Commercial matrix V1** — Issue #902 / merged PR #903: canonical **2 Free / 1 Platform Core / 53 Pro** surface split.
 2. **Physical Package Boundary V1** — Issue #904 / merged PR #905, merge `4cc04111831895e1b07b3480ae2957d70d7d0f8d`: Free and Pro are deterministic physically separate artifacts; Free contains shared Platform/Kernel/Contracts/Bootstrap plus CPT + Taxonomy implementation, while premium implementation/assets are Pro-owned.
-3. **Canonical Edition Metadata + Local Entitlement Domain V1** — Issue #908 / merged PR #909, merge **`b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d`**: provider-neutral local entitlement states, entitlement-aware Pro activation policy, separate premium operation authority, and canonical `edition: 'pro'` metadata for the 12 currently implemented premium modules.
+3. **Canonical Edition Metadata + Local Entitlement Domain V1** — Issue #908 / merged PR #909, merge `b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d`: provider-neutral local entitlement states, entitlement-aware Pro activation policy, separate premium operation authority, and canonical `edition: 'pro'` metadata for the 12 currently implemented premium modules.
+4. **Read-only Modules Commercial Inventory V1** — Issue #912 / merged PR #913, merge **`f06bdfb20d17d1ce313560a774e9f3b8655961cc`**: the existing Platform Runtime Observatory exposes server-generated, read-only commercial/runtime inventory for modules known to the current kernel.
 
 ## Entitlement Domain V1 truth
 
@@ -45,17 +46,36 @@ V1 semantics are intentionally split between module/read preservation and premiu
 
 This gate models authority for current and future integration but does **not** claim that every future premium mutation path is already universally wired through `PremiumOperationPolicy`. Current contributed premium modules are the bounded read-only `get`/`catalog` surfaces already accepted before this commercial gate.
 
-## Exact-head evidence for PR #909
+## Modules Commercial Inventory V1 truth
 
-Exact PR #909 head **`37e5bb3c7a9186482306a458836575648614635e`** passed all five applicable workflows before merge:
+The existing Platform Runtime Observatory now exposes a read-only table with the bounded fields:
 
-1. Architecture Guards — PASS, including architecture manifests/contracts, PHP syntax, WPCS, PHPStan, PHPUnit, smoke, persistence, AJAX, Action Scheduler coexistence and JobService integration;
+`Module | Edition | Package | Compatibility | Entitlement | Runtime state | Reason`
+
+Inventory semantics are intentionally non-mutating and non-certifying:
+
+- module rows derive from canonical `ModuleRegistry` registration/runtime state rather than a private duplicate inventory;
+- Free modules report package `wpessential`, their manifest edition, and entitlement `not_applicable`;
+- current Pro modules report package `wpessential-pro`, canonical `edition: 'pro'`, and the same provider-neutral entitlement snapshot used by `EntitlementAwareModuleActivationPolicy`;
+- Membership/user authentication is not used as product-entitlement truth;
+- runtime state/reason derives from canonical registered/degraded/booted state and explicit bounded reasons such as missing dependency or read-safe degraded entitlement;
+- compatibility checks are local prerequisite diagnostics only; Pro rows explicitly do **not** claim ADR-0010 certified Free/Pro version pairs;
+- the admin table is read-only and exposes no activation/deactivation controls, license keys, tokens or secrets;
+- Free-only packaging remains independent of Pro implementation classes merely to render diagnostics.
+
+This inventory is observability, not a commercial control plane. It does not activate modules, verify remote licenses, process billing, grant mutation authority or certify compatibility pairs.
+
+## Exact-head evidence for PR #913
+
+Exact PR #913 head **`1be9ca7cf19fd65b83899fd269f72d0ba225178b`** passed all five applicable workflows before merge:
+
+1. Architecture Guards — PASS, including architecture/contracts, syntax, WPCS, PHPStan, PHPUnit, smoke and integration evidence;
 2. PHP Quality Toolchain — PASS;
 3. Distributable Package — PASS, including deterministic Free/Pro artifacts, both package load orders and package-boundary checks;
 4. Platform Compatibility Matrix — PASS across the applicable WordPress/PHP/database matrix;
-5. Taxonomy Role Impact — PASS across WP 6.9/7.1 × PHP 8.2/8.5 separated Free+Pro fixtures.
+5. Browser E2E Accessibility — PASS against the exact packaged WordPress distributable and accessibility evidence.
 
-The 12 currently implemented premium Module manifests now report `edition: 'pro'`: Roles & Capabilities, Admin Menu, Settings Pages, Frontend Dashboard, User Profiles, Membership, Builder Widgets, Forms & Workflows, Cron, Notifications, Emails and Chat.
+The merged gate adds no module activation controls, secrets, live license/billing/provider calls, remote entitlement verification, ADR-0010 certified-pair claim, multisite entitlement allocation, deployment or release authority.
 
 ## Commercial architecture authority
 
@@ -65,18 +85,19 @@ Accepted authority:
 - `docs/DECISIONS/ADR-0007-license-expiry-runtime.md` — entitlement expiry must not destroy ownership/data; temporary verification failure is not equivalent to expiry.
 - `docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md` — canonical 56-surface commercial split and bounded implementation gates.
 - `docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md` — accepted V1 local entitlement/edition semantics and explicit non-goals.
+- Issue #912 / merged PR #913 — accepted read-only Modules commercial/runtime diagnostics over canonical registry and entitlement-provider truth.
 
 Still separate / not certified:
 
 - `docs/DECISIONS/ADR-0010-free-pro-compatibility.md` remains a later executable compatibility gate; certified Free/Pro version pairs remain unpromoted.
-- WordPress admin Modules inventory remains unimplemented.
 - multisite entitlement allocation, clone/restore and network/site semantics remain separately gated.
-- remote license-server, billing/provider integration, secrets/credential persistence and live verification remain unauthorized in this gate.
+- remote license-server, billing/provider integration, secrets/credential persistence and live verification remain unauthorized in the current state.
+- broad activation/deactivation controls and universal premium mutation enforcement remain separately gated.
 - production deployment/release remains separately gated.
 
 ## Full-parity lifecycle truth remains unchanged
 
-Commercial packaging and entitlement infrastructure are not lifecycle-certification promotions. Canonical machine truth remains:
+Commercial packaging, entitlement infrastructure and read-only inventory are not lifecycle-certification promotions. Canonical machine truth remains:
 
 - **17** surfaces at or beyond `OPTION_CONTRACT_COMPLETE`;
 - **16** surfaces exactly at `UX_CONTRACT_COMPLETE`;
@@ -99,15 +120,15 @@ The previously accepted bounded states remain unchanged:
 - Surface 9 / Listings — **PASS FOR CERTIFIED BOUNDED V1 BASELINE**.
 - Surface 2 / Taxonomy — **PASS FOR CERTIFIED BOUNDED ACCEPTED V1 OWNER-RUNTIME SCOPE**; full-parity lifecycle remains unpromoted.
 - Surface 7 / Custom Tables — **ACTIVE / NOT PASS**, bounded runway **90%**, managed-table execution still blocked.
-- Surfaces 11–21 — bounded read-only Runtime Foundation + Module/Ability exposure accepted and now Pro-owned; **NOT full-parity runtime/product certified**.
+- Surfaces 11–21 — bounded read-only Runtime Foundation + Module/Ability exposure accepted and Pro-owned; **NOT full-parity runtime/product certified**.
 
 No bounded state above implies deployment/release readiness.
 
 ## Current queue and security residual
 
-`config/coordination/agent-work-queue.json` v33 is the authoritative conflict-safe queue and is anchored to `main @ b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d`.
+`config/coordination/agent-work-queue.json` v34 is the authoritative conflict-safe queue and is anchored to `main @ f06bdfb20d17d1ce313560a774e9f3b8655961cc`.
 
-After Entitlement Domain V1 there is **no dependency-ready source-development slot**. Completed branches must not be reused. Deterministic behavior is therefore `NO_VALID_WORK_SLOT` unless a separate accepted fresh-main issue explicitly opens another bounded gate.
+After Modules Commercial Inventory V1 there is **no dependency-ready source-development slot**. Completed branches must not be reused. Deterministic behavior is therefore `NO_VALID_WORK_SLOT` unless a separate accepted fresh-main issue explicitly opens another bounded gate.
 
 Issue **#858** remains the repository-admin security residual: `main` branch protection/ruleset is still not enabled. This must be fixed through GitHub repository administration; no source-code workaround is authorized and the project must not claim it fixed without fresh branch/ruleset evidence.
 
@@ -115,10 +136,10 @@ Issue **#858** remains the repository-admin security residual: `main` branch pro
 
 Possible later commercial gates remain independent unless a fresh accepted Issue explicitly authorizes one:
 
-- WordPress admin Modules inventory: `Module | Edition | Package | Compatibility | Entitlement | Runtime state | Reason`, with no secret/token exposure;
 - ADR-0010 executable Free/Pro compatibility preflight and certified version pairs;
 - multisite entitlement allocation, site/network scope, clone/restore behavior;
 - remote entitlement verification and provider/billing integration;
+- module activation/deactivation commercial controls, if product requirements later authorize them;
 - explicit wiring of premium mutation policies into future mutating premium surfaces as those surfaces are authorized;
 - deployment/release certification.
 
