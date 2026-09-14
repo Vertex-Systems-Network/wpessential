@@ -188,9 +188,8 @@ add_action(
         }
 
         $compatibility = $preflightClass::evaluateRuntime($packageComplete);
-        $publishCompatibility($compatibility);
-
         if (($compatibility['state'] ?? '') !== 'compatible') {
+            $publishCompatibility($compatibility);
             $proNotice(sprintf(
                 'WPEssential Pro is inactive because local Free/Pro compatibility failed (%s). Recovery: %s.',
                 (string) ($compatibility['reason'] ?? 'unknown'),
@@ -209,10 +208,20 @@ add_action(
         ];
         foreach ($requiredFreeRuntimeClasses as $requiredFreeRuntimeClass) {
             if (!class_exists($requiredFreeRuntimeClass)) {
+                $compatibility['state'] = 'free_bootstrap_incomplete';
+                $compatibility['dimension'] = 'package';
+                $compatibility['reason'] = 'free_platform_api_profile_incomplete';
+                $compatibility['remediation'] = 'repair_free';
+                $compatibility['premium_boot_allowed'] = false;
+                $compatibility['premium_migrations_allowed'] = false;
+                $publishCompatibility($compatibility);
                 $proNotice('WPEssential Pro found compatible metadata but the Free Platform API is incomplete.');
                 return;
             }
         }
+
+        // Publish compatible only after the declared Free API profile actually resolves.
+        $publishCompatibility($compatibility);
 
         $configuredState = defined('WPE_PRO_LOCAL_ENTITLEMENT_STATE')
             ? (string) WPE_PRO_LOCAL_ENTITLEMENT_STATE
