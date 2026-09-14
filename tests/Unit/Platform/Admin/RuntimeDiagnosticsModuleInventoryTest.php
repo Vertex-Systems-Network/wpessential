@@ -38,6 +38,8 @@ final class RuntimeDiagnosticsModuleInventoryTest extends TestCase
         self::assertSame(2, $modules['count']);
         self::assertTrue($modules['read_only']);
         self::assertSame('adr_0010_not_certified', $modules['compatibility_certification']);
+        self::assertSame('unavailable', $modules['pro_compatibility']['state']);
+        self::assertSame('adr_0010_not_certified', $modules['pro_compatibility']['certification']);
 
         $inventory = $modules['inventory'];
         self::assertIsArray($inventory);
@@ -55,7 +57,10 @@ final class RuntimeDiagnosticsModuleInventoryTest extends TestCase
         self::assertSame('verification_unavailable', $inventory[1]['entitlement']);
         self::assertSame('booted', $inventory[1]['runtime_state']);
         self::assertSame('read_safe_entitlement_verification_unavailable', $inventory[1]['reason']);
-        self::assertSame('local_prerequisites_met_adr_0010_not_certified', $inventory[1]['compatibility']);
+        self::assertSame(
+            'compatibility_state_unavailable_adr_0010_not_certified',
+            $inventory[1]['compatibility'],
+        );
     }
 
     public function testDegradedModuleReportsCanonicalRegistryStateAndReason(): void
