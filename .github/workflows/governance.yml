@@ -1,0 +1,102 @@
+name: Governance Gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    name: governance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head and diff hygiene
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+          if [ -n "${WPE_BASE_SHA}" ]; then
+            git cat-file -e "${WPE_BASE_SHA}^{commit}"
+            git diff --check "${WPE_BASE_SHA}...HEAD"
+          fi
+
+      - name: Set up PHP 8.2 governance runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Verify required governance surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          for required in \
+            AGENTS.md \
+            AUTO-AGENT.md \
+            CONTRIBUTING.md \
+            CHECKPOINT.md \
+            DEVELOPMENT-CONSENT.md \
+            docs/APPROVAL-LEDGER.md \
+            docs/ENGINEERING-EXECUTION-GOVERNANCE.md \
+            config/coordination/agent-work-queue.json
+          do
+            test -s "${required}"
+          done
+
+      - name: Validate governance tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          php -l tools/architecture/validate.php
+          php -l tools/architecture/validate-engineering-contracts.php
+
+      - name: Parse tracked configuration JSON strictly
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            php -r '
+              $path = $argv[1];
+              $raw = file_get_contents($path);
+              if ($raw === false) {
+                  fwrite(STDERR, "Unable to read {$path}\n");
+                  exit(1);
+              }
+              try {
+                  json_decode($raw, true, flags: JSON_THROW_ON_ERROR);
+              } catch (JsonException $exception) {
+                  fwrite(STDERR, "Invalid JSON {$path}: {$exception->getMessage()}\n");
+                  exit(1);
+              }
+            ' "${file}"
+            count=$((count + 1))
+          done < <(find config -type f -name '*.json' -print0 | sort -z)
+          test "${count}" -gt 0
+          printf 'Validated %s tracked configuration JSON files.\n' "${count}"
+
+      - name: Validate architecture manifests
+        run: php tools/architecture/validate.php
+
+      - name: Validate engineering contracts
+        run: php tools/architecture/validate-engineering-contracts.php
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
