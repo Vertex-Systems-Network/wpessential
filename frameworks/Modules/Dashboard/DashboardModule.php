@@ -25,7 +25,7 @@ final class DashboardModule implements ModuleInterface
     public const ABILITY_CATALOG = 'wpessential/dashboard/catalog';
     public const CAPABILITY = 'manage_options';
 
-    public function manifest(): ModuleManifest { return new ModuleManifest(id: 'dashboard', name: 'Frontend Dashboard', version: '0.1.0', edition: 'free'); }
+    public function manifest(): ModuleManifest { return new ModuleManifest(id: 'dashboard', name: 'Frontend Dashboard', version: '0.1.0', edition: 'pro'); }
 
     public function register(ServiceRegistryInterface $services): void
     {
