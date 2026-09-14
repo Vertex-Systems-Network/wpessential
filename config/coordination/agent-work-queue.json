@@ -1,8 +1,8 @@
 {
-  "schema_version": 32,
+  "schema_version": 33,
   "snapshot_date": "2026-09-14",
-  "queue_anchor_main_sha": "4cc04111831895e1b07b3480ae2957d70d7d0f8d",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. PR #905 / Issue #904 completed the physical Free/Pro package-boundary gate: Free ships Platform Core + CPT Builder + Taxonomy Builder implementation, while premium module implementation is physically separated into the Pro add-on package. This package boundary does not grant paid-entitlement enforcement, premium manifest normalization, provider/billing/network execution, ADR-0010 compatibility certification, deployment or release authority. Security residual #858 remains a repository-admin branch-protection action and does not create a source-development slot.",
+  "queue_anchor_main_sha": "b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Issue #904 / PR #905 completed the physical Free/Pro package-boundary gate. Issue #908 / PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1: the 12 currently implemented premium modules now report edition=pro, Pro installs a provider-neutral entitlement-aware activation policy before module contribution, and premium activation/read preservation is modeled separately from premium mutation authority. This V1 does not authorize or claim live license-server/billing/provider integration, universal enforcement of every future premium mutation path, ADR-0010 compatibility certification, multisite allocation semantics, deployment or release. Security residual #858 remains a repository-admin branch-protection action and does not create a source-development slot.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,34 +14,37 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "All previously authorized source-development slots are completed or closed. The physical Free/Pro package boundary is merged through Issue #904 / PR #905. No entitlement/edition follow-on source slot exists until a separate fresh-main Supervisor/implementation Issue explicitly authorizes it.",
+    "selection_rule": "All previously authorized source-development slots are completed or closed. Free/Pro physical packaging and local entitlement/edition V1 are merged through Issues #904/#908 and PRs #905/#909. No Modules inventory, compatibility-preflight, multisite-allocation, remote-entitlement/provider, deeper module-runtime or release source slot exists until a separate fresh-main Supervisor/implementation Issue explicitly authorizes it.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches must never be reused. Any future entitlement, compatibility, multisite-allocation or deeper module-runtime tranche must declare a new exact claim_branch from its accepted exact-main authorization anchor.",
+    "claim_branch_rule": "Completed branches must never be reused. Any future Modules inventory, compatibility, multisite-allocation, remote-entitlement/provider or deeper module-runtime tranche must declare a new exact claim_branch from its accepted exact-main authorization anchor.",
     "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Treat docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md, ADR-0001 and ADR-0007 as accepted product/distribution truth; ADR-0010 compatibility certification remains a separate gate.",
+      "Treat ADR-0001, ADR-0007, docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md and docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md as accepted commercial/runtime-boundary truth; ADR-0010 compatibility certification remains a separate gate.",
+      "Preserve the distinction between product entitlement, Membership/user authentication and ordinary authorization/capability truth.",
+      "Preserve non-destructive expiry/degraded semantics: verification_stale and verification_unavailable are not equivalent to expired; owned definitions/data are not deleted merely because premium mutation authority is unavailable.",
       "Require an explicit OPEN issue/queue slot naming bounded source/test paths, dependency boundaries, authorization capability and forbidden side effects before additional runtime code is written.",
-      "Do not infer paid entitlement enforcement, RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, provider execution, destructive mutation, production migration, deployment or release authority from the completed physical package boundary."
+      "Do not infer RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, universal premium-mutation enforcement, live provider execution, destructive mutation, production migration, ADR-0010 compatible-pair certification, deployment or release authority from the completed entitlement-domain V1."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Require every diff to remain inside its declared write boundary and preserve shared-owner/provider seams.",
-      "Require exact-head tests appropriate to the authorized tranche, including security, degraded-state, multisite/scope, portability and performance evidence where applicable.",
+      "Require exact-head tests appropriate to the authorized tranche, including entitlement/degraded-state, security, multisite/scope, portability and performance evidence where applicable.",
       "Require Free/Pro package boundaries to remain fail-closed and deterministic when package/distribution code is touched.",
       "Require all path-applicable exact-head workflows to pass before merge."
     ],
     "cycle_closeout": [
-      "Issue #904 / merged PR #905 completed the physical Free/Pro Package Boundary Gate V1 on main 4cc04111831895e1b07b3480ae2957d70d7d0f8d.",
-      "Exact PR head 79fa4173208b3dcae00b303395831f9e2b6c7634 passed all 9 applicable workflows before merge.",
-      "Free package is physically limited to shared Platform/Kernel/Contracts/Bootstrap plus CPT and Taxonomy implementation and Free admin assets.",
-      "Pro package owns premium module implementation/assets without duplicating Free Platform/Kernel/Contracts/Bootstrap or CPT/Taxonomy source.",
-      "Free-only Taxonomy role-impact diagnostics degrade visibly to unavailable when Pro Roles is absent; Free+Pro canonical Surface 30 role-impact evidence passes.",
-      "No paid-entitlement enforcement, premium edition-manifest normalization, ADR-0010 certification, deployment or release promotion follows from this gate.",
+      "Issue #904 / merged PR #905 completed physical Free/Pro Package Boundary Gate V1.",
+      "Issue #908 / merged PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1 on main b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d.",
+      "Exact PR #909 head 37e5bb3c7a9186482306a458836575648614635e passed Architecture Guards, PHP Quality Toolchain, Distributable Package, Platform Compatibility Matrix and all four Taxonomy Role Impact lanes.",
+      "Canonical local entitlement states are free, trial_active, pro_active, grace, expired, suspended, verification_stale, verification_unavailable and incompatible_version.",
+      "Free modules remain entitlement-independent; current Pro modules use entitlement-aware activation; Trial/Pro Active/Grace permit premium mutation in the V1 policy model, while Expired/Suspended/Stale/Unavailable preserve read-safe activation but deny premium mutation; Free/Incompatible Version deny Pro activation.",
+      "Current 12 implemented premium module manifests report edition=pro. Membership/user authentication is not product-entitlement truth.",
+      "No live license-server/billing/provider integration, universal future premium-operation enforcement, ADR-0010 certification, multisite entitlement allocation, deployment or release promotion follows from this gate.",
       "Security residual #858 remains admin-only and main branch protection is still not claimed fixed."
     ]
   },
@@ -63,10 +66,10 @@
       "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY slots.",
-        "Edit wpessential.php, Bootstrap Plugin, composer/shared registries/Atomic lifecycle/progress/shared truth without an explicit worker slot.",
-        "Implement writes, AJAX routes, entitlement enforcement or provider/runtime side effects without an explicit bounded source slot.",
+        "Edit wpessential.php, wpessential-pro.php, Bootstrap Plugin, composer/shared registries/Atomic lifecycle/progress/shared truth without an explicit worker slot.",
+        "Implement writes, AJAX routes, entitlement/provider/runtime side effects or compatibility claims without an explicit bounded source slot.",
         "Invent another branch when no dependency-ready deterministic claim exists.",
-        "Execute destructive provider/database/user/content mutation, role/capability/user mutation, billing/payment/provider calls, external dispatch, jobs/schedules, deployment or release without a separately accepted gate."
+        "Execute destructive provider/database/user/content mutation, role/capability/user mutation, billing/payment/license-provider calls, external dispatch, jobs/schedules, deployment or release without a separately accepted gate."
       ]
     }
   },
@@ -74,7 +77,7 @@
     {
       "coordination": "surfaces-11-21-read-only-module-ability-exposure-v1",
       "status": "COMPLETED_BOUNDED_READ_ONLY_MODULE_ABILITY_ACTIVATED_NOT_CERTIFIED",
-      "closure": "Issues #873-#883 / merged PRs #886-#896; central activation Issue #897 / merged PR #898",
+      "closure": "Issues #873-#883 / merged PRs #886-#896; original central activation Issue #897 / merged PR #898; physical Pro move Issue #904 / PR #905",
       "evidence": "Read-only get/catalog exposure remains bounded and does not promote full-parity runtime/product certification."
     },
     {
@@ -85,13 +88,21 @@
     },
     {
       "coordination": "free-pro-physical-package-boundary-v1",
-      "status": "COMPLETED_PHYSICAL_PACKAGE_BOUNDARY_NOT_ENTITLEMENT_CERTIFIED",
+      "status": "COMPLETED_PHYSICAL_PACKAGE_BOUNDARY_NOT_COMPATIBILITY_CERTIFIED",
       "source": "Issue #904",
       "closure": "merged PR #905",
       "merge_sha": "4cc04111831895e1b07b3480ae2957d70d7d0f8d",
-      "evidence": "Deterministic Free/Pro ZIP split, package boundary assertions, both package load orders, Free-only degraded optional Roles diagnostics, Free+Pro Surface 30 consumer evidence and all 9 exact-head workflows green."
+      "evidence": "Deterministic Free/Pro ZIP split, package boundary assertions, both package load orders, Free-only degraded optional Roles diagnostics and Free+Pro Surface 30 consumer evidence."
+    },
+    {
+      "coordination": "canonical-edition-local-entitlement-domain-v1",
+      "status": "COMPLETED_LOCAL_PROVIDER_NEUTRAL_ENTITLEMENT_MODEL_NOT_REMOTE_LICENSE_CERTIFIED",
+      "source": "Issue #908",
+      "closure": "merged PR #909",
+      "merge_sha": "b549a65ce1ffa7400fe3a10b2f0b255ecfbba80d",
+      "evidence": "Nine-state provider-neutral local entitlement model; activation/operation authority separated; 12 current premium manifests normalized to pro; Pro policy installed before contribution; exact PR head passed all five applicable workflows. No live provider/billing/network licensing or ADR-0010 certification."
     }
   ],
-  "historical_queue_note": "Queue v31 and earlier completed worker-slot histories remain preserved in git history. V32 intentionally contains no completed worker slots because none is actionable after the package-boundary closeout.",
+  "historical_queue_note": "Queue v32 and earlier completed commercial/worker histories remain preserved in git history. V33 intentionally contains no actionable source slots after entitlement-domain V1 closeout.",
   "slots": []
 }
