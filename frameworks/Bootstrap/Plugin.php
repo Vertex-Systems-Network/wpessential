@@ -283,13 +283,13 @@ final class Plugin
 
     private static function proCustomTablesRuntimeAvailable(): bool
     {
+        $compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
         if (
             !defined('WPE_PRO_PACKAGE_ACTIVE')
             || WPE_PRO_PACKAGE_ACTIVE !== true
-            || !defined('WPE_PRO_COMPATIBILITY_STATE')
-            || WPE_PRO_COMPATIBILITY_STATE !== 'compatible'
-            || !defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED')
-            || WPE_PRO_COMPATIBILITY_BOOT_ALLOWED !== true
+            || !is_array($compatibility)
+            || ($compatibility['state'] ?? '') !== 'compatible'
+            || ($compatibility['premium_boot_allowed'] ?? false) !== true
         ) {
             return false;
         }
@@ -313,9 +313,11 @@ final class Plugin
 
     private static function proCustomTablesMigrationsAllowed(): bool
     {
+        $compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
+
         return self::proCustomTablesRuntimeAvailable()
-            && defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED')
-            && WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED === true;
+            && is_array($compatibility)
+            && ($compatibility['premium_migrations_allowed'] ?? false) === true;
     }
 
     private static function supportsMysqlPersistence(object $wpdb): bool
