@@ -80,9 +80,10 @@ spl_autoload_register(
         }
 
         $compatibilityPrefix = 'WPEssential\\Modules\\Compatibility\\';
+        $compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
         if (
             !str_starts_with($class, $compatibilityPrefix)
-            && (!defined('WPE_PRO_COMPATIBILITY_STATE') || WPE_PRO_COMPATIBILITY_STATE !== 'compatible')
+            && (!is_array($compatibility) || ($compatibility['state'] ?? '') !== 'compatible')
         ) {
             return;
         }
@@ -135,6 +136,9 @@ $moduleFileForClass = static function (string $class): ?string {
 };
 
 $publishCompatibility = static function (array $result): void {
+    // Canonical request-local authority. Compatibility mirror constants below are observability only.
+    $GLOBALS['wpe_pro_compatibility_result'] = $result;
+
     $constants = [
         'WPE_PRO_COMPATIBILITY_STATE' => (string) ($result['state'] ?? 'pro_package_incomplete'),
         'WPE_PRO_COMPATIBILITY_DIMENSION' => (string) ($result['dimension'] ?? 'package'),
