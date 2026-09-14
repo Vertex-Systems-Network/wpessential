@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use WPEssential\Kernel\Kernel;
+use WPEssential\Platform\Entitlements\EntitlementAwareModuleActivationPolicy;
 use WPEssential\Platform\Entitlements\ProductEntitlementState;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\Modules\ModuleState;
@@ -131,12 +132,12 @@ final readonly class RuntimeDiagnosticsSnapshot
             return 'not_applicable';
         }
 
-        if (!defined('WPE_PRO_ENTITLEMENT_STATE')) {
+        $policy = $this->kernel->moduleActivationPolicy();
+        if (!$policy instanceof EntitlementAwareModuleActivationPolicy) {
             return 'unknown';
         }
 
-        $state = ProductEntitlementState::tryFrom((string) WPE_PRO_ENTITLEMENT_STATE);
-        return $state?->value ?? 'unknown';
+        return $policy->entitlementSnapshot()->state->value;
     }
 
     private function runtimeReason(ModuleManifest $manifest, ?ModuleState $state, string $entitlement): string
