@@ -33,9 +33,9 @@ final class EntitlementProBootstrapSourceTest extends TestCase
         self::assertIsString($source);
 
         self::assertStringContainsString("WPEssential\\\\Modules\\\\Compatibility\\\\", $source);
-        self::assertStringContainsString("$GLOBALS['wpe_pro_compatibility_result']", $source);
-        self::assertStringContainsString("($compatibility['state'] ?? '') !== 'compatible'", $source);
-        self::assertStringContainsString("$GLOBALS['wpe_pro_compatibility_result'] = $result", $source);
+        self::assertStringContainsString('$GLOBALS[\'wpe_pro_compatibility_result\']', $source);
+        self::assertStringContainsString("(\$compatibility['state'] ?? '') !== 'compatible'", $source);
+        self::assertStringContainsString('$GLOBALS[\'wpe_pro_compatibility_result\'] = $result', $source);
     }
 
     public function testBootstrapContainsNoRemoteLicenseOrBillingTransport(): void
