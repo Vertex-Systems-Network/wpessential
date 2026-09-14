@@ -17,7 +17,11 @@ final class PlatformAdminCommercialInventorySourceTest extends TestCase
         foreach (['Module', 'Edition', 'Package', 'Compatibility', 'Entitlement', 'Runtime state', 'Reason'] as $heading) {
             self::assertStringContainsString("'{$heading}'", $source);
         }
+        foreach (['Free / Pro compatibility', 'Pair state', 'Dimension', 'Recovery', 'Certification'] as $label) {
+            self::assertStringContainsString($label, $source);
+        }
         self::assertStringContainsString('screen-reader-text', $source);
+        self::assertStringContainsString('Pro compatibility consumes the canonical local preflight result', $source);
         self::assertStringContainsString('ADR-0010 certified Free/Pro version pairs are not claimed here', $source);
         self::assertStringNotContainsString('<form', $source);
         self::assertStringNotContainsString('<button', $source);

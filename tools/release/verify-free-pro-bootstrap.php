@@ -11,9 +11,10 @@ $mode = $argv[1] ?? '';
 $freeRoot = isset($argv[2]) ? realpath($argv[2]) : false;
 $proRoot = isset($argv[3]) ? realpath($argv[3]) : false;
 $order = $argv[4] ?? 'free-first';
+$freeProModes = ['free-pro', 'free-pro-incompatible'];
 
-if (!in_array($mode, ['free', 'free-pro'], true)) {
-    fwrite(STDERR, "Usage: php verify-free-pro-bootstrap.php <free|free-pro> <free-root> [pro-root] [free-first|pro-first]\n");
+if (!in_array($mode, ['free', ...$freeProModes], true)) {
+    fwrite(STDERR, "Usage: php verify-free-pro-bootstrap.php <free|free-pro|free-pro-incompatible> <free-root> [pro-root] [free-first|pro-first]\n");
     exit(1);
 }
 
@@ -22,7 +23,7 @@ if ($freeRoot === false || !is_file($freeRoot . '/wpessential.php')) {
     exit(1);
 }
 
-if ($mode === 'free-pro') {
+if (in_array($mode, $freeProModes, true)) {
     if ($proRoot === false || !is_file($proRoot . '/wpessential-pro.php')) {
         fwrite(STDERR, "Pro package root is invalid.\n");
         exit(1);
@@ -35,6 +36,11 @@ if ($mode === 'free-pro') {
 
 if (!defined('ABSPATH')) {
     define('ABSPATH', $freeRoot . '/');
+}
+
+if ($mode === 'free-pro-incompatible' && !defined('WPE_PLATFORM_API_VERSION')) {
+    // Simulate an independently updated Free package outside this Pro package's supported API range.
+    define('WPE_PLATFORM_API_VERSION', '9.9.9');
 }
 
 $GLOBALS['wpe_bootstrap_verifier_actions'] = [];
@@ -90,6 +96,20 @@ if ($mode === 'free') {
 } else {
     $includePro();
     $includeFree();
+}
+
+$expectedPlatformApi = $mode === 'free-pro-incompatible' ? '9.9.9' : '0.1.0';
+if (!defined('WPE_PLATFORM_API_VERSION') || WPE_PLATFORM_API_VERSION !== $expectedPlatformApi) {
+    fwrite(STDERR, "Free package did not publish/preserve the expected Platform API version.\n");
+    exit(1);
+}
+if (!defined('WPE_PLATFORM_SCHEMA_GENERATION') || WPE_PLATFORM_SCHEMA_GENERATION !== 1) {
+    fwrite(STDERR, "Free package did not publish the expected Platform schema generation.\n");
+    exit(1);
+}
+if (!defined('WPE_FREE_BOOTSTRAP_READY') || WPE_FREE_BOOTSTRAP_READY !== true) {
+    fwrite(STDERR, "Free package did not publish bootstrap-ready state.\n");
+    exit(1);
 }
 
 $pluginsLoaded = $GLOBALS['wpe_bootstrap_verifier_actions']['plugins_loaded'] ?? [];
@@ -161,6 +181,10 @@ if ($mode === 'free') {
         fwrite(STDERR, "Free-only boot unexpectedly marked the Pro package active.\n");
         exit(1);
     }
+    if (defined('WPE_PRO_COMPATIBILITY_STATE')) {
+        fwrite(STDERR, "Free-only boot unexpectedly published a Pro compatibility decision.\n");
+        exit(1);
+    }
 
     $services = $kernel->services();
     $roleImpact = $services->get('module.taxonomies.role-impact');
@@ -180,9 +204,57 @@ if ($mode === 'free') {
         fwrite(STDERR, "Free Taxonomy must degrade role-impact diagnostics when Pro Roles is absent.\n");
         exit(1);
     }
+} elseif ($mode === 'free-pro-incompatible') {
+    if (!defined('WPE_PRO_PACKAGE_ACTIVE') || WPE_PRO_PACKAGE_ACTIVE !== true) {
+        fwrite(STDERR, "Mismatch fixture did not mark the Pro package present.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_STATE') || WPE_PRO_COMPATIBILITY_STATE !== 'platform_api_too_new') {
+        fwrite(STDERR, "Mismatch fixture did not resolve platform_api_too_new.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED') || WPE_PRO_COMPATIBILITY_BOOT_ALLOWED !== false) {
+        fwrite(STDERR, "Mismatch fixture unexpectedly authorized premium boot.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED') || WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED !== false) {
+        fwrite(STDERR, "Mismatch fixture unexpectedly authorized premium migrations.\n");
+        exit(1);
+    }
+
+    foreach ($implementedProModules as $proModule) {
+        if ($modules->has($proModule)) {
+            fwrite(STDERR, "Mismatch fixture registered incompatible Pro module: {$proModule}\n");
+            exit(1);
+        }
+    }
+    if (class_exists(\WPEssential\Modules\Membership\MembershipModule::class)) {
+        fwrite(STDERR, "Mismatch fixture autoloaded premium implementation after compatibility failure.\n");
+        exit(1);
+    }
+    if (class_exists(\WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRunStoreMigration::class)) {
+        fwrite(STDERR, "Mismatch fixture autoloaded Pro migration implementation after compatibility failure.\n");
+        exit(1);
+    }
 } else {
     if (!defined('WPE_PRO_PACKAGE_ACTIVE') || WPE_PRO_PACKAGE_ACTIVE !== true) {
         fwrite(STDERR, "Free+Pro boot did not mark the Pro package active.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_STATE') || WPE_PRO_COMPATIBILITY_STATE !== 'compatible') {
+        fwrite(STDERR, "Free+Pro packaged preflight did not resolve compatible.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED') || WPE_PRO_COMPATIBILITY_BOOT_ALLOWED !== true) {
+        fwrite(STDERR, "Free+Pro packaged preflight did not authorize premium boot.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED') || WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED !== true) {
+        fwrite(STDERR, "Free+Pro packaged preflight did not admit compatible migration paths.\n");
+        exit(1);
+    }
+    if (!class_exists(\WPEssential\Modules\Compatibility\LocalCompatibilityPreflight::class)) {
+        fwrite(STDERR, "Pro package could not autoload the compatibility preflight.\n");
         exit(1);
     }
 
@@ -209,5 +281,5 @@ fwrite(STDOUT, sprintf(
     $mode,
     $mode === 'free' ? 'n/a' : $order,
     $freeRoot,
-    $mode === 'free-pro' ? $proRoot : 'n/a',
+    in_array($mode, $freeProModes, true) ? $proRoot : 'n/a',
 ));

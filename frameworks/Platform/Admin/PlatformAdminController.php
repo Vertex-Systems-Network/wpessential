@@ -100,6 +100,7 @@ final class PlatformAdminController
         $context = is_array($snapshot['context'] ?? null) ? $snapshot['context'] : [];
         $modules = is_array($snapshot['modules'] ?? null) ? $snapshot['modules'] : [];
         $moduleInventory = is_array($modules['inventory'] ?? null) ? $modules['inventory'] : [];
+        $proCompatibility = is_array($modules['pro_compatibility'] ?? null) ? $modules['pro_compatibility'] : [];
 
         echo '<div class="wrap wpessential-admin-wrap">';
         echo '<section id="wpessential-admin-root" aria-labelledby="wpessential-admin-title" data-wpessential-surface="runtime-observatory">';
@@ -108,6 +109,8 @@ final class PlatformAdminController
         echo '<p>' . esc_html__('Read-only bounded diagnostics for the shared WPEssential Platform runtime. No mutation controls are exposed on this surface.', 'wpessential') . '</p>';
         echo '<table class="widefat striped" aria-label="' . esc_html__('WPEssential runtime diagnostics', 'wpessential') . '"><tbody>';
         $this->renderDiagnosticRow('Platform version', (string) ($app['version'] ?? 'unknown'));
+        $this->renderDiagnosticRow('Platform API', (string) ($app['platform_api'] ?? 'unknown'));
+        $this->renderDiagnosticRow('Platform schema', (string) ($app['platform_schema'] ?? 'unknown'));
         $this->renderDiagnosticRow('WordPress', (string) ($runtime['wordpress'] ?? 'unknown'));
         $this->renderDiagnosticRow('PHP', (string) ($runtime['php'] ?? PHP_VERSION));
         $this->renderDiagnosticRow('Kernel booted', !empty($runtime['kernel_booted']) ? 'yes' : 'no');
@@ -121,8 +124,18 @@ final class PlatformAdminController
         echo '</tbody></table>';
         echo '<p><em>' . esc_html__('Trace data is request-bounded and non-authoritative; use canonical persistent evidence for release or incident decisions.', 'wpessential') . '</em></p>';
 
+        echo '<h2>' . esc_html__('Free / Pro compatibility', 'wpessential') . '</h2>';
+        echo '<p>' . esc_html__('Local package compatibility is evaluated before premium boot. This runtime result is not ADR-0010 or P-006 certification.', 'wpessential') . '</p>';
+        echo '<table class="widefat striped" aria-label="' . esc_html__('WPEssential Free Pro compatibility', 'wpessential') . '"><tbody>';
+        $this->renderDiagnosticRow('Pair state', (string) ($proCompatibility['state'] ?? 'unavailable'));
+        $this->renderDiagnosticRow('Dimension', (string) ($proCompatibility['dimension'] ?? 'unavailable'));
+        $this->renderDiagnosticRow('Reason', (string) ($proCompatibility['reason'] ?? 'unavailable'));
+        $this->renderDiagnosticRow('Recovery', (string) ($proCompatibility['remediation'] ?? 'unavailable'));
+        $this->renderDiagnosticRow('Certification', (string) ($proCompatibility['certification'] ?? 'adr_0010_not_certified'));
+        echo '</tbody></table>';
+
         echo '<h2>' . esc_html__('Modules', 'wpessential') . '</h2>';
-        echo '<p>' . esc_html__('Read-only commercial and runtime inventory for modules known to the current kernel. Compatibility reflects local prerequisites only; ADR-0010 certified Free/Pro version pairs are not claimed here.', 'wpessential') . '</p>';
+        echo '<p>' . esc_html__('Read-only commercial and runtime inventory for modules known to the current kernel. Pro compatibility consumes the canonical local preflight result; entitlement remains a separate truth. ADR-0010 certified Free/Pro version pairs are not claimed here.', 'wpessential') . '</p>';
         $this->renderModuleInventory($moduleInventory);
 
         echo '</section>';
