@@ -69,12 +69,21 @@ if (PHP_VERSION_ID < 80200) {
 
 /**
  * The Pro package owns only WPEssential\Modules\* implementation source.
- * Platform/Kernel/Contracts continue to resolve from the active Free plugin.
+ * Compatibility code is the only Pro module namespace allowed to autoload before
+ * the local Free/Pro preflight passes. All other Pro implementation remains inert.
  */
 spl_autoload_register(
     static function (string $class): void {
         $prefix = 'WPEssential\\Modules\\';
         if (!str_starts_with($class, $prefix)) {
+            return;
+        }
+
+        $compatibilityPrefix = 'WPEssential\\Modules\\Compatibility\\';
+        if (
+            !str_starts_with($class, $compatibilityPrefix)
+            && (!defined('WPE_PRO_COMPATIBILITY_STATE') || WPE_PRO_COMPATIBILITY_STATE !== 'compatible')
+        ) {
             return;
         }
 
