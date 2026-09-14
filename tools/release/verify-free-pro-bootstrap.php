@@ -161,6 +161,25 @@ if ($mode === 'free') {
         fwrite(STDERR, "Free-only boot unexpectedly marked the Pro package active.\n");
         exit(1);
     }
+
+    $services = $kernel->services();
+    $roleImpact = $services->get('module.taxonomies.role-impact');
+    if (!$roleImpact instanceof \WPEssential\Modules\Taxonomies\TaxonomyRoleImpactReadModel) {
+        fwrite(STDERR, "Free Taxonomy role-impact read model is unavailable.\n");
+        exit(1);
+    }
+
+    $impact = $roleImpact->forCapabilities(
+        ['manage_terms' => 'manage_categories'],
+        new \WPEssential\Platform\Auth\ExecutionContext(
+            new \WPEssential\Platform\Auth\Principal(1),
+            1,
+        ),
+    );
+    if (($impact['state'] ?? null) !== 'unavailable') {
+        fwrite(STDERR, "Free Taxonomy must degrade role-impact diagnostics when Pro Roles is absent.\n");
+        exit(1);
+    }
 } else {
     if (!defined('WPE_PRO_PACKAGE_ACTIVE') || WPE_PRO_PACKAGE_ACTIVE !== true) {
         fwrite(STDERR, "Free+Pro boot did not mark the Pro package active.\n");
