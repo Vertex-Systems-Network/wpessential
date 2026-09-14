@@ -24,7 +24,7 @@ final class ProfilesModule implements ModuleInterface
     public const ABILITY_GET = 'wpessential/profiles/get';
     public const ABILITY_CATALOG = 'wpessential/profiles/catalog';
     public const CAPABILITY = 'manage_options';
-    public function manifest(): ModuleManifest { return new ModuleManifest(id: 'profiles', name: 'User Profiles', version: '0.1.0', edition: 'free'); }
+    public function manifest(): ModuleManifest { return new ModuleManifest(id: 'profiles', name: 'User Profiles', version: '0.1.0', edition: 'pro'); }
     public function register(ServiceRegistryInterface $services): void
     {
         $definitions=$services->get('platform.definitions'); $abilities=$services->get('platform.abilities'); $bridge=$services->get('platform.abilities.wordpress');
