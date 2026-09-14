@@ -117,6 +117,10 @@ jobs:
           cmp --silent /tmp/p006-wpessential-first.zip artifacts/wpessential.zip
           cmp --silent /tmp/p006-wpessential-pro-first.zip artifacts/wpessential-pro.zip
 
+          export P006_FREE_FIRST="${free_first}"
+          export P006_FREE_SECOND="${free_second}"
+          export P006_PRO_FIRST="${pro_first}"
+          export P006_PRO_SECOND="${pro_second}"
           php -r '
             $payload = [
               "source_sha" => getenv("WPE_P006_SOURCE_SHA"),
@@ -126,11 +130,7 @@ jobs:
               "pro_second" => getenv("P006_PRO_SECOND"),
             ];
             file_put_contents("artifacts/p006-wave1-determinism.json", json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
-          ' \
-            P006_FREE_FIRST="${free_first}" \
-            P006_FREE_SECOND="${free_second}" \
-            P006_PRO_FIRST="${pro_first}" \
-            P006_PRO_SECOND="${pro_second}"
+          '
           test -s artifacts/p006-wave1-determinism.json
           cat artifacts/p006-wave1-determinism.json
 
