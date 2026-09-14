@@ -92,6 +92,19 @@ if ($mode === 'free') {
     $includeFree();
 }
 
+if (!defined('WPE_PLATFORM_API_VERSION') || WPE_PLATFORM_API_VERSION !== '0.1.0') {
+    fwrite(STDERR, "Free package did not publish the expected Platform API version.\n");
+    exit(1);
+}
+if (!defined('WPE_PLATFORM_SCHEMA_GENERATION') || WPE_PLATFORM_SCHEMA_GENERATION !== 1) {
+    fwrite(STDERR, "Free package did not publish the expected Platform schema generation.\n");
+    exit(1);
+}
+if (!defined('WPE_FREE_BOOTSTRAP_READY') || WPE_FREE_BOOTSTRAP_READY !== true) {
+    fwrite(STDERR, "Free package did not publish bootstrap-ready state.\n");
+    exit(1);
+}
+
 $pluginsLoaded = $GLOBALS['wpe_bootstrap_verifier_actions']['plugins_loaded'] ?? [];
 usort(
     $pluginsLoaded,
@@ -161,6 +174,10 @@ if ($mode === 'free') {
         fwrite(STDERR, "Free-only boot unexpectedly marked the Pro package active.\n");
         exit(1);
     }
+    if (defined('WPE_PRO_COMPATIBILITY_STATE')) {
+        fwrite(STDERR, "Free-only boot unexpectedly published a Pro compatibility decision.\n");
+        exit(1);
+    }
 
     $services = $kernel->services();
     $roleImpact = $services->get('module.taxonomies.role-impact');
@@ -183,6 +200,22 @@ if ($mode === 'free') {
 } else {
     if (!defined('WPE_PRO_PACKAGE_ACTIVE') || WPE_PRO_PACKAGE_ACTIVE !== true) {
         fwrite(STDERR, "Free+Pro boot did not mark the Pro package active.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_STATE') || WPE_PRO_COMPATIBILITY_STATE !== 'compatible') {
+        fwrite(STDERR, "Free+Pro packaged preflight did not resolve compatible.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED') || WPE_PRO_COMPATIBILITY_BOOT_ALLOWED !== true) {
+        fwrite(STDERR, "Free+Pro packaged preflight did not authorize premium boot.\n");
+        exit(1);
+    }
+    if (!defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED') || WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED !== true) {
+        fwrite(STDERR, "Free+Pro packaged preflight did not admit compatible migration paths.\n");
+        exit(1);
+    }
+    if (!class_exists(\WPEssential\Modules\Compatibility\LocalCompatibilityPreflight::class)) {
+        fwrite(STDERR, "Pro package could not autoload the compatibility preflight.\n");
         exit(1);
     }
 
