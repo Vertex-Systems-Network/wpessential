@@ -29,7 +29,7 @@ final class SettingsModule implements ModuleInterface
 
     public function manifest(): ModuleManifest
     {
-        return new ModuleManifest(id: 'settings', name: 'Settings', version: '0.1.0', edition: 'free');
+        return new ModuleManifest(id: 'settings', name: 'Settings', version: '0.1.0', edition: 'pro');
     }
 
     public function register(ServiceRegistryInterface $services): void
