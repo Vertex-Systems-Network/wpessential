@@ -1,8 +1,8 @@
 {
-  "schema_version": 40,
+  "schema_version": 41,
   "snapshot_date": "2026-09-15",
-  "queue_anchor_main_sha": "9c5e961a46e4a005cca762c0b84f6ec9c7cbd2fb",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Commercial/package/preflight/planning gates #904/#908/#912/#916/#920 and #925-#929 remain historical evidence. Explicit P-006-scoped ADR-0014 owner authorization is active as GOV-OWNER-CONSENT-P006-001 through PR #944. P-006 Wave 1A merged through PR #946 with FP-01/02/05/07/08 PASS and Wave 1B merged through PR #951 with FP-03/10/11 PASS: 144 documented, 8 executed, 8 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. Queue v40 exposes only Issues #947 and #949 as bounded non-overlapping worker lanes. Active main ruleset 23374068 requires pull requests, resolved review threads and required status context governance; PR #953 added the always-on read-only governance provider and PR #951 subsequently merged under that gate. #858 remains open for final CI-policy reconciliation. Production deploy/release, live authoritative provider/billing/payment/license/allocation side effects, production credentials/data and irreversible/destructive operations remain separately gated.",
+  "queue_anchor_main_sha": "15e727029be2a7dc75f01ebaf1eec038152b9e77",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Commercial/package/preflight/planning gates #904/#908/#912/#916/#920 and #925-#929 remain historical evidence. Explicit P-006-scoped ADR-0014 owner authorization remains active as GOV-OWNER-CONSENT-P006-001 through PR #944. P-006 Wave 1A merged through PR #946 with FP-01/02/05/07/08 PASS and Wave 1B merged through PR #951 with FP-03/10/11 PASS: 144 documented, 8 executed, 8 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. P-001 dependency reconciliation #949/#956 concluded P001_DEPENDENCY_NOT_SATISFIED; FP-13+ real WordPress/runtime evidence remains blocked pending explicit P-001/CF owner decision #957. Queue v41 preserves #947 as independent-review-only and records #957 as BLOCKED_OWNER_DECISION with no claim branch. Active main ruleset 23374068 requires pull requests, resolved review threads and required status context governance. #858 remains open for final CI-policy reconciliation. Production deploy/release, live authoritative provider/billing/payment/license/allocation side effects, production credentials/data and irreversible/destructive operations remain separately gated.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,11 +14,11 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "Queue v40 exposes exactly two dependency-ready ANY slots under Issues #947 and #949. #947 is docs-only independent Wave 1A evidence review and must remain independent of the current Supervisor; #949 is docs-only P-001 environment-floor dependency reconciliation and is the next Supervisor-claimable ANY lane. #948/#951 are completed and their branch must never be reused. No other executable P-006/runtime/module/provider/deploy slot is open.",
+    "selection_rule": "Queue v41 has no Supervisor-claimable dependency-ready OPEN slot. #947 remains OPEN for an independent Worker only and the current Supervisor must not claim it. #957 is BLOCKED_OWNER_DECISION and has no claim branch until explicit P-001/CF owner consent records path A or B. Completed #948 and #949 branches are retired and must never be reused. No executable P-006/runtime/module/provider/deploy slot is open.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches. Workers may claim only the exact branch declared by an OPEN v40 slot, created from current queue anchor main without force. The current Supervisor must not claim #947 because its purpose is independent review. Any additional tranche requires a new accepted fresh-main issue and a new exact claim branch.",
+    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches. Workers may claim only the exact branch declared by a dependency-ready OPEN slot, created from the current queue anchor main without force. The current Supervisor must not claim #947 because its purpose is independent review. #957 has no claim branch before explicit owner P-001/CF consent. Any additional tranche requires a new accepted fresh-main issue and a new exact claim branch.",
     "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
@@ -28,11 +28,12 @@
       "Read docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md and all five P-006 planning maps before executing or reviewing a fixture.",
       "Treat merged PR #946 as exact Wave 1A evidence only: FP-01/02/05/07/08 PASS against source head ea1988cfd6aefd0aabdc6703a6f0763d12123c08, Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80 and Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363.",
       "Treat merged PR #951 as bounded Wave 1B evidence only: FP-03/10/11 PASS against exact protected head 5f99c01f143d734e51abf53059bd9f8c05530c5b; same immutable Free/Pro artifact hashes and canonical pair id 39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea.",
+      "Treat merged #949/#956 outcome P001_DEPENDENCY_NOT_SATISFIED as authoritative for the environment-floor gate: current WP/PHP/MySQL declarations and compatibility matrix are regression/candidate evidence, not accepted P-001/CF truth.",
       "Keep current P-006 truth at 144 documented / 8 executed / 8 passed / 0 failed / 0 certified pairs / 0 runtime certifications until new authorized exact-head evidence is accepted.",
       "ADR-0010 remains Proposed; do not infer decision acceptance from local preflight implementation, passing fixtures or ordinary CI.",
       "Preserve the distinction between package presence, binary compatibility, Platform API compatibility, observed schema state, migration markers, product entitlement, remote Product License/allocation, Membership/user authorization and updater/package trust.",
-      "Use canonical request-local compatibility truth for premium loading where runtime fixtures apply; mirror constants, package presence, class presence, marketing-version equality or entitlement are not substitutes.",
-      "Do not run FP-13+ real WordPress/runtime fixtures until the P-001 environment-floor dependency is accepted or a separately authorized exception/gate records exact environment semantics.",
+      "Do not run FP-13+ real WordPress/runtime fixtures until #957 records explicit P-001/CF acceptance or an explicitly scoped temporary P-001 matrix authorization and any required exact-head evidence is satisfied.",
+      "Plain continue is not P-001/CF owner consent and must not be interpreted as path A or B in #957.",
       "Require exact artifact hashes, environment identity, expected/actual outcome, stop-the-line handling and terminal fixture state for every executable P-006 result.",
       "Do not promote pair/runtime/product-parity certification, adjacent evidence domains, deployment or release from partial P-006 results."
     ],
@@ -40,7 +41,8 @@
       "Reconcile latest main without force or history overwrite.",
       "Require every diff to remain inside its declared issue/queue write boundary.",
       "Require the active ruleset governance check plus every path-applicable exact-head workflow; absence of a triggered workflow is not a green status claim.",
-      "For #947 and #949 require exactly one declared docs/QUALITY file and zero executable/runtime/package mutation.",
+      "For #947 require exactly one declared docs/QUALITY file and zero executable/runtime/package mutation.",
+      "Do not create or merge any #957 implementation/evidence branch before explicit owner consent selects an accepted P-001/CF scope.",
       "Require read-only evidence to contain no production secrets or private provider/account material.",
       "Do not merge a failing or inconclusive executable fixture as PASS; link a defect/stop-the-line result instead."
     ],
@@ -52,13 +54,15 @@
       "Issue #920 / PR #921 completed Local Free/Pro Compatibility Preflight Gates A-C.",
       "Issues #925-#929 / PRs #932-#936 completed planning maps for FP-01..FP-144.",
       "Issue #924 authorization gate closed after explicit owner authorization was recorded as GOV-OWNER-CONSENT-P006-001 through PR #944.",
-      "Issue #945 / PR #946 completed P-006 Wave 1A exact-head evidence: FP-01/02/05/07/08 PASS, three applicable workflows successful, no pair/runtime certification.",
+      "Issue #945 / PR #946 completed P-006 Wave 1A exact-head evidence: FP-01/02/05/07/08 PASS, no pair/runtime certification.",
       "Wave 1A tested Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80 and Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363; pair id 39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea.",
       "Issue #948 / PR #951 completed P-006 Wave 1B local compatibility evidence: FP-03/10/11 PASS under exact-head governance, Wave-1A regression, Wave-1B, distributable package and Browser E2E checks.",
       "Wave 1B exact protected head was 5f99c01f143d734e51abf53059bd9f8c05530c5b; evidence artifact 10372668679 / archive sha256:c499ec790bd819d33b946bd6ae66f2c4d0ecdef77c63363dc83d92732ed1f9a9 preserved the same immutable Free/Pro hashes and canonical pair id.",
       "Security issue #858 advanced through active ruleset 23374068 and merged PR #953, which supplies the required always-on governance check; #858 remains open for final CI-policy reconciliation.",
+      "Issue #949 / PR #956 completed P-001 environment-floor dependency reconciliation with outcome P001_DEPENDENCY_NOT_SATISFIED; no P-006 fixture was executed and counters remain unchanged.",
+      "Issue #957 is the explicit P-001/CF owner-decision gate; no branch may be created before owner chooses full floor acceptance, temporary matrix authorization, or defer/decline.",
       "Current P-006 truth is 144 documented, 8 executed, 8 passed, 0 failed, 0 certified pairs and 0 runtime certifications; ADR-0010 remains Proposed.",
-      "Queue v40 keeps #947 and #949 OPEN only; completed #948 branch is retired."
+      "Queue v41 retires #949 and leaves #947 independent-review-only plus #957 blocked on owner decision. Current Supervisor has NO_VALID_WORK_SLOT after this coordination merge."
     ]
   },
   "roles": {
@@ -72,6 +76,8 @@
       "must_not": [
         "Pre-create future worker or integration branches before an accepted issue/queue slot authorizes them.",
         "Claim #947 independent-review work in the same Supervisor identity.",
+        "Create a #957 execution/acceptance branch before explicit P-001/CF owner consent.",
+        "Treat plain continue as P-001/CF owner consent.",
         "Force or reuse a claimed branch.",
         "Merge from worker report alone.",
         "Allow workers to edit Supervisor-owned shared truth without an explicit slot."
@@ -79,14 +85,14 @@
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v40.",
+      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v41.",
       "may_claim": [
         "ANY"
       ],
       "must_not": [
-        "Claim SUPERVISOR_ONLY slots.",
+        "Claim SUPERVISOR_ONLY or BLOCKED_OWNER_DECISION gates.",
         "Create any branch other than the exact branch of a dependency-ready OPEN slot.",
-        "Reuse the completed #948 Wave 1B branch.",
+        "Reuse completed #948 or #949 branches.",
         "Edit wpessential.php, wpessential-pro.php, Bootstrap Plugin, composer/shared registries/Atomic lifecycle/progress/shared truth without an explicit worker slot.",
         "Implement writes, AJAX routes, entitlement/provider/runtime side effects, activation controls or compatibility/certification claims outside the exact slot.",
         "Execute destructive provider/database/user/content mutation, billing/payment/license-provider calls, deployment or release."
@@ -220,10 +226,21 @@
       "merge_sha": "180dbde54945f97f8508a3961034a0062018b3f7",
       "ruleset_id": 23374068,
       "required_status_context": "governance",
-      "evidence": "The active main ruleset requires pull requests, resolved review threads and strict required status context governance. PR #953 added an always-on read-only provider and PR #951 subsequently passed that check before protected merge. #858 remains open for final CI-policy reconciliation."
+      "evidence": "The active main ruleset requires pull requests, resolved review threads and strict required status context governance. PR #953 added an always-on read-only provider and subsequent protected PRs passed that check before merge. #858 remains open for final CI-policy reconciliation."
+    },
+    {
+      "coordination": "p001-environment-floor-dependency-reconciliation-v1",
+      "status": "COMPLETED_DEPENDENCY_NOT_SATISFIED",
+      "source": "Issue #949; parent #939",
+      "closure": "merged PR #956",
+      "merge_sha": "15e727029be2a7dc75f01ebaf1eec038152b9e77",
+      "outcome": "P001_DEPENDENCY_NOT_SATISFIED",
+      "candidate_minimum": "WordPress 6.9 + PHP 8.2 + MySQL 8.4",
+      "candidate_reference": "WordPress 7.1 + PHP 8.5 + MySQL 8.4",
+      "evidence": "Current declarations and real compatibility regression infrastructure are coherent but remain candidate/non-certifying evidence. No accepted P-001/CF decision or explicitly scoped temporary P-001 runtime matrix authorization was identified. FP-13+ runtime work remains blocked."
     }
   ],
-  "historical_queue_note": "Queue v38 intentionally had no OPEN worker slots after planning closeout. Queue v39 recorded scoped owner authorization, Wave 1A execution and exposed Issues #947-#949. Queue v40 preserves that evidence, records completed Wave 1B #948/#951 and the governance-provider hardening #952/#953, retires the completed #948 slot, and keeps only #947 and #949 open.",
+  "historical_queue_note": "Queue v38 intentionally had no OPEN worker slots after planning closeout. Queue v39 recorded scoped owner authorization and Wave 1A execution. Queue v40 recorded completed Wave 1B and exposed #947/#949. Queue v41 preserves all prior evidence, records #949/#956 as completed with P001_DEPENDENCY_NOT_SATISFIED, retires #949, preserves #947 for an independent Worker, and records #957 as blocked on explicit owner P-001/CF decision.",
   "slots": [
     {
       "priority": 1650,
@@ -233,7 +250,7 @@
       "status": "OPEN",
       "work_mode": "P006_INDEPENDENT_EVIDENCE_REVIEW_ONLY",
       "parallel_class": "P006_WAVE1_POST_STATIC_V1",
-      "source": "Issue #947; parent #939; coordination #941/#954",
+      "source": "Issue #947; parent #939; coordination #941/#954/#958",
       "runtime_allowed": false,
       "product_parity_allowed": false,
       "independence_required": true,
@@ -251,27 +268,32 @@
       "claim_branch": "agent/p006-wave1a-independent-evidence-review-v1"
     },
     {
-      "priority": 1652,
-      "slot_id": "p006-p001-environment-floor-reconciliation-v1",
-      "title": "P-006 P-001 Environment Floor Dependency Reconciliation",
-      "role": "ANY",
-      "status": "OPEN",
-      "work_mode": "P006_P001_DEPENDENCY_RECONCILIATION_ONLY",
-      "parallel_class": "P006_WAVE1_POST_STATIC_V1",
-      "source": "Issue #949; parent #939; coordination #941/#954",
+      "priority": 1653,
+      "slot_id": "p001-cf-owner-decision-gate-v1",
+      "title": "P-001/CF Executable Compatibility-Floor Owner Decision Gate",
+      "role": "SUPERVISOR_ONLY",
+      "status": "BLOCKED_OWNER_DECISION",
+      "work_mode": "AUTHORIZATION_GATE_ONLY",
+      "source": "Issue #957; parent P-006 #939; reconciliation #949/#956; coordination #958",
       "runtime_allowed": false,
       "product_parity_allowed": false,
-      "allowed_scope": [
-        "create docs/QUALITY/P006-P001-ENVIRONMENT-FLOOR-RECONCILIATION.md only"
+      "claim_branch": null,
+      "owner_decision_required": true,
+      "plain_continue_is_authorization": false,
+      "candidate_paths": [
+        "A: accept full P-001/CF minimum/reference environment floor",
+        "B: authorize a temporary P-001 matrix for the next bounded P-006 runtime tranche",
+        "C: defer/decline and keep FP-13+ blocked"
       ],
       "forbidden_scope": [
-        "P-001 or P-006 fixture execution",
-        "runtime/source/test/workflow/package mutation",
-        "environment or certification promotion",
-        "database/provider/network mutation",
-        "deployment/release"
-      ],
-      "claim_branch": "agent/p006-p001-environment-floor-reconciliation-v1"
+        "branch creation before explicit P-001/CF owner consent",
+        "P-001 or FP-13+ runtime execution before accepted environment semantics",
+        "certification promotion by inference from ordinary compatibility CI",
+        "production deploy/release",
+        "production credentials/data",
+        "live authoritative provider/billing/payment/license/allocation side effects",
+        "irreversible/destructive operations"
+      ]
     }
   ]
 }
