@@ -10,11 +10,12 @@ if (!defined('ABSPATH')) {
 
 use InvalidArgumentException;
 use RuntimeException;
+use WPEssential\Contracts\RoleImpactReadServiceInterface;
 use WPEssential\Platform\Auth\AuthorizationRequest;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 
-final readonly class RolesReadService
+final readonly class RolesReadService implements RoleImpactReadServiceInterface
 {
     public const OWNER_SURFACE_ID = 30;
     public const CAPABILITY = 'manage_options';
@@ -220,19 +221,17 @@ final readonly class RolesReadService
                 'explicit_deny_role_count' => $count['deny'],
             ];
         }
-
         return $registry;
     }
 
     /**
-     * @param 'degraded'|'unavailable' $state
      * @param array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool} $scope
      * @param list<string> $caveats
      * @return array{
      *   state:'degraded'|'unavailable',
      *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
-     *   roles:list<array{key:string,name:string,provenance:'unknown',capabilities:array<string,bool>}>,
-     *   capability_registry:list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>,
+     *   roles:list<never>,
+     *   capability_registry:list<never>,
      *   caveats:list<string>
      * }
      */
@@ -243,19 +242,17 @@ final readonly class RolesReadService
             'scope_context' => $scope,
             'roles' => [],
             'capability_registry' => [],
-            'caveats' => $caveats,
+            'caveats' => array_values(array_unique($caveats)),
         ];
     }
 
     private function authorize(ExecutionContext $context, string $ability): void
     {
-        $decision = $this->policy->authorize(new AuthorizationRequest(
-            context: $context,
-            ability: $ability,
-            capability: self::CAPABILITY,
-        ));
+        $decision = $this->policy->authorize(
+            new AuthorizationRequest($ability, self::CAPABILITY, $context, mutates: false),
+        );
         if (!$decision->allowed) {
-            throw new RuntimeException('Roles read service access denied: ' . $decision->reason . '.');
+            throw new RuntimeException($decision->reason);
         }
     }
 }
