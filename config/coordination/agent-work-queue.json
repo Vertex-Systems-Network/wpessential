@@ -1,8 +1,8 @@
 {
-  "schema_version": 34,
+  "schema_version": 35,
   "snapshot_date": "2026-09-14",
-  "queue_anchor_main_sha": "f06bdfb20d17d1ce313560a774e9f3b8655961cc",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Issue #904 / PR #905 completed the physical Free/Pro package-boundary gate. Issue #908 / PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1. Issue #912 / PR #913 completed a read-only Modules commercial/runtime inventory in the existing Platform diagnostics surface, deriving rows from canonical ModuleRegistry state and the same local entitlement provider truth used by Pro activation. These completed gates do not authorize or claim live license-server/billing/provider integration, activation controls, universal enforcement of every future premium mutation path, ADR-0010 compatibility certification, multisite allocation semantics, deployment or release. Security residual #858 remains a repository-admin branch-protection action and does not create a source-development slot.",
+  "queue_anchor_main_sha": "2c9c32665557eb9855c31406dad20c7f72d0ff50",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Issue #904 / PR #905 completed the physical Free/Pro package-boundary gate. Issue #908 / PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1. Issue #912 / PR #913 completed a read-only Modules commercial/runtime inventory in the existing Platform diagnostics surface, deriving rows from canonical ModuleRegistry state and the same local entitlement provider truth used by Pro activation. Issue #916 / PR #917 completed ADR-0010 compatibility-preflight execution-readiness reconciliation only; ADR-0010 remains Proposed, FP execution remains 0/144, certified Free/Pro pairs remain 0, and no runtime compatibility source slot was opened. These completed gates do not authorize or claim live license-server/billing/provider integration, activation controls, universal enforcement of every future premium mutation path, ADR-0010 compatibility certification, multisite allocation semantics, deployment or release. Security residual #858 remains a repository-admin branch-protection action and does not create a source-development slot.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,28 +14,30 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "All previously authorized source-development slots are completed or closed. Free/Pro physical packaging, local entitlement/edition V1, and read-only Modules commercial inventory V1 are merged through Issues #904/#908/#912 and PRs #905/#909/#913. No compatibility-preflight, multisite-allocation, remote-entitlement/provider, activation-control, broader premium-mutation, deeper module-runtime or release source slot exists until a separate fresh-main Supervisor/implementation Issue explicitly authorizes it.",
+    "selection_rule": "All previously authorized source-development slots are completed or closed. Free/Pro physical packaging, local entitlement/edition V1, read-only Modules commercial inventory V1, and ADR-0010 compatibility execution-readiness documentation are merged through Issues #904/#908/#912/#916 and PRs #905/#909/#913/#917. No compatibility-preflight runtime, P-006 execution, multisite-allocation, remote-entitlement/provider, activation-control, broader premium-mutation, deeper module-runtime or release source slot exists until a separate fresh-main Supervisor/implementation Issue explicitly authorizes it and satisfies the applicable technical/decision/evidence gates.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches must never be reused. Any future compatibility, multisite-allocation, remote-entitlement/provider, activation-control, broader premium-mutation or deeper module-runtime tranche must declare a new exact claim_branch from its accepted exact-main authorization anchor.",
+    "claim_branch_rule": "Completed branches must never be reused. Any future compatibility-preflight runtime, P-006 execution, multisite-allocation, remote-entitlement/provider, activation-control, broader premium-mutation or deeper module-runtime tranche must declare a new exact claim_branch from its accepted exact-main authorization anchor.",
     "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work; accepted actionable work may not be bypassed.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Treat ADR-0001, ADR-0007, docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md, docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md, and merged Modules inventory evidence #912/#913 as accepted commercial/runtime-boundary truth; ADR-0010 compatibility certification remains a separate gate.",
-      "Preserve the distinction between product entitlement, Membership/user authentication and ordinary authorization/capability truth.",
+      "Treat ADR-0001, ADR-0007, docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md, docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md, merged Modules inventory evidence #912/#913, and docs/PRODUCT/ADR-0010-COMPATIBILITY-PREFLIGHT-READINESS-V1.md as current commercial/runtime-boundary truth; ADR-0010 compatibility implementation/certification remains a separate gated decision/evidence tranche.",
+      "Preserve the distinction between package presence, binary compatibility, Platform API compatibility, schema compatibility, product entitlement, remote Product License/allocation, Membership/user authentication and updater/package trust.",
       "Preserve non-destructive expiry/degraded semantics: verification_stale and verification_unavailable are not equivalent to expired; owned definitions/data are not deleted merely because premium mutation authority is unavailable.",
       "Treat the Modules commercial inventory as read-only diagnostics. It may report package, edition, local compatibility, entitlement and runtime state but must not become an implicit activation, licensing or provider-execution control plane.",
+      "Do not use WPE_PRO_PACKAGE_ACTIVE, class presence, marketing-version equality or entitlement state as a substitute for future canonical ADR-0010 compatibility PASS.",
       "Require an explicit OPEN issue/queue slot naming bounded source/test paths, dependency boundaries, authorization capability and forbidden side effects before additional runtime code is written.",
-      "Do not infer RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, universal premium-mutation enforcement, live provider execution, destructive mutation, production migration, ADR-0010 compatible-pair certification, deployment or release authority from the completed commercial gates."
+      "Do not infer RUNTIME_CERTIFIED, PRODUCT_PARITY_CERTIFIED, P-006 execution, universal premium-mutation enforcement, live provider execution, destructive mutation, production migration, ADR-0010 compatible-pair certification, deployment or release authority from the completed commercial/readiness gates."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Require every diff to remain inside its declared write boundary and preserve shared-owner/provider seams.",
       "Require exact-head tests appropriate to the authorized tranche, including entitlement/degraded-state, security, multisite/scope, portability and performance evidence where applicable.",
       "Require Free/Pro package boundaries to remain fail-closed and deterministic when package/distribution code is touched.",
+      "Require any future compatibility implementation to evaluate canonical local pair truth before premium module/service/migration eligibility and to preserve entitlement/Membership/updater truth separation.",
       "Require read-only commercial inventory changes to preserve no-secret, no-mutation and non-certifying compatibility semantics.",
       "Require all path-applicable exact-head workflows to pass before merge."
     ],
@@ -43,10 +45,13 @@
       "Issue #904 / merged PR #905 completed physical Free/Pro Package Boundary Gate V1.",
       "Issue #908 / merged PR #909 completed Canonical Edition Metadata + Local Entitlement Domain V1.",
       "Issue #912 / merged PR #913 completed read-only Modules Commercial Inventory V1 on main f06bdfb20d17d1ce313560a774e9f3b8655961cc.",
-      "Exact PR #913 head 1be9ca7cf19fd65b83899fd269f72d0ba225178b passed Architecture Guards, PHP Quality Toolchain, Distributable Package, Platform Compatibility Matrix and Browser E2E Accessibility.",
-      "Inventory fields are Module, Edition, Package, Compatibility, Entitlement, Runtime state and Reason; rows derive from canonical ModuleRegistry state and the same provider-neutral entitlement snapshot used by Pro activation.",
-      "Free inventory entitlement reports not_applicable; Pro reports bounded local entitlement truth without exposing tokens/secrets. Compatibility is local/non-certifying and explicitly does not claim ADR-0010 certified Free/Pro pairs.",
-      "No module activation/deactivation controls, live license-server/billing/provider integration, universal future premium-operation enforcement, multisite entitlement allocation, deployment or release promotion follows from this gate.",
+      "Issue #916 / merged PR #917 completed docs-only ADR-0010 Compatibility Preflight Execution Readiness V1 on main 2c9c32665557eb9855c31406dad20c7f72d0ff50.",
+      "Readiness V1 records that current main has no dedicated WPE_PLATFORM_API_VERSION contract, no Pro supported Free/Platform API/schema range metadata, no canonical compatibility result, and no runtime preflight before all Pro Free-runtime references.",
+      "Readiness V1 also records that Free Plugin::proCustomTablesRuntimeAvailable() must eventually require canonical compatibility PASS in addition to Pro package/class presence before Pro-owned runtime/migration eligibility.",
+      "P-006 truth remains FP documented 144, executed 0/144, passed 0, failed 0, certified Free/Pro pairs 0 and runtime certifications 0.",
+      "Exact PR #913 head 1be9ca7cf19fd65b83899fd269f72d0ba225178b passed Architecture Guards, PHP Quality Toolchain, Distributable Package, Platform Compatibility Matrix and Browser E2E Accessibility; PR #917 was docs-only and triggered no applicable runtime workflow.",
+      "Inventory fields remain Module, Edition, Package, Compatibility, Entitlement, Runtime state and Reason; rows derive from canonical ModuleRegistry state and the same provider-neutral entitlement snapshot used by Pro activation.",
+      "No compatibility runtime implementation, module activation/deactivation controls, live license-server/billing/provider integration, universal future premium-operation enforcement, multisite entitlement allocation, deployment or release promotion follows from the readiness gate.",
       "Security residual #858 remains admin-only and main branch protection is still not claimed fixed."
     ]
   },
@@ -111,8 +116,16 @@
       "closure": "merged PR #913",
       "merge_sha": "f06bdfb20d17d1ce313560a774e9f3b8655961cc",
       "evidence": "Existing Platform Runtime Observatory exposes read-only Module/Edition/Package/Compatibility/Entitlement/Runtime state/Reason inventory from canonical ModuleRegistry and entitlement-provider truth. Exact PR head 1be9ca7cf19fd65b83899fd269f72d0ba225178b passed all five applicable workflows. No controls, secrets, live licensing/provider calls or ADR-0010 certification."
+    },
+    {
+      "coordination": "adr-0010-compatibility-preflight-execution-readiness-v1",
+      "status": "COMPLETED_DOCUMENTED_EXECUTION_READINESS_NOT_RUNTIME_IMPLEMENTED_NOT_CERTIFIED",
+      "source": "Issue #916",
+      "closure": "merged PR #917",
+      "merge_sha": "2c9c32665557eb9855c31406dad20c7f72d0ff50",
+      "evidence": "docs/PRODUCT/ADR-0010-COMPATIBILITY-PREFLIGHT-READINESS-V1.md reconciles current package/entitlement/inventory architecture, fixes future local metadata/result/bootstrap/CustomTables/diagnostics ownership boundaries, preserves ADR-0010 Proposed status and preserves FP execution 0/144 with certified pairs 0."
     }
   ],
-  "historical_queue_note": "Queue v33 and earlier completed commercial/worker histories remain preserved in git history. V34 intentionally contains no actionable source slots after Modules Commercial Inventory V1 closeout.",
+  "historical_queue_note": "Queue v34 and earlier completed commercial/worker histories remain preserved in git history. V35 intentionally contains no actionable source slots after ADR-0010 compatibility execution-readiness closeout.",
   "slots": []
 }
