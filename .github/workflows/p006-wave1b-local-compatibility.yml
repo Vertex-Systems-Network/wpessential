@@ -1,0 +1,139 @@
+name: P-006 Wave 1B Local Compatibility Evidence
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Modules/Compatibility/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+      - 'tools/release/**'
+      - '.github/workflows/p006-wave1b-local-compatibility.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p006-wave1b-local-compatibility-evidence:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate package manifest and build production admin assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run lint:package
+          npm run build:admin
+          for entry in main taxonomy fields columns-runtime; do
+            test -s "assets/admin/${entry}.js"
+            test -s "assets/admin/${entry}.css"
+            test -s "assets/admin/${entry}.asset.php"
+          done
+
+      - name: Set up PHP 8.2 evidence runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate packaging and Wave 1B harness syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l wpessential.php
+          php -l wpessential-pro.php
+          php -l frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/release/p006-wave1b-local-compatibility-evidence.php
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Build deterministic immutable base candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          for artifact in \
+            artifacts/wpessential.zip \
+            artifacts/wpessential-package.json \
+            artifacts/wpessential-pro.zip \
+            artifacts/wpessential-pro-package.json
+          do
+            test -s "${artifact}"
+          done
+          sha256sum artifacts/wpessential.zip
+          sha256sum artifacts/wpessential-pro.zip
+
+      - name: Execute authorized P-006 Wave 1B fixtures
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          php tools/release/p006-wave1b-local-compatibility-evidence.php
+          test -s artifacts/p006-wave1b-local-compatibility-evidence.json
+          php -r '
+            $e = json_decode(file_get_contents("artifacts/p006-wave1b-local-compatibility-evidence.json"), true, flags: JSON_THROW_ON_ERROR);
+            if (($e["summary"]["executed"] ?? null) !== 3 || ($e["summary"]["passed"] ?? null) !== 3 || ($e["summary"]["failed"] ?? null) !== 0) {
+              fwrite(STDERR, "Unexpected P-006 Wave 1B summary\n");
+              exit(1);
+            }
+            $ids = array_column($e["fixtures"] ?? [], "fixture_id");
+            if ($ids !== ["FP-03", "FP-10", "FP-11"]) {
+              fwrite(STDERR, "Unexpected P-006 Wave 1B fixture set\n");
+              exit(1);
+            }
+          '
+          cat artifacts/p006-wave1b-local-compatibility-evidence.json
+
+      - name: Upload immutable candidates and Wave 1B evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1b-local-compatibility-evidence-${{ github.run_id }}
+          path: |
+            artifacts/wpessential.zip
+            artifacts/wpessential-package.json
+            artifacts/wpessential-pro.zip
+            artifacts/wpessential-pro-package.json
+            artifacts/p006-wave1b-local-compatibility-evidence.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
