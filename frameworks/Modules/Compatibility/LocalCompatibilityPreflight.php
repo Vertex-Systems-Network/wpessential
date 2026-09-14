@@ -89,17 +89,37 @@ final class LocalCompatibilityPreflight
         $proSchema = $pro['schema'] ?? null;
 
         if (
-            !self::isMarketingVersion($proVersion)
+            $proVersion === null
+            || $minFree === null
+            || $maxFree === null
+            || $minApi === null
+            || $maxApi === null
+            || !self::isMarketingVersion($proVersion)
             || !self::isMarketingVersion($minFree)
             || !self::isMarketingVersion($maxFree)
-            || version_compare($minFree, $maxFree, '>')
             || !self::isStrictVersion($minApi)
             || !self::isStrictVersion($maxApi)
+            || !is_int($minSchema)
+            || $minSchema < 0
+            || !is_int($maxSchema)
+            || $maxSchema < 0
+            || !is_int($proSchema)
+            || $proSchema < 0
+        ) {
+            return self::result(
+                self::PRO_METADATA_INVALID,
+                'pro_metadata',
+                'pro_metadata_missing_malformed_or_contradictory',
+                'reinstall_pro',
+                $free,
+                $pro,
+            );
+        }
+
+        if (
+            version_compare($minFree, $maxFree, '>')
             || version_compare($minApi, $maxApi, '>')
-            || !self::isSchemaGeneration($minSchema)
-            || !self::isSchemaGeneration($maxSchema)
             || $minSchema > $maxSchema
-            || !self::isSchemaGeneration($proSchema)
         ) {
             return self::result(
                 self::PRO_METADATA_INVALID,
@@ -206,7 +226,7 @@ final class LocalCompatibilityPreflight
                 $pro,
             );
         }
-        if (!self::isSchemaGeneration($platformSchema)) {
+        if (!is_int($platformSchema) || $platformSchema < 0) {
             return self::result(
                 self::PLATFORM_SCHEMA_INVALID,
                 'platform_schema',
@@ -292,19 +312,14 @@ final class LocalCompatibilityPreflight
         );
     }
 
-    private static function isMarketingVersion(?string $value): bool
+    private static function isMarketingVersion(string $value): bool
     {
-        return $value !== null && preg_match(self::MARKETING_VERSION_PATTERN, $value) === 1;
+        return preg_match(self::MARKETING_VERSION_PATTERN, $value) === 1;
     }
 
-    private static function isStrictVersion(?string $value): bool
+    private static function isStrictVersion(string $value): bool
     {
-        return $value !== null && preg_match(self::STRICT_VERSION_PATTERN, $value) === 1;
-    }
-
-    private static function isSchemaGeneration(mixed $value): bool
-    {
-        return is_int($value) && $value >= 0;
+        return preg_match(self::STRICT_VERSION_PATTERN, $value) === 1;
     }
 
     private static function stringValue(mixed $value): ?string
@@ -357,7 +372,7 @@ final class LocalCompatibilityPreflight
             'platform_schema' => is_int($platformSchema) ? $platformSchema : 'unknown',
             'pro_schema' => is_int($proSchema) ? $proSchema : 'unknown',
             'premium_boot_allowed' => $allowed,
-            // This is compatibility-layer admission only. Migration-specific safety/preconditions remain downstream.
+            // Compatibility-layer admission only; migration-specific safety checks remain downstream.
             'premium_migrations_allowed' => $allowed,
         ];
     }
