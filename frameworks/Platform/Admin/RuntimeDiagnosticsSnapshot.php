@@ -35,6 +35,12 @@ final readonly class RuntimeDiagnosticsSnapshot
             'app' => [
                 'name' => 'WPEssential',
                 'version' => defined('WPE_VERSION') ? (string) WPE_VERSION : 'unknown',
+                'platform_api' => defined('WPE_PLATFORM_API_VERSION')
+                    ? (string) WPE_PLATFORM_API_VERSION
+                    : 'unknown',
+                'platform_schema' => defined('WPE_PLATFORM_SCHEMA_GENERATION')
+                    ? WPE_PLATFORM_SCHEMA_GENERATION
+                    : 'unknown',
                 'surface_id' => 31,
             ],
             'context' => [
@@ -52,6 +58,7 @@ final readonly class RuntimeDiagnosticsSnapshot
             'modules' => [
                 'count' => count($moduleInventory),
                 'inventory' => $moduleInventory,
+                'pro_compatibility' => $this->proCompatibility(),
                 'compatibility_certification' => 'adr_0010_not_certified',
                 'read_only' => true,
             ],
@@ -116,14 +123,24 @@ final readonly class RuntimeDiagnosticsSnapshot
             return 'incompatible_wordpress';
         }
 
-        $platform = defined('WPE_VERSION') ? (string) WPE_VERSION : '';
-        if ($platform !== '' && version_compare($platform, $manifest->minimumPlatformVersion, '<')) {
-            return 'incompatible_platform';
+        $platformApi = defined('WPE_PLATFORM_API_VERSION') ? (string) WPE_PLATFORM_API_VERSION : '';
+        if ($platformApi !== '' && version_compare($platformApi, $manifest->minimumPlatformVersion, '<')) {
+            return 'incompatible_platform_api';
         }
 
-        return $manifest->edition === 'pro'
-            ? 'local_prerequisites_met_adr_0010_not_certified'
-            : 'local_prerequisites_met';
+        if ($manifest->edition !== 'pro') {
+            return 'local_prerequisites_met';
+        }
+
+        $pair = $this->proCompatibility();
+        if ($pair['state'] === 'unavailable') {
+            return 'compatibility_state_unavailable_adr_0010_not_certified';
+        }
+        if ($pair['state'] !== 'compatible') {
+            return 'pair_' . $pair['state'];
+        }
+
+        return 'compatible_adr_0010_not_certified';
     }
 
     private function entitlementFor(ModuleManifest $manifest): string
@@ -165,5 +182,77 @@ final readonly class RuntimeDiagnosticsSnapshot
         }
 
         return 'booted';
+    }
+
+    /**
+     * @return array{
+     *   state:string,
+     *   dimension:string,
+     *   reason:string,
+     *   remediation:string,
+     *   free_version:string,
+     *   platform_api:string,
+     *   platform_schema:int|string,
+     *   pro_schema:int|string,
+     *   premium_boot_allowed:bool,
+     *   premium_migrations_allowed:bool,
+     *   certification:string
+     * }
+     */
+    private function proCompatibility(): array
+    {
+        return [
+            'state' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_STATE', 'unavailable'),
+            'dimension' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_DIMENSION', 'unavailable'),
+            'reason' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_REASON', 'unavailable'),
+            'remediation' => $this->safeCompatibilityToken('WPE_PRO_COMPATIBILITY_REMEDIATION', 'unavailable'),
+            'free_version' => $this->safeCompatibilityVersion('WPE_PRO_COMPATIBILITY_FREE_VERSION'),
+            'platform_api' => $this->safeCompatibilityVersion('WPE_PRO_COMPATIBILITY_PLATFORM_API'),
+            'platform_schema' => $this->safeCompatibilityGeneration('WPE_PRO_COMPATIBILITY_PLATFORM_SCHEMA'),
+            'pro_schema' => $this->safeCompatibilityGeneration('WPE_PRO_COMPATIBILITY_PRO_SCHEMA'),
+            'premium_boot_allowed' => defined('WPE_PRO_COMPATIBILITY_BOOT_ALLOWED')
+                && WPE_PRO_COMPATIBILITY_BOOT_ALLOWED === true,
+            'premium_migrations_allowed' => defined('WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED')
+                && WPE_PRO_COMPATIBILITY_MIGRATIONS_ALLOWED === true,
+            'certification' => 'adr_0010_not_certified',
+        ];
+    }
+
+    private function safeCompatibilityToken(string $constant, string $fallback): string
+    {
+        if (!defined($constant)) {
+            return $fallback;
+        }
+
+        $value = constant($constant);
+        if (!is_string($value) || preg_match('/^[a-z0-9_]+$/', $value) !== 1) {
+            return 'invalid';
+        }
+
+        return $value;
+    }
+
+    private function safeCompatibilityVersion(string $constant): string
+    {
+        if (!defined($constant)) {
+            return 'unknown';
+        }
+
+        $value = constant($constant);
+        if (!is_string($value) || preg_match('/^[0-9A-Za-z.-]+$/', $value) !== 1) {
+            return 'invalid';
+        }
+
+        return $value;
+    }
+
+    private function safeCompatibilityGeneration(string $constant): int|string
+    {
+        if (!defined($constant)) {
+            return 'unknown';
+        }
+
+        $value = constant($constant);
+        return is_int($value) && $value >= 0 ? $value : 'invalid';
     }
 }
