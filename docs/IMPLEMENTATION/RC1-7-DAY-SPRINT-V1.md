@@ -1,8 +1,8 @@
 # WPEssential RC1 — 7-Day Fast-Development Sprint V1
 
-Status: **ACTIVE / BOUNDED RC1 STABILIZATION**  
-Owner milestone record: **GOV-OWNER-CONSENT-RC1-001 / Issue #1016**  
-Sprint window: **2026-09-16 through 2026-09-22**  
+Status: **ACTIVE / BOUNDED RC1 STABILIZATION**
+Owner milestone record: **GOV-OWNER-CONSENT-RC1-001 / Issue #1016**
+Sprint window: **2026-09-16 through 2026-09-22**
 Initial main anchor: **a1675d179e81333361f3b16d37717b0c08774c80**
 
 ## 1. Objective
