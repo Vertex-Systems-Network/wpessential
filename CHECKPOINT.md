@@ -1,10 +1,10 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-16 UTC**  
-Canonical audited base anchor: **`main @ a1675d179e81333361f3b16d37717b0c08774c80`**  
-Project classification: **`ACTIVE_EXISTING_PROJECT`**  
-Execution mode: **`IMPLEMENTATION_GATED / RC1_7_DAY_SPRINT`**  
-Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**  
+Checkpoint date: **2026-09-16 UTC**
+Canonical audited base anchor: **`main @ a1675d179e81333361f3b16d37717b0c08774c80`**
+Project classification: **`ACTIVE_EXISTING_PROJECT`**
+Execution mode: **`IMPLEMENTATION_GATED / RC1_7_DAY_SPRINT`**
+Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 
 ## Mandatory work-cycle order
@@ -112,10 +112,10 @@ P-006 accepted truth remains:
 Passed bounded fixtures:
 `FP-01/02/03/05/07/08/10/11/13/14/15/16/17/18/19/20/23/25/26/27/28`.
 
-`FP-21/22/24` remain **NOT EXECUTED**.  
-`FP-29+` remain **NOT EXECUTED** unless separately exposed by an accepted compatibility slot.  
-Temporary grants `-001` through `-005` are consumed and non-reusable.  
-Permanent P-001/CF remains uncertified.  
+`FP-21/22/24` remain **NOT EXECUTED**.
+`FP-29+` remain **NOT EXECUTED** unless separately exposed by an accepted compatibility slot.
+Temporary grants `-001` through `-005` are consumed and non-reusable.
+Permanent P-001/CF remains uncertified.
 ADR-0010 remains **Proposed**.
 
 RC1 stabilization must preserve compatibility fail-closed behavior and must not manufacture certification.
