@@ -1,8 +1,8 @@
 {
-  "schema_version": 42,
+  "schema_version": 43,
   "snapshot_date": "2026-09-15",
-  "queue_anchor_main_sha": "a7b472cd555659c5fa7c66bcd09aaf195cc9cb5d",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Commercial/package/preflight/planning gates #904/#908/#912/#916/#920 and #925-#929 remain historical evidence. Explicit P-006-scoped ADR-0014 owner authorization remains active as GOV-OWNER-CONSENT-P006-001 through PR #944. P-006 Wave 1A merged through PR #946 with FP-01/02/05/07/08 PASS and Wave 1B merged through PR #951 with FP-03/10/11 PASS: 144 documented, 8 executed, 8 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. P-001 dependency reconciliation #949/#956 concluded P001_DEPENDENCY_NOT_SATISFIED for permanent/broader support-floor truth, but merged #960/#961 records temporary authorization GOV-OWNER-CONSENT-P001-TEMP-P006-001 for exactly the next bounded P-006 runtime tranche on WordPress 6.9 + PHP 8.2 + MySQL 8.4 and WordPress 7.1 + PHP 8.5 + MySQL 8.4. Queue v42 preserves #947 as independent-review-only, records #957 as TEMP_MATRIX_AUTHORIZED_PENDING_RUNTIME_EVIDENCE, and exposes #962 for FP-13/14 only. Active main ruleset 23374068 requires pull requests, resolved review threads and required status context governance. #858 remains open for final CI-policy reconciliation. Production deploy/release, live authoritative provider/billing/payment/license/allocation side effects, production credentials/data and irreversible/destructive operations remain separately gated.",
+  "queue_anchor_main_sha": "08cfd952de671167e5b23784b8a983e821b7468e",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, reconciles accepted OPEN Issues first, eligible OPEN PRs/MRs second, active deterministic claims and this queue third, and only then starts new development. Commercial/package/preflight/planning gates #904/#908/#912/#916/#920 and #925-#929 remain historical evidence. Explicit P-006-scoped ADR-0014 owner authorization remains active as GOV-OWNER-CONSENT-P006-001 through PR #944. P-006 Wave 1A merged through PR #946 with FP-01/02/05/07/08 PASS, Wave 1B merged through PR #951 with FP-03/10/11 PASS, and Wave 1C merged through PR #965 with real-WordPress FP-13/14 PASS: 144 documented, 10 executed, 10 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. P-001 dependency reconciliation #949/#956 remains P001_DEPENDENCY_NOT_SATISFIED for permanent/broader support-floor truth. Temporary authorization GOV-OWNER-CONSENT-P001-TEMP-P006-001 recorded by #960/#961 was exercised only for Wave 1C and is now consumed/non-reusable for FP-15+ without explicit renewal. Queue v43 preserves #947 as independent-review-only, marks #957 and #962 completed, and exposes no Supervisor-claimable P-006 runtime slot. #858 remains open for final CI-policy reconciliation. Production deploy/release, live authoritative provider/billing/payment/license/allocation side effects, production credentials/data and irreversible/destructive operations remain separately gated.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,11 +14,11 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "Queue v42 exposes #962 as the only Supervisor-claimable dependency-ready ANY runtime slot. #962 is limited to FP-13/14 real WordPress Free-only baseline evidence on the two temporary authorized MySQL 8.4 cells and exactly two new files. #947 remains OPEN for an independent Worker only and the current Supervisor must not claim it. #957 is TEMP_MATRIX_AUTHORIZED_PENDING_RUNTIME_EVIDENCE and is not a separate implementation branch. Completed #948 and #949 branches are retired and must never be reused. No FP-15+, provider, entitlement, destructive, deploy or release slot is open.",
+    "selection_rule": "Queue v43 exposes no Supervisor-claimable P-006 runtime slot. #947 remains OPEN for an independent Worker only and the current Supervisor must not claim it. #957 is completed after least-privilege path B was exercised; #962 is completed with FP-13/14 PASS and its temporary runtime authority is consumed. Completed #948, #949 and #962 branches are retired and must never be reused. No FP-15+, provider, entitlement, destructive, deploy or release slot is open.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches before an accepted issue/queue slot exists. The current Supervisor may claim #962 only through exact branch agent/p006-wave1c-free-only-runtime-baseline-v1 created from the current queue anchor main after v42 merges. The current Supervisor must not claim #947 because its purpose is independent review. Any additional runtime tranche requires a new accepted fresh-main issue and a new exact claim branch.",
+    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches before an accepted issue/queue slot exists. The current Supervisor must not claim #947 because its purpose is independent review. The completed #962 branch is retired. Any FP-15+ or additional runtime tranche requires a new accepted fresh-main issue, explicit environment/runtime authority as needed, and a new exact claim branch.",
     "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
@@ -29,21 +29,20 @@
       "Treat merged PR #946 as exact Wave 1A evidence only: FP-01/02/05/07/08 PASS against source head ea1988cfd6aefd0aabdc6703a6f0763d12123c08, Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80 and Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363.",
       "Treat merged PR #951 as bounded Wave 1B evidence only: FP-03/10/11 PASS against exact protected head 5f99c01f143d734e51abf53059bd9f8c05530c5b; same immutable Free/Pro artifact hashes and canonical pair id 39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea.",
       "Treat merged #949/#956 outcome P001_DEPENDENCY_NOT_SATISFIED as authoritative for broader/permanent P-001/CF truth; do not relabel the temporary exception as permanent support certification.",
-      "Treat merged #960/#961 as a one-tranche temporary exception only: FP-13 on WordPress 6.9 + PHP 8.2 + MySQL 8.4 and FP-14 on WordPress 7.1 + PHP 8.5 + MySQL 8.4, disposable/sandbox exact-head evidence only.",
-      "Keep current P-006 truth at 144 documented / 8 executed / 8 passed / 0 failed / 0 certified pairs / 0 runtime certifications until new authorized exact-head evidence is accepted.",
+      "Treat merged #960/#961 as a consumed one-tranche temporary exception: it authorized only FP-13 on WordPress 6.9 + PHP 8.2 + MySQL 8.4 and FP-14 on WordPress 7.1 + PHP 8.5 + MySQL 8.4; merged #965 completed those fixtures and the grant is not reusable for FP-15+.",
       "ADR-0010 remains Proposed; do not infer decision acceptance from local preflight implementation, passing fixtures or ordinary CI.",
+      "Treat merged PR #965 as bounded Wave 1C evidence only: FP-13/14 PASS against exact head b4a933d11641d9316085ff78162f8a1b7bcc5c78, merged as 08cfd952de671167e5b23784b8a983e821b7468e, preserving the same immutable Free/Pro hashes and canonical pair id.",
+      "Keep current P-006 truth at 144 documented / 10 executed / 10 passed / 0 failed / 0 certified pairs / 0 runtime certifications until later separately authorized exact-head evidence is accepted.",
       "Preserve the distinction between package presence, binary compatibility, Platform API compatibility, observed schema state, migration markers, product entitlement, remote Product License/allocation, Membership/user authorization and updater/package trust.",
-      "Execute no FP beyond FP-13/14 under #962; FP-15+ requires a later accepted tranche.",
-      "Require exact source SHA, immutable Free/Pro artifact hashes, environment identity, activation outcome, request-context outcomes, no-Pro assertions, runtime-network-deny evidence and terminal fixture state for FP-13/14.",
-      "Do not promote permanent P-001 support, pair/runtime/product-parity certification, adjacent evidence domains, deployment or release from partial P-006 results."
+      "Do not promote permanent P-001 support, pair/runtime/product-parity certification, adjacent evidence domains, deployment or release from partial P-006 results.",
+      "Execute no FP-15+ under the consumed temporary matrix grant; any later runtime tranche requires a new accepted scope/authorization."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Require every diff to remain inside its declared issue/queue write boundary.",
       "Require the active ruleset governance check plus every path-applicable exact-head workflow; absence of a triggered workflow is not a green status claim.",
       "For #947 require exactly one declared docs/QUALITY file and zero executable/runtime/package mutation.",
-      "For #962 require exactly tools/release/p006-wave1c-wordpress-runtime-evidence.php and .github/workflows/p006-wave1c-wordpress-runtime-evidence.yml, with no normal runtime/package-builder/source mutation.",
-      "For #962 require terminal evidence for both authorized cells and inspect the raw uploaded evidence artifact before merge.",
+      "For coordination closeout #966 require exactly docs/APPROVAL-LEDGER.md and config/coordination/agent-work-queue.json, valid JSON, no executable/runtime/test/workflow/package mutation and no new FP slot.",
       "Require read-only evidence to contain no production secrets or private provider/account material.",
       "Do not merge a failing or inconclusive executable fixture as PASS; link a defect/stop-the-line result instead."
     ],
@@ -61,11 +60,12 @@
       "Wave 1B exact protected head was 5f99c01f143d734e51abf53059bd9f8c05530c5b; evidence artifact 10372668679 / archive sha256:c499ec790bd819d33b946bd6ae66f2c4d0ecdef77c63363dc83d92732ed1f9a9 preserved the same immutable Free/Pro hashes and canonical pair id.",
       "Security issue #858 advanced through active ruleset 23374068 and merged PR #953, which supplies the required always-on governance check; #858 remains open for final CI-policy reconciliation.",
       "Issue #949 / PR #956 completed P-001 environment-floor dependency reconciliation with outcome P001_DEPENDENCY_NOT_SATISFIED for broader/permanent support truth; no P-006 fixture was executed and counters remained unchanged.",
-      "Issue #957 received owner decision; least-privilege path B is operative because A and B were supplied together with conflicting permanent-certification semantics.",
-      "Issue #960 / PR #961 recorded GOV-OWNER-CONSENT-P001-TEMP-P006-001 for exactly the next bounded P-006 runtime tranche on the two temporary MySQL 8.4 cells; it is not broader permanent P-001 certification.",
-      "Issue #962 defines the next bounded runtime execution lane for FP-13/14 only and has exact branch agent/p006-wave1c-free-only-runtime-baseline-v1 plus a two-file write boundary.",
-      "Current P-006 truth remains 144 documented, 8 executed, 8 passed, 0 failed, 0 certified pairs and 0 runtime certifications until #962 evidence is accepted; ADR-0010 remains Proposed.",
-      "Queue v42 preserves #947 independent-review-only, marks #957 temporary-matrix-authorized pending runtime evidence, and exposes #962 as the only Supervisor-claimable runtime slot."
+      "Issue #957 completed after the owner decision was interpreted via communicated least-privilege path B; no permanent P-001/CF support floor was accepted.",
+      "Issue #960 / PR #961 recorded GOV-OWNER-CONSENT-P001-TEMP-P006-001 for one bounded P-006 runtime tranche; merged #965 consumed that authority and it is not reusable for FP-15+ without explicit renewal.",
+      "Issue #962 / PR #965 completed P-006 Wave 1C real WordPress evidence: FP-13 and FP-14 PASS on the temporary minimum/reference MySQL 8.4 cells; no pair/runtime certification promoted.",
+      "Wave 1C exact head b4a933d11641d9316085ff78162f8a1b7bcc5c78 merged as 08cfd952de671167e5b23784b8a983e821b7468e; raw evidence artifacts 10386861110 (FP-13) and 10386424913 (FP-14) were independently reconciled with zero runtime HTTP attempts.",
+      "Current P-006 truth is 144 documented, 10 executed, 10 passed, 0 failed, 0 certified pairs and 0 runtime certifications; ADR-0010 remains Proposed.",
+      "Queue v43 preserves #947 independent-review-only, marks #957/#962 completed, records the temporary matrix consumed and exposes no Supervisor-claimable P-006 runtime slot."
     ]
   },
   "roles": {
@@ -79,7 +79,7 @@
       "must_not": [
         "Pre-create future worker or integration branches before an accepted issue/queue slot authorizes them.",
         "Claim #947 independent-review work in the same Supervisor identity.",
-        "Expand #962 beyond FP-13/14 or beyond the two temporary authorized environment cells.",
+        "Reuse completed #962, reuse the consumed temporary P-001 matrix, or execute FP-15+ without a new accepted runtime scope.",
         "Treat the temporary P-001 matrix as broader permanent product-support certification.",
         "Force or reuse a claimed branch.",
         "Merge from worker report alone.",
@@ -88,14 +88,14 @@
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v42.",
+      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v43.",
       "may_claim": [
         "ANY"
       ],
       "must_not": [
         "Claim SUPERVISOR_ONLY or non-OPEN authorization gates.",
         "Create any branch other than the exact branch of a dependency-ready OPEN slot.",
-        "Reuse completed #948 or #949 branches.",
+        "Reuse completed #948, #949 or #962 branches.",
         "Edit wpessential.php, wpessential-pro.php, Bootstrap Plugin, composer/shared registries/Atomic lifecycle/progress/shared truth without an explicit worker slot.",
         "Implement writes, AJAX routes, entitlement/provider runtime side effects, activation controls or compatibility/certification claims outside the exact slot.",
         "Execute destructive provider/database/user/content mutation, billing/payment/license-provider calls, deployment or release."
@@ -244,17 +244,38 @@
     },
     {
       "coordination": "p001-temp-matrix-p006-runtime-v1",
-      "status": "ACTIVE_TEMPORARY_ONE_TRANCHE_NOT_PERMANENTLY_CERTIFIED",
+      "status": "CONSUMED_ONE_TRANCHE_NOT_PERMANENTLY_CERTIFIED",
       "source": "Issue #957 decision; Issue #960",
-      "closure": "merged PR #961",
+      "closure": "merged PR #961 authorization; consumed by merged PR #965",
       "merge_sha": "a7b472cd555659c5fa7c66bcd09aaf195cc9cb5d",
       "approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-001",
       "minimum_cell": "WordPress 6.9 + PHP 8.2 + MySQL 8.4",
       "reference_cell": "WordPress 7.1 + PHP 8.5 + MySQL 8.4",
-      "evidence": "Temporary environment authority for exactly the next bounded P-006 runtime tranche. It does not establish broader permanent P-001/CF product-support certification and is not reusable beyond that tranche without explicit renewal."
+      "evidence": "Temporary environment authority was used only for Wave 1C FP-13/14 and is now consumed. It does not establish broader permanent P-001/CF product-support certification and is not reusable for FP-15+ without explicit renewal.",
+      "consumed_merge_sha": "08cfd952de671167e5b23784b8a983e821b7468e"
+    },
+    {
+      "coordination": "p006-wave1c-real-wordpress-free-only-baseline-v1",
+      "status": "COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED",
+      "source": "Issue #939 / child #962; owner decision #957",
+      "closure": "merged PR #965",
+      "merge_sha": "08cfd952de671167e5b23784b8a983e821b7468e",
+      "exact_head_sha": "b4a933d11641d9316085ff78162f8a1b7bcc5c78",
+      "workflow_run": "34945056366 P-006 Wave 1C Real WordPress Runtime Evidence SUCCESS",
+      "candidate_artifact_id": "10386389799",
+      "fp13_artifact_id": "10386861110",
+      "fp14_artifact_id": "10386424913",
+      "free_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
+      "pro_sha256": "771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363",
+      "pair_id_sha256": "39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea",
+      "fixtures": [
+        "FP-13 PASS: WordPress 6.9 + PHP 8.2.33 + MySQL 8.4.11",
+        "FP-14 PASS: WordPress 7.1 + PHP 8.5.10 + MySQL 8.4.11"
+      ],
+      "evidence": "Real disposable WordPress install and clean packaged-Free activation passed; frontend/admin/REST/cron/CLI fresh contexts passed; Free CPT/Taxonomy present; Pro absent; runtime HTTP attempts zero. 10/144 total executed/passed after merge. Permanent P-001, pair/runtime certification and ADR-0010 acceptance remain false/unset."
     }
   ],
-  "historical_queue_note": "Queue v38 intentionally had no OPEN worker slots after planning closeout. Queue v39 recorded scoped owner authorization and Wave 1A execution. Queue v40 recorded completed Wave 1B and exposed #947/#949. Queue v41 recorded #949/#956 as P001_DEPENDENCY_NOT_SATISFIED, preserved #947 and blocked #957 on owner decision. Queue v42 preserves all prior evidence, records temporary P-001 matrix authorization #960/#961, marks #957 as pending runtime evidence under that temporary scope, and exposes #962 for FP-13/14 only.",
+  "historical_queue_note": "Queue v38 intentionally had no OPEN worker slots after planning closeout. Queue v39 recorded scoped owner authorization and Wave 1A execution. Queue v40 recorded completed Wave 1B and exposed #947/#949. Queue v41 recorded #949/#956 as P001_DEPENDENCY_NOT_SATISFIED, preserved #947 and blocked #957 on owner decision. Queue v42 recorded one-tranche temporary P-001 matrix authority and exposed #962 for FP-13/14. Queue v43 records #957/#962 completed, Wave 1C FP-13/14 PASS, 10/144 execution truth and the temporary matrix consumed; #947 remains the only OPEN P-006 queue slot and requires an independent Worker.",
   "slots": [
     {
       "priority": 1650,
@@ -286,9 +307,9 @@
       "slot_id": "p001-cf-owner-decision-gate-v1",
       "title": "P-001/CF Executable Compatibility-Floor Owner Decision Gate",
       "role": "SUPERVISOR_ONLY",
-      "status": "TEMP_MATRIX_AUTHORIZED_PENDING_RUNTIME_EVIDENCE",
+      "status": "COMPLETED_TEMP_MATRIX_CONSUMED",
       "work_mode": "AUTHORIZATION_GATE_ONLY",
-      "source": "Issue #957; reconciliation #949/#956; temporary authorization #960/#961; coordination #958/#963",
+      "source": "Issue #957 closed completed; reconciliation #949/#956; temporary authorization #960/#961; Wave 1C #962/#965; coordination #966",
       "runtime_allowed": false,
       "product_parity_allowed": false,
       "claim_branch": null,
@@ -302,26 +323,27 @@
       ],
       "forbidden_scope": [
         "treat temporary matrix as broader permanent P-001/CF support certification",
-        "runtime execution outside child Issue #962 or outside FP-13/14",
+        "reuse consumed temporary matrix for FP-15+ or any later runtime tranche",
         "certification promotion by inference from ordinary compatibility CI",
         "production deploy/release",
         "production credentials/data",
         "live authoritative provider/billing/payment/license/allocation side effects",
         "irreversible/destructive operations"
-      ]
+      ],
+      "temporary_authority_consumed": true
     },
     {
       "priority": 1654,
       "slot_id": "p006-wave1c-free-only-runtime-baseline-v1",
       "title": "P-006 Wave 1C Real WordPress Free-only Baseline FP-13/14",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED_PASS_TEMP_AUTH_CONSUMED",
       "work_mode": "P006_REAL_WORDPRESS_RUNTIME_EVIDENCE",
       "parallel_class": "P006_WAVE1C_RUNTIME_BASELINE_V1",
-      "source": "Issue #962; parent #939; owner decision #957; temporary authorization #960/#961; coordination #963",
-      "runtime_allowed": true,
+      "source": "Issue #962 closed completed; parent #939; owner decision #957; temporary authorization #960/#961; merged PR #965; coordination #966",
+      "runtime_allowed": false,
       "product_parity_allowed": false,
-      "supervisor_claim_allowed": true,
+      "supervisor_claim_allowed": false,
       "fixtures": [
         "FP-13",
         "FP-14"
@@ -350,7 +372,14 @@
         "live authoritative provider/billing/payment/license/allocation side effects",
         "irreversible/destructive operations"
       ],
-      "claim_branch": "agent/p006-wave1c-free-only-runtime-baseline-v1"
+      "claim_branch": null,
+      "merge_sha": "08cfd952de671167e5b23784b8a983e821b7468e",
+      "exact_head_sha": "b4a933d11641d9316085ff78162f8a1b7bcc5c78",
+      "results": [
+        "FP-13 PASS",
+        "FP-14 PASS"
+      ],
+      "temporary_authority_consumed": true
     }
   ]
 }
