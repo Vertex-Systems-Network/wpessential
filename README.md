@@ -112,3 +112,378 @@ Timeline fields follow `docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md`. Time
 | 56 | Theme Workspace | PLANNED — ATOMIC_INVENTORY_COMPLETE / implementation baseline not promoted | — / no implementation baseline | — / no implementation start promoted | FORECAST PENDING / implementation baseline not promoted | — | Atomic option progress (2026-08-31) | Schema instances + UX contracts, then implementation authorization |
 
 The Custom Tables 90% value is a bounded-track progress indicator for the currently defined V1 foundation/composition runway; it is not a claim that 90% of all future Custom Tables product parity is implemented. Trusted Runtime Evidence Sources V1 and the post-trust audit do not invent a higher percentage because the repository defines no new percentage milestone for this wave.
+
+Surfaces 11–21 have now progressed beyond their earlier planning/Bank-only snapshots. Their canonical Banks are `BANK_REVIEWED`, their machine lifecycle is `UX_CONTRACT_COMPLETE`, their fail-closed DefinitionRepository-backed Runtime Foundation V1 is merged, and their initial read-only `get`/`catalog` Module/Ability exposure is available through the Pro add-on. PR #909 additionally normalizes the currently implemented premium manifests to `edition: 'pro'` under the provider-neutral entitlement-aware activation policy. PR #913 adds read-only commercial/runtime visibility for kernel-known modules without promoting any module lifecycle or mutation authority. This tranche deliberately has no invented percentage scale and does not promote full-parity `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED`. Writes, provider execution, destructive mutation, external dispatch, production migration, deployment and release remain separately gated.
+
+The owner-directed Surfaces 22–28 planning/readiness wave remains complete as planning/readiness evidence only. Issues #588–#594 / PRs #601–#607 add per-surface Bank-entry/readiness, provisional UX and runtime-gap/prerequisite documents. Their Banks remain `UNSEEDED / 0`; no higher option-contract, `UX_CONTRACT_COMPLETE`, runtime or product-parity promotion follows.
+
+## Free / Pro distribution and entitlement boundary
+
+Accepted commercial truth is governed by ADR-0001, ADR-0007, `docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md` and `docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md`.
+
+Package Boundary Gate V1 is complete through Issue #904 / merged PR #905:
+
+- `artifacts/wpessential.zip` is the WordPress.org-target Free package;
+- `artifacts/wpessential-pro.zip` is the separate premium add-on foundation;
+- Free contains only CPT Builder + Taxonomy Builder module implementation plus the shared platform/kernel/contracts/bootstrap required by Free;
+- Pro contains premium module implementation/assets and rejects duplicated Free Platform/Kernel/Contracts/Bootstrap and Free CPT/Taxonomy source;
+- package builds are deterministic and CI executes Free-only, Free→Pro and Pro→Free bootstrap verification;
+- Free-only Taxonomy remains functional without Pro and visibly degrades optional Surface 30 role-impact diagnostics to `unavailable` rather than resolving Pro implementation from the Free artifact;
+- Free+Pro composition restores the canonical Surface 30-backed role-impact path through the shared neutral contract.
+
+Canonical Edition Metadata + Local Entitlement Domain V1 is complete through Issue #908 / merged PR #909:
+
+- canonical local states are `free`, `trial_active`, `pro_active`, `grace`, `expired`, `suspended`, `verification_stale`, `verification_unavailable` and `incompatible_version`;
+- Free modules are entitlement-independent;
+- the 12 currently implemented premium Module manifests now truthfully report `edition: 'pro'`;
+- Pro installs the entitlement-aware activation policy through the existing pre-boot seam before premium module contribution;
+- `trial_active`, `pro_active` and `grace` permit premium mutation in the V1 operation policy;
+- `expired`, `suspended`, `verification_stale` and `verification_unavailable` preserve read-safe Pro activation but deny premium mutation;
+- `free` and `incompatible_version` deny Pro module activation;
+- temporary verification failure remains distinct from expiry and Membership/user authentication is not product-entitlement truth;
+- when no deterministic local state is supplied, Pro defaults to `verification_unavailable`, not `expired`.
+
+Read-only Modules Commercial Inventory V1 is complete through Issue #912 / merged PR #913:
+
+- the existing Platform Runtime Observatory exposes `Module | Edition | Package | Compatibility | Entitlement | Runtime state | Reason` for modules known to the current kernel;
+- inventory rows derive from canonical `ModuleRegistry` state, not a duplicate registry;
+- Pro entitlement display uses the same provider-neutral entitlement snapshot that controls Pro activation; Membership/user authentication is not substituted as entitlement truth;
+- Free rows report `not_applicable` entitlement; Pro rows report bounded local entitlement state without tokens, keys or secrets;
+- compatibility reports local prerequisite truth only and explicitly does not certify ADR-0010 Free/Pro version pairs;
+- the table exposes no module activation/deactivation or mutation controls;
+- exact PR #913 head `1be9ca7cf19fd65b83899fd269f72d0ba225178b` passed Architecture Guards, PHP Quality Toolchain, Distributable Package, Platform Compatibility Matrix and Browser E2E Accessibility.
+
+P-006 bounded compatibility evidence now includes:
+
+- Wave 1A / Issue #945 / PR #946 — FP-01/02/05/07/08 PASS against immutable Free/Pro package identity;
+- Wave 1B / Issue #948 / PR #951 — FP-03/10/11 PASS for bounded local compatibility metadata/preflight evidence;
+- Wave 1C / Issue #962 / PR #965 — real disposable WordPress FP-13/14 PASS for Free-only baseline on the authorized minimum/reference cells;
+- Wave 1D / Issue #972 / PR #975 — real disposable WordPress FP-15/16 PASS for compatible Free+Pro activation/load-order evidence on both authorized cells, including WordPress `plugin_missing_dependencies` Pro-first prevention and successful Free-then-Pro recovery;
+- Wave 1E / Issue #983 / PR #986 — real disposable WordPress FP-17/18 PASS on both authorized cells: installed inactive Pro contributed no Pro files/runtime/compatibility state in FP-17, and WordPress `plugin_missing_dependencies` prevented Pro-without-Free activation in FP-18; zero unexpected runtime HTTP in both fixtures;
+- Wave 1F / Issue #995 / PR #997 — real disposable WordPress FP-19/20 PASS on both authorized cells using separately hashed NON-RELEASE / TEST-ONLY Free `0.0.9` and `0.1.1` variants. FP-19 recorded canonical `free_version_too_old` / `free_version_below_supported_minimum` / `update_free`; FP-20 recorded `free_version_too_new` / `free_version_above_supported_maximum` / `update_pro`. Premium boot/migrations remained denied, Free CPT/Taxonomy remained available, and runtime HTTP attempts were zero;
+- Wave 1G / Issue #1007 / PR #1008 — real disposable WordPress FP-23/25/26/27/28 PASS across old/new mismatch candidates and minimum/reference cells. Premium boot/migrations stayed fail-closed, Free CPT/Taxonomy stayed available, admin remediation remained exact/non-scripted/non-hijacking, frontend premium leakage stayed absent, REST stayed non-fatal, cron/WP-CLI-shaped contexts stayed inert, no unexpected Pro implementation/modules loaded and runtime HTTP attempts were zero;
+- current formal P-006 fixture accounting is **144 documented / 21 executed / 21 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications**; the four Wave 1G matrix cells are environment coverage and do not double-count fixture executions;
+- all five temporary P-001/CF matrix grants used for Waves 1C, 1D, 1E, 1F and 1G are consumed/non-reusable; permanent P-001/CF remains uncertified; ADR-0010 remains Proposed; FP-21/22/24 remain NOT EXECUTED and FP-29+ remains unexposed with no Supervisor runtime/source authority open.
+
+These commercial and bounded evidence gates are provider-neutral local architecture/read-only observability plus partial compatibility evidence, not a live commercial license service or full P-006 certification. The Wave 1F synthetic version variants are explicitly NON-RELEASE / TEST-ONLY and Wave 1G reused only those exact candidate identities; neither wave promotes product/release artifacts or compatibility certification. These gates do **not** claim universal wiring of every future premium mutation path, remote verification/billing/provider integration, credential/secret persistence, ADR-0010 acceptance, a certified Free/Pro pair, P-006 runtime certification, multisite allocation semantics, deployment or release readiness.
+
+## AI-Native work-cycle order
+
+Every Supervisor/Worker `start`, `continue` or `resume` cycle follows this mandatory hard-gated order from `AUTO-AGENT.md`:
+
+1. refresh exact current `main`;
+2. inspect and continue/solve accepted **OPEN Issues first**;
+3. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
+4. confirm no accepted actionable Issue/PR/MR path is being bypassed;
+5. re-read active deterministic claims and the coordination queue;
+6. only then start or claim new dependency-ready development;
+7. after the cycle reaches a stable final state, reconcile this complete 56 / 56 README dashboard before reporting completion.
+
+New development is forbidden while an accepted actionable Issue or PR/MR path is being bypassed unless repository evidence explicitly marks that path blocked or superseded.
+
+Issue #415 / merged PR #416 promoted issue-first/PR-second README closeout. Issue #451 added timeline/forecast reconciliation. Issue #455 / merged PR #456 extends the Definition of Done to the complete canonical 56-surface dashboard and hard-gates new development behind Issues and PRs/MRs.
+
+## Current Custom Tables state
+
+Surface 7 is **ACTIVE / NOT PASS**. The following bounded foundations are promoted:
+
+1. **Canonical table Definition + schema descriptor V1** — Issue #382 / merged PR #383.
+2. **Observed schema normalization + pure Migration Plan V1** — Issue #385 / merged PR #387.
+3. **Post-plan dependency audit** — Issue #388 / merged PR #390.
+4. **Trusted CT1/PT-E physical identity + strictly read-only schema introspection V1** — Issue #389 / merged PR #391.
+5. **Post-introspection next-lane audit V1** — Issue #392 / merged PR #394.
+6. **Server-selected provider capability profile + pure DDL compiler preview V1** — Issue #393 / merged PR #395.
+7. **Post-provider exact-main prerequisite audit V1** — Issue #397 / merged PR #398.
+8. **Immutable Migration Run state machine V1** — Issue #399 / merged PR #402.
+9. **Typed Precondition Contract V1** — Issue #400 / merged PR #403.
+10. **Recovery + reviewed-source Revalidation V1** — Issue #401 / merged PR #404.
+11. **Post-prerequisite exact-main audit V1** — Issue #405 / merged PR #406.
+12. **Migration Run Repository Contract V1** — Issue #407 / merged PR #410.
+13. **Precondition Evaluator V1** — Issue #408 / merged PR #411.
+14. **Recovery Readiness V1** — Issue #409 / merged PR #412.
+15. **Post-contract-wave exact-main audit V1** — Issue #413 / merged PR #414.
+16. **AI-Native issue-first/PR-second + README closeout governance** — Issue #415 / merged PR #416.
+17. **Migration Run Transition Service V1** — Issue #423 / merged PR #427.
+18. **Precondition Probe Registry V1** — Issue #420 / merged PR #428.
+19. **Recovery Evidence Source Contract V1** — Issue #421 / merged PR #429.
+20. **Migration Execution Readiness V1** — Issue #422 / merged PR #430.
+21. **Post-composition-wave exact-main audit + progress reconciliation** — Issue #431 / merged PR #432.
+22. **Migration Run Persistence Record Codec V1** — merged PR #437.
+23. **Precondition Read-Only Probe Plan V1** — merged PR #438.
+24. **Recovery Evidence Binding/Freshness V1** — Issue #435 / merged PR #439.
+25. **Execution Authorization Envelope V1** — Issue #436 / merged PR #440.
+26. **Post-hardening-wave exact-main audit** — Issue #441 / merged PR #442.
+27. **Metadata-only Precondition Probe Adapters V1** — merged PR #447.
+28. **Recovery Verification Provider Port V1** — Issue #445 / merged PR #448.
+29. **Execution Authorization Policy Adapter V1** — Issue #446 / merged PR #449.
+30. **Internal Migration Run Store Schema + WPDB Repository V1** — Issue #443 / merged PR #450.
+31. **Post-adapter exact-main audit V1** — Issue #453 / merged PR #454.
+32. **Runtime Composition Readiness V1** — Issue #459 / merged PR #460.
+33. **Post-Runtime Composition exact-main audit V1** — Issue #461 / merged PR #462.
+34. **Trusted Runtime Evidence Sources V1** — Issue #463 / merged PR #464.
+35. **Post-Trusted Runtime Evidence exact-main audit V1** — Issue #465 / merged PR #466.
+36. **Physical Free/Pro decoupling** — Issue #904 / merged PR #905; Custom Tables implementation remains Pro-owned and optional from the Free bootstrap.
+
+PR #464 moves metadata-fact derivation behind a typed server-side provider, composes the existing read-only CT1 schema introspector, binds descriptors to persisted run identity/revision/schema, adds a site-scoped internal WPE confirmation metadata store + read-only confirmation source, removes provider arguments from canonical `create()`, and converts source failures into deterministic fail-closed readiness reasons. Its exact head passed all seven applicable workflows, including CPT Runtime and Taxonomy Runtime.
+
+The post-trust audit accepts this hardening evidence but **does not authorize managed-table execution**. Public factory construction can still receive trusted-marker implementations, production recovery is intentionally fail-closed with no real allowlisted verifier, and no trusted confirmation issuance lifecycle has been promoted. Therefore R1/R2 execution remains **BLOCKED / NOT AUTHORIZED**.
+
+### Still blocked
+
+The current Custom Tables foundation does **not** authorize:
+
+- physical `CREATE`, `ALTER`, `DROP`, `RENAME`, `TRUNCATE` or `dbDelta()` execution against managed Custom Tables;
+- generic managed-table DDL dispatch through `$wpdb->query()` or shared database mutation interfaces;
+- R1/R2 managed-table statement execution;
+- row `INSERT`, `UPDATE`, `DELETE` or CRUD/Data Source runtime;
+- R3/R4 managed-table execution;
+- leases, retry workers or Action Scheduler migration execution;
+- live row-count/null/duplicate/range/max-length precondition scans or row payload reads;
+- Backup creation or restore side effects;
+- backfill, deduplication, shadow-copy or swap flows;
+- CT2/PT-D or CT3 runtime/topology conversion;
+- external-table adoption;
+- Custom Tables admin/REST/Ability/public execution mutation surfaces;
+- `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release approval.
+
+Custom Tables is safe-paused at its current bounded milestone until a later explicit trust-activation/hardening audit authorizes another lane.
+
+## Owner-directed CPT + Taxonomy full-final program
+
+The target for Surfaces 1 and 2 is **PARITY_OR_EXCEED**. Existing runtime code is preserved and gap-audited rather than rebuilt speculatively. A green CPT Runtime or Taxonomy Runtime workflow proves regression health of the current baseline; it does not by itself prove full product parity.
+
+### Surface 1 — CPT Builder
+
+Current machine truth after Issue #473 / merged PR #477:
+
+- lifecycle `UX_CONTRACT_COMPLETE`;
+- Options Bank `BANK_REVIEWED`, 107 records, zero unresolved review gates;
+- 23 normalized Atomic Option Contracts with deterministic 107/107 source projection;
+- `missing=0`, `unclassified=0`;
+- reviewed Essential/Advanced/Expert UX contract;
+- accepted runtime gap matrix against the existing CustomPostTypes baseline;
+- existing Definition projection, validation, admin, Ability and registration/runtime baseline remains preserved;
+- dedicated CPT Runtime regression workflow is green, but full runtime/product parity is not certified.
+
+No CPT runtime-gap implementation lane is authorized by the current queue. The next CPT step requires a later exact-main Supervisor transition audit before any new runtime work is opened.
+
+### Surface 2 — Taxonomy Builder
+
+Current machine truth through Issue #632 / merged PR #634 plus package-boundary and entitlement regression evidence from Issues #904/#908 and merged PRs #905/#909:
+
+- Options Bank `BANK_REVIEWED`, 71 records, zero unresolved review items;
+- full-parity Atomic Option Contract machine lifecycle remains `UX_CONTRACT_COMPLETE`;
+- the accepted bounded V1 owner-runtime scope is independently certified PASS by the exact-main V2 audit;
+- 20 normalized atomic contracts with deterministic 71/71 Bank source projection;
+- `missing=0`, `unclassified=0`;
+- reviewed Essential/Advanced/Expert UX contract and accepted runtime gap matrix;
+- previously promoted Definition, provider-ID, diagnostics, labels, tiered visibility, setting search, default-term/object-term query, rewrite/REST/provider/capability/compatibility/portability evidence remains preserved;
+- searchable/grouped object-type discovery with preserved external keys is promoted through PR #578;
+- the post-object-discovery exact-main audit in PR #597 closes object-type search/grouping and Definition-list Revision as duplicate residuals;
+- Issue #609 / merged PR #610 promotes one canonical server-authoritative read-only dependency/usage summary, Definition-list runtime health/dependency count and matching diagnostics presentation with exact-head PHP/Package/Compatibility/Architecture/Taxonomy Runtime/Browser-Axe evidence;
+- Issue #611 / merged PR #612 records the historical role-impact blocker and establishes that Surface 2 must not implement a private role engine;
+- Surface 30 Issue #615 / merged PR #617 promotes `BANK_REVIEWED / 68`, 19 normalized Atomic Option Contracts, deterministic 68/68 projection and `UX_CONTRACT_COMPLETE` planning truth;
+- Surface 30 Issue #618 / merged PR #620 promotes a bounded canonical policy-gated read-only role catalog/capability-impact seam with explicit true/false/absent semantics, scoped degraded/unavailable states, site/network context and Super Admin caveats; this does not certify the whole Surface 30 product;
+- Taxonomy Issue #621 / merged PR #623 consumes only that canonical Surface 30 seam for Definition `read_model.role_impact` and validation `diagnostics.role_impact`, preserves explicit allow/deny/absent and contextual/meta-capability caveats, deduplicates repeated capability queries, and fails visibly unavailable instead of scanning WordPress role storage directly;
+- Issue #626 / merged PR #628 independently audited exact main and identified exactly three remaining reviewed admin-UX blockers: visual role-impact preview, unsaved-change guard and sticky Validate/Save;
+- Issue #629 / merged PR #631 closes those three blockers and its final head `7c49f294...` passed Architecture Guards, Distributable Package and Browser E2E Accessibility, including packaged role-impact/dirty-state/sticky-command/Axe evidence;
+- Issue #632 / merged PR #634 performs the fresh exact-main contract-by-contract V2 audit and finds no remaining accepted bounded V1 owner-runtime blocker, certifying that bounded V1 milestone without promoting the full-parity Atomic Option Contract lifecycle;
+- Issue #904 / merged PR #905 proves the Free-only packaged Taxonomy path remains functional when Surface 30 Pro implementation is physically absent: role-impact diagnostics fail visibly to `unavailable`, not fatally or through a hidden Free→Pro source dependency;
+- Issue #908 / merged PR #909 proves the separated Free+Pro Surface 30-backed role-impact path remains green after Roles and the other currently implemented premium modules are canonically `edition: 'pro'` and routed through the entitlement-aware activation policy;
+- taxonomy-key migration planning exists, but **execution remains blocked by design** pending separate explicit safety authorization;
+- generic package/import-export orchestration remains Surface 26-owned;
+- machine full-parity `RUNTIME_CERTIFIED` and `PRODUCT_PARITY_CERTIFIED` remain unpromoted.
+
+Current lane: **Taxonomy Builder Runtime Gap Closure V1 is complete and PASS-certified for the accepted bounded V1 owner-runtime scope**. No dependency-ready Surface 2 implementation slice remains in the current queue. Full-parity machine runtime/product-parity lifecycle, taxonomy-key migration execution and generic package orchestration are separate gates and are not implicitly authorized by the bounded V1 certification.
+
+## Owner-directed planning waves
+
+Surfaces 11–21 completed their staged planning-to-read-only-runtime progression through Bank seeding/audit/review, Atomic Option Contracts, UX contracts, Post-UX readiness, bounded Runtime Foundation V1, Module/Ability exposure and initial centralized plugin contribution. Issue #904 / merged PR #905 moved those product-Pro contributions behind the physically separate Pro add-on, Issue #908 / merged PR #909 normalized the currently implemented premium manifests to `edition: 'pro'` behind the provider-neutral entitlement-aware activation policy, and Issue #912 / merged PR #913 adds read-only commercial/runtime visibility in the shared Platform diagnostics surface. None of these commercial gates promotes deeper runtime mutation/provider authority. This remains a bounded read-only owner-runtime tranche, not full product parity.
+
+Supervisor Issue #583 established the earlier 11 isolated planning lanes. Hosted coding-agent assignment was attempted after coordination PR #595 but the available GitHub connector returned HTTP 403; no hosted claim became active. Repository precedent was followed through fallback PR #596, and the deterministic planning lanes completed without overlapping writes. Surfaces 19–21 have since advanced through the same reviewed Bank/Atomic/UX/read-only runtime exposure progression as Surfaces 11–18. Surfaces 22–28 remain planning/readiness-only and `UNSEEDED / 0`.
+
+### What “full final” means
+
+Neither CPT nor Taxonomy may be reported fully final until that surface explicitly promotes all of the following:
+
+1. reviewed Options Bank with zero unresolved native/market/semantic items;
+2. schema-valid Atomic Option Contract with `missing=0` and `unclassified=0`;
+3. reviewed UX contract;
+4. exhaustive existing-runtime gap matrix;
+5. implementation of every accepted missing behavior through canonical owners;
+6. applicable Multisite, security, REST/Ability, import/export/migration, accessibility, compatibility and performance evidence;
+7. exact-head required runtime/browser/security/parity tests;
+8. machine lifecycle `RUNTIME_CERTIFIED`;
+9. competitor-parity acceptance `PRODUCT_PARITY_CERTIFIED`.
+
+## Planning / Bank snapshot
+
+Planning certification and runtime implementation are separate lifecycle dimensions.
+
+- Canonical modules planned: **56 / 56**
+- README closeout dashboard: **56 / 56 modules listed**
+- Current Options Bank and Atomic Option lifecycle truth: `config/product/options-bank-progress.json` and `config/product/atomic-option-contract-progress.json`
+- Current Options Bank truth: **22 seeded / 22 NATIVE_AUDITED / 22 MARKET_AUDITED / 22 BANK_REVIEWED / 2139 records**.
+- Product-parity targets: `config/product/competitor-parity-surfaces.json`
+- Current conflict-safe development queue: `config/coordination/agent-work-queue.json`
+- No bounded module pass in this README implies full product parity or release readiness.
+
+`config/product/atomic-option-contract-progress.json` records all 56 surfaces in the atomic inventory, with **17 surfaces at or beyond `OPTION_CONTRACT_COMPLETE`**, **16 surfaces exactly at `UX_CONTRACT_COMPLETE`**, **0 surfaces at full-parity `RUNTIME_CERTIFIED`**, and **0 surfaces at `PRODUCT_PARITY_CERTIFIED`**. Machine-readable files are authoritative for lifecycle counts. Bounded runtime/read-only exposure evidence is tracked separately and does not advance this full-parity machine lifecycle unless explicitly promoted.
+
+## Certified runtime / implementation gates
+
+| Gate / Surface | Certified implementation state | Current boundary |
+|---|---|---|
+| A — Fields | **PASS — certified native V1 scope** | Broader provider/full parity remains gated |
+| B — Relations | **PASS — certified native V1 baseline** | Richer provider/parity remains gated |
+| C — Query | **PASS — certified bounded V1 baseline** | Public execution/full parity remains gated |
+| D — Admin Columns | **PASS — certified bounded V1 baseline** | No unbounded mass-edit/provider-wide parity claim |
+| E — Dynamic Listings | **PASS — certified bounded V1 baseline** | Richer async/builder parity remains gated |
+| Status Manager | **PASS — certified bounded V1 baseline** | Workflow/provider/bulk parity remains gated |
+| Taxonomy Builder | **PASS — certified bounded accepted V1 owner-runtime scope** | Full-parity machine lifecycle remains `UX_CONTRACT_COMPLETE`; product parity and taxonomy-key migration execution remain separate gates |
+| Custom Tables | **ACTIVE / NOT PASS — bounded runway 90%** | Trusted evidence hardening promoted; managed-table execution remains blocked and Surface 7 is safe-paused |
+| Surfaces 11–21 | **BOUNDED READ-ONLY FOUNDATION + MODULE/ABILITY EXPOSURE ACCEPTED IN PRO / NOT FULL-PARITY CERTIFIED** | `get`/`catalog` only when Pro activation is allowed; writes, providers, destructive operations and full-parity runtime/product certification remain separate gates |
+| Free/Pro Package Boundary V1 | **PASS — physical distribution boundary accepted** | No certified compatibility pair, deployment or release claim |
+| Edition Metadata + Local Entitlement Domain V1 | **PASS — provider-neutral local commercial-runtime model accepted** | No live license/billing/provider service, universal future premium-operation enforcement, ADR-0010 certification, multisite allocation, deployment or release claim |
+| Modules Commercial Inventory V1 | **PASS — bounded read-only commercial/runtime diagnostics accepted** | No activation controls, secrets, remote verification/provider execution, ADR-0010 compatibility certification, lifecycle promotion, deployment or release claim |
+| P-006 Waves 1A–1G | **PASS for 21 explicitly executed fixtures / NOT P-006 CERTIFIED** | 144 documented / 21 executed / 21 PASS / 0 FAIL; no certified pair/runtime; ADR-0010 Proposed; FP-21/22/24 NOT EXECUTED and FP-29+ separately gated |
+
+`config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS or accepted read-only/commercial infrastructure tranche must never be reported as machine `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted consistently with the canonical option-contract instance.
+
+## Multi-agent development
+
+WPEssential uses one Supervisor plus as many conflict-safe Workers as the dependency graph allows.
+
+The authoritative queue is `config/coordination/agent-work-queue.json`.
+
+### Supervisor
+
+Start WPEssential Supervisor in AUTO mode.
+
+Read `AUTO-AGENT.md` completely. Refresh exact current main, solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then active deterministic claim branches and the coordination queue before starting new work. New development must not bypass an accepted actionable Issue or PR/MR. The Supervisor owns shared truth, audit gates, merge serialization and complete 56 / 56 README progress/timeline reconciliation.
+
+### Workers
+
+Start WPEssential Worker in AUTO mode.
+
+Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
+
+Surfaces 11–21 bounded read-only Runtime Foundation V1 and read-only Module/Ability exposure are complete and Pro-owned. Physical package separation is complete through Issue #904 / PR #905, local provider-neutral entitlement/edition V1 is complete through Issue #908 / PR #909, read-only Modules commercial/runtime inventory is complete through Issue #912 / PR #913, and bounded P-006 Waves 1A–1G are complete through PRs #946/#951/#965/#975/#986/#997/#1008 for 21 explicitly executed fixtures. Surfaces 22–28 remain planning/readiness-only and unseeded. Queue v51 exposes **no Supervisor-claimable P-006 runtime/source slot**; #947 remains independent-review-only and unclaimed. ADR-0010 remains Proposed, permanent P-001/CF remains uncertified, all five temporary runtime-matrix grants are consumed/non-reusable, FP-21/22/24 remain NOT EXECUTED and FP-29+ requires a new accepted exact-main gate/environment authority. Wave 1F `0.0.9`/`0.1.1` Free variants are NON-RELEASE / TEST-ONLY evidence artifacts only and Wave 1G reused those exact candidates. Security issue #858 remains open for broader required-CI policy reconciliation while active ruleset `23374068` and the required `governance` status already protect main. Deterministic Supervisor P-006 runtime/source behavior is `NO_VALID_WORK_SLOT` until a new accepted gate exists.
+
+## What WPEssential is
+
+WPEssential is designed as one governed platform rather than a collection of unrelated mini-frameworks. Business modules compose shared contracts for:
+
+- canonical data and semantic ownership;
+- definitions and compiled WordPress registrations;
+- capability and Policy authorization;
+- Abilities and typed events;
+- scoped persistence and migrations;
+- jobs and external integrations;
+- audit and diagnostics;
+- WordPress bridges, AJAX, nonce and runtime security;
+- Multisite isolation;
+- AI/MCP-safe invocation boundaries.
+
+Core rule: every business semantic has one canonical owner. UI, REST, Workflow, Cron, CLI and AI are invocation channels and cannot create private duplicate engines or bypass the canonical owner Policy/Ability/storage path.
+
+## Engineering contract
+
+Production implementation must preserve:
+
+- namespace `WPEssential`;
+- canonical PSR-4 source root `frameworks/`;
+- global functions `wpessential_*`;
+- constants `WPE_*`;
+- exact custom filters `wpesential/apply_*`;
+- custom actions `wpessential/hook_*`;
+- one typed allowlisted AJAX gateway;
+- centralized nonce operation handling;
+- compile-on-write runtime registrations;
+- bounded/redacted Runtime Observatory diagnostics;
+- direct-access `ABSPATH` guards on shipped PHP source.
+
+The asymmetric `wpesential` filter spelling is intentional public API.
+
+See `CONTRIBUTING.md` for contribution and WordPress.org release rules. The mandatory WordPress.org/Plugin Check policy is `docs/QUALITY/WORDPRESS-ORG-PLUGIN-CHECK-COMPLIANCE.md`. `readme.txt` is the WordPress.org-facing plugin documentation draft for the current development line.
+
+## Current foundation evidence
+
+Commercial Free/Pro evidence now includes:
+
+- `docs/DECISIONS/ADR-0001-free-pro-distribution.md`
+- `docs/DECISIONS/ADR-0007-license-expiry-runtime.md`
+- `docs/DECISIONS/ADR-0010-free-pro-compatibility.md` — remains Proposed; bounded P-006 evidence through PR #1008 does not accept ADR-0010 or certify a Free/Pro pair
+- `docs/COMMERCIAL-DISTRIBUTION.md`
+- `docs/COMMERCIAL-POSITIONING-AND-PACKAGING.md`
+- `docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md`
+- `docs/IMPLEMENTATION/EDITION-ENTITLEMENT-DOMAIN-V1.md`
+- Issue #904 / merged PR #905 — physical Free/Pro Package Boundary Gate V1
+- Issue #908 / merged PR #909 — Canonical Edition Metadata + Local Entitlement Domain V1
+- Issue #912 / merged PR #913 — read-only Modules Commercial Inventory V1
+- Issue #945 / merged PR #946 — P-006 Wave 1A static artifact evidence, five fixtures PASS
+- Issue #948 / merged PR #951 — P-006 Wave 1B bounded local compatibility evidence, three fixtures PASS
+- Issue #962 / merged PR #965 — P-006 Wave 1C real WordPress Free-only baseline, FP-13/14 PASS
+- Issue #972 / merged PR #975 — P-006 Wave 1D real WordPress compatible Free+Pro baseline, FP-15/16 PASS
+- Issue #983 / merged PR #986 — P-006 Wave 1E real WordPress inactive-Pro/dependency-state baseline, FP-17/18 PASS
+- Issue #995 / merged PR #997 — P-006 Wave 1F real WordPress marketing-version mismatch baseline, FP-19/20 PASS with NON-RELEASE / TEST-ONLY Free variants
+- Issue #1007 / merged PR #1008 — P-006 Wave 1G real WordPress mismatch-context evidence, FP-23/25/26/27/28 PASS with exact reused TEST-ONLY mismatch candidates
+
+Dynamic Listings final bounded closure: `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`.
+
+Status Manager final bounded closure: `docs/IMPLEMENTATION/STATUS-MANAGER-FINAL-CLOSURE-AUDIT-V3.md`.
+
+Custom Tables dependency evidence currently includes:
+
+- `docs/IMPLEMENTATION/POST-STATUS-NEXT-GATE-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-DEFINITION-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PLAN-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-INTROSPECTION-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PROVIDER-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-PREREQUISITE-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-CONTRACT-WAVE-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-COMPOSITION-WAVE-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-HARDENING-WAVE-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-ADAPTER-EXACT-MAIN-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-RUNTIME-COMPOSITION-EXACT-MAIN-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/CUSTOM-TABLES-POST-TRUSTED-RUNTIME-EVIDENCE-EXACT-MAIN-AUDIT-V1.md`
+
+CPT, Taxonomy and Dashboard Widgets planning/runtime evidence currently includes:
+
+- `docs/PRODUCT/CPT-BUILDER-OPTIONS-BANK-AUDIT-CLOSURE-V1.md`
+- `config/product/option-contracts/cpt.json`
+- `docs/PRODUCT/CPT-BUILDER-UX-CONTRACT-V1.md`
+- `docs/IMPLEMENTATION/CPT-BUILDER-RUNTIME-GAP-MATRIX-V1.md`
+- `config/product/option-contracts/taxonomy.json`
+- `docs/UI/TAXONOMY-BUILDER-UX-CONTRACT-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-BUILDER-RUNTIME-GAP-MATRIX-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-BUILDER-POST-OBJECT-DISCOVERY-RESIDUAL-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-CAPABILITY-ROLE-IMPACT-DEPENDENCY-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-ROLE-IMPACT-CONSUMER-V1.md`
+- `docs/IMPLEMENTATION/ROLES-CAPABILITIES-READ-SEAM-RUNTIME-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-FINAL-ADMIN-UX-CLOSURE-V1.md`
+- `docs/IMPLEMENTATION/TAXONOMY-EXACT-MAIN-RUNTIME-CERTIFICATION-AUDIT-V2.md`
+- `config/product/option-contracts/dashboard-widgets.json`
+- `docs/UI/DASHBOARD-WIDGETS-UX-CONTRACT-V1.md`
+- `docs/IMPLEMENTATION/DASHBOARD-WIDGETS-RUNTIME-GAP-MATRIX-V1.md`
+
+Surfaces 11–21 bounded read-only evidence is promoted through Runtime Foundation V1 Issues #844–#854 / PRs #859–#869, Supervisor closeout #870 / PR #871, read-only Module/Ability Issues #873–#883 / PRs #886–#896, original central activation #897 / PR #898, physical Pro-package contribution boundary #904 / PR #905, canonical Pro edition/entitlement activation policy #908 / PR #909, and shared read-only Modules commercial/runtime inventory #912 / PR #913. Each surface remains fail-closed and read-only over the canonical Definition Repository; full-parity runtime/product certification and side-effect authority remain unpromoted.
+
+Surfaces 22–28 planning/readiness evidence is promoted through Issues #588–#594 / PRs #601–#607. Each surface has one `docs/PRODUCT/*-BANK-ENTRY-READINESS-V1.md`, one provisional `docs/UI/*-UX-CONTRACT-V1.md`, and one `docs/IMPLEMENTATION/*-RUNTIME-GAP-MATRIX-V1.md`; their Banks remain `UNSEEDED / 0`. None of these planning records authorize runtime implementation.
+
+Hosted CI provides architecture, PHP quality, WordPress/PHP/database compatibility and deterministic distributable-package evidence on applicable exact heads. WordPress.org release readiness remains a separate gate.
+
+## Canonical planning maps
+
+- `docs/ARCHITECTURE/CANONICAL-56-SURFACE-OWNERSHIP-REGISTRY.md`
+- `docs/ARCHITECTURE/CROSS-MODULE-OPTION-OWNERSHIP-AND-NO-BYPASS-CONTRACT.md`
+- `docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md`
+- `docs/UI/ADMIN-INFORMATION-ARCHITECTURE-V2-56-SURFACES.md`
+- `docs/SOLUTIONS/SYSTEM-PATTERN-TO-CANONICAL-SURFACE-MAP.md`
+- `docs/ARCHITECTURE/CANONICAL-56-SURFACE-DEPENDENCY-RELATION-MATRIX.md`
+- `docs/ARCHITECTURE/PER-SURFACE-CAPABILITY-ABILITY-EVENT-REGISTRY-32-56.md`
+- `docs/ARCHITECTURE/DATA-OWNERSHIP-LIFECYCLE-REGISTRY-32-56.md`
+- `docs/QUALITY/POST-P0-MODULE-OPTION-UI-SYSTEM-INTEGRITY-AUDIT.md`
+
+Repository evidence and accepted ADRs override stale conversational summaries.
