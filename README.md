@@ -4,7 +4,7 @@ WPEssential is a modular WordPress application platform for structured data, aut
 
 Project website: **https://wpessential.org**
 
-> **Status:** Source development is active under explicit `GOV-OWNER-CONSENT-001` and remains milestone-gated. Production deployment, destructive live-provider operations, full runtime certification and product-parity certification are separate gates.
+> **Status:** Source development is active under explicit `GOV-OWNER-CONSENT-001` and remains milestone-gated. P-006 bounded executable evidence is at **144 documented / 12 executed / 12 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications** after Waves 1A–1D. Production deployment, destructive live-provider operations, full runtime certification and product-parity certification are separate gates.
 
 ## Current lifecycle
 
@@ -24,6 +24,8 @@ Project website: **https://wpessential.org**
 - Physical Free/Pro package boundary: **DONE for Package Boundary Gate V1** through Issue #904 / merged PR #905. Free physically ships Platform Core + CPT + Taxonomy implementation; premium implementation is separated into the Pro add-on. Certified compatibility pairs, live licensing/provider integration, deployment and release remain separate gates.
 - Canonical Edition Metadata + Local Entitlement Domain V1: **DONE** through Issue #908 / merged PR #909. The 12 currently implemented premium Module manifests now report `edition: 'pro'`; Pro installs a provider-neutral entitlement-aware activation policy before premium contribution; activation/read preservation is modeled separately from premium mutation authority. This does not certify every future premium mutation path or add a live license/billing/provider service.
 - Read-only Modules Commercial Inventory V1: **DONE** through Issue #912 / merged PR #913. The existing Platform Runtime Observatory now exposes server-generated `Module | Edition | Package | Compatibility | Entitlement | Runtime state | Reason` diagnostics from canonical ModuleRegistry/runtime state and the same local entitlement-provider truth used by Pro activation. It adds no activation controls, secrets, live licensing/provider calls or compatibility certification.
+- P-006 executable evidence: **Waves 1A–1D complete for the bounded executed subset** through PRs #946, #951, #965 and #975: FP-01/02/03/05/07/08/10/11/13/14/15/16 PASS; **144 documented / 12 executed / 12 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications**. Both temporary P-001/CF matrix grants are consumed and non-reusable; permanent P-001/CF remains uncertified; ADR-0010 remains **Proposed**; FP-17+ requires a new accepted scope/environment authority.
+- Main protection/security: active ruleset `23374068` enforces pull-request-based main protection, deletion/non-fast-forward protection, review-thread resolution, strict required `governance` status and zero bypass. Issue #858 remains open for broader required-CI policy reconciliation; the legacy branch-protection subobject is not authoritative for ruleset enforcement.
 - Phase 2 Gate A / Fields: **PASS for the certified native V1 scope**
 - Phase 2 Gate B / Relations: **PASS for the certified native V1 baseline**
 - Phase 2 Gate C / Query: **PASS for the certified bounded V1 baseline**
@@ -38,7 +40,7 @@ Project website: **https://wpessential.org**
 - Surfaces 22–28: **planning/readiness COMPLETE / Bank UNSEEDED / runtime unpromoted** through Issues #588–#594 / merged PRs #601–#607. No schema-valid option-contract, UX lifecycle, runtime or product-parity promotion is implied.
 - Surface 30 / Roles & Capabilities: **UX_CONTRACT_COMPLETE / bounded canonical read-only runtime seam accepted / NOT RUNTIME CERTIFIED** through Issue #615 / merged PR #617 and Issue #618 / merged PR #620. The Bank is `BANK_REVIEWED / 68` with 19 normalized Atomic Option Contracts and deterministic 68/68 projection. Roles is now physically Pro-owned and canonically `edition: 'pro'` through PRs #905 and #909. The accepted runtime seam is policy-gated and read-only; broader role/capability/user mutation and full runtime/product parity remain unpromoted.
 
-README audited base anchor: `main @ f06bdfb20d17d1ce313560a774e9f3b8655961cc` on **2026-09-14 UTC**. Accepted commercial architecture now combines the documented **2 Free / 1 Platform Core / 53 Pro** split, deterministic physical dual-package boundary from Issue #904 / merged PR #905, Canonical Edition Metadata + Local Entitlement Domain V1 from Issue #908 / merged PR #909, and Read-only Modules Commercial Inventory V1 from Issue #912 / merged PR #913. Exact PR #913 head `1be9ca7cf19fd65b83899fd269f72d0ba225178b` passed all five applicable workflows: Architecture Guards, PHP Quality Toolchain, Distributable Package, Platform Compatibility Matrix and Browser E2E Accessibility. Canonical local entitlement states remain `free`, `trial_active`, `pro_active`, `grace`, `expired`, `suspended`, `verification_stale`, `verification_unavailable` and `incompatible_version`; verification failure is not collapsed into expiry, Membership/user authentication is not product-entitlement truth, and current premium mutation authority remains separated from read-safe module activation. The Modules inventory is read-only observability, not an activation/licensing control plane, and its compatibility field reports local prerequisite truth without claiming ADR-0010 certified pairs. Canonical machine truth remains **17 option-contract-complete-or-later / 16 UX-contract-complete / 0 full-parity runtime-certified / 0 product-parity-certified**. Options Bank truth remains **22 seeded / 22 native-audited / 22 market-audited / 22 BANK_REVIEWED / 2139 records**. None of these commercial gates promotes universal future premium-operation enforcement, ADR-0010 certification, deployment or release readiness. Security residual #858 remains a separate repository-admin branch-protection action; current branch evidence still reports `main` unprotected. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
+README reconciliation base anchor: `main @ e31ace121f953d81a70f101c639f72983cbbe34f` on **2026-09-15 UTC**. Accepted commercial architecture combines the documented **2 Free / 1 Platform Core / 53 Pro** split, deterministic physical dual-package boundary from Issue #904 / merged PR #905, Canonical Edition Metadata + Local Entitlement Domain V1 from Issue #908 / merged PR #909, and Read-only Modules Commercial Inventory V1 from Issue #912 / merged PR #913. Bounded P-006 evidence then progressed through Wave 1A PR #946 (FP-01/02/05/07/08), Wave 1B PR #951 (FP-03/10/11), Wave 1C PR #965 (real-WordPress FP-13/14) and Wave 1D PR #975 (real-WordPress compatible Free+Pro FP-15/16). The same immutable Free/Pro candidate hashes and canonical pair identity were preserved through these waves, but evidence remains partial: **144 documented / 12 executed / 12 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications**. Both one-tranche temporary P-001/CF matrix grants are consumed and non-reusable; permanent P-001/CF remains uncertified and ADR-0010 remains **Proposed**. Canonical local entitlement states remain `free`, `trial_active`, `pro_active`, `grace`, `expired`, `suspended`, `verification_stale`, `verification_unavailable` and `incompatible_version`; verification failure is not collapsed into expiry, Membership/user authentication is not product-entitlement truth, and current premium mutation authority remains separated from read-safe module activation. The Modules inventory is read-only observability, not an activation/licensing control plane, and its compatibility field reports local prerequisite truth without claiming an ADR-0010 certified pair. Canonical machine truth remains **17 option-contract-complete-or-later / 16 UX-contract-complete / 0 full-parity runtime-certified / 0 product-parity-certified**. Options Bank truth remains **22 seeded / 22 native-audited / 22 market-audited / 22 BANK_REVIEWED / 2139 records**. Security issue #858 remains open for broader required-CI policy reconciliation; active ruleset `23374068` already enforces PR-based main protection, deletion/non-fast-forward protection, review-thread resolution, strict required `governance` status and zero bypass. The legacy branch-protection subobject must not be interpreted as overriding active ruleset enforcement. Repository, CI and machine-readable lifecycle files override this prose if it later becomes stale.
 
 ## Module implementation progress — 56 / 56 modules listed
 
@@ -151,7 +153,16 @@ Read-only Modules Commercial Inventory V1 is complete through Issue #912 / merge
 - the table exposes no module activation/deactivation or mutation controls;
 - exact PR #913 head `1be9ca7cf19fd65b83899fd269f72d0ba225178b` passed Architecture Guards, PHP Quality Toolchain, Distributable Package, Platform Compatibility Matrix and Browser E2E Accessibility.
 
-These commercial V1 gates are provider-neutral local architecture and read-only observability, not a live commercial license service. They do **not** claim universal wiring of every future premium mutation path, remote verification/billing/provider integration, credential/secret persistence, ADR-0010 certified Free/Pro version pairs, multisite allocation semantics, deployment or release readiness.
+P-006 bounded compatibility evidence now includes:
+
+- Wave 1A / Issue #945 / PR #946 — FP-01/02/05/07/08 PASS against immutable Free/Pro package identity;
+- Wave 1B / Issue #948 / PR #951 — FP-03/10/11 PASS for bounded local compatibility metadata/preflight evidence;
+- Wave 1C / Issue #962 / PR #965 — real disposable WordPress FP-13/14 PASS for Free-only baseline on the authorized minimum/reference cells;
+- Wave 1D / Issue #972 / PR #975 — real disposable WordPress FP-15/16 PASS for compatible Free+Pro activation/load-order evidence on both authorized cells, including WordPress `plugin_missing_dependencies` Pro-first prevention and successful Free-then-Pro recovery;
+- current formal P-006 fixture accounting is **144 documented / 12 executed / 12 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications**;
+- both temporary P-001/CF matrix grants used for Waves 1C and 1D are consumed/non-reusable; permanent P-001/CF remains uncertified; ADR-0010 remains Proposed; no FP-17+ runtime authority is open.
+
+These commercial and bounded evidence gates are provider-neutral local architecture/read-only observability plus partial compatibility evidence, not a live commercial license service or full P-006 certification. They do **not** claim universal wiring of every future premium mutation path, remote verification/billing/provider integration, credential/secret persistence, ADR-0010 acceptance, a certified Free/Pro pair, P-006 runtime certification, multisite allocation semantics, deployment or release readiness.
 
 ## AI-Native work-cycle order
 
@@ -332,6 +343,7 @@ Planning certification and runtime implementation are separate lifecycle dimensi
 | Free/Pro Package Boundary V1 | **PASS — physical distribution boundary accepted** | No certified compatibility pair, deployment or release claim |
 | Edition Metadata + Local Entitlement Domain V1 | **PASS — provider-neutral local commercial-runtime model accepted** | No live license/billing/provider service, universal future premium-operation enforcement, ADR-0010 certification, multisite allocation, deployment or release claim |
 | Modules Commercial Inventory V1 | **PASS — bounded read-only commercial/runtime diagnostics accepted** | No activation controls, secrets, remote verification/provider execution, ADR-0010 compatibility certification, lifecycle promotion, deployment or release claim |
+| P-006 Waves 1A–1D | **PASS for 12 explicitly executed fixtures / NOT P-006 CERTIFIED** | 144 documented / 12 executed / 12 PASS / 0 FAIL; no certified pair/runtime; ADR-0010 Proposed; FP-17+ separately gated |
 
 `config/product/atomic-option-contract-progress.json` remains the authority for full-parity lifecycle flags. A bounded gate PASS or accepted read-only/commercial infrastructure tranche must never be reported as machine `RUNTIME_CERTIFIED` or `PRODUCT_PARITY_CERTIFIED` unless that machine state is explicitly promoted consistently with the canonical option-contract instance.
 
@@ -353,7 +365,7 @@ Start WPEssential Worker in AUTO mode.
 
 Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
 
-Surfaces 11–21 bounded read-only Runtime Foundation V1 and read-only Module/Ability exposure are complete and Pro-owned. Physical package separation is complete through Issue #904 / PR #905, local provider-neutral entitlement/edition V1 is complete through Issue #908 / PR #909, and read-only Modules commercial/runtime inventory is complete through Issue #912 / PR #913. Surfaces 22–28 remain planning/readiness-only and unseeded. **There are currently zero dependency-ready actionable source-development queue slots.** ADR-0010 compatibility preflight/certified pairs, multisite allocation/clone/restore, remote entitlement/provider integration, activation controls and deeper premium mutation/runtime work each require a separate accepted exact-main gate. Security residual #858 is a repository-admin branch-protection action, not a source slot. Deterministic source behavior is `NO_VALID_WORK_SLOT` until such a gate exists.
+Surfaces 11–21 bounded read-only Runtime Foundation V1 and read-only Module/Ability exposure are complete and Pro-owned. Physical package separation is complete through Issue #904 / PR #905, local provider-neutral entitlement/edition V1 is complete through Issue #908 / PR #909, read-only Modules commercial/runtime inventory is complete through Issue #912 / PR #913, and bounded P-006 Waves 1A–1D are complete through PRs #946/#951/#965/#975 for 12 explicitly executed fixtures. Surfaces 22–28 remain planning/readiness-only and unseeded. Queue v45 exposes **no Supervisor-claimable P-006 runtime/source slot**; #947 remains independent-review-only and unclaimed. ADR-0010 remains Proposed, permanent P-001/CF remains uncertified, both temporary runtime-matrix grants are consumed, and FP-17+ requires a new accepted exact-main gate/environment authority. Security issue #858 remains open for broader required-CI policy reconciliation while active ruleset `23374068` and the required `governance` status already protect main. Deterministic Supervisor P-006 runtime/source behavior is `NO_VALID_WORK_SLOT` until a new accepted gate exists.
 
 ## What WPEssential is
 
@@ -398,7 +410,7 @@ Commercial Free/Pro evidence now includes:
 
 - `docs/DECISIONS/ADR-0001-free-pro-distribution.md`
 - `docs/DECISIONS/ADR-0007-license-expiry-runtime.md`
-- `docs/DECISIONS/ADR-0010-free-pro-compatibility.md` — proposed/later executable compatibility gate; not certified by PR #905, PR #909 or PR #913
+- `docs/DECISIONS/ADR-0010-free-pro-compatibility.md` — remains Proposed; bounded P-006 evidence through PR #975 does not accept ADR-0010 or certify a Free/Pro pair
 - `docs/COMMERCIAL-DISTRIBUTION.md`
 - `docs/COMMERCIAL-POSITIONING-AND-PACKAGING.md`
 - `docs/PRODUCT/FREE-PRO-ENTITLEMENT-MATRIX-V1.md`
@@ -406,6 +418,10 @@ Commercial Free/Pro evidence now includes:
 - Issue #904 / merged PR #905 — physical Free/Pro Package Boundary Gate V1
 - Issue #908 / merged PR #909 — Canonical Edition Metadata + Local Entitlement Domain V1
 - Issue #912 / merged PR #913 — read-only Modules Commercial Inventory V1
+- Issue #945 / merged PR #946 — P-006 Wave 1A static artifact evidence, five fixtures PASS
+- Issue #948 / merged PR #951 — P-006 Wave 1B bounded local compatibility evidence, three fixtures PASS
+- Issue #962 / merged PR #965 — P-006 Wave 1C real WordPress Free-only baseline, FP-13/14 PASS
+- Issue #972 / merged PR #975 — P-006 Wave 1D real WordPress compatible Free+Pro baseline, FP-15/16 PASS
 
 Dynamic Listings final bounded closure: `docs/IMPLEMENTATION/DYNAMIC-LISTINGS-GATE-E-FINAL-CLOSURE-AUDIT-V3.md`.
 
