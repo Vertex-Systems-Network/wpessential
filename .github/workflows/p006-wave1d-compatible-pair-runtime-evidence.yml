@@ -1,0 +1,358 @@
+name: P-006 Wave 1D Compatible Free+Pro Runtime Evidence
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/**'
+      - 'admin-ui/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'readme.txt'
+      - 'LICENSE'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tools/release/**'
+      - '.github/workflows/p006-wave1d-compatible-pair-runtime-evidence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-candidates:
+    name: Build immutable Wave 1D Free and Pro candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_EXPECTED_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate and build production admin assets
+        run: |
+          npm run lint:package
+          npm run build:admin
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate metadata and Wave 1D harness syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l wpessential.php
+          php -l wpessential-pro.php
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/release/p006-wave1d-compatible-pair-runtime-evidence.php
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Build first immutable candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          for artifact in \
+            artifacts/wpessential.zip \
+            artifacts/wpessential-package.json \
+            artifacts/wpessential-pro.zip \
+            artifacts/wpessential-pro-package.json
+          do
+            test -s "${artifact}"
+          done
+          cp artifacts/wpessential.zip /tmp/p006-wave1d-free-first.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-wave1d-pro-first.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/p006-wave1d-free-first.sha256
+          sha256sum artifacts/wpessential-pro.zip | tee /tmp/p006-wave1d-pro-first.sha256
+
+      - name: Rebuild, prove determinism, and pin candidate identity
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          free_first="$(cut -d' ' -f1 /tmp/p006-wave1d-free-first.sha256)"
+          pro_first="$(cut -d' ' -f1 /tmp/p006-wave1d-pro-first.sha256)"
+          free_second="$(sha256sum artifacts/wpessential.zip | cut -d' ' -f1)"
+          pro_second="$(sha256sum artifacts/wpessential-pro.zip | cut -d' ' -f1)"
+          test "${free_first}" = "${free_second}"
+          test "${pro_first}" = "${pro_second}"
+          cmp --silent /tmp/p006-wave1d-free-first.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-wave1d-pro-first.zip artifacts/wpessential-pro.zip
+          pair_id="$(php -r 'echo hash("sha256", "free:" . $argv[1] . "\npro:" . $argv[2] . "\n");' "${free_second}" "${pro_second}")"
+          export P006D_FREE_SHA="${free_second}"
+          export P006D_PRO_SHA="${pro_second}"
+          export P006D_PAIR_ID="${pair_id}"
+          php -r '
+            $freeManifest = json_decode(file_get_contents("artifacts/wpessential-package.json"), true, flags: JSON_THROW_ON_ERROR);
+            $proManifest = json_decode(file_get_contents("artifacts/wpessential-pro-package.json"), true, flags: JSON_THROW_ON_ERROR);
+            $free = getenv("P006D_FREE_SHA"); $pro = getenv("P006D_PRO_SHA");
+            if (($freeManifest["sha256"] ?? null) !== $free || ($proManifest["sha256"] ?? null) !== $pro) { fwrite(STDERR, "Candidate manifest hash mismatch\n"); exit(1); }
+            $payload = [
+                "protocol" => "P-006",
+                "wave" => "1D-compatible-free-pro-runtime-baseline",
+                "source_sha" => getenv("WPE_P006_SOURCE_SHA"),
+                "free_sha256" => $free,
+                "pro_sha256" => $pro,
+                "pair_id_sha256" => getenv("P006D_PAIR_ID"),
+                "builder_php" => PHP_VERSION,
+                "deterministic_rebuild" => true,
+                "temporary_approval_id" => "GOV-OWNER-CONSENT-P001-TEMP-P006-002",
+            ];
+            file_put_contents("artifacts/p006-wave1d-candidate-identity.json", json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL);
+          '
+          cat artifacts/p006-wave1d-candidate-identity.json
+
+      - name: Upload immutable Wave 1D candidates
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1d-candidates-${{ github.run_id }}
+          path: |
+            artifacts/wpessential.zip
+            artifacts/wpessential-package.json
+            artifacts/wpessential-pro.zip
+            artifacts/wpessential-pro-package.json
+            artifacts/p006-wave1d-candidate-identity.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  runtime-evidence:
+    name: ${{ matrix.fixture }} / ${{ matrix.cell }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: build-candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - fixture: FP-15
+            cell: minimum
+            wordpress: '6.9'
+            php: '8.2'
+          - fixture: FP-15
+            cell: reference
+            wordpress: '7.1'
+            php: '8.5'
+          - fixture: FP-16
+            cell: minimum
+            wordpress: '6.9'
+            php: '8.2'
+          - fixture: FP-16
+            cell: reference
+            wordpress: '7.1'
+            php: '8.5'
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_FIXTURE_ID: ${{ matrix.fixture }}
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_FREE_ZIP_PATH: ${{ github.workspace }}/artifacts/wpessential.zip
+      WPE_P006_PRO_ZIP_PATH: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+      WPE_P006_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-wave1d/${{ matrix.fixture }}-${{ matrix.cell }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-wave1d-${{ matrix.fixture }}-${{ matrix.cell }}-network.log
+      WPE_P006_TIMING_LOG: /tmp/p006-wave1d-${{ matrix.fixture }}-${{ matrix.cell }}-timing.log
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${WPE_P006_SOURCE_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+
+      - name: Download exact immutable candidate set
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-wave1d-candidates-${{ github.run_id }}
+          path: artifacts
+
+      - name: Verify candidate identity and export hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for artifact in artifacts/wpessential.zip artifacts/wpessential-pro.zip artifacts/p006-wave1d-candidate-identity.json; do test -s "${artifact}"; done
+          php -r '
+            $identity = json_decode(file_get_contents("artifacts/p006-wave1d-candidate-identity.json"), true, flags: JSON_THROW_ON_ERROR);
+            if (($identity["source_sha"] ?? null) !== getenv("WPE_P006_SOURCE_SHA")) { fwrite(STDERR, "Candidate source SHA mismatch\n"); exit(1); }
+            $free = hash_file("sha256", "artifacts/wpessential.zip"); $pro = hash_file("sha256", "artifacts/wpessential-pro.zip");
+            $pair = hash("sha256", "free:" . $free . "\npro:" . $pro . "\n");
+            if (($identity["free_sha256"] ?? null) !== $free || ($identity["pro_sha256"] ?? null) !== $pro || ($identity["pair_id_sha256"] ?? null) !== $pair) { fwrite(STDERR, "Candidate identity verification failed\n"); exit(1); }
+            echo "WPE_P006_FREE_SHA256={$free}\nWPE_P006_PRO_SHA256={$pro}\nWPE_P006_PAIR_ID={$pair}\n";
+          ' >> "${GITHUB_ENV}"
+
+      - name: Prepare disposable WordPress core and exact packaged pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
+          curl --fail --silent --show-error --location --retry 3 "https://wordpress.org/wordpress-${WPE_P006_EXPECTED_WP}.tar.gz" --output /tmp/wordpress.tar.gz
+          tar -xzf /tmp/wordpress.tar.gz -C /tmp
+          test -f /tmp/wordpress/wp-load.php
+          mkdir -p /tmp/wordpress/wp-content/plugins /tmp/wordpress/wp-content/mu-plugins
+          unzip -q artifacts/wpessential.zip -d /tmp/wordpress/wp-content/plugins
+          unzip -q artifacts/wpessential-pro.zip -d /tmp/wordpress/wp-content/plugins
+          test -f /tmp/wordpress/wp-content/plugins/wpessential/wpessential.php
+          test -f /tmp/wordpress/wp-content/plugins/wpessential-pro/wpessential-pro.php
+
+          cat > /tmp/wordpress/wp-config.php <<'PHP'
+          <?php
+          define('DB_NAME', getenv('WPE_TEST_WP_DB') ?: 'wpessential_test');
+          define('DB_USER', getenv('WPE_TEST_MYSQL_USER') ?: 'root');
+          define('DB_PASSWORD', getenv('WPE_TEST_MYSQL_PASSWORD') ?: 'root');
+          define('DB_HOST', getenv('WPE_TEST_WP_DB_HOST') ?: '127.0.0.1:3306');
+          define('DB_CHARSET', 'utf8mb4');
+          define('DB_COLLATE', '');
+          define('AUTH_KEY', 'p006-wave1d-auth-key');
+          define('SECURE_AUTH_KEY', 'p006-wave1d-secure-auth-key');
+          define('LOGGED_IN_KEY', 'p006-wave1d-logged-in-key');
+          define('NONCE_KEY', 'p006-wave1d-nonce-key');
+          define('AUTH_SALT', 'p006-wave1d-auth-salt');
+          define('SECURE_AUTH_SALT', 'p006-wave1d-secure-auth-salt');
+          define('LOGGED_IN_SALT', 'p006-wave1d-logged-in-salt');
+          define('NONCE_SALT', 'p006-wave1d-nonce-salt');
+          define('WP_DEBUG', false);
+          define('DISABLE_WP_CRON', true);
+          define('AUTOMATIC_UPDATER_DISABLED', true);
+          define('WP_AUTO_UPDATE_CORE', false);
+          define('WP_ENVIRONMENT_TYPE', 'development');
+          $table_prefix = 'wpep006d_';
+          require_once ABSPATH . 'wp-settings.php';
+          PHP
+
+          cat > /tmp/wordpress/wp-content/mu-plugins/p006-wave1d-core-install-network-deny.php <<'PHP'
+          <?php
+          add_filter('pre_http_request', static function ($preempt, $parsedArgs, $url) {
+              if (function_exists('wp_installing') && wp_installing()) {
+                  return new WP_Error('p006_wave1d_core_install_network_blocked', 'Core installer HTTP is denied inside the disposable P-006 fixture.');
+              }
+              return $preempt;
+          }, PHP_INT_MIN, 3);
+          PHP
+
+          cat > /tmp/p006-wave1d-core-install.php <<'PHP'
+          <?php
+          declare(strict_types=1);
+          $wpDir = rtrim((string) getenv('WPE_TEST_WORDPRESS_DIR'), '/\\');
+          $_SERVER['HTTP_HOST'] = 'p006.test'; $_SERVER['SERVER_NAME'] = 'p006.test'; $_SERVER['SERVER_PORT'] = '80'; $_SERVER['SERVER_PROTOCOL'] = 'HTTP/1.1';
+          $_SERVER['REQUEST_METHOD'] = 'GET'; $_SERVER['REMOTE_ADDR'] = '127.0.0.1'; $_SERVER['HTTPS'] = 'off'; $_SERVER['REQUEST_URI'] = '/wp-admin/install.php';
+          $_SERVER['SCRIPT_NAME'] = '/index.php'; $_SERVER['PHP_SELF'] = '/index.php';
+          if (!defined('WP_INSTALLING')) { define('WP_INSTALLING', true); }
+          require $wpDir . '/wp-load.php'; require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+          if (!is_blog_installed()) {
+              $installed = wp_install('WPEssential P-006 Wave 1D', 'p006_admin', 'p006-admin@example.test', false, '', 'p006-test-password-strong');
+              if (is_wp_error($installed)) { fwrite(STDERR, "Disposable WordPress installation failed\n"); exit(1); }
+          }
+          if (function_exists('wp_installing')) { wp_installing(false); }
+          if (!is_blog_installed()) { fwrite(STDERR, "Disposable WordPress installation did not reach installed state\n"); exit(1); }
+          PHP
+          php /tmp/p006-wave1d-core-install.php
+          rm -f /tmp/p006-wave1d-core-install.php /tmp/wordpress/wp-content/mu-plugins/p006-wave1d-core-install-network-deny.php
+
+      - name: Execute real WordPress activation-order evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/p006-wave1d-compatible-pair-runtime-evidence.php prepare
+          test -s "${WPE_P006_EVIDENCE_DIR}/activation.json"
+          cat "${WPE_P006_EVIDENCE_DIR}/activation.json"
+
+      - name: Execute fresh compatible Free+Pro request contexts
+        shell: bash
+        run: |
+          set -euo pipefail
+          context_failure=0
+          for context in frontend admin rest cron cli; do
+            echo "Executing ${WPE_P006_FIXTURE_ID}/${{ matrix.cell }} context=${context}"
+            if ! WPE_P006_REQUEST_CONTEXT="${context}" php tools/release/p006-wave1d-compatible-pair-runtime-evidence.php verify; then context_failure=1; fi
+          done
+          aggregate_failure=0
+          if ! php tools/release/p006-wave1d-compatible-pair-runtime-evidence.php aggregate; then aggregate_failure=1; fi
+          if test -s "${WPE_P006_EVIDENCE_DIR}/summary.json"; then cat "${WPE_P006_EVIDENCE_DIR}/summary.json"; fi
+          test "${context_failure}" -eq 0
+          test "${aggregate_failure}" -eq 0
+
+      - name: Upload raw Wave 1D runtime evidence and immutable candidates
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1d-${{ matrix.fixture }}-${{ matrix.cell }}-evidence-${{ github.run_id }}
+          path: |
+            artifacts/wpessential.zip
+            artifacts/wpessential-pro.zip
+            artifacts/p006-wave1d-candidate-identity.json
+            artifacts/p006-wave1d/${{ matrix.fixture }}-${{ matrix.cell }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
