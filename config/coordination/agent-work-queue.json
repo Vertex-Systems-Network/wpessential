@@ -1,35 +1,35 @@
 {
-  "schema_version": 50,
+  "schema_version": 51,
   "snapshot_date": "2026-09-16",
-  "queue_anchor_main_sha": "d01178c23b9408b0fabfe04a1c1f215050e8ea66",
-  "authoritative_rule": "Resolve exact main → open issues → open PRs → active claims/queue → new work. P-006 truth after Wave 1F remains 144 documented / 16 executed / 16 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications until accepted Wave 1G evidence merges. ADR-0010 Proposed; permanent P-001/CF uncertified. Temporary grants -001/-002/-003/-004 are consumed/non-reusable; -005 is ACTIVE for Wave 1G FP-23/25/26/27/28 only. #947 remains independent-review-only. FP-21/22/24 and FP-29+ are not exposed.",
+  "queue_anchor_main_sha": "e349fb21e5cb3b6fbb7f26b3e74aa0791591f4a7",
+  "authoritative_rule": "Resolve exact main → open issues → open PRs → active claims/queue → new work. P-006 truth after accepted Wave 1G evidence is 144 documented / 21 executed / 21 PASS / 0 FAIL / 0 certified Free/Pro pairs / 0 runtime certifications. ADR-0010 remains Proposed and permanent P-001/CF remains uncertified. Temporary grants -001/-002/-003/-004/-005 are consumed and non-reusable. #947 remains independent-review-only. #858 remains open for broader required-CI policy reconciliation. FP-21/22/24 and FP-29+ are not exposed and no new Supervisor runtime/source/test/provider/production/destructive/deploy/release slot is authorized.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": ["resolve_exact_main", "open_issues_first", "open_prs_mrs_second", "active_claims_and_queue_third", "new_development_last"],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots eligible for the acting role",
-    "selection_rule": "Supervisor may claim only the Wave 1G slot p006-wave1g-mismatch-context-runtime-v1. #947 is independent Worker-only. FP-21/22/24 and FP-29+ remain unexposed.",
+    "selection_rule": "No Supervisor mutation/runtime slot is currently exposed. #947 remains independently claimable by a non-Supervisor Worker only. FP-21/22/24 and FP-29+ remain unexposed until a fresh explicit dependency/authorization gate is recorded.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches never reused. Supervisor must not claim #947. Wave 1G must use exact branch agent/p006-wave1g-mismatch-context-runtime-v1 and exact issue/grant boundary; no adjacent fixture execution.",
+    "claim_branch_rule": "Completed branches and consumed grants are never reused. Supervisor must not claim or pre-create a branch for #947. Any future P-006 execution requires a newly recorded bounded slot, fresh issue-owned branch and explicit authority before mutation.",
     "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main, open issues, open PRs and active claims before new work.",
       "Read governance surfaces and P-006 executable-evidence protocol/planning.",
-      "Treat grants -001/-002/-003/-004 as consumed; never reuse them.",
-      "Use grant -005 only for Wave 1G FP-23/25/26/27/28 and only on the two authorized disposable environment cells.",
-      "Reuse/re-derive only exact hash-pinned TEST-ONLY Free 0.0.9/0.1.1 candidates; hash mismatch requires STOP.",
-      "Keep P-006 truth at 144/16/16/0/0/0 until later accepted evidence.",
+      "Treat grants -001/-002/-003/-004/-005 as consumed and non-reusable.",
+      "Treat accepted P-006 truth as 144/21/21/0/0/0; matrix environment cells are coverage, not additional fixture executions.",
       "Keep #949/#956 P001_DEPENDENCY_NOT_SATISFIED authoritative for permanent P-001/CF truth.",
-      "Do not execute FP-21/22/24 or FP-29+; do not infer certification, ADR-0010 acceptance, deploy/release, or adjacent evidence domains."
+      "Preserve #947 independence: Supervisor must not claim it, create its branch, author its evidence or pre-resolve its conclusion.",
+      "Do not execute FP-21/22/24 or FP-29+; do not infer certification, ADR-0010 acceptance, deploy/release, or adjacent evidence domains.",
+      "Keep #858 open until broader required-CI protection is actually enforced; ruleset 23374068 currently requires governance only."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force/history overwrite.",
-      "Require exact issue/queue write boundary.",
+      "Require exact issue/queue write boundary and no overlapping active claim.",
       "Require governance plus every path-applicable exact-head workflow.",
       "For #947 allow exactly docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md and no executable/runtime/package mutation.",
-      "For Wave 1G allow only bounded evidence harness/workflow files required by Issue #1002; product runtime, compatibility evaluator and release builder remain untouched.",
+      "Do not merge any new P-006 Supervisor execution without a fresh bounded authorization and exact slot.",
       "Do not promote certification from partial P-006 evidence."
     ],
     "cycle_closeout": [
@@ -48,7 +48,13 @@
       "FP-20 TEST-ONLY Free 0.1.1 819c6674cecd42b4f9ba2e7226c5913c616f31d49187568af07383a0a0bc6471; pair 890f74a7f8bc560be3311fb9dab438e47e658350a227674eac4dffb3d7155e5d.",
       "Each TEST-ONLY Free ZIP changed only plugin Version + WPE_VERSION in wpessential.php; Platform API 0.1.0, schema 1, other Free bytes and Pro bytes unchanged.",
       "FP-19 canonical free_version_too_old / free_version_below_supported_minimum / update_free; FP-20 free_version_too_new / free_version_above_supported_maximum / update_pro; both fail closed for premium boot/migrations, preserve Free CPT/Taxonomy and record zero unexpected runtime HTTP.",
-      "Wave 1G authorization #1002 / grant -005 is ACTIVE for FP-23/25/26/27/28 only; counters remain unchanged before accepted evidence.",
+      "Wave 1G #1007/#1008: FP-23/25/26/27/28 PASS; exact evidence head 0f2a39af2415943815173d4033ec50e3637e2fe9; workflow run 35028623350; merge e349fb21e5cb3b6fbb7f26b3e74aa0791591f4a7; grant -005 consumed.",
+      "Wave 1G candidates artifact 10420168112 digest sha256:1ca002edbadf833471776eafc0c065e39b66f13eba00456ed66497a3d37ffa1 reproduced immutable Free/Pro and exact TEST-ONLY old/new candidates and pair identities.",
+      "Wave 1G raw old/minimum 10420129664 sha256:ad6617f132b8f23d1ca9853768a970cf9864b04dd15ddf067ef00be00c5111b7; old/reference 10420995799 sha256:65b64ad030b7cd2e4ccd9e8b706cf24cdd986259d0cdcc7378770d4c8bc6aaf9; new/minimum 10421100260 sha256:ae12af803bad3033e1118bdc5ad3385d635ae4fb43196058fc8f9286bde6cb26; new/reference 10421130162 sha256:61649a0e4807310772cf4c9684385077ff7a545fabbf8ee42a6dd262c3f89cee.",
+      "Wave 1G verified safe mismatch behavior across activation/admin/frontend/REST/cron/WP-CLI-shaped contexts: premium boot/migrations denied, Free CPT/Taxonomy preserved, exact non-scripted remediation, no frontend leak, no unexpected Pro implementation/module load, non-fatal REST, inert cron/CLI and zero runtime HTTP attempts.",
+      "Wave 1G matrix cells are environment coverage only and do not double-count fixtures; accepted counters are 144 documented / 21 executed / 21 PASS / 0 FAIL / 0 certified pairs / 0 runtime certifications.",
+      "FP-21/22/24 remain NOT EXECUTED; FP-29+ remains unexposed; permanent P-001/CF certification, pair/runtime certification and ADR-0010 acceptance remain false/not accepted.",
+      "#947 stays open for independent Worker-only evidence review and Supervisor remains prohibited from claiming or pre-authoring it.",
       "#858 remains open for broader required-CI policy reconciliation; ruleset 23374068/governance stays authoritative."
     ]
   },
@@ -56,7 +62,7 @@
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
       "may_claim": ["SUPERVISOR_ONLY", "ANY"],
-      "must_not": ["Claim #947", "Reuse completed branches or consumed grants", "Execute FP-21/22/24 or FP-29+", "Force push", "Promote partial evidence to certification"]
+      "must_not": ["Claim #947", "Reuse completed branches or consumed grants", "Execute FP-21/22/24 or FP-29+", "Create a new runtime/source slot without fresh explicit authorization", "Force push", "Promote partial evidence to certification"]
     },
     "WORKER": {
       "start_mode": "AUTO",
@@ -72,10 +78,10 @@
     {"coordination":"p006-wave1d-compatible-free-pro-runtime-v1","status":"COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED","closure":"#972/#975","approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-002","fixtures":["FP-15 PASS","FP-16 PASS"],"temporary_authority_consumed":true},
     {"coordination":"p006-wave1e-inactive-dependency-runtime-v1","status":"COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED","closure":"#983/#986","approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-003","fixtures":["FP-17 PASS","FP-18 PASS"],"temporary_authority_consumed":true},
     {"coordination":"p006-wave1f-marketing-version-mismatch-runtime-v1","status":"COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED","closure":"#995/#997","approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-004","workflow_run_id":"34970637877","merge_sha":"64cb19e431bdc22f7ec7ca043d46fc865a889c06","exact_head_sha":"288089543a66ab2563a6bf4abebe5bf676d333ea","candidate_artifact_id":"10396558551","raw_artifact_ids":["10396859001","10396478969","10397167648","10396922400"],"fixtures":["FP-19 PASS","FP-20 PASS"],"temporary_authority_consumed":true,"certification_boundary":{"permanent_p001_certified":false,"free_pro_pair_certified":false,"runtime_certified":false,"adr_0010":"Proposed","fp21_plus_executed":false}},
-    {"coordination":"p006-wave1g-mismatch-context-runtime-v1","status":"AUTHORIZED_NOT_EXECUTED","source":"#1002/#1004/#1005","approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-005","fixtures":["FP-23","FP-25","FP-26","FP-27","FP-28"],"temporary_authority_consumed":false,"certification_boundary":{"permanent_p001_certified":false,"free_pro_pair_certified":false,"runtime_certified":false,"adr_0010":"Proposed","fp21_22_24_executed":false,"fp29_plus_executed":false}},
+    {"coordination":"p006-wave1g-mismatch-context-runtime-v1","status":"COMPLETED_5_FIXTURES_PASS_NOT_CERTIFIED","source":"#1002/#1004/#1005/#1007/#1008","approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-005","workflow_run_id":"35028623350","merge_sha":"e349fb21e5cb3b6fbb7f26b3e74aa0791591f4a7","exact_head_sha":"0f2a39af2415943815173d4033ec50e3637e2fe9","candidate_artifact_id":"10420168112","candidate_artifact_sha256":"1ca002edbadf833471776eafc0c065e39b66f13eba00456ed66497a3d37ffa1","raw_artifacts":[{"id":"10420129664","cell":"old/minimum","sha256":"ad6617f132b8f23d1ca9853768a970cf9864b04dd15ddf067ef00be00c5111b7"},{"id":"10420995799","cell":"old/reference","sha256":"65b64ad030b7cd2e4ccd9e8b706cf24cdd986259d0cdcc7378770d4c8bc6aaf9"},{"id":"10421100260","cell":"new/minimum","sha256":"ae12af803bad3033e1118bdc5ad3385d635ae4fb43196058fc8f9286bde6cb26"},{"id":"10421130162","cell":"new/reference","sha256":"61649a0e4807310772cf4c9684385077ff7a545fabbf8ee42a6dd262c3f89cee"}],"fixtures":["FP-23 PASS","FP-25 PASS","FP-26 PASS","FP-27 PASS","FP-28 PASS"],"temporary_authority_consumed":true,"certification_boundary":{"permanent_p001_certified":false,"free_pro_pair_certified":false,"runtime_certified":false,"adr_0010":"Proposed","fp21_22_24_executed":false,"fp29_plus_executed":false}},
     {"coordination":"main-ruleset-governance-provider-v1","status":"ACTIVE_REQUIRED_GOVERNANCE_CHECK_NOT_FULL_SECURITY_CLOSEOUT","closure":"#858/#952/#953","ruleset_id":23374068,"required_status_context":"governance"}
   ],
-  "historical_queue_note": "v39 Wave1A; v40 Wave1B; v41 P001 floor; v42-43 Wave1C; v44-45 Wave1D; v46-47 Wave1E; v48-49 Wave1F; v50 opens one bounded Wave1G Supervisor slot for FP-23/25/26/27/28 while #947 remains independent Worker-only.",
+  "historical_queue_note": "v39 Wave1A; v40 Wave1B; v41 P001 floor; v42-43 Wave1C; v44-45 Wave1D; v46-47 Wave1E; v48-49 Wave1F; v50 authorized Wave1G; v51 closes Wave1G at 144/21/21 with grant -005 consumed and leaves no Supervisor runtime/source slot. #947 remains independent Worker-only and #858 remains broader-CI residual.",
   "slots": [
     {"priority":1650,"slot_id":"p006-wave1a-independent-evidence-review-v1","title":"P-006 Wave 1A Independent Evidence Integrity Review","role":"ANY","status":"OPEN","work_mode":"P006_INDEPENDENT_EVIDENCE_REVIEW_ONLY","source":"Issue #947; parent #939","runtime_allowed":false,"independence_required":true,"supervisor_claim_allowed":false,"allowed_scope":["docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"],"claim_branch":"agent/p006-wave1a-independent-evidence-review-v1"},
     {"priority":1653,"slot_id":"p001-cf-owner-decision-gate-v1","role":"SUPERVISOR_ONLY","status":"COMPLETED_TEMP_MATRICES_CONSUMED","runtime_allowed":false,"permanent_p001_certified":false,"claim_branch":null},
@@ -83,6 +89,6 @@
     {"priority":1655,"slot_id":"p006-wave1d-compatible-pair-runtime-v1","status":"COMPLETED_PASS_TEMP_AUTH_CONSUMED","runtime_allowed":false,"fixtures":["FP-15","FP-16"],"results":["FP-15 PASS","FP-16 PASS"],"claim_branch":null},
     {"priority":1656,"slot_id":"p006-wave1e-inactive-dependency-runtime-v1","status":"COMPLETED_PASS_TEMP_AUTH_CONSUMED","runtime_allowed":false,"fixtures":["FP-17","FP-18"],"results":["FP-17 PASS","FP-18 PASS"],"claim_branch":null},
     {"priority":1657,"slot_id":"p006-wave1f-marketing-version-mismatch-runtime-v1","status":"COMPLETED_PASS_TEMP_AUTH_CONSUMED","runtime_allowed":false,"fixtures":["FP-19","FP-20"],"results":["FP-19 PASS","FP-20 PASS"],"claim_branch":null,"temporary_authority_consumed":true},
-    {"priority":1658,"slot_id":"p006-wave1g-mismatch-context-runtime-v1","title":"P-006 Wave 1G mismatch-context runtime evidence","role":"SUPERVISOR_ONLY","status":"OPEN","work_mode":"P006_BOUNDED_RUNTIME_EVIDENCE_ONLY","source":"Issue #1002; coordination #1005","runtime_allowed":true,"approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-005","fixtures":["FP-23","FP-25","FP-26","FP-27","FP-28"],"excluded_fixtures":["FP-21","FP-22","FP-24","FP-29+"],"allowed_scope":["tools/release/p006-wave1g-mismatch-context-runtime-evidence.php", ".github/workflows/p006-wave1g-mismatch-context-runtime-evidence.yml"],"claim_branch":"agent/p006-wave1g-mismatch-context-runtime-v1","candidate_boundary":{"free_old_version":"0.0.9","free_old_sha256":"c67c6b67be87b2ca21f3f6bfdb97430b0580846444a2441665f414885ca224b6","free_new_version":"0.1.1","free_new_sha256":"819c6674cecd42b4f9ba2e7226c5913c616f31d49187568af07383a0a0bc6471","pro_sha256":"771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363","rederive_only_same_values":true,"hash_mismatch_stop":true}}
+    {"priority":1658,"slot_id":"p006-wave1g-mismatch-context-runtime-v1","title":"P-006 Wave 1G mismatch-context runtime evidence","role":"SUPERVISOR_ONLY","status":"COMPLETED_PASS_TEMP_AUTH_CONSUMED","work_mode":"P006_BOUNDED_RUNTIME_EVIDENCE_ONLY","source":"Issue #1002; coordination #1005; execution #1007/#1008","runtime_allowed":false,"approval_id":"GOV-OWNER-CONSENT-P001-TEMP-P006-005","fixtures":["FP-23","FP-25","FP-26","FP-27","FP-28"],"results":["FP-23 PASS","FP-25 PASS","FP-26 PASS","FP-27 PASS","FP-28 PASS"],"excluded_fixtures":["FP-21","FP-22","FP-24","FP-29+"],"allowed_scope":["tools/release/p006-wave1g-mismatch-context-runtime-evidence.php", ".github/workflows/p006-wave1g-mismatch-context-runtime-evidence.yml"],"claim_branch":null,"temporary_authority_consumed":true,"terminal_execution_head":"0f2a39af2415943815173d4033ec50e3637e2fe9","terminal_merge_sha":"e349fb21e5cb3b6fbb7f26b3e74aa0791591f4a7","candidate_boundary":{"free_old_version":"0.0.9","free_old_sha256":"c67c6b67be87b2ca21f3f6bfdb97430b0580846444a2441665f414885ca224b6","free_new_version":"0.1.1","free_new_sha256":"819c6674cecd42b4f9ba2e7226c5913c616f31d49187568af07383a0a0bc6471","pro_sha256":"771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363","rederive_only_same_values":true,"hash_mismatch_stop":true}}
   ]
 }
