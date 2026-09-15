@@ -115,8 +115,6 @@ jobs:
           WPE_P006_VARIANT_DIR: ${{ github.workspace }}/artifacts/p006-wave1g-candidates
         run: |
           set -euo pipefail
-          # Reuse the already-merged deterministic Wave 1F byte-derivation utility only.
-          # Wave 1G authority is independently recorded and verified by the Wave 1G identity file below.
           php tools/release/p006-wave1f-marketing-version-mismatch-evidence.php derive
           test -s artifacts/p006-wave1g-candidates/wpessential-fp19-0.0.9.zip
           test -s artifacts/p006-wave1g-candidates/wpessential-fp20-0.1.1.zip
@@ -368,7 +366,7 @@ jobs:
           run_fixture FP-28 cron
           : > "${WPE_P006_NETWORK_LOG}"
           echo "Executing FP-28/${WPE_P006_VARIANT_ID}/${{ matrix.cell }} through actual WP-CLI bootstrap"
-          if ! WPE_P006_EXECUTION_MODE=verify WPE_P006_FIXTURE_ID=FP-28 WPE_P006_REQUEST_CONTEXT=cli wp --path="${WPE_TEST_WORDPRESS_DIR}" --allow-root eval-file "${GITHUB_WORKSPACE}/tools/release/p006-wave1g-mismatch-context-runtime-evidence.php"; then
+          if ! WPE_P006_EXECUTION_MODE=verify WPE_P006_FIXTURE_ID=FP-28 WPE_P006_REQUEST_CONTEXT=cli wp --path="${WPE_TEST_WORDPRESS_DIR}" --allow-root eval 'require getenv("GITHUB_WORKSPACE") . "/tools/release/p006-wave1g-mismatch-context-runtime-evidence.php";'; then
             failure=1
           fi
           aggregate_failure=0
