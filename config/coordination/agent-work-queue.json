@@ -1,8 +1,8 @@
 {
-  "schema_version": 46,
+  "schema_version": 47,
   "snapshot_date": "2026-09-15",
-  "queue_anchor_main_sha": "8afe830ad551e6b4fea85036abed93407712a58e",
-  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, accepted OPEN Issues, eligible OPEN PRs/MRs, active deterministic claims and this queue, then new development. P-006 Wave 1A (#946) FP-01/02/05/07/08 PASS, Wave 1B (#951) FP-03/10/11 PASS, Wave 1C (#965) FP-13/14 PASS and Wave 1D (#975) FP-15/16 PASS: 144 documented, 12 executed, 12 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. Permanent P-001/CF remains not satisfied by #949/#956. Temporary grants GOV-OWNER-CONSENT-P001-TEMP-P006-001 and GOV-OWNER-CONSENT-P001-TEMP-P006-002 are consumed/non-reusable. GOV-OWNER-CONSENT-P001-TEMP-P006-003 is ACTIVE for exactly one Wave 1E FP-17/18 tranche on the two authorized disposable environment cells. Queue v46 preserves #947 as independent-review-only and exposes exactly one Supervisor-claimable P-006 runtime slot: #983. FP-19+, permanent P-001 certification, pair/runtime certification, ADR-0010 acceptance, live provider/billing/license side effects, production data, destructive operations and deploy/release remain separately gated.",
+  "queue_anchor_main_sha": "6bdceed17a481e8cd6915d11f86a2f00f1432f63",
+  "authoritative_rule": "Every AI-Native work cycle resolves exact current main, accepted OPEN Issues, eligible OPEN PRs/MRs, active deterministic claims and this queue, then new development. P-006 Wave 1A (#946) FP-01/02/05/07/08 PASS, Wave 1B (#951) FP-03/10/11 PASS, Wave 1C (#965) FP-13/14 PASS, Wave 1D (#975) FP-15/16 PASS and Wave 1E (#986) FP-17/18 PASS: 144 documented, 14 executed, 14 passed, 0 failed, 0 certified Free/Pro pairs and 0 runtime certifications. ADR-0010 remains Proposed. Permanent P-001/CF remains not satisfied by #949/#956. Temporary grants GOV-OWNER-CONSENT-P001-TEMP-P006-001, -002 and -003 are consumed and non-reusable. Queue v47 preserves #947 as independent-review-only and exposes no Supervisor-claimable P-006 runtime/source slot. FP-19+, permanent P-001 certification, pair/runtime certification, ADR-0010 acceptance, live provider/billing/license side effects, production data, destructive operations and deploy/release remain separately gated.",
   "auto_assignment": {
     "enabled": true,
     "startup_order": [
@@ -14,32 +14,31 @@
     ],
     "hard_issue_pr_gate": true,
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots eligible for the acting role; independent slots may run in parallel only when exact write boundaries do not overlap",
-    "selection_rule": "Queue v46 exposes #983 as the sole Supervisor-claimable P-006 runtime/source slot under GOV-OWNER-CONSENT-P001-TEMP-P006-003. #947 remains OPEN for an independent Worker only and the current Supervisor must not claim it. #957, #962 and #972 are completed; Wave 1C and Wave 1D temporary matrix authorities are consumed. Completed branches are retired and must never be reused. No FP-19+ slot is open.",
+    "selection_rule": "Queue v47 exposes no Supervisor-claimable P-006 runtime/source slot. #947 remains OPEN for an independent Worker only and the current Supervisor must not claim it. #983 is completed by PR #986; Wave 1C, Wave 1D and Wave 1E temporary matrix authorities are consumed. Completed branches are retired and must never be reused. No FP-19+ slot is open.",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
     "speculative_branch_creation_forbidden": true,
-    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches before an accepted issue/queue slot exists. The current Supervisor must not claim #947 because its purpose is independent review. The completed Wave 1C and Wave 1D branches are retired. #983 may be claimed only through exact branch agent/p006-wave1e-inactive-dependency-runtime-v1 after queue v46 merges. Any FP-19+ or later runtime tranche requires a new accepted fresh-main issue, explicit environment/runtime authority as needed, queue reconciliation and a new exact claim branch.",
-    "no_valid_slot_behavior": "If #983 is no longer OPEN or its authorization is not ACTIVE, make no repository source changes and report NO_VALID_WORK_SLOT.",
+    "claim_branch_rule": "Completed branches must never be reused. The Supervisor must not pre-create worker branches before an accepted issue/queue slot exists. The current Supervisor must not claim #947 because its purpose is independent review. The completed Wave 1C, Wave 1D and Wave 1E branches are retired. Any FP-19+ or later runtime tranche requires a new accepted fresh-main issue, explicit environment/runtime authority as needed, queue reconciliation and a new exact claim branch.",
+    "no_valid_slot_behavior": "Make no repository source changes and report NO_VALID_WORK_SLOT.",
     "revalidation_before_work": [
       "Resolve exact current main and reconcile accepted OPEN Issues before selecting work.",
       "Reconcile eligible OPEN PRs/MRs before selecting new work.",
       "Read AGENTS.md, CONTRIBUTING.md, CHECKPOINT.md, AUTO-AGENT.md, DEVELOPMENT-CONSENT.md and docs/ENGINEERING-EXECUTION-GOVERNANCE.md.",
-      "Read GOV-OWNER-CONSENT-P006-001, consumed GOV-OWNER-CONSENT-P001-TEMP-P006-001/-002 and ACTIVE GOV-OWNER-CONSENT-P001-TEMP-P006-003 in docs/APPROVAL-LEDGER.md; do not reuse a consumed grant.",
+      "Read GOV-OWNER-CONSENT-P006-001 and consumed temporary P-001/CF grants GOV-OWNER-CONSENT-P001-TEMP-P006-001/-002/-003 in docs/APPROVAL-LEDGER.md; do not reuse a consumed grant.",
       "Read docs/QUALITY/P006-FREE-PRO-COMPATIBILITY-EXECUTABLE-EVIDENCE-PROTOCOL.md and all P-006 planning maps before executing or reviewing a fixture.",
-      "Treat PR #946 as Wave 1A evidence only, PR #951 as Wave 1B evidence only, PR #965 as Wave 1C evidence only and PR #975 as Wave 1D evidence only.",
-      "Keep current P-006 truth at 144 documented / 12 executed / 12 passed / 0 failed / 0 certified pairs / 0 runtime certifications until later separately authorized exact-head evidence is accepted.",
+      "Treat PR #946 as Wave 1A evidence only, PR #951 as Wave 1B evidence only, PR #965 as Wave 1C evidence only, PR #975 as Wave 1D evidence only and PR #986 as Wave 1E evidence only.",
+      "Keep current P-006 truth at 144 documented / 14 executed / 14 passed / 0 failed / 0 certified pairs / 0 runtime certifications until later separately authorized exact-head evidence is accepted.",
       "Treat #949/#956 P001_DEPENDENCY_NOT_SATISFIED as authoritative for permanent P-001/CF truth.",
       "Preserve the distinction between package presence, local pair compatibility, schema/migration admission, product entitlement, remote Product License/allocation, Membership/user authorization and updater/package trust.",
       "Do not infer permanent P-001 support, pair/runtime/product-parity certification, adjacent evidence domains, ADR-0010 acceptance, deployment or release from partial P-006 results.",
-      "Execute only FP-17 and FP-18 under GOV-OWNER-CONSENT-P001-TEMP-P006-003; execute no FP-19+."
+      "Execute no FP-19+ under any consumed temporary matrix grant."
     ],
     "revalidation_before_merge": [
       "Reconcile latest main without force or history overwrite.",
       "Require every diff to remain inside its declared issue/queue write boundary.",
       "Require the active ruleset governance check plus every path-applicable exact-head workflow; absence of a triggered workflow is not a green status claim.",
       "For #947 require exactly docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md and zero executable/runtime/package mutation.",
-      "For coordination #984 require exactly config/coordination/agent-work-queue.json, valid JSON and no executable/runtime/test/workflow/package mutation.",
-      "For #983 require exactly tools/release/p006-wave1e-inactive-dependency-runtime-evidence.php and .github/workflows/p006-wave1e-inactive-dependency-runtime-evidence.yml; no normal runtime source, plugin headers, package builder behavior, existing workflows, entitlement/provider code, migrations or shared product truth may change.",
+      "For coordination closeout #987 require exactly docs/APPROVAL-LEDGER.md and config/coordination/agent-work-queue.json, valid JSON and no executable/runtime/test/workflow/package mutation.",
       "Require read-only evidence to contain no production secrets or private provider/account material.",
       "Do not merge failing or inconclusive executable evidence as PASS and do not promote certifications outside accepted fixture scope."
     ],
@@ -50,15 +49,18 @@
       "Issue #948 / PR #951 completed Wave 1B: FP-03/10/11 PASS.",
       "Issue #949 / PR #956 concluded P001_DEPENDENCY_NOT_SATISFIED for broader/permanent P-001/CF truth.",
       "Issue #962 / PR #965 completed Wave 1C real WordPress FP-13/14 PASS; GOV-OWNER-CONSENT-P001-TEMP-P006-001 is consumed.",
-      "Issue #969 authorized Wave 1D FP-15/16; Issue #970 / PR #971 recorded GOV-OWNER-CONSENT-P001-TEMP-P006-002; coordination #973 / PR #974 exposed only #972.",
-      "Issue #972 / PR #975 completed Wave 1D real WordPress FP-15/16 PASS on both authorized cells; exact head abcc226e7ddd2f4dd10ffbc481b52372729cbc44 merged as 3e41bfb509235c7f2c6604099ed8acea42828eac.",
-      "Wave 1D candidate artifact 10391059092 and raw runtime artifacts 10391930012, 10390959816, 10391271651 and 10391670457 were independently reconciled.",
-      "FP-15 proved Free-first activation plus compatibility-before-premium timing; FP-16 proved WordPress plugin_missing_dependencies Pro-first prevention followed by successful Free activation and Pro retry in both cells.",
-      "Wave 1A through Wave 1D preserve Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80, Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363 and pair id 39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea.",
-      "GOV-OWNER-CONSENT-P001-TEMP-P006-002 is consumed by Wave 1D and non-reusable for FP-17+.",
-      "Issue #980 records the Wave 1E authorization gate. Issue #981 / PR #982 records ACTIVE GOV-OWNER-CONSENT-P001-TEMP-P006-003 for FP-17/18 only. Issue #983 defines the bounded runtime evidence lane; coordination #984 / queue v46 exposes it after merge.",
-      "Current P-006 truth before Wave 1E execution is 144 documented, 12 executed, 12 passed, 0 failed, 0 certified pairs and 0 runtime certifications; ADR-0010 remains Proposed.",
-      "Queue v46 preserves #947 independent-review-only and exposes #983 as the sole Supervisor-claimable P-006 runtime/source slot.",
+      "Issue #972 / PR #975 completed Wave 1D real WordPress FP-15/16 PASS; GOV-OWNER-CONSENT-P001-TEMP-P006-002 is consumed.",
+      "Issue #980 authorized Wave 1E FP-17/18; Issue #981 / PR #982 recorded GOV-OWNER-CONSENT-P001-TEMP-P006-003; coordination #984 / PR #985 exposed only #983.",
+      "Issue #983 / PR #986 completed Wave 1E real WordPress FP-17/18 PASS on both authorized cells; exact head 7ef1e054f0ea2f38cec6ea6c6acd516b43f673f9 merged as 6bdceed17a481e8cd6915d11f86a2f00f1432f63.",
+      "Wave 1E workflow run 34962006574; candidate artifact 10394245437 digest sha256:97423a03b306f5ea2f070a8c97b9bdd3a12a2150fe8b7c486ffda65c24ae163e.",
+      "FP-17 raw minimum artifact 10394106138 digest sha256:372a8521f5299accd0b42539fa870f21f77a1d1b0348b79e1ad1ca8c81b52b03; reference artifact 10394061385 digest sha256:9efe01b375081b1cb098fd78cd0c169ad1888b698f2674ce2e04839a7b108124.",
+      "FP-18 raw minimum artifact 10393513470 digest sha256:4aa55093856eed7cc7fd1f423d35e1e666c3771f261ddbf13953109b655c3cbf; reference artifact 10393632989 digest sha256:7373c44969d99b725c14873310d7a681826c8e19cef58c3d76393e3148ffa08e.",
+      "Wave 1A through Wave 1E preserve Free SHA-256 2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80, Pro SHA-256 771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363 and pair id 39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea.",
+      "FP-17 proved installed-but-inactive Pro contributes no Pro files, compatibility publication, premium module/runtime state or unexpected HTTP while Free CPT/Taxonomy remain available in both cells.",
+      "FP-18 proved WordPress plugin_missing_dependencies blocks Pro activation without Free in both cells and all fresh contexts remain non-fatal with zero Pro file/runtime/compatibility contribution and zero unexpected HTTP.",
+      "GOV-OWNER-CONSENT-P001-TEMP-P006-003 is consumed by Wave 1E and non-reusable for FP-19+.",
+      "Current P-006 truth is 144 documented, 14 executed, 14 passed, 0 failed, 0 certified pairs and 0 runtime certifications; ADR-0010 remains Proposed.",
+      "Queue v47 preserves #947 independent-review-only and exposes no Supervisor-claimable P-006 runtime/source slot.",
       "Security #858 remains open for broader required-CI policy reconciliation; active ruleset 23374068 and governance provider remain in force."
     ]
   },
@@ -66,15 +68,11 @@
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
       "description": "Exactly one user-designated Supervisor/Integrator coordinates issue/PR preflight, shared truth, claim review, merge review and closeout.",
-      "may_claim": [
-        "SUPERVISOR_ONLY",
-        "ANY"
-      ],
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
       "must_not": [
         "Pre-create future worker or integration branches before an accepted issue/queue slot authorizes them.",
         "Claim #947 independent-review work in the same Supervisor identity.",
-        "Reuse completed Wave 1C or Wave 1D branches or consumed temporary P-001 matrices.",
-        "Execute any Wave 1E fixture outside FP-17/18 or outside the two authorized disposable environment cells.",
+        "Reuse completed Wave 1C, Wave 1D or Wave 1E branches or consumed temporary P-001 matrices.",
         "Execute FP-19+ without a new accepted runtime scope and environment authority.",
         "Treat temporary P-001 matrix evidence as broader permanent product-support certification.",
         "Force or reuse a claimed branch.",
@@ -84,14 +82,12 @@
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v46.",
-      "may_claim": [
-        "ANY"
-      ],
+      "description": "Workers may claim only dependency-ready ANY slots through the exact deterministic branch declared by queue v47.",
+      "may_claim": ["ANY"],
       "must_not": [
         "Claim SUPERVISOR_ONLY or non-OPEN authorization gates.",
         "Create any branch other than the exact branch of a dependency-ready OPEN slot.",
-        "Reuse completed Wave 1B, P-001 reconciliation, Wave 1C or Wave 1D branches.",
+        "Reuse completed P-006 execution branches.",
         "Edit runtime/shared truth outside the exact slot.",
         "Implement writes, entitlement/provider runtime side effects or certification claims outside the exact slot.",
         "Execute destructive provider/database/user/content mutation, billing/payment/license-provider calls, deployment or release."
@@ -121,39 +117,25 @@
       "coordination": "p001-environment-floor-dependency-reconciliation-v1",
       "status": "COMPLETED_DEPENDENCY_NOT_SATISFIED",
       "closure": "Issue #949 / PR #956",
-      "merge_sha": "15e727029be2a7dc75f01ebaf1eec038152b9e77",
       "outcome": "P001_DEPENDENCY_NOT_SATISFIED",
       "candidate_minimum": "WordPress 6.9 + PHP 8.2 + MySQL 8.4",
       "candidate_reference": "WordPress 7.1 + PHP 8.5 + MySQL 8.4"
     },
     {
-      "coordination": "p001-temp-matrix-p006-runtime-v1",
-      "status": "CONSUMED_ONE_TRANCHE_NOT_PERMANENTLY_CERTIFIED",
-      "approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-001",
-      "closure": "PR #961 authorization; consumed by PR #965",
-      "consumed_merge_sha": "08cfd952de671167e5b23784b8a983e821b7468e"
-    },
-    {
       "coordination": "p006-wave1c-real-wordpress-free-only-baseline-v1",
       "status": "COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED",
       "closure": "Issue #962 / PR #965",
+      "approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-001",
       "merge_sha": "08cfd952de671167e5b23784b8a983e821b7468e",
       "exact_head_sha": "b4a933d11641d9316085ff78162f8a1b7bcc5c78",
-      "fixtures": ["FP-13 PASS", "FP-14 PASS"]
-    },
-    {
-      "coordination": "p001-temp-matrix-p006-wave1d-v1",
-      "status": "CONSUMED_ONE_TRANCHE_NOT_PERMANENTLY_CERTIFIED",
-      "approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-002",
-      "closure": "PR #971 authorization; consumed by PR #975",
-      "consumed_merge_sha": "3e41bfb509235c7f2c6604099ed8acea42828eac",
-      "minimum_cell": "WordPress 6.9 + PHP 8.2 + MySQL 8.4",
-      "reference_cell": "WordPress 7.1 + PHP 8.5 + MySQL 8.4"
+      "fixtures": ["FP-13 PASS", "FP-14 PASS"],
+      "temporary_authority_consumed": true
     },
     {
       "coordination": "p006-wave1d-compatible-free-pro-runtime-v1",
       "status": "COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED",
       "closure": "Issue #972 / PR #975",
+      "approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-002",
       "merge_sha": "3e41bfb509235c7f2c6604099ed8acea42828eac",
       "exact_head_sha": "abcc226e7ddd2f4dd10ffbc481b52372729cbc44",
       "candidate_artifact_id": "10391059092",
@@ -162,16 +144,25 @@
       "pro_sha256": "771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363",
       "pair_id_sha256": "39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea",
       "fixtures": ["FP-15 PASS", "FP-16 PASS"],
-      "evidence": "Both authorized cells passed. FP-15 established compatibility before premium contribution; FP-16 recorded real WordPress plugin_missing_dependencies prevention of Pro-first activation and successful recovery after Free activation. Zero unexpected runtime HTTP."
+      "temporary_authority_consumed": true
     },
     {
-      "coordination": "p001-temp-matrix-p006-wave1e-v1",
-      "status": "ACTIVE_ONE_TRANCHE_NOT_PERMANENTLY_CERTIFIED",
+      "coordination": "p006-wave1e-inactive-dependency-runtime-v1",
+      "status": "COMPLETED_2_FIXTURES_PASS_NOT_CERTIFIED",
+      "closure": "Issue #983 / PR #986",
       "approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-003",
-      "closure": "Issue #981 / PR #982 authorization; execution pending #983",
-      "minimum_cell": "WordPress 6.9 + PHP 8.2 + MySQL 8.4",
-      "reference_cell": "WordPress 7.1 + PHP 8.5 + MySQL 8.4",
-      "fixtures": ["FP-17", "FP-18"]
+      "workflow_run_id": "34962006574",
+      "merge_sha": "6bdceed17a481e8cd6915d11f86a2f00f1432f63",
+      "exact_head_sha": "7ef1e054f0ea2f38cec6ea6c6acd516b43f673f9",
+      "candidate_artifact_id": "10394245437",
+      "candidate_archive_digest": "sha256:97423a03b306f5ea2f070a8c97b9bdd3a12a2150fe8b7c486ffda65c24ae163e",
+      "raw_artifact_ids": ["10394106138", "10394061385", "10393513470", "10393632989"],
+      "free_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
+      "pro_sha256": "771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363",
+      "pair_id_sha256": "39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea",
+      "fixtures": ["FP-17 PASS", "FP-18 PASS"],
+      "evidence": "FP-17 passed on both cells with installed inactive Pro contributing no Pro files/runtime/compatibility state while Free CPT/Taxonomy remained available. FP-18 passed on both cells with real WordPress plugin_missing_dependencies prevention of Pro activation without Free and zero Pro runtime/HTTP side effects in all fresh contexts.",
+      "temporary_authority_consumed": true
     },
     {
       "coordination": "main-ruleset-governance-provider-v1",
@@ -182,7 +173,7 @@
       "evidence": "Active ruleset requires pull requests, resolved review threads and strict governance status; #858 remains open for broader CI policy reconciliation."
     }
   ],
-  "historical_queue_note": "Queue v39 activated Wave 1A. v40 completed Wave 1B and exposed #947/#949. v41 recorded P001_DEPENDENCY_NOT_SATISFIED. v42 exposed Wave 1C under the first temporary matrix. v43 closed Wave 1C and consumed that matrix. v44 recorded the distinct Wave 1D temporary matrix and exposed #972 FP-15/16. v45 closed Wave 1D, consumed the second temporary matrix and recorded 12/144 execution truth. v46 records ACTIVE GOV-OWNER-CONSENT-P001-TEMP-P006-003 and exposes #983 FP-17/18 while preserving #947 independent-only.",
+  "historical_queue_note": "Queue v39 activated Wave 1A. v40 completed Wave 1B and exposed #947/#949. v41 recorded P001_DEPENDENCY_NOT_SATISFIED. v42 exposed Wave 1C under the first temporary matrix. v43 closed Wave 1C and consumed that matrix. v44 recorded the distinct Wave 1D temporary matrix and exposed #972 FP-15/16. v45 closed Wave 1D and consumed the second matrix. v46 recorded the distinct Wave 1E temporary matrix and exposed #983 FP-17/18. Queue v47 closes Wave 1E, consumes the third temporary matrix, records 14/144 execution truth and leaves #947 as the only OPEN P-006 queue lane, requiring an independent Worker.",
   "slots": [
     {
       "priority": 1650,
@@ -206,9 +197,9 @@
       "slot_id": "p001-cf-owner-decision-gate-v1",
       "title": "P-001/CF Executable Compatibility-Floor Owner Decision Gate",
       "role": "SUPERVISOR_ONLY",
-      "status": "COMPLETED_TEMP_MATRIX_CONSUMED",
+      "status": "COMPLETED_TEMP_MATRICES_CONSUMED",
       "work_mode": "AUTHORIZATION_GATE_ONLY",
-      "source": "Issue #957 closed completed; #949/#956; temporary grants through Wave 1D",
+      "source": "Issue #957 closed completed; #949/#956; temporary grants through Wave 1E",
       "runtime_allowed": false,
       "product_parity_allowed": false,
       "claim_branch": null,
@@ -221,8 +212,6 @@
       "title": "P-006 Wave 1C Real WordPress Free-only Baseline FP-13/14",
       "role": "ANY",
       "status": "COMPLETED_PASS_TEMP_AUTH_CONSUMED",
-      "work_mode": "P006_REAL_WORDPRESS_RUNTIME_EVIDENCE",
-      "source": "Issue #962 / PR #965",
       "runtime_allowed": false,
       "product_parity_allowed": false,
       "supervisor_claim_allowed": false,
@@ -238,37 +227,34 @@
       "title": "P-006 Wave 1D Compatible Free+Pro Runtime FP-15/16",
       "role": "ANY",
       "status": "COMPLETED_PASS_TEMP_AUTH_CONSUMED",
-      "work_mode": "P006_REAL_WORDPRESS_COMPATIBLE_PAIR_EVIDENCE",
-      "source": "Issue #972 / PR #975; authorization #969/#970/#971; coordination #973/#974",
       "runtime_allowed": false,
       "product_parity_allowed": false,
       "supervisor_claim_allowed": false,
       "fixtures": ["FP-15", "FP-16"],
-      "authorized_cells": ["WordPress 6.9 + PHP 8.2 + MySQL 8.4", "WordPress 7.1 + PHP 8.5 + MySQL 8.4"],
       "claim_branch": null,
       "merge_sha": "3e41bfb509235c7f2c6604099ed8acea42828eac",
-      "exact_head_sha": "abcc226e7ddd2f4dd10ffbc481b52372729cbc44",
       "results": ["FP-15 PASS", "FP-16 PASS"],
-      "temporary_authority_consumed": true,
-      "forbidden_scope": ["FP-17+", "permanent P-001/CF certification", "Free/Pro pair certification", "P-006 runtime certification", "ADR-0010 acceptance", "live provider/billing/license side effects", "production data", "destructive operations", "deploy/release"]
+      "temporary_authority_consumed": true
     },
     {
       "priority": 1656,
       "slot_id": "p006-wave1e-inactive-dependency-runtime-v1",
       "title": "P-006 Wave 1E Inactive Pro + Dependency-State Runtime FP-17/18",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED_PASS_TEMP_AUTH_CONSUMED",
       "work_mode": "P006_REAL_WORDPRESS_INACTIVE_DEPENDENCY_EVIDENCE",
-      "source": "Issue #983; authorization #980/#981/PR #982; coordination #984",
-      "runtime_allowed": true,
+      "source": "Issue #983 / PR #986; authorization #980/#981/#982; coordination #984/#985",
+      "runtime_allowed": false,
       "product_parity_allowed": false,
-      "supervisor_claim_allowed": true,
+      "supervisor_claim_allowed": false,
       "fixtures": ["FP-17", "FP-18"],
       "authorized_cells": ["WordPress 6.9 + PHP 8.2 + MySQL 8.4", "WordPress 7.1 + PHP 8.5 + MySQL 8.4"],
-      "temporary_approval_id": "GOV-OWNER-CONSENT-P001-TEMP-P006-003",
-      "allowed_scope": ["create tools/release/p006-wave1e-inactive-dependency-runtime-evidence.php", "create .github/workflows/p006-wave1e-inactive-dependency-runtime-evidence.yml", "execute exact-head disposable FP-17/18 evidence only after this queue version merges"],
-      "forbidden_scope": ["FP-19+", "normal runtime source or plugin-header changes", "existing workflow or package-builder mutation", "permanent P-001/CF certification", "Free/Pro pair certification", "P-006 runtime certification", "ADR-0010 acceptance", "live entitlement/provider/billing/license/payment/allocation calls", "production data/credentials", "destructive operations", "deploy/release", "synthetic source/header mutation to manufacture dependency states"],
-      "claim_branch": "agent/p006-wave1e-inactive-dependency-runtime-v1"
+      "claim_branch": null,
+      "merge_sha": "6bdceed17a481e8cd6915d11f86a2f00f1432f63",
+      "exact_head_sha": "7ef1e054f0ea2f38cec6ea6c6acd516b43f673f9",
+      "results": ["FP-17 PASS", "FP-18 PASS"],
+      "temporary_authority_consumed": true,
+      "forbidden_scope": ["FP-19+", "permanent P-001/CF certification", "Free/Pro pair certification", "P-006 runtime certification", "ADR-0010 acceptance", "live provider/billing/license side effects", "production data", "destructive operations", "deploy/release"]
     }
   ]
 }
