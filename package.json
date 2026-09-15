@@ -14,10 +14,10 @@
   "homepage": "https://wpessential.org",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Vertex-Systems-Network/wpesssential.git"
+    "url": "git+https://github.com/Vertex-Systems-Network/wpessential.git"
   },
   "bugs": {
-    "url": "https://github.com/Vertex-Systems-Network/wpesssential/issues"
+    "url": "https://github.com/Vertex-Systems-Network/wpessential/issues"
   },
   "engines": {
     "node": ">=24 <25",
