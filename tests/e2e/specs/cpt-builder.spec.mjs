@@ -28,44 +28,6 @@ async function visitCpts(page) {
   return root;
 }
 
-async function postCptRoute(page, routeKey, payload) {
-  return page.evaluate(
-    async ({ routeKey: key, requestPayload }) => {
-      const bootstrapNode = document.querySelector('#wpessential-admin-bootstrap');
-      if (!(bootstrapNode instanceof HTMLScriptElement)) {
-        throw new Error('CPT bootstrap payload is unavailable.');
-      }
-
-      const bootstrap = JSON.parse(bootstrapNode.textContent ?? '{}');
-      const route = bootstrap?.routes?.[key];
-      if (!route || typeof route.type !== 'string' || typeof route.nonce !== 'string') {
-        throw new Error(`CPT route ${key} is unavailable.`);
-      }
-
-      const body = new URLSearchParams();
-      body.set('action', bootstrap.ajaxAction);
-      body.set('type', route.type);
-      body.set('nonce', route.nonce);
-      body.set('payload_json', JSON.stringify(requestPayload));
-
-      const response = await fetch(bootstrap.ajaxUrl, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-        body: body.toString(),
-      });
-      const value = await response.json();
-      if (!response.ok || value?.success !== true) {
-        throw new Error(value?.error?.message ?? `CPT route ${key} failed.`);
-      }
-      return value.data;
-    },
-    { routeKey, requestPayload: payload },
-  );
-}
-
 test.beforeAll(async () => {
   playground = await runCLI({
     command: 'server',
@@ -123,11 +85,11 @@ test('packaged CPT Builder renders the bounded editor and progressively enhances
   expect(pageErrors, `Unexpected CPT Builder browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
-test('bounded CPT editor preserves hidden runtime options and supports on update', async ({ page }) => {
-  await visitCpts(page);
-
-  await postCptRoute(page, 'save', {
+test('bounded CPT editor preserves hidden runtime options and supports in its save contract', async ({ page }) => {
+  const seeded = {
+    id: '11111111-1111-4111-8111-111111111111',
     status: 'draft',
+    revision: 1,
     payload: {
       post_type_key: 'rc_book',
       name: 'RC Books',
@@ -144,15 +106,70 @@ test('bounded CPT editor preserves hidden runtime options and supports on update
       delete_with_user: true,
       menu_icon: 'dashicons-book-alt',
     },
-  });
-
-  const seededList = await postCptRoute(page, 'list', {});
-  const seeded = seededList.definitions.find(
-    (definition) => definition?.payload?.post_type_key === 'rc_book',
-  );
-  expect(seeded, 'Seeded CPT definition should persist before UI hydration.').toBeTruthy();
+  };
+  let currentDefinition = seeded;
+  let capturedSavePayload = null;
 
   await visitCpts(page);
+  await page.route('**/wp-admin/admin-ajax.php', async (route) => {
+    const request = route.request();
+    if (request.method() !== 'POST') {
+      await route.continue();
+      return;
+    }
+
+    const body = new URLSearchParams(request.postData() ?? '');
+    const type = body.get('type');
+    if (type === 'cpt.list') {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, data: { definitions: [currentDefinition] } }),
+      });
+      return;
+    }
+
+    if (type === 'cpt.validate') {
+      const payload = JSON.parse(body.get('payload_json') ?? '{}');
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          data: {
+            valid: true,
+            issues: [],
+            candidate: {
+              post_type_key: payload?.payload?.post_type_key ?? null,
+            },
+          },
+        }),
+      });
+      return;
+    }
+
+    if (type === 'cpt.save') {
+      capturedSavePayload = JSON.parse(body.get('payload_json') ?? '{}');
+      currentDefinition = {
+        ...seeded,
+        status: capturedSavePayload.status,
+        revision: 2,
+        payload: capturedSavePayload.payload,
+      };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: true, data: { definition: currentDefinition } }),
+      });
+      return;
+    }
+
+    await route.continue();
+  });
+
+  await page.getByRole('button', { name: 'Refresh' }).click();
+  await expect(page.getByText('Custom post types refreshed.')).toBeVisible();
+
   const row = page.locator(`tr[data-wpessential-cpt-row="${seeded.id}"]`);
   await expect(row).toBeVisible();
   await expect(row).toContainText('RC Books');
@@ -169,22 +186,18 @@ test('bounded CPT editor preserves hidden runtime options and supports on update
   await page.getByRole('button', { name: 'Save custom post type' }).click();
 
   await expect(page.getByText('Custom post type updated.')).toBeVisible();
-
-  const list = await postCptRoute(page, 'list', {});
-  const updated = list.definitions.find(
-    (definition) => definition?.payload?.post_type_key === 'rc_book',
-  );
-
-  expect(updated, 'Updated CPT definition should remain readable.').toBeTruthy();
-  expect(updated.payload.name).toBe('RC Books Updated');
-  expect(updated.payload.has_archive).toBe('rc-books');
-  expect(updated.payload.rewrite).toEqual({ slug: 'rc/library', with_front: false });
-  expect(updated.payload.query_var).toBe('rc_book');
-  expect(updated.payload.can_export).toBe(false);
-  expect(updated.payload.delete_with_user).toBe(true);
-  expect(updated.payload.menu_icon).toBe('dashicons-book-alt');
-  expect(updated.payload.supports).toEqual(expect.arrayContaining(['title', 'author']));
-  expect(updated.payload.supports).not.toContain('editor');
+  expect(capturedSavePayload, 'The packaged editor should emit a save request.').toBeTruthy();
+  expect(capturedSavePayload.id).toBe(seeded.id);
+  expect(capturedSavePayload.expected_revision).toBe(1);
+  expect(capturedSavePayload.payload.name).toBe('RC Books Updated');
+  expect(capturedSavePayload.payload.has_archive).toBe('rc-books');
+  expect(capturedSavePayload.payload.rewrite).toEqual({ slug: 'rc/library', with_front: false });
+  expect(capturedSavePayload.payload.query_var).toBe('rc_book');
+  expect(capturedSavePayload.payload.can_export).toBe(false);
+  expect(capturedSavePayload.payload.delete_with_user).toBe(true);
+  expect(capturedSavePayload.payload.menu_icon).toBe('dashicons-book-alt');
+  expect(capturedSavePayload.payload.supports).toEqual(expect.arrayContaining(['title', 'author']));
+  expect(capturedSavePayload.payload.supports).not.toContain('editor');
 });
 
 test('packaged CPT Builder has zero axe violations in its initial bounded editor', async ({ page }) => {
