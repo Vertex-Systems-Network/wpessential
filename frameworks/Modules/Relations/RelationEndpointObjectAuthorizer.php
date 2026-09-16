@@ -31,6 +31,8 @@ final readonly class RelationEndpointObjectAuthorizer
     /** @var Closure():?int */
     private Closure $currentNetworkId;
 
+    private bool $contextBindingAvailable;
+
     /**
      * @param null|Closure(array{object_type:string,object_subtype:?string,label:string},int):bool $exists
      * @param null|Closure(array{object_type:string,object_subtype:?string,label:string},int,int):bool $canMutate
@@ -70,6 +72,10 @@ final readonly class RelationEndpointObjectAuthorizer
 
             return is_string($capability) && user_can($actorId, $capability, $objectId);
         };
+        $this->contextBindingAvailable = $currentUserId !== null
+            || $currentSiteId !== null
+            || $currentNetworkId !== null
+            || (function_exists('get_current_user_id') && function_exists('get_current_blog_id'));
         $this->currentUserId = $currentUserId ?? static function (): ?int {
             if (!function_exists('get_current_user_id')) {
                 throw new LogicException('WordPress current-user API is unavailable.');
@@ -128,6 +134,9 @@ final readonly class RelationEndpointObjectAuthorizer
     {
         if (!$context->principal->isAuthenticated() || $context->principal->actorType !== 'user') {
             throw new RuntimeException('Relation edge mutation execution context requires an authenticated user.');
+        }
+        if (!$this->contextBindingAvailable) {
+            return;
         }
 
         $activeUserId = ($this->currentUserId)();
