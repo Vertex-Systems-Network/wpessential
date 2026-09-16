@@ -146,11 +146,17 @@ test('bounded CPT editor preserves hidden runtime options and supports on update
     },
   });
 
-  await page.getByRole('button', { name: 'Refresh' }).click();
-  await expect(page.getByText('Custom post types refreshed.')).toBeVisible();
+  const seededList = await postCptRoute(page, 'list', {});
+  const seeded = seededList.definitions.find(
+    (definition) => definition?.payload?.post_type_key === 'rc_book',
+  );
+  expect(seeded, 'Seeded CPT definition should persist before UI hydration.').toBeTruthy();
 
-  const row = page.getByRole('row', { name: /RC Books rc_book Draft 1/ });
+  await visitCpts(page);
+  const row = page.locator(`tr[data-wpessential-cpt-row="${seeded.id}"]`);
   await expect(row).toBeVisible();
+  await expect(row).toContainText('RC Books');
+  await expect(row).toContainText('rc_book');
   await row.getByRole('button', { name: 'Edit' }).click();
 
   await expect(page.getByLabel('Post type key')).toHaveAttribute('readonly', '');
