@@ -88,6 +88,7 @@ final class AdminColumnsFieldValueWriteAbilityHandlerTest extends TestCase
             'view_id' => $view->id,
             'column_key' => 'headline',
             'post_id' => 21,
+            'expected_view_revision' => $view->revision,
             'expected_group_revision' => 4,
             'value' => 'Updated headline',
         ], $this->context());
@@ -119,6 +120,7 @@ final class AdminColumnsFieldValueWriteAbilityHandlerTest extends TestCase
             'view_id' => $view->id,
             'column_key' => 'headline',
             'post_id' => 21,
+            'expected_view_revision' => $view->revision,
             'expected_group_revision' => 4,
             'value' => null,
         ], $this->context());
@@ -131,6 +133,7 @@ final class AdminColumnsFieldValueWriteAbilityHandlerTest extends TestCase
             'view_id' => $view->id,
             'column_key' => 'headline',
             'post_id' => 21,
+            'expected_view_revision' => $view->revision,
             'expected_group_revision' => 4,
         ], $this->context());
     }
@@ -148,6 +151,7 @@ final class AdminColumnsFieldValueWriteAbilityHandlerTest extends TestCase
                 'view_id' => $view->id,
                 'column_key' => 'headline',
                 'post_id' => 21,
+                'expected_view_revision' => $view->revision,
                 'expected_group_revision' => 4,
                 'value' => 'x',
                 'storage_key' => '_private',
@@ -157,12 +161,26 @@ final class AdminColumnsFieldValueWriteAbilityHandlerTest extends TestCase
             self::assertStringContainsString('unsupported option', $error->getMessage());
         }
 
+        try {
+            $handler->handle([
+                'view_id' => $view->id,
+                'column_key' => 'headline',
+                'post_id' => 21,
+                'expected_group_revision' => 4,
+                'value' => 'x',
+            ], $this->context());
+            self::fail('Missing View revision must fail closed.');
+        } catch (InvalidArgumentException $error) {
+            self::assertStringContainsString('expected_view_revision', $error->getMessage());
+        }
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('post_id');
         $handler->handle([
             'view_id' => $view->id,
             'column_key' => 'headline',
             'post_id' => 0,
+            'expected_view_revision' => $view->revision,
             'expected_group_revision' => 4,
             'value' => 'x',
         ], $this->context());
