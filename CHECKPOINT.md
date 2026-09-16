@@ -1,9 +1,10 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-16 UTC**  
-Canonical integration base: **`main @ aaf73c702f0f8bc073e1891e0456dea5ebe23904`**  
+RC1 integration base before closeout: **`main @ aaf73c702f0f8bc073e1891e0456dea5ebe23904`**  
+RC1 Supervisor closeout: **PR #1024**  
 Project classification: **`ACTIVE_EXISTING_PROJECT`**  
-Execution mode: **`IMPLEMENTATION_GATED / RC1_SUPERVISOR_CLOSEOUT`**  
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA`**  
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**  
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 
@@ -22,13 +23,13 @@ Every `start`, `continue` and `resume` cycle must:
 
 Repository/runtime evidence outranks conversational memory.
 
-## RC1 current state
+## RC1 closeout state
 
-Sprint window remains **2026-09-16 through 2026-09-22**. The core implementation lanes completed early and are integrated; only Supervisor closeout remains.
+The bounded RC1 core stabilization milestone is completed by merge of Supervisor PR **#1024** after its exact-head path-applicable FULL evidence is green.
 
-RC1 is an installable/testable **core production-candidate milestone**, not 56/56 product parity and not GA/release authority.
+RC1 is an installable/testable **core production candidate**, not 56/56 product parity, not a P-006 runtime certification, and not GA/release authority.
 
-Critical-path surfaces remain:
+Critical RC1 surfaces were:
 
 - Surface 1 — CPT Builder;
 - Surface 2 — Taxonomy Builder;
@@ -41,26 +42,17 @@ Critical-path surfaces remain:
 
 ### Integrated lane results
 
-- **Lane A / #1017 / PR #1021 / `39b441b4c991515b3384c7f7285143855796acbc` — COMPLETED.** Fresh CPT audit found no demonstrated RC1-critical production-runtime defect requiring behavior changes. Evidence was hardened instead: real WordPress runtime assertions were expanded, packaged CPT editor regression coverage now proves hidden advanced options/supports survive visible edits, axe accessibility evidence was added, and existing Taxonomy packaged regression coverage remained green. No full-parity/runtime-certification promotion follows.
+- **Lane A / #1017 / PR #1021 / `39b441b4c991515b3384c7f7285143855796acbc` — COMPLETED.** Fresh CPT audit found no demonstrated RC1-critical production-runtime defect requiring behavior changes. Evidence was hardened instead: real WordPress runtime assertions were expanded, packaged CPT editor regression coverage proves hidden advanced options/supports survive visible edits, axe accessibility evidence was added, and existing Taxonomy packaged regression coverage remained green. No full-parity/runtime-certification promotion follows.
 - **Lane C / #1019 / PR #1022 / `891cd201667efbc72cc40285206741dc5a8c9abb` — COMPLETED.** Admin Columns Fields-owned mutation requests now carry the loaded canonical View revision; stale View mappings fail closed before Query proof or Fields-owner mutation. Regression coverage proves stale mapping evidence produces zero Query calls and zero Fields writes.
-- **Lane B / #1018 / PR #1023 / `aaf73c702f0f8bc073e1891e0456dea5ebe23904` — COMPLETED.** Relations endpoint mutation authorization now binds `ExecutionContext` to the active WordPress user/site/network before endpoint existence/capability probes and rejects mismatched/non-user contexts. Focused unit, Relations persistence, architecture, package and WordPress/PHP compatibility evidence passed. Fields and Status audit found their existing bounded mutation paths already enforce the required owner/state/revision protections, so they were left unchanged.
+- **Lane B / #1018 / PR #1023 / `aaf73c702f0f8bc073e1891e0456dea5ebe23904` — COMPLETED.** Relations endpoint mutation authorization binds `ExecutionContext` to the active WordPress user/site/network before endpoint existence/capability probes and rejects mismatched/non-user contexts. Focused unit, Relations persistence, architecture, package and WordPress/PHP compatibility evidence passed. Fields and Status audit found their existing bounded mutation paths already enforce the required owner/state/revision protections, so they were left unchanged.
 
-## Supervisor closeout
+### Supervisor closeout
 
-Issue **#1016** remains the only RC1 critical-path issue.
-
-Deterministic branch: `agent/rc1-sprint-governance-v1`.
-
-Before #1016 can close:
-
-- queue/checkpoint/README must reflect the integrated state;
-- exact-head path-applicable FULL workflows for the closeout PR must pass;
-- Free-only and Free+Pro deterministic package composition must remain valid;
-- no unresolved high-severity security/data-integrity regression may remain;
-- no live/destructive/provider/deploy/release authority may be exercised;
-- final state remains **RC / non-GA** unless a separate release gate later authorizes release.
-
-Do **not** report RC1 as closed merely because the three implementation lanes are merged.
+- **#1016 / PR #1024 — COMPLETED on merge of this checkpoint.**
+- Shared truth is serialized across `config/coordination/agent-work-queue.json`, `CHECKPOINT.md` and `README.md`.
+- PR #1024 changes only those three truth files; no runtime/source/package/build/migration/auth/compatibility implementation is changed.
+- The closeout is valid only because PR #1024 is merged after exact-head path-applicable FULL workflows, fresh-main reconciliation and zero unresolved review threads.
+- Final classification is **RC core production candidate / non-GA**. Production deployment/release remains a separate gate.
 
 ## Current issue classification
 
@@ -68,10 +60,12 @@ Do **not** report RC1 as closed merely because the three implementation lanes ar
 - **#947** — `INDEPENDENT_NONBLOCKING_WORKER_ONLY`; Supervisor must not claim/pre-create its branch or author its evidence.
 - **#1014** — `CERTIFICATION_NONBLOCKING_NOT_EXECUTED`; P-006 Wave 1H remains separately gated.
 - **#1015** — `CERTIFICATION_NONBLOCKING_NOT_EXECUTED`; P-006 Wave 1I remains separately gated.
-- **#1016** — `RC1_SUPERVISOR_CLOSEOUT_CRITICAL_PATH`.
-- **#1017** — closed completed via PR #1021.
-- **#1018** — closed completed via PR #1023.
-- **#1019** — closed completed via PR #1022.
+- **#1016** — closed completed by PR #1024.
+- **#1017** — closed completed by PR #1021.
+- **#1018** — closed completed by PR #1023.
+- **#1019** — closed completed by PR #1022.
+
+No RC1 implementation or Supervisor slot remains open after PR #1024 is on `main`.
 
 ## Current implementation truth
 
@@ -82,7 +76,7 @@ Accepted product planning remains **56/56 surfaces**. RC1 did not silently promo
 - Surface 3 / Fields — PASS for certified native V1 scope; Lane B audit required no source change.
 - Surface 4 / Relations — PASS for certified native V1 baseline plus RC1 active-context authorization hardening through #1018/#1023.
 - Surface 5 / Status — PASS for certified bounded V1 baseline; Lane B audit required no source change.
-- Surface 6 / Query — PASS for certified bounded V1 baseline; Lane C integration remained owner-read-only except as consumed by bounded Admin Columns proof.
+- Surface 6 / Query — PASS for certified bounded V1 baseline; Lane C integration preserved Query ownership and used it only as bounded Admin Columns proof.
 - Surface 8 / Admin Columns — PASS for certified bounded V1 baseline plus RC1 stale-View mutation guard through #1019/#1022.
 - Surface 9 / Listings — PASS for certified bounded V1 baseline; Lane C audit required no accepted source change.
 - Surface 7 / Custom Tables — ACTIVE / NOT PASS; managed DDL/destructive execution remains safe-paused and outside RC1.
@@ -119,13 +113,13 @@ Active ruleset `23374068` protects the default/main branch with PR-based flow, d
 
 Issue #858 remains open because broader path-applicable required-CI enforcement is not yet configured through repository administration.
 
-RC1 merges still require every path-applicable exact-head workflow even when GitHub ruleset enforcement only mandates `governance`.
+RC1 merge policy still required every path-applicable exact-head workflow even when GitHub ruleset enforcement only mandates `governance`.
 
 ## Verification model
 
-Worker FAST evidence is targeted coding-standard/static/unit/integration/runtime/build/security proof for the changed surface.
+Worker FAST evidence remained targeted coding-standard/static/unit/integration/runtime/build/security proof for the changed surface.
 
-Supervisor FULL evidence at integration/RC closeout requires, where path-applicable:
+Supervisor FULL evidence at RC closeout requires, where path-applicable:
 
 - Architecture Guards;
 - PHP Quality Toolchain;
@@ -140,7 +134,7 @@ FAST evidence never overrides a required FULL failure.
 
 ## Explicit RC1 deferrals
 
-RC1 does not authorize or promote:
+RC1 did not authorize or promote:
 
 - Surface 7 managed Custom Tables DDL/destructive execution;
 - new runtime implementation for Surfaces 22–56;
@@ -152,6 +146,12 @@ RC1 does not authorize or promote:
 - production deployment/release.
 
 These remain valid future work behind their own gates.
+
+## Resume rule after RC1
+
+After PR #1024 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering. It must not recreate RC1 lane work merely because the historical sprint window extends through 2026-09-22.
+
+The next valid work item must come from current repository issue/queue truth. #858, #947, #1014 and #1015 retain their existing explicit boundaries and must not be silently reclassified.
 
 ## Historical authority
 
