@@ -13,7 +13,7 @@ on:
       - 'admin-ui/**'
       - 'tools/release/build-distributable.php'
       - 'tools/release/build-free-pro-distributables.php'
-      - 'tools/release/p006-wave1h-static-harness-evidence.php'
+      - 'tools/p006/p006-wave1h-static-harness-evidence.php'
       - '.github/workflows/p006-wave1h-static-harness-evidence.yml'
   workflow_dispatch:
 
@@ -81,7 +81,7 @@ jobs:
           php -l frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php
           php -l tools/release/build-distributable.php
           php -l tools/release/build-free-pro-distributables.php
-          php -l tools/release/p006-wave1h-static-harness-evidence.php
+          php -l tools/p006/p006-wave1h-static-harness-evidence.php
           php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
 
       - name: Build deterministic immutable Wave 1H candidates
@@ -106,7 +106,14 @@ jobs:
           WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
-          php tools/release/p006-wave1h-static-harness-evidence.php
+          set +e
+          php tools/p006/p006-wave1h-static-harness-evidence.php
+          harness_exit=$?
+          set -e
+          if [ "${harness_exit}" -ne 2 ]; then
+            echo "Expected Wave 1H STOP/REVIEW exit 2 for the authorized FP-33 lifecycle-owner discovery; got ${harness_exit}" >&2
+            exit 1
+          fi
           test -s artifacts/p006-wave1h-static-harness-evidence.json
           php -r '
             $e = json_decode(file_get_contents("artifacts/p006-wave1h-static-harness-evidence.json"), true, flags: JSON_THROW_ON_ERROR);
@@ -115,18 +122,51 @@ jobs:
               fwrite(STDERR, "Unexpected Wave 1H grant\n");
               exit(1);
             }
-            if (($summary["executed"] ?? null) !== 7 || ($summary["passed"] ?? null) !== 7 || ($summary["failed"] ?? null) !== 0 || ($summary["inconclusive"] ?? null) !== 0) {
-              fwrite(STDERR, "Unexpected P-006 Wave 1H terminal summary\n");
+            if (($summary["executed"] ?? null) !== 7 || ($summary["passed"] ?? null) !== 6 || ($summary["failed"] ?? null) !== 0 || ($summary["inconclusive"] ?? null) !== 1) {
+              fwrite(STDERR, "Unexpected P-006 Wave 1H terminal summary; expected 6 PASS / 0 FAIL / 1 INCONCLUSIVE\n");
               exit(1);
             }
-            $ids = array_column($e["fixtures"] ?? [], "fixture_id");
+            $fixtures = $e["fixtures"] ?? [];
+            $ids = array_column($fixtures, "fixture_id");
             if ($ids !== ["FP-29", "FP-30", "FP-31", "FP-33", "FP-40", "FP-41", "FP-42"]) {
               fwrite(STDERR, "Unexpected P-006 Wave 1H fixture set\n");
               exit(1);
             }
-            if (($e["boundaries"]["real_wordpress_runtime_executed"] ?? null) !== false || ($e["boundaries"]["pair_certification_promoted"] ?? null) !== false || ($e["boundaries"]["runtime_certification_promoted"] ?? null) !== false) {
-              fwrite(STDERR, "Wave 1H non-certifying boundary violation\n");
+            $byId = [];
+            foreach ($fixtures as $fixture) {
+              $byId[$fixture["fixture_id"] ?? ""] = $fixture;
+            }
+            foreach (["FP-29", "FP-30", "FP-31", "FP-40", "FP-41", "FP-42"] as $id) {
+              if (($byId[$id]["status"] ?? null) !== "PASS") {
+                fwrite(STDERR, "Expected {$id} PASS\n");
+                exit(1);
+              }
+            }
+            $fp33 = $byId["FP-33"] ?? null;
+            if (!is_array($fp33) || ($fp33["status"] ?? null) !== "INCONCLUSIVE") {
+              fwrite(STDERR, "FP-33 must be the sole INCONCLUSIVE STOP/REVIEW fixture\n");
               exit(1);
+            }
+            $markers = $fp33["actual"]["lifecycle_owner_markers"] ?? [];
+            if (!is_array($markers) || $markers === []) {
+              fwrite(STDERR, "FP-33 STOP/REVIEW requires concrete lifecycle-owner markers\n");
+              exit(1);
+            }
+            $assertions = $fp33["assertions"] ?? [];
+            if (($assertions["no_activation_or_migration_owner_marker"] ?? null) !== false || ($assertions["incompatible_decision_denies_boot"] ?? null) !== true || ($assertions["incompatible_decision_denies_migrations"] ?? null) !== true) {
+              fwrite(STDERR, "FP-33 lifecycle-owner/fail-closed evidence mismatch\n");
+              exit(1);
+            }
+            if (($fp33["failed_assertions"] ?? null) !== ["no_activation_or_migration_owner_marker"]) {
+              fwrite(STDERR, "FP-33 must stop only on lifecycle-owner discovery\n");
+              exit(1);
+            }
+            $boundaries = $e["boundaries"] ?? [];
+            foreach (["real_wordpress_runtime_executed", "provider_or_license_calls_executed", "production_credentials_or_live_sites_used", "destructive_or_irreversible_operations_executed", "deployment_or_release_executed", "permanent_p001_cf_promoted", "pair_certification_promoted", "runtime_certification_promoted", "adr_0010_promoted"] as $key) {
+              if (($boundaries[$key] ?? null) !== false) {
+                fwrite(STDERR, "Wave 1H non-certifying boundary violation: {$key}\n");
+                exit(1);
+              }
             }
           '
           cat artifacts/p006-wave1h-static-harness-evidence.json
