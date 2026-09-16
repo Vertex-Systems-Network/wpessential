@@ -46,6 +46,7 @@ final readonly class AdminColumnsFieldValueWriteAdapter
         string $viewId,
         string $columnKey,
         int $postId,
+        int $expectedViewRevision,
         int $expectedGroupRevision,
         mixed $value,
         ExecutionContext $context,
@@ -56,11 +57,17 @@ final readonly class AdminColumnsFieldValueWriteAdapter
         if ($postId < 1) {
             throw new InvalidArgumentException('Admin Columns mutation post id must be positive.');
         }
+        if ($expectedViewRevision < 1) {
+            throw new InvalidArgumentException('Admin Columns mutation expected View revision must be positive.');
+        }
         if ($expectedGroupRevision < 1) {
             throw new InvalidArgumentException('Admin Columns mutation expected Field Group revision must be positive.');
         }
 
         $view = $this->views->get($viewId);
+        if ($view->revision !== $expectedViewRevision) {
+            throw new InvalidArgumentException('Admin Columns mutation View revision is stale.');
+        }
         $targetKey = $this->targetKey($view);
         $fieldReference = $this->fieldReference($view, $columnKey);
 

@@ -2036,6 +2036,8 @@ function wirePreview(
 									writeBootstrap.routes.writeFieldValue,
 									{
 										view_id: expectedViewId,
+										expected_view_revision:
+											expectedViewRevision,
 										column_key: column.key,
 										post_id: postId,
 										expected_group_revision:
@@ -2154,6 +2156,7 @@ function wirePreview(
 						writeBootstrap.routes.writeFieldValue,
 						{
 							view_id: expectedViewId,
+							expected_view_revision: expectedViewRevision,
 							column_key: target.column.key,
 							post_id: postId,
 							expected_group_revision:

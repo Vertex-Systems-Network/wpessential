@@ -65,7 +65,7 @@ $bookPayload = [
     'has_archive' => 'library-books',
     'rewrite' => ['slug' => 'library/books', 'with_front' => false],
     'query_var' => 'library_book',
-    'can_export' => true,
+    'can_export' => false,
 ];
 $mode = getenv('WPE_CPT_TEST_MODE') ?: '';
 
@@ -83,6 +83,9 @@ if ($mode === 'verify-active') {
     cptRuntimeExpect($object instanceof WP_Post_Type, 'registered CPT object must be available');
     cptRuntimeExpect($object->public === true && $object->show_in_rest === true, 'public + REST semantics must survive projection');
     cptRuntimeExpect($object->has_archive === 'library-books', 'archive slug must survive projection');
+    cptRuntimeExpect(is_array($object->rewrite) && ($object->rewrite['slug'] ?? null) === 'library/books' && ($object->rewrite['with_front'] ?? null) === false, 'rewrite policy must survive projection');
+    cptRuntimeExpect($object->query_var === 'library_book', 'custom query_var must survive projection');
+    cptRuntimeExpect($object->can_export === false, 'explicit can_export=false must survive projection');
     cptRuntimeExpect(post_type_supports('library_book', 'title') && post_type_supports('library_book', 'editor'), 'editor supports must register');
     cptRuntimeExpect(isset($runtime->forKind(RegistrationKind::PostType)['library_book']), 'compiled manifest must contain the CPT');
     fwrite(STDOUT, "CPT verify-active PASS\n");
