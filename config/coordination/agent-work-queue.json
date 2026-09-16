@@ -1,19 +1,21 @@
 {
-  "schema_version": 53,
+  "schema_version": 54,
   "snapshot_date": "2026-09-16",
-  "queue_anchor_main_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
-  "mode": "RC1_7_DAY_SPRINT",
-  "source_issue": "#1016",
+  "queue_anchor_main_sha": "ef57638e4494fa2afd228a683fe6889d5b924e44",
+  "mode": "POST_RC1_P006_WAVE_1H",
+  "source_issue": "#1014",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
     "rc1_milestone_state": "COMPLETED_BY_SUPERVISOR_CLOSEOUT_PR_1024",
-    "sprint_window": "2026-09-16/2026-09-22",
+    "p006_milestone_record": "GOV-OWNER-CONSENT-P006-001 ACTIVE",
+    "wave1h_owner_authorization": "Issue #1014 comment 5698613873",
+    "wave1h_temp_matrix_grant": "GOV-P001-CF-TEMP-006 ACTIVE_ONE_TRANCHE",
     "production_deploy_authorized": false,
     "live_provider_authorized": false,
     "destructive_production_authorized": false
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → accepted work. RC1 core stabilization is closed by Supervisor PR #1024 once this queue state is on main. #858 remains external-admin NON_BLOCKING, #947 remains independent NON_BLOCKING, and #1014/#1015 remain compatibility-certification NON_BLOCKING. No RC1 implementation lane remains open.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → accepted work. RC1 is closed. #1014 Wave 1H is now the only Supervisor-authorized executable slot and is bounded to FP-29/30/31/33/40/41/42 static/harness evidence. #858 remains external-admin NON_BLOCKING, #947 remains independent Worker-only NON_BLOCKING, and #1015 remains certification NON_BLOCKING / NOT EXECUTED.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -31,7 +33,7 @@
   "issue_classification": {
     "858": "NON_BLOCKING_EXTERNAL_ADMIN",
     "947": "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
-    "1014": "CERTIFICATION_NONBLOCKING_NOT_EXECUTED",
+    "1014": "AUTHORIZED_OPEN_P006_WAVE_1H_STATIC_HARNESS",
     "1015": "CERTIFICATION_NONBLOCKING_NOT_EXECUTED",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
@@ -40,7 +42,7 @@
   },
   "auto_assignment": {
     "enabled": true,
-    "startup_order": ["resolve_exact_main", "open_issues_classify_first", "open_prs_mrs_second", "active_claims_and_queue_third", "rc1_development_last"],
+    "startup_order": ["resolve_exact_main", "open_issues_classify_first", "open_prs_mrs_second", "active_claims_and_queue_third", "accepted_work_last"],
     "hard_issue_pr_gate": true,
     "nonblocking_classes": ["NON_BLOCKING_EXTERNAL_ADMIN", "INDEPENDENT_NONBLOCKING_WORKER_ONLY", "CERTIFICATION_NONBLOCKING_NOT_EXECUTED"],
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots eligible for the acting role",
@@ -52,8 +54,8 @@
     "worker_shared_truth_rule": "Workers do not edit queue/checkpoint/README/approval/shared bootstrap/build/migration/auth/compatibility surfaces unless the slot explicitly assigns them. Report shared changes as Integration Requirements.",
     "verification": {
       "worker_fast_gate": "targeted lint/static/unit/integration/runtime/build checks for changed surface",
-      "integration_full_gate": "all path-applicable exact-head workflows before merge/final RC1 promotion",
-      "feature_freeze_rule": "After core implementation window, no new product scope; defect/integration/regression fixes only."
+      "integration_full_gate": "all path-applicable exact-head workflows before merge/final promotion",
+      "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     }
   },
   "roles": {
@@ -107,10 +109,13 @@
       "certified_free_pro_pairs": 0,
       "runtime_certifications": 0,
       "fp_21_22_24": "NOT_EXECUTED",
-      "fp_29_plus": "NOT_EXECUTED_UNLESS_SEPARATELY_EXPOSED",
+      "fp_29_30_31_33_40_41_42": "AUTHORIZED_NOT_EXECUTED_WAVE_1H",
+      "fp_34_44": "NOT_EXECUTED_WAVE_1I_UNAUTHORIZED",
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
-      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005"]
+      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005"],
+      "active_temp_grant": "-006",
+      "active_temp_grant_scope": "Wave 1H FP-29/30/31/33/40/41/42 only; exact derived candidate identities must be pinned before fixture evaluation; non-certifying; one tranche; non-reusable after consumption"
     },
     "main_ruleset": {
       "ruleset_id": 23374068,
@@ -178,6 +183,21 @@
       "merged_pr": 1022,
       "merge_sha": "891cd201667efbc72cc40285206741dc5a8c9abb",
       "shared_changes": "NONE_REQUIRED"
+    },
+    {
+      "priority": 200,
+      "slot_id": "p006-wave1h-static-harness-v1",
+      "title": "P-006 Wave 1H static/harness evidence — FP-29/30/31/33/40/41/42",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "P006_BOUNDED_STATIC_HARNESS_EVIDENCE",
+      "source": "Issue #1014 / owner authorization comment 5698613873",
+      "runtime_allowed": false,
+      "claim_branch": "agent/p006-wave1h-static-harness-v1",
+      "temp_matrix_grant": "GOV-P001-CF-TEMP-006",
+      "allowed_scope": ["deterministic Wave 1H static/harness evidence tooling", "tests/fixtures/workflow/docs required only for FP-29/30/31/33/40/41/42", "deterministic derivation and SHA-256 pinning of immutable Free/Pro candidates through accepted build path"],
+      "forbidden_scope": ["real WordPress runtime execution", "FP-21/22/24", "FP-32", "FP-34+", "runtime behavior changes merely to force PASS", "remote licensing/provider calls", "production credentials/data", "destructive or irreversible operations", "deploy/release", "#947 independent review"],
+      "close_condition": "Seven authorized fixtures reach terminal PASS/FAIL/INCONCLUSIVE with exact candidate identities recorded; no excluded behavior; exact-head path-applicable CI green; fresh main; zero unresolved review threads; shared truth reconciled without certification promotion"
     },
     {
       "priority": 900,
