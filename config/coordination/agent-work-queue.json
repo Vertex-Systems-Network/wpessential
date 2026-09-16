@@ -1,18 +1,19 @@
 {
-  "schema_version": 52,
+  "schema_version": 53,
   "snapshot_date": "2026-09-16",
-  "queue_anchor_main_sha": "a1675d179e81333361f3b16d37717b0c08774c80",
+  "queue_anchor_main_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
   "mode": "RC1_7_DAY_SPRINT",
   "source_issue": "#1016",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
+    "rc1_milestone_state": "CORE_LANES_COMPLETE_SUPERVISOR_CLOSEOUT",
     "sprint_window": "2026-09-16/2026-09-22",
     "production_deploy_authorized": false,
     "live_provider_authorized": false,
     "destructive_production_authorized": false
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → RC1 work. During RC1, #858 is external-admin NON_BLOCKING, #947 is independent NON_BLOCKING, and #1014/#1015 are compatibility-certification NON_BLOCKING. Do not bypass actionable RC1 issues #1016–#1019.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → RC1 work. During RC1 closeout, #858 is external-admin NON_BLOCKING, #947 is independent NON_BLOCKING, and #1014/#1015 are compatibility-certification NON_BLOCKING. Implementation Issues #1017/#1018/#1019 are closed completed; #1016 remains the only RC1 Supervisor critical-path issue until final exact-head closeout evidence and shared truth merge.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -32,10 +33,10 @@
     "947": "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
     "1014": "CERTIFICATION_NONBLOCKING_NOT_EXECUTED",
     "1015": "CERTIFICATION_NONBLOCKING_NOT_EXECUTED",
-    "1016": "RC1_SUPERVISOR_CRITICAL_PATH",
-    "1017": "RC1_IMPLEMENTATION_CRITICAL_PATH",
-    "1018": "RC1_IMPLEMENTATION_CRITICAL_PATH",
-    "1019": "RC1_IMPLEMENTATION_CRITICAL_PATH"
+    "1016": "RC1_SUPERVISOR_CLOSEOUT_CRITICAL_PATH",
+    "1017": "CLOSED_COMPLETED_RC1_LANE_A",
+    "1018": "CLOSED_COMPLETED_RC1_LANE_B",
+    "1019": "CLOSED_COMPLETED_RC1_LANE_C"
   },
   "auto_assignment": {
     "enabled": true,
@@ -70,6 +71,33 @@
   "accepted_truth": {
     "product_surface_count": 56,
     "rc1_is_not_full_product_parity": true,
+    "rc1": {
+      "initial_main_sha": "a1675d179e81333361f3b16d37717b0c08774c80",
+      "integration_base_main_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
+      "lane_a": {
+        "issue": 1017,
+        "pr": 1021,
+        "merge_sha": "39b441b4c991515b3384c7f7285143855796acbc",
+        "state": "COMPLETED",
+        "result": "CPT runtime and packaged editor regression evidence hardened; Taxonomy remained regression-safe; no production runtime behavior expansion"
+      },
+      "lane_b": {
+        "issue": 1018,
+        "pr": 1023,
+        "merge_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
+        "state": "COMPLETED",
+        "result": "Relations endpoint mutations bind execution context to active WordPress user/site/network with fail-closed regression coverage; Fields and Status audit required no source change"
+      },
+      "lane_c": {
+        "issue": 1019,
+        "pr": 1022,
+        "merge_sha": "891cd201667efbc72cc40285206741dc5a8c9abb",
+        "state": "COMPLETED",
+        "result": "Admin Columns Fields-owned writes require expected View revision and fail before Query/Fields delegation when mapping evidence is stale"
+      },
+      "supervisor_closeout": "ACTIVE_PENDING_EXACT_HEAD_FULL_EVIDENCE_AND_SHARED_TRUTH_MERGE",
+      "release_classification": "RC_NON_GA_PENDING_CLOSEOUT"
+    },
     "p006": {
       "documented": 144,
       "executed": 21,
@@ -96,52 +124,59 @@
       "slot_id": "rc1-supervisor-integration-v1",
       "title": "RC1 sprint integration, shared truth and merge serialization",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
+      "status": "ACTIVE_CLOSEOUT",
       "work_mode": "RC1_SUPERVISOR_INTEGRATION",
       "source": "Issue #1016",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-sprint-governance-v1",
       "allowed_scope": ["coordination/checkpoint/sprint docs", "shared integration required by accepted RC1 Worker findings", "package metadata/build integration when required", "final README reconciliation at stable sprint closeout"],
-      "forbidden_scope": ["production deploy/release", "live provider side effects", "destructive production actions", "Surface 7 managed DDL execution", "new Surfaces 22-56 runtime features"]
+      "forbidden_scope": ["production deploy/release", "live provider side effects", "destructive production actions", "Surface 7 managed DDL execution", "new Surfaces 22-56 runtime features"],
+      "close_condition": "Exact-head path-applicable FULL gates green, shared queue/checkpoint/README reconciled, zero unresolved high-severity RC1 regressions, and closeout PR merged"
     },
     {
       "priority": 110,
       "slot_id": "rc1-lane-a-cpt-taxonomy-v1",
       "title": "RC1 Lane A — CPT primary stabilization + Taxonomy regression guard",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "RC1_BOUNDED_STABILIZATION",
       "source": "Issue #1017",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-a-cpt-taxonomy-v1",
       "primary_surfaces": [1, 2],
-      "shared_changes": "INTEGRATION_REQUIREMENT"
+      "merged_pr": 1021,
+      "merge_sha": "39b441b4c991515b3384c7f7285143855796acbc",
+      "shared_changes": "NONE_REQUIRED"
     },
     {
       "priority": 120,
       "slot_id": "rc1-lane-b-fields-relations-status-v1",
       "title": "RC1 Lane B — Fields, Relations, Status stabilization",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "RC1_BOUNDED_STABILIZATION",
       "source": "Issue #1018",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-b-fields-relations-status-v1",
       "primary_surfaces": [3, 4, 5],
-      "shared_changes": "INTEGRATION_REQUIREMENT"
+      "merged_pr": 1023,
+      "merge_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
+      "shared_changes": "NONE_REQUIRED"
     },
     {
       "priority": 130,
       "slot_id": "rc1-lane-c-query-columns-listings-v1",
       "title": "RC1 Lane C — Query, Admin Columns, Listings stabilization",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "RC1_BOUNDED_STABILIZATION",
       "source": "Issue #1019",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-c-query-columns-listings-v1",
       "primary_surfaces": [6, 8, 9],
-      "shared_changes": "INTEGRATION_REQUIREMENT"
+      "merged_pr": 1022,
+      "merge_sha": "891cd201667efbc72cc40285206741dc5a8c9abb",
+      "shared_changes": "NONE_REQUIRED"
     },
     {
       "priority": 900,
@@ -161,6 +196,8 @@
   "historical_closeout": {
     "p006_waves_1a_1g": "COMPLETED_BOUNDED_21_PASS_NOT_CERTIFIED",
     "wave1g_merge_sha": "e349fb21e5cb3b6fbb7f26b3e74aa0791591f4a7",
-    "readme_wave1g_closeout_sha": "a1675d179e81333361f3b16d37717b0c08774c80"
+    "readme_wave1g_closeout_sha": "a1675d179e81333361f3b16d37717b0c08774c80",
+    "rc1_core_lanes": "COMPLETED_PENDING_SUPERVISOR_CLOSEOUT",
+    "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
   }
 }
