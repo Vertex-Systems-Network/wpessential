@@ -23,6 +23,7 @@ final readonly class AdminColumnsFieldValueWriteAbilityHandler implements Abilit
         'view_id',
         'column_key',
         'post_id',
+        'expected_view_revision',
         'expected_group_revision',
         'value',
     ];
@@ -57,6 +58,11 @@ final readonly class AdminColumnsFieldValueWriteAbilityHandler implements Abilit
             throw new InvalidArgumentException('post_id must be a positive integer.');
         }
 
+        $expectedViewRevision = $input['expected_view_revision'] ?? null;
+        if (!is_int($expectedViewRevision) || $expectedViewRevision < 1) {
+            throw new InvalidArgumentException('expected_view_revision must be a positive integer.');
+        }
+
         $expectedGroupRevision = $input['expected_group_revision'] ?? null;
         if (!is_int($expectedGroupRevision) || $expectedGroupRevision < 1) {
             throw new InvalidArgumentException('expected_group_revision must be a positive integer.');
@@ -70,6 +76,7 @@ final readonly class AdminColumnsFieldValueWriteAbilityHandler implements Abilit
             $viewId,
             $columnKey,
             $postId,
+            $expectedViewRevision,
             $expectedGroupRevision,
             $input['value'],
             $context,
