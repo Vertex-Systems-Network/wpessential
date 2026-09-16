@@ -20,6 +20,7 @@ use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
 {
     private const FIELD_REF = 'fields.01990f6e-1f30-4000-8000-000000000200.01990f6e-1f30-4000-8000-000000000202';
+    private const ALTERNATE_FIELD_REF = 'fields.01990f6e-1f30-4000-8000-000000000200.01990f6e-1f30-4000-8000-000000000203';
 
     public function testDelegatesExactlyOnceAfterExactQueryTargetProof(): void
     {
@@ -90,6 +91,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
             $view->id,
             'headline',
             41,
+            $view->revision,
             4,
             'Hello',
             $context,
@@ -157,6 +159,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
             $view->id,
             'headline',
             41,
+            $view->revision,
             4,
             null,
             $this->context(),
@@ -186,6 +189,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
                     $view->id,
                     'headline',
                     41,
+                    $view->revision,
                     4,
                     'Nope',
                     $this->context(),
@@ -216,6 +220,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
                     $view->id,
                     $columnKey,
                     41,
+                    $view->revision,
                     4,
                     'Nope',
                     $this->context(),
@@ -240,14 +245,64 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
         $view = $views->save($this->payload(), DefinitionStatus::Published);
         $adapter = new AdminColumnsFieldValueWriteAdapter($views, $query, $fields);
 
-        foreach ([[0, 4], [41, 0]] as [$postId, $revision]) {
+        foreach (
+            [
+                [0, $view->revision, 4],
+                [41, 0, 4],
+                [41, $view->revision, 0],
+            ] as [$postId, $viewRevision, $groupRevision]
+        ) {
             try {
-                $adapter->write($view->id, 'headline', $postId, $revision, 'Nope', $this->context());
+                $adapter->write(
+                    $view->id,
+                    'headline',
+                    $postId,
+                    $viewRevision,
+                    $groupRevision,
+                    'Nope',
+                    $this->context(),
+                );
                 self::fail('Invalid mutation identity unexpectedly passed validation.');
             } catch (InvalidArgumentException) {
                 self::assertSame(0, $query->calls);
                 self::assertSame(0, $fields->calls);
             }
+        }
+    }
+
+    public function testStaleViewRevisionFailsBeforeQueryAndOwnerWrite(): void
+    {
+        $query = new class implements QueryReadConsumerInterface {
+            public int $calls = 0;
+            public function describe(string $sourceRef, ExecutionContext $context): array { return []; }
+            public function read(array $request, ExecutionContext $context): array { ++$this->calls; return []; }
+        };
+        $fields = $this->countingWriter();
+        $views = $this->views();
+        $staleView = $views->save($this->payload(), DefinitionStatus::Published);
+        $views->save(
+            $this->payload(reference: self::ALTERNATE_FIELD_REF),
+            DefinitionStatus::Published,
+            $staleView->id,
+            $staleView->revision,
+        );
+        $adapter = new AdminColumnsFieldValueWriteAdapter($views, $query, $fields);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('View revision is stale');
+        try {
+            $adapter->write(
+                $staleView->id,
+                'headline',
+                41,
+                $staleView->revision,
+                4,
+                'Nope',
+                $this->context(),
+            );
+        } finally {
+            self::assertSame(0, $query->calls);
+            self::assertSame(0, $fields->calls);
         }
     }
 
@@ -278,6 +333,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
                 $view->id,
                 'headline',
                 41,
+                $view->revision,
                 4,
                 'Nope',
                 $this->context(),
@@ -309,6 +365,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
             $view->id,
             'headline',
             41,
+            $view->revision,
             4,
             'Nope',
             $this->context(),
@@ -346,6 +403,7 @@ final class AdminColumnsFieldValueWriteAdapterTest extends TestCase
             $view->id,
             'headline',
             41,
+            $view->revision,
             4,
             'Nope',
             $this->context(),
