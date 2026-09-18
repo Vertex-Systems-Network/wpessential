@@ -1,0 +1,316 @@
+name: P-006 B3 Publication Owner Harness
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-publication-owner-harness.yml'
+      - 'tools/p006/p006-publication-owner-harness.php'
+      - 'tools/p006/p006-wave1m-build-manual-order-artifacts.php'
+      - 'tools/p006/p006-wave1m-wordpress-setup.sh'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'docs/QUALITY/P006-B3-PUBLICATION-OWNER-HARNESS.md'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-publication-owner-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-candidates:
+    name: Build deterministic publication-owner candidate graph
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install locked admin build graph
+        run: npm ci
+
+      - name: Build admin assets
+        run: npm run build
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+
+      - name: Validate tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/p006/p006-wave1m-build-manual-order-artifacts.php
+          php -l tools/p006/p006-publication-owner-harness.php
+          bash -n tools/p006/p006-wave1m-wordpress-setup.sh
+
+      - name: Build canonical package pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cp artifacts/wpessential.zip /tmp/p006-pub-canonical-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-pub-canonical-pro.zip
+          sha256sum artifacts/wpessential.zip > /tmp/p006-pub-free.sha256
+          sha256sum artifacts/wpessential-pro.zip > /tmp/p006-pub-pro.sha256
+
+      - name: Rebuild and prove canonical determinism
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cmp --silent /tmp/p006-pub-canonical-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-pub-canonical-pro.zip artifacts/wpessential-pro.zip
+
+      - name: Derive deterministic F0 F1 P0 P1 graph twice
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-publication-owner
+          mkdir -p artifacts/p006-publication-owner/set-a artifacts/p006-publication-owner/set-b
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-publication-owner/set-a" php tools/p006/p006-wave1m-build-manual-order-artifacts.php
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-publication-owner/set-b" php tools/p006/p006-wave1m-build-manual-order-artifacts.php
+          for file in f0.zip f1.zip p0.zip p1.zip candidate-identity.json; do
+            cmp --silent "artifacts/p006-publication-owner/set-a/${file}" "artifacts/p006-publication-owner/set-b/${file}"
+          done
+          mv artifacts/p006-publication-owner/set-a artifacts/p006-publication-owner/candidates
+          rm -rf artifacts/p006-publication-owner/set-b
+
+      - name: Normalize prerequisite authority boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq '{
+            protocol: "P-006",
+            prerequisite: "B3-entrypoint-last-publication-owner-harness",
+            source_sha: .source_sha,
+            authorization: "GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001",
+            classification: "RUNTIME HARNESS PREREQUISITE ONLY / NOT FP-49-52 EXECUTION",
+            historical_graph_reuse: {
+              source_wave: .wave,
+              historical_authority_reused: false,
+              note: "Wave 1M builder is reused only for deterministic F0/F1/P0/P1 test artifact derivation."
+            },
+            nodes: {F0:.nodes.F0,F1:.nodes.F1,P0:.nodes.P0,P1:.nodes.P1},
+            pairs: {F0_P0:.pairs.F0_P0,F1_P0:.pairs.F1_P0,F0_P1:.pairs.F0_P1},
+            boundaries: {
+              formal_fp_fixture_executed: false,
+              fixture_accounting_changed: false,
+              product_runtime_source_modified: false,
+              updater_or_tuf_certified: false,
+              pair_certified: false,
+              runtime_certified: false,
+              adr_0010: "Proposed"
+            }
+          }' artifacts/p006-publication-owner/candidates/candidate-identity.json > artifacts/p006-publication-owner/candidates/publication-owner-identity.json
+          test -s artifacts/p006-publication-owner/candidates/publication-owner-identity.json
+          cat artifacts/p006-publication-owner/candidates/publication-owner-identity.json
+
+      - name: Upload immutable publication-owner candidate graph
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-publication-owner-candidates-${{ github.run_id }}
+          path: |
+            artifacts/p006-publication-owner/candidates/f0.zip
+            artifacts/p006-publication-owner/candidates/f1.zip
+            artifacts/p006-publication-owner/candidates/p0.zip
+            artifacts/p006-publication-owner/candidates/p1.zip
+            artifacts/p006-publication-owner/candidates/publication-owner-identity.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  publication-owner:
+    name: Publication owner / ${{ matrix.cell }} / ${{ matrix.target }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: build-candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cell: minimum
+            target: free
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: minimum
+            target: pro
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: reference
+            target: free
+            wordpress: '7.1'
+            php: '8.5'
+          - cell: reference
+            target: pro
+            wordpress: '7.1'
+            php: '8.5'
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wpessential_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_CELL_ID: ${{ matrix.cell }}
+      WPE_PUB_TARGET: ${{ matrix.target }}
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_BASE_FREE_NODE: F0
+      WPE_P006_BASE_PRO_NODE: P0
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_PUB_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-publication-owner/candidates
+      WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-publication-owner/candidates/f0.zip
+      WPE_P006_F1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-publication-owner/candidates/f1.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-publication-owner/candidates/p0.zip
+      WPE_PUB_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-publication-owner/candidates/publication-owner-identity.json
+      WPE_PUB_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-publication-owner/evidence/${{ matrix.cell }}/${{ matrix.target }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-publication-owner-${{ matrix.cell }}-${{ matrix.target }}-network.log
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+
+      - name: Download exact publication-owner candidate graph
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-publication-owner-candidates-${{ github.run_id }}
+          path: artifacts/p006-publication-owner/candidates
+
+      - name: Validate harness inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in f0.zip f1.zip p0.zip p1.zip publication-owner-identity.json; do
+            test -s "artifacts/p006-publication-owner/candidates/${file}"
+          done
+          php -l tools/p006/p006-publication-owner-harness.php
+          bash -n tools/p006/p006-wave1m-wordpress-setup.sh
+
+      - name: Prepare disposable WordPress baseline
+        run: bash tools/p006/p006-wave1m-wordpress-setup.sh
+
+      - name: Activate exact baseline pair
+        run: php tools/p006/p006-publication-owner-harness.php prepare
+
+      - name: Execute publication-owner prerequisite scenarios
+        run: php tools/p006/p006-publication-owner-harness.php run
+
+      - name: Show prerequisite evidence
+        run: cat "${WPE_PUB_EVIDENCE_DIR}/summary.json"
+
+      - name: Upload immutable publication-owner evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-publication-owner-${{ matrix.cell }}-${{ matrix.target }}-${{ github.run_id }}
+          path: |
+            artifacts/p006-publication-owner/candidates/publication-owner-identity.json
+            artifacts/p006-publication-owner/evidence/${{ matrix.cell }}/${{ matrix.target }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  publication-owner-terminal:
+    name: Publication owner prerequisite terminal aggregate
+    needs: [build-candidates, publication-owner]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Record terminal prerequisite result
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/p006-publication-owner/terminal
+          cat > artifacts/p006-publication-owner/terminal/publication-owner-terminal.json <<'JSON'
+          {
+            "status": "PASS_PREREQUISITE_ONLY",
+            "authorization": "GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001",
+            "classification": "RUNTIME HARNESS PREREQUISITE / NOT FP-49-52 EXECUTION",
+            "required_cells": ["minimum/free", "minimum/pro", "reference/free", "reference/pro"],
+            "all_matrix_jobs_required_success": true,
+            "formal_fp_fixture_executed": false,
+            "fixture_accounting_changed": false,
+            "pair_certified": false,
+            "runtime_certified": false,
+            "updater_or_tuf_certified": false,
+            "rollback_or_migration_certified": false,
+            "adr_0010": "Proposed",
+            "ga_or_release_authorized": false
+          }
+          JSON
+          cat artifacts/p006-publication-owner/terminal/publication-owner-terminal.json
+
+      - name: Upload terminal prerequisite marker
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-publication-owner-terminal-${{ github.run_id }}
+          path: artifacts/p006-publication-owner/terminal/publication-owner-terminal.json
+          if-no-files-found: error
+          retention-days: 14
