@@ -230,6 +230,7 @@
       },
       "b3_harness_readiness": {
         "source_issue": 1040,
+        "closeout_pr": 1042,
         "review_authorization": "GOV-P006-B3-HARNESS-REVIEW-001",
         "runtime_executed": false,
         "fixture_accounting_changed": false,
@@ -410,7 +411,7 @@
       "role": "SUPERVISOR_ONLY",
       "status": "COMPLETED_ON_REVIEW_PR_MERGE",
       "work_mode": "P006_NON_RUNTIME_HARNESS_READINESS_REVIEW",
-      "source": "Issue #1040 / readiness closeout PR",
+      "source": "Issue #1040 / PR #1042",
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b3-harness-readiness-review-v1",
       "authorization": "GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED",
@@ -460,6 +461,7 @@
     "p006_wave1l_candidate_artifact_id": 10565272329,
     "p006_b3_harness_readiness": "TERMINAL_NON_RUNTIME_REVIEW_FP49_52_58_NOT_EXECUTION_READY",
     "p006_b3_harness_readiness_issue": 1040,
+    "p006_b3_harness_readiness_pr": 1042,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
