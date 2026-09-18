@@ -308,7 +308,7 @@ function pAssertCompatible(array $obs): void {
 }
 function pAssertPartialSafe(array $obs, array $cfg): void {
     pAssertEnvironment($obs);
-    pAssert(($obs['fatal_or_error'] ?? 'unexpected') === null, 'Partial observation has error');
+    pAssert(array_key_exists('fatal_or_error', $obs) && $obs['fatal_or_error'] === null, 'Partial observation has error');
     pAssert(($obs['premium_boot_allowed'] ?? false) === false, 'Partial state allowed premium boot');
     pAssert(($obs['premium_migrations_allowed'] ?? false) === false, 'Partial state allowed premium migrations');
     pAssert(($obs['premium_mutations_allowed'] ?? false) === false, 'Partial state allowed premium mutations');
