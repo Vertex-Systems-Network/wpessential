@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before manual-replacement harness closeout merge: **`main @ 60ed7a9a654baa579df3a49a4cd4fce89f64fa67`**
+Current integration anchor before Wave 1M FP-58 closeout merge: **`main @ a99fb1b438d35de1fca9b228d698044eceaa9fab`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -10,6 +10,7 @@ P-006 Wave 1K closeout: **Issue #1034 / PR #1036**
 P-006 Wave 1L closeout: **Issue #1037 / PR #1039**
 P-006 B3 harness readiness review: **Issue #1040 / PR #1042**
 P-006 B3 WordPress manual replacement harness prerequisite: **Issue #1043 / PR #1045**
+P-006 Wave 1M FP-58 closeout: **Issue #1046 / PR #1048**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1L_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -21,6 +22,7 @@ Wave 1K temporary grant: **`GOV-P001-CF-TEMP-009 CONSUMED / NON-REUSABLE`**
 Wave 1L temporary grant: **`GOV-P001-CF-TEMP-010 CONSUMED / NON-REUSABLE`**
 B3 harness review authorization: **`GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED / NON-RUNTIME`**
 Manual replacement harness authorization: **`GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
+Wave 1M temporary grant: **`GOV-P001-CF-TEMP-011 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -458,11 +460,11 @@ Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Waves 1H/1
 
 Physical Free/Pro package separation, canonical local entitlement state, read-only commercial inventory and local fail-closed compatibility preflight remain accepted architecture.
 
-P-006 accepted truth after Wave 1L closeout:
+P-006 accepted truth after Wave 1M closeout:
 
 - documented fixtures: **144**;
-- executed: **45**;
-- PASS: **44**;
+- executed: **46**;
+- PASS: **45**;
 - FAIL: **0**;
 - INCONCLUSIVE: **1**;
 - certified Free↔Pro pairs: **0**;
@@ -522,9 +524,9 @@ Current authority does not authorize or promote:
 
 These remain valid future work behind their own gates.
 
-## Resume rule after manual-replacement harness prerequisite
+## Resume rule after Wave 1M FP-58 closeout
 
-After PR #1045 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
+After PR #1048 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
 
 It must not recreate Waves 1H–1L or reinterpret this harness prerequisite as FP-58 execution. The WordPress-owned manual replacement transport prerequisite is now available, so a future FP-58 execution tranche may be considered only through a separate explicit authorization and fresh dependency audit. FP-49…52 remain blocked by the integrity/publication-contract gap. #858 and #947 retain their explicit nonblocking boundaries; rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
 
@@ -541,3 +543,24 @@ Detailed historical evidence remains in:
 - Git history and merged PR/Issue evidence.
 
 This checkpoint is intentionally a compact **current-state resume document**, not a replacement for historical records.
+
+
+## P-006 Wave 1M FP-58 closeout
+
+Issue **#1046** / PR **#1048** executes only FP-58 under one-tranche `GOV-P001-CF-TEMP-011` through WordPress core `Plugin_Upgrader::install(local ZIP, overwrite_package=true)` with real plugin directories and `FS_METHOD=direct`.
+
+Final pre-merge evidence head: `d5e574b1154dd0db4aaaeff8b2f1983a123326f4`.
+
+Exact-head checks:
+- Governance Gate run **35396928806 — PASS**;
+- Wave 1M FP-58 run **35396928791 — PASS**;
+- deterministic graph build — PASS;
+- all 8 authorized minimum/reference compatible/breaking cells — PASS;
+- terminal aggregate — PASS.
+
+Final candidate artifact: **10567947917** / `sha256:2c831545297cadc6acf1ec7cffaa286e4e5096afdc3654cbfe2887bdad5099b8`.
+Final terminal artifact: **10569065242** / `sha256:62833a3f98ce9a6f28eab782ebcc01c0fed4dcca4069c225d33a11b67f540957`.
+
+Formal result: **FP-58 PASS**. Accounting is **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**. Compatible manual replacements preserve premium admission; breaking replacements fail closed as `free_version_too_new` or `free_version_too_old`, deny premium boot/migrations, leave premium modules inert, preserve the Free kernel plus `custom-post-types` and `taxonomies`, and observe zero outbound HTTP, persistence keys or backup residue.
+
+No automatic updater/TUF, partial/interrupted replacement, rollback/migration, provider, pair/runtime certification, ADR-0010 promotion, deploy or release authority follows. FP-49…52 remain blocked by the integrity/publication-contract gap. #947 remains independent Worker-only.
