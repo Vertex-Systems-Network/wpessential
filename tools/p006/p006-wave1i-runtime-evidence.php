@@ -367,7 +367,7 @@ function iSetOrder(array $in, string $orderId): array
     $order = $orders[$orderId] ?? null;
     iAssert(is_array($order), 'Unsupported FP-34 load-order id');
 
-    iAssert(update_option('active_plugins', $order), 'Unable to set active_plugins order');
+    $changed = update_option('active_plugins', $order);
     $stored = get_option('active_plugins', []);
     iAssert($stored === $order, 'active_plugins order did not persist exactly');
 
@@ -376,6 +376,7 @@ function iSetOrder(array $in, string $orderId): array
         'phase' => 'set-order',
         'cell_id' => $in['cell_id'],
         'order_id' => $orderId,
+        'option_changed' => $changed,
         'stored_active_plugins' => $stored,
     ];
 }
