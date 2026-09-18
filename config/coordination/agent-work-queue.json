@@ -19,22 +19,8 @@
   },
   "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → accepted work. RC1 and P-006 Wave 1H are closed. #1015 Wave 1I is the only Supervisor-authorized executable slot and is bounded to FP-34/44 disposable real-WordPress evidence under the predeclared runtime matrix and timing bound. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
-    "critical_surfaces": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      8,
-      9
-    ],
-    "shared_integration": [
-      "Platform",
-      "Kernel",
-      "Admin",
-      "packaging/build only when required by RC1"
-    ],
+    "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
+    "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
     "deferred": [
       "Surface 7 managed DDL/destructive execution",
       "new runtime implementation for Surfaces 22-56",
@@ -58,19 +44,9 @@
   },
   "auto_assignment": {
     "enabled": true,
-    "startup_order": [
-      "resolve_exact_main",
-      "open_issues_classify_first",
-      "open_prs_mrs_second",
-      "active_claims_and_queue_third",
-      "accepted_work_last"
-    ],
+    "startup_order": ["resolve_exact_main", "open_issues_classify_first", "open_prs_mrs_second", "active_claims_and_queue_third", "accepted_work_last"],
     "hard_issue_pr_gate": true,
-    "nonblocking_classes": [
-      "NON_BLOCKING_EXTERNAL_ADMIN",
-      "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
-      "CERTIFICATION_NONBLOCKING_NOT_EXECUTED"
-    ],
+    "nonblocking_classes": ["NON_BLOCKING_EXTERNAL_ADMIN", "INDEPENDENT_NONBLOCKING_WORKER_ONLY", "CERTIFICATION_NONBLOCKING_NOT_EXECUTED"],
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots eligible for the acting role",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
@@ -87,30 +63,13 @@
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "may_claim": [
-        "SUPERVISOR_ONLY",
-        "ANY"
-      ],
-      "must_not": [
-        "Claim or pre-create #947 branch",
-        "Force push",
-        "Run live-provider/destructive production/deploy/release actions",
-        "Promote partial evidence to certification",
-        "Allow more than one writer on serialized shared surfaces"
-      ]
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
+      "must_not": ["Claim or pre-create #947 branch", "Force push", "Run live-provider/destructive production/deploy/release actions", "Promote partial evidence to certification", "Allow more than one writer on serialized shared surfaces"]
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "may_claim": [
-        "ANY"
-      ],
-      "must_not": [
-        "Claim SUPERVISOR_ONLY",
-        "Use branches other than exact OPEN slot",
-        "Mutate outside slot",
-        "Edit serialized shared truth unless explicitly assigned",
-        "Perform destructive/live-provider/deploy/release actions"
-      ]
+      "may_claim": ["ANY"],
+      "must_not": ["Claim SUPERVISOR_ONLY", "Use branches other than exact OPEN slot", "Mutate outside slot", "Edit serialized shared truth unless explicitly assigned", "Perform destructive/live-provider/deploy/release actions"]
     }
   },
   "accepted_truth": {
@@ -158,15 +117,9 @@
       "fp_34_44": "AUTHORIZED_NOT_EXECUTED_WAVE_1I",
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
-      "consumed_temp_grants": [
-        "-001",
-        "-002",
-        "-003",
-        "-004",
-        "-005",
-        "-006"
-      ],
+      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006"],
       "active_temp_grant": "-007",
+      "active_temp_grant_scope": "Wave 1I FP-34/44 only; exact derived candidate identities pinned before runtime; WP 6.9/PHP 8.2/MySQL 8.4 and WP 7.1/PHP 8.5/MySQL 8.4 disposable cells; FP-44 20 warmups + 100 samples with median <=5ms and p95 <=20ms and zero outbound HTTP; non-certifying; one tranche; non-reusable after consumption",
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -176,8 +129,7 @@
         "pro_sha256": "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467",
         "pair_id": "28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211",
         "summary": "6 PASS / 0 FAIL / 1 INCONCLUSIVE; static harness only; no WordPress runtime/provider/live/destructive/deploy/release side effects"
-      },
-      "active_temp_grant_scope": "Wave 1I FP-34/44 only; exact derived candidate identities pinned before runtime; WP 6.9/PHP 8.2/MySQL 8.4 and WP 7.1/PHP 8.5/MySQL 8.4 disposable cells; FP-44 20 warmups + 100 samples with median <=5ms and p95 <=20ms and zero outbound HTTP; non-certifying; one tranche; non-reusable after consumption"
+      }
     },
     "main_ruleset": {
       "ruleset_id": 23374068,
@@ -197,19 +149,8 @@
       "source": "Issue #1016 / PR #1024",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-sprint-governance-v1",
-      "allowed_scope": [
-        "coordination/checkpoint/sprint docs",
-        "shared integration required by accepted RC1 Worker findings",
-        "package metadata/build integration when required",
-        "final README reconciliation at stable sprint closeout"
-      ],
-      "forbidden_scope": [
-        "production deploy/release",
-        "live provider side effects",
-        "destructive production actions",
-        "Surface 7 managed DDL execution",
-        "new Surfaces 22-56 runtime features"
-      ],
+      "allowed_scope": ["coordination/checkpoint/sprint docs", "shared integration required by accepted RC1 Worker findings", "package metadata/build integration when required", "final README reconciliation at stable sprint closeout"],
+      "forbidden_scope": ["production deploy/release", "live provider side effects", "destructive production actions", "Surface 7 managed DDL execution", "new Surfaces 22-56 runtime features"],
       "close_condition": "Satisfied by PR #1024 merge after exact-head path-applicable FULL gates, three-file shared-truth diff audit, fresh main and zero unresolved review threads"
     },
     {
@@ -222,10 +163,7 @@
       "source": "Issue #1017",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-a-cpt-taxonomy-v1",
-      "primary_surfaces": [
-        1,
-        2
-      ],
+      "primary_surfaces": [1, 2],
       "merged_pr": 1021,
       "merge_sha": "39b441b4c991515b3384c7f7285143855796acbc",
       "shared_changes": "NONE_REQUIRED"
@@ -240,11 +178,7 @@
       "source": "Issue #1018",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-b-fields-relations-status-v1",
-      "primary_surfaces": [
-        3,
-        4,
-        5
-      ],
+      "primary_surfaces": [3, 4, 5],
       "merged_pr": 1023,
       "merge_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
       "shared_changes": "NONE_REQUIRED"
@@ -259,11 +193,7 @@
       "source": "Issue #1019",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-c-query-columns-listings-v1",
-      "primary_surfaces": [
-        6,
-        8,
-        9
-      ],
+      "primary_surfaces": [6, 8, 9],
       "merged_pr": 1022,
       "merge_sha": "891cd201667efbc72cc40285206741dc5a8c9abb",
       "shared_changes": "NONE_REQUIRED"
@@ -280,23 +210,8 @@
       "claim_branch": "agent/p006-wave1h-static-harness-v1",
       "temp_matrix_grant": "GOV-P001-CF-TEMP-006 CONSUMED",
       "terminal_result": "FP-29/30/31/40/41/42 PASS; FP-33 INCONCLUSIVE STOP/REVIEW on lifecycle-owner discovery; 0 FAIL",
-      "allowed_scope": [
-        "deterministic Wave 1H static/harness evidence tooling",
-        "tests/fixtures/workflow/docs required only for FP-29/30/31/33/40/41/42",
-        "deterministic derivation and SHA-256 pinning of immutable Free/Pro candidates through accepted build path"
-      ],
-      "forbidden_scope": [
-        "real WordPress runtime execution",
-        "FP-21/22/24",
-        "FP-32",
-        "FP-34+",
-        "runtime behavior changes merely to force PASS",
-        "remote licensing/provider calls",
-        "production credentials/data",
-        "destructive or irreversible operations",
-        "deploy/release",
-        "#947 independent review"
-      ],
+      "allowed_scope": ["deterministic Wave 1H static/harness evidence tooling", "tests/fixtures/workflow/docs required only for FP-29/30/31/33/40/41/42", "deterministic derivation and SHA-256 pinning of immutable Free/Pro candidates through accepted build path"],
+      "forbidden_scope": ["real WordPress runtime execution", "FP-21/22/24", "FP-32", "FP-34+", "runtime behavior changes merely to force PASS", "remote licensing/provider calls", "production credentials/data", "destructive or irreversible operations", "deploy/release", "#947 independent review"],
       "close_condition": "Satisfied on PR #1028 merge after exact-head green CI, immutable evidence run 35146615997/artifact 10467128983, fresh-main verification, zero unresolved review threads and README/shared-truth reconciliation without certification promotion"
     },
     {
@@ -310,32 +225,11 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1i-runtime-v1",
       "temp_matrix_grant": "GOV-P001-CF-TEMP-007",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
       "fp44_method": "Booted real WordPress; 20 warmups + 100 hrtime samples around LocalCompatibilityPreflight::evaluateRuntime(); median <= 5.0 ms; p95 <= 20.0 ms; outbound WordPress HTTP interception; zero remote attempts",
       "timeout_safe_ci": "Separate candidate-build, FP-34 matrix, and FP-44 matrix jobs with job-level timeouts, concurrency cancellation and per-cell artifacts",
-      "allowed_scope": [
-        "deterministic immutable candidate build and SHA-256/pair pinning",
-        "disposable real WordPress FP-34 load-order evidence for the two authorized cells",
-        "disposable real WordPress FP-44 local-preflight timing and outbound-HTTP-denial evidence for the two authorized cells",
-        "tests/fixtures/workflow/docs required only for FP-34/44"
-      ],
-      "forbidden_scope": [
-        "FP-21/22/24",
-        "FP-32",
-        "FP-35-43",
-        "FP-45+",
-        "multisite/MU/managed-host/recovery/opcache/package-replacement/concurrent-migration evidence",
-        "runtime behavior changes merely to force PASS",
-        "remote licensing/provider/billing/allocation calls",
-        "production credentials/data or live sites",
-        "destructive or irreversible production operations",
-        "deploy/release",
-        "#947 independent review",
-        "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["deterministic immutable candidate build and SHA-256/pair pinning", "disposable real WordPress FP-34 load-order evidence for the two authorized cells", "disposable real WordPress FP-44 local-preflight timing and outbound-HTTP-denial evidence for the two authorized cells", "tests/fixtures/workflow/docs required only for FP-34/44"],
+      "forbidden_scope": ["FP-21/22/24", "FP-32", "FP-35-43", "FP-45+", "multisite/MU/managed-host/recovery/opcache/package-replacement/concurrent-migration evidence", "runtime behavior changes merely to force PASS", "remote licensing/provider/billing/allocation calls", "production credentials/data or live sites", "destructive or irreversible production operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "FP-34 and FP-44 reach terminal PASS/FAIL/INCONCLUSIVE on both authorized cells with exact artifact identities and predeclared FP-44 method/bounds preserved; exact-head path-applicable CI green; fresh main; zero unresolved review threads; shared truth reconciled without certification promotion"
     },
     {
@@ -349,9 +243,7 @@
       "runtime_allowed": false,
       "independence_required": true,
       "supervisor_claim_allowed": false,
-      "allowed_scope": [
-        "docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"
-      ],
+      "allowed_scope": ["docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"],
       "claim_branch": "agent/p006-wave1a-independent-evidence-review-v1"
     }
   ],
@@ -365,10 +257,6 @@
     "p006_wave1h_artifact_id": 10467128983,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
-    "rc1_lane_merge_order": [
-      "39b441b4c991515b3384c7f7285143855796acbc",
-      "891cd201667efbc72cc40285206741dc5a8c9abb",
-      "aaf73c702f0f8bc073e1891e0456dea5ebe23904"
-    ]
+    "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
   }
 }
