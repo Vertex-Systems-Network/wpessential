@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before B3 harness-readiness closeout merge: **`main @ cee1e4ba2a441218a26c615b358377bcbc54f33d`**
+Current integration anchor before manual-replacement harness closeout merge: **`main @ 60ed7a9a654baa579df3a49a4cd4fce89f64fa67`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -9,6 +9,7 @@ P-006 Wave 1J closeout: **Issue #1031 / PR #1033**
 P-006 Wave 1K closeout: **Issue #1034 / PR #1036**
 P-006 Wave 1L closeout: **Issue #1037 / PR #1039**
 P-006 B3 harness readiness review: **Issue #1040 / PR #1042**
+P-006 B3 WordPress manual replacement harness prerequisite: **Issue #1043 / PR #1045**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1L_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -19,6 +20,7 @@ Wave 1J temporary grant: **`GOV-P001-CF-TEMP-008 CONSUMED / NON-REUSABLE`**
 Wave 1K temporary grant: **`GOV-P001-CF-TEMP-009 CONSUMED / NON-REUSABLE`**
 Wave 1L temporary grant: **`GOV-P001-CF-TEMP-010 CONSUMED / NON-REUSABLE`**
 B3 harness review authorization: **`GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED / NON-RUNTIME`**
+Manual replacement harness authorization: **`GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
 
 ## Mandatory work-cycle order
 
@@ -359,6 +361,65 @@ A future FP-58 harness must pin the exact WordPress-owned upload/overwrite path,
 
 No new P-006 execution slot is dependency-ready from this review.
 
+## P-006 B3 WordPress manual replacement harness prerequisite closeout
+
+Issue **#1043** / PR **#1045** implements and validates the WordPress-owned manual ZIP overwrite transport prerequisite required before any future FP-58 execution.
+
+Initial exact harness head:
+
+- `816cca3ca04cac48337dc02cb018da04c2c70d2a`
+
+Initial exact-head CI:
+
+- Governance Gate run **35394229287 — PASS**;
+- P-006 Manual Replacement Harness run **35394229243 — PASS**.
+
+Immutable artifacts:
+
+- candidate graph: id **10567116617**, digest `sha256:f5115379e452daa8687f67058f1128bfa7082392cab4bba889771386495d2b86`;
+- minimum Free: id **10567201765**, digest `sha256:ae30610998d83577bd10abe76b0df90017a3b61f00ced48c9f2cf35ffa07bcdf`;
+- minimum Pro: id **10566906985**, digest `sha256:8912e32b6293debc34459c78cd4aa80b48e1bac1d556af3120bfc63837f4ea6a`;
+- reference Free: id **10566818273**, digest `sha256:e7cb0ec496ef203f915be18f03b137dd0deb00ab0da354be57e3679f2f8e44d0`;
+- reference Pro: id **10567082791**, digest `sha256:457fb7baaff8cb06d197bf61263b119c379e98640770b10a002029bb060eed16`.
+
+Validated transport:
+
+- WordPress core `Plugin_Upgrader::install($localZip, ['overwrite_package' => true])`;
+- local deterministic ZIP only;
+- `FS_METHOD=direct`;
+- live Free and Pro plugin roots are real directories, not symlinks;
+- fresh PHP process observes the post-overwrite generation.
+
+Validated cells:
+
+- minimum / Free F0→F1 — **PASS prerequisite**;
+- minimum / Pro P0→P1 — **PASS prerequisite**;
+- reference / Free F0→F1 — **PASS prerequisite**;
+- reference / Pro P0→P1 — **PASS prerequisite**.
+
+Exact payload identities observed:
+
+- F0 payload tree: `0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`;
+- F1 ZIP: `f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185`;
+- F1 payload tree: `3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460`;
+- P0 payload tree: `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`;
+- P1 ZIP: `96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac`;
+- P1 payload tree: `d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`.
+
+Every cell preserved expected plugin activation, reached fresh-boot `compatible`, observed **0 outbound WordPress HTTP attempts**, and left **no temporary plugin-backup residue**.
+
+This result is intentionally a **HARNESS PREREQUISITE PASS**, not an FP-58 result:
+
+- FP-58 remains **NOT_EXECUTED**;
+- no interrupted/corrupt replacement is executed;
+- no updater/TUF certification;
+- no rollback/migration certification;
+- no pair/runtime certification;
+- ADR-0010 remains **Proposed**;
+- formal P-006 accounting remains **144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+FP-49…52 remain separately blocked by the readable-partial-PHP integrity/publication-contract gap identified in #1040.
+
 ## Current issue classification
 
 - **#858** — `NON_BLOCKING_EXTERNAL_ADMIN`; active ruleset protects main, broader required-CI policy remains a repository-admin residual.
@@ -368,7 +429,8 @@ No new P-006 execution slot is dependency-ready from this review.
 - **#1031** — `COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL`; FP-61…68/76 reach bounded pure/local PASS in PHP 8.2 and 8.5 without certification promotion.
 - **#1034** — `COMPLETED_ON_PR_1036_MERGE_P006_WAVE_1K_TERMINAL`; FP-45/46/53/60 reach bounded PASS on both authorized disposable WordPress cells without updater/manual-upload or certification promotion.
 - **#1037** — `COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL`; FP-47/48 reach bounded complete-package breaking-order PASS on both authorized disposable WordPress cells without interruption/manual-upload/updater/rollback/migration certification promotion.
-- **#1040** — `COMPLETED_ON_PR_1042_NON_RUNTIME_B3_HARNESS_READINESS`; FP-49/51/52/58 remain BLOCKED and FP-50 remains PARTIAL/not full-fixture ready; no fixture execution or counter change.
+- **#1040** — `COMPLETED_ON_PR_1042_NON_RUNTIME_B3_HARNESS_READINESS`; FP-49/51/52 remain blocked, FP-50 remains PARTIAL/not full-fixture ready, and FP-58 required a WordPress-owned manual replacement harness; no fixture execution or counter change.
+- **#1043** — `COMPLETED_ON_PR_1045_MANUAL_REPLACEMENT_HARNESS_PREREQUISITE`; WordPress-owned Free/Pro manual ZIP overwrite transport passes minimum/reference harness validation while FP-58 remains NOT_EXECUTED and counters remain unchanged.
 - **#1016** — closed completed by PR #1024.
 - **#1017** — closed completed by PR #1021.
 - **#1018** — closed completed by PR #1023.
@@ -460,11 +522,11 @@ Current authority does not authorize or promote:
 
 These remain valid future work behind their own gates.
 
-## Resume rule after B3 harness readiness review
+## Resume rule after manual-replacement harness prerequisite
 
-After PR #1042 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
+After PR #1045 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
 
-It must not recreate Waves 1H–1L or directly execute FP-49…52/58. The next valid B3 repository-changing item must be a separately authorized integrity/publication architecture prerequisite or WordPress-owned manual replacement harness prerequisite. #858 and #947 retain their explicit nonblocking boundaries; rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
+It must not recreate Waves 1H–1L or reinterpret this harness prerequisite as FP-58 execution. The WordPress-owned manual replacement transport prerequisite is now available, so a future FP-58 execution tranche may be considered only through a separate explicit authorization and fresh dependency audit. FP-49…52 remain blocked by the integrity/publication-contract gap. #858 and #947 retain their explicit nonblocking boundaries; rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
 
 ## Historical authority
 
