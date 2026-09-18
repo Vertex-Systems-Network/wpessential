@@ -1,9 +1,9 @@
 {
-  "schema_version": 55,
-  "snapshot_date": "2026-09-16",
-  "queue_anchor_main_sha": "83cb24d9070cbb4c94473c167fac639fce8210b6",
-  "mode": "POST_RC1_P006_WAVE_1H_CLOSEOUT",
-  "source_issue": "#1014",
+  "schema_version": 56,
+  "snapshot_date": "2026-09-18",
+  "queue_anchor_main_sha": "0ae1ec735b2e7351bd3d26cacbd6ea47b3daf086",
+  "mode": "POST_RC1_P006_WAVE_1I_AUTHORIZED",
+  "source_issue": "#1015",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -13,9 +13,11 @@
     "wave1h_temp_matrix_grant": "GOV-P001-CF-TEMP-006 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "production_deploy_authorized": false,
     "live_provider_authorized": false,
-    "destructive_production_authorized": false
+    "destructive_production_authorized": false,
+    "wave1i_owner_authorization": "Issue #1015 comment 5730643218",
+    "wave1i_temp_matrix_grant": "GOV-P001-CF-TEMP-007 ACTIVE_ONE_TRANCHE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → accepted work. RC1 is closed. P-006 Wave 1H reaches terminal bounded evidence through PR #1028: FP-29/30/31/40/41/42 PASS and FP-33 INCONCLUSIVE/STOP-REVIEW because concrete migration-owner types exist. No Supervisor P-006 execution slot remains after PR #1028 merges. #858 remains external-admin NON_BLOCKING, #947 remains independent Worker-only NON_BLOCKING, and #1015 remains certification NON_BLOCKING / NOT EXECUTED.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs → active claims/queue → accepted work. RC1 and P-006 Wave 1H are closed. #1015 Wave 1I is the only Supervisor-authorized executable slot and is bounded to FP-34/44 disposable real-WordPress evidence under the predeclared runtime matrix and timing bound. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -34,7 +36,7 @@
     "858": "NON_BLOCKING_EXTERNAL_ADMIN",
     "947": "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
     "1014": "COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL",
-    "1015": "CERTIFICATION_NONBLOCKING_NOT_EXECUTED",
+    "1015": "AUTHORIZED_OPEN_P006_WAVE_1I_RUNTIME",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -112,11 +114,12 @@
       "fp_21_22_24": "NOT_EXECUTED",
       "fp_29_30_31_40_41_42": "PASS_WAVE_1H_STATIC_HARNESS",
       "fp_33": "INCONCLUSIVE_STOP_REVIEW_LIFECYCLE_OWNER_DISCOVERY",
-      "fp_34_44": "NOT_EXECUTED_WAVE_1I_UNAUTHORIZED",
+      "fp_34_44": "AUTHORIZED_NOT_EXECUTED_WAVE_1I",
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
       "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006"],
-      "active_temp_grant": null,
+      "active_temp_grant": "-007",
+      "active_temp_grant_scope": "Wave 1I FP-34/44 only; exact derived candidate identities pinned before runtime; WP 6.9/PHP 8.2/MySQL 8.4 and WP 7.1/PHP 8.5/MySQL 8.4 disposable cells; FP-44 20 warmups + 100 samples with median <=5ms and p95 <=20ms and zero outbound HTTP; non-certifying; one tranche; non-reusable after consumption",
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -210,6 +213,24 @@
       "allowed_scope": ["deterministic Wave 1H static/harness evidence tooling", "tests/fixtures/workflow/docs required only for FP-29/30/31/33/40/41/42", "deterministic derivation and SHA-256 pinning of immutable Free/Pro candidates through accepted build path"],
       "forbidden_scope": ["real WordPress runtime execution", "FP-21/22/24", "FP-32", "FP-34+", "runtime behavior changes merely to force PASS", "remote licensing/provider calls", "production credentials/data", "destructive or irreversible operations", "deploy/release", "#947 independent review"],
       "close_condition": "Satisfied on PR #1028 merge after exact-head green CI, immutable evidence run 35146615997/artifact 10467128983, fresh-main verification, zero unresolved review threads and README/shared-truth reconciliation without certification promotion"
+    },
+    {
+      "priority": 210,
+      "slot_id": "p006-wave1i-runtime-v1",
+      "title": "P-006 Wave 1I real-WordPress evidence — FP-34/44",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "P006_BOUNDED_REAL_WORDPRESS_EVIDENCE",
+      "source": "Issue #1015 / owner authorization comment 5730643218",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-wave1i-runtime-v1",
+      "temp_matrix_grant": "GOV-P001-CF-TEMP-007",
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "fp44_method": "Booted real WordPress; 20 warmups + 100 hrtime samples around LocalCompatibilityPreflight::evaluateRuntime(); median <= 5.0 ms; p95 <= 20.0 ms; outbound WordPress HTTP interception; zero remote attempts",
+      "timeout_safe_ci": "Separate candidate-build, FP-34 matrix, and FP-44 matrix jobs with job-level timeouts, concurrency cancellation and per-cell artifacts",
+      "allowed_scope": ["deterministic immutable candidate build and SHA-256/pair pinning", "disposable real WordPress FP-34 load-order evidence for the two authorized cells", "disposable real WordPress FP-44 local-preflight timing and outbound-HTTP-denial evidence for the two authorized cells", "tests/fixtures/workflow/docs required only for FP-34/44"],
+      "forbidden_scope": ["FP-21/22/24", "FP-32", "FP-35-43", "FP-45+", "multisite/MU/managed-host/recovery/opcache/package-replacement/concurrent-migration evidence", "runtime behavior changes merely to force PASS", "remote licensing/provider/billing/allocation calls", "production credentials/data or live sites", "destructive or irreversible production operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
+      "close_condition": "FP-34 and FP-44 reach terminal PASS/FAIL/INCONCLUSIVE on both authorized cells with exact artifact identities and predeclared FP-44 method/bounds preserved; exact-head path-applicable CI green; fresh main; zero unresolved review threads; shared truth reconciled without certification promotion"
     },
     {
       "priority": 900,
