@@ -1,20 +1,22 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before Wave 1K closeout merge: **`main @ 2d307e4bdc6c5bc9da26cfd86702550f5f770fff`**
+Current integration anchor before Wave 1L closeout merge: **`main @ 56a6a9bcdf3d83c2f30689224c159be952f9c387`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
 P-006 Wave 1J closeout: **Issue #1031 / PR #1033**
 P-006 Wave 1K closeout: **Issue #1034 / PR #1036**
+P-006 Wave 1L closeout: **Issue #1037 / PR #1039**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1K_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1L_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
 Wave 1I temporary grant: **`GOV-P001-CF-TEMP-007 CONSUMED / NON-REUSABLE`**
 Wave 1J temporary grant: **`GOV-P001-CF-TEMP-008 CONSUMED / NON-REUSABLE`**
 Wave 1K temporary grant: **`GOV-P001-CF-TEMP-009 CONSUMED / NON-REUSABLE`**
+Wave 1L temporary grant: **`GOV-P001-CF-TEMP-010 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -254,6 +256,64 @@ Boundary truth for Wave 1K:
 
 `GOV-P001-CF-TEMP-009` is consumed by this tranche and is non-reusable.
 
+## P-006 Wave 1L closeout
+
+Issue **#1037** authorizes only `FP-47` and `FP-48` under one-tranche temporary grant **`GOV-P001-CF-TEMP-010`**.
+
+PR **#1039** executes only complete-package breaking update-order evidence against deterministic **NON-RELEASE / TEST-ONLY** F1/P0/F2/P2 ZIPs. It is a narrowed B3a pre-slice and does not claim interrupted/fault-injected/manual replacement evidence. Initial exact evidence head before shared-truth reconciliation was **`cfc90af3176df979d1646597414d462ab78114f8`**.
+
+Terminal initial evidence:
+
+- workflow run: **35390769301**;
+- candidate graph artifact: **10565272329** / digest **`sha256:2bb9631a537029df1558672a0a45818fb5ba4d72f5345044fa28c159ec79c44e`**;
+- FP-47 minimum artifact: **10565807310** / digest **`sha256:98da23c10fbd11aa475d0171e50c2b8e36e0b3c0bdcd2e75c5fa49589a157c27`**;
+- FP-47 reference artifact: **10566341661** / digest **`sha256:44ab87fffe7775771977554af57e9d3403fe0e4bea61928ea5040b6de23f12ca`**;
+- FP-48 minimum artifact: **10566127002** / digest **`sha256:757dec6733be4afbad52f17fd58a0d8b5c576319963ca9b6fd2f8ad9a9fef977`**;
+- FP-48 reference artifact: **10565487306** / digest **`sha256:ab29dc75774a4a0f82ac0caf130ffeb6d718f0f7c0812aab92f33fc955015e30`**.
+
+Immutable complete test-only nodes:
+
+- **F1:** ZIP **`f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185`**, payload tree **`3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460`**, Free `0.1.1-test-overlap`, Platform API `0.1.0`, schema `1`.
+- **F2:** ZIP **`92e54db0220ea76323fcf2b0e3772ea31e379dac47ed62690b027edbccbff4dc`**, payload tree **`a19b300607420d77b7751334a9a4ea2ad1570ff9078aaa6938e5d32755cce42e`**, Free `0.2.0-test-breaking`, Platform API `0.2.0`, schema `1`.
+- **P0:** ZIP **`0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178`**, payload tree **`08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`**, Pro `0.1.0-dev`, Free range `0.1.0-dev … 0.1.1-test-overlap`, API `0.1.0`, schema `1`.
+- **P2:** ZIP **`2a56eb653a3e685a76a6c43e5f22cebfe92b0827b77475bdf2242afd094478c3`**, payload tree **`16e4a2a6fe6ca1b1c29d39e47186c83af6a9ad7e51bd09e8e0765bb8be639289`**, Pro `0.2.0-test-breaking`, exact Free `0.2.0-test-breaking`, API `0.2.0`, schema `1`.
+
+Pinned pair identities:
+
+- **F1/P0:** `f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef` — expected `compatible`;
+- **F2/P0:** `72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c` — expected `free_version_too_new`;
+- **F1/P2:** `a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501` — expected `free_version_too_old`.
+
+Fixture results on both WordPress 6.9 / PHP 8.2 / MySQL 8.4 and WordPress 7.1 / PHP 8.5 / MySQL 8.4:
+
+- **FP-47 — PASS:** F1/P0 begins compatible, then complete Free replacement to F2 while P0 remains produces `free_version_too_new`; premium boot and migration admission are false, premium modules are inert, the Free kernel stays booted, and Free `custom-post-types` plus `taxonomies` remain registered. No fatal, outbound HTTP or compatibility persistence is observed.
+- **FP-48 — PASS:** F1/P0 begins compatible, then complete Pro replacement to P2 while F1 remains produces `free_version_too_old`; premium boot and migration admission are false, premium modules are inert, the Free kernel stays booted, and Free `custom-post-types` plus `taxonomies` remain registered. No fatal, outbound HTTP or compatibility persistence is observed.
+
+Timeout/runaway protection:
+
+- candidate/breaking graph build is a separate **<=15 minute** job;
+- FP-47 and FP-48 run as independent minimum/reference matrix jobs capped at **<=18 minutes** each;
+- matrix `fail-fast: false` preserves independent cell results;
+- stale runs are cancelled by workflow concurrency;
+- each path/cell uploads its own evidence artifact.
+
+Boundary truth for Wave 1L:
+
+- complete ZIP artifacts only; no partial/truncated/missing-file fault injection;
+- tracked product runtime source was not modified to force PASS;
+- the symlink-target swap is harness placement only and does not certify WordPress manual upload, automatic updater/TUF or interrupted replacement;
+- no rollback/downgrade or schema migration certification was executed;
+- no stale/concurrent request evidence was executed;
+- no provider/license/billing/allocation service was called;
+- no live credentials/sites or production resources were used;
+- no destructive or irreversible production action was executed;
+- no deployment/release was executed;
+- permanent P-001/CF was not promoted;
+- no Free↔Pro pair or P-006 runtime certification was promoted;
+- ADR-0010 remains **Proposed**.
+
+`GOV-P001-CF-TEMP-010` is consumed by this tranche and is non-reusable.
+
 ## Current issue classification
 
 - **#858** — `NON_BLOCKING_EXTERNAL_ADMIN`; active ruleset protects main, broader required-CI policy remains a repository-admin residual.
@@ -262,16 +322,17 @@ Boundary truth for Wave 1K:
 - **#1015** — `COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL`; FP-34 and FP-44 reach bounded PASS on both authorized disposable WordPress cells without certification promotion.
 - **#1031** — `COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL`; FP-61…68/76 reach bounded pure/local PASS in PHP 8.2 and 8.5 without certification promotion.
 - **#1034** — `COMPLETED_ON_PR_1036_MERGE_P006_WAVE_1K_TERMINAL`; FP-45/46/53/60 reach bounded PASS on both authorized disposable WordPress cells without updater/manual-upload or certification promotion.
+- **#1037** — `COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL`; FP-47/48 reach bounded complete-package breaking-order PASS on both authorized disposable WordPress cells without interruption/manual-upload/updater/rollback/migration certification promotion.
 - **#1016** — closed completed by PR #1024.
 - **#1017** — closed completed by PR #1021.
 - **#1018** — closed completed by PR #1023.
 - **#1019** — closed completed by PR #1022.
 
-After PR #1036 merges, no Supervisor P-006 execution slot remains open. #947 remains independent Worker-only and #858 remains the external-admin residual.
+After PR #1039 merges, no Supervisor P-006 execution slot remains open. #947 remains independent Worker-only and #858 remains the external-admin residual.
 
 ## Current implementation truth
 
-Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Waves 1H/1I/1J/1K silently promote full-parity machine lifecycle states.
+Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Waves 1H/1I/1J/1K/1L silently promote full-parity machine lifecycle states.
 
 - Surface 1 / CPT — bounded runtime/editor evidence hardened for RC1 through #1017/#1021; full-parity `RUNTIME_CERTIFIED` remains unpromoted.
 - Surface 2 / Taxonomy — PASS for the accepted bounded V1 owner-runtime scope; RC1 regression-safe, no taxonomy migration execution.
@@ -289,29 +350,30 @@ Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Waves 1H/1
 
 Physical Free/Pro package separation, canonical local entitlement state, read-only commercial inventory and local fail-closed compatibility preflight remain accepted architecture.
 
-P-006 accepted truth after Wave 1K closeout:
+P-006 accepted truth after Wave 1L closeout:
 
 - documented fixtures: **144**;
-- executed: **43**;
-- PASS: **42**;
+- executed: **45**;
+- PASS: **44**;
 - FAIL: **0**;
 - INCONCLUSIVE: **1**;
 - certified Free↔Pro pairs: **0**;
 - P-006 runtime certifications: **0**.
 
 Passed bounded fixtures are:
-`FP-01/02/03/05/07/08/10/11/13/14/15/16/17/18/19/20/23/25/26/27/28/29/30/31/34/40/41/42/44/45/46/53/60/61/62/63/64/65/66/67/68/76`.
+`FP-01/02/03/05/07/08/10/11/13/14/15/16/17/18/19/20/23/25/26/27/28/29/30/31/34/40/41/42/44/45/46/47/48/53/60/61/62/63/64/65/66/67/68/76`.
 
 `FP-33` is **INCONCLUSIVE / STOP-REVIEW**, not PASS and not FAIL.
 `FP-21/22/24` remain **NOT EXECUTED**.
 `FP-34/44` are **PASS / Wave 1I bounded real-WordPress evidence**.
 `FP-61…68/76` are **PASS / Wave 1J bounded pure/local range-semantics evidence**.
 `FP-45/46/53/60` are **PASS / Wave 1K bounded compatible update-order evidence**.
-All temporary grants `-001` through `-009` are consumed and non-reusable.
+`FP-47/48` are **PASS / Wave 1L bounded complete-package breaking-order evidence**.
+All temporary grants `-001` through `-010` are consumed and non-reusable.
 Permanent P-001/CF remains uncertified.
 ADR-0010 remains **Proposed**.
 
-Wave 1H static evidence, Wave 1I real-WordPress evidence, Wave 1J pure/local range evidence and Wave 1K compatible update-order evidence do not manufacture compatibility-pair certification, updater/TUF certification, manual-upload certification or P-006 runtime certification.
+Wave 1H static evidence, Wave 1I real-WordPress evidence, Wave 1J pure/local range evidence, Wave 1K compatible update-order evidence and Wave 1L complete-package breaking-order evidence do not manufacture compatibility-pair certification, interrupted-replacement certification, updater/TUF certification, manual-upload certification, rollback/migration certification or P-006 runtime certification.
 
 ## Security / repository protection
 
@@ -347,16 +409,16 @@ Current authority does not authorize or promote:
 - full Multisite commercial allocation/clone semantics;
 - blanket P-006 144/144 certification;
 - FP-21/22/24 execution;
-- Wave 1K follow-on update/interruption/rollback execution beyond FP-45/46/53/60 without separate authorization;
+- Wave 1L follow-on interruption/manual-upgrade/rollback execution beyond FP-47/48 without separate authorization;
 - production deployment/release.
 
 These remain valid future work behind their own gates.
 
-## Resume rule after Wave 1K
+## Resume rule after Wave 1L
 
-After PR #1036 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
+After PR #1039 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
 
-It must not recreate Waves 1H–1K work. The next valid work item must come from current repository issue/queue truth. #858 and #947 retain their explicit nonblocking boundaries; breaking/interrupted replacement, rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
+It must not recreate Waves 1H–1L work. The next valid work item must come from current repository issue/queue truth. #858 and #947 retain their explicit nonblocking boundaries; FP-49…52 interruption/fault-injection, FP-58 manual-upgrade replacement, rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
 
 ## Historical authority
 
