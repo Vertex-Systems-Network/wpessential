@@ -347,7 +347,10 @@ try {
         'P1' => $outputDir . '/p1.zip',
     ];
 
-    kWriteZip($paths['F0'], $f0Entries);
+    @unlink($paths['F0']);
+    kAssert(copy($canonicalFree, $paths['F0']), 'Unable to copy canonical Free ZIP as F0');
+    kAssert(hash_equals(kHashFile($canonicalFree), kHashFile($paths['F0'])), 'F0 is not byte-identical to canonical Free ZIP');
+
     kWriteZip($paths['F1'], $f1Entries);
     kWriteZip($paths['P0'], $p0Entries);
     kWriteZip($paths['P1'], $p1Entries);
