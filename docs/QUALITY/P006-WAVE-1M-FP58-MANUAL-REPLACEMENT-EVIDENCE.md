@@ -137,6 +137,10 @@ Initial exact evidence head:
 
 `400efc86ef2bceecfbc138e8678519371f7d1924`
 
+Final pre-merge exact evidence head:
+
+`d5e574b1154dd0db4aaaeff8b2f1983a123326f4`
+
 Initial exact-head checks:
 
 - Governance Gate run **35396546234 — PASS**;
@@ -220,3 +224,22 @@ Formal P-006 accounting after this bounded result:
 `GOV-P001-CF-TEMP-011` is consumed by this tranche and is non-reusable.
 
 FP-58 PASS does not promote a certified pair/runtime, automatic updater/TUF behavior, rollback/migration behavior, partial/interrupted package safety, ADR-0010 acceptance, GA, release or deployment authority.
+
+
+### Final pre-merge exact-head verification
+
+- Governance Gate run **35396928806 — PASS**;
+- P-006 Wave 1M FP-58 run **35396928791 — PASS**;
+- deterministic graph build plus all eight scenario cells plus terminal aggregate — **PASS**.
+
+Final pre-merge immutable artifacts:
+- candidate graph: **10567947917** / `sha256:2c831545297cadc6acf1ec7cffaa286e4e5096afdc3654cbfe2887bdad5099b8`;
+- minimum compatible Free: **10568955257** / `sha256:5e9374de7496f7860598cb8396eb77071b0dd788a9873dd60d12c88262c9a1a0`;
+- minimum compatible Pro: **10569275141** / `sha256:b75d709ca6bd922fd417153cd9ef6aad9cf45810612bcc1ec9ab7d18cf327087`;
+- minimum breaking Free: **10567753082** / `sha256:0cdcbf15da20f1ed4584a0875de36570f47f44bd25a6bc9fbac2f5ab3b205c6e`;
+- minimum breaking Pro: **10568910292** / `sha256:10941d124949bdae211d1688d23a0293275433ddfb43b8697484b7888a25a8f8`;
+- reference compatible Free: **10568137775** / `sha256:b3e11258ad67fd4c61ab19f0069227d97698b97bdf63a2f0501039f57b33a1fb`;
+- reference compatible Pro: **10568980222** / `sha256:46a2eed38e04a732e9cebccc7c99f1cf844f8364bee601b5ae4381d50a0e6da9`;
+- reference breaking Free: **10569045243** / `sha256:1d6bd01a48409a3111e95350002b9d74137732c1744a9a120623517de85c549b`;
+- reference breaking Pro: **10568112777** / `sha256:a22edce987c1fd30668ca78737290169e12656da1532abfb2c8ec529effd825f`;
+- terminal marker: **10569065242** / `sha256:62833a3f98ce9a6f28eab782ebcc01c0fed4dcca4069c225d33a11b67f540957`.
