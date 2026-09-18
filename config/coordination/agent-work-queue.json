@@ -1,8 +1,8 @@
 {
-  "schema_version": 58,
+  "schema_version": 59,
   "snapshot_date": "2026-09-18",
   "queue_anchor_main_sha": "198b71fcb133dd574f4c010147078eaeabb9549b",
-  "mode": "POST_RC1_P006_WAVE_1J_AUTHORIZED",
+  "mode": "POST_RC1_P006_WAVE_1J_CLOSEOUT",
   "source_issue": "#1031",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -17,9 +17,9 @@
     "wave1i_owner_authorization": "Issue #1015 comment 5730643218",
     "wave1i_temp_matrix_grant": "GOV-P001-CF-TEMP-007 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "wave1j_owner_authorization": "Issue #1031",
-    "wave1j_temp_grant": "GOV-P001-CF-TEMP-008 ACTIVE_ONE_TRANCHE"
+    "wave1j_temp_grant": "GOV-P001-CF-TEMP-008 CONSUMED_ONE_TRANCHE_NON_REUSABLE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I are terminal. #1031 Wave 1J is the only Supervisor-authorized executable slot and is bounded to pure/local FP-61…68/76 Platform API range semantics under GOV-P001-CF-TEMP-008. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J are terminal. #1031 Wave 1J reaches bounded terminal PASS through PR #1033: FP-61…68/76 PASS in pure PHP 8.2/8.5 with identical deterministic decisions and no WordPress/DB/provider side effects. No Supervisor P-006 execution slot remains after PR #1033 merges. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -39,7 +39,7 @@
     "947": "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
     "1014": "COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL",
     "1015": "COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL",
-    "1031": "AUTHORIZED_OPEN_P006_WAVE_1J_B1_RANGE_SEMANTICS",
+    "1031": "COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -108,8 +108,8 @@
     },
     "p006": {
       "documented": 144,
-      "executed": 30,
-      "pass": 29,
+      "executed": 39,
+      "pass": 38,
       "fail": 0,
       "inconclusive": 1,
       "certified_free_pro_pairs": 0,
@@ -118,11 +118,11 @@
       "fp_29_30_31_40_41_42": "PASS_WAVE_1H_STATIC_HARNESS",
       "fp_33": "INCONCLUSIVE_STOP_REVIEW_LIFECYCLE_OWNER_DISCOVERY",
       "fp_34_44": "PASS_WAVE_1I_REAL_WORDPRESS",
+      "fp_61_68_76": "PASS_WAVE_1J_PURE_RANGE_SEMANTICS",
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
-      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007"],
-      "active_temp_grant": "-008",
-      "active_temp_grant_scope": "Wave 1J FP-61…68/76 only; pure PHP 8.2/8.5 evaluator evidence; deterministic candidate/source identity pinning; no WordPress, DB, filesystem replacement, provider, destructive, deploy or release side effects; non-certifying; one tranche; non-reusable after consumption",
+      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008"],
+      "active_temp_grant": null,
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -148,6 +148,23 @@
         "fp44_minimum": {"median_ms": 0.002783, "p95_ms": 0.002996, "network_attempts": 0},
         "fp44_reference": {"median_ms": 0.003144, "p95_ms": 0.003285, "network_attempts": 0},
         "summary": "FP-34 PASS on minimum/reference genuine WordPress load-order variants; FP-44 PASS on minimum/reference under predeclared 20-warmup/100-sample limits; zero outbound HTTP; no pair/runtime certification promotion"
+      },
+      "wave1j_evidence": {
+        "source_head": "fc868fff6b3ca58a5088f416deb3f98debff5ce4",
+        "workflow_run": 35386874694,
+        "candidate_artifact_id": 10564580440,
+        "candidate_artifact_digest": "sha256:bcf30eb7296d21c7da049553027aa620aedb0738fb57dd8b23e9c18a6846621c",
+        "php82_artifact_id": 10564382281,
+        "php82_artifact_digest": "sha256:ab35f73ddb07764a3c24e2670be1545f4fe55582f1044a8a58d7066053923d2d",
+        "php85_artifact_id": 10564610456,
+        "php85_artifact_digest": "sha256:ce08bc33bba21fcee94cf5a96be432553a5416cf3d72349c94ae4bc2730e2dc8",
+        "free_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
+        "pro_sha256": "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467",
+        "pair_id": "28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211",
+        "local_compatibility_preflight_sha256": "53333d4bc59947e8dcc22b5119f7f0edd5609150cc47a33a360e40aaf62470f2",
+        "php82_determinism_sha256": "ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632",
+        "php85_determinism_sha256": "ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632",
+        "summary": "FP-61…68/76 PASS in PHP 8.2 and 8.5; 9 formal fixtures; identical normalized decisions across both cells; no WordPress boot, DB, filesystem replacement, provider/network or destructive/live side effects; no pair/runtime certification promotion"
       }
     },
     "main_ruleset": {
@@ -257,17 +274,18 @@
       "slot_id": "p006-wave1j-range-semantics-v1",
       "title": "P-006 Wave 1J Lane B1 pure Platform API range semantics — FP-61…68/76",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
+      "status": "COMPLETED_ON_PR_1033_MERGE",
       "work_mode": "P006_BOUNDED_PURE_RANGE_EVIDENCE",
-      "source": "Issue #1031",
+      "source": "Issue #1031 / PR #1033",
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1j-range-semantics-v1",
-      "temp_grant": "GOV-P001-CF-TEMP-008",
+      "temp_grant": "GOV-P001-CF-TEMP-008 CONSUMED",
+      "terminal_result": "FP-61…68/76 PASS in PHP 8.2 and PHP 8.5; identical determinism digest ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632; 0 FAIL; no WordPress/DB/provider side effects",
       "authorized_php_cells": ["PHP 8.2", "PHP 8.5"],
       "timeout_safe_ci": "Separate immutable-candidate build/identity job and independent PHP 8.2/8.5 pure-evaluator jobs; <=15m build, <=8m evaluator jobs; concurrency cancellation; per-cell artifacts",
       "allowed_scope": ["deterministic Free/Pro candidate and compatibility-source identity pinning", "pure LocalCompatibilityPreflight::evaluate() fixtures FP-61…68 and FP-76", "tests/evidence workflow/docs required only for Wave 1J B1"],
       "forbidden_scope": ["FP-45-60", "FP-69-75", "FP-77+", "WordPress boot or filesystem replacement", "DB/schema migration or rollback", "updater/TUF", "remote licensing/provider/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive or irreversible operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
-      "close_condition": "FP-61…68/76 reach terminal PASS/FAIL/INCONCLUSIVE in both authorized PHP cells with exact identities and deterministic decisions; exact-head path-applicable CI green; fresh main; zero unresolved review threads; shared truth reconciled without certification promotion"
+      "close_condition": "Satisfied on PR #1033 merge after exact identities and initial evidence run 35386874694, deterministic PHP 8.2/8.5 decisions, exact-head path-applicable CI, fresh-main verification, zero unresolved review threads and shared-truth reconciliation without certification promotion"
     },
     {
       "priority": 900,
@@ -296,6 +314,10 @@
     "p006_wave1i_source_head": "dfac65cc18506c47d50cbb1988cd2f9f4ae86f98",
     "p006_wave1i_workflow_run": 35351107887,
     "p006_wave1i_candidate_artifact_id": 10549554022,
+    "p006_wave1j": "TERMINAL_PR_1033_FP61_68_76_PASS_NOT_CERTIFIED",
+    "p006_wave1j_source_head": "fc868fff6b3ca58a5088f416deb3f98debff5ce4",
+    "p006_wave1j_workflow_run": 35386874694,
+    "p006_wave1j_candidate_artifact_id": 10564580440,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
