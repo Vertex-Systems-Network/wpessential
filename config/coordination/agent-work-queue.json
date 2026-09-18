@@ -1,9 +1,9 @@
 {
-  "schema_version": 65,
+  "schema_version": 66,
   "snapshot_date": "2026-09-18",
-  "queue_anchor_main_sha": "cee1e4ba2a441218a26c615b358377bcbc54f33d",
-  "mode": "POST_RC1_P006_B3_HARNESS_REVIEW_CLOSEOUT",
-  "source_issue": "#1040",
+  "queue_anchor_main_sha": "9b45af0340ce7dd448cda7742ef79f92a1e275da",
+  "mode": "POST_RC1_P006_B3_MANUAL_REPLACEMENT_HARNESS_AUTHORIZED",
+  "source_issue": "#1043",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -22,9 +22,10 @@
     "wave1k_temp_grant": "GOV-P001-CF-TEMP-009 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "wave1l_owner_authorization": "Issue #1037",
     "wave1l_temp_grant": "GOV-P001-CF-TEMP-010 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
-    "b3_harness_review_authorization": "Issue #1040 / GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW"
+    "b3_harness_review_authorization": "Issue #1040 / GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW",
+    "b3_manual_replacement_harness_authorization": "Issue #1043 / GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 ACTIVE_PREREQUISITE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K/1L are terminal. #1040 B3 harness readiness review is terminal and non-executing: FP-49 BLOCKED, FP-50 PARTIAL/NOT FULL-FIXTURE READY, FP-51 BLOCKED AS WRITTEN, FP-52 BLOCKED AS WRITTEN, FP-58 BLOCKED. No P-006 counters changed and no Supervisor execution slot remains. The next B3 action requires a separately authorized integrity/publication architecture or WordPress-owned manual replacement harness prerequisite. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K/1L plus #1040 readiness review are terminal. #1043 is the only Supervisor-authorized slot: implement and validate a disposable WordPress-owned manual ZIP overwrite harness via Plugin_Upgrader::install(... overwrite_package=true) on the minimum/reference cells. This is a prerequisite only: FP-58 remains NOT_EXECUTED, P-006 counters remain unchanged, product runtime source may not change, and no certification/release authority is promoted. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -48,6 +49,7 @@
     "1034": "COMPLETED_ON_PR_1036_MERGE_P006_WAVE_1K_TERMINAL",
     "1037": "COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL",
     "1040": "COMPLETED_ON_REVIEW_PR_NON_RUNTIME_B3_HARNESS_READINESS",
+    "1043": "AUTHORIZED_OPEN_P006_B3_MANUAL_REPLACEMENT_HARNESS_PREREQUISITE",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -419,6 +421,23 @@
       "allowed_scope": ["static source/repository inspection for FP-49/50/51/52/58 harness readiness", "source-derived deterministic cut-point and fixed coverage-set design", "missing-vs-readable-truncated PHP safety analysis", "future disposable harness architecture, recovery and timeout-safe CI design", "docs/QUALITY/P006-B3-FAULT-INJECTION-MANUAL-UPGRADE-HARNESS-READINESS.md", "queue/CHECKPOINT/README closeout only as needed to record readiness without fixture-accounting change"],
       "forbidden_scope": ["execute FP-49/50/51/52/58 or any other fixture", "WordPress runtime execution", "filesystem fault injection", "Plugin_Upgrader/manual replacement execution", "DB/schema mutation", "product runtime source mutation", "updater/TUF/provider/license/billing calls", "production/live credentials or sites", "destructive actions", "deploy/release", "#947 independent review", "P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on readiness closeout PR merge after per-fixture BLOCKED/PARTIAL conclusions, exact prerequisites, unchanged 144/45/44/0/1 accounting, exact-head governance, fresh-main verification and zero unresolved review threads"
+    },
+    {
+      "priority": 260,
+      "slot_id": "p006-b3-manual-replacement-harness-v1",
+      "title": "P-006 Lane B3 WordPress-owned manual ZIP overwrite harness prerequisite",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "P006_MANUAL_REPLACEMENT_HARNESS_PREREQUISITE",
+      "source": "Issue #1043",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-b3-manual-replacement-harness-v1",
+      "authorization": "GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001",
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "allowed_scope": ["dedicated tools/p006 manual replacement harness tooling", "dedicated timeout-safe harness-validation workflow", "deterministic F0/F1/P0/P1 candidate derivation through existing accepted build path", "disposable WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) transport validation", "exact before/after payload identity, activation-state, filesystem-method, backup-residue and zero-outbound-HTTP evidence", "documentation and queue/CHECKPOINT/README closeout for harness prerequisite only"],
+      "forbidden_scope": ["formal FP-58 execution or PASS/FAIL result", "FP-49-52 fault injection", "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes", "automatic updater/TUF", "rollback/migration certification", "provider/license/billing calls", "production/live credentials or sites", "deploy/release", "#947 independent review", "P-001/CF, pair/runtime certification or ADR-0010 promotion"],
+      "timeout_safe_ci": "candidate build <=15m; each minimum/reference manual-overwrite cell <=18m; fail-fast false; stale-run cancellation; per-cell immutable evidence artifacts",
+      "close_condition": "Harness validation PASS on both authorized cells using WordPress-owned overwrite transport; exact before/after identities and zero outbound HTTP recorded; exact-head governance/path-applicable checks green; P-006 accounting unchanged and FP-58 remains NOT_EXECUTED"
     },
     {
       "priority": 900,
