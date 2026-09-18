@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before Wave 1M FP-58 closeout merge: **`main @ a99fb1b438d35de1fca9b228d698044eceaa9fab`**
+Current integration anchor before B3 integrity/publication architecture-review closeout merge: **`main @ 951353d3eb96fc6213b0b8ba91abeefb981ccdc2`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -11,6 +11,7 @@ P-006 Wave 1L closeout: **Issue #1037 / PR #1039**
 P-006 B3 harness readiness review: **Issue #1040 / PR #1042**
 P-006 B3 WordPress manual replacement harness prerequisite: **Issue #1043 / PR #1045**
 P-006 Wave 1M FP-58 closeout: **Issue #1046 / PR #1048**
+P-006 B3 integrity/publication architecture review: **Issue #1049**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1L_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -23,6 +24,7 @@ Wave 1L temporary grant: **`GOV-P001-CF-TEMP-010 CONSUMED / NON-REUSABLE`**
 B3 harness review authorization: **`GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED / NON-RUNTIME`**
 Manual replacement harness authorization: **`GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
 Wave 1M temporary grant: **`GOV-P001-CF-TEMP-011 CONSUMED / NON-REUSABLE`**
+B3 integrity/publication review authorization: **`GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -420,12 +422,13 @@ This result is intentionally a **HARNESS PREREQUISITE PASS**, not an FP-58 resul
 - ADR-0010 remains **Proposed**;
 - formal P-006 accounting remains **144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
 
-FP-49…52 remain separately blocked by the readable-partial-PHP integrity/publication-contract gap identified in #1040.
+FP-49…52 remain unexecuted. Issue #1049 resolves the architecture ordering: generic WordPress replacement is not accepted as universally atomic; plugin-internal integrity alone cannot protect a corrupt entrypoint; an external publication-owner contract/harness is the mandatory next prerequisite.
 
 ## Current issue classification
 
 - **#858** — `NON_BLOCKING_EXTERNAL_ADMIN`; active ruleset protects main, broader required-CI policy remains a repository-admin residual.
 - **#947** — `INDEPENDENT_NONBLOCKING_WORKER_ONLY`; Supervisor must not claim/pre-create its branch or author its evidence.
+- **#1049** — `COMPLETED_NON_RUNTIME_B3_INTEGRITY_PUBLICATION_ARCHITECTURE_REVIEW`; no fixture execution/counter change; next prerequisite is an external publication-owner contract/harness.
 - **#1014** — `COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL`; six authorized fixtures PASS and FP-33 terminates INCONCLUSIVE/STOP-REVIEW.
 - **#1015** — `COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL`; FP-34 and FP-44 reach bounded PASS on both authorized disposable WordPress cells without certification promotion.
 - **#1031** — `COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL`; FP-61…68/76 reach bounded pure/local PASS in PHP 8.2 and 8.5 without certification promotion.
@@ -524,9 +527,9 @@ Current authority does not authorize or promote:
 
 These remain valid future work behind their own gates.
 
-## Resume rule after Wave 1M FP-58 closeout
+## Resume rule after B3 integrity/publication architecture review
 
-After PR #1048 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
+After the #1049 review closeout PR is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering. Do not execute FP-49…52 directly. The next B3 repository-changing action must be separately authorized publication-owner contract/harness work that proves entrypoint execution exclusion, staged/final tree verification and recovery for the intended WordPress Filesystem profile. A standalone internal manifest is not the first unblocker.
 
 It must not recreate Waves 1H–1L or reinterpret this harness prerequisite as FP-58 execution. The WordPress-owned manual replacement transport prerequisite is now available, so a future FP-58 execution tranche may be considered only through a separate explicit authorization and fresh dependency audit. FP-49…52 remain blocked by the integrity/publication-contract gap. #858 and #947 retain their explicit nonblocking boundaries; rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
 
@@ -564,3 +567,21 @@ Final terminal artifact: **10569065242** / `sha256:62833a3f98ce9a6f28eab782ebcc0
 Formal result: **FP-58 PASS**. Accounting is **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**. Compatible manual replacements preserve premium admission; breaking replacements fail closed as `free_version_too_new` or `free_version_too_old`, deny premium boot/migrations, leave premium modules inert, preserve the Free kernel plus `custom-post-types` and `taxonomies`, and observe zero outbound HTTP, persistence keys or backup residue.
 
 No automatic updater/TUF, partial/interrupted replacement, rollback/migration, provider, pair/runtime certification, ADR-0010 promotion, deploy or release authority follows. FP-49…52 remain blocked by the integrity/publication-contract gap. #947 remains independent Worker-only.
+
+
+## P-006 B3 integrity/publication architecture review
+
+Issue **#1049** completes a non-runtime review of the remaining FP-49…52 package-integrity/publication blocker.
+
+Terminal conclusions:
+
+- WordPress `move_dir()` may fall back from filesystem move to recursive copy, so generic WordPress replacement is **not** accepted as a universal atomic-publication guarantee;
+- a plugin-internal manifest may protect non-entry runtime files only after trusted code is already executing;
+- plugin-internal PHP cannot protect an already corrupt/truncated `wpessential.php` or `wpessential-pro.php` before PHP parses that entrypoint;
+- therefore an **external publication/execution boundary is mandatory first**;
+- internal runtime-critical-file manifesting is optional secondary defense and must not be implemented first as if it solved entrypoint corruption;
+- the next prerequisite is a publication-owner contract/harness covering staging, entrypoint execution exclusion, exact staged/final tree verification, recursive-copy fallback handling and recover-old/fail-closed behavior.
+
+Cut-point status remains: F-CUT-1 bounded-safe subcase; F-CUT-2 BLOCKED; F-CUT-3 PARTIAL; F-CUT-4 BLOCKED; P-CUT-1 bounded-safe subcase; P-CUT-2 BLOCKED; P-CUT-3 ready only after fixed file-list pin; P-CUT-4 BLOCKED; P-CUT-5 externally owned/plugin-internal unprovable.
+
+Formal P-006 accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
