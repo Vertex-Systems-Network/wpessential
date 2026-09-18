@@ -1,8 +1,8 @@
 {
-  "schema_version": 60,
+  "schema_version": 61,
   "snapshot_date": "2026-09-18",
-  "queue_anchor_main_sha": "f451190b24215035a68ed3ff10b353b665745c6e",
-  "mode": "POST_RC1_P006_WAVE_1K_AUTHORIZED",
+  "queue_anchor_main_sha": "2d307e4bdc6c5bc9da26cfd86702550f5f770fff",
+  "mode": "POST_RC1_P006_WAVE_1K_CLOSEOUT",
   "source_issue": "#1034",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -19,9 +19,9 @@
     "wave1j_owner_authorization": "Issue #1031",
     "wave1j_temp_grant": "GOV-P001-CF-TEMP-008 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "wave1k_owner_authorization": "Issue #1034",
-    "wave1k_temp_grant": "GOV-P001-CF-TEMP-009 ACTIVE_ONE_TRANCHE"
+    "wave1k_temp_grant": "GOV-P001-CF-TEMP-009 CONSUMED_ONE_TRANCHE_NON_REUSABLE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J are terminal. #1034 Wave 1K is the only Supervisor-authorized executable slot and is bounded to compatible independent update-order evidence FP-45/46/53/60 using full immutable NON-RELEASE overlap ZIPs under GOV-P001-CF-TEMP-009. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K are terminal. #1034 Wave 1K reaches bounded terminal PASS through PR #1036: FP-45/46/53/60 PASS on both disposable minimum/reference WordPress cells using deterministic full NON-RELEASE F0/F1/P0/P1 overlap ZIPs, exact post-step health evidence, zero outbound HTTP and no certification promotion. No Supervisor P-006 execution slot remains after PR #1036 merges. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -42,7 +42,7 @@
     "1014": "COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL",
     "1015": "COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL",
     "1031": "COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL",
-    "1034": "AUTHORIZED_OPEN_P006_WAVE_1K_B2_COMPATIBLE_UPDATE_ORDER",
+    "1034": "COMPLETED_ON_PR_1036_MERGE_P006_WAVE_1K_TERMINAL",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -111,8 +111,8 @@
     },
     "p006": {
       "documented": 144,
-      "executed": 39,
-      "pass": 38,
+      "executed": 43,
+      "pass": 42,
       "fail": 0,
       "inconclusive": 1,
       "certified_free_pro_pairs": 0,
@@ -122,11 +122,11 @@
       "fp_33": "INCONCLUSIVE_STOP_REVIEW_LIFECYCLE_OWNER_DISCOVERY",
       "fp_34_44": "PASS_WAVE_1I_REAL_WORDPRESS",
       "fp_61_68_76": "PASS_WAVE_1J_PURE_RANGE_SEMANTICS",
+      "fp_45_46_53_60": "PASS_WAVE_1K_COMPATIBLE_UPDATE_ORDER",
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
-      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008"],
-      "active_temp_grant": "-009",
-      "active_temp_grant_scope": "Wave 1K FP-45/46/53/60 only; full deterministic NON-RELEASE F0/F1/P0/P1 overlap ZIP graph; disposable WordPress 6.9/PHP 8.2/MySQL 8.4 and WordPress 7.1/PHP 8.5/MySQL 8.4; atomic harness-only plugin-directory replacement; no updater/TUF, interrupted/fault injection, rollback, migration certification, provider, production, destructive, deploy or release side effects; non-certifying; one tranche; non-reusable after consumption",
+      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009"],
+      "active_temp_grant": null,
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -169,6 +169,32 @@
         "php82_determinism_sha256": "ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632",
         "php85_determinism_sha256": "ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632",
         "summary": "FP-61…68/76 PASS in PHP 8.2 and 8.5; 9 formal fixtures; identical normalized decisions across both cells; no WordPress boot, DB, filesystem replacement, provider/network or destructive/live side effects; no pair/runtime certification promotion"
+      },
+      "wave1k_evidence": {
+        "source_head": "59e8675e292d41a3a98009f8649593f57f8d22ad",
+        "workflow_run": 35388639559,
+        "candidate_artifact_id": 10564059614,
+        "candidate_artifact_digest": "sha256:3610a5ca9223fc093972cc01ff4e7f43cf132ce57650449ff42cf8c0171eac0b",
+        "free_first_minimum_artifact_id": 10565043143,
+        "free_first_minimum_artifact_digest": "sha256:3b9585701ef7278838cbde31f971c22ecda5f1de631f01c10d7c9a56e152952e",
+        "free_first_reference_artifact_id": 10564948428,
+        "free_first_reference_artifact_digest": "sha256:4e3ba2783c4f82ba6aebcec5e0bdbb27337ac8ebfdccbc3b57b1eeb1ff281140",
+        "pro_first_minimum_artifact_id": 10564179781,
+        "pro_first_minimum_artifact_digest": "sha256:af88e451b99dd179279b6be29769dca2c0ed50632b25da72767a4d1a0c8e0bde",
+        "pro_first_reference_artifact_id": 10564379598,
+        "pro_first_reference_artifact_digest": "sha256:4b5bacdaafa6981d784caa7fa8b9ea91c6a9b15ef5d809a460b41df33474bd87",
+        "nodes": {
+          "F0": {"sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80", "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9", "version": "0.1.0-dev"},
+          "F1": {"sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185", "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460", "version": "0.1.1-test-overlap"},
+          "P0": {"sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178", "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7", "version": "0.1.0-dev"},
+          "P1": {"sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac", "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46", "version": "0.1.1-test-overlap"}
+        },
+        "pairs": {
+          "F0_P0": "c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0",
+          "F1_P0": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef",
+          "F0_P1": "532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26"
+        },
+        "summary": "FP-45/46/53/60 PASS on minimum/reference disposable WordPress cells; deterministic complete overlap ZIP graph derived twice byte-identically; F1/P0/P1 mutate only their main plugin entry; compatible Free-first and Pro-first replacement preserve API/schema and premium module availability; same exact F1 retry is compatibility-layer idempotent; FP-60 records exact health identities; zero outbound HTTP; no updater/manual-upload/pair/runtime certification promotion"
       }
     },
     "main_ruleset": {
@@ -296,18 +322,19 @@
       "slot_id": "p006-wave1k-compatible-update-order-v1",
       "title": "P-006 Wave 1K Lane B2 compatible update order — FP-45/46/53/60",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
+      "status": "COMPLETED_ON_PR_1036_MERGE",
       "work_mode": "P006_BOUNDED_COMPATIBLE_UPDATE_EVIDENCE",
-      "source": "Issue #1034",
+      "source": "Issue #1034 / PR #1036",
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1k-compatible-update-order-v1",
-      "temp_grant": "GOV-P001-CF-TEMP-009",
+      "temp_grant": "GOV-P001-CF-TEMP-009 CONSUMED",
+      "terminal_result": "FP-45/46/53/60 PASS on both authorized runtime cells; deterministic full F0/F1/P0/P1 overlap graph; zero outbound HTTP; no updater/manual-upload/pair/runtime certification promotion",
       "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
       "artifact_graph": ["F0 canonical Free 0.1.0-dev", "F1 full test-only Free 0.1.1-test-overlap / API 0.1.0 / schema 1", "P0 full test-only Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schema 1", "P1 full test-only Pro 0.1.1-test-overlap with same overlap contract"],
       "timeout_safe_ci": "Separate <=15m candidate/overlap build job, independent <=18m Free-first and Pro-first matrix jobs per cell, fail-fast false, stale-run cancellation, per-path/cell artifacts",
       "allowed_scope": ["deterministic complete overlap ZIP derivation from canonical package artifacts without tracked product-source mutation", "disposable WordPress FP-45/46 compatible replacement evidence", "FP-53 same-exact-artifact retry compatibility-layer idempotency", "FP-60 exact post-step artifact/metadata/compatibility health records", "tests/evidence workflow/docs required only for Wave 1K B2"],
       "forbidden_scope": ["FP-47-52", "FP-54-59", "automatic updater/TUF", "WordPress manual-upload UI certification or FP-58", "partial/interrupted replacement or fault injection", "rollback/downgrade", "schema migration certification", "provider/license/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive or irreversible operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
-      "close_condition": "FP-45/46/53/60 reach terminal PASS/FAIL/INCONCLUSIVE in both authorized cells with deterministic complete F0/F1/P0/P1 ZIP hashes/metadata and exact post-step health records; exact-head path-applicable CI green; fresh main; zero unresolved review threads; shared truth reconciled without certification promotion"
+      "close_condition": "Satisfied on PR #1036 merge after deterministic complete F0/F1/P0/P1 identities, initial evidence run 35388639559, FP-45/46/53/60 PASS on both authorized cells, exact post-step health records, exact-head path-applicable CI, fresh-main verification, zero unresolved review threads and shared-truth reconciliation without certification promotion"
     },
     {
       "priority": 900,
@@ -340,6 +367,10 @@
     "p006_wave1j_source_head": "fc868fff6b3ca58a5088f416deb3f98debff5ce4",
     "p006_wave1j_workflow_run": 35386874694,
     "p006_wave1j_candidate_artifact_id": 10564580440,
+    "p006_wave1k": "TERMINAL_PR_1036_FP45_FP46_FP53_FP60_PASS_NOT_CERTIFIED",
+    "p006_wave1k_source_head": "59e8675e292d41a3a98009f8649593f57f8d22ad",
+    "p006_wave1k_workflow_run": 35388639559,
+    "p006_wave1k_candidate_artifact_id": 10564059614,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
