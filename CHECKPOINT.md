@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before B3 integrity/publication architecture-review closeout merge: **`main @ 951353d3eb96fc6213b0b8ba91abeefb981ccdc2`**
+Current integration anchor before B3 publication-owner prerequisite closeout merge: **`main @ ed0d897e528be060573c935bd162ca824cec2d53`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -12,8 +12,9 @@ P-006 B3 harness readiness review: **Issue #1040 / PR #1042**
 P-006 B3 WordPress manual replacement harness prerequisite: **Issue #1043 / PR #1045**
 P-006 Wave 1M FP-58 closeout: **Issue #1046 / PR #1048**
 P-006 B3 integrity/publication architecture review: **Issue #1049**
+P-006 B3 entrypoint-last publication-owner prerequisite: **Issue #1052 / PR #1054**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1L_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B3_PUBLICATION_OWNER_PREREQUISITE_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -25,6 +26,7 @@ B3 harness review authorization: **`GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED / N
 Manual replacement harness authorization: **`GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
 Wave 1M temporary grant: **`GOV-P001-CF-TEMP-011 CONSUMED / NON-REUSABLE`**
 B3 integrity/publication review authorization: **`GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED / NON-RUNTIME`**
+B3 publication-owner harness authorization: **`GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
 
 ## Mandatory work-cycle order
 
@@ -422,7 +424,7 @@ This result is intentionally a **HARNESS PREREQUISITE PASS**, not an FP-58 resul
 - ADR-0010 remains **Proposed**;
 - formal P-006 accounting remains **144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
 
-FP-49…52 remain unexecuted. Issue #1049 resolves the architecture ordering: generic WordPress replacement is not accepted as universally atomic; plugin-internal integrity alone cannot protect a corrupt entrypoint; an external publication-owner contract/harness is the mandatory next prerequisite.
+FP-49…52 remain unexecuted. Issue #1049 resolved the architecture ordering, and Issue #1052/PR #1054 now validates the mandatory narrow publication-owner prerequisite: disposable local WordPress, real plugin directories, direct filesystem, deterministic entrypoint-last publication, exact staged/final/recovery tree verification, mid-copy fresh-process probes, corrupt-stage refusal and unsupported-profile refusal. This prerequisite does not certify generic WordPress `move_dir()`/recursive-copy replacement.
 
 ## Current issue classification
 
@@ -527,9 +529,9 @@ Current authority does not authorize or promote:
 
 These remain valid future work behind their own gates.
 
-## Resume rule after B3 integrity/publication architecture review
+## Resume rule after B3 publication-owner prerequisite
 
-After the #1049 review closeout PR is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering. Do not execute FP-49…52 directly. The next B3 repository-changing action must be separately authorized publication-owner contract/harness work that proves entrypoint execution exclusion, staged/final tree verification and recovery for the intended WordPress Filesystem profile. A standalone internal manifest is not the first unblocker.
+After PR #1054 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering. Do not execute FP-49…52 directly. The next P-006 action, if any, must be a separately authorized FP-49…52 applicability/readiness review that maps each original fixture to the now-validated narrow publication-owner profile and identifies which conditions remain blocked, need reformulation, or are dependency-ready. Formal fixture execution requires a later explicit authorization.
 
 It must not recreate Waves 1H–1L or reinterpret this harness prerequisite as FP-58 execution. The WordPress-owned manual replacement transport prerequisite is now available, so a future FP-58 execution tranche may be considered only through a separate explicit authorization and fresh dependency audit. FP-49…52 remain blocked by the integrity/publication-contract gap. #858 and #947 retain their explicit nonblocking boundaries; rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
 
@@ -566,7 +568,7 @@ Final terminal artifact: **10569065242** / `sha256:62833a3f98ce9a6f28eab782ebcc0
 
 Formal result: **FP-58 PASS**. Accounting is **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**. Compatible manual replacements preserve premium admission; breaking replacements fail closed as `free_version_too_new` or `free_version_too_old`, deny premium boot/migrations, leave premium modules inert, preserve the Free kernel plus `custom-post-types` and `taxonomies`, and observe zero outbound HTTP, persistence keys or backup residue.
 
-No automatic updater/TUF, partial/interrupted replacement, rollback/migration, provider, pair/runtime certification, ADR-0010 promotion, deploy or release authority follows. FP-49…52 remain blocked by the integrity/publication-contract gap. #947 remains independent Worker-only.
+No automatic updater/TUF, generic WordPress interrupted-copy safety, rollback/migration, provider, pair/runtime certification, ADR-0010 promotion, deploy or release authority follows. FP-49…52 remain unexecuted and require a separate applicability/readiness gate before any formal execution. #947 remains independent Worker-only.
 
 
 ## P-006 B3 integrity/publication architecture review
@@ -585,3 +587,43 @@ Terminal conclusions:
 Cut-point status remains: F-CUT-1 bounded-safe subcase; F-CUT-2 BLOCKED; F-CUT-3 PARTIAL; F-CUT-4 BLOCKED; P-CUT-1 bounded-safe subcase; P-CUT-2 BLOCKED; P-CUT-3 ready only after fixed file-list pin; P-CUT-4 BLOCKED; P-CUT-5 externally owned/plugin-internal unprovable.
 
 Formal P-006 accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+
+## P-006 B3 publication-owner prerequisite closeout
+
+Issue **#1052** / PR **#1054** validates one narrow external publication-owner profile under **`GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001`**.
+
+Pre-closeout exact evidence head: **`6ee016d8c13f1c0eaeecd1971c3ebf4fd6ca0f5c`**.
+
+- Governance run **35405126545** — PASS.
+- Publication-owner workflow run **35405126544** — PASS.
+- deterministic candidate graph — PASS;
+- minimum Free — PASS;
+- minimum Pro — PASS;
+- reference Free — PASS;
+- reference Pro — PASS;
+- terminal aggregate — PASS.
+
+Validated publication profile:
+
+- disposable local WordPress;
+- real plugin directories;
+- WordPress Filesystem method `direct`;
+- external publisher owns staging/copy/recovery;
+- configured target entry is withheld until exact non-entry verification;
+- final entry publication uses a same-directory rename;
+- unsupported publication profiles refuse before live mutation.
+
+Observed target behavior:
+
+- Free target: **238** deterministic non-entry files; partial observations report entry absent, `free_missing`, premium boot/migrations/mutations denied, no fatal; final F1 payload tree **`3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460`**; recovery F0 tree **`0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`**.
+- Pro target: **286** deterministic non-entry files; partial observations keep Free independently bootable while Pro is absent/inert and premium boot/migrations/mutations remain denied; final P1 payload tree **`d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`**; recovery P0 tree **`08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`**.
+- interruption-before-entry recovery — PASS;
+- injected final-entry rename failure recovery — PASS;
+- corrupt staged tree refusal — PASS;
+- unsupported profile refusal before mutation — PASS;
+- outbound WordPress HTTP attempts — **0**.
+
+Immutable pre-closeout artifacts: candidate **10572222787**, minimum Free **10572305453**, minimum Pro **10571733040**, reference Free **10571832978**, reference Pro **10572262741**, terminal **10572192814**; digests are pinned in queue v74.
+
+Formal P-006 accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**. No FP-49…52 fixture was executed, no product runtime source was changed, and no updater/TUF, rollback/migration, pair/runtime certification, ADR-0010, deploy or release authority is promoted.
