@@ -55,7 +55,8 @@ function iHash(string $path): string
 
 function iPair(string $freeHash, string $proHash): string
 {
-    return hash('sha256', "free:{$freeHash}\npro:{$proHash}\n");
+    // Canonical pair identity follows the current Wave 1H/P-006 convention.
+    return hash('sha256', $freeHash . ':' . $proHash);
 }
 
 /** @param array<string,mixed> $value */
