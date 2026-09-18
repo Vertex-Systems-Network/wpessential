@@ -1,5 +1,5 @@
 {
-  "schema_version": 69,
+  "schema_version": 70,
   "snapshot_date": "2026-09-18",
   "queue_anchor_main_sha": "a99fb1b438d35de1fca9b228d698044eceaa9fab",
   "mode": "POST_RC1_P006_WAVE_1M_CLOSEOUT",
@@ -236,11 +236,18 @@
       },
       "wave1m_evidence": {
         "source_head_initial": "400efc86ef2bceecfbc138e8678519371f7d1924",
+        "source_head_final_premerge": "d5e574b1154dd0db4aaaeff8b2f1983a123326f4",
         "workflow_run_initial": 35396546267,
+        "workflow_run_final_premerge": 35396928791,
+        "governance_run_final_premerge": 35396928806,
         "governance_run_initial": 35396546234,
         "candidate_artifact_id": 10567872128,
         "candidate_artifact_digest": "sha256:72ba53aba032bf37c26d4ec2a2ccee29d96d834ea906d2bf377083aa1730c6c8",
         "terminal_artifact_id": 10567559315,
+        "final_candidate_artifact_id": 10567947917,
+        "final_candidate_artifact_digest": "sha256:2c831545297cadc6acf1ec7cffaa286e4e5096afdc3654cbfe2887bdad5099b8",
+        "final_terminal_artifact_id": 10569065242,
+        "final_terminal_artifact_digest": "sha256:62833a3f98ce9a6f28eab782ebcc01c0fed4dcca4069c225d33a11b67f540957",
         "terminal_artifact_digest": "sha256:e486f57f66826eb6b3cccf898895a4cdd3048492587ff667c9a7b6884cf0231a",
         "scenario_artifacts": {
           "minimum_compatible_free": {"id": 10567429483, "digest": "sha256:f14d2d90388d17162c37ca6fb6022e67e33e5d54cb594518988dada03fdc8317"},
