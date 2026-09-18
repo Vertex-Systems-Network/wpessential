@@ -1,0 +1,332 @@
+name: P-006 Manual Replacement Harness
+
+on:
+  pull_request:
+    paths:
+      - 'tools/p006/p006-manual-replacement-**'
+      - 'tools/p006/p006-wave1k-build-overlap-artifacts.php'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'docs/QUALITY/P006-MANUAL-REPLACEMENT-HARNESS.md'
+      - '.github/workflows/p006-manual-replacement-harness.yml'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-manual-harness-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-candidates:
+    name: Build deterministic manual-harness candidate graph
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_P006_SOURCE_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate package manifest and build admin assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run lint:package
+          npm run build:admin
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate harness tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/p006/p006-wave1k-build-overlap-artifacts.php
+          php -l tools/p006/p006-manual-replacement-harness.php
+          bash -n tools/p006/p006-manual-replacement-wordpress-setup.sh
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Build canonical package pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test -s artifacts/wpessential.zip
+          test -s artifacts/wpessential-pro.zip
+          cp artifacts/wpessential.zip /tmp/p006-manual-canonical-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-manual-canonical-pro.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/p006-manual-canonical-free.sha256
+          sha256sum artifacts/wpessential-pro.zip | tee /tmp/p006-manual-canonical-pro.sha256
+
+      - name: Rebuild and prove canonical determinism
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test "$(sha256sum artifacts/wpessential.zip | cut -d' ' -f1)" = "$(cut -d' ' -f1 /tmp/p006-manual-canonical-free.sha256)"
+          test "$(sha256sum artifacts/wpessential-pro.zip | cut -d' ' -f1)" = "$(cut -d' ' -f1 /tmp/p006-manual-canonical-pro.sha256)"
+          cmp --silent /tmp/p006-manual-canonical-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-manual-canonical-pro.zip artifacts/wpessential-pro.zip
+
+      - name: Derive complete overlap graph twice
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-manual
+          mkdir -p artifacts/p006-manual/set-a artifacts/p006-manual/set-b
+
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-manual/set-a" \
+            php tools/p006/p006-wave1k-build-overlap-artifacts.php
+
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-manual/set-b" \
+            php tools/p006/p006-wave1k-build-overlap-artifacts.php
+
+          for file in f0.zip f1.zip p0.zip p1.zip candidate-identity.json; do
+            cmp --silent "artifacts/p006-manual/set-a/${file}" "artifacts/p006-manual/set-b/${file}"
+          done
+
+          mv artifacts/p006-manual/set-a artifacts/p006-manual/candidates
+          rm -rf artifacts/p006-manual/set-b
+          test -s artifacts/p006-manual/candidates/candidate-identity.json
+
+      - name: Record prerequisite authority boundary
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          php -r '
+            $identity = json_decode(file_get_contents("artifacts/p006-manual/candidates/candidate-identity.json"), true, 512, JSON_THROW_ON_ERROR);
+            $record = [
+              "source_sha" => getenv("WPE_P006_SOURCE_SHA"),
+              "authorization" => "GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001",
+              "classification" => "HARNESS PREREQUISITE ONLY",
+              "candidate_builder_reused_for_deterministic_graph_only" => true,
+              "historical_wave1k_grant_reused_as_authority" => false,
+              "nodes" => $identity["nodes"],
+              "fp58" => "NOT_EXECUTED",
+              "p006_accounting_changed" => false,
+              "pair_certified" => false,
+              "runtime_certified" => false,
+              "adr_0010" => "Proposed",
+            ];
+            file_put_contents(
+              "artifacts/p006-manual/candidates/harness-identity.json",
+              json_encode($record, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL
+            );
+          '
+          cat artifacts/p006-manual/candidates/harness-identity.json
+
+      - name: Upload immutable manual-harness candidate graph
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-manual-harness-candidates-${{ github.run_id }}
+          path: |
+            artifacts/p006-manual/candidates/f0.zip
+            artifacts/p006-manual/candidates/f1.zip
+            artifacts/p006-manual/candidates/p0.zip
+            artifacts/p006-manual/candidates/p1.zip
+            artifacts/p006-manual/candidates/candidate-identity.json
+            artifacts/p006-manual/candidates/harness-identity.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  manual-overwrite:
+    name: Manual overwrite prerequisite / ${{ matrix.cell }} / ${{ matrix.target }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: build-candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cell: minimum
+            target: free
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: minimum
+            target: pro
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: reference
+            target: free
+            wordpress: '7.1'
+            php: '8.5'
+          - cell: reference
+            target: pro
+            wordpress: '7.1'
+            php: '8.5'
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_P006_MANUAL_TARGET: ${{ matrix.target }}
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-manual/candidates
+      WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-manual/candidates/f0.zip
+      WPE_P006_F1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-manual/candidates/f1.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-manual/candidates/p0.zip
+      WPE_P006_P1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-manual/candidates/p1.zip
+      WPE_P006_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-manual/candidates/candidate-identity.json
+      WPE_P006_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-manual/evidence/${{ matrix.cell }}/${{ matrix.target }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-manual-${{ matrix.cell }}-${{ matrix.target }}-network.log
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_P006_SOURCE_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+
+      - name: Download exact candidate graph
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-manual-harness-candidates-${{ github.run_id }}
+          path: artifacts/p006-manual/candidates
+
+      - name: Verify harness inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in f0.zip f1.zip p0.zip p1.zip candidate-identity.json harness-identity.json; do
+            test -s "artifacts/p006-manual/candidates/${file}"
+          done
+          php -l tools/p006/p006-manual-replacement-harness.php
+          bash -n tools/p006/p006-manual-replacement-wordpress-setup.sh
+
+      - name: Prepare disposable WordPress F0/P0 baseline
+        shell: bash
+        run: bash tools/p006/p006-manual-replacement-wordpress-setup.sh
+
+      - name: Activate and pin baseline
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: prepare
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-manual-replacement-harness.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/prepare.json"
+
+      - name: Execute WordPress-owned local ZIP overwrite
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: overwrite
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-manual-replacement-harness.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/overwrite.json"
+
+      - name: Fresh-process post-overwrite observation
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: observe
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-manual-replacement-harness.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/observe.json"
+
+      - name: Aggregate prerequisite evidence
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: aggregate
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-manual-replacement-harness.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/summary.json"
+          cat "${WPE_P006_EVIDENCE_DIR}/summary.json"
+
+      - name: Upload per-cell manual-harness evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-manual-harness-${{ matrix.cell }}-${{ matrix.target }}-${{ github.run_id }}
+          path: |
+            artifacts/p006-manual/candidates/candidate-identity.json
+            artifacts/p006-manual/candidates/harness-identity.json
+            artifacts/p006-manual/evidence/${{ matrix.cell }}/${{ matrix.target }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
