@@ -1,9 +1,9 @@
 {
-  "schema_version": 67,
+  "schema_version": 68,
   "snapshot_date": "2026-09-18",
-  "queue_anchor_main_sha": "60ed7a9a654baa579df3a49a4cd4fce89f64fa67",
-  "mode": "POST_RC1_P006_B3_MANUAL_REPLACEMENT_HARNESS_CLOSEOUT",
-  "source_issue": "#1043",
+  "queue_anchor_main_sha": "4f0e89f8bf6cef82a0fabbcd74dd93d9227f0d08",
+  "mode": "POST_RC1_P006_WAVE_1M_FP58_AUTHORIZED",
+  "source_issue": "#1046",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -23,9 +23,11 @@
     "wave1l_owner_authorization": "Issue #1037",
     "wave1l_temp_grant": "GOV-P001-CF-TEMP-010 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "b3_harness_review_authorization": "Issue #1040 / GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW",
-    "b3_manual_replacement_harness_authorization": "Issue #1043 / GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED_PREREQUISITE"
+    "b3_manual_replacement_harness_authorization": "Issue #1043 / GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED_PREREQUISITE",
+    "wave1m_owner_authorization": "Issue #1046",
+    "wave1m_temp_grant": "GOV-P001-CF-TEMP-011 ACTIVE_ONE_TRANCHE_NON_REUSABLE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K/1L plus #1040 readiness review are terminal. #1043 manual replacement harness prerequisite is terminal after PR #1045: WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) is validated with direct filesystem and real plugin directories for Free and Pro on minimum/reference cells, zero outbound HTTP, exact payload-tree matches and no backup residue. FP-58 remains NOT_EXECUTED, P-006 counters remain unchanged and no Supervisor P-006 execution slot remains. FP-49…52 remain blocked by the separate integrity/publication contract gap. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K/1L plus #1040/#1043 prerequisites are terminal. #1046 is the only Supervisor-authorized P-006 execution slot: execute FP-58 through the validated WordPress-owned Plugin_Upgrader::install(local ZIP, overwrite_package=true) path across 8 isolated scenario/cell jobs covering compatible Free-first, compatible Pro-first, breaking Free-first and breaking Pro-first on minimum/reference cells. Product runtime source may not change. FP-49…52 remain blocked by the separate integrity/publication contract gap. No certification, updater/TUF, rollback/migration, provider, deploy/release or #947 authority is granted. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -50,6 +52,7 @@
     "1037": "COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL",
     "1040": "COMPLETED_ON_REVIEW_PR_NON_RUNTIME_B3_HARNESS_READINESS",
     "1043": "COMPLETED_ON_PR_1045_P006_B3_MANUAL_REPLACEMENT_HARNESS_PREREQUISITE",
+    "1046": "AUTHORIZED_OPEN_P006_WAVE_1M_FP58_MANUAL_REPLACEMENT_ORDER",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -134,7 +137,7 @@
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
       "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009", "-010"],
-      "active_temp_grant": null,
+      "active_temp_grant": "-011",
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -483,6 +486,26 @@
       "forbidden_scope": ["formal FP-58 execution or PASS/FAIL result", "FP-49-52 fault injection", "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes", "automatic updater/TUF", "rollback/migration certification", "provider/license/billing calls", "production/live credentials or sites", "deploy/release", "#947 independent review", "P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "timeout_safe_ci": "candidate build <=15m; each minimum/reference manual-overwrite cell <=18m; fail-fast false; stale-run cancellation; per-cell immutable evidence artifacts",
       "close_condition": "Satisfied on PR #1045 merge after four harness prerequisite cells PASS, exact before/after payload identities, WordPress-owned direct overwrite transport, zero outbound HTTP, fresh-main verification, exact-head governance, zero unresolved review threads, unchanged P-006 accounting and FP-58 NOT_EXECUTED"
+    },
+    {
+      "priority": 270,
+      "slot_id": "p006-wave1m-fp58-manual-replacement-v1",
+      "title": "P-006 Wave 1M FP-58 WordPress-owned manual replacement order",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "P006_BOUNDED_FP58_MANUAL_REPLACEMENT_EVIDENCE",
+      "source": "Issue #1046",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-wave1m-fp58-manual-replacement-v1",
+      "temp_grant": "GOV-P001-CF-TEMP-011 ACTIVE",
+      "authorized_fixture": "FP-58",
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "authorized_paths": ["compatible Free-first F0/P0→F1/P0", "compatible Pro-first F0/P0→F0/P1", "breaking Free-first F1/P0→F2/P0", "breaking Pro-first F1/P0→F1/P2"],
+      "artifact_graph": ["F0 Free 0.1.0-dev / API 0.1.0 / schema 1", "F1 Free 0.1.1-test-overlap / API 0.1.0 / schema 1", "F2 Free 0.2.0-test-breaking / API 0.2.0 / schema 1", "P0 Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schemas 1", "P1 Pro 0.1.1-test-overlap with same overlap contract", "P2 Pro 0.2.0-test-breaking supporting exact Free 0.2.0-test-breaking / API 0.2.0 / schemas 1"],
+      "timeout_safe_ci": "separate <=15m deterministic combined-graph build job; 8 isolated <=18m runtime jobs; fail-fast false; stale-run cancellation; per-scenario/cell immutable evidence artifacts",
+      "allowed_scope": ["dedicated deterministic FP-58 combined-graph builder", "disposable WordPress real-directory setup", "WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) FP-58 execution", "compatible and breaking compatibility assertions matching prior bounded update-order guarantees", "exact package/payload/pair identity, activation, module, persistence, backup-residue and network evidence", "FP-58 workflow/docs and queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["FP-49-52", "partial/truncated/missing-file fault injection", "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes", "automatic updater/TUF", "rollback/downgrade or migration certification", "schema-generation change", "stale/concurrent request fixture", "provider/license/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
+      "close_condition": "Terminal formal FP-58 result across all 8 authorized paths/cells; deterministic graph pinned; exact-head Governance and FP-58 workflow green; fresh-main and zero unresolved threads; shared truth reconciled; GOV-P001-CF-TEMP-011 consumed/non-reusable; no certification/release promotion"
     },
     {
       "priority": 900,
