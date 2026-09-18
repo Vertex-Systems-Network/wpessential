@@ -163,3 +163,62 @@ Formal accounting remains:
 A passing prerequisite establishes one concrete publication profile that can be considered in a later, separately authorized FP-49…52 applicability/execution review.
 
 It does not itself decide that every byte-truncation state is non-applicable to all WPEssential installation/update paths, and it does not convert missing-entry probes into formal FP fixture PASS results.
+
+
+## Terminal prerequisite evidence
+
+Pre-closeout exact source head: **`6ee016d8c13f1c0eaeecd1971c3ebf4fd6ca0f5c`**.
+
+CI:
+
+- Governance Gate run **35405126545** — PASS;
+- P-006 B3 Publication Owner Harness run **35405126544** — PASS;
+- deterministic candidate graph — PASS;
+- minimum Free target — PASS;
+- minimum Pro target — PASS;
+- reference Free target — PASS;
+- reference Pro target — PASS;
+- terminal aggregate — PASS.
+
+Observed deterministic payload ordering:
+
+- Free target non-entry file count: **238**;
+- Pro target non-entry file count: **286**.
+
+Observed partial-state behavior:
+
+- Free target: configured entry absent at every mid-copy cut point; compatibility state `free_missing`; premium boot, premium migrations and premium mutations denied; no PHP fatal/error.
+- Pro target: configured Pro entry absent at every mid-copy cut point; Free remains independently bootable with required Free modules; Pro premium runtime remains absent/inert; premium boot, migrations and mutations denied; no PHP fatal/error.
+
+Final exact payload identities:
+
+- F1 payload tree: **`3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460`**;
+- P1 payload tree: **`d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`**.
+
+Recovery identities:
+
+- F0 payload tree: **`0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`**;
+- P0 payload tree: **`08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`**.
+
+All five required scenario classes pass on both runtime families/targets: successful entrypoint-last publication; interruption-before-entry recovery; injected final-entry rename failure recovery; corrupt staged-tree refusal before mutation; unsupported-profile refusal before mutation. Outbound WordPress HTTP attempts remain **0**.
+
+Immutable pre-closeout artifacts:
+
+| Evidence | Artifact | Digest |
+| --- | ---: | --- |
+| candidates | 10572222787 | `sha256:14841f3b5062a9bdb163d48ffa28a9374cc28601f70dec17d625e1ac6fbfc2d5` |
+| minimum Free | 10572305453 | `sha256:e3026b0e7ca6b13e09f9988402771772f6277c79870527cd39a52abbeff766eb` |
+| minimum Pro | 10571733040 | `sha256:238ea0c81424aa4246b7d0e83b64c0bc4b64f8b042b75acf3af80338689e7b11` |
+| reference Free | 10571832978 | `sha256:e59a0461e50f697668b68c5da89898c1f7ce0c7dd990c7bc244f2322693b3527` |
+| reference Pro | 10572262741 | `sha256:396aaf55f1155fcf3b36bc7e8429d6b696b6724266b816b8d9d5c075e2d1f9e6` |
+| terminal | 10572192814 | `sha256:112ea45ede2ee0d1a83b54f8e5fb66bf16a46be3461387a32e0787b4e157ff86` |
+
+### Terminal classification
+
+**PASS_PREREQUISITE_ONLY** for the explicit direct/same-filesystem entrypoint-last publication profile.
+
+This result does **not** execute FP-49, FP-50, FP-51 or FP-52; does not certify generic WordPress `move_dir()`/recursive-copy interruption safety; does not certify an updater/TUF/signature system, rollback or migration recovery, a Free/Pro pair, a runtime, ADR-0010, deploy or release; and changes no P-006 fixture counters.
+
+Formal accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+The next possible P-006 step is a **separately authorized FP-49…52 applicability/readiness review**. It must map the original fixture wording to this validated publication profile and determine dependency readiness before any formal execution is authorized.
