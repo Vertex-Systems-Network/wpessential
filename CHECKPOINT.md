@@ -1,14 +1,16 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-16 UTC**
-Current integration anchor before Wave 1H closeout merge: **`main @ 83cb24d9070cbb4c94473c167fac639fce8210b6`**
+Checkpoint date: **2026-09-18 UTC**
+Current integration anchor before Wave 1I closeout merge: **`main @ 2daeca87cea154582b00a45f2b04e7f90502223a`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
+P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1H_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1I_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
+Wave 1I temporary grant: **`GOV-P001-CF-TEMP-007 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -93,22 +95,61 @@ Boundary truth for Wave 1H:
 
 `GOV-P001-CF-TEMP-006` is consumed by this tranche and is non-reusable.
 
+## P-006 Wave 1I closeout
+
+Owner authorization comment **5730643218** exposed only `FP-34` and `FP-44` under one-tranche temporary grant **`GOV-P001-CF-TEMP-007`**.
+
+PR **#1030** executes disposable real-WordPress evidence with timeout-safe split CI. Corrected canonical-pair evidence head before shared-truth reconciliation was **`dfac65cc18506c47d50cbb1988cd2f9f4ae86f98`**.
+
+Terminal evidence:
+
+- workflow run: **35351107887**;
+- candidate artifact: **10549554022** / digest **`sha256:1bf733a3abdc185200b4996d24665412f110c564df1ee44e64d63fae6dc4e8f4`**;
+- FP-34 minimum artifact: **10549819018**;
+- FP-34 reference artifact: **10549903863**;
+- FP-44 minimum artifact: **10549509355**;
+- FP-44 reference artifact: **10549794149**;
+- Free SHA-256: **`2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80`**;
+- Pro SHA-256: **`bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467`**;
+- canonical pair id: **`28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211`**;
+- terminal summary: **2 PASS / 0 FAIL** formal fixtures across both authorized runtime cells.
+
+Fixture results:
+
+- **FP-34 — PASS:** genuine fresh WordPress processes were executed with both active-plugin orders, Free → Pro and Pro → Free, on WordPress 6.9 / PHP 8.2 / MySQL 8.4 and WordPress 7.1 / PHP 8.5 / MySQL 8.4. Both orders produced the same accepted compatible decision and premium module set; no fail-open bypass or outbound WordPress HTTP attempt was observed.
+- **FP-44 — PASS:** the predeclared evaluator-cost method ran inside booted real WordPress with 20 warm-ups and 100 measured `hrtime(true)` samples per cell around `LocalCompatibilityPreflight::evaluateRuntime()`. Minimum cell median/p95 were **0.002783 / 0.002996 ms**; reference cell median/p95 were **0.003144 / 0.003285 ms**. Both are below the predeclared median **5.0 ms** and p95 **20.0 ms** bounds, with **0 outbound HTTP attempts** in each cell. This is evaluator-cost evidence, not total request-latency evidence.
+
+Timeout/runaway protection for Wave 1I is structural rather than a single long timeout: immutable candidate build is a separate bounded job, FP-34 and FP-44 use independent matrix jobs per runtime cell, job-level limits are 15/18 minutes, stale runs are cancelled by workflow concurrency, and each cell uploads an independent evidence artifact.
+
+Boundary truth for Wave 1I:
+
+- no product runtime behavior was changed to force PASS;
+- no provider/license/billing/allocation service was called;
+- no live credentials/sites were used;
+- no destructive or irreversible production operation was executed;
+- no deployment/release was executed;
+- permanent P-001/CF was not promoted;
+- no Free↔Pro pair or P-006 runtime certification was promoted;
+- ADR-0010 remains **Proposed**.
+
+`GOV-P001-CF-TEMP-007` is consumed by this tranche and is non-reusable.
+
 ## Current issue classification
 
 - **#858** — `NON_BLOCKING_EXTERNAL_ADMIN`; active ruleset protects main, broader required-CI policy remains a repository-admin residual.
 - **#947** — `INDEPENDENT_NONBLOCKING_WORKER_ONLY`; Supervisor must not claim/pre-create its branch or author its evidence.
 - **#1014** — `COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL`; six authorized fixtures PASS and FP-33 terminates INCONCLUSIVE/STOP-REVIEW.
-- **#1015** — `CERTIFICATION_NONBLOCKING_NOT_EXECUTED`; P-006 Wave 1I remains separately gated and unauthorized.
+- **#1015** — `COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL`; FP-34 and FP-44 reach bounded PASS on both authorized disposable WordPress cells without certification promotion.
 - **#1016** — closed completed by PR #1024.
 - **#1017** — closed completed by PR #1021.
 - **#1018** — closed completed by PR #1023.
 - **#1019** — closed completed by PR #1022.
 
-After PR #1028 merges, no Supervisor P-006 execution slot remains open. #947 remains independent Worker-only; #1015 still requires its own exact authorization payload.
+After PR #1030 merges, no Supervisor P-006 execution slot remains open. #947 remains independent Worker-only and #858 remains the external-admin residual.
 
 ## Current implementation truth
 
-Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Wave 1H silently promotes full-parity machine lifecycle states.
+Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Waves 1H/1I silently promote full-parity machine lifecycle states.
 
 - Surface 1 / CPT — bounded runtime/editor evidence hardened for RC1 through #1017/#1021; full-parity `RUNTIME_CERTIFIED` remains unpromoted.
 - Surface 2 / Taxonomy — PASS for the accepted bounded V1 owner-runtime scope; RC1 regression-safe, no taxonomy migration execution.
@@ -126,27 +167,27 @@ Accepted product planning remains **56/56 surfaces**. Neither RC1 nor Wave 1H si
 
 Physical Free/Pro package separation, canonical local entitlement state, read-only commercial inventory and local fail-closed compatibility preflight remain accepted architecture.
 
-P-006 accepted truth after Wave 1H closeout:
+P-006 accepted truth after Wave 1I closeout:
 
 - documented fixtures: **144**;
-- executed: **28**;
-- PASS: **27**;
+- executed: **30**;
+- PASS: **29**;
 - FAIL: **0**;
 - INCONCLUSIVE: **1**;
 - certified Free↔Pro pairs: **0**;
 - P-006 runtime certifications: **0**.
 
 Passed bounded fixtures are:
-`FP-01/02/03/05/07/08/10/11/13/14/15/16/17/18/19/20/23/25/26/27/28/29/30/31/40/41/42`.
+`FP-01/02/03/05/07/08/10/11/13/14/15/16/17/18/19/20/23/25/26/27/28/29/30/31/34/40/41/42/44`.
 
 `FP-33` is **INCONCLUSIVE / STOP-REVIEW**, not PASS and not FAIL.
 `FP-21/22/24` remain **NOT EXECUTED**.
-`FP-34/44` remain **NOT EXECUTED / Wave 1I unauthorized**.
-All temporary grants `-001` through `-006` are consumed and non-reusable.
+`FP-34/44` are **PASS / Wave 1I bounded real-WordPress evidence**.
+All temporary grants `-001` through `-007` are consumed and non-reusable.
 Permanent P-001/CF remains uncertified.
 ADR-0010 remains **Proposed**.
 
-Wave 1H static evidence does not manufacture compatibility certification or runtime certification.
+Wave 1H static evidence and Wave 1I real-WordPress evidence do not manufacture compatibility-pair certification or P-006 runtime certification.
 
 ## Security / repository protection
 
