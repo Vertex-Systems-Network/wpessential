@@ -1,8 +1,8 @@
 # P-006 Lane B3 Fault-Injection / Manual-Upgrade Harness Readiness Review
 
-Review authority: `GOV-P006-B3-HARNESS-REVIEW-001`  
-Source issue: #1040  
-Exact review base: `cee1e4ba2a441218a26c615b358377bcbc54f33d`  
+Review authority: `GOV-P006-B3-HARNESS-REVIEW-001`
+Source issue: #1040
+Exact review base: `cee1e4ba2a441218a26c615b358377bcbc54f33d`
 Review type: **NON-RUNTIME / NO FP EXECUTION**
 
 ## 1. Scope and non-promotion boundary
