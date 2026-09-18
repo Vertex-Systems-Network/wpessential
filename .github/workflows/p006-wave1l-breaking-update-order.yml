@@ -1,0 +1,479 @@
+name: P-006 Wave 1L Breaking Update Order
+
+on:
+  pull_request:
+    paths:
+      - 'frameworks/Modules/Compatibility/**'
+      - 'frameworks/Bootstrap/**'
+      - 'frameworks/Kernel/**'
+      - 'frameworks/Platform/**'
+      - 'frameworks/Modules/CustomPostTypes/**'
+      - 'frameworks/Modules/Taxonomies/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'tools/p006/p006-wave1l-build-breaking-artifacts.php'
+      - 'tools/p006/p006-wave1l-wordpress-setup.sh'
+      - 'tools/p006/p006-wave1l-swap-plugin.sh'
+      - 'tools/p006/p006-wave1l-runtime-evidence.php'
+      - '.github/workflows/p006-wave1l-breaking-update-order.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-wave1l-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-candidates:
+    name: Build and pin Wave 1L breaking graph
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_P006_SOURCE_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+
+      - name: Install locked admin build graph
+        run: npm ci --ignore-scripts
+
+      - name: Validate package manifest and build admin assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run lint:package
+          npm run build:admin
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Wave 1L tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/p006/p006-wave1l-build-breaking-artifacts.php
+          php -l tools/p006/p006-wave1l-runtime-evidence.php
+          bash -n tools/p006/p006-wave1l-wordpress-setup.sh
+          bash -n tools/p006/p006-wave1l-swap-plugin.sh
+          php -r 'if (!class_exists("ZipArchive")) { fwrite(STDERR, "ZipArchive unavailable\n"); exit(1); }'
+
+      - name: Build canonical package pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test -s artifacts/wpessential.zip
+          test -s artifacts/wpessential-pro.zip
+          cp artifacts/wpessential.zip /tmp/p006-wave1l-canonical-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-wave1l-canonical-pro.zip
+          sha256sum artifacts/wpessential.zip | tee /tmp/p006-wave1l-canonical-free.sha256
+          sha256sum artifacts/wpessential-pro.zip | tee /tmp/p006-wave1l-canonical-pro.sha256
+
+      - name: Rebuild and prove canonical determinism
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          test "$(sha256sum artifacts/wpessential.zip | cut -d' ' -f1)" = "$(cut -d' ' -f1 /tmp/p006-wave1l-canonical-free.sha256)"
+          test "$(sha256sum artifacts/wpessential-pro.zip | cut -d' ' -f1)" = "$(cut -d' ' -f1 /tmp/p006-wave1l-canonical-pro.sha256)"
+          cmp --silent /tmp/p006-wave1l-canonical-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-wave1l-canonical-pro.zip artifacts/wpessential-pro.zip
+
+      - name: Derive complete immutable breaking graph twice
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-wave1l
+          mkdir -p artifacts/p006-wave1l/set-a artifacts/p006-wave1l/set-b
+
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-wave1l/set-a"             php tools/p006/p006-wave1l-build-breaking-artifacts.php
+
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-wave1l/set-b"             php tools/p006/p006-wave1l-build-breaking-artifacts.php
+
+          for file in f1.zip f2.zip p0.zip p2.zip candidate-identity.json; do
+            cmp --silent "artifacts/p006-wave1l/set-a/${file}" "artifacts/p006-wave1l/set-b/${file}"
+          done
+
+          mv artifacts/p006-wave1l/set-a artifacts/p006-wave1l/candidates
+          rm -rf artifacts/p006-wave1l/set-b
+
+          test -s artifacts/p006-wave1l/candidates/candidate-identity.json
+          cat artifacts/p006-wave1l/candidates/candidate-identity.json
+
+      - name: Upload immutable Wave 1L candidate graph
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1l-candidates-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1l/candidates/f1.zip
+            artifacts/p006-wave1l/candidates/f2.zip
+            artifacts/p006-wave1l/candidates/p0.zip
+            artifacts/p006-wave1l/candidates/p2.zip
+            artifacts/p006-wave1l/candidates/candidate-identity.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  free-first-breaking:
+    name: FP-47 Free-first breaking / ${{ matrix.cell }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: build-candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cell: minimum
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: reference
+            wordpress: '7.1'
+            php: '8.5'
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-wave1l/candidates
+      WPE_P006_F1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/f1.zip
+      WPE_P006_F2_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/f2.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/p0.zip
+      WPE_P006_P2_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/p2.zip
+      WPE_P006_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/candidate-identity.json
+      WPE_P006_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-wave1l/fp47/${{ matrix.cell }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-wave1l-fp47-${{ matrix.cell }}-network.log
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_P006_SOURCE_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+
+      - name: Download exact Wave 1L graph
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-wave1l-candidates-${{ github.run_id }}
+          path: artifacts/p006-wave1l/candidates
+
+      - name: Verify Wave 1L inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in f1.zip f2.zip p0.zip p2.zip candidate-identity.json; do
+            test -s "artifacts/p006-wave1l/candidates/${file}"
+          done
+          php -l tools/p006/p006-wave1l-runtime-evidence.php
+          bash -n tools/p006/p006-wave1l-wordpress-setup.sh
+          bash -n tools/p006/p006-wave1l-swap-plugin.sh
+
+      - name: Prepare disposable WordPress with F1/P0
+        shell: bash
+        run: bash tools/p006/p006-wave1l-wordpress-setup.sh
+
+      - name: Activate F1/P0 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          WPE_P006_EXECUTION_MODE=prepare php tools/p006/p006-wave1l-runtime-evidence.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/prepare.json"
+
+      - name: Record fresh compatible F1/P0 baseline
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: observe
+          WPE_P006_EXPECTED_FREE_NODE: F1
+          WPE_P006_EXPECTED_PRO_NODE: P0
+          WPE_P006_EXPECTED_FREE_INSTANCE: f1
+          WPE_P006_EXPECTED_PRO_INSTANCE: p0
+          WPE_P006_EXPECTED_STATE: compatible
+          WPE_P006_FIXTURE_ID: FP-47
+          WPE_P006_PHASE: compatible-baseline
+          WPE_P006_EVIDENCE_FILE: baseline.json
+        run: php tools/p006/p006-wave1l-runtime-evidence.php
+
+      - name: Atomically switch complete Free F1 to F2
+        shell: bash
+        env:
+          WPE_P006_SWAP_PLUGIN: free
+          WPE_P006_SWAP_TARGET: f2
+        run: bash tools/p006/p006-wave1l-swap-plugin.sh
+
+      - name: Record FP-47 breaking F2/P0 degradation
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: observe
+          WPE_P006_EXPECTED_FREE_NODE: F2
+          WPE_P006_EXPECTED_PRO_NODE: P0
+          WPE_P006_EXPECTED_FREE_INSTANCE: f2
+          WPE_P006_EXPECTED_PRO_INSTANCE: p0
+          WPE_P006_EXPECTED_STATE: free_version_too_new
+          WPE_P006_FIXTURE_ID: FP-47
+          WPE_P006_PHASE: free-first-breaking
+          WPE_P006_EVIDENCE_FILE: breaking.json
+        run: php tools/p006/p006-wave1l-runtime-evidence.php
+
+      - name: Aggregate FP-47 terminal evidence
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: aggregate
+          WPE_P006_FIXTURE_ID: FP-47
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-wave1l-runtime-evidence.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/summary.json"
+          cat "${WPE_P006_EVIDENCE_DIR}/summary.json"
+
+      - name: Upload FP-47 raw evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1l-fp47-${{ matrix.cell }}-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1l/candidates/candidate-identity.json
+            artifacts/p006-wave1l/fp47/${{ matrix.cell }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  pro-first-breaking:
+    name: FP-48 Pro-first breaking / ${{ matrix.cell }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: build-candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cell: minimum
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: reference
+            wordpress: '7.1'
+            php: '8.5'
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-wave1l/candidates
+      WPE_P006_F1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/f1.zip
+      WPE_P006_F2_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/f2.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/p0.zip
+      WPE_P006_P2_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/p2.zip
+      WPE_P006_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-wave1l/candidates/candidate-identity.json
+      WPE_P006_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-wave1l/fp48/${{ matrix.cell }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-wave1l-fp48-${{ matrix.cell }}-network.log
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WPE_P006_SOURCE_SHA}"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+
+      - name: Download exact Wave 1L graph
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-wave1l-candidates-${{ github.run_id }}
+          path: artifacts/p006-wave1l/candidates
+
+      - name: Verify Wave 1L inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in f1.zip f2.zip p0.zip p2.zip candidate-identity.json; do
+            test -s "artifacts/p006-wave1l/candidates/${file}"
+          done
+          php -l tools/p006/p006-wave1l-runtime-evidence.php
+          bash -n tools/p006/p006-wave1l-wordpress-setup.sh
+          bash -n tools/p006/p006-wave1l-swap-plugin.sh
+
+      - name: Prepare disposable WordPress with F1/P0
+        shell: bash
+        run: bash tools/p006/p006-wave1l-wordpress-setup.sh
+
+      - name: Activate F1/P0 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          WPE_P006_EXECUTION_MODE=prepare php tools/p006/p006-wave1l-runtime-evidence.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/prepare.json"
+
+      - name: Record fresh compatible F1/P0 baseline
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: observe
+          WPE_P006_EXPECTED_FREE_NODE: F1
+          WPE_P006_EXPECTED_PRO_NODE: P0
+          WPE_P006_EXPECTED_FREE_INSTANCE: f1
+          WPE_P006_EXPECTED_PRO_INSTANCE: p0
+          WPE_P006_EXPECTED_STATE: compatible
+          WPE_P006_FIXTURE_ID: FP-48
+          WPE_P006_PHASE: compatible-baseline
+          WPE_P006_EVIDENCE_FILE: baseline.json
+        run: php tools/p006/p006-wave1l-runtime-evidence.php
+
+      - name: Atomically switch complete Pro P0 to P2
+        shell: bash
+        env:
+          WPE_P006_SWAP_PLUGIN: pro
+          WPE_P006_SWAP_TARGET: p2
+        run: bash tools/p006/p006-wave1l-swap-plugin.sh
+
+      - name: Record FP-48 breaking F1/P2 degradation
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: observe
+          WPE_P006_EXPECTED_FREE_NODE: F1
+          WPE_P006_EXPECTED_PRO_NODE: P2
+          WPE_P006_EXPECTED_FREE_INSTANCE: f1
+          WPE_P006_EXPECTED_PRO_INSTANCE: p2
+          WPE_P006_EXPECTED_STATE: free_version_too_old
+          WPE_P006_FIXTURE_ID: FP-48
+          WPE_P006_PHASE: pro-first-breaking
+          WPE_P006_EVIDENCE_FILE: breaking.json
+        run: php tools/p006/p006-wave1l-runtime-evidence.php
+
+      - name: Aggregate FP-48 terminal evidence
+        shell: bash
+        env:
+          WPE_P006_EXECUTION_MODE: aggregate
+          WPE_P006_FIXTURE_ID: FP-48
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-wave1l-runtime-evidence.php
+          test -s "${WPE_P006_EVIDENCE_DIR}/summary.json"
+          cat "${WPE_P006_EVIDENCE_DIR}/summary.json"
+
+      - name: Upload FP-48 raw evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1l-fp48-${{ matrix.cell }}-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1l/candidates/candidate-identity.json
+            artifacts/p006-wave1l/fp48/${{ matrix.cell }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        if: always()
+        shell: bash
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
