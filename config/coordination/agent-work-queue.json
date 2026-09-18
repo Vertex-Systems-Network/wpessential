@@ -1,8 +1,8 @@
 {
-  "schema_version": 68,
+  "schema_version": 69,
   "snapshot_date": "2026-09-18",
-  "queue_anchor_main_sha": "4f0e89f8bf6cef82a0fabbcd74dd93d9227f0d08",
-  "mode": "POST_RC1_P006_WAVE_1M_FP58_AUTHORIZED",
+  "queue_anchor_main_sha": "a99fb1b438d35de1fca9b228d698044eceaa9fab",
+  "mode": "POST_RC1_P006_WAVE_1M_CLOSEOUT",
   "source_issue": "#1046",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -25,9 +25,9 @@
     "b3_harness_review_authorization": "Issue #1040 / GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW",
     "b3_manual_replacement_harness_authorization": "Issue #1043 / GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED_PREREQUISITE",
     "wave1m_owner_authorization": "Issue #1046",
-    "wave1m_temp_grant": "GOV-P001-CF-TEMP-011 ACTIVE_ONE_TRANCHE_NON_REUSABLE"
+    "wave1m_temp_grant": "GOV-P001-CF-TEMP-011 CONSUMED_ONE_TRANCHE_NON_REUSABLE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K/1L plus #1040/#1043 prerequisites are terminal. #1046 is the only Supervisor-authorized P-006 execution slot: execute FP-58 through the validated WordPress-owned Plugin_Upgrader::install(local ZIP, overwrite_package=true) path across 8 isolated scenario/cell jobs covering compatible Free-first, compatible Pro-first, breaking Free-first and breaking Pro-first on minimum/reference cells. Product runtime source may not change. FP-49…52 remain blocked by the separate integrity/publication contract gap. No certification, updater/TUF, rollback/migration, provider, deploy/release or #947 authority is granted. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H/1I/1J/1K/1L/1M plus #1040/#1043 prerequisites are terminal after PR #1048 merge. FP-58 is bounded PASS through the WordPress-owned Plugin_Upgrader::install(local ZIP, overwrite_package=true) path across all 8 authorized compatible/breaking minimum/reference scenario cells. Formal accounting is 144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications. GOV-P001-CF-TEMP-011 is consumed/non-reusable and no Supervisor P-006 execution slot remains. FP-49…52 remain blocked by the separate integrity/publication contract gap. No updater/TUF, rollback/migration, provider, certification, deploy/release or #947 authority is promoted. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -52,7 +52,7 @@
     "1037": "COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL",
     "1040": "COMPLETED_ON_REVIEW_PR_NON_RUNTIME_B3_HARNESS_READINESS",
     "1043": "COMPLETED_ON_PR_1045_P006_B3_MANUAL_REPLACEMENT_HARNESS_PREREQUISITE",
-    "1046": "AUTHORIZED_OPEN_P006_WAVE_1M_FP58_MANUAL_REPLACEMENT_ORDER",
+    "1046": "COMPLETED_ON_PR_1048_MERGE_P006_WAVE_1M_FP58_TERMINAL",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -121,8 +121,8 @@
     },
     "p006": {
       "documented": 144,
-      "executed": 45,
-      "pass": 44,
+      "executed": 46,
+      "pass": 45,
       "fail": 0,
       "inconclusive": 1,
       "certified_free_pro_pairs": 0,
@@ -134,10 +134,11 @@
       "fp_61_68_76": "PASS_WAVE_1J_PURE_RANGE_SEMANTICS",
       "fp_45_46_53_60": "PASS_WAVE_1K_COMPATIBLE_UPDATE_ORDER",
       "fp_47_48": "PASS_WAVE_1L_COMPLETE_BREAKING_ORDER",
+      "fp_58": "PASS_WAVE_1M_WORDPRESS_MANUAL_REPLACEMENT_ORDER",
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
-      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009", "-010"],
-      "active_temp_grant": "-011",
+      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009", "-010", "-011"],
+      "active_temp_grant": null,
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -232,6 +233,66 @@
           "F1_P2": {"pair_id": "a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501", "expected_state": "free_version_too_old"}
         },
         "summary": "FP-47/48 PASS on minimum/reference disposable WordPress cells; deterministic complete breaking ZIP graph derived twice byte-identically; F2/P0 fails closed free_version_too_new, F1/P2 fails closed free_version_too_old; premium boot/migration denied and premium modules inert after mismatch; Free kernel plus custom-post-types/taxonomies remain available; zero outbound HTTP and no compatibility persistence; no partial/manual-upload/updater/rollback/migration/pair/runtime certification promotion"
+      },
+      "wave1m_evidence": {
+        "source_head_initial": "400efc86ef2bceecfbc138e8678519371f7d1924",
+        "workflow_run_initial": 35396546267,
+        "governance_run_initial": 35396546234,
+        "candidate_artifact_id": 10567872128,
+        "candidate_artifact_digest": "sha256:72ba53aba032bf37c26d4ec2a2ccee29d96d834ea906d2bf377083aa1730c6c8",
+        "terminal_artifact_id": 10567559315,
+        "terminal_artifact_digest": "sha256:e486f57f66826eb6b3cccf898895a4cdd3048492587ff667c9a7b6884cf0231a",
+        "scenario_artifacts": {
+          "minimum_compatible_free": {"id": 10567429483, "digest": "sha256:f14d2d90388d17162c37ca6fb6022e67e33e5d54cb594518988dada03fdc8317"},
+          "minimum_compatible_pro": {"id": 10567144590, "digest": "sha256:0350ab08d7a8a9ea56f363f12c99a50a51f93135f35a306244659d3171a45180"},
+          "minimum_breaking_free": {"id": 10568142044, "digest": "sha256:98193c8d08c306c3213f9342f3076f503c338c2972452b0c85c605558a1e09c7"},
+          "minimum_breaking_pro": {"id": 10567862207, "digest": "sha256:8a9591e81f0a9b34475b3679f2a2dc83e8cca271d0af67fdc279b953597d0944"},
+          "reference_compatible_free": {"id": 10567234817, "digest": "sha256:13d32734484b7d97d1516abec4281ff2d7270ddae4103588af4f28e4b025004b"},
+          "reference_compatible_pro": {"id": 10568142097, "digest": "sha256:47ec5c193d5ecaa464c5974eec16d78040746f139e9e6eccc922c7bf86302594"},
+          "reference_breaking_free": {"id": 10567717372, "digest": "sha256:954b7885abe0299dc460057643fdc9d28e6a60b6a055fad1ca48a53a18231325"},
+          "reference_breaking_pro": {"id": 10568117088, "digest": "sha256:8c235eebd3102cdf9710788d816d7682f22633b020909ebd02db8a77406c5132"}
+        },
+        "nodes": {
+          "F0": {"sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80", "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9", "version": "0.1.0-dev"},
+          "F1": {"sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185", "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460", "version": "0.1.1-test-overlap"},
+          "F2": {"sha256": "92e54db0220ea76323fcf2b0e3772ea31e379dac47ed62690b027edbccbff4dc", "payload_tree_sha256": "a19b300607420d77b7751334a9a4ea2ad1570ff9078aaa6938e5d32755cce42e", "version": "0.2.0-test-breaking"},
+          "P0": {"sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178", "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7", "version": "0.1.0-dev"},
+          "P1": {"sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac", "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46", "version": "0.1.1-test-overlap"},
+          "P2": {"sha256": "2a56eb653a3e685a76a6c43e5f22cebfe92b0827b77475bdf2242afd094478c3", "payload_tree_sha256": "16e4a2a6fe6ca1b1c29d39e47186c83af6a9ad7e51bd09e8e0765bb8be639289", "version": "0.2.0-test-breaking"}
+        },
+        "pairs": {
+          "F0_P0": {"pair_id": "c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0", "expected_state": "compatible"},
+          "F1_P0": {"pair_id": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef", "expected_state": "compatible"},
+          "F0_P1": {"pair_id": "532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26", "expected_state": "compatible"},
+          "F2_P0": {"pair_id": "72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c", "expected_state": "free_version_too_new"},
+          "F1_P2": {"pair_id": "a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501", "expected_state": "free_version_too_old"}
+        },
+        "results": {
+          "minimum_compatible_free": "PASS",
+          "minimum_compatible_pro": "PASS",
+          "minimum_breaking_free": "PASS",
+          "minimum_breaking_pro": "PASS",
+          "reference_compatible_free": "PASS",
+          "reference_compatible_pro": "PASS",
+          "reference_breaking_free": "PASS",
+          "reference_breaking_pro": "PASS"
+        },
+        "transport": "WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true)",
+        "filesystem_method": "direct",
+        "compatible_paths_preserve_premium_admission": true,
+        "breaking_paths_deny_premium_boot_and_migrations": true,
+        "breaking_paths_premium_modules_inert": true,
+        "required_free_modules_preserved": ["custom-post-types", "taxonomies"],
+        "network_attempt_count": 0,
+        "compatibility_persistence_keys": [],
+        "temp_backup_residue": [],
+        "pair_certified": false,
+        "runtime_certified": false,
+        "updater_or_tuf_certified": false,
+        "rollback_or_migration_certified": false,
+        "partial_or_interrupted_replacement_certified": false,
+        "adr_0010": "Proposed",
+        "summary": "FP-58 PASS on 8 isolated minimum/reference compatible and breaking manual WordPress replacement paths; exact package/payload/pair identities pinned; compatible paths preserve premium admission; breaking paths fail closed with Free CPT/Taxonomy continuity; zero outbound HTTP/persistence/backup residue; no certification promotion"
       },
       "b3_harness_readiness": {
         "source_issue": 1040,
@@ -492,12 +553,13 @@
       "slot_id": "p006-wave1m-fp58-manual-replacement-v1",
       "title": "P-006 Wave 1M FP-58 WordPress-owned manual replacement order",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
+      "status": "COMPLETED_ON_PR_1048_MERGE",
       "work_mode": "P006_BOUNDED_FP58_MANUAL_REPLACEMENT_EVIDENCE",
       "source": "Issue #1046",
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1m-fp58-manual-replacement-v1",
-      "temp_grant": "GOV-P001-CF-TEMP-011 ACTIVE",
+      "temp_grant": "GOV-P001-CF-TEMP-011 CONSUMED",
+      "terminal_result": "FP-58 PASS across all 8 authorized minimum/reference compatible/breaking WordPress manual replacement paths; Plugin_Upgrader overwrite path direct filesystem; compatible paths preserve premium admission; breaking paths fail closed free_version_too_new/free_version_too_old with premium boot/migrations denied, premium modules inert and Free custom-post-types/taxonomies preserved; zero outbound HTTP/persistence/backup residue; no certification promotion.",
       "authorized_fixture": "FP-58",
       "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
       "authorized_paths": ["compatible Free-first F0/P0→F1/P0", "compatible Pro-first F0/P0→F0/P1", "breaking Free-first F1/P0→F2/P0", "breaking Pro-first F1/P0→F1/P2"],
@@ -505,7 +567,7 @@
       "timeout_safe_ci": "separate <=15m deterministic combined-graph build job; 8 isolated <=18m runtime jobs; fail-fast false; stale-run cancellation; per-scenario/cell immutable evidence artifacts",
       "allowed_scope": ["dedicated deterministic FP-58 combined-graph builder", "disposable WordPress real-directory setup", "WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) FP-58 execution", "compatible and breaking compatibility assertions matching prior bounded update-order guarantees", "exact package/payload/pair identity, activation, module, persistence, backup-residue and network evidence", "FP-58 workflow/docs and queue/CHECKPOINT/README closeout"],
       "forbidden_scope": ["FP-49-52", "partial/truncated/missing-file fault injection", "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes", "automatic updater/TUF", "rollback/downgrade or migration certification", "schema-generation change", "stale/concurrent request fixture", "provider/license/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
-      "close_condition": "Terminal formal FP-58 result across all 8 authorized paths/cells; deterministic graph pinned; exact-head Governance and FP-58 workflow green; fresh-main and zero unresolved threads; shared truth reconciled; GOV-P001-CF-TEMP-011 consumed/non-reusable; no certification/release promotion"
+      "close_condition": "Satisfied on PR #1048 merge after initial run 35396546267 and terminal artifact 10567559315, all 8 FP-58 scenario/cell jobs PASS, deterministic graph/pair identities pinned, exact-head Governance/FP-58 workflow, fresh-main verification, zero unresolved threads, accounting 144/46/45/0/1, GOV-P001-CF-TEMP-011 consumed/non-reusable and zero certification/release promotion"
     },
     {
       "priority": 900,
@@ -553,6 +615,11 @@
     "p006_b3_manual_replacement_harness_issue": 1043,
     "p006_b3_manual_replacement_harness_pr": 1045,
     "p006_b3_manual_replacement_harness_run": 35394229243,
+    "p006_wave1m": "TERMINAL_PR_1048_FP58_PASS_NOT_CERTIFIED",
+    "p006_wave1m_source_head_initial": "400efc86ef2bceecfbc138e8678519371f7d1924",
+    "p006_wave1m_workflow_run_initial": 35396546267,
+    "p006_wave1m_candidate_artifact_id": 10567872128,
+    "p006_wave1m_terminal_artifact_id": 10567559315,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
