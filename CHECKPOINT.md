@@ -1,13 +1,14 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before Wave 1L closeout merge: **`main @ 56a6a9bcdf3d83c2f30689224c159be952f9c387`**
+Current integration anchor before B3 harness-readiness closeout merge: **`main @ cee1e4ba2a441218a26c615b358377bcbc54f33d`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
 P-006 Wave 1J closeout: **Issue #1031 / PR #1033**
 P-006 Wave 1K closeout: **Issue #1034 / PR #1036**
 P-006 Wave 1L closeout: **Issue #1037 / PR #1039**
+P-006 B3 harness readiness review: **Issue #1040 / PR #1042**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1L_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
@@ -17,6 +18,7 @@ Wave 1I temporary grant: **`GOV-P001-CF-TEMP-007 CONSUMED / NON-REUSABLE`**
 Wave 1J temporary grant: **`GOV-P001-CF-TEMP-008 CONSUMED / NON-REUSABLE`**
 Wave 1K temporary grant: **`GOV-P001-CF-TEMP-009 CONSUMED / NON-REUSABLE`**
 Wave 1L temporary grant: **`GOV-P001-CF-TEMP-010 CONSUMED / NON-REUSABLE`**
+B3 harness review authorization: **`GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -314,6 +316,49 @@ Boundary truth for Wave 1L:
 
 `GOV-P001-CF-TEMP-010` is consumed by this tranche and is non-reusable.
 
+## P-006 B3 harness readiness review closeout
+
+Issue **#1040** / PR **#1042** performs the required non-runtime readiness review before any FP-49…52/58 execution.
+
+Deliverable:
+
+- `docs/QUALITY/P006-B3-FAULT-INJECTION-MANUAL-UPGRADE-HARNESS-READINESS.md`
+
+The review executes no WordPress runtime, fault injection, manual replacement, DB mutation or P-006 fixture. Formal accounting therefore remains **144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+Source-derived findings:
+
+- Free `wpessential.php` safely handles a **missing/unreadable** `vendor/autoload.php` by returning before `WPE_FREE_BOOTSTRAP_READY`, but a **readable truncated/corrupt** autoloader can reach `require_once` before application-level package state exists.
+- Pro runs its compatibility callback at `plugins_loaded` priority **-200**, before Free boot at **-100**. Missing Pro preflight or missing declared premium module files have fail-closed paths; missing required Free runtime classes can also be rejected before premium registration.
+- Pro's current package-completeness checks use `is_readable()`; readable-but-corrupt PHP is therefore not equivalent to a missing file and can parser-fail when autoloaded.
+- Wave 1K/1L atomic symlink-target switching is complete-generation transport only and cannot stand in for interrupted in-place copying or WordPress manual upload/overwrite.
+
+Per-fixture readiness:
+
+- **FP-49 — BLOCKED**
+- **FP-50 — PARTIAL / NOT FULL-FIXTURE READY**
+- **FP-51 — BLOCKED AS WRITTEN**
+- **FP-52 — BLOCKED AS WRITTEN**
+- **FP-58 — BLOCKED**
+
+Primary FP-49…52 blocker:
+
+> No accepted integrity/publication contract currently prevents a readable partially copied PHP file from reaching `require_once`/autoload before fail-closed package state can be published.
+
+The next prerequisite must explicitly choose one supported model before full interruption execution:
+
+1. an accepted atomic-publication contract that prevents live partial PHP publication;
+2. a separately authorized pre-load package-integrity contract; or
+3. a separately governed external installer/updater integrity authority.
+
+Primary FP-58 blocker:
+
+> No accepted WordPress-owned manual upload/overwrite harness exists. The existing symlink transport is explicitly not equivalent.
+
+A future FP-58 harness must pin the exact WordPress-owned upload/overwrite path, filesystem method, overwrite/cleanup semantics, activation behavior and exact package identities on the accepted minimum/reference cells.
+
+No new P-006 execution slot is dependency-ready from this review.
+
 ## Current issue classification
 
 - **#858** — `NON_BLOCKING_EXTERNAL_ADMIN`; active ruleset protects main, broader required-CI policy remains a repository-admin residual.
@@ -323,6 +368,7 @@ Boundary truth for Wave 1L:
 - **#1031** — `COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL`; FP-61…68/76 reach bounded pure/local PASS in PHP 8.2 and 8.5 without certification promotion.
 - **#1034** — `COMPLETED_ON_PR_1036_MERGE_P006_WAVE_1K_TERMINAL`; FP-45/46/53/60 reach bounded PASS on both authorized disposable WordPress cells without updater/manual-upload or certification promotion.
 - **#1037** — `COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL`; FP-47/48 reach bounded complete-package breaking-order PASS on both authorized disposable WordPress cells without interruption/manual-upload/updater/rollback/migration certification promotion.
+- **#1040** — `COMPLETED_ON_PR_1042_NON_RUNTIME_B3_HARNESS_READINESS`; FP-49/51/52/58 remain BLOCKED and FP-50 remains PARTIAL/not full-fixture ready; no fixture execution or counter change.
 - **#1016** — closed completed by PR #1024.
 - **#1017** — closed completed by PR #1021.
 - **#1018** — closed completed by PR #1023.
@@ -414,11 +460,11 @@ Current authority does not authorize or promote:
 
 These remain valid future work behind their own gates.
 
-## Resume rule after Wave 1L
+## Resume rule after B3 harness readiness review
 
-After PR #1039 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
+After PR #1042 is merged, a new `continue` cycle must resolve fresh `main` and re-run the normal issue-first/PR-second/queue ordering.
 
-It must not recreate Waves 1H–1L work. The next valid work item must come from current repository issue/queue truth. #858 and #947 retain their explicit nonblocking boundaries; FP-49…52 interruption/fault-injection, FP-58 manual-upgrade replacement, rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
+It must not recreate Waves 1H–1L or directly execute FP-49…52/58. The next valid B3 repository-changing item must be a separately authorized integrity/publication architecture prerequisite or WordPress-owned manual replacement harness prerequisite. #858 and #947 retain their explicit nonblocking boundaries; rollback/stale concurrency, updater/TUF, capability/deprecation, provider, multisite and certification work remains separately gated.
 
 ## Historical authority
 
