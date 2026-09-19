@@ -1,9 +1,9 @@
 {
-  "schema_version": 76,
+  "schema_version": 77,
   "snapshot_date": "2026-09-18",
-  "queue_anchor_main_sha": "d642a6db7b4bd2dc2173bf843ab8a623bef93aa8",
-  "mode": "POST_RC1_P006_B3_FP49_52_APPLICABILITY_REVIEW_CLOSEOUT",
-  "source_issue": "#1055",
+  "queue_anchor_main_sha": "225827c633f77d3964f31a753ba7a6b963f7a26b",
+  "mode": "POST_RC1_P006_WAVE_1N_FP49_AUTHORIZED",
+  "source_issue": "#1058",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -28,9 +28,11 @@
     "wave1m_temp_grant": "GOV-P001-CF-TEMP-011 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "b3_integrity_publication_review_authorization": "Issue #1049 / GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW",
     "b3_publication_owner_harness_authorization": "Issue #1052 / GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001 COMPLETED_PREREQUISITE_ON_PR_1054",
-    "b3_fp49_52_applicability_review_authorization": "Issue #1055 / GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW_ON_PR_1057"
+    "b3_fp49_52_applicability_review_authorization": "Issue #1055 / GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW_ON_PR_1057",
+    "wave1n_owner_authorization": "Issue #1058 / FP-49 ONLY",
+    "wave1n_temp_grant": "GOV-P001-CF-TEMP-012 ACTIVE_ONE_TRANCHE_NON_REUSABLE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1, P-006 Waves 1H–1M, #1040, #1043, #1049, #1052 and the #1055 FP-49…52 applicability review are terminal once PR #1057 merges. The accepted entrypoint-last publication profile makes FP-49, FP-51 and FP-52 dependency-ready for separately authorized formal runtime evidence; FP-50 remains blocked pending explicit interpretation of its original “safe package-incomplete result” expectation because supported Pro interruption excludes the Pro entry and therefore publishes no Pro-local compatibility result. No formal FP-49…52 result or counter change follows from #1055. After merge there is no Supervisor P-006 execution slot. P-006 remains 144/46/45/0/1 with zero certified pairs/runtime certifications. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1, P-006 Waves 1H–1M and B3 reviews/prerequisites through #1055 are terminal. #1058 is the only Supervisor-authorized P-006 runtime slot: execute FP-49 only against the accepted entrypoint-last external publication-owner profile on minimum/reference disposable WordPress. Required cut points are 1/59/119/178/238 current F1 non-entry files with wpessential.php absent, fresh-process non-fatal detection, premium boot/migrations/mutations denied, exact F0 recovery and zero outbound HTTP. GOV-P001-CF-TEMP-012 is active for this one tranche only and is not permanent P-001/CF certification. FP-50/51/52, product runtime mutation, generic WordPress recursive-copy claims, updater/TUF, rollback/migration certification, pair/runtime certification, ADR promotion, deploy/release and #947 remain unauthorized. Pre-execution P-006 accounting stays 144/46/45/0/1. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -59,6 +61,7 @@
     "1049": "COMPLETED_ON_REVIEW_PR_P006_B3_INTEGRITY_PUBLICATION_ARCHITECTURE",
     "1052": "COMPLETED_ON_PR_1054_P006_B3_PUBLICATION_OWNER_HARNESS_PREREQUISITE",
     "1055": "COMPLETED_ON_PR_1057_P006_B3_FP49_52_APPLICABILITY_READINESS_REVIEW",
+    "1058": "AUTHORIZED_OPEN_P006_WAVE_1N_FP49_FREE_INTERRUPTION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -144,7 +147,7 @@
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
       "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009", "-010", "-011"],
-      "active_temp_grant": null,
+      "active_temp_grant": "GOV-P001-CF-TEMP-012 / Issue #1058 / FP-49 only",
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -711,6 +714,26 @@
       "fp_52": "READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION",
       "formal_fp_fixture_executed": false,
       "fixture_accounting_changed": false
+    },
+    {
+      "priority": 292,
+      "slot_id": "p006-wave1n-fp49-free-interruption-v1",
+      "title": "P-006 Wave 1N — FP-49 Free interruption",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "P006_FORMAL_FP49_FREE_INTERRUPTION",
+      "source": "Issue #1058",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-wave1n-fp49-free-interruption-v1",
+      "authorization": "GOV-P001-CF-TEMP-012",
+      "authorized_fixture": "FP-49 only",
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "baseline_target": "F0/P0 → interrupted Free F1/P0 → exact F0/P0 recovery",
+      "required_cut_points": ["F49-01: 1/238", "F49-25: 59/238", "F49-50: 119/238", "F49-75: 178/238", "F49-100: 238/238 configured Free entry absent"],
+      "timeout_safe_ci": "candidate/state build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
+      "allowed_scope": ["dedicated FP-49 tools/p006 evidence tooling", "dedicated FP-49 timeout-safe workflow", "deterministic F0/F1/P0 graph derivation", "disposable WordPress setup reuse", "formal FP-49 evidence doc", "queue/CHECKPOINT/README terminal closeout"],
+      "forbidden_scope": ["FP-50/51/52 execution or result", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "generic WordPress move_dir/recursive-copy safety claim", "updater/TUF/signing/remote delivery", "rollback/downgrade/migration certification", "schema advancement", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "permanent P-001/CF certification", "pair/runtime certification", "ADR-0010 promotion"],
+      "close_condition": "Satisfied only after both runtime cells and all five FP-49 cut points are terminal with exact identities/recovery, exact-head Governance + FP-49 workflow support the terminal result, fresh-main/zero-thread checks pass, product runtime source remains unchanged, TEMP-012 is consumed/non-reusable, and accounting reflects the actual FP-49 result"
     },
     {
       "priority": 900,
