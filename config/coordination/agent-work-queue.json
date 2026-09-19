@@ -1,9 +1,9 @@
 {
-  "schema_version": 78,
+  "schema_version": 79,
   "snapshot_date": "2026-09-18",
-  "queue_anchor_main_sha": "8f0416e017a371212b61cee0be0a04ccfa21a7c6",
-  "mode": "POST_RC1_P006_WAVE_1N_FP49_CLOSEOUT",
-  "source_issue": "#1058",
+  "queue_anchor_main_sha": "42dd2898487cb063843e1655923bd4f957a2538e",
+  "mode": "POST_RC1_P006_WAVE_1O_FP51_AUTHORIZED",
+  "source_issue": "#1061",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -30,9 +30,11 @@
     "b3_publication_owner_harness_authorization": "Issue #1052 / GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001 COMPLETED_PREREQUISITE_ON_PR_1054",
     "b3_fp49_52_applicability_review_authorization": "Issue #1055 / GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001 COMPLETED_NON_RUNTIME_REVIEW_ON_PR_1057",
     "wave1n_owner_authorization": "Issue #1058 / FP-49 ONLY",
-    "wave1n_temp_grant": "GOV-P001-CF-TEMP-012 CONSUMED_ONE_TRANCHE_NON_REUSABLE"
+    "wave1n_temp_grant": "GOV-P001-CF-TEMP-012 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
+    "wave1o_owner_authorization": "Issue #1061 / FP-51 ONLY",
+    "wave1o_temp_grant": "GOV-P001-CF-TEMP-013 ACTIVE_ONE_TRANCHE_NON_REUSABLE"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1, P-006 Waves 1H–1N and B3 reviews/prerequisites through #1055 are terminal once PR #1060 merges. FP-49 PASS is bounded to the accepted direct-filesystem entrypoint-last external publication-owner profile on minimum/reference disposable WordPress at exact cuts 1/59/119/178/238; every partial state reported free_missing, denied premium boot/migrations/mutations, remained non-fatal, and restored exact F0. GOV-P001-CF-TEMP-012 is consumed/non-reusable. Formal P-006 accounting is 144/47/46/0/1 with zero certified pairs/runtime certifications. FP-50 remains expectation-blocked; FP-51/52 remain unexecuted but dependency-ready only for separate authorization. No Supervisor P-006 execution slot remains after merge. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1, P-006 Waves 1H–1N and B3 reviews/prerequisites through #1055 are terminal. #1061 is the only Supervisor-authorized P-006 runtime slot: execute FP-51 only on minimum/reference disposable WordPress using the accepted entrypoint-last external publisher and the fixed 12-cell bootstrap/preflight/module/runtime coverage from #1055. Bootstrap faults are staged-rejection only; live non-entry faults require configured Pro entry absent, Free operational, premium admission denied, sentinel data preserved, exact P0 recovery and zero outbound HTTP. GOV-P001-CF-TEMP-013 is active for this tranche only and is not permanent P-001/CF certification. FP-50/52, product runtime mutation, generic WordPress recursive-copy claims, updater/TUF, rollback/migration certification, pair/runtime certification, ADR promotion, deploy/release and #947 remain unauthorized. Pre-execution P-006 accounting is 144/47/46/0/1. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -62,6 +64,7 @@
     "1052": "COMPLETED_ON_PR_1054_P006_B3_PUBLICATION_OWNER_HARNESS_PREREQUISITE",
     "1055": "COMPLETED_ON_PR_1057_P006_B3_FP49_52_APPLICABILITY_READINESS_REVIEW",
     "1058": "COMPLETED_ON_PR_1060_P006_WAVE_1N_FP49_PASS",
+    "1061": "AUTHORIZED_OPEN_P006_WAVE_1O_FP51_PRO_PARTIAL_FILE_MATRIX",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -148,7 +151,7 @@
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
       "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009", "-010", "-011", "-012"],
-      "active_temp_grant": null,
+      "active_temp_grant": "GOV-P001-CF-TEMP-013 / Issue #1061 / FP-51 only",
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
         "workflow_run": 35146615997,
@@ -790,6 +793,27 @@
       "fixture_accounting_changed": true,
       "pair_certified": false,
       "runtime_certified": false
+    },
+    {
+      "priority": 293,
+      "slot_id": "p006-wave1o-fp51-pro-partial-files-v1",
+      "title": "P-006 Wave 1O — FP-51 Pro partial-file matrix",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN",
+      "work_mode": "P006_FORMAL_FP51_PRO_PARTIAL_FILES",
+      "source": "Issue #1061",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-wave1o-fp51-pro-partial-files-v1",
+      "authorization": "GOV-P001-CF-TEMP-013",
+      "authorized_fixture": "FP-51 only",
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "fixed_fault_cells": ["P51-B-MISSING", "P51-B-TRUNCATED", "P51-P-MISSING", "P51-P-TRUNCATED", "P51-M1-MISSING", "P51-M1-TRUNCATED", "P51-MM-MISSING", "P51-MM-TRUNCATED", "P51-ML-MISSING", "P51-ML-TRUNCATED", "P51-R-MISSING", "P51-R-TRUNCATED"],
+      "baseline_target": "F0/P0 → faulted P1 non-entry destination with Pro entry excluded or staged-bootstrap refusal → exact P0 recovery",
+      "data_sentinel": "wpe_p006_fp51_data_sentinel=fp51-preserve-v1",
+      "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
+      "allowed_scope": ["dedicated FP-51 tools/p006 evidence tooling", "dedicated FP-51 timeout-safe workflow", "deterministic F0/P0/P1 graph derivation", "disposable WordPress setup reuse", "bounded sentinel option", "formal FP-51 evidence doc", "queue/CHECKPOINT/README terminal closeout"],
+      "forbidden_scope": ["FP-50/52 execution or result", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "live execution of readable corrupt configured Pro entry", "generic WordPress move_dir/recursive-copy safety claim", "updater/TUF/signing/remote delivery", "rollback/downgrade/migration certification", "schema advancement", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "permanent P-001/CF certification", "pair/runtime certification", "ADR-0010 promotion"],
+      "close_condition": "Satisfied only after both runtime cells and all 12 fixed FP-51 cells are terminal with exact identities/recovery and sentinel preservation, exact-head Governance + FP-51 workflow support the terminal result, fresh-main/zero-thread checks pass, product runtime source remains unchanged, TEMP-013 is consumed/non-reusable, and accounting reflects the actual FP-51 result"
     },
     {
       "priority": 900,
