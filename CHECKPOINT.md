@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before Wave 1N FP-49 closeout merge: **`main @ 8f0416e017a371212b61cee0be0a04ccfa21a7c6`**
+Current integration anchor before Wave 1O FP-51 closeout merge: **`main @ 6fb08e7c4f4dbdd07db0ec22a1fb6327f224e96c`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -15,8 +15,9 @@ P-006 B3 integrity/publication architecture review: **Issue #1049**
 P-006 B3 entrypoint-last publication-owner prerequisite: **Issue #1052 / PR #1054**
 P-006 B3 FP-49…52 applicability/readiness review: **Issue #1055 / PR #1057**
 P-006 Wave 1N FP-49 closeout: **Issue #1058 / PR #1060**
+P-006 Wave 1O FP-51 closeout: **Issue #1061 / PR #1063**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1N_FP49_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1O_FP51_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -31,6 +32,7 @@ B3 integrity/publication review authorization: **`GOV-P006-B3-INTEGRITY-PUBLICAT
 B3 publication-owner harness authorization: **`GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
 FP-49…52 applicability review authorization: **`GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001 COMPLETED / NON-RUNTIME`**
 Wave 1N temporary grant: **`GOV-P001-CF-TEMP-012 CONSUMED / NON-REUSABLE`**
+Wave 1O temporary grant: **`GOV-P001-CF-TEMP-013 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -695,3 +697,53 @@ Formal P-006 accounting becomes **144 documented / 47 executed / 46 PASS / 0 FAI
 TEMP-012 is consumed/non-reusable. This PASS does not certify generic WordPress `move_dir()`/recursive-copy interruption, P-001/CF, a Free/Pro pair, a runtime, updater/TUF, rollback/migration, ADR-0010, production deploy/release or #947. FP-50 remains expectation-blocked; FP-51 and FP-52 remain unexecuted and require separate authorization.
 
 After #1060 merges there is **no Supervisor P-006 execution slot**. A future bounded tranche requires a new authorization cycle.
+
+
+## P-006 Wave 1O FP-51 closeout
+
+Issue **#1061** / PR **#1063** executes **FP-51 only** under one-tranche temporary grant **`GOV-P001-CF-TEMP-013`** against the accepted direct-filesystem entrypoint-last external publication-owner profile.
+
+Pre-closeout exact implementation head: **`6e7e40599635876cc7b54108c46bac59eced6903`**.
+
+Pre-closeout terminal CI:
+
+- Governance Gate run **35412194583** — PASS;
+- P-006 Wave 1O FP-51 run **35412194610** — PASS;
+- deterministic F0/P0/P1 candidate graph — PASS;
+- minimum WP 6.9 / PHP 8.2 / MySQL 8.4 — 12/12 fixed cells PASS;
+- reference WP 7.1 / PHP 8.5 / MySQL 8.4 — 12/12 fixed cells PASS;
+- terminal aggregate — PASS.
+
+Exact candidate identities:
+
+- F0 ZIP `2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80`;
+- P0 ZIP `0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178`;
+- P1 ZIP `96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac`;
+- F0 tree `0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`;
+- P0 tree `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`;
+- P1 tree `d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`;
+- F0/P0 pair `c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0`;
+- F0/P1 pair `532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26`.
+
+Complete F0/P1 was proven compatible before fault injection and exact P0 recovery returned compatible.
+
+Formal coverage per runtime:
+
+- 2 bootstrap-entry faults — missing/truncated staged `wpessential-pro.php`; both rejected before live mutation with exact P0 unchanged;
+- 2 compatibility-preflight faults;
+- 6 first/middle/last required top-level module faults;
+- 2 runtime-support faults.
+
+For all **20 live non-entry observations** across both runtime cells, configured Pro entry remained absent; Free bootstrap and kernel remained operational; required Free modules remained available; premium modules were empty; premium boot/migrations/mutations were denied; no fatal/error occurred; sentinel `wpe_p006_fp51_data_sentinel=fp51-preserve-v1` remained unchanged; outbound WordPress HTTP attempts were zero; and exact P0 recovery tree `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7` returned `compatible`.
+
+The live entry-excluded Pro fault observations intentionally do not manufacture a compatibility result. They do **not** publish `pro_package_incomplete`; FP-50 therefore remains a separate expectation blocker.
+
+Immutable pre-closeout artifacts: candidates **10574708923**, minimum **10574424230**, reference **10574459295**, terminal **10573608656**; digests and all deterministic state/truncation hashes are pinned in queue v80 and `docs/QUALITY/P006-WAVE-1O-FP51-PRO-PARTIAL-FILE-EVIDENCE.md`.
+
+Terminal formal result: **FP-51 — PASS_WAVE_1O_PRO_PARTIAL_FILES**.
+
+Formal P-006 accounting becomes **144 documented / 48 executed / 47 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+TEMP-013 is consumed/non-reusable. This PASS does not certify generic WordPress `move_dir()`/recursive-copy interruption, permanent P-001/CF, a Free/Pro pair, a runtime, updater/TUF, rollback/migration, ADR-0010, production deploy/release or #947. FP-50 remains expectation-blocked; FP-52 remains unexecuted and requires separate authorization.
+
+After #1063 merges there is **no Supervisor P-006 execution slot**. A future bounded tranche requires a new authorization cycle.
