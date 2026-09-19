@@ -162,25 +162,102 @@ Stop rather than manufacture PASS if:
 
 ## 9. Terminal evidence
 
-**Pending exact-head CI.**
+Pre-closeout exact implementation head:
 
-Before terminal closeout this section must pin:
+`6e7e40599635876cc7b54108c46bac59eced6903`
 
-- exact implementation head;
-- Governance run;
-- FP-51 workflow run;
-- candidate artifact id/digest;
-- minimum artifact id/digest;
-- reference artifact id/digest;
-- terminal artifact id/digest;
-- exact F0/P0/P1 ZIP and payload-tree identities;
-- baseline and target pair identities;
-- complete P1 compatibility proof;
-- all 12 fault-state manifests / staged-rejection identities;
-- truncation source/truncated hashes and sizes;
-- sentinel preservation;
-- exact P0 recovery identity;
-- final formal result.
+CI:
+
+- Governance Gate run **35412194583** — PASS;
+- P-006 Wave 1O FP-51 run **35412194610** — PASS;
+- deterministic candidate graph — PASS;
+- minimum runtime — PASS;
+- reference runtime — PASS;
+- FP-51 terminal aggregate — PASS.
+
+Immutable artifacts:
+
+| Evidence | Artifact | Digest |
+| --- | ---: | --- |
+| candidates | 10574708923 | `sha256:8f4d45e68d3c5830800e27b3201b3190e52621aa7690d93aec7c4bf42330a5c1` |
+| minimum | 10574424230 | `sha256:4bdd51f1feebe4aa2c63c1ed80a9f19dc5e0ca003605968963fe63b321588c6d` |
+| reference | 10574459295 | `sha256:b3a439d01a64795f9fa6629acaadca72a27ffedcfa65b76c02f9b1e32e196f9e` |
+| terminal | 10573608656 | `sha256:86c68462ff614aa0153a18842c78d961022b8ff04cbeafa0482cc789a37ad2c9` |
+
+Exact candidate identities:
+
+- F0 ZIP: `2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80`;
+- P0 ZIP: `0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178`;
+- P1 ZIP: `96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac`;
+- F0 payload tree: `0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`;
+- P0 payload tree: `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`;
+- P1 payload tree: `d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`;
+- baseline F0/P0 pair id: `c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0`;
+- target F0/P1 pair id: `532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26`.
+
+Complete P1/F0 was proven `compatible` before the fault matrix, with exact P1 tree `d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`; exact P0 recovery returned `compatible`.
+
+### Staged bootstrap rejection identities
+
+| Cell | Staged state SHA-256 | Faulted staged tree | Live P0 |
+| --- | --- | --- | --- |
+| P51-B-MISSING | `131c287ce80951c2e7134f3c29b92011b223dc3ebca5ea22f3ceaed49b4246a1` | `b58af5c9b9ab6e21363236df544a39a113a0fd1be3b5272d840f883b6b11293b` | exact / unchanged |
+| P51-B-TRUNCATED | `de098153fe5509f6b6c77383e08a7bc1449bc0c8d5e1a51ced40e7ba727a79d8` | `0098f9db2119636fea246a1038d8864d7434f1fefbf8035f8cf6267ff760d343` | exact / unchanged |
+
+The P1 entry source was **10,960 bytes**, SHA-256 `cc004ef6dffaa41eff60da1445355bb7754553e8c10c4cc1f36a5d18555e979b`. Deterministic truncation wrote **5,480 bytes**, SHA-256 `52e299c8fb76562347f11cf69cba53903a91d4de367a61e196c409df533d466c`.
+
+Both staged faults were refused before live mutation. The request continued against exact P0, therefore the live observation remained fully `compatible` with the normal P0 premium modules present. This is expected staged-rejection evidence, not a live partial-Pro observation.
+
+### Live non-entry fault identities
+
+Both runtime families produced the same deterministic state-manifest SHA-256 values:
+
+| Cell | Fault path | Mode | Live state manifest SHA-256 |
+| --- | --- | --- | --- |
+| P51-P-MISSING | `frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php` | missing | `1ffd6698195e577fd70ab8a353491a7791642a5d0d4cd5d87c25ae807f11093c` |
+| P51-P-TRUNCATED | same | truncated | `f803a4cbcc3b5baf31aea0621ba05801ba77e2e30b116eecd9867a3d062145c6` |
+| P51-M1-MISSING | `frameworks/Modules/Roles/RolesModule.php` | missing | `b14ee38c71945ef563980c2497e813f943880f4775164f28642231d4db2e3bea` |
+| P51-M1-TRUNCATED | same | truncated | `75d82ad9c74d2ea7dde343d705d5fa83eaeebb0c4074d104a7ddace429d8a862` |
+| P51-MM-MISSING | `frameworks/Modules/BuilderWidgets/BuilderWidgetsModule.php` | missing | `17c77fdd552978c35c04a312370de51ea89554ca4e3d1acfab60dbdffa583c4e` |
+| P51-MM-TRUNCATED | same | truncated | `513b1ef5dc980ff9fce569886002752390cf7b80438269afff24a0d4fb291444` |
+| P51-ML-MISSING | `frameworks/Modules/Chat/ChatModule.php` | missing | `31bda2dc8f25d2fe37e49d40d0c9fe1f98f242e859868efbb2a094f5be1ae4eb` |
+| P51-ML-TRUNCATED | same | truncated | `299960ba9dcac658a8ac1b318e6c7c04a2d83944bb78b8cb0e2f488f3eab240c` |
+| P51-R-MISSING | `frameworks/Modules/Roles/WordPressRoleRuntimeEnvironment.php` | missing | `8fcfa6a3458d5f56c2c6848c3847e1275dad1fd9bec4c0171bceee81969c24e4` |
+| P51-R-TRUNCATED | same | truncated | `6c000aab2d227df092fb418c96af6182ae9512c92ec24ce6ba6a890d8a01cd1c` |
+
+Truncation identities:
+
+| Path | Source bytes | Source SHA-256 | Truncated bytes | Truncated SHA-256 |
+| --- | ---: | --- | ---: | --- |
+| `LocalCompatibilityPreflight.php` | 13,407 | `53333d4bc59947e8dcc22b5119f7f0edd5609150cc47a33a360e40aaf62470f2` | 6,703 | `04f3dbaf041c6618b1fd03904aa34296a40ea96fdf63ca45810317e2e3be26c3` |
+| `RolesModule.php` | 4,538 | `3d2cc42cc6d59e5d0aa4098d4fee63cbf2b9cff2ff3355791672da6588d06619` | 2,269 | `a43a191ff61f84e0bceb3a98d02493657b19245df94fad91a0d141c1f7e7023d` |
+| `BuilderWidgetsModule.php` | 3,516 | `32719e47868a8d9c593680e47027967b583576b5c81b24c06686103ba5370029` | 1,758 | `340c361affe81ef35146c09db965c8ede7b15ccf3a26412c516b5075bcc8f38e` |
+| `ChatModule.php` | 3,327 | `9e3a57fb1951014ad40f92e2ec6ad4ca7bb6fe804d9cc6bbff1e1bb97be820a8` | 1,663 | `b38eda5010e9e29fe53d030aab89a96ee5ac3cc08b2c14e21262a31e52dbce75` |
+| `WordPressRoleRuntimeEnvironment.php` | 3,330 | `a556a06f06ba17e17b541655a76992b60f6013dcffb6f7091f000cf8c6132c9f` | 1,665 | `a2ec26b8ea3b4ef4505c25606527ff49841f7b04d5793241dfcffdac56672520` |
+
+Across all **20 live non-entry observations** (10 faults × 2 runtimes):
+
+- configured Pro entry was absent;
+- Free bootstrap was ready;
+- Free kernel was booted;
+- required Free modules remained available;
+- premium module list was empty;
+- premium boot was false;
+- premium migrations were false;
+- premium mutations were false;
+- no fatal/error occurred;
+- sentinel remained exactly `fp51-preserve-v1`;
+- outbound WordPress HTTP attempts were zero;
+- exact P0 recovery tree was `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`;
+- every recovery returned `compatible`.
+
+The compatibility state during live entry-excluded Pro faults is intentionally absent/null because the configured Pro entry does not execute. This is not promoted to `pro_package_incomplete` and does not resolve FP-50's separate expectation blocker.
+
+Terminal formal result:
+
+**FP-51 — PASS_WAVE_1O_PRO_PARTIAL_FILES**
+
+This PASS is limited to the accepted direct-filesystem, entrypoint-last external publication-owner profile.
 
 ## 10. Accounting boundary
 
@@ -188,11 +265,11 @@ Before execution:
 
 **144 documented / 47 executed / 46 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**
 
-If FP-51 terminally PASSes and exact-head evidence is accepted:
+Terminal accepted accounting from this bounded fixture:
 
 **144 documented / 48 executed / 47 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**
 
-If FAIL or INCONCLUSIVE occurs, accounting must record the actual terminal result.
+TEMP-013 is consumed at terminal closeout and is not reusable.
 
 ## 11. Non-promotion boundary
 
