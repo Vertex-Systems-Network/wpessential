@@ -134,23 +134,85 @@ Stop rather than force PASS if:
 
 ## 9. Terminal evidence
 
-**Pending exact-head CI.**
+Pre-closeout exact implementation head:
 
-Before terminal closeout this section must pin:
+`6eee1496adc92a818165e2ed57b270f8a45ee053`
 
-- exact implementation head;
-- Governance run;
-- FP-52 workflow run;
-- candidate/minimum/reference/terminal artifact ids and digests;
-- F0/F1/P0 ZIP and payload-tree identities;
-- F0/P0 and F1/P0 pair ids;
-- complete F1/P0 compatibility proof;
-- all 8 exact state-manifest hashes;
-- truncation source/truncated sizes and SHA-256 values;
-- P0 unchanged identity;
-- sentinel preservation;
-- exact F0 recovery identity;
-- final formal result.
+CI:
+
+- Governance Gate run **35436900216** — PASS;
+- P-006 Wave 1P FP-52 run **35436900226** — PASS;
+- deterministic candidate graph — PASS;
+- minimum runtime — 8/8 fixed cells PASS;
+- reference runtime — 8/8 fixed cells PASS;
+- FP-52 terminal aggregate — PASS.
+
+Immutable artifacts:
+
+| Evidence | Artifact | Digest |
+| --- | ---: | --- |
+| candidates | 10581564385 | `sha256:1d10d4c40c60c41d8d01be446073c2caaa540d80cfc2179b2b5b0d50419d6026` |
+| minimum | 10582875950 | `sha256:5c1ed933fbddadcb3061e60789ec5a1c69b4171747793d9e1a50033c0323731e` |
+| reference | 10582930369 | `sha256:e43f86807471e4d3f3de716fa770c8b89bbab93bd0d7b552e0eb580420b9c8e9` |
+| terminal | 10581449897 | `sha256:8044e47daccdacb8304bfba1feadfa8cf4ed1dd475e8d747bc94777b7f5604f1` |
+
+Exact candidate identities:
+
+- F0 ZIP: `2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80`;
+- F1 ZIP: `f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185`;
+- P0 ZIP: `0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178`;
+- F0 payload tree: `0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`;
+- F1 payload tree: `3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460`;
+- P0 payload tree: `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`;
+- baseline F0/P0 pair id: `c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0`;
+- target F1/P0 pair id: `f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef`.
+
+Complete F1/P0 was proven `compatible` before the fault matrix. Exact recovery returned F0 tree `0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`, unchanged P0 tree `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`, and `compatible`.
+
+Both minimum and reference runtimes produced the same deterministic fault-state manifests:
+
+| Cell | Fault path | Mode | State manifest SHA-256 |
+| --- | --- | --- | --- |
+| F52-A-MISSING | `vendor/autoload.php` | missing | `3509831e69ac01c353607cc24338212d25e1669b29c7e3b54ac06cdb9720c64f` |
+| F52-A-TRUNCATED | same | truncated | `2889f7144750fd813d0b974642a77b6f575253e94119411bd71fdff5aa72dc45` |
+| F52-B-MISSING | `frameworks/Bootstrap/Plugin.php` | missing | `67f0cda2e3cc5aa581955bfa157e0f131d351c8eda51fc53b4f63cea9350d81a` |
+| F52-B-TRUNCATED | same | truncated | `0b84b482152efdd54a34e431019918f35d42df7b297197cfc7d1f4a482b66bce` |
+| F52-E1-MISSING | `frameworks/Platform/Entitlements/ProductEntitlementState.php` | missing | `3885aa6cdf95b51496982f2bfb8d7ab7613f68f33e1b6f0cef0f501b527e30a6` |
+| F52-E1-TRUNCATED | same | truncated | `3279e8cb6009a77a372800525a261534b65a37682f165c41c23316d3e0c24f84` |
+| F52-EL-MISSING | `frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php` | missing | `66b151185f67a898852ef36659cca64291a17dc97ea7bed2b06a3d1b178d916e` |
+| F52-EL-TRUNCATED | same | truncated | `8f1d65d2032c256ccf20795e0908ed8a89d0941d708fcc015c1ce66b70267524` |
+
+Truncation identities:
+
+| Path | Source bytes | Source SHA-256 | Truncated bytes | Truncated SHA-256 |
+| --- | ---: | --- | ---: | --- |
+| `vendor/autoload.php` | 748 | `79c30eda7334e2cc9fb1f98ab169e11f12c6fd6441de0cd3349e5bbe5f8c2c15` | 374 | `83fb4633003eaec658b156aad092933c5847af1ca7453830d13892d97abccea0` |
+| `frameworks/Bootstrap/Plugin.php` | 17,804 | `72818b3d4fecf143a8acaea1643a99b103d52f4b6246d64b77bcb169516c291e` | 8,902 | `9361ad1a8c9b99841dad80277245d5120792e27088571437b3e2287f5490ee0b` |
+| `frameworks/Platform/Entitlements/ProductEntitlementState.php` | 517 | `3818b76ee7232a29bdc96033a37253cab152b11c04b276feb5811eaa02bfa860` | 258 | `883e7fcfaed30063cecd5bf1a273587c10ad5b4719431d33b5b12901648dcf19` |
+| `frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php` | 867 | `c33ba66093cc8df64f9ea0e7b640c21572a09ff9efbffd957e739be069ce01dd` | 433 | `1966af7859b3277824801e40c5d8261b96cf5864e7420b63aa81a45c0340acde` |
+
+Across all **16 formal partial-state observations**:
+
+- compatibility state was `free_missing`;
+- configured Free entry was absent;
+- complete Pro entry remained present;
+- Free bootstrap was false;
+- Free kernel was not booted;
+- premium module list was empty;
+- premium boot was false;
+- premium migrations were false;
+- premium mutations were false;
+- no fatal/error occurred;
+- P0 remained exactly `08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7`;
+- sentinel remained exactly `fp52-preserve-v1`;
+- outbound WordPress HTTP attempts were zero;
+- recovery returned exact F0/P0 and `compatible`.
+
+Terminal formal result:
+
+**FP-52 — PASS_WAVE_1P_FREE_PARTIAL_FILES**
+
+This PASS is limited to the accepted direct-filesystem, entrypoint-last external publication-owner profile. It does not prove that corrupt PHP is safe to execute.
 
 ## 10. Accounting boundary
 
@@ -158,11 +220,11 @@ Before execution:
 
 **144 documented / 48 executed / 47 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**
 
-If FP-52 terminally PASSes and exact-head evidence is accepted:
+Terminal accepted accounting from this bounded fixture:
 
 **144 documented / 49 executed / 48 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**
 
-If FAIL or INCONCLUSIVE occurs, accounting records the actual terminal result.
+TEMP-014 is consumed at terminal closeout and is not reusable.
 
 ## 11. Non-promotion boundary
 
