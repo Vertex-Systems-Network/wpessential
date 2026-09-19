@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before FP-49…52 applicability-review closeout merge: **`main @ d642a6db7b4bd2dc2173bf843ab8a623bef93aa8`**
+Current integration anchor before Wave 1N FP-49 closeout merge: **`main @ 8f0416e017a371212b61cee0be0a04ccfa21a7c6`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -14,8 +14,9 @@ P-006 Wave 1M FP-58 closeout: **Issue #1046 / PR #1048**
 P-006 B3 integrity/publication architecture review: **Issue #1049**
 P-006 B3 entrypoint-last publication-owner prerequisite: **Issue #1052 / PR #1054**
 P-006 B3 FP-49…52 applicability/readiness review: **Issue #1055 / PR #1057**
+P-006 Wave 1N FP-49 closeout: **Issue #1058 / PR #1060**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B3_FP49_52_APPLICABILITY_REVIEW_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1N_FP49_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -29,6 +30,7 @@ Wave 1M temporary grant: **`GOV-P001-CF-TEMP-011 CONSUMED / NON-REUSABLE`**
 B3 integrity/publication review authorization: **`GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED / NON-RUNTIME`**
 B3 publication-owner harness authorization: **`GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
 FP-49…52 applicability review authorization: **`GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001 COMPLETED / NON-RUNTIME`**
+Wave 1N temporary grant: **`GOV-P001-CF-TEMP-012 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -649,3 +651,47 @@ This review does not certify generic WordPress `move_dir()`/recursive-copy inter
 Formal P-006 accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
 
 After #1057 merges there is **no Supervisor P-006 execution slot**. The next bounded actions require separate authorization: either an FP-49 formal runtime tranche, an FP-51/52 formal runtime tranche, or a non-runtime FP-50 expectation decision. #947 remains independent Worker-only.
+
+
+## P-006 Wave 1N FP-49 closeout
+
+Issue **#1058** / PR **#1060** executes **FP-49 only** under one-tranche temporary grant **`GOV-P001-CF-TEMP-012`** against the accepted direct-filesystem entrypoint-last external publication-owner profile.
+
+Pre-closeout exact implementation head: **`63f8c493bf82e8d6d4cbf129377c56db2cc143a4`**.
+
+Pre-closeout terminal CI:
+
+- Governance Gate run **35411082352** — PASS;
+- P-006 Wave 1N FP-49 run **35411082371** — PASS;
+- deterministic candidate graph — PASS;
+- minimum WP 6.9 / PHP 8.2 / MySQL 8.4 — PASS;
+- reference WP 7.1 / PHP 8.5 / MySQL 8.4 — PASS;
+- terminal aggregate — PASS.
+
+Formal interruption coverage in each runtime cell:
+
+- F49-01 — 1 / 238 non-entry files;
+- F49-25 — 59 / 238;
+- F49-50 — 119 / 238;
+- F49-75 — 178 / 238;
+- F49-100 — 238 / 238 with configured Free entry still absent.
+
+All ten formal observations reported `free_missing`; Free bootstrap/kernel remained non-runnable; premium boot/migrations/mutations were denied; no fatal/error occurred; active-plugin records remained present; outbound WordPress HTTP attempts were zero. Every cell restored exact F0 payload tree **`0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9`** and the fresh recovery observation returned `compatible`.
+
+Deterministic interruption-state manifests were identical across minimum/reference cells:
+
+- F49-01: `7303446f9ec15974b9f1feb90ffc6d81765ae3d63498033394dc52996f04aac4`;
+- F49-25: `b31ab1cebd5e71c2132cedb326921e8a4059c62c88b7526746e914754d9975f6`;
+- F49-50: `74b157a1eb5b1f2c32bcb654617a0926238c5232652d19b18420ec97700a9918`;
+- F49-75: `7e033af63a5025ff62573dca57d1e4920cf0cc2942188df5454f6fd9b9302620`;
+- F49-100: `9669cb81ae5815d5212ad14d661b3e698ceb68f7d04e3d14ebcb92cb2a89529b`.
+
+Immutable pre-closeout artifacts are pinned in queue v78 and `docs/QUALITY/P006-WAVE-1N-FP49-FREE-INTERRUPTION-EVIDENCE.md`.
+
+Terminal formal result: **FP-49 — PASS_WAVE_1N_FREE_INTERRUPTION**.
+
+Formal P-006 accounting becomes **144 documented / 47 executed / 46 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+TEMP-012 is consumed/non-reusable. This PASS does not certify generic WordPress `move_dir()`/recursive-copy interruption, P-001/CF, a Free/Pro pair, a runtime, updater/TUF, rollback/migration, ADR-0010, production deploy/release or #947. FP-50 remains expectation-blocked; FP-51 and FP-52 remain unexecuted and require separate authorization.
+
+After #1060 merges there is **no Supervisor P-006 execution slot**. A future bounded tranche requires a new authorization cycle.
