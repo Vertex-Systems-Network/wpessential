@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before B3 publication-owner prerequisite closeout merge: **`main @ ed0d897e528be060573c935bd162ca824cec2d53`**
+Current integration anchor before FP-49…52 applicability-review closeout merge: **`main @ d642a6db7b4bd2dc2173bf843ab8a623bef93aa8`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -13,8 +13,9 @@ P-006 B3 WordPress manual replacement harness prerequisite: **Issue #1043 / PR #
 P-006 Wave 1M FP-58 closeout: **Issue #1046 / PR #1048**
 P-006 B3 integrity/publication architecture review: **Issue #1049**
 P-006 B3 entrypoint-last publication-owner prerequisite: **Issue #1052 / PR #1054**
+P-006 B3 FP-49…52 applicability/readiness review: **Issue #1055 / PR #1057**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B3_PUBLICATION_OWNER_PREREQUISITE_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B3_FP49_52_APPLICABILITY_REVIEW_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -27,6 +28,7 @@ Manual replacement harness authorization: **`GOV-P006-B3-MANUAL-REPLACEMENT-HARN
 Wave 1M temporary grant: **`GOV-P001-CF-TEMP-011 CONSUMED / NON-REUSABLE`**
 B3 integrity/publication review authorization: **`GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED / NON-RUNTIME`**
 B3 publication-owner harness authorization: **`GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001 COMPLETED / PREREQUISITE ONLY`**
+FP-49…52 applicability review authorization: **`GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -627,3 +629,23 @@ Observed target behavior:
 Immutable pre-closeout artifacts: candidate **10572222787**, minimum Free **10572305453**, minimum Pro **10571733040**, reference Free **10571832978**, reference Pro **10572262741**, terminal **10572192814**; digests are pinned in queue v74.
 
 Formal P-006 accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**. No FP-49…52 fixture was executed, no product runtime source was changed, and no updater/TUF, rollback/migration, pair/runtime certification, ADR-0010, deploy or release authority is promoted.
+
+
+## P-006 B3 FP-49…52 applicability/readiness closeout
+
+Issue **#1055** / PR **#1057** is a non-runtime review only. It maps the exact accepted Lane B fixture wording to the #1052 entrypoint-last publication profile without executing or redefining a fixture.
+
+Terminal review classifications:
+
+- **FP-49 — READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION.** The accepted publisher gives deterministic Free file-copy cut points while `wpessential.php` remains absent. Current-candidate proposed counts are **1 / 59 / 119 / 178 / 238** non-entry files. A later runtime tranche must prove each exact state non-runnable/non-fatal with premium migration/mutation denied and exact F0 recovery.
+- **FP-50 — BLOCKED_EXPECTATION_CLARIFICATION_REQUIRED.** Supported Pro interruption keeps `wpessential-pro.php` absent, so Free remains usable and premium is absent/inert, but Pro publishes no request-local `pro_package_incomplete` result. Governance must decide whether the external `EXECUTION_EXCLUDED` state satisfies the original phrase “safe package-incomplete result.” No FP-50 runtime authorization should exist before that decision.
+- **FP-51 — READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION.** Fixed proposed set is **12 cells**: staged Pro entry missing/truncated; preflight missing/truncated; first/middle/last required top-level module missing/truncated; one concrete runtime-support class missing/truncated. Configured Pro entry remains absent for live non-entry faults.
+- **FP-52 — READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION.** Fixed proposed set is **8 cells** over `vendor/autoload.php`, `frameworks/Bootstrap/Plugin.php`, `ProductEntitlementState.php`, and `EntitlementAwareModuleActivationPolicy.php`, each missing/truncated while the configured Free entry remains absent.
+
+Main-entry rule for all later evidence: a configured Free/Pro main entry may be **absent** during publication, but a readable partial/corrupt configured entry is unsupported and must never be exposed. Corrupt staged entries are rejected before live mutation.
+
+This review does not certify generic WordPress `move_dir()`/recursive-copy interruption, does not make corrupt PHP safe to parse, and does not authorize updater/TUF, rollback/migration, providers, production, deploy/release, pair/runtime certification or ADR-0010 promotion.
+
+Formal P-006 accounting remains **144 documented / 46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+After #1057 merges there is **no Supervisor P-006 execution slot**. The next bounded actions require separate authorization: either an FP-49 formal runtime tranche, an FP-51/52 formal runtime tranche, or a non-runtime FP-50 expectation decision. #947 remains independent Worker-only.
