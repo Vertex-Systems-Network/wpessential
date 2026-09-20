@@ -106,6 +106,7 @@ jobs:
       WPE_P006_RESTORED_EVIDENCE: ${{ github.workspace }}/artifacts/p006-b6d/restored.json
       WPE_P006_COMPATIBILITY_EVIDENCE: ${{ github.workspace }}/artifacts/p006-b6d/compatibility.json
       WPE_P006_EVIDENCE_FILE: ${{ github.workspace }}/artifacts/p006-b6d/evidence.json
+      WPE_P006_SQL_SEED_SNAPSHOT: ${{ github.workspace }}/artifacts/p006-b6d/seed-state.sql
       WPE_P006_SQL_SNAPSHOT: ${{ github.workspace }}/artifacts/p006-b6d/older-state.sql
       WPE_P006_SQL_SNAPSHOT_RESTORED: ${{ github.workspace }}/artifacts/p006-b6d/restored-state.sql
       WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/wpessential.zip
@@ -192,41 +193,39 @@ jobs:
           test "$(jq -r '.snapshot.pro_tables_absent' artifacts/p006-b6d/before.json)" = "true"
           test "$(jq -r '.prerequisite_phase_network_attempt_count' artifacts/p006-b6d/before.json)" = "0"
 
-      - name: Export deterministic older-state SQL snapshot
+      - name: Export seed SQL snapshot from logical older state
         run: |
           set -euo pipefail
           test "$WPE_TEST_WP_DB" = "wpessential_b6d"
-          dump_db() {
-            docker exec \
-              -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
-              "$MYSQL_CONTAINER_ID" \
-              mysqldump \
-              -u"$WPE_TEST_MYSQL_USER" \
-              --default-character-set=utf8mb4 \
-              --single-transaction \
-              --quick \
-              --hex-blob \
-              --skip-comments \
-              --skip-add-locks \
-              --skip-disable-keys \
-              --skip-triggers \
-              --order-by-primary \
-              --complete-insert \
-              --skip-extended-insert \
-              --set-gtid-purged=OFF \
-              --no-tablespaces \
-              "$WPE_TEST_WP_DB"
-          }
-          dump_db > "$WPE_P006_SQL_SNAPSHOT"
-          test -s "$WPE_P006_SQL_SNAPSHOT"
-          ! grep -Eq '^(CREATE DATABASE|USE )' "$WPE_P006_SQL_SNAPSHOT"
-          ! grep -Fq '220.custom_tables_migration_runs_v1' "$WPE_P006_SQL_SNAPSHOT"
-          ! grep -Fq '221.custom_tables_migration_execution_confirmations_v1' "$WPE_P006_SQL_SNAPSHOT"
-          ! grep -Fq 'wpe_custom_table_migration_runs' "$WPE_P006_SQL_SNAPSHOT"
-          ! grep -Fq 'wpe_custom_table_migration_confirmations' "$WPE_P006_SQL_SNAPSHOT"
-          sha256sum "$WPE_P006_SQL_SNAPSHOT"
+          docker exec \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysqldump \
+            -u"$WPE_TEST_MYSQL_USER" \
+            --default-character-set=utf8mb4 \
+            --single-transaction \
+            --quick \
+            --hex-blob \
+            --skip-comments \
+            --skip-add-locks \
+            --skip-disable-keys \
+            --skip-triggers \
+            --order-by-primary \
+            --complete-insert \
+            --skip-extended-insert \
+            --set-gtid-purged=OFF \
+            --no-tablespaces \
+            "$WPE_TEST_WP_DB" \
+            > "$WPE_P006_SQL_SEED_SNAPSHOT"
+          test -s "$WPE_P006_SQL_SEED_SNAPSHOT"
+          ! grep -Eq '^(CREATE DATABASE|USE )' "$WPE_P006_SQL_SEED_SNAPSHOT"
+          ! grep -Fq '220.custom_tables_migration_runs_v1' "$WPE_P006_SQL_SEED_SNAPSHOT"
+          ! grep -Fq '221.custom_tables_migration_execution_confirmations_v1' "$WPE_P006_SQL_SEED_SNAPSHOT"
+          ! grep -Fq 'wpe_custom_table_migration_runs' "$WPE_P006_SQL_SEED_SNAPSHOT"
+          ! grep -Fq 'wpe_custom_table_migration_confirmations' "$WPE_P006_SQL_SEED_SNAPSHOT"
+          sha256sum "$WPE_P006_SQL_SEED_SNAPSHOT"
 
-      - name: Drop recreate and import disposable database
+      - name: Replay seed snapshot into disposable database
         run: |
           set -euo pipefail
           test "$WPE_TEST_WP_DB" = "wpessential_b6d"
@@ -240,9 +239,9 @@ jobs:
             -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
             "$MYSQL_CONTAINER_ID" \
             mysql -u"$WPE_TEST_MYSQL_USER" "$WPE_TEST_WP_DB" \
-            < "$WPE_P006_SQL_SNAPSHOT"
+            < "$WPE_P006_SQL_SEED_SNAPSHOT"
 
-      - name: Verify restored older-state identity
+      - name: Verify semantic identity after seed replay
         env:
           WPE_P006_EXECUTION_MODE: verify-restored
         run: |
@@ -266,7 +265,65 @@ jobs:
           test "$(jq -r '.pending_pro_migrations_invoked' artifacts/p006-b6d/compatibility.json)" = "false"
           test "$(jq -r '.pair_id_sha256' artifacts/p006-b6d/compatibility.json)" = "28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211"
 
-      - name: Re-export restored database and prove byte identity
+      - name: Export accepted canonical older-state SQL snapshot
+        run: |
+          set -euo pipefail
+          docker exec \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysqldump \
+            -u"$WPE_TEST_MYSQL_USER" \
+            --default-character-set=utf8mb4 \
+            --single-transaction \
+            --quick \
+            --hex-blob \
+            --skip-comments \
+            --skip-add-locks \
+            --skip-disable-keys \
+            --skip-triggers \
+            --order-by-primary \
+            --complete-insert \
+            --skip-extended-insert \
+            --set-gtid-purged=OFF \
+            --no-tablespaces \
+            "$WPE_TEST_WP_DB" \
+            > "$WPE_P006_SQL_SNAPSHOT"
+          test -s "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Eq '^(CREATE DATABASE|USE )' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq '220.custom_tables_migration_runs_v1' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq '221.custom_tables_migration_execution_confirmations_v1' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq 'wpe_custom_table_migration_runs' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq 'wpe_custom_table_migration_confirmations' "$WPE_P006_SQL_SNAPSHOT"
+          sha256sum "$WPE_P006_SQL_SNAPSHOT"
+
+      - name: Replay accepted snapshot into disposable database
+        run: |
+          set -euo pipefail
+          test "$WPE_TEST_WP_DB" = "wpessential_b6d"
+          docker exec \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysql -u"$WPE_TEST_MYSQL_USER" \
+            -e 'DROP DATABASE IF EXISTS `wpessential_b6d`; CREATE DATABASE `wpessential_b6d` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+          docker exec \
+            -i \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysql -u"$WPE_TEST_MYSQL_USER" "$WPE_TEST_WP_DB" \
+            < "$WPE_P006_SQL_SNAPSHOT"
+
+      - name: Verify semantic identity after accepted replay
+        env:
+          WPE_P006_EXECUTION_MODE: verify-restored
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-b6d-fp90-disposable-db-snapshot.php
+          test "$(jq -r '.status' artifacts/p006-b6d/restored.json)" = "PASS"
+          test "$(jq -r '.matches_pre_export_state' artifacts/p006-b6d/restored.json)" = "true"
+          test "$(jq -r '.pending_pro_migrations_invoked' artifacts/p006-b6d/restored.json)" = "false"
+          test "$(jq -r '.snapshot.state_sha256' artifacts/p006-b6d/restored.json)" = "$(jq -r '.snapshot.state_sha256' artifacts/p006-b6d/before.json)"
+
+      - name: Re-export accepted snapshot and prove fixed-point byte identity
         run: |
           set -euo pipefail
           docker exec \
@@ -290,6 +347,7 @@ jobs:
             "$WPE_TEST_WP_DB" \
             > "$WPE_P006_SQL_SNAPSHOT_RESTORED"
           cmp --silent "$WPE_P006_SQL_SNAPSHOT" "$WPE_P006_SQL_SNAPSHOT_RESTORED"
+          sha256sum "$WPE_P006_SQL_SNAPSHOT" "$WPE_P006_SQL_SNAPSHOT_RESTORED"
 
       - name: Aggregate B6d prerequisite evidence
         env:
@@ -321,6 +379,7 @@ jobs:
             artifacts/p006-b6d/before.json
             artifacts/p006-b6d/restored.json
             artifacts/p006-b6d/compatibility.json
+            artifacts/p006-b6d/seed-state.sql
             artifacts/p006-b6d/older-state.sql
           if-no-files-found: error
           retention-days: 14
