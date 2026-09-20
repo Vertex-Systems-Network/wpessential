@@ -134,7 +134,7 @@ function tMigrationInsertOrder(array $queries): array {
 function tWpeDdl(array $queries): array {
     $ddl = [];
     foreach ($queries as $query) {
-        if (stripos($query, 'wpe_') !== false && preg_match('/\\b(?:CREATE|ALTER|DROP|RENAME|TRUNCATE)\\s+TABLE\\b/i', $query) === 1) {
+        if (stripos($query, 'wpe_') !== false && preg_match('/^\\s*(?:CREATE|ALTER|DROP|RENAME|TRUNCATE)\\s+TABLE\\b/i', $query) === 1) {
             $ddl[] = $query;
         }
     }
