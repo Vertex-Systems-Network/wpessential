@@ -1,0 +1,140 @@
+name: P-006 B6c FP-94 Diagnostics Redaction Prerequisite
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-b6c-fp94-diagnostics-redaction.yml'
+      - 'tools/p006/p006-b6c-fp94-diagnostics-redaction.php'
+      - 'frameworks/Contracts/MigrationInterface.php'
+      - 'frameworks/Contracts/MigrationStateStoreInterface.php'
+      - 'frameworks/Platform/Database/DatabaseAdapterInterface.php'
+      - 'frameworks/Platform/Database/Migrations/**'
+      - 'frameworks/Modules/CustomTables/Migration/**'
+      - 'frameworks/Platform/Secrets/SensitiveValue.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-b6c-fp94-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  change-gate:
+    name: B6c latest-change gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      run_harness: ${{ steps.gate.outputs.run_harness }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Decide whether latest change requires harness
+        id: gate
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          run_harness=true
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$EVENT_ACTION" = "synchronize" ] && [ -n "$BEFORE_SHA" ]; then
+            git cat-file -e "$BEFORE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            changed="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+            printf '%s\n' "$changed"
+            harness_regex='^(\.github/workflows/p006-b6c-fp94-diagnostics-redaction\.yml|tools/p006/p006-b6c-fp94-diagnostics-redaction\.php|frameworks/Contracts/MigrationInterface\.php|frameworks/Contracts/MigrationStateStoreInterface\.php|frameworks/Platform/Database/DatabaseAdapterInterface\.php|frameworks/Platform/Database/Migrations/|frameworks/Modules/CustomTables/Migration/|frameworks/Platform/Secrets/SensitiveValue\.php)'
+            if printf '%s\n' "$changed" | grep -Eq "$harness_regex"; then run_harness=true; else run_harness=false; fi
+          fi
+          echo "run_harness=$run_harness" >> "$GITHUB_OUTPUT"
+          echo "B6c harness required: $run_harness"
+
+  prerequisite:
+    name: Validate FP-94 diagnostics/redaction capture
+    needs: change-gate
+    if: needs.change-gate.outputs.run_harness == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          coverage: none
+      - name: Validate B6c tooling
+        run: php -l tools/p006/p006-b6c-fp94-diagnostics-redaction.php
+      - name: Execute deterministic capture twice
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-b6c
+          mkdir -p artifacts/p006-b6c/a artifacts/p006-b6c/b
+          for pass in a b; do
+            out="$GITHUB_WORKSPACE/artifacts/p006-b6c/$pass"
+            : > "$out/php-error.log"
+            : > "$out/stderr.log"
+            WPE_P006_EVIDENCE_FILE="$out/evidence.json" \
+            WPE_P006_ERROR_LOG="$out/php-error.log" \
+            WPE_P006_STDERR_CAPTURE="$out/stderr.log" \
+              php tools/p006/p006-b6c-fp94-diagnostics-redaction.php \
+              > "$out/stdout.json" 2>> "$out/stderr.log"
+            test -s "$out/evidence.json"
+            test "$(jq -r '.status' "$out/evidence.json")" = "PASS"
+            test "$(jq -r '.raw_canaries_absent_from_all_captured_surfaces' "$out/evidence.json")" = "true"
+            test "$(jq -r '.raw_canaries_absent_from_evidence_json' "$out/evidence.json")" = "true"
+            test "$(jq -r '.sensitive_value.vault_plaintext_absent' "$out/evidence.json")" = "true"
+            test "$(jq -r '.formal_fixture_executed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.fixture_accounting_changed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.product_logging_added_or_changed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.product_runtime_source_modified' "$out/evidence.json")" = "false"
+            test "$(jq -r '.wordpress_or_mysql_runtime_used' "$out/evidence.json")" = "false"
+            test "$(jq -r '.provider_or_network_runtime_used' "$out/evidence.json")" = "false"
+            test "$(jq -r '.runtime_grant_created' "$out/evidence.json")" = "false"
+            test "$(jq -r '.accounting.documented' "$out/evidence.json")" = "144"
+            test "$(jq -r '.accounting.executed' "$out/evidence.json")" = "57"
+            test "$(jq -r '.accounting.pass' "$out/evidence.json")" = "57"
+            test "$(jq -r '.accounting.fail' "$out/evidence.json")" = "0"
+            test "$(jq -r '.accounting.inconclusive' "$out/evidence.json")" = "0"
+            test "$(jq -r '.product_logging_added_or_changed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.wordpress_or_mysql_runtime_used' "$out/evidence.json")" = "false"
+            for canary in               P006_B6C_LICENSE_TOKEN_DO_NOT_EMIT               P006_B6C_VAULT_PLAINTEXT_DO_NOT_EMIT               P006_B6C_PRIVATE_USER_DATA_DO_NOT_EMIT
+            do
+              if grep -R -F -- "$canary" "$out" >/dev/null; then
+                echo "Raw canary leaked into captured artifact: $canary" >&2
+                exit 1
+              fi
+            done
+          done
+          for file in evidence.json stdout.json stderr.log php-error.log; do
+            cmp --silent "artifacts/p006-b6c/a/$file" "artifacts/p006-b6c/b/$file"
+          done
+          cat artifacts/p006-b6c/a/evidence.json
+      - name: Upload immutable B6c prerequisite evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-b6c-fp94-prerequisite-${{ github.run_id }}
+          path: artifacts/p006-b6c/a/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"

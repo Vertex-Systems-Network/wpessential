@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before B6b FP-86 fail-once marker prerequisite closeout: **`main @ d35f4d7ebd86dc13cd8115355a1cf4f1dfe3d070`**
+Current integration anchor before B6c FP-94 diagnostics/redaction prerequisite closeout: **`main @ 03bee5a0953ee5f1432066aa64ce274b194f49dc`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -31,8 +31,9 @@ P-006 Wave 1T shared-truth closeout: **PR #1090**
 P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR #1092**
 P-006 B6a FP-89 Platform API candidate prerequisite: **Issue #1093 / PR #1094**
 P-006 B6b FP-86 fail-once marker prerequisite: **Issue #1095 / PR #1096**
+P-006 B6c FP-94 diagnostics/redaction prerequisite: **Issue #1097 / PR #1098**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6B_FP86_FAIL_ONCE_MARKER_PREREQUISITE_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6C_FP94_DIAGNOSTICS_REDACTION_PREREQUISITE_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -59,6 +60,7 @@ Wave 1T temporary grant: **`GOV-P001-CF-TEMP-018 CONSUMED / NON-REUSABLE`**
 B6 harness-prerequisite readiness authorization: **`GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001 COMPLETED / NON-RUNTIME`**
 B6a FP-89 candidate authorization: **`GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001 PREREQUISITE PASS / NON-RUNTIME / FP-89 NOT EXECUTED`**
 B6b FP-86 marker-failure authorization: **`GOV-P006-B6B-FP86-FAIL-ONCE-MARKER-001 PREREQUISITE PASS / DISPOSABLE TEST RUNTIME / FP-86 NOT EXECUTED`**
+B6c FP-94 diagnostics/redaction authorization: **`GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001 PREREQUISITE PASS / NON-RUNTIME / FP-94 NOT EXECUTED`**
 
 ## Mandatory work-cycle order
 
@@ -1247,3 +1249,28 @@ Observed result:
 Two WordPress installer URL probes were intercepted by the MU `pre_http_request` blocker and are recorded separately; no outbound transport occurred.
 
 **FP-86 remains NOT FORMALLY EXECUTED.** P-006 accounting remains **144/57/57/0/0** with zero certified pairs/runtime certifications. This prerequisite is bounded to current migration 220 and does not certify generic migration interruption recovery.
+
+
+## P-006 B6c FP-94 diagnostics/redaction prerequisite closeout
+
+Issue **#1097** / PR **#1098** implements only the test-only diagnostics/redaction prerequisite required before a later separately authorized FP-94 formal fixture.
+
+Accepted exact prerequisite source head **`46ab31e6ab6169d05c8a1c936970c2213aca1146`** passed:
+
+- Governance run **35540536932**;
+- dedicated B6c run **35540536959**;
+- immutable artifact **10614821331** / `sha256:0bdf200c404e9db5d91fb60c937603ef7a1d07945fec79811074e4a8dceb822a`.
+
+The prerequisite:
+
+- scans 65 current migration PHP files and confirms no dedicated `error_log`, `trigger_error`, `do_action` or `apply_filters` logging/hook surface in the audited migration subtree;
+- captures real `MigrationRunner` returned IDs and the current fixed target-migration / marker-store exception messages;
+- captures PHP error-log/stderr and production `SensitiveValue` JSON/debug representations;
+- persists only SHA-256 fingerprints for deterministic license/Vault/private-data canaries;
+- finds no raw canary in any captured surface or final evidence JSON;
+- adds/changes no product logger and no product runtime source;
+- uses no WordPress/MySQL/provider runtime and creates no runtime grant.
+
+**FP-94 remains NOT FORMALLY EXECUTED.** Formal P-006 accounting remains **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
+
+No pair/runtime/migration certification, permanent P-001/CF, provider/updater/TUF, ADR-0010 promotion, deploy/release or #947 authority follows.
