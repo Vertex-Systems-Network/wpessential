@@ -93,13 +93,28 @@ jobs:
             out="$GITHUB_WORKSPACE/artifacts/p006-b6c/$pass"
             : > "$out/php-error.log"
             : > "$out/stderr.log"
-            WPE_P006_EVIDENCE_FILE="$out/evidence.json"             WPE_P006_ERROR_LOG="$out/php-error.log"             WPE_P006_STDERR_CAPTURE="$out/stderr.log"               php tools/p006/p006-b6c-fp94-diagnostics-redaction.php               > "$out/stdout.json" 2>> "$out/stderr.log"
+            WPE_P006_EVIDENCE_FILE="$out/evidence.json" \
+            WPE_P006_ERROR_LOG="$out/php-error.log" \
+            WPE_P006_STDERR_CAPTURE="$out/stderr.log" \
+              php tools/p006/p006-b6c-fp94-diagnostics-redaction.php \
+              > "$out/stdout.json" 2>> "$out/stderr.log"
             test -s "$out/evidence.json"
             test "$(jq -r '.status' "$out/evidence.json")" = "PASS"
             test "$(jq -r '.raw_canaries_absent_from_all_captured_surfaces' "$out/evidence.json")" = "true"
             test "$(jq -r '.raw_canaries_absent_from_evidence_json' "$out/evidence.json")" = "true"
             test "$(jq -r '.sensitive_value.vault_plaintext_absent' "$out/evidence.json")" = "true"
             test "$(jq -r '.formal_fixture_executed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.fixture_accounting_changed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.product_logging_added_or_changed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.product_runtime_source_modified' "$out/evidence.json")" = "false"
+            test "$(jq -r '.wordpress_or_mysql_runtime_used' "$out/evidence.json")" = "false"
+            test "$(jq -r '.provider_or_network_runtime_used' "$out/evidence.json")" = "false"
+            test "$(jq -r '.runtime_grant_created' "$out/evidence.json")" = "false"
+            test "$(jq -r '.accounting.documented' "$out/evidence.json")" = "144"
+            test "$(jq -r '.accounting.executed' "$out/evidence.json")" = "57"
+            test "$(jq -r '.accounting.pass' "$out/evidence.json")" = "57"
+            test "$(jq -r '.accounting.fail' "$out/evidence.json")" = "0"
+            test "$(jq -r '.accounting.inconclusive' "$out/evidence.json")" = "0"
             test "$(jq -r '.product_logging_added_or_changed' "$out/evidence.json")" = "false"
             test "$(jq -r '.wordpress_or_mysql_runtime_used' "$out/evidence.json")" = "false"
             for canary in               P006_B6C_LICENSE_TOKEN_DO_NOT_EMIT               P006_B6C_VAULT_PLAINTEXT_DO_NOT_EMIT               P006_B6C_PRIVATE_USER_DATA_DO_NOT_EMIT
