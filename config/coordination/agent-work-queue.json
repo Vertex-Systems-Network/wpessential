@@ -77,7 +77,7 @@
     "1067": "COMPLETED_ON_NON_RUNTIME_FP50_EXPECTATION_DECISION_CLOSEOUT",
     "1071": "COMPLETED_ON_PR_1073_P006_WAVE_1Q_FP50_PASS",
     "1074": "COMPLETED_ON_P006_B4_FP21_22_24_33_READINESS_CLOSEOUT",
-    "1077": "COMPLETED_ON_WAVE_1R_CLOSEOUT_PR_PENDING",
+    "1077": "COMPLETED_ON_PR_1080_P006_WAVE_1R_FP21_FP22_PASS",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1188,7 +1188,7 @@
       "runtime_executed": true,
       "pair_certified": false,
       "runtime_certified": false,
-      "closeout_pr": null
+      "closeout_pr": 1080
     },
     {
       "priority": 900,
@@ -1284,6 +1284,7 @@
     "p006_wave1r_runtime_governance_run_exact_verification": 35509406247,
     "p006_wave1r_evidence_finalization_head": "d5484702607d8b58c2b6c3bf035fea45b153ed43",
     "p006_wave1r_evidence_finalization_wave_shell_run": 35510042121,
+    "p006_wave1r_closeout_pr": 1080,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
