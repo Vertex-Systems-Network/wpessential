@@ -174,7 +174,7 @@ jobs:
           cmp --silent /tmp/b6d-free.zip artifacts/wpessential.zip
           cmp --silent /tmp/b6d-pro.zip artifacts/wpessential-pro.zip
           test "$(sha256sum artifacts/wpessential.zip | awk '{print $1}')" = "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80"
-          test "$(sha256sum artifacts/wpessential-pro.zip | awk '{print $1}')" = "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de046"
+          test "$(sha256sum artifacts/wpessential-pro.zip | awk '{print $1}')" = "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467"
 
       - name: Prepare disposable WordPress files
         run: bash tools/p006/p006-b6d-wordpress-setup.sh
