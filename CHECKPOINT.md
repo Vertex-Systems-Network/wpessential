@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before B6a FP-89 candidate prerequisite closeout: **`main @ 768ce0af64f311289c515f7b98fbbc6a9a0af23b`**
+Current integration anchor before B6b FP-86 fail-once marker prerequisite closeout: **`main @ d35f4d7ebd86dc13cd8115355a1cf4f1dfe3d070`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -30,8 +30,9 @@ P-006 Wave 1T FP-77/78/79/80/88 runtime evidence: **Issue #1087 / PR #1089**
 P-006 Wave 1T shared-truth closeout: **PR #1090**
 P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR #1092**
 P-006 B6a FP-89 Platform API candidate prerequisite: **Issue #1093 / PR #1094**
+P-006 B6b FP-86 fail-once marker prerequisite: **Issue #1095 / PR #1096**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6A_FP89_CANDIDATE_PREREQUISITE_NON_RUNTIME_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6B_FP86_FAIL_ONCE_MARKER_PREREQUISITE_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -57,6 +58,7 @@ B5 Lane C readiness authorization: **`GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READIN
 Wave 1T temporary grant: **`GOV-P001-CF-TEMP-018 CONSUMED / NON-REUSABLE`**
 B6 harness-prerequisite readiness authorization: **`GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001 COMPLETED / NON-RUNTIME`**
 B6a FP-89 candidate authorization: **`GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001 PREREQUISITE PASS / NON-RUNTIME / FP-89 NOT EXECUTED`**
+B6b FP-86 marker-failure authorization: **`GOV-P006-B6B-FP86-FAIL-ONCE-MARKER-001 PREREQUISITE PASS / DISPOSABLE TEST RUNTIME / FP-86 NOT EXECUTED`**
 
 ## Mandatory work-cycle order
 
@@ -1215,3 +1217,33 @@ Only `wpessential-pro/wpessential-pro.php` differs from canonical P0, and only t
 The real `LocalCompatibilityPreflight::evaluate()` reports `platform_api_too_old` / dimension `platform_api`, with premium boot and premium migrations denied. No WordPress/MySQL runtime or migration/DB mutation was used.
 
 **FP-89 remains NOT FORMALLY EXECUTED.** P-006 accounting remains **144/57/57/0/0** with zero certified pairs/runtime certifications. No runtime grant, product runtime mutation, certification, ADR-0010 promotion, provider/updater, deploy/release or #947 authority follows.
+
+
+## P-006 B6b FP-86 fail-once marker prerequisite
+
+Issue **#1095 / PR #1096** implements only the deterministic fail-once migration marker prerequisite for later FP-86 execution.
+
+Accepted exact-head prerequisite evidence:
+
+- source head: **`dcc15826df5989df23f3f1e588371af4038ad7d8`**;
+- prerequisite workflow run: **35539744399 — PASS**;
+- Governance run: **35539744384 — PASS**;
+- immutable artifact: **10614580717**;
+- artifact digest: **`sha256:e17644327bd8ddd57c17d12205e3d8a0959ca3966b426391d8f2a1eeb4a6e6fc`**.
+
+Disposable cell: WordPress **6.9** / PHP **8.2.33** / MySQL **8.4.11**.
+
+The harness uses real `wpdb`, `NativeWpdbAdapter`, `WpdbMigrationStateStore`, `MigrationRegistry`, `MigrationRunner`, and current non-destructive migration `220.custom_tables_migration_runs_v1` unchanged. A test-only state-store decorator throws exactly once after `apply()` and before marker persistence.
+
+Observed result:
+
+- first run created the target table then raised `P006_B6B_FAIL_ONCE_MARKER_WRITE`;
+- migration marker remained absent;
+- fresh normal retry applied exactly migration 220 and persisted exactly one marker;
+- target schema hash stayed **`3d5c22d7013a46bbba3ddee33ec00aedafdd0b23b0e56eae3e75a58e6cb99318`**;
+- third fresh runner returned no pending migrations and kept the same schema;
+- prerequisite-phase WordPress HTTP attempts were zero.
+
+Two WordPress installer URL probes were intercepted by the MU `pre_http_request` blocker and are recorded separately; no outbound transport occurred.
+
+**FP-86 remains NOT FORMALLY EXECUTED.** P-006 accounting remains **144/57/57/0/0** with zero certified pairs/runtime certifications. This prerequisite is bounded to current migration 220 and does not certify generic migration interruption recovery.

@@ -1,0 +1,149 @@
+name: P-006 B6b FP-86 Fail-Once Marker Prerequisite
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-b6b-fp86-fail-once-marker.yml'
+      - 'tools/p006/p006-b6b-fp86-fail-once-marker.php'
+      - 'tools/p006/p006-b6b-wordpress-setup.sh'
+      - 'frameworks/Contracts/MigrationInterface.php'
+      - 'frameworks/Contracts/MigrationStateStoreInterface.php'
+      - 'frameworks/Platform/Database/DatabaseAdapterInterface.php'
+      - 'frameworks/Platform/Database/NativeWpdbAdapter.php'
+      - 'frameworks/Platform/Database/Migrations/MigrationRegistry.php'
+      - 'frameworks/Platform/Database/Migrations/MigrationRunner.php'
+      - 'frameworks/Platform/Database/Migrations/WpdbMigrationStateStore.php'
+      - 'frameworks/Modules/CustomTables/Migration/Run/Persistence/CreateMigrationRunStoreMigration.php'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-b6b-fp86-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  change-gate:
+    name: B6b latest-change gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      run_harness: ${{ steps.gate.outputs.run_harness }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Decide whether latest change requires harness
+        id: gate
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          run_harness=true
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$EVENT_ACTION" = "synchronize" ] && [ -n "$BEFORE_SHA" ]; then
+            git cat-file -e "$BEFORE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            changed="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+            printf '%s\n' "$changed"
+            harness_regex='^(\.github/workflows/p006-b6b-fp86-fail-once-marker\.yml|tools/p006/p006-b6b-fp86-fail-once-marker\.php|tools/p006/p006-b6b-wordpress-setup\.sh|frameworks/Contracts/MigrationInterface\.php|frameworks/Contracts/MigrationStateStoreInterface\.php|frameworks/Platform/Database/DatabaseAdapterInterface\.php|frameworks/Platform/Database/NativeWpdbAdapter\.php|frameworks/Platform/Database/Migrations/MigrationRegistry\.php|frameworks/Platform/Database/Migrations/MigrationRunner\.php|frameworks/Platform/Database/Migrations/WpdbMigrationStateStore\.php|frameworks/Modules/CustomTables/Migration/Run/Persistence/CreateMigrationRunStoreMigration\.php)'
+            if printf '%s\n' "$changed" | grep -Eq "$harness_regex"; then run_harness=true; else run_harness=false; fi
+          fi
+          echo "run_harness=$run_harness" >> "$GITHUB_OUTPUT"
+          echo "B6b harness required: $run_harness"
+
+  prerequisite:
+    name: Validate fail-once marker prerequisite / WP 6.9 / PHP 8.2 / MySQL 8.4
+    needs: change-gate
+    if: needs.change-gate.outputs.run_harness == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_EXPECTED_WP: '6.9'
+      WPE_P006_EXPECTED_PHP: '8.2'
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_TABLE_PREFIX: wpep006b6b_
+      WPE_P006_NETWORK_LOG: /tmp/p006-b6b-network.log
+      WPE_P006_EVIDENCE_FILE: ${{ github.workspace }}/artifacts/p006-b6b/evidence.json
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: mysqli
+          coverage: none
+
+      - name: Validate B6b tooling
+        run: |
+          set -euo pipefail
+          php -l tools/p006/p006-b6b-fp86-fail-once-marker.php
+          bash -n tools/p006/p006-b6b-wordpress-setup.sh
+
+      - name: Prepare disposable WordPress
+        run: bash tools/p006/p006-b6b-wordpress-setup.sh
+
+      - name: Execute prerequisite harness
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/p006-b6b
+          php tools/p006/p006-b6b-fp86-fail-once-marker.php
+          test -s artifacts/p006-b6b/evidence.json
+          test "$(jq -r '.status' artifacts/p006-b6b/evidence.json)" = "PASS"
+          test "$(jq -r '.target.migration_id' artifacts/p006-b6b/evidence.json)" = "220.custom_tables_migration_runs_v1"
+          test "$(jq -r '.first_run.exception.message' artifacts/p006-b6b/evidence.json)" = "P006_B6B_FAIL_ONCE_MARKER_WRITE"
+          test "$(jq -r '.second_fresh_run.schema_unchanged_from_first_apply' artifacts/p006-b6b/evidence.json)" = "true"
+          test "$(jq -r '.third_fresh_run.applied_ids | length' artifacts/p006-b6b/evidence.json)" = "0"
+          test "$(jq -r '.formal_fixture_executed' artifacts/p006-b6b/evidence.json)" = "false"
+          test "$(jq -r '.prerequisite_phase_network_attempt_count' artifacts/p006-b6b/evidence.json)" = "0"
+          test "$(jq -r '.network_attempt_count' artifacts/p006-b6b/evidence.json)" = "0"
+          cat artifacts/p006-b6b/evidence.json
+
+      - name: Upload immutable B6b prerequisite evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-b6b-fp86-prerequisite-${{ github.run_id }}
+          path: artifacts/p006-b6b/evidence.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
