@@ -155,7 +155,7 @@ $gateway = new WordPressAjaxGateway(WPE_AJAX_ACTION, $dispatcher, $ajaxEnvironme
 $gateway->register();
 
 wpAjaxPolicyExpect(has_action('wp_ajax_' . WPE_AJAX_ACTION, [$gateway, 'handle']) !== false, 'canonical authenticated wp_ajax hook must be registered');
-wpAjaxPolicyExpect(has_action('wp_ajax_nopriv_' . WPE_AJAX_ACTION, [$gateway, 'handle']) !== false, 'canonical nopriv wp_ajax hook must be registered');
+wpAjaxPolicyExpect(has_action('wp_ajax_nopriv_' . WPE_AJAX_ACTION, [$gateway, 'handle']) === false, 'authenticated-only AJAX gateway must not expose a nopriv hook');
 wpAjaxPolicyExpect($gateway->action() === WPE_AJAX_ACTION, 'gateway must expose the exact configured action to canonical admin adapters');
 wpAjaxPolicyExpect($routes->types() === ['platform.fixture'], 'AJAX type registry must contain only the explicit allowlisted route');
 
