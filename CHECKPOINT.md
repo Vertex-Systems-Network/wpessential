@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before Wave 1T shared-truth closeout: **`main @ 6313a00c5089c573e0051563e47773147472899d`**
+Current integration anchor before B6 harness-prerequisite readiness closeout: **`main @ 10ccd7087d47fc7f8b41dc3a2e2846e2d5e6bf20`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -28,8 +28,9 @@ P-006 Wave 1S shared-truth closeout: **PR #1084**
 P-006 B5 Lane C schema/migration readiness: **Issue #1085 / PR #1086**
 P-006 Wave 1T FP-77/78/79/80/88 runtime evidence: **Issue #1087 / PR #1089**
 P-006 Wave 1T shared-truth closeout: **PR #1090**
+P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR #1092**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1T_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6_HARNESS_PREREQUISITE_READINESS_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -53,6 +54,7 @@ Wave 1R temporary grant: **`GOV-P001-CF-TEMP-016 CONSUMED / NON-REUSABLE`**
 Wave 1S temporary grant: **`GOV-P001-CF-TEMP-017 CONSUMED / NON-REUSABLE`**
 B5 Lane C readiness authorization: **`GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001 COMPLETED / NON-RUNTIME`**
 Wave 1T temporary grant: **`GOV-P001-CF-TEMP-018 CONSUMED / NON-REUSABLE`**
+B6 harness-prerequisite readiness authorization: **`GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -1163,3 +1165,25 @@ Formal P-006 accounting after this closeout:
 **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
 
 `GOV-P001-CF-TEMP-018` is consumed and non-reusable. No destructive migration executed. Product runtime source was unchanged. No pair/runtime/generic-migration certification, permanent P-001/CF, updater/TUF, production deployment, release authority, ADR-0010 promotion or #947 authority follows.
+
+
+## P-006 B6 harness-prerequisite readiness closeout
+
+Issue **#1091** reviews only **FP-86, FP-89, FP-90 and FP-94** against exact main after terminal Wave 1T.
+
+Review deliverable:
+
+- `docs/QUALITY/P006-B6-HARNESS-PREREQUISITE-READINESS.md`.
+
+All four fixtures are **READY_FOR_PREREQUISITE_IMPLEMENTATION** under separate later bounded implementation authorization:
+
+- **FP-86** — test-only fail-once `MigrationStateStoreInterface` decorator over a real disposable DB/current fixed idempotent migration; no product bootstrap DI change;
+- **FP-89** — deterministic Pro-only Platform API mismatch candidate while marketing/schema dimensions remain compatible;
+- **FP-90** — CI-only disposable SQL snapshot/hash/drop-recreate/import primitive, explicitly not product Backup/Restore implementation or certification;
+- **FP-94** — finite migration-adjacent status/error capture with deterministic license/Vault/private-data canaries and no new product logger.
+
+No formal fixture is executed by B6. Formal P-006 accounting remains:
+
+**144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
+
+No runtime grant, product runtime mutation, destructive migration, provider/updater, product Backup/Restore implementation, certification, ADR-0010 promotion, deploy/release or #947 authority follows.
