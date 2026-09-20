@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before B6 harness-prerequisite readiness closeout: **`main @ 10ccd7087d47fc7f8b41dc3a2e2846e2d5e6bf20`**
+Current integration anchor before B6a FP-89 candidate prerequisite closeout: **`main @ 768ce0af64f311289c515f7b98fbbc6a9a0af23b`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -29,8 +29,9 @@ P-006 B5 Lane C schema/migration readiness: **Issue #1085 / PR #1086**
 P-006 Wave 1T FP-77/78/79/80/88 runtime evidence: **Issue #1087 / PR #1089**
 P-006 Wave 1T shared-truth closeout: **PR #1090**
 P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR #1092**
+P-006 B6a FP-89 Platform API candidate prerequisite: **Issue #1093 / PR #1094**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6_HARNESS_PREREQUISITE_READINESS_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6A_FP89_CANDIDATE_PREREQUISITE_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -55,6 +56,7 @@ Wave 1S temporary grant: **`GOV-P001-CF-TEMP-017 CONSUMED / NON-REUSABLE`**
 B5 Lane C readiness authorization: **`GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001 COMPLETED / NON-RUNTIME`**
 Wave 1T temporary grant: **`GOV-P001-CF-TEMP-018 CONSUMED / NON-REUSABLE`**
 B6 harness-prerequisite readiness authorization: **`GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001 COMPLETED / NON-RUNTIME`**
+B6a FP-89 candidate authorization: **`GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001 PREREQUISITE PASS / NON-RUNTIME / FP-89 NOT EXECUTED`**
 
 ## Mandatory work-cycle order
 
@@ -1187,3 +1189,29 @@ No formal fixture is executed by B6. Formal P-006 accounting remains:
 **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
 
 No runtime grant, product runtime mutation, destructive migration, provider/updater, product Backup/Restore implementation, certification, ADR-0010 promotion, deploy/release or #947 authority follows.
+
+
+## P-006 B6a FP-89 Platform API candidate prerequisite
+
+Issue **#1093 / PR #1094** implements only the deterministic candidate prerequisite for later FP-89 execution.
+
+Accepted exact-head prerequisite evidence:
+
+- source head: **`bf7f5dc9dd73d13143dcc19d5c5743f1f5034ef8`**;
+- prerequisite workflow run: **35539119381 — PASS**;
+- Governance run: **35539119359 — PASS**;
+- immutable artifact: **10613911938**;
+- artifact digest: **`sha256:dab04416de5ff4a9e1c2562b0aef0e8d147b953a67d5ab5bdaff07848838c44a`**.
+
+Candidate identity:
+
+- F0 canonical ZIP: `2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80`;
+- P0 canonical ZIP: `bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467`;
+- P-API ZIP: `5a2634a0d3c72ff7ede89545837c3fe2773aefad90a3fed4b060485c55645af9`;
+- isolated F0/P-API pair id: `9447c78174b7702879f318339c60942ebc20be9a477df78f9dbd2b734705d841`.
+
+Only `wpessential-pro/wpessential-pro.php` differs from canonical P0, and only the Pro min/max Platform API constants change from `0.1.0` to `0.2.0`.
+
+The real `LocalCompatibilityPreflight::evaluate()` reports `platform_api_too_old` / dimension `platform_api`, with premium boot and premium migrations denied. No WordPress/MySQL runtime or migration/DB mutation was used.
+
+**FP-89 remains NOT FORMALLY EXECUTED.** P-006 accounting remains **144/57/57/0/0** with zero certified pairs/runtime certifications. No runtime grant, product runtime mutation, certification, ADR-0010 promotion, provider/updater, deploy/release or #947 authority follows.
