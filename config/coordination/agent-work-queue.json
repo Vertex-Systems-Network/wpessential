@@ -43,7 +43,7 @@
     "wave1r_temp_grant": "GOV-P001-CF-TEMP-016 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "wave1s_owner_authorization": "Issue #1081 / FP-33 ONLY",
     "wave1s_temp_grant": "GOV-P001-CF-TEMP-017 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
-    "b5_lane_c_schema_readiness_authorization": "Issue #1085 / GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001 COMPLETED_NON_RUNTIME_REVIEW_PENDING_MERGE"
+    "b5_lane_c_schema_readiness_authorization": "Issue #1085 / GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001 COMPLETED_NON_RUNTIME_REVIEW_ON_PR_1086_PENDING_MERGE"
   },
   "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H–1S are terminal. B5 Issue #1085 is a non-runtime Lane C schema/migration readiness review only: formal accounting remains 144/52/52/0/0 with zero certified pairs/runtime certifications. Current review classifies FP-77/78/79/80/88 as ready for separate formal execution authorization; FP-86/89/90/94 as ready only after exact harness prerequisites; FP-81 as N_A_CURRENT_ACCEPTED_MIGRATION_SET because no accepted destructive Pro migration exists and none may be invented for evidence; FP-82/83/84/85/87/91/92/93 remain blocked on persisted schema-ahead authority, interruption/marker reconciliation, cross-request migration serialization, rollback recovery, or verified backup evidence. B5 executes no fixture, creates no P-001/CF runtime grant, changes no product runtime, and promotes no migration/pair/runtime certification, ADR-0010, provider/updater, deploy/release or #947 authority. #858 remains external-admin NON_BLOCKING and #947 independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
@@ -82,7 +82,7 @@
     "1074": "COMPLETED_ON_P006_B4_FP21_22_24_33_READINESS_CLOSEOUT",
     "1077": "COMPLETED_ON_PR_1080_P006_WAVE_1R_FP21_FP22_PASS",
     "1081": "COMPLETED_ON_PR_1084_P006_WAVE_1S_FP33_PASS",
-    "1085": "COMPLETED_PENDING_PR_P006_B5_LANE_C_SCHEMA_READINESS",
+    "1085": "COMPLETED_ON_PR_1086_PENDING_MERGE_P006_B5_LANE_C_SCHEMA_READINESS",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1284,7 +1284,7 @@
       "slot_id": "p006-b5-lane-c-schema-readiness-v1",
       "title": "P-006 B5 Lane C schema/migration readiness review — FP-77…94",
       "role": "SUPERVISOR_ONLY",
-      "status": "COMPLETED_PENDING_PR",
+      "status": "COMPLETED_ON_PR_1086_PENDING_MERGE",
       "work_mode": "P006_B5_NON_RUNTIME_SCHEMA_MIGRATION_READINESS_REVIEW",
       "source": "Issue #1085",
       "runtime_allowed": false,
@@ -1300,7 +1300,7 @@
       "blocked": ["FP-82","FP-83","FP-84","FP-85","FP-87","FP-91","FP-92","FP-93"],
       "fixture_accounting": {"documented":144,"executed":52,"pass":52,"fail":0,"inconclusive":0},
       "runtime_executed": false,
-      "closeout_pr": null
+      "closeout_pr": 1086
     },
     {
       "priority": 900,
@@ -1407,9 +1407,9 @@
     "p006_wave1s_evidence_finalization_head": "2c3ad516894f8602822745b023d71e3770c66769",
     "p006_wave1s_evidence_finalization_wave_shell_run": 35511107065,
     "p006_wave1s_closeout_pr": 1084,
-    "p006_b5_lane_c_schema_readiness": "TERMINAL_NON_RUNTIME_REVIEW_PENDING_PR",
+    "p006_b5_lane_c_schema_readiness": "TERMINAL_NON_RUNTIME_REVIEW_PR_1086_PENDING_MERGE",
     "p006_b5_lane_c_schema_readiness_issue": 1085,
-    "p006_b5_lane_c_schema_readiness_closeout_pr": null,
+    "p006_b5_lane_c_schema_readiness_closeout_pr": 1086,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
