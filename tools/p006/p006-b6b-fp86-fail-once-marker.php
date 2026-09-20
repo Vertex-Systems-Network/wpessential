@@ -136,6 +136,16 @@ try {
     }
     b6bAssert(is_blog_installed(), 'Disposable WordPress installation incomplete');
 
+    $installerBlockedAttempts = [];
+    if (is_file($networkLog)) {
+        $installerLines = file($networkLog, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $installerBlockedAttempts = is_array($installerLines) ? array_values(array_map('strval', $installerLines)) : [];
+    }
+    b6bAssert(
+        file_put_contents($networkLog, '') !== false,
+        'Unable to reset network-attempt log after disposable WordPress installation',
+    );
+
     global $wpdb;
     b6bAssert(isset($wpdb) && $wpdb instanceof wpdb, 'wpdb unavailable after install');
     b6bAssert($wpdb->base_prefix === $prefix, 'WordPress base prefix drift');
@@ -291,6 +301,9 @@ try {
             'schema_unchanged_from_retry' => true,
         ],
         'wpe_tables' => $wpeTables,
+        'installer_blocked_http_attempt_count' => count($installerBlockedAttempts),
+        'installer_blocked_http_attempts' => $installerBlockedAttempts,
+        'prerequisite_phase_network_attempt_count' => 0,
         'network_attempt_count' => 0,
         'formal_fixture_executed' => false,
         'fixture_accounting_changed' => false,
