@@ -120,7 +120,68 @@ Shared-truth closeout is a separate Governance-only PR after the runtime/evidenc
 
 ## 8. Formal result
 
-**PENDING EXACT-HEAD RUNTIME EXECUTION.**
+Accepted runtime source head:
+
+`dcc8e965408331b2d0be449b2859a64729ee8b3b`
+
+Exact-head verification:
+
+- Governance Gate run **35510888422 — PASS**;
+- Wave 1S run **35510888416 — PASS**;
+- latest-change gate — PASS;
+- deterministic candidate build — PASS;
+- static first-party activation/deactivation/uninstall hook prerequisite — PASS with zero hits;
+- minimum / WordPress 6.9 / PHP 8.2 / MySQL 8.4 — PASS;
+- reference / WordPress 7.1 / PHP 8.5 / MySQL 8.4 — PASS;
+- terminal aggregate — PASS;
+- review threads before evidence finalization — zero;
+- fresh main before evidence finalization remained `7ff24ae84e8a4ed976a17dc4bf9f7e5c2651ccd5`.
+
+Immutable exact-run artifacts:
+
+- candidate graph + static scan — id **10605022170**, digest `sha256:34f6b8b3792fba11665edb0377ddce6891a80ba114f4792761244e77270635d4`;
+- minimum runtime — id **10605280957**, digest `sha256:17da20cfd7c35d36c5ab1c641a5583ce2e4430301dc02a15773ce67f1a5f144f`;
+- reference runtime — id **10606060168**, digest `sha256:d4290f7200e3fb41c1b17ab9b244359f30067ed698b6c3ec405f9acde1dba9e4`;
+- terminal marker — id **10606030821**, digest `sha256:fa52290de2c182c779eddd2986e0d2b7b4586207b1bd6280a727d48472dbdbff`.
+
+Both runtime cells produced the same settled Free-only WPE snapshot SHA-256:
+
+`42e5d91120cbca74e9857efd778afecb18fe5978507d3052493819fb57eae551`
+
+### Scenario A — F2/P0
+
+Both runtime cells executed two complete activation/deactivation cycles for exact F2/P0.
+
+Each cycle proved:
+
+- WordPress `activate_plugin()` succeeded;
+- immediate pre/post activation WPE snapshot hashes were identical;
+- fresh request resolved `free_version_too_new`;
+- premium boot, migrations and mutations remained denied;
+- premium module set remained empty;
+- required Free CPT + Taxonomy modules remained present;
+- Pro migration ids 220/221 remained absent;
+- Pro Custom Tables migration-run/confirmation stores remained absent;
+- deactivation left WPE migration/schema state unchanged;
+- sentinel remained `fp33-preserve-v1`;
+- outbound WordPress HTTP attempts remained zero;
+- no fatal/error occurred.
+
+### Scenario B — F1/P2
+
+Both runtime cells executed two complete activation/deactivation cycles for exact F1/P2.
+
+Each cycle proved the same activation/deactivation WPE-state invariants, with fresh request compatibility equal to `free_version_too_old`.
+
+Across all accepted observations, no destructive migration executed and no first-party WordPress activation/deactivation/uninstall hook was present.
+
+Terminal result:
+
+**FP-33 — PASS_WAVE_1S_ACTIVATION_LIFECYCLE**
+
+The earlier Wave 1H INCONCLUSIVE result is resolved by this formal re-execution. FP-33 is **not** counted as a new executed fixture.
+
+The workflow YAML required one tooling-only normalization before the accepted run: the PHP setup step was converted from YAML flow-map syntax to block syntax so the new workflow registered correctly. No Wave 1S runtime evidence was accepted before head `dcc8e965408331b2d0be449b2859a64729ee8b3b`.
 
 ## 9. Accounting boundary
 
@@ -128,14 +189,18 @@ Before Wave 1S:
 
 **144 documented / 52 executed / 51 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
 
-FP-33 is already included in the executed count.
-
-If Wave 1S resolves FP-33 to PASS:
+Terminal Wave 1S reclassification:
 
 **144 documented / 52 executed / 52 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
 
 Executed remains **52**, not 53.
 
-TEMP-017 is consumed only by the separate terminal shared-truth closeout.
+TEMP-017 is consumed only by the separate terminal shared-truth closeout after this runtime/evidence PR merges.
 
 No permanent P-001/CF, pair/runtime/migration certification, provider integration, updater/TUF, production deploy/release or ADR-0010 promotion follows.
+
+## 10. Terminal conclusion
+
+**Wave 1S — PASS_FP33_ACTIVATION_LIFECYCLE / NON-CERTIFYING**
+
+The bounded evidence resolves the prior static-harness ambiguity by demonstrating that repeated WordPress Pro activation/deactivation against both accepted incompatible breaking pairs does not mutate WPE migration/schema state before compatibility is known and does not admit Pro-dependent migrations afterward. This remains fixture evidence, not runtime, migration, pair or production certification.
