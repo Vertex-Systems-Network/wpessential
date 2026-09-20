@@ -434,7 +434,21 @@ function b6dVerifyRestored(): array
     $before = b6dReadJson(b6dEnv('WPE_P006_BEFORE_EVIDENCE'));
     $snapshot = b6dSnapshot();
     b6dAssert(isset($before['snapshot']) && is_array($before['snapshot']), 'Before snapshot missing');
-    b6dAssert($snapshot === $before['snapshot'], 'Restored older-state snapshot drift');
+    $expectedSnapshot = $before['snapshot'];
+    if ($snapshot !== $expectedSnapshot) {
+        $diff = [];
+        foreach (array_values(array_unique(array_merge(array_keys($expectedSnapshot), array_keys($snapshot)))) as $key) {
+            $expectedValue = $expectedSnapshot[$key] ?? '__missing__';
+            $actualValue = $snapshot[$key] ?? '__missing__';
+            if ($expectedValue !== $actualValue) {
+                $diff[$key] = ['before' => $expectedValue, 'after' => $actualValue];
+            }
+        }
+        b6dFail(
+            'Restored older-state snapshot drift: '
+            . json_encode($diff, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
+        );
+    }
     b6dAssert(b6dNetworkAttempts($networkLog) === [], 'Outbound WordPress HTTP during restored-state verification');
 
     return [
