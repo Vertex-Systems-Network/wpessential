@@ -1,0 +1,145 @@
+name: P-006 B6a FP-89 Platform API Candidate
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-b6a-fp89-platform-api-candidate.yml'
+      - 'tools/p006/p006-b6a-fp89-platform-api-candidate.php'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-b6a-fp89-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  change-gate:
+    name: B6a latest-change gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      run_candidate: ${{ steps.gate.outputs.run_candidate }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Decide whether latest change requires candidate build
+        id: gate
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          run_candidate=true
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$EVENT_ACTION" = "synchronize" ] && [ -n "$BEFORE_SHA" ]; then
+            git cat-file -e "$BEFORE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            changed="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+            printf '%s\n' "$changed"
+            candidate_regex='^(\.github/workflows/p006-b6a-fp89-platform-api-candidate\.yml|tools/p006/p006-b6a-fp89-platform-api-candidate\.php|tools/release/build-distributable\.php|tools/release/build-free-pro-distributables\.php|frameworks/Modules/Compatibility/LocalCompatibilityPreflight\.php|wpessential\.php|wpessential-pro\.php|package\.json|package-lock\.json|admin-ui/)'
+            if printf '%s\n' "$changed" | grep -Eq "$candidate_regex"; then run_candidate=true; else run_candidate=false; fi
+          fi
+          echo "run_candidate=$run_candidate" >> "$GITHUB_OUTPUT"
+          echo "B6a heavy candidate build required: $run_candidate"
+
+  build-candidate:
+    name: Build deterministic F0/P0/P-API graph
+    needs: change-gate
+    if: needs.change-gate.outputs.run_candidate == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Build admin assets
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run lint:package
+          npm run build:admin
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+      - name: Validate prerequisite tooling
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/p006/p006-b6a-fp89-platform-api-candidate.php
+          php -l frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php
+      - name: Build canonical package pair twice
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cp artifacts/wpessential.zip /tmp/b6a-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/b6a-pro.zip
+          php tools/release/build-distributable.php
+          cmp --silent /tmp/b6a-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/b6a-pro.zip artifacts/wpessential-pro.zip
+      - name: Derive isolated Platform API candidate twice
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-b6a
+          mkdir -p artifacts/p006-b6a/a artifacts/p006-b6a/b
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-b6a/a" php tools/p006/p006-b6a-fp89-platform-api-candidate.php
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-b6a/b" php tools/p006/p006-b6a-fp89-platform-api-candidate.php
+          for file in f0.zip p0.zip p-api.zip candidate-identity.json; do
+            cmp --silent "artifacts/p006-b6a/a/$file" "artifacts/p006-b6a/b/$file"
+          done
+          cmp --silent artifacts/wpessential.zip artifacts/p006-b6a/a/f0.zip
+          cmp --silent artifacts/wpessential-pro.zip artifacts/p006-b6a/a/p0.zip
+          test "$(jq -r '.pairs.F0_P0.preflight.state' artifacts/p006-b6a/a/candidate-identity.json)" = "compatible"
+          test "$(jq -r '.pairs.F0_P_API.preflight.state' artifacts/p006-b6a/a/candidate-identity.json)" = "platform_api_too_old"
+          test "$(jq -r '.pairs.F0_P_API.preflight.dimension' artifacts/p006-b6a/a/candidate-identity.json)" = "platform_api"
+          test "$(jq -r '.pairs.F0_P_API.preflight.premium_boot_allowed' artifacts/p006-b6a/a/candidate-identity.json)" = "false"
+          test "$(jq -r '.pairs.F0_P_API.preflight.premium_migrations_allowed' artifacts/p006-b6a/a/candidate-identity.json)" = "false"
+          test "$(jq -r '.formal_fixture_executed' artifacts/p006-b6a/a/candidate-identity.json)" = "false"
+          test "$(jq -r '.variant_boundary.P_API_changed_entries | join(",")' artifacts/p006-b6a/a/candidate-identity.json)" = "wpessential-pro/wpessential-pro.php"
+      - name: Upload immutable B6a prerequisite artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-b6a-fp89-candidates-${{ github.run_id }}
+          path: artifacts/p006-b6a/a/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
