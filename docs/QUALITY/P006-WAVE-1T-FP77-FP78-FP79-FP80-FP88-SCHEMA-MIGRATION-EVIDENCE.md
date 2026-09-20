@@ -1,8 +1,8 @@
 # P-006 Wave 1T — FP-77 / FP-78 / FP-79 / FP-80 / FP-88 Schema-Migration Evidence
 
-Issue: #1087  
-Runtime/evidence PR: #1089  
-Authorization: `GOV-P001-CF-TEMP-018`  
+Issue: #1087
+Runtime/evidence PR: #1089
+Authorization: `GOV-P001-CF-TEMP-018`
 Accepted runtime source head: `e3b2589ebd3234b4cecfb4c847713e17f4da0fa2`
 
 Classification: **FORMAL BOUNDED P-006 EVIDENCE / NON-CERTIFYING**
