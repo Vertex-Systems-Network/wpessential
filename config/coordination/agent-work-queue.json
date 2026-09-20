@@ -1,9 +1,9 @@
 {
-  "schema_version": 99,
+  "schema_version": 100,
   "snapshot_date": "2026-09-20",
-  "queue_anchor_main_sha": "03bee5a0953ee5f1432066aa64ce274b194f49dc",
-  "mode": "POST_RC1_P006_B6C_FP94_DIAGNOSTICS_REDACTION_PREREQUISITE",
-  "source_issue": "#1097",
+  "queue_anchor_main_sha": "7e5f01811e60f77d9ae732d56262b432dbaeb397",
+  "mode": "POST_RC1_P006_B6D_FP90_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE",
+  "source_issue": "#1099",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -49,7 +49,8 @@
     "b6_harness_prerequisite_readiness_authorization": "Issue #1091 / GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001 COMPLETED_NON_RUNTIME_REVIEW_ON_PR_1092",
     "b6a_fp89_platform_api_candidate_authorization": "Issue #1093 / GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001 PREREQUISITE_PASS_PR_1094",
     "b6b_fp86_fail_once_marker_authorization": "Issue #1095 / GOV-P006-B6B-FP86-FAIL-ONCE-MARKER-001 PREREQUISITE_PASS_PR_1096",
-    "b6c_fp94_diagnostics_redaction_authorization": "Issue #1097 / GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001 PREREQUISITE_PASS_PENDING_MERGE"
+    "b6c_fp94_diagnostics_redaction_authorization": "Issue #1097 / GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001 PREREQUISITE_PASS_PR_1098",
+    "b6d_fp90_disposable_db_snapshot_authorization": "Issue #1099 / GOV-P006-B6D-FP90-DISPOSABLE-DB-SNAPSHOT-001 CLAIMED"
   },
   "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H–1T are terminal. B6 readiness is terminal non-runtime; B6a FP-89 and B6b FP-86 prerequisites are merged while both fixtures remain not formally executed. B6c Issue #1097 is a test-only FP-94 diagnostics/redaction prerequisite. Exact-head source 46ab31e6ab6169d05c8a1c936970c2213aca1146 passed Governance run 35540536932 and dedicated run 35540536959. The harness scanned 65 migration PHP files, captured only the current finite runner/error/stderr/error-log/SensitiveValue surfaces, persisted only canary SHA-256 fingerprints, and found no raw license/Vault/private-data canaries; product logging/runtime source remained unchanged, WordPress/MySQL/provider runtime was unused, no runtime grant was created, and accounting remains 144/57/57/0/0. FP-94 is NOT formally executed. No pair/runtime/migration certification, permanent P-001/CF, provider/updater/TUF, ADR-0010, deploy/release or #947 authority is promoted. #858 remains external-admin NON_BLOCKING and #947 independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
@@ -93,7 +94,8 @@
     "1091": "COMPLETED_ON_PR_1092_P006_B6_HARNESS_PREREQUISITE_READINESS",
     "1093": "COMPLETED_ON_PR_1094_P006_B6A_FP89_PLATFORM_API_CANDIDATE",
     "1095": "COMPLETED_ON_PR_1096_P006_B6B_FP86_FAIL_ONCE_MARKER",
-    "1097": "PREREQUISITE_PASS_PENDING_PR_1098_P006_B6C_FP94_DIAGNOSTICS_REDACTION",
+    "1097": "COMPLETED_ON_PR_1098_P006_B6C_FP94_DIAGNOSTICS_REDACTION",
+    "1099": "CLAIMED_P006_B6D_FP90_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1611,6 +1613,23 @@
       "formal_fixture_executed": false,
       "fixture_accounting_changed": false,
       "closeout_pr": 1098
+    },
+    {
+      "priority": 306,
+      "slot_id": "p006-b6d-fp90-disposable-db-snapshot-v1",
+      "title": "P-006 B6d FP-90 disposable older-DB snapshot prerequisite",
+      "role": "SUPERVISOR_ONLY",
+      "status": "CLAIMED",
+      "work_mode": "P006_B6D_FP90_TEST_ONLY_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE",
+      "source": "Issue #1099",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-b6d-fp90-disposable-db-snapshot-v1",
+      "authorization": "GOV-P006-B6D-FP90-DISPOSABLE-DB-SNAPSHOT-001",
+      "authorized_scope": ["single disposable minimum WordPress/MySQL prerequisite cell", "Free migrations 006/007/008 settled older state", "deterministic SQL dump/hash/drop-recreate/import", "restored state fingerprint verification", "exact canonical Free/Pro compatibility preflight before pending migration", "immutable prerequisite evidence", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-90 execution", "invoking Pro 220/221 after restore", "product Backup/Restore implementation/certification", "production/live DB", "destructive/irreversible migration", "P-001/CF runtime grant", "provider/license/billing", "updater/TUF/signing", "pair/runtime/migration certification", "deploy/release", "ADR-0010 promotion", "#947"],
+      "formal_fixture_executed": false,
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
+      "close_condition": "Disposable DB snapshot prerequisite merged with exact-head Governance + dedicated workflow PASS, immutable evidence, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-90 remains not formally executed"
     },
     {
       "priority": 900,
