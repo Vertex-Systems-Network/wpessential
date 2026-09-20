@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before Wave 1Q FP-50 closeout: **`main @ bdeeb8c474628ae4e9aa9fd73f87df14188a6056`**
+Current integration anchor before B4 FP-21/22/24/33 readiness closeout: **`main @ 5f783256fbe1228e1585df9de1dfd995cc9a25f8`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -20,8 +20,9 @@ P-006 Wave 1P FP-52 closeout: **Issue #1064 / PR #1066**
 P-006 terminal-workflow timeout hardening: **PR #1069**
 P-006 B3 FP-50 expectation decision: **Issue #1067 / PR #1070**
 P-006 Wave 1Q FP-50 closeout: **Issue #1071 / PR #1073**
+P-006 B4 FP-21/22/24/33 readiness review: **Issue #1074 / PR #1076**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1Q_FP50_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B4_READINESS_REVIEW_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -40,6 +41,7 @@ Wave 1O temporary grant: **`GOV-P001-CF-TEMP-013 CONSUMED / NON-REUSABLE`**
 Wave 1P temporary grant: **`GOV-P001-CF-TEMP-014 CONSUMED / NON-REUSABLE`**
 FP-50 expectation decision authorization: **`GOV-P006-B3-FP50-EXPECTATION-DECISION-001 COMPLETED / NON-RUNTIME`**
 Wave 1Q temporary grant: **`GOV-P001-CF-TEMP-015 CONSUMED / NON-REUSABLE`**
+B4 FP-21/22/24/33 readiness authorization: **`GOV-P006-B4-FP21-22-24-33-READINESS-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -930,3 +932,28 @@ Timeout containment remains active:
 No product runtime source changed. This PASS does not certify generic WordPress recursive-copy interruption safety, permanent P-001/CF, a Free/Pro pair, a P-006 runtime, updater/TUF, rollback/migration behavior, provider/license/billing, multisite, production deployment/release, ADR-0010 or #947.
 
 After PR #1073 merges there is **no Supervisor P-006 runtime execution slot**.
+
+
+## P-006 B4 FP-21 / FP-22 / FP-24 / FP-33 readiness closeout
+
+Issue **#1074** performs a bounded non-runtime readiness/applicability review after Wave 1Q. No fixture is executed, no WordPress/MySQL runtime is started and no P-001/CF temporary grant is created.
+
+Review base: **`5f783256fbe1228e1585df9de1dfd995cc9a25f8`**.
+
+Terminal decisions:
+
+- **FP-21 — READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION.** The original missing-overlap-artifact blocker is removed by the deterministic **F1/P0** compatible pair already pinned by prior accepted P-006 evidence. FP-21 itself remains NOT_EXECUTED.
+- **FP-22 — READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION.** Exact **F0/P1** now supplies the required older-Free/newer-Pro compatible overlap pair. FP-22 itself remains NOT_EXECUTED.
+- **FP-24 — N_A_CURRENT_ACCEPTED_CONTRACT.** Current binary compatibility is pair-wide; there is no accepted per-module/per-adapter binary range or optional capability-degradation contract. This is applicability truth, not PASS and not execution.
+- **FP-33 — READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION, formal result remains INCONCLUSIVE.** Current source separates ordinary migration-owner classes from WordPress activation hooks, compatibility gates Pro-dependent migration registration, and destructive migrations require a recovery plan. Resolving the existing INCONCLUSIVE result still requires a separately authorized real WordPress activation/deactivation/reactivation fixture.
+
+Exact overlap evidence reused only as prerequisite truth:
+
+- F1/P0 pair id: `f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef`;
+- F0/P1 pair id: `532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26`.
+
+The review does not retroactively count Wave 1K as FP-21 or FP-22 execution.
+
+Formal P-006 accounting remains **144 documented / 50 executed / 49 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+No product runtime source, schema, migration state, provider, updater/TUF, multisite, production site, deployment/release, ADR-0010, permanent P-001/CF, pair/runtime certification or #947 authority is promoted.
