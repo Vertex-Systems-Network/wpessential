@@ -1,0 +1,362 @@
+name: P-006 Wave 1T Schema Migration Ordering
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-wave1t-schema-migration.yml'
+      - 'tools/p006/p006-wave1t-schema-migration.php'
+      - 'tools/p006/p006-wave1t-wordpress-setup.sh'
+      - 'tools/p006/p006-wave1k-build-overlap-artifacts.php'
+      - 'tools/p006/p006-wave1l-build-breaking-artifacts.php'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'frameworks/Bootstrap/Plugin.php'
+      - 'frameworks/Modules/Compatibility/**'
+      - 'frameworks/Modules/CustomTables/**'
+      - 'frameworks/Platform/Database/Migrations/**'
+      - 'frameworks/Platform/Entitlements/**'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-wave1t-schema-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  change-gate:
+    name: Wave 1T latest-change gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      run_runtime: ${{ steps.gate.outputs.run_runtime }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Decide whether latest change requires runtime
+        id: gate
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          run_runtime=true
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$EVENT_ACTION" = "synchronize" ] && [ -n "$BEFORE_SHA" ]; then
+            git cat-file -e "$BEFORE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            changed="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+            printf '%s\n' "$changed"
+            runtime_regex='^(\.github/workflows/p006-wave1t-schema-migration\.yml|tools/p006/p006-wave1t-schema-migration\.php|tools/p006/p006-wave1t-wordpress-setup\.sh|tools/p006/p006-wave1k-build-overlap-artifacts\.php|tools/p006/p006-wave1l-build-breaking-artifacts\.php|tools/release/build-distributable\.php|tools/release/build-free-pro-distributables\.php|frameworks/Bootstrap/Plugin\.php|frameworks/Modules/Compatibility/|frameworks/Modules/CustomTables/|frameworks/Platform/Database/Migrations/|frameworks/Platform/Entitlements/|wpessential\.php|wpessential-pro\.php|package\.json|package-lock\.json|admin-ui/)'
+            if printf '%s\n' "$changed" | grep -Eq "$runtime_regex"; then run_runtime=true; else run_runtime=false; fi
+          fi
+          echo "run_runtime=$run_runtime" >> "$GITHUB_OUTPUT"
+          echo "Wave 1T heavy runtime required: $run_runtime"
+
+  build-candidates:
+    name: Build and verify Wave 1T candidate graph
+    needs: change-gate
+    if: needs.change-gate.outputs.run_runtime == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Build admin assets
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run lint:package
+          npm run build:admin
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+          tools: composer:v2
+      - name: Validate Wave 1T tooling
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/p006/p006-wave1k-build-overlap-artifacts.php
+          php -l tools/p006/p006-wave1l-build-breaking-artifacts.php
+          php -l tools/p006/p006-wave1t-schema-migration.php
+          bash -n tools/p006/p006-wave1t-wordpress-setup.sh
+      - name: Build canonical package pair twice
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cp artifacts/wpessential.zip /tmp/w1t-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/w1t-pro.zip
+          php tools/release/build-distributable.php
+          cmp --silent /tmp/w1t-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/w1t-pro.zip artifacts/wpessential-pro.zip
+      - name: Derive accepted compatible and breaking graphs twice
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-wave1t
+          mkdir -p artifacts/p006-wave1t/k-a artifacts/p006-wave1t/k-b artifacts/p006-wave1t/l-a artifacts/p006-wave1t/l-b
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-wave1t/k-a" php tools/p006/p006-wave1k-build-overlap-artifacts.php
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-wave1t/k-b" php tools/p006/p006-wave1k-build-overlap-artifacts.php
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-wave1t/l-a" php tools/p006/p006-wave1l-build-breaking-artifacts.php
+          WPE_P006_OUTPUT_DIR="$GITHUB_WORKSPACE/artifacts/p006-wave1t/l-b" php tools/p006/p006-wave1l-build-breaking-artifacts.php
+          for file in f0.zip f1.zip p0.zip p1.zip candidate-identity.json; do cmp --silent "artifacts/p006-wave1t/k-a/$file" "artifacts/p006-wave1t/k-b/$file"; done
+          for file in f1.zip f2.zip p0.zip p2.zip candidate-identity.json; do cmp --silent "artifacts/p006-wave1t/l-a/$file" "artifacts/p006-wave1t/l-b/$file"; done
+          cmp --silent artifacts/p006-wave1t/k-a/f1.zip artifacts/p006-wave1t/l-a/f1.zip
+          cmp --silent artifacts/p006-wave1t/k-a/p0.zip artifacts/p006-wave1t/l-a/p0.zip
+      - name: Assemble TEMP-018 immutable graph
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/p006-wave1t/candidates
+          cp artifacts/p006-wave1t/k-a/f0.zip artifacts/p006-wave1t/candidates/f0.zip
+          cp artifacts/p006-wave1t/l-a/f2.zip artifacts/p006-wave1t/candidates/f2.zip
+          cp artifacts/p006-wave1t/k-a/p0.zip artifacts/p006-wave1t/candidates/p0.zip
+          jq -n \
+            --arg source "$WPE_P006_SOURCE_SHA" \
+            --slurpfile k artifacts/p006-wave1t/k-a/candidate-identity.json \
+            --slurpfile l artifacts/p006-wave1t/l-a/candidate-identity.json \
+            '{
+              protocol:"P-006",wave:"1T-schema-migration-ordering",source_sha:$source,
+              temporary_approval_id:"GOV-P001-CF-TEMP-018",authorization:"GOV-P001-CF-TEMP-018",
+              classification:"FORMAL FP-77/78/79/80/88 / NON-CERTIFYING",
+              historical_graph_reuse:{wave1k_authority_reused:false,wave1l_authority_reused:false,construction_primitives_only:true},
+              nodes:{F0:$k[0].nodes.F0,F2:$l[0].nodes.F2,P0:$k[0].nodes.P0},
+              pairs:{
+                F0_P0:($k[0].pairs.F0_P0 + {expected_state:"compatible"}),
+                F2_P0:$l[0].pairs.F2_P0
+              },
+              migration_contract:{
+                free:[
+                  {id:"006.create-compiled-registration-atomic-store",sequence:60},
+                  {id:"007.create-definition-persistence",sequence:70},
+                  {id:"008.create-audit-ptd-store",sequence:80}
+                ],
+                pro:[
+                  {id:"220.custom_tables_migration_runs_v1",sequence:220},
+                  {id:"221.custom_tables_migration_execution_confirmations_v1",sequence:221}
+                ],
+                destructive_migrations_authorized:false
+              },
+              authorized_fixtures:["FP-77","FP-78","FP-79","FP-80","FP-88"],
+              authorized_runtime_cells:{
+                minimum:{wordpress:"6.9",php:"8.2",mysql:"8.4"},
+                reference:{wordpress:"7.1",php:"8.5",mysql:"8.4"}
+              },
+              boundaries:{
+                product_runtime_source_modified:false,provider_or_remote_entitlement_used:false,
+                destructive_migration_execution:false,backup_restore:false,updater_or_tuf_certified:false,
+                pair_certified:false,runtime_certified:false,migration_certified:false,adr_0010:"Proposed"
+              }
+            }' > artifacts/p006-wave1t/candidates/wave1t-identity.json
+          test "$(jq -r '.temporary_approval_id' artifacts/p006-wave1t/candidates/wave1t-identity.json)" = "GOV-P001-CF-TEMP-018"
+          test "$(jq -r '.pairs.F0_P0.expected_state' artifacts/p006-wave1t/candidates/wave1t-identity.json)" = "compatible"
+          test "$(jq -r '.pairs.F2_P0.expected_state' artifacts/p006-wave1t/candidates/wave1t-identity.json)" = "free_version_too_new"
+          test "$(sha256sum artifacts/p006-wave1t/candidates/p0.zip | cut -d' ' -f1)" = "$(jq -r '.nodes.P0.sha256' artifacts/p006-wave1t/candidates/wave1t-identity.json)"
+      - name: Upload immutable Wave 1T candidates
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1t-candidates-${{ github.run_id }}
+          path: artifacts/p006-wave1t/candidates/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  runtime:
+    name: FP-77/78/79/80/88 / ${{ matrix.cell }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: [change-gate, build-candidates]
+    if: needs.change-gate.outputs.run_runtime == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {cell: minimum, wordpress: '6.9', php: '8.2'}
+          - {cell: reference, wordpress: '7.1', php: '8.5'}
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_test
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_LOCAL_ENTITLEMENT_STATE: pro_active
+      WPE_P006_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-wave1t/candidates
+      WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1t/candidates/f0.zip
+      WPE_P006_F2_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1t/candidates/f2.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1t/candidates/p0.zip
+      WPE_P006_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-wave1t/candidates/wave1t-identity.json
+      WPE_P006_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-wave1t/evidence/${{ matrix.cell }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-wave1t-${{ matrix.cell }}-network.log
+      WPE_P006_SQL_LOG: /tmp/p006-wave1t-${{ matrix.cell }}-sql.log
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+      - name: Download exact Wave 1T graph
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-wave1t-candidates-${{ github.run_id }}
+          path: artifacts/p006-wave1t/candidates
+      - name: Validate runtime inputs
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$WPE_P006_SOURCE_SHA"
+          for file in f0.zip f2.zip p0.zip wave1t-identity.json; do test -s "artifacts/p006-wave1t/candidates/$file"; done
+          php -l tools/p006/p006-wave1t-schema-migration.php
+          bash -n tools/p006/p006-wave1t-wordpress-setup.sh
+      - name: Prepare disposable WordPress files
+        run: bash tools/p006/p006-wave1t-wordpress-setup.sh
+      - name: Execute formal Wave 1T scenarios
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$WPE_P006_EVIDENCE_DIR"
+          run_phase() {
+            local prefix="$1" free="$2" pro="$3" mode="$4" file="$5"
+            WPE_P006_TABLE_PREFIX="$prefix" \
+            WPE_P006_EXPECTED_FREE_NODE="$free" \
+            WPE_P006_EXPECTED_PRO_NODE="$pro" \
+            WPE_P006_EXECUTION_MODE="$mode" \
+            WPE_P006_EVIDENCE_FILE="$file" \
+            php tools/p006/p006-wave1t-schema-migration.php
+          }
+
+          run_phase wpep006t77_ F0 P0 install fp77-install.json
+          run_phase wpep006t77_ F0 P0 activate-both fp77-before.json
+          run_phase wpep006t77_ F0 P0 settle-compatible fp77-settled.json
+          run_phase wpep006t77_ F0 P0 fp77 fp77.json
+
+          run_phase wpep006t78_ F0 P0 install fp78-install.json
+          run_phase wpep006t78_ F0 P0 activate-free fp78-before.json
+          run_phase wpep006t78_ F0 P0 fp78 fp78.json
+
+          run_phase wpep006t79_ F0 P0 install fp79-install.json
+          run_phase wpep006t79_ F0 P0 activate-free fp79-free-before.json
+          run_phase wpep006t79_ F0 P0 settle-free fp79-free-settled.json
+          run_phase wpep006t79_ F0 P0 activate-pro fp79-pro-activated.json
+          run_phase wpep006t79_ F0 P0 fp79 fp79.json
+
+          run_phase wpep006t88_ F0 P0 install fp88-install.json
+          run_phase wpep006t88_ F0 P0 activate-both fp88-before.json
+          run_phase wpep006t88_ F0 P0 fp88 fp88.json
+
+          run_phase wpep006t80_ F2 P0 install fp80-install.json
+          run_phase wpep006t80_ F2 P0 activate-both fp80-before.json
+          run_phase wpep006t80_ F2 P0 fp80 fp80.json
+
+          WPE_P006_TABLE_PREFIX=wpep006t77_ \
+          WPE_P006_EXPECTED_FREE_NODE=F0 \
+          WPE_P006_EXPECTED_PRO_NODE=P0 \
+          WPE_P006_EXECUTION_MODE=aggregate \
+          php tools/p006/p006-wave1t-schema-migration.php
+          cat "$WPE_P006_EVIDENCE_DIR/summary.json"
+      - name: Upload immutable runtime evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1t-${{ matrix.cell }}-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1t/candidates/wave1t-identity.json
+            artifacts/p006-wave1t/evidence/${{ matrix.cell }}/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  terminal:
+    name: Wave 1T terminal aggregate
+    needs: [change-gate, build-candidates, runtime]
+    if: always() && needs.change-gate.outputs.run_runtime == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      BUILD_RESULT: ${{ needs.build-candidates.result }}
+      RUNTIME_RESULT: ${{ needs.runtime.result }}
+    steps:
+      - name: Record terminal result
+        run: |
+          set -euo pipefail
+          status=FAIL
+          if [ "$BUILD_RESULT" = "success" ] && [ "$RUNTIME_RESULT" = "success" ]; then status=PASS; fi
+          mkdir -p artifacts/p006-wave1t/terminal
+          jq -n --arg status "$status" --arg build "$BUILD_RESULT" --arg runtime "$RUNTIME_RESULT" '{
+            status:$status,protocol:"P-006",wave:"1T",fixtures:["FP-77","FP-78","FP-79","FP-80","FP-88"],
+            authorization:"GOV-P001-CF-TEMP-018",classification:"FORMAL SCHEMA/MIGRATION ORDERING EVIDENCE / NON-CERTIFYING",
+            build_result:$build,runtime_matrix_result:$runtime,
+            accounting_if_pass:{documented:144,executed:57,pass:57,fail:0,inconclusive:0},
+            destructive_migration_executed:false,provider_or_remote_entitlement_used:false,
+            pair_certified:false,runtime_certified:false,migration_certified:false,permanent_p001_cf_certified:false,
+            updater_or_tuf_certified:false,adr_0010:"Proposed",ga_or_release_authorized:false
+          }' > artifacts/p006-wave1t/terminal/terminal.json
+          cat artifacts/p006-wave1t/terminal/terminal.json
+      - name: Upload terminal marker
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1t-terminal-${{ github.run_id }}
+          path: artifacts/p006-wave1t/terminal/terminal.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce terminal success
+        run: |
+          test "$BUILD_RESULT" = "success"
+          test "$RUNTIME_RESULT" = "success"
