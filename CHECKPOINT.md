@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before B5 Lane C schema/migration readiness closeout: **`main @ 078f43b592f8006b98e42303d3907d4a825a0b03`**
+Current integration anchor before Wave 1T shared-truth closeout: **`main @ 6313a00c5089c573e0051563e47773147472899d`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -26,8 +26,10 @@ P-006 Wave 1R shared-truth closeout: **PR #1080**
 P-006 Wave 1S FP-33 runtime evidence: **Issue #1081 / PR #1083**
 P-006 Wave 1S shared-truth closeout: **PR #1084**
 P-006 B5 Lane C schema/migration readiness: **Issue #1085 / PR #1086**
+P-006 Wave 1T FP-77/78/79/80/88 runtime evidence: **Issue #1087 / PR #1089**
+P-006 Wave 1T shared-truth closeout: **PR #1090**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B5_LANE_C_SCHEMA_READINESS_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1T_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -50,6 +52,7 @@ B4 FP-21/22/24/33 readiness authorization: **`GOV-P006-B4-FP21-22-24-33-READINES
 Wave 1R temporary grant: **`GOV-P001-CF-TEMP-016 CONSUMED / NON-REUSABLE`**
 Wave 1S temporary grant: **`GOV-P001-CF-TEMP-017 CONSUMED / NON-REUSABLE`**
 B5 Lane C readiness authorization: **`GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001 COMPLETED / NON-RUNTIME`**
+Wave 1T temporary grant: **`GOV-P001-CF-TEMP-018 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -1134,3 +1137,29 @@ The blocking contracts are substantive:
 The smallest direct follow-on formal runtime candidate is **FP-77/78/79/80/88** only, and it still requires a separate runtime authorization/grant before any disposable WordPress/MySQL execution.
 
 No product runtime source, database/schema mutation, provider/updater/TUF, permanent P-001/CF, migration/pair/runtime certification, ADR-0010, deploy/release or #947 authority is promoted by B5.
+
+
+## P-006 Wave 1T shared-truth closeout
+
+Issue **#1087** authorized exactly **FP-77, FP-78, FP-79, FP-80 and FP-88** under one-tranche **`GOV-P001-CF-TEMP-018`**.
+
+Runtime/evidence PR **#1089** merged as **`6313a00c5089c573e0051563e47773147472899d`**. Accepted exact runtime source head **`e3b2589ebd3234b4cecfb4c847713e17f4da0fa2`** passed Governance run **35531995252** and Wave 1T run **35531995346** across both authorized disposable cells:
+
+- minimum — WordPress 6.9 / PHP 8.2 / MySQL 8.4;
+- reference — WordPress 7.1 / PHP 8.5 / MySQL 8.4.
+
+Terminal bounded results:
+
+- **FP-77 PASS** — settled matching schema did not reapply migration markers or change normalized WPE schema state;
+- **FP-78 PASS** — Free-behind state applied exactly 006 → 007 → 008;
+- **FP-79 PASS** — Pro-behind state applied exactly 220 → 221 only after compatibility PASS;
+- **FP-80 PASS** — local `pro_active` entitlement did not override incompatible F2/P0; premium boot/migrations remained denied;
+- **FP-88 PASS** — runtime observed explicit 006 → 007 → 008 → 220 → 221 ordering.
+
+Evidence-finalization head **`2f3bb10e26591e85d486a45fb603648c1f53aa02`** passed Governance run **35532263746** and Wave shell run **35532263816**, with candidate/runtime/terminal heavy jobs skipped on the evidence-only synchronize.
+
+Formal P-006 accounting after this closeout:
+
+**144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
+
+`GOV-P001-CF-TEMP-018` is consumed and non-reusable. No destructive migration executed. Product runtime source was unchanged. No pair/runtime/generic-migration certification, permanent P-001/CF, updater/TUF, production deployment, release authority, ADR-0010 promotion or #947 authority follows.
