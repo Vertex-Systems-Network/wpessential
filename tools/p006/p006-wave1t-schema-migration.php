@@ -412,7 +412,7 @@ function tFp77(array $identity, array $in): array {
     foreach ($ddl as $query) {
         tAssert(
             str_starts_with($query, $stateStoreEnsurePrefix),
-            'FP-77 executed non-readiness WPE DDL on matching schema boot',
+            'FP-77 executed non-readiness WPE DDL on matching schema boot: ' . $query,
         );
     }
     $compat = tCompatibility();
