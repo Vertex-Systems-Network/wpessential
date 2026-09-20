@@ -90,11 +90,17 @@ if (!defined('WPE_P006T_PROBE_ACTIVE')) {
     define('WPE_P006T_PROBE_ACTIVE', true);
 }
 add_filter('pre_http_request', static function ($preempt, $parsedArgs, $url) {
+    if (function_exists('wp_installing') && wp_installing()) {
+        return new WP_Error(
+            'p006_wave1t_core_install_network_blocked',
+            'Core installer HTTP is denied inside the disposable P-006 Wave 1T fixture.'
+        );
+    }
     $log = trim((string) getenv('WPE_P006_NETWORK_LOG'));
     if ($log !== '') {
         file_put_contents($log, (string) $url . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
-    return new WP_Error('p006_wave1t_network_blocked', 'Outbound HTTP denied during Wave 1T.');
+    return new WP_Error('p006_wave1t_network_blocked', 'Outbound HTTP denied during formal Wave 1T runtime evidence.');
 }, PHP_INT_MIN, 3);
 add_filter('query', static function ($query) {
     if (is_string($query) && stripos($query, 'wpe_') !== false) {
