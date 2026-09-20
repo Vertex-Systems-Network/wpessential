@@ -1,0 +1,324 @@
+name: P-006 B6d FP-90 Disposable DB Snapshot Prerequisite
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-b6d-fp90-disposable-db-snapshot.yml'
+      - 'tools/p006/p006-b6d-fp90-disposable-db-snapshot.php'
+      - 'tools/p006/p006-b6d-wordpress-setup.sh'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'frameworks/Contracts/MigrationInterface.php'
+      - 'frameworks/Contracts/MigrationStateStoreInterface.php'
+      - 'frameworks/Platform/Database/DatabaseAdapterInterface.php'
+      - 'frameworks/Platform/Database/NativeWpdbAdapter.php'
+      - 'frameworks/Platform/Database/Migrations/MigrationRegistry.php'
+      - 'frameworks/Platform/Database/Migrations/MigrationRunner.php'
+      - 'frameworks/Platform/Database/Migrations/WpdbMigrationStateStore.php'
+      - 'frameworks/Platform/WordPress/Registrations/CompiledRegistrationTableNames.php'
+      - 'frameworks/Platform/WordPress/Registrations/Migrations/CreateCompiledRegistrationTablesMigration.php'
+      - 'frameworks/Platform/Definitions/DefinitionTableNames.php'
+      - 'frameworks/Platform/Definitions/Migrations/CreateDefinitionTablesMigration.php'
+      - 'frameworks/Platform/Audit/AuditTableNames.php'
+      - 'frameworks/Platform/Audit/Migrations/CreateAuditEventsTableMigration.php'
+      - 'frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php'
+      - 'wpessential.php'
+      - 'wpessential-pro.php'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-b6d-fp90-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  change-gate:
+    name: B6d latest-change gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    outputs:
+      run_harness: ${{ steps.gate.outputs.run_harness }}
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Decide whether latest change requires snapshot harness
+        id: gate
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_ACTION: ${{ github.event.action }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          run_harness=true
+          if [ "$EVENT_NAME" = "pull_request" ] && [ "$EVENT_ACTION" = "synchronize" ] && [ -n "$BEFORE_SHA" ]; then
+            git cat-file -e "$BEFORE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            changed="$(git diff --name-only "$BEFORE_SHA" "$HEAD_SHA")"
+            printf '%s\n' "$changed"
+            harness_regex='^(\.github/workflows/p006-b6d-fp90-disposable-db-snapshot\.yml|tools/p006/p006-b6d-fp90-disposable-db-snapshot\.php|tools/p006/p006-b6d-wordpress-setup\.sh|tools/release/build-distributable\.php|tools/release/build-free-pro-distributables\.php|frameworks/Contracts/MigrationInterface\.php|frameworks/Contracts/MigrationStateStoreInterface\.php|frameworks/Platform/Database/DatabaseAdapterInterface\.php|frameworks/Platform/Database/NativeWpdbAdapter\.php|frameworks/Platform/Database/Migrations/MigrationRegistry\.php|frameworks/Platform/Database/Migrations/MigrationRunner\.php|frameworks/Platform/Database/Migrations/WpdbMigrationStateStore\.php|frameworks/Platform/WordPress/Registrations/CompiledRegistrationTableNames\.php|frameworks/Platform/WordPress/Registrations/Migrations/CreateCompiledRegistrationTablesMigration\.php|frameworks/Platform/Definitions/DefinitionTableNames\.php|frameworks/Platform/Definitions/Migrations/CreateDefinitionTablesMigration\.php|frameworks/Platform/Audit/AuditTableNames\.php|frameworks/Platform/Audit/Migrations/CreateAuditEventsTableMigration\.php|frameworks/Modules/Compatibility/LocalCompatibilityPreflight\.php|wpessential\.php|wpessential-pro\.php|package\.json|package-lock\.json|admin-ui/)'
+            if printf '%s\n' "$changed" | grep -Eq "$harness_regex"; then run_harness=true; else run_harness=false; fi
+          fi
+          echo "run_harness=$run_harness" >> "$GITHUB_OUTPUT"
+          echo "B6d heavy snapshot prerequisite required: $run_harness"
+
+  prerequisite:
+    name: Validate FP-90 disposable DB snapshot / WP 6.9 / PHP 8.2 / MySQL 8.4
+    needs: change-gate
+    if: needs.change-gate.outputs.run_harness == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: wpessential_b6d
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_EXPECTED_WP: '6.9'
+      WPE_P006_EXPECTED_PHP: '8.2'
+      WPE_P006_EXPECTED_MYSQL: '8.4'
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_b6d
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_P006_TABLE_PREFIX: wpep006b6d_
+      WPE_P006_NETWORK_LOG: /tmp/p006-b6d-network.log
+      WPE_P006_BEFORE_EVIDENCE: ${{ github.workspace }}/artifacts/p006-b6d/before.json
+      WPE_P006_RESTORED_EVIDENCE: ${{ github.workspace }}/artifacts/p006-b6d/restored.json
+      WPE_P006_COMPATIBILITY_EVIDENCE: ${{ github.workspace }}/artifacts/p006-b6d/compatibility.json
+      WPE_P006_EVIDENCE_FILE: ${{ github.workspace }}/artifacts/p006-b6d/evidence.json
+      WPE_P006_SQL_SNAPSHOT: ${{ github.workspace }}/artifacts/p006-b6d/older-state.sql
+      WPE_P006_SQL_SNAPSHOT_RESTORED: ${{ github.workspace }}/artifacts/p006-b6d/restored-state.sql
+      WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/wpessential.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/wpessential-pro.zip
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Resolve disposable MySQL service container
+        run: |
+          set -euo pipefail
+          ids="$(docker ps --filter 'ancestor=mysql:8.4' --format '{{.ID}}')"
+          test "$(printf '%s\n' "$ids" | sed '/^$/d' | wc -l)" -eq 1
+          id="$(printf '%s\n' "$ids" | sed '/^$/d')"
+          test -n "$id"
+          echo "MYSQL_CONTAINER_ID=$id" >> "$GITHUB_ENV"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Build admin assets
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run lint:package
+          npm run build:admin
+
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: mysqli, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate B6d tooling
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/p006/p006-b6d-fp90-disposable-db-snapshot.php
+          bash -n tools/p006/p006-b6d-wordpress-setup.sh
+
+      - name: Build canonical package pair twice
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cp artifacts/wpessential.zip /tmp/b6d-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/b6d-pro.zip
+          php tools/release/build-distributable.php
+          cmp --silent /tmp/b6d-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/b6d-pro.zip artifacts/wpessential-pro.zip
+          test "$(sha256sum artifacts/wpessential.zip | awk '{print $1}')" = "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80"
+          test "$(sha256sum artifacts/wpessential-pro.zip | awk '{print $1}')" = "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de046"
+
+      - name: Prepare disposable WordPress files
+        run: bash tools/p006/p006-b6d-wordpress-setup.sh
+
+      - name: Establish pinned older WPE state
+        env:
+          WPE_P006_EXECUTION_MODE: prepare
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/p006-b6d
+          php tools/p006/p006-b6d-fp90-disposable-db-snapshot.php
+          test "$(jq -r '.status' artifacts/p006-b6d/before.json)" = "PASS"
+          test "$(jq -r '.snapshot.migration_ids | join(",")' artifacts/p006-b6d/before.json)" = "006.create-compiled-registration-atomic-store,007.create-definition-persistence,008.create-audit-ptd-store"
+          test "$(jq -r '.snapshot.pro_migration_ids_absent' artifacts/p006-b6d/before.json)" = "true"
+          test "$(jq -r '.snapshot.pro_tables_absent' artifacts/p006-b6d/before.json)" = "true"
+          test "$(jq -r '.prerequisite_phase_network_attempt_count' artifacts/p006-b6d/before.json)" = "0"
+
+      - name: Export deterministic older-state SQL snapshot
+        run: |
+          set -euo pipefail
+          test "$WPE_TEST_WP_DB" = "wpessential_b6d"
+          dump_db() {
+            docker exec \
+              -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+              "$MYSQL_CONTAINER_ID" \
+              mysqldump \
+              -u"$WPE_TEST_MYSQL_USER" \
+              --default-character-set=utf8mb4 \
+              --single-transaction \
+              --quick \
+              --hex-blob \
+              --skip-comments \
+              --skip-add-locks \
+              --skip-disable-keys \
+              --skip-triggers \
+              --order-by-primary \
+              --complete-insert \
+              --skip-extended-insert \
+              --set-gtid-purged=OFF \
+              --no-tablespaces \
+              "$WPE_TEST_WP_DB"
+          }
+          dump_db > "$WPE_P006_SQL_SNAPSHOT"
+          test -s "$WPE_P006_SQL_SNAPSHOT"
+          sha256sum "$WPE_P006_SQL_SNAPSHOT"
+
+      - name: Drop recreate and import disposable database
+        run: |
+          set -euo pipefail
+          test "$WPE_TEST_WP_DB" = "wpessential_b6d"
+          docker exec \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysql -u"$WPE_TEST_MYSQL_USER" \
+            -e 'DROP DATABASE IF EXISTS `wpessential_b6d`; CREATE DATABASE `wpessential_b6d` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'
+          docker exec \
+            -i \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysql -u"$WPE_TEST_MYSQL_USER" "$WPE_TEST_WP_DB" \
+            < "$WPE_P006_SQL_SNAPSHOT"
+
+      - name: Verify restored older-state identity
+        env:
+          WPE_P006_EXECUTION_MODE: verify-restored
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-b6d-fp90-disposable-db-snapshot.php
+          test "$(jq -r '.status' artifacts/p006-b6d/restored.json)" = "PASS"
+          test "$(jq -r '.matches_pre_export_state' artifacts/p006-b6d/restored.json)" = "true"
+          test "$(jq -r '.pending_pro_migrations_invoked' artifacts/p006-b6d/restored.json)" = "false"
+          test "$(jq -r '.snapshot.state_sha256' artifacts/p006-b6d/restored.json)" = "$(jq -r '.snapshot.state_sha256' artifacts/p006-b6d/before.json)"
+
+      - name: Prove canonical compatibility before pending migrations
+        env:
+          WPE_P006_EXECUTION_MODE: compatibility
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-b6d-fp90-disposable-db-snapshot.php
+          test "$(jq -r '.status' artifacts/p006-b6d/compatibility.json)" = "PASS"
+          test "$(jq -r '.preflight.state' artifacts/p006-b6d/compatibility.json)" = "compatible"
+          test "$(jq -r '.preflight.premium_migrations_allowed' artifacts/p006-b6d/compatibility.json)" = "true"
+          test "$(jq -r '.evaluated_before_pending_migration_execution' artifacts/p006-b6d/compatibility.json)" = "true"
+          test "$(jq -r '.pending_pro_migrations_invoked' artifacts/p006-b6d/compatibility.json)" = "false"
+          test "$(jq -r '.pair_id_sha256' artifacts/p006-b6d/compatibility.json)" = "28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211"
+
+      - name: Re-export restored database and prove byte identity
+        run: |
+          set -euo pipefail
+          docker exec \
+            -e MYSQL_PWD="$WPE_TEST_MYSQL_PASSWORD" \
+            "$MYSQL_CONTAINER_ID" \
+            mysqldump \
+            -u"$WPE_TEST_MYSQL_USER" \
+            --default-character-set=utf8mb4 \
+            --single-transaction \
+            --quick \
+            --hex-blob \
+            --skip-comments \
+            --skip-add-locks \
+            --skip-disable-keys \
+            --skip-triggers \
+            --order-by-primary \
+            --complete-insert \
+            --skip-extended-insert \
+            --set-gtid-purged=OFF \
+            --no-tablespaces \
+            "$WPE_TEST_WP_DB" \
+            > "$WPE_P006_SQL_SNAPSHOT_RESTORED"
+          cmp --silent "$WPE_P006_SQL_SNAPSHOT" "$WPE_P006_SQL_SNAPSHOT_RESTORED"
+
+      - name: Aggregate B6d prerequisite evidence
+        env:
+          WPE_P006_EXECUTION_MODE: aggregate
+        run: |
+          set -euo pipefail
+          php tools/p006/p006-b6d-fp90-disposable-db-snapshot.php
+          test "$(jq -r '.status' artifacts/p006-b6d/evidence.json)" = "PASS"
+          test "$(jq -r '.state_identity_restored' artifacts/p006-b6d/evidence.json)" = "true"
+          test "$(jq -r '.sql_snapshot.second_export_byte_identical' artifacts/p006-b6d/evidence.json)" = "true"
+          test "$(jq -r '.compatibility_before_pending_migrations.preflight.state' artifacts/p006-b6d/evidence.json)" = "compatible"
+          test "$(jq -r '.pending_pro_migrations_invoked' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.product_backup_restore_implemented_or_certified' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.production_or_live_data_used' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.product_runtime_source_modified' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.destructive_or_irreversible_wpe_migration_executed' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.runtime_grant_created' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.formal_fixture_executed' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.fixture_accounting_changed' artifacts/p006-b6d/evidence.json)" = "false"
+          test "$(jq -r '.accounting.executed' artifacts/p006-b6d/evidence.json)" = "57"
+          cat artifacts/p006-b6d/evidence.json
+
+      - name: Upload immutable B6d prerequisite evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-b6d-fp90-prerequisite-${{ github.run_id }}
+          path: |
+            artifacts/p006-b6d/evidence.json
+            artifacts/p006-b6d/before.json
+            artifacts/p006-b6d/restored.json
+            artifacts/p006-b6d/compatibility.json
+            artifacts/p006-b6d/older-state.sql
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
