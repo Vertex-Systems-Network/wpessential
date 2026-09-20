@@ -1544,6 +1544,23 @@
       "closeout_pr": 1096
     },
     {
+      "priority": 305,
+      "slot_id": "p006-b6c-fp94-diagnostics-redaction-v1",
+      "title": "P-006 B6c FP-94 migration diagnostics redaction prerequisite",
+      "role": "SUPERVISOR_ONLY",
+      "status": "CLAIMED",
+      "work_mode": "P006_B6C_FP94_TEST_ONLY_DIAGNOSTICS_REDACTION_PREREQUISITE",
+      "source": "Issue #1097",
+      "runtime_allowed": false,
+      "claim_branch": "agent/p006-b6c-fp94-diagnostics-redaction-v1",
+      "authorization": "GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001",
+      "authorized_scope": ["current migration output-surface audit", "test-only deterministic DatabaseAdapterInterface fakes", "MigrationRunner/Registry/InMemory/Wpdb state-store error capture", "SensitiveValue redaction capture", "PHP error-log/stderr capture", "immutable prerequisite evidence", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-94 execution", "product logging addition/change", "product runtime mutation", "WordPress/MySQL runtime", "provider/license/billing calls", "real secrets", "production/live data", "P-001/CF runtime grant", "pair/runtime/migration certification", "updater/TUF", "deploy/release", "ADR-0010 promotion", "#947"],
+      "formal_fixture_executed": false,
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
+      "close_condition": "Deterministic redaction/capture prerequisite merged with exact-head Governance + dedicated workflow PASS, immutable evidence, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-94 remains not formally executed"
+    },
+    {
       "priority": 900,
       "slot_id": "p006-wave1a-independent-evidence-review-v1",
       "title": "P-006 Wave 1A Independent Evidence Integrity Review",
