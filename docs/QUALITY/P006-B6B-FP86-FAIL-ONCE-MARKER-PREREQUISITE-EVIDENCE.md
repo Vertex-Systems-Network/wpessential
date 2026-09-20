@@ -52,6 +52,15 @@ Exact-head Governance Gate:
 - run id: **35539744384**;
 - result: **PASS**.
 
+Evidence/shared-truth-only finalization:
+
+- finalization head: `467c129b8589872554f4df58088f374def556c81`;
+- Governance run: **35539959777 — PASS**;
+- B6b change-gate run: **35539959790 — PASS**;
+- disposable `Validate fail-once marker prerequisite` job: **SKIPPED**.
+
+This proves evidence/shared-truth synchronization does not rerun or silently replace the accepted disposable prerequisite evidence.
+
 Earlier run **35539597530** is diagnostic only and is not prerequisite evidence. Its scenario assertions had already passed far enough to reach the final network assertion; it failed because blocked WordPress installer URL probes were counted together with the migration-prerequisite phase. The harness was corrected to preserve those blocked installer attempts as explicit metadata, reset the probe log after installation, and require zero attempts during the actual migration-prerequisite phase.
 
 No product behavior was changed to obtain the accepted PASS.
@@ -184,7 +193,7 @@ The workflow uses:
 
 ## 10. Terminal prerequisite decision
 
-**B6b prerequisite: PASS / MERGE-READY SUBJECT TO EVIDENCE-ONLY SYNCHRONIZE CHECK.**
+**B6b prerequisite: PASS / MERGE-READY.**
 
 The repository now has a deterministic test harness that can construct the exact current marker-failure prerequisite state for a later separately authorized FP-86 formal fixture.
 
