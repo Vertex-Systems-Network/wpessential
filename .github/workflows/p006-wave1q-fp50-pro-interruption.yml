@@ -1,0 +1,351 @@
+name: P-006 Wave 1Q FP-50 Pro Interruption
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p006-wave1q-fp50-pro-interruption.yml'
+      - 'tools/p006/p006-wave1q-fp50-pro-interruption.php'
+      - 'tools/p006/p006-wave1m-build-manual-order-artifacts.php'
+      - 'tools/p006/p006-wave1m-wordpress-setup.sh'
+      - 'tools/release/build-distributable.php'
+      - 'tools/release/build-free-pro-distributables.php'
+      - 'docs/QUALITY/P006-WAVE-1Q-FP50-PRO-INTERRUPTION-EVIDENCE.md'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'admin-ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p006-wave1q-fp50-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-candidates:
+    name: Build deterministic FP-50 candidate graph
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install locked admin build graph
+        run: npm ci
+
+      - name: Build admin assets
+        run: npm run build
+
+      - name: Set up PHP 8.2 packaging runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: zip
+          coverage: none
+
+      - name: Validate tooling syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer validate --strict
+          php -l tools/release/build-distributable.php
+          php -l tools/release/build-free-pro-distributables.php
+          php -l tools/p006/p006-wave1m-build-manual-order-artifacts.php
+          php -l tools/p006/p006-wave1q-fp50-pro-interruption.php
+          bash -n tools/p006/p006-wave1m-wordpress-setup.sh
+
+      - name: Build canonical package pair
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cp artifacts/wpessential.zip /tmp/p006-fp50-canonical-free.zip
+          cp artifacts/wpessential-pro.zip /tmp/p006-fp50-canonical-pro.zip
+
+      - name: Rebuild and prove canonical determinism
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tools/release/build-distributable.php
+          cmp --silent /tmp/p006-fp50-canonical-free.zip artifacts/wpessential.zip
+          cmp --silent /tmp/p006-fp50-canonical-pro.zip artifacts/wpessential-pro.zip
+
+      - name: Derive deterministic F0 P0 P1 graph twice
+        shell: bash
+        env:
+          WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          rm -rf artifacts/p006-wave1q-fp50
+          mkdir -p artifacts/p006-wave1q-fp50/set-a artifacts/p006-wave1q-fp50/set-b
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-wave1q-fp50/set-a" php tools/p006/p006-wave1m-build-manual-order-artifacts.php
+          WPE_P006_OUTPUT_DIR="${GITHUB_WORKSPACE}/artifacts/p006-wave1q-fp50/set-b" php tools/p006/p006-wave1m-build-manual-order-artifacts.php
+          for file in f0.zip f1.zip p0.zip p1.zip candidate-identity.json; do
+            cmp --silent "artifacts/p006-wave1q-fp50/set-a/${file}" "artifacts/p006-wave1q-fp50/set-b/${file}"
+          done
+          mv artifacts/p006-wave1q-fp50/set-a artifacts/p006-wave1q-fp50/candidates
+          rm -rf artifacts/p006-wave1q-fp50/set-b
+
+      - name: Normalize FP-50 formal authority boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq '{
+            protocol: "P-006",
+            wave: "1Q-fp50-pro-interruption",
+            source_sha: .source_sha,
+            authorization: "GOV-P001-CF-TEMP-015",
+            authorized_fixture: "FP-50",
+            classification: "FORMAL FP-50 EVIDENCE / NON-CERTIFYING",
+            historical_graph_reuse: {
+              source_wave: .wave,
+              historical_authority_reused: false,
+              note: "Wave 1M graph builder is reused only for deterministic F0/P0/P1 test artifact derivation."
+            },
+            nodes: {F0:.nodes.F0,P0:.nodes.P0,P1:.nodes.P1},
+            pairs: {F0_P0:.pairs.F0_P0,F0_P1:.pairs.F0_P1},
+            fixed_cells: ["P50-01","P50-25","P50-50","P50-75","P50-100"],
+            expected_p1_non_entry_count: 286,
+            sentinel: {key:"wpe_p006_fp50_data_sentinel",value:"fp50-preserve-v1"},
+            boundaries: {
+              adjacent_fixture_results_modified: false,
+              product_runtime_source_modified: false,
+              generic_wordpress_recursive_copy_certified: false,
+              updater_or_tuf_certified: false,
+              rollback_or_migration_certified: false,
+              pair_certified: false,
+              runtime_certified: false,
+              adr_0010: "Proposed"
+            }
+          }' artifacts/p006-wave1q-fp50/candidates/candidate-identity.json > artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+          test -s artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+          cat artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+
+      - name: Prove fixed P1 non-entry graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/p006-wave1q-p1
+          mkdir -p /tmp/p006-wave1q-p1
+          unzip -q artifacts/p006-wave1q-fp50/candidates/p1.zip -d /tmp/p006-wave1q-p1
+          root=/tmp/p006-wave1q-p1/wpessential-pro
+          test -d "$root"
+          find "$root" -type f -printf '%P\n' | LC_ALL=C sort | grep -vx 'wpessential-pro.php' > artifacts/p006-wave1q-fp50/candidates/p1-non-entry-files.txt
+          test "$(wc -l < artifacts/p006-wave1q-fp50/candidates/p1-non-entry-files.txt | tr -d ' ')" = "286"
+          order_sha="$(sha256sum artifacts/p006-wave1q-fp50/candidates/p1-non-entry-files.txt | awk '{print $1}')"
+          jq --arg order_sha "$order_sha" '. + {p1_non_entry_count:286,p1_non_entry_files_sha256:$order_sha}'             artifacts/p006-wave1q-fp50/candidates/fp50-identity.json > /tmp/fp50-identity.json
+          mv /tmp/fp50-identity.json artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+          test "$(jq -r '.p1_non_entry_count' artifacts/p006-wave1q-fp50/candidates/fp50-identity.json)" = "286"
+
+      - name: Upload immutable FP-50 candidate graph
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1q-fp50-candidates-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1q-fp50/candidates/f0.zip
+            artifacts/p006-wave1q-fp50/candidates/f1.zip
+            artifacts/p006-wave1q-fp50/candidates/p0.zip
+            artifacts/p006-wave1q-fp50/candidates/p1.zip
+            artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+            artifacts/p006-wave1q-fp50/candidates/p1-non-entry-files.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  fp50:
+    name: FP-50 / ${{ matrix.cell }} / WP ${{ matrix.wordpress }} / PHP ${{ matrix.php }} / MySQL 8.4
+    needs: build-candidates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cell: minimum
+            wordpress: '6.9'
+            php: '8.2'
+          - cell: reference
+            wordpress: '7.1'
+            php: '8.5'
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wpessential_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      WPE_P006_CELL_ID: ${{ matrix.cell }}
+      WPE_PUB_TARGET: pro
+      WPE_P006_EXPECTED_WP: ${{ matrix.wordpress }}
+      WPE_P006_EXPECTED_PHP: ${{ matrix.php }}
+      WPE_P006_BASE_FREE_NODE: F0
+      WPE_P006_BASE_PRO_NODE: P0
+      WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+      WPE_TEST_WP_DB: wpessential_test
+      WPE_TEST_WP_DB_HOST: 127.0.0.1:3306
+      WPE_TEST_MYSQL_USER: root
+      WPE_TEST_MYSQL_PASSWORD: root
+      WPE_PUB_CANDIDATE_DIR: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/candidates
+      WPE_P006_F0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/candidates/f0.zip
+      WPE_P006_F1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/candidates/f1.zip
+      WPE_P006_P0_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/candidates/p0.zip
+      WPE_P006_P1_ZIP_PATH: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/candidates/p1.zip
+      WPE_PUB_IDENTITY_PATH: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+      WPE_PUB_EVIDENCE_DIR: ${{ github.workspace }}/artifacts/p006-wave1q-fp50/evidence/${{ matrix.cell }}
+      WPE_P006_NETWORK_LOG: /tmp/p006-wave1q-fp50-${{ matrix.cell }}-network.log
+
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "$expected"
+
+      - name: Set up authorized PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, mysqli
+          coverage: none
+
+      - name: Download exact FP-50 candidate graph
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: p006-wave1q-fp50-candidates-${{ github.run_id }}
+          path: artifacts/p006-wave1q-fp50/candidates
+
+      - name: Validate FP-50 harness inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in f0.zip f1.zip p0.zip p1.zip fp50-identity.json p1-non-entry-files.txt; do
+            test -s "artifacts/p006-wave1q-fp50/candidates/${file}"
+          done
+          test "$(jq -r '.authorization' artifacts/p006-wave1q-fp50/candidates/fp50-identity.json)" = "GOV-P001-CF-TEMP-015"
+          test "$(jq -r '.authorized_fixture' artifacts/p006-wave1q-fp50/candidates/fp50-identity.json)" = "FP-50"
+          test "$(jq -r '.p1_non_entry_count' artifacts/p006-wave1q-fp50/candidates/fp50-identity.json)" = "286"
+          test "$(wc -l < artifacts/p006-wave1q-fp50/candidates/p1-non-entry-files.txt | tr -d ' ')" = "286"
+          php -l tools/p006/p006-wave1q-fp50-pro-interruption.php
+          bash -n tools/p006/p006-wave1m-wordpress-setup.sh
+
+      - name: Prepare disposable WordPress F0 P0 baseline
+        run: bash tools/p006/p006-wave1m-wordpress-setup.sh
+
+      - name: Activate exact F0 P0 baseline and create sentinel
+        run: php tools/p006/p006-wave1q-fp50-pro-interruption.php prepare
+
+      - name: Execute formal FP-50 fixed matrix
+        run: php tools/p006/p006-wave1q-fp50-pro-interruption.php run
+
+      - name: Show formal FP-50 evidence
+        run: cat "${WPE_PUB_EVIDENCE_DIR}/fp50-summary.json"
+
+      - name: Upload immutable FP-50 runtime evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1q-fp50-${{ matrix.cell }}-${{ github.run_id }}
+          path: |
+            artifacts/p006-wave1q-fp50/candidates/fp50-identity.json
+            artifacts/p006-wave1q-fp50/candidates/p1-non-entry-files.txt
+            artifacts/p006-wave1q-fp50/evidence/${{ matrix.cell }}/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify tracked source remains clean
+        run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+  fp50-terminal:
+    name: FP-50 terminal aggregate
+    needs: [build-candidates, fp50]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      BUILD_RESULT: ${{ needs.build-candidates.result }}
+      FP50_RESULT: ${{ needs.fp50.result }}
+    steps:
+      - name: Record terminal FP-50 result
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=FAIL
+          if [ "$BUILD_RESULT" = "success" ] && [ "$FP50_RESULT" = "success" ]; then
+            status=PASS
+          fi
+          mkdir -p artifacts/p006-wave1q-fp50/terminal
+          jq -n             --arg status "$status"             --arg build "$BUILD_RESULT"             --arg runtime "$FP50_RESULT"             '{
+              status: $status,
+              protocol: "P-006",
+              wave: "1Q",
+              fixture: "FP-50",
+              authorization: "GOV-P001-CF-TEMP-015",
+              classification: "FORMAL FP-50 EVIDENCE / NON-CERTIFYING",
+              build_result: $build,
+              runtime_matrix_result: $runtime,
+              required_runtime_cells: ["minimum", "reference"],
+              required_cell_count_each: 5,
+              formal_fp_fixture_executed: true,
+              safe_package_incomplete_result_domain: "external publication harness",
+              product_local_pro_package_incomplete_required: false,
+              accounting_if_pass: {documented:144,executed:50,pass:49,fail:0,inconclusive:1},
+              pair_certified: false,
+              runtime_certified: false,
+              generic_wordpress_recursive_copy_certified: false,
+              updater_or_tuf_certified: false,
+              rollback_or_migration_certified: false,
+              adr_0010: "Proposed",
+              ga_or_release_authorized: false
+            }' > artifacts/p006-wave1q-fp50/terminal/fp50-terminal.json
+          cat artifacts/p006-wave1q-fp50/terminal/fp50-terminal.json
+
+      - name: Upload terminal FP-50 marker
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p006-wave1q-fp50-terminal-${{ github.run_id }}
+          path: artifacts/p006-wave1q-fp50/terminal/fp50-terminal.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce FP-50 terminal success
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$BUILD_RESULT" = "success"
+          test "$FP50_RESULT" = "success"
