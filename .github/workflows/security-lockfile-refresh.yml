@@ -1,0 +1,61 @@
+name: Security Lockfile Refresh
+
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/security-lockfile-refresh.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Refresh wp-scripts lockfile only
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock-only --ignore-scripts --save-dev @wordpress/scripts@35.0.0
+          node -e 'const p=require("./package.json"); if(p.devDependencies?.["@wordpress/scripts"]!=="^35.0.0" && p.devDependencies?.["@wordpress/scripts"]!=="35.0.0"){throw new Error("unexpected wp-scripts version "+p.devDependencies?.["@wordpress/scripts"])}'
+
+      - name: Audit refreshed dev graph
+        shell: bash
+        run: |
+          set +e
+          npm audit --audit-level=high --json > npm-audit-after.json
+          echo "dev_audit_exit=$?" >> "$GITHUB_ENV"
+          npm audit --omit=dev --audit-level=high --json > npm-audit-distributable-after.json
+          echo "prod_audit_exit=$?" >> "$GITHUB_ENV"
+          set -e
+          cat npm-audit-after.json
+          cat npm-audit-distributable-after.json
+
+      - name: Upload refreshed lockfile evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: security-lockfile-refresh-${{ github.run_id }}
+          path: |
+            package.json
+            package-lock.json
+            npm-audit-after.json
+            npm-audit-distributable-after.json
+          if-no-files-found: error
+          retention-days: 2
