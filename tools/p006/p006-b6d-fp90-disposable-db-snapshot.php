@@ -224,6 +224,11 @@ function b6dSnapshot(): array
     return [
         'migration_ids' => $ids,
         'wpe_tables' => $tables,
+        'normalized_schema' => $schemas,
+        'normalized_schema_table_sha256' => array_map(
+            static fn (string $ddl): string => hash('sha256', $ddl),
+            $schemas,
+        ),
         'normalized_schema_sha256' => hash('sha256', $schemaJson),
         'state_sha256' => hash('sha256', $stateJson),
         'sentinel_key' => P006B6D_SENTINEL_KEY,
