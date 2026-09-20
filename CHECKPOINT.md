@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before Wave 1R FP-21/22 shared-truth closeout: **`main @ a794f18d9fc0bd47a5e2c5ab2cf454a05ee292de`**
+Current integration anchor before Wave 1S FP-33 shared-truth closeout: **`main @ e37a1cb8637a1d36ff10ccc35dce5fd4e98b94b1`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -23,8 +23,10 @@ P-006 Wave 1Q FP-50 closeout: **Issue #1071 / PR #1073**
 P-006 B4 FP-21/22/24/33 readiness review: **Issue #1074 / PR #1076**
 P-006 Wave 1R FP-21/22 runtime evidence: **Issue #1077 / PR #1079**
 P-006 Wave 1R shared-truth closeout: **PR #1080**
+P-006 Wave 1S FP-33 runtime evidence: **Issue #1081 / PR #1083**
+P-006 Wave 1S shared-truth closeout: **PR pending**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1R_FP21_FP22_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1S_FP33_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -45,6 +47,7 @@ FP-50 expectation decision authorization: **`GOV-P006-B3-FP50-EXPECTATION-DECISI
 Wave 1Q temporary grant: **`GOV-P001-CF-TEMP-015 CONSUMED / NON-REUSABLE`**
 B4 FP-21/22/24/33 readiness authorization: **`GOV-P006-B4-FP21-22-24-33-READINESS-001 COMPLETED / NON-RUNTIME`**
 Wave 1R temporary grant: **`GOV-P001-CF-TEMP-016 CONSUMED / NON-REUSABLE`**
+Wave 1S temporary grant: **`GOV-P001-CF-TEMP-017 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -1026,3 +1029,72 @@ FP-33 remains **INCONCLUSIVE**, separately execution-ready only.
 `GOV-P001-CF-TEMP-016` is consumed and non-reusable. No Supervisor P-006 runtime slot remains after this shared-truth closeout.
 
 No product runtime source, permanent P-001/CF, pair/runtime certification, updater/TUF, provider/license/billing, production deploy/release, ADR-0010 or #947 authority is promoted.
+
+
+## P-006 Wave 1S FP-33 terminal closeout
+
+Issue **#1081** / runtime PR **#1083** re-executes the already-counted FP-33 fixture under one-tranche **`GOV-P001-CF-TEMP-017`**.
+
+Runtime merge: **`e37a1cb8637a1d36ff10ccc35dce5fd4e98b94b1`**.
+
+Accepted runtime source head: **`dcc8e965408331b2d0be449b2859a64729ee8b3b`**.
+
+Exact-head terminal verification:
+
+- Governance run **35510888422 — PASS**;
+- Wave 1S run **35510888416 — PASS**;
+- deterministic breaking candidate graph — PASS;
+- static first-party activation/deactivation/uninstall hook prerequisite — PASS with zero hits;
+- minimum / WordPress 6.9 / PHP 8.2 / MySQL 8.4 — PASS;
+- reference / WordPress 7.1 / PHP 8.5 / MySQL 8.4 — PASS;
+- terminal aggregate — PASS;
+- zero review threads before runtime PR merge.
+
+Exact-run immutable artifacts:
+
+- candidate graph + static scan: **10605022170**, `sha256:34f6b8b3792fba11665edb0377ddce6891a80ba114f4792761244e77270635d4`;
+- minimum runtime: **10605280957**, `sha256:17da20cfd7c35d36c5ab1c641a5583ce2e4430301dc02a15773ce67f1a5f144f`;
+- reference runtime: **10606060168**, `sha256:d4290f7200e3fb41c1b17ab9b244359f30067ed698b6c3ec405f9acde1dba9e4`;
+- terminal marker: **10606030821**, `sha256:fa52290de2c182c779eddd2986e0d2b7b4586207b1bd6280a727d48472dbdbff`.
+
+Both runtime cells settled on the same Free-only WPE migration/schema snapshot:
+
+**`42e5d91120cbca74e9857efd778afecb18fe5978507d3052493819fb57eae551`**.
+
+Formal scenarios:
+
+- **F2/P0** — pair id `72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c`, expected `free_version_too_new`;
+- **F1/P2** — pair id `a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501`, expected `free_version_too_old`.
+
+Each cell executed two complete activation/deactivation cycles per scenario. Across all accepted cycles:
+
+- WordPress Pro activation succeeded;
+- immediate pre/post activation WPE migration/table/schema hashes remained identical;
+- fresh requests resolved the exact expected incompatibility;
+- premium boot, migrations and mutations remained denied;
+- required Free CPT + Taxonomy modules remained present;
+- premium module set remained empty;
+- Pro-dependent migration ids 220/221 remained absent;
+- Pro Custom Tables migration stores remained absent;
+- deactivation left WPE migration/schema state unchanged;
+- sentinel `fp33-preserve-v1` remained preserved;
+- outbound WordPress HTTP attempts remained zero;
+- no destructive migration or fatal/error occurred.
+
+Terminal result:
+
+**FP-33 — PASS_WAVE_1S_ACTIVATION_LIFECYCLE**
+
+This resolves the Wave 1H INCONCLUSIVE result. FP-33 was already counted as executed in Wave 1H, so Wave 1S does **not** increment the executed count.
+
+Evidence-finalization head **`2c3ad516894f8602822745b023d71e3770c66769`** passed Governance run **35511107028** and Wave shell run **35511107065**, with candidate/runtime/terminal heavy jobs skipped. This proves evidence-only finalization does not rerun the heavy matrix.
+
+Formal P-006 accounting is now:
+
+**144 documented / 52 executed / 52 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+FP-24 remains **N_A_CURRENT_ACCEPTED_CONTRACT / NOT_EXECUTED**.
+
+`GOV-P001-CF-TEMP-017` is consumed and non-reusable. No Supervisor P-006 runtime slot remains after this shared-truth closeout.
+
+No product runtime source, destructive migration execution, permanent P-001/CF, pair/runtime/migration certification, provider/license/billing, updater/TUF, production deploy/release, ADR-0010 or #947 authority is promoted.
