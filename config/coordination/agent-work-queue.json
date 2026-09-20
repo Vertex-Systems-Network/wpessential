@@ -85,7 +85,7 @@
     "1077": "COMPLETED_ON_PR_1080_P006_WAVE_1R_FP21_FP22_PASS",
     "1081": "COMPLETED_ON_PR_1084_P006_WAVE_1S_FP33_PASS",
     "1085": "COMPLETED_ON_PR_1086_P006_B5_LANE_C_SCHEMA_READINESS",
-    "1087": "COMPLETED_ON_WAVE_1T_CLOSEOUT_PR_PENDING",
+    "1087": "COMPLETED_ON_PR_1090_P006_WAVE_1T_FP77_FP78_FP79_FP80_FP88_PASS",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1374,7 +1374,7 @@
       "pair_certified": false,
       "runtime_certified": false,
       "migration_certified": false,
-      "closeout_pr": null
+      "closeout_pr": 1090
     },
     {
       "priority": 900,
@@ -1494,7 +1494,7 @@
     "p006_wave1t_evidence_finalization_head": "2f3bb10e26591e85d486a45fb603648c1f53aa02",
     "p006_wave1t_evidence_finalization_governance_run": 35532263746,
     "p006_wave1t_evidence_finalization_wave_shell_run": 35532263816,
-    "p006_wave1t_closeout_pr": null,
+    "p006_wave1t_closeout_pr": 1090,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
     "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
