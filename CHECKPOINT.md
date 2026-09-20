@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before Wave 1S FP-33 shared-truth closeout: **`main @ e37a1cb8637a1d36ff10ccc35dce5fd4e98b94b1`**
+Current integration anchor before B5 Lane C schema/migration readiness closeout: **`main @ 078f43b592f8006b98e42303d3907d4a825a0b03`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -25,8 +25,9 @@ P-006 Wave 1R FP-21/22 runtime evidence: **Issue #1077 / PR #1079**
 P-006 Wave 1R shared-truth closeout: **PR #1080**
 P-006 Wave 1S FP-33 runtime evidence: **Issue #1081 / PR #1083**
 P-006 Wave 1S shared-truth closeout: **PR #1084**
+P-006 B5 Lane C schema/migration readiness: **Issue #1085 / PR #1086**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1S_FP33_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B5_LANE_C_SCHEMA_READINESS_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -48,6 +49,7 @@ Wave 1Q temporary grant: **`GOV-P001-CF-TEMP-015 CONSUMED / NON-REUSABLE`**
 B4 FP-21/22/24/33 readiness authorization: **`GOV-P006-B4-FP21-22-24-33-READINESS-001 COMPLETED / NON-RUNTIME`**
 Wave 1R temporary grant: **`GOV-P001-CF-TEMP-016 CONSUMED / NON-REUSABLE`**
 Wave 1S temporary grant: **`GOV-P001-CF-TEMP-017 CONSUMED / NON-REUSABLE`**
+B5 Lane C readiness authorization: **`GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -1098,3 +1100,37 @@ FP-24 remains **N_A_CURRENT_ACCEPTED_CONTRACT / NOT_EXECUTED**.
 `GOV-P001-CF-TEMP-017` is consumed and non-reusable. No Supervisor P-006 runtime slot remains after this shared-truth closeout.
 
 No product runtime source, destructive migration execution, permanent P-001/CF, pair/runtime/migration certification, provider/license/billing, updater/TUF, production deploy/release, ADR-0010 or #947 authority is promoted.
+
+
+## P-006 B5 Lane C schema / migration readiness closeout
+
+Issue **#1085** performs a bounded non-runtime readiness/applicability review of the exact protocol fixtures **FP-77…FP-94** against current main.
+
+Review deliverable:
+
+- `docs/QUALITY/P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS.md`.
+
+Formal P-006 accounting remains:
+
+**144 documented / 52 executed / 52 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+No FP-77…94 fixture is executed by this review.
+
+Current terminal readiness decisions:
+
+- **READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION:** FP-77, FP-78, FP-79, FP-80, FP-88.
+- **READY_AFTER_EXACT_HARNESS_PREREQUISITE:** FP-86, FP-89, FP-90, FP-94.
+- **N_A_CURRENT_ACCEPTED_MIGRATION_SET:** FP-81 — current accepted Pro migrations are non-destructive; no destructive Pro migration may be invented merely to make this fixture executable.
+- **BLOCKED:** FP-82, FP-83, FP-84, FP-85, FP-87, FP-91, FP-92, FP-93.
+
+The blocking contracts are substantive:
+
+- no authoritative persisted Free/Pro schema-generation bridge for schema-ahead code;
+- no generic migration marker ↔ physical-schema reconciliation;
+- no generic interrupted-migration resume protocol;
+- no cross-request migration lock/lease;
+- no verified backup/snapshot evidence gate in the generic destructive-migration runner.
+
+The smallest direct follow-on formal runtime candidate is **FP-77/78/79/80/88** only, and it still requires a separate runtime authorization/grant before any disposable WordPress/MySQL execution.
+
+No product runtime source, database/schema mutation, provider/updater/TUF, permanent P-001/CF, migration/pair/runtime certification, ADR-0010, deploy/release or #947 authority is promoted by B5.
