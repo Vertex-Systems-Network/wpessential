@@ -177,6 +177,12 @@ function b6dNormalizedDdl(object $wpdb, string $table): string
     b6dAssert(is_array($row) && isset($row[1]) && is_string($row[1]), 'Unable to inspect schema: ' . $table);
     $ddl = preg_replace('/AUTO_INCREMENT=\\d+\\s*/', '', $row[1]);
     b6dAssert(is_string($ddl), 'Unable to normalize schema: ' . $table);
+    $ddl = preg_replace(
+        '/\\bCHARACTER SET utf8mb4 (?=COLLATE utf8mb4_unicode_520_ci\\b)/',
+        '',
+        $ddl,
+    );
+    b6dAssert(is_string($ddl), 'Unable to normalize redundant column charset: ' . $table);
     return preg_replace('/\\s+/', ' ', trim($ddl)) ?? trim($ddl);
 }
 
