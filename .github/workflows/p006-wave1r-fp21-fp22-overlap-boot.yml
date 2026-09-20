@@ -198,7 +198,11 @@ jobs:
               note: "Wave 1K graph builder is reused only as a deterministic overlap-artifact construction primitive."
             },
             nodes: {F0:.nodes.F0,F1:.nodes.F1,P0:.nodes.P0,P1:.nodes.P1},
-            pairs: {F0_P0:.pairs.F0_P0,F1_P0:.pairs.F1_P0,F0_P1:.pairs.F0_P1},
+            pairs: {
+              F0_P0:(.pairs.F0_P0 + {expected_state:"compatible"}),
+              F1_P0:(.pairs.F1_P0 + {expected_state:"compatible"}),
+              F0_P1:(.pairs.F0_P1 + {expected_state:"compatible"})
+            },
             local_entitlement: {state:"pro_active",remote_provider:false},
             boundaries: {
               fp24_executed:false,
