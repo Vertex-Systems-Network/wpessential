@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before B6c FP-94 diagnostics/redaction prerequisite closeout: **`main @ 03bee5a0953ee5f1432066aa64ce274b194f49dc`**
+Current integration anchor before B6d FP-90 disposable DB snapshot prerequisite closeout: **`main @ 85b5a2eb82a71bab3e42d8c7d38dedcbf13654c7`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -32,8 +32,9 @@ P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR #1092
 P-006 B6a FP-89 Platform API candidate prerequisite: **Issue #1093 / PR #1094**
 P-006 B6b FP-86 fail-once marker prerequisite: **Issue #1095 / PR #1096**
 P-006 B6c FP-94 diagnostics/redaction prerequisite: **Issue #1097 / PR #1098**
+P-006 B6d FP-90 disposable DB snapshot prerequisite: **Issue #1099 / PR #1100**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6C_FP94_DIAGNOSTICS_REDACTION_PREREQUISITE_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6D_FP90_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -61,6 +62,7 @@ B6 harness-prerequisite readiness authorization: **`GOV-P006-B6-HARNESS-PREREQUI
 B6a FP-89 candidate authorization: **`GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001 PREREQUISITE PASS / NON-RUNTIME / FP-89 NOT EXECUTED`**
 B6b FP-86 marker-failure authorization: **`GOV-P006-B6B-FP86-FAIL-ONCE-MARKER-001 PREREQUISITE PASS / DISPOSABLE TEST RUNTIME / FP-86 NOT EXECUTED`**
 B6c FP-94 diagnostics/redaction authorization: **`GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001 PREREQUISITE PASS / NON-RUNTIME / FP-94 NOT EXECUTED`**
+B6d FP-90 disposable DB snapshot authorization: **`GOV-P006-B6D-FP90-DISPOSABLE-DB-SNAPSHOT-001 PREREQUISITE PASS / DISPOSABLE TEST RUNTIME / FP-90 NOT EXECUTED`**
 
 ## Mandatory work-cycle order
 
@@ -1274,3 +1276,24 @@ The prerequisite:
 **FP-94 remains NOT FORMALLY EXECUTED.** Formal P-006 accounting remains **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
 
 No pair/runtime/migration certification, permanent P-001/CF, provider/updater/TUF, ADR-0010 promotion, deploy/release or #947 authority follows.
+
+
+## P-006 B6d FP-90 disposable DB snapshot prerequisite closeout
+
+Issue **#1099** / merged PR **#1100** completes only the FP-90 disposable older-DB snapshot prerequisite.
+
+Accepted exact prerequisite source **`6e7cef451494a5403991755b599ece560177675c`** passed:
+
+- dedicated workflow run **35542007281**;
+- Governance run **35542007218**;
+- immutable artifact **10615316516** / `sha256:7e2c19c0ec29e81cbfef865bac2a404c315189d7852b1af662ee3187417fd8a3`.
+
+The prerequisite proves a MySQL-owned fixed-point disposable SQL snapshot with accepted SHA-256:
+
+`24178a1289fb5929eda850f488d932c94bbbddc5936a82cc26cb83979823b058`
+
+It preserves the exact older Free 006/007/008 migration state, sentinel and normalized WPE schema/state across drop/recreate/import; canonical F0/P0 local compatibility is observed before pending migrations; Pro 220/221 are not invoked.
+
+Evidence-only finalization run **35542170139** passed with the heavy DB prerequisite job skipped.
+
+FP-90 remains **NOT FORMALLY EXECUTED**. Product Backup/Restore remains unimplemented/uncertified. Formal P-006 accounting remains **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications**.
