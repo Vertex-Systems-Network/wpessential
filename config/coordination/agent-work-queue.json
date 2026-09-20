@@ -1036,7 +1036,8 @@
       "fixture_accounting_changed": false,
       "runtime_executed": false,
       "pair_certified": false,
-      "runtime_certified": false
+      "runtime_certified": false,
+      "closeout_pr": 1070
     },
     {
       "priority": 900,
