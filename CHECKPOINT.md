@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
-Checkpoint date: **2026-09-18 UTC**
-Current integration anchor before Wave 1P FP-52 closeout merge: **`main @ b8681eebeede713957fbf314b730290db516d6e4`**
+Checkpoint date: **2026-09-20 UTC**
+Current integration anchor before FP-50 expectation decision closeout: **`main @ fac942ae585a22e9a8a89d270c8f6a665a61e21b`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -17,8 +17,10 @@ P-006 B3 FP-49…52 applicability/readiness review: **Issue #1055 / PR #1057**
 P-006 Wave 1N FP-49 closeout: **Issue #1058 / PR #1060**
 P-006 Wave 1O FP-51 closeout: **Issue #1061 / PR #1063**
 P-006 Wave 1P FP-52 closeout: **Issue #1064 / PR #1066**
+P-006 terminal-workflow timeout hardening: **PR #1069**
+P-006 B3 FP-50 expectation decision: **Issue #1067 / closeout PR pending**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1P_FP52_TERMINAL_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_FP50_EXPECTATION_RESOLVED_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -35,6 +37,7 @@ FP-49…52 applicability review authorization: **`GOV-P006-B3-FP49-52-APPLICABIL
 Wave 1N temporary grant: **`GOV-P001-CF-TEMP-012 CONSUMED / NON-REUSABLE`**
 Wave 1O temporary grant: **`GOV-P001-CF-TEMP-013 CONSUMED / NON-REUSABLE`**
 Wave 1P temporary grant: **`GOV-P001-CF-TEMP-014 CONSUMED / NON-REUSABLE`**
+FP-50 expectation decision authorization: **`GOV-P006-B3-FP50-EXPECTATION-DECISION-001 COMPLETED / NON-RUNTIME`**
 
 ## Mandatory work-cycle order
 
@@ -797,3 +800,46 @@ Formal P-006 accounting becomes **144 documented / 49 executed / 48 PASS / 0 FAI
 TEMP-014 is consumed/non-reusable. This PASS does not certify corrupt PHP execution, generic WordPress `move_dir()`/recursive-copy interruption, permanent P-001/CF, a Free/Pro pair, a runtime, updater/TUF, rollback/migration, ADR-0010, production deploy/release or #947.
 
 FP-50 remains **BLOCKED_EXPECTATION_CLARIFICATION_REQUIRED** and unexecuted. After #1066 merges there is **no Supervisor P-006 execution slot**. The next valid B3 action is a separately authorized non-runtime FP-50 expectation decision; do not create FP-50 runtime evidence until that decision exists.
+
+
+## P-006 B3 FP-50 expectation decision closeout
+
+Issue **#1067** resolves the remaining FP-50 fixture-expectation ambiguity under **`GOV-P006-B3-FP50-EXPECTATION-DECISION-001`**.
+
+This is a **non-runtime governance/fixture decision**. No WordPress runtime, database, package replacement, fault injection or P-001 temporary runtime grant is used.
+
+Exact decision base before closeout: **`fac942ae585a22e9a8a89d270c8f6a665a61e21b`**.
+
+The original accepted FP-50 contract remains:
+
+> fault-inject Pro replacement; Free remains usable, premium disabled with safe package-incomplete result.
+
+Decision:
+
+- **Interpretation A is accepted** for the accepted direct-filesystem entrypoint-last publication-owner profile.
+- Harness-observed **`EXECUTION_EXCLUDED_LIVE_PARTIAL`** is the FP-50 safe package-incomplete result while the configured Pro entry is absent.
+- A product-local `pro_package_incomplete` state is **not required** while Pro is deliberately non-executable.
+- Requiring a product-local state during the interrupted publication would require exposing an executable Pro entry before its non-entry tree is complete, which conflicts with the accepted execution-exclusion safety boundary.
+- This decision does not prohibit separately governed safe missing-file corruption fixtures; it only resolves FP-50 under the accepted publisher.
+
+FP-50 classification becomes:
+
+**`READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION / NOT_EXECUTED`**
+
+The finite proposed later execution cells remain:
+
+- P50-01 — 1 / 286 Pro non-entry files;
+- P50-25 — 71 / 286;
+- P50-50 — 143 / 286;
+- P50-75 — 214 / 286;
+- P50-100 — 286 / 286 with configured Pro entry still absent.
+
+Any later formal execution must separately authorize the runtime tranche and required temporary P-001/CF matrix grant, re-pin exact candidate identities on its own exact head, preserve Free usability, deny all premium admission/migration/mutation, and restore exact P0.
+
+Formal P-006 accounting remains **144 documented / 49 executed / 48 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+Timeout/runaway hardening completed immediately before this decision in PR **#1069**: the already-terminal FP-49, FP-51 and FP-52 runtime workflows no longer trigger merely from `config/coordination/agent-work-queue.json`, `CHECKPOINT.md` or `README.md` changes. Their workflow/tool/evidence/build/package/admin triggers, manual dispatch, per-job timeouts and concurrency cancellation remain intact. This prevents shared-truth-only closeouts from needlessly launching three long runtime matrices.
+
+No product runtime source changed. Generic WordPress `move_dir()`/recursive-copy interruption safety, permanent P-001/CF, a Free/Pro pair, runtime certification, updater/TUF, rollback/migration, ADR-0010, production deploy/release and #947 remain unpromoted.
+
+After this closeout merges there is **no Supervisor FP-50 runtime execution slot**. Formal FP-50 execution requires a separate authorization cycle.
