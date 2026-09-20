@@ -1128,7 +1128,8 @@
       "fixture_accounting_changed": false,
       "runtime_executed": false,
       "pair_certified": false,
-      "runtime_certified": false
+      "runtime_certified": false,
+      "closeout_pr": 1076
     },
     {
       "priority": 900,
@@ -1213,6 +1214,7 @@
     "p006_wave1q_governance_run_exact_verification": 35507518694,
     "p006_b4_fp21_22_24_33_readiness": "TERMINAL_NON_RUNTIME_REVIEW_FP21_FP22_READY_FP24_NA_FP33_READY_STILL_INCONCLUSIVE",
     "p006_b4_fp21_22_24_33_readiness_issue": 1074,
+    "p006_b4_fp21_22_24_33_readiness_pr": 1076,
     "p006_b4_fp21_22_24_33_readiness_base": "5f783256fbe1228e1585df9de1dfd995cc9a25f8",
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
