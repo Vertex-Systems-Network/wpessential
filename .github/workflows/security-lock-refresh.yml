@@ -38,8 +38,33 @@ jobs:
       - name: Refresh locked npm graph without lifecycle scripts
         run: npm install --package-lock-only --ignore-scripts
 
+      - name: Upload refreshed package lock
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: security-refreshed-package-lock-${{ github.run_id }}
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 2
+
       - name: Install refreshed graph without lifecycle scripts
         run: npm ci --ignore-scripts
+
+      - name: Capture machine-readable npm audit
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          npm audit --json > npm-audit.json
+          exit 0
+
+      - name: Upload npm audit report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: security-npm-audit-${{ github.run_id }}
+          path: npm-audit.json
+          if-no-files-found: error
+          retention-days: 2
 
       - name: Audit refreshed graph
         run: npm audit --audit-level=high
@@ -51,11 +76,3 @@ jobs:
 
       - name: Build admin assets
         run: npm run build:admin
-
-      - name: Upload refreshed package lock
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: security-refreshed-package-lock-${{ github.run_id }}
-          path: package-lock.json
-          if-no-files-found: error
-          retention-days: 2
