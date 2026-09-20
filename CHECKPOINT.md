@@ -28,7 +28,7 @@ P-006 Wave 1S shared-truth closeout: **PR #1084**
 P-006 B5 Lane C schema/migration readiness: **Issue #1085 / PR #1086**
 P-006 Wave 1T FP-77/78/79/80/88 runtime evidence: **Issue #1087 / PR #1089**
 P-006 Wave 1T shared-truth closeout: **PR #1090**
-P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR pending**
+P-006 B6 FP-86/89/90/94 harness-prerequisite readiness: **Issue #1091 / PR #1092**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B6_HARNESS_PREREQUISITE_READINESS_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
