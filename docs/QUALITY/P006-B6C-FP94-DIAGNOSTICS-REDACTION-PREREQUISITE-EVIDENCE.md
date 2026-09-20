@@ -65,6 +65,15 @@ Exact-head Governance Gate:
 - run id: **35540536932**;
 - result: **PASS**.
 
+Evidence/shared-truth-only finalization:
+
+- finalization head: `284e4f412257d561fbbb228342a2a758c5a56987`;
+- Governance run: **35540781136 — PASS**;
+- B6c change-gate run: **35540781182 — PASS**;
+- heavy `Validate FP-94 diagnostics/redaction capture` job: **SKIPPED**.
+
+This proves evidence/shared-truth synchronization does not rerun or replace the accepted immutable prerequisite evidence.
+
 The accepted implementation diff modifies only prerequisite workflow/tooling and the serialized queue claim. Product runtime source is unchanged.
 
 ## 4. Deterministic canary design
@@ -199,7 +208,7 @@ Workflow uses pinned Action revisions, `contents: read`, exact-head checkout, no
 
 ## 10. Terminal prerequisite decision
 
-**B6c prerequisite: PASS / MERGE-READY SUBJECT TO EVIDENCE-ONLY SYNCHRONIZE CHECK.**
+**B6c prerequisite: PASS / MERGE-READY.**
 
 The repository now has the bounded diagnostics/redaction capture prerequisite required for later separately authorized FP-94 formal execution.
 
