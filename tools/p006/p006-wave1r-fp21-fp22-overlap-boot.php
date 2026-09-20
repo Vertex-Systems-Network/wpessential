@@ -602,7 +602,7 @@ function rAggregate(array $in): array
         kAssert(($record['compatibility_persistence_keys'] ?? null) === [], "{$fixture}: compatibility persistence appeared");
         kAssert(($record['external_object_cache'] ?? null) === false, "{$fixture}: external object cache participated");
         kAssert(($record['network_attempt_count'] ?? null) === 0, "{$fixture}: outbound WordPress HTTP observed");
-        kAssert(($record['fatal_or_error'] ?? 'missing') === null, "{$fixture}: fatal/error observed");
+        kAssert(array_key_exists('fatal_or_error', $record) && $record['fatal_or_error'] === null, "{$fixture}: fatal/error observed");
     }
 
     kAssert(($fp21['logical_pair'] ?? null) === ['free' => 'F1', 'pro' => 'P0'], 'FP-21 exact pair drift');
