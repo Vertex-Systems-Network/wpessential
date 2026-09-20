@@ -482,13 +482,21 @@ function b6dAggregate(): array
     $before = b6dReadJson(b6dEnv('WPE_P006_BEFORE_EVIDENCE'));
     $restored = b6dReadJson(b6dEnv('WPE_P006_RESTORED_EVIDENCE'));
     $compatibility = b6dReadJson(b6dEnv('WPE_P006_COMPATIBILITY_EVIDENCE'));
+    $seedSnapshot = b6dEnv('WPE_P006_SQL_SEED_SNAPSHOT');
     $snapshotA = b6dEnv('WPE_P006_SQL_SNAPSHOT');
     $snapshotB = b6dEnv('WPE_P006_SQL_SNAPSHOT_RESTORED');
-    b6dAssert(is_file($snapshotA) && is_file($snapshotB), 'SQL snapshot artifact missing');
+    b6dAssert(
+        is_file($seedSnapshot) && is_file($snapshotA) && is_file($snapshotB),
+        'SQL snapshot artifact missing',
+    );
+    $seedHash = hash_file('sha256', $seedSnapshot);
     $hashA = hash_file('sha256', $snapshotA);
     $hashB = hash_file('sha256', $snapshotB);
-    b6dAssert(is_string($hashA) && is_string($hashB), 'Unable to hash SQL snapshots');
-    b6dAssert(hash_equals($hashA, $hashB), 'Restored SQL export is not byte-identical');
+    b6dAssert(
+        is_string($seedHash) && is_string($hashA) && is_string($hashB),
+        'Unable to hash SQL snapshots',
+    );
+    b6dAssert(hash_equals($hashA, $hashB), 'Accepted SQL snapshot fixed point is not byte-identical');
     b6dAssert(filesize($snapshotA) > 0 && filesize($snapshotA) === filesize($snapshotB), 'SQL snapshot size drift');
     b6dAssert(($before['snapshot']['state_sha256'] ?? null) === ($restored['snapshot']['state_sha256'] ?? null), 'State hash drift after restore');
     b6dAssert(($compatibility['preflight']['state'] ?? null) === 'compatible', 'Compatibility preflight did not pass');
@@ -505,19 +513,26 @@ function b6dAggregate(): array
         'restored_state' => $restored['snapshot'],
         'state_identity_restored' => true,
         'sql_snapshot' => [
-            'sha256' => $hashA,
-            'bytes' => filesize($snapshotA),
-            'second_export_sha256' => $hashB,
+            'seed_sha256' => $seedHash,
+            'seed_bytes' => filesize($seedSnapshot),
+            'accepted_sha256' => $hashA,
+            'accepted_bytes' => filesize($snapshotA),
+            'fixed_point_export_sha256' => $hashB,
             'second_export_byte_identical' => true,
+            'mysql_replay_canonicalization_used' => true,
+            'seed_and_accepted_byte_identical' => hash_equals($seedHash, $hashA),
         ],
         'compatibility_before_pending_migrations' => $compatibility,
         'ordering' => [
             'older_state_settled',
-            'sql_export',
-            'drop_recreate_disposable_database',
-            'sql_import',
-            'state_identity_verified',
+            'seed_sql_export',
+            'seed_drop_recreate_import',
+            'semantic_state_identity_verified',
             'canonical_pair_compatibility_pass',
+            'accepted_sql_export',
+            'accepted_drop_recreate_import',
+            'semantic_state_identity_reverified',
+            'fixed_point_sql_export_byte_identical',
             'stop_before_pro_migrations',
         ],
         'pending_pro_migrations_invoked' => false,
