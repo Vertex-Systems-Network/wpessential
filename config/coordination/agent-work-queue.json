@@ -1,8 +1,8 @@
 {
-  "schema_version": 83,
+  "schema_version": 84,
   "snapshot_date": "2026-09-20",
-  "queue_anchor_main_sha": "fecc24bf29b74bf3254b6e28978d26e12f1cb043",
-  "mode": "POST_RC1_P006_B3_FP50_EXPECTATION_DECISION_AUTHORIZED",
+  "queue_anchor_main_sha": "fac942ae585a22e9a8a89d270c8f6a665a61e21b",
+  "mode": "POST_RC1_P006_B3_FP50_EXPECTATION_DECISION_CLOSEOUT",
   "source_issue": "#1067",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -35,9 +35,9 @@
     "wave1o_temp_grant": "GOV-P001-CF-TEMP-013 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
     "wave1p_owner_authorization": "Issue #1064 / FP-52 ONLY",
     "wave1p_temp_grant": "GOV-P001-CF-TEMP-014 CONSUMED_ONE_TRANCHE_NON_REUSABLE",
-    "b3_fp50_expectation_decision_authorization": "Issue #1067 / GOV-P006-B3-FP50-EXPECTATION-DECISION-001 ACTIVE_NON_RUNTIME_DECISION"
+    "b3_fp50_expectation_decision_authorization": "Issue #1067 / GOV-P006-B3-FP50-EXPECTATION-DECISION-001 COMPLETED_NON_RUNTIME_DECISION"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1 and P-006 Waves 1H–1P plus prior B3 reviews/prerequisites are terminal. Issue #1067 is the only Supervisor-authorized P-006 slot and is NON-RUNTIME: resolve FP-50's safe package-incomplete-result expectation against the accepted entrypoint-last publication-owner contract without executing FP-50, changing product runtime, creating a P-001 runtime grant, or changing P-006 accounting/certification state. The decision must explicitly choose transport-level EXECUTION_EXCLUDED_LIVE_PARTIAL semantics or retain the product-local-result requirement and blocked state. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → accepted work. RC1, P-006 Waves 1H–1P and the FP-50 expectation decision are terminal after this closeout merges. Issue #1067 accepts the transport-level EXECUTION_EXCLUDED_LIVE_PARTIAL publication state as FP-50's safe package-incomplete result under the accepted entrypoint-last publisher; FP-50 remains NOT_EXECUTED and receives no PASS/FAIL result. Formal accounting remains 144/49/48/0/1 with zero certified pairs/runtime certifications. No Supervisor FP-50 runtime slot or P-001 temporary grant exists; any formal FP-50 execution requires separate authorization. Terminal FP-49/51/52 workflows no longer trigger on queue/CHECKPOINT/README-only changes after PR #1069, reducing unnecessary long runtime matrices. #858 remains external-admin NON_BLOCKING and #947 remains independent Worker-only NON_BLOCKING.",
   "rc1_scope": {
     "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
     "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
@@ -69,7 +69,7 @@
     "1058": "COMPLETED_ON_PR_1060_P006_WAVE_1N_FP49_PASS",
     "1061": "COMPLETED_ON_PR_1063_P006_WAVE_1O_FP51_PASS",
     "1064": "COMPLETED_ON_PR_1066_P006_WAVE_1P_FP52_PASS",
-    "1067": "AUTHORIZED_OPEN_P006_B3_FP50_EXPECTATION_DECISION",
+    "1067": "COMPLETED_ON_NON_RUNTIME_FP50_EXPECTATION_DECISION_CLOSEOUT",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1019,7 +1019,7 @@
       "slot_id": "p006-b3-fp50-expectation-decision-v1",
       "title": "P-006 B3 FP-50 package-incomplete expectation decision",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "P006_B3_FP50_EXPECTATION_DECISION_NON_RUNTIME",
       "source": "Issue #1067",
       "runtime_allowed": false,
@@ -1029,7 +1029,14 @@
       "required_output": "docs/QUALITY/P006-B3-FP50-EXPECTATION-DECISION.md",
       "allowed_scope": ["non-runtime governance/fixture expectation decision", "exact FP-50 contract interpretation", "transport-state versus product-local compatibility-state distinction", "dependency-readiness decision", "queue/CHECKPOINT/README closeout"],
       "forbidden_scope": ["FP-50 execution or PASS/FAIL result", "P-001 temporary runtime grant", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "updater/TUF/signing/installer implementation", "schema/migration behavior", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "pair/runtime certification", "ADR-0010 promotion"],
-      "close_condition": "Satisfied only after the exact FP-50 expectation is explicitly resolved in the required decision document, dependency readiness is stated without execution, exact-head applicable CI/fresh-main/zero-thread checks pass, shared truth is reconciled, and P-006 accounting remains 144/49/48/0/1 with zero certified pairs/runtime certifications"
+      "close_condition": "Satisfied only after the exact FP-50 expectation is explicitly resolved in the required decision document, dependency readiness is stated without execution, exact-head applicable CI/fresh-main/zero-thread checks pass, shared truth is reconciled, and P-006 accounting remains 144/49/48/0/1 with zero certified pairs/runtime certifications",
+      "terminal_decision": "INTERPRETATION_A_ACCEPTED_TRANSPORT_LEVEL_EXECUTION_EXCLUDED_LIVE_PARTIAL_IS_SAFE_PACKAGE_INCOMPLETE_RESULT",
+      "fp50_state": "READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION_NOT_EXECUTED",
+      "required_future_cells": ["P50-01: 1/286", "P50-25: 71/286", "P50-50: 143/286", "P50-75: 214/286", "P50-100: 286/286 configured Pro entry absent"],
+      "fixture_accounting_changed": false,
+      "runtime_executed": false,
+      "pair_certified": false,
+      "runtime_certified": false
     },
     {
       "priority": 900,
