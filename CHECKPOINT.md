@@ -27,7 +27,7 @@ P-006 Wave 1S FP-33 runtime evidence: **Issue #1081 / PR #1083**
 P-006 Wave 1S shared-truth closeout: **PR #1084**
 P-006 B5 Lane C schema/migration readiness: **Issue #1085 / PR #1086**
 P-006 Wave 1T FP-77/78/79/80/88 runtime evidence: **Issue #1087 / PR #1089**
-P-006 Wave 1T shared-truth closeout: **PR pending**
+P-006 Wave 1T shared-truth closeout: **PR #1090**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1T_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
