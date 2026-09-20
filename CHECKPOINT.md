@@ -22,7 +22,7 @@ P-006 B3 FP-50 expectation decision: **Issue #1067 / PR #1070**
 P-006 Wave 1Q FP-50 closeout: **Issue #1071 / PR #1073**
 P-006 B4 FP-21/22/24/33 readiness review: **Issue #1074 / PR #1076**
 P-006 Wave 1R FP-21/22 runtime evidence: **Issue #1077 / PR #1079**
-P-006 Wave 1R shared-truth closeout: **PR pending**
+P-006 Wave 1R shared-truth closeout: **PR #1080**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1R_FP21_FP22_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
