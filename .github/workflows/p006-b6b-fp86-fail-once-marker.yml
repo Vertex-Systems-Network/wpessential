@@ -133,6 +133,7 @@ jobs:
           test "$(jq -r '.second_fresh_run.schema_unchanged_from_first_apply' artifacts/p006-b6b/evidence.json)" = "true"
           test "$(jq -r '.third_fresh_run.applied_ids | length' artifacts/p006-b6b/evidence.json)" = "0"
           test "$(jq -r '.formal_fixture_executed' artifacts/p006-b6b/evidence.json)" = "false"
+          test "$(jq -r '.prerequisite_phase_network_attempt_count' artifacts/p006-b6b/evidence.json)" = "0"
           test "$(jq -r '.network_attempt_count' artifacts/p006-b6b/evidence.json)" = "0"
           cat artifacts/p006-b6b/evidence.json
 
