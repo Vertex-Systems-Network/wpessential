@@ -35,6 +35,15 @@ Exact-head Governance Gate:
 - run id: **35539119359**;
 - result: **PASS**.
 
+Evidence/shared-truth-only finalization:
+
+- finalization head: `0e6abf9ce8c159c3e370debf512081585a9149ba`;
+- Governance run: **35539283470 — PASS**;
+- B6a change-gate run: **35539283407 — PASS**;
+- heavy `Build deterministic F0/P0/P-API graph` job: **SKIPPED**.
+
+This proves documentation/shared-truth synchronization does not rebuild or silently replace the accepted immutable candidate graph.
+
 The accepted implementation diff before evidence finalization contains only:
 
 - `.github/workflows/p006-b6a-fp89-platform-api-candidate.yml`;
@@ -141,7 +150,7 @@ It does not use WordPress/MySQL services, external providers, license/billing se
 
 ## 8. Terminal prerequisite decision
 
-**B6a prerequisite: PASS / MERGE-READY SUBJECT TO FINAL EVIDENCE-ONLY SYNCHRONIZE CHECK.**
+**B6a prerequisite: PASS / MERGE-READY.**
 
 The repository now has the exact deterministic candidate identity required for a later separately authorized FP-89 formal runtime fixture.
 
