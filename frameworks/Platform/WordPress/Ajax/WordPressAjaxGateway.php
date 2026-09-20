@@ -30,7 +30,6 @@ final readonly class WordPressAjaxGateway
     public function register(): void
     {
         $this->environment->registerAction('wp_ajax_' . $this->action, [$this, 'handle']);
-        $this->environment->registerAction('wp_ajax_nopriv_' . $this->action, [$this, 'handle']);
     }
 
     public function handle(): void
