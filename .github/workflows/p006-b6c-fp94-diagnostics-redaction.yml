@@ -100,6 +100,8 @@ jobs:
             test "$(jq -r '.raw_canaries_absent_from_evidence_json' "$out/evidence.json")" = "true"
             test "$(jq -r '.sensitive_value.vault_plaintext_absent' "$out/evidence.json")" = "true"
             test "$(jq -r '.formal_fixture_executed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.product_logging_added_or_changed' "$out/evidence.json")" = "false"
+            test "$(jq -r '.wordpress_or_mysql_runtime_used' "$out/evidence.json")" = "false"
             for canary in               P006_B6C_LICENSE_TOKEN_DO_NOT_EMIT               P006_B6C_VAULT_PLAINTEXT_DO_NOT_EMIT               P006_B6C_PRIVATE_USER_DATA_DO_NOT_EMIT
             do
               if grep -R -F -- "$canary" "$out" >/dev/null; then
