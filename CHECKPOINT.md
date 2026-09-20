@@ -20,7 +20,7 @@ P-006 Wave 1P FP-52 closeout: **Issue #1064 / PR #1066**
 P-006 terminal-workflow timeout hardening: **PR #1069**
 P-006 B3 FP-50 expectation decision: **Issue #1067 / PR #1070**
 P-006 Wave 1Q FP-50 closeout: **Issue #1071 / PR #1073**
-P-006 B4 FP-21/22/24/33 readiness review: **Issue #1074 / closeout PR pending**
+P-006 B4 FP-21/22/24/33 readiness review: **Issue #1074 / PR #1076**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_B4_READINESS_REVIEW_TERMINAL_NON_RUNTIME_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
