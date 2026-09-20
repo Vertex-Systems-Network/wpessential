@@ -1,0 +1,61 @@
+name: Security Lock Refresh
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - '.github/workflows/security-lock-refresh.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-lock-refresh-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh-lock:
+    name: refresh and verify npm lock
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify exact source head
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Refresh locked npm graph without lifecycle scripts
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Install refreshed graph without lifecycle scripts
+        run: npm ci --ignore-scripts
+
+      - name: Audit refreshed graph
+        run: npm audit --audit-level=high
+
+      - name: Validate package and TypeScript
+        run: |
+          npm run lint:package
+          npm run typecheck
+
+      - name: Build admin assets
+        run: npm run build:admin
+
+      - name: Upload refreshed package lock
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: security-refreshed-package-lock-${{ github.run_id }}
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 2
