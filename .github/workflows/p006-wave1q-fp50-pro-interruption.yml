@@ -91,6 +91,8 @@ jobs:
         shell: bash
         env:
           WPE_P006_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          WPE_P006_CANONICAL_FREE_ZIP: ${{ github.workspace }}/artifacts/wpessential.zip
+          WPE_P006_CANONICAL_PRO_ZIP: ${{ github.workspace }}/artifacts/wpessential-pro.zip
         run: |
           set -euo pipefail
           rm -rf artifacts/p006-wave1q-fp50
