@@ -1,7 +1,7 @@
 # WPEssential — Engineering Checkpoint
 
 Checkpoint date: **2026-09-20 UTC**
-Current integration anchor before FP-50 expectation decision closeout: **`main @ fac942ae585a22e9a8a89d270c8f6a665a61e21b`**
+Current integration anchor before Wave 1Q FP-50 closeout: **`main @ bdeeb8c474628ae4e9aa9fd73f87df14188a6056`**
 RC1 Supervisor closeout: **PR #1024**
 P-006 Wave 1H closeout: **Issue #1014 / PR #1028**
 P-006 Wave 1I closeout: **Issue #1015 / PR #1030**
@@ -19,8 +19,9 @@ P-006 Wave 1O FP-51 closeout: **Issue #1061 / PR #1063**
 P-006 Wave 1P FP-52 closeout: **Issue #1064 / PR #1066**
 P-006 terminal-workflow timeout hardening: **PR #1069**
 P-006 B3 FP-50 expectation decision: **Issue #1067 / PR #1070**
+P-006 Wave 1Q FP-50 closeout: **Issue #1071 / PR #1073**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
-Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_FP50_EXPECTATION_RESOLVED_NON_RUNTIME_NON_CERTIFYING`**
+Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1Q_FP50_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
 RC1 sprint record: **`GOV-OWNER-CONSENT-RC1-001` via Issue #1016**
 Wave 1H temporary grant: **`GOV-P001-CF-TEMP-006 CONSUMED / NON-REUSABLE`**
@@ -38,6 +39,7 @@ Wave 1N temporary grant: **`GOV-P001-CF-TEMP-012 CONSUMED / NON-REUSABLE`**
 Wave 1O temporary grant: **`GOV-P001-CF-TEMP-013 CONSUMED / NON-REUSABLE`**
 Wave 1P temporary grant: **`GOV-P001-CF-TEMP-014 CONSUMED / NON-REUSABLE`**
 FP-50 expectation decision authorization: **`GOV-P006-B3-FP50-EXPECTATION-DECISION-001 COMPLETED / NON-RUNTIME`**
+Wave 1Q temporary grant: **`GOV-P001-CF-TEMP-015 CONSUMED / NON-REUSABLE`**
 
 ## Mandatory work-cycle order
 
@@ -843,3 +845,88 @@ Timeout/runaway hardening completed immediately before this decision in PR **#10
 No product runtime source changed. Generic WordPress `move_dir()`/recursive-copy interruption safety, permanent P-001/CF, a Free/Pro pair, runtime certification, updater/TUF, rollback/migration, ADR-0010, production deploy/release and #947 remain unpromoted.
 
 After this closeout merges there is **no Supervisor FP-50 runtime execution slot**. Formal FP-50 execution requires a separate authorization cycle.
+
+
+## P-006 Wave 1Q FP-50 closeout
+
+Issue **#1071** / PR **#1073** executes FP-50 only under one-tranche temporary grant **`GOV-P001-CF-TEMP-015`**.
+
+Accepted fixture:
+
+> fault-inject Pro replacement; Free remains usable, premium disabled with safe package-incomplete result.
+
+The accepted result domain remains the external direct-filesystem entrypoint-last publication owner from Issue #1067 / PR #1070. A product-local `pro_package_incomplete` reason is not required while the configured Pro entry is deliberately absent.
+
+Final exact-head verification before shared-truth closeout:
+
+- source head: **`56efc19d54cc5de54086fa19e930f611cb77825f`**;
+- Governance Gate run **35507518694 — PASS**;
+- Wave 1Q workflow run **35507518628 — PASS**;
+- candidate graph job — PASS;
+- minimum / WordPress 6.9 / PHP 8.2 / MySQL 8.4 — PASS;
+- reference / WordPress 7.1 / PHP 8.5 / MySQL 8.4 — PASS;
+- terminal aggregate — PASS;
+- review threads before closeout reconciliation — zero.
+
+Exact-head immutable artifacts:
+
+- candidate graph: id **10604377061**, digest **`sha256:69b6d7c9b808491506f3b771526f8914ecd540b4038026c0b040fddcf6383161`**;
+- minimum runtime: id **10604786359**, digest **`sha256:f2be16598e354472370825d8e93b3edba79bf7460f48295edc9b853321556978`**;
+- reference runtime: id **10604801446**, digest **`sha256:0cc0b9ffd043f6511caba11abdbcc4a31c16992d1a0a32b981a9c862a51b498f`**;
+- terminal marker: id **10604287404**, digest **`sha256:ae9719c2e89043cc21804b11aadfc3c8b7ae9d32dc9c85a27e8cc47fb73b808a`**.
+
+Deterministic P1 graph:
+
+- P1 ZIP: **`96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac`**;
+- P1 payload tree: **`d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46`**;
+- P1 total files: **287**;
+- P1 non-entry files: **286**;
+- sorted non-entry list SHA-256: **`bcdde6de56c6c24305a167288f27e1487b3666c48639634ef807404014ec23a8`**.
+
+Formal cut points executed on both runtimes:
+
+- P50-01 — 1 / 286 — **`EXECUTION_EXCLUDED_LIVE_PARTIAL`**;
+- P50-25 — 71 / 286 — **`EXECUTION_EXCLUDED_LIVE_PARTIAL`**;
+- P50-50 — 143 / 286 — **`EXECUTION_EXCLUDED_LIVE_PARTIAL`**;
+- P50-75 — 214 / 286 — **`EXECUTION_EXCLUDED_LIVE_PARTIAL`**;
+- P50-100 — 286 / 286 with configured Pro entry absent — **`NON_ENTRY_COMPLETE_ENTRY_ABSENT`**.
+
+Across all ten interrupted observations:
+
+- exact F0 remained present and usable;
+- Free bootstrap remained ready and the Free kernel remained booted;
+- required Free modules remained available;
+- configured Pro entry remained absent/unreadable;
+- no premium module registered;
+- premium boot, migrations and mutations remained denied;
+- no fatal/error occurred;
+- the bounded sentinel remained exactly **`fp50-preserve-v1`**;
+- outbound WordPress HTTP remained zero;
+- exact P0 recovery succeeded entrypoint-last;
+- recovered F0/P0 returned **`compatible`**.
+
+The initial workflow attempt **35507243222** stopped in candidate derivation before any runtime cell started because the reused graph builder was missing canonical ZIP environment inputs. It therefore does not count as FP-50 fixture execution. The wiring was corrected without product-runtime changes, and subsequent exact-head runs passed.
+
+Terminal formal result:
+
+**FP-50 — PASS_WAVE_1Q_PRO_INTERRUPTION_ENTRYPOINT_EXCLUDED**
+
+Formal P-006 accounting becomes:
+
+**144 documented / 50 executed / 49 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications**.
+
+`GOV-P001-CF-TEMP-015` is consumed and non-reusable.
+
+Timeout containment remains active:
+
+- terminal FP-49/51/52 workflows do not trigger on queue/CHECKPOINT/README-only changes;
+- Wave 1Q has its own narrow path filter;
+- candidate build hard cap is 15 minutes;
+- each runtime cell hard cap is 18 minutes;
+- terminal aggregate hard cap is 5 minutes;
+- stale Wave 1Q runs are cancelled by concurrency;
+- shared-truth closeout changes do not rerun the Wave 1Q runtime matrix.
+
+No product runtime source changed. This PASS does not certify generic WordPress recursive-copy interruption safety, permanent P-001/CF, a Free/Pro pair, a P-006 runtime, updater/TUF, rollback/migration behavior, provider/license/billing, multisite, production deployment/release, ADR-0010 or #947.
+
+After PR #1073 merges there is **no Supervisor P-006 runtime execution slot**.
