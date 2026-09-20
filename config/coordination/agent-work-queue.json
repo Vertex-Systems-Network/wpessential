@@ -1414,6 +1414,23 @@
       "closeout_pr": 1092
     },
     {
+      "priority": 303,
+      "slot_id": "p006-b6a-fp89-platform-api-candidate-v1",
+      "title": "P-006 B6a isolated FP-89 Platform API candidate prerequisite",
+      "role": "SUPERVISOR_ONLY",
+      "status": "CLAIMED",
+      "work_mode": "P006_B6A_FP89_TEST_ONLY_CANDIDATE_PREREQUISITE",
+      "source": "Issue #1093",
+      "runtime_allowed": false,
+      "claim_branch": "agent/p006-b6a-fp89-platform-api-candidate-v1",
+      "authorization": "GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001",
+      "authorized_scope": ["deterministic canonical package build", "test-only P-API candidate derivation", "actual LocalCompatibilityPreflight pure evaluation", "immutable prerequisite artifact", "B6a evidence markdown", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-89 execution", "WordPress/MySQL runtime matrix", "P-001/CF runtime grant", "product runtime mutation", "migration/DB mutation", "provider/license/billing", "updater/TUF", "production/live data", "certification promotion", "deploy/release", "ADR-0010 promotion", "#947"],
+      "formal_fixture_executed": false,
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
+      "close_condition": "Deterministic F0/P0/P-API prerequisite artifacts merged with exact-head Governance + prerequisite workflow PASS, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-89 remains not formally executed"
+    },
+    {
       "priority": 900,
       "slot_id": "p006-wave1a-independent-evidence-review-v1",
       "title": "P-006 Wave 1A Independent Evidence Integrity Review",
