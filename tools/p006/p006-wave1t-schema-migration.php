@@ -408,7 +408,13 @@ function tFp77(array $identity, array $in): array {
     $order = tMigrationInsertOrder(tSql($in));
     $ddl = tWpeDdl(tSql($in));
     tAssert($order === [], 'FP-77 wrote migration marker on matching schema boot');
-    tAssert($ddl === [], 'FP-77 executed WPE DDL on matching schema boot');
+    $stateStoreEnsurePrefix = 'CREATE TABLE IF NOT EXISTS `' . $in['table_prefix'] . 'wpe_migrations`';
+    foreach ($ddl as $query) {
+        tAssert(
+            str_starts_with($query, $stateStoreEnsurePrefix),
+            'FP-77 executed non-readiness WPE DDL on matching schema boot',
+        );
+    }
     $compat = tCompatibility();
     tAssert(is_array($compat) && ($compat['state'] ?? null) === 'compatible', 'FP-77 compatibility drift');
     tAssert(tNetwork($in) === [], 'FP-77 outbound HTTP observed');
@@ -416,8 +422,8 @@ function tFp77(array $identity, array $in): array {
         'status' => 'PASS', 'fixture_id' => 'FP-77', 'cell_id' => $in['cell'], 'environment' => tEnvironment($in),
         'logical_pair' => ['free' => 'F0', 'pro' => 'P0'], 'artifact_identity' => $artifact,
         'before_snapshot_sha256' => $baseline['snapshot']['snapshot_sha256'], 'after_snapshot' => $snapshot,
-        'migration_insert_order' => [], 'wpe_ddl' => [], 'compatibility' => $compat,
-        'network_attempt_count' => 0, 'fatal_or_error' => null,
+        'migration_insert_order' => [], 'wpe_ddl' => $ddl, 'state_store_readiness_ddl_only' => true,
+        'compatibility' => $compat, 'network_attempt_count' => 0, 'fatal_or_error' => null,
     ];
 }
 
