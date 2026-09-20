@@ -24,7 +24,7 @@ P-006 B4 FP-21/22/24/33 readiness review: **Issue #1074 / PR #1076**
 P-006 Wave 1R FP-21/22 runtime evidence: **Issue #1077 / PR #1079**
 P-006 Wave 1R shared-truth closeout: **PR #1080**
 P-006 Wave 1S FP-33 runtime evidence: **Issue #1081 / PR #1083**
-P-006 Wave 1S shared-truth closeout: **PR pending**
+P-006 Wave 1S shared-truth closeout: **PR #1084**
 Project classification: **`ACTIVE_EXISTING_PROJECT`**
 Execution mode after this closeout lands: **`IMPLEMENTATION_GATED / RC1_CORE_PRODUCTION_CANDIDATE_NON_GA / P006_WAVE_1S_FP33_TERMINAL_NON_CERTIFYING`**
 Development approval: **`GOV-OWNER-CONSENT-001 ACTIVE / source scope 56/56`**
