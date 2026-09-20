@@ -219,6 +219,11 @@ jobs:
           }
           dump_db > "$WPE_P006_SQL_SNAPSHOT"
           test -s "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Eq '^(CREATE DATABASE|USE )' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq '220.custom_tables_migration_runs_v1' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq '221.custom_tables_migration_execution_confirmations_v1' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq 'wpe_custom_table_migration_runs' "$WPE_P006_SQL_SNAPSHOT"
+          ! grep -Fq 'wpe_custom_table_migration_confirmations' "$WPE_P006_SQL_SNAPSHOT"
           sha256sum "$WPE_P006_SQL_SNAPSHOT"
 
       - name: Drop recreate and import disposable database
