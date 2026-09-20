@@ -1478,6 +1478,23 @@
       "closeout_pr": 1094
     },
     {
+      "priority": 304,
+      "slot_id": "p006-b6b-fp86-fail-once-marker-v1",
+      "title": "P-006 B6b FP-86 fail-once migration marker prerequisite",
+      "role": "SUPERVISOR_ONLY",
+      "status": "CLAIMED",
+      "work_mode": "P006_B6B_FP86_TEST_ONLY_FAIL_ONCE_MARKER_PREREQUISITE",
+      "source": "Issue #1095",
+      "runtime_allowed": true,
+      "claim_branch": "agent/p006-b6b-fp86-fail-once-marker-v1",
+      "authorization": "GOV-P006-B6B-FP86-FAIL-ONCE-MARKER-001",
+      "authorized_scope": ["single disposable minimum WordPress/MySQL prerequisite cell", "real MigrationRunner/Registry/NativeWpdbAdapter/WpdbMigrationStateStore", "migration 220 only", "test-only fail-once marker-store decorator", "immutable prerequisite evidence", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-86 execution", "any migration other than 220", "destructive or irreversible migration", "product runtime/bootstrap/DI mutation", "generic migration-recovery certification", "production/live DB", "provider/license/billing", "updater/TUF", "P-001/CF runtime grant", "pair/runtime/migration certification", "deploy/release", "ADR-0010 promotion", "#947"],
+      "formal_fixture_executed": false,
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
+      "close_condition": "Fail-once marker prerequisite merged with exact-head Governance + dedicated workflow PASS, immutable evidence, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-86 remains not formally executed"
+    },
+    {
       "priority": 900,
       "slot_id": "p006-wave1a-independent-evidence-review-v1",
       "title": "P-006 Wave 1A Independent Evidence Integrity Review",
