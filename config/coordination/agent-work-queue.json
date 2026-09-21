@@ -1,9 +1,9 @@
 {
-  "schema_version": 114,
+  "schema_version": 115,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088",
-  "mode": "DASHBOARD_WIDGETS_VISIBILITY_POLICY_TRANSITION_AUDIT",
-  "source_issue": "#1143",
+  "queue_anchor_main_sha": "3c88e9e2909518a95515da812b06edb0ae71bfa6",
+  "mode": "DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
+  "source_issue": "#1147",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -148,8 +148,10 @@
     "1137": "COMPLETED_ON_PR_1139_DASHBOARD_WIDGETS_WORDPRESS_REGISTRATION_TRANSITION_AUDIT",
     "1138": "COMPLETED_ON_PR_1140_DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_FOUNDATION",
     "1141": "COMPLETED_ON_PR_1142_DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_RECONCILIATION",
-    "1143": "ACTIVE_DASHBOARD_WIDGETS_VISIBILITY_POLICY_TRANSITION_AUDIT",
-    "1144": "OPEN_DASHBOARD_WIDGETS_VISIBILITY_POLICY_CONTRACT_FOUNDATION"
+    "1143": "COMPLETED_ON_PR_1145_DASHBOARD_WIDGETS_VISIBILITY_POLICY_TRANSITION_AUDIT",
+    "1144": "COMPLETED_ON_PR_1146_DASHBOARD_WIDGETS_VISIBILITY_POLICY_CONTRACT_FOUNDATION",
+    "1147": "ACTIVE_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
+    "1148": "OPEN_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3163,7 +3165,7 @@
       "slot_id": "dashboard-widgets-visibility-policy-contract-foundation-v1",
       "title": "Dashboard Widgets bounded visibility policy contract foundation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1",
       "source": "Issue #1144 / audit Issue #1143",
       "dependencies": [
@@ -3196,7 +3198,65 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-visibility-policy-contract-foundation-v1",
-      "close_condition": "Fail-closed visibility policy descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, no evaluation/hooks/provider/render/mutation scope widening"
+      "close_condition": "Fail-closed visibility policy descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, no evaluation/hooks/provider/render/mutation scope widening",
+      "terminal_result": "PASS_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1",
+      "source_head_exact_verification": "79c15c0db85ebecb4fda3753534152f98c00d5be",
+      "governance_run_exact_verification": 35647855379,
+      "architecture_run_exact_verification": 35647855338,
+      "php_quality_run_exact_verification": 35647855344,
+      "platform_matrix_run_exact_verification": 35647855395,
+      "package_run_exact_verification": 35647855396,
+      "merge_sha": "3c88e9e2909518a95515da812b06edb0ae71bfa6",
+      "closeout_pr": 1146
+    },
+    {
+      "priority": 1005,
+      "slot_id": "dashboard-widgets-server-visibility-evaluator-v1",
+      "title": "Dashboard Widgets bounded server visibility evaluator V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
+      "source": "Issue #1148 / audit Issue #1147",
+      "dependencies": [
+        "Issue #1147 audit PR merged with READY_FOR_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "visibility_evaluation_allowed": true,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetVisibilityDecision.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRoleMembershipProviderInterface.php",
+        "frameworks/Modules/DashboardWidgets/WordPressDashboardWidgetRoleMembershipProvider.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetVisibilityEvaluator.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetVisibilityEvaluatorTest.php",
+        "tests/Unit/Modules/DashboardWidgets/WordPressDashboardWidgetRoleMembershipProviderTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php"
+      ],
+      "forbidden_scope": [
+        "wp_dashboard_setup/wp_network_dashboard_setup/wp_add_dashboard_widget",
+        "Membership/Entitlement/Condition execution",
+        "render/control provider resolution or execution",
+        "content rendering or source-data fetching",
+        "Definition/user-preference mutation",
+        "shared Platform contract changes",
+        "entitlement/compatibility semantic changes",
+        "authorization bypass semantics",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-server-visibility-evaluator-v1",
+      "evaluation_semantics": {
+        "populated_dimensions": "AND",
+        "values_within_dimension": "ANY",
+        "empty_dimension": "UNCONSTRAINED",
+        "unauthenticated_or_non_user": "DENY",
+        "current_context_mismatch": "DENY",
+        "authorization_boundary": "Visibility never authorizes actions/data access"
+      },
+      "close_condition": "Bounded current-user server visibility evaluator merged from fresh main with canonical capability checker reuse, fail-closed role membership adapter, focused tests, exact-head CI, zero unresolved review threads and no hooks/render/provider/mutation scope widening"
     }
   ],
   "historical_closeout": {
