@@ -126,4 +126,3 @@ Rules:
 - V1 evaluator semantics frozen as AND across populated dimensions / ANY within a dimension; empty unconstrained; context mismatch deny.
 - Issue #1148 opened for bounded server visibility evaluator with module-local role-membership adapter and canonical capability-checker reuse.
 - Dashboard hooks, trusted rendering, Membership/Condition execution, provider/data-source execution, mutation and certification remain separately gated.
-
