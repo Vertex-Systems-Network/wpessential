@@ -87,3 +87,13 @@ Rules:
 - Surface 10 read-only Dashboard Widgets module is now centrally contributed through the existing fail-closed Pro compatibility and entitlement activation path.
 - WordPress dashboard registration, mutation/provider execution and full-parity runtime/product certification remain separate gates.
 - Issue #1135 opened for mandatory post-merge shared-truth reconciliation before any further Surface 10 transition.
+
+## 2026-09-21 — Dashboard Widgets WordPress registration transition audit opened
+
+- PR #1136 shared-truth closeout merged as `d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46`.
+- RB-0014 reconciled terminal PASS from exact head `dd29239bac61eb8fa33d64265f14e1c40f3e69e3`, Governance `35630048216`, Architecture `35630048254`.
+- Issue #1137 opened for fresh exact-main WordPress Dashboard registration transition audit.
+- Verdict: `BLOCKED_FOR_DIRECT_WORDPRESS_DASHBOARD_REGISTRATION`.
+- Safe prerequisite verdict: `READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1`.
+- Issue #1138 opened as dependency-gated descriptor/compiler slot on `agent/dashboard-widgets-registration-descriptor-foundation-v1`.
+- Native registration context/priority metadata is allowlisted, while render/control provider execution and WordPress hook registration remain frozen.

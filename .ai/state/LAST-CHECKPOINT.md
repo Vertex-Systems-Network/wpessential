@@ -2,39 +2,39 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Reconciled product baseline pending closeout transport
+## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Product integration main: `faaf5e4c5f7cf25d3e05847e28dec5e9646d26a3`
-- Completed Issue: #1132
-- Completed PR: #1134
-- Exact tested source head: `6af7fdc73488b563aa9b0816db9747b38ff14ebf`
-- Active shared-truth closeout Issue: #1135
+- Exact main before this milestone: `d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46`
+- Active Issue: #1137
+- Active branch: `supervisor/dashboard-widgets-wordpress-registration-transition-audit-v1`
 
-## Terminal #1134 evidence
+## Active milestone
 
-- Governance Gate `35628538165` — PASS.
-- Architecture Guards `35628538105` — PASS.
-- PHP Quality Toolchain `35628538114` — PASS.
-- Distributable Package `35628538040` — PASS.
-- Taxonomy Role Impact `35628538102` — PASS.
-- Browser E2E Accessibility `35628538142` — PASS.
-- Zero unresolved review threads and zero commits behind main at merge gate.
-- Exactly four #1132-authorized files changed; activation diff was additive only.
-- PR #1134 merged as `faaf5e4c5f7cf25d3e05847e28dec5e9646d26a3`; Issue #1132 closed.
+Surface 10 / Dashboard Widgets exact-main WordPress Dashboard registration transition audit.
 
-## Product truth
+Verdict:
+- **BLOCKED_FOR_DIRECT_WORDPRESS_DASHBOARD_REGISTRATION**
+- **READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1**
 
-Surface 10 / Dashboard Widgets now has:
-- bounded read-only Definition/read-service foundation;
-- Pro-owned read-only Module/Ability exposure;
-- central Pro contribution through `wpessential-pro.php`;
-- packaged Free/Pro regression evidence proving fail-closed compatibility paths and compatible activation.
+## Why direct registration is blocked
 
-The central contribution preserves existing compatibility and entitlement semantics.
+Current runtime has canonical definitions, read-only abilities and central Pro activation, but lacks the compiled descriptor, visibility policy, trusted renderer/provider boundary and WordPress adapter required by the accepted privileged wp-admin content-trust model.
 
-This does not promote WordPress dashboard widget registration, Definition/user-preference mutation, provider execution, full-parity `RUNTIME_CERTIFIED`, product parity, deployment or release.
+No `wp_dashboard_setup`, `wp_network_dashboard_setup` or `wp_add_dashboard_widget` call is authorized.
 
-## Next safe transition
+## Next bounded prerequisite after audit promotion
 
-After #1135 closeout merges, run a fresh exact-main audit before any additional Surface 10 runtime tranche.
+Issue #1138 on `agent/dashboard-widgets-registration-descriptor-foundation-v1`.
+
+The tranche may only add a fail-closed typed registration descriptor/compiler, register it as a module-local service, and add focused tests.
+
+Native allowlists:
+- context: `normal|side|column3|column4`;
+- priority: `high|core|default|low`.
+
+No provider/render execution, visibility implementation, WordPress hook registration, mutation, shared Platform change, certification, deploy or release.
+
+## Recovery behavior
+
+On next `continue`, resolve the audit PR exact head and perform one consolidated CI/review/main-divergence refresh. Do not claim #1138 until the audit PR is merged.

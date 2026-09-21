@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1109",
-  "anchor_main_sha": "faaf5e4c5f7cf25d3e05847e28dec5e9646d26a3",
+  "anchor_main_sha": "d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -473,13 +473,43 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|central-pro-activation-closeout|issue1135|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1136 exact head dd29239bac61eb8fa33d64265f14e1c40f3e69e3",
+        "Governance Gate run 35630048216 PASS",
+        "Architecture Guards run 35630048254 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1136 merged as d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46",
+        "Issue #1135 closed completed"
+      ],
+      "note": "Central Pro Activation shared-truth closeout promoted successfully. Direct WordPress dashboard registration remained unpromoted."
+    },
+    {
+      "id": "RB-0015",
+      "source": "Issue #1137 / PR #1139",
+      "category": "DASHBOARD_WIDGETS_WORDPRESS_REGISTRATION_TRANSITION_AUDIT",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-wordpress-registration-transition-audit-v1 exact head",
+      "dependencies": [
+        "merged Dashboard Widgets Central Pro Activation V1 and closeout",
+        "accepted Dashboard Widgets content-trust architecture",
+        "reviewed native WordPress Dashboard option mappings",
+        "coordination queue prerequisite slot #1138"
+      ],
+      "authorization": "Planning/coordination transition only; direct WordPress dashboard registration remains blocked. Authorizes only descriptor/compiler prerequisite if audit merges.",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|wordpress-registration-transition-audit|issue1137|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
       "status": "IN_PROGRESS",
       "evidence": [
-        "PR #1136 opened; exact-head Governance/Architecture validation pending"
+        "PR #1139 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "Exact-head shared-truth closeout merge gate only. No tight polling. Any next Surface 10 tranche requires a fresh exact-main transition audit."
+      "note": "Exact-head transition-audit merge gate only. Direct WordPress dashboard registration remains blocked; a PASS authorizes only bounded #1138 descriptor/compiler foundation."
     }
   ],
-  "last_reconciled_issue": "#1135",
+  "last_reconciled_issue": "#1137",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
 }
