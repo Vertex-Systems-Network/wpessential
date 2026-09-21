@@ -1,7 +1,7 @@
 # Dashboard Widgets — Visibility Policy Foundation Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1143**  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1143**
 Exact-main baseline: `cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088`
 
 ## Verdict
