@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
@@ -72,6 +73,11 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(
             DashboardWidgetsReadService::class,
             $services->get(DashboardWidgetsModule::SERVICE_READ),
+        );
+
+        self::assertInstanceOf(
+            DashboardWidgetRegistrationCompiler::class,
+            $services->get(DashboardWidgetsModule::SERVICE_REGISTRATION_COMPILER),
         );
 
         foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG] as $name) {
