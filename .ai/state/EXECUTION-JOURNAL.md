@@ -97,4 +97,3 @@ Rules:
 - Safe prerequisite verdict: `READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1`.
 - Issue #1138 opened as dependency-gated descriptor/compiler slot on `agent/dashboard-widgets-registration-descriptor-foundation-v1`.
 - Native registration context/priority metadata is allowlisted, while render/control provider execution and WordPress hook registration remain frozen.
-
