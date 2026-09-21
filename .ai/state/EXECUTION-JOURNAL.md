@@ -206,3 +206,12 @@ Rules:
 - Compact state binds `active_pr: "#1161"` before final exact-head validation.
 - RB-0025 is the immediate Governance/Architecture merge gate.
 - Issue #1160 remains dependency-gated and must not be claimed until PR #1161 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`.
+
+
+## 2026-09-22 — PR #1161 Governance diff-hygiene failure corrected
+
+- PR #1161 prior head `70756a84c1b01dd0d99012e2aa4436497b6bc38a` failed Governance `35658579793` at `git diff --check`.
+- Root cause: two trailing-whitespace lines in the new render-source transition audit Markdown.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0025/journal evidence.
+- Audit verdict remains `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`; no runtime/product source or authorization boundary changed.
+- Issue #1160 remains dependency-gated until corrected PR #1161 exact head is terminal green and merged.

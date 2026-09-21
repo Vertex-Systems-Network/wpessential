@@ -820,9 +820,11 @@
       "evidence": [
         "Exact audited main 6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4",
         "Audit verdict READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
-        "PR #1161 opened on supervisor/dashboard-widgets-render-source-transition-audit-v1; final exact-head validation pending"
+        "PR #1161 prior exact head 70756a84c1b01dd0d99012e2aa4436497b6bc38a",
+        "Governance Gate run 35658579793 FAIL at exact-head diff hygiene only: two trailing-whitespace lines in the new audit Markdown",
+        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
       ],
-      "note": "PASS may authorize only Issue #1160 planning/implementation-contract work. Renderer execution remains blocked."
+      "note": "Prior head failed only git diff --check. Corrective head remains shared-truth/audit-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
     }
   ],
   "last_reconciled_issue": "#1159",

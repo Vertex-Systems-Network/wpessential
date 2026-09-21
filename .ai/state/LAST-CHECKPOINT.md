@@ -39,6 +39,12 @@ Verdict:
 
 Issue #1160 is the only dependency-gated next tranche and is planning/implementation-contract only.
 
+## #1161 validation correction
+
+- Prior head `70756a84c1b01dd0d99012e2aa4436497b6bc38a` failed Governance `35658579793` at exact-head diff hygiene only.
+- Root cause: two trailing-whitespace lines in the new render-source audit Markdown.
+- The corrective change removes only that whitespace and records the failure evidence; audit verdict and runtime/product scope remain unchanged.
+
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1161. Merge only on terminal green evidence. Do not claim #1160 before audit promotion.
+Validate the corrected PR #1161 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence. Do not claim #1160 before audit promotion.

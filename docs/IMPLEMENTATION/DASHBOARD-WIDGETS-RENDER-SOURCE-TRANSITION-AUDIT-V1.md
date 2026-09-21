@@ -1,7 +1,7 @@
 # Dashboard Widgets — Render-Source Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1159**  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1159**
 Exact audited main: `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`
 
 ## Purpose
