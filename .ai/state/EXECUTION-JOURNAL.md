@@ -68,4 +68,3 @@ Rules:
 - PR #1128 merged as `29ad66ca2984d89a3ae7e949679a62d35ca2c357`; Issue #1126 closed.
 - Surface 10 now has bounded read-only Module/Ability exposure source, but `wpessential-pro.php` central activation remains intentionally absent.
 - Issue #1129 opened for mandatory post-merge shared-truth reconciliation before any activation transition.
-
