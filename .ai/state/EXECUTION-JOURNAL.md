@@ -87,4 +87,3 @@ Rules:
 - Surface 10 read-only Dashboard Widgets module is now centrally contributed through the existing fail-closed Pro compatibility and entitlement activation path.
 - WordPress dashboard registration, mutation/provider execution and full-parity runtime/product certification remain separate gates.
 - Issue #1135 opened for mandatory post-merge shared-truth reconciliation before any further Surface 10 transition.
-
