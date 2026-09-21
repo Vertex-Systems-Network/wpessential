@@ -22,7 +22,7 @@ After startup, the agent must:
 10. submit/update a PR/MR with exact-head evidence when applicable;
 11. let the Supervisor/Integrator decide merge order from dependencies and current main;
 12. before reporting completion/blocked/waiting, reconcile compact state and changed queue/Runner Benchmark truth;
-13. reconcile the full **56 / 56** README dashboard only when module/public delivery truth changed or at a terminal product milestone closeout.
+13. on every meaningful repository-changing Supervisor milestone, reconcile the README **Current AI-Native Development Progress** block before reporting; when module/public delivery truth changed or at a terminal product milestone/integration closeout, also reconcile the full **56 / 56** README dashboard.
 
 ## Mandatory Issues-first / PR-MR-second preflight
 
@@ -44,13 +44,15 @@ Rules:
 - Merge order remains dependency-safe and exact-head certified; "PRs second" does not mean blindly merging every PR.
 - Critical/security/recovery incidents may stop the line under existing governance, but their Issue/PR evidence must still be reconciled durably.
 
-## Conditional README reconciliation
+## Mandatory README progress reconciliation
+
+Every meaningful repository-changing Supervisor milestone must update the README **Current AI-Native Development Progress** block before the final report. The block must reflect the reconciled main anchor, active or just-completed Issue/PR, active surface/milestone state, evidence-backed bounded progress when a baseline exists, latest durable evidence, and exact next gate/blocker.
 
 The complete 56-surface README dashboard remains mandatory when module lifecycle/progress/timeline/public delivery truth changed, or at a terminal product milestone/integration closeout.
 
-A governance/security/coordination-only cycle that does not change module delivery truth must reconcile the compact AI state and affected governance/public-status fields, but must not rewrite the full 56-row table merely to create churn.
+A governance/security/coordination-only cycle must still update the concise live progress block, but must not rewrite the full 56-row table merely to create churn.
 
-When README reconciliation is applicable, the Supervisor must update `README.md` before reporting that product-delivery milestone final.
+A Supervisor milestone is not fully closed if its required README progress reconciliation is stale or omitted.
 
 README closeout must include:
 
@@ -93,7 +95,7 @@ Timeline rules:
 - If an exact historical timestamp has not been audited, use `UNKNOWN / pending evidence audit`.
 - Planning lifecycle labels such as `ATOMIC_INVENTORY_COMPLETE` are not implementation percentages.
 
-When the README trigger above is applicable, the README update is part of product-delivery completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports complete 56-module README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
+README reconciliation is part of repository-changing milestone completion, not an optional cosmetic follow-up. If a Worker cannot edit Supervisor-owned shared truth, it reports the concise live README progress reconciliation as an Integration Requirement; when the full-dashboard trigger applies it also reports complete 56-module progress/timeline reconciliation for Supervisor integration after merge serialization.
 
 ## Important role rule
 
@@ -118,7 +120,7 @@ Do not start new development while an accepted actionable Issue or PR/MR path is
 Default to one user continue/resume turn = one logical milestone. Do not tight-poll CI; use one consolidated status refresh per milestone, persist WAITING_EXTERNAL when needed, and resume on the next user turn.
 Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
-Before reporting completion/blocked/waiting, update compact durable state. Update the complete 56 / 56 README dashboard only when module/public delivery truth changed or at a terminal product milestone closeout.
+Before reporting completion/blocked/waiting, update compact durable state and reconcile the README Current AI-Native Development Progress block. Update the complete 56 / 56 README dashboard additionally when module/public delivery truth changed or at a terminal product milestone/integration closeout.
 ```
 
 The Supervisor must not pre-create worker branches. Workers claim their own slots.

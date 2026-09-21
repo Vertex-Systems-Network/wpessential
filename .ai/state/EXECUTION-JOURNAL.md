@@ -126,3 +126,23 @@ Rules:
 - V1 evaluator semantics frozen as AND across populated dimensions / ANY within a dimension; empty unconstrained; context mismatch deny.
 - Issue #1148 opened for bounded server visibility evaluator with module-local role-membership adapter and canonical capability-checker reuse.
 - Dashboard hooks, trusted rendering, Membership/Condition execution, provider/data-source execution, mutation and certification remain separately gated.
+
+
+## 2026-09-22 — Dashboard Widgets evaluator merged; mandatory README progress governance started
+
+- Issue #1148 / PR #1150 exact head `674d665aabbefbfe6d381852e3e028c74a72b421` passed Governance `35652489619`, Architecture `35652489824`, PHP Quality `35652489508`, Platform Matrix `35652489826` and Package `35652489713`.
+- PR #1150 merged as `2f2fb37cb8302503b48717cc539394bfc106ec66`; Issue #1148 closed completed.
+- RB-0020 reconciled terminal PASS for #1147/#1149; RB-0021 records #1148/#1150 terminal PASS.
+- Surface 10 now has bounded fail-closed server visibility evaluation bound to the current authenticated WordPress user/site; visibility remains presentation-only.
+- Owner-directed Issue #1151 claimed on `supervisor/ai-native-mandatory-readme-progress-v1`.
+- #1151 converts README reconciliation from conditional-only behavior to a mandatory concise live progress update on every meaningful repository-changing Supervisor milestone, while preserving the complete 56 / 56 dashboard trigger for module delivery truth changes/terminal product closeout.
+- No runtime/product behavior, provider, destructive, certification, deploy or release authority is added by #1151.
+
+
+## 2026-09-22 — PR #1152 Architecture contract failure diagnosed and corrected
+
+- PR #1152 prior exact head `ff8258cd6a0ae092da81e05bd9434dd7dacf37c0` passed Governance `35654102501`.
+- Architecture `35654102687` failed only at `tests/Smoke/ai-timeout-resilient-state-contract.php`.
+- Root cause: compact state used `active_pr: "PENDING"`; the enforced contract accepts only `null` or an exact `"#<number>"` value.
+- Architecture PHP syntax, WPCS, PHPStan, PHPUnit, engineering contracts, JS lint/typecheck/build and other smoke checks passed before the enforcement failure.
+- Corrective shared-truth change sets `active_pr: "#1152"`; no runtime/product behavior, authorization semantics, hooks, provider execution, destructive action, certification, deploy or release scope changed.

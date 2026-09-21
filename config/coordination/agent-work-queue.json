@@ -1,9 +1,9 @@
 {
-  "schema_version": 115,
-  "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "3c88e9e2909518a95515da812b06edb0ae71bfa6",
-  "mode": "DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
-  "source_issue": "#1147",
+  "schema_version": 116,
+  "snapshot_date": "2026-09-22",
+  "queue_anchor_main_sha": "2f2fb37cb8302503b48717cc539394bfc106ec66",
+  "mode": "AI_NATIVE_MANDATORY_README_PROGRESS_RECONCILIATION_V1",
+  "source_issue": "#1151",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -150,8 +150,9 @@
     "1141": "COMPLETED_ON_PR_1142_DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_RECONCILIATION",
     "1143": "COMPLETED_ON_PR_1145_DASHBOARD_WIDGETS_VISIBILITY_POLICY_TRANSITION_AUDIT",
     "1144": "COMPLETED_ON_PR_1146_DASHBOARD_WIDGETS_VISIBILITY_POLICY_CONTRACT_FOUNDATION",
-    "1147": "ACTIVE_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
-    "1148": "OPEN_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1"
+    "1147": "COMPLETED_ON_PR_1149_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
+    "1148": "COMPLETED_ON_PR_1150_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
+    "1151": "ACTIVE_AI_NATIVE_MANDATORY_README_PROGRESS_RECONCILIATION"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3214,7 +3215,7 @@
       "slot_id": "dashboard-widgets-server-visibility-evaluator-v1",
       "title": "Dashboard Widgets bounded server visibility evaluator V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
       "source": "Issue #1148 / audit Issue #1147",
       "dependencies": [
@@ -3256,7 +3257,55 @@
         "current_context_mismatch": "DENY",
         "authorization_boundary": "Visibility never authorizes actions/data access"
       },
-      "close_condition": "Bounded current-user server visibility evaluator merged from fresh main with canonical capability checker reuse, fail-closed role membership adapter, focused tests, exact-head CI, zero unresolved review threads and no hooks/render/provider/mutation scope widening"
+      "close_condition": "Bounded current-user server visibility evaluator merged from fresh main with canonical capability checker reuse, fail-closed role membership adapter, focused tests, exact-head CI, zero unresolved review threads and no hooks/render/provider/mutation scope widening",
+      "terminal_result": "PASS_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1",
+      "source_head_exact_verification": "674d665aabbefbfe6d381852e3e028c74a72b421",
+      "governance_run_exact_verification": 35652489619,
+      "architecture_run_exact_verification": 35652489824,
+      "php_quality_run_exact_verification": 35652489508,
+      "platform_matrix_run_exact_verification": 35652489826,
+      "package_run_exact_verification": 35652489713,
+      "merge_sha": "2f2fb37cb8302503b48717cc539394bfc106ec66",
+      "closeout_pr": 1150
+    },
+    {
+      "priority": 1006,
+      "slot_id": "ai-native-mandatory-readme-progress-v1",
+      "title": "AI-Native mandatory README progress reconciliation V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "IN_PROGRESS",
+      "work_mode": "AI_NATIVE_MANDATORY_README_PROGRESS_RECONCILIATION_V1",
+      "source": "Issue #1151 / owner instruction",
+      "dependencies": [
+        "PR #1150 terminal merged and Issue #1148 completed"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "AGENTS.md",
+        "AUTO-AGENT.md",
+        "docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md",
+        "docs/AI-NATIVE-README-MODULE-TIMELINE-CLOSEOUT.md",
+        "config/coordination/ai-native-readme-closeout.json",
+        "README.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        ".ai/state/EXECUTION-JOURNAL.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product behavior",
+        "authorization semantic changes",
+        "WordPress hooks",
+        "provider/network execution",
+        "destructive actions",
+        "certification/deploy/release authority"
+      ],
+      "claim_branch": "supervisor/ai-native-mandatory-readme-progress-v1",
+      "close_condition": "Mandatory README live-progress governance and stale shared truth reconciled from exact main; exact-head Governance/Architecture terminal green; zero unresolved review threads; branch current"
     }
   ],
   "historical_closeout": {

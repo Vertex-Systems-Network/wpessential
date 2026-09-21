@@ -33,7 +33,7 @@ These files complement existing architecture/module/security ADRs; they do not r
 
 For every meaningful task:
 
-**Compact State → Refresh Main → Issues First → PRs/MRs Second → Queue → Runner Benchmark → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement one logical milestone → Fast/Local Verify → Capture Runner Tasks → Immediate Safety/Merge Runner Exceptions → Review → Harden → Document → Commit → Final Consolidated Runner Batch only at closeout → Durable Compact State → Conditional README Progress Reconciliation → Report**
+**Compact State → Refresh Main → Issues First → PRs/MRs Second → Queue → Runner Benchmark → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement one logical milestone → Fast/Local Verify → Capture Runner Tasks → Immediate Safety/Merge Runner Exceptions → Review → Harden → Document → Commit → Final Consolidated Runner Batch only at closeout → Durable Compact State → Mandatory README Progress Reconciliation → Report**
 
 Do not jump from requirement to code when architecture, data, security, compatibility, dependency, migration or approval decisions are involved.
 
@@ -450,9 +450,12 @@ Update the relevant:
 - changelog/release notes;
 - troubleshooting;
 - checkpoint;
-- README current module progress/status dashboard when module/public delivery truth changed or at a terminal product milestone closeout.
+- README `Current AI-Native Development Progress` block on every meaningful repository-changing Supervisor milestone;
+- complete README 56 / 56 module progress/status dashboard when module/public delivery truth changed or at a terminal product milestone/integration closeout.
 
 Do not create documentation for volume; it must help the next engineer make a correct decision.
+
+A meaningful repository-changing Supervisor milestone is not fully closed until the README live progress block is reconciled with exact repository truth. Governance/security/coordination-only milestones update the concise live progress block without rewriting the full 56-row dashboard; module delivery/lifecycle changes or terminal product closeouts require the complete 56 / 56 dashboard as well.
 
 README progress percentages must be evidence-based and scoped to the currently approved/certified bounded implementation milestone. Do not present a bounded baseline percentage as full product parity. Planning-only modules without a defined implementation baseline must not receive fabricated percentages.
 
