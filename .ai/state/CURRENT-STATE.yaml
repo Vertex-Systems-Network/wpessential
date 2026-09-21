@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: 9c5e2143978ba6644abc03eafa1ef1522fcc53da
 observed_main_source: "PR #1161 merged Dashboard Widgets render-source transition audit"
 active_issue: "#1160"
-active_pr: null
+active_pr: "#1163"
 active_branch: supervisor/dashboard-widgets-trusted-render-source-contract-v1
 current_milestone: "Dashboard Widgets trusted render-source implementation contract V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1159 / PR #1161 merged as 9c5e2143978ba6644abc03eafa1ef1522fcc53da; corrected exact-head Governance and Architecture passed"
-next_safe_action: "Open the #1160 contract PR, bind active_pr to its exact number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "Issue #1160 contract branch publication and exact-head validation"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1163. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1163 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1162"
   slot_id: dashboard-widgets-trusted-render-source-descriptor-compiler-v1

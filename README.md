@@ -11,9 +11,9 @@ Project website: **https://wpessential.org**
 - Reconciled product main: `9c5e2143978ba6644abc03eafa1ef1522fcc53da` after Issue #1159 / PR #1161 merged the render-source transition audit.
 - #1159 terminal evidence: corrected exact head `109f1f57c6a8994e941189c7584f2d760f3f9797`; Governance `35658839373` PASS; Architecture `35658839531` PASS; zero unresolved review threads and zero behind at merge.
 - Surface 10 latest runtime milestone remains **trusted content-class contract V1 PASS / merged** through #1154/#1158. The bounded `██████████ 100%` applies to that content-class milestone only, not renderer/full parity.
-- Active milestone: **Issue #1160 — trusted render-source implementation contract V1**, branch `supervisor/dashboard-widgets-trusted-render-source-contract-v1`.
+- Active milestone: **Issue #1160 / PR #1163 — trusted render-source implementation contract V1**, branch `supervisor/dashboard-widgets-trusted-render-source-contract-v1`.
 - Contract V1 freezes `widget.render_source` as a Surface-10-owned Component Blueprint UUID/revision plus literal-only typed bindings matching the shared Blueprint schema exactly; it reuses shared `RenderInput` and does not execute a renderer.
-- Dependency-gated next source tranche: **Issue #1162 — trusted render-source descriptor/compiler V1**, branch `agent/dashboard-widgets-trusted-render-source-compiler-v1`; claim only after #1160 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1`.
+- Dependency-gated next source tranche: **Issue #1162 — trusted render-source descriptor/compiler V1**, branch `agent/dashboard-widgets-trusted-render-source-compiler-v1`; claim only after PR #1163 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1`.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, renderer/provider/query/source execution, remote/iframe execution, mutation/preferences and full-parity certification remain blocked.
 - Current AI-Native rule: every meaningful repository-changing Supervisor milestone must reconcile this live README progress block before final reporting; module delivery/timeline changes also require the complete 56 / 56 dashboard reconciliation.
 

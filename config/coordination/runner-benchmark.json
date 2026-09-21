@@ -847,10 +847,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-render-source-contract|issue1160|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact base main 9c5e2143978ba6644abc03eafa1ef1522fcc53da",
-        "Contract defines component_blueprint + literal-only exact-schema bindings; exact-head PR validation pending"
+        "Contract defines component_blueprint + literal-only exact-schema bindings",
+        "PR #1163 opened on supervisor/dashboard-widgets-trusted-render-source-contract-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1162 non-executing render-source descriptor/compiler V1."
     }

@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `9c5e2143978ba6644abc03eafa1ef1522fcc53da`
 - Completed transition audit: Issue #1159 / PR #1161
 - Active contract Issue: #1160
+- Active PR: #1163
 - Deterministic branch: `supervisor/dashboard-widgets-trusted-render-source-contract-v1`
 
 ## #1159 / #1161 terminal evidence
@@ -56,4 +57,4 @@ Verdict after successful contract merge:
 
 ## Next safe action
 
-Open the #1160 contract PR, bind compact state to its exact PR number, then run one consolidated exact-head Governance/Architecture + review/main-divergence refresh.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1163. Merge only on terminal green evidence.
