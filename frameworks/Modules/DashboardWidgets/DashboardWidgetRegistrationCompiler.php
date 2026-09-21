@@ -20,13 +20,17 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'context', 'priority', 'network_dashboard', 'visibility'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'visibility'];
 
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
+    private DashboardWidgetContentClassCompiler $contentClassCompiler;
 
-    public function __construct(?DashboardWidgetVisibilityCompiler $visibilityCompiler = null)
-    {
+    public function __construct(
+        ?DashboardWidgetVisibilityCompiler $visibilityCompiler = null,
+        ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
+    ) {
         $this->visibilityCompiler = $visibilityCompiler ?? new DashboardWidgetVisibilityCompiler();
+        $this->contentClassCompiler = $contentClassCompiler ?? new DashboardWidgetContentClassCompiler();
     }
 
     public function compile(Definition $definition): DashboardWidgetRegistrationDescriptor
@@ -52,6 +56,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         }
         $this->assertKnownKeys($widget, self::WIDGET_KEYS, 'Dashboard Widget registration metadata');
 
+        $this->contentClassCompiler->compile($definition);
         $this->visibilityCompiler->compile($definition);
 
         $key = $widget['key'] ?? null;

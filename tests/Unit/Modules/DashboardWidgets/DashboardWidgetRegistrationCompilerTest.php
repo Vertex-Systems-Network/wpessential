@@ -55,12 +55,42 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         ));
     }
 
+    public function testRegistrationCompilationFailsClosedOnUntrustedContentClass(): void
+    {
+        $compiler = new DashboardWidgetRegistrationCompiler();
+        $valid = [
+            'key' => 'sales-overview',
+            'title' => 'Sales Overview',
+            'type' => 'rich_text',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => false,
+        ];
+        $missing = $valid;
+        unset($missing['type']);
+
+        foreach ([
+            $missing,
+            array_replace($valid, ['type' => 'Rich Text']),
+            array_replace($valid, ['type' => 'iframe']),
+            array_replace($valid, ['type' => 'registered_provider']),
+        ] as $widget) {
+            try {
+                $compiler->compile($this->definition(widget: $widget));
+                self::fail('Expected untrusted Dashboard Widget content class to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
     public function testRejectsMalformedRegistrationMetadata(): void
     {
         $compiler = new DashboardWidgetRegistrationCompiler();
         $valid = [
             'key' => 'sales-overview',
             'title' => 'Sales Overview',
+            'type' => 'rich_text',
             'context' => 'normal',
             'priority' => 'default',
             'network_dashboard' => false,
@@ -98,6 +128,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         $widget = $widget ?? [
             'key' => 'sales-overview',
             'title' => 'Sales Overview',
+            'type' => 'rich_text',
             'context' => 'normal',
             'priority' => 'default',
             'network_dashboard' => true,

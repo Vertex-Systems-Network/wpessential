@@ -26,6 +26,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 {
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
+    public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
     public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
@@ -63,6 +64,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         }
 
         $read = new DashboardWidgetsReadService($definitions);
+        $contentClassCompiler = new DashboardWidgetContentClassCompiler();
         $visibilityCompiler = new DashboardWidgetVisibilityCompiler();
         $visibilityEvaluator = new DashboardWidgetVisibilityEvaluator(
             $capabilityChecker,
@@ -70,8 +72,12 @@ final class DashboardWidgetsModule implements ModuleInterface
         );
 
         $services->set(self::SERVICE_READ, $read);
+        $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
         $services->set(self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler);
-        $services->set(self::SERVICE_REGISTRATION_COMPILER, new DashboardWidgetRegistrationCompiler($visibilityCompiler));
+        $services->set(
+            self::SERVICE_REGISTRATION_COMPILER,
+            new DashboardWidgetRegistrationCompiler($visibilityCompiler, $contentClassCompiler),
+        );
         $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
 
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
