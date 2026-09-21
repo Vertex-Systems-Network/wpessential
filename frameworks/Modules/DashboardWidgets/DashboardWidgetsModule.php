@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
 
 use LogicException;
 use WPEssential\Contracts\AbilityHandlerInterface;
+use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -19,12 +20,14 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
+use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
 
 final class DashboardWidgetsModule implements ModuleInterface
 {
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
+    public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
     public const CAPABILITY = 'manage_options';
@@ -44,6 +47,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $definitions = $services->get('platform.definitions');
         $abilities = $services->get('platform.abilities');
         $bridge = $services->get('platform.abilities.wordpress');
+        $capabilityChecker = $services->get(WordPressAuthorizationServices::CAPABILITY_CHECKER);
 
         if (!$definitions instanceof DefinitionRepositoryInterface) {
             throw new LogicException('Dashboard Widgets requires the shared Definition Repository.');
@@ -54,12 +58,21 @@ final class DashboardWidgetsModule implements ModuleInterface
         if (!$bridge instanceof WordPressAbilityBridge) {
             throw new LogicException('Dashboard Widgets requires the shared WordPress Ability bridge.');
         }
+        if (!$capabilityChecker instanceof CapabilityCheckerInterface) {
+            throw new LogicException('Dashboard Widgets requires the canonical WordPress capability checker.');
+        }
 
         $read = new DashboardWidgetsReadService($definitions);
         $visibilityCompiler = new DashboardWidgetVisibilityCompiler();
+        $visibilityEvaluator = new DashboardWidgetVisibilityEvaluator(
+            $capabilityChecker,
+            new WordPressDashboardWidgetRoleMembershipProvider(),
+        );
+
         $services->set(self::SERVICE_READ, $read);
         $services->set(self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler);
         $services->set(self::SERVICE_REGISTRATION_COMPILER, new DashboardWidgetRegistrationCompiler($visibilityCompiler));
+        $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
 
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $this->registerAbility(

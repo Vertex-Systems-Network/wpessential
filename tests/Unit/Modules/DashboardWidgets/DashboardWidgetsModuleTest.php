@@ -11,6 +11,7 @@ use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityEvaluator;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
@@ -25,6 +26,7 @@ use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
 
 final class DashboardWidgetsModuleTest extends TestCase
 {
@@ -41,12 +43,13 @@ final class DashboardWidgetsModuleTest extends TestCase
     {
         $definitions = new InMemoryDefinitionRepository();
         $services = new ServiceRegistry();
-        $abilities = new AbilityRegistry(new PolicyEngine(new class implements CapabilityCheckerInterface {
+        $capabilityChecker = new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
             {
                 return true;
             }
-        }));
+        };
+        $abilities = new AbilityRegistry(new PolicyEngine($capabilityChecker));
         $environment = new class implements WordPressAbilityEnvironmentInterface {
             public function abilitiesApiAvailable(): bool { return true; }
             public function doingAction(string $hook): bool { return $hook === 'wp_abilities_api_init'; }
@@ -68,6 +71,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         $services->set('platform.definitions', $definitions);
         $services->set('platform.abilities', $abilities);
         $services->set('platform.abilities.wordpress', $bridge);
+        $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
 
         (new DashboardWidgetsModule())->register($services);
 
@@ -84,6 +88,11 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(
             DashboardWidgetVisibilityCompiler::class,
             $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_COMPILER),
+        );
+
+        self::assertInstanceOf(
+            DashboardWidgetVisibilityEvaluator::class,
+            $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_EVALUATOR),
         );
 
         foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG] as $name) {
