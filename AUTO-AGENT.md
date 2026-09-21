@@ -2,7 +2,7 @@
 
 This file is the entrypoint for autonomous multi-agent work on WPEssential.
 
-It does **not** replace `AGENTS.md`, `CONTRIBUTING.md`, `CHECKPOINT.md`, `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`, approval/consent rules, ownership contracts, dependency contracts or quality gates. Those remain authoritative.
+It does **not** replace `AGENTS.md`, `CONTRIBUTING.md`, `.ai/state/CURRENT-STATE.yaml`, `.ai/state/LAST-CHECKPOINT.md`, `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md`, historical `CHECKPOINT.md`, `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`, approval/consent rules, ownership contracts, dependency contracts or quality gates. Those remain authoritative.
 
 ## Goal
 
@@ -42,9 +42,13 @@ Rules:
 - Merge order remains dependency-safe and exact-head certified; "PRs second" does not mean blindly merging every PR.
 - Critical/security/recovery incidents may stop the line under existing governance, but their Issue/PR evidence must still be reconciled durably.
 
-## Mandatory end-of-cycle README reconciliation
+## Conditional README reconciliation
 
-After a meaningful work cycle reaches a stable final state (merged work, resolved issue, completed audit, or an explicitly documented blocked state), the Supervisor must update `README.md` before reporting the engineering query/cycle final.
+The complete 56-surface README dashboard remains mandatory when module lifecycle/progress/timeline/public delivery truth changed, or at a terminal product milestone/integration closeout.
+
+A governance/security/coordination-only cycle that does not change module delivery truth must reconcile the compact AI state and affected governance/public-status fields, but must not rewrite the full 56-row table merely to create churn.
+
+When README reconciliation is applicable, the Supervisor must update `README.md` before reporting that product-delivery milestone final.
 
 README closeout must include:
 
@@ -87,7 +91,7 @@ Timeline rules:
 - If an exact historical timestamp has not been audited, use `UNKNOWN / pending evidence audit`.
 - Planning lifecycle labels such as `ATOMIC_INVENTORY_COMPLETE` are not implementation percentages.
 
-The README update is part of engineering completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports complete 56-module README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
+When the README trigger above is applicable, the README update is part of product-delivery completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports complete 56-module README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
 
 ## Important role rule
 
@@ -143,7 +147,9 @@ Before branch creation:
 - stop new-development selection if an accepted actionable Issue/PR/MR path still requires reconciliation;
 - read root `AGENTS.md`;
 - read `CONTRIBUTING.md`;
-- read current `CHECKPOINT.md`;
+- read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
+- read `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md`;
+- consult only relevant historical `CHECKPOINT.md` sections when needed;
 - read `docs/PROJECT-STATE-AND-ADOPTION.md`;
 - read `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`;
 - read the relevant approval/consent and canonical ownership/dependency files;
@@ -210,12 +216,12 @@ The Supervisor performs the mandatory Issues-first / PR-MR-second hard preflight
 5. takes the highest-priority valid `SUPERVISOR_ONLY` slot, if any;
 6. otherwise may claim the highest-priority valid `ANY` slot;
 7. does not create branches for Workers;
-8. periodically re-reads current Issue/PR/MR/main state when the user invokes or continues the Supervisor session;
+8. on each user invocation reads compact state, then re-resolves current Issue/PR/MR/main state; it does not repeatedly poll unchanged CI/status inside the same milestone;
 9. reviews submitted work against current main and dependency order;
 10. applies serialized shared-file Integration Requirements;
 11. merges only merge-ready exact heads;
-12. reconciles queue/shared progress after accepted merges;
-13. updates README complete 56 / 56 module progress/status/timeline before final query/cycle reporting, including evidence-backed start time where known, non-binding completion forecast, actual completion time, latest evidence and next gate.
+12. reconciles compact state, queue and Runner Benchmark after accepted merges;
+13. updates README complete 56 / 56 module progress/status/timeline only when the README trigger applies, including evidence-backed start time where known, non-binding completion forecast, actual completion time, latest evidence and next gate.
 
 A Worker finishing first does not automatically mean it merges first. Merge order follows dependency and shared-truth safety.
 
@@ -265,8 +271,8 @@ The Supervisor must review evidence rather than trusting the phrase itself.
 After a Worker PR/MR is merged:
 
 - authoritative current main changes;
-- the Supervisor reconciles durable progress/queue truth when needed;
-- the Supervisor updates the complete 56 / 56 README module progress/status/timeline dashboard as part of cycle closeout;
+- the Supervisor reconciles `.ai/state/CURRENT-STATE.yaml`, `.ai/state/LAST-CHECKPOINT.md`, durable progress/queue truth and Runner Benchmark as needed;
+- the Supervisor updates the complete 56 / 56 README module progress/status/timeline dashboard only when module/public delivery truth changed or a terminal product milestone closeout requires it;
 - other active agents must incorporate relevant new main changes before final certification;
 - old exact-head CI does not certify a new synchronized head;
 - no branch may be force-rewritten to hide integration conflicts.
