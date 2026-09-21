@@ -1,18 +1,6 @@
 name: P-006 Wave 1N FP-49 Free Interruption
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-wave1n-fp49-free-interruption.yml'
-      - 'tools/p006/p006-wave1n-fp49-free-interruption.php'
-      - 'tools/p006/p006-wave1m-build-manual-order-artifacts.php'
-      - 'tools/p006/p006-wave1m-wordpress-setup.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'docs/QUALITY/P006-WAVE-1N-FP49-FREE-INTERRUPTION-EVIDENCE.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:
