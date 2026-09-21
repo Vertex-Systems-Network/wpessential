@@ -2,42 +2,39 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Fully reconciled integration baseline
+## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Merged main baseline: `74b07170b5dc5a654b1148b24224aa781d8123d4`
-- Completed Issue: #1115
-- Completed PR: #1116
-- Exact tested PR head: `daddd0ebb35ae7231921e1a96c04d36189564920`
+- Exact main before this milestone: `b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9`
+- Active Issue: #1119
+- Active PR: #1121
+- Active branch: `supervisor/dashboard-widgets-runtime-transition-audit-v1`
 
-## Terminal merge evidence
+## Active milestone
 
-- Governance Gate run `35609009420` — PASS.
-- Architecture Guards run `35609009426` — PASS.
-- Platform Compatibility Matrix run `35609009412` — PASS.
-- PR #1116 had zero unresolved review threads and was zero commits behind main before merge.
-- PR #1116 merged as `74b07170b5dc5a654b1148b24224aa781d8123d4`; Issue #1115 closed automatically.
+Dashboard Widgets / Surface 10 exact-main runtime transition audit.
 
-## Open repository truth at reconciliation
+Audit verdict: **READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1**.
 
-- #858 — external repository-admin required-CI hardening; nonblocking for source work.
-- #947 — independent worker-only evidence review; Supervisor independence must be preserved.
-- #1102 — P-006 Wave 1U formal runtime authorization gate; no execution authority exists.
-- OPEN PRs observed: none.
+The audit proves the next safe source tranche is Issue #1120 on deterministic branch `agent/dashboard-widgets-read-runtime-foundation-v1`, limited to a Surface 10 Definition/read-service owner foundation over the canonical shared Definition Repository.
 
-## Mandatory recovery behavior
+## Explicit boundaries
 
-On `start`, `continue`, `resume`, tool failure, chat interruption, or message-delivery timeout:
+- #1120 is not claimable until PR #1121 merges.
+- No Dashboard Widgets Module/Ability/bootstrap exposure yet.
+- No WordPress dashboard registration, Definition/user-preference mutation, Query/Listings/Analytics/Form/provider execution, cache/remote engine, AJAX/REST mutation, shared Platform change, certification, deploy or release.
+- #1102 remains separately authorization-gated.
+- #947 remains independent Worker-only.
+- #858 remains repository-admin.
 
-1. read `.ai/state/CURRENT-STATE.yaml`;
-2. read this file;
-3. resolve exact current main and reconcile OPEN Issues then OPEN PRs/MRs;
-4. re-read queue and Runner Benchmark from current main;
-5. inspect only the historical `CHECKPOINT.md` sections needed for a specific conflict or evidence question;
-6. continue only the next safe logical milestone.
+## Recovery behavior
 
-Never repeat an operation solely because the previous chat response was not delivered. Repository/runtime evidence outranks this checkpoint.
+On the next `continue`:
 
-## Next safe action
+1. read compact state/checkpoint;
+2. resolve current PR #1121 head and exact current main;
+3. perform one consolidated exact-head CI/review refresh;
+4. merge only if applicable CI is terminal green, branch is current and unresolved review threads are zero;
+5. if still pending, stop without polling or source-head mutation solely to record pending state.
 
-Resolve fresh main and existing open work. Do not execute #1102 without a new explicit owner-authoritative runtime grant, do not absorb #947 into Supervisor work, and do not claim #858 complete without repository-admin ruleset evidence.
+Never claim #1120 before #1121 promotion.
