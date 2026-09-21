@@ -1,9 +1,9 @@
 {
-  "schema_version": 118,
+  "schema_version": 119,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "de9edd9c30deb261cb135e6a88837bfdcdf9d123",
-  "mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_READY_TO_CLAIM",
-  "source_issue": "#1156",
+  "queue_anchor_main_sha": "6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4",
+  "mode": "DASHBOARD_WIDGETS_RENDER_SOURCE_TRANSITION_AUDIT",
+  "source_issue": "#1159",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -154,8 +154,10 @@
     "1148": "COMPLETED_ON_PR_1150_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
     "1151": "COMPLETED_ON_PR_1152_AI_NATIVE_MANDATORY_README_PROGRESS",
     "1153": "COMPLETED_ON_PR_1155_DASHBOARD_WIDGETS_TRUSTED_CONTENT_TRANSITION_AUDIT",
-    "1154": "READY_TO_CLAIM_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
-    "1156": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1153_TO_1154"
+    "1154": "COMPLETED_ON_PR_1158_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
+    "1156": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1153_TO_1154",
+    "1159": "ACTIVE_DASHBOARD_WIDGETS_RENDER_SOURCE_TRANSITION_AUDIT",
+    "1160": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3321,7 +3323,7 @@
       "slot_id": "dashboard-widgets-trusted-content-class-contract-v1",
       "title": "Dashboard Widgets bounded trusted content-class descriptor/compiler foundation V1",
       "role": "ANY",
-      "status": "READY_TO_CLAIM",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
       "source": "Issue #1154 / audit Issue #1153",
       "dependencies": [
@@ -3371,7 +3373,50 @@
         "governance_run": 35656112003,
         "architecture_run": 35656111955,
         "merge_sha": "de9edd9c30deb261cb135e6a88837bfdcdf9d123"
-      }
+      },
+      "terminal_result": "PASS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
+      "source_head_exact_verification": "38b0883927864e8f13b3da0d6bf4d32dbde31a36",
+      "governance_run_exact_verification": 35657768143,
+      "architecture_run_exact_verification": 35657768000,
+      "php_quality_run_exact_verification": 35657767995,
+      "platform_matrix_run_exact_verification": 35657768081,
+      "package_run_exact_verification": 35657768053,
+      "merge_sha": "6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4",
+      "closeout_pr": 1158
+    },
+    {
+      "priority": 1008,
+      "slot_id": "dashboard-widgets-trusted-render-source-implementation-contract-v1",
+      "title": "Dashboard Widgets trusted render-source implementation contract V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "OPEN_DEPENDENCY_GATED",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
+      "source": "Issue #1160 / audit Issue #1159",
+      "dependencies": [
+        "Issue #1159 audit PR merged with READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "renderer_execution_allowed": false,
+      "allowed_scope": [
+        "Surface 10 implementation-contract/product-contract documentation and projections selected from exact-main canonical locations",
+        "README/shared AI truth only when Supervisor reconciliation requires it"
+      ],
+      "forbidden_scope": [
+        "runtime PHP",
+        "HTML output",
+        "renderer/provider/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "wp_dashboard_setup/wp_network_dashboard_setup/wp_add_dashboard_widget",
+        "Definition/user-preference mutation",
+        "shared renderer fork",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-trusted-render-source-contract-v1",
+      "close_condition": "Exact Surface 10 render-source identity/binding implementation contract merged without runtime execution and with enough concrete fields for a later bounded compiler/bridge tranche"
     }
   ],
   "historical_closeout": {
