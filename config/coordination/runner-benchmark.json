@@ -753,10 +753,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-content-class-transition-audit|issue1153|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact audited main b9e971653db0bbab177784c0b501c4e03269ea5d",
-        "Audit verdict READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1; exact-head PR validation pending"
+        "Audit verdict READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
+        "PR #1155 opened on supervisor/dashboard-widgets-post-readme-governance-transition-audit-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only dependency-gated Issue #1154 typed non-executing content-class contract/compiler foundation."
     }

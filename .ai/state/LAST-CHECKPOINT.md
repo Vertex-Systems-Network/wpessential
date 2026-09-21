@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `b9e971653db0bbab177784c0b501c4e03269ea5d`
 - Completed governance milestone: Issue #1151 / PR #1152
 - Active combined reconciliation/audit Issue: #1153
+- Active PR: #1155
 - Deterministic branch: `supervisor/dashboard-widgets-post-readme-governance-transition-audit-v1`
 
 ## #1152 terminal evidence
@@ -37,4 +38,4 @@ Issue #1154 is the only dependency-gated next implementation slot. It may add a 
 
 ## Next safe action
 
-Open the #1153 audit PR, update compact state to its exact PR number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only on terminal green evidence. Do not claim #1154 before audit promotion.
+Perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1155. Merge only on terminal green evidence. Do not claim #1154 before audit promotion.

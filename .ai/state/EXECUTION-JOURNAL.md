@@ -157,3 +157,12 @@ Rules:
 - Verdict: `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, trusted rendering/provider/source execution, mutation/preferences and full-parity certification remain blocked.
 - Issue #1154 opened as the only dependency-gated next source tranche on `agent/dashboard-widgets-trusted-content-class-contract-v1`; claim is forbidden until #1153 audit PR merges.
+
+
+## 2026-09-22 — PR #1155 opened for trusted-content transition audit
+
+- PR #1155 opened from exact main `b9e971653db0bbab177784c0b501c4e03269ea5d`.
+- Scope is exactly seven shared-truth/audit files; no runtime/product source files are changed.
+- Compact state binds `active_pr: "#1155"` before final exact-head validation.
+- RB-0023 is the immediate Governance/Architecture merge gate.
+- Issue #1154 remains dependency-gated and must not be claimed until PR #1155 merges with `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`.
