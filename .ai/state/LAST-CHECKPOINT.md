@@ -5,33 +5,42 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main before this milestone: `cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088`
-- Active Issue: #1143
-- Active branch: `supervisor/dashboard-widgets-visibility-policy-transition-audit-v1`
+- Exact main: `3c88e9e2909518a95515da812b06edb0ae71bfa6`
+- Completed implementation: Issue #1144 / PR #1146
+- Active combined reconciliation/audit Issue: #1147
 
-## Active milestone
+## #1146 terminal evidence
 
-Surface 10 / Dashboard Widgets exact-main visibility policy foundation transition audit.
+- exact head `79c15c0db85ebecb4fda3753534152f98c00d5be`
+- Governance `35647855379` PASS
+- Architecture `35647855338` PASS
+- PHP Quality `35647855344` PASS
+- Platform Matrix `35647855395` PASS
+- Package `35647855396` PASS
+- zero unresolved threads; zero behind
+- seven authorized files only
+- merged as `3c88e9e2909518a95515da812b06edb0ae71bfa6`; Issue #1144 closed
 
-Verdict:
-- **BLOCKED_FOR_DIRECT_WORDPRESS_DASHBOARD_REGISTRATION**
-- **BLOCKED_FOR_VISIBILITY_POLICY_EVALUATION_V1**
-- **READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1**
+## Product truth
 
-## Why evaluation is not yet authorized
+Surface 10 now has:
+- read-only Definition/runtime foundation;
+- Module/Ability exposure;
+- central Pro activation;
+- fail-closed native registration descriptor/compiler;
+- fail-closed typed P0 visibility descriptor/compiler for roles/capabilities/users.
 
-The runtime now has a fail-closed native registration descriptor/compiler, but it has no typed audience-policy contract and no Surface 10 role/Membership/Condition evaluation boundary.
+## Fresh evaluator audit verdict
 
-The shared PolicyEngine remains authorization-focused; Dashboard Widget visibility is a presentation/audience filter and must never replace action/data authorization.
+**READY_FOR_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1**
 
-## Next bounded prerequisite after audit promotion
+V1 semantics:
+- AND across populated roles/capabilities/users dimensions;
+- ANY within each populated dimension;
+- empty dimension unconstrained;
+- unauthenticated/non-user/current-context mismatch deny;
+- visibility never substitutes for action/data authorization.
 
-Issue #1144 on `agent/dashboard-widgets-visibility-policy-contract-foundation-v1`.
+Issue #1148 is dependency-gated until #1147 audit PR merges.
 
-The tranche may only add typed/fail-closed visibility metadata for P0 roles, capabilities and users, register a module-local compiler service, and add focused tests.
-
-No visibility evaluation, WordPress Dashboard hooks, provider/render execution, Membership/Condition execution, mutation, shared Platform change, certification, deploy or release.
-
-## Recovery behavior
-
-On next `continue`, resolve the audit PR exact head and perform one consolidated CI/review/main-divergence refresh. Do not claim #1144 until the audit PR is merged.
+Direct WordPress Dashboard registration, trusted rendering, Membership/Condition execution, provider/data-source execution and mutation remain blocked.

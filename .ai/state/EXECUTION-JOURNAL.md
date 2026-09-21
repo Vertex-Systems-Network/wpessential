@@ -116,3 +116,13 @@ Rules:
 - P0 Options Bank audience fields scoped to roles, capabilities and users.
 - Issue #1144 opened as dependency-gated typed visibility contract/compiler foundation only.
 - No visibility evaluation, WordPress hooks, provider/render execution, Membership/Condition execution, mutation, certification, deploy or release authorized.
+
+## 2026-09-22 — Dashboard Widgets visibility contract closeout + evaluator transition audit
+
+- PR #1145 exact head `0789b4ff76a5506f24fbd89e79b7d7d82571686e` passed Governance `35641583748` + Architecture `35641583781`; merged as `731a7dcb1242ef056f5980129bc3cb598ee828b2`.
+- PR #1146 exact head `79c15c0db85ebecb4fda3753534152f98c00d5be` passed Governance `35647855379`, Architecture `35647855338`, PHP Quality `35647855344`, Platform Matrix `35647855395`, Package `35647855396`; merged as `3c88e9e2909518a95515da812b06edb0ae71bfa6`.
+- Visibility contract/compiler foundation marked terminal PASS.
+- Fresh exact-main audit found canonical capability checking reusable but no current-user role-membership seam.
+- V1 evaluator semantics frozen as AND across populated dimensions / ANY within a dimension; empty unconstrained; context mismatch deny.
+- Issue #1148 opened for bounded server visibility evaluator with module-local role-membership adapter and canonical capability-checker reuse.
+- Dashboard hooks, trusted rendering, Membership/Condition execution, provider/data-source execution, mutation and certification remain separately gated.

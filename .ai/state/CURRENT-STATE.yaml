@@ -2,25 +2,25 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: WAITING_EXTERNAL
-observed_main_sha: cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088
-observed_main_source: "PR #1142 merged Dashboard Widgets registration descriptor/compiler foundation shared-truth closeout"
-active_issue: "#1143"
-active_pr: "#1145"
-active_branch: supervisor/dashboard-widgets-visibility-policy-transition-audit-v1
-current_milestone: "Dashboard Widgets exact-main visibility policy foundation transition audit V1"
+observed_main_sha: 3c88e9e2909518a95515da812b06edb0ae71bfa6
+observed_main_source: "PR #1146 merged Dashboard Widgets visibility policy contract/compiler foundation V1"
+active_issue: "#1147"
+active_pr: "#1149"
+active_branch: supervisor/dashboard-widgets-server-visibility-evaluator-transition-audit-v1
+current_milestone: "Dashboard Widgets visibility contract closeout + server visibility evaluator transition audit V1"
 milestone_status: WAITING_EXTERNAL
-last_completed_milestone: "Issue #1141 / PR #1142 merged as cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088; registration descriptor/compiler shared truth reconciled"
-next_safe_action: "Resolve PR #1145 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1144 before audit promotion."
-waiting_external: "PR #1145 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1144 / PR #1146 merged as 3c88e9e2909518a95515da812b06edb0ae71bfa6; typed P0 visibility contract/compiler foundation passed all applicable exact-head gates"
+next_safe_action: "Resolve PR #1149 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1148 before audit promotion."
+waiting_external: "PR #1149 exact-head Governance/Architecture validation"
 next_planned_slot:
-  issue: "#1144"
-  slot_id: dashboard-widgets-visibility-policy-contract-foundation-v1
-  claim_branch: agent/dashboard-widgets-visibility-policy-contract-foundation-v1
-  claim_rule: "Do not claim until #1143 audit PR merges with READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1."
+  issue: "#1148"
+  slot_id: dashboard-widgets-server-visibility-evaluator-v1
+  claim_branch: agent/dashboard-widgets-server-visibility-evaluator-v1
+  claim_rule: "Do not claim until #1147 audit PR merges with READY_FOR_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1."
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0018
+    - RB-0020
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -44,7 +44,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Audit verdict: READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1 only."
-  - "Direct WordPress Dashboard registration remains blocked."
-  - "Visibility evaluation remains blocked; #1144 is typed metadata/compiler only."
-  - "Action/data authorization remains canonical Policy/source-owner responsibility."
+  - "RB-0018 reconciled PASS from #1145; RB-0019 records #1146 terminal PASS."
+  - "Audit verdict: READY_FOR_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1."
+  - "Evaluator V1 is presentation filtering only; it never authorizes actions or source data."
+  - "Direct WordPress Dashboard registration and trusted content rendering remain blocked."
