@@ -1,18 +1,6 @@
 name: P-006 Wave 1B Local Compatibility Evidence
 
 on:
-  pull_request:
-    paths:
-      - 'frameworks/Modules/Compatibility/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
-      - 'tools/release/**'
-      - '.github/workflows/p006-wave1b-local-compatibility.yml'
   workflow_dispatch:
 
 permissions:
