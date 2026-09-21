@@ -2,23 +2,28 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Exact observed base
+## Fully reconciled integration baseline
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Observed main: `aff745c642246ffd28e12797b29e94112ea0baca`
-- Active Issue: #1115
-- Active branch: `supervisor/timeout-resilient-ai-state-v1`
-- Active PR: #1116
+- Merged main baseline: `74b07170b5dc5a654b1148b24224aa781d8123d4`
+- Completed Issue: #1115
+- Completed PR: #1116
+- Exact tested PR head: `daddd0ebb35ae7231921e1a96c04d36189564920`
 
-## Completed immediately before this milestone
+## Terminal merge evidence
 
-- Security Issue #1108 / PR #1111 merged.
-- The accepted Node development dependency graph is integrated through merge `aff745c642246ffd28e12797b29e94112ea0baca`.
-- Runner Benchmark policy #1109/#1110 and terminal P-006 workflow enforcement #1112/#1113/#1114 are already on main.
+- Governance Gate run `35609009420` — PASS.
+- Architecture Guards run `35609009426` — PASS.
+- Platform Compatibility Matrix run `35609009412` — PASS.
+- PR #1116 had zero unresolved review threads and was zero commits behind main before merge.
+- PR #1116 merged as `74b07170b5dc5a654b1148b24224aa781d8123d4`; Issue #1115 closed automatically.
 
-## Active milestone
+## Open repository truth at reconciliation
 
-Implement compact durable AI state, strict one-milestone execution, no tight CI polling, state-drift guards, queue/Runner Benchmark reconciliation, and a portable cross-project AI prompt.
+- #858 — external repository-admin required-CI hardening; nonblocking for source work.
+- #947 — independent worker-only evidence review; Supervisor independence must be preserved.
+- #1102 — P-006 Wave 1U formal runtime authorization gate; no execution authority exists.
+- OPEN PRs observed: none.
 
 ## Mandatory recovery behavior
 
@@ -28,11 +33,11 @@ On `start`, `continue`, `resume`, tool failure, chat interruption, or message-de
 2. read this file;
 3. resolve exact current main and reconcile OPEN Issues then OPEN PRs/MRs;
 4. re-read queue and Runner Benchmark from current main;
-5. inspect only the historical `CHECKPOINT.md` sections needed to resolve a conflict or historical evidence question;
+5. inspect only the historical `CHECKPOINT.md` sections needed for a specific conflict or evidence question;
 6. continue only the next safe logical milestone.
 
-Never repeat an operation solely because the previous chat response was not delivered. Verify repository evidence first.
+Never repeat an operation solely because the previous chat response was not delivered. Repository/runtime evidence outranks this checkpoint.
 
 ## Next safe action
 
-PR #1116 contains the #1115 implementation. Compact state is pre-persisted as `WAITING_EXTERNAL` so exact-head CI can be observed without a follow-up state-only commit invalidating the tested head. On the next user `continue`, resolve the PR's current head and perform one consolidated CI/review refresh; merge only if the exact head is green/current and review threads are zero.
+Resolve fresh main and existing open work. Do not execute #1102 without a new explicit owner-authoritative runtime grant, do not absorb #947 into Supervisor work, and do not claim #858 complete without repository-admin ruleset evidence.
