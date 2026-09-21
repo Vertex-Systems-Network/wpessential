@@ -1,7 +1,7 @@
 # Dashboard Widgets — Read-Only Runtime Foundation V1
 
-Issue: **#1120**  
-Surface: **10 / Dashboard Widgets**  
+Issue: **#1120**
+Surface: **10 / Dashboard Widgets**
 Exact implementation base: `main@780d0301ba63b132e6b944aec8dc15e1afdf397a`
 
 ## Scope
