@@ -59,4 +59,3 @@ Rules:
 - Issue #1126 opened as the only next bounded source slot on `agent/dashboard-widgets-read-module-ability-exposure-v1`.
 - #1126 explicitly forbids `wpessential-pro.php` activation and all mutation/provider/certification/deploy scope.
 - PR #1127 opened for the audit/queue transition; RB-0009 is its exact-head merge gate.
-
