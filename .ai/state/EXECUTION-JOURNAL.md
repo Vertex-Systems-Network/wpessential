@@ -25,3 +25,10 @@ Rules:
 - Created branch `supervisor/timeout-resilient-ai-state-v1`.
 - Current milestone: implement policy + state + CI enforcement + queue/Runner Benchmark reconciliation + portable prompt.
 - Runner impact: RB-0006, immediate exact-head governance/architecture validation required before merge.
+
+## 2026-09-21 — PR #1116 merged / post-merge reconciliation opened
+
+- PR #1116 exact head `daddd0ebb35ae7231921e1a96c04d36189564920` reached terminal PASS on Governance Gate `35609009420`, Architecture Guards `35609009426`, and Platform Compatibility Matrix `35609009412`.
+- PR #1116 merged as `74b07170b5dc5a654b1148b24224aa781d8123d4`; Issue #1115 closed.
+- Reconciliation Issue #1117 opened because compact state, queue, and RB-0006 still described the pre-merge waiting boundary.
+- Open-work truth at this boundary: #858 external-admin/nonblocking, #947 independent worker-only/nonblocking, #1102 authorization-gated, zero open PRs.
