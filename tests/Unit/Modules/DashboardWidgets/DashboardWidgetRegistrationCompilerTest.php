@@ -46,6 +46,15 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
+    public function testRegistrationCompilationFailsClosedOnMalformedVisibilityMetadata(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        (new DashboardWidgetRegistrationCompiler())->compile($this->definition(
+            visibility: ['roles' => ['Bad Role']],
+        ));
+    }
+
     public function testRejectsMalformedRegistrationMetadata(): void
     {
         $compiler = new DashboardWidgetRegistrationCompiler();
@@ -84,7 +93,19 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         string $type = DashboardWidgetDefinition::TYPE,
         DefinitionStatus $status = DefinitionStatus::Published,
         ?array $widget = null,
+        ?array $visibility = null,
     ): Definition {
+        $widget = $widget ?? [
+            'key' => 'sales-overview',
+            'title' => 'Sales Overview',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => true,
+        ];
+        if ($visibility !== null) {
+            $widget['visibility'] = $visibility;
+        }
+
         return new Definition(
             id: '11111111-1111-4111-8111-111111111111',
             slug: 'sales-overview',
@@ -92,15 +113,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
             schemaVersion: 1,
             ownerSurfaceId: $ownerSurfaceId,
             status: $status,
-            payload: [
-                'widget' => $widget ?? [
-                    'key' => 'sales-overview',
-                    'title' => 'Sales Overview',
-                    'context' => 'normal',
-                    'priority' => 'default',
-                    'network_dashboard' => true,
-                ],
-            ],
+            payload: ['widget' => $widget],
             revision: 3,
             dependencies: [],
         );
