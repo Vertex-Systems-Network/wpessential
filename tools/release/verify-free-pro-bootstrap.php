@@ -154,6 +154,7 @@ $implementedProModules = [
     'admin-menu',
     'settings',
     'dashboard',
+    'dashboard-widgets',
     'profiles',
     'membership',
     'builder-widgets',

@@ -308,6 +308,7 @@ jobs:
             wpessential-pro/LICENSE \
             wpessential-pro/frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php \
             wpessential-pro/frameworks/Modules/Roles/RolesModule.php \
+            wpessential-pro/frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php \
             wpessential-pro/frameworks/Modules/Membership/MembershipModule.php \
             wpessential-pro/frameworks/Modules/Chat/ChatModule.php \
             wpessential-pro/assets/admin/fields.js \
