@@ -102,6 +102,7 @@ jobs:
         run: npm run lint:package
 
       # Security #1108: the locked development graph must stay free of high/critical advisories.
+      # Formatter compatibility is pinned in package.json to avoid unrelated source rewrites during this security-only upgrade.
       - name: Capture npm dependency advisory gate
         id: npm-dev-audit
         shell: bash
