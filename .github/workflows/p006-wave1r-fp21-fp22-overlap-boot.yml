@@ -1,24 +1,6 @@
 name: P-006 Wave 1R FP-21 FP-22 Overlap Boot
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-wave1r-fp21-fp22-overlap-boot.yml'
-      - 'tools/p006/p006-wave1r-fp21-fp22-overlap-boot.php'
-      - 'tools/p006/p006-wave1k-build-overlap-artifacts.php'
-      - 'tools/p006/p006-wave1k-wordpress-setup.sh'
-      - 'tools/p006/p006-wave1k-swap-plugin.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'frameworks/Modules/Compatibility/**'
-      - 'frameworks/Bootstrap/Plugin.php'
-      - 'frameworks/Platform/Entitlements/**'
-      - 'frameworks/Platform/Modules/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:
