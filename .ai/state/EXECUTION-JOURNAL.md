@@ -237,3 +237,14 @@ Rules:
 - Compact state binds `active_pr: "#1163"` before final exact-head validation.
 - RB-0026 is the immediate Governance/Architecture merge gate.
 - Issue #1162 remains dependency-gated and must not be claimed until PR #1163 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1`.
+
+
+## 2026-09-22 — Trusted render-source contract merged; #1162 ready to claim
+
+- PR #1163 exact head `98d8d154febf1fbc00589d8fb90eea857a3af8e6` passed Governance `35659598400` and Architecture `35659598251`.
+- Branch was zero behind with zero unresolved review threads at merge.
+- PR #1163 merged as `83e876a7485de8510e268359264d83434e21514e`; Issue #1160 closed.
+- RB-0026 reconciled terminal PASS.
+- `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1` is promoted.
+- Issue #1162 is READY_TO_CLAIM on `agent/dashboard-widgets-trusted-render-source-compiler-v1`.
+- Renderer execution, HTML output, provider/query/source execution, remote/iframe execution, Dashboard hooks, mutation and full-parity certification remain blocked.

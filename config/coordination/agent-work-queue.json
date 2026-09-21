@@ -1,9 +1,9 @@
 {
-  "schema_version": 120,
+  "schema_version": 121,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "9c5e2143978ba6644abc03eafa1ef1522fcc53da",
-  "mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
-  "source_issue": "#1160",
+  "queue_anchor_main_sha": "83e876a7485de8510e268359264d83434e21514e",
+  "mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_READY_TO_CLAIM",
+  "source_issue": "#1164",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -157,8 +157,9 @@
     "1154": "COMPLETED_ON_PR_1158_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
     "1156": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1153_TO_1154",
     "1159": "COMPLETED_ON_PR_1161_DASHBOARD_WIDGETS_RENDER_SOURCE_TRANSITION_AUDIT",
-    "1160": "ACTIVE_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
-    "1162": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1"
+    "1160": "COMPLETED_ON_PR_1163_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
+    "1162": "READY_TO_CLAIM_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1",
+    "1164": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1160_TO_1162"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3390,7 +3391,7 @@
       "slot_id": "dashboard-widgets-trusted-render-source-implementation-contract-v1",
       "title": "Dashboard Widgets trusted render-source implementation contract V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
       "source": "Issue #1160 / audit Issue #1159",
       "dependencies": [
@@ -3425,14 +3426,20 @@
         "governance_run": 35658839373,
         "architecture_run": 35658839531,
         "merge_sha": "9c5e2143978ba6644abc03eafa1ef1522fcc53da"
-      }
+      },
+      "terminal_result": "PASS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
+      "source_head_exact_verification": "98d8d154febf1fbc00589d8fb90eea857a3af8e6",
+      "governance_run_exact_verification": 35659598400,
+      "architecture_run_exact_verification": 35659598251,
+      "merge_sha": "83e876a7485de8510e268359264d83434e21514e",
+      "closeout_pr": 1163
     },
     {
       "priority": 1009,
       "slot_id": "dashboard-widgets-trusted-render-source-descriptor-compiler-v1",
       "title": "Dashboard Widgets trusted render-source descriptor/compiler V1",
       "role": "ANY",
-      "status": "OPEN_DEPENDENCY_GATED",
+      "status": "READY_TO_CLAIM",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1",
       "source": "Issue #1162 / contract Issue #1160",
       "dependencies": [
@@ -3464,7 +3471,15 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-trusted-render-source-compiler-v1",
-      "close_condition": "Typed fail-closed render-source descriptor/compiler V1 merged from fresh main with focused tests, exact-head path-applicable CI green and no renderer/hook/provider/mutation scope widening"
+      "close_condition": "Typed fail-closed render-source descriptor/compiler V1 merged from fresh main with focused tests, exact-head path-applicable CI green and no renderer/hook/provider/mutation scope widening",
+      "dependency_evidence": {
+        "contract_issue": 1160,
+        "contract_pr": 1163,
+        "contract_head": "98d8d154febf1fbc00589d8fb90eea857a3af8e6",
+        "governance_run": 35659598400,
+        "architecture_run": 35659598251,
+        "merge_sha": "83e876a7485de8510e268359264d83434e21514e"
+      }
     }
   ],
   "historical_closeout": {
