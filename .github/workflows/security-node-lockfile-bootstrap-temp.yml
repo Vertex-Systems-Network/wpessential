@@ -36,6 +36,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git checkout origin/main -- package-lock.json
           npm install --package-lock-only --ignore-scripts
           node <<'NODE'
           const lock = require('./package-lock.json');
