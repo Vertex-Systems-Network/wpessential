@@ -1,0 +1,68 @@
+name: Security Node Lockfile Bootstrap TEMP
+
+on:
+  pull_request:
+    types: [synchronize]
+    paths:
+      - 'package.json'
+      - '.github/workflows/security-node-lockfile-bootstrap-temp.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lockfile:
+    if: >-
+      github.event.pull_request.number == 1111 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'security/node-dev-dependency-remediation-v1'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact trusted PR head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Node 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Regenerate lockfile without lifecycle scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock-only --ignore-scripts
+          node <<'NODE'
+          const lock = require('./package-lock.json');
+          const prettier = lock.packages?.['node_modules/prettier'];
+          if (!prettier || prettier.name !== 'wp-prettier' || prettier.version !== '3.0.3') {
+            throw new Error('expected wp-prettier 3.0.3 compatibility package');
+          }
+          NODE
+          npm audit --audit-level=high
+          npm audit --omit=dev --audit-level=high
+
+      - name: Commit only regenerated lockfile and retire bootstrap workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/security-node-lockfile-bootstrap-temp.yml
+          git add package-lock.json
+          changed="$(git diff --cached --name-only)"
+          printf '%s\n' "$changed"
+          test "$(printf '%s\n' "$changed" | sed '/^$/d' | wc -l)" -eq 2
+          printf '%s\n' "$changed" | grep -Fx 'package-lock.json'
+          printf '%s\n' "$changed" | grep -Fx '.github/workflows/security-node-lockfile-bootstrap-temp.yml'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'security: regenerate accepted zero-vulnerability lockfile'
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "HEAD:${HEAD_REF}"
