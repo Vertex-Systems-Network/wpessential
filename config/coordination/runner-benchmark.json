@@ -238,7 +238,7 @@
     },
     {
       "id": "RB-0007",
-      "source": "Issue #1119",
+      "source": "Issue #1119 / PR #1121",
       "category": "DASHBOARD_WIDGETS_RUNTIME_TRANSITION_AUDIT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -254,11 +254,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|runtime-transition-audit|issue1119|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1119 opened; exact-head merge-gate validation pending"
+        "PR #1121 opened; exact-head Governance/Architecture merge-gate validation pending"
       ],
-      "note": "Run once at exact-head merge gate. If still running after one consolidated refresh, persist WAITING_EXTERNAL and check on the next user continue."
+      "note": "Exact-head merge gate for the evidence/coordination audit only. Do not tight-poll. If pending after one consolidated refresh, preserve WAITING_EXTERNAL and retry on the next user continue."
     }
   ],
   "last_reconciled_issue": "#1119",
