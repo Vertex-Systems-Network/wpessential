@@ -77,3 +77,14 @@ Rules:
 - Audit verdict: `READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1`.
 - Issue #1132 opened as dependency-gated activation slot on `agent/dashboard-widgets-central-pro-activation-v1`.
 - Activation scope requires bootstrap contribution plus entitlement/package verifier regression evidence; Dashboard Widgets runtime source and policy semantics remain frozen.
+
+## 2026-09-21 — Dashboard Widgets bounded central Pro Activation V1 merged
+
+- Activation audit Issue #1131 / PR #1133 merged as `3d6b695029ece43c1ce75b9f33edb89708f59444`.
+- Issue #1132 / PR #1134 completed from exact source head `6af7fdc73488b563aa9b0816db9747b38ff14ebf`.
+- Exact-head gates PASS: Governance `35628538165`, Architecture `35628538105`, PHP Quality `35628538114`, Distributable Package `35628538040`, Taxonomy Role Impact `35628538102`, Browser E2E Accessibility `35628538142`.
+- PR #1134 merged as `faaf5e4c5f7cf25d3e05847e28dec5e9646d26a3`; Issue #1132 closed.
+- Surface 10 read-only Dashboard Widgets module is now centrally contributed through the existing fail-closed Pro compatibility and entitlement activation path.
+- WordPress dashboard registration, mutation/provider execution and full-parity runtime/product certification remain separate gates.
+- Issue #1135 opened for mandatory post-merge shared-truth reconciliation before any further Surface 10 transition.
+
