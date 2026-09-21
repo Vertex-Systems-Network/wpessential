@@ -146,3 +146,32 @@ Rules:
 - Root cause: compact state used `active_pr: "PENDING"`; the enforced contract accepts only `null` or an exact `"#<number>"` value.
 - Architecture PHP syntax, WPCS, PHPStan, PHPUnit, engineering contracts, JS lint/typecheck/build and other smoke checks passed before the enforcement failure.
 - Corrective shared-truth change sets `active_pr: "#1152"`; no runtime/product behavior, authorization semantics, hooks, provider execution, destructive action, certification, deploy or release scope changed.
+
+
+## 2026-09-22 — README governance merged; trusted-content transition audit started
+
+- Issue #1151 / PR #1152 corrected exact head `c668ed14369c7b9f9dd360a6239ed1085ce4d67a` passed Governance `35654519471` + Architecture `35654519447`.
+- PR #1152 merged as `b9e971653db0bbab177784c0b501c4e03269ea5d`; Issue #1151 closed.
+- RB-0022 reconciled terminal PASS; mandatory README live progress reconciliation is active on main.
+- Fresh exact-main Surface 10 audit confirms registration metadata + bounded server visibility are merged, while the trusted content/renderer side of ADR-0051 remains absent.
+- Verdict: `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`.
+- Direct Dashboard hooks/`wp_add_dashboard_widget`, trusted rendering/provider/source execution, mutation/preferences and full-parity certification remain blocked.
+- Issue #1154 opened as the only dependency-gated next source tranche on `agent/dashboard-widgets-trusted-content-class-contract-v1`; claim is forbidden until #1153 audit PR merges.
+
+
+## 2026-09-22 — PR #1155 opened for trusted-content transition audit
+
+- PR #1155 opened from exact main `b9e971653db0bbab177784c0b501c4e03269ea5d`.
+- Scope is exactly seven shared-truth/audit files; no runtime/product source files are changed.
+- Compact state binds `active_pr: "#1155"` before final exact-head validation.
+- RB-0023 is the immediate Governance/Architecture merge gate.
+- Issue #1154 remains dependency-gated and must not be claimed until PR #1155 merges with `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`.
+
+
+## 2026-09-22 — PR #1155 Governance diff-hygiene failure corrected
+
+- PR #1155 prior head `dac053315769469edf4f791fe66752d006c7eb5e` passed Architecture `35655657954`.
+- Governance `35655659544` failed before governance semantic checks because `git diff --check` found trailing whitespace on two audit-heading lines.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0023/journal evidence.
+- Audit verdict remains `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`; no runtime/product source or authorization boundary changed.
+- Issue #1154 remains dependency-gated until corrected PR #1155 exact head is terminal green and merged.

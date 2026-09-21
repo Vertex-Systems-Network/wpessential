@@ -1,9 +1,9 @@
 {
-  "schema_version": 116,
+  "schema_version": 117,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "2f2fb37cb8302503b48717cc539394bfc106ec66",
-  "mode": "AI_NATIVE_MANDATORY_README_PROGRESS_RECONCILIATION_V1",
-  "source_issue": "#1151",
+  "queue_anchor_main_sha": "b9e971653db0bbab177784c0b501c4e03269ea5d",
+  "mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_TRANSITION_AUDIT",
+  "source_issue": "#1153",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -152,7 +152,9 @@
     "1144": "COMPLETED_ON_PR_1146_DASHBOARD_WIDGETS_VISIBILITY_POLICY_CONTRACT_FOUNDATION",
     "1147": "COMPLETED_ON_PR_1149_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
     "1148": "COMPLETED_ON_PR_1150_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
-    "1151": "ACTIVE_AI_NATIVE_MANDATORY_README_PROGRESS_RECONCILIATION"
+    "1151": "COMPLETED_ON_PR_1152_AI_NATIVE_MANDATORY_README_PROGRESS",
+    "1153": "ACTIVE_DASHBOARD_WIDGETS_POST_README_GOVERNANCE_TRANSITION_AUDIT",
+    "1154": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3273,7 +3275,7 @@
       "slot_id": "ai-native-mandatory-readme-progress-v1",
       "title": "AI-Native mandatory README progress reconciliation V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "AI_NATIVE_MANDATORY_README_PROGRESS_RECONCILIATION_V1",
       "source": "Issue #1151 / owner instruction",
       "dependencies": [
@@ -3305,7 +3307,62 @@
         "certification/deploy/release authority"
       ],
       "claim_branch": "supervisor/ai-native-mandatory-readme-progress-v1",
-      "close_condition": "Mandatory README live-progress governance and stale shared truth reconciled from exact main; exact-head Governance/Architecture terminal green; zero unresolved review threads; branch current"
+      "close_condition": "Mandatory README live-progress governance and stale shared truth reconciled from exact main; exact-head Governance/Architecture terminal green; zero unresolved review threads; branch current",
+      "terminal_result": "PASS_AI_NATIVE_MANDATORY_README_PROGRESS_V1",
+      "source_head_exact_verification": "c668ed14369c7b9f9dd360a6239ed1085ce4d67a",
+      "governance_run_exact_verification": 35654519471,
+      "architecture_run_exact_verification": 35654519447,
+      "merge_sha": "b9e971653db0bbab177784c0b501c4e03269ea5d",
+      "closeout_pr": 1152
+    },
+    {
+      "priority": 1007,
+      "slot_id": "dashboard-widgets-trusted-content-class-contract-v1",
+      "title": "Dashboard Widgets bounded trusted content-class descriptor/compiler foundation V1",
+      "role": "ANY",
+      "status": "OPEN_DEPENDENCY_GATED",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
+      "source": "Issue #1154 / audit Issue #1153",
+      "dependencies": [
+        "Issue #1153 audit PR merged with READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "content_rendering_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetContentClassDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetContentClassCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetContentClassCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php"
+      ],
+      "forbidden_scope": [
+        "content body rendering or HTML output",
+        "renderer/provider resolution or execution",
+        "Query/Listings/Ledger/Forms/Platform source execution",
+        "Safe HTTP/RSS/remote fetch",
+        "iframe/embed execution",
+        "wp_dashboard_setup/wp_network_dashboard_setup/wp_add_dashboard_widget",
+        "Definition/user-preference mutation",
+        "shared Platform changes",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-trusted-content-class-contract-v1",
+      "admitted_structured_types": [
+        "rich_text",
+        "kpi",
+        "chart",
+        "quick_links",
+        "announcement",
+        "support_onboarding",
+        "icon_link"
+      ],
+      "close_condition": "Typed fail-closed trusted content-class descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads and no render/provider/hook/mutation scope widening"
     }
   ],
   "historical_closeout": {
