@@ -11,6 +11,7 @@ use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityEvaluator;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
@@ -21,9 +22,11 @@ use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
+use WPEssential\Platform\Components\ComponentBlueprintRegistry;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
@@ -68,11 +71,13 @@ final class DashboardWidgetsModuleTest extends TestCase
             $environment,
             new WordPressExecutionContextFactory($environment),
         );
+        $blueprints = new ComponentBlueprintRegistry();
 
         $services->set('platform.definitions', $definitions);
         $services->set('platform.abilities', $abilities);
         $services->set('platform.abilities.wordpress', $bridge);
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+        $services->set(RenderingServiceRegistrar::SERVICE_BLUEPRINTS, $blueprints);
 
         (new DashboardWidgetsModule())->register($services);
 
@@ -84,6 +89,11 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(
             DashboardWidgetContentClassCompiler::class,
             $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER),
+        );
+
+        self::assertInstanceOf(
+            DashboardWidgetRenderSourceCompiler::class,
+            $services->get(DashboardWidgetsModule::SERVICE_RENDER_SOURCE_COMPILER),
         );
 
         self::assertInstanceOf(
@@ -113,6 +123,41 @@ final class DashboardWidgetsModuleTest extends TestCase
         }
 
         self::assertCount(2, $bridge->registerAbilities());
+    }
+
+    public function testModuleFailsClosedWithoutCanonicalBlueprintRegistry(): void
+    {
+        $services = new ServiceRegistry();
+        $capabilityChecker = new class implements CapabilityCheckerInterface {
+            public function can(ExecutionContext $context, string $capability): bool
+            {
+                return true;
+            }
+        };
+        $abilities = new AbilityRegistry(new PolicyEngine($capabilityChecker));
+        $environment = new class implements WordPressAbilityEnvironmentInterface {
+            public function abilitiesApiAvailable(): bool { return true; }
+            public function doingAction(string $hook): bool { return $hook === 'wp_abilities_api_init'; }
+            public function currentUserId(): ?int { return 1; }
+            public function currentSiteId(): int { return 1; }
+            public function currentNetworkId(): ?int { return null; }
+            public function currentUserCan(string $capability): bool { return true; }
+            public function isRestRequest(): bool { return false; }
+            public function isCli(): bool { return false; }
+            public function registerCategory(string $slug, array $args): bool { return true; }
+            public function registerAbility(string $name, array $args): bool { return true; }
+        };
+
+        $services->set('platform.definitions', new InMemoryDefinitionRepository());
+        $services->set('platform.abilities', $abilities);
+        $services->set(
+            'platform.abilities.wordpress',
+            new WordPressAbilityBridge($abilities, $environment, new WordPressExecutionContextFactory($environment)),
+        );
+        $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+
+        $this->expectException(\LogicException::class);
+        (new DashboardWidgetsModule())->register($services);
     }
 
     public function testHandlerDelegatesGetAndCatalogWithoutMutation(): void

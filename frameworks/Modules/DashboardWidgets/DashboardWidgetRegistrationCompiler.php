@@ -20,7 +20,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'visibility'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'visibility', 'render_source'];
 
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
@@ -28,6 +28,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     public function __construct(
         ?DashboardWidgetVisibilityCompiler $visibilityCompiler = null,
         ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
+        private ?DashboardWidgetRenderSourceCompiler $renderSourceCompiler = null,
     ) {
         $this->visibilityCompiler = $visibilityCompiler ?? new DashboardWidgetVisibilityCompiler();
         $this->contentClassCompiler = $contentClassCompiler ?? new DashboardWidgetContentClassCompiler();
@@ -58,6 +59,10 @@ final readonly class DashboardWidgetRegistrationCompiler
 
         $this->contentClassCompiler->compile($definition);
         $this->visibilityCompiler->compile($definition);
+        if ($this->renderSourceCompiler === null) {
+            throw new InvalidArgumentException('Dashboard Widget trusted render-source compiler is required for registration compilation.');
+        }
+        $this->renderSourceCompiler->compile($definition);
 
         $key = $widget['key'] ?? null;
         if (!is_string($key) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $key)) {

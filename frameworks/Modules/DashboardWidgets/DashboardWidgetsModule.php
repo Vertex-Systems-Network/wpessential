@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 use LogicException;
 use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\CapabilityCheckerInterface;
+use WPEssential\Contracts\ComponentBlueprintRegistryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -18,6 +19,7 @@ use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Modules\ModuleManifest;
+use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
@@ -27,6 +29,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
+    public const SERVICE_RENDER_SOURCE_COMPILER = 'module.dashboard-widgets.render-source-compiler';
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
     public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
@@ -50,6 +53,11 @@ final class DashboardWidgetsModule implements ModuleInterface
         $bridge = $services->get('platform.abilities.wordpress');
         $capabilityChecker = $services->get(WordPressAuthorizationServices::CAPABILITY_CHECKER);
 
+        if (!$services->has(RenderingServiceRegistrar::SERVICE_BLUEPRINTS)) {
+            throw new LogicException('Dashboard Widgets requires the canonical Component Blueprint registry.');
+        }
+        $blueprints = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
+
         if (!$definitions instanceof DefinitionRepositoryInterface) {
             throw new LogicException('Dashboard Widgets requires the shared Definition Repository.');
         }
@@ -62,9 +70,13 @@ final class DashboardWidgetsModule implements ModuleInterface
         if (!$capabilityChecker instanceof CapabilityCheckerInterface) {
             throw new LogicException('Dashboard Widgets requires the canonical WordPress capability checker.');
         }
+        if (!$blueprints instanceof ComponentBlueprintRegistryInterface) {
+            throw new LogicException('Dashboard Widgets requires the canonical Component Blueprint registry.');
+        }
 
         $read = new DashboardWidgetsReadService($definitions);
         $contentClassCompiler = new DashboardWidgetContentClassCompiler();
+        $renderSourceCompiler = new DashboardWidgetRenderSourceCompiler($blueprints, $contentClassCompiler);
         $visibilityCompiler = new DashboardWidgetVisibilityCompiler();
         $visibilityEvaluator = new DashboardWidgetVisibilityEvaluator(
             $capabilityChecker,
@@ -73,10 +85,15 @@ final class DashboardWidgetsModule implements ModuleInterface
 
         $services->set(self::SERVICE_READ, $read);
         $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
+        $services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
         $services->set(self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler);
         $services->set(
             self::SERVICE_REGISTRATION_COMPILER,
-            new DashboardWidgetRegistrationCompiler($visibilityCompiler, $contentClassCompiler),
+            new DashboardWidgetRegistrationCompiler(
+                $visibilityCompiler,
+                $contentClassCompiler,
+                $renderSourceCompiler,
+            ),
         );
         $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
 

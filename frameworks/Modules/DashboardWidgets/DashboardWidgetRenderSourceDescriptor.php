@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace WPEssential\Modules\DashboardWidgets;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+use InvalidArgumentException;
+use WPEssential\Platform\Rendering\RenderInput;
+
+final readonly class DashboardWidgetRenderSourceDescriptor
+{
+    /**
+     * @param array<string, scalar|list<scalar>> $bindings
+     */
+    public function __construct(
+        public string $definitionId,
+        public int $definitionRevision,
+        public string $blueprintId,
+        public int $blueprintRevision,
+        public array $bindings,
+    ) {
+        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
+            throw new InvalidArgumentException('Dashboard Widget render-source descriptor definition id must be a lowercase RFC 4122 UUID.');
+        }
+        if ($this->definitionRevision < 1) {
+            throw new InvalidArgumentException('Dashboard Widget render-source descriptor definition revision must be positive.');
+        }
+        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->blueprintId)) {
+            throw new InvalidArgumentException('Dashboard Widget render-source Blueprint id must be a lowercase RFC 4122 UUID.');
+        }
+        if ($this->blueprintRevision < 1) {
+            throw new InvalidArgumentException('Dashboard Widget render-source Blueprint revision must be positive.');
+        }
+        if (count($this->bindings) > 128) {
+            throw new InvalidArgumentException('Dashboard Widget render-source bindings exceed the bounded V1 limit.');
+        }
+
+        foreach ($this->bindings as $key => $value) {
+            if (!is_string($key) || preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $key) !== 1) {
+                throw new InvalidArgumentException('Dashboard Widget render-source binding keys must be stable semantic identifiers.');
+            }
+            $this->assertSafeValue($value);
+        }
+
+        new RenderInput($this->blueprintId, $this->blueprintRevision, $this->bindings);
+    }
+
+    public function toRenderInput(): RenderInput
+    {
+        return new RenderInput(
+            $this->blueprintId,
+            $this->blueprintRevision,
+            $this->bindings,
+        );
+    }
+
+    private function assertSafeValue(mixed $value): void
+    {
+        if (is_string($value)) {
+            if (preg_match('/<\?(?:php|=)|<script\b|javascript:/i', $value)) {
+                throw new InvalidArgumentException('Executable authored channels are not accepted as Dashboard Widget render bindings.');
+            }
+            return;
+        }
+
+        if (is_int($value) || is_float($value) || is_bool($value)) {
+            return;
+        }
+
+        if (is_array($value) && array_is_list($value)) {
+            foreach ($value as $item) {
+                if (!is_string($item) && !is_int($item) && !is_float($item) && !is_bool($item)) {
+                    throw new InvalidArgumentException('Dashboard Widget render-source binding lists must contain scalars only.');
+                }
+                if (is_string($item) && preg_match('/<\?(?:php|=)|<script\b|javascript:/i', $item)) {
+                    throw new InvalidArgumentException('Executable authored channels are not accepted as Dashboard Widget render binding list values.');
+                }
+            }
+            return;
+        }
+
+        throw new InvalidArgumentException('Dashboard Widget render-source bindings must be non-null scalars or scalar lists.');
+    }
+}
