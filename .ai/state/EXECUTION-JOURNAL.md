@@ -137,3 +137,12 @@ Rules:
 - Owner-directed Issue #1151 claimed on `supervisor/ai-native-mandatory-readme-progress-v1`.
 - #1151 converts README reconciliation from conditional-only behavior to a mandatory concise live progress update on every meaningful repository-changing Supervisor milestone, while preserving the complete 56 / 56 dashboard trigger for module delivery truth changes/terminal product closeout.
 - No runtime/product behavior, provider, destructive, certification, deploy or release authority is added by #1151.
+
+
+## 2026-09-22 — PR #1152 Architecture contract failure diagnosed and corrected
+
+- PR #1152 prior exact head `ff8258cd6a0ae092da81e05bd9434dd7dacf37c0` passed Governance `35654102501`.
+- Architecture `35654102687` failed only at `tests/Smoke/ai-timeout-resilient-state-contract.php`.
+- Root cause: compact state used `active_pr: "PENDING"`; the enforced contract accepts only `null` or an exact `"#<number>"` value.
+- Architecture PHP syntax, WPCS, PHPStan, PHPUnit, engineering contracts, JS lint/typecheck/build and other smoke checks passed before the enforcement failure.
+- Corrective shared-truth change sets `active_pr: "#1152"`; no runtime/product behavior, authorization semantics, hooks, provider execution, destructive action, certification, deploy or release scope changed.

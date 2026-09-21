@@ -11,7 +11,7 @@ Project website: **https://wpessential.org**
 - Reconciled product base: `main @ 2f2fb37cb8302503b48717cc539394bfc106ec66` after Dashboard Widgets Issue #1148 / PR #1150 merged.
 - Latest product milestone: **Surface 10 / Dashboard Widgets — bounded server visibility evaluator V1 PASS and merged**. Exact implementation head `674d665aabbefbfe6d381852e3e028c74a72b421` passed Governance `35652489619`, Architecture `35652489824`, PHP Quality `35652489508`, Platform Matrix `35652489826` and Package `35652489713` before squash merge `2f2fb37c...`.
 - Bounded milestone progress: `██████████ 100%` for **server visibility evaluator V1 only**. This does not imply full-parity `RUNTIME_CERTIFIED`, `PRODUCT_PARITY_CERTIFIED`, deployment or release readiness.
-- Active governance milestone: **Issue #1151 — mandatory README progress reconciliation V1**, branch `supervisor/ai-native-mandatory-readme-progress-v1`.
+- Active governance milestone: **Issue #1151 / PR #1152 — mandatory README progress reconciliation V1**, branch `supervisor/ai-native-mandatory-readme-progress-v1`. Prior head `ff8258cd...` passed Governance but Architecture exposed a compact-state schema error (`active_pr: "PENDING"`); the corrective head binds state to `#1152` without runtime/product changes.
 - Current boundary: direct WordPress Dashboard hooks/registration, trusted rendering/provider execution, mutation/preferences and full-parity certification remain unpromoted.
 - Exact next gate: merge #1151 only after exact-head Governance/Architecture are terminal green, branch is current and review threads are resolved; after that, a fresh exact-main Surface 10 transition audit is required before any further runtime tranche.
 

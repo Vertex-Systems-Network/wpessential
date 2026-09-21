@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: 2f2fb37cb8302503b48717cc539394bfc106ec66
 observed_main_source: "PR #1150 merged Dashboard Widgets bounded server visibility evaluator V1"
 active_issue: "#1151"
-active_pr: "PENDING"
+active_pr: "#1152"
 active_branch: supervisor/ai-native-mandatory-readme-progress-v1
 current_milestone: "AI-Native mandatory README progress reconciliation V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1148 / PR #1150 merged as 2f2fb37cb8302503b48717cc539394bfc106ec66; bounded server visibility evaluator V1 passed Governance, Architecture, PHP Quality, Platform Matrix and Package"
-next_safe_action: "Open the #1151 PR from the deterministic branch, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1151 exact-head validation after branch publication"
+next_safe_action: "Validate the corrected PR #1152 exact head after the compact-state schema fix. Merge only if Governance/Architecture are terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1152 corrected exact-head Governance/Architecture validation"
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true

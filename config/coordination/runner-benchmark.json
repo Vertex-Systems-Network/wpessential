@@ -722,11 +722,16 @@
       "expected_minutes": 10,
       "dedup_key": "ai-native|mandatory-readme-progress|issue1151|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Implementation branch claimed from main 2f2fb37cb8302503b48717cc539394bfc106ec66; exact-head PR validation pending"
+        "Initial PR #1152 exact head ff8258cd6a0ae092da81e05bd9434dd7dacf37c0",
+        "Governance Gate run 35654102501 PASS",
+        "Architecture Guards run 35654102687 FAIL at smoke contract only",
+        "Architecture PHP syntax, WPCS, PHPStan, PHPUnit, engineering contracts, JS lint/typecheck/build and diagnostic smoke prerequisites passed before enforcement",
+        "Failure reason: CURRENT-STATE.yaml active_pr used invalid PENDING token; contract requires null or #<number>",
+        "Corrective shared-truth commit sets active_pr to #1152; corrected exact-head validation pending"
       ],
-      "note": "Owner-directed governance hardening. Merge requires exact-head Governance/Architecture terminal PASS, zero unresolved threads and current branch."
+      "note": "First exact head exposed only a compact-state schema violation. Corrective head remains governance/shared-truth-only; merge still requires terminal green exact-head Governance/Architecture, zero unresolved threads and current branch."
     }
   ],
   "last_reconciled_issue": "#1151",

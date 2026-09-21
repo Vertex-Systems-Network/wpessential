@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `2f2fb37cb8302503b48717cc539394bfc106ec66`
 - Completed product implementation: Issue #1148 / PR #1150
 - Active governance Issue: #1151
+- Active PR: #1152
 - Deterministic branch: `supervisor/ai-native-mandatory-readme-progress-v1`
 
 ## #1150 terminal evidence
@@ -32,6 +33,12 @@ Visibility remains presentation filtering only and never authorizes actions or s
 
 Issue #1151 makes README progress reconciliation non-optional for meaningful repository-changing Supervisor milestones: a concise live progress block every time, plus the complete 56 / 56 dashboard when module delivery/lifecycle truth changes or at terminal product/integration closeout. Fabricated percentages, timestamps, promises and certification claims remain forbidden.
 
+## #1152 validation correction
+
+- Prior exact head `ff8258cd6a0ae092da81e05bd9434dd7dacf37c0` passed Governance run `35654102501` but Architecture run `35654102687` failed only because `CURRENT-STATE.yaml` used invalid `active_pr: "PENDING"` instead of the required `null` or `"#<number>"` form.
+- Product/runtime, PHP quality, lint, typecheck, PHPUnit and engineering-contract validation inside Architecture all passed before the smoke-contract failure.
+- The corrective change is bounded to shared truth and sets `active_pr: "#1152"` while recording the failed-attempt evidence.
+
 ## Next safe action
 
-Open the #1151 PR, then perform one consolidated exact-head Governance/Architecture, review-thread and main-divergence refresh. Merge only on terminal green evidence.
+Validate the corrected PR #1152 exact head with one consolidated Governance/Architecture, review-thread and main-divergence refresh. Merge only on terminal green evidence.
