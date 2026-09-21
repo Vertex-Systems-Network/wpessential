@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
@@ -78,6 +79,11 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(
             DashboardWidgetsReadService::class,
             $services->get(DashboardWidgetsModule::SERVICE_READ),
+        );
+
+        self::assertInstanceOf(
+            DashboardWidgetContentClassCompiler::class,
+            $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER),
         );
 
         self::assertInstanceOf(
