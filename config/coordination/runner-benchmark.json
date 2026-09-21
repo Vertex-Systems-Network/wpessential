@@ -299,7 +299,7 @@
     },
     {
       "id": "RB-0009",
-      "source": "Issue #1125",
+      "source": "Issue #1125 / PR #1127",
       "category": "DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -315,11 +315,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|module-ability-transition-audit|issue1125|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1125 opened; exact-head audit merge-gate validation pending"
+        "PR #1127 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "Run once at exact-head merge gate. Central Pro activation remains explicitly outside this transition."
+      "note": "Exact-head audit merge gate only. No tight polling. Central Pro activation remains explicitly outside Issue #1126."
     }
   ],
   "last_reconciled_issue": "#1125",
