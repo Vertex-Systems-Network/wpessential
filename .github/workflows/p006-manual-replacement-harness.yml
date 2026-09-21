@@ -1,19 +1,6 @@
 name: P-006 Manual Replacement Harness
 
 on:
-  pull_request:
-    paths:
-      - 'tools/p006/p006-manual-replacement-**'
-      - 'tools/p006/p006-wave1k-build-overlap-artifacts.php'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'docs/QUALITY/P006-MANUAL-REPLACEMENT-HARNESS.md'
-      - '.github/workflows/p006-manual-replacement-harness.yml'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:
