@@ -2,49 +2,39 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Exact observed base
+## Reconciled product baseline pending closeout transport
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main before this milestone: `cd03b5002e1562e7f04d8b37018eea8638dd4a24`
-- Active Issue: #1125
-- Active PR: #1127
-- Active branch: `supervisor/dashboard-widgets-module-ability-transition-audit-v1`
+- Product integration main: `29ad66ca2984d89a3ae7e949679a62d35ca2c357`
+- Completed Issue: #1126
+- Completed PR: #1128
+- Exact tested source head: `1a463e209ad3fdaf054487b58920b9e148245a75`
+- Active shared-truth closeout Issue: #1129
 
-## Active milestone
+## Terminal #1128 evidence
 
-Surface 10 / Dashboard Widgets exact-main Module/Ability exposure transition audit.
+- Governance Gate `35620989535` — PASS.
+- Architecture Guards `35620989489` — PASS.
+- PHP Quality Toolchain `35620989526` — PASS.
+- Platform Compatibility Matrix `35620989554` — PASS.
+- Distributable Package `35620989537` — PASS.
+- Zero unresolved review threads and zero commits behind main at merge gate.
+- Exactly three #1126-authorized files changed.
+- `wpessential-pro.php` remained untouched.
+- PR #1128 merged as `29ad66ca2984d89a3ae7e949679a62d35ca2c357`; Issue #1126 closed.
 
-Decision: **READY_FOR_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1**.
+## Product truth
 
-Current accepted precedent separates read-only Module/Ability source from central activation:
-- PR #886 — Admin Menu Module + read handler + unit test only;
-- PR #887 — Settings equivalent only;
-- PR #888 — Frontend Dashboard equivalent only;
-- PR #898 — central activation separately gated later.
+Surface 10 / Dashboard Widgets now has:
+- bounded read-only Definition/read-service foundation;
+- Pro-owned `DashboardWidgetsModule`;
+- read-only `get`/`catalog` Ability handlers and WordPress Ability exposure source;
+- `manage_options`, `mutates:false`, Internal/UI/REST contracts.
 
-## Next bounded source slot after audit promotion
+The module is **not centrally activated** in `wpessential-pro.php`.
 
-Issue #1126 on `agent/dashboard-widgets-read-module-ability-exposure-v1`.
+This does not promote WordPress dashboard registration, mutation, provider execution, full-parity `RUNTIME_CERTIFIED`, product parity, deployment or release.
 
-Allowed: Dashboard Widgets Module, read Ability handler, focused module test.
+## Next safe transition
 
-Forbidden in #1126:
-- `wpessential-pro.php` central activation;
-- WordPress dashboard widget registration;
-- mutation/user preferences;
-- providers/query/listing/analytics/forms execution;
-- cache/remote engines;
-- shared Platform changes;
-- full-parity certification, deploy or release.
-
-## Recovery behavior
-
-On next `continue`:
-
-1. read compact state/checkpoint;
-2. resolve PR #1127 current head and exact current main;
-3. perform one consolidated exact-head CI/review refresh;
-4. merge only if applicable checks are terminal green, branch is current and unresolved review threads are zero;
-5. if pending, stop without tight polling.
-
-Do not claim #1126 before #1127 promotion.
+After #1129 closeout merges, run a fresh exact-main audit for central Pro activation. Do not edit `wpessential-pro.php` before that audit explicitly authorizes a bounded activation tranche.
