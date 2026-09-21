@@ -32,4 +32,3 @@ Rules:
 - PR #1116 merged as `74b07170b5dc5a654b1148b24224aa781d8123d4`; Issue #1115 closed.
 - Reconciliation Issue #1117 opened because compact state, queue, and RB-0006 still described the pre-merge waiting boundary.
 - Open-work truth at this boundary: #858 external-admin/nonblocking, #947 independent worker-only/nonblocking, #1102 authorization-gated, zero open PRs.
-
