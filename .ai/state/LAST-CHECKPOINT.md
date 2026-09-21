@@ -5,56 +5,46 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `9c5e2143978ba6644abc03eafa1ef1522fcc53da`
-- Completed transition audit: Issue #1159 / PR #1161
-- Active contract Issue: #1160
-- Active PR: #1163
-- Deterministic branch: `supervisor/dashboard-widgets-trusted-render-source-contract-v1`
+- Exact product main after contract merge: `83e876a7485de8510e268359264d83434e21514e`
+- Completed contract: Issue #1160 / PR #1163
+- Next implementation Issue: #1162
+- Deterministic source branch: `agent/dashboard-widgets-trusted-render-source-compiler-v1`
 
-## #1159 / #1161 terminal evidence
+## #1160 / #1163 terminal evidence
 
-- corrected exact head `109f1f57c6a8994e941189c7584f2d760f3f9797`
-- Governance `35658839373` PASS
-- Architecture `35658839531` PASS
-- zero unresolved review threads; zero behind
-- merged as `9c5e2143978ba6644abc03eafa1ef1522fcc53da`
-- Issue #1159 closed completed
-- RB-0025 reconciled PASS
+- exact head `98d8d154febf1fbc00589d8fb90eea857a3af8e6`
+- Governance `35659598400` PASS
+- Architecture `35659598251` PASS
+- zero unresolved review threads; zero behind at merge
+- merged as `83e876a7485de8510e268359264d83434e21514e`
+- Issue #1160 closed completed
+- RB-0026 reconciled PASS
 
-## #1160 render-source contract
-
-Exact V1 authored shape:
-
-- `widget.render_source.kind = "component_blueprint"`
-- lowercase RFC 4122 `blueprint_id`
-- positive `blueprint_revision`
-- at most 128 `bindings`
-- each binding uses `source: "literal"` plus a scalar/list value
-- authored binding keys must exactly equal the resolved Blueprint `bindingSchema` keys
-- binding types must match `string|int|float|bool|string_list|int_list`
-- resolved Blueprint must be owned by Surface 10
-- no null/optional binding semantics are invented in V1
-- provider/context/query/remote binding sources fail closed
-
-The future compiler may construct shared `RenderInput` but may not execute `RendererInterface::render()`.
-
-## Next source tranche
-
-Issue #1162 is dependency-gated on the #1160 contract merge.
-
-Verdict after successful contract merge:
+## Promoted next tranche
 
 `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1`
 
+Issue #1162 is READY_TO_CLAIM.
+
+The compiler tranche may only:
+- compile the exact `widget.render_source` contract;
+- resolve Blueprints via `ComponentBlueprintRegistryInterface`;
+- require Surface 10 Blueprint ownership;
+- validate literal-only bindings against exact shared Blueprint schema keys/types;
+- produce a typed Surface 10 descriptor sufficient to construct shared `RenderInput`;
+- wire the compiler as a module-local service and make registration compilation fail closed on invalid render source;
+- add focused unit tests.
+
 ## Still blocked
 
-- renderer execution / HTML output
+- `RendererInterface::render()`
+- HTML output
 - provider/query/source execution
 - remote/Safe HTTP/iframe execution
 - Dashboard hooks / `wp_add_dashboard_widget`
 - Definition/user-preference mutation
-- full-parity certification/deploy/release
+- full-parity runtime/product certification, deploy or release
 
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1163. Merge only on terminal green evidence.
+Claim Issue #1162 from fresh exact current main on `agent/dashboard-widgets-trusted-render-source-compiler-v1` and implement only its seven authorized source/test files.
