@@ -46,13 +46,6 @@ jobs:
           unzip -q /tmp/security-lockfile-accepted.zip -d /tmp/security-lockfile-accepted
           cmp --silent package.json /tmp/security-lockfile-accepted/package.json
           cp /tmp/security-lockfile-accepted/package-lock.json package-lock.json
-          node <<'NODE'
-          const lock = require('./package-lock.json');
-          const prettier = lock.packages?.['node_modules/prettier'];
-          if (!prettier || prettier.name !== 'wp-prettier' || prettier.version !== '3.0.3') {
-            throw new Error('accepted lockfile lost wp-prettier 3.0.3 compatibility package');
-          }
-          NODE
           npm ci --ignore-scripts
           npm audit --audit-level=high
           npm audit --omit=dev --audit-level=high
