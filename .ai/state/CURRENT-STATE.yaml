@@ -2,25 +2,20 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: WAITING_EXTERNAL
-observed_main_sha: d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46
-observed_main_source: "PR #1136 merged Dashboard Widgets Central Pro Activation V1 shared-truth closeout"
-active_issue: "#1137"
-active_pr: "#1139"
-active_branch: supervisor/dashboard-widgets-wordpress-registration-transition-audit-v1
-current_milestone: "Dashboard Widgets exact-main WordPress dashboard registration transition audit V1"
+observed_main_sha: 2e28666372899e2547ff89c0986812cd4ea2aa42
+observed_main_source: "PR #1140 merged Dashboard Widgets registration descriptor/compiler foundation V1"
+active_issue: "#1141"
+active_pr: "#1142"
+active_branch: supervisor/dashboard-widgets-registration-descriptor-closeout-v1
+current_milestone: "Dashboard Widgets registration descriptor/compiler foundation V1 post-merge shared-truth reconciliation"
 milestone_status: WAITING_EXTERNAL
-last_completed_milestone: "Issue #1135 / PR #1136 merged as d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46; Central Pro Activation V1 shared truth reconciled"
-next_safe_action: "Resolve PR #1139 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. After merge, Issue #1138 becomes the next bounded prerequisite source slot."
-waiting_external: "PR #1139 exact-head Governance/Architecture validation"
-next_planned_slot:
-  issue: "#1138"
-  slot_id: dashboard-widgets-registration-descriptor-foundation-v1
-  claim_branch: agent/dashboard-widgets-registration-descriptor-foundation-v1
-  claim_rule: "Do not claim until #1137 audit PR merges with READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1."
+last_completed_milestone: "Issue #1138 / PR #1140 merged as 2e28666372899e2547ff89c0986812cd4ea2aa42; exact head a201f2a481627ae82595aaec167edcf9419a7856 passed all applicable exact-head gates"
+next_safe_action: "Resolve PR #1142 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if applicable checks are terminal green, branch is current and review threads are zero. After merge, resolve fresh exact main and run a separate transition audit before any additional Surface 10 runtime prerequisite."
+waiting_external: "PR #1142 exact-head Governance/Architecture validation"
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0015
+    - RB-0017
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -44,9 +39,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Direct WordPress Dashboard registration is BLOCKED at this transition."
-  - "Audit verdict: READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1 only."
-  - "Native context allowlist: normal|side|column3|column4."
-  - "Native priority allowlist: high|core|default|low."
-  - "Render/control callbacks remain provider-only and are not authorized in #1138."
-  - "Full-parity RUNTIME_CERTIFIED remains unpromoted."
+  - "Surface 10 bounded read-only Runtime Foundation, Module/Ability exposure, central Pro activation and registration descriptor/compiler foundation are merged."
+  - "Direct WordPress Dashboard registration remains blocked."
+  - "No renderer/provider execution, visibility policy, mutation, shared Platform change or full-parity certification is promoted."
+  - "Any next Surface 10 prerequisite requires a fresh exact-main audit after this closeout merges."

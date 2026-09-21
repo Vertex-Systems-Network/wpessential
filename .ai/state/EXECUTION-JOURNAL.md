@@ -97,3 +97,13 @@ Rules:
 - Safe prerequisite verdict: `READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1`.
 - Issue #1138 opened as dependency-gated descriptor/compiler slot on `agent/dashboard-widgets-registration-descriptor-foundation-v1`.
 - Native registration context/priority metadata is allowlisted, while render/control provider execution and WordPress hook registration remain frozen.
+
+## 2026-09-21 — Dashboard Widgets registration descriptor/compiler foundation V1 merged
+
+- WordPress registration transition audit Issue #1137 / PR #1139 merged as `7f8713c0894ed0465412cfc505789027d76cb4d9`.
+- Issue #1138 / PR #1140 completed from exact source head `a201f2a481627ae82595aaec167edcf9419a7856`.
+- Exact-head gates PASS: Governance `35639142764`, Architecture `35639142333`, PHP Quality `35639142769`, Platform Matrix `35639142728`, Distributable Package `35639142823`.
+- PR #1140 merged as `2e28666372899e2547ff89c0986812cd4ea2aa42`; Issue #1138 closed.
+- Surface 10 now has a fail-closed typed registration descriptor/compiler and module-local compiler service.
+- Direct WordPress Dashboard hooks, renderer/provider execution, visibility policy, mutation and full-parity certification remain blocked/separately gated.
+- Issue #1141 opened for mandatory post-merge shared-truth reconciliation before any further Surface 10 transition.
