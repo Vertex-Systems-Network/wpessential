@@ -179,13 +179,15 @@ These commercial and bounded evidence gates are provider-neutral local architect
 
 Every Supervisor/Worker `start`, `continue` or `resume` cycle follows this mandatory hard-gated order from `AUTO-AGENT.md`:
 
-1. refresh exact current `main`;
-2. inspect and continue/solve accepted **OPEN Issues first**;
-3. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
-4. confirm no accepted actionable Issue/PR/MR path is being bypassed;
-5. re-read active deterministic claims and the coordination queue;
-6. only then start or claim new dependency-ready development;
-7. after the cycle reaches a stable final state, reconcile this complete 56 / 56 README dashboard before reporting completion.
+1. read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
+2. refresh exact current `main` and reconcile stale compact state;
+3. inspect and continue/solve accepted **OPEN Issues first**;
+4. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
+5. confirm no accepted actionable Issue/PR/MR path is being bypassed;
+6. re-read active deterministic claims, the coordination queue and Runner Benchmark;
+7. execute one bounded logical milestone by default; never tight-poll CI/status endpoints;
+8. before reporting completion/blocked/waiting, persist compact durable state;
+9. reconcile this complete 56 / 56 README dashboard only when module/public delivery truth changed or at a terminal product milestone/integration closeout.
 
 New development is forbidden while an accepted actionable Issue or PR/MR path is being bypassed unless repository evidence explicitly marks that path blocked or superseded.
 
@@ -373,13 +375,13 @@ The authoritative queue is `config/coordination/agent-work-queue.json`.
 
 Start WPEssential Supervisor in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Refresh exact current main, solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then active deterministic claim branches and the coordination queue before starting new work. New development must not bypass an accepted actionable Issue or PR/MR. The Supervisor owns shared truth, audit gates, merge serialization and complete 56 / 56 README progress/timeline reconciliation.
+Read `AUTO-AGENT.md` completely. Read compact `.ai/state` first, refresh exact current main, solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then active deterministic claims, coordination queue and Runner Benchmark before new work. New development must not bypass an accepted actionable Issue or PR/MR. Default to one logical milestone per user turn, never tight-poll CI, persist durable compact state before reporting completion/blocked/waiting, and reconcile the complete 56 / 56 README dashboard only when its delivery-truth trigger applies.
 
 ### Workers
 
 Start WPEssential Worker in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth. Complete 56-module README progress/timeline changes are reported as an Integration Requirement.
+Read `AUTO-AGENT.md` completely. Read compact `.ai/state` first, refresh exact current main, inspect/continue OPEN Issues first and OPEN PRs/MRs second, then inspect the coordination queue and Runner Benchmark only after those gates are clear. Workers must not duplicate accepted work or edit Supervisor-owned shared truth, must not tight-poll CI, and must report README reconciliation as an Integration Requirement only when the delivery-truth trigger applies.
 
 RC1 implementation Lanes A/B/C are integrated and remain non-GA. Bounded P-006 Waves 1A–1M remain terminal at **46 executed / 45 PASS / 0 FAIL / 1 INCONCLUSIVE**. Queue v76 records the #1055 FP-49…52 applicability-review closeout and exposes **no Supervisor-claimable P-006 execution slot**. FP-49/51/52 are dependency-ready for separately authorized future runtime evidence; FP-50 requires a non-runtime expectation decision first. No FP-49…52 fixture has executed. #947 remains independent-review-only. ADR-0010 remains Proposed and permanent P-001/CF remains uncertified. Security issue #858 remains open for broader required-CI policy reconciliation.
 

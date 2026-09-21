@@ -5,13 +5,13 @@ Sources: **Issue #451 + Issue #455 / owner instructions 2026-09-10**
 
 ## Purpose
 
-Every meaningful WPEssential AI-Native engineering query/work cycle must leave a readable module-level delivery view in `README.md` before the Supervisor reports the query/cycle final.
+Every WPEssential AI-Native cycle that changes module lifecycle/progress/timeline/public delivery truth, and every terminal product milestone/integration closeout, must leave a readable module-level delivery view in `README.md` before the Supervisor reports that product-delivery milestone final.
 
 The README module dashboard is shared engineering truth, not a cosmetic status widget.
 
 ## Mandatory complete 56-surface dashboard
 
-The README closeout dashboard must contain **all 56 canonical product surfaces on every meaningful repository-changing cycle**.
+When this contract's README trigger applies, the closeout dashboard must contain **all 56 canonical product surfaces**. Governance/security/coordination-only cycles that do not change module delivery truth reconcile compact AI state instead and do not rewrite the entire dashboard solely for churn.
 
 The canonical names, numbers and order come from:
 
@@ -94,7 +94,7 @@ Planning status such as `ATOMIC_INVENTORY_COMPLETE`, `OPTION_CONTRACT_COMPLETE`,
 
 ## Final-query gate
 
-Before a Supervisor sends a final response for a meaningful engineering query/cycle that changed repository state, it must:
+Before a Supervisor sends a final response for a cycle where this README trigger applies, it must:
 
 1. resolve exact current `main`;
 2. reconcile accepted open Issues first;

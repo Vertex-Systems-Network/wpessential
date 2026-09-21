@@ -3,6 +3,12 @@ name: Architecture Guards
 on:
   pull_request:
     paths:
+      - '.ai/**'
+      - 'AGENTS.md'
+      - 'AUTO-AGENT.md'
+      - 'docs/AI/**'
+      - 'docs/ENGINEERING-EXECUTION-GOVERNANCE.md'
+      - 'config/coordination/**'
       - 'config/architecture/**'
       - 'config/product/**'
       - 'tools/architecture/**'
@@ -25,6 +31,12 @@ on:
     branches:
       - 'implementation/**'
     paths:
+      - '.ai/**'
+      - 'AGENTS.md'
+      - 'AUTO-AGENT.md'
+      - 'docs/AI/**'
+      - 'docs/ENGINEERING-EXECUTION-GOVERNANCE.md'
+      - 'config/coordination/**'
       - 'config/architecture/**'
       - 'config/product/**'
       - 'tools/architecture/**'
@@ -251,6 +263,7 @@ jobs:
             tests/Smoke/wordpress-abilities-bridge-smoke.php \
             tests/Smoke/engineering-contracts-smoke.php \
             tests/Smoke/security-ci-permissions-contract.php \
+            tests/Smoke/ai-timeout-resilient-state-contract.php \
             tests/Smoke/runner-benchmark-terminal-p006-workflows-contract.php \
             tests/Smoke/compiled-registration-persistence-smoke.php \
             tests/Smoke/compiled-registration-scale-smoke.php \

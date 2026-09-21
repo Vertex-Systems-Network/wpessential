@@ -1,5 +1,19 @@
 # WPEssential — Engineering Checkpoint
 
+## Resume-source policy update — 2026-09-21
+
+This file is now **long-form historical engineering evidence**, not the mandatory compact resume source for every AI turn.
+
+For every `start`, `continue`, `resume`, interrupted session or message-delivery timeout, read first:
+
+1. `.ai/state/CURRENT-STATE.yaml`;
+2. `.ai/state/LAST-CHECKPOINT.md`;
+3. exact current repository Issue/PR/main truth;
+4. queue + Runner Benchmark.
+
+Read only the relevant section of this historical file when a specific evidence/history question requires it. Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`.
+
+
 Checkpoint date: **2026-09-20 UTC**
 Current integration anchor before B6d FP-90 disposable DB snapshot prerequisite closeout: **`main @ 85b5a2eb82a71bab3e42d8c7d38dedcbf13654c7`**
 RC1 Supervisor closeout: **PR #1024**
@@ -69,14 +83,17 @@ B6d FP-90 disposable DB snapshot authorization: **`GOV-P006-B6D-FP90-DISPOSABLE-
 
 Every `start`, `continue` and `resume` cycle must:
 
-1. resolve exact current `main`;
-2. classify OPEN Issues first;
-3. reconcile eligible OPEN PRs/MRs second;
-4. inspect active deterministic claims and `config/coordination/agent-work-queue.json`;
-5. execute only a valid bounded slot;
-6. require exact-head applicable CI before merge;
-7. serialize shared/global writes through the Supervisor;
-8. reconcile README/shared truth at a stable integration closeout.
+1. read compact `.ai/state` resume files;
+2. resolve exact current `main` and reconcile stale compact state;
+3. classify OPEN Issues first;
+4. reconcile eligible OPEN PRs/MRs second;
+5. inspect active deterministic claims, `config/coordination/agent-work-queue.json` and Runner Benchmark;
+6. execute only one valid bounded logical milestone by default;
+7. never tight-poll CI/status endpoints; persist `WAITING_EXTERNAL` when required CI remains running;
+8. require exact-head applicable CI before merge;
+9. serialize shared/global writes through the Supervisor;
+10. reconcile compact durable state before reporting completion/blocked/waiting;
+11. reconcile README full dashboard only when module/public delivery truth changed or at terminal product closeout.
 
 Repository/runtime evidence outranks conversational memory.
 
@@ -584,7 +601,7 @@ Detailed historical evidence remains in:
 - `docs/QUALITY/`;
 - Git history and merged PR/Issue evidence.
 
-This checkpoint is intentionally a compact **current-state resume document**, not a replacement for historical records.
+This checkpoint has grown into **long-form historical evidence**. Compact current-state resume truth now lives under `.ai/state/`; this file is consulted selectively for historical evidence.
 
 
 ## P-006 Wave 1M FP-58 closeout

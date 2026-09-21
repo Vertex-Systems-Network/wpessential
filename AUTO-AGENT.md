@@ -2,7 +2,7 @@
 
 This file is the entrypoint for autonomous multi-agent work on WPEssential.
 
-It does **not** replace `AGENTS.md`, `CONTRIBUTING.md`, `CHECKPOINT.md`, `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`, approval/consent rules, ownership contracts, dependency contracts or quality gates. Those remain authoritative.
+It does **not** replace `AGENTS.md`, `CONTRIBUTING.md`, `.ai/state/CURRENT-STATE.yaml`, `.ai/state/LAST-CHECKPOINT.md`, `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md`, historical `CHECKPOINT.md`, `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`, approval/consent rules, ownership contracts, dependency contracts or quality gates. Those remain authoritative.
 
 ## Goal
 
@@ -10,17 +10,19 @@ A newly started agent should not need the repository owner to manually choose `T
 
 After startup, the agent must:
 
-1. refresh exact current repository truth;
-2. inspect, triage and continue/solve accepted **OPEN Issues first**;
-3. inspect, repair, review and merge eligible **OPEN PRs/MRs second**;
-4. determine its role;
-5. read `config/coordination/agent-work-queue.json` and active deterministic claim branches;
-6. select the highest-priority valid free work slot only after existing Issue/PR/MR work is reconciled;
-7. claim it without racing another agent;
-8. work only inside that slot's allowed scope;
-9. submit a PR/MR with exact-head evidence;
-10. let the Supervisor/Integrator decide merge order from dependencies and current main;
-11. at the end of the completed work cycle, reconcile README status including the complete **56 / 56 canonical module** progress/timeline dashboard before the engineering query/cycle is reported final.
+1. read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
+2. refresh exact current repository truth and reconcile stale compact state;
+3. inspect, triage and continue/solve accepted **OPEN Issues first**;
+4. inspect, repair, review and merge eligible **OPEN PRs/MRs second**;
+5. determine its role;
+6. read `config/coordination/agent-work-queue.json`, Runner Benchmark and active deterministic claim branches;
+7. select the highest-priority valid free work slot only after existing Issue/PR/MR work is reconciled;
+8. claim it without racing another agent;
+9. work only inside that slot's allowed scope and one logical milestone;
+10. submit/update a PR/MR with exact-head evidence when applicable;
+11. let the Supervisor/Integrator decide merge order from dependencies and current main;
+12. before reporting completion/blocked/waiting, reconcile compact state and changed queue/Runner Benchmark truth;
+13. reconcile the full **56 / 56** README dashboard only when module/public delivery truth changed or at a terminal product milestone closeout.
 
 ## Mandatory Issues-first / PR-MR-second preflight
 
@@ -42,9 +44,13 @@ Rules:
 - Merge order remains dependency-safe and exact-head certified; "PRs second" does not mean blindly merging every PR.
 - Critical/security/recovery incidents may stop the line under existing governance, but their Issue/PR evidence must still be reconciled durably.
 
-## Mandatory end-of-cycle README reconciliation
+## Conditional README reconciliation
 
-After a meaningful work cycle reaches a stable final state (merged work, resolved issue, completed audit, or an explicitly documented blocked state), the Supervisor must update `README.md` before reporting the engineering query/cycle final.
+The complete 56-surface README dashboard remains mandatory when module lifecycle/progress/timeline/public delivery truth changed, or at a terminal product milestone/integration closeout.
+
+A governance/security/coordination-only cycle that does not change module delivery truth must reconcile the compact AI state and affected governance/public-status fields, but must not rewrite the full 56-row table merely to create churn.
+
+When README reconciliation is applicable, the Supervisor must update `README.md` before reporting that product-delivery milestone final.
 
 README closeout must include:
 
@@ -87,7 +93,7 @@ Timeline rules:
 - If an exact historical timestamp has not been audited, use `UNKNOWN / pending evidence audit`.
 - Planning lifecycle labels such as `ATOMIC_INVENTORY_COMPLETE` are not implementation percentages.
 
-The README update is part of engineering completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports complete 56-module README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
+When the README trigger above is applicable, the README update is part of product-delivery completion, not an optional cosmetic follow-up. If a Worker cannot edit shared truth, it reports complete 56-module README progress/timeline reconciliation as an Integration Requirement and the Supervisor performs it after merge serialization.
 
 ## Important role rule
 
@@ -106,11 +112,13 @@ Use exactly this intent:
 ```text
 Start WPEssential Supervisor in AUTO mode.
 Read AUTO-AGENT.md and follow it completely.
-Refresh exact current main; solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then reconcile active claim branches and config/coordination/agent-work-queue.json before starting any new development.
+Read .ai/state/CURRENT-STATE.yaml and .ai/state/LAST-CHECKPOINT.md first, then resolve exact current main.
+Solve/continue accepted OPEN Issues first, inspect/fix/review/merge eligible OPEN PRs/MRs second, then reconcile active claim branches, config/coordination/agent-work-queue.json and Runner Benchmark before new development.
 Do not start new development while an accepted actionable Issue or PR/MR path is being bypassed.
+Default to one user continue/resume turn = one logical milestone. Do not tight-poll CI; use one consolidated status refresh per milestone, persist WAITING_EXTERNAL when needed, and resume on the next user turn.
 Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
-At the end of the completed work cycle, update README current status and its complete 56 / 56 canonical module progress/timeline table — including progress/status, start time, completion forecast, actual completion time, evidence and next gate — before reporting the engineering query/cycle final.
+Before reporting completion/blocked/waiting, update compact durable state. Update the complete 56 / 56 README dashboard only when module/public delivery truth changed or at a terminal product milestone closeout.
 ```
 
 The Supervisor must not pre-create worker branches. Workers claim their own slots.
@@ -122,8 +130,10 @@ Use exactly this intent:
 ```text
 Start WPEssential Worker in AUTO mode.
 Read AUTO-AGENT.md and follow it completely.
-Refresh exact current main; inspect/continue accepted OPEN Issues first and inspect/fix eligible OPEN PRs/MRs second. Do not duplicate accepted work already represented there and do not start new development while an actionable accepted path is being bypassed.
-Then inspect config/coordination/agent-work-queue.json and claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
+Read .ai/state/CURRENT-STATE.yaml and .ai/state/LAST-CHECKPOINT.md first, then resolve exact current main.
+Inspect/continue accepted OPEN Issues first and inspect/fix eligible OPEN PRs/MRs second. Do not duplicate accepted work already represented there and do not start new development while an actionable accepted path is being bypassed.
+Then inspect config/coordination/agent-work-queue.json and Runner Benchmark and claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
+Default to one logical milestone per user turn and never tight-poll CI/status endpoints.
 Do not ask me which module to work on unless repository evidence contains a genuine unresolved decision.
 ```
 
@@ -143,7 +153,9 @@ Before branch creation:
 - stop new-development selection if an accepted actionable Issue/PR/MR path still requires reconciliation;
 - read root `AGENTS.md`;
 - read `CONTRIBUTING.md`;
-- read current `CHECKPOINT.md`;
+- read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
+- read `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md`;
+- consult only relevant historical `CHECKPOINT.md` sections when needed;
 - read `docs/PROJECT-STATE-AND-ADOPTION.md`;
 - read `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`;
 - read the relevant approval/consent and canonical ownership/dependency files;
@@ -210,12 +222,12 @@ The Supervisor performs the mandatory Issues-first / PR-MR-second hard preflight
 5. takes the highest-priority valid `SUPERVISOR_ONLY` slot, if any;
 6. otherwise may claim the highest-priority valid `ANY` slot;
 7. does not create branches for Workers;
-8. periodically re-reads current Issue/PR/MR/main state when the user invokes or continues the Supervisor session;
+8. on each user invocation reads compact state, then re-resolves current Issue/PR/MR/main state; it does not repeatedly poll unchanged CI/status inside the same milestone;
 9. reviews submitted work against current main and dependency order;
 10. applies serialized shared-file Integration Requirements;
 11. merges only merge-ready exact heads;
-12. reconciles queue/shared progress after accepted merges;
-13. updates README complete 56 / 56 module progress/status/timeline before final query/cycle reporting, including evidence-backed start time where known, non-binding completion forecast, actual completion time, latest evidence and next gate.
+12. reconciles compact state, queue and Runner Benchmark after accepted merges;
+13. updates README complete 56 / 56 module progress/status/timeline only when the README trigger applies, including evidence-backed start time where known, non-binding completion forecast, actual completion time, latest evidence and next gate.
 
 A Worker finishing first does not automatically mean it merges first. Merge order follows dependency and shared-truth safety.
 
@@ -256,7 +268,7 @@ only together with:
 - unresolved items and risks;
 - next safe action.
 
-A Worker must additionally identify whether complete 56-module README/shared progress/timeline reconciliation is required. The Supervisor may call a work cycle fully complete only after the README has all 56 canonical module rows current or the inability to update it is explicitly recorded as a blocker.
+A Worker must additionally identify whether the README delivery-truth trigger applies. When it applies, the Supervisor may call that product-delivery milestone fully complete only after the README has all 56 canonical module rows current or the inability to update it is explicitly recorded as a blocker. When it does not apply, compact durable state reconciliation is the mandatory closeout.
 
 The Supervisor must review evidence rather than trusting the phrase itself.
 
@@ -265,8 +277,8 @@ The Supervisor must review evidence rather than trusting the phrase itself.
 After a Worker PR/MR is merged:
 
 - authoritative current main changes;
-- the Supervisor reconciles durable progress/queue truth when needed;
-- the Supervisor updates the complete 56 / 56 README module progress/status/timeline dashboard as part of cycle closeout;
+- the Supervisor reconciles `.ai/state/CURRENT-STATE.yaml`, `.ai/state/LAST-CHECKPOINT.md`, durable progress/queue truth and Runner Benchmark as needed;
+- the Supervisor updates the complete 56 / 56 README module progress/status/timeline dashboard only when module/public delivery truth changed or a terminal product milestone closeout requires it;
 - other active agents must incorporate relevant new main changes before final certification;
 - old exact-head CI does not certify a new synchronized head;
 - no branch may be force-rewritten to hide integration conflicts.

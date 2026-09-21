@@ -53,6 +53,24 @@ Material expansion indicators include:
 
 Do not continue merely to finish the original task label.
 
+## 3.1 Timeout-resilient AI milestone budget
+
+Policy `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001` in `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md` is mandatory for AI-driven work.
+
+Default execution boundary:
+
+- one user `continue` / `resume` turn = one logical milestone;
+- related read-only remote calls are batched where supported;
+- tight CI/status polling is forbidden;
+- one consolidated CI/status refresh per milestone is the default;
+- if required CI remains running, persist `WAITING_EXTERNAL` with exact run/source identity and stop the milestone;
+- a later `continue` performs one new consolidated refresh;
+- before reporting completion/blocked/waiting, update compact durable AI state and any changed queue/Runner Benchmark truth.
+
+A second status refresh in the same milestone is exceptional and must be justified by a material security, merge, incident/recovery, or provider state transition required for a safe decision.
+
+A message-delivery timeout never proves that a repository action failed and never authorizes repeating it. Verify repository evidence first.
+
 ## 4. No unrelated cleanup
 
 During feature/fix work do not automatically:
