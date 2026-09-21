@@ -1,17 +1,17 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: VERIFYING
+state_status: WAITING_EXTERNAL
 observed_main_sha: cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088
 observed_main_source: "PR #1142 merged Dashboard Widgets registration descriptor/compiler foundation shared-truth closeout"
 active_issue: "#1143"
-active_pr: null
+active_pr: "#1145"
 active_branch: supervisor/dashboard-widgets-visibility-policy-transition-audit-v1
 current_milestone: "Dashboard Widgets exact-main visibility policy foundation transition audit V1"
-milestone_status: VERIFYING
+milestone_status: WAITING_EXTERNAL
 last_completed_milestone: "Issue #1141 / PR #1142 merged as cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088; registration descriptor/compiler shared truth reconciled"
-next_safe_action: "Open and validate the #1143 visibility-policy transition audit PR. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1144 before audit promotion."
-waiting_external: "visibility-policy audit PR exact-head validation once opened"
+next_safe_action: "Resolve PR #1145 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1144 before audit promotion."
+waiting_external: "PR #1145 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1144"
   slot_id: dashboard-widgets-visibility-policy-contract-foundation-v1
