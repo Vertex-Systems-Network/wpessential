@@ -1,9 +1,9 @@
 {
-  "schema_version": 112,
+  "schema_version": 113,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "d3817ee2ddc10a4c625f2b0e47ddf1d9b90cdf46",
-  "mode": "DASHBOARD_WIDGETS_WORDPRESS_REGISTRATION_TRANSITION_AUDIT",
-  "source_issue": "#1137",
+  "queue_anchor_main_sha": "2e28666372899e2547ff89c0986812cd4ea2aa42",
+  "mode": "DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_FOUNDATION_MERGED_NEXT_TRANSITION_AUDIT",
+  "source_issue": "#1141",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -121,8 +121,9 @@
     "1131": "COMPLETED_ON_PR_1133_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
     "1132": "COMPLETED_ON_PR_1134_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION",
     "1135": "COMPLETED_ON_PR_1136_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_RECONCILIATION",
-    "1137": "ACTIVE_DASHBOARD_WIDGETS_WORDPRESS_REGISTRATION_TRANSITION_AUDIT",
-    "1138": "OPEN_DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_FOUNDATION",
+    "1137": "COMPLETED_ON_PR_1139_DASHBOARD_WIDGETS_WORDPRESS_REGISTRATION_TRANSITION_AUDIT",
+    "1138": "COMPLETED_ON_PR_1140_DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_FOUNDATION",
+    "1141": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_RECONCILIATION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1851,7 +1852,7 @@
       "slot_id": "dashboard-widgets-registration-descriptor-foundation-v1",
       "title": "Dashboard Widgets bounded registration descriptor/compiler foundation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_FOUNDATION_V1",
       "source": "Issue #1138 / audit Issue #1137",
       "dependencies": ["Issue #1137 audit PR merged with READY_FOR_REGISTRATION_DESCRIPTOR_FOUNDATION_V1"],
@@ -1878,7 +1879,16 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-registration-descriptor-foundation-v1",
-      "close_condition": "Fail-closed registration descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, no WordPress hook/provider/render execution and no scope widening"
+      "close_condition": "Fail-closed registration descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, no WordPress hook/provider/render execution and no scope widening",
+      "terminal_result": "PASS_REGISTRATION_DESCRIPTOR_FOUNDATION_V1",
+      "source_head_exact_verification": "a201f2a481627ae82595aaec167edcf9419a7856",
+      "governance_run_exact_verification": 35639142764,
+      "architecture_run_exact_verification": 35639142333,
+      "php_quality_run_exact_verification": 35639142769,
+      "platform_matrix_run_exact_verification": 35639142728,
+      "package_run_exact_verification": 35639142823,
+      "merge_sha": "2e28666372899e2547ff89c0986812cd4ea2aa42",
+      "closeout_pr": 1140
     }
   ],
   "historical_closeout": {
