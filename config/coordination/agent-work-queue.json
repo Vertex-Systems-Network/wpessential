@@ -1,9 +1,9 @@
 {
-  "schema_version": 108,
+  "schema_version": 109,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "cd03b5002e1562e7f04d8b37018eea8638dd4a24",
-  "mode": "DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
-  "source_issue": "#1125",
+  "queue_anchor_main_sha": "29ad66ca2984d89a3ae7e949679a62d35ca2c357",
+  "mode": "DASHBOARD_WIDGETS_MODULE_ABILITY_EXPOSURE_MERGED_NEXT_ACTIVATION_AUDIT",
+  "source_issue": "#1129",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -115,8 +115,9 @@
     "1119": "COMPLETED_ON_AUDIT_PR_MERGE_DASHBOARD_WIDGETS_RUNTIME_TRANSITION",
     "1120": "COMPLETED_ON_PR_1122_DASHBOARD_WIDGETS_READ_RUNTIME_FOUNDATION",
     "1123": "COMPLETED_ON_PR_1124_DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_RECONCILIATION",
-    "1125": "ACTIVE_DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
-    "1126": "OPEN_DASHBOARD_WIDGETS_READ_MODULE_ABILITY_EXPOSURE",
+    "1125": "COMPLETED_ON_PR_1127_DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
+    "1126": "COMPLETED_ON_PR_1128_DASHBOARD_WIDGETS_READ_MODULE_ABILITY_EXPOSURE",
+    "1129": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_MODULE_ABILITY_RECONCILIATION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1762,7 +1763,7 @@
       "slot_id": "dashboard-widgets-read-module-ability-exposure-v1",
       "title": "Dashboard Widgets bounded read-only Module/Ability Exposure V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1",
       "source": "Issue #1126 / audit Issue #1125",
       "dependencies": ["Issue #1125 audit PR merged with READY_FOR_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1"],
@@ -1787,7 +1788,16 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-read-module-ability-exposure-v1",
-      "close_condition": "Bounded read-only Module/Ability exposure source merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, no central activation and no scope widening"
+      "close_condition": "Bounded read-only Module/Ability exposure source merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, no central activation and no scope widening",
+      "terminal_result": "PASS_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1",
+      "source_head_exact_verification": "1a463e209ad3fdaf054487b58920b9e148245a75",
+      "governance_run_exact_verification": 35620989535,
+      "architecture_run_exact_verification": 35620989489,
+      "php_quality_run_exact_verification": 35620989526,
+      "platform_matrix_run_exact_verification": 35620989554,
+      "package_run_exact_verification": 35620989537,
+      "merge_sha": "29ad66ca2984d89a3ae7e949679a62d35ca2c357",
+      "closeout_pr": 1128
     }
   ],
   "historical_closeout": {
