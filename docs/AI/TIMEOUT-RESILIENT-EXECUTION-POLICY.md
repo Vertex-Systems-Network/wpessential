@@ -1,7 +1,7 @@
 # AI-Native Timeout-Resilient Execution Policy
 
-Status: **ACTIVE / MANDATORY GOVERNANCE**  
-Policy ID: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`  
+Status: **ACTIVE / MANDATORY GOVERNANCE**
+Policy ID: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 Source: **Issue #1115**
 
 ## Purpose
