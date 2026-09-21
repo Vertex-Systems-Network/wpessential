@@ -41,4 +41,3 @@ Rules:
 - Issue #1120 opened as the single bounded next source tranche on `agent/dashboard-widgets-read-runtime-foundation-v1`; claim is forbidden until the audit PR merges.
 - PR #1121 opened for the audit/queue transition.
 - RB-0007 is the exact-head merge gate; no tight CI polling.
-
