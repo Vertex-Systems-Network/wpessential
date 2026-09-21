@@ -1,9 +1,9 @@
 {
-  "schema_version": 117,
+  "schema_version": 118,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "b9e971653db0bbab177784c0b501c4e03269ea5d",
-  "mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_TRANSITION_AUDIT",
-  "source_issue": "#1153",
+  "queue_anchor_main_sha": "de9edd9c30deb261cb135e6a88837bfdcdf9d123",
+  "mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_READY_TO_CLAIM",
+  "source_issue": "#1156",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -153,8 +153,9 @@
     "1147": "COMPLETED_ON_PR_1149_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
     "1148": "COMPLETED_ON_PR_1150_DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
     "1151": "COMPLETED_ON_PR_1152_AI_NATIVE_MANDATORY_README_PROGRESS",
-    "1153": "ACTIVE_DASHBOARD_WIDGETS_POST_README_GOVERNANCE_TRANSITION_AUDIT",
-    "1154": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1"
+    "1153": "COMPLETED_ON_PR_1155_DASHBOARD_WIDGETS_TRUSTED_CONTENT_TRANSITION_AUDIT",
+    "1154": "READY_TO_CLAIM_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
+    "1156": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1153_TO_1154"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3320,7 +3321,7 @@
       "slot_id": "dashboard-widgets-trusted-content-class-contract-v1",
       "title": "Dashboard Widgets bounded trusted content-class descriptor/compiler foundation V1",
       "role": "ANY",
-      "status": "OPEN_DEPENDENCY_GATED",
+      "status": "READY_TO_CLAIM",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
       "source": "Issue #1154 / audit Issue #1153",
       "dependencies": [
@@ -3362,7 +3363,15 @@
         "support_onboarding",
         "icon_link"
       ],
-      "close_condition": "Typed fail-closed trusted content-class descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads and no render/provider/hook/mutation scope widening"
+      "close_condition": "Typed fail-closed trusted content-class descriptor/compiler foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads and no render/provider/hook/mutation scope widening",
+      "dependency_evidence": {
+        "audit_issue": 1153,
+        "audit_pr": 1155,
+        "audit_head": "25c469e7753e9a5f41e7785e0d83fa59dc9f3ea9",
+        "governance_run": 35656112003,
+        "architecture_run": 35656111955,
+        "merge_sha": "de9edd9c30deb261cb135e6a88837bfdcdf9d123"
+      }
     }
   ],
   "historical_closeout": {
