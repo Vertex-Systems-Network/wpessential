@@ -29,6 +29,17 @@ final class AjaxRouteRegistry
         return $this->routes[$type] ?? null;
     }
 
+    public function hasGuestRoutes(): bool
+    {
+        foreach ($this->routes as $route) {
+            if ($route->allowGuests) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /** @return list<string> */
     public function types(): array
     {
