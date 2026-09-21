@@ -1,8 +1,8 @@
 # Dashboard Widgets — Exact-Main Central Pro Activation Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1131**  
-Exact audited main: `bce056cf837f7f34bdff4f876446d9714359f077`  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1131**
+Exact audited main: `bce056cf837f7f34bdff4f876446d9714359f077`
 Decision: **READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1**
 
 ## Current product state
@@ -49,7 +49,7 @@ Issue #1132 must also update regression evidence so:
 
 ## Authorized next tranche
 
-Issue: **#1132 — Dashboard Widgets: bounded central Pro Activation V1**  
+Issue: **#1132 — Dashboard Widgets: bounded central Pro Activation V1**
 Branch: `agent/dashboard-widgets-central-pro-activation-v1`
 
 Allowed files only:
