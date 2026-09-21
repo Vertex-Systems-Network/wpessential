@@ -22,6 +22,11 @@ final class AjaxDispatcher
         private readonly AjaxNonceScope $nonceScope = new AjaxNonceScope(),
     ) {}
 
+    public function allowsGuestRequests(): bool
+    {
+        return $this->routes->hasGuestRoutes();
+    }
+
     public function createNonce(string $type): string
     {
         $route = $this->routes->get(trim($type));
