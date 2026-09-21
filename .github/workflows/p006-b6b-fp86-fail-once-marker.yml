@@ -1,19 +1,6 @@
 name: P-006 B6b FP-86 Fail-Once Marker Prerequisite
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-b6b-fp86-fail-once-marker.yml'
-      - 'tools/p006/p006-b6b-fp86-fail-once-marker.php'
-      - 'tools/p006/p006-b6b-wordpress-setup.sh'
-      - 'frameworks/Contracts/MigrationInterface.php'
-      - 'frameworks/Contracts/MigrationStateStoreInterface.php'
-      - 'frameworks/Platform/Database/DatabaseAdapterInterface.php'
-      - 'frameworks/Platform/Database/NativeWpdbAdapter.php'
-      - 'frameworks/Platform/Database/Migrations/MigrationRegistry.php'
-      - 'frameworks/Platform/Database/Migrations/MigrationRunner.php'
-      - 'frameworks/Platform/Database/Migrations/WpdbMigrationStateStore.php'
-      - 'frameworks/Modules/CustomTables/Migration/Run/Persistence/CreateMigrationRunStoreMigration.php'
   workflow_dispatch:
 
 permissions:
