@@ -150,7 +150,7 @@
     },
     {
       "id": "RB-0004",
-      "source": "Security Issue #1108",
+      "source": "Security Issue #1108 / PR #1111",
       "category": "DEPENDENCY_SECURITY",
       "runner": "GitHub Actions",
       "command_or_workflow": "npm locked-graph audit + architecture/build/package/quality exact-head gates",
@@ -164,15 +164,21 @@
       "expected_minutes": 35,
       "dedup_key": "security-node-deps|issue1108|wp-scripts35-reviewed-overrides",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "PASS",
       "evidence": [
         "Security Lockfile Refresh run 35545469722",
         "artifact 10616492438",
         "artifact digest sha256:38e1ae861354e9614a14277aa2858dc798830681e552f2674325a50de65eefda",
         "candidate dev audit 0 vulnerabilities",
-        "candidate production audit 0 vulnerabilities"
+        "candidate production audit 0 vulnerabilities",
+        "PR #1111 merged as aff745c642246ffd28e12797b29e94112ea0baca",
+        "Architecture Guards run 35603895222 PASS",
+        "Governance Gate run 35603895089 PASS",
+        "Distributable Package run 35603895051 PASS",
+        "Browser E2E Accessibility run 35603895176 PASS",
+        "Security Lockfile Refresh run 35603895143 PASS"
       ],
-      "note": "Immediate exception because high-severity dependency remediation must be verified before merge."
+      "note": "Immediate dependency-security exception completed and merged; the accepted development graph remediation is terminal for PR #1111 exact head and production dependency audit remains clean."
     },
     {
       "id": "RB-0005",
@@ -199,6 +205,28 @@
         "26 terminal P-006 evidence/prerequisite workflows retain workflow_dispatch and expose no pull_request/push/schedule trigger"
       ],
       "note": "Terminal scheduling enforcement is merged. Historical P-006 workflows are manual-dispatch only; future formal dispatch requires a current RB entry and valid current authorization. This PASS concerns CI scheduling governance only."
+    },
+    {
+      "id": "RB-0006",
+      "source": "Issue #1115",
+      "category": "AI_STATE_TIMEOUT_RESILIENCE",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Architecture Guards + Governance Gate exact-head validation",
+      "environment": "supervisor/timeout-resilient-ai-state-v1 exact head",
+      "dependencies": [
+        "compact .ai/state layer",
+        "timeout-resilient execution policy",
+        "queue and Runner Benchmark reconciliation"
+      ],
+      "authorization": "Governance/coordination hardening only; no runtime/destructive/provider/deploy/release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 12,
+      "dedup_key": "ai-timeout-resilience|issue1115|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "CAPTURED",
+      "evidence": [],
+      "note": "Run once at exact-head merge gate. Do not tight-poll; if still running after one consolidated refresh, persist WAITING_EXTERNAL and check again on the next user continue."
     }
   ]
 }
