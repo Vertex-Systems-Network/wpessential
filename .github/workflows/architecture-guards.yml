@@ -20,7 +20,7 @@ on:
       - 'phpcs.xml.dist'
       - 'phpstan.neon.dist'
       - 'phpunit.xml.dist'
-      - '.github/workflows/architecture-guards.yml'
+      - '.github/workflows/**'
   push:
     branches:
       - 'implementation/**'
@@ -42,7 +42,7 @@ on:
       - 'phpcs.xml.dist'
       - 'phpstan.neon.dist'
       - 'phpunit.xml.dist'
-      - '.github/workflows/architecture-guards.yml'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
