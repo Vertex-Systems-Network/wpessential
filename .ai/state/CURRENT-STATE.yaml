@@ -1,20 +1,26 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: READY
-observed_main_sha: e4ca0998dba0c0db1a7778b7a8dafadb55531e5f
-observed_main_source: "PR #1122 merged Dashboard Widgets bounded read-only Runtime Foundation V1"
-active_issue: "#1123"
-active_pr: null
-active_branch: supervisor/dashboard-widgets-runtime-foundation-closeout-v1
-current_milestone: "Dashboard Widgets Runtime Foundation V1 post-merge shared-truth reconciliation"
-milestone_status: VERIFYING
-last_completed_milestone: "Issue #1120 / PR #1122 merged as e4ca0998dba0c0db1a7778b7a8dafadb55531e5f; exact head 143893fcfd9b12828277dc112023e3fb0fa33af3 passed Governance, Architecture, PHP Quality, Platform Matrix and Distributable Package"
-next_safe_action: "Merge the shared-truth closeout for #1123 after exact-head governance/architecture validation. Then resolve fresh main and audit the next Surface 10 transition, likely read-only Module/Ability exposure, before opening any new source implementation slot."
-waiting_external: "post-merge shared-truth closeout PR exact-head validation once opened"
+state_status: WAITING_EXTERNAL
+observed_main_sha: cd03b5002e1562e7f04d8b37018eea8638dd4a24
+observed_main_source: "PR #1124 merged Dashboard Widgets Runtime Foundation V1 shared-truth closeout"
+active_issue: "#1125"
+active_pr: "#1127"
+active_branch: supervisor/dashboard-widgets-module-ability-transition-audit-v1
+current_milestone: "Dashboard Widgets exact-main Module/Ability exposure transition audit V1"
+milestone_status: WAITING_EXTERNAL
+last_completed_milestone: "Issue #1123 / PR #1124 merged as cd03b5002e1562e7f04d8b37018eea8638dd4a24; Surface 10 bounded read-only Runtime Foundation V1 shared truth reconciled"
+next_safe_action: "Resolve PR #1127 current head and perform one consolidated exact-head CI/review/main-divergence refresh. Merge only if all applicable checks are terminal green, branch is current and review threads are zero. After merge, Issue #1126 becomes the next bounded source slot."
+waiting_external: "PR #1127 exact-head Governance/Architecture validation"
+next_planned_slot:
+  issue: "#1126"
+  slot_id: dashboard-widgets-read-module-ability-exposure-v1
+  claim_branch: agent/dashboard-widgets-read-module-ability-exposure-v1
+  claim_rule: "Do not claim until PR #1127 merges with READY_FOR_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1."
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0009
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -38,6 +44,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Surface 10 machine lifecycle remains UX_CONTRACT_COMPLETE; bounded read-only runtime foundation evidence does not promote full-parity RUNTIME_CERTIFIED."
-  - "Module/Ability exposure and WordPress dashboard integration remain separate future transitions."
+  - "Audit verdict is READY_FOR_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1."
+  - "Issue #1126 explicitly forbids wpessential-pro.php central activation; activation remains a later separate transition."
+  - "Full-parity RUNTIME_CERTIFIED remains unpromoted."
   - "A delivery timeout never grants permission to repeat a merge or execute an authorization-gated action."
