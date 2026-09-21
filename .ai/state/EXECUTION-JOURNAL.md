@@ -248,3 +248,23 @@ Rules:
 - `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1` is promoted.
 - Issue #1162 is READY_TO_CLAIM on `agent/dashboard-widgets-trusted-render-source-compiler-v1`.
 - Renderer execution, HTML output, provider/query/source execution, remote/iframe execution, Dashboard hooks, mutation and full-parity certification remain blocked.
+
+
+## 2026-09-22 — Trusted render-source compiler merged; component-render transition audit started
+
+- Issue #1162 / PR #1166 exact head `1ee7d728cddf687138df23e403880c6bba704ae0` passed Governance `35661019438`, Architecture `35661019316`, PHP Quality `35661019306`, Package `35661019321` and Platform Matrix `35661019341`.
+- PR #1166 merged as `d721c09c66cb2e4f8e53fd353ed5b5f36f96f816`; Issue #1162 closed.
+- RB-0027 records terminal PASS for the bounded trusted render-source descriptor/compiler V1.
+- Fresh exact-main audit confirms Surface 10 has no module-local Component Blueprint registrar and no component renderer implementation.
+- The shared dispatcher therefore cannot provide a complete Surface 10 render path yet; missing component renderer remains fail-closed as `DependencyMismatch`.
+- Verdict: `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1`.
+- Issue #1168 opened as the only dependency-gated next tranche; it is contract/planning only and must not invoke rendering or Dashboard hooks.
+
+
+## 2026-09-22 — PR #1169 opened for component-render transition audit
+
+- PR #1169 opened from exact main `d721c09c66cb2e4f8e53fd353ed5b5f36f96f816`.
+- Scope is exactly seven shared-truth/audit files; no runtime/product source files change.
+- Compact state binds `active_pr: "#1169"` before final exact-head validation.
+- RB-0028 is the immediate Governance/Architecture merge gate.
+- Issue #1168 remains dependency-gated and must not be claimed until PR #1169 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1`.

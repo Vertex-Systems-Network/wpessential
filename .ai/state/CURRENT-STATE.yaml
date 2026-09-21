@@ -1,23 +1,30 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: READY
-observed_main_sha: 83e876a7485de8510e268359264d83434e21514e
-observed_main_source: "PR #1163 merged Dashboard Widgets trusted render-source implementation contract V1"
-active_issue: "#1162"
-active_pr: null
-active_branch: agent/dashboard-widgets-trusted-render-source-compiler-v1
-current_milestone: "Dashboard Widgets trusted render-source descriptor/compiler V1"
-milestone_status: READY_TO_CLAIM
-last_completed_milestone: "Issue #1160 / PR #1163 merged as 83e876a7485de8510e268359264d83434e21514e; exact-head Governance and Architecture passed"
-next_safe_action: "Claim Issue #1162 on agent/dashboard-widgets-trusted-render-source-compiler-v1 from fresh exact current main, implement only its seven authorized source/test files, and keep RendererInterface::render, HTML output, providers/sources, Dashboard hooks, mutation and full parity blocked."
+state_status: VERIFYING
+observed_main_sha: d721c09c66cb2e4f8e53fd353ed5b5f36f96f816
+observed_main_source: "PR #1166 merged Dashboard Widgets trusted render-source descriptor/compiler V1"
+active_issue: "#1167"
+active_pr: "#1169"
+active_branch: supervisor/dashboard-widgets-component-render-transition-audit-v1
+current_milestone: "Dashboard Widgets #1162 terminal reconciliation + component-render transition audit V1"
+milestone_status: VERIFYING
+last_completed_milestone: "Issue #1162 / PR #1166 merged as d721c09c66cb2e4f8e53fd353ed5b5f36f96f816; all five exact-head workflows passed"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1169. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1169 exact-head Governance/Architecture validation"
+next_planned_slot:
+  issue: "#1168"
+  slot_id: dashboard-widgets-trusted-component-blueprint-renderer-contract-v1
+  claim_branch: supervisor/dashboard-widgets-trusted-component-renderer-contract-v1
+  claim_rule: "Do not claim until #1167 audit PR merges with READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0028
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -41,7 +48,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0026 reconciled terminal PASS for #1160/#1163."
-  - "Issue #1162 dependency gate is satisfied and the slot is READY_TO_CLAIM."
-  - "V1 render source is Surface-10-owned component_blueprint UUID/revision plus literal-only bindings with exact Blueprint schema-key/type match."
-  - "Renderer execution, HTML output, provider/query/source execution, remote/iframe execution, Dashboard hooks, mutation and full-parity certification remain blocked."
+  - "RB-0027 records terminal PASS for #1162/#1166."
+  - "Surface 10 currently has no module-local Component Blueprint registrar or component renderer implementation."
+  - "Shared BlueprintRendererDispatcher fails closed with DependencyMismatch when a component renderer is missing."
+  - "Audit verdict READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1."
+  - "Renderer invocation, HTML output, Dashboard hooks, provider/query/source execution, remote/iframe execution, mutation and full-parity certification remain blocked."
