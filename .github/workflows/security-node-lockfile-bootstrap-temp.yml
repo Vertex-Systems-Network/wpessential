@@ -59,6 +59,9 @@ jobs:
           if (current.overrides?.['@wordpress/prettier-config'] !== '4.54.0') {
             throw new Error('formatting compatibility override missing');
           }
+          if (current.overrides?.prettier !== 'npm:wp-prettier@3.0.3') {
+            throw new Error('WordPress formatter alias missing');
+          }
           NODE
           cp /tmp/security-lockfile-accepted/package-lock.json package-lock.json
           npm install --package-lock-only --ignore-scripts
