@@ -1,20 +1,26 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: READY
-observed_main_sha: 74b07170b5dc5a654b1148b24224aa781d8123d4
-observed_main_source: "PR #1116 merged timeout-resilience integration baseline"
-active_issue: null
-active_pr: null
-active_branch: null
-current_milestone: "Post-merge shared-truth reconciliation after PR #1116"
-milestone_status: COMPLETE
-last_completed_milestone: "Issue #1115 / PR #1116 merged as 74b07170b5dc5a654b1148b24224aa781d8123d4; exact head daddd0ebb35ae7231921e1a96c04d36189564920 passed Governance Gate, Architecture Guards, and Platform Compatibility Matrix"
-next_safe_action: "Resolve exact current main, then OPEN Issues first and OPEN PRs second. At this baseline #858 is external-admin/nonblocking, #947 is independent worker-only/nonblocking, #1102 is authorization-gated, and no OPEN PRs were observed."
-waiting_external: null
+state_status: WAITING_EXTERNAL
+observed_main_sha: b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9
+observed_main_source: "fresh exact main before Dashboard Widgets runtime transition audit"
+active_issue: "#1119"
+active_pr: "#1121"
+active_branch: supervisor/dashboard-widgets-runtime-transition-audit-v1
+current_milestone: "Dashboard Widgets exact-main runtime transition audit V1"
+milestone_status: WAITING_EXTERNAL
+last_completed_milestone: "Issue #1117 / PR #1118 post-merge compact-state reconciliation merged; timeout-resilient AI flow is aligned"
+next_safe_action: "Resolve PR #1121 current head and perform one consolidated CI/review/main-divergence refresh. Merge only if all applicable exact-head checks are terminal green, branch is current, and review threads are zero. After merge, Issue #1120 becomes the next bounded development slot."
+waiting_external: "PR #1121 exact-head merge-gate CI/review state"
+next_planned_slot:
+  issue: "#1120"
+  slot_id: dashboard-widgets-read-runtime-foundation-v1
+  claim_branch: agent/dashboard-widgets-read-runtime-foundation-v1
+  claim_rule: "Do not claim until PR #1121 is merged to current main."
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0007
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -37,6 +43,6 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
-  - "Compact state is a resume hint and never overrides current repository/runtime evidence."
-  - "observed_main_sha is the last fully reconciled integration baseline; a state-only reconciliation merge may advance main, so exact current main must still be resolved on every resume."
-  - "A delivery timeout never grants permission to repeat an already-completed or authorization-gated operation."
+  - "Repository/runtime evidence outranks compact state."
+  - "Surface 10 audit verdict is READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1, but source Issue #1120 remains dependency-gated until PR #1121 merges."
+  - "A delivery timeout never grants permission to repeat a merge or execute an authorization-gated action."
