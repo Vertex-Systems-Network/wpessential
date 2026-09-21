@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: 6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4
-observed_main_source: "PR #1158 merged Dashboard Widgets trusted content-class contract V1"
-active_issue: "#1159"
-active_pr: "#1161"
-active_branch: supervisor/dashboard-widgets-render-source-transition-audit-v1
-current_milestone: "Dashboard Widgets #1154 terminal reconciliation + render-source transition audit V1"
+observed_main_sha: 9c5e2143978ba6644abc03eafa1ef1522fcc53da
+observed_main_source: "PR #1161 merged Dashboard Widgets render-source transition audit"
+active_issue: "#1160"
+active_pr: "#1163"
+active_branch: supervisor/dashboard-widgets-trusted-render-source-contract-v1
+current_milestone: "Dashboard Widgets trusted render-source implementation contract V1"
 milestone_status: VERIFYING
-last_completed_milestone: "Issue #1154 / PR #1158 merged as 6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4; trusted content-class contract V1 passed all five exact-head workflows"
-next_safe_action: "Validate PR #1161 corrected exact head after the Governance diff-hygiene whitespace fix. Merge only if Governance/Architecture are terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1161 corrected exact-head Governance/Architecture validation after diff-hygiene fix"
+last_completed_milestone: "Issue #1159 / PR #1161 merged as 9c5e2143978ba6644abc03eafa1ef1522fcc53da; corrected exact-head Governance and Architecture passed"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1163. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1163 exact-head Governance/Architecture validation"
 next_planned_slot:
-  issue: "#1160"
-  slot_id: dashboard-widgets-trusted-render-source-implementation-contract-v1
-  claim_branch: supervisor/dashboard-widgets-trusted-render-source-contract-v1
-  claim_rule: "Do not claim until #1159 audit PR merges with READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1."
+  issue: "#1162"
+  slot_id: dashboard-widgets-trusted-render-source-descriptor-compiler-v1
+  claim_branch: agent/dashboard-widgets-trusted-render-source-compiler-v1
+  claim_rule: "Do not claim until #1160 contract PR merges with READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0025
+    - RB-0026
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,9 +48,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0024 records terminal PASS for #1154/#1158."
-  - "Shared RendererInterface/BlueprintRendererDispatcher must be reused; no private Surface 10 renderer engine."
-  - "Current Surface 10 Definition/runtime contract lacks explicit Blueprint/render-source identity and binding schema."
-  - "Audit verdict READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1."
-  - "PR #1161 prior head 70756a84 failed Governance 35658579793 only on two trailing-whitespace lines; corrective head removes the whitespace without runtime/product scope change."
-  - "Direct Dashboard hooks, renderer/provider/source execution, remote/iframe execution, mutation/preferences and full-parity certification remain blocked."
+  - "RB-0025 reconciled terminal PASS for #1159/#1161."
+  - "Issue #1160 defines exact Surface 10 render-source identity/binding semantics over shared Blueprint/RenderInput contracts."
+  - "V1 accepts only Surface 10-owned component_blueprint + literal binding sources with exact Blueprint schema-key/type match."
+  - "Issue #1162 is dependency-gated; no renderer execution, Dashboard hooks, provider/source execution or mutation is promoted."

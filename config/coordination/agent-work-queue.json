@@ -1,9 +1,9 @@
 {
-  "schema_version": 119,
+  "schema_version": 120,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4",
-  "mode": "DASHBOARD_WIDGETS_RENDER_SOURCE_TRANSITION_AUDIT",
-  "source_issue": "#1159",
+  "queue_anchor_main_sha": "9c5e2143978ba6644abc03eafa1ef1522fcc53da",
+  "mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
+  "source_issue": "#1160",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -156,8 +156,9 @@
     "1153": "COMPLETED_ON_PR_1155_DASHBOARD_WIDGETS_TRUSTED_CONTENT_TRANSITION_AUDIT",
     "1154": "COMPLETED_ON_PR_1158_DASHBOARD_WIDGETS_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
     "1156": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1153_TO_1154",
-    "1159": "ACTIVE_DASHBOARD_WIDGETS_RENDER_SOURCE_TRANSITION_AUDIT",
-    "1160": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1"
+    "1159": "COMPLETED_ON_PR_1161_DASHBOARD_WIDGETS_RENDER_SOURCE_TRANSITION_AUDIT",
+    "1160": "ACTIVE_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
+    "1162": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3389,7 +3390,7 @@
       "slot_id": "dashboard-widgets-trusted-render-source-implementation-contract-v1",
       "title": "Dashboard Widgets trusted render-source implementation contract V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN_DEPENDENCY_GATED",
+      "status": "IN_PROGRESS",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
       "source": "Issue #1160 / audit Issue #1159",
       "dependencies": [
@@ -3416,7 +3417,54 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-trusted-render-source-contract-v1",
-      "close_condition": "Exact Surface 10 render-source identity/binding implementation contract merged without runtime execution and with enough concrete fields for a later bounded compiler/bridge tranche"
+      "close_condition": "Exact Surface 10 render-source identity/binding implementation contract merged without runtime execution and with enough concrete fields for a later bounded compiler/bridge tranche",
+      "dependency_evidence": {
+        "audit_issue": 1159,
+        "audit_pr": 1161,
+        "audit_head": "109f1f57c6a8994e941189c7584f2d760f3f9797",
+        "governance_run": 35658839373,
+        "architecture_run": 35658839531,
+        "merge_sha": "9c5e2143978ba6644abc03eafa1ef1522fcc53da"
+      }
+    },
+    {
+      "priority": 1009,
+      "slot_id": "dashboard-widgets-trusted-render-source-descriptor-compiler-v1",
+      "title": "Dashboard Widgets trusted render-source descriptor/compiler V1",
+      "role": "ANY",
+      "status": "OPEN_DEPENDENCY_GATED",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1",
+      "source": "Issue #1162 / contract Issue #1160",
+      "dependencies": [
+        "Issue #1160 contract PR merged with READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRenderSourceDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php"
+      ],
+      "forbidden_scope": [
+        "RendererInterface::render invocation",
+        "HTML output",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "wp_dashboard_setup/wp_network_dashboard_setup/wp_add_dashboard_widget",
+        "Definition/user-preference mutation",
+        "shared renderer fork",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-trusted-render-source-compiler-v1",
+      "close_condition": "Typed fail-closed render-source descriptor/compiler V1 merged from fresh main with focused tests, exact-head path-applicable CI green and no renderer/hook/provider/mutation scope widening"
     }
   ],
   "historical_closeout": {

@@ -5,46 +5,56 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`
-- Completed source milestone: Issue #1154 / PR #1158
-- Active reconciliation/audit Issue: #1159
-- Active PR: #1161
-- Deterministic audit branch: `supervisor/dashboard-widgets-render-source-transition-audit-v1`
+- Exact main: `9c5e2143978ba6644abc03eafa1ef1522fcc53da`
+- Completed transition audit: Issue #1159 / PR #1161
+- Active contract Issue: #1160
+- Active PR: #1163
+- Deterministic branch: `supervisor/dashboard-widgets-trusted-render-source-contract-v1`
 
-## #1154 / #1158 terminal evidence
+## #1159 / #1161 terminal evidence
 
-- exact head `38b0883927864e8f13b3da0d6bf4d32dbde31a36`
-- Governance `35657768143` PASS
-- Architecture `35657768000` PASS
-- PHP Quality `35657767995` PASS
-- Platform Matrix `35657768081` PASS
-- Package `35657768053` PASS
-- zero unresolved threads; zero behind
-- exactly seven authorized files
-- merged as `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`; Issue #1154 closed
+- corrected exact head `109f1f57c6a8994e941189c7584f2d760f3f9797`
+- Governance `35658839373` PASS
+- Architecture `35658839531` PASS
+- zero unresolved review threads; zero behind
+- merged as `9c5e2143978ba6644abc03eafa1ef1522fcc53da`
+- Issue #1159 closed completed
+- RB-0025 reconciled PASS
 
-## Render-source transition audit
+## #1160 render-source contract
 
-The shared repository already owns `RendererInterface`, `BlueprintRendererDispatcher` and Component Blueprint registry contracts. Surface 10 must reuse them.
+Exact V1 authored shape:
 
-Current Dashboard Widgets authored/runtime contracts do not expose an explicit evidence-backed Component Blueprint id/revision or deterministic binding map sufficient to construct shared `RenderInput`. Runtime renderer wiring would therefore invent Definition fields.
+- `widget.render_source.kind = "component_blueprint"`
+- lowercase RFC 4122 `blueprint_id`
+- positive `blueprint_revision`
+- at most 128 `bindings`
+- each binding uses `source: "literal"` plus a scalar/list value
+- authored binding keys must exactly equal the resolved Blueprint `bindingSchema` keys
+- binding types must match `string|int|float|bool|string_list|int_list`
+- resolved Blueprint must be owned by Surface 10
+- no null/optional binding semantics are invented in V1
+- provider/context/query/remote binding sources fail closed
 
-Verdict:
+The future compiler may construct shared `RenderInput` but may not execute `RendererInterface::render()`.
 
-- `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`
-- renderer execution remains blocked;
-- direct Dashboard registration remains blocked;
-- provider/source/remote/iframe execution remains blocked;
-- mutation/full parity remain blocked.
+## Next source tranche
 
-Issue #1160 is the only dependency-gated next tranche and is planning/implementation-contract only.
+Issue #1162 is dependency-gated on the #1160 contract merge.
 
-## #1161 validation correction
+Verdict after successful contract merge:
 
-- Prior head `70756a84c1b01dd0d99012e2aa4436497b6bc38a` failed Governance `35658579793` at exact-head diff hygiene only.
-- Root cause: two trailing-whitespace lines in the new render-source audit Markdown.
-- The corrective change removes only that whitespace and records the failure evidence; audit verdict and runtime/product scope remain unchanged.
+`READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1`
+
+## Still blocked
+
+- renderer execution / HTML output
+- provider/query/source execution
+- remote/Safe HTTP/iframe execution
+- Dashboard hooks / `wp_add_dashboard_widget`
+- Definition/user-preference mutation
+- full-parity certification/deploy/release
 
 ## Next safe action
 
-Validate the corrected PR #1161 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence. Do not claim #1160 before audit promotion.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1163. Merge only on terminal green evidence.

@@ -215,3 +215,25 @@ Rules:
 - Corrective change removes only that whitespace and reconciles README/compact state/RB-0025/journal evidence.
 - Audit verdict remains `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`; no runtime/product source or authorization boundary changed.
 - Issue #1160 remains dependency-gated until corrected PR #1161 exact head is terminal green and merged.
+
+
+## 2026-09-22 — Render-source transition audit merged; implementation contract started
+
+- PR #1161 corrected exact head `109f1f57c6a8994e941189c7584f2d760f3f9797` passed Governance `35658839373` and Architecture `35658839531`.
+- Branch was zero behind with zero unresolved review threads at merge.
+- PR #1161 merged as `9c5e2143978ba6644abc03eafa1ef1522fcc53da`; Issue #1159 closed.
+- RB-0025 reconciled terminal PASS.
+- Issue #1160 claimed on `supervisor/dashboard-widgets-trusted-render-source-contract-v1`.
+- Contract V1 freezes `widget.render_source` to Surface-10-owned `component_blueprint` identity plus literal-only bindings that exactly match the shared Blueprint binding schema.
+- No renderer/provider/source execution, remote/iframe execution, Dashboard hooks, mutation or full-parity promotion is authorized.
+- Issue #1162 opened as the dependency-gated next non-executing descriptor/compiler source tranche.
+
+
+## 2026-09-22 — PR #1163 opened for trusted render-source implementation contract
+
+- PR #1163 opened from exact main `9c5e2143978ba6644abc03eafa1ef1522fcc53da`.
+- Contract freezes Surface 10 `widget.render_source` to a Surface-10-owned `component_blueprint` UUID/revision plus literal-only bindings that exactly match the shared Blueprint binding schema.
+- Shared `RenderInput`, `RendererInterface`, `BlueprintRendererDispatcher` and Component Blueprint registry remain canonical; no private renderer is introduced.
+- Compact state binds `active_pr: "#1163"` before final exact-head validation.
+- RB-0026 is the immediate Governance/Architecture merge gate.
+- Issue #1162 remains dependency-gated and must not be claimed until PR #1163 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1`.
