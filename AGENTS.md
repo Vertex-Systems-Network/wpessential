@@ -33,7 +33,7 @@ These files complement existing architecture/module/security ADRs; they do not r
 
 For every meaningful task:
 
-**Refresh Main → Issues First → PRs/MRs Second → Queue → Runner Benchmark → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement → Fast/Local Verify → Capture Runner Tasks → Immediate Safety/Merge Runner Exceptions → Review → Harden → Document → Commit → Final Consolidated Runner Batch at Closeout → Checkpoint → README Progress Reconciliation → Report**
+**Compact State → Refresh Main → Issues First → PRs/MRs Second → Queue → Runner Benchmark → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement one logical milestone → Fast/Local Verify → Capture Runner Tasks → Immediate Safety/Merge Runner Exceptions → Review → Harden → Document → Commit → Final Consolidated Runner Batch only at closeout → Durable Compact State → Conditional README Progress Reconciliation → Report**
 
 Do not jump from requirement to code when architecture, data, security, compatibility, dependency, migration or approval decisions are involved.
 
@@ -510,7 +510,7 @@ AI must compose approved WPEssential actions; it must not become a privileged ex
 
 AI-Native work control also obeys the mandatory operational order:
 
-**Exact Main → OPEN Issues → OPEN PRs/MRs → Claims/Queue → New Development → Exact-Head Verification/Merge → README Module Progress Reconciliation → Report**
+**Compact State → Exact Main → OPEN Issues → OPEN PRs/MRs → Claims/Queue → Runner Benchmark → One Logical Milestone → Exact-Head Verification/Merge when applicable → Durable Compact State → Conditional README Module Progress Reconciliation → Report**
 
 Where practical expose operations as typed WordPress Abilities with:
 - stable name;
