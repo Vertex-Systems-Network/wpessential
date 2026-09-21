@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1109",
-  "anchor_main_sha": "29ad66ca2984d89a3ae7e949679a62d35ca2c357",
+  "anchor_main_sha": "bce056cf837f7f34bdff4f876446d9714359f077",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -378,13 +378,43 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|module-ability-closeout|issue1129|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
-        "PR #1130 opened; exact-head Governance/Architecture validation pending"
+        "PR #1130 exact head a405e2c031a9cd8f5a253cdee3cf5df57f75fbc8",
+        "Governance Gate run 35623739284 PASS",
+        "Architecture Guards run 35623739139 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1130 merged as bce056cf837f7f34bdff4f876446d9714359f077",
+        "Issue #1129 closed completed"
       ],
-      "note": "Exact-head shared-truth closeout merge gate only. No tight polling. Central Pro activation remains a later separately audited transition."
+      "note": "Shared-truth closeout promoted successfully. Central Pro activation remained unexecuted and separately gated."
+    },
+    {
+      "id": "RB-0012",
+      "source": "Issue #1131",
+      "category": "DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-central-pro-activation-audit-v1 exact head",
+      "dependencies": [
+        "merged Dashboard Widgets Module/Ability Exposure V1",
+        "merged shared-truth closeout #1129/#1130",
+        "current fail-closed Pro compatibility and entitlement activation contracts",
+        "coordination queue slot #1132"
+      ],
+      "authorization": "Planning/coordination transition only; no central activation source change, WordPress dashboard registration, mutation, provider, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|central-pro-activation-audit|issue1131|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "CAPTURED",
+      "evidence": [
+        "Issue #1131 audit branch prepared; protected PR exact-head validation pending"
+      ],
+      "note": "Run once at exact-head merge gate. A PASS authorizes only the bounded #1132 activation tranche."
     }
   ],
-  "last_reconciled_issue": "#1129",
+  "last_reconciled_issue": "#1131",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
 }
