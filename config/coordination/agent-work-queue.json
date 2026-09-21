@@ -1,8 +1,8 @@
 {
-  "schema_version": 105,
+  "schema_version": 106,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "74b07170b5dc5a654b1148b24224aa781d8123d4",
-  "mode": "POST_MERGE_RECONCILED_EXISTING_GATED_WORK",
+  "queue_anchor_main_sha": "b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9",
+  "mode": "DASHBOARD_WIDGETS_RUNTIME_TRANSITION_AND_EXISTING_GATED_WORK",
   "source_issue": "#1109",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -112,6 +112,8 @@
     "1108": "COMPLETED_ON_PR_1111_NODE_DEPENDENCY_SECURITY",
     "1109": "AI_NATIVE_RUNNER_BENCHMARK_GOVERNANCE_ACTIVE",
     "1115": "COMPLETED_ON_PR_1116_AI_TIMEOUT_RESILIENCE",
+    "1119": "ACTIVE_DASHBOARD_WIDGETS_EXACT_MAIN_RUNTIME_TRANSITION_AUDIT",
+    "1120": "PENDING_AUDIT_PROMOTION_DASHBOARD_WIDGETS_READ_RUNTIME_FOUNDATION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1716,6 +1718,37 @@
       "supervisor_claim_allowed": false,
       "allowed_scope": ["docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"],
       "claim_branch": "agent/p006-wave1a-independent-evidence-review-v1"
+    },
+    {
+      "priority": 1000,
+      "slot_id": "dashboard-widgets-read-runtime-foundation-v1",
+      "title": "Dashboard Widgets bounded read-only Runtime Foundation V1",
+      "role": "ANY",
+      "status": "OPEN_AFTER_AUDIT_PROMOTION",
+      "work_mode": "DASHBOARD_WIDGETS_READ_ONLY_RUNTIME_FOUNDATION_V1",
+      "source": "Issue #1120 / audit Issue #1119",
+      "dependencies": ["Issue #1119 audit PR merged with READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1"],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets owner Definition/read service foundation",
+        "focused Dashboard Widgets unit tests",
+        "one Dashboard Widgets implementation evidence document"
+      ],
+      "forbidden_scope": [
+        "Module/Ability/bootstrap exposure",
+        "WordPress dashboard widget registration",
+        "Definition/user-preference/data mutation",
+        "Query/Listings/Analytics/Form/provider execution",
+        "cache/remote/provider engines",
+        "AJAX/REST mutation",
+        "shared Platform contract changes",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-read-runtime-foundation-v1",
+      "close_condition": "Bounded read-only owner foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, and no scope widening"
     }
   ],
   "historical_closeout": {
