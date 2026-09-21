@@ -910,10 +910,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|component-render-transition-audit|issue1167|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact audited main d721c09c66cb2e4f8e53fd353ed5b5f36f96f816",
-        "Audit verdict READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1; exact-head PR validation pending"
+        "Audit verdict READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
+        "PR #1169 opened on supervisor/dashboard-widgets-component-render-transition-audit-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1168 planning/implementation-contract work. Renderer invocation and Dashboard hooks remain blocked."
     }

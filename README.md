@@ -11,9 +11,9 @@ Project website: **https://wpessential.org**
 - Reconciled product main: `d721c09c66cb2e4f8e53fd353ed5b5f36f96f816` after Issue #1162 / PR #1166 merged Trusted Render-Source Descriptor/Compiler V1.
 - #1162 terminal evidence: exact head `1ee7d728cddf687138df23e403880c6bba704ae0`; Governance `35661019438`, Architecture `35661019316`, PHP Quality `35661019306`, Package `35661019321`, Platform Matrix `35661019341` all PASS; zero unresolved review threads and zero behind at merge.
 - Surface 10 render-source compiler milestone: `██████████ 100%` for **Trusted Render-Source Descriptor/Compiler V1 only**. This is not renderer execution or full product parity.
-- Active milestone: **Issue #1167 — #1162 terminal reconciliation + exact-main component-render transition audit**.
+- Active milestone: **Issue #1167 / PR #1169 — #1162 terminal reconciliation + exact-main component-render transition audit**.
 - Audit verdict: **READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1**. The shared renderer stack is available, but Surface 10 currently registers no module-local Component Blueprint or component renderer, so renderer invocation remains blocked.
-- Dependency-gated next tranche: **Issue #1168 — Trusted Component Blueprint/Renderer Implementation Contract V1**, branch `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`; claim only after the #1167 audit PR merges.
+- Dependency-gated next tranche: **Issue #1168 — Trusted Component Blueprint/Renderer Implementation Contract V1**, branch `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`; claim only after PR #1169 merges with terminal green evidence and promotes the audit verdict.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, renderer invocation/HTML output, provider/query/source execution, remote/iframe execution, mutation/preferences and full-parity certification remain blocked.
 - Current AI-Native rule: every meaningful repository-changing Supervisor milestone must reconcile this live README progress block before final reporting; module delivery/timeline changes also require the complete 56 / 56 dashboard reconciliation.
 
