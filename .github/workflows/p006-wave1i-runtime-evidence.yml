@@ -1,23 +1,6 @@
 name: P-006 Wave 1I Real WordPress Evidence
 
 on:
-  pull_request:
-    paths:
-      - 'frameworks/Modules/Compatibility/**'
-      - 'frameworks/Bootstrap/**'
-      - 'frameworks/Platform/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'tools/p006/p006-wave1i-runtime-evidence.php'
-      - 'tools/p006/p006-wave1i-wordpress-setup.sh'
-      - '.github/workflows/p006-wave1i-runtime-evidence.yml'
   workflow_dispatch:
 
 permissions:
