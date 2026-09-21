@@ -1,9 +1,9 @@
 {
-  "schema_version": 109,
+  "schema_version": 110,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "29ad66ca2984d89a3ae7e949679a62d35ca2c357",
-  "mode": "DASHBOARD_WIDGETS_MODULE_ABILITY_EXPOSURE_MERGED_NEXT_ACTIVATION_AUDIT",
-  "source_issue": "#1129",
+  "queue_anchor_main_sha": "bce056cf837f7f34bdff4f876446d9714359f077",
+  "mode": "DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
+  "source_issue": "#1131",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -117,7 +117,9 @@
     "1123": "COMPLETED_ON_PR_1124_DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_RECONCILIATION",
     "1125": "COMPLETED_ON_PR_1127_DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
     "1126": "COMPLETED_ON_PR_1128_DASHBOARD_WIDGETS_READ_MODULE_ABILITY_EXPOSURE",
-    "1129": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_MODULE_ABILITY_RECONCILIATION",
+    "1129": "COMPLETED_ON_PR_1130_DASHBOARD_WIDGETS_MODULE_ABILITY_RECONCILIATION",
+    "1131": "ACTIVE_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
+    "1132": "OPEN_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1798,6 +1800,38 @@
       "package_run_exact_verification": 35620989537,
       "merge_sha": "29ad66ca2984d89a3ae7e949679a62d35ca2c357",
       "closeout_pr": 1128
+    },
+    {
+      "priority": 1002,
+      "slot_id": "dashboard-widgets-central-pro-activation-v1",
+      "title": "Dashboard Widgets bounded central Pro Activation V1",
+      "role": "ANY",
+      "status": "OPEN",
+      "work_mode": "DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_V1",
+      "source": "Issue #1132 / audit Issue #1131",
+      "dependencies": ["Issue #1131 audit PR merged with READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1"],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "wpessential-pro.php",
+        "tests/Unit/Platform/EntitlementPolicyTest.php",
+        "tools/release/verify-free-pro-bootstrap.php",
+        ".github/workflows/distributable-package.yml"
+      ],
+      "forbidden_scope": [
+        "Dashboard Widgets implementation source changes",
+        "WordPress dashboard widget registration",
+        "Definition/user-preference/data mutation",
+        "Query/Listings/Analytics/Form/provider execution",
+        "cache/remote/provider engines",
+        "entitlement/compatibility semantic changes",
+        "shared Platform contract changes",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-central-pro-activation-v1",
+      "close_condition": "Bounded central Pro activation merged from fresh main with packaged Free/Pro regression evidence, path-applicable exact-head CI, zero unresolved review threads and no scope widening"
     }
   ],
   "historical_closeout": {
