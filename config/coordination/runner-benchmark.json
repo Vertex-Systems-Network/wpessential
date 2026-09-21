@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1153",
-  "anchor_main_sha": "b9e971653db0bbab177784c0b501c4e03269ea5d",
+  "source_issue": "#1156",
+  "anchor_main_sha": "de9edd9c30deb261cb135e6a88837bfdcdf9d123",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -753,18 +753,20 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-content-class-transition-audit|issue1153|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "Exact audited main b9e971653db0bbab177784c0b501c4e03269ea5d",
         "Audit verdict READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
-        "PR #1155 prior exact head dac053315769469edf4f791fe66752d006c7eb5e",
-        "Architecture Guards run 35655657954 PASS",
-        "Governance Gate run 35655659544 FAIL at exact-head diff hygiene only: two trailing-whitespace lines in the new audit Markdown",
-        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
+        "PR #1155 corrected exact head 25c469e7753e9a5f41e7785e0d83fa59dc9f3ea9",
+        "Governance Gate run 35656112003 PASS",
+        "Architecture Guards run 35656111955 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1155 merged as de9edd9c30deb261cb135e6a88837bfdcdf9d123",
+        "Issue #1153 closed completed"
       ],
-      "note": "Prior head failed only git diff --check. Corrective head remains shared-truth/audit-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
+      "note": "Terminal PASS. Issue #1154 trusted content-class descriptor/compiler foundation V1 is dependency-ready; direct Dashboard registration/render/provider/mutation/full parity remain blocked."
     }
   ],
-  "last_reconciled_issue": "#1153",
+  "last_reconciled_issue": "#1156",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }

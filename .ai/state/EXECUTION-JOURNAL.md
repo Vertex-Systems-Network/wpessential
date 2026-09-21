@@ -175,3 +175,14 @@ Rules:
 - Corrective change removes only that whitespace and reconciles README/compact state/RB-0023/journal evidence.
 - Audit verdict remains `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`; no runtime/product source or authorization boundary changed.
 - Issue #1154 remains dependency-gated until corrected PR #1155 exact head is terminal green and merged.
+
+
+## 2026-09-22 — Trusted-content transition audit merged; #1154 ready to claim
+
+- PR #1155 corrected exact head `25c469e7753e9a5f41e7785e0d83fa59dc9f3ea9` passed Governance `35656112003` and Architecture `35656111955`.
+- Branch was zero behind with zero unresolved review threads at merge.
+- PR #1155 merged as `de9edd9c30deb261cb135e6a88837bfdcdf9d123`; Issue #1153 closed.
+- RB-0023 reconciled terminal PASS.
+- Audit verdict `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1` is promoted.
+- Issue #1154 is READY_TO_CLAIM on `agent/dashboard-widgets-trusted-content-class-contract-v1`.
+- Direct Dashboard hooks, trusted rendering/provider/source execution, iframe/remote execution, mutation/preferences and full-parity certification remain blocked.

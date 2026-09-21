@@ -1,30 +1,23 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: VERIFYING
-observed_main_sha: b9e971653db0bbab177784c0b501c4e03269ea5d
-observed_main_source: "PR #1152 merged AI-Native mandatory README progress reconciliation V1"
-active_issue: "#1153"
-active_pr: "#1155"
-active_branch: supervisor/dashboard-widgets-post-readme-governance-transition-audit-v1
-current_milestone: "Dashboard Widgets post-README-governance reconciliation + trusted content transition audit V1"
-milestone_status: VERIFYING
-last_completed_milestone: "Issue #1151 / PR #1152 merged as b9e971653db0bbab177784c0b501c4e03269ea5d; mandatory README progress governance passed corrected exact-head Governance and Architecture"
-next_safe_action: "Validate PR #1155 corrected exact head after the Governance diff-hygiene whitespace fix. Merge only if Governance/Architecture are terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1155 corrected exact-head Governance/Architecture validation after diff-hygiene fix"
-next_planned_slot:
-  issue: "#1154"
-  slot_id: dashboard-widgets-trusted-content-class-contract-v1
-  claim_branch: agent/dashboard-widgets-trusted-content-class-contract-v1
-  claim_rule: "Do not claim until #1153 audit PR merges with READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1."
+state_status: READY
+observed_main_sha: de9edd9c30deb261cb135e6a88837bfdcdf9d123
+observed_main_source: "PR #1155 merged Dashboard Widgets trusted-content transition audit"
+active_issue: "#1154"
+active_pr: null
+active_branch: agent/dashboard-widgets-trusted-content-class-contract-v1
+current_milestone: "Dashboard Widgets bounded trusted content-class descriptor/compiler foundation V1"
+milestone_status: READY_TO_CLAIM
+last_completed_milestone: "Issue #1153 / PR #1155 merged as de9edd9c30deb261cb135e6a88837bfdcdf9d123; trusted-content transition audit passed corrected exact-head Governance and Architecture"
+next_safe_action: "Claim Issue #1154 on agent/dashboard-widgets-trusted-content-class-contract-v1 from fresh exact current main, implement only the seven authorized source/test files, and keep rendering/providers/hooks/mutation/full parity blocked."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending:
-    - RB-0023
+  immediate_pending: []
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,8 +41,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0022 reconciled terminal PASS for #1151/#1152."
-  - "Surface 10 registration metadata and bounded server visibility evaluation are merged."
-  - "Audit verdict READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1."
-  - "PR #1155 prior head dac05331 passed Architecture 35655657954; Governance 35655659544 failed only on two trailing-whitespace lines and was corrected without runtime/product scope change."
-  - "Direct WordPress Dashboard registration, wp_add_dashboard_widget, trusted rendering/provider execution, mutation/preferences and full-parity certification remain blocked."
+  - "RB-0023 reconciled terminal PASS for #1153/#1155."
+  - "Issue #1154 dependency gate is satisfied and the slot is READY_TO_CLAIM."
+  - "Allowed V1 content types: rich_text, kpi, chart, quick_links, announcement, support_onboarding, icon_link."
+  - "Direct WordPress Dashboard registration, rendering/provider/source execution, iframe/remote execution, mutation/preferences and full-parity certification remain blocked."
