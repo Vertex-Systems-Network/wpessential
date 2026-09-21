@@ -85,6 +85,21 @@ Equivalent work executes once. All dependent work items point to the same immuta
 
 A new source SHA, changed fixture/input identity, changed runtime matrix, or changed security-sensitive dependency normally creates a new dedup identity.
 
+## CI/status observation budget
+
+Runner execution and runner observation are separate concerns.
+
+Under `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`:
+
+- **tight CI/status polling is forbidden**;
+- related runner/status reads should be consolidated;
+- one consolidated status refresh per logical milestone is the default;
+- when required CI remains in progress, compact state records `WAITING_EXTERNAL`, exact run/source identity and next action, then the milestone stops;
+- the next user `continue` performs a fresh consolidated refresh;
+- no workflow is rerun merely because a chat/message response timed out.
+
+Security/merge/incident transitions may justify one additional same-milestone refresh when it is necessary for a safe decision; the exception is recorded durably.
+
 ## Final consolidated runner batch
 
 The final batch occurs at the milestone/integration closeout after intended implementation has settled and before terminal milestone/release claims.
