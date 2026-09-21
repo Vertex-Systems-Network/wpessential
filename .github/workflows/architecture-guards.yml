@@ -101,12 +101,15 @@ jobs:
       - name: Verify package manifest contract
         run: npm run lint:package
 
-      - name: Capture npm dependency advisory audit
+      - name: Capture npm dependency advisory gate
+        id: npm-dev-audit
         shell: bash
         run: |
           set +e
           npm audit --audit-level=high --json > npm-audit.json
+          code=$?
           set -e
+          echo "exit_code=${code}" >> "$GITHUB_OUTPUT"
           cat npm-audit.json
           exit 0
 
@@ -173,7 +176,11 @@ jobs:
           test -s assets/admin/main.css
           php -r '$asset = require "assets/admin/main.asset.php"; if (!is_array($asset) || !isset($asset["dependencies"], $asset["version"]) || !is_array($asset["dependencies"]) || !is_string($asset["version"]) || $asset["version"] === "") { fwrite(STDERR, "invalid wp-scripts asset metadata\n"); exit(1); }'
 
-      - name: Enforce npm advisory gate
+      - name: Enforce development npm advisory gate
+        if: steps.npm-dev-audit.outputs.exit_code != '0'
+        run: exit 1
+
+      - name: Enforce distributable npm advisory gate
         if: steps.npm-distributable-audit.outputs.exit_code != '0'
         run: exit 1
 
