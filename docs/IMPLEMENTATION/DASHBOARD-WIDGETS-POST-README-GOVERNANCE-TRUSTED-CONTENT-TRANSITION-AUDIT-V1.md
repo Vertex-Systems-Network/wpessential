@@ -1,7 +1,7 @@
 # Dashboard Widgets — Post-README-Governance Reconciliation + Trusted Content Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1153**  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1153**
 Exact audited main: `b9e971653db0bbab177784c0b501c4e03269ea5d`
 
 ## Combined milestone purpose

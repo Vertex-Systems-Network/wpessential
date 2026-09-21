@@ -757,9 +757,12 @@
       "evidence": [
         "Exact audited main b9e971653db0bbab177784c0b501c4e03269ea5d",
         "Audit verdict READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1",
-        "PR #1155 opened on supervisor/dashboard-widgets-post-readme-governance-transition-audit-v1; final exact-head validation pending"
+        "PR #1155 prior exact head dac053315769469edf4f791fe66752d006c7eb5e",
+        "Architecture Guards run 35655657954 PASS",
+        "Governance Gate run 35655659544 FAIL at exact-head diff hygiene only: two trailing-whitespace lines in the new audit Markdown",
+        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
       ],
-      "note": "PASS may authorize only dependency-gated Issue #1154 typed non-executing content-class contract/compiler foundation."
+      "note": "Prior head failed only git diff --check. Corrective head remains shared-truth/audit-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
     }
   ],
   "last_reconciled_issue": "#1153",

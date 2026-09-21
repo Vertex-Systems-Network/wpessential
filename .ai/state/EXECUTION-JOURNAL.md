@@ -166,3 +166,12 @@ Rules:
 - Compact state binds `active_pr: "#1155"` before final exact-head validation.
 - RB-0023 is the immediate Governance/Architecture merge gate.
 - Issue #1154 remains dependency-gated and must not be claimed until PR #1155 merges with `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`.
+
+
+## 2026-09-22 — PR #1155 Governance diff-hygiene failure corrected
+
+- PR #1155 prior head `dac053315769469edf4f791fe66752d006c7eb5e` passed Architecture `35655657954`.
+- Governance `35655659544` failed before governance semantic checks because `git diff --check` found trailing whitespace on two audit-heading lines.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0023/journal evidence.
+- Audit verdict remains `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`; no runtime/product source or authorization boundary changed.
+- Issue #1154 remains dependency-gated until corrected PR #1155 exact head is terminal green and merged.

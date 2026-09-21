@@ -36,6 +36,12 @@ Verdicts:
 
 Issue #1154 is the only dependency-gated next implementation slot. It may add a typed, non-executing content-class descriptor/compiler for reviewed safe structured types only. It may not render, execute providers/sources, fetch remote data, register Dashboard hooks or mutate state.
 
+## #1155 validation correction
+
+- Prior head `dac053315769469edf4f791fe66752d006c7eb5e` passed Architecture `35655657954`.
+- Governance `35655659544` failed at exact-head diff hygiene only because lines 3–4 of the new audit note contained trailing whitespace.
+- The corrective change removes trailing whitespace and records the failure evidence; audit verdict and runtime/product scope are unchanged.
+
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1155. Merge only on terminal green evidence. Do not claim #1154 before audit promotion.
+Validate the corrected PR #1155 exact head with one consolidated Governance/Architecture + review-thread + main-divergence refresh. Merge only on terminal green evidence. Do not claim #1154 before audit promotion.
