@@ -23,6 +23,7 @@ use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 final class DashboardWidgetsModule implements ModuleInterface
 {
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
+    public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
     public const CAPABILITY = 'manage_options';
@@ -55,6 +56,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 
         $read = new DashboardWidgetsReadService($definitions);
         $services->set(self::SERVICE_READ, $read);
+        $services->set(self::SERVICE_REGISTRATION_COMPILER, new DashboardWidgetRegistrationCompiler());
 
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $this->registerAbility(
