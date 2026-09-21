@@ -173,6 +173,30 @@
         "candidate production audit 0 vulnerabilities"
       ],
       "note": "Immediate exception because high-severity dependency remediation must be verified before merge."
+    },
+    {
+      "id": "RB-0005",
+      "source": "Issue #1112",
+      "category": "RUNNER_BENCHMARK_ENFORCEMENT",
+      "runner": "GitHub Actions / Architecture Guards",
+      "command_or_workflow": "terminal P-006 trigger retirement contract",
+      "environment": "tracked .github/workflows/p006-*.yml terminal allowlist",
+      "dependencies": [
+        "merged Runner Benchmark policy #1109/#1110"
+      ],
+      "authorization": "Governance/CI scheduling hardening only; no formal P-006 execution authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 8,
+      "dedup_key": "runner-benchmark|terminal-p006-retirement|issue1112|v1",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "26 terminal P-006 workflow allowlist",
+        "manual workflow_dispatch retained",
+        "automatic pull_request/push/schedule forbidden by smoke contract"
+      ],
+      "note": "This task changes scheduling only. Historical fixture logic/evidence semantics are untouched; future manual formal dispatch still requires current RB entry and valid authorization."
     }
   ]
 }

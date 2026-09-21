@@ -1,25 +1,6 @@
 name: P-006 Wave 1T Schema Migration Ordering
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-wave1t-schema-migration.yml'
-      - 'tools/p006/p006-wave1t-schema-migration.php'
-      - 'tools/p006/p006-wave1t-wordpress-setup.sh'
-      - 'tools/p006/p006-wave1k-build-overlap-artifacts.php'
-      - 'tools/p006/p006-wave1l-build-breaking-artifacts.php'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'frameworks/Bootstrap/Plugin.php'
-      - 'frameworks/Modules/Compatibility/**'
-      - 'frameworks/Modules/CustomTables/**'
-      - 'frameworks/Platform/Database/Migrations/**'
-      - 'frameworks/Platform/Entitlements/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:

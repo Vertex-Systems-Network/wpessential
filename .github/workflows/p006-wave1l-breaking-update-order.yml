@@ -1,28 +1,6 @@
 name: P-006 Wave 1L Breaking Update Order
 
 on:
-  pull_request:
-    paths:
-      - 'frameworks/Modules/Compatibility/**'
-      - 'frameworks/Bootstrap/**'
-      - 'frameworks/Kernel/**'
-      - 'frameworks/Platform/**'
-      - 'frameworks/Modules/CustomPostTypes/**'
-      - 'frameworks/Modules/Taxonomies/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'tools/p006/p006-wave1l-build-breaking-artifacts.php'
-      - 'tools/p006/p006-wave1l-wordpress-setup.sh'
-      - 'tools/p006/p006-wave1l-swap-plugin.sh'
-      - 'tools/p006/p006-wave1l-runtime-evidence.php'
-      - '.github/workflows/p006-wave1l-breaking-update-order.yml'
   workflow_dispatch:
 
 permissions:
