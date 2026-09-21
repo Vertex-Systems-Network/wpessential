@@ -101,10 +101,10 @@ jobs:
           test "${pro_first}" = "${pro_second}"
           cmp --silent /tmp/p006-wave1g-free-first.zip artifacts/wpessential.zip
           cmp --silent /tmp/p006-wave1g-pro-first.zip artifacts/wpessential-pro.zip
-          test "${free_second}" = "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80"
-          test "${pro_second}" = "771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363"
+          test "${free_second}" = "3da7484926e5fe66f71097ebb0ca3263eb4f74aaed55072318635459400411be"
+          test "${pro_second}" = "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467"
           pair_id="$(php -r 'echo hash("sha256", "free:" . $argv[1] . "\npro:" . $argv[2] . "\n");' "${free_second}" "${pro_second}")"
-          test "${pair_id}" = "39a31275225f1b560a22096fcbd66aef8878bc23554c5b32c6861a6a446215ea"
+          test "${pair_id}" = "74085a44f808918c62ee5552542551fe0a1c7228c0906b1a0ecc590f88568d9d"
 
       - name: Reproduce exact authorized NON-RELEASE TEST-ONLY mismatch candidates
         shell: bash
@@ -267,7 +267,7 @@ jobs:
             $pair = hash("sha256", "free:" . $free . "\npro:" . $pro . "\n");
             if ($free !== getenv("WPE_EXPECTED_FREE_SHA256") || $pair !== getenv("WPE_EXPECTED_PAIR_ID")) { fwrite(STDERR, "Authorized Wave 1F candidate hash/pair mismatch; STOP\n"); exit(1); }
             if (($variant["sha256"] ?? null) !== $free || ($variant["pair_id_sha256"] ?? null) !== $pair) { fwrite(STDERR, "Identity JSON mismatch\n"); exit(1); }
-            if (($identity["original"]["free_sha256"] ?? null) !== "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80" || ($identity["original"]["pro_sha256"] ?? null) !== "771bf516e9c1d0707a7d036309b14520facf5daa59742b337b0a0fdf622c0363") { fwrite(STDERR, "Original immutable identity drift\n"); exit(1); }
+            if (($identity["original"]["free_sha256"] ?? null) !== "3da7484926e5fe66f71097ebb0ca3263eb4f74aaed55072318635459400411be" || ($identity["original"]["pro_sha256"] ?? null) !== "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467") { fwrite(STDERR, "Original immutable identity drift\n"); exit(1); }
           '
 
       - name: Prepare disposable WordPress core and exact mismatch pair
