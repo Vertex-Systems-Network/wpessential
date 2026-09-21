@@ -486,7 +486,7 @@
     },
     {
       "id": "RB-0015",
-      "source": "Issue #1137",
+      "source": "Issue #1137 / PR #1139",
       "category": "DASHBOARD_WIDGETS_WORDPRESS_REGISTRATION_TRANSITION_AUDIT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -503,11 +503,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|wordpress-registration-transition-audit|issue1137|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1137 audit branch prepared; protected PR exact-head validation pending"
+        "PR #1139 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "Audit verdict blocks direct WordPress dashboard registration and authorizes only bounded #1138 registration descriptor/compiler foundation."
+      "note": "Exact-head transition-audit merge gate only. Direct WordPress dashboard registration remains blocked; a PASS authorizes only bounded #1138 descriptor/compiler foundation."
     }
   ],
   "last_reconciled_issue": "#1137",
