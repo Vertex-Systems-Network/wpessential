@@ -107,4 +107,3 @@ Rules:
 - Surface 10 now has a fail-closed typed registration descriptor/compiler and module-local compiler service.
 - Direct WordPress Dashboard hooks, renderer/provider execution, visibility policy, mutation and full-parity certification remain blocked/separately gated.
 - Issue #1141 opened for mandatory post-merge shared-truth reconciliation before any further Surface 10 transition.
-
