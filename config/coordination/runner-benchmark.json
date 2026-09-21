@@ -551,7 +551,7 @@
     },
     {
       "id": "RB-0017",
-      "source": "Issue #1141",
+      "source": "Issue #1141 / PR #1142",
       "category": "DASHBOARD_WIDGETS_REGISTRATION_DESCRIPTOR_SHARED_TRUTH_CLOSEOUT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -567,11 +567,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|registration-descriptor-closeout|issue1141|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1141 closeout branch prepared; protected PR exact-head validation pending"
+        "PR #1142 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "Run once at exact-head merge gate. Any next Surface 10 prerequisite requires a fresh exact-main transition audit."
+      "note": "Exact-head shared-truth closeout merge gate only. No tight polling. Any next Surface 10 prerequisite requires a fresh exact-main transition audit."
     }
   ],
   "last_reconciled_issue": "#1141",
