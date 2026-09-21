@@ -122,7 +122,10 @@ final class WordPressDashboardWidgetRoleMembershipProvider implements DashboardW
         }
 
         foreach ($currentRoles as $currentRole) {
-            if (!is_string($currentRole)) {
+            if (
+                !is_string($currentRole)
+                || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $currentRole) !== 1
+            ) {
                 return false;
             }
         }

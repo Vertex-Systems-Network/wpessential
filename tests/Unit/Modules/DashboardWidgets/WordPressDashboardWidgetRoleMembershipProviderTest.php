@@ -93,7 +93,7 @@ final class WordPressDashboardWidgetRoleMembershipProviderTest extends TestCase
         $malformed = new WordPressDashboardWidgetRoleMembershipProvider(
             currentUserId: static fn (): ?int => 7,
             currentSiteId: static fn (): int => 3,
-            currentUserRoles: static fn (): array => ['editor', 9],
+            currentUserRoles: static fn (): array => ['editor', 'Bad Role'],
         );
         self::assertFalse($malformed->hasAnyRole($context, ['editor']));
     }
