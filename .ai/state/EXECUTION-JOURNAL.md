@@ -116,4 +116,3 @@ Rules:
 - P0 Options Bank audience fields scoped to roles, capabilities and users.
 - Issue #1144 opened as dependency-gated typed visibility contract/compiler foundation only.
 - No visibility evaluation, WordPress hooks, provider/render execution, Membership/Condition execution, mutation, certification, deploy or release authorized.
-
