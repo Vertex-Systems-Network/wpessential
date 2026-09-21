@@ -279,3 +279,13 @@ Rules:
 - Contract V1 defines seven stable Surface 10 component types, revision-1 Blueprint UUIDs, minimal exact binding schemas, safe escaping/link rules and zero asset handles.
 - Issue #1170 opened as the dependency-gated next Blueprint registrar + bounded component renderer source tranche.
 - Dashboard runtime renderer invocation, Dashboard hooks, providers/sources, remote/iframe, assets, mutation and full-parity certification remain blocked.
+
+
+## 2026-09-22 — PR #1171 opened for trusted component Blueprint/renderer contract
+
+- PR #1171 opened from exact main `a8b3539168ba72f74473d4bc9e3fef6af445147f`.
+- Contract freezes seven revision-1 Surface 10 Blueprint UUID/component-type pairs and minimal required binding schemas.
+- V1 defines escaped text output, bounded integer chart/link rules and zero asset handles.
+- Compact state binds `active_pr: "#1171"` before final exact-head validation.
+- RB-0029 is the immediate Governance/Architecture merge gate.
+- Issue #1170 remains dependency-gated and must not be claimed until PR #1171 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`.

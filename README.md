@@ -11,9 +11,9 @@ Project website: **https://wpessential.org**
 - Reconciled product main: `a8b3539168ba72f74473d4bc9e3fef6af445147f` after Issue #1167 / PR #1169 merged the component-render transition audit.
 - #1167 terminal evidence: exact head `82403eaa65100e8914225563573aa031ec8a151d`; Governance `35661587232` PASS; Architecture `35661587244` PASS; zero unresolved review threads and zero behind at merge.
 - Surface 10 latest runtime milestone remains **Trusted Render-Source Descriptor/Compiler V1 PASS / merged** through #1162/#1166. The bounded `██████████ 100%` applies to that compiler milestone only, not renderer/full parity.
-- Active milestone: **Issue #1168 — Trusted Component Blueprint/Renderer Implementation Contract V1**, branch `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`.
+- Active milestone: **Issue #1168 / PR #1171 — Trusted Component Blueprint/Renderer Implementation Contract V1**, branch `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`.
 - Contract V1 defines seven stable Surface-10-owned component types/Blueprint UUIDs with minimal exact binding schemas, escaped output, bounded chart/link rules and zero V1 asset handles. It registers no runtime hooks and does not invoke a renderer.
-- Dependency-gated next source tranche: **Issue #1170 — Trusted Component Blueprint Registrar + Renderer V1**, branch `agent/dashboard-widgets-trusted-component-renderer-v1`; claim only after #1168 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`.
+- Dependency-gated next source tranche: **Issue #1170 — Trusted Component Blueprint Registrar + Renderer V1**, branch `agent/dashboard-widgets-trusted-component-renderer-v1`; claim only after PR #1171 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, Dashboard runtime renderer invocation, provider/query/source execution, remote/iframe execution, mutation/preferences and full-parity certification remain blocked.
 - Current AI-Native rule: every meaningful repository-changing Supervisor milestone must reconcile this live README progress block before final reporting; module delivery/timeline changes also require the complete 56 / 56 dashboard reconciliation.
 

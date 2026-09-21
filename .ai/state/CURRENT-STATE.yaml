@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: a8b3539168ba72f74473d4bc9e3fef6af445147f
 observed_main_source: "PR #1169 merged Dashboard Widgets component-render transition audit"
 active_issue: "#1168"
-active_pr: null
+active_pr: "#1171"
 active_branch: supervisor/dashboard-widgets-trusted-component-renderer-contract-v1
 current_milestone: "Dashboard Widgets trusted component Blueprint/renderer implementation contract V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1167 / PR #1169 merged as a8b3539168ba72f74473d4bc9e3fef6af445147f; exact-head Governance and Architecture passed"
-next_safe_action: "Open the #1168 contract PR, bind active_pr to its exact number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "Issue #1168 contract branch publication and exact-head validation"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1171. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1171 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1170"
   slot_id: dashboard-widgets-trusted-component-blueprint-registrar-renderer-v1

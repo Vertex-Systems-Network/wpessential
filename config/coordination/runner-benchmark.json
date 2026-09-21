@@ -941,10 +941,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-component-renderer-contract|issue1168|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact base main a8b3539168ba72f74473d4bc9e3fef6af445147f",
-        "Contract freezes seven Surface 10 component types/Blueprint UUIDs and minimal exact binding schemas; exact-head validation pending"
+        "Contract freezes seven Surface 10 component types/Blueprint UUIDs and minimal exact binding schemas",
+        "PR #1171 opened on supervisor/dashboard-widgets-trusted-component-renderer-contract-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1170 Blueprint registrar + bounded component renderer registration. Dashboard runtime renderer invocation remains blocked."
     }
