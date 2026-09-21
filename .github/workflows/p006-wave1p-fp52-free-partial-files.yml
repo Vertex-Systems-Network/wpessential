@@ -1,18 +1,6 @@
 name: P-006 Wave 1P FP-52 Free Partial Files
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-wave1p-fp52-free-partial-files.yml'
-      - 'tools/p006/p006-wave1p-fp52-free-partial-files.php'
-      - 'tools/p006/p006-wave1m-build-manual-order-artifacts.php'
-      - 'tools/p006/p006-wave1m-wordpress-setup.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'docs/QUALITY/P006-WAVE-1P-FP52-FREE-PARTIAL-FILE-EVIDENCE.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:

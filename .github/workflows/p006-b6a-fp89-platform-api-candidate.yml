@@ -1,18 +1,6 @@
 name: P-006 B6a FP-89 Platform API Candidate
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-b6a-fp89-platform-api-candidate.yml'
-      - 'tools/p006/p006-b6a-fp89-platform-api-candidate.php'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:

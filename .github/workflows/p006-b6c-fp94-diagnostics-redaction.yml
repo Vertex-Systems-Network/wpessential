@@ -1,16 +1,6 @@
 name: P-006 B6c FP-94 Diagnostics Redaction Prerequisite
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-b6c-fp94-diagnostics-redaction.yml'
-      - 'tools/p006/p006-b6c-fp94-diagnostics-redaction.php'
-      - 'frameworks/Contracts/MigrationInterface.php'
-      - 'frameworks/Contracts/MigrationStateStoreInterface.php'
-      - 'frameworks/Platform/Database/DatabaseAdapterInterface.php'
-      - 'frameworks/Platform/Database/Migrations/**'
-      - 'frameworks/Modules/CustomTables/Migration/**'
-      - 'frameworks/Platform/Secrets/SensitiveValue.php'
   workflow_dispatch:
 
 permissions:

@@ -1,18 +1,6 @@
 name: P-006 B3 Publication Owner Harness
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-publication-owner-harness.yml'
-      - 'tools/p006/p006-publication-owner-harness.php'
-      - 'tools/p006/p006-wave1m-build-manual-order-artifacts.php'
-      - 'tools/p006/p006-wave1m-wordpress-setup.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'docs/QUALITY/P006-B3-PUBLICATION-OWNER-HARNESS.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:

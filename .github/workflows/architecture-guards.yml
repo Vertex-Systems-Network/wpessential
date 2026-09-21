@@ -251,6 +251,7 @@ jobs:
             tests/Smoke/wordpress-abilities-bridge-smoke.php \
             tests/Smoke/engineering-contracts-smoke.php \
             tests/Smoke/security-ci-permissions-contract.php \
+            tests/Smoke/runner-benchmark-terminal-p006-workflows-contract.php \
             tests/Smoke/compiled-registration-persistence-smoke.php \
             tests/Smoke/compiled-registration-scale-smoke.php \
             tests/Smoke/options-bank-contract.php \

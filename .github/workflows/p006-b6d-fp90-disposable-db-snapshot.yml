@@ -1,32 +1,6 @@
 name: P-006 B6d FP-90 Disposable DB Snapshot Prerequisite
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-b6d-fp90-disposable-db-snapshot.yml'
-      - 'tools/p006/p006-b6d-fp90-disposable-db-snapshot.php'
-      - 'tools/p006/p006-b6d-wordpress-setup.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'frameworks/Contracts/MigrationInterface.php'
-      - 'frameworks/Contracts/MigrationStateStoreInterface.php'
-      - 'frameworks/Platform/Database/DatabaseAdapterInterface.php'
-      - 'frameworks/Platform/Database/NativeWpdbAdapter.php'
-      - 'frameworks/Platform/Database/Migrations/MigrationRegistry.php'
-      - 'frameworks/Platform/Database/Migrations/MigrationRunner.php'
-      - 'frameworks/Platform/Database/Migrations/WpdbMigrationStateStore.php'
-      - 'frameworks/Platform/WordPress/Registrations/CompiledRegistrationTableNames.php'
-      - 'frameworks/Platform/WordPress/Registrations/Migrations/CreateCompiledRegistrationTablesMigration.php'
-      - 'frameworks/Platform/Definitions/DefinitionTableNames.php'
-      - 'frameworks/Platform/Definitions/Migrations/CreateDefinitionTablesMigration.php'
-      - 'frameworks/Platform/Audit/AuditTableNames.php'
-      - 'frameworks/Platform/Audit/Migrations/CreateAuditEventsTableMigration.php'
-      - 'frameworks/Modules/Compatibility/LocalCompatibilityPreflight.php'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:

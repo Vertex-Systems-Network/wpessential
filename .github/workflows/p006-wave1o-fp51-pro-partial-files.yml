@@ -1,18 +1,6 @@
 name: P-006 Wave 1O FP-51 Pro Partial Files
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-wave1o-fp51-pro-partial-files.yml'
-      - 'tools/p006/p006-wave1o-fp51-pro-partial-files.php'
-      - 'tools/p006/p006-wave1m-build-manual-order-artifacts.php'
-      - 'tools/p006/p006-wave1m-wordpress-setup.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'docs/QUALITY/P006-WAVE-1O-FP51-PRO-PARTIAL-FILE-EVIDENCE.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:

@@ -1,20 +1,6 @@
 name: P-006 Wave 1J Pure Range Semantics
 
 on:
-  pull_request:
-    paths:
-      - 'frameworks/Modules/Compatibility/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'tools/p006/p006-wave1j-range-semantics.php'
-      - '.github/workflows/p006-wave1j-range-semantics.yml'
   workflow_dispatch:
 
 permissions:

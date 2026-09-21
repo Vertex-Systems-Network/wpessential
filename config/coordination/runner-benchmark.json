@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1109",
-  "anchor_main_sha": "be640fbf580e2baa8a6736a89f967b3478907b8c",
+  "anchor_main_sha": "5a3c3b506e0580fb121453d81b377655251b3a27",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -173,6 +173,32 @@
         "candidate production audit 0 vulnerabilities"
       ],
       "note": "Immediate exception because high-severity dependency remediation must be verified before merge."
+    },
+    {
+      "id": "RB-0005",
+      "source": "Issue #1112",
+      "category": "RUNNER_BENCHMARK_ENFORCEMENT",
+      "runner": "GitHub Actions / Architecture Guards",
+      "command_or_workflow": "terminal P-006 trigger retirement contract",
+      "environment": "tracked .github/workflows/p006-*.yml terminal allowlist",
+      "dependencies": [
+        "merged Runner Benchmark policy #1109/#1110"
+      ],
+      "authorization": "Governance/CI scheduling hardening only; no formal P-006 execution authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 8,
+      "dedup_key": "runner-benchmark|terminal-p006-retirement|issue1112|v1",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1113 merged as 5a3c3b506e0580fb121453d81b377655251b3a27",
+        "exact implementation head 35fa78b21452c1e91c119fb89aacab15dbbbcfb2",
+        "Governance Gate run 35602181831 PASS",
+        "Architecture Guards run 35602181725 PASS including terminal P-006 workflow retirement smoke contract",
+        "26 terminal P-006 evidence/prerequisite workflows retain workflow_dispatch and expose no pull_request/push/schedule trigger"
+      ],
+      "note": "Terminal scheduling enforcement is merged. Historical P-006 workflows are manual-dispatch only; future formal dispatch requires a current RB entry and valid current authorization. This PASS concerns CI scheduling governance only."
     }
   ]
 }

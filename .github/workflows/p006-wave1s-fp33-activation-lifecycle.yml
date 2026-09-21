@@ -1,24 +1,6 @@
 name: P-006 Wave 1S FP-33 Activation Lifecycle
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/p006-wave1s-fp33-activation-lifecycle.yml'
-      - 'tools/p006/p006-wave1s-fp33-activation-lifecycle.php'
-      - 'tools/p006/p006-wave1l-build-breaking-artifacts.php'
-      - 'tools/p006/p006-wave1l-wordpress-setup.sh'
-      - 'tools/p006/p006-wave1l-swap-plugin.sh'
-      - 'tools/release/build-distributable.php'
-      - 'tools/release/build-free-pro-distributables.php'
-      - 'frameworks/Modules/Compatibility/**'
-      - 'frameworks/Bootstrap/Plugin.php'
-      - 'frameworks/Platform/Database/Migrations/**'
-      - 'frameworks/Modules/CustomTables/Migration/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'admin-ui/**'
   workflow_dispatch:
 
 permissions:
