@@ -49,3 +49,13 @@ Rules:
 - PR #1122 merged as `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`; Issue #1120 closed.
 - Surface 10 now has only the bounded read-only Definition/read-service owner foundation. Full-parity runtime certification remains unpromoted.
 - Issue #1123 opened for mandatory post-merge shared-truth reconciliation before any next Surface 10 source tranche.
+
+## 2026-09-21 — Dashboard Widgets Module/Ability transition audit opened
+
+- Shared-truth closeout PR #1124 merged as `cd03b5002e1562e7f04d8b37018eea8638dd4a24`.
+- Issue #1125 opened for the next exact-main Surface 10 transition audit.
+- Accepted neighboring precedent #886/#887/#888 confirms Module + read-handler + unit-test exposure can remain separate from central activation; PR #898 is the distinct activation precedent.
+- Audit verdict: `READY_FOR_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1`.
+- Issue #1126 opened as the only next bounded source slot on `agent/dashboard-widgets-read-module-ability-exposure-v1`.
+- #1126 explicitly forbids `wpessential-pro.php` activation and all mutation/provider/certification/deploy scope.
+- PR #1127 opened for the audit/queue transition; RB-0009 is its exact-head merge gate.

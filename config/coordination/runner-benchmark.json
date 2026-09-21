@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1109",
-  "anchor_main_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f",
+  "anchor_main_sha": "cd03b5002e1562e7f04d8b37018eea8638dd4a24",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -296,8 +296,32 @@
         "Issue #1120 closed completed"
       ],
       "note": "PASS certifies only the bounded read-only Dashboard Widgets Definition/read-service foundation. Full-parity machine RUNTIME_CERTIFIED remains false; Module/Ability exposure, WordPress dashboard integration, mutation/provider execution and release remain separate future gates."
+    },
+    {
+      "id": "RB-0009",
+      "source": "Issue #1125 / PR #1127",
+      "category": "DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-module-ability-transition-audit-v1 exact head",
+      "dependencies": [
+        "merged Dashboard Widgets read-only Runtime Foundation V1",
+        "accepted neighboring Module/Ability exposure precedent #886/#887/#888",
+        "coordination queue slot #1126"
+      ],
+      "authorization": "Planning/coordination transition only; no central activation, WordPress dashboard registration, mutation, provider, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|module-ability-transition-audit|issue1125|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "PR #1127 opened; exact-head Governance/Architecture validation pending"
+      ],
+      "note": "Exact-head audit merge gate only. No tight polling. Central Pro activation remains explicitly outside Issue #1126."
     }
   ],
-  "last_reconciled_issue": "#1123",
+  "last_reconciled_issue": "#1125",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
 }
