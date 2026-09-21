@@ -20,6 +20,8 @@ Before meaningful engineering work read/apply as relevant:
 - `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
 - `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
 - `docs/QUALITY-GATES.md`
+- `config/coordination/runner-benchmark.json`
+- `docs/AI/RUNNER-BENCHMARK-EXECUTION-POLICY.md`
 - latest `CHECKPOINT.md`
 
 These files complement existing architecture/module/security ADRs; they do not replace them.
@@ -28,7 +30,7 @@ These files complement existing architecture/module/security ADRs; they do not r
 
 For every meaningful task:
 
-**Refresh Main → Issues First → PRs/MRs Second → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement → Test → Attack → Review → Harden → Document → Commit → Checkpoint → README Progress Reconciliation → Report**
+**Refresh Main → Issues First → PRs/MRs Second → Queue → Runner Benchmark → Inspect → Understand → Research → Assess → Plan → Approval/Consent Gate when required → Implement → Fast/Local Verify → Capture Runner Tasks → Immediate Safety/Merge Runner Exceptions → Review → Harden → Document → Commit → Final Consolidated Runner Batch at Closeout → Checkpoint → README Progress Reconciliation → Report**
 
 Do not jump from requirement to code when architecture, data, security, compatibility, dependency, migration or approval decisions are involved.
 
@@ -76,11 +78,12 @@ Before coding:
 8. **Inspect OPEN Issues first.** Triage dependency-ready/accepted unfinished issues and continue/solve them before inventing new work.
 9. **Inspect OPEN PRs/MRs second.** Review mergeability, exact-head CI, review threads, conflicts and dependencies; fix stale/failing accepted PRs and merge merge-ready work before starting new implementation.
 10. Re-read active deterministic claim branches and `config/coordination/agent-work-queue.json` after issue/PR reconciliation.
-11. Inspect relevant existing implementation and tests.
-12. Identify unfinished work, baseline failures and known risks.
-13. Verify available build/test commands and applicable FAST/FULL gates.
-14. Re-run relevant validation if the checkpoint is stale or uncertain and execution is authorized.
-15. Only then plan/implement within the approved scope.
+11. Reconcile `config/coordination/runner-benchmark.json`: capture newly discovered material runner work, preserve authorization blocks, and identify mandatory immediate exceptions.
+12. Inspect relevant existing implementation and tests.
+13. Identify unfinished work, baseline failures and known risks.
+14. Verify available build/test commands and applicable FAST/FULL gates.
+15. Re-run only the validation that is required now by security, merge protection, migration/auth/secrets/data safety, incident recovery, or current-change integration safety; otherwise capture eligible material runner work for the final batch.
+16. Only then plan/implement within the approved scope, including explicit Runner Benchmark impact.
 
 An issue already represented by an open PR/MR must not be duplicated by a new branch unless repository evidence explicitly supersedes the existing path. PR/MR-first cleanup after issue triage does not authorize unsafe merges; all dependency, review and exact-head gates remain mandatory.
 
@@ -115,11 +118,32 @@ When resuming work:
 6. verify current approval/work lifecycle state;
 7. identify partial/failed work and baseline failures;
 8. re-read active deterministic claims/queue after any accepted merge;
-9. continue from the safest verified point.
+9. reconcile the Runner Benchmark and do not silently rerun historical/authorization-gated evidence;
+10. continue from the safest verified point.
 
 Never restart completed work without evidence that it is invalid.
 
 `continue`/`resume` never overrides a pending approval state.
+
+## Runner Benchmark and final-batch rule
+
+Material runner-dependent work is governed by `config/coordination/runner-benchmark.json` and `docs/AI/RUNNER-BENCHMARK-EXECUTION-POLICY.md`.
+
+For every material CI/cloud/container/browser/runtime/matrix/performance/full-regression runner task:
+
+1. assign or reuse a stable `RB-####` entry before execution or deferral;
+2. record source, workflow/command, exact environment/fixture/input identity, dependencies, authorization, merge/security classification, expected runner time and dedup key;
+3. default to `DEFER_FINAL_BATCH` when the task is non-blocking and safe to postpone;
+4. execute immediately when it is security-critical, exact-head merge-required, migration/auth/secrets/data safety-critical, required to validate the current integration, or incident/recovery work;
+5. record immediate-exception evidence back into the benchmark;
+6. deduplicate equivalent tasks before the final consolidated runner batch;
+7. treat deferred work as **NOT EXECUTED**, never PASS.
+
+The final runner batch happens at milestone/integration closeout after intended implementation has settled and before terminal milestone/release claims.
+
+Runner batching never bypasses branch protection or approval boundaries. A benchmark entry does not grant runtime, destructive, provider, production, deploy, release or formal evidence authority. Authorization-gated items remain `BLOCKED_AUTHORIZATION` until a valid current grant explicitly covers them; consumed or historical grants are never reused.
+
+Every implementation plan must state its **Runner Benchmark impact**: expected `RB-####` entries, deferred vs immediate classification, expected runner minutes, dependencies/authorization, and dedup/final-batch grouping. Record `none` when no material runner task is introduced.
 
 ## External research rule
 
