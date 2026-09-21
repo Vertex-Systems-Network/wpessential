@@ -1,8 +1,8 @@
 # Dashboard Widgets — Exact-Main Runtime Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1119**  
-Exact audited main: `b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9`  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1119**
+Exact audited main: `b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9`
 Decision: **READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1**
 
 ## Purpose
@@ -92,7 +92,7 @@ Issue #1120 must **not** include:
 
 ## Next deterministic source slot
 
-Issue: **#1120 — Dashboard Widgets: bounded read-only Runtime Foundation V1**  
+Issue: **#1120 — Dashboard Widgets: bounded read-only Runtime Foundation V1**
 Branch: `agent/dashboard-widgets-read-runtime-foundation-v1`
 
 Claim requirements after this audit PR merges:
