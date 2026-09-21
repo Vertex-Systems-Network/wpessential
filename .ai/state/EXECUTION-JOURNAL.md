@@ -77,4 +77,3 @@ Rules:
 - Audit verdict: `READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1`.
 - Issue #1132 opened as dependency-gated activation slot on `agent/dashboard-widgets-central-pro-activation-v1`.
 - Activation scope requires bootstrap contribution plus entitlement/package verifier regression evidence; Dashboard Widgets runtime source and policy semantics remain frozen.
-
