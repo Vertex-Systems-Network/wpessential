@@ -1,7 +1,7 @@
 # WPEssential — Engineering Execution Governance
 
 Status: **Active governance / implementation rules predeclared**  
-Last reviewed: 2026-09-01
+Last reviewed: 2026-09-21
 
 ## 1. Purpose
 
@@ -158,6 +158,49 @@ Run at milestone/release boundaries as applicable:
 - broader regression/performance evidence.
 
 FAST GATE never substitutes a required FULL GATE.
+
+### 10.1 Runner Benchmark / consolidated final-batch execution
+
+All material runner-dependent work is registered in `config/coordination/runner-benchmark.json` under policy `GOV-AI-NATIVE-RUNNER-BENCHMARK-001`.
+
+A material runner task includes cloud/CI jobs, WordPress/MySQL/PHP runtime matrices, browser/E2E runners, performance/load benchmarks, full regression/package simulations and other non-trivial remote/container execution.
+
+Before execution or deferral, record:
+
+- stable `RB-####` ID;
+- source issue/PR/work package;
+- workflow/command;
+- exact source/environment/matrix/fixture/input identity;
+- dependencies and authorization state;
+- merge-blocking and security-critical classification;
+- expected runner minutes;
+- deterministic dedup key;
+- disposition/status;
+- terminal evidence when available.
+
+Default disposition is `DEFER_FINAL_BATCH` when postponement is safe. Eligible work is accumulated and executed once in a consolidated milestone/integration closeout batch after normal implementation has settled.
+
+Mandatory immediate exceptions are:
+
+- `SECURITY_CRITICAL`;
+- `MERGE_REQUIRED_EXACT_HEAD`;
+- `MIGRATION_AUTH_SECRETS_DATA_SAFETY`;
+- `CURRENT_CHANGE_INTEGRATION_SAFETY`;
+- `INCIDENT_OR_RECOVERY`.
+
+Immediate exceptions still require a benchmark entry and evidence reconciliation.
+
+Before the final batch, deduplicate tasks by:
+
+`workflow/command + exact source SHA + environment/matrix + fixture/input identity`.
+
+Equivalent tasks execute once and dependent work references the same evidence. A different source, security-sensitive dependency, fixture/input identity or runtime matrix is a different benchmark identity.
+
+The final batch never bypasses branch protection or approval. Tasks needing a separate formal runtime, destructive, provider, production, deployment or release authorization remain `BLOCKED_AUTHORIZATION` and are excluded until a valid current grant exists. Historical/consumed grants are non-reusable.
+
+Deferred means **NOT EXECUTED**, never PASS. Failure evidence must be classified under the existing baseline/flaky-test rules and may not be hidden by rerun-until-green.
+
+Every implementation plan must include a Runner Benchmark impact statement and expected final-batch grouping. Full details are in `docs/AI/RUNNER-BENCHMARK-EXECUTION-POLICY.md`.
 
 ## 11. Flaky-test policy
 
