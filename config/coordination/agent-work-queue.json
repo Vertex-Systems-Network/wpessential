@@ -1,9 +1,9 @@
 {
-  "schema_version": 106,
+  "schema_version": 107,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9",
-  "mode": "DASHBOARD_WIDGETS_RUNTIME_TRANSITION_AND_EXISTING_GATED_WORK",
-  "source_issue": "#1109",
+  "queue_anchor_main_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f",
+  "mode": "DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_MERGED_NEXT_TRANSITION_AUDIT",
+  "source_issue": "#1123",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -113,7 +113,8 @@
     "1109": "AI_NATIVE_RUNNER_BENCHMARK_GOVERNANCE_ACTIVE",
     "1115": "COMPLETED_ON_PR_1116_AI_TIMEOUT_RESILIENCE",
     "1119": "COMPLETED_ON_AUDIT_PR_MERGE_DASHBOARD_WIDGETS_RUNTIME_TRANSITION",
-    "1120": "OPEN_DASHBOARD_WIDGETS_READ_RUNTIME_FOUNDATION",
+    "1120": "COMPLETED_ON_PR_1122_DASHBOARD_WIDGETS_READ_RUNTIME_FOUNDATION",
+    "1123": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_RECONCILIATION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1724,7 +1725,7 @@
       "slot_id": "dashboard-widgets-read-runtime-foundation-v1",
       "title": "Dashboard Widgets bounded read-only Runtime Foundation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_READ_ONLY_RUNTIME_FOUNDATION_V1",
       "source": "Issue #1120 / audit Issue #1119",
       "dependencies": ["Issue #1119 audit PR merged with READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1"],
@@ -1748,7 +1749,11 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-read-runtime-foundation-v1",
-      "close_condition": "Bounded read-only owner foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, and no scope widening"
+      "close_condition": "Bounded read-only owner foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, and no scope widening",
+      "terminal_result": "PASS_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1",
+      "source_head_exact_verification": "143893fcfd9b12828277dc112023e3fb0fa33af3",
+      "merge_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f",
+      "closeout_pr": 1122
     }
   ],
   "historical_closeout": {

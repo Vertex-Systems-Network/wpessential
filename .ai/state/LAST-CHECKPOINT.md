@@ -2,39 +2,37 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Exact observed base
+## Fully reconciled product baseline pending closeout transport
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main before this milestone: `b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9`
-- Active Issue: #1119
-- Active PR: #1121
-- Active branch: `supervisor/dashboard-widgets-runtime-transition-audit-v1`
+- Product integration main: `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`
+- Completed Issue: #1120
+- Completed PR: #1122
+- Exact tested source head: `143893fcfd9b12828277dc112023e3fb0fa33af3`
+- Active shared-truth closeout Issue: #1123
 
-## Active milestone
+## Terminal #1122 evidence
 
-Dashboard Widgets / Surface 10 exact-main runtime transition audit.
+- Governance Gate `35617311150` — PASS.
+- Architecture Guards `35617311221` — PASS.
+- PHP Quality Toolchain `35617311439` — PASS.
+- Platform Compatibility Matrix `35617311155` — PASS.
+- Distributable Package `35617311271` — PASS.
+- Zero unresolved review threads and zero commits behind main at merge gate.
+- PR #1122 merged as `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`; Issue #1120 closed.
 
-Audit verdict: **READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1**.
+## Product truth
 
-The audit proves the next safe source tranche is Issue #1120 on deterministic branch `agent/dashboard-widgets-read-runtime-foundation-v1`, limited to a Surface 10 Definition/read-service owner foundation over the canonical shared Definition Repository.
+Surface 10 / Dashboard Widgets now has a bounded read-only owner foundation:
+- `DashboardWidgetDefinition` validates canonical Surface 10 ownership/type;
+- `DashboardWidgetsReadService` reads only through the shared Definition Repository;
+- `get` and deterministic `catalog` are implemented;
+- foreign owner/type exposure fails closed.
 
-## Explicit boundaries
+This does **not** promote full-parity `RUNTIME_CERTIFIED`. Module/Ability exposure, WordPress dashboard registration, mutation, user preferences, providers, cache/refresh, actions, deployment and release remain separate gates.
 
-- #1120 is not claimable until PR #1121 merges.
-- No Dashboard Widgets Module/Ability/bootstrap exposure yet.
-- No WordPress dashboard registration, Definition/user-preference mutation, Query/Listings/Analytics/Form/provider execution, cache/remote engine, AJAX/REST mutation, shared Platform change, certification, deploy or release.
-- #1102 remains separately authorization-gated.
-- #947 remains independent Worker-only.
-- #858 remains repository-admin.
+## Next safe transition
 
-## Recovery behavior
+After this shared-truth closeout merges, run a fresh exact-main transition audit for the next Surface 10 bounded tranche. Do not assume Module/Ability exposure is automatically authorized merely because the foundation merged.
 
-On the next `continue`:
-
-1. read compact state/checkpoint;
-2. resolve current PR #1121 head and exact current main;
-3. perform one consolidated exact-head CI/review refresh;
-4. merge only if applicable CI is terminal green, branch is current and unresolved review threads are zero;
-5. if still pending, stop without polling or source-head mutation solely to record pending state.
-
-Never claim #1120 before #1121 promotion.
+#858 remains repo-admin, #947 independent Worker-only, and #1102 separately authorization-gated.
