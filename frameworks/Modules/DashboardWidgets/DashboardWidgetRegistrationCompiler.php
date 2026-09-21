@@ -20,7 +20,14 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'context', 'priority', 'network_dashboard'];
+    private const WIDGET_KEYS = ['key', 'title', 'context', 'priority', 'network_dashboard', 'visibility'];
+
+    private DashboardWidgetVisibilityCompiler $visibilityCompiler;
+
+    public function __construct(?DashboardWidgetVisibilityCompiler $visibilityCompiler = null)
+    {
+        $this->visibilityCompiler = $visibilityCompiler ?? new DashboardWidgetVisibilityCompiler();
+    }
 
     public function compile(Definition $definition): DashboardWidgetRegistrationDescriptor
     {
@@ -44,6 +51,8 @@ final readonly class DashboardWidgetRegistrationCompiler
             throw new InvalidArgumentException('Dashboard Widget registration metadata must be an object/map.');
         }
         $this->assertKnownKeys($widget, self::WIDGET_KEYS, 'Dashboard Widget registration metadata');
+
+        $this->visibilityCompiler->compile($definition);
 
         $key = $widget['key'] ?? null;
         if (!is_string($key) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $key)) {
