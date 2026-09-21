@@ -2,37 +2,49 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Fully reconciled product baseline pending closeout transport
+## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Product integration main: `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`
-- Completed Issue: #1120
-- Completed PR: #1122
-- Exact tested source head: `143893fcfd9b12828277dc112023e3fb0fa33af3`
-- Active shared-truth closeout Issue: #1123
+- Exact main before this milestone: `cd03b5002e1562e7f04d8b37018eea8638dd4a24`
+- Active Issue: #1125
+- Active PR: #1127
+- Active branch: `supervisor/dashboard-widgets-module-ability-transition-audit-v1`
 
-## Terminal #1122 evidence
+## Active milestone
 
-- Governance Gate `35617311150` — PASS.
-- Architecture Guards `35617311221` — PASS.
-- PHP Quality Toolchain `35617311439` — PASS.
-- Platform Compatibility Matrix `35617311155` — PASS.
-- Distributable Package `35617311271` — PASS.
-- Zero unresolved review threads and zero commits behind main at merge gate.
-- PR #1122 merged as `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`; Issue #1120 closed.
+Surface 10 / Dashboard Widgets exact-main Module/Ability exposure transition audit.
 
-## Product truth
+Decision: **READY_FOR_BOUNDED_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1**.
 
-Surface 10 / Dashboard Widgets now has a bounded read-only owner foundation:
-- `DashboardWidgetDefinition` validates canonical Surface 10 ownership/type;
-- `DashboardWidgetsReadService` reads only through the shared Definition Repository;
-- `get` and deterministic `catalog` are implemented;
-- foreign owner/type exposure fails closed.
+Current accepted precedent separates read-only Module/Ability source from central activation:
+- PR #886 — Admin Menu Module + read handler + unit test only;
+- PR #887 — Settings equivalent only;
+- PR #888 — Frontend Dashboard equivalent only;
+- PR #898 — central activation separately gated later.
 
-This does **not** promote full-parity `RUNTIME_CERTIFIED`. Module/Ability exposure, WordPress dashboard registration, mutation, user preferences, providers, cache/refresh, actions, deployment and release remain separate gates.
+## Next bounded source slot after audit promotion
 
-## Next safe transition
+Issue #1126 on `agent/dashboard-widgets-read-module-ability-exposure-v1`.
 
-After this shared-truth closeout merges, run a fresh exact-main transition audit for the next Surface 10 bounded tranche. Do not assume Module/Ability exposure is automatically authorized merely because the foundation merged.
+Allowed: Dashboard Widgets Module, read Ability handler, focused module test.
 
-#858 remains repo-admin, #947 independent Worker-only, and #1102 separately authorization-gated.
+Forbidden in #1126:
+- `wpessential-pro.php` central activation;
+- WordPress dashboard widget registration;
+- mutation/user preferences;
+- providers/query/listing/analytics/forms execution;
+- cache/remote engines;
+- shared Platform changes;
+- full-parity certification, deploy or release.
+
+## Recovery behavior
+
+On next `continue`:
+
+1. read compact state/checkpoint;
+2. resolve PR #1127 current head and exact current main;
+3. perform one consolidated exact-head CI/review refresh;
+4. merge only if applicable checks are terminal green, branch is current and unresolved review threads are zero;
+5. if pending, stop without tight polling.
+
+Do not claim #1126 before #1127 promotion.
