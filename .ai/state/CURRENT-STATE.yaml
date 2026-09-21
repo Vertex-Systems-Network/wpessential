@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: d721c09c66cb2e4f8e53fd353ed5b5f36f96f816
-observed_main_source: "PR #1166 merged Dashboard Widgets trusted render-source descriptor/compiler V1"
-active_issue: "#1167"
-active_pr: "#1169"
-active_branch: supervisor/dashboard-widgets-component-render-transition-audit-v1
-current_milestone: "Dashboard Widgets #1162 terminal reconciliation + component-render transition audit V1"
+observed_main_sha: a8b3539168ba72f74473d4bc9e3fef6af445147f
+observed_main_source: "PR #1169 merged Dashboard Widgets component-render transition audit"
+active_issue: "#1168"
+active_pr: null
+active_branch: supervisor/dashboard-widgets-trusted-component-renderer-contract-v1
+current_milestone: "Dashboard Widgets trusted component Blueprint/renderer implementation contract V1"
 milestone_status: VERIFYING
-last_completed_milestone: "Issue #1162 / PR #1166 merged as d721c09c66cb2e4f8e53fd353ed5b5f36f96f816; all five exact-head workflows passed"
-next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1169. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1169 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1167 / PR #1169 merged as a8b3539168ba72f74473d4bc9e3fef6af445147f; exact-head Governance and Architecture passed"
+next_safe_action: "Open the #1168 contract PR, bind active_pr to its exact number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "Issue #1168 contract branch publication and exact-head validation"
 next_planned_slot:
-  issue: "#1168"
-  slot_id: dashboard-widgets-trusted-component-blueprint-renderer-contract-v1
-  claim_branch: supervisor/dashboard-widgets-trusted-component-renderer-contract-v1
-  claim_rule: "Do not claim until #1167 audit PR merges with READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1."
+  issue: "#1170"
+  slot_id: dashboard-widgets-trusted-component-blueprint-registrar-renderer-v1
+  claim_branch: agent/dashboard-widgets-trusted-component-renderer-v1
+  claim_rule: "Do not claim until #1168 contract PR merges with READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0028
+    - RB-0029
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,8 +48,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0027 records terminal PASS for #1162/#1166."
-  - "Surface 10 currently has no module-local Component Blueprint registrar or component renderer implementation."
-  - "Shared BlueprintRendererDispatcher fails closed with DependencyMismatch when a component renderer is missing."
-  - "Audit verdict READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1."
-  - "Renderer invocation, HTML output, Dashboard hooks, provider/query/source execution, remote/iframe execution, mutation and full-parity certification remain blocked."
+  - "RB-0028 reconciled terminal PASS for #1167/#1169."
+  - "Issue #1168 defines seven canonical Surface 10 component types, stable Blueprint UUIDs and minimal required binding schemas."
+  - "V1 component registration reuses concrete shared ComponentBlueprintRegistry and BlueprintRendererDispatcher services without shared Platform mutation."
+  - "Issue #1170 is dependency-gated; Dashboard runtime renderer invocation, hooks, providers/sources, assets, mutation and full parity remain blocked."

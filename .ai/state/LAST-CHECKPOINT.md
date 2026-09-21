@@ -5,42 +5,56 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `d721c09c66cb2e4f8e53fd353ed5b5f36f96f816`
-- Completed source milestone: Issue #1162 / PR #1166
-- Active reconciliation/audit Issue: #1167
-- Active PR: #1169
-- Deterministic audit branch: `supervisor/dashboard-widgets-component-render-transition-audit-v1`
+- Exact main: `a8b3539168ba72f74473d4bc9e3fef6af445147f`
+- Completed audit: Issue #1167 / PR #1169
+- Active contract Issue: #1168
+- Deterministic branch: `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`
 
-## #1162 / #1166 terminal evidence
+## #1167 / #1169 terminal evidence
 
-- exact head `1ee7d728cddf687138df23e403880c6bba704ae0`
-- Governance `35661019438` PASS
-- Architecture `35661019316` PASS
-- PHP Quality `35661019306` PASS
-- Package `35661019321` PASS
-- Platform Matrix `35661019341` PASS
+- exact head `82403eaa65100e8914225563573aa031ec8a151d`
+- Governance `35661587232` PASS
+- Architecture `35661587244` PASS
 - zero unresolved review threads; zero behind
-- exactly seven authorized source/test files
-- merged as `d721c09c66cb2e4f8e53fd353ed5b5f36f96f816`; Issue #1162 closed
+- merged as `a8b3539168ba72f74473d4bc9e3fef6af445147f`
+- Issue #1167 closed completed
+- RB-0028 reconciled PASS
 
-## Component-render transition audit
+## #1168 component contract
 
-Exact-main Surface 10 can now compile a trusted render source into shared `RenderInput`, but Dashboard Widgets registers no Surface 10 Component Blueprint and no component renderer.
+Seven canonical Surface 10 V1 components are frozen with revision-1 stable Blueprint UUIDs and minimal exact required bindings:
 
-The shared dispatcher returns `DependencyMismatch` when a Blueprint's component type has no registered renderer.
+- rich-text → content:string
+- kpi → label:string + value:string
+- chart → labels:string_list + values:int_list
+- quick-links → labels:string_list + urls:string_list
+- announcement → title:string + text:string
+- support-onboarding → title:string + text:string
+- icon-link → icon:string + label:string + url:string
 
-ADR-0051 requires a trusted content renderer before the WordPress Dashboard adapter.
+V1 uses no asset handles. Text is escaped. Links are HTTPS absolute or same-site root-relative only. Chart and quick-link lists are bounded and length-matched.
 
-Verdict:
+The implementation reuses concrete shared `ComponentBlueprintRegistry` and `BlueprintRendererDispatcher` services. It does not modify shared Platform contracts.
 
-- `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1`
-- renderer invocation remains blocked;
-- direct Dashboard registration remains blocked;
-- provider/query/source/remote/iframe execution remains blocked;
-- mutation/full parity remain blocked.
+## Next source tranche
 
-Issue #1168 is the only dependency-gated next tranche and is planning/implementation-contract only.
+Issue #1170 is dependency-gated on the #1168 contract merge.
+
+Verdict after successful contract merge:
+
+`READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`
+
+## Still blocked
+
+- Dashboard runtime renderer invocation
+- WordPress Dashboard hooks / `wp_add_dashboard_widget`
+- provider/query/source execution
+- remote/Safe HTTP/iframe execution
+- shortcode/block/action execution
+- Definition/user-preference mutation
+- asset registration
+- full-parity certification/deploy/release
 
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1169. Merge only on terminal green evidence. Do not claim #1168 before audit promotion.
+Open the #1168 contract PR, bind compact state to its exact PR number, then run one consolidated exact-head Governance/Architecture + review/main-divergence refresh.

@@ -268,3 +268,14 @@ Rules:
 - Compact state binds `active_pr: "#1169"` before final exact-head validation.
 - RB-0028 is the immediate Governance/Architecture merge gate.
 - Issue #1168 remains dependency-gated and must not be claimed until PR #1169 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1`.
+
+
+## 2026-09-22 — Component-render audit merged; trusted component contract started
+
+- PR #1169 exact head `82403eaa65100e8914225563573aa031ec8a151d` passed Governance `35661587232` and Architecture `35661587244`.
+- PR #1169 merged as `a8b3539168ba72f74473d4bc9e3fef6af445147f`; Issue #1167 closed.
+- RB-0028 reconciled terminal PASS.
+- Issue #1168 claimed on `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`.
+- Contract V1 defines seven stable Surface 10 component types, revision-1 Blueprint UUIDs, minimal exact binding schemas, safe escaping/link rules and zero asset handles.
+- Issue #1170 opened as the dependency-gated next Blueprint registrar + bounded component renderer source tranche.
+- Dashboard runtime renderer invocation, Dashboard hooks, providers/sources, remote/iframe, assets, mutation and full-parity certification remain blocked.
