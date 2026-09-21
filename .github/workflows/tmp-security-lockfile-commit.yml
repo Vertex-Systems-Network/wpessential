@@ -1,0 +1,49 @@
+name: Temporary Security Lockfile Commit
+
+on:
+  push:
+    branches:
+      - 'security/node-dev-dependency-advisories-v1'
+    paths:
+      - '.github/workflows/tmp-security-lockfile-commit.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.repository == 'Vertex-Systems-Network/wpessential'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact security branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: security/node-dev-dependency-advisories-v1
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Regenerate lockfile without lifecycle scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "security/node-dev-dependency-advisories-v1"
+          npm install --package-lock-only --ignore-scripts
+          npm audit --audit-level=high
+          npm audit --omit=dev --audit-level=high
+
+      - name: Commit only regenerated lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          git status --short
+          test -z "$(git status --short | awk '$2 != "package-lock.json" {print}')"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "No lockfile change required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "security: refresh zero-advisory Node lockfile"
+          git push origin HEAD:security/node-dev-dependency-advisories-v1
