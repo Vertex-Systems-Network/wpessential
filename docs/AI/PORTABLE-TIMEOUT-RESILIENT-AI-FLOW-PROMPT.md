@@ -32,8 +32,9 @@ TIMEOUT / REMOTE-CALL BUDGET
 - Read only what the active milestone needs.
 - Perform at most one consolidated CI/status refresh per milestone by default.
 - NEVER tight-poll CI, workflows, deployments, providers, or status endpoints.
-- If required CI is still running, write durable state as WAITING_EXTERNAL with exact run/source IDs and next action, report that state, and end the milestone.
-- On the next "continue", perform one fresh consolidated status refresh.
+- Before the final exact-head CI observation, persist VERIFYING/WAITING_EXTERNAL state so a later state-only commit does not invalidate the head being certified.
+- If required CI is still running after the consolidated refresh, do not create another source commit only to record that fact. Keep the pre-persisted waiting state, record run IDs in a PR/Issue status surface when possible without mutating the certified head, report pending, and end the milestone.
+- On the next "continue", resolve the current PR/branch head and perform one fresh consolidated status refresh.
 - A second same-milestone refresh is allowed only for a documented security, merge, incident/recovery, or provider state transition that is required for a safe decision.
 
 RUNNER BENCHMARK
