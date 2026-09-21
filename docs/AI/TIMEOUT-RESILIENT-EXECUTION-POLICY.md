@@ -61,15 +61,19 @@ AI MUST NOT:
 - rerun historical/formal evidence without current authorization;
 - treat deferred or still-running CI as PASS.
 
+Before the final exact-head CI observation, persist compact state as `VERIFYING` or `WAITING_EXTERNAL` when the milestone is expected to wait on remote checks. This prevents a post-observation state-only commit from invalidating the source head that was just certified.
+
 If required external CI is still running after the milestone's consolidated refresh:
 
-1. set compact state to `WAITING_EXTERNAL`;
-2. record the exact workflow/run/source identity and next safe action;
-3. update `LAST-CHECKPOINT.md`;
+1. do **not** create a new source commit solely to record that CI is still running;
+2. preserve the already-persisted waiting/verifying state;
+3. record exact run IDs in a PR/Issue status surface when available without mutating the source head, or resolve them fresh on resume;
 4. report the pending state;
 5. stop that milestone.
 
-The next user `continue` performs one new consolidated refresh.
+The next user `continue` resolves the current PR/branch head and performs one new consolidated refresh. After CI/merge reaches a terminal repository transition, compact state is reconciled in the next safe state-changing milestone.
+
+Exact run/source identity is required whenever it can be recorded without self-invalidating the certified head. The compact file itself must not attempt to embed its own Git commit SHA.
 
 A second status refresh inside the same milestone is allowed only when a security, merge, incident/recovery, or provider result materially changed and the extra refresh is necessary to make a safe decision. Record the exception in the execution journal.
 
