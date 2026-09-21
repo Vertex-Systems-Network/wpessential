@@ -580,7 +580,7 @@
     },
     {
       "id": "RB-0018",
-      "source": "Issue #1143",
+      "source": "Issue #1143 / PR #1145",
       "category": "DASHBOARD_WIDGETS_VISIBILITY_POLICY_TRANSITION_AUDIT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -597,11 +597,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|visibility-policy-transition-audit|issue1143|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1143 audit branch prepared; protected PR exact-head validation pending"
+        "PR #1145 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "A PASS authorizes only bounded #1144 visibility policy contract/compiler foundation. Direct visibility evaluation and WordPress dashboard registration remain blocked."
+      "note": "Exact-head visibility-policy transition-audit merge gate only. No tight polling. A PASS authorizes only bounded #1144 contract/compiler foundation."
     }
   ],
   "last_reconciled_issue": "#1143",
