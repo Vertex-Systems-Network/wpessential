@@ -49,4 +49,3 @@ Rules:
 - PR #1122 merged as `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`; Issue #1120 closed.
 - Surface 10 now has only the bounded read-only Definition/read-service owner foundation. Full-parity runtime certification remains unpromoted.
 - Issue #1123 opened for mandatory post-merge shared-truth reconciliation before any next Surface 10 source tranche.
-
