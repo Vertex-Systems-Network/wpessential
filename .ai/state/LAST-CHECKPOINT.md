@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`
 - Completed source milestone: Issue #1154 / PR #1158
 - Active reconciliation/audit Issue: #1159
+- Active PR: #1161
 - Deterministic audit branch: `supervisor/dashboard-widgets-render-source-transition-audit-v1`
 
 ## #1154 / #1158 terminal evidence
@@ -40,4 +41,4 @@ Issue #1160 is the only dependency-gated next tranche and is planning/implementa
 
 ## Next safe action
 
-Open the #1159 audit PR, bind compact state to its exact PR number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Do not claim #1160 before audit promotion.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1161. Merge only on terminal green evidence. Do not claim #1160 before audit promotion.

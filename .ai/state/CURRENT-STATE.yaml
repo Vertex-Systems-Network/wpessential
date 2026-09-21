@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: 6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4
 observed_main_source: "PR #1158 merged Dashboard Widgets trusted content-class contract V1"
 active_issue: "#1159"
-active_pr: null
+active_pr: "#1161"
 active_branch: supervisor/dashboard-widgets-render-source-transition-audit-v1
 current_milestone: "Dashboard Widgets #1154 terminal reconciliation + render-source transition audit V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1154 / PR #1158 merged as 6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4; trusted content-class contract V1 passed all five exact-head workflows"
-next_safe_action: "Open the #1159 audit PR, bind active_pr to its exact number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "Issue #1159 audit branch publication and exact-head validation"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1161. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1161 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1160"
   slot_id: dashboard-widgets-trusted-render-source-implementation-contract-v1

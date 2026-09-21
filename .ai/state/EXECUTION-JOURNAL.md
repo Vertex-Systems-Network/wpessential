@@ -197,3 +197,12 @@ Rules:
 - Surface 10 currently lacks an explicit authored Blueprint/render-source id/revision + binding schema sufficient to build shared RenderInput without inventing Definition fields.
 - Verdict: `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`.
 - Issue #1160 opened as the only dependency-gated next tranche; it is contract/planning only and must not execute rendering or Dashboard hooks.
+
+
+## 2026-09-22 — PR #1161 opened for render-source transition audit
+
+- PR #1161 opened from exact main `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`.
+- Scope is exactly seven shared-truth/audit files; no runtime/product source files change.
+- Compact state binds `active_pr: "#1161"` before final exact-head validation.
+- RB-0025 is the immediate Governance/Architecture merge gate.
+- Issue #1160 remains dependency-gated and must not be claimed until PR #1161 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`.

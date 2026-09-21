@@ -816,10 +816,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|render-source-transition-audit|issue1159|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact audited main 6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4",
-        "Audit verdict READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1; exact-head PR validation pending"
+        "Audit verdict READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
+        "PR #1161 opened on supervisor/dashboard-widgets-render-source-transition-audit-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1160 planning/implementation-contract work. Renderer execution remains blocked."
     }

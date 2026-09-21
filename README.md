@@ -11,9 +11,9 @@ Project website: **https://wpessential.org**
 - Reconciled product main: `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4` after Issue #1154 / PR #1158 merged trusted content-class descriptor/compiler V1.
 - #1154 terminal evidence: exact head `38b0883927864e8f13b3da0d6bf4d32dbde31a36`; Governance `35657768143`, Architecture `35657768000`, PHP Quality `35657767995`, Platform Matrix `35657768081`, Package `35657768053` all PASS; zero threads and zero behind at merge.
 - Surface 10 content-class milestone: `██████████ 100%` for **trusted content-class contract V1 only**. Registration now fails closed unless `widget.type` is one of the seven reviewed structured V1 classes; this is not full product parity or renderer certification.
-- Active milestone: **Issue #1159 — terminal reconciliation + exact-main render-source transition audit**.
+- Active milestone: **Issue #1159 / PR #1161 — terminal reconciliation + exact-main render-source transition audit**.
 - Audit verdict: **READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1**. Shared `RendererInterface` / `BlueprintRendererDispatcher` must be reused; current Surface 10 Definition contracts lack an explicit Blueprint/render-binding schema, so renderer execution remains blocked.
-- Dependency-gated next tranche: **Issue #1160 — trusted render-source implementation contract V1**, branch `supervisor/dashboard-widgets-trusted-render-source-contract-v1`; claim only after the #1159 audit PR merges.
+- Dependency-gated next tranche: **Issue #1160 — trusted render-source implementation contract V1**, branch `supervisor/dashboard-widgets-trusted-render-source-contract-v1`; claim only after PR #1161 merges with terminal green evidence and promotes the audit verdict.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, renderer/provider/source execution, remote/iframe execution, mutation/preferences and full-parity certification remain blocked.
 - Current AI-Native rule: every meaningful repository-changing Supervisor milestone must reconcile this live README progress block before final reporting; module delivery/timeline changes also require the complete 56 / 56 dashboard reconciliation.
 
