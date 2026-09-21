@@ -1,8 +1,8 @@
 {
-  "schema_version": 104,
+  "schema_version": 105,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "aff745c642246ffd28e12797b29e94112ea0baca",
-  "mode": "AI_NATIVE_TIMEOUT_RESILIENCE_AND_EXISTING_GATED_WORK",
+  "queue_anchor_main_sha": "74b07170b5dc5a654b1148b24224aa781d8123d4",
+  "mode": "POST_MERGE_RECONCILED_EXISTING_GATED_WORK",
   "source_issue": "#1109",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -52,7 +52,7 @@
     "b6c_fp94_diagnostics_redaction_authorization": "Issue #1097 / GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001 PREREQUISITE_PASS_PR_1098",
     "b6d_fp90_disposable_db_snapshot_authorization": "Issue #1099 / GOV-P006-B6D-FP90-DISPOSABLE-DB-SNAPSHOT-001 PREREQUISITE_PASS_MERGED_PR_1100"
   },
-  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → Runner Benchmark → accepted work. Security remediation #1103/#1108 is active and security/merge-required runner checks are immediate exceptions. Material non-blocking runner work is registered in config/coordination/runner-benchmark.json and defaults to DEFER_FINAL_BATCH for one deduplicated milestone/integration closeout batch. A Runner Benchmark entry never grants execution authority: formal runtime/destructive/provider/production/deploy/release tasks remain BLOCKED_AUTHORIZATION until an explicit current grant exists. Historical consumed P-006 evidence must not be silently rerun. RC1 and P-006 Waves 1H–1T plus B6 prerequisites remain terminal as previously recorded; FP-86/89/90/94 remain NOT FORMALLY EXECUTED and accounting remains 144/57/57/0/0 with zero certified pairs/runtime certifications. #858 remains external-admin NON_BLOCKING and #947 independent Worker-only NON_BLOCKING.",
+  "authoritative_rule": "Resolve exact main → classify open issues → reconcile open PRs/MRs second → active claims/queue → Runner Benchmark → accepted work. Security remediations #1103/#1108 are completed; security/merge-required runner checks remain immediate exceptions. Material non-blocking runner work is registered in config/coordination/runner-benchmark.json and defaults to DEFER_FINAL_BATCH for one deduplicated milestone/integration closeout batch. A Runner Benchmark entry never grants execution authority: formal runtime/destructive/provider/production/deploy/release tasks remain BLOCKED_AUTHORIZATION until an explicit current grant exists. Historical consumed P-006 evidence must not be silently rerun. RC1 and P-006 Waves 1H–1T plus B6 prerequisites remain terminal as previously recorded; FP-86/89/90/94 remain NOT FORMALLY EXECUTED and accounting remains 144/57/57/0/0 with zero certified pairs/runtime certifications. #858 remains external-admin NON_BLOCKING and #947 independent Worker-only NON_BLOCKING.",
   "runner_benchmark": {
     "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
     "source_issue": "#1109",
@@ -108,9 +108,10 @@
     "1097": "COMPLETED_ON_PR_1098_P006_B6C_FP94_DIAGNOSTICS_REDACTION",
     "1099": "COMPLETED_ON_PR_1100_P006_B6D_FP90_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE",
     "1102": "AUTHORIZATION_GATE_OPEN_NO_RUNTIME_GRANT",
-    "1103": "SECURITY_REMEDIATION_ACTIVE_SPLIT_1106_1107_1108",
-    "1108": "SECURITY_NODE_DEPENDENCY_REMEDIATION_OPEN",
+    "1103": "COMPLETED_SECURITY_REMEDIATION_SPLIT_1106_1107_1108",
+    "1108": "COMPLETED_ON_PR_1111_NODE_DEPENDENCY_SECURITY",
     "1109": "AI_NATIVE_RUNNER_BENCHMARK_GOVERNANCE_ACTIVE",
+    "1115": "COMPLETED_ON_PR_1116_AI_TIMEOUT_RESILIENCE",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
