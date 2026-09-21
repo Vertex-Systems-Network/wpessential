@@ -2,40 +2,36 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Reconciled product baseline pending closeout transport
+## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Product integration main: `2e28666372899e2547ff89c0986812cd4ea2aa42`
-- Completed Issue: #1138
-- Completed PR: #1140
-- Exact tested source head: `a201f2a481627ae82595aaec167edcf9419a7856`
-- Active shared-truth closeout Issue: #1141
+- Exact main before this milestone: `cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088`
+- Active Issue: #1143
+- Active branch: `supervisor/dashboard-widgets-visibility-policy-transition-audit-v1`
 
-## Terminal #1140 evidence
+## Active milestone
 
-- Governance Gate `35639142764` — PASS.
-- Architecture Guards `35639142333` — PASS.
-- PHP Quality Toolchain `35639142769` — PASS.
-- Platform Compatibility Matrix `35639142728` — PASS.
-- Distributable Package `35639142823` — PASS.
-- Zero unresolved review threads and zero commits behind main at merge gate.
-- Exactly five #1138-authorized files changed.
-- No WordPress dashboard hooks, renderer/provider execution, visibility implementation or mutation was added.
-- PR #1140 merged as `2e28666372899e2547ff89c0986812cd4ea2aa42`; Issue #1138 closed.
+Surface 10 / Dashboard Widgets exact-main visibility policy foundation transition audit.
 
-## Product truth
+Verdict:
+- **BLOCKED_FOR_DIRECT_WORDPRESS_DASHBOARD_REGISTRATION**
+- **BLOCKED_FOR_VISIBILITY_POLICY_EVALUATION_V1**
+- **READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1**
 
-Surface 10 / Dashboard Widgets now has:
-- bounded read-only Definition/read-service foundation;
-- Pro-owned read-only Module/Ability exposure;
-- central Pro contribution through `wpessential-pro.php`;
-- fail-closed typed registration descriptor/compiler foundation;
-- module-local registration compiler service.
+## Why evaluation is not yet authorized
 
-The compiler accepts only owned, schema-v1, Published Dashboard Widget definitions and strict native registration metadata.
+The runtime now has a fail-closed native registration descriptor/compiler, but it has no typed audience-policy contract and no Surface 10 role/Membership/Condition evaluation boundary.
 
-Direct WordPress Dashboard registration remains blocked. No `wp_dashboard_setup`, `wp_network_dashboard_setup`, `wp_add_dashboard_widget`, content renderer/provider execution, visibility authorization, mutation or full-parity certification is promoted.
+The shared PolicyEngine remains authorization-focused; Dashboard Widget visibility is a presentation/audience filter and must never replace action/data authorization.
 
-## Next safe transition
+## Next bounded prerequisite after audit promotion
 
-After #1141 closeout merges, run a fresh exact-main audit before any additional Surface 10 runtime prerequisite.
+Issue #1144 on `agent/dashboard-widgets-visibility-policy-contract-foundation-v1`.
+
+The tranche may only add typed/fail-closed visibility metadata for P0 roles, capabilities and users, register a module-local compiler service, and add focused tests.
+
+No visibility evaluation, WordPress Dashboard hooks, provider/render execution, Membership/Condition execution, mutation, shared Platform change, certification, deploy or release.
+
+## Recovery behavior
+
+On next `continue`, resolve the audit PR exact head and perform one consolidated CI/review/main-divergence refresh. Do not claim #1144 until the audit PR is merged.

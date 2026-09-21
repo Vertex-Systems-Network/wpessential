@@ -107,3 +107,12 @@ Rules:
 - Surface 10 now has a fail-closed typed registration descriptor/compiler and module-local compiler service.
 - Direct WordPress Dashboard hooks, renderer/provider execution, visibility policy, mutation and full-parity certification remain blocked/separately gated.
 - Issue #1141 opened for mandatory post-merge shared-truth reconciliation before any further Surface 10 transition.
+
+## 2026-09-21 — Dashboard Widgets visibility policy foundation transition audit
+
+- Exact audited main: `cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088` after registration descriptor/compiler closeout PR #1142.
+- RB-0017 reconciled PASS from PR #1142 exact-head Governance `35640304531` + Architecture `35640304459`.
+- Audit verdict: `BLOCKED_FOR_DIRECT_WORDPRESS_DASHBOARD_REGISTRATION`, `BLOCKED_FOR_VISIBILITY_POLICY_EVALUATION_V1`, `READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1`.
+- P0 Options Bank audience fields scoped to roles, capabilities and users.
+- Issue #1144 opened as dependency-gated typed visibility contract/compiler foundation only.
+- No visibility evaluation, WordPress hooks, provider/render execution, Membership/Condition execution, mutation, certification, deploy or release authorized.

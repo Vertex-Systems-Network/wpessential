@@ -2,20 +2,25 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: WAITING_EXTERNAL
-observed_main_sha: 2e28666372899e2547ff89c0986812cd4ea2aa42
-observed_main_source: "PR #1140 merged Dashboard Widgets registration descriptor/compiler foundation V1"
-active_issue: "#1141"
-active_pr: "#1142"
-active_branch: supervisor/dashboard-widgets-registration-descriptor-closeout-v1
-current_milestone: "Dashboard Widgets registration descriptor/compiler foundation V1 post-merge shared-truth reconciliation"
+observed_main_sha: cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088
+observed_main_source: "PR #1142 merged Dashboard Widgets registration descriptor/compiler foundation shared-truth closeout"
+active_issue: "#1143"
+active_pr: "#1145"
+active_branch: supervisor/dashboard-widgets-visibility-policy-transition-audit-v1
+current_milestone: "Dashboard Widgets exact-main visibility policy foundation transition audit V1"
 milestone_status: WAITING_EXTERNAL
-last_completed_milestone: "Issue #1138 / PR #1140 merged as 2e28666372899e2547ff89c0986812cd4ea2aa42; exact head a201f2a481627ae82595aaec167edcf9419a7856 passed all applicable exact-head gates"
-next_safe_action: "Resolve PR #1142 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if applicable checks are terminal green, branch is current and review threads are zero. After merge, resolve fresh exact main and run a separate transition audit before any additional Surface 10 runtime prerequisite."
-waiting_external: "PR #1142 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1141 / PR #1142 merged as cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088; registration descriptor/compiler shared truth reconciled"
+next_safe_action: "Resolve PR #1145 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1144 before audit promotion."
+waiting_external: "PR #1145 exact-head Governance/Architecture validation"
+next_planned_slot:
+  issue: "#1144"
+  slot_id: dashboard-widgets-visibility-policy-contract-foundation-v1
+  claim_branch: agent/dashboard-widgets-visibility-policy-contract-foundation-v1
+  claim_rule: "Do not claim until #1143 audit PR merges with READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1."
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0017
+    - RB-0018
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -39,7 +44,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Surface 10 bounded read-only Runtime Foundation, Module/Ability exposure, central Pro activation and registration descriptor/compiler foundation are merged."
+  - "Audit verdict: READY_FOR_VISIBILITY_POLICY_CONTRACT_FOUNDATION_V1 only."
   - "Direct WordPress Dashboard registration remains blocked."
-  - "No renderer/provider execution, visibility policy, mutation, shared Platform change or full-parity certification is promoted."
-  - "Any next Surface 10 prerequisite requires a fresh exact-main audit after this closeout merges."
+  - "Visibility evaluation remains blocked; #1144 is typed metadata/compiler only."
+  - "Action/data authorization remains canonical Policy/source-owner responsibility."
