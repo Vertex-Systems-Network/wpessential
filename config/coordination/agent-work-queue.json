@@ -1,9 +1,9 @@
 {
-  "schema_version": 110,
+  "schema_version": 111,
   "snapshot_date": "2026-09-21",
-  "queue_anchor_main_sha": "bce056cf837f7f34bdff4f876446d9714359f077",
-  "mode": "DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
-  "source_issue": "#1131",
+  "queue_anchor_main_sha": "faaf5e4c5f7cf25d3e05847e28dec5e9646d26a3",
+  "mode": "DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_MERGED_NEXT_TRANSITION_AUDIT",
+  "source_issue": "#1135",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -118,8 +118,9 @@
     "1125": "COMPLETED_ON_PR_1127_DASHBOARD_WIDGETS_MODULE_ABILITY_TRANSITION_AUDIT",
     "1126": "COMPLETED_ON_PR_1128_DASHBOARD_WIDGETS_READ_MODULE_ABILITY_EXPOSURE",
     "1129": "COMPLETED_ON_PR_1130_DASHBOARD_WIDGETS_MODULE_ABILITY_RECONCILIATION",
-    "1131": "ACTIVE_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
-    "1132": "OPEN_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION",
+    "1131": "COMPLETED_ON_PR_1133_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_TRANSITION_AUDIT",
+    "1132": "COMPLETED_ON_PR_1134_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION",
+    "1135": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_RECONCILIATION",
     "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
     "1017": "CLOSED_COMPLETED_RC1_LANE_A",
     "1018": "CLOSED_COMPLETED_RC1_LANE_B",
@@ -1806,7 +1807,7 @@
       "slot_id": "dashboard-widgets-central-pro-activation-v1",
       "title": "Dashboard Widgets bounded central Pro Activation V1",
       "role": "ANY",
-      "status": "OPEN",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_CENTRAL_PRO_ACTIVATION_V1",
       "source": "Issue #1132 / audit Issue #1131",
       "dependencies": ["Issue #1131 audit PR merged with READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1"],
@@ -1831,7 +1832,17 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-central-pro-activation-v1",
-      "close_condition": "Bounded central Pro activation merged from fresh main with packaged Free/Pro regression evidence, path-applicable exact-head CI, zero unresolved review threads and no scope widening"
+      "close_condition": "Bounded central Pro activation merged from fresh main with packaged Free/Pro regression evidence, path-applicable exact-head CI, zero unresolved review threads and no scope widening",
+      "terminal_result": "PASS_BOUNDED_CENTRAL_PRO_ACTIVATION_V1",
+      "source_head_exact_verification": "6af7fdc73488b563aa9b0816db9747b38ff14ebf",
+      "governance_run_exact_verification": 35628538165,
+      "architecture_run_exact_verification": 35628538105,
+      "php_quality_run_exact_verification": 35628538114,
+      "package_run_exact_verification": 35628538040,
+      "taxonomy_role_impact_run_exact_verification": 35628538102,
+      "browser_e2e_accessibility_run_exact_verification": 35628538142,
+      "merge_sha": "faaf5e4c5f7cf25d3e05847e28dec5e9646d26a3",
+      "closeout_pr": 1134
     }
   ],
   "historical_closeout": {
