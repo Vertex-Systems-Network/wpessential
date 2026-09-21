@@ -268,7 +268,7 @@ only together with:
 - unresolved items and risks;
 - next safe action.
 
-A Worker must additionally identify whether complete 56-module README/shared progress/timeline reconciliation is required. The Supervisor may call a work cycle fully complete only after the README has all 56 canonical module rows current or the inability to update it is explicitly recorded as a blocker.
+A Worker must additionally identify whether the README delivery-truth trigger applies. When it applies, the Supervisor may call that product-delivery milestone fully complete only after the README has all 56 canonical module rows current or the inability to update it is explicitly recorded as a blocker. When it does not apply, compact durable state reconciliation is the mandatory closeout.
 
 The Supervisor must review evidence rather than trusting the phrase itself.
 
