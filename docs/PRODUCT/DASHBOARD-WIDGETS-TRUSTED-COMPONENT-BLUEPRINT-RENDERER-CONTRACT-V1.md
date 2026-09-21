@@ -1,8 +1,8 @@
 # Dashboard Widgets — Trusted Component Blueprint / Renderer Implementation Contract V1
 
-Status: **implementation-ready planning contract / Dashboard runtime renderer invocation NOT authorized**  
-Surface: **10 — Dashboard Widgets**  
-Issue: **#1168**  
+Status: **implementation-ready planning contract / Dashboard runtime renderer invocation NOT authorized**
+Surface: **10 — Dashboard Widgets**
+Issue: **#1168**
 Exact base: `main@a8b3539168ba72f74473d4bc9e3fef6af445147f`
 
 ## 1. Purpose

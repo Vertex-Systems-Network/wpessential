@@ -10,8 +10,8 @@ active_branch: supervisor/dashboard-widgets-trusted-component-renderer-contract-
 current_milestone: "Dashboard Widgets trusted component Blueprint/renderer implementation contract V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1167 / PR #1169 merged as a8b3539168ba72f74473d4bc9e3fef6af445147f; exact-head Governance and Architecture passed"
-next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1171. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1171 exact-head Governance/Architecture validation"
+next_safe_action: "Validate PR #1171 corrected exact head after Governance diff-hygiene whitespace fix. Merge only if Governance/Architecture are terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1171 corrected exact-head Governance/Architecture validation after diff-hygiene fix"
 next_planned_slot:
   issue: "#1170"
   slot_id: dashboard-widgets-trusted-component-blueprint-registrar-renderer-v1
@@ -52,3 +52,4 @@ notes:
   - "Issue #1168 defines seven canonical Surface 10 component types, stable Blueprint UUIDs and minimal required binding schemas."
   - "V1 component registration reuses concrete shared ComponentBlueprintRegistry and BlueprintRendererDispatcher services without shared Platform mutation."
   - "Issue #1170 is dependency-gated; Dashboard runtime renderer invocation, hooks, providers/sources, assets, mutation and full parity remain blocked."
+  - "PR #1171 prior head d0df313f failed Governance 35662465508 only on three trailing-whitespace contract-header lines; corrective head removes that whitespace without contract/runtime scope change."

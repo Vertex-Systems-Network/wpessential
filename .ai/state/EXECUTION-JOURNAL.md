@@ -289,3 +289,12 @@ Rules:
 - Compact state binds `active_pr: "#1171"` before final exact-head validation.
 - RB-0029 is the immediate Governance/Architecture merge gate.
 - Issue #1170 remains dependency-gated and must not be claimed until PR #1171 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`.
+
+
+## 2026-09-22 — PR #1171 Governance diff-hygiene failure corrected
+
+- PR #1171 prior head `d0df313f2a55bda8f6f835b234bb23563983d383` failed Governance `35662465508` at `git diff --check`.
+- Root cause: three trailing-whitespace lines in the trusted component contract Markdown header.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0029/journal evidence.
+- Contract component types, Blueprint UUIDs, binding schemas and authorization boundaries remain unchanged.
+- Issue #1170 remains dependency-gated until corrected PR #1171 exact head is terminal green and merged.

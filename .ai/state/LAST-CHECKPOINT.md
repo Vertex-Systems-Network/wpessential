@@ -56,6 +56,12 @@ Verdict after successful contract merge:
 - asset registration
 - full-parity certification/deploy/release
 
+## #1171 validation correction
+
+- Prior head `d0df313f2a55bda8f6f835b234bb23563983d383` failed Governance `35662465508` at exact-head diff hygiene only.
+- Root cause: three trailing-whitespace lines in the new contract Markdown header.
+- Corrective change removes only that whitespace and records the evidence; component types, Blueprint UUIDs, binding schemas and scope are unchanged.
+
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1171. Merge only on terminal green evidence.
+Validate the corrected PR #1171 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence.

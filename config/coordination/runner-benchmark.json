@@ -945,9 +945,11 @@
       "evidence": [
         "Exact base main a8b3539168ba72f74473d4bc9e3fef6af445147f",
         "Contract freezes seven Surface 10 component types/Blueprint UUIDs and minimal exact binding schemas",
-        "PR #1171 opened on supervisor/dashboard-widgets-trusted-component-renderer-contract-v1; final exact-head validation pending"
+        "PR #1171 prior exact head d0df313f2a55bda8f6f835b234bb23563983d383",
+        "Governance Gate run 35662465508 FAIL at exact-head diff hygiene only: three trailing-whitespace lines in the new contract Markdown header",
+        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
       ],
-      "note": "PASS may authorize only Issue #1170 Blueprint registrar + bounded component renderer registration. Dashboard runtime renderer invocation remains blocked."
+      "note": "Prior head failed only git diff --check. Corrective head remains planning/shared-truth-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
     }
   ],
   "last_reconciled_issue": "#1168",
