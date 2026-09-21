@@ -1,20 +1,6 @@
 name: P-006 Wave 1F Marketing-Version Mismatch Runtime Evidence
 
 on:
-  pull_request:
-    paths:
-      - 'frameworks/**'
-      - 'admin-ui/**'
-      - 'wpessential.php'
-      - 'wpessential-pro.php'
-      - 'readme.txt'
-      - 'LICENSE'
-      - 'composer.json'
-      - 'composer.lock'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'tools/release/**'
-      - '.github/workflows/p006-wave1f-marketing-version-mismatch-evidence.yml'
   workflow_dispatch:
 
 permissions:
