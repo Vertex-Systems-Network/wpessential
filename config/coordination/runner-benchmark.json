@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1109",
-  "anchor_main_sha": "cd03b5002e1562e7f04d8b37018eea8638dd4a24",
+  "anchor_main_sha": "29ad66ca2984d89a3ae7e949679a62d35ca2c357",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -315,13 +315,76 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|module-ability-transition-audit|issue1125|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1127 exact head d2048ee0f2388a6089af4e28359ced816746c2c8",
+        "Governance Gate run 35620030246 PASS",
+        "Architecture Guards run 35620030491 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1127 merged as 205ac96ad4a1cc8d097c184792df251e36bc3fa9",
+        "Issue #1125 closed completed"
+      ],
+      "note": "Exact-main Module/Ability transition audit promoted successfully. This PASS authorized only bounded read-only exposure source; central Pro activation remained separately gated."
+    },
+    {
+      "id": "RB-0010",
+      "source": "Issue #1126 / PR #1128",
+      "category": "DASHBOARD_WIDGETS_READ_ONLY_MODULE_ABILITY_EXPOSURE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package",
+      "environment": "agent/dashboard-widgets-read-module-ability-exposure-v1 exact head",
+      "dependencies": [
+        "merged Module/Ability transition audit #1125/#1127",
+        "merged Dashboard Widgets read-only Runtime Foundation V1",
+        "canonical Ability Registry and WordPress Ability bridge"
+      ],
+      "authorization": "Bounded read-only Module/Ability exposure source only; no central activation, WordPress dashboard registration, mutation, provider, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|read-module-ability-exposure|issue1126|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1128 exact head 1a463e209ad3fdaf054487b58920b9e148245a75",
+        "Governance Gate run 35620989535 PASS",
+        "Architecture Guards run 35620989489 PASS",
+        "PHP Quality Toolchain run 35620989526 PASS",
+        "Platform Compatibility Matrix run 35620989554 PASS",
+        "Distributable Package run 35620989537 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "branch diff contained exactly 3 Issue #1126-authorized files",
+        "wpessential-pro.php remained untouched",
+        "PR #1128 merged as 29ad66ca2984d89a3ae7e949679a62d35ca2c357",
+        "Issue #1126 closed completed"
+      ],
+      "note": "PASS certifies only bounded read-only Dashboard Widgets Module/Ability exposure source. The module is not centrally activated in wpessential-pro.php; WordPress dashboard integration and full-parity runtime/product certification remain unpromoted."
+    },
+    {
+      "id": "RB-0011",
+      "source": "Issue #1129 / PR #1130",
+      "category": "DASHBOARD_WIDGETS_MODULE_ABILITY_SHARED_TRUTH_CLOSEOUT",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-module-ability-closeout-v1 exact head",
+      "dependencies": [
+        "merged Dashboard Widgets Module/Ability Exposure V1 #1126/#1128",
+        "queue and Runner Benchmark reconciliation",
+        "README and compact AI state reconciliation"
+      ],
+      "authorization": "Shared-truth closeout only; no central activation, WordPress dashboard registration, mutation, provider, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|module-ability-closeout|issue1129|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
       "status": "IN_PROGRESS",
       "evidence": [
-        "PR #1127 opened; exact-head Governance/Architecture validation pending"
+        "PR #1130 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "Exact-head audit merge gate only. No tight polling. Central Pro activation remains explicitly outside Issue #1126."
+      "note": "Exact-head shared-truth closeout merge gate only. No tight polling. Central Pro activation remains a later separately audited transition."
     }
   ],
-  "last_reconciled_issue": "#1125",
+  "last_reconciled_issue": "#1129",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
 }

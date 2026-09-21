@@ -59,3 +59,12 @@ Rules:
 - Issue #1126 opened as the only next bounded source slot on `agent/dashboard-widgets-read-module-ability-exposure-v1`.
 - #1126 explicitly forbids `wpessential-pro.php` activation and all mutation/provider/certification/deploy scope.
 - PR #1127 opened for the audit/queue transition; RB-0009 is its exact-head merge gate.
+
+## 2026-09-21 — Dashboard Widgets bounded read-only Module/Ability Exposure V1 merged
+
+- Transition audit Issue #1125 / PR #1127 merged as `205ac96ad4a1cc8d097c184792df251e36bc3fa9`.
+- Issue #1126 / PR #1128 completed from exact source head `1a463e209ad3fdaf054487b58920b9e148245a75`.
+- Exact-head gates PASS: Governance `35620989535`, Architecture `35620989489`, PHP Quality `35620989526`, Platform Matrix `35620989554`, Distributable Package `35620989537`.
+- PR #1128 merged as `29ad66ca2984d89a3ae7e949679a62d35ca2c357`; Issue #1126 closed.
+- Surface 10 now has bounded read-only Module/Ability exposure source, but `wpessential-pro.php` central activation remains intentionally absent.
+- Issue #1129 opened for mandatory post-merge shared-truth reconciliation before any activation transition.
