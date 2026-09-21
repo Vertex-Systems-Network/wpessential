@@ -362,7 +362,7 @@
     },
     {
       "id": "RB-0011",
-      "source": "Issue #1129",
+      "source": "Issue #1129 / PR #1130",
       "category": "DASHBOARD_WIDGETS_MODULE_ABILITY_SHARED_TRUTH_CLOSEOUT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -378,11 +378,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|module-ability-closeout|issue1129|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1129 closeout branch prepared; protected PR exact-head validation pending"
+        "PR #1130 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "Run once at exact-head merge gate. Central Pro activation remains a later separately audited transition."
+      "note": "Exact-head shared-truth closeout merge gate only. No tight polling. Central Pro activation remains a later separately audited transition."
     }
   ],
   "last_reconciled_issue": "#1129",
