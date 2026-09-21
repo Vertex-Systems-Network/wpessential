@@ -1,7 +1,7 @@
 # WPEssential — Product Master Plan
 
 Status: **Phase 0 / planning source of truth**  
-Last reviewed: 2026-08-27
+Last reviewed: 2026-09-21
 
 ## 1. Product thesis
 
@@ -15,6 +15,26 @@ A definition created once should be reusable everywhere. Examples:
 - A query can power an admin column, listing, table, dashboard card, form options, REST endpoint, scheduled job, email digest, membership segment, or AI ability.
 - A workflow action can be invoked by a form, cron schedule, webhook, post transition, membership lifecycle event, REST call, manual admin action, or approved AI agent.
 - A membership entitlement can control content, downloads, dashboard routes, forms, menu visibility, notifications, REST/Ability access, and third-party benefits without being reduced to a WordPress role.
+
+## 1A. AI-Native execution overlay — Runner Benchmark
+
+All implementation phases in this master plan use the repository-wide Runner Benchmark policy:
+
+- registry: `config/coordination/runner-benchmark.json`;
+- execution policy: `docs/AI/RUNNER-BENCHMARK-EXECUTION-POLICY.md`;
+- policy ID: `GOV-AI-NATIVE-RUNNER-BENCHMARK-001`.
+
+Planning rule for every milestone/work package:
+
+1. identify material runner-dependent tasks during planning rather than discovering them only at the end;
+2. add/reuse stable `RB-####` entries with environment, dependency, authorization, expected runtime and completion evidence;
+3. defer eligible non-blocking runner work to the milestone/integration final consolidated batch;
+4. execute security-critical, merge-required exact-head, migration/auth/secrets/data safety, current-change integration and incident/recovery runner tasks immediately;
+5. deduplicate equivalent tasks before the final batch;
+6. never treat a benchmark entry as authorization for formal runtime, destructive/provider/production/deploy/release work;
+7. reconcile runner evidence before milestone terminal/release claims.
+
+This overlay changes execution scheduling, not product scope or quality gates. Deferred runner tasks are `NOT EXECUTED` until their batch runs, and required merge/security gates remain mandatory.
 
 ## 2. Product suites
 
