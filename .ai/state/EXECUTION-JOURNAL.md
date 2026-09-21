@@ -32,3 +32,13 @@ Rules:
 - PR #1116 merged as `74b07170b5dc5a654b1148b24224aa781d8123d4`; Issue #1115 closed.
 - Reconciliation Issue #1117 opened because compact state, queue, and RB-0006 still described the pre-merge waiting boundary.
 - Open-work truth at this boundary: #858 external-admin/nonblocking, #947 independent worker-only/nonblocking, #1102 authorization-gated, zero open PRs.
+
+## 2026-09-21 — Dashboard Widgets development plan resumed
+
+- Fresh roadmap/README reconciliation found Phase 2 bounded gates complete and Surface 10 Dashboard Widgets as the explicit planning-only row requiring an exact-main runtime transition audit.
+- Issue #1119 opened from exact main `b93fb27e13dba9ae4e2db8c749cc1ddfad44acd9`.
+- Exact-main audit verdict: `READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1`.
+- Issue #1120 opened as the single bounded next source tranche on `agent/dashboard-widgets-read-runtime-foundation-v1`; claim is forbidden until the audit PR merges.
+- PR #1121 opened for the audit/queue transition.
+- RB-0007 is the exact-head merge gate; no tight CI polling.
+
