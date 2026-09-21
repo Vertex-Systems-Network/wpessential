@@ -4,7 +4,7 @@ This file is mandatory reading for every human or AI engineering session.
 
 ## Source of truth
 
-Repository state + tests + documentation + ADRs + Git history + latest `CHECKPOINT.md` are authoritative. Chat memory is not.
+Repository/runtime state + tests + documentation + ADRs + Git history are authoritative. `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md` are mandatory compact resume indexes; `CHECKPOINT.md` remains historical evidence. Chat memory is not.
 
 Never assume prior work is complete because it was discussed. Verify repository state and tests.
 
@@ -20,9 +20,12 @@ Before meaningful engineering work read/apply as relevant:
 - `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`
 - `docs/RELEASE-INCIDENT-RECOVERY-GOVERNANCE.md`
 - `docs/QUALITY-GATES.md`
+- `.ai/state/CURRENT-STATE.yaml`
+- `.ai/state/LAST-CHECKPOINT.md`
 - `config/coordination/runner-benchmark.json`
 - `docs/AI/RUNNER-BENCHMARK-EXECUTION-POLICY.md`
-- latest `CHECKPOINT.md`
+- `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md`
+- relevant `CHECKPOINT.md` sections only when historical evidence is needed
 
 These files complement existing architecture/module/security ADRs; they do not replace them.
 
@@ -70,7 +73,7 @@ Before coding:
 
 1. Read this file.
 2. Read `DEVELOPMENT-CONSENT.md` and `docs/APPROVAL-LEDGER.md`.
-3. Read `CHECKPOINT.md` and `docs/PROJECT-STATE-AND-ADOPTION.md`.
+3. Read `.ai/state/CURRENT-STATE.yaml`, `.ai/state/LAST-CHECKPOINT.md`, and `docs/PROJECT-STATE-AND-ADOPTION.md`; consult only relevant `CHECKPOINT.md` sections when historical evidence is needed.
 4. Detect actual project state, execution mode and available capabilities.
 5. Read the relevant product/module/architecture docs.
 6. Read applicable ADRs.
@@ -110,20 +113,30 @@ Classify newly discovered gaps as:
 
 When resuming work:
 
-1. verify latest checkpoint and exact current main;
-2. inspect OPEN Issues first;
-3. inspect/fix/merge eligible OPEN PRs/MRs second;
-4. inspect commits since the checkpoint and queue anchor;
-5. verify actual files and tests/evidence;
-6. verify current approval/work lifecycle state;
-7. identify partial/failed work and baseline failures;
-8. re-read active deterministic claims/queue after any accepted merge;
-9. reconcile the Runner Benchmark and do not silently rerun historical/authorization-gated evidence;
-10. continue from the safest verified point.
+1. read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
+2. resolve exact current main and compare it with the compact observed anchor;
+3. inspect OPEN Issues first;
+4. inspect/fix/merge eligible OPEN PRs/MRs second;
+5. inspect commits since the compact observed anchor and queue anchor;
+6. verify actual files and tests/evidence;
+7. verify current approval/work lifecycle state;
+8. identify partial/failed work and baseline failures;
+9. re-read active deterministic claims/queue after any accepted merge;
+10. reconcile the Runner Benchmark and do not silently rerun historical/authorization-gated evidence;
+11. consult only the relevant historical `CHECKPOINT.md` section when needed;
+12. continue from the safest verified point.
 
-Never restart completed work without evidence that it is invalid.
+Never restart completed work without evidence that it is invalid. A missing/delayed chat response is not evidence that repository work failed.
 
 `continue`/`resume` never overrides a pending approval state.
+
+### Timeout-resilient turn boundary
+
+Policy `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001` is mandatory. By default **one user `continue`/`resume` turn = one logical engineering milestone**. Batch related remote reads, do not tight-poll CI/status endpoints, and use at most one consolidated CI/status refresh per milestone unless a documented security/merge/incident transition requires one additional safe-decision refresh.
+
+If required external CI is still running, write compact state as `WAITING_EXTERNAL` with exact run/source identity and next safe action, then end the milestone. The next `continue` performs one fresh consolidated status check.
+
+Before reporting a repository-changing milestone complete/blocked/waiting, durably reconcile the compact state files and any changed queue/Runner Benchmark truth.
 
 ## Runner Benchmark and final-batch rule
 
@@ -477,18 +490,17 @@ Inspect provider protections where accessible: required reviews/checks, CODEOWNE
 
 ## Checkpoints
 
-After a meaningful unit of work update `CHECKPOINT.md` with:
-- current project/execution/work lifecycle state;
-- current branch/phase/work ID where assigned;
-- completed work;
-- verification/tests;
-- baseline/flaky/known failures;
-- important decisions;
-- active files/areas;
-- approvals/blockers/risks;
-- exact next safe action.
+After a meaningful state transition update the compact resume layer first:
 
-At stable cycle closeout the Supervisor also updates README current main/status and its module-wise progress table/progress bars. A Worker that cannot edit shared truth reports this as an Integration Requirement rather than skipping it.
+- `.ai/state/CURRENT-STATE.yaml` — current observed anchor, active issue/PR/branch, milestone status, blockers, Runner Benchmark state and exact next safe action;
+- `.ai/state/LAST-CHECKPOINT.md` — short human-readable recovery checkpoint;
+- `.ai/state/EXECUTION-JOURNAL.md` — rolling meaningful transitions only.
+
+The size caps and durable-write-before-report rule in `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md` are mandatory.
+
+`CHECKPOINT.md` is long-form historical evidence. Update it when a milestone needs durable historical/evidence detail, but do not require a full-file read or append on every small `continue` turn.
+
+README full 56-surface reconciliation is required when module lifecycle/progress/timeline/public delivery truth changed or at a terminal product milestone/integration closeout. Governance/security/coordination-only cycles reconcile compact state and only materially affected public status, avoiding no-op dashboard churn.
 
 Before a long/risky operation create or confirm a recoverable VCS point.
 
