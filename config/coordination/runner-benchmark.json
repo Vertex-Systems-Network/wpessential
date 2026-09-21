@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1141",
-  "anchor_main_sha": "2e28666372899e2547ff89c0986812cd4ea2aa42",
+  "source_issue": "#1143",
+  "anchor_main_sha": "cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -567,13 +567,43 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|registration-descriptor-closeout|issue1141|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
-        "PR #1142 opened; exact-head Governance/Architecture validation pending"
+        "PR #1142 exact head 895b03b4208765859242fb63a848f59f903d85b9",
+        "Governance Gate run 35640304531 PASS",
+        "Architecture Guards run 35640304459 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1142 merged as cc5e0f37d4bc7a3ad791fd5ab951eae93b98d088",
+        "Issue #1141 closed completed"
       ],
-      "note": "Exact-head shared-truth closeout merge gate only. No tight polling. Any next Surface 10 prerequisite requires a fresh exact-main transition audit."
+      "note": "Registration descriptor/compiler shared-truth closeout promoted successfully. Direct WordPress dashboard registration and visibility evaluation remained unpromoted."
+    },
+    {
+      "id": "RB-0018",
+      "source": "Issue #1143",
+      "category": "DASHBOARD_WIDGETS_VISIBILITY_POLICY_TRANSITION_AUDIT",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-visibility-policy-transition-audit-v1 exact head",
+      "dependencies": [
+        "merged registration descriptor/compiler foundation #1138/#1140 and closeout #1141/#1142",
+        "accepted Dashboard Widget content-trust architecture ADR-0051",
+        "Dashboard Widgets Options Bank P0 visibility fields",
+        "coordination queue prerequisite slot #1144"
+      ],
+      "authorization": "Planning/coordination transition only; no visibility evaluation, WordPress dashboard registration, provider/render execution, mutation, shared Platform changes, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|visibility-policy-transition-audit|issue1143|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "CAPTURED",
+      "evidence": [
+        "Issue #1143 audit branch prepared; protected PR exact-head validation pending"
+      ],
+      "note": "A PASS authorizes only bounded #1144 visibility policy contract/compiler foundation. Direct visibility evaluation and WordPress dashboard registration remain blocked."
     }
   ],
-  "last_reconciled_issue": "#1141",
+  "last_reconciled_issue": "#1143",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
 }
