@@ -1,17 +1,17 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: VERIFYING
+state_status: WAITING_EXTERNAL
 observed_main_sha: 3c88e9e2909518a95515da812b06edb0ae71bfa6
 observed_main_source: "PR #1146 merged Dashboard Widgets visibility policy contract/compiler foundation V1"
 active_issue: "#1147"
-active_pr: null
+active_pr: "#1149"
 active_branch: supervisor/dashboard-widgets-server-visibility-evaluator-transition-audit-v1
 current_milestone: "Dashboard Widgets visibility contract closeout + server visibility evaluator transition audit V1"
-milestone_status: VERIFYING
+milestone_status: WAITING_EXTERNAL
 last_completed_milestone: "Issue #1144 / PR #1146 merged as 3c88e9e2909518a95515da812b06edb0ae71bfa6; typed P0 visibility contract/compiler foundation passed all applicable exact-head gates"
-next_safe_action: "Open and validate the #1147 combined reconciliation/audit PR. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1148 before audit promotion."
-waiting_external: "combined reconciliation/audit PR exact-head validation once opened"
+next_safe_action: "Resolve PR #1149 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1148 before audit promotion."
+waiting_external: "PR #1149 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1148"
   slot_id: dashboard-widgets-server-visibility-evaluator-v1
