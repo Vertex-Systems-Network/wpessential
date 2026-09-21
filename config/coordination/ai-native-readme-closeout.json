@@ -1,10 +1,13 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "status": "ACTIVE",
-  "source_issues": [451, 455],
+  "source_issues": [
+    451,
+    455
+  ],
   "scope": "AI_NATIVE_ENGINEERING_QUERY_CLOSEOUT",
   "owner": "SUPERVISOR",
-  "trigger": "before_final_response_when_meaningful_repository_state_changed",
+  "trigger": "when_module_delivery_truth_changes_or_terminal_product_milestone_closeout",
   "work_order": {
     "hard_gate": true,
     "sequence": [
@@ -76,5 +79,10 @@
     "may_edit_supervisor_shared_truth": false,
     "required_output_when_reconciliation_needed": "Complete 56-module README progress/timeline reconciliation Integration Requirement"
   },
-  "runtime_authorization_changed": false
+  "runtime_authorization_changed": false,
+  "governance_security_coordination_only_cycle": {
+    "full_dashboard_rewrite_required": false,
+    "compact_ai_state_reconciliation_required": true,
+    "update_materially_affected_public_status_only": true
+  }
 }
