@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1109",
-  "anchor_main_sha": "5a3c3b506e0580fb121453d81b377655251b3a27",
+  "anchor_main_sha": "aff745c642246ffd28e12797b29e94112ea0baca",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -228,5 +228,7 @@
       "evidence": [],
       "note": "Run once at exact-head merge gate. Do not tight-poll; if still running after one consolidated refresh, persist WAITING_EXTERNAL and check again on the next user continue."
     }
-  ]
+  ],
+  "last_reconciled_issue": "#1115",
+  "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
 }
