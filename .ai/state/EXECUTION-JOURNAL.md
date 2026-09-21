@@ -41,3 +41,12 @@ Rules:
 - Issue #1120 opened as the single bounded next source tranche on `agent/dashboard-widgets-read-runtime-foundation-v1`; claim is forbidden until the audit PR merges.
 - PR #1121 opened for the audit/queue transition.
 - RB-0007 is the exact-head merge gate; no tight CI polling.
+
+## 2026-09-21 — Dashboard Widgets bounded read-only Runtime Foundation V1 merged
+
+- Issue #1120 / PR #1122 completed from exact source head `143893fcfd9b12828277dc112023e3fb0fa33af3`.
+- Exact-head gates PASS: Governance `35617311150`, Architecture `35617311221`, PHP Quality `35617311439`, Platform Matrix `35617311155`, Distributable Package `35617311271`.
+- PR #1122 merged as `e4ca0998dba0c0db1a7778b7a8dafadb55531e5f`; Issue #1120 closed.
+- Surface 10 now has only the bounded read-only Definition/read-service owner foundation. Full-parity runtime certification remains unpromoted.
+- Issue #1123 opened for mandatory post-merge shared-truth reconciliation before any next Surface 10 source tranche.
+
