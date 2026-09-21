@@ -10,6 +10,7 @@ use WPEssential\Modules\BuilderWidgets\BuilderWidgetsModule;
 use WPEssential\Modules\Chat\ChatModule;
 use WPEssential\Modules\Cron\CronModule;
 use WPEssential\Modules\Dashboard\DashboardModule;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\Emails\EmailsModule;
 use WPEssential\Modules\FormsWorkflows\FormsWorkflowsModule;
 use WPEssential\Modules\Membership\MembershipModule;
@@ -95,6 +96,7 @@ final class EntitlementPolicyTest extends TestCase
             new AdminMenuModule(),
             new SettingsModule(),
             new DashboardModule(),
+            new DashboardWidgetsModule(),
             new ProfilesModule(),
             new MembershipModule(),
             new BuilderWidgetsModule(),
