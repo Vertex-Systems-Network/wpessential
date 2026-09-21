@@ -1,0 +1,41 @@
+schema_version: 1
+repository: Vertex-Systems-Network/wpessential
+state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
+state_status: IN_PROGRESS
+observed_main_sha: aff745c642246ffd28e12797b29e94112ea0baca
+observed_main_source: "PR #1111 security closeout"
+active_issue: "#1115"
+active_pr: null
+active_branch: supervisor/timeout-resilient-ai-state-v1
+current_milestone: "Timeout-resilient AI execution and compact durable state"
+milestone_status: IN_PROGRESS
+last_completed_milestone: "Security Issue #1108 / PR #1111 merged; development Node high-severity remediation integrated"
+next_safe_action: "Finish #1115 policy/state/CI contract, open its PR, perform one consolidated exact-head CI refresh, then merge only if required checks and review-thread gates pass."
+runner_benchmark:
+  policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
+  immediate_pending:
+    - RB-0006
+  blocked_authorization:
+    - RB-0001
+    - RB-0002
+open_repository_blockers:
+  - "#858 broader required-CI ruleset enforcement remains repository-admin work"
+  - "#1102 P-006 Wave 1U remains separately authorization-gated"
+  - "#947 independent Wave 1A review remains nonblocking and must preserve independence"
+timeout_contract:
+  one_logical_milestone_per_user_turn: true
+  max_consolidated_ci_status_refreshes_per_milestone: 1
+  tight_polling_loops_forbidden: true
+  batch_related_remote_reads: true
+  durable_state_write_before_completion_report: true
+  historical_checkpoint_full_read_default: false
+recovery_order:
+  - ".ai/state/CURRENT-STATE.yaml"
+  - ".ai/state/LAST-CHECKPOINT.md"
+  - "exact current main + OPEN Issues + OPEN PRs/MRs"
+  - "config/coordination/agent-work-queue.json"
+  - "config/coordination/runner-benchmark.json"
+  - "CHECKPOINT.md only when historical evidence is needed"
+notes:
+  - "Compact state is a resume hint and never overrides current repository/runtime evidence."
+  - "A delivery timeout never grants permission to repeat an already-completed or authorization-gated operation."
