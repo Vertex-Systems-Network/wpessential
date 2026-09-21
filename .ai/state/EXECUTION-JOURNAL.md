@@ -186,3 +186,32 @@ Rules:
 - Audit verdict `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1` is promoted.
 - Issue #1154 is READY_TO_CLAIM on `agent/dashboard-widgets-trusted-content-class-contract-v1`.
 - Direct Dashboard hooks, trusted rendering/provider/source execution, iframe/remote execution, mutation/preferences and full-parity certification remain blocked.
+
+
+## 2026-09-22 — Trusted content-class V1 merged; render-source transition audit started
+
+- Issue #1154 / PR #1158 exact head `38b0883927864e8f13b3da0d6bf4d32dbde31a36` passed Governance `35657768143`, Architecture `35657768000`, PHP Quality `35657767995`, Platform Matrix `35657768081` and Package `35657768053`.
+- PR #1158 merged as `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`; Issue #1154 closed.
+- RB-0024 records terminal PASS for the bounded trusted content-class contract/compiler V1.
+- Fresh exact-main audit confirms the shared Renderer/Component Blueprint infrastructure exists and must be reused.
+- Surface 10 currently lacks an explicit authored Blueprint/render-source id/revision + binding schema sufficient to build shared RenderInput without inventing Definition fields.
+- Verdict: `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`.
+- Issue #1160 opened as the only dependency-gated next tranche; it is contract/planning only and must not execute rendering or Dashboard hooks.
+
+
+## 2026-09-22 — PR #1161 opened for render-source transition audit
+
+- PR #1161 opened from exact main `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`.
+- Scope is exactly seven shared-truth/audit files; no runtime/product source files change.
+- Compact state binds `active_pr: "#1161"` before final exact-head validation.
+- RB-0025 is the immediate Governance/Architecture merge gate.
+- Issue #1160 remains dependency-gated and must not be claimed until PR #1161 merges with `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`.
+
+
+## 2026-09-22 — PR #1161 Governance diff-hygiene failure corrected
+
+- PR #1161 prior head `70756a84c1b01dd0d99012e2aa4436497b6bc38a` failed Governance `35658579793` at `git diff --check`.
+- Root cause: two trailing-whitespace lines in the new render-source transition audit Markdown.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0025/journal evidence.
+- Audit verdict remains `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`; no runtime/product source or authorization boundary changed.
+- Issue #1160 remains dependency-gated until corrected PR #1161 exact head is terminal green and merged.

@@ -5,47 +5,46 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact product main after audit merge: `de9edd9c30deb261cb135e6a88837bfdcdf9d123`
-- Completed transition audit: Issue #1153 / PR #1155
-- Next implementation Issue: #1154
-- Deterministic source branch: `agent/dashboard-widgets-trusted-content-class-contract-v1`
+- Exact main: `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`
+- Completed source milestone: Issue #1154 / PR #1158
+- Active reconciliation/audit Issue: #1159
+- Active PR: #1161
+- Deterministic audit branch: `supervisor/dashboard-widgets-render-source-transition-audit-v1`
 
-## #1153 / #1155 terminal evidence
+## #1154 / #1158 terminal evidence
 
-- corrected exact head `25c469e7753e9a5f41e7785e0d83fa59dc9f3ea9`
-- Governance `35656112003` PASS
-- Architecture `35656111955` PASS
-- zero unresolved review threads; zero behind at merge
-- merged as `de9edd9c30deb261cb135e6a88837bfdcdf9d123`
-- Issue #1153 closed completed
-- RB-0023 reconciled PASS
+- exact head `38b0883927864e8f13b3da0d6bf4d32dbde31a36`
+- Governance `35657768143` PASS
+- Architecture `35657768000` PASS
+- PHP Quality `35657767995` PASS
+- Platform Matrix `35657768081` PASS
+- Package `35657768053` PASS
+- zero unresolved threads; zero behind
+- exactly seven authorized files
+- merged as `6509f8e1e82292fa10bc017e0eef2dcb8eb15ac4`; Issue #1154 closed
 
-## Promoted next tranche
+## Render-source transition audit
 
-`READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`
+The shared repository already owns `RendererInterface`, `BlueprintRendererDispatcher` and Component Blueprint registry contracts. Surface 10 must reuse them.
 
-Issue #1154 is READY_TO_CLAIM. V1 may add only a typed, non-executing content-class descriptor/compiler for the reviewed structured types:
+Current Dashboard Widgets authored/runtime contracts do not expose an explicit evidence-backed Component Blueprint id/revision or deterministic binding map sufficient to construct shared `RenderInput`. Runtime renderer wiring would therefore invent Definition fields.
 
-- `rich_text`
-- `kpi`
-- `chart`
-- `quick_links`
-- `announcement`
-- `support_onboarding`
-- `icon_link`
+Verdict:
 
-Registration compilation must fail closed on missing/malformed/unknown/not-yet-trusted widget types.
+- `READY_FOR_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1`
+- renderer execution remains blocked;
+- direct Dashboard registration remains blocked;
+- provider/source/remote/iframe execution remains blocked;
+- mutation/full parity remain blocked.
 
-## Still blocked
+Issue #1160 is the only dependency-gated next tranche and is planning/implementation-contract only.
 
-- `wp_dashboard_setup` / `wp_network_dashboard_setup`
-- `wp_add_dashboard_widget`
-- content body rendering / HTML output
-- renderer/provider/source-data execution
-- RSS/remote/iframe execution
-- Definition/user-preference mutation
-- full-parity runtime/product certification, deploy or release
+## #1161 validation correction
+
+- Prior head `70756a84c1b01dd0d99012e2aa4436497b6bc38a` failed Governance `35658579793` at exact-head diff hygiene only.
+- Root cause: two trailing-whitespace lines in the new render-source audit Markdown.
+- The corrective change removes only that whitespace and records the failure evidence; audit verdict and runtime/product scope remain unchanged.
 
 ## Next safe action
 
-Claim Issue #1154 from fresh exact current main on `agent/dashboard-widgets-trusted-content-class-contract-v1`, implement only its seven authorized files, then run exact-head CI/review/divergence validation.
+Validate the corrected PR #1161 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence. Do not claim #1160 before audit promotion.
