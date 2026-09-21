@@ -146,3 +146,14 @@ Rules:
 - Root cause: compact state used `active_pr: "PENDING"`; the enforced contract accepts only `null` or an exact `"#<number>"` value.
 - Architecture PHP syntax, WPCS, PHPStan, PHPUnit, engineering contracts, JS lint/typecheck/build and other smoke checks passed before the enforcement failure.
 - Corrective shared-truth change sets `active_pr: "#1152"`; no runtime/product behavior, authorization semantics, hooks, provider execution, destructive action, certification, deploy or release scope changed.
+
+
+## 2026-09-22 — README governance merged; trusted-content transition audit started
+
+- Issue #1151 / PR #1152 corrected exact head `c668ed14369c7b9f9dd360a6239ed1085ce4d67a` passed Governance `35654519471` + Architecture `35654519447`.
+- PR #1152 merged as `b9e971653db0bbab177784c0b501c4e03269ea5d`; Issue #1151 closed.
+- RB-0022 reconciled terminal PASS; mandatory README live progress reconciliation is active on main.
+- Fresh exact-main Surface 10 audit confirms registration metadata + bounded server visibility are merged, while the trusted content/renderer side of ADR-0051 remains absent.
+- Verdict: `READY_FOR_BOUNDED_TRUSTED_CONTENT_CLASS_CONTRACT_V1`.
+- Direct Dashboard hooks/`wp_add_dashboard_widget`, trusted rendering/provider/source execution, mutation/preferences and full-parity certification remain blocked.
+- Issue #1154 opened as the only dependency-gated next source tranche on `agent/dashboard-widgets-trusted-content-class-contract-v1`; claim is forbidden until #1153 audit PR merges.
