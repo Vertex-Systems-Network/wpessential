@@ -8,7 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Observed main: `aff745c642246ffd28e12797b29e94112ea0baca`
 - Active Issue: #1115
 - Active branch: `supervisor/timeout-resilient-ai-state-v1`
-- Active PR: not opened yet at this checkpoint
+- Active PR: #1116
 
 ## Completed immediately before this milestone
 
@@ -35,4 +35,4 @@ Never repeat an operation solely because the previous chat response was not deli
 
 ## Next safe action
 
-Complete #1115 changes, open the PR, then perform one consolidated exact-head CI/status refresh. If required CI is still running, persist `WAITING_EXTERNAL` in compact state and stop the milestone instead of polling repeatedly.
+PR #1116 contains the #1115 implementation. Compact state is pre-persisted as `WAITING_EXTERNAL` so exact-head CI can be observed without a follow-up state-only commit invalidating the tested head. On the next user `continue`, resolve the PR's current head and perform one consolidated CI/review refresh; merge only if the exact head is green/current and review threads are zero.
