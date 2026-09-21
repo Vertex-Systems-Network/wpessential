@@ -3,7 +3,7 @@
   "snapshot_date": "2026-09-21",
   "queue_anchor_main_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f",
   "mode": "DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_MERGED_NEXT_TRANSITION_AUDIT",
-  "source_issue": "Issue #1123 post-merge Dashboard Widgets Runtime Foundation V1 reconciliation",
+  "source_issue": "#1123",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -60,33 +60,13 @@
     "policy_doc": "docs/AI/RUNNER-BENCHMARK-EXECUTION-POLICY.md",
     "default_disposition": "DEFER_FINAL_BATCH",
     "final_batch_boundary": "milestone_or_integration_closeout_before_terminal_claims",
-    "immediate_exceptions": [
-      "SECURITY_CRITICAL",
-      "MERGE_REQUIRED_EXACT_HEAD",
-      "MIGRATION_AUTH_SECRETS_DATA_SAFETY",
-      "CURRENT_CHANGE_INTEGRATION_SAFETY",
-      "INCIDENT_OR_RECOVERY"
-    ],
+    "immediate_exceptions": ["SECURITY_CRITICAL", "MERGE_REQUIRED_EXACT_HEAD", "MIGRATION_AUTH_SECRETS_DATA_SAFETY", "CURRENT_CHANGE_INTEGRATION_SAFETY", "INCIDENT_OR_RECOVERY"],
     "authorization_gated_disposition": "BLOCKED_AUTHORIZATION",
     "historical_consumed_formal_evidence_auto_rerun": false
   },
   "rc1_scope": {
-    "critical_surfaces": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      8,
-      9
-    ],
-    "shared_integration": [
-      "Platform",
-      "Kernel",
-      "Admin",
-      "packaging/build only when required by RC1"
-    ],
+    "critical_surfaces": [1, 2, 3, 4, 5, 6, 8, 9],
+    "shared_integration": ["Platform", "Kernel", "Admin", "packaging/build only when required by RC1"],
     "deferred": [
       "Surface 7 managed DDL/destructive execution",
       "new runtime implementation for Surfaces 22-56",
@@ -103,10 +83,6 @@
     "947": "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
     "1014": "COMPLETED_ON_PR_1028_MERGE_P006_WAVE_1H_TERMINAL",
     "1015": "COMPLETED_ON_PR_1030_MERGE_P006_WAVE_1I_TERMINAL",
-    "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
-    "1017": "CLOSED_COMPLETED_RC1_LANE_A",
-    "1018": "CLOSED_COMPLETED_RC1_LANE_B",
-    "1019": "CLOSED_COMPLETED_RC1_LANE_C",
     "1031": "COMPLETED_ON_PR_1033_MERGE_P006_WAVE_1J_TERMINAL",
     "1034": "COMPLETED_ON_PR_1036_MERGE_P006_WAVE_1K_TERMINAL",
     "1037": "COMPLETED_ON_PR_1039_MERGE_P006_WAVE_1L_TERMINAL",
@@ -138,23 +114,17 @@
     "1115": "COMPLETED_ON_PR_1116_AI_TIMEOUT_RESILIENCE",
     "1119": "COMPLETED_ON_AUDIT_PR_MERGE_DASHBOARD_WIDGETS_RUNTIME_TRANSITION",
     "1120": "COMPLETED_ON_PR_1122_DASHBOARD_WIDGETS_READ_RUNTIME_FOUNDATION",
-    "1123": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_RECONCILIATION"
+    "1123": "ACTIVE_POST_MERGE_DASHBOARD_WIDGETS_RUNTIME_FOUNDATION_RECONCILIATION",
+    "1016": "CLOSED_COMPLETED_RC1_SUPERVISOR_PR_1024",
+    "1017": "CLOSED_COMPLETED_RC1_LANE_A",
+    "1018": "CLOSED_COMPLETED_RC1_LANE_B",
+    "1019": "CLOSED_COMPLETED_RC1_LANE_C"
   },
   "auto_assignment": {
     "enabled": true,
-    "startup_order": [
-      "resolve_exact_main",
-      "open_issues_classify_first",
-      "open_prs_mrs_second",
-      "active_claims_and_queue_third",
-      "accepted_work_last"
-    ],
+    "startup_order": ["resolve_exact_main", "open_issues_classify_first", "open_prs_mrs_second", "active_claims_and_queue_third", "accepted_work_last"],
     "hard_issue_pr_gate": true,
-    "nonblocking_classes": [
-      "NON_BLOCKING_EXTERNAL_ADMIN",
-      "INDEPENDENT_NONBLOCKING_WORKER_ONLY",
-      "CERTIFICATION_NONBLOCKING_NOT_EXECUTED"
-    ],
+    "nonblocking_classes": ["NON_BLOCKING_EXTERNAL_ADMIN", "INDEPENDENT_NONBLOCKING_WORKER_ONLY", "CERTIFICATION_NONBLOCKING_NOT_EXECUTED"],
     "selection_order": "lowest numeric priority first among dependency-ready OPEN slots eligible for the acting role",
     "claim_mechanism": "DETERMINISTIC_REMOTE_BRANCH_CREATE",
     "force_push_forbidden": true,
@@ -172,30 +142,13 @@
   "roles": {
     "SUPERVISOR": {
       "start_mode": "EXPLICIT",
-      "may_claim": [
-        "SUPERVISOR_ONLY",
-        "ANY"
-      ],
-      "must_not": [
-        "Claim or pre-create #947 branch",
-        "Force push",
-        "Run live-provider/destructive production/deploy/release actions",
-        "Promote partial evidence to certification",
-        "Allow more than one writer on serialized shared surfaces"
-      ]
+      "may_claim": ["SUPERVISOR_ONLY", "ANY"],
+      "must_not": ["Claim or pre-create #947 branch", "Force push", "Run live-provider/destructive production/deploy/release actions", "Promote partial evidence to certification", "Allow more than one writer on serialized shared surfaces"]
     },
     "WORKER": {
       "start_mode": "AUTO",
-      "may_claim": [
-        "ANY"
-      ],
-      "must_not": [
-        "Claim SUPERVISOR_ONLY",
-        "Use branches other than exact OPEN slot",
-        "Mutate outside slot",
-        "Edit serialized shared truth unless explicitly assigned",
-        "Perform destructive/live-provider/deploy/release actions"
-      ]
+      "may_claim": ["ANY"],
+      "must_not": ["Claim SUPERVISOR_ONLY", "Use branches other than exact OPEN slot", "Mutate outside slot", "Edit serialized shared truth unless explicitly assigned", "Perform destructive/live-provider/deploy/release actions"]
     }
   },
   "accepted_truth": {
@@ -332,32 +285,10 @@
         "authorization": "GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001",
         "classification": "NON_RUNTIME_READINESS_NON_CERTIFYING",
         "deliverable": "docs/QUALITY/P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS.md",
-        "direct_formal_execution_ready": [
-          "FP-77",
-          "FP-78",
-          "FP-79",
-          "FP-80",
-          "FP-88"
-        ],
-        "ready_after_exact_harness_prerequisite": [
-          "FP-86",
-          "FP-89",
-          "FP-90",
-          "FP-94"
-        ],
-        "n_a_current_accepted_migration_set": [
-          "FP-81"
-        ],
-        "blocked": [
-          "FP-82",
-          "FP-83",
-          "FP-84",
-          "FP-85",
-          "FP-87",
-          "FP-91",
-          "FP-92",
-          "FP-93"
-        ],
+        "direct_formal_execution_ready": ["FP-77","FP-78","FP-79","FP-80","FP-88"],
+        "ready_after_exact_harness_prerequisite": ["FP-86","FP-89","FP-90","FP-94"],
+        "n_a_current_accepted_migration_set": ["FP-81"],
+        "blocked": ["FP-82","FP-83","FP-84","FP-85","FP-87","FP-91","FP-92","FP-93"],
         "fixture_accounting_changed": false,
         "runtime_executed": false,
         "summary": "Current migrations support a small non-destructive formal Lane C follow-on, while schema-ahead authority, marker/schema reconciliation, interruption recovery, cross-request serialization and verified backup evidence remain explicit blockers."
@@ -379,30 +310,15 @@
         "reference_artifact_digest": "sha256:d89ff1124e40c7638564e67cd007053052d453ab1ca43c385b52a85eb97a4fb6",
         "terminal_artifact_id": 10612295065,
         "terminal_artifact_digest": "sha256:4665315bad7223597fc16a26306de4b04d3d080be6c9aea3d6270e16835c9987",
-        "fixtures": {
-          "FP-77": "PASS",
-          "FP-78": "PASS",
-          "FP-79": "PASS",
-          "FP-80": "PASS",
-          "FP-88": "PASS"
-        },
+        "fixtures": {"FP-77":"PASS","FP-78":"PASS","FP-79":"PASS","FP-80":"PASS","FP-88":"PASS"},
         "compatible_pair_id": "c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0",
         "incompatible_control_pair_id": "72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c",
-        "observed_migration_order": [
-          "006.create-compiled-registration-atomic-store",
-          "007.create-definition-persistence",
-          "008.create-audit-ptd-store",
-          "220.custom_tables_migration_runs_v1",
-          "221.custom_tables_migration_execution_confirmations_v1"
-        ],
+        "observed_migration_order": ["006.create-compiled-registration-atomic-store","007.create-definition-persistence","008.create-audit-ptd-store","220.custom_tables_migration_runs_v1","221.custom_tables_migration_execution_confirmations_v1"],
         "network_attempt_count": 0,
         "destructive_migration_executed": false,
         "provider_or_remote_entitlement_used": false,
         "latest_change_gate_proof": "Evidence-only finalization run 35532263816 succeeded with candidate/runtime/terminal heavy jobs skipped",
-        "diagnostic_runs_not_counted": [
-          35514296158,
-          35531851930
-        ],
+        "diagnostic_runs_not_counted": [35514296158,35531851930],
         "summary": "FP-77/78/79/80/88 PASS on minimum/reference disposable WordPress/MySQL; matching schema did not reapply markers, Free-behind applied 006/007/008, Pro-behind applied 220/221 only after compatibility PASS, local entitlement did not override incompatible F2/P0, and runtime ordering observed 006/007/008 before 220/221; zero outbound HTTP; no certification promotion."
       },
       "b6_harness_prerequisite_readiness": {
@@ -410,12 +326,7 @@
         "authorization": "GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001",
         "classification": "NON_RUNTIME_HARNESS_PREREQUISITE_REVIEW_NON_CERTIFYING",
         "deliverable": "docs/QUALITY/P006-B6-HARNESS-PREREQUISITE-READINESS.md",
-        "ready_for_prerequisite_implementation": [
-          "FP-86",
-          "FP-89",
-          "FP-90",
-          "FP-94"
-        ],
+        "ready_for_prerequisite_implementation": ["FP-86","FP-89","FP-90","FP-94"],
         "fp86_prerequisite": "test-only fail-once MigrationStateStoreInterface decorator over real disposable DB/current fixed idempotent migration; no product bootstrap DI change",
         "fp89_prerequisite": "deterministic P-API candidate changes only Pro min/max Platform API to 0.2.0 while compatible marketing/schema dimensions remain fixed",
         "fp90_prerequisite": "CI-only disposable SQL snapshot/hash/drop-recreate/import identity primitive; no product Backup/Restore implementation",
@@ -439,42 +350,16 @@
         "artifact_id": 10613911938,
         "artifact_digest": "sha256:dab04416de5ff4a9e1c2562b0aef0e8d147b953a67d5ab5bdaff07848838c44a",
         "nodes": {
-          "F0": {
-            "sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
-            "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9",
-            "entry_count": 239
-          },
-          "P0": {
-            "sha256": "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467",
-            "payload_tree_sha256": "fbaa10957eeb482bd248ef2833b021202068ce7f420fe2d78f35b0e522b0bfd0",
-            "entry_count": 287
-          },
-          "P_API": {
-            "sha256": "5a2634a0d3c72ff7ede89545837c3fe2773aefad90a3fed4b060485c55645af9",
-            "payload_tree_sha256": "8985a20a68c7aafeee2d758845b26bddfe34ba83b5141ea335fad174acd52a69",
-            "entry_count": 287
-          }
+          "F0": {"sha256":"2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80","payload_tree_sha256":"0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9","entry_count":239},
+          "P0": {"sha256":"bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467","payload_tree_sha256":"fbaa10957eeb482bd248ef2833b021202068ce7f420fe2d78f35b0e522b0bfd0","entry_count":287},
+          "P_API": {"sha256":"5a2634a0d3c72ff7ede89545837c3fe2773aefad90a3fed4b060485c55645af9","payload_tree_sha256":"8985a20a68c7aafeee2d758845b26bddfe34ba83b5141ea335fad174acd52a69","entry_count":287}
         },
         "pairs": {
-          "F0_P0": {
-            "pair_id": "28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211",
-            "state": "compatible"
-          },
-          "F0_P_API": {
-            "pair_id": "9447c78174b7702879f318339c60942ebc20be9a477df78f9dbd2b734705d841",
-            "state": "platform_api_too_old",
-            "dimension": "platform_api",
-            "premium_boot_allowed": false,
-            "premium_migrations_allowed": false
-          }
+          "F0_P0": {"pair_id":"28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211","state":"compatible"},
+          "F0_P_API": {"pair_id":"9447c78174b7702879f318339c60942ebc20be9a477df78f9dbd2b734705d841","state":"platform_api_too_old","dimension":"platform_api","premium_boot_allowed":false,"premium_migrations_allowed":false}
         },
-        "changed_entries": [
-          "wpessential-pro/wpessential-pro.php"
-        ],
-        "changed_constants": [
-          "WPE_PRO_MIN_PLATFORM_API_VERSION",
-          "WPE_PRO_MAX_PLATFORM_API_VERSION"
-        ],
+        "changed_entries": ["wpessential-pro/wpessential-pro.php"],
+        "changed_constants": ["WPE_PRO_MIN_PLATFORM_API_VERSION","WPE_PRO_MAX_PLATFORM_API_VERSION"],
         "formal_fixture_executed": false,
         "fixture_accounting_changed": false,
         "wordpress_or_mysql_runtime_used": false,
@@ -495,20 +380,14 @@
         "latest_change_gate_proof": "Evidence/shared-truth-only finalization run 35539959790 succeeded with the disposable prerequisite job skipped.",
         "artifact_id": 10614580717,
         "artifact_digest": "sha256:e17644327bd8ddd57c17d12205e3d8a0959ca3966b426391d8f2a1eeb4a6e6fc",
-        "environment": {
-          "wordpress": "6.9",
-          "php": "8.2.33",
-          "mysql": "8.4.11"
-        },
+        "environment": {"wordpress":"6.9","php":"8.2.33","mysql":"8.4.11"},
         "table_prefix": "wpep006b6b_",
         "target_migration_id": "220.custom_tables_migration_runs_v1",
         "target_sequence": 220,
         "fail_once_exception": "P006_B6B_FAIL_ONCE_MARKER_WRITE",
         "schema_sha256": "3d5c22d7013a46bbba3ddee33ec00aedafdd0b23b0e56eae3e75a58e6cb99318",
         "first_run_marker_ids": [],
-        "second_fresh_run_applied_ids": [
-          "220.custom_tables_migration_runs_v1"
-        ],
+        "second_fresh_run_applied_ids": ["220.custom_tables_migration_runs_v1"],
         "second_fresh_run_marker_count": 1,
         "third_fresh_run_applied_ids": [],
         "installer_blocked_http_attempt_count": 2,
@@ -518,9 +397,7 @@
         "generic_migration_recovery_certified": false,
         "product_runtime_source_modified": false,
         "runtime_grant_created": false,
-        "diagnostic_runs_not_counted": [
-          35539597530
-        ],
+        "diagnostic_runs_not_counted": [35539597530],
         "summary": "B6b prerequisite PASS for exact current migration 220: apply completed before fail-once marker error, marker remained absent, fresh real-store retry converged with unchanged schema and exactly one marker, third fresh runner no-op; FP-86 remains not formally executed."
       },
       "b6c_fp94_diagnostics_redaction": {
@@ -567,18 +444,10 @@
         "governance_run_exact_verification": 35542007218,
         "artifact_id": 10615316516,
         "artifact_digest": "sha256:7e2c19c0ec29e81cbfef865bac2a404c315189d7852b1af662ee3187417fd8a3",
-        "environment": {
-          "wordpress": "6.9",
-          "php": "8.2.33",
-          "mysql": "8.4.11"
-        },
+        "environment": {"wordpress":"6.9","php":"8.2.33","mysql":"8.4.11"},
         "database": "wpessential_b6d",
         "table_prefix": "wpep006b6d_",
-        "older_state_migration_ids": [
-          "006.create-compiled-registration-atomic-store",
-          "007.create-definition-persistence",
-          "008.create-audit-ptd-store"
-        ],
+        "older_state_migration_ids": ["006.create-compiled-registration-atomic-store","007.create-definition-persistence","008.create-audit-ptd-store"],
         "normalized_schema_sha256": "b5dce97185091736adb5e7400216f8501b2394d083daca98edd400a5570a1da7",
         "normalized_state_sha256": "6db1c72036e77ff1bece365eb2abf7dd55018a066739899b597e247f6bce8600",
         "seed_sql_sha256": "53d27f6a111009d4ccc5ac59eb838be5e67d54a06c30e57a07e46595a17eb618",
@@ -597,37 +466,12 @@
         "runtime_grant_created": false,
         "formal_fixture_executed": false,
         "fixture_accounting_changed": false,
-        "diagnostic_runs_not_counted": [
-          35541352389,
-          35541485786,
-          35541593704,
-          35541716384,
-          35541870992
-        ],
+        "diagnostic_runs_not_counted": [35541352389,35541485786,35541593704,35541716384,35541870992],
         "summary": "B6d prerequisite PASS: exact older Free 006/007/008 WPE state survives disposable MySQL snapshot replay with stable semantic identity, accepted SQL reaches a byte-stable fixed point, canonical F0/P0 compatibility passes before pending Pro migrations, and FP-90 remains not formally executed."
       },
       "adr_0010": "Proposed",
       "permanent_p001_cf": "NOT_CERTIFIED",
-      "consumed_temp_grants": [
-        "-001",
-        "-002",
-        "-003",
-        "-004",
-        "-005",
-        "-006",
-        "-007",
-        "-008",
-        "-009",
-        "-010",
-        "-011",
-        "-012",
-        "-013",
-        "-014",
-        "-015",
-        "-016",
-        "-017",
-        "-018"
-      ],
+      "consumed_temp_grants": ["-001", "-002", "-003", "-004", "-005", "-006", "-007", "-008", "-009", "-010", "-011", "-012", "-013", "-014", "-015", "-016", "-017", "-018"],
       "active_temp_grant": null,
       "wave1h_evidence": {
         "source_head": "002cb7bfdb3c9edae969f937ddf11fe92faf734e",
@@ -651,16 +495,8 @@
         "free_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
         "pro_sha256": "bd74077f22c7268765519ac2d4c64dd785ba59c9eee68f5a5f1b4d8fd8de0467",
         "pair_id": "28e96f5207d3dc195bbf1b1a883ea7dcea5a314580661de5400e4e299dbd5211",
-        "fp44_minimum": {
-          "median_ms": 0.002783,
-          "p95_ms": 0.002996,
-          "network_attempts": 0
-        },
-        "fp44_reference": {
-          "median_ms": 0.003144,
-          "p95_ms": 0.003285,
-          "network_attempts": 0
-        },
+        "fp44_minimum": {"median_ms": 0.002783, "p95_ms": 0.002996, "network_attempts": 0},
+        "fp44_reference": {"median_ms": 0.003144, "p95_ms": 0.003285, "network_attempts": 0},
         "summary": "FP-34 PASS on minimum/reference genuine WordPress load-order variants; FP-44 PASS on minimum/reference under predeclared 20-warmup/100-sample limits; zero outbound HTTP; no pair/runtime certification promotion"
       },
       "wave1j_evidence": {
@@ -694,26 +530,10 @@
         "pro_first_reference_artifact_id": 10564379598,
         "pro_first_reference_artifact_digest": "sha256:4b5bacdaafa6981d784caa7fa8b9ea91c6a9b15ef5d809a460b41df33474bd87",
         "nodes": {
-          "F0": {
-            "sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
-            "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9",
-            "version": "0.1.0-dev"
-          },
-          "F1": {
-            "sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185",
-            "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460",
-            "version": "0.1.1-test-overlap"
-          },
-          "P0": {
-            "sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178",
-            "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7",
-            "version": "0.1.0-dev"
-          },
-          "P1": {
-            "sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac",
-            "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46",
-            "version": "0.1.1-test-overlap"
-          }
+          "F0": {"sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80", "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9", "version": "0.1.0-dev"},
+          "F1": {"sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185", "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460", "version": "0.1.1-test-overlap"},
+          "P0": {"sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178", "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7", "version": "0.1.0-dev"},
+          "P1": {"sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac", "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46", "version": "0.1.1-test-overlap"}
         },
         "pairs": {
           "F0_P0": "c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0",
@@ -736,40 +556,15 @@
         "fp48_reference_artifact_id": 10565487306,
         "fp48_reference_artifact_digest": "sha256:ab29dc75774a4a0f82ac0caf130ffeb6d718f0f7c0812aab92f33fc955015e30",
         "nodes": {
-          "F1": {
-            "sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185",
-            "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460",
-            "version": "0.1.1-test-overlap"
-          },
-          "F2": {
-            "sha256": "92e54db0220ea76323fcf2b0e3772ea31e379dac47ed62690b027edbccbff4dc",
-            "payload_tree_sha256": "a19b300607420d77b7751334a9a4ea2ad1570ff9078aaa6938e5d32755cce42e",
-            "version": "0.2.0-test-breaking"
-          },
-          "P0": {
-            "sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178",
-            "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7",
-            "version": "0.1.0-dev"
-          },
-          "P2": {
-            "sha256": "2a56eb653a3e685a76a6c43e5f22cebfe92b0827b77475bdf2242afd094478c3",
-            "payload_tree_sha256": "16e4a2a6fe6ca1b1c29d39e47186c83af6a9ad7e51bd09e8e0765bb8be639289",
-            "version": "0.2.0-test-breaking"
-          }
+          "F1": {"sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185", "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460", "version": "0.1.1-test-overlap"},
+          "F2": {"sha256": "92e54db0220ea76323fcf2b0e3772ea31e379dac47ed62690b027edbccbff4dc", "payload_tree_sha256": "a19b300607420d77b7751334a9a4ea2ad1570ff9078aaa6938e5d32755cce42e", "version": "0.2.0-test-breaking"},
+          "P0": {"sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178", "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7", "version": "0.1.0-dev"},
+          "P2": {"sha256": "2a56eb653a3e685a76a6c43e5f22cebfe92b0827b77475bdf2242afd094478c3", "payload_tree_sha256": "16e4a2a6fe6ca1b1c29d39e47186c83af6a9ad7e51bd09e8e0765bb8be639289", "version": "0.2.0-test-breaking"}
         },
         "pairs": {
-          "F1_P0": {
-            "pair_id": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef",
-            "expected_state": "compatible"
-          },
-          "F2_P0": {
-            "pair_id": "72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c",
-            "expected_state": "free_version_too_new"
-          },
-          "F1_P2": {
-            "pair_id": "a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501",
-            "expected_state": "free_version_too_old"
-          }
+          "F1_P0": {"pair_id": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef", "expected_state": "compatible"},
+          "F2_P0": {"pair_id": "72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c", "expected_state": "free_version_too_new"},
+          "F1_P2": {"pair_id": "a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501", "expected_state": "free_version_too_old"}
         },
         "summary": "FP-47/48 PASS on minimum/reference disposable WordPress cells; deterministic complete breaking ZIP graph derived twice byte-identically; F2/P0 fails closed free_version_too_new, F1/P2 fails closed free_version_too_old; premium boot/migration denied and premium modules inert after mismatch; Free kernel plus custom-post-types/taxonomies remain available; zero outbound HTTP and no compatibility persistence; no partial/manual-upload/updater/rollback/migration/pair/runtime certification promotion"
       },
@@ -789,92 +584,29 @@
         "final_terminal_artifact_digest": "sha256:62833a3f98ce9a6f28eab782ebcc01c0fed4dcca4069c225d33a11b67f540957",
         "terminal_artifact_digest": "sha256:e486f57f66826eb6b3cccf898895a4cdd3048492587ff667c9a7b6884cf0231a",
         "scenario_artifacts": {
-          "minimum_compatible_free": {
-            "id": 10567429483,
-            "digest": "sha256:f14d2d90388d17162c37ca6fb6022e67e33e5d54cb594518988dada03fdc8317"
-          },
-          "minimum_compatible_pro": {
-            "id": 10567144590,
-            "digest": "sha256:0350ab08d7a8a9ea56f363f12c99a50a51f93135f35a306244659d3171a45180"
-          },
-          "minimum_breaking_free": {
-            "id": 10568142044,
-            "digest": "sha256:98193c8d08c306c3213f9342f3076f503c338c2972452b0c85c605558a1e09c7"
-          },
-          "minimum_breaking_pro": {
-            "id": 10567862207,
-            "digest": "sha256:8a9591e81f0a9b34475b3679f2a2dc83e8cca271d0af67fdc279b953597d0944"
-          },
-          "reference_compatible_free": {
-            "id": 10567234817,
-            "digest": "sha256:13d32734484b7d97d1516abec4281ff2d7270ddae4103588af4f28e4b025004b"
-          },
-          "reference_compatible_pro": {
-            "id": 10568142097,
-            "digest": "sha256:47ec5c193d5ecaa464c5974eec16d78040746f139e9e6eccc922c7bf86302594"
-          },
-          "reference_breaking_free": {
-            "id": 10567717372,
-            "digest": "sha256:954b7885abe0299dc460057643fdc9d28e6a60b6a055fad1ca48a53a18231325"
-          },
-          "reference_breaking_pro": {
-            "id": 10568117088,
-            "digest": "sha256:8c235eebd3102cdf9710788d816d7682f22633b020909ebd02db8a77406c5132"
-          }
+          "minimum_compatible_free": {"id": 10567429483, "digest": "sha256:f14d2d90388d17162c37ca6fb6022e67e33e5d54cb594518988dada03fdc8317"},
+          "minimum_compatible_pro": {"id": 10567144590, "digest": "sha256:0350ab08d7a8a9ea56f363f12c99a50a51f93135f35a306244659d3171a45180"},
+          "minimum_breaking_free": {"id": 10568142044, "digest": "sha256:98193c8d08c306c3213f9342f3076f503c338c2972452b0c85c605558a1e09c7"},
+          "minimum_breaking_pro": {"id": 10567862207, "digest": "sha256:8a9591e81f0a9b34475b3679f2a2dc83e8cca271d0af67fdc279b953597d0944"},
+          "reference_compatible_free": {"id": 10567234817, "digest": "sha256:13d32734484b7d97d1516abec4281ff2d7270ddae4103588af4f28e4b025004b"},
+          "reference_compatible_pro": {"id": 10568142097, "digest": "sha256:47ec5c193d5ecaa464c5974eec16d78040746f139e9e6eccc922c7bf86302594"},
+          "reference_breaking_free": {"id": 10567717372, "digest": "sha256:954b7885abe0299dc460057643fdc9d28e6a60b6a055fad1ca48a53a18231325"},
+          "reference_breaking_pro": {"id": 10568117088, "digest": "sha256:8c235eebd3102cdf9710788d816d7682f22633b020909ebd02db8a77406c5132"}
         },
         "nodes": {
-          "F0": {
-            "sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
-            "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9",
-            "version": "0.1.0-dev"
-          },
-          "F1": {
-            "sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185",
-            "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460",
-            "version": "0.1.1-test-overlap"
-          },
-          "F2": {
-            "sha256": "92e54db0220ea76323fcf2b0e3772ea31e379dac47ed62690b027edbccbff4dc",
-            "payload_tree_sha256": "a19b300607420d77b7751334a9a4ea2ad1570ff9078aaa6938e5d32755cce42e",
-            "version": "0.2.0-test-breaking"
-          },
-          "P0": {
-            "sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178",
-            "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7",
-            "version": "0.1.0-dev"
-          },
-          "P1": {
-            "sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac",
-            "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46",
-            "version": "0.1.1-test-overlap"
-          },
-          "P2": {
-            "sha256": "2a56eb653a3e685a76a6c43e5f22cebfe92b0827b77475bdf2242afd094478c3",
-            "payload_tree_sha256": "16e4a2a6fe6ca1b1c29d39e47186c83af6a9ad7e51bd09e8e0765bb8be639289",
-            "version": "0.2.0-test-breaking"
-          }
+          "F0": {"sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80", "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9", "version": "0.1.0-dev"},
+          "F1": {"sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185", "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460", "version": "0.1.1-test-overlap"},
+          "F2": {"sha256": "92e54db0220ea76323fcf2b0e3772ea31e379dac47ed62690b027edbccbff4dc", "payload_tree_sha256": "a19b300607420d77b7751334a9a4ea2ad1570ff9078aaa6938e5d32755cce42e", "version": "0.2.0-test-breaking"},
+          "P0": {"sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178", "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7", "version": "0.1.0-dev"},
+          "P1": {"sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac", "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46", "version": "0.1.1-test-overlap"},
+          "P2": {"sha256": "2a56eb653a3e685a76a6c43e5f22cebfe92b0827b77475bdf2242afd094478c3", "payload_tree_sha256": "16e4a2a6fe6ca1b1c29d39e47186c83af6a9ad7e51bd09e8e0765bb8be639289", "version": "0.2.0-test-breaking"}
         },
         "pairs": {
-          "F0_P0": {
-            "pair_id": "c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0",
-            "expected_state": "compatible"
-          },
-          "F1_P0": {
-            "pair_id": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef",
-            "expected_state": "compatible"
-          },
-          "F0_P1": {
-            "pair_id": "532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26",
-            "expected_state": "compatible"
-          },
-          "F2_P0": {
-            "pair_id": "72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c",
-            "expected_state": "free_version_too_new"
-          },
-          "F1_P2": {
-            "pair_id": "a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501",
-            "expected_state": "free_version_too_old"
-          }
+          "F0_P0": {"pair_id": "c564b2fdc079a02dbba57bee0d90dd64fd683605c0fdbca89ab48323b394f2a0", "expected_state": "compatible"},
+          "F1_P0": {"pair_id": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef", "expected_state": "compatible"},
+          "F0_P1": {"pair_id": "532f93f984bb5ecee1793a4c325c904e84945e35f1f5f682e20b59cbdbc58b26", "expected_state": "compatible"},
+          "F2_P0": {"pair_id": "72f260a4882bb04aaf05a8a4960aaaf7fa2bba0f83591aeb79f5ece4f303480c", "expected_state": "free_version_too_new"},
+          "F1_P2": {"pair_id": "a3bb184caaef86f4c303c2cf73ba5f7631d711cae4e280cbca035e95937f6501", "expected_state": "free_version_too_old"}
         },
         "results": {
           "minimum_compatible_free": "PASS",
@@ -891,10 +623,7 @@
         "compatible_paths_preserve_premium_admission": true,
         "breaking_paths_deny_premium_boot_and_migrations": true,
         "breaking_paths_premium_modules_inert": true,
-        "required_free_modules_preserved": [
-          "custom-post-types",
-          "taxonomies"
-        ],
+        "required_free_modules_preserved": ["custom-post-types", "taxonomies"],
         "network_attempt_count": 0,
         "compatibility_persistence_keys": [],
         "temp_backup_residue": [],
@@ -920,27 +649,21 @@
         "fp_58": "BLOCKED",
         "primary_fault_injection_blocker": "No accepted integrity/publication contract prevents readable partially copied PHP from reaching require/autoload before fail-closed package state can be published",
         "manual_replacement_blocker": "No accepted WordPress-owned manual upload/overwrite harness; Wave 1K/1L symlink transport is not equivalent",
-        "next_prerequisites": [
-          "separate integrity/publication architecture decision or pre-load package-integrity contract for full FP-49…52 interruption/truncation coverage",
-          "separate WordPress-owned manual upload/overwrite harness implementation/review for FP-58"
-        ],
+        "next_prerequisites": ["separate integrity/publication architecture decision or pre-load package-integrity contract for full FP-49…52 interruption/truncation coverage", "separate WordPress-owned manual upload/overwrite harness implementation/review for FP-58"],
         "summary": "Non-runtime review only; no FP-49…52/58 execution; P-006 remains 144 documented / 45 executed / 44 PASS / 0 FAIL / 1 INCONCLUSIVE / 0 certified pairs / 0 runtime certifications"
       },
       "b3_manual_replacement_harness": {
         "source_issue": 1043,
         "closeout_pr": 1045,
         "authorization": "GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001 COMPLETED",
-        "terminal_result": "PASS prerequisite on minimum/reference Free and Pro cells using WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true), direct filesystem and real plugin directories; exact F0→F1/P0→P1 payload trees, activation preserved, compatible fresh boot, zero outbound HTTP, no temp-backup residue. FP-58 remains NOT_EXECUTED and P-006 counters unchanged.",
+      "terminal_result": "PASS prerequisite on minimum/reference Free and Pro cells using WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true), direct filesystem and real plugin directories; exact F0→F1/P0→P1 payload trees, activation preserved, compatible fresh boot, zero outbound HTTP, no temp-backup residue. FP-58 remains NOT_EXECUTED and P-006 counters unchanged.",
         "source_head_initial": "816cca3ca04cac48337dc02cb018da04c2c70d2a",
         "workflow_run": 35394229243,
         "governance_run_initial": 35394229287,
         "transport": "WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true)",
         "filesystem_method": "direct",
         "live_plugin_roots_are_symlinks": false,
-        "runtime_cells": [
-          "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-          "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-        ],
+        "runtime_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
         "candidate_artifact_id": 10567116617,
         "candidate_artifact_digest": "sha256:f5115379e452daa8687f67058f1128bfa7082392cab4bba889771386495d2b86",
         "minimum_free_artifact_id": 10567201765,
@@ -952,20 +675,10 @@
         "reference_pro_artifact_id": 10567082791,
         "reference_pro_artifact_digest": "sha256:457fb7baaff8cb06d197bf61263b119c379e98640770b10a002029bb060eed16",
         "nodes": {
-          "F0": {
-            "payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9"
-          },
-          "F1": {
-            "sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185",
-            "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460"
-          },
-          "P0": {
-            "payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7"
-          },
-          "P1": {
-            "sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac",
-            "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46"
-          }
+          "F0": {"payload_tree_sha256": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9"},
+          "F1": {"sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185", "payload_tree_sha256": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460"},
+          "P0": {"payload_tree_sha256": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7"},
+          "P1": {"sha256": "96acfb8527e62f3ee52f8ef61b801f770315a3a633502ead845c5c4f145b30ac", "payload_tree_sha256": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46"}
         },
         "results": {
           "minimum_free": "PASS_HARNESS_PREREQUISITE_ONLY",
@@ -993,60 +706,21 @@
         "workflow_run_precloseout": 35405126544,
         "governance_run_precloseout": 35405126545,
         "publication_profile": "external publisher / disposable local WordPress / real plugin dirs / FS_METHOD direct / same-directory final-entry rename",
-        "runtime_cells": [
-          "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-          "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-        ],
-        "targets": [
-          "Free F0→F1 with P0 unchanged",
-          "Pro P0→P1 with F0 unchanged"
-        ],
-        "scenarios": {
-          "successful_entrypoint_last_publication": "PASS",
-          "interruption_before_entry_publication_and_recovery": "PASS",
-          "final_entry_rename_failure_and_recovery": "PASS",
-          "corrupt_staged_tree_refusal": "PASS",
-          "unsupported_profile_refusal": "PASS"
-        },
-        "ordered_non_entry_file_counts": {
-          "free": 238,
-          "pro": 286
-        },
+        "runtime_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+        "targets": ["Free F0→F1 with P0 unchanged", "Pro P0→P1 with F0 unchanged"],
+        "scenarios": {"successful_entrypoint_last_publication": "PASS", "interruption_before_entry_publication_and_recovery": "PASS", "final_entry_rename_failure_and_recovery": "PASS", "corrupt_staged_tree_refusal": "PASS", "unsupported_profile_refusal": "PASS"},
+        "ordered_non_entry_file_counts": {"free": 238, "pro": 286},
         "free_partial_state": "entry absent; compatibility free_missing; premium boot/migrations/mutations denied; no fatal",
         "pro_partial_state": "entry absent; Free independently bootable; premium runtime inert; no fatal",
-        "final_payload_tree_sha256": {
-          "F1": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460",
-          "P1": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46"
-        },
-        "recovery_payload_tree_sha256": {
-          "F0": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9",
-          "P0": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7"
-        },
+        "final_payload_tree_sha256": {"F1": "3e8e56d3887b1f6ed29a66beb0a489d44e547d8b5104c6819e41b91bb6518460", "P1": "d9a2d208871d684d50e4eabcdb7d4ffb0e2f51cff160ebb311e47d210c3d2a46"},
+        "recovery_payload_tree_sha256": {"F0": "0698d1a772704bcf44bea1eefae0c490212d6bb6ee214a4f6a5c33db1bf998b9", "P0": "08ef083162109a15899dba7b14d1e420f327323b20cd1434cf9e7cfa23af09a7"},
         "artifacts": {
-          "candidates": {
-            "id": 10572222787,
-            "digest": "sha256:14841f3b5062a9bdb163d48ffa28a9374cc28601f70dec17d625e1ac6fbfc2d5"
-          },
-          "minimum_free": {
-            "id": 10572305453,
-            "digest": "sha256:e3026b0e7ca6b13e09f9988402771772f6277c79870527cd39a52abbeff766eb"
-          },
-          "minimum_pro": {
-            "id": 10571733040,
-            "digest": "sha256:238ea0c81424aa4246b7d0e83b64c0bc4b64f8b042b75acf3af80338689e7b11"
-          },
-          "reference_free": {
-            "id": 10571832978,
-            "digest": "sha256:e59a0461e50f697668b68c5da89898c1f7ce0c7dd990c7bc244f2322693b3527"
-          },
-          "reference_pro": {
-            "id": 10572262741,
-            "digest": "sha256:396aaf55f1155fcf3b36bc7e8429d6b696b6724266b816b8d9d5c075e2d1f9e6"
-          },
-          "terminal": {
-            "id": 10572192814,
-            "digest": "sha256:112ea45ede2ee0d1a83b54f8e5fb66bf16a46be3461387a32e0787b4e157ff86"
-          }
+          "candidates": {"id": 10572222787, "digest": "sha256:14841f3b5062a9bdb163d48ffa28a9374cc28601f70dec17d625e1ac6fbfc2d5"},
+          "minimum_free": {"id": 10572305453, "digest": "sha256:e3026b0e7ca6b13e09f9988402771772f6277c79870527cd39a52abbeff766eb"},
+          "minimum_pro": {"id": 10571733040, "digest": "sha256:238ea0c81424aa4246b7d0e83b64c0bc4b64f8b042b75acf3af80338689e7b11"},
+          "reference_free": {"id": 10571832978, "digest": "sha256:e59a0461e50f697668b68c5da89898c1f7ce0c7dd990c7bc244f2322693b3527"},
+          "reference_pro": {"id": 10572262741, "digest": "sha256:396aaf55f1155fcf3b36bc7e8429d6b696b6724266b816b8d9d5c075e2d1f9e6"},
+          "terminal": {"id": 10572192814, "digest": "sha256:112ea45ede2ee0d1a83b54f8e5fb66bf16a46be3461387a32e0787b4e157ff86"}
         },
         "network_attempt_count": 0,
         "formal_fp_fixture_executed": false,
@@ -1071,20 +745,8 @@
         "fp_50": "BLOCKED_EXPECTATION_CLARIFICATION_REQUIRED",
         "fp_51": "READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION",
         "fp_52": "READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION",
-        "fp49_current_candidate_cut_counts": [
-          1,
-          59,
-          119,
-          178,
-          238
-        ],
-        "fp50_candidate_cut_counts_if_transport_level_interpretation_is_accepted": [
-          1,
-          71,
-          143,
-          214,
-          286
-        ],
+        "fp49_current_candidate_cut_counts": [1, 59, 119, 178, 238],
+        "fp50_candidate_cut_counts_if_transport_level_interpretation_is_accepted": [1, 71, 143, 214, 286],
         "fp51_fixed_cell_count": 12,
         "fp52_fixed_cell_count": 8,
         "main_entry_rule": "configured Free/Pro main entry may be absent during publication but readable partial/corrupt configured entry is unsupported and forbidden; corrupt staged main entry is rejected before live mutation",
@@ -1104,17 +766,8 @@
         "source_head_precloseout": "63f8c493bf82e8d6d4cbf129377c56db2cc143a4",
         "governance_run_precloseout": 35411082352,
         "workflow_run_precloseout": 35411082371,
-        "runtime_cells": [
-          "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-          "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-        ],
-        "cut_points": {
-          "F49-01": 1,
-          "F49-25": 59,
-          "F49-50": 119,
-          "F49-75": 178,
-          "F49-100": 238
-        },
+        "runtime_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+        "cut_points": {"F49-01": 1, "F49-25": 59, "F49-50": 119, "F49-75": 178, "F49-100": 238},
         "ordered_non_entry_file_count": 238,
         "ordered_non_entry_files_sha256": "a0f7cb06b7739aacc9e5bba4dcc0f7a7c0f617a31d6866f62a9ede738dc1a792",
         "state_manifest_sha256": {
@@ -1137,22 +790,10 @@
           "F1_P0_pair_id_sha256": "f5157c46d4a29af6df4929cafeaad831fc50a8d38e469c2df73340766bb3faef"
         },
         "artifacts": {
-          "candidates": {
-            "id": 10573987005,
-            "digest": "sha256:6402a9681ec85488589bf0a882de80d6af500c03ebc03985c9e966e4cefb5d1b"
-          },
-          "minimum": {
-            "id": 10573822241,
-            "digest": "sha256:d879095f1e5845426c593b0a11416cc75674bf202105cf8343c4e5d30a0c0b78"
-          },
-          "reference": {
-            "id": 10574337678,
-            "digest": "sha256:7deaac32593afd050a9ccdf0c8539a2cf2fc14ef1f32e7da3096703ba3defa7b"
-          },
-          "terminal": {
-            "id": 10574322713,
-            "digest": "sha256:f071153b5427cd43f758feecf8474d35ac789ea9178eb6ee600303007573906a"
-          }
+          "candidates": {"id": 10573987005, "digest": "sha256:6402a9681ec85488589bf0a882de80d6af500c03ebc03985c9e966e4cefb5d1b"},
+          "minimum": {"id": 10573822241, "digest": "sha256:d879095f1e5845426c593b0a11416cc75674bf202105cf8343c4e5d30a0c0b78"},
+          "reference": {"id": 10574337678, "digest": "sha256:7deaac32593afd050a9ccdf0c8539a2cf2fc14ef1f32e7da3096703ba3defa7b"},
+          "terminal": {"id": 10574322713, "digest": "sha256:f071153b5427cd43f758feecf8474d35ac789ea9178eb6ee600303007573906a"}
         },
         "network_attempt_count": 0,
         "product_runtime_source_modified": false,
@@ -1172,27 +813,10 @@
         "source_head_precloseout": "6e7e40599635876cc7b54108c46bac59eced6903",
         "governance_run_precloseout": 35412194583,
         "workflow_run_precloseout": 35412194610,
-        "runtime_cells": [
-          "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-          "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-        ],
+        "runtime_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
         "fixed_cell_count_each_runtime": 12,
-        "bootstrap_cells": [
-          "P51-B-MISSING",
-          "P51-B-TRUNCATED"
-        ],
-        "live_non_entry_cells": [
-          "P51-P-MISSING",
-          "P51-P-TRUNCATED",
-          "P51-M1-MISSING",
-          "P51-M1-TRUNCATED",
-          "P51-MM-MISSING",
-          "P51-MM-TRUNCATED",
-          "P51-ML-MISSING",
-          "P51-ML-TRUNCATED",
-          "P51-R-MISSING",
-          "P51-R-TRUNCATED"
-        ],
+        "bootstrap_cells": ["P51-B-MISSING", "P51-B-TRUNCATED"],
+        "live_non_entry_cells": ["P51-P-MISSING", "P51-P-TRUNCATED", "P51-M1-MISSING", "P51-M1-TRUNCATED", "P51-MM-MISSING", "P51-MM-TRUNCATED", "P51-ML-MISSING", "P51-ML-TRUNCATED", "P51-R-MISSING", "P51-R-TRUNCATED"],
         "identity": {
           "F0_zip_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
           "P0_zip_sha256": "0b12ada8265f3032641e09a80ba09f9950d3aef8b526b63c2b3665663aca4178",
@@ -1233,11 +857,7 @@
           "ChatModule.php": "b38eda5010e9e29fe53d030aab89a96ee5ac3cc08b2c14e21262a31e52dbce75",
           "WordPressRoleRuntimeEnvironment.php": "a2ec26b8ea3b4ef4505c25606527ff49841f7b04d5793241dfcffdac56672520"
         },
-        "sentinel": {
-          "key": "wpe_p006_fp51_data_sentinel",
-          "value": "fp51-preserve-v1",
-          "preserved": true
-        },
+        "sentinel": {"key": "wpe_p006_fp51_data_sentinel", "value": "fp51-preserve-v1", "preserved": true},
         "live_partial_invariants": {
           "configured_pro_entry_absent": true,
           "free_bootstrap_ready": true,
@@ -1250,22 +870,10 @@
           "network_attempt_count": 0
         },
         "artifacts": {
-          "candidates": {
-            "id": 10574708923,
-            "digest": "sha256:8f4d45e68d3c5830800e27b3201b3190e52621aa7690d93aec7c4bf42330a5c1"
-          },
-          "minimum": {
-            "id": 10574424230,
-            "digest": "sha256:4bdd51f1feebe4aa2c63c1ed80a9f19dc5e0ca003605968963fe63b321588c6d"
-          },
-          "reference": {
-            "id": 10574459295,
-            "digest": "sha256:b3a439d01a64795f9fa6629acaadca72a27ffedcfa65b76c02f9b1e32e196f9e"
-          },
-          "terminal": {
-            "id": 10573608656,
-            "digest": "sha256:86c68462ff614aa0153a18842c78d961022b8ff04cbeafa0482cc789a37ad2c9"
-          }
+          "candidates": {"id": 10574708923, "digest": "sha256:8f4d45e68d3c5830800e27b3201b3190e52621aa7690d93aec7c4bf42330a5c1"},
+          "minimum": {"id": 10574424230, "digest": "sha256:4bdd51f1feebe4aa2c63c1ed80a9f19dc5e0ca003605968963fe63b321588c6d"},
+          "reference": {"id": 10574459295, "digest": "sha256:b3a439d01a64795f9fa6629acaadca72a27ffedcfa65b76c02f9b1e32e196f9e"},
+          "terminal": {"id": 10573608656, "digest": "sha256:86c68462ff614aa0153a18842c78d961022b8ff04cbeafa0482cc789a37ad2c9"}
         },
         "product_runtime_source_modified": false,
         "generic_wordpress_recursive_copy_certified": false,
@@ -1284,27 +892,10 @@
         "source_head_precloseout": "6eee1496adc92a818165e2ed57b270f8a45ee053",
         "governance_run_precloseout": 35436900216,
         "workflow_run_precloseout": 35436900226,
-        "runtime_cells": [
-          "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-          "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-        ],
+        "runtime_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
         "fixed_cell_count_each_runtime": 8,
-        "fixed_cells": [
-          "F52-A-MISSING",
-          "F52-A-TRUNCATED",
-          "F52-B-MISSING",
-          "F52-B-TRUNCATED",
-          "F52-E1-MISSING",
-          "F52-E1-TRUNCATED",
-          "F52-EL-MISSING",
-          "F52-EL-TRUNCATED"
-        ],
-        "fixed_paths": [
-          "vendor/autoload.php",
-          "frameworks/Bootstrap/Plugin.php",
-          "frameworks/Platform/Entitlements/ProductEntitlementState.php",
-          "frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php"
-        ],
+        "fixed_cells": ["F52-A-MISSING", "F52-A-TRUNCATED", "F52-B-MISSING", "F52-B-TRUNCATED", "F52-E1-MISSING", "F52-E1-TRUNCATED", "F52-EL-MISSING", "F52-EL-TRUNCATED"],
+        "fixed_paths": ["vendor/autoload.php", "frameworks/Bootstrap/Plugin.php", "frameworks/Platform/Entitlements/ProductEntitlementState.php", "frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php"],
         "identity": {
           "F0_zip_sha256": "2acf6d202315e7105b89589822a95448febdc06634c0399dfcfc57b702e14d80",
           "F1_zip_sha256": "f9401f81b4a65d6f610b05cd445d3d8bdec75b2996296e0deaa13a8a2a265185",
@@ -1338,11 +929,7 @@
           "frameworks/Platform/Entitlements/ProductEntitlementState.php": "883e7fcfaed30063cecd5bf1a273587c10ad5b4719431d33b5b12901648dcf19",
           "frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php": "1966af7859b3277824801e40c5d8261b96cf5864e7420b63aa81a45c0340acde"
         },
-        "sentinel": {
-          "key": "wpe_p006_fp52_data_sentinel",
-          "value": "fp52-preserve-v1",
-          "preserved": true
-        },
+        "sentinel": {"key": "wpe_p006_fp52_data_sentinel", "value": "fp52-preserve-v1", "preserved": true},
         "partial_invariants": {
           "compatibility_state": "free_missing",
           "configured_free_entry_absent": true,
@@ -1358,22 +945,10 @@
           "network_attempt_count": 0
         },
         "artifacts": {
-          "candidates": {
-            "id": 10581564385,
-            "digest": "sha256:1d10d4c40c60c41d8d01be446073c2caaa540d80cfc2179b2b5b0d50419d6026"
-          },
-          "minimum": {
-            "id": 10582875950,
-            "digest": "sha256:5c1ed933fbddadcb3061e60789ec5a1c69b4171747793d9e1a50033c0323731e"
-          },
-          "reference": {
-            "id": 10582930369,
-            "digest": "sha256:e43f86807471e4d3f3de716fa770c8b89bbab93bd0d7b552e0eb580420b9c8e9"
-          },
-          "terminal": {
-            "id": 10581449897,
-            "digest": "sha256:8044e47daccdacb8304bfba1feadfa8cf4ed1dd475e8d747bc94777b7f5604f1"
-          }
+          "candidates": {"id": 10581564385, "digest": "sha256:1d10d4c40c60c41d8d01be446073c2caaa540d80cfc2179b2b5b0d50419d6026"},
+          "minimum": {"id": 10582875950, "digest": "sha256:5c1ed933fbddadcb3061e60789ec5a1c69b4171747793d9e1a50033c0323731e"},
+          "reference": {"id": 10582930369, "digest": "sha256:e43f86807471e4d3f3de716fa770c8b89bbab93bd0d7b552e0eb580420b9c8e9"},
+          "terminal": {"id": 10581449897, "digest": "sha256:8044e47daccdacb8304bfba1feadfa8cf4ed1dd475e8d747bc94777b7f5604f1"}
         },
         "product_runtime_source_modified": false,
         "generic_wordpress_recursive_copy_certified": false,
@@ -1402,19 +977,8 @@
       "source": "Issue #1016 / PR #1024",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-sprint-governance-v1",
-      "allowed_scope": [
-        "coordination/checkpoint/sprint docs",
-        "shared integration required by accepted RC1 Worker findings",
-        "package metadata/build integration when required",
-        "final README reconciliation at stable sprint closeout"
-      ],
-      "forbidden_scope": [
-        "production deploy/release",
-        "live provider side effects",
-        "destructive production actions",
-        "Surface 7 managed DDL execution",
-        "new Surfaces 22-56 runtime features"
-      ],
+      "allowed_scope": ["coordination/checkpoint/sprint docs", "shared integration required by accepted RC1 Worker findings", "package metadata/build integration when required", "final README reconciliation at stable sprint closeout"],
+      "forbidden_scope": ["production deploy/release", "live provider side effects", "destructive production actions", "Surface 7 managed DDL execution", "new Surfaces 22-56 runtime features"],
       "close_condition": "Satisfied by PR #1024 merge after exact-head path-applicable FULL gates, three-file shared-truth diff audit, fresh main and zero unresolved review threads"
     },
     {
@@ -1427,10 +991,7 @@
       "source": "Issue #1017",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-a-cpt-taxonomy-v1",
-      "primary_surfaces": [
-        1,
-        2
-      ],
+      "primary_surfaces": [1, 2],
       "merged_pr": 1021,
       "merge_sha": "39b441b4c991515b3384c7f7285143855796acbc",
       "shared_changes": "NONE_REQUIRED"
@@ -1445,11 +1006,7 @@
       "source": "Issue #1018",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-b-fields-relations-status-v1",
-      "primary_surfaces": [
-        3,
-        4,
-        5
-      ],
+      "primary_surfaces": [3, 4, 5],
       "merged_pr": 1023,
       "merge_sha": "aaf73c702f0f8bc073e1891e0456dea5ebe23904",
       "shared_changes": "NONE_REQUIRED"
@@ -1464,11 +1021,7 @@
       "source": "Issue #1019",
       "runtime_allowed": true,
       "claim_branch": "agent/rc1-lane-c-query-columns-listings-v1",
-      "primary_surfaces": [
-        6,
-        8,
-        9
-      ],
+      "primary_surfaces": [6, 8, 9],
       "merged_pr": 1022,
       "merge_sha": "891cd201667efbc72cc40285206741dc5a8c9abb",
       "shared_changes": "NONE_REQUIRED"
@@ -1485,23 +1038,8 @@
       "claim_branch": "agent/p006-wave1h-static-harness-v1",
       "temp_matrix_grant": "GOV-P001-CF-TEMP-006 CONSUMED",
       "terminal_result": "FP-29/30/31/40/41/42 PASS; FP-33 INCONCLUSIVE STOP/REVIEW on lifecycle-owner discovery; 0 FAIL",
-      "allowed_scope": [
-        "deterministic Wave 1H static/harness evidence tooling",
-        "tests/fixtures/workflow/docs required only for FP-29/30/31/33/40/41/42",
-        "deterministic derivation and SHA-256 pinning of immutable Free/Pro candidates through accepted build path"
-      ],
-      "forbidden_scope": [
-        "real WordPress runtime execution",
-        "FP-21/22/24",
-        "FP-32",
-        "FP-34+",
-        "runtime behavior changes merely to force PASS",
-        "remote licensing/provider calls",
-        "production credentials/data",
-        "destructive or irreversible operations",
-        "deploy/release",
-        "#947 independent review"
-      ],
+      "allowed_scope": ["deterministic Wave 1H static/harness evidence tooling", "tests/fixtures/workflow/docs required only for FP-29/30/31/33/40/41/42", "deterministic derivation and SHA-256 pinning of immutable Free/Pro candidates through accepted build path"],
+      "forbidden_scope": ["real WordPress runtime execution", "FP-21/22/24", "FP-32", "FP-34+", "runtime behavior changes merely to force PASS", "remote licensing/provider calls", "production credentials/data", "destructive or irreversible operations", "deploy/release", "#947 independent review"],
       "close_condition": "Satisfied on PR #1028 merge after exact-head green CI, immutable evidence run 35146615997/artifact 10467128983, fresh-main verification, zero unresolved review threads and README/shared-truth reconciliation without certification promotion"
     },
     {
@@ -1516,32 +1054,11 @@
       "claim_branch": "agent/p006-wave1i-runtime-v1",
       "temp_matrix_grant": "GOV-P001-CF-TEMP-007 CONSUMED",
       "terminal_result": "FP-34 PASS and FP-44 PASS on both authorized cells; FP-44 minimum median/p95 0.002783/0.002996 ms, reference 0.003144/0.003285 ms; zero outbound HTTP; 0 FAIL",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
       "fp44_method": "Booted real WordPress; 20 warmups + 100 hrtime samples around LocalCompatibilityPreflight::evaluateRuntime(); median <= 5.0 ms; p95 <= 20.0 ms; outbound WordPress HTTP interception; zero remote attempts",
       "timeout_safe_ci": "Separate candidate-build, FP-34 matrix, and FP-44 matrix jobs with job-level timeouts, concurrency cancellation and per-cell artifacts",
-      "allowed_scope": [
-        "deterministic immutable candidate build and SHA-256/pair pinning",
-        "disposable real WordPress FP-34 load-order evidence for the two authorized cells",
-        "disposable real WordPress FP-44 local-preflight timing and outbound-HTTP-denial evidence for the two authorized cells",
-        "tests/fixtures/workflow/docs required only for FP-34/44"
-      ],
-      "forbidden_scope": [
-        "FP-21/22/24",
-        "FP-32",
-        "FP-35-43",
-        "FP-45+",
-        "multisite/MU/managed-host/recovery/opcache/package-replacement/concurrent-migration evidence",
-        "runtime behavior changes merely to force PASS",
-        "remote licensing/provider/billing/allocation calls",
-        "production credentials/data or live sites",
-        "destructive or irreversible production operations",
-        "deploy/release",
-        "#947 independent review",
-        "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["deterministic immutable candidate build and SHA-256/pair pinning", "disposable real WordPress FP-34 load-order evidence for the two authorized cells", "disposable real WordPress FP-44 local-preflight timing and outbound-HTTP-denial evidence for the two authorized cells", "tests/fixtures/workflow/docs required only for FP-34/44"],
+      "forbidden_scope": ["FP-21/22/24", "FP-32", "FP-35-43", "FP-45+", "multisite/MU/managed-host/recovery/opcache/package-replacement/concurrent-migration evidence", "runtime behavior changes merely to force PASS", "remote licensing/provider/billing/allocation calls", "production credentials/data or live sites", "destructive or irreversible production operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on PR #1030 merge after corrected canonical-pair evidence run 35351107887, exact artifact identities, predeclared FP-44 bounds, exact-head path-applicable CI, fresh-main verification, zero unresolved review threads and shared-truth reconciliation without certification promotion"
     },
     {
@@ -1556,31 +1073,10 @@
       "claim_branch": "agent/p006-wave1j-range-semantics-v1",
       "temp_grant": "GOV-P001-CF-TEMP-008 CONSUMED",
       "terminal_result": "FP-61…68/76 PASS in PHP 8.2 and PHP 8.5; identical determinism digest ddf105e199387baf9e949249c8176fc289052fdb582eaafaab74b4d71836b632; 0 FAIL; no WordPress/DB/provider side effects",
-      "authorized_php_cells": [
-        "PHP 8.2",
-        "PHP 8.5"
-      ],
+      "authorized_php_cells": ["PHP 8.2", "PHP 8.5"],
       "timeout_safe_ci": "Separate immutable-candidate build/identity job and independent PHP 8.2/8.5 pure-evaluator jobs; <=15m build, <=8m evaluator jobs; concurrency cancellation; per-cell artifacts",
-      "allowed_scope": [
-        "deterministic Free/Pro candidate and compatibility-source identity pinning",
-        "pure LocalCompatibilityPreflight::evaluate() fixtures FP-61…68 and FP-76",
-        "tests/evidence workflow/docs required only for Wave 1J B1"
-      ],
-      "forbidden_scope": [
-        "FP-45-60",
-        "FP-69-75",
-        "FP-77+",
-        "WordPress boot or filesystem replacement",
-        "DB/schema migration or rollback",
-        "updater/TUF",
-        "remote licensing/provider/billing/allocation calls",
-        "multisite",
-        "production credentials/data/live sites",
-        "destructive or irreversible operations",
-        "deploy/release",
-        "#947 independent review",
-        "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["deterministic Free/Pro candidate and compatibility-source identity pinning", "pure LocalCompatibilityPreflight::evaluate() fixtures FP-61…68 and FP-76", "tests/evidence workflow/docs required only for Wave 1J B1"],
+      "forbidden_scope": ["FP-45-60", "FP-69-75", "FP-77+", "WordPress boot or filesystem replacement", "DB/schema migration or rollback", "updater/TUF", "remote licensing/provider/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive or irreversible operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on PR #1033 merge after exact identities and initial evidence run 35386874694, deterministic PHP 8.2/8.5 decisions, exact-head path-applicable CI, fresh-main verification, zero unresolved review threads and shared-truth reconciliation without certification promotion"
     },
     {
@@ -1595,40 +1091,11 @@
       "claim_branch": "agent/p006-wave1k-compatible-update-order-v1",
       "temp_grant": "GOV-P001-CF-TEMP-009 CONSUMED",
       "terminal_result": "FP-45/46/53/60 PASS on both authorized runtime cells; deterministic full F0/F1/P0/P1 overlap graph; zero outbound HTTP; no updater/manual-upload/pair/runtime certification promotion",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "artifact_graph": [
-        "F0 canonical Free 0.1.0-dev",
-        "F1 full test-only Free 0.1.1-test-overlap / API 0.1.0 / schema 1",
-        "P0 full test-only Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schema 1",
-        "P1 full test-only Pro 0.1.1-test-overlap with same overlap contract"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "artifact_graph": ["F0 canonical Free 0.1.0-dev", "F1 full test-only Free 0.1.1-test-overlap / API 0.1.0 / schema 1", "P0 full test-only Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schema 1", "P1 full test-only Pro 0.1.1-test-overlap with same overlap contract"],
       "timeout_safe_ci": "Separate <=15m candidate/overlap build job, independent <=18m Free-first and Pro-first matrix jobs per cell, fail-fast false, stale-run cancellation, per-path/cell artifacts",
-      "allowed_scope": [
-        "deterministic complete overlap ZIP derivation from canonical package artifacts without tracked product-source mutation",
-        "disposable WordPress FP-45/46 compatible replacement evidence",
-        "FP-53 same-exact-artifact retry compatibility-layer idempotency",
-        "FP-60 exact post-step artifact/metadata/compatibility health records",
-        "tests/evidence workflow/docs required only for Wave 1K B2"
-      ],
-      "forbidden_scope": [
-        "FP-47-52",
-        "FP-54-59",
-        "automatic updater/TUF",
-        "WordPress manual-upload UI certification or FP-58",
-        "partial/interrupted replacement or fault injection",
-        "rollback/downgrade",
-        "schema migration certification",
-        "provider/license/billing/allocation calls",
-        "multisite",
-        "production credentials/data/live sites",
-        "destructive or irreversible operations",
-        "deploy/release",
-        "#947 independent review",
-        "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["deterministic complete overlap ZIP derivation from canonical package artifacts without tracked product-source mutation", "disposable WordPress FP-45/46 compatible replacement evidence", "FP-53 same-exact-artifact retry compatibility-layer idempotency", "FP-60 exact post-step artifact/metadata/compatibility health records", "tests/evidence workflow/docs required only for Wave 1K B2"],
+      "forbidden_scope": ["FP-47-52", "FP-54-59", "automatic updater/TUF", "WordPress manual-upload UI certification or FP-58", "partial/interrupted replacement or fault injection", "rollback/downgrade", "schema migration certification", "provider/license/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive or irreversible operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on PR #1036 merge after deterministic complete F0/F1/P0/P1 identities, initial evidence run 35388639559, FP-45/46/53/60 PASS on both authorized cells, exact post-step health records, exact-head path-applicable CI, fresh-main verification, zero unresolved review threads and shared-truth reconciliation without certification promotion"
     },
     {
@@ -1643,41 +1110,11 @@
       "claim_branch": "agent/p006-wave1l-breaking-order-v1",
       "temp_grant": "GOV-P001-CF-TEMP-010 CONSUMED",
       "terminal_result": "FP-47/48 PASS on both authorized runtime cells; complete F1/P0/F2/P2 graph; mismatch denies premium boot/migration while Free custom-post-types/taxonomies remain available; zero outbound HTTP; no partial/manual/updater/rollback/migration/pair/runtime certification promotion",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "artifact_graph": [
-        "F1 full test-only Free 0.1.1-test-overlap / API 0.1.0 / schema 1",
-        "P0 full test-only Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schema 1",
-        "F2 full test-only Free 0.2.0-test-breaking / API 0.2.0 / schema 1",
-        "P2 full test-only Pro 0.2.0-test-breaking supporting exact Free 0.2.0-test-breaking / API 0.2.0 / schema 1"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "artifact_graph": ["F1 full test-only Free 0.1.1-test-overlap / API 0.1.0 / schema 1", "P0 full test-only Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schema 1", "F2 full test-only Free 0.2.0-test-breaking / API 0.2.0 / schema 1", "P2 full test-only Pro 0.2.0-test-breaking supporting exact Free 0.2.0-test-breaking / API 0.2.0 / schema 1"],
       "timeout_safe_ci": "Separate <=15m candidate/breaking graph build job, independent <=18m FP-47 Free-first and FP-48 Pro-first matrix jobs per cell, fail-fast false, stale-run cancellation, per-path/cell artifacts",
-      "allowed_scope": [
-        "deterministic complete F1/P0/F2/P2 ZIP derivation from canonical package artifacts without tracked product-source mutation",
-        "disposable WordPress FP-47 Free-first complete breaking update safe-degradation evidence",
-        "disposable WordPress FP-48 Pro-first complete breaking update safe-degradation evidence",
-        "Free custom-post-types/taxonomies continuity assertions",
-        "tests/evidence workflow/docs required only for Wave 1L FP-47/48"
-      ],
-      "forbidden_scope": [
-        "FP-49-52",
-        "FP-54-59",
-        "partial/truncated/missing-file fault injection",
-        "WordPress manual ZIP upload/replacement certification",
-        "automatic updater/TUF",
-        "rollback/downgrade",
-        "schema generation change or migration certification",
-        "stale/concurrent request evidence",
-        "provider/license/billing/allocation calls",
-        "multisite",
-        "production credentials/data/live sites",
-        "destructive or irreversible operations",
-        "deploy/release",
-        "#947 independent review",
-        "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["deterministic complete F1/P0/F2/P2 ZIP derivation from canonical package artifacts without tracked product-source mutation", "disposable WordPress FP-47 Free-first complete breaking update safe-degradation evidence", "disposable WordPress FP-48 Pro-first complete breaking update safe-degradation evidence", "Free custom-post-types/taxonomies continuity assertions", "tests/evidence workflow/docs required only for Wave 1L FP-47/48"],
+      "forbidden_scope": ["FP-49-52", "FP-54-59", "partial/truncated/missing-file fault injection", "WordPress manual ZIP upload/replacement certification", "automatic updater/TUF", "rollback/downgrade", "schema generation change or migration certification", "stale/concurrent request evidence", "provider/license/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive or irreversible operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on PR #1039 merge after deterministic complete F1/P0/F2/P2 identities, initial evidence run 35390769301, FP-47/48 PASS on both authorized cells, safe fail-closed premium inactivity with Free custom-post-types/taxonomies continuity, exact-head path-applicable CI, fresh-main verification, zero unresolved review threads and shared-truth reconciliation without certification promotion"
     },
     {
@@ -1692,28 +1129,8 @@
       "claim_branch": "agent/p006-b3-harness-readiness-review-v1",
       "authorization": "GOV-P006-B3-HARNESS-REVIEW-001 COMPLETED",
       "terminal_result": "FP-49 BLOCKED; FP-50 PARTIAL/NOT FULL-FIXTURE READY; FP-51 BLOCKED AS WRITTEN; FP-52 BLOCKED AS WRITTEN; FP-58 BLOCKED. Missing-file states have some fail-closed paths, but readable-truncated PHP lacks pre-include integrity/publication protection; manual WordPress replacement harness is absent. No fixture execution or accounting change.",
-      "allowed_scope": [
-        "static source/repository inspection for FP-49/50/51/52/58 harness readiness",
-        "source-derived deterministic cut-point and fixed coverage-set design",
-        "missing-vs-readable-truncated PHP safety analysis",
-        "future disposable harness architecture, recovery and timeout-safe CI design",
-        "docs/QUALITY/P006-B3-FAULT-INJECTION-MANUAL-UPGRADE-HARNESS-READINESS.md",
-        "queue/CHECKPOINT/README closeout only as needed to record readiness without fixture-accounting change"
-      ],
-      "forbidden_scope": [
-        "execute FP-49/50/51/52/58 or any other fixture",
-        "WordPress runtime execution",
-        "filesystem fault injection",
-        "Plugin_Upgrader/manual replacement execution",
-        "DB/schema mutation",
-        "product runtime source mutation",
-        "updater/TUF/provider/license/billing calls",
-        "production/live credentials or sites",
-        "destructive actions",
-        "deploy/release",
-        "#947 independent review",
-        "P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["static source/repository inspection for FP-49/50/51/52/58 harness readiness", "source-derived deterministic cut-point and fixed coverage-set design", "missing-vs-readable-truncated PHP safety analysis", "future disposable harness architecture, recovery and timeout-safe CI design", "docs/QUALITY/P006-B3-FAULT-INJECTION-MANUAL-UPGRADE-HARNESS-READINESS.md", "queue/CHECKPOINT/README closeout only as needed to record readiness without fixture-accounting change"],
+      "forbidden_scope": ["execute FP-49/50/51/52/58 or any other fixture", "WordPress runtime execution", "filesystem fault injection", "Plugin_Upgrader/manual replacement execution", "DB/schema mutation", "product runtime source mutation", "updater/TUF/provider/license/billing calls", "production/live credentials or sites", "destructive actions", "deploy/release", "#947 independent review", "P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on readiness closeout PR merge after per-fixture BLOCKED/PARTIAL conclusions, exact prerequisites, unchanged 144/45/44/0/1 accounting, exact-head governance, fresh-main verification and zero unresolved review threads"
     },
     {
@@ -1727,30 +1144,9 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-b3-manual-replacement-harness-v1",
       "authorization": "GOV-P006-B3-MANUAL-REPLACEMENT-HARNESS-001",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "allowed_scope": [
-        "dedicated tools/p006 manual replacement harness tooling",
-        "dedicated timeout-safe harness-validation workflow",
-        "deterministic F0/F1/P0/P1 candidate derivation through existing accepted build path",
-        "disposable WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) transport validation",
-        "exact before/after payload identity, activation-state, filesystem-method, backup-residue and zero-outbound-HTTP evidence",
-        "documentation and queue/CHECKPOINT/README closeout for harness prerequisite only"
-      ],
-      "forbidden_scope": [
-        "formal FP-58 execution or PASS/FAIL result",
-        "FP-49-52 fault injection",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes",
-        "automatic updater/TUF",
-        "rollback/migration certification",
-        "provider/license/billing calls",
-        "production/live credentials or sites",
-        "deploy/release",
-        "#947 independent review",
-        "P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "allowed_scope": ["dedicated tools/p006 manual replacement harness tooling", "dedicated timeout-safe harness-validation workflow", "deterministic F0/F1/P0/P1 candidate derivation through existing accepted build path", "disposable WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) transport validation", "exact before/after payload identity, activation-state, filesystem-method, backup-residue and zero-outbound-HTTP evidence", "documentation and queue/CHECKPOINT/README closeout for harness prerequisite only"],
+      "forbidden_scope": ["formal FP-58 execution or PASS/FAIL result", "FP-49-52 fault injection", "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes", "automatic updater/TUF", "rollback/migration certification", "provider/license/billing calls", "production/live credentials or sites", "deploy/release", "#947 independent review", "P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "timeout_safe_ci": "candidate build <=15m; each minimum/reference manual-overwrite cell <=18m; fail-fast false; stale-run cancellation; per-cell immutable evidence artifacts",
       "close_condition": "Satisfied on PR #1045 merge after four harness prerequisite cells PASS, exact before/after payload identities, WordPress-owned direct overwrite transport, zero outbound HTTP, fresh-main verification, exact-head governance, zero unresolved review threads, unchanged P-006 accounting and FP-58 NOT_EXECUTED"
     },
@@ -1767,49 +1163,12 @@
       "temp_grant": "GOV-P001-CF-TEMP-011 CONSUMED",
       "terminal_result": "FP-58 PASS across all 8 authorized minimum/reference compatible/breaking WordPress manual replacement paths; Plugin_Upgrader overwrite path direct filesystem; compatible paths preserve premium admission; breaking paths fail closed free_version_too_new/free_version_too_old with premium boot/migrations denied, premium modules inert and Free custom-post-types/taxonomies preserved; zero outbound HTTP/persistence/backup residue; no certification promotion.",
       "authorized_fixture": "FP-58",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "authorized_paths": [
-        "compatible Free-first F0/P0→F1/P0",
-        "compatible Pro-first F0/P0→F0/P1",
-        "breaking Free-first F1/P0→F2/P0",
-        "breaking Pro-first F1/P0→F1/P2"
-      ],
-      "artifact_graph": [
-        "F0 Free 0.1.0-dev / API 0.1.0 / schema 1",
-        "F1 Free 0.1.1-test-overlap / API 0.1.0 / schema 1",
-        "F2 Free 0.2.0-test-breaking / API 0.2.0 / schema 1",
-        "P0 Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schemas 1",
-        "P1 Pro 0.1.1-test-overlap with same overlap contract",
-        "P2 Pro 0.2.0-test-breaking supporting exact Free 0.2.0-test-breaking / API 0.2.0 / schemas 1"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "authorized_paths": ["compatible Free-first F0/P0→F1/P0", "compatible Pro-first F0/P0→F0/P1", "breaking Free-first F1/P0→F2/P0", "breaking Pro-first F1/P0→F1/P2"],
+      "artifact_graph": ["F0 Free 0.1.0-dev / API 0.1.0 / schema 1", "F1 Free 0.1.1-test-overlap / API 0.1.0 / schema 1", "F2 Free 0.2.0-test-breaking / API 0.2.0 / schema 1", "P0 Pro 0.1.0-dev supporting Free 0.1.0-dev..0.1.1-test-overlap / API 0.1.0 / schemas 1", "P1 Pro 0.1.1-test-overlap with same overlap contract", "P2 Pro 0.2.0-test-breaking supporting exact Free 0.2.0-test-breaking / API 0.2.0 / schemas 1"],
       "timeout_safe_ci": "separate <=15m deterministic combined-graph build job; 8 isolated <=18m runtime jobs; fail-fast false; stale-run cancellation; per-scenario/cell immutable evidence artifacts",
-      "allowed_scope": [
-        "dedicated deterministic FP-58 combined-graph builder",
-        "disposable WordPress real-directory setup",
-        "WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) FP-58 execution",
-        "compatible and breaking compatibility assertions matching prior bounded update-order guarantees",
-        "exact package/payload/pair identity, activation, module, persistence, backup-residue and network evidence",
-        "FP-58 workflow/docs and queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "FP-49-52",
-        "partial/truncated/missing-file fault injection",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes",
-        "automatic updater/TUF",
-        "rollback/downgrade or migration certification",
-        "schema-generation change",
-        "stale/concurrent request fixture",
-        "provider/license/billing/allocation calls",
-        "multisite",
-        "production credentials/data/live sites",
-        "destructive operations",
-        "deploy/release",
-        "#947 independent review",
-        "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated deterministic FP-58 combined-graph builder", "disposable WordPress real-directory setup", "WordPress core Plugin_Upgrader::install(local ZIP, overwrite_package=true) FP-58 execution", "compatible and breaking compatibility assertions matching prior bounded update-order guarantees", "exact package/payload/pair identity, activation, module, persistence, backup-residue and network evidence", "FP-58 workflow/docs and queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["FP-49-52", "partial/truncated/missing-file fault injection", "wpessential.php/wpessential-pro.php/frameworks product runtime behavior changes", "automatic updater/TUF", "rollback/downgrade or migration certification", "schema-generation change", "stale/concurrent request fixture", "provider/license/billing/allocation calls", "multisite", "production credentials/data/live sites", "destructive operations", "deploy/release", "#947 independent review", "permanent P-001/CF, pair/runtime certification or ADR-0010 promotion"],
       "close_condition": "Satisfied on PR #1048 merge after initial run 35396546267 and terminal artifact 10567559315, all 8 FP-58 scenario/cell jobs PASS, deterministic graph/pair identities pinned, exact-head Governance/FP-58 workflow, fresh-main verification, zero unresolved threads, accounting 144/46/45/0/1, GOV-P001-CF-TEMP-011 consumed/non-reusable and zero certification/release promotion"
     },
     {
@@ -1824,36 +1183,9 @@
       "claim_branch": "agent/p006-b3-integrity-publication-review-v1",
       "authorization": "GOV-P006-B3-INTEGRITY-PUBLICATION-REVIEW-001 COMPLETED",
       "terminal_result": "NON-RUNTIME architecture review complete: generic WordPress replacement not universally atomic; plugin-internal manifest alone cannot protect corrupt entrypoint; external publication-owner boundary is mandatory first prerequisite; FP-49…52 remain unexecuted and counters unchanged.",
-      "allowed_scope": [
-        "docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md",
-        "read-only repository bootstrap/build/update inspection",
-        "official WordPress code-reference/source research",
-        "queue/CHECKPOINT/README closeout truth"
-      ],
-      "required_questions": [
-        "entrypoint partial-copy protection authority",
-        "non-entry pre-load integrity manifest feasibility/trust",
-        "supported publication semantics vs recursive-copy fallback",
-        "F-CUT-1..4/P-CUT-1..5 applicability",
-        "recovery invariant",
-        "trust-boundary separation"
-      ],
-      "forbidden_scope": [
-        "FP-49/50/51/52 execution",
-        "fault injection",
-        "WordPress runtime fixture execution",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "integrity-manifest implementation",
-        "automatic updater/TUF/signature implementation",
-        "schema/migration behavior",
-        "provider/license/billing calls",
-        "production/live credentials or sites",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "P-001/CF pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md", "read-only repository bootstrap/build/update inspection", "official WordPress code-reference/source research", "queue/CHECKPOINT/README closeout truth"],
+      "required_questions": ["entrypoint partial-copy protection authority", "non-entry pre-load integrity manifest feasibility/trust", "supported publication semantics vs recursive-copy fallback", "F-CUT-1..4/P-CUT-1..5 applicability", "recovery invariant", "trust-boundary separation"],
+      "forbidden_scope": ["FP-49/50/51/52 execution", "fault injection", "WordPress runtime fixture execution", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "integrity-manifest implementation", "automatic updater/TUF/signature implementation", "schema/migration behavior", "provider/license/billing calls", "production/live credentials or sites", "destructive actions", "deploy/release", "#947", "P-001/CF pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied on review closeout PR merge after every cut-point is classified, unsupported atomicity assumptions are rejected, publication-owner contract/harness is named as the narrow next prerequisite, exact-head Governance/fresh-main/zero-thread checks pass, and P-006 accounting remains unchanged"
     },
     {
@@ -1867,46 +1199,12 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b3-publication-owner-harness-v1",
       "authorization": "GOV-P006-B3-PUBLICATION-OWNER-HARNESS-001",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "authorized_targets": [
-        "Free F0→F1",
-        "Pro P0→P1"
-      ],
-      "required_scenarios": [
-        "successful entrypoint-last publication",
-        "interruption before entry publication + recovery",
-        "final-entry rename failure + recovery",
-        "corrupt staged tree refusal",
-        "unsupported publication profile refusal"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "authorized_targets": ["Free F0→F1", "Pro P0→P1"],
+      "required_scenarios": ["successful entrypoint-last publication", "interruption before entry publication + recovery", "final-entry rename failure + recovery", "corrupt staged tree refusal", "unsupported publication profile refusal"],
       "timeout_safe_ci": "candidate/state build <=15m; each target/runtime cell <=18m; fail-fast false; stale-run cancellation; per-cell immutable evidence; terminal aggregate <=5m",
-      "allowed_scope": [
-        "dedicated tools/p006 publication-owner harness tooling",
-        "dedicated timeout-safe workflow",
-        "deterministic F0/F1/P0/P1 test-only artifact reuse/derivation",
-        "disposable WordPress setup",
-        "publication-owner prerequisite evidence docs",
-        "queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "formal FP-49/50/51/52 execution or result",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "production updater",
-        "TUF/signature/key infrastructure",
-        "remote package delivery",
-        "rollback/migration certification",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive production actions",
-        "deploy/release",
-        "#947",
-        "P-001/CF pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated tools/p006 publication-owner harness tooling", "dedicated timeout-safe workflow", "deterministic F0/F1/P0/P1 test-only artifact reuse/derivation", "disposable WordPress setup", "publication-owner prerequisite evidence docs", "queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["formal FP-49/50/51/52 execution or result", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "production updater", "TUF/signature/key infrastructure", "remote package delivery", "rollback/migration certification", "provider/license/billing", "production/live sites", "multisite", "destructive production actions", "deploy/release", "#947", "P-001/CF pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after minimum/reference Free+Pro target harness cells prove entrypoint-last success, partial/pre-entry safety, recovery, corrupt-stage refusal and unsupported-profile refusal with exact identities, exact-head Governance/workflow, fresh-main/zero-thread checks and unchanged P-006 accounting",
       "closeout_pr": 1054,
       "terminal_result": "PASS_PREREQUISITE_ONLY",
@@ -1929,37 +1227,10 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b3-fp49-52-applicability-review-v1",
       "authorization": "GOV-P006-B3-FP49-52-APPLICABILITY-REVIEW-001",
-      "required_inputs": [
-        "docs/QUALITY/P006-PLANNING-LANE-B-UPDATE-API-RANGES.md",
-        "docs/QUALITY/P006-B3-FAULT-INJECTION-MANUAL-UPGRADE-HARNESS-READINESS.md",
-        "docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md",
-        "docs/QUALITY/P006-B3-PUBLICATION-OWNER-HARNESS.md",
-        "current Free/Pro compatibility/load-order source as needed"
-      ],
+      "required_inputs": ["docs/QUALITY/P006-PLANNING-LANE-B-UPDATE-API-RANGES.md", "docs/QUALITY/P006-B3-FAULT-INJECTION-MANUAL-UPGRADE-HARNESS-READINESS.md", "docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md", "docs/QUALITY/P006-B3-PUBLICATION-OWNER-HARNESS.md", "current Free/Pro compatibility/load-order source as needed"],
       "required_output": "docs/QUALITY/P006-B3-FP49-52-APPLICABILITY-READINESS.md",
-      "allowed_scope": [
-        "non-runtime source/evidence review",
-        "exact original FP-49…52 contract mapping",
-        "supported-vs-excluded publication state classification",
-        "finite proposed coverage pinning",
-        "dependency-readiness decision",
-        "queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "FP-49/50/51/52 execution or result",
-        "P-001 temporary runtime grant",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "updater/TUF/signing/installer implementation",
-        "schema/migration behavior",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["non-runtime source/evidence review", "exact original FP-49…52 contract mapping", "supported-vs-excluded publication state classification", "finite proposed coverage pinning", "dependency-readiness decision", "queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["FP-49/50/51/52 execution or result", "P-001 temporary runtime grant", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "updater/TUF/signing/installer implementation", "schema/migration behavior", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after all four exact original Lane B fixtures are mapped without silent redefinition, applicable/excluded/blocked states and finite candidate cells are explicit, later execution readiness is decided, exact-head Governance/fresh-main/zero-thread checks pass, and P-006 accounting remains unchanged",
       "closeout_pr": 1057,
       "terminal_result": "NON_RUNTIME_REVIEW_COMPLETE",
@@ -1982,44 +1253,12 @@
       "claim_branch": "agent/p006-wave1n-fp49-free-interruption-v1",
       "authorization": "GOV-P001-CF-TEMP-012",
       "authorized_fixture": "FP-49 only",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
       "baseline_target": "F0/P0 → interrupted Free F1/P0 → exact F0/P0 recovery",
-      "required_cut_points": [
-        "F49-01: 1/238",
-        "F49-25: 59/238",
-        "F49-50: 119/238",
-        "F49-75: 178/238",
-        "F49-100: 238/238 configured Free entry absent"
-      ],
+      "required_cut_points": ["F49-01: 1/238", "F49-25: 59/238", "F49-50: 119/238", "F49-75: 178/238", "F49-100: 238/238 configured Free entry absent"],
       "timeout_safe_ci": "candidate/state build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
-      "allowed_scope": [
-        "dedicated FP-49 tools/p006 evidence tooling",
-        "dedicated FP-49 timeout-safe workflow",
-        "deterministic F0/F1/P0 graph derivation",
-        "disposable WordPress setup reuse",
-        "formal FP-49 evidence doc",
-        "queue/CHECKPOINT/README terminal closeout"
-      ],
-      "forbidden_scope": [
-        "FP-50/51/52 execution or result",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "generic WordPress move_dir/recursive-copy safety claim",
-        "updater/TUF/signing/remote delivery",
-        "rollback/downgrade/migration certification",
-        "schema advancement",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF certification",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated FP-49 tools/p006 evidence tooling", "dedicated FP-49 timeout-safe workflow", "deterministic F0/F1/P0 graph derivation", "disposable WordPress setup reuse", "formal FP-49 evidence doc", "queue/CHECKPOINT/README terminal closeout"],
+      "forbidden_scope": ["FP-50/51/52 execution or result", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "generic WordPress move_dir/recursive-copy safety claim", "updater/TUF/signing/remote delivery", "rollback/downgrade/migration certification", "schema advancement", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "permanent P-001/CF certification", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after both runtime cells and all five FP-49 cut points are terminal with exact identities/recovery, exact-head Governance + FP-49 workflow support the terminal result, fresh-main/zero-thread checks pass, product runtime source remains unchanged, TEMP-012 is consumed/non-reusable, and accounting reflects the actual FP-49 result",
       "closeout_pr": 1060,
       "terminal_result": "PASS_WAVE_1N_FREE_INTERRUPTION",
@@ -2042,54 +1281,13 @@
       "claim_branch": "agent/p006-wave1o-fp51-pro-partial-files-v1",
       "authorization": "GOV-P001-CF-TEMP-013",
       "authorized_fixture": "FP-51 only",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "fixed_fault_cells": [
-        "P51-B-MISSING",
-        "P51-B-TRUNCATED",
-        "P51-P-MISSING",
-        "P51-P-TRUNCATED",
-        "P51-M1-MISSING",
-        "P51-M1-TRUNCATED",
-        "P51-MM-MISSING",
-        "P51-MM-TRUNCATED",
-        "P51-ML-MISSING",
-        "P51-ML-TRUNCATED",
-        "P51-R-MISSING",
-        "P51-R-TRUNCATED"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "fixed_fault_cells": ["P51-B-MISSING", "P51-B-TRUNCATED", "P51-P-MISSING", "P51-P-TRUNCATED", "P51-M1-MISSING", "P51-M1-TRUNCATED", "P51-MM-MISSING", "P51-MM-TRUNCATED", "P51-ML-MISSING", "P51-ML-TRUNCATED", "P51-R-MISSING", "P51-R-TRUNCATED"],
       "baseline_target": "F0/P0 → faulted P1 non-entry destination with Pro entry excluded or staged-bootstrap refusal → exact P0 recovery",
       "data_sentinel": "wpe_p006_fp51_data_sentinel=fp51-preserve-v1",
       "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
-      "allowed_scope": [
-        "dedicated FP-51 tools/p006 evidence tooling",
-        "dedicated FP-51 timeout-safe workflow",
-        "deterministic F0/P0/P1 graph derivation",
-        "disposable WordPress setup reuse",
-        "bounded sentinel option",
-        "formal FP-51 evidence doc",
-        "queue/CHECKPOINT/README terminal closeout"
-      ],
-      "forbidden_scope": [
-        "FP-50/52 execution or result",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "live execution of readable corrupt configured Pro entry",
-        "generic WordPress move_dir/recursive-copy safety claim",
-        "updater/TUF/signing/remote delivery",
-        "rollback/downgrade/migration certification",
-        "schema advancement",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF certification",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated FP-51 tools/p006 evidence tooling", "dedicated FP-51 timeout-safe workflow", "deterministic F0/P0/P1 graph derivation", "disposable WordPress setup reuse", "bounded sentinel option", "formal FP-51 evidence doc", "queue/CHECKPOINT/README terminal closeout"],
+      "forbidden_scope": ["FP-50/52 execution or result", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "live execution of readable corrupt configured Pro entry", "generic WordPress move_dir/recursive-copy safety claim", "updater/TUF/signing/remote delivery", "rollback/downgrade/migration certification", "schema advancement", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "permanent P-001/CF certification", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after both runtime cells and all 12 fixed FP-51 cells are terminal with exact identities/recovery and sentinel preservation, exact-head Governance + FP-51 workflow support the terminal result, fresh-main/zero-thread checks pass, product runtime source remains unchanged, TEMP-013 is consumed/non-reusable, and accounting reflects the actual FP-51 result",
       "closeout_pr": 1063,
       "terminal_result": "PASS_WAVE_1O_PRO_PARTIAL_FILES",
@@ -2112,56 +1310,14 @@
       "claim_branch": "agent/p006-wave1p-fp52-free-partial-files-v1",
       "authorization": "GOV-P001-CF-TEMP-014",
       "authorized_fixture": "FP-52 only",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "fixed_fault_cells": [
-        "F52-A-MISSING",
-        "F52-A-TRUNCATED",
-        "F52-B-MISSING",
-        "F52-B-TRUNCATED",
-        "F52-E1-MISSING",
-        "F52-E1-TRUNCATED",
-        "F52-EL-MISSING",
-        "F52-EL-TRUNCATED"
-      ],
-      "fixed_paths": [
-        "vendor/autoload.php",
-        "frameworks/Bootstrap/Plugin.php",
-        "frameworks/Platform/Entitlements/ProductEntitlementState.php",
-        "frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "fixed_fault_cells": ["F52-A-MISSING", "F52-A-TRUNCATED", "F52-B-MISSING", "F52-B-TRUNCATED", "F52-E1-MISSING", "F52-E1-TRUNCATED", "F52-EL-MISSING", "F52-EL-TRUNCATED"],
+      "fixed_paths": ["vendor/autoload.php", "frameworks/Bootstrap/Plugin.php", "frameworks/Platform/Entitlements/ProductEntitlementState.php", "frameworks/Platform/Entitlements/EntitlementAwareModuleActivationPolicy.php"],
       "baseline_target": "F0/P0 → faulted F1 non-entry destination with Free entry excluded and complete P0 active → exact F0/P0 recovery",
       "data_sentinel": "wpe_p006_fp52_data_sentinel=fp52-preserve-v1",
       "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; immutable per-runtime artifacts; terminal aggregate <=5m",
-      "allowed_scope": [
-        "dedicated FP-52 tools/p006 evidence tooling",
-        "dedicated FP-52 timeout-safe workflow",
-        "deterministic F0/F1/P0 graph derivation",
-        "disposable WordPress setup reuse",
-        "bounded sentinel option",
-        "formal FP-52 evidence doc",
-        "queue/CHECKPOINT/README terminal closeout"
-      ],
-      "forbidden_scope": [
-        "FP-50 execution/result or expectation reinterpretation",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "live execution of readable corrupt configured Free entry",
-        "generic WordPress move_dir/recursive-copy safety claim",
-        "updater/TUF/signing/remote delivery",
-        "rollback/downgrade/migration certification",
-        "schema advancement",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF certification",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated FP-52 tools/p006 evidence tooling", "dedicated FP-52 timeout-safe workflow", "deterministic F0/F1/P0 graph derivation", "disposable WordPress setup reuse", "bounded sentinel option", "formal FP-52 evidence doc", "queue/CHECKPOINT/README terminal closeout"],
+      "forbidden_scope": ["FP-50 execution/result or expectation reinterpretation", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "live execution of readable corrupt configured Free entry", "generic WordPress move_dir/recursive-copy safety claim", "updater/TUF/signing/remote delivery", "rollback/downgrade/migration certification", "schema advancement", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "permanent P-001/CF certification", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after both runtime cells and all 8 fixed FP-52 cells are terminal with exact identities/recovery and sentinel preservation, exact-head Governance + FP-52 workflow support the terminal result, fresh-main/zero-thread checks pass, product runtime source remains unchanged, TEMP-014 is consumed/non-reusable, and accounting reflects the actual FP-52 result",
       "closeout_pr": 1066,
       "terminal_result": "PASS_WAVE_1P_FREE_PARTIAL_FILES",
@@ -2183,46 +1339,14 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b3-fp50-expectation-decision-v1",
       "authorization": "GOV-P006-B3-FP50-EXPECTATION-DECISION-001",
-      "required_inputs": [
-        "docs/QUALITY/P006-PLANNING-LANE-B-UPDATE-API-RANGES.md",
-        "docs/QUALITY/P006-B3-FP49-52-APPLICABILITY-READINESS.md",
-        "docs/QUALITY/P006-B3-PUBLICATION-OWNER-HARNESS.md",
-        "docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md",
-        "Wave 1N/1O/1P terminal evidence as corroborating publication-boundary evidence only"
-      ],
+      "required_inputs": ["docs/QUALITY/P006-PLANNING-LANE-B-UPDATE-API-RANGES.md", "docs/QUALITY/P006-B3-FP49-52-APPLICABILITY-READINESS.md", "docs/QUALITY/P006-B3-PUBLICATION-OWNER-HARNESS.md", "docs/QUALITY/P006-B3-INTEGRITY-PUBLICATION-ARCHITECTURE-READINESS.md", "Wave 1N/1O/1P terminal evidence as corroborating publication-boundary evidence only"],
       "required_output": "docs/QUALITY/P006-B3-FP50-EXPECTATION-DECISION.md",
-      "allowed_scope": [
-        "non-runtime governance/fixture expectation decision",
-        "exact FP-50 contract interpretation",
-        "transport-state versus product-local compatibility-state distinction",
-        "dependency-readiness decision",
-        "queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "FP-50 execution or PASS/FAIL result",
-        "P-001 temporary runtime grant",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "updater/TUF/signing/installer implementation",
-        "schema/migration behavior",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["non-runtime governance/fixture expectation decision", "exact FP-50 contract interpretation", "transport-state versus product-local compatibility-state distinction", "dependency-readiness decision", "queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["FP-50 execution or PASS/FAIL result", "P-001 temporary runtime grant", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "updater/TUF/signing/installer implementation", "schema/migration behavior", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after the exact FP-50 expectation is explicitly resolved in the required decision document, dependency readiness is stated without execution, exact-head applicable CI/fresh-main/zero-thread checks pass, shared truth is reconciled, and P-006 accounting remains 144/49/48/0/1 with zero certified pairs/runtime certifications",
       "terminal_decision": "INTERPRETATION_A_ACCEPTED_TRANSPORT_LEVEL_EXECUTION_EXCLUDED_LIVE_PARTIAL_IS_SAFE_PACKAGE_INCOMPLETE_RESULT",
       "fp50_state": "READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION_NOT_EXECUTED",
-      "required_future_cells": [
-        "P50-01: 1/286",
-        "P50-25: 71/286",
-        "P50-50: 143/286",
-        "P50-75: 214/286",
-        "P50-100: 286/286 configured Pro entry absent"
-      ],
+      "required_future_cells": ["P50-01: 1/286", "P50-25: 71/286", "P50-50: 143/286", "P50-75: 214/286", "P50-100: 286/286 configured Pro entry absent"],
       "fixture_accounting_changed": false,
       "runtime_executed": false,
       "pair_certified": false,
@@ -2241,47 +1365,13 @@
       "claim_branch": "agent/p006-wave1q-fp50-pro-interruption-v1",
       "authorization": "GOV-P001-CF-TEMP-015",
       "authorized_fixture": "FP-50 only",
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "fixed_cut_points": [
-        "P50-01: 1/286",
-        "P50-25: 71/286",
-        "P50-50: 143/286",
-        "P50-75: 214/286",
-        "P50-100: 286/286 configured Pro entry absent"
-      ],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "fixed_cut_points": ["P50-01: 1/286", "P50-25: 71/286", "P50-50: 143/286", "P50-75: 214/286", "P50-100: 286/286 configured Pro entry absent"],
       "baseline_target": "F0/P0 → interrupted Pro P1 non-entry destination with Pro entry excluded and exact F0 active → exact P0 recovery",
       "data_sentinel": "wpe_p006_fp50_data_sentinel=fp50-preserve-v1",
       "timeout_safe_ci": "candidate build <=15m; each runtime cell <=18m; fail-fast false; stale-run cancellation; one immutable candidate artifact shared by both runtime cells; terminal aggregate <=5m; queue/CHECKPOINT/README excluded from runtime workflow paths",
-      "allowed_scope": [
-        "dedicated FP-50 tools/p006 evidence tooling",
-        "dedicated FP-50 timeout-safe workflow",
-        "deterministic F0/P0/P1 graph derivation",
-        "disposable WordPress setup reuse",
-        "bounded sentinel option",
-        "formal FP-50 evidence doc",
-        "queue/CHECKPOINT/README terminal closeout"
-      ],
-      "forbidden_scope": [
-        "FP-49/51/52 re-execution or result changes",
-        "wpessential.php/wpessential-pro.php/frameworks product runtime mutation",
-        "live execution of readable corrupt configured Pro entry",
-        "generic WordPress move_dir/recursive-copy safety claim",
-        "updater/TUF/signing/remote delivery",
-        "rollback/downgrade/migration certification",
-        "schema advancement",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF certification",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated FP-50 tools/p006 evidence tooling", "dedicated FP-50 timeout-safe workflow", "deterministic F0/P0/P1 graph derivation", "disposable WordPress setup reuse", "bounded sentinel option", "formal FP-50 evidence doc", "queue/CHECKPOINT/README terminal closeout"],
+      "forbidden_scope": ["FP-49/51/52 re-execution or result changes", "wpessential.php/wpessential-pro.php/frameworks product runtime mutation", "live execution of readable corrupt configured Pro entry", "generic WordPress move_dir/recursive-copy safety claim", "updater/TUF/signing/remote delivery", "rollback/downgrade/migration certification", "schema advancement", "provider/license/billing", "production/live sites", "multisite", "destructive actions", "deploy/release", "#947", "permanent P-001/CF certification", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after both runtime cells and all five fixed FP-50 cut points are terminal with exact candidate/cut/recovery identities and sentinel preservation, exact-head Governance + FP-50 workflow support the terminal result, fresh-main/zero-thread checks pass, product runtime source remains unchanged, TEMP-015 is consumed/non-reusable, and accounting reflects the actual FP-50 result",
       "terminal_result": "PASS_WAVE_1Q_FP50_PRO_INTERRUPTION",
       "source_head_exact_verification": "56efc19d54cc5de54086fa19e930f611cb77825f",
@@ -2295,13 +1385,7 @@
       "reference_artifact_digest": "sha256:0cc0b9ffd043f6511caba11abdbcc4a31c16992d1a0a32b981a9c862a51b498f",
       "terminal_artifact_id": 10604287404,
       "terminal_artifact_digest": "sha256:ae9719c2e89043cc21804b11aadfc3c8b7ae9d32dc9c85a27e8cc47fb73b808a",
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 50,
-        "pass": 49,
-        "fail": 0,
-        "inconclusive": 1
-      },
+      "fixture_accounting": {"documented":144,"executed":50,"pass":49,"fail":0,"inconclusive":1},
       "runtime_executed": true,
       "pair_certified": false,
       "runtime_certified": false,
@@ -2318,48 +1402,11 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b4-fp21-22-24-33-readiness-v1",
       "authorization": "GOV-P006-B4-FP21-22-24-33-READINESS-001",
-      "authorized_fixtures": [
-        "FP-21",
-        "FP-22",
-        "FP-24",
-        "FP-33"
-      ],
+      "authorized_fixtures": ["FP-21","FP-22","FP-24","FP-33"],
       "required_output": "docs/QUALITY/P006-B4-FP21-22-24-33-READINESS.md",
-      "required_inputs": [
-        "P006 executable evidence protocol",
-        "Lane A artifact/bootstrap planning",
-        "Lane B update/API-range planning",
-        "Wave 1H FP-33 evidence",
-        "Wave 1K overlap evidence",
-        "current LocalCompatibilityPreflight and bootstraps",
-        "current migration coordinator/registry/runner and concrete migration owners",
-        "current module activation-policy/entitlement sources"
-      ],
-      "allowed_scope": [
-        "non-runtime source/evidence review",
-        "FP-21/22 overlap prerequisite mapping",
-        "FP-24 applicability decision under current accepted compatibility contract",
-        "FP-33 lifecycle-owner/gating readiness mapping",
-        "queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "fixture execution",
-        "FP-33 PASS/FAIL promotion",
-        "P-006 counter changes",
-        "P-001 temporary runtime grant",
-        "product runtime mutation",
-        "invented per-module compatibility contract",
-        "schema/migration execution",
-        "updater/TUF/signing/remote delivery",
-        "provider/license/billing",
-        "production/live sites",
-        "multisite execution",
-        "destructive actions",
-        "deploy/release",
-        "#947",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "required_inputs": ["P006 executable evidence protocol", "Lane A artifact/bootstrap planning", "Lane B update/API-range planning", "Wave 1H FP-33 evidence", "Wave 1K overlap evidence", "current LocalCompatibilityPreflight and bootstraps", "current migration coordinator/registry/runner and concrete migration owners", "current module activation-policy/entitlement sources"],
+      "allowed_scope": ["non-runtime source/evidence review", "FP-21/22 overlap prerequisite mapping", "FP-24 applicability decision under current accepted compatibility contract", "FP-33 lifecycle-owner/gating readiness mapping", "queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["fixture execution", "FP-33 PASS/FAIL promotion", "P-006 counter changes", "P-001 temporary runtime grant", "product runtime mutation", "invented per-module compatibility contract", "schema/migration execution", "updater/TUF/signing/remote delivery", "provider/license/billing", "production/live sites", "multisite execution", "destructive actions", "deploy/release", "#947", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Satisfied only after all four decisions are explicit in the required review document, shared truth is reconciled, exact-head applicable CI/fresh-main/zero-thread checks pass, accounting remains 144/50/49/0/1, FP-33 remains INCONCLUSIVE unless separately executed later, and no runtime/certification/release authority is promoted",
       "terminal_decisions": {
         "FP-21": "READY_FOR_SEPARATE_FORMAL_EXECUTION_AUTHORIZATION",
@@ -2384,43 +1431,13 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1r-fp21-fp22-overlap-boot-v1",
       "authorization": "GOV-P001-CF-TEMP-016",
-      "authorized_fixtures": [
-        "FP-21",
-        "FP-22"
-      ],
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "formal_pairs": [
-        "FP-21: F1/P0",
-        "FP-22: F0/P1"
-      ],
+      "authorized_fixtures": ["FP-21","FP-22"],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "formal_pairs": ["FP-21: F1/P0", "FP-22: F0/P1"],
       "local_entitlement": "test-only pro_active before WordPress load; no remote provider",
       "timeout_safe_ci": "candidate <=15m; two runtime jobs <=18m each; fail-fast false; terminal <=5m; stale-run cancellation; evidence markdown and shared truth excluded from runtime pull_request paths; split runtime PR and shared-truth closeout PR",
-      "allowed_scope": [
-        "dedicated Wave 1R harness/workflow",
-        "Wave 1K overlap graph/setup/swap primitives",
-        "TEMP-016 identity wrapper",
-        "test-only local pro_active entitlement in harness",
-        "formal Wave 1R evidence markdown",
-        "separate post-merge queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "FP-24 execution or PASS",
-        "FP-33 execution/result change",
-        "product runtime mutation",
-        "provider/license/billing",
-        "updater/TUF/signing/remote delivery",
-        "production/live sites",
-        "multisite",
-        "destructive production actions",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF",
-        "pair/runtime certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated Wave 1R harness/workflow", "Wave 1K overlap graph/setup/swap primitives", "TEMP-016 identity wrapper", "test-only local pro_active entitlement in harness", "formal Wave 1R evidence markdown", "separate post-merge queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["FP-24 execution or PASS", "FP-33 execution/result change", "product runtime mutation", "provider/license/billing", "updater/TUF/signing/remote delivery", "production/live sites", "multisite", "destructive production actions", "deploy/release", "#947", "permanent P-001/CF", "pair/runtime certification", "ADR-0010 promotion"],
       "close_condition": "Runtime PR requires exact-head candidate/minimum/reference/terminal PASS with immutable evidence and zero threads/fresh main; Issue closes only after separate Governance-only shared-truth closeout consumes TEMP-016 and records actual accounting without rerunning Wave 1R",
       "terminal_result": "PASS_WAVE_1R_FP21_FP22_OVERLAP_BOOT",
       "runtime_pr": 1079,
@@ -2431,13 +1448,7 @@
       "evidence_finalization_head": "d5484702607d8b58c2b6c3bf035fea45b153ed43",
       "evidence_finalization_wave_shell_run": 35510042121,
       "heavy_jobs_skipped_on_evidence_only_finalization": true,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 52,
-        "pass": 51,
-        "fail": 0,
-        "inconclusive": 1
-      },
+      "fixture_accounting": {"documented":144,"executed":52,"pass":51,"fail":0,"inconclusive":1},
       "runtime_executed": true,
       "pair_certified": false,
       "runtime_certified": false,
@@ -2454,44 +1465,15 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1s-fp33-activation-lifecycle-v1",
       "authorization": "GOV-P001-CF-TEMP-017",
-      "authorized_fixtures": [
-        "FP-33"
-      ],
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "formal_pairs": [
-        "scenario-a: F2/P0 => free_version_too_new",
-        "scenario-b: F1/P2 => free_version_too_old"
-      ],
+      "authorized_fixtures": ["FP-33"],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "formal_pairs": ["scenario-a: F2/P0 => free_version_too_new", "scenario-b: F1/P2 => free_version_too_old"],
       "accounting_rule": "FP-33 already executed/inconclusive in Wave 1H; re-execution does not increment executed count; PASS => 144/52/52/0/0",
       "required_snapshot": "sorted WPE migration ids + WPE-owned tables + Pro Custom Tables store-table absence + sentinel + normalized SHA-256 immediately before/after activate_plugin and reactivate",
       "static_prerequisite": "no first-party register_activation_hook/register_deactivation_hook/register_uninstall_hook in exact candidate packages/current entry files",
       "timeout_safe_ci": "latest-change gate <=3m; candidate/static <=15m; two runtime jobs <=18m each; fail-fast false; terminal <=5m; stale-run cancellation; evidence/shared truth excluded from heavy runtime paths; split closeout",
-      "allowed_scope": [
-        "dedicated Wave 1S harness/workflow",
-        "Wave 1L breaking graph/setup/swap primitives",
-        "TEMP-017 identity wrapper",
-        "WordPress activate/deactivate/reactivate API on disposable runtime",
-        "WPE migration/schema read snapshots",
-        "formal Wave 1S evidence markdown",
-        "separate post-merge queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "fixtures other than FP-33",
-        "destructive migration execution",
-        "product runtime mutation",
-        "provider/license/billing",
-        "updater/TUF/signing/remote delivery",
-        "production/live sites",
-        "multisite",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF",
-        "pair/runtime/migration certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated Wave 1S harness/workflow", "Wave 1L breaking graph/setup/swap primitives", "TEMP-017 identity wrapper", "WordPress activate/deactivate/reactivate API on disposable runtime", "WPE migration/schema read snapshots", "formal Wave 1S evidence markdown", "separate post-merge queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["fixtures other than FP-33", "destructive migration execution", "product runtime mutation", "provider/license/billing", "updater/TUF/signing/remote delivery", "production/live sites", "multisite", "deploy/release", "#947", "permanent P-001/CF", "pair/runtime/migration certification", "ADR-0010 promotion"],
       "close_condition": "Runtime PR requires exact-head candidate/static/minimum/reference/terminal PASS, immutable evidence, zero threads/fresh main, product runtime unchanged and evidence-only heavy-job skip; Issue closes only after separate Governance-only closeout consumes TEMP-017 and updates FP-33 accounting without double-counting execution",
       "terminal_result": "PASS_WAVE_1S_FP33_ACTIVATION_LIFECYCLE",
       "runtime_pr": 1083,
@@ -2502,13 +1484,7 @@
       "evidence_finalization_head": "2c3ad516894f8602822745b023d71e3770c66769",
       "evidence_finalization_wave_shell_run": 35511107065,
       "heavy_jobs_skipped_on_evidence_only_finalization": true,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 52,
-        "pass": 52,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "fixture_accounting": {"documented":144,"executed":52,"pass":52,"fail":0,"inconclusive":0},
       "executed_count_increment": 0,
       "runtime_executed": true,
       "destructive_migration_executed": false,
@@ -2528,63 +1504,15 @@
       "runtime_allowed": false,
       "claim_branch": "supervisor/p006-b5-lane-c-schema-readiness-v1",
       "authorization": "GOV-P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS-001",
-      "authorized_fixtures": [
-        "FP-77…FP-94 READINESS ONLY"
-      ],
-      "allowed_scope": [
-        "docs/QUALITY/P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS.md",
-        "config/coordination/agent-work-queue.json",
-        "CHECKPOINT.md",
-        "README.md"
-      ],
-      "forbidden_scope": [
-        "formal fixture execution",
-        "P-006 counter changes",
-        "temporary runtime grant",
-        "product runtime mutation",
-        "DB/schema migration execution",
-        "synthetic destructive migration",
-        "provider/updater/TUF",
-        "production/live sites",
-        "deploy/release",
-        "#947",
-        "pair/runtime/migration certification",
-        "ADR-0010 promotion"
-      ],
+      "authorized_fixtures": ["FP-77…FP-94 READINESS ONLY"],
+      "allowed_scope": ["docs/QUALITY/P006-B5-LANE-C-SCHEMA-MIGRATION-READINESS.md", "config/coordination/agent-work-queue.json", "CHECKPOINT.md", "README.md"],
+      "forbidden_scope": ["formal fixture execution", "P-006 counter changes", "temporary runtime grant", "product runtime mutation", "DB/schema migration execution", "synthetic destructive migration", "provider/updater/TUF", "production/live sites", "deploy/release", "#947", "pair/runtime/migration certification", "ADR-0010 promotion"],
       "terminal_result": "READINESS_REVIEW_COMPLETE_NON_RUNTIME",
-      "direct_formal_execution_ready": [
-        "FP-77",
-        "FP-78",
-        "FP-79",
-        "FP-80",
-        "FP-88"
-      ],
-      "ready_after_exact_harness_prerequisite": [
-        "FP-86",
-        "FP-89",
-        "FP-90",
-        "FP-94"
-      ],
-      "n_a_current_accepted_migration_set": [
-        "FP-81"
-      ],
-      "blocked": [
-        "FP-82",
-        "FP-83",
-        "FP-84",
-        "FP-85",
-        "FP-87",
-        "FP-91",
-        "FP-92",
-        "FP-93"
-      ],
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 52,
-        "pass": 52,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "direct_formal_execution_ready": ["FP-77","FP-78","FP-79","FP-80","FP-88"],
+      "ready_after_exact_harness_prerequisite": ["FP-86","FP-89","FP-90","FP-94"],
+      "n_a_current_accepted_migration_set": ["FP-81"],
+      "blocked": ["FP-82","FP-83","FP-84","FP-85","FP-87","FP-91","FP-92","FP-93"],
+      "fixture_accounting": {"documented":144,"executed":52,"pass":52,"fail":0,"inconclusive":0},
       "runtime_executed": false,
       "closeout_pr": 1086
     },
@@ -2599,54 +1527,14 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-wave1t-schema-migration-v1",
       "authorization": "GOV-P001-CF-TEMP-018",
-      "authorized_fixtures": [
-        "FP-77",
-        "FP-78",
-        "FP-79",
-        "FP-80",
-        "FP-88"
-      ],
-      "authorized_cells": [
-        "minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4",
-        "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"
-      ],
-      "db_states": [
-        "settled current schema",
-        "Free-behind before 006/007/008",
-        "Pro-behind with Free settled and 220/221 absent",
-        "incompatible entitled control for FP-80"
-      ],
+      "authorized_fixtures": ["FP-77","FP-78","FP-79","FP-80","FP-88"],
+      "authorized_cells": ["minimum: WordPress 6.9 / PHP 8.2 / MySQL 8.4", "reference: WordPress 7.1 / PHP 8.5 / MySQL 8.4"],
+      "db_states": ["settled current schema", "Free-behind before 006/007/008", "Pro-behind with Free settled and 220/221 absent", "incompatible entitled control for FP-80"],
       "local_entitlement": "test-only local entitlement only where needed; no remote provider",
       "required_snapshot": "sorted WPE migration ids + normalized WPE-owned table/schema state + sentinel + exact before/after hash + applied-order trace + outbound HTTP count",
       "timeout_safe_ci": "latest-change gate <=3m; candidate+DB identity <=15m; minimum/reference runtime jobs <=18m each; fail-fast false; terminal <=5m; stale-run cancellation; evidence/shared truth excluded from heavy runtime paths; split closeout",
-      "allowed_scope": [
-        "dedicated Wave 1T harness/workflow",
-        "existing deterministic candidate graph/setup primitives",
-        "disposable WordPress/MySQL setup",
-        "bounded local test entitlement",
-        "migration/schema read snapshots",
-        "formal Wave 1T evidence markdown",
-        "separate post-merge queue/CHECKPOINT/README closeout"
-      ],
-      "forbidden_scope": [
-        "fixtures other than FP-77/78/79/80/88",
-        "destructive or irreversible migration",
-        "schema-ahead/downgrade recovery",
-        "interrupted migration recovery",
-        "marker/schema reconciliation implementation",
-        "concurrency migration execution",
-        "backup/restore",
-        "product runtime mutation",
-        "provider/license/billing",
-        "updater/TUF/signing/remote delivery",
-        "production/live sites/data",
-        "multisite",
-        "deploy/release",
-        "#947",
-        "permanent P-001/CF",
-        "pair/runtime/migration certification",
-        "ADR-0010 promotion"
-      ],
+      "allowed_scope": ["dedicated Wave 1T harness/workflow", "existing deterministic candidate graph/setup primitives", "disposable WordPress/MySQL setup", "bounded local test entitlement", "migration/schema read snapshots", "formal Wave 1T evidence markdown", "separate post-merge queue/CHECKPOINT/README closeout"],
+      "forbidden_scope": ["fixtures other than FP-77/78/79/80/88", "destructive or irreversible migration", "schema-ahead/downgrade recovery", "interrupted migration recovery", "marker/schema reconciliation implementation", "concurrency migration execution", "backup/restore", "product runtime mutation", "provider/license/billing", "updater/TUF/signing/remote delivery", "production/live sites/data", "multisite", "deploy/release", "#947", "permanent P-001/CF", "pair/runtime/migration certification", "ADR-0010 promotion"],
       "close_condition": "Runtime/evidence accepted by PR #1089; terminal shared-truth closeout consumes TEMP-018 and records bounded accounting without certification promotion",
       "terminal_result": "PASS_WAVE_1T_FP77_FP78_FP79_FP80_FP88_SCHEMA_MIGRATION",
       "runtime_pr": 1089,
@@ -2658,13 +1546,7 @@
       "evidence_finalization_governance_run": 35532263746,
       "evidence_finalization_wave_shell_run": 35532263816,
       "heavy_jobs_skipped_on_evidence_only_finalization": true,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 57,
-        "pass": 57,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
       "runtime_executed": true,
       "destructive_migration_executed": false,
       "pair_certified": false,
@@ -2683,46 +1565,12 @@
       "runtime_allowed": false,
       "claim_branch": "supervisor/p006-b6-harness-prerequisite-readiness-v1",
       "authorization": "GOV-P006-B6-HARNESS-PREREQUISITE-READINESS-001",
-      "authorized_fixtures": [
-        "FP-86",
-        "FP-89",
-        "FP-90",
-        "FP-94 READINESS ONLY"
-      ],
-      "allowed_scope": [
-        "docs/QUALITY/P006-B6-HARNESS-PREREQUISITE-READINESS.md",
-        "config/coordination/agent-work-queue.json",
-        "CHECKPOINT.md",
-        "README.md"
-      ],
-      "forbidden_scope": [
-        "formal fixture execution",
-        "P-006 counter changes",
-        "temporary runtime grant",
-        "product runtime mutation",
-        "product Backup/Restore implementation",
-        "production/live DB restore",
-        "destructive migration",
-        "provider/updater/TUF",
-        "deploy/release",
-        "#947",
-        "pair/runtime/generic-migration certification",
-        "ADR-0010 promotion"
-      ],
+      "authorized_fixtures": ["FP-86","FP-89","FP-90","FP-94 READINESS ONLY"],
+      "allowed_scope": ["docs/QUALITY/P006-B6-HARNESS-PREREQUISITE-READINESS.md", "config/coordination/agent-work-queue.json", "CHECKPOINT.md", "README.md"],
+      "forbidden_scope": ["formal fixture execution", "P-006 counter changes", "temporary runtime grant", "product runtime mutation", "product Backup/Restore implementation", "production/live DB restore", "destructive migration", "provider/updater/TUF", "deploy/release", "#947", "pair/runtime/generic-migration certification", "ADR-0010 promotion"],
       "terminal_result": "READINESS_REVIEW_COMPLETE_NON_RUNTIME",
-      "ready_for_prerequisite_implementation": [
-        "FP-86",
-        "FP-89",
-        "FP-90",
-        "FP-94"
-      ],
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 57,
-        "pass": 57,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "ready_for_prerequisite_implementation": ["FP-86","FP-89","FP-90","FP-94"],
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
       "runtime_executed": false,
       "closeout_pr": 1092
     },
@@ -2740,36 +1588,10 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b6a-fp89-platform-api-candidate-v1",
       "authorization": "GOV-P006-B6A-FP89-PLATFORM-API-CANDIDATE-001",
-      "authorized_scope": [
-        "deterministic canonical package build",
-        "test-only P-API candidate derivation",
-        "actual LocalCompatibilityPreflight pure evaluation",
-        "immutable prerequisite artifact",
-        "B6a evidence markdown",
-        "shared-truth closeout"
-      ],
-      "forbidden_scope": [
-        "formal FP-89 execution",
-        "WordPress/MySQL runtime matrix",
-        "P-001/CF runtime grant",
-        "product runtime mutation",
-        "migration/DB mutation",
-        "provider/license/billing",
-        "updater/TUF",
-        "production/live data",
-        "certification promotion",
-        "deploy/release",
-        "ADR-0010 promotion",
-        "#947"
-      ],
+      "authorized_scope": ["deterministic canonical package build", "test-only P-API candidate derivation", "actual LocalCompatibilityPreflight pure evaluation", "immutable prerequisite artifact", "B6a evidence markdown", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-89 execution", "WordPress/MySQL runtime matrix", "P-001/CF runtime grant", "product runtime mutation", "migration/DB mutation", "provider/license/billing", "updater/TUF", "production/live data", "certification promotion", "deploy/release", "ADR-0010 promotion", "#947"],
       "formal_fixture_executed": false,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 57,
-        "pass": 57,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
       "close_condition": "Deterministic F0/P0/P-API prerequisite artifacts merged with exact-head Governance + prerequisite workflow PASS, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-89 remains not formally executed",
       "terminal_result": "PASS_TEST_ONLY_FP89_PLATFORM_API_CANDIDATE_PREREQUISITE",
       "runtime_source_head_exact_verification": "bf7f5dc9dd73d13143dcc19d5c5743f1f5034ef8",
@@ -2782,6 +1604,7 @@
       "artifact_id": 10613911938,
       "artifact_digest": "sha256:dab04416de5ff4a9e1c2562b0aef0e8d147b953a67d5ab5bdaff07848838c44a",
       "isolated_pair_id": "9447c78174b7702879f318339c60942ebc20be9a477df78f9dbd2b734705d841",
+      "formal_fixture_executed": false,
       "fixture_accounting_changed": false,
       "closeout_pr": 1094
     },
@@ -2799,37 +1622,10 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-b6b-fp86-fail-once-marker-v1",
       "authorization": "GOV-P006-B6B-FP86-FAIL-ONCE-MARKER-001",
-      "authorized_scope": [
-        "single disposable minimum WordPress/MySQL prerequisite cell",
-        "real MigrationRunner/Registry/NativeWpdbAdapter/WpdbMigrationStateStore",
-        "migration 220 only",
-        "test-only fail-once marker-store decorator",
-        "immutable prerequisite evidence",
-        "shared-truth closeout"
-      ],
-      "forbidden_scope": [
-        "formal FP-86 execution",
-        "any migration other than 220",
-        "destructive or irreversible migration",
-        "product runtime/bootstrap/DI mutation",
-        "generic migration-recovery certification",
-        "production/live DB",
-        "provider/license/billing",
-        "updater/TUF",
-        "P-001/CF runtime grant",
-        "pair/runtime/migration certification",
-        "deploy/release",
-        "ADR-0010 promotion",
-        "#947"
-      ],
+      "authorized_scope": ["single disposable minimum WordPress/MySQL prerequisite cell", "real MigrationRunner/Registry/NativeWpdbAdapter/WpdbMigrationStateStore", "migration 220 only", "test-only fail-once marker-store decorator", "immutable prerequisite evidence", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-86 execution", "any migration other than 220", "destructive or irreversible migration", "product runtime/bootstrap/DI mutation", "generic migration-recovery certification", "production/live DB", "provider/license/billing", "updater/TUF", "P-001/CF runtime grant", "pair/runtime/migration certification", "deploy/release", "ADR-0010 promotion", "#947"],
       "formal_fixture_executed": false,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 57,
-        "pass": 57,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
       "close_condition": "Fail-once marker prerequisite merged with exact-head Governance + dedicated workflow PASS, immutable evidence, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-86 remains not formally executed",
       "terminal_result": "PASS_TEST_ONLY_FP86_FAIL_ONCE_MARKER_PREREQUISITE",
       "runtime_source_head_exact_verification": "dcc15826df5989df23f3f1e588371af4038ad7d8",
@@ -2842,6 +1638,7 @@
       "artifact_id": 10614580717,
       "artifact_digest": "sha256:e17644327bd8ddd57c17d12205e3d8a0959ca3966b426391d8f2a1eeb4a6e6fc",
       "schema_sha256": "3d5c22d7013a46bbba3ddee33ec00aedafdd0b23b0e56eae3e75a58e6cb99318",
+      "formal_fixture_executed": false,
       "fixture_accounting_changed": false,
       "closeout_pr": 1096
     },
@@ -2859,38 +1656,10 @@
       "runtime_allowed": false,
       "claim_branch": "agent/p006-b6c-fp94-diagnostics-redaction-v1",
       "authorization": "GOV-P006-B6C-FP94-DIAGNOSTICS-REDACTION-001",
-      "authorized_scope": [
-        "current migration output-surface audit",
-        "test-only deterministic DatabaseAdapterInterface fakes",
-        "MigrationRunner/Registry/InMemory/Wpdb state-store error capture",
-        "SensitiveValue redaction capture",
-        "PHP error-log/stderr capture",
-        "immutable prerequisite evidence",
-        "shared-truth closeout"
-      ],
-      "forbidden_scope": [
-        "formal FP-94 execution",
-        "product logging addition/change",
-        "product runtime mutation",
-        "WordPress/MySQL runtime",
-        "provider/license/billing calls",
-        "real secrets",
-        "production/live data",
-        "P-001/CF runtime grant",
-        "pair/runtime/migration certification",
-        "updater/TUF",
-        "deploy/release",
-        "ADR-0010 promotion",
-        "#947"
-      ],
+      "authorized_scope": ["current migration output-surface audit", "test-only deterministic DatabaseAdapterInterface fakes", "MigrationRunner/Registry/InMemory/Wpdb state-store error capture", "SensitiveValue redaction capture", "PHP error-log/stderr capture", "immutable prerequisite evidence", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-94 execution", "product logging addition/change", "product runtime mutation", "WordPress/MySQL runtime", "provider/license/billing calls", "real secrets", "production/live data", "P-001/CF runtime grant", "pair/runtime/migration certification", "updater/TUF", "deploy/release", "ADR-0010 promotion", "#947"],
       "formal_fixture_executed": false,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 57,
-        "pass": 57,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
       "close_condition": "Deterministic redaction/capture prerequisite merged with exact-head Governance + dedicated workflow PASS, immutable evidence, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-94 remains not formally executed",
       "terminal_result": "PASS_TEST_ONLY_FP94_DIAGNOSTICS_REDACTION_PREREQUISITE",
       "runtime_source_head_exact_verification": "46ab31e6ab6169d05c8a1c936970c2213aca1146",
@@ -2904,6 +1673,7 @@
       "artifact_digest": "sha256:0bdf200c404e9db5d91fb60c937603ef7a1d07945fec79811074e4a8dceb822a",
       "raw_canaries_absent": true,
       "product_logging_added_or_changed": false,
+      "formal_fixture_executed": false,
       "fixture_accounting_changed": false,
       "closeout_pr": 1098
     },
@@ -2918,37 +1688,10 @@
       "runtime_allowed": true,
       "claim_branch": "agent/p006-b6d-fp90-disposable-db-snapshot-v1",
       "authorization": "GOV-P006-B6D-FP90-DISPOSABLE-DB-SNAPSHOT-001",
-      "authorized_scope": [
-        "single disposable minimum WordPress/MySQL prerequisite cell",
-        "Free migrations 006/007/008 settled older state",
-        "deterministic SQL dump/hash/drop-recreate/import",
-        "restored state fingerprint verification",
-        "exact canonical Free/Pro compatibility preflight before pending migration",
-        "immutable prerequisite evidence",
-        "shared-truth closeout"
-      ],
-      "forbidden_scope": [
-        "formal FP-90 execution",
-        "invoking Pro 220/221 after restore",
-        "product Backup/Restore implementation/certification",
-        "production/live DB",
-        "destructive/irreversible migration",
-        "P-001/CF runtime grant",
-        "provider/license/billing",
-        "updater/TUF/signing",
-        "pair/runtime/migration certification",
-        "deploy/release",
-        "ADR-0010 promotion",
-        "#947"
-      ],
+      "authorized_scope": ["single disposable minimum WordPress/MySQL prerequisite cell", "Free migrations 006/007/008 settled older state", "deterministic SQL dump/hash/drop-recreate/import", "restored state fingerprint verification", "exact canonical Free/Pro compatibility preflight before pending migration", "immutable prerequisite evidence", "shared-truth closeout"],
+      "forbidden_scope": ["formal FP-90 execution", "invoking Pro 220/221 after restore", "product Backup/Restore implementation/certification", "production/live DB", "destructive/irreversible migration", "P-001/CF runtime grant", "provider/license/billing", "updater/TUF/signing", "pair/runtime/migration certification", "deploy/release", "ADR-0010 promotion", "#947"],
       "formal_fixture_executed": false,
-      "fixture_accounting": {
-        "documented": 144,
-        "executed": 57,
-        "pass": 57,
-        "fail": 0,
-        "inconclusive": 0
-      },
+      "fixture_accounting": {"documented":144,"executed":57,"pass":57,"fail":0,"inconclusive":0},
       "close_condition": "Disposable DB snapshot prerequisite merged with exact-head Governance + dedicated workflow PASS, immutable evidence, evidence-only heavy-job skip, fresh main, zero unresolved review threads; FP-90 remains not formally executed",
       "terminal_result": "PASS_TEST_ONLY_FP90_DISPOSABLE_DB_SNAPSHOT_PREREQUISITE",
       "merge_sha": "85b5a2eb82a71bab3e42d8c7d38dedcbf13654c7",
@@ -2959,6 +1702,7 @@
       "artifact_digest": "sha256:7e2c19c0ec29e81cbfef865bac2a404c315189d7852b1af662ee3187417fd8a3",
       "accepted_sql_sha256": "24178a1289fb5929eda850f488d932c94bbbddc5936a82cc26cb83979823b058",
       "pending_pro_migrations_invoked": false,
+      "formal_fixture_executed": false,
       "fixture_accounting_changed": false,
       "closeout_pr": 1100
     },
@@ -2973,9 +1717,7 @@
       "runtime_allowed": false,
       "independence_required": true,
       "supervisor_claim_allowed": false,
-      "allowed_scope": [
-        "docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"
-      ],
+      "allowed_scope": ["docs/QUALITY/P006-WAVE-1A-INDEPENDENT-EVIDENCE-REVIEW.md only"],
       "claim_branch": "agent/p006-wave1a-independent-evidence-review-v1"
     },
     {
@@ -2986,9 +1728,7 @@
       "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_READ_ONLY_RUNTIME_FOUNDATION_V1",
       "source": "Issue #1120 / audit Issue #1119",
-      "dependencies": [
-        "Issue #1119 audit PR merged with READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1"
-      ],
+      "dependencies": ["Issue #1119 audit PR merged with READY_FOR_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1"],
       "runtime_allowed": true,
       "mutation_allowed": false,
       "provider_execution_allowed": false,
@@ -3010,15 +1750,10 @@
       ],
       "claim_branch": "agent/dashboard-widgets-read-runtime-foundation-v1",
       "close_condition": "Bounded read-only owner foundation merged from fresh main with focused tests, path-applicable exact-head CI, zero unresolved review threads, and no scope widening",
-      "merge_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f",
+      "terminal_result": "PASS_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1",
       "source_head_exact_verification": "143893fcfd9b12828277dc112023e3fb0fa33af3",
-      "governance_run_exact_verification": 35617311150,
-      "architecture_run_exact_verification": 35617311221,
-      "php_quality_run_exact_verification": 35617311439,
-      "platform_matrix_run_exact_verification": 35617311155,
-      "package_run_exact_verification": 35617311271,
-      "closeout_pr": 1122,
-      "terminal_result": "PASS_BOUNDED_READ_ONLY_RUNTIME_FOUNDATION_V1"
+      "merge_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f",
+      "closeout_pr": 1122
     }
   ],
   "historical_closeout": {
@@ -3169,14 +1904,6 @@
     "p006_b6a_fp89_platform_api_candidate_evidence_finalization_change_gate_run": 35539283407,
     "rc1_core_lanes": "COMPLETED",
     "rc1_supervisor_closeout": "PR_1024_COMPLETED_ON_MERGE",
-    "rc1_lane_merge_order": [
-      "39b441b4c991515b3384c7f7285143855796acbc",
-      "891cd201667efbc72cc40285206741dc5a8c9abb",
-      "aaf73c702f0f8bc073e1891e0456dea5ebe23904"
-    ],
-    "dashboard_widgets_runtime_foundation_v1": "TERMINAL_PR_1122_BOUNDED_READ_ONLY_FOUNDATION_PASS_NOT_RUNTIME_CERTIFIED",
-    "dashboard_widgets_runtime_foundation_issue": 1120,
-    "dashboard_widgets_runtime_foundation_pr": 1122,
-    "dashboard_widgets_runtime_foundation_merge_sha": "e4ca0998dba0c0db1a7778b7a8dafadb55531e5f"
+    "rc1_lane_merge_order": ["39b441b4c991515b3384c7f7285143855796acbc", "891cd201667efbc72cc40285206741dc5a8c9abb", "aaf73c702f0f8bc073e1891e0456dea5ebe23904"]
   }
 }
