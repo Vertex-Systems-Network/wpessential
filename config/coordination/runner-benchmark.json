@@ -643,7 +643,7 @@
     },
     {
       "id": "RB-0020",
-      "source": "Issue #1147",
+      "source": "Issue #1147 / PR #1149",
       "category": "DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_TRANSITION_AUDIT",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
@@ -660,11 +660,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|server-visibility-evaluator-transition-audit|issue1147|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
+      "status": "IN_PROGRESS",
       "evidence": [
-        "Issue #1147 audit branch prepared; protected PR exact-head validation pending"
+        "PR #1149 opened; exact-head Governance/Architecture validation pending"
       ],
-      "note": "A PASS authorizes only bounded #1148 server visibility evaluator V1. Direct WordPress Dashboard registration and trusted rendering remain blocked."
+      "note": "Exact-head combined reconciliation/evaluator transition audit gate only. A PASS authorizes only bounded #1148 server visibility evaluator V1."
     }
   ],
   "last_reconciled_issue": "#1147",
