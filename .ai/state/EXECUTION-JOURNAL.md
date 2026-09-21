@@ -10,6 +10,13 @@ Rules:
 - archive older detail under `docs/CHECKPOINT-ARCHIVE/` when necessary;
 - repository evidence outranks this journal.
 
+## 2026-09-21 — PR #1116 opened / waiting boundary persisted
+
+- Opened PR #1116 for Issue #1115.
+- Persisted compact state as `WAITING_EXTERNAL` before the final exact-head CI observation.
+- RB-0006 is the immediate merge-gate validation task.
+- No tight CI polling is permitted; the next user `continue` performs one consolidated refresh if checks are still pending.
+
 ## 2026-09-21 — Issue #1115 started
 
 - Observed main: `aff745c642246ffd28e12797b29e94112ea0baca`.
