@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1147",
-  "anchor_main_sha": "3c88e9e2909518a95515da812b06edb0ae71bfa6",
+  "source_issue": "#1151",
+  "anchor_main_sha": "2f2fb37cb8302503b48717cc539394bfc106ec66",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -660,13 +660,75 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|server-visibility-evaluator-transition-audit|issue1147|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
-        "PR #1149 opened; exact-head Governance/Architecture validation pending"
+        "PR #1149 exact head 570694027ba690446c2b4c43d3e88ea2b1d49409",
+        "Governance Gate run 35649364419 PASS",
+        "Architecture Guards run 35649364371 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1149 merged as 43c4cd43490d8eb9f0a1a4f38f92758108fe7795",
+        "Issue #1147 closed completed"
       ],
-      "note": "Exact-head combined reconciliation/evaluator transition audit gate only. A PASS authorizes only bounded #1148 server visibility evaluator V1."
+      "note": "Exact-main evaluator transition audit terminal PASS. It authorized only bounded Issue #1148 server visibility evaluator V1."
+    },
+    {
+      "id": "RB-0021",
+      "source": "Issue #1148 / PR #1150",
+      "category": "DASHBOARD_WIDGETS_SERVER_VISIBILITY_EVALUATOR_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package",
+      "environment": "agent/dashboard-widgets-server-visibility-evaluator-v1 exact head",
+      "dependencies": [
+        "merged evaluator transition audit #1147/#1149",
+        "canonical CapabilityCheckerInterface service",
+        "current-user/current-site WordPress context binding"
+      ],
+      "authorization": "Bounded presentation-only visibility evaluator; no Dashboard hooks, rendering/providers, mutation, shared Platform changes, certification, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|server-visibility-evaluator|issue1148|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1150 exact head 674d665aabbefbfe6d381852e3e028c74a72b421",
+        "Governance Gate run 35652489619 PASS",
+        "Architecture Guards run 35652489824 PASS",
+        "PHP Quality Toolchain run 35652489508 PASS",
+        "Platform Compatibility Matrix run 35652489826 PASS",
+        "Distributable Package run 35652489713 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "branch diff contained exactly the eight Issue #1148-authorized files",
+        "PR #1150 merged as 2f2fb37cb8302503b48717cc539394bfc106ec66",
+        "Issue #1148 closed completed"
+      ],
+      "note": "PASS certifies only the bounded fail-closed server visibility evaluator V1. Direct WordPress Dashboard registration, rendering/provider execution, mutation and full parity remain unpromoted."
+    },
+    {
+      "id": "RB-0022",
+      "source": "Issue #1151",
+      "category": "AI_NATIVE_MANDATORY_README_PROGRESS_GOVERNANCE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/ai-native-mandatory-readme-progress-v1 exact head",
+      "dependencies": [
+        "merged Dashboard Widgets evaluator #1148/#1150",
+        "README live progress + 56/56 dashboard reconciliation",
+        "compact AI state, queue and Runner Benchmark reconciliation"
+      ],
+      "authorization": "Governance/shared-truth only; no runtime/product behavior, provider, destructive, certification, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "ai-native|mandatory-readme-progress|issue1151|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IMMEDIATE_REQUIRED",
+      "evidence": [
+        "Implementation branch claimed from main 2f2fb37cb8302503b48717cc539394bfc106ec66; exact-head PR validation pending"
+      ],
+      "note": "Owner-directed governance hardening. Merge requires exact-head Governance/Architecture terminal PASS, zero unresolved threads and current branch."
     }
   ],
-  "last_reconciled_issue": "#1147",
-  "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001"
+  "last_reconciled_issue": "#1151",
+  "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }

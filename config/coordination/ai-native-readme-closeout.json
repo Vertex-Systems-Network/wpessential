@@ -1,13 +1,14 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "status": "ACTIVE",
   "source_issues": [
     451,
-    455
+    455,
+    1151
   ],
   "scope": "AI_NATIVE_ENGINEERING_QUERY_CLOSEOUT",
   "owner": "SUPERVISOR",
-  "trigger": "when_module_delivery_truth_changes_or_terminal_product_milestone_closeout",
+  "trigger": "every_meaningful_repository_changing_supervisor_milestone",
   "work_order": {
     "hard_gate": true,
     "sequence": [
@@ -48,7 +49,8 @@
     "timestamp_format": "ISO_8601_UTC",
     "unknown_historical_value": "UNKNOWN / pending evidence audit",
     "active_actual_completion_value": "—",
-    "unknown_forecast_value": "FORECAST PENDING / reason required"
+    "unknown_forecast_value": "FORECAST PENDING / reason required",
+    "trigger": "module_delivery_truth_changes_or_terminal_product_milestone_closeout"
   },
   "forecast_contract": {
     "binding": false,
@@ -83,6 +85,29 @@
   "governance_security_coordination_only_cycle": {
     "full_dashboard_rewrite_required": false,
     "compact_ai_state_reconciliation_required": true,
-    "update_materially_affected_public_status_only": true
+    "update_materially_affected_public_status_only": true,
+    "live_progress_summary_required": true
+  },
+  "readme_progress_summary": {
+    "required": true,
+    "owner": "SUPERVISOR",
+    "trigger": "every_meaningful_repository_changing_supervisor_milestone",
+    "heading": "Current AI-Native Development Progress",
+    "fields": [
+      "reconciled_main_anchor_where_applicable",
+      "active_or_just_completed_issue_pr",
+      "active_product_surface_or_governance_milestone",
+      "milestone_state",
+      "evidence_backed_bounded_progress_when_defined",
+      "latest_durable_evidence",
+      "exact_next_gate_or_blocker"
+    ],
+    "stale_or_omitted_blocks_milestone_closeout": true,
+    "fabrication_forbidden": true
+  },
+  "completion_contract": {
+    "readme_progress_reconciliation_required_before_supervisor_final_report": true,
+    "full_56_dashboard_required_when_delivery_truth_trigger_applies": true,
+    "missing_required_readme_update_means_not_fully_closed": true
   }
 }

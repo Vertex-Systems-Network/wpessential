@@ -84,7 +84,8 @@ Before reporting a meaningful repository-changing milestone as complete, blocked
 - `.ai/state/CURRENT-STATE.yaml`;
 - `.ai/state/LAST-CHECKPOINT.md`;
 - `.ai/state/EXECUTION-JOURNAL.md` for meaningful transitions;
-- queue / Runner Benchmark when their state changed.
+- queue / Runner Benchmark when their state changed;
+- README `Current AI-Native Development Progress` for every meaningful repository-changing Supervisor milestone, plus the complete 56 / 56 dashboard when its delivery-truth trigger applies.
 
 If durable shared truth cannot be updated, the milestone is not fully closed. Report the exact blocker instead of claiming completion.
 
@@ -129,16 +130,18 @@ Non-blocking material runner work defaults to the final consolidated runner batc
 
 Runner Benchmark registration never grants runtime, destructive, provider, production, deployment, release, or formal-evidence authority.
 
-## README closeout scope
+## Mandatory README progress closeout
 
-The complete 56-surface README dashboard remains mandatory when:
+For every meaningful repository-changing Supervisor milestone, `README.md` MUST be reconciled before the final report. The concise **Current AI-Native Development Progress** block must record the reconciled main anchor where appropriate, active or just-completed Issue/PR, active product surface or governance milestone, milestone state, evidence-backed bounded progress when a scale exists, latest durable evidence, and exact next gate/blocker.
+
+The complete 56-surface README dashboard additionally remains mandatory when:
 
 - module lifecycle/progress/timeline/public delivery truth changed; or
 - a terminal product milestone/integration closeout is being reported.
 
-A governance/security/coordination-only cycle that does not change module delivery truth MUST reconcile compact AI state and relevant governance records, but MUST NOT rewrite the full 56-row dashboard merely to generate churn.
+A governance/security/coordination-only cycle MUST update the concise live progress block but MUST NOT rewrite the full 56-row dashboard merely to generate churn.
 
-If README public status becomes stale because the governance change materially changes a public project-status statement, update only the affected public status plus any contract-required dashboard reconciliation.
+No README progress percentage, timestamp, delivery promise, runtime certification or product-parity state may be fabricated. A milestone whose required README reconciliation is stale or omitted is not fully closed.
 
 ## Fail-closed rules
 
@@ -165,4 +168,5 @@ A milestone is timeout-resilient only when:
 - runner work is reconciled;
 - no unsafe polling loop remains active;
 - required immediate checks are either terminal or recorded as `WAITING_EXTERNAL`;
+- required README progress reconciliation is current for the milestone;
 - a new session can continue correctly without reading prior chat history.

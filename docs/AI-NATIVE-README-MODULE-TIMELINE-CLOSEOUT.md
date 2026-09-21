@@ -1,13 +1,31 @@
 # AI-Native README Module Timeline Closeout Contract
 
 Status: **ACTIVE / OWNER-DIRECTED**  
-Sources: **Issue #451 + Issue #455 / owner instructions 2026-09-10**
+Sources: **Issue #451 + Issue #455 + Issue #1151 / owner instructions through 2026-09-22**
 
 ## Purpose
 
-Every WPEssential AI-Native cycle that changes module lifecycle/progress/timeline/public delivery truth, and every terminal product milestone/integration closeout, must leave a readable module-level delivery view in `README.md` before the Supervisor reports that product-delivery milestone final.
+Every meaningful repository-changing WPEssential Supervisor milestone must leave a current, readable **Current AI-Native Development Progress** view in `README.md` before the Supervisor reports the milestone complete, blocked or waiting.
 
-The README module dashboard is shared engineering truth, not a cosmetic status widget.
+When module lifecycle/progress/timeline/public delivery truth changes, or at a terminal product milestone/integration closeout, the complete 56-surface dashboard must also be reconciled.
+
+README progress is shared engineering truth, not a cosmetic status widget.
+
+## Mandatory every-milestone live progress block
+
+For every meaningful repository-changing Supervisor milestone, `README.md` must include a current **Current AI-Native Development Progress** block containing:
+
+1. reconciled `main` anchor where appropriate;
+2. active or just-completed Issue/PR;
+3. active product surface or governance milestone;
+4. milestone state;
+5. evidence-backed bounded progress bar/percentage only when a promoted scale exists;
+6. latest durable evidence;
+7. exact next gate/blocker.
+
+Governance/security/coordination-only milestones update this concise block even when the 56-row dashboard itself does not need a rewrite. A stale or omitted live progress block makes the milestone closeout incomplete.
+
+No percentage, timestamp, delivery promise, runtime certification or product-parity state may be invented merely to populate this block.
 
 ## Mandatory complete 56-surface dashboard
 
@@ -94,19 +112,19 @@ Planning status such as `ATOMIC_INVENTORY_COMPLETE`, `OPTION_CONTRACT_COMPLETE`,
 
 ## Final-query gate
 
-Before a Supervisor sends a final response for a cycle where this README trigger applies, it must:
+Before a Supervisor sends a final response for any meaningful repository-changing cycle, it must:
 
 1. resolve exact current `main`;
 2. reconcile accepted open Issues first;
 3. reconcile eligible open PRs/MRs second;
-4. reconcile accepted merges, claims, queue and shared truth;
-5. update the README with the complete canonical **56 / 56** module dashboard from repository evidence;
-6. verify no canonical surface is missing or duplicated;
-7. update the README main/reconciliation anchor where appropriate;
+4. reconcile accepted merges, claims, queue, Runner Benchmark and compact shared truth;
+5. update the README **Current AI-Native Development Progress** block from repository evidence;
+6. when module delivery/lifecycle truth changed or a terminal product milestone/integration closeout is being reported, also reconcile the complete canonical **56 / 56** module dashboard;
+7. when the full dashboard is required, verify no canonical surface is missing or duplicated;
 8. record unknown/blocked progress or forecast data explicitly rather than fabricate it;
 9. only then report the cycle final.
 
-A Worker that cannot edit Supervisor-owned shared truth must report complete 56-module README reconciliation as an Integration Requirement.
+A Worker that cannot edit Supervisor-owned shared truth must report live README progress reconciliation as an Integration Requirement, plus complete 56-module dashboard reconciliation when that trigger applies.
 
 ## Scope boundary
 

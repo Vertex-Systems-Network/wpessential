@@ -1,26 +1,25 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: WAITING_EXTERNAL
-observed_main_sha: 3c88e9e2909518a95515da812b06edb0ae71bfa6
-observed_main_source: "PR #1146 merged Dashboard Widgets visibility policy contract/compiler foundation V1"
-active_issue: "#1147"
-active_pr: "#1149"
-active_branch: supervisor/dashboard-widgets-server-visibility-evaluator-transition-audit-v1
-current_milestone: "Dashboard Widgets visibility contract closeout + server visibility evaluator transition audit V1"
-milestone_status: WAITING_EXTERNAL
-last_completed_milestone: "Issue #1144 / PR #1146 merged as 3c88e9e2909518a95515da812b06edb0ae71bfa6; typed P0 visibility contract/compiler foundation passed all applicable exact-head gates"
-next_safe_action: "Resolve PR #1149 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. Do not claim #1148 before audit promotion."
-waiting_external: "PR #1149 exact-head Governance/Architecture validation"
-next_planned_slot:
-  issue: "#1148"
-  slot_id: dashboard-widgets-server-visibility-evaluator-v1
-  claim_branch: agent/dashboard-widgets-server-visibility-evaluator-v1
-  claim_rule: "Do not claim until #1147 audit PR merges with READY_FOR_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1."
+state_status: VERIFYING
+observed_main_sha: 2f2fb37cb8302503b48717cc539394bfc106ec66
+observed_main_source: "PR #1150 merged Dashboard Widgets bounded server visibility evaluator V1"
+active_issue: "#1151"
+active_pr: "PENDING"
+active_branch: supervisor/ai-native-mandatory-readme-progress-v1
+current_milestone: "AI-Native mandatory README progress reconciliation V1"
+milestone_status: VERIFYING
+last_completed_milestone: "Issue #1148 / PR #1150 merged as 2f2fb37cb8302503b48717cc539394bfc106ec66; bounded server visibility evaluator V1 passed Governance, Architecture, PHP Quality, Platform Matrix and Package"
+next_safe_action: "Open the #1151 PR from the deterministic branch, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1151 exact-head validation after branch publication"
+readme_progress_contract:
+  live_summary_every_repository_changing_supervisor_milestone: true
+  full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
+  final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0020
+    - RB-0022
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -44,7 +43,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0018 reconciled PASS from #1145; RB-0019 records #1146 terminal PASS."
-  - "Audit verdict: READY_FOR_BOUNDED_SERVER_VISIBILITY_EVALUATOR_V1."
-  - "Evaluator V1 is presentation filtering only; it never authorizes actions or source data."
-  - "Direct WordPress Dashboard registration and trusted content rendering remain blocked."
+  - "RB-0020 reconciled PASS for #1147/#1149; RB-0021 records #1148/#1150 terminal PASS."
+  - "Surface 10 server visibility evaluator V1 is merged; visibility remains presentation-only and never authorizes actions/data."
+  - "Direct WordPress Dashboard registration and trusted content rendering remain separately blocked/unpromoted pending fresh exact-main audit."
+  - "Issue #1151 makes README live progress reconciliation mandatory on every meaningful repository-changing Supervisor milestone."
