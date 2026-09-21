@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
+  "status": "ACTIVE",
+  "source_issue": "#1109",
+  "anchor_main_sha": "be640fbf580e2baa8a6736a89f967b3478907b8c",
+  "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
+  "default_disposition": "DEFER_FINAL_BATCH",
+  "runner_task_definition": [
+    "cloud/CI workflow jobs",
+    "WordPress/MySQL/PHP compatibility or migration matrices",
+    "browser/E2E runners",
+    "performance/benchmark/load jobs",
+    "full regression/package/release-simulation jobs",
+    "other material remote/container runner workloads"
+  ],
+  "immediate_exception_classes": [
+    "SECURITY_CRITICAL",
+    "MERGE_REQUIRED_EXACT_HEAD",
+    "MIGRATION_AUTH_SECRETS_DATA_SAFETY",
+    "CURRENT_CHANGE_INTEGRATION_SAFETY",
+    "INCIDENT_OR_RECOVERY"
+  ],
+  "authorization_rule": "Benchmark registration never grants execution authority. Any owner/runtime/destructive/provider/deploy/release gated item remains BLOCKED_AUTHORIZATION, including during the final batch. Consumed, expired or unrelated grants are never reused.",
+  "required_task_fields": [
+    "id",
+    "source",
+    "category",
+    "runner",
+    "command_or_workflow",
+    "environment",
+    "dependencies",
+    "authorization",
+    "merge_blocking",
+    "security_critical",
+    "expected_minutes",
+    "dedup_key",
+    "disposition",
+    "status",
+    "evidence"
+  ],
+  "final_batch": {
+    "trigger": "Milestone/integration closeout after normal implementation is settled and before terminal milestone/release claims.",
+    "entry_conditions": [
+      "all non-runner implementation intended for the batch is integrated or frozen",
+      "each task has a stable dedup_key and current authorization state",
+      "security/merge/safety exceptions have already run when required",
+      "blocked-authorization tasks remain excluded rather than inferred executable"
+    ],
+    "deduplication": "Tasks with equivalent workflow/command + exact source + environment/matrix + fixture/input identity collapse to one execution record; dependents reference the same evidence.",
+    "execution_order": [
+      "dependency/setup validation",
+      "unit/integration full gates",
+      "runtime/compatibility matrices",
+      "browser/E2E",
+      "performance/benchmark",
+      "package/release simulation when separately authorized"
+    ],
+    "exit_conditions": [
+      "all executable entries have terminal evidence",
+      "failures are classified and not hidden by rerun-until-green",
+      "blocked authorization items remain explicitly blocked",
+      "evidence IDs/digests and source SHA are recorded",
+      "benchmark statuses are reconciled before milestone closeout"
+    ]
+  },
+  "statuses": [
+    "CAPTURED",
+    "DEFERRED_FINAL_BATCH",
+    "IMMEDIATE_REQUIRED",
+    "IN_PROGRESS",
+    "PASS",
+    "FAIL",
+    "BLOCKED_AUTHORIZATION",
+    "BLOCKED_DEPENDENCY",
+    "N_A"
+  ],
+  "tasks": [
+    {
+      "id": "RB-0001",
+      "source": "PR #1107 / P-006 Wave 1F run 35579621550",
+      "category": "HISTORICAL_FORMAL_P006_RUNTIME",
+      "runner": "GitHub Actions / Wave 1F",
+      "command_or_workflow": ".github/workflows/p006-wave1f-marketing-version-mismatch-evidence.yml",
+      "environment": "historical minimum/reference formal matrix",
+      "dependencies": [
+        "terminal Wave 1F evidence identity"
+      ],
+      "authorization": "Consumed historical formal grant; no reusable execution authority",
+      "merge_blocking": false,
+      "security_critical": false,
+      "expected_minutes": 50,
+      "dedup_key": "p006-wave1f|historical-terminal-identity|authorization-required",
+      "disposition": "BLOCKED_AUTHORIZATION",
+      "status": "BLOCKED_AUTHORIZATION",
+      "evidence": [
+        "failed unintended rerun 35579621550 exposed historical immutable identity drift",
+        "security PR #1107 merged as be640fbf580e2baa8a6736a89f967b3478907b8c"
+      ],
+      "note": "Do not rerun automatically. Workflow is archived to manual dispatch by merged security PR #1107; any new formal run needs fresh explicit authorization."
+    },
+    {
+      "id": "RB-0002",
+      "source": "PR #1107 / P-006 Wave 1G run 35579621670",
+      "category": "HISTORICAL_FORMAL_P006_RUNTIME",
+      "runner": "GitHub Actions / Wave 1G",
+      "command_or_workflow": ".github/workflows/p006-wave1g-mismatch-context-runtime-evidence.yml",
+      "environment": "historical minimum/reference formal matrix",
+      "dependencies": [
+        "terminal Wave 1G evidence identity"
+      ],
+      "authorization": "Consumed historical formal grant; no reusable execution authority",
+      "merge_blocking": false,
+      "security_critical": false,
+      "expected_minutes": 50,
+      "dedup_key": "p006-wave1g|historical-terminal-identity|authorization-required",
+      "disposition": "BLOCKED_AUTHORIZATION",
+      "status": "BLOCKED_AUTHORIZATION",
+      "evidence": [
+        "failed unintended rerun 35579621670 exposed historical immutable identity drift",
+        "security PR #1107 merged as be640fbf580e2baa8a6736a89f967b3478907b8c"
+      ],
+      "note": "Do not rerun automatically. Workflow is archived to manual dispatch by merged security PR #1107; any new formal run needs fresh explicit authorization."
+    },
+    {
+      "id": "RB-0003",
+      "source": "Security Issue #1103 / PR #1107",
+      "category": "SECURITY_INTEGRATION",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "path-applicable exact-head PHP/Architecture/Governance/Package/WordPress regression gates",
+      "environment": "security/ajax-guest-hook-least-privilege-v2 exact head",
+      "dependencies": [
+        "AJAX least-privilege implementation"
+      ],
+      "authorization": "Within owner-directed security remediation scope",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 45,
+      "dedup_key": "security-ajax|pr1107|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "Architecture Guards run 35594696323 PASS including real WordPress AJAX nonce/Policy integration",
+        "PHP Quality run 35594696378 PASS",
+        "Governance run 35594696123 PASS",
+        "Distributable Package run 35594696162 PASS",
+        "PR #1107 merged as be640fbf580e2baa8a6736a89f967b3478907b8c"
+      ],
+      "note": "Immediate security/merge exception completed; evidence is terminal for the exact merged AJAX security change."
+    },
+    {
+      "id": "RB-0004",
+      "source": "Security Issue #1108",
+      "category": "DEPENDENCY_SECURITY",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "npm locked-graph audit + architecture/build/package/quality exact-head gates",
+      "environment": "Node 24 / npm locked development graph",
+      "dependencies": [
+        "accepted zero-vulnerability refresh artifact 10616492438"
+      ],
+      "authorization": "Within owner-directed security remediation scope",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 35,
+      "dedup_key": "security-node-deps|issue1108|wp-scripts35-reviewed-overrides",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "CAPTURED",
+      "evidence": [
+        "Security Lockfile Refresh run 35545469722",
+        "artifact 10616492438",
+        "artifact digest sha256:38e1ae861354e9614a14277aa2858dc798830681e552f2674325a50de65eefda",
+        "candidate dev audit 0 vulnerabilities",
+        "candidate production audit 0 vulnerabilities"
+      ],
+      "note": "Immediate exception because high-severity dependency remediation must be verified before merge."
+    }
+  ]
+}
