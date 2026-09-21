@@ -10,6 +10,7 @@ use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
@@ -78,6 +79,11 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(
             DashboardWidgetRegistrationCompiler::class,
             $services->get(DashboardWidgetsModule::SERVICE_REGISTRATION_COMPILER),
+        );
+
+        self::assertInstanceOf(
+            DashboardWidgetVisibilityCompiler::class,
+            $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_COMPILER),
         );
 
         foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG] as $name) {
