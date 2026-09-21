@@ -8,6 +8,7 @@ on:
       - '.github/workflows/security-node-lockfile-bootstrap-temp.yml'
 
 permissions:
+  actions: read
   contents: write
 
 jobs:
@@ -32,21 +33,30 @@ jobs:
           node-version: '24'
           cache: npm
 
-      - name: Regenerate lockfile without lifecycle scripts
+      - name: Restore accepted zero-vulnerability lockfile artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          git checkout origin/main -- package-lock.json
-          npm install --package-lock-only --ignore-scripts
+          rm -rf /tmp/security-lockfile-accepted /tmp/security-lockfile-accepted.zip
+          mkdir -p /tmp/security-lockfile-accepted
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/10616492438/zip" > /tmp/security-lockfile-accepted.zip
+          test "$(sha256sum /tmp/security-lockfile-accepted.zip | awk '{print $1}')" = "38e1ae861354e9614a14277aa2858dc798830681e552f2674325a50de65eefda"
+          unzip -q /tmp/security-lockfile-accepted.zip -d /tmp/security-lockfile-accepted
+          cmp --silent package.json /tmp/security-lockfile-accepted/package.json
+          cp /tmp/security-lockfile-accepted/package-lock.json package-lock.json
           node <<'NODE'
           const lock = require('./package-lock.json');
           const prettier = lock.packages?.['node_modules/prettier'];
           if (!prettier || prettier.name !== 'wp-prettier' || prettier.version !== '3.0.3') {
-            throw new Error('expected wp-prettier 3.0.3 compatibility package');
+            throw new Error('accepted lockfile lost wp-prettier 3.0.3 compatibility package');
           }
           NODE
+          npm ci --ignore-scripts
           npm audit --audit-level=high
           npm audit --omit=dev --audit-level=high
+          npm run lint:js
 
       - name: Commit only regenerated lockfile and retire bootstrap workflow
         env:
