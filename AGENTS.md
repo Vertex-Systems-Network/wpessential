@@ -450,7 +450,7 @@ Update the relevant:
 - changelog/release notes;
 - troubleshooting;
 - checkpoint;
-- README current module progress/status dashboard after meaningful completed work cycles.
+- README current module progress/status dashboard when module/public delivery truth changed or at a terminal product milestone closeout.
 
 Do not create documentation for volume; it must help the next engineer make a correct decision.
 
@@ -615,7 +615,7 @@ when useful.
 
 A task is **DONE** only when applicable approved implementation, integration, security, errors, data integrity, performance, tests, documentation, VCS history, checkpoint, migration/recovery and observability are complete and verified.
 
-For a meaningful completed work cycle, Definition of Done also includes Supervisor reconciliation of README current status and module-wise progress bars/table, or an explicit durable blocker explaining why that shared-truth update could not be made.
+For a cycle where module/public delivery truth changed or a terminal product milestone closes, Definition of Done also includes Supervisor reconciliation of README current status and module-wise progress bars/table, or an explicit durable blocker. Governance/security/coordination-only cycles instead require compact durable AI-state reconciliation and any materially affected public-status update.
 
 Otherwise report `PARTIALLY_COMPLETE`, `VERIFYING`, `BLOCKED` or another truthful lifecycle state.
 
