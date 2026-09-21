@@ -208,7 +208,7 @@
     },
     {
       "id": "RB-0006",
-      "source": "Issue #1115",
+      "source": "Issue #1115 / PR #1116",
       "category": "AI_STATE_TIMEOUT_RESILIENCE",
       "runner": "GitHub Actions",
       "command_or_workflow": "Architecture Guards + Governance Gate exact-head validation",
@@ -224,8 +224,10 @@
       "expected_minutes": 12,
       "dedup_key": "ai-timeout-resilience|issue1115|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "CAPTURED",
-      "evidence": [],
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "PR #1116 opened; exact-head merge-gate validation pending"
+      ],
       "note": "Run once at exact-head merge gate. Do not tight-poll; if still running after one consolidated refresh, persist WAITING_EXTERNAL and check again on the next user continue."
     }
   ],
