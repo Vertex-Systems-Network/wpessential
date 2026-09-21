@@ -74,6 +74,7 @@ use WPEssential\Platform\WordPress\Abilities\WordPressCapabilityChecker;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
 use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\WordPress\Ajax\AjaxHandlerInterface;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
 use WPEssential\Platform\WordPress\Ajax\NativeWordPressAjaxEnvironment;
@@ -155,8 +156,35 @@ $gateway = new WordPressAjaxGateway(WPE_AJAX_ACTION, $dispatcher, $ajaxEnvironme
 $gateway->register();
 
 wpAjaxPolicyExpect(has_action('wp_ajax_' . WPE_AJAX_ACTION, [$gateway, 'handle']) !== false, 'canonical authenticated wp_ajax hook must be registered');
-wpAjaxPolicyExpect(has_action('wp_ajax_nopriv_' . WPE_AJAX_ACTION, [$gateway, 'handle']) !== false, 'canonical nopriv wp_ajax hook must be registered');
+wpAjaxPolicyExpect(has_action('wp_ajax_nopriv_' . WPE_AJAX_ACTION, [$gateway, 'handle']) === false, 'authenticated-only route registry must not expose a public nopriv hook');
+wpAjaxPolicyExpect(!$dispatcher->allowsGuestRequests(), 'authenticated-only route registry must report no guest transport requirement');
 wpAjaxPolicyExpect($gateway->action() === WPE_AJAX_ACTION, 'gateway must expose the exact configured action to canonical admin adapters');
+
+$guestRoutes = new AjaxRouteRegistry();
+$guestRoutes->register(new AjaxRoute(
+    type: 'platform.guest.fixture',
+    handler: new class implements AjaxHandlerInterface {
+        public function handle(array $payload): mixed
+        {
+            return ['guest' => true];
+        }
+    },
+    operation: NonceOperation::Apply,
+    allowGuests: true,
+    requiresNonce: false,
+));
+$guestDispatcher = new AjaxDispatcher(
+    $guestRoutes,
+    $nonces,
+    static fn (string $capability): bool => current_user_can($capability),
+);
+$guestGateway = new WordPressAjaxGateway('wpessential_guest_dispatch', $guestDispatcher, $ajaxEnvironment);
+wpAjaxPolicyExpect($guestDispatcher->allowsGuestRequests(), 'explicit guest route must require guest transport');
+$guestGateway->register();
+wpAjaxPolicyExpect(
+    has_action('wp_ajax_nopriv_wpessential_guest_dispatch', [$guestGateway, 'handle']) !== false,
+    'explicit guest route must retain the nopriv transport hook',
+);
 wpAjaxPolicyExpect($routes->types() === ['platform.fixture'], 'AJAX type registry must contain only the explicit allowlisted route');
 
 $unknown = $dispatcher->dispatch(['type' => 'platform.unknown'], true);
