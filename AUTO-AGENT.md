@@ -10,17 +10,19 @@ A newly started agent should not need the repository owner to manually choose `T
 
 After startup, the agent must:
 
-1. refresh exact current repository truth;
-2. inspect, triage and continue/solve accepted **OPEN Issues first**;
-3. inspect, repair, review and merge eligible **OPEN PRs/MRs second**;
-4. determine its role;
-5. read `config/coordination/agent-work-queue.json` and active deterministic claim branches;
-6. select the highest-priority valid free work slot only after existing Issue/PR/MR work is reconciled;
-7. claim it without racing another agent;
-8. work only inside that slot's allowed scope;
-9. submit a PR/MR with exact-head evidence;
-10. let the Supervisor/Integrator decide merge order from dependencies and current main;
-11. at the end of the completed work cycle, reconcile README status including the complete **56 / 56 canonical module** progress/timeline dashboard before the engineering query/cycle is reported final.
+1. read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
+2. refresh exact current repository truth and reconcile stale compact state;
+3. inspect, triage and continue/solve accepted **OPEN Issues first**;
+4. inspect, repair, review and merge eligible **OPEN PRs/MRs second**;
+5. determine its role;
+6. read `config/coordination/agent-work-queue.json`, Runner Benchmark and active deterministic claim branches;
+7. select the highest-priority valid free work slot only after existing Issue/PR/MR work is reconciled;
+8. claim it without racing another agent;
+9. work only inside that slot's allowed scope and one logical milestone;
+10. submit/update a PR/MR with exact-head evidence when applicable;
+11. let the Supervisor/Integrator decide merge order from dependencies and current main;
+12. before reporting completion/blocked/waiting, reconcile compact state and changed queue/Runner Benchmark truth;
+13. reconcile the full **56 / 56** README dashboard only when module/public delivery truth changed or at a terminal product milestone closeout.
 
 ## Mandatory Issues-first / PR-MR-second preflight
 
@@ -110,11 +112,13 @@ Use exactly this intent:
 ```text
 Start WPEssential Supervisor in AUTO mode.
 Read AUTO-AGENT.md and follow it completely.
-Refresh exact current main; solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then reconcile active claim branches and config/coordination/agent-work-queue.json before starting any new development.
+Read .ai/state/CURRENT-STATE.yaml and .ai/state/LAST-CHECKPOINT.md first, then resolve exact current main.
+Solve/continue accepted OPEN Issues first, inspect/fix/review/merge eligible OPEN PRs/MRs second, then reconcile active claim branches, config/coordination/agent-work-queue.json and Runner Benchmark before new development.
 Do not start new development while an accepted actionable Issue or PR/MR path is being bypassed.
+Default to one user continue/resume turn = one logical milestone. Do not tight-poll CI; use one consolidated status refresh per milestone, persist WAITING_EXTERNAL when needed, and resume on the next user turn.
 Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
-At the end of the completed work cycle, update README current status and its complete 56 / 56 canonical module progress/timeline table — including progress/status, start time, completion forecast, actual completion time, evidence and next gate — before reporting the engineering query/cycle final.
+Before reporting completion/blocked/waiting, update compact durable state. Update the complete 56 / 56 README dashboard only when module/public delivery truth changed or at a terminal product milestone closeout.
 ```
 
 The Supervisor must not pre-create worker branches. Workers claim their own slots.
@@ -126,8 +130,10 @@ Use exactly this intent:
 ```text
 Start WPEssential Worker in AUTO mode.
 Read AUTO-AGENT.md and follow it completely.
-Refresh exact current main; inspect/continue accepted OPEN Issues first and inspect/fix eligible OPEN PRs/MRs second. Do not duplicate accepted work already represented there and do not start new development while an actionable accepted path is being bypassed.
-Then inspect config/coordination/agent-work-queue.json and claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
+Read .ai/state/CURRENT-STATE.yaml and .ai/state/LAST-CHECKPOINT.md first, then resolve exact current main.
+Inspect/continue accepted OPEN Issues first and inspect/fix eligible OPEN PRs/MRs second. Do not duplicate accepted work already represented there and do not start new development while an actionable accepted path is being bypassed.
+Then inspect config/coordination/agent-work-queue.json and Runner Benchmark and claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
+Default to one logical milestone per user turn and never tight-poll CI/status endpoints.
 Do not ask me which module to work on unless repository evidence contains a genuine unresolved decision.
 ```
 
