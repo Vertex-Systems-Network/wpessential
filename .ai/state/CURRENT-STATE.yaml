@@ -2,19 +2,25 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: WAITING_EXTERNAL
-observed_main_sha: 29ad66ca2984d89a3ae7e949679a62d35ca2c357
-observed_main_source: "PR #1128 merged Dashboard Widgets bounded read-only Module/Ability Exposure V1"
-active_issue: "#1129"
-active_pr: "#1130"
-active_branch: supervisor/dashboard-widgets-module-ability-closeout-v1
-current_milestone: "Dashboard Widgets Module/Ability Exposure V1 post-merge shared-truth reconciliation"
+observed_main_sha: bce056cf837f7f34bdff4f876446d9714359f077
+observed_main_source: "PR #1130 merged Dashboard Widgets Module/Ability Exposure V1 shared-truth closeout"
+active_issue: "#1131"
+active_pr: "#1133"
+active_branch: supervisor/dashboard-widgets-central-pro-activation-audit-v1
+current_milestone: "Dashboard Widgets exact-main central Pro activation transition audit V1"
 milestone_status: WAITING_EXTERNAL
-last_completed_milestone: "Issue #1126 / PR #1128 merged as 29ad66ca2984d89a3ae7e949679a62d35ca2c357; exact head 1a463e209ad3fdaf054487b58920b9e148245a75 passed Governance, Architecture, PHP Quality, Platform Matrix and Distributable Package"
-next_safe_action: "Resolve PR #1130 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if applicable checks are terminal green, branch is current and review threads are zero. After merge, run a fresh exact-main audit before any central Pro activation of DashboardWidgetsModule."
-waiting_external: "PR #1130 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1129 / PR #1130 merged as bce056cf837f7f34bdff4f876446d9714359f077; Module/Ability Exposure V1 shared truth reconciled"
+next_safe_action: "Resolve PR #1133 exact head and perform one consolidated CI/review/main-divergence refresh. Merge only if Governance/Architecture are terminal green, branch is current and review threads are zero. After merge, Issue #1132 becomes the next bounded activation source slot."
+waiting_external: "PR #1133 exact-head Governance/Architecture validation"
+next_planned_slot:
+  issue: "#1132"
+  slot_id: dashboard-widgets-central-pro-activation-v1
+  claim_branch: agent/dashboard-widgets-central-pro-activation-v1
+  claim_rule: "Do not claim until #1131 audit PR merges with READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1."
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0012
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -38,7 +44,6 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Surface 10 has merged bounded read-only Definition/read-service foundation plus Module/Ability exposure source."
-  - "DashboardWidgetsModule is not centrally activated in wpessential-pro.php."
-  - "Central Pro activation requires a fresh exact-main transition audit after this closeout merges."
-  - "Full-parity RUNTIME_CERTIFIED remains unpromoted."
+  - "Audit verdict: READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1."
+  - "The #1132 implementation must update activation plus entitlement/package verifier evidence; it must not change entitlement semantics."
+  - "WordPress dashboard registration and full-parity RUNTIME_CERTIFIED remain separately gated."

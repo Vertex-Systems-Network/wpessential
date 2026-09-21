@@ -2,39 +2,42 @@
 
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
-## Reconciled product baseline pending closeout transport
+## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Product integration main: `29ad66ca2984d89a3ae7e949679a62d35ca2c357`
-- Completed Issue: #1126
-- Completed PR: #1128
-- Exact tested source head: `1a463e209ad3fdaf054487b58920b9e148245a75`
-- Active shared-truth closeout Issue: #1129
+- Exact main before this milestone: `bce056cf837f7f34bdff4f876446d9714359f077`
+- Active Issue: #1131
+- Active branch: `supervisor/dashboard-widgets-central-pro-activation-audit-v1`
 
-## Terminal #1128 evidence
+## Active milestone
 
-- Governance Gate `35620989535` — PASS.
-- Architecture Guards `35620989489` — PASS.
-- PHP Quality Toolchain `35620989526` — PASS.
-- Platform Compatibility Matrix `35620989554` — PASS.
-- Distributable Package `35620989537` — PASS.
-- Zero unresolved review threads and zero commits behind main at merge gate.
-- Exactly three #1126-authorized files changed.
-- `wpessential-pro.php` remained untouched.
-- PR #1128 merged as `29ad66ca2984d89a3ae7e949679a62d35ca2c357`; Issue #1126 closed.
+Surface 10 / Dashboard Widgets exact-main central Pro activation transition audit.
 
-## Product truth
+Decision: **READY_FOR_BOUNDED_CENTRAL_PRO_ACTIVATION_V1**.
 
-Surface 10 / Dashboard Widgets now has:
-- bounded read-only Definition/read-service foundation;
-- Pro-owned `DashboardWidgetsModule`;
-- read-only `get`/`catalog` Ability handlers and WordPress Ability exposure source;
-- `manage_options`, `mutates:false`, Internal/UI/REST contracts.
+## Activation safety evidence
 
-The module is **not centrally activated** in `wpessential-pro.php`.
+- Dashboard Widgets Module/Ability source is merged and read-only.
+- Pro bootstrap runs compatibility preflight before premium contribution.
+- Entitlement-aware module activation is installed before Pro modules are contributed.
+- Free/incompatible entitlement states deny Pro module activation.
+- degraded verification/expiry states remain read-safe while mutation is independently denied.
+- packaged Free/Pro verifier already enforces absence on Free-only/incompatible paths and presence on compatible paths for implemented Pro modules.
 
-This does not promote WordPress dashboard registration, mutation, provider execution, full-parity `RUNTIME_CERTIFIED`, product parity, deployment or release.
+## Next bounded source slot after audit promotion
 
-## Next safe transition
+Issue #1132 on `agent/dashboard-widgets-central-pro-activation-v1`.
 
-After #1129 closeout merges, run a fresh exact-main audit for central Pro activation. Do not edit `wpessential-pro.php` before that audit explicitly authorizes a bounded activation tranche.
+Allowed files:
+- `wpessential-pro.php`
+- `tests/Unit/Platform/EntitlementPolicyTest.php`
+- `tools/release/verify-free-pro-bootstrap.php`
+- `.github/workflows/distributable-package.yml`
+
+The tranche may add Dashboard Widgets to canonical Pro contribution and corresponding package/entitlement regression evidence only.
+
+No Dashboard Widgets implementation changes, WordPress dashboard registration, mutation/provider execution, entitlement/compatibility semantic changes, certification, deploy or release.
+
+## Recovery behavior
+
+On next `continue`, resolve the audit PR exact head and perform one consolidated CI/review/main-divergence refresh. Do not claim #1132 until the audit PR is merged.
