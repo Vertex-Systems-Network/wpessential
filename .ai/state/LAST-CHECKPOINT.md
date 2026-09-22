@@ -8,7 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `7f448ff01b51f0abfd3551ef431f5cf5675ec5a9`
 - Completed audit milestone: Issue #1185 / PR #1187
 - Active contract Issue: #1186
-- Active PR: pending creation
+- Active PR: #1189
 - Deterministic contract branch: `supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1`
 
 ## #1185 / #1187 terminal audit evidence
@@ -71,4 +71,4 @@ Exact scope is seven files: module-local WordPress environment interface, native
 
 ## Next safe action
 
-Open the #1186 contract PR from the deterministic branch, bind its exact PR number in compact state, then perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh. Merge only on terminal green evidence.
+Perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1189. Merge only on terminal green evidence.
