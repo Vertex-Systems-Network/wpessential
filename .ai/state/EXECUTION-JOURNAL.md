@@ -11,15 +11,14 @@ Rules:
 - repository evidence outranks this journal.
 
 
-## 2026-09-23 — Adapter audit merged; bounded WordPress Dashboard adapter contract started
+## 2026-09-23 — WordPress Dashboard Adapter V1 merged; shared-truth reconciliation opened
 
-- Issue #1182 / PR #1184 remains terminal source PASS as `cfd2003aaf238f7453c9f8fa429f5103e86fce05`; six-state non-throwing runtime rendering is merged and security checks passed.
-- Issue #1185 / PR #1187 exact head `9c8fa3e106a60b179349e0a3fb20fe7ba2b8a33d` passed Governance `35787116494` and Architecture `35787116504`; zero unresolved threads/behind; merged as `7f448ff01b51f0abfd3551ef431f5cf5675ec5a9`.
-- RB-0037 is terminal PASS; audit verdict `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1`.
-- Issue #1186 is claimed on `supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1`.
-- Contract freezes canonical slug+id planning, exact `wpe_dashboard_widget_` ids, same-target collision suppression before side effects, site/network isolation, idempotent hooks, fresh UI execution context and six-state callback mapping.
-- Existing visibility policy remains authoritative; no blanket `manage_options` gate is added.
-- Issue #1188 is dependency-gated with exact seven-file module-local source/test scope. Providers/sources, assets, mutation, caching/refresh, shared Platform changes, full parity, deploy and release remain blocked.
+- Issue #1186 / PR #1189 contract merged as `e3ce7c3ee9742f2d116b546950f6d459d5f37bd9`; exact-head Governance `35790596276` and Architecture `35790596315` PASS.
+- Issue #1188 / PR #1190 exact head `02c71dc800ba9e75ca53c07cd3284674b9e705a7` passed Governance `35791655782`, Architecture `35791655725`, PHP Quality `35791655792`, Platform Matrix `35791655760`, and Package `35791655750`; merged as `b2d15e894be6b695a34e70b1e73159617baf4aa0`.
+- Source scope was exactly seven authorized module-local source/test files; zero unresolved threads and zero behind at merge.
+- Bounded WordPress Dashboard hooks, deterministic collision-safe planning and UI-context rendering are now present.
+- Providers/sources, remote execution, assets, mutation, caching/refresh, shared Platform widening, full parity, deploy and release remain blocked.
+- Issue #1191 is mandatory post-merge shared-truth reconciliation; no next source tranche is claimable until it closes and a fresh exact-main transition audit runs.
 
 ## 2026-09-21 — PR #1116 opened / waiting boundary persisted
 

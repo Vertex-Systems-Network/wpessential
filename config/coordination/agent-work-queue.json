@@ -1,9 +1,9 @@
 {
-  "schema_version": 129,
+  "schema_version": 130,
   "snapshot_date": "2026-09-23",
-  "queue_anchor_main_sha": "7f448ff01b51f0abfd3551ef431f5cf5675ec5a9",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1",
-  "source_issue": "#1186",
+  "queue_anchor_main_sha": "b2d15e894be6b695a34e70b1e73159617baf4aa0",
+  "mode": "DASHBOARD_WIDGETS_WORDPRESS_DASHBOARD_ADAPTER_POST_MERGE_RECONCILIATION_V1",
+  "source_issue": "#1191",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -170,8 +170,9 @@
     "1180": "COMPLETED_ON_PR_1183_DASHBOARD_WIDGETS_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1",
     "1182": "COMPLETED_ON_PR_1184_DASHBOARD_WIDGETS_BOUNDED_RUNTIME_RENDER_EXECUTOR_V1",
     "1185": "COMPLETED_ON_PR_1187_DASHBOARD_WIDGETS_WORDPRESS_DASHBOARD_ADAPTER_TRANSITION_AUDIT",
-    "1186": "ACTIVE_DASHBOARD_WIDGETS_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1",
-    "1188": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_V1"
+    "1186": "COMPLETED_ON_PR_1189_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1",
+    "1188": "COMPLETED_ON_PR_1190_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_V1",
+    "1191": "ACTIVE_POST_MERGE_SHARED_TRUTH_RECONCILIATION"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3766,7 +3767,7 @@
       "slot_id": "dashboard-widgets-bounded-wordpress-dashboard-adapter-contract-v1",
       "title": "Dashboard Widgets bounded WordPress Dashboard adapter contract V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1",
       "source": "Issue #1186 / audit Issue #1185",
       "dependencies": [
@@ -3803,6 +3804,14 @@
         "governance_run": 35787116494,
         "architecture_run": 35787116504,
         "merge_sha": "7f448ff01b51f0abfd3551ef431f5cf5675ec5a9"
+      },
+      "terminal_evidence": {
+        "issue": 1186,
+        "pr": 1189,
+        "head": "0859a8bbaef7d9a571b630a5e368be641c7f41a7",
+        "governance_run": 35790596276,
+        "architecture_run": 35790596315,
+        "merge_sha": "e3ce7c3ee9742f2d116b546950f6d459d5f37bd9"
       }
     },
     {
@@ -3810,7 +3819,7 @@
       "slot_id": "dashboard-widgets-bounded-wordpress-dashboard-adapter-v1",
       "title": "Dashboard Widgets bounded WordPress Dashboard adapter V1",
       "role": "ANY",
-      "status": "OPEN_DEPENDENCY_GATED",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_V1",
       "source": "Issue #1188 / contract Issue #1186",
       "dependencies": [
@@ -3844,7 +3853,18 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-wordpress-dashboard-adapter-v1",
-      "close_condition": "Exact seven-file bounded WordPress Dashboard adapter merged with collision-safe two-phase planning, UI ExecutionContext forwarding, six-state callback mapping, focused tests and green path-applicable exact-head CI"
+      "close_condition": "Exact seven-file bounded WordPress Dashboard adapter merged with collision-safe two-phase planning, UI ExecutionContext forwarding, six-state callback mapping, focused tests and green path-applicable exact-head CI",
+      "terminal_evidence": {
+        "issue": 1188,
+        "pr": 1190,
+        "head": "02c71dc800ba9e75ca53c07cd3284674b9e705a7",
+        "governance_run": 35791655782,
+        "architecture_run": 35791655725,
+        "php_quality_run": 35791655792,
+        "platform_matrix_run": 35791655760,
+        "package_run": 35791655750,
+        "merge_sha": "b2d15e894be6b695a34e70b1e73159617baf4aa0"
+      }
     }
   ],
   "historical_closeout": {
