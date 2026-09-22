@@ -1,9 +1,9 @@
 {
-  "schema_version": 124,
+  "schema_version": 125,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "1031be4c88f8daadd79bb64a8aef7d5714e72c1a",
-  "mode": "DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_READY_TO_CLAIM",
-  "source_issue": "#1172",
+  "queue_anchor_main_sha": "e3c7b9dbf6f6465a4487aeaf309651923524c771",
+  "mode": "DASHBOARD_WIDGETS_RENDERER_EXECUTION_TRANSITION_AUDIT",
+  "source_issue": "#1175",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -162,8 +162,10 @@
     "1164": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1160_TO_1162",
     "1167": "COMPLETED_ON_PR_1169_DASHBOARD_WIDGETS_COMPONENT_RENDER_TRANSITION_AUDIT",
     "1168": "COMPLETED_ON_PR_1171_DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
-    "1170": "READY_TO_CLAIM_DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1",
-    "1172": "ACTIVE_TERMINAL_HANDOFF_1168_TO_1170"
+    "1170": "COMPLETED_ON_PR_1174_DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1",
+    "1172": "ACTIVE_TERMINAL_HANDOFF_1168_TO_1170",
+    "1175": "ACTIVE_DASHBOARD_WIDGETS_RENDERER_EXECUTION_TRANSITION_AUDIT",
+    "1176": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_CONTENT_BLUEPRINT_CONSISTENCY_GATE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3547,7 +3549,7 @@
       "slot_id": "dashboard-widgets-trusted-component-blueprint-registrar-renderer-v1",
       "title": "Dashboard Widgets trusted component blueprint registrar + renderer V1",
       "role": "ANY",
-      "status": "READY_TO_CLAIM",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1",
       "source": "Issue #1170 / contract Issue #1168",
       "dependencies": [
@@ -3589,7 +3591,54 @@
         "governance_run": 35662578475,
         "architecture_run": 35662578469,
         "merge_sha": "1031be4c88f8daadd79bb64a8aef7d5714e72c1a"
-      }
+      },
+      "terminal_result": "PASS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1",
+      "source_head_exact_verification": "b32939b5665d98be21fafd892cb5419e6b7f5c8d",
+      "governance_run_exact_verification": 35672066125,
+      "architecture_run_exact_verification": 35672066118,
+      "php_quality_run_exact_verification": 35672066106,
+      "package_run_exact_verification": 35672066117,
+      "platform_matrix_run_exact_verification": 35672066124,
+      "merge_sha": "e3c7b9dbf6f6465a4487aeaf309651923524c771",
+      "closeout_pr": 1174
+    },
+    {
+      "priority": 1012,
+      "slot_id": "dashboard-widgets-content-blueprint-consistency-gate-v1",
+      "title": "Dashboard Widgets content-class to canonical Blueprint consistency gate V1",
+      "role": "ANY",
+      "status": "OPEN_DEPENDENCY_GATED",
+      "work_mode": "DASHBOARD_WIDGETS_CONTENT_BLUEPRINT_CONSISTENCY_GATE_V1",
+      "source": "Issue #1176 / audit Issue #1175",
+      "dependencies": [
+        "Issue #1175 audit PR merged with READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php"
+      ],
+      "forbidden_scope": [
+        "Dashboard Widgets runtime RendererInterface::render invocation",
+        "wp_dashboard_setup/wp_network_dashboard_setup/wp_add_dashboard_widget",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "shortcode/block/action execution",
+        "asset registration",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-content-blueprint-consistency-gate-v1",
+      "close_condition": "All seven trusted content classes require their exact canonical revision-1 Blueprint; cross-class mismatches fail closed in render-source and registration compilation"
     }
   ],
   "historical_closeout": {
