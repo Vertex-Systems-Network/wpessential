@@ -10,8 +10,8 @@ active_branch: supervisor/dashboard-widgets-renderer-execution-transition-audit-
 current_milestone: "Dashboard Widgets #1170 terminal reconciliation + renderer-execution transition audit"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1170 / PR #1174 merged as e3c7b9dbf6f6465a4487aeaf309651923524c771; all five exact-head workflows passed"
-next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1177. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1177 exact-head Governance/Architecture validation"
+next_safe_action: "Validate PR #1177 corrected exact head after Governance diff-hygiene whitespace fix. Merge only if Governance/Architecture are terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1177 corrected exact-head Governance/Architecture validation after diff-hygiene fix"
 next_planned_slot:
   issue: "#1176"
   slot_id: dashboard-widgets-content-blueprint-consistency-gate-v1
@@ -53,3 +53,4 @@ notes:
   - "Exact-main audit proves widget.type is not yet fail-closed against its canonical Surface 10 Blueprint."
   - "Audit verdict READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1."
   - "Dashboard runtime renderer invocation, WordPress Dashboard hooks, providers/sources, assets, mutation and full parity remain blocked."
+  - "PR #1177 prior head 38fa51b5 failed Governance 35672696232 only on two trailing-whitespace audit-header lines; corrective head removes that whitespace without audit/runtime scope change."

@@ -57,6 +57,12 @@ Its only source purpose is to bind each trusted content class to its exact canon
 - #1102 remains explicit runtime-authorization gated.
 - #947 remains independent Worker-only.
 
+## #1177 validation correction
+
+- Prior head `38fa51b5caa10dbb2c2dd0f47c0849369130d0fe` failed Governance `35672696232` at exact-head diff hygiene only.
+- Root cause: two trailing-whitespace lines in the new audit Markdown header.
+- Corrective change removes only that whitespace and records the evidence; audit verdict, #1176 scope and runtime boundaries are unchanged.
+
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1177. Merge only on terminal green evidence. Do not claim #1176 before audit promotion.
+Validate the corrected PR #1177 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence. Do not claim #1176 before audit promotion.

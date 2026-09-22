@@ -330,3 +330,11 @@ Rules:
 - Compact state binds `active_pr: "#1177"` before final exact-head validation.
 - RB-0032 is the immediate Governance/Architecture merge gate.
 - Issue #1176 remains dependency-gated and must not be claimed until PR #1177 merges with `READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1`.
+
+
+## 2026-09-22 — PR #1177 Governance diff-hygiene failure corrected
+
+- PR #1177 prior head `38fa51b5caa10dbb2c2dd0f47c0849369130d0fe` failed Governance `35672696232` at `git diff --check`.
+- Root cause: two trailing-whitespace lines in the renderer-execution transition audit Markdown header.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0032/journal evidence.
+- Audit verdict `READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1`, Issue #1176 source scope and runtime authorization boundaries remain unchanged.

@@ -1,7 +1,7 @@
 # Dashboard Widgets — Renderer-Execution Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1175**  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1175**
 Exact audited main: `e3c7b9dbf6f6465a4487aeaf309651923524c771`
 
 ## Purpose

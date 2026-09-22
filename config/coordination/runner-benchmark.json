@@ -1040,9 +1040,11 @@
       "evidence": [
         "Exact audited main e3c7b9dbf6f6465a4487aeaf309651923524c771",
         "Audit verdict READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1",
-        "PR #1177 opened on supervisor/dashboard-widgets-renderer-execution-transition-audit-v1; final exact-head validation pending"
+        "PR #1177 prior exact head 38fa51b5caa10dbb2c2dd0f47c0849369130d0fe",
+        "Governance Gate run 35672696232 FAIL at exact-head diff hygiene only: two trailing-whitespace lines in the new audit Markdown header",
+        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
       ],
-      "note": "PASS may authorize only Issue #1176 content-class↔canonical Blueprint consistency gate. Dashboard runtime renderer invocation remains blocked."
+      "note": "Prior head failed only git diff --check. Corrective head remains shared-truth/audit-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
     }
   ],
   "last_reconciled_issue": "#1175",
