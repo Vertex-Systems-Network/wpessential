@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1168",
-  "anchor_main_sha": "a8b3539168ba72f74473d4bc9e3fef6af445147f",
+  "source_issue": "#1172",
+  "anchor_main_sha": "1031be4c88f8daadd79bb64a8aef7d5714e72c1a",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -941,17 +941,46 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-component-renderer-contract|issue1168|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "Exact base main a8b3539168ba72f74473d4bc9e3fef6af445147f",
         "Contract freezes seven Surface 10 component types/Blueprint UUIDs and minimal exact binding schemas",
-        "PR #1171 prior exact head d0df313f2a55bda8f6f835b234bb23563983d383",
-        "Governance Gate run 35662465508 FAIL at exact-head diff hygiene only: three trailing-whitespace lines in the new contract Markdown header",
-        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
+        "Prior PR #1171 head d0df313f2a55bda8f6f835b234bb23563983d383: Governance 35662465508 failed only git diff --check on three trailing-whitespace contract-header lines",
+        "Corrected PR #1171 exact head f485d592b6cb5f50f729a5db7dc0cb8785336705",
+        "Governance Gate run 35662578475 PASS",
+        "Architecture Guards run 35662578469 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1171 merged as 1031be4c88f8daadd79bb64a8aef7d5714e72c1a",
+        "Issue #1168 closed completed"
       ],
-      "note": "Prior head failed only git diff --check. Corrective head remains planning/shared-truth-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
+      "note": "Terminal PASS. Prior diff-hygiene failure is historical only. Issue #1170 Blueprint registrar + bounded renderer source tranche is READY_TO_CLAIM; Dashboard runtime renderer invocation and hooks remain blocked."
+    },
+    {
+      "id": "RB-0030",
+      "source": "Issue #1172",
+      "category": "DASHBOARD_WIDGETS_1168_TERMINAL_HANDOFF_TO_1170",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-1168-terminal-handoff-v1 exact head",
+      "dependencies": [
+        "merged trusted component Blueprint/renderer contract #1168/#1171",
+        "README 56/56 terminal reconciliation",
+        "queue and compact-state promotion of #1170 READY_TO_CLAIM"
+      ],
+      "authorization": "Shared-truth terminal handoff only; no runtime/product source, renderer invocation, Dashboard hooks, providers/sources, assets, mutation, certification, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|1168-terminal-handoff|issue1172|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IMMEDIATE_REQUIRED",
+      "evidence": [
+        "Exact base main 1031be4c88f8daadd79bb64a8aef7d5714e72c1a",
+        "RB-0029 terminal PASS and Issue #1170 dependency satisfied; exact-head handoff validation pending"
+      ],
+      "note": "PASS closes shared-truth handoff only. Next source milestone is Issue #1170."
     }
   ],
-  "last_reconciled_issue": "#1168",
+  "last_reconciled_issue": "#1172",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
