@@ -1101,10 +1101,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|runtime-render-execution-transition-audit|issue1179|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact audited main d6c66ed7ce224131f484dc8bc8243c03a8649832",
-        "Audit verdict READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1; exact-head validation pending"
+        "Audit verdict READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1",
+        "PR #1181 opened on supervisor/dashboard-widgets-runtime-render-execution-transition-audit-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1180 planning/implementation-contract work. Direct WordPress Dashboard registration remains blocked."
     }

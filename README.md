@@ -12,10 +12,10 @@ Project website: **https://wpessential.org**
 - #1175/#1177 terminal audit evidence: corrected exact head `c55cb1025d5888a6ee5defdcac10518181e3d545`; Governance `35672788382` PASS; Architecture `35672788502` PASS; zero unresolved review threads and zero behind at merge; merged as `0bb6ded6...`.
 - #1176 terminal source evidence: exact head `d0da096dbda8dede7ea3a703ad6506473cebea94`; Governance `35673808532`, Architecture `35673808430`, PHP Quality `35673808674`, Package `35673808499`, Platform Matrix `35673808503` all PASS; zero unresolved review threads and zero behind at merge.
 - #1176 bounded source milestone: `██████████ 100%` for **Content-Class ↔ Canonical Blueprint Consistency Gate V1 only**. All seven trusted class↔Blueprint pairs remain valid and cross-class trusted Blueprint substitution now fails closed.
-- Active milestone: **Issue #1179 — #1176 terminal reconciliation + runtime-render execution transition audit**.
+- Active milestone: **Issue #1179 / PR #1181 — #1176 terminal reconciliation + runtime-render execution transition audit**.
 - Exact-main audit finding: compile/visibility/render components are now present, but no module-local non-throwing runtime result/orchestration boundary exists. Shared `RenderOutput` must not be overloaded with Definition-not-found, compile-rejected or visibility-denied states.
 - Audit verdict: **READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1**.
-- Dependency-gated next tranche: **Issue #1180 — Bounded Runtime Render Execution Contract V1**, branch `supervisor/dashboard-widgets-runtime-render-execution-contract-v1`; claim only after the #1179 audit PR merges.
+- Dependency-gated next tranche: **Issue #1180 — Bounded Runtime Render Execution Contract V1**, branch `supervisor/dashboard-widgets-runtime-render-execution-contract-v1`; claim only after PR #1181 merges with `READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1`.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, provider/query/source execution, remote/iframe/shortcode/block/action execution, asset side effects, mutation/preferences and full-parity certification remain blocked.
 - Open repository blockers remain #858 external-admin required-CI reconciliation, #1102 separately authorization-gated P-006 Wave 1U, and #947 independent Worker-only audit.
 - Current AI-Native rule: every meaningful repository-changing Supervisor milestone must reconcile this live README progress block before final reporting; module delivery/timeline changes also require the complete 56 / 56 dashboard reconciliation.

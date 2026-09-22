@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `d6c66ed7ce224131f484dc8bc8243c03a8649832`
 - Completed source milestone: Issue #1176 / PR #1178
 - Active audit Issue: #1179
+- Active PR: #1181
 - Deterministic audit branch: `supervisor/dashboard-widgets-runtime-render-execution-transition-audit-v1`
 
 ## #1176 / #1178 terminal evidence
@@ -65,4 +66,4 @@ It must define distinct typed outcomes for missing Definition, invalid Definitio
 
 ## Next safe action
 
-Open the #1179 audit PR, bind compact state to its exact PR number, then run one consolidated exact-head Governance/Architecture + review/main-divergence refresh.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1181. Merge only on terminal green evidence.

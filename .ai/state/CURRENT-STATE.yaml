@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: d6c66ed7ce224131f484dc8bc8243c03a8649832
 observed_main_source: "PR #1178 merged Dashboard Widgets content-class ↔ canonical Blueprint consistency gate V1"
 active_issue: "#1179"
-active_pr: null
+active_pr: "#1181"
 active_branch: supervisor/dashboard-widgets-runtime-render-execution-transition-audit-v1
 current_milestone: "Dashboard Widgets #1176 terminal reconciliation + runtime-render execution transition audit"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1176 / PR #1178 merged as d6c66ed7ce224131f484dc8bc8243c03a8649832; all five exact-head workflows passed"
-next_safe_action: "Open the #1179 audit PR, bind active_pr to its exact number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "Issue #1179 audit branch publication and exact-head validation"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1181. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1181 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1180"
   slot_id: dashboard-widgets-bounded-runtime-render-execution-contract-v1

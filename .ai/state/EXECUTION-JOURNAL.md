@@ -351,3 +351,12 @@ Rules:
 - Verdict: `READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1`.
 - Issue #1180 opened as the dependency-gated next planning/implementation-contract tranche.
 - Direct Dashboard hooks, providers/sources, asset side effects, mutation and full-parity certification remain blocked.
+
+
+## 2026-09-22 — PR #1181 opened for runtime-render execution transition audit
+
+- PR #1181 opened from exact main `d6c66ed7ce224131f484dc8bc8243c03a8649832`.
+- Scope is exactly seven shared-truth/audit files; no runtime/product source files change.
+- Compact state binds `active_pr: "#1181"` before final exact-head validation.
+- RB-0034 is the immediate Governance/Architecture merge gate.
+- Issue #1180 remains dependency-gated and must not be claimed until PR #1181 merges with `READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1`.
