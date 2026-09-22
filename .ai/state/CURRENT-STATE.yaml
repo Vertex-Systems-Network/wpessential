@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: 7f448ff01b51f0abfd3551ef431f5cf5675ec5a9
 observed_main_source: "PR #1187 merged Dashboard Widgets WordPress Dashboard adapter transition audit"
 active_issue: "#1186"
-active_pr: null
+active_pr: "#1189"
 active_branch: supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1
 current_milestone: "Dashboard Widgets bounded WordPress Dashboard adapter contract V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1185 / PR #1187 merged as 7f448ff01b51f0abfd3551ef431f5cf5675ec5a9; exact-head Governance and Architecture passed"
-next_safe_action: "Open the #1186 contract PR, bind its exact PR number, then perform one consolidated Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: null
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1189. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1189 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1188"
   slot_id: dashboard-widgets-bounded-wordpress-dashboard-adapter-v1
