@@ -36,6 +36,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_COMPONENT_REGISTRAR = 'module.dashboard-widgets.component-registrar';
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
     public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
+    public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
     public const CAPABILITY = 'manage_options';
@@ -105,6 +106,19 @@ final class DashboardWidgetsModule implements ModuleInterface
             $capabilityChecker,
             new WordPressDashboardWidgetRoleMembershipProvider(),
         );
+        $registrationCompiler = new DashboardWidgetRegistrationCompiler(
+            $visibilityCompiler,
+            $contentClassCompiler,
+            $renderSourceCompiler,
+        );
+        $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
+            $definitions,
+            $registrationCompiler,
+            $visibilityCompiler,
+            $visibilityEvaluator,
+            $renderSourceCompiler,
+            $dispatcher,
+        );
 
         $componentRegistrar->register();
 
@@ -115,15 +129,9 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_TRUSTED_COMPONENT_RENDERER, $trustedComponentRenderer);
         $services->set(self::SERVICE_COMPONENT_REGISTRAR, $componentRegistrar);
         $services->set(self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler);
-        $services->set(
-            self::SERVICE_REGISTRATION_COMPILER,
-            new DashboardWidgetRegistrationCompiler(
-                $visibilityCompiler,
-                $contentClassCompiler,
-                $renderSourceCompiler,
-            ),
-        );
+        $services->set(self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler);
         $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
+        $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
 
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $this->registerAbility(
