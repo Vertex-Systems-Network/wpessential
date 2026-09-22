@@ -8,7 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `179bff897b9d64a4297855e375d1c679a3550151`
 - Completed reconciliation: Issue #1191 / PR #1192
 - Active transition audit: Issue #1193
-- Active PR: pending creation
+- Active PR: #1197
 - Deterministic branch: `supervisor/dashboard-widgets-site-targeting-transition-audit-v1`
 
 ## Fresh targeting audit
@@ -46,4 +46,4 @@ Direct targeting source remains blocked until Issue #1195 freezes payload/defaul
 
 ## Next safe action
 
-Open the #1193 audit PR. Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh and merge only on terminal green.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1197 and merge only on terminal green.
