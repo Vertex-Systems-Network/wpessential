@@ -1133,10 +1133,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|bounded-runtime-render-execution-contract|issue1180|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact base main de147432457892b388d80ee368a30c7a9b26fa4d",
-        "Contract freezes six runtime result states, exception mapping and renderer non-invocation rules; exact-head validation pending"
+        "Contract freezes six runtime result states, exception mapping, visibility ordering and renderer non-invocation rules",
+        "PR #1183 opened on supervisor/dashboard-widgets-runtime-render-execution-contract-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1182 bounded runtime render executor V1. Direct WordPress Dashboard registration remains blocked."
     }

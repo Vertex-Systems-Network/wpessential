@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: de147432457892b388d80ee368a30c7a9b26fa4d
 observed_main_source: "PR #1181 merged Dashboard Widgets runtime-render execution transition audit"
 active_issue: "#1180"
-active_pr: null
+active_pr: "#1183"
 active_branch: supervisor/dashboard-widgets-runtime-render-execution-contract-v1
 current_milestone: "Dashboard Widgets bounded runtime render execution contract V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1179 / PR #1181 merged as de147432457892b388d80ee368a30c7a9b26fa4d; corrected exact-head Governance and Architecture passed"
-next_safe_action: "Open the #1180 contract PR, bind active_pr to its exact number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "Issue #1180 contract branch publication and exact-head validation"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1183. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1183 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1182"
   slot_id: dashboard-widgets-bounded-runtime-render-executor-v1

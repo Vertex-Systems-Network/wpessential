@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `de147432457892b388d80ee368a30c7a9b26fa4d`
 - Completed audit: Issue #1179 / PR #1181
 - Active contract Issue: #1180
+- Active PR: #1183
 - Deterministic contract branch: `supervisor/dashboard-widgets-runtime-render-execution-contract-v1`
 
 ## #1179 / #1181 terminal evidence
@@ -72,4 +73,4 @@ Exact scope is six files: module-local result, executor, module wiring and three
 
 ## Next safe action
 
-Open the #1180 contract PR, bind compact state to its exact PR number, then run one consolidated exact-head Governance/Architecture + review/main-divergence refresh.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1183. Merge only on terminal green evidence.
