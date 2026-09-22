@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: 179bff897b9d64a4297855e375d1c679a3550151
 observed_main_source: "PR #1192 merged Dashboard Widgets adapter post-merge shared-truth reconciliation"
 active_issue: "#1193"
-active_pr: null
+active_pr: "#1197"
 active_branch: supervisor/dashboard-widgets-site-targeting-transition-audit-v1
 current_milestone: "Dashboard Widgets site targeting transition audit V1"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1191 / PR #1192 merged as 179bff897b9d64a4297855e375d1c679a3550151; exact-head Governance and Architecture passed"
-next_safe_action: "Open the #1193 audit PR and perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh; merge only if terminal green."
-waiting_external: null
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1197; merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1197 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1195"
   slot_id: dashboard-widgets-bounded-site-targeting-contract-v1
