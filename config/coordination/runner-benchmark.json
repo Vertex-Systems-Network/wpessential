@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1180",
-  "anchor_main_sha": "de147432457892b388d80ee368a30c7a9b26fa4d",
+  "source_issue": "#1185",
+  "anchor_main_sha": "cfd2003aaf238f7453c9f8fa429f5103e86fce05",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1133,15 +1133,82 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|bounded-runtime-render-execution-contract|issue1180|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1183 exact head fe0e9715f1b91eb10c5e5588866670e27ff311f3",
+        "Governance Gate run 35785418262 PASS",
+        "Architecture Guards run 35785418065 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1183 merged as 80fdd1d3e38fea7bd44baf9011ef8f69c73589b7",
+        "Issue #1180 closed completed"
+      ],
+      "note": "Terminal PASS. Issue #1182 bounded runtime render executor V1 became claimable; direct WordPress Dashboard registration remained blocked."
+    },
+    {
+      "id": "RB-0036",
+      "source": "Issue #1182 / PR #1184",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_RENDER_EXECUTOR_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package",
+      "environment": "agent/dashboard-widgets-bounded-runtime-render-executor-v1 exact head",
+      "dependencies": [
+        "merged runtime render execution contract #1180/#1183",
+        "canonical Definition repository",
+        "registration/visibility/render-source compilers",
+        "shared renderer dispatcher"
+      ],
+      "authorization": "Bounded module-local runtime executor/result only; no WordPress Dashboard hooks, providers/sources, asset side effects, mutation, shared Platform changes, certification, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-runtime-render-executor|issue1182|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1184 exact head 9a6b0650a706b14e5ef7bef92da2ac00f5536dcb",
+        "Governance Gate run 35786157023 PASS",
+        "Architecture Guards run 35786157058 PASS",
+        "PHP Quality Toolchain run 35786157049 PASS",
+        "Platform Compatibility Matrix run 35786157012 PASS",
+        "Distributable Package run 35786157060 PASS",
+        "Composer dependency advisory audit PASS",
+        "Architecture npm high/critical development and distributable advisory gates PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "branch diff contained exactly six Issue #1182-authorized source/test files",
+        "manual forbidden-hook/network/mutation/asset-side-effect scan found no hit in changed runtime source",
+        "PR #1184 merged as cfd2003aaf238f7453c9f8fa429f5103e86fce05",
+        "Issue #1182 closed completed"
+      ],
+      "note": "PASS certifies only the bounded six-state runtime executor/result milestone. Direct WordPress Dashboard registration, providers/sources, asset side effects, mutation and full parity remain blocked."
+    },
+    {
+      "id": "RB-0037",
+      "source": "Issue #1185",
+      "category": "DASHBOARD_WIDGETS_WORDPRESS_DASHBOARD_ADAPTER_TRANSITION_AUDIT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-wordpress-dashboard-adapter-transition-audit-v1 exact head",
+      "dependencies": [
+        "merged bounded runtime render executor #1182/#1184",
+        "README 56/56 reconciliation",
+        "queue and compact-state promotion of #1186 as dependency-gated"
+      ],
+      "authorization": "Shared-truth reconciliation + WordPress Dashboard adapter transition audit only; no runtime/product PHP, hooks, providers/sources, assets, mutation, shared Platform changes, certification, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|wordpress-dashboard-adapter-transition-audit|issue1185|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
       "status": "IN_PROGRESS",
       "evidence": [
-        "Exact base main de147432457892b388d80ee368a30c7a9b26fa4d",
-        "Contract freezes six runtime result states, exception mapping, visibility ordering and renderer non-invocation rules",
-        "PR #1183 opened on supervisor/dashboard-widgets-runtime-render-execution-contract-v1; final exact-head validation pending"
+        "Exact audited main cfd2003aaf238f7453c9f8fa429f5103e86fce05",
+        "Audit verdict READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1",
+        "Issue #1186 opened dependency-gated",
+        "Deterministic audit branch created; PR exact-head validation pending"
       ],
-      "note": "PASS may authorize only Issue #1182 bounded runtime render executor V1. Direct WordPress Dashboard registration remains blocked."
+      "note": "PASS may authorize only Issue #1186 adapter contract documentation. Direct wp_add_dashboard_widget implementation remains blocked."
     }
   ],
-  "last_reconciled_issue": "#1180",
+  "last_reconciled_issue": "#1185",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
