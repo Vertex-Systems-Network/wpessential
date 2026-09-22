@@ -10,6 +10,17 @@ Rules:
 - archive older detail under `docs/CHECKPOINT-ARCHIVE/` when necessary;
 - repository evidence outranks this journal.
 
+
+## 2026-09-23 — Runtime executor merged; WordPress Dashboard adapter transition audited
+
+- Issue #1180 / PR #1183 merged the bounded runtime-render execution contract as `80fdd1d3e38fea7bd44baf9011ef8f69c73589b7`; RB-0035 requires terminal reconciliation.
+- Issue #1182 / PR #1184 exact head `9a6b0650a706b14e5ef7bef92da2ac00f5536dcb` passed Governance `35786157023`, Architecture `35786157058`, PHP Quality `35786157049`, Platform Matrix `35786157012` and Package `35786157060`; merged as `cfd2003aaf238f7453c9f8fa429f5103e86fce05`.
+- Security checks included Composer advisory audit plus Architecture npm high/critical development/distributable advisory gates; all passed.
+- The six-state non-throwing runtime executor is now present with renderer non-invocation on denial/rejection and no raw exception leakage.
+- Issue #1185 audits the remaining WordPress adapter boundary. Verdict: `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1`.
+- Catalog-level duplicate widget-id handling, normal/network target isolation, fixed WPEssential ids, UI `ExecutionContext`, six-state callback mapping and exception containment must be frozen before any `wp_add_dashboard_widget` implementation.
+- Issue #1186 is dependency-gated. Providers/sources, assets, mutation, caching/refresh, full parity, deploy and release remain blocked.
+
 ## 2026-09-21 — PR #1116 opened / waiting boundary persisted
 
 - Opened PR #1116 for Issue #1115.
