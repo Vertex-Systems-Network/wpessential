@@ -87,8 +87,12 @@ final class DashboardWidgetsModule implements ModuleInterface
 
         $read = new DashboardWidgetsReadService($definitions);
         $contentClassCompiler = new DashboardWidgetContentClassCompiler();
-        $renderSourceCompiler = new DashboardWidgetRenderSourceCompiler($blueprints, $contentClassCompiler);
         $componentCatalog = new DashboardWidgetComponentBlueprintCatalog();
+        $renderSourceCompiler = new DashboardWidgetRenderSourceCompiler(
+            $blueprints,
+            $contentClassCompiler,
+            $componentCatalog,
+        );
         $trustedComponentRenderer = new DashboardWidgetTrustedComponentRenderer($componentCatalog);
         $componentRegistrar = new DashboardWidgetComponentRegistrar(
             $blueprints,
