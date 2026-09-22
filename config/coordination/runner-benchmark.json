@@ -1204,7 +1204,7 @@
         "Exact audited main cfd2003aaf238f7453c9f8fa429f5103e86fce05",
         "Audit verdict READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1",
         "Issue #1186 opened dependency-gated",
-        "Deterministic audit branch created; PR exact-head validation pending"
+        "PR #1187 opened on supervisor/dashboard-widgets-wordpress-dashboard-adapter-transition-audit-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1186 adapter contract documentation. Direct wp_add_dashboard_widget implementation remains blocked."
     }
