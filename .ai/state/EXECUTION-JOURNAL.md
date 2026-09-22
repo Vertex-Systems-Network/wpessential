@@ -309,3 +309,15 @@ Rules:
 - `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1` is promoted.
 - Issue #1170 is READY_TO_CLAIM on `agent/dashboard-widgets-trusted-component-renderer-v1`.
 - Dashboard runtime renderer invocation, Dashboard hooks, providers/sources, remote/iframe/shortcode/block/action execution, assets, mutation and full-parity certification remain blocked.
+
+
+## 2026-09-22 — Component renderer registration merged; trust-class/Blueprint mismatch audit started
+
+- Issue #1170 / PR #1174 exact head `b32939b5665d98be21fafd892cb5419e6b7f5c8d` passed Governance `35672066125`, Architecture `35672066118`, PHP Quality `35672066106`, Package `35672066117` and Platform Matrix `35672066124`.
+- PR #1174 merged as `e3c7b9dbf6f6465a4487aeaf309651923524c771`; Issue #1170 closed.
+- RB-0030 reconciles the prior #1172/#1173 handoff PASS; RB-0031 records #1170/#1174 terminal PASS.
+- Fresh exact-main audit finds trusted content-class and trusted render-source Blueprint validation are independent.
+- A Definition can declare one trusted class while referencing another trusted class's canonical Blueprint when the latter bindings are valid.
+- Verdict: `READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1`; Dashboard runtime renderer invocation remains blocked.
+- Issue #1176 opened as the dependency-gated five-file source tranche.
+- #858, #1102 and #947 were reconciled and remain respectively admin-only, separately authorization-gated and independent Worker-only.

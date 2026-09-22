@@ -5,52 +5,57 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main after contract merge: `1031be4c88f8daadd79bb64a8aef7d5714e72c1a`
-- Completed contract: Issue #1168 / PR #1171
-- Next implementation Issue: #1170
-- Deterministic source branch: `agent/dashboard-widgets-trusted-component-renderer-v1`
+- Exact main: `e3c7b9dbf6f6465a4487aeaf309651923524c771`
+- Completed source milestone: Issue #1170 / PR #1174
+- Active audit Issue: #1175
+- Deterministic audit branch: `supervisor/dashboard-widgets-renderer-execution-transition-audit-v1`
 
-## #1168 / #1171 terminal evidence
+## #1170 / #1174 terminal evidence
 
-- corrected exact head `f485d592b6cb5f50f729a5db7dc0cb8785336705`
-- Governance `35662578475` PASS
-- Architecture `35662578469` PASS
-- zero unresolved review threads; zero behind at merge
-- merged as `1031be4c88f8daadd79bb64a8aef7d5714e72c1a`
-- Issue #1168 closed completed
-- RB-0029 reconciled PASS
+- exact head `b32939b5665d98be21fafd892cb5419e6b7f5c8d`
+- Governance `35672066125` PASS
+- Architecture `35672066118` PASS
+- PHP Quality `35672066106` PASS
+- Package `35672066117` PASS
+- Platform Matrix `35672066124` PASS
+- zero unresolved review threads; zero behind
+- exactly eight authorized source/test files
+- merged as `e3c7b9dbf6f6465a4487aeaf309651923524c771`; Issue #1170 closed
+- RB-0031 records terminal PASS
 
-Historical-only validation evidence:
+## Renderer-execution transition audit
 
-- prior head `d0df313f2a55bda8f6f835b234bb23563983d383`
-- Governance `35662465508` failed only `git diff --check` on three trailing-whitespace contract-header lines
-- corrected before merge; contract/runtime semantics unchanged
+Merged #1170 registers all seven canonical Surface 10 Blueprints and one bounded renderer, but no Dashboard runtime path invokes it.
 
-## Promoted next tranche
+The next blocker is semantic trust-class coupling:
 
-`READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`
+- `DashboardWidgetContentClassCompiler` validates `widget.type`;
+- `DashboardWidgetRenderSourceCompiler` validates any exact registered Surface-10-owned Blueprint + its schema;
+- `DashboardWidgetRegistrationCompiler` runs both independently;
+- no current compiler requires the declared trusted content class to equal the canonical Blueprint class.
 
-Issue #1170 is READY_TO_CLAIM.
+Therefore one trusted class can point at another trusted class's canonical Blueprint and pass the independent checks.
 
-The source tranche may only:
+Verdict:
 
-- register the seven canonical revision-1 Surface 10 Blueprints;
-- register one bounded Dashboard Widgets renderer under the seven canonical component types;
-- reuse the existing shared `ComponentBlueprintRegistry` and `BlueprintRendererDispatcher`;
-- escape authored text and enforce the merged link/chart bounds;
-- wire module-local registration and add focused tests.
+- `READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1`
+- Dashboard runtime renderer invocation remains blocked;
+- WordPress Dashboard registration remains blocked;
+- provider/query/source/remote/iframe/shortcode/block/action execution remains blocked;
+- assets, mutation and full parity remain blocked.
 
-## Still blocked
+## Next source tranche
 
-- Dashboard Widgets runtime `RendererInterface::render()` invocation
-- WordPress Dashboard hooks / `wp_add_dashboard_widget`
-- provider/query/source execution
-- Safe HTTP/remote/iframe execution
-- shortcode/block/action execution
-- asset registration
-- Definition/user-preference mutation
-- full-parity certification/deploy/release
+Issue #1176 is dependency-gated on the #1175 audit PR.
+
+Its only source purpose is to bind each trusted content class to its exact canonical revision-1 Blueprint in render-source/registration compilation. No renderer invocation or hook scope is authorized.
+
+## Repository blockers
+
+- #858 remains repository-admin work.
+- #1102 remains explicit runtime-authorization gated.
+- #947 remains independent Worker-only.
 
 ## Next safe action
 
-Claim Issue #1170 from fresh exact current main on `agent/dashboard-widgets-trusted-component-renderer-v1` and implement only its eight authorized source/test files.
+Open the #1175 audit PR, bind compact state to its exact PR number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Do not claim #1176 before audit promotion.
