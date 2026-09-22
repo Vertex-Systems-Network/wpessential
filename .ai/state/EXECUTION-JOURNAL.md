@@ -368,3 +368,23 @@ Rules:
 - Root cause: two trailing-whitespace lines in the runtime-render transition audit Markdown header.
 - Corrective change removes only that whitespace and reconciles README/compact state/RB-0034/journal evidence.
 - Audit verdict, Issue #1180 contract scope and runtime authorization boundaries remain unchanged.
+
+
+## 2026-09-23 — Runtime-render audit merged; bounded execution contract started
+
+- PR #1181 corrected exact head `d12b6a6ee4bfc4db3cd612f1f5146f0ddfdb87c6` passed Governance `35768397173` and Architecture `35768397195`.
+- PR #1181 merged as `de147432457892b388d80ee368a30c7a9b26fa4d`; Issue #1179 closed.
+- RB-0034 reconciled terminal PASS.
+- Issue #1180 claimed on `supervisor/dashboard-widgets-runtime-render-execution-contract-v1`.
+- Contract V1 freezes six module-local runtime result states, exact compile/visibility/render ordering, expected-vs-unexpected exception mapping, unchanged ExecutionContext forwarding and zero asset side effects.
+- Issue #1182 opened as the dependency-gated six-file bounded runtime render executor implementation tranche.
+- Direct Dashboard hooks, providers/sources, assets, mutation, caching/refresh and full-parity certification remain blocked.
+
+
+## 2026-09-23 — PR #1183 opened for bounded runtime render execution contract
+
+- PR #1183 opened from exact main `de147432457892b388d80ee368a30c7a9b26fa4d`.
+- Contract freezes six module-local runtime result states and exact non-throwing orchestration semantics.
+- Compact state binds `active_pr: "#1183"` before final exact-head validation.
+- RB-0035 is the immediate Governance/Architecture merge gate.
+- Issue #1182 remains dependency-gated until PR #1183 merges with `READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTOR_V1`.

@@ -5,71 +5,72 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `d6c66ed7ce224131f484dc8bc8243c03a8649832`
-- Completed source milestone: Issue #1176 / PR #1178
-- Active audit Issue: #1179
-- Active PR: #1181
-- Deterministic audit branch: `supervisor/dashboard-widgets-runtime-render-execution-transition-audit-v1`
+- Exact main: `de147432457892b388d80ee368a30c7a9b26fa4d`
+- Completed audit: Issue #1179 / PR #1181
+- Active contract Issue: #1180
+- Active PR: #1183
+- Deterministic contract branch: `supervisor/dashboard-widgets-runtime-render-execution-contract-v1`
 
-## #1176 / #1178 terminal evidence
+## #1179 / #1181 terminal evidence
 
-- exact head `d0da096dbda8dede7ea3a703ad6506473cebea94`
-- Governance `35673808532` PASS
-- Architecture `35673808430` PASS
-- PHP Quality `35673808674` PASS
-- Package `35673808499` PASS
-- Platform Matrix `35673808503` PASS
-- zero unresolved review threads; zero behind
-- exactly five authorized source/test files
-- merged as `d6c66ed7ce224131f484dc8bc8243c03a8649832`
-- Issue #1176 closed completed
-- RB-0033 records terminal PASS
+- corrected exact head `d12b6a6ee4bfc4db3cd612f1f5146f0ddfdb87c6`
+- Governance `35768397173` PASS
+- Architecture `35768397195` PASS
+- zero unresolved review threads; zero behind at merge
+- merged as `de147432457892b388d80ee368a30c7a9b26fa4d`
+- Issue #1179 closed completed
+- RB-0034 reconciled PASS
 
-## Runtime-render execution transition audit
+Historical-only validation evidence:
 
-The exact main now fail-closes every trusted content class to its exact canonical revision-1 Blueprint and already has:
+- prior head `af42eeaaa959d4101c905467c1f98b3c2c462947`
+- Governance `35768211280` failed only `git diff --check` on two trailing-whitespace audit-header lines
+- corrected before merge; audit/runtime semantics unchanged
 
-- registration/content/visibility/render-source compilers;
-- server visibility evaluator;
-- seven canonical Blueprint registrations;
-- bounded component renderer registration;
-- shared dispatcher + RenderInput/RenderOutput.
+## #1180 runtime render execution contract
 
-The remaining gap is a module-local non-throwing orchestration/result boundary.
+The contract freezes six module-local result states:
 
-Shared RenderOutput represents renderer failures only. It must not be overloaded with:
+- `missing_definition`
+- `invalid_definition`
+- `visibility_denied`
+- `renderer_failed`
+- `runtime_failure`
+- `rendered`
 
-- missing Definition;
-- compile rejection;
-- visibility denial.
+Runtime order:
 
-The Dashboard content-trust architecture also requires one widget failure not to take down the whole Dashboard.
+`Definition lookup → registration compile → visibility compile/evaluate → trusted render-source compile → shared renderer → module-local result`
 
-Verdict:
+Critical rules:
 
-- `READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1`
-- direct WordPress Dashboard registration remains blocked;
-- provider/query/source/remote/iframe/shortcode/block/action execution remains blocked;
-- assets, mutation and full parity remain blocked.
+- missing Definition short-circuits before compilers;
+- expected compiler `InvalidArgumentException` maps to `invalid_definition`;
+- visibility denial preserves only the bounded denial reason and prevents renderer invocation;
+- shared renderer failure preserves only `RenderFailureCode`;
+- unexpected `Throwable` maps to `runtime_failure` with no raw exception leakage;
+- exact incoming `ExecutionContext` is forwarded unchanged;
+- renderer asset handles are data only; no enqueue/register side effect.
 
-## Next contract tranche
+## Next source tranche
 
-Issue #1180 is dependency-gated on the #1179 audit PR.
+Issue #1182 is dependency-gated on the #1180 contract PR.
 
-It must define distinct typed outcomes for missing Definition, invalid Definition/compile rejection, visibility denial, renderer failure and rendered success, with no raw exception leakage and no asset side effects.
+Exact scope is six files: module-local result, executor, module wiring and three focused test files.
 
-## Repository blockers
+## Still blocked
 
-- #858 remains repository-admin work.
-- #1102 remains explicit runtime-authorization gated.
-- #947 remains independent Worker-only.
-
-## #1181 validation correction
-
-- Prior head `af42eeaaa959d4101c905467c1f98b3c2c462947` failed Governance `35768211280` at exact-head diff hygiene only.
-- Root cause: two trailing-whitespace lines in the new audit Markdown header.
-- Corrective change removes only that whitespace and records the evidence; audit verdict, #1180 scope and runtime boundaries are unchanged.
+- WordPress Dashboard hooks / `wp_add_dashboard_widget`
+- WordPress Dashboard callback adapter
+- provider/query/source execution
+- remote/Safe HTTP/iframe execution
+- shortcode/block/action execution
+- asset side effects
+- Definition/user-preference mutation
+- caching/refresh
+- shared Platform source changes
+- full-parity certification/deploy/release
 
 ## Next safe action
 
-Validate the corrected PR #1181 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1183. Merge only on terminal green evidence.
