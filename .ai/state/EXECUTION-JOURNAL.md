@@ -360,3 +360,11 @@ Rules:
 - Compact state binds `active_pr: "#1181"` before final exact-head validation.
 - RB-0034 is the immediate Governance/Architecture merge gate.
 - Issue #1180 remains dependency-gated and must not be claimed until PR #1181 merges with `READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTION_CONTRACT_V1`.
+
+
+## 2026-09-22 — PR #1181 Governance diff-hygiene failure corrected
+
+- PR #1181 prior head `af42eeaaa959d4101c905467c1f98b3c2c462947` failed Governance `35768211280` at `git diff --check`.
+- Root cause: two trailing-whitespace lines in the runtime-render transition audit Markdown header.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0034/journal evidence.
+- Audit verdict, Issue #1180 contract scope and runtime authorization boundaries remain unchanged.

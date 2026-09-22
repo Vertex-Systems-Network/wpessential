@@ -64,6 +64,12 @@ It must define distinct typed outcomes for missing Definition, invalid Definitio
 - #1102 remains explicit runtime-authorization gated.
 - #947 remains independent Worker-only.
 
+## #1181 validation correction
+
+- Prior head `af42eeaaa959d4101c905467c1f98b3c2c462947` failed Governance `35768211280` at exact-head diff hygiene only.
+- Root cause: two trailing-whitespace lines in the new audit Markdown header.
+- Corrective change removes only that whitespace and records the evidence; audit verdict, #1180 scope and runtime boundaries are unchanged.
+
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1181. Merge only on terminal green evidence.
+Validate the corrected PR #1181 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence.

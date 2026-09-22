@@ -1,7 +1,7 @@
 # Dashboard Widgets — Runtime Render Execution Transition Audit V1
 
-Surface: **10 / Dashboard Widgets**  
-Issue: **#1179**  
+Surface: **10 / Dashboard Widgets**
+Issue: **#1179**
 Exact audited main: `d6c66ed7ce224131f484dc8bc8243c03a8649832`
 
 ## Purpose
