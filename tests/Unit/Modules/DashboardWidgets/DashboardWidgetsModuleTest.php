@@ -13,6 +13,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetTrustedComponentRenderer;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
@@ -82,6 +83,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetRegistrationCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_REGISTRATION_COMPILER));
         self::assertInstanceOf(DashboardWidgetVisibilityCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_COMPILER));
         self::assertInstanceOf(DashboardWidgetVisibilityEvaluator::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_EVALUATOR));
+        self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
 
         $registry = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
         self::assertInstanceOf(ComponentBlueprintRegistry::class, $registry);
