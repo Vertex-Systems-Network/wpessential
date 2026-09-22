@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: cfd2003aaf238f7453c9f8fa429f5103e86fce05
 observed_main_source: "PR #1184 merged Dashboard Widgets bounded runtime render executor V1"
 active_issue: "#1185"
-active_pr: null
+active_pr: "#1187"
 active_branch: supervisor/dashboard-widgets-wordpress-dashboard-adapter-transition-audit-v1
 current_milestone: "Dashboard Widgets #1182 terminal reconciliation + WordPress Dashboard adapter transition audit"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1182 / PR #1184 merged as cfd2003aaf238f7453c9f8fa429f5103e86fce05; all five path-applicable exact-head workflows passed"
-next_safe_action: "Open the #1185 shared-truth/audit PR, bind its exact PR number, then perform one consolidated Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: null
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1187. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1187 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1186"
   slot_id: dashboard-widgets-bounded-wordpress-dashboard-adapter-contract-v1
