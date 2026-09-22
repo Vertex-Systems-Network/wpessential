@@ -11,15 +11,15 @@ Rules:
 - repository evidence outranks this journal.
 
 
-## 2026-09-23 — Runtime executor merged; WordPress Dashboard adapter transition audited
+## 2026-09-23 — Adapter audit merged; bounded WordPress Dashboard adapter contract started
 
-- Issue #1180 / PR #1183 merged the bounded runtime-render execution contract as `80fdd1d3e38fea7bd44baf9011ef8f69c73589b7`; RB-0035 requires terminal reconciliation.
-- Issue #1182 / PR #1184 exact head `9a6b0650a706b14e5ef7bef92da2ac00f5536dcb` passed Governance `35786157023`, Architecture `35786157058`, PHP Quality `35786157049`, Platform Matrix `35786157012` and Package `35786157060`; merged as `cfd2003aaf238f7453c9f8fa429f5103e86fce05`.
-- Security checks included Composer advisory audit plus Architecture npm high/critical development/distributable advisory gates; all passed.
-- The six-state non-throwing runtime executor is now present with renderer non-invocation on denial/rejection and no raw exception leakage.
-- Issue #1185 audits the remaining WordPress adapter boundary. Verdict: `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1`.
-- Catalog-level duplicate widget-id handling, normal/network target isolation, fixed WPEssential ids, UI `ExecutionContext`, six-state callback mapping and exception containment must be frozen before any `wp_add_dashboard_widget` implementation.
-- Issue #1186 is dependency-gated. Providers/sources, assets, mutation, caching/refresh, full parity, deploy and release remain blocked.
+- Issue #1182 / PR #1184 remains terminal source PASS as `cfd2003aaf238f7453c9f8fa429f5103e86fce05`; six-state non-throwing runtime rendering is merged and security checks passed.
+- Issue #1185 / PR #1187 exact head `9c8fa3e106a60b179349e0a3fb20fe7ba2b8a33d` passed Governance `35787116494` and Architecture `35787116504`; zero unresolved threads/behind; merged as `7f448ff01b51f0abfd3551ef431f5cf5675ec5a9`.
+- RB-0037 is terminal PASS; audit verdict `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1`.
+- Issue #1186 is claimed on `supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1`.
+- Contract freezes canonical slug+id planning, exact `wpe_dashboard_widget_` ids, same-target collision suppression before side effects, site/network isolation, idempotent hooks, fresh UI execution context and six-state callback mapping.
+- Existing visibility policy remains authoritative; no blanket `manage_options` gate is added.
+- Issue #1188 is dependency-gated with exact seven-file module-local source/test scope. Providers/sources, assets, mutation, caching/refresh, shared Platform changes, full parity, deploy and release remain blocked.
 
 ## 2026-09-21 — PR #1116 opened / waiting boundary persisted
 
