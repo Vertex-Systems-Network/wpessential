@@ -8,7 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `cfd2003aaf238f7453c9f8fa429f5103e86fce05`
 - Completed source milestone: Issue #1182 / PR #1184
 - Active audit Issue: #1185
-- Active PR: pending creation
+- Active PR: #1187
 - Deterministic audit branch: `supervisor/dashboard-widgets-wordpress-dashboard-adapter-transition-audit-v1`
 
 ## #1180 / #1183 terminal contract evidence
@@ -95,4 +95,4 @@ Its contract may define WordPress Dashboard adapter semantics only. It may not i
 
 ## Next safe action
 
-Open the #1185 shared-truth/audit PR from the deterministic branch, bind its exact PR number in compact state, then perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh. Merge only on terminal green evidence.
+Perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1187. Merge only on terminal green evidence.
