@@ -298,3 +298,14 @@ Rules:
 - Corrective change removes only that whitespace and reconciles README/compact state/RB-0029/journal evidence.
 - Contract component types, Blueprint UUIDs, binding schemas and authorization boundaries remain unchanged.
 - Issue #1170 remains dependency-gated until corrected PR #1171 exact head is terminal green and merged.
+
+
+## 2026-09-22 — Trusted component renderer contract merged; #1170 ready to claim
+
+- PR #1171 corrected exact head `f485d592b6cb5f50f729a5db7dc0cb8785336705` passed Governance `35662578475` and Architecture `35662578469`.
+- Prior head `d0df313f...` / Governance `35662465508` remains historical only; it failed solely on three trailing-whitespace contract-header lines.
+- PR #1171 merged as `1031be4c88f8daadd79bb64a8aef7d5714e72c1a`; Issue #1168 closed.
+- RB-0029 reconciled terminal PASS.
+- `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1` is promoted.
+- Issue #1170 is READY_TO_CLAIM on `agent/dashboard-widgets-trusted-component-renderer-v1`.
+- Dashboard runtime renderer invocation, Dashboard hooks, providers/sources, remote/iframe/shortcode/block/action execution, assets, mutation and full-parity certification remain blocked.

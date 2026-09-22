@@ -1,22 +1,16 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: VERIFYING
-observed_main_sha: a8b3539168ba72f74473d4bc9e3fef6af445147f
-observed_main_source: "PR #1169 merged Dashboard Widgets component-render transition audit"
-active_issue: "#1168"
-active_pr: "#1171"
-active_branch: supervisor/dashboard-widgets-trusted-component-renderer-contract-v1
-current_milestone: "Dashboard Widgets trusted component Blueprint/renderer implementation contract V1"
-milestone_status: VERIFYING
-last_completed_milestone: "Issue #1167 / PR #1169 merged as a8b3539168ba72f74473d4bc9e3fef6af445147f; exact-head Governance and Architecture passed"
-next_safe_action: "Validate PR #1171 corrected exact head after Governance diff-hygiene whitespace fix. Merge only if Governance/Architecture are terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1171 corrected exact-head Governance/Architecture validation after diff-hygiene fix"
-next_planned_slot:
-  issue: "#1170"
-  slot_id: dashboard-widgets-trusted-component-blueprint-registrar-renderer-v1
-  claim_branch: agent/dashboard-widgets-trusted-component-renderer-v1
-  claim_rule: "Do not claim until #1168 contract PR merges with READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1."
+state_status: READY
+observed_main_sha: 1031be4c88f8daadd79bb64a8aef7d5714e72c1a
+observed_main_source: "PR #1171 merged Dashboard Widgets trusted component Blueprint/renderer implementation contract V1"
+active_issue: "#1170"
+active_pr: null
+active_branch: agent/dashboard-widgets-trusted-component-renderer-v1
+current_milestone: "Dashboard Widgets trusted component Blueprint registrar + bounded renderer V1"
+milestone_status: READY_TO_CLAIM
+last_completed_milestone: "Issue #1168 / PR #1171 merged as 1031be4c88f8daadd79bb64a8aef7d5714e72c1a; corrected exact-head Governance and Architecture passed"
+next_safe_action: "Claim Issue #1170 on agent/dashboard-widgets-trusted-component-renderer-v1 from fresh exact current main, implement only its eight authorized source/test files, register seven canonical Surface 10 Blueprints plus one bounded renderer, and keep Dashboard runtime renderer invocation/hooks/providers/assets/mutation blocked."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +18,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0029
+    - RB-0030
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,8 +42,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0028 reconciled terminal PASS for #1167/#1169."
-  - "Issue #1168 defines seven canonical Surface 10 component types, stable Blueprint UUIDs and minimal required binding schemas."
-  - "V1 component registration reuses concrete shared ComponentBlueprintRegistry and BlueprintRendererDispatcher services without shared Platform mutation."
-  - "Issue #1170 is dependency-gated; Dashboard runtime renderer invocation, hooks, providers/sources, assets, mutation and full parity remain blocked."
-  - "PR #1171 prior head d0df313f failed Governance 35662465508 only on three trailing-whitespace contract-header lines; corrective head removes that whitespace without contract/runtime scope change."
+  - "RB-0029 reconciled terminal PASS for #1168/#1171."
+  - "Issue #1170 dependency gate is satisfied and the slot is READY_TO_CLAIM."
+  - "Seven canonical Surface 10 revision-1 Blueprints and bounded renderer semantics are frozen by the merged #1168 contract."
+  - "Dashboard runtime RendererInterface::render invocation, WordPress Dashboard hooks, providers/query/source execution, remote/iframe/shortcode/block/action execution, assets, mutation and full parity remain blocked."

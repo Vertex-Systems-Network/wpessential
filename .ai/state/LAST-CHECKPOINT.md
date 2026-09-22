@@ -5,63 +5,52 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `a8b3539168ba72f74473d4bc9e3fef6af445147f`
-- Completed audit: Issue #1167 / PR #1169
-- Active contract Issue: #1168
-- Active PR: #1171
-- Deterministic branch: `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`
+- Exact main after contract merge: `1031be4c88f8daadd79bb64a8aef7d5714e72c1a`
+- Completed contract: Issue #1168 / PR #1171
+- Next implementation Issue: #1170
+- Deterministic source branch: `agent/dashboard-widgets-trusted-component-renderer-v1`
 
-## #1167 / #1169 terminal evidence
+## #1168 / #1171 terminal evidence
 
-- exact head `82403eaa65100e8914225563573aa031ec8a151d`
-- Governance `35661587232` PASS
-- Architecture `35661587244` PASS
-- zero unresolved review threads; zero behind
-- merged as `a8b3539168ba72f74473d4bc9e3fef6af445147f`
-- Issue #1167 closed completed
-- RB-0028 reconciled PASS
+- corrected exact head `f485d592b6cb5f50f729a5db7dc0cb8785336705`
+- Governance `35662578475` PASS
+- Architecture `35662578469` PASS
+- zero unresolved review threads; zero behind at merge
+- merged as `1031be4c88f8daadd79bb64a8aef7d5714e72c1a`
+- Issue #1168 closed completed
+- RB-0029 reconciled PASS
 
-## #1168 component contract
+Historical-only validation evidence:
 
-Seven canonical Surface 10 V1 components are frozen with revision-1 stable Blueprint UUIDs and minimal exact required bindings:
+- prior head `d0df313f2a55bda8f6f835b234bb23563983d383`
+- Governance `35662465508` failed only `git diff --check` on three trailing-whitespace contract-header lines
+- corrected before merge; contract/runtime semantics unchanged
 
-- rich-text → content:string
-- kpi → label:string + value:string
-- chart → labels:string_list + values:int_list
-- quick-links → labels:string_list + urls:string_list
-- announcement → title:string + text:string
-- support-onboarding → title:string + text:string
-- icon-link → icon:string + label:string + url:string
-
-V1 uses no asset handles. Text is escaped. Links are HTTPS absolute or same-site root-relative only. Chart and quick-link lists are bounded and length-matched.
-
-The implementation reuses concrete shared `ComponentBlueprintRegistry` and `BlueprintRendererDispatcher` services. It does not modify shared Platform contracts.
-
-## Next source tranche
-
-Issue #1170 is dependency-gated on the #1168 contract merge.
-
-Verdict after successful contract merge:
+## Promoted next tranche
 
 `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`
 
+Issue #1170 is READY_TO_CLAIM.
+
+The source tranche may only:
+
+- register the seven canonical revision-1 Surface 10 Blueprints;
+- register one bounded Dashboard Widgets renderer under the seven canonical component types;
+- reuse the existing shared `ComponentBlueprintRegistry` and `BlueprintRendererDispatcher`;
+- escape authored text and enforce the merged link/chart bounds;
+- wire module-local registration and add focused tests.
+
 ## Still blocked
 
-- Dashboard runtime renderer invocation
+- Dashboard Widgets runtime `RendererInterface::render()` invocation
 - WordPress Dashboard hooks / `wp_add_dashboard_widget`
 - provider/query/source execution
-- remote/Safe HTTP/iframe execution
+- Safe HTTP/remote/iframe execution
 - shortcode/block/action execution
-- Definition/user-preference mutation
 - asset registration
+- Definition/user-preference mutation
 - full-parity certification/deploy/release
-
-## #1171 validation correction
-
-- Prior head `d0df313f2a55bda8f6f835b234bb23563983d383` failed Governance `35662465508` at exact-head diff hygiene only.
-- Root cause: three trailing-whitespace lines in the new contract Markdown header.
-- Corrective change removes only that whitespace and records the evidence; component types, Blueprint UUIDs, binding schemas and scope are unchanged.
 
 ## Next safe action
 
-Validate the corrected PR #1171 exact head with Governance/Architecture + review-thread + main-divergence evidence. Merge only on terminal green evidence.
+Claim Issue #1170 from fresh exact current main on `agent/dashboard-widgets-trusted-component-renderer-v1` and implement only its eight authorized source/test files.
