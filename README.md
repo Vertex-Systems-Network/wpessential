@@ -11,10 +11,10 @@ Project website: **https://wpessential.org**
 - Reconciled product main: `e3c7b9dbf6f6465a4487aeaf309651923524c771` after Issue #1170 / PR #1174 merged **Trusted Component Blueprint Registrar + Renderer V1**.
 - #1170 terminal evidence: exact head `b32939b5665d98be21fafd892cb5419e6b7f5c8d`; Governance `35672066125`, Architecture `35672066118`, PHP Quality `35672066106`, Package `35672066117`, Platform Matrix `35672066124` all PASS; zero unresolved review threads and zero behind at merge.
 - #1170 bounded source milestone: `██████████ 100%` for **Component Blueprint Registrar + Renderer V1 only**. This is not Dashboard runtime renderer invocation or full product parity.
-- Active milestone: **Issue #1175 — #1170 terminal reconciliation + renderer-execution transition audit**.
+- Active milestone: **Issue #1175 / PR #1177 — #1170 terminal reconciliation + renderer-execution transition audit**.
 - Exact-main audit finding: trusted `widget.type` and trusted Surface 10 Blueprint are validated independently; a Definition can currently declare one trusted class while referencing another trusted class's canonical Blueprint if that Blueprint's own bindings are valid.
 - Audit verdict: **READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1** and **BLOCKED_FOR_DASHBOARD_RUNTIME_RENDERER_INVOCATION**.
-- Dependency-gated next source tranche: **Issue #1176 — Content-Class ↔ Canonical Blueprint Consistency Gate V1**, branch `agent/dashboard-widgets-content-blueprint-consistency-gate-v1`; claim only after the #1175 audit PR merges.
+- Dependency-gated next source tranche: **Issue #1176 — Content-Class ↔ Canonical Blueprint Consistency Gate V1**, branch `agent/dashboard-widgets-content-blueprint-consistency-gate-v1`; claim only after PR #1177 merges with `READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1`.
 - Direct Dashboard hooks/`wp_add_dashboard_widget`, runtime renderer invocation, provider/query/source execution, remote/iframe/shortcode/block/action execution, assets, mutation/preferences and full-parity certification remain blocked.
 - Open repository blockers remain #858 external-admin required-CI reconciliation, #1102 separately authorization-gated P-006 Wave 1U, and #947 independent Worker-only audit.
 - Current AI-Native rule: every meaningful repository-changing Supervisor milestone must reconcile this live README progress block before final reporting; module delivery/timeline changes also require the complete 56 / 56 dashboard reconciliation.

@@ -8,6 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `e3c7b9dbf6f6465a4487aeaf309651923524c771`
 - Completed source milestone: Issue #1170 / PR #1174
 - Active audit Issue: #1175
+- Active PR: #1177
 - Deterministic audit branch: `supervisor/dashboard-widgets-renderer-execution-transition-audit-v1`
 
 ## #1170 / #1174 terminal evidence
@@ -58,4 +59,4 @@ Its only source purpose is to bind each trusted content class to its exact canon
 
 ## Next safe action
 
-Open the #1175 audit PR, bind compact state to its exact PR number, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Do not claim #1176 before audit promotion.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1177. Merge only on terminal green evidence. Do not claim #1176 before audit promotion.

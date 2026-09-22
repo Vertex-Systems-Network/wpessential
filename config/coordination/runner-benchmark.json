@@ -1036,10 +1036,11 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|renderer-execution-transition-audit|issue1175|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Exact audited main e3c7b9dbf6f6465a4487aeaf309651923524c771",
-        "Audit verdict READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1; exact-head PR validation pending"
+        "Audit verdict READY_FOR_CONTENT_CLASS_BLUEPRINT_CONSISTENCY_GATE_V1",
+        "PR #1177 opened on supervisor/dashboard-widgets-renderer-execution-transition-audit-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1176 content-class↔canonical Blueprint consistency gate. Dashboard runtime renderer invocation remains blocked."
     }
