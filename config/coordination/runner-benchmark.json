@@ -1234,7 +1234,7 @@
         "Exact base main 7f448ff01b51f0abfd3551ef431f5cf5675ec5a9",
         "Contract freezes two-phase collision-safe registration planning, fixed ids, site/network isolation, UI ExecutionContext and six-state callback mapping",
         "Issue #1188 opened dependency-gated with exact seven-file source/test scope",
-        "Contract PR exact-head validation pending"
+        "PR #1189 opened on supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1; final exact-head validation pending"
       ],
       "note": "PASS may authorize only Issue #1188 bounded WordPress Dashboard adapter V1. Providers/sources, assets, mutation, caching/refresh, shared Platform changes, full parity, deploy and release remain blocked."
     }
