@@ -5,63 +5,59 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `7f448ff01b51f0abfd3551ef431f5cf5675ec5a9`
-- Completed audit milestone: Issue #1185 / PR #1187
-- Active contract Issue: #1186
-- Active PR: #1189
-- Deterministic contract branch: `supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1`
+- Exact main: `b2d15e894be6b695a34e70b1e73159617baf4aa0`
+- Completed source milestone: Issue #1188 / PR #1190
+- Active reconciliation Issue: #1191
+- Active PR: #1192
+- Deterministic branch: `supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1`
 
-## #1185 / #1187 terminal audit evidence
+## #1186 / #1189 terminal contract evidence
 
-- exact head `9c8fa3e106a60b179349e0a3fb20fe7ba2b8a33d`
-- Governance `35787116494` PASS
-- Architecture `35787116504` PASS
+- exact head `0859a8bbaef7d9a571b630a5e368be641c7f41a7`
+- Governance `35790596276` PASS
+- Architecture `35790596315` PASS
+- zero unresolved review threads; zero behind
+- merged as `e3ce7c3ee9742f2d116b546950f6d459d5f37bd9`
+- Issue #1186 closed completed
+- verdict `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_V1`
+
+## #1188 / #1190 terminal source evidence
+
+- exact head `02c71dc800ba9e75ca53c07cd3284674b9e705a7`
+- Governance `35791655782` PASS
+- Architecture `35791655725` PASS
+- PHP Quality `35791655792` PASS
+- Platform Compatibility Matrix `35791655760` PASS
+- Distributable Package `35791655750` PASS
 - zero unresolved review threads
 - zero commits behind main
-- exactly seven shared-truth/audit files
-- merged as `7f448ff01b51f0abfd3551ef431f5cf5675ec5a9`
-- Issue #1185 closed completed
-- audit verdict `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1`
+- exactly seven authorized source/test files
+- merged as `b2d15e894be6b695a34e70b1e73159617baf4aa0`
+- Issue #1188 closed completed
 
-## Current runtime boundary
+## Bounded adapter now present
 
-Issue #1182 / PR #1184 remains the latest merged source milestone:
+Surface 10 now registers only the site/network WordPress Dashboard hooks through the module boot lifecycle and uses a module-local native environment seam.
 
-- six non-throwing module-local render states;
-- compiler rejection and visibility denial prevent renderer invocation;
-- unexpected runtime failures do not expose raw exception text;
-- exact incoming `ExecutionContext` reaches visibility and rendering;
-- asset handles remain data only;
-- no Dashboard hooks/provider/source/mutation/asset side effects.
+Security/correctness guarantees:
 
-## #1186 adapter contract
-
-The contract freezes a module-local WordPress integration seam and does not yet execute native Dashboard hooks.
-
-Exact decisions:
-
-- module-local WordPress environment interface + native implementation;
-- module `boot()` owns idempotent Dashboard hook registration;
-- exact hooks are `wp_dashboard_setup` and `wp_network_dashboard_setup`;
-- Definition planning sorts by canonical `slug`, then Definition id;
-- expected compiler rejection skips only that Definition;
-- unexpected planning failure aborts the target before any registration side effect;
-- site/network targets are isolated collision domains;
-- exact widget id is `wpe_dashboard_widget_` + compiled widget key;
-- all members of a same-target duplicate id group are suppressed before native registration;
-- collision-free entries may register after the full collision scan;
-- callbacks build fresh current-request `ExecutionContext` with `ExecutionChannel::Ui`;
-- no blanket `manage_options` gate is added because the existing visibility evaluator remains authoritative;
+- deterministic Definition planning by slug then id;
+- exact `wpe_dashboard_widget_` id namespace;
+- complete same-target collision scan before native registration side effects;
+- all members of a colliding group suppressed;
+- site/network collision domains isolated;
+- no control callback or callback args;
+- fresh current-request `ExecutionContext` with `ExecutionChannel::Ui`;
+- existing visibility policy remains authoritative; no blanket adapter capability gate;
 - only `rendered` emits exact trusted renderer HTML;
 - all other runtime states emit nothing;
 - asset handles remain ignored/data-only;
-- no control callback, provider/source execution, mutation, caching/refresh or shared Platform source change.
+- hook/API/repository/compiler/runtime/output failures are contained;
+- no provider/query/source execution, remote content, mutation, caching/refresh or shared Platform widening.
 
-## Next source tranche
+## Current closeout
 
-Issue #1188 is dependency-gated on the #1186 contract PR.
-
-Exact scope is seven files: module-local WordPress environment interface, native environment, adapter, module wiring/boot, adapter unit tests, native environment unit tests, and module tests.
+Issue #1191 reconciles compact state, queue, Runner Benchmark and README only. No runtime/product source is authorized.
 
 ## Repository blockers
 
@@ -71,4 +67,4 @@ Exact scope is seven files: module-local WordPress environment interface, native
 
 ## Next safe action
 
-Perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1189. Merge only on terminal green evidence.
+On the next low-request milestone perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1192 and merge only on terminal green.
