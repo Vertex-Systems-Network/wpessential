@@ -240,16 +240,22 @@ final readonly class DashboardWidgetTrustedComponentRenderer implements Renderer
             return !str_starts_with($url, '//');
         }
 
-        $parts = parse_url($url);
-        if (!is_array($parts)) {
+        if (!str_starts_with(strtolower($url), 'https://')) {
             return false;
         }
 
-        return isset($parts['scheme'], $parts['host'])
-            && strtolower((string) $parts['scheme']) === 'https'
-            && (string) $parts['host'] !== ''
-            && !isset($parts['user'])
-            && !isset($parts['pass']);
+        $remainder = substr($url, 8);
+        $authorityLength = strcspn($remainder, '/?#');
+        $authority = substr($remainder, 0, $authorityLength);
+        if (
+            $authority === ''
+            || str_contains($authority, '@')
+            || preg_match('/^[a-z0-9.-]+(?::[0-9]{1,5})?$/i', $authority) !== 1
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     private function escape(string $value): string
