@@ -14,7 +14,7 @@ Project website: **https://wpessential.org**
 - Surface 10 now has bounded native WordPress Dashboard registration through `wp_dashboard_setup` and `wp_network_dashboard_setup`, collision-safe two-phase planning, fixed `wpe_dashboard_widget_` ids, site/network isolation and fresh `ExecutionChannel::Ui` callback context.
 - Existing roles/capabilities/users visibility policy remains authoritative. Only the `rendered` runtime state emits exact trusted renderer HTML; all failure/deny/missing states emit nothing. Asset handles remain ignored/data-only.
 - Latest bounded milestone: **WordPress Dashboard Adapter V1 PASS / merged**. The `██████████ 100%` marker applies only to this bounded adapter milestone, not full Dashboard Widgets product parity.
-- Active closeout: **Issue #1191 — #1188 post-merge shared-truth reconciliation**, branch `supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1`; no runtime/product PHP.
+- Active closeout: **Issue #1191 / PR #1192 — #1188 post-merge shared-truth reconciliation**, branch `supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1`; no runtime/product PHP.
 - No new Dashboard Widgets source tranche is claimable until this reconciliation merges and a fresh exact-main transition audit identifies the next safe bounded gate.
 - Provider/query/source execution, remote/iframe/shortcode/block/action execution, asset enqueue/register, mutation/preferences, caching/refresh, shared Platform widening and full-parity certification remain blocked/separately gated.
 - Open repository blockers remain #858 external-admin required-CI reconciliation, #1102 separately authorization-gated P-006 Wave 1U, and #947 independent Worker-only audit.

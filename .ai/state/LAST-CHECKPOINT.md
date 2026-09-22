@@ -8,7 +8,7 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 - Exact main: `b2d15e894be6b695a34e70b1e73159617baf4aa0`
 - Completed source milestone: Issue #1188 / PR #1190
 - Active reconciliation Issue: #1191
-- Active PR: pending creation
+- Active PR: #1192
 - Deterministic branch: `supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1`
 
 ## #1186 / #1189 terminal contract evidence
@@ -67,4 +67,4 @@ Issue #1191 reconciles compact state, queue, Runner Benchmark and README only. N
 
 ## Next safe action
 
-Open the #1191 reconciliation PR. On the next low-request milestone perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh and merge only on terminal green.
+On the next low-request milestone perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1192 and merge only on terminal green.

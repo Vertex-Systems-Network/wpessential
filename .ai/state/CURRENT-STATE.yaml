@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: b2d15e894be6b695a34e70b1e73159617baf4aa0
 observed_main_source: "PR #1190 merged Dashboard Widgets bounded WordPress Dashboard adapter V1"
 active_issue: "#1191"
-active_pr: null
+active_pr: "#1192"
 active_branch: supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1
 current_milestone: "Dashboard Widgets #1188 post-merge shared-truth reconciliation"
 milestone_status: VERIFYING
 last_completed_milestone: "Issue #1188 / PR #1190 merged as b2d15e894be6b695a34e70b1e73159617baf4aa0; all five path-applicable exact-head workflows passed"
-next_safe_action: "Open the #1191 shared-truth reconciliation PR and validate its exact-head Governance/Architecture gate on the next low-request milestone."
-waiting_external: null
+next_safe_action: "On the next low-request milestone perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1192; merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1192 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: null
   slot_id: null

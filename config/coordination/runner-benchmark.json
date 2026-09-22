@@ -1268,7 +1268,7 @@
         "exact seven authorized source/test files",
         "merged as b2d15e894be6b695a34e70b1e73159617baf4aa0; Issue #1188 closed completed"
       ],
-      "note": "Terminal bounded source PASS only. Full Surface 10 runtime/product parity, provider/source execution, assets, mutation, deploy and release remain unpromoted."
+      "note": "Terminal bounded source PASS only. Full Surface 10 runtime/product parity, provider/source execution, assets, mutation, deploy and release remain unpromoted. Post-merge shared-truth reconciliation is PR #1192 / Issue #1191; no new source tranche may be claimed before that reconciliation merges and a fresh exact-main transition audit runs."
     }
   ],
   "last_reconciled_issue": "#1191",
