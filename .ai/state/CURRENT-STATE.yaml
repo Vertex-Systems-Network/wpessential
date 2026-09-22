@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: de147432457892b388d80ee368a30c7a9b26fa4d
-observed_main_source: "PR #1181 merged Dashboard Widgets runtime-render execution transition audit"
-active_issue: "#1180"
-active_pr: "#1183"
-active_branch: supervisor/dashboard-widgets-runtime-render-execution-contract-v1
-current_milestone: "Dashboard Widgets bounded runtime render execution contract V1"
+observed_main_sha: cfd2003aaf238f7453c9f8fa429f5103e86fce05
+observed_main_source: "PR #1184 merged Dashboard Widgets bounded runtime render executor V1"
+active_issue: "#1185"
+active_pr: null
+active_branch: supervisor/dashboard-widgets-wordpress-dashboard-adapter-transition-audit-v1
+current_milestone: "Dashboard Widgets #1182 terminal reconciliation + WordPress Dashboard adapter transition audit"
 milestone_status: VERIFYING
-last_completed_milestone: "Issue #1179 / PR #1181 merged as de147432457892b388d80ee368a30c7a9b26fa4d; corrected exact-head Governance and Architecture passed"
-next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1183. Merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1183 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1182 / PR #1184 merged as cfd2003aaf238f7453c9f8fa429f5103e86fce05; all five path-applicable exact-head workflows passed"
+next_safe_action: "Open the #1185 shared-truth/audit PR, bind its exact PR number, then perform one consolidated Governance/Architecture + review/main-divergence refresh. Merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: null
 next_planned_slot:
-  issue: "#1182"
-  slot_id: dashboard-widgets-bounded-runtime-render-executor-v1
-  claim_branch: agent/dashboard-widgets-bounded-runtime-render-executor-v1
-  claim_rule: "Do not claim until #1180 contract PR merges with READY_FOR_BOUNDED_RUNTIME_RENDER_EXECUTOR_V1."
+  issue: "#1186"
+  slot_id: dashboard-widgets-bounded-wordpress-dashboard-adapter-contract-v1
+  claim_branch: supervisor/dashboard-widgets-wordpress-dashboard-adapter-contract-v1
+  claim_rule: "Do not claim until #1185 audit PR merges with READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0035
+    - RB-0037
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,7 +48,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0034 reconciled terminal PASS for #1179/#1181."
-  - "Issue #1180 freezes six module-local runtime result states and exact orchestration/failure mapping."
-  - "Issue #1182 is dependency-gated with exact six-file source/test scope."
-  - "Direct WordPress Dashboard hooks, providers/sources, asset side effects, mutation, caching/refresh and full parity remain blocked."
+  - "RB-0035 must reconcile terminal PASS for #1180/#1183."
+  - "RB-0036 records terminal PASS for #1182/#1184."
+  - "Issue #1185 audit verdict is READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_CONTRACT_V1."
+  - "Issue #1186 is dependency-gated; direct WordPress Dashboard hooks remain blocked until its contract merges."
+  - "Provider/source execution, asset side effects, mutation, caching/refresh, full parity, deploy and release remain blocked."
