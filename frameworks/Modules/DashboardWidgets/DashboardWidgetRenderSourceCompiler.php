@@ -21,17 +21,20 @@ final readonly class DashboardWidgetRenderSourceCompiler
     private const BINDING_ENVELOPE_KEYS = ['source', 'value'];
 
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
+    private DashboardWidgetComponentBlueprintCatalog $componentCatalog;
 
     public function __construct(
         private ComponentBlueprintRegistryInterface $blueprints,
         ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
+        ?DashboardWidgetComponentBlueprintCatalog $componentCatalog = null,
     ) {
         $this->contentClassCompiler = $contentClassCompiler ?? new DashboardWidgetContentClassCompiler();
+        $this->componentCatalog = $componentCatalog ?? new DashboardWidgetComponentBlueprintCatalog();
     }
 
     public function compile(Definition $definition): DashboardWidgetRenderSourceDescriptor
     {
-        $this->contentClassCompiler->compile($definition);
+        $contentClass = $this->contentClassCompiler->compile($definition);
 
         $payload = $definition->payload;
         $widget = $payload['widget'] ?? null;
@@ -60,6 +63,19 @@ final readonly class DashboardWidgetRenderSourceCompiler
         $blueprintRevision = $renderSource['blueprint_revision'] ?? null;
         if (!is_int($blueprintRevision) || $blueprintRevision < 1) {
             throw new InvalidArgumentException('Dashboard Widget render_source blueprint_revision must be a positive integer.');
+        }
+
+        $canonicalBlueprint = $this->componentCatalog->forContentType($contentClass->contentType);
+        if ($canonicalBlueprint === null) {
+            throw new InvalidArgumentException('Dashboard Widget trusted content class has no canonical Component Blueprint.');
+        }
+        if (
+            $blueprintId !== $canonicalBlueprint->id
+            || $blueprintRevision !== $canonicalBlueprint->revision
+        ) {
+            throw new InvalidArgumentException(
+                'Dashboard Widget render_source Blueprint must match the canonical Blueprint for its trusted content class.',
+            );
         }
 
         $bindings = $renderSource['bindings'] ?? null;

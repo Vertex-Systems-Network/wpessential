@@ -96,6 +96,84 @@ final class DashboardWidgetsModuleTest extends TestCase
             $services->get(RenderingServiceRegistrar::SERVICE_RENDERER),
         );
 
+        $registrationCompiler = $services->get(DashboardWidgetsModule::SERVICE_REGISTRATION_COMPILER);
+        self::assertInstanceOf(DashboardWidgetRegistrationCompiler::class, $registrationCompiler);
+
+        $richText = $catalog->forContentType('rich_text');
+        $kpi = $catalog->forContentType('kpi');
+        self::assertNotNull($richText);
+        self::assertNotNull($kpi);
+
+        $validDefinition = new Definition(
+            id: '22222222-2222-4222-8222-222222222222',
+            slug: 'valid-rich-text',
+            type: DashboardWidgetDefinition::TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+            status: DefinitionStatus::Published,
+            payload: [
+                'widget' => [
+                    'key' => 'valid-rich-text',
+                    'title' => 'Valid Rich Text',
+                    'type' => 'rich_text',
+                    'context' => 'normal',
+                    'priority' => 'default',
+                    'network_dashboard' => false,
+                    'render_source' => [
+                        'kind' => 'component_blueprint',
+                        'blueprint_id' => $richText->id,
+                        'blueprint_revision' => $richText->revision,
+                        'bindings' => [
+                            'content' => ['source' => 'literal', 'value' => 'Safe'],
+                        ],
+                    ],
+                ],
+            ],
+            revision: 1,
+            dependencies: [],
+        );
+        self::assertInstanceOf(
+            DashboardWidgetRegistrationCompiler::class,
+            $registrationCompiler,
+        );
+        $registrationCompiler->compile($validDefinition);
+
+        $mismatchDefinition = new Definition(
+            id: '33333333-3333-4333-8333-333333333333',
+            slug: 'mismatched-rich-text',
+            type: DashboardWidgetDefinition::TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+            status: DefinitionStatus::Published,
+            payload: [
+                'widget' => [
+                    'key' => 'mismatched-rich-text',
+                    'title' => 'Mismatched Rich Text',
+                    'type' => 'rich_text',
+                    'context' => 'normal',
+                    'priority' => 'default',
+                    'network_dashboard' => false,
+                    'render_source' => [
+                        'kind' => 'component_blueprint',
+                        'blueprint_id' => $kpi->id,
+                        'blueprint_revision' => $kpi->revision,
+                        'bindings' => [
+                            'label' => ['source' => 'literal', 'value' => 'Orders'],
+                            'value' => ['source' => 'literal', 'value' => '12'],
+                        ],
+                    ],
+                ],
+            ],
+            revision: 1,
+            dependencies: [],
+        );
+        try {
+            $registrationCompiler->compile($mismatchDefinition);
+            self::fail('Expected module-wired registration compiler to reject cross-class Blueprint mismatch.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
         foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG] as $name) {
             $descriptor = $abilities->descriptor($name);
             self::assertNotNull($descriptor);

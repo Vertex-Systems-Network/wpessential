@@ -6,21 +6,19 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
-use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
 final class DashboardWidgetRegistrationCompilerTest extends TestCase
 {
-    private const BLUEPRINT_ID = '22222222-2222-4222-8222-222222222222';
-
     public function testCompilesPublishedOwnedDefinitionIntoTypedDescriptor(): void
     {
         $descriptor = $this->compiler()->compile($this->definition());
@@ -84,6 +82,27 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
+    public function testRegistrationCompilationRejectsCrossClassCanonicalBlueprintMismatch(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $kpi = $catalog->forContentType('kpi');
+        self::assertNotNull($kpi);
+
+        $widget = $this->widget();
+        $widget['render_source'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $kpi->id,
+            'blueprint_revision' => $kpi->revision,
+            'bindings' => [
+                'label' => ['source' => 'literal', 'value' => 'Orders'],
+                'value' => ['source' => 'literal', 'value' => '12'],
+            ],
+        ];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->compiler()->compile($this->definition(widget: $widget));
+    }
+
     public function testRegistrationCompilationFailsClosedOnMissingOrMalformedRenderSource(): void
     {
         $valid = $this->widget();
@@ -95,7 +114,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
             array_replace($valid, ['render_source' => ['kind' => 'provider']]),
             array_replace($valid, ['render_source' => array_replace(
                 $this->renderSource(),
-                ['bindings' => ['title' => ['source' => 'provider', 'value' => 'Orders']]],
+                ['bindings' => ['content' => ['source' => 'provider', 'value' => 'Orders']]],
             )]),
         ] as $widget) {
             try {
@@ -140,21 +159,22 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
 
     private function compiler(): DashboardWidgetRegistrationCompiler
     {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $registry = new ComponentBlueprintRegistry();
-        $registry->register(new ComponentBlueprintDescriptor(
-            id: self::BLUEPRINT_ID,
-            revision: 2,
-            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
-            componentType: 'dashboard.metrics',
-            bindingSchema: ['title' => 'string', 'count' => 'int'],
-        ));
+        foreach ($catalog->all() as $blueprint) {
+            $registry->register($blueprint);
+        }
 
         $contentClassCompiler = new DashboardWidgetContentClassCompiler();
 
         return new DashboardWidgetRegistrationCompiler(
             new DashboardWidgetVisibilityCompiler(),
             $contentClassCompiler,
-            new DashboardWidgetRenderSourceCompiler($registry, $contentClassCompiler),
+            new DashboardWidgetRenderSourceCompiler(
+                $registry,
+                $contentClassCompiler,
+                $catalog,
+            ),
         );
     }
 
@@ -203,13 +223,15 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
     /** @return array<string,mixed> */
     private function renderSource(): array
     {
+        $blueprint = (new DashboardWidgetComponentBlueprintCatalog())->forContentType('rich_text');
+        self::assertNotNull($blueprint);
+
         return [
             'kind' => 'component_blueprint',
-            'blueprint_id' => self::BLUEPRINT_ID,
-            'blueprint_revision' => 2,
+            'blueprint_id' => $blueprint->id,
+            'blueprint_revision' => $blueprint->revision,
             'bindings' => [
-                'title' => ['source' => 'literal', 'value' => 'Orders'],
-                'count' => ['source' => 'literal', 'value' => 12],
+                'content' => ['source' => 'literal', 'value' => 'Orders'],
             ],
         ];
     }

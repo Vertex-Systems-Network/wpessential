@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceDescriptor;
@@ -17,70 +18,77 @@ use WPEssential\Platform\Rendering\RenderInput;
 
 final class DashboardWidgetRenderSourceCompilerTest extends TestCase
 {
-    private const BLUEPRINT_ID = '22222222-2222-4222-8222-222222222222';
-
-    public function testCompilesExactSurfaceOwnedBlueprintAndLiteralBindings(): void
+    public function testCompilesCanonicalRichTextBlueprintAndLiteralBindings(): void
     {
-        $descriptor = (new DashboardWidgetRenderSourceCompiler($this->registry()))->compile($this->definition());
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $blueprint = $catalog->forContentType('rich_text');
+        self::assertNotNull($blueprint);
+
+        $descriptor = $this->compiler()->compile($this->definition());
 
         self::assertInstanceOf(DashboardWidgetRenderSourceDescriptor::class, $descriptor);
         self::assertSame('11111111-1111-4111-8111-111111111111', $descriptor->definitionId);
         self::assertSame(3, $descriptor->definitionRevision);
-        self::assertSame(self::BLUEPRINT_ID, $descriptor->blueprintId);
-        self::assertSame(2, $descriptor->blueprintRevision);
-        self::assertSame(['count' => 12, 'title' => 'Orders'], $descriptor->bindings);
+        self::assertSame($blueprint->id, $descriptor->blueprintId);
+        self::assertSame($blueprint->revision, $descriptor->blueprintRevision);
+        self::assertSame(['content' => 'Orders'], $descriptor->bindings);
 
         $renderInput = $descriptor->toRenderInput();
         self::assertInstanceOf(RenderInput::class, $renderInput);
-        self::assertSame(self::BLUEPRINT_ID, $renderInput->blueprintId);
-        self::assertSame(['count' => 12, 'title' => 'Orders'], $renderInput->bindings);
+        self::assertSame($blueprint->id, $renderInput->blueprintId);
+        self::assertSame(['content' => 'Orders'], $renderInput->bindings);
     }
 
-    public function testSupportsEverySharedBlueprintBindingType(): void
+    public function testAcceptsAllSevenCanonicalContentClassBlueprintPairs(): void
     {
-        $registry = new ComponentBlueprintRegistry();
-        $registry->register(new ComponentBlueprintDescriptor(
-            id: self::BLUEPRINT_ID,
-            revision: 2,
-            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
-            componentType: 'dashboard.metrics',
-            bindingSchema: [
-                'active' => 'bool',
-                'count' => 'int',
-                'ids' => 'int_list',
-                'labels' => 'string_list',
-                'ratio' => 'float',
-                'title' => 'string',
-            ],
+        $cases = [
+            'rich_text' => ['content' => 'Orders'],
+            'kpi' => ['label' => 'Orders', 'value' => '12'],
+            'chart' => ['labels' => ['A', 'B'], 'values' => [2, 4]],
+            'quick_links' => ['labels' => ['Docs'], 'urls' => ['https://example.com/docs']],
+            'announcement' => ['title' => 'Notice', 'text' => 'Maintenance'],
+            'support_onboarding' => ['title' => 'Help', 'text' => 'Read the guide'],
+            'icon_link' => ['icon' => 'gear', 'label' => 'Settings', 'url' => '/settings'],
+        ];
+
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $compiler = $this->compiler();
+
+        foreach ($cases as $contentType => $values) {
+            $blueprint = $catalog->forContentType($contentType);
+            self::assertNotNull($blueprint);
+
+            $bindings = [];
+            foreach ($values as $key => $value) {
+                $bindings[$key] = ['source' => 'literal', 'value' => $value];
+            }
+
+            $descriptor = $compiler->compile($this->definition(
+                contentType: $contentType,
+                renderSource: $this->renderSource($contentType, $bindings),
+            ));
+
+            self::assertSame($blueprint->id, $descriptor->blueprintId);
+            self::assertSame($blueprint->revision, $descriptor->blueprintRevision);
+        }
+    }
+
+    public function testRejectsCrossClassCanonicalBlueprintMismatch(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->compiler()->compile($this->definition(
+            contentType: 'rich_text',
+            renderSource: $this->renderSource('kpi', [
+                'label' => ['source' => 'literal', 'value' => 'Orders'],
+                'value' => ['source' => 'literal', 'value' => '12'],
+            ]),
         ));
-
-        $definition = $this->definition(bindings: [
-            'active' => ['source' => 'literal', 'value' => true],
-            'count' => ['source' => 'literal', 'value' => 12],
-            'ids' => ['source' => 'literal', 'value' => [2, 4]],
-            'labels' => ['source' => 'literal', 'value' => ['A', 'B']],
-            'ratio' => ['source' => 'literal', 'value' => 1.5],
-            'title' => ['source' => 'literal', 'value' => 'Orders'],
-        ]);
-
-        $descriptor = (new DashboardWidgetRenderSourceCompiler($registry))->compile($definition);
-
-        self::assertSame(
-            [
-                'active' => true,
-                'count' => 12,
-                'ids' => [2, 4],
-                'labels' => ['A', 'B'],
-                'ratio' => 1.5,
-                'title' => 'Orders',
-            ],
-            $descriptor->bindings,
-        );
     }
 
-    public function testRejectsWrongDefinitionOwnerTypeSchemaOrStatus(): void
+    public function testRejectsWrongDefinitionOwnerTypeSchemaStatusOrContentClass(): void
     {
-        $compiler = new DashboardWidgetRenderSourceCompiler($this->registry());
+        $compiler = $this->compiler();
 
         foreach ([
             $this->definition(ownerSurfaceId: 9),
@@ -100,7 +108,8 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
 
     public function testRejectsMissingUnknownOrMalformedRenderSource(): void
     {
-        $compiler = new DashboardWidgetRenderSourceCompiler($this->registry());
+        $compiler = $this->compiler();
+        $valid = $this->renderSource('rich_text');
 
         try {
             $compiler->compile($this->definition(includeRenderSource: false));
@@ -109,14 +118,13 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             self::assertTrue(true);
         }
 
-        $valid = $this->renderSource();
         foreach ([
             [],
             $valid + ['provider' => 'unsafe'],
             array_replace($valid, ['kind' => 'provider']),
-            array_replace($valid, ['blueprint_id' => strtoupper(self::BLUEPRINT_ID)]),
+            array_replace($valid, ['blueprint_id' => strtoupper((string) $valid['blueprint_id'])]),
             array_replace($valid, ['blueprint_revision' => 0]),
-            array_replace($valid, ['blueprint_revision' => '2']),
+            array_replace($valid, ['blueprint_revision' => '1']),
             array_replace($valid, ['bindings' => ['not-an-envelope']]),
         ] as $renderSource) {
             try {
@@ -128,66 +136,63 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
         }
     }
 
-    public function testRejectsMissingBlueprintExactRevisionAndCrossSurfaceOwnership(): void
+    public function testRejectsMissingRegisteredBlueprintAndCrossSurfaceOwnership(): void
     {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $contentClassCompiler = new \WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler();
+
         try {
-            (new DashboardWidgetRenderSourceCompiler(new ComponentBlueprintRegistry()))->compile($this->definition());
-            self::fail('Expected missing Blueprint to be rejected.');
+            (new DashboardWidgetRenderSourceCompiler(
+                new ComponentBlueprintRegistry(),
+                $contentClassCompiler,
+                $catalog,
+            ))->compile($this->definition());
+            self::fail('Expected missing canonical Blueprint registration to be rejected.');
         } catch (InvalidArgumentException) {
             self::assertTrue(true);
         }
 
-        $wrongRevisionRegistry = new ComponentBlueprintRegistry();
-        $wrongRevisionRegistry->register($this->blueprint(revision: 3));
-        try {
-            (new DashboardWidgetRenderSourceCompiler($wrongRevisionRegistry))->compile($this->definition());
-            self::fail('Expected exact-revision lookup to reject fallback.');
-        } catch (InvalidArgumentException) {
-            self::assertTrue(true);
-        }
-
+        $canonical = $catalog->forContentType('rich_text');
+        self::assertNotNull($canonical);
         $crossSurfaceRegistry = new ComponentBlueprintRegistry();
-        $crossSurfaceRegistry->register($this->blueprint(ownerSurfaceId: 9));
+        $crossSurfaceRegistry->register(new ComponentBlueprintDescriptor(
+            id: $canonical->id,
+            revision: $canonical->revision,
+            ownerSurfaceId: 9,
+            componentType: $canonical->componentType,
+            bindingSchema: $canonical->bindingSchema,
+        ));
+
         $this->expectException(InvalidArgumentException::class);
-        (new DashboardWidgetRenderSourceCompiler($crossSurfaceRegistry))->compile($this->definition());
+        (new DashboardWidgetRenderSourceCompiler(
+            $crossSurfaceRegistry,
+            $contentClassCompiler,
+            $catalog,
+        ))->compile($this->definition());
     }
 
     public function testRejectsBindingKeySourceTypeAndExecutableMismatches(): void
     {
-        $compiler = new DashboardWidgetRenderSourceCompiler($this->registry());
+        $compiler = $this->compiler();
 
         $cases = [
-            ['title' => ['source' => 'literal', 'value' => 'Orders']],
+            [],
             [
-                'title' => ['source' => 'literal', 'value' => 'Orders'],
-                'count' => ['source' => 'literal', 'value' => 12],
+                'content' => ['source' => 'literal', 'value' => 'Orders'],
                 'extra' => ['source' => 'literal', 'value' => 'x'],
             ],
-            [
-                'title' => ['source' => 'provider', 'value' => 'Orders'],
-                'count' => ['source' => 'literal', 'value' => 12],
-            ],
-            [
-                'title' => ['source' => 'literal', 'value' => 'Orders', 'callback' => 'unsafe'],
-                'count' => ['source' => 'literal', 'value' => 12],
-            ],
-            [
-                'title' => ['source' => 'literal', 'value' => 12],
-                'count' => ['source' => 'literal', 'value' => 12],
-            ],
-            [
-                'title' => ['source' => 'literal', 'value' => '<script>alert(1)</script>'],
-                'count' => ['source' => 'literal', 'value' => 12],
-            ],
-            [
-                'title' => ['source' => 'literal', 'value' => 'Orders'],
-                'count' => ['source' => 'literal', 'value' => null],
-            ],
+            ['content' => ['source' => 'provider', 'value' => 'Orders']],
+            ['content' => ['source' => 'literal', 'value' => 'Orders', 'callback' => 'unsafe']],
+            ['content' => ['source' => 'literal', 'value' => 12]],
+            ['content' => ['source' => 'literal', 'value' => '<script>alert(1)</script>']],
+            ['content' => ['source' => 'literal', 'value' => null]],
         ];
 
         foreach ($cases as $bindings) {
             try {
-                $compiler->compile($this->definition(bindings: $bindings));
+                $compiler->compile($this->definition(
+                    renderSource: $this->renderSource('rich_text', $bindings),
+                ));
                 self::fail('Expected unsafe or incompatible Dashboard Widget render binding to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
@@ -195,29 +200,23 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
         }
     }
 
-    private function registry(): ComponentBlueprintRegistry
+    private function compiler(): DashboardWidgetRenderSourceCompiler
     {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $registry = new ComponentBlueprintRegistry();
-        $registry->register($this->blueprint());
-        return $registry;
-    }
+        foreach ($catalog->all() as $blueprint) {
+            $registry->register($blueprint);
+        }
 
-    private function blueprint(
-        int $ownerSurfaceId = DashboardWidgetDefinition::OWNER_SURFACE_ID,
-        int $revision = 2,
-    ): ComponentBlueprintDescriptor {
-        return new ComponentBlueprintDescriptor(
-            id: self::BLUEPRINT_ID,
-            revision: $revision,
-            ownerSurfaceId: $ownerSurfaceId,
-            componentType: 'dashboard.metrics',
-            bindingSchema: ['title' => 'string', 'count' => 'int'],
+        return new DashboardWidgetRenderSourceCompiler(
+            $registry,
+            null,
+            $catalog,
         );
     }
 
     /**
      * @param array<string,mixed>|null $renderSource
-     * @param array<string,mixed>|null $bindings
      */
     private function definition(
         int $ownerSurfaceId = DashboardWidgetDefinition::OWNER_SURFACE_ID,
@@ -226,12 +225,11 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
         DefinitionStatus $status = DefinitionStatus::Published,
         string $contentType = 'rich_text',
         ?array $renderSource = null,
-        ?array $bindings = null,
         bool $includeRenderSource = true,
     ): Definition {
         $widget = ['type' => $contentType];
         if ($includeRenderSource) {
-            $widget['render_source'] = $renderSource ?? $this->renderSource($bindings);
+            $widget['render_source'] = $renderSource ?? $this->renderSource($contentType);
         }
 
         return new Definition(
@@ -251,16 +249,45 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
      * @param array<string,mixed>|null $bindings
      * @return array<string,mixed>
      */
-    private function renderSource(?array $bindings = null): array
+    private function renderSource(string $contentType, ?array $bindings = null): array
     {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $blueprint = $catalog->forContentType($contentType);
+        self::assertNotNull($blueprint);
+
+        if ($bindings === null) {
+            $bindings = match ($contentType) {
+                'rich_text' => ['content' => ['source' => 'literal', 'value' => 'Orders']],
+                'kpi' => [
+                    'label' => ['source' => 'literal', 'value' => 'Orders'],
+                    'value' => ['source' => 'literal', 'value' => '12'],
+                ],
+                'chart' => [
+                    'labels' => ['source' => 'literal', 'value' => ['A']],
+                    'values' => ['source' => 'literal', 'value' => [1]],
+                ],
+                'quick_links' => [
+                    'labels' => ['source' => 'literal', 'value' => ['Docs']],
+                    'urls' => ['source' => 'literal', 'value' => ['https://example.com/docs']],
+                ],
+                'announcement', 'support_onboarding' => [
+                    'title' => ['source' => 'literal', 'value' => 'Notice'],
+                    'text' => ['source' => 'literal', 'value' => 'Text'],
+                ],
+                'icon_link' => [
+                    'icon' => ['source' => 'literal', 'value' => 'gear'],
+                    'label' => ['source' => 'literal', 'value' => 'Settings'],
+                    'url' => ['source' => 'literal', 'value' => '/settings'],
+                ],
+                default => [],
+            };
+        }
+
         return [
             'kind' => 'component_blueprint',
-            'blueprint_id' => self::BLUEPRINT_ID,
-            'blueprint_revision' => 2,
-            'bindings' => $bindings ?? [
-                'title' => ['source' => 'literal', 'value' => 'Orders'],
-                'count' => ['source' => 'literal', 'value' => 12],
-            ],
+            'blueprint_id' => $blueprint->id,
+            'blueprint_revision' => $blueprint->revision,
+            'bindings' => $bindings,
         ];
     }
 }
