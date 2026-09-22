@@ -1,9 +1,9 @@
 {
-  "schema_version": 122,
+  "schema_version": 123,
   "snapshot_date": "2026-09-22",
-  "queue_anchor_main_sha": "d721c09c66cb2e4f8e53fd353ed5b5f36f96f816",
-  "mode": "DASHBOARD_WIDGETS_COMPONENT_RENDER_TRANSITION_AUDIT",
-  "source_issue": "#1167",
+  "queue_anchor_main_sha": "a8b3539168ba72f74473d4bc9e3fef6af445147f",
+  "mode": "DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
+  "source_issue": "#1168",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -160,8 +160,9 @@
     "1160": "COMPLETED_ON_PR_1163_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_IMPLEMENTATION_CONTRACT_V1",
     "1162": "COMPLETED_ON_PR_1166_DASHBOARD_WIDGETS_TRUSTED_RENDER_SOURCE_DESCRIPTOR_COMPILER_V1",
     "1164": "TERMINAL_HANDOFF_RECONCILIATION_FOR_1160_TO_1162",
-    "1167": "ACTIVE_DASHBOARD_WIDGETS_COMPONENT_RENDER_TRANSITION_AUDIT",
-    "1168": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1"
+    "1167": "COMPLETED_ON_PR_1169_DASHBOARD_WIDGETS_COMPONENT_RENDER_TRANSITION_AUDIT",
+    "1168": "ACTIVE_DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
+    "1170": "OPEN_DEPENDENCY_GATED_DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3497,7 +3498,7 @@
       "slot_id": "dashboard-widgets-trusted-component-blueprint-renderer-contract-v1",
       "title": "Dashboard Widgets trusted component blueprint/renderer implementation contract V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "OPEN_DEPENDENCY_GATED",
+      "status": "IN_PROGRESS",
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
       "source": "Issue #1168 / audit Issue #1167",
       "dependencies": [
@@ -3524,7 +3525,56 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-trusted-component-renderer-contract-v1",
-      "close_condition": "Exact Surface 10 component types, Blueprint binding schemas, renderer/output sanitization rules, asset ownership and registration lifecycle merged without runtime execution"
+      "close_condition": "Exact Surface 10 component types, Blueprint binding schemas, renderer/output sanitization rules, asset ownership and registration lifecycle merged without runtime execution",
+      "dependency_evidence": {
+        "audit_issue": 1167,
+        "audit_pr": 1169,
+        "audit_head": "82403eaa65100e8914225563573aa031ec8a151d",
+        "governance_run": 35661587232,
+        "architecture_run": 35661587244,
+        "merge_sha": "a8b3539168ba72f74473d4bc9e3fef6af445147f"
+      }
+    },
+    {
+      "priority": 1011,
+      "slot_id": "dashboard-widgets-trusted-component-blueprint-registrar-renderer-v1",
+      "title": "Dashboard Widgets trusted component blueprint registrar + renderer V1",
+      "role": "ANY",
+      "status": "OPEN_DEPENDENCY_GATED",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1",
+      "source": "Issue #1170 / contract Issue #1168",
+      "dependencies": [
+        "Issue #1168 contract PR merged with READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetComponentBlueprintCatalog.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetTrustedComponentRenderer.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetComponentRegistrar.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetComponentBlueprintCatalogTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetTrustedComponentRendererTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetComponentRegistrarTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php"
+      ],
+      "forbidden_scope": [
+        "Dashboard Widgets runtime RendererInterface::render invocation",
+        "wp_dashboard_setup/wp_network_dashboard_setup/wp_add_dashboard_widget",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "shortcode/block/action execution",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "asset registration",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-trusted-component-renderer-v1",
+      "close_condition": "Seven canonical Surface 10 Blueprints plus bounded renderer registration merged with focused tests and no invocation/hook/provider/mutation scope widening"
     }
   ],
   "historical_closeout": {

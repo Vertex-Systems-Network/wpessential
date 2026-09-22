@@ -268,3 +268,33 @@ Rules:
 - Compact state binds `active_pr: "#1169"` before final exact-head validation.
 - RB-0028 is the immediate Governance/Architecture merge gate.
 - Issue #1168 remains dependency-gated and must not be claimed until PR #1169 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1`.
+
+
+## 2026-09-22 — Component-render audit merged; trusted component contract started
+
+- PR #1169 exact head `82403eaa65100e8914225563573aa031ec8a151d` passed Governance `35661587232` and Architecture `35661587244`.
+- PR #1169 merged as `a8b3539168ba72f74473d4bc9e3fef6af445147f`; Issue #1167 closed.
+- RB-0028 reconciled terminal PASS.
+- Issue #1168 claimed on `supervisor/dashboard-widgets-trusted-component-renderer-contract-v1`.
+- Contract V1 defines seven stable Surface 10 component types, revision-1 Blueprint UUIDs, minimal exact binding schemas, safe escaping/link rules and zero asset handles.
+- Issue #1170 opened as the dependency-gated next Blueprint registrar + bounded component renderer source tranche.
+- Dashboard runtime renderer invocation, Dashboard hooks, providers/sources, remote/iframe, assets, mutation and full-parity certification remain blocked.
+
+
+## 2026-09-22 — PR #1171 opened for trusted component Blueprint/renderer contract
+
+- PR #1171 opened from exact main `a8b3539168ba72f74473d4bc9e3fef6af445147f`.
+- Contract freezes seven revision-1 Surface 10 Blueprint UUID/component-type pairs and minimal required binding schemas.
+- V1 defines escaped text output, bounded integer chart/link rules and zero asset handles.
+- Compact state binds `active_pr: "#1171"` before final exact-head validation.
+- RB-0029 is the immediate Governance/Architecture merge gate.
+- Issue #1170 remains dependency-gated and must not be claimed until PR #1171 merges with `READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_REGISTRAR_RENDERER_V1`.
+
+
+## 2026-09-22 — PR #1171 Governance diff-hygiene failure corrected
+
+- PR #1171 prior head `d0df313f2a55bda8f6f835b234bb23563983d383` failed Governance `35662465508` at `git diff --check`.
+- Root cause: three trailing-whitespace lines in the trusted component contract Markdown header.
+- Corrective change removes only that whitespace and reconciles README/compact state/RB-0029/journal evidence.
+- Contract component types, Blueprint UUIDs, binding schemas and authorization boundaries remain unchanged.
+- Issue #1170 remains dependency-gated until corrected PR #1171 exact head is terminal green and merged.

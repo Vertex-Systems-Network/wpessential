@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1167",
-  "anchor_main_sha": "d721c09c66cb2e4f8e53fd353ed5b5f36f96f816",
+  "source_issue": "#1168",
+  "anchor_main_sha": "a8b3539168ba72f74473d4bc9e3fef6af445147f",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -910,15 +910,48 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|component-render-transition-audit|issue1167|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "Exact audited main d721c09c66cb2e4f8e53fd353ed5b5f36f96f816",
         "Audit verdict READY_FOR_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
-        "PR #1169 opened on supervisor/dashboard-widgets-component-render-transition-audit-v1; final exact-head validation pending"
+        "PR #1169 exact head 82403eaa65100e8914225563573aa031ec8a151d",
+        "Governance Gate run 35661587232 PASS",
+        "Architecture Guards run 35661587244 PASS",
+        "zero unresolved review threads and zero commits behind main at merge gate",
+        "PR #1169 merged as a8b3539168ba72f74473d4bc9e3fef6af445147f",
+        "Issue #1167 closed completed"
       ],
-      "note": "PASS may authorize only Issue #1168 planning/implementation-contract work. Renderer invocation and Dashboard hooks remain blocked."
+      "note": "Terminal PASS. Issue #1168 trusted component Blueprint/renderer implementation contract V1 is active; renderer invocation and Dashboard hooks remain blocked."
+    },
+    {
+      "id": "RB-0029",
+      "source": "Issue #1168",
+      "category": "DASHBOARD_WIDGETS_TRUSTED_COMPONENT_BLUEPRINT_RENDERER_CONTRACT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-trusted-component-renderer-contract-v1 exact head",
+      "dependencies": [
+        "merged component-render transition audit #1167/#1169",
+        "shared ComponentBlueprintRegistry and BlueprintRendererDispatcher",
+        "seven trusted Surface 10 content classes"
+      ],
+      "authorization": "Planning/implementation-contract + shared-truth only; no runtime PHP, renderer invocation, Dashboard hooks, providers/sources, shared Platform changes, mutation, certification, deploy or release authority",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|trusted-component-renderer-contract|issue1168|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Exact base main a8b3539168ba72f74473d4bc9e3fef6af445147f",
+        "Contract freezes seven Surface 10 component types/Blueprint UUIDs and minimal exact binding schemas",
+        "PR #1171 prior exact head d0df313f2a55bda8f6f835b234bb23563983d383",
+        "Governance Gate run 35662465508 FAIL at exact-head diff hygiene only: three trailing-whitespace lines in the new contract Markdown header",
+        "Corrective shared-truth commit removes trailing whitespace; corrected exact-head validation pending"
+      ],
+      "note": "Prior head failed only git diff --check. Corrective head remains planning/shared-truth-only; merge requires corrected exact-head Governance/Architecture PASS, zero unresolved threads and current branch."
     }
   ],
-  "last_reconciled_issue": "#1167",
+  "last_reconciled_issue": "#1168",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
