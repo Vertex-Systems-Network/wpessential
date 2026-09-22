@@ -18,6 +18,8 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetTrustedComponentRenderer;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityEvaluator;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetWordPressAdapter;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetWordPressEnvironmentInterface;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
@@ -84,6 +86,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetVisibilityCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_COMPILER));
         self::assertInstanceOf(DashboardWidgetVisibilityEvaluator::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_EVALUATOR));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
+        self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
 
         $registry = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
         self::assertInstanceOf(ComponentBlueprintRegistry::class, $registry);
@@ -188,6 +191,33 @@ final class DashboardWidgetsModuleTest extends TestCase
         }
 
         self::assertCount(2, $bridge->registerAbilities());
+    }
+
+    public function testModuleBootRegistersWordPressDashboardHooksThroughAdapterService(): void
+    {
+        $dashboardEnvironment = new class implements DashboardWidgetWordPressEnvironmentInterface {
+            /** @var list<string> */
+            public array $hooks = [];
+            public function registerAction(string $hook, callable $callback): void { $this->hooks[] = $hook; }
+            public function registerDashboardWidget(string $id, string $title, callable $callback, string $context, string $priority): void {}
+            public function currentUserId(): ?int { return 1; }
+            public function currentSiteId(): int { return 1; }
+            public function currentNetworkId(): ?int { return null; }
+            public function outputTrustedHtml(string $html): void {}
+        };
+        $services = $this->baseServices();
+        (new RenderingServiceRegistrar())->register($services);
+        $module = new DashboardWidgetsModule($dashboardEnvironment);
+
+        $module->register($services);
+        $module->boot($services);
+        $module->boot($services);
+
+        self::assertInstanceOf(
+            DashboardWidgetWordPressAdapter::class,
+            $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER),
+        );
+        self::assertSame(['wp_dashboard_setup', 'wp_network_dashboard_setup'], $dashboardEnvironment->hooks);
     }
 
     public function testModuleFailsClosedWithoutCanonicalRenderingServices(): void

@@ -37,9 +37,14 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
     public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
     public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
+    public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
     public const CAPABILITY = 'manage_options';
+
+    public function __construct(
+        private readonly ?DashboardWidgetWordPressEnvironmentInterface $dashboardEnvironment = null,
+    ) {}
 
     public function manifest(): ModuleManifest
     {
@@ -119,6 +124,12 @@ final class DashboardWidgetsModule implements ModuleInterface
             $renderSourceCompiler,
             $dispatcher,
         );
+        $wordpressAdapter = new DashboardWidgetWordPressAdapter(
+            $definitions,
+            $registrationCompiler,
+            $runtimeRenderExecutor,
+            $this->dashboardEnvironment ?? new NativeWordPressDashboardWidgetEnvironment(),
+        );
 
         $componentRegistrar->register();
 
@@ -132,6 +143,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler);
         $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
         $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
+        $services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
 
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
         $this->registerAbility(
@@ -173,7 +185,14 @@ final class DashboardWidgetsModule implements ModuleInterface
         );
     }
 
-    public function boot(ServiceRegistryInterface $services): void {}
+    public function boot(ServiceRegistryInterface $services): void
+    {
+        $adapter = $services->get(self::SERVICE_WORDPRESS_ADAPTER);
+        if (!$adapter instanceof DashboardWidgetWordPressAdapter) {
+            throw new LogicException('Dashboard Widgets requires its WordPress Dashboard adapter service.');
+        }
+        $adapter->registerHooks();
+    }
 
     private function registerAbility(
         AbilityRegistry $abilities,
