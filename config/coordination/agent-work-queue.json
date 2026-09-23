@@ -1,9 +1,9 @@
 {
-  "schema_version": 136,
+  "schema_version": 137,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3",
-  "mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
-  "source_issue": "#1210",
+  "queue_anchor_main_sha": "27a8be9bb09a3f1f1c907506436600772af01ba6",
+  "mode": "DASHBOARD_WIDGETS_QUERY_DATA_SOURCE_TRANSITION_AUDIT_V1",
+  "source_issue": "#1212",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -181,7 +181,9 @@
     "1203": "COMPLETED_ON_PR_1209_BOUNDED_SITE_TARGETING_SOURCE_V1",
     "1205": "COMPLETED_ON_PR_1206_DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_ACTIVATION_RECONCILIATION_V1",
     "1207": "COMPLETED_ON_PR_1208_SITE_TARGETING_SOURCE_TERMINAL_RECONCILIATION_V1",
-    "1210": "ACTIVE_SHARED_TRUTH_POST_MERGE_RECONCILIATION_TRANSPORT"
+    "1210": "COMPLETED_ON_PR_1211_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
+    "1212": "ACTIVE_DASHBOARD_WIDGETS_QUERY_DATA_SOURCE_TRANSITION_AUDIT_V1",
+    "1213": "DEPENDENCY_GATED_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -4141,7 +4143,7 @@
       "slot_id": "dashboard-widgets-site-targeting-source-post-merge-reconciliation-v1",
       "title": "Dashboard Widgets bounded site targeting source post-merge reconciliation V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE_SHARED_TRUTH_TRANSPORT",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
       "source": "Issue #1210 / merged Issue #1203 / PR #1209",
       "dependencies": [
@@ -4173,7 +4175,97 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-site-targeting-source-post-merge-reconciliation-v1",
-      "close_condition": "Shared truth records RB-0044/RB-0045 terminal PASS and #1203/#1209 source completion; no next product slot is activated"
+      "close_condition": "Shared truth records RB-0044/RB-0045 terminal PASS and #1203/#1209 source completion; no next product slot is activated",
+      "terminal_result": "PASS_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
+      "terminal_evidence": {
+        "issue": 1210,
+        "pr": 1211,
+        "head": "252556e49a7a7efe77a3d3f24c69cf90873e04c0",
+        "governance_run": 35918566515,
+        "architecture_run": 35918566390,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "27a8be9bb09a3f1f1c907506436600772af01ba6"
+      }
+    },
+    {
+      "priority": 1023,
+      "slot_id": "dashboard-widgets-query-data-source-transition-audit-v1",
+      "title": "Dashboard Widgets Query/Data-Source transition audit V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE_SUPERVISOR_AUDIT",
+      "work_mode": "DASHBOARD_WIDGETS_QUERY_DATA_SOURCE_TRANSITION_AUDIT_V1",
+      "source": "Issue #1212 / merged #1203/#1209 and #1210/#1211",
+      "dependencies": [
+        "RB-0045 terminal PASS",
+        "RB-0046 terminal PASS"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "docs/QUALITY/DASHBOARD-WIDGETS-QUERY-DATA-SOURCE-TRANSITION-AUDIT-V1.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP implementation",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "shortcode/block/action execution",
+        "asset enqueue/register side effects",
+        "refresh/cache/background jobs",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-query-data-source-transition-audit-v1",
+      "close_condition": "Fresh exact-main audit merges terminal green with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1 and leaves #1213 contract-only dependency-gated"
+    },
+    {
+      "priority": 1024,
+      "slot_id": "dashboard-widgets-bounded-query-data-source-binding-contract-v1",
+      "title": "Dashboard Widgets bounded Query/Data-Source binding contract V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "BLOCKED_BY_AUDIT_PR",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1",
+      "source": "Issue #1213 / audit Issue #1212",
+      "dependencies": [
+        "Issue #1212 / PR #1214 terminal merge with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "contract/audit documentation and shared AI truth to be frozen after audit merge"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP implementation",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "shortcode/block/action execution",
+        "assets",
+        "refresh/cache/background jobs",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-query-data-source-binding-contract-v1",
+      "close_condition": "Contract freezes exact Definition payload, Query/Data Source bounds, row-to-Blueprint mapping, failure/context/authorization semantics and exact later implementation allowlist"
     }
   ],
   "historical_closeout": {
