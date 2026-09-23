@@ -13,7 +13,8 @@
 - Reconciliation branch: `supervisor/dashboard-widgets-site-targeting-source-terminal-reconciliation-v1`.
 - #1203 remains limited to the exact five authorized compiler/descriptor/adapter source/test files.
 - Source mutation remains blocked until the #1207 reconciliation PR merges.
-- Next safe action: open/reconcile #1207 with exact-head Governance/Architecture; after terminal merge, begin #1203 implementation.
+- PR #1208 opened for #1207 terminal reconciliation.
+- Next safe action: exact-head Governance/Architecture + review/main-divergence refresh for PR #1208; after terminal merge, begin #1203 implementation.
 
 ## 2026-09-24 — #1202/#1204 terminal; #1203 source lane claimed behind reconciliation
 
