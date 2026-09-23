@@ -1,5 +1,19 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1203/#1209 Bounded Site Targeting Source V1 terminal PASS
+
+- Exact product/runtime main: `ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3`.
+- Issue #1207 / PR #1208 terminal source-activation reconciliation merged as `680b62bc4c79aa2b20c3f8c72a208d70d178a33e`.
+- PR #1208 exact head `0a256eb1cd326787fae817a5c018c443f45f43fe`: Governance `35916602904` PASS; Architecture `35916602817` PASS; zero unresolved threads/comments and zero behind.
+- RB-0044 reconciled terminal PASS.
+- Issue #1203 / PR #1209 exact head `f89d7059592b3709711b9e3db2cf2d6ab8596cc0` changed exactly the five authorized compiler/descriptor/adapter source/test files.
+- PR #1209 path-applicable gates: Governance `35917953810` PASS; Architecture `35917953718` PASS; PHP Quality `35917953924` PASS; Platform Compatibility `35917953547` PASS; Distributable Package `35917953890` PASS.
+- Zero unresolved review threads, zero PR comments/blockers and zero commits behind at the source merge gate.
+- PR #1209 merged as `ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3`; Issue #1203 closed completed.
+- RB-0045 reconciled terminal PASS.
+- Issue #1210 is shared-truth-only reconciliation transport; it is not a product-active slot.
+- No next Dashboard Widgets runtime/source tranche is active. A fresh exact-main transition audit is required after #1210 reconciliation merges.
+
 ## 2026-09-24 — #1205/#1206 terminal; #1203 branch synchronized to exact main
 
 - Exact protected main: `9298bdbfcf9c0d11e06d78ceadc50b268c1489b2`.
