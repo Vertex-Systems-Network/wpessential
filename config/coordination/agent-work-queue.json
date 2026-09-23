@@ -1,8 +1,8 @@
 {
-  "schema_version": 138,
+  "schema_version": 139,
   "snapshot_date": "2026-09-24",
   "queue_anchor_main_sha": "a63adf38e960842de19c94dd797628d1f2d578e5",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1_ARCHITECTURE_CORRECTION",
   "source_issue": "#1213",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
@@ -184,7 +184,8 @@
     "1210": "COMPLETED_ON_PR_1211_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
     "1212": "COMPLETED_ON_PR_1214_QUERY_DATA_SOURCE_TRANSITION_AUDIT_V1",
     "1213": "ACTIVE_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1",
-    "1215": "DEPENDENCY_GATED_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1"
+    "1215": "DUAL_GATED_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1",
+    "1217": "DEPENDENCY_GATED_QUERY_BOUNDED_CENTRAL_PRO_ACTIVATION_PREREQUISITE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -4250,7 +4251,7 @@
       "slot_id": "dashboard-widgets-bounded-query-data-source-binding-contract-v1",
       "title": "Dashboard Widgets bounded Query/Data-Source binding contract V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE_CONTRACT",
+      "status": "ACTIVE_CONTRACT_CORRECTION",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1",
       "source": "Issue #1213 / audit Issue #1212",
       "dependencies": [
@@ -4284,25 +4285,25 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-query-data-source-binding-contract-v1",
-      "close_condition": "Contract freezes exact payload/bounds/mapping/failure/context/authorization semantics plus exact ten-file source allowlist and merges terminal green with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1"
+      "close_condition": "Corrected contract merges terminal green with CONTRACT_FROZEN_AWAITING_QUERY_MODULE_ACTIVATION_V1; #1217 becomes claimable while #1215 remains blocked"
     },
     {
-      "priority": 1025,
+      "priority": 1026,
       "slot_id": "dashboard-widgets-bounded-query-data-source-binding-source-v1",
       "title": "Dashboard Widgets bounded Query/Data-Source binding source V1",
       "role": "ANY",
-      "status": "BLOCKED_BY_CONTRACT_PR",
+      "status": "BLOCKED_BY_CONTRACT_AND_QUERY_ACTIVATION",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1",
       "source": "Issue #1215 / contract Issue #1213",
       "dependencies": [
-        "Issue #1213 / PR #1216 terminal merge with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1"
+        "Issue #1213 / PR #1216 terminal contract merge",
+        "Issue #1217 terminal Query central Pro activation PASS"
       ],
       "runtime_allowed": true,
       "mutation_allowed": false,
-      "provider_execution_allowed": true,
-      "provider_execution_boundary": "Only via canonical QueryReadConsumerInterface V1; no generic registered-provider or IntegrationRegistry execution",
+      "provider_execution_allowed": false,
       "renderer_execution_allowed": true,
-      "wordpress_dashboard_registration_allowed": true,
+      "wordpress_dashboard_registration_allowed": false,
       "shared_platform_mutation_allowed": false,
       "allowed_scope": [
         "frameworks/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompiler.php",
@@ -4330,7 +4331,45 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-query-data-source-binding-source-v1",
-      "close_condition": "Exact ten-file source/test implementation, focused tests and all path-applicable exact-head CI green"
+      "close_condition": "After both dependencies are terminal PASS: exact ten-file Dashboard Widgets source/test implementation, focused tests and all path-applicable exact-head CI green",
+      "canonical_query_read_execution_allowed": true,
+      "canonical_query_read_execution_boundary": "Only via QueryReadConsumerInterface V1 after QueryModule activation #1217; Query retains Policy authorization, planning and provider execution ownership"
+    },
+    {
+      "priority": 1025,
+      "slot_id": "query-bounded-central-pro-activation-prerequisite-v1",
+      "title": "Query bounded central Pro activation prerequisite V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "BLOCKED_BY_CONTRACT_PR",
+      "work_mode": "QUERY_BOUNDED_CENTRAL_PRO_ACTIVATION_PREREQUISITE_V1",
+      "source": "Issue #1217 / contract Issue #1213",
+      "dependencies": [
+        "Issue #1213 / PR #1216 terminal merge with CONTRACT_FROZEN_AWAITING_QUERY_MODULE_ACTIVATION_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "module_activation_allowed": true,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "wpessential-pro.php",
+        "tests/Smoke/query-pro-activation-contract.php"
+      ],
+      "forbidden_scope": [
+        "Query provider/compiler/validator/executor source changes",
+        "Dashboard Widgets runtime/source implementation",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "shared Platform source changes",
+        "Definition/user-preference mutation",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/query-bounded-central-pro-activation-prerequisite-v1",
+      "close_condition": "Exact two-file activation; QueryModule exactly once before DashboardWidgetsModule; canonical read-consumer available in compatible Pro runtime; exact-head CI terminal green"
     }
   ],
   "historical_closeout": {
