@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: b2d15e894be6b695a34e70b1e73159617baf4aa0
-observed_main_source: "PR #1190 merged Dashboard Widgets bounded WordPress Dashboard adapter V1"
-active_issue: "#1191"
-active_pr: "#1192"
-active_branch: supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1
-current_milestone: "Dashboard Widgets #1188 post-merge shared-truth reconciliation"
+observed_main_sha: 179bff897b9d64a4297855e375d1c679a3550151
+observed_main_source: "PR #1192 merged Dashboard Widgets adapter post-merge shared-truth reconciliation"
+active_issue: "#1193"
+active_pr: "#1197"
+active_branch: supervisor/dashboard-widgets-site-targeting-transition-audit-v1
+current_milestone: "Dashboard Widgets site targeting transition audit V1"
 milestone_status: VERIFYING
-last_completed_milestone: "Issue #1188 / PR #1190 merged as b2d15e894be6b695a34e70b1e73159617baf4aa0; all five path-applicable exact-head workflows passed"
-next_safe_action: "On the next low-request milestone perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1192; merge only if terminal green, zero unresolved threads and zero behind."
-waiting_external: "PR #1192 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1191 / PR #1192 merged as 179bff897b9d64a4297855e375d1c679a3550151; exact-head Governance and Architecture passed"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1197; merge only if terminal green, zero unresolved threads and zero behind."
+waiting_external: "PR #1197 exact-head Governance/Architecture validation"
 next_planned_slot:
-  issue: null
-  slot_id: null
-  claim_branch: null
-  claim_rule: "Do not claim a new Dashboard Widgets source tranche until #1191 reconciliation merges and a fresh exact-main transition audit identifies the next safe bounded gate."
+  issue: "#1195"
+  slot_id: dashboard-widgets-bounded-site-targeting-contract-v1
+  claim_branch: supervisor/dashboard-widgets-site-targeting-contract-v1
+  claim_rule: "Do not claim until #1193 audit PR merges with READY_FOR_BOUNDED_SITE_TARGETING_CONTRACT_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0039
+    - RB-0040
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,7 +48,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "RB-0038 records terminal contract PASS for #1186/#1189."
-  - "RB-0039 records terminal source PASS for #1188/#1190."
-  - "Bounded WordPress Dashboard Adapter V1 is merged and active through the existing Pro module lifecycle."
-  - "Provider/source execution, asset side effects, mutation, caching/refresh, full parity, deploy and release remain blocked."
+  - "Issue #1191 / PR #1192 terminal reconciliation PASS is repository truth."
+  - "Audit #1193 finds target.scope + target.site_ids absent from exact-main runtime while network_dashboard is implemented."
+  - "Issue #1195 is dependency-gated contract-only; direct targeting source remains blocked."
+  - "Duplicate audit Issues #1194 and #1196 were closed as duplicates."
+  - "Provider/source execution, remote content, asset side effects, mutation, caching/refresh, full parity, deploy and release remain blocked."

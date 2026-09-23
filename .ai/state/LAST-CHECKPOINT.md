@@ -5,66 +5,45 @@ Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 ## Exact observed base
 
 - Repository: `Vertex-Systems-Network/wpessential`
-- Exact main: `b2d15e894be6b695a34e70b1e73159617baf4aa0`
-- Completed source milestone: Issue #1188 / PR #1190
-- Active reconciliation Issue: #1191
-- Active PR: #1192
-- Deterministic branch: `supervisor/dashboard-widgets-wordpress-dashboard-adapter-post-merge-reconciliation-v1`
+- Exact main: `179bff897b9d64a4297855e375d1c679a3550151`
+- Completed reconciliation: Issue #1191 / PR #1192
+- Active transition audit: Issue #1193
+- Active PR: #1197
+- Deterministic branch: `supervisor/dashboard-widgets-site-targeting-transition-audit-v1`
 
-## #1186 / #1189 terminal contract evidence
+## Fresh targeting audit
 
-- exact head `0859a8bbaef7d9a571b630a5e368be641c7f41a7`
-- Governance `35790596276` PASS
-- Architecture `35790596315` PASS
-- zero unresolved review threads; zero behind
-- merged as `e3ce7c3ee9742f2d116b546950f6d459d5f37bd9`
-- Issue #1186 closed completed
-- verdict `READY_FOR_BOUNDED_WORDPRESS_DASHBOARD_ADAPTER_V1`
+Canonical P0 records `target.scope`, `target.site_ids`, and `target.network_dashboard` all project to `dashboard-widgets.targeting.policy`.
 
-## #1188 / #1190 terminal source evidence
+Exact-main implements `network_dashboard` but not `target.scope` or `target.site_ids`. Strict unknown-key compilation keeps unsupported targeting fail-closed.
 
-- exact head `02c71dc800ba9e75ca53c07cd3284674b9e705a7`
-- Governance `35791655782` PASS
-- Architecture `35791655725` PASS
-- PHP Quality `35791655792` PASS
-- Platform Compatibility Matrix `35791655760` PASS
-- Distributable Package `35791655750` PASS
-- zero unresolved review threads
-- zero commits behind main
-- exactly seven authorized source/test files
-- merged as `b2d15e894be6b695a34e70b1e73159617baf4aa0`
-- Issue #1188 closed completed
+The current adapter has no current-site eligibility phase, so every valid non-network Definition is registered on the current site.
 
-## Bounded adapter now present
+Audit verdict:
 
-Surface 10 now registers only the site/network WordPress Dashboard hooks through the module boot lifecycle and uses a module-local native environment seam.
+`READY_FOR_BOUNDED_SITE_TARGETING_CONTRACT_V1`
 
-Security/correctness guarantees:
+Direct targeting source remains blocked until Issue #1195 freezes payload/default/validation/current-site/collision-order semantics.
 
-- deterministic Definition planning by slug then id;
-- exact `wpe_dashboard_widget_` id namespace;
-- complete same-target collision scan before native registration side effects;
-- all members of a colliding group suppressed;
-- site/network collision domains isolated;
-- no control callback or callback args;
-- fresh current-request `ExecutionContext` with `ExecutionChannel::Ui`;
-- existing visibility policy remains authoritative; no blanket adapter capability gate;
-- only `rendered` emits exact trusted renderer HTML;
-- all other runtime states emit nothing;
-- asset handles remain ignored/data-only;
-- hook/API/repository/compiler/runtime/output failures are contained;
-- no provider/query/source execution, remote content, mutation, caching/refresh or shared Platform widening.
+## Dependency-gated next slot
 
-## Current closeout
+- Issue: #1195
+- Branch: `supervisor/dashboard-widgets-site-targeting-contract-v1`
+- Contract only; no runtime/product PHP before the audit PR merges.
 
-Issue #1191 reconciles compact state, queue, Runner Benchmark and README only. No runtime/product source is authorized.
+## Duplicate reconciliation
+
+- #1194 closed duplicate.
+- #1196 closed duplicate.
+- #1193 is the canonical audit.
+- #1195 is the canonical dependency-gated contract.
 
 ## Repository blockers
 
-- #858 remains repository-admin broader required-CI ruleset work.
-- #1102 remains explicit runtime-authorization gated.
-- #947 remains independent Worker-only.
+- #858 repository-admin only.
+- #1102 explicit runtime authorization required.
+- #947 independent Worker-only.
 
 ## Next safe action
 
-On the next low-request milestone perform one consolidated exact-head Governance/Architecture + review-thread + main-divergence refresh for PR #1192 and merge only on terminal green.
+Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1197 and merge only on terminal green.

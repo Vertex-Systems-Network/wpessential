@@ -11,14 +11,15 @@ Rules:
 - repository evidence outranks this journal.
 
 
-## 2026-09-23 — WordPress Dashboard Adapter V1 merged; shared-truth reconciliation opened
+## 2026-09-23 — Adapter closeout merged; site-targeting transition audit opened
 
-- Issue #1186 / PR #1189 contract merged as `e3ce7c3ee9742f2d116b546950f6d459d5f37bd9`; exact-head Governance `35790596276` and Architecture `35790596315` PASS.
-- Issue #1188 / PR #1190 exact head `02c71dc800ba9e75ca53c07cd3284674b9e705a7` passed Governance `35791655782`, Architecture `35791655725`, PHP Quality `35791655792`, Platform Matrix `35791655760`, and Package `35791655750`; merged as `b2d15e894be6b695a34e70b1e73159617baf4aa0`.
-- Source scope was exactly seven authorized module-local source/test files; zero unresolved threads and zero behind at merge.
-- Bounded WordPress Dashboard hooks, deterministic collision-safe planning and UI-context rendering are now present.
-- Providers/sources, remote execution, assets, mutation, caching/refresh, shared Platform widening, full parity, deploy and release remain blocked.
-- Issue #1191 is mandatory post-merge shared-truth reconciliation; no next source tranche is claimable until it closes and a fresh exact-main transition audit runs.
+- Issue #1191 / PR #1192 passed Governance `35792377626` and Architecture `35792377512`; merged as `179bff897b9d64a4297855e375d1c679a3550151`.
+- Fresh Surface 10 audit found canonical P0 `target.scope` + `target.site_ids` absent from compiler/descriptor/adapter; `network_dashboard` is implemented.
+- Strict unknown-key compilation keeps unsupported site targeting fail-closed.
+- Current-site eligibility must resolve before same-site collision grouping.
+- Canonical audit is #1193; duplicates #1194/#1196 closed. #1195 is dependency-gated contract-only.
+- Verdict: `READY_FOR_BOUNDED_SITE_TARGETING_CONTRACT_V1`.
+- Providers/sources, remote content, assets, controls/mutation, caching/refresh, shared Platform widening, full parity, deploy and release remain blocked.
 
 ## 2026-09-21 — PR #1116 opened / waiting boundary persisted
 
