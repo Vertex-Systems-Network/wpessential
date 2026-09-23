@@ -1,6 +1,6 @@
 # Dashboard Widgets — Bounded Query/Data-Source Binding Contract V1
 
-Status: **implementation-ready planning contract / source implementation NOT authorized until contract merge**
+Status: **corrected planning contract / source implementation NOT authorized until contract merge + Query activation prerequisite**
 Surface: **10 — Dashboard Widgets**
 Issue: **#1213**
 Exact base: `main@a63adf38e960842de19c94dd797628d1f2d578e5`
@@ -50,6 +50,26 @@ Ownership is fixed:
 - Surface 10 owns only bounded query intent, binding mapping, fail-closed orchestration and final trusted rendering.
 
 `IntegrationRegistry` is not an execution API and is not used by V1.
+
+## 3A. Query Module activation prerequisite
+
+The architecture/security review of PR #1216 found a required runtime precondition that is not currently satisfied on exact main:
+
+- `QueryModule` implements and registers `QueryModule::SERVICE_READ_CONSUMER`;
+- the current Pro bootstrap contributes `DashboardWidgetsModule`;
+- the current Pro bootstrap does **not** contribute `QueryModule`;
+- therefore `module.query.read-consumer` is not guaranteed to exist when Dashboard Widgets registers.
+
+Dependency-gated Issue **#1217 — Query: bounded central Pro activation prerequisite V1** is required before Dashboard Widgets source Issue #1215 may be claimed.
+
+#1217 is limited to exactly:
+
+1. `wpessential-pro.php`
+2. `tests/Smoke/query-pro-activation-contract.php`
+
+The activation must contribute `QueryModule::class` exactly once and place it before `DashboardWidgetsModule::class` so Kernel registration makes Query services available first. It must preserve the existing compatible-Pro and entitlement gates.
+
+No Query provider/compiler/validator/executor source change is authorized by this prerequisite.
 
 ## 4. Exact Definition payload
 
@@ -466,7 +486,7 @@ Provider execution occurs only behind the Query-owned public read-consumer contr
 
 ## 20. Exact later implementation allowlist
 
-Dependency-gated Issue **#1215 — Dashboard Widgets: bounded Query/Data-Source binding source V1** is the only later source tranche.
+Dependency-gated Issue **#1215 — Dashboard Widgets: bounded Query/Data-Source binding source V1** remains the only later Dashboard Widgets source tranche, but it is **dual-gated** by this contract and Query activation prerequisite #1217.
 
 It may modify/create exactly:
 
@@ -481,7 +501,12 @@ It may modify/create exactly:
 9. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetRuntimeRenderExecutorTest.php`
 10. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php`
 
-No other source/test file is authorized by V1.
+No other Dashboard Widgets source/test file is authorized by V1.
+
+Issue #1215 MUST remain unclaimable until both conditions are terminal PASS:
+
+1. Issue #1213 / PR #1216 merges this corrected contract; and
+2. Issue #1217 activates the existing QueryModule before DashboardWidgetsModule and proves the canonical read-consumer service is available.
 
 ## 21. Minimum later test matrix
 
@@ -532,7 +557,13 @@ V1 does not authorize:
 
 ## 23. Promotion verdict
 
-When this contract merges with exact-head Governance/Architecture green, zero unresolved review threads/comments and zero behind, promote:
+When this corrected contract merges with exact-head Governance/Architecture green, zero unresolved review threads/comments and zero behind, promote only:
+
+`CONTRACT_FROZEN_AWAITING_QUERY_MODULE_ACTIVATION_V1`
+
+That terminal contract merge makes Issue #1217 claimable. It does **not** make Issue #1215 claimable.
+
+Only after Issue #1217 itself closes terminal PASS with the bounded central Pro activation may the repository promote:
 
 `READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1`
 
