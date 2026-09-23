@@ -71,6 +71,18 @@ final class DashboardWidgetWordPressAdapter
 
     private function registerTarget(bool $networkDashboard): void
     {
+        $currentSiteId = null;
+        if (!$networkDashboard) {
+            try {
+                $currentSiteId = $this->environment->currentSiteId();
+            } catch (Throwable) {
+                return;
+            }
+            if ($currentSiteId < 1) {
+                return;
+            }
+        }
+
         try {
             $definitions = $this->definitions->byType(DashboardWidgetDefinition::TYPE);
             usort(
@@ -89,6 +101,9 @@ final class DashboardWidgetWordPressAdapter
                 }
 
                 if ($descriptor->networkDashboard !== $networkDashboard) {
+                    continue;
+                }
+                if (!$networkDashboard && ($currentSiteId === null || !$descriptor->isEligibleForSite($currentSiteId))) {
                     continue;
                 }
 
