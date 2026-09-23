@@ -1,5 +1,22 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1213 bounded Query/Data-Source binding contract activated
+
+- Exact contract base: `a63adf38e960842de19c94dd797628d1f2d578e5`.
+- Issue #1212 / PR #1214 merged as `a63adf38e960842de19c94dd797628d1f2d578e5`.
+- PR #1214 exact head `c9f26ddef503f302ab92cc28579b08fbf873568e`: Governance `35919710237` PASS; Architecture `35919709973` PASS; zero unresolved threads/comments and zero behind.
+- RB-0047 reconciled terminal PASS.
+- Active contract Issue: #1213.
+- Active PR: #1216.
+- Contract branch: `supervisor/dashboard-widgets-query-data-source-binding-contract-v1`.
+- V1 freezes optional `render_source.query`, mixed `source: literal|query` binding envelopes, derived projection, no search, filters max 8, order max 2, page size 1..50, offset 0..1000 and request <=8192 bytes.
+- Data Source Registry is descriptor/schema/availability truth only; QueryReadConsumerInterface V1 is the only read execution seam.
+- Row mapping is limited to `first|column` with exact logical-type → Blueprint-type compatibility and no coercion.
+- Query/Data Source/runtime/type/safety failures fail closed before renderer; raw provider/query errors are not exposed.
+- Dependency-gated source Issue #1215 freezes exactly ten module-local source/test files.
+- Generic registered-provider execution, direct IntegrationRegistry execution, remote transport, assets, refresh/cache, mutation, shared Platform changes, P-006 runtime, full parity, deploy and release remain blocked.
+- Next safe action: exact-head Governance/Architecture + review/main-divergence refresh for PR #1216; merge only terminal green.
+
 ## 2026-09-24 — #1212 Query/Data-Source transition audit activated
 
 - Exact audited main: `27a8be9bb09a3f1f1c907506436600772af01ba6`.
