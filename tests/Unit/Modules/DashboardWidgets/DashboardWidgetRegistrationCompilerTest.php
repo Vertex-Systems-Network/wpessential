@@ -68,6 +68,13 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertSame([], $defaultDescriptor->siteIds);
         self::assertTrue($defaultDescriptor->isEligibleForSite(11));
 
+        $emptyTarget = $defaultSite;
+        $emptyTarget['target'] = [];
+        $emptyTargetDescriptor = $this->compiler()->compile($this->definition(widget: $emptyTarget));
+        self::assertNull($emptyTargetDescriptor->siteScope);
+        self::assertSame([], $emptyTargetDescriptor->siteIds);
+        self::assertTrue($emptyTargetDescriptor->isEligibleForSite(11));
+
         $nestedNetwork = $this->widget();
         unset($nestedNetwork['network_dashboard']);
         $nestedNetwork['target'] = ['network_dashboard' => true];
