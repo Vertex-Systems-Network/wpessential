@@ -126,7 +126,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         }
 
         $target = $widget['target'];
-        if (!is_array($target) || array_is_list($target)) {
+        if (!is_array($target) || ($target !== [] && array_is_list($target))) {
             throw new InvalidArgumentException('Dashboard Widget target must be an object/map.');
         }
         $this->assertKnownKeys($target, self::TARGET_KEYS, 'Dashboard Widget target');
