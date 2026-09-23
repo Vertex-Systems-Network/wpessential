@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1205",
-  "anchor_main_sha": "cdacca2ae85defc9065c5e219867689c1dc70cc1",
+  "source_issue": "#1207",
+  "anchor_main_sha": "9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1376,14 +1376,46 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|site-targeting-source-activation-reconciliation|issue1205|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1206 exact head 37e5015b4c6a012fe7be43cd6be93f66a9a504e8",
+        "Governance Gate run 35915841219 PASS",
+        "Architecture Guards run 35915841267 PASS",
+        "zero unresolved review threads",
+        "zero PR comments/blockers",
+        "zero commits behind main at merge gate",
+        "PR #1206 merged as 9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
+        "Issue #1205 closed completed",
+        "Issue #1203 branch non-force fast-forwarded to 9298bdbfcf9c0d11e06d78ceadc50b268c1489b2 and verified identical to main"
+      ],
+      "note": "Terminal PASS. Source branch is synchronized; source mutation remains blocked only by terminal shared-truth reconciliation #1207."
+    },
+    {
+      "id": "RB-0044",
+      "source": "Issue #1207",
+      "category": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TERMINAL_RECONCILIATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-site-targeting-source-terminal-reconciliation-v1 exact head",
+      "dependencies": [
+        "PR #1206 merged as 9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
+        "RB-0043 terminal PASS",
+        "Issue #1203 branch synchronized to resulting main"
+      ],
+      "authorization": "Terminal shared-truth reconciliation only; no runtime/product PHP or source mutation",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|site-targeting-source-terminal-reconciliation|issue1207|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "resulting main cdacca2ae85defc9065c5e219867689c1dc70cc1",
-        "Issue #1203 branch agent/dashboard-widgets-bounded-site-targeting-source-v1 claimed from exact main"
+        "resulting main 9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
+        "Issue #1203 branch synchronized with 0 ahead / 0 behind and no changed files"
       ],
-      "note": "PASS unlocks source mutation on #1203; it does not certify the source implementation."
+      "note": "PASS unlocks bounded source mutation on Issue #1203; it does not certify the implementation."
     }
   ],
-  "last_reconciled_issue": "#1205",
+  "last_reconciled_issue": "#1207",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
