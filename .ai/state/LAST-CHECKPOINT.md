@@ -1,5 +1,17 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-23 — #1195 bounded site-targeting contract activated
+
+- Exact protected main: `d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4`.
+- #1193 / PR #1197 merged with `READY_FOR_BOUNDED_SITE_TARGETING_CONTRACT_V1`.
+- Governance Gate `35854095152` PASS; Architecture Guards `35854095151` PASS.
+- Active Issue: #1195.
+- Deterministic branch: `supervisor/dashboard-widgets-site-targeting-contract-v1`.
+- Runtime/product PHP remains forbidden in this milestone.
+- Contract freezes site scope, bounded positive site-id validation, site/network mutual exclusion, fail-closed malformed combinations, and current-site eligibility before collision grouping.
+- Next safe action: open/reconcile the bounded contract PR and require fresh exact-head gates before merge.
+
+
 Policy: `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`
 
 ## Exact observed base

@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1193",
-  "anchor_main_sha": "179bff897b9d64a4297855e375d1c679a3550151",
+  "source_issue": "#1195",
+  "anchor_main_sha": "d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1288,16 +1288,42 @@
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|site-targeting-transition-audit|issue1193|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "evidence": [
         "exact audited main 179bff897b9d64a4297855e375d1c679a3550151",
         "canonical target.scope + target.site_ids + target.network_dashboard map to dashboard-widgets.targeting.policy",
         "exact-main implements network_dashboard but lacks target.scope/site_ids compiler/descriptor/runtime semantics",
-        "Issue #1195 created dependency-gated"
+        "Issue #1195 created dependency-gated",
+        "PR #1197 exact head deb7dd5d3e9c02d1e4867993b46da9216eee1e61",
+        "Governance Gate 35854095152 PASS",
+        "Architecture Guards 35854095151 PASS",
+        "merged main d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4"
       ],
       "note": "PASS may authorize only the bounded site-targeting contract V1. Direct runtime implementation remains blocked until that contract merges."
+    },
+    {
+      "id": "RB-0041",
+      "source": "Issue #1195",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-site-targeting-contract-v1 exact head",
+      "dependencies": [
+        "PR #1197 merged as d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4"
+      ],
+      "authorization": "Contract/shared-truth only; runtime/product PHP and side effects forbidden",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|bounded-site-targeting-contract|issue1195|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "dependency gate satisfied by #1193/#1197"
+      ],
+      "note": "PASS authorizes only a later separately scoped source transition; it does not authorize runtime mutation by itself."
     }
   ],
-  "last_reconciled_issue": "#1193",
+  "last_reconciled_issue": "#1195",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
