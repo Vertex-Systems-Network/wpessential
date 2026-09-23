@@ -1,5 +1,20 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1212 Query/Data-Source transition audit activated
+
+- Exact audited main: `27a8be9bb09a3f1f1c907506436600772af01ba6`.
+- Issue #1210 / PR #1211 shared-truth reconciliation merged as `27a8be9bb09a3f1f1c907506436600772af01ba6`.
+- PR #1211 exact head `252556e49a7a7efe77a3d3f24c69cf90873e04c0`: Governance `35918566515` PASS; Architecture `35918566390` PASS; zero unresolved threads/comments and zero behind.
+- RB-0046 reconciled terminal PASS.
+- Fresh Surface 10 evidence confirms trusted render-source bindings remain literal-only.
+- Canonical Data Source Registry supplies policy-aware descriptor/discovery truth.
+- Canonical Query `QueryReadConsumerInterface` V1 supplies the bounded public read-execution boundary and preserves Query-owned validation, Policy authorization, planning and execution.
+- `IntegrationRegistry` is metadata/discovery only; direct generic provider execution is not authorized.
+- Audit verdict candidate: `READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1`.
+- Dependency-gated contract Issue #1213 created; no runtime/source implementation is authorized.
+- Audit Issue #1212 / PR #1214 active on branch `supervisor/dashboard-widgets-query-data-source-transition-audit-v1`.
+- Next safe action: one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1214; merge only terminal green.
+
 ## 2026-09-24 — #1203/#1209 Bounded Site Targeting Source V1 terminal PASS
 
 - Exact product/runtime main: `ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3`.
