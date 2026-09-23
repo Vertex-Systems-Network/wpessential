@@ -13,7 +13,8 @@
 - Dependency-gated source Issue #1203 is frozen to exactly five module-local compiler/descriptor/adapter source/test files.
 - Audit verdict: `READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1`.
 - No runtime/product PHP is changed by this audit milestone.
-- Next safe action: open/reconcile the #1202 audit PR and require fresh exact-head Governance/Architecture, zero unresolved threads and zero behind before merge.
+- PR #1204 opened for the #1202 audit milestone.
+- Next safe action: one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1204; merge only if terminal green, zero unresolved threads and zero behind.
 
 ## 2026-09-23 — #1195 bounded site-targeting contract activated
 
