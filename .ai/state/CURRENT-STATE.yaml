@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: 2669449a23ba4fc965045b8f9e419b31544bd53c
-observed_main_source: "PR #1201 merged org-wide next-action options after #1195 / PR #1200 site targeting contract"
-active_issue: "#1202"
-active_pr: "#1204"
-active_branch: supervisor/dashboard-widgets-site-targeting-source-transition-audit-v1
-current_milestone: "Dashboard Widgets site targeting source transition audit V1"
+observed_main_sha: cdacca2ae85defc9065c5e219867689c1dc70cc1
+observed_main_source: "Issue #1202 / PR #1204 merged Dashboard Widgets site targeting source transition audit V1"
+active_issue: "#1205"
+active_pr: "#1206"
+active_branch: supervisor/dashboard-widgets-site-targeting-source-activation-reconciliation-v1
+current_milestone: "Dashboard Widgets post-audit shared-truth reconciliation and #1203 source-lane activation"
 milestone_status: VERIFYING
-last_completed_milestone: "Issue #1195 / PR #1200 merged as c525008c5c203863998a30d52201bee3905c0c4f; exact-head Governance Gate 35872950066 and Architecture Guards 35872950059 passed"
-next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1204; merge only if terminal green, zero unresolved threads and zero behind. #1203 becomes claimable only after PR #1204 merges with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1."
-waiting_external: "PR #1204 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1202 / PR #1204 merged as cdacca2ae85defc9065c5e219867689c1dc70cc1; exact-head Governance Gate 35914942538 and Architecture Guards 35914942385 passed; zero unresolved threads and zero behind"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1206; merge only if terminal green, zero unresolved threads and zero behind. After PR #1206 merges, #1203 may begin source mutation on its already-claimed deterministic branch."
+waiting_external: "PR #1206 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1203"
   slot_id: dashboard-widgets-bounded-site-targeting-source-v1
   claim_branch: agent/dashboard-widgets-bounded-site-targeting-source-v1
-  claim_rule: "Do not claim until #1202 audit PR merges with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1."
+  claim_rule: "Branch claimed from cdacca2ae85defc9065c5e219867689c1dc70cc1; source mutation blocked until #1205 reconciliation PR merges."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,9 +24,10 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0042
+    - RB-0043
   terminal_pass:
     - RB-0041
+    - RB-0042
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -50,8 +51,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1195 / PR #1200 contract terminal PASS is repository truth."
-  - "PR #1201 changes only AI next-action handoff governance; it does not widen product/runtime authority."
-  - "Exact-main compiler/descriptor/adapter still lack target.scope + target.site_ids implementation; currentSiteId environment seam already exists."
-  - "Issue #1203 is exact five-file dependency-gated source scope; no claim before #1202 audit merge."
-  - "Provider/source execution, remote content, asset side effects, mutation, caching/refresh, full parity, deploy and release remain blocked."
+  - "Issue #1202 / PR #1204 terminal PASS is repository truth."
+  - "RB-0042 terminal evidence: Governance 35914942538 PASS; Architecture 35914942385 PASS; zero unresolved threads; zero behind."
+  - "Issue #1203 deterministic branch is claimed from exact resulting main cdacca2ae85defc9065c5e219867689c1dc70cc1, but accepted open reconciliation work blocks source mutation."
+  - "Issue #1203 remains exactly five source/test files; environment interface/native environment and shared Platform are outside its write scope."
+  - "Provider/source execution, remote content, asset side effects, Definition/user-preference mutation, caching/refresh, full parity, deploy and release remain blocked."

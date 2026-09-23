@@ -1,9 +1,9 @@
 {
-  "schema_version": 133,
+  "schema_version": 134,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "2669449a23ba4fc965045b8f9e419b31544bd53c",
-  "mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
-  "source_issue": "#1202",
+  "queue_anchor_main_sha": "cdacca2ae85defc9065c5e219867689c1dc70cc1",
+  "mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_ACTIVATION_RECONCILIATION_V1",
+  "source_issue": "#1205",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -177,8 +177,9 @@
     "1194": "CLOSED_DUPLICATE_OF_1193",
     "1195": "COMPLETED_ON_PR_1200_DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
     "1196": "CLOSED_DUPLICATE_OF_1193",
-    "1202": "ACTIVE_DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
-    "1203": "OPEN_DEPENDENCY_GATED_BOUNDED_SITE_TARGETING_SOURCE_V1"
+    "1202": "COMPLETED_ON_PR_1204_DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
+    "1203": "CLAIMED_BLOCKED_BY_POST_AUDIT_RECONCILIATION",
+    "1205": "ACTIVE_POST_AUDIT_SHARED_TRUTH_RECONCILIATION"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3922,7 +3923,7 @@
       "slot_id": "dashboard-widgets-site-targeting-source-transition-audit-v1",
       "title": "Dashboard Widgets site targeting source transition audit V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE_SUPERVISOR_AUDIT",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
       "source": "Issue #1202 / contract Issue #1195",
       "dependencies": [
@@ -3955,14 +3956,25 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-site-targeting-source-transition-audit-v1",
-      "close_condition": "Fresh exact-main source audit merges with exact five-file source allowlist, dependency-gated #1203 and READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1 verdict"
+      "close_condition": "Fresh exact-main source audit merges with exact five-file source allowlist, dependency-gated #1203 and READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1 verdict",
+      "terminal_result": "PASS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
+      "terminal_evidence": {
+        "issue": 1202,
+        "pr": 1204,
+        "head": "a801f0e3b47f9f0e01632a2b2fac5d43cae50167",
+        "governance_run": 35914942538,
+        "architecture_run": 35914942385,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "cdacca2ae85defc9065c5e219867689c1dc70cc1"
+      }
     },
     {
       "priority": 1019,
       "slot_id": "dashboard-widgets-bounded-site-targeting-source-v1",
       "title": "Dashboard Widgets bounded site targeting source V1",
       "role": "ANY",
-      "status": "OPEN_DEPENDENCY_GATED",
+      "status": "CLAIMED_BLOCKED_BY_RECONCILIATION",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_SOURCE_V1",
       "source": "Issue #1203 / audit Issue #1202",
       "dependencies": [
@@ -3994,7 +4006,47 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-site-targeting-source-v1",
-      "close_condition": "Exact five-file targeting implementation merges with contract semantics, focused tests and all path-applicable exact-head CI green"
+      "close_condition": "Exact five-file targeting implementation merges with contract semantics, focused tests and all path-applicable exact-head CI green",
+      "claim_base_sha": "cdacca2ae85defc9065c5e219867689c1dc70cc1",
+      "claimed_branch": "agent/dashboard-widgets-bounded-site-targeting-source-v1",
+      "claim_blocker": "Issue #1205 reconciliation PR must merge before source mutation."
+    },
+    {
+      "priority": 1020,
+      "slot_id": "dashboard-widgets-site-targeting-source-activation-reconciliation-v1",
+      "title": "Dashboard Widgets post-audit shared-truth reconciliation and source-lane activation",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE_SUPERVISOR_RECONCILIATION",
+      "work_mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_ACTIVATION_RECONCILIATION_V1",
+      "source": "Issue #1205 / merged audit Issue #1202 / PR #1204",
+      "dependencies": [
+        "Issue #1202 / PR #1204 merged with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP implementation",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "asset enqueue/register side effects",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-site-targeting-source-activation-reconciliation-v1",
+      "close_condition": "Terminal audit evidence reconciled, RB-0042 PASS recorded, #1203 branch claim recorded, and shared truth merged before source mutation"
     }
   ],
   "historical_closeout": {
