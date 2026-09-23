@@ -1,9 +1,9 @@
 {
-  "schema_version": 135,
+  "schema_version": 136,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
-  "mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TERMINAL_RECONCILIATION_V1",
-  "source_issue": "#1207",
+  "queue_anchor_main_sha": "ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3",
+  "mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
+  "source_issue": "#1210",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -178,9 +178,10 @@
     "1195": "COMPLETED_ON_PR_1200_DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
     "1196": "CLOSED_DUPLICATE_OF_1193",
     "1202": "COMPLETED_ON_PR_1204_DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
-    "1203": "CLAIMED_SYNCED_BLOCKED_BY_TERMINAL_RECONCILIATION",
+    "1203": "COMPLETED_ON_PR_1209_BOUNDED_SITE_TARGETING_SOURCE_V1",
     "1205": "COMPLETED_ON_PR_1206_DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_ACTIVATION_RECONCILIATION_V1",
-    "1207": "ACTIVE_TERMINAL_SOURCE_ACTIVATION_RECONCILIATION"
+    "1207": "COMPLETED_ON_PR_1208_SITE_TARGETING_SOURCE_TERMINAL_RECONCILIATION_V1",
+    "1210": "ACTIVE_SHARED_TRUTH_POST_MERGE_RECONCILIATION_TRANSPORT"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3975,7 +3976,7 @@
       "slot_id": "dashboard-widgets-bounded-site-targeting-source-v1",
       "title": "Dashboard Widgets bounded site targeting source V1",
       "role": "ANY",
-      "status": "CLAIMED_SYNCED_BLOCKED_BY_TERMINAL_RECONCILIATION",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_SOURCE_V1",
       "source": "Issue #1203 / audit Issue #1202",
       "dependencies": [
@@ -4008,15 +4009,31 @@
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-site-targeting-source-v1",
       "close_condition": "Exact five-file targeting implementation merges with contract semantics, focused tests and all path-applicable exact-head CI green",
-      "claim_base_sha": "9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
+      "claim_base_sha": "680b62bc4c79aa2b20c3f8c72a208d70d178a33e",
       "claimed_branch": "agent/dashboard-widgets-bounded-site-targeting-source-v1",
-      "claim_blocker": "Issue #1207 terminal reconciliation PR must merge before source mutation.",
+      "claim_blocker": null,
       "sync_evidence": {
         "method": "non_force_fast_forward",
         "synced_to_main_sha": "9298bdbfcf9c0d11e06d78ceadc50b268c1489b2",
         "ahead_by": 0,
         "behind_by": 0,
         "changed_files": 0
+      },
+      "terminal_result": "PASS_BOUNDED_SITE_TARGETING_SOURCE_V1",
+      "terminal_evidence": {
+        "issue": 1203,
+        "pr": 1209,
+        "head": "f89d7059592b3709711b9e3db2cf2d6ab8596cc0",
+        "governance_run": 35917953810,
+        "architecture_run": 35917953718,
+        "php_quality_run": 35917953924,
+        "platform_compatibility_run": 35917953547,
+        "distributable_package_run": 35917953890,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "changed_files": 5,
+        "merge_sha": "ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3"
       }
     },
     {
@@ -4073,7 +4090,7 @@
       "slot_id": "dashboard-widgets-site-targeting-source-terminal-reconciliation-v1",
       "title": "Dashboard Widgets terminal source-activation reconciliation V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE_SUPERVISOR_RECONCILIATION",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TERMINAL_RECONCILIATION_V1",
       "source": "Issue #1207 / merged Issue #1205 / PR #1206",
       "dependencies": [
@@ -4105,7 +4122,58 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-site-targeting-source-terminal-reconciliation-v1",
-      "close_condition": "RB-0043 terminal evidence and #1203 exact-main synchronization merged into shared truth; source lane becomes mutation-ready only after this reconciliation merges"
+      "close_condition": "RB-0043 terminal evidence and #1203 exact-main synchronization merged into shared truth; source lane becomes mutation-ready only after this reconciliation merges",
+      "terminal_result": "PASS_SITE_TARGETING_SOURCE_TERMINAL_RECONCILIATION_V1",
+      "terminal_evidence": {
+        "issue": 1207,
+        "pr": 1208,
+        "head": "0a256eb1cd326787fae817a5c018c443f45f43fe",
+        "governance_run": 35916602904,
+        "architecture_run": 35916602817,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "680b62bc4c79aa2b20c3f8c72a208d70d178a33e"
+      }
+    },
+    {
+      "priority": 1022,
+      "slot_id": "dashboard-widgets-site-targeting-source-post-merge-reconciliation-v1",
+      "title": "Dashboard Widgets bounded site targeting source post-merge reconciliation V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE_SHARED_TRUTH_TRANSPORT",
+      "work_mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
+      "source": "Issue #1210 / merged Issue #1203 / PR #1209",
+      "dependencies": [
+        "Issue #1207 / PR #1208 terminal PASS",
+        "Issue #1203 / PR #1209 exact five-file source terminal PASS"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "product_active_slot": false,
+      "allowed_scope": [
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP implementation",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "asset enqueue/register side effects",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-site-targeting-source-post-merge-reconciliation-v1",
+      "close_condition": "Shared truth records RB-0044/RB-0045 terminal PASS and #1203/#1209 source completion; no next product slot is activated"
     }
   ],
   "historical_closeout": {
