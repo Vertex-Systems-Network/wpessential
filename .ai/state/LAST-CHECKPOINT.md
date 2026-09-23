@@ -1,5 +1,18 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1213 architecture/security correction: Query activation prerequisite
+
+- Exact main remains `a63adf38e960842de19c94dd797628d1f2d578e5`.
+- Read-only review of PR #1216 found a merge-blocking runtime dependency: QueryModule is implemented but not contributed by current Pro bootstrap.
+- DashboardWidgetsModule is currently contributed while QueryModule is absent, so `module.query.read-consumer` is not guaranteed at Dashboard Widgets registration time.
+- Kernel registers modules in boot-order before boot; for modules without manifest dependencies, contribution order is material for service availability.
+- Issue #1217 created as the bounded Query central Pro activation prerequisite.
+- #1217 exact authorized files: `wpessential-pro.php` and `tests/Smoke/query-pro-activation-contract.php`.
+- #1217 must contribute QueryModule exactly once before DashboardWidgetsModule and preserve compatibility/entitlement gates.
+- #1215 remains exact ten-file Dashboard Widgets source but is now dual-gated by corrected contract #1216 plus terminal Query activation #1217.
+- Queue authority must keep Dashboard Widgets generic provider execution forbidden; only canonical QueryReadConsumerInterface calls may be enabled after #1217.
+- Corrected PR #1216 must be revalidated on its new exact head before merge.
+
 ## 2026-09-24 — #1213 bounded Query/Data-Source binding contract activated
 
 - Exact contract base: `a63adf38e960842de19c94dd797628d1f2d578e5`.
