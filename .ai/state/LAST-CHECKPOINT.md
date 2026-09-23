@@ -12,7 +12,8 @@
 - Issue #1203 deterministic source branch `agent/dashboard-widgets-bounded-site-targeting-source-v1` is claimed from exact main `cdacca2ae85defc9065c5e219867689c1dc70cc1`.
 - Source mutation remains blocked until the #1205 reconciliation PR merges.
 - #1203 remains limited to the exact five compiler/descriptor/adapter source/test files already frozen by the audit.
-- Next safe action: open/reconcile #1205 with exact-head Governance/Architecture; after terminal merge, begin the #1203 source tranche.
+- PR #1206 opened for #1205 reconciliation.
+- Next safe action: exact-head Governance/Architecture + review/main-divergence refresh for PR #1206; after terminal merge, begin the #1203 source tranche.
 
 ## 2026-09-24 — #1202 site-targeting source transition audit activated
 
