@@ -5,7 +5,7 @@ state_status: VERIFYING
 observed_main_sha: d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4
 observed_main_source: "PR #1197 merged Dashboard Widgets site targeting transition audit V1"
 active_issue: "#1195"
-active_pr: "PENDING"
+active_pr: "#1200"
 active_branch: supervisor/dashboard-widgets-site-targeting-contract-v1
 current_milestone: "Dashboard Widgets bounded site targeting contract V1"
 milestone_status: IMPLEMENTING
