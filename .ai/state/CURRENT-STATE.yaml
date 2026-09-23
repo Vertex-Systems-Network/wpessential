@@ -1,22 +1,22 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: PRODUCT_TRUTH_RECONCILED_PENDING_SHARED_TRUTH_MERGE
-observed_main_sha: ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3
-observed_main_source: "Issue #1203 / PR #1209 merged Dashboard Widgets Bounded Site Targeting Source V1"
-active_issue: null
-active_pr: null
-active_branch: null
-current_milestone: "Dashboard Widgets Bounded Site Targeting Source V1 terminal PASS"
-milestone_status: COMPLETED_PENDING_SHARED_TRUTH_TRANSPORT
-last_completed_milestone: "Issue #1203 / PR #1209 exact five-file source implementation merged as ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3; Governance 35917953810, Architecture 35917953718, PHP Quality 35917953924, Platform Compatibility 35917953547 and Distributable Package 35917953890 all PASS; zero unresolved threads/comments and zero behind"
-next_safe_action: "Merge the shared-truth-only reconciliation transport from Issue #1210 after exact-head Governance/Architecture green. Then run a fresh exact-main Dashboard Widgets transition audit before activating any next runtime/source tranche."
-waiting_external: "Issue #1210 shared-truth transport verification only; no Dashboard Widgets product lane is active"
+state_status: VERIFYING
+observed_main_sha: 27a8be9bb09a3f1f1c907506436600772af01ba6
+observed_main_source: "Issue #1210 / PR #1211 merged Dashboard Widgets bounded site-targeting source shared-truth reconciliation"
+active_issue: "#1212"
+active_pr: "#1214"
+active_branch: supervisor/dashboard-widgets-query-data-source-transition-audit-v1
+current_milestone: "Dashboard Widgets Query/Data-Source Transition Audit V1"
+milestone_status: VERIFYING
+last_completed_milestone: "Issue #1210 / PR #1211 merged as 27a8be9bb09a3f1f1c907506436600772af01ba6; exact-head Governance 35918566515 and Architecture 35918566390 PASS; zero unresolved threads/comments and zero behind. RB-0046 terminal PASS."
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1214; merge only if terminal green, zero unresolved threads/comments and zero behind. After merge, Issue #1213 may begin contract-only work."
+waiting_external: "PR #1214 exact-head Governance/Architecture validation"
 next_planned_slot:
-  issue: null
-  slot_id: null
-  claim_branch: null
-  claim_rule: "No next product/runtime slot may be claimed until Issue #1210 reconciliation merges and a fresh exact-main transition audit explicitly scopes it."
+  issue: "#1213"
+  slot_id: dashboard-widgets-bounded-query-data-source-binding-contract-v1
+  claim_branch: supervisor/dashboard-widgets-query-data-source-binding-contract-v1
+  claim_rule: "Do not claim until Issue #1212 / PR #1214 merges terminal green with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,13 +24,14 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0046
+    - RB-0047
   terminal_pass:
     - RB-0041
     - RB-0042
     - RB-0043
     - RB-0044
     - RB-0045
+    - RB-0046
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -54,9 +55,11 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1207 / PR #1208 terminal reconciliation merged as 680b62bc4c79aa2b20c3f8c72a208d70d178a33e; Governance 35916602904 PASS and Architecture 35916602817 PASS."
-  - "RB-0044 is terminal PASS and unlocked Issue #1203 source mutation."
-  - "Issue #1203 / PR #1209 is terminal bounded source PASS on exact five authorized files."
-  - "Normalized target.scope/site_ids ownership is compiler/descriptor-local; site eligibility occurs before site collision grouping; network collision remains independent."
-  - "Provider/source execution, remote content, asset side effects, Definition/user-preference mutation, caching/refresh, full parity, deploy and release remain blocked."
-  - "Issue #1210 is reconciliation transport only and is intentionally not represented as an active product issue/PR."
+  - "Issue #1203 / PR #1209 bounded Site Targeting Source V1 remains terminal PASS."
+  - "Issue #1210 / PR #1211 reconciliation is terminal PASS; RB-0046 is terminal PASS."
+  - "Current trusted render source remains component_blueprint + literal bindings only."
+  - "Canonical QueryReadConsumerInterface V1 is the safe public cross-surface read execution seam; DataSourceRegistry is descriptor/discovery truth."
+  - "IntegrationRegistry is metadata/discovery only and is not authorized as a generic provider execution interface."
+  - "Audit candidate verdict: READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1."
+  - "Issue #1213 is contract-only and remains blocked until PR #1214 merges terminal green."
+  - "registered_provider execution, remote/Safe HTTP/RSS/iframe, assets, refresh/cache, Definition/user-preference mutation, shared Platform widening, P-006 runtime, full parity, deploy and release remain blocked."
