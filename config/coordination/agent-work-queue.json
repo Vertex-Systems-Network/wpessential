@@ -1,9 +1,9 @@
 {
-  "schema_version": 132,
-  "snapshot_date": "2026-09-23",
-  "queue_anchor_main_sha": "d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
-  "source_issue": "#1195",
+  "schema_version": 133,
+  "snapshot_date": "2026-09-24",
+  "queue_anchor_main_sha": "2669449a23ba4fc965045b8f9e419b31544bd53c",
+  "mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
+  "source_issue": "#1202",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -175,8 +175,10 @@
     "1191": "COMPLETED_ON_PR_1192_DASHBOARD_WIDGETS_ADAPTER_POST_MERGE_RECONCILIATION",
     "1193": "COMPLETED_ON_PR_1197_DASHBOARD_WIDGETS_SITE_TARGETING_TRANSITION_AUDIT_V1",
     "1194": "CLOSED_DUPLICATE_OF_1193",
-    "1195": "ACTIVE_BOUNDED_SITE_TARGETING_CONTRACT_V1",
-    "1196": "CLOSED_DUPLICATE_OF_1193"
+    "1195": "COMPLETED_ON_PR_1200_DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
+    "1196": "CLOSED_DUPLICATE_OF_1193",
+    "1202": "ACTIVE_DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
+    "1203": "OPEN_DEPENDENCY_GATED_BOUNDED_SITE_TARGETING_SOURCE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -3875,7 +3877,7 @@
       "slot_id": "dashboard-widgets-bounded-site-targeting-contract-v1",
       "title": "Dashboard Widgets bounded site targeting contract V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE_SUPERVISOR_CONTRACT",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
       "source": "Issue #1195 / audit Issue #1193",
       "dependencies": [
@@ -3904,7 +3906,95 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-site-targeting-contract-v1",
-      "close_condition": "Targeting contract merged with exact payload/default/validation, current-site eligibility, site/network isolation, collision-order semantics and later source scope"
+      "close_condition": "Targeting contract merged with exact payload/default/validation, current-site eligibility, site/network isolation, collision-order semantics and later source scope",
+      "terminal_result": "PASS_BOUNDED_SITE_TARGETING_CONTRACT_V1",
+      "terminal_evidence": {
+        "issue": 1195,
+        "pr": 1200,
+        "head": "bd2ccc8f6f309a32608886bf1dd57ec718be8a59",
+        "governance_run": 35872950066,
+        "architecture_run": 35872950059,
+        "merge_sha": "c525008c5c203863998a30d52201bee3905c0c4f"
+      }
+    },
+    {
+      "priority": 1018,
+      "slot_id": "dashboard-widgets-site-targeting-source-transition-audit-v1",
+      "title": "Dashboard Widgets site targeting source transition audit V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE_SUPERVISOR_AUDIT",
+      "work_mode": "DASHBOARD_WIDGETS_SITE_TARGETING_SOURCE_TRANSITION_AUDIT_V1",
+      "source": "Issue #1202 / contract Issue #1195",
+      "dependencies": [
+        "Issue #1195 / PR #1200 merged with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "docs/QUALITY/DASHBOARD-WIDGETS-SITE-TARGETING-SOURCE-TRANSITION-AUDIT-V1.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP implementation",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "shortcode/block/action execution",
+        "asset enqueue/register side effects",
+        "Definition/user-preference mutation",
+        "caching/refresh",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-site-targeting-source-transition-audit-v1",
+      "close_condition": "Fresh exact-main source audit merges with exact five-file source allowlist, dependency-gated #1203 and READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1 verdict"
+    },
+    {
+      "priority": 1019,
+      "slot_id": "dashboard-widgets-bounded-site-targeting-source-v1",
+      "title": "Dashboard Widgets bounded site targeting source V1",
+      "role": "ANY",
+      "status": "OPEN_DEPENDENCY_GATED",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_SITE_TARGETING_SOURCE_V1",
+      "source": "Issue #1203 / audit Issue #1202",
+      "dependencies": [
+        "Issue #1202 audit PR merged with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": true,
+      "wordpress_dashboard_registration_allowed": true,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressAdapter.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetWordPressAdapterTest.php"
+      ],
+      "forbidden_scope": [
+        "DashboardWidgetWordPressEnvironmentInterface.php or NativeWordPressDashboardWidgetEnvironment.php mutation unless a new separately governed audit proves a deficiency",
+        "provider/query/source execution",
+        "Safe HTTP/remote/iframe execution",
+        "shortcode/block/action execution",
+        "asset registration/enqueue",
+        "Definition/user-preference mutation",
+        "caching/refresh",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-site-targeting-source-v1",
+      "close_condition": "Exact five-file targeting implementation merges with contract semantics, focused tests and all path-applicable exact-head CI green"
     }
   ],
   "historical_closeout": {
