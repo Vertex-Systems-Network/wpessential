@@ -1531,7 +1531,7 @@
         "RB-0047 terminal PASS",
         "exact contract base a63adf38e960842de19c94dd797628d1f2d578e5"
       ],
-      "authorization": "Contract/shared-truth only; no runtime/product PHP, remote transport, generic provider execution, assets, mutation, cache/refresh, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "authorization": "Corrected contract/shared-truth only; no runtime/product PHP, no Query activation in this PR, no generic provider execution, remote transport, assets, mutation, cache/refresh, shared Platform changes, P-006 runtime, certification, deploy or release",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 10,
@@ -1539,10 +1539,12 @@
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "contract doc docs/PRODUCT/DASHBOARD-WIDGETS-BOUNDED-QUERY-DATA-SOURCE-BINDING-CONTRACT-V1.md",
-        "dependency-gated source Issue #1215 with exact ten-file allowlist"
+        "corrected contract doc docs/PRODUCT/DASHBOARD-WIDGETS-BOUNDED-QUERY-DATA-SOURCE-BINDING-CONTRACT-V1.md",
+        "architecture/security review found QueryModule not centrally contributed on exact main",
+        "dependency-gated Query activation prerequisite Issue #1217 exact two-file scope",
+        "Dashboard Widgets source Issue #1215 remains dual-gated"
       ],
-      "note": "PASS may promote only READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1. Source #1215 remains blocked until terminal contract merge."
+      "note": "PASS may promote only CONTRACT_FROZEN_AWAITING_QUERY_MODULE_ACTIVATION_V1. It makes #1217 claimable, not #1215. #1215 requires separate terminal Query activation PASS."
     }
   ],
   "last_reconciled_issue": "#1213",
