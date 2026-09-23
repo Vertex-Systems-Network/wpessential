@@ -11,11 +11,11 @@ Project website: **https://wpessential.org**
 - Reconciled product main: `179bff897b9d64a4297855e375d1c679a3550151` after Issue #1191 / PR #1192 merged the **Bounded WordPress Dashboard Adapter V1 post-merge shared-truth reconciliation**.
 - #1191 / PR #1192 exact-head evidence: Governance `35792377626` PASS; Architecture `35792377512` PASS; zero unresolved review threads and zero behind.
 - Latest bounded source milestone remains **#1188 / PR #1190 — Bounded WordPress Dashboard Adapter V1 PASS / merged** with all five path-applicable exact-head workflows green.
-- Active milestone: **Issue #1193 — Site Targeting Transition Audit V1**, branch `supervisor/dashboard-widgets-site-targeting-transition-audit-v1`.
+- Completed transition audit: **Issue #1193 / PR #1197 — Site Targeting Transition Audit V1**, merged as `d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4`; Governance `35854095152` and Architecture `35854095151` PASS.
 - Fresh exact-main finding: canonical P0 `widget.target.scope` and `widget.target.site_ids` map to `dashboard-widgets.targeting.policy` but are absent from the current registration compiler/descriptor/adapter; `network_dashboard` is already implemented.
 - Unsupported site targeting currently fails closed through strict unknown-key compilation. Current-site eligibility must be resolved before same-site WordPress-id collision grouping.
-- Audit verdict: `READY_FOR_BOUNDED_SITE_TARGETING_CONTRACT_V1`.
-- Dependency-gated next contract: **Issue #1195 — Bounded Site Targeting Contract V1**, branch `supervisor/dashboard-widgets-site-targeting-contract-v1`; direct targeting PHP remains blocked until the audit PR merges.
+- Audit verdict: `READY_FOR_BOUNDED_SITE_TARGETING_CONTRACT_V1`; dependency gate satisfied.
+- Active milestone: **Issue #1195 — Bounded Site Targeting Contract V1**, branch `supervisor/dashboard-widgets-site-targeting-contract-v1`; contract-only, with direct targeting PHP still blocked until this contract merges and a fresh source transition is explicitly scoped.
 - Duplicate audit Issues #1194 and #1196 are closed; #1193 is canonical.
 - Provider/query/source execution, remote/iframe/RSS, asset side effects, widget controls/settings, Definition/user-preference mutation, caching/refresh, shared Platform widening and full-parity certification remain blocked/separately gated.
 - Open repository blockers remain #858 external-admin required-CI reconciliation, #1102 separately authorization-gated P-006 Wave 1U, and #947 independent Worker-only audit.
