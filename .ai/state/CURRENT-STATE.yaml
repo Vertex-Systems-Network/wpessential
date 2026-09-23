@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: 27a8be9bb09a3f1f1c907506436600772af01ba6
-observed_main_source: "Issue #1210 / PR #1211 merged Dashboard Widgets bounded site-targeting source shared-truth reconciliation"
-active_issue: "#1212"
-active_pr: "#1214"
-active_branch: supervisor/dashboard-widgets-query-data-source-transition-audit-v1
-current_milestone: "Dashboard Widgets Query/Data-Source Transition Audit V1"
+observed_main_sha: a63adf38e960842de19c94dd797628d1f2d578e5
+observed_main_source: "Issue #1212 / PR #1214 merged Dashboard Widgets Query/Data-Source Transition Audit V1"
+active_issue: "#1213"
+active_pr: "#1216"
+active_branch: supervisor/dashboard-widgets-query-data-source-binding-contract-v1
+current_milestone: "Dashboard Widgets Bounded Query/Data-Source Binding Contract V1"
 milestone_status: VERIFYING
-last_completed_milestone: "Issue #1210 / PR #1211 merged as 27a8be9bb09a3f1f1c907506436600772af01ba6; exact-head Governance 35918566515 and Architecture 35918566390 PASS; zero unresolved threads/comments and zero behind. RB-0046 terminal PASS."
-next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1214; merge only if terminal green, zero unresolved threads/comments and zero behind. After merge, Issue #1213 may begin contract-only work."
-waiting_external: "PR #1214 exact-head Governance/Architecture validation"
+last_completed_milestone: "Issue #1212 / PR #1214 merged as a63adf38e960842de19c94dd797628d1f2d578e5; exact-head Governance 35919710237 and Architecture 35919709973 PASS; zero unresolved threads/comments and zero behind. RB-0047 terminal PASS."
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1216; merge only if terminal green, zero unresolved threads/comments and zero behind. After merge, Issue #1215 may be claimed for the exact ten-file source tranche."
+waiting_external: "PR #1216 exact-head Governance/Architecture validation"
 next_planned_slot:
-  issue: "#1213"
-  slot_id: dashboard-widgets-bounded-query-data-source-binding-contract-v1
-  claim_branch: supervisor/dashboard-widgets-query-data-source-binding-contract-v1
-  claim_rule: "Do not claim until Issue #1212 / PR #1214 merges terminal green with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1."
+  issue: "#1215"
+  slot_id: dashboard-widgets-bounded-query-data-source-binding-source-v1
+  claim_branch: agent/dashboard-widgets-bounded-query-data-source-binding-source-v1
+  claim_rule: "Do not claim or mutate source until Issue #1213 / PR #1216 merges terminal green with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0047
+    - RB-0048
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -32,6 +32,7 @@ runner_benchmark:
     - RB-0044
     - RB-0045
     - RB-0046
+    - RB-0047
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -55,11 +56,12 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1203 / PR #1209 bounded Site Targeting Source V1 remains terminal PASS."
-  - "Issue #1210 / PR #1211 reconciliation is terminal PASS; RB-0046 is terminal PASS."
-  - "Current trusted render source remains component_blueprint + literal bindings only."
-  - "Canonical QueryReadConsumerInterface V1 is the safe public cross-surface read execution seam; DataSourceRegistry is descriptor/discovery truth."
-  - "IntegrationRegistry is metadata/discovery only and is not authorized as a generic provider execution interface."
-  - "Audit candidate verdict: READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1."
-  - "Issue #1213 is contract-only and remains blocked until PR #1214 merges terminal green."
-  - "registered_provider execution, remote/Safe HTTP/RSS/iframe, assets, refresh/cache, Definition/user-preference mutation, shared Platform widening, P-006 runtime, full parity, deploy and release remain blocked."
+  - "Issue #1212 / PR #1214 is terminal PASS with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1."
+  - "Issue #1213 / PR #1216 is contract-only; no runtime/product PHP is authorized in this milestone."
+  - "V1 adds optional render_source.query metadata and source=literal|query binding envelopes while keeping render kind component_blueprint."
+  - "Authored projection and search are forbidden; projection is derived from query binding field_ref values."
+  - "Surface 10 bounds filters to 8, order fields to 2, page size to 50, offset to 1000 and encoded request to 8192 bytes."
+  - "DataSourceRegistryInterface is descriptor/schema/availability truth only; QueryReadConsumerInterface V1 is the only read-execution seam."
+  - "Exact incoming ExecutionContext must be reused unchanged for Query and renderer calls."
+  - "Generic registered_provider execution, direct IntegrationRegistry execution, remote/Safe HTTP/RSS/iframe, assets, refresh/cache, mutation, shared Platform widening, P-006 runtime, full parity, deploy and release remain blocked."
+  - "Issue #1215 is dependency-gated to the exact ten-file implementation allowlist frozen by #1213."
