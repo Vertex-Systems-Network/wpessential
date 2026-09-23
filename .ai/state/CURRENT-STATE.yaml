@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: VERIFYING
-observed_main_sha: d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4
-observed_main_source: "PR #1197 merged Dashboard Widgets site targeting transition audit V1"
-active_issue: "#1195"
-active_pr: "#1200"
-active_branch: supervisor/dashboard-widgets-site-targeting-contract-v1
-current_milestone: "Dashboard Widgets bounded site targeting contract V1"
+observed_main_sha: 2669449a23ba4fc965045b8f9e419b31544bd53c
+observed_main_source: "PR #1201 merged org-wide next-action options after #1195 / PR #1200 site targeting contract"
+active_issue: "#1202"
+active_pr: null
+active_branch: supervisor/dashboard-widgets-site-targeting-source-transition-audit-v1
+current_milestone: "Dashboard Widgets site targeting source transition audit V1"
 milestone_status: IMPLEMENTING
-last_completed_milestone: "Issue #1193 / PR #1197 merged as d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4; exact-head Governance Gate 35854095152 and Architecture Guards 35854095151 passed"
-next_safe_action: "Open the bounded #1195 contract PR, then perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh; merge only if terminal green, zero unresolved threads and zero behind."
+last_completed_milestone: "Issue #1195 / PR #1200 merged as c525008c5c203863998a30d52201bee3905c0c4f; exact-head Governance Gate 35872950066 and Architecture Guards 35872950059 passed"
+next_safe_action: "Open the bounded #1202 audit PR, perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh, and merge only if terminal green, zero unresolved threads and zero behind. #1203 becomes claimable only after audit verdict READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1 merges."
 waiting_external: "none"
 next_planned_slot:
-  issue: null
-  slot_id: null
-  claim_branch: null
-  claim_rule: "Direct targeting source remains blocked until #1195 contract merges and a fresh exact-main transition audit creates an exact source Issue."
+  issue: "#1203"
+  slot_id: dashboard-widgets-bounded-site-targeting-source-v1
+  claim_branch: agent/dashboard-widgets-bounded-site-targeting-source-v1
+  claim_rule: "Do not claim until #1202 audit PR merges with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,6 +24,8 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
+    - RB-0042
+  terminal_pass:
     - RB-0041
   blocked_authorization:
     - RB-0001
@@ -48,8 +50,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1191 / PR #1192 terminal reconciliation PASS is repository truth."
-  - "Audit #1193 finds target.scope + target.site_ids absent from exact-main runtime while network_dashboard is implemented."
-  - "Issue #1195 is dependency-gated contract-only; direct targeting source remains blocked."
-  - "Duplicate audit Issues #1194 and #1196 were closed as duplicates."
+  - "Issue #1195 / PR #1200 contract terminal PASS is repository truth."
+  - "PR #1201 changes only AI next-action handoff governance; it does not widen product/runtime authority."
+  - "Exact-main compiler/descriptor/adapter still lack target.scope + target.site_ids implementation; currentSiteId environment seam already exists."
+  - "Issue #1203 is exact five-file dependency-gated source scope; no claim before #1202 audit merge."
   - "Provider/source execution, remote content, asset side effects, mutation, caching/refresh, full parity, deploy and release remain blocked."
