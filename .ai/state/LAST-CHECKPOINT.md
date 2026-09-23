@@ -1,5 +1,19 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1202/#1204 terminal; #1203 source lane claimed behind reconciliation
+
+- Exact protected main: `cdacca2ae85defc9065c5e219867689c1dc70cc1`.
+- Issue #1202 / PR #1204 merged with `READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1`.
+- PR #1204 exact head `a801f0e3b47f9f0e01632a2b2fac5d43cae50167`: Governance `35914942538` PASS; Architecture `35914942385` PASS.
+- Zero unresolved review threads and zero commits behind at the merge gate.
+- RB-0042 reconciled terminal PASS.
+- Issue #1205 is the active shared-truth reconciliation milestone.
+- Reconciliation branch: `supervisor/dashboard-widgets-site-targeting-source-activation-reconciliation-v1`.
+- Issue #1203 deterministic source branch `agent/dashboard-widgets-bounded-site-targeting-source-v1` is claimed from exact main `cdacca2ae85defc9065c5e219867689c1dc70cc1`.
+- Source mutation remains blocked until the #1205 reconciliation PR merges.
+- #1203 remains limited to the exact five compiler/descriptor/adapter source/test files already frozen by the audit.
+- Next safe action: open/reconcile #1205 with exact-head Governance/Architecture; after terminal merge, begin the #1203 source tranche.
+
 ## 2026-09-24 — #1202 site-targeting source transition audit activated
 
 - Exact protected main: `2669449a23ba4fc965045b8f9e419b31544bd53c`.
