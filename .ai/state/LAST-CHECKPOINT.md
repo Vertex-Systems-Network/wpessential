@@ -1,5 +1,21 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1205/#1206 terminal; #1203 branch synchronized to exact main
+
+- Exact protected main: `9298bdbfcf9c0d11e06d78ceadc50b268c1489b2`.
+- Issue #1205 / PR #1206 merged as `9298bdbfcf9c0d11e06d78ceadc50b268c1489b2`.
+- PR #1206 exact head `37e5015b4c6a012fe7be43cd6be93f66a9a504e8`: Governance `35915841219` PASS; Architecture `35915841267` PASS.
+- Zero unresolved review threads, zero PR comments/blockers and zero commits behind at the merge gate.
+- RB-0043 reconciled terminal PASS.
+- Issue #1203 branch `agent/dashboard-widgets-bounded-site-targeting-source-v1` was fast-forwarded without force to exact main `9298bdbfcf9c0d11e06d78ceadc50b268c1489b2`.
+- Source branch verification: 0 ahead / 0 behind / no changed files against main.
+- Issue #1207 is the active terminal shared-truth reconciliation.
+- Reconciliation branch: `supervisor/dashboard-widgets-site-targeting-source-terminal-reconciliation-v1`.
+- #1203 remains limited to the exact five authorized compiler/descriptor/adapter source/test files.
+- Source mutation remains blocked until the #1207 reconciliation PR merges.
+- PR #1208 opened for #1207 terminal reconciliation.
+- Next safe action: exact-head Governance/Architecture + review/main-divergence refresh for PR #1208; after terminal merge, begin #1203 implementation.
+
 ## 2026-09-24 — #1202/#1204 terminal; #1203 source lane claimed behind reconciliation
 
 - Exact protected main: `cdacca2ae85defc9065c5e219867689c1dc70cc1`.
