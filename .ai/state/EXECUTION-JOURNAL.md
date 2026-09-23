@@ -10,6 +10,15 @@ Rules:
 - archive older detail under `docs/CHECKPOINT-ARCHIVE/` when necessary;
 - repository evidence outranks this journal.
 
+## 2026-09-23 — Bounded site-targeting contract V1 activated
+
+- #1193 / PR #1197 merged as `d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4`; Governance `35854095152` PASS and Architecture `35854095151` PASS.
+- Dependency gate for #1195 is satisfied.
+- Contract-only branch `supervisor/dashboard-widgets-site-targeting-contract-v1` activated.
+- No runtime/product PHP, providers/sources, remote content, assets, mutation, cache/refresh, shared Platform, certification, deploy or release authority is granted.
+- Promotion requires fresh exact-head Governance/Architecture, zero unresolved threads and zero behind.
+
+
 
 ## 2026-09-23 — Adapter closeout merged; site-targeting transition audit opened
 
