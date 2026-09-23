@@ -63,6 +63,117 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertNotContains('wpe_dashboard_widget_duplicate', array_column($environment->widgets, 'id'));
     }
 
+    public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
+    {
+        $definitions = [
+            $this->definition(
+                '40000000-0000-4000-8000-000000000051',
+                'site-eleven',
+                'shared-target',
+                false,
+                ['scope' => 'site_ids', 'site_ids' => [11]],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000052',
+                'site-twelve',
+                'shared-target',
+                false,
+                ['scope' => 'site_ids', 'site_ids' => [12]],
+            ),
+        ];
+        [$adapter, , $environment] = $this->harness($definitions);
+        $environment->siteId = 11;
+
+        $adapter->registerSiteDashboard();
+
+        self::assertSame(['wpe_dashboard_widget_shared-target'], array_column($environment->widgets, 'id'));
+
+        $collidingDefinitions = [
+            $this->definition(
+                '40000000-0000-4000-8000-000000000053',
+                'site-eleven-a',
+                'eligible-collision',
+                false,
+                ['scope' => 'site_ids', 'site_ids' => [11]],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000054',
+                'site-eleven-b',
+                'eligible-collision',
+                false,
+                ['scope' => 'all_sites'],
+            ),
+        ];
+        [$collidingAdapter, , $collidingEnvironment] = $this->harness($collidingDefinitions);
+        $collidingEnvironment->siteId = 11;
+
+        $collidingAdapter->registerSiteDashboard();
+
+        self::assertSame([], $collidingEnvironment->widgets);
+    }
+
+    public function testTargetAbsentAndAllSitesRemainSiteEligible(): void
+    {
+        $definitions = [
+            $this->definition('40000000-0000-4000-8000-000000000061', 'legacy-site', 'legacy-site'),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000062',
+                'all-sites',
+                'all-sites',
+                false,
+                ['scope' => 'all_sites'],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000063',
+                'other-site',
+                'other-site',
+                false,
+                ['scope' => 'site_ids', 'site_ids' => [99]],
+            ),
+        ];
+        [$adapter, , $environment] = $this->harness($definitions);
+        $environment->siteId = 11;
+
+        $adapter->registerSiteDashboard();
+
+        self::assertSame(
+            ['wpe_dashboard_widget_all-sites', 'wpe_dashboard_widget_legacy-site'],
+            array_column($environment->widgets, 'id'),
+        );
+    }
+
+    public function testInvalidOrThrowingCurrentSiteEvidenceHasNoSiteRegistrationSideEffects(): void
+    {
+        $definition = $this->definition(
+            '40000000-0000-4000-8000-000000000071',
+            'site-target',
+            'site-target',
+            false,
+            ['scope' => 'all_sites'],
+        );
+
+        [$invalidAdapter, , $invalidEnvironment] = $this->harness([$definition]);
+        $invalidEnvironment->siteId = 0;
+        $invalidAdapter->registerSiteDashboard();
+        self::assertSame([], $invalidEnvironment->widgets);
+
+        [$throwingAdapter, , $throwingEnvironment] = $this->harness([$definition]);
+        $throwingEnvironment->throwOnCurrentSiteId = true;
+        $throwingAdapter->registerSiteDashboard();
+        self::assertSame([], $throwingEnvironment->widgets);
+
+        $networkDefinition = $this->definition(
+            '40000000-0000-4000-8000-000000000072',
+            'network-target',
+            'network-target',
+            true,
+        );
+        [$networkAdapter, , $networkEnvironment] = $this->harness([$networkDefinition]);
+        $networkEnvironment->throwOnCurrentSiteId = true;
+        $networkAdapter->registerNetworkDashboard();
+        self::assertSame(['wpe_dashboard_widget_network-target'], array_column($networkEnvironment->widgets, 'id'));
+    }
+
     public function testSiteAndNetworkTargetsUseIndependentCollisionDomains(): void
     {
         $definitions = [
@@ -220,6 +331,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public ?int $networkId = null;
             public bool $throwOnWidgetRegistration = false;
             public bool $throwOnFirstHook = false;
+            public bool $throwOnCurrentSiteId = false;
             private int $hookAttempts = 0;
 
             public function registerAction(string $hook, callable $callback): void
@@ -245,7 +357,13 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             }
 
             public function currentUserId(): ?int { return $this->userId; }
-            public function currentSiteId(): int { return $this->siteId; }
+            public function currentSiteId(): int
+            {
+                if ($this->throwOnCurrentSiteId) {
+                    throw new RuntimeException('current site unavailable');
+                }
+                return $this->siteId;
+            }
             public function currentNetworkId(): ?int { return $this->networkId; }
             public function outputTrustedHtml(string $html): void { $this->outputs[] = $html; }
         };
@@ -300,12 +418,36 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ];
     }
 
+    /**
+     * @param array<string,mixed>|null $target
+     */
     private function definition(
         string $id,
         string $slug,
         string $key,
         bool $networkDashboard = false,
+        ?array $target = null,
     ): Definition {
+        $widget = [
+            'key' => $key,
+            'title' => ucfirst(str_replace('-', ' ', $slug)),
+            'type' => 'rich_text',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => $networkDashboard,
+            'render_source' => [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => '31000000-0000-4000-8000-000000000001',
+                'blueprint_revision' => 1,
+                'bindings' => [
+                    'content' => ['source' => 'literal', 'value' => 'Safe'],
+                ],
+            ],
+        ];
+        if ($target !== null) {
+            $widget['target'] = $target;
+        }
+
         return new Definition(
             id: $id,
             slug: $slug,
@@ -313,24 +455,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             schemaVersion: 1,
             ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
             status: DefinitionStatus::Published,
-            payload: [
-                'widget' => [
-                    'key' => $key,
-                    'title' => ucfirst(str_replace('-', ' ', $slug)),
-                    'type' => 'rich_text',
-                    'context' => 'normal',
-                    'priority' => 'default',
-                    'network_dashboard' => $networkDashboard,
-                    'render_source' => [
-                        'kind' => 'component_blueprint',
-                        'blueprint_id' => '31000000-0000-4000-8000-000000000001',
-                        'blueprint_revision' => 1,
-                        'bindings' => [
-                            'content' => ['source' => 'literal', 'value' => 'Safe'],
-                        ],
-                    ],
-                ],
-            ],
+            payload: ['widget' => $widget],
             revision: 1,
             dependencies: [],
         );

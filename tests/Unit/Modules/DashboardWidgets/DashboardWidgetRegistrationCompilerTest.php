@@ -31,6 +31,93 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertSame('normal', $descriptor->context);
         self::assertSame('default', $descriptor->priority);
         self::assertTrue($descriptor->networkDashboard);
+        self::assertNull($descriptor->siteScope);
+        self::assertSame([], $descriptor->siteIds);
+    }
+
+    public function testCompilesAndNormalizesBoundedSiteTargeting(): void
+    {
+        $siteTarget = $this->widget();
+        $siteTarget['network_dashboard'] = false;
+        $siteTarget['target'] = [
+            'scope' => 'site_ids',
+            'site_ids' => [11, 3, 11, 7],
+            'network_dashboard' => false,
+        ];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $siteTarget));
+
+        self::assertFalse($descriptor->networkDashboard);
+        self::assertSame(DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS, $descriptor->siteScope);
+        self::assertSame([3, 7, 11], $descriptor->siteIds);
+        self::assertTrue($descriptor->isEligibleForSite(7));
+        self::assertFalse($descriptor->isEligibleForSite(9));
+
+        $allSites = $this->widget();
+        $allSites['network_dashboard'] = false;
+        $allSites['target'] = ['scope' => 'all_sites'];
+        $allSitesDescriptor = $this->compiler()->compile($this->definition(widget: $allSites));
+        self::assertSame(DashboardWidgetRegistrationDescriptor::SITE_SCOPE_ALL_SITES, $allSitesDescriptor->siteScope);
+        self::assertSame([], $allSitesDescriptor->siteIds);
+        self::assertTrue($allSitesDescriptor->isEligibleForSite(999));
+
+        $defaultSite = $this->widget();
+        $defaultSite['network_dashboard'] = false;
+        $defaultDescriptor = $this->compiler()->compile($this->definition(widget: $defaultSite));
+        self::assertNull($defaultDescriptor->siteScope);
+        self::assertSame([], $defaultDescriptor->siteIds);
+        self::assertTrue($defaultDescriptor->isEligibleForSite(11));
+
+        $emptyTarget = $defaultSite;
+        $emptyTarget['target'] = [];
+        $emptyTargetDescriptor = $this->compiler()->compile($this->definition(widget: $emptyTarget));
+        self::assertNull($emptyTargetDescriptor->siteScope);
+        self::assertSame([], $emptyTargetDescriptor->siteIds);
+        self::assertTrue($emptyTargetDescriptor->isEligibleForSite(11));
+
+        $nestedNetwork = $this->widget();
+        unset($nestedNetwork['network_dashboard']);
+        $nestedNetwork['target'] = ['network_dashboard' => true];
+        $nestedNetworkDescriptor = $this->compiler()->compile($this->definition(widget: $nestedNetwork));
+        self::assertTrue($nestedNetworkDescriptor->networkDashboard);
+        self::assertNull($nestedNetworkDescriptor->siteScope);
+        self::assertFalse($nestedNetworkDescriptor->isEligibleForSite(11));
+    }
+
+    public function testRejectsMalformedOrConflictingSiteTargeting(): void
+    {
+        $compiler = $this->compiler();
+        $valid = $this->widget();
+        $valid['network_dashboard'] = false;
+
+        $overBound = array_fill(0, DashboardWidgetRegistrationDescriptor::MAX_SITE_IDS + 1, 1);
+        $cases = [
+            array_replace($valid, ['target' => ['unknown' => true]]),
+            array_replace($valid, ['target' => ['scope' => 'current_site']]),
+            array_replace($valid, ['target' => ['site_ids' => [11]]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => []]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => '11']]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => [11, '12']]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => [11, 12.0]]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => [11, true]]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => [11, null]]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => [0]]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => [-1]]]),
+            array_replace($valid, ['target' => ['scope' => 'site_ids', 'site_ids' => $overBound]]),
+            array_replace($valid, ['target' => ['scope' => 'all_sites', 'site_ids' => []]]),
+            array_replace($valid, ['target' => ['scope' => 'all_sites', 'site_ids' => [11]]]),
+            array_replace($valid, ['target' => ['scope' => 'all_sites', 'network_dashboard' => true]]),
+            array_replace($valid, ['network_dashboard' => true, 'target' => ['network_dashboard' => false]]),
+        ];
+
+        foreach ($cases as $widget) {
+            try {
+                $compiler->compile($this->definition(widget: $widget));
+                self::fail('Expected malformed Dashboard Widget site targeting to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
     }
 
     public function testRejectsWrongOwnerTypeOrStatus(): void

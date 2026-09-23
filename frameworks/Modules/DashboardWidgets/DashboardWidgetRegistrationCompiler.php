@@ -20,7 +20,10 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'visibility', 'render_source'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'visibility', 'render_source'];
+
+    /** @var list<string> */
+    private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
 
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
@@ -91,10 +94,7 @@ final readonly class DashboardWidgetRegistrationCompiler
             throw new InvalidArgumentException('Dashboard Widget priority is unsupported.');
         }
 
-        $networkDashboard = $widget['network_dashboard'] ?? false;
-        if (!is_bool($networkDashboard)) {
-            throw new InvalidArgumentException('Dashboard Widget network_dashboard target must be boolean.');
-        }
+        [$networkDashboard, $siteScope, $siteIds] = $this->compileTarget($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -104,7 +104,86 @@ final readonly class DashboardWidgetRegistrationCompiler
             context: $context,
             priority: $priority,
             networkDashboard: $networkDashboard,
+            siteScope: $siteScope,
+            siteIds: $siteIds,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     * @return array{0:bool,1:?string,2:list<int>}
+     */
+    private function compileTarget(array $widget): array
+    {
+        $legacyNetworkPresent = array_key_exists('network_dashboard', $widget);
+        $legacyNetworkDashboard = $legacyNetworkPresent ? $widget['network_dashboard'] : false;
+        if (!is_bool($legacyNetworkDashboard)) {
+            throw new InvalidArgumentException('Dashboard Widget network_dashboard target must be boolean.');
+        }
+
+        if (!array_key_exists('target', $widget)) {
+            return [$legacyNetworkDashboard, null, []];
+        }
+
+        $target = $widget['target'];
+        if (!is_array($target) || ($target !== [] && array_is_list($target))) {
+            throw new InvalidArgumentException('Dashboard Widget target must be an object/map.');
+        }
+        $this->assertKnownKeys($target, self::TARGET_KEYS, 'Dashboard Widget target');
+
+        $targetNetworkPresent = array_key_exists('network_dashboard', $target);
+        $targetNetworkDashboard = $targetNetworkPresent ? $target['network_dashboard'] : $legacyNetworkDashboard;
+        if (!is_bool($targetNetworkDashboard)) {
+            throw new InvalidArgumentException('Dashboard Widget target.network_dashboard must be boolean.');
+        }
+        if ($legacyNetworkPresent && $targetNetworkPresent && $legacyNetworkDashboard !== $targetNetworkDashboard) {
+            throw new InvalidArgumentException('Dashboard Widget network target declarations conflict.');
+        }
+
+        $scopePresent = array_key_exists('scope', $target);
+        $scope = $scopePresent ? $target['scope'] : null;
+        if ($scopePresent && (!is_string($scope) || !in_array($scope, DashboardWidgetRegistrationDescriptor::SITE_SCOPES, true))) {
+            throw new InvalidArgumentException('Dashboard Widget target.scope is unsupported.');
+        }
+
+        $siteIdsPresent = array_key_exists('site_ids', $target);
+        $authoredSiteIds = $siteIdsPresent ? $target['site_ids'] : [];
+        if ($siteIdsPresent && (!is_array($authoredSiteIds) || !array_is_list($authoredSiteIds))) {
+            throw new InvalidArgumentException('Dashboard Widget target.site_ids must be a list.');
+        }
+        if ($siteIdsPresent && count($authoredSiteIds) > DashboardWidgetRegistrationDescriptor::MAX_SITE_IDS) {
+            throw new InvalidArgumentException('Dashboard Widget target.site_ids exceeds the bounded maximum.');
+        }
+
+        /** @var array<int,true> $siteIdSet */
+        $siteIdSet = [];
+        if ($siteIdsPresent) {
+            foreach ($authoredSiteIds as $siteId) {
+                if (!is_int($siteId) || $siteId < 1) {
+                    throw new InvalidArgumentException('Dashboard Widget target.site_ids must contain positive integers only.');
+                }
+                $siteIdSet[$siteId] = true;
+            }
+        }
+
+        /** @var list<int> $siteIds */
+        $siteIds = array_keys($siteIdSet);
+        sort($siteIds, SORT_NUMERIC);
+
+        if ($siteIdsPresent && $scope !== DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS) {
+            throw new InvalidArgumentException('Dashboard Widget target.site_ids requires scope=site_ids.');
+        }
+        if ($scope === DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS && $siteIds === []) {
+            throw new InvalidArgumentException('Dashboard Widget target.scope=site_ids requires a non-empty site_ids list.');
+        }
+        if ($scope === DashboardWidgetRegistrationDescriptor::SITE_SCOPE_ALL_SITES && $siteIdsPresent) {
+            throw new InvalidArgumentException('Dashboard Widget target.scope=all_sites forbids site_ids.');
+        }
+        if ($targetNetworkDashboard && ($scopePresent || $siteIds !== [])) {
+            throw new InvalidArgumentException('Dashboard Widget network target cannot include site targeting intent.');
+        }
+
+        return [$targetNetworkDashboard, $scope, $siteIds];
     }
 
     /**

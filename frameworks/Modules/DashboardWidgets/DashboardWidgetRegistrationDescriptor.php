@@ -22,6 +22,16 @@ final readonly class DashboardWidgetRegistrationDescriptor
     public const PRIORITY_DEFAULT = 'default';
     public const PRIORITY_LOW = 'low';
 
+    public const SITE_SCOPE_ALL_SITES = 'all_sites';
+    public const SITE_SCOPE_SITE_IDS = 'site_ids';
+    public const MAX_SITE_IDS = 100;
+
+    /** @var list<string> */
+    public const SITE_SCOPES = [
+        self::SITE_SCOPE_ALL_SITES,
+        self::SITE_SCOPE_SITE_IDS,
+    ];
+
     /** @var list<string> */
     public const CONTEXTS = [
         self::CONTEXT_NORMAL,
@@ -46,6 +56,9 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public string $context,
         public string $priority,
         public bool $networkDashboard,
+        public ?string $siteScope = null,
+        /** @var list<int> */
+        public array $siteIds = [],
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -71,5 +84,45 @@ final readonly class DashboardWidgetRegistrationDescriptor
         if (!in_array($this->priority, self::PRIORITIES, true)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor priority is unsupported.');
         }
+        if ($this->siteScope !== null && !in_array($this->siteScope, self::SITE_SCOPES, true)) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor site scope is unsupported.');
+        }
+        if (!array_is_list($this->siteIds) || count($this->siteIds) > self::MAX_SITE_IDS) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor site ids must be a bounded normalized list.');
+        }
+
+        $previousSiteId = 0;
+        foreach ($this->siteIds as $siteId) {
+            if (!is_int($siteId) || $siteId < 1 || $siteId <= $previousSiteId) {
+                throw new InvalidArgumentException('Dashboard Widget descriptor site ids must be unique positive integers sorted ascending.');
+            }
+            $previousSiteId = $siteId;
+        }
+
+        if ($this->siteScope === null && $this->siteIds !== []) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor site ids require site_ids scope.');
+        }
+        if ($this->siteScope === self::SITE_SCOPE_SITE_IDS && $this->siteIds === []) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor site_ids scope requires at least one site id.');
+        }
+        if ($this->siteScope === self::SITE_SCOPE_ALL_SITES && $this->siteIds !== []) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor all_sites scope forbids site ids.');
+        }
+        if ($this->networkDashboard && ($this->siteScope !== null || $this->siteIds !== [])) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor network target cannot include site targeting.');
+        }
+    }
+
+    public function isEligibleForSite(int $siteId): bool
+    {
+        if ($siteId < 1 || $this->networkDashboard) {
+            return false;
+        }
+
+        return match ($this->siteScope) {
+            null, self::SITE_SCOPE_ALL_SITES => true,
+            self::SITE_SCOPE_SITE_IDS => in_array($siteId, $this->siteIds, true),
+            default => false,
+        };
     }
 }
