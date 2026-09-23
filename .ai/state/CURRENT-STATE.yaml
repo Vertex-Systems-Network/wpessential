@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: 2669449a23ba4fc965045b8f9e419b31544bd53c
 observed_main_source: "PR #1201 merged org-wide next-action options after #1195 / PR #1200 site targeting contract"
 active_issue: "#1202"
-active_pr: null
+active_pr: "#1204"
 active_branch: supervisor/dashboard-widgets-site-targeting-source-transition-audit-v1
 current_milestone: "Dashboard Widgets site targeting source transition audit V1"
-milestone_status: IMPLEMENTING
+milestone_status: VERIFYING
 last_completed_milestone: "Issue #1195 / PR #1200 merged as c525008c5c203863998a30d52201bee3905c0c4f; exact-head Governance Gate 35872950066 and Architecture Guards 35872950059 passed"
-next_safe_action: "Open the bounded #1202 audit PR, perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh, and merge only if terminal green, zero unresolved threads and zero behind. #1203 becomes claimable only after audit verdict READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1 merges."
-waiting_external: "none"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1204; merge only if terminal green, zero unresolved threads and zero behind. #1203 becomes claimable only after PR #1204 merges with READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1."
+waiting_external: "PR #1204 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1203"
   slot_id: dashboard-widgets-bounded-site-targeting-source-v1
