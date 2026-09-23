@@ -107,4 +107,3 @@ Do not wait for discretionary duplicate human review when repository rules do no
 If GitHub or repository policy prevents an identity from approving its own PR/MR, do not fabricate an approval or weaken the rule. Record the AI review result, keep required mandatory external approval as a real gate when the repository enforces one, and continue all other non-conflicting actionable work.
 
 AI approval never overrides required security/governance checks, exact-head validation, branch-protection/ruleset requirements, migration/data-safety gates or required external evidence.
-
