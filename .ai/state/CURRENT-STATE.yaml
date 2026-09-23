@@ -5,13 +5,13 @@ state_status: VERIFYING
 observed_main_sha: cdacca2ae85defc9065c5e219867689c1dc70cc1
 observed_main_source: "Issue #1202 / PR #1204 merged Dashboard Widgets site targeting source transition audit V1"
 active_issue: "#1205"
-active_pr: null
+active_pr: "#1206"
 active_branch: supervisor/dashboard-widgets-site-targeting-source-activation-reconciliation-v1
 current_milestone: "Dashboard Widgets post-audit shared-truth reconciliation and #1203 source-lane activation"
-milestone_status: IMPLEMENTING
+milestone_status: VERIFYING
 last_completed_milestone: "Issue #1202 / PR #1204 merged as cdacca2ae85defc9065c5e219867689c1dc70cc1; exact-head Governance Gate 35914942538 and Architecture Guards 35914942385 passed; zero unresolved threads and zero behind"
-next_safe_action: "Open the #1205 shared-truth reconciliation PR and perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh. Merge only if terminal green. After that merge, #1203 may begin source mutation on its already-claimed deterministic branch."
-waiting_external: "none"
+next_safe_action: "Perform one consolidated exact-head Governance/Architecture + review/main-divergence refresh for PR #1206; merge only if terminal green, zero unresolved threads and zero behind. After PR #1206 merges, #1203 may begin source mutation on its already-claimed deterministic branch."
+waiting_external: "PR #1206 exact-head Governance/Architecture validation"
 next_planned_slot:
   issue: "#1203"
   slot_id: dashboard-widgets-bounded-site-targeting-source-v1
