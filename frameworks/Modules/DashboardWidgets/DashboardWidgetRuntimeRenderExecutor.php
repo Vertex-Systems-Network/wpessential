@@ -94,7 +94,30 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
                 return DashboardWidgetRuntimeRenderResult::runtimeFailure();
             }
 
-            return DashboardWidgetRuntimeRenderResult::rendererFailed($output->failure);
+            $primaryFailure = $output->failure;
+            if ($renderSource->errorState === null) {
+                return DashboardWidgetRuntimeRenderResult::rendererFailed($primaryFailure);
+            }
+
+            try {
+                $fallback = $this->renderer->render($renderSource->errorState->toRenderInput(), $context);
+            } catch (Throwable) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
+
+            if (!$fallback->success) {
+                if ($fallback->failure === null) {
+                    return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+                }
+
+                return DashboardWidgetRuntimeRenderResult::rendererFailed($fallback->failure);
+            }
+
+            return DashboardWidgetRuntimeRenderResult::renderedError(
+                $fallback->html,
+                $fallback->assetHandles,
+                $primaryFailure,
+            );
         }
 
         return DashboardWidgetRuntimeRenderResult::rendered(
