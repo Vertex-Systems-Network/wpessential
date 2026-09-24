@@ -10,6 +10,7 @@
 - RB-0049 records the terminal Query central Pro activation prerequisite; no historical runner evidence is rerun.
 - Issue #1215 now has both product dependencies satisfied, but source mutation remains blocked until Issue #1219 shared-truth reconciliation merges terminal green.
 - Issue #1219 exact authorized scope is five shared-truth files only: compact state, checkpoint, README, coordination queue and Runner Benchmark. No runtime/product PHP is authorized.
+- PR #1220 is the active reconciliation transport on `supervisor/dashboard-widgets-query-activation-post-merge-reconciliation-v1`; merge only after exact-head path-applicable CI, zero review blockers and zero behind.
 - After #1219 terminal merge, the next safe action is to claim #1215 on `agent/dashboard-widgets-bounded-query-data-source-binding-source-v1` and mutate only its exact ten authorized Dashboard Widgets source/test files.
 - Generic provider execution, direct IntegrationRegistry execution, remote/Safe HTTP/RSS/iframe, assets, cache/refresh, mutation, shared Platform widening, P-006 runtime, full parity, deploy and release remain blocked.
 

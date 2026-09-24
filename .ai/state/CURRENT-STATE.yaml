@@ -5,13 +5,13 @@ state_status: RECONCILING
 observed_main_sha: 8f844ec4211c73f44d27a048e7a5cf7505126d23
 observed_main_source: "Issue #1217 / PR #1218 merged Query bounded central Pro activation prerequisite V1"
 active_issue: "#1219"
-active_pr: "PENDING_RECONCILIATION_PR"
+active_pr: "#1220"
 active_branch: supervisor/dashboard-widgets-query-activation-post-merge-reconciliation-v1
 current_milestone: "Dashboard Widgets Query activation post-merge shared-truth reconciliation V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1217 / PR #1218 merged as 8f844ec4211c73f44d27a048e7a5cf7505126d23; exact head 1fe2493ba5e8e3d432a0023cd28d747007294c69; 17/17 observed exact-head checks PASS; zero review blockers/comments and zero behind; QueryModule precedes DashboardWidgetsModule; Issue #1217 closed completed."
 next_safe_action: "Open and validate the #1219 exact five-file shared-truth reconciliation PR; merge only terminal green. After #1219 terminal merge, claim Issue #1215 on agent/dashboard-widgets-bounded-query-data-source-binding-source-v1 with the exact ten-file allowlist."
-waiting_external: "Issue #1219 shared-truth reconciliation exact-head CI/review"
+waiting_external: "PR #1220 shared-truth reconciliation exact-head CI/review"
 next_planned_slot:
   issue: "#1215"
   slot_id: dashboard-widgets-bounded-query-data-source-binding-source-v1
