@@ -13,6 +13,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalo
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetDynamicBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
@@ -101,6 +102,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetContentClassCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER));
         self::assertInstanceOf(DashboardWidgetRenderSourceCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_RENDER_SOURCE_COMPILER));
         self::assertInstanceOf(DashboardWidgetQueryBindingExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_QUERY_BINDING_EXECUTOR));
+        self::assertInstanceOf(DashboardWidgetDynamicBindingExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_DYNAMIC_BINDING_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetComponentBlueprintCatalog::class, $services->get(DashboardWidgetsModule::SERVICE_COMPONENT_CATALOG));
         self::assertInstanceOf(DashboardWidgetTrustedComponentRenderer::class, $services->get(DashboardWidgetsModule::SERVICE_TRUSTED_COMPONENT_RENDERER));
         self::assertInstanceOf(DashboardWidgetComponentRegistrar::class, $services->get(DashboardWidgetsModule::SERVICE_COMPONENT_REGISTRAR));

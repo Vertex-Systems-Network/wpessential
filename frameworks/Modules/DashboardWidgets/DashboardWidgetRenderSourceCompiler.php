@@ -25,6 +25,9 @@ final readonly class DashboardWidgetRenderSourceCompiler
     private const QUERY_BINDING_KEYS = ['source', 'field_ref', 'mode'];
 
     /** @var list<string> */
+    private const DYNAMIC_BINDING_KEYS = ['source', 'source_ref', 'value_ref', 'resource'];
+
+    /** @var list<string> */
     private const QUERY_KEYS = ['contract_version', 'source_ref', 'filters', 'order_by', 'page_size', 'offset'];
 
     /** @var list<string> */
@@ -130,6 +133,8 @@ final readonly class DashboardWidgetRenderSourceCompiler
         $literalBindings = [];
         /** @var array<string,array{field_ref:string,mode:string,binding_type:string}> $queryBindings */
         $queryBindings = [];
+        /** @var array<string,array{source_ref:string,value_ref:string,resource:string,binding_type:string}> $dynamicBindings */
+        $dynamicBindings = [];
 
         foreach ($blueprint->bindingSchema as $key => $type) {
             $envelope = $bindings[$key] ?? null;
@@ -165,11 +170,35 @@ final readonly class DashboardWidgetRenderSourceCompiler
                 continue;
             }
 
-            throw new InvalidArgumentException('Dashboard Widget render_source binding source must be literal or query.');
+            if ($source === 'dynamic') {
+                $this->assertKnownKeys($envelope, self::DYNAMIC_BINDING_KEYS, 'Dashboard Widget Dynamic render_source binding');
+                $sourceRef = $this->semanticReference(
+                    $envelope['source_ref'] ?? null,
+                    'Dashboard Widget Dynamic binding source_ref',
+                );
+                $valueRef = $this->semanticReference(
+                    $envelope['value_ref'] ?? null,
+                    'Dashboard Widget Dynamic binding value_ref',
+                );
+                $resource = $envelope['resource'] ?? null;
+                if (!is_string($resource) || !in_array($resource, ['site', 'user', 'network'], true)) {
+                    throw new InvalidArgumentException('Dashboard Widget Dynamic binding resource must be site, user or network.');
+                }
+                $dynamicBindings[$key] = [
+                    'source_ref' => $sourceRef,
+                    'value_ref' => $valueRef,
+                    'resource' => $resource,
+                    'binding_type' => $type,
+                ];
+                continue;
+            }
+
+            throw new InvalidArgumentException('Dashboard Widget render_source binding source must be literal, query or dynamic.');
         }
 
         ksort($literalBindings, SORT_STRING);
         ksort($queryBindings, SORT_STRING);
+        ksort($dynamicBindings, SORT_STRING);
 
         $queryAuthored = array_key_exists('query', $renderSource);
         if ($queryBindings === [] && $queryAuthored) {
@@ -208,6 +237,7 @@ final readonly class DashboardWidgetRenderSourceCompiler
             query: $query,
             emptyState: $emptyState,
             errorState: $errorState,
+            dynamicBindings: $dynamicBindings,
         );
     }
 
@@ -583,6 +613,20 @@ final readonly class DashboardWidgetRenderSourceCompiler
                 throw new InvalidArgumentException($label . ' contains an unsupported key.');
             }
         }
+    }
+
+    private function semanticReference(mixed $value, string $label): string
+    {
+        if (
+            !is_string($value)
+            || $value === ''
+            || strlen($value) > 160
+            || preg_match('/^[a-zA-Z0-9_.:-]+$/', $value) !== 1
+        ) {
+            throw new InvalidArgumentException($label . ' must be a bounded semantic reference.');
+        }
+
+        return $value;
     }
 
     private function assertValueMatchesType(mixed $value, string $type): void

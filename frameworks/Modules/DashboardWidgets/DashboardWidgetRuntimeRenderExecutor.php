@@ -24,6 +24,7 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
         private DashboardWidgetRenderSourceCompiler $renderSourceCompiler,
         private RendererInterface $renderer,
         private ?DashboardWidgetQueryBindingExecutor $queryBindingExecutor = null,
+        private ?DashboardWidgetDynamicBindingExecutor $dynamicBindingExecutor = null,
     ) {}
 
     public function render(
@@ -79,6 +80,22 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
             }
 
             if ($renderSource->query !== null || $renderSource->emptyState !== null) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
+        }
+
+        if ($renderSource->dynamicBindings !== []) {
+            if ($this->dynamicBindingExecutor === null) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
+
+            try {
+                $renderSource = $this->dynamicBindingExecutor->resolve($renderSource, $context);
+            } catch (Throwable) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
+
+            if ($renderSource->query !== null || $renderSource->dynamicBindings !== [] || $renderSource->emptyState !== null) {
                 return DashboardWidgetRuntimeRenderResult::runtimeFailure();
             }
         }

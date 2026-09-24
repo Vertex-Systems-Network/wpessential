@@ -9,11 +9,13 @@ use RuntimeException;
 use Throwable;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\DynamicValueResolverInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\RendererInterface;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetDynamicBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
@@ -32,6 +34,8 @@ use WPEssential\Platform\DataSources\DataSourceAuthorizationMapping;
 use WPEssential\Platform\DataSources\DataSourceDescriptor;
 use WPEssential\Platform\DataSources\DataSourceRegistry;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
+use WPEssential\Platform\DynamicValues\DynamicValueRequest;
+use WPEssential\Platform\DynamicValues\DynamicValueResult;
 use WPEssential\Platform\Rendering\RenderFailureCode;
 use WPEssential\Platform\Rendering\RenderInput;
 use WPEssential\Platform\Rendering\RenderOutput;
@@ -294,6 +298,96 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         );
     }
 
+    public function testDynamicContextTokenSuccessForwardsExactContextAndBinding(): void
+    {
+        $resolver = new RuntimeDynamicResolver(new DynamicValueResult(true, 'Dynamic content'));
+        $dynamicBindings = new DashboardWidgetDynamicBindingExecutor($resolver);
+        $repository = $this->repositoryWith($this->definition(renderSource: $this->dynamicRenderSource()));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>dynamic</p>'));
+        $context = new ExecutionContext(new Principal(7), 3, networkId: 9);
+        $executor = $this->executor(
+            $repository,
+            $renderer,
+            new RuntimeRenderRoleProvider(),
+            null,
+            $dynamicBindings,
+        );
+
+        $result = $executor->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $result->status);
+        self::assertSame(1, $resolver->calls);
+        self::assertSame($context, $resolver->seenContext);
+        self::assertSame('context.site', $resolver->seenRequest?->sourceRef);
+        self::assertSame('display_name', $resolver->seenRequest?->valueRef);
+        self::assertSame('site', $resolver->seenRequest?->resourceType);
+        self::assertSame(3, $resolver->seenRequest?->resourceId);
+        self::assertSame(['content' => 'Dynamic content'], $renderer->seenInput?->bindings);
+    }
+
+    public function testQueryResolvesBeforeDynamicAndRendererReceivesBothBindings(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer([
+            'contract_version' => 1,
+            'ok' => true,
+            'source_ref' => 'wordpress.posts',
+            'projection' => ['post.title'],
+            'rows' => [['post.title' => 'Query title']],
+            'returned' => 1,
+            'error' => null,
+        ]);
+        $resolver = new RuntimeDynamicResolver(new DynamicValueResult(true, 'Dynamic text'));
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->queryAndDynamicRenderSource(),
+        ));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>combined</p>'));
+        $context = new ExecutionContext(new Principal(7), 3);
+        $executor = $this->executor(
+            $repository,
+            $renderer,
+            new RuntimeRenderRoleProvider(),
+            new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer),
+            new DashboardWidgetDynamicBindingExecutor($resolver),
+        );
+
+        $result = $executor->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $result->status);
+        self::assertSame(1, $consumer->calls);
+        self::assertSame(1, $resolver->calls);
+        self::assertSame(
+            ['text' => 'Dynamic text', 'title' => 'Query title'],
+            $renderer->seenInput?->bindings,
+        );
+    }
+
+    public function testDynamicFailurePreventsRendererAndFallback(): void
+    {
+        $resolver = new RuntimeDynamicResolver(
+            new DynamicValueResult(false, null, RenderFailureCode::UnsupportedValueSource),
+        );
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->dynamicRenderSource(withErrorState: true),
+        ));
+        $renderer = new RuntimeRenderSequenceRenderer([
+            new RenderOutput(true, '<p>must not render</p>'),
+            new RenderOutput(true, '<p>fallback must not render</p>'),
+        ]);
+        $executor = $this->executor(
+            $repository,
+            $renderer,
+            new RuntimeRenderRoleProvider(),
+            null,
+            new DashboardWidgetDynamicBindingExecutor($resolver),
+        );
+
+        $result = $executor->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RUNTIME_FAILURE, $result->status);
+        self::assertSame(1, $resolver->calls);
+        self::assertSame(0, $renderer->calls);
+    }
+
     public function testTypedPrimaryRendererFailureUsesOneShotTrustedErrorState(): void
     {
         $repository = $this->repositoryWith($this->definition(
@@ -450,6 +544,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         RendererInterface $renderer,
         RuntimeRenderRoleProvider $roles,
         ?DashboardWidgetQueryBindingExecutor $queryBindings = null,
+        ?DashboardWidgetDynamicBindingExecutor $dynamicBindings = null,
     ): DashboardWidgetRuntimeRenderExecutor {
         $blueprints = new ComponentBlueprintRegistry();
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
@@ -483,6 +578,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             $renderSourceCompiler,
             $renderer,
             $queryBindings,
+            $dynamicBindings,
         );
     }
 
@@ -539,6 +635,72 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             'blueprint_revision' => $richText->revision,
             'bindings' => [
                 'content' => ['source' => 'literal', 'value' => 'Safe content'],
+            ],
+        ];
+
+        if ($withErrorState) {
+            $announcement = $catalog->forContentType('announcement');
+            self::assertNotNull($announcement);
+            $renderSource['error_state'] = [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'Widget unavailable'],
+                    'text' => ['source' => 'literal', 'value' => 'Please try again later.'],
+                ],
+            ];
+        }
+
+        return $renderSource;
+    }
+
+    /** @return array<string,mixed> */
+    private function queryAndDynamicRenderSource(): array
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($announcement);
+
+        return [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+                'page_size' => 1,
+            ],
+            'bindings' => [
+                'title' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+                'text' => [
+                    'source' => 'dynamic',
+                    'source_ref' => 'context.site',
+                    'value_ref' => 'display_name',
+                    'resource' => 'site',
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private function dynamicRenderSource(bool $withErrorState = false): array
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        self::assertNotNull($richText);
+
+        $renderSource = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'bindings' => [
+                'content' => [
+                    'source' => 'dynamic',
+                    'source_ref' => 'context.site',
+                    'value_ref' => 'display_name',
+                    'resource' => 'site',
+                ],
             ],
         ];
 
@@ -745,6 +907,25 @@ final class RuntimeRenderQueryConsumer implements QueryReadConsumerInterface
     public function read(array $request, ExecutionContext $context): array
     {
         ++$this->calls;
+        $this->seenContext = $context;
+
+        return $this->result;
+    }
+}
+
+
+final class RuntimeDynamicResolver implements DynamicValueResolverInterface
+{
+    public int $calls = 0;
+    public ?ExecutionContext $seenContext = null;
+    public ?DynamicValueRequest $seenRequest = null;
+
+    public function __construct(private DynamicValueResult $result) {}
+
+    public function resolve(DynamicValueRequest $request, ExecutionContext $context): DynamicValueResult
+    {
+        ++$this->calls;
+        $this->seenRequest = $request;
         $this->seenContext = $context;
 
         return $this->result;

@@ -204,6 +204,54 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
     }
 
 
+    public function testCompilesBoundedDynamicContextTokenBinding(): void
+    {
+        $descriptor = $this->compiler()->compile($this->definition(
+            renderSource: $this->renderSource('rich_text', [
+                'content' => [
+                    'source' => 'dynamic',
+                    'source_ref' => 'context.site',
+                    'value_ref' => 'display_name',
+                    'resource' => 'site',
+                ],
+            ]),
+        ));
+
+        self::assertSame([], $descriptor->bindings);
+        self::assertSame(
+            [
+                'content' => [
+                    'source_ref' => 'context.site',
+                    'value_ref' => 'display_name',
+                    'resource' => 'site',
+                    'binding_type' => 'string',
+                ],
+            ],
+            $descriptor->dynamicBindings,
+        );
+    }
+
+    public function testRejectsMalformedDynamicContextTokenBindings(): void
+    {
+        $cases = [
+            ['source' => 'dynamic', 'source_ref' => '', 'value_ref' => 'name', 'resource' => 'site'],
+            ['source' => 'dynamic', 'source_ref' => 'context.site', 'value_ref' => 'bad/value', 'resource' => 'site'],
+            ['source' => 'dynamic', 'source_ref' => 'context.site', 'value_ref' => 'name', 'resource' => 'post'],
+            ['source' => 'dynamic', 'source_ref' => 'context.site', 'value_ref' => 'name', 'resource' => 'site', 'resource_id' => 99],
+        ];
+
+        foreach ($cases as $binding) {
+            try {
+                $this->compiler()->compile($this->definition(
+                    renderSource: $this->renderSource('rich_text', ['content' => $binding]),
+                ));
+                self::fail('Expected malformed Dashboard Widget Dynamic binding to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
     public function testCompilesBoundedQueryBindingsWithDerivedSortedProjection(): void
     {
         $catalog = new DashboardWidgetComponentBlueprintCatalog();

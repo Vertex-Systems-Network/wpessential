@@ -1,9 +1,9 @@
 {
-  "schema_version": 158,
+  "schema_version": 159,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "cfec6da42fb5ca40776d9282c5b8656623d00b71",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
-  "source_issue": "#1258",
+  "queue_anchor_main_sha": "acc2acb3b5a231322bd8c11119842f09a82b6fe2",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
+  "source_issue": "#1260",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -205,7 +205,8 @@
     "1252": "COMPLETED_ON_PR_1253_BOUNDED_NATIVE_USER_REORDER_STATE_V1",
     "1254": "COMPLETED_ON_PR_1255_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1",
     "1256": "COMPLETED_ON_PR_1257_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1",
-    "1258": "ACTIVE_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1"
+    "1258": "COMPLETED_ON_PR_1259_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
+    "1260": "ACTIVE_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -235,7 +236,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open and validate Issue #1258 exact ten-file Cron Background-Job Reference feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; no Cron execution.",
+    "next_safe_action": "Open and validate Issue #1260 exact fourteen-file Dynamic Context-Token Bindings feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; no owner resolver registration or identity override.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -5559,7 +5560,7 @@
       "slot_id": "dashboard-widgets-bounded-cron-background-job-reference-v1",
       "title": "Dashboard Widgets bounded Cron Background-Job Reference V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
       "source": "Issue #1258 / exact-main P1_CORE deep audit",
       "dependencies": [
@@ -5597,7 +5598,73 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-cron-background-job-reference-v1",
-      "close_condition": "Exact ten-file feature/test/shared-truth scope; optional background_job UUID resolves only to exact Published owner-surface-18 cron definition via canonical Cron read service; no execution; RB-0069 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1."
+      "close_condition": "Exact ten-file feature/test/shared-truth scope; optional background_job UUID resolves only to exact Published owner-surface-18 cron definition via canonical Cron read service; no execution; RB-0069 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1.",
+      "terminal_result": "PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
+      "terminal_evidence": {
+        "issue": 1258,
+        "pr": 1259,
+        "head": "58442514577e5d48646207c9398cd1e5f13cc34f",
+        "governance_run": 36072317686,
+        "architecture_run": 36072317711,
+        "php_quality_run": 36072317652,
+        "platform_compatibility_run": 36072317771,
+        "distributable_run": 36072317643,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "acc2acb3b5a231322bd8c11119842f09a82b6fe2"
+      }
+    },
+    {
+      "priority": 1046,
+      "slot_id": "dashboard-widgets-bounded-dynamic-context-token-bindings-v1",
+      "title": "Dashboard Widgets bounded Dynamic Context-Token Bindings V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
+      "source": "Issue #1260 / exact-main P1_CORE dependency audit",
+      "dependencies": [
+        "Issue #1258 / PR #1259 terminal Cron Background-Job Reference PASS",
+        "RB-0069 terminal PASS",
+        "canonical shared DynamicValueResolverInterface service",
+        "exact source base acc2acb3b5a231322bd8c11119842f09a82b6fe2"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": true,
+      "renderer_execution_allowed": true,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRenderSourceDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRuntimeRenderExecutor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetDynamicBindingExecutor.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRenderSourceCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRuntimeRenderExecutorTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetDynamicBindingExecutorTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "private token interpolation language",
+        "Surface 10 dynamic resolver/provider registration",
+        "authored user/site/network resource ids",
+        "arbitrary callbacks or PHP",
+        "generic registered-provider execution beyond canonical DynamicValue resolver",
+        "Query/Listings owner-contract duplication or bypass",
+        "remote connection execution",
+        "public mutation Ability/REST expansion",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1",
+      "close_condition": "Exact fourteen-file compiler/runtime/test/shared-truth scope; Dynamic bindings use canonical resolver with ExecutionContext-derived site/user/network ids; unknown/unresolved/throw/type/unsafe failures prevent renderer; Query-before-Dynamic ordering; RB-0070 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1."
     }
   ],
   "historical_closeout": {
