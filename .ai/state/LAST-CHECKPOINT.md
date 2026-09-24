@@ -50,6 +50,7 @@ Audit verdict:
 ### FAST delivery status
 
 - Active Issue: **#1252 — Dashboard Widgets: bounded native per-user reorder state V1**.
+- Active PR: **#1253 — Dashboard Widgets: bounded Native Per-User Reorder State V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-user-reorder-state-v1`.
 - RB-0066 is the single pending feature merge gate.
 - Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
