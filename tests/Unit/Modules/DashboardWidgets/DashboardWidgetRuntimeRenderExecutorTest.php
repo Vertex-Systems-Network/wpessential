@@ -499,10 +499,6 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         ?array $renderSource = null,
         string $title = 'Safe Widget',
     ): Definition {
-        $catalog = new DashboardWidgetComponentBlueprintCatalog();
-        $richText = $catalog->forContentType('rich_text');
-        self::assertNotNull($richText);
-
         $renderSource ??= $this->literalRenderSource();
 
         return new Definition(
