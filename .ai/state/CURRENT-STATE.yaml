@@ -1,22 +1,22 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: VERIFYING
-observed_main_sha: a63adf38e960842de19c94dd797628d1f2d578e5
-observed_main_source: "Issue #1212 / PR #1214 merged Dashboard Widgets Query/Data-Source Transition Audit V1"
-active_issue: "#1213"
-active_pr: "#1216"
-active_branch: supervisor/dashboard-widgets-query-data-source-binding-contract-v1
-current_milestone: "Dashboard Widgets Bounded Query/Data-Source Binding Contract V1 — architecture correction"
-milestone_status: VERIFYING
-last_completed_milestone: "Issue #1212 / PR #1214 merged as a63adf38e960842de19c94dd797628d1f2d578e5; exact-head Governance 35919710237 and Architecture 35919709973 PASS; zero unresolved threads/comments and zero behind. RB-0047 terminal PASS."
-next_safe_action: "Validate corrected PR #1216 on its new exact head with one consolidated Governance/Architecture + review/main-divergence refresh; merge only terminal green. After merge, claim Issue #1217 Query Pro activation prerequisite. Do not claim Issue #1215 until #1217 also closes terminal PASS."
-waiting_external: "Corrected PR #1216 exact-head Governance/Architecture validation"
+state_status: RECONCILING
+observed_main_sha: 8f844ec4211c73f44d27a048e7a5cf7505126d23
+observed_main_source: "Issue #1217 / PR #1218 merged Query bounded central Pro activation prerequisite V1"
+active_issue: "#1219"
+active_pr: "PENDING_RECONCILIATION_PR"
+active_branch: supervisor/dashboard-widgets-query-activation-post-merge-reconciliation-v1
+current_milestone: "Dashboard Widgets Query activation post-merge shared-truth reconciliation V1"
+milestone_status: ACTIVE
+last_completed_milestone: "Issue #1217 / PR #1218 merged as 8f844ec4211c73f44d27a048e7a5cf7505126d23; exact head 1fe2493ba5e8e3d432a0023cd28d747007294c69; 17/17 observed exact-head checks PASS; zero review blockers/comments and zero behind; QueryModule precedes DashboardWidgetsModule; Issue #1217 closed completed."
+next_safe_action: "Open and validate the #1219 exact five-file shared-truth reconciliation PR; merge only terminal green. After #1219 terminal merge, claim Issue #1215 on agent/dashboard-widgets-bounded-query-data-source-binding-source-v1 with the exact ten-file allowlist."
+waiting_external: "Issue #1219 shared-truth reconciliation exact-head CI/review"
 next_planned_slot:
-  issue: "#1217"
-  slot_id: query-bounded-central-pro-activation-prerequisite-v1
-  claim_branch: supervisor/query-bounded-central-pro-activation-prerequisite-v1
-  claim_rule: "Do not claim until Issue #1213 / PR #1216 merges terminal green with CONTRACT_FROZEN_AWAITING_QUERY_MODULE_ACTIVATION_V1."
+  issue: "#1215"
+  slot_id: dashboard-widgets-bounded-query-data-source-binding-source-v1
+  claim_branch: agent/dashboard-widgets-bounded-query-data-source-binding-source-v1
+  claim_rule: "Do not mutate product/runtime source until Issue #1219 shared-truth reconciliation merges terminal green. Then use only the exact ten Issue #1215-authorized Dashboard Widgets source/test files."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0048
+    - RB-0050
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -33,6 +33,8 @@ runner_benchmark:
     - RB-0045
     - RB-0046
     - RB-0047
+    - RB-0048
+    - RB-0049
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -56,10 +58,9 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1212 / PR #1214 is terminal PASS with READY_FOR_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1."
-  - "Issue #1213 / PR #1216 remains contract-only; no runtime/product PHP is authorized in this milestone."
-  - "Architecture/security review found QueryModule is not centrally contributed on exact main, so module.query.read-consumer is not runtime-guaranteed."
-  - "Issue #1217 is the exact two-file Query Pro activation prerequisite and must place QueryModule before DashboardWidgetsModule."
-  - "Issue #1215 is dual-gated: corrected contract #1216 terminal PASS plus Query activation #1217 terminal PASS."
-  - "provider_execution_allowed remains false for Dashboard Widgets; it may only call canonical QueryReadConsumerInterface after #1217."
+  - "Issue #1213 / PR #1216 is terminal PASS and merged as 1d853db9db137b9278c2757e8b8ad051b40aa1d5; RB-0048 reconciles that exact-head contract gate."
+  - "Issue #1217 / PR #1218 is terminal PASS and merged as 8f844ec4211c73f44d27a048e7a5cf7505126d23; RB-0049 records the Query central Pro activation gate."
+  - "Resulting main contributes QueryModule exactly once before DashboardWidgetsModule and the focused smoke proves canonical QueryReadConsumerInterface registration."
+  - "Issue #1215 has both product dependencies satisfied but remains source-mutation blocked until #1219 shared-truth reconciliation itself merges terminal green."
+  - "Dashboard Widgets may call only canonical QueryReadConsumerInterface; Query retains Policy authorization, planning and provider execution ownership."
   - "Generic registered_provider execution, direct IntegrationRegistry execution, remote/Safe HTTP/RSS/iframe, assets, refresh/cache, mutation, shared Platform widening, P-006 runtime, full parity, deploy and release remain blocked."
