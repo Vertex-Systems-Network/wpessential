@@ -49,6 +49,9 @@ Why:
 
 ### FAST delivery status
 
+- Active PR: **#1237 — Dashboard Widgets: bounded Native Default-Hidden State V1**.
+- Exact current feature head will be validated by RB-0059.
+
 Turn A scope is exactly fourteen files:
 - five Dashboard Widgets runtime/WordPress files;
 - four focused unit-test files;
