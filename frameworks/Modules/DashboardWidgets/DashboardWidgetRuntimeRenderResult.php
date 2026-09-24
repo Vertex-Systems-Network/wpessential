@@ -19,6 +19,7 @@ final readonly class DashboardWidgetRuntimeRenderResult
     public const STATUS_RENDERER_FAILED = 'renderer_failed';
     public const STATUS_RUNTIME_FAILURE = 'runtime_failure';
     public const STATUS_RENDERED = 'rendered';
+    public const STATUS_RENDERED_ERROR = 'rendered_error';
 
     /** @var list<string> */
     private const STATUSES = [
@@ -28,6 +29,7 @@ final readonly class DashboardWidgetRuntimeRenderResult
         self::STATUS_RENDERER_FAILED,
         self::STATUS_RUNTIME_FAILURE,
         self::STATUS_RENDERED,
+        self::STATUS_RENDERED_ERROR,
     ];
 
     /**
@@ -81,6 +83,21 @@ final readonly class DashboardWidgetRuntimeRenderResult
         return new self(self::STATUS_RENDERED, $html, $assetHandles, null, null);
     }
 
+    /** @param list<string> $assetHandles */
+    public static function renderedError(
+        string $html,
+        array $assetHandles,
+        RenderFailureCode $primaryFailure,
+    ): self {
+        return new self(
+            self::STATUS_RENDERED_ERROR,
+            $html,
+            $assetHandles,
+            null,
+            $primaryFailure,
+        );
+    }
+
     private function assertShape(): void
     {
         if ($this->status === self::STATUS_VISIBILITY_DENIED) {
@@ -101,6 +118,15 @@ final readonly class DashboardWidgetRuntimeRenderResult
         if ($this->status === self::STATUS_RENDERED) {
             if ($this->visibilityReason !== null || $this->renderFailure !== null) {
                 throw new InvalidArgumentException('Rendered Dashboard Widget runtime results cannot carry failure metadata.');
+            }
+            return;
+        }
+
+        if ($this->status === self::STATUS_RENDERED_ERROR) {
+            if ($this->visibilityReason !== null || $this->renderFailure === null) {
+                throw new InvalidArgumentException(
+                    'Rendered-error Dashboard Widget runtime results require the original typed primary render failure metadata.',
+                );
             }
             return;
         }
