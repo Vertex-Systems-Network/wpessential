@@ -12,6 +12,8 @@ interface DashboardWidgetWordPressEnvironmentInterface
 {
     public function registerAction(string $hook, callable $callback): void;
 
+    public function registerFilter(string $hook, callable $callback, int $acceptedArgs = 1): void;
+
     public function registerDashboardWidget(
         string $id,
         string $title,
@@ -25,6 +27,8 @@ interface DashboardWidgetWordPressEnvironmentInterface
     public function currentSiteId(): int;
 
     public function currentNetworkId(): ?int;
+
+    public function screenId(mixed $screen): ?string;
 
     public function outputTrustedHtml(string $html): void;
 }
