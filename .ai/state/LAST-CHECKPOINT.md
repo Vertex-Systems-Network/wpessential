@@ -1,5 +1,19 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1217/#1218 terminal Query activation; #1219 shared-truth reconciliation active
+
+- Exact resulting product/runtime main: `8f844ec4211c73f44d27a048e7a5cf7505126d23`.
+- Issue #1213 / PR #1216 is terminal PASS: exact head `64dcfcaacc69218152a8d60b391210408dbfab2c`, Governance `35921909563` PASS, Architecture `35921909577` PASS, zero review blockers/comments and zero behind; merged as `1d853db9db137b9278c2757e8b8ad051b40aa1d5`.
+- RB-0048 is reconciled terminal PASS for the corrected Query/Data-Source binding contract. Its promotion boundary is contract-only.
+- Issue #1217 / PR #1218 is terminal PASS: exact head `1fe2493ba5e8e3d432a0023cd28d747007294c69`, all 17 observed exact-head checks PASS, zero review blockers/comments and zero behind; expected-head merge produced `8f844ec4211c73f44d27a048e7a5cf7505126d23`.
+- Resulting main contributes `QueryModule` exactly once before `DashboardWidgetsModule`; the focused smoke contract verifies canonical `QueryModule::SERVICE_READ_CONSUMER` publication through `QueryReadConsumerInterface`.
+- RB-0049 records the terminal Query central Pro activation prerequisite; no historical runner evidence is rerun.
+- Issue #1215 now has both product dependencies satisfied, but source mutation remains blocked until Issue #1219 shared-truth reconciliation merges terminal green.
+- Issue #1219 exact authorized scope is five shared-truth files only: compact state, checkpoint, README, coordination queue and Runner Benchmark. No runtime/product PHP is authorized.
+- PR #1220 is the active reconciliation transport on `supervisor/dashboard-widgets-query-activation-post-merge-reconciliation-v1`; merge only after exact-head path-applicable CI, zero review blockers and zero behind.
+- After #1219 terminal merge, the next safe action is to claim #1215 on `agent/dashboard-widgets-bounded-query-data-source-binding-source-v1` and mutate only its exact ten authorized Dashboard Widgets source/test files.
+- Generic provider execution, direct IntegrationRegistry execution, remote/Safe HTTP/RSS/iframe, assets, cache/refresh, mutation, shared Platform widening, P-006 runtime, full parity, deploy and release remain blocked.
+
 ## 2026-09-24 — #1213 architecture/security correction: Query activation prerequisite
 
 - Exact main remains `a63adf38e960842de19c94dd797628d1f2d578e5`.
