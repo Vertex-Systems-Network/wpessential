@@ -1,5 +1,19 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1215/#1221 terminal Query/Data-Source source PASS; #1222 reconciliation active
+
+- Exact product/runtime main: `815f35910367b9103954de80975fc76bf8807d69`.
+- Issue #1219 / PR #1220 terminal shared-truth reconciliation merged as `a1d1061dc1c07f8c799138f11792e817f5d54f01`; Governance `35995340341` PASS and Architecture `35995340385` PASS. RB-0050 is reconciled terminal PASS.
+- Issue #1215 / PR #1221 terminal bounded Query/Data-Source binding source V1 exact head: `a6be8af09ddce141a952885b0ddd5e6fff39ebdc`.
+- #1221 exact-head gates: Governance `35996551115` PASS; Architecture `35996551192` PASS; PHP Quality `35996551145` PASS; Platform Compatibility `35996551121` PASS; Distributable Package `35996551287` PASS.
+- #1221 changed exactly the ten Issue #1215-authorized source/test files, had zero unresolved review/comments/inline blockers and zero behind, then expected-head merged as `815f35910367b9103954de80975fc76bf8807d69`; Issue #1215 closed completed.
+- Resulting main preserves visibility-before-query, canonical `QueryReadConsumerInterface` execution, Data Source descriptor preflight, exact incoming `ExecutionContext` forwarding, opaque runtime failure mapping and no direct IntegrationRegistry/remote execution.
+- RB-0051 records the terminal bounded source PASS.
+- Issue #1222 is shared-truth-only reconciliation with exactly five authorized files; no runtime/product PHP is authorized.
+- PR #1223 is the active reconciliation transport on `supervisor/dashboard-widgets-query-source-post-merge-reconciliation-v1`; merge only after exact-head Governance/Architecture, zero review blockers and zero behind.
+- No next Dashboard Widgets product Issue is open. After #1222 terminal merge, run a fresh exact-main transition audit before creating or claiming the next bounded product tranche.
+- Full-parity runtime/product certification, P-006 runtime, deploy and release remain unpromoted.
+
 ## 2026-09-24 — #1217/#1218 terminal Query activation; #1219 shared-truth reconciliation active
 
 - Exact resulting product/runtime main: `8f844ec4211c73f44d27a048e7a5cf7505126d23`.
