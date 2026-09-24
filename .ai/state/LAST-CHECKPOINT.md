@@ -68,6 +68,7 @@ Remaining higher-risk/provider-owner gaps:
 ### FAST delivery status
 
 - Active Issue: **#1260 — Dashboard Widgets: bounded dynamic context-token bindings V1**.
+- Active PR: **#1261 — Dashboard Widgets: bounded Dynamic Context-Token Bindings V1**.
 - Active branch: `agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1`.
 - RB-0070 is the single pending feature merge gate.
 - Exact authorized scope: five Dashboard Widgets runtime/compiler files including new Dynamic Binding Executor, four focused unit-test files including its new test, and five shared-truth files.
