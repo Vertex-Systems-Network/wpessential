@@ -259,6 +259,67 @@ final class DashboardWidgetWordPressAdapter
         return $result;
     }
 
+    /**
+     * Returns the current user's explicitly saved Dashboard Widget order.
+     *
+     * Saved ID order is preserved per supported dashboard context. No ordering is applied.
+     *
+     * @return list<array{context:string,ids:list<string>}>
+     */
+    public function currentUserDashboardWidgetOrder(bool $networkDashboard = false): array
+    {
+        $screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
+
+        try {
+            $order = $this->environment->currentUserDashboardWidgetOrder($screenId);
+        } catch (Throwable) {
+            return [];
+        }
+
+        $contexts = ['normal', 'side', 'column3', 'column4'];
+        foreach ($order as $context => $csv) {
+            if (
+                !is_string($context)
+                || !in_array($context, $contexts, true)
+                || !is_string($csv)
+            ) {
+                return [];
+            }
+        }
+
+        $result = [];
+        foreach ($contexts as $context) {
+            if (!array_key_exists($context, $order)) {
+                continue;
+            }
+
+            $ids = [];
+            $seen = [];
+            foreach (explode(',', $order[$context]) as $id) {
+                if ($id === '') {
+                    continue;
+                }
+                if (preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
+                    return [];
+                }
+                if (isset($seen[$id])) {
+                    continue;
+                }
+                $seen[$id] = true;
+                $ids[] = $id;
+            }
+
+            if ($ids !== []) {
+                $result[] = [
+                    'context' => $context,
+                    'ids' => $ids,
+                ];
+            }
+        }
+
+        return $result;
+    }
+
     private function registerTarget(bool $networkDashboard): void
     {
         foreach ($this->planTarget($networkDashboard) as $entry) {

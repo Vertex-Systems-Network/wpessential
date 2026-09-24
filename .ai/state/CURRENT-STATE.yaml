@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: b8bf30a48f5db3f36eb1309280076d7daa833e55
-observed_main_source: "Issue #1248 / PR #1249 merged Dashboard Widgets bounded Native Per-User Hidden State V1"
-active_issue: "#1250"
-active_pr: "#1251"
-active_branch: agent/dashboard-widgets-bounded-native-user-collapse-state-v1
-current_milestone: "Dashboard Widgets bounded Native Per-User Collapse State V1"
+observed_main_sha: 22355cb57a0e3891d3fccdb24c24c95ede258823
+observed_main_source: "Issue #1250 / PR #1251 merged Dashboard Widgets bounded Native Per-User Collapse State V1"
+active_issue: "#1252"
+active_pr: "#1253"
+active_branch: agent/dashboard-widgets-bounded-native-user-reorder-state-v1
+current_milestone: "Dashboard Widgets bounded Native Per-User Reorder State V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1248 / PR #1249 merged as b8bf30a48f5db3f36eb1309280076d7daa833e55; exact head c9b14c2d07b3ccc6612b68a6c7c3dff7751671af; Governance 36056955974 PASS; Architecture 36056956136 PASS; PHP Quality 36056955992 PASS; Platform Compatibility 36056955986 PASS; Distributable 36056956030 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_USER_HIDE_STATE_V1."
-next_safe_action: "Open and validate Issue #1250 exact eleven-file feature/shared-truth PR for bounded read-only current-user saved collapsed Dashboard Widget IDs; merge only terminal green with expected-head protection. No default/effective collapse merge, no user-option writes, no user reorder/hide mutation, full parity, deploy or release."
-waiting_external: "PR #1251 exact-head CI/review"
+last_completed_milestone: "Issue #1250 / PR #1251 merged as 22355cb57a0e3891d3fccdb24c24c95ede258823; exact head 728595aad011c9e8980d1ac8af22bda3faeae76c; Governance 36066477892 PASS; Architecture 36066478000 PASS; PHP Quality 36066477872 PASS; Platform Compatibility 36066477878 PASS; Distributable 36066478003 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_USER_COLLAPSE_STATE_V1."
+next_safe_action: "Open and validate Issue #1252 exact eleven-file feature/shared-truth PR for bounded read-only current-user saved Dashboard Widget order; merge only terminal green with expected-head protection. No AJAX/user-option writes, no effective runtime reordering, no user hide/collapse mutation, full parity, deploy or release."
+waiting_external: "PR #1253 exact-head CI/review"
 next_planned_slot:
-  issue: "#1250"
-  slot_id: dashboard-widgets-bounded-native-user-collapse-state-v1
-  claim_branch: "agent/dashboard-widgets-bounded-native-user-collapse-state-v1"
-  claim_rule: "Issue #1250 freezes exact eleven-file read-only current-user saved closedpostboxes preference state on exact main b8bf30a48f5db3f36eb1309280076d7daa833e55; no writes or default/effective collapse merge."
+  issue: "#1252"
+  slot_id: dashboard-widgets-bounded-native-user-reorder-state-v1
+  claim_branch: "agent/dashboard-widgets-bounded-native-user-reorder-state-v1"
+  claim_rule: "Issue #1252 freezes exact eleven-file read-only current-user saved meta-box-order preference state on exact main 22355cb57a0e3891d3fccdb24c24c95ede258823; preserve saved per-context ID order, no writes or runtime reorder application."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0065
+    - RB-0066
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -50,6 +50,7 @@ runner_benchmark:
     - RB-0062
     - RB-0063
     - RB-0064
+    - RB-0065
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -97,4 +98,5 @@ notes:
   - "Issue #1244 / PR #1245 bounded Core-Widget Classification V1 is terminal PASS; RB-0062 is reconciled PASS."
   - "Issue #1246 / PR #1247 bounded Non-Core Registered Classification V1 is terminal PASS; RB-0063 is reconciled PASS."
   - "Issue #1248 / PR #1249 bounded Per-User Hidden State V1 is terminal PASS; RB-0064 is reconciled PASS."
-  - "Issue #1250 is the active FAST feature: bounded read-only widget.preference.user_collapse saved current-user closed-postbox state; no user-option writes or default/effective collapse merge."
+  - "Issue #1250 / PR #1251 bounded Per-User Collapse State V1 is terminal PASS; RB-0065 is reconciled PASS."
+  - "Issue #1252 is the active FAST feature: bounded read-only widget.preference.user_reorder saved current-user meta-box order state; no AJAX/user-option writes or effective runtime reordering."
