@@ -204,11 +204,23 @@ final class DashboardWidgetsModuleTest extends TestCase
         $dashboardEnvironment = new class implements DashboardWidgetWordPressEnvironmentInterface {
             /** @var list<string> */
             public array $hooks = [];
+            /** @var list<string> */
+            public array $filters = [];
             public function registerAction(string $hook, callable $callback): void { $this->hooks[] = $hook; }
+            public function registerFilter(string $hook, callable $callback, int $acceptedArgs = 1): void
+            {
+                $this->filters[] = $hook;
+            }
             public function registerDashboardWidget(string $id, string $title, callable $callback, string $context, string $priority): void {}
             public function currentUserId(): ?int { return 1; }
             public function currentSiteId(): int { return 1; }
             public function currentNetworkId(): ?int { return null; }
+            public function screenId(mixed $screen): ?string
+            {
+                return is_object($screen) && isset($screen->id) && is_string($screen->id)
+                    ? $screen->id
+                    : null;
+            }
             public function outputTrustedHtml(string $html): void {}
         };
         $services = $this->baseServices();
@@ -224,6 +236,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER),
         );
         self::assertSame(['wp_dashboard_setup', 'wp_network_dashboard_setup'], $dashboardEnvironment->hooks);
+        self::assertSame(['default_hidden_meta_boxes'], $dashboardEnvironment->filters);
     }
 
     public function testModuleFailsClosedWithoutCanonicalRenderingServices(): void
