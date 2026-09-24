@@ -65,6 +65,7 @@ Dependency-ready bounded integration selected:
 ### FAST delivery status
 
 - Active Issue: **#1258 — Dashboard Widgets: bounded Cron background-job reference V1**.
+- Active PR: **#1259 — Dashboard Widgets: bounded Cron Background-Job Reference V1**.
 - Active branch: `agent/dashboard-widgets-bounded-cron-background-job-reference-v1`.
 - RB-0069 is the single pending feature merge gate.
 - Exact authorized scope: registration compiler + registration descriptor + DashboardWidgets module + two focused unit-test files + five shared-truth files.
