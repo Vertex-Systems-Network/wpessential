@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: acc2acb3b5a231322bd8c11119842f09a82b6fe2
 observed_main_source: "Issue #1258 / PR #1259 merged Dashboard Widgets bounded Cron Background-Job Reference V1"
 active_issue: "#1260"
-active_pr: null
+active_pr: "#1261"
 active_branch: agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1
 current_milestone: "Dashboard Widgets bounded Dynamic Context-Token Bindings V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1258 / PR #1259 merged as acc2acb3b5a231322bd8c11119842f09a82b6fe2; exact head 58442514577e5d48646207c9398cd1e5f13cc34f; Governance 36072317686 PASS; Architecture 36072317711 PASS; PHP Quality 36072317652 PASS; Platform Compatibility 36072317771 PASS; Distributable 36072317643 PASS; exact ten-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1."
 next_safe_action: "Open and validate Issue #1260 exact fourteen-file Dynamic Context-Token Binding PR. Resolve only through canonical shared Dynamic Value resolver using ExecutionContext-derived site/user/network identity; no owner resolver registration, authored resource IDs, generic provider execution, remote connections, full parity, deploy or release."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1261 exact-head CI/review"
 next_planned_slot:
   issue: "#1260"
   slot_id: dashboard-widgets-bounded-dynamic-context-token-bindings-v1
