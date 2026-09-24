@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: b8bf30a48f5db3f36eb1309280076d7daa833e55
 observed_main_source: "Issue #1248 / PR #1249 merged Dashboard Widgets bounded Native Per-User Hidden State V1"
 active_issue: "#1250"
-active_pr: null
+active_pr: "#1251"
 active_branch: agent/dashboard-widgets-bounded-native-user-collapse-state-v1
 current_milestone: "Dashboard Widgets bounded Native Per-User Collapse State V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1248 / PR #1249 merged as b8bf30a48f5db3f36eb1309280076d7daa833e55; exact head c9b14c2d07b3ccc6612b68a6c7c3dff7751671af; Governance 36056955974 PASS; Architecture 36056956136 PASS; PHP Quality 36056955992 PASS; Platform Compatibility 36056955986 PASS; Distributable 36056956030 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_USER_HIDE_STATE_V1."
 next_safe_action: "Open and validate Issue #1250 exact eleven-file feature/shared-truth PR for bounded read-only current-user saved collapsed Dashboard Widget IDs; merge only terminal green with expected-head protection. No default/effective collapse merge, no user-option writes, no user reorder/hide mutation, full parity, deploy or release."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1251 exact-head CI/review"
 next_planned_slot:
   issue: "#1250"
   slot_id: dashboard-widgets-bounded-native-user-collapse-state-v1
