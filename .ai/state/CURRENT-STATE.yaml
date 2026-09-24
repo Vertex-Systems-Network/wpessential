@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 4603672f75371d753f312bda75093cafd5a437fc
 observed_main_source: "Issue #1244 / PR #1245 merged Dashboard Widgets bounded Native Core-Widget Classification V1"
 active_issue: "#1246"
-active_pr: null
+active_pr: "#1247"
 active_branch: agent/dashboard-widgets-bounded-native-non-core-registered-classification-v1
 current_milestone: "Dashboard Widgets bounded Native Non-Core Registered Classification V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1244 / PR #1245 merged as 4603672f75371d753f312bda75093cafd5a437fc; exact head a05ebde729288618fb2cbfda62d2cab6d4c630cd; Governance 36052490560 PASS; Architecture 36052490607 PASS; PHP Quality 36052490535 PASS; Platform Compatibility 36052490624 PASS; Distributable 36052490554 PASS; exact seven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1."
 next_safe_action: "Open and validate Issue #1246 exact seven-file feature/shared-truth PR for bounded registered non-core classification backing widget.inventory.third_party_widget; merge only terminal green with expected-head protection. No provenance attestation, hide/remove mutation, provider/remote execution, full parity, deploy or release."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1247 exact-head CI/review"
 next_planned_slot:
   issue: "#1246"
   slot_id: dashboard-widgets-bounded-native-non-core-registered-classification-v1
