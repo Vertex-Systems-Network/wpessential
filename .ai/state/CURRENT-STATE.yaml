@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 2c236701a653242117173cd6494cc5007b17edb7
 observed_main_source: "Issue #1260 / PR #1261 merged Dashboard Widgets bounded Dynamic Context-Token Bindings V1"
 active_issue: "#1262"
-active_pr: null
+active_pr: "#1263"
 active_branch: agent/dashboard-widgets-bounded-forms-action-ability-reference-v1
 current_milestone: "Dashboard Widgets bounded Forms/Workflow Action Ability Reference V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1260 / PR #1261 merged as 2c236701a653242117173cd6494cc5007b17edb7; exact head 05ec947c0490c03c7688b002a8564a71d9bbd08e; Governance 36073579403 PASS; Architecture 36073579477 PASS; PHP Quality 36073579453 PASS; Platform Compatibility 36073579449 PASS; Distributable 36073579367 PASS; exact fourteen-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1."
 next_safe_action: "Open and validate Issue #1262 exact ten-file Forms/Workflow action ability-reference PR. Reference-only: Forms owner surface 17, mutates=true, Ui channel, empty input schema; no authorize/execute call, no form_action UI, confirmation, audit, result notice, generic provider execution, full parity, deploy or release."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1263 exact-head CI/review"
 next_planned_slot:
   issue: "#1262"
   slot_id: dashboard-widgets-bounded-forms-action-ability-reference-v1
