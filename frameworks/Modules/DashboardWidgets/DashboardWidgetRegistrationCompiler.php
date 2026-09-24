@@ -20,7 +20,10 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'visibility', 'render_source'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'visibility', 'render_source'];
+
+    /** @var list<string> */
+    private const INVENTORY_KEYS = ['default_hidden'];
 
     /** @var list<string> */
     private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
@@ -95,6 +98,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         }
 
         [$networkDashboard, $siteScope, $siteIds] = $this->compileTarget($widget);
+        $defaultHidden = $this->compileDefaultHidden($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -104,9 +108,35 @@ final readonly class DashboardWidgetRegistrationCompiler
             context: $context,
             priority: $priority,
             networkDashboard: $networkDashboard,
+            defaultHidden: $defaultHidden,
             siteScope: $siteScope,
             siteIds: $siteIds,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileDefaultHidden(array $widget): bool
+    {
+        if (!array_key_exists('inventory', $widget)) {
+            return false;
+        }
+
+        $inventory = $widget['inventory'];
+        if (!is_array($inventory) || ($inventory !== [] && array_is_list($inventory))) {
+            throw new InvalidArgumentException('Dashboard Widget inventory metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($inventory, self::INVENTORY_KEYS, 'Dashboard Widget inventory metadata');
+
+        if (!array_key_exists('default_hidden', $inventory)) {
+            return false;
+        }
+        if (!is_bool($inventory['default_hidden'])) {
+            throw new InvalidArgumentException('Dashboard Widget inventory.default_hidden must be boolean.');
+        }
+
+        return $inventory['default_hidden'];
     }
 
     /**

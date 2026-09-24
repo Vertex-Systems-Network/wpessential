@@ -31,8 +31,46 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertSame('normal', $descriptor->context);
         self::assertSame('default', $descriptor->priority);
         self::assertTrue($descriptor->networkDashboard);
+        self::assertFalse($descriptor->defaultHidden);
         self::assertNull($descriptor->siteScope);
         self::assertSame([], $descriptor->siteIds);
+    }
+
+    public function testCompilesBoundedNativeDefaultHiddenState(): void
+    {
+        $widget = $this->widget();
+        $widget['inventory'] = ['default_hidden' => true];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+
+        self::assertTrue($descriptor->defaultHidden);
+
+        $emptyInventory = $this->widget();
+        $emptyInventory['inventory'] = [];
+        self::assertFalse(
+            $this->compiler()->compile($this->definition(widget: $emptyInventory))->defaultHidden,
+        );
+    }
+
+    public function testRejectsMalformedNativeDefaultHiddenMetadata(): void
+    {
+        $valid = $this->widget();
+
+        foreach ([
+            array_replace($valid, ['inventory' => 'hidden']),
+            array_replace($valid, ['inventory' => [true]]),
+            array_replace($valid, ['inventory' => ['unknown' => true]]),
+            array_replace($valid, ['inventory' => ['default_hidden' => 1]]),
+            array_replace($valid, ['inventory' => ['default_hidden' => 'yes']]),
+            array_replace($valid, ['inventory' => ['default_hidden' => null]]),
+        ] as $widget) {
+            try {
+                $this->compiler()->compile($this->definition(widget: $widget));
+                self::fail('Expected malformed Dashboard Widget default-hidden metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
     }
 
     public function testCompilesAndNormalizesBoundedSiteTargeting(): void

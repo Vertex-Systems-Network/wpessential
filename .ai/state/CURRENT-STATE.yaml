@@ -1,22 +1,22 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: RECONCILING
-observed_main_sha: 776d5e0d3ae9f05f2a0922457398051e08166912
-observed_main_source: "Issue #1232 / PR #1233 merged Dashboard Widgets bounded Renderer-Failure Error-State Source V1"
-active_issue: "#1234"
-active_pr: "#1235"
-active_branch: supervisor/dashboard-widgets-error-state-source-post-merge-reconciliation-v1
-current_milestone: "Dashboard Widgets Error-State source post-merge shared-truth reconciliation V1"
+state_status: FEATURE_ACTIVE
+observed_main_sha: a3d7ccef7c8cba7baf5a94bafd938da3f86979d0
+observed_main_source: "Issue #1234 / PR #1235 merged Error-State shared-truth reconciliation + FAST AI-Native policy"
+active_issue: "#1236"
+active_pr: "#1237"
+active_branch: agent/dashboard-widgets-bounded-native-default-hidden-state-v1
+current_milestone: "Dashboard Widgets bounded Native Default-Hidden State V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1232 / PR #1233 merged as 776d5e0d3ae9f05f2a0922457398051e08166912; exact head e178d7857b8266242c8f611a78fc8967d2821ca2; Governance 36011545416 PASS; Architecture 36011545418 PASS; PHP Quality 36011545569 PASS; Platform Compatibility 36011545742 PASS; Distributable 36011545700 PASS; exact eleven-file scope; zero blockers and zero behind."
-next_safe_action: "Open and validate the #1234 exact five-file shared-truth reconciliation PR; merge only terminal green. After #1234 terminal merge, run a fresh exact-main Surface 10 transition audit before creating or claiming any next product/runtime tranche."
-waiting_external: "PR #1235 shared-truth reconciliation exact-head CI/review"
+last_completed_milestone: "Issue #1234 / PR #1235 merged as a3d7ccef7c8cba7baf5a94bafd938da3f86979d0; exact head d0e466565054cc51695bb6013f576f3e77525872; Governance 36014261934 PASS; Architecture 36014262076 PASS; exact five-file scope; zero blockers and zero behind; FAST AI-Native mode active."
+next_safe_action: "Open and validate the #1236 exact fourteen-file feature/shared-truth PR; merge only terminal green with expected-head protection. After terminal merge, use FAST mode: no separate reconciliation by default; verify resulting main and run the next exact-main feature audit."
+waiting_external: "PR #1237 feature exact-head CI/review"
 next_planned_slot:
-  issue: "UNASSIGNED_FRESH_TRANSITION_AUDIT"
-  slot_id: dashboard-widgets-fresh-exact-main-transition-audit
-  claim_branch: "UNASSIGNED_UNTIL_AUDIT_ISSUE_EXISTS"
-  claim_rule: "Do not infer the next runtime/product tranche. After #1234 terminal merge, audit exact main and create/claim only the next dependency-supported bounded slot."
+  issue: "UNASSIGNED_AFTER_1236"
+  slot_id: dashboard-widgets-next-fast-feature-audit
+  claim_branch: "UNASSIGNED_UNTIL_EXACT_MAIN_AUDIT"
+  claim_rule: "After #1236 terminal merge, audit exact resulting main and select the next smallest dependency-supported feature. Do not create a separate reconciliation PR unless real divergence/conflict requires it."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0058
+    - RB-0059
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -43,6 +43,7 @@ runner_benchmark:
     - RB-0055
     - RB-0056
     - RB-0057
+    - RB-0058
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -92,8 +93,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1230 / PR #1231 bounded Renderer-Failure Error-State contract is terminal PASS; RB-0056 is reconciled PASS."
-  - "Issue #1232 / PR #1233 bounded Renderer-Failure Error-State source is terminal PASS; RB-0057 records its exact-head source gate."
-  - "Resulting main supports one-shot trusted Error-State fallback only after typed primary renderer failure; Policy/Data Source/Query/visibility/missing/invalid/runtime failures remain fail-closed."
-  - "Generic provider/remote/action/cache-refresh/loading/preferences/shared-Platform widening, P-006 runtime, full parity, deploy and release remain blocked."
-  - "No next Dashboard Widgets product Issue is open; next product action after #1234 is a fresh exact-main transition audit."
+  - "Issue #1234 / PR #1235 reconciliation is terminal PASS; RB-0058 is reconciled PASS from exact-head evidence."
+  - "Issue #1236 is the first FAST-mode routine feature tranche carrying implementation, focused tests and shared truth in one PR."
+  - "Feature contract: optional widget.inventory.default_hidden boolean; default false; unknown/malformed inventory metadata fails closed."
+  - "Runtime projection uses only WordPress default_hidden_meta_boxes with exact target/collision planning; no user preference persistence or inventory removal."
+  - "Loading, inventory discovery/hide, collapsible/default-collapsed/dismissible, providers/remote/actions/cache-refresh, P-006 runtime, full parity, deploy and release remain unpromoted."

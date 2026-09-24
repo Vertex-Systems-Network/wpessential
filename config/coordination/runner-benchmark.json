@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1234",
-  "anchor_main_sha": "776d5e0d3ae9f05f2a0922457398051e08166912",
+  "source_issue": "#1236",
+  "anchor_main_sha": "a3d7ccef7c8cba7baf5a94bafd938da3f86979d0",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1862,17 +1862,50 @@
       "security_critical": false,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|error-state-source-post-merge-reconciliation|issue1234|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1235 exact head d0e466565054cc51695bb6013f576f3e77525872",
+        "Governance Gate 36014261934 PASS",
+        "Architecture Guards 36014262076 PASS",
+        "exact five authorized shared-truth files",
+        "zero unresolved review/comments/inline blockers",
+        "zero commits behind main",
+        "PR #1235 merged as a3d7ccef7c8cba7baf5a94bafd938da3f86979d0",
+        "Issue #1234 closed completed",
+        "FAST AI-Native policy GOV-AI-NATIVE-FAST-DELIVERY-001 active"
+      ],
+      "note": "Terminal shared-truth PASS. FAST mode now carries routine implementation + shared truth in one feature PR."
+    },
+    {
+      "id": "RB-0059",
+      "source": "Issue #1236",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-native-default-hidden-state-v1 exact head",
+      "dependencies": [
+        "RB-0058 terminal PASS",
+        "Issue #1234 / PR #1235 terminal FAST policy merge",
+        "exact source base a3d7ccef7c8cba7baf5a94bafd938da3f86979d0"
+      ],
+      "authorization": "Exact fourteen-file Dashboard Widgets default-hidden feature/test/shared-truth scope only; no user preference writes, inventory removal/discovery, collapse/dismiss/loading, provider/remote/action execution, cache/refresh, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-native-default-hidden-state|issue1236|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1234 exact five-file shared-truth scope",
-        "RB-0056 and RB-0057 terminal evidence frozen",
-        "next product action remains fresh exact-main Surface 10 transition audit"
+        "Issue #1236 FAST feature contract",
+        "dashboard-widgets.inventory.default_hidden is P0_NATIVE / MUST_HAVE / SOFT_NATIVE",
+        "native audit identifies default_hidden_meta_boxes",
+        "implementation reuses exact registration target/collision planning and performs no persistent preference write"
       ],
-      "note": "PASS may authorize only a fresh exact-main transition audit. It must not infer or activate a new runtime/product tranche."
+      "note": "PASS may promote only PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1. No separate routine reconciliation benchmark/PR should follow."
     }
   ],
-  "last_reconciled_issue": "#1232",
+  "last_reconciled_issue": "#1234",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
