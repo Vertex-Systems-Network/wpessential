@@ -47,6 +47,7 @@ Audit verdict:
 ### FAST delivery status
 
 - Active Issue: **#1250 — Dashboard Widgets: bounded native per-user collapse state V1**.
+- Active PR: **#1251 — Dashboard Widgets: bounded Native Per-User Collapse State V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-user-collapse-state-v1`.
 - RB-0065 is the single pending feature merge gate.
 - Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
