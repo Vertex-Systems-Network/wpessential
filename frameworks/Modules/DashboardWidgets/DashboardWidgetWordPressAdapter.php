@@ -94,7 +94,9 @@ final class DashboardWidgetWordPressAdapter
 
         $contextOrder = array_flip(['normal', 'side', 'column3', 'column4']);
         $priorityOrder = array_flip(['high', 'sorted', 'core', 'default', 'low']);
+        /** @var list<array{id:string,context:string,priority:string}> $safe */
         $safe = [];
+        /** @var array<string,true> $seen */
         $seen = [];
 
         foreach ($inventory as $entry) {
@@ -121,7 +123,11 @@ final class DashboardWidgetWordPressAdapter
                 continue;
             }
             $seen[$dedupKey] = true;
-            $safe[] = compact('id', 'context', 'priority');
+            $safe[] = [
+                'id' => $id,
+                'context' => $context,
+                'priority' => $priority,
+            ];
         }
 
         usort(
