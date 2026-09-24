@@ -336,6 +336,52 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $adapter->discoverCoreDashboardWidgets(true));
     }
 
+    public function testClassifiesRegisteredNonCoreWidgetsWithoutClaimingProvenance(): void
+    {
+        [$adapter, , $environment] = $this->harness([]);
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard'] = [
+            ['id' => 'dashboard_browser_nag', 'context' => 'normal', 'priority' => 'high'],
+            ['id' => 'vendor_widget', 'context' => 'normal', 'priority' => 'core'],
+            ['id' => 'dashboard_custom_guess', 'context' => 'normal', 'priority' => 'core'],
+            ['id' => 'dashboard_primary', 'context' => 'side', 'priority' => 'core'],
+            ['id' => 'another.plugin:widget', 'context' => 'side', 'priority' => 'low'],
+        ];
+
+        self::assertSame(
+            [
+                ['id' => 'dashboard_custom_guess', 'context' => 'normal', 'priority' => 'core'],
+                ['id' => 'vendor_widget', 'context' => 'normal', 'priority' => 'core'],
+                ['id' => 'another.plugin:widget', 'context' => 'side', 'priority' => 'low'],
+            ],
+            $adapter->discoverNonCoreDashboardWidgets(),
+        );
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard-network'] = [
+            ['id' => 'network_dashboard_right_now', 'context' => 'normal', 'priority' => 'core'],
+            ['id' => 'dashboard_site_health', 'context' => 'normal', 'priority' => 'core'],
+            ['id' => 'network_vendor_widget', 'context' => 'side', 'priority' => 'core'],
+            ['id' => 'dashboard_primary', 'context' => 'side', 'priority' => 'core'],
+        ];
+
+        self::assertSame(
+            [
+                ['id' => 'dashboard_site_health', 'context' => 'normal', 'priority' => 'core'],
+                ['id' => 'network_vendor_widget', 'context' => 'side', 'priority' => 'core'],
+            ],
+            $adapter->discoverNonCoreDashboardWidgets(true),
+        );
+    }
+
+    public function testNonCoreClassificationFailsClosedWithInventoryDiscoveryFailure(): void
+    {
+        [$adapter, , $environment] = $this->harness([]);
+        $environment->throwOnRegisteredDashboardWidgetDiscovery = true;
+
+        self::assertSame([], $adapter->discoverNonCoreDashboardWidgets());
+        self::assertSame([], $adapter->discoverNonCoreDashboardWidgets(true));
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
