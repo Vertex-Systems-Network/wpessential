@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 88d04846b909c2a467d812501d82290bbf7bcc39
 observed_main_source: "Issue #1252 / PR #1253 merged Dashboard Widgets bounded Native Per-User Reorder State V1"
 active_issue: "#1254"
-active_pr: null
+active_pr: "#1255"
 active_branch: agent/dashboard-widgets-bounded-native-collapsible-capability-v1
 current_milestone: "Dashboard Widgets bounded Native Collapsible Capability V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1252 / PR #1253 merged as 88d04846b909c2a467d812501d82290bbf7bcc39; exact head 0a981953ae437c96d20221c50c4e2ea6a095c24c; Governance 36067471961 PASS; Architecture 36067471959 PASS; PHP Quality 36067471948 PASS; Platform Compatibility 36067471991 PASS; Distributable 36067471953 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1."
 next_safe_action: "Open and validate Issue #1254 exact seven-file feature/shared-truth PR for bounded native collapsible capability. Accept absent/true only; false remains fail-closed unsupported. No custom JS/CSS/DOM interception, collapse mutation, inventory hide/remove, full parity, deploy or release."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1255 exact-head CI/review"
 next_planned_slot:
   issue: "#1254"
   slot_id: dashboard-widgets-bounded-native-collapsible-capability-v1
