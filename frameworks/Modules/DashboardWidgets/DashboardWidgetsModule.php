@@ -13,6 +13,7 @@ use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\DynamicValueResolverInterface;
 use WPEssential\Contracts\ModuleInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
@@ -37,6 +38,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
     public const SERVICE_RENDER_SOURCE_COMPILER = 'module.dashboard-widgets.render-source-compiler';
     public const SERVICE_QUERY_BINDING_EXECUTOR = 'module.dashboard-widgets.query-binding-executor';
+    public const SERVICE_DYNAMIC_BINDING_EXECUTOR = 'module.dashboard-widgets.dynamic-binding-executor';
     public const SERVICE_COMPONENT_CATALOG = 'module.dashboard-widgets.component-catalog';
     public const SERVICE_TRUSTED_COMPONENT_RENDERER = 'module.dashboard-widgets.trusted-component-renderer';
     public const SERVICE_COMPONENT_REGISTRAR = 'module.dashboard-widgets.component-registrar';
@@ -70,6 +72,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $capabilityChecker = $services->get(WordPressAuthorizationServices::CAPABILITY_CHECKER);
         $dataSources = $services->get('platform.data-sources');
         $queryReadConsumer = $services->get(QueryModule::SERVICE_READ_CONSUMER);
+        $dynamicValues = $services->get(RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES);
         $cronRead = null;
         if ($services->has(CronModule::SERVICE_READ)) {
             $candidateCronRead = $services->get(CronModule::SERVICE_READ);
@@ -112,6 +115,9 @@ final class DashboardWidgetsModule implements ModuleInterface
         if (!$queryReadConsumer instanceof QueryReadConsumerInterface) {
             throw new LogicException('Dashboard Widgets requires the canonical Query read-consumer service.');
         }
+        if (!$dynamicValues instanceof DynamicValueResolverInterface) {
+            throw new LogicException('Dashboard Widgets requires the canonical shared Dynamic Value resolver.');
+        }
 
         $read = new DashboardWidgetsReadService($definitions);
         $contentClassCompiler = new DashboardWidgetContentClassCompiler();
@@ -122,6 +128,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $componentCatalog,
         );
         $queryBindingExecutor = new DashboardWidgetQueryBindingExecutor($dataSources, $queryReadConsumer);
+        $dynamicBindingExecutor = new DashboardWidgetDynamicBindingExecutor($dynamicValues);
         $trustedComponentRenderer = new DashboardWidgetTrustedComponentRenderer($componentCatalog);
         $componentRegistrar = new DashboardWidgetComponentRegistrar(
             $blueprints,
@@ -150,6 +157,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $renderSourceCompiler,
             $dispatcher,
             $queryBindingExecutor,
+            $dynamicBindingExecutor,
         );
         $wordpressAdapter = new DashboardWidgetWordPressAdapter(
             $definitions,
@@ -164,6 +172,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
         $services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
         $services->set(self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor);
+        $services->set(self::SERVICE_DYNAMIC_BINDING_EXECUTOR, $dynamicBindingExecutor);
         $services->set(self::SERVICE_COMPONENT_CATALOG, $componentCatalog);
         $services->set(self::SERVICE_TRUSTED_COMPONENT_RENDERER, $trustedComponentRenderer);
         $services->set(self::SERVICE_COMPONENT_REGISTRAR, $componentRegistrar);
