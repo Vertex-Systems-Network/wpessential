@@ -32,5 +32,10 @@ interface DashboardWidgetWordPressEnvironmentInterface
 
     public function hasClosedPostboxPreference(string $screenId): bool;
 
+    /**
+     * @return list<array{id:string,context:string,priority:string}>
+     */
+    public function discoverRegisteredDashboardWidgets(string $screenId): array;
+
     public function outputTrustedHtml(string $html): void;
 }
