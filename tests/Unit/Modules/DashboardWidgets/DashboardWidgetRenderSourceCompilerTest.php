@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetEmptyStateDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceDescriptor;
@@ -298,6 +299,124 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             try {
                 $this->compiler()->compile($this->definition(renderSource: $renderSource));
                 self::fail('Expected invalid bounded Query binding definition to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
+    public function testCompilesQueryBoundTrustedEmptyState(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($richText);
+        self::assertNotNull($announcement);
+
+        $descriptor = $this->compiler()->compile($this->definition(renderSource: [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+                'page_size' => 1,
+            ],
+            'bindings' => [
+                'content' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+            ],
+            'empty_state' => [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'No results'],
+                    'text' => ['source' => 'literal', 'value' => 'Nothing to display yet.'],
+                ],
+            ],
+        ]));
+
+        self::assertInstanceOf(DashboardWidgetEmptyStateDescriptor::class, $descriptor->emptyState);
+        self::assertSame($announcement->id, $descriptor->emptyState->blueprintId);
+        self::assertSame(
+            ['text' => 'Nothing to display yet.', 'title' => 'No results'],
+            $descriptor->emptyState->bindings,
+        );
+    }
+
+    public function testRejectsUnboundedOrNonQueryEmptyStateMetadata(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        $announcement = $catalog->forContentType('announcement');
+        $kpi = $catalog->forContentType('kpi');
+        self::assertNotNull($richText);
+        self::assertNotNull($announcement);
+        self::assertNotNull($kpi);
+
+        $querySource = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+                'page_size' => 1,
+            ],
+            'bindings' => [
+                'content' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+            ],
+            'empty_state' => [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'No results'],
+                    'text' => ['source' => 'literal', 'value' => 'Nothing to display yet.'],
+                ],
+            ],
+        ];
+
+        $literalWithEmpty = $this->renderSource('rich_text');
+        $literalWithEmpty['empty_state'] = $querySource['empty_state'];
+
+        $wrongBlueprint = $querySource;
+        $wrongBlueprint['empty_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $kpi->id,
+            'blueprint_revision' => $kpi->revision,
+            'bindings' => [
+                'label' => ['source' => 'literal', 'value' => 'No results'],
+                'value' => ['source' => 'literal', 'value' => '0'],
+            ],
+        ];
+
+        $queryEnvelope = $querySource;
+        $queryEnvelope['empty_state']['bindings']['text'] = [
+            'source' => 'query',
+            'value' => 'forbidden',
+        ];
+
+        $oversized = $querySource;
+        $oversized['empty_state']['bindings']['text']['value'] = str_repeat(
+            'x',
+            DashboardWidgetEmptyStateDescriptor::MAX_STRING_BYTES + 1,
+        );
+
+        $oversizedObject = $querySource;
+        $oversizedObject['empty_state']['bindings']['title']['value'] = str_repeat('a', 2000);
+        $oversizedObject['empty_state']['bindings']['text']['value'] = str_repeat('b', 2000);
+
+        $wrongRevision = $querySource;
+        $wrongRevision['empty_state']['blueprint_revision'] = 2;
+
+        $unknownKey = $querySource;
+        $unknownKey['empty_state']['provider'] = 'forbidden';
+
+        foreach ([$literalWithEmpty, $wrongBlueprint, $queryEnvelope, $oversized, $oversizedObject, $wrongRevision, $unknownKey] as $renderSource) {
+            try {
+                $this->compiler()->compile($this->definition(renderSource: $renderSource));
+                self::fail('Expected invalid Dashboard Widget empty-state metadata to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
             }

@@ -24,6 +24,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
         public int $blueprintRevision,
         public array $bindings,
         public ?DashboardWidgetQueryBindingDescriptor $query = null,
+        public ?DashboardWidgetEmptyStateDescriptor $emptyState = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget render-source descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -39,6 +40,10 @@ final readonly class DashboardWidgetRenderSourceDescriptor
         }
         if (count($this->bindings) > 128) {
             throw new InvalidArgumentException('Dashboard Widget render-source bindings exceed the bounded V1 limit.');
+        }
+
+        if ($this->emptyState !== null && $this->query === null) {
+            throw new InvalidArgumentException('Dashboard Widget empty-state metadata requires unresolved Query bindings.');
         }
 
         foreach ($this->bindings as $key => $value) {
@@ -77,6 +82,24 @@ final readonly class DashboardWidgetRenderSourceDescriptor
             blueprintRevision: $this->blueprintRevision,
             bindings: $bindings,
             query: null,
+            emptyState: null,
+        );
+    }
+
+    public function resolvedEmptyState(): self
+    {
+        if ($this->emptyState === null || $this->query === null) {
+            throw new LogicException('Dashboard Widget empty-state resolution requires unresolved Query bindings and authored empty state.');
+        }
+
+        return new self(
+            definitionId: $this->definitionId,
+            definitionRevision: $this->definitionRevision,
+            blueprintId: $this->emptyState->blueprintId,
+            blueprintRevision: $this->emptyState->blueprintRevision,
+            bindings: $this->emptyState->bindings,
+            query: null,
+            emptyState: null,
         );
     }
 

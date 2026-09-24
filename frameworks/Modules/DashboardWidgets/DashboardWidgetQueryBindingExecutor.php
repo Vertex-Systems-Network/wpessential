@@ -47,6 +47,14 @@ final readonly class DashboardWidgetQueryBindingExecutor
         $result = $this->query->read($query->request(), $context);
         $rows = $this->validatedRows($result, $query);
 
+        if ($rows === []) {
+            if ($renderSource->emptyState === null) {
+                throw new RuntimeException('Dashboard Widget Query returned zero rows without an authored empty state.');
+            }
+
+            return $renderSource->resolvedEmptyState();
+        }
+
         $bindings = $renderSource->bindings;
         foreach ($query->bindings as $bindingKey => $binding) {
             $logicalType = $descriptor->fieldSchema[$binding['field_ref']];
@@ -136,7 +144,7 @@ final readonly class DashboardWidgetQueryBindingExecutor
             || !array_is_list($rows)
             || !is_int($returned)
             || $returned !== count($rows)
-            || $returned < 1
+            || $returned < 0
             || $returned > $query->pageSize
         ) {
             throw new RuntimeException('Dashboard Widget Query result row/cardinality contract failed.');

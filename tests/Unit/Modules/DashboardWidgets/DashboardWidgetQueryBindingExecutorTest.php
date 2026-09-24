@@ -7,6 +7,7 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WPEssential\Contracts\QueryReadConsumerInterface;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetEmptyStateDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceDescriptor;
@@ -136,7 +137,45 @@ final class DashboardWidgetQueryBindingExecutorTest extends TestCase
         }
     }
 
-    private function renderSource(int $pageSize = 2): DashboardWidgetRenderSourceDescriptor
+    public function testValidZeroRowsResolveAuthoredEmptyStateAndMissingStateFailsClosed(): void
+    {
+        $zeroRows = [
+            'contract_version' => 1,
+            'ok' => true,
+            'source_ref' => 'wordpress.posts',
+            'projection' => ['post.id', 'post.title'],
+            'rows' => [],
+            'returned' => 0,
+            'error' => null,
+        ];
+        $context = new ExecutionContext(new Principal(7), 3);
+        $emptyState = new DashboardWidgetEmptyStateDescriptor(
+            blueprintId: '31000000-0000-4000-8000-000000000005',
+            blueprintRevision: 1,
+            bindings: ['text' => 'Nothing to display yet.', 'title' => 'No results'],
+        );
+
+        $consumer = new QueryBindingCapturingConsumer($zeroRows);
+        $resolved = (new DashboardWidgetQueryBindingExecutor($this->registry(), $consumer))
+            ->resolve($this->renderSource(emptyState: $emptyState), $context);
+
+        self::assertSame($context, $consumer->seenContext);
+        self::assertNull($resolved->query);
+        self::assertNull($resolved->emptyState);
+        self::assertSame($emptyState->blueprintId, $resolved->toRenderInput()->blueprintId);
+        self::assertSame($emptyState->bindings, $resolved->toRenderInput()->bindings);
+
+        $this->expectException(RuntimeException::class);
+        (new DashboardWidgetQueryBindingExecutor(
+            $this->registry(),
+            new QueryBindingCapturingConsumer($zeroRows),
+        ))->resolve($this->renderSource(), $context);
+    }
+
+    private function renderSource(
+        int $pageSize = 2,
+        ?DashboardWidgetEmptyStateDescriptor $emptyState = null,
+    ): DashboardWidgetRenderSourceDescriptor
     {
         return new DashboardWidgetRenderSourceDescriptor(
             definitionId: '77777777-7777-4777-8777-777777777777',
@@ -156,6 +195,7 @@ final class DashboardWidgetQueryBindingExecutorTest extends TestCase
                     'values' => ['field_ref' => 'post.id', 'mode' => 'column', 'binding_type' => 'int_list'],
                 ],
             ),
+            emptyState: $emptyState,
         );
     }
 
