@@ -1,9 +1,9 @@
 {
-  "schema_version": 152,
+  "schema_version": 153,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "4603672f75371d753f312bda75093cafd5a437fc",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1",
-  "source_issue": "#1246",
+  "queue_anchor_main_sha": "42eb0f87bb31bef7a9494df888e78c4ae681338c",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_USER_HIDE_STATE_V1",
+  "source_issue": "#1248",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -199,7 +199,8 @@
     "1240": "COMPLETED_ON_PR_1241_DEFAULT_COLLAPSED_SHARED_TRUTH_RECONCILIATION",
     "1242": "COMPLETED_ON_PR_1243_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
     "1244": "COMPLETED_ON_PR_1245_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1",
-    "1246": "ACTIVE_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1"
+    "1246": "COMPLETED_ON_PR_1247_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1",
+    "1248": "ACTIVE_BOUNDED_NATIVE_USER_HIDE_STATE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -229,7 +230,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open and validate Issue #1246 exact seven-file Non-Core Registered Classification feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
+    "next_safe_action": "Open and validate Issue #1248 exact eleven-file Per-User Hidden State feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -5168,7 +5169,7 @@
       "slot_id": "dashboard-widgets-bounded-native-non-core-registered-classification-v1",
       "title": "Dashboard Widgets bounded Native Non-Core Registered Classification V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1",
       "source": "Issue #1246 / fresh exact-main FAST Surface 10 audit",
       "dependencies": [
@@ -5208,7 +5209,73 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-native-non-core-registered-classification-v1",
-      "close_condition": "Exact seven-file feature/test/shared-truth scope; registered rows outside exact screen-specific core allowlist only; focused tests; RB-0063 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1."
+      "close_condition": "Exact seven-file feature/test/shared-truth scope; registered rows outside exact screen-specific core allowlist only; focused tests; RB-0063 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1.",
+      "terminal_result": "PASS_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1",
+      "terminal_evidence": {
+        "issue": 1246,
+        "pr": 1247,
+        "head": "e75c1aee3e33d352e27cf80b81eed934fb671642",
+        "governance_run": 36053960261,
+        "architecture_run": 36053960358,
+        "php_quality_run": 36053960286,
+        "platform_compatibility_run": 36053960290,
+        "distributable_run": 36053960350,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "42eb0f87bb31bef7a9494df888e78c4ae681338c"
+      }
+    },
+    {
+      "priority": 1040,
+      "slot_id": "dashboard-widgets-bounded-native-user-hide-state-v1",
+      "title": "Dashboard Widgets bounded Native Per-User Hidden State V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_USER_HIDE_STATE_V1",
+      "source": "Issue #1248 / fresh exact-main FAST Surface 10 audit",
+      "dependencies": [
+        "Issue #1246 / PR #1247 terminal Non-Core Registered Classification PASS",
+        "RB-0063 terminal PASS",
+        "exact source base 42eb0f87bb31bef7a9494df888e78c4ae681338c"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressEnvironmentInterface.php",
+        "frameworks/Modules/DashboardWidgets/NativeWordPressDashboardWidgetEnvironment.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressAdapter.php",
+        "tests/Unit/Modules/DashboardWidgets/NativeWordPressDashboardWidgetEnvironmentTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetWordPressAdapterTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "user meta/user option write, update or delete",
+        "Screen Options mutation",
+        "default-hidden or effective hidden-meta-box state merge",
+        "inventory hide/remove mutation",
+        "registered-inventory inference for saved user preference",
+        "callback/callback-args/raw title or HTML inspection or exposure",
+        "public Ability/REST expansion",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "user reorder/user collapse/collapsible behavior",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-native-user-hide-state-v1",
+      "close_condition": "Exact eleven-file feature/test/shared-truth scope; saved current-user metaboxhidden IDs only; focused tests; RB-0064 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_USER_HIDE_STATE_V1."
     }
   ],
   "historical_closeout": {
