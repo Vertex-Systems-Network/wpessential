@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: a3d7ccef7c8cba7baf5a94bafd938da3f86979d0
 observed_main_source: "Issue #1234 / PR #1235 merged Error-State shared-truth reconciliation + FAST AI-Native policy"
 active_issue: "#1236"
-active_pr: "PENDING_FEATURE_PR"
+active_pr: "#1237"
 active_branch: agent/dashboard-widgets-bounded-native-default-hidden-state-v1
 current_milestone: "Dashboard Widgets bounded Native Default-Hidden State V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1234 / PR #1235 merged as a3d7ccef7c8cba7baf5a94bafd938da3f86979d0; exact head d0e466565054cc51695bb6013f576f3e77525872; Governance 36014261934 PASS; Architecture 36014262076 PASS; exact five-file scope; zero blockers and zero behind; FAST AI-Native mode active."
 next_safe_action: "Open and validate the #1236 exact fourteen-file feature/shared-truth PR; merge only terminal green with expected-head protection. After terminal merge, use FAST mode: no separate reconciliation by default; verify resulting main and run the next exact-main feature audit."
-waiting_external: "Issue #1236 feature exact-head CI/review after PR open"
+waiting_external: "PR #1237 feature exact-head CI/review"
 next_planned_slot:
   issue: "UNASSIGNED_AFTER_1236"
   slot_id: dashboard-widgets-next-fast-feature-audit
