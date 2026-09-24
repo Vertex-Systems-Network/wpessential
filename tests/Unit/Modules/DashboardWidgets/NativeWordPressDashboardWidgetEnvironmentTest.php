@@ -51,6 +51,30 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         self::assertSame('high', $registrations[0]['priority']);
     }
 
+    public function testForwardsFiltersAndProjectsBoundedScreenId(): void
+    {
+        $filters = [];
+        $environment = new NativeWordPressDashboardWidgetEnvironment(
+            registerFilter: static function (
+                string $hook,
+                callable $callback,
+                int $acceptedArgs,
+            ) use (&$filters): void {
+                $filters[] = compact('hook', 'callback', 'acceptedArgs');
+            },
+        );
+
+        $callback = static fn (array $hidden): array => $hidden;
+        $environment->registerFilter('default_hidden_meta_boxes', $callback, 2);
+
+        self::assertSame('default_hidden_meta_boxes', $filters[0]['hook']);
+        self::assertSame(2, $filters[0]['acceptedArgs']);
+        self::assertSame('dashboard', $environment->screenId((object) ['id' => 'dashboard']));
+        self::assertSame('dashboard-network', $environment->screenId((object) ['id' => 'dashboard-network']));
+        self::assertNull($environment->screenId((object) []));
+        self::assertNull($environment->screenId('dashboard'));
+    }
+
     public function testProjectsCurrentRequestIdsAndTrustedOutput(): void
     {
         $outputs = [];
