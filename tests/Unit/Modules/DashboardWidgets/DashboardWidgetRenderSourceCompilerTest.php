@@ -403,10 +403,17 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             DashboardWidgetEmptyStateDescriptor::MAX_STRING_BYTES + 1,
         );
 
+        $oversizedObject = $querySource;
+        $oversizedObject['empty_state']['bindings']['title']['value'] = str_repeat('a', 2000);
+        $oversizedObject['empty_state']['bindings']['text']['value'] = str_repeat('b', 2000);
+
+        $wrongRevision = $querySource;
+        $wrongRevision['empty_state']['blueprint_revision'] = 2;
+
         $unknownKey = $querySource;
         $unknownKey['empty_state']['provider'] = 'forbidden';
 
-        foreach ([$literalWithEmpty, $wrongBlueprint, $queryEnvelope, $oversized, $unknownKey] as $renderSource) {
+        foreach ([$literalWithEmpty, $wrongBlueprint, $queryEnvelope, $oversized, $oversizedObject, $wrongRevision, $unknownKey] as $renderSource) {
             try {
                 $this->compiler()->compile($this->definition(renderSource: $renderSource));
                 self::fail('Expected invalid Dashboard Widget empty-state metadata to be rejected.');
