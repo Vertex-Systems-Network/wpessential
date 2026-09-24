@@ -111,6 +111,7 @@ $moduleClasses = [
     \WPEssential\Modules\AdminMenu\AdminMenuModule::class,
     \WPEssential\Modules\Settings\SettingsModule::class,
     \WPEssential\Modules\Dashboard\DashboardModule::class,
+    \WPEssential\Modules\Query\QueryModule::class,
     \WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule::class,
     \WPEssential\Modules\Profiles\ProfilesModule::class,
     \WPEssential\Modules\Membership\MembershipModule::class,
