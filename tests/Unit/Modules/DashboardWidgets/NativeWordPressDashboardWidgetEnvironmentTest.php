@@ -113,6 +113,29 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         self::assertSame(['dashboard', 'dashboard-network'], $seen);
     }
 
+    public function testReadsSavedCurrentUserCollapsedDashboardWidgetIdsThroughBoundedSeam(): void
+    {
+        $seen = [];
+        $environment = new NativeWordPressDashboardWidgetEnvironment(
+            currentUserCollapsedDashboardWidgetIds: static function (string $screenId) use (&$seen): array {
+                $seen[] = $screenId;
+                return $screenId === 'dashboard'
+                    ? ['z_widget', 'a-widget', 'z_widget']
+                    : ['network_widget'];
+            },
+        );
+
+        self::assertSame(
+            ['z_widget', 'a-widget', 'z_widget'],
+            $environment->currentUserCollapsedDashboardWidgetIds('dashboard'),
+        );
+        self::assertSame(
+            ['network_widget'],
+            $environment->currentUserCollapsedDashboardWidgetIds('dashboard-network'),
+        );
+        self::assertSame(['dashboard', 'dashboard-network'], $seen);
+    }
+
     public function testDiscoversOnlySafeRegisteredDashboardInventoryMetadata(): void
     {
         $hadMetaBoxes = array_key_exists('wp_meta_boxes', $GLOBALS);
