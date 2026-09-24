@@ -23,6 +23,7 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
         private DashboardWidgetVisibilityEvaluator $visibilityEvaluator,
         private DashboardWidgetRenderSourceCompiler $renderSourceCompiler,
         private RendererInterface $renderer,
+        private ?DashboardWidgetQueryBindingExecutor $queryBindingExecutor = null,
     ) {}
 
     public function render(
@@ -64,6 +65,18 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
             return DashboardWidgetRuntimeRenderResult::invalidDefinition();
         } catch (Throwable) {
             return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+
+        if ($renderSource->query !== null) {
+            if ($this->queryBindingExecutor === null) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
+
+            try {
+                $renderSource = $this->queryBindingExecutor->resolve($renderSource, $context);
+            } catch (Throwable) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
         }
 
         try {

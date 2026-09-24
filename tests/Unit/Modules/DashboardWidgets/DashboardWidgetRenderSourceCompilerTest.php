@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceDescriptor;
 use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
@@ -194,6 +195,109 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
                     renderSource: $this->renderSource('rich_text', $bindings),
                 ));
                 self::fail('Expected unsafe or incompatible Dashboard Widget render binding to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
+
+    public function testCompilesBoundedQueryBindingsWithDerivedSortedProjection(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $chart = $catalog->forContentType('chart');
+        self::assertNotNull($chart);
+
+        $descriptor = $this->compiler()->compile($this->definition(
+            contentType: 'chart',
+            renderSource: [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $chart->id,
+                'blueprint_revision' => $chart->revision,
+                'query' => [
+                    'contract_version' => 1,
+                    'source_ref' => 'wordpress.posts',
+                    'filters' => [['field_ref' => 'post.status', 'operator' => 'eq', 'value' => 'publish']],
+                    'order_by' => [['field_ref' => 'post.date', 'direction' => 'desc']],
+                    'page_size' => 20,
+                    'offset' => 0,
+                ],
+                'bindings' => [
+                    'labels' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'column'],
+                    'values' => ['source' => 'query', 'field_ref' => 'post.id', 'mode' => 'column'],
+                ],
+            ],
+        ));
+
+        self::assertInstanceOf(DashboardWidgetQueryBindingDescriptor::class, $descriptor->query);
+        self::assertSame([], $descriptor->bindings);
+        self::assertSame(['post.id', 'post.title'], $descriptor->query->projection);
+        self::assertSame('wordpress.posts', $descriptor->query->sourceRef);
+        self::assertArrayNotHasKey('search', $descriptor->query->request());
+    }
+
+    public function testAllowsMixedLiteralAndQueryBindings(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($announcement);
+
+        $descriptor = $this->compiler()->compile($this->definition(
+            contentType: 'announcement',
+            renderSource: [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'query' => [
+                    'contract_version' => 1,
+                    'source_ref' => 'wordpress.posts',
+                    'page_size' => 1,
+                ],
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'Latest'],
+                    'text' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+                ],
+            ],
+        ));
+
+        self::assertSame(['title' => 'Latest'], $descriptor->bindings);
+        self::assertNotNull($descriptor->query);
+        self::assertSame(['post.title'], $descriptor->query->projection);
+    }
+
+    public function testRejectsQueryPairingUnknownKeysAndBounds(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        self::assertNotNull($richText);
+
+        $base = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+            ],
+            'bindings' => [
+                'content' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+            ],
+        ];
+
+        $cases = [
+            array_diff_key($base, ['query' => true]),
+            array_replace($base, ['bindings' => ['content' => ['source' => 'literal', 'value' => 'Safe']]]),
+            array_replace_recursive($base, ['query' => ['search' => 'forbidden']]),
+            array_replace_recursive($base, ['query' => ['projection' => ['post.title']]]),
+            array_replace_recursive($base, ['query' => ['page_size' => 51]]),
+            array_replace_recursive($base, ['query' => ['offset' => 1001]]),
+            array_replace_recursive($base, ['bindings' => ['content' => ['callback' => 'forbidden']]]),
+        ];
+
+        foreach ($cases as $renderSource) {
+            try {
+                $this->compiler()->compile($this->definition(renderSource: $renderSource));
+                self::fail('Expected invalid bounded Query binding definition to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
             }

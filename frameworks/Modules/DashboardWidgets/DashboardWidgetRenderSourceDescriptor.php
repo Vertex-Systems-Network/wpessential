@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 use InvalidArgumentException;
+use LogicException;
 use WPEssential\Platform\Rendering\RenderInput;
 
 final readonly class DashboardWidgetRenderSourceDescriptor
@@ -22,6 +23,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
         public string $blueprintId,
         public int $blueprintRevision,
         public array $bindings,
+        public ?DashboardWidgetQueryBindingDescriptor $query = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget render-source descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -44,17 +46,37 @@ final readonly class DashboardWidgetRenderSourceDescriptor
                 throw new InvalidArgumentException('Dashboard Widget render-source binding keys must be stable semantic identifiers.');
             }
             $this->assertSafeValue($value);
+            if ($this->query !== null && array_key_exists($key, $this->query->bindings)) {
+                throw new InvalidArgumentException('Dashboard Widget literal and Query bindings cannot target the same Blueprint binding key.');
+            }
         }
-
-        new RenderInput($this->blueprintId, $this->blueprintRevision, $this->bindings);
     }
 
     public function toRenderInput(): RenderInput
     {
+        if ($this->query !== null) {
+            throw new LogicException('Dashboard Widget Query bindings must be resolved before renderer invocation.');
+        }
+
         return new RenderInput(
             $this->blueprintId,
             $this->blueprintRevision,
             $this->bindings,
+        );
+    }
+
+    /**
+     * @param array<string, scalar|list<scalar>> $bindings
+     */
+    public function resolvedWith(array $bindings): self
+    {
+        return new self(
+            definitionId: $this->definitionId,
+            definitionRevision: $this->definitionRevision,
+            blueprintId: $this->blueprintId,
+            blueprintRevision: $this->blueprintRevision,
+            bindings: $bindings,
+            query: null,
         );
     }
 
