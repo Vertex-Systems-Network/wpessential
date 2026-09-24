@@ -1,9 +1,9 @@
 {
-  "schema_version": 155,
+  "schema_version": 156,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "22355cb57a0e3891d3fccdb24c24c95ede258823",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_USER_REORDER_STATE_V1",
-  "source_issue": "#1252",
+  "queue_anchor_main_sha": "88d04846b909c2a467d812501d82290bbf7bcc39",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1",
+  "source_issue": "#1254",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -202,7 +202,8 @@
     "1246": "COMPLETED_ON_PR_1247_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1",
     "1248": "COMPLETED_ON_PR_1249_BOUNDED_NATIVE_USER_HIDE_STATE_V1",
     "1250": "COMPLETED_ON_PR_1251_BOUNDED_NATIVE_USER_COLLAPSE_STATE_V1",
-    "1252": "ACTIVE_BOUNDED_NATIVE_USER_REORDER_STATE_V1"
+    "1252": "COMPLETED_ON_PR_1253_BOUNDED_NATIVE_USER_REORDER_STATE_V1",
+    "1254": "ACTIVE_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -232,7 +233,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open and validate Issue #1252 exact eleven-file Per-User Reorder State feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
+    "next_safe_action": "Open and validate Issue #1254 exact seven-file Native Collapsible Capability feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -5365,7 +5366,7 @@
       "slot_id": "dashboard-widgets-bounded-native-user-reorder-state-v1",
       "title": "Dashboard Widgets bounded Native Per-User Reorder State V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_USER_REORDER_STATE_V1",
       "source": "Issue #1252 / fresh exact-main FAST Surface 10 audit",
       "dependencies": [
@@ -5409,7 +5410,67 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-native-user-reorder-state-v1",
-      "close_condition": "Exact eleven-file feature/test/shared-truth scope; saved current-user meta-box-order state only with per-context ID order preserved; focused tests; RB-0066 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1."
+      "close_condition": "Exact eleven-file feature/test/shared-truth scope; saved current-user meta-box-order state only with per-context ID order preserved; focused tests; RB-0066 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1.",
+      "terminal_result": "PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1",
+      "terminal_evidence": {
+        "issue": 1252,
+        "pr": 1253,
+        "head": "0a981953ae437c96d20221c50c4e2ea6a095c24c",
+        "governance_run": 36067471961,
+        "architecture_run": 36067471959,
+        "php_quality_run": 36067471948,
+        "platform_compatibility_run": 36067471991,
+        "distributable_run": 36067471953,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "88d04846b909c2a467d812501d82290bbf7bcc39"
+      }
+    },
+    {
+      "priority": 1043,
+      "slot_id": "dashboard-widgets-bounded-native-collapsible-capability-v1",
+      "title": "Dashboard Widgets bounded Native Collapsible Capability V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1",
+      "source": "Issue #1254 / fresh exact-main FAST Surface 10 audit",
+      "dependencies": [
+        "Issue #1252 / PR #1253 terminal Per-User Reorder State PASS",
+        "RB-0066 terminal PASS",
+        "exact source base 88d04846b909c2a467d812501d82290bbf7bcc39"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": true,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "presentation.collapsible=false custom emulation",
+        "custom JavaScript/CSS/DOM mutation/event interception/asset enqueue",
+        "user meta/user option write, update or delete",
+        "collapse-state mutation",
+        "inventory hide/remove mutation",
+        "public Ability/REST expansion",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-native-collapsible-capability-v1",
+      "close_condition": "Exact seven-file compiler/test/shared-truth scope; absent/true collapsible accepted via native WordPress postbox behavior; false/malformed rejected; RB-0067 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1."
     }
   ],
   "historical_closeout": {

@@ -26,7 +26,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const INVENTORY_KEYS = ['default_hidden'];
 
     /** @var list<string> */
-    private const PRESENTATION_KEYS = ['default_collapsed'];
+    private const PRESENTATION_KEYS = ['collapsible', 'default_collapsed'];
 
     /** @var list<string> */
     private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
@@ -102,6 +102,7 @@ final readonly class DashboardWidgetRegistrationCompiler
 
         [$networkDashboard, $siteScope, $siteIds] = $this->compileTarget($widget);
         $defaultHidden = $this->compileDefaultHidden($widget);
+        $this->assertNativeCollapsibleCapability($widget);
         $defaultCollapsed = $this->compileDefaultCollapsed($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
@@ -117,6 +118,32 @@ final readonly class DashboardWidgetRegistrationCompiler
             siteScope: $siteScope,
             siteIds: $siteIds,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function assertNativeCollapsibleCapability(array $widget): void
+    {
+        if (!array_key_exists('presentation', $widget)) {
+            return;
+        }
+
+        $presentation = $widget['presentation'];
+        if (!is_array($presentation) || ($presentation !== [] && array_is_list($presentation))) {
+            throw new InvalidArgumentException('Dashboard Widget presentation metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Dashboard Widget presentation metadata');
+
+        if (!array_key_exists('collapsible', $presentation)) {
+            return;
+        }
+        if (!is_bool($presentation['collapsible'])) {
+            throw new InvalidArgumentException('Dashboard Widget presentation.collapsible must be boolean.');
+        }
+        if ($presentation['collapsible'] !== true) {
+            throw new InvalidArgumentException('Dashboard Widget presentation.collapsible=false is unsupported by bounded native V1.');
+        }
     }
 
     /**
