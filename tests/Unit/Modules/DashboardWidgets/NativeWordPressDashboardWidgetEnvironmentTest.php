@@ -159,6 +159,31 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         self::assertSame(['dashboard', 'dashboard-network'], $seen);
     }
 
+    public function testRemovesDashboardWidgetThroughBoundedEnvironmentSeam(): void
+    {
+        $calls = [];
+        $environment = new NativeWordPressDashboardWidgetEnvironment(
+            removeDashboardWidget: static function (
+                string $id,
+                string $screenId,
+                string $context,
+            ) use (&$calls): void {
+                $calls[] = compact('id', 'screenId', 'context');
+            },
+        );
+
+        $environment->removeDashboardWidget('site_widget', 'dashboard', 'normal');
+        $environment->removeDashboardWidget('network_widget', 'dashboard-network', 'side');
+
+        self::assertSame(
+            [
+                ['id' => 'site_widget', 'screenId' => 'dashboard', 'context' => 'normal'],
+                ['id' => 'network_widget', 'screenId' => 'dashboard-network', 'context' => 'side'],
+            ],
+            $calls,
+        );
+    }
+
     public function testDiscoversOnlySafeRegisteredDashboardInventoryMetadata(): void
     {
         $hadMetaBoxes = array_key_exists('wp_meta_boxes', $GLOBALS);
@@ -175,6 +200,7 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
                                 'args' => ['token' => 'do-not-expose'],
                             ],
                             'a-widget' => ['title' => 'A'],
+                            'removed_widget' => false,
                         ],
                     ],
                     'side' => [

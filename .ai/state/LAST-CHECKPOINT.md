@@ -1,55 +1,55 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-25 — #1254 bounded Native Collapsible Capability V1 active
+## 2026-09-25 — #1256 bounded Native Inventory Remove Seam V1 active
 
 ### Exact repository truth
 
-- Exact current main: `88d04846b909c2a467d812501d82290bbf7bcc39`.
-- Issue #1252 / PR #1253 — Bounded Native Per-User Reorder State V1 — terminal PASS:
-  - exact head `0a981953ae437c96d20221c50c4e2ea6a095c24c`;
-  - Governance `36067471961` PASS;
-  - Architecture `36067471959` PASS;
-  - PHP Quality `36067471948` PASS;
-  - Platform Compatibility `36067471991` PASS;
-  - Distributable `36067471953` PASS;
-  - exact eleven authorized files;
+- Exact current main: `8e0645fa6c7617718e96141c92da906e58a554bb`.
+- Issue #1254 / PR #1255 — Bounded Native Collapsible Capability V1 — terminal PASS:
+  - exact head `435325d7897ccca0f7772821c27c08fb5c05fd43`;
+  - Governance `36069693481` PASS;
+  - Architecture `36069693461` PASS;
+  - PHP Quality `36069693393` PASS;
+  - Platform Compatibility `36069693379` PASS;
+  - Distributable `36069693490` PASS;
+  - exact seven authorized files;
   - zero review blockers and zero behind;
-  - expected-head merge `88d04846b909c2a467d812501d82290bbf7bcc39`;
-  - verdict `PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1`.
-- RB-0066 is terminal PASS.
+  - expected-head merge `8e0645fa6c7617718e96141c92da906e58a554bb`;
+  - verdict `PASS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1`.
+- RB-0067 is terminal PASS.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
 ### Fresh exact-main Surface 10 audit
 
 Canonical Bank candidate selected:
 
-`widget.presentation.collapsible`
+`widget.inventory.hide`
 
 Audit verdict:
 
-`READY_FOR_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1`
+`READY_FOR_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1`
 
-### #1254 frozen feature contract
+### #1256 frozen feature contract
 
-- WordPress ordinary dashboard postboxes natively render and bind Show/Hide panel collapse affordances.
-- `presentation.collapsible` omitted => native collapsible behavior.
-- `presentation.collapsible: true` => accepted and uses native WordPress postbox collapse behavior.
-- `presentation.collapsible: false` => compile-time rejection in bounded native V1.
-- Non-boolean values => rejected.
-- `presentation.default_collapsed` behavior remains unchanged and independently supported.
-- No custom JavaScript, CSS, DOM/event interception or asset enqueue.
-- No user-meta/user-option write/update/delete.
-- No collapse-state mutation.
-- No inventory hide/remove mutation.
-- No public Ability/REST expansion, provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
+- Native WordPress audit maps inventory hide/remove to `remove_meta_box(id, screen, context)`.
+- Normalized atomic inventory policy remains computed/read-only; V1 exposes no authored definition or public mutation API.
+- Exact supported screens: `dashboard`, `dashboard-network`.
+- Exact supported contexts: `normal`, `side`, `column3`, `column4`.
+- Widget ID must pass the existing safe ID regex.
+- Requested `(id, context)` must already exist in safe registered inventory for the exact screen before mutation.
+- Missing/malformed inventory, target mismatch or environment/API failure returns false without mutation.
+- Native registered-inventory discovery ignores WordPress `false` tombstones created by `remove_meta_box()`.
+- No wildcard/bulk removal.
+- No callbacks, args, titles or HTML inspection/exposure.
+- No user-meta/user-option writes, persistence, public Ability/REST expansion, provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
 
 ### FAST delivery status
 
-- Active Issue: **#1254 — Dashboard Widgets: bounded native collapsible capability V1**.
-- Active PR: **#1255 — Dashboard Widgets: bounded Native Collapsible Capability V1**.
-- Active branch: `agent/dashboard-widgets-bounded-native-collapsible-capability-v1`.
-- RB-0067 is the single pending feature merge gate.
-- Exact authorized scope: registration compiler + focused compiler test + five shared-truth files.
+- Active Issue: **#1256 — Dashboard Widgets: bounded native inventory remove seam V1**.
+- Active PR: **#1257 — Dashboard Widgets: bounded Native Inventory Remove Seam V1**.
+- Active branch: `agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1`.
+- RB-0068 is the single pending feature merge gate.
+- Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
 
 ### Persistent recovery order
 

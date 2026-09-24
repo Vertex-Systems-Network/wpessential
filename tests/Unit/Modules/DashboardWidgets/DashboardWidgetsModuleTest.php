@@ -225,6 +225,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             public function currentUserHiddenDashboardWidgetIds(string $screenId): array { return []; }
             public function currentUserCollapsedDashboardWidgetIds(string $screenId): array { return []; }
             public function currentUserDashboardWidgetOrder(string $screenId): array { return []; }
+            public function removeDashboardWidget(string $id, string $screenId, string $context): void {}
             public function discoverRegisteredDashboardWidgets(string $screenId): array { return []; }
             public function outputTrustedHtml(string $html): void {}
         };

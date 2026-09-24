@@ -200,6 +200,45 @@ final class DashboardWidgetWordPressAdapter
     }
 
     /**
+     * Removes one exact currently registered Dashboard Widget target.
+     *
+     * No wildcard, bulk, persistence, or public mutation surface is exposed.
+     */
+    public function removeRegisteredDashboardWidget(
+        string $id,
+        string $context,
+        bool $networkDashboard = false,
+    ): bool {
+        if (
+            preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1
+            || !in_array($context, ['normal', 'side', 'column3', 'column4'], true)
+        ) {
+            return false;
+        }
+
+        $registered = $this->discoverRegisteredDashboardWidgets($networkDashboard);
+        $targetExists = false;
+        foreach ($registered as $entry) {
+            if ($entry['id'] === $id && $entry['context'] === $context) {
+                $targetExists = true;
+                break;
+            }
+        }
+        if (!$targetExists) {
+            return false;
+        }
+
+        $screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
+        try {
+            $this->environment->removeDashboardWidget($id, $screenId, $context);
+        } catch (Throwable) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns the current user's explicitly saved hidden Dashboard Widget IDs.
      *
      * Default-hidden and effective hidden state are intentionally excluded.

@@ -276,6 +276,42 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $adapter->discoverRegisteredDashboardWidgets());
     }
 
+    public function testRemovesOnlyExactRegisteredDashboardWidgetTarget(): void
+    {
+        [$adapter, , $environment] = $this->harness([]);
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard'] = [
+            ['id' => 'site_widget', 'context' => 'normal', 'priority' => 'core'],
+            ['id' => 'side_widget', 'context' => 'side', 'priority' => 'low'],
+        ];
+        self::assertTrue($adapter->removeRegisteredDashboardWidget('site_widget', 'normal'));
+        self::assertSame(
+            [['id' => 'site_widget', 'screenId' => 'dashboard', 'context' => 'normal']],
+            $environment->removedDashboardWidgets,
+        );
+
+        self::assertFalse($adapter->removeRegisteredDashboardWidget('site_widget', 'side'));
+        self::assertFalse($adapter->removeRegisteredDashboardWidget('<unsafe>', 'normal'));
+        self::assertFalse($adapter->removeRegisteredDashboardWidget('site_widget', 'advanced'));
+        self::assertCount(1, $environment->removedDashboardWidgets);
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard-network'] = [
+            ['id' => 'network_widget', 'context' => 'side', 'priority' => 'core'],
+        ];
+        self::assertTrue($adapter->removeRegisteredDashboardWidget('network_widget', 'side', true));
+        self::assertSame(
+            ['id' => 'network_widget', 'screenId' => 'dashboard-network', 'context' => 'side'],
+            $environment->removedDashboardWidgets[1],
+        );
+
+        $environment->throwOnDashboardWidgetRemoval = true;
+        self::assertFalse($adapter->removeRegisteredDashboardWidget('network_widget', 'side', true));
+        $environment->throwOnDashboardWidgetRemoval = false;
+
+        $environment->throwOnRegisteredDashboardWidgetDiscovery = true;
+        self::assertFalse($adapter->removeRegisteredDashboardWidget('site_widget', 'normal'));
+    }
+
     public function testClassifiesOnlyCanonicalCoreWidgetIdsPerDashboardScreen(): void
     {
         [$adapter, , $environment] = $this->harness([]);
@@ -795,6 +831,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnScreenId = false;
             public bool $throwOnClosedPostboxPreference = false;
             public bool $throwOnRegisteredDashboardWidgetDiscovery = false;
+            public bool $throwOnDashboardWidgetRemoval = false;
             public bool $throwOnHiddenDashboardWidgetPreference = false;
             public bool $throwOnCollapsedDashboardWidgetPreference = false;
             public bool $throwOnDashboardWidgetOrderPreference = false;
@@ -808,6 +845,8 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public array $dashboardWidgetOrderByScreen = [];
             /** @var array<string,list<array<string,mixed>>> */
             public array $registeredDashboardWidgetsByScreen = [];
+            /** @var list<array{id:string,screenId:string,context:string}> */
+            public array $removedDashboardWidgets = [];
             private int $hookAttempts = 0;
 
             public function registerAction(string $hook, callable $callback): void
@@ -882,6 +921,13 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                     throw new RuntimeException('dashboard widget order preference unavailable');
                 }
                 return $this->dashboardWidgetOrderByScreen[$screenId] ?? [];
+            }
+            public function removeDashboardWidget(string $id, string $screenId, string $context): void
+            {
+                if ($this->throwOnDashboardWidgetRemoval) {
+                    throw new RuntimeException('dashboard widget removal unavailable');
+                }
+                $this->removedDashboardWidgets[] = compact('id', 'screenId', 'context');
             }
             public function discoverRegisteredDashboardWidgets(string $screenId): array
             {

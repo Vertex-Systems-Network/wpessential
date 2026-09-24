@@ -46,6 +46,9 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure(string):array<string,string> */
     private Closure $currentUserDashboardWidgetOrder;
 
+    /** @var Closure(string,string,string):void */
+    private Closure $removeDashboardWidget;
+
     /** @var Closure(string):array<int,array{id:string,context:string,priority:string}> */
     private Closure $discoverRegisteredDashboardWidgets;
 
@@ -64,6 +67,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
      * @param null|callable(string):array<int,string> $currentUserHiddenDashboardWidgetIds
      * @param null|callable(string):array<int,string> $currentUserCollapsedDashboardWidgetIds
      * @param null|callable(string):array<string,string> $currentUserDashboardWidgetOrder
+     * @param null|callable(string,string,string):void $removeDashboardWidget
      * @param null|callable(string):array<int,array{id:string,context:string,priority:string}> $discoverRegisteredDashboardWidgets
      * @param null|callable(string):void $outputTrustedHtml
      */
@@ -79,6 +83,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
         ?callable $currentUserHiddenDashboardWidgetIds = null,
         ?callable $currentUserCollapsedDashboardWidgetIds = null,
         ?callable $currentUserDashboardWidgetOrder = null,
+        ?callable $removeDashboardWidget = null,
         ?callable $discoverRegisteredDashboardWidgets = null,
         ?callable $outputTrustedHtml = null,
     ) {
@@ -272,6 +277,25 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return $order;
             };
 
+        $this->removeDashboardWidget = $removeDashboardWidget !== null
+            ? Closure::fromCallable($removeDashboardWidget)
+            : static function (string $id, string $screenId, string $context): void {
+                if (!in_array($screenId, ['dashboard', 'dashboard-network'], true)) {
+                    throw new LogicException('Dashboard Widget removal screen is unsupported.');
+                }
+                if (!in_array($context, ['normal', 'side', 'column3', 'column4'], true)) {
+                    throw new LogicException('Dashboard Widget removal context is unsupported.');
+                }
+                if (preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
+                    throw new LogicException('Dashboard Widget removal id is unsafe.');
+                }
+                if (!function_exists('remove_meta_box')) {
+                    throw new LogicException('WordPress meta-box removal API is unavailable.');
+                }
+
+                remove_meta_box($id, $screenId, $context);
+            };
+
         $this->discoverRegisteredDashboardWidgets = $discoverRegisteredDashboardWidgets !== null
             ? Closure::fromCallable($discoverRegisteredDashboardWidgets)
             : static function (string $screenId): array {
@@ -314,10 +338,13 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                             throw new LogicException('WordPress dashboard meta-box priority is malformed.');
                         }
 
-                        $ids = array_values(array_filter(
-                            array_keys($priorityBoxes),
-                            static fn (mixed $id): bool => is_string($id) && $id !== '',
-                        ));
+                        $ids = [];
+                        foreach ($priorityBoxes as $id => $box) {
+                            if ($box === false || !is_string($id) || $id === '') {
+                                continue;
+                            }
+                            $ids[] = $id;
+                        }
                         sort($ids, SORT_STRING);
 
                         foreach ($ids as $id) {
@@ -399,6 +426,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function currentUserDashboardWidgetOrder(string $screenId): array
     {
         return ($this->currentUserDashboardWidgetOrder)($screenId);
+    }
+
+    public function removeDashboardWidget(string $id, string $screenId, string $context): void
+    {
+        ($this->removeDashboardWidget)($id, $screenId, $context);
     }
 
     public function discoverRegisteredDashboardWidgets(string $screenId): array

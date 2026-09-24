@@ -47,6 +47,8 @@ interface DashboardWidgetWordPressEnvironmentInterface
      */
     public function currentUserDashboardWidgetOrder(string $screenId): array;
 
+    public function removeDashboardWidget(string $id, string $screenId, string $context): void;
+
     /**
      * @return list<array{id:string,context:string,priority:string}>
      */
