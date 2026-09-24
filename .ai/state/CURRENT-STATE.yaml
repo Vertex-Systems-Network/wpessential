@@ -5,13 +5,13 @@ state_status: RECONCILING
 observed_main_sha: 815f35910367b9103954de80975fc76bf8807d69
 observed_main_source: "Issue #1215 / PR #1221 merged Dashboard Widgets bounded Query/Data-Source binding source V1"
 active_issue: "#1222"
-active_pr: "PENDING_RECONCILIATION_PR"
+active_pr: "#1223"
 active_branch: supervisor/dashboard-widgets-query-source-post-merge-reconciliation-v1
 current_milestone: "Dashboard Widgets Query/Data-Source source post-merge shared-truth reconciliation V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1215 / PR #1221 merged as 815f35910367b9103954de80975fc76bf8807d69; exact head a6be8af09ddce141a952885b0ddd5e6fff39ebdc; Governance, Architecture, PHP Quality, Platform Compatibility and Distributable Package PASS; exact ten-file scope; zero review blockers/comments and zero behind."
 next_safe_action: "Open and validate the #1222 exact five-file shared-truth reconciliation PR; merge only terminal green. After #1222 terminal merge, run a fresh exact-main Surface 10 transition audit before creating or claiming any next product/runtime tranche."
-waiting_external: "Issue #1222 shared-truth reconciliation exact-head CI/review"
+waiting_external: "PR #1223 shared-truth reconciliation exact-head CI/review"
 next_planned_slot:
   issue: "UNASSIGNED_FRESH_TRANSITION_AUDIT"
   slot_id: dashboard-widgets-fresh-exact-main-transition-audit

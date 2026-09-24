@@ -10,6 +10,7 @@
 - Resulting main preserves visibility-before-query, canonical `QueryReadConsumerInterface` execution, Data Source descriptor preflight, exact incoming `ExecutionContext` forwarding, opaque runtime failure mapping and no direct IntegrationRegistry/remote execution.
 - RB-0051 records the terminal bounded source PASS.
 - Issue #1222 is shared-truth-only reconciliation with exactly five authorized files; no runtime/product PHP is authorized.
+- PR #1223 is the active reconciliation transport on `supervisor/dashboard-widgets-query-source-post-merge-reconciliation-v1`; merge only after exact-head Governance/Architecture, zero review blockers and zero behind.
 - No next Dashboard Widgets product Issue is open. After #1222 terminal merge, run a fresh exact-main transition audit before creating or claiming the next bounded product tranche.
 - Full-parity runtime/product certification, P-006 runtime, deploy and release remain unpromoted.
 
