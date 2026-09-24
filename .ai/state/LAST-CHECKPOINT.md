@@ -48,6 +48,7 @@ Why this tranche:
 ### FAST delivery status
 
 - Active Issue: **#1242 — Dashboard Widgets: bounded native registered inventory source V1**.
+- Active PR: **#1243 — Dashboard Widgets: bounded Native Registered Inventory Source V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-registered-inventory-source-v1`.
 - RB-0061 is the single pending feature merge gate.
 - Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
