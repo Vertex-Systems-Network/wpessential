@@ -75,7 +75,7 @@ expect_query_pro_activation(
     'QueryModule must precede DashboardWidgetsModule in the Pro contribution list',
 );
 
-$compatibilityGate = strpos($source, "if (($compatibility['state'] ?? '') !== 'compatible')");
+$compatibilityGate = strpos($source, "if ((\$compatibility['state'] ?? '') !== 'compatible')");
 $registrationLoop = strpos(
     $source,
     '\WPEssential\Bootstrap\Plugin::registerModule(new $moduleClass())',
