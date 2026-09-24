@@ -45,6 +45,7 @@ Audit verdict:
 ### FAST delivery status
 
 - Active Issue: **#1248 — Dashboard Widgets: bounded native per-user hidden state V1**.
+- Active PR: **#1249 — Dashboard Widgets: bounded Native Per-User Hidden State V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-user-hide-state-v1`.
 - RB-0064 is the single pending feature merge gate.
 - Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
