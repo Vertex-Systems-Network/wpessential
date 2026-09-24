@@ -38,6 +38,11 @@ interface DashboardWidgetWordPressEnvironmentInterface
     public function currentUserHiddenDashboardWidgetIds(string $screenId): array;
 
     /**
+     * @return list<string>
+     */
+    public function currentUserCollapsedDashboardWidgetIds(string $screenId): array;
+
+    /**
      * @return list<array{id:string,context:string,priority:string}>
      */
     public function discoverRegisteredDashboardWidgets(string $screenId): array;
