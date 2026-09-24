@@ -199,6 +199,36 @@ final class DashboardWidgetWordPressAdapter
         ));
     }
 
+    /**
+     * Returns the current user's explicitly saved hidden Dashboard Widget IDs.
+     *
+     * Default-hidden and effective hidden state are intentionally excluded.
+     *
+     * @return list<string>
+     */
+    public function currentUserHiddenDashboardWidgetIds(bool $networkDashboard = false): array
+    {
+        $screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
+
+        try {
+            $ids = $this->environment->currentUserHiddenDashboardWidgetIds($screenId);
+        } catch (Throwable) {
+            return [];
+        }
+
+        $safe = [];
+        foreach ($ids as $id) {
+            if (!is_string($id) || preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
+                return [];
+            }
+            $safe[$id] = true;
+        }
+
+        $result = array_keys($safe);
+        sort($result, SORT_STRING);
+        return $result;
+    }
+
     private function registerTarget(bool $networkDashboard): void
     {
         foreach ($this->planTarget($networkDashboard) as $entry) {
