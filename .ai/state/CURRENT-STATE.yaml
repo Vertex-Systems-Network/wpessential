@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b
-observed_main_source: "Issue #1242 / PR #1243 merged Dashboard Widgets bounded Native Registered Inventory Source V1"
-active_issue: "#1244"
-active_pr: "#1245"
-active_branch: agent/dashboard-widgets-bounded-native-core-widget-classification-v1
-current_milestone: "Dashboard Widgets bounded Native Core-Widget Classification V1"
+observed_main_sha: 4603672f75371d753f312bda75093cafd5a437fc
+observed_main_source: "Issue #1244 / PR #1245 merged Dashboard Widgets bounded Native Core-Widget Classification V1"
+active_issue: "#1246"
+active_pr: null
+active_branch: agent/dashboard-widgets-bounded-native-non-core-registered-classification-v1
+current_milestone: "Dashboard Widgets bounded Native Non-Core Registered Classification V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1242 / PR #1243 merged as b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b; exact head 8f6df050d6a0f1fe5d69ff6ff3ad549cf17a42a2; Governance 36025603063 PASS; Architecture 36025603345 PASS; PHP Quality 36025603066 PASS; Platform Compatibility 36025603100 PASS; Distributable 36025603189 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1."
-next_safe_action: "Open and validate Issue #1244 exact seven-file feature/shared-truth PR for bounded canonical core-widget classification; merge only terminal green with expected-head protection. No third-party classification, provenance attestation, hide/remove mutation, provider/remote execution, full parity, deploy or release."
-waiting_external: "PR #1245 exact-head CI/review"
+last_completed_milestone: "Issue #1244 / PR #1245 merged as 4603672f75371d753f312bda75093cafd5a437fc; exact head a05ebde729288618fb2cbfda62d2cab6d4c630cd; Governance 36052490560 PASS; Architecture 36052490607 PASS; PHP Quality 36052490535 PASS; Platform Compatibility 36052490624 PASS; Distributable 36052490554 PASS; exact seven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1."
+next_safe_action: "Open and validate Issue #1246 exact seven-file feature/shared-truth PR for bounded registered non-core classification backing widget.inventory.third_party_widget; merge only terminal green with expected-head protection. No provenance attestation, hide/remove mutation, provider/remote execution, full parity, deploy or release."
+waiting_external: "feature PR creation / exact-head CI-review"
 next_planned_slot:
-  issue: "#1244"
-  slot_id: dashboard-widgets-bounded-native-core-widget-classification-v1
-  claim_branch: "agent/dashboard-widgets-bounded-native-core-widget-classification-v1"
-  claim_rule: "Issue #1244 freezes exact seven-file read-only canonical core-ID classification on exact main b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b; classification is not provenance attestation."
+  issue: "#1246"
+  slot_id: dashboard-widgets-bounded-native-non-core-registered-classification-v1
+  claim_branch: "agent/dashboard-widgets-bounded-native-non-core-registered-classification-v1"
+  claim_rule: "Issue #1246 freezes exact seven-file read-only registered-non-core classification on exact main 4603672f75371d753f312bda75093cafd5a437fc; this backs third_party_widget without claiming plugin/vendor provenance."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0062
+    - RB-0063
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -47,6 +47,7 @@ runner_benchmark:
     - RB-0059
     - RB-0060
     - RB-0061
+    - RB-0062
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -91,5 +92,5 @@ notes:
   - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
   - "Issue #1240 / PR #1241 terminally reconciled #1238/#1239 shared truth on exact main d46bb23f948ee6c943cf8cce82231c74918480f9."
   - "Issue #1242 / PR #1243 bounded Registered Inventory Source V1 is terminal PASS; RB-0061 is reconciled PASS."
-  - "Issue #1244 is the active FAST feature: bounded widget.inventory.core_widget classification over safe registered inventory."
-  - "Core classification is exact canonical-ID classification only, not plugin/callback provenance attestation; third-party classification remains unpromoted."
+  - "Issue #1244 / PR #1245 bounded Core-Widget Classification V1 is terminal PASS; RB-0062 is reconciled PASS."
+  - "Issue #1246 is the active FAST feature: bounded registered-non-core classification backing widget.inventory.third_party_widget without provenance attestation."
