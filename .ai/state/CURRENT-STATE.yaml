@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: d46bb23f948ee6c943cf8cce82231c74918480f9
 observed_main_source: "Issue #1240 / PR #1241 terminal shared-truth reconciliation merged after Default-Collapsed V1"
 active_issue: "#1242"
-active_pr: null
+active_pr: "#1243"
 active_branch: agent/dashboard-widgets-bounded-native-registered-inventory-source-v1
 current_milestone: "Dashboard Widgets bounded Native Registered Inventory Source V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1240 / PR #1241 shared-truth reconciliation merged as d46bb23f948ee6c943cf8cce82231c74918480f9; exact head f32c30eae86a2eff789e77615cac8e58d9c51454; Governance 36023143527 PASS; Architecture 36023143626 PASS; exact five-file shared-truth scope; zero review blockers and zero behind."
 next_safe_action: "Open and validate Issue #1242 exact eleven-file feature/shared-truth PR for bounded registered Dashboard Widget inventory; merge only terminal green with expected-head protection. No core/third-party classification, hide/remove, callback/title/args exposure, provider/remote execution, full parity, deploy or release."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1243 exact-head CI/review"
 next_planned_slot:
   issue: "#1242"
   slot_id: dashboard-widgets-bounded-native-registered-inventory-source-v1
