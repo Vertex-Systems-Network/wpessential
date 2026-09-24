@@ -20,6 +20,25 @@ final class DashboardWidgetWordPressAdapter
 {
     public const WORDPRESS_ID_PREFIX = 'wpe_dashboard_widget_';
 
+    /** @var list<string> */
+    private const SITE_CORE_WIDGET_IDS = [
+        'dashboard_browser_nag',
+        'dashboard_php_nag',
+        'dashboard_site_health',
+        'dashboard_right_now',
+        'dashboard_activity',
+        'dashboard_quick_press',
+        'dashboard_primary',
+    ];
+
+    /** @var list<string> */
+    private const NETWORK_CORE_WIDGET_IDS = [
+        'dashboard_browser_nag',
+        'dashboard_php_nag',
+        'network_dashboard_right_now',
+        'dashboard_primary',
+    ];
+
     private bool $hooksRegistered = false;
     private bool $siteRegistered = false;
     private bool $networkRegistered = false;
@@ -139,6 +158,25 @@ final class DashboardWidgetWordPressAdapter
         );
 
         return $safe;
+    }
+
+    /**
+     * Returns registered rows whose exact widget IDs match WordPress core dashboard IDs.
+     *
+     * This is canonical-ID classification only; it does not attest callback/plugin provenance.
+     *
+     * @return list<array{id:string,context:string,priority:string}>
+     */
+    public function discoverCoreDashboardWidgets(bool $networkDashboard = false): array
+    {
+        $coreIds = $networkDashboard
+            ? self::NETWORK_CORE_WIDGET_IDS
+            : self::SITE_CORE_WIDGET_IDS;
+
+        return array_values(array_filter(
+            $this->discoverRegisteredDashboardWidgets($networkDashboard),
+            static fn (array $entry): bool => in_array($entry['id'], $coreIds, true),
+        ));
     }
 
     private function registerTarget(bool $networkDashboard): void

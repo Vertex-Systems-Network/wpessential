@@ -1,9 +1,9 @@
 {
-  "schema_version": 150,
+  "schema_version": 151,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "d46bb23f948ee6c943cf8cce82231c74918480f9",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
-  "source_issue": "#1242",
+  "queue_anchor_main_sha": "b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1",
+  "source_issue": "#1244",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -197,7 +197,8 @@
     "1236": "COMPLETED_ON_PR_1237_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
     "1238": "COMPLETED_ON_PR_1239_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
     "1240": "COMPLETED_ON_PR_1241_DEFAULT_COLLAPSED_SHARED_TRUTH_RECONCILIATION",
-    "1242": "ACTIVE_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1"
+    "1242": "COMPLETED_ON_PR_1243_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
+    "1244": "ACTIVE_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -227,7 +228,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open and validate Issue #1242 exact eleven-file Registered Inventory feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
+    "next_safe_action": "Open and validate Issue #1244 exact seven-file Core-Widget Classification feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -5038,7 +5039,7 @@
       "slot_id": "dashboard-widgets-bounded-native-registered-inventory-source-v1",
       "title": "Dashboard Widgets bounded Native Registered Inventory Source V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
       "source": "Issue #1242 / fresh exact-main FAST Surface 10 audit",
       "dependencies": [
@@ -5082,7 +5083,69 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-native-registered-inventory-source-v1",
-      "close_condition": "Exact eleven-file feature/shared-truth scope; safe deterministic id/context/priority inventory only; focused tests; RB-0061 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1."
+      "close_condition": "Exact eleven-file feature/shared-truth scope; safe deterministic id/context/priority inventory only; focused tests; RB-0061 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1.",
+      "terminal_result": "PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
+      "terminal_evidence": {
+        "issue": 1242,
+        "pr": 1243,
+        "head": "8f6df050d6a0f1fe5d69ff6ff3ad549cf17a42a2",
+        "governance_run": 36025603063,
+        "architecture_run": 36025603345,
+        "php_quality_run": 36025603066,
+        "platform_compatibility_run": 36025603100,
+        "distributable_run": 36025603189,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b"
+      }
+    },
+    {
+      "priority": 1038,
+      "slot_id": "dashboard-widgets-bounded-native-core-widget-classification-v1",
+      "title": "Dashboard Widgets bounded Native Core-Widget Classification V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1",
+      "source": "Issue #1244 / fresh exact-main FAST Surface 10 audit",
+      "dependencies": [
+        "Issue #1242 / PR #1243 terminal Registered Inventory PASS",
+        "RB-0061 terminal PASS",
+        "exact source base b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressAdapter.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetWordPressAdapterTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "prefix/substring/regex guessing of core identity",
+        "callback/callback-args/raw title or HTML inspection or exposure",
+        "plugin-origin/provenance attestation",
+        "third-party inventory classification",
+        "inventory hide/remove mutation",
+        "user meta/options/global registry writes",
+        "public Ability/REST expansion",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "collapsible/dismissible/loading/refresh/cache/background jobs",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-native-core-widget-classification-v1",
+      "close_condition": "Exact seven-file feature/test/shared-truth scope; exact site/network canonical-ID core classification; focused tests; RB-0062 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1."
     }
   ],
   "historical_closeout": {

@@ -1,57 +1,70 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — #1242 bounded Native Registered Inventory Source V1 active
+## 2026-09-24 — #1244 bounded Native Core-Widget Classification V1 active
 
 ### Exact repository truth
 
-- Exact current main: `d46bb23f948ee6c943cf8cce82231c74918480f9`.
-- Issue #1238 / PR #1239 — Bounded Native Default-Collapsed State V1 — terminal PASS.
-- Issue #1240 / PR #1241 — five-file post-merge shared-truth reconciliation — terminal PASS:
-  - exact head `f32c30eae86a2eff789e77615cac8e58d9c51454`;
-  - Governance `36023143527` PASS;
-  - Architecture `36023143626` PASS;
-  - zero review blockers;
-  - zero behind;
-  - merge `d46bb23f948ee6c943cf8cce82231c74918480f9`.
-- RB-0060 remains terminal PASS.
+- Exact current main: `b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b`.
+- Issue #1242 / PR #1243 — Bounded Native Registered Inventory Source V1 — terminal PASS:
+  - exact head `8f6df050d6a0f1fe5d69ff6ff3ad549cf17a42a2`;
+  - Governance `36025603063` PASS;
+  - Architecture `36025603345` PASS;
+  - PHP Quality `36025603066` PASS;
+  - Platform Compatibility `36025603100` PASS;
+  - Distributable `36025603189` PASS;
+  - exact eleven authorized files;
+  - zero review blockers and zero behind;
+  - expected-head merge `b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b`;
+  - verdict `PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1`.
+- RB-0061 is terminal PASS.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
 ### Fresh exact-main Surface 10 audit
 
 Canonical Bank candidate selected:
 
-`widget.inventory.discover_registered`
+`widget.inventory.core_widget`
 
 Audit verdict:
 
-`READY_FOR_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1`
+`READY_FOR_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1`
 
-Why this tranche:
-- `SOFT_NATIVE / MUST_HAVE / P0_NATIVE`;
-- strictly read-only;
-- smaller and safer than `presentation.collapsible`, which requires a broader WordPress UI/JS boundary;
-- no provider/action/remote execution dependency.
+The classifier consumes the already bounded registered-inventory source and performs exact screen-specific canonical-ID membership only.
 
-### #1242 frozen feature contract
+### #1244 frozen feature contract
 
-- Discover registered Dashboard meta boxes for exact screen ids `dashboard` and `dashboard-network`.
-- Project only `id`, `context`, and `priority`.
-- Deterministic ordering.
-- Do not expose callback, callback args, raw title/HTML or arbitrary meta-box payload.
-- Adapter validates the returned shape and fails closed to `[]` on malformed/unavailable inventory.
-- No core-vs-third-party classification.
-- No hide/remove.
-- No user preference write or other mutation.
-- No public Ability/REST expansion.
-- No provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
+Site dashboard canonical IDs:
+- `dashboard_browser_nag`
+- `dashboard_php_nag`
+- `dashboard_site_health`
+- `dashboard_right_now`
+- `dashboard_activity`
+- `dashboard_quick_press`
+- `dashboard_primary`
+
+Network dashboard canonical IDs:
+- `dashboard_browser_nag`
+- `dashboard_php_nag`
+- `network_dashboard_right_now`
+- `dashboard_primary`
+
+Rules:
+- input remains the safe `id/context/priority` discovery projection;
+- only exact allowlisted IDs are classified core;
+- no prefix/substring/regex guessing;
+- deterministic discovery order is preserved;
+- no callback, args, title/HTML inspection or exposure;
+- “core” means canonical WordPress core widget ID, not cryptographic/plugin-origin provenance;
+- unknown IDs remain non-core;
+- no third-party classification, hide/remove, user-meta/options/global writes, public Ability/REST expansion, provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
 
 ### FAST delivery status
 
-- Active Issue: **#1242 — Dashboard Widgets: bounded native registered inventory source V1**.
-- Active PR: **#1243 — Dashboard Widgets: bounded Native Registered Inventory Source V1**.
-- Active branch: `agent/dashboard-widgets-bounded-native-registered-inventory-source-v1`.
-- RB-0061 is the single pending feature merge gate.
-- Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
+- Active Issue: **#1244 — Dashboard Widgets: bounded native core-widget classification V1**.
+- Active PR: **#1245 — Dashboard Widgets: bounded Native Core-Widget Classification V1**.
+- Active branch: `agent/dashboard-widgets-bounded-native-core-widget-classification-v1`.
+- RB-0062 is the single pending feature merge gate.
+- Exact authorized scope: Dashboard Widget WordPress adapter, focused adapter test, and five shared-truth files.
 
 ### Persistent recovery order
 
