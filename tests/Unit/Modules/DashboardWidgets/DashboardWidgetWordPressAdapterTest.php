@@ -42,6 +42,8 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             ['wp_dashboard_setup', 'wp_network_dashboard_setup'],
             array_column($environment->hooks, 'hook'),
         );
+        self::assertSame(['default_hidden_meta_boxes'], array_column($environment->filters, 'hook'));
+        self::assertSame(2, $environment->filters[0]['acceptedArgs']);
     }
 
     public function testPlanningSortsCanonicallyAndSuppressesAllSameTargetColliders(): void
@@ -61,6 +63,84 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             array_column($environment->widgets, 'id'),
         );
         self::assertNotContains('wpe_dashboard_widget_duplicate', array_column($environment->widgets, 'id'));
+    }
+
+    public function testDefaultHiddenFilterUsesExactTargetAndCollisionPlanning(): void
+    {
+        $definitions = [
+            $this->definition(
+                '40000000-0000-4000-8000-000000000081',
+                'hidden-site',
+                'hidden-site',
+                defaultHidden: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000082',
+                'visible-site',
+                'visible-site',
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000083',
+                'other-site',
+                'other-site',
+                target: ['scope' => 'site_ids', 'site_ids' => [99]],
+                defaultHidden: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000084',
+                'collision-a',
+                'collision',
+                defaultHidden: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000085',
+                'collision-b',
+                'collision',
+                defaultHidden: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000086',
+                'hidden-network',
+                'hidden-network',
+                networkDashboard: true,
+                defaultHidden: true,
+            ),
+        ];
+        [$adapter, , $environment] = $this->harness($definitions);
+        $adapter->registerHooks();
+
+        $filter = $environment->filters[0]['callback'];
+        $siteHidden = $filter(
+            ['dashboard_right_now', 'wpe_dashboard_widget_hidden-site'],
+            (object) ['id' => 'dashboard'],
+        );
+        self::assertSame(
+            ['dashboard_right_now', 'wpe_dashboard_widget_hidden-site'],
+            $siteHidden,
+        );
+        self::assertNotContains('wpe_dashboard_widget_other-site', $siteHidden);
+        self::assertNotContains('wpe_dashboard_widget_collision', $siteHidden);
+        self::assertNotContains('wpe_dashboard_widget_hidden-network', $siteHidden);
+
+        $networkHidden = $filter(
+            ['dashboard_primary'],
+            (object) ['id' => 'dashboard-network'],
+        );
+        self::assertSame(
+            ['dashboard_primary', 'wpe_dashboard_widget_hidden-network'],
+            $networkHidden,
+        );
+
+        self::assertSame(
+            ['existing'],
+            $filter(['existing'], (object) ['id' => 'edit-post']),
+        );
+
+        $environment->throwOnScreenId = true;
+        self::assertSame(
+            ['existing'],
+            $filter(['existing'], (object) ['id' => 'dashboard']),
+        );
     }
 
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
@@ -355,6 +435,8 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public array $hooks = [];
             /** @var list<array{id:string,title:string,callback:callable,context:string,priority:string}> */
             public array $widgets = [];
+            /** @var list<array{hook:string,callback:callable,acceptedArgs:int}> */
+            public array $filters = [];
             /** @var list<string> */
             public array $outputs = [];
             public ?int $userId = 7;
@@ -363,6 +445,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnWidgetRegistration = false;
             public bool $throwOnFirstHook = false;
             public bool $throwOnCurrentSiteId = false;
+            public bool $throwOnScreenId = false;
             private int $hookAttempts = 0;
 
             public function registerAction(string $hook, callable $callback): void
@@ -372,6 +455,11 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                     throw new RuntimeException('hook unavailable');
                 }
                 $this->hooks[] = ['hook' => $hook, 'callback' => $callback];
+            }
+
+            public function registerFilter(string $hook, callable $callback, int $acceptedArgs = 1): void
+            {
+                $this->filters[] = compact('hook', 'callback', 'acceptedArgs');
             }
 
             public function registerDashboardWidget(
@@ -396,6 +484,15 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 return $this->siteId;
             }
             public function currentNetworkId(): ?int { return $this->networkId; }
+            public function screenId(mixed $screen): ?string
+            {
+                if ($this->throwOnScreenId) {
+                    throw new RuntimeException('screen id unavailable');
+                }
+                return is_object($screen) && isset($screen->id) && is_string($screen->id)
+                    ? $screen->id
+                    : null;
+            }
             public function outputTrustedHtml(string $html): void { $this->outputs[] = $html; }
         };
 
@@ -476,6 +573,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         bool $networkDashboard = false,
         ?array $target = null,
         bool $withErrorState = false,
+        bool $defaultHidden = false,
     ): Definition {
         $widget = [
             'key' => $key,
@@ -495,6 +593,10 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ];
         if ($target !== null) {
             $widget['target'] = $target;
+        }
+
+        if ($defaultHidden) {
+            $widget['inventory'] = ['default_hidden' => true];
         }
 
         if ($withErrorState) {
