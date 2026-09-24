@@ -520,10 +520,25 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
         $oversizedObject['error_state']['bindings']['title']['value'] = str_repeat('a', 2000);
         $oversizedObject['error_state']['bindings']['text']['value'] = str_repeat('b', 2000);
 
+        $wrongRevision = $base;
+        $wrongRevision['error_state']['blueprint_revision'] = 2;
+
+        $missingBinding = $base;
+        unset($missingBinding['error_state']['bindings']['text']);
+
         $nested = $base;
         $nested['error_state']['error_state'] = [];
 
-        foreach ([$wrongBlueprint, $dynamic, $unsafe, $oversized, $oversizedObject, $nested] as $renderSource) {
+        foreach ([
+            $wrongBlueprint,
+            $dynamic,
+            $unsafe,
+            $oversized,
+            $oversizedObject,
+            $wrongRevision,
+            $missingBinding,
+            $nested,
+        ] as $renderSource) {
             try {
                 $this->compiler()->compile($this->definition(renderSource: $renderSource));
                 self::fail('Expected invalid Dashboard Widget error-state metadata to be rejected.');
