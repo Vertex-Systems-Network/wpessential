@@ -3,20 +3,20 @@ repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
 observed_main_sha: 88d04846b909c2a467d812501d82290bbf7bcc39
-observed_main_source: "Issue #1252 / PR #1253 merged Dashboard Widgets bounded Native Per-User Reorder State V1"
-active_issue: "#1254"
-active_pr: "#1255"
-active_branch: agent/dashboard-widgets-bounded-native-collapsible-capability-v1
-current_milestone: "Dashboard Widgets bounded Native Collapsible Capability V1"
+observed_main_source: "Issue #1254 / PR #1255 merged Dashboard Widgets bounded Native Collapsible Capability V1"
+active_issue: "#1256"
+active_pr: null
+active_branch: agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1
+current_milestone: "Dashboard Widgets bounded Native Inventory Remove Seam V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1252 / PR #1253 merged as 88d04846b909c2a467d812501d82290bbf7bcc39; exact head 0a981953ae437c96d20221c50c4e2ea6a095c24c; Governance 36067471961 PASS; Architecture 36067471959 PASS; PHP Quality 36067471948 PASS; Platform Compatibility 36067471991 PASS; Distributable 36067471953 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1."
-next_safe_action: "Open and validate Issue #1254 exact seven-file feature/shared-truth PR for bounded native collapsible capability. Accept absent/true only; false remains fail-closed unsupported. No custom JS/CSS/DOM interception, collapse mutation, inventory hide/remove, full parity, deploy or release."
-waiting_external: "PR #1255 exact-head CI/review"
+last_completed_milestone: "Issue #1254 / PR #1255 merged as 8e0645fa6c7617718e96141c92da906e58a554bb; exact head 435325d7897ccca0f7772821c27c08fb5c05fd43; Governance 36069693481 PASS; Architecture 36069693461 PASS; PHP Quality 36069693393 PASS; Platform Compatibility 36069693379 PASS; Distributable 36069693490 PASS; exact seven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1."
+next_safe_action: "Open and validate Issue #1256 exact eleven-file internal inventory-remove seam PR. Mutation requires exact safe registered id/context membership on dashboard/dashboard-network; no authored/public mutation, bulk removal, user-state writes, full parity, deploy or release."
+waiting_external: "feature PR creation / exact-head CI-review"
 next_planned_slot:
-  issue: "#1254"
-  slot_id: dashboard-widgets-bounded-native-collapsible-capability-v1
-  claim_branch: "agent/dashboard-widgets-bounded-native-collapsible-capability-v1"
-  claim_rule: "Issue #1254 freezes exact seven-file positive native collapsible capability on exact main 88d04846b909c2a467d812501d82290bbf7bcc39; absent/true accepted, false rejected, no custom UI emulation."
+  issue: "#1256"
+  slot_id: dashboard-widgets-bounded-native-inventory-remove-seam-v1
+  claim_branch: "agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1"
+  claim_rule: "Issue #1256 freezes exact eleven-file internal remove_meta_box seam on exact main 8e0645fa6c7617718e96141c92da906e58a554bb; exact registered id/context membership required, false tombstones excluded from inventory, no public/authored mutation."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0067
+    - RB-0068
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -52,6 +52,7 @@ runner_benchmark:
     - RB-0064
     - RB-0065
     - RB-0066
+    - RB-0067
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -101,4 +102,5 @@ notes:
   - "Issue #1248 / PR #1249 bounded Per-User Hidden State V1 is terminal PASS; RB-0064 is reconciled PASS."
   - "Issue #1250 / PR #1251 bounded Per-User Collapse State V1 is terminal PASS; RB-0065 is reconciled PASS."
   - "Issue #1252 / PR #1253 bounded Per-User Reorder State V1 is terminal PASS; RB-0066 is reconciled PASS."
-  - "Issue #1254 is the active FAST feature: bounded positive native widget.presentation.collapsible capability; absent/true accepted, false fail-closed unsupported, no custom JS/CSS."
+  - "Issue #1254 / PR #1255 bounded Native Collapsible Capability V1 is terminal PASS; RB-0067 is reconciled PASS."
+  - "Issue #1256 is the active FAST feature: bounded internal widget.inventory.hide/remove_meta_box seam; exact registered id/context membership required, no authored/public mutation."
