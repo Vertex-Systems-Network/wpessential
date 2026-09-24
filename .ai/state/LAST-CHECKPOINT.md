@@ -42,6 +42,7 @@
 ### Shared-truth reconciliation
 
 - Active Issue: **#1234 — Error-State source post-merge shared-truth reconciliation V1**.
+- Active PR: **#1235 — AI: reconcile Renderer-Failure Error-State source shared truth V1**.
 - Active branch: `supervisor/dashboard-widgets-error-state-source-post-merge-reconciliation-v1`.
 - Scope: exactly five shared-truth files; no runtime/product PHP or tests.
 - RB-0056 reconciles #1230/#1231 terminal contract PASS.
