@@ -50,8 +50,33 @@ open_repository_blockers:
   - "#858 broader required-CI ruleset enforcement remains repository-admin work"
   - "#1102 P-006 Wave 1U remains separately authorization-gated"
   - "#947 independent Wave 1A review remains nonblocking and must preserve independence"
+fast_ai_native_mode:
+  enabled: true
+  policy_id: GOV-AI-NATIVE-FAST-DELIVERY-001
+  default_delivery_cycle:
+    - "Turn A: exact-main audit + Issue claim + implementation + focused tests + README/shared truth + PR open"
+    - "Turn B: one consolidated CI/review refresh + required fixes if any + expected-head merge + terminal resulting-main verification"
+  separate_contract_pr_only_for_high_risk_boundaries: true
+  high_risk_examples:
+    - authentication_or_authorization
+    - payments_or_billing
+    - destructive_or_privileged_mutation
+    - remote_provider_or_transport_execution
+    - security_boundary_or_shared_platform_change
+  routine_bounded_feature_contract_location: "Freeze in the implementation Issue instead of a separate contract PR."
+  separate_post_merge_reconciliation_default: false
+  reconciliation_exception: "Create a separate reconciliation milestone only for real divergence/conflict or when exact scope technically forbids carrying shared truth in the implementation PR."
+  implementation_pr_shared_truth_default: true
+  runner_benchmark_policy: "Record one merge-gate benchmark for the meaningful feature tranche; do not create historical/reconciliation benchmark churn unless evidence genuinely changes."
+  user_update_policy: "Report only meaningful states: implementation ready, material blocker/failure, PR open, or merge complete. Avoid micro-step commentary."
+  security_guards_preserved:
+    - exact_file_allowlist
+    - expected_head_merge
+    - required_ci_and_architecture_checks
+    - fail_closed_runtime_boundaries
+    - zero_behind_merge_gate
 timeout_contract:
-  one_logical_milestone_per_user_turn: true
+  one_meaningful_feature_milestone_per_user_turn_by_default: true
   max_consolidated_ci_status_refreshes_per_milestone: 1
   tight_polling_loops_forbidden: true
   batch_related_remote_reads: true
