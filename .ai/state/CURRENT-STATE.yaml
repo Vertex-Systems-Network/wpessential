@@ -1,19 +1,19 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: FEATURE_ACTIVE
-observed_main_sha: a79bf3e2e5b3f6a026ce31184f7652f933508969
-observed_main_source: "Issue #1236 / PR #1237 merged Dashboard Widgets bounded Native Default-Hidden State V1"
-active_issue: "#1238"
-active_pr: "#1239"
-active_branch: agent/dashboard-widgets-bounded-native-default-collapsed-state-v1
-current_milestone: "Dashboard Widgets bounded Native Default-Collapsed State V1"
+state_status: RECONCILIATION_ACTIVE
+observed_main_sha: 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8
+observed_main_source: "Issue #1238 / PR #1239 merged Dashboard Widgets bounded Native Default-Collapsed State V1"
+active_issue: "#1240"
+active_pr: "#1241"
+active_branch: supervisor/dashboard-widgets-default-collapsed-post-merge-reconciliation-v1
+current_milestone: "Dashboard Widgets Default-Collapsed post-merge shared-truth reconciliation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1236 / PR #1237 merged as a79bf3e2e5b3f6a026ce31184f7652f933508969; exact head 6c90286c3ad32b9ac40f55d744e48f6d29a472d1; Governance 36017952292 PASS; Architecture 36017952019 PASS; Platform Compatibility 36017952031 PASS; Distributable 36017951864 PASS; exact fourteen-file scope; zero blockers and zero behind."
-next_safe_action: "Open and validate the #1238 exact fourteen-file feature/shared-truth PR; merge only terminal green with expected-head protection. After terminal merge, verify resulting main and continue FAST exact-main audit without a routine reconciliation PR."
-waiting_external: "PR #1239 feature exact-head CI/review"
+last_completed_milestone: "Issue #1238 / PR #1239 merged as 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8; exact head 9baef3734989933f78abee934d8267d1c4a7c09c; Governance 36019998970 PASS; Architecture 36019999084 PASS; PHP Quality 36019998732 PASS; Platform Compatibility 36019999027 PASS; Distributable 36019998866 PASS; exact fourteen-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1."
+next_safe_action: "Complete the exact five-file shared-truth reconciliation exception for #1238/#1239 terminal merge. Then audit exact resulting main for the next smallest dependency-supported Dashboard Widgets feature; current Bank candidate is widget.presentation.collapsible (P0_NATIVE / MUST_HAVE), but no implementation contract is frozen by this reconciliation."
+waiting_external: "reconciliation PR creation / exact-head CI"
 next_planned_slot:
-  issue: "UNASSIGNED_AFTER_1238"
+  issue: "UNASSIGNED_AFTER_RECONCILIATION"
   slot_id: dashboard-widgets-next-fast-feature-audit
   claim_branch: "UNASSIGNED_UNTIL_EXACT_MAIN_AUDIT"
   claim_rule: "After #1238 terminal merge, audit exact resulting main and select the next smallest dependency-supported feature. Do not create a separate reconciliation PR unless real divergence/conflict requires it."
@@ -24,7 +24,6 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0060
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -45,6 +44,7 @@ runner_benchmark:
     - RB-0057
     - RB-0058
     - RB-0059
+    - RB-0060
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -86,8 +86,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1236 / PR #1237 bounded Native Default-Hidden State V1 is terminal PASS; RB-0059 is reconciled PASS from exact-head evidence."
-  - "Issue #1238 is the active FAST routine feature tranche carrying implementation, focused tests and shared truth in one PR."
+  - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
+  - "A post-merge shared-truth divergence after #1239 requires the bounded five-file reconciliation exception tracked by Issue #1240."
   - "Feature contract: optional widget.presentation.default_collapsed boolean; saved current-user closed-postbox metadata always wins."
   - "WPE performs no user-meta write; default-collapsed projection uses only native dynamic postbox class filters after successful WPE widget registration."
   - "Collapsible disablement, dismissible, inventory hide/discovery/classification, loading, providers/remote/actions/cache-refresh, P-006 runtime, full parity, deploy and release remain unpromoted."

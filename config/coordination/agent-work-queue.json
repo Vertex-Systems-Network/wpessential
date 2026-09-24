@@ -1,9 +1,9 @@
 {
-  "schema_version": 148,
+  "schema_version": 149,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "a79bf3e2e5b3f6a026ce31184f7652f933508969",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
-  "source_issue": "#1238",
+  "queue_anchor_main_sha": "5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8",
+  "mode": "DASHBOARD_WIDGETS_DEFAULT_COLLAPSED_POST_MERGE_RECONCILIATION_V1",
+  "source_issue": "#1240",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -195,7 +195,8 @@
     "1232": "COMPLETED_ON_PR_1233_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1",
     "1234": "COMPLETED_ON_PR_1235_ERROR_STATE_SOURCE_SHARED_TRUTH_RECONCILIATION_V1",
     "1236": "COMPLETED_ON_PR_1237_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
-    "1238": "ACTIVE_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1"
+    "1238": "COMPLETED_ON_PR_1239_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
+    "1240": "ACTIVE_SHARED_TRUTH_RECONCILIATION_EXCEPTION"
   },
   "auto_assignment": {
     "enabled": true,
@@ -225,7 +226,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Validate and merge #1238 as the FAST Turn-B milestone. After terminal merge, verify resulting main and audit the next smallest dependency-supported feature; do not create a routine reconciliation PR.",
+    "next_safe_action": "Complete Issue #1240 five-file shared-truth reconciliation against 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8; then audit exact resulting main. Current Bank candidate is widget.presentation.collapsible (P0_NATIVE / MUST_HAVE); do not create its feature branch until the reconciliation is terminal.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {

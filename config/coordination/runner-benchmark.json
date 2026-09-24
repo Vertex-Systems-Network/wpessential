@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1238",
-  "anchor_main_sha": "a79bf3e2e5b3f6a026ce31184f7652f933508969",
+  "anchor_main_sha": "5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1917,7 +1917,7 @@
       "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
-      "environment": "agent/dashboard-widgets-bounded-native-default-collapsed-state-v1 exact head",
+      "environment": "agent/dashboard-widgets-bounded-native-default-collapsed-state-v1 exact head 9baef3734989933f78abee934d8267d1c4a7c09c",
       "dependencies": [
         "RB-0059 terminal PASS",
         "Issue #1236 / PR #1237 terminal Default-Hidden merge",
@@ -1928,18 +1928,26 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "dashboard-widgets|bounded-native-default-collapsed-state|issue1238|exact-head",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Issue #1238 FAST feature contract",
-        "dashboard-widgets.presentation.default_collapsed is P0_NATIVE / MUST_HAVE / SOFT_NATIVE",
-        "native postbox classes support a per-screen/per-box filter after WordPress user collapse resolution",
-        "implementation checks saved preference metadata existence before applying authored default and performs no user-meta write"
+        "PR #1239 exact head 9baef3734989933f78abee934d8267d1c4a7c09c",
+        "Governance Gate 36019998970 PASS",
+        "Architecture Guards 36019999084 PASS",
+        "PHP Quality Toolchain 36019998732 PASS",
+        "Platform Compatibility Matrix 36019999027 PASS",
+        "Distributable Package 36019998866 PASS",
+        "exact fourteen authorized feature/test/shared-truth files",
+        "zero unresolved review threads/blockers",
+        "zero commits behind main",
+        "PR #1239 merged as 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8",
+        "Issue #1238 closed completed",
+        "verdict PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1. No separate routine reconciliation benchmark/PR should follow."
+      "note": "Terminal bounded Default-Collapsed PASS only. Full Surface 10 runtime/product parity, collapsible disablement, dismissible, inventory discovery/hide, loading, refresh/cache/actions/providers/remote, deploy and release remain unpromoted."
     }
   ],
-  "last_reconciled_issue": "#1236",
+  "last_reconciled_issue": "#1238",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

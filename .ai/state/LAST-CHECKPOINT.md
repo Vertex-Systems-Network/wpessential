@@ -1,64 +1,41 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — FAST feature #1238 Native Default-Collapsed State V1 active
+## 2026-09-24 — #1238 Native Default-Collapsed State V1 terminal PASS; shared-truth reconciliation active
 
 ### Exact repository truth
 
-- Exact current main: `a79bf3e2e5b3f6a026ce31184f7652f933508969`.
-- Issue #1236 / PR #1237 — Bounded Native Default-Hidden State V1 — terminal PASS.
-  - exact head `6c90286c3ad32b9ac40f55d744e48f6d29a472d1`;
-  - Governance `36017952292` PASS;
-  - Architecture `36017952019` PASS;
-  - Platform Compatibility `36017952031` PASS;
-  - Distributable Package `36017951864` PASS;
+- Exact current main: `5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8`.
+- Issue #1238 / PR #1239 — Bounded Native Default-Collapsed State V1 — terminal PASS.
+  - exact head `9baef3734989933f78abee934d8267d1c4a7c09c`;
+  - Governance `36019998970` PASS;
+  - Architecture `36019999084` PASS;
+  - PHP Quality `36019998732` PASS;
+  - Platform Compatibility `36019999027` PASS;
+  - Distributable Package `36019998866` PASS;
   - exact fourteen-file implementation/test/shared-truth scope;
-  - zero blockers and zero behind;
-  - merge `a79bf3e2e5b3f6a026ce31184f7652f933508969`;
-  - verdict `PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1`.
-- RB-0059 is reconciled terminal PASS from exact-head evidence.
+  - zero review threads/blockers and zero behind;
+  - expected-head merge `5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8`;
+  - Issue #1238 closed completed;
+  - verdict `PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1`.
+- RB-0060 is terminal PASS from exact-head evidence.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
-### Fresh exact-main Surface 10 audit
+### Reconciliation exception
 
-Next smallest dependency-supported feature:
+The merged shared-truth files still described #1238/#1239 as ACTIVE / merge-pending. That is real post-merge truth divergence, so a bounded reconciliation exception is active under Issue #1240.
 
-`dashboard-widgets.presentation.default_collapsed`
+Exact write scope:
+- `.ai/state/CURRENT-STATE.yaml`
+- `.ai/state/LAST-CHECKPOINT.md`
+- `README.md`
+- `config/coordination/agent-work-queue.json`
+- `config/coordination/runner-benchmark.json`
 
-Audit verdict:
+No runtime source/tests/product behavior changes are authorized.
 
-`READY_FOR_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1`
+### Next exact-main audit candidate
 
-Safety decision:
-- A naive unconditional `closed` postbox class would override saved user intent.
-- V1 therefore applies authored default collapse only when saved current-user `closedpostboxes_<screen>` metadata is confirmed absent.
-- WPE reads preference existence only; it does not write/update/delete user metadata.
-
-### #1238 frozen feature contract + implementation
-
-- Optional authored `widget.presentation.default_collapsed: bool`.
-- Absent presentation/default_collapsed => false.
-- Unknown presentation keys or non-boolean value => compile rejection.
-- Descriptor carries immutable `defaultCollapsed`.
-- WordPress environment exposes read-only `hasClosedPostboxPreference(screenId)`.
-- Only exact `dashboard` and `dashboard-network` screen ids are supported by the native preference seam.
-- After successful WPE widget registration and only when `defaultCollapsed=true`, adapter registers the exact dynamic native postbox-class filter for that WPE widget.
-- Saved preference metadata exists => existing classes unchanged.
-- Saved preference confirmed absent => append `closed` once.
-- Preference read failure => classes unchanged.
-- Collision-suppressed, target-ineligible, malformed or registration-failed widgets receive no default-collapsed filter.
-- No user-meta write, collapsible disablement, dismissible state, inventory removal/discovery, provider/remote/action execution, loading, refresh/cache or shared Platform widening.
-
-### FAST delivery status
-
-- Active PR: **#1239 — Dashboard Widgets: bounded Native Default-Collapsed State V1**.
-- Exact current feature head will be validated by RB-0060.
-
-Turn A scope is exactly fourteen files:
-- five Dashboard Widgets runtime/WordPress files;
-- four focused unit-test files;
-- five shared-truth files.
-
-RB-0060 is the single pending feature merge gate. After terminal merge, no separate reconciliation PR is expected; terminal issue evidence + resulting-main verification close the feature unless real divergence exists.
+Current canonical Bank evidence identifies `widget.presentation.collapsible` as `SOFT_NATIVE / P0_NATIVE / MUST_HAVE`. It is the adjacent smallest candidate after Default-Collapsed, but this reconciliation does **not** freeze an implementation contract. Exact resulting main must be audited after the reconciliation merge before any feature Issue/branch is created.
 
 ### Persistent recovery order
 
