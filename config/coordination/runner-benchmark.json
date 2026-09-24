@@ -1873,5 +1873,14 @@
     }
   ],
   "last_reconciled_issue": "#1232",
-  "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
+  "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
+  "workflow_policy": {
+    "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
+    "enabled": true,
+    "benchmark_granularity": "MEANINGFUL_FEATURE_MERGE_GATE",
+    "historical_reruns_forbidden": true,
+    "reconciliation_benchmark_default": false,
+    "exception": "Use a distinct reconciliation benchmark only when real divergence/conflict or technical scope separation requires a separate PR.",
+    "security_critical_source_changes_still_require_full_path_applicable_ci": true
+  }
 }
