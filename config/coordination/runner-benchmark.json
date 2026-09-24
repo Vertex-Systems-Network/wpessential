@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1228",
-  "anchor_main_sha": "6cacf5c0fd77908b12605c34fcad658f40a60239",
+  "source_issue": "#1230",
+  "anchor_main_sha": "4fbe3ae7b65ec0ad627ceefac465d4269a872446",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1765,16 +1765,48 @@
       "security_critical": false,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|empty-state-source-post-merge-reconciliation|issue1228|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1229 exact head f64fe40331da2e8139897170aae881b8b93a23b7",
+        "Governance Gate 36005699579 PASS",
+        "Architecture Guards 36005699569 PASS",
+        "exact five authorized shared-truth files",
+        "zero unresolved review/comments/inline blockers",
+        "zero commits behind main",
+        "PR #1229 merged as 4fbe3ae7b65ec0ad627ceefac465d4269a872446",
+        "Issue #1228 closed completed"
+      ],
+      "note": "Terminal shared-truth PASS. It authorized only a fresh exact-main transition audit."
+    },
+    {
+      "id": "RB-0056",
+      "source": "Issue #1230",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_RENDERER_FAILURE_ERROR_STATE_CONTRACT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-bounded-renderer-failure-error-state-contract-v1 exact head",
+      "dependencies": [
+        "RB-0055 terminal PASS",
+        "Issue #1228 / PR #1229 terminal shared-truth merge",
+        "exact contract base 4fbe3ae7b65ec0ad627ceefac465d4269a872446"
+      ],
+      "authorization": "Exactly six contract/shared-truth files; no runtime/product PHP/tests, no fallback on authorization/source/runtime failures, no provider/remote/action execution, assets, loading/refresh/cache, mutation, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|bounded-renderer-failure-error-state-contract|issue1230|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1228 exact five-file shared-truth scope",
-        "RB-0053 and RB-0054 terminal evidence frozen",
-        "next product action remains fresh exact-main Surface 10 transition audit"
+        "Issue #1230 exact six-file contract scope",
+        "fresh exact-main audit verdict READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_CONTRACT_V1",
+        "dashboard-widgets.state.error is P0 parity and maps to dashboard-widgets.presentation.states",
+        "current runtime exposes typed opaque renderer_failed and WordPress adapter outputs only rendered"
       ],
-      "note": "PASS may authorize only a fresh exact-main transition audit. It must not infer or activate a new runtime/product tranche."
+      "note": "PASS may promote only CONTRACT_FROZEN_READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1 and make the separately created exact eleven-file source issue claimable."
     }
   ],
-  "last_reconciled_issue": "#1226",
+  "last_reconciled_issue": "#1228",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
