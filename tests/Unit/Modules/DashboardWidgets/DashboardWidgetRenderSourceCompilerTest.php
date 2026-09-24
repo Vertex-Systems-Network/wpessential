@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetEmptyStateDescriptor;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetErrorStateDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceDescriptor;
@@ -417,6 +418,115 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             try {
                 $this->compiler()->compile($this->definition(renderSource: $renderSource));
                 self::fail('Expected invalid Dashboard Widget empty-state metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
+    public function testCompilesTrustedErrorStateForLiteralAndQuerySources(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($richText);
+        self::assertNotNull($announcement);
+
+        $literalSource = $this->renderSource('rich_text');
+        $literalSource['error_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'bindings' => [
+                'title' => ['source' => 'literal', 'value' => 'Widget unavailable'],
+                'text' => ['source' => 'literal', 'value' => 'Please try again later.'],
+            ],
+        ];
+        $literalDescriptor = $this->compiler()->compile($this->definition(renderSource: $literalSource));
+        self::assertInstanceOf(DashboardWidgetErrorStateDescriptor::class, $literalDescriptor->errorState);
+
+        $querySource = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+                'page_size' => 1,
+            ],
+            'bindings' => [
+                'content' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+            ],
+            'empty_state' => [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'No results'],
+                    'text' => ['source' => 'literal', 'value' => 'Nothing to display yet.'],
+                ],
+            ],
+            'error_state' => $literalSource['error_state'],
+        ];
+        $queryDescriptor = $this->compiler()->compile($this->definition(renderSource: $querySource));
+
+        self::assertInstanceOf(DashboardWidgetEmptyStateDescriptor::class, $queryDescriptor->emptyState);
+        self::assertInstanceOf(DashboardWidgetErrorStateDescriptor::class, $queryDescriptor->errorState);
+    }
+
+    public function testRejectsUnboundedOrExecutableErrorStateMetadata(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        $kpi = $catalog->forContentType('kpi');
+        self::assertNotNull($announcement);
+        self::assertNotNull($kpi);
+
+        $base = $this->renderSource('rich_text');
+        $base['error_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'bindings' => [
+                'title' => ['source' => 'literal', 'value' => 'Widget unavailable'],
+                'text' => ['source' => 'literal', 'value' => 'Please try again later.'],
+            ],
+        ];
+
+        $wrongBlueprint = $base;
+        $wrongBlueprint['error_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $kpi->id,
+            'blueprint_revision' => $kpi->revision,
+            'bindings' => [
+                'label' => ['source' => 'literal', 'value' => 'Unavailable'],
+                'value' => ['source' => 'literal', 'value' => '0'],
+            ],
+        ];
+
+        $dynamic = $base;
+        $dynamic['error_state']['bindings']['text'] = ['source' => 'query', 'value' => 'forbidden'];
+
+        $unsafe = $base;
+        $unsafe['error_state']['bindings']['text']['value'] = 'javascript:alert(1)';
+
+        $oversized = $base;
+        $oversized['error_state']['bindings']['text']['value'] = str_repeat(
+            'x',
+            DashboardWidgetErrorStateDescriptor::MAX_STRING_BYTES + 1,
+        );
+
+        $oversizedObject = $base;
+        $oversizedObject['error_state']['bindings']['title']['value'] = str_repeat('a', 2000);
+        $oversizedObject['error_state']['bindings']['text']['value'] = str_repeat('b', 2000);
+
+        $nested = $base;
+        $nested['error_state']['error_state'] = [];
+
+        foreach ([$wrongBlueprint, $dynamic, $unsafe, $oversized, $oversizedObject, $nested] as $renderSource) {
+            try {
+                $this->compiler()->compile($this->definition(renderSource: $renderSource));
+                self::fail('Expected invalid Dashboard Widget error-state metadata to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
             }
