@@ -76,6 +76,7 @@ fast_ai_native_mode:
     - fail_closed_runtime_boundaries
     - zero_behind_merge_gate
 timeout_contract:
+  one_logical_milestone_per_user_turn: true
   one_meaningful_feature_milestone_per_user_turn_by_default: true
   max_consolidated_ci_status_refreshes_per_milestone: 1
   tight_polling_loops_forbidden: true
