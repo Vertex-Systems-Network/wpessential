@@ -297,9 +297,9 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             [
                 ['id' => 'dashboard_browser_nag', 'context' => 'normal', 'priority' => 'high'],
                 ['id' => 'dashboard_php_nag', 'context' => 'normal', 'priority' => 'high'],
+                ['id' => 'dashboard_right_now', 'context' => 'normal', 'priority' => 'sorted'],
                 ['id' => 'dashboard_activity', 'context' => 'normal', 'priority' => 'core'],
                 ['id' => 'dashboard_site_health', 'context' => 'normal', 'priority' => 'core'],
-                ['id' => 'dashboard_right_now', 'context' => 'normal', 'priority' => 'sorted'],
                 ['id' => 'dashboard_primary', 'context' => 'side', 'priority' => 'core'],
                 ['id' => 'dashboard_quick_press', 'context' => 'side', 'priority' => 'core'],
             ],
