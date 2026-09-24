@@ -79,6 +79,62 @@ final class DashboardWidgetWordPressAdapter
         $this->registerTarget(true);
     }
 
+    /**
+     * @return list<array{id:string,context:string,priority:string}>
+     */
+    public function discoverRegisteredDashboardWidgets(bool $networkDashboard = false): array
+    {
+        $screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
+
+        try {
+            $inventory = $this->environment->discoverRegisteredDashboardWidgets($screenId);
+        } catch (Throwable) {
+            return [];
+        }
+
+        $contextOrder = array_flip(['normal', 'side', 'column3', 'column4']);
+        $priorityOrder = array_flip(['high', 'sorted', 'core', 'default', 'low']);
+        $safe = [];
+        $seen = [];
+
+        foreach ($inventory as $entry) {
+            if (!is_array($entry) || array_keys($entry) !== ['id', 'context', 'priority']) {
+                return [];
+            }
+
+            $id = $entry['id'];
+            $context = $entry['context'];
+            $priority = $entry['priority'];
+            if (
+                !is_string($id)
+                || preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1
+                || !is_string($context)
+                || !array_key_exists($context, $contextOrder)
+                || !is_string($priority)
+                || !array_key_exists($priority, $priorityOrder)
+            ) {
+                return [];
+            }
+
+            $dedupKey = $context . "\0" . $priority . "\0" . $id;
+            if (isset($seen[$dedupKey])) {
+                continue;
+            }
+            $seen[$dedupKey] = true;
+            $safe[] = compact('id', 'context', 'priority');
+        }
+
+        usort(
+            $safe,
+            static fn (array $left, array $right): int =>
+                ($contextOrder[$left['context']] <=> $contextOrder[$right['context']])
+                ?: ($priorityOrder[$left['priority']] <=> $priorityOrder[$right['priority']])
+                ?: ($left['id'] <=> $right['id']),
+        );
+
+        return $safe;
+    }
+
     private function registerTarget(bool $networkDashboard): void
     {
         foreach ($this->planTarget($networkDashboard) as $entry) {
