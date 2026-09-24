@@ -263,6 +263,12 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                     throw new LogicException('WordPress Dashboard Widget order preference is malformed.');
                 }
 
+                foreach ($order as $context => $ids) {
+                    if (!is_string($context) || !is_string($ids)) {
+                        throw new LogicException('WordPress Dashboard Widget order preference contains malformed context data.');
+                    }
+                }
+
                 return $order;
             };
 
