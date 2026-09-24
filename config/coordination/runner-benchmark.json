@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1238",
-  "anchor_main_sha": "acc2acb3b5a231322bd8c11119842f09a82b6fe2",
+  "anchor_main_sha": "2c236701a653242117173cd6494cc5007b17edb7",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2268,7 +2268,7 @@
       "category": "DASHBOARD_WIDGETS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
-      "environment": "agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1 exact head",
+      "environment": "agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1 exact head 05ec947c0490c03c7688b002a8564a71d9bbd08e",
       "dependencies": [
         "RB-0069 terminal PASS",
         "Issue #1258 / PR #1259 terminal Cron Background-Job Reference merge",
@@ -2280,22 +2280,57 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "dashboard-widgets|bounded-dynamic-context-token-bindings|issue1260|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1261 exact head 05ec947c0490c03c7688b002a8564a71d9bbd08e",
+        "Governance Gate 36073579403 PASS",
+        "Architecture Guards 36073579477 PASS",
+        "PHP Quality Toolchain 36073579453 PASS",
+        "Platform Compatibility Matrix 36073579449 PASS",
+        "Distributable Package 36073579367 PASS",
+        "exact fourteen authorized feature/test/shared-truth files",
+        "zero unresolved review threads/blockers",
+        "zero commits behind main",
+        "PR #1261 merged as 2c236701a653242117173cd6494cc5007b17edb7",
+        "Issue #1260 closed completed",
+        "verdict PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1"
+      ],
+      "note": "PASS may promote only PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1. Owner resolver implementations, generic provider execution, remote connections, owner-contract bypasses, full Surface 10 product parity, deploy and release remain unpromoted."
+    },
+    {
+      "id": "RB-0071",
+      "source": "Issue #1262",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-forms-action-ability-reference-v1 exact head",
+      "dependencies": [
+        "RB-0070 terminal PASS",
+        "Issue #1260 / PR #1261 terminal Dynamic Context-Token merge",
+        "canonical shared AbilityRegistry descriptor lookup",
+        "exact source base 2c236701a653242117173cd6494cc5007b17edb7"
+      ],
+      "authorization": "Exact ten-file Dashboard Widgets action.ability_id prerequisite compiler/descriptor/module/test/shared-truth scope only; resolve metadata only from canonical AbilityRegistry; accept exact Forms/Workflow owner-17 mutating Ui zero-input ability references; no authorize/execute call, action input, form_action UI, confirmation/result/audit, generic provider execution or shared Platform changes",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-forms-action-ability-reference|issue1262|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1260 P1_CORE audit and frozen contract",
-        "source.context_tokens is P1_CORE / PROVIDER_SOFT and explicitly requires shared Context/Dynamic Value contracts",
-        "exact source base acc2acb3b5a231322bd8c11119842f09a82b6fe2",
-        "binding source dynamic with bounded source_ref/value_ref and resource site/user/network",
-        "resource ids derived only from ExecutionContext",
-        "unknown/unresolved/null/throw/type/unsafe failures prevent renderer",
-        "Query resolves before Dynamic; trusted renderer invoked last",
-        "no Surface 10 owner resolver registration or shared Platform mutation"
+        "Issue #1262 type.form_action dependency audit and frozen prerequisite contract",
+        "action.ability_id is P0_PARITY / WPE_HARD prerequisite",
+        "exact source base 2c236701a653242117173cd6494cc5007b17edb7",
+        "ability name resolves through canonical AbilityRegistry descriptor only",
+        "owner surface 17 + mutates=true + Ui allowed + empty input schema required",
+        "no AbilityRegistry authorize/execute call",
+        "type.form_action remains explicitly unpromoted"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1. Owner resolver implementations, generic provider execution, remote connections, owner-contract bypasses, full Surface 10 product parity, deploy and release remain unpromoted."
+      "note": "PASS may promote only PASS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1. type.form_action execution, action policy authorization/confirmation/result/audit, generic providers, full Surface 10 product parity, deploy and release remain unpromoted."
     }
   ],
-  "last_reconciled_issue": "#1258",
+  "last_reconciled_issue": "#1260",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
