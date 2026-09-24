@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: cfec6da42fb5ca40776d9282c5b8656623d00b71
 observed_main_source: "Issue #1256 / PR #1257 merged Dashboard Widgets bounded Native Inventory Remove Seam V1"
 active_issue: "#1258"
-active_pr: null
+active_pr: "#1259"
 active_branch: agent/dashboard-widgets-bounded-cron-background-job-reference-v1
 current_milestone: "Dashboard Widgets bounded Cron Background-Job Reference V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1256 / PR #1257 merged as cfec6da42fb5ca40776d9282c5b8656623d00b71; exact head b9b9978d25a218ba0b4fdebd2d0285a53e52550b; Governance 36070564866 PASS; Architecture 36070564818 PASS; PHP Quality 36070564718 PASS; Platform Compatibility 36070564726 PASS; Distributable 36070564880 PASS; exact eleven-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1."
 next_safe_action: "Open and validate Issue #1258 exact ten-file Cron background-job reference PR. Reference-only: canonical Published Cron definition id validation and descriptor carry; no schedule/run/trigger/retry/provider execution or owner-contract bypass."
-waiting_external: "feature PR creation / exact-head CI-review"
+waiting_external: "PR #1259 exact-head CI/review"
 next_planned_slot:
   issue: "#1258"
   slot_id: dashboard-widgets-bounded-cron-background-job-reference-v1
