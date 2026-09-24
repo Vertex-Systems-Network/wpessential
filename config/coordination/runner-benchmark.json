@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1224",
-  "anchor_main_sha": "675466f37354c24749902f80e3c553cc394368d8",
+  "source_issue": "#1228",
+  "anchor_main_sha": "6cacf5c0fd77908b12605c34fcad658f40a60239",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1699,17 +1699,82 @@
       "security_critical": true,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|bounded-empty-state-rendering-contract|issue1224|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1225 exact head e4562e7b1bbd3d1f17220d1b141738876fba7b93",
+        "Governance Gate 36000817200 PASS",
+        "Architecture Guards 36000817125 PASS",
+        "exact six authorized contract/shared-truth files",
+        "zero unresolved review/comments/inline blockers",
+        "zero commits behind main",
+        "PR #1225 merged as 4b8a51a7984b5e84084696a7ea2e1a80018652e2",
+        "Issue #1224 closed completed",
+        "promotion CONTRACT_FROZEN_READY_FOR_BOUNDED_EMPTY_STATE_RENDERING_SOURCE_V1"
+      ],
+      "note": "Terminal contract PASS. It authorized only the exact bounded Empty-State source tranche."
+    },
+    {
+      "id": "RB-0054",
+      "source": "Issue #1226 / PR #1227",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_EMPTY_STATE_RENDERING_SOURCE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-empty-state-rendering-source-v1 exact head 1f2111b3f1ccaca0313aef53554409c5b9f2bff1",
+      "dependencies": [
+        "RB-0053 terminal PASS",
+        "Issue #1224 / PR #1225 terminal contract merge",
+        "exact source base 4b8a51a7984b5e84084696a7ea2e1a80018652e2"
+      ],
+      "authorization": "Exact nine-file Dashboard Widgets Empty-State source/test scope only; no generic provider/remote/action execution, assets, cache/refresh, mutation, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-empty-state-rendering-source|issue1226|pr1227|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1227 exact head 1f2111b3f1ccaca0313aef53554409c5b9f2bff1",
+        "Governance Gate 36002366213 PASS",
+        "Architecture Guards 36002366273 PASS",
+        "PHP Quality Toolchain 36002366239 PASS",
+        "Platform Compatibility Matrix 36002366222 PASS",
+        "Distributable Package 36002366319 PASS",
+        "exact nine authorized source/test files",
+        "zero unresolved review/comments/inline blockers",
+        "zero commits behind main",
+        "expected-head merge as 6cacf5c0fd77908b12605c34fcad658f40a60239",
+        "Issue #1226 closed completed"
+      ],
+      "note": "Terminal bounded Empty-State source PASS only. Full Surface 10 runtime/product parity, refresh/cache/actions/providers/remote, deploy and release remain unpromoted."
+    },
+    {
+      "id": "RB-0055",
+      "source": "Issue #1228",
+      "category": "DASHBOARD_WIDGETS_EMPTY_STATE_SOURCE_POST_MERGE_SHARED_TRUTH_RECONCILIATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head validation",
+      "environment": "supervisor/dashboard-widgets-empty-state-source-post-merge-reconciliation-v1 exact head",
+      "dependencies": [
+        "RB-0053 terminal PASS",
+        "RB-0054 terminal PASS",
+        "exact reconciliation base 6cacf5c0fd77908b12605c34fcad658f40a60239"
+      ],
+      "authorization": "Exactly five shared-truth files only; no runtime/product PHP/tests, provider/remote/action execution, assets, cache/refresh, mutation, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": false,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|empty-state-source-post-merge-reconciliation|issue1228|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1224 exact six-file contract scope",
-        "fresh exact-main audit verdict READY_FOR_BOUNDED_EMPTY_STATE_RENDERING_CONTRACT_V1",
-        "dashboard-widgets.state.empty is P0 parity and projects to dashboard-widgets.presentation.states",
-        "current Query source treats zero rows as failure and explicitly reserved later empty-state tranche"
+        "Issue #1228 exact five-file shared-truth scope",
+        "RB-0053 and RB-0054 terminal evidence frozen",
+        "next product action remains fresh exact-main Surface 10 transition audit"
       ],
-      "note": "PASS may promote only CONTRACT_FROZEN_READY_FOR_BOUNDED_EMPTY_STATE_RENDERING_SOURCE_V1 and make the separately created exact nine-file source issue claimable."
+      "note": "PASS may authorize only a fresh exact-main transition audit. It must not infer or activate a new runtime/product tranche."
     }
   ],
-  "last_reconciled_issue": "#1222",
+  "last_reconciled_issue": "#1226",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation"
 }
