@@ -74,6 +74,44 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
+    public function testAcceptsBoundedNativeCollapsibleCapability(): void
+    {
+        $widget = $this->widget();
+        $widget['presentation'] = ['collapsible' => true];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+
+        self::assertFalse($descriptor->defaultCollapsed);
+
+        $combined = $this->widget();
+        $combined['presentation'] = [
+            'collapsible' => true,
+            'default_collapsed' => true,
+        ];
+        self::assertTrue(
+            $this->compiler()->compile($this->definition(widget: $combined))->defaultCollapsed,
+        );
+    }
+
+    public function testRejectsUnsupportedOrMalformedNativeCollapsibleMetadata(): void
+    {
+        $valid = $this->widget();
+
+        foreach ([
+            array_replace($valid, ['presentation' => ['collapsible' => false]]),
+            array_replace($valid, ['presentation' => ['collapsible' => 1]]),
+            array_replace($valid, ['presentation' => ['collapsible' => 'yes']]),
+            array_replace($valid, ['presentation' => ['collapsible' => null]]),
+        ] as $widget) {
+            try {
+                $this->compiler()->compile($this->definition(widget: $widget));
+                self::fail('Expected unsupported or malformed Dashboard Widget collapsible metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
     public function testCompilesBoundedNativeDefaultCollapsedState(): void
     {
         $widget = $this->widget();
