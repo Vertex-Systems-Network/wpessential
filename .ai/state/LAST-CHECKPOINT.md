@@ -58,6 +58,7 @@ Owner-contract blockers:
 ### FAST delivery status
 
 - Active Issue: **#1262 — Dashboard Widgets: bounded Forms/Workflow action ability reference V1**.
+- Active PR: **#1263 — Dashboard Widgets: bounded Forms/Workflow Action Ability Reference V1**.
 - Active branch: `agent/dashboard-widgets-bounded-forms-action-ability-reference-v1`.
 - RB-0071 is the single pending feature merge gate.
 - Exact authorized scope: registration compiler + registration descriptor + DashboardWidgets module + two focused unit-test files + five shared-truth files.
