@@ -25,6 +25,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
         public array $bindings,
         public ?DashboardWidgetQueryBindingDescriptor $query = null,
         public ?DashboardWidgetEmptyStateDescriptor $emptyState = null,
+        public ?DashboardWidgetErrorStateDescriptor $errorState = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget render-source descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -83,6 +84,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
             bindings: $bindings,
             query: null,
             emptyState: null,
+            errorState: $this->errorState,
         );
     }
 
@@ -100,6 +102,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
             bindings: $this->emptyState->bindings,
             query: null,
             emptyState: null,
+            errorState: $this->errorState,
         );
     }
 
