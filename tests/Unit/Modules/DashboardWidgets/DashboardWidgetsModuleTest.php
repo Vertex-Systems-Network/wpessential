@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
@@ -29,7 +30,9 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
 use WPEssential\Modules\Cron\CronDefinition;
 use WPEssential\Modules\Cron\CronModule;
 use WPEssential\Modules\Cron\CronReadService;
+use WPEssential\Modules\FormsWorkflows\FormWorkflowDefinition;
 use WPEssential\Modules\Query\QueryModule;
+use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
@@ -81,6 +84,24 @@ final class DashboardWidgetsModuleTest extends TestCase
             }
         };
         $abilities = new AbilityRegistry(new PolicyEngine($capabilityChecker));
+        $actionAbilityId = 'wpessential/forms-workflows/submit';
+        $abilities->register(
+            new AbilityDescriptor(
+                name: $actionAbilityId,
+                ownerSurfaceId: FormWorkflowDefinition::OWNER_SURFACE_ID,
+                capability: 'manage_options',
+                mutates: true,
+                channels: [ExecutionChannel::Ui],
+                inputSchema: [],
+                outputSchema: [],
+            ),
+            new class implements AbilityHandlerInterface {
+                public function handle(array $input, ExecutionContext $context): mixed
+                {
+                    return ['ok' => true];
+                }
+            },
+        );
         $environment = $this->environment();
         $bridge = new WordPressAbilityBridge(
             $abilities,
@@ -149,6 +170,7 @@ final class DashboardWidgetsModuleTest extends TestCase
                     'priority' => 'default',
                     'network_dashboard' => false,
                     'refresh' => ['background_job' => $backgroundJobId],
+                    'action' => ['ability_id' => $actionAbilityId],
                     'render_source' => [
                         'kind' => 'component_blueprint',
                         'blueprint_id' => $richText->id,
@@ -168,6 +190,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         );
         $compiledRegistration = $registrationCompiler->compile($validDefinition);
         self::assertSame($backgroundJobId, $compiledRegistration->backgroundJobId);
+        self::assertSame($actionAbilityId, $compiledRegistration->actionAbilityId);
 
         $mismatchDefinition = new Definition(
             id: '33333333-3333-4333-8333-333333333333',

@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: acc2acb3b5a231322bd8c11119842f09a82b6fe2
-observed_main_source: "Issue #1258 / PR #1259 merged Dashboard Widgets bounded Cron Background-Job Reference V1"
-active_issue: "#1260"
-active_pr: "#1261"
-active_branch: agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1
-current_milestone: "Dashboard Widgets bounded Dynamic Context-Token Bindings V1"
+observed_main_sha: 2c236701a653242117173cd6494cc5007b17edb7
+observed_main_source: "Issue #1260 / PR #1261 merged Dashboard Widgets bounded Dynamic Context-Token Bindings V1"
+active_issue: "#1262"
+active_pr: "#1263"
+active_branch: agent/dashboard-widgets-bounded-forms-action-ability-reference-v1
+current_milestone: "Dashboard Widgets bounded Forms/Workflow Action Ability Reference V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1258 / PR #1259 merged as acc2acb3b5a231322bd8c11119842f09a82b6fe2; exact head 58442514577e5d48646207c9398cd1e5f13cc34f; Governance 36072317686 PASS; Architecture 36072317711 PASS; PHP Quality 36072317652 PASS; Platform Compatibility 36072317771 PASS; Distributable 36072317643 PASS; exact ten-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1."
-next_safe_action: "Open and validate Issue #1260 exact fourteen-file Dynamic Context-Token Binding PR. Resolve only through canonical shared Dynamic Value resolver using ExecutionContext-derived site/user/network identity; no owner resolver registration, authored resource IDs, generic provider execution, remote connections, full parity, deploy or release."
-waiting_external: "PR #1261 exact-head CI/review"
+last_completed_milestone: "Issue #1260 / PR #1261 merged as 2c236701a653242117173cd6494cc5007b17edb7; exact head 05ec947c0490c03c7688b002a8564a71d9bbd08e; Governance 36073579403 PASS; Architecture 36073579477 PASS; PHP Quality 36073579453 PASS; Platform Compatibility 36073579449 PASS; Distributable 36073579367 PASS; exact fourteen-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1."
+next_safe_action: "Open and validate Issue #1262 exact ten-file Forms/Workflow action ability-reference PR. Reference-only: Forms owner surface 17, mutates=true, Ui channel, empty input schema; no authorize/execute call, no form_action UI, confirmation, audit, result notice, generic provider execution, full parity, deploy or release."
+waiting_external: "PR #1263 exact-head CI/review"
 next_planned_slot:
-  issue: "#1260"
-  slot_id: dashboard-widgets-bounded-dynamic-context-token-bindings-v1
-  claim_branch: "agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1"
-  claim_rule: "Issue #1260 freezes exact fourteen-file P1_CORE Dynamic Context-Token binding support on exact main acc2acb3b5a231322bd8c11119842f09a82b6fe2; source/value refs bounded, resource ids derived only from ExecutionContext, canonical shared resolver only."
+  issue: "#1262"
+  slot_id: dashboard-widgets-bounded-forms-action-ability-reference-v1
+  claim_branch: "agent/dashboard-widgets-bounded-forms-action-ability-reference-v1"
+  claim_rule: "Issue #1262 freezes exact ten-file action.ability_id prerequisite on exact main 2c236701a653242117173cd6494cc5007b17edb7; only registered Forms/Workflow owner-17 mutating Ui zero-input abilities may compile; no execution."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0070
+    - RB-0071
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -55,6 +55,7 @@ runner_benchmark:
     - RB-0067
     - RB-0068
     - RB-0069
+    - RB-0070
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -107,4 +108,4 @@ notes:
   - "Issue #1254 / PR #1255 bounded Native Collapsible Capability V1 is terminal PASS; RB-0067 is reconciled PASS."
   - "Issue #1256 is the active FAST feature: bounded internal widget.inventory.hide/remove_meta_box seam; exact registered id/context membership required, no authored/public mutation."
 
-# P1_CORE deep audit: 16 records = 3 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), active source.context_tokens, and 9 other higher-risk provider/execution gaps.
+# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), type.form_action blocked behind action-policy/UI/input-validation prerequisites, and 8 other higher-risk provider/execution gaps. Active prerequisite: action.ability_id reference V1.

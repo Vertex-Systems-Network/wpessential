@@ -36,6 +36,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertNull($descriptor->siteScope);
         self::assertSame([], $descriptor->siteIds);
         self::assertNull($descriptor->backgroundJobId);
+        self::assertNull($descriptor->actionAbilityId);
     }
 
     public function testCompilesValidatedCronBackgroundJobReferenceWithoutExecutingIt(): void
@@ -105,6 +106,84 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
                 throw new \RuntimeException('cron read unavailable');
             })->compile($this->definition(widget: $widget));
             self::fail('Expected background job resolver failure to fail closed.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->compiler()->compile($this->definition(widget: $widget));
+    }
+
+    public function testCompilesBoundedFormsActionAbilityReferenceWithoutExecutingIt(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/submit';
+        $widget = $this->widget();
+        $widget['action'] = ['ability_id' => $abilityId];
+
+        $descriptor = $this->compiler(
+            null,
+            static fn (string $name): ?array => [
+                'name' => $name,
+                'owner_surface_id' => 17,
+                'mutates' => true,
+                'ui_allowed' => true,
+                'input_schema' => [],
+            ],
+        )->compile($this->definition(widget: $widget));
+
+        self::assertSame($abilityId, $descriptor->actionAbilityId);
+
+        $emptyAction = $this->widget();
+        $emptyAction['action'] = [];
+        self::assertNull(
+            $this->compiler()->compile($this->definition(widget: $emptyAction))->actionAbilityId,
+        );
+    }
+
+    public function testRejectsUnsafeOrUnsupportedFormsActionAbilityReference(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/submit';
+        $valid = $this->widget();
+
+        foreach ([
+            array_replace($valid, ['action' => 'submit']),
+            array_replace($valid, ['action' => [true]]),
+            array_replace($valid, ['action' => ['unknown' => $abilityId]]),
+            array_replace($valid, ['action' => ['ability_id' => 'bad ability']]),
+        ] as $widget) {
+            try {
+                $this->compiler()->compile($this->definition(widget: $widget));
+                self::fail('Expected malformed Dashboard Widget action metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+
+        $widget = $this->widget();
+        $widget['action'] = ['ability_id' => $abilityId];
+
+        foreach ([
+            null,
+            ['name' => 'wpessential/forms-workflows/other', 'owner_surface_id' => 17, 'mutates' => true, 'ui_allowed' => true, 'input_schema' => []],
+            ['name' => $abilityId, 'owner_surface_id' => 10, 'mutates' => true, 'ui_allowed' => true, 'input_schema' => []],
+            ['name' => $abilityId, 'owner_surface_id' => 17, 'mutates' => false, 'ui_allowed' => true, 'input_schema' => []],
+            ['name' => $abilityId, 'owner_surface_id' => 17, 'mutates' => true, 'ui_allowed' => false, 'input_schema' => []],
+            ['name' => $abilityId, 'owner_surface_id' => 17, 'mutates' => true, 'ui_allowed' => true, 'input_schema' => ['type' => 'object']],
+        ] as $resolved) {
+            try {
+                $this->compiler(null, static fn (string $name): ?array => $resolved)
+                    ->compile($this->definition(widget: $widget));
+                self::fail('Expected unsupported Forms action ability reference to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+
+        try {
+            $this->compiler(null, static function (string $name): ?array {
+                throw new \RuntimeException('ability registry unavailable');
+            })->compile($this->definition(widget: $widget));
+            self::fail('Expected ability resolver failure to fail closed.');
         } catch (InvalidArgumentException) {
             self::assertTrue(true);
         }
@@ -434,7 +513,10 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
-    private function compiler(?callable $backgroundJobResolver = null): DashboardWidgetRegistrationCompiler
+    private function compiler(
+        ?callable $backgroundJobResolver = null,
+        ?callable $formActionAbilityResolver = null,
+    ): DashboardWidgetRegistrationCompiler
     {
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $registry = new ComponentBlueprintRegistry();
@@ -453,6 +535,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
                 $catalog,
             ),
             $backgroundJobResolver,
+            $formActionAbilityResolver,
         );
     }
 
