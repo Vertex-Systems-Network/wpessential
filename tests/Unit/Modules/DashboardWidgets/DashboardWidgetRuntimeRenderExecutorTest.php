@@ -250,7 +250,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             'error' => ['message' => 'secret-provider-detail'],
         ]);
         $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
-        $repository = $this->repositoryWith($this->definition(renderSource: $this->queryRenderSource()));
+        $repository = $this->repositoryWith($this->definition(renderSource: $this->queryRenderSource(withEmptyState: true)));
         $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>unused</p>'));
         $executor = $this->executor($repository, $renderer, new RuntimeRenderRoleProvider(), $queryBindings);
 
@@ -260,6 +260,38 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         self::assertSame('', $result->html);
         self::assertSame(0, $renderer->calls);
         self::assertSame(1, $consumer->calls);
+    }
+
+    public function testValidZeroRowQueryRendersTrustedEmptyStateWithExactContext(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer([
+            'contract_version' => 1,
+            'ok' => true,
+            'source_ref' => 'wordpress.posts',
+            'projection' => ['post.title'],
+            'rows' => [],
+            'returned' => 0,
+            'error' => null,
+        ]);
+        $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->queryRenderSource(withEmptyState: true),
+        ));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>trusted empty state</p>'));
+        $executor = $this->executor($repository, $renderer, new RuntimeRenderRoleProvider(), $queryBindings);
+        $context = $this->context();
+
+        $result = $executor->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $result->status);
+        self::assertSame(1, $consumer->calls);
+        self::assertSame(1, $renderer->calls);
+        self::assertSame($context, $consumer->seenContext);
+        self::assertSame($context, $renderer->seenContext);
+        self::assertSame(
+            ['text' => 'Nothing to display yet.', 'title' => 'No results'],
+            $renderer->seenInput?->bindings,
+        );
     }
 
     private function executor(
@@ -387,13 +419,13 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
     }
 
     /** @return array<string,mixed> */
-    private function queryRenderSource(): array
+    private function queryRenderSource(bool $withEmptyState = false): array
     {
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $richText = $catalog->forContentType('rich_text');
         self::assertNotNull($richText);
 
-        return [
+        $renderSource = [
             'kind' => 'component_blueprint',
             'blueprint_id' => $richText->id,
             'blueprint_revision' => $richText->revision,
@@ -406,6 +438,22 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
                 'content' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
             ],
         ];
+
+        if ($withEmptyState) {
+            $announcement = $catalog->forContentType('announcement');
+            self::assertNotNull($announcement);
+            $renderSource['empty_state'] = [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'No results'],
+                    'text' => ['source' => 'literal', 'value' => 'Nothing to display yet.'],
+                ],
+            ];
+        }
+
+        return $renderSource;
     }
 
     private function context(): ExecutionContext

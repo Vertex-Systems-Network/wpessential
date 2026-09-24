@@ -77,6 +77,10 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
             } catch (Throwable) {
                 return DashboardWidgetRuntimeRenderResult::runtimeFailure();
             }
+
+            if ($renderSource->query !== null || $renderSource->emptyState !== null) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
         }
 
         try {
