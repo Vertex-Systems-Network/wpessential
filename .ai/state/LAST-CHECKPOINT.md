@@ -1,5 +1,20 @@
 # AI Durable Last Checkpoint
 
+## 2026-09-24 — #1222/#1223 terminal reconciliation; #1224 bounded Empty-State contract active
+
+- Exact current main: `675466f37354c24749902f80e3c553cc394368d8`.
+- Issue #1222 / PR #1223 terminal shared-truth reconciliation exact head: `e578d81beac789ad0606207a4562fe653c8b9341`.
+- #1223 Governance `35997232559` PASS; Architecture `35997232640` PASS; exact five-file scope; zero review blockers/comments and zero behind; expected-head merge produced `675466f37354c24749902f80e3c553cc394368d8`.
+- RB-0052 is reconciled terminal PASS using that existing evidence; no historical runner rerun is required.
+- Fresh exact-main Surface 10 audit selected **bounded Empty-State Rendering Contract V1** as the smallest dependency-supported next tranche.
+- Evidence: `dashboard-widgets.state.empty` is P0 parity, projects to `dashboard-widgets.presentation.states`, current Query binding source rejects `returned < 1`, and the prior Query contract explicitly reserves a future empty-state tranche.
+- Issue #1224 is contract/shared-truth only and authorizes exactly six files. No runtime/product PHP is allowed in this milestone.
+- Contract V1 makes Empty State Query-bound only; it allows literal-only `rich_text` or `announcement` trusted Blueprints, with 2048-byte per-string and 4096-byte total empty-state bounds.
+- Empty state may be selected only for canonical Query `ok:true`, exact source/projection, `rows=[]`, `returned=0` after Data Source preflight and visibility authorization. Every other error/failure remains fail-closed.
+- Missing authored empty_state preserves current zero-row `runtime_failure`.
+- Later source work is frozen to an exact nine-file Surface 10 source/test allowlist and remains unclaimable until #1224 terminal merge.
+- Refresh/cache, actions, providers, remote transport, mutation, shared Platform changes, P-006 runtime, full parity, deploy and release remain blocked.
+
 ## 2026-09-24 — #1215/#1221 terminal Query/Data-Source source PASS; #1222 reconciliation active
 
 - Exact product/runtime main: `815f35910367b9103954de80975fc76bf8807d69`.
