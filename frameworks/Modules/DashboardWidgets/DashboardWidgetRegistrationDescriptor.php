@@ -61,6 +61,7 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public ?string $siteScope = null,
         /** @var list<int> */
         public array $siteIds = [],
+        public ?string $backgroundJobId = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -112,6 +113,12 @@ final readonly class DashboardWidgetRegistrationDescriptor
         }
         if ($this->networkDashboard && ($this->siteScope !== null || $this->siteIds !== [])) {
             throw new InvalidArgumentException('Dashboard Widget descriptor network target cannot include site targeting.');
+        }
+        if (
+            $this->backgroundJobId !== null
+            && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->backgroundJobId) !== 1
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor background job id must be a lowercase RFC 4122 UUID.');
         }
     }
 
