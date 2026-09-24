@@ -8,6 +8,7 @@
 - Issue #1224 / PR #1225 — Bounded Empty-State Rendering Contract V1 — terminal PASS.
 - Issue #1226 / PR #1227 — Bounded Empty-State Rendering Source V1 — terminal PASS.
 - Issue #1228 / PR #1229 — Empty-State source post-merge shared-truth reconciliation V1 — terminal PASS.
+- Active contract transport: **PR #1231 — Dashboard Widgets: bounded Renderer-Failure Error-State contract V1**.
   - exact head `f64fe40331da2e8139897170aae881b8b93a23b7`;
   - Governance `36005699579` PASS;
   - Architecture `36005699569` PASS;

@@ -5,13 +5,13 @@ state_status: CONTRACT_ACTIVE
 observed_main_sha: 4fbe3ae7b65ec0ad627ceefac465d4269a872446
 observed_main_source: "Issue #1228 / PR #1229 merged Empty-State source post-merge shared-truth reconciliation V1"
 active_issue: "#1230"
-active_pr: "PENDING_CONTRACT_PR"
+active_pr: "#1231"
 active_branch: supervisor/dashboard-widgets-bounded-renderer-failure-error-state-contract-v1
 current_milestone: "Dashboard Widgets bounded Renderer-Failure Error-State Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1228 / PR #1229 merged as 4fbe3ae7b65ec0ad627ceefac465d4269a872446; exact head f64fe40331da2e8139897170aae881b8b93a23b7; Governance 36005699579 PASS; Architecture 36005699569 PASS; exact five-file scope; zero review blockers/comments and zero behind."
 next_safe_action: "Open and validate the #1230 exact six-file Error-State contract/shared-truth PR; merge only terminal green. After terminal contract merge, create/claim only the exact eleven-file bounded Renderer-Failure Error-State source issue frozen by the contract."
-waiting_external: "Issue #1230 contract exact-head CI/review"
+waiting_external: "PR #1231 contract exact-head CI/review"
 next_planned_slot:
   issue: "PENDING_SOURCE_ISSUE_AFTER_1230_TERMINAL_MERGE"
   slot_id: dashboard-widgets-bounded-renderer-failure-error-state-source-v1
