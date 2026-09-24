@@ -1,80 +1,60 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — #1232/#1233 terminal Error-State source PASS; #1234 reconciliation active
+## 2026-09-24 — FAST feature #1236 Native Default-Hidden State V1 active
 
 ### Exact repository truth
 
-- Exact resulting main: `776d5e0d3ae9f05f2a0922457398051e08166912`.
-- Issue #1230 / PR #1231 — Bounded Renderer-Failure Error-State Contract V1 — terminal PASS.
-  - exact head `00b24e8ff08c64e653888d6b68ebb2c3eee68c24`;
-  - Governance `36009531350` PASS;
-  - Architecture `36009531532` PASS;
-  - exact six-file contract/shared-truth scope;
+- Exact current main: `a3d7ccef7c8cba7baf5a94bafd938da3f86979d0`.
+- Issue #1234 / PR #1235 — Error-State source shared-truth reconciliation + FAST policy — terminal PASS.
+  - exact head `d0e466565054cc51695bb6013f576f3e77525872`;
+  - Governance `36014261934` PASS;
+  - Architecture `36014262076` PASS;
+  - exact five shared-truth files;
   - zero blockers and zero behind;
-  - merge `e894a4a2c5acb3e756f519e4d4014ccb9462589b`;
-  - promotion `CONTRACT_FROZEN_READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1`.
-- Issue #1232 / PR #1233 — Bounded Renderer-Failure Error-State Source V1 — terminal PASS.
-  - exact head `e178d7857b8266242c8f611a78fc8967d2821ca2`;
-  - Governance `36011545416` PASS;
-  - Architecture `36011545418` PASS;
-  - PHP Quality `36011545569` PASS;
-  - Platform Compatibility `36011545742` PASS;
-  - Distributable Package `36011545700` PASS;
-  - exact eleven-file source/test scope;
-  - zero blockers and zero behind;
-  - merge `776d5e0d3ae9f05f2a0922457398051e08166912`;
-  - verdict `PASS_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1`.
+  - merge `a3d7ccef7c8cba7baf5a94bafd938da3f86979d0`.
+- RB-0058 is reconciled terminal PASS from that exact-head evidence.
+- FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` is active.
 
-### Resulting-main bounded behavior
+### Fresh exact-main Surface 10 audit
 
-- Optional `render_source.error_state` is supported for literal or Query-bound trusted Component Blueprint sources.
-- Trusted Error-State Blueprints remain Surface 10 `rich_text` or `announcement`.
-- Error-State bindings are literal strings only.
-- Per-string bound is 2048 bytes; normalized object bound is 4096 bytes.
-- Fallback is eligible only after a primary trusted renderer returns a typed `RenderFailureCode`.
-- Primary renderer throwable remains opaque `runtime_failure` with no fallback.
-- Fallback is one-shot, receives the exact same incoming `ExecutionContext`, and has no recursive third attempt.
-- Successful fallback returns dedicated `rendered_error` with trusted HTML/assets and only the original primary typed failure metadata.
-- WordPress adapter outputs trusted HTML for `rendered` and `rendered_error` only.
-- Policy denial, unavailable/degraded source, Query/provider failure, malformed Definition/schema/cardinality/type, unsafe content and generic runtime failures never become Error-State success.
-- No direct IntegrationRegistry or remote transport execution was introduced.
+Next smallest dependency-supported feature:
 
-### Shared-truth reconciliation
+`dashboard-widgets.inventory.default_hidden`
 
-- Active Issue: **#1234 — Error-State source post-merge shared-truth reconciliation V1**.
-- Active PR: **#1235 — AI: reconcile Renderer-Failure Error-State source shared truth V1**.
-- Active branch: `supervisor/dashboard-widgets-error-state-source-post-merge-reconciliation-v1`.
-- Scope: exactly five shared-truth files; no runtime/product PHP or tests.
-- RB-0056 reconciles #1230/#1231 terminal contract PASS.
-- RB-0057 records #1232/#1233 terminal source PASS.
-- RB-0058 is the only new pending exact-head Governance/Architecture reconciliation gate.
-- After #1234 terminal merge, run a fresh exact-main Surface 10 transition audit. Do not infer or claim a new product/runtime tranche before that audit.
+Audit verdict:
 
-### Still blocked / residual
+`READY_FOR_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1`
 
-- #858 broader required-CI/ruleset administration remains external-admin work.
-- #947 independent Worker-only audit remains independent/nonblocking.
-- #1102 P-006 Wave 1U remains authorization-gated.
-- Loading state, generic registered-provider execution, direct IntegrationRegistry execution, remote/RSS/iframe, actions, assets, refresh/cache/background work, Definition/user-preference mutation, shared Platform source changes, P-006 runtime, full-parity certification, deploy and release remain blocked.
+Why:
+- P0_NATIVE / MUST_HAVE / SOFT_NATIVE;
+- repository native audit already identifies WordPress `default_hidden_meta_boxes`;
+- current runtime already owns safe registration, site/network targeting and collision suppression;
+- feature is default-state projection only and does not write user preferences;
+- smaller/safer than loading, refresh/cache, dismiss/preferences, actions, provider or remote execution.
 
-### FAST AI-Native delivery mode
+### #1236 frozen feature contract + implementation
 
-Policy: `GOV-AI-NATIVE-FAST-DELIVERY-001`.
+- Optional authored `widget.inventory.default_hidden: bool`.
+- Absent inventory/default_hidden => false.
+- Unknown inventory keys or non-boolean value => compile rejection.
+- Descriptor carries immutable `defaultHidden`.
+- WordPress environment adds bounded filter registration and screen-id projection.
+- Adapter registers `default_hidden_meta_boxes` once with two args.
+- Only exact screens `dashboard` and `dashboard-network` are eligible.
+- Default-hidden ids come from the exact same canonical target/collision plan used by registration.
+- Existing hidden ids are preserved; WPE ids are appended once.
+- Site-target eligibility and network-dashboard separation remain authoritative.
+- Unsupported/malformed screen or environment/repository/compiler failure returns existing hidden list unchanged.
+- No user-meta write, persistent preference mutation, inventory removal, provider/remote/action execution, loading, refresh/cache or shared Platform widening.
 
-Default feature delivery is now deliberately coarse-grained:
+### FAST delivery status
 
-1. **Turn A** — exact-main audit, accepted Issue claim/create, implementation, focused tests, README/shared-truth update and PR open.
-2. **Turn B** — one consolidated CI/review refresh, required fixes when present, expected-head merge and terminal resulting-main verification.
+Turn A scope is exactly fourteen files:
+- five Dashboard Widgets runtime/WordPress files;
+- four focused unit-test files;
+- five shared-truth files.
 
-Rules:
-
-- Separate contract PRs are reserved for high-risk boundaries such as auth/authorization, payments, privileged/destructive mutation, remote/provider transport or shared security/platform changes.
-- Routine bounded feature contracts are frozen in the implementation Issue and proceed directly to source implementation.
-- Shared-truth/README/queue/Runner updates belong in the implementation PR by default when scope permits.
-- Separate post-merge reconciliation PRs are **not** the default; use them only for genuine divergence/conflict or when the implementation allowlist technically forbids shared truth.
-- Runner Benchmark records the meaningful merge gate, not every administrative sub-step.
-- User-facing progress updates are limited to meaningful outcomes: implementation ready, material blocker/failure, PR open, merge complete.
-- Security is unchanged: exact allowlists, CI/architecture gates, expected-head merge, zero-behind checks and fail-closed runtime boundaries remain mandatory.
+RB-0059 is the single pending feature merge gate. After terminal merge, no separate reconciliation PR is expected; terminal issue evidence + resulting-main verification close the feature unless real divergence exists.
 
 ### Persistent recovery order
 
