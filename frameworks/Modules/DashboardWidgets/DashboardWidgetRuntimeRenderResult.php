@@ -88,7 +88,8 @@ final readonly class DashboardWidgetRuntimeRenderResult
         string $html,
         array $assetHandles,
         RenderFailureCode $primaryFailure,
-    ): self {
+    ): self
+    {
         return new self(
             self::STATUS_RENDERED_ERROR,
             $html,
