@@ -40,7 +40,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
 
-    /** @var null|Closure(string):(?array<string,mixed>) */
+    /** @var null|Closure */
     private ?Closure $backgroundJobResolver;
 
     public function __construct(
