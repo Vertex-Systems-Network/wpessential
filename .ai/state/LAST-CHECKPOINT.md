@@ -46,6 +46,7 @@ Audit verdict:
 ### FAST delivery status
 
 - Active Issue: **#1256 — Dashboard Widgets: bounded native inventory remove seam V1**.
+- Active PR: **#1257 — Dashboard Widgets: bounded Native Inventory Remove Seam V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1`.
 - RB-0068 is the single pending feature merge gate.
 - Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
