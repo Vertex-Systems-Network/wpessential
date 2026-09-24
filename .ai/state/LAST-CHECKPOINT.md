@@ -61,6 +61,7 @@ Rules:
 ### FAST delivery status
 
 - Active Issue: **#1244 — Dashboard Widgets: bounded native core-widget classification V1**.
+- Active PR: **#1245 — Dashboard Widgets: bounded Native Core-Widget Classification V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-core-widget-classification-v1`.
 - RB-0062 is the single pending feature merge gate.
 - Exact authorized scope: Dashboard Widget WordPress adapter, focused adapter test, and five shared-truth files.
