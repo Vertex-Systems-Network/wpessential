@@ -165,6 +165,26 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         }
     }
 
+    public function testRejectsMalformedNativeDashboardInventoryRegistry(): void
+    {
+        $hadMetaBoxes = array_key_exists('wp_meta_boxes', $GLOBALS);
+        $previousMetaBoxes = $GLOBALS['wp_meta_boxes'] ?? null;
+
+        try {
+            $GLOBALS['wp_meta_boxes'] = ['dashboard' => 'malformed'];
+            $environment = new NativeWordPressDashboardWidgetEnvironment();
+
+            $this->expectException(\LogicException::class);
+            $environment->discoverRegisteredDashboardWidgets('dashboard');
+        } finally {
+            if ($hadMetaBoxes) {
+                $GLOBALS['wp_meta_boxes'] = $previousMetaBoxes;
+            } else {
+                unset($GLOBALS['wp_meta_boxes']);
+            }
+        }
+    }
+
     public function testProjectsCurrentRequestIdsAndTrustedOutput(): void
     {
         $outputs = [];
