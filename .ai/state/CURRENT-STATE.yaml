@@ -1,22 +1,22 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: RECONCILIATION_ACTIVE
-observed_main_sha: 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8
-observed_main_source: "Issue #1238 / PR #1239 merged Dashboard Widgets bounded Native Default-Collapsed State V1"
-active_issue: "#1240"
-active_pr: "#1241"
-active_branch: supervisor/dashboard-widgets-default-collapsed-post-merge-reconciliation-v1
-current_milestone: "Dashboard Widgets Default-Collapsed post-merge shared-truth reconciliation"
+state_status: FEATURE_ACTIVE
+observed_main_sha: d46bb23f948ee6c943cf8cce82231c74918480f9
+observed_main_source: "Issue #1240 / PR #1241 terminal shared-truth reconciliation merged after Default-Collapsed V1"
+active_issue: "#1242"
+active_pr: null
+active_branch: agent/dashboard-widgets-bounded-native-registered-inventory-source-v1
+current_milestone: "Dashboard Widgets bounded Native Registered Inventory Source V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1238 / PR #1239 merged as 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8; exact head 9baef3734989933f78abee934d8267d1c4a7c09c; Governance 36019998970 PASS; Architecture 36019999084 PASS; PHP Quality 36019998732 PASS; Platform Compatibility 36019999027 PASS; Distributable 36019998866 PASS; exact fourteen-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1."
-next_safe_action: "Complete the exact five-file shared-truth reconciliation exception for #1238/#1239 terminal merge. Then audit exact resulting main for the next smallest dependency-supported Dashboard Widgets feature; current Bank candidate is widget.presentation.collapsible (P0_NATIVE / MUST_HAVE), but no implementation contract is frozen by this reconciliation."
-waiting_external: "reconciliation PR creation / exact-head CI"
+last_completed_milestone: "Issue #1240 / PR #1241 shared-truth reconciliation merged as d46bb23f948ee6c943cf8cce82231c74918480f9; exact head f32c30eae86a2eff789e77615cac8e58d9c51454; Governance 36023143527 PASS; Architecture 36023143626 PASS; exact five-file shared-truth scope; zero review blockers and zero behind."
+next_safe_action: "Open and validate Issue #1242 exact eleven-file feature/shared-truth PR for bounded registered Dashboard Widget inventory; merge only terminal green with expected-head protection. No core/third-party classification, hide/remove, callback/title/args exposure, provider/remote execution, full parity, deploy or release."
+waiting_external: "feature PR creation / exact-head CI-review"
 next_planned_slot:
-  issue: "UNASSIGNED_AFTER_RECONCILIATION"
-  slot_id: dashboard-widgets-next-fast-feature-audit
-  claim_branch: "UNASSIGNED_UNTIL_EXACT_MAIN_AUDIT"
-  claim_rule: "After #1238 terminal merge, audit exact resulting main and select the next smallest dependency-supported feature. Do not create a separate reconciliation PR unless real divergence/conflict requires it."
+  issue: "#1242"
+  slot_id: dashboard-widgets-bounded-native-registered-inventory-source-v1
+  claim_branch: "agent/dashboard-widgets-bounded-native-registered-inventory-source-v1"
+  claim_rule: "Issue #1242 freezes the exact eleven-file read-only registered inventory source tranche on exact main d46bb23f948ee6c943cf8cce82231c74918480f9."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,6 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
+    - RB-0061
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -87,7 +88,7 @@ recovery_order:
 notes:
   - "Repository/runtime evidence outranks compact state."
   - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
-  - "A post-merge shared-truth divergence after #1239 requires the bounded five-file reconciliation exception tracked by Issue #1240."
-  - "Feature contract: optional widget.presentation.default_collapsed boolean; saved current-user closed-postbox metadata always wins."
-  - "WPE performs no user-meta write; default-collapsed projection uses only native dynamic postbox class filters after successful WPE widget registration."
-  - "Collapsible disablement, dismissible, inventory hide/discovery/classification, loading, providers/remote/actions/cache-refresh, P-006 runtime, full parity, deploy and release remain unpromoted."
+  - "Issue #1240 / PR #1241 terminally reconciled #1238/#1239 shared truth on exact main d46bb23f948ee6c943cf8cce82231c74918480f9."
+  - "Issue #1242 is the active FAST feature: bounded read-only widget.inventory.discover_registered source for exact dashboard/dashboard-network screens."
+  - "Registered inventory may expose only safe widget id/context/priority metadata; callback, args, title/HTML and mutation are forbidden."
+  - "Core/third-party classification, inventory hide/remove, collapsible/dismissible, loading, providers/remote/actions/cache-refresh, P-006 runtime, full parity, deploy and release remain unpromoted."
