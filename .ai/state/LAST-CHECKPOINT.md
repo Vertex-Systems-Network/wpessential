@@ -57,6 +57,25 @@
 - #1102 P-006 Wave 1U remains authorization-gated.
 - Loading state, generic registered-provider execution, direct IntegrationRegistry execution, remote/RSS/iframe, actions, assets, refresh/cache/background work, Definition/user-preference mutation, shared Platform source changes, P-006 runtime, full-parity certification, deploy and release remain blocked.
 
+### FAST AI-Native delivery mode
+
+Policy: `GOV-AI-NATIVE-FAST-DELIVERY-001`.
+
+Default feature delivery is now deliberately coarse-grained:
+
+1. **Turn A** — exact-main audit, accepted Issue claim/create, implementation, focused tests, README/shared-truth update and PR open.
+2. **Turn B** — one consolidated CI/review refresh, required fixes when present, expected-head merge and terminal resulting-main verification.
+
+Rules:
+
+- Separate contract PRs are reserved for high-risk boundaries such as auth/authorization, payments, privileged/destructive mutation, remote/provider transport or shared security/platform changes.
+- Routine bounded feature contracts are frozen in the implementation Issue and proceed directly to source implementation.
+- Shared-truth/README/queue/Runner updates belong in the implementation PR by default when scope permits.
+- Separate post-merge reconciliation PRs are **not** the default; use them only for genuine divergence/conflict or when the implementation allowlist technically forbids shared truth.
+- Runner Benchmark records the meaningful merge gate, not every administrative sub-step.
+- User-facing progress updates are limited to meaningful outcomes: implementation ready, material blocker/failure, PR open, merge complete.
+- Security is unchanged: exact allowlists, CI/architecture gates, expected-head merge, zero-behind checks and fail-closed runtime boundaries remain mandatory.
+
 ### Persistent recovery order
 
 1. `.ai/state/CURRENT-STATE.yaml`
