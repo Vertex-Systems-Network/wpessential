@@ -382,6 +382,39 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $adapter->discoverNonCoreDashboardWidgets(true));
     }
 
+    public function testProjectsOnlySavedCurrentUserHiddenWidgetIds(): void
+    {
+        [$adapter, , $environment] = $this->harness([]);
+
+        $environment->hiddenDashboardWidgetIdsByScreen['dashboard'] = [
+            'z_widget',
+            'a-widget',
+            'z_widget',
+        ];
+        self::assertSame(
+            ['a-widget', 'z_widget'],
+            $adapter->currentUserHiddenDashboardWidgetIds(),
+        );
+
+        $environment->hiddenDashboardWidgetIdsByScreen['dashboard-network'] = [
+            'network_widget',
+        ];
+        self::assertSame(
+            ['network_widget'],
+            $adapter->currentUserHiddenDashboardWidgetIds(true),
+        );
+
+        $environment->throwOnHiddenDashboardWidgetPreference = true;
+        self::assertSame([], $adapter->currentUserHiddenDashboardWidgetIds());
+        $environment->throwOnHiddenDashboardWidgetPreference = false;
+
+        $environment->hiddenDashboardWidgetIdsByScreen['dashboard'] = [
+            'safe_widget',
+            '<unsafe>',
+        ];
+        self::assertSame([], $adapter->currentUserHiddenDashboardWidgetIds());
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -687,8 +720,11 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnScreenId = false;
             public bool $throwOnClosedPostboxPreference = false;
             public bool $throwOnRegisteredDashboardWidgetDiscovery = false;
+            public bool $throwOnHiddenDashboardWidgetPreference = false;
             /** @var array<string,bool> */
             public array $closedPostboxPreferenceByScreen = [];
+            /** @var array<string,list<string>> */
+            public array $hiddenDashboardWidgetIdsByScreen = [];
             /** @var array<string,list<array<string,mixed>>> */
             public array $registeredDashboardWidgetsByScreen = [];
             private int $hookAttempts = 0;
@@ -744,6 +780,13 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                     throw new RuntimeException('closed postbox preference unavailable');
                 }
                 return $this->closedPostboxPreferenceByScreen[$screenId] ?? false;
+            }
+            public function currentUserHiddenDashboardWidgetIds(string $screenId): array
+            {
+                if ($this->throwOnHiddenDashboardWidgetPreference) {
+                    throw new RuntimeException('hidden dashboard widget preference unavailable');
+                }
+                return $this->hiddenDashboardWidgetIdsByScreen[$screenId] ?? [];
             }
             public function discoverRegisteredDashboardWidgets(string $screenId): array
             {
