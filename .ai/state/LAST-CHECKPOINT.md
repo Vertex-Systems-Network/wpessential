@@ -49,6 +49,7 @@ Bounded semantic:
 ### FAST delivery status
 
 - Active Issue: **#1246 — Dashboard Widgets: bounded native non-core registered classification V1**.
+- Active PR: **#1247 — Dashboard Widgets: bounded Native Non-Core Registered Classification V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-non-core-registered-classification-v1`.
 - RB-0063 is the single pending feature merge gate.
 - Exact authorized scope: Dashboard Widget WordPress adapter, focused adapter test, and five shared-truth files.
