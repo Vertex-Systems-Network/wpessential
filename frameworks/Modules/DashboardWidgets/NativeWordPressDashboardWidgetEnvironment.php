@@ -40,6 +40,9 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure(string):array<int,string> */
     private Closure $currentUserHiddenDashboardWidgetIds;
 
+    /** @var Closure(string):array<int,string> */
+    private Closure $currentUserCollapsedDashboardWidgetIds;
+
     /** @var Closure(string):array<int,array{id:string,context:string,priority:string}> */
     private Closure $discoverRegisteredDashboardWidgets;
 
@@ -56,6 +59,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
      * @param null|callable(mixed):?string $screenId
      * @param null|callable(string):bool $hasClosedPostboxPreference
      * @param null|callable(string):array<int,string> $currentUserHiddenDashboardWidgetIds
+     * @param null|callable(string):array<int,string> $currentUserCollapsedDashboardWidgetIds
      * @param null|callable(string):array<int,array{id:string,context:string,priority:string}> $discoverRegisteredDashboardWidgets
      * @param null|callable(string):void $outputTrustedHtml
      */
@@ -69,6 +73,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
         ?callable $screenId = null,
         ?callable $hasClosedPostboxPreference = null,
         ?callable $currentUserHiddenDashboardWidgetIds = null,
+        ?callable $currentUserCollapsedDashboardWidgetIds = null,
         ?callable $discoverRegisteredDashboardWidgets = null,
         ?callable $outputTrustedHtml = null,
     ) {
@@ -204,6 +209,37 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return $ids;
             };
 
+        $this->currentUserCollapsedDashboardWidgetIds = $currentUserCollapsedDashboardWidgetIds !== null
+            ? Closure::fromCallable($currentUserCollapsedDashboardWidgetIds)
+            : static function (string $screenId): array {
+                if (!in_array($screenId, ['dashboard', 'dashboard-network'], true)) {
+                    throw new LogicException('Dashboard Widget collapsed preference screen is unsupported.');
+                }
+                if (!function_exists('get_user_option')) {
+                    throw new LogicException('WordPress user-option API is unavailable.');
+                }
+
+                $collapsed = get_user_option('closedpostboxes_' . $screenId);
+                if ($collapsed === false || $collapsed === null) {
+                    return [];
+                }
+                if (!is_array($collapsed)) {
+                    throw new LogicException('WordPress collapsed Dashboard Widget preference is malformed.');
+                }
+
+                $safe = [];
+                foreach ($collapsed as $id) {
+                    if (!is_string($id) || preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
+                        throw new LogicException('WordPress collapsed Dashboard Widget preference contains an unsafe widget id.');
+                    }
+                    $safe[$id] = true;
+                }
+
+                $ids = array_keys($safe);
+                sort($ids, SORT_STRING);
+                return $ids;
+            };
+
         $this->discoverRegisteredDashboardWidgets = $discoverRegisteredDashboardWidgets !== null
             ? Closure::fromCallable($discoverRegisteredDashboardWidgets)
             : static function (string $screenId): array {
@@ -321,6 +357,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function currentUserHiddenDashboardWidgetIds(string $screenId): array
     {
         return ($this->currentUserHiddenDashboardWidgetIds)($screenId);
+    }
+
+    public function currentUserCollapsedDashboardWidgetIds(string $screenId): array
+    {
+        return ($this->currentUserCollapsedDashboardWidgetIds)($screenId);
     }
 
     public function discoverRegisteredDashboardWidgets(string $screenId): array
