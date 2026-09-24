@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1236",
-  "anchor_main_sha": "a3d7ccef7c8cba7baf5a94bafd938da3f86979d0",
+  "source_issue": "#1238",
+  "anchor_main_sha": "a79bf3e2e5b3f6a026ce31184f7652f933508969",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1894,18 +1894,52 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "dashboard-widgets|bounded-native-default-hidden-state|issue1236|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1237 exact head 6c90286c3ad32b9ac40f55d744e48f6d29a472d1",
+        "Governance Gate 36017952292 PASS",
+        "Architecture Guards 36017952019 PASS",
+        "Platform Compatibility Matrix 36017952031 PASS",
+        "Distributable Package 36017951864 PASS",
+        "exact fourteen authorized feature/test/shared-truth files",
+        "zero unresolved review/comments/inline blockers",
+        "zero commits behind main",
+        "PR #1237 merged as a79bf3e2e5b3f6a026ce31184f7652f933508969",
+        "Issue #1236 closed completed",
+        "verdict PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1"
+      ],
+      "note": "Terminal FAST feature PASS. No routine post-merge reconciliation PR was created."
+    },
+    {
+      "id": "RB-0060",
+      "source": "Issue #1238",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-native-default-collapsed-state-v1 exact head",
+      "dependencies": [
+        "RB-0059 terminal PASS",
+        "Issue #1236 / PR #1237 terminal Default-Hidden merge",
+        "exact source base a79bf3e2e5b3f6a026ce31184f7652f933508969"
+      ],
+      "authorization": "Exact fourteen-file Dashboard Widgets default-collapsed feature/test/shared-truth scope only; no user-meta writes, no forced collapse over saved preference, no inventory removal/discovery, collapsible/dismiss/loading, provider/remote/action execution, cache/refresh, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-native-default-collapsed-state|issue1238|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1236 FAST feature contract",
-        "dashboard-widgets.inventory.default_hidden is P0_NATIVE / MUST_HAVE / SOFT_NATIVE",
-        "native audit identifies default_hidden_meta_boxes",
-        "implementation reuses exact registration target/collision planning and performs no persistent preference write"
+        "Issue #1238 FAST feature contract",
+        "dashboard-widgets.presentation.default_collapsed is P0_NATIVE / MUST_HAVE / SOFT_NATIVE",
+        "native postbox classes support a per-screen/per-box filter after WordPress user collapse resolution",
+        "implementation checks saved preference metadata existence before applying authored default and performs no user-meta write"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1. No separate routine reconciliation benchmark/PR should follow."
+      "note": "PASS may promote only PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1. No separate routine reconciliation benchmark/PR should follow."
     }
   ],
-  "last_reconciled_issue": "#1234",
+  "last_reconciled_issue": "#1236",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
