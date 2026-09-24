@@ -1,75 +1,80 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — #1228/#1229 terminal shared truth; #1230 Error-State contract active
+## 2026-09-24 — #1232/#1233 terminal Error-State source PASS; #1234 reconciliation active
 
 ### Exact repository truth
 
-- Exact current main: `4fbe3ae7b65ec0ad627ceefac465d4269a872446`.
-- Issue #1224 / PR #1225 — Bounded Empty-State Rendering Contract V1 — terminal PASS.
-- Issue #1226 / PR #1227 — Bounded Empty-State Rendering Source V1 — terminal PASS.
-- Issue #1228 / PR #1229 — Empty-State source post-merge shared-truth reconciliation V1 — terminal PASS.
-- Active contract transport: **PR #1231 — Dashboard Widgets: bounded Renderer-Failure Error-State contract V1**.
-  - exact head `f64fe40331da2e8139897170aae881b8b93a23b7`;
-  - Governance `36005699579` PASS;
-  - Architecture `36005699569` PASS;
-  - exact five shared-truth files;
+- Exact resulting main: `776d5e0d3ae9f05f2a0922457398051e08166912`.
+- Issue #1230 / PR #1231 — Bounded Renderer-Failure Error-State Contract V1 — terminal PASS.
+  - exact head `00b24e8ff08c64e653888d6b68ebb2c3eee68c24`;
+  - Governance `36009531350` PASS;
+  - Architecture `36009531532` PASS;
+  - exact six-file contract/shared-truth scope;
   - zero blockers and zero behind;
-  - expected-head merge `4fbe3ae7b65ec0ad627ceefac465d4269a872446`.
-- RB-0055 is terminal PASS from #1228/#1229 existing evidence; no historical rerun is required.
+  - merge `e894a4a2c5acb3e756f519e4d4014ccb9462589b`;
+  - promotion `CONTRACT_FROZEN_READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1`.
+- Issue #1232 / PR #1233 — Bounded Renderer-Failure Error-State Source V1 — terminal PASS.
+  - exact head `e178d7857b8266242c8f611a78fc8967d2821ca2`;
+  - Governance `36011545416` PASS;
+  - Architecture `36011545418` PASS;
+  - PHP Quality `36011545569` PASS;
+  - Platform Compatibility `36011545742` PASS;
+  - Distributable Package `36011545700` PASS;
+  - exact eleven-file source/test scope;
+  - zero blockers and zero behind;
+  - merge `776d5e0d3ae9f05f2a0922457398051e08166912`;
+  - verdict `PASS_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1`.
 
-### Fresh Surface 10 audit verdict
+### Resulting-main bounded behavior
 
-The exact-main transition audit selected:
+- Optional `render_source.error_state` is supported for literal or Query-bound trusted Component Blueprint sources.
+- Trusted Error-State Blueprints remain Surface 10 `rich_text` or `announcement`.
+- Error-State bindings are literal strings only.
+- Per-string bound is 2048 bytes; normalized object bound is 4096 bytes.
+- Fallback is eligible only after a primary trusted renderer returns a typed `RenderFailureCode`.
+- Primary renderer throwable remains opaque `runtime_failure` with no fallback.
+- Fallback is one-shot, receives the exact same incoming `ExecutionContext`, and has no recursive third attempt.
+- Successful fallback returns dedicated `rendered_error` with trusted HTML/assets and only the original primary typed failure metadata.
+- WordPress adapter outputs trusted HTML for `rendered` and `rendered_error` only.
+- Policy denial, unavailable/degraded source, Query/provider failure, malformed Definition/schema/cardinality/type, unsafe content and generic runtime failures never become Error-State success.
+- No direct IntegrationRegistry or remote transport execution was introduced.
 
-`READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_CONTRACT_V1`
+### Shared-truth reconciliation
 
-Evidence:
+- Active Issue: **#1234 — Error-State source post-merge shared-truth reconciliation V1**.
+- Active PR: **#1235 — AI: reconcile Renderer-Failure Error-State source shared truth V1**.
+- Active branch: `supervisor/dashboard-widgets-error-state-source-post-merge-reconciliation-v1`.
+- Scope: exactly five shared-truth files; no runtime/product PHP or tests.
+- RB-0056 reconciles #1230/#1231 terminal contract PASS.
+- RB-0057 records #1232/#1233 terminal source PASS.
+- RB-0058 is the only new pending exact-head Governance/Architecture reconciliation gate.
+- After #1234 terminal merge, run a fresh exact-main Surface 10 transition audit. Do not infer or claim a new product/runtime tranche before that audit.
 
-- `dashboard-widgets.state.error` is `WPE_HARD / P0_PARITY`;
-- projection maps it to `dashboard-widgets.presentation.states`;
-- Empty-State in the same normalized contract is now bounded source PASS;
-- exact main has typed opaque `renderer_failed` but no authored trusted error presentation;
-- exact main WordPress adapter outputs only `STATUS_RENDERED`;
-- `DW-33` and `DW-108` require isolated renderer failure and non-leaking error presentation direction.
+### Still blocked / residual
 
-### #1230 frozen contract direction
+- #858 broader required-CI/ruleset administration remains external-admin work.
+- #947 independent Worker-only audit remains independent/nonblocking.
+- #1102 P-006 Wave 1U remains authorization-gated.
+- Loading state, generic registered-provider execution, direct IntegrationRegistry execution, remote/RSS/iframe, actions, assets, refresh/cache/background work, Definition/user-preference mutation, shared Platform source changes, P-006 runtime, full-parity certification, deploy and release remain blocked.
 
-- Authored sibling: optional `widget.render_source.error_state`.
-- Allowed for literal or Query-bound trusted Component Blueprint render sources.
-- May coexist with `empty_state`.
-- Error-State Blueprint allowlist: trusted Surface 10 `rich_text` or `announcement` only.
-- Bindings: authored literal strings only.
-- Per-string bound: 1..2048 encoded bytes.
-- Complete encoded error_state object: <=4096 bytes.
-- Fallback eligibility: only primary trusted renderer returns `success=false` with typed `RenderFailureCode`.
-- Primary renderer throwable remains opaque `runtime_failure`; no fallback.
-- Fallback invoked at most once using exact same incoming `ExecutionContext`.
-- Successful fallback uses dedicated `rendered_error` status and retains original primary typed failure metadata.
-- Adapter may output trusted HTML only for ordinary `rendered` and `rendered_error`.
-- Fallback failure/throw remains fail closed with no recursion.
-- Policy/source/Query/visibility/missing/invalid/runtime failures never select Error-State.
+### FAST AI-Native delivery mode
 
-### Later source gate
+Policy: `GOV-AI-NATIVE-FAST-DELIVERY-001`.
 
-No Error-State runtime source may be created or mutated until #1230 merges terminal green with:
+Default feature delivery is now deliberately coarse-grained:
 
-`CONTRACT_FROZEN_READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1`
+1. **Turn A** — exact-main audit, accepted Issue claim/create, implementation, focused tests, README/shared-truth update and PR open.
+2. **Turn B** — one consolidated CI/review refresh, required fixes when present, expected-head merge and terminal resulting-main verification.
 
-The later source issue is frozen to exactly eleven source/test files listed in the contract. No Query Binding Executor or shared Platform change is authorized.
+Rules:
 
-### Still blocked
-
-- loading-state runtime;
-- generic registered-provider execution;
-- direct IntegrationRegistry execution;
-- Safe HTTP / remote / RSS / iframe;
-- Listings / shortcode / block / action execution;
-- assets;
-- refresh/cache/background jobs;
-- Definition/user-preference mutation;
-- P-006 runtime;
-- full-parity certification;
-- deploy / release.
+- Separate contract PRs are reserved for high-risk boundaries such as auth/authorization, payments, privileged/destructive mutation, remote/provider transport or shared security/platform changes.
+- Routine bounded feature contracts are frozen in the implementation Issue and proceed directly to source implementation.
+- Shared-truth/README/queue/Runner updates belong in the implementation PR by default when scope permits.
+- Separate post-merge reconciliation PRs are **not** the default; use them only for genuine divergence/conflict or when the implementation allowlist technically forbids shared truth.
+- Runner Benchmark records the meaningful merge gate, not every administrative sub-step.
+- User-facing progress updates are limited to meaningful outcomes: implementation ready, material blocker/failure, PR open, merge complete.
+- Security is unchanged: exact allowlists, CI/architecture gates, expected-head merge, zero-behind checks and fail-closed runtime boundaries remain mandatory.
 
 ### Persistent recovery order
 

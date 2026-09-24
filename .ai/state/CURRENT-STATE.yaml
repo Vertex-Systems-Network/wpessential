@@ -1,22 +1,22 @@
 schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
-state_status: CONTRACT_ACTIVE
-observed_main_sha: 4fbe3ae7b65ec0ad627ceefac465d4269a872446
-observed_main_source: "Issue #1228 / PR #1229 merged Empty-State source post-merge shared-truth reconciliation V1"
-active_issue: "#1230"
-active_pr: "#1231"
-active_branch: supervisor/dashboard-widgets-bounded-renderer-failure-error-state-contract-v1
-current_milestone: "Dashboard Widgets bounded Renderer-Failure Error-State Contract V1"
+state_status: RECONCILING
+observed_main_sha: 776d5e0d3ae9f05f2a0922457398051e08166912
+observed_main_source: "Issue #1232 / PR #1233 merged Dashboard Widgets bounded Renderer-Failure Error-State Source V1"
+active_issue: "#1234"
+active_pr: "#1235"
+active_branch: supervisor/dashboard-widgets-error-state-source-post-merge-reconciliation-v1
+current_milestone: "Dashboard Widgets Error-State source post-merge shared-truth reconciliation V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1228 / PR #1229 merged as 4fbe3ae7b65ec0ad627ceefac465d4269a872446; exact head f64fe40331da2e8139897170aae881b8b93a23b7; Governance 36005699579 PASS; Architecture 36005699569 PASS; exact five-file scope; zero review blockers/comments and zero behind."
-next_safe_action: "Open and validate the #1230 exact six-file Error-State contract/shared-truth PR; merge only terminal green. After terminal contract merge, create/claim only the exact eleven-file bounded Renderer-Failure Error-State source issue frozen by the contract."
-waiting_external: "PR #1231 contract exact-head CI/review"
+last_completed_milestone: "Issue #1232 / PR #1233 merged as 776d5e0d3ae9f05f2a0922457398051e08166912; exact head e178d7857b8266242c8f611a78fc8967d2821ca2; Governance 36011545416 PASS; Architecture 36011545418 PASS; PHP Quality 36011545569 PASS; Platform Compatibility 36011545742 PASS; Distributable 36011545700 PASS; exact eleven-file scope; zero blockers and zero behind."
+next_safe_action: "Open and validate the #1234 exact five-file shared-truth reconciliation PR; merge only terminal green. After #1234 terminal merge, run a fresh exact-main Surface 10 transition audit before creating or claiming any next product/runtime tranche."
+waiting_external: "PR #1235 shared-truth reconciliation exact-head CI/review"
 next_planned_slot:
-  issue: "PENDING_SOURCE_ISSUE_AFTER_1230_TERMINAL_MERGE"
-  slot_id: dashboard-widgets-bounded-renderer-failure-error-state-source-v1
-  claim_branch: "agent/dashboard-widgets-bounded-renderer-failure-error-state-source-v1"
-  claim_rule: "Do not create or mutate Error-State runtime source until #1230 contract merges terminal green with CONTRACT_FROZEN_READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1."
+  issue: "UNASSIGNED_FRESH_TRANSITION_AUDIT"
+  slot_id: dashboard-widgets-fresh-exact-main-transition-audit
+  claim_branch: "UNASSIGNED_UNTIL_AUDIT_ISSUE_EXISTS"
+  claim_rule: "Do not infer the next runtime/product tranche. After #1234 terminal merge, audit exact main and create/claim only the next dependency-supported bounded slot."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0056
+    - RB-0058
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -41,6 +41,8 @@ runner_benchmark:
     - RB-0053
     - RB-0054
     - RB-0055
+    - RB-0056
+    - RB-0057
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -48,8 +50,34 @@ open_repository_blockers:
   - "#858 broader required-CI ruleset enforcement remains repository-admin work"
   - "#1102 P-006 Wave 1U remains separately authorization-gated"
   - "#947 independent Wave 1A review remains nonblocking and must preserve independence"
+fast_ai_native_mode:
+  enabled: true
+  policy_id: GOV-AI-NATIVE-FAST-DELIVERY-001
+  default_delivery_cycle:
+    - "Turn A: exact-main audit + Issue claim + implementation + focused tests + README/shared truth + PR open"
+    - "Turn B: one consolidated CI/review refresh + required fixes if any + expected-head merge + terminal resulting-main verification"
+  separate_contract_pr_only_for_high_risk_boundaries: true
+  high_risk_examples:
+    - authentication_or_authorization
+    - payments_or_billing
+    - destructive_or_privileged_mutation
+    - remote_provider_or_transport_execution
+    - security_boundary_or_shared_platform_change
+  routine_bounded_feature_contract_location: "Freeze in the implementation Issue instead of a separate contract PR."
+  separate_post_merge_reconciliation_default: false
+  reconciliation_exception: "Create a separate reconciliation milestone only for real divergence/conflict or when exact scope technically forbids carrying shared truth in the implementation PR."
+  implementation_pr_shared_truth_default: true
+  runner_benchmark_policy: "Record one merge-gate benchmark for the meaningful feature tranche; do not create historical/reconciliation benchmark churn unless evidence genuinely changes."
+  user_update_policy: "Report only meaningful states: implementation ready, material blocker/failure, PR open, or merge complete. Avoid micro-step commentary."
+  security_guards_preserved:
+    - exact_file_allowlist
+    - expected_head_merge
+    - required_ci_and_architecture_checks
+    - fail_closed_runtime_boundaries
+    - zero_behind_merge_gate
 timeout_contract:
   one_logical_milestone_per_user_turn: true
+  one_meaningful_feature_milestone_per_user_turn_by_default: true
   max_consolidated_ci_status_refreshes_per_milestone: 1
   tight_polling_loops_forbidden: true
   batch_related_remote_reads: true
@@ -64,8 +92,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1228 / PR #1229 is terminal shared-truth PASS; RB-0055 is reconciled PASS from exact-head evidence."
-  - "Issue #1230 is contract-only; no runtime/product PHP or tests are authorized."
-  - "Error-State V1 is renderer-failure-only: no fallback on Policy, Data Source, Query, visibility, missing/invalid Definition or generic runtime failure."
-  - "Successful one-shot fallback uses dedicated rendered_error status and retains only the original typed primary RenderFailureCode."
-  - "Loading, refresh/cache, actions/preferences, provider/remote execution, P-006 runtime, full parity, deploy and release remain blocked."
+  - "Issue #1230 / PR #1231 bounded Renderer-Failure Error-State contract is terminal PASS; RB-0056 is reconciled PASS."
+  - "Issue #1232 / PR #1233 bounded Renderer-Failure Error-State source is terminal PASS; RB-0057 records its exact-head source gate."
+  - "Resulting main supports one-shot trusted Error-State fallback only after typed primary renderer failure; Policy/Data Source/Query/visibility/missing/invalid/runtime failures remain fail-closed."
+  - "Generic provider/remote/action/cache-refresh/loading/preferences/shared-Platform widening, P-006 runtime, full parity, deploy and release remain blocked."
+  - "No next Dashboard Widgets product Issue is open; next product action after #1234 is a fresh exact-main transition audit."
