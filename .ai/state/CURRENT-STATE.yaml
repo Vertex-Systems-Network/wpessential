@@ -5,13 +5,13 @@ state_status: CONTRACT_ACTIVE
 observed_main_sha: 675466f37354c24749902f80e3c553cc394368d8
 observed_main_source: "Issue #1222 / PR #1223 merged Query/Data-Source source post-merge shared-truth reconciliation V1"
 active_issue: "#1224"
-active_pr: "PENDING_CONTRACT_PR"
+active_pr: "#1225"
 active_branch: supervisor/dashboard-widgets-bounded-empty-state-rendering-contract-v1
 current_milestone: "Dashboard Widgets bounded Empty-State Rendering Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1222 / PR #1223 merged as 675466f37354c24749902f80e3c553cc394368d8; exact head e578d81beac789ad0606207a4562fe653c8b9341; Governance 35997232559 PASS; Architecture 35997232640 PASS; exact five-file scope; zero review blockers/comments and zero behind."
 next_safe_action: "Open and validate the #1224 exact six-file contract/shared-truth PR; merge only terminal green. After terminal contract merge, create/claim only the exact nine-file bounded empty-state source issue frozen by the contract."
-waiting_external: "Issue #1224 contract exact-head CI/review"
+waiting_external: "PR #1225 contract exact-head CI/review"
 next_planned_slot:
   issue: "PENDING_SOURCE_ISSUE_AFTER_1224_TERMINAL_MERGE"
   slot_id: dashboard-widgets-bounded-empty-state-rendering-source-v1

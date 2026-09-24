@@ -9,6 +9,7 @@
 - Fresh exact-main Surface 10 audit selected **bounded Empty-State Rendering Contract V1** as the smallest dependency-supported next tranche.
 - Evidence: `dashboard-widgets.state.empty` is P0 parity, projects to `dashboard-widgets.presentation.states`, current Query binding source rejects `returned < 1`, and the prior Query contract explicitly reserves a future empty-state tranche.
 - Issue #1224 is contract/shared-truth only and authorizes exactly six files. No runtime/product PHP is allowed in this milestone.
+- PR #1225 is the active contract transport on `supervisor/dashboard-widgets-bounded-empty-state-rendering-contract-v1`; merge only after exact-head CI terminal green, zero review blockers and zero behind.
 - Contract V1 makes Empty State Query-bound only; it allows literal-only `rich_text` or `announcement` trusted Blueprints, with 2048-byte per-string and 4096-byte total empty-state bounds.
 - Empty state may be selected only for canonical Query `ok:true`, exact source/projection, `rows=[]`, `returned=0` after Data Source preflight and visibility authorization. Every other error/failure remains fail-closed.
 - Missing authored empty_state preserves current zero-row `runtime_failure`.
