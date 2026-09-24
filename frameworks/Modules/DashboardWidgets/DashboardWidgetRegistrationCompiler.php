@@ -12,6 +12,7 @@ use Closure;
 use InvalidArgumentException;
 use Throwable;
 use WPEssential\Modules\Cron\CronDefinition;
+use WPEssential\Modules\FormsWorkflows\FormWorkflowDefinition;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -23,7 +24,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source', 'refresh'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source', 'refresh', 'action'];
 
     /** @var list<string> */
     private const INVENTORY_KEYS = ['default_hidden'];
@@ -37,22 +38,32 @@ final readonly class DashboardWidgetRegistrationCompiler
     /** @var list<string> */
     private const REFRESH_KEYS = ['background_job'];
 
+    /** @var list<string> */
+    private const ACTION_KEYS = ['ability_id'];
+
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
 
     /** @var null|Closure */
     private ?Closure $backgroundJobResolver;
 
+    /** @var null|Closure */
+    private ?Closure $formActionAbilityResolver;
+
     public function __construct(
         ?DashboardWidgetVisibilityCompiler $visibilityCompiler = null,
         ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
         private ?DashboardWidgetRenderSourceCompiler $renderSourceCompiler = null,
         ?callable $backgroundJobResolver = null,
+        ?callable $formActionAbilityResolver = null,
     ) {
         $this->visibilityCompiler = $visibilityCompiler ?? new DashboardWidgetVisibilityCompiler();
         $this->contentClassCompiler = $contentClassCompiler ?? new DashboardWidgetContentClassCompiler();
         $this->backgroundJobResolver = $backgroundJobResolver !== null
             ? Closure::fromCallable($backgroundJobResolver)
+            : null;
+        $this->formActionAbilityResolver = $formActionAbilityResolver !== null
+            ? Closure::fromCallable($formActionAbilityResolver)
             : null;
     }
 
@@ -118,6 +129,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         $this->assertNativeCollapsibleCapability($widget);
         $defaultCollapsed = $this->compileDefaultCollapsed($widget);
         $backgroundJobId = $this->compileBackgroundJobReference($widget);
+        $actionAbilityId = $this->compileFormsActionAbilityReference($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -132,7 +144,58 @@ final readonly class DashboardWidgetRegistrationCompiler
             siteScope: $siteScope,
             siteIds: $siteIds,
             backgroundJobId: $backgroundJobId,
+            actionAbilityId: $actionAbilityId,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileFormsActionAbilityReference(array $widget): ?string
+    {
+        if (!array_key_exists('action', $widget)) {
+            return null;
+        }
+
+        $action = $widget['action'];
+        if (!is_array($action) || ($action !== [] && array_is_list($action))) {
+            throw new InvalidArgumentException('Dashboard Widget action metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($action, self::ACTION_KEYS, 'Dashboard Widget action metadata');
+
+        if (!array_key_exists('ability_id', $action)) {
+            return null;
+        }
+
+        $abilityId = $action['ability_id'];
+        if (
+            !is_string($abilityId)
+            || preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId) !== 1
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget action.ability_id must use the canonical ability name shape.');
+        }
+        if ($this->formActionAbilityResolver === null) {
+            throw new InvalidArgumentException('Dashboard Widget action.ability_id requires the canonical Ability Registry.');
+        }
+
+        try {
+            $record = ($this->formActionAbilityResolver)($abilityId);
+        } catch (Throwable) {
+            throw new InvalidArgumentException('Dashboard Widget action ability reference could not be resolved.');
+        }
+
+        if (
+            !is_array($record)
+            || ($record['name'] ?? null) !== $abilityId
+            || ($record['owner_surface_id'] ?? null) !== FormWorkflowDefinition::OWNER_SURFACE_ID
+            || ($record['mutates'] ?? null) !== true
+            || ($record['ui_allowed'] ?? null) !== true
+            || ($record['input_schema'] ?? null) !== []
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget action ability must be a zero-input mutating Forms & Workflows UI ability.');
+        }
+
+        return $abilityId;
     }
 
     /**
