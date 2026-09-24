@@ -40,6 +40,7 @@
 ### Shared-truth reconciliation
 
 - Active Issue: **#1228 — Empty-State source post-merge shared-truth reconciliation V1**.
+- Active PR: **#1229 — AI: reconcile Empty-State source shared truth V1**.
 - Active branch: `supervisor/dashboard-widgets-empty-state-source-post-merge-reconciliation-v1`.
 - Scope: exactly five shared-truth files; no runtime/product PHP or tests.
 - RB-0053 reconciles #1224/#1225 terminal contract PASS.
