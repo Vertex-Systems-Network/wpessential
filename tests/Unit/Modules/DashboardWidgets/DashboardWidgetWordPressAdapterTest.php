@@ -448,6 +448,48 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $adapter->currentUserCollapsedDashboardWidgetIds());
     }
 
+    public function testProjectsOnlySavedCurrentUserDashboardWidgetOrder(): void
+    {
+        [$adapter, , $environment] = $this->harness([]);
+
+        $environment->dashboardWidgetOrderByScreen['dashboard'] = [
+            'side' => 'side_b,side_a',
+            'normal' => 'z_widget,a-widget,z_widget',
+            'column4' => '',
+        ];
+        self::assertSame(
+            [
+                ['context' => 'normal', 'ids' => ['z_widget', 'a-widget']],
+                ['context' => 'side', 'ids' => ['side_b', 'side_a']],
+            ],
+            $adapter->currentUserDashboardWidgetOrder(),
+        );
+
+        $environment->dashboardWidgetOrderByScreen['dashboard-network'] = [
+            'normal' => 'network_b,network_a',
+        ];
+        self::assertSame(
+            [
+                ['context' => 'normal', 'ids' => ['network_b', 'network_a']],
+            ],
+            $adapter->currentUserDashboardWidgetOrder(true),
+        );
+
+        $environment->throwOnDashboardWidgetOrderPreference = true;
+        self::assertSame([], $adapter->currentUserDashboardWidgetOrder());
+        $environment->throwOnDashboardWidgetOrderPreference = false;
+
+        $environment->dashboardWidgetOrderByScreen['dashboard'] = [
+            'normal' => 'safe_widget,<unsafe>',
+        ];
+        self::assertSame([], $adapter->currentUserDashboardWidgetOrder());
+
+        $environment->dashboardWidgetOrderByScreen['dashboard'] = [
+            'unsupported' => 'safe_widget',
+        ];
+        self::assertSame([], $adapter->currentUserDashboardWidgetOrder());
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -755,12 +797,15 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnRegisteredDashboardWidgetDiscovery = false;
             public bool $throwOnHiddenDashboardWidgetPreference = false;
             public bool $throwOnCollapsedDashboardWidgetPreference = false;
+            public bool $throwOnDashboardWidgetOrderPreference = false;
             /** @var array<string,bool> */
             public array $closedPostboxPreferenceByScreen = [];
             /** @var array<string,list<string>> */
             public array $hiddenDashboardWidgetIdsByScreen = [];
             /** @var array<string,list<string>> */
             public array $collapsedDashboardWidgetIdsByScreen = [];
+            /** @var array<string,array<string,string>> */
+            public array $dashboardWidgetOrderByScreen = [];
             /** @var array<string,list<array<string,mixed>>> */
             public array $registeredDashboardWidgetsByScreen = [];
             private int $hookAttempts = 0;
@@ -830,6 +875,13 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                     throw new RuntimeException('collapsed dashboard widget preference unavailable');
                 }
                 return $this->collapsedDashboardWidgetIdsByScreen[$screenId] ?? [];
+            }
+            public function currentUserDashboardWidgetOrder(string $screenId): array
+            {
+                if ($this->throwOnDashboardWidgetOrderPreference) {
+                    throw new RuntimeException('dashboard widget order preference unavailable');
+                }
+                return $this->dashboardWidgetOrderByScreen[$screenId] ?? [];
             }
             public function discoverRegisteredDashboardWidgets(string $screenId): array
             {
