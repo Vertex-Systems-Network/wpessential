@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: a79bf3e2e5b3f6a026ce31184f7652f933508969
 observed_main_source: "Issue #1236 / PR #1237 merged Dashboard Widgets bounded Native Default-Hidden State V1"
 active_issue: "#1238"
-active_pr: "PENDING_FEATURE_PR"
+active_pr: "#1239"
 active_branch: agent/dashboard-widgets-bounded-native-default-collapsed-state-v1
 current_milestone: "Dashboard Widgets bounded Native Default-Collapsed State V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1236 / PR #1237 merged as a79bf3e2e5b3f6a026ce31184f7652f933508969; exact head 6c90286c3ad32b9ac40f55d744e48f6d29a472d1; Governance 36017952292 PASS; Architecture 36017952019 PASS; Platform Compatibility 36017952031 PASS; Distributable 36017951864 PASS; exact fourteen-file scope; zero blockers and zero behind."
 next_safe_action: "Open and validate the #1238 exact fourteen-file feature/shared-truth PR; merge only terminal green with expected-head protection. After terminal merge, verify resulting main and continue FAST exact-main audit without a routine reconciliation PR."
-waiting_external: "Issue #1238 feature exact-head CI/review after PR open"
+waiting_external: "PR #1239 feature exact-head CI/review"
 next_planned_slot:
   issue: "UNASSIGNED_AFTER_1238"
   slot_id: dashboard-widgets-next-fast-feature-audit
