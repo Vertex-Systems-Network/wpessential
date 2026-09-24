@@ -1,9 +1,9 @@
 {
-  "schema_version": 140,
+  "schema_version": 141,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "8f844ec4211c73f44d27a048e7a5cf7505126d23",
-  "mode": "DASHBOARD_WIDGETS_QUERY_ACTIVATION_POST_MERGE_RECONCILIATION_V1",
-  "source_issue": "#1219",
+  "queue_anchor_main_sha": "815f35910367b9103954de80975fc76bf8807d69",
+  "mode": "DASHBOARD_WIDGETS_QUERY_DATA_SOURCE_SOURCE_POST_MERGE_RECONCILIATION_V1",
+  "source_issue": "#1222",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -184,9 +184,10 @@
     "1210": "COMPLETED_ON_PR_1211_SITE_TARGETING_SOURCE_POST_MERGE_RECONCILIATION_V1",
     "1212": "COMPLETED_ON_PR_1214_QUERY_DATA_SOURCE_TRANSITION_AUDIT_V1",
     "1213": "COMPLETED_ON_PR_1216_BOUNDED_QUERY_DATA_SOURCE_BINDING_CONTRACT_V1",
-    "1215": "CLAIMABLE_AFTER_1219_SHARED_TRUTH_RECONCILIATION_TERMINAL_MERGE",
+    "1215": "COMPLETED_ON_PR_1221_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1",
     "1217": "COMPLETED_ON_PR_1218_QUERY_BOUNDED_CENTRAL_PRO_ACTIVATION_PREREQUISITE_V1",
-    "1219": "ACTIVE_QUERY_ACTIVATION_POST_MERGE_SHARED_TRUTH_RECONCILIATION_V1"
+    "1219": "COMPLETED_ON_PR_1220_QUERY_ACTIVATION_POST_MERGE_SHARED_TRUTH_RECONCILIATION_V1",
+    "1222": "ACTIVE_QUERY_DATA_SOURCE_SOURCE_POST_MERGE_SHARED_TRUTH_RECONCILIATION_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -215,7 +216,8 @@
       "integration_full_gate": "all path-applicable exact-head workflows required by merge/security/current-change safety before merge; eligible non-blocking material runner work is deferred and deduplicated through the Runner Benchmark final batch",
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
-    }
+    },
+    "next_safe_action": "After Issue #1222 terminal merge, create a fresh exact-main Dashboard Widgets transition audit. Do not infer or claim the next runtime/product tranche before that audit."
   },
   "roles": {
     "SUPERVISOR": {
@@ -4306,7 +4308,7 @@
       "slot_id": "dashboard-widgets-bounded-query-data-source-binding-source-v1",
       "title": "Dashboard Widgets bounded Query/Data-Source binding source V1",
       "role": "ANY",
-      "status": "CLAIMABLE_AFTER_1219_TERMINAL_MERGE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1",
       "source": "Issue #1215 / contract Issue #1213",
       "dependencies": [
@@ -4349,7 +4351,22 @@
       "close_condition": "After both dependencies are terminal PASS: exact ten-file Dashboard Widgets source/test implementation, focused tests and all path-applicable exact-head CI green",
       "canonical_query_read_execution_allowed": true,
       "canonical_query_read_execution_boundary": "Only via QueryReadConsumerInterface V1 after QueryModule activation #1217; Query retains Policy authorization, planning and provider execution ownership",
-      "claim_rule": "Claim only after Issue #1219 closes completed on its shared-truth PR; then use the exact ten-file allowlist with no scope widening."
+      "claim_rule": "Claim only after Issue #1219 closes completed on its shared-truth PR; then use the exact ten-file allowlist with no scope widening.",
+      "terminal_result": "PASS_BOUNDED_QUERY_DATA_SOURCE_BINDING_SOURCE_V1",
+      "terminal_evidence": {
+        "issue": 1215,
+        "pr": 1221,
+        "head": "a6be8af09ddce141a952885b0ddd5e6fff39ebdc",
+        "governance_run": 35996551115,
+        "architecture_run": 35996551192,
+        "php_quality_run": 35996551145,
+        "platform_compatibility_run": 35996551121,
+        "distributable_run": 35996551287,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "815f35910367b9103954de80975fc76bf8807d69"
+      }
     },
     {
       "priority": 1025,
@@ -4404,7 +4421,7 @@
       "slot_id": "dashboard-widgets-query-activation-post-merge-reconciliation-v1",
       "title": "Dashboard Widgets Query activation post-merge shared-truth reconciliation V1",
       "role": "SUPERVISOR_ONLY",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_QUERY_ACTIVATION_POST_MERGE_RECONCILIATION_V1",
       "source": "Issue #1219 / terminal #1213/#1216 and #1217/#1218",
       "dependencies": [
@@ -4439,7 +4456,59 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "supervisor/dashboard-widgets-query-activation-post-merge-reconciliation-v1",
-      "close_condition": "Exactly five authorized shared-truth files; RB-0048/RB-0049 terminal evidence reconciled; RB-0050 exact-head governance/architecture PASS; zero review blockers; zero behind; resulting main leaves #1215 claimable."
+      "close_condition": "Exactly five authorized shared-truth files; RB-0048/RB-0049 terminal evidence reconciled; RB-0050 exact-head governance/architecture PASS; zero review blockers; zero behind; resulting main leaves #1215 claimable.",
+      "terminal_result": "PASS_QUERY_ACTIVATION_POST_MERGE_SHARED_TRUTH_RECONCILIATION_V1",
+      "terminal_evidence": {
+        "issue": 1219,
+        "pr": 1220,
+        "head": "71b9b8c314caddc0a837e83e2253a9b4a1468d6e",
+        "governance_run": 35995340341,
+        "architecture_run": 35995340385,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "a1d1061dc1c07f8c799138f11792e817f5d54f01"
+      }
+    },
+    {
+      "priority": 1028,
+      "slot_id": "dashboard-widgets-query-data-source-source-post-merge-reconciliation-v1",
+      "title": "Dashboard Widgets Query/Data-Source source post-merge shared-truth reconciliation V1",
+      "role": "SUPERVISOR_ONLY",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_QUERY_DATA_SOURCE_SOURCE_POST_MERGE_RECONCILIATION_V1",
+      "source": "Issue #1222 / terminal Issue #1215 / PR #1221",
+      "dependencies": [
+        "Issue #1215 / PR #1221 terminal PASS",
+        "RB-0051 terminal PASS",
+        "exact resulting main 815f35910367b9103954de80975fc76bf8807d69"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP implementation",
+        "provider execution widening",
+        "remote transport",
+        "assets",
+        "refresh/cache/background jobs",
+        "Definition/user-preference mutation",
+        "shared Platform source changes",
+        "P-006 runtime",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-query-source-post-merge-reconciliation-v1",
+      "close_condition": "Exactly five shared-truth files; RB-0050/RB-0051 terminal evidence reconciled; RB-0052 exact-head Governance/Architecture PASS; zero review blockers; zero behind; next product action remains fresh exact-main transition audit."
     }
   ],
   "historical_closeout": {
