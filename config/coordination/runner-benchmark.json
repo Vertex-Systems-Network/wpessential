@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1238",
-  "anchor_main_sha": "5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8",
+  "anchor_main_sha": "d46bb23f948ee6c943cf8cce82231c74918480f9",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -1945,9 +1945,37 @@
         "verdict PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1"
       ],
       "note": "Terminal bounded Default-Collapsed PASS only. Full Surface 10 runtime/product parity, collapsible disablement, dismissible, inventory discovery/hide, loading, refresh/cache/actions/providers/remote, deploy and release remain unpromoted."
+    },
+    {
+      "id": "RB-0061",
+      "source": "Issue #1242",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-native-registered-inventory-source-v1 exact head",
+      "dependencies": [
+        "RB-0060 terminal PASS",
+        "Issue #1240 / PR #1241 terminal shared-truth reconciliation",
+        "exact source base d46bb23f948ee6c943cf8cce82231c74918480f9"
+      ],
+      "authorization": "Exact eleven-file Dashboard Widgets registered-inventory source/test/shared-truth scope only; safe id/context/priority projection; no callback/args/title exposure, core-third-party classification, hide/remove mutation, public Ability/REST expansion, provider/remote/action execution, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-native-registered-inventory-source|issue1242|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Issue #1242 FAST feature contract",
+        "widget.inventory.discover_registered is SOFT_NATIVE / MUST_HAVE / P0_NATIVE",
+        "exact source base d46bb23f948ee6c943cf8cce82231c74918480f9",
+        "read-only environment seam projects only widget id/context/priority and ignores callback/title/args values",
+        "adapter fail-closed validation forbids malformed or expanded inventory rows"
+      ],
+      "note": "PASS may promote only PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1. Core/third-party classification, inventory hide/remove, collapsible/dismissible/loading, full Surface 10 runtime/product parity, deploy and release remain unpromoted."
     }
   ],
-  "last_reconciled_issue": "#1238",
+  "last_reconciled_issue": "#1240",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
