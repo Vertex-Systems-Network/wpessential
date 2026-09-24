@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1238",
-  "anchor_main_sha": "22355cb57a0e3891d3fccdb24c24c95ede258823",
+  "anchor_main_sha": "88d04846b909c2a467d812501d82290bbf7bcc39",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2127,7 +2127,7 @@
       "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_USER_REORDER_STATE_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
-      "environment": "agent/dashboard-widgets-bounded-native-user-reorder-state-v1 exact head",
+      "environment": "agent/dashboard-widgets-bounded-native-user-reorder-state-v1 exact head 0a981953ae437c96d20221c50c4e2ea6a095c24c",
       "dependencies": [
         "RB-0065 terminal PASS",
         "Issue #1250 / PR #1251 terminal Per-User Collapse State merge",
@@ -2138,22 +2138,56 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "dashboard-widgets|bounded-native-user-reorder-state|issue1252|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1253 exact head 0a981953ae437c96d20221c50c4e2ea6a095c24c",
+        "Governance Gate 36067471961 PASS",
+        "Architecture Guards 36067471959 PASS",
+        "PHP Quality Toolchain 36067471948 PASS",
+        "Platform Compatibility Matrix 36067471991 PASS",
+        "Distributable Package 36067471953 PASS",
+        "exact eleven authorized feature/test/shared-truth files",
+        "zero unresolved review threads/blockers",
+        "zero commits behind main",
+        "PR #1253 merged as 88d04846b909c2a467d812501d82290bbf7bcc39",
+        "Issue #1252 closed completed",
+        "verdict PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1"
+      ],
+      "note": "PASS may promote only PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1. Reorder mutation/AJAX execution, effective runtime reordering, inventory hide/remove, full Surface 10 runtime/product parity, deploy and release remain unpromoted."
+    },
+    {
+      "id": "RB-0067",
+      "source": "Issue #1254",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-native-collapsible-capability-v1 exact head",
+      "dependencies": [
+        "RB-0066 terminal PASS",
+        "Issue #1252 / PR #1253 terminal Per-User Reorder State merge",
+        "exact source base 88d04846b909c2a467d812501d82290bbf7bcc39"
+      ],
+      "authorization": "Exact seven-file Dashboard Widgets collapsible-capability compiler/test/shared-truth scope only; accept omitted/true presentation.collapsible through native WordPress postbox behavior; reject false/malformed; no custom JS/CSS/DOM interception, collapse mutation, inventory hide/remove, public Ability/REST expansion, provider/remote/action execution, shared Platform changes, P-006 runtime, certification, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-native-collapsible-capability|issue1254|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1252 FAST feature contract",
-        "widget.preference.user_reorder is SOFT_NATIVE / MUST_HAVE / P0_NATIVE",
-        "exact source base 22355cb57a0e3891d3fccdb24c24c95ede258823",
-        "read-only current-user meta-box-order_<screen> saved preference seam",
-        "supported contexts normal/side/column3/column4",
-        "saved per-context ID order preserved; duplicates deduped by first occurrence",
-        "malformed context/CSV/widget ID fails closed at adapter boundary",
-        "no user-meta/user-option writes or runtime reorder application"
+        "Issue #1254 FAST feature contract",
+        "widget.presentation.collapsible is SOFT_NATIVE / MUST_HAVE / P0_NATIVE",
+        "exact source base 88d04846b909c2a467d812501d82290bbf7bcc39",
+        "WordPress ordinary postboxes provide native Show/Hide panel toggle behavior",
+        "core postbox.js binds native collapse to postbox heading/handle and has no general per-widget disable flag",
+        "absent/true accepted; false/malformed fail closed at compile time",
+        "no custom UI assets or user-state writes"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_NATIVE_USER_REORDER_STATE_V1. Reorder mutation/AJAX execution, effective runtime reordering, inventory hide/remove, full Surface 10 runtime/product parity, deploy and release remain unpromoted."
+      "note": "PASS may promote only PASS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1. Non-collapsible custom emulation, collapse mutation, inventory hide/remove, full Surface 10 runtime/product parity, deploy and release remain unpromoted."
     }
   ],
-  "last_reconciled_issue": "#1250",
+  "last_reconciled_issue": "#1252",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
