@@ -325,6 +325,42 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         self::assertSame(['content' => 'Dynamic content'], $renderer->seenInput?->bindings);
     }
 
+    public function testQueryResolvesBeforeDynamicAndRendererReceivesBothBindings(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer([
+            'contract_version' => 1,
+            'ok' => true,
+            'source_ref' => 'wordpress.posts',
+            'projection' => ['post.title'],
+            'rows' => [['post.title' => 'Query title']],
+            'returned' => 1,
+            'error' => null,
+        ]);
+        $resolver = new RuntimeDynamicResolver(new DynamicValueResult(true, 'Dynamic text'));
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->queryAndDynamicRenderSource(),
+        ));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>combined</p>'));
+        $context = new ExecutionContext(new Principal(7), 3);
+        $executor = $this->executor(
+            $repository,
+            $renderer,
+            new RuntimeRenderRoleProvider(),
+            new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer),
+            new DashboardWidgetDynamicBindingExecutor($resolver),
+        );
+
+        $result = $executor->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $result->status);
+        self::assertSame(1, $consumer->calls);
+        self::assertSame(1, $resolver->calls);
+        self::assertSame(
+            ['text' => 'Dynamic text', 'title' => 'Query title'],
+            $renderer->seenInput?->bindings,
+        );
+    }
+
     public function testDynamicFailurePreventsRendererAndFallback(): void
     {
         $resolver = new RuntimeDynamicResolver(
@@ -617,6 +653,34 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         }
 
         return $renderSource;
+    }
+
+    /** @return array<string,mixed> */
+    private function queryAndDynamicRenderSource(): array
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($announcement);
+
+        return [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+                'page_size' => 1,
+            ],
+            'bindings' => [
+                'title' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+                'text' => [
+                    'source' => 'dynamic',
+                    'source_ref' => 'context.site',
+                    'value_ref' => 'display_name',
+                    'resource' => 'site',
+                ],
+            ],
+        ];
     }
 
     /** @return array<string,mixed> */
