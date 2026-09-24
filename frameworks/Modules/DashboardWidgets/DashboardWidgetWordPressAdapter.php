@@ -98,6 +98,36 @@ final class DashboardWidgetWordPressAdapter
                 );
             } catch (Throwable) {
                 // Registration failure for one safe planned entry is isolated.
+                continue;
+            }
+
+            if (!$descriptor->defaultCollapsed) {
+                continue;
+            }
+
+            $screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
+            $hook = 'postbox_classes_' . $screenId . '_' . $entry['id'];
+            try {
+                $this->environment->registerFilter(
+                    $hook,
+                    function (array $classes) use ($screenId): array {
+                        try {
+                            if ($this->environment->hasClosedPostboxPreference($screenId)) {
+                                return $classes;
+                            }
+                        } catch (Throwable) {
+                            return $classes;
+                        }
+
+                        if (!in_array('closed', $classes, true)) {
+                            $classes[] = 'closed';
+                        }
+
+                        return $classes;
+                    },
+                );
+            } catch (Throwable) {
+                // Default-collapsed projection is optional and must not break registration.
             }
         }
     }

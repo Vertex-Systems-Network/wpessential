@@ -32,6 +32,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertSame('default', $descriptor->priority);
         self::assertTrue($descriptor->networkDashboard);
         self::assertFalse($descriptor->defaultHidden);
+        self::assertFalse($descriptor->defaultCollapsed);
         self::assertNull($descriptor->siteScope);
         self::assertSame([], $descriptor->siteIds);
     }
@@ -67,6 +68,43 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
             try {
                 $this->compiler()->compile($this->definition(widget: $widget));
                 self::fail('Expected malformed Dashboard Widget default-hidden metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
+    public function testCompilesBoundedNativeDefaultCollapsedState(): void
+    {
+        $widget = $this->widget();
+        $widget['presentation'] = ['default_collapsed' => true];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+
+        self::assertTrue($descriptor->defaultCollapsed);
+
+        $emptyPresentation = $this->widget();
+        $emptyPresentation['presentation'] = [];
+        self::assertFalse(
+            $this->compiler()->compile($this->definition(widget: $emptyPresentation))->defaultCollapsed,
+        );
+    }
+
+    public function testRejectsMalformedNativeDefaultCollapsedMetadata(): void
+    {
+        $valid = $this->widget();
+
+        foreach ([
+            array_replace($valid, ['presentation' => 'closed']),
+            array_replace($valid, ['presentation' => [true]]),
+            array_replace($valid, ['presentation' => ['unknown' => true]]),
+            array_replace($valid, ['presentation' => ['default_collapsed' => 1]]),
+            array_replace($valid, ['presentation' => ['default_collapsed' => 'yes']]),
+            array_replace($valid, ['presentation' => ['default_collapsed' => null]]),
+        ] as $widget) {
+            try {
+                $this->compiler()->compile($this->definition(widget: $widget));
+                self::fail('Expected malformed Dashboard Widget default-collapsed metadata to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
             }

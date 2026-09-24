@@ -221,6 +221,7 @@ final class DashboardWidgetsModuleTest extends TestCase
                     ? $screen->id
                     : null;
             }
+            public function hasClosedPostboxPreference(string $screenId): bool { return false; }
             public function outputTrustedHtml(string $html): void {}
         };
         $services = $this->baseServices();

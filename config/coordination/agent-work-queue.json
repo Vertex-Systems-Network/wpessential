@@ -1,9 +1,9 @@
 {
-  "schema_version": 147,
+  "schema_version": 148,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "a3d7ccef7c8cba7baf5a94bafd938da3f86979d0",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
-  "source_issue": "#1236",
+  "queue_anchor_main_sha": "a79bf3e2e5b3f6a026ce31184f7652f933508969",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
+  "source_issue": "#1238",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -194,7 +194,8 @@
     "1230": "COMPLETED_ON_PR_1231_BOUNDED_RENDERER_FAILURE_ERROR_STATE_CONTRACT_V1",
     "1232": "COMPLETED_ON_PR_1233_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1",
     "1234": "COMPLETED_ON_PR_1235_ERROR_STATE_SOURCE_SHARED_TRUTH_RECONCILIATION_V1",
-    "1236": "ACTIVE_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1"
+    "1236": "COMPLETED_ON_PR_1237_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
+    "1238": "ACTIVE_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -224,7 +225,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Validate and merge #1236 as the FAST Turn-B milestone. After terminal merge, verify resulting main and audit the next smallest dependency-supported feature; do not create a routine reconciliation PR.",
+    "next_safe_action": "Validate and merge #1238 as the FAST Turn-B milestone. After terminal merge, verify resulting main and audit the next smallest dependency-supported feature; do not create a routine reconciliation PR.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -4897,7 +4898,7 @@
       "slot_id": "dashboard-widgets-bounded-native-default-hidden-state-v1",
       "title": "Dashboard Widgets bounded Native Default-Hidden State V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
       "source": "Issue #1236 / fresh exact-main FAST Surface 10 audit",
       "dependencies": [
@@ -4943,7 +4944,74 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-native-default-hidden-state-v1",
-      "close_condition": "Exact fourteen-file feature/shared-truth scope; bounded default-hidden filter semantics; focused tests; RB-0059 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1."
+      "close_condition": "Exact fourteen-file feature/shared-truth scope; bounded default-hidden filter semantics; focused tests; RB-0059 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1.",
+      "terminal_result": "PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
+      "terminal_evidence": {
+        "issue": 1236,
+        "pr": 1237,
+        "head": "6c90286c3ad32b9ac40f55d744e48f6d29a472d1",
+        "governance_run": 36017952292,
+        "architecture_run": 36017952019,
+        "platform_compatibility_run": 36017952031,
+        "distributable_run": 36017951864,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "a79bf3e2e5b3f6a026ce31184f7652f933508969"
+      }
+    },
+    {
+      "priority": 1036,
+      "slot_id": "dashboard-widgets-bounded-native-default-collapsed-state-v1",
+      "title": "Dashboard Widgets bounded Native Default-Collapsed State V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
+      "source": "Issue #1238 / fresh exact-main FAST Surface 10 audit",
+      "dependencies": [
+        "Issue #1236 / PR #1237 terminal Default-Hidden PASS",
+        "RB-0059 terminal PASS",
+        "exact source base a79bf3e2e5b3f6a026ce31184f7652f933508969"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": true,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressEnvironmentInterface.php",
+        "frameworks/Modules/DashboardWidgets/NativeWordPressDashboardWidgetEnvironment.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressAdapter.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/NativeWordPressDashboardWidgetEnvironmentTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetWordPressAdapterTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "user meta writes/updates/deletes",
+        "forcing collapsed state when saved preference exists",
+        "collapsible disablement/dismissible behavior",
+        "inventory hide/removal/discovery/classification",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "actions or arbitrary callbacks",
+        "asset enqueue/register side effects",
+        "loading/refresh/cache/background jobs",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-native-default-collapsed-state-v1",
+      "close_condition": "Exact fourteen-file feature/shared-truth scope; saved user collapse preference wins; focused tests; RB-0060 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1."
     }
   ],
   "historical_closeout": {

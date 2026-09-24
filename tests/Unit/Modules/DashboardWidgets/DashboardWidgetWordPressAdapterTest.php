@@ -143,6 +143,99 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         );
     }
 
+    public function testDefaultCollapsedUsesNativePostboxClassOnlyWithoutSavedPreference(): void
+    {
+        $definitions = [
+            $this->definition(
+                '40000000-0000-4000-8000-000000000091',
+                'collapsed-site',
+                'collapsed-site',
+                defaultCollapsed: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000092',
+                'open-site',
+                'open-site',
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000093',
+                'other-site',
+                'other-site',
+                target: ['scope' => 'site_ids', 'site_ids' => [99]],
+                defaultCollapsed: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000094',
+                'collision-a',
+                'collapse-collision',
+                defaultCollapsed: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000095',
+                'collision-b',
+                'collapse-collision',
+                defaultCollapsed: true,
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000096',
+                'collapsed-network',
+                'collapsed-network',
+                networkDashboard: true,
+                defaultCollapsed: true,
+            ),
+        ];
+        [$adapter, , $environment] = $this->harness($definitions);
+        $adapter->registerHooks();
+        $adapter->registerSiteDashboard();
+
+        $siteFilters = array_values(array_filter(
+            $environment->filters,
+            static fn (array $filter): bool =>
+                str_starts_with($filter['hook'], 'postbox_classes_dashboard_'),
+        ));
+        self::assertCount(1, $siteFilters);
+        self::assertSame(
+            'postbox_classes_dashboard_wpe_dashboard_widget_collapsed-site',
+            $siteFilters[0]['hook'],
+        );
+
+        $siteCallback = $siteFilters[0]['callback'];
+        $environment->closedPostboxPreferenceByScreen['dashboard'] = false;
+        self::assertSame(['postbox', 'closed'], $siteCallback(['postbox']));
+        self::assertSame(['closed'], $siteCallback(['closed']));
+
+        $environment->closedPostboxPreferenceByScreen['dashboard'] = true;
+        self::assertSame(['postbox'], $siteCallback(['postbox']));
+
+        $environment->throwOnClosedPostboxPreference = true;
+        self::assertSame(['postbox'], $siteCallback(['postbox']));
+        $environment->throwOnClosedPostboxPreference = false;
+
+        $adapter->registerNetworkDashboard();
+        $networkFilters = array_values(array_filter(
+            $environment->filters,
+            static fn (array $filter): bool =>
+                str_starts_with($filter['hook'], 'postbox_classes_dashboard-network_'),
+        ));
+        self::assertCount(1, $networkFilters);
+        self::assertSame(
+            'postbox_classes_dashboard-network_wpe_dashboard_widget_collapsed-network',
+            $networkFilters[0]['hook'],
+        );
+
+        [$failedAdapter, , $failedEnvironment] = $this->harness([
+            $this->definition(
+                '40000000-0000-4000-8000-000000000097',
+                'failed-collapse',
+                'failed-collapse',
+                defaultCollapsed: true,
+            ),
+        ]);
+        $failedEnvironment->throwOnWidgetRegistration = true;
+        $failedAdapter->registerSiteDashboard();
+        self::assertSame([], $failedEnvironment->filters);
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -446,6 +539,9 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnFirstHook = false;
             public bool $throwOnCurrentSiteId = false;
             public bool $throwOnScreenId = false;
+            public bool $throwOnClosedPostboxPreference = false;
+            /** @var array<string,bool> */
+            public array $closedPostboxPreferenceByScreen = [];
             private int $hookAttempts = 0;
 
             public function registerAction(string $hook, callable $callback): void
@@ -492,6 +588,13 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 return is_object($screen) && isset($screen->id) && is_string($screen->id)
                     ? $screen->id
                     : null;
+            }
+            public function hasClosedPostboxPreference(string $screenId): bool
+            {
+                if ($this->throwOnClosedPostboxPreference) {
+                    throw new RuntimeException('closed postbox preference unavailable');
+                }
+                return $this->closedPostboxPreferenceByScreen[$screenId] ?? false;
             }
             public function outputTrustedHtml(string $html): void { $this->outputs[] = $html; }
         };
@@ -574,6 +677,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ?array $target = null,
         bool $withErrorState = false,
         bool $defaultHidden = false,
+        bool $defaultCollapsed = false,
     ): Definition {
         $widget = [
             'key' => $key,
@@ -597,6 +701,10 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
 
         if ($defaultHidden) {
             $widget['inventory'] = ['default_hidden' => true];
+        }
+
+        if ($defaultCollapsed) {
+            $widget['presentation'] = ['default_collapsed' => true];
         }
 
         if ($withErrorState) {

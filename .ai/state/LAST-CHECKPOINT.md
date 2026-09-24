@@ -1,63 +1,64 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — FAST feature #1236 Native Default-Hidden State V1 active
+## 2026-09-24 — FAST feature #1238 Native Default-Collapsed State V1 active
 
 ### Exact repository truth
 
-- Exact current main: `a3d7ccef7c8cba7baf5a94bafd938da3f86979d0`.
-- Issue #1234 / PR #1235 — Error-State source shared-truth reconciliation + FAST policy — terminal PASS.
-  - exact head `d0e466565054cc51695bb6013f576f3e77525872`;
-  - Governance `36014261934` PASS;
-  - Architecture `36014262076` PASS;
-  - exact five shared-truth files;
+- Exact current main: `a79bf3e2e5b3f6a026ce31184f7652f933508969`.
+- Issue #1236 / PR #1237 — Bounded Native Default-Hidden State V1 — terminal PASS.
+  - exact head `6c90286c3ad32b9ac40f55d744e48f6d29a472d1`;
+  - Governance `36017952292` PASS;
+  - Architecture `36017952019` PASS;
+  - Platform Compatibility `36017952031` PASS;
+  - Distributable Package `36017951864` PASS;
+  - exact fourteen-file implementation/test/shared-truth scope;
   - zero blockers and zero behind;
-  - merge `a3d7ccef7c8cba7baf5a94bafd938da3f86979d0`.
-- RB-0058 is reconciled terminal PASS from that exact-head evidence.
-- FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` is active.
+  - merge `a79bf3e2e5b3f6a026ce31184f7652f933508969`;
+  - verdict `PASS_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1`.
+- RB-0059 is reconciled terminal PASS from exact-head evidence.
+- FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
 ### Fresh exact-main Surface 10 audit
 
 Next smallest dependency-supported feature:
 
-`dashboard-widgets.inventory.default_hidden`
+`dashboard-widgets.presentation.default_collapsed`
 
 Audit verdict:
 
-`READY_FOR_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1`
+`READY_FOR_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1`
 
-Why:
-- P0_NATIVE / MUST_HAVE / SOFT_NATIVE;
-- repository native audit already identifies WordPress `default_hidden_meta_boxes`;
-- current runtime already owns safe registration, site/network targeting and collision suppression;
-- feature is default-state projection only and does not write user preferences;
-- smaller/safer than loading, refresh/cache, dismiss/preferences, actions, provider or remote execution.
+Safety decision:
+- A naive unconditional `closed` postbox class would override saved user intent.
+- V1 therefore applies authored default collapse only when saved current-user `closedpostboxes_<screen>` metadata is confirmed absent.
+- WPE reads preference existence only; it does not write/update/delete user metadata.
 
-### #1236 frozen feature contract + implementation
+### #1238 frozen feature contract + implementation
 
-- Optional authored `widget.inventory.default_hidden: bool`.
-- Absent inventory/default_hidden => false.
-- Unknown inventory keys or non-boolean value => compile rejection.
-- Descriptor carries immutable `defaultHidden`.
-- WordPress environment adds bounded filter registration and screen-id projection.
-- Adapter registers `default_hidden_meta_boxes` once with two args.
-- Only exact screens `dashboard` and `dashboard-network` are eligible.
-- Default-hidden ids come from the exact same canonical target/collision plan used by registration.
-- Existing hidden ids are preserved; WPE ids are appended once.
-- Site-target eligibility and network-dashboard separation remain authoritative.
-- Unsupported/malformed screen or environment/repository/compiler failure returns existing hidden list unchanged.
-- No user-meta write, persistent preference mutation, inventory removal, provider/remote/action execution, loading, refresh/cache or shared Platform widening.
+- Optional authored `widget.presentation.default_collapsed: bool`.
+- Absent presentation/default_collapsed => false.
+- Unknown presentation keys or non-boolean value => compile rejection.
+- Descriptor carries immutable `defaultCollapsed`.
+- WordPress environment exposes read-only `hasClosedPostboxPreference(screenId)`.
+- Only exact `dashboard` and `dashboard-network` screen ids are supported by the native preference seam.
+- After successful WPE widget registration and only when `defaultCollapsed=true`, adapter registers the exact dynamic native postbox-class filter for that WPE widget.
+- Saved preference metadata exists => existing classes unchanged.
+- Saved preference confirmed absent => append `closed` once.
+- Preference read failure => classes unchanged.
+- Collision-suppressed, target-ineligible, malformed or registration-failed widgets receive no default-collapsed filter.
+- No user-meta write, collapsible disablement, dismissible state, inventory removal/discovery, provider/remote/action execution, loading, refresh/cache or shared Platform widening.
 
 ### FAST delivery status
 
-- Active PR: **#1237 — Dashboard Widgets: bounded Native Default-Hidden State V1**.
-- Exact current feature head will be validated by RB-0059.
+- Active PR: **#1239 — Dashboard Widgets: bounded Native Default-Collapsed State V1**.
+- Exact current feature head will be validated by RB-0060.
 
 Turn A scope is exactly fourteen files:
 - five Dashboard Widgets runtime/WordPress files;
 - four focused unit-test files;
 - five shared-truth files.
 
-RB-0059 is the single pending feature merge gate. After terminal merge, no separate reconciliation PR is expected; terminal issue evidence + resulting-main verification close the feature unless real divergence exists.
+RB-0060 is the single pending feature merge gate. After terminal merge, no separate reconciliation PR is expected; terminal issue evidence + resulting-main verification close the feature unless real divergence exists.
 
 ### Persistent recovery order
 

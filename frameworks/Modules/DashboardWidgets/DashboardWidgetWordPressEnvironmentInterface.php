@@ -30,5 +30,7 @@ interface DashboardWidgetWordPressEnvironmentInterface
 
     public function screenId(mixed $screen): ?string;
 
+    public function hasClosedPostboxPreference(string $screenId): bool;
+
     public function outputTrustedHtml(string $html): void;
 }
