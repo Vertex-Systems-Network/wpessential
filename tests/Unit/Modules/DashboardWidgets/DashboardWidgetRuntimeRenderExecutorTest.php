@@ -9,10 +9,12 @@ use RuntimeException;
 use Throwable;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\RendererInterface;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRoleMembershipProviderInterface;
@@ -26,6 +28,9 @@ use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
+use WPEssential\Platform\DataSources\DataSourceAuthorizationMapping;
+use WPEssential\Platform\DataSources\DataSourceDescriptor;
+use WPEssential\Platform\DataSources\DataSourceRegistry;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\Rendering\RenderFailureCode;
 use WPEssential\Platform\Rendering\RenderInput;
@@ -194,10 +199,74 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         self::assertNotNull($renderer->seenInput);
     }
 
+
+    public function testVisibilityDenialOccursBeforeAnyQueryRead(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer($this->querySuccessResult());
+        $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
+        $repository = $this->repositoryWith($this->definition(
+            visibility: ['users' => [999]],
+            renderSource: $this->queryRenderSource(),
+        ));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>unused</p>'));
+        $executor = $this->executor($repository, $renderer, new RuntimeRenderRoleProvider(), $queryBindings);
+
+        $result = $executor->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_VISIBILITY_DENIED, $result->status);
+        self::assertSame(0, $consumer->calls);
+        self::assertSame(0, $renderer->calls);
+    }
+
+    public function testQuerySuccessForwardsExactContextToQueryAndRenderer(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer($this->querySuccessResult());
+        $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
+        $repository = $this->repositoryWith($this->definition(renderSource: $this->queryRenderSource()));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>safe query widget</p>'));
+        $roles = new RuntimeRenderRoleProvider();
+        $executor = $this->executor($repository, $renderer, $roles, $queryBindings);
+        $context = $this->context();
+
+        $result = $executor->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $result->status);
+        self::assertSame($context, $consumer->seenContext);
+        self::assertSame($context, $renderer->seenContext);
+        self::assertSame(['content' => 'Query content'], $renderer->seenInput?->bindings);
+        self::assertSame(1, $consumer->calls);
+        self::assertSame(1, $renderer->calls);
+    }
+
+    public function testQueryFailureIsOpaqueAndPreventsRendererCall(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer([
+            'contract_version' => 1,
+            'ok' => false,
+            'source_ref' => 'wordpress.posts',
+            'projection' => [],
+            'rows' => [],
+            'returned' => 0,
+            'error' => ['message' => 'secret-provider-detail'],
+        ]);
+        $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
+        $repository = $this->repositoryWith($this->definition(renderSource: $this->queryRenderSource()));
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>unused</p>'));
+        $executor = $this->executor($repository, $renderer, new RuntimeRenderRoleProvider(), $queryBindings);
+
+        $result = $executor->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RUNTIME_FAILURE, $result->status);
+        self::assertSame('', $result->html);
+        self::assertSame(0, $renderer->calls);
+        self::assertSame(1, $consumer->calls);
+    }
+
     private function executor(
         DefinitionRepositoryInterface $definitions,
         RuntimeRenderCapturingRenderer $renderer,
         RuntimeRenderRoleProvider $roles,
+        ?DashboardWidgetQueryBindingExecutor $queryBindings = null,
     ): DashboardWidgetRuntimeRenderExecutor {
         $blueprints = new ComponentBlueprintRegistry();
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
@@ -230,6 +299,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             new DashboardWidgetVisibilityEvaluator($capabilities, $roles),
             $renderSourceCompiler,
             $renderer,
+            $queryBindings,
         );
     }
 
@@ -281,6 +351,61 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             revision: 1,
             dependencies: [],
         );
+    }
+
+
+    /** @return array<string,mixed> */
+    private function querySuccessResult(): array
+    {
+        return [
+            'contract_version' => 1,
+            'ok' => true,
+            'source_ref' => 'wordpress.posts',
+            'projection' => ['post.title'],
+            'rows' => [['post.title' => 'Query content']],
+            'returned' => 1,
+            'error' => null,
+        ];
+    }
+
+    private function queryRegistry(): DataSourceRegistry
+    {
+        $registry = new DataSourceRegistry();
+        $registry->register(new DataSourceDescriptor(
+            id: 'wordpress.posts',
+            sourceType: 'wordpress.posts',
+            capabilityVersion: 1,
+            fieldSchema: ['post.title' => 'string'],
+            predicates: ['eq'],
+            sortModes: ['field'],
+            paginationModes: ['offset'],
+            maxPageSize: 50,
+            authorization: new DataSourceAuthorizationMapping('wpessential/query/execute', 'read', 'post'),
+        ));
+
+        return $registry;
+    }
+
+    /** @return array<string,mixed> */
+    private function queryRenderSource(): array
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        self::assertNotNull($richText);
+
+        return [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'query' => [
+                'contract_version' => 1,
+                'source_ref' => 'wordpress.posts',
+                'page_size' => 1,
+            ],
+            'bindings' => [
+                'content' => ['source' => 'query', 'field_ref' => 'post.title', 'mode' => 'first'],
+            ],
+        ];
     }
 
     private function context(): ExecutionContext
@@ -335,5 +460,28 @@ final class RuntimeRenderRoleProvider implements DashboardWidgetRoleMembershipPr
         $this->seenContext = $context;
 
         return true;
+    }
+}
+
+
+final class RuntimeRenderQueryConsumer implements QueryReadConsumerInterface
+{
+    public int $calls = 0;
+    public ?ExecutionContext $seenContext = null;
+
+    /** @param array<string,mixed> $result */
+    public function __construct(private array $result) {}
+
+    public function describe(string $sourceRef, ExecutionContext $context): array
+    {
+        return [];
+    }
+
+    public function read(array $request, ExecutionContext $context): array
+    {
+        ++$this->calls;
+        $this->seenContext = $context;
+
+        return $this->result;
     }
 }

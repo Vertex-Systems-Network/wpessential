@@ -7,11 +7,13 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Contracts\CapabilityCheckerInterface;
+use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
@@ -23,12 +25,14 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetWordPressEnvironmentInte
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
+use WPEssential\Modules\Query\QueryModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
+use WPEssential\Platform\DataSources\DataSourceRegistry;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
@@ -73,12 +77,14 @@ final class DashboardWidgetsModuleTest extends TestCase
         $services->set('platform.abilities.wordpress', $bridge);
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
         (new RenderingServiceRegistrar())->register($services);
+        $this->addQueryServices($services);
 
         (new DashboardWidgetsModule())->register($services);
 
         self::assertInstanceOf(DashboardWidgetsReadService::class, $services->get(DashboardWidgetsModule::SERVICE_READ));
         self::assertInstanceOf(DashboardWidgetContentClassCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER));
         self::assertInstanceOf(DashboardWidgetRenderSourceCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_RENDER_SOURCE_COMPILER));
+        self::assertInstanceOf(DashboardWidgetQueryBindingExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_QUERY_BINDING_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetComponentBlueprintCatalog::class, $services->get(DashboardWidgetsModule::SERVICE_COMPONENT_CATALOG));
         self::assertInstanceOf(DashboardWidgetTrustedComponentRenderer::class, $services->get(DashboardWidgetsModule::SERVICE_TRUSTED_COMPONENT_RENDERER));
         self::assertInstanceOf(DashboardWidgetComponentRegistrar::class, $services->get(DashboardWidgetsModule::SERVICE_COMPONENT_REGISTRAR));
@@ -299,8 +305,34 @@ final class DashboardWidgetsModuleTest extends TestCase
             new WordPressAbilityBridge($abilities, $environment, new WordPressExecutionContextFactory($environment)),
         );
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+        $this->addQueryServices($services);
 
         return $services;
+    }
+
+
+    private function addQueryServices(ServiceRegistry $services): void
+    {
+        $services->set('platform.data-sources', new DataSourceRegistry());
+        $services->set(QueryModule::SERVICE_READ_CONSUMER, new class implements QueryReadConsumerInterface {
+            public function describe(string $sourceRef, ExecutionContext $context): array
+            {
+                return [];
+            }
+
+            public function read(array $request, ExecutionContext $context): array
+            {
+                return [
+                    'contract_version' => self::CONTRACT_VERSION,
+                    'ok' => false,
+                    'source_ref' => '',
+                    'projection' => [],
+                    'rows' => [],
+                    'returned' => 0,
+                    'error' => null,
+                ];
+            }
+        });
     }
 
     private function environment(): WordPressAbilityEnvironmentInterface
