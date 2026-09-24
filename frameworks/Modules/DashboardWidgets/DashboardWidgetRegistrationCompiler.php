@@ -20,10 +20,13 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'visibility', 'render_source'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source'];
 
     /** @var list<string> */
     private const INVENTORY_KEYS = ['default_hidden'];
+
+    /** @var list<string> */
+    private const PRESENTATION_KEYS = ['default_collapsed'];
 
     /** @var list<string> */
     private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
@@ -99,6 +102,7 @@ final readonly class DashboardWidgetRegistrationCompiler
 
         [$networkDashboard, $siteScope, $siteIds] = $this->compileTarget($widget);
         $defaultHidden = $this->compileDefaultHidden($widget);
+        $defaultCollapsed = $this->compileDefaultCollapsed($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -109,9 +113,35 @@ final readonly class DashboardWidgetRegistrationCompiler
             priority: $priority,
             networkDashboard: $networkDashboard,
             defaultHidden: $defaultHidden,
+            defaultCollapsed: $defaultCollapsed,
             siteScope: $siteScope,
             siteIds: $siteIds,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileDefaultCollapsed(array $widget): bool
+    {
+        if (!array_key_exists('presentation', $widget)) {
+            return false;
+        }
+
+        $presentation = $widget['presentation'];
+        if (!is_array($presentation) || ($presentation !== [] && array_is_list($presentation))) {
+            throw new InvalidArgumentException('Dashboard Widget presentation metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Dashboard Widget presentation metadata');
+
+        if (!array_key_exists('default_collapsed', $presentation)) {
+            return false;
+        }
+        if (!is_bool($presentation['default_collapsed'])) {
+            throw new InvalidArgumentException('Dashboard Widget presentation.default_collapsed must be boolean.');
+        }
+
+        return $presentation['default_collapsed'];
     }
 
     /**
