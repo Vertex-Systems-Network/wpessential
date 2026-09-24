@@ -90,6 +90,81 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         self::assertSame(['dashboard', 'dashboard-network'], $seen);
     }
 
+    public function testDiscoversOnlySafeRegisteredDashboardInventoryMetadata(): void
+    {
+        $hadMetaBoxes = array_key_exists('wp_meta_boxes', $GLOBALS);
+        $previousMetaBoxes = $GLOBALS['wp_meta_boxes'] ?? null;
+
+        try {
+            $GLOBALS['wp_meta_boxes'] = [
+                'dashboard' => [
+                    'normal' => [
+                        'high' => [
+                            'z_widget' => [
+                                'title' => '<strong>Secret title</strong>',
+                                'callback' => static fn (): string => 'secret-callback',
+                                'args' => ['token' => 'do-not-expose'],
+                            ],
+                            'a-widget' => ['title' => 'A'],
+                        ],
+                    ],
+                    'side' => [
+                        'sorted' => [
+                            'third.party:widget' => ['title' => 'Third party'],
+                        ],
+                    ],
+                ],
+                'dashboard-network' => [
+                    'normal' => [
+                        'core' => [
+                            'network_widget' => ['title' => 'Network'],
+                        ],
+                    ],
+                ],
+            ];
+
+            $environment = new NativeWordPressDashboardWidgetEnvironment();
+
+            self::assertSame(
+                [
+                    ['id' => 'a-widget', 'context' => 'normal', 'priority' => 'high'],
+                    ['id' => 'z_widget', 'context' => 'normal', 'priority' => 'high'],
+                    ['id' => 'third.party:widget', 'context' => 'side', 'priority' => 'sorted'],
+                ],
+                $environment->discoverRegisteredDashboardWidgets('dashboard'),
+            );
+            self::assertSame(
+                [['id' => 'network_widget', 'context' => 'normal', 'priority' => 'core']],
+                $environment->discoverRegisteredDashboardWidgets('dashboard-network'),
+            );
+        } finally {
+            if ($hadMetaBoxes) {
+                $GLOBALS['wp_meta_boxes'] = $previousMetaBoxes;
+            } else {
+                unset($GLOBALS['wp_meta_boxes']);
+            }
+        }
+    }
+
+    public function testInventorySeamRejectsUnsupportedOrMalformedRegistry(): void
+    {
+        $hadMetaBoxes = array_key_exists('wp_meta_boxes', $GLOBALS);
+        $previousMetaBoxes = $GLOBALS['wp_meta_boxes'] ?? null;
+
+        try {
+            $environment = new NativeWordPressDashboardWidgetEnvironment();
+
+            $this->expectException(\LogicException::class);
+            $environment->discoverRegisteredDashboardWidgets('edit-post');
+        } finally {
+            if ($hadMetaBoxes) {
+                $GLOBALS['wp_meta_boxes'] = $previousMetaBoxes;
+            } else {
+                unset($GLOBALS['wp_meta_boxes']);
+            }
+        }
+    }
+
     public function testProjectsCurrentRequestIdsAndTrustedOutput(): void
     {
         $outputs = [];
