@@ -294,9 +294,160 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         );
     }
 
+    public function testTypedPrimaryRendererFailureUsesOneShotTrustedErrorState(): void
+    {
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->literalRenderSource(withErrorState: true),
+        ));
+        $renderer = new RuntimeRenderSequenceRenderer([
+            new RenderOutput(false, '', [], RenderFailureCode::DependencyMismatch),
+            new RenderOutput(true, '<p>trusted error state</p>', ['wpe-dashboard-error']),
+        ]);
+        $executor = $this->executor($repository, $renderer, new RuntimeRenderRoleProvider());
+        $context = $this->context();
+
+        $result = $executor->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED_ERROR, $result->status);
+        self::assertSame('<p>trusted error state</p>', $result->html);
+        self::assertSame(['wpe-dashboard-error'], $result->assetHandles);
+        self::assertSame(RenderFailureCode::DependencyMismatch, $result->renderFailure);
+        self::assertSame(2, $renderer->calls);
+        self::assertSame($context, $renderer->seenContexts[0]);
+        self::assertSame($context, $renderer->seenContexts[1]);
+        self::assertSame(
+            ['text' => 'Please try again later.', 'title' => 'Widget unavailable'],
+            $renderer->seenInputs[1]->bindings,
+        );
+    }
+
+    public function testErrorStateDoesNotRunForQueryFailureOrPrimaryThrowable(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer([
+            'contract_version' => 1,
+            'ok' => false,
+            'source_ref' => 'wordpress.posts',
+            'projection' => [],
+            'rows' => [],
+            'returned' => 0,
+            'error' => ['message' => 'secret-provider-detail'],
+        ]);
+        $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->queryRenderSource(withEmptyState: false, withErrorState: true),
+        ));
+        $renderer = new RuntimeRenderSequenceRenderer([
+            new RenderOutput(true, '<p>must not render</p>'),
+        ]);
+        $executor = $this->executor($repository, $renderer, new RuntimeRenderRoleProvider(), $queryBindings);
+
+        $result = $executor->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RUNTIME_FAILURE, $result->status);
+        self::assertSame(0, $renderer->calls);
+
+        $throwingRepository = $this->repositoryWith($this->definition(
+            renderSource: $this->literalRenderSource(withErrorState: true),
+        ));
+        $throwingRenderer = new RuntimeRenderSequenceRenderer([
+            new RuntimeException('sensitive-primary-renderer-detail'),
+            new RenderOutput(true, '<p>fallback must not run</p>'),
+        ]);
+        $throwingExecutor = $this->executor(
+            $throwingRepository,
+            $throwingRenderer,
+            new RuntimeRenderRoleProvider(),
+        );
+
+        $throwingResult = $throwingExecutor->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RUNTIME_FAILURE, $throwingResult->status);
+        self::assertSame(1, $throwingRenderer->calls);
+    }
+
+    public function testFallbackFailureOrThrowableFailsClosedWithoutRecursion(): void
+    {
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->literalRenderSource(withErrorState: true),
+        ));
+
+        $failedFallback = new RuntimeRenderSequenceRenderer([
+            new RenderOutput(false, '', [], RenderFailureCode::DependencyMismatch),
+            new RenderOutput(false, '', [], RenderFailureCode::MissingBlueprint),
+            new RenderOutput(true, '<p>third call forbidden</p>'),
+        ]);
+        $failedResult = $this->executor(
+            $repository,
+            $failedFallback,
+            new RuntimeRenderRoleProvider(),
+        )->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERER_FAILED, $failedResult->status);
+        self::assertSame(RenderFailureCode::MissingBlueprint, $failedResult->renderFailure);
+        self::assertSame('', $failedResult->html);
+        self::assertSame(2, $failedFallback->calls);
+
+        $throwingFallback = new RuntimeRenderSequenceRenderer([
+            new RenderOutput(false, '', [], RenderFailureCode::DependencyMismatch),
+            new RuntimeException('sensitive-fallback-detail'),
+            new RenderOutput(true, '<p>third call forbidden</p>'),
+        ]);
+        $throwingResult = $this->executor(
+            $repository,
+            $throwingFallback,
+            new RuntimeRenderRoleProvider(),
+        )->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RUNTIME_FAILURE, $throwingResult->status);
+        self::assertSame('', $throwingResult->html);
+        self::assertSame(2, $throwingFallback->calls);
+    }
+
+    public function testEmptyStateResolvedPrimaryPreservesErrorStateFallback(): void
+    {
+        $consumer = new RuntimeRenderQueryConsumer([
+            'contract_version' => 1,
+            'ok' => true,
+            'source_ref' => 'wordpress.posts',
+            'projection' => ['post.title'],
+            'rows' => [],
+            'returned' => 0,
+            'error' => null,
+        ]);
+        $queryBindings = new DashboardWidgetQueryBindingExecutor($this->queryRegistry(), $consumer);
+        $repository = $this->repositoryWith($this->definition(
+            renderSource: $this->queryRenderSource(withEmptyState: true, withErrorState: true),
+        ));
+        $renderer = new RuntimeRenderSequenceRenderer([
+            new RenderOutput(false, '', [], RenderFailureCode::InvalidInput),
+            new RenderOutput(true, '<p>error after empty-state failure</p>'),
+        ]);
+        $context = $this->context();
+        $result = $this->executor(
+            $repository,
+            $renderer,
+            new RuntimeRenderRoleProvider(),
+            $queryBindings,
+        )->render($this->definitionId(), $context);
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED_ERROR, $result->status);
+        self::assertSame(RenderFailureCode::InvalidInput, $result->renderFailure);
+        self::assertSame(2, $renderer->calls);
+        self::assertSame(
+            ['text' => 'Nothing to display yet.', 'title' => 'No results'],
+            $renderer->seenInputs[0]->bindings,
+        );
+        self::assertSame(
+            ['text' => 'Please try again later.', 'title' => 'Widget unavailable'],
+            $renderer->seenInputs[1]->bindings,
+        );
+        self::assertSame($context, $renderer->seenContexts[0]);
+        self::assertSame($context, $renderer->seenContexts[1]);
+    }
+
     private function executor(
         DefinitionRepositoryInterface $definitions,
-        RuntimeRenderCapturingRenderer $renderer,
+        RendererInterface $renderer,
         RuntimeRenderRoleProvider $roles,
         ?DashboardWidgetQueryBindingExecutor $queryBindings = null,
     ): DashboardWidgetRuntimeRenderExecutor {
@@ -348,18 +499,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         ?array $renderSource = null,
         string $title = 'Safe Widget',
     ): Definition {
-        $catalog = new DashboardWidgetComponentBlueprintCatalog();
-        $richText = $catalog->forContentType('rich_text');
-        self::assertNotNull($richText);
-
-        $renderSource ??= [
-            'kind' => 'component_blueprint',
-            'blueprint_id' => $richText->id,
-            'blueprint_revision' => $richText->revision,
-            'bindings' => [
-                'content' => ['source' => 'literal', 'value' => 'Safe content'],
-            ],
-        ];
+        $renderSource ??= $this->literalRenderSource();
 
         return new Definition(
             id: $this->definitionId(),
@@ -385,6 +525,39 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         );
     }
 
+
+    /** @return array<string,mixed> */
+    private function literalRenderSource(bool $withErrorState = false): array
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        self::assertNotNull($richText);
+
+        $renderSource = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $richText->id,
+            'blueprint_revision' => $richText->revision,
+            'bindings' => [
+                'content' => ['source' => 'literal', 'value' => 'Safe content'],
+            ],
+        ];
+
+        if ($withErrorState) {
+            $announcement = $catalog->forContentType('announcement');
+            self::assertNotNull($announcement);
+            $renderSource['error_state'] = [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'Widget unavailable'],
+                    'text' => ['source' => 'literal', 'value' => 'Please try again later.'],
+                ],
+            ];
+        }
+
+        return $renderSource;
+    }
 
     /** @return array<string,mixed> */
     private function querySuccessResult(): array
@@ -419,7 +592,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
     }
 
     /** @return array<string,mixed> */
-    private function queryRenderSource(bool $withEmptyState = false): array
+    private function queryRenderSource(bool $withEmptyState = false, bool $withErrorState = false): array
     {
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $richText = $catalog->forContentType('rich_text');
@@ -449,6 +622,20 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
                 'bindings' => [
                     'title' => ['source' => 'literal', 'value' => 'No results'],
                     'text' => ['source' => 'literal', 'value' => 'Nothing to display yet.'],
+                ],
+            ];
+        }
+
+        if ($withErrorState) {
+            $announcement = $catalog->forContentType('announcement');
+            self::assertNotNull($announcement);
+            $renderSource['error_state'] = [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => $announcement->id,
+                'blueprint_revision' => $announcement->revision,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'Widget unavailable'],
+                    'text' => ['source' => 'literal', 'value' => 'Please try again later.'],
                 ],
             ];
         }
@@ -489,6 +676,36 @@ final class RuntimeRenderCapturingRenderer implements RendererInterface
         }
 
         return $this->output;
+    }
+}
+
+final class RuntimeRenderSequenceRenderer implements RendererInterface
+{
+    public int $calls = 0;
+    /** @var list<ExecutionContext> */
+    public array $seenContexts = [];
+    /** @var list<RenderInput> */
+    public array $seenInputs = [];
+
+    /** @param list<RenderOutput|Throwable> $sequence */
+    public function __construct(private array $sequence) {}
+
+    public function render(RenderInput $input, ExecutionContext $context): RenderOutput
+    {
+        $index = $this->calls;
+        ++$this->calls;
+        $this->seenInputs[] = $input;
+        $this->seenContexts[] = $context;
+
+        $next = $this->sequence[$index] ?? null;
+        if ($next instanceof Throwable) {
+            throw $next;
+        }
+        if (!$next instanceof RenderOutput) {
+            throw new RuntimeException('Unexpected renderer invocation beyond the bounded test sequence.');
+        }
+
+        return $next;
     }
 }
 

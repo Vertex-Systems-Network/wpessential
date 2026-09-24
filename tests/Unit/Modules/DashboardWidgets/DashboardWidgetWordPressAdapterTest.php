@@ -238,6 +238,33 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame(ExecutionChannel::Ui, $renderer->lastContext->channel);
     }
 
+    public function testCallbackEmitsTrustedRenderedErrorHtmlButNotFailureMetadata(): void
+    {
+        $definition = $this->definition(
+            '40000000-0000-4000-8000-000000000032',
+            'error-widget',
+            'error-widget',
+            false,
+            null,
+            true,
+        );
+        [$adapter, , $environment, $renderer] = $this->harness(
+            [$definition],
+            new RenderOutput(false, '', [], RenderFailureCode::DependencyMismatch),
+            new RenderOutput(true, '<p>Trusted error state</p>', ['wpe-dashboard-error']),
+        );
+
+        $adapter->registerSiteDashboard();
+        ($environment->widgets[0]['callback'])();
+
+        self::assertSame(['<p>Trusted error state</p>'], $environment->outputs);
+        self::assertSame(2, $renderer->calls);
+        self::assertSame(
+            ['text' => 'Please try again later.', 'title' => 'Widget unavailable'],
+            $renderer->lastInput?->bindings,
+        );
+    }
+
     public function testNonRenderedStatesAndEnvironmentFailuresEmitNothing(): void
     {
         $definition = $this->definition('40000000-0000-4000-8000-000000000041', 'failed-widget', 'failed');
@@ -273,7 +300,11 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
      * @param list<Definition> $definitions
      * @return array{0:DashboardWidgetWordPressAdapter,1:object,2:object,3:object}
      */
-    private function harness(array $definitions, ?RenderOutput $renderOutput = null): array
+    private function harness(
+        array $definitions,
+        ?RenderOutput $renderOutput = null,
+        ?RenderOutput $fallbackRenderOutput = null,
+    ): array
     {
         $repository = new class($definitions) implements DefinitionRepositoryInterface {
             /** @var array<string,Definition> */
@@ -392,12 +423,29 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public function hasAnyRole(ExecutionContext $context, array $roles): bool { return true; }
         };
         $visibilityEvaluator = new DashboardWidgetVisibilityEvaluator($capabilities, $roles);
-        $renderer = new class($renderOutput ?? new RenderOutput(true, '<p>Rendered</p>')) implements RendererInterface {
+        $renderer = new class(
+            $renderOutput ?? new RenderOutput(true, '<p>Rendered</p>'),
+            $fallbackRenderOutput,
+        ) implements RendererInterface {
             public ?ExecutionContext $lastContext = null;
-            public function __construct(private RenderOutput $output) {}
+            public ?RenderInput $lastInput = null;
+            public int $calls = 0;
+
+            public function __construct(
+                private RenderOutput $output,
+                private ?RenderOutput $fallbackOutput,
+            ) {}
+
             public function render(RenderInput $input, ExecutionContext $context): RenderOutput
             {
+                ++$this->calls;
                 $this->lastContext = $context;
+                $this->lastInput = $input;
+
+                if ($this->calls === 2 && $this->fallbackOutput !== null) {
+                    return $this->fallbackOutput;
+                }
+
                 return $this->output;
             }
         };
@@ -427,6 +475,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         string $key,
         bool $networkDashboard = false,
         ?array $target = null,
+        bool $withErrorState = false,
     ): Definition {
         $widget = [
             'key' => $key,
@@ -446,6 +495,18 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ];
         if ($target !== null) {
             $widget['target'] = $target;
+        }
+
+        if ($withErrorState) {
+            $widget['render_source']['error_state'] = [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => '31000000-0000-4000-8000-000000000005',
+                'blueprint_revision' => 1,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'Widget unavailable'],
+                    'text' => ['source' => 'literal', 'value' => 'Please try again later.'],
+                ],
+            ];
         }
 
         return new Definition(
