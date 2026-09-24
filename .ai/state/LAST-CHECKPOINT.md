@@ -50,6 +50,9 @@ Safety decision:
 
 ### FAST delivery status
 
+- Active PR: **#1239 — Dashboard Widgets: bounded Native Default-Collapsed State V1**.
+- Exact current feature head will be validated by RB-0060.
+
 Turn A scope is exactly fourteen files:
 - five Dashboard Widgets runtime/WordPress files;
 - four focused unit-test files;
