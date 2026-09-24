@@ -1,55 +1,74 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-25 — #1256 bounded Native Inventory Remove Seam V1 active
+## 2026-09-25 — #1258 bounded Cron Background-Job Reference V1 active
 
 ### Exact repository truth
 
-- Exact current main: `8e0645fa6c7617718e96141c92da906e58a554bb`.
-- Issue #1254 / PR #1255 — Bounded Native Collapsible Capability V1 — terminal PASS:
-  - exact head `435325d7897ccca0f7772821c27c08fb5c05fd43`;
-  - Governance `36069693481` PASS;
-  - Architecture `36069693461` PASS;
-  - PHP Quality `36069693393` PASS;
-  - Platform Compatibility `36069693379` PASS;
-  - Distributable `36069693490` PASS;
-  - exact seven authorized files;
+- Exact current main: `cfec6da42fb5ca40776d9282c5b8656623d00b71`.
+- Issue #1256 / PR #1257 — Bounded Native Inventory Remove Seam V1 — terminal PASS:
+  - exact head `b9b9978d25a218ba0b4fdebd2d0285a53e52550b`;
+  - Governance `36070564866` PASS;
+  - Architecture `36070564818` PASS;
+  - PHP Quality `36070564718` PASS;
+  - Platform Compatibility `36070564726` PASS;
+  - Distributable `36070564880` PASS;
+  - exact eleven authorized files;
   - zero review blockers and zero behind;
-  - expected-head merge `8e0645fa6c7617718e96141c92da906e58a554bb`;
-  - verdict `PASS_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1`.
-- RB-0067 is terminal PASS.
+  - expected-head merge `cfec6da42fb5ca40776d9282c5b8656623d00b71`;
+  - verdict `PASS_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1`.
+- RB-0068 is terminal PASS.
+- All 12/12 P0_NATIVE Dashboard Widgets bank records now have bounded implementation evidence.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
-### Fresh exact-main Surface 10 audit
+### P1_CORE deep audit
 
-Canonical Bank candidate selected:
+Total P1_CORE bank records: **16**.
 
-`widget.inventory.hide`
+Already covered by existing bounded runtime:
+- `dashboard-widgets.native.render_provider`: WordPress callback -> DashboardWidgetRuntimeRenderExecutor -> shared BlueprintRendererDispatcher.
+- `dashboard-widgets.source.data_source_ref`: bounded Query `source_ref` -> canonical DataSourceRegistry + QueryReadConsumer.
 
-Audit verdict:
+Owner-contract blockers; do not duplicate owner logic:
+- `dashboard-widgets.type.listing`
+- `dashboard-widgets.source.listing_ref`
+- `dashboard-widgets.source.query_ref`
 
-`READY_FOR_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1`
+Higher-risk missing provider/execution work:
+- native.control_provider
+- native.callback_args_provider
+- type.activity
+- type.form_action
+- type.site_health
+- type.shortcode
+- type.block
+- type.registered_provider
+- source.context_tokens
+- remote.connection_ref
 
-### #1256 frozen feature contract
+Dependency-ready bounded integration selected:
+- `dashboard-widgets.refresh.background_job`
 
-- Native WordPress audit maps inventory hide/remove to `remove_meta_box(id, screen, context)`.
-- Normalized atomic inventory policy remains computed/read-only; V1 exposes no authored definition or public mutation API.
-- Exact supported screens: `dashboard`, `dashboard-network`.
-- Exact supported contexts: `normal`, `side`, `column3`, `column4`.
-- Widget ID must pass the existing safe ID regex.
-- Requested `(id, context)` must already exist in safe registered inventory for the exact screen before mutation.
-- Missing/malformed inventory, target mismatch or environment/API failure returns false without mutation.
-- Native registered-inventory discovery ignores WordPress `false` tombstones created by `remove_meta_box()`.
-- No wildcard/bulk removal.
-- No callbacks, args, titles or HTML inspection/exposure.
-- No user-meta/user-option writes, persistence, public Ability/REST expansion, provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
+### #1258 frozen feature contract
+
+- Optional `widget.refresh.background_job`.
+- `refresh` must be an object/map; V1 exact key is `background_job`.
+- Background job id must be a lowercase RFC 4122 UUID.
+- If authored, id must resolve through the canonical Cron read service.
+- Resolved record must match exact id, `type=cron`, owner surface 18, and Published status.
+- Compiled Dashboard Widget registration descriptor stores only the validated Cron definition id.
+- Omitted refresh/background_job yields null.
+- Missing Cron service, missing definition, wrong owner/type/status, malformed record or resolver failure fails closed.
+- No schedule execution, enqueue, trigger, retry, Cron mutation, background worker or polling.
+- No public mutation Ability/REST expansion.
+- No Query/Listings/Cron/Platform source modification.
 
 ### FAST delivery status
 
-- Active Issue: **#1256 — Dashboard Widgets: bounded native inventory remove seam V1**.
-- Active PR: **#1257 — Dashboard Widgets: bounded Native Inventory Remove Seam V1**.
-- Active branch: `agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1`.
-- RB-0068 is the single pending feature merge gate.
-- Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
+- Active Issue: **#1258 — Dashboard Widgets: bounded Cron background-job reference V1**.
+- Active PR: **#1259 — Dashboard Widgets: bounded Cron Background-Job Reference V1**.
+- Active branch: `agent/dashboard-widgets-bounded-cron-background-job-reference-v1`.
+- RB-0069 is the single pending feature merge gate.
+- Exact authorized scope: registration compiler + registration descriptor + DashboardWidgets module + two focused unit-test files + five shared-truth files.
 
 ### Persistent recovery order
 

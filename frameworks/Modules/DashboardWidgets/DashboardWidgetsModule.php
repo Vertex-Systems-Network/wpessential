@@ -20,6 +20,8 @@ use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
+use WPEssential\Modules\Cron\CronModule;
+use WPEssential\Modules\Cron\CronReadService;
 use WPEssential\Modules\Query\QueryModule;
 use WPEssential\Platform\Modules\ModuleManifest;
 use WPEssential\Platform\Rendering\BlueprintRendererDispatcher;
@@ -68,6 +70,14 @@ final class DashboardWidgetsModule implements ModuleInterface
         $capabilityChecker = $services->get(WordPressAuthorizationServices::CAPABILITY_CHECKER);
         $dataSources = $services->get('platform.data-sources');
         $queryReadConsumer = $services->get(QueryModule::SERVICE_READ_CONSUMER);
+        $cronRead = null;
+        if ($services->has(CronModule::SERVICE_READ)) {
+            $candidateCronRead = $services->get(CronModule::SERVICE_READ);
+            if (!$candidateCronRead instanceof CronReadService) {
+                throw new LogicException('Dashboard Widgets optional Cron integration requires the canonical Cron read service.');
+            }
+            $cronRead = $candidateCronRead;
+        }
 
         if (
             !$services->has(RenderingServiceRegistrar::SERVICE_BLUEPRINTS)
@@ -128,6 +138,9 @@ final class DashboardWidgetsModule implements ModuleInterface
             $visibilityCompiler,
             $contentClassCompiler,
             $renderSourceCompiler,
+            $cronRead !== null
+                ? static fn (string $id): ?array => $cronRead->get($id)
+                : null,
         );
         $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
             $definitions,

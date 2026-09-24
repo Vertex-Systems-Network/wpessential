@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1238",
-  "anchor_main_sha": "8e0645fa6c7617718e96141c92da906e58a554bb",
+  "anchor_main_sha": "cfec6da42fb5ca40776d9282c5b8656623d00b71",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2197,7 +2197,7 @@
       "category": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
-      "environment": "agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1 exact head",
+      "environment": "agent/dashboard-widgets-bounded-native-inventory-remove-seam-v1 exact head b9b9978d25a218ba0b4fdebd2d0285a53e52550b",
       "dependencies": [
         "RB-0067 terminal PASS",
         "Issue #1254 / PR #1255 terminal Native Collapsible Capability merge",
@@ -2208,22 +2208,56 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "dashboard-widgets|bounded-native-inventory-remove-seam|issue1256|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1257 exact head b9b9978d25a218ba0b4fdebd2d0285a53e52550b",
+        "Governance Gate 36070564866 PASS",
+        "Architecture Guards 36070564818 PASS",
+        "PHP Quality Toolchain 36070564718 PASS",
+        "Platform Compatibility Matrix 36070564726 PASS",
+        "Distributable Package 36070564880 PASS",
+        "exact eleven authorized runtime/test/shared-truth files",
+        "zero unresolved review threads/blockers",
+        "zero commits behind main",
+        "PR #1257 merged as cfec6da42fb5ca40776d9282c5b8656623d00b71",
+        "Issue #1256 closed completed",
+        "verdict PASS_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1"
+      ],
+      "note": "PASS may promote only PASS_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1. Authored/public inventory-hide mutation, bulk removal, full Surface 10 runtime/product parity, deploy and release remain unpromoted."
+    },
+    {
+      "id": "RB-0069",
+      "source": "Issue #1258",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-cron-background-job-reference-v1 exact head",
+      "dependencies": [
+        "RB-0068 terminal PASS",
+        "Issue #1256 / PR #1257 terminal Native Inventory Remove merge",
+        "canonical Cron read-only definition service",
+        "exact source base cfec6da42fb5ca40776d9282c5b8656623d00b71"
+      ],
+      "authorization": "Exact ten-file Dashboard Widgets P1_CORE Cron background-job reference compiler/descriptor/module/test/shared-truth scope only; validate optional UUID against canonical Published owner-surface-18 Cron definition; descriptor carries reference only; no schedule/run/trigger/retry/provider execution, no owner-contract bypass, no shared Cron/Query/Listings/Platform changes",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 15,
+      "dedup_key": "dashboard-widgets|bounded-cron-background-job-reference|issue1258|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1256 FAST feature contract",
-        "widget.inventory.hide is SOFT_NATIVE / MUST_HAVE / P0_NATIVE",
-        "native WordPress audit maps inventory.hide to remove_meta_box(id,screen,context)",
-        "exact source base 8e0645fa6c7617718e96141c92da906e58a554bb",
-        "exact safe registered id/context membership required before mutation",
-        "screens limited to dashboard/dashboard-network and contexts normal/side/column3/column4",
-        "WordPress false removal tombstones excluded from registered inventory",
-        "no authored/public/bulk mutation or user-state writes"
+        "Issue #1258 P1_CORE audit and frozen contract",
+        "refresh.background_job is P1_CORE / PROVIDER_SOFT / integration owned by cron",
+        "exact source base cfec6da42fb5ca40776d9282c5b8656623d00b71",
+        "reference must resolve to exact Published type=cron owner_surface_id=18 record",
+        "missing service/definition or malformed/wrong record fails closed",
+        "no scheduling or execution path"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1. Authored/public inventory-hide mutation, bulk removal, full Surface 10 runtime/product parity, deploy and release remain unpromoted."
+      "note": "PASS may promote only PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1. Cron execution, owner-contract bypasses, generic provider execution, full Surface 10 product parity, deploy and release remain unpromoted."
     }
   ],
-  "last_reconciled_issue": "#1254",
+  "last_reconciled_issue": "#1256",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

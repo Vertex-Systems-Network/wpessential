@@ -25,6 +25,9 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetWordPressEnvironmentInte
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsModule;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetsReadService;
+use WPEssential\Modules\Cron\CronDefinition;
+use WPEssential\Modules\Cron\CronModule;
+use WPEssential\Modules\Cron\CronReadService;
 use WPEssential\Modules\Query\QueryModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Auth\ExecutionChannel;
@@ -57,6 +60,18 @@ final class DashboardWidgetsModuleTest extends TestCase
     public function testModuleRegistersBoundedReadOnlyAbilitiesAndTrustedComponentServices(): void
     {
         $definitions = new InMemoryDefinitionRepository();
+        $backgroundJobId = '18000000-0000-4000-8000-000000000001';
+        $definitions->save(new Definition(
+            id: $backgroundJobId,
+            slug: 'dashboard-refresh',
+            type: CronDefinition::TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: CronDefinition::OWNER_SURFACE_ID,
+            status: DefinitionStatus::Published,
+            payload: [],
+            revision: 1,
+            dependencies: [],
+        ));
         $services = new ServiceRegistry();
         $capabilityChecker = new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
@@ -76,6 +91,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         $services->set('platform.abilities', $abilities);
         $services->set('platform.abilities.wordpress', $bridge);
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+        $services->set(CronModule::SERVICE_READ, new CronReadService($definitions));
         (new RenderingServiceRegistrar())->register($services);
         $this->addQueryServices($services);
 
@@ -130,6 +146,7 @@ final class DashboardWidgetsModuleTest extends TestCase
                     'context' => 'normal',
                     'priority' => 'default',
                     'network_dashboard' => false,
+                    'refresh' => ['background_job' => $backgroundJobId],
                     'render_source' => [
                         'kind' => 'component_blueprint',
                         'blueprint_id' => $richText->id,
@@ -147,7 +164,8 @@ final class DashboardWidgetsModuleTest extends TestCase
             DashboardWidgetRegistrationCompiler::class,
             $registrationCompiler,
         );
-        $registrationCompiler->compile($validDefinition);
+        $compiledRegistration = $registrationCompiler->compile($validDefinition);
+        self::assertSame($backgroundJobId, $compiledRegistration->backgroundJobId);
 
         $mismatchDefinition = new Definition(
             id: '33333333-3333-4333-8333-333333333333',

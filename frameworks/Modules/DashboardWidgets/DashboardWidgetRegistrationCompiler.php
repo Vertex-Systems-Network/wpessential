@@ -8,7 +8,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Closure;
 use InvalidArgumentException;
+use Throwable;
+use WPEssential\Modules\Cron\CronDefinition;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -20,7 +23,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source', 'refresh'];
 
     /** @var list<string> */
     private const INVENTORY_KEYS = ['default_hidden'];
@@ -31,16 +34,26 @@ final readonly class DashboardWidgetRegistrationCompiler
     /** @var list<string> */
     private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
 
+    /** @var list<string> */
+    private const REFRESH_KEYS = ['background_job'];
+
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
+
+    /** @var null|Closure */
+    private ?Closure $backgroundJobResolver;
 
     public function __construct(
         ?DashboardWidgetVisibilityCompiler $visibilityCompiler = null,
         ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
         private ?DashboardWidgetRenderSourceCompiler $renderSourceCompiler = null,
+        ?callable $backgroundJobResolver = null,
     ) {
         $this->visibilityCompiler = $visibilityCompiler ?? new DashboardWidgetVisibilityCompiler();
         $this->contentClassCompiler = $contentClassCompiler ?? new DashboardWidgetContentClassCompiler();
+        $this->backgroundJobResolver = $backgroundJobResolver !== null
+            ? Closure::fromCallable($backgroundJobResolver)
+            : null;
     }
 
     public function compile(Definition $definition): DashboardWidgetRegistrationDescriptor
@@ -104,6 +117,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         $defaultHidden = $this->compileDefaultHidden($widget);
         $this->assertNativeCollapsibleCapability($widget);
         $defaultCollapsed = $this->compileDefaultCollapsed($widget);
+        $backgroundJobId = $this->compileBackgroundJobReference($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -117,7 +131,57 @@ final readonly class DashboardWidgetRegistrationCompiler
             defaultCollapsed: $defaultCollapsed,
             siteScope: $siteScope,
             siteIds: $siteIds,
+            backgroundJobId: $backgroundJobId,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileBackgroundJobReference(array $widget): ?string
+    {
+        if (!array_key_exists('refresh', $widget)) {
+            return null;
+        }
+
+        $refresh = $widget['refresh'];
+        if (!is_array($refresh) || ($refresh !== [] && array_is_list($refresh))) {
+            throw new InvalidArgumentException('Dashboard Widget refresh metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($refresh, self::REFRESH_KEYS, 'Dashboard Widget refresh metadata');
+
+        if (!array_key_exists('background_job', $refresh)) {
+            return null;
+        }
+
+        $backgroundJobId = $refresh['background_job'];
+        if (
+            !is_string($backgroundJobId)
+            || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $backgroundJobId) !== 1
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget refresh.background_job must be a lowercase RFC 4122 UUID.');
+        }
+        if ($this->backgroundJobResolver === null) {
+            throw new InvalidArgumentException('Dashboard Widget refresh.background_job requires the canonical Cron read service.');
+        }
+
+        try {
+            $record = ($this->backgroundJobResolver)($backgroundJobId);
+        } catch (Throwable) {
+            throw new InvalidArgumentException('Dashboard Widget background job reference could not be resolved.');
+        }
+
+        if (
+            !is_array($record)
+            || ($record['id'] ?? null) !== $backgroundJobId
+            || ($record['type'] ?? null) !== CronDefinition::TYPE
+            || ($record['owner_surface_id'] ?? null) !== CronDefinition::OWNER_SURFACE_ID
+            || ($record['status'] ?? null) !== DefinitionStatus::Published->value
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget background job reference must resolve to a Published canonical Cron definition.');
+        }
+
+        return $backgroundJobId;
     }
 
     /**
