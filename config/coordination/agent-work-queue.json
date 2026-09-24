@@ -1,5 +1,5 @@
 {
-  "schema_version": 145,
+  "schema_version": 146,
   "snapshot_date": "2026-09-24",
   "queue_anchor_main_sha": "776d5e0d3ae9f05f2a0922457398051e08166912",
   "mode": "DASHBOARD_WIDGETS_ERROR_STATE_SOURCE_POST_MERGE_RECONCILIATION_V1",
@@ -223,7 +223,8 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "After Issue #1234 terminal merge, run a fresh exact-main Surface 10 transition audit. Do not infer or claim the next runtime/product tranche before that audit."
+    "next_safe_action": "After Issue #1234 terminal merge, run a fresh exact-main Surface 10 transition audit. Do not infer or claim the next runtime/product tranche before that audit.",
+    "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
     "SUPERVISOR": {
@@ -5032,5 +5033,48 @@
       "891cd201667efbc72cc40285206741dc5a8c9abb",
       "aaf73c702f0f8bc073e1891e0456dea5ebe23904"
     ]
+  },
+  "workflow_policy": {
+    "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
+    "enabled": true,
+    "default_delivery_cycle": {
+      "turn_a": [
+        "exact_main_audit",
+        "issue_claim_or_create",
+        "implementation",
+        "focused_tests",
+        "readme_and_shared_truth",
+        "pr_open"
+      ],
+      "turn_b": [
+        "single_consolidated_ci_review_refresh",
+        "required_fixes_only_if_real",
+        "expected_head_merge",
+        "terminal_resulting_main_verification"
+      ]
+    },
+    "separate_contract_pr": "HIGH_RISK_ONLY",
+    "high_risk_boundaries": [
+      "auth_or_authorization",
+      "payments_or_billing",
+      "privileged_or_destructive_mutation",
+      "remote_provider_or_transport",
+      "security_or_shared_platform_boundary"
+    ],
+    "routine_contract": "FREEZE_IN_IMPLEMENTATION_ISSUE",
+    "implementation_pr_includes_shared_truth_when_scope_allows": true,
+    "separate_post_merge_reconciliation": "EXCEPTION_ONLY",
+    "reconciliation_reasons": [
+      "real_divergence_or_conflict",
+      "implementation_scope_technically_forbids_shared_truth"
+    ],
+    "runner_benchmark": "ONE_MEANINGFUL_MERGE_GATE_PER_FEATURE_TRANCHE",
+    "user_updates": [
+      "implementation_ready",
+      "material_blocker_or_failure",
+      "pr_open",
+      "merge_complete"
+    ],
+    "security_invariants_preserved": true
   }
 }
