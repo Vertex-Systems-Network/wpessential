@@ -16,6 +16,9 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure(string, callable):void */
     private Closure $registerAction;
 
+    /** @var Closure(string, callable, int):void */
+    private Closure $registerFilter;
+
     /** @var Closure(string, string, callable, ?callable, ?array, string, string):void */
     private Closure $registerDashboardWidget;
 
@@ -28,23 +31,30 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure():?int */
     private Closure $currentNetworkId;
 
+    /** @var Closure(mixed):?string */
+    private Closure $screenId;
+
     /** @var Closure(string):void */
     private Closure $outputTrustedHtml;
 
     /**
      * @param null|callable(string, callable):void $registerAction
+     * @param null|callable(string, callable, int):void $registerFilter
      * @param null|callable(string, string, callable, ?callable, ?array, string, string):void $registerDashboardWidget
      * @param null|callable():?int $currentUserId
      * @param null|callable():int $currentSiteId
      * @param null|callable():?int $currentNetworkId
+     * @param null|callable(mixed):?string $screenId
      * @param null|callable(string):void $outputTrustedHtml
      */
     public function __construct(
         ?callable $registerAction = null,
+        ?callable $registerFilter = null,
         ?callable $registerDashboardWidget = null,
         ?callable $currentUserId = null,
         ?callable $currentSiteId = null,
         ?callable $currentNetworkId = null,
+        ?callable $screenId = null,
         ?callable $outputTrustedHtml = null,
     ) {
         $this->registerAction = $registerAction !== null
@@ -54,6 +64,18 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                     throw new LogicException('WordPress action API is unavailable.');
                 }
                 add_action($hook, $callback);
+            };
+
+        $this->registerFilter = $registerFilter !== null
+            ? Closure::fromCallable($registerFilter)
+            : static function (string $hook, callable $callback, int $acceptedArgs): void {
+                if (!function_exists('add_filter')) {
+                    throw new LogicException('WordPress filter API is unavailable.');
+                }
+                if ($acceptedArgs < 1) {
+                    throw new LogicException('WordPress filter accepted-args count must be positive.');
+                }
+                add_filter($hook, $callback, 10, $acceptedArgs);
             };
 
         $this->registerDashboardWidget = $registerDashboardWidget !== null
@@ -110,6 +132,15 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return $networkId > 0 ? $networkId : null;
             };
 
+        $this->screenId = $screenId !== null
+            ? Closure::fromCallable($screenId)
+            : static function (mixed $screen): ?string {
+                if (!is_object($screen) || !isset($screen->id) || !is_string($screen->id)) {
+                    return null;
+                }
+                return $screen->id;
+            };
+
         $this->outputTrustedHtml = $outputTrustedHtml !== null
             ? Closure::fromCallable($outputTrustedHtml)
             : static function (string $html): void {
@@ -121,6 +152,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function registerAction(string $hook, callable $callback): void
     {
         ($this->registerAction)($hook, $callback);
+    }
+
+    public function registerFilter(string $hook, callable $callback, int $acceptedArgs = 1): void
+    {
+        ($this->registerFilter)($hook, $callback, $acceptedArgs);
     }
 
     public function registerDashboardWidget(
@@ -146,6 +182,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function currentNetworkId(): ?int
     {
         return ($this->currentNetworkId)();
+    }
+
+    public function screenId(mixed $screen): ?string
+    {
+        return ($this->screenId)($screen);
     }
 
     public function outputTrustedHtml(string $html): void
