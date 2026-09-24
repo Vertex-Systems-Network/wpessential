@@ -236,6 +236,46 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $failedEnvironment->filters);
     }
 
+    public function testDiscoversRegisteredDashboardWidgetsThroughBoundedReadOnlySeam(): void
+    {
+        [$adapter, , $environment] = $this->harness([]);
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard'] = [
+            ['id' => 'z_widget', 'context' => 'side', 'priority' => 'low'],
+            ['id' => 'a-widget', 'context' => 'normal', 'priority' => 'high'],
+            ['id' => 'a-widget', 'context' => 'normal', 'priority' => 'high'],
+        ];
+        self::assertSame(
+            [
+                ['id' => 'a-widget', 'context' => 'normal', 'priority' => 'high'],
+                ['id' => 'z_widget', 'context' => 'side', 'priority' => 'low'],
+            ],
+            $adapter->discoverRegisteredDashboardWidgets(),
+        );
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard-network'] = [
+            ['id' => 'network_widget', 'context' => 'normal', 'priority' => 'core'],
+        ];
+        self::assertSame(
+            [['id' => 'network_widget', 'context' => 'normal', 'priority' => 'core']],
+            $adapter->discoverRegisteredDashboardWidgets(true),
+        );
+
+        $environment->throwOnRegisteredDashboardWidgetDiscovery = true;
+        self::assertSame([], $adapter->discoverRegisteredDashboardWidgets());
+        $environment->throwOnRegisteredDashboardWidgetDiscovery = false;
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard'] = [
+            ['id' => 'leak', 'context' => 'normal', 'priority' => 'high', 'callback' => 'secret'],
+        ];
+        self::assertSame([], $adapter->discoverRegisteredDashboardWidgets());
+
+        $environment->registeredDashboardWidgetsByScreen['dashboard'] = [
+            ['id' => '<unsafe>', 'context' => 'normal', 'priority' => 'high'],
+        ];
+        self::assertSame([], $adapter->discoverRegisteredDashboardWidgets());
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -540,8 +580,11 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnCurrentSiteId = false;
             public bool $throwOnScreenId = false;
             public bool $throwOnClosedPostboxPreference = false;
+            public bool $throwOnRegisteredDashboardWidgetDiscovery = false;
             /** @var array<string,bool> */
             public array $closedPostboxPreferenceByScreen = [];
+            /** @var array<string,list<array<string,mixed>>> */
+            public array $registeredDashboardWidgetsByScreen = [];
             private int $hookAttempts = 0;
 
             public function registerAction(string $hook, callable $callback): void
@@ -595,6 +638,13 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                     throw new RuntimeException('closed postbox preference unavailable');
                 }
                 return $this->closedPostboxPreferenceByScreen[$screenId] ?? false;
+            }
+            public function discoverRegisteredDashboardWidgets(string $screenId): array
+            {
+                if ($this->throwOnRegisteredDashboardWidgetDiscovery) {
+                    throw new RuntimeException('dashboard inventory unavailable');
+                }
+                return $this->registeredDashboardWidgetsByScreen[$screenId] ?? [];
             }
             public function outputTrustedHtml(string $html): void { $this->outputs[] = $html; }
         };

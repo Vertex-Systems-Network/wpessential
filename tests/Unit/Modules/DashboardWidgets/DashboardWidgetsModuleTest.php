@@ -222,6 +222,7 @@ final class DashboardWidgetsModuleTest extends TestCase
                     : null;
             }
             public function hasClosedPostboxPreference(string $screenId): bool { return false; }
+            public function discoverRegisteredDashboardWidgets(string $screenId): array { return []; }
             public function outputTrustedHtml(string $html): void {}
         };
         $services = $this->baseServices();

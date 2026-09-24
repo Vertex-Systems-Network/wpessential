@@ -1,9 +1,9 @@
 {
-  "schema_version": 149,
+  "schema_version": 150,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8",
-  "mode": "DASHBOARD_WIDGETS_DEFAULT_COLLAPSED_POST_MERGE_RECONCILIATION_V1",
-  "source_issue": "#1240",
+  "queue_anchor_main_sha": "d46bb23f948ee6c943cf8cce82231c74918480f9",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
+  "source_issue": "#1242",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -196,7 +196,8 @@
     "1234": "COMPLETED_ON_PR_1235_ERROR_STATE_SOURCE_SHARED_TRUTH_RECONCILIATION_V1",
     "1236": "COMPLETED_ON_PR_1237_BOUNDED_NATIVE_DEFAULT_HIDDEN_STATE_V1",
     "1238": "COMPLETED_ON_PR_1239_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
-    "1240": "ACTIVE_SHARED_TRUTH_RECONCILIATION_EXCEPTION"
+    "1240": "COMPLETED_ON_PR_1241_DEFAULT_COLLAPSED_SHARED_TRUTH_RECONCILIATION",
+    "1242": "ACTIVE_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -226,7 +227,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Complete Issue #1240 five-file shared-truth reconciliation against 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8; then audit exact resulting main. Current Bank candidate is widget.presentation.collapsible (P0_NATIVE / MUST_HAVE); do not create its feature branch until the reconciliation is terminal.",
+    "next_safe_action": "Open and validate Issue #1242 exact eleven-file Registered Inventory feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; then verify resulting main and continue FAST exact-main audit.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -4966,7 +4967,7 @@
       "slot_id": "dashboard-widgets-bounded-native-default-collapsed-state-v1",
       "title": "Dashboard Widgets bounded Native Default-Collapsed State V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
       "source": "Issue #1238 / fresh exact-main FAST Surface 10 audit",
       "dependencies": [
@@ -5012,7 +5013,76 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-native-default-collapsed-state-v1",
-      "close_condition": "Exact fourteen-file feature/shared-truth scope; saved user collapse preference wins; focused tests; RB-0060 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1."
+      "close_condition": "Exact fourteen-file feature/shared-truth scope; saved user collapse preference wins; focused tests; RB-0060 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1.",
+      "terminal_result": "PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1",
+      "terminal_evidence": {
+        "issue": 1238,
+        "pr": 1239,
+        "head": "9baef3734989933f78abee934d8267d1c4a7c09c",
+        "governance_run": 36019998970,
+        "architecture_run": 36019999084,
+        "php_quality_run": 36019998732,
+        "platform_compatibility_run": 36019999027,
+        "distributable_run": 36019998866,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8",
+        "shared_truth_reconciliation_issue": 1240,
+        "shared_truth_reconciliation_pr": 1241,
+        "reconciled_main_sha": "d46bb23f948ee6c943cf8cce82231c74918480f9"
+      }
+    },
+    {
+      "priority": 1037,
+      "slot_id": "dashboard-widgets-bounded-native-registered-inventory-source-v1",
+      "title": "Dashboard Widgets bounded Native Registered Inventory Source V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1",
+      "source": "Issue #1242 / fresh exact-main FAST Surface 10 audit",
+      "dependencies": [
+        "Issue #1240 / PR #1241 terminal shared-truth reconciliation PASS",
+        "RB-0060 terminal PASS",
+        "exact source base d46bb23f948ee6c943cf8cce82231c74918480f9"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "wordpress_dashboard_registration_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressAdapter.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetWordPressEnvironmentInterface.php",
+        "frameworks/Modules/DashboardWidgets/NativeWordPressDashboardWidgetEnvironment.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetWordPressAdapterTest.php",
+        "tests/Unit/Modules/DashboardWidgets/NativeWordPressDashboardWidgetEnvironmentTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "callback/callback-args/raw title or HTML exposure",
+        "core-vs-third-party inventory classification",
+        "inventory hide/remove mutation",
+        "user meta/options/global registry writes",
+        "collapsible/dismissible/loading behavior",
+        "public Ability/REST expansion",
+        "generic registered-provider execution",
+        "direct IntegrationRegistry execution",
+        "Safe HTTP/remote/RSS/iframe execution",
+        "actions or arbitrary callbacks",
+        "refresh/cache/background jobs",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-native-registered-inventory-source-v1",
+      "close_condition": "Exact eleven-file feature/shared-truth scope; safe deterministic id/context/priority inventory only; focused tests; RB-0061 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1."
     }
   ],
   "historical_closeout": {

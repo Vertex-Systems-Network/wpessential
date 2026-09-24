@@ -37,6 +37,9 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure(string):bool */
     private Closure $hasClosedPostboxPreference;
 
+    /** @var Closure(string):array<int,array{id:string,context:string,priority:string}> */
+    private Closure $discoverRegisteredDashboardWidgets;
+
     /** @var Closure(string):void */
     private Closure $outputTrustedHtml;
 
@@ -49,6 +52,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
      * @param null|callable():?int $currentNetworkId
      * @param null|callable(mixed):?string $screenId
      * @param null|callable(string):bool $hasClosedPostboxPreference
+     * @param null|callable(string):array<int,array{id:string,context:string,priority:string}> $discoverRegisteredDashboardWidgets
      * @param null|callable(string):void $outputTrustedHtml
      */
     public function __construct(
@@ -60,6 +64,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
         ?callable $currentNetworkId = null,
         ?callable $screenId = null,
         ?callable $hasClosedPostboxPreference = null,
+        ?callable $discoverRegisteredDashboardWidgets = null,
         ?callable $outputTrustedHtml = null,
     ) {
         $this->registerAction = $registerAction !== null
@@ -163,6 +168,67 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return metadata_exists('user', $userId, 'closedpostboxes_' . $screenId);
             };
 
+        $this->discoverRegisteredDashboardWidgets = $discoverRegisteredDashboardWidgets !== null
+            ? Closure::fromCallable($discoverRegisteredDashboardWidgets)
+            : static function (string $screenId): array {
+                if (!in_array($screenId, ['dashboard', 'dashboard-network'], true)) {
+                    throw new LogicException('Dashboard Widget inventory screen is unsupported.');
+                }
+
+                global $wp_meta_boxes;
+                if (!isset($wp_meta_boxes)) {
+                    return [];
+                }
+                if (!is_array($wp_meta_boxes)) {
+                    throw new LogicException('WordPress meta-box registry is malformed.');
+                }
+
+                $screenBoxes = $wp_meta_boxes[$screenId] ?? [];
+                if (!is_array($screenBoxes)) {
+                    throw new LogicException('WordPress dashboard meta-box registry is malformed.');
+                }
+
+                $contexts = ['normal', 'side', 'column3', 'column4'];
+                $priorities = ['high', 'sorted', 'core', 'default', 'low'];
+                $inventory = [];
+
+                foreach ($contexts as $context) {
+                    if (!array_key_exists($context, $screenBoxes)) {
+                        continue;
+                    }
+                    $contextBoxes = $screenBoxes[$context];
+                    if (!is_array($contextBoxes)) {
+                        throw new LogicException('WordPress dashboard meta-box context is malformed.');
+                    }
+
+                    foreach ($priorities as $priority) {
+                        if (!array_key_exists($priority, $contextBoxes)) {
+                            continue;
+                        }
+                        $priorityBoxes = $contextBoxes[$priority];
+                        if (!is_array($priorityBoxes)) {
+                            throw new LogicException('WordPress dashboard meta-box priority is malformed.');
+                        }
+
+                        $ids = array_values(array_filter(
+                            array_keys($priorityBoxes),
+                            static fn (mixed $id): bool => is_string($id) && $id !== '',
+                        ));
+                        sort($ids, SORT_STRING);
+
+                        foreach ($ids as $id) {
+                            $inventory[] = [
+                                'id' => $id,
+                                'context' => $context,
+                                'priority' => $priority,
+                            ];
+                        }
+                    }
+                }
+
+                return $inventory;
+            };
+
         $this->outputTrustedHtml = $outputTrustedHtml !== null
             ? Closure::fromCallable($outputTrustedHtml)
             : static function (string $html): void {
@@ -214,6 +280,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function hasClosedPostboxPreference(string $screenId): bool
     {
         return ($this->hasClosedPostboxPreference)($screenId);
+    }
+
+    public function discoverRegisteredDashboardWidgets(string $screenId): array
+    {
+        return ($this->discoverRegisteredDashboardWidgets)($screenId);
     }
 
     public function outputTrustedHtml(string $html): void

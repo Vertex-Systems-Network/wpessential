@@ -1,41 +1,57 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — #1238 Native Default-Collapsed State V1 terminal PASS; shared-truth reconciliation active
+## 2026-09-24 — #1242 bounded Native Registered Inventory Source V1 active
 
 ### Exact repository truth
 
-- Exact current main: `5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8`.
+- Exact current main: `d46bb23f948ee6c943cf8cce82231c74918480f9`.
 - Issue #1238 / PR #1239 — Bounded Native Default-Collapsed State V1 — terminal PASS.
-  - exact head `9baef3734989933f78abee934d8267d1c4a7c09c`;
-  - Governance `36019998970` PASS;
-  - Architecture `36019999084` PASS;
-  - PHP Quality `36019998732` PASS;
-  - Platform Compatibility `36019999027` PASS;
-  - Distributable Package `36019998866` PASS;
-  - exact fourteen-file implementation/test/shared-truth scope;
-  - zero review threads/blockers and zero behind;
-  - expected-head merge `5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8`;
-  - Issue #1238 closed completed;
-  - verdict `PASS_BOUNDED_NATIVE_DEFAULT_COLLAPSED_STATE_V1`.
-- RB-0060 is terminal PASS from exact-head evidence.
+- Issue #1240 / PR #1241 — five-file post-merge shared-truth reconciliation — terminal PASS:
+  - exact head `f32c30eae86a2eff789e77615cac8e58d9c51454`;
+  - Governance `36023143527` PASS;
+  - Architecture `36023143626` PASS;
+  - zero review blockers;
+  - zero behind;
+  - merge `d46bb23f948ee6c943cf8cce82231c74918480f9`.
+- RB-0060 remains terminal PASS.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
-### Reconciliation exception
+### Fresh exact-main Surface 10 audit
 
-The merged shared-truth files still described #1238/#1239 as ACTIVE / merge-pending. That is real post-merge truth divergence, so a bounded reconciliation exception is active under Issue #1240.
+Canonical Bank candidate selected:
 
-Exact write scope:
-- `.ai/state/CURRENT-STATE.yaml`
-- `.ai/state/LAST-CHECKPOINT.md`
-- `README.md`
-- `config/coordination/agent-work-queue.json`
-- `config/coordination/runner-benchmark.json`
+`widget.inventory.discover_registered`
 
-No runtime source/tests/product behavior changes are authorized.
+Audit verdict:
 
-### Next exact-main audit candidate
+`READY_FOR_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1`
 
-Current canonical Bank evidence identifies `widget.presentation.collapsible` as `SOFT_NATIVE / P0_NATIVE / MUST_HAVE`. It is the adjacent smallest candidate after Default-Collapsed, but this reconciliation does **not** freeze an implementation contract. Exact resulting main must be audited after the reconciliation merge before any feature Issue/branch is created.
+Why this tranche:
+- `SOFT_NATIVE / MUST_HAVE / P0_NATIVE`;
+- strictly read-only;
+- smaller and safer than `presentation.collapsible`, which requires a broader WordPress UI/JS boundary;
+- no provider/action/remote execution dependency.
+
+### #1242 frozen feature contract
+
+- Discover registered Dashboard meta boxes for exact screen ids `dashboard` and `dashboard-network`.
+- Project only `id`, `context`, and `priority`.
+- Deterministic ordering.
+- Do not expose callback, callback args, raw title/HTML or arbitrary meta-box payload.
+- Adapter validates the returned shape and fails closed to `[]` on malformed/unavailable inventory.
+- No core-vs-third-party classification.
+- No hide/remove.
+- No user preference write or other mutation.
+- No public Ability/REST expansion.
+- No provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
+
+### FAST delivery status
+
+- Active Issue: **#1242 — Dashboard Widgets: bounded native registered inventory source V1**.
+- Active PR: **#1243 — Dashboard Widgets: bounded Native Registered Inventory Source V1**.
+- Active branch: `agent/dashboard-widgets-bounded-native-registered-inventory-source-v1`.
+- RB-0061 is the single pending feature merge gate.
+- Exact authorized scope: three Dashboard Widgets runtime/environment files, three focused unit-test files, and five shared-truth files.
 
 ### Persistent recovery order
 
