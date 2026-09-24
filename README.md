@@ -192,6 +192,18 @@ P-006 bounded compatibility evidence now includes:
 
 These commercial and bounded evidence gates are provider-neutral local architecture/read-only observability plus partial compatibility evidence, not a live commercial license service or full P-006 certification. Wave 1H is static/harness-only and its FP-33 STOP/REVIEW result is intentionally not promoted to PASS; Wave 1I adds bounded real-WordPress FP-34/44 evidence; Wave 1J adds bounded pure/local FP-61…68/76 range-semantics evidence; Wave 1K adds bounded compatible independent update-order FP-45/46/53/60 evidence against complete test-only ZIPs; Wave 1L adds bounded complete-package breaking-order FP-47/48 safe-degradation evidence. None promotes a certified pair, interrupted/manual-replacement certification, updater/TUF certification, rollback/migration certification or runtime certification. These gates do **not** claim universal wiring of every future premium mutation path, remote verification/billing/provider integration, credential/secret persistence, ADR-0010 acceptance, a certified Free/Pro pair, P-006 runtime certification, multisite allocation semantics, deployment or release readiness.
 
+### FAST AI-Native delivery mode
+
+To reduce development latency and chat noise, the default workflow is now:
+
+- **Turn A:** exact-main audit → accepted Issue → implementation → focused tests → README/shared-truth/coordination update → PR open.
+- **Turn B:** one consolidated CI/review check → fix only real failures → expected-head merge → terminal resulting-main verification.
+- Do not create separate contract PRs for routine bounded features; reserve them for auth/security, payments, destructive/privileged mutation, remote/provider transport or shared-platform boundary changes.
+- Do not create a post-merge reconciliation PR by default. Carry shared truth in the implementation PR whenever its allowlist permits; use a reconciliation milestone only for real divergence/conflict or a technical scope restriction.
+- Runner Benchmark tracks the meaningful merge gate instead of every administrative transition.
+- Progress messages should report meaningful outcomes rather than internal micro-steps.
+- Security requirements remain unchanged: exact scope, fail-closed behavior, path-applicable CI, architecture checks, zero-behind and expected-head merge.
+
 ## AI-Native work-cycle order
 
 Every Supervisor/Worker `start`, `continue` or `resume` cycle follows this mandatory hard-gated order from `AUTO-AGENT.md`:
@@ -202,7 +214,7 @@ Every Supervisor/Worker `start`, `continue` or `resume` cycle follows this manda
 4. inspect/fix/review/merge eligible **OPEN PRs/MRs second**;
 5. confirm no accepted actionable Issue/PR/MR path is being bypassed;
 6. re-read active deterministic claims, the coordination queue and Runner Benchmark;
-7. execute one bounded logical milestone by default; never tight-poll CI/status endpoints;
+7. execute one **meaningful feature milestone** by default under FAST AI-Native mode: Turn A = audit + Issue + implementation + tests + README/shared truth + PR open; Turn B = one CI/review refresh + fixes if needed + expected-head merge + terminal verification. Avoid administrative micro-milestones and never tight-poll CI/status endpoints;
 8. before reporting completion/blocked/waiting, persist compact durable state;
 9. reconcile this complete 56 / 56 README dashboard only when module/public delivery truth changed or at a terminal product milestone/integration closeout.
 
@@ -392,7 +404,7 @@ The authoritative queue is `config/coordination/agent-work-queue.json`.
 
 Start WPEssential Supervisor in AUTO mode.
 
-Read `AUTO-AGENT.md` completely. Read compact `.ai/state` first, refresh exact current main, solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then active deterministic claims, coordination queue and Runner Benchmark before new work. New development must not bypass an accepted actionable Issue or PR/MR. Default to one logical milestone per user turn, never tight-poll CI, persist durable compact state before reporting completion/blocked/waiting, and reconcile the complete 56 / 56 README dashboard only when its delivery-truth trigger applies.
+Read `AUTO-AGENT.md` completely. Read compact `.ai/state` first, refresh exact current main, solve/continue accepted OPEN Issues first, then inspect/fix/review/merge eligible OPEN PRs/MRs, then active deterministic claims, coordination queue and Runner Benchmark before new work. New development must not bypass an accepted actionable Issue or PR/MR. FAST AI-Native mode is default: combine audit + Issue + implementation + focused tests + README/shared truth + PR open into one meaningful feature milestone when safe; use the next milestone for one consolidated CI/review refresh + required fixes + expected-head merge + terminal verification. Separate contract PRs are for high-risk boundaries only; separate post-merge reconciliation is exceptional, not default. Never tight-poll CI. Preserve exact allowlists, CI/architecture/security gates and expected-head merge protection.
 
 ### Workers
 
