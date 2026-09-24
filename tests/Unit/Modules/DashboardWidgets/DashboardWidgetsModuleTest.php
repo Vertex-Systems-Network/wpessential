@@ -224,6 +224,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             public function hasClosedPostboxPreference(string $screenId): bool { return false; }
             public function currentUserHiddenDashboardWidgetIds(string $screenId): array { return []; }
             public function currentUserCollapsedDashboardWidgetIds(string $screenId): array { return []; }
+            public function currentUserDashboardWidgetOrder(string $screenId): array { return []; }
             public function discoverRegisteredDashboardWidgets(string $screenId): array { return []; }
             public function outputTrustedHtml(string $html): void {}
         };
