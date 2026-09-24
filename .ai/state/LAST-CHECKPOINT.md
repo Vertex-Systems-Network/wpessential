@@ -1,59 +1,74 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — #1226/#1227 terminal Empty-State source PASS; #1228 reconciliation active
+## 2026-09-24 — #1228/#1229 terminal shared truth; #1230 Error-State contract active
 
 ### Exact repository truth
 
-- Exact resulting main: `6cacf5c0fd77908b12605c34fcad658f40a60239`.
+- Exact current main: `4fbe3ae7b65ec0ad627ceefac465d4269a872446`.
 - Issue #1224 / PR #1225 — Bounded Empty-State Rendering Contract V1 — terminal PASS.
-  - exact head `e4562e7b1bbd3d1f17220d1b141738876fba7b93`;
-  - Governance `36000817200` PASS;
-  - Architecture `36000817125` PASS;
-  - exact six-file contract/shared-truth scope;
-  - zero blockers and zero behind;
-  - merge `4b8a51a7984b5e84084696a7ea2e1a80018652e2`;
-  - promotion `CONTRACT_FROZEN_READY_FOR_BOUNDED_EMPTY_STATE_RENDERING_SOURCE_V1`.
 - Issue #1226 / PR #1227 — Bounded Empty-State Rendering Source V1 — terminal PASS.
-  - exact head `1f2111b3f1ccaca0313aef53554409c5b9f2bff1`;
-  - Governance `36002366213` PASS;
-  - Architecture `36002366273` PASS;
-  - PHP Quality `36002366239` PASS;
-  - Platform Compatibility `36002366222` PASS;
-  - Distributable Package `36002366319` PASS;
-  - exact nine-file source/test scope;
+- Issue #1228 / PR #1229 — Empty-State source post-merge shared-truth reconciliation V1 — terminal PASS.
+  - exact head `f64fe40331da2e8139897170aae881b8b93a23b7`;
+  - Governance `36005699579` PASS;
+  - Architecture `36005699569` PASS;
+  - exact five shared-truth files;
   - zero blockers and zero behind;
-  - merge `6cacf5c0fd77908b12605c34fcad658f40a60239`;
-  - verdict `PASS_BOUNDED_EMPTY_STATE_RENDERING_SOURCE_V1`.
+  - expected-head merge `4fbe3ae7b65ec0ad627ceefac465d4269a872446`.
+- RB-0055 is terminal PASS from #1228/#1229 existing evidence; no historical rerun is required.
 
-### Resulting-main bounded behavior
+### Fresh Surface 10 audit verdict
 
-- `render_source.empty_state` is Query-bound only.
-- Trusted empty-state Blueprints remain Surface 10 `rich_text` or `announcement`.
-- Empty-state bindings are literal strings only.
-- Per-string bound is 2048 bytes; normalized object bound is 4096 bytes.
-- A valid canonical `ok:true`, exact source/projection, `rows=[]`, `returned=0` result may select the authored empty state.
-- Zero rows without authored empty state remain fail-closed.
-- Policy denial, unavailable/degraded source, Query/provider failure, source/projection mismatch, malformed cardinality, schema/type mismatch, unsafe content and renderer failure never become empty-state success.
-- Exact incoming `ExecutionContext` continues to Query and trusted renderer.
-- No direct IntegrationRegistry or remote transport execution was introduced.
+The exact-main transition audit selected:
 
-### Shared-truth reconciliation
+`READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_CONTRACT_V1`
 
-- Active Issue: **#1228 — Empty-State source post-merge shared-truth reconciliation V1**.
-- Active PR: **#1229 — AI: reconcile Empty-State source shared truth V1**.
-- Active branch: `supervisor/dashboard-widgets-empty-state-source-post-merge-reconciliation-v1`.
-- Scope: exactly five shared-truth files; no runtime/product PHP or tests.
-- RB-0053 reconciles #1224/#1225 terminal contract PASS.
-- RB-0054 records #1226/#1227 terminal source PASS.
-- RB-0055 is the only new pending exact-head Governance/Architecture reconciliation gate.
-- After #1228 terminal merge, run a fresh exact-main Surface 10 transition audit. Do not infer or claim a new product/runtime tranche before that audit.
+Evidence:
 
-### Still blocked / residual
+- `dashboard-widgets.state.error` is `WPE_HARD / P0_PARITY`;
+- projection maps it to `dashboard-widgets.presentation.states`;
+- Empty-State in the same normalized contract is now bounded source PASS;
+- exact main has typed opaque `renderer_failed` but no authored trusted error presentation;
+- exact main WordPress adapter outputs only `STATUS_RENDERED`;
+- `DW-33` and `DW-108` require isolated renderer failure and non-leaking error presentation direction.
 
-- #858 broader required-CI/ruleset administration remains external-admin work.
-- #947 independent Worker-only audit remains independent/nonblocking.
-- #1102 P-006 Wave 1U remains authorization-gated.
-- Generic registered-provider execution, direct IntegrationRegistry execution, remote/RSS/iframe, actions, assets, refresh/cache/background work, Definition/user-preference mutation, shared Platform source changes, P-006 runtime, full-parity certification, deploy and release remain blocked.
+### #1230 frozen contract direction
+
+- Authored sibling: optional `widget.render_source.error_state`.
+- Allowed for literal or Query-bound trusted Component Blueprint render sources.
+- May coexist with `empty_state`.
+- Error-State Blueprint allowlist: trusted Surface 10 `rich_text` or `announcement` only.
+- Bindings: authored literal strings only.
+- Per-string bound: 1..2048 encoded bytes.
+- Complete encoded error_state object: <=4096 bytes.
+- Fallback eligibility: only primary trusted renderer returns `success=false` with typed `RenderFailureCode`.
+- Primary renderer throwable remains opaque `runtime_failure`; no fallback.
+- Fallback invoked at most once using exact same incoming `ExecutionContext`.
+- Successful fallback uses dedicated `rendered_error` status and retains original primary typed failure metadata.
+- Adapter may output trusted HTML only for ordinary `rendered` and `rendered_error`.
+- Fallback failure/throw remains fail closed with no recursion.
+- Policy/source/Query/visibility/missing/invalid/runtime failures never select Error-State.
+
+### Later source gate
+
+No Error-State runtime source may be created or mutated until #1230 merges terminal green with:
+
+`CONTRACT_FROZEN_READY_FOR_BOUNDED_RENDERER_FAILURE_ERROR_STATE_SOURCE_V1`
+
+The later source issue is frozen to exactly eleven source/test files listed in the contract. No Query Binding Executor or shared Platform change is authorized.
+
+### Still blocked
+
+- loading-state runtime;
+- generic registered-provider execution;
+- direct IntegrationRegistry execution;
+- Safe HTTP / remote / RSS / iframe;
+- Listings / shortcode / block / action execution;
+- assets;
+- refresh/cache/background jobs;
+- Definition/user-preference mutation;
+- P-006 runtime;
+- full-parity certification;
+- deploy / release.
 
 ### Persistent recovery order
 
