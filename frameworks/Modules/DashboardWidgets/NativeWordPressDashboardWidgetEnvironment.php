@@ -43,6 +43,9 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure(string):array<int,string> */
     private Closure $currentUserCollapsedDashboardWidgetIds;
 
+    /** @var Closure(string):array<string,string> */
+    private Closure $currentUserDashboardWidgetOrder;
+
     /** @var Closure(string):array<int,array{id:string,context:string,priority:string}> */
     private Closure $discoverRegisteredDashboardWidgets;
 
@@ -60,6 +63,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
      * @param null|callable(string):bool $hasClosedPostboxPreference
      * @param null|callable(string):array<int,string> $currentUserHiddenDashboardWidgetIds
      * @param null|callable(string):array<int,string> $currentUserCollapsedDashboardWidgetIds
+     * @param null|callable(string):array<string,string> $currentUserDashboardWidgetOrder
      * @param null|callable(string):array<int,array{id:string,context:string,priority:string}> $discoverRegisteredDashboardWidgets
      * @param null|callable(string):void $outputTrustedHtml
      */
@@ -74,6 +78,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
         ?callable $hasClosedPostboxPreference = null,
         ?callable $currentUserHiddenDashboardWidgetIds = null,
         ?callable $currentUserCollapsedDashboardWidgetIds = null,
+        ?callable $currentUserDashboardWidgetOrder = null,
         ?callable $discoverRegisteredDashboardWidgets = null,
         ?callable $outputTrustedHtml = null,
     ) {
@@ -240,6 +245,27 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return $ids;
             };
 
+        $this->currentUserDashboardWidgetOrder = $currentUserDashboardWidgetOrder !== null
+            ? Closure::fromCallable($currentUserDashboardWidgetOrder)
+            : static function (string $screenId): array {
+                if (!in_array($screenId, ['dashboard', 'dashboard-network'], true)) {
+                    throw new LogicException('Dashboard Widget order preference screen is unsupported.');
+                }
+                if (!function_exists('get_user_option')) {
+                    throw new LogicException('WordPress user-option API is unavailable.');
+                }
+
+                $order = get_user_option('meta-box-order_' . $screenId);
+                if ($order === false || $order === null) {
+                    return [];
+                }
+                if (!is_array($order)) {
+                    throw new LogicException('WordPress Dashboard Widget order preference is malformed.');
+                }
+
+                return $order;
+            };
+
         $this->discoverRegisteredDashboardWidgets = $discoverRegisteredDashboardWidgets !== null
             ? Closure::fromCallable($discoverRegisteredDashboardWidgets)
             : static function (string $screenId): array {
@@ -362,6 +388,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function currentUserCollapsedDashboardWidgetIds(string $screenId): array
     {
         return ($this->currentUserCollapsedDashboardWidgetIds)($screenId);
+    }
+
+    public function currentUserDashboardWidgetOrder(string $screenId): array
+    {
+        return ($this->currentUserDashboardWidgetOrder)($screenId);
     }
 
     public function discoverRegisteredDashboardWidgets(string $screenId): array
