@@ -75,6 +75,21 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         self::assertNull($environment->screenId('dashboard'));
     }
 
+    public function testReadsSavedClosedPostboxPreferenceThroughBoundedEnvironmentSeam(): void
+    {
+        $seen = [];
+        $environment = new NativeWordPressDashboardWidgetEnvironment(
+            hasClosedPostboxPreference: static function (string $screenId) use (&$seen): bool {
+                $seen[] = $screenId;
+                return $screenId === 'dashboard';
+            },
+        );
+
+        self::assertTrue($environment->hasClosedPostboxPreference('dashboard'));
+        self::assertFalse($environment->hasClosedPostboxPreference('dashboard-network'));
+        self::assertSame(['dashboard', 'dashboard-network'], $seen);
+    }
+
     public function testProjectsCurrentRequestIdsAndTrustedOutput(): void
     {
         $outputs = [];
