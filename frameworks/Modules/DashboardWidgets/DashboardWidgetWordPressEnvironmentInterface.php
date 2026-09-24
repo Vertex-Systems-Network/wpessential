@@ -43,6 +43,11 @@ interface DashboardWidgetWordPressEnvironmentInterface
     public function currentUserCollapsedDashboardWidgetIds(string $screenId): array;
 
     /**
+     * @return array<string,string>
+     */
+    public function currentUserDashboardWidgetOrder(string $screenId): array;
+
+    /**
      * @return list<array{id:string,context:string,priority:string}>
      */
     public function discoverRegisteredDashboardWidgets(string $screenId): array;
