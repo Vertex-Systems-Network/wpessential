@@ -34,6 +34,9 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure(mixed):?string */
     private Closure $screenId;
 
+    /** @var Closure(string):bool */
+    private Closure $hasClosedPostboxPreference;
+
     /** @var Closure(string):void */
     private Closure $outputTrustedHtml;
 
@@ -45,6 +48,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
      * @param null|callable():int $currentSiteId
      * @param null|callable():?int $currentNetworkId
      * @param null|callable(mixed):?string $screenId
+     * @param null|callable(string):bool $hasClosedPostboxPreference
      * @param null|callable(string):void $outputTrustedHtml
      */
     public function __construct(
@@ -55,6 +59,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
         ?callable $currentSiteId = null,
         ?callable $currentNetworkId = null,
         ?callable $screenId = null,
+        ?callable $hasClosedPostboxPreference = null,
         ?callable $outputTrustedHtml = null,
     ) {
         $this->registerAction = $registerAction !== null
@@ -141,6 +146,23 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return $screen->id;
             };
 
+        $this->hasClosedPostboxPreference = $hasClosedPostboxPreference !== null
+            ? Closure::fromCallable($hasClosedPostboxPreference)
+            : static function (string $screenId): bool {
+                if (!in_array($screenId, ['dashboard', 'dashboard-network'], true)) {
+                    throw new LogicException('Dashboard Widget closed-postbox preference screen is unsupported.');
+                }
+                if (!function_exists('get_current_user_id') || !function_exists('metadata_exists')) {
+                    throw new LogicException('WordPress user-meta API is unavailable.');
+                }
+                $userId = (int) get_current_user_id();
+                if ($userId < 1) {
+                    throw new LogicException('WordPress current user is unavailable.');
+                }
+
+                return metadata_exists('user', $userId, 'closedpostboxes_' . $screenId);
+            };
+
         $this->outputTrustedHtml = $outputTrustedHtml !== null
             ? Closure::fromCallable($outputTrustedHtml)
             : static function (string $html): void {
@@ -187,6 +209,11 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function screenId(mixed $screen): ?string
     {
         return ($this->screenId)($screen);
+    }
+
+    public function hasClosedPostboxPreference(string $screenId): bool
+    {
+        return ($this->hasClosedPostboxPreference)($screenId);
     }
 
     public function outputTrustedHtml(string $html): void
