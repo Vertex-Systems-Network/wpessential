@@ -35,6 +35,82 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertFalse($descriptor->defaultCollapsed);
         self::assertNull($descriptor->siteScope);
         self::assertSame([], $descriptor->siteIds);
+        self::assertNull($descriptor->backgroundJobId);
+    }
+
+    public function testCompilesValidatedCronBackgroundJobReferenceWithoutExecutingIt(): void
+    {
+        $backgroundJobId = '18000000-0000-4000-8000-000000000001';
+        $widget = $this->widget();
+        $widget['refresh'] = ['background_job' => $backgroundJobId];
+
+        $descriptor = $this->compiler(
+            static fn (string $id): ?array => [
+                'id' => $id,
+                'type' => 'cron',
+                'owner_surface_id' => 18,
+                'status' => 'published',
+            ],
+        )->compile($this->definition(widget: $widget));
+
+        self::assertSame($backgroundJobId, $descriptor->backgroundJobId);
+
+        $emptyRefresh = $this->widget();
+        $emptyRefresh['refresh'] = [];
+        self::assertNull(
+            $this->compiler()->compile($this->definition(widget: $emptyRefresh))->backgroundJobId,
+        );
+    }
+
+    public function testRejectsInvalidOrUnresolvableCronBackgroundJobReference(): void
+    {
+        $backgroundJobId = '18000000-0000-4000-8000-000000000001';
+        $valid = $this->widget();
+
+        foreach ([
+            array_replace($valid, ['refresh' => 'cron']),
+            array_replace($valid, ['refresh' => [true]]),
+            array_replace($valid, ['refresh' => ['unknown' => $backgroundJobId]]),
+            array_replace($valid, ['refresh' => ['background_job' => 'not-a-uuid']]),
+        ] as $widget) {
+            try {
+                $this->compiler()->compile($this->definition(widget: $widget));
+                self::fail('Expected malformed Dashboard Widget background job metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+
+        $widget = $this->widget();
+        $widget['refresh'] = ['background_job' => $backgroundJobId];
+
+        foreach ([
+            null,
+            ['id' => $backgroundJobId, 'type' => 'query', 'owner_surface_id' => 18, 'status' => 'published'],
+            ['id' => $backgroundJobId, 'type' => 'cron', 'owner_surface_id' => 10, 'status' => 'published'],
+            ['id' => $backgroundJobId, 'type' => 'cron', 'owner_surface_id' => 18, 'status' => 'draft'],
+            ['id' => '18000000-0000-4000-8000-000000000002', 'type' => 'cron', 'owner_surface_id' => 18, 'status' => 'published'],
+        ] as $resolved) {
+            try {
+                $this->compiler(static fn (string $id): ?array => $resolved)
+                    ->compile($this->definition(widget: $widget));
+                self::fail('Expected non-canonical Dashboard Widget background job reference to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+
+        try {
+            $this->compiler(static function (string $id): ?array {
+                throw new \RuntimeException('cron read unavailable');
+            })->compile($this->definition(widget: $widget));
+            self::fail('Expected background job resolver failure to fail closed.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->compiler()->compile($this->definition(widget: $widget));
     }
 
     public function testCompilesBoundedNativeDefaultHiddenState(): void
@@ -358,7 +434,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
-    private function compiler(): DashboardWidgetRegistrationCompiler
+    private function compiler(?callable $backgroundJobResolver = null): DashboardWidgetRegistrationCompiler
     {
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $registry = new ComponentBlueprintRegistry();
@@ -376,6 +452,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
                 $contentClassCompiler,
                 $catalog,
             ),
+            $backgroundJobResolver,
         );
     }
 
