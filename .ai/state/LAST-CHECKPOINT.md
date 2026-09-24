@@ -46,6 +46,7 @@ Audit verdict:
 ### FAST delivery status
 
 - Active Issue: **#1254 — Dashboard Widgets: bounded native collapsible capability V1**.
+- Active PR: **#1255 — Dashboard Widgets: bounded Native Collapsible Capability V1**.
 - Active branch: `agent/dashboard-widgets-bounded-native-collapsible-capability-v1`.
 - RB-0067 is the single pending feature merge gate.
 - Exact authorized scope: registration compiler + focused compiler test + five shared-truth files.
