@@ -179,6 +179,26 @@ final class DashboardWidgetWordPressAdapter
         ));
     }
 
+    /**
+     * Returns registered rows whose exact widget IDs are not canonical WordPress core IDs.
+     *
+     * This is a bounded non-core classification backing the third-party inventory option;
+     * it does not attest callback, plugin, package, or vendor provenance.
+     *
+     * @return list<array{id:string,context:string,priority:string}>
+     */
+    public function discoverNonCoreDashboardWidgets(bool $networkDashboard = false): array
+    {
+        $coreIds = $networkDashboard
+            ? self::NETWORK_CORE_WIDGET_IDS
+            : self::SITE_CORE_WIDGET_IDS;
+
+        return array_values(array_filter(
+            $this->discoverRegisteredDashboardWidgets($networkDashboard),
+            static fn (array $entry): bool => !in_array($entry['id'], $coreIds, true),
+        ));
+    }
+
     private function registerTarget(bool $networkDashboard): void
     {
         foreach ($this->planTarget($networkDashboard) as $entry) {

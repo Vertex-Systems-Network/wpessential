@@ -1,69 +1,57 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-24 — #1244 bounded Native Core-Widget Classification V1 active
+## 2026-09-24 — #1246 bounded Native Non-Core Registered Classification V1 active
 
 ### Exact repository truth
 
-- Exact current main: `b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b`.
-- Issue #1242 / PR #1243 — Bounded Native Registered Inventory Source V1 — terminal PASS:
-  - exact head `8f6df050d6a0f1fe5d69ff6ff3ad549cf17a42a2`;
-  - Governance `36025603063` PASS;
-  - Architecture `36025603345` PASS;
-  - PHP Quality `36025603066` PASS;
-  - Platform Compatibility `36025603100` PASS;
-  - Distributable `36025603189` PASS;
-  - exact eleven authorized files;
+- Exact current main: `4603672f75371d753f312bda75093cafd5a437fc`.
+- Issue #1244 / PR #1245 — Bounded Native Core-Widget Classification V1 — terminal PASS:
+  - exact head `a05ebde729288618fb2cbfda62d2cab6d4c630cd`;
+  - Governance `36052490560` PASS;
+  - Architecture `36052490607` PASS;
+  - PHP Quality `36052490535` PASS;
+  - Platform Compatibility `36052490624` PASS;
+  - Distributable `36052490554` PASS;
+  - exact seven authorized files;
   - zero review blockers and zero behind;
-  - expected-head merge `b9e88e657fc990c25d9ae2dad3dfd77fa8a1491b`;
-  - verdict `PASS_BOUNDED_NATIVE_REGISTERED_INVENTORY_SOURCE_V1`.
-- RB-0061 is terminal PASS.
+  - expected-head merge `4603672f75371d753f312bda75093cafd5a437fc`;
+  - verdict `PASS_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1`.
+- RB-0062 is terminal PASS.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
 ### Fresh exact-main Surface 10 audit
 
 Canonical Bank candidate selected:
 
-`widget.inventory.core_widget`
+`widget.inventory.third_party_widget`
 
 Audit verdict:
 
-`READY_FOR_BOUNDED_NATIVE_CORE_WIDGET_CLASSIFICATION_V1`
+`READY_FOR_BOUNDED_NATIVE_NON_CORE_REGISTERED_CLASSIFICATION_V1`
 
-The classifier consumes the already bounded registered-inventory source and performs exact screen-specific canonical-ID membership only.
+Bounded semantic:
+- consume the already safe registered-inventory `id/context/priority` rows;
+- classify rows whose exact ID is not in the canonical WordPress core-ID allowlist for that screen;
+- report this only as registered non-core classification.
 
-### #1244 frozen feature contract
+### #1246 frozen feature contract
 
-Site dashboard canonical IDs:
-- `dashboard_browser_nag`
-- `dashboard_php_nag`
-- `dashboard_site_health`
-- `dashboard_right_now`
-- `dashboard_activity`
-- `dashboard_quick_press`
-- `dashboard_primary`
-
-Network dashboard canonical IDs:
-- `dashboard_browser_nag`
-- `dashboard_php_nag`
-- `network_dashboard_right_now`
-- `dashboard_primary`
-
-Rules:
-- input remains the safe `id/context/priority` discovery projection;
-- only exact allowlisted IDs are classified core;
-- no prefix/substring/regex guessing;
-- deterministic discovery order is preserved;
-- no callback, args, title/HTML inspection or exposure;
-- “core” means canonical WordPress core widget ID, not cryptographic/plugin-origin provenance;
-- unknown IDs remain non-core;
-- no third-party classification, hide/remove, user-meta/options/global writes, public Ability/REST expansion, provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
+- Site/network uses the same exact core-ID allowlists accepted in #1244.
+- Return only registered rows outside the relevant canonical core allowlist.
+- Preserve deterministic registered-inventory order.
+- No prefix/substring/regex guessing.
+- No callback, callback-args, raw title/HTML inspection or exposure.
+- No plugin-file, hook-owner, callable reflection, filesystem or package provenance inspection.
+- This does not prove plugin/vendor provenance; a reused canonical core ID is not independently attributable in this tranche.
+- Existing malformed/unavailable inventory failure remains fail-closed to an empty list.
+- No hide/remove, user-meta/options/global writes, public Ability/REST expansion, provider/remote/action execution, shared Platform widening, P-006 runtime, certification, deploy or release.
 
 ### FAST delivery status
 
-- Active Issue: **#1244 — Dashboard Widgets: bounded native core-widget classification V1**.
-- Active PR: **#1245 — Dashboard Widgets: bounded Native Core-Widget Classification V1**.
-- Active branch: `agent/dashboard-widgets-bounded-native-core-widget-classification-v1`.
-- RB-0062 is the single pending feature merge gate.
+- Active Issue: **#1246 — Dashboard Widgets: bounded native non-core registered classification V1**.
+- Active PR: **#1247 — Dashboard Widgets: bounded Native Non-Core Registered Classification V1**.
+- Active branch: `agent/dashboard-widgets-bounded-native-non-core-registered-classification-v1`.
+- RB-0063 is the single pending feature merge gate.
 - Exact authorized scope: Dashboard Widget WordPress adapter, focused adapter test, and five shared-truth files.
 
 ### Persistent recovery order
