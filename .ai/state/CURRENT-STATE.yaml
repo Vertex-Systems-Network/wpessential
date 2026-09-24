@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: a3d7ccef7c8cba7baf5a94bafd938da3f86979d0
-observed_main_source: "Issue #1234 / PR #1235 merged Error-State shared-truth reconciliation + FAST AI-Native policy"
-active_issue: "#1236"
-active_pr: "#1237"
-active_branch: agent/dashboard-widgets-bounded-native-default-hidden-state-v1
-current_milestone: "Dashboard Widgets bounded Native Default-Hidden State V1"
+observed_main_sha: a79bf3e2e5b3f6a026ce31184f7652f933508969
+observed_main_source: "Issue #1236 / PR #1237 merged Dashboard Widgets bounded Native Default-Hidden State V1"
+active_issue: "#1238"
+active_pr: "PENDING_FEATURE_PR"
+active_branch: agent/dashboard-widgets-bounded-native-default-collapsed-state-v1
+current_milestone: "Dashboard Widgets bounded Native Default-Collapsed State V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1234 / PR #1235 merged as a3d7ccef7c8cba7baf5a94bafd938da3f86979d0; exact head d0e466565054cc51695bb6013f576f3e77525872; Governance 36014261934 PASS; Architecture 36014262076 PASS; exact five-file scope; zero blockers and zero behind; FAST AI-Native mode active."
-next_safe_action: "Open and validate the #1236 exact fourteen-file feature/shared-truth PR; merge only terminal green with expected-head protection. After terminal merge, use FAST mode: no separate reconciliation by default; verify resulting main and run the next exact-main feature audit."
-waiting_external: "PR #1237 feature exact-head CI/review"
+last_completed_milestone: "Issue #1236 / PR #1237 merged as a79bf3e2e5b3f6a026ce31184f7652f933508969; exact head 6c90286c3ad32b9ac40f55d744e48f6d29a472d1; Governance 36017952292 PASS; Architecture 36017952019 PASS; Platform Compatibility 36017952031 PASS; Distributable 36017951864 PASS; exact fourteen-file scope; zero blockers and zero behind."
+next_safe_action: "Open and validate the #1238 exact fourteen-file feature/shared-truth PR; merge only terminal green with expected-head protection. After terminal merge, verify resulting main and continue FAST exact-main audit without a routine reconciliation PR."
+waiting_external: "Issue #1238 feature exact-head CI/review after PR open"
 next_planned_slot:
-  issue: "UNASSIGNED_AFTER_1236"
+  issue: "UNASSIGNED_AFTER_1238"
   slot_id: dashboard-widgets-next-fast-feature-audit
   claim_branch: "UNASSIGNED_UNTIL_EXACT_MAIN_AUDIT"
-  claim_rule: "After #1236 terminal merge, audit exact resulting main and select the next smallest dependency-supported feature. Do not create a separate reconciliation PR unless real divergence/conflict requires it."
+  claim_rule: "After #1238 terminal merge, audit exact resulting main and select the next smallest dependency-supported feature. Do not create a separate reconciliation PR unless real divergence/conflict requires it."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0059
+    - RB-0060
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -44,6 +44,7 @@ runner_benchmark:
     - RB-0056
     - RB-0057
     - RB-0058
+    - RB-0059
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -58,18 +59,10 @@ fast_ai_native_mode:
     - "Turn A: exact-main audit + Issue claim + implementation + focused tests + README/shared truth + PR open"
     - "Turn B: one consolidated CI/review refresh + required fixes if any + expected-head merge + terminal resulting-main verification"
   separate_contract_pr_only_for_high_risk_boundaries: true
-  high_risk_examples:
-    - authentication_or_authorization
-    - payments_or_billing
-    - destructive_or_privileged_mutation
-    - remote_provider_or_transport_execution
-    - security_boundary_or_shared_platform_change
   routine_bounded_feature_contract_location: "Freeze in the implementation Issue instead of a separate contract PR."
   separate_post_merge_reconciliation_default: false
-  reconciliation_exception: "Create a separate reconciliation milestone only for real divergence/conflict or when exact scope technically forbids carrying shared truth in the implementation PR."
   implementation_pr_shared_truth_default: true
-  runner_benchmark_policy: "Record one merge-gate benchmark for the meaningful feature tranche; do not create historical/reconciliation benchmark churn unless evidence genuinely changes."
-  user_update_policy: "Report only meaningful states: implementation ready, material blocker/failure, PR open, or merge complete. Avoid micro-step commentary."
+  runner_benchmark_policy: "Record one merge-gate benchmark for the meaningful feature tranche."
   security_guards_preserved:
     - exact_file_allowlist
     - expected_head_merge
@@ -93,8 +86,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Repository/runtime evidence outranks compact state."
-  - "Issue #1234 / PR #1235 reconciliation is terminal PASS; RB-0058 is reconciled PASS from exact-head evidence."
-  - "Issue #1236 is the first FAST-mode routine feature tranche carrying implementation, focused tests and shared truth in one PR."
-  - "Feature contract: optional widget.inventory.default_hidden boolean; default false; unknown/malformed inventory metadata fails closed."
-  - "Runtime projection uses only WordPress default_hidden_meta_boxes with exact target/collision planning; no user preference persistence or inventory removal."
-  - "Loading, inventory discovery/hide, collapsible/default-collapsed/dismissible, providers/remote/actions/cache-refresh, P-006 runtime, full parity, deploy and release remain unpromoted."
+  - "Issue #1236 / PR #1237 bounded Native Default-Hidden State V1 is terminal PASS; RB-0059 is reconciled PASS from exact-head evidence."
+  - "Issue #1238 is the active FAST routine feature tranche carrying implementation, focused tests and shared truth in one PR."
+  - "Feature contract: optional widget.presentation.default_collapsed boolean; saved current-user closed-postbox metadata always wins."
+  - "WPE performs no user-meta write; default-collapsed projection uses only native dynamic postbox class filters after successful WPE widget registration."
+  - "Collapsible disablement, dismissible, inventory hide/discovery/classification, loading, providers/remote/actions/cache-refresh, P-006 runtime, full parity, deploy and release remain unpromoted."
