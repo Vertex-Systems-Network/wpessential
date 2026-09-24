@@ -158,7 +158,14 @@ final class DashboardWidgetWordPressAdapter
             );
             $result = $this->runtimeRenderExecutor->render($definitionId, $context);
 
-            if ($result->status !== DashboardWidgetRuntimeRenderResult::STATUS_RENDERED) {
+            if (!in_array(
+                $result->status,
+                [
+                    DashboardWidgetRuntimeRenderResult::STATUS_RENDERED,
+                    DashboardWidgetRuntimeRenderResult::STATUS_RENDERED_ERROR,
+                ],
+                true,
+            )) {
                 return;
             }
 
