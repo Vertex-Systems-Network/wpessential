@@ -5,7 +5,7 @@ state_status: RECONCILIATION_ACTIVE
 observed_main_sha: 5c89e5a40e1b5833e3a157cea0dd42fc77f4bec8
 observed_main_source: "Issue #1238 / PR #1239 merged Dashboard Widgets bounded Native Default-Collapsed State V1"
 active_issue: "#1240"
-active_pr: "UNASSIGNED_RECONCILIATION_PR"
+active_pr: "#1241"
 active_branch: supervisor/dashboard-widgets-default-collapsed-post-merge-reconciliation-v1
 current_milestone: "Dashboard Widgets Default-Collapsed post-merge shared-truth reconciliation"
 milestone_status: ACTIVE
