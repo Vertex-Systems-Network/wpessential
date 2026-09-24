@@ -51,6 +51,17 @@ final class DashboardWidgetRuntimeRenderResultTest extends TestCase
         self::assertSame(['wpe-dashboard-widget'], $rendered->assetHandles);
         self::assertNull($rendered->visibilityReason);
         self::assertNull($rendered->renderFailure);
+
+        $renderedError = DashboardWidgetRuntimeRenderResult::renderedError(
+            '<p>safe error presentation</p>',
+            ['wpe-dashboard-error'],
+            RenderFailureCode::DependencyMismatch,
+        );
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED_ERROR, $renderedError->status);
+        self::assertSame('<p>safe error presentation</p>', $renderedError->html);
+        self::assertSame(['wpe-dashboard-error'], $renderedError->assetHandles);
+        self::assertNull($renderedError->visibilityReason);
+        self::assertSame(RenderFailureCode::DependencyMismatch, $renderedError->renderFailure);
     }
 
     public function testVisibilityDeniedRejectsAllowedReason(): void
@@ -67,6 +78,17 @@ final class DashboardWidgetRuntimeRenderResultTest extends TestCase
         try {
             DashboardWidgetRuntimeRenderResult::rendered('<p>safe</p>', ['not-wpe']);
             self::fail('Expected malformed asset handle rejection.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        try {
+            DashboardWidgetRuntimeRenderResult::renderedError(
+                '<p>safe</p>',
+                ['not-wpe'],
+                RenderFailureCode::InvalidInput,
+            );
+            self::fail('Expected malformed rendered-error asset handle rejection.');
         } catch (InvalidArgumentException) {
             self::assertTrue(true);
         }
