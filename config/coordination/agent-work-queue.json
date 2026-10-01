@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-02",
-  "queue_anchor_main_sha": "eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7",
+  "queue_anchor_main_sha": "880db8ac6938f520fcc53d7f23eddd319b45e5fe",
   "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
-  "source_issue": "#1281",
+  "source_issue": "#1283",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6197,7 +6197,7 @@
       "slot_id": "dashboard-widgets-bounded-action-input-binding-v1",
       "title": "Dashboard Widgets bounded Action-Input Binding V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_ACTION_INPUT_BINDING_V1",
       "source": "Issue #1281 / terminal #1279 Action-Input contract",
       "dependencies": [
@@ -6239,7 +6239,63 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-action-input-binding-v1",
-      "close_condition": "Exact thirteen-file descriptor/compiler/binder/registration/test/shared-truth scope; literal+dynamic compile tests; site/user/network/runtime schema-drift fail-closed binder tests; no AbilityRegistry/Forms changes; RB-0080 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1."
+      "close_condition": "Exact thirteen-file descriptor/compiler/binder/registration/test/shared-truth scope; literal+dynamic compile tests; site/user/network/runtime schema-drift fail-closed binder tests; no AbilityRegistry/Forms changes; RB-0080 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1.",
+      "terminal_result": "PASS_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1",
+      "terminal_evidence": {
+        "issue": 1281,
+        "pr": 1282,
+        "head": "8e281620c2f2906946d7faa764d3faea085c8a15",
+        "governance_run": 36930174072,
+        "php_quality_run": 36930174063,
+        "distributable_run": 36930174073,
+        "architecture_run": 36930174056,
+        "platform_compatibility_run": 36930174064,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "880db8ac6938f520fcc53d7f23eddd319b45e5fe"
+      }
+    },
+    {
+      "priority": 1057,
+      "slot_id": "forms-workflows-set-enabled-ability-contract-v1",
+      "title": "Forms & Workflows Set-Enabled Mutating Ability Owner Contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "FORMS_WORKFLOWS_SET_ENABLED_ABILITY_CONTRACT_V1",
+      "source": "Issue #1283 / exact-main Surface-17 owner mutation audit",
+      "dependencies": [
+        "Issue #1281 / PR #1282 terminal Action-Input Binding PASS",
+        "RB-0080 terminal PASS",
+        "DefinitionRepository monotonic revision persistence",
+        "Forms lifecycle ownership + Published/Disabled reversible state",
+        "exact source base 880db8ac6938f520fcc53d7f23eddd319b45e5fe"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "docs/PRODUCT/FORMS-WORKFLOWS-SET-ENABLED-ABILITY-CONTRACT-V1.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "Forms runtime/product PHP/JS/tests",
+        "AbilityRegistry.php",
+        "Dashboard Widgets source",
+        "entry/submission/run mutation",
+        "provider/payment/secret execution",
+        "REST mutation exposure",
+        "direct DB/table gateway writes",
+        "package/dependency changes",
+        "P-006/deploy/release widening"
+      ],
+      "claim_branch": "agent/forms-workflows-set-enabled-ability-contract-v1",
+      "close_condition": "Exact six-file contract/shared-truth scope; reconcile #1281/#1282/RB-0080 PASS; freeze owner Ability input/resource authorization/revision/no-op/write/output/no-REST semantics; RB-0081 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge; promote only CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1 + READY_FOR_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
     }
   ],
   "historical_closeout": {
