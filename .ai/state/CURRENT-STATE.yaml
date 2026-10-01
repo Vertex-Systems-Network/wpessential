@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: ae3f67828b2b3ac32ce21f87f6d48f77489085e4
 observed_main_source: "Issue #1270 / PR #1271 corrective Action Readiness validation repair merged; Governance and Architecture both PASS"
 active_issue: "#1269"
-active_pr: null
+active_pr: "#1272"
 active_branch: agent/dashboard-widgets-bounded-action-confirmation-metadata-v1
 current_milestone: "Dashboard Widgets bounded Action Confirmation Metadata V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Action Readiness Contract semantics merged through #1267/#1268, with original RB-0073 preserved FAIL due invalid active_pr sentinel; corrective #1270/#1271 passed Governance 36919767646 and Architecture 36919771597 and merged as ae3f67828b2b3ac32ce21f87f6d48f77489085e4. RB-0074 PASS terminally validates the contract direction without rewriting RB-0073 history."
 next_safe_action: "Implement Issue #1269 exact ten-file Bounded Action Confirmation Metadata V1 from repaired main; metadata/compiler only, no renderer, no JS, no AbilityRegistry execute, no mutation."
-waiting_external: "none; #1269 implementation active before PR open"
+waiting_external: "PR #1272 exact-head RB-0075 CI/review gate"
 next_planned_slot:
   issue: "#1269"
   slot_id: dashboard-widgets-bounded-action-confirmation-metadata-v1
