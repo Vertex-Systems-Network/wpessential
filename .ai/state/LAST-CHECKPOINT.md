@@ -1,74 +1,70 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1281 Dashboard Widgets bounded Action-Input Binding V1 active
+## 2026-10-02 — #1283 Forms & Workflows Set-Enabled Mutating Ability Owner Contract V1 active
 
 ### Exact repository truth
 
-- Exact current main: `eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7`.
-- Issue #1279 / PR #1280 — Action-Input Binding Contract V1 — terminal PASS:
-  - exact head `ae959bb11d7882f7c55b5a16ffd2c8ea712c2441`;
-  - Governance `36928758192` PASS;
-  - Architecture `36928758204` PASS;
-  - exact six authorized contract/shared-truth files;
-  - expected-head merge `eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7`;
-  - verdict `CONTRACT_FROZEN_DASHBOARD_ACTION_INPUT_BINDING_V1`.
-- RB-0079 is terminal PASS.
-- RB-0078 shared Ability Input Validator implementation remains terminal PASS.
+- Exact current main: `880db8ac6938f520fcc53d7f23eddd319b45e5fe`.
+- Issue #1281 / PR #1282 — Bounded Dashboard Action-Input Binding V1 — terminal PASS:
+  - exact head `8e281620c2f2906946d7faa764d3faea085c8a15`;
+  - Governance `36930174072` PASS;
+  - PHP Quality `36930174063` PASS;
+  - Distributable `36930174073` PASS;
+  - Architecture `36930174056` PASS;
+  - Platform Compatibility `36930174064` PASS;
+  - exact thirteen authorized files;
+  - zero unresolved review blockers;
+  - zero behind;
+  - expected-head merge `880db8ac6938f520fcc53d7f23eddd319b45e5fe`;
+  - verdict `PASS_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1`.
+- RB-0080 is terminal PASS.
 - RB-0073 remains historical FAIL and is not rewritten.
 
-### #1281 active implementation
+### First real Surface-17 mutation selection
 
-Bounded action-input binding only.
+Fresh exact-main audit selects **Set-Enabled** as the smallest real owner mutation:
 
-Product implementation:
-- typed `DashboardWidgetActionInputDescriptor`;
-- `DashboardWidgetActionInputCompiler`;
-- `DashboardWidgetActionInputBinder`;
-- registration compiler/descriptor integration;
-- focused compiler/binder/registration tests.
+- existing Surface-17 definitions are revisioned and repository-backed;
+- Published/Disabled lifecycle already exists;
+- this mutation is reversible and does not invent submission/entry/run persistence;
+- shared repository already provides optimistic revision conflict protection.
 
-Compile-time boundary:
-- action input only with canonical Forms owner Ability;
-- zero-input backward compatibility preserved;
-- non-empty input requires valid non-empty object schema with `additionalProperties=false`;
-- required top-level properties must be bound;
-- literal bindings validated through canonical `AbilityInputValidator`;
-- Dynamic bindings only for scalar/scalar-list properties;
-- credential-like property names fail closed;
-- Query/DataSource/template/provider binding forbidden.
+Ability candidate:
 
-Runtime binder:
-- exact `ExecutionContext` derives site/user/network identity;
-- canonical `DynamicValueResolverInterface` only;
-- current Ability descriptor re-resolved;
-- current schema revalidated;
-- final assembled input revalidated;
-- schema drift/unresolved/context/type failures fail closed;
-- no raw rejected values exposed.
+`wpessential/forms-workflows/set-enabled`
 
-Strictly absent:
-- no `AbilityRegistry.php` change;
-- no `AbilityRegistry::execute()`;
-- no Forms & Workflows source;
-- no Forms mutation Ability;
-- no trusted form_action UI;
-- no public REST mutation;
-- no package/dependency change.
-
-### Dependency order after merge
-
-1. bounded Action-Input Binding V1;
-2. real Forms & Workflows mutating Ability owner contract;
-3. trusted form_action UI/orchestration;
-4. final separately reviewed execution gate.
+Contract direction:
+- owner Surface 17;
+- `manage_options`;
+- `mutates=true`;
+- Internal/UI only;
+- no REST;
+- input: definition_id + expected_revision + enabled;
+- direct owner-side canonical input validation required because AbilityRegistry does not globally enforce inputSchema;
+- explicit lowercase RFC4122 UUID validation at handler level because the shared validator intentionally has no pattern/format keyword;
+- re-read/re-check immediately before write;
+- Published↔Disabled only;
+- same-target is deterministic no-op;
+- changed transition increments revision exactly once;
+- stale replay fails closed;
+- payload/dependencies/identity/checksum preserved;
+- no direct DB/table gateway writes.
 
 ### FAST delivery status
 
-- Active Issue: **#1281 — Dashboard Widgets: bounded Action-Input Binding V1**.
-- Active PR: **#1282**.
-- Active branch: `agent/dashboard-widgets-bounded-action-input-binding-v1`.
-- RB-0080 is the single implementation merge gate.
-- Exact authorized scope: eight product/test files + five shared-truth files.
+- Active Issue: **#1283 — Forms & Workflows: Set-Enabled Mutating Ability Owner Contract V1**.
+- Active PR: **pending**.
+- Active branch: `agent/forms-workflows-set-enabled-ability-contract-v1`.
+- RB-0081 is the single owner-contract merge gate.
+- Exact authorized scope: one contract document + five shared-truth files.
+- No Forms runtime source is authorized in this contract tranche.
+
+### Dependency order after contract
+
+1. Set-Enabled owner Ability contract.
+2. Bounded Set-Enabled owner Ability implementation.
+3. Trusted Dashboard `form_action` UI/orchestration.
+4. Final separately reviewed Dashboard execution gate.
 
 ### Persistent recovery order
 
