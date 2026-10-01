@@ -60,7 +60,7 @@ Strictly absent:
 ### FAST delivery status
 
 - Active Issue: **#1269 — Dashboard Widgets: bounded Action Confirmation Metadata V1**.
-- Active PR: **pending**.
+- Active PR: **#1272**.
 - Active branch: `agent/dashboard-widgets-bounded-action-confirmation-metadata-v1`.
 - RB-0075 is the single feature merge gate.
 - Exact authorized scope: five product/test files + five shared-truth files.
