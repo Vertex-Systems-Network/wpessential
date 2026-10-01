@@ -62,7 +62,7 @@ Strictly absent:
 ### FAST delivery status
 
 - Active Issue: **#1277 — Platform: bounded Ability Input Validator V1**.
-- Active PR: **pending**.
+- Active PR: **#1278**.
 - Active branch: `agent/platform-bounded-ability-input-validator-v1`.
 - RB-0078 is the single implementation merge gate.
 - Exact authorized scope: three implementation/test files + five shared-truth files.
