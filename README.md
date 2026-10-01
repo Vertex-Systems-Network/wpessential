@@ -8,7 +8,8 @@ Project website: **https://wpessential.org**
 
 This is the high-level AI-Native roadmap index derived from repository evidence. **Progress here is milestone-scoped, not a claim of full product parity or GA readiness.** A milestone is counted as terminal only when its explicitly named bounded scope is closed by repository evidence.
 
-**Overall milestone completion (equal-weight, terminal-only): `5 / 10 = 50%`.**  
+**Overall milestone completion (equal-weight, terminal-only): `5 / 10 = 50%`.**
+
 Active/partial milestones: **3 / 10** (M6-M8). Full-parity/release milestones not promoted: **2 / 10** (M9-M10).
 
 | Milestone | Scope | Evidence-based progress | State | Primary evidence / next gate |
