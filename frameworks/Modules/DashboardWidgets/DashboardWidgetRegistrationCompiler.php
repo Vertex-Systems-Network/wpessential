@@ -39,7 +39,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const REFRESH_KEYS = ['background_job'];
 
     /** @var list<string> */
-    private const ACTION_KEYS = ['ability_id'];
+    private const ACTION_KEYS = ['ability_id', 'confirmation'];
 
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
@@ -130,6 +130,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         $defaultCollapsed = $this->compileDefaultCollapsed($widget);
         $backgroundJobId = $this->compileBackgroundJobReference($widget);
         $actionAbilityId = $this->compileFormsActionAbilityReference($widget);
+        $actionConfirmation = $this->compileActionConfirmation($widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -145,6 +146,50 @@ final readonly class DashboardWidgetRegistrationCompiler
             siteIds: $siteIds,
             backgroundJobId: $backgroundJobId,
             actionAbilityId: $actionAbilityId,
+            actionConfirmation: $actionConfirmation,
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileActionConfirmation(array $widget): ?DashboardWidgetActionConfirmationDescriptor
+    {
+        if (!array_key_exists('action', $widget)) {
+            return null;
+        }
+
+        $action = $widget['action'];
+        if (!is_array($action) || ($action !== [] && array_is_list($action))) {
+            throw new InvalidArgumentException('Dashboard Widget action metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($action, self::ACTION_KEYS, 'Dashboard Widget action metadata');
+
+        if (!array_key_exists('confirmation', $action)) {
+            return null;
+        }
+
+        $confirmation = $action['confirmation'];
+        if (!is_array($confirmation) || array_is_list($confirmation)) {
+            throw new InvalidArgumentException('Dashboard Widget action.confirmation must be an object/map.');
+        }
+
+        $keys = ['title', 'message', 'confirm_label', 'cancel_label'];
+        $this->assertKnownKeys($confirmation, $keys, 'Dashboard Widget action.confirmation');
+
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $confirmation) || !is_string($confirmation[$key])) {
+                throw new InvalidArgumentException(
+                    'Dashboard Widget action.confirmation requires bounded string title, message, confirm_label and cancel_label fields.',
+                );
+            }
+        }
+
+        return new DashboardWidgetActionConfirmationDescriptor(
+            $confirmation['title'],
+            $confirmation['message'],
+            $confirmation['confirm_label'],
+            $confirmation['cancel_label'],
         );
     }
 
