@@ -10,6 +10,7 @@ use WPEssential\Contracts\AbilityHandlerInterface;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionAuthorizationEvaluator;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
@@ -130,6 +131,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetRegistrationCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_REGISTRATION_COMPILER));
         self::assertInstanceOf(DashboardWidgetVisibilityCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_COMPILER));
         self::assertInstanceOf(DashboardWidgetVisibilityEvaluator::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_EVALUATOR));
+        self::assertInstanceOf(DashboardWidgetActionAuthorizationEvaluator::class, $services->get(DashboardWidgetsModule::SERVICE_ACTION_AUTHORIZATION_EVALUATOR));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
 
