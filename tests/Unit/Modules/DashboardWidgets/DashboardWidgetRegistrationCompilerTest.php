@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionConfirmationDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
@@ -37,6 +38,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertSame([], $descriptor->siteIds);
         self::assertNull($descriptor->backgroundJobId);
         self::assertNull($descriptor->actionAbilityId);
+        self::assertNull($descriptor->actionConfirmation);
     }
 
     public function testCompilesValidatedCronBackgroundJobReferenceWithoutExecutingIt(): void
@@ -138,6 +140,79 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertNull(
             $this->compiler()->compile($this->definition(widget: $emptyAction))->actionAbilityId,
         );
+    }
+
+    public function testCompilesBoundedActionConfirmationMetadataWithoutExecutingIt(): void
+    {
+        $widget = $this->widget();
+        $widget['action'] = [
+            'confirmation' => [
+                'title' => 'Confirm action',
+                'message' => 'This change will be applied. Continue?',
+                'confirm_label' => 'Confirm',
+                'cancel_label' => 'Cancel',
+            ],
+        ];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+
+        self::assertNull($descriptor->actionAbilityId);
+        self::assertInstanceOf(DashboardWidgetActionConfirmationDescriptor::class, $descriptor->actionConfirmation);
+        self::assertSame('Confirm action', $descriptor->actionConfirmation->title);
+        self::assertSame('This change will be applied. Continue?', $descriptor->actionConfirmation->message);
+        self::assertSame('Confirm', $descriptor->actionConfirmation->confirmLabel);
+        self::assertSame('Cancel', $descriptor->actionConfirmation->cancelLabel);
+
+        $abilityId = 'wpessential/forms-workflows/submit';
+        $widget['action']['ability_id'] = $abilityId;
+        $combined = $this->compiler(
+            null,
+            static fn (string $name): ?array => [
+                'name' => $name,
+                'owner_surface_id' => 17,
+                'mutates' => true,
+                'ui_allowed' => true,
+                'input_schema' => [],
+            ],
+        )->compile($this->definition(widget: $widget));
+
+        self::assertSame($abilityId, $combined->actionAbilityId);
+        self::assertInstanceOf(DashboardWidgetActionConfirmationDescriptor::class, $combined->actionConfirmation);
+    }
+
+    public function testRejectsMalformedActionConfirmationMetadata(): void
+    {
+        $valid = $this->widget();
+        $base = [
+            'title' => 'Confirm action',
+            'message' => 'This change will be applied. Continue?',
+            'confirm_label' => 'Confirm',
+            'cancel_label' => 'Cancel',
+        ];
+
+        $cases = [
+            array_replace($valid, ['action' => ['confirmation' => 'confirm']]),
+            array_replace($valid, ['action' => ['confirmation' => [true]]]),
+            array_replace($valid, ['action' => ['confirmation' => array_replace($base, ['unknown' => 'x'])]]),
+            array_replace($valid, ['action' => ['confirmation' => [
+                'title' => 'Confirm action',
+                'message' => 'Continue?',
+                'confirm_label' => 'Confirm',
+            ]]]),
+            array_replace($valid, ['action' => ['confirmation' => array_replace($base, ['title' => 123])]]),
+            array_replace($valid, ['action' => ['confirmation' => array_replace($base, ['message' => '   '])]]),
+            array_replace($valid, ['action' => ['confirmation' => array_replace($base, ['confirm_label' => "Bad\x00label"])]]),
+            array_replace($valid, ['action' => ['confirmation' => array_replace($base, ['message' => str_repeat('m', DashboardWidgetActionConfirmationDescriptor::MAX_MESSAGE_BYTES + 1)])]]),
+        ];
+
+        foreach ($cases as $widget) {
+            try {
+                $this->compiler()->compile($this->definition(widget: $widget));
+                self::fail('Expected malformed Dashboard Widget action confirmation metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
     }
 
     public function testRejectsUnsafeOrUnsupportedFormsActionAbilityReference(): void

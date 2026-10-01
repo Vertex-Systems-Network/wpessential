@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-02",
-  "queue_anchor_main_sha": "9733765f0e8f619299634ae5afbbb362b8f71a00",
+  "queue_anchor_main_sha": "ae3f67828b2b3ac32ce21f87f6d48f77489085e4",
   "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
-  "source_issue": "#1270",
+  "source_issue": "#1269",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -5810,7 +5810,7 @@
       "slot_id": "dashboard-widgets-action-readiness-contract-v1",
       "title": "Dashboard Widgets Action Readiness Contract V1",
       "role": "AGENT_CONTRACT",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_ACTION_READINESS_CONTRACT_V1",
       "source": "Issue #1267 / exact-main post-authorization action readiness audit",
       "dependencies": [
@@ -5855,6 +5855,18 @@
         "architecture_run": 36918750714,
         "architecture_status": "FAIL",
         "failure": "CURRENT-STATE active_pr used invalid PENDING sentinel"
+      },
+      "terminal_result": "CONTRACT_FROZEN_ACTION_READINESS_V1",
+      "terminal_evidence": {
+        "issue": 1267,
+        "pr": 1268,
+        "merge_sha": "9733765f0e8f619299634ae5afbbb362b8f71a00",
+        "original_gate": "RB-0073 FAIL preserved",
+        "corrective_issue": 1270,
+        "corrective_pr": 1271,
+        "corrective_governance_run": 36919767646,
+        "corrective_architecture_run": 36919771597,
+        "corrective_merge_sha": "ae3f67828b2b3ac32ce21f87f6d48f77489085e4"
       }
     },
     {
@@ -5862,7 +5874,7 @@
       "slot_id": "dashboard-widgets-action-readiness-validation-repair",
       "title": "Dashboard Widgets Action Readiness contract validation repair",
       "role": "SUPERVISOR_RECONCILIATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_ACTION_READINESS_VALIDATION_REPAIR",
       "source": "Issue #1270 / PR #1268 Architecture durable-state format failure",
       "dependencies": [
@@ -5892,20 +5904,33 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "supervisor/dashboard-widgets-action-readiness-validation-repair",
-      "close_condition": "Exact five-file shared-truth repair; active_pr schema-valid; RB-0074 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge; then #1267 may close and #1269 may resume."
+      "close_condition": "Exact five-file shared-truth repair; active_pr schema-valid; RB-0074 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge; then #1267 may close and #1269 may resume.",
+      "terminal_result": "PASS_ACTION_READINESS_VALIDATION_REPAIR",
+      "terminal_evidence": {
+        "issue": 1270,
+        "pr": 1271,
+        "head": "599aaafd46091a56bfd5f4b169c2f1b6f435b330",
+        "governance_run": 36919767646,
+        "architecture_run": 36919771597,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "ae3f67828b2b3ac32ce21f87f6d48f77489085e4"
+      }
     },
     {
       "priority": 1051,
       "slot_id": "dashboard-widgets-bounded-action-confirmation-metadata-v1",
       "title": "Dashboard Widgets bounded Action Confirmation Metadata V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "OPEN_NONBLOCKING",
+      "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_ACTION_CONFIRMATION_METADATA_V1",
-      "source": "Issue #1269 / dependency-gated by #1270 repair",
+      "source": "Issue #1269 / repaired exact-main Action Readiness confirmation prerequisite",
       "dependencies": [
-        "Issue #1267 Action Readiness contract terminal validation",
-        "RB-0074 corrective PASS",
-        "fresh exact-main claim after repair"
+        "Action Readiness contract semantics merged",
+        "RB-0073 historical FAIL preserved",
+        "Issue #1270 / PR #1271 corrective validation terminal PASS",
+        "RB-0074 terminal PASS",
+        "exact source base ae3f67828b2b3ac32ce21f87f6d48f77489085e4"
       ],
       "runtime_allowed": false,
       "mutation_allowed": false,
@@ -5913,7 +5938,33 @@
       "renderer_execution_allowed": false,
       "shared_platform_mutation_allowed": false,
       "claim_branch": "agent/dashboard-widgets-bounded-action-confirmation-metadata-v1",
-      "close_condition": "Paused. Must be re-anchored to exact repaired main before merge-track resumes."
+      "close_condition": "Exact ten-file metadata/compiler/descriptor/test/shared-truth scope; positive + backward-compatible + malformed fail-closed tests; RB-0075 path-applicable exact-head CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_ACTION_CONFIRMATION_METADATA_V1.",
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetActionConfirmationDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationDescriptor.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetActionConfirmationDescriptorTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "confirmation renderer/modal/button behavior",
+        "JS",
+        "AbilityRegistry authorize changes or execute",
+        "action mutation",
+        "Forms & Workflows source changes",
+        "result/audit source implementation",
+        "non-empty action input",
+        "generic provider execution",
+        "public REST mutation widening",
+        "shared Platform source changes",
+        "package/dependency changes",
+        "P-006/deploy/release widening"
+      ]
     }
   ],
   "historical_closeout": {
