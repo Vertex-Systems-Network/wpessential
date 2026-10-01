@@ -1,77 +1,70 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1273 Dashboard Widgets Action Result + Audit Contract V1 active
+## 2026-10-02 — #1275 Platform bounded Ability Input Validation Contract V1 active
 
 ### Exact repository truth
 
-- Exact current main: `f20d15aa5879be026dd76d89cd3e009c77b4af0f`.
-- Issue #1269 / PR #1272 — Bounded Action Confirmation Metadata V1 — terminal PASS:
-  - exact head `be1fd9ca20beed039a82fd5e887810bab7d6ef35`;
-  - PHP Quality `36921040704` PASS;
-  - Governance `36921040715` PASS;
-  - Distributable `36921040579` PASS;
-  - Platform Compatibility `36921040474` PASS;
-  - Architecture `36921040547` PASS;
-  - exact ten authorized files;
+- Exact current main: `f7e24263b1429ffbacd3cba212684858feafbfe9`.
+- Issue #1273 / PR #1274 — Action Result + Audit Contract V1 — terminal PASS:
+  - exact head `c4211da4db9311f66c08174328094ccc30332a3e`;
+  - Governance `36924167746` PASS;
+  - Architecture `36924167872` PASS;
+  - exact six authorized contract/shared-truth files;
   - zero unresolved review blockers;
   - zero behind;
-  - expected-head merge `f20d15aa5879be026dd76d89cd3e009c77b4af0f`;
-  - verdict `PASS_BOUNDED_ACTION_CONFIRMATION_METADATA_V1`.
-- RB-0075 is terminal PASS.
+  - expected-head merge `f7e24263b1429ffbacd3cba212684858feafbfe9`;
+  - verdict `CONTRACT_FROZEN_ACTION_RESULT_AUDIT_V1`.
+- RB-0076 is terminal PASS.
 - RB-0073 remains historical FAIL and is not rewritten.
 - Corrective RB-0074 remains terminal PASS.
 
-### Surface 10 action readiness after #1272
+### Fresh dependency correction
 
-Terminal prerequisites:
-- canonical `action.ability_id` reference;
-- authorization-only policy/capability evaluator;
-- typed bounded action confirmation metadata;
-- Action Readiness contract direction terminally validated.
+The prior next-step assumption — create a Forms & Workflows mutating Ability before action-input validation — is not safe on exact main.
 
-Still blocked:
-- Action Result + Audit contract;
-- real Forms & Workflows owner-surface-17 mutating Ability;
-- canonical input validation if non-empty input is needed;
-- trusted `form_action` UI/orchestration;
-- final separately reviewed action execution gate.
+Evidence:
+- Surface 17 currently exposes only read-only `get` and `catalog` abilities.
+- Forms BANK_REVIEWED/Atomic/UX truth shows real mutations require resource/input identity plus replay/idempotency/state semantics.
+- No truthful zero-input Forms business mutation exists.
+- Dashboard Widgets currently admits only zero-input action abilities.
+- `AbilityRegistry` stores `AbilityDescriptor::inputSchema` but does not validate it.
+- No canonical generic Ability input validator exists.
 
-### Canonical audit evidence
+Therefore a fake zero-input mutation is prohibited.
 
-Shared audit infrastructure already exists and is promoted:
-- `AuditServices::LOGGER = platform.audit`;
-- `AuditLoggerInterface::record(AuditRecord)`;
-- `AuditRecord` carries canonical `ExecutionContext`, owner surface, stable action, `AuditOutcome`, resource, reason and sanitized metadata;
-- persistent audit storage captures actor/site/network/channel/correlation/action/outcome/resource/reason/metadata/retention/privacy;
-- `AuditMetadataSanitizer` redacts sensitive keys, bounds nesting and truncates long strings.
+Corrected order:
+1. bounded Ability Input Validation contract;
+2. shared validator implementation;
+3. Dashboard Widgets action-input binding contract;
+4. real Forms & Workflows mutating Ability owner contract;
+5. trusted form_action UI/orchestration;
+6. final execution gate.
 
-Dashboard Widgets must reuse this plane and must not create a private audit logger/table/file.
+### #1275 contract direction
 
-### #1273 frozen contract direction
+Contract-only shared Platform tranche. No runtime/shared-Platform PHP/JS/tests yet.
 
-Contract-only tranche; no runtime/product PHP/JS/test source.
+Frozen principles:
+- opt-in validator first; no global `AbilityRegistry` behavior change;
+- root object schema;
+- bounded subset: type, required, properties, additionalProperties, items, enum, min/max length/value/items;
+- unsupported keywords fail closed;
+- no coercion/default injection/remote refs/callbacks;
+- schema depth <= 8, nodes <= 256, runtime input <= 32768 bytes;
+- typed machine-safe validation result without rejected values;
+- pure deterministic validation only.
 
-It freezes:
-- safe action result taxonomy;
-- non-ambiguous retry behavior;
-- mandatory `execution_outcome_unknown` for ambiguous post-attempt results;
-- canonical Surface-10 audit action names;
-- bounded audit metadata allowlist;
-- pre-execution audit append as mandatory fail-closed mutation gate;
-- post-success audit degradation semantics that preserve known mutation success and forbid automatic retry;
-- no EventBus requirement in V1.
+Next promotion after terminal contract merge:
 
-Next dependency-ready tranche after terminal contract merge:
-
-`READY_FOR_FORMS_WORKFLOWS_MUTATING_ABILITY_OWNER_CONTRACT_V1`
+`READY_FOR_BOUNDED_ABILITY_INPUT_VALIDATOR_V1`
 
 ### FAST delivery status
 
-- Active Issue: **#1273 — Dashboard Widgets: Action Result + Audit Contract V1**.
-- Active PR: **#1274**.
-- Active branch: `agent/dashboard-widgets-action-result-audit-contract-v1`.
-- RB-0076 is the single contract merge gate.
-- Exact authorized scope: one contract document + five shared-truth files.
+- Active Issue: **#1275 — Platform: bounded Ability input validation contract V1**.
+- Active PR: **#1276**.
+- Active branch: `supervisor/platform-bounded-ability-input-validation-contract-v1`.
+- RB-0077 is the single contract merge gate.
+- Exact authorized scope: one new Platform contract document + five shared-truth files.
 
 ### Persistent recovery order
 
