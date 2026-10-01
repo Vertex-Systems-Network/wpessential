@@ -5,18 +5,18 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: c9ff0250c10d4c01a7732fd748068697123babfc
 observed_main_source: "Issue #1262 / PR #1263 merged Dashboard Widgets bounded Forms/Workflow Action Ability Reference V1"
 active_issue: "#1265"
-active_pr: "PENDING"
+active_pr: "#1266"
 active_branch: agent/dashboard-widgets-bounded-action-authorization-evaluator-v1
 current_milestone: "Dashboard Widgets bounded Action Authorization Evaluator V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1262 / PR #1263 merged as c9ff0250c10d4c01a7732fd748068697123babfc; exact head ec1da195d9b2e1240c5c6aeb3c29bba6e879d118; Governance 36074707568 PASS; Architecture 36074707624 PASS; PHP Quality 36074707473 PASS; Platform Compatibility 36074707516 PASS; Distributable 36074707503 PASS; exact ten-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1."
 next_safe_action: "Implement Issue #1265 exact nine-file authorization-only prerequisite: validate canonical Forms owner-17 mutating UI zero-input ability, authenticated user UI context, and call AbilityRegistry::authorize only; no execute, mutation, form_action UI, confirmation/result/audit, shared Platform change, deploy or release."
-waiting_external: "none; #1265 implementation active"
+waiting_external: "PR #1266 exact-head CI/review after emergency dev-dependency advisory lock remediation"
 next_planned_slot:
   issue: "#1265"
   slot_id: dashboard-widgets-bounded-action-authorization-evaluator-v1
   claim_branch: "agent/dashboard-widgets-bounded-action-authorization-evaluator-v1"
-  claim_rule: "Issue #1265 freezes exact nine-file authorization-only prerequisite on exact main c9ff0250c10d4c01a7732fd748068697123babfc; canonical AbilityRegistry authorize-only, Forms owner-17 mutating UI zero-input descriptor, authenticated user UI context, no execute."
+  claim_rule: "Issue #1265 freezes exact ten-file authorization-only prerequisite scope on exact main c9ff0250c10d4c01a7732fd748068697123babfc; nine original feature/shared-truth files plus package-lock emergency advisory remediation only; canonical AbilityRegistry authorize-only, Forms owner-17 mutating UI zero-input descriptor, authenticated user UI context, no execute."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
