@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 9733765f0e8f619299634ae5afbbb362b8f71a00
 observed_main_source: "Issue #1267 / PR #1268 Action Readiness Contract V1 merged, but Architecture exact-head validation failed on durable active_pr state format"
 active_issue: "#1270"
-active_pr: null
+active_pr: "#1271"
 active_branch: supervisor/dashboard-widgets-action-readiness-validation-repair
 current_milestone: "Dashboard Widgets Action Readiness Contract validation repair"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1265 / PR #1266 remains the last fully terminal PASS milestone. Issue #1267 / PR #1268 merged as 9733765f0e8f619299634ae5afbbb362b8f71a00 with Governance 36918750577 PASS but Architecture 36918750714 FAIL because CURRENT-STATE active_pr used invalid value PENDING; contract semantics are merged but terminal validation is not satisfied."
 next_safe_action: "Complete Issue #1270 exact five-file shared-truth validation repair; obtain Governance + Architecture PASS; only then close #1267 and allow #1269 Action Confirmation Metadata V1 to resume."
-waiting_external: "none; #1270 validation repair active"
+waiting_external: "PR #1271 exact-head Governance + Architecture corrective validation"
 next_planned_slot:
   issue: "#1270"
   slot_id: dashboard-widgets-action-readiness-validation-repair
