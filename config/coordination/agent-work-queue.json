@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-02",
-  "queue_anchor_main_sha": "077eec04e53a9da7994df2977b69a0d5ba763ead",
+  "queue_anchor_main_sha": "9733765f0e8f619299634ae5afbbb362b8f71a00",
   "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
-  "source_issue": "#1267",
+  "source_issue": "#1270",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -5845,7 +5845,75 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-action-readiness-contract-v1",
-      "close_condition": "Exact six-file contract/shared-truth scope; reconcile #1265/#1266/RB-0072 terminal PASS; freeze ordered remaining action prerequisites; promote only CONTRACT_FROZEN_ACTION_READINESS_V1 + READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1; RB-0073 path-applicable CI PASS; zero blockers; zero behind; expected-head merge."
+      "close_condition": "Contract semantics are merged, but slot remains ACTIVE until corrective Issue #1270/RB-0074 exact-head Governance + Architecture PASS. RB-0073 is terminal FAIL.",
+      "merge_evidence": {
+        "pr": 1268,
+        "head": "8050c1ccc2e750aef83f8ff17a7a707787219488",
+        "merge_sha": "9733765f0e8f619299634ae5afbbb362b8f71a00",
+        "governance_run": 36918750577,
+        "governance_status": "PASS",
+        "architecture_run": 36918750714,
+        "architecture_status": "FAIL",
+        "failure": "CURRENT-STATE active_pr used invalid PENDING sentinel"
+      }
+    },
+    {
+      "priority": 1050,
+      "slot_id": "dashboard-widgets-action-readiness-validation-repair",
+      "title": "Dashboard Widgets Action Readiness contract validation repair",
+      "role": "SUPERVISOR_RECONCILIATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_ACTION_READINESS_VALIDATION_REPAIR",
+      "source": "Issue #1270 / PR #1268 Architecture durable-state format failure",
+      "dependencies": [
+        "PR #1268 merged as 9733765f0e8f619299634ae5afbbb362b8f71a00",
+        "RB-0073 terminal FAIL",
+        "exact active_pr schema failure isolated"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "contract semantic changes",
+        "runtime/product PHP or JS",
+        "package/dependency changes",
+        "AbilityRegistry execute/action mutation",
+        "Forms source changes",
+        "shared Platform source changes",
+        "P-006/deploy/release widening"
+      ],
+      "claim_branch": "supervisor/dashboard-widgets-action-readiness-validation-repair",
+      "close_condition": "Exact five-file shared-truth repair; active_pr schema-valid; RB-0074 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge; then #1267 may close and #1269 may resume."
+    },
+    {
+      "priority": 1051,
+      "slot_id": "dashboard-widgets-bounded-action-confirmation-metadata-v1",
+      "title": "Dashboard Widgets bounded Action Confirmation Metadata V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "OPEN_NONBLOCKING",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_ACTION_CONFIRMATION_METADATA_V1",
+      "source": "Issue #1269 / dependency-gated by #1270 repair",
+      "dependencies": [
+        "Issue #1267 Action Readiness contract terminal validation",
+        "RB-0074 corrective PASS",
+        "fresh exact-main claim after repair"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "claim_branch": "agent/dashboard-widgets-bounded-action-confirmation-metadata-v1",
+      "close_condition": "Paused. Must be re-anchored to exact repaired main before merge-track resumes."
     }
   ],
   "historical_closeout": {
