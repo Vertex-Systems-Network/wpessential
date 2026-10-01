@@ -42,6 +42,7 @@ final readonly class DashboardWidgetActionInputDescriptor
 
         foreach ($this->literalBindings as $key => $_value) {
             $this->assertBindingKey($key);
+            $this->assertNonSensitiveKey($key);
             if (array_key_exists($key, $this->dynamicBindings)) {
                 throw new InvalidArgumentException('Dashboard Widget action-input binding cannot be both literal and dynamic.');
             }
@@ -49,6 +50,15 @@ final readonly class DashboardWidgetActionInputDescriptor
 
         foreach ($this->dynamicBindings as $key => $binding) {
             $this->assertBindingKey($key);
+            $this->assertNonSensitiveKey($key);
+
+            if (
+                !is_array($binding)
+                || array_keys($binding) !== ['source_ref', 'value_ref', 'resource']
+            ) {
+                throw new InvalidArgumentException('Dashboard Widget action-input Dynamic binding shape is invalid.');
+            }
+
             foreach (['source_ref', 'value_ref'] as $refKey) {
                 $ref = $binding[$refKey] ?? null;
                 if (!is_string($ref) || $ref === '' || strlen($ref) > 160 || preg_match('/^[a-zA-Z0-9_.:-]+$/', $ref) !== 1) {
@@ -81,6 +91,30 @@ final readonly class DashboardWidgetActionInputDescriptor
     {
         if (!is_string($key) || preg_match('/^[A-Za-z_][A-Za-z0-9_-]{0,127}$/', $key) !== 1) {
             throw new InvalidArgumentException('Dashboard Widget action-input binding keys must be bounded top-level semantic identifiers.');
+        }
+    }
+
+    private function assertNonSensitiveKey(string $key): void
+    {
+        $normalized = strtolower((string) preg_replace('/[^a-z0-9]/i', '', $key));
+
+        foreach ([
+            'password',
+            'passwd',
+            'secret',
+            'token',
+            'apikey',
+            'privatekey',
+            'authorization',
+            'cookie',
+            'credential',
+            'cardnumber',
+            'cvv',
+            'cvc',
+        ] as $fragment) {
+            if (str_contains($normalized, $fragment)) {
+                throw new InvalidArgumentException('Dashboard Widget action-input credential-bearing properties are unsupported in V1.');
+            }
         }
     }
 }
