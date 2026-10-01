@@ -61,7 +61,7 @@ Next promotion after terminal contract merge:
 ### FAST delivery status
 
 - Active Issue: **#1275 — Platform: bounded Ability input validation contract V1**.
-- Active PR: **pending**.
+- Active PR: **#1276**.
 - Active branch: `supervisor/platform-bounded-ability-input-validation-contract-v1`.
 - RB-0077 is the single contract merge gate.
 - Exact authorized scope: one new Platform contract document + five shared-truth files.
