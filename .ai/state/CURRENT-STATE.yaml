@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 880db8ac6938f520fcc53d7f23eddd319b45e5fe
 observed_main_source: "Issue #1281 / PR #1282 bounded Dashboard Action-Input Binding V1 merged; exact-head Governance/PHP/Distributable/Architecture/Platform Compatibility terminal PASS"
 active_issue: "#1283"
-active_pr: null
+active_pr: "#1284"
 active_branch: agent/forms-workflows-set-enabled-ability-contract-v1
 current_milestone: "Forms & Workflows Set-Enabled Mutating Ability Owner Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1281 / PR #1282 merged as 880db8ac6938f520fcc53d7f23eddd319b45e5fe; exact head 8e281620c2f2906946d7faa764d3faea085c8a15; Governance 36930174072 PASS; PHP Quality 36930174063 PASS; Distributable 36930174073 PASS; Architecture 36930174056 PASS; Platform Compatibility 36930174064 PASS; exact thirteen-file scope; zero unresolved review blockers and zero behind; verdict PASS_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1."
 next_safe_action: "Freeze Issue #1283 exact six-file Forms & Workflows Set-Enabled Mutating Ability Owner Contract V1 on main 880db8ac6938f520fcc53d7f23eddd319b45e5fe; Published↔Disabled only, expected_revision required, Internal/UI only, no REST, no implementation."
-waiting_external: "none; #1283 owner-contract batch active before PR open"
+waiting_external: "PR #1284 exact-head RB-0081 Governance + Architecture contract gate"
 next_planned_slot:
   issue: "#1283"
   slot_id: forms-workflows-set-enabled-ability-contract-v1
