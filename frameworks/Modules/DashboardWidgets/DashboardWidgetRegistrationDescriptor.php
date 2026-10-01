@@ -63,6 +63,7 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public array $siteIds = [],
         public ?string $backgroundJobId = null,
         public ?string $actionAbilityId = null,
+        public ?DashboardWidgetActionConfirmationDescriptor $actionConfirmation = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
