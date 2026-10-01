@@ -4,24 +4,49 @@ WPEssential is a modular WordPress application platform for structured data, aut
 
 Project website: **https://wpessential.org**
 
+## Milestone Table of Contents & Overall Progress
+
+This is the high-level AI-Native roadmap index derived from repository evidence. **Progress here is milestone-scoped, not a claim of full product parity or GA readiness.** A milestone is counted as terminal only when its explicitly named bounded scope is closed by repository evidence.
+
+**Overall milestone completion (equal-weight, terminal-only): `5 / 10 = 50%`.**  
+Active/partial milestones: **3 / 10** (M6-M8). Full-parity/release milestones not promoted: **2 / 10** (M9-M10).
+
+| Milestone | Scope | Evidence-based progress | State | Primary evidence / next gate |
+|---|---|---:|---|---|
+| M1 | Accepted scope + Multisite + AI Prompt planning | `██████████ 100%` | TERMINAL | 56/56 accepted scope, 56/56 Multisite planning, 56/56 AI Prompt planning; planning authority through ADR-0213 |
+| M2 | Architecture + Platform Foundation | `██████████ 100%` | TERMINAL | WP119 / ADR-0214 PASS; WP120 / ADR-0215 PASS; WP121 DONE / PASS FOR MODULE HANDOFF |
+| M3 | Phase 2 bounded core runtime gates | `██████████ 100%` | TERMINAL for bounded baseline | Fields, Relations, Query, Admin Columns, Listings and Status bounded V1 baselines are PASS; richer/full-parity behavior remains separately gated |
+| M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro matrix; physical Free/Pro boundary; canonical edition metadata/local entitlement domain; read-only commercial inventory |
+| M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; explicitly not GA and not 56/56 product parity |
+| M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE | #1260 / PR #1261 Dynamic Context-Token Bindings is merged; #1262 / PR #1263 Forms/Workflow Action Ability Reference V1 is the current bounded prerequisite tranche |
+| M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 executed, 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
+| M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain planning-only, bounded read-only, or partial; do not infer completion from the 56/56 inventory table |
+| M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, production deployment, release authority and ADR-0010 promotion remain unpromoted |
+
+### Milestone navigation
+
+- **M1-M2:** planning, architecture and platform foundation
+- **M3:** bounded core runtime gates
+- **M4:** Free/Pro packaging and entitlement baseline
+- **M5:** RC1 stabilization
+- **M6-M7:** active runtime/product surface development
+- **M8:** P-006 executable evidence/certification runway
+- **M9-M10:** full product parity, deployment and release gates
+
 > **Status:** Source development is active under explicit `GOV-OWNER-CONSENT-001` and remains milestone-gated. RC1 core stabilization is closed/non-GA. P-006 bounded evidence remains **144 documented / 57 executed / 57 PASS / 0 FAIL / 0 INCONCLUSIVE / 0 certified Free/Pro pairs / 0 runtime certifications** after Wave 1T. All four B6 prerequisites are now merged: FP-89 isolated Platform API candidate (B6a), FP-86 fail-once marker seam (B6b), FP-94 diagnostics/redaction capture (B6c), and FP-90 disposable older-DB SQL snapshot identity (B6d). None of FP-86/89/90/94 is formally executed yet. B6d proves only a disposable MySQL snapshot/restore fixed point plus canonical compatibility preflight before pending migrations; Pro 220/221 remain uninvoked and product Backup/Restore remains unimplemented/uncertified. No formal runtime grant, pair/runtime/migration certification, permanent P-001/CF, updater/TUF, production deployment, release authority or ADR-0010 promotion follows.
 
 ## Current AI-Native Development Progress
 
-- Exact current product/runtime main: `a79bf3e2e5b3f6a026ce31184f7652f933508969` after **Issue #1236 / PR #1237 — Bounded Native Default-Hidden State V1** merged terminal PASS. **Issue #1238 / PR #1239 — Bounded Native Default-Collapsed State V1** is the active FAST feature tranche.
-- #1191 / PR #1192 exact-head evidence: Governance `35792377626` PASS; Architecture `35792377512` PASS; zero unresolved review threads and zero behind.
-- Latest bounded source milestone: **Issue #1203 / PR #1209 — Bounded Site Targeting Source V1 PASS / merged** as `ecc4d3f01a3a330a039d1b774b84ad5ca70f1bf3`; exactly five authorized compiler/descriptor/adapter source/test files changed.
-- Completed transition audit: **Issue #1193 / PR #1197 — Site Targeting Transition Audit V1**, merged as `d57c9439dfd8f6105c3f5a0b90f8cef68e2ac5f4`; Governance `35854095152` and Architecture `35854095151` PASS.
-- Bounded site targeting is now implemented on exact main: optional `widget.target.scope = all_sites|site_ids`, bounded positive exact-integer `site_ids` normalization, descriptor-owned targeting, current-site eligibility before collision grouping, and independent network collision behavior.
-- Malformed/unknown site targeting now fails closed at compilation; invalid/throwing current-site evidence yields zero native site registration side effects. Provider/source execution and broader remote/mutation behavior remain outside this tranche.
-- Site-targeting contract promotion completed with `READY_FOR_BOUNDED_SITE_TARGETING_SOURCE_V1`; PR #1200 exact head passed Governance and Architecture.
-- Site-targeting, Query/Data-Source, Empty-State, Renderer-Failure Error-State, shared-truth and **#1236/#1237 Native Default-Hidden** milestones are terminal PASS. **Issue #1238 / PR #1239 — Bounded Native Default-Collapsed State V1** is ACTIVE under FAST AI-Native mode.
-- Duplicate audit Issues #1194 and #1196 are closed; #1193 is canonical.
-- Contract V1 keeps Query as execution owner: `DataSourceRegistryInterface` supplies descriptor/schema/availability truth; `QueryReadConsumerInterface` V1 is the only read-execution seam. Surface 10 authors bounded query intent only, derives projection from query-bound fields, and maps normalized rows into existing trusted Blueprint bindings.
-- Architecture/security correction is closed: resulting main now contributes `QueryModule` exactly once before `DashboardWidgetsModule`; the #1217/#1218 focused smoke verifies canonical `module.query.read-consumer` registration through `QueryReadConsumerInterface`.
-- Generic registered-provider execution, direct IntegrationRegistry execution, remote/iframe/RSS, asset side effects, user-preference persistence, inventory removal/discovery, collapsible disablement/dismissible, loading, caching/refresh, actions and full-parity certification remain blocked/separately gated. #1236 default-hidden is terminal PASS; #1238 adds only preference-safe bounded native default-collapsed projection.
-- Open repository blockers remain #858 external-admin required-CI reconciliation, #1102 separately authorization-gated P-006 Wave 1U, and #947 independent Worker-only audit.
-- Dashboard Widgets P0_NATIVE bank coverage remains `██████████ 100%` (12/12 bounded capabilities). P1_CORE now has three terminal bounded capabilities (`native.render_provider`, `source.data_source_ref`, `refresh.background_job`); the active Dynamic Context-Token Bindings V1 tranche is tracked separately. This does not certify full Surface 10 product parity.
+- Exact current main: `2c236701a653242117173cd6494cc5007b17edb7`, produced by the terminal merge of **Issue #1260 / PR #1261 — Bounded Dynamic Context-Token Bindings V1** on 2026-09-24.
+- PR #1261 exact feature head: `05ec947c0490c03c7688b002a8564a71d9bbd08e`; merged successfully into main as `2c236701a653242117173cd6494cc5007b17edb7`.
+- The actual active bounded tranche is **Issue #1262 / PR #1263 — Bounded Forms/Workflow Action Ability Reference V1**, branch `agent/dashboard-widgets-bounded-forms-action-ability-reference-v1`, exact head `ec1da195d9b2e1240c5c6aeb3c29bba6e879d118`.
+- PR #1263 is currently **OPEN / mergeable**. Exact-head checks observed during the 2026-10-02 audit are terminal PASS: Governance Gate `36074707568`, Architecture Guards `36074707624`, PHP Quality Toolchain `36074707473`, Platform Compatibility Matrix `36074707516`, and Distributable Package `36074707503`. Unresolved review threads: `0`.
+- #1263 advances only the bounded `widget.action.ability_id` prerequisite toward `dashboard-widgets.type.form_action`; it does **not** promote Forms/Workflow action execution, authorization/execution calls, action inputs, confirmation/result UX, generic provider execution, public mutation APIs, deployment or release.
+- Dashboard Widgets P0_NATIVE remains `12/12 = 100%` bounded capability coverage. P1_CORE has terminal bounded coverage for `native.render_provider`, `source.data_source_ref`, `refresh.background_job`, and now `source.context_tokens`; higher-risk owner/provider/execution gaps remain separately gated.
+- Repository-state drift found by this audit: `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md` still describe #1260/#1261 as active even though #1261 is merged and #1263 is now the live PR. Repository/GitHub evidence outranks that stale compact state.
+- Open repository blockers preserved from durable state: **#858** broader required-CI/admin reconciliation, **#1102** separately authorization-gated P-006 Wave 1U, and **#947** independent Worker-only audit.
+- No full 56-surface product-parity certification, production deployment, GA, updater/TUF, permanent P-001/CF, release authority or ADR-0010 promotion is implied by the active Surface 10 work.
 
 ## Current lifecycle
 
