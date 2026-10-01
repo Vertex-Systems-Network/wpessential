@@ -1,66 +1,74 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1279 Dashboard Widgets Action-Input Binding Contract V1 active
+## 2026-10-02 — #1281 Dashboard Widgets bounded Action-Input Binding V1 active
 
 ### Exact repository truth
 
-- Exact current main: `57165b1571ecf45430ad34a7ed3e53823e08750d`.
-- Issue #1277 / PR #1278 — Bounded Ability Input Validator V1 — terminal PASS:
-  - exact head `fa00d97c8ce93ca8907805d6486132c8e0e8d941`;
-  - PHP Quality `36927727718` PASS;
-  - Governance `36927727794` PASS;
-  - Architecture `36927727799` PASS;
-  - Distributable `36927728071` PASS;
-  - Status Reference `36927727731` PASS;
-  - Platform Compatibility `36927727997` PASS;
-  - exact eight authorized files;
-  - zero unresolved review blockers;
-  - zero behind;
-  - expected-head merge `57165b1571ecf45430ad34a7ed3e53823e08750d`;
-  - verdict `PASS_BOUNDED_ABILITY_INPUT_VALIDATOR_V1`.
-- RB-0078 is terminal PASS.
+- Exact current main: `eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7`.
+- Issue #1279 / PR #1280 — Action-Input Binding Contract V1 — terminal PASS:
+  - exact head `ae959bb11d7882f7c55b5a16ffd2c8ea712c2441`;
+  - Governance `36928758192` PASS;
+  - Architecture `36928758204` PASS;
+  - exact six authorized contract/shared-truth files;
+  - expected-head merge `eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7`;
+  - verdict `CONTRACT_FROZEN_DASHBOARD_ACTION_INPUT_BINDING_V1`.
+- RB-0079 is terminal PASS.
+- RB-0078 shared Ability Input Validator implementation remains terminal PASS.
 - RB-0073 remains historical FAIL and is not rewritten.
 
-### Current action dependency order
+### #1281 active implementation
 
-1. Dashboard Widgets Action-Input Binding contract.
-2. Bounded Action-Input compiler/runtime binder implementation.
-3. Real Forms & Workflows mutating Ability owner contract.
-4. Trusted form_action UI/orchestration.
-5. Final separately reviewed execution gate.
+Bounded action-input binding only.
 
-### #1279 frozen direction
+Product implementation:
+- typed `DashboardWidgetActionInputDescriptor`;
+- `DashboardWidgetActionInputCompiler`;
+- `DashboardWidgetActionInputBinder`;
+- registration compiler/descriptor integration;
+- focused compiler/binder/registration tests.
 
-High-risk contract only; no runtime/product PHP/JS/tests.
+Compile-time boundary:
+- action input only with canonical Forms owner Ability;
+- zero-input backward compatibility preserved;
+- non-empty input requires valid non-empty object schema with `additionalProperties=false`;
+- required top-level properties must be bound;
+- literal bindings validated through canonical `AbilityInputValidator`;
+- Dynamic bindings only for scalar/scalar-list properties;
+- credential-like property names fail closed;
+- Query/DataSource/template/provider binding forbidden.
 
-Authored input:
-- top-level property bindings only;
-- literal or canonical dynamic source only;
-- no Query/DataSource binding;
-- no template/interpolation/callback/provider execution;
-- current Ability schema is authoritative;
-- required properties must be bound;
-- unknown properties fail closed;
-- maximum 32 bindings and 8192-byte authored envelope.
-
-Dynamic resolution:
+Runtime binder:
+- exact `ExecutionContext` derives site/user/network identity;
 - canonical `DynamicValueResolverInterface` only;
-- site/user/network resource id derives from exact `ExecutionContext`;
-- no authored identity override;
-- dynamic values limited to scalar/scalar-list-compatible schema properties;
-- final assembled input must pass canonical `AbilityInputValidator`.
+- current Ability descriptor re-resolved;
+- current schema revalidated;
+- final assembled input revalidated;
+- schema drift/unresolved/context/type failures fail closed;
+- no raw rejected values exposed.
 
-Credential-like top-level properties are rejected until descriptor sensitivity metadata exists.
+Strictly absent:
+- no `AbilityRegistry.php` change;
+- no `AbilityRegistry::execute()`;
+- no Forms & Workflows source;
+- no Forms mutation Ability;
+- no trusted form_action UI;
+- no public REST mutation;
+- no package/dependency change.
 
-No action execution is promoted.
+### Dependency order after merge
+
+1. bounded Action-Input Binding V1;
+2. real Forms & Workflows mutating Ability owner contract;
+3. trusted form_action UI/orchestration;
+4. final separately reviewed execution gate.
 
 ### FAST delivery status
 
-- Active Issue: **#1279 — Dashboard Widgets: bounded Action-Input Binding Contract V1**.
-- Active PR: **#1280**.
-- Active branch: `agent/dashboard-widgets-action-input-binding-contract-v1`.
-- RB-0079 is the single contract merge gate.
-- Exact authorized scope: one contract document + five shared-truth files.
+- Active Issue: **#1281 — Dashboard Widgets: bounded Action-Input Binding V1**.
+- Active PR: **pending**.
+- Active branch: `agent/dashboard-widgets-bounded-action-input-binding-v1`.
+- RB-0080 is the single implementation merge gate.
+- Exact authorized scope: eight product/test files + five shared-truth files.
 
 ### Persistent recovery order
 
