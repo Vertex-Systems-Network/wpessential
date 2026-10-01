@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: f47ab596dc0329b759bdfa404b37fce6b5963447
 observed_main_source: "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract merged; Governance and Architecture terminal PASS"
 active_issue: "#1285"
-active_pr: null
+active_pr: "#1286"
 active_branch: agent/forms-workflows-bounded-set-enabled-ability-v1
 current_milestone: "Forms & Workflows bounded Set-Enabled Mutating Ability V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1283 / PR #1284 merged as f47ab596dc0329b759bdfa404b37fce6b5963447; exact head a6ce28c716489d82153c71bc849902fdf1b2a97b; Governance 36931696966 PASS; Architecture 36931696965 PASS; exact six-file contract scope; zero review blockers and zero behind; verdict CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
 next_safe_action: "Implement Issue #1285 exact nine-file bounded Forms Set-Enabled Ability V1: owner-side input validation + Published↔Disabled handler + Internal/UI non-REST module registration + focused tests + shared truth."
-waiting_external: "none; #1285 implementation active before PR open"
+waiting_external: "PR #1286 exact-head RB-0082 CI/review gate"
 next_planned_slot:
   issue: "#1285"
   slot_id: forms-workflows-bounded-set-enabled-ability-v1
