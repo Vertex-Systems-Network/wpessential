@@ -5770,7 +5770,8 @@
         ".ai/state/LAST-CHECKPOINT.md",
         "README.md",
         "config/coordination/agent-work-queue.json",
-        "config/coordination/runner-benchmark.json"
+        "config/coordination/runner-benchmark.json",
+        "package-lock.json"
       ],
       "forbidden_scope": [
         "AbilityRegistry execute or action mutation",
@@ -5782,10 +5783,11 @@
         "public REST mutation expansion",
         "shared Platform source changes",
         "P-006 runtime execution",
-        "RUNTIME_CERTIFIED/product parity/deploy/release"
+        "RUNTIME_CERTIFIED/product parity/deploy/release",
+        "package.json/direct dependency changes beyond emergency lock-only advisory remediation"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-action-authorization-evaluator-v1",
-      "close_condition": "Exact nine-file evaluator/module/test/shared-truth scope; canonical Forms owner-17 mutating Ui zero-input descriptor; authenticated user Ui context; AbilityRegistry authorize-only with fail-closed exceptions; no execute; RB-0072 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_ACTION_AUTHORIZATION_EVALUATOR_V1."
+      "close_condition": "Exact ten-file evaluator/module/test/shared-truth scope; canonical Forms owner-17 mutating Ui zero-input descriptor; authenticated user Ui context; AbilityRegistry authorize-only with fail-closed exceptions; no execute; RB-0072 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_ACTION_AUTHORIZATION_EVALUATOR_V1."
     }
   ],
   "historical_closeout": {
