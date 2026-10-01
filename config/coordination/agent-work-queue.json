@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-02",
-  "queue_anchor_main_sha": "f7e24263b1429ffbacd3cba212684858feafbfe9",
+  "queue_anchor_main_sha": "cee7568b5bb95a29e921f75684b145dd870b822b",
   "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
-  "source_issue": "#1275",
+  "source_issue": "#1277",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6040,7 +6040,7 @@
       "slot_id": "platform-bounded-ability-input-validation-contract-v1",
       "title": "Platform bounded Ability Input Validation Contract V1",
       "role": "SUPERVISOR_CONTRACT",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "PLATFORM_BOUNDED_ABILITY_INPUT_VALIDATION_CONTRACT_V1",
       "source": "Issue #1275 / exact-main dependency correction after result+audit contract",
       "dependencies": [
@@ -6075,7 +6075,58 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "supervisor/platform-bounded-ability-input-validation-contract-v1",
-      "close_condition": "Exact six-file contract/shared-truth scope; reconcile #1273/#1274/RB-0076 PASS; freeze bounded opt-in Ability input validation semantics and next validator implementation gate; RB-0077 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge; promote only CONTRACT_FROZEN_ABILITY_INPUT_VALIDATION_V1 + READY_FOR_BOUNDED_ABILITY_INPUT_VALIDATOR_V1."
+      "close_condition": "Exact six-file contract/shared-truth scope; reconcile #1273/#1274/RB-0076 PASS; freeze bounded opt-in Ability input validation semantics and next validator implementation gate; RB-0077 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge; promote only CONTRACT_FROZEN_ABILITY_INPUT_VALIDATION_V1 + READY_FOR_BOUNDED_ABILITY_INPUT_VALIDATOR_V1.",
+      "terminal_result": "CONTRACT_FROZEN_ABILITY_INPUT_VALIDATION_V1",
+      "terminal_evidence": {
+        "issue": 1275,
+        "pr": 1276,
+        "head": "ec195666c7986e0d65d163839bae9f1f22a92ee9",
+        "governance_run": 36925418278,
+        "architecture_run": 36925418297,
+        "merge_sha": "cee7568b5bb95a29e921f75684b145dd870b822b"
+      }
+    },
+    {
+      "priority": 1054,
+      "slot_id": "platform-bounded-ability-input-validator-v1",
+      "title": "Platform bounded Ability Input Validator V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "PLATFORM_BOUNDED_ABILITY_INPUT_VALIDATOR_V1",
+      "source": "Issue #1277 / terminal #1275 contract",
+      "dependencies": [
+        "Issue #1275 / PR #1276 terminal contract PASS",
+        "RB-0077 terminal PASS",
+        "exact source base cee7568b5bb95a29e921f75684b145dd870b822b"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": true,
+      "allowed_scope": [
+        "frameworks/Platform/Abilities/InputValidation/AbilityInputValidationResult.php",
+        "frameworks/Platform/Abilities/InputValidation/AbilityInputValidator.php",
+        "tests/Unit/Platform/Abilities/InputValidation/AbilityInputValidatorTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "frameworks/Platform/Abilities/AbilityRegistry.php",
+        "service/bootstrap registration",
+        "Dashboard Widgets source",
+        "Forms & Workflows source",
+        "action-input binding",
+        "Forms mutation Ability",
+        "Ability execution/mutation",
+        "package/dependency changes",
+        "P-006/deploy/release widening"
+      ],
+      "claim_branch": "agent/platform-bounded-ability-input-validator-v1",
+      "close_condition": "Exact eight-file validator/test/shared-truth scope; focused strict positive + malformed/schema-complexity/runtime-envelope fail-closed tests; no AbilityRegistry/module changes; RB-0078 path-applicable exact-head CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_ABILITY_INPUT_VALIDATOR_V1."
     }
   ],
   "historical_closeout": {
