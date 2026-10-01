@@ -68,7 +68,7 @@ Next dependency-ready tranche after terminal contract merge:
 ### FAST delivery status
 
 - Active Issue: **#1273 — Dashboard Widgets: Action Result + Audit Contract V1**.
-- Active PR: **pending**.
+- Active PR: **#1274**.
 - Active branch: `agent/dashboard-widgets-action-result-audit-contract-v1`.
 - RB-0076 is the single contract merge gate.
 - Exact authorized scope: one contract document + five shared-truth files.
