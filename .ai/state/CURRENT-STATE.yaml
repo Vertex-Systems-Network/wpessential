@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 57165b1571ecf45430ad34a7ed3e53823e08750d
 observed_main_source: "Issue #1277 / PR #1278 bounded Ability Input Validator V1 merged; six exact-head workflows terminal PASS"
 active_issue: "#1279"
-active_pr: null
+active_pr: "#1280"
 active_branch: agent/dashboard-widgets-action-input-binding-contract-v1
 current_milestone: "Dashboard Widgets bounded Action-Input Binding Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1277 / PR #1278 merged as 57165b1571ecf45430ad34a7ed3e53823e08750d; exact head fa00d97c8ce93ca8907805d6486132c8e0e8d941; PHP Quality 36927727718 PASS; Governance 36927727794 PASS; Architecture 36927727799 PASS; Distributable 36927728071 PASS; Status Reference 36927727731 PASS; Platform Compatibility 36927727997 PASS; exact eight-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_ABILITY_INPUT_VALIDATOR_V1."
 next_safe_action: "Freeze Issue #1279 exact six-file Dashboard Widgets Action-Input Binding Contract V1. Top-level literal + canonical dynamic bindings only; final input must pass current Ability schema through canonical validator; no execution."
-waiting_external: "none; #1279 high-risk contract batch active before PR open"
+waiting_external: "PR #1280 exact-head RB-0079 Governance + Architecture contract gate"
 next_planned_slot:
   issue: "#1279"
   slot_id: dashboard-widgets-action-input-binding-contract-v1
