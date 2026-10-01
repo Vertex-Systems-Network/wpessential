@@ -1,35 +1,30 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1270 Action Readiness contract validation repair active
+## 2026-10-02 — #1269 Bounded Action Confirmation Metadata V1 active
 
 ### Exact repository truth
 
-- Exact current main: `9733765f0e8f619299634ae5afbbb362b8f71a00`.
-- Issue #1267 / PR #1268 — Action Readiness Contract V1 — **merged but not terminally validated**:
-  - exact head `8050c1ccc2e750aef83f8ff17a7a707787219488`;
+- Exact current main: `ae3f67828b2b3ac32ce21f87f6d48f77489085e4`.
+- Issue #1267 / PR #1268 Action Readiness Contract semantics are merged.
+- Original contract validation RB-0073 remains **FAIL**:
+  - PR #1268 head `8050c1ccc2e750aef83f8ff17a7a707787219488`;
   - Governance `36918750577` PASS;
   - Architecture `36918750714` FAIL;
-  - merge `9733765f0e8f619299634ae5afbbb362b8f71a00`.
-- Architecture failure root cause is exact and non-semantic:
-  - `tests/Smoke/ai-timeout-resilient-state-contract.php` rejected `active_pr: "PENDING"`;
-  - mandatory pattern permits only `active_pr: null` or `active_pr: "#<number>"`;
-  - all other observed smoke contracts in the Architecture job passed.
-- Therefore RB-0073 is **FAIL**, never PASS.
-- Issue #1267 has been reopened.
-- Issue #1270 is the corrective shared-truth validation repair.
-- Issue #1269 Action Confirmation Metadata V1 exists but is dependency-gated and must not merge until #1270 terminal PASS.
+  - exact failure: invalid durable `active_pr: "PENDING"`.
+- Corrective Issue #1270 / PR #1271 is terminal PASS:
+  - exact head `599aaafd46091a56bfd5f4b169c2f1b6f435b330`;
+  - Governance `36919767646` PASS;
+  - Architecture `36919771597` PASS;
+  - zero unresolved review blockers;
+  - zero behind at merge gate;
+  - expected-head merge `ae3f67828b2b3ac32ce21f87f6d48f77489085e4`.
+- RB-0074 is terminal PASS.
+- Issue #1267 is closed completed after corrective validation.
+- RB-0073 failure history is not rewritten.
 
-### Last fully terminal product milestone
+### Action readiness contract direction
 
-Issue #1265 / PR #1266 — Bounded Action Authorization Evaluator V1 — remains the last fully terminal PASS:
-- merge `077eec04e53a9da7994df2977b69a0d5ba763ead`;
-- Governance, Architecture, PHP Quality, Platform Compatibility, Distributable, Security Lockfile Refresh and Browser E2E Accessibility all PASS;
-- RB-0072 PASS.
-
-### Merged Action Readiness contract semantics
-
-The #1268 contract document is present on main and its semantic direction remains unchanged:
-
+Remaining order:
 1. Bounded Action Confirmation Metadata V1.
 2. Bounded Action Result + Audit Contract V1.
 3. Forms & Workflows Mutating Ability Owner Contract V1.
@@ -37,23 +32,38 @@ The #1268 contract document is present on main and its semantic direction remain
 5. Trusted form_action Component + Confirmation Orchestration.
 6. Final separately reviewed Bounded Action Execution Gate.
 
-However, `CONTRACT_FROZEN_ACTION_READINESS_V1` and `READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1` are not treated as terminally validated until corrective Architecture validation passes.
+### #1269 active implementation
 
-### #1270 exact repair scope
+Exact repaired base:
+`ae3f67828b2b3ac32ce21f87f6d48f77489085e4`
 
-Shared truth only:
-1. `.ai/state/CURRENT-STATE.yaml`
-2. `.ai/state/LAST-CHECKPOINT.md`
-3. `README.md`
-4. `config/coordination/agent-work-queue.json`
-5. `config/coordination/runner-benchmark.json`
+Bounded implementation:
+- new typed `DashboardWidgetActionConfirmationDescriptor`;
+- compile optional `widget.action.confirmation`;
+- exact keys: `title`, `message`, `confirm_label`, `cancel_label`;
+- bounded trimmed data-only strings;
+- registration descriptor stores only typed confirmation metadata;
+- existing `action.ability_id` behavior remains backward compatible.
 
-No contract semantic changes.
-No runtime/product PHP/JS.
-No dependency/package changes.
-No action execution.
+Strictly absent:
+- confirmation renderer/modal/button behavior;
+- JS;
+- `AbilityRegistry::execute()`;
+- action mutation;
+- Forms & Workflows source changes;
+- result/audit source;
+- non-empty action input;
+- shared Platform changes;
+- package/dependency changes;
+- P-006/deploy/release widening.
 
-RB-0074 is the single corrective merge gate.
+### FAST delivery status
+
+- Active Issue: **#1269 — Dashboard Widgets: bounded Action Confirmation Metadata V1**.
+- Active PR: **pending**.
+- Active branch: `agent/dashboard-widgets-bounded-action-confirmation-metadata-v1`.
+- RB-0075 is the single feature merge gate.
+- Exact authorized scope: five product/test files + five shared-truth files.
 
 ### Persistent recovery order
 
