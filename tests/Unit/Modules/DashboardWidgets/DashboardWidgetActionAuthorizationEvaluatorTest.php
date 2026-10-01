@@ -36,25 +36,22 @@ final class DashboardWidgetActionAuthorizationEvaluatorTest extends TestCase
     public function testReturnsCanonicalPolicyDenialWithoutExecutingAbility(): void
     {
         $registry = $this->registry(false);
-        $executions = 0;
-        $registry->register(
-            $this->descriptor(),
-            new class($executions) implements AbilityHandlerInterface {
-                public function __construct(private int &$executions) {}
+        $handler = new class implements AbilityHandlerInterface {
+            public int $executions = 0;
 
-                public function handle(array $input, ExecutionContext $context): mixed
-                {
-                    ++$this->executions;
-                    return ['ok' => true];
-                }
-            },
-        );
+            public function handle(array $input, ExecutionContext $context): mixed
+            {
+                ++$this->executions;
+                return ['ok' => true];
+            }
+        };
+        $registry->register($this->descriptor(), $handler);
 
         $decision = (new DashboardWidgetActionAuthorizationEvaluator($registry))
             ->authorize(self::ABILITY_ID, $this->uiContext());
 
         self::assertFalse($decision->allowed);
-        self::assertSame(0, $executions);
+        self::assertSame(0, $handler->executions);
     }
 
     public function testRejectsMalformedOrUnsafeAbilityDescriptors(): void
@@ -124,7 +121,7 @@ final class DashboardWidgetActionAuthorizationEvaluatorTest extends TestCase
 
                 public function handle(array $input, ExecutionContext $context): mixed
                 {
-                    self::fail('Action handler must never execute during authorization evaluation.');
+                    throw new \RuntimeException('Action handler must never execute during authorization evaluation.');
                 }
             },
         );
