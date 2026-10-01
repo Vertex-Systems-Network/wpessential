@@ -2347,7 +2347,7 @@
         "canonical shared AbilityRegistry authorize path",
         "exact source base c9ff0250c10d4c01a7732fd748068697123babfc"
       ],
-      "authorization": "Exact nine-file Dashboard Widgets action authorization evaluator/module/test/shared-truth scope only; canonical AbilityRegistry authorize-only for exact Forms owner-17 mutating Ui zero-input ability in authenticated user Ui context; no execute, mutation, form_action UI, confirmation/result/audit, shared Platform changes or public mutation expansion",
+      "authorization": "Exact ten-file Dashboard Widgets action authorization evaluator/module/test/shared-truth scope plus package-lock emergency dev-advisory remediation only; canonical AbilityRegistry authorize-only for exact Forms owner-17 mutating Ui zero-input ability in authenticated user Ui context; no execute, mutation, form_action UI, confirmation/result/audit, shared Platform changes, public mutation expansion or package manifest widening",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 15,
@@ -2361,7 +2361,9 @@
         "AbilityRegistry authorize path already owns capability/policy enforcement",
         "descriptor revalidation requires owner surface 17 + mutates=true + Ui + empty input schema",
         "authenticated user Ui context required",
-        "AbilityRegistry execute remains forbidden"
+        "AbilityRegistry execute remains forbidden",
+        "Architecture run 36914855325 exposed dev-only brace-expansion/fast-uri high-severity advisories; distributable audit remained clean",
+        "Issue #1265 emergency amendment authorizes package-lock only to patched semver-compatible transitive versions"
       ],
       "note": "PASS may promote only PASS_BOUNDED_ACTION_AUTHORIZATION_EVALUATOR_V1. type.form_action execution, Forms mutation abilities, form_action UI, confirmation/result/audit, full Surface 10 product parity, deploy and release remain unpromoted."
     }
