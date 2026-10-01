@@ -57,7 +57,7 @@ No action execution is promoted.
 ### FAST delivery status
 
 - Active Issue: **#1279 — Dashboard Widgets: bounded Action-Input Binding Contract V1**.
-- Active PR: **pending**.
+- Active PR: **#1280**.
 - Active branch: `agent/dashboard-widgets-action-input-binding-contract-v1`.
 - RB-0079 is the single contract merge gate.
 - Exact authorized scope: one contract document + five shared-truth files.
