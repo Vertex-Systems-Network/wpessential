@@ -54,7 +54,10 @@ final readonly class DashboardWidgetActionInputDescriptor
 
             if (
                 !is_array($binding)
-                || array_keys($binding) !== ['source_ref', 'value_ref', 'resource']
+                || count($binding) !== 3
+                || !array_key_exists('source_ref', $binding)
+                || !array_key_exists('value_ref', $binding)
+                || !array_key_exists('resource', $binding)
             ) {
                 throw new InvalidArgumentException('Dashboard Widget action-input Dynamic binding shape is invalid.');
             }
