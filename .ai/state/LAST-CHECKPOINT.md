@@ -59,7 +59,7 @@ Strictly absent:
 ### FAST delivery status
 
 - Active Issue: **#1285 — Forms & Workflows: bounded Set-Enabled Mutating Ability V1**.
-- Active PR: **pending**.
+- Active PR: **#1286**.
 - Active branch: `agent/forms-workflows-bounded-set-enabled-ability-v1`.
 - RB-0082 is the single implementation merge gate.
 - Exact authorized scope: two product files + two focused test files + five shared-truth files.
