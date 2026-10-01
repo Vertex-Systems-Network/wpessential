@@ -1,72 +1,59 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1267 Dashboard Widgets Action Readiness Contract V1 active
+## 2026-10-02 — #1270 Action Readiness contract validation repair active
 
 ### Exact repository truth
 
-- Exact current main: `077eec04e53a9da7994df2977b69a0d5ba763ead`.
-- Issue #1265 / PR #1266 — Bounded Action Authorization Evaluator V1 — terminal PASS:
-  - exact head `ecbd1d409aa348277c8d31b50d4147c243012de6`;
-  - Governance `36916865668` PASS;
-  - Architecture `36916865716` PASS;
-  - PHP Quality `36916865706` PASS;
-  - Platform Compatibility `36916865834` PASS;
-  - Distributable `36916865705` PASS;
-  - Security Lockfile Refresh `36916865748` PASS;
-  - Browser E2E Accessibility `36916865717` PASS;
-  - exact ten-file final scope including lock-only emergency dev advisory remediation;
-  - zero unresolved review threads and zero behind;
-  - expected-head merge `077eec04e53a9da7994df2977b69a0d5ba763ead`;
-  - verdict `PASS_BOUNDED_ACTION_AUTHORIZATION_EVALUATOR_V1`.
-- RB-0072 is terminal PASS.
-- P0_NATIVE remains 12/12 bounded coverage.
-- FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
+- Exact current main: `9733765f0e8f619299634ae5afbbb362b8f71a00`.
+- Issue #1267 / PR #1268 — Action Readiness Contract V1 — **merged but not terminally validated**:
+  - exact head `8050c1ccc2e750aef83f8ff17a7a707787219488`;
+  - Governance `36918750577` PASS;
+  - Architecture `36918750714` FAIL;
+  - merge `9733765f0e8f619299634ae5afbbb362b8f71a00`.
+- Architecture failure root cause is exact and non-semantic:
+  - `tests/Smoke/ai-timeout-resilient-state-contract.php` rejected `active_pr: "PENDING"`;
+  - mandatory pattern permits only `active_pr: null` or `active_pr: "#<number>"`;
+  - all other observed smoke contracts in the Architecture job passed.
+- Therefore RB-0073 is **FAIL**, never PASS.
+- Issue #1267 has been reopened.
+- Issue #1270 is the corrective shared-truth validation repair.
+- Issue #1269 Action Confirmation Metadata V1 exists but is dependency-gated and must not merge until #1270 terminal PASS.
 
-### Surface 10 action readiness after #1266
+### Last fully terminal product milestone
 
-Terminal prerequisites:
-- `dashboard-widgets.action.ability_id` bounded reference validation;
-- canonical Forms owner-17 mutating UI zero-input descriptor validation;
-- authenticated user UI-context capability/policy authorization via `AbilityRegistry::authorize()`;
-- fail-closed authorization exception behavior;
-- no `AbilityRegistry::execute()` path.
+Issue #1265 / PR #1266 — Bounded Action Authorization Evaluator V1 — remains the last fully terminal PASS:
+- merge `077eec04e53a9da7994df2977b69a0d5ba763ead`;
+- Governance, Architecture, PHP Quality, Platform Compatibility, Distributable, Security Lockfile Refresh and Browser E2E Accessibility all PASS;
+- RB-0072 PASS.
 
-Still blocked:
-- trusted `form_action` presentation/UI;
-- explicit confirmation semantics;
-- bounded result notice;
-- bounded audit semantics;
-- production mutating Forms & Workflows owner Ability;
-- canonical validation for any non-empty action input.
+### Merged Action Readiness contract semantics
 
-### #1267 frozen contract-batch direction
+The #1268 contract document is present on main and its semantic direction remains unchanged:
 
-Issue #1267 creates one ordered Action Readiness Contract V1 instead of speculative small execution tranches.
-
-Dependency order:
-1. Bounded Action Confirmation Metadata V1 — metadata only, no execution.
-2. Bounded Action Result + Audit Contract V1 — no execution.
-3. Forms & Workflows Mutating Ability Owner Contract V1 — Surface 17 only.
-4. Action Input Validation Gate — only if non-empty schemas are needed.
+1. Bounded Action Confirmation Metadata V1.
+2. Bounded Action Result + Audit Contract V1.
+3. Forms & Workflows Mutating Ability Owner Contract V1.
+4. Action Input Validation Gate when non-empty input is needed.
 5. Trusted form_action Component + Confirmation Orchestration.
-6. Final Bounded Action Execution Gate.
+6. Final separately reviewed Bounded Action Execution Gate.
 
-The contract freezes the exact next prerequisite as:
+However, `CONTRACT_FROZEN_ACTION_READINESS_V1` and `READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1` are not treated as terminally validated until corrective Architecture validation passes.
 
-`READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1`
+### #1270 exact repair scope
 
-Authored candidate:
-`widget.action.confirmation` with exact keys `title`, `message`, `confirm_label`, `cancel_label`.
+Shared truth only:
+1. `.ai/state/CURRENT-STATE.yaml`
+2. `.ai/state/LAST-CHECKPOINT.md`
+3. `README.md`
+4. `config/coordination/agent-work-queue.json`
+5. `config/coordination/runner-benchmark.json`
 
-This batch changes no runtime/product PHP or JS.
+No contract semantic changes.
+No runtime/product PHP/JS.
+No dependency/package changes.
+No action execution.
 
-### FAST delivery status
-
-- Active Issue: **#1267 — Dashboard Widgets: action readiness contract batch V1**.
-- Active PR: **pending**.
-- Active branch: `agent/dashboard-widgets-action-readiness-contract-v1`.
-- RB-0073 is the single pending contract merge gate.
-- Exact authorized scope: one new product contract document + five shared-truth files.
+RB-0074 is the single corrective merge gate.
 
 ### Persistent recovery order
 
