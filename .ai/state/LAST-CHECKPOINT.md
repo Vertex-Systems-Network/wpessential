@@ -1,32 +1,33 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-25 — #1262 bounded Forms/Workflow Action Ability Reference V1 active
+## 2026-10-02 — #1265 bounded Action Authorization Evaluator V1 active
 
 ### Exact repository truth
 
-- Exact current main: `2c236701a653242117173cd6494cc5007b17edb7`.
-- Issue #1260 / PR #1261 — Bounded Dynamic Context-Token Bindings V1 — terminal PASS:
-  - exact head `05ec947c0490c03c7688b002a8564a71d9bbd08e`;
-  - Governance `36073579403` PASS;
-  - Architecture `36073579477` PASS;
-  - PHP Quality `36073579453` PASS;
-  - Platform Compatibility `36073579449` PASS;
-  - Distributable `36073579367` PASS;
-  - exact fourteen authorized files;
+- Exact current main: `c9ff0250c10d4c01a7732fd748068697123babfc`.
+- Issue #1262 / PR #1263 — Bounded Forms/Workflow Action Ability Reference V1 — terminal PASS:
+  - exact head `ec1da195d9b2e1240c5c6aeb3c29bba6e879d118`;
+  - Governance `36074707568` PASS;
+  - Architecture `36074707624` PASS;
+  - PHP Quality `36074707473` PASS;
+  - Platform Compatibility `36074707516` PASS;
+  - Distributable `36074707503` PASS;
+  - exact ten authorized files;
   - zero review blockers and zero behind;
-  - expected-head merge `2c236701a653242117173cd6494cc5007b17edb7`;
-  - verdict `PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1`.
-- RB-0070 is terminal PASS.
+  - expected-head merge `c9ff0250c10d4c01a7732fd748068697123babfc`;
+  - verdict `PASS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1`.
+- RB-0071 is terminal PASS.
 - P0_NATIVE remains 12/12 bounded coverage.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
-### P1_CORE audit after #1261
+### P1_CORE / action prerequisite audit after #1263
 
 Terminal bounded coverage:
 - `dashboard-widgets.native.render_provider`
 - `dashboard-widgets.source.data_source_ref`
 - `dashboard-widgets.refresh.background_job`
 - `dashboard-widgets.source.context_tokens`
+- `dashboard-widgets.action.ability_id` prerequisite reference is terminal PASS.
 
 Owner-contract blockers:
 - `dashboard-widgets.type.listing`
@@ -34,34 +35,35 @@ Owner-contract blockers:
 - `dashboard-widgets.source.query_ref`
 
 `dashboard-widgets.type.form_action` remains blocked because:
-- Forms & Workflows currently exposes read-only abilities only;
+- Forms & Workflows still exposes no production mutating action ability;
 - Dashboard Widgets has no trusted `form_action` Blueprint/UI component;
-- no canonical generic platform input-schema validator exists;
-- P0_PARITY action prerequisites remain separate: ability id, policy/capability check, confirmation, result notice, audit.
+- non-empty action payloads remain blocked without a canonical platform input validator;
+- confirmation, result notice and audit remain separate prerequisites.
 
-### #1262 frozen prerequisite contract
+### #1265 frozen prerequisite contract
 
-- Optional `widget.action.ability_id`.
-- Ability id must match `wpessential/<domain>/<action>`.
-- Reference resolves only through the canonical shared Ability Registry.
-- Descriptor must exactly match the id.
-- Descriptor owner surface must be Forms & Workflows surface 17.
-- Descriptor must be mutating.
-- Descriptor must allow `Ui`.
-- Descriptor input schema must be exactly empty in this V1.
-- Compiled Dashboard Widget registration descriptor stores only the validated ability id.
-- Missing/wrong owner/read-only/UI-disallowed/non-empty-schema/resolver failure fails closed.
-- No `AbilityRegistry::authorize()` or `execute()` call.
-- No action input, form-action trusted UI, confirmation, result notice or audit behavior.
-- No generic provider execution, REST expansion, Forms/Workflow source change, shared Platform mutation, P-006, deploy or release.
+- Add Surface 10-owned `DashboardWidgetActionAuthorizationEvaluator`.
+- Input is a previously compiled canonical `action.ability_id` plus `ExecutionContext`.
+- Revalidate exact registered descriptor:
+  - Forms & Workflows owner surface 17;
+  - `mutates=true`;
+  - UI channel allowed;
+  - exactly empty input schema.
+- Require authenticated user + UI execution context.
+- Call only `AbilityRegistry::authorize(ability_id, context, [])`.
+- Return canonical `PolicyDecision`.
+- Registry/handler authorization exceptions fail closed.
+- Never call `AbilityRegistry::execute()`.
+- No action input, form-action UI, confirmation, result notice or audit behavior.
+- No Forms/Workflow mutating source, generic provider execution, REST mutation expansion, shared Platform mutation, P-006, deploy or release.
 
 ### FAST delivery status
 
-- Active Issue: **#1262 — Dashboard Widgets: bounded Forms/Workflow action ability reference V1**.
-- Active PR: **#1263 — Dashboard Widgets: bounded Forms/Workflow Action Ability Reference V1**.
-- Active branch: `agent/dashboard-widgets-bounded-forms-action-ability-reference-v1`.
-- RB-0071 is the single pending feature merge gate.
-- Exact authorized scope: registration compiler + registration descriptor + DashboardWidgets module + two focused unit-test files + five shared-truth files.
+- Active Issue: **#1265 — Dashboard Widgets: bounded action authorization evaluator V1**.
+- Active PR: **pending**.
+- Active branch: `agent/dashboard-widgets-bounded-action-authorization-evaluator-v1`.
+- RB-0072 is the single pending feature merge gate.
+- Exact authorized scope: evaluator + module wiring + two focused tests + five shared-truth files.
 
 ### Persistent recovery order
 

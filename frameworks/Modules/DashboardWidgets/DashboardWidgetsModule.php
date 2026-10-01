@@ -44,6 +44,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_COMPONENT_REGISTRAR = 'module.dashboard-widgets.component-registrar';
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
     public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
+    public const SERVICE_ACTION_AUTHORIZATION_EVALUATOR = 'module.dashboard-widgets.action-authorization-evaluator';
     public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
     public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
@@ -141,6 +142,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $capabilityChecker,
             new WordPressDashboardWidgetRoleMembershipProvider(),
         );
+        $actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator($abilities);
         $registrationCompiler = new DashboardWidgetRegistrationCompiler(
             $visibilityCompiler,
             $contentClassCompiler,
@@ -193,6 +195,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler);
         $services->set(self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler);
         $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
+        $services->set(self::SERVICE_ACTION_AUTHORIZATION_EVALUATOR, $actionAuthorizationEvaluator);
         $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
         $services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
 
