@@ -136,6 +136,57 @@ final class DashboardWidgetActionInputBinderTest extends TestCase
         }
     }
 
+    public function testDescriptorRejectsCredentialLikeAndMalformedDynamicBindings(): void
+    {
+        try {
+            new DashboardWidgetActionInputDescriptor(
+                definitionId: '11111111-1111-4111-8111-111111111111',
+                definitionRevision: 4,
+                abilityId: 'wpessential/forms-workflows/update-entry',
+                literalBindings: ['api_key' => 'private-value'],
+                dynamicBindings: [],
+            );
+            self::fail('Expected credential-like literal binding key to fail closed.');
+        } catch (\InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        $this->expectException(\InvalidArgumentException::class);
+        new DashboardWidgetActionInputDescriptor(
+            definitionId: '11111111-1111-4111-8111-111111111111',
+            definitionRevision: 4,
+            abilityId: 'wpessential/forms-workflows/update-entry',
+            literalBindings: [],
+            dynamicBindings: [
+                'status' => [
+                    'resource' => 'site',
+                    'value_ref' => 'entry_status',
+                    'source_ref' => 'context.site',
+                    'extra' => 'forbidden',
+                ],
+            ],
+        );
+    }
+
+    public function testDescriptorAcceptsExactDynamicKeySetRegardlessOfInsertionOrder(): void
+    {
+        $descriptor = new DashboardWidgetActionInputDescriptor(
+            definitionId: '11111111-1111-4111-8111-111111111111',
+            definitionRevision: 4,
+            abilityId: 'wpessential/forms-workflows/update-entry',
+            literalBindings: [],
+            dynamicBindings: [
+                'status' => [
+                    'resource' => 'site',
+                    'value_ref' => 'entry_status',
+                    'source_ref' => 'context.site',
+                ],
+            ],
+        );
+
+        self::assertSame('site', $descriptor->dynamicBindings['status']['resource']);
+    }
+
     public function testPreservesLiteralInputAndNeverExecutesAbility(): void
     {
         $resolver = new ActionInputCapturingResolver(new DynamicValueResult(true, 'unused'));
