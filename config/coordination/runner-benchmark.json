@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1277",
-  "anchor_main_sha": "cee7568b5bb95a29e921f75684b145dd870b822b",
+  "source_issue": "#1279",
+  "anchor_main_sha": "57165b1571ecf45430ad34a7ed3e53823e08750d",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2540,7 +2540,7 @@
       "category": "PLATFORM_BOUNDED_ABILITY_INPUT_VALIDATOR_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards + PHP Quality Toolchain + Platform Compatibility Matrix + Distributable Package exact-head validation",
-      "environment": "agent/platform-bounded-ability-input-validator-v1 exact head",
+      "environment": "agent/platform-bounded-ability-input-validator-v1 exact head fa00d97c8ce93ca8907805d6486132c8e0e8d941",
       "dependencies": [
         "RB-0077 terminal PASS",
         "Issue #1275 / PR #1276 terminal contract merge",
@@ -2551,19 +2551,56 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "platform|bounded-ability-input-validator|issue1277|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1278 exact head fa00d97c8ce93ca8907805d6486132c8e0e8d941",
+        "PHP Quality Toolchain 36927727718 PASS",
+        "Governance Gate 36927727794 PASS",
+        "Architecture Guards 36927727799 PASS",
+        "Distributable Package 36927728071 PASS",
+        "Status Reference Application 36927727731 PASS",
+        "Platform Compatibility Matrix 36927727997 PASS",
+        "exact eight authorized implementation/test/shared-truth files",
+        "zero unresolved review threads/blockers",
+        "zero commits behind main",
+        "PR #1278 merged as 57165b1571ecf45430ad34a7ed3e53823e08750d",
+        "Issue #1277 closed completed",
+        "verdict PASS_BOUNDED_ABILITY_INPUT_VALIDATOR_V1"
+      ],
+      "note": "PASS promotes only opt-in bounded Ability input validation. No global registry enforcement, action input, Forms mutation or action execution is promoted."
+    },
+    {
+      "id": "RB-0079",
+      "source": "Issue #1279",
+      "category": "DASHBOARD_WIDGETS_ACTION_INPUT_BINDING_CONTRACT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head contract validation",
+      "environment": "agent/dashboard-widgets-action-input-binding-contract-v1 exact head",
+      "dependencies": [
+        "RB-0078 terminal PASS",
+        "Issue #1277 / PR #1278 terminal validator merge",
+        "canonical DynamicValueResolverInterface",
+        "exact source base 57165b1571ecf45430ad34a7ed3e53823e08750d"
+      ],
+      "authorization": "Exact six-file high-risk contract/shared-truth scope only; freeze top-level literal + canonical dynamic action-input binding semantics and final current-schema validation; no runtime/product PHP/JS/tests or execution",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|action-input-binding-contract|issue1279|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1277 implementation authority",
-        "contract RB-0077 terminal PASS",
-        "pure validator + typed result",
-        "strict no-coercion/no-default/no-remote-ref boundary",
-        "AbilityRegistry remains untouched"
+        "Issue #1279 exact-main contract authority",
+        "shared AbilityInputValidator terminal PASS",
+        "existing Dynamic Value context/resource derivation contract",
+        "current compiler remains zero-input-only until bounded implementation",
+        "AbilityRegistry execute remains absent"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_ABILITY_INPUT_VALIDATOR_V1. No global registry enforcement, Dashboard action input, Forms mutation Ability or action execution follows."
+      "note": "PASS may promote only CONTRACT_FROZEN_DASHBOARD_ACTION_INPUT_BINDING_V1 and READY_FOR_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1. No Forms mutation Ability or Dashboard Widget action execution follows."
     }
   ],
-  "last_reconciled_issue": "#1275",
+  "last_reconciled_issue": "#1277",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
