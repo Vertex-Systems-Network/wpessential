@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 077eec04e53a9da7994df2977b69a0d5ba763ead
-observed_main_source: "Issue #1265 / PR #1266 merged Dashboard Widgets bounded Action Authorization Evaluator V1"
-active_issue: "#1267"
-active_pr: "PENDING"
-active_branch: agent/dashboard-widgets-action-readiness-contract-v1
-current_milestone: "Dashboard Widgets Action Readiness Contract V1"
+observed_main_sha: 9733765f0e8f619299634ae5afbbb362b8f71a00
+observed_main_source: "Issue #1267 / PR #1268 Action Readiness Contract V1 merged, but Architecture exact-head validation failed on durable active_pr state format"
+active_issue: "#1270"
+active_pr: null
+active_branch: supervisor/dashboard-widgets-action-readiness-validation-repair
+current_milestone: "Dashboard Widgets Action Readiness Contract validation repair"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1265 / PR #1266 merged as 077eec04e53a9da7994df2977b69a0d5ba763ead; exact head ecbd1d409aa348277c8d31b50d4147c243012de6; Governance 36916865668 PASS; Architecture 36916865716 PASS; PHP Quality 36916865706 PASS; Platform Compatibility 36916865834 PASS; Distributable 36916865705 PASS; Security Lockfile Refresh 36916865748 PASS; Browser E2E Accessibility 36916865717 PASS; exact ten-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_ACTION_AUTHORIZATION_EVALUATOR_V1."
-next_safe_action: "Freeze Issue #1267 Action Readiness Contract V1 and promote only READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1. No runtime execution; confirmation metadata is the next dependency-ready prerequisite."
-waiting_external: "none; #1267 contract batch active"
+last_completed_milestone: "Issue #1265 / PR #1266 remains the last fully terminal PASS milestone. Issue #1267 / PR #1268 merged as 9733765f0e8f619299634ae5afbbb362b8f71a00 with Governance 36918750577 PASS but Architecture 36918750714 FAIL because CURRENT-STATE active_pr used invalid value PENDING; contract semantics are merged but terminal validation is not satisfied."
+next_safe_action: "Complete Issue #1270 exact five-file shared-truth validation repair; obtain Governance + Architecture PASS; only then close #1267 and allow #1269 Action Confirmation Metadata V1 to resume."
+waiting_external: "none; #1270 validation repair active"
 next_planned_slot:
-  issue: "#1267"
-  slot_id: dashboard-widgets-action-readiness-contract-v1
-  claim_branch: "agent/dashboard-widgets-action-readiness-contract-v1"
-  claim_rule: "Issue #1267 freezes exact six-file Action Readiness Contract V1 on main 077eec04e53a9da7994df2977b69a0d5ba763ead; no runtime source; promotion only CONTRACT_FROZEN_ACTION_READINESS_V1 and READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1."
+  issue: "#1270"
+  slot_id: dashboard-widgets-action-readiness-validation-repair
+  claim_branch: "supervisor/dashboard-widgets-action-readiness-validation-repair"
+  claim_rule: "Issue #1270 authorizes exactly five shared-truth files to repair the merged #1268 Architecture state-format failure; no contract semantic or runtime/product change; active_pr must be schema-valid; RB-0073 remains FAIL and RB-0074 is the corrective validation gate."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0073
+    - RB-0074
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -58,6 +58,8 @@ runner_benchmark:
     - RB-0070
     - RB-0071
     - RB-0072
+  terminal_fail:
+    - RB-0073
   blocked_authorization:
     - RB-0001
     - RB-0002
@@ -111,5 +113,6 @@ notes:
   - "Issue #1256 / PR #1257 bounded internal widget.inventory.hide/remove_meta_box seam is terminal PASS; exact registered id/context membership required, no authored/public mutation."
   - "Issue #1262 / PR #1263 bounded Forms/Workflow Action Ability Reference V1 is terminal PASS; RB-0071 is reconciled PASS; no action execution was promoted."
   - "Issue #1265 / PR #1266 bounded Action Authorization Evaluator V1 is terminal PASS; RB-0072 is reconciled PASS; lock-only dev advisory remediation passed Security Lockfile Refresh; no action execution was promoted."
+  - "Issue #1267 / PR #1268 merged but Architecture validation failed because active_pr was PENDING instead of null/#number; RB-0073 is terminal FAIL; #1270 is the corrective validation repair; #1269 remains paused."
 
-# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference terminal PASS, authorization evaluator terminal PASS. type.form_action remains blocked by confirmation/UI, result/audit, Forms owner mutation and input-validation prerequisites. Active #1267 freezes the ordered action-readiness contract; next implementation candidate is confirmation metadata only.
+# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference terminal PASS, authorization evaluator terminal PASS. #1267 contract semantics are merged but its Architecture validation failed on durable-state format; #1270 corrective validation is active. #1269 confirmation metadata remains dependency-gated and must not merge until repair PASS.
