@@ -1,69 +1,77 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1269 Bounded Action Confirmation Metadata V1 active
+## 2026-10-02 — #1273 Dashboard Widgets Action Result + Audit Contract V1 active
 
 ### Exact repository truth
 
-- Exact current main: `ae3f67828b2b3ac32ce21f87f6d48f77489085e4`.
-- Issue #1267 / PR #1268 Action Readiness Contract semantics are merged.
-- Original contract validation RB-0073 remains **FAIL**:
-  - PR #1268 head `8050c1ccc2e750aef83f8ff17a7a707787219488`;
-  - Governance `36918750577` PASS;
-  - Architecture `36918750714` FAIL;
-  - exact failure: invalid durable `active_pr: "PENDING"`.
-- Corrective Issue #1270 / PR #1271 is terminal PASS:
-  - exact head `599aaafd46091a56bfd5f4b169c2f1b6f435b330`;
-  - Governance `36919767646` PASS;
-  - Architecture `36919771597` PASS;
+- Exact current main: `f20d15aa5879be026dd76d89cd3e009c77b4af0f`.
+- Issue #1269 / PR #1272 — Bounded Action Confirmation Metadata V1 — terminal PASS:
+  - exact head `be1fd9ca20beed039a82fd5e887810bab7d6ef35`;
+  - PHP Quality `36921040704` PASS;
+  - Governance `36921040715` PASS;
+  - Distributable `36921040579` PASS;
+  - Platform Compatibility `36921040474` PASS;
+  - Architecture `36921040547` PASS;
+  - exact ten authorized files;
   - zero unresolved review blockers;
-  - zero behind at merge gate;
-  - expected-head merge `ae3f67828b2b3ac32ce21f87f6d48f77489085e4`.
-- RB-0074 is terminal PASS.
-- Issue #1267 is closed completed after corrective validation.
-- RB-0073 failure history is not rewritten.
+  - zero behind;
+  - expected-head merge `f20d15aa5879be026dd76d89cd3e009c77b4af0f`;
+  - verdict `PASS_BOUNDED_ACTION_CONFIRMATION_METADATA_V1`.
+- RB-0075 is terminal PASS.
+- RB-0073 remains historical FAIL and is not rewritten.
+- Corrective RB-0074 remains terminal PASS.
 
-### Action readiness contract direction
+### Surface 10 action readiness after #1272
 
-Remaining order:
-1. Bounded Action Confirmation Metadata V1.
-2. Bounded Action Result + Audit Contract V1.
-3. Forms & Workflows Mutating Ability Owner Contract V1.
-4. Action Input Validation Gate when non-empty input is needed.
-5. Trusted form_action Component + Confirmation Orchestration.
-6. Final separately reviewed Bounded Action Execution Gate.
+Terminal prerequisites:
+- canonical `action.ability_id` reference;
+- authorization-only policy/capability evaluator;
+- typed bounded action confirmation metadata;
+- Action Readiness contract direction terminally validated.
 
-### #1269 active implementation
+Still blocked:
+- Action Result + Audit contract;
+- real Forms & Workflows owner-surface-17 mutating Ability;
+- canonical input validation if non-empty input is needed;
+- trusted `form_action` UI/orchestration;
+- final separately reviewed action execution gate.
 
-Exact repaired base:
-`ae3f67828b2b3ac32ce21f87f6d48f77489085e4`
+### Canonical audit evidence
 
-Bounded implementation:
-- new typed `DashboardWidgetActionConfirmationDescriptor`;
-- compile optional `widget.action.confirmation`;
-- exact keys: `title`, `message`, `confirm_label`, `cancel_label`;
-- bounded trimmed data-only strings;
-- registration descriptor stores only typed confirmation metadata;
-- existing `action.ability_id` behavior remains backward compatible.
+Shared audit infrastructure already exists and is promoted:
+- `AuditServices::LOGGER = platform.audit`;
+- `AuditLoggerInterface::record(AuditRecord)`;
+- `AuditRecord` carries canonical `ExecutionContext`, owner surface, stable action, `AuditOutcome`, resource, reason and sanitized metadata;
+- persistent audit storage captures actor/site/network/channel/correlation/action/outcome/resource/reason/metadata/retention/privacy;
+- `AuditMetadataSanitizer` redacts sensitive keys, bounds nesting and truncates long strings.
 
-Strictly absent:
-- confirmation renderer/modal/button behavior;
-- JS;
-- `AbilityRegistry::execute()`;
-- action mutation;
-- Forms & Workflows source changes;
-- result/audit source;
-- non-empty action input;
-- shared Platform changes;
-- package/dependency changes;
-- P-006/deploy/release widening.
+Dashboard Widgets must reuse this plane and must not create a private audit logger/table/file.
+
+### #1273 frozen contract direction
+
+Contract-only tranche; no runtime/product PHP/JS/test source.
+
+It freezes:
+- safe action result taxonomy;
+- non-ambiguous retry behavior;
+- mandatory `execution_outcome_unknown` for ambiguous post-attempt results;
+- canonical Surface-10 audit action names;
+- bounded audit metadata allowlist;
+- pre-execution audit append as mandatory fail-closed mutation gate;
+- post-success audit degradation semantics that preserve known mutation success and forbid automatic retry;
+- no EventBus requirement in V1.
+
+Next dependency-ready tranche after terminal contract merge:
+
+`READY_FOR_FORMS_WORKFLOWS_MUTATING_ABILITY_OWNER_CONTRACT_V1`
 
 ### FAST delivery status
 
-- Active Issue: **#1269 — Dashboard Widgets: bounded Action Confirmation Metadata V1**.
-- Active PR: **#1272**.
-- Active branch: `agent/dashboard-widgets-bounded-action-confirmation-metadata-v1`.
-- RB-0075 is the single feature merge gate.
-- Exact authorized scope: five product/test files + five shared-truth files.
+- Active Issue: **#1273 — Dashboard Widgets: Action Result + Audit Contract V1**.
+- Active PR: **pending**.
+- Active branch: `agent/dashboard-widgets-action-result-audit-contract-v1`.
+- RB-0076 is the single contract merge gate.
+- Exact authorized scope: one contract document + five shared-truth files.
 
 ### Persistent recovery order
 
