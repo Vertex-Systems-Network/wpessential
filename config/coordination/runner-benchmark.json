@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1267",
-  "anchor_main_sha": "077eec04e53a9da7994df2977b69a0d5ba763ead",
+  "source_issue": "#1270",
+  "anchor_main_sha": "9733765f0e8f619299634ae5afbbb362b8f71a00",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2378,7 +2378,7 @@
       "category": "DASHBOARD_WIDGETS_ACTION_READINESS_CONTRACT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head contract validation",
-      "environment": "agent/dashboard-widgets-action-readiness-contract-v1 exact head",
+      "environment": "agent/dashboard-widgets-action-readiness-contract-v1 exact head 8050c1ccc2e750aef83f8ff17a7a707787219488",
       "dependencies": [
         "RB-0072 terminal PASS",
         "Issue #1265 / PR #1266 terminal Action Authorization Evaluator merge",
@@ -2389,20 +2389,48 @@
       "security_critical": true,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|action-readiness-contract|issue1267|exact-head",
+      "disposition": "TERMINAL_FAILED",
+      "status": "FAIL",
+      "evidence": [
+        "PR #1268 exact head 8050c1ccc2e750aef83f8ff17a7a707787219488",
+        "Governance Gate 36918750577 PASS",
+        "Architecture Guards 36918750714 FAIL",
+        "Architecture failure: tests/Smoke/ai-timeout-resilient-state-contract.php rejected active_pr: PENDING",
+        "required durable-state pattern permits only active_pr: null or active_pr: #<number>",
+        "PR #1268 nevertheless merged as 9733765f0e8f619299634ae5afbbb362b8f71a00 because Architecture was not enforced by the current main ruleset",
+        "Issue #1267 reopened; corrective Issue #1270 created"
+      ],
+      "note": "FAIL is preserved. Do not reinterpret RB-0073 as PASS. Contract semantics are merged, but terminal validation waits for corrective RB-0074."
+    },
+    {
+      "id": "RB-0074",
+      "source": "Issue #1270",
+      "category": "DASHBOARD_WIDGETS_ACTION_READINESS_VALIDATION_REPAIR",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head corrective validation",
+      "environment": "supervisor/dashboard-widgets-action-readiness-validation-repair exact head",
+      "dependencies": [
+        "RB-0073 terminal FAIL",
+        "PR #1268 merged contract semantics",
+        "exact active_pr schema failure isolated"
+      ],
+      "authorization": "Exact five shared-truth files only; repair durable active_pr format and reconcile merged-but-failed #1268 truth; no runtime/product, contract semantic, package, Forms or shared Platform changes",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 10,
+      "dedup_key": "dashboard-widgets|action-readiness-validation-repair|issue1270|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1267 exact-main action readiness audit",
-        "action.ability_id prerequisite terminal PASS",
-        "authorization evaluator prerequisite terminal PASS",
-        "type.form_action still lacks confirmation/UI, result/audit, Forms owner mutation and non-empty input validation",
-        "next dependency-ready prerequisite frozen as Action Confirmation Metadata V1",
-        "AbilityRegistry execute remains forbidden"
+        "Issue #1270 frozen corrective scope",
+        "Architecture run 36918750714 isolated state-format failure",
+        "all other observed Architecture smoke contracts passed",
+        "active_pr corrected to schema-valid null until a numbered PR exists"
       ],
-      "note": "PASS may promote only CONTRACT_FROZEN_ACTION_READINESS_V1 and READY_FOR_BOUNDED_ACTION_CONFIRMATION_METADATA_V1. No action execution or full Surface 10 parity follows."
+      "note": "PASS may terminally validate the already-merged Action Readiness contract. It does not execute actions or promote Surface 10 parity."
     }
   ],
-  "last_reconciled_issue": "#1265",
+  "last_reconciled_issue": "#1267",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
