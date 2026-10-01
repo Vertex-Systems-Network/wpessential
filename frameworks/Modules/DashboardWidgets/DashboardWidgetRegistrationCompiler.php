@@ -13,6 +13,7 @@ use InvalidArgumentException;
 use Throwable;
 use WPEssential\Modules\Cron\CronDefinition;
 use WPEssential\Modules\FormsWorkflows\FormWorkflowDefinition;
+use WPEssential\Platform\Abilities\InputValidation\AbilityInputValidator;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
 
@@ -39,7 +40,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const REFRESH_KEYS = ['background_job'];
 
     /** @var list<string> */
-    private const ACTION_KEYS = ['ability_id', 'confirmation'];
+    private const ACTION_KEYS = ['ability_id', 'confirmation', 'input'];
 
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
@@ -49,6 +50,8 @@ final readonly class DashboardWidgetRegistrationCompiler
 
     /** @var null|Closure */
     private ?Closure $formActionAbilityResolver;
+
+    private ?DashboardWidgetActionInputCompiler $actionInputCompiler;
 
     public function __construct(
         ?DashboardWidgetVisibilityCompiler $visibilityCompiler = null,
@@ -64,6 +67,9 @@ final readonly class DashboardWidgetRegistrationCompiler
             : null;
         $this->formActionAbilityResolver = $formActionAbilityResolver !== null
             ? Closure::fromCallable($formActionAbilityResolver)
+            : null;
+        $this->actionInputCompiler = $formActionAbilityResolver !== null
+            ? new DashboardWidgetActionInputCompiler(new AbilityInputValidator(), $formActionAbilityResolver)
             : null;
     }
 
@@ -131,6 +137,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         $backgroundJobId = $this->compileBackgroundJobReference($widget);
         $actionAbilityId = $this->compileFormsActionAbilityReference($widget);
         $actionConfirmation = $this->compileActionConfirmation($widget);
+        $actionInput = $this->compileActionInput($definition, $widget);
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,
@@ -147,7 +154,31 @@ final readonly class DashboardWidgetRegistrationCompiler
             backgroundJobId: $backgroundJobId,
             actionAbilityId: $actionAbilityId,
             actionConfirmation: $actionConfirmation,
+            actionInput: $actionInput,
         );
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileActionInput(
+        Definition $definition,
+        array $widget,
+    ): ?DashboardWidgetActionInputDescriptor {
+        $action = $widget['action'] ?? null;
+        if (!is_array($action) || !array_key_exists('input', $action)) {
+            return null;
+        }
+
+        if ($action['input'] === []) {
+            return null;
+        }
+
+        if ($this->actionInputCompiler === null) {
+            throw new InvalidArgumentException('Dashboard Widget action.input requires the canonical Ability Registry.');
+        }
+
+        return $this->actionInputCompiler->compile($definition, $widget);
     }
 
     /**
@@ -229,15 +260,23 @@ final readonly class DashboardWidgetRegistrationCompiler
             throw new InvalidArgumentException('Dashboard Widget action ability reference could not be resolved.');
         }
 
+        $inputSchema = is_array($record) ? ($record['input_schema'] ?? null) : null;
         if (
             !is_array($record)
             || ($record['name'] ?? null) !== $abilityId
             || ($record['owner_surface_id'] ?? null) !== FormWorkflowDefinition::OWNER_SURFACE_ID
             || ($record['mutates'] ?? null) !== true
             || ($record['ui_allowed'] ?? null) !== true
-            || ($record['input_schema'] ?? null) !== []
+            || !is_array($inputSchema)
         ) {
-            throw new InvalidArgumentException('Dashboard Widget action ability must be a zero-input mutating Forms & Workflows UI ability.');
+            throw new InvalidArgumentException('Dashboard Widget action ability must be a mutating Forms & Workflows UI ability.');
+        }
+
+        $hasAuthoredInput = array_key_exists('input', $action) && $action['input'] !== [];
+        if (($hasAuthoredInput && $inputSchema === []) || (!$hasAuthoredInput && $inputSchema !== [])) {
+            throw new InvalidArgumentException(
+                'Dashboard Widget action Ability input schema must match whether bounded action.input is authored.',
+            );
         }
 
         return $abilityId;
