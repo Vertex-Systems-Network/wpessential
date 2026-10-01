@@ -1,70 +1,71 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1275 Platform bounded Ability Input Validation Contract V1 active
+## 2026-10-02 — #1277 Platform bounded Ability Input Validator V1 active
 
 ### Exact repository truth
 
-- Exact current main: `f7e24263b1429ffbacd3cba212684858feafbfe9`.
-- Issue #1273 / PR #1274 — Action Result + Audit Contract V1 — terminal PASS:
-  - exact head `c4211da4db9311f66c08174328094ccc30332a3e`;
-  - Governance `36924167746` PASS;
-  - Architecture `36924167872` PASS;
+- Exact current main: `cee7568b5bb95a29e921f75684b145dd870b822b`.
+- Issue #1275 / PR #1276 — Bounded Ability Input Validation Contract V1 — terminal PASS:
+  - exact head `ec195666c7986e0d65d163839bae9f1f22a92ee9`;
+  - Governance `36925418278` PASS;
+  - Architecture `36925418297` PASS;
   - exact six authorized contract/shared-truth files;
-  - zero unresolved review blockers;
-  - zero behind;
-  - expected-head merge `f7e24263b1429ffbacd3cba212684858feafbfe9`;
-  - verdict `CONTRACT_FROZEN_ACTION_RESULT_AUDIT_V1`.
-- RB-0076 is terminal PASS.
+  - expected-head merge `cee7568b5bb95a29e921f75684b145dd870b822b`;
+  - verdict `CONTRACT_FROZEN_ABILITY_INPUT_VALIDATION_V1`.
+- RB-0077 is terminal PASS.
 - RB-0073 remains historical FAIL and is not rewritten.
-- Corrective RB-0074 remains terminal PASS.
 
-### Fresh dependency correction
+### Corrected action dependency order
 
-The prior next-step assumption — create a Forms & Workflows mutating Ability before action-input validation — is not safe on exact main.
+1. bounded shared Ability input validator;
+2. Dashboard Widgets action-input binding;
+3. real Forms & Workflows mutating Ability owner contract;
+4. trusted form_action UI/orchestration;
+5. final separately reviewed execution gate.
 
-Evidence:
-- Surface 17 currently exposes only read-only `get` and `catalog` abilities.
-- Forms BANK_REVIEWED/Atomic/UX truth shows real mutations require resource/input identity plus replay/idempotency/state semantics.
-- No truthful zero-input Forms business mutation exists.
-- Dashboard Widgets currently admits only zero-input action abilities.
-- `AbilityRegistry` stores `AbilityDescriptor::inputSchema` but does not validate it.
-- No canonical generic Ability input validator exists.
+A fake zero-input Forms mutation remains prohibited.
 
-Therefore a fake zero-input mutation is prohibited.
+### #1277 active implementation
 
-Corrected order:
-1. bounded Ability Input Validation contract;
-2. shared validator implementation;
-3. Dashboard Widgets action-input binding contract;
-4. real Forms & Workflows mutating Ability owner contract;
-5. trusted form_action UI/orchestration;
-6. final execution gate.
+Opt-in pure shared Platform validator only.
 
-### #1275 contract direction
+Files:
+- `AbilityInputValidationResult`;
+- `AbilityInputValidator`;
+- focused PHPUnit suite.
 
-Contract-only shared Platform tranche. No runtime/shared-Platform PHP/JS/tests yet.
+Frozen behavior:
+- root object schema only;
+- supported bounded schema subset only;
+- unsupported keywords/types fail closed;
+- schema depth <= 8 and nodes <= 256;
+- arrays <= 100;
+- strings <= 4096 bytes;
+- encoded input <= 32768 bytes;
+- strict types/no coercion/default injection;
+- safe result fields `valid/code/path` only;
+- no rejected runtime value in result;
+- no network/filesystem/database/provider/secret behavior;
+- no input mutation.
 
-Frozen principles:
-- opt-in validator first; no global `AbilityRegistry` behavior change;
-- root object schema;
-- bounded subset: type, required, properties, additionalProperties, items, enum, min/max length/value/items;
-- unsupported keywords fail closed;
-- no coercion/default injection/remote refs/callbacks;
-- schema depth <= 8, nodes <= 256, runtime input <= 32768 bytes;
-- typed machine-safe validation result without rejected values;
-- pure deterministic validation only.
-
-Next promotion after terminal contract merge:
-
-`READY_FOR_BOUNDED_ABILITY_INPUT_VALIDATOR_V1`
+Strictly absent:
+- no `AbilityRegistry.php` change;
+- no global validator enforcement;
+- no service/bootstrap registration;
+- no Dashboard Widgets source;
+- no Forms & Workflows source;
+- no action-input binding;
+- no mutation Ability;
+- no action execution;
+- no package/dependency change.
 
 ### FAST delivery status
 
-- Active Issue: **#1275 — Platform: bounded Ability input validation contract V1**.
-- Active PR: **#1276**.
-- Active branch: `supervisor/platform-bounded-ability-input-validation-contract-v1`.
-- RB-0077 is the single contract merge gate.
-- Exact authorized scope: one new Platform contract document + five shared-truth files.
+- Active Issue: **#1277 — Platform: bounded Ability Input Validator V1**.
+- Active PR: **#1278**.
+- Active branch: `agent/platform-bounded-ability-input-validator-v1`.
+- RB-0078 is the single implementation merge gate.
+- Exact authorized scope: three implementation/test files + five shared-truth files.
 
 ### Persistent recovery order
 

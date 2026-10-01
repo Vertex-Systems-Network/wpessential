@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: f7e24263b1429ffbacd3cba212684858feafbfe9
-observed_main_source: "Issue #1273 / PR #1274 Action Result + Audit Contract V1 merged; Governance and Architecture both PASS"
-active_issue: "#1275"
-active_pr: "#1276"
-active_branch: supervisor/platform-bounded-ability-input-validation-contract-v1
-current_milestone: "Platform bounded Ability Input Validation Contract V1"
+observed_main_sha: cee7568b5bb95a29e921f75684b145dd870b822b
+observed_main_source: "Issue #1275 / PR #1276 bounded Ability Input Validation Contract V1 merged; Governance and Architecture terminal PASS"
+active_issue: "#1277"
+active_pr: "#1278"
+active_branch: agent/platform-bounded-ability-input-validator-v1
+current_milestone: "Platform bounded Ability Input Validator V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1273 / PR #1274 merged as f7e24263b1429ffbacd3cba212684858feafbfe9; exact head c4211da4db9311f66c08174328094ccc30332a3e; Governance 36924167746 PASS; Architecture 36924167872 PASS; exact six-file contract scope; zero review blockers and zero behind; verdict CONTRACT_FROZEN_ACTION_RESULT_AUDIT_V1."
-next_safe_action: "Freeze Issue #1275 bounded canonical Ability Input Validation Contract V1. Fresh Surface-17 audit proves no truthful zero-input Forms mutation exists and AbilityRegistry does not validate inputSchema; shared validator must precede real Forms mutation Ability."
-waiting_external: "PR #1276 exact-head RB-0077 Governance + Architecture contract gate"
+last_completed_milestone: "Issue #1275 / PR #1276 merged as cee7568b5bb95a29e921f75684b145dd870b822b; exact head ec195666c7986e0d65d163839bae9f1f22a92ee9; Governance 36925418278 PASS; Architecture 36925418297 PASS; exact six-file contract scope; verdict CONTRACT_FROZEN_ABILITY_INPUT_VALIDATION_V1."
+next_safe_action: "Implement Issue #1277 exact eight-file opt-in Ability Input Validator V1: pure shared validator + typed result + focused unit tests + shared truth; AbilityRegistry.php and all modules remain untouched."
+waiting_external: "PR #1278 exact-head RB-0078 CI/review gate"
 next_planned_slot:
-  issue: "#1275"
-  slot_id: platform-bounded-ability-input-validation-contract-v1
-  claim_branch: "supervisor/platform-bounded-ability-input-validation-contract-v1"
-  claim_rule: "Issue #1275 authorizes exact six-file shared contract batch on main f7e24263b1429ffbacd3cba212684858feafbfe9; freeze opt-in bounded Ability input validation only; no AbilityRegistry/module/runtime PHP changes."
+  issue: "#1277"
+  slot_id: platform-bounded-ability-input-validator-v1
+  claim_branch: "agent/platform-bounded-ability-input-validator-v1"
+  claim_rule: "Issue #1277 authorizes exact eight-file opt-in shared Ability input validator implementation on main cee7568b5bb95a29e921f75684b145dd870b822b; no AbilityRegistry.php, module, Dashboard Widgets or Forms source changes."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0077
+    - RB-0078
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -61,6 +61,7 @@ runner_benchmark:
     - RB-0074
     - RB-0075
     - RB-0076
+    - RB-0077
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -120,6 +121,7 @@ notes:
   - "Issue #1270 / PR #1271 corrective Action Readiness validation repair is terminal PASS; RB-0074 PASS; contract direction is terminally validated."
   - "Issue #1269 / PR #1272 bounded Action Confirmation Metadata V1 is terminal PASS; RB-0075 PASS; no confirmation UI or action execution was promoted."
   - "Issue #1273 / PR #1274 Action Result + Audit Contract V1 is terminal PASS; RB-0076 PASS; canonical platform.audit/result semantics are frozen; no mutation was promoted."
-  - "Fresh post-#1274 Surface-17 audit proves no truthful zero-input Forms mutation exists and AbilityRegistry does not validate inputSchema; #1275 corrects the dependency order by gating on shared Ability input validation first."
+  - "Fresh post-#1274 Surface-17 audit proves no truthful zero-input Forms mutation exists and AbilityRegistry does not validate inputSchema; dependency order was corrected to gate on shared Ability input validation first."
+  - "Issue #1275 / PR #1276 bounded Ability Input Validation Contract V1 is terminal PASS; RB-0077 PASS; no global AbilityRegistry behavior change was promoted."
 
-# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference terminal PASS, authorization evaluator terminal PASS, confirmation metadata terminal PASS, result/audit contract terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Fresh dependency audit blocks fake zero-input Forms mutation and moves canonical Ability input validation ahead of the Surface-17 mutation owner contract. Active #1275 freezes the shared validator contract; type.form_action remains blocked by validator implementation, action-input binding, real Forms owner mutation, trusted UI/orchestration and final execution.
+# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference terminal PASS, authorization evaluator terminal PASS, confirmation metadata terminal PASS, result/audit contract terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Ability input-validation contract is terminal PASS through RB-0077. Active #1277 implements the opt-in shared validator only; type.form_action remains blocked by validator merge, Dashboard action-input binding, real Forms owner mutation, trusted UI/orchestration and final execution.
