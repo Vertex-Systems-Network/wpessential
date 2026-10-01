@@ -47,6 +47,18 @@ final class DashboardWidgetActionConfirmationDescriptorTest extends TestCase
         }
     }
 
+    public function testRejectsMetadataWhenJsonEncodingExceedsAggregateBound(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new DashboardWidgetActionConfirmationDescriptor(
+            str_repeat('"', DashboardWidgetActionConfirmationDescriptor::MAX_TITLE_BYTES),
+            str_repeat('"', DashboardWidgetActionConfirmationDescriptor::MAX_MESSAGE_BYTES),
+            str_repeat('"', DashboardWidgetActionConfirmationDescriptor::MAX_LABEL_BYTES),
+            str_repeat('"', DashboardWidgetActionConfirmationDescriptor::MAX_LABEL_BYTES),
+        );
+    }
+
     public function testMetadataIsDataOnlyAndDoesNotInterpretExecutableLookingText(): void
     {
         $descriptor = new DashboardWidgetActionConfirmationDescriptor(
