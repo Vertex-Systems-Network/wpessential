@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7
 observed_main_source: "Issue #1279 / PR #1280 bounded Action-Input Binding Contract V1 merged; Governance and Architecture terminal PASS"
 active_issue: "#1281"
-active_pr: null
+active_pr: "#1282"
 active_branch: agent/dashboard-widgets-bounded-action-input-binding-v1
 current_milestone: "Dashboard Widgets bounded Action-Input Binding V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1279 / PR #1280 merged as eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7; exact head ae959bb11d7882f7c55b5a16ffd2c8ea712c2441; Governance 36928758192 PASS; Architecture 36928758204 PASS; exact six-file contract scope; verdict CONTRACT_FROZEN_DASHBOARD_ACTION_INPUT_BINDING_V1."
 next_safe_action: "Implement Issue #1281 exact thirteen-file bounded Dashboard Action-Input Binding V1: typed descriptor + compiler + runtime binder + registration integration + focused tests + shared truth; no AbilityRegistry execute or Forms source."
-waiting_external: "none; #1281 implementation active before PR open"
+waiting_external: "PR #1282 exact-head RB-0080 CI/review gate"
 next_planned_slot:
   issue: "#1281"
   slot_id: dashboard-widgets-bounded-action-input-binding-v1
