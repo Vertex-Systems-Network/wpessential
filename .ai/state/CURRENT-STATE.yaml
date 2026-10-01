@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: f7e24263b1429ffbacd3cba212684858feafbfe9
 observed_main_source: "Issue #1273 / PR #1274 Action Result + Audit Contract V1 merged; Governance and Architecture both PASS"
 active_issue: "#1275"
-active_pr: null
+active_pr: "#1276"
 active_branch: supervisor/platform-bounded-ability-input-validation-contract-v1
 current_milestone: "Platform bounded Ability Input Validation Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1273 / PR #1274 merged as f7e24263b1429ffbacd3cba212684858feafbfe9; exact head c4211da4db9311f66c08174328094ccc30332a3e; Governance 36924167746 PASS; Architecture 36924167872 PASS; exact six-file contract scope; zero review blockers and zero behind; verdict CONTRACT_FROZEN_ACTION_RESULT_AUDIT_V1."
 next_safe_action: "Freeze Issue #1275 bounded canonical Ability Input Validation Contract V1. Fresh Surface-17 audit proves no truthful zero-input Forms mutation exists and AbilityRegistry does not validate inputSchema; shared validator must precede real Forms mutation Ability."
-waiting_external: "none; #1275 contract batch active before PR open"
+waiting_external: "PR #1276 exact-head RB-0077 Governance + Architecture contract gate"
 next_planned_slot:
   issue: "#1275"
   slot_id: platform-bounded-ability-input-validation-contract-v1
