@@ -1,70 +1,74 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1283 Forms & Workflows Set-Enabled Mutating Ability Owner Contract V1 active
+## 2026-10-02 — #1285 Forms & Workflows bounded Set-Enabled Mutating Ability V1 active
 
 ### Exact repository truth
 
-- Exact current main: `880db8ac6938f520fcc53d7f23eddd319b45e5fe`.
-- Issue #1281 / PR #1282 — Bounded Dashboard Action-Input Binding V1 — terminal PASS:
-  - exact head `8e281620c2f2906946d7faa764d3faea085c8a15`;
-  - Governance `36930174072` PASS;
-  - PHP Quality `36930174063` PASS;
-  - Distributable `36930174073` PASS;
-  - Architecture `36930174056` PASS;
-  - Platform Compatibility `36930174064` PASS;
-  - exact thirteen authorized files;
+- Exact current main: `f47ab596dc0329b759bdfa404b37fce6b5963447`.
+- Issue #1283 / PR #1284 — Set-Enabled Mutating Ability Owner Contract V1 — terminal PASS:
+  - exact head `a6ce28c716489d82153c71bc849902fdf1b2a97b`;
+  - Governance `36931696966` PASS;
+  - Architecture `36931696965` PASS;
+  - exact six authorized contract/shared-truth files;
   - zero unresolved review blockers;
   - zero behind;
-  - expected-head merge `880db8ac6938f520fcc53d7f23eddd319b45e5fe`;
-  - verdict `PASS_BOUNDED_DASHBOARD_ACTION_INPUT_BINDING_V1`.
-- RB-0080 is terminal PASS.
+  - expected-head merge `f47ab596dc0329b759bdfa404b37fce6b5963447`;
+  - verdict `CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
+- RB-0081 is terminal PASS.
+- RB-0080 bounded Dashboard Action-Input Binding remains terminal PASS.
 - RB-0073 remains historical FAIL and is not rewritten.
 
-### First real Surface-17 mutation selection
+### #1285 active implementation
 
-Fresh exact-main audit selects **Set-Enabled** as the smallest real owner mutation:
-
-- existing Surface-17 definitions are revisioned and repository-backed;
-- Published/Disabled lifecycle already exists;
-- this mutation is reversible and does not invent submission/entry/run persistence;
-- shared repository already provides optimistic revision conflict protection.
-
-Ability candidate:
+First real Surface-17 mutation:
 
 `wpessential/forms-workflows/set-enabled`
 
-Contract direction:
+Implementation boundary:
 - owner Surface 17;
-- `manage_options`;
-- `mutates=true`;
-- Internal/UI only;
-- no REST;
-- input: definition_id + expected_revision + enabled;
-- direct owner-side canonical input validation required because AbilityRegistry does not globally enforce inputSchema;
-- explicit lowercase RFC4122 UUID validation at handler level because the shared validator intentionally has no pattern/format keyword;
-- re-read/re-check immediately before write;
-- Published↔Disabled only;
-- same-target is deterministic no-op;
-- changed transition increments revision exactly once;
-- stale replay fails closed;
+- manage_options;
+- mutates=true;
+- Internal/UI channels only;
+- showInRest=false;
+- no custom REST/AJAX/admin-post mutation endpoint.
+
+Input:
+- definition_id string length 36 plus explicit lowercase RFC4122 owner check;
+- expected_revision integer >= 1;
+- enabled boolean;
+- no additional properties;
+- direct owner-side canonical AbilityInputValidator validation because AbilityRegistry does not globally validate input schemas.
+
+Authorization/execution:
+- existence + owner/type + Published/Disabled + exact expected revision;
+- execution re-reads all state before write;
+- same-target = no-op, zero save, zero revision increment;
+- changed target = immutable Definition copy + revision +1 + canonical repository save;
+- stale replay/conflict fails closed;
 - payload/dependencies/identity/checksum preserved;
-- no direct DB/table gateway writes.
+- persistence failures use stable safe messages.
+
+Strictly absent:
+- no AbilityRegistry.php change;
+- no Dashboard Widgets source;
+- no submission/entry/run mutation;
+- no provider/payment/secret execution;
+- no REST mutation;
+- no package/dependency change.
 
 ### FAST delivery status
 
-- Active Issue: **#1283 — Forms & Workflows: Set-Enabled Mutating Ability Owner Contract V1**.
-- Active PR: **#1284**.
-- Active branch: `agent/forms-workflows-set-enabled-ability-contract-v1`.
-- RB-0081 is the single owner-contract merge gate.
-- Exact authorized scope: one contract document + five shared-truth files.
-- No Forms runtime source is authorized in this contract tranche.
+- Active Issue: **#1285 — Forms & Workflows: bounded Set-Enabled Mutating Ability V1**.
+- Active PR: **pending**.
+- Active branch: `agent/forms-workflows-bounded-set-enabled-ability-v1`.
+- RB-0082 is the single implementation merge gate.
+- Exact authorized scope: two product files + two focused test files + five shared-truth files.
 
-### Dependency order after contract
+### Dependency order after merge
 
-1. Set-Enabled owner Ability contract.
-2. Bounded Set-Enabled owner Ability implementation.
-3. Trusted Dashboard `form_action` UI/orchestration.
-4. Final separately reviewed Dashboard execution gate.
+1. Set-Enabled owner mutation implementation.
+2. Trusted Dashboard `form_action` UI/orchestration.
+3. Final separately reviewed Dashboard execution gate.
 
 ### Persistent recovery order
 
