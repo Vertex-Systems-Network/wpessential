@@ -53,7 +53,7 @@ Contract direction:
 ### FAST delivery status
 
 - Active Issue: **#1283 — Forms & Workflows: Set-Enabled Mutating Ability Owner Contract V1**.
-- Active PR: **pending**.
+- Active PR: **#1284**.
 - Active branch: `agent/forms-workflows-set-enabled-ability-contract-v1`.
 - RB-0081 is the single owner-contract merge gate.
 - Exact authorized scope: one contract document + five shared-truth files.
