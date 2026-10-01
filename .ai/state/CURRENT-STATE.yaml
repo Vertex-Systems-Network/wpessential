@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: f20d15aa5879be026dd76d89cd3e009c77b4af0f
 observed_main_source: "Issue #1269 / PR #1272 bounded Action Confirmation Metadata V1 merged; five required exact-head workflows PASS"
 active_issue: "#1273"
-active_pr: null
+active_pr: "#1274"
 active_branch: agent/dashboard-widgets-action-result-audit-contract-v1
 current_milestone: "Dashboard Widgets Action Result + Audit Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1269 / PR #1272 merged as f20d15aa5879be026dd76d89cd3e009c77b4af0f; exact head be1fd9ca20beed039a82fd5e887810bab7d6ef35; PHP Quality 36921040704 PASS; Governance 36921040715 PASS; Distributable 36921040579 PASS; Platform Compatibility 36921040474 PASS; Architecture 36921040547 PASS; exact ten-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_ACTION_CONFIRMATION_METADATA_V1."
 next_safe_action: "Freeze Issue #1273 exact six-file Action Result + Audit Contract V1 using canonical platform.audit / AuditLoggerInterface / AuditRecord; no runtime source or execution; promote only READY_FOR_FORMS_WORKFLOWS_MUTATING_ABILITY_OWNER_CONTRACT_V1."
-waiting_external: "none; #1273 contract batch active before PR open"
+waiting_external: "PR #1274 exact-head RB-0076 Governance + Architecture contract gate"
 next_planned_slot:
   issue: "#1273"
   slot_id: dashboard-widgets-action-result-audit-contract-v1
