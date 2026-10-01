@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: cee7568b5bb95a29e921f75684b145dd870b822b
 observed_main_source: "Issue #1275 / PR #1276 bounded Ability Input Validation Contract V1 merged; Governance and Architecture terminal PASS"
 active_issue: "#1277"
-active_pr: null
+active_pr: "#1278"
 active_branch: agent/platform-bounded-ability-input-validator-v1
 current_milestone: "Platform bounded Ability Input Validator V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1275 / PR #1276 merged as cee7568b5bb95a29e921f75684b145dd870b822b; exact head ec195666c7986e0d65d163839bae9f1f22a92ee9; Governance 36925418278 PASS; Architecture 36925418297 PASS; exact six-file contract scope; verdict CONTRACT_FROZEN_ABILITY_INPUT_VALIDATION_V1."
 next_safe_action: "Implement Issue #1277 exact eight-file opt-in Ability Input Validator V1: pure shared validator + typed result + focused unit tests + shared truth; AbilityRegistry.php and all modules remain untouched."
-waiting_external: "none; #1277 implementation active before PR open"
+waiting_external: "PR #1278 exact-head RB-0078 CI/review gate"
 next_planned_slot:
   issue: "#1277"
   slot_id: platform-bounded-ability-input-validator-v1
