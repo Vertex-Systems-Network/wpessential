@@ -1,77 +1,67 @@
 # AI Durable Last Checkpoint
 
-## 2026-09-25 — #1260 bounded Dynamic Context-Token Bindings V1 active
+## 2026-09-25 — #1262 bounded Forms/Workflow Action Ability Reference V1 active
 
 ### Exact repository truth
 
-- Exact current main: `acc2acb3b5a231322bd8c11119842f09a82b6fe2`.
-- Issue #1258 / PR #1259 — Bounded Cron Background-Job Reference V1 — terminal PASS:
-  - exact head `58442514577e5d48646207c9398cd1e5f13cc34f`;
-  - Governance `36072317686` PASS;
-  - Architecture `36072317711` PASS;
-  - PHP Quality `36072317652` PASS;
-  - Platform Compatibility `36072317771` PASS;
-  - Distributable `36072317643` PASS;
-  - exact ten authorized files;
+- Exact current main: `2c236701a653242117173cd6494cc5007b17edb7`.
+- Issue #1260 / PR #1261 — Bounded Dynamic Context-Token Bindings V1 — terminal PASS:
+  - exact head `05ec947c0490c03c7688b002a8564a71d9bbd08e`;
+  - Governance `36073579403` PASS;
+  - Architecture `36073579477` PASS;
+  - PHP Quality `36073579453` PASS;
+  - Platform Compatibility `36073579449` PASS;
+  - Distributable `36073579367` PASS;
+  - exact fourteen authorized files;
   - zero review blockers and zero behind;
-  - expected-head merge `acc2acb3b5a231322bd8c11119842f09a82b6fe2`;
-  - verdict `PASS_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1`.
-- RB-0069 is terminal PASS.
+  - expected-head merge `2c236701a653242117173cd6494cc5007b17edb7`;
+  - verdict `PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1`.
+- RB-0070 is terminal PASS.
 - P0_NATIVE remains 12/12 bounded coverage.
 - FAST AI-Native policy `GOV-AI-NATIVE-FAST-DELIVERY-001` remains active.
 
-### P1_CORE audit after #1259
+### P1_CORE audit after #1261
 
 Terminal bounded coverage:
 - `dashboard-widgets.native.render_provider`
 - `dashboard-widgets.source.data_source_ref`
 - `dashboard-widgets.refresh.background_job`
+- `dashboard-widgets.source.context_tokens`
 
 Owner-contract blockers:
 - `dashboard-widgets.type.listing`
 - `dashboard-widgets.source.listing_ref`
 - `dashboard-widgets.source.query_ref`
 
-Active dependency-ready integration:
-- `dashboard-widgets.source.context_tokens`
+`dashboard-widgets.type.form_action` remains blocked because:
+- Forms & Workflows currently exposes read-only abilities only;
+- Dashboard Widgets has no trusted `form_action` Blueprint/UI component;
+- no canonical generic platform input-schema validator exists;
+- P0_PARITY action prerequisites remain separate: ability id, policy/capability check, confirmation, result notice, audit.
 
-Remaining higher-risk/provider-owner gaps:
-- native.control_provider
-- native.callback_args_provider
-- type.activity
-- type.form_action
-- type.site_health
-- type.shortcode
-- type.block
-- type.registered_provider
-- remote.connection_ref
+### #1262 frozen prerequisite contract
 
-### #1260 frozen contract
-
-- Trusted Blueprint binding source `dynamic`.
-- Exact envelope keys: `source`, `source_ref`, `value_ref`, `resource`.
-- Source/value refs use shared bounded semantic-reference syntax.
-- Resource is exactly `site`, `user`, or `network`.
-- Resource id is never authored:
-  - site -> ExecutionContext.siteId;
-  - user -> ExecutionContext.principal.userId;
-  - network -> ExecutionContext.networkId.
-- Missing user/network identity fails closed before provider resolution.
-- Resolution uses only the canonical shared `DynamicValueResolverInterface` service.
-- Unknown source, unresolved/null result, provider exception, type mismatch or executable string marker fails closed before renderer invocation.
-- Query resolves before Dynamic; trusted renderer runs only after both are fully resolved.
-- No private token interpolation language.
-- No Surface 10 resolver/provider registration.
-- No authored resource identity override.
-- No public mutation Ability/REST expansion, remote connection, Query/Listings owner-contract bypass, shared Platform mutation, P-006, deploy or release.
+- Optional `widget.action.ability_id`.
+- Ability id must match `wpessential/<domain>/<action>`.
+- Reference resolves only through the canonical shared Ability Registry.
+- Descriptor must exactly match the id.
+- Descriptor owner surface must be Forms & Workflows surface 17.
+- Descriptor must be mutating.
+- Descriptor must allow `Ui`.
+- Descriptor input schema must be exactly empty in this V1.
+- Compiled Dashboard Widget registration descriptor stores only the validated ability id.
+- Missing/wrong owner/read-only/UI-disallowed/non-empty-schema/resolver failure fails closed.
+- No `AbilityRegistry::authorize()` or `execute()` call.
+- No action input, form-action trusted UI, confirmation, result notice or audit behavior.
+- No generic provider execution, REST expansion, Forms/Workflow source change, shared Platform mutation, P-006, deploy or release.
 
 ### FAST delivery status
 
-- Active Issue: **#1260 — Dashboard Widgets: bounded dynamic context-token bindings V1**.
-- Active PR: **#1261 — Dashboard Widgets: bounded Dynamic Context-Token Bindings V1**.
-- Active branch: `agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1`.
-- RB-0070 is the single pending feature merge gate.
-- Exact authorized scope: five Dashboard Widgets runtime/compiler files including new Dynamic Binding Executor, four focused unit-test files including its new test, and five shared-truth files.
+- Active Issue: **#1262 — Dashboard Widgets: bounded Forms/Workflow action ability reference V1**.
+- Active PR: **#1263 — Dashboard Widgets: bounded Forms/Workflow Action Ability Reference V1**.
+- Active branch: `agent/dashboard-widgets-bounded-forms-action-ability-reference-v1`.
+- RB-0071 is the single pending feature merge gate.
+- Exact authorized scope: registration compiler + registration descriptor + DashboardWidgets module + two focused unit-test files + five shared-truth files.
 
 ### Persistent recovery order
 

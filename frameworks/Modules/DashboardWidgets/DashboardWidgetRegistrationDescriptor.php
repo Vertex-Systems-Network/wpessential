@@ -62,6 +62,7 @@ final readonly class DashboardWidgetRegistrationDescriptor
         /** @var list<int> */
         public array $siteIds = [],
         public ?string $backgroundJobId = null,
+        public ?string $actionAbilityId = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -119,6 +120,12 @@ final readonly class DashboardWidgetRegistrationDescriptor
             && preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->backgroundJobId) !== 1
         ) {
             throw new InvalidArgumentException('Dashboard Widget descriptor background job id must be a lowercase RFC 4122 UUID.');
+        }
+        if (
+            $this->actionAbilityId !== null
+            && preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $this->actionAbilityId) !== 1
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget descriptor action ability id must use the canonical ability name shape.');
         }
     }
 

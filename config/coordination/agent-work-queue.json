@@ -1,9 +1,9 @@
 {
-  "schema_version": 159,
+  "schema_version": 160,
   "snapshot_date": "2026-09-24",
-  "queue_anchor_main_sha": "acc2acb3b5a231322bd8c11119842f09a82b6fe2",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
-  "source_issue": "#1260",
+  "queue_anchor_main_sha": "2c236701a653242117173cd6494cc5007b17edb7",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
+  "source_issue": "#1262",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -206,7 +206,8 @@
     "1254": "COMPLETED_ON_PR_1255_BOUNDED_NATIVE_COLLAPSIBLE_CAPABILITY_V1",
     "1256": "COMPLETED_ON_PR_1257_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1",
     "1258": "COMPLETED_ON_PR_1259_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
-    "1260": "ACTIVE_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1"
+    "1260": "COMPLETED_ON_PR_1261_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
+    "1262": "ACTIVE_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1"
   },
   "auto_assignment": {
     "enabled": true,
@@ -236,7 +237,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open and validate Issue #1260 exact fourteen-file Dynamic Context-Token Bindings feature PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; no owner resolver registration or identity override.",
+    "next_safe_action": "Open and validate Issue #1262 exact ten-file Forms Action Ability Reference prerequisite PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; do not promote type.form_action execution.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
   },
   "roles": {
@@ -5620,7 +5621,7 @@
       "slot_id": "dashboard-widgets-bounded-dynamic-context-token-bindings-v1",
       "title": "Dashboard Widgets bounded Dynamic Context-Token Bindings V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
       "source": "Issue #1260 / exact-main P1_CORE dependency audit",
       "dependencies": [
@@ -5664,7 +5665,68 @@
         "RUNTIME_CERTIFIED/product parity/deploy/release"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-dynamic-context-token-bindings-v1",
-      "close_condition": "Exact fourteen-file compiler/runtime/test/shared-truth scope; Dynamic bindings use canonical resolver with ExecutionContext-derived site/user/network ids; unknown/unresolved/throw/type/unsafe failures prevent renderer; Query-before-Dynamic ordering; RB-0070 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1."
+      "close_condition": "Exact fourteen-file compiler/runtime/test/shared-truth scope; Dynamic bindings use canonical resolver with ExecutionContext-derived site/user/network ids; unknown/unresolved/throw/type/unsafe failures prevent renderer; Query-before-Dynamic ordering; RB-0070 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1.",
+      "terminal_result": "PASS_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
+      "terminal_evidence": {
+        "issue": 1260,
+        "pr": 1261,
+        "head": "05ec947c0490c03c7688b002a8564a71d9bbd08e",
+        "governance_run": 36073579403,
+        "architecture_run": 36073579477,
+        "php_quality_run": 36073579453,
+        "platform_compatibility_run": 36073579449,
+        "distributable_run": 36073579367,
+        "unresolved_review_threads": 0,
+        "pr_comments": 0,
+        "behind_main": 0,
+        "merge_sha": "2c236701a653242117173cd6494cc5007b17edb7"
+      }
+    },
+    {
+      "priority": 1047,
+      "slot_id": "dashboard-widgets-bounded-forms-action-ability-reference-v1",
+      "title": "Dashboard Widgets bounded Forms/Workflow Action Ability Reference V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
+      "source": "Issue #1262 / exact-main type.form_action dependency audit",
+      "dependencies": [
+        "Issue #1260 / PR #1261 terminal Dynamic Context-Token Bindings PASS",
+        "RB-0070 terminal PASS",
+        "canonical shared AbilityRegistry descriptor lookup",
+        "exact source base 2c236701a653242117173cd6494cc5007b17edb7"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationCompiler.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetRegistrationDescriptor.php",
+        "frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetRegistrationCompilerTest.php",
+        "tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "AbilityRegistry authorize or execute",
+        "action input execution or schema emulation",
+        "trusted form_action Blueprint/UI component",
+        "confirmation/result notice/audit behavior",
+        "generic registered-provider execution",
+        "public Ability/REST expansion",
+        "Forms/Workflow source changes",
+        "shared Platform source changes",
+        "P-006 runtime execution",
+        "RUNTIME_CERTIFIED/product parity/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-forms-action-ability-reference-v1",
+      "close_condition": "Exact ten-file compiler/descriptor/module/test/shared-truth scope; action.ability_id resolves only to exact Forms owner-17 mutating Ui zero-input registered ability; no execution; RB-0071 terminal path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1."
     }
   ],
   "historical_closeout": {

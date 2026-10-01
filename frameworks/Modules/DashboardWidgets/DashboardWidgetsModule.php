@@ -148,6 +148,20 @@ final class DashboardWidgetsModule implements ModuleInterface
             $cronRead !== null
                 ? static fn (string $id): ?array => $cronRead->get($id)
                 : null,
+            static function (string $name) use ($abilities): ?array {
+                $descriptor = $abilities->descriptor($name);
+                if (!$descriptor instanceof AbilityDescriptor) {
+                    return null;
+                }
+
+                return [
+                    'name' => $descriptor->name,
+                    'owner_surface_id' => $descriptor->ownerSurfaceId,
+                    'mutates' => $descriptor->mutates,
+                    'ui_allowed' => $descriptor->allows(ExecutionChannel::Ui),
+                    'input_schema' => $descriptor->inputSchema,
+                ];
+            },
         );
         $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
             $definitions,
