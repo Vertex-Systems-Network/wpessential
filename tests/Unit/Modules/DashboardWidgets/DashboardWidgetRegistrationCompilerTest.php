@@ -7,6 +7,7 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionConfirmationDescriptor;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionInputDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
@@ -39,6 +40,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertNull($descriptor->backgroundJobId);
         self::assertNull($descriptor->actionAbilityId);
         self::assertNull($descriptor->actionConfirmation);
+        self::assertNull($descriptor->actionInput);
     }
 
     public function testCompilesValidatedCronBackgroundJobReferenceWithoutExecutingIt(): void
@@ -140,6 +142,48 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertNull(
             $this->compiler()->compile($this->definition(widget: $emptyAction))->actionAbilityId,
         );
+    }
+
+    public function testCompilesBoundedActionInputWithoutExecutingIt(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/update-entry';
+        $widget = $this->widget();
+        $widget['action'] = [
+            'ability_id' => $abilityId,
+            'input' => [
+                'entry_id' => ['source' => 'literal', 'value' => 42],
+                'status' => [
+                    'source' => 'dynamic',
+                    'source_ref' => 'context.site',
+                    'value_ref' => 'entry_status',
+                    'resource' => 'site',
+                ],
+            ],
+        ];
+
+        $descriptor = $this->compiler(
+            null,
+            static fn (string $name): ?array => [
+                'name' => $name,
+                'owner_surface_id' => 17,
+                'mutates' => true,
+                'ui_allowed' => true,
+                'input_schema' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'entry_id' => ['type' => 'integer', 'minimum' => 1],
+                        'status' => ['type' => 'string', 'enum' => ['open', 'closed']],
+                    ],
+                    'required' => ['entry_id', 'status'],
+                    'additionalProperties' => false,
+                ],
+            ],
+        )->compile($this->definition(widget: $widget));
+
+        self::assertSame($abilityId, $descriptor->actionAbilityId);
+        self::assertInstanceOf(DashboardWidgetActionInputDescriptor::class, $descriptor->actionInput);
+        self::assertSame(['entry_id' => 42], $descriptor->actionInput->literalBindings);
+        self::assertSame('context.site', $descriptor->actionInput->dynamicBindings['status']['source_ref']);
     }
 
     public function testCompilesBoundedActionConfirmationMetadataWithoutExecutingIt(): void

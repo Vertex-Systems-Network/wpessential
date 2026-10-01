@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 57165b1571ecf45430ad34a7ed3e53823e08750d
-observed_main_source: "Issue #1277 / PR #1278 bounded Ability Input Validator V1 merged; six exact-head workflows terminal PASS"
-active_issue: "#1279"
-active_pr: "#1280"
-active_branch: agent/dashboard-widgets-action-input-binding-contract-v1
-current_milestone: "Dashboard Widgets bounded Action-Input Binding Contract V1"
+observed_main_sha: eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7
+observed_main_source: "Issue #1279 / PR #1280 bounded Action-Input Binding Contract V1 merged; Governance and Architecture terminal PASS"
+active_issue: "#1281"
+active_pr: "#1282"
+active_branch: agent/dashboard-widgets-bounded-action-input-binding-v1
+current_milestone: "Dashboard Widgets bounded Action-Input Binding V1"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1277 / PR #1278 merged as 57165b1571ecf45430ad34a7ed3e53823e08750d; exact head fa00d97c8ce93ca8907805d6486132c8e0e8d941; PHP Quality 36927727718 PASS; Governance 36927727794 PASS; Architecture 36927727799 PASS; Distributable 36927728071 PASS; Status Reference 36927727731 PASS; Platform Compatibility 36927727997 PASS; exact eight-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_ABILITY_INPUT_VALIDATOR_V1."
-next_safe_action: "Freeze Issue #1279 exact six-file Dashboard Widgets Action-Input Binding Contract V1. Top-level literal + canonical dynamic bindings only; final input must pass current Ability schema through canonical validator; no execution."
-waiting_external: "PR #1280 exact-head RB-0079 Governance + Architecture contract gate"
+last_completed_milestone: "Issue #1279 / PR #1280 merged as eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7; exact head ae959bb11d7882f7c55b5a16ffd2c8ea712c2441; Governance 36928758192 PASS; Architecture 36928758204 PASS; exact six-file contract scope; verdict CONTRACT_FROZEN_DASHBOARD_ACTION_INPUT_BINDING_V1."
+next_safe_action: "Implement Issue #1281 exact thirteen-file bounded Dashboard Action-Input Binding V1: typed descriptor + compiler + runtime binder + registration integration + focused tests + shared truth; no AbilityRegistry execute or Forms source."
+waiting_external: "PR #1282 exact-head RB-0080 CI/review gate"
 next_planned_slot:
-  issue: "#1279"
-  slot_id: dashboard-widgets-action-input-binding-contract-v1
-  claim_branch: "agent/dashboard-widgets-action-input-binding-contract-v1"
-  claim_rule: "Issue #1279 authorizes exact six-file high-risk Action-Input Binding Contract V1 on main 57165b1571ecf45430ad34a7ed3e53823e08750d; literal + canonical dynamic binding semantics only; no runtime/product PHP/JS/tests, Forms mutation or Ability execution."
+  issue: "#1281"
+  slot_id: dashboard-widgets-bounded-action-input-binding-v1
+  claim_branch: "agent/dashboard-widgets-bounded-action-input-binding-v1"
+  claim_rule: "Issue #1281 authorizes exact thirteen-file bounded Dashboard action-input descriptor/compiler/binder/registration/test/shared-truth implementation on main eef4bbfd74ac3306ea89a0501e08ae5aa59c55d7; no AbilityRegistry.php, Forms source, action execution, UI or package changes."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0079
+    - RB-0080
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -63,6 +63,7 @@ runner_benchmark:
     - RB-0076
     - RB-0077
     - RB-0078
+    - RB-0079
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -125,6 +126,7 @@ notes:
   - "Fresh post-#1274 Surface-17 audit proves no truthful zero-input Forms mutation exists and AbilityRegistry does not validate inputSchema; dependency order was corrected to gate on shared Ability input validation first."
   - "Issue #1275 / PR #1276 bounded Ability Input Validation Contract V1 is terminal PASS; RB-0077 PASS; no global AbilityRegistry behavior change was promoted."
   - "Issue #1277 / PR #1278 bounded Ability Input Validator V1 is terminal PASS; RB-0078 PASS; opt-in validator only, no AbilityRegistry/module behavior change."
-  - "Issue #1279 is the active high-risk Dashboard Widgets Action-Input Binding contract; literal + canonical dynamic bindings only, no Query/provider execution or mutation."
+  - "Issue #1279 / PR #1280 bounded Action-Input Binding Contract V1 is terminal PASS; RB-0079 PASS; literal + canonical dynamic binding semantics are frozen without execution."
+  - "Issue #1281 is the active bounded Action-Input Binding implementation; typed descriptor/compiler/binder only, no Forms source or Ability execution."
 
-# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference + authorization + confirmation metadata + result/audit terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Shared Ability input validator is terminal PASS through RB-0078. Active #1279 freezes Dashboard action-input binding: top-level literal + canonical dynamic values, current-schema final validation, no execution. type.form_action remains blocked by binding implementation, real Forms owner mutation, trusted UI/orchestration and final execution.
+# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference + authorization + confirmation metadata + result/audit terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Shared Ability input validator terminal PASS through RB-0078; Action-Input Binding contract terminal PASS through RB-0079. Active #1281 implements top-level literal + canonical dynamic action-input binding with current-schema final validation and no execution. type.form_action remains blocked by implementation merge, real Forms owner mutation, trusted UI/orchestration and final execution.

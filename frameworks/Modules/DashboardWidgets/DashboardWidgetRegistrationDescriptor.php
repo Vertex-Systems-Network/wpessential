@@ -64,6 +64,7 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public ?string $backgroundJobId = null,
         public ?string $actionAbilityId = null,
         public ?DashboardWidgetActionConfirmationDescriptor $actionConfirmation = null,
+        public ?DashboardWidgetActionInputDescriptor $actionInput = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -127,6 +128,17 @@ final readonly class DashboardWidgetRegistrationDescriptor
             && preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $this->actionAbilityId) !== 1
         ) {
             throw new InvalidArgumentException('Dashboard Widget descriptor action ability id must use the canonical ability name shape.');
+        }
+        if ($this->actionInput !== null) {
+            if ($this->actionAbilityId === null || $this->actionInput->abilityId !== $this->actionAbilityId) {
+                throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration action Ability.');
+            }
+            if (
+                $this->actionInput->definitionId !== $this->definitionId
+                || $this->actionInput->definitionRevision !== $this->revision
+            ) {
+                throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration definition revision.');
+            }
         }
     }
 
