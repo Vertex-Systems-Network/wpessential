@@ -65,7 +65,7 @@ Strictly absent:
 ### FAST delivery status
 
 - Active Issue: **#1281 — Dashboard Widgets: bounded Action-Input Binding V1**.
-- Active PR: **pending**.
+- Active PR: **#1282**.
 - Active branch: `agent/dashboard-widgets-bounded-action-input-binding-v1`.
 - RB-0080 is the single implementation merge gate.
 - Exact authorized scope: eight product/test files + five shared-truth files.
