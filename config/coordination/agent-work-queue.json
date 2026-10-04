@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
-  "snapshot_date": "2026-10-02",
-  "queue_anchor_main_sha": "f47ab596dc0329b759bdfa404b37fce6b5963447",
+  "snapshot_date": "2026-10-05",
+  "queue_anchor_main_sha": "25f098a170c42d30f829d196452189d9f5b71763",
   "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
-  "source_issue": "#1285",
+  "source_issue": "#1287",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6313,7 +6313,7 @@
       "slot_id": "forms-workflows-bounded-set-enabled-ability-v1",
       "title": "Forms & Workflows bounded Set-Enabled Mutating Ability V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "FORMS_WORKFLOWS_BOUNDED_SET_ENABLED_ABILITY_V1",
       "source": "Issue #1285 / terminal #1283 owner contract",
       "dependencies": [
@@ -6350,7 +6350,62 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "agent/forms-workflows-bounded-set-enabled-ability-v1",
-      "close_condition": "Exact nine-file handler/module/test/shared-truth scope; owner-side strict input validation; authorization+execution resource/revision checks; Published↔Disabled changed/no-op/replay tests; showInRest=false; existing read abilities unchanged; RB-0082 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
+      "close_condition": "Exact nine-file handler/module/test/shared-truth scope; owner-side strict input validation; authorization+execution resource/revision checks; Published↔Disabled changed/no-op/replay tests; showInRest=false; existing read abilities unchanged; RB-0082 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1.",
+      "terminal_result": "PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1",
+      "terminal_evidence": {
+        "issue": 1285,
+        "pr": 1286,
+        "head": "c45e623079824b7e75e4a05617f1439a6971ea2f",
+        "governance_run": 36932601887,
+        "php_quality_run": 36932601852,
+        "distributable_run": 36932601809,
+        "architecture_run": 36932601669,
+        "platform_compatibility_run": 36932601737,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "25f098a170c42d30f829d196452189d9f5b71763"
+      }
+    },
+    {
+      "priority": 1059,
+      "slot_id": "dashboard-widgets-input-aware-action-authorization-contract-v1",
+      "title": "Dashboard Widgets Input-Aware Action Authorization Contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
+      "source": "Issue #1287 / fresh post-Set-Enabled authorization dependency audit",
+      "dependencies": [
+        "Issue #1285 / PR #1286 terminal Set-Enabled mutation PASS",
+        "RB-0082 terminal PASS",
+        "Dashboard Action-Input Binding terminal PASS",
+        "AbilityRegistry input-aware authorize API",
+        "exact source base 25f098a170c42d30f829d196452189d9f5b71763"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "docs/PRODUCT/DASHBOARD-WIDGETS-INPUT-AWARE-ACTION-AUTHORIZATION-CONTRACT-V1.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime/product PHP/JS/tests",
+        "AbilityRegistry.php",
+        "Forms source",
+        "confirmation UI/orchestration",
+        "Ability execution/mutation",
+        "REST widening",
+        "package/dependency changes",
+        "P-006/deploy/release widening"
+      ],
+      "claim_branch": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1",
+      "close_condition": "Exact six-file contract/shared-truth scope; reconcile #1285/#1286/RB-0082 PASS; freeze bound-input schema validation + canonical owner authorization + deny-reason preservation; RB-0083 Governance + Architecture PASS; zero blockers; zero behind; expected-head merge."
     }
   ],
   "historical_closeout": {
