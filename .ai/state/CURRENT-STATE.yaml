@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 25f098a170c42d30f829d196452189d9f5b71763
 observed_main_source: "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 merged; exact-head Governance/PHP/Distributable/Architecture/Platform Compatibility terminal PASS"
 active_issue: "#1287"
-active_pr: null
+active_pr: "#1288"
 active_branch: agent/dashboard-widgets-input-aware-action-authorization-contract-v1
 current_milestone: "Dashboard Widgets Input-Aware Action Authorization Contract V1"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1285 / PR #1286 merged as 25f098a170c42d30f829d196452189d9f5b71763; exact head c45e623079824b7e75e4a05617f1439a6971ea2f; Governance 36932601887 PASS; PHP Quality 36932601852 PASS; Distributable 36932601809 PASS; Architecture 36932601669 PASS; Platform Compatibility 36932601737 PASS; exact nine-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
 next_safe_action: "Freeze Issue #1287 exact six-file Dashboard Input-Aware Action Authorization Contract V1: pass validated bound input into AbilityRegistry::authorize, preserve owner deny reasons, no execution."
-waiting_external: "none; #1287 high-risk authorization contract active before PR open"
+waiting_external: "PR #1288 exact-head RB-0083 Governance + Architecture contract gate"
 next_planned_slot:
   issue: "#1287"
   slot_id: dashboard-widgets-input-aware-action-authorization-contract-v1
