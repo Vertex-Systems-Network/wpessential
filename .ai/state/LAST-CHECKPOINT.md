@@ -1,74 +1,63 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1285 Forms & Workflows bounded Set-Enabled Mutating Ability V1 active
+## 2026-10-05 — #1287 Dashboard Widgets Input-Aware Action Authorization Contract V1 active
 
 ### Exact repository truth
 
-- Exact current main: `f47ab596dc0329b759bdfa404b37fce6b5963447`.
-- Issue #1283 / PR #1284 — Set-Enabled Mutating Ability Owner Contract V1 — terminal PASS:
-  - exact head `a6ce28c716489d82153c71bc849902fdf1b2a97b`;
-  - Governance `36931696966` PASS;
-  - Architecture `36931696965` PASS;
-  - exact six authorized contract/shared-truth files;
+- Exact current main: `25f098a170c42d30f829d196452189d9f5b71763`.
+- Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1 — terminal PASS:
+  - exact head `c45e623079824b7e75e4a05617f1439a6971ea2f`;
+  - Governance `36932601887` PASS;
+  - PHP Quality `36932601852` PASS;
+  - Distributable `36932601809` PASS;
+  - Architecture `36932601669` PASS;
+  - Platform Compatibility `36932601737` PASS;
+  - exact nine authorized files;
   - zero unresolved review blockers;
   - zero behind;
-  - expected-head merge `f47ab596dc0329b759bdfa404b37fce6b5963447`;
-  - verdict `CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
-- RB-0081 is terminal PASS.
-- RB-0080 bounded Dashboard Action-Input Binding remains terminal PASS.
-- RB-0073 remains historical FAIL and is not rewritten.
+  - expected-head merge `25f098a170c42d30f829d196452189d9f5b71763`;
+  - verdict `PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
+- RB-0082 is terminal PASS.
+- RB-0073 remains historical FAIL.
 
-### #1285 active implementation
+### Fresh dependency correction
 
-First real Surface-17 mutation:
+The first real Forms mutation is ready, but current Dashboard authorization is still zero-input-only:
 
-`wpessential/forms-workflows/set-enabled`
+- `DashboardWidgetActionAuthorizationEvaluator` requires `descriptor->inputSchema === []`;
+- it calls `AbilityRegistry::authorize(..., [])`;
+- therefore Set-Enabled input cannot reach owner resource authorization.
 
-Implementation boundary:
-- owner Surface 17;
-- manage_options;
-- mutates=true;
-- Internal/UI channels only;
-- showInRest=false;
-- no custom REST/AJAX/admin-post mutation endpoint.
+Trusted `form_action` UI/orchestration is blocked until authorization becomes input-aware.
 
-Input:
-- definition_id string length 36 plus explicit lowercase RFC4122 owner check;
-- expected_revision integer >= 1;
-- enabled boolean;
-- no additional properties;
-- direct owner-side canonical AbilityInputValidator validation because AbilityRegistry does not globally validate input schemas.
+### #1287 contract direction
 
-Authorization/execution:
-- existence + owner/type + Published/Disabled + exact expected revision;
-- execution re-reads all state before write;
-- same-target = no-op, zero save, zero revision increment;
-- changed target = immutable Definition copy + revision +1 + canonical repository save;
-- stale replay/conflict fails closed;
-- payload/dependencies/identity/checksum preserved;
-- persistence failures use stable safe messages.
-
-Strictly absent:
-- no AbilityRegistry.php change;
-- no Dashboard Widgets source;
-- no submission/entry/run mutation;
-- no provider/payment/secret execution;
-- no REST mutation;
-- no package/dependency change.
+Later evaluator:
+- accepts ability id + bound input + exact UI ExecutionContext;
+- supports zero-input backward compatibility;
+- validates current descriptor schema/input through canonical AbilityInputValidator;
+- requires owner Surface 17 + mutates=true + UI channel;
+- requires authenticated user + UI context;
+- calls only `AbilityRegistry::authorize($abilityId, $context, $input)`;
+- preserves canonical capability/owner denial reasons;
+- fails unexpected exceptions closed;
+- never calls `AbilityRegistry::execute()`.
 
 ### FAST delivery status
 
-- Active Issue: **#1285 — Forms & Workflows: bounded Set-Enabled Mutating Ability V1**.
-- Active PR: **#1286**.
-- Active branch: `agent/forms-workflows-bounded-set-enabled-ability-v1`.
-- RB-0082 is the single implementation merge gate.
-- Exact authorized scope: two product files + two focused test files + five shared-truth files.
+- Active Issue: **#1287 — Dashboard Widgets: Input-Aware Action Authorization Contract V1**.
+- Active PR: **pending**.
+- Active branch: `agent/dashboard-widgets-input-aware-action-authorization-contract-v1`.
+- RB-0083 is the single contract merge gate.
+- Exact authorized scope: one contract document + five shared-truth files.
 
-### Dependency order after merge
+### Corrected dependency order
 
-1. Set-Enabled owner mutation implementation.
-2. Trusted Dashboard `form_action` UI/orchestration.
-3. Final separately reviewed Dashboard execution gate.
+1. Input-Aware Action Authorization contract.
+2. Input-Aware Action Authorization implementation.
+3. Trusted form_action UI/orchestration contract.
+4. Trusted UI/orchestration implementation.
+5. Final separately reviewed execution gate.
 
 ### Persistent recovery order
 
