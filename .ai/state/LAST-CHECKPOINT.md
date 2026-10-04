@@ -46,7 +46,7 @@ Later evaluator:
 ### FAST delivery status
 
 - Active Issue: **#1287 — Dashboard Widgets: Input-Aware Action Authorization Contract V1**.
-- Active PR: **pending**.
+- Active PR: **#1288**.
 - Active branch: `agent/dashboard-widgets-input-aware-action-authorization-contract-v1`.
 - RB-0083 is the single contract merge gate.
 - Exact authorized scope: one contract document + five shared-truth files.
