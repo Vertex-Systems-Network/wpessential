@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / STACKED PREPARATION | #1286 Set-Enabled terminal PASS; #1288/#1298/#1299 dependency/security-gated; #1301 trusted form_action confirmation preflight prepared; no action execution |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0085 | Security + Input-Aware Authorization terminal PASS; #1299 trusted form_action contract validation active; #1301 prepared; no action execution |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,20 +37,15 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main anchor remains `25f098a170c42d30f829d196452189d9f5b71763`, produced by terminal merge of Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1.
-- RB-0082 is terminal PASS. Repository-wide security Issue #1289 remains the active Architecture blocker; the high-severity development advisory gate is not waived or lowered.
-- Issue #1287 / PR #1288 / RB-0083 freezes Input-Aware Dashboard action authorization semantics and remains dependency/security blocked.
-- Issue #1291 / PR #1298 / RB-0084 prepares the exact bounded Input-Aware Authorization evaluator and remains **PREPARED_NOT_MERGEABLE**.
-- Issue #1296 / PR #1299 / RB-0085 prepares the trusted `form_action` UI + confirmation contract and remains **PREPARED_NOT_MERGEABLE**.
-- Issue #1300 / PR #1301 / RB-0086 prepares the trusted `form_action` UI + confirmation preflight implementation, stacked on #1299 and still **PREPARED_NOT_MERGEABLE**.
-- #1301 implementation recognizes `form_action` as a trusted Dashboard type while keeping it outside the generic Component Blueprint renderer; generic `render_source` is forbidden for this type.
-- #1301 uses a dedicated escaped presenter, the existing fixed admin bundle on the WordPress Dashboard, canonical shared AJAX/nonce/context/audit services, server-side current Definition reload/recompile/input binding, and Input-Aware Authorization.
-- Browser transport sends exactly Definition id, Definition revision and accepted/cancelled confirmation state. Ability id and owner input remain server-side.
-- The preflight path has no `AbilityRegistry::execute()`, no owner handler `handle()`, no Forms mutation, no REST/admin-post mutation, no generic `AbilityAjaxHandler`, no new shared Platform source changes and no automatic retry.
-- `confirmation_ready` means **authorized + confirmed + audited, not executed**.
-- Pre-shared-truth #1301 head `4687fe933c1f603984cc3a928c422b5de47f8e3b` passed Governance `37305617864`, PHP Quality `37305617634`, and Distributable `37305617666`; exact-head final evidence is re-required after this shared-truth reconciliation.
-- Dependency order remains strict: **#1289 security resolution → #1288/RB-0083 → #1298/RB-0084 → #1299/RB-0085 → #1301/RB-0086 → separately authorized final bounded execution gate #1297**.
-- Overall terminal milestone completion remains **5/10 = 50%**. Prepared stacked tranches do not create a new terminal roadmap milestone.
+- Exact current main: `a7804178ae287bb0550c9456b07ea0aea70fb93a`.
+- Security migration RB-0087 remains terminal PASS with a clean maintained admin dependency graph and 0 dev/distributable vulnerabilities.
+- PR #1288 / RB-0083 Input-Aware Authorization Contract V1 is terminal PASS and merged.
+- PR #1298 / RB-0084 bounded Input-Aware Action Authorization V1 is terminal PASS and merged. Exact head `d786beff0ead88eb83252cd414e040a7883430c4` passed Governance, PHP Quality, Distributable, Architecture, and Platform Compatibility 10/10.
+- The evaluator now validates current Ability schema/input, requires authenticated UI user context and owner Surface 17 mutating UI Ability, forwards exact bound input only to canonical `AbilityRegistry::authorize()`, preserves canonical owner/capability denials, and never executes the owner Ability.
+- Issue #1296 / PR #1299 / RB-0085 is now the active trusted `form_action` UI + confirmation contract validation tranche.
+- #1299 freezes only dedicated trusted presentation, canonical confirmation-preflight transport, server-side reload/rebind/authorization, canonical audit requirements, and bounded safe states. `confirmation_ready` explicitly remains **not executed**.
+- PR #1301 / RB-0086 remains prepared downstream and must reconcile after RB-0085 merges.
+- #1297 final execution remains implementation-forbidden until RB-0086 is terminal PASS.
 
 ## Current lifecycle
 

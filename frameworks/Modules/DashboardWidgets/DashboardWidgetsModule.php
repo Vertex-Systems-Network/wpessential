@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
 
 use LogicException;
 use WPEssential\Contracts\AbilityHandlerInterface;
-use WPEssential\Contracts\AuditLoggerInterface;
 use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\DataSourceRegistryInterface;
 use WPEssential\Contracts\DefinitionRepositoryInterface;
@@ -20,8 +19,6 @@ use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Contracts\ServiceRegistryInterface;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
-use WPEssential\Platform\Abilities\InputValidation\AbilityInputValidator;
-use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
 use WPEssential\Modules\Cron\CronModule;
@@ -32,13 +29,7 @@ use WPEssential\Platform\Rendering\BlueprintRendererDispatcher;
 use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
-use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
-use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
-use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
-use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
-use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
-use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class DashboardWidgetsModule implements ModuleInterface
 {
@@ -54,9 +45,6 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_VISIBILITY_COMPILER = 'module.dashboard-widgets.visibility-compiler';
     public const SERVICE_VISIBILITY_EVALUATOR = 'module.dashboard-widgets.visibility-evaluator';
     public const SERVICE_ACTION_AUTHORIZATION_EVALUATOR = 'module.dashboard-widgets.action-authorization-evaluator';
-    public const SERVICE_ACTION_INPUT_BINDER = 'module.dashboard-widgets.action-input-binder';
-    public const SERVICE_FORM_ACTION_PRESENTER = 'module.dashboard-widgets.form-action-presenter';
-    public const SERVICE_FORM_ACTION_PREFLIGHT = 'module.dashboard-widgets.form-action-preflight';
     public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
     public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
@@ -86,39 +74,6 @@ final class DashboardWidgetsModule implements ModuleInterface
         $dataSources = $services->get('platform.data-sources');
         $queryReadConsumer = $services->get(QueryModule::SERVICE_READ_CONSUMER);
         $dynamicValues = $services->get(RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES);
-
-        foreach ([
-            'platform.abilities.contexts',
-            'platform.ajax.routes',
-            'platform.ajax.dispatcher',
-            'platform.ajax.gateway',
-            AuditServices::LOGGER,
-        ] as $serviceId) {
-            if (!$services->has($serviceId)) {
-                throw new LogicException(sprintf(
-                    'Dashboard Widgets form-action preflight requires canonical shared service "%s".',
-                    $serviceId,
-                ));
-            }
-        }
-        $contexts = $services->get('platform.abilities.contexts');
-        $ajaxRoutes = $services->get('platform.ajax.routes');
-        $ajaxDispatcher = $services->get('platform.ajax.dispatcher');
-        $ajaxGateway = $services->get('platform.ajax.gateway');
-        $audit = $services->get(AuditServices::LOGGER);
-
-        if (
-            !$contexts instanceof WordPressExecutionContextFactory
-            || !$ajaxRoutes instanceof AjaxRouteRegistry
-            || !$ajaxDispatcher instanceof AjaxDispatcher
-            || !$ajaxGateway instanceof WordPressAjaxGateway
-            || !$audit instanceof AuditLoggerInterface
-        ) {
-            throw new LogicException(
-                'Dashboard Widgets form-action preflight requires canonical WordPress AJAX/context/audit services.',
-            );
-        }
-
         $cronRead = null;
         if ($services->has(CronModule::SERVICE_READ)) {
             $candidateCronRead = $services->get(CronModule::SERVICE_READ);
@@ -188,20 +143,6 @@ final class DashboardWidgetsModule implements ModuleInterface
             new WordPressDashboardWidgetRoleMembershipProvider(),
         );
         $actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator($abilities);
-        $abilityResolver = static function (string $name) use ($abilities): ?array {
-            $descriptor = $abilities->descriptor($name);
-            if (!$descriptor instanceof AbilityDescriptor) {
-                return null;
-            }
-
-            return [
-                'name' => $descriptor->name,
-                'owner_surface_id' => $descriptor->ownerSurfaceId,
-                'mutates' => $descriptor->mutates,
-                'ui_allowed' => $descriptor->allows(ExecutionChannel::Ui),
-                'input_schema' => $descriptor->inputSchema,
-            ];
-        };
         $registrationCompiler = new DashboardWidgetRegistrationCompiler(
             $visibilityCompiler,
             $contentClassCompiler,
@@ -209,12 +150,20 @@ final class DashboardWidgetsModule implements ModuleInterface
             $cronRead !== null
                 ? static fn (string $id): ?array => $cronRead->get($id)
                 : null,
-            $abilityResolver,
-        );
-        $actionInputBinder = new DashboardWidgetActionInputBinder(
-            new AbilityInputValidator(),
-            $dynamicValues,
-            $abilityResolver,
+            static function (string $name) use ($abilities): ?array {
+                $descriptor = $abilities->descriptor($name);
+                if (!$descriptor instanceof AbilityDescriptor) {
+                    return null;
+                }
+
+                return [
+                    'name' => $descriptor->name,
+                    'owner_surface_id' => $descriptor->ownerSurfaceId,
+                    'mutates' => $descriptor->mutates,
+                    'ui_allowed' => $descriptor->allows(ExecutionChannel::Ui),
+                    'input_schema' => $descriptor->inputSchema,
+                ];
+            },
         );
         $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
             $definitions,
@@ -226,38 +175,11 @@ final class DashboardWidgetsModule implements ModuleInterface
             $queryBindingExecutor,
             $dynamicBindingExecutor,
         );
-        $preflightHandler = new DashboardWidgetFormActionPreflightAjaxHandler(
-            $definitions,
-            $contentClassCompiler,
-            $registrationCompiler,
-            $actionInputBinder,
-            $actionAuthorizationEvaluator,
-            $contexts,
-            $audit,
-        );
-        $ajaxRoutes->register(new AjaxRoute(
-            type: DashboardWidgetFormActionPresenter::ROUTE_TYPE,
-            handler: $preflightHandler,
-            operation: NonceOperation::Apply,
-            capability: null,
-            allowGuests: false,
-            requiresNonce: true,
-        ));
-        $formActionPresenter = new DashboardWidgetFormActionPresenter(
-            $ajaxGateway->action(),
-            static fn (): string => $ajaxDispatcher->createNonce(
-                DashboardWidgetFormActionPresenter::ROUTE_TYPE,
-            ),
-        );
-        $dashboardEnvironment = $this->dashboardEnvironment
-            ?? new NativeWordPressDashboardWidgetEnvironment();
         $wordpressAdapter = new DashboardWidgetWordPressAdapter(
             $definitions,
             $registrationCompiler,
             $runtimeRenderExecutor,
-            $dashboardEnvironment,
-            $contentClassCompiler,
-            $formActionPresenter,
+            $this->dashboardEnvironment ?? new NativeWordPressDashboardWidgetEnvironment(),
         );
 
         $componentRegistrar->register();
@@ -274,9 +196,6 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler);
         $services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
         $services->set(self::SERVICE_ACTION_AUTHORIZATION_EVALUATOR, $actionAuthorizationEvaluator);
-        $services->set(self::SERVICE_ACTION_INPUT_BINDER, $actionInputBinder);
-        $services->set(self::SERVICE_FORM_ACTION_PRESENTER, $formActionPresenter);
-        $services->set(self::SERVICE_FORM_ACTION_PREFLIGHT, $preflightHandler);
         $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
         $services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
 

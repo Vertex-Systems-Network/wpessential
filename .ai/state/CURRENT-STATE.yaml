@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 25f098a170c42d30f829d196452189d9f5b71763
-observed_main_source: "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 merged; exact-head Governance/PHP/Distributable/Architecture/Platform Compatibility terminal PASS"
-active_issue: "#1300"
-active_pr: "#1301"
-active_branch: agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1
-current_milestone: "Dashboard Widgets trusted form_action UI + confirmation preflight V1 — stacked implementation preparation"
+observed_main_sha: a7804178ae287bb0550c9456b07ea0aea70fb93a
+observed_main_source: "Issue #1291 / PR #1298 bounded Input-Aware Action Authorization V1 merged; Governance/PHP/Distributable/Architecture/Platform terminal PASS"
+active_issue: "#1296"
+active_pr: "#1299"
+active_branch: agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1
+current_milestone: "Dashboard Widgets trusted form_action UI + confirmation orchestration contract V1 — fresh-main validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1285 / PR #1286 merged as 25f098a170c42d30f829d196452189d9f5b71763; exact head c45e623079824b7e75e4a05617f1439a6971ea2f; Governance 36932601887 PASS; PHP Quality 36932601852 PASS; Distributable 36932601809 PASS; Architecture 36932601669 PASS; Platform Compatibility 36932601737 PASS; exact nine-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
-next_safe_action: "Maintain #1300/#1301 as PREPARED_NOT_MERGEABLE; continue exact-head CI/review repair only. Do not merge/promote until RB-0083, RB-0084, RB-0085 and security #1289 are terminal and fresh predecessor/main reconciliation passes."
-waiting_external: "#1289 upstream Node dev-toolchain advisory blocker; PR #1288/RB-0083; PR #1298/RB-0084; PR #1299/RB-0085 terminal reconciliation before #1301 can merge"
+last_completed_milestone: "Issue #1291 / PR #1298 merged as a7804178ae287bb0550c9456b07ea0aea70fb93a; exact head d786beff0ead88eb83252cd414e040a7883430c4; Governance 37319094769 PASS; PHP Quality 37319094814 PASS; Distributable 37319094729 PASS; Architecture 37319094548 FULL PASS; Platform Compatibility 37319094511 PASS 10/10; exact two-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1."
+next_safe_action: "Run RB-0085 exact-head Governance + Architecture on PR #1299 exact six-file contract scope; require zero behind/review blockers; expected-head merge; then reconcile PR #1301."
+waiting_external: "PR #1299 exact-head RB-0085 Governance + Architecture merge gate"
 next_planned_slot:
-  issue: "#1300"
-  slot_id: dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1
-  claim_branch: "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1"
-  claim_rule: "Owner-authorized stacked implementation preparation on PR #1299 only; exact #1300 allowlist; no Ability execution or Forms mutation; PREPARED_NOT_MERGEABLE until RB-0083/RB-0084/RB-0085/#1289 terminal gates and fresh reconciliation."
+  issue: "#1296"
+  slot_id: dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1
+  claim_branch: "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1"
+  claim_rule: "Fresh main exact six-file trusted form_action UI/confirmation contract/shared-truth scope only; no runtime UI/AJAX/audit execution; RB-0085 Governance + Architecture FULL PASS required before expected-head merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,8 +24,6 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0083
-    - RB-0084
     - RB-0085
     - RB-0086
   terminal_pass:
@@ -70,13 +68,15 @@ runner_benchmark:
     - RB-0080
     - RB-0081
     - RB-0082
+    - RB-0087
+    - RB-0083
+    - RB-0084
   terminal_fail:
     - RB-0073
   blocked_authorization:
     - RB-0001
     - RB-0002
 open_repository_blockers:
-  - "#1289 repository-wide Node dev-toolchain advisory blocker remains BLOCKED_UPSTREAM; Architecture high-severity gate must not be weakened"
   - "#858 broader required-CI ruleset enforcement remains repository-admin work"
   - "#1102 P-006 Wave 1U remains separately authorization-gated"
   - "#947 independent Wave 1A review remains nonblocking and must preserve independence"
@@ -113,6 +113,9 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
+  - "Issue #1296 / PR #1299 is the active trusted form_action contract gate on terminal RB-0084 main; no runtime/action execution in this tranche."
+  - "RB-0083 and RB-0084 are terminal PASS; PR #1288 contract and PR #1298 implementation are merged."
+  - "Issue #1287 / PR #1288 is the active fresh secure-main contract gate; RB-0083 must pass Governance + Architecture before merge."
   - "Repository/runtime evidence outranks compact state."
   - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
   - "Issue #1240 / PR #1241 terminally reconciled #1238/#1239 shared truth on exact main d46bb23f948ee6c943cf8cce82231c74918480f9."
@@ -136,10 +139,10 @@ notes:
   - "Issue #1279 / PR #1280 bounded Action-Input Binding Contract V1 is terminal PASS; RB-0079 PASS; literal + canonical dynamic binding semantics are frozen without execution."
   - "Issue #1281 / PR #1282 bounded Dashboard Action-Input Binding V1 is terminal PASS; RB-0080 PASS; typed descriptor/compiler/binder merged without Ability execution or Forms source changes."
   - "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract is terminal PASS; RB-0081 PASS; Published↔Disabled/expected_revision/no-REST semantics are frozen."
-  - "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 is terminal PASS; RB-0082 PASS; first real Surface-17 mutation is available with expected_revision and no REST."
-  - "Issue #1287 / PR #1288 Input-Aware Authorization contract remains open and merge-blocked only by repository-wide security Issue #1289."
-  - "Issue #1291 / PR #1298 is owner-authorized PREPARED_NOT_MERGEABLE implementation preparation; exact head 0111346896b5092abd65a16939bf2fdb15d20cc9 passed Governance, PHP Quality, Distributable and Platform Compatibility 10/10; Architecture fails only at #1289 dev advisory gate."
-  - "Issue #1296 / PR #1299 is stacked PREPARED_NOT_MERGEABLE contract preparation only; no runtime/UI/AJAX/audit implementation or execution."
-  - "Issue #1300 / PR #1301 is owner-authorized PREPARED_NOT_MERGEABLE trusted form_action UI + confirmation preflight implementation stacked on #1299. Pre-shared-truth head 4687fe933c1f603984cc3a928c422b5de47f8e3b passed Governance 37305617864, PHP Quality 37305617634 and Distributable 37305617666; exact-head final evidence remains pending after shared-truth reconciliation. The path never calls AbilityRegistry::execute() or owner handle(), performs no Forms mutation, and confirmation_ready means authorized + confirmed + audited only."
+  - "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 is terminal PASS; RB-0082 PASS; merged as 25f098a170c42d30f829d196452189d9f5b71763."
+  - "Issue #1287 / PR #1288 Input-Aware Authorization contract remains open; feature contract is clean but must rebase/rerun after security migration #1310/#1311."
+  - "Issue #1291 / PR #1298, Issue #1296 / PR #1299 and Issue #1300 / PR #1301 are owner-authorized stacked PREPARED_NOT_MERGEABLE work; they remain downstream of RB-0083 and security-main reconciliation."
+  - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
+  - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: 16 records retain terminal bounded action reference/confirmation/result-audit/input-binding evidence through RB-0082. PR #1288 / RB-0083 Input-Aware Authorization contract is security-blocked by #1289. PR #1298 prepares the bounded input-aware authorization implementation with Governance/PHP Quality/Distributable/Platform 10/10 PASS and Architecture failing only at the existing dev advisory gate; it remains PREPARED_NOT_MERGEABLE. PR #1299 prepares the trusted form_action UI + confirmation contract only, stacked on #1298; no UI/AJAX/audit runtime implementation or action execution is promoted.
+# P1_CORE deep audit: 16 records now include terminal Input-Aware Authorization contract + implementation through RB-0084 on secure main. Active #1296/#1299 freezes trusted form_action presentation/confirmation-preflight semantics only; downstream #1301 implementation remains prepared and non-mergeable until RB-0085 terminal. Final action execution remains forbidden.

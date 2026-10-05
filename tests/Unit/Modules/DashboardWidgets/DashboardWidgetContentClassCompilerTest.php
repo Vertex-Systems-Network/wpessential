@@ -61,6 +61,7 @@ final class DashboardWidgetContentClassCompilerTest extends TestCase
             $this->definition(contentType: 'video'),
             $this->definition(contentType: 'listing'),
             $this->definition(contentType: 'activity'),
+            $this->definition(contentType: 'form_action'),
             $this->definition(contentType: 'site_health'),
             $this->definition(contentType: 'shortcode'),
             $this->definition(contentType: 'block'),

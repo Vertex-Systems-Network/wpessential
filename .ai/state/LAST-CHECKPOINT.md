@@ -1,91 +1,42 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-05 — stacked Dashboard form_action preparation active
+## 2026-10-05 — Input-Aware Authorization terminal PASS; RB-0085 active
 
-### Exact terminal repository truth
+### Exact current main truth
 
-- Exact current main anchor: `25f098a170c42d30f829d196452189d9f5b71763`.
-- Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1 — terminal PASS:
-  - exact head `c45e623079824b7e75e4a05617f1439a6971ea2f`;
-  - Governance `36932601887` PASS;
-  - PHP Quality `36932601852` PASS;
-  - Distributable `36932601809` PASS;
-  - Architecture `36932601669` PASS;
-  - Platform Compatibility `36932601737` PASS;
-  - exact nine-file scope;
-  - zero unresolved review blockers;
+- Exact current main: `a7804178ae287bb0550c9456b07ea0aea70fb93a`.
+- Security migration #1310 / PR #1311 / RB-0087 remains terminal PASS with 0 dev/distributable vulnerabilities and the affected braces/@wordpress-scripts chain absent.
+- Issue #1287 / PR #1288 — Input-Aware Action Authorization Contract V1 — terminal PASS:
+  - exact head `044259a6b0c1d61170e812ce962787e30abc0a49`;
+  - Governance `37318710838` PASS;
+  - Architecture `37318710417` FULL PASS;
+  - exact six-file scope;
   - zero behind;
-  - merge `25f098a170c42d30f829d196452189d9f5b71763`;
-  - verdict `PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
-- RB-0082 is terminal PASS.
-- RB-0073 remains historical FAIL and is not rewritten.
+  - zero unresolved review threads;
+  - merged as `089aeed095c582756011f88c5bfcb2edd9dd1917`;
+  - verdict `CONTRACT_FROZEN_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1`.
+- RB-0083 is terminal PASS.
+- Issue #1291 / PR #1298 — bounded Input-Aware Action Authorization V1 — terminal PASS:
+  - exact head `d786beff0ead88eb83252cd414e040a7883430c4`;
+  - Governance `37319094769` PASS;
+  - PHP Quality `37319094814` PASS;
+  - Distributable `37319094729` PASS;
+  - Architecture `37319094548` FULL PASS;
+  - Platform Compatibility `37319094511` PASS, 10/10 cells;
+  - exact two-file implementation/test scope;
+  - zero behind;
+  - zero unresolved review threads;
+  - merged as `a7804178ae287bb0550c9456b07ea0aea70fb93a`;
+  - verdict `PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1`.
+- RB-0084 is terminal PASS.
+- RB-0082 and RB-0087 remain terminal PASS.
+- RB-0073 remains historical FAIL.
 
-### Repository-wide security blocker
+### Active #1296 / PR #1299 — trusted form_action UI + confirmation contract
 
-Issue #1289 remains `BLOCKED_UPSTREAM`.
+PR #1299 is reconciled onto terminal authorization main `a7804178ae287bb0550c9456b07ea0aea70fb93a`. PR #1299 base is now retargeted directly to `main`; exact-head pull-request CI is required after this synchronization commit.
 
-Current repository dev graph evidence:
-- 23 total vulnerabilities;
-- 19 high;
-- 3 moderate;
-- 1 low;
-- 0 critical;
-- distributable/production graph: 0 vulnerabilities.
-
-The high-severity remainder is rooted in affected `braces 3.0.3` through maintained dev-tooling chains. Architecture policy is not weakened, waived or bypassed.
-
-### #1287 / PR #1288 — Input-Aware Authorization contract
-
-- Contract branch remains 0 behind its audited main base.
-- Exact six-file contract scope remains clean.
-- Zero unresolved review threads.
-- Feature contract Governance is PASS.
-- Architecture is blocked by #1289 dev advisory gate.
-- RB-0083 remains dependency/security blocked.
-- No merge or contract promotion is allowed until Architecture truthfully passes.
-
-### #1291 / PR #1298 — prepared Input-Aware Authorization implementation
-
-Owner-authorized preparation status: **PREPARED_NOT_MERGEABLE**.
-
-Exact prepared head:
-
-`0111346896b5092abd65a16939bf2fdb15d20cc9`
-
-Exact diff:
-1. `frameworks/Modules/DashboardWidgets/DashboardWidgetActionAuthorizationEvaluator.php`
-2. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetActionAuthorizationEvaluatorTest.php`
-
-Prepared behavior:
-- validated bound input reaches canonical `AbilityRegistry::authorize()`;
-- zero-input compatibility requires exact `[]`;
-- canonical `AbilityInputValidator` validates non-empty schema/input;
-- owner Surface 17 + mutates=true + UI channel required;
-- authenticated user/UI context required;
-- canonical capability/owner denial reasons preserved;
-- invalid input/context/ability and authorization exceptions fail closed;
-- zero `AbilityRegistry::execute()`;
-- zero handler `handle()` execution.
-
-Exact-head evidence:
-- Governance `37301962477` PASS;
-- PHP Quality `37301962406` PASS;
-- Distributable `37301962201` PASS;
-- Platform Compatibility `37301962440` PASS, 10/10 cells;
-- Architecture `37301962429` FAIL only at the existing development npm advisory gate;
-- JS lint, style lint, TypeScript and admin build passed before the advisory gate;
-- review threads: 0.
-
-RB-0084 remains dependency-blocked and cannot promote PASS before #1288/#1289 terminal reconciliation.
-
-### #1296 / PR #1299 — stacked trusted form_action UI + confirmation contract preparation
-
-Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
-
-Stack base:
-- PR #1298 head `0111346896b5092abd65a16939bf2fdb15d20cc9`.
-
-Expected contract PR diff against #1298:
+Exact permitted diff:
 1. `docs/PRODUCT/DASHBOARD-WIDGETS-TRUSTED-FORM-ACTION-UI-CONFIRMATION-CONTRACT-V1.md`;
 2. `.ai/state/CURRENT-STATE.yaml`;
 3. `.ai/state/LAST-CHECKPOINT.md`;
@@ -93,14 +44,14 @@ Expected contract PR diff against #1298:
 5. `config/coordination/agent-work-queue.json`;
 6. `config/coordination/runner-benchmark.json`.
 
-Frozen contract:
-- dedicated trusted `form_action` presentation only;
-- Dashboard-owned canonical nonce-protected preflight AJAX route;
-- browser supplies only definition id/revision + accepted/cancelled state;
-- server reloads/recompiles current Definition and rebinds current owner input;
-- exact input-aware authorization runs before confirmation-ready;
-- canonical authorization + confirmation audits are required;
-- bounded safe response taxonomy only;
+Frozen boundary:
+- dedicated trusted `form_action` presentation;
+- canonical nonce-protected Dashboard-owned confirmation-preflight AJAX transport;
+- browser envelope limited to Definition id/revision + accepted/cancelled state;
+- server reload/recompile/rebind of current action truth;
+- exact Input-Aware Authorization before confirmation-ready;
+- canonical authorization + confirmation audits;
+- bounded response taxonomy;
 - `confirmation_ready` means authorized + confirmed + audited, **not executed**;
 - no generic `AbilityAjaxHandler`;
 - no `AbilityRegistry::execute()`;
@@ -109,76 +60,24 @@ Frozen contract:
 - no REST/admin-post mutation;
 - no arbitrary Definition HTML/JS.
 
-RB-0085 remains dependency-blocked. No contract PASS/readiness promotion is permitted until RB-0083 and RB-0084 are terminal PASS and #1289 is resolved.
+RB-0085 merge gate:
+- Governance exact-head PASS;
+- Architecture exact-head FULL PASS;
+- exact six-file diff;
+- zero behind;
+- zero unresolved review blockers;
+- expected-head merge only.
 
+### Downstream
 
-### #1300 / PR #1301 — trusted form_action UI + confirmation preflight implementation
+- #1300 / PR #1301 / RB-0086 — trusted `form_action` UI + confirmation preflight implementation is prepared, but remains non-mergeable until RB-0085 terminal PASS and fresh-main reconciliation.
+- #1297 final bounded execution remains implementation-forbidden until RB-0086 terminal PASS.
 
-Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
-
-Last product-code head before shared-truth-only reconciliation:
-
-`eef275ceedd0ca5241a489d188d350c459640771`
-
-Stack base:
-- PR #1299 exact contract head `5ba81941566f291a6b112570757091ee99a8884c`.
-- exact stacked diff: 21 files, all inside #1300 allowlist;
-- behind stacked base: 0;
-- unresolved review threads: 0.
-
-Audited implementation boundary:
-- `form_action` is a recognized trusted Dashboard type but is not added to the generic Component Blueprint renderer/catalog;
-- generic `render_source` is forbidden for `form_action`;
-- registration requires canonical action Ability + confirmation + non-empty input descriptors;
-- dedicated presenter emits escaped server-owned UI plus Definition id/revision and canonical AJAX action/type/nonce only;
-- Ability id and bound owner input are not emitted to browser markup;
-- existing fixed admin bundle is reused on the WordPress Dashboard through a bounded Dashboard environment seam;
-- browser sends exactly `definition_id`, `definition_revision`, and `confirmation_state`;
-- canonical route is `dashboard-widgets.form-action.confirm`, `NonceOperation::Apply`, no fixed capability, guests forbidden;
-- server reloads/recompiles current Definition, server-binds current action input, and runs Input-Aware Authorization;
-- canonical authorization and confirmation audits are required;
-- owner authorization reason is audited only when it matches a bounded machine-code shape;
-- cancellation audit preserves bounded `input_present` truth without exposing raw input;
-- accepted result `confirmation_ready` means authorized + confirmed + audited, **not executed**;
-- cancelled result never owner-authorizes merely to cancel;
-- no `AbilityRegistry::execute()`;
-- no owner handler `handle()` invocation by the preflight path;
-- no Forms mutation;
-- no REST/admin-post mutation;
-- no generic `AbilityAjaxHandler`;
-- no shared Platform source changes;
-- no new npm/composer dependency.
-
-Product-code-head CI evidence:
-- Governance Gate `37306315812` — **PASS**;
-- Distributable Package `37306315904` — **PASS**;
-- Browser E2E Accessibility `37306315836` — **PASS**;
-- Platform Compatibility Matrix `37306315830` — **PASS, 10/10 cells**;
-- Architecture Guards `37306315833` — **FAIL only at repository-wide #1289 development npm advisory gate**;
-  - Node engine/package contract PASS;
-  - npm audit capture PASS;
-  - distributable audit capture PASS;
-  - JavaScript lint PASS;
-  - Stylelint PASS;
-  - TypeScript PASS;
-  - admin build/artifact verification PASS;
-  - development advisory enforcement FAIL;
-  - later PHP/runtime Architecture stages skipped because #1289 remains unresolved.
-
-PHP Quality note:
-- this workflow auto-triggers only for PRs targeting `main`;
-- #1301 is intentionally stacked on #1299, so latest stacked-head PHP Quality does not auto-trigger;
-- earlier implementation head `4687fe933c1f603984cc3a928c422b5de47f8e3b` passed PHP Quality `37305617634`;
-- terminal predecessor/main reconciliation must run exact-head PHP Quality before merge.
-
-RB-0086 remains `BLOCKED_DEPENDENCY` and may not promote PASS until RB-0083, RB-0084, RB-0085 and #1289 are terminal, followed by fresh predecessor/main reconciliation and exact-head CI/review. Shared-truth-only commits after the product-code head must be validated through PR CI/comments rather than recorded as a self-referential "current head" inside this file.
-
-### Updated recovery order
+### Recovery order
 
 1. Read `.ai/state/CURRENT-STATE.yaml`.
 2. Read this checkpoint.
-3. Resolve exact current main and open PRs #1288, #1298, #1299 and #1301.
-4. Re-read security Issue #1289.
-5. Re-read `config/coordination/agent-work-queue.json`.
-6. Re-read `config/coordination/runner-benchmark.json`.
-7. Do not merge #1288/#1298/#1299/#1301 while the required Architecture security gate is red.
+3. Resolve current main and PR #1299.
+4. Read queue + runner benchmark.
+5. Require RB-0085 exact-head PASS and expected-head merge.
+6. Then reconcile PR #1301.

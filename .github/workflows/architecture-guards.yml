@@ -114,7 +114,7 @@ jobs:
         run: npm run lint:package
 
       # Security #1108: the locked development graph must stay free of high/critical advisories.
-      # Formatter compatibility is pinned in package.json to avoid unrelated source rewrites during this security-only upgrade.
+      # The minimal admin toolchain is pinned in package.json; no advisory waiver or override is permitted.
       - name: Capture npm dependency advisory gate
         id: npm-dev-audit
         shell: bash
@@ -181,14 +181,33 @@ jobs:
       - name: Build admin application
         run: npm run build:admin
 
-      - name: Verify wp-scripts admin artifacts
+      - name: Verify deterministic admin artifacts
         shell: bash
         run: |
           set -euo pipefail
-          test -s assets/admin/main.js
-          test -s assets/admin/main.asset.php
-          test -s assets/admin/main.css
-          php -r '$asset = require "assets/admin/main.asset.php"; if (!is_array($asset) || !isset($asset["dependencies"], $asset["version"]) || !is_array($asset["dependencies"]) || !is_string($asset["version"]) || $asset["version"] === "") { fwrite(STDERR, "invalid wp-scripts asset metadata\n"); exit(1); }'
+          rm -rf /tmp/wpessential-admin-build-first
+          cp -R assets/admin /tmp/wpessential-admin-build-first
+          npm run build:admin
+          diff -ru /tmp/wpessential-admin-build-first assets/admin
+
+          for entry in main taxonomy fields query columns-runtime; do
+            test -s "assets/admin/${entry}.js"
+            test -s "assets/admin/${entry}.css"
+            test -s "assets/admin/${entry}.asset.php"
+            php -r '
+              $asset = require $argv[1];
+              if (
+                  !is_array($asset)
+                  || ($asset["dependencies"] ?? null) !== []
+                  || !isset($asset["version"])
+                  || !is_string($asset["version"])
+                  || preg_match("/^[0-9a-f]{20}$/", $asset["version"]) !== 1
+              ) {
+                  fwrite(STDERR, "invalid deterministic admin asset metadata\n");
+                  exit(1);
+              }
+            ' "assets/admin/${entry}.asset.php"
+          done
 
       - name: Enforce development npm advisory gate
         if: steps.npm-dev-audit.outputs.exit_code != '0'

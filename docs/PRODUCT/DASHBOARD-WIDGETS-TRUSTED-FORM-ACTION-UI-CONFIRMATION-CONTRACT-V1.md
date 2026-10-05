@@ -1,19 +1,19 @@
 # Dashboard Widgets Trusted form_action UI + Confirmation Orchestration Contract V1
 
-Status: PREPARED_NOT_MERGEABLE
+Status: FRESH-MAIN CONTRACT VALIDATION
 Issue: #1296
-Stacked predecessor: #1298
-Security blocker: #1289
+Terminal predecessor: #1298 / RB-0084 PASS
+Security predecessor: #1311 / RB-0087 PASS
 
 ## Purpose
 
 Freeze the only allowed V1 presentation and confirmation-preflight boundary for `dashboard-widgets.type.form_action` without executing the owner Ability.
 
-This contract is stacked on the prepared Input-Aware Action Authorization implementation and remains non-mergeable until all predecessor/security gates are terminal.
+This contract is reconciled on terminal Input-Aware Action Authorization main a7804178ae287bb0550c9456b07ea0aea70fb93a. Predecessor/security gates RB-0083, RB-0084 and RB-0087 are terminal PASS; this contract itself remains non-runtime and requires RB-0085 exact-head validation before merge.
 
 ## Dependency gates
 
-Before this contract may merge or promote readiness:
+Terminal predecessor gates satisfied before this contract validation:
 
 1. Issue #1287 / PR #1288 must be terminal with RB-0083 PASS.
 2. Issue #1291 / PR #1298 must be reconciled to the terminal contract and merged with terminal PASS.

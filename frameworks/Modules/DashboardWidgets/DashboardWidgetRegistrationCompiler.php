@@ -96,18 +96,12 @@ final readonly class DashboardWidgetRegistrationCompiler
         }
         $this->assertKnownKeys($widget, self::WIDGET_KEYS, 'Dashboard Widget registration metadata');
 
-        $contentClass = $this->contentClassCompiler->compile($definition);
+        $this->contentClassCompiler->compile($definition);
         $this->visibilityCompiler->compile($definition);
-        if ($contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION) {
-            if (array_key_exists('render_source', $widget)) {
-                throw new InvalidArgumentException('Dashboard Widget form_action must use the dedicated trusted action presenter, not render_source.');
-            }
-        } else {
-            if ($this->renderSourceCompiler === null) {
-                throw new InvalidArgumentException('Dashboard Widget trusted render-source compiler is required for registration compilation.');
-            }
-            $this->renderSourceCompiler->compile($definition);
+        if ($this->renderSourceCompiler === null) {
+            throw new InvalidArgumentException('Dashboard Widget trusted render-source compiler is required for registration compilation.');
         }
+        $this->renderSourceCompiler->compile($definition);
 
         $key = $widget['key'] ?? null;
         if (!is_string($key) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $key)) {
@@ -144,15 +138,6 @@ final readonly class DashboardWidgetRegistrationCompiler
         $actionAbilityId = $this->compileFormsActionAbilityReference($widget);
         $actionConfirmation = $this->compileActionConfirmation($widget);
         $actionInput = $this->compileActionInput($definition, $widget);
-
-        if (
-            $contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION
-            && ($actionAbilityId === null || $actionConfirmation === null || $actionInput === null)
-        ) {
-            throw new InvalidArgumentException(
-                'Dashboard Widget form_action requires canonical action Ability, confirmation and non-empty input descriptors.',
-            );
-        }
 
         return new DashboardWidgetRegistrationDescriptor(
             definitionId: $definition->id,

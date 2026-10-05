@@ -299,23 +299,4 @@ final class NativeWordPressDashboardWidgetEnvironmentTest extends TestCase
         $environment->outputTrustedHtml('<p>Trusted</p>');
         self::assertSame(['<p>Trusted</p>'], $outputs);
     }
-    public function testProjectsBoundedAjaxUrlAndFormActionAssetEnqueueSeams(): void
-    {
-        $enqueues = 0;
-        $environment = new NativeWordPressDashboardWidgetEnvironment(
-            ajaxUrl: static fn (): string => 'https://example.test/wp-admin/admin-ajax.php',
-            enqueueFormActionAssets: static function () use (&$enqueues): void {
-                ++$enqueues;
-            },
-        );
-
-        self::assertSame(
-            'https://example.test/wp-admin/admin-ajax.php',
-            $environment->ajaxUrl(),
-        );
-
-        $environment->enqueueFormActionAssets();
-        self::assertSame(1, $enqueues);
-    }
-
 }
