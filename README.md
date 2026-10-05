@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0088 | Trusted confirmation-preflight terminal PASS; first bounded Forms Set-Enabled execution seam under exact 14-file validation |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | BOUNDED ACTION PASS / ASSET CONVERGENCE | RB-0088 bounded Forms Set-Enabled execution terminal PASS; RB-0089 shared AssetRegistry loader contract active; no full parity/GA claim |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,16 +37,14 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main: `713942185ce5340192b2a76bde29b69d68aed975`.
-- RB-0087 security migration, RB-0083/RB-0084 Input-Aware Authorization, and RB-0085 trusted UI contract remain terminal PASS.
-- PR #1301 / RB-0086 trusted `form_action` confirmation-preflight is terminal PASS and merged. Exact head `c5250ddad34ac0a2d11dcb651ee7a55977ba924f` passed Governance, PHP Quality, Distributable, Browser E2E, Platform Compatibility 10/10 and full Architecture.
-- Issue #1297 / RB-0088 is now the active final bounded execution tranche.
-- V1 execution is explicitly allowlisted to `wpessential/forms-workflows/set-enabled` only. The browser never supplies Ability id or bound owner input.
-- The server repeats current Definition revision validation, registration compilation, current input binding and Input-Aware Authorization, then requires authorization + confirmation + execution-attempt audit records before mutation.
-- Exactly one `AbilityRegistry::execute()` call is allowed per admitted request. There is no Dashboard direct owner `handle()` call and no automatic retry.
-- Strict result adaptation accepts only exact `status_changed` or `already_target_status` Set-Enabled results consistent with the server-bound input.
-- Exceptions or malformed post-execute results return `execution_outcome_unknown`; known success with failed terminal audit returns `execution_succeeded_audit_degraded`. Both require refresh/re-read and retry mode remains none.
-- No generic Ability execution, generic `AbilityAjaxHandler`, REST/admin-post mutation, shared Platform mutation, package change, deploy or GA widening is included.
+- Exact current main: `17b00095a594435acb2b10245bdb076737849abc`.
+- Issue #1297 / PR #1312 / RB-0088 is terminal PASS. Exact head `e29fb878a7550a24f80328d6d77d0e68a5d259f7` passed Governance, PHP Quality, Distributable, Browser E2E, Platform Compatibility 10/10 and full Architecture before expected-head merge.
+- The first bounded trusted Dashboard `form_action` mutation path is now merged: only Forms Set-Enabled may execute; server revalidates current Definition/input/authorization; required pre-execution audits run before one canonical `AbilityRegistry::execute()`; no automatic retry.
+- This does **not** claim full Surface 10 parity, production deployment or GA.
+- Fresh architecture audit found one remaining convergence debt: ADR-0150 still requires a shared AssetRegistry/scoped loader, while the current Dashboard action bundle is loaded through a safe but module-local fixed `AdminAssetManifest` seam.
+- Issue #1294 / PR #1305 / RB-0089 is now the active contract tranche. It preserves the working Dashboard behavior and freezes the shared Platform loader migration path.
+- Planned dependency order: RB-0089 contract → RB-0090 shared Platform loader implementation (#1307) → RB-0091 Dashboard consumer migration to `platform.assets.wordpress`.
+- No ASR 176/176 certification is claimed by these bounded convergence tranches.
 
 ## Current lifecycle
 
