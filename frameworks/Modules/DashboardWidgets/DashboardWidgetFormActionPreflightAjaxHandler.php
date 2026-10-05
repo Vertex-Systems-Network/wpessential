@@ -121,7 +121,7 @@ final readonly class DashboardWidgetFormActionPreflightAjaxHandler implements Aj
                     $descriptor,
                     'confirmation_cancelled',
                     'cancelled',
-                    false,
+                    $descriptor->actionInput->hasInput(),
                 );
             } catch (Throwable) {
                 return $this->response(
