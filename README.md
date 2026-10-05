@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS PASS / RB-0093 DISMISS+RESET | RB-0088 action execution + RB-0091 asset convergence + RB-0092 diagnostics terminal PASS; #1319 dismiss/reset parity active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS PASS / RB-0093 DISMISS+RESET | RB-0088 action execution + RB-0091 asset convergence + RB-0092 diagnostics terminal PASS; #1319/#1320 dismiss/reset parity validation active |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -45,7 +45,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 - Fresh Surface-10 residual audit found zero Dashboard runtime references for cache/TTL/retry, provider/remote, import/export and diagnostics.
 - Issue #1317 / PR #1318 / RB-0092 is terminal PASS: bounded read-only runtime diagnostics merged as `c386f72e648f85dadc64324fe863f5d12fb40cb2` after Governance, PHP, Distributable, Architecture and Platform 10/10 PASS; Browser was path-filter N/A.
 - Fresh residual audit confirmed `icon_link` is already implemented. Portability execution is explicit-owner-authorization-gated by ADR-0116; shared cache runtime remains EXECUTION NOT AUTHORIZED with CAC 0/176 executed; provider/remote remains cross-owner.
-- Issue #1319 / RB-0093 is active as the next unblocked P0_PARITY tranche: `presentation.dismissible` + verified current-user WPE-only dismiss/reset preferences, preserving every core/third-party native preference.
+- Issue #1319 / PR #1320 / RB-0093 is active as the next unblocked P0_PARITY tranche: `presentation.dismissible` + verified current-user WPE-only dismiss/reset preferences, preserving every core/third-party native preference.
 
 ## Current lifecycle
 
