@@ -162,4 +162,83 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
             $output->assetHandles,
         );
     }
+
+    public function renderLoadingState(
+        string $definitionId,
+        ExecutionContext $context,
+    ): DashboardWidgetRuntimeRenderResult {
+        try {
+            $definition = $this->definitions->get($definitionId);
+        } catch (Throwable) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+        if ($definition === null) {
+            return DashboardWidgetRuntimeRenderResult::missingDefinition();
+        }
+
+        try {
+            $registration = $this->registrationCompiler->compile($definition);
+            if (!$registration->manualRefresh) {
+                return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+            }
+            $visibility = $this->visibilityCompiler->compile($definition);
+            $lifecycleState = $registration->lifecycleStateAt($this->clock->now());
+        } catch (InvalidArgumentException) {
+            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+        } catch (Throwable) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+
+        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+                DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
+            );
+        }
+        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+                DashboardWidgetVisibilityDecision::REASON_EXPIRED,
+            );
+        }
+        if ($lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+
+        try {
+            $decision = $this->visibilityEvaluator->evaluate($visibility, $context);
+        } catch (Throwable) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+        if (!$decision->allowed) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied($decision->reason);
+        }
+
+        try {
+            $renderSource = $this->renderSourceCompiler->compile($definition);
+        } catch (InvalidArgumentException) {
+            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+        } catch (Throwable) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+        if ($renderSource->loadingState === null) {
+            return DashboardWidgetRuntimeRenderResult::invalidDefinition();
+        }
+
+        try {
+            $output = $this->renderer->render($renderSource->loadingState->toRenderInput(), $context);
+        } catch (Throwable) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+        if (!$output->success) {
+            if ($output->failure === null) {
+                return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+            }
+
+            return DashboardWidgetRuntimeRenderResult::rendererFailed($output->failure);
+        }
+
+        return DashboardWidgetRuntimeRenderResult::rendered(
+            $output->html,
+            $output->assetHandles,
+        );
+    }
 }
