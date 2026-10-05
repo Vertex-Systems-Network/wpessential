@@ -36,7 +36,7 @@ Fresh unblocked P0_PARITY residual:
 - `dashboard-widgets.lifecycle.schedule_start`;
 - `dashboard-widgets.lifecycle.schedule_end`.
 
-### Active #1321 / RB-0094
+### Active #1321 / PR #1322 / RB-0094
 
 Branch: `agent/dashboard-lifecycle-visibility-window-v1`.
 
