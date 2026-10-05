@@ -780,7 +780,14 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 
 type DashboardFormActionConfirmationState = 'accepted' | 'cancelled';
 
-const dashboardFormActionStates = new Set( [
+type DashboardFormActionResponse = {
+	state: string;
+	notice: string;
+	resultCode?: string;
+	retryMode?: 'none';
+};
+
+const dashboardFormActionPreflightStates = new Set( [
 	'confirmation_ready',
 	'confirmation_cancelled',
 	'authorization_denied',
@@ -789,36 +796,69 @@ const dashboardFormActionStates = new Set( [
 	'runtime_failure',
 ] );
 
+const dashboardFormActionExecutionStates = new Set( [
+	'execution_succeeded',
+	'execution_succeeded_audit_degraded',
+	'execution_outcome_unknown',
+	'authorization_denied',
+	'confirmation_invalid',
+	'stale_definition',
+	'runtime_failure',
+] );
+
 function dashboardFormActionResponse(
-	value: unknown
-): { state: string; notice: string } | null {
+	value: unknown,
+	allowedStates: Set< string >,
+	requireExecutionMetadata = false
+): DashboardFormActionResponse | null {
 	if (
 		! isBootstrapRecord( value ) ||
 		typeof value.state !== 'string' ||
-		! dashboardFormActionStates.has( value.state ) ||
+		! allowedStates.has( value.state ) ||
 		typeof value.notice !== 'string'
 	) {
 		return null;
 	}
 
-	return { state: value.state, notice: value.notice };
+	if ( ! requireExecutionMetadata ) {
+		return { state: value.state, notice: value.notice };
+	}
+
+	if (
+		typeof value.result_code !== 'string' ||
+		value.result_code.length < 1 ||
+		value.result_code.length > 80 ||
+		! /^[a-z0-9][a-z0-9_:-]*$/.test( value.result_code ) ||
+		value.retry_mode !== 'none'
+	) {
+		return null;
+	}
+
+	return {
+		state: value.state,
+		notice: value.notice,
+		resultCode: value.result_code,
+		retryMode: 'none',
+	};
 }
 
-async function postDashboardFormAction(
+async function postDashboardFormActionRoute(
 	root: HTMLElement,
-	confirmationState: DashboardFormActionConfirmationState
-): Promise< { state: string; notice: string } > {
+	routeType: string,
+	nonce: string,
+	confirmationState: DashboardFormActionConfirmationState,
+	allowedStates: Set< string >,
+	requireExecutionMetadata = false
+): Promise< DashboardFormActionResponse > {
 	const ajaxUrl = root.dataset.ajaxUrl ?? '';
 	const ajaxAction = root.dataset.ajaxAction ?? '';
-	const routeType = root.dataset.routeType ?? '';
-	const nonce = root.dataset.nonce ?? '';
 	const definitionId = root.dataset.definitionId ?? '';
 	const revision = Number( root.dataset.definitionRevision ?? 0 );
 
 	if (
 		ajaxUrl === '' ||
 		ajaxAction === '' ||
-		routeType !== 'dashboard-widgets.form-action.confirm' ||
+		routeType === '' ||
 		nonce === '' ||
 		definitionId === '' ||
 		! Number.isInteger( revision ) ||
@@ -856,12 +896,54 @@ async function postDashboardFormAction(
 	if ( ! response.ok || ! envelope.success ) {
 		throw new Error( 'dashboard-form-action-request-failed' );
 	}
-	const result = dashboardFormActionResponse( envelope.data );
+	const result = dashboardFormActionResponse(
+		envelope.data,
+		allowedStates,
+		requireExecutionMetadata
+	);
 	if ( ! result ) {
 		throw new Error( 'invalid-dashboard-form-action-result' );
 	}
 
 	return result;
+}
+
+async function postDashboardFormActionPreflight(
+	root: HTMLElement,
+	confirmationState: DashboardFormActionConfirmationState
+): Promise< DashboardFormActionResponse > {
+	const routeType = root.dataset.routeType ?? '';
+	const nonce = root.dataset.nonce ?? '';
+	if ( routeType !== 'dashboard-widgets.form-action.confirm' ) {
+		throw new Error( 'invalid-dashboard-form-action-preflight-route' );
+	}
+
+	return postDashboardFormActionRoute(
+		root,
+		routeType,
+		nonce,
+		confirmationState,
+		dashboardFormActionPreflightStates
+	);
+}
+
+async function postDashboardFormActionExecution(
+	root: HTMLElement
+): Promise< DashboardFormActionResponse > {
+	const routeType = root.dataset.executeRouteType ?? '';
+	const nonce = root.dataset.executeNonce ?? '';
+	if ( routeType !== 'dashboard-widgets.form-action.execute' ) {
+		throw new Error( 'invalid-dashboard-form-action-execution-route' );
+	}
+
+	return postDashboardFormActionRoute(
+		root,
+		routeType,
+		nonce,
+		'accepted',
+		dashboardFormActionExecutionStates,
+		true
+	);
 }
 
 function bootDashboardFormActions(): void {
@@ -894,6 +976,7 @@ function bootDashboardFormActions(): void {
 		}
 
 		let busy = false;
+		let executionLocked = false;
 		const setBusy = ( value: boolean ): void => {
 			busy = value;
 			open.disabled = value;
@@ -901,37 +984,66 @@ function bootDashboardFormActions(): void {
 			cancel.disabled = value;
 			root.setAttribute( 'aria-busy', value ? 'true' : 'false' );
 		};
+		const lockAfterExecutionAttempt = (): void => {
+			executionLocked = true;
+			busy = true;
+			open.disabled = true;
+			confirm.disabled = true;
+			cancel.disabled = true;
+			root.setAttribute(
+				'data-wpessential-form-action-execution-locked',
+				'1'
+			);
+			root.setAttribute( 'aria-busy', 'false' );
+		};
 
 		const submit = async (
 			confirmationState: DashboardFormActionConfirmationState
 		): Promise< void > => {
-			if ( busy ) {
+			if ( busy || executionLocked ) {
 				return;
 			}
 			setBusy( true );
 			status.textContent = 'Checking current action state…';
 			try {
-				const result = await postDashboardFormAction(
+				const preflight = await postDashboardFormActionPreflight(
 					root,
 					confirmationState
 				);
-				status.textContent = result.notice;
-				if (
-					result.state === 'confirmation_cancelled' ||
-					result.state === 'confirmation_ready'
-				) {
+				status.textContent = preflight.notice;
+
+				if ( preflight.state === 'confirmation_cancelled' ) {
 					panel.hidden = true;
+					return;
 				}
+				if ( preflight.state !== 'confirmation_ready' ) {
+					return;
+				}
+
+				panel.hidden = true;
+				status.textContent = 'Executing confirmed action…';
+				try {
+					const execution = await postDashboardFormActionExecution(
+						root
+					);
+					status.textContent = execution.notice;
+				} catch {
+					status.textContent =
+						'The execution outcome could not be confirmed. Refresh before taking any further action.';
+				}
+				lockAfterExecutionAttempt();
 			} catch {
 				status.textContent =
 					'The action could not be prepared. Refresh and try again.';
 			} finally {
-				setBusy( false );
+				if ( ! executionLocked ) {
+					setBusy( false );
+				}
 			}
 		};
 
 		open.addEventListener( 'click', () => {
-			if ( busy ) {
+			if ( busy || executionLocked ) {
 				return;
 			}
 			panel.hidden = false;
