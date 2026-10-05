@@ -19,6 +19,8 @@ final readonly class DashboardWidgetVisibilityDecision
     public const REASON_ROLE_MISMATCH = 'role_mismatch';
     public const REASON_CAPABILITY_MISMATCH = 'capability_mismatch';
     public const REASON_USER_MISMATCH = 'user_mismatch';
+    public const REASON_BEFORE_SCHEDULE = 'before_schedule';
+    public const REASON_EXPIRED = 'expired';
 
     /** @var list<string> */
     private const DENY_REASONS = [
@@ -28,6 +30,8 @@ final readonly class DashboardWidgetVisibilityDecision
         self::REASON_ROLE_MISMATCH,
         self::REASON_CAPABILITY_MISMATCH,
         self::REASON_USER_MISMATCH,
+        self::REASON_BEFORE_SCHEDULE,
+        self::REASON_EXPIRED,
     ];
 
     private function __construct(

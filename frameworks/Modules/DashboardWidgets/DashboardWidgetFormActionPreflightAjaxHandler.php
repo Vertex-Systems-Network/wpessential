@@ -20,11 +20,14 @@ use WPEssential\Platform\WordPress\Ajax\AjaxHandlerInterface;
 
 final readonly class DashboardWidgetFormActionPreflightAjaxHandler implements AjaxHandlerInterface
 {
+    private DashboardWidgetRuntimeClock $clock;
+
     public const STATE_CONFIRMATION_READY = 'confirmation_ready';
     public const STATE_CONFIRMATION_CANCELLED = 'confirmation_cancelled';
     public const STATE_AUTHORIZATION_DENIED = 'authorization_denied';
     public const STATE_CONFIRMATION_INVALID = 'confirmation_invalid';
     public const STATE_STALE_DEFINITION = 'stale_definition';
+    public const STATE_LIFECYCLE_INACTIVE = 'lifecycle_inactive';
     public const STATE_RUNTIME_FAILURE = 'runtime_failure';
 
     private const AUDIT_AUTHORIZATION = 'dashboard-widgets/action.authorization';
@@ -39,7 +42,10 @@ final readonly class DashboardWidgetFormActionPreflightAjaxHandler implements Aj
         private DashboardWidgetActionAuthorizationEvaluator $authorization,
         private WordPressExecutionContextFactory $contexts,
         private AuditLoggerInterface $audit,
-    ) {}
+        ?DashboardWidgetRuntimeClock $clock = null,
+    ) {
+        $this->clock = $clock ?? new DashboardWidgetRuntimeClock();
+    }
 
     public function handle(array $payload): mixed
     {
@@ -109,6 +115,20 @@ final readonly class DashboardWidgetFormActionPreflightAjaxHandler implements Aj
             return $this->response(
                 self::STATE_CONFIRMATION_INVALID,
                 'The action confirmation is no longer valid. Refresh and try again.',
+            );
+        }
+
+        try {
+            if (!$descriptor->isActiveAt($this->clock->now())) {
+                return $this->response(
+                    self::STATE_LIFECYCLE_INACTIVE,
+                    'This widget is not currently active. Refresh before trying again.',
+                );
+            }
+        } catch (Throwable) {
+            return $this->response(
+                self::STATE_RUNTIME_FAILURE,
+                'The action could not be prepared. Refresh and try again.',
             );
         }
 

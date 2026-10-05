@@ -26,6 +26,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceAbilit
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetTrustedComponentRenderer;
@@ -144,7 +145,28 @@ final class DashboardWidgetsModuleTest extends TestCase
         $this->addAssetServices($services);
         $this->addQueryServices($services);
 
-        (new DashboardWidgetsModule())->register($services);
+        $runtimeClock = new DashboardWidgetRuntimeClock(static fn (): int => 1737000000);
+        (new DashboardWidgetsModule(runtimeClock: $runtimeClock))->register($services);
+
+        self::assertSame($runtimeClock, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_CLOCK));
+
+        $clockOf = static function (object $consumer): DashboardWidgetRuntimeClock {
+            $property = new \ReflectionProperty($consumer, 'clock');
+            $clock = $property->getValue($consumer);
+            self::assertInstanceOf(DashboardWidgetRuntimeClock::class, $clock);
+
+            return $clock;
+        };
+        foreach ([
+            $services->get(DashboardWidgetsModule::SERVICE_DIAGNOSTICS),
+            $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR),
+            $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PREFLIGHT),
+            $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_EXECUTION),
+            $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER),
+        ] as $lifecycleConsumer) {
+            self::assertIsObject($lifecycleConsumer);
+            self::assertSame($runtimeClock, $clockOf($lifecycleConsumer));
+        }
 
         self::assertInstanceOf(DashboardWidgetsReadService::class, $services->get(DashboardWidgetsModule::SERVICE_READ));
         self::assertInstanceOf(DashboardWidgetDiagnosticsAbilityHandler::class, $services->get(DashboardWidgetsModule::SERVICE_DIAGNOSTICS));

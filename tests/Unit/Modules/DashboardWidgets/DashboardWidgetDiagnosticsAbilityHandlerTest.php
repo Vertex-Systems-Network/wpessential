@@ -13,6 +13,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDiagnosticsAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
@@ -59,6 +60,11 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
             'default_collapsed' => false,
         ], $item['target']);
         self::assertSame([
+            'schedule_start' => null,
+            'schedule_end' => null,
+            'state' => 'active',
+        ], $item['lifecycle']);
+        self::assertSame([
             'background_job_id' => null,
             'action_ability_id' => null,
             'action_input_present' => false,
@@ -88,6 +94,65 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
         self::assertSame('inactive', $result['definitions'][0]['runtime_state']);
         self::assertNull($result['definitions'][0]['content_type']);
         self::assertNull($result['definitions'][0]['target']);
+        self::assertNull($result['definitions'][0]['lifecycle']);
+    }
+
+    public function testReportsCanonicalLifecycleStateAtInjectedClock(): void
+    {
+        $definitions = new InMemoryDefinitionRepository();
+        $widget = $this->widget('scheduled-widget');
+        $widget['lifecycle'] = [
+            'schedule_start' => '2025-01-01T00:00:00Z',
+            'schedule_end' => '2025-02-01T00:00:00Z',
+        ];
+        $definitions->save($this->definition(
+            self::READY_ID,
+            'scheduled-widget',
+            DefinitionStatus::Published,
+            widget: $widget,
+        ));
+
+        $result = $this->handler(
+            $definitions,
+            new DashboardWidgetRuntimeClock(static fn (): int => 1735689599),
+        )->handle(['definition_id' => self::READY_ID], $this->context());
+
+        self::assertSame([
+            'schedule_start' => '2025-01-01T00:00:00Z',
+            'schedule_end' => '2025-02-01T00:00:00Z',
+            'state' => 'before_schedule',
+        ], $result['definitions'][0]['lifecycle']);
+        self::assertSame('ready', $result['definitions'][0]['runtime_state']);
+
+        $active = $this->handler(
+            $definitions,
+            new DashboardWidgetRuntimeClock(static fn (): int => 1737000000),
+        )->handle(['definition_id' => self::READY_ID], $this->context());
+        self::assertSame('active', $active['definitions'][0]['lifecycle']['state']);
+
+        $expired = $this->handler(
+            $definitions,
+            new DashboardWidgetRuntimeClock(static fn (): int => 1738368000),
+        )->handle(['definition_id' => self::READY_ID], $this->context());
+        self::assertSame('expired', $expired['definitions'][0]['lifecycle']['state']);
+    }
+
+    public function testLifecycleClockFailureIsBoundedDiagnosticEvidence(): void
+    {
+        $definitions = new InMemoryDefinitionRepository();
+        $definitions->save($this->definition(self::READY_ID, 'ready-widget', DefinitionStatus::Published));
+
+        $result = $this->handler(
+            $definitions,
+            new DashboardWidgetRuntimeClock(static fn (): string => 'invalid'),
+        )->handle(['definition_id' => self::READY_ID], $this->context());
+
+        self::assertSame('blocked', $result['definitions'][0]['runtime_state']);
+        self::assertNull($result['definitions'][0]['lifecycle']['state']);
+        self::assertSame(
+            ['dashboard-widget.diagnostics.lifecycle-clock-unavailable'],
+            array_column($result['definitions'][0]['issues'], 'id'),
+        );
     }
 
     public function testReportsPublishedRegistrationFailureAndChecksumMismatchWithoutLeakingPayload(): void
@@ -154,7 +219,10 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
         );
     }
 
-    private function handler(InMemoryDefinitionRepository $definitions): DashboardWidgetDiagnosticsAbilityHandler
+    private function handler(
+        InMemoryDefinitionRepository $definitions,
+        ?DashboardWidgetRuntimeClock $clock = null,
+    ): DashboardWidgetDiagnosticsAbilityHandler
     {
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
         $blueprints = new ComponentBlueprintRegistry();
@@ -174,6 +242,7 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
             $definitions,
             $content,
             $registration,
+            $clock,
         );
     }
 

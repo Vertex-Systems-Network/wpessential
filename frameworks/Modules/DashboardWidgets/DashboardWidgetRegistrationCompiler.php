@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
 }
 
 use Closure;
+use DateTimeImmutable;
+use DateTimeZone;
 use InvalidArgumentException;
 use Throwable;
 use WPEssential\Modules\Cron\CronDefinition;
@@ -25,7 +27,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const PAYLOAD_KEYS = ['widget'];
 
     /** @var list<string> */
-    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source', 'refresh', 'action'];
+    private const WIDGET_KEYS = ['key', 'title', 'type', 'context', 'priority', 'network_dashboard', 'target', 'inventory', 'presentation', 'visibility', 'render_source', 'refresh', 'action', 'lifecycle'];
 
     /** @var list<string> */
     private const INVENTORY_KEYS = ['default_hidden'];
@@ -41,6 +43,9 @@ final readonly class DashboardWidgetRegistrationCompiler
 
     /** @var list<string> */
     private const ACTION_KEYS = ['ability_id', 'confirmation', 'input'];
+
+    /** @var list<string> */
+    private const LIFECYCLE_KEYS = ['schedule_start', 'schedule_end'];
 
     private DashboardWidgetVisibilityCompiler $visibilityCompiler;
     private DashboardWidgetContentClassCompiler $contentClassCompiler;
@@ -141,6 +146,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         $this->assertNativeCollapsibleCapability($widget);
         $defaultCollapsed = $this->compileDefaultCollapsed($widget);
         $dismissible = $this->compileDismissible($widget);
+        [$scheduleStartAt, $scheduleEndAt] = $this->compileLifecycle($widget);
         $backgroundJobId = $this->compileBackgroundJobReference($widget);
         $actionAbilityId = $this->compileFormsActionAbilityReference($widget);
         $actionConfirmation = $this->compileActionConfirmation($widget);
@@ -172,6 +178,8 @@ final readonly class DashboardWidgetRegistrationCompiler
             actionAbilityId: $actionAbilityId,
             actionConfirmation: $actionConfirmation,
             actionInput: $actionInput,
+            scheduleStartAt: $scheduleStartAt,
+            scheduleEndAt: $scheduleEndAt,
         );
     }
 
@@ -346,6 +354,65 @@ final readonly class DashboardWidgetRegistrationCompiler
         }
 
         return $backgroundJobId;
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     * @return array{0:?int,1:?int}
+     */
+    private function compileLifecycle(array $widget): array
+    {
+        if (!array_key_exists('lifecycle', $widget)) {
+            return [null, null];
+        }
+
+        $lifecycle = $widget['lifecycle'];
+        if (!is_array($lifecycle) || ($lifecycle !== [] && array_is_list($lifecycle))) {
+            throw new InvalidArgumentException('Dashboard Widget lifecycle metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($lifecycle, self::LIFECYCLE_KEYS, 'Dashboard Widget lifecycle metadata');
+
+        $start = array_key_exists('schedule_start', $lifecycle)
+            ? $this->canonicalUtcTimestamp($lifecycle['schedule_start'], 'schedule_start')
+            : null;
+        $end = array_key_exists('schedule_end', $lifecycle)
+            ? $this->canonicalUtcTimestamp($lifecycle['schedule_end'], 'schedule_end')
+            : null;
+
+        if ($start !== null && $end !== null && $start >= $end) {
+            throw new InvalidArgumentException('Dashboard Widget lifecycle schedule_start must be earlier than schedule_end.');
+        }
+
+        return [$start, $end];
+    }
+
+    private function canonicalUtcTimestamp(mixed $value, string $label): int
+    {
+        if (!is_string($value) || preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', $value) !== 1) {
+            throw new InvalidArgumentException(sprintf(
+                'Dashboard Widget lifecycle %s must be canonical UTC RFC3339 second-precision text.',
+                $label,
+            ));
+        }
+
+        $date = DateTimeImmutable::createFromFormat(
+            '!Y-m-d\TH:i:s\Z',
+            $value,
+            new DateTimeZone('UTC'),
+        );
+        $errors = DateTimeImmutable::getLastErrors();
+        if (
+            !$date instanceof DateTimeImmutable
+            || ($errors !== false && (($errors['warning_count'] ?? 0) > 0 || ($errors['error_count'] ?? 0) > 0))
+            || $date->format('Y-m-d\TH:i:s\Z') !== $value
+        ) {
+            throw new InvalidArgumentException(sprintf(
+                'Dashboard Widget lifecycle %s is not a valid canonical UTC timestamp.',
+                $label,
+            ));
+        }
+
+        return $date->getTimestamp();
     }
 
     /**

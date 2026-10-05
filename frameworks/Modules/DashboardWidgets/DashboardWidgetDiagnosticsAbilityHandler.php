@@ -19,11 +19,16 @@ use WPEssential\Platform\Definitions\DefinitionStatus;
 
 final readonly class DashboardWidgetDiagnosticsAbilityHandler implements AbilityHandlerInterface
 {
+    private DashboardWidgetRuntimeClock $clock;
+
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private DashboardWidgetContentClassCompiler $contentClassCompiler,
         private DashboardWidgetRegistrationCompiler $registrationCompiler,
-    ) {}
+        ?DashboardWidgetRuntimeClock $clock = null,
+    ) {
+        $this->clock = $clock ?? new DashboardWidgetRuntimeClock();
+    }
 
     public function handle(array $input, ExecutionContext $context): mixed
     {
@@ -139,6 +144,7 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
             'action_ability_id' => null,
             'action_input_present' => false,
         ];
+        $lifecycle = null;
 
         if ($definition->status === DefinitionStatus::Published) {
             $runtimeState = 'blocked';
@@ -172,6 +178,25 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
                         'action_ability_id' => $descriptor->actionAbilityId,
                         'action_input_present' => $descriptor->actionInput !== null,
                     ];
+                    $lifecycle = [
+                        'schedule_start' => $descriptor->scheduleStartAt !== null
+                            ? gmdate('Y-m-d\TH:i:s\Z', $descriptor->scheduleStartAt)
+                            : null,
+                        'schedule_end' => $descriptor->scheduleEndAt !== null
+                            ? gmdate('Y-m-d\TH:i:s\Z', $descriptor->scheduleEndAt)
+                            : null,
+                        'state' => null,
+                    ];
+                    try {
+                        $lifecycle['state'] = $descriptor->lifecycleStateAt($this->clock->now());
+                    } catch (Throwable) {
+                        $runtimeState = 'blocked';
+                        $issues[] = $this->issue(
+                            'dashboard-widget.diagnostics.lifecycle-clock-unavailable',
+                            'widget.lifecycle',
+                            'Dashboard Widget lifecycle state could not be evaluated safely.',
+                        );
+                    }
                 } catch (Throwable) {
                     $issues[] = $this->issue(
                         'dashboard-widget.diagnostics.registration-invalid',
@@ -192,6 +217,7 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
             'runtime_state' => $runtimeState,
             'content_type' => $contentType,
             'target' => $target,
+            'lifecycle' => $lifecycle,
             'references' => $references,
             'dependency_count' => count($definition->dependencies),
             'issues' => $issues,

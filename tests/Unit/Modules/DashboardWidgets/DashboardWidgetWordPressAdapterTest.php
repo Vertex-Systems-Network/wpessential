@@ -17,6 +17,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRoleMembershipProviderInterface;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityEvaluator;
@@ -94,6 +95,54 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             '22222222-2222-4222-8222-222222222222',
             $environment->outputs[0],
         );
+    }
+
+    public function testFormActionCallbackRechecksLifecycleAfterRegistration(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/set-enabled';
+        $resolver = static fn (string $name): ?array => [
+            'name' => $name,
+            'owner_surface_id' => 17,
+            'mutates' => true,
+            'ui_allowed' => true,
+            'input_schema' => [
+                'type' => 'object',
+                'required' => ['definition_id', 'expected_revision', 'enabled'],
+                'properties' => [
+                    'definition_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                    'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    'enabled' => ['type' => 'boolean'],
+                ],
+                'additionalProperties' => false,
+            ],
+        ];
+        $presenter = new DashboardWidgetFormActionPresenter(
+            'wpessential_dispatch',
+            static fn (): string => 'test-nonce',
+        );
+        $now = 1737000000;
+        $clock = new DashboardWidgetRuntimeClock(static function () use (&$now): int {
+            return $now;
+        });
+
+        [$adapter, , $environment, $renderer] = $this->harness(
+            [$this->formActionDefinition($abilityId, [
+                'schedule_start' => '2025-01-01T00:00:00Z',
+                'schedule_end' => '2025-02-01T00:00:00Z',
+            ])],
+            formActionAbilityResolver: $resolver,
+            formActionPresenter: $presenter,
+            runtimeClock: $clock,
+        );
+
+        $adapter->registerSiteDashboard();
+        self::assertCount(1, $environment->widgets);
+
+        $now = 1738368000;
+        ($environment->widgets[0]['callback'])();
+
+        self::assertSame(0, $renderer->calls);
+        self::assertSame([], $environment->outputs);
     }
 
     public function testPlanningSortsCanonicallyAndSuppressesAllSameTargetColliders(): void
@@ -614,6 +663,39 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         );
     }
 
+    public function testLifecycleWindowFiltersRegistrationAtSharedClockBoundary(): void
+    {
+        $definitions = [
+            $this->definition(
+                '40000000-0000-4000-8000-000000000060',
+                'active-widget',
+                'active-widget',
+                lifecycle: [
+                    'schedule_start' => '2025-01-01T00:00:00Z',
+                    'schedule_end' => '2025-02-01T00:00:00Z',
+                ],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000061',
+                'future-widget',
+                'future-widget',
+                lifecycle: ['schedule_start' => '2025-03-01T00:00:00Z'],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000062',
+                'expired-widget',
+                'expired-widget',
+                lifecycle: ['schedule_end' => '2025-01-10T00:00:00Z'],
+            ),
+        ];
+        $clock = new DashboardWidgetRuntimeClock(static fn (): int => 1737000000);
+        [$adapter, , $environment] = $this->harness($definitions, runtimeClock: $clock);
+
+        $adapter->registerSiteDashboard();
+
+        self::assertSame(['wpe_dashboard_widget_active-widget'], array_column($environment->widgets, 'id'));
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -861,6 +943,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ?callable $formActionAbilityResolver = null,
         ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
         ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
+        ?DashboardWidgetRuntimeClock $runtimeClock = null,
     ): array
     {
         $repository = new class($definitions) implements DefinitionRepositoryInterface {
@@ -1087,6 +1170,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 return $this->output;
             }
         };
+        $clock = $runtimeClock ?? new DashboardWidgetRuntimeClock();
         $executor = new DashboardWidgetRuntimeRenderExecutor(
             $repository,
             $registrationCompiler,
@@ -1094,6 +1178,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             $visibilityEvaluator,
             $renderSourceCompiler,
             $renderer,
+            clock: $clock,
         );
 
         return [
@@ -1105,6 +1190,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 $contentCompiler,
                 $formActionPresenter,
                 $personalPreferences,
+                $clock,
             ),
             $repository,
             $environment,
@@ -1112,8 +1198,37 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ];
     }
 
-    private function formActionDefinition(string $abilityId): Definition
+    private function formActionDefinition(string $abilityId, array $lifecycle = []): Definition
     {
+        $widget = [
+            'key' => 'workflow-control',
+            'title' => 'Workflow control',
+            'type' => 'form_action',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => false,
+            'action' => [
+                'ability_id' => $abilityId,
+                'confirmation' => [
+                    'title' => 'Disable workflow?',
+                    'message' => 'This changes workflow availability.',
+                    'confirm_label' => 'Disable',
+                    'cancel_label' => 'Cancel',
+                ],
+                'input' => [
+                    'definition_id' => [
+                        'source' => 'literal',
+                        'value' => '22222222-2222-4222-8222-222222222222',
+                    ],
+                    'expected_revision' => ['source' => 'literal', 'value' => 4],
+                    'enabled' => ['source' => 'literal', 'value' => false],
+                ],
+            ],
+        ];
+        if ($lifecycle !== []) {
+            $widget['lifecycle'] = $lifecycle;
+        }
+
         return new Definition(
             id: '41000000-0000-4000-8000-000000000001',
             slug: 'workflow-control',
@@ -1121,33 +1236,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             schemaVersion: 1,
             ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
             status: DefinitionStatus::Published,
-            payload: [
-                'widget' => [
-                    'key' => 'workflow-control',
-                    'title' => 'Workflow control',
-                    'type' => 'form_action',
-                    'context' => 'normal',
-                    'priority' => 'default',
-                    'network_dashboard' => false,
-                    'action' => [
-                        'ability_id' => $abilityId,
-                        'confirmation' => [
-                            'title' => 'Disable workflow?',
-                            'message' => 'This changes workflow availability.',
-                            'confirm_label' => 'Disable',
-                            'cancel_label' => 'Cancel',
-                        ],
-                        'input' => [
-                            'definition_id' => [
-                                'source' => 'literal',
-                                'value' => '22222222-2222-4222-8222-222222222222',
-                            ],
-                            'expected_revision' => ['source' => 'literal', 'value' => 4],
-                            'enabled' => ['source' => 'literal', 'value' => false],
-                        ],
-                    ],
-                ],
-            ],
+            payload: ['widget' => $widget],
             revision: 3,
             dependencies: [],
         );
@@ -1166,6 +1255,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         bool $defaultHidden = false,
         bool $defaultCollapsed = false,
         bool $dismissible = false,
+        array $lifecycle = [],
     ): Definition {
         $widget = [
             'key' => $key,
@@ -1199,6 +1289,10 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             if ($dismissible) {
                 $widget['presentation']['dismissible'] = true;
             }
+        }
+
+        if ($lifecycle !== []) {
+            $widget['lifecycle'] = $lifecycle;
         }
 
         if ($withErrorState) {

@@ -26,6 +26,10 @@ final readonly class DashboardWidgetRegistrationDescriptor
     public const SITE_SCOPE_SITE_IDS = 'site_ids';
     public const MAX_SITE_IDS = 100;
 
+    public const LIFECYCLE_BEFORE_SCHEDULE = 'before_schedule';
+    public const LIFECYCLE_ACTIVE = 'active';
+    public const LIFECYCLE_EXPIRED = 'expired';
+
     /** @var list<string> */
     public const SITE_SCOPES = [
         self::SITE_SCOPE_ALL_SITES,
@@ -66,6 +70,8 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public ?string $actionAbilityId = null,
         public ?DashboardWidgetActionConfirmationDescriptor $actionConfirmation = null,
         public ?DashboardWidgetActionInputDescriptor $actionInput = null,
+        public ?int $scheduleStartAt = null,
+        public ?int $scheduleEndAt = null,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');
@@ -130,6 +136,9 @@ final readonly class DashboardWidgetRegistrationDescriptor
         ) {
             throw new InvalidArgumentException('Dashboard Widget descriptor action ability id must use the canonical ability name shape.');
         }
+        if ($this->scheduleStartAt !== null && $this->scheduleEndAt !== null && $this->scheduleStartAt >= $this->scheduleEndAt) {
+            throw new InvalidArgumentException('Dashboard Widget lifecycle start must be earlier than end.');
+        }
         if ($this->actionInput !== null) {
             if ($this->actionAbilityId === null || $this->actionInput->abilityId !== $this->actionAbilityId) {
                 throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration action Ability.');
@@ -141,6 +150,26 @@ final readonly class DashboardWidgetRegistrationDescriptor
                 throw new InvalidArgumentException('Dashboard Widget action-input descriptor must match the registration definition revision.');
             }
         }
+    }
+
+    public function lifecycleStateAt(int $timestamp): string
+    {
+        if ($timestamp < 0) {
+            throw new InvalidArgumentException('Dashboard Widget lifecycle evaluation timestamp must be non-negative.');
+        }
+        if ($this->scheduleStartAt !== null && $timestamp < $this->scheduleStartAt) {
+            return self::LIFECYCLE_BEFORE_SCHEDULE;
+        }
+        if ($this->scheduleEndAt !== null && $timestamp >= $this->scheduleEndAt) {
+            return self::LIFECYCLE_EXPIRED;
+        }
+
+        return self::LIFECYCLE_ACTIVE;
+    }
+
+    public function isActiveAt(int $timestamp): bool
+    {
+        return $this->lifecycleStateAt($timestamp) === self::LIFECYCLE_ACTIVE;
     }
 
     public function isEligibleForSite(int $siteId): bool

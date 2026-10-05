@@ -16,6 +16,8 @@ use WPEssential\Platform\Auth\ExecutionContext;
 
 final readonly class DashboardWidgetRuntimeRenderExecutor
 {
+    private DashboardWidgetRuntimeClock $clock;
+
     public function __construct(
         private DefinitionRepositoryInterface $definitions,
         private DashboardWidgetRegistrationCompiler $registrationCompiler,
@@ -25,7 +27,10 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
         private RendererInterface $renderer,
         private ?DashboardWidgetQueryBindingExecutor $queryBindingExecutor = null,
         private ?DashboardWidgetDynamicBindingExecutor $dynamicBindingExecutor = null,
-    ) {}
+        ?DashboardWidgetRuntimeClock $clock = null,
+    ) {
+        $this->clock = $clock ?? new DashboardWidgetRuntimeClock();
+    }
 
     public function render(
         string $definitionId,
@@ -42,11 +47,26 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
         }
 
         try {
-            $this->registrationCompiler->compile($definition);
+            $registration = $this->registrationCompiler->compile($definition);
             $visibility = $this->visibilityCompiler->compile($definition);
+            $lifecycleState = $registration->lifecycleStateAt($this->clock->now());
         } catch (InvalidArgumentException) {
             return DashboardWidgetRuntimeRenderResult::invalidDefinition();
         } catch (Throwable) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
+        }
+
+        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+                DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
+            );
+        }
+        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+                DashboardWidgetVisibilityDecision::REASON_EXPIRED,
+            );
+        }
+        if ($lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE) {
             return DashboardWidgetRuntimeRenderResult::runtimeFailure();
         }
 

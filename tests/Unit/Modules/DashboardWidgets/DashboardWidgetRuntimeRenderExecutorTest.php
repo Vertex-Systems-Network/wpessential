@@ -20,6 +20,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRoleMembershipProviderInterface;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderResult;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
@@ -102,6 +103,46 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
 
         self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_INVALID_DEFINITION, $result->status);
         self::assertSame(0, $renderer->calls);
+    }
+
+    public function testLifecycleWindowDeniesBeforeScheduleAndExpiredBeforeRenderer(): void
+    {
+        $lifecycle = [
+            'schedule_start' => '2025-01-01T00:00:00Z',
+            'schedule_end' => '2025-02-01T00:00:00Z',
+        ];
+        $repository = $this->repositoryWith($this->definition(lifecycle: $lifecycle));
+
+        foreach ([
+            [1735689599, DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE],
+            [1738368000, DashboardWidgetVisibilityDecision::REASON_EXPIRED],
+        ] as [$now, $reason]) {
+            $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>must not render</p>'));
+            $roles = new RuntimeRenderRoleProvider();
+            $result = $this->executor(
+                $repository,
+                $renderer,
+                $roles,
+                clock: new DashboardWidgetRuntimeClock(static fn (): int => $now),
+            )->render($this->definitionId(), $this->context());
+
+            self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_VISIBILITY_DENIED, $result->status);
+            self::assertSame($reason, $result->visibilityReason);
+            self::assertSame(0, $renderer->calls);
+            self::assertNull($roles->seenContext);
+        }
+
+        $renderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>active</p>'));
+        $result = $this->executor(
+            $repository,
+            $renderer,
+            new RuntimeRenderRoleProvider(),
+            clock: new DashboardWidgetRuntimeClock(static fn (): int => 1737000000),
+        )->render($this->definitionId(), $this->context());
+
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $result->status);
+        self::assertSame('<p>active</p>', $result->html);
+        self::assertSame(1, $renderer->calls);
     }
 
     public function testVisibilityDenialPreservesBoundedReasonAndDoesNotRender(): void
@@ -545,6 +586,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         RuntimeRenderRoleProvider $roles,
         ?DashboardWidgetQueryBindingExecutor $queryBindings = null,
         ?DashboardWidgetDynamicBindingExecutor $dynamicBindings = null,
+        ?DashboardWidgetRuntimeClock $clock = null,
     ): DashboardWidgetRuntimeRenderExecutor {
         $blueprints = new ComponentBlueprintRegistry();
         $catalog = new DashboardWidgetComponentBlueprintCatalog();
@@ -579,6 +621,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             $renderer,
             $queryBindings,
             $dynamicBindings,
+            $clock,
         );
     }
 
@@ -594,8 +637,22 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         array $visibility = [],
         ?array $renderSource = null,
         string $title = 'Safe Widget',
+        array $lifecycle = [],
     ): Definition {
         $renderSource ??= $this->literalRenderSource();
+        $widget = [
+            'key' => 'runtime_widget',
+            'title' => $title,
+            'type' => 'rich_text',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => false,
+            'visibility' => $visibility,
+            'render_source' => $renderSource,
+        ];
+        if ($lifecycle !== []) {
+            $widget['lifecycle'] = $lifecycle;
+        }
 
         return new Definition(
             id: $this->definitionId(),
@@ -604,18 +661,7 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
             schemaVersion: 1,
             ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
             status: DefinitionStatus::Published,
-            payload: [
-                'widget' => [
-                    'key' => 'runtime_widget',
-                    'title' => $title,
-                    'type' => 'rich_text',
-                    'context' => 'normal',
-                    'priority' => 'default',
-                    'network_dashboard' => false,
-                    'visibility' => $visibility,
-                    'render_source' => $renderSource,
-                ],
-            ],
+            payload: ['widget' => $widget],
             revision: 1,
             dependencies: [],
         );

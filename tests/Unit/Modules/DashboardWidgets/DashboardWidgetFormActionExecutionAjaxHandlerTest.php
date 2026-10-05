@@ -16,6 +16,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionExecutionAjaxHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionExecutionResultAdapter;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Modules\FormsWorkflows\FormsWorkflowsModule;
@@ -203,6 +204,27 @@ final class DashboardWidgetFormActionExecutionAjaxHandlerTest extends TestCase
         self::assertSame('dashboard-widgets/action.execution-attempt', $audit->records[2]->action);
     }
 
+    public function testInactiveLifecycleStopsBeforeAuthorizationAuditAndExecution(): void
+    {
+        [$handler, $ability, $audit] = $this->harness(
+            clock: new DashboardWidgetRuntimeClock(static fn (): int => 1738368000),
+            lifecycle: [
+                'schedule_start' => '2025-01-01T00:00:00Z',
+                'schedule_end' => '2025-02-01T00:00:00Z',
+            ],
+        );
+
+        $result = $handler->handle($this->request());
+
+        self::assertSame(
+            DashboardWidgetFormActionExecutionAjaxHandler::STATE_LIFECYCLE_INACTIVE,
+            $result['state'],
+        );
+        self::assertSame(0, $ability->authorizationCalls);
+        self::assertSame(0, $ability->executions);
+        self::assertCount(0, $audit->records);
+    }
+
     public function testMalformedExtraAndStaleRequestsFailClosedBeforeAuthorization(): void
     {
         [$handler, $ability, $audit] = $this->harness();
@@ -245,9 +267,11 @@ final class DashboardWidgetFormActionExecutionAjaxHandlerTest extends TestCase
         ?PolicyDecision $ownerDecision = null,
         bool $throwOnExecute = false,
         ?int $failAuditAt = null,
+        ?DashboardWidgetRuntimeClock $clock = null,
+        array $lifecycle = [],
     ): array {
         $definitions = new InMemoryDefinitionRepository();
-        $definitions->save($this->dashboardDefinition());
+        $definitions->save($this->dashboardDefinition($lifecycle));
 
         $capabilities = new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool
@@ -333,6 +357,7 @@ final class DashboardWidgetFormActionExecutionAjaxHandlerTest extends TestCase
                 $audit,
                 $abilities,
                 new DashboardWidgetFormActionExecutionResultAdapter(),
+                $clock,
             ),
             $ability,
             $audit,
@@ -364,8 +389,34 @@ final class DashboardWidgetFormActionExecutionAjaxHandlerTest extends TestCase
         ];
     }
 
-    private function dashboardDefinition(): Definition
+    private function dashboardDefinition(array $lifecycle = []): Definition
     {
+        $widget = [
+            'key' => 'workflow-control',
+            'title' => 'Workflow control',
+            'type' => 'form_action',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => false,
+            'action' => [
+                'ability_id' => FormsWorkflowsModule::ABILITY_SET_ENABLED,
+                'confirmation' => [
+                    'title' => 'Disable workflow?',
+                    'message' => 'This changes workflow availability.',
+                    'confirm_label' => 'Disable',
+                    'cancel_label' => 'Cancel',
+                ],
+                'input' => [
+                    'definition_id' => ['source' => 'literal', 'value' => self::FORMS_ID],
+                    'expected_revision' => ['source' => 'literal', 'value' => 4],
+                    'enabled' => ['source' => 'literal', 'value' => false],
+                ],
+            ],
+        ];
+        if ($lifecycle !== []) {
+            $widget['lifecycle'] = $lifecycle;
+        }
+
         return new Definition(
             id: self::DASHBOARD_ID,
             slug: 'workflow-control',
@@ -373,30 +424,7 @@ final class DashboardWidgetFormActionExecutionAjaxHandlerTest extends TestCase
             schemaVersion: 1,
             ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
             status: DefinitionStatus::Published,
-            payload: [
-                'widget' => [
-                    'key' => 'workflow-control',
-                    'title' => 'Workflow control',
-                    'type' => 'form_action',
-                    'context' => 'normal',
-                    'priority' => 'default',
-                    'network_dashboard' => false,
-                    'action' => [
-                        'ability_id' => FormsWorkflowsModule::ABILITY_SET_ENABLED,
-                        'confirmation' => [
-                            'title' => 'Disable workflow?',
-                            'message' => 'This changes workflow availability.',
-                            'confirm_label' => 'Disable',
-                            'cancel_label' => 'Cancel',
-                        ],
-                        'input' => [
-                            'definition_id' => ['source' => 'literal', 'value' => self::FORMS_ID],
-                            'expected_revision' => ['source' => 'literal', 'value' => 4],
-                            'enabled' => ['source' => 'literal', 'value' => false],
-                        ],
-                    ],
-                ],
-            ],
+            payload: ['widget' => $widget],
             revision: 3,
             dependencies: [],
         );
