@@ -40,6 +40,11 @@ use WPEssential\Modules\FormsWorkflows\FormWorkflowDefinition;
 use WPEssential\Modules\Query\QueryModule;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Assets\AssetLoadStrategy;
+use WPEssential\Platform\Assets\AssetRegistry;
+use WPEssential\Platform\Assets\AssetScope;
+use WPEssential\Platform\Assets\AssetServices;
+use WPEssential\Platform\Assets\TrustedAssetBuildEntryRegistry;
 use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Audit\InMemoryAuditLogger;
 use WPEssential\Platform\Auth\ExecutionChannel;
@@ -132,6 +137,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         $this->addFormActionPlatformServices($services, $environment);
         $services->set(CronModule::SERVICE_READ, new CronReadService($definitions));
         (new RenderingServiceRegistrar())->register($services);
+        $this->addAssetServices($services);
         $this->addQueryServices($services);
 
         (new DashboardWidgetsModule())->register($services);
@@ -155,6 +161,22 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetFormActionExecutionAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_EXECUTION));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
+
+        $assetRegistry = $services->get(AssetServices::REGISTRY);
+        self::assertInstanceOf(AssetRegistry::class, $assetRegistry);
+        $assetDescriptor = $assetRegistry->get('wpe-dashboard-form-action');
+        self::assertSame(DashboardWidgetDefinition::OWNER_SURFACE_ID, $assetDescriptor->ownerSurfaceId);
+        self::assertSame(AssetScope::Admin, $assetDescriptor->scope);
+        self::assertSame(AssetLoadStrategy::AdminRoute, $assetDescriptor->loadStrategy);
+        self::assertSame(
+            ['/wp-admin/index.php', '/wp-admin/network/index.php'],
+            $assetDescriptor->adminRoutes,
+        );
+        $buildEntries = $services->get(AssetServices::BUILD_ENTRIES);
+        self::assertInstanceOf(TrustedAssetBuildEntryRegistry::class, $buildEntries);
+        $buildEntry = $buildEntries->get('wpe-dashboard-form-action');
+        self::assertSame('main', $buildEntry->scriptEntry);
+        self::assertNull($buildEntry->styleEntry);
 
         $ajaxRoutes = $services->get('platform.ajax.routes');
         self::assertInstanceOf(AjaxRouteRegistry::class, $ajaxRoutes);
@@ -282,6 +304,7 @@ final class DashboardWidgetsModuleTest extends TestCase
     {
         $services = $this->baseServices();
         (new RenderingServiceRegistrar())->register($services);
+        $this->addAssetServices($services);
         (new DashboardWidgetsModule())->register($services);
 
         $dispatcher = $services->get('platform.ajax.dispatcher');
@@ -344,11 +367,11 @@ final class DashboardWidgetsModuleTest extends TestCase
             public function removeDashboardWidget(string $id, string $screenId, string $context): void {}
             public function discoverRegisteredDashboardWidgets(string $screenId): array { return []; }
             public function ajaxUrl(): string { return 'https://example.test/wp-admin/admin-ajax.php'; }
-            public function enqueueFormActionAssets(): void {}
             public function outputTrustedHtml(string $html): void {}
         };
         $services = $this->baseServices();
         (new RenderingServiceRegistrar())->register($services);
+        $this->addAssetServices($services);
         $module = new DashboardWidgetsModule($dashboardEnvironment);
 
         $module->register($services);
@@ -360,7 +383,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER),
         );
         self::assertSame(
-            ['wp_dashboard_setup', 'wp_network_dashboard_setup', 'admin_enqueue_scripts'],
+            ['wp_dashboard_setup', 'wp_network_dashboard_setup'],
             $dashboardEnvironment->hooks,
         );
         self::assertSame(['default_hidden_meta_boxes'], $dashboardEnvironment->filters);
@@ -451,6 +474,18 @@ final class DashboardWidgetsModuleTest extends TestCase
         return $services;
     }
 
+
+    private function addAssetServices(ServiceRegistry $services): void
+    {
+        $assets = $services->get(AssetServices::REGISTRY);
+        if (!$assets instanceof AssetRegistry) {
+            self::fail('Canonical AssetRegistry service is unavailable in the test harness.');
+        }
+        $services->set(
+            AssetServices::BUILD_ENTRIES,
+            new TrustedAssetBuildEntryRegistry($assets),
+        );
+    }
 
     private function addFormActionPlatformServices(
         ServiceRegistry $services,
