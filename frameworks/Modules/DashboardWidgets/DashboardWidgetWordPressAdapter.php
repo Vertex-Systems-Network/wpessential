@@ -50,6 +50,7 @@ final class DashboardWidgetWordPressAdapter
         private readonly DashboardWidgetWordPressEnvironmentInterface $environment,
         private readonly ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
         private readonly ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
+        private readonly ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
     ) {}
 
     public function registerHooks(): void
@@ -363,8 +364,26 @@ final class DashboardWidgetWordPressAdapter
 
     private function registerTarget(bool $networkDashboard): void
     {
+        $screenId = $networkDashboard
+            ? DashboardWidgetPersonalPreferenceStore::SCREEN_NETWORK
+            : DashboardWidgetPersonalPreferenceStore::SCREEN_SITE;
+        $dismissed = [];
+        if ($this->personalPreferences !== null) {
+            try {
+                $userId = $this->environment->currentUserId();
+                if (is_int($userId) && $userId > 0) {
+                    $dismissed = $this->personalPreferences->dismissed($userId, $screenId);
+                }
+            } catch (Throwable) {
+                $dismissed = [];
+            }
+        }
+
         foreach ($this->planTarget($networkDashboard) as $entry) {
             $descriptor = $entry['descriptor'];
+            if ($descriptor->dismissible && in_array($entry['id'], $dismissed, true)) {
+                continue;
+            }
             $definitionId = $descriptor->definitionId;
             $callback = function () use ($definitionId): void {
                 $this->renderDefinition($definitionId);
