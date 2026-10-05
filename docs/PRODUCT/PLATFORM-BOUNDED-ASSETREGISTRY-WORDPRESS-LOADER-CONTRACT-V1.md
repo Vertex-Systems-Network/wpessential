@@ -26,7 +26,7 @@ Current Platform source contains:
 - `AdminAssetManifest`.
 
 Current gaps:
-- `Plugin::boot()` does not publish `platform.assets`;
+- `Plugin::boot()` calls `RenderingServiceRegistrar`, which already publishes the canonical `platform.assets` → `AssetRegistry` service;
 - no shared trusted build-entry map exists;
 - no shared scoped WordPress asset loader exists;
 - `AssetDescriptor` has ownership/scope/dependency/route semantics but no executable file/source identity;
@@ -59,9 +59,12 @@ Reason:
 
 ## Canonical service IDs
 
-Later implementation must publish:
+Later implementation must **reuse, not re-register**, the existing canonical service:
 
-- `platform.assets` → canonical `AssetRegistry`;
+- `platform.assets` → canonical `AssetRegistry`, already owned by `RenderingServiceRegistrar`;
+
+and publish the remaining services:
+
 - `platform.assets.build-entries` → trusted code-owned build-entry registry;
 - `platform.assets.manifest` → canonical trusted `AdminAssetManifest`;
 - `platform.assets.wordpress` → bounded WordPress scoped loader.
