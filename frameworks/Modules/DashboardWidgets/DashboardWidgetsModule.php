@@ -70,6 +70,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_FORM_ACTION_EXECUTION = 'module.dashboard-widgets.form-action-execution';
     public const SERVICE_FORM_ACTION_RESULT_ADAPTER = 'module.dashboard-widgets.form-action-result-adapter';
     public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
+    public const SERVICE_RUNTIME_CLOCK = 'module.dashboard-widgets.runtime-clock';
     public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
@@ -80,6 +81,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 
     public function __construct(
         private readonly ?DashboardWidgetWordPressEnvironmentInterface $dashboardEnvironment = null,
+        private readonly ?DashboardWidgetRuntimeClock $runtimeClock = null,
     ) {}
 
     public function manifest(): ModuleManifest
@@ -247,6 +249,7 @@ final class DashboardWidgetsModule implements ModuleInterface
                 : null,
             $abilityResolver,
         );
+        $runtimeClock = $this->runtimeClock ?? new DashboardWidgetRuntimeClock();
         $actionInputBinder = new DashboardWidgetActionInputBinder(
             new AbilityInputValidator(),
             $dynamicValues,
@@ -256,6 +259,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $definitions,
             $contentClassCompiler,
             $registrationCompiler,
+            $runtimeClock,
         );
         $personalPreferences = new DashboardWidgetPersonalPreferenceStore();
         $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
@@ -267,6 +271,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $dispatcher,
             $queryBindingExecutor,
             $dynamicBindingExecutor,
+            $runtimeClock,
         );
         $preflightHandler = new DashboardWidgetFormActionPreflightAjaxHandler(
             $definitions,
@@ -276,6 +281,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $actionAuthorizationEvaluator,
             $contexts,
             $audit,
+            $runtimeClock,
         );
         $ajaxRoutes->register(new AjaxRoute(
             type: DashboardWidgetFormActionPresenter::ROUTE_TYPE,
@@ -296,6 +302,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $audit,
             $abilities,
             $executionResultAdapter,
+            $runtimeClock,
         );
         $ajaxRoutes->register(new AjaxRoute(
             type: DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
@@ -324,6 +331,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $contentClassCompiler,
             $formActionPresenter,
             $personalPreferences,
+            $runtimeClock,
         );
 
         $componentRegistrar->register();
@@ -348,6 +356,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $executionResultAdapter);
         $services->set(self::SERVICE_FORM_ACTION_EXECUTION, $executionHandler);
         $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
+        $services->set(self::SERVICE_RUNTIME_CLOCK, $runtimeClock);
         $services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
 
         $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
