@@ -34,7 +34,7 @@
 
 ### Active #1296 / PR #1299 — trusted form_action UI + confirmation contract
 
-PR #1299 is reconciled onto terminal authorization main `a7804178ae287bb0550c9456b07ea0aea70fb93a`.
+PR #1299 is reconciled onto terminal authorization main `a7804178ae287bb0550c9456b07ea0aea70fb93a`. PR #1299 base is now retargeted directly to `main`; exact-head pull-request CI is required after this synchronization commit.
 
 Exact permitted diff:
 1. `docs/PRODUCT/DASHBOARD-WIDGETS-TRUSTED-FORM-ACTION-UI-CONFIRMATION-CONTRACT-V1.md`;
