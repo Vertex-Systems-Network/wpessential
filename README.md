@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | BOUNDED ACTION PASS / ASSET CONVERGENCE | RB-0088 bounded Forms Set-Enabled execution terminal PASS; RB-0089 shared AssetRegistry loader contract active; no full parity/GA claim |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | BOUNDED ACTION PASS / RB-0090 ASSET CONVERGENCE | RB-0088 bounded execution + RB-0089 loader contract terminal PASS; shared Platform loader implementation active; Dashboard consumer migration still blocked |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,14 +37,15 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main: `17b00095a594435acb2b10245bdb076737849abc`.
-- Issue #1297 / PR #1312 / RB-0088 is terminal PASS. Exact head `e29fb878a7550a24f80328d6d77d0e68a5d259f7` passed Governance, PHP Quality, Distributable, Browser E2E, Platform Compatibility 10/10 and full Architecture before expected-head merge.
-- The first bounded trusted Dashboard `form_action` mutation path is now merged: only Forms Set-Enabled may execute; server revalidates current Definition/input/authorization; required pre-execution audits run before one canonical `AbilityRegistry::execute()`; no automatic retry.
-- This does **not** claim full Surface 10 parity, production deployment or GA.
-- Fresh architecture audit found one remaining convergence debt: ADR-0150 still requires a shared AssetRegistry/scoped loader, while the current Dashboard action bundle is loaded through a safe but module-local fixed `AdminAssetManifest` seam.
-- Issue #1294 / PR #1305 / RB-0089 is now the active contract tranche. It preserves the working Dashboard behavior and freezes the shared Platform loader migration path.
-- Planned dependency order: RB-0089 contract → RB-0090 shared Platform loader implementation (#1307) → RB-0091 Dashboard consumer migration to `platform.assets.wordpress`.
-- No ASR 176/176 certification is claimed by these bounded convergence tranches.
+- Exact current main: `e40f65afe38960c57ed85e296447f6a42c688e12`.
+- Dashboard bounded `form_action` execution remains terminal PASS through RB-0088.
+- Issue #1294 / PR #1305 / RB-0089 bounded AssetRegistry WordPress loader contract is terminal PASS and merged. Exact head `0d3562f60056004f9a99353aeea318b383a79203` passed Governance `37330030554` and Architecture `37330030247`.
+- Issue #1306 / PR #1307 / RB-0090 is now the active fresh-main shared Platform loader implementation tranche.
+- #1307 reuses the existing canonical `platform.assets` registry, adds code-owned trusted build-entry mapping, reuses `AdminAssetManifest`, and publishes a scoped WordPress loader service.
+- The loader projects only site/network Dashboard routes, resolves canonical AssetRegistry dependencies, and fails closed on missing mapping/manifest/style evidence without remote/inline fallback.
+- This Platform tranche registers **no Dashboard consumer descriptor** and changes no Dashboard action execution behavior.
+- After RB-0090 terminal PASS, RB-0091 will separately freeze/migrate the Dashboard fixed form-action asset consumer to the shared loader.
+- Full Surface 10 parity, production deployment and GA remain unpromoted.
 
 ## Current lifecycle
 
