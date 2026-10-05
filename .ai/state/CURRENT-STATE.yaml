@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 17b00095a594435acb2b10245bdb076737849abc
-observed_main_source: "Issue #1297 / PR #1312 bounded Dashboard form_action execution V1 merged; all six RB-0088 workflow families terminal PASS"
-active_issue: "#1294"
-active_pr: "#1305"
-active_branch: agent/platform-bounded-assetregistry-wordpress-loader-contract-v1
-current_milestone: "Platform bounded AssetRegistry WordPress loader contract V1 — architecture-debt reconciliation"
+observed_main_sha: e40f65afe38960c57ed85e296447f6a42c688e12
+observed_main_source: "Issue #1294 / PR #1305 AssetRegistry WordPress loader contract merged; Governance + Architecture terminal PASS"
+active_issue: "#1306"
+active_pr: "#1307"
+active_branch: agent/platform-bounded-assetregistry-wordpress-loader-v1
+current_milestone: "Platform bounded AssetRegistry WordPress loader V1 — fresh-main implementation validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1297 / PR #1312 merged as 17b00095a594435acb2b10245bdb076737849abc; exact head e29fb878a7550a24f80328d6d77d0e68a5d259f7; Governance 37326386156 PASS; PHP Quality 37326385987 PASS; Distributable 37326385920 PASS; Browser E2E 37326385904 PASS; Platform Compatibility 37326386023 PASS 10/10; Architecture 37326385998 FULL PASS; exact 14-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1."
-next_safe_action: "Complete #1294 / PR #1305 RB-0089 exact six-file AssetRegistry loader contract validation on current main; merge expected-head; then reconcile #1306 / PR #1307 as RB-0090; only after shared loader terminal open RB-0091 Dashboard consumer migration."
-waiting_external: "PR #1305 RB-0089 Governance + Architecture exact-head contract gate."
+last_completed_milestone: "Issue #1294 / PR #1305 merged as e40f65afe38960c57ed85e296447f6a42c688e12; exact head 0d3562f60056004f9a99353aeea318b383a79203; Governance 37330030554 PASS; Architecture 37330030247 FULL PASS; exact six-file contract/shared-truth scope; zero behind; zero unresolved review blockers; verdict CONTRACT_FROZEN_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1 + READY_FOR_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1."
+next_safe_action: "Run RB-0090 full exact-head validation on PR #1307 exact 17-file #1306 allowlist; fix any real failures; expected-head merge; only after terminal PASS freeze RB-0091 Dashboard consumer migration in a separate Issue."
+waiting_external: "PR #1307 RB-0090 Governance/PHP/Distributable/Platform/Architecture exact-head merge gate."
 next_planned_slot:
-  issue: "#1294"
-  slot_id: platform-bounded-assetregistry-wordpress-loader-contract-v1
-  claim_branch: "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1"
-  claim_rule: "Exact six-file contract/shared-truth scope; preserve terminal Dashboard action behavior; freeze shared AssetRegistry loader as architecture-debt convergence; RB-0089 Governance + Architecture PASS required before merge."
+  issue: "#1306"
+  slot_id: platform-bounded-assetregistry-wordpress-loader-v1
+  claim_branch: "agent/platform-bounded-assetregistry-wordpress-loader-v1"
+  claim_rule: "Exact #1306 17-file Platform loader implementation/test/shared-truth scope; no Dashboard source/action behavior/package widening; RB-0090 full exact-head CI PASS required before expected-head merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0089
+    - RB-0090
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -73,6 +73,7 @@ runner_benchmark:
     - RB-0085
     - RB-0086
     - RB-0088
+    - RB-0089
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -115,6 +116,9 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
+  - "Issue #1294 / PR #1305 is terminal PASS through RB-0089; shared AssetRegistry WordPress loader contract merged as e40f65afe38960c57ed85e296447f6a42c688e12."
+  - "Issue #1306 / PR #1307 is the active RB-0090 shared Platform loader implementation; no Dashboard source change belongs in this tranche."
+  - "RB-0091 Dashboard consumer migration remains blocked until RB-0090 terminal PASS and a separate exact-scope Issue."
   - "Issue #1297 / PR #1312 bounded Dashboard form_action execution is terminal PASS; RB-0088 PASS; merged as 17b00095a594435acb2b10245bdb076737849abc."
   - "Fresh ADR-0150 audit found remaining architecture debt: current Dashboard fixed asset seam is safe/terminal but bypasses the shared Platform AssetRegistry load plan."
   - "Issue #1294 / PR #1305 is the active RB-0089 shared-loader contract reconciliation; #1307 implementation remains downstream."
@@ -153,4 +157,4 @@ notes:
   - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
   - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: first bounded trusted form_action mutation path is terminal through RB-0088. Remaining work is architectural convergence, not action correctness: ADR-0150 still requires one shared AssetRegistry/scoped loader, while the current Dashboard form_action uses a bounded module-local manifest enqueue seam. Active RB-0089 freezes the shared loader migration contract; RB-0090 will implement Platform runtime; RB-0091 will migrate the Dashboard consumer. No full Surface 10 parity/GA claim.
+# P1_CORE deep audit: bounded Dashboard form_action execution remains terminal through RB-0088. RB-0089 has frozen the shared AssetRegistry/scoped WordPress loader convergence contract. Active #1306/#1307 implements the consumer-free Platform loader only; Dashboard module migration remains separately blocked as RB-0091.
