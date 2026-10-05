@@ -1,5 +1,60 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-06 — RB-0093 terminal PASS; RB-0094 lifecycle visibility active
+
+### Exact current main truth
+
+- Exact current main: `bb6c826f05ffdc7f84c0abcbad42979cf590e648`.
+- Issue #1319 / PR #1320 — dismissible + per-user dismiss/reset parity — terminal PASS:
+  - exact head `04c0c93d795bbcdecea863c2a80e8a0d720b9ecb`;
+  - Governance `37377873464` PASS;
+  - PHP Quality `37377873542` PASS;
+  - Distributable `37377873458` PASS;
+  - Platform Compatibility `37377873478` PASS, 10/10 matrix cells;
+  - Architecture `37377873714` FULL PASS;
+  - Browser E2E = NOT_APPLICABLE by pull_request path filters;
+  - exact 16-file #1319 allowlist;
+  - zero behind and zero unresolved review blockers;
+  - expected-head squash merge `bb6c826f05ffdc7f84c0abcbad42979cf590e648`;
+  - verdict `PASS_DASHBOARD_DISMISS_RESET_PARITY_V1`.
+- Issue #1319 is closed completed.
+
+### Fresh residual audit
+
+Already implemented:
+- visibility roles/capabilities/users are compiled and server-runtime evaluated;
+- native hide/collapse/reorder evidence is terminal;
+- dismiss/reset parity is terminal through RB-0093.
+
+Still gated/out-of-owner:
+- portability execution remains explicit-owner-authorization-gated by ADR-0116;
+- shared cache runtime remains EXECUTION NOT AUTHORIZED with CAC 0/176 executed;
+- provider/remote remains cross-owner;
+- actual scheduling engine remains Surface 18 Cron/shared Job Service-owned.
+
+Fresh unblocked P0_PARITY residual:
+- `dashboard-widgets.lifecycle.schedule_start`;
+- `dashboard-widgets.lifecycle.schedule_end`.
+
+### Active #1321 / RB-0094
+
+Branch: `agent/dashboard-lifecycle-visibility-window-v1`.
+
+Exact maximum scope: 23 files.
+
+Contract:
+- optional canonical UTC RFC3339 second-precision `widget.lifecycle.schedule_start/end`;
+- start inclusive; end exclusive; start < end;
+- request-time lifecycle states `before_schedule | active | expired`;
+- one shared injectable Surface-10 runtime clock;
+- enforce at WordPress registration, direct render, form_action preflight, form_action execution and diagnostics;
+- inactive form_action must stop before owner Ability authorization/audit/execution;
+- diagnostics may expose only canonical timestamps + bounded state;
+- no Cron/Job scheduling, Definition status mutation, cache/provider/portability runtime or shared Platform widening.
+
+Promotion only:
+`PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1`.
+
 ## 2026-10-06 — RB-0092 terminal PASS; RB-0093 dismiss/reset parity active
 
 ### Exact current main truth
