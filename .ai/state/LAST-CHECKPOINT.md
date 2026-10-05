@@ -1,5 +1,67 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-06 — RB-0091 terminal PASS; stale Dashboard issues closed; RB-0092 diagnostics active
+
+### Exact current main truth
+
+- Exact current main: `9d6945a718923fb0bbaab0f19e431ec4d7fb06ac`.
+- Issue #1315 / PR #1316 — Dashboard shared asset-loader consumer migration — terminal PASS:
+  - exact head `fef1c601605cee702b9a5b94a835af1017a678b9`;
+  - Governance `37335868721` PASS;
+  - PHP Quality `37335868747` PASS;
+  - Distributable `37335868658` PASS;
+  - Platform Compatibility `37335868376` PASS, 10/10 matrix cells;
+  - Architecture `37335868524` FULL PASS;
+  - Browser E2E = NOT_APPLICABLE because #1316 changed none of the workflow's path-filtered surfaces;
+  - exact 12-file #1315 allowlist;
+  - zero commits behind and zero unresolved review blockers;
+  - expected-head squash merge as `9d6945a718923fb0bbaab0f19e431ec4d7fb06ac`;
+  - verdict `PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1`.
+- Issue #1315 is closed completed.
+
+### Stale OPEN issue reconciliation
+
+Closed with terminal merge evidence:
+- #1291 — bounded Input-Aware Action Authorization V1;
+- #1296 — trusted form_action UI/confirmation contract V1;
+- #1300 — trusted form_action confirmation-preflight implementation V1;
+- #1292 — asset-runtime prerequisite, superseded/satisfied by #1294/#1306/#1315 chain.
+
+Remaining open lanes are not Supervisor source-development claims:
+- #858 requires repository-admin ruleset mutation evidence;
+- #1102 requires explicit owner authorization + temporary P-001/CF grant before formal P-006 execution;
+- #947 is Worker-only independent evidence review.
+
+### Fresh Surface-10 residual audit
+
+Current Dashboard runtime has zero module-local runtime references for `cache`, `ttl`, `retry`, provider/remote execution, portability import/export, or diagnostics.
+
+Priority decision:
+1. bounded owner-local read-only diagnostics now;
+2. portability next;
+3. cache/stale/retry only after shared-cache contract/evidence fit is re-audited;
+4. provider/remote remains cross-owner and must not be forked into Surface 10.
+
+### Active #1317 / RB-0092
+
+Branch: `agent/dashboard-widgets-runtime-diagnostics-v1`.
+
+Exact maximum scope: 9 files.
+
+Implementation contract:
+- new read-only `wpessential/dashboard-widgets/diagnostics` Ability;
+- optional exact Definition UUID filter;
+- deterministic safe summary + per-definition runtime-readiness projection;
+- Published definitions diagnosed through canonical content/registration compilers;
+- non-Published definitions classified inactive, not falsely compiled;
+- checksum state + bounded target/reference summary;
+- fixed issue taxonomy only;
+- no raw payload/action input/output/nonce/secret/raw exception text;
+- no mutation/provider/cache/portability/shared-Platform widening.
+
+Promotion only:
+`PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1`.
+
 ## 2026-10-05 — RB-0090 terminal PASS; RB-0091 shared Dashboard asset consumer migration active
 
 ### Exact current main truth

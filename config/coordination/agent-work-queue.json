@@ -1,9 +1,9 @@
 {
-  "schema_version": 161,
+  "schema_version": 162,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "95a79d509c3234a427de769b01fa7c15fc3c34ae",
-  "mode": "DASHBOARD_WIDGETS_SHARED_ASSET_LOADER_CONSUMER_MIGRATION_V1",
-  "source_issue": "#1315",
+  "queue_anchor_main_sha": "9d6945a718923fb0bbaab0f19e431ec4d7fb06ac",
+  "mode": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_DIAGNOSTICS_V1",
+  "source_issue": "#1317",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6784,9 +6784,9 @@
       "slot_id": "dashboard-widgets-shared-asset-loader-consumer-migration-v1",
       "title": "Dashboard Widgets shared asset-loader consumer migration V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_SHARED_ASSET_LOADER_CONSUMER_MIGRATION_V1",
-      "source": "Issue #1315 / PR #1316 fresh-main RB-0091 implementation validation",
+      "source": "Issue #1315 / PR #1316 terminal RB-0091 migration",
       "dependencies": [
         "RB-0090 terminal PASS",
         "exact fresh source base 95a79d509c3234a427de769b01fa7c15fc3c34ae"
@@ -6807,7 +6807,56 @@
         "deploy/release/GA widening"
       ],
       "claim_branch": "agent/dashboard-form-action-shared-asset-loader-v1",
-      "close_condition": "Exact 12-file #1315 source/test/shared-truth scope; fixed Surface-10 AssetRegistry + trusted build mapping registration; no Dashboard-owned enqueue seam; RB-0091 exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1."
+      "close_condition": "Satisfied: exact 12-file #1315 scope; applicable exact-head CI PASS; Browser NOT_APPLICABLE by path filter; zero behind/review blockers; expected-head merge.",
+      "terminal_result": "PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1",
+      "terminal_evidence": {
+        "issue": 1315,
+        "pr": 1316,
+        "head": "fef1c601605cee702b9a5b94a835af1017a678b9",
+        "governance_run": 37335868721,
+        "php_quality_run": 37335868747,
+        "distributable_run": 37335868658,
+        "platform_compatibility_run": 37335868376,
+        "platform_cells_passed": 10,
+        "architecture_run": 37335868524,
+        "browser_e2e": "NOT_APPLICABLE_PATH_FILTER",
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "9d6945a718923fb0bbaab0f19e431ec4d7fb06ac"
+      }
+    },
+    {
+      "priority": 1068,
+      "slot_id": "dashboard-widgets-bounded-runtime-diagnostics-v1",
+      "title": "Dashboard Widgets bounded runtime diagnostics snapshot V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_DIAGNOSTICS_V1",
+      "source": "Issue #1317 / PR #1318 fresh-main RB-0092 validation",
+      "dependencies": [
+        "RB-0091 terminal PASS",
+        "exact fresh source base 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1317 exact 9-file source/test/shared-truth allowlist"
+      ],
+      "forbidden_scope": [
+        "raw Definition payload/action input/action output/nonce/secret/raw exception output",
+        "Definition/WordPress mutation",
+        "provider/remote execution",
+        "cache/TTL/retry semantics",
+        "portability implementation",
+        "shared Platform source changes",
+        "package/dependency changes",
+        "deploy/release/GA widening"
+      ],
+      "claim_branch": "agent/dashboard-widgets-runtime-diagnostics-v1",
+      "close_condition": "Exact #1317 9-file scope; safe deterministic diagnostics; existing get/catalog/action behavior unchanged; RB-0092 applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1."
     }
   ],
   "historical_closeout": {

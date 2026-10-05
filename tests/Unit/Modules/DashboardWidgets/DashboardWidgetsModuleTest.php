@@ -21,6 +21,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDynamicBindingExecutor;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetDiagnosticsAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
@@ -143,6 +144,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         (new DashboardWidgetsModule())->register($services);
 
         self::assertInstanceOf(DashboardWidgetsReadService::class, $services->get(DashboardWidgetsModule::SERVICE_READ));
+        self::assertInstanceOf(DashboardWidgetDiagnosticsAbilityHandler::class, $services->get(DashboardWidgetsModule::SERVICE_DIAGNOSTICS));
         self::assertInstanceOf(DashboardWidgetContentClassCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER));
         self::assertInstanceOf(DashboardWidgetRenderSourceCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_RENDER_SOURCE_COMPILER));
         self::assertInstanceOf(DashboardWidgetQueryBindingExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_QUERY_BINDING_EXECUTOR));
@@ -286,7 +288,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertTrue(true);
         }
 
-        foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG] as $name) {
+        foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG, DashboardWidgetsModule::ABILITY_DIAGNOSTICS] as $name) {
             $descriptor = $abilities->descriptor($name);
             self::assertNotNull($descriptor);
             self::assertFalse($descriptor->mutates);
@@ -297,7 +299,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertTrue($descriptor->allows(ExecutionChannel::Rest));
         }
 
-        self::assertCount(2, $bridge->registerAbilities());
+        self::assertCount(3, $bridge->registerAbilities());
     }
 
     public function testFormActionRoutesRejectGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
