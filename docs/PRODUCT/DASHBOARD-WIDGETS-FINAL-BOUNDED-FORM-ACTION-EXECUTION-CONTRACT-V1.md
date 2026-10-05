@@ -1,8 +1,8 @@
 # Dashboard Widgets Final Bounded form_action Execution Contract V1
 
-Status: PREPARED_NOT_MERGEABLE  
-Issue: #1297  
-Stacked predecessor: #1301  
+Status: PREPARED_NOT_MERGEABLE
+Issue: #1297
+Stacked predecessor: #1301
 Security blocker: #1289
 
 ## Purpose
