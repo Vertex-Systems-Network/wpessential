@@ -1,8 +1,8 @@
 # Dashboard Widgets Trusted form_action UI + Confirmation Orchestration Contract V1
 
-Status: PREPARED_NOT_MERGEABLE  
-Issue: #1296  
-Stacked predecessor: #1298  
+Status: PREPARED_NOT_MERGEABLE
+Issue: #1296
+Stacked predecessor: #1298
 Security blocker: #1289
 
 ## Purpose
