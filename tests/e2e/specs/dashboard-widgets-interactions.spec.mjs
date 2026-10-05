@@ -19,6 +19,12 @@ async function visitDashboard(page) {
   expect(response?.ok(), 'Dashboard should return a successful HTTP response.').toBe(true);
 }
 
+async function bootPackagedAdminBundle(page) {
+  await page.addScriptTag({
+    url: `${playground.serverUrl}/wp-content/plugins/wpessential/assets/admin/main.js`,
+  });
+}
+
 async function installManualRefreshFixture(page) {
   await page.addInitScript(() => {
     document.addEventListener(
@@ -133,6 +139,7 @@ test('packaged Dashboard manual refresh shows loading and replaces trusted conte
   });
 
   await visitDashboard(page);
+  await bootPackagedAdminBundle(page);
 
   const root = page.locator('#wpe-e2e-refresh');
   const content = root.locator('[data-wpessential-dashboard-refresh-content="1"]');
@@ -201,6 +208,7 @@ test('packaged Dashboard manual refresh restores previous content on failure wit
   });
 
   await visitDashboard(page);
+  await bootPackagedAdminBundle(page);
 
   const root = page.locator('#wpe-e2e-refresh');
   const content = root.locator('[data-wpessential-dashboard-refresh-content="1"]');
@@ -259,6 +267,7 @@ test('packaged form-action client accepts lifecycle_inactive and does not execut
   });
 
   await visitDashboard(page);
+  await bootPackagedAdminBundle(page);
 
   const root = page.locator('#wpe-e2e-form-action');
   await expect(root).toHaveAttribute('data-wpessential-form-action-enhanced', 'ready');
