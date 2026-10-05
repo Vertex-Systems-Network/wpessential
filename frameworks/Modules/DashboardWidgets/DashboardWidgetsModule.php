@@ -50,6 +50,7 @@ use WPEssential\Platform\WordPress\Security\NonceOperation;
 final class DashboardWidgetsModule implements ModuleInterface
 {
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
+    public const SERVICE_DIAGNOSTICS = 'module.dashboard-widgets.diagnostics';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
     public const SERVICE_RENDER_SOURCE_COMPILER = 'module.dashboard-widgets.render-source-compiler';
@@ -70,6 +71,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
+    public const ABILITY_DIAGNOSTICS = 'wpessential/dashboard-widgets/diagnostics';
     public const CAPABILITY = 'manage_options';
 
     public function __construct(
@@ -246,6 +248,11 @@ final class DashboardWidgetsModule implements ModuleInterface
             $dynamicValues,
             $abilityResolver,
         );
+        $diagnostics = new DashboardWidgetDiagnosticsAbilityHandler(
+            $definitions,
+            $contentClassCompiler,
+            $registrationCompiler,
+        );
         $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
             $definitions,
             $registrationCompiler,
@@ -316,6 +323,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $componentRegistrar->register();
 
         $services->set(self::SERVICE_READ, $read);
+        $services->set(self::SERVICE_DIAGNOSTICS, $diagnostics);
         $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
         $services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
         $services->set(self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor);
@@ -372,6 +380,32 @@ final class DashboardWidgetsModule implements ModuleInterface
             new DashboardWidgetsReadAbilityHandler($read, DashboardWidgetsReadAbilityHandler::CATALOG),
             'Read Dashboard Widgets catalog',
             'Reads the deterministic canonical Dashboard Widgets definition catalog without mutation.',
+        );
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_DIAGNOSTICS,
+                ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'properties' => [
+                        'definition_id' => [
+                            'type' => 'string',
+                            'minLength' => 36,
+                            'maxLength' => 36,
+                        ],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                outputSchema: ['type' => 'object'],
+            ),
+            $diagnostics,
+            'Read Dashboard Widgets diagnostics',
+            'Reads a bounded safe Dashboard Widgets runtime-readiness snapshot without exposing raw payloads or mutating state.',
         );
     }
 
