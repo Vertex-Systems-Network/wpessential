@@ -34,7 +34,7 @@ Fresh unblocked P0_PARITY residual:
 - `dashboard-widgets.preference.reset_layout`;
 - compiler/runtime prerequisite `presentation.dismissible`.
 
-### Active #1319 / RB-0093
+### Active #1319 / PR #1320 / RB-0093
 
 Branch: `agent/dashboard-dismiss-reset-parity-v1`.
 
