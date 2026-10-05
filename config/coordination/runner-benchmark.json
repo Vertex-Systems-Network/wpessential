@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1297",
-  "anchor_main_sha": "713942185ce5340192b2a76bde29b69d68aed975",
+  "source_issue": "#1313",
+  "anchor_main_sha": "17b00095a594435acb2b10245bdb076737849abc",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2878,7 +2878,7 @@
       "category": "DASHBOARD_WIDGETS_BOUNDED_FORM_ACTION_EXECUTION_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Browser E2E + Platform Compatibility + Architecture exact-head validation",
-      "environment": "agent/dashboard-widgets-bounded-form-action-execution-v1 exact base 713942185ce5340192b2a76bde29b69d68aed975",
+      "environment": "agent/dashboard-widgets-bounded-form-action-execution-v1 exact head e29fb878a7550a24f80328d6d77d0e68a5d259f7",
       "dependencies": [
         "RB-0082 terminal PASS",
         "RB-0083 terminal PASS",
@@ -2893,15 +2893,24 @@
       "security_critical": true,
       "expected_minutes": 25,
       "dedup_key": "dashboard-widgets|bounded-form-action-execution|issue1297|exact-head",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Fresh-main implementation allowlist frozen on Issue #1297",
-        "Runtime source contains one Dashboard-owned AbilityRegistry::execute call site and zero direct owner handle() calls",
-        "Focused execution/result/presenter/module tests added",
-        "Full exact-head CI pending"
+        "PR #1312 exact head e29fb878a7550a24f80328d6d77d0e68a5d259f7",
+        "Governance Gate 37326386156 PASS",
+        "PHP Quality Toolchain 37326385987 PASS",
+        "Distributable Package 37326385920 PASS",
+        "Browser E2E Accessibility 37326385904 PASS",
+        "Platform Compatibility Matrix 37326386023 PASS 10/10",
+        "Architecture Guards 37326385998 FULL PASS",
+        "exact 14-file #1297 allowlist",
+        "zero unresolved review threads",
+        "zero commits behind pre-merge main",
+        "PR #1312 merged as 17b00095a594435acb2b10245bdb076737849abc",
+        "resulting main tree equals terminal PR-head tree",
+        "verdict PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1"
       ],
-      "note": "PASS may promote only PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1; not full Surface 10 parity/deploy/GA."
+      "note": "PASS promotes only the bounded Forms Set-Enabled Dashboard form_action execution seam. Full Surface 10 parity, deploy and GA remain unpromoted."
     }
   ],
   "last_reconciled_issue": "#1283",
