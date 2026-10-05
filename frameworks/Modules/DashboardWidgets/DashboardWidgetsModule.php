@@ -470,6 +470,7 @@ final class DashboardWidgetsModule implements ModuleInterface
                 $action === DashboardWidgetPersonalPreferenceAbilityHandler::DISMISS
                     ? 'Dismisses one canonical dismissible WPE Dashboard Widget for the current user.'
                     : 'Resets only WPE-owned Dashboard Widget preferences while preserving core and third-party state.',
+                false,
             );
             $ajaxRoutes->register(new AjaxRoute(
                 type: $ajaxType,
@@ -495,13 +496,14 @@ final class DashboardWidgetsModule implements ModuleInterface
         AbilityHandlerInterface $handler,
         string $label,
         string $description,
+        bool $showInRest = true,
     ): void {
         $abilities->register($descriptor, $handler);
         $bridge->expose(new WordPressAbilityExposure(
             internalName: $descriptor->name,
             label: $label,
             description: $description,
-            showInRest: true,
+            showInRest: $showInRest,
         ));
     }
 }
