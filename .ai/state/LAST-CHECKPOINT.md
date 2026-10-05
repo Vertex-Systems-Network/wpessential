@@ -1,5 +1,74 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-06 — RB-0094 terminal PASS; RB-0095 manual refresh + loading active
+
+### Exact current main truth
+
+- Exact current main: `dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea`.
+- Issue #1321 / PR #1322 — bounded lifecycle visibility — terminal PASS:
+  - exact head `c01bed388d2191d48c223224014e05ab1ea54756`;
+  - Governance `37380946760` PASS;
+  - PHP Quality `37380946758` PASS;
+  - Distributable `37380946780` PASS;
+  - Platform Compatibility `37380946804` PASS, 10/10 matrix cells;
+  - Architecture `37380946768` FULL PASS;
+  - Browser E2E = NOT_APPLICABLE by previous pull_request path filters;
+  - exact 23-file #1321 allowlist;
+  - zero behind and zero unresolved review blockers;
+  - expected-head squash merge `dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea`;
+  - verdict `PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1`.
+- Issue #1321 is closed completed.
+
+### Fresh residual audit
+
+Already implemented:
+- P0 native Dashboard registration/presentation baseline;
+- roles/capabilities/users visibility;
+- trusted query/dynamic rendering + empty/error states;
+- form_action execution;
+- shared asset convergence;
+- bounded diagnostics;
+- dismiss/reset parity;
+- UTC schedule_start/schedule_end request-time lifecycle visibility.
+
+Fresh unblocked P0 owner-local residuals:
+- `dashboard-widgets.refresh.manual`;
+- `dashboard-widgets.state.loading`.
+
+Fresh client reconciliation:
+- RB-0094 backend emits bounded `lifecycle_inactive` form-action states;
+- pre-RB-0095 admin client allow-lists did not recognize that state, causing generic fallback notice instead of the bounded server notice.
+
+Still gated/out-of-owner:
+- portability execution remains ADR-0116 owner-authorization-gated;
+- shared cache TTL/scope/invalidation runtime remains EXECUTION NOT AUTHORIZED;
+- refresh interval/retry/polling and timeout scheduling are not this tranche;
+- background scheduling remains Surface 18 / Job Service-owned;
+- provider/remote remains cross-owner.
+
+### Active #1323 / RB-0095
+
+Branch: `agent/dashboard-manual-refresh-loading-v1`.
+
+Exact maximum scope: 27 files.
+
+Contract:
+- optional `widget.refresh.manual` boolean, omitted=false;
+- manual=true only for trusted non-form_action widgets;
+- manual=true requires trusted `widget.render_source.loading_state`;
+- loading_state without manual=true is rejected;
+- loading state uses Surface-10 rich_text or announcement Blueprint only, exact revision, literal safe strings;
+- nonce-protected authenticated `dashboard-widgets.refresh.manual` AJAX route;
+- exact definition revision + current site/network target + lifecycle + visibility re-evaluated every request;
+- refresh invokes no cache invalidation, Cron/Job, provider/remote transport or Definition mutation;
+- refreshed outputs requiring non-empty new asset handles fail closed;
+- browser allows one in-flight refresh, renders loading state, restores previous content on failure and performs no retry/polling;
+- form-action client accepts `lifecycle_inactive` without executing;
+- Browser E2E is applicable and merge-blocking.
+
+Promotion only:
+`PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1`.
+
 ## 2026-10-06 — RB-0093 terminal PASS; RB-0094 lifecycle visibility active
 
 ### Exact current main truth
