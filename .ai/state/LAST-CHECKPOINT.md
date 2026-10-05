@@ -116,23 +116,29 @@ RB-0085 remains dependency-blocked. No contract PASS/readiness promotion is perm
 
 Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
 
+Exact current head:
+
+`eef275ceedd0ca5241a489d188d350c459640771`
+
 Stack base:
 - PR #1299 exact contract head `5ba81941566f291a6b112570757091ee99a8884c`.
-
-Pre-shared-truth implementation head:
-- `4687fe933c1f603984cc3a928c422b5de47f8e3b`.
+- exact stacked diff: 21 files, all inside #1300 allowlist;
+- behind stacked base: 0;
+- unresolved review threads: 0.
 
 Audited implementation boundary:
-- `form_action` becomes a recognized trusted Dashboard type but is not added to the generic Component Blueprint renderer/catalog;
+- `form_action` is a recognized trusted Dashboard type but is not added to the generic Component Blueprint renderer/catalog;
 - generic `render_source` is forbidden for `form_action`;
 - registration requires canonical action Ability + confirmation + non-empty input descriptors;
-- dedicated presenter emits escaped server-owned UI plus Definition id/revision, canonical AJAX action/type/nonce only;
+- dedicated presenter emits escaped server-owned UI plus Definition id/revision and canonical AJAX action/type/nonce only;
 - Ability id and bound owner input are not emitted to browser markup;
-- existing fixed `assets/admin/main.js` is reused on the WordPress Dashboard through a bounded Dashboard environment seam;
+- existing fixed admin bundle is reused on the WordPress Dashboard through a bounded Dashboard environment seam;
 - browser sends exactly `definition_id`, `definition_revision`, and `confirmation_state`;
 - canonical route is `dashboard-widgets.form-action.confirm`, `NonceOperation::Apply`, no fixed capability, guests forbidden;
 - server reloads/recompiles current Definition, server-binds current action input, and runs Input-Aware Authorization;
 - canonical authorization and confirmation audits are required;
+- owner authorization reason is audited only when it matches a bounded machine-code shape;
+- cancellation audit preserves bounded `input_present` truth without exposing raw input;
 - accepted result `confirmation_ready` means authorized + confirmed + audited, **not executed**;
 - cancelled result never owner-authorizes merely to cancel;
 - no `AbilityRegistry::execute()`;
@@ -143,13 +149,27 @@ Audited implementation boundary:
 - no shared Platform source changes;
 - no new npm/composer dependency.
 
-Pre-shared-truth exact-head CI evidence:
-- Governance Gate `37305617864` PASS;
-- PHP Quality Toolchain `37305617634` PASS, including PHPCS/PHPStan/PHPUnit;
-- Distributable Package `37305617666` PASS;
-- Architecture `37305617660` was still running when shared truth was reconciled and is expected to remain blocked only if #1289 reaches its existing advisory enforcement gate;
-- Platform Compatibility `37305617651` was still running;
-- Browser E2E Accessibility `37305617569` was still running.
+Exact-head CI evidence:
+- Governance Gate `37306315812` — **PASS**;
+- Distributable Package `37306315904` — **PASS**;
+- Browser E2E Accessibility `37306315836` — **PASS**;
+- Platform Compatibility Matrix `37306315830` — **PASS, 10/10 cells**;
+- Architecture Guards `37306315833` — **FAIL only at repository-wide #1289 development npm advisory gate**;
+  - Node engine/package contract PASS;
+  - npm audit capture PASS;
+  - distributable audit capture PASS;
+  - JavaScript lint PASS;
+  - Stylelint PASS;
+  - TypeScript PASS;
+  - admin build/artifact verification PASS;
+  - development advisory enforcement FAIL;
+  - later PHP/runtime Architecture stages skipped because #1289 remains unresolved.
+
+PHP Quality note:
+- this workflow auto-triggers only for PRs targeting `main`;
+- #1301 is intentionally stacked on #1299, so latest stacked-head PHP Quality does not auto-trigger;
+- earlier implementation head `4687fe933c1f603984cc3a928c422b5de47f8e3b` passed PHP Quality `37305617634`;
+- terminal predecessor/main reconciliation must run exact-head PHP Quality before merge.
 
 RB-0086 remains `BLOCKED_DEPENDENCY` and may not promote PASS until RB-0083, RB-0084, RB-0085 and #1289 are terminal, followed by fresh predecessor/main reconciliation and exact-head CI/review.
 
