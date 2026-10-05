@@ -26,6 +26,10 @@ final readonly class DashboardWidgetRegistrationDescriptor
     public const SITE_SCOPE_SITE_IDS = 'site_ids';
     public const MAX_SITE_IDS = 100;
 
+    public const LIFECYCLE_BEFORE_SCHEDULE = 'before_schedule';
+    public const LIFECYCLE_ACTIVE = 'active';
+    public const LIFECYCLE_EXPIRED = 'expired';
+
     /** @var list<string> */
     public const SITE_SCOPES = [
         self::SITE_SCOPE_ALL_SITES,
@@ -154,18 +158,18 @@ final readonly class DashboardWidgetRegistrationDescriptor
             throw new InvalidArgumentException('Dashboard Widget lifecycle evaluation timestamp must be non-negative.');
         }
         if ($this->scheduleStartAt !== null && $timestamp < $this->scheduleStartAt) {
-            return DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE;
+            return self::LIFECYCLE_BEFORE_SCHEDULE;
         }
         if ($this->scheduleEndAt !== null && $timestamp >= $this->scheduleEndAt) {
-            return DashboardWidgetVisibilityDecision::REASON_EXPIRED;
+            return self::LIFECYCLE_EXPIRED;
         }
 
-        return DashboardWidgetVisibilityDecision::REASON_ALLOWED;
+        return self::LIFECYCLE_ACTIVE;
     }
 
     public function isActiveAt(int $timestamp): bool
     {
-        return $this->lifecycleStateAt($timestamp) === DashboardWidgetVisibilityDecision::REASON_ALLOWED;
+        return $this->lifecycleStateAt($timestamp) === self::LIFECYCLE_ACTIVE;
     }
 
     public function isEligibleForSite(int $siteId): bool
