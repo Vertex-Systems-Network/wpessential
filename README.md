@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / FORMS OWNER-MUTATION IMPLEMENTATION | #1283/#1284 Set-Enabled owner contract terminal PASS; #1285 bounded Set-Enabled mutation implementation active; no Dashboard execution |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / ASSET-PREREQUISITE RECONCILIATION | #1301 preflight prepared but must consume shared AssetRegistry loader; #1305 contract active; no Dashboard execution |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,23 +37,20 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main: `f47ab596dc0329b759bdfa404b37fce6b5963447`, produced by terminal merge of **Issue #1283 / PR #1284 — Forms Set-Enabled Mutating Ability Owner Contract V1**.
-- PR #1284 exact head `a6ce28c716489d82153c71bc849902fdf1b2a97b` passed Governance `36931696966` and Architecture `36931696965`; RB-0081 is terminal PASS.
-- Active implementation: **Issue #1285 — Forms & Workflows bounded Set-Enabled Mutating Ability V1**, branch `agent/forms-workflows-bounded-set-enabled-ability-v1`, PR **#1286**.
-- The new owner Ability is `wpessential/forms-workflows/set-enabled`: Surface 17, `manage_options`, `mutates=true`, Internal/UI only, and `showInRest=false`.
-- Input is exactly `definition_id + expected_revision + enabled`; the handler runs canonical `AbilityInputValidator` itself and separately enforces lowercase RFC4122 UUID shape because global AbilityRegistry input validation is not automatic and the shared validator intentionally has no pattern/format keyword.
-- Authorization and execution both read current definition truth, require Forms owner/type, require Published/Disabled lifecycle state, and require the exact expected revision.
-- Same-target requests are deterministic no-op success with zero save/revision increment. Changed requests preserve identity/payload/dependencies/checksum, increment revision exactly once and save only through canonical `DefinitionRepositoryInterface`.
-- Stale replay and post-authorization revision drift fail closed. Persistence failures use stable safe messages and never fabricate success.
-- Existing read-only GET/CATALOG abilities remain Internal/UI/REST and REST-exposed; only the Set-Enabled mutation is non-REST.
-- Strictly absent: no `AbilityRegistry.php` change, no Dashboard Widgets source, no submission/entry/run persistence, no provider/payment/secret execution, no custom REST/AJAX/admin-post mutation, no direct table/database write.
-- Dashboard Widgets bounded Action-Input Binding remains terminal PASS and can bind the future Set-Enabled schema, but there is still no Dashboard `AbilityRegistry::execute()` orchestration path.
-- Corrected dependency order after #1285 is: real Forms Set-Enabled mutation → trusted Dashboard `form_action` UI/orchestration → final separately reviewed Dashboard execution gate.
-- Dashboard Widgets P0_NATIVE remains `12/12 = 100%` bounded capability coverage; `type.form_action` remains blocked on #1285 merge plus trusted UI/orchestration + final execution.
-- Forms & Workflows is moving beyond read-only with one bounded lifecycle mutation only; full submissions/entries/runs remain unimplemented and unpromoted.
-- Overall terminal milestone completion remains **5/10 = 50%**; #1285 is an internal M7/Surface-17 prerequisite, not a new terminal roadmap milestone.
-- Open repository blockers remain **#858** broader required-CI/admin reconciliation, **#1102** separately authorization-gated P-006 Wave 1U, and **#947** independent Worker-only audit.
-- No full 56-surface product-parity certification, production deployment, GA, updater/TUF, permanent P-001/CF, release authority or ADR-0010 promotion follows from this bounded mutation.
+- Exact current main: `25f098a170c42d30f829d196452189d9f5b71763`; Issue #1285 / PR #1286 Forms Set-Enabled V1 is terminal PASS with RB-0082 PASS.
+- Repository-wide security #1289 remains BLOCKED_UPSTREAM; `braces 3.0.3` remains affected and no patched release is available. Architecture policy is not weakened.
+- #1288/RB-0083 Input-Aware Authorization contract, #1298/RB-0084 implementation, and #1299/RB-0085 trusted form_action UI contract remain prepared/dependency-gated.
+- #1301/RB-0086 trusted form_action preflight exact head `eef275ceedd0ca5241a489d188d350c459640771`: Governance PASS, Distributable PASS, Platform Compatibility 10/10 PASS, Browser E2E PASS, Architecture blocked only by #1289; 21/21 files, 0 behind, 0 review blockers.
+- A fresh plan-drift audit found #1301's direct Dashboard `AdminAssetManifest` enqueue prototype bypasses ADR-0150 and #1292's selected shared AssetRegistry/scoped-loader direction.
+- Therefore #1301 is **not terminally merge-ready** even after #1289 clears until its asset seam is reconciled.
+- Active prerequisite: Issue #1294 / PR #1305 — **bounded AssetRegistry WordPress loader contract V1**.
+- #1305 preserves `AssetDescriptor` and freezes a separate code-owned handle→build-entry mapping registry, shared `AssetRegistry`, trusted `AdminAssetManifest`, and shared scoped WordPress loader.
+- Planned stable services: `platform.assets`, `platform.assets.build-entries`, `platform.assets.manifest`, and `platform.assets.wordpress`.
+- First consumer is code-owned `wpe-dashboard-form-action`, Surface 10, exact site/network Dashboard routes only, generated `main` script entry, no style entry for V1 unless separately required.
+- No Definition/user input may choose executable URL/path/build entry; missing mapping/manifest/dependency fails closed.
+- #1304/RB-0087 final bounded execution contract remains prepared/downstream; no execution runtime is authorized.
+- Corrected order: **#1289 → #1288/RB-0083 → #1298/RB-0084 → #1305/RB-0088 contract → shared asset runtime implementation → #1301 asset reconciliation/terminal gate → #1304/RB-0087 → bounded execution implementation**.
+- Overall terminal milestone completion remains **5/10 = 50%**.
 
 ## Current lifecycle
 
