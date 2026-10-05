@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / STACKED PREPARATION | #1286 Set-Enabled terminal PASS; #1288 security-blocked contract; #1298 input-aware authorization prepared; #1299 trusted form_action UI/confirmation contract prepared; no action execution |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0083 | Security migration terminal PASS; #1288 fresh-secure-main contract validation active; #1298/#1299/#1301 prepared downstream; no action execution |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,18 +37,15 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main anchor: `25f098a170c42d30f829d196452189d9f5b71763`, produced by terminal merge of Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1.
-- RB-0082 is terminal PASS. The first real Surface-17 lifecycle mutation is available with owner-side validation, expected revision safety, Internal/UI-only mutation exposure and no REST mutation.
-- Repository-wide security Issue #1289 is the active Architecture blocker. Current dev audit evidence is 23 total vulnerabilities (19 high, 3 moderate, 1 low, 0 critical) while the distributable graph remains 0 vulnerabilities. The gate is not waived or lowered.
-- Issue #1287 / PR #1288 freezes Input-Aware Dashboard action authorization semantics. The contract is clean and 0 behind but cannot merge while #1289 keeps Architecture red.
-- Issue #1291 / PR #1298 is owner-authorized **PREPARED_NOT_MERGEABLE** implementation preparation. Exact head `0111346896b5092abd65a16939bf2fdb15d20cc9` changes only the evaluator + focused tests.
-- #1298 exact-head evidence: Governance PASS, PHP Quality PASS, Distributable PASS, Platform Compatibility **10/10 PASS**, zero review threads; Architecture fails only at the existing dev npm advisory gate after JS lint, style lint, TypeScript and admin build PASS.
-- Prepared evaluator behavior validates current Ability input schema + exact bound input, preserves canonical capability/owner denial reasons, requires authenticated UI user context, and never executes an Ability or handler.
-- Issue #1296 / PR #1299 is a stacked **PREPARED_NOT_MERGEABLE** six-file contract tranche on #1298. It freezes trusted `form_action` presentation and confirmation-preflight semantics only.
-- #1299 permits only a dedicated trusted action presentation path, canonical nonce-protected Dashboard-owned preflight AJAX transport, server-side Definition reload/recompile/input rebind, input-aware authorization, canonical authorization/confirmation audit, and bounded safe response states.
-- `confirmation_ready` explicitly means authorized + confirmed + audited, **not executed**. No `AbilityRegistry::execute()`, owner `handle()`, Forms mutation, REST/admin-post mutation, generic `AbilityAjaxHandler`, arbitrary Definition HTML/JS, deployment or release authority is promoted.
-- Dependency order remains strict: **#1289 security resolution → #1288/RB-0083 terminal contract → #1298/RB-0084 terminal implementation → #1299/RB-0085 terminal trusted UI/preflight contract → separately authorized implementation → #1297 final bounded execution gate**.
-- Overall terminal milestone completion remains **5/10 = 50%**. These prepared tranches do not create a new terminal roadmap milestone.
+- Exact current main: `1db4daa0cfb786b86af62d06c1bac27d64f3cfa0`.
+- Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS. Security Lockfile Refresh `37316752594`, Architecture `37316752583`, Governance `37316752522`, Distributable `37316752573`, and Browser E2E `37316752923` all passed on exact final head.
+- The maintained Node admin graph now has dev vulnerabilities 0, high 0, critical 0, distributable vulnerabilities 0; the affected `braces` chain and `@wordpress/scripts` meta-package are absent without audit waivers or forks.
+- RB-0087 is terminal PASS and Issue #1289 is resolved/closed.
+- Issue #1287 / PR #1288 / RB-0083 is now the active fresh-secure-main contract tranche. It changes exactly one Input-Aware Authorization contract document plus five shared-truth files.
+- The frozen contract allows future validated bound input to reach canonical `AbilityRegistry::authorize()` only. It does **not** authorize `AbilityRegistry::execute()`, owner handler execution, confirmation UI, audit orchestration, Forms mutation, REST mutation, or deployment/release widening.
+- Downstream prepared order remains: #1298/RB-0084 evaluator implementation → #1299/RB-0085 trusted UI/confirmation contract → #1301/RB-0086 non-executing confirmation preflight → #1297 separately reviewed final execution.
+- #1298/#1299/#1301 remain non-mergeable until each predecessor gate is terminal and each branch is reconciled to fresh main.
+- Overall terminal roadmap completion is unchanged by prepared stacked work until terminal merges occur.
 
 ## Current lifecycle
 

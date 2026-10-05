@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "25f098a170c42d30f829d196452189d9f5b71763",
-  "mode": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_CONTRACT_V1_PREPARATION",
-  "source_issue": "#1296",
+  "queue_anchor_main_sha": "1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+  "mode": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
+  "source_issue": "#1287",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6373,13 +6373,11 @@
       "role": "AGENT_CONTRACT",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
-      "source": "Issue #1287 / PR #1288; merge blocked by security Issue #1289",
+      "source": "Issue #1287 / PR #1288 fresh secure-main RB-0083 contract validation",
       "dependencies": [
-        "Issue #1285 / PR #1286 terminal Set-Enabled PASS",
         "RB-0082 terminal PASS",
-        "bounded Dashboard Action-Input Binding terminal PASS",
-        "exact source base 25f098a170c42d30f829d196452189d9f5b71763",
-        "repository-wide security #1289 must be resolved before merge"
+        "RB-0087 terminal PASS",
+        "exact fresh source base 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0"
       ],
       "runtime_allowed": false,
       "mutation_allowed": false,
@@ -6395,16 +6393,15 @@
         "config/coordination/runner-benchmark.json"
       ],
       "forbidden_scope": [
-        "runtime/product PHP/JS/tests",
-        "AbilityRegistry execute",
-        "trusted form_action UI/orchestration",
-        "Forms mutation source",
-        "REST mutation",
+        "runtime/product source",
+        "Ability execution",
+        "trusted form_action UI",
+        "Forms mutation",
         "package/dependency changes",
         "deploy/release widening"
       ],
       "claim_branch": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1",
-      "close_condition": "PR #1288 exact six-file contract scope; RB-0083 Governance + Architecture PASS; #1289 resolved without weakening policy; zero review blockers; zero behind; expected-head merge. Current state BLOCKED_DEPENDENCY."
+      "close_condition": "Exact six-file contract/shared-truth scope; RB-0083 Governance + Architecture FULL PASS; zero review blockers; zero behind; expected-head merge; promote only CONTRACT_FROZEN_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1 + READY_FOR_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1."
     },
     {
       "priority": 1060,
@@ -6415,9 +6412,9 @@
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_INPUT_AWARE_ACTION_AUTHORIZATION_V1_PREPARATION",
       "source": "Issue #1291 / PR #1298 owner-authorized PREPARED_NOT_MERGEABLE implementation preparation",
       "dependencies": [
-        "Issue #1287 / PR #1288 terminal RB-0083 PASS before merge",
-        "repository-wide security #1289 resolved before merge",
-        "fresh-main reconciliation before terminal review"
+        "RB-0083 terminal PASS before merge",
+        "RB-0087 security migration terminal PASS",
+        "fresh-main reconciliation"
       ],
       "runtime_allowed": true,
       "mutation_allowed": false,
@@ -6429,17 +6426,14 @@
         "tests/Unit/Modules/DashboardWidgets/DashboardWidgetActionAuthorizationEvaluatorTest.php"
       ],
       "forbidden_scope": [
-        "AbilityRegistry.php",
-        "trusted form_action UI/AJAX",
         "Ability execution",
-        "Forms mutation invocation",
-        "audit orchestration",
-        "REST mutation",
+        "trusted form_action UI/AJAX",
+        "Forms mutation",
         "package/dependency changes",
         "deploy/release widening"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-input-aware-action-authorization-v1",
-      "close_condition": "Prepared exact two-file PR #1298 may merge only after #1288/#1289 terminal gates and fresh-main reconciliation; required exact-head CI including Architecture PASS; zero review blockers; promote only PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1."
+      "close_condition": "Prepared PR #1298 may merge only after RB-0083/RB-0087 and fresh-main reconciliation; exact-head required CI green; zero review blockers."
     },
     {
       "priority": 1061,
@@ -6450,10 +6444,10 @@
       "work_mode": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_CONTRACT_V1_PREPARATION",
       "source": "Issue #1296 / PR #1299 owner-authorized stacked PREPARED_NOT_MERGEABLE contract preparation",
       "dependencies": [
-        "PR #1288 / RB-0083 terminal PASS before merge",
-        "PR #1298 / RB-0084 terminal PASS before merge",
-        "repository-wide security #1289 resolved before merge",
-        "fresh-main and terminal-predecessor reconciliation"
+        "RB-0083 terminal PASS",
+        "RB-0084 terminal PASS",
+        "RB-0087 security migration terminal PASS",
+        "fresh-main/predecessor reconciliation"
       ],
       "runtime_allowed": false,
       "mutation_allowed": false,
@@ -6470,16 +6464,108 @@
       ],
       "forbidden_scope": [
         "trusted form_action runtime/UI/AJAX/audit implementation",
-        "AbilityRegistry execute",
-        "Forms handler handle",
+        "Ability execution",
         "Forms mutation",
-        "REST/admin-post mutation",
-        "generic AbilityAjaxHandler",
         "package/dependency changes",
         "deploy/release widening"
       ],
       "claim_branch": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1",
-      "close_condition": "Stacked PR #1299 exact six-file contract/shared-truth diff against #1298; RB-0085 exact-head Governance + Architecture PASS only after RB-0083/RB-0084/#1289 terminal gates; zero review blockers; expected-head stacked merge; promote contract/readiness only."
+      "close_condition": "PR #1299 may merge only after RB-0083/RB-0084/RB-0087 terminal and fresh reconciliation; RB-0085 exact-head contract validation PASS."
+    },
+    {
+      "priority": 1062,
+      "slot_id": "dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1",
+      "title": "Dashboard Widgets trusted form_action UI + confirmation preflight V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1_PREPARATION",
+      "source": "Issue #1300 / PR #1301 owner-authorized stacked PREPARED_NOT_MERGEABLE implementation preparation",
+      "dependencies": [
+        "RB-0083 terminal PASS",
+        "RB-0084 terminal PASS",
+        "RB-0085 terminal PASS",
+        "RB-0087 security migration terminal PASS",
+        "fresh-main/predecessor reconciliation"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1300 exact 21-file allowlist"
+      ],
+      "forbidden_scope": [
+        "AbilityRegistry execute",
+        "owner handler mutation execution",
+        "Forms mutation",
+        "final execution route",
+        "shared Platform source changes",
+        "deploy/release widening"
+      ],
+      "claim_branch": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1",
+      "close_condition": "PR #1301 may merge only after RB-0083/RB-0084/RB-0085/RB-0087 terminal and fresh reconciliation; RB-0086 exact-head validation PASS."
+    },
+    {
+      "priority": 1063,
+      "slot_id": "security-minimal-admin-toolchain-migration-v1",
+      "title": "Repository security minimal admin toolchain migration V1",
+      "role": "AGENT_SECURITY",
+      "status": "COMPLETED",
+      "work_mode": "SECURITY_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1",
+      "source": "Issue #1310 / PR #1311; research #1308/#1309 clean-graph proof",
+      "dependencies": [
+        "Issue #1285 / PR #1286 terminal merge",
+        "Research run 37313892338 clean dependency graph",
+        "exact source base 25f098a170c42d30f829d196452189d9f5b71763"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "package.json",
+        "package-lock.json",
+        "biome.json",
+        "tools/admin/admin-toolchain.mjs",
+        ".github/workflows/security-lockfile-refresh.yml",
+        ".github/workflows/architecture-guards.yml",
+        "admin-ui/src/columns-runtime.ts",
+        "admin-ui/src/taxonomy-visibility.ts",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "product PHP/runtime behavior changes",
+        "other admin source rewrites",
+        "npm advisory waiver/ignore",
+        "audit threshold reduction",
+        "private/unreleased fork",
+        "runtime npm dependencies",
+        "deploy/release widening"
+      ],
+      "claim_branch": "agent/security-minimal-admin-toolchain-migration-v1",
+      "close_condition": "Exact #1310 13-file scope; reproducible 0-vulnerability lock; affected braces chain absent; Security Refresh + Architecture + Governance + Distributable + Browser exact-head PASS; zero review blockers; zero behind; expected-head merge; promote only PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1.",
+      "terminal_result": "PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1",
+      "terminal_evidence": {
+        "issue": 1310,
+        "pr": 1311,
+        "head": "18f6d887867398374b5711ce810fd2b86d62b74b",
+        "security_refresh_run": 37316752594,
+        "architecture_run": 37316752583,
+        "governance_run": 37316752522,
+        "distributable_run": 37316752573,
+        "browser_e2e_run": 37316752923,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+        "dev_vulnerabilities": 0,
+        "distributable_vulnerabilities": 0
+      }
     }
   ],
   "historical_closeout": {
