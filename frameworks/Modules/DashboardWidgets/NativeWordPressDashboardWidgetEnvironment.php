@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
 
 use Closure;
 use LogicException;
-use WPEssential\Platform\Admin\AdminAssetManifest;
 
 final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidgetWordPressEnvironmentInterface
 {
@@ -56,9 +55,6 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     /** @var Closure():string */
     private Closure $ajaxUrl;
 
-    /** @var Closure():void */
-    private Closure $enqueueFormActionAssets;
-
     /** @var Closure(string):void */
     private Closure $outputTrustedHtml;
 
@@ -77,7 +73,6 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
      * @param null|callable(string,string,string):void $removeDashboardWidget
      * @param null|callable(string):array<int,array{id:string,context:string,priority:string}> $discoverRegisteredDashboardWidgets
      * @param null|callable():string $ajaxUrl
-     * @param null|callable():void $enqueueFormActionAssets
      * @param null|callable(string):void $outputTrustedHtml
      */
     public function __construct(
@@ -95,7 +90,6 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
         ?callable $removeDashboardWidget = null,
         ?callable $discoverRegisteredDashboardWidgets = null,
         ?callable $ajaxUrl = null,
-        ?callable $enqueueFormActionAssets = null,
         ?callable $outputTrustedHtml = null,
     ) {
         $this->registerAction = $registerAction !== null
@@ -384,36 +378,6 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
                 return $url;
             };
 
-        $this->enqueueFormActionAssets = $enqueueFormActionAssets !== null
-            ? Closure::fromCallable($enqueueFormActionAssets)
-            : static function (): void {
-                if (
-                    !function_exists('plugin_dir_url')
-                    || !function_exists('wp_enqueue_script')
-                ) {
-                    throw new LogicException('WordPress Dashboard form-action asset APIs are unavailable.');
-                }
-
-                $pluginRoot = dirname(__DIR__, 3);
-                $pluginFile = $pluginRoot . '/wpessential.php';
-                $pluginUrl = (string) plugin_dir_url($pluginFile);
-                $entry = (new AdminAssetManifest($pluginRoot, $pluginUrl))->entry('main');
-                if ($entry === null) {
-                    throw new LogicException('WPEssential admin asset entry is unavailable.');
-                }
-
-                wp_enqueue_script(
-                    'wpessential-dashboard-form-action',
-                    $entry['script'],
-                    $entry['dependencies'],
-                    $entry['version'] ?? (defined('WPE_VERSION') ? (string) WPE_VERSION : null),
-                    true,
-                );
-                if (function_exists('wp_script_add_data')) {
-                    wp_script_add_data('wpessential-dashboard-form-action', 'strategy', 'defer');
-                }
-            };
-
         $this->outputTrustedHtml = $outputTrustedHtml !== null
             ? Closure::fromCallable($outputTrustedHtml)
             : static function (string $html): void {
@@ -495,11 +459,6 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
     public function ajaxUrl(): string
     {
         return ($this->ajaxUrl)();
-    }
-
-    public function enqueueFormActionAssets(): void
-    {
-        ($this->enqueueFormActionAssets)();
     }
 
     public function outputTrustedHtml(string $html): void
