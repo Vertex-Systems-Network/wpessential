@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-05 — #1287 Dashboard Widgets Input-Aware Action Authorization Contract V1 active
+## 2026-10-05 — minimal admin toolchain security migration active
 
-### Exact repository truth
+### Exact terminal main truth
 
-- Exact current main: `25f098a170c42d30f829d196452189d9f5b71763`.
+- Exact current main anchor: `25f098a170c42d30f829d196452189d9f5b71763`.
 - Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1 — terminal PASS:
   - exact head `c45e623079824b7e75e4a05617f1439a6971ea2f`;
   - Governance `36932601887` PASS;
@@ -12,60 +12,116 @@
   - Distributable `36932601809` PASS;
   - Architecture `36932601669` PASS;
   - Platform Compatibility `36932601737` PASS;
-  - exact nine authorized files;
   - zero unresolved review blockers;
   - zero behind;
-  - expected-head merge `25f098a170c42d30f829d196452189d9f5b71763`;
+  - merge `25f098a170c42d30f829d196452189d9f5b71763`;
   - verdict `PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
 - RB-0082 is terminal PASS.
-- RB-0073 remains historical FAIL.
+- RB-0073 remains historical FAIL and is not rewritten.
 
-### Fresh dependency correction
+### Repository security migration — #1289 / #1310 / PR #1311
 
-The first real Forms mutation is ready, but current Dashboard authorization is still zero-input-only:
+Upstream `braces` remediation is no longer the only path.
 
-- `DashboardWidgetActionAuthorizationEvaluator` requires `descriptor->inputSchema === []`;
-- it calls `AbilityRegistry::authorize(..., [])`;
-- therefore Set-Enabled input cannot reach owner resource authorization.
+Issue #1308 / PR #1309 performed research only and closed without merge after deterministic workflow run `37313892338` proved a maintained minimal admin dependency graph exists with:
+- 62 package-lock entries;
+- dev vulnerabilities: 0;
+- high: 0;
+- critical: 0;
+- distributable vulnerabilities: 0;
+- `braces`, `micromatch`, `fast-glob`, `stylelint`, `webpack-dev-server`, `@wordpress/scripts`: absent.
 
-Trusted `form_action` UI/orchestration is blocked until authorization becomes input-aware.
+Issue #1310 / PR #1311 implements that migration.
 
-### #1287 contract direction
+Last product/toolchain head before shared-truth reconciliation:
 
-Later evaluator:
-- accepts ability id + bound input + exact UI ExecutionContext;
-- supports zero-input backward compatibility;
-- validates current descriptor schema/input through canonical AbilityInputValidator;
-- requires owner Surface 17 + mutates=true + UI channel;
-- requires authenticated user + UI context;
-- calls only `AbilityRegistry::authorize($abilityId, $context, $input)`;
-- preserves canonical capability/owner denial reasons;
-- fails unexpected exceptions closed;
-- never calls `AbilityRegistry::execute()`.
+`c1f9d81177031d997b490b2be64d47c863121cda`
 
-### FAST delivery status
+Product/toolchain scope before shared truth:
+1. `package.json`;
+2. `package-lock.json`;
+3. `biome.json`;
+4. `tools/admin/admin-toolchain.mjs`;
+5. `.github/workflows/security-lockfile-refresh.yml`;
+6. `.github/workflows/architecture-guards.yml`;
+7. `admin-ui/src/columns-runtime.ts` — two CI-proven ES2022 own-property compatibility edits only;
+8. `admin-ui/src/taxonomy-visibility.ts` — one CI-proven expression-body callback compatibility edit only.
 
-- Active Issue: **#1287 — Dashboard Widgets: Input-Aware Action Authorization Contract V1**.
-- Active PR: **#1288**.
-- Active branch: `agent/dashboard-widgets-input-aware-action-authorization-contract-v1`.
-- RB-0083 is the single contract merge gate.
-- Exact authorized scope: one contract document + five shared-truth files.
+Exact minimal graph:
+- `@biomejs/biome 2.5.15`;
+- `esbuild 0.28.2`;
+- `sass 1.105.1`;
+- `typescript -> @typescript/typescript6 6.0.2`;
+- no overrides;
+- no runtime npm dependencies.
 
-### Corrected dependency order
+Security Lockfile Refresh `37315744695` — PASS:
+- artifact `11346929180`;
+- artifact digest `sha256:4210c97da60e55f848f2baf7ef9eacd3bd3043fdaab8c5d556283c893d46dfec`;
+- committed and reproduced package-lock SHA256 both `88e943bde327ec4f88c034c75a877defca8e1367052c654791e21622dd2b0c0b`;
+- reproducibility diff 0 bytes;
+- dev/distributable vulnerabilities 0;
+- affected legacy toolchain chain absent.
 
-1. Input-Aware Action Authorization contract.
-2. Input-Aware Action Authorization implementation.
-3. Trusted form_action UI/orchestration contract.
-4. Trusted UI/orchestration implementation.
-5. Final separately reviewed execution gate.
+Architecture Guards `37315744449` — PASS:
+- Node/package manifest validation;
+- dev + distributable npm advisory gates;
+- Biome JS/TS lint;
+- SCSS validation;
+- TypeScript strict check;
+- deterministic five-entry admin build;
+- repeated build byte identity;
+- Composer audit;
+- architecture/engineering contracts;
+- PHP syntax;
+- PHPCS;
+- PHPStan;
+- PHPUnit;
+- diagnostic smoke;
+- MySQL registration/persistence;
+- real WordPress AJAX nonce policy;
+- Action Scheduler coexistence;
+- durable JobService persistence/lease;
+- tracked source clean.
 
-### Persistent recovery order
+Distributable Package `37315744645` — PASS:
+- five production admin asset triplets;
+- optional query triplet fail-closed proof;
+- independent Free + Pro builds;
+- byte-for-byte rebuild determinism;
+- compatibility bootstrap;
+- ZIP integrity/package boundaries.
 
-1. `.ai/state/CURRENT-STATE.yaml`
-2. `.ai/state/LAST-CHECKPOINT.md`
-3. exact current main + OPEN Issues + OPEN PRs
-4. `config/coordination/agent-work-queue.json`
-5. `config/coordination/runner-benchmark.json`
-6. historical `CHECKPOINT.md` only when needed
+Browser E2E Accessibility `37315744670` remains a required merge gate and was still running when this shared-truth reconciliation was prepared.
+
+RB-0087 is the security migration merge gate. It must not promote PASS until the final shared-truth head is green, zero behind, zero review blockers, and expected-head merged.
+
+### Downstream prepared Dashboard chain
+
+- #1287 / PR #1288 / RB-0083 — Input-Aware Authorization Contract V1: open and security/main-reconciliation blocked.
+- #1291 / PR #1298 / RB-0084 — bounded Input-Aware Authorization implementation: PREPARED_NOT_MERGEABLE.
+- #1296 / PR #1299 / RB-0085 — trusted form_action UI + confirmation contract: PREPARED_NOT_MERGEABLE.
+- #1300 / PR #1301 / RB-0086 — trusted form_action UI + confirmation preflight implementation: PREPARED_NOT_MERGEABLE.
+- #1297 final execution remains implementation-forbidden until predecessors are terminal.
+
+After #1311 terminal merge:
+1. close #1289;
+2. update/rebase #1288 to fresh main;
+3. rerun RB-0083;
+4. reconcile/merge #1298 / RB-0084;
+5. reconcile/merge #1299 / RB-0085;
+6. reconcile/merge #1301 / RB-0086;
+7. only then freeze/claim #1297 execution implementation.
+
+### Recovery order
+
+1. Read `.ai/state/CURRENT-STATE.yaml`.
+2. Read this checkpoint.
+3. Resolve exact current main and PR #1311.
+4. Re-read #1289 and #1310.
+5. Read `config/coordination/agent-work-queue.json`.
+6. Read `config/coordination/runner-benchmark.json`.
+7. Do not merge downstream Dashboard prepared PRs before security/main reconciliation.
+8. Do not implement #1297 before RB-0083 through RB-0086 are terminal.
 
 Repository/runtime evidence outranks compact state.
