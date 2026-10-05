@@ -13,6 +13,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalo
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPresenter;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetManualRefreshPresenter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
@@ -849,6 +850,38 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $failingEnvironment->widgets);
     }
 
+    public function testManualRefreshCallbackWrapsTrustedCurrentAndLoadingState(): void
+    {
+        $definition = $this->definition(
+            '40000000-0000-4000-8000-000000000030',
+            'refresh-widget',
+            'refresh-widget',
+            manualRefresh: true,
+        );
+        $presenter = new DashboardWidgetManualRefreshPresenter(
+            'wpessential_dispatch',
+            static fn (): string => 'refresh-nonce',
+        );
+        [$adapter, , $environment, $renderer] = $this->harness(
+            [$definition],
+            new RenderOutput(true, '<p>Current trusted content</p>'),
+            new RenderOutput(true, '<p>Trusted loading content</p>'),
+            manualRefreshPresenter: $presenter,
+        );
+
+        $adapter->registerSiteDashboard();
+        self::assertCount(1, $environment->widgets);
+        ($environment->widgets[0]['callback'])();
+
+        self::assertSame(2, $renderer->calls);
+        self::assertCount(1, $environment->outputs);
+        self::assertStringContainsString('data-wpessential-dashboard-manual-refresh="1"', $environment->outputs[0]);
+        self::assertStringContainsString('data-route-type="dashboard-widgets.refresh.manual"', $environment->outputs[0]);
+        self::assertStringContainsString('data-screen="site"', $environment->outputs[0]);
+        self::assertStringContainsString('<p>Current trusted content</p>', $environment->outputs[0]);
+        self::assertStringContainsString('<p>Trusted loading content</p>', $environment->outputs[0]);
+    }
+
     public function testCallbackUsesFreshUiContextAndEmitsOnlyTrustedRenderedHtml(): void
     {
         $definition = $this->definition('40000000-0000-4000-8000-000000000031', 'rendered-widget', 'rendered');
@@ -944,6 +977,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
         ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
         ?DashboardWidgetRuntimeClock $runtimeClock = null,
+        ?DashboardWidgetManualRefreshPresenter $manualRefreshPresenter = null,
     ): array
     {
         $repository = new class($definitions) implements DefinitionRepositoryInterface {
@@ -1191,6 +1225,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 $formActionPresenter,
                 $personalPreferences,
                 $clock,
+                $manualRefreshPresenter,
             ),
             $repository,
             $environment,
@@ -1256,6 +1291,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         bool $defaultCollapsed = false,
         bool $dismissible = false,
         array $lifecycle = [],
+        bool $manualRefresh = false,
     ): Definition {
         $widget = [
             'key' => $key,
@@ -1293,6 +1329,19 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
 
         if ($lifecycle !== []) {
             $widget['lifecycle'] = $lifecycle;
+        }
+
+        if ($manualRefresh) {
+            $widget['refresh'] = ['manual' => true];
+            $widget['render_source']['loading_state'] = [
+                'kind' => 'component_blueprint',
+                'blueprint_id' => '31000000-0000-4000-8000-000000000005',
+                'blueprint_revision' => 1,
+                'bindings' => [
+                    'title' => ['source' => 'literal', 'value' => 'Refreshing'],
+                    'text' => ['source' => 'literal', 'value' => 'Fetching the latest data.'],
+                ],
+            ];
         }
 
         if ($withErrorState) {
