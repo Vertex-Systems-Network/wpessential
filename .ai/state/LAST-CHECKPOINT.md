@@ -111,12 +111,54 @@ Frozen contract:
 
 RB-0085 remains dependency-blocked. No contract PASS/readiness promotion is permitted until RB-0083 and RB-0084 are terminal PASS and #1289 is resolved.
 
-### Recovery order
+
+### #1300 / PR #1301 — trusted form_action UI + confirmation preflight implementation
+
+Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
+
+Stack base:
+- PR #1299 exact contract head `5ba81941566f291a6b112570757091ee99a8884c`.
+
+Pre-shared-truth implementation head:
+- `4687fe933c1f603984cc3a928c422b5de47f8e3b`.
+
+Audited implementation boundary:
+- `form_action` becomes a recognized trusted Dashboard type but is not added to the generic Component Blueprint renderer/catalog;
+- generic `render_source` is forbidden for `form_action`;
+- registration requires canonical action Ability + confirmation + non-empty input descriptors;
+- dedicated presenter emits escaped server-owned UI plus Definition id/revision, canonical AJAX action/type/nonce only;
+- Ability id and bound owner input are not emitted to browser markup;
+- existing fixed `assets/admin/main.js` is reused on the WordPress Dashboard through a bounded Dashboard environment seam;
+- browser sends exactly `definition_id`, `definition_revision`, and `confirmation_state`;
+- canonical route is `dashboard-widgets.form-action.confirm`, `NonceOperation::Apply`, no fixed capability, guests forbidden;
+- server reloads/recompiles current Definition, server-binds current action input, and runs Input-Aware Authorization;
+- canonical authorization and confirmation audits are required;
+- accepted result `confirmation_ready` means authorized + confirmed + audited, **not executed**;
+- cancelled result never owner-authorizes merely to cancel;
+- no `AbilityRegistry::execute()`;
+- no owner handler `handle()` invocation by the preflight path;
+- no Forms mutation;
+- no REST/admin-post mutation;
+- no generic `AbilityAjaxHandler`;
+- no shared Platform source changes;
+- no new npm/composer dependency.
+
+Pre-shared-truth exact-head CI evidence:
+- Governance Gate `37305617864` PASS;
+- PHP Quality Toolchain `37305617634` PASS, including PHPCS/PHPStan/PHPUnit;
+- Distributable Package `37305617666` PASS;
+- Architecture `37305617660` was still running when shared truth was reconciled and is expected to remain blocked only if #1289 reaches its existing advisory enforcement gate;
+- Platform Compatibility `37305617651` was still running;
+- Browser E2E Accessibility `37305617569` was still running.
+
+RB-0086 remains `BLOCKED_DEPENDENCY` and may not promote PASS until RB-0083, RB-0084, RB-0085 and #1289 are terminal, followed by fresh predecessor/main reconciliation and exact-head CI/review.
+
+### Updated recovery order
 
 1. Read `.ai/state/CURRENT-STATE.yaml`.
 2. Read this checkpoint.
-3. Resolve exact current main and open PRs #1288, #1298 and #1299.
+3. Resolve exact current main and open PRs #1288, #1298, #1299 and #1301.
 4. Re-read security Issue #1289.
 5. Re-read `config/coordination/agent-work-queue.json`.
 6. Re-read `config/coordination/runner-benchmark.json`.
-7. Do not merge #1288/#1298/#1299 while the required Architecture security gate is red.
+7. Do not merge #1288/#1298/#1299/#1301 while the required Architecture security gate is red.
