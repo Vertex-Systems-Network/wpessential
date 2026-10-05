@@ -61,6 +61,10 @@ Implementation boundary:
 - no Dashboard action execution changes;
 - no package/dependency changes.
 
+### Exact-head synchronization note
+
+The first main-retarget validation wave did not schedule the path-filtered PHP Quality workflow even though the PR contains `frameworks/**/*.php` and `tests/Unit/**/*.php` changes. This shared-truth-only synchronization commit intentionally generates a fresh pull-request head so RB-0090 can require the canonical PHP Quality workflow in addition to the already-proven Architecture embedded PHP checks. No runtime/product/test source changes are introduced by this synchronization.
+
 ### RB-0090 merge gate
 
 Required exact-head:
