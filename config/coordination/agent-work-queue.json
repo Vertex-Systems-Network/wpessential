@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "25f098a170c42d30f829d196452189d9f5b71763",
-  "mode": "SECURITY_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1",
-  "source_issue": "#1310",
+  "queue_anchor_main_sha": "1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+  "mode": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
+  "source_issue": "#1287",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6373,11 +6373,11 @@
       "role": "AGENT_CONTRACT",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
-      "source": "Issue #1287 / PR #1288; fresh-main Architecture blocked until security migration #1310/#1311 is terminal",
+      "source": "Issue #1287 / PR #1288 fresh secure-main RB-0083 contract validation",
       "dependencies": [
         "RB-0082 terminal PASS",
-        "Issue #1285 / PR #1286 terminal Set-Enabled merge",
-        "RB-0087 security migration terminal PASS before merge"
+        "RB-0087 terminal PASS",
+        "exact fresh source base 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0"
       ],
       "runtime_allowed": false,
       "mutation_allowed": false,
@@ -6401,7 +6401,7 @@
         "deploy/release widening"
       ],
       "claim_branch": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1",
-      "close_condition": "After RB-0087/main security reconciliation: fresh-main update, exact six-file scope, RB-0083 Governance + Architecture PASS, zero blockers/behind, expected-head merge."
+      "close_condition": "Exact six-file contract/shared-truth scope; RB-0083 Governance + Architecture FULL PASS; zero review blockers; zero behind; expected-head merge; promote only CONTRACT_FROZEN_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1 + READY_FOR_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1."
     },
     {
       "priority": 1060,
@@ -6511,7 +6511,7 @@
       "slot_id": "security-minimal-admin-toolchain-migration-v1",
       "title": "Repository security minimal admin toolchain migration V1",
       "role": "AGENT_SECURITY",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "SECURITY_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1",
       "source": "Issue #1310 / PR #1311; research #1308/#1309 clean-graph proof",
       "dependencies": [
@@ -6549,7 +6549,23 @@
         "deploy/release widening"
       ],
       "claim_branch": "agent/security-minimal-admin-toolchain-migration-v1",
-      "close_condition": "Exact #1310 13-file scope; reproducible 0-vulnerability lock; affected braces chain absent; Security Refresh + Architecture + Governance + Distributable + Browser exact-head PASS; zero review blockers; zero behind; expected-head merge; promote only PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1."
+      "close_condition": "Exact #1310 13-file scope; reproducible 0-vulnerability lock; affected braces chain absent; Security Refresh + Architecture + Governance + Distributable + Browser exact-head PASS; zero review blockers; zero behind; expected-head merge; promote only PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1.",
+      "terminal_result": "PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1",
+      "terminal_evidence": {
+        "issue": 1310,
+        "pr": 1311,
+        "head": "18f6d887867398374b5711ce810fd2b86d62b74b",
+        "security_refresh_run": 37316752594,
+        "architecture_run": 37316752583,
+        "governance_run": 37316752522,
+        "distributable_run": 37316752573,
+        "browser_e2e_run": 37316752923,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+        "dev_vulnerabilities": 0,
+        "distributable_vulnerabilities": 0
+      }
     }
   ],
   "historical_closeout": {

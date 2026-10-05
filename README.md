@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / SECURITY RECONCILIATION | Set-Enabled terminal PASS; #1288/#1298/#1299/#1301 prepared behind #1311 security migration; no final action execution |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0083 | Security migration terminal PASS; #1288 fresh-secure-main contract validation active; #1298/#1299/#1301 prepared downstream; no action execution |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,26 +37,15 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main: `25f098a170c42d30f829d196452189d9f5b71763`, produced by terminal merge of **Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1**.
-- #1286 exact head `c45e623079824b7e75e4a05617f1439a6971ea2f` passed Governance `36932601887`, PHP Quality `36932601852`, Distributable `36932601809`, Architecture `36932601669`, and Platform Compatibility `36932601737`; RB-0082 is terminal PASS.
-- Repository security Issue #1289 is now being resolved through **Issue #1310 / PR #1311 — minimal admin build/lint toolchain migration V1**, instead of waiting for an upstream `braces` release.
-- Research #1308 / PR #1309 proved the replacement dependency graph before implementation: 62 package-lock entries, 0 dev vulnerabilities, 0 distributable vulnerabilities, and no `braces`, `micromatch`, `fast-glob`, `stylelint`, `webpack-dev-server` or `@wordpress/scripts`.
-- #1311 replaces the monolithic `@wordpress/scripts` dev graph with pinned `@biomejs/biome 2.5.15`, `esbuild 0.28.2`, `sass 1.105.1`, and `typescript6 6.0.2`; no npm overrides, fork, advisory waiver, or audit-threshold reduction is used.
-- The repo-owned admin toolchain preserves the five existing admin entry triplets, compiles TypeScript through esbuild, compiles local SCSS through Sass, generates deterministic `.asset.php` metadata with empty dependencies and content-hash versions, and validates repeated build byte identity.
-- Last product/toolchain head before this shared-truth reconciliation: `c1f9d81177031d997b490b2be64d47c863121cda`.
-- Security Lockfile Refresh `37315744695` PASS: committed/reproduced lock SHA256 both `88e943bde327ec4f88c034c75a877defca8e1367052c654791e21622dd2b0c0b`, 0-byte diff, dev/distributable vulnerabilities 0.
-- Architecture Guards `37315744449` **FULL PASS**, including Biome, SCSS validation, TypeScript, deterministic admin build, npm/Composer advisory gates, PHPCS, PHPStan, PHPUnit, smoke, MySQL, real WordPress AJAX, Action Scheduler and durable JobService integrations.
-- Distributable Package `37315744645` **PASS**, including Free/Pro deterministic rebuilds, compatibility bootstrap and ZIP/package-boundary checks.
-- Browser E2E Accessibility `37315744670` remains required before terminal #1311 merge; final shared-truth head must rerun required CI.
-- Dashboard action chain remains deliberately stacked and non-mergeable behind security/main reconciliation:
-  - #1288 / RB-0083 Input-Aware Authorization contract;
-  - #1298 / RB-0084 bounded Input-Aware Authorization implementation;
-  - #1299 / RB-0085 trusted `form_action` UI/confirmation contract;
-  - #1301 / RB-0086 trusted `form_action` confirmation preflight implementation.
-- #1297 final action execution remains implementation-forbidden until RB-0083 through RB-0086 are terminal.
-- After #1311 merge: close #1289, rebase #1288 to fresh main, then progress RB-0083 → RB-0086 in order.
-- Overall terminal milestone completion remains **5/10 = 50%**. Security/toolchain remediation and prepared internal tranches do not create a new terminal roadmap milestone.
-- No full 56-surface parity, production deployment, GA, updater/TUF, permanent P-001/CF, release authority or ADR-0010 promotion follows.
+- Exact current main: `1db4daa0cfb786b86af62d06c1bac27d64f3cfa0`.
+- Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS. Security Lockfile Refresh `37316752594`, Architecture `37316752583`, Governance `37316752522`, Distributable `37316752573`, and Browser E2E `37316752923` all passed on exact final head.
+- The maintained Node admin graph now has dev vulnerabilities 0, high 0, critical 0, distributable vulnerabilities 0; the affected `braces` chain and `@wordpress/scripts` meta-package are absent without audit waivers or forks.
+- RB-0087 is terminal PASS and Issue #1289 is resolved/closed.
+- Issue #1287 / PR #1288 / RB-0083 is now the active fresh-secure-main contract tranche. It changes exactly one Input-Aware Authorization contract document plus five shared-truth files.
+- The frozen contract allows future validated bound input to reach canonical `AbilityRegistry::authorize()` only. It does **not** authorize `AbilityRegistry::execute()`, owner handler execution, confirmation UI, audit orchestration, Forms mutation, REST mutation, or deployment/release widening.
+- Downstream prepared order remains: #1298/RB-0084 evaluator implementation → #1299/RB-0085 trusted UI/confirmation contract → #1301/RB-0086 non-executing confirmation preflight → #1297 separately reviewed final execution.
+- #1298/#1299/#1301 remain non-mergeable until each predecessor gate is terminal and each branch is reconciled to fresh main.
+- Overall terminal roadmap completion is unchanged by prepared stacked work until terminal merges occur.
 
 ## Current lifecycle
 
