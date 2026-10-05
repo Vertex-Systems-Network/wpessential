@@ -19,6 +19,7 @@ final readonly class DashboardWidgetContentClassDescriptor
     public const TYPE_ANNOUNCEMENT = 'announcement';
     public const TYPE_SUPPORT_ONBOARDING = 'support_onboarding';
     public const TYPE_ICON_LINK = 'icon_link';
+    public const TYPE_FORM_ACTION = 'form_action';
 
     /** @var list<string> */
     public const TRUSTED_TYPES = [
@@ -29,6 +30,7 @@ final readonly class DashboardWidgetContentClassDescriptor
         self::TYPE_ANNOUNCEMENT,
         self::TYPE_SUPPORT_ONBOARDING,
         self::TYPE_ICON_LINK,
+        self::TYPE_FORM_ACTION,
     ];
 
     public function __construct(

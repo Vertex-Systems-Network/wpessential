@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1294",
-  "anchor_main_sha": "25f098a170c42d30f829d196452189d9f5b71763",
+  "source_issue": "#1297",
+  "anchor_main_sha": "713942185ce5340192b2a76bde29b69d68aed975",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2694,12 +2694,15 @@
       "status": "PASS",
       "evidence": [
         "PR #1286 exact head c45e623079824b7e75e4a05617f1439a6971ea2f",
-        "Governance 36932601887 PASS",
-        "PHP Quality 36932601852 PASS",
-        "Distributable 36932601809 PASS",
-        "Architecture 36932601669 PASS",
-        "Platform Compatibility 36932601737 PASS",
-        "merge 25f098a170c42d30f829d196452189d9f5b71763"
+        "Governance Gate 36932601887 PASS",
+        "PHP Quality Toolchain 36932601852 PASS",
+        "Distributable Package 36932601809 PASS",
+        "Architecture Guards 36932601669 PASS",
+        "Platform Compatibility Matrix 36932601737 PASS",
+        "zero unresolved review blockers",
+        "zero commits behind main",
+        "PR #1286 merged as 25f098a170c42d30f829d196452189d9f5b71763",
+        "verdict PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1"
       ],
       "note": "PASS may promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1. No Dashboard action execution or trusted form_action UI follows."
     },
@@ -2708,155 +2711,197 @@
       "source": "Issue #1287 / PR #1288",
       "category": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "Governance + Architecture",
-      "environment": "prepared contract branch",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head contract validation",
+      "environment": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1 exact head 044259a6b0c1d61170e812ce962787e30abc0a49",
       "dependencies": [
-        "RB-0082 PASS",
-        "#1289 resolution"
+        "RB-0082 terminal PASS",
+        "RB-0087 terminal PASS",
+        "fresh main 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0"
       ],
-      "authorization": "contract only",
+      "authorization": "Exact six-file contract/shared-truth scope; no runtime/action execution.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 10,
-      "dedup_key": "dashboard-widgets|input-aware-contract|1287",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "dedup_key": "dashboard-widgets|input-aware-action-authorization-contract|issue1287|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Governance PASS",
-        "Architecture blocked by #1289"
+        "PR #1288 exact six-file scope",
+        "Governance 37318710838 PASS",
+        "Architecture 37318710417 FULL PASS",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as 089aeed095c582756011f88c5bfcb2edd9dd1917",
+        "verdict CONTRACT_FROZEN_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1"
       ],
-      "note": "No PASS until #1289 clears."
+      "note": "Security blocker is resolved. Merge only after exact-head Governance + Architecture FULL PASS, zero behind and zero unresolved review blockers."
     },
     {
       "id": "RB-0084",
       "source": "Issue #1291 / PR #1298",
       "category": "DASHBOARD_WIDGETS_BOUNDED_INPUT_AWARE_ACTION_AUTHORIZATION_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "required implementation CI",
-      "environment": "prepared branch",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Platform + Architecture exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-input-aware-action-authorization-v1 exact head d786beff0ead88eb83252cd414e040a7883430c4",
       "dependencies": [
-        "RB-0083 PASS",
-        "#1289 resolution"
+        "RB-0083 terminal PASS",
+        "RB-0087 terminal PASS",
+        "fresh-main reconciliation"
       ],
-      "authorization": "prepared evaluator/tests only",
+      "authorization": "Prepared exact two-file evaluator/test implementation; no execute/UI/audit/REST/package widening.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 15,
-      "dedup_key": "dashboard-widgets|input-aware-impl|1291",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "dedup_key": "dashboard-widgets|bounded-input-aware-action-authorization|issue1291|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Governance/PHP/Distributable/Platform PASS",
-        "Architecture blocked by #1289"
+        "PR #1298 exact two-file scope",
+        "Governance 37319094769 PASS",
+        "PHP Quality 37319094814 PASS",
+        "Distributable 37319094729 PASS",
+        "Architecture 37319094548 FULL PASS",
+        "Platform Compatibility 37319094511 PASS 10/10",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as a7804178ae287bb0550c9456b07ea0aea70fb93a",
+        "verdict PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1"
       ],
-      "note": "PREPARED_NOT_MERGEABLE."
+      "note": "No PASS promotion until RB-0083/RB-0087 terminal and fresh exact-head validation."
     },
     {
       "id": "RB-0085",
       "source": "Issue #1296 / PR #1299",
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_CONTRACT_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "Governance + Architecture",
-      "environment": "prepared contract branch",
+      "command_or_workflow": "Governance Gate + Architecture Guards exact-head stacked contract validation",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1 exact head 93dd6bf2efbbf1f52ea4ba3a259b71e1bc6a50e0",
       "dependencies": [
-        "RB-0083 PASS",
-        "RB-0084 PASS",
-        "asset prerequisite",
-        "#1289 resolution"
+        "RB-0083 terminal PASS",
+        "RB-0084 terminal PASS",
+        "RB-0087 terminal PASS",
+        "fresh main a7804178ae287bb0550c9456b07ea0aea70fb93a"
       ],
-      "authorization": "contract only",
+      "authorization": "Prepared contract/shared-truth only; no runtime execution.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 10,
-      "dedup_key": "dashboard-widgets|form-action-ui-contract|1296",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "dedup_key": "dashboard-widgets|trusted-form-action-ui-confirmation-contract|issue1296|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Governance PASS",
-        "Architecture blocked by #1289"
+        "PR #1299 exact six-file scope",
+        "Governance 37319828147 PASS",
+        "Architecture 37319827994 FULL PASS",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e",
+        "verdict CONTRACT_FROZEN_TRUSTED_FORM_ACTION_UI_CONFIRMATION_V1"
       ],
-      "note": "Needs asset prerequisite reconciliation."
+      "note": "Merge only after exact-head Governance + Architecture FULL PASS, zero behind and zero unresolved review blockers."
     },
     {
       "id": "RB-0086",
       "source": "Issue #1300 / PR #1301",
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "Governance + PHP + Distributable + Browser + Platform + Architecture",
-      "environment": "exact prepared head eef275ceedd0ca5241a489d188d350c459640771",
+      "command_or_workflow": "Governance + Distributable + Browser + Platform + Architecture + main-bound PHP Quality terminal validation",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 exact head c5250ddad34ac0a2d11dcb651ee7a55977ba924f",
       "dependencies": [
-        "RB-0083/84/85",
-        "shared asset runtime terminal",
-        "#1289 resolution"
+        "RB-0083 terminal PASS",
+        "RB-0084 terminal PASS",
+        "RB-0085 terminal PASS",
+        "RB-0087 terminal PASS",
+        "fresh main 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e"
       ],
-      "authorization": "preflight only, no execute",
+      "authorization": "Prepared trusted form_action confirmation preflight only; confirmation_ready is not executed.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 20,
-      "dedup_key": "dashboard-widgets|form-action-preflight|1300",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "dedup_key": "dashboard-widgets|trusted-form-action-confirmation-preflight|issue1300|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Governance 37306315812 PASS",
-        "Distributable 37306315904 PASS",
-        "Platform 37306315830 PASS 10/10",
-        "Browser 37306315836 PASS",
-        "Architecture blocked by #1289",
-        "plan drift: direct AdminAssetManifest enqueue must be replaced by shared loader"
+        "PR #1301 exact 21-file #1300 allowlist",
+        "Governance 37320691873 PASS",
+        "PHP Quality 37320691877 PASS",
+        "Distributable 37320691991 PASS",
+        "Browser E2E Accessibility 37320692040 PASS",
+        "Platform Compatibility 37320691996 PASS 10/10",
+        "Architecture 37320692399 FULL PASS",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as 713942185ce5340192b2a76bde29b69d68aed975",
+        "verdict PASS_TRUSTED_DASHBOARD_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1"
       ],
-      "note": "PREPARED_NOT_MERGEABLE; asset reconciliation required."
+      "note": "PASS promotes only trusted non-executing confirmation preflight; final execution remains separately governed by RB-0088."
     },
     {
       "id": "RB-0087",
-      "source": "Issue #1297 / PR #1304",
-      "category": "DASHBOARD_WIDGETS_FINAL_BOUNDED_FORM_ACTION_EXECUTION_CONTRACT_V1",
+      "source": "Issue #1310 / PR #1311",
+      "category": "SECURITY_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "Governance + Architecture",
-      "environment": "prepared contract branch",
+      "command_or_workflow": "Security Lockfile Refresh + Architecture Guards + Governance Gate + Distributable Package + Browser E2E Accessibility exact-head validation",
+      "environment": "agent/security-minimal-admin-toolchain-migration-v1 exact head 18f6d887867398374b5711ce810fd2b86d62b74b",
       "dependencies": [
-        "RB-0086 PASS",
-        "#1289 resolution"
+        "RB-0082 terminal PASS",
+        "research #1308/#1309 clean graph proof",
+        "exact main 25f098a170c42d30f829d196452189d9f5b71763"
       ],
-      "authorization": "execution contract only",
+      "authorization": "Exact #1310 scope: minimal maintained admin build/lint graph, deterministic build metadata, two CI-proven TypeScript compatibility edits and five shared-truth files; no product PHP/runtime behavior change or audit weakening.",
       "merge_blocking": true,
       "security_critical": true,
-      "expected_minutes": 10,
-      "dedup_key": "dashboard-widgets|final-execution-contract|1297",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "expected_minutes": 25,
+      "dedup_key": "security|minimal-admin-toolchain-migration|issue1310|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "Governance PASS",
-        "Architecture blocked by #1289",
-        "no runtime execution code"
+        "PR #1311 exact head 18f6d887867398374b5711ce810fd2b86d62b74b",
+        "Security Lockfile Refresh 37316752594 PASS",
+        "Architecture Guards 37316752583 FULL PASS",
+        "Governance Gate 37316752522 PASS",
+        "Distributable Package 37316752573 PASS",
+        "Browser E2E Accessibility 37316752923 PASS",
+        "exact 13 authorized files",
+        "zero unresolved review blockers",
+        "zero commits behind main before merge",
+        "PR #1311 merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+        "dev vulnerabilities 0; high 0; critical 0; distributable vulnerabilities 0",
+        "affected braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts chain absent",
+        "verdict PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1"
       ],
-      "note": "Downstream of corrected asset/preflight chain."
+      "note": "PASS resolves #1289 without waiver/fork and unblocks RB-0083."
     },
     {
       "id": "RB-0088",
-      "source": "Issue #1294 / PR #1305",
-      "category": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_CONTRACT_V1",
+      "source": "Issue #1297",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_FORM_ACTION_EXECUTION_V1",
       "runner": "GitHub Actions",
-      "command_or_workflow": "Governance Gate + Architecture Guards exact-head contract validation",
-      "environment": "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1 based on main 25f098a170c42d30f829d196452189d9f5b71763",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Browser E2E + Platform Compatibility + Architecture exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-form-action-execution-v1 exact base 713942185ce5340192b2a76bde29b69d68aed975",
       "dependencies": [
-        "ADR-0150 planning architecture",
-        "#1292 exact-main prerequisite audit",
-        "#1289 resolution before merge"
+        "RB-0082 terminal PASS",
+        "RB-0083 terminal PASS",
+        "RB-0084 terminal PASS",
+        "RB-0085 terminal PASS",
+        "RB-0086 terminal PASS",
+        "RB-0087 terminal PASS",
+        "exact source base 713942185ce5340192b2a76bde29b69d68aed975"
       ],
-      "authorization": "Exact six-file contract/shared-truth scope only; freeze shared AssetRegistry + trusted build-entry mapping + scoped WordPress loader; no runtime enqueue.",
+      "authorization": "Exact #1297 14-file scope; only wpessential/forms-workflows/set-enabled execution; exactly one AbilityRegistry::execute per admitted request; no generic execution/REST/admin-post/retry/shared Platform mutation.",
       "merge_blocking": true,
       "security_critical": true,
-      "expected_minutes": 10,
-      "dedup_key": "platform|assetregistry-wordpress-loader-contract|1294|exact-head",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "expected_minutes": 25,
+      "dedup_key": "dashboard-widgets|bounded-form-action-execution|issue1297|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
       "evidence": [
-        "#1292 selected shared composition",
-        "ADR-0150 shared registry/loader architecture",
-        "prepared #1301 plan-drift requires shared loader reconciliation",
-        "contract preserves AssetDescriptor semantics and uses code-owned mapping"
+        "Fresh-main implementation allowlist frozen on Issue #1297",
+        "Runtime source contains one Dashboard-owned AbilityRegistry::execute call site and zero direct owner handle() calls",
+        "Focused execution/result/presenter/module tests added",
+        "Full exact-head CI pending"
       ],
-      "note": "No runtime asset loading or Dashboard UI promotion. #1301 must consume later terminal shared runtime."
+      "note": "PASS may promote only PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1; not full Surface 10 parity/deploy/GA."
     }
   ],
   "last_reconciled_issue": "#1283",

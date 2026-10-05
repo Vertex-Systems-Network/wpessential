@@ -1,153 +1,102 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-05 — shared AssetRegistry prerequisite reconciliation active
+## 2026-10-05 — confirmation preflight terminal PASS; final execution RB-0088 active
 
-### Exact terminal repository truth
+### Exact current main truth
 
-- Exact current main: `25f098a170c42d30f829d196452189d9f5b71763`.
-- Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1 — terminal PASS.
-- Exact #1286 head: `c45e623079824b7e75e4a05617f1439a6971ea2f`.
-- Governance `36932601887` PASS.
-- PHP Quality `36932601852` PASS.
-- Distributable `36932601809` PASS.
-- Architecture `36932601669` PASS.
-- Platform Compatibility `36932601737` PASS.
-- RB-0082 terminal PASS.
+- Exact current main: `713942185ce5340192b2a76bde29b69d68aed975`.
+- Security RB-0087, Input-Aware Authorization RB-0083/RB-0084, and trusted UI contract RB-0085 remain terminal PASS.
+- Issue #1300 / PR #1301 — trusted form_action UI + confirmation preflight V1 — terminal PASS:
+  - exact head `c5250ddad34ac0a2d11dcb651ee7a55977ba924f`;
+  - Governance `37320691873` PASS;
+  - PHP Quality `37320691877` PASS;
+  - Distributable `37320691991` PASS;
+  - Browser E2E Accessibility `37320692040` PASS;
+  - Platform Compatibility `37320691996` PASS, 10/10 cells;
+  - Architecture `37320692399` FULL PASS;
+  - exact 21-file allowlist;
+  - zero behind;
+  - zero unresolved review blockers;
+  - merged as `713942185ce5340192b2a76bde29b69d68aed975`;
+  - verdict `PASS_TRUSTED_DASHBOARD_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1`.
+- RB-0086 is terminal PASS.
 - RB-0073 remains historical FAIL.
 
-### Repository-wide security blocker
+### Active #1297 / PR #1312 — final bounded form_action execution V1
 
-Issue #1289 remains `BLOCKED_UPSTREAM`.
+Claim branch:
 
-Fresh 2026-10-05 public evidence still reports:
-- `braces` latest published version: 3.0.3;
-- affected: <=3.0.3;
-- patched versions: none;
-- upstream fix PR remains open/unmerged.
+`agent/dashboard-widgets-bounded-form-action-execution-v1`
 
-Architecture high-severity advisory policy is not waived or lowered.
+PR #1312 is the active RB-0088 implementation PR.
 
-### Prepared Dashboard stack
+Fresh-main exact maximum scope is frozen to 14 files:
 
-#### #1287 / PR #1288 / RB-0083
-Input-Aware Authorization contract:
-- contract prepared;
-- feature Governance PASS;
-- Architecture blocked by #1289;
-- no merge/PASS promotion.
+Runtime/browser:
+1. `admin-ui/src/main.ts`
+2. `frameworks/Modules/DashboardWidgets/DashboardWidgetFormActionPresenter.php`
+3. `frameworks/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionAjaxHandler.php`
+4. `frameworks/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionResultAdapter.php`
+5. `frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php`
 
-#### #1291 / PR #1298 / RB-0084
-Input-Aware Authorization implementation:
-- exact prepared head `0111346896b5092abd65a16939bf2fdb15d20cc9`;
-- Governance/PHP Quality/Distributable PASS;
-- Platform Compatibility 10/10 PASS;
-- Architecture fails only at #1289;
-- 0 review threads;
-- PREPARED_NOT_MERGEABLE.
+Focused tests:
+6. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetFormActionPresenterTest.php`
+7. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionAjaxHandlerTest.php`
+8. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionResultAdapterTest.php`
+9. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php`
 
-#### #1296 / PR #1299 / RB-0085
-Trusted form_action UI + confirmation contract:
-- exact six-file stacked contract;
+Shared truth:
+10. `.ai/state/CURRENT-STATE.yaml`
+11. `.ai/state/LAST-CHECKPOINT.md`
+12. `README.md`
+13. `config/coordination/agent-work-queue.json`
+14. `config/coordination/runner-benchmark.json`
+
+Implementation boundary:
+- dedicated authenticated execute route `dashboard-widgets.form-action.execute`;
+- separate server-generated execute nonce;
+- browser payload remains exactly Definition id/revision + `confirmation_state=accepted`;
+- only `wpessential/forms-workflows/set-enabled` is executable in V1;
+- server repeats current Definition reload/revision check, registration compilation, input binding and Input-Aware Authorization;
+- required authorization → confirmation → execution-attempt audits occur before mutation;
+- exactly one `AbilityRegistry::execute()` call per admitted request;
+- strict Set-Enabled result adapter accepts only exact `status_changed` or `already_target_status` owner result shapes consistent with bound input;
+- owner exception or malformed/ambiguous post-execute result => `execution_outcome_unknown`;
+- known success + terminal result-audit persistence failure => `execution_succeeded_audit_degraded`;
+- browser locks the action after an execution attempt and requires refresh/re-read;
+- retry mode is `none`;
+- no generic Ability execution;
+- no generic `AbilityAjaxHandler`;
+- no direct owner `handle()` invocation from Dashboard;
+- no REST/admin-post mutation;
+- no shared Platform source mutation;
+- no dependency/package change;
+- no deploy/release widening.
+
+### RB-0088 merge gate
+
+Required exact-head:
 - Governance PASS;
-- Architecture blocked only by #1289;
-- PREPARED_NOT_MERGEABLE.
+- PHP Quality PASS;
+- Distributable PASS;
+- Browser E2E Accessibility PASS;
+- Platform Compatibility PASS;
+- Architecture FULL PASS;
+- exact 14-file allowlist;
+- zero behind;
+- zero unresolved review blockers;
+- expected-head merge.
 
-#### #1300 / PR #1301 / RB-0086
-Trusted form_action presentation + confirmation preflight:
-- exact prepared head `eef275ceedd0ca5241a489d188d350c459640771`;
-- 21/21 authorized files;
-- 0 behind stacked base;
-- 0 unresolved review threads;
-- Governance `37306315812` PASS;
-- Distributable `37306315904` PASS;
-- Platform Compatibility `37306315830` PASS 10/10;
-- Browser E2E Accessibility `37306315836` PASS;
-- Architecture `37306315833` fails only at #1289 after JS lint/Stylelint/TypeScript/admin build PASS;
-- zero AbilityRegistry execute/direct owner handle/Forms mutation in the preflight path.
+Promotion only:
+`PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1`.
 
-### Plan-drift finding — shared assets
-
-Older #1292/#1294 planning was still open and remains architecturally relevant.
-
-ADR-0150 says the Platform architecture requires one shared Asset Registry / scoped loader for:
-- asset identity and ownership;
-- dependency resolution;
-- route/screen scoping;
-- trusted build-manifest mapping.
-
-#1292 selected:
-
-`trusted build manifest → AssetRegistry ownership → scoped WordPress loader`.
-
-Prepared #1301 currently directly resolves `AdminAssetManifest('main')` inside `NativeWordPressDashboardWidgetEnvironment` and enqueues the bundle through a Dashboard-module environment seam.
-
-That is safe as a prototype but bypasses the selected shared AssetRegistry path.
-
-Therefore #1301 is not terminally merge-ready even after #1289 clears until asset-runtime reconciliation is complete.
-
-### #1294 / PR #1305 — active shared asset contract
-
-Status: **PREPARED_NOT_MERGEABLE / contract only**.
-
-Exact main base:
-`25f098a170c42d30f829d196452189d9f5b71763`.
-
-V1 design:
-- preserve existing `AssetDescriptor` semantics;
-- add a Platform-owned trusted logical-handle → build-entry mapping registry;
-- reuse `AdminAssetManifest` as trusted generated-file resolver;
-- add one shared scoped WordPress loader;
-- publish stable services:
-  - `platform.assets`;
-  - `platform.assets.build-entries`;
-  - `platform.assets.manifest`;
-  - `platform.assets.wordpress`.
-- first consumer handle: `wpe-dashboard-form-action`;
-- owner Surface 10;
-- exact site/network Dashboard routes only;
-- trusted `main` script entry;
-- no style entry in V1 unless separately proved necessary;
-- no Definition-selected path/URL;
-- no remote fallback;
-- no global wp-admin loading;
-- no action execution.
-
-RB-0088 is the contract gate.
-
-### #1297 / PR #1304 / RB-0087
-
-Final bounded form_action execution contract is prepared but remains downstream.
-
-It freezes:
-- Set-Enabled-only owner allowlist;
-- exact pre-execution audit order;
-- exactly one later `AbilityRegistry::execute()`;
-- no direct owner handle;
-- exact seven-field result adapter;
-- ambiguity/no-retry semantics.
-
-No execution runtime is authorized.
-
-### Corrected dependency order
-
-1. resolve #1289 without weakening Architecture;
-2. #1288 / RB-0083;
-3. #1298 / RB-0084;
-4. #1305 / RB-0088 shared AssetRegistry contract;
-5. bounded shared AssetRegistry runtime implementation;
-6. reconcile #1301 to consume shared loader;
-7. #1299/#1301 terminal contract/preflight gates as appropriate after reconciliation;
-8. #1304 / RB-0087 final execution contract;
-9. separately authorized bounded execution implementation.
+This remains narrower than full Surface 10 runtime parity, production deployment or GA.
 
 ### Recovery order
 
-1. read `.ai/state/CURRENT-STATE.yaml`;
-2. read this checkpoint;
-3. resolve exact main and open PRs #1288, #1298, #1299, #1301, #1304, #1305;
-4. read #1289;
-5. read #1292 and #1294 asset prerequisite truth;
-6. read queue + runner benchmark;
-7. do not merge any affected branch while Architecture is red;
-8. do not terminally merge #1301 with module-local asset enqueue;
-9. do not implement final Dashboard execution runtime before all predecessor gates are terminal.
+1. Read CURRENT-STATE + this checkpoint.
+2. Resolve exact current main and #1297 implementation branch/PR.
+3. Verify exact 14-file diff.
+4. Run/inspect RB-0088 full exact-head CI.
+5. Fix any real failures within the frozen allowlist.
+6. Merge only with expected-head proof.
