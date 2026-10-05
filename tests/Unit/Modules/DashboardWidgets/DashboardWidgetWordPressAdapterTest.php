@@ -97,6 +97,54 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         );
     }
 
+    public function testFormActionCallbackRechecksLifecycleAfterRegistration(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/set-enabled';
+        $resolver = static fn (string $name): ?array => [
+            'name' => $name,
+            'owner_surface_id' => 17,
+            'mutates' => true,
+            'ui_allowed' => true,
+            'input_schema' => [
+                'type' => 'object',
+                'required' => ['definition_id', 'expected_revision', 'enabled'],
+                'properties' => [
+                    'definition_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                    'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    'enabled' => ['type' => 'boolean'],
+                ],
+                'additionalProperties' => false,
+            ],
+        ];
+        $presenter = new DashboardWidgetFormActionPresenter(
+            'wpessential_dispatch',
+            static fn (): string => 'test-nonce',
+        );
+        $now = 1737000000;
+        $clock = new DashboardWidgetRuntimeClock(static function () use (&$now): int {
+            return $now;
+        });
+
+        [$adapter, , $environment, $renderer] = $this->harness(
+            [$this->formActionDefinition($abilityId, [
+                'schedule_start' => '2025-01-01T00:00:00Z',
+                'schedule_end' => '2025-02-01T00:00:00Z',
+            ])],
+            formActionAbilityResolver: $resolver,
+            formActionPresenter: $presenter,
+            runtimeClock: $clock,
+        );
+
+        $adapter->registerSiteDashboard();
+        self::assertCount(1, $environment->widgets);
+
+        $now = 1738368000;
+        ($environment->widgets[0]['callback'])();
+
+        self::assertSame(0, $renderer->calls);
+        self::assertSame([], $environment->outputs);
+    }
+
     public function testPlanningSortsCanonicallyAndSuppressesAllSameTargetColliders(): void
     {
         $definitions = [
@@ -1150,8 +1198,37 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ];
     }
 
-    private function formActionDefinition(string $abilityId): Definition
+    private function formActionDefinition(string $abilityId, array $lifecycle = []): Definition
     {
+        $widget = [
+            'key' => 'workflow-control',
+            'title' => 'Workflow control',
+            'type' => 'form_action',
+            'context' => 'normal',
+            'priority' => 'default',
+            'network_dashboard' => false,
+            'action' => [
+                'ability_id' => $abilityId,
+                'confirmation' => [
+                    'title' => 'Disable workflow?',
+                    'message' => 'This changes workflow availability.',
+                    'confirm_label' => 'Disable',
+                    'cancel_label' => 'Cancel',
+                ],
+                'input' => [
+                    'definition_id' => [
+                        'source' => 'literal',
+                        'value' => '22222222-2222-4222-8222-222222222222',
+                    ],
+                    'expected_revision' => ['source' => 'literal', 'value' => 4],
+                    'enabled' => ['source' => 'literal', 'value' => false],
+                ],
+            ],
+        ];
+        if ($lifecycle !== []) {
+            $widget['lifecycle'] = $lifecycle;
+        }
+
         return new Definition(
             id: '41000000-0000-4000-8000-000000000001',
             slug: 'workflow-control',
@@ -1159,33 +1236,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             schemaVersion: 1,
             ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
             status: DefinitionStatus::Published,
-            payload: [
-                'widget' => [
-                    'key' => 'workflow-control',
-                    'title' => 'Workflow control',
-                    'type' => 'form_action',
-                    'context' => 'normal',
-                    'priority' => 'default',
-                    'network_dashboard' => false,
-                    'action' => [
-                        'ability_id' => $abilityId,
-                        'confirmation' => [
-                            'title' => 'Disable workflow?',
-                            'message' => 'This changes workflow availability.',
-                            'confirm_label' => 'Disable',
-                            'cancel_label' => 'Cancel',
-                        ],
-                        'input' => [
-                            'definition_id' => [
-                                'source' => 'literal',
-                                'value' => '22222222-2222-4222-8222-222222222222',
-                            ],
-                            'expected_revision' => ['source' => 'literal', 'value' => 4],
-                            'enabled' => ['source' => 'literal', 'value' => false],
-                        ],
-                    ],
-                ],
-            ],
+            payload: ['widget' => $widget],
             revision: 3,
             dependencies: [],
         );
