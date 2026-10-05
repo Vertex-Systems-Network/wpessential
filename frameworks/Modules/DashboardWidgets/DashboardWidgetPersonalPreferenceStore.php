@@ -102,32 +102,40 @@ final readonly class DashboardWidgetPersonalPreferenceStore
         $this->assertUserAndScreen($userId, $screenId);
 
         $dismissed = $this->dismissed($userId, $screenId);
-        $key = $this->dismissedKey($screenId);
-        ($this->metaDeleter)($userId, $key);
-        if (($this->metaReader)($userId, $key) !== '' && ($this->metaReader)($userId, $key) !== null && ($this->metaReader)($userId, $key) !== false) {
+        $hidden = $this->listResetPlan($userId, 'metaboxhidden_' . $screenId);
+        $collapsed = $this->listResetPlan($userId, 'closedpostboxes_' . $screenId);
+        $ordered = $this->orderResetPlan($userId, 'meta-box-order_' . $screenId);
+
+        $dismissedKey = $this->dismissedKey($screenId);
+        ($this->metaDeleter)($userId, $dismissedKey);
+        $remaining = ($this->metaReader)($userId, $dismissedKey);
+        if ($remaining !== '' && $remaining !== null && $remaining !== false) {
             throw new RuntimeException('Dashboard Widget dismiss reset verification failed.');
         }
 
-        $hiddenRemoved = $this->stripListOption($userId, 'metaboxhidden_' . $screenId);
-        $collapsedRemoved = $this->stripListOption($userId, 'closedpostboxes_' . $screenId);
-        $orderedRemoved = $this->stripOrderOption($userId, 'meta-box-order_' . $screenId);
+        $this->applyOptionPlan($userId, $hidden);
+        $this->applyOptionPlan($userId, $collapsed);
+        $this->applyOptionPlan($userId, $ordered);
 
         return [
             'screen_id' => $screenId,
             'removed' => [
                 'dismissed' => count($dismissed),
-                'hidden' => $hiddenRemoved,
-                'collapsed' => $collapsedRemoved,
-                'ordered' => $orderedRemoved,
+                'hidden' => $hidden['removed'],
+                'collapsed' => $collapsed['removed'],
+                'ordered' => $ordered['removed'],
             ],
         ];
     }
 
-    private function stripListOption(int $userId, string $key): int
+    /**
+     * @return array{key:string,changed:bool,value:mixed,removed:int}
+     */
+    private function listResetPlan(int $userId, string $key): array
     {
         $raw = ($this->optionReader)($userId, $key);
         if ($raw === '' || $raw === null || $raw === false) {
-            return 0;
+            return ['key' => $key, 'changed' => false, 'value' => $raw, 'removed' => 0];
         }
         if (!is_array($raw) || !array_is_list($raw)) {
             throw new RuntimeException('Stored Dashboard Widget list preference is malformed.');
@@ -146,21 +154,17 @@ final readonly class DashboardWidgetPersonalPreferenceStore
             $kept[] = $id;
         }
 
-        if ($removed > 0) {
-            ($this->optionWriter)($userId, $key, $kept);
-            if (($this->optionReader)($userId, $key) !== $kept) {
-                throw new RuntimeException('Dashboard Widget list preference reset verification failed.');
-            }
-        }
-
-        return $removed;
+        return ['key' => $key, 'changed' => $removed > 0, 'value' => $kept, 'removed' => $removed];
     }
 
-    private function stripOrderOption(int $userId, string $key): int
+    /**
+     * @return array{key:string,changed:bool,value:mixed,removed:int}
+     */
+    private function orderResetPlan(int $userId, string $key): array
     {
         $raw = ($this->optionReader)($userId, $key);
         if ($raw === '' || $raw === null || $raw === false) {
-            return 0;
+            return ['key' => $key, 'changed' => false, 'value' => $raw, 'removed' => 0];
         }
         if (!is_array($raw) || array_is_list($raw)) {
             throw new RuntimeException('Stored Dashboard Widget order preference is malformed.');
@@ -191,14 +195,22 @@ final readonly class DashboardWidgetPersonalPreferenceStore
             $next[$context] = implode(',', $kept);
         }
 
-        if ($removed > 0) {
-            ($this->optionWriter)($userId, $key, $next);
-            if (($this->optionReader)($userId, $key) !== $next) {
-                throw new RuntimeException('Dashboard Widget order preference reset verification failed.');
-            }
+        return ['key' => $key, 'changed' => $removed > 0, 'value' => $next, 'removed' => $removed];
+    }
+
+    /**
+     * @param array{key:string,changed:bool,value:mixed,removed:int} $plan
+     */
+    private function applyOptionPlan(int $userId, array $plan): void
+    {
+        if (!$plan['changed']) {
+            return;
         }
 
-        return $removed;
+        ($this->optionWriter)($userId, $plan['key'], $plan['value']);
+        if (($this->optionReader)($userId, $plan['key']) !== $plan['value']) {
+            throw new RuntimeException('Dashboard Widget preference reset verification failed.');
+        }
     }
 
     private function assertUserAndScreen(int $userId, string $screenId): void
