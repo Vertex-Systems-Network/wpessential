@@ -48,6 +48,8 @@ final class DashboardWidgetWordPressAdapter
         private readonly DashboardWidgetRegistrationCompiler $registrationCompiler,
         private readonly DashboardWidgetRuntimeRenderExecutor $runtimeRenderExecutor,
         private readonly DashboardWidgetWordPressEnvironmentInterface $environment,
+        private readonly ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
+        private readonly ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
     ) {}
 
     public function registerHooks(): void
@@ -77,6 +79,28 @@ final class DashboardWidgetWordPressAdapter
             );
         } catch (Throwable) {
             // Default-hidden projection is optional and must not break registration.
+        }
+
+        try {
+            $this->environment->registerAction(
+                'admin_enqueue_scripts',
+                [$this, 'enqueueFormActionAssets'],
+            );
+        } catch (Throwable) {
+            // Dedicated action assets are optional until a trusted form_action is rendered.
+        }
+    }
+
+    public function enqueueFormActionAssets(string $hookSuffix): void
+    {
+        if ($hookSuffix !== 'index.php') {
+            return;
+        }
+
+        try {
+            $this->environment->enqueueFormActionAssets();
+        } catch (Throwable) {
+            // Fail closed without affecting the WordPress Dashboard.
         }
     }
 
@@ -516,6 +540,25 @@ final class DashboardWidgetWordPressAdapter
                 channel: ExecutionChannel::Ui,
                 networkId: $this->environment->currentNetworkId(),
             );
+
+            if ($this->contentClassCompiler !== null && $this->formActionPresenter !== null) {
+                $definition = $this->definitions->get($definitionId);
+                if ($definition === null) {
+                    return;
+                }
+
+                $contentClass = $this->contentClassCompiler->compile($definition);
+                if ($contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION) {
+                    $descriptor = $this->registrationCompiler->compile($definition);
+                    $html = $this->formActionPresenter->render(
+                        $descriptor,
+                        $this->environment->ajaxUrl(),
+                    );
+                    $this->environment->outputTrustedHtml($html);
+                    return;
+                }
+            }
+
             $result = $this->runtimeRenderExecutor->render($definitionId, $context);
 
             if (!in_array(

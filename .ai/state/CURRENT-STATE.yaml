@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: a7804178ae287bb0550c9456b07ea0aea70fb93a
-observed_main_source: "Issue #1291 / PR #1298 bounded Input-Aware Action Authorization V1 merged; Governance/PHP/Distributable/Architecture/Platform terminal PASS"
-active_issue: "#1296"
-active_pr: "#1299"
-active_branch: agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1
-current_milestone: "Dashboard Widgets trusted form_action UI + confirmation orchestration contract V1 — fresh-main validation"
+observed_main_sha: 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e
+observed_main_source: "Issue #1296 / PR #1299 trusted form_action UI + confirmation contract merged; Governance + Architecture terminal PASS"
+active_issue: "#1300"
+active_pr: "#1301"
+active_branch: agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1
+current_milestone: "Dashboard Widgets trusted form_action UI + confirmation preflight V1 — fresh-main implementation validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1291 / PR #1298 merged as a7804178ae287bb0550c9456b07ea0aea70fb93a; exact head d786beff0ead88eb83252cd414e040a7883430c4; Governance 37319094769 PASS; PHP Quality 37319094814 PASS; Distributable 37319094729 PASS; Architecture 37319094548 FULL PASS; Platform Compatibility 37319094511 PASS 10/10; exact two-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1."
-next_safe_action: "Run RB-0085 exact-head Governance + Architecture on PR #1299 exact six-file contract scope; require zero behind/review blockers; expected-head merge; then reconcile PR #1301."
-waiting_external: "PR #1299 exact-head RB-0085 Governance + Architecture merge gate"
+last_completed_milestone: "Issue #1296 / PR #1299 merged as 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e; exact head 93dd6bf2efbbf1f52ea4ba3a259b71e1bc6a50e0; Governance 37319828147 PASS; Architecture 37319827994 FULL PASS; exact six-file contract/shared-truth scope; zero review blockers and zero behind; verdict CONTRACT_FROZEN_TRUSTED_FORM_ACTION_UI_CONFIRMATION_V1."
+next_safe_action: "Run RB-0086 full exact-head validation on PR #1301 fresh main; require exact 21-file allowlist, Governance/PHP/Distributable/Browser/Platform/Architecture PASS, zero behind/review blockers; expected-head merge; only then unlock #1297 execution implementation planning."
+waiting_external: "PR #1301 exact-head RB-0086 full CI/review merge gate"
 next_planned_slot:
-  issue: "#1296"
-  slot_id: dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1
-  claim_branch: "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1"
-  claim_rule: "Fresh main exact six-file trusted form_action UI/confirmation contract/shared-truth scope only; no runtime UI/AJAX/audit execution; RB-0085 Governance + Architecture FULL PASS required before expected-head merge."
+  issue: "#1300"
+  slot_id: dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1
+  claim_branch: "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1"
+  claim_rule: "Fresh main exact 21-file #1300 allowlist only; trusted form_action UI + confirmation preflight remains non-executing; RB-0086 full CI/review PASS required before expected-head merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,6 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0085
     - RB-0086
   terminal_pass:
     - RB-0041
@@ -71,6 +70,7 @@ runner_benchmark:
     - RB-0087
     - RB-0083
     - RB-0084
+    - RB-0085
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -113,6 +113,7 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
+  - "Issue #1300 / PR #1301 is the active trusted form_action confirmation-preflight implementation gate on terminal RB-0085 main; confirmation_ready remains pre-execution."
   - "Issue #1296 / PR #1299 is the active trusted form_action contract gate on terminal RB-0084 main; no runtime/action execution in this tranche."
   - "RB-0083 and RB-0084 are terminal PASS; PR #1288 contract and PR #1298 implementation are merged."
   - "Issue #1287 / PR #1288 is the active fresh secure-main contract gate; RB-0083 must pass Governance + Architecture before merge."
@@ -145,4 +146,4 @@ notes:
   - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
   - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: 16 records now include terminal Input-Aware Authorization contract + implementation through RB-0084 on secure main. Active #1296/#1299 freezes trusted form_action presentation/confirmation-preflight semantics only; downstream #1301 implementation remains prepared and non-mergeable until RB-0085 terminal. Final action execution remains forbidden.
+# P1_CORE deep audit: trusted form_action contract is terminal through RB-0085; active #1300/#1301 implements only dedicated trusted presentation + confirmation-preflight, server-side current input rebind, Input-Aware Authorization and canonical audit. confirmation_ready remains not executed. Final owner mutation invocation remains forbidden until separate #1297 gate.
