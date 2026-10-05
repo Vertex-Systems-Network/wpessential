@@ -1,102 +1,76 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-05 — confirmation preflight terminal PASS; final execution RB-0088 active
+## 2026-10-05 — bounded form_action execution terminal PASS; next-gap audit active
 
 ### Exact current main truth
 
-- Exact current main: `713942185ce5340192b2a76bde29b69d68aed975`.
-- Security RB-0087, Input-Aware Authorization RB-0083/RB-0084, and trusted UI contract RB-0085 remain terminal PASS.
-- Issue #1300 / PR #1301 — trusted form_action UI + confirmation preflight V1 — terminal PASS:
-  - exact head `c5250ddad34ac0a2d11dcb651ee7a55977ba924f`;
-  - Governance `37320691873` PASS;
-  - PHP Quality `37320691877` PASS;
-  - Distributable `37320691991` PASS;
-  - Browser E2E Accessibility `37320692040` PASS;
-  - Platform Compatibility `37320691996` PASS, 10/10 cells;
-  - Architecture `37320692399` FULL PASS;
-  - exact 21-file allowlist;
-  - zero behind;
-  - zero unresolved review blockers;
-  - merged as `713942185ce5340192b2a76bde29b69d68aed975`;
-  - verdict `PASS_TRUSTED_DASHBOARD_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1`.
-- RB-0086 is terminal PASS.
+- Exact current main: `17b00095a594435acb2b10245bdb076737849abc`.
+- Issue #1297 / PR #1312 — bounded Dashboard `form_action` execution V1 — terminal PASS:
+  - exact implementation head `e29fb878a7550a24f80328d6d77d0e68a5d259f7`;
+  - Governance `37326386156` PASS;
+  - PHP Quality `37326385987` PASS;
+  - Distributable `37326385920` PASS;
+  - Browser E2E Accessibility `37326385904` PASS;
+  - Platform Compatibility `37326386023` PASS, 10/10 cells;
+  - Architecture `37326385998` FULL PASS;
+  - exact 14-file #1297 allowlist;
+  - zero unresolved review threads;
+  - zero behind pre-merge main;
+  - resulting main tree equals PR-head tree exactly;
+  - merged as `17b00095a594435acb2b10245bdb076737849abc`;
+  - verdict `PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1`.
+- RB-0088 is terminal PASS.
+- RB-0087, RB-0086, RB-0085, RB-0084, RB-0083 and RB-0082 remain terminal PASS.
 - RB-0073 remains historical FAIL.
 
-### Active #1297 / PR #1312 — final bounded form_action execution V1
+### Terminal execution boundary
 
-Claim branch:
+V1 now supports one bounded Dashboard mutation path:
 
-`agent/dashboard-widgets-bounded-form-action-execution-v1`
+`dashboard-widgets.type.form_action`
+→ dedicated authenticated execute AJAX route
+→ server revalidation/rebinding
+→ Input-Aware Authorization
+→ required authorization / confirmation / execution-attempt audits
+→ exactly one `AbilityRegistry::execute()`
+→ allowlisted owner Ability `wpessential/forms-workflows/set-enabled`
+→ strict result adapter
+→ bounded result audit/response.
 
-PR #1312 is the active RB-0088 implementation PR.
-
-Fresh-main exact maximum scope is frozen to 14 files:
-
-Runtime/browser:
-1. `admin-ui/src/main.ts`
-2. `frameworks/Modules/DashboardWidgets/DashboardWidgetFormActionPresenter.php`
-3. `frameworks/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionAjaxHandler.php`
-4. `frameworks/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionResultAdapter.php`
-5. `frameworks/Modules/DashboardWidgets/DashboardWidgetsModule.php`
-
-Focused tests:
-6. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetFormActionPresenterTest.php`
-7. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionAjaxHandlerTest.php`
-8. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetFormActionExecutionResultAdapterTest.php`
-9. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetsModuleTest.php`
-
-Shared truth:
-10. `.ai/state/CURRENT-STATE.yaml`
-11. `.ai/state/LAST-CHECKPOINT.md`
-12. `README.md`
-13. `config/coordination/agent-work-queue.json`
-14. `config/coordination/runner-benchmark.json`
-
-Implementation boundary:
-- dedicated authenticated execute route `dashboard-widgets.form-action.execute`;
-- separate server-generated execute nonce;
-- browser payload remains exactly Definition id/revision + `confirmation_state=accepted`;
-- only `wpessential/forms-workflows/set-enabled` is executable in V1;
-- server repeats current Definition reload/revision check, registration compilation, input binding and Input-Aware Authorization;
-- required authorization → confirmation → execution-attempt audits occur before mutation;
-- exactly one `AbilityRegistry::execute()` call per admitted request;
-- strict Set-Enabled result adapter accepts only exact `status_changed` or `already_target_status` owner result shapes consistent with bound input;
-- owner exception or malformed/ambiguous post-execute result => `execution_outcome_unknown`;
-- known success + terminal result-audit persistence failure => `execution_succeeded_audit_degraded`;
-- browser locks the action after an execution attempt and requires refresh/re-read;
-- retry mode is `none`;
+Permanent V1 guards:
+- browser never sends Ability id or owner input;
+- only Forms Set-Enabled is executable;
 - no generic Ability execution;
 - no generic `AbilityAjaxHandler`;
-- no direct owner `handle()` invocation from Dashboard;
+- no direct Dashboard owner `handle()`;
 - no REST/admin-post mutation;
-- no shared Platform source mutation;
-- no dependency/package change;
-- no deploy/release widening.
+- no automatic retry;
+- malformed/ambiguous post-execute outcome => `execution_outcome_unknown`;
+- known success + terminal audit failure => `execution_succeeded_audit_degraded`;
+- no shared Platform mutation;
+- no package/dependency widening;
+- no production deployment/GA claim.
 
-### RB-0088 merge gate
+### Active Issue #1313
 
-Required exact-head:
-- Governance PASS;
-- PHP Quality PASS;
-- Distributable PASS;
-- Browser E2E Accessibility PASS;
-- Platform Compatibility PASS;
-- Architecture FULL PASS;
-- exact 14-file allowlist;
-- zero behind;
-- zero unresolved review blockers;
-- expected-head merge.
+Issue #1313 is **shared-truth reconciliation + read-only post-execution Surface 10 parity audit**.
 
-Promotion only:
-`PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1`.
+Exact reconciliation scope:
+1. `.ai/state/CURRENT-STATE.yaml`
+2. `.ai/state/LAST-CHECKPOINT.md`
+3. `README.md`
+4. `config/coordination/agent-work-queue.json`
+5. `config/coordination/runner-benchmark.json`
 
-This remains narrower than full Surface 10 runtime parity, production deployment or GA.
+No runtime/product/test/package source may change in this tranche.
+
+After reconciliation, audit remaining Dashboard Widgets gaps against repository evidence. Do not implement the next gap until a new Issue freezes exact scope and file allowlist.
 
 ### Recovery order
 
 1. Read CURRENT-STATE + this checkpoint.
-2. Resolve exact current main and #1297 implementation branch/PR.
-3. Verify exact 14-file diff.
-4. Run/inspect RB-0088 full exact-head CI.
-5. Fix any real failures within the frozen allowlist.
-6. Merge only with expected-head proof.
+2. Resolve exact main `17b00095a594435acb2b10245bdb076737849abc` and Issue #1313.
+3. Validate five-file reconciliation PR with Governance + Architecture.
+4. Merge only with expected-head proof.
+5. Perform/read the Surface 10 post-execution gap audit.
+6. Freeze the next bounded gap in a new Issue before product changes.
