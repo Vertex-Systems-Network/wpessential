@@ -35,6 +35,7 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         self::assertTrue($descriptor->networkDashboard);
         self::assertFalse($descriptor->defaultHidden);
         self::assertFalse($descriptor->defaultCollapsed);
+        self::assertFalse($descriptor->dismissible);
         self::assertNull($descriptor->siteScope);
         self::assertSame([], $descriptor->siteIds);
         self::assertNull($descriptor->backgroundJobId);
@@ -380,6 +381,32 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
             try {
                 $this->compiler()->compile($this->definition(widget: $widget));
                 self::fail('Expected unsupported or malformed Dashboard Widget collapsible metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
+    public function testCompilesBoundedDismissiblePresentationState(): void
+    {
+        $widget = $this->widget();
+        $widget['presentation'] = ['dismissible' => true];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+        self::assertTrue($descriptor->dismissible);
+
+        $disabled = $this->widget();
+        $disabled['presentation'] = ['dismissible' => false];
+        self::assertFalse(
+            $this->compiler()->compile($this->definition(widget: $disabled))->dismissible,
+        );
+
+        foreach ([1, 'yes', null, []] as $invalid) {
+            $candidate = $this->widget();
+            $candidate['presentation'] = ['dismissible' => $invalid];
+            try {
+                $this->compiler()->compile($this->definition(widget: $candidate));
+                self::fail('Expected malformed Dashboard Widget dismissible metadata to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
             }
