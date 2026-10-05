@@ -22,11 +22,13 @@
 - RB-0086 is terminal PASS.
 - RB-0073 remains historical FAIL.
 
-### Active #1297 — final bounded form_action execution V1
+### Active #1297 / PR #1312 — final bounded form_action execution V1
 
 Claim branch:
 
 `agent/dashboard-widgets-bounded-form-action-execution-v1`
+
+PR #1312 is the active RB-0088 implementation PR.
 
 Fresh-main exact maximum scope is frozen to 14 files:
 
