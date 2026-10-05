@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1296",
-  "anchor_main_sha": "a7804178ae287bb0550c9456b07ea0aea70fb93a",
+  "source_issue": "#1300",
+  "anchor_main_sha": "5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2775,7 +2775,7 @@
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_CONTRACT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head stacked contract validation",
-      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1 fresh main a7804178ae287bb0550c9456b07ea0aea70fb93a",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1 exact head 93dd6bf2efbbf1f52ea4ba3a259b71e1bc6a50e0",
       "dependencies": [
         "RB-0083 terminal PASS",
         "RB-0084 terminal PASS",
@@ -2787,10 +2787,16 @@
       "security_critical": true,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-form-action-ui-confirmation-contract|issue1296|exact-head",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "PR #1299 reconciled to terminal authorization main; exact six-file contract scope pending Governance + Architecture."
+        "PR #1299 exact six-file scope",
+        "Governance 37319828147 PASS",
+        "Architecture 37319827994 FULL PASS",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e",
+        "verdict CONTRACT_FROZEN_TRUSTED_FORM_ACTION_UI_CONFIRMATION_V1"
       ],
       "note": "Merge only after exact-head Governance + Architecture FULL PASS, zero behind and zero unresolved review blockers."
     },
@@ -2800,25 +2806,25 @@
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + Distributable + Browser + Platform + Architecture + main-bound PHP Quality terminal validation",
-      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 prepared stack",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 fresh main 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e",
       "dependencies": [
         "RB-0083 terminal PASS",
         "RB-0084 terminal PASS",
         "RB-0085 terminal PASS",
         "RB-0087 terminal PASS",
-        "fresh reconciliation"
+        "fresh main 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e"
       ],
       "authorization": "Prepared trusted form_action confirmation preflight only; confirmation_ready is not executed.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|trusted-form-action-confirmation-preflight|issue1300|exact-head",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
       "evidence": [
-        "PR #1301 PREPARED_NOT_MERGEABLE; product code prepared and prior stacked checks strong"
+        "PR #1301 reconciled to terminal contract main; exact #1300 21-file allowlist pending full exact-head validation."
       ],
-      "note": "No PASS promotion until all predecessors plus security main are terminal."
+      "note": "confirmation_ready remains pre-execution. Merge only after Governance/PHP/Distributable/Browser/Platform/Architecture PASS, zero behind and zero unresolved review blockers."
     },
     {
       "id": "RB-0087",
