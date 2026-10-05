@@ -3014,7 +3014,7 @@
     },
     {
       "id": "RB-0092",
-      "source": "Issue #1317",
+      "source": "Issue #1317 / PR #1318",
       "category": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_DIAGNOSTICS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation; Browser applicability determined from repository path filters",
@@ -3033,7 +3033,8 @@
       "evidence": [
         "Issue #1317 freezes exact 9-file diagnostics scope",
         "fresh post-RB-0091 audit selected diagnostics as next owner-local P1_CORE capability",
-        "source implementation and focused unit coverage prepared on claimed branch"
+        "source implementation and focused unit coverage prepared on claimed branch",
+        "PR #1318 opened from exact main 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac"
       ],
       "note": "Merge only after applicable exact-head CI PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
