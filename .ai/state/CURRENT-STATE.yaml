@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 25f098a170c42d30f829d196452189d9f5b71763
-observed_main_source: "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 merged; exact-head Governance/PHP/Distributable/Architecture/Platform Compatibility terminal PASS"
+observed_main_sha: 17b00095a594435acb2b10245bdb076737849abc
+observed_main_source: "Issue #1297 / PR #1312 bounded Dashboard form_action execution V1 merged; all six RB-0088 workflow families terminal PASS"
 active_issue: "#1294"
 active_pr: "#1305"
 active_branch: agent/platform-bounded-assetregistry-wordpress-loader-contract-v1
-current_milestone: "Platform bounded AssetRegistry WordPress loader contract V1 — plan-drift reconciliation"
+current_milestone: "Platform bounded AssetRegistry WordPress loader contract V1 — architecture-debt reconciliation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1285 / PR #1286 merged as 25f098a170c42d30f829d196452189d9f5b71763; exact head c45e623079824b7e75e4a05617f1439a6971ea2f; Governance 36932601887 PASS; PHP Quality 36932601852 PASS; Distributable 36932601809 PASS; Architecture 36932601669 PASS; Platform Compatibility 36932601737 PASS; verdict PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
-next_safe_action: "Freeze #1294/#1305 shared AssetRegistry WordPress loader contract; no runtime asset loader until contract gate. Prepared #1301 must later reconcile its module-local enqueue seam to the shared loader before RB-0086 can promote."
-waiting_external: "#1289 upstream Node dev-toolchain advisory blocker; #1288/RB-0083 through #1304/RB-0087 remain prepared/dependency-gated; #1301 additionally requires #1294 shared asset runtime reconciliation"
+last_completed_milestone: "Issue #1297 / PR #1312 merged as 17b00095a594435acb2b10245bdb076737849abc; exact head e29fb878a7550a24f80328d6d77d0e68a5d259f7; Governance 37326386156 PASS; PHP Quality 37326385987 PASS; Distributable 37326385920 PASS; Browser E2E 37326385904 PASS; Platform Compatibility 37326386023 PASS 10/10; Architecture 37326385998 FULL PASS; exact 14-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1."
+next_safe_action: "Complete #1294 / PR #1305 RB-0089 exact six-file AssetRegistry loader contract validation on current main; merge expected-head; then reconcile #1306 / PR #1307 as RB-0090; only after shared loader terminal open RB-0091 Dashboard consumer migration."
+waiting_external: "PR #1305 RB-0089 Governance + Architecture exact-head contract gate."
 next_planned_slot:
   issue: "#1294"
   slot_id: platform-bounded-assetregistry-wordpress-loader-contract-v1
   claim_branch: "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1"
-  claim_rule: "Contract-only six-file Platform shared-asset tranche. Preserve AssetDescriptor semantics; freeze code-owned handle→build-entry mapping + shared scoped WordPress loader. No runtime enqueue in contract PR."
+  claim_rule: "Exact six-file contract/shared-truth scope; preserve terminal Dashboard action behavior; freeze shared AssetRegistry loader as architecture-debt convergence; RB-0089 Governance + Architecture PASS required before merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,12 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0083
-    - RB-0084
-    - RB-0085
-    - RB-0086
-    - RB-0087
-    - RB-0088
+    - RB-0089
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -72,13 +67,18 @@ runner_benchmark:
     - RB-0080
     - RB-0081
     - RB-0082
+    - RB-0087
+    - RB-0083
+    - RB-0084
+    - RB-0085
+    - RB-0086
+    - RB-0088
   terminal_fail:
     - RB-0073
   blocked_authorization:
     - RB-0001
     - RB-0002
 open_repository_blockers:
-  - "#1289 repository-wide Node dev-toolchain advisory blocker remains BLOCKED_UPSTREAM; braces <=3.0.3 has no patched release and Architecture policy must not be weakened"
   - "#858 broader required-CI ruleset enforcement remains repository-admin work"
   - "#1102 P-006 Wave 1U remains separately authorization-gated"
   - "#947 independent Wave 1A review remains nonblocking and must preserve independence"
@@ -115,6 +115,15 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
+  - "Issue #1297 / PR #1312 bounded Dashboard form_action execution is terminal PASS; RB-0088 PASS; merged as 17b00095a594435acb2b10245bdb076737849abc."
+  - "Fresh ADR-0150 audit found remaining architecture debt: current Dashboard fixed asset seam is safe/terminal but bypasses the shared Platform AssetRegistry load plan."
+  - "Issue #1294 / PR #1305 is the active RB-0089 shared-loader contract reconciliation; #1307 implementation remains downstream."
+  - "Issue #1297 is the active final bounded form_action execution gate; exact 14-file allowlist frozen on main 713942185ce5340192b2a76bde29b69d68aed975; only Forms Set-Enabled is executable in V1."
+  - "Issue #1300 / PR #1301 is terminal PASS through RB-0086; confirmation-preflight merged as 713942185ce5340192b2a76bde29b69d68aed975."
+  - "Issue #1300 / PR #1301 is the active trusted form_action confirmation-preflight implementation gate on terminal RB-0085 main; confirmation_ready remains pre-execution."
+  - "Issue #1296 / PR #1299 is the active trusted form_action contract gate on terminal RB-0084 main; no runtime/action execution in this tranche."
+  - "RB-0083 and RB-0084 are terminal PASS; PR #1288 contract and PR #1298 implementation are merged."
+  - "Issue #1287 / PR #1288 is the active fresh secure-main contract gate; RB-0083 must pass Governance + Architecture before merge."
   - "Repository/runtime evidence outranks compact state."
   - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
   - "Issue #1240 / PR #1241 terminally reconciled #1238/#1239 shared truth on exact main d46bb23f948ee6c943cf8cce82231c74918480f9."
@@ -138,14 +147,10 @@ notes:
   - "Issue #1279 / PR #1280 bounded Action-Input Binding Contract V1 is terminal PASS; RB-0079 PASS; literal + canonical dynamic binding semantics are frozen without execution."
   - "Issue #1281 / PR #1282 bounded Dashboard Action-Input Binding V1 is terminal PASS; RB-0080 PASS; typed descriptor/compiler/binder merged without Ability execution or Forms source changes."
   - "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract is terminal PASS; RB-0081 PASS; Published↔Disabled/expected_revision/no-REST semantics are frozen."
-  - "Issue #1285 is the active bounded Set-Enabled implementation: owner-side canonical input validation, direct repository revision safety, Internal/UI only, showInRest=false."
-  - "Issue #1285 / PR #1286 bounded Forms Set-Enabled V1 is terminal PASS; RB-0082 PASS; exact main 25f098a170c42d30f829d196452189d9f5b71763."
-  - "Issue #1287 / PR #1288 Input-Aware Authorization contract remains blocked only by #1289; RB-0083 blocked dependency."
-  - "Issue #1291 / PR #1298 Input-Aware Authorization implementation is PREPARED_NOT_MERGEABLE; Governance/PHP/Distributable/Platform green, Architecture blocked only by #1289."
-  - "Issue #1296 / PR #1299 trusted form_action UI/confirmation contract is PREPARED_NOT_MERGEABLE; RB-0085 blocked dependency."
-  - "Issue #1300 / PR #1301 trusted form_action preflight exact head eef275ceedd0ca5241a489d188d350c459640771: Governance, Distributable, Platform 10/10 and Browser E2E PASS; Architecture blocked only by #1289; 21/21 allowlist, 0 behind, 0 review blockers."
-  - "Plan-drift audit found #1301 module-local AdminAssetManifest enqueue bypasses ADR-0150/#1292 selected shared AssetRegistry loader direction. #1301 cannot terminally merge until shared asset runtime is implemented and the Dashboard consumer is reconciled."
-  - "Issue #1294 / PR #1305 is the active contract-only shared AssetRegistry WordPress-loader prerequisite; selected V1 preserves AssetDescriptor and adds code-owned build-entry mapping + shared scoped loader."
-  - "Issue #1297 / PR #1304 final bounded execution contract remains PREPARED_NOT_MERGEABLE and downstream of RB-0086 plus asset reconciliation; no execution runtime is authorized."
+  - "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 is terminal PASS; RB-0082 PASS; merged as 25f098a170c42d30f829d196452189d9f5b71763."
+  - "Issue #1287 / PR #1288 Input-Aware Authorization contract remains open; feature contract is clean but must rebase/rerun after security migration #1310/#1311."
+  - "Issue #1291 / PR #1298, Issue #1296 / PR #1299 and Issue #1300 / PR #1301 are owner-authorized stacked PREPARED_NOT_MERGEABLE work; they remain downstream of RB-0083 and security-main reconciliation."
+  - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
+  - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference + authorization + confirmation metadata + result/audit terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Shared Ability input validator PASS through RB-0078; Action-Input contract PASS through RB-0079; bounded Action-Input Binding PASS through RB-0080; Forms Set-Enabled owner contract PASS through RB-0081. Active #1285 implements the first real Surface-17 mutation with expected_revision and no REST. type.form_action remains blocked by mutation merge, trusted UI/orchestration and final execution.
+# P1_CORE deep audit: first bounded trusted form_action mutation path is terminal through RB-0088. Remaining work is architectural convergence, not action correctness: ADR-0150 still requires one shared AssetRegistry/scoped loader, while the current Dashboard form_action uses a bounded module-local manifest enqueue seam. Active RB-0089 freezes the shared loader migration contract; RB-0090 will implement Platform runtime; RB-0091 will migrate the Dashboard consumer. No full Surface 10 parity/GA claim.

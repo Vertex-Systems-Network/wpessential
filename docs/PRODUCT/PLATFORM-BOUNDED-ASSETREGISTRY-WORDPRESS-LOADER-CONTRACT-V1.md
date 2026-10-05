@@ -1,20 +1,21 @@
 # Platform Bounded AssetRegistry WordPress Loader Contract V1
 
-Status: PREPARED_NOT_MERGEABLE
+Status: FRESH-MAIN CONTRACT VALIDATION
 Issue: #1294
 Related prerequisite audit: #1292
-Current main anchor: 25f098a170c42d30f829d196452189d9f5b71763
+Current main anchor: 17b00095a594435acb2b10245bdb076737849abc
 
 ## Purpose
 
-Freeze the smallest shared first-party asset runtime required before Dashboard Widgets may terminally ship interactive `form_action` browser behavior.
+Freeze the smallest shared first-party asset runtime needed to close the remaining ADR-0150 architectural debt after the first bounded Dashboard `form_action` action flow reached terminal PASS.
 
-This contract resolves the plan drift discovered between:
+This contract reconciles:
 - accepted ADR-0150 shared Asset Registry / scoped-loader architecture;
 - #1292/#1294 shared loader prerequisite;
-- prepared #1301 Dashboard-module-local asset enqueue prototype.
+- the now-merged bounded Dashboard-owned fixed asset enqueue seam from #1300/#1301;
+- the now-merged bounded execution seam from #1297/#1312.
 
-The prepared #1301 prototype remains non-mergeable until it consumes this shared path.
+The current Dashboard implementation is not rolled back or declared unsafe. It is a narrow, code-owned, route-bounded seam that passed full CI. The remaining debt is architectural convergence: new cross-module browser asset loading must flow through the shared Platform AssetRegistry/scoped-loader path rather than remain module-private.
 
 ## Current canonical evidence
 
@@ -31,7 +32,7 @@ Current gaps:
 - no shared scoped WordPress asset loader exists;
 - `AssetDescriptor` has ownership/scope/dependency/route semantics but no executable file/source identity;
 - `PlatformAdminController` directly consumes `AdminAssetManifest` for its own page;
-- current Dashboard #1301 preparation directly consumes `AdminAssetManifest` inside a module environment seam and therefore bypasses `AssetRegistry`.
+- current merged Dashboard `form_action` runtime directly consumes `AdminAssetManifest` inside a module environment seam and therefore bypasses the shared `AssetRegistry` load plan.
 
 ADR-0150 remains planning evidence, but its architectural direction is authoritative for this prerequisite:
 one shared registry/loader owns asset identity, ownership, dependencies, scope and trusted build mapping.
@@ -215,15 +216,17 @@ Later convergence of Platform admin loading into AssetRegistry is a separate non
 
 ## Dashboard reconciliation requirement
 
-Prepared PR #1301 is not terminally merge-ready with its current module-local `enqueueFormActionAssets()` implementation.
+The current Dashboard flow is terminal and operational; this contract does not retroactively invalidate its security or behavioral evidence.
 
-After this shared runtime implementation is prepared/terminal:
-- Dashboard module must register the `wpe-dashboard-form-action` descriptor + build mapping through canonical shared services;
-- native Dashboard adapter/environment must stop directly resolving `AdminAssetManifest`;
-- shared `platform.assets.wordpress` loader must own native Dashboard enqueue;
-- #1301 must rerun exact-head PHP/Platform/Browser/Architecture/Governance gates after reconciliation.
+After the shared Platform loader implementation is terminal:
+- open a separate bounded Dashboard consumer-migration tranche;
+- register the `wpe-dashboard-form-action` descriptor + build mapping through canonical shared services;
+- remove the direct module-local `AdminAssetManifest` resolution from `NativeWordPressDashboardWidgetEnvironment`;
+- make shared `platform.assets.wordpress` own native Dashboard enqueue;
+- preserve the already-terminal presenter/preflight/execution behavior unchanged unless fresh evidence requires a bounded repair;
+- rerun exact-head Governance, PHP Quality, Distributable, Browser, Platform Compatibility and Architecture.
 
-The existing presenter/preflight/AJAX logic may otherwise remain bounded if fresh audit proves no drift.
+This later consumer migration is tracked as RB-0091 direction and is not part of this contract PR or the Platform loader implementation PR.
 
 ## Expected later implementation maximum scope
 
@@ -306,12 +309,16 @@ No Dashboard runtime change belongs in the Platform implementation PR. Dashboard
 
 ## Promotion boundary
 
-After exact-head contract evidence:
+RB-0089 is the exact-head contract merge gate.
+
+After terminal RB-0089 evidence:
 
 `CONTRACT_FROZEN_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1`
 
-and readiness for a separately authorized bounded implementation:
+and:
 
 `READY_FOR_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1`
 
-No runtime asset loading or Dashboard action UI is promoted by this contract alone.
+The bounded shared loader implementation is RB-0090. The later Dashboard consumer convergence is RB-0091.
+
+No runtime asset loading, ASR 176/176 certification, or new Dashboard action behavior is promoted by this contract alone.

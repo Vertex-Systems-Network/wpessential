@@ -54,5 +54,9 @@ interface DashboardWidgetWordPressEnvironmentInterface
      */
     public function discoverRegisteredDashboardWidgets(string $screenId): array;
 
+    public function ajaxUrl(): string;
+
+    public function enqueueFormActionAssets(): void;
+
     public function outputTrustedHtml(string $html): void;
 }

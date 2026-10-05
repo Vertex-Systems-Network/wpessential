@@ -24,11 +24,6 @@ use WPEssential\Modules\CustomTables\Migration\Run\Persistence\CreateMigrationRu
 use WPEssential\Modules\CustomTables\Schema\WordPressCt1SchemaIntrospector;
 use WPEssential\Modules\Taxonomies\TaxonomyModule;
 use WPEssential\Platform\Abilities\AbilityRegistry;
-use WPEssential\Platform\Assets\AssetRegistry;
-use WPEssential\Platform\Assets\AssetServices;
-use WPEssential\Platform\Assets\NativeWordPressAssetEnvironment;
-use WPEssential\Platform\Assets\TrustedAssetBuildEntryRegistry;
-use WPEssential\Platform\Assets\WordPressAssetLoader;
 use WPEssential\Platform\Admin\AdminAssetManifest;
 use WPEssential\Platform\Admin\PlatformAdminController;
 use WPEssential\Platform\Admin\RuntimeDiagnosticsSnapshot;
@@ -173,21 +168,6 @@ final class Plugin
         $services->set('platform.data-sources', $dataSources);
         $services->set('platform.cache', $cache);
         (new RenderingServiceRegistrar())->register($services);
-
-        $assetRegistry = $services->get(AssetServices::REGISTRY);
-        if (!$assetRegistry instanceof AssetRegistry) {
-            throw new LogicException('Canonical platform.assets service must be an AssetRegistry.');
-        }
-        $assetBuildEntries = new TrustedAssetBuildEntryRegistry($assetRegistry);
-        $assetLoader = new WordPressAssetLoader(
-            $assetRegistry,
-            $assetBuildEntries,
-            $adminAssets,
-            new NativeWordPressAssetEnvironment(),
-        );
-        $services->set(AssetServices::BUILD_ENTRIES, $assetBuildEntries);
-        $services->set(AssetServices::MANIFEST, $adminAssets);
-        $services->set(AssetServices::WORDPRESS, $assetLoader);
         if ($database instanceof NativeWpdbAdapter) {
             $services->set('platform.database', $database);
             $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
@@ -236,7 +216,6 @@ final class Plugin
 
         if (function_exists('add_action')) {
             $ajaxGateway->register();
-            $assetLoader->register();
             $adminController->register();
             add_action('wp_abilities_api_categories_init', [$abilityBridge, 'registerCategory']);
             add_action('wp_abilities_api_init', [$abilityBridge, 'registerAbilities']);
