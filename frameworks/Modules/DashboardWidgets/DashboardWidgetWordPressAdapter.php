@@ -42,6 +42,7 @@ final class DashboardWidgetWordPressAdapter
     private bool $hooksRegistered = false;
     private bool $siteRegistered = false;
     private bool $networkRegistered = false;
+    private readonly DashboardWidgetRuntimeClock $clock;
 
     public function __construct(
         private readonly DefinitionRepositoryInterface $definitions,
@@ -51,7 +52,10 @@ final class DashboardWidgetWordPressAdapter
         private readonly ?DashboardWidgetContentClassCompiler $contentClassCompiler = null,
         private readonly ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
         private readonly ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
-    ) {}
+        ?DashboardWidgetRuntimeClock $clock = null,
+    ) {
+        $this->clock = $clock ?? new DashboardWidgetRuntimeClock();
+    }
 
     public function registerHooks(): void
     {
@@ -484,6 +488,7 @@ final class DashboardWidgetWordPressAdapter
         }
 
         try {
+            $now = $this->clock->now();
             $definitions = $this->definitions->byType(DashboardWidgetDefinition::TYPE);
             usort(
                 $definitions,
@@ -504,6 +509,9 @@ final class DashboardWidgetWordPressAdapter
                     continue;
                 }
                 if (!$networkDashboard && ($currentSiteId === null || !$descriptor->isEligibleForSite($currentSiteId))) {
+                    continue;
+                }
+                if (!$descriptor->isActiveAt($now)) {
                     continue;
                 }
 
@@ -547,6 +555,9 @@ final class DashboardWidgetWordPressAdapter
                 $contentClass = $this->contentClassCompiler->compile($definition);
                 if ($contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION) {
                     $descriptor = $this->registrationCompiler->compile($definition);
+                    if (!$descriptor->isActiveAt($this->clock->now())) {
+                        return;
+                    }
                     $html = $this->formActionPresenter->render(
                         $descriptor,
                         $this->environment->ajaxUrl(),
