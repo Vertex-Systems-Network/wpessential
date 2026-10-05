@@ -46,7 +46,7 @@ Still gated/out-of-owner:
 - background scheduling remains Surface 18 / Job Service-owned;
 - provider/remote remains cross-owner.
 
-### Active #1323 / RB-0095
+### Active #1323 / PR #1324 / RB-0095
 
 Branch: `agent/dashboard-manual-refresh-loading-v1`.
 
