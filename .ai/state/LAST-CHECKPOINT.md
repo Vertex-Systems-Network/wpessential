@@ -116,7 +116,7 @@ RB-0085 remains dependency-blocked. No contract PASS/readiness promotion is perm
 
 Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
 
-Exact current head:
+Last product-code head before shared-truth-only reconciliation:
 
 `eef275ceedd0ca5241a489d188d350c459640771`
 
@@ -149,7 +149,7 @@ Audited implementation boundary:
 - no shared Platform source changes;
 - no new npm/composer dependency.
 
-Exact-head CI evidence:
+Product-code-head CI evidence:
 - Governance Gate `37306315812` — **PASS**;
 - Distributable Package `37306315904` — **PASS**;
 - Browser E2E Accessibility `37306315836` — **PASS**;
@@ -171,7 +171,7 @@ PHP Quality note:
 - earlier implementation head `4687fe933c1f603984cc3a928c422b5de47f8e3b` passed PHP Quality `37305617634`;
 - terminal predecessor/main reconciliation must run exact-head PHP Quality before merge.
 
-RB-0086 remains `BLOCKED_DEPENDENCY` and may not promote PASS until RB-0083, RB-0084, RB-0085 and #1289 are terminal, followed by fresh predecessor/main reconciliation and exact-head CI/review.
+RB-0086 remains `BLOCKED_DEPENDENCY` and may not promote PASS until RB-0083, RB-0084, RB-0085 and #1289 are terminal, followed by fresh predecessor/main reconciliation and exact-head CI/review. Shared-truth-only commits after the product-code head must be validated through PR CI/comments rather than recorded as a self-referential "current head" inside this file.
 
 ### Updated recovery order
 
