@@ -63,6 +63,57 @@ final class AdminAssetManifestTest extends TestCase
         self::assertSame('taxonomy-hash', $entry['version']);
     }
 
+    public function testScriptLookupDoesNotRequireOrImplicitlyLoadStyle(): void
+    {
+        file_put_contents($this->root . '/assets/admin/main.js', 'window.WPEAdmin=true;');
+        file_put_contents(
+            $this->root . '/assets/admin/main.asset.php',
+            "<?php return ['dependencies' => ['wp-i18n'], 'version' => 'script-only'];",
+        );
+
+        $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
+        $script = $manifest->script('main');
+
+        self::assertNotNull($script);
+        self::assertSame(
+            'https://example.test/wpessential/assets/admin/main.js',
+            $script['script'],
+        );
+        self::assertSame(['wp-i18n'], $script['dependencies']);
+        self::assertSame('script-only', $script['version']);
+        self::assertNull($manifest->style('main'));
+    }
+
+    public function testScriptLookupDropsMalformedDependencyHandles(): void
+    {
+        file_put_contents($this->root . '/assets/admin/main.js', 'window.WPEAdmin=true;');
+        file_put_contents(
+            $this->root . '/assets/admin/main.asset.php',
+            "<?php return ['dependencies' => ['wp-i18n', '../bad', '', str_repeat('x', 192)], 'version' => 'hash'];",
+        );
+
+        $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
+        $script = $manifest->script('main');
+
+        self::assertNotNull($script);
+        self::assertSame(['wp-i18n'], $script['dependencies']);
+    }
+
+    public function testStyleLookupIsExactAndRejectsUnsafeEntry(): void
+    {
+        file_put_contents($this->root . '/assets/admin/dashboard.css', '.dashboard{}');
+
+        $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
+
+        self::assertSame(
+            'https://example.test/wpessential/assets/admin/dashboard.css',
+            $manifest->style('dashboard'),
+        );
+        self::assertNull($manifest->style('../dashboard'));
+        self::assertNull($manifest->script('../dashboard'));
+        self::assertNull($manifest->script('bad..entry'));
+    }
+
     public function testRejectsUnsafeNamedEntry(): void
     {
         $manifest = new AdminAssetManifest($this->root, 'https://example.test/wpessential');
