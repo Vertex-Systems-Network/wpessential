@@ -97,9 +97,11 @@ final readonly class DashboardWidgetPresetCompiler
                     if (!is_string($role) || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $role) !== 1) {
                         throw new InvalidArgumentException('Dashboard Widget preset assignment role references must be canonical role slugs.');
                     }
+                    if (in_array($role, $roles, true)) {
+                        throw new InvalidArgumentException('Dashboard Widget preset assignment role references must be unique.');
+                    }
                     $roles[] = $role;
                 }
-                $roles = array_values(array_unique($roles));
                 sort($roles, SORT_STRING);
             }
 
