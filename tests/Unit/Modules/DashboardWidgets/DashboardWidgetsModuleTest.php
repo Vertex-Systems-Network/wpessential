@@ -26,6 +26,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceAbilit
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetTrustedComponentRenderer;
@@ -144,8 +145,10 @@ final class DashboardWidgetsModuleTest extends TestCase
         $this->addAssetServices($services);
         $this->addQueryServices($services);
 
-        (new DashboardWidgetsModule())->register($services);
+        $runtimeClock = new DashboardWidgetRuntimeClock(static fn (): int => 1737000000);
+        (new DashboardWidgetsModule(runtimeClock: $runtimeClock))->register($services);
 
+        self::assertSame($runtimeClock, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_CLOCK));
         self::assertInstanceOf(DashboardWidgetsReadService::class, $services->get(DashboardWidgetsModule::SERVICE_READ));
         self::assertInstanceOf(DashboardWidgetDiagnosticsAbilityHandler::class, $services->get(DashboardWidgetsModule::SERVICE_DIAGNOSTICS));
         self::assertInstanceOf(DashboardWidgetPersonalPreferenceStore::class, $services->get(DashboardWidgetsModule::SERVICE_PERSONAL_PREFERENCES));
