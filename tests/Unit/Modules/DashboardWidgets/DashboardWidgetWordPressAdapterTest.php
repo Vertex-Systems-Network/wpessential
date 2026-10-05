@@ -12,6 +12,7 @@ use WPEssential\Contracts\RendererInterface;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPresenter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRoleMembershipProviderInterface;
@@ -65,6 +66,54 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
 
         $enqueue('index.php');
         self::assertSame(1, $environment->formActionAssetEnqueues);
+    }
+
+    public function testFormActionBypassesGenericRendererAndUsesTrustedPresenter(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/set-enabled';
+        $resolver = static fn (string $name): ?array => [
+            'name' => $name,
+            'owner_surface_id' => 17,
+            'mutates' => true,
+            'ui_allowed' => true,
+            'input_schema' => [
+                'type' => 'object',
+                'required' => ['definition_id', 'expected_revision', 'enabled'],
+                'properties' => [
+                    'definition_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                    'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    'enabled' => ['type' => 'boolean'],
+                ],
+                'additionalProperties' => false,
+            ],
+        ];
+        $presenter = new DashboardWidgetFormActionPresenter(
+            'wpessential_dispatch',
+            static fn (): string => 'test-nonce',
+        );
+
+        [$adapter, , $environment, $renderer] = $this->harness(
+            [$this->formActionDefinition($abilityId)],
+            formActionAbilityResolver: $resolver,
+            formActionPresenter: $presenter,
+        );
+
+        $adapter->registerSiteDashboard();
+        self::assertCount(1, $environment->widgets);
+
+        ($environment->widgets[0]['callback'])();
+
+        self::assertSame(0, $renderer->calls);
+        self::assertCount(1, $environment->outputs);
+        self::assertStringContainsString(
+            'data-wpessential-dashboard-form-action="1"',
+            $environment->outputs[0],
+        );
+        self::assertStringNotContainsString($abilityId, $environment->outputs[0]);
+        self::assertStringNotContainsString(
+            '22222222-2222-4222-8222-222222222222',
+            $environment->outputs[0],
+        );
     }
 
     public function testPlanningSortsCanonicallyAndSuppressesAllSameTargetColliders(): void
@@ -791,6 +840,8 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         array $definitions,
         ?RenderOutput $renderOutput = null,
         ?RenderOutput $fallbackRenderOutput = null,
+        ?callable $formActionAbilityResolver = null,
+        ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
     ): array
     {
         $repository = new class($definitions) implements DefinitionRepositoryInterface {
@@ -979,6 +1030,8 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             $visibilityCompiler,
             $contentCompiler,
             $renderSourceCompiler,
+            null,
+            $formActionAbilityResolver,
         );
         $capabilities = new class implements CapabilityCheckerInterface {
             public function can(ExecutionContext $context, string $capability): bool { return true; }
@@ -1027,11 +1080,59 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         );
 
         return [
-            new DashboardWidgetWordPressAdapter($repository, $registrationCompiler, $executor, $environment),
+            new DashboardWidgetWordPressAdapter(
+                $repository,
+                $registrationCompiler,
+                $executor,
+                $environment,
+                $contentCompiler,
+                $formActionPresenter,
+            ),
             $repository,
             $environment,
             $renderer,
         ];
+    }
+
+    private function formActionDefinition(string $abilityId): Definition
+    {
+        return new Definition(
+            id: '41000000-0000-4000-8000-000000000001',
+            slug: 'workflow-control',
+            type: DashboardWidgetDefinition::TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+            status: DefinitionStatus::Published,
+            payload: [
+                'widget' => [
+                    'key' => 'workflow-control',
+                    'title' => 'Workflow control',
+                    'type' => 'form_action',
+                    'context' => 'normal',
+                    'priority' => 'default',
+                    'network_dashboard' => false,
+                    'action' => [
+                        'ability_id' => $abilityId,
+                        'confirmation' => [
+                            'title' => 'Disable workflow?',
+                            'message' => 'This changes workflow availability.',
+                            'confirm_label' => 'Disable',
+                            'cancel_label' => 'Cancel',
+                        ],
+                        'input' => [
+                            'definition_id' => [
+                                'source' => 'literal',
+                                'value' => '22222222-2222-4222-8222-222222222222',
+                            ],
+                            'expected_revision' => ['source' => 'literal', 'value' => 4],
+                            'enabled' => ['source' => 'literal', 'value' => false],
+                        ],
+                    ],
+                ],
+            ],
+            revision: 3,
+            dependencies: [],
+        );
     }
 
     /**
