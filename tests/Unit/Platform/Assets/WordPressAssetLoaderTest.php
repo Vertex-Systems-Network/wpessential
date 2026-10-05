@@ -209,6 +209,56 @@ final class WordPressAssetLoaderTest extends TestCase
         self::assertSame([], $environment->styles);
     }
 
+    public function testUnknownOrCyclicLogicalDependenciesFailClosedBeforeAnyEnqueue(): void
+    {
+        foreach ([false, true] as $cyclic) {
+            $assets = new AssetRegistry();
+            $assets->register(new AssetDescriptor(
+                handle: 'wpe-dashboard-form-action',
+                ownerSurfaceId: 10,
+                scope: AssetScope::Admin,
+                loadStrategy: AssetLoadStrategy::AdminRoute,
+                dependencies: ['wpe-dashboard-support'],
+                adminRoutes: ['/wp-admin/index.php'],
+            ));
+
+            if ($cyclic) {
+                $assets->register(new AssetDescriptor(
+                    handle: 'wpe-dashboard-support',
+                    ownerSurfaceId: 10,
+                    scope: AssetScope::Admin,
+                    dependencies: ['wpe-dashboard-form-action'],
+                ));
+            }
+
+            $mappings = new TrustedAssetBuildEntryRegistry($assets);
+            $mappings->register(new TrustedAssetBuildEntry(
+                'wpe-dashboard-form-action',
+                'main',
+            ));
+            if ($cyclic) {
+                $mappings->register(new TrustedAssetBuildEntry(
+                    'wpe-dashboard-support',
+                    'dependency',
+                ));
+            }
+
+            $environment = new AssetLoaderEnvironmentProbe('/wp-admin/index.php');
+            $loader = new WordPressAssetLoader(
+                $assets,
+                $mappings,
+                new AdminAssetManifest($this->root, 'https://example.test/wpessential'),
+                $environment,
+            );
+
+            $loader->enqueueForAdminHook('index.php');
+
+            self::assertSame([], $environment->scripts);
+            self::assertSame([], $environment->styles);
+            self::assertSame([], $environment->strategies);
+        }
+    }
+
     /**
      * @return array{AssetRegistry,TrustedAssetBuildEntryRegistry}
      */
