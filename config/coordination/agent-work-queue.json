@@ -6882,7 +6882,7 @@
       "role": "AGENT_IMPLEMENTATION",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_DISMISS_RESET_PARITY_V1",
-      "source": "Issue #1319 fresh-main RB-0093",
+      "source": "Issue #1319 / PR #1320 fresh-main RB-0093 validation",
       "dependencies": [
         "RB-0092 terminal PASS",
         "exact fresh source base c386f72e648f85dadc64324fe863f5d12fb40cb2"
