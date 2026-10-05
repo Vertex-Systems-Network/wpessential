@@ -673,7 +673,7 @@ function parsePreviewResult(
 		const row: Record< string, string | null > = {};
 		for ( const column of columns ) {
 			if (
-				! Object.prototype.hasOwnProperty.call( candidate, column.key )
+				! Object.hasOwn( candidate, column.key )
 			) {
 				return null;
 			}
@@ -767,7 +767,7 @@ function parseFieldWriteResult(
 		write.status !== '' &&
 		write.status.length <= 64 &&
 		typeof write.changed === 'boolean' &&
-		Object.prototype.hasOwnProperty.call( write, 'value' )
+		Object.hasOwn( write, 'value' )
 	);
 }
 
