@@ -2803,7 +2803,7 @@
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + PHP Quality Toolchain + Distributable Package + Browser E2E Accessibility + Platform Compatibility Matrix + Architecture Guards exact-head validation",
-      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 stacked on PR #1299",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 exact head eef275ceedd0ca5241a489d188d350c459640771 stacked on PR #1299",
       "dependencies": [
         "RB-0083 terminal PASS before merge",
         "RB-0084 terminal PASS before merge",
@@ -2819,17 +2819,26 @@
       "disposition": "BLOCKED_DEPENDENCY",
       "status": "BLOCKED_DEPENDENCY",
       "evidence": [
-        "PR #1301 pre-shared-truth head 4687fe933c1f603984cc3a928c422b5de47f8e3b",
-        "Governance Gate 37305617864 PASS",
-        "PHP Quality Toolchain 37305617634 PASS including PHPCS/PHPStan/PHPUnit",
-        "Distributable Package 37305617666 PASS",
+        "PR #1301 exact head eef275ceedd0ca5241a489d188d350c459640771",
+        "exact 21-file #1300 allowlist scope",
+        "zero commits behind stacked PR #1299 base",
+        "zero unresolved review threads",
+        "Governance Gate 37306315812 PASS",
+        "Distributable Package 37306315904 PASS",
+        "Browser E2E Accessibility 37306315836 PASS",
+        "Platform Compatibility Matrix 37306315830 PASS 10/10 cells",
+        "Architecture Guards 37306315833 FAIL only at repository-wide #1289 development npm advisory gate",
+        "Architecture JavaScript lint/Stylelint/TypeScript/admin build all PASS before advisory enforcement",
+        "earlier implementation head 4687fe933c1f603984cc3a928c422b5de47f8e3b PHP Quality 37305617634 PASS",
         "form_action remains outside generic Component Blueprint renderer",
         "browser payload limited to definition_id, definition_revision and confirmation_state",
         "canonical shared AJAX/nonce/context/audit services only",
+        "guest and invalid-nonce rejection covered through canonical dispatcher",
+        "unsafe owner authorization reason is not persisted",
         "confirmation_ready explicitly not executed",
         "zero AbilityRegistry::execute() and zero owner handle() invocation in preflight path"
       ],
-      "note": "PREPARED_NOT_MERGEABLE. Exact-head CI must rerun after shared-truth reconciliation. No PASS promotion until RB-0083/RB-0084/RB-0085/#1289 terminal and fresh predecessor/main reconciliation."
+      "note": "PREPARED_NOT_MERGEABLE. All applicable stacked-head gates except global Architecture security gate are green. Latest stacked head cannot auto-run PHP Quality because that workflow targets main-base PRs; exact-head PHP Quality is mandatory after terminal predecessor/main reconciliation. No PASS promotion until RB-0083/RB-0084/RB-0085/#1289 terminal."
     }
   ],
   "last_reconciled_issue": "#1283",
