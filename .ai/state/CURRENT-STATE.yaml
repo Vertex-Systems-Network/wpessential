@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea
 observed_main_source: "Issue #1321 / PR #1322 RB-0094 lifecycle visibility merged after all applicable exact-head gates PASS"
 active_issue: "#1323"
-active_pr: null
+active_pr: "#1324"
 active_branch: agent/dashboard-manual-refresh-loading-v1
-current_milestone: "Dashboard Widgets trusted manual refresh + loading state V1 — RB-0095 implementation"
+current_milestone: "Dashboard Widgets trusted manual refresh + loading state V1 — PR #1324 exact-head RB-0095 validation"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1321 / PR #1322 RB-0094 terminal PASS; exact head c01bed388d2191d48c223224014e05ab1ea54756; Governance 37380946760 PASS; PHP Quality 37380946758 PASS; Distributable 37380946780 PASS; Platform Compatibility 37380946804 PASS 10/10; Architecture 37380946768 FULL PASS; Browser workflow NOT_APPLICABLE by path filter; exact 23-file scope; zero behind/review blockers; expected-head squash merged as dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea; verdict PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1."
-next_safe_action: "Finish #1323 exact 27-file manual-refresh/loading scope, validate server + browser behavior, open PR, then require all applicable RB-0095 exact-head gates including Browser E2E before expected-head merge."
-waiting_external: "none — active #1323 implementation before PR open."
+next_safe_action: "Validate PR #1324 exact head against #1323 27-file allowlist; fix any real failure; require Governance/PHP/Distributable/Platform/Architecture/Browser exact-head PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
+waiting_external: "PR #1324 RB-0095 exact-head six-family merge gate including Browser E2E."
 next_planned_slot:
   issue: "#1323"
   slot_id: dashboard-widgets-manual-refresh-loading-v1
