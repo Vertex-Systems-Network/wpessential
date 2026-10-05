@@ -58,6 +58,7 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public bool $networkDashboard,
         public bool $defaultHidden = false,
         public bool $defaultCollapsed = false,
+        public bool $dismissible = false,
         public ?string $siteScope = null,
         /** @var list<int> */
         public array $siteIds = [],
