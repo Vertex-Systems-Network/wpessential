@@ -778,6 +778,177 @@ function bootCptAdmin( root: HTMLElement, bootstrap: CptBootstrap ): void {
 	);
 }
 
+type DashboardFormActionConfirmationState = 'accepted' | 'cancelled';
+
+const dashboardFormActionStates = new Set( [
+	'confirmation_ready',
+	'confirmation_cancelled',
+	'authorization_denied',
+	'confirmation_invalid',
+	'stale_definition',
+	'runtime_failure',
+] );
+
+function dashboardFormActionResponse(
+	value: unknown
+): { state: string; notice: string } | null {
+	if (
+		! isBootstrapRecord( value ) ||
+		typeof value.state !== 'string' ||
+		! dashboardFormActionStates.has( value.state ) ||
+		typeof value.notice !== 'string'
+	) {
+		return null;
+	}
+
+	return { state: value.state, notice: value.notice };
+}
+
+async function postDashboardFormAction(
+	root: HTMLElement,
+	confirmationState: DashboardFormActionConfirmationState
+): Promise< { state: string; notice: string } > {
+	const ajaxUrl = root.dataset.ajaxUrl ?? '';
+	const ajaxAction = root.dataset.ajaxAction ?? '';
+	const routeType = root.dataset.routeType ?? '';
+	const nonce = root.dataset.nonce ?? '';
+	const definitionId = root.dataset.definitionId ?? '';
+	const revision = Number( root.dataset.definitionRevision ?? 0 );
+
+	if (
+		ajaxUrl === '' ||
+		ajaxAction === '' ||
+		routeType !== 'dashboard-widgets.form-action.confirm' ||
+		nonce === '' ||
+		definitionId === '' ||
+		! Number.isInteger( revision ) ||
+		revision < 1
+	) {
+		throw new Error( 'invalid-dashboard-form-action-bootstrap' );
+	}
+
+	const body = new URLSearchParams();
+	body.set( 'action', ajaxAction );
+	body.set( 'type', routeType );
+	body.set( 'nonce', nonce );
+	body.set(
+		'payload_json',
+		JSON.stringify( {
+			definition_id: definitionId,
+			definition_revision: revision,
+			confirmation_state: confirmationState,
+		} )
+	);
+
+	const response = await fetch( ajaxUrl, {
+		method: 'POST',
+		credentials: 'same-origin',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		},
+		body: body.toString(),
+	} );
+	const value: unknown = await response.json();
+	if ( ! isBootstrapRecord( value ) || typeof value.success !== 'boolean' ) {
+		throw new Error( 'invalid-dashboard-form-action-response' );
+	}
+	const envelope = value as AjaxEnvelope;
+	if ( ! response.ok || ! envelope.success ) {
+		throw new Error( 'dashboard-form-action-request-failed' );
+	}
+	const result = dashboardFormActionResponse( envelope.data );
+	if ( ! result ) {
+		throw new Error( 'invalid-dashboard-form-action-result' );
+	}
+
+	return result;
+}
+
+function bootDashboardFormActions(): void {
+	const roots = document.querySelectorAll< HTMLElement >(
+		'[data-wpessential-dashboard-form-action="1"]'
+	);
+
+	for ( const root of roots ) {
+		if ( root.dataset.wpessentialFormActionEnhanced === 'ready' ) {
+			continue;
+		}
+
+		const open = root.querySelector< HTMLButtonElement >(
+			'[data-wpessential-form-action-open="1"]'
+		);
+		const panel = root.querySelector< HTMLElement >(
+			'[data-wpessential-form-action-confirmation="1"]'
+		);
+		const confirm = root.querySelector< HTMLButtonElement >(
+			'[data-wpessential-form-action-confirm="1"]'
+		);
+		const cancel = root.querySelector< HTMLButtonElement >(
+			'[data-wpessential-form-action-cancel="1"]'
+		);
+		const status = root.querySelector< HTMLElement >(
+			'[data-wpessential-form-action-status="1"]'
+		);
+		if ( ! open || ! panel || ! confirm || ! cancel || ! status ) {
+			continue;
+		}
+
+		let busy = false;
+		const setBusy = ( value: boolean ): void => {
+			busy = value;
+			open.disabled = value;
+			confirm.disabled = value;
+			cancel.disabled = value;
+			root.setAttribute( 'aria-busy', value ? 'true' : 'false' );
+		};
+
+		const submit = async (
+			confirmationState: DashboardFormActionConfirmationState
+		): Promise< void > => {
+			if ( busy ) {
+				return;
+			}
+			setBusy( true );
+			status.textContent = 'Checking current action state…';
+			try {
+				const result = await postDashboardFormAction(
+					root,
+					confirmationState
+				);
+				status.textContent = result.notice;
+				if (
+					result.state === 'confirmation_cancelled' ||
+					result.state === 'confirmation_ready'
+				) {
+					panel.hidden = true;
+				}
+			} catch {
+				status.textContent =
+					'The action could not be prepared. Refresh and try again.';
+			} finally {
+				setBusy( false );
+			}
+		};
+
+		open.addEventListener( 'click', () => {
+			if ( busy ) {
+				return;
+			}
+			panel.hidden = false;
+			status.textContent = '';
+			confirm.focus();
+		} );
+		confirm.addEventListener( 'click', () => {
+			void submit( 'accepted' );
+		} );
+		cancel.addEventListener( 'click', () => {
+			void submit( 'cancelled' );
+		} );
+
+		root.dataset.wpessentialFormActionEnhanced = 'ready';
+	}
+}
+
 function bootAdmin(): void {
 	const root = document.getElementById( 'wpessential-admin-root' );
 	const bootstrap = document.getElementById( 'wpessential-admin-bootstrap' );
@@ -811,8 +982,15 @@ function bootAdmin(): void {
 	}
 }
 
-if ( document.readyState === 'loading' ) {
-	document.addEventListener( 'DOMContentLoaded', bootAdmin, { once: true } );
-} else {
+function bootWPEssentialAdmin(): void {
 	bootAdmin();
+	bootDashboardFormActions();
+}
+
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', bootWPEssentialAdmin, {
+		once: true,
+	} );
+} else {
+	bootWPEssentialAdmin();
 }
