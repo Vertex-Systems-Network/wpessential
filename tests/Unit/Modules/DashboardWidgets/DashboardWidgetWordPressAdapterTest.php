@@ -40,32 +40,11 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         $adapter->registerHooks();
 
         self::assertSame(
-            ['wp_dashboard_setup', 'wp_network_dashboard_setup', 'admin_enqueue_scripts'],
+            ['wp_dashboard_setup', 'wp_network_dashboard_setup'],
             array_column($environment->hooks, 'hook'),
         );
         self::assertSame(['default_hidden_meta_boxes'], array_column($environment->filters, 'hook'));
         self::assertSame(2, $environment->filters[0]['acceptedArgs']);
-    }
-
-    public function testFormActionAssetsAreEnqueuedOnlyOnWordPressDashboard(): void
-    {
-        [$adapter, , $environment] = $this->harness([]);
-        $adapter->registerHooks();
-
-        $enqueue = null;
-        foreach ($environment->hooks as $hook) {
-            if ($hook['hook'] === 'admin_enqueue_scripts') {
-                $enqueue = $hook['callback'];
-                break;
-            }
-        }
-        self::assertIsCallable($enqueue);
-
-        $enqueue('edit.php');
-        self::assertSame(0, $environment->formActionAssetEnqueues);
-
-        $enqueue('index.php');
-        self::assertSame(1, $environment->formActionAssetEnqueues);
     }
 
     public function testFormActionBypassesGenericRendererAndUsesTrustedPresenter(): void
@@ -827,7 +806,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         $adapter->registerHooks();
 
         self::assertSame(
-            ['wp_network_dashboard_setup', 'admin_enqueue_scripts'],
+            ['wp_network_dashboard_setup'],
             array_column($environment->hooks, 'hook'),
         );
     }
@@ -910,7 +889,6 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             public bool $throwOnHiddenDashboardWidgetPreference = false;
             public bool $throwOnCollapsedDashboardWidgetPreference = false;
             public bool $throwOnDashboardWidgetOrderPreference = false;
-            public int $formActionAssetEnqueues = 0;
             public string $ajaxEndpoint = 'https://example.test/wp-admin/admin-ajax.php';
             /** @var array<string,bool> */
             public array $closedPostboxPreferenceByScreen = [];
@@ -1014,7 +992,6 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 return $this->registeredDashboardWidgetsByScreen[$screenId] ?? [];
             }
             public function ajaxUrl(): string { return $this->ajaxEndpoint; }
-            public function enqueueFormActionAssets(): void { ++$this->formActionAssetEnqueues; }
             public function outputTrustedHtml(string $html): void { $this->outputs[] = $html; }
         };
 
