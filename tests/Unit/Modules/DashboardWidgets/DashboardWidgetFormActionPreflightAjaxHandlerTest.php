@@ -141,6 +141,28 @@ final class DashboardWidgetFormActionPreflightAjaxHandlerTest extends TestCase
         );
     }
 
+    public function testUnsafeOwnerAuthorizationReasonIsNotPersisted(): void
+    {
+        [$handler, $abilityHandler, $audit] = $this->harness(
+            ownerDecision: PolicyDecision::deny('<script>secret detail</script>'),
+        );
+
+        $result = $handler->handle($this->request('accepted'));
+
+        self::assertSame(
+            DashboardWidgetFormActionPreflightAjaxHandler::STATE_AUTHORIZATION_DENIED,
+            $result['state'],
+        );
+        self::assertSame(1, $abilityHandler->authorizationCalls);
+        self::assertSame(0, $abilityHandler->executions);
+        self::assertCount(1, $audit->records);
+        self::assertNull($audit->records[0]->reason);
+        self::assertStringNotContainsString(
+            'secret detail',
+            json_encode($audit->records[0]->metadata, JSON_THROW_ON_ERROR),
+        );
+    }
+
     public function testRequiredAuditFailurePreventsConfirmationReady(): void
     {
         [$handler, $abilityHandler, $audit] = $this->harness(failAuditAt: 1);
