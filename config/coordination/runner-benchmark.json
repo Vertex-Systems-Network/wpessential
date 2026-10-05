@@ -3116,7 +3116,7 @@
     },
     {
       "id": "RB-0095",
-      "source": "Issue #1323",
+      "source": "Issue #1323 / PR #1324",
       "category": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture + Browser E2E exact-head validation",
@@ -3136,7 +3136,8 @@
         "Issue #1323 freezes exact 27-file RB-0095 scope",
         "fresh post-RB-0094 audit selected dashboard-widgets.refresh.manual + dashboard-widgets.state.loading as unblocked P0_PARITY residuals",
         "admin-ui/src/main.ts changes make Browser E2E applicable and merge-blocking",
-        "manual refresh reruns canonical runtime authority without cache invalidation, scheduler invocation or provider transport"
+        "manual refresh reruns canonical runtime authority without cache invalidation, scheduler invocation or provider transport",
+        "PR #1324 opened from exact main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
       ],
       "note": "Merge only after all six exact-head gate families PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
