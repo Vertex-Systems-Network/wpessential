@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0
-observed_main_source: "Issue #1310 / PR #1311 minimal admin toolchain migration merged; Security Refresh/Architecture/Governance/Distributable/Browser terminal PASS"
-active_issue: "#1287"
-active_pr: "#1288"
-active_branch: agent/dashboard-widgets-input-aware-action-authorization-contract-v1
-current_milestone: "Dashboard Widgets Input-Aware Action Authorization Contract V1 — fresh secure-main validation"
+observed_main_sha: a7804178ae287bb0550c9456b07ea0aea70fb93a
+observed_main_source: "Issue #1291 / PR #1298 bounded Input-Aware Action Authorization V1 merged; Governance/PHP/Distributable/Architecture/Platform terminal PASS"
+active_issue: "#1296"
+active_pr: "#1299"
+active_branch: agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1
+current_milestone: "Dashboard Widgets trusted form_action UI + confirmation orchestration contract V1 — fresh-main validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1310 / PR #1311 merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; exact head 18f6d887867398374b5711ce810fd2b86d62b74b; Security Lockfile Refresh 37316752594 PASS; Architecture 37316752583 FULL PASS; Governance 37316752522 PASS; Distributable 37316752573 PASS; Browser E2E 37316752923 PASS; dev/distributable vulnerabilities 0; verdict PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1."
-next_safe_action: "Run RB-0083 exact-head Governance + Architecture on PR #1288; require exact six-file scope, zero behind and zero review blockers; expected-head merge; then reconcile PR #1298."
-waiting_external: "PR #1288 exact-head RB-0083 Governance + Architecture merge gate"
+last_completed_milestone: "Issue #1291 / PR #1298 merged as a7804178ae287bb0550c9456b07ea0aea70fb93a; exact head d786beff0ead88eb83252cd414e040a7883430c4; Governance 37319094769 PASS; PHP Quality 37319094814 PASS; Distributable 37319094729 PASS; Architecture 37319094548 FULL PASS; Platform Compatibility 37319094511 PASS 10/10; exact two-file scope; zero review blockers and zero behind; verdict PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1."
+next_safe_action: "Run RB-0085 exact-head Governance + Architecture on PR #1299 exact six-file contract scope; require zero behind/review blockers; expected-head merge; then reconcile PR #1301."
+waiting_external: "PR #1299 exact-head RB-0085 Governance + Architecture merge gate"
 next_planned_slot:
-  issue: "#1287"
-  slot_id: dashboard-widgets-input-aware-action-authorization-contract-v1
-  claim_branch: "agent/dashboard-widgets-input-aware-action-authorization-contract-v1"
-  claim_rule: "Fresh secure-main exact six-file contract/shared-truth scope only; no runtime/product source; RB-0083 Governance + Architecture FULL PASS required before expected-head merge."
+  issue: "#1296"
+  slot_id: dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1
+  claim_branch: "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1"
+  claim_rule: "Fresh main exact six-file trusted form_action UI/confirmation contract/shared-truth scope only; no runtime UI/AJAX/audit execution; RB-0085 Governance + Architecture FULL PASS required before expected-head merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,8 +24,6 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0083
-    - RB-0084
     - RB-0085
     - RB-0086
   terminal_pass:
@@ -71,6 +69,8 @@ runner_benchmark:
     - RB-0081
     - RB-0082
     - RB-0087
+    - RB-0083
+    - RB-0084
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -113,6 +113,8 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
+  - "Issue #1296 / PR #1299 is the active trusted form_action contract gate on terminal RB-0084 main; no runtime/action execution in this tranche."
+  - "RB-0083 and RB-0084 are terminal PASS; PR #1288 contract and PR #1298 implementation are merged."
   - "Issue #1287 / PR #1288 is the active fresh secure-main contract gate; RB-0083 must pass Governance + Architecture before merge."
   - "Repository/runtime evidence outranks compact state."
   - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
@@ -143,4 +145,4 @@ notes:
   - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
   - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: 16 records retain terminal bounded action reference/authorization/confirmation/result-audit/input-binding and owner Set-Enabled mutation evidence through RB-0082. Repository security migration #1310/#1311 is terminal PASS through RB-0087 with 0 dev/distributable vulnerabilities and the affected braces chain absent. Active #1287/#1288 now validates the Input-Aware Authorization contract on fresh secure main; downstream #1298/#1299/#1301 remain prepared and non-mergeable until predecessor gates are terminal. No final Dashboard action execution is promoted.
+# P1_CORE deep audit: 16 records now include terminal Input-Aware Authorization contract + implementation through RB-0084 on secure main. Active #1296/#1299 freezes trusted form_action presentation/confirmation-preflight semantics only; downstream #1301 implementation remains prepared and non-mergeable until RB-0085 terminal. Final action execution remains forbidden.
