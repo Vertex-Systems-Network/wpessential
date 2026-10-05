@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 17b00095a594435acb2b10245bdb076737849abc
 observed_main_source: "Issue #1297 / PR #1312 bounded form_action execution V1 merged; Governance/PHP/Distributable/Browser/Platform/Architecture terminal PASS"
 active_issue: "#1313"
-active_pr: null
+active_pr: "#1314"
 active_branch: agent/dashboard-widgets-rb0088-terminal-reconciliation
 current_milestone: "Dashboard Widgets RB-0088 terminal reconciliation + post-execution parity audit"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1297 / PR #1312 merged as 17b00095a594435acb2b10245bdb076737849abc; exact head e29fb878a7550a24f80328d6d77d0e68a5d259f7; Governance 37326386156 PASS; PHP Quality 37326385987 PASS; Distributable 37326385920 PASS; Browser E2E 37326385904 PASS; Platform Compatibility 37326386023 PASS 10/10; Architecture 37326385998 FULL PASS; exact 14-file scope; zero unresolved review threads; zero behind pre-merge main; resulting main tree equals PR head tree; verdict PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1."
 next_safe_action: "Complete Issue #1313 five-file shared-truth reconciliation, then perform read-only Surface 10 post-execution parity audit and freeze the next bounded gap in a new Issue before any runtime implementation."
-waiting_external: "Issue #1313 shared-truth-only reconciliation PR exact-head Governance + Architecture gate."
+waiting_external: "PR #1314 exact-head Governance + Architecture reconciliation gate."
 next_planned_slot:
   issue: "#1313"
   slot_id: dashboard-widgets-post-execution-parity-audit
