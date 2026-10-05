@@ -632,6 +632,86 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
+    public function testCompilesFormActionOnlyThroughDedicatedActionContract(): void
+    {
+        $abilityId = 'wpessential/forms-workflows/set-enabled';
+        $resolver = static fn (string $name): ?array => [
+            'name' => $name,
+            'owner_surface_id' => 17,
+            'mutates' => true,
+            'ui_allowed' => true,
+            'input_schema' => [
+                'type' => 'object',
+                'required' => ['definition_id', 'expected_revision', 'enabled'],
+                'properties' => [
+                    'definition_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                    'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                    'enabled' => ['type' => 'boolean'],
+                ],
+                'additionalProperties' => false,
+            ],
+        ];
+
+        $widget = $this->widget();
+        $widget['type'] = DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION;
+        unset($widget['render_source']);
+        $widget['action'] = [
+            'ability_id' => $abilityId,
+            'confirmation' => [
+                'title' => 'Disable workflow?',
+                'message' => 'This changes the workflow availability.',
+                'confirm_label' => 'Disable',
+                'cancel_label' => 'Cancel',
+            ],
+            'input' => [
+                'definition_id' => [
+                    'source' => 'literal',
+                    'value' => '22222222-2222-4222-8222-222222222222',
+                ],
+                'expected_revision' => ['source' => 'literal', 'value' => 4],
+                'enabled' => ['source' => 'literal', 'value' => false],
+            ],
+        ];
+
+        $descriptor = $this->compiler(null, $resolver)->compile(
+            $this->definition(widget: $widget),
+        );
+
+        self::assertSame($abilityId, $descriptor->actionAbilityId);
+        self::assertInstanceOf(
+            DashboardWidgetActionConfirmationDescriptor::class,
+            $descriptor->actionConfirmation,
+        );
+        self::assertInstanceOf(
+            DashboardWidgetActionInputDescriptor::class,
+            $descriptor->actionInput,
+        );
+
+        $withRenderSource = $widget;
+        $withRenderSource['render_source'] = $this->renderSource();
+        try {
+            $this->compiler(null, $resolver)->compile(
+                $this->definition(widget: $withRenderSource),
+            );
+            self::fail('form_action must never enter generic render_source compilation.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        foreach (['ability_id', 'confirmation', 'input'] as $missing) {
+            $invalid = $widget;
+            unset($invalid['action'][$missing]);
+            try {
+                $this->compiler(null, $resolver)->compile(
+                    $this->definition(widget: $invalid),
+                );
+                self::fail('form_action must require Ability, confirmation and input descriptors.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
     private function compiler(
         ?callable $backgroundJobResolver = null,
         ?callable $formActionAbilityResolver = null,
