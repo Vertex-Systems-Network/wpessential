@@ -3048,7 +3048,7 @@
     },
     {
       "id": "RB-0093",
-      "source": "Issue #1319",
+      "source": "Issue #1319 / PR #1320",
       "category": "DASHBOARD_WIDGETS_DISMISS_RESET_PARITY_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation; Browser applicability determined from repository path filters",
@@ -3067,7 +3067,8 @@
       "evidence": [
         "Issue #1319 freezes exact 16-file parity scope",
         "fresh post-RB-0092 audit selected user_dismiss + reset_layout as unblocked P0_PARITY residual",
-        "implementation validates reset sources before mutation and derives dismiss ids only from canonical definitions"
+        "implementation validates reset sources before mutation and derives dismiss ids only from canonical definitions",
+        "PR #1320 opened from exact main c386f72e648f85dadc64324fe863f5d12fb40cb2"
       ],
       "note": "Merge only after applicable exact-head CI PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
