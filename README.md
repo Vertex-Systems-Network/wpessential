@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET PASS / RB-0094 LIFECYCLE | RB-0093 dismiss/reset terminal PASS; #1321 lifecycle visibility active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET PASS / RB-0094 LIFECYCLE | RB-0093 dismiss/reset terminal PASS; #1321/#1322 lifecycle visibility validation active |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -46,7 +46,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 - Issue #1317 / PR #1318 / RB-0092 is terminal PASS: bounded read-only runtime diagnostics merged as `c386f72e648f85dadc64324fe863f5d12fb40cb2` after Governance, PHP, Distributable, Architecture and Platform 10/10 PASS; Browser was path-filter N/A.
 - Fresh residual audit confirmed `icon_link` is already implemented. Portability execution is explicit-owner-authorization-gated by ADR-0116; shared cache runtime remains EXECUTION NOT AUTHORIZED with CAC 0/176 executed; provider/remote remains cross-owner.
 - Issue #1319 / PR #1320 / RB-0093 is terminal PASS: dismissible + verified current-user WPE-only dismiss/reset parity merged as `bb6c826f05ffdc7f84c0abcbad42979cf590e648`; core/third-party native preference state remains preserved.
-- Fresh post-RB-0093 audit confirms roles/capabilities/users visibility is already runtime-covered. Issue #1321 / RB-0094 is active for bounded UTC `schedule_start`/`schedule_end` request-time lifecycle visibility across registration, direct render, form_action preflight/execution and diagnostics; no Cron/Job scheduling engine is claimed.
+- Fresh post-RB-0093 audit confirms roles/capabilities/users visibility is already runtime-covered. Issue #1321 / PR #1322 / RB-0094 is active for bounded UTC `schedule_start`/`schedule_end` request-time lifecycle visibility across registration, direct render, form_action preflight/execution and diagnostics; no Cron/Job scheduling engine is claimed.
 
 ## Current lifecycle
 
