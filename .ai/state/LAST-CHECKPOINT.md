@@ -1,82 +1,122 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-02 — #1285 Forms & Workflows bounded Set-Enabled Mutating Ability V1 active
+## 2026-10-05 — stacked Dashboard form_action preparation active
 
-### Exact repository truth
+### Exact terminal repository truth
 
-- Exact current main: `f47ab596dc0329b759bdfa404b37fce6b5963447`.
-- Issue #1283 / PR #1284 — Set-Enabled Mutating Ability Owner Contract V1 — terminal PASS:
-  - exact head `a6ce28c716489d82153c71bc849902fdf1b2a97b`;
-  - Governance `36931696966` PASS;
-  - Architecture `36931696965` PASS;
-  - exact six authorized contract/shared-truth files;
+- Exact current main anchor: `25f098a170c42d30f829d196452189d9f5b71763`.
+- Issue #1285 / PR #1286 — bounded Forms Set-Enabled Mutating Ability V1 — terminal PASS:
+  - exact head `c45e623079824b7e75e4a05617f1439a6971ea2f`;
+  - Governance `36932601887` PASS;
+  - PHP Quality `36932601852` PASS;
+  - Distributable `36932601809` PASS;
+  - Architecture `36932601669` PASS;
+  - Platform Compatibility `36932601737` PASS;
+  - exact nine-file scope;
   - zero unresolved review blockers;
   - zero behind;
-  - expected-head merge `f47ab596dc0329b759bdfa404b37fce6b5963447`;
-  - verdict `CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
-- RB-0081 is terminal PASS.
-- RB-0080 bounded Dashboard Action-Input Binding remains terminal PASS.
+  - merge `25f098a170c42d30f829d196452189d9f5b71763`;
+  - verdict `PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1`.
+- RB-0082 is terminal PASS.
 - RB-0073 remains historical FAIL and is not rewritten.
 
-### #1285 active implementation
+### Repository-wide security blocker
 
-First real Surface-17 mutation:
+Issue #1289 remains `BLOCKED_UPSTREAM`.
 
-`wpessential/forms-workflows/set-enabled`
+Current repository dev graph evidence:
+- 23 total vulnerabilities;
+- 19 high;
+- 3 moderate;
+- 1 low;
+- 0 critical;
+- distributable/production graph: 0 vulnerabilities.
 
-Implementation boundary:
-- owner Surface 17;
-- manage_options;
-- mutates=true;
-- Internal/UI channels only;
-- showInRest=false;
-- no custom REST/AJAX/admin-post mutation endpoint.
+The high-severity remainder is rooted in affected `braces 3.0.3` through maintained dev-tooling chains. Architecture policy is not weakened, waived or bypassed.
 
-Input:
-- definition_id string length 36 plus explicit lowercase RFC4122 owner check;
-- expected_revision integer >= 1;
-- enabled boolean;
-- no additional properties;
-- direct owner-side canonical AbilityInputValidator validation because AbilityRegistry does not globally validate input schemas.
+### #1287 / PR #1288 — Input-Aware Authorization contract
 
-Authorization/execution:
-- existence + owner/type + Published/Disabled + exact expected revision;
-- execution re-reads all state before write;
-- same-target = no-op, zero save, zero revision increment;
-- changed target = immutable Definition copy + revision +1 + canonical repository save;
-- stale replay/conflict fails closed;
-- payload/dependencies/identity/checksum preserved;
-- persistence failures use stable safe messages.
+- Contract branch remains 0 behind its audited main base.
+- Exact six-file contract scope remains clean.
+- Zero unresolved review threads.
+- Feature contract Governance is PASS.
+- Architecture is blocked by #1289 dev advisory gate.
+- RB-0083 remains dependency/security blocked.
+- No merge or contract promotion is allowed until Architecture truthfully passes.
 
-Strictly absent:
-- no AbilityRegistry.php change;
-- no Dashboard Widgets source;
-- no submission/entry/run mutation;
-- no provider/payment/secret execution;
-- no REST mutation;
-- no package/dependency change.
+### #1291 / PR #1298 — prepared Input-Aware Authorization implementation
 
-### FAST delivery status
+Owner-authorized preparation status: **PREPARED_NOT_MERGEABLE**.
 
-- Active Issue: **#1285 — Forms & Workflows: bounded Set-Enabled Mutating Ability V1**.
-- Active PR: **#1286**.
-- Active branch: `agent/forms-workflows-bounded-set-enabled-ability-v1`.
-- RB-0082 is the single implementation merge gate.
-- Exact authorized scope: two product files + two focused test files + five shared-truth files.
+Exact prepared head:
 
-### Dependency order after merge
+`0111346896b5092abd65a16939bf2fdb15d20cc9`
 
-1. Set-Enabled owner mutation implementation.
-2. Trusted Dashboard `form_action` UI/orchestration.
-3. Final separately reviewed Dashboard execution gate.
+Exact diff:
+1. `frameworks/Modules/DashboardWidgets/DashboardWidgetActionAuthorizationEvaluator.php`
+2. `tests/Unit/Modules/DashboardWidgets/DashboardWidgetActionAuthorizationEvaluatorTest.php`
 
-### Persistent recovery order
+Prepared behavior:
+- validated bound input reaches canonical `AbilityRegistry::authorize()`;
+- zero-input compatibility requires exact `[]`;
+- canonical `AbilityInputValidator` validates non-empty schema/input;
+- owner Surface 17 + mutates=true + UI channel required;
+- authenticated user/UI context required;
+- canonical capability/owner denial reasons preserved;
+- invalid input/context/ability and authorization exceptions fail closed;
+- zero `AbilityRegistry::execute()`;
+- zero handler `handle()` execution.
 
-1. `.ai/state/CURRENT-STATE.yaml`
-2. `.ai/state/LAST-CHECKPOINT.md`
-3. exact current main + OPEN Issues + OPEN PRs
-4. `config/coordination/agent-work-queue.json`
-5. `config/coordination/runner-benchmark.json`
-6. historical `CHECKPOINT.md` only when needed
+Exact-head evidence:
+- Governance `37301962477` PASS;
+- PHP Quality `37301962406` PASS;
+- Distributable `37301962201` PASS;
+- Platform Compatibility `37301962440` PASS, 10/10 cells;
+- Architecture `37301962429` FAIL only at the existing development npm advisory gate;
+- JS lint, style lint, TypeScript and admin build passed before the advisory gate;
+- review threads: 0.
 
-Repository/runtime evidence outranks compact state.
+RB-0084 remains dependency-blocked and cannot promote PASS before #1288/#1289 terminal reconciliation.
+
+### #1296 / PR #1299 — stacked trusted form_action UI + confirmation contract preparation
+
+Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
+
+Stack base:
+- PR #1298 head `0111346896b5092abd65a16939bf2fdb15d20cc9`.
+
+Expected contract PR diff against #1298:
+1. `docs/PRODUCT/DASHBOARD-WIDGETS-TRUSTED-FORM-ACTION-UI-CONFIRMATION-CONTRACT-V1.md`;
+2. `.ai/state/CURRENT-STATE.yaml`;
+3. `.ai/state/LAST-CHECKPOINT.md`;
+4. `README.md`;
+5. `config/coordination/agent-work-queue.json`;
+6. `config/coordination/runner-benchmark.json`.
+
+Frozen contract:
+- dedicated trusted `form_action` presentation only;
+- Dashboard-owned canonical nonce-protected preflight AJAX route;
+- browser supplies only definition id/revision + accepted/cancelled state;
+- server reloads/recompiles current Definition and rebinds current owner input;
+- exact input-aware authorization runs before confirmation-ready;
+- canonical authorization + confirmation audits are required;
+- bounded safe response taxonomy only;
+- `confirmation_ready` means authorized + confirmed + audited, **not executed**;
+- no generic `AbilityAjaxHandler`;
+- no `AbilityRegistry::execute()`;
+- no owner `handle()`;
+- no Forms mutation;
+- no REST/admin-post mutation;
+- no arbitrary Definition HTML/JS.
+
+RB-0085 remains dependency-blocked. No contract PASS/readiness promotion is permitted until RB-0083 and RB-0084 are terminal PASS and #1289 is resolved.
+
+### Recovery order
+
+1. Read `.ai/state/CURRENT-STATE.yaml`.
+2. Read this checkpoint.
+3. Resolve exact current main and open PRs #1288, #1298 and #1299.
+4. Re-read security Issue #1289.
+5. Re-read `config/coordination/agent-work-queue.json`.
+6. Re-read `config/coordination/runner-benchmark.json`.
+7. Do not merge #1288/#1298/#1299 while the required Architecture security gate is red.
