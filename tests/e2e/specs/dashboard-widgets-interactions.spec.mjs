@@ -47,7 +47,8 @@ async function installManualRefreshFixture(page) {
           <template data-wpessential-dashboard-refresh-loading="1"><div><p>Trusted loading state</p></div></template>
           <p role="status" aria-live="polite" data-wpessential-dashboard-refresh-status="1"></p>
         `;
-        document.body.append(root);
+        const mount = document.getElementById('wpbody-content') ?? document.body;
+        mount.prepend(root);
       },
       { once: true }
     );
@@ -83,7 +84,8 @@ async function installFormActionFixture(page) {
           </div>
           <p role="status" aria-live="polite" data-wpessential-form-action-status="1"></p>
         `;
-        document.body.append(root);
+        const mount = document.getElementById('wpbody-content') ?? document.body;
+        mount.prepend(root);
       },
       { once: true }
     );
