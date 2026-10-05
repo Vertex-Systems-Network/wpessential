@@ -6832,7 +6832,7 @@
       "role": "AGENT_IMPLEMENTATION",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_DIAGNOSTICS_V1",
-      "source": "Issue #1317 fresh-main RB-0092",
+      "source": "Issue #1317 / PR #1318 fresh-main RB-0092 validation",
       "dependencies": [
         "RB-0091 terminal PASS",
         "exact fresh source base 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac"
