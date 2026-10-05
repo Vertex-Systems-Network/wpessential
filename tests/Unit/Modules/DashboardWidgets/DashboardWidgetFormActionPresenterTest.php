@@ -17,7 +17,8 @@ final class DashboardWidgetFormActionPresenterTest extends TestCase
     {
         $presenter = new DashboardWidgetFormActionPresenter(
             'wpessential_dispatch',
-            static fn (): string => 'nonce-"<&',
+            static fn (): string => 'preflight-nonce-"<&',
+            static fn (): string => 'execution-nonce-"<&',
         );
 
         $html = $presenter->render(
@@ -38,6 +39,11 @@ final class DashboardWidgetFormActionPresenterTest extends TestCase
             $html,
         );
         self::assertStringContainsString(
+            'data-execute-route-type="dashboard-widgets.form-action.execute"',
+            $html,
+        );
+        self::assertStringContainsString('data-execute-nonce="execution-nonce-&quot;&lt;&amp;"', $html);
+        self::assertStringContainsString(
             'data-definition-id="11111111-1111-4111-8111-111111111111"',
             $html,
         );
@@ -55,7 +61,8 @@ final class DashboardWidgetFormActionPresenterTest extends TestCase
     {
         $presenter = new DashboardWidgetFormActionPresenter(
             'wpessential_dispatch',
-            static fn (): string => 'nonce',
+            static fn (): string => 'preflight-nonce',
+            static fn (): string => 'execution-nonce',
         );
 
         foreach ([
@@ -86,6 +93,7 @@ final class DashboardWidgetFormActionPresenterTest extends TestCase
 
         $presenter = new DashboardWidgetFormActionPresenter(
             'wpessential_dispatch',
+            static fn (): string => 'preflight-nonce',
             static fn (): string => '',
         );
         $this->expectException(InvalidArgumentException::class);

@@ -12,6 +12,8 @@ use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionAuthorizationEvaluator;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionInputBinder;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionExecutionAjaxHandler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionExecutionResultAdapter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPreflightAjaxHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPresenter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
@@ -149,6 +151,8 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetActionInputBinder::class, $services->get(DashboardWidgetsModule::SERVICE_ACTION_INPUT_BINDER));
         self::assertInstanceOf(DashboardWidgetFormActionPresenter::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PRESENTER));
         self::assertInstanceOf(DashboardWidgetFormActionPreflightAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PREFLIGHT));
+        self::assertInstanceOf(DashboardWidgetFormActionExecutionResultAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_RESULT_ADAPTER));
+        self::assertInstanceOf(DashboardWidgetFormActionExecutionAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_EXECUTION));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
 
@@ -274,7 +278,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertCount(2, $bridge->registerAbilities());
     }
 
-    public function testFormActionRouteRejectsGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
+    public function testFormActionRoutesRejectGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
     {
         $services = $this->baseServices();
         (new RenderingServiceRegistrar())->register($services);
@@ -283,27 +287,32 @@ final class DashboardWidgetsModuleTest extends TestCase
         $dispatcher = $services->get('platform.ajax.dispatcher');
         self::assertInstanceOf(AjaxDispatcher::class, $dispatcher);
 
-        $guest = $dispatcher->dispatch(
-            [
-                'type' => DashboardWidgetFormActionPresenter::ROUTE_TYPE,
-                'nonce' => 'test-nonce',
-                'payload' => [],
-            ],
-            false,
-        );
-        self::assertSame(401, $guest->status);
-        self::assertSame('authentication_required', $guest->payload()['error']['code']);
+        foreach ([
+            DashboardWidgetFormActionPresenter::ROUTE_TYPE,
+            DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
+        ] as $routeType) {
+            $guest = $dispatcher->dispatch(
+                [
+                    'type' => $routeType,
+                    'nonce' => 'test-nonce',
+                    'payload' => [],
+                ],
+                false,
+            );
+            self::assertSame(401, $guest->status);
+            self::assertSame('authentication_required', $guest->payload()['error']['code']);
 
-        $invalidNonce = $dispatcher->dispatch(
-            [
-                'type' => DashboardWidgetFormActionPresenter::ROUTE_TYPE,
-                'nonce' => 'wrong-nonce',
-                'payload' => [],
-            ],
-            true,
-        );
-        self::assertSame(403, $invalidNonce->status);
-        self::assertSame('invalid_nonce', $invalidNonce->payload()['error']['code']);
+            $invalidNonce = $dispatcher->dispatch(
+                [
+                    'type' => $routeType,
+                    'nonce' => 'wrong-nonce',
+                    'payload' => [],
+                ],
+                true,
+            );
+            self::assertSame(403, $invalidNonce->status);
+            self::assertSame('invalid_nonce', $invalidNonce->payload()['error']['code']);
+        }
     }
 
     public function testModuleBootRegistersWordPressDashboardHooksThroughAdapterService(): void

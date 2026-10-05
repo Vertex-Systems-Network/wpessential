@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0086 | Security + Input-Aware Authorization + trusted UI contract terminal PASS; #1301 non-executing preflight validation active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0088 | Trusted confirmation-preflight terminal PASS; first bounded Forms Set-Enabled execution seam under exact 14-file validation |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,15 +37,16 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main: `5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e`.
-- RB-0087 security migration, RB-0083 Input-Aware Authorization contract and RB-0084 Input-Aware Authorization implementation are terminal PASS.
-- PR #1299 / RB-0085 trusted `form_action` UI + confirmation contract is terminal PASS and merged. Exact head `93dd6bf2efbbf1f52ea4ba3a259b71e1bc6a50e0` passed Governance `37319828147` and Architecture `37319827994`.
-- Issue #1300 / PR #1301 / RB-0086 is now the active fresh-main implementation validation tranche.
-- #1301 implements dedicated trusted `form_action` presentation plus a canonical confirmation-preflight route; browser sends only Definition id/revision and accepted/cancelled state, while Ability id and owner input remain server-side.
-- Server reloads/recompiles current truth, rebinds current input, runs Input-Aware Authorization and writes bounded canonical authorization/confirmation audits.
-- `confirmation_ready` explicitly means **authorized + confirmed + audited, not executed**.
-- The preflight path contains no `AbilityRegistry::execute()`, no direct owner handler execution, no Forms mutation, no REST/admin-post mutation, no generic `AbilityAjaxHandler`, no shared Platform source mutation and no automatic retry.
-- #1297 final execution remains implementation-forbidden until RB-0086 terminal merge.
+- Exact current main: `713942185ce5340192b2a76bde29b69d68aed975`.
+- RB-0087 security migration, RB-0083/RB-0084 Input-Aware Authorization, and RB-0085 trusted UI contract remain terminal PASS.
+- PR #1301 / RB-0086 trusted `form_action` confirmation-preflight is terminal PASS and merged. Exact head `c5250ddad34ac0a2d11dcb651ee7a55977ba924f` passed Governance, PHP Quality, Distributable, Browser E2E, Platform Compatibility 10/10 and full Architecture.
+- Issue #1297 / RB-0088 is now the active final bounded execution tranche.
+- V1 execution is explicitly allowlisted to `wpessential/forms-workflows/set-enabled` only. The browser never supplies Ability id or bound owner input.
+- The server repeats current Definition revision validation, registration compilation, current input binding and Input-Aware Authorization, then requires authorization + confirmation + execution-attempt audit records before mutation.
+- Exactly one `AbilityRegistry::execute()` call is allowed per admitted request. There is no Dashboard direct owner `handle()` call and no automatic retry.
+- Strict result adaptation accepts only exact `status_changed` or `already_target_status` Set-Enabled results consistent with the server-bound input.
+- Exceptions or malformed post-execute results return `execution_outcome_unknown`; known success with failed terminal audit returns `execution_succeeded_audit_degraded`. Both require refresh/re-read and retry mode remains none.
+- No generic Ability execution, generic `AbilityAjaxHandler`, REST/admin-post mutation, shared Platform mutation, package change, deploy or GA widening is included.
 
 ## Current lifecycle
 

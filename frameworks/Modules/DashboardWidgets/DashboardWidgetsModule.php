@@ -57,6 +57,8 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_ACTION_INPUT_BINDER = 'module.dashboard-widgets.action-input-binder';
     public const SERVICE_FORM_ACTION_PRESENTER = 'module.dashboard-widgets.form-action-presenter';
     public const SERVICE_FORM_ACTION_PREFLIGHT = 'module.dashboard-widgets.form-action-preflight';
+    public const SERVICE_FORM_ACTION_EXECUTION = 'module.dashboard-widgets.form-action-execution';
+    public const SERVICE_FORM_ACTION_RESULT_ADAPTER = 'module.dashboard-widgets.form-action-result-adapter';
     public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
     public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
@@ -243,10 +245,33 @@ final class DashboardWidgetsModule implements ModuleInterface
             allowGuests: false,
             requiresNonce: true,
         ));
+        $executionResultAdapter = new DashboardWidgetFormActionExecutionResultAdapter();
+        $executionHandler = new DashboardWidgetFormActionExecutionAjaxHandler(
+            $definitions,
+            $contentClassCompiler,
+            $registrationCompiler,
+            $actionInputBinder,
+            $actionAuthorizationEvaluator,
+            $contexts,
+            $audit,
+            $abilities,
+            $executionResultAdapter,
+        );
+        $ajaxRoutes->register(new AjaxRoute(
+            type: DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
+            handler: $executionHandler,
+            operation: NonceOperation::Apply,
+            capability: null,
+            allowGuests: false,
+            requiresNonce: true,
+        ));
         $formActionPresenter = new DashboardWidgetFormActionPresenter(
             $ajaxGateway->action(),
             static fn (): string => $ajaxDispatcher->createNonce(
                 DashboardWidgetFormActionPresenter::ROUTE_TYPE,
+            ),
+            static fn (): string => $ajaxDispatcher->createNonce(
+                DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
             ),
         );
         $dashboardEnvironment = $this->dashboardEnvironment
@@ -277,6 +302,8 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_ACTION_INPUT_BINDER, $actionInputBinder);
         $services->set(self::SERVICE_FORM_ACTION_PRESENTER, $formActionPresenter);
         $services->set(self::SERVICE_FORM_ACTION_PREFLIGHT, $preflightHandler);
+        $services->set(self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $executionResultAdapter);
+        $services->set(self::SERVICE_FORM_ACTION_EXECUTION, $executionHandler);
         $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
         $services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
 
