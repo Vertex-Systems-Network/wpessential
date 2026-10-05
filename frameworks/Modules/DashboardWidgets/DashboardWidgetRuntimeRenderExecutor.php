@@ -56,8 +56,18 @@ final readonly class DashboardWidgetRuntimeRenderExecutor
             return DashboardWidgetRuntimeRenderResult::runtimeFailure();
         }
 
-        if ($lifecycleState !== DashboardWidgetVisibilityDecision::REASON_ALLOWED) {
-            return DashboardWidgetRuntimeRenderResult::visibilityDenied($lifecycleState);
+        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_BEFORE_SCHEDULE) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+                DashboardWidgetVisibilityDecision::REASON_BEFORE_SCHEDULE,
+            );
+        }
+        if ($lifecycleState === DashboardWidgetRegistrationDescriptor::LIFECYCLE_EXPIRED) {
+            return DashboardWidgetRuntimeRenderResult::visibilityDenied(
+                DashboardWidgetVisibilityDecision::REASON_EXPIRED,
+            );
+        }
+        if ($lifecycleState !== DashboardWidgetRegistrationDescriptor::LIFECYCLE_ACTIVE) {
+            return DashboardWidgetRuntimeRenderResult::runtimeFailure();
         }
 
         try {
