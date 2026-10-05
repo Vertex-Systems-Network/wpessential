@@ -51,7 +51,11 @@ jobs:
           }
           NODE
           npm install --package-lock-only --ignore-scripts
-          cmp package-lock-before.json package-lock.json
+          set +e
+          diff -u package-lock-before.json package-lock.json > package-lock-reproducibility.diff
+          lock_diff_exit=$?
+          set -e
+          echo "lock_diff_exit=${lock_diff_exit}" >> "$GITHUB_ENV"
 
       - name: Audit refreshed dev graph
         shell: bash
@@ -111,5 +115,21 @@ jobs:
             npm-audit-after.json
             npm-audit-distributable-after.json
             candidate-graph-report.json
+            package-lock-reproducibility.diff
           if-no-files-found: error
           retention-days: 2
+
+      - name: Enforce lockfile reproducibility
+        if: env.lock_diff_exit != '0'
+        run: |
+          cat package-lock-reproducibility.diff
+          exit 1
+
+      - name: Enforce refreshed advisory gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${dev_audit_exit}" != "0" ] || [ "${prod_audit_exit}" != "0" ]; then
+            echo "Minimal admin toolchain audit gate failed." >&2
+            exit 1
+          fi
