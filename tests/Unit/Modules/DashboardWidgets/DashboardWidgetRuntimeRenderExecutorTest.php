@@ -580,6 +580,82 @@ final class DashboardWidgetRuntimeRenderExecutorTest extends TestCase
         self::assertSame($context, $renderer->seenContexts[1]);
     }
 
+    public function testManualRefreshLoadingStateReusesLifecycleAndVisibilityBeforeRendering(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $richText = $catalog->forContentType('rich_text');
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($richText);
+        self::assertNotNull($announcement);
+
+        $definition = new Definition(
+            id: $this->definitionId(),
+            slug: 'manual-loading-widget',
+            type: DashboardWidgetDefinition::TYPE,
+            schemaVersion: 1,
+            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+            status: DefinitionStatus::Published,
+            payload: ['widget' => [
+                'key' => 'manual_loading_widget',
+                'title' => 'Manual loading widget',
+                'type' => 'rich_text',
+                'context' => 'normal',
+                'priority' => 'default',
+                'network_dashboard' => false,
+                'refresh' => ['manual' => true],
+                'render_source' => [
+                    'kind' => 'component_blueprint',
+                    'blueprint_id' => $richText->id,
+                    'blueprint_revision' => $richText->revision,
+                    'bindings' => [
+                        'content' => ['source' => 'literal', 'value' => 'Current'],
+                    ],
+                    'loading_state' => [
+                        'kind' => 'component_blueprint',
+                        'blueprint_id' => $announcement->id,
+                        'blueprint_revision' => $announcement->revision,
+                        'bindings' => [
+                            'title' => ['source' => 'literal', 'value' => 'Refreshing'],
+                            'text' => ['source' => 'literal', 'value' => 'Fetching the latest data.'],
+                        ],
+                    ],
+                ],
+                'lifecycle' => [
+                    'schedule_start' => '2025-01-01T00:00:00Z',
+                    'schedule_end' => '2025-02-01T00:00:00Z',
+                ],
+            ]],
+            revision: 1,
+            dependencies: [],
+        );
+        $repository = $this->repositoryWith($definition);
+
+        $beforeRenderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>must not render</p>'));
+        $before = $this->executor(
+            $repository,
+            $beforeRenderer,
+            new RuntimeRenderRoleProvider(),
+            clock: new DashboardWidgetRuntimeClock(static fn (): int => 1735689599),
+        )->renderLoadingState($this->definitionId(), $this->context());
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_VISIBILITY_DENIED, $before->status);
+        self::assertSame(0, $beforeRenderer->calls);
+
+        $activeRenderer = new RuntimeRenderCapturingRenderer(new RenderOutput(true, '<p>trusted loading</p>'));
+        $active = $this->executor(
+            $repository,
+            $activeRenderer,
+            new RuntimeRenderRoleProvider(),
+            clock: new DashboardWidgetRuntimeClock(static fn (): int => 1737000000),
+        )->renderLoadingState($this->definitionId(), $this->context());
+        self::assertSame(DashboardWidgetRuntimeRenderResult::STATUS_RENDERED, $active->status);
+        self::assertSame('<p>trusted loading</p>', $active->html);
+        self::assertSame(
+            ['text' => 'Fetching the latest data.', 'title' => 'Refreshing'],
+            $activeRenderer->seenInput?->bindings,
+        );
+        self::assertSame(1, $activeRenderer->calls);
+    }
+
     private function executor(
         DefinitionRepositoryInterface $definitions,
         RendererInterface $renderer,
