@@ -3082,7 +3082,7 @@
     },
     {
       "id": "RB-0094",
-      "source": "Issue #1321",
+      "source": "Issue #1321 / PR #1322",
       "category": "DASHBOARD_WIDGETS_LIFECYCLE_VISIBILITY_WINDOW_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation; Browser applicability determined from repository path filters",
@@ -3101,7 +3101,8 @@
       "evidence": [
         "Issue #1321 freezes exact 23-file lifecycle visibility scope",
         "fresh post-RB-0093 audit selected schedule_start + schedule_end as unblocked P0_PARITY residual",
-        "implementation uses one injected runtime clock and gates registration/direct render/form_action preflight+execution plus diagnostics"
+        "implementation uses one injected runtime clock and gates registration/direct render/form_action preflight+execution plus diagnostics",
+        "PR #1322 opened from exact main bb6c826f05ffdc7f84c0abcbad42979cf590e648"
       ],
       "note": "Merge only after applicable exact-head CI PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
