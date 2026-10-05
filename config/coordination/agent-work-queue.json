@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "713942185ce5340192b2a76bde29b69d68aed975",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_FORM_ACTION_EXECUTION_V1",
-  "source_issue": "#1297",
+  "queue_anchor_main_sha": "17b00095a594435acb2b10245bdb076737849abc",
+  "mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_CONTRACT_V1",
+  "source_issue": "#1294",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6623,7 +6623,7 @@
       "slot_id": "dashboard-widgets-bounded-form-action-execution-v1",
       "title": "Dashboard Widgets bounded form_action execution V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_FORM_ACTION_EXECUTION_V1",
       "source": "Issue #1297 fresh-main final execution implementation",
       "dependencies": [
@@ -6667,7 +6667,90 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "agent/dashboard-widgets-bounded-form-action-execution-v1",
-      "close_condition": "Exact 14-file #1297 scope; only Forms Set-Enabled execution; exactly one AbilityRegistry::execute call per admitted request; authorization/confirmation/execution-attempt audits before mutation; strict result adaptation; no retry; RB-0088 full exact-head CI PASS; zero blockers/behind; expected-head merge; promote only PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1."
+      "close_condition": "Exact 14-file #1297 scope; only Forms Set-Enabled execution; exactly one AbilityRegistry::execute call per admitted request; authorization/confirmation/execution-attempt audits before mutation; strict result adaptation; no retry; RB-0088 full exact-head CI PASS; zero blockers/behind; expected-head merge; promote only PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1.",
+      "terminal_result": "PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1",
+      "terminal_evidence": {
+        "issue": 1297,
+        "pr": 1312,
+        "head": "e29fb878a7550a24f80328d6d77d0e68a5d259f7",
+        "governance_run": 37326386156,
+        "php_quality_run": 37326385987,
+        "distributable_run": 37326385920,
+        "browser_e2e_run": 37326385904,
+        "platform_compatibility_run": 37326386023,
+        "platform_cells_passed": 10,
+        "architecture_run": 37326385998,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "17b00095a594435acb2b10245bdb076737849abc",
+        "resulting_tree_matches_pr_head": true
+      }
+    },
+    {
+      "priority": 1065,
+      "slot_id": "platform-bounded-assetregistry-wordpress-loader-contract-v1",
+      "title": "Platform bounded AssetRegistry WordPress loader contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_CONTRACT_V1",
+      "source": "Issue #1294 / PR #1305 architecture-debt convergence contract",
+      "dependencies": [
+        "RB-0088 terminal PASS",
+        "exact current main 17b00095a594435acb2b10245bdb076737849abc",
+        "ADR-0150 accepted shared AssetRegistry/scoped-loader requirement"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "docs/PRODUCT/PLATFORM-BOUNDED-ASSETREGISTRY-WORDPRESS-LOADER-CONTRACT-V1.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "Platform runtime implementation",
+        "Dashboard Widgets runtime/source changes",
+        "package/dependency changes",
+        "action execution behavior changes",
+        "deploy/release/GA widening"
+      ],
+      "claim_branch": "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1",
+      "close_condition": "Exact six-file contract/shared-truth scope; RB-0089 Governance + Architecture FULL PASS; zero behind/review blockers; expected-head merge; promote only CONTRACT_FROZEN_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1 + READY_FOR_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1."
+    },
+    {
+      "priority": 1066,
+      "slot_id": "platform-bounded-assetregistry-wordpress-loader-v1",
+      "title": "Platform bounded AssetRegistry WordPress loader V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "BLOCKED_DEPENDENCY",
+      "work_mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1_PREPARATION",
+      "source": "Issue #1306 / PR #1307 prepared implementation",
+      "dependencies": [
+        "RB-0089 terminal PASS",
+        "fresh-main + terminal-contract reconciliation"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": true,
+      "allowed_scope": [
+        "Issue #1306 exact Platform loader implementation allowlist"
+      ],
+      "forbidden_scope": [
+        "Dashboard Widgets source changes",
+        "arbitrary remote/user-authored assets",
+        "package/dependency changes",
+        "action execution changes",
+        "deploy/release/GA widening"
+      ],
+      "claim_branch": "agent/platform-bounded-assetregistry-wordpress-loader-v1",
+      "close_condition": "Reconcile to terminal #1305/main; exact #1306 allowlist; RB-0090 required CI PASS; zero behind/review blockers; expected-head merge."
     }
   ],
   "historical_closeout": {
