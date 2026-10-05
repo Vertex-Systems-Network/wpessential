@@ -649,7 +649,9 @@ function removeStaleProviderOption( select: HTMLSelectElement ): void {
 		.querySelectorAll< HTMLOptionElement >(
 			'[data-wpessential-taxonomy-provider-stale]'
 		)
-		.forEach( ( option ) => option.remove() );
+		.forEach( ( option ) => {
+			option.remove();
+		} );
 }
 
 function setRuntimeProviders( payload: RecordValue ): void {

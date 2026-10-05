@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: f47ab596dc0329b759bdfa404b37fce6b5963447
-observed_main_source: "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract merged; Governance and Architecture terminal PASS"
-active_issue: "#1285"
-active_pr: "#1286"
-active_branch: agent/forms-workflows-bounded-set-enabled-ability-v1
-current_milestone: "Forms & Workflows bounded Set-Enabled Mutating Ability V1"
+observed_main_sha: 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0
+observed_main_source: "Issue #1310 / PR #1311 minimal admin toolchain migration merged; Security Refresh/Architecture/Governance/Distributable/Browser terminal PASS"
+active_issue: "#1287"
+active_pr: "#1288"
+active_branch: agent/dashboard-widgets-input-aware-action-authorization-contract-v1
+current_milestone: "Dashboard Widgets Input-Aware Action Authorization Contract V1 — fresh secure-main validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1283 / PR #1284 merged as f47ab596dc0329b759bdfa404b37fce6b5963447; exact head a6ce28c716489d82153c71bc849902fdf1b2a97b; Governance 36931696966 PASS; Architecture 36931696965 PASS; exact six-file contract scope; zero review blockers and zero behind; verdict CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
-next_safe_action: "Implement Issue #1285 exact nine-file bounded Forms Set-Enabled Ability V1: owner-side input validation + Published↔Disabled handler + Internal/UI non-REST module registration + focused tests + shared truth."
-waiting_external: "PR #1286 exact-head RB-0082 CI/review gate"
+last_completed_milestone: "Issue #1310 / PR #1311 merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; exact head 18f6d887867398374b5711ce810fd2b86d62b74b; Security Lockfile Refresh 37316752594 PASS; Architecture 37316752583 FULL PASS; Governance 37316752522 PASS; Distributable 37316752573 PASS; Browser E2E 37316752923 PASS; dev/distributable vulnerabilities 0; verdict PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1."
+next_safe_action: "Run RB-0083 exact-head Governance + Architecture on PR #1288; require exact six-file scope, zero behind and zero review blockers; expected-head merge; then reconcile PR #1298."
+waiting_external: "PR #1288 exact-head RB-0083 Governance + Architecture merge gate"
 next_planned_slot:
-  issue: "#1285"
-  slot_id: forms-workflows-bounded-set-enabled-ability-v1
-  claim_branch: "agent/forms-workflows-bounded-set-enabled-ability-v1"
-  claim_rule: "Issue #1285 authorizes exact nine-file bounded Set-Enabled owner Ability implementation on main f47ab596dc0329b759bdfa404b37fce6b5963447; Published↔Disabled only, owner-side canonical input validation, expected_revision safety, Internal/UI only, showInRest=false; no Dashboard source, REST, entry/run/provider mutation."
+  issue: "#1287"
+  slot_id: dashboard-widgets-input-aware-action-authorization-contract-v1
+  claim_branch: "agent/dashboard-widgets-input-aware-action-authorization-contract-v1"
+  claim_rule: "Fresh secure-main exact six-file contract/shared-truth scope only; no runtime/product source; RB-0083 Governance + Architecture FULL PASS required before expected-head merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,10 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0082
+    - RB-0083
+    - RB-0084
+    - RB-0085
+    - RB-0086
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -66,6 +69,8 @@ runner_benchmark:
     - RB-0079
     - RB-0080
     - RB-0081
+    - RB-0082
+    - RB-0087
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -108,6 +113,7 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
+  - "Issue #1287 / PR #1288 is the active fresh secure-main contract gate; RB-0083 must pass Governance + Architecture before merge."
   - "Repository/runtime evidence outranks compact state."
   - "Issue #1238 / PR #1239 bounded Native Default-Collapsed State V1 is terminal PASS; RB-0060 is reconciled PASS from exact-head evidence."
   - "Issue #1240 / PR #1241 terminally reconciled #1238/#1239 shared truth on exact main d46bb23f948ee6c943cf8cce82231c74918480f9."
@@ -131,6 +137,10 @@ notes:
   - "Issue #1279 / PR #1280 bounded Action-Input Binding Contract V1 is terminal PASS; RB-0079 PASS; literal + canonical dynamic binding semantics are frozen without execution."
   - "Issue #1281 / PR #1282 bounded Dashboard Action-Input Binding V1 is terminal PASS; RB-0080 PASS; typed descriptor/compiler/binder merged without Ability execution or Forms source changes."
   - "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract is terminal PASS; RB-0081 PASS; Published↔Disabled/expected_revision/no-REST semantics are frozen."
-  - "Issue #1285 is the active bounded Set-Enabled implementation: owner-side canonical input validation, direct repository revision safety, Internal/UI only, showInRest=false."
+  - "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 is terminal PASS; RB-0082 PASS; merged as 25f098a170c42d30f829d196452189d9f5b71763."
+  - "Issue #1287 / PR #1288 Input-Aware Authorization contract remains open; feature contract is clean but must rebase/rerun after security migration #1310/#1311."
+  - "Issue #1291 / PR #1298, Issue #1296 / PR #1299 and Issue #1300 / PR #1301 are owner-authorized stacked PREPARED_NOT_MERGEABLE work; they remain downstream of RB-0083 and security-main reconciliation."
+  - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
+  - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference + authorization + confirmation metadata + result/audit terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Shared Ability input validator PASS through RB-0078; Action-Input contract PASS through RB-0079; bounded Action-Input Binding PASS through RB-0080; Forms Set-Enabled owner contract PASS through RB-0081. Active #1285 implements the first real Surface-17 mutation with expected_revision and no REST. type.form_action remains blocked by mutation merge, trusted UI/orchestration and final execution.
+# P1_CORE deep audit: 16 records retain terminal bounded action reference/authorization/confirmation/result-audit/input-binding and owner Set-Enabled mutation evidence through RB-0082. Repository security migration #1310/#1311 is terminal PASS through RB-0087 with 0 dev/distributable vulnerabilities and the affected braces chain absent. Active #1287/#1288 now validates the Input-Aware Authorization contract on fresh secure main; downstream #1298/#1299/#1301 remain prepared and non-mergeable until predecessor gates are terminal. No final Dashboard action execution is promoted.
