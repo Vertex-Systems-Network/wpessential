@@ -116,49 +116,79 @@ RB-0085 remains dependency-blocked. No contract PASS/readiness promotion is perm
 
 Owner-authorized stacked preparation status: **PREPARED_NOT_MERGEABLE**.
 
-Stack base:
-- PR #1299 exact contract head `5ba81941566f291a6b112570757091ee99a8884c`.
+Exact prepared head:
+- `eef275ceedd0ca5241a489d188d350c459640771`.
 
-Pre-shared-truth implementation head:
-- `4687fe933c1f603984cc3a928c422b5de47f8e3b`.
+Exact stacked scope:
+- 21/21 files inside #1300 allowlist;
+- 0 behind PR #1299 stack base;
+- 0 unresolved review threads.
 
-Audited implementation boundary:
-- `form_action` becomes a recognized trusted Dashboard type but is not added to the generic Component Blueprint renderer/catalog;
-- generic `render_source` is forbidden for `form_action`;
-- registration requires canonical action Ability + confirmation + non-empty input descriptors;
-- dedicated presenter emits escaped server-owned UI plus Definition id/revision, canonical AJAX action/type/nonce only;
-- Ability id and bound owner input are not emitted to browser markup;
-- existing fixed `assets/admin/main.js` is reused on the WordPress Dashboard through a bounded Dashboard environment seam;
-- browser sends exactly `definition_id`, `definition_revision`, and `confirmation_state`;
-- canonical route is `dashboard-widgets.form-action.confirm`, `NonceOperation::Apply`, no fixed capability, guests forbidden;
-- server reloads/recompiles current Definition, server-binds current action input, and runs Input-Aware Authorization;
+Terminal prepared-head evidence available while dependency blocked:
+- Governance Gate `37306315812` — PASS;
+- Distributable Package `37306315904` — PASS;
+- Platform Compatibility Matrix `37306315830` — PASS, 10/10;
+- Browser E2E Accessibility `37306315836` — PASS;
+- Architecture Guards `37306315833` — FAIL only at repository-wide #1289 development npm advisory gate;
+- Architecture pre-gate Node/package contract, JS lint, Stylelint, TypeScript and admin build/artifact verification — PASS;
+- earlier implementation head `4687fe933c1f603984cc3a928c422b5de47f8e3b` passed PHP Quality `37305617634`;
+- exact terminal/main-bound PHP Quality remains mandatory after predecessor reconciliation because the workflow auto-triggers only for PRs targeting main.
+
+Prepared behavior remains pre-execution only:
+- current Definition/type/action/input are reconstructed server-side;
 - canonical authorization and confirmation audits are required;
-- accepted result `confirmation_ready` means authorized + confirmed + audited, **not executed**;
-- cancelled result never owner-authorizes merely to cancel;
-- no `AbilityRegistry::execute()`;
-- no owner handler `handle()` invocation by the preflight path;
-- no Forms mutation;
-- no REST/admin-post mutation;
-- no generic `AbilityAjaxHandler`;
-- no shared Platform source changes;
-- no new npm/composer dependency.
+- browser sends only Definition id/revision + confirmation state;
+- unsafe owner reason text is not persisted;
+- guest and invalid nonce are rejected by canonical dispatcher;
+- `confirmation_ready` means authorized + confirmed + audited, not executed;
+- zero `AbilityRegistry::execute()`;
+- zero direct owner `handle()`;
+- zero Forms mutation.
 
-Pre-shared-truth exact-head CI evidence:
-- Governance Gate `37305617864` PASS;
-- PHP Quality Toolchain `37305617634` PASS, including PHPCS/PHPStan/PHPUnit;
-- Distributable Package `37305617666` PASS;
-- Architecture `37305617660` was still running when shared truth was reconciled and is expected to remain blocked only if #1289 reaches its existing advisory enforcement gate;
-- Platform Compatibility `37305617651` was still running;
-- Browser E2E Accessibility `37305617569` was still running.
+RB-0086 remains BLOCKED_DEPENDENCY until RB-0083/RB-0084/RB-0085/#1289 are terminal and fresh reconciliation succeeds.
 
-RB-0086 remains `BLOCKED_DEPENDENCY` and may not promote PASS until RB-0083, RB-0084, RB-0085 and #1289 are terminal, followed by fresh predecessor/main reconciliation and exact-head CI/review.
+### #1297 / PR #1304 — final bounded form_action execution contract V1
+
+High-risk stacked contract preparation status: **PREPARED_NOT_MERGEABLE**.
+
+Stack base:
+- PR #1301 exact head `eef275ceedd0ca5241a489d188d350c459640771`.
+
+Expected exact contract PR diff:
+1. `docs/PRODUCT/DASHBOARD-WIDGETS-FINAL-BOUNDED-FORM-ACTION-EXECUTION-CONTRACT-V1.md`;
+2. `.ai/state/CURRENT-STATE.yaml`;
+3. `.ai/state/LAST-CHECKPOINT.md`;
+4. `README.md`;
+5. `config/coordination/agent-work-queue.json`;
+6. `config/coordination/runner-benchmark.json`.
+
+Frozen contract:
+- dedicated execute route `dashboard-widgets.form-action.execute`;
+- browser sends only Definition id/revision + `confirmation_state=accepted`;
+- current Definition/type/Ability/input reloaded and rebound server-side;
+- V1 owner allowlist contains only `wpessential/forms-workflows/set-enabled`;
+- required pre-execution audit order authorization → confirmation → execution-attempt;
+- exactly one `AbilityRegistry::execute()` after those gates;
+- `AbilityRegistry::execute()` internal reauthorization is retained;
+- no direct owner `handle()`;
+- no exception-message parsing;
+- exact seven-key Set-Enabled result adapter;
+- exact `status_changed` and `already_target_status` consistency checks;
+- execute exception or malformed result => `execution_outcome_unknown`;
+- known bounded success + result-audit failure => `execution_succeeded_audit_degraded`;
+- no automatic retry;
+- render/preflight remain mutation-free;
+- no shared Platform widening.
+
+RB-0087 remains BLOCKED_DEPENDENCY. No runtime execution implementation is authorized until RB-0083/RB-0084/RB-0085/RB-0086/#1289 are terminal and this contract is reconciled and passed.
 
 ### Updated recovery order
 
 1. Read `.ai/state/CURRENT-STATE.yaml`.
 2. Read this checkpoint.
-3. Resolve exact current main and open PRs #1288, #1298, #1299 and #1301.
+3. Resolve exact current main and open PRs #1288, #1298, #1299, #1301 and #1304.
 4. Re-read security Issue #1289.
 5. Re-read `config/coordination/agent-work-queue.json`.
 6. Re-read `config/coordination/runner-benchmark.json`.
-7. Do not merge #1288/#1298/#1299/#1301 while the required Architecture security gate is red.
+7. Do not merge #1288/#1298/#1299/#1301/#1304 while the required Architecture security gate is red.
+8. Do not implement #1297 execution runtime before RB-0083 through RB-0087 dependency gates allow it.
