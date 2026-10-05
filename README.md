@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / RB-0088 | Trusted confirmation-preflight terminal PASS; first bounded Forms Set-Enabled execution seam under exact 14-file validation |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | ACTIVE / POST-EXECUTION AUDIT | RB-0088 bounded Forms Set-Enabled execution terminal PASS; full Surface 10 parity still not promoted |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,16 +37,16 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact current main: `713942185ce5340192b2a76bde29b69d68aed975`.
-- RB-0087 security migration, RB-0083/RB-0084 Input-Aware Authorization, and RB-0085 trusted UI contract remain terminal PASS.
-- PR #1301 / RB-0086 trusted `form_action` confirmation-preflight is terminal PASS and merged. Exact head `c5250ddad34ac0a2d11dcb651ee7a55977ba924f` passed Governance, PHP Quality, Distributable, Browser E2E, Platform Compatibility 10/10 and full Architecture.
-- Issue #1297 / RB-0088 is now the active final bounded execution tranche.
-- V1 execution is explicitly allowlisted to `wpessential/forms-workflows/set-enabled` only. The browser never supplies Ability id or bound owner input.
-- The server repeats current Definition revision validation, registration compilation, current input binding and Input-Aware Authorization, then requires authorization + confirmation + execution-attempt audit records before mutation.
-- Exactly one `AbilityRegistry::execute()` call is allowed per admitted request. There is no Dashboard direct owner `handle()` call and no automatic retry.
-- Strict result adaptation accepts only exact `status_changed` or `already_target_status` Set-Enabled results consistent with the server-bound input.
-- Exceptions or malformed post-execute results return `execution_outcome_unknown`; known success with failed terminal audit returns `execution_succeeded_audit_degraded`. Both require refresh/re-read and retry mode remains none.
-- No generic Ability execution, generic `AbilityAjaxHandler`, REST/admin-post mutation, shared Platform mutation, package change, deploy or GA widening is included.
+- Exact current main: `17b00095a594435acb2b10245bdb076737849abc`.
+- Security RB-0087, Input-Aware Authorization RB-0083/RB-0084, trusted form-action contract RB-0085, and non-executing confirmation preflight RB-0086 remain terminal PASS.
+- Issue #1297 / PR #1312 / RB-0088 bounded `form_action` execution V1 is terminal PASS and merged.
+- Exact #1312 head `e29fb878a7550a24f80328d6d77d0e68a5d259f7` passed Governance `37326386156`, PHP Quality `37326385987`, Distributable `37326385920`, Browser E2E `37326385904`, Platform Compatibility `37326386023` (10/10), and Architecture `37326385998`.
+- The resulting main commit is `17b00095a594435acb2b10245bdb076737849abc`; its tree is identical to the terminal PR-head tree.
+- V1 execution is explicitly allowlisted to `wpessential/forms-workflows/set-enabled` only. Browser input remains Definition id/revision + accepted confirmation state; Ability id and bound owner input stay server-side.
+- Every admitted execute request repeats current Definition revision validation, registration compilation, current input binding and Input-Aware Authorization, then requires authorization + confirmation + execution-attempt audits before exactly one `AbilityRegistry::execute()` call.
+- Strict result adaptation recognizes only exact `status_changed` and `already_target_status` owner results consistent with server-bound input. Ambiguous outcomes never auto-retry.
+- This milestone does **not** promote full Surface 10 runtime parity, full Forms parity, production deployment or GA.
+- Issue #1313 is the active shared-truth-only reconciliation + read-only post-execution Dashboard Widgets gap audit. No next runtime implementation is authorized until a separate Issue freezes its exact scope.
 
 ## Current lifecycle
 
