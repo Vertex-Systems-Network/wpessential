@@ -6984,7 +6984,7 @@
       "role": "AGENT_IMPLEMENTATION",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
-      "source": "Issue #1323 fresh-main RB-0095",
+      "source": "Issue #1323 / PR #1324 fresh-main RB-0095 validation",
       "dependencies": [
         "RB-0094 terminal PASS",
         "exact fresh source base dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
