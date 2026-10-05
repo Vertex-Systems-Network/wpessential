@@ -39,7 +39,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
 
     /** @var list<string> */
-    private const REFRESH_KEYS = ['background_job'];
+    private const REFRESH_KEYS = ['background_job', 'manual'];
 
     /** @var list<string> */
     private const ACTION_KEYS = ['ability_id', 'confirmation', 'input'];
@@ -103,7 +103,11 @@ final readonly class DashboardWidgetRegistrationCompiler
 
         $contentClass = $this->contentClassCompiler->compile($definition);
         $this->visibilityCompiler->compile($definition);
+        $manualRefresh = $this->compileManualRefresh($widget);
         if ($contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION) {
+            if ($manualRefresh) {
+                throw new InvalidArgumentException('Dashboard Widget form_action does not support manual refresh V1.');
+            }
             if (array_key_exists('render_source', $widget)) {
                 throw new InvalidArgumentException('Dashboard Widget form_action must use the dedicated trusted action presenter, not render_source.');
             }
@@ -111,7 +115,13 @@ final readonly class DashboardWidgetRegistrationCompiler
             if ($this->renderSourceCompiler === null) {
                 throw new InvalidArgumentException('Dashboard Widget trusted render-source compiler is required for registration compilation.');
             }
-            $this->renderSourceCompiler->compile($definition);
+            $compiledRenderSource = $this->renderSourceCompiler->compile($definition);
+            if ($manualRefresh && $compiledRenderSource->loadingState === null) {
+                throw new InvalidArgumentException('Dashboard Widget manual refresh requires a trusted loading_state.');
+            }
+            if (!$manualRefresh && $compiledRenderSource->loadingState !== null) {
+                throw new InvalidArgumentException('Dashboard Widget loading_state requires refresh.manual=true in bounded V1.');
+            }
         }
 
         $key = $widget['key'] ?? null;
@@ -180,6 +190,7 @@ final readonly class DashboardWidgetRegistrationCompiler
             actionInput: $actionInput,
             scheduleStartAt: $scheduleStartAt,
             scheduleEndAt: $scheduleEndAt,
+            manualRefresh: $manualRefresh,
         );
     }
 
@@ -305,6 +316,31 @@ final readonly class DashboardWidgetRegistrationCompiler
         }
 
         return $abilityId;
+    }
+
+    /**
+     * @param array<string,mixed> $widget
+     */
+    private function compileManualRefresh(array $widget): bool
+    {
+        if (!array_key_exists('refresh', $widget)) {
+            return false;
+        }
+
+        $refresh = $widget['refresh'];
+        if (!is_array($refresh) || ($refresh !== [] && array_is_list($refresh))) {
+            throw new InvalidArgumentException('Dashboard Widget refresh metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($refresh, self::REFRESH_KEYS, 'Dashboard Widget refresh metadata');
+
+        if (!array_key_exists('manual', $refresh)) {
+            return false;
+        }
+        if (!is_bool($refresh['manual'])) {
+            throw new InvalidArgumentException('Dashboard Widget refresh.manual must be boolean.');
+        }
+
+        return $refresh['manual'];
     }
 
     /**

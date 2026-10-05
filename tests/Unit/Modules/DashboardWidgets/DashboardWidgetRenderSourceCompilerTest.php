@@ -10,6 +10,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalo
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetEmptyStateDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetErrorStateDescriptor;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetLoadingStateDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceDescriptor;
@@ -590,6 +591,88 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             try {
                 $this->compiler()->compile($this->definition(renderSource: $renderSource));
                 self::fail('Expected invalid Dashboard Widget error-state metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
+    public function testCompilesTrustedLoadingState(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($announcement);
+
+        $renderSource = $this->renderSource('rich_text');
+        $renderSource['loading_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'bindings' => [
+                'title' => ['source' => 'literal', 'value' => 'Refreshing'],
+                'text' => ['source' => 'literal', 'value' => 'Fetching the latest data.'],
+            ],
+        ];
+
+        $descriptor = $this->compiler()->compile($this->definition(renderSource: $renderSource));
+
+        self::assertInstanceOf(DashboardWidgetLoadingStateDescriptor::class, $descriptor->loadingState);
+        self::assertSame($announcement->id, $descriptor->loadingState->blueprintId);
+        self::assertSame(
+            ['text' => 'Fetching the latest data.', 'title' => 'Refreshing'],
+            $descriptor->loadingState->bindings,
+        );
+    }
+
+    public function testRejectsUnsafeOrMalformedLoadingStateMetadata(): void
+    {
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        $kpi = $catalog->forContentType('kpi');
+        self::assertNotNull($announcement);
+        self::assertNotNull($kpi);
+
+        $base = $this->renderSource('rich_text');
+        $base['loading_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'bindings' => [
+                'title' => ['source' => 'literal', 'value' => 'Refreshing'],
+                'text' => ['source' => 'literal', 'value' => 'Fetching data.'],
+            ],
+        ];
+
+        $wrongBlueprint = $base;
+        $wrongBlueprint['loading_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $kpi->id,
+            'blueprint_revision' => $kpi->revision,
+            'bindings' => [
+                'label' => ['source' => 'literal', 'value' => 'Loading'],
+                'value' => ['source' => 'literal', 'value' => '1'],
+            ],
+        ];
+        $dynamic = $base;
+        $dynamic['loading_state']['bindings']['text'] = ['source' => 'dynamic', 'value' => 'forbidden'];
+        $unsafe = $base;
+        $unsafe['loading_state']['bindings']['text']['value'] = '<script>alert(1)</script>';
+        $oversized = $base;
+        $oversized['loading_state']['bindings']['text']['value'] = str_repeat(
+            'x',
+            DashboardWidgetLoadingStateDescriptor::MAX_STRING_BYTES + 1,
+        );
+        $wrongRevision = $base;
+        $wrongRevision['loading_state']['blueprint_revision'] = 2;
+        $missing = $base;
+        unset($missing['loading_state']['bindings']['text']);
+        $unknown = $base;
+        $unknown['loading_state']['callback'] = 'unsafe';
+
+        foreach ([$wrongBlueprint, $dynamic, $unsafe, $oversized, $wrongRevision, $missing, $unknown] as $renderSource) {
+            try {
+                $this->compiler()->compile($this->definition(renderSource: $renderSource));
+                self::fail('Expected invalid Dashboard Widget loading-state metadata to be rejected.');
             } catch (InvalidArgumentException) {
                 self::assertTrue(true);
             }

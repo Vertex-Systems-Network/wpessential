@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1321",
-  "anchor_main_sha": "bb6c826f05ffdc7f84c0abcbad42979cf590e648",
+  "source_issue": "#1323",
+  "anchor_main_sha": "dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3086,7 +3086,7 @@
       "category": "DASHBOARD_WIDGETS_LIFECYCLE_VISIBILITY_WINDOW_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation; Browser applicability determined from repository path filters",
-      "environment": "agent/dashboard-lifecycle-visibility-window-v1 on fresh main bb6c826f05ffdc7f84c0abcbad42979cf590e648",
+      "environment": "agent/dashboard-lifecycle-visibility-window-v1 exact head c01bed388d2191d48c223224014e05ab1ea54756",
       "dependencies": [
         "RB-0093 terminal PASS",
         "fresh main bb6c826f05ffdc7f84c0abcbad42979cf590e648"
@@ -3096,18 +3096,53 @@
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|lifecycle-visibility-window|issue1321|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1322 exact head c01bed388d2191d48c223224014e05ab1ea54756",
+        "Governance Gate 37380946760 PASS",
+        "PHP Quality Toolchain 37380946758 PASS",
+        "Distributable Package 37380946780 PASS",
+        "Platform Compatibility Matrix 37380946804 PASS 10/10",
+        "Architecture Guards 37380946768 FULL PASS",
+        "Browser E2E NOT_APPLICABLE by previous pull_request path filters",
+        "exact 23-file #1321 allowlist",
+        "zero unresolved review threads",
+        "zero commits behind main",
+        "PR #1322 merged as dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
+        "verdict PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1"
+      ],
+      "note": "PASS promotes only bounded request-time lifecycle visibility; scheduling engines and full Surface 10 parity remain unpromoted."
+    },
+    {
+      "id": "RB-0095",
+      "source": "Issue #1323 / PR #1324",
+      "category": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture + Browser E2E exact-head validation",
+      "environment": "agent/dashboard-manual-refresh-loading-v1 on fresh main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
+      "dependencies": [
+        "RB-0094 terminal PASS",
+        "fresh main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
+      ],
+      "authorization": "Exact #1323 27-file source/test/browser/shared-truth scope; trusted manual refresh + loading state + lifecycle_inactive browser reconciliation only; no cache/job/provider/portability/shared-Platform widening.",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 30,
+      "dedup_key": "dashboard-widgets|manual-refresh-loading|issue1323|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1321 freezes exact 23-file lifecycle visibility scope",
-        "fresh post-RB-0093 audit selected schedule_start + schedule_end as unblocked P0_PARITY residual",
-        "implementation uses one injected runtime clock and gates registration/direct render/form_action preflight+execution plus diagnostics",
-        "PR #1322 opened from exact main bb6c826f05ffdc7f84c0abcbad42979cf590e648"
+        "Issue #1323 freezes exact 27-file RB-0095 scope",
+        "fresh post-RB-0094 audit selected dashboard-widgets.refresh.manual + dashboard-widgets.state.loading as unblocked P0_PARITY residuals",
+        "admin-ui/src/main.ts changes make Browser E2E applicable and merge-blocking",
+        "manual refresh reruns canonical runtime authority without cache invalidation, scheduler invocation or provider transport",
+        "PR #1324 opened from exact main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
       ],
-      "note": "Merge only after applicable exact-head CI PASS, exact allowlist, zero behind and zero unresolved review blockers."
+      "note": "Merge only after all six exact-head gate families PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
   ],
-  "last_reconciled_issue": "#1321",
+  "last_reconciled_issue": "#1323",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

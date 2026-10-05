@@ -365,6 +365,60 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         }
     }
 
+    public function testCompilesManualRefreshOnlyWithTrustedLoadingState(): void
+    {
+        $widget = $this->widget();
+        $widget['refresh'] = ['manual' => true];
+        $loading = (new DashboardWidgetComponentBlueprintCatalog())->forContentType('announcement');
+        self::assertNotNull($loading);
+        $widget['render_source']['loading_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $loading->id,
+            'blueprint_revision' => $loading->revision,
+            'bindings' => [
+                'title' => ['source' => 'literal', 'value' => 'Refreshing'],
+                'text' => ['source' => 'literal', 'value' => 'Fetching the latest data.'],
+            ],
+        ];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+        self::assertTrue($descriptor->manualRefresh);
+
+        $withoutManual = $this->widget();
+        self::assertFalse($this->compiler()->compile(
+            $this->definition(widget: $withoutManual),
+        )->manualRefresh);
+
+        $missingLoading = $this->widget();
+        $missingLoading['refresh'] = ['manual' => true];
+        try {
+            $this->compiler()->compile($this->definition(widget: $missingLoading));
+            self::fail('Manual refresh must require a trusted loading state.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        $orphanLoading = $this->widget();
+        $orphanLoading['render_source']['loading_state'] = $widget['render_source']['loading_state'];
+        try {
+            $this->compiler()->compile($this->definition(widget: $orphanLoading));
+            self::fail('Loading state must require manual refresh in bounded V1.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
+
+        foreach ([1, 'yes', null, []] as $invalid) {
+            $candidate = $this->widget();
+            $candidate['refresh'] = ['manual' => $invalid];
+            try {
+                $this->compiler()->compile($this->definition(widget: $candidate));
+                self::fail('Malformed refresh.manual must be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
     public function testCompilesBoundedNativeDefaultHiddenState(): void
     {
         $widget = $this->widget();
@@ -766,6 +820,17 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
             DashboardWidgetActionInputDescriptor::class,
             $descriptor->actionInput,
         );
+
+        $manualFormAction = $widget;
+        $manualFormAction['refresh'] = ['manual' => true];
+        try {
+            $this->compiler(null, $resolver)->compile(
+                $this->definition(widget: $manualFormAction),
+            );
+            self::fail('form_action must reject manual refresh V1.');
+        } catch (InvalidArgumentException) {
+            self::assertTrue(true);
+        }
 
         $withRenderSource = $widget;
         $withRenderSource['render_source'] = $this->renderSource();

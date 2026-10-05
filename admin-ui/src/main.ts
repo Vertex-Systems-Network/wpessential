@@ -793,6 +793,7 @@ const dashboardFormActionPreflightStates = new Set( [
 	'authorization_denied',
 	'confirmation_invalid',
 	'stale_definition',
+	'lifecycle_inactive',
 	'runtime_failure',
 ] );
 
@@ -803,6 +804,7 @@ const dashboardFormActionExecutionStates = new Set( [
 	'authorization_denied',
 	'confirmation_invalid',
 	'stale_definition',
+	'lifecycle_inactive',
 	'runtime_failure',
 ] );
 
@@ -1061,6 +1063,224 @@ function bootDashboardFormActions(): void {
 	}
 }
 
+type DashboardManualRefreshResponse = {
+	state: string;
+	notice: string;
+	html?: string;
+};
+
+const dashboardManualRefreshStates = new Set( [
+	'rendered',
+	'rendered_error',
+	'unavailable',
+	'stale_definition',
+	'invalid_definition',
+	'runtime_failure',
+] );
+
+function dashboardManualRefreshResponse(
+	value: unknown
+): DashboardManualRefreshResponse | null {
+	if (
+		! isBootstrapRecord( value ) ||
+		typeof value.state !== 'string' ||
+		! dashboardManualRefreshStates.has( value.state ) ||
+		typeof value.notice !== 'string' ||
+		value.notice.length < 1 ||
+		value.notice.length > 300
+	) {
+		return null;
+	}
+
+	if ( value.state === 'rendered' || value.state === 'rendered_error' ) {
+		if (
+			typeof value.html !== 'string' ||
+			value.html.length < 1 ||
+			value.html.length > 65536
+		) {
+			return null;
+		}
+		return { state: value.state, notice: value.notice, html: value.html };
+	}
+
+	if ( Object.hasOwn( value, 'html' ) ) {
+		return null;
+	}
+
+	return { state: value.state, notice: value.notice };
+}
+
+function trustedDashboardFragment( html: string ): DocumentFragment {
+	const parsed = new DOMParser().parseFromString( html, 'text/html' );
+	if (
+		parsed.querySelector(
+			'script, iframe, object, embed, base, meta[http-equiv], link[rel="import"]'
+		)
+	) {
+		throw new Error( 'unsafe-dashboard-refresh-html' );
+	}
+
+	for ( const element of parsed.body.querySelectorAll< HTMLElement >( '*' ) ) {
+		for ( const attribute of Array.from( element.attributes ) ) {
+			const name = attribute.name.toLowerCase();
+			const value = attribute.value.trim().toLowerCase();
+			if (
+				name.startsWith( 'on' ) ||
+				( ( name === 'href' || name === 'src' ) &&
+					value.startsWith( 'javascript:' ) )
+			) {
+				throw new Error( 'unsafe-dashboard-refresh-html' );
+			}
+		}
+	}
+
+	const fragment = document.createDocumentFragment();
+	for ( const node of Array.from( parsed.body.childNodes ) ) {
+		fragment.append( document.importNode( node, true ) );
+	}
+	if ( ! fragment.hasChildNodes() ) {
+		throw new Error( 'empty-dashboard-refresh-html' );
+	}
+
+	return fragment;
+}
+
+async function postDashboardManualRefresh(
+	root: HTMLElement
+): Promise< DashboardManualRefreshResponse > {
+	const ajaxUrl = root.dataset.ajaxUrl ?? '';
+	const ajaxAction = root.dataset.ajaxAction ?? '';
+	const routeType = root.dataset.routeType ?? '';
+	const nonce = root.dataset.nonce ?? '';
+	const definitionId = root.dataset.definitionId ?? '';
+	const revision = Number( root.dataset.definitionRevision ?? 0 );
+	const screen = root.dataset.screen ?? '';
+
+	if (
+		ajaxUrl === '' ||
+		ajaxAction === '' ||
+		routeType !== 'dashboard-widgets.refresh.manual' ||
+		nonce === '' ||
+		definitionId === '' ||
+		! Number.isInteger( revision ) ||
+		revision < 1 ||
+		! [ 'site', 'network' ].includes( screen )
+	) {
+		throw new Error( 'invalid-dashboard-manual-refresh-bootstrap' );
+	}
+
+	const body = new URLSearchParams();
+	body.set( 'action', ajaxAction );
+	body.set( 'type', routeType );
+	body.set( 'nonce', nonce );
+	body.set(
+		'payload_json',
+		JSON.stringify( {
+			definition_id: definitionId,
+			definition_revision: revision,
+			screen,
+		} )
+	);
+
+	const response = await fetch( ajaxUrl, {
+		method: 'POST',
+		credentials: 'same-origin',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+		},
+		body: body.toString(),
+	} );
+	const value: unknown = await response.json();
+	if ( ! isBootstrapRecord( value ) || typeof value.success !== 'boolean' ) {
+		throw new Error( 'invalid-dashboard-manual-refresh-response' );
+	}
+	const envelope = value as AjaxEnvelope;
+	if ( ! response.ok || ! envelope.success ) {
+		throw new Error( 'dashboard-manual-refresh-request-failed' );
+	}
+
+	const result = dashboardManualRefreshResponse( envelope.data );
+	if ( ! result ) {
+		throw new Error( 'invalid-dashboard-manual-refresh-result' );
+	}
+
+	return result;
+}
+
+function bootDashboardManualRefresh(): void {
+	const roots = document.querySelectorAll< HTMLElement >(
+		'[data-wpessential-dashboard-manual-refresh="1"]'
+	);
+
+	for ( const root of roots ) {
+		if ( root.dataset.wpessentialManualRefreshEnhanced === 'ready' ) {
+			continue;
+		}
+
+		const content = root.querySelector< HTMLElement >(
+			'[data-wpessential-dashboard-refresh-content="1"]'
+		);
+		const button = root.querySelector< HTMLButtonElement >(
+			'[data-wpessential-dashboard-refresh-button="1"]'
+		);
+		const loading = root.querySelector< HTMLTemplateElement >(
+			'template[data-wpessential-dashboard-refresh-loading="1"]'
+		);
+		const status = root.querySelector< HTMLElement >(
+			'[data-wpessential-dashboard-refresh-status="1"]'
+		);
+		if ( ! content || ! button || ! loading || ! status ) {
+			continue;
+		}
+
+		let busy = false;
+		button.addEventListener( 'click', () => {
+			if ( busy ) {
+				return;
+			}
+			busy = true;
+			button.disabled = true;
+			root.setAttribute( 'aria-busy', 'true' );
+
+			const previousNodes = Array.from( content.childNodes ).map( ( node ) =>
+				node.cloneNode( true )
+			);
+			content.replaceChildren( loading.content.cloneNode( true ) );
+			status.textContent = 'Refreshing widget…';
+
+			void postDashboardManualRefresh( root )
+				.then( ( result ) => {
+					if (
+						( result.state === 'rendered' ||
+							result.state === 'rendered_error' ) &&
+						result.html
+					) {
+						content.replaceChildren(
+							trustedDashboardFragment( result.html )
+						);
+						status.textContent = result.notice;
+						return;
+					}
+
+					content.replaceChildren( ...previousNodes );
+					status.textContent = result.notice;
+				} )
+				.catch( () => {
+					content.replaceChildren( ...previousNodes );
+					status.textContent =
+						'The widget could not be refreshed. Reload the dashboard and try again.';
+				} )
+				.finally( () => {
+					busy = false;
+					button.disabled = false;
+					root.setAttribute( 'aria-busy', 'false' );
+				} );
+		} );
+
+		root.dataset.wpessentialManualRefreshEnhanced = 'ready';
+	}
+}
+
 function bootAdmin(): void {
 	const root = document.getElementById( 'wpessential-admin-root' );
 	const bootstrap = document.getElementById( 'wpessential-admin-bootstrap' );
@@ -1097,6 +1317,7 @@ function bootAdmin(): void {
 function bootWPEssentialAdmin(): void {
 	bootAdmin();
 	bootDashboardFormActions();
+	bootDashboardManualRefresh();
 }
 
 if ( document.readyState === 'loading' ) {

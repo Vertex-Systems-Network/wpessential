@@ -27,6 +27,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
         public ?DashboardWidgetQueryBindingDescriptor $query = null,
         public ?DashboardWidgetEmptyStateDescriptor $emptyState = null,
         public ?DashboardWidgetErrorStateDescriptor $errorState = null,
+        public ?DashboardWidgetLoadingStateDescriptor $loadingState = null,
         public array $dynamicBindings = [],
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
@@ -112,6 +113,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
             query: null,
             emptyState: null,
             errorState: $this->errorState,
+            loadingState: $this->loadingState,
             dynamicBindings: $this->dynamicBindings,
         );
     }
@@ -134,6 +136,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
             query: null,
             emptyState: null,
             errorState: $this->errorState,
+            loadingState: $this->loadingState,
             dynamicBindings: [],
         );
     }
@@ -153,6 +156,7 @@ final readonly class DashboardWidgetRenderSourceDescriptor
             query: null,
             emptyState: null,
             errorState: $this->errorState,
+            loadingState: $this->loadingState,
         );
     }
 

@@ -16,6 +16,8 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionExecutionAjaxH
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionExecutionResultAdapter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPreflightAjaxHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPresenter;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetManualRefreshAjaxHandler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetManualRefreshPresenter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
@@ -187,6 +189,8 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetFormActionPreflightAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PREFLIGHT));
         self::assertInstanceOf(DashboardWidgetFormActionExecutionResultAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_RESULT_ADAPTER));
         self::assertInstanceOf(DashboardWidgetFormActionExecutionAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_EXECUTION));
+        self::assertInstanceOf(DashboardWidgetManualRefreshPresenter::class, $services->get(DashboardWidgetsModule::SERVICE_MANUAL_REFRESH_PRESENTER));
+        self::assertInstanceOf(DashboardWidgetManualRefreshAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_MANUAL_REFRESH_HANDLER));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
 
@@ -218,6 +222,14 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertNull($formActionRoute->capability);
         self::assertFalse($formActionRoute->allowGuests);
         self::assertTrue($formActionRoute->requiresNonce);
+
+        $manualRefreshRoute = $ajaxRoutes->get(DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE);
+        self::assertNotNull($manualRefreshRoute);
+        self::assertInstanceOf(DashboardWidgetManualRefreshAjaxHandler::class, $manualRefreshRoute->handler);
+        self::assertSame(NonceOperation::Apply, $manualRefreshRoute->operation);
+        self::assertNull($manualRefreshRoute->capability);
+        self::assertFalse($manualRefreshRoute->allowGuests);
+        self::assertTrue($manualRefreshRoute->requiresNonce);
 
         foreach ([
             DashboardWidgetPersonalPreferenceAbilityHandler::AJAX_DISMISS,
@@ -364,6 +376,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         foreach ([
             DashboardWidgetFormActionPresenter::ROUTE_TYPE,
             DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE,
+            DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE,
         ] as $routeType) {
             $guest = $dispatcher->dispatch(
                 [

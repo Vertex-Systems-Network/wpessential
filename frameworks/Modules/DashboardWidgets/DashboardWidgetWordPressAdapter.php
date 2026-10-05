@@ -53,6 +53,7 @@ final class DashboardWidgetWordPressAdapter
         private readonly ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
         private readonly ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
         ?DashboardWidgetRuntimeClock $clock = null,
+        private readonly ?DashboardWidgetManualRefreshPresenter $manualRefreshPresenter = null,
     ) {
         $this->clock = $clock ?? new DashboardWidgetRuntimeClock();
     }
@@ -578,6 +579,34 @@ final class DashboardWidgetWordPressAdapter
                 true,
             )) {
                 return;
+            }
+
+            if ($this->manualRefreshPresenter !== null) {
+                $definition = $this->definitions->get($definitionId);
+                if ($definition === null) {
+                    return;
+                }
+                $descriptor = $this->registrationCompiler->compile($definition);
+                if ($descriptor->manualRefresh) {
+                    $loading = $this->runtimeRenderExecutor->renderLoadingState($definitionId, $context);
+                    if (
+                        $loading->status !== DashboardWidgetRuntimeRenderResult::STATUS_RENDERED
+                        || $result->assetHandles !== []
+                        || $loading->assetHandles !== []
+                    ) {
+                        return;
+                    }
+
+                    $html = $this->manualRefreshPresenter->render(
+                        $descriptor,
+                        $this->environment->ajaxUrl(),
+                        $result->html,
+                        $loading->html,
+                        $descriptor->networkDashboard ? 'network' : 'site',
+                    );
+                    $this->environment->outputTrustedHtml($html);
+                    return;
+                }
             }
 
             $this->environment->outputTrustedHtml($result->html);

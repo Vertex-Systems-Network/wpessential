@@ -58,6 +58,7 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
             'site_ids' => [],
             'default_hidden' => false,
             'default_collapsed' => false,
+            'manual_refresh' => false,
         ], $item['target']);
         self::assertSame([
             'schedule_start' => null,
@@ -72,6 +73,39 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
         self::assertSame(0, $item['dependency_count']);
         self::assertSame([], $item['issues']);
         self::assertArrayNotHasKey('payload', $item);
+    }
+
+    public function testReportsManualRefreshAsBoundedTargetTruth(): void
+    {
+        $definitions = new InMemoryDefinitionRepository();
+        $widget = $this->widget('manual-refresh-widget');
+        $widget['refresh'] = ['manual' => true];
+        $catalog = new DashboardWidgetComponentBlueprintCatalog();
+        $announcement = $catalog->forContentType('announcement');
+        self::assertNotNull($announcement);
+        $widget['render_source']['loading_state'] = [
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $announcement->id,
+            'blueprint_revision' => $announcement->revision,
+            'bindings' => [
+                'title' => ['source' => 'literal', 'value' => 'Refreshing'],
+                'text' => ['source' => 'literal', 'value' => 'Fetching the latest data.'],
+            ],
+        ];
+        $definitions->save($this->definition(
+            self::READY_ID,
+            'manual-refresh-widget',
+            DefinitionStatus::Published,
+            widget: $widget,
+        ));
+
+        $result = $this->handler($definitions)->handle(
+            ['definition_id' => self::READY_ID],
+            $this->context(),
+        );
+
+        self::assertTrue($result['definitions'][0]['target']['manual_refresh']);
+        self::assertSame('ready', $result['definitions'][0]['runtime_state']);
     }
 
     public function testClassifiesNonPublishedDefinitionAsInactiveWithoutRuntimeCompilation(): void

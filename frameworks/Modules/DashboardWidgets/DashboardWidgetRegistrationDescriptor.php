@@ -72,6 +72,7 @@ final readonly class DashboardWidgetRegistrationDescriptor
         public ?DashboardWidgetActionInputDescriptor $actionInput = null,
         public ?int $scheduleStartAt = null,
         public ?int $scheduleEndAt = null,
+        public bool $manualRefresh = false,
     ) {
         if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
             throw new InvalidArgumentException('Dashboard Widget descriptor definition id must be a lowercase RFC 4122 UUID.');

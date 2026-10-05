@@ -16,7 +16,7 @@ use WPEssential\Platform\Definitions\Definition;
 final readonly class DashboardWidgetRenderSourceCompiler
 {
     /** @var list<string> */
-    private const RENDER_SOURCE_KEYS = ['kind', 'blueprint_id', 'blueprint_revision', 'query', 'bindings', 'empty_state', 'error_state'];
+    private const RENDER_SOURCE_KEYS = ['kind', 'blueprint_id', 'blueprint_revision', 'query', 'bindings', 'empty_state', 'error_state', 'loading_state'];
 
     /** @var list<string> */
     private const LITERAL_BINDING_KEYS = ['source', 'value'];
@@ -35,6 +35,9 @@ final readonly class DashboardWidgetRenderSourceCompiler
 
     /** @var list<string> */
     private const ERROR_STATE_KEYS = ['kind', 'blueprint_id', 'blueprint_revision', 'bindings'];
+
+    /** @var list<string> */
+    private const LOADING_STATE_KEYS = ['kind', 'blueprint_id', 'blueprint_revision', 'bindings'];
 
     /** @var list<string> */
     private const FILTER_KEYS = ['field_ref', 'operator', 'value'];
@@ -228,6 +231,11 @@ final readonly class DashboardWidgetRenderSourceCompiler
             $errorState = $this->compileErrorState($renderSource['error_state']);
         }
 
+        $loadingState = null;
+        if (array_key_exists('loading_state', $renderSource)) {
+            $loadingState = $this->compileLoadingState($renderSource['loading_state']);
+        }
+
         return new DashboardWidgetRenderSourceDescriptor(
             definitionId: $definition->id,
             definitionRevision: $definition->revision,
@@ -237,7 +245,117 @@ final readonly class DashboardWidgetRenderSourceCompiler
             query: $query,
             emptyState: $emptyState,
             errorState: $errorState,
+            loadingState: $loadingState,
             dynamicBindings: $dynamicBindings,
+        );
+    }
+
+    private function compileLoadingState(mixed $raw): DashboardWidgetLoadingStateDescriptor
+    {
+        if (!is_array($raw) || array_is_list($raw)) {
+            throw new InvalidArgumentException('Dashboard Widget render_source loading_state must be an object/map.');
+        }
+        $this->assertKnownKeys($raw, self::LOADING_STATE_KEYS, 'Dashboard Widget render_source loading_state');
+
+        foreach (self::LOADING_STATE_KEYS as $requiredKey) {
+            if (!array_key_exists($requiredKey, $raw)) {
+                throw new InvalidArgumentException('Dashboard Widget render_source loading_state is missing a required key.');
+            }
+        }
+
+        if ($raw['kind'] !== 'component_blueprint') {
+            throw new InvalidArgumentException('Dashboard Widget loading_state kind must be component_blueprint.');
+        }
+
+        $blueprintId = $raw['blueprint_id'];
+        if (
+            !is_string($blueprintId)
+            || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $blueprintId) !== 1
+        ) {
+            throw new InvalidArgumentException('Dashboard Widget loading_state blueprint_id must be a lowercase RFC 4122 UUID.');
+        }
+
+        $blueprintRevision = $raw['blueprint_revision'];
+        if (!is_int($blueprintRevision) || $blueprintRevision < 1) {
+            throw new InvalidArgumentException('Dashboard Widget loading_state blueprint_revision must be a positive integer.');
+        }
+
+        $contentType = $this->componentCatalog->contentTypeForBlueprint($blueprintId, $blueprintRevision);
+        if (!in_array($contentType, ['rich_text', 'announcement'], true)) {
+            throw new InvalidArgumentException(
+                'Dashboard Widget loading_state Blueprint must be a trusted rich_text or announcement Blueprint.',
+            );
+        }
+
+        $blueprint = $this->blueprints->get($blueprintId, $blueprintRevision);
+        if ($blueprint === null || $blueprint->ownerSurfaceId !== DashboardWidgetDefinition::OWNER_SURFACE_ID) {
+            throw new InvalidArgumentException('Dashboard Widget loading_state Blueprint must be registered and owned by Surface 10.');
+        }
+
+        $bindings = $raw['bindings'];
+        if (!is_array($bindings) || ($bindings !== [] && array_is_list($bindings))) {
+            throw new InvalidArgumentException('Dashboard Widget loading_state bindings must be an object/map.');
+        }
+
+        $authoredKeys = array_keys($bindings);
+        $schemaKeys = array_keys($blueprint->bindingSchema);
+        sort($authoredKeys, SORT_STRING);
+        sort($schemaKeys, SORT_STRING);
+        if ($authoredKeys !== $schemaKeys) {
+            throw new InvalidArgumentException(
+                'Dashboard Widget loading_state bindings must exactly match the trusted Blueprint binding schema.',
+            );
+        }
+
+        $literalBindings = [];
+        $normalizedBindings = [];
+        foreach ($blueprint->bindingSchema as $key => $type) {
+            if ($type !== 'string') {
+                throw new InvalidArgumentException('Dashboard Widget loading_state V1 supports string Blueprint bindings only.');
+            }
+
+            $envelope = $bindings[$key] ?? null;
+            if (!is_array($envelope) || array_is_list($envelope)) {
+                throw new InvalidArgumentException('Dashboard Widget loading_state binding entries must be object/maps.');
+            }
+            $this->assertKnownKeys($envelope, self::LITERAL_BINDING_KEYS, 'Dashboard Widget loading_state literal binding');
+            if (($envelope['source'] ?? null) !== 'literal' || !array_key_exists('value', $envelope)) {
+                throw new InvalidArgumentException('Dashboard Widget loading_state bindings must use literal value envelopes.');
+            }
+
+            $value = $envelope['value'];
+            if (
+                !is_string($value)
+                || strlen($value) < 1
+                || strlen($value) > DashboardWidgetLoadingStateDescriptor::MAX_STRING_BYTES
+                || trim($value, " \t\n\r\0\x0B") === ''
+                || !$this->isSafeString($value)
+            ) {
+                throw new InvalidArgumentException(
+                    'Dashboard Widget loading_state binding value must be a safe non-empty string within 2048 bytes.',
+                );
+            }
+
+            $literalBindings[$key] = $value;
+            $normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
+        }
+        ksort($literalBindings, SORT_STRING);
+        ksort($normalizedBindings, SORT_STRING);
+
+        $encoded = json_encode([
+            'kind' => 'component_blueprint',
+            'blueprint_id' => $blueprintId,
+            'blueprint_revision' => $blueprintRevision,
+            'bindings' => $normalizedBindings,
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        if (!is_string($encoded) || strlen($encoded) > DashboardWidgetLoadingStateDescriptor::MAX_ENCODED_BYTES) {
+            throw new InvalidArgumentException('Dashboard Widget loading_state exceeds the bounded 4096-byte limit.');
+        }
+
+        return new DashboardWidgetLoadingStateDescriptor(
+            blueprintId: $blueprintId,
+            blueprintRevision: $blueprintRevision,
+            bindings: $literalBindings,
         );
     }
 

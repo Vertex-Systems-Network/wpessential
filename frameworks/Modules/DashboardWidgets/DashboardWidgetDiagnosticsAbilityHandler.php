@@ -172,6 +172,7 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
                         'site_ids' => $descriptor->siteIds,
                         'default_hidden' => $descriptor->defaultHidden,
                         'default_collapsed' => $descriptor->defaultCollapsed,
+                        'manual_refresh' => $descriptor->manualRefresh,
                     ];
                     $references = [
                         'background_job_id' => $descriptor->backgroundJobId,

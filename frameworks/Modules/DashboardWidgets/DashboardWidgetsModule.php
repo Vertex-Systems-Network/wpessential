@@ -69,6 +69,8 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_FORM_ACTION_PREFLIGHT = 'module.dashboard-widgets.form-action-preflight';
     public const SERVICE_FORM_ACTION_EXECUTION = 'module.dashboard-widgets.form-action-execution';
     public const SERVICE_FORM_ACTION_RESULT_ADAPTER = 'module.dashboard-widgets.form-action-result-adapter';
+    public const SERVICE_MANUAL_REFRESH_PRESENTER = 'module.dashboard-widgets.manual-refresh-presenter';
+    public const SERVICE_MANUAL_REFRESH_HANDLER = 'module.dashboard-widgets.manual-refresh-handler';
     public const SERVICE_RUNTIME_RENDER_EXECUTOR = 'module.dashboard-widgets.runtime-render-executor';
     public const SERVICE_RUNTIME_CLOCK = 'module.dashboard-widgets.runtime-clock';
     public const SERVICE_WORDPRESS_ADAPTER = 'module.dashboard-widgets.wordpress-adapter';
@@ -273,6 +275,27 @@ final class DashboardWidgetsModule implements ModuleInterface
             $dynamicBindingExecutor,
             $runtimeClock,
         );
+        $manualRefreshHandler = new DashboardWidgetManualRefreshAjaxHandler(
+            $definitions,
+            $registrationCompiler,
+            $runtimeRenderExecutor,
+            $contexts,
+        );
+        $ajaxRoutes->register(new AjaxRoute(
+            type: DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE,
+            handler: $manualRefreshHandler,
+            operation: NonceOperation::Apply,
+            capability: null,
+            allowGuests: false,
+            requiresNonce: true,
+        ));
+        $manualRefreshPresenter = new DashboardWidgetManualRefreshPresenter(
+            $ajaxGateway->action(),
+            static fn (): string => $ajaxDispatcher->createNonce(
+                DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE,
+            ),
+        );
+
         $preflightHandler = new DashboardWidgetFormActionPreflightAjaxHandler(
             $definitions,
             $contentClassCompiler,
@@ -332,6 +355,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $formActionPresenter,
             $personalPreferences,
             $runtimeClock,
+            $manualRefreshPresenter,
         );
 
         $componentRegistrar->register();
@@ -355,6 +379,8 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_FORM_ACTION_PREFLIGHT, $preflightHandler);
         $services->set(self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $executionResultAdapter);
         $services->set(self::SERVICE_FORM_ACTION_EXECUTION, $executionHandler);
+        $services->set(self::SERVICE_MANUAL_REFRESH_PRESENTER, $manualRefreshPresenter);
+        $services->set(self::SERVICE_MANUAL_REFRESH_HANDLER, $manualRefreshHandler);
         $services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
         $services->set(self::SERVICE_RUNTIME_CLOCK, $runtimeClock);
         $services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
