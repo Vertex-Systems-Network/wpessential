@@ -29,28 +29,29 @@ jobs:
           node-version: '24'
           cache: npm
 
-      - name: Refresh wp-scripts lockfile only
+      - name: Reproduce minimal admin toolchain lockfile
         shell: bash
         run: |
           set -euo pipefail
           cp package.json package-before.json
           cp package-lock.json package-lock-before.json
           node <<'NODE'
-          const fs = require('fs');
-          const path = 'package.json';
-          const p = JSON.parse(fs.readFileSync(path, 'utf8'));
-          p.devDependencies['@wordpress/scripts'] = '35.0.0';
-          p.overrides = {
-            'adm-zip': '0.6.1',
-            'serialize-javascript': '7.1.1',
-            'markdownlint-cli': '0.49.1',
-            'qs': '6.16.0',
-            'uuid': '11.1.1'
+          const p = require('./package.json');
+          const expected = {
+            '@biomejs/biome': '2.5.15',
+            'esbuild': '0.28.2',
+            'sass': '1.105.1',
+            'typescript': 'npm:@typescript/typescript6@6.0.2'
           };
-          fs.writeFileSync(path, JSON.stringify(p, null, 2) + '\n');
+          if (JSON.stringify(p.devDependencies) !== JSON.stringify(expected)) {
+            throw new Error('unexpected minimal admin toolchain graph: ' + JSON.stringify(p.devDependencies));
+          }
+          if (p.overrides !== undefined) {
+            throw new Error('minimal admin toolchain must not use npm overrides');
+          }
           NODE
           npm install --package-lock-only --ignore-scripts
-          node -e 'const p=require("./package.json"); if(p.devDependencies?.["@wordpress/scripts"]!=="35.0.0"){throw new Error("unexpected wp-scripts version "+p.devDependencies?.["@wordpress/scripts"])}'
+          cmp package-lock-before.json package-lock.json
 
       - name: Audit refreshed dev graph
         shell: bash
@@ -64,6 +65,40 @@ jobs:
           cat npm-audit-after.json
           cat npm-audit-distributable-after.json
 
+      - name: Capture candidate dependency graph report
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          const packages = lock.packages || {};
+          const names = ['braces', 'micromatch', 'fast-glob', 'stylelint', 'webpack-dev-server', '@wordpress/scripts'];
+          const matches = Object.fromEntries(names.map((name) => [name, []]));
+          for (const [packagePath, meta] of Object.entries(packages)) {
+            for (const name of names) {
+              if (
+                packagePath === 'node_modules/' + name
+                || packagePath.endsWith('/node_modules/' + name)
+              ) {
+                matches[name].push({
+                  path: packagePath,
+                  version: meta.version || null
+                });
+              }
+            }
+          }
+          fs.writeFileSync(
+            'candidate-graph-report.json',
+            JSON.stringify({
+              package_count: Object.keys(packages).length,
+              candidate_dev_dependencies: require('./package.json').devDependencies,
+              affected_chain_packages: matches
+            }, null, 2) + '\n'
+          );
+          console.log(fs.readFileSync('candidate-graph-report.json', 'utf8'));
+          NODE
+
       - name: Upload refreshed lockfile evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -75,5 +110,6 @@ jobs:
             package-lock.json
             npm-audit-after.json
             npm-audit-distributable-after.json
+            candidate-graph-report.json
           if-no-files-found: error
           retention-days: 2
