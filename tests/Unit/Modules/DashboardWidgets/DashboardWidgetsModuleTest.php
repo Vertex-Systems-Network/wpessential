@@ -62,6 +62,7 @@ use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
 use WPEssential\Platform\WordPress\Security\NonceEnvironmentInterface;
 use WPEssential\Platform\WordPress\Security\NonceManager;
+use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class DashboardWidgetsModuleTest extends TestCase
 {
@@ -150,6 +151,19 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetFormActionPreflightAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PREFLIGHT));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
+
+        $ajaxRoutes = $services->get('platform.ajax.routes');
+        self::assertInstanceOf(AjaxRouteRegistry::class, $ajaxRoutes);
+        $formActionRoute = $ajaxRoutes->get(DashboardWidgetFormActionPresenter::ROUTE_TYPE);
+        self::assertNotNull($formActionRoute);
+        self::assertInstanceOf(
+            DashboardWidgetFormActionPreflightAjaxHandler::class,
+            $formActionRoute->handler,
+        );
+        self::assertSame(NonceOperation::Apply, $formActionRoute->operation);
+        self::assertNull($formActionRoute->capability);
+        self::assertFalse($formActionRoute->allowGuests);
+        self::assertTrue($formActionRoute->requiresNonce);
 
         $registry = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
         self::assertInstanceOf(ComponentBlueprintRegistry::class, $registry);
