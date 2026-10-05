@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: c386f72e648f85dadc64324fe863f5d12fb40cb2
 observed_main_source: "Issue #1317 / PR #1318 RB-0092 bounded Dashboard runtime diagnostics merged after all applicable exact-head gates PASS"
 active_issue: "#1319"
-active_pr: null
+active_pr: "#1320"
 active_branch: agent/dashboard-dismiss-reset-parity-v1
-current_milestone: "Dashboard Widgets dismissible + per-user dismiss/reset parity V1 — RB-0093 implementation"
+current_milestone: "Dashboard Widgets dismissible + per-user dismiss/reset parity V1 — PR #1320 exact-head RB-0093 validation"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1317 / PR #1318 RB-0092 terminal PASS; exact head 31d37a15340da314dad1f5f3e255728a4e6f53ea; Governance 37374450833 PASS; PHP Quality 37374450852 PASS; Distributable 37374450839 PASS; Platform Compatibility 37374450909 PASS 10/10; Architecture 37374450910 FULL PASS; Browser workflow NOT_APPLICABLE by path filter; exact 9-file scope; zero behind/review blockers; expected-head squash merged as c386f72e648f85dadc64324fe863f5d12fb40cb2; verdict PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1."
-next_safe_action: "Finish #1319 exact 16-file dismiss/reset parity scope, audit preservation/write-back tests, reconcile shared truth, open PR, then run one consolidated RB-0093 exact-head merge gate."
-waiting_external: "none — active #1319 implementation before PR open."
+next_safe_action: "Validate PR #1320 exact head against #1319 16-file allowlist; fix any real failure; require applicable RB-0093 CI PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
+waiting_external: "PR #1320 RB-0093 exact-head Governance/PHP/Distributable/Platform/Architecture merge gate; Browser applicability is path-filtered."
 next_planned_slot:
   issue: "#1319"
   slot_id: dashboard-widgets-dismiss-reset-parity-v1
