@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1287",
-  "anchor_main_sha": "1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+  "source_issue": "#1296",
+  "anchor_main_sha": "a7804178ae287bb0550c9456b07ea0aea70fb93a",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2712,7 +2712,7 @@
       "category": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head contract validation",
-      "environment": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1 fresh main 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0",
+      "environment": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1 exact head 044259a6b0c1d61170e812ce962787e30abc0a49",
       "dependencies": [
         "RB-0082 terminal PASS",
         "RB-0087 terminal PASS",
@@ -2723,11 +2723,16 @@
       "security_critical": true,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|input-aware-action-authorization-contract|issue1287|exact-head",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "PR #1288 rebuilt on fresh secure main",
-        "exact six-file contract/shared-truth scope pending exact-head Governance + Architecture"
+        "PR #1288 exact six-file scope",
+        "Governance 37318710838 PASS",
+        "Architecture 37318710417 FULL PASS",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as 089aeed095c582756011f88c5bfcb2edd9dd1917",
+        "verdict CONTRACT_FROZEN_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1"
       ],
       "note": "Security blocker is resolved. Merge only after exact-head Governance + Architecture FULL PASS, zero behind and zero unresolved review blockers."
     },
@@ -2737,7 +2742,7 @@
       "category": "DASHBOARD_WIDGETS_BOUNDED_INPUT_AWARE_ACTION_AUTHORIZATION_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform + Architecture exact-head validation",
-      "environment": "agent/dashboard-widgets-bounded-input-aware-action-authorization-v1 prepared stack",
+      "environment": "agent/dashboard-widgets-bounded-input-aware-action-authorization-v1 exact head d786beff0ead88eb83252cd414e040a7883430c4",
       "dependencies": [
         "RB-0083 terminal PASS",
         "RB-0087 terminal PASS",
@@ -2748,10 +2753,19 @@
       "security_critical": true,
       "expected_minutes": 15,
       "dedup_key": "dashboard-widgets|bounded-input-aware-action-authorization|issue1291|exact-head",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "PR #1298 PREPARED_NOT_MERGEABLE; prior preparation gates green except old security-main blocker"
+        "PR #1298 exact two-file scope",
+        "Governance 37319094769 PASS",
+        "PHP Quality 37319094814 PASS",
+        "Distributable 37319094729 PASS",
+        "Architecture 37319094548 FULL PASS",
+        "Platform Compatibility 37319094511 PASS 10/10",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as a7804178ae287bb0550c9456b07ea0aea70fb93a",
+        "verdict PASS_BOUNDED_DASHBOARD_INPUT_AWARE_ACTION_AUTHORIZATION_V1"
       ],
       "note": "No PASS promotion until RB-0083/RB-0087 terminal and fresh exact-head validation."
     },
@@ -2761,24 +2775,24 @@
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_CONTRACT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head stacked contract validation",
-      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1 prepared stack",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1 fresh main a7804178ae287bb0550c9456b07ea0aea70fb93a",
       "dependencies": [
         "RB-0083 terminal PASS",
         "RB-0084 terminal PASS",
         "RB-0087 terminal PASS",
-        "fresh reconciliation"
+        "fresh main a7804178ae287bb0550c9456b07ea0aea70fb93a"
       ],
       "authorization": "Prepared contract/shared-truth only; no runtime execution.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 10,
       "dedup_key": "dashboard-widgets|trusted-form-action-ui-confirmation-contract|issue1296|exact-head",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
       "evidence": [
-        "PR #1299 PREPARED_NOT_MERGEABLE"
+        "PR #1299 reconciled to terminal authorization main; exact six-file contract scope pending Governance + Architecture."
       ],
-      "note": "No contract PASS until predecessors and security main are terminal."
+      "note": "Merge only after exact-head Governance + Architecture FULL PASS, zero behind and zero unresolved review blockers."
     },
     {
       "id": "RB-0086",
