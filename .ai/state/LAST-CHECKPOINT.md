@@ -1,5 +1,64 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-05 — RB-0090 terminal PASS; RB-0091 shared Dashboard asset consumer migration active
+
+### Exact current main truth
+
+- Exact current main: `95a79d509c3234a427de769b01fa7c15fc3c34ae`.
+- Issue #1306 / PR #1307 — bounded AssetRegistry WordPress loader V1 — terminal PASS:
+  - exact head `fa8b93c962886ce08fa636c9a300d74959c86ed6`;
+  - Governance `37332149972` PASS;
+  - PHP Quality `37332149843` PASS;
+  - Distributable `37332149884` PASS;
+  - Browser E2E Accessibility `37332150089` PASS;
+  - Platform Compatibility `37332149994` PASS;
+  - Architecture `37332149995` FULL PASS;
+  - exact 17-file #1306 allowlist;
+  - zero behind and zero unresolved review blockers;
+  - expected-head squash merge and resulting-main verification at `95a79d509c3234a427de769b01fa7c15fc3c34ae`;
+  - verdict `PASS_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1`.
+- Issue #1306 is closed completed.
+- Legacy validation-only PRs #1302/#1303 are closed without merge.
+
+### Active #1315 / PR #1316 — RB-0091
+
+Fresh-main audit proved the remaining ADR-0150 convergence debt is isolated to the Dashboard `form_action` consumer:
+- Dashboard adapter owned a second `admin_enqueue_scripts` hook;
+- Native Dashboard environment directly resolved `AdminAssetManifest('main')` and enqueued the script;
+- shared `platform.assets.wordpress` is already registered once by Plugin bootstrap.
+
+Bounded implementation on `agent/dashboard-form-action-shared-asset-loader-v1`:
+- register `wpe-dashboard-form-action` in canonical `platform.assets`;
+- owner Surface 10;
+- Admin + AdminRoute;
+- exact routes `/wp-admin/index.php` and `/wp-admin/network/index.php`;
+- register trusted build mapping `wpe-dashboard-form-action -> main`, style entry null;
+- remove Dashboard-owned `admin_enqueue_scripts` hook;
+- remove adapter/environment `enqueueFormActionAssets()` seam;
+- remove Dashboard environment direct `AdminAssetManifest` dependency;
+- preserve presenter/preflight/execution behavior and all mutation boundaries.
+
+Exact maximum #1315 scope: 12 files (7 source/test + 5 shared-truth files).
+
+### RB-0091 merge gate
+
+Required exact-head:
+- Governance PASS;
+- PHP Quality PASS;
+- Distributable PASS;
+- Browser E2E Accessibility PASS;
+- Platform Compatibility PASS;
+- Architecture FULL PASS;
+- exact #1315 allowlist;
+- zero behind;
+- zero unresolved review blockers;
+- expected-head merge.
+
+Promotion only:
+`PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1`.
+
+No full Surface 10 parity, ASR certification, deployment or GA promotion.
+
 ## 2026-10-05 — AssetRegistry loader contract terminal PASS; RB-0090 active
 
 ### Exact current main truth

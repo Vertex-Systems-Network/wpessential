@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: e40f65afe38960c57ed85e296447f6a42c688e12
-observed_main_source: "Issue #1294 / PR #1305 AssetRegistry WordPress loader contract merged; Governance + Architecture terminal PASS"
-active_issue: "#1306"
-active_pr: "#1307"
-active_branch: agent/platform-bounded-assetregistry-wordpress-loader-v1
-current_milestone: "Platform bounded AssetRegistry WordPress loader V1 — fresh-main implementation validation"
+observed_main_sha: 95a79d509c3234a427de769b01fa7c15fc3c34ae
+observed_main_source: "Issue #1306 / PR #1307 RB-0090 shared Platform AssetRegistry WordPress loader merged after all exact-head gates PASS"
+active_issue: "#1315"
+active_pr: "#1316"
+active_branch: agent/dashboard-form-action-shared-asset-loader-v1
+current_milestone: "Dashboard Widgets shared asset-loader consumer migration V1 — fresh-main RB-0091 validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1294 / PR #1305 merged as e40f65afe38960c57ed85e296447f6a42c688e12; exact head 0d3562f60056004f9a99353aeea318b383a79203; Governance 37330030554 PASS; Architecture 37330030247 FULL PASS; exact six-file contract/shared-truth scope; zero behind; zero unresolved review blockers; verdict CONTRACT_FROZEN_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1 + READY_FOR_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1."
-next_safe_action: "Run RB-0090 full exact-head validation on PR #1307 exact 17-file #1306 allowlist; fix any real failures; expected-head merge; only after terminal PASS freeze RB-0091 Dashboard consumer migration in a separate Issue."
-waiting_external: "PR #1307 RB-0090 Governance/PHP/Distributable/Platform/Architecture exact-head merge gate."
+last_completed_milestone: "Issue #1306 / PR #1307 RB-0090 terminal PASS; exact head fa8b93c962886ce08fa636c9a300d74959c86ed6; Governance 37332149972 PASS; PHP Quality 37332149843 PASS; Distributable 37332149884 PASS; Browser E2E 37332150089 PASS; Platform Compatibility 37332149994 PASS; Architecture 37332149995 FULL PASS; exact 17-file scope; zero behind/review blockers; merged and resulting main verified as 95a79d509c3234a427de769b01fa7c15fc3c34ae; verdict PASS_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1."
+next_safe_action: "Run RB-0091 exact-head validation on PR #1316 exact 12-file #1315 allowlist; fix any real failures; expected-head merge; verify resulting main and close #1315 only after terminal PASS."
+waiting_external: "PR #1316 RB-0091 Governance/PHP/Distributable/Browser/Platform/Architecture exact-head merge gate."
 next_planned_slot:
-  issue: "#1306"
-  slot_id: platform-bounded-assetregistry-wordpress-loader-v1
-  claim_branch: "agent/platform-bounded-assetregistry-wordpress-loader-v1"
-  claim_rule: "Exact #1306 17-file Platform loader implementation/test/shared-truth scope; no Dashboard source/action behavior/package widening; RB-0090 full exact-head CI PASS required before expected-head merge."
+  issue: "#1315"
+  slot_id: dashboard-widgets-shared-asset-loader-consumer-migration-v1
+  claim_branch: "agent/dashboard-form-action-shared-asset-loader-v1"
+  claim_rule: "Exact #1315 12-file source/test/shared-truth allowlist; register Surface-10 descriptor + trusted main build mapping in canonical Platform registries; remove Dashboard-owned enqueue hook/seam; preserve action execution behavior; RB-0091 full exact-head CI PASS required before expected-head merge."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0090
+    - RB-0091
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -74,6 +74,7 @@ runner_benchmark:
     - RB-0086
     - RB-0088
     - RB-0089
+    - RB-0090
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -117,8 +118,8 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Issue #1294 / PR #1305 is terminal PASS through RB-0089; shared AssetRegistry WordPress loader contract merged as e40f65afe38960c57ed85e296447f6a42c688e12."
-  - "Issue #1306 / PR #1307 is the active RB-0090 shared Platform loader implementation; no Dashboard source change belongs in this tranche."
-  - "RB-0091 Dashboard consumer migration remains blocked until RB-0090 terminal PASS and a separate exact-scope Issue."
+  - "Issue #1306 / PR #1307 is terminal PASS through RB-0090; shared Platform AssetRegistry WordPress loader merged and resulting main verified as 95a79d509c3234a427de769b01fa7c15fc3c34ae."
+  - "Issue #1315 / PR #1316 is the active RB-0091 Dashboard consumer migration: register the fixed Surface-10 form_action asset in canonical Platform registries and remove the module-local enqueue hook/seam."
   - "Issue #1297 / PR #1312 bounded Dashboard form_action execution is terminal PASS; RB-0088 PASS; merged as 17b00095a594435acb2b10245bdb076737849abc."
   - "Fresh ADR-0150 audit found remaining architecture debt: current Dashboard fixed asset seam is safe/terminal but bypasses the shared Platform AssetRegistry load plan."
   - "Issue #1294 / PR #1305 is the active RB-0089 shared-loader contract reconciliation; #1307 implementation remains downstream."
@@ -157,4 +158,4 @@ notes:
   - "Issue #1308 / PR #1309 research proved a 62-package minimal admin graph with 0 vulnerabilities and no braces/micromatch/fast-glob/stylelint/webpack-dev-server/@wordpress/scripts; research PR closed without merge."
   - "Issue #1310 / PR #1311 minimal admin toolchain migration is terminal PASS; RB-0087 PASS; merged as 1db4daa0cfb786b86af62d06c1bac27d64f3cfa0; dev/distributable vulnerabilities are 0 and the affected braces chain is absent."
 
-# P1_CORE deep audit: bounded Dashboard form_action execution remains terminal through RB-0088. RB-0089 has frozen the shared AssetRegistry/scoped WordPress loader convergence contract. Active #1306/#1307 implements the consumer-free Platform loader only; Dashboard module migration remains separately blocked as RB-0091.
+# P1_CORE deep audit: bounded Dashboard form_action execution remains terminal through RB-0088; shared Platform asset runtime is terminal through RB-0090. Active #1315/#1316 RB-0091 converges the fixed Surface-10 form_action consumer onto canonical platform.assets + platform.assets.build-entries and removes the duplicate Dashboard enqueue seam. No full Surface 10 parity/GA claim.

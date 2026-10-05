@@ -1,9 +1,9 @@
 {
-  "schema_version": 160,
+  "schema_version": 161,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "e40f65afe38960c57ed85e296447f6a42c688e12",
-  "mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1",
-  "source_issue": "#1306",
+  "queue_anchor_main_sha": "95a79d509c3234a427de769b01fa7c15fc3c34ae",
+  "mode": "DASHBOARD_WIDGETS_SHARED_ASSET_LOADER_CONSUMER_MIGRATION_V1",
+  "source_issue": "#1315",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6738,9 +6738,9 @@
       "slot_id": "platform-bounded-assetregistry-wordpress-loader-v1",
       "title": "Platform bounded AssetRegistry WordPress loader V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1",
-      "source": "Issue #1306 / PR #1307 fresh-main RB-0090 implementation validation",
+      "source": "Issue #1306 / PR #1307 terminal RB-0090 implementation",
       "dependencies": [
         "RB-0089 terminal PASS",
         "exact fresh source base e40f65afe38960c57ed85e296447f6a42c688e12"
@@ -6761,35 +6761,53 @@
         "deploy/release/GA widening"
       ],
       "claim_branch": "agent/platform-bounded-assetregistry-wordpress-loader-v1",
-      "close_condition": "Exact 17-file #1306 implementation/test/shared-truth scope; RB-0090 Governance/PHP/Distributable/Platform/Architecture PASS; zero behind/review blockers; expected-head merge; promote only PASS_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1."
+      "close_condition": "Satisfied: exact 17-file #1306 implementation/test/shared-truth scope; all exact-head workflow families PASS; zero behind/review blockers; expected-head merge; resulting main verified.",
+      "terminal_result": "PASS_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1",
+      "terminal_evidence": {
+        "issue": 1306,
+        "pr": 1307,
+        "head": "fa8b93c962886ce08fa636c9a300d74959c86ed6",
+        "governance_run": 37332149972,
+        "php_quality_run": 37332149843,
+        "distributable_run": 37332149884,
+        "browser_e2e_run": 37332150089,
+        "platform_compatibility_run": 37332149994,
+        "architecture_run": 37332149995,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "95a79d509c3234a427de769b01fa7c15fc3c34ae",
+        "resulting_main_verified": true
+      }
     },
     {
       "priority": 1067,
       "slot_id": "dashboard-widgets-shared-asset-loader-consumer-migration-v1",
       "title": "Dashboard Widgets shared asset-loader consumer migration V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "BLOCKED_DEPENDENCY",
+      "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_SHARED_ASSET_LOADER_CONSUMER_MIGRATION_V1",
-      "source": "RB-0091 planning placeholder; separate Issue required after RB-0090",
+      "source": "Issue #1315 / PR #1316 fresh-main RB-0091 implementation validation",
       "dependencies": [
         "RB-0090 terminal PASS",
-        "fresh current-main Dashboard consumer audit",
-        "separate exact-scope Issue"
+        "exact fresh source base 95a79d509c3234a427de769b01fa7c15fc3c34ae"
       ],
-      "runtime_allowed": false,
+      "runtime_allowed": true,
       "mutation_allowed": false,
       "provider_execution_allowed": false,
       "renderer_execution_allowed": false,
       "shared_platform_mutation_allowed": false,
-      "allowed_scope": [],
+      "allowed_scope": [
+        "Issue #1315 exact 12-file Dashboard consumer migration allowlist"
+      ],
       "forbidden_scope": [
-        "Dashboard source changes before separate Issue",
+        "shared Platform source changes",
+        "arbitrary remote/user-authored assets",
         "action execution behavior changes",
         "package/dependency changes",
         "deploy/release/GA widening"
       ],
-      "claim_branch": null,
-      "close_condition": "Not claimable until RB-0090 terminal PASS and a separate Issue freezes exact Dashboard consumer migration allowlist."
+      "claim_branch": "agent/dashboard-form-action-shared-asset-loader-v1",
+      "close_condition": "Exact 12-file #1315 source/test/shared-truth scope; fixed Surface-10 AssetRegistry + trusted build mapping registration; no Dashboard-owned enqueue seam; RB-0091 exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1."
     }
   ],
   "historical_closeout": {

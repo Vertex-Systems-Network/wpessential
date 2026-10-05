@@ -21,6 +21,13 @@ use WPEssential\Contracts\ServiceRegistryInterface;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
 use WPEssential\Platform\Abilities\InputValidation\AbilityInputValidator;
+use WPEssential\Platform\Assets\AssetDescriptor;
+use WPEssential\Platform\Assets\AssetLoadStrategy;
+use WPEssential\Platform\Assets\AssetRegistry;
+use WPEssential\Platform\Assets\AssetScope;
+use WPEssential\Platform\Assets\AssetServices;
+use WPEssential\Platform\Assets\TrustedAssetBuildEntry;
+use WPEssential\Platform\Assets\TrustedAssetBuildEntryRegistry;
 use WPEssential\Platform\Audit\AuditServices;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Components\ComponentBlueprintRegistry;
@@ -94,6 +101,8 @@ final class DashboardWidgetsModule implements ModuleInterface
             'platform.ajax.routes',
             'platform.ajax.dispatcher',
             'platform.ajax.gateway',
+            AssetServices::REGISTRY,
+            AssetServices::BUILD_ENTRIES,
             AuditServices::LOGGER,
         ] as $serviceId) {
             if (!$services->has($serviceId)) {
@@ -107,6 +116,8 @@ final class DashboardWidgetsModule implements ModuleInterface
         $ajaxRoutes = $services->get('platform.ajax.routes');
         $ajaxDispatcher = $services->get('platform.ajax.dispatcher');
         $ajaxGateway = $services->get('platform.ajax.gateway');
+        $assetRegistry = $services->get(AssetServices::REGISTRY);
+        $assetBuildEntries = $services->get(AssetServices::BUILD_ENTRIES);
         $audit = $services->get(AuditServices::LOGGER);
 
         if (
@@ -114,6 +125,8 @@ final class DashboardWidgetsModule implements ModuleInterface
             || !$ajaxRoutes instanceof AjaxRouteRegistry
             || !$ajaxDispatcher instanceof AjaxDispatcher
             || !$ajaxGateway instanceof WordPressAjaxGateway
+            || !$assetRegistry instanceof AssetRegistry
+            || !$assetBuildEntries instanceof TrustedAssetBuildEntryRegistry
             || !$audit instanceof AuditLoggerInterface
         ) {
             throw new LogicException(
@@ -166,6 +179,21 @@ final class DashboardWidgetsModule implements ModuleInterface
         if (!$dynamicValues instanceof DynamicValueResolverInterface) {
             throw new LogicException('Dashboard Widgets requires the canonical shared Dynamic Value resolver.');
         }
+
+        $assetRegistry->register(new AssetDescriptor(
+            handle: 'wpe-dashboard-form-action',
+            ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+            scope: AssetScope::Admin,
+            loadStrategy: AssetLoadStrategy::AdminRoute,
+            adminRoutes: [
+                '/wp-admin/index.php',
+                '/wp-admin/network/index.php',
+            ],
+        ));
+        $assetBuildEntries->register(new TrustedAssetBuildEntry(
+            assetHandle: 'wpe-dashboard-form-action',
+            scriptEntry: 'main',
+        ));
 
         $read = new DashboardWidgetsReadService($definitions);
         $contentClassCompiler = new DashboardWidgetContentClassCompiler();

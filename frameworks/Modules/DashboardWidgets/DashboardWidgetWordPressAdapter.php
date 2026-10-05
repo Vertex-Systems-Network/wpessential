@@ -80,28 +80,6 @@ final class DashboardWidgetWordPressAdapter
         } catch (Throwable) {
             // Default-hidden projection is optional and must not break registration.
         }
-
-        try {
-            $this->environment->registerAction(
-                'admin_enqueue_scripts',
-                [$this, 'enqueueFormActionAssets'],
-            );
-        } catch (Throwable) {
-            // Dedicated action assets are optional until a trusted form_action is rendered.
-        }
-    }
-
-    public function enqueueFormActionAssets(string $hookSuffix): void
-    {
-        if ($hookSuffix !== 'index.php') {
-            return;
-        }
-
-        try {
-            $this->environment->enqueueFormActionAssets();
-        } catch (Throwable) {
-            // Fail closed without affecting the WordPress Dashboard.
-        }
     }
 
     public function registerSiteDashboard(): void
