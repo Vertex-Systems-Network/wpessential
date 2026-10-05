@@ -142,7 +142,7 @@ final readonly class DashboardWidgetFormActionExecutionAjaxHandler implements Aj
                 $context,
                 $descriptor,
                 $decision->allowed ? 'authorization_allowed' : 'authorization_denied',
-                $decision->allowed ? $this->auditReason($decision->reason) : $this->auditReason($decision->reason),
+                $this->auditReason($decision->reason),
             );
         } catch (Throwable) {
             return $this->response(
