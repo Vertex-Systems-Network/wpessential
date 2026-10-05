@@ -11,6 +11,9 @@ use WPEssential\Contracts\CapabilityCheckerInterface;
 use WPEssential\Contracts\QueryReadConsumerInterface;
 use WPEssential\Kernel\ServiceRegistry;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionAuthorizationEvaluator;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionInputBinder;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPreflightAjaxHandler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPresenter;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentRegistrar;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
@@ -35,6 +38,8 @@ use WPEssential\Modules\FormsWorkflows\FormWorkflowDefinition;
 use WPEssential\Modules\Query\QueryModule;
 use WPEssential\Platform\Abilities\AbilityDescriptor;
 use WPEssential\Platform\Abilities\AbilityRegistry;
+use WPEssential\Platform\Audit\AuditServices;
+use WPEssential\Platform\Audit\InMemoryAuditLogger;
 use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\PolicyEngine;
@@ -49,7 +54,14 @@ use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityEnvironmentInterface;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
+use WPEssential\Platform\WordPress\Ajax\AjaxResponse;
+use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxEnvironmentInterface;
+use WPEssential\Platform\WordPress\Ajax\WordPressAjaxGateway;
 use WPEssential\Platform\WordPress\Auth\WordPressAuthorizationServices;
+use WPEssential\Platform\WordPress\Security\NonceEnvironmentInterface;
+use WPEssential\Platform\WordPress\Security\NonceManager;
 
 final class DashboardWidgetsModuleTest extends TestCase
 {
@@ -114,6 +126,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         $services->set('platform.abilities', $abilities);
         $services->set('platform.abilities.wordpress', $bridge);
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+        $this->addFormActionPlatformServices($services, $environment);
         $services->set(CronModule::SERVICE_READ, new CronReadService($definitions));
         (new RenderingServiceRegistrar())->register($services);
         $this->addQueryServices($services);
@@ -132,6 +145,9 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetVisibilityCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_COMPILER));
         self::assertInstanceOf(DashboardWidgetVisibilityEvaluator::class, $services->get(DashboardWidgetsModule::SERVICE_VISIBILITY_EVALUATOR));
         self::assertInstanceOf(DashboardWidgetActionAuthorizationEvaluator::class, $services->get(DashboardWidgetsModule::SERVICE_ACTION_AUTHORIZATION_EVALUATOR));
+        self::assertInstanceOf(DashboardWidgetActionInputBinder::class, $services->get(DashboardWidgetsModule::SERVICE_ACTION_INPUT_BINDER));
+        self::assertInstanceOf(DashboardWidgetFormActionPresenter::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PRESENTER));
+        self::assertInstanceOf(DashboardWidgetFormActionPreflightAjaxHandler::class, $services->get(DashboardWidgetsModule::SERVICE_FORM_ACTION_PREFLIGHT));
         self::assertInstanceOf(DashboardWidgetRuntimeRenderExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_RUNTIME_RENDER_EXECUTOR));
         self::assertInstanceOf(DashboardWidgetWordPressAdapter::class, $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER));
 
@@ -272,6 +288,8 @@ final class DashboardWidgetsModuleTest extends TestCase
             public function currentUserDashboardWidgetOrder(string $screenId): array { return []; }
             public function removeDashboardWidget(string $id, string $screenId, string $context): void {}
             public function discoverRegisteredDashboardWidgets(string $screenId): array { return []; }
+            public function ajaxUrl(): string { return 'https://example.test/wp-admin/admin-ajax.php'; }
+            public function enqueueFormActionAssets(): void {}
             public function outputTrustedHtml(string $html): void {}
         };
         $services = $this->baseServices();
@@ -286,7 +304,10 @@ final class DashboardWidgetsModuleTest extends TestCase
             DashboardWidgetWordPressAdapter::class,
             $services->get(DashboardWidgetsModule::SERVICE_WORDPRESS_ADAPTER),
         );
-        self::assertSame(['wp_dashboard_setup', 'wp_network_dashboard_setup'], $dashboardEnvironment->hooks);
+        self::assertSame(
+            ['wp_dashboard_setup', 'wp_network_dashboard_setup', 'admin_enqueue_scripts'],
+            $dashboardEnvironment->hooks,
+        );
         self::assertSame(['default_hidden_meta_boxes'], $dashboardEnvironment->filters);
     }
 
@@ -369,11 +390,54 @@ final class DashboardWidgetsModuleTest extends TestCase
             new WordPressAbilityBridge($abilities, $environment, new WordPressExecutionContextFactory($environment)),
         );
         $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+        $this->addFormActionPlatformServices($services, $environment);
         $this->addQueryServices($services);
 
         return $services;
     }
 
+
+    private function addFormActionPlatformServices(
+        ServiceRegistry $services,
+        WordPressAbilityEnvironmentInterface $abilityEnvironment,
+    ): void {
+        $routes = new AjaxRouteRegistry();
+        $nonceEnvironment = new class implements NonceEnvironmentInterface {
+            public function create(string $action): string
+            {
+                return 'test-nonce';
+            }
+
+            public function verify(string $nonce, string $action): bool
+            {
+                return $nonce === 'test-nonce';
+            }
+        };
+        $dispatcher = new AjaxDispatcher(
+            $routes,
+            new NonceManager($nonceEnvironment, 'wpessential-test'),
+            static fn (string $capability): bool => true,
+        );
+        $ajaxEnvironment = new class implements WordPressAjaxEnvironmentInterface {
+            public function registerAction(string $hook, callable $callback): void {}
+            public function request(): array { return []; }
+            public function isAuthenticated(): bool { return true; }
+            public function currentUserCan(string $capability): bool { return true; }
+            public function respond(AjaxResponse $response): void {}
+        };
+
+        $services->set(
+            'platform.abilities.contexts',
+            new WordPressExecutionContextFactory($abilityEnvironment),
+        );
+        $services->set('platform.ajax.routes', $routes);
+        $services->set('platform.ajax.dispatcher', $dispatcher);
+        $services->set(
+            'platform.ajax.gateway',
+            new WordPressAjaxGateway('wpessential_dispatch', $dispatcher, $ajaxEnvironment),
+        );
+        $services->set(AuditServices::LOGGER, new InMemoryAuditLogger());
+    }
 
     private function addQueryServices(ServiceRegistry $services): void
     {
