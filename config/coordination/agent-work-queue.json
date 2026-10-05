@@ -6934,7 +6934,7 @@
       "role": "AGENT_IMPLEMENTATION",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_LIFECYCLE_VISIBILITY_WINDOW_V1",
-      "source": "Issue #1321 fresh-main RB-0094",
+      "source": "Issue #1321 / PR #1322 fresh-main RB-0094 validation",
       "dependencies": [
         "RB-0093 terminal PASS",
         "exact fresh source base bb6c826f05ffdc7f84c0abcbad42979cf590e648"
