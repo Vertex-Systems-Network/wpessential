@@ -21,8 +21,8 @@ final readonly class DashboardWidgetPersonalPreferenceAbilityHandler implements 
     public const DISMISS = 'dismiss';
     public const RESET = 'reset';
 
-    public const ABILITY_DISMISS = 'wpessential/dashboard-widgets/personal-preference/dismiss';
-    public const ABILITY_RESET = 'wpessential/dashboard-widgets/personal-preference/reset';
+    public const ABILITY_DISMISS = 'wpessential/dashboard-widgets/dismiss';
+    public const ABILITY_RESET = 'wpessential/dashboard-widgets/reset-layout';
 
     public const AJAX_DISMISS = 'dashboard-widgets.personal-preference.dismiss';
     public const AJAX_RESET = 'dashboard-widgets.personal-preference.reset';
