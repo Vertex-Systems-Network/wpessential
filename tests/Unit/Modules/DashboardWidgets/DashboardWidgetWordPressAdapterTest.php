@@ -13,6 +13,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalo
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetFormActionPresenter;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRoleMembershipProviderInterface;
@@ -575,6 +576,44 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         self::assertSame([], $adapter->currentUserDashboardWidgetOrder());
     }
 
+    public function testDismissedStateSuppressesOnlyDismissibleWpeWidgetForCurrentUser(): void
+    {
+        $dismissible = $this->definition(
+            '40000000-0000-4000-8000-000000000049',
+            'dismissible-widget',
+            'dismissible-widget',
+            dismissible: true,
+        );
+        $nonDismissible = $this->definition(
+            '40000000-0000-4000-8000-000000000050',
+            'fixed-widget',
+            'fixed-widget',
+        );
+        $preferences = new DashboardWidgetPersonalPreferenceStore(
+            metaReader: static function (int $userId, string $key): mixed {
+                if ($userId === 7 && $key === '_wpessential_dashboard_widgets_dismissed_dashboard') {
+                    return [
+                        'wpe_dashboard_widget_dismissible-widget',
+                        'wpe_dashboard_widget_fixed-widget',
+                    ];
+                }
+                return null;
+            },
+        );
+
+        [$adapter, , $environment] = $this->harness(
+            [$dismissible, $nonDismissible],
+            personalPreferences: $preferences,
+        );
+
+        $adapter->registerSiteDashboard();
+
+        self::assertSame(
+            ['wpe_dashboard_widget_fixed-widget'],
+            array_column($environment->widgets, 'id'),
+        );
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -821,6 +860,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ?RenderOutput $fallbackRenderOutput = null,
         ?callable $formActionAbilityResolver = null,
         ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
+        ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
     ): array
     {
         $repository = new class($definitions) implements DefinitionRepositoryInterface {
@@ -1064,6 +1104,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 $environment,
                 $contentCompiler,
                 $formActionPresenter,
+                $personalPreferences,
             ),
             $repository,
             $environment,
@@ -1124,6 +1165,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         bool $withErrorState = false,
         bool $defaultHidden = false,
         bool $defaultCollapsed = false,
+        bool $dismissible = false,
     ): Definition {
         $widget = [
             'key' => $key,
@@ -1149,8 +1191,14 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             $widget['inventory'] = ['default_hidden' => true];
         }
 
-        if ($defaultCollapsed) {
-            $widget['presentation'] = ['default_collapsed' => true];
+        if ($defaultCollapsed || $dismissible) {
+            $widget['presentation'] = [];
+            if ($defaultCollapsed) {
+                $widget['presentation']['default_collapsed'] = true;
+            }
+            if ($dismissible) {
+                $widget['presentation']['dismissible'] = true;
+            }
         }
 
         if ($withErrorState) {

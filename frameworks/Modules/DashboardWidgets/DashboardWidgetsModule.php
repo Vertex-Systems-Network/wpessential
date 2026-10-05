@@ -40,6 +40,7 @@ use WPEssential\Platform\Rendering\RenderingServiceRegistrar;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityBridge;
 use WPEssential\Platform\WordPress\Abilities\WordPressAbilityExposure;
 use WPEssential\Platform\WordPress\Abilities\WordPressExecutionContextFactory;
+use WPEssential\Platform\WordPress\Ajax\AbilityAjaxHandler;
 use WPEssential\Platform\WordPress\Ajax\AjaxDispatcher;
 use WPEssential\Platform\WordPress\Ajax\AjaxRoute;
 use WPEssential\Platform\WordPress\Ajax\AjaxRouteRegistry;
@@ -51,6 +52,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 {
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
     public const SERVICE_DIAGNOSTICS = 'module.dashboard-widgets.diagnostics';
+    public const SERVICE_PERSONAL_PREFERENCES = 'module.dashboard-widgets.personal-preferences';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
     public const SERVICE_RENDER_SOURCE_COMPILER = 'module.dashboard-widgets.render-source-compiler';
@@ -72,6 +74,8 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
     public const ABILITY_DIAGNOSTICS = 'wpessential/dashboard-widgets/diagnostics';
+    public const ABILITY_DISMISS = DashboardWidgetPersonalPreferenceAbilityHandler::ABILITY_DISMISS;
+    public const ABILITY_RESET_LAYOUT = DashboardWidgetPersonalPreferenceAbilityHandler::ABILITY_RESET;
     public const CAPABILITY = 'manage_options';
 
     public function __construct(
@@ -253,6 +257,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $contentClassCompiler,
             $registrationCompiler,
         );
+        $personalPreferences = new DashboardWidgetPersonalPreferenceStore();
         $runtimeRenderExecutor = new DashboardWidgetRuntimeRenderExecutor(
             $definitions,
             $registrationCompiler,
@@ -318,12 +323,14 @@ final class DashboardWidgetsModule implements ModuleInterface
             $dashboardEnvironment,
             $contentClassCompiler,
             $formActionPresenter,
+            $personalPreferences,
         );
 
         $componentRegistrar->register();
 
         $services->set(self::SERVICE_READ, $read);
         $services->set(self::SERVICE_DIAGNOSTICS, $diagnostics);
+        $services->set(self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences);
         $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
         $services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
         $services->set(self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor);
@@ -407,6 +414,70 @@ final class DashboardWidgetsModule implements ModuleInterface
             'Read Dashboard Widgets diagnostics',
             'Reads a bounded safe Dashboard Widgets runtime-readiness snapshot without exposing raw payloads or mutating state.',
         );
+
+        $preferenceActions = [
+            DashboardWidgetPersonalPreferenceAbilityHandler::DISMISS => [
+                self::ABILITY_DISMISS,
+                DashboardWidgetPersonalPreferenceAbilityHandler::AJAX_DISMISS,
+                [
+                    'type' => 'object',
+                    'required' => ['definition_id', 'expected_revision', 'screen'],
+                    'properties' => [
+                        'definition_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+                        'screen' => ['type' => 'string', 'enum' => ['site', 'network']],
+                    ],
+                    'additionalProperties' => false,
+                ],
+            ],
+            DashboardWidgetPersonalPreferenceAbilityHandler::RESET => [
+                self::ABILITY_RESET_LAYOUT,
+                DashboardWidgetPersonalPreferenceAbilityHandler::AJAX_RESET,
+                [
+                    'type' => 'object',
+                    'required' => ['screen'],
+                    'properties' => [
+                        'screen' => ['type' => 'string', 'enum' => ['site', 'network']],
+                    ],
+                    'additionalProperties' => false,
+                ],
+            ],
+        ];
+        foreach ($preferenceActions as $action => [$abilityName, $ajaxType, $inputSchema]) {
+            $descriptor = new AbilityDescriptor(
+                name: $abilityName,
+                ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: true,
+                channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
+                inputSchema: $inputSchema,
+                outputSchema: ['type' => 'object'],
+            );
+            $handler = new DashboardWidgetPersonalPreferenceAbilityHandler(
+                $definitions,
+                $registrationCompiler,
+                $personalPreferences,
+                $action,
+            );
+            $this->registerAbility(
+                $abilities,
+                $bridge,
+                $descriptor,
+                $handler,
+                $action === DashboardWidgetPersonalPreferenceAbilityHandler::DISMISS
+                    ? 'Dismiss Dashboard Widget'
+                    : 'Reset Dashboard Widget layout',
+                $action === DashboardWidgetPersonalPreferenceAbilityHandler::DISMISS
+                    ? 'Dismisses one canonical dismissible WPE Dashboard Widget for the current user.'
+                    : 'Resets only WPE-owned Dashboard Widget preferences while preserving core and third-party state.',
+                false,
+            );
+            $ajaxRoutes->register(new AjaxRoute(
+                type: $ajaxType,
+                handler: new AbilityAjaxHandler($abilities, $descriptor->name, $contexts),
+                operation: NonceOperation::Update,
+            ));
+        }
     }
 
     public function boot(ServiceRegistryInterface $services): void
@@ -425,13 +496,14 @@ final class DashboardWidgetsModule implements ModuleInterface
         AbilityHandlerInterface $handler,
         string $label,
         string $description,
+        bool $showInRest = true,
     ): void {
         $abilities->register($descriptor, $handler);
         $bridge->expose(new WordPressAbilityExposure(
             internalName: $descriptor->name,
             label: $label,
             description: $description,
-            showInRest: true,
+            showInRest: $showInRest,
         ));
     }
 }

@@ -1,9 +1,9 @@
 {
-  "schema_version": 162,
+  "schema_version": 163,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "9d6945a718923fb0bbaab0f19e431ec4d7fb06ac",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_DIAGNOSTICS_V1",
-  "source_issue": "#1317",
+  "queue_anchor_main_sha": "c386f72e648f85dadc64324fe863f5d12fb40cb2",
+  "mode": "DASHBOARD_WIDGETS_DISMISS_RESET_PARITY_V1",
+  "source_issue": "#1319",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6830,9 +6830,9 @@
       "slot_id": "dashboard-widgets-bounded-runtime-diagnostics-v1",
       "title": "Dashboard Widgets bounded runtime diagnostics snapshot V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_BOUNDED_RUNTIME_DIAGNOSTICS_V1",
-      "source": "Issue #1317 / PR #1318 fresh-main RB-0092 validation",
+      "source": "Issue #1317 / PR #1318 terminal RB-0092 diagnostics",
       "dependencies": [
         "RB-0091 terminal PASS",
         "exact fresh source base 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac"
@@ -6856,7 +6856,59 @@
         "deploy/release/GA widening"
       ],
       "claim_branch": "agent/dashboard-widgets-runtime-diagnostics-v1",
-      "close_condition": "Exact #1317 9-file scope; safe deterministic diagnostics; existing get/catalog/action behavior unchanged; RB-0092 applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1."
+      "close_condition": "Satisfied: exact 9-file #1317 scope; all applicable exact-head CI PASS; Browser NOT_APPLICABLE by path filter; zero behind/review blockers; expected-head merge.",
+      "terminal_result": "PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1",
+      "terminal_evidence": {
+        "issue": 1317,
+        "pr": 1318,
+        "head": "31d37a15340da314dad1f5f3e255728a4e6f53ea",
+        "governance_run": 37374450833,
+        "php_quality_run": 37374450852,
+        "distributable_run": 37374450839,
+        "platform_compatibility_run": 37374450909,
+        "platform_cells_passed": 10,
+        "architecture_run": 37374450910,
+        "browser_e2e": "NOT_APPLICABLE_PATH_FILTER",
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "c386f72e648f85dadc64324fe863f5d12fb40cb2",
+        "resulting_main_verified": true
+      }
+    },
+    {
+      "priority": 1069,
+      "slot_id": "dashboard-widgets-dismiss-reset-parity-v1",
+      "title": "Dashboard Widgets dismissible + per-user dismiss/reset parity V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_DISMISS_RESET_PARITY_V1",
+      "source": "Issue #1319 / PR #1320 fresh-main RB-0093 validation",
+      "dependencies": [
+        "RB-0092 terminal PASS",
+        "exact fresh source base c386f72e648f85dadc64324fe863f5d12fb40cb2"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": true,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1319 exact 16-file source/test/shared-truth allowlist"
+      ],
+      "forbidden_scope": [
+        "arbitrary user-meta/user-option key input",
+        "arbitrary WordPress widget-id input",
+        "whole native preference deletion",
+        "core/third-party preference mutation",
+        "cross-user mutation",
+        "Definition mutation",
+        "provider/remote/cache/portability runtime",
+        "shared Platform source changes",
+        "package/dependency changes",
+        "deploy/release/GA widening"
+      ],
+      "claim_branch": "agent/dashboard-dismiss-reset-parity-v1",
+      "close_condition": "Exact #1319 16-file scope; dismissible compiler state + verified current-user WPE-only dismiss/reset; core/third-party state preserved; RB-0093 applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_DISMISS_RESET_PARITY_V1."
     }
   ],
   "historical_closeout": {

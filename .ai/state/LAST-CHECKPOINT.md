@@ -1,5 +1,58 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-06 — RB-0092 terminal PASS; RB-0093 dismiss/reset parity active
+
+### Exact current main truth
+
+- Exact current main: `c386f72e648f85dadc64324fe863f5d12fb40cb2`.
+- Issue #1317 / PR #1318 — bounded Dashboard runtime diagnostics — terminal PASS:
+  - exact head `31d37a15340da314dad1f5f3e255728a4e6f53ea`;
+  - Governance `37374450833` PASS;
+  - PHP Quality `37374450852` PASS;
+  - Distributable `37374450839` PASS;
+  - Platform Compatibility `37374450909` PASS, 10/10 matrix cells;
+  - Architecture `37374450910` FULL PASS;
+  - Browser E2E = NOT_APPLICABLE by pull_request path filters;
+  - exact 9-file #1317 allowlist;
+  - zero behind and zero unresolved review blockers;
+  - expected-head squash merge `c386f72e648f85dadc64324fe863f5d12fb40cb2`;
+  - verdict `PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1`.
+- Issue #1317 is closed completed.
+
+### Next-lane audit
+
+False residual removed:
+- `dashboard-widgets.type.icon_link` is already implemented through the trusted Surface-10 Component Blueprint catalog/runtime.
+
+Governance-gated lanes:
+- ADR-0116: import/export parse/target mutation requires explicit owner authorization; portability is not an automatic next implementation lane.
+- Shared cache evidence protocol: EXECUTION NOT AUTHORIZED; CAC-01…CAC-176 = 0/176 executed; durable cache/TTL/stale runtime is not an automatic next lane.
+- provider/remote remains cross-owner and must not be forked into Dashboard Widgets.
+
+Fresh unblocked P0_PARITY residual:
+- `dashboard-widgets.preference.user_dismiss`;
+- `dashboard-widgets.preference.reset_layout`;
+- compiler/runtime prerequisite `presentation.dismissible`.
+
+### Active #1319 / PR #1320 / RB-0093
+
+Branch: `agent/dashboard-dismiss-reset-parity-v1`.
+
+Exact maximum scope: 16 files.
+
+Contract:
+- add typed `dismissible` registration state;
+- canonical dismiss Ability accepts Definition UUID/revision/screen, never arbitrary widget id;
+- dedicated current-user WPE dismiss state with write-back verification;
+- runtime suppression only when descriptor is dismissible and derived WPE id is dismissed;
+- reset strips only `wpe_dashboard_widget_` ids from hidden/collapsed/order native preference records;
+- preserve core/third-party ids and ordering;
+- validate all reset source records before mutation;
+- no Definition mutation, shared Platform widening, provider/remote/cache/portability runtime.
+
+Promotion only:
+`PASS_DASHBOARD_DISMISS_RESET_PARITY_V1`.
+
 ## 2026-10-06 — RB-0091 terminal PASS; stale Dashboard issues closed; RB-0092 diagnostics active
 
 ### Exact current main truth

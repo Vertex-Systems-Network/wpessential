@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac
-observed_main_source: "Issue #1315 / PR #1316 RB-0091 Dashboard form_action shared asset-loader consumer migration merged after all applicable exact-head gates PASS"
-active_issue: "#1317"
-active_pr: "#1318"
-active_branch: agent/dashboard-widgets-runtime-diagnostics-v1
-current_milestone: "Dashboard Widgets bounded runtime diagnostics snapshot V1 — PR #1318 exact-head RB-0092 validation"
+observed_main_sha: c386f72e648f85dadc64324fe863f5d12fb40cb2
+observed_main_source: "Issue #1317 / PR #1318 RB-0092 bounded Dashboard runtime diagnostics merged after all applicable exact-head gates PASS"
+active_issue: "#1319"
+active_pr: "#1320"
+active_branch: agent/dashboard-dismiss-reset-parity-v1
+current_milestone: "Dashboard Widgets dismissible + per-user dismiss/reset parity V1 — PR #1320 exact-head RB-0093 validation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1315 / PR #1316 RB-0091 terminal PASS; exact head fef1c601605cee702b9a5b94a835af1017a678b9; Governance 37335868721 PASS; PHP Quality 37335868747 PASS; Distributable 37335868658 PASS; Platform Compatibility 37335868376 PASS 10/10; Architecture 37335868524 FULL PASS; Browser workflow NOT_APPLICABLE by path filter; exact 12-file scope; zero behind/review blockers; expected-head squash merged as 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac; verdict PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1."
-next_safe_action: "Validate PR #1318 exact head against #1317 9-file allowlist; fix any real failure; require applicable RB-0092 CI PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
-waiting_external: "PR #1318 RB-0092 exact-head Governance/PHP/Distributable/Platform/Architecture merge gate; Browser applicability is path-filtered."
+last_completed_milestone: "Issue #1317 / PR #1318 RB-0092 terminal PASS; exact head 31d37a15340da314dad1f5f3e255728a4e6f53ea; Governance 37374450833 PASS; PHP Quality 37374450852 PASS; Distributable 37374450839 PASS; Platform Compatibility 37374450909 PASS 10/10; Architecture 37374450910 FULL PASS; Browser workflow NOT_APPLICABLE by path filter; exact 9-file scope; zero behind/review blockers; expected-head squash merged as c386f72e648f85dadc64324fe863f5d12fb40cb2; verdict PASS_BOUNDED_DASHBOARD_RUNTIME_DIAGNOSTICS_V1."
+next_safe_action: "Validate PR #1320 exact head against #1319 16-file allowlist; fix any real failure; require applicable RB-0093 CI PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
+waiting_external: "PR #1320 RB-0093 exact-head Governance/PHP/Distributable/Platform/Architecture merge gate; Browser applicability is path-filtered."
 next_planned_slot:
-  issue: "#1317"
-  slot_id: dashboard-widgets-bounded-runtime-diagnostics-v1
-  claim_branch: "agent/dashboard-widgets-runtime-diagnostics-v1"
-  claim_rule: "Exact #1317 9-file source/test/shared-truth allowlist; read-only safe runtime-readiness diagnostics only; no raw payload/input/output/exception leakage; no mutation/provider/cache/portability/shared-Platform widening."
+  issue: "#1319"
+  slot_id: dashboard-widgets-dismiss-reset-parity-v1
+  claim_branch: "agent/dashboard-dismiss-reset-parity-v1"
+  claim_rule: "Exact #1319 16-file source/test/shared-truth allowlist; bounded dismissible compiler state + current-user WPE-owned dismiss/reset only; preserve core/third-party preferences; no portability/cache/provider/remote/shared-Platform widening."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0092
+    - RB-0093
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -76,6 +76,7 @@ runner_benchmark:
     - RB-0089
     - RB-0090
     - RB-0091
+    - RB-0092
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -122,7 +123,9 @@ notes:
   - "Issue #1306 / PR #1307 is terminal PASS through RB-0090; shared Platform AssetRegistry WordPress loader merged and resulting main verified as 95a79d509c3234a427de769b01fa7c15fc3c34ae."
   - "Issue #1315 / PR #1316 is terminal PASS through RB-0091; fixed Surface-10 form_action assets now use canonical Platform registries/shared loader and the module-local enqueue seam is removed."
   - "Fresh post-RB-0091 cleanup closed stale completed Issues #1291, #1292, #1296 and #1300 with merge evidence."
-  - "Issue #1317 / RB-0092 is the active owner-local P1_CORE diagnostics tranche; it is read-only and may not expose raw payload/input/output/exceptions."
+  - "Issue #1317 / PR #1318 is terminal PASS through RB-0092; bounded read-only Dashboard runtime diagnostics merged as c386f72e648f85dadc64324fe863f5d12fb40cb2."
+  - "Portability execution remains explicit-owner-authorization-gated by ADR-0116; shared cache runtime remains EXECUTION NOT AUTHORIZED with CAC 0/176 executed; provider/remote remains cross-owner."
+  - "Issue #1319 / RB-0093 is the active P0_PARITY dismiss/reset tranche: dismissible compiler state + verified current-user WPE-only preference mutation with core/third-party preservation."
   - "Issue #1297 / PR #1312 bounded Dashboard form_action execution is terminal PASS; RB-0088 PASS; merged as 17b00095a594435acb2b10245bdb076737849abc."
   - "Fresh ADR-0150 audit found remaining architecture debt: current Dashboard fixed asset seam is safe/terminal but bypasses the shared Platform AssetRegistry load plan."
   - "Issue #1294 / PR #1305 is the active RB-0089 shared-loader contract reconciliation; #1307 implementation remains downstream."

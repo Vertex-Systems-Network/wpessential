@@ -31,7 +31,7 @@ final readonly class DashboardWidgetRegistrationCompiler
     private const INVENTORY_KEYS = ['default_hidden'];
 
     /** @var list<string> */
-    private const PRESENTATION_KEYS = ['collapsible', 'default_collapsed'];
+    private const PRESENTATION_KEYS = ['collapsible', 'default_collapsed', 'dismissible'];
 
     /** @var list<string> */
     private const TARGET_KEYS = ['scope', 'site_ids', 'network_dashboard'];
@@ -140,6 +140,7 @@ final readonly class DashboardWidgetRegistrationCompiler
         $defaultHidden = $this->compileDefaultHidden($widget);
         $this->assertNativeCollapsibleCapability($widget);
         $defaultCollapsed = $this->compileDefaultCollapsed($widget);
+        $dismissible = $this->compileDismissible($widget);
         $backgroundJobId = $this->compileBackgroundJobReference($widget);
         $actionAbilityId = $this->compileFormsActionAbilityReference($widget);
         $actionConfirmation = $this->compileActionConfirmation($widget);
@@ -164,6 +165,7 @@ final readonly class DashboardWidgetRegistrationCompiler
             networkDashboard: $networkDashboard,
             defaultHidden: $defaultHidden,
             defaultCollapsed: $defaultCollapsed,
+            dismissible: $dismissible,
             siteScope: $siteScope,
             siteIds: $siteIds,
             backgroundJobId: $backgroundJobId,
@@ -375,6 +377,28 @@ final readonly class DashboardWidgetRegistrationCompiler
     /**
      * @param array<string,mixed> $widget
      */
+    private function compileDismissible(array $widget): bool
+    {
+        if (!array_key_exists('presentation', $widget)) {
+            return false;
+        }
+
+        $presentation = $widget['presentation'];
+        if (!is_array($presentation) || ($presentation !== [] && array_is_list($presentation))) {
+            throw new InvalidArgumentException('Dashboard Widget presentation metadata must be an object/map.');
+        }
+        $this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Dashboard Widget presentation metadata');
+
+        if (!array_key_exists('dismissible', $presentation)) {
+            return false;
+        }
+        if (!is_bool($presentation['dismissible'])) {
+            throw new InvalidArgumentException('Dashboard Widget presentation.dismissible must be boolean.');
+        }
+
+        return $presentation['dismissible'];
+    }
+
     private function compileDefaultCollapsed(array $widget): bool
     {
         if (!array_key_exists('presentation', $widget)) {
