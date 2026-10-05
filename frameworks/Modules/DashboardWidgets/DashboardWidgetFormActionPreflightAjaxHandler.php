@@ -250,7 +250,7 @@ final readonly class DashboardWidgetFormActionPreflightAjaxHandler implements Aj
             outcome: $outcome,
             resourceType: self::RESOURCE_TYPE,
             resourceId: $descriptor->definitionId,
-            reason: $reason,
+            reason: $this->auditReason($reason),
             metadata: [
                 'widget_key' => $descriptor->key,
                 'definition_revision' => $descriptor->revision,
@@ -260,6 +260,19 @@ final readonly class DashboardWidgetFormActionPreflightAjaxHandler implements Aj
                 'input_present' => $inputPresent,
             ],
         ));
+    }
+
+    private function auditReason(?string $reason): ?string
+    {
+        if (
+            $reason === null
+            || strlen($reason) > 160
+            || preg_match('/^[a-z0-9][a-z0-9_.:-]*$/', $reason) !== 1
+        ) {
+            return null;
+        }
+
+        return $reason;
     }
 
     /** @return array{state:string,notice:string} */
