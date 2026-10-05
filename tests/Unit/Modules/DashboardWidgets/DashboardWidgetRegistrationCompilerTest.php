@@ -312,6 +312,59 @@ final class DashboardWidgetRegistrationCompilerTest extends TestCase
         $this->compiler()->compile($this->definition(widget: $widget));
     }
 
+    public function testCompilesCanonicalUtcLifecycleWindow(): void
+    {
+        $widget = $this->widget();
+        $widget['lifecycle'] = [
+            'schedule_start' => '2025-01-01T00:00:00Z',
+            'schedule_end' => '2025-02-01T00:00:00Z',
+        ];
+
+        $descriptor = $this->compiler()->compile($this->definition(widget: $widget));
+
+        self::assertSame(1735689600, $descriptor->scheduleStartAt);
+        self::assertSame(1738368000, $descriptor->scheduleEndAt);
+        self::assertFalse($descriptor->isActiveAt(1735689599));
+        self::assertTrue($descriptor->isActiveAt(1735689600));
+        self::assertTrue($descriptor->isActiveAt(1738367999));
+        self::assertFalse($descriptor->isActiveAt(1738368000));
+
+        $withoutLifecycle = $this->compiler()->compile($this->definition(widget: $this->widget()));
+        self::assertNull($withoutLifecycle->scheduleStartAt);
+        self::assertNull($withoutLifecycle->scheduleEndAt);
+        self::assertTrue($withoutLifecycle->isActiveAt(1735689600));
+    }
+
+    public function testRejectsMalformedOrInvertedLifecycleWindow(): void
+    {
+        $valid = $this->widget();
+
+        foreach ([
+            ['lifecycle' => '2025-01-01T00:00:00Z'],
+            ['lifecycle' => [true]],
+            ['lifecycle' => ['unknown' => '2025-01-01T00:00:00Z']],
+            ['lifecycle' => ['schedule_start' => '2025-01-01T00:00:00+00:00']],
+            ['lifecycle' => ['schedule_start' => '2025-01-01 00:00:00Z']],
+            ['lifecycle' => ['schedule_start' => '2025-02-30T00:00:00Z']],
+            ['lifecycle' => ['schedule_start' => null]],
+            ['lifecycle' => [
+                'schedule_start' => '2025-02-01T00:00:00Z',
+                'schedule_end' => '2025-01-01T00:00:00Z',
+            ]],
+            ['lifecycle' => [
+                'schedule_start' => '2025-01-01T00:00:00Z',
+                'schedule_end' => '2025-01-01T00:00:00Z',
+            ]],
+        ] as $patch) {
+            try {
+                $this->compiler()->compile($this->definition(widget: array_replace($valid, $patch)));
+                self::fail('Expected malformed Dashboard Widget lifecycle metadata to be rejected.');
+            } catch (InvalidArgumentException) {
+                self::assertTrue(true);
+            }
+        }
+    }
+
     public function testCompilesBoundedNativeDefaultHiddenState(): void
     {
         $widget = $this->widget();
