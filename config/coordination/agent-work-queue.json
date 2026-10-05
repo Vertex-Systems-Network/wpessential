@@ -1,9 +1,9 @@
 {
   "schema_version": 160,
-  "snapshot_date": "2026-10-02",
-  "queue_anchor_main_sha": "f47ab596dc0329b759bdfa404b37fce6b5963447",
-  "mode": "DASHBOARD_WIDGETS_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
-  "source_issue": "#1285",
+  "snapshot_date": "2026-10-05",
+  "queue_anchor_main_sha": "25f098a170c42d30f829d196452189d9f5b71763",
+  "mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_CONTRACT_V1_PREPARATION",
+  "source_issue": "#1294",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6313,7 +6313,7 @@
       "slot_id": "forms-workflows-bounded-set-enabled-ability-v1",
       "title": "Forms & Workflows bounded Set-Enabled Mutating Ability V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "FORMS_WORKFLOWS_BOUNDED_SET_ENABLED_ABILITY_V1",
       "source": "Issue #1285 / terminal #1283 owner contract",
       "dependencies": [
@@ -6350,7 +6350,196 @@
         "P-006/deploy/release widening"
       ],
       "claim_branch": "agent/forms-workflows-bounded-set-enabled-ability-v1",
-      "close_condition": "Exact nine-file handler/module/test/shared-truth scope; owner-side strict input validation; authorization+execution resource/revision checks; Published↔Disabled changed/no-op/replay tests; showInRest=false; existing read abilities unchanged; RB-0082 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
+      "close_condition": "Exact nine-file handler/module/test/shared-truth scope; owner-side strict input validation; authorization+execution resource/revision checks; Published↔Disabled changed/no-op/replay tests; showInRest=false; existing read abilities unchanged; RB-0082 exact-head path-applicable CI PASS; zero blockers; zero behind; expected-head merge; promote only PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1.",
+      "terminal_result": "PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1",
+      "terminal_evidence": {
+        "issue": 1285,
+        "pr": 1286,
+        "head": "c45e623079824b7e75e4a05617f1439a6971ea2f",
+        "governance_run": 36932601887,
+        "php_quality_run": 36932601852,
+        "distributable_run": 36932601809,
+        "architecture_run": 36932601669,
+        "platform_compatibility_run": 36932601737,
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "25f098a170c42d30f829d196452189d9f5b71763"
+      }
+    },
+    {
+      "priority": 1059,
+      "slot_id": "dashboard-widgets-input-aware-action-authorization-contract-v1",
+      "title": "Dashboard Widgets Input-Aware Action Authorization Contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_INPUT_AWARE_ACTION_AUTHORIZATION_CONTRACT_V1",
+      "source": "Issue #1287 / PR #1288; blocked by #1289",
+      "dependencies": [
+        "RB-0082 PASS",
+        "#1289 resolution"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "contract/shared truth"
+      ],
+      "forbidden_scope": [
+        "runtime implementation",
+        "execution"
+      ],
+      "claim_branch": "agent/dashboard-widgets-input-aware-action-authorization-contract-v1",
+      "close_condition": "RB-0083 exact-head Governance+Architecture PASS after #1289."
+    },
+    {
+      "priority": 1060,
+      "slot_id": "dashboard-widgets-bounded-input-aware-action-authorization-v1",
+      "title": "Dashboard Widgets bounded Input-Aware Action Authorization V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_BOUNDED_INPUT_AWARE_ACTION_AUTHORIZATION_V1_PREPARATION",
+      "source": "Issue #1291 / PR #1298 PREPARED_NOT_MERGEABLE",
+      "dependencies": [
+        "RB-0083 PASS",
+        "#1289 resolution"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "prepared evaluator/tests"
+      ],
+      "forbidden_scope": [
+        "execute",
+        "UI mutation"
+      ],
+      "claim_branch": "agent/dashboard-widgets-bounded-input-aware-action-authorization-v1",
+      "close_condition": "RB-0084 terminal after predecessor/security reconciliation."
+    },
+    {
+      "priority": 1061,
+      "slot_id": "dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1",
+      "title": "Dashboard Widgets trusted form_action UI + confirmation contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_CONTRACT_V1_PREPARATION",
+      "source": "Issue #1296 / PR #1299 PREPARED_NOT_MERGEABLE",
+      "dependencies": [
+        "RB-0083 PASS",
+        "RB-0084 PASS",
+        "shared asset prerequisite"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "contract/shared truth"
+      ],
+      "forbidden_scope": [
+        "execution"
+      ],
+      "claim_branch": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-contract-v1",
+      "close_condition": "RB-0085 terminal after asset/predecessor/security reconciliation."
+    },
+    {
+      "priority": 1062,
+      "slot_id": "dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1",
+      "title": "Dashboard Widgets trusted form_action UI + confirmation preflight V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1_PREPARATION",
+      "source": "Issue #1300 / PR #1301 PREPARED_NOT_MERGEABLE; requires asset seam reconciliation",
+      "dependencies": [
+        "RB-0083 PASS",
+        "RB-0084 PASS",
+        "RB-0085 PASS",
+        "#1294 shared asset contract + runtime terminal",
+        "#1289 resolution"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "#1300 allowlist"
+      ],
+      "forbidden_scope": [
+        "Ability execute",
+        "Forms mutation",
+        "module-private terminal asset loader"
+      ],
+      "claim_branch": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1",
+      "close_condition": "Reconcile module-local asset seam to platform.assets.wordpress, rerun exact-head CI, RB-0086 terminal."
+    },
+    {
+      "priority": 1063,
+      "slot_id": "dashboard-widgets-final-bounded-form-action-execution-contract-v1",
+      "title": "Dashboard Widgets final bounded form_action execution contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_FINAL_BOUNDED_FORM_ACTION_EXECUTION_CONTRACT_V1_PREPARATION",
+      "source": "Issue #1297 / PR #1304 PREPARED_NOT_MERGEABLE",
+      "dependencies": [
+        "RB-0086 PASS",
+        "#1289 resolution"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "contract/shared truth"
+      ],
+      "forbidden_scope": [
+        "execution runtime"
+      ],
+      "claim_branch": "agent/dashboard-widgets-final-bounded-form-action-execution-contract-v1",
+      "close_condition": "RB-0087 contract terminal after corrected predecessor chain."
+    },
+    {
+      "priority": 1064,
+      "slot_id": "platform-bounded-assetregistry-wordpress-loader-contract-v1",
+      "title": "Platform bounded AssetRegistry WordPress loader contract V1",
+      "role": "AGENT_CONTRACT",
+      "status": "ACTIVE",
+      "work_mode": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_CONTRACT_V1_PREPARATION",
+      "source": "Issue #1294 / PR #1305; plan-drift reconciliation from #1292",
+      "dependencies": [
+        "ADR-0150 accepted planning architecture",
+        "exact main 25f098a170c42d30f829d196452189d9f5b71763",
+        "#1289 must clear before merge"
+      ],
+      "runtime_allowed": false,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "docs/PRODUCT/PLATFORM-BOUNDED-ASSETREGISTRY-WORDPRESS-LOADER-CONTRACT-V1.md",
+        ".ai/state/CURRENT-STATE.yaml",
+        ".ai/state/LAST-CHECKPOINT.md",
+        "README.md",
+        "config/coordination/agent-work-queue.json",
+        "config/coordination/runner-benchmark.json"
+      ],
+      "forbidden_scope": [
+        "runtime asset loader",
+        "Plugin runtime wiring",
+        "Dashboard source",
+        "build/package dependency changes",
+        "action execution",
+        "deploy/release"
+      ],
+      "claim_branch": "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1",
+      "close_condition": "Exact six-file contract/shared-truth PR #1305; RB-0088 Governance+Architecture PASS; zero review blockers; zero behind; expected-head merge; promote contract/readiness only."
     }
   ],
   "historical_closeout": {
