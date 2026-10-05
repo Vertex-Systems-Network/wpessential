@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac
 observed_main_source: "Issue #1315 / PR #1316 RB-0091 Dashboard form_action shared asset-loader consumer migration merged after all applicable exact-head gates PASS"
 active_issue: "#1317"
-active_pr: null
+active_pr: "#1318"
 active_branch: agent/dashboard-widgets-runtime-diagnostics-v1
-current_milestone: "Dashboard Widgets bounded runtime diagnostics snapshot V1 — fresh-main RB-0092 implementation"
+current_milestone: "Dashboard Widgets bounded runtime diagnostics snapshot V1 — PR #1318 exact-head RB-0092 validation"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1315 / PR #1316 RB-0091 terminal PASS; exact head fef1c601605cee702b9a5b94a835af1017a678b9; Governance 37335868721 PASS; PHP Quality 37335868747 PASS; Distributable 37335868658 PASS; Platform Compatibility 37335868376 PASS 10/10; Architecture 37335868524 FULL PASS; Browser workflow NOT_APPLICABLE by path filter; exact 12-file scope; zero behind/review blockers; expected-head squash merged as 9d6945a718923fb0bbaab0f19e431ec4d7fb06ac; verdict PASS_DASHBOARD_FORM_ACTION_SHARED_ASSET_LOADER_MIGRATION_V1."
-next_safe_action: "Implement and focused-test #1317 exact 9-file bounded runtime diagnostics scope, reconcile shared truth, open PR, then run one consolidated RB-0092 exact-head merge gate."
-waiting_external: "none — active #1317 source implementation before PR open."
+next_safe_action: "Validate PR #1318 exact head against #1317 9-file allowlist; fix any real failure; require applicable RB-0092 CI PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
+waiting_external: "PR #1318 RB-0092 exact-head Governance/PHP/Distributable/Platform/Architecture merge gate; Browser applicability is path-filtered."
 next_planned_slot:
   issue: "#1317"
   slot_id: dashboard-widgets-bounded-runtime-diagnostics-v1
