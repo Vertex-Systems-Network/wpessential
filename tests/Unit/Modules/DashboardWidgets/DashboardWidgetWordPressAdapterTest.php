@@ -17,6 +17,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRenderSourceCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRoleMembershipProviderInterface;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeRenderExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetVisibilityEvaluator;
@@ -614,6 +615,39 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         );
     }
 
+    public function testLifecycleWindowFiltersRegistrationAtSharedClockBoundary(): void
+    {
+        $definitions = [
+            $this->definition(
+                '40000000-0000-4000-8000-000000000060',
+                'active-widget',
+                'active-widget',
+                lifecycle: [
+                    'schedule_start' => '2025-01-01T00:00:00Z',
+                    'schedule_end' => '2025-02-01T00:00:00Z',
+                ],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000061',
+                'future-widget',
+                'future-widget',
+                lifecycle: ['schedule_start' => '2025-03-01T00:00:00Z'],
+            ),
+            $this->definition(
+                '40000000-0000-4000-8000-000000000062',
+                'expired-widget',
+                'expired-widget',
+                lifecycle: ['schedule_end' => '2025-01-10T00:00:00Z'],
+            ),
+        ];
+        $clock = new DashboardWidgetRuntimeClock(static fn (): int => 1737000000);
+        [$adapter, , $environment] = $this->harness($definitions, runtimeClock: $clock);
+
+        $adapter->registerSiteDashboard();
+
+        self::assertSame(['wpe_dashboard_widget_active-widget'], array_column($environment->widgets, 'id'));
+    }
+
     public function testSiteTargetingFiltersBeforeCollisionGrouping(): void
     {
         $definitions = [
@@ -861,6 +895,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         ?callable $formActionAbilityResolver = null,
         ?DashboardWidgetFormActionPresenter $formActionPresenter = null,
         ?DashboardWidgetPersonalPreferenceStore $personalPreferences = null,
+        ?DashboardWidgetRuntimeClock $runtimeClock = null,
     ): array
     {
         $repository = new class($definitions) implements DefinitionRepositoryInterface {
@@ -1087,6 +1122,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 return $this->output;
             }
         };
+        $clock = $runtimeClock ?? new DashboardWidgetRuntimeClock();
         $executor = new DashboardWidgetRuntimeRenderExecutor(
             $repository,
             $registrationCompiler,
@@ -1094,6 +1130,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             $visibilityEvaluator,
             $renderSourceCompiler,
             $renderer,
+            clock: $clock,
         );
 
         return [
@@ -1105,6 +1142,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
                 $contentCompiler,
                 $formActionPresenter,
                 $personalPreferences,
+                $clock,
             ),
             $repository,
             $environment,
@@ -1166,6 +1204,7 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
         bool $defaultHidden = false,
         bool $defaultCollapsed = false,
         bool $dismissible = false,
+        array $lifecycle = [],
     ): Definition {
         $widget = [
             'key' => $key,
@@ -1199,6 +1238,10 @@ final class DashboardWidgetWordPressAdapterTest extends TestCase
             if ($dismissible) {
                 $widget['presentation']['dismissible'] = true;
             }
+        }
+
+        if ($lifecycle !== []) {
+            $widget['lifecycle'] = $lifecycle;
         }
 
         if ($withErrorState) {
