@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: f47ab596dc0329b759bdfa404b37fce6b5963447
-observed_main_source: "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract merged; Governance and Architecture terminal PASS"
-active_issue: "#1285"
-active_pr: "#1286"
-active_branch: agent/forms-workflows-bounded-set-enabled-ability-v1
-current_milestone: "Forms & Workflows bounded Set-Enabled Mutating Ability V1"
+observed_main_sha: 25f098a170c42d30f829d196452189d9f5b71763
+observed_main_source: "Issue #1285 / PR #1286 bounded Forms Set-Enabled Mutating Ability V1 merged; exact-head Governance/PHP/Distributable/Architecture/Platform Compatibility terminal PASS"
+active_issue: "#1294"
+active_pr: "#1305"
+active_branch: agent/platform-bounded-assetregistry-wordpress-loader-contract-v1
+current_milestone: "Platform bounded AssetRegistry WordPress loader contract V1 — plan-drift reconciliation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1283 / PR #1284 merged as f47ab596dc0329b759bdfa404b37fce6b5963447; exact head a6ce28c716489d82153c71bc849902fdf1b2a97b; Governance 36931696966 PASS; Architecture 36931696965 PASS; exact six-file contract scope; zero review blockers and zero behind; verdict CONTRACT_FROZEN_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
-next_safe_action: "Implement Issue #1285 exact nine-file bounded Forms Set-Enabled Ability V1: owner-side input validation + Published↔Disabled handler + Internal/UI non-REST module registration + focused tests + shared truth."
-waiting_external: "PR #1286 exact-head RB-0082 CI/review gate"
+last_completed_milestone: "Issue #1285 / PR #1286 merged as 25f098a170c42d30f829d196452189d9f5b71763; exact head c45e623079824b7e75e4a05617f1439a6971ea2f; Governance 36932601887 PASS; PHP Quality 36932601852 PASS; Distributable 36932601809 PASS; Architecture 36932601669 PASS; Platform Compatibility 36932601737 PASS; verdict PASS_BOUNDED_FORMS_WORKFLOWS_SET_ENABLED_ABILITY_V1."
+next_safe_action: "Freeze #1294/#1305 shared AssetRegistry WordPress loader contract; no runtime asset loader until contract gate. Prepared #1301 must later reconcile its module-local enqueue seam to the shared loader before RB-0086 can promote."
+waiting_external: "#1289 upstream Node dev-toolchain advisory blocker; #1288/RB-0083 through #1304/RB-0087 remain prepared/dependency-gated; #1301 additionally requires #1294 shared asset runtime reconciliation"
 next_planned_slot:
-  issue: "#1285"
-  slot_id: forms-workflows-bounded-set-enabled-ability-v1
-  claim_branch: "agent/forms-workflows-bounded-set-enabled-ability-v1"
-  claim_rule: "Issue #1285 authorizes exact nine-file bounded Set-Enabled owner Ability implementation on main f47ab596dc0329b759bdfa404b37fce6b5963447; Published↔Disabled only, owner-side canonical input validation, expected_revision safety, Internal/UI only, showInRest=false; no Dashboard source, REST, entry/run/provider mutation."
+  issue: "#1294"
+  slot_id: platform-bounded-assetregistry-wordpress-loader-contract-v1
+  claim_branch: "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1"
+  claim_rule: "Contract-only six-file Platform shared-asset tranche. Preserve AssetDescriptor semantics; freeze code-owned handle→build-entry mapping + shared scoped WordPress loader. No runtime enqueue in contract PR."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,12 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0082
+    - RB-0083
+    - RB-0084
+    - RB-0085
+    - RB-0086
+    - RB-0087
+    - RB-0088
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -66,12 +71,14 @@ runner_benchmark:
     - RB-0079
     - RB-0080
     - RB-0081
+    - RB-0082
   terminal_fail:
     - RB-0073
   blocked_authorization:
     - RB-0001
     - RB-0002
 open_repository_blockers:
+  - "#1289 repository-wide Node dev-toolchain advisory blocker remains BLOCKED_UPSTREAM; braces <=3.0.3 has no patched release and Architecture policy must not be weakened"
   - "#858 broader required-CI ruleset enforcement remains repository-admin work"
   - "#1102 P-006 Wave 1U remains separately authorization-gated"
   - "#947 independent Wave 1A review remains nonblocking and must preserve independence"
@@ -132,5 +139,13 @@ notes:
   - "Issue #1281 / PR #1282 bounded Dashboard Action-Input Binding V1 is terminal PASS; RB-0080 PASS; typed descriptor/compiler/binder merged without Ability execution or Forms source changes."
   - "Issue #1283 / PR #1284 Forms Set-Enabled owner Ability contract is terminal PASS; RB-0081 PASS; Published↔Disabled/expected_revision/no-REST semantics are frozen."
   - "Issue #1285 is the active bounded Set-Enabled implementation: owner-side canonical input validation, direct repository revision safety, Internal/UI only, showInRest=false."
+  - "Issue #1285 / PR #1286 bounded Forms Set-Enabled V1 is terminal PASS; RB-0082 PASS; exact main 25f098a170c42d30f829d196452189d9f5b71763."
+  - "Issue #1287 / PR #1288 Input-Aware Authorization contract remains blocked only by #1289; RB-0083 blocked dependency."
+  - "Issue #1291 / PR #1298 Input-Aware Authorization implementation is PREPARED_NOT_MERGEABLE; Governance/PHP/Distributable/Platform green, Architecture blocked only by #1289."
+  - "Issue #1296 / PR #1299 trusted form_action UI/confirmation contract is PREPARED_NOT_MERGEABLE; RB-0085 blocked dependency."
+  - "Issue #1300 / PR #1301 trusted form_action preflight exact head eef275ceedd0ca5241a489d188d350c459640771: Governance, Distributable, Platform 10/10 and Browser E2E PASS; Architecture blocked only by #1289; 21/21 allowlist, 0 behind, 0 review blockers."
+  - "Plan-drift audit found #1301 module-local AdminAssetManifest enqueue bypasses ADR-0150/#1292 selected shared AssetRegistry loader direction. #1301 cannot terminally merge until shared asset runtime is implemented and the Dashboard consumer is reconciled."
+  - "Issue #1294 / PR #1305 is the active contract-only shared AssetRegistry WordPress-loader prerequisite; selected V1 preserves AssetDescriptor and adds code-owned build-entry mapping + shared scoped loader."
+  - "Issue #1297 / PR #1304 final bounded execution contract remains PREPARED_NOT_MERGEABLE and downstream of RB-0086 plus asset reconciliation; no execution runtime is authorized."
 
 # P1_CORE deep audit: 16 records = 4 terminal bounded coverage (native.render_provider, source.data_source_ref, refresh.background_job, source.context_tokens), 3 owner-contract blockers (type.listing, source.listing_ref, source.query_ref), action.ability_id reference + authorization + confirmation metadata + result/audit terminal PASS. RB-0073 historical FAIL remains preserved; corrective RB-0074 PASS. Shared Ability input validator PASS through RB-0078; Action-Input contract PASS through RB-0079; bounded Action-Input Binding PASS through RB-0080; Forms Set-Enabled owner contract PASS through RB-0081. Active #1285 implements the first real Surface-17 mutation with expected_revision and no REST. type.form_action remains blocked by mutation merge, trusted UI/orchestration and final execution.
