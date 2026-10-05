@@ -213,16 +213,18 @@ final class DashboardWidgetPersonalPreferenceAbilityHandlerTest extends TestCase
     private function store(array &$meta, array &$options): DashboardWidgetPersonalPreferenceStore
     {
         return new DashboardWidgetPersonalPreferenceStore(
-            metaReader: static fn (int $userId, string $key): mixed =>
-                $meta[$userId . ':' . $key] ?? null,
+            metaReader: static function (int $userId, string $key) use (&$meta): mixed {
+                return $meta[$userId . ':' . $key] ?? null;
+            },
             metaWriter: static function (int $userId, string $key, array $value) use (&$meta): void {
                 $meta[$userId . ':' . $key] = $value;
             },
             metaDeleter: static function (int $userId, string $key) use (&$meta): void {
                 unset($meta[$userId . ':' . $key]);
             },
-            optionReader: static fn (int $userId, string $key): mixed =>
-                $options[$userId . ':' . $key] ?? null,
+            optionReader: static function (int $userId, string $key) use (&$options): mixed {
+                return $options[$userId . ':' . $key] ?? null;
+            },
             optionWriter: static function (int $userId, string $key, mixed $value) use (&$options): void {
                 $options[$userId . ':' . $key] = $value;
             },
