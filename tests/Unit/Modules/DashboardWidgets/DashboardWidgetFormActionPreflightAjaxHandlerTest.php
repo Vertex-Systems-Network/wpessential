@@ -62,6 +62,20 @@ final class DashboardWidgetFormActionPreflightAjaxHandlerTest extends TestCase
         self::assertSame('dashboard-widgets/action.authorization', $audit->records[0]->action);
         self::assertSame('dashboard-widgets/action.confirmation', $audit->records[1]->action);
         self::assertSame('confirmation_ready', $audit->records[1]->metadata['result_code']);
+        self::assertSame(
+            [
+                'widget_key',
+                'definition_revision',
+                'ability_id',
+                'result_code',
+                'confirmation_state',
+                'input_present',
+            ],
+            array_keys($audit->records[1]->metadata),
+        );
+        self::assertTrue($audit->records[1]->metadata['input_present']);
+        self::assertArrayNotHasKey('definition_id', $audit->records[1]->metadata);
+        self::assertArrayNotHasKey('enabled', $audit->records[1]->metadata);
     }
 
     public function testCancellationAuditsWithoutAuthorizingOrExecuting(): void
@@ -79,6 +93,7 @@ final class DashboardWidgetFormActionPreflightAjaxHandlerTest extends TestCase
         self::assertCount(1, $audit->records);
         self::assertSame('dashboard-widgets/action.confirmation', $audit->records[0]->action);
         self::assertSame('cancelled', $audit->records[0]->metadata['confirmation_state']);
+        self::assertTrue($audit->records[0]->metadata['input_present']);
     }
 
     public function testMalformedExtraAndStaleRequestsFailClosed(): void
