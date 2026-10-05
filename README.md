@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | BOUNDED ACTION + ASSET CONVERGENCE PASS / RB-0092 DIAGNOSTICS | RB-0088 action execution + RB-0090 loader + RB-0091 consumer convergence terminal PASS; #1317 runtime diagnostics active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P1_CORE ACTIVE | BOUNDED ACTION + ASSET CONVERGENCE PASS / RB-0092 DIAGNOSTICS | RB-0088 action execution + RB-0090 loader + RB-0091 consumer convergence terminal PASS; #1317/#1318 runtime diagnostics validation active |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -43,7 +43,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 - Issue #1315 / PR #1316 / RB-0091 shared Dashboard form_action asset-consumer migration is terminal PASS. Exact head `fef1c601605cee702b9a5b94a835af1017a678b9` passed Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture; Browser was correctly NOT_APPLICABLE by workflow path filters; resulting main is `9d6945a718923fb0bbaab0f19e431ec4d7fb06ac`.
 - Stale completed Issues #1291, #1292, #1296 and #1300 are closed with terminal merge evidence; #858 remains repository-admin-only, #1102 owner-authorization-gated, and #947 Worker-only.
 - Fresh Surface-10 residual audit found zero Dashboard runtime references for cache/TTL/retry, provider/remote, import/export and diagnostics.
-- Issue #1317 / RB-0092 is active as the next safe owner-local P1_CORE tranche: a `manage_options`, `mutates=false` runtime-readiness diagnostics Ability with deterministic safe projections and no raw payload/input/output/exception leakage.
+- Issue #1317 / PR #1318 / RB-0092 is active as the next safe owner-local P1_CORE tranche: a `manage_options`, `mutates=false` runtime-readiness diagnostics Ability with deterministic safe projections and no raw payload/input/output/exception leakage.
 - Portability follows diagnostics; durable cache/stale/retry requires a fresh shared-cache fit audit; provider/remote remains cross-owner and must not be duplicated inside Dashboard Widgets.
 
 ## Current lifecycle
