@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1294",
-  "anchor_main_sha": "17b00095a594435acb2b10245bdb076737849abc",
+  "source_issue": "#1306",
+  "anchor_main_sha": "e40f65afe38960c57ed85e296447f6a42c688e12",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2918,7 +2918,7 @@
       "category": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_CONTRACT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance Gate + Architecture Guards exact-head contract validation",
-      "environment": "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1 exact current main 17b00095a594435acb2b10245bdb076737849abc",
+      "environment": "agent/platform-bounded-assetregistry-wordpress-loader-contract-v1 exact head 0d3562f60056004f9a99353aeea318b383a79203",
       "dependencies": [
         "RB-0088 terminal PASS",
         "exact current main 17b00095a594435acb2b10245bdb076737849abc",
@@ -2929,15 +2929,20 @@
       "security_critical": true,
       "expected_minutes": 10,
       "dedup_key": "platform|assetregistry-wordpress-loader-contract|issue1294|exact-head",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "PR #1305 reconciled to current main",
-        "current Dashboard asset seam is safe/terminal but module-owned",
-        "ADR-0150 still requires shared Platform AssetRegistry/scoped loader",
-        "exact six-file contract/shared-truth scope pending refreshed exact-head validation"
+        "PR #1305 exact head 0d3562f60056004f9a99353aeea318b383a79203",
+        "Governance Gate 37330030554 PASS",
+        "Architecture Guards 37330030247 FULL PASS",
+        "exact six-file contract/shared-truth scope",
+        "zero unresolved review blockers",
+        "zero commits behind main",
+        "PR #1305 merged as e40f65afe38960c57ed85e296447f6a42c688e12",
+        "verdict CONTRACT_FROZEN_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1",
+        "readiness READY_FOR_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1"
       ],
-      "note": "PASS freezes architecture-debt convergence only; no runtime asset loader or Dashboard consumer migration is promoted."
+      "note": "PASS freezes only shared loader architecture; no Dashboard consumer migration or action behavior change."
     },
     {
       "id": "RB-0090",
@@ -2945,23 +2950,23 @@
       "category": "PLATFORM_BOUNDED_ASSETREGISTRY_WORDPRESS_LOADER_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation",
-      "environment": "agent/platform-bounded-assetregistry-wordpress-loader-v1 prepared implementation",
+      "environment": "agent/platform-bounded-assetregistry-wordpress-loader-v1 fresh main e40f65afe38960c57ed85e296447f6a42c688e12",
       "dependencies": [
         "RB-0089 terminal PASS",
-        "fresh-main + terminal-contract reconciliation"
+        "fresh main e40f65afe38960c57ed85e296447f6a42c688e12"
       ],
       "authorization": "Exact #1306 shared Platform loader implementation allowlist; no Dashboard source/action execution/package widening.",
       "merge_blocking": true,
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "platform|assetregistry-wordpress-loader|issue1306|exact-head",
-      "disposition": "BLOCKED_DEPENDENCY",
-      "status": "BLOCKED_DEPENDENCY",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
       "evidence": [
-        "PR #1307 prepared implementation exists and remains draft",
-        "must reconcile after RB-0089 terminal contract merge"
+        "PR #1307 prepared runtime/test implementation reconciled to terminal contract main",
+        "exact 17-file #1306 scope pending full exact-head validation"
       ],
-      "note": "No PASS promotion before terminal contract/main reconciliation and exact-head CI."
+      "note": "Merge only after Governance/PHP/Distributable/Platform/Architecture PASS, zero behind and zero unresolved review blockers."
     },
     {
       "id": "RB-0091",
