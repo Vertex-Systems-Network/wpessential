@@ -20,7 +20,7 @@
 
 ### Active #1300 / PR #1301 — trusted form_action UI + confirmation preflight V1
 
-PR #1301 is reconciled onto terminal contract main `5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e`.
+PR #1301 is reconciled onto terminal contract main `5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e`. PR #1301 base is retargeted directly to `main`; this synchronization commit is the exact-head RB-0086 CI trigger.
 
 Exact #1300 maximum scope remains 21 files:
 - 9 runtime/product files;
