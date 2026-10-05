@@ -1,9 +1,9 @@
 {
-  "schema_version": 164,
+  "schema_version": 165,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "bb6c826f05ffdc7f84c0abcbad42979cf590e648",
-  "mode": "DASHBOARD_WIDGETS_LIFECYCLE_VISIBILITY_WINDOW_V1",
-  "source_issue": "#1321",
+  "queue_anchor_main_sha": "dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
+  "mode": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
+  "source_issue": "#1323",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6932,9 +6932,9 @@
       "slot_id": "dashboard-widgets-lifecycle-visibility-window-v1",
       "title": "Dashboard Widgets bounded lifecycle visibility window V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_LIFECYCLE_VISIBILITY_WINDOW_V1",
-      "source": "Issue #1321 / PR #1322 fresh-main RB-0094 validation",
+      "source": "Issue #1321 / PR #1322 terminal RB-0094 lifecycle visibility",
       "dependencies": [
         "RB-0093 terminal PASS",
         "exact fresh source base bb6c826f05ffdc7f84c0abcbad42979cf590e648"
@@ -6958,7 +6958,58 @@
         "deploy/release/GA widening"
       ],
       "claim_branch": "agent/dashboard-lifecycle-visibility-window-v1",
-      "close_condition": "Exact #1321 23-file scope; canonical UTC schedule_start/end; one shared clock; registration/direct render/form_action preflight+execution/diagnostics enforcement; RB-0094 applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1."
+      "close_condition": "Satisfied: exact 23-file #1321 scope; Governance/PHP/Distributable/Platform/Architecture exact-head PASS; Browser NOT_APPLICABLE by previous path filters; zero behind/review blockers; expected-head merge.",
+      "terminal_result": "PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1",
+      "terminal_evidence": {
+        "issue": 1321,
+        "pr": 1322,
+        "head": "c01bed388d2191d48c223224014e05ab1ea54756",
+        "governance_run": 37380946760,
+        "php_quality_run": 37380946758,
+        "distributable_run": 37380946780,
+        "platform_compatibility_run": 37380946804,
+        "platform_cells_passed": 10,
+        "architecture_run": 37380946768,
+        "browser_e2e": "NOT_APPLICABLE_PATH_FILTER",
+        "unresolved_review_threads": 0,
+        "behind_main": 0,
+        "merge_sha": "dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
+        "resulting_main_verified": true
+      }
+    },
+    {
+      "priority": 1071,
+      "slot_id": "dashboard-widgets-manual-refresh-loading-v1",
+      "title": "Dashboard Widgets trusted manual refresh + loading state V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
+      "source": "Issue #1323 fresh-main RB-0095",
+      "dependencies": [
+        "RB-0094 terminal PASS",
+        "exact fresh source base dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": true,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1323 exact 27-file source/test/browser/shared-truth allowlist"
+      ],
+      "forbidden_scope": [
+        "cache TTL/scope/invalidation runtime",
+        "refresh interval/retry/polling/timeout scheduling",
+        "Cron/Job invocation or mutation",
+        "provider/remote transport",
+        "form_action manual refresh",
+        "Definition mutation",
+        "shared Platform source changes",
+        "package/dependency changes",
+        "deploy/release/GA widening"
+      ],
+      "claim_branch": "agent/dashboard-manual-refresh-loading-v1",
+      "close_condition": "Exact #1323 27-file scope; manual=true + loading_state atomic contract; exact revision/target/lifecycle/visibility refresh gate; zero cache/job/provider mutation; Browser E2E PASS; all RB-0095 exact-head gates PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1."
     }
   ],
   "historical_closeout": {
