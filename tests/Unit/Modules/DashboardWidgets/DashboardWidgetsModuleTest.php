@@ -274,6 +274,38 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertCount(2, $bridge->registerAbilities());
     }
 
+    public function testFormActionRouteRejectsGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
+    {
+        $services = $this->baseServices();
+        (new RenderingServiceRegistrar())->register($services);
+        (new DashboardWidgetsModule())->register($services);
+
+        $dispatcher = $services->get('platform.ajax.dispatcher');
+        self::assertInstanceOf(AjaxDispatcher::class, $dispatcher);
+
+        $guest = $dispatcher->dispatch(
+            [
+                'type' => DashboardWidgetFormActionPresenter::ROUTE_TYPE,
+                'nonce' => 'test-nonce',
+                'payload' => [],
+            ],
+            false,
+        );
+        self::assertSame(401, $guest->status);
+        self::assertSame('authentication_required', $guest->payload()['error']['code']);
+
+        $invalidNonce = $dispatcher->dispatch(
+            [
+                'type' => DashboardWidgetFormActionPresenter::ROUTE_TYPE,
+                'nonce' => 'wrong-nonce',
+                'payload' => [],
+            ],
+            true,
+        );
+        self::assertSame(403, $invalidNonce->status);
+        self::assertSame('invalid_nonce', $invalidNonce->payload()['error']['code']);
+    }
+
     public function testModuleBootRegistersWordPressDashboardHooksThroughAdapterService(): void
     {
         $dashboardEnvironment = new class implements DashboardWidgetWordPressEnvironmentInterface {
