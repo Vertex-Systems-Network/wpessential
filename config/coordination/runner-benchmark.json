@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1300",
-  "anchor_main_sha": "5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e",
+  "source_issue": "#1297",
+  "anchor_main_sha": "713942185ce5340192b2a76bde29b69d68aed975",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -2806,7 +2806,7 @@
       "category": "DASHBOARD_WIDGETS_TRUSTED_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + Distributable + Browser + Platform + Architecture + main-bound PHP Quality terminal validation",
-      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 fresh main 5fbf7ea35b96d60aa2f451e8fe6ac9ac93bc6c0e",
+      "environment": "agent/dashboard-widgets-trusted-form-action-ui-confirmation-preflight-v1 exact head c5250ddad34ac0a2d11dcb651ee7a55977ba924f",
       "dependencies": [
         "RB-0083 terminal PASS",
         "RB-0084 terminal PASS",
@@ -2819,12 +2819,22 @@
       "security_critical": true,
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|trusted-form-action-confirmation-preflight|issue1300|exact-head",
-      "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
       "evidence": [
-        "PR #1301 reconciled to terminal contract main; exact #1300 21-file allowlist pending full exact-head validation."
+        "PR #1301 exact 21-file #1300 allowlist",
+        "Governance 37320691873 PASS",
+        "PHP Quality 37320691877 PASS",
+        "Distributable 37320691991 PASS",
+        "Browser E2E Accessibility 37320692040 PASS",
+        "Platform Compatibility 37320691996 PASS 10/10",
+        "Architecture 37320692399 FULL PASS",
+        "zero unresolved review threads",
+        "zero behind",
+        "merged as 713942185ce5340192b2a76bde29b69d68aed975",
+        "verdict PASS_TRUSTED_DASHBOARD_FORM_ACTION_UI_CONFIRMATION_PREFLIGHT_V1"
       ],
-      "note": "confirmation_ready remains pre-execution. Merge only after Governance/PHP/Distributable/Browser/Platform/Architecture PASS, zero behind and zero unresolved review blockers."
+      "note": "PASS promotes only trusted non-executing confirmation preflight; final execution remains separately governed by RB-0088."
     },
     {
       "id": "RB-0087",
@@ -2861,6 +2871,37 @@
         "verdict PASS_MINIMAL_ADMIN_TOOLCHAIN_MIGRATION_V1"
       ],
       "note": "PASS resolves #1289 without waiver/fork and unblocks RB-0083."
+    },
+    {
+      "id": "RB-0088",
+      "source": "Issue #1297",
+      "category": "DASHBOARD_WIDGETS_BOUNDED_FORM_ACTION_EXECUTION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Browser E2E + Platform Compatibility + Architecture exact-head validation",
+      "environment": "agent/dashboard-widgets-bounded-form-action-execution-v1 exact base 713942185ce5340192b2a76bde29b69d68aed975",
+      "dependencies": [
+        "RB-0082 terminal PASS",
+        "RB-0083 terminal PASS",
+        "RB-0084 terminal PASS",
+        "RB-0085 terminal PASS",
+        "RB-0086 terminal PASS",
+        "RB-0087 terminal PASS",
+        "exact source base 713942185ce5340192b2a76bde29b69d68aed975"
+      ],
+      "authorization": "Exact #1297 14-file scope; only wpessential/forms-workflows/set-enabled execution; exactly one AbilityRegistry::execute per admitted request; no generic execution/REST/admin-post/retry/shared Platform mutation.",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 25,
+      "dedup_key": "dashboard-widgets|bounded-form-action-execution|issue1297|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Fresh-main implementation allowlist frozen on Issue #1297",
+        "Runtime source contains one Dashboard-owned AbilityRegistry::execute call site and zero direct owner handle() calls",
+        "Focused execution/result/presenter/module tests added",
+        "Full exact-head CI pending"
+      ],
+      "note": "PASS may promote only PASS_BOUNDED_DASHBOARD_FORM_ACTION_EXECUTION_V1; not full Surface 10 parity/deploy/GA."
     }
   ],
   "last_reconciled_issue": "#1283",
