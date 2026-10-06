@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET + LIFECYCLE + REFRESH PASS / RB-0096 PRESETS | RB-0095 manual refresh/loading terminal PASS; #1325 preset assignment foundation active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET + LIFECYCLE + REFRESH PASS / RB-0096 PRESETS | RB-0095 manual refresh/loading terminal PASS; #1325/#1326 preset assignment foundation validation active |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
