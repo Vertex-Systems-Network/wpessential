@@ -7035,7 +7035,7 @@
       "role": "AGENT_IMPLEMENTATION",
       "status": "ACTIVE",
       "work_mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
-      "source": "Issue #1325 fresh-main RB-0096",
+      "source": "Issue #1325 / PR #1326 fresh-main RB-0096 validation",
       "dependencies": [
         "RB-0095 terminal PASS",
         "exact fresh source base 9f3d5922aa5d801aad40d553b6acd0db558865c8"
