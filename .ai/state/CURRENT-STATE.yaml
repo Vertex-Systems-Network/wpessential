@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 9f3d5922aa5d801aad40d553b6acd0db558865c8
 observed_main_source: "Issue #1323 / PR #1324 RB-0095 manual refresh + loading merged after all six exact-head gates PASS"
 active_issue: "#1325"
-active_pr: null
+active_pr: "#1326"
 active_branch: agent/dashboard-preset-assignment-foundation-v1
-current_milestone: "Dashboard Widgets preset assignment foundation V1 — RB-0096 implementation"
+current_milestone: "Dashboard Widgets preset assignment foundation V1 — PR #1326 exact-head RB-0096 validation"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1323 / PR #1324 RB-0095 terminal PASS; final head 4ae2df3b65c0e31fa64e94e30340e0331a4a823b; Governance 37388039211 PASS; PHP Quality 37388039748 PASS; Distributable 37388038687 PASS; Platform Compatibility 37388038610 PASS 10/10; Architecture 37388038899 FULL PASS; Browser E2E 37388039030 PASS; exact 27-file scope; zero unresolved review blockers; squash merged as 9f3d5922aa5d801aad40d553b6acd0db558865c8; verdict PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1."
-next_safe_action: "Finish #1325 exact 18-file preset foundation scope, validate compiler/resolver/read abilities, open PR, then run one consolidated RB-0096 exact-head merge gate."
-waiting_external: "none — active #1325 implementation before PR open."
+next_safe_action: "Validate PR #1326 exact head against #1325 18-file allowlist; fix any real failure; require applicable RB-0096 CI PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
+waiting_external: "PR #1326 RB-0096 exact-head Governance/PHP/Distributable/Platform/Architecture merge gate; Browser applicability is path-filtered."
 next_planned_slot:
   issue: "#1325"
   slot_id: dashboard-widgets-preset-assignment-foundation-v1
