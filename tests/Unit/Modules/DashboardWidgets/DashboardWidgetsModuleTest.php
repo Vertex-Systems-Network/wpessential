@@ -26,6 +26,9 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetDynamicBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDiagnosticsAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRuntimeClock;
@@ -173,6 +176,9 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetsReadService::class, $services->get(DashboardWidgetsModule::SERVICE_READ));
         self::assertInstanceOf(DashboardWidgetDiagnosticsAbilityHandler::class, $services->get(DashboardWidgetsModule::SERVICE_DIAGNOSTICS));
         self::assertInstanceOf(DashboardWidgetPersonalPreferenceStore::class, $services->get(DashboardWidgetsModule::SERVICE_PERSONAL_PREFERENCES));
+        self::assertInstanceOf(DashboardWidgetPresetCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_COMPILER));
+        self::assertInstanceOf(DashboardWidgetPresetResolver::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_RESOLVER));
+        self::assertInstanceOf(DashboardWidgetPresetReadService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_READ));
         self::assertInstanceOf(DashboardWidgetContentClassCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER));
         self::assertInstanceOf(DashboardWidgetRenderSourceCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_RENDER_SOURCE_COMPILER));
         self::assertInstanceOf(DashboardWidgetQueryBindingExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_QUERY_BINDING_EXECUTOR));
@@ -338,7 +344,14 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertTrue(true);
         }
 
-        foreach ([DashboardWidgetsModule::ABILITY_GET, DashboardWidgetsModule::ABILITY_CATALOG, DashboardWidgetsModule::ABILITY_DIAGNOSTICS] as $name) {
+        foreach ([
+            DashboardWidgetsModule::ABILITY_GET,
+            DashboardWidgetsModule::ABILITY_CATALOG,
+            DashboardWidgetsModule::ABILITY_DIAGNOSTICS,
+            DashboardWidgetsModule::ABILITY_PRESET_GET,
+            DashboardWidgetsModule::ABILITY_PRESET_CATALOG,
+            DashboardWidgetsModule::ABILITY_EFFECTIVE_PRESET,
+        ] as $name) {
             $descriptor = $abilities->descriptor($name);
             self::assertNotNull($descriptor);
             self::assertFalse($descriptor->mutates);
@@ -360,7 +373,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertFalse($descriptor->allows(ExecutionChannel::Rest));
         }
 
-        self::assertCount(5, $bridge->registerAbilities());
+        self::assertCount(8, $bridge->registerAbilities());
     }
 
     public function testFormActionRoutesRejectGuestsAndInvalidNonceThroughCanonicalDispatcher(): void

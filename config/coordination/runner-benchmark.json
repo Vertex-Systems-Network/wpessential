@@ -2,8 +2,8 @@
   "schema_version": 1,
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
-  "source_issue": "#1323",
-  "anchor_main_sha": "dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
+  "source_issue": "#1325",
+  "anchor_main_sha": "9f3d5922aa5d801aad40d553b6acd0db558865c8",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3120,7 +3120,7 @@
       "category": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture + Browser E2E exact-head validation",
-      "environment": "agent/dashboard-manual-refresh-loading-v1 on fresh main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
+      "environment": "agent/dashboard-manual-refresh-loading-v1 exact head 4ae2df3b65c0e31fa64e94e30340e0331a4a823b",
       "dependencies": [
         "RB-0094 terminal PASS",
         "fresh main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
@@ -3130,19 +3130,51 @@
       "security_critical": true,
       "expected_minutes": 30,
       "dedup_key": "dashboard-widgets|manual-refresh-loading|issue1323|exact-head",
+      "disposition": "TERMINAL_RECONCILED",
+      "status": "PASS",
+      "evidence": [
+        "PR #1324 exact head 4ae2df3b65c0e31fa64e94e30340e0331a4a823b",
+        "Governance Gate 37388039211 PASS",
+        "PHP Quality Toolchain 37388039748 PASS",
+        "Distributable Package 37388038687 PASS",
+        "Platform Compatibility Matrix 37388038610 PASS 10/10",
+        "Architecture Guards 37388038899 FULL PASS",
+        "Browser E2E Accessibility 37388039030 PASS",
+        "exact 27-file #1323 allowlist",
+        "zero unresolved review threads",
+        "PR #1324 merged as 9f3d5922aa5d801aad40d553b6acd0db558865c8",
+        "verdict PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1"
+      ],
+      "note": "PASS promotes only trusted manual refresh/loading + lifecycle client reconciliation; full Surface 10 parity remains unpromoted."
+    },
+    {
+      "id": "RB-0096",
+      "source": "Issue #1325 / PR #1326",
+      "category": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation; Browser applicability determined from repository path filters",
+      "environment": "agent/dashboard-preset-assignment-foundation-v1 on fresh main 9f3d5922aa5d801aad40d553b6acd0db558865c8",
+      "dependencies": [
+        "RB-0095 terminal PASS",
+        "fresh main 9f3d5922aa5d801aad40d553b6acd0db558865c8"
+      ],
+      "authorization": "Exact #1325 18-file source/test/shared-truth scope; typed Surface10 preset definitions + role/network read-only resolution only; no layout mutation, Surface38 fork, portability/cache/provider/scheduler widening.",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|preset-assignment-foundation|issue1325|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
       "status": "PENDING",
       "evidence": [
-        "Issue #1323 freezes exact 27-file RB-0095 scope",
-        "fresh post-RB-0094 audit selected dashboard-widgets.refresh.manual + dashboard-widgets.state.loading as unblocked P0_PARITY residuals",
-        "admin-ui/src/main.ts changes make Browser E2E applicable and merge-blocking",
-        "manual refresh reruns canonical runtime authority without cache invalidation, scheduler invocation or provider transport",
-        "PR #1324 opened from exact main dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
+        "Issue #1325 freezes exact 18-file RB-0096 scope",
+        "canonical ownership assigns preset assignment to Surface10 and generic placement/personalization to Surface38",
+        "implementation resolves current-user role-default before network-default without mutating WordPress layout",
+        "PR #1326 opened from exact main 9f3d5922aa5d801aad40d553b6acd0db558865c8"
       ],
-      "note": "Merge only after all six exact-head gate families PASS, exact allowlist, zero behind and zero unresolved review blockers."
+      "note": "Merge only after applicable exact-head gates PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
   ],
-  "last_reconciled_issue": "#1323",
+  "last_reconciled_issue": "#1325",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

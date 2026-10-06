@@ -1,9 +1,9 @@
 {
-  "schema_version": 165,
+  "schema_version": 166,
   "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea",
-  "mode": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
-  "source_issue": "#1323",
+  "queue_anchor_main_sha": "9f3d5922aa5d801aad40d553b6acd0db558865c8",
+  "mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
+  "source_issue": "#1325",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -6982,9 +6982,9 @@
       "slot_id": "dashboard-widgets-manual-refresh-loading-v1",
       "title": "Dashboard Widgets trusted manual refresh + loading state V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_MANUAL_REFRESH_LOADING_V1",
-      "source": "Issue #1323 / PR #1324 fresh-main RB-0095 validation",
+      "source": "Issue #1323 / PR #1324 terminal RB-0095 manual refresh/loading",
       "dependencies": [
         "RB-0094 terminal PASS",
         "exact fresh source base dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea"
@@ -7009,7 +7009,58 @@
         "deploy/release/GA widening"
       ],
       "claim_branch": "agent/dashboard-manual-refresh-loading-v1",
-      "close_condition": "Exact #1323 27-file scope; manual=true + loading_state atomic contract; exact revision/target/lifecycle/visibility refresh gate; zero cache/job/provider mutation; Browser E2E PASS; all RB-0095 exact-head gates PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1."
+      "close_condition": "Satisfied: exact 27-file #1323 scope; Governance/PHP/Distributable/Platform/Architecture/Browser exact-head PASS; zero review blockers; squash merge.",
+      "terminal_result": "PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1",
+      "terminal_evidence": {
+        "issue": 1323,
+        "pr": 1324,
+        "head": "4ae2df3b65c0e31fa64e94e30340e0331a4a823b",
+        "governance_run": 37388039211,
+        "php_quality_run": 37388039748,
+        "distributable_run": 37388038687,
+        "platform_compatibility_run": 37388038610,
+        "platform_cells_passed": 10,
+        "architecture_run": 37388038899,
+        "browser_e2e_run": 37388039030,
+        "browser_job": 112026199711,
+        "unresolved_review_threads": 0,
+        "merge_sha": "9f3d5922aa5d801aad40d553b6acd0db558865c8",
+        "resulting_main_verified": true
+      }
+    },
+    {
+      "priority": 1072,
+      "slot_id": "dashboard-widgets-preset-assignment-foundation-v1",
+      "title": "Dashboard Widgets preset assignment foundation V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "ACTIVE",
+      "work_mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
+      "source": "Issue #1325 / PR #1326 fresh-main RB-0096 validation",
+      "dependencies": [
+        "RB-0095 terminal PASS",
+        "exact fresh source base 9f3d5922aa5d801aad40d553b6acd0db558865c8"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1325 exact 18-file source/test/shared-truth allowlist"
+      ],
+      "forbidden_scope": [
+        "native WordPress order/hide/collapse mutation",
+        "Surface38 placement/personalization engine fork",
+        "user preference writes",
+        "role/capability creation or authorization semantics",
+        "Multisite blueprint/exclude/subsite/global-order runtime",
+        "portability/cache/provider/remote/scheduler runtime",
+        "shared Platform source changes",
+        "package/dependency changes",
+        "deploy/release/GA widening"
+      ],
+      "claim_branch": "agent/dashboard-preset-assignment-foundation-v1",
+      "close_condition": "Exact #1325 18-file scope; typed preset compiler + Published widget refs + deterministic role-default > network-default resolver + read-only abilities; applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1."
     }
   ],
   "historical_closeout": {

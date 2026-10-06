@@ -53,6 +53,9 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_READ = 'module.dashboard-widgets.read-service';
     public const SERVICE_DIAGNOSTICS = 'module.dashboard-widgets.diagnostics';
     public const SERVICE_PERSONAL_PREFERENCES = 'module.dashboard-widgets.personal-preferences';
+    public const SERVICE_PRESET_COMPILER = 'module.dashboard-widgets.preset-compiler';
+    public const SERVICE_PRESET_RESOLVER = 'module.dashboard-widgets.preset-resolver';
+    public const SERVICE_PRESET_READ = 'module.dashboard-widgets.preset-read';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
     public const SERVICE_RENDER_SOURCE_COMPILER = 'module.dashboard-widgets.render-source-compiler';
@@ -77,6 +80,9 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const ABILITY_GET = 'wpessential/dashboard-widgets/get';
     public const ABILITY_CATALOG = 'wpessential/dashboard-widgets/catalog';
     public const ABILITY_DIAGNOSTICS = 'wpessential/dashboard-widgets/diagnostics';
+    public const ABILITY_PRESET_GET = 'wpessential/dashboard-widgets/preset-get';
+    public const ABILITY_PRESET_CATALOG = 'wpessential/dashboard-widgets/preset-catalog';
+    public const ABILITY_EFFECTIVE_PRESET = 'wpessential/dashboard-widgets/effective-preset';
     public const ABILITY_DISMISS = DashboardWidgetPersonalPreferenceAbilityHandler::ABILITY_DISMISS;
     public const ABILITY_RESET_LAYOUT = DashboardWidgetPersonalPreferenceAbilityHandler::ABILITY_RESET;
     public const CAPABILITY = 'manage_options';
@@ -223,9 +229,21 @@ final class DashboardWidgetsModule implements ModuleInterface
             $trustedComponentRenderer,
         );
         $visibilityCompiler = new DashboardWidgetVisibilityCompiler();
+        $roleMemberships = new WordPressDashboardWidgetRoleMembershipProvider();
         $visibilityEvaluator = new DashboardWidgetVisibilityEvaluator(
             $capabilityChecker,
-            new WordPressDashboardWidgetRoleMembershipProvider(),
+            $roleMemberships,
+        );
+        $presetCompiler = new DashboardWidgetPresetCompiler($definitions);
+        $presetResolver = new DashboardWidgetPresetResolver(
+            $definitions,
+            $presetCompiler,
+            $roleMemberships,
+        );
+        $presetRead = new DashboardWidgetPresetReadService(
+            $definitions,
+            $presetCompiler,
+            $presetResolver,
         );
         $actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator($abilities);
         $abilityResolver = static function (string $name) use ($abilities): ?array {
@@ -363,6 +381,9 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_READ, $read);
         $services->set(self::SERVICE_DIAGNOSTICS, $diagnostics);
         $services->set(self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences);
+        $services->set(self::SERVICE_PRESET_COMPILER, $presetCompiler);
+        $services->set(self::SERVICE_PRESET_RESOLVER, $presetResolver);
+        $services->set(self::SERVICE_PRESET_READ, $presetRead);
         $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
         $services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
         $services->set(self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor);
@@ -423,6 +444,71 @@ final class DashboardWidgetsModule implements ModuleInterface
             'Read Dashboard Widgets catalog',
             'Reads the deterministic canonical Dashboard Widgets definition catalog without mutation.',
         );
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_PRESET_GET,
+                ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['id'],
+                    'properties' => [
+                        'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                outputSchema: ['type' => ['object', 'null']],
+            ),
+            new DashboardWidgetPresetReadAbilityHandler(
+                $presetRead,
+                DashboardWidgetPresetReadAbilityHandler::GET,
+            ),
+            'Read Dashboard Widget preset',
+            'Reads one validated Published Surface-10 Dashboard Widget preset without mutating layout or authorization state.',
+        );
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_PRESET_CATALOG,
+                ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: ['type' => 'object', 'additionalProperties' => false],
+                outputSchema: ['type' => 'array'],
+            ),
+            new DashboardWidgetPresetReadAbilityHandler(
+                $presetRead,
+                DashboardWidgetPresetReadAbilityHandler::CATALOG,
+            ),
+            'Read Dashboard Widget preset catalog',
+            'Reads the deterministic Published Surface-10 Dashboard Widget preset catalog without mutation.',
+        );
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_EFFECTIVE_PRESET,
+                ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: ['type' => 'object', 'additionalProperties' => false],
+                outputSchema: ['type' => 'object'],
+            ),
+            new DashboardWidgetPresetReadAbilityHandler(
+                $presetRead,
+                DashboardWidgetPresetReadAbilityHandler::EFFECTIVE,
+            ),
+            'Read effective Dashboard Widget preset',
+            'Resolves current-user role-default then network-default preset evidence without mutating WordPress layout or preferences.',
+        );
+
         $this->registerAbility(
             $abilities,
             $bridge,
