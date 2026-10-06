@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea
-observed_main_source: "Issue #1321 / PR #1322 RB-0094 lifecycle visibility merged after all applicable exact-head gates PASS"
-active_issue: "#1323"
-active_pr: "#1324"
-active_branch: agent/dashboard-manual-refresh-loading-v1
-current_milestone: "Dashboard Widgets trusted manual refresh + loading state V1 — PR #1324 exact-head RB-0095 validation"
+observed_main_sha: 9f3d5922aa5d801aad40d553b6acd0db558865c8
+observed_main_source: "Issue #1323 / PR #1324 RB-0095 manual refresh + loading merged after all six exact-head gates PASS"
+active_issue: "#1325"
+active_pr: null
+active_branch: agent/dashboard-preset-assignment-foundation-v1
+current_milestone: "Dashboard Widgets preset assignment foundation V1 — RB-0096 implementation"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1321 / PR #1322 RB-0094 terminal PASS; exact head c01bed388d2191d48c223224014e05ab1ea54756; Governance 37380946760 PASS; PHP Quality 37380946758 PASS; Distributable 37380946780 PASS; Platform Compatibility 37380946804 PASS 10/10; Architecture 37380946768 FULL PASS; Browser workflow NOT_APPLICABLE by path filter; exact 23-file scope; zero behind/review blockers; expected-head squash merged as dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea; verdict PASS_DASHBOARD_LIFECYCLE_VISIBILITY_WINDOW_V1."
-next_safe_action: "Validate PR #1324 exact head against #1323 27-file allowlist; fix any real failure; require Governance/PHP/Distributable/Platform/Architecture/Browser exact-head PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
-waiting_external: "PR #1324 RB-0095 exact-head six-family merge gate including Browser E2E."
+last_completed_milestone: "Issue #1323 / PR #1324 RB-0095 terminal PASS; final head 4ae2df3b65c0e31fa64e94e30340e0331a4a823b; Governance 37388039211 PASS; PHP Quality 37388039748 PASS; Distributable 37388038687 PASS; Platform Compatibility 37388038610 PASS 10/10; Architecture 37388038899 FULL PASS; Browser E2E 37388039030 PASS; exact 27-file scope; zero unresolved review blockers; squash merged as 9f3d5922aa5d801aad40d553b6acd0db558865c8; verdict PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1."
+next_safe_action: "Finish #1325 exact 18-file preset foundation scope, validate compiler/resolver/read abilities, open PR, then run one consolidated RB-0096 exact-head merge gate."
+waiting_external: "none — active #1325 implementation before PR open."
 next_planned_slot:
-  issue: "#1323"
-  slot_id: dashboard-widgets-manual-refresh-loading-v1
-  claim_branch: "agent/dashboard-manual-refresh-loading-v1"
-  claim_rule: "Exact #1323 27-file source/test/browser/shared-truth allowlist; trusted manual refresh + loading state + lifecycle_inactive client reconciliation only; no cache invalidation/TTL, polling/retry, Cron/Job invocation, provider/remote/portability/shared-Platform widening."
+  issue: "#1325"
+  slot_id: dashboard-widgets-preset-assignment-foundation-v1
+  claim_branch: "agent/dashboard-preset-assignment-foundation-v1"
+  claim_rule: "Exact #1325 18-file source/test/shared-truth allowlist; Surface-10 preset definitions + role-default/network-default read-only resolution only; no native layout/order mutation, Surface38 fork, portability/cache/provider/scheduler widening."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0095
+    - RB-0096
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -79,6 +79,7 @@ runner_benchmark:
     - RB-0092
     - RB-0093
     - RB-0094
+    - RB-0095
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -121,10 +122,9 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
-  - "Issue #1319 / PR #1320 is terminal PASS through RB-0093; dismiss/reset parity merged as bb6c826f05ffdc7f84c0abcbad42979cf590e648."
-  - "Issue #1321 / PR #1322 is terminal PASS through RB-0094; bounded request-time lifecycle visibility merged as dfaa67f663cfdabc5aeda06ae3d9ba4e64eac6ea."
-  - "Issue #1323 / RB-0095 is active for P0 manual refresh + trusted loading state + lifecycle_inactive browser reconciliation."
-  - "RB-0095 Browser E2E is applicable because admin-ui/src/main.ts and tests/e2e change."
-  - "Manual refresh V1 re-renders through the canonical runtime path only; no cache invalidation, TTL, retry, polling, Cron/Job invocation or provider transport."
-  - "Portability remains ADR-0116 owner-authorization-gated; shared cache runtime remains EXECUTION NOT AUTHORIZED; provider/remote remains cross-owner."
+  - "Issue #1323 / PR #1324 is terminal PASS through RB-0095; manual refresh + trusted loading merged as 9f3d5922aa5d801aad40d553b6acd0db558865c8."
+  - "Fresh residual audit leaves presets/multisite as the largest owner-local P0 family; cache/portability/provider/remote/scheduling remain gated or cross-owner."
+  - "Canonical ownership assigns preset assignment to Surface10 but generic placement/personalization to Surface38."
+  - "Issue #1325 / RB-0096 is active for typed Dashboard preset definitions plus role-default/network-default current-user resolution and read-only abilities."
+  - "RB-0096 explicitly forbids native WordPress order/hide/collapse mutation and any Surface38 placement-engine fork."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
