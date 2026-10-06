@@ -3149,7 +3149,7 @@
     },
     {
       "id": "RB-0096",
-      "source": "Issue #1325",
+      "source": "Issue #1325 / PR #1326",
       "category": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head validation; Browser applicability determined from repository path filters",
@@ -3168,7 +3168,8 @@
       "evidence": [
         "Issue #1325 freezes exact 18-file RB-0096 scope",
         "canonical ownership assigns preset assignment to Surface10 and generic placement/personalization to Surface38",
-        "implementation resolves current-user role-default before network-default without mutating WordPress layout"
+        "implementation resolves current-user role-default before network-default without mutating WordPress layout",
+        "PR #1326 opened from exact main 9f3d5922aa5d801aad40d553b6acd0db558865c8"
       ],
       "note": "Merge only after applicable exact-head gates PASS, exact allowlist, zero behind and zero unresolved review blockers."
     }
