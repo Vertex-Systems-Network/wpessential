@@ -44,7 +44,7 @@ Still gated/out-of-owner:
 - remote/iframe transport policy remains Surface23;
 - scheduling remains Surface18/Job Service.
 
-### Active #1325 / RB-0096
+### Active #1325 / PR #1326 / RB-0096
 
 Branch: `agent/dashboard-preset-assignment-foundation-v1`.
 Exact maximum scope: 18 files.
