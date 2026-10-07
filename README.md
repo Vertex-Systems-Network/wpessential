@@ -37,6 +37,9 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
+**Autonomous execution operating rule:** Within the recorded source-development grant, AI resolves routine technical errors and proceeds to the next independent safe milestone without asking the owner to debug or reapprove. Privileged/production gates remain enforced. At each meaningful Supervisor integration, refresh the verified milestone progress bars below and the active evidence/next gate; no percentage is promoted without an audited denominator. See [AGENTS.md](AGENTS.md#autonomous-continuity-and-no-repeat-question-policy).
+
+
 - Exact current main: `c386f72e648f85dadc64324fe863f5d12fb40cb2`.
 - Dashboard bounded `form_action` execution remains terminal PASS through RB-0088.
 - Issue #1294 / PR #1305 / RB-0089 shared-loader contract and Issue #1306 / PR #1307 / RB-0090 shared Platform loader are terminal PASS.

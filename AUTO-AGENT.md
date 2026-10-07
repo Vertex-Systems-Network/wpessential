@@ -4,6 +4,10 @@ This file is the entrypoint for autonomous multi-agent work on WPEssential.
 
 It does **not** replace `AGENTS.md`, `CONTRIBUTING.md`, `.ai/state/CURRENT-STATE.yaml`, `.ai/state/LAST-CHECKPOINT.md`, `docs/AI/TIMEOUT-RESILIENT-EXECUTION-POLICY.md`, historical `CHECKPOINT.md`, `docs/ENGINEERING-EXECUTION-GOVERNANCE.md`, approval/consent rules, ownership contracts, dependency contracts or quality gates. Those remain authoritative.
 
+## Continuous execution directive
+
+Read and enforce the autonomous continuity/no-repeat-question policy in `AGENTS.md`. Continue across successive safe milestones in the active session when requested; resolve ordinary technical blockers without owner intervention, rotate to other ready safe work when externally gated, and keep evidence-backed README progress bars current at each meaningful Supervisor integration. Never bypass required authorization, review or CI, and never claim unattended execution beyond the active runtime.
+
 ## Goal
 
 A newly started agent should not need the repository owner to manually choose `Taxonomy`, `Query`, `Listings`, etc.
