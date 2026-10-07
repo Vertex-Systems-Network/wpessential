@@ -4,7 +4,7 @@ state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
 observed_main_sha: 31724a373e7ad6c278c0a0072f32230dd036e309
 observed_main_source: "Issue #1325 / PR #1326 RB-0096 preset assignment foundation merged terminal PASS; governance Issue #1328 branches from this exact main"
-active_issue: "#1328 governance; #1327 queued product lane"
+active_issue: "#1328"
 active_pr: "#1329"
 active_branch: governance/continuous-ai-native-execution-v1
 current_milestone: "AI-Native continuous autonomous execution governance V1 — Issue #1328 / PR #1329"
