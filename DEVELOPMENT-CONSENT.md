@@ -1,8 +1,8 @@
 # WPEssential — Development Consent Gate
 
-Status: **ACTIVE / MANDATORY**  
-Owner instruction recorded: **2026-08-27**  
-Explicit development grant recorded: **2026-08-29**  
+Status: **ACTIVE / MANDATORY**
+Owner instruction recorded: **2026-08-27**
+Explicit development grant recorded: **2026-08-29**
 Continuous autonomous execution instruction recorded: **2026-10-08 / Issue #1328**
 
 ## Rule
@@ -27,10 +27,10 @@ Do not repeatedly ask approval for ordinary reversible decisions inside an ACTIV
 
 ## Current consent state
 
-Project development approval: **GRANTED / ACTIVE**  
-Approval record: **`GOV-OWNER-CONSENT-001`** in `docs/APPROVAL-LEDGER.md`  
-Current canonical scope: **56 module/platform surfaces**  
-Source implementation authorization: **56/56 module/platform surfaces**, executed milestone-by-milestone under accepted architecture and quality gates.  
+Project development approval: **GRANTED / ACTIVE**
+Approval record: **`GOV-OWNER-CONSENT-001`** in `docs/APPROVAL-LEDGER.md`
+Current canonical scope: **56 module/platform surfaces**
+Source implementation authorization: **56/56 module/platform surfaces**, executed milestone-by-milestone under accepted architecture and quality gates.
 Current execution stage: **IMPLEMENTATION BASELINE / ADOPTION GATE**.
 
 ## Continuous autonomous execution under active consent
