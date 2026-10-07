@@ -5,13 +5,13 @@ state_status: FEATURE_ACTIVE
 observed_main_sha: 31724a373e7ad6c278c0a0072f32230dd036e309
 observed_main_source: "Issue #1325 / PR #1326 RB-0096 preset assignment foundation merged terminal PASS; governance Issue #1328 branches from this exact main"
 active_issue: "#1328 governance; #1327 queued product lane"
-active_pr: "none yet for #1328 at compact-state write"
+active_pr: "#1329"
 active_branch: governance/continuous-ai-native-execution-v1
-current_milestone: "AI-Native continuous autonomous execution governance V1 — remove confirmation/one-turn stop loops and enforce README progress sync"
+current_milestone: "AI-Native continuous autonomous execution governance V1 — Issue #1328 / PR #1329"
 milestone_status: ACTIVE
 last_completed_milestone: "Issue #1325 / PR #1326 RB-0096 terminal PASS; exact head 6f54c797578a9808c5e28cab41f8c1e88642d093; Governance/PHP/Distributable/Platform 10/10/Architecture PASS; Browser path-filter N/A; zero behind/review blockers; squash merged as 31724a373e7ad6c278c0a0072f32230dd036e309; verdict PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1."
 next_safe_action: "Complete Issue #1328 governance delivery, then automatically continue the highest-priority safe authorized product lane without an owner continuation prompt; #1327 is currently queued."
-waiting_external: "none for the governance implementation at compact-state write; future WAITING_EXTERNAL lanes must be parked while independent safe work continues."
+waiting_external: "PR #1329 governance checks/merge gate if still pending; if waiting, park this lane and continue any independent safe authorized work. Future WAITING_EXTERNAL lanes follow the same rule."
 next_planned_slot:
   issue: "#1327"
   slot_id: dashboard-widgets-multisite-preset-policy-foundation-v1
