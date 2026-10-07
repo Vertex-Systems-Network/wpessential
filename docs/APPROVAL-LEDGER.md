@@ -1,7 +1,7 @@
 # WPEssential — Approval Ledger & Work Lifecycle
 
 Status: **Active governance**
-Last reviewed: **2026-09-16**
+Last reviewed: **2026-10-08**
 
 | Approval ID | Scope | Work ID | Status | Included | Excluded / notes |
 |---|---|---|---|---|---|
@@ -42,6 +42,8 @@ The owner explicitly authorized this sequence:
 `Implementation Baseline / Adoption Gate → Machine-enforced architecture guards → Milestone 1 Platform Foundation → module development`.
 
 The project-level grant prevents repeated approval prompts for ordinary reversible source-development decisions that remain inside accepted architecture and milestone budgets. It does **not** waive technical, security, recovery, provider or release gates.
+
+Owner instruction Issue #1328 (2026-10-08) further defines the **cadence** under the active project grant: an explicit development instruction may chain successive bounded safe milestones without repeated `continue`/confirmation prompts. Recoverable errors and non-actionable blockers are handled autonomously; blocked privileged lanes are parked while independent authorized work continues. This cadence instruction does not expand production, destructive, provider, legal, credential, deployment, release, or other separately gated authority.
 
 The RC1 milestone grant narrows the immediate delivery target to a bounded core stabilization sprint and authorizes conflict-safe source/test/package work inside that scope without repeated per-task approval. It does not broaden production/live/destructive/provider privileges, bypass shared-surface serialization, or convert bounded RC evidence into full product parity/certification.
 
