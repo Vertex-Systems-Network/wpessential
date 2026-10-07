@@ -56,10 +56,14 @@ $requiredCurrentPatterns = [
     '/^milestone_status:\s*[A-Z_]+\s*$/m',
     '/^last_completed_milestone:\s*".+"\s*$/m',
     '/^next_safe_action:\s*".+"\s*$/m',
-    '/^\s{2}one_logical_milestone_per_user_turn:\s*true\s*$/m',
-    '/^\s{2}max_consolidated_ci_status_refreshes_per_milestone:\s*1\s*$/m',
+    '/^\s{2}continuous_autonomous_chain_per_user_development_instruction:\s*true\s*$/m',
+    '/^\s{2}logical_milestone_is_checkpoint_not_stop_boundary:\s*true\s*$/m',
+    '/^\s{2}ordinary_blocker_or_error_confirmation_required:\s*false\s*$/m',
+    '/^\s{2}waiting_external_lane_is_parked_while_safe_work_continues:\s*true\s*$/m',
+    '/^\s{2}user_continue_required_between_safe_milestones:\s*false\s*$/m',
+    '/^\s{2}max_consolidated_ci_status_refreshes_per_lane_milestone:\s*1\s*$/m',
     '/^\s{2}tight_polling_loops_forbidden:\s*true\s*$/m',
-    '/^\s{2}durable_state_write_before_completion_report:\s*true\s*$/m',
+    '/^\s{2}durable_state_write_between_milestones_and_before_completion_report:\s*true\s*$/m',
     '/^\s{2}historical_checkpoint_full_read_default:\s*false\s*$/m',
 ];
 
