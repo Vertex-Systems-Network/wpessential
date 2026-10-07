@@ -39,7 +39,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 - Exact main at the continuous-execution governance branch base: `31724a373e7ad6c278c0a0072f32230dd036e309`.
 - Issue #1325 / PR #1326 / RB-0096 is terminal PASS: Dashboard preset assignment foundation merged after Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture PASS; Browser E2E was path-filter N/A.
-- **AI-Native continuous autonomous execution V1 — `██████████ 100%` policy implementation for Issue #1328.** A start/continue/resume development instruction now chains successive safe authorized milestones in the same workspace/session; a logical milestone is a durable checkpoint, not a mandatory user-message stop.
+- **AI-Native continuous autonomous execution V1 — `██████████ 100%` policy implementation for Issue #1328 / PR #1329.** A start/continue/resume development instruction now chains successive safe authorized milestones in the same workspace/session; a logical milestone is a durable checkpoint, not a mandatory user-message stop.
 - Ordinary blocker/error recovery, test-failure repair, merge-conflict repair, module selection and next-safe-action selection are autonomous inside active approval when repository evidence can determine the answer.
 - `WAITING_EXTERNAL`, authorization-gated, dependency-gated or otherwise non-actionable lanes are parked with evidence while the Supervisor continues the next dependency-ready conflict-safe authorized lane. Tight CI polling remains forbidden.
 - Interactive numbered next-action options are suppressed during active autonomous development; URL-only read-only entry behavior remains unchanged.
