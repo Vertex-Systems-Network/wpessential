@@ -1,5 +1,33 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-08 — continuous AI-Native execution governance activated; #1327 queued after integration
+
+### Exact main and product truth at governance branch base
+
+- Exact main at branch base: `31724a373e7ad6c278c0a0072f32230dd036e309`.
+- Issue #1325 / PR #1326 / RB-0096 is terminal PASS:
+  - exact head `6f54c797578a9808c5e28cab41f8c1e88642d093`;
+  - Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture PASS;
+  - Browser E2E path-filter NOT_APPLICABLE;
+  - zero behind/review blockers;
+  - squash merge `31724a373e7ad6c278c0a0072f32230dd036e309`;
+  - verdict `PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1`.
+- Issue #1327 is the next queued Dashboard Multisite preset-policy foundation lane and must be revalidated after governance integration.
+
+### Owner-requested continuous execution contract — Issue #1328
+
+- A start/continue/resume development instruction activates a continuous autonomous chain for the current workspace/session.
+- Logical milestones are durable checkpoints, not user-message stop boundaries.
+- Ordinary blockers/errors/test failures/merge conflicts/module selection do not require owner confirmation when repository evidence can resolve them.
+- `WAITING_EXTERNAL`, authorization-gated, dependency-gated or otherwise non-actionable lanes are parked; the Supervisor continues the next conflict-safe authorized lane.
+- Tight CI polling remains forbidden.
+- Privileged production/destructive/provider/legal/credential/deployment/release boundaries remain fail-closed for the affected lane.
+- README live AI-Native progress reconciliation remains automatic alongside meaningful Supervisor repository changes; full 56/56 dashboard rules remain evidence-triggered.
+
+### Next safe action
+
+Integrate Issue #1328 governance, re-resolve exact current main/queue, then automatically continue the highest-priority safe authorized work without requesting another `continue`; #1327 is currently queued.
+
 ## 2026-10-06 — RB-0095 terminal PASS; RB-0096 preset assignment foundation active
 
 ### Exact current main truth
