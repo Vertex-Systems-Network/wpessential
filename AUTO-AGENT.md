@@ -18,7 +18,7 @@ After startup, the agent must:
 6. read `config/coordination/agent-work-queue.json`, Runner Benchmark and active deterministic claim branches;
 7. select the highest-priority valid free work slot only after existing Issue/PR/MR work is reconciled;
 8. claim it without racing another agent;
-9. work only inside that slot's allowed scope and one logical milestone;
+9. work only inside that slot's allowed scope, checkpoint each logical milestone, and keep chaining the next safe authorized milestone without waiting for another user message;
 10. submit/update a PR/MR with exact-head evidence when applicable;
 11. let the Supervisor/Integrator decide merge order from dependencies and current main;
 12. before reporting completion/blocked/waiting, reconcile compact state and changed queue/Runner Benchmark truth;
@@ -34,15 +34,28 @@ Every Supervisor and Worker work cycle, including `start`, `continue` and `resum
 4. **Claims/queue third.** Re-read deterministic claim branches and `config/coordination/agent-work-queue.json` after Issue/PR reconciliation because merges may have changed dependencies.
 5. **New development last.** Only then claim a dependency-ready free slot or create a new implementation Issue authorized by the current exact-main audit.
 
-This is a **hard development gate**. New feature/module development is forbidden while an accepted actionable OPEN Issue or PR/MR path is being bypassed. The only exception is repository-evidenced blocked or superseded work, and that state must be explicit before another development path starts.
+This is a **hard actionable-work gate**, not an idle-workspace gate. New feature/module development is forbidden while an accepted actionable OPEN Issue or PR/MR path can be safely progressed now. If that path is repository-evidenced `WAITING_EXTERNAL`, authorization-gated, dependency-gated, occupied, blocked, or superseded, persist the state and continue the next dependency-ready conflict-safe authorized path.
 
 Rules:
 
 - An OPEN Issue that is already represented by an OPEN PR/MR is not duplicate work; finish/review that PR/MR path.
 - Do not bypass a failing accepted PR by creating a replacement feature branch unless the existing PR is explicitly superseded/closed with repository evidence.
-- Do not treat "not yet reviewed" or "CI still running" as permission to invent unrelated development that violates dependency/shared-write safety.
+- If an accepted path is still actionable now, finish/reconcile it first. If it is explicitly `WAITING_EXTERNAL`, authorization-gated, dependency-gated, occupied, or otherwise has no safe action now, park it with exact evidence and continue the next conflict-safe dependency-ready lane; never use a waiting lane as a reason to idle the whole workspace.
 - Merge order remains dependency-safe and exact-head certified; "PRs second" does not mean blindly merging every PR.
 - Critical/security/recovery incidents may stop the line under existing governance, but their Issue/PR evidence must still be reconciled durably.
+
+## Continuous workspace rule
+
+An explicit owner development instruction activates autonomous execution for the current workspace/session. The Supervisor and AUTO Workers must not stop after an ordinary milestone merely to request another `continue`, confirmation, blocker decision, or module choice.
+
+For each completed/parked milestone:
+1. persist durable state and README progress truth as applicable;
+2. repair ordinary errors/failures autonomously inside approved scope;
+3. park lanes that are waiting on CI, credentials, external authority, dependency completion, or other non-actionable blockers;
+4. immediately select the next dependency-ready conflict-safe authorized lane;
+5. continue until scope is complete, no safe authorized lane remains, or the current execution/session/tool/token boundary is reached.
+
+This rule never broadens privilege. Production/deploy/release/destructive/provider/legal/credential decisions that require separate authority remain fail-closed for the affected lane.
 
 ## Mandatory README progress reconciliation
 
@@ -117,7 +130,7 @@ Read AUTO-AGENT.md and follow it completely.
 Read .ai/state/CURRENT-STATE.yaml and .ai/state/LAST-CHECKPOINT.md first, then resolve exact current main.
 Solve/continue accepted OPEN Issues first, inspect/fix/review/merge eligible OPEN PRs/MRs second, then reconcile active claim branches, config/coordination/agent-work-queue.json and Runner Benchmark before new development.
 Do not start new development while an accepted actionable Issue or PR/MR path is being bypassed.
-Default to one user continue/resume turn = one logical milestone. Do not tight-poll CI; use one consolidated status refresh per milestone, persist WAITING_EXTERNAL when needed, and resume on the next user turn.
+Keep executing successive logical milestones continuously in the current workspace/session without waiting for another continue/resume message. Do not tight-poll CI; use one consolidated status refresh per lane/milestone, park WAITING_EXTERNAL lanes, and continue other conflict-safe authorized work.
 Take the highest-priority valid SUPERVISOR_ONLY slot first; if none exists, take the highest-priority valid ANY slot.
 Coordinate submitted workers, shared writes and merge order while working on your own claimed slot.
 Before reporting completion/blocked/waiting, update compact durable state and reconcile the README Current AI-Native Development Progress block. Update the complete 56 / 56 README dashboard additionally when module/public delivery truth changed or at a terminal product milestone/integration closeout.
@@ -135,8 +148,8 @@ Read AUTO-AGENT.md and follow it completely.
 Read .ai/state/CURRENT-STATE.yaml and .ai/state/LAST-CHECKPOINT.md first, then resolve exact current main.
 Inspect/continue accepted OPEN Issues first and inspect/fix eligible OPEN PRs/MRs second. Do not duplicate accepted work already represented there and do not start new development while an actionable accepted path is being bypassed.
 Then inspect config/coordination/agent-work-queue.json and Runner Benchmark and claim the highest-priority valid free ANY slot using its deterministic remote claim branch.
-Default to one logical milestone per user turn and never tight-poll CI/status endpoints.
-Do not ask me which module to work on unless repository evidence contains a genuine unresolved decision.
+Checkpoint each logical milestone but keep chaining the next safe authorized milestone in the same workspace/session; never tight-poll CI/status endpoints.
+Do not ask me which module to work on, whether to fix an ordinary error, or whether to continue. Resolve those from repository evidence and current approval. Park privileged/externally blocked lanes and continue other safe work.
 ```
 
 That is enough. The Worker chooses its own safe assignment.
@@ -152,7 +165,7 @@ Before branch creation:
 - resolve the exact current `main` SHA;
 - list/read relevant OPEN Issues first and continue accepted work where actionable;
 - list/read relevant OPEN PRs/MRs second, repair accepted work where permitted and do not duplicate it;
-- stop new-development selection if an accepted actionable Issue/PR/MR path still requires reconciliation;
+- stop new-development selection only while an accepted Issue/PR/MR path has a safe actionable step now; if it is explicitly waiting/blocked/authorization-gated, park it and continue conflict-safe selection;
 - read root `AGENTS.md`;
 - read `CONTRIBUTING.md`;
 - read `.ai/state/CURRENT-STATE.yaml` and `.ai/state/LAST-CHECKPOINT.md`;
@@ -205,13 +218,13 @@ For command-line Git, the equivalent intent is a normal non-force remote branch 
 
 ### D. No valid slot
 
-If every valid slot is claimed, blocked, completed or invalid:
+If every valid slot is claimed, blocked, completed or invalid, persist the exact reasons and emit:
 
 ```text
 NO_VALID_WORK_SLOT
 ```
 
-Make no repository changes. Do not invent work merely to keep the agent busy.
+Do not invent work merely to stay busy, and do not ask the owner to select arbitrary work. End the workspace only when no safe authorized lane remains (or the execution/session boundary is reached).
 
 ## Supervisor algorithm
 
@@ -224,7 +237,7 @@ The Supervisor performs the mandatory Issues-first / PR-MR-second hard preflight
 5. takes the highest-priority valid `SUPERVISOR_ONLY` slot, if any;
 6. otherwise may claim the highest-priority valid `ANY` slot;
 7. does not create branches for Workers;
-8. on each user invocation reads compact state, then re-resolves current Issue/PR/MR/main state; it does not repeatedly poll unchanged CI/status inside the same milestone;
+8. on each user invocation reads compact state, re-resolves current Issue/PR/MR/main state, then continuously chains successive safe milestones; it checkpoints between milestones and does not repeatedly poll unchanged CI/status;
 9. reviews submitted work against current main and dependency order;
 10. applies serialized shared-file Integration Requirements;
 11. merges only merge-ready exact heads;
