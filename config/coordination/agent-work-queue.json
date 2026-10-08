@@ -7082,7 +7082,7 @@
       "slot_id": "dashboard-widgets-multisite-preset-policy-foundation-v1",
       "title": "Dashboard Widgets Multisite preset policy foundation V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "READY_AFTER_GOVERNANCE",
+      "status": "OPEN",
       "work_mode": "DASHBOARD_WIDGETS_MULTISITE_PRESET_POLICY_FOUNDATION_V1",
       "source": "Issue #1327 / RB-0097",
       "dependencies": [
