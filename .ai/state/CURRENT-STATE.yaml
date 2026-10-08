@@ -2,29 +2,28 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 9f3d5922aa5d801aad40d553b6acd0db558865c8
-observed_main_source: "Issue #1323 / PR #1324 RB-0095 manual refresh + loading merged after all six exact-head gates PASS"
-active_issue: "#1325"
-active_pr: "#1326"
-active_branch: agent/dashboard-preset-assignment-foundation-v1
-current_milestone: "Dashboard Widgets preset assignment foundation V1 — PR #1326 exact-head RB-0096 validation"
+observed_main_sha: 643f1984ad019e134bc75e7f944df5dae50ac177
+observed_main_source: "Main 643f1984ad019e134bc75e7f944df5dae50ac177 includes #1325/#1326 RB-0096 terminal and #1330 merged AI autonomy baseline; governance #1328/#1329 reconciliation underway."
+active_issue: "#1328"
+active_pr: "#1329"
+active_branch: governance/continuous-ai-native-execution-v1
+current_milestone: "AI-Native continuous autonomous execution governance V1 — Issue #1328 / PR #1329"
 milestone_status: ACTIVE
-last_completed_milestone: "Issue #1323 / PR #1324 RB-0095 terminal PASS; final head 4ae2df3b65c0e31fa64e94e30340e0331a4a823b; Governance 37388039211 PASS; PHP Quality 37388039748 PASS; Distributable 37388038687 PASS; Platform Compatibility 37388038610 PASS 10/10; Architecture 37388038899 FULL PASS; Browser E2E 37388039030 PASS; exact 27-file scope; zero unresolved review blockers; squash merged as 9f3d5922aa5d801aad40d553b6acd0db558865c8; verdict PASS_DASHBOARD_MANUAL_REFRESH_LOADING_V1."
-next_safe_action: "Validate PR #1326 exact head against #1325 18-file allowlist; fix any real failure; require applicable RB-0096 CI PASS, zero behind/review blockers, then expected-head merge and resulting-main verification."
-waiting_external: "PR #1326 RB-0096 exact-head Governance/PHP/Distributable/Platform/Architecture merge gate; Browser applicability is path-filtered."
+last_completed_milestone: "Issue #1325 / PR #1326 RB-0096 terminal PASS; exact head 6f54c797578a9808c5e28cab41f8c1e88642d093; Governance/PHP/Distributable/Platform 10/10/Architecture PASS; Browser path-filter N/A; zero behind/review blockers; squash merged as 31724a373e7ad6c278c0a0072f32230dd036e309; verdict PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1."
+next_safe_action: "Complete Issue #1328 governance delivery, then automatically continue the highest-priority safe authorized product lane without an owner continuation prompt; #1327 is currently queued."
+waiting_external: "PR #1329 governance checks/merge gate if still pending; if waiting, park this lane and continue any independent safe authorized work. Future WAITING_EXTERNAL lanes follow the same rule."
 next_planned_slot:
-  issue: "#1325"
-  slot_id: dashboard-widgets-preset-assignment-foundation-v1
-  claim_branch: "agent/dashboard-preset-assignment-foundation-v1"
-  claim_rule: "Exact #1325 18-file source/test/shared-truth allowlist; Surface-10 preset definitions + role-default/network-default read-only resolution only; no native layout/order mutation, Surface38 fork, portability/cache/provider/scheduler widening."
+  issue: "#1327"
+  slot_id: dashboard-widgets-multisite-preset-policy-foundation-v1
+  claim_branch: "resolve from live queue/issue before claim"
+  claim_rule: "After #1328 governance merge, re-resolve exact main/queue and continue #1327 only if still highest-priority dependency-ready safe work."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending:
-    - RB-0096
+  immediate_pending: []
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -80,6 +79,7 @@ runner_benchmark:
     - RB-0093
     - RB-0094
     - RB-0095
+    - RB-0096
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -93,8 +93,8 @@ fast_ai_native_mode:
   enabled: true
   policy_id: GOV-AI-NATIVE-FAST-DELIVERY-001
   default_delivery_cycle:
-    - "Turn A: exact-main audit + Issue claim + implementation + focused tests + README/shared truth + PR open"
-    - "Turn B: one consolidated CI/review refresh + required fixes if any + expected-head merge + terminal resulting-main verification"
+    - "Continuous chain: exact-main audit + actionable Issue/PR reconciliation + implementation/fix + focused tests + README/shared truth + PR/merge gate"
+    - "Checkpoint each logical milestone, park WAITING_EXTERNAL/authorization-gated lanes, then immediately continue the next safe conflict-free authorized lane without another user prompt."
   separate_contract_pr_only_for_high_risk_boundaries: true
   routine_bounded_feature_contract_location: "Freeze in the implementation Issue instead of a separate contract PR."
   separate_post_merge_reconciliation_default: false
@@ -107,12 +107,15 @@ fast_ai_native_mode:
     - fail_closed_runtime_boundaries
     - zero_behind_merge_gate
 timeout_contract:
-  one_logical_milestone_per_user_turn: true
-  one_meaningful_feature_milestone_per_user_turn_by_default: true
-  max_consolidated_ci_status_refreshes_per_milestone: 1
+  continuous_autonomous_chain_per_user_development_instruction: true
+  logical_milestone_is_checkpoint_not_stop_boundary: true
+  ordinary_blocker_or_error_confirmation_required: false
+  waiting_external_lane_is_parked_while_safe_work_continues: true
+  user_continue_required_between_safe_milestones: false
+  max_consolidated_ci_status_refreshes_per_lane_milestone: 1
   tight_polling_loops_forbidden: true
   batch_related_remote_reads: true
-  durable_state_write_before_completion_report: true
+  durable_state_write_between_milestones_and_before_completion_report: true
   historical_checkpoint_full_read_default: false
 recovery_order:
   - ".ai/state/CURRENT-STATE.yaml"
@@ -122,9 +125,9 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
-  - "Issue #1323 / PR #1324 is terminal PASS through RB-0095; manual refresh + trusted loading merged as 9f3d5922aa5d801aad40d553b6acd0db558865c8."
-  - "Fresh residual audit leaves presets/multisite as the largest owner-local P0 family; cache/portability/provider/remote/scheduling remain gated or cross-owner."
-  - "Canonical ownership assigns preset assignment to Surface10 but generic placement/personalization to Surface38."
-  - "Issue #1325 / RB-0096 is active for typed Dashboard preset definitions plus role-default/network-default current-user resolution and read-only abilities."
-  - "RB-0096 explicitly forbids native WordPress order/hide/collapse mutation and any Surface38 placement-engine fork."
+  - "Issue #1325 / PR #1326 is terminal PASS through RB-0096; preset assignment foundation merged as 31724a373e7ad6c278c0a0072f32230dd036e309."
+  - "Issue #1328 records the owner-requested continuous AI-Native execution cadence: no repeated continue/confirmation for ordinary safe work."
+  - "WAITING_EXTERNAL, authorization-gated, dependency-gated, or otherwise non-actionable lanes are parked; independent safe authorized work continues."
+  - "README Current AI-Native Development Progress remains mandatory alongside meaningful Supervisor repository truth changes."
+  - "Issue #1327 is the current queued Dashboard Multisite preset-policy foundation lane and must be revalidated live after governance integration."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

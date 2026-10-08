@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET + LIFECYCLE + REFRESH PASS / RB-0096 PRESETS | RB-0095 manual refresh/loading terminal PASS; #1325/#1326 preset assignment foundation validation active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET + LIFECYCLE + REFRESH + RB-0096 PRESETS PASS | RB-0096 preset assignment terminal PASS; RB-0097 / Issue #1327 Multisite policy next |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -40,16 +40,15 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 **Autonomous execution operating rule:** Within the recorded source-development grant, AI resolves routine technical errors and proceeds to the next independent safe milestone without asking the owner to debug or reapprove. Privileged/production gates remain enforced. At each meaningful Supervisor integration, refresh the verified milestone progress bars below and the active evidence/next gate; no percentage is promoted without an audited denominator. See [AGENTS.md](AGENTS.md#autonomous-continuity-and-no-repeat-question-policy).
 
 
-- Exact current main: `c386f72e648f85dadc64324fe863f5d12fb40cb2`.
-- Dashboard bounded `form_action` execution remains terminal PASS through RB-0088.
-- Issue #1294 / PR #1305 / RB-0089 shared-loader contract and Issue #1306 / PR #1307 / RB-0090 shared Platform loader are terminal PASS.
-- Issue #1315 / PR #1316 / RB-0091 shared Dashboard form_action asset-consumer migration is terminal PASS. Exact head `fef1c601605cee702b9a5b94a835af1017a678b9` passed Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture; Browser was correctly NOT_APPLICABLE by workflow path filters; resulting main is `9d6945a718923fb0bbaab0f19e431ec4d7fb06ac`.
-- Stale completed Issues #1291, #1292, #1296 and #1300 are closed with terminal merge evidence; #858 remains repository-admin-only, #1102 owner-authorization-gated, and #947 Worker-only.
-- Fresh Surface-10 residual audit found zero Dashboard runtime references for cache/TTL/retry, provider/remote, import/export and diagnostics.
-- Issue #1317 / PR #1318 / RB-0092 is terminal PASS: bounded read-only runtime diagnostics merged as `c386f72e648f85dadc64324fe863f5d12fb40cb2` after Governance, PHP, Distributable, Architecture and Platform 10/10 PASS; Browser was path-filter N/A.
-- Fresh residual audit confirmed `icon_link` is already implemented. Portability execution is explicit-owner-authorization-gated by ADR-0116; shared cache runtime remains EXECUTION NOT AUTHORIZED with CAC 0/176 executed; provider/remote remains cross-owner.
-- Issue #1319 / PR #1320 / RB-0093 is terminal PASS: dismissible + verified current-user WPE-only dismiss/reset parity merged as `bb6c826f05ffdc7f84c0abcbad42979cf590e648`; core/third-party native preference state remains preserved.
-- Issue #1323 / PR #1324 / RB-0095 is terminal PASS: trusted manual refresh + loading state + lifecycle-inactive browser reconciliation merged as `9f3d5922aa5d801aad40d553b6acd0db558865c8`, including packaged Browser E2E PASS. Issue #1325 / RB-0096 is active for typed Surface-10 preset definitions plus role-default/network-default read-only resolution; native layout mutation remains out of scope.
+- Exact verified main before governance PR #1329 integration: `643f1984ad019e134bc75e7f944df5dae50ac177` (includes merged #1330 continuity rules).
+- Issue #1325 / PR #1326 / RB-0096 is terminal PASS: Dashboard preset assignment foundation merged after Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture PASS; Browser E2E was path-filter N/A.
+- **AI-Native continuous autonomous execution V1 — `██████████ 100%` policy implementation for Issue #1328 / PR #1329.** A start/continue/resume development instruction now chains successive safe authorized milestones in the same workspace/session; a logical milestone is a durable checkpoint, not a mandatory user-message stop.
+- Ordinary blocker/error recovery, test-failure repair, merge-conflict repair, module selection and next-safe-action selection are autonomous inside active approval when repository evidence can determine the answer.
+- `WAITING_EXTERNAL`, authorization-gated, dependency-gated or otherwise non-actionable lanes are parked with evidence while the Supervisor continues the next dependency-ready conflict-safe authorized lane. Tight CI polling remains forbidden.
+- Interactive numbered next-action options are suppressed during active autonomous development; URL-only read-only entry behavior remains unchanged.
+- Privileged production/destructive/provider/legal/credential/deployment/release boundaries remain fail-closed for the affected lane; Issue #1328 changes cadence, not privilege.
+- README progress reconciliation remains mandatory alongside every meaningful Supervisor repository-truth change. The full 56/56 module dashboard remains triggered only by module/public-delivery truth changes or terminal product closeout.
+- Issue #1327 is the current queued Dashboard Multisite preset-policy foundation lane and must be revalidated from live exact main after Issue #1328 integration; autonomous flow continues it without requiring an owner `continue` prompt when it remains safe and dependency-ready.
 
 ## Current lifecycle
 

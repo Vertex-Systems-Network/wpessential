@@ -93,9 +93,10 @@ Under `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001`:
 
 - **tight CI/status polling is forbidden**;
 - related runner/status reads should be consolidated;
-- one consolidated status refresh per logical milestone is the default;
-- when required CI remains in progress, compact state records `WAITING_EXTERNAL`, exact run/source identity and next action, then the milestone stops;
-- the next user `continue` performs a fresh consolidated refresh;
+- one consolidated status refresh per lane/logical milestone is the default;
+- when required CI remains in progress, compact state records `WAITING_EXTERNAL`, exact run/source identity and next action, then that lane is parked;
+- the Supervisor continues the next dependency-ready conflict-safe authorized lane instead of waiting for another user message;
+- a waiting lane is refreshed again only after useful independent work, a meaningful external transition, or another natural reconciliation boundary;
 - no workflow is rerun merely because a chat/message response timed out.
 
 Security/merge/incident transitions may justify one additional same-milestone refresh when it is necessary for a safe decision; the exception is recorded durably.

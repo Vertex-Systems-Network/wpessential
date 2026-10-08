@@ -64,6 +64,8 @@ Every Supervisor and Worker `start`, `continue`, or `resume` cycle is hard-gated
 
 New feature development must not begin while an accepted actionable Issue or PR/MR path is being bypassed. The only exception is repository-evidenced blocked/superseded work, and that state must be explicit rather than inferred from chat memory.
 
+A lane parked as `WAITING_EXTERNAL`, `BLOCKED_AUTHORIZATION`, or dependency-gated is **not actionable now** if its required CI, privilege, or dependency is unavailable. Checkpoint the exact head/run/gate and next safe action, preserve the affected PR, and continue a separate dependency-ready conflict-free authorized lane without another owner `continue`. Never bypass a mandatory check or claim the parked lane passed. This clarification overrides any interpretation of Issue/PR ordering that would idle the entire workspace merely because one PR's external check has not completed.
+
 An Issue already represented by an open PR/MR is one accepted work path: finish the PR/MR rather than duplicate the Issue on a new branch.
 
 ## Evidence rules

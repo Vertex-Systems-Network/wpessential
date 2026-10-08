@@ -142,15 +142,19 @@ When resuming work:
 
 Never restart completed work without evidence that it is invalid. A missing/delayed chat response is not evidence that repository work failed.
 
-`continue`/`resume` never overrides a pending approval state.
+`continue`/`resume` never overrides a pending approval state for that affected privileged lane. A blocked or approval-gated lane must be parked with evidence; it must not stop unrelated safe, already-authorized work while another dependency-ready lane exists.
 
-### Timeout-resilient turn boundary
+### Continuous timeout-resilient execution boundary
 
-Policy `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001` is mandatory. By default **one user `continue`/`resume` turn = one logical engineering milestone**. Batch related remote reads, do not tight-poll CI/status endpoints, and use at most one consolidated CI/status refresh per milestone unless a documented security/merge/incident transition requires one additional safe-decision refresh.
+Policy `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001` is mandatory. A user instruction to start/continue development activates a **continuous autonomous execution chain** for the current workspace/session. The Supervisor may complete multiple successive logical milestones in the same turn and must keep selecting the next safe authorized milestone instead of waiting for another `continue` message.
 
-If required external CI is still running, write compact state as `WAITING_EXTERNAL` with exact run/source identity and next safe action, then end the milestone. The next `continue` performs one fresh consolidated status check.
+A logical milestone remains the durable checkpoint unit. After each milestone: reconcile exact main/Issue/PR/queue/Runner truth as needed, persist compact state, reconcile the README live progress block when repository truth changed, then immediately continue to the next dependency-ready safe milestone while execution capacity remains.
 
-Before reporting a repository-changing milestone complete/blocked/waiting, durably reconcile the compact state files and any changed queue/Runner Benchmark truth.
+Do not tight-poll CI/status endpoints. Use at most one consolidated CI/status refresh per lane/milestone unless a documented security/merge/incident transition requires one additional safe-decision refresh. If required external CI is still running, persist/retain `WAITING_EXTERNAL` for that lane and **park it**. Continue a conflict-safe independent lane instead of ending the workspace. Revisit the waiting lane only after useful independent work, a meaningful external-state change, or at the next natural reconciliation boundary.
+
+Ordinary errors, test failures, merge conflicts, stale state, blocked dependencies, or implementation questions are not user-confirmation gates when repository evidence, tests, current architecture, or legitimate research can determine a safe answer. The AI repairs/replans autonomously inside active approval. Ask the owner only for a genuinely new privileged/irreversible/legal/product decision that cannot be derived from existing authority, and only when no other safe authorized work can continue.
+
+Before any user-facing completion/blocked/waiting report, durably reconcile compact state files and changed queue/Runner Benchmark truth. A workspace ends only when the requested scope is complete, the current environment/session/tool/token boundary is reached, no safe authorized work remains, or a genuine stop-the-line safety condition applies.
 
 ## Runner Benchmark and final-batch rule
 
@@ -545,15 +549,13 @@ Generated destructive changes require preview/diff/confirmation according to pol
 
 Make reversible, low-risk decisions independently when requirements, approval and architecture are clear.
 
-Do not repeatedly ask questions that repository inspection or legitimate research can answer.
+Do **not** ask the owner to choose a module, approve ordinary reversible fixes, confirm error recovery, repeat `continue`, or select a next action when repository inspection, tests, current plans, conventions, or legitimate research can determine the answer.
 
-Escalate/ask only when:
-- requirements materially conflict;
-- approved scope materially changes;
-- the decision is irreversible/high-risk;
-- security/legal/data-loss behavior is genuinely ambiguous;
-- external credentials/human approval are necessary;
-- privileged production action requires explicit authorization.
+When a lane encounters a blocker:
+1. diagnose and attempt safe repair inside current scope;
+2. if the blocker is external, authorization-gated, or dependency-gated, record exact evidence and park that lane;
+3. continue the highest-priority conflict-safe authorized lane;
+4. escalate only when the unresolved decision is genuinely privileged/irreversible/legal/security-sensitive, requirements materially conflict, or no safe authorized work remains.
 
 When minor behavior is unspecified:
 1. inspect conventions/docs;
@@ -561,7 +563,7 @@ When minor behavior is unspecified:
 3. choose the simplest production-appropriate behavior;
 4. record important assumptions.
 
-Do not invent major product requirements.
+Do not invent major product requirements. Existing production/deployment/destructive/provider authorization boundaries remain fail-closed; continuous execution changes cadence, not privilege.
 
 ## Technical debt
 
@@ -659,6 +661,8 @@ The goal is a secure, maintainable, testable, observable, documented, recoverabl
 
 ## VSN organization next-action handoff
 
-Before every user-facing development handoff, read and follow `.ai/NEXT-ACTION-OPTIONS.md`.
+Read and follow `.ai/NEXT-ACTION-OPTIONS.md` before user-facing development handoff.
+
+When an explicit autonomous development instruction is active, do **not** interrupt execution with numbered next-action choices or require another `continue`. Select the canonical next safe action automatically and keep working until the continuous execution boundary is reached.
 
 If the user sends only this repository's GitHub URL, perform the policy's read-only bootstrap and return shuffled numbered next-action options. A URL-only message never authorizes a repository mutation. A later numeric selection must revalidate live repository state before acting.

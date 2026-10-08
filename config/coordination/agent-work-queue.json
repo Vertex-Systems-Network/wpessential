@@ -1,7 +1,7 @@
 {
   "schema_version": 166,
-  "snapshot_date": "2026-10-05",
-  "queue_anchor_main_sha": "9f3d5922aa5d801aad40d553b6acd0db558865c8",
+  "snapshot_date": "2026-10-08",
+  "queue_anchor_main_sha": "643f1984ad019e134bc75e7f944df5dae50ac177",
   "mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
   "source_issue": "#1325",
   "approval": {
@@ -207,7 +207,10 @@
     "1256": "COMPLETED_ON_PR_1257_BOUNDED_NATIVE_INVENTORY_REMOVE_SEAM_V1",
     "1258": "COMPLETED_ON_PR_1259_BOUNDED_CRON_BACKGROUND_JOB_REFERENCE_V1",
     "1260": "COMPLETED_ON_PR_1261_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
-    "1262": "ACTIVE_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1"
+    "1262": "ACTIVE_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
+    "1325": "COMPLETED_PR_1326_RB0096_TERMINAL_PASS",
+    "1327": "READY_AFTER_GOVERNANCE_INTEGRATION_RB0097",
+    "1328": "ACTIVE_GOVERNANCE_PR_1329_NEEDS_EXACT_HEAD_CI_MERGE"
   },
   "auto_assignment": {
     "enabled": true,
@@ -237,8 +240,12 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open and validate Issue #1262 exact ten-file Forms Action Ability Reference prerequisite PR. Merge only terminal exact-head CI green, zero blockers, zero behind and expected-head protection; do not promote type.form_action execution.",
-    "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them."
+    "next_safe_action": "Reconcile Issue #1328 / PR #1329 governance exact-head CI and merge first; then auto-claim Issue #1327 RB-0097 if still dependency-ready. Do not ask owner for technical next action; park separately authorized lanes.",
+    "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
+    "continuous_authorized_milestones": true,
+    "technical_confirmation_required": false,
+    "blocked_lane_fallback": "PARK_WITH_EVIDENCE_THEN_NEXT_INDEPENDENT_READY",
+    "next_action_options_in_autonomous_mode": false
   },
   "roles": {
     "SUPERVISOR": {
@@ -7033,9 +7040,9 @@
       "slot_id": "dashboard-widgets-preset-assignment-foundation-v1",
       "title": "Dashboard Widgets preset assignment foundation V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "ACTIVE",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
-      "source": "Issue #1325 / PR #1326 fresh-main RB-0096 validation",
+      "source": "Issue #1325 / PR #1326 RB-0096 terminal PASS, main 31724a373e7ad6c278c0a0072f32230dd036e309",
       "dependencies": [
         "RB-0095 terminal PASS",
         "exact fresh source base 9f3d5922aa5d801aad40d553b6acd0db558865c8"
@@ -7060,7 +7067,48 @@
         "deploy/release/GA widening"
       ],
       "claim_branch": "agent/dashboard-preset-assignment-foundation-v1",
-      "close_condition": "Exact #1325 18-file scope; typed preset compiler + Published widget refs + deterministic role-default > network-default resolver + read-only abilities; applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1."
+      "close_condition": "Exact #1325 18-file scope; typed preset compiler + Published widget refs + deterministic role-default > network-default resolver + read-only abilities; applicable exact-head CI PASS; zero behind/review blockers; expected-head merge; promote only PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1.",
+      "terminal_result": "PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1",
+      "terminal_evidence": {
+        "issue": 1325,
+        "pr": 1326,
+        "head": "6f54c797578a9808c5e28cab41f8c1e88642d093",
+        "merge_sha": "31724a373e7ad6c278c0a0072f32230dd036e309",
+        "platform_cells_passed": 10
+      }
+    },
+    {
+      "priority": 1073,
+      "slot_id": "dashboard-widgets-multisite-preset-policy-foundation-v1",
+      "title": "Dashboard Widgets Multisite preset policy foundation V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "OPEN",
+      "work_mode": "DASHBOARD_WIDGETS_MULTISITE_PRESET_POLICY_FOUNDATION_V1",
+      "source": "Issue #1327 / RB-0097",
+      "dependencies": [
+        "RB-0096 terminal PASS",
+        "Issue #1328 governance PR #1329 reconciled",
+        "Fresh-main issue/PR and claim audit before mutation"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Exact 18-file Issue #1327 source/test/README/queue/runner-state allowlist"
+      ],
+      "forbidden_scope": [
+        "native widget order/hide/collapse changes",
+        "copying arbitrary usermeta",
+        "Surface38 placement engine fork",
+        "role/capability creation",
+        "provider/cache/remote/scheduler/import/export runtime",
+        "package/dependency changes",
+        "deployment/release"
+      ],
+      "claim_branch": "agent/dashboard-multisite-preset-policy-foundation-v1",
+      "close_condition": "Only promote PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1 with Issue #1327 exact 18-file allowlist, tests and applicable exact-head CI PASS and protected expected-head merge."
     }
   ],
   "historical_closeout": {
@@ -7230,11 +7278,13 @@
         "pr_open"
       ],
       "turn_b": [
-        "single_consolidated_ci_review_refresh",
-        "required_fixes_only_if_real",
+        "consolidated_ci_review_refresh",
+        "required_fixes_when_real",
         "expected_head_merge",
-        "terminal_resulting_main_verification"
-      ]
+        "resulting_main_verification",
+        "next_safe_milestone_without_owner_continue"
+      ],
+      "after_each_milestone": "RECONCILE_README_AND_STATE_THEN_CONTINUE_SAFE_READY_LANE"
     },
     "separate_contract_pr": "HIGH_RISK_ONLY",
     "high_risk_boundaries": [

@@ -26,22 +26,27 @@ For `start`, `continue`, `resume`, recovery, or a previous message-delivery fail
 
 Compact state is a resume index, not authority to override current repository/runtime evidence.
 
-## One-turn / one-milestone rule
+## Continuous-turn / milestone-checkpoint rule
 
-By default:
+A user instruction to start, continue, or resume development activates a **continuous autonomous execution chain** for the current workspace/session.
 
-**one user `continue` / `resume` turn = one logical engineering milestone.**
+The AI may and should complete multiple successive logical engineering milestones in one turn while safe authorized work remains. A logical milestone is a **durable checkpoint unit**, not a reason to stop and ask for another message.
 
-A logical milestone is a bounded unit such as:
+After each milestone:
+- persist/reconcile compact state and changed queue/Runner truth;
+- reconcile README live progress when repository truth changed;
+- classify the lane as complete, actionable, waiting, blocked, or superseded;
+- immediately continue the highest-priority dependency-ready conflict-safe authorized lane.
 
-- reconcile and close one accepted PR;
-- implement one coherent code/governance change and persist it;
-- perform one exact-head verification/merge decision;
-- reconcile durable shared state after an accepted merge.
+Do not chain unsafe scopes together merely to maximize activity. Each milestone keeps its own allowlist, tests, approval, merge and rollback boundaries.
 
-Do not chain audit → broad implementation → repeated CI polling → merge → post-merge audit → unrelated next task in one turn.
+The overall workspace/turn may end only when:
+- the requested scope is complete;
+- no safe authorized lane remains;
+- a genuine stop-the-line safety condition applies; or
+- the current execution/session/tool/token boundary is reached.
 
-Security/recovery work may contain multiple tightly coupled actions only when splitting them would make the repository less safe. The durable state must still be written at the safe boundary.
+Ordinary errors, failed tests, merge conflicts, stale state, recoverable tool failures, or routine implementation choices are not user-confirmation gates. Diagnose, repair, replan, or park the affected lane autonomously inside existing authority.
 
 ## Remote-operation and CI status budget
 
@@ -63,15 +68,15 @@ AI MUST NOT:
 
 Before the final exact-head CI observation, persist compact state as `VERIFYING` or `WAITING_EXTERNAL` when the milestone is expected to wait on remote checks. This prevents a post-observation state-only commit from invalidating the source head that was just certified.
 
-If required external CI is still running after the milestone's consolidated refresh:
+If required external CI is still running after the lane/milestone's consolidated refresh:
 
 1. do **not** create a new source commit solely to record that CI is still running;
 2. preserve the already-persisted waiting/verifying state;
-3. record exact run IDs in a PR/Issue status surface when available without mutating the source head, or resolve them fresh on resume;
-4. report the pending state;
-5. stop that milestone.
+3. record exact run IDs in a PR/Issue status surface when available without mutating the source head, or resolve them at the next natural reconciliation;
+4. mark that lane `WAITING_EXTERNAL` and park it;
+5. continue the next dependency-ready conflict-safe authorized lane instead of ending the workspace.
 
-The next user `continue` resolves the current PR/branch head and performs one new consolidated refresh. After CI/merge reaches a terminal repository transition, compact state is reconciled in the next safe state-changing milestone.
+Revisit the waiting lane only after useful independent work, a meaningful external state transition, or another natural reconciliation boundary. Never tight-poll merely to consume time.
 
 Exact run/source identity is required whenever it can be recorded without self-invalidating the certified head. The compact file itself must not attempt to embed its own Git commit SHA.
 
@@ -157,7 +162,7 @@ AI MUST NOT:
 - silently reuse consumed grants;
 - repeat an operation just because the previous response was not delivered.
 
-When evidence conflicts, stop the affected action, reconcile repository truth, and persist the conflict in compact state.
+When evidence conflicts, stop the affected action, reconcile repository truth, and persist the conflict in compact state. Continue independent safe authorized work when the conflict does not contaminate those lanes; stop the whole workspace only for a genuine shared safety boundary or when no safe lane remains.
 
 ## Definition of timeout-resilient completion
 

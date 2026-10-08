@@ -1,5 +1,16 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-08 — Issue #1328 / PR #1329 continuous execution governance
+
+- Governance branch base: exact main `31724a373e7ad6c278c0a0072f32230dd036e309`.
+- RB-0096 / Issue #1325 / PR #1326 is terminal PASS and merged at that main.
+- Owner cadence: one start/continue/resume instruction chains successive safe authorized milestones; logical milestones are checkpoints, not mandatory user-message stops.
+- Ordinary errors/blockers/test failures/merge conflicts/module selection are resolved autonomously when repository evidence can decide safely.
+- `WAITING_EXTERNAL` / authorization-gated / dependency-gated lanes are parked; independent conflict-safe authorized work continues. Tight polling stays forbidden.
+- Privileged production/destructive/provider/legal/credential/deploy/release boundaries remain fail-closed for the affected lane.
+- README live progress reconciliation remains automatic for meaningful Supervisor repository changes; full 56/56 reconciliation remains evidence-triggered.
+- PR #1329 carries the governance change. After integration, re-resolve exact main/queue and automatically continue the highest-priority safe authorized lane; Issue #1327 is currently queued.
+
 ## 2026-10-06 — RB-0095 terminal PASS; RB-0096 preset assignment foundation active
 
 ### Exact current main truth

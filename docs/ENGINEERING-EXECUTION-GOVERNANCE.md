@@ -59,13 +59,14 @@ Policy `GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001` in `docs/AI/TIMEOUT-RESILIENT-EXEC
 
 Default execution boundary:
 
-- one user `continue` / `resume` turn = one logical milestone;
+- one explicit start/continue/resume instruction activates a continuous chain of successive safe authorized logical milestones for the current workspace/session;
+- a logical milestone is a durable checkpoint, not a mandatory user-message stop;
 - related read-only remote calls are batched where supported;
 - tight CI/status polling is forbidden;
-- one consolidated CI/status refresh per milestone is the default;
-- if required CI remains running, persist `WAITING_EXTERNAL` with exact run/source identity and stop the milestone;
-- a later `continue` performs one new consolidated refresh;
-- before reporting completion/blocked/waiting, update compact durable AI state and any changed queue/Runner Benchmark truth.
+- one consolidated CI/status refresh per lane/milestone is the default;
+- if required CI remains running, persist `WAITING_EXTERNAL` with exact run/source identity, park that lane, and continue the next dependency-ready conflict-safe authorized lane;
+- revisit a waiting lane only after useful independent work, a meaningful external transition, or another natural reconciliation boundary;
+- before reporting completion/blocked/waiting, update compact durable AI state, README live progress when repository truth changed, and any changed queue/Runner Benchmark truth.
 
 A second status refresh in the same milestone is exceptional and must be justified by a material security, merge, incident/recovery, or provider state transition required for a safe decision.
 
