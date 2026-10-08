@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-08 — governance #1328/#1329 terminal PASS; RB-0097 next
+
+- Exact verified main: `cd4af50f70386f73cb2c89101de484c941b7d2b4`; PR #1329 head `231311e2cbb2ece9f94e1a6d75201aa32d221650` passed 12/12 exact-head checks and squash merged; Issue #1328 closed.
+- No open PR was found at this reconciliation. Issue #1327 / RB-0097 is the next safe bounded module lane; revalidate live main/issues/PRs/claim before mutation.
+- Standing project source approval covers safe reversible work. Do not ask the owner which task to do next or for routine technical-error/CI-fix confirmation.
+- Separate admin, P-006 authorization and independent Worker evidence tasks (#858, #1102, #947) remain parked or delegated, not reasons to idle Issue #1327.
+- After every merge, reconcile compact state and README live progress from observed main (do not retain a merged PR as active); the latest verified merge is a resume anchor, not an immutable future-main assertion.
+
 ## 2026-10-08 — Issue #1328 / PR #1329 continuous execution governance
 
 - Governance branch base: exact main `31724a373e7ad6c278c0a0072f32230dd036e309`.
