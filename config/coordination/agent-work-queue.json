@@ -1,7 +1,7 @@
 {
   "schema_version": 166,
   "snapshot_date": "2026-10-08",
-  "queue_anchor_main_sha": "643f1984ad019e134bc75e7f944df5dae50ac177",
+  "queue_anchor_main_sha": "cd4af50f70386f73cb2c89101de484c941b7d2b4",
   "mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
   "source_issue": "#1325",
   "approval": {
@@ -209,8 +209,8 @@
     "1260": "COMPLETED_ON_PR_1261_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
     "1262": "ACTIVE_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
     "1325": "COMPLETED_PR_1326_RB0096_TERMINAL_PASS",
-    "1327": "READY_AFTER_GOVERNANCE_INTEGRATION_RB0097",
-    "1328": "ACTIVE_GOVERNANCE_PR_1329_NEEDS_EXACT_HEAD_CI_MERGE"
+    "1327": "OPEN_DEPENDENCY_READY_RB0097_AFTER_PR1329_MERGE",
+    "1328": "CLOSED_COMPLETED_PR_1329_CONTINUOUS_GOVERNANCE_12_OF_12_PASS_MERGED"
   },
   "auto_assignment": {
     "enabled": true,
@@ -240,7 +240,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Reconcile Issue #1328 / PR #1329 governance exact-head CI and merge first; then auto-claim Issue #1327 RB-0097 if still dependency-ready. Do not ask owner for technical next action; park separately authorized lanes.",
+    "next_safe_action": "Resolve exact live main and active claims, then autonomously claim Issue #1327 / RB-0097 read-only Dashboard Multisite policy if still ready; protect exact 18-file allowlist/CI/merge. Do not reopen merged #1329 or request owner technical decisions.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7087,7 +7087,7 @@
       "source": "Issue #1327 / RB-0097",
       "dependencies": [
         "RB-0096 terminal PASS",
-        "Issue #1328 governance PR #1329 reconciled",
+        "Issue #1328 / PR #1329 governance merged cd4af50f70386f73cb2c89101de484c941b7d2b4",
         "Fresh-main issue/PR and claim audit before mutation"
       ],
       "runtime_allowed": true,
@@ -7284,7 +7284,8 @@
         "resulting_main_verification",
         "next_safe_milestone_without_owner_continue"
       ],
-      "after_each_milestone": "RECONCILE_README_AND_STATE_THEN_CONTINUE_SAFE_READY_LANE"
+      "after_each_milestone": "RECONCILE_README_AND_STATE_THEN_CONTINUE_SAFE_READY_LANE",
+      "after_merge": "VERIFY_RESULTING_MAIN_AND_RECONCILE_COMPACT_STATE_AND_README_BEFORE_NEXT_SAFE_LANE"
     },
     "separate_contract_pr": "HIGH_RISK_ONLY",
     "high_risk_boundaries": [

@@ -40,15 +40,15 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 **Autonomous execution operating rule:** Within the recorded source-development grant, AI resolves routine technical errors and proceeds to the next independent safe milestone without asking the owner to debug or reapprove. Privileged/production gates remain enforced. At each meaningful Supervisor integration, refresh the verified milestone progress bars below and the active evidence/next gate; no percentage is promoted without an audited denominator. See [AGENTS.md](AGENTS.md#autonomous-continuity-and-no-repeat-question-policy).
 
 
-- Exact verified main before governance PR #1329 integration: `643f1984ad019e134bc75e7f944df5dae50ac177` (includes merged #1330 continuity rules).
+- Exact verified main after governance PR #1329 integration: `cd4af50f70386f73cb2c89101de484c941b7d2b4` (contains #1330 and #1329 autonomous execution rules).
 - Issue #1325 / PR #1326 / RB-0096 is terminal PASS: Dashboard preset assignment foundation merged after Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture PASS; Browser E2E was path-filter N/A.
-- **AI-Native continuous autonomous execution V1 — `██████████ 100%` policy implementation for Issue #1328 / PR #1329.** A start/continue/resume development instruction now chains successive safe authorized milestones in the same workspace/session; a logical milestone is a durable checkpoint, not a mandatory user-message stop.
+- **AI-Native continuous autonomous execution V1 — `██████████ 100%` governance milestone terminal PASS for Issue #1328 / merged PR #1329 (12/12 exact-head checks PASS).** A start/continue/resume development instruction now chains successive safe authorized milestones in the same workspace/session; a logical milestone is a durable checkpoint, not a mandatory user-message stop.
 - Ordinary blocker/error recovery, test-failure repair, merge-conflict repair, module selection and next-safe-action selection are autonomous inside active approval when repository evidence can determine the answer.
 - `WAITING_EXTERNAL`, authorization-gated, dependency-gated or otherwise non-actionable lanes are parked with evidence while the Supervisor continues the next dependency-ready conflict-safe authorized lane. Tight CI polling remains forbidden.
 - Interactive numbered next-action options are suppressed during active autonomous development; URL-only read-only entry behavior remains unchanged.
 - Privileged production/destructive/provider/legal/credential/deployment/release boundaries remain fail-closed for the affected lane; Issue #1328 changes cadence, not privilege.
 - README progress reconciliation remains mandatory alongside every meaningful Supervisor repository-truth change. The full 56/56 module dashboard remains triggered only by module/public-delivery truth changes or terminal product closeout.
-- Issue #1327 is the current queued Dashboard Multisite preset-policy foundation lane and must be revalidated from live exact main after Issue #1328 integration; autonomous flow continues it without requiring an owner `continue` prompt when it remains safe and dependency-ready.
+- Issue #1327 / RB-0097 is the next dependency-ready Dashboard Multisite preset-policy foundation lane. Autonomously revalidate and claim from live exact main without an owner `continue` or module-choice prompt; #858/#1102/#947 remain separate authorization/admin/Worker lanes.
 
 ## Current lifecycle
 

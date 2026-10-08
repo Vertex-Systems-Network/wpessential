@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 643f1984ad019e134bc75e7f944df5dae50ac177
-observed_main_source: "Main 643f1984ad019e134bc75e7f944df5dae50ac177 includes #1325/#1326 RB-0096 terminal and #1330 merged AI autonomy baseline; governance #1328/#1329 reconciliation underway."
-active_issue: "#1328"
-active_pr: "#1329"
-active_branch: governance/continuous-ai-native-execution-v1
-current_milestone: "AI-Native continuous autonomous execution governance V1 — Issue #1328 / PR #1329"
-milestone_status: ACTIVE
-last_completed_milestone: "Issue #1325 / PR #1326 RB-0096 terminal PASS; exact head 6f54c797578a9808c5e28cab41f8c1e88642d093; Governance/PHP/Distributable/Platform 10/10/Architecture PASS; Browser path-filter N/A; zero behind/review blockers; squash merged as 31724a373e7ad6c278c0a0072f32230dd036e309; verdict PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1."
-next_safe_action: "Complete Issue #1328 governance delivery, then automatically continue the highest-priority safe authorized product lane without an owner continuation prompt; #1327 is currently queued."
-waiting_external: "PR #1329 governance checks/merge gate if still pending; if waiting, park this lane and continue any independent safe authorized work. Future WAITING_EXTERNAL lanes follow the same rule."
+observed_main_sha: cd4af50f70386f73cb2c89101de484c941b7d2b4
+observed_main_source: "Issue #1328 / PR #1329 continuous AI-Native governance exact-head 12/12 PASS and merged; main cd4af50f70386f73cb2c89101de484c941b7d2b4 verified; Issue #1328 closed."
+active_issue: "#1327"
+active_pr: null
+active_branch: null
+current_milestone: "RB-0097 / Issue #1327 Dashboard Widgets Multisite preset policy foundation V1 — ready for automatic claim"
+milestone_status: READY
+last_completed_milestone: "Issue #1328 / PR #1329 continuous autonomous AI-Native governance V1; exact head 231311e2cbb2ece9f94e1a6d75201aa32d221650, 12/12 required exact-head checks PASS, squash merge cd4af50f70386f73cb2c89101de484c941b7d2b4, issue closed. No extra development approval needed for the next safe source lane."
+next_safe_action: "Reconcile exact live main/issues/PRs/claim queue, then autonomously claim and implement Issue #1327 / RB-0097 within exact 18-file accepted scope if still dependency-ready. No user selection or technical confirmation needed."
+waiting_external: "None for PR #1329 (merged with 12/12 PASS); preserve independent authorization-gated lanes as parked without blocking Issue #1327."
 next_planned_slot:
   issue: "#1327"
   slot_id: dashboard-widgets-multisite-preset-policy-foundation-v1
   claim_branch: "resolve from live queue/issue before claim"
-  claim_rule: "After #1328 governance merge, re-resolve exact main/queue and continue #1327 only if still highest-priority dependency-ready safe work."
+  claim_rule: "Re-read Issue #1327 and latest main/claim branch; implement safe read-only Multisite policy within its exact file allowlist and protected exact-head CI gates."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -126,7 +126,7 @@ recovery_order:
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
   - "Issue #1325 / PR #1326 is terminal PASS through RB-0096; preset assignment foundation merged as 31724a373e7ad6c278c0a0072f32230dd036e309."
-  - "Issue #1328 records the owner-requested continuous AI-Native execution cadence: no repeated continue/confirmation for ordinary safe work."
+  - "Issue #1328 / PR #1329 merged on cd4af50f70386f73cb2c89101de484c941b7d2b4 after 12/12 PASS; continuous cadence applies to subsequent safe milestones."
   - "WAITING_EXTERNAL, authorization-gated, dependency-gated, or otherwise non-actionable lanes are parked; independent safe authorized work continues."
   - "README Current AI-Native Development Progress remains mandatory alongside meaningful Supervisor repository truth changes."
   - "Issue #1327 is the current queued Dashboard Multisite preset-policy foundation lane and must be revalidated live after governance integration."
