@@ -18,7 +18,7 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 | M4 | Commercial package + entitlement baseline | `██████████ 100%` | TERMINAL for bounded baseline | 2 Free / 1 Platform Core / 53 Pro; physical Free/Pro boundary; edition metadata; local entitlement domain |
 | M5 | RC1 7-Day Core Stabilization | `██████████ 100%` | TERMINAL / NON-GA | Lane A/B/C + Supervisor closeout merged; no GA/full-parity claim |
 | M6 | Surface 7 — Custom Tables | `█████████░ 90%` | ACTIVE / SAFE-PAUSED | Managed-table execution remains blocked pending explicit trust-activation audit |
-| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET + LIFECYCLE + REFRESH PASS / RB-0096 PRESETS | RB-0095 manual refresh/loading terminal PASS; #1325/#1326 preset assignment foundation validation active |
+| M7 | Surface 10 — Dashboard Widgets | P0_NATIVE `12/12 = 100%`; P0/P1 parity ACTIVE | ACTION + ASSET + DIAGNOSTICS + DISMISS/RESET + LIFECYCLE + REFRESH + RB-0096 PRESETS PASS | RB-0096 preset assignment terminal PASS; RB-0097 / Issue #1327 Multisite policy next |
 | M8 | P-006 executable evidence | `57 / 144 = 39.6%` executed | ACTIVE / PARTIAL | 57 PASS, 0 FAIL, 0 INCONCLUSIVE; 0 certified Free/Pro pairs and 0 runtime certifications |
 | M9 | Full 56-surface runtime/product parity | No canonical percentage promoted | NOT PROMOTED | Multiple surfaces remain bounded, read-only, partial or planning-only |
 | M10 | Production deployment / GA / release authority | `0 terminal release milestones` | NOT STARTED / NOT AUTHORIZED | Permanent P-001/CF, updater/TUF, deployment, release authority and ADR-0010 promotion remain unpromoted |
@@ -37,7 +37,10 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
-- Exact main at the continuous-execution governance branch base: `31724a373e7ad6c278c0a0072f32230dd036e309`.
+**Autonomous execution operating rule:** Within the recorded source-development grant, AI resolves routine technical errors and proceeds to the next independent safe milestone without asking the owner to debug or reapprove. Privileged/production gates remain enforced. At each meaningful Supervisor integration, refresh the verified milestone progress bars below and the active evidence/next gate; no percentage is promoted without an audited denominator. See [AGENTS.md](AGENTS.md#autonomous-continuity-and-no-repeat-question-policy).
+
+
+- Exact verified main before governance PR #1329 integration: `643f1984ad019e134bc75e7f944df5dae50ac177` (includes merged #1330 continuity rules).
 - Issue #1325 / PR #1326 / RB-0096 is terminal PASS: Dashboard preset assignment foundation merged after Governance, PHP Quality, Distributable, Platform Compatibility 10/10 and Architecture PASS; Browser E2E was path-filter N/A.
 - **AI-Native continuous autonomous execution V1 — `██████████ 100%` policy implementation for Issue #1328 / PR #1329.** A start/continue/resume development instruction now chains successive safe authorized milestones in the same workspace/session; a logical milestone is a durable checkpoint, not a mandatory user-message stop.
 - Ordinary blocker/error recovery, test-failure repair, merge-conflict repair, module selection and next-safe-action selection are autonomous inside active approval when repository evidence can determine the answer.

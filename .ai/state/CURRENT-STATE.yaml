@@ -2,8 +2,8 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 31724a373e7ad6c278c0a0072f32230dd036e309
-observed_main_source: "Issue #1325 / PR #1326 RB-0096 preset assignment foundation merged terminal PASS; governance Issue #1328 branches from this exact main"
+observed_main_sha: 643f1984ad019e134bc75e7f944df5dae50ac177
+observed_main_source: "Main 643f1984ad019e134bc75e7f944df5dae50ac177 includes #1325/#1326 RB-0096 terminal and #1330 merged AI autonomy baseline; governance #1328/#1329 reconciliation underway."
 active_issue: "#1328"
 active_pr: "#1329"
 active_branch: governance/continuous-ai-native-execution-v1

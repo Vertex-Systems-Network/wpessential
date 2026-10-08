@@ -29,6 +29,20 @@ Before meaningful engineering work read/apply as relevant:
 
 These files complement existing architecture/module/security ADRs; they do not replace them.
 
+## Autonomous continuity and no-repeat-question policy
+
+For an already authorized engineering scope, the default is **act, verify, recover, and continue** rather than asking a nontechnical owner how to fix implementation details. The agent owns technical diagnosis, code changes, tests, lint, CI failure triage, conflict resolution, documentation, and safe reversible repair.
+
+- Do not request repeated owner confirmation for ordinary reversible changes covered by `GOV-OWNER-CONSENT-001`. Treat "continue" as authorization to continue *within that existing scope*, never as a new privileged grant.
+- On a tool error, failed test, stale branch, conflict, broken dependency, unavailable runner, or rejected PR: diagnose from evidence; retry with bounded backoff only when safe; implement a corrective patch; validate again; and select the next independent, dependency-ready safe issue when the affected lane is truly blocked. Never turn a technical problem into a request for the owner to debug it.
+- When a gate requires credentials, external approval, privileged production/deployment authorization, or a genuine product/legal decision, **do not bypass it**. Record the exact gate and evidence in compact state and continue other authorized independent work. Ask only the specific unavoidable decision when no safe work remains.
+- Avoid needless stop points between milestones inside an active execution session: after successful integration, re-read current main/issues/PRs/queue and immediately pick the next safe ready milestone while runtime and context allow. The one-milestone-per-turn rule is a resource-saving *default*, not a mandatory stopping condition when the owner expressly requests a continuous batch.
+- Never claim execution can persist after a chat/tool session ends, evade context/token limits, ignore CI/branch protection, or autonomously resume without an actual scheduled/hosted runner. Before any forced boundary, persist the next actionable step and exact evidence for seamless restart.
+- Every meaningful Supervisor integration must update README's live progress section **in the same branch/integration cycle**, recording verified milestone progress bars where a defined denominator exists, the exact observed main/PR evidence, completed/active/blocked gates, and the next safe action. Update the full 56-module table only when its evidence changes or the existing closeout policy requires it. Never infer a percentage from elapsed time, code size, or number of commits.
+- Avoid questions such as "which module next?", "should I fix this error?", "shall I rerun tests?", "may I repair this CI failure?", or "may I update README?" when the work is covered by the recorded grant. Make the decision from repository policy and verified evidence instead.
+
+This continuity policy does not supersede security, scoped change allowlists, approval ledger, privacy, production-data safety, review, or required CI gates.
+
 ## Default lifecycle
 
 For every meaningful task:
