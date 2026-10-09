@@ -1,11 +1,11 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0109 atomic Definition create-only foundation staged
+## 2026-10-09 — RB-0109 atomic create-only PASS; RB-0110 real MySQL fixture staged
 
-- Audited main `b37518cc693b071309cc74c588164243619fe1c8`, zero open PRs, RB-0107 / RB-0108 exact-head source and real WordPress CI terminal PASS; #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked.
-- Issue #1369 branch `agent/definition-create-only-atomic-v1`: separate opt-in create-only Definition repository contract, persistent direct INSERT without pre-find/update, revision-one and checksum guards, in-memory matching id/type+slug unique enforcement and focused regression tests.
-- Preserves original `save()` and does not register any public import Ability or apply WordPress native Dashboard preference updates. Real DB schema already defines scoped unique id and type+slug.
-- Exact 11-file issue scope, path-applicable CI and protected merge PENDING. Full preset import, cache/provider, production and GA remain unpromoted.
+- RB-0109 Issue #1369 / PR #1370 exact head `de35551c8f6a1bad57ec12b6227d5ff9b203153f`: **36/36** path-applicable CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform and core WP modules; 11/11 authorized paths, zero behind/reviews; protected merged `d3f2f130643d0f373724c123afd1769891016499`.
+- The new opt-in create-only repository contract uses transactional insert with scoped physical id and type+slug uniqueness, without reads/upsert/update; no public importer or WordPress preferences writes.
+- RB-0110 Issue #1371 branch `agent/definition-create-only-real-mysql-v1` extends disposable real MySQL persistence fixture for collision/revision/checksum/site/network isolation. Exact six-file scope; real-MySQL CI and protected merge PENDING.
+- No import/provider/cache/production/GA. Park #858 admin, #1102 separately authorized P-006, #947 independent Worker.
 
 
 ## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
@@ -36,14 +36,6 @@
 - Only `PASS_DASHBOARD_PRESET_PORTABILITY_REAL_WORDPRESS_READ_V1` promoted; no complete portability import/round-trip, cryptographic signing, usermeta writes, provider, cache, production or GA.
 - Issue #1349 records real post-merge README/AI state/queue benchmark pending-to-PASS divergence; exact 5 shared-truth files and 2 path-applicable CI gates only. Fresh main/Issues/PRs and queue must be re-audited after protected merge.
 - #858 admin, #1102 privileged P-006, #947 independent Worker parked; independent safe source work remains eligible.
-
-
-## 2026-10-09 — RB-0101 PASS, RB-0102 pinned real WP fixture staged
-
-- Issue #1345 / PR #1346 RB-0101 exact head `4970298a680c860e2d304c3eae9375ee45ba1a8b`: **14/14 applicable exact-head CI PASS** (Governance, PHP Quality, Distributable, Architecture, Platform 10/10). Exact 11 authorized paths, zero behind/review blockers; protected squash merged `4e3e1acc48600c03e918c3e3d0e8a37b2af5d5c1`.
-- Promoted bounded `PASS_DASHBOARD_PRESET_PORTABILITY_READ_ONLY_SNAPSHOT_V1`: deterministic Published Surface10 preset V1 payload with non-authenticating SHA256 fingerprint and read-only Policy-gated ability, no import or native user preference layout mutation.
-- Issue #1347 / RB-0102 branch `agent/dashboard-preset-portability-real-wordpress-v1` extends the pinned disposable two-site WordPress 7.1/PHP8.2/MySQL8.4 fixture with repeatable cross-site snapshots, Draft/foreign/wrong-type handling, digest changes and native WordPress user/blog/preferences preservation.
-- Exact six-file scope; CI and expected-head merge **not yet verified**. No product runtime/workflow modifications; #858 admin, #1102 P-006 authorization and #947 independent Worker parked.
 
 
 ## 2026-10-09 — RB-0100 PASS; post-merge README/shared truth closeout

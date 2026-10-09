@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "b37518cc693b071309cc74c588164243619fe1c8",
+  "anchor_main_sha": "d3f2f130643d0f373724c123afd1769891016499",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3479,7 +3479,7 @@
     },
     {
       "id": "RB-0109",
-      "source": "Issue #1369 / implementation PR pending",
+      "source": "Issue #1369 / merged PR #1370",
       "category": "ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "PHPCS/PHPStan/PHPUnit; Governance; Architecture; Distributable; 10-cell Platform Compatibility all path-applicable exact-head CI",
@@ -3494,15 +3494,40 @@
       "expected_minutes": 20,
       "dedup_key": "platform|atomic-definition-create-only|issue1369|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Atomic revision-one insert-only repository API and direct gateway insert, InMemory slug/ID uniqueness, regression suite staged",
-        "All exact-head CI and merge PENDING"
+        "All exact-head CI and merge PENDING",
+        "PR #1370 exact head de35551c8f6a1bad57ec12b6227d5ff9b203153f passed 36/36 path-applicable checks, 11 authorized files, zero behind/reviews, protected merged d3f2f130643d0f373724c123afd1769891016499"
       ],
-      "note": "No terminal PASS before full exact-head CI and protected merge; actual preset importer/full parity/GA not promoted."
+      "note": "Bounded terminal PASS_ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1; no public importer or full parity/GA."
+    },
+    {
+      "id": "RB-0110",
+      "source": "Issue #1371 / real MySQL PR pending",
+      "category": "ATOMIC_DEFINITION_CREATE_ONLY_REAL_MYSQL_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Disposable real MySQL 8.4 Definition/Audit persistence integration fixture plus Governance/Architecture/Platform and all applicable exact-head CI",
+      "environment": "agent/definition-create-only-real-mysql-v1 on main d3f2f130643d0f373724c123afd1769891016499",
+      "dependencies": [
+        "RB-0109 terminal PASS",
+        "main d3f2f130643d0f373724c123afd1769891016499"
+      ],
+      "authorization": "Issue #1371 exact six-file real MySQL fixture + 5 shared-truth files, no product runtime/import/prefs/deployment",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "platform|definition-create-only-real-mysql|issue1371|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Real disposable MySQL integration fixture staged with duplicate id/slug, revision/checksum rejection, unchanged original records, independent site/network insert isolation",
+        "CI and protected merge pending"
+      ],
+      "note": "Only bounded real MySQL persistence integration PASS when exact-head fixture and all applicable CI accepted."
     }
   ],
-  "last_reconciled_issue": "#1369",
+  "last_reconciled_issue": "#1371",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
