@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "4e3e1acc48600c03e918c3e3d0e8a37b2af5d5c1",
+  "anchor_main_sha": "939605b1d7567966e1a95763b76e2c35500e5c43",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3303,7 +3303,7 @@
     },
     {
       "id": "RB-0102",
-      "source": "Issue #1347 / PR pending",
+      "source": "Issue #1347 / merged PR #1348",
       "category": "DASHBOARD_PRESET_PORTABILITY_REAL_WORDPRESS_READ_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Pinned two-site WP 7.1/PHP 8.2/MySQL 8.4 Multisite Runtime Isolation plus Governance, Architecture and path-applicable Platform Compatibility",
@@ -3318,15 +3318,16 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|portability-real-wordpress|issue1347|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Added WP two-site portability snapshot deterministic, invalid reference, fingerprint and nonmutation fixture asserts",
-        "No product source or workflow changes; exact-head CI still PENDING"
+        "No product source or workflow changes; exact-head CI still PENDING",
+        "Exact head 6410be52dc80aaec01c7b84849272b7ef60cedf0 passed 13/13 checks including real pinned two-site WP 7.1/PHP 8.2/MySQL 8.4 isolation and Platform 10/10, exact 6 paths, zero behind/reviews, merged 939605b1d7567966e1a95763b76e2c35500e5c43"
       ],
-      "note": "No terminal PASS until real Multisite runtime CI, all applicable gates and protected expected-head merge."
+      "note": "Terminal PASS_DASHBOARD_PRESET_PORTABILITY_REAL_WORDPRESS_READ_V1; no importer, native WordPress preferences, provider, cache or GA."
     }
   ],
-  "last_reconciled_issue": "#1347",
+  "last_reconciled_issue": "#1349",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
