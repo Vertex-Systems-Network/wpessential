@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7",
+  "anchor_main_sha": "595f6114e0954736e343255e1cb5766f336d6473",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3353,7 +3353,7 @@
     },
     {
       "id": "RB-0104",
-      "source": "Issue #1353 / integration PR pending",
+      "source": "Issue #1353 / merged PR #1354",
       "category": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Pinned real WordPress 7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation + applicable Governance, Architecture, Platform Compatibility",
@@ -3368,15 +3368,17 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|freshness-real-wordpress|issue1353|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Pinned real WP two-site fixture extended with match/stale/unavailable/invalid catalog and no WordPress preferences mutation",
-        "Exact-head CI not yet verified"
+        "Exact-head CI not yet verified",
+        "Initial PR #1354 real WP fixture failed from strtoupper numeric-only UUID; replaced with letter-bearing uppercase UUID and reran exact-head checks.",
+        "Corrected PR exact head 9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e passed 13/13 checks incl. real two-site WordPress/Platform 10/10/Governance/Architecture, 6 allowed files, 0 behind/reviews, protected merged 595f6114e0954736e343255e1cb5766f336d6473"
       ],
-      "note": "Do not promote PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1 until accepted CI+merge."
+      "note": "Terminal PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1 only; no complete parity, import or GA."
     }
   ],
-  "last_reconciled_issue": "#1353",
+  "last_reconciled_issue": "#1355",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
