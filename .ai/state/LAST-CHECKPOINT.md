@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-10 — RB-0122 Published widget fingerprint drift safety in progress
+
+- Exact main `c3c05cfe32682754562d46c5b223a8405fce80d8`, PR #1402 accepted Governance/Architecture 2/2 CI PASS (5 files/zero behind/reviews), merged and closed Issue #1401; RB-0121 terminal source 14/14 PASS.
+- RB-0122 Issue #1403 branch `agent/dashboard-draft-postcreate-widget-fingerprint-v1` adds strict pre-/post-atomic-create Published widget identity/schema/revision/slug/dependencies and canonical content checksum comparison. A concurrent Published revision or content edit cannot produce false `created_draft`; non-Published and precreate-read failures reject safely. Internal Draft-only, no rollback/retry, native WP prefs, public route/provider/GA.
+- Source/unit race tests staged under exact 7-file Issue #1403 allowlist; PHP Quality, Architecture, Distributable, Governance and Platform 10-cell exact-head CI PENDING. External #858 admin, #1102 P-006 privilege, #947 Worker parked.
+
+
 ## 2026-10-09 — RB-0121 terminal PASS; ready next safe source
 
 - RB-0121 Issue #1399 / PR #1400 exact head `f48132cc007b201ecf3f701a827d08d41c5c6aef`: **14/14** path-applicable CI PASS incl. PHP Quality, Distributable, Governance, Architecture and 10-cell Platform; exactly 7 authorized paths, zero behind/reviews, protected merged `5f17579908d15db504ac495565cfd3b297fa63be`; issue closed.
@@ -64,15 +71,6 @@
 - Protected squash merge `c171acebf90ef90def07363ad26c9af52b3f3973`; exact 6-file authorized scope; zero behind and unresolved review threads; Issue #1341 closed.
 - Promote only `PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1`. No native WordPress order/hide/collapse mutation, auto-preset application, full Surface 10 parity, production or GA.
 - Issue #1343 post-merge shared-truth discrepancy reconciliation has five documentation/coordination files only. After protected merge, use fresh main/Issues/PR/queue to select next authorized product work. Park #858/#1102/#947.
-
-
-## 2026-10-09 — RB-0099 scoped subsite preset override V1 in progress
-
-- Source baseline verified main `10c493cc970473187dd0b9b1a1a94bfe34cb43d3`: Issue #1337 / PR #1338 is terminal PASS 2/2 required checks with post-RB-0098 README truth reconciliation.
-- Issue #1339 / RB-0099 claims branch `agent/dashboard-multisite-subsite-override-v1` for read-only explicit network/site/policy-bound subsite preset override selection; non-network, unassigned Published presets only; network inheritance fallback, invalid/conflict fail closed.
-- Scope fixed 15 paths (5 new source/three new focused tests/two module files/five README/AI-state/queue/benchmark files); no WordPress layout mutation, role/capability creation, database migration, provider/deploy or production.
-- Source and unit tests committed; exact-head CI and protected expected-head merge **pending**, not terminal PASS. Continue CI remediation autonomously without requesting technical decisions.
-- P-006 #1102, admin #858 and Worker-only #947 stay parked independently.
 
 
 ## 2026-10-09 — RB-0098 PASS; post-merge evidence terminal
