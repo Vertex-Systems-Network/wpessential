@@ -1,19 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0105 PASS, RB-0106 real WordPress preflight fixture staged
+## 2026-10-09 — RB-0106 read-only import preflight real WordPress PASS
 
-- RB-0105 Issue #1357 / PR #1358 exact head `51763aa8c97a69d7c738c2af344b758ae5026700`, **14/14** exact-head CI PASS incl. PHP Quality, Distributable, Governance, Architecture, 10-cell Platform matrix; exactly 11 files, zero behind/reviews; protected merged `6e6e9811eaf7f27411400474b4bb794ac18bec12`.
-- Promoted only `PASS_DASHBOARD_PRESET_IMPORT_PREFLIGHT_READ_ONLY_V1`: bounded V1 envelope/Published references/integrity/conflict assessment with every `applicable=false`, no importer, provider, cache or native WordPress layout mutation.
-- RB-0106 Issue #1359 `agent/dashboard-import-preflight-real-wordpress-v1` extends pinned two-site WP 7.1/PHP8.2/MySQL8.4 fixture to test valid-candidate vs conflict, integrity mismatch, missing/wrong-type widget references, non-canonical inputs and unchanged blog/user/network/native preferences plus no persisted candidate.
-- Exact 6-file test/README/shared truth scope, real WP CI and protected merge PENDING. External #858 admin, #1102 P-006 and #947 independent Worker parked.
-
-
-## 2026-10-09 — RB-0105 read-only preset import preflight V1 staged
-
-- Verified current main `1b6fd40f6f920120dca0352364ec9d23c16a2a1f`; Issue #1355 / PR #1356 RB-0104 postmerge terminal README/benchmark reconciliation passed 2/2 Governance/Architecture checks, exact 5 files, zero behind/reviews and merged; issue closed.
-- RB-0105 Issue #1357 source branch `agent/dashboard-preset-import-preflight-read-v1`: bounded deterministic V1 Published Dashboard preset snapshot preflight validates format/version/canonical payload/revision, published widget references, SHA-256 non-authenticating integrity, id conflict, typed role assignment and no mutation.
-- Returns `valid_candidate`, `id_conflict`, `integrity_mismatch` or `invalid_snapshot`, always `applicable=false`; no importer, native WordPress dashboard/user preferences, trust, provider/cache/deployment or GA.
-- Dedicated PHPUnit source/handler/module regressions staged, 11 authorized files, exact-head CI PENDING. Park external #858 admin, #1102 P-006 and #947 independent Worker.
+- RB-0106 Issue #1359 / PR #1360 exact head `1cdb9d222b1442650fab7563b6e3aeaf14154ed0`: **13/13** path-applicable CI PASS including pinned real two-site WordPress Multisite, Governance, Architecture and Platform 10/10; 6 authorized files, no behind/review blockers, protected merged `151c70cbffa8346e10dae552d4debe2a4985540f`; issue closed.
+- Bounded `PASS_DASHBOARD_PRESET_IMPORT_PREFLIGHT_REAL_WORDPRESS_V1`; all preflight states `applicable=false`, no importer/native WordPress preferences/provider/cache/deployment/GA.
+- Issue #1361 terminal README/shared-truth status reconciliation; external #858 admin, #1102 P-006 and #947 Worker lanes parked.
 
 
 ## 2026-10-09 — RB-0104 real WordPress fingerprint freshness PASS, terminal reconciliation
