@@ -59,6 +59,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_PRESET_PORTABILITY = 'module.dashboard-widgets.preset-portability';
     public const SERVICE_PRESET_PORTABILITY_FRESHNESS = 'module.dashboard-widgets.preset-portability-freshness';
     public const SERVICE_PRESET_IMPORT_PREFLIGHT = 'module.dashboard-widgets.preset-import-preflight';
+    public const SERVICE_PRESET_MAPPING_PREVIEW = 'module.dashboard-widgets.preset-mapping-preview';
     public const SERVICE_MULTISITE_POLICY_COMPILER = 'module.dashboard-widgets.multisite-policy-compiler';
     public const SERVICE_MULTISITE_POLICY_RESOLVER = 'module.dashboard-widgets.multisite-policy-resolver';
     public const SERVICE_MULTISITE_POLICY_READ = 'module.dashboard-widgets.multisite-policy-read';
@@ -92,6 +93,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const ABILITY_PRESET_PORTABILITY = 'wpessential/dashboard-widgets/preset-portability-snapshot';
     public const ABILITY_PRESET_PORTABILITY_FRESHNESS = 'wpessential/dashboard-widgets/preset-portability-freshness';
     public const ABILITY_PRESET_IMPORT_PREFLIGHT = 'wpessential/dashboard-widgets/preset-import-preflight';
+    public const ABILITY_PRESET_MAPPING_PREVIEW = 'wpessential/dashboard-widgets/preset-portability-mapping-preview';
     public const ABILITY_PRESET_CATALOG = 'wpessential/dashboard-widgets/preset-catalog';
     public const ABILITY_EFFECTIVE_PRESET = 'wpessential/dashboard-widgets/effective-preset';
     public const ABILITY_MULTISITE_POLICY_GET = 'wpessential/dashboard-widgets/multisite-policy-get';
@@ -263,6 +265,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $presetPortability = new DashboardWidgetPresetPortabilityReadService($presetRead);
         $presetPortabilityFreshness = new DashboardWidgetPresetPortabilityFreshnessService($presetPortability);
         $presetImportPreflight = new DashboardWidgetPresetImportPreflightService($definitions, $presetCompiler);
+        $presetMappingPreview = new DashboardWidgetPresetPortabilityMappingPreviewService($presetImportPreflight);
         $multisitePolicyCompiler = new DashboardWidgetMultisitePolicyCompiler($definitions, $presetCompiler);
         $multisitePolicyResolver = new DashboardWidgetMultisitePolicyResolver(
             $definitions,
@@ -423,6 +426,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_PRESET_PORTABILITY, $presetPortability);
         $services->set(self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $presetPortabilityFreshness);
         $services->set(self::SERVICE_PRESET_IMPORT_PREFLIGHT, $presetImportPreflight);
+        $services->set(self::SERVICE_PRESET_MAPPING_PREVIEW, $presetMappingPreview);
         $services->set(self::SERVICE_MULTISITE_POLICY_COMPILER, $multisitePolicyCompiler);
         $services->set(self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisitePolicyResolver);
         $services->set(self::SERVICE_MULTISITE_POLICY_READ, $multisitePolicyRead);
@@ -583,6 +587,31 @@ final class DashboardWidgetsModule implements ModuleInterface
             new DashboardWidgetPresetImportPreflightAbilityHandler($presetImportPreflight),
             'Read Dashboard preset import compatibility preflight',
             'Checks a bounded portability envelope and Published widget references without importing, writing, signing or applying a preset.',
+        );
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_PRESET_MAPPING_PREVIEW,
+                ownerSurfaceId: DashboardWidgetPresetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['snapshot', 'target_id', 'widget_id_map'],
+                    'properties' => [
+                        'snapshot' => ['type' => 'object'],
+                        'target_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                        'widget_id_map' => ['type' => 'object'],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                outputSchema: ['type' => 'object'],
+            ),
+            new DashboardWidgetPresetPortabilityMappingPreviewAbilityHandler($presetMappingPreview),
+            'Preview Dashboard preset cross-site widget UUID mapping',
+            'Maps validated export UUIDs into a destination candidate and rechecks its Published widgets without importing, trusting, or writing WordPress preferences.',
         );
         $this->registerAbility(
             $abilities,

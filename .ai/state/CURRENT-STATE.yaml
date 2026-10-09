@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 151c70cbffa8346e10dae552d4debe2a4985540f
-observed_main_source: "RB-0106 Issue #1359 / PR #1360 exact head 1cdb9d222b1442650fab7563b6e3aeaf14154ed0 passed 13/13 CI incl. real WordPress Multisite, six authorized files, zero behind/reviews, merged 151c70cbffa8346e10dae552d4debe2a4985540f; issue closed."
-active_issue: "#1361"
+observed_main_sha: f8c3c0c48fc84757f520318242196e973e150c4e
+observed_main_source: "Issue #1361 / PR #1362 RB-0106 terminal read-only preflight shared-truth reconciliation exact head d887da8384549254261fea9091459baa4cf924a1 passed Governance/Architecture 2/2, five files, zero behind/reviews, merged f8c3c0c48fc84757f520318242196e973e150c4e; issue closed."
+active_issue: "#1363"
 active_pr: null
-active_branch: agent/rb0106-import-preflight-terminal-truth-v1
-current_milestone: "RB-0106 terminal real WordPress PASS, Issue #1361 exact 5-file postmerge truth reconciliation; next safe source audit"
-milestone_status: READY
+active_branch: agent/dashboard-preset-portability-mapping-preview-v1
+current_milestone: "RB-0107 / Issue #1363 bounded Dashboard preset cross-site widget UUID mapping preview V1, source/regression tests staged, exact-head CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0106 Issue #1359 / PR #1360 13/13 exact-head CI PASS incl. real pinned WordPress two-site isolation, six allowed paths, zero behind/reviews, merged 151c70cbffa8346e10dae552d4debe2a4985540f; read-only preflight only."
-next_safe_action: "Merge Issue #1361 exact five-file shared-truth PR after path-applicable Governance/Architecture PASS and zero behind/reviews; then fresh audit safe source lane."
+next_safe_action: "Open Issue #1363 exact 11-file source PR; run all path-applicable exact-head CI, repair failures, verify zero behind/reviews, protected expected-head merge; never import/write."
 waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked; no approval required for safe read-only preset preflight."
 next_planned_slot:
-  issue: "#1361"
-  slot_id: rb0106-import-preflight-terminal-truth-v1
-  claim_branch: "agent/rb0106-import-preflight-terminal-truth-v1"
-  claim_rule: "Issue #1361 exact five README/AI state/queue/benchmark files only, no source/tests/workflow/import/deployment changes."
+  issue: "#1363"
+  slot_id: dashboard-preset-portability-mapping-preview-v1
+  claim_branch: "agent/dashboard-preset-portability-mapping-preview-v1"
+  claim_rule: "Issue #1363 strict 11-file read-only mapping service/Ability/module/tests plus README/AI state/queue/benchmark; no actual importer/provider/deployment."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0107
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -166,4 +167,6 @@ notes:
   - "RB-0106 Issue #1359 pinned two-site WordPress Multisite preflight/no-mutation fixture staged, CI pending."
   - "RB-0106 Issue #1359 / PR #1360 real two-site WordPress preflight 13/13 CI PASS, merged 151c70cbffa8346e10dae552d4debe2a4985540f; no importer."
   - "Issue #1361 five-file verified status reconciliation, code unaffected."
+  - "RB-0106 Issue #1361 / PR #1362 exact five-file terminal state merged f8c3c0c48fc84757f520318242196e973e150c4e, 2/2 Governance/Architecture PASS."
+  - "RB-0107 Issue #1363 read-only cross-site widget UUID mapping preview staged, CI pending."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

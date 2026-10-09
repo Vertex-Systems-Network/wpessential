@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0107 cross-site Dashboard preset mapping preview staged
+
+- Current audited main `f8c3c0c48fc84757f520318242196e973e150c4e`: Issue #1361 / PR #1362 RB-0106 terminal README/benchmark reconciliation passed exact-head Governance/Architecture 2/2, five files, zero behind/reviews; issue closed.
+- RB-0107 Issue #1363 branch `agent/dashboard-preset-portability-mapping-preview-v1` stages pure read-only V1 cross-site widget UUID translation; validates original SHA-256 content integrity, complete one-to-one typed mapping, Published target widget catalog, target preset id collision; computes deterministic mapped candidate fingerprint. Source content SHA-256 is **not** a signature or authorization; every result `applicable=false`. No Definition writes or native WordPress Dashboard preference changes.
+- Source/Ability/module regression tests, README and shared AI state/queue/benchmark staged; 11 authorized files; path-applicable CI and protected merge PENDING. Full import, provider/cache, production/GA remain unpromoted; #858/#1102/#947 parked.
+
+
 ## 2026-10-09 — RB-0106 read-only import preflight real WordPress PASS
 
 - RB-0106 Issue #1359 / PR #1360 exact head `1cdb9d222b1442650fab7563b6e3aeaf14154ed0`: **13/13** path-applicable CI PASS including pinned real two-site WordPress Multisite, Governance, Architecture and Platform 10/10; 6 authorized files, no behind/review blockers, protected merged `151c70cbffa8346e10dae552d4debe2a4985540f`; issue closed.
@@ -13,15 +20,6 @@
 - Corrected PR exact head `9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e`: **13/13** path-applicable CI PASS incl. pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation, Governance, Architecture, Platform Compatibility 10/10; exactly 6 allowed paths, 0 behind/reviews; protected merged `595f6114e0954736e343255e1cb5766f336d6473`. Issue #1353 closed.
 - Promote only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1`; no import, signature trust, native WordPress dashboard preferences, provider, cache, full Surface10 product parity, production or GA.
 - Issue #1355 is real 5-file post-merge README/queue/benchmark PENDING-to-PASS evidence reconciliation. Fresh audit after protected merge; #858 admin, #1102 privileged P-006 and #947 independent Worker parked.
-
-
-## 2026-10-09 — RB-0103 Published preset fingerprint freshness V1 staged
-
-- Verified source main `cb35543f49037c78eccd1de37e7c5199f2d3fad6`; RB-0102 terminal shared truth reconciliation Issue #1349 / PR #1350 merged after 2/2 Governance and Architecture checks PASS. The pre-merge compact queue slot was stale and is reconciled below, not a reason to halt safe source work.
-- RB-0103 Issue #1351 claimed branch `agent/dashboard-preset-portability-freshness-v1`: canonical Published Surface-10 preset non-authenticating SHA-256 fingerprint comparison to current deterministic snapshot; read-only, Policy-gated `manage_options`, strictly typed id/sha256.
-- Returns only `{status,current}` with match, stale, unavailable, invalid_catalog. Never exposes present hash, raw payload, user WordPress options, remote URLs or writes/import; no signing or trust claim.
-- Source/handler/module regression tests staged and within exact 11-file allowlist; all path-applicable CI and protected expected-head merge **PENDING** (do not promote PASS).
-- #858 admin, #1102 P-006 separate authorization, #947 independent Worker stay parked; full Surface10 parity/GA and import/cache/provider are unpromoted.
 
 
 ## 2026-10-09 — RB-0102 real WordPress preset snapshot PASS, terminal reconciliation
