@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0101 PASS, RB-0102 pinned real WP fixture staged
+
+- Issue #1345 / PR #1346 RB-0101 exact head `4970298a680c860e2d304c3eae9375ee45ba1a8b`: **14/14 applicable exact-head CI PASS** (Governance, PHP Quality, Distributable, Architecture, Platform 10/10). Exact 11 authorized paths, zero behind/review blockers; protected squash merged `4e3e1acc48600c03e918c3e3d0e8a37b2af5d5c1`.
+- Promoted bounded `PASS_DASHBOARD_PRESET_PORTABILITY_READ_ONLY_SNAPSHOT_V1`: deterministic Published Surface10 preset V1 payload with non-authenticating SHA256 fingerprint and read-only Policy-gated ability, no import or native user preference layout mutation.
+- Issue #1347 / RB-0102 branch `agent/dashboard-preset-portability-real-wordpress-v1` extends the pinned disposable two-site WordPress 7.1/PHP8.2/MySQL8.4 fixture with repeatable cross-site snapshots, Draft/foreign/wrong-type handling, digest changes and native WordPress user/blog/preferences preservation.
+- Exact six-file scope; CI and expected-head merge **not yet verified**. No product runtime/workflow modifications; #858 admin, #1102 P-006 authorization and #947 independent Worker parked.
+
+
 ## 2026-10-09 — RB-0101 read-only preset portability snapshot staged
 
 - Verified exact source main `3978342d3f9b98cc7c62bab8de83a312a2f04810`, Issue #1343 / PR #1344 terminal RB-0100 README progress/queue reconciliation accepted after 2/2 Governance and Architecture CI PASS; zero open PRs before RB-0101.
