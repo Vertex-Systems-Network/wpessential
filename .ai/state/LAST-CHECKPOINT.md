@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0099 terminal; RB-0100 real WP fixture staged
+
+- RB-0099 Issue #1339 / PR #1340 exact head `ed464c5377fd3d35b947219723c7c48e7aec3d2c`: 14/14 path-applicable CI PASS, 15 authorized paths, 0 behind and unresolved review blockers, merged `685cd5986761f995c33f9d01e41ec41141d187eb`; Issue #1339 auto-closed.
+- Promoted bounded `PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1` only: typed network/site/policy-bound unassigned preset, read-only selection and Policy-gated ability. No WordPress native preference layout application or full parity/GA.
+- RB-0100 Issue #1341 deterministic claim `agent/dashboard-subsite-override-real-wordpress-v1`; extends disposable pinned real WordPress two-site Multisite fixture with local precedence, isolation, disabled override, fail-closed conflict/invalid and preference preservation, without product source or workflow changes.
+- Exact 6-file scope; test staged, CI/merge **not yet verified**. Autonomous troubleshooting inside scoped tests, preserve #858 admin, #1102 authorization and #947 independent Worker gates.
+
+
 ## 2026-10-09 — RB-0099 scoped subsite preset override V1 in progress
 
 - Source baseline verified main `10c493cc970473187dd0b9b1a1a94bfe34cb43d3`: Issue #1337 / PR #1338 is terminal PASS 2/2 required checks with post-RB-0098 README truth reconciliation.

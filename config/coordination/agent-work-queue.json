@@ -1,9 +1,9 @@
 {
-  "schema_version": 171,
+  "schema_version": 172,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "10c493cc970473187dd0b9b1a1a94bfe34cb43d3",
-  "mode": "DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1",
-  "source_issue": "#1339",
+  "queue_anchor_main_sha": "685cd5986761f995c33f9d01e41ec41141d187eb",
+  "mode": "DASHBOARD_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1",
+  "source_issue": "#1341",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -214,7 +214,8 @@
     "1333": "CLOSED_COMPLETED_POST_MERGE_RECONCILIATION_PR1334_PASS_2_OF_2",
     "1335": "CLOSED_COMPLETED_RB0098_PR1336_REAL_WORDPRESS_13_OF_13_PASS",
     "1337": "CLOSED_COMPLETED_PR1338_RB0098_TERMINAL_RECONCILIATION_2_OF_2_PASS",
-    "1339": "IN_PROGRESS_RB0099_SCOPED_SUBSITE_OVERRIDE_CI_PENDING"
+    "1339": "CLOSED_COMPLETED_RB0099_PR1340_EXACT_HEAD_14_OF_14_PASS",
+    "1341": "IN_PROGRESS_RB0100_REAL_WORDPRESS_SUBSITE_OVERRIDE_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -244,7 +245,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open #1339 implementation PR, verify 15-file allowlist and required exact-head checks, repair test failures and expected-head merge only after all gates PASS.",
+    "next_safe_action": "Open Issue #1341 RB-0100 PR; execute pinned real WordPress Multisite and applicable exact-head CI, repair failures within exact 6-file scope then verify 0 behind/reviews and expected-head merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7261,7 +7262,7 @@
       "slot_id": "dashboard-multisite-subsite-preset-override-v1",
       "title": "Dashboard Multisite scoped subsite preset override read-only V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1",
       "source": "Issue #1339 / RB-0099",
       "dependencies": [
@@ -7283,7 +7284,47 @@
         "Provider/cache/scheduler/deployment/release"
       ],
       "claim_branch": "agent/dashboard-multisite-subsite-override-v1",
-      "close_condition": "Only PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1 after exact 15-file allowlist, applicable exact-head CI PASS, 0 behind/reviews and expected-head merge."
+      "close_condition": "Only PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1 after exact 15-file allowlist, applicable exact-head CI PASS, 0 behind/reviews and expected-head merge.",
+      "terminal_result": "PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1",
+      "terminal_evidence": {
+        "issue": 1339,
+        "pr": 1340,
+        "head": "ed464c5377fd3d35b947219723c7c48e7aec3d2c",
+        "merge_sha": "685cd5986761f995c33f9d01e41ec41141d187eb",
+        "checks_passed": 14,
+        "platform_cells_passed": 10,
+        "authorized_paths": 15,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1078,
+      "slot_id": "dashboard-subsite-override-real-wordpress-v1",
+      "title": "Dashboard Multisite real WordPress subsite override isolation V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1",
+      "source": "Issue #1341 / RB-0100",
+      "dependencies": [
+        "RB-0099 terminal PASS",
+        "main 685cd5986761f995c33f9d01e41ec41141d187eb"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1341 exact six-file real WordPress integration test/README/state/queue/benchmark allowlist"
+      ],
+      "forbidden_scope": [
+        "Product Dashboard source/WordPress native preferences mutation",
+        "Workflow/Platform/source changes",
+        "Provider/remote/deploy/release"
+      ],
+      "claim_branch": "agent/dashboard-subsite-override-real-wordpress-v1",
+      "close_condition": "Promote only PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1 after exact 6-file scope, real WordPress integration plus path-applicable CI PASS, 0 behind and reviews, protected merge."
     }
   ],
   "historical_closeout": {
