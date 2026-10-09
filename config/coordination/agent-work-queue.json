@@ -1,9 +1,9 @@
 {
-  "schema_version": 168,
+  "schema_version": 169,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "adb7cfa042e733ec59e530601c9cb6152ba1e526",
-  "mode": "RB0097_TERMINAL_RECONCILIATION_V1",
-  "source_issue": "#1333",
+  "queue_anchor_main_sha": "b02a51c9ec7477f448c197b5796e4004881418d9",
+  "mode": "DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1",
+  "source_issue": "#1335",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -211,7 +211,8 @@
     "1325": "COMPLETED_PR_1326_RB0096_TERMINAL_PASS",
     "1327": "CLOSED_COMPLETED_PR1332_RB0097_TERMINAL_14_OF_14_PASS",
     "1328": "CLOSED_COMPLETED_PR_1329_CONTINUOUS_GOVERNANCE_12_OF_12_PASS_MERGED",
-    "1333": "OPEN_REAL_POST_MERGE_RECONCILIATION_APPROVED_5_FILES"
+    "1333": "CLOSED_COMPLETED_POST_MERGE_RECONCILIATION_PR1334_PASS_2_OF_2",
+    "1335": "IN_PROGRESS_RB0098_CLAIMED_REAL_WORDPRESS_FIXTURE_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -241,7 +242,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Complete #1333 bounded 5-file shared-truth PR with exact-head CI and expected-head merge, then select highest-priority freshly authorized source lane.",
+    "next_safe_action": "Open Issue #1335 PR from claimed branch; run real WP Multisite fixture and applicable exact-head checks, fix failures inside seven-file scope, then expected-head merge and resume next safe source lane.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7130,7 +7131,7 @@
       "slot_id": "rb0097-post-merge-truth-reconciliation-v1",
       "title": "RB-0097 terminal post-merge evidence reconciliation",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "AI_NATIVE_POST_MERGE_SHARED_TRUTH_RECONCILIATION",
       "source": "Issue #1333",
       "dependencies": [
@@ -7156,7 +7157,46 @@
         "Any deployment/provider execution"
       ],
       "claim_branch": "agent/rb0097-terminal-truth-reconcile-v1",
-      "close_condition": "Only exact 5-file shared-truth changes, full applicable CI PASS, zero behind/review blockers, expected-head merge"
+      "close_condition": "Only exact 5-file shared-truth changes, full applicable CI PASS, zero behind/review blockers, expected-head merge",
+      "terminal_result": "PASS_RB0097_POST_MERGE_SHARED_TRUTH_RECONCILIATION",
+      "terminal_evidence": {
+        "issue": 1333,
+        "pr": 1334,
+        "merge_sha": "b02a51c9ec7477f448c197b5796e4004881418d9",
+        "checks_passed": 2,
+        "authorized_paths": 5,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1075,
+      "slot_id": "dashboard-multisite-policy-real-wordpress-isolation-v1",
+      "title": "Dashboard Multisite policy real WordPress isolation V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1",
+      "source": "Issue #1335 / RB-0098",
+      "dependencies": [
+        "RB-0097 terminal PASS",
+        "PR #1334 exact source main b02a51c9ec7477f448c197b5796e4004881418d9"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1335 exact seven-file test/workflow/README/shared-truth allowlist"
+      ],
+      "forbidden_scope": [
+        "Product Dashboard widget source changes",
+        "Native WordPress usermeta/placement mutation",
+        "Shared Platform changes",
+        "Provider/deployment or release"
+      ],
+      "claim_branch": "agent/dashboard-multisite-policy-real-wordpress-isolation-v1",
+      "close_condition": "Only promote PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1 after exact seven-file scope, real WordPress Multisite Runtime Isolation and all path-applicable CI PASS, 0 behind/threads, expected-head merge."
     }
   ],
   "historical_closeout": {
