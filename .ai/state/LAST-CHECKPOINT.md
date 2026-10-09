@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-10 — RB-0122 Published widget fingerprint drift safety in progress
+## 2026-10-10 — RB-0122 terminal PASS; RB-0123 real MySQL drift evidence staged
 
-- Exact main `c3c05cfe32682754562d46c5b223a8405fce80d8`, PR #1402 accepted Governance/Architecture 2/2 CI PASS (5 files/zero behind/reviews), merged and closed Issue #1401; RB-0121 terminal source 14/14 PASS.
-- RB-0122 Issue #1403 branch `agent/dashboard-draft-postcreate-widget-fingerprint-v1` adds strict pre-/post-atomic-create Published widget identity/schema/revision/slug/dependencies and canonical content checksum comparison. A concurrent Published revision or content edit cannot produce false `created_draft`; non-Published and precreate-read failures reject safely. Internal Draft-only, no rollback/retry, native WP prefs, public route/provider/GA.
-- Source/unit race tests staged under exact 7-file Issue #1403 allowlist; PHP Quality, Architecture, Distributable, Governance and Platform 10-cell exact-head CI PENDING. External #858 admin, #1102 P-006 privilege, #947 Worker parked.
+- RB-0122 Issue #1403 / PR #1404 exact head `c3ad12b3db465dcfdf826197f9764c14364caff6`, **14/14** CI PASS incl. PHP Quality, Governance, Distributable, Architecture and 10-cell Platform, exactly 7 files, zero behind/reviews, protected merged `517a04f0e8806f092f62947368f293d6005025ad`. Bounded internal Draft importer now snapshots Published widget identity/revision/slug/schema/dependencies and canonical payload fingerprint around atomic create to reject stale success.
+- RB-0123 Issue #1405 branch `agent/dashboard-draft-fingerprint-real-mysql-v1`: real disposable MySQL persistence fixture simulates a separate writer revising Published widget after actual Draft insert; verifies generic `write_failed`, one create, persisted Draft unchanged, other site/network untouched; no claim of rollback/publication.
+- Six allowed fixture and README/AI state/queue/benchmark files, real MySQL CI and protected merge PENDING. Park #858 admin, #1102 gated P-006 and #947 independent Worker; full parity/provider/GA unpromoted.
 
 
 ## 2026-10-09 — RB-0121 terminal PASS; ready next safe source
