@@ -1,11 +1,11 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0109 atomic create-only PASS; RB-0110 real MySQL fixture staged
+## 2026-10-09 — RB-0111 guarded internal Draft-only import staged
 
-- RB-0109 Issue #1369 / PR #1370 exact head `de35551c8f6a1bad57ec12b6227d5ff9b203153f`: **36/36** path-applicable CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform and core WP modules; 11/11 authorized paths, zero behind/reviews; protected merged `d3f2f130643d0f373724c123afd1769891016499`.
-- The new opt-in create-only repository contract uses transactional insert with scoped physical id and type+slug uniqueness, without reads/upsert/update; no public importer or WordPress preferences writes.
-- RB-0110 Issue #1371 branch `agent/definition-create-only-real-mysql-v1` extends disposable real MySQL persistence fixture for collision/revision/checksum/site/network isolation. Exact six-file scope; real-MySQL CI and protected merge PENDING.
-- No import/provider/cache/production/GA. Park #858 admin, #1102 separately authorized P-006, #947 independent Worker.
+- Current verified main `aa69cc1770297a8454fb37442d415d8c386f2d31`: Issue #1371 / PR #1372 real MySQL atomic Definition create-only isolation 12/12 exact-head CI PASS, protected merged, issue closed; RB-0107–0110 accepted on main.
+- RB-0111 Issue #1373 branch `agent/dashboard-preset-draft-import-create-only-v1` uses opt-in `DefinitionCreateOnlyRepositoryInterface::create` exactly once to persist only `DefinitionStatus::Draft`, revision=1, full canonical label/widget order/assignment. Requires authenticated human `Internal` caller, current WordPress site/user identity and `manage_options`, rejects network-default without distinct grant, preflight V1 integrity and Published refs required.
+- No public Ability/REST/UI/AJAX, no native Dashboard preferences or Published preset mutation; checksum non-authenticating; insert conflicts fail closed without write replay.
+- Unit service, collision and module wiring tests staged in Issue #1373 exact 10-file scope; PHP Quality, Governance, Distributable, Architecture, 10-cell Platform checks and protected merge **PENDING**. Production/provider/GA and #858/#1102/#947 parked.
 
 
 ## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
