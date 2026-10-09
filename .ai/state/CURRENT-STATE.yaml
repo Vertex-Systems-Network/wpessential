@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 482c935e1da311737d545736881d2cc35384d2d4
-observed_main_source: "RB-0113 Issue #1377 / PR #1378 exact head e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c passed 12/12 CI including real disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, merged 482c935e1da311737d545736881d2cc35384d2d4; issue closed."
-active_issue: null
+observed_main_sha: b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15
+observed_main_source: "Issue #1379 / PR #1380 terminal RB-0113 real MySQL 12/12 evidence reconciliation passed Governance/Architecture 2/2, five files, 0 behind/reviews, merged b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15; queue READY_NEXT_SAFE_SOURCE."
+active_issue: "#1381"
 active_pr: null
-active_branch: unclaimed
-current_milestone: "RB-0113 Draft-only import real MySQL E2E terminal PASS; READY_NEXT_SAFE_SOURCE for next authorized meaningful source milestone, no further admin slot"
-milestone_status: READY
+active_branch: agent/dashboard-preset-internal-mapped-draft-create-v1
+current_milestone: "RB-0114 / Issue #1381 internal source UUID mapped Dashboard preset Draft-only create-once workflow, tests staged, exact-head CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0113 Issue #1377 / PR #1378 exact-head 12/12 CI PASS incl. real disposable MySQL create-once, 6 allowed files, zero behind/reviews; merged 482c935e1da311737d545736881d2cc35384d2d4; bounded internal Draft only."
-next_safe_action: "Fresh audit of open issues, PRs and verified main; select next dependency-ready authorized meaningful module source milestone. Do not create another documentation-only closeout slot. Park #858 admin, #1102 privilege and #947 independent Worker."
+next_safe_action: "Create RB-0114 Issue #1381 exact eleven-file PR, run all path-applicable CI, autonomously repair failures and protected expected-head merge after zero behind/reviews. No public Ability/import/publish/provider/GA."
 waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
 next_planned_slot:
-  issue: null
-  slot_id: unclaimed
-  claim_branch: unclaimed
-  claim_rule: "Fresh issue-first audit; claim only a new independently safe, explicitly scoped source development milestone; no speculative branch or privileged grant."
+  issue: "#1381"
+  slot_id: dashboard-preset-internal-mapped-draft-create-v1
+  claim_branch: "agent/dashboard-preset-internal-mapped-draft-create-v1"
+  claim_rule: "Issue #1381 exact eleven-file internal mapped Draft importer implementation, unit tests and README/shared truth; no public Ability, native usermeta, provider, production or GA."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0114
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -173,4 +174,6 @@ notes:
   - "RB-0113 Issue #1377 real disposable MySQL Draft import end-to-end scope staged, exact-head CI PENDING."
   - "RB-0113 Issue #1377 / PR #1378 exact-head 12/12 CI PASS, disposable real MySQL create-once Draft import, merged 482c935e1da311737d545736881d2cc35384d2d4; internal only."
   - "RB-0113 postmerge Issue #1379 shared-truth correction uses READY_NEXT_SAFE_SOURCE without recursive administrative queue slot."
+  - "RB-0113 Issue #1379 / PR #1380 2/2 Governance/Architecture PASS terminal reconciliation merged b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15, queue READY_NEXT_SAFE_SOURCE."
+  - "RB-0114 Issue #1381 internal authorized source-to-target mapped Draft-only create-once module and unit tests staged; CI PENDING."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

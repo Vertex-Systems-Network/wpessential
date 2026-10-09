@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0114 internal mapped Draft-only import staged
+
+- Verified `main` `b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15`; Issue #1379 / PR #1380 RB-0113 terminal README/AI truth 2/2 Governance/Architecture PASS, exact five paths, zero behind/reviews, protected merged; no recursive documentation-only queue slot.
+- RB-0114 Issue #1381 internal-only `agent/dashboard-preset-internal-mapped-draft-create-v1`: source snapshot integrity and exact one-to-one target Published Surface-10 UUID mapping -> candidate preview -> *independent repeated* authenticated current WordPress user/blog/network `manage_options` and Internal channel -> atomic `Draft` revision-one create-once. Deny unauthorized before mapping any untrusted snapshot.
+- No public Ability/REST/AJAX/CLI, no automatic publishing, WordPress native Dashboard preference changes, remote provider, production release or GA. Unit tests for mapping/collisions/network defaults/denied callers staged; **exact-head CI PENDING**.
+
+
 ## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY
 
 - RB-0113 Issue #1377 / PR #1378 exact head `e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c`: **12/12** path-applicable exact-head CI PASS including actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `482c935e1da311737d545736881d2cc35384d2d4`, issue closed.

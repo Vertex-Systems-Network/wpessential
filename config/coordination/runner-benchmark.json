@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "482c935e1da311737d545736881d2cc35384d2d4",
+  "anchor_main_sha": "b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3601,9 +3601,33 @@
         "PR #1378 exact head e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c passed 12/12 exact-head CI incl. actual disposable MySQL Definition/Audit persistence + Governance/Architecture/10-cell Platform, 6 files, 0 behind/reviews, protected merged 482c935e1da311737d545736881d2cc35384d2d4"
       ],
       "note": "Terminal bounded PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1, no public import/publish/provider/production/full parity/GA."
+    },
+    {
+      "id": "RB-0114",
+      "source": "Issue #1381 / implementation PR pending",
+      "category": "DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_CREATE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit, Governance, Distributable, Architecture, Platform 10-cell compatibility plus path-applicable checks",
+      "environment": "agent/dashboard-preset-internal-mapped-draft-create-v1 on main b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15",
+      "dependencies": [
+        "RB-0113 terminal PASS",
+        "main b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15"
+      ],
+      "authorization": "Issue #1381 exactly 11-file internal-only, authorized-before-mapping Draft create composition; no public importer or provider",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|internal-mapped-draft-create|issue1381|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Internal only importMappedDraft maps full source UUIDs into verified target catalog; checks WP user/blog/network capability before untrusted mapping and again at Draft create",
+        "Unit tests for mapped ordering, revision-one, id/slug collisions, unauthorized/invalid inputs staged; exact-head CI PENDING"
+      ],
+      "note": "No bounded PASS or full import/GA until all applicable exact-head CI and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1377",
+  "last_reconciled_issue": "#1381",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
