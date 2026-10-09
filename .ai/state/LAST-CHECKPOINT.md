@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0100 PASS; post-merge README/shared truth closeout
+
+- RB-0100 Issue #1341 / PR #1342 exact head `d978030f7aca15fd6193307de840248ceed74398`: **13/13 exact-head CI PASS**, including real pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite isolation, Governance, Architecture and Platform Compatibility 10/10.
+- Protected squash merge `c171acebf90ef90def07363ad26c9af52b3f3973`; exact 6-file authorized scope; zero behind and unresolved review threads; Issue #1341 closed.
+- Promote only `PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1`. No native WordPress order/hide/collapse mutation, auto-preset application, full Surface 10 parity, production or GA.
+- Issue #1343 post-merge shared-truth discrepancy reconciliation has five documentation/coordination files only. After protected merge, use fresh main/Issues/PR/queue to select next authorized product work. Park #858/#1102/#947.
+
+
 ## 2026-10-09 — RB-0099 terminal; RB-0100 real WP fixture staged
 
 - RB-0099 Issue #1339 / PR #1340 exact head `ed464c5377fd3d35b947219723c7c48e7aec3d2c`: 14/14 path-applicable CI PASS, 15 authorized paths, 0 behind and unresolved review blockers, merged `685cd5986761f995c33f9d01e41ec41141d187eb`; Issue #1339 auto-closed.
