@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0115 real WordPress mapped Draft PASS, RB-0116 MySQL staged
+## 2026-10-09 — RB-0116 real MySQL mapped Draft terminal PASS, next safe source READY
 
-- RB-0115 Issue #1383 / PR #1384 exact head `232d6be73013b3faa2d62a1602211ebc54c35da6`: **13/13** path-applicable CI PASS including actual pinned two-site WordPress identity/permission checks, Governance, Architecture and 10-cell Platform; 6 authorized files, zero behind/reviews, protected merged `96bc0d7992fe787a3234c9e6084e6e0d75504f7a`.
-- Promoted only `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_REAL_WORDPRESS_V1`, no public importer/auto-publish/native preferences/provider/GA.
-- RB-0116 Issue #1385 `agent/dashboard-mapped-draft-real-mysql-v1` extends disposable MySQL Definition/Audit fixture with synthetic test-only capability-gated internal mapped Draft create, source UUID→target Published widget order, id/slug conflicts, two-site scope isolation. Real WP authentication already established separately; exactly six files. Actual MySQL CI and protected merge **PENDING**.
+- Issue #1385 / PR #1386 exact head `a8248878d00f1b13f2afd99b1bfd4fbbb319603e`: 12/12 applicable exact-head CI PASS including actual disposable MySQL Definition/Audit, Governance, Architecture, Platform Compatibility 10/10; 6 authorized files, zero behind/unresolved reviews, protected merge `dbeece1c1fd81f2aefac9d2ae6820942446acdad`; issue closed.
+- Only bounded `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_REAL_MYSQL_V1` certified. Internal-only Draft create-once; no public importer, publishing, live DB, WordPress layout, provider/cache/GA.
+- Issue #1387 terminates shared truth and leaves queue `READY_NEXT_SAFE_SOURCE` **without** another recursive administrative IN_PROGRESS slot. Fresh main/issues/PR audit next; #858/#947/#1102 remain parked.
 
 
 ## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY
