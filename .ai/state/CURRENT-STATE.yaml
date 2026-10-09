@@ -2,24 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: f5083db963b6fa443be6d728d678feae4ce3d3d0
-observed_main_source: "RB-0108 Issue #1365 / PR #1366 exact head 16f4db02c01cf2129029c3e72245d932635d9ebf passed 13/13 CI incl. pinned real WordPress Multisite and Platform 10/10, six allowed files, zero behind/reviews, merged f5083db963b6fa443be6d728d678feae4ce3d3d0; issue closed."
-active_issue: null
+observed_main_sha: b37518cc693b071309cc74c588164243619fe1c8
+observed_main_source: "RB-0108 Issue #1365 / PR #1366 13/13 real WordPress PASS; PR #1368 shared-truth terminal closeout merged b37518cc693b071309cc74c588164243619fe1c8 after 2/2 Governance/Architecture; no active PR before Issue #1369."
+active_issue: "#1369"
 active_pr: null
-active_branch: none
-current_milestone: "RB-0108 source terminal bounded PASS; next safe Dashboard Widgets source lane audit READY; no active development PR"
-milestone_status: READY
+active_branch: agent/definition-create-only-atomic-v1
+current_milestone: "RB-0109 / Issue #1369 atomic Definition create-only contract for safe future Dashboard preset imports, scoped source/tests staged, CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0108 Issue #1365 / PR #1366 13/13 exact-head CI PASS incl. pinned two-site real WordPress, six allowed files, zero behind/reviews, merged f5083db963b6fa443be6d728d678feae4ce3d3d0; bounded UUID mapping preview only."
-next_safe_action: "Refresh exact main and open issues/PRs, select next approved reversible source gap (import atomic create-only authorization/persistence boundaries or cache), create exact scoped issue and continue; do not invent live/import/GA authority."
+next_safe_action: "Open Issue #1369 exact 11-file PR, run all path-applicable exact-head CI; repair failing tests autonomously within scope, verify zero behind/reviews, protected expected-head merge."
 waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked; no approval required for safe read-only preset preflight."
-next_planned_slot: null
+next_planned_slot:
+  issue: "#1369"
+  slot_id: definition-create-only-atomic-v1
+  claim_branch: "agent/definition-create-only-atomic-v1"
+  claim_rule: "Exact Issue #1369 11-file create-only repository interface/implementations/gateway/tests plus README/shared state; no importer/public Ability/prod."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0109
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -170,4 +175,5 @@ notes:
   - "RB-0108 Issue #1365 real WordPress pinned two-site mapping fixture staged, CI pending."
   - "RB-0108 Issue #1365 / PR #1366 exact-head 13/13 real WP and Platform/Governance/Architecture PASS, merged f5083db963b6fa443be6d728d678feae4ce3d3d0; no actual import."
   - "Issue #1367 shared-truth closeout completes source evidence, with no extra in-progress admin queue slot; next safe source audit READY."
+  - "Issue #1369 / RB-0109 atomic create-only persistence contract and scoped unit tests staged, exact-head CI PENDING; no actual importer."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

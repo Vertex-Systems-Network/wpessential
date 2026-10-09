@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0109 atomic Definition create-only foundation staged
+
+- Audited main `b37518cc693b071309cc74c588164243619fe1c8`, zero open PRs, RB-0107 / RB-0108 exact-head source and real WordPress CI terminal PASS; #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked.
+- Issue #1369 branch `agent/definition-create-only-atomic-v1`: separate opt-in create-only Definition repository contract, persistent direct INSERT without pre-find/update, revision-one and checksum guards, in-memory matching id/type+slug unique enforcement and focused regression tests.
+- Preserves original `save()` and does not register any public import Ability or apply WordPress native Dashboard preference updates. Real DB schema already defines scoped unique id and type+slug.
+- Exact 11-file issue scope, path-applicable CI and protected merge PENDING. Full preset import, cache/provider, production and GA remain unpromoted.
+
+
 ## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
 
 - RB-0108 Issue #1365 / PR #1366 exact head `16f4db02c01cf2129029c3e72245d932635d9ebf`: **13/13** path-applicable CI PASS including pinned real two-site WP7.1/PHP8.2/MySQL8.4 Multisite Isolation, Governance, Architecture and Platform 10/10; exactly 6 authorized files, zero behind/reviews, protected merged `f5083db963b6fa443be6d728d678feae4ce3d3d0`, issue closed.
