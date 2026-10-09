@@ -1,5 +1,14 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0103 Published preset fingerprint freshness V1 staged
+
+- Verified source main `cb35543f49037c78eccd1de37e7c5199f2d3fad6`; RB-0102 terminal shared truth reconciliation Issue #1349 / PR #1350 merged after 2/2 Governance and Architecture checks PASS. The pre-merge compact queue slot was stale and is reconciled below, not a reason to halt safe source work.
+- RB-0103 Issue #1351 claimed branch `agent/dashboard-preset-portability-freshness-v1`: canonical Published Surface-10 preset non-authenticating SHA-256 fingerprint comparison to current deterministic snapshot; read-only, Policy-gated `manage_options`, strictly typed id/sha256.
+- Returns only `{status,current}` with match, stale, unavailable, invalid_catalog. Never exposes present hash, raw payload, user WordPress options, remote URLs or writes/import; no signing or trust claim.
+- Source/handler/module regression tests staged and within exact 11-file allowlist; all path-applicable CI and protected expected-head merge **PENDING** (do not promote PASS).
+- #858 admin, #1102 P-006 separate authorization, #947 independent Worker stay parked; full Surface10 parity/GA and import/cache/provider are unpromoted.
+
+
 ## 2026-10-09 — RB-0102 real WordPress preset snapshot PASS, terminal reconciliation
 
 - RB-0102 Issue #1347 / PR #1348 exact head `6410be52dc80aaec01c7b84849272b7ef60cedf0`, **13/13** path-applicable exact-head CI PASS including pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation and Platform 10/10, Governance/Architecture. Exact six files, zero behind/threads, protected merged `939605b1d7567966e1a95763b76e2c35500e5c43`; issue closed.

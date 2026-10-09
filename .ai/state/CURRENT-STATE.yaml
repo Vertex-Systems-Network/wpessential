@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 939605b1d7567966e1a95763b76e2c35500e5c43
-observed_main_source: "RB-0102 Issue #1347 / PR #1348 exact head 6410be52dc80aaec01c7b84849272b7ef60cedf0 passed 13/13 checks including real pinned two-site WP isolation, 6/6 allowed paths, zero behind/reviews, merged 939605b1d7567966e1a95763b76e2c35500e5c43; issue closed."
-active_issue: "#1349"
+observed_main_sha: cb35543f49037c78eccd1de37e7c5199f2d3fad6
+observed_main_source: "Issue #1349 / PR #1350 RB-0102 terminal shared-truth closeout merged cb35543f49037c78eccd1de37e7c5199f2d3fad6 after 2/2 Governance/Architecture checks PASS, exact 5 paths; Issue closed; RB-0103 source branch claimed."
+active_issue: "#1351"
 active_pr: null
-active_branch: agent/rb0102-portability-postmerge-truth-v1
-current_milestone: "RB-0102 terminal PASS / Issue #1349 verified post-merge README/state/queue/benchmark reconciliation, next safe source lane fresh audit"
-milestone_status: READY
+active_branch: agent/dashboard-preset-portability-freshness-v1
+current_milestone: "RB-0103 / Issue #1351 bounded Published Dashboard preset SHA-256 fingerprint freshness verification V1; source/unit tests staged, CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0102 / Issue #1347 / PR #1348 13/13 exact-head CI PASS (real two-site WP Multisite, Governance, Architecture, Platform 10/10), six authorized paths, zero behind/reviews, merged 939605b1d7567966e1a95763b76e2c35500e5c43; bounded read-only snapshot real WP evidence only."
-next_safe_action: "Protected merge Issue #1349 five-file terminal evidence reconciliation after Governance/Architecture; then audit fresh main for next safe authorized source without owner technical confirmation, park #858/#1102/#947."
-waiting_external: "Issue #858 repository-admin, #1102 P-006 separate authorization and #947 independent Worker are parked; not blockers for safe read-only preset snapshot development."
+next_safe_action: "Open Issue #1351 exact 11-file PR, run all path-applicable exact-head CI, repair failures within allowed scope, verify zero behind/reviews then protected expected-head merge. Park unrelated privilege/admin/Worker boundaries."
+waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked, not blockers for read-only preset snapshot freshness source development."
 next_planned_slot:
-  issue: "#1349"
-  slot_id: rb0102-postmerge-portability-truth-v1
-  claim_branch: "agent/rb0102-portability-postmerge-truth-v1"
-  claim_rule: "Issue #1349 exact 5-file post-merge source-truth divergence reconciliation, no product/source/test/workflow changes or release."
+  issue: "#1351"
+  slot_id: dashboard-preset-portability-freshness-v1
+  claim_branch: "agent/dashboard-preset-portability-freshness-v1"
+  claim_rule: "Issue #1351 exact 11-file source/test/README/AI state/queue/benchmark boundary: read-only digest freshness check only; no import, native usermeta/placement, provider, trust or deployment."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0103
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -150,4 +151,6 @@ notes:
   - "RB-0102 Issue #1347 real WordPress Multisite snapshot isolation fixture staged and CI PENDING; full import/parity/GA not promoted."
   - "RB-0102 / Issue #1347 / PR #1348 pinned real WordPress two-site Published preset portability fixture passed 13/13 CI, merged 939605b1d7567966e1a95763b76e2c35500e5c43; bounded evidence only."
   - "Issue #1349 is exact five-file post-merge material README/queue benchmark truth reconciliation. Source runtime unaffected."
+  - "Issue #1349 / PR #1350 RB-0102 terminal postmerge reconciliation merged cb35543f49037c78eccd1de37e7c5199f2d3fad6 after 2/2 Governance/Architecture checks PASS, scope 5 files."
+  - "Issue #1351 / RB-0103 bounded Published preset portability freshness source and tests staged, exact-head CI PENDING."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

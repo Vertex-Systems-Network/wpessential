@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "939605b1d7567966e1a95763b76e2c35500e5c43",
+  "anchor_main_sha": "cb35543f49037c78eccd1de37e7c5199f2d3fad6",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3325,9 +3325,33 @@
         "Exact head 6410be52dc80aaec01c7b84849272b7ef60cedf0 passed 13/13 checks including real pinned two-site WP 7.1/PHP 8.2/MySQL 8.4 isolation and Platform 10/10, exact 6 paths, zero behind/reviews, merged 939605b1d7567966e1a95763b76e2c35500e5c43"
       ],
       "note": "Terminal PASS_DASHBOARD_PRESET_PORTABILITY_REAL_WORDPRESS_READ_V1; no importer, native WordPress preferences, provider, cache or GA."
+    },
+    {
+      "id": "RB-0103",
+      "source": "Issue #1351 / implementation PR pending",
+      "category": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit; Governance; Distributable; Architecture; 10-cell Platform Compatibility; Browser applicability by path",
+      "environment": "agent/dashboard-preset-portability-freshness-v1 on main cb35543f49037c78eccd1de37e7c5199f2d3fad6",
+      "dependencies": [
+        "RB-0101/0102 terminal PASS",
+        "PR #1350 shared truth reconciliation merged cb35543f49037c78eccd1de37e7c5199f2d3fad6"
+      ],
+      "authorization": "Issue #1351 exact 11-file read-only Published preset SHA256 digest freshness service/ability/regression tests/README shared truth scope",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|preset-portability-freshness-read|issue1351|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "New strict UUID and lowercase SHA256 canonical Published snapshot freshness match/stale/unavailable/invalid_catalog read-only ability staged",
+        "PHP unit, handler and module tests staged; exact-head CI pending"
+      ],
+      "note": "No terminal PASS or full portability/GA claim before protected merge."
     }
   ],
-  "last_reconciled_issue": "#1349",
+  "last_reconciled_issue": "#1351",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
