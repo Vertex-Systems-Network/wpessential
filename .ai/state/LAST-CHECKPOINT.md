@@ -41,15 +41,6 @@
 - Exact six-file scope; CI and expected-head merge **not yet verified**. No product runtime/workflow modifications; #858 admin, #1102 P-006 authorization and #947 independent Worker parked.
 
 
-## 2026-10-09 — RB-0101 read-only preset portability snapshot staged
-
-- Verified exact source main `3978342d3f9b98cc7c62bab8de83a312a2f04810`, Issue #1343 / PR #1344 terminal RB-0100 README progress/queue reconciliation accepted after 2/2 Governance and Architecture CI PASS; zero open PRs before RB-0101.
-- Issue #1345 / RB-0101 deterministic branch `agent/dashboard-preset-portability-read-v1` implements one bounded read-only Published Surface10 preset portability envelope and canonical Policy `manage_options` read ability.
-- Envelope V1 includes only validated preset id/revision/label, ordered Published widget references and canonical role/network assignment. SHA-256 is expressly a **non-authenticating fingerprint** over deterministic payload JSON; neither import, signature, token, trust migration nor native WordPress layout mutation.
-- Focused deterministic, invalid/draft/foreign type, fingerprint and ability-input tests staged; exact 11-file authorized scope; CI and protected expected-head merge PENDING, not certified.
-- #858 admin, #1102 privileged P-006 and #947 independent Worker remain parked, not source blockers. Full Surface10 parity, import, cache and provider remain separate.
-
-
 ## 2026-10-09 — RB-0100 PASS; post-merge README/shared truth closeout
 
 - RB-0100 Issue #1341 / PR #1342 exact head `d978030f7aca15fd6193307de840248ceed74398`: **13/13 exact-head CI PASS**, including real pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite isolation, Governance, Architecture and Platform Compatibility 10/10.
@@ -98,15 +89,6 @@
 - Exact implementation PR head `f5844b210e17646ed60e57fa5ddbc0f2a228f18a`; 14/14 checks PASS (Governance, PHP, Distributable, Architecture, Platform Compatibility 10/10); 18 accepted paths, zero behind, zero unresolved review threads.
 - Terminal evidence only: `PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1`. No full Surface 10 runtime parity, native layout preference application, deployment or GA.
 - Issue #1333 records material README/state/queue/benchmark divergence after the merge. This narrow reconciliation does not introduce runtime source changes. Future safe source milestone must be freshly selected and scoped; #858/#1102/#947 remain parked.
-
-## 2026-10-09 — RB-0097 claimed; implementation staged for CI
-
-- Current pre-implementation main: `9cbc28bda205c10d503dceb767e56364116b3985`, latest PR #1331; RB-0097 deterministic claim branch previously held two unmerged policy files on a three-commits-behind base.
-- Claim branch `agent/dashboard-multisite-preset-policy-foundation-v1` reconciled with exact main by non-force merge commit preserving existing policy Definition/Descriptor files.
-- Implemented bounded Surface-10 Multisite policy compiler/resolver/read service/handler, three read-only abilities, and focused tests; 18-file Issue #1327 allowlist respected.
-- Status **IN_PROGRESS / CI UNVERIFIED**, not PASS: open PR, run applicable exact-head Governance, PHP Quality, Distributable, Platform Compatibility, Architecture, inspect Browser applicability, repair any failures and verify zero behind/review blockers before expected-head merge.
-- #858 admin, #1102 authorization, #947 independent Worker remain parked; no deployment, provider or native Dashboard layout mutation.
-- README M7 row and 56-module Surface 10 row show candidate source development without promoting unverified completion.
 
 ## 2026-10-08 — Continuous governance closed; RB-0097 next
 
