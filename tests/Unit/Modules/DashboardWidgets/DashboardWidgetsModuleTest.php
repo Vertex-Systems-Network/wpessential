@@ -33,6 +33,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyReadServi
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
@@ -184,6 +185,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetPresetCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_COMPILER));
         self::assertInstanceOf(DashboardWidgetPresetResolver::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_RESOLVER));
         self::assertInstanceOf(DashboardWidgetPresetReadService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_READ));
+        self::assertInstanceOf(DashboardWidgetPresetPortabilityReadService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_PORTABILITY));
         self::assertInstanceOf(DashboardWidgetMultisitePolicyCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_COMPILER));
         self::assertInstanceOf(DashboardWidgetMultisitePolicyResolver::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_RESOLVER));
         self::assertInstanceOf(DashboardWidgetMultisitePolicyReadService::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_READ));
@@ -359,6 +361,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             DashboardWidgetsModule::ABILITY_CATALOG,
             DashboardWidgetsModule::ABILITY_DIAGNOSTICS,
             DashboardWidgetsModule::ABILITY_PRESET_GET,
+            DashboardWidgetsModule::ABILITY_PRESET_PORTABILITY,
             DashboardWidgetsModule::ABILITY_PRESET_CATALOG,
             DashboardWidgetsModule::ABILITY_EFFECTIVE_PRESET,
             DashboardWidgetsModule::ABILITY_MULTISITE_POLICY_GET,
@@ -387,7 +390,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertFalse($descriptor->allows(ExecutionChannel::Rest));
         }
 
-        self::assertCount(12, $bridge->registerAbilities());
+        self::assertCount(13, $bridge->registerAbilities());
     }
 
     public function testFormActionRoutesRejectGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
