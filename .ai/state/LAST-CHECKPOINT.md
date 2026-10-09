@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0103 PASS; RB-0104 real WordPress freshness fixture staged
+
+- RB-0103 Issue #1351 / PR #1352 exact head `1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee` passed **14/14** exact-head CI incl. Governance, PHP Quality, Distributable, Architecture and Platform 10/10; 11/11 authorized files, no behind/review blockers; protected squash merged `6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7`, issue closed.
+- Promoted only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1` (non-authenticating digest vs current Published preset snapshot, no import/user WordPress preference writes/provider/cache/deployment/GA).
+- RB-0104 Issue #1353 branch `agent/dashboard-portability-freshness-real-wordpress-v1` extends pinned WP 7.1/PHP8.2/MySQL8.4 real two-site Multisite test with match/stale, invalid catalog and native user/blog/network/preferences unchanged checks.
+- Exactly 6 allowed paths; integration CI and protected expected-head merge **PENDING**, not terminal PASS. #858 admin, #1102 P-006 privilege, #947 independent Worker remain parked.
+
+
 ## 2026-10-09 — RB-0103 Published preset fingerprint freshness V1 staged
 
 - Verified source main `cb35543f49037c78eccd1de37e7c5199f2d3fad6`; RB-0102 terminal shared truth reconciliation Issue #1349 / PR #1350 merged after 2/2 Governance and Architecture checks PASS. The pre-merge compact queue slot was stale and is reconciled below, not a reason to halt safe source work.

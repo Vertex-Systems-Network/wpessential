@@ -1,9 +1,9 @@
 {
-  "schema_version": 177,
+  "schema_version": 178,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "cb35543f49037c78eccd1de37e7c5199f2d3fad6",
-  "mode": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1",
-  "source_issue": "#1351",
+  "queue_anchor_main_sha": "6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7",
+  "mode": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1",
+  "source_issue": "#1353",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -220,7 +220,8 @@
     "1345": "CLOSED_COMPLETED_RB0101_PR1346_14_OF_14_PASS",
     "1347": "CLOSED_COMPLETED_RB0102_PR1348_REAL_WORDPRESS_13_OF_13_PASS",
     "1349": "CLOSED_COMPLETED_RB0102_POSTMERGE_PR1350_2_OF_2_PASS",
-    "1351": "IN_PROGRESS_RB0103_FINGERPRINT_FRESHNESS_READ_CI_PENDING"
+    "1351": "CLOSED_COMPLETED_RB0103_PR1352_14_OF_14_PASS",
+    "1353": "IN_PROGRESS_RB0104_REAL_WORDPRESS_FRESHNESS_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -250,7 +251,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open RB-0103 Issue #1351 PR; verify exact 11 files and path-applicable PHP Quality, Governance, Architecture, Platform and Distributable CI; repair failures autonomously and merge protected after 0 behind/reviews.",
+    "next_safe_action": "Open Issue #1353 real WP Multisite integration PR, run path-applicable exact-head CI, fix errors inside exact six-file scope, verify 0 behind/reviews then protected expected-head merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7514,7 +7515,7 @@
       "slot_id": "dashboard-preset-portability-freshness-v1",
       "title": "Dashboard preset canonical Published snapshot fingerprint freshness V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1",
       "source": "Issue #1351 / RB-0103",
       "dependencies": [
@@ -7535,7 +7536,47 @@
         "Shared Platform/provider/trust/cache/deployment/GA"
       ],
       "claim_branch": "agent/dashboard-preset-portability-freshness-v1",
-      "close_condition": "Only PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1 after 11 authorized files, PHP Quality/Governance/Distributable/Architecture/Platform exact-head CI PASS, no behind/reviews, protected merge."
+      "close_condition": "Only PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1 after 11 authorized files, PHP Quality/Governance/Distributable/Architecture/Platform exact-head CI PASS, no behind/reviews, protected merge.",
+      "terminal_result": "PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1",
+      "terminal_evidence": {
+        "issue": 1351,
+        "pr": 1352,
+        "head": "1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee",
+        "merge_sha": "6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7",
+        "checks_passed": 14,
+        "platform_cells_passed": 10,
+        "authorized_paths": 11,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1084,
+      "slot_id": "dashboard-portability-freshness-real-wordpress-v1",
+      "title": "Dashboard preset freshness real WordPress Multisite isolation V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1",
+      "source": "Issue #1353 / RB-0104",
+      "dependencies": [
+        "RB-0103 terminal PASS",
+        "main 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1353 exact 6-file real WP integration fixture/README/shared-truth scope"
+      ],
+      "forbidden_scope": [
+        "Product Dashboard source or workflow changes",
+        "Native WordPress user preferences/layout",
+        "Provider/cache/import/deployment/GA"
+      ],
+      "claim_branch": "agent/dashboard-portability-freshness-real-wordpress-v1",
+      "close_condition": "Real pinned two-site WP fixture and all path-applicable exact-head CI PASS, authorized 6 files, 0 behind/reviews, expected-head protected merge; bounded PASS only."
     }
   ],
   "historical_closeout": {
