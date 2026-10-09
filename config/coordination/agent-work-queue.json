@@ -1,9 +1,9 @@
 {
-  "schema_version": 166,
-  "snapshot_date": "2026-10-08",
-  "queue_anchor_main_sha": "cd4af50f70386f73cb2c89101de484c941b7d2b4",
-  "mode": "DASHBOARD_WIDGETS_PRESET_ASSIGNMENT_FOUNDATION_V1",
-  "source_issue": "#1325",
+  "schema_version": 167,
+  "snapshot_date": "2026-10-09",
+  "queue_anchor_main_sha": "9cbc28bda205c10d503dceb767e56364116b3985",
+  "mode": "DASHBOARD_WIDGETS_MULTISITE_PRESET_POLICY_FOUNDATION_V1",
+  "source_issue": "#1327",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -209,7 +209,7 @@
     "1260": "COMPLETED_ON_PR_1261_BOUNDED_DYNAMIC_CONTEXT_TOKEN_BINDINGS_V1",
     "1262": "ACTIVE_BOUNDED_FORMS_ACTION_ABILITY_REFERENCE_V1",
     "1325": "COMPLETED_PR_1326_RB0096_TERMINAL_PASS",
-    "1327": "OPEN_DEPENDENCY_READY_RB0097_AFTER_PR1329_MERGE",
+    "1327": "IN_PROGRESS_CLAIMED_RB0097_SOURCE_TESTS_COMMITTED_CI_PENDING",
     "1328": "CLOSED_COMPLETED_PR_1329_CONTINUOUS_GOVERNANCE_12_OF_12_PASS_MERGED"
   },
   "auto_assignment": {
@@ -240,7 +240,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Resolve exact live main and active claims, then autonomously claim Issue #1327 / RB-0097 read-only Dashboard Multisite policy if still ready; protect exact 18-file allowlist/CI/merge. Do not reopen merged #1329 or request owner technical decisions.",
+    "next_safe_action": "Open #1327 RB-0097 PR from deterministic claim branch; validate exact-head CI/review/scope and merge only after verified PASS; then continue another safe lane.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7082,7 +7082,7 @@
       "slot_id": "dashboard-widgets-multisite-preset-policy-foundation-v1",
       "title": "Dashboard Widgets Multisite preset policy foundation V1",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "OPEN",
+      "status": "IN_PROGRESS",
       "work_mode": "DASHBOARD_WIDGETS_MULTISITE_PRESET_POLICY_FOUNDATION_V1",
       "source": "Issue #1327 / RB-0097",
       "dependencies": [
@@ -7108,7 +7108,9 @@
         "deployment/release"
       ],
       "claim_branch": "agent/dashboard-multisite-preset-policy-foundation-v1",
-      "close_condition": "Only promote PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1 with Issue #1327 exact 18-file allowlist, tests and applicable exact-head CI PASS and protected expected-head merge."
+      "close_condition": "Only promote PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1 with Issue #1327 exact 18-file allowlist, tests and applicable exact-head CI PASS and protected expected-head merge.",
+      "claim_base_main_sha": "9cbc28bda205c10d503dceb767e56364116b3985",
+      "claim_branch_head_note": "Existing remote branch reconciled through non-force merge; implementation and focused tests staged, CI not yet verified"
     }
   ],
   "historical_closeout": {

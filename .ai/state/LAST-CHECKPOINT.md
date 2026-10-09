@@ -1,5 +1,14 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0097 claimed; implementation staged for CI
+
+- Current pre-implementation main: `9cbc28bda205c10d503dceb767e56364116b3985`, latest PR #1331; RB-0097 deterministic claim branch previously held two unmerged policy files on a three-commits-behind base.
+- Claim branch `agent/dashboard-multisite-preset-policy-foundation-v1` reconciled with exact main by non-force merge commit preserving existing policy Definition/Descriptor files.
+- Implemented bounded Surface-10 Multisite policy compiler/resolver/read service/handler, three read-only abilities, and focused tests; 18-file Issue #1327 allowlist respected.
+- Status **IN_PROGRESS / CI UNVERIFIED**, not PASS: open PR, run applicable exact-head Governance, PHP Quality, Distributable, Platform Compatibility, Architecture, inspect Browser applicability, repair any failures and verify zero behind/review blockers before expected-head merge.
+- #858 admin, #1102 authorization, #947 independent Worker remain parked; no deployment, provider or native Dashboard layout mutation.
+- README M7 row and 56-module Surface 10 row show candidate source development without promoting unverified completion.
+
 ## 2026-10-08 — Continuous governance closed; RB-0097 next
 
 - Last verified main before this checkpoint PR: `cd4af50f70386f73cb2c89101de484c941b7d2b4`.
