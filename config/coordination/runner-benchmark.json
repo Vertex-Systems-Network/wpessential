@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "03e86ed08edaeb9e48d1ca22a932897768f7e0f5",
+  "anchor_main_sha": "574d1f89cb8a1455079182256b4739140a00214c",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3704,7 +3704,7 @@
     },
     {
       "id": "RB-0118",
-      "source": "Issue #1391 / real MySQL integration PR pending",
+      "source": "Issue #1391 / merged PR #1392",
       "category": "DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Actual disposable MySQL Definition/Audit Persistence + applicable Governance/Architecture/Platform Compatibility checks",
@@ -3719,15 +3719,16 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|draft-readback-real-mysql|issue1391|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Real MySQL Draft equivalent readback + synthetic adapter silent ack/tampered/read exception fail closed fixture staged",
-        "Actual exact-head MySQL CI and merge not yet verified"
+        "Actual exact-head MySQL CI and merge not yet verified",
+        "Exact head 9916b4ca8559c7ac20ed64c366104338b60c83c5 12/12 path-applicable CI PASS incl. actual disposable MySQL Definition/Audit persistence, Governance, Architecture, 10-cell Platform; 6 files, 0 behind/reviews; protected merged 574d1f89cb8a1455079182256b4739140a00214c"
       ],
-      "note": "Do not promote PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1 before exact-head actual MySQL CI PASS and protected merge."
+      "note": "Terminal PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1; internal-only, no public importer/full parity/GA."
     }
   ],
-  "last_reconciled_issue": "#1391",
+  "last_reconciled_issue": "#1393",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
