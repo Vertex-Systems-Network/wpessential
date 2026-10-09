@@ -1,5 +1,14 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0099 scoped subsite preset override V1 in progress
+
+- Source baseline verified main `10c493cc970473187dd0b9b1a1a94bfe34cb43d3`: Issue #1337 / PR #1338 is terminal PASS 2/2 required checks with post-RB-0098 README truth reconciliation.
+- Issue #1339 / RB-0099 claims branch `agent/dashboard-multisite-subsite-override-v1` for read-only explicit network/site/policy-bound subsite preset override selection; non-network, unassigned Published presets only; network inheritance fallback, invalid/conflict fail closed.
+- Scope fixed 15 paths (5 new source/three new focused tests/two module files/five README/AI-state/queue/benchmark files); no WordPress layout mutation, role/capability creation, database migration, provider/deploy or production.
+- Source and unit tests committed; exact-head CI and protected expected-head merge **pending**, not terminal PASS. Continue CI remediation autonomously without requesting technical decisions.
+- P-006 #1102, admin #858 and Worker-only #947 stay parked independently.
+
+
 ## 2026-10-09 — RB-0098 PASS; post-merge evidence terminal
 
 - Issue #1335 / PR #1336 merged `78b1bfbd0426e922b514159feebebfbf51f7f667`, exact PR head `098054362615e12e3e5f7617bc03512ec06db487`.

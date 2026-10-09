@@ -1,9 +1,9 @@
 {
-  "schema_version": 170,
+  "schema_version": 171,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "78b1bfbd0426e922b514159feebebfbf51f7f667",
-  "mode": "RB0098_TERMINAL_TRUTH_RECONCILIATION_V1",
-  "source_issue": "#1337",
+  "queue_anchor_main_sha": "10c493cc970473187dd0b9b1a1a94bfe34cb43d3",
+  "mode": "DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1",
+  "source_issue": "#1339",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -213,7 +213,8 @@
     "1328": "CLOSED_COMPLETED_PR_1329_CONTINUOUS_GOVERNANCE_12_OF_12_PASS_MERGED",
     "1333": "CLOSED_COMPLETED_POST_MERGE_RECONCILIATION_PR1334_PASS_2_OF_2",
     "1335": "CLOSED_COMPLETED_RB0098_PR1336_REAL_WORDPRESS_13_OF_13_PASS",
-    "1337": "OPEN_RB0098_REAL_POST_MERGE_RECONCILIATION_5_FILES"
+    "1337": "CLOSED_COMPLETED_PR1338_RB0098_TERMINAL_RECONCILIATION_2_OF_2_PASS",
+    "1339": "IN_PROGRESS_RB0099_SCOPED_SUBSITE_OVERRIDE_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -243,7 +244,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Complete #1337 exact five-file post-merge real-divergence reconciliation under CI/expected-head merge, then resolve fresh next safe authorized source lane.",
+    "next_safe_action": "Open #1339 implementation PR, verify 15-file allowlist and required exact-head checks, repair test failures and expected-head merge only after all gates PASS.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7217,7 +7218,7 @@
       "slot_id": "rb0098-post-merge-terminal-truth-v1",
       "title": "RB-0098 terminal shared-truth reconciliation",
       "role": "SUPERVISOR_ONLY",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "AI_NATIVE_POST_MERGE_SHARED_TRUTH_RECONCILIATION",
       "source": "Issue #1337",
       "dependencies": [
@@ -7243,7 +7244,46 @@
         "Deployment or provider"
       ],
       "claim_branch": "agent/rb0098-post-merge-terminal-truth-v1",
-      "close_condition": "5-file scope, applicable CI PASS, zero behind/review blockers, expected-head merge; next source lane fresh audit."
+      "close_condition": "5-file scope, applicable CI PASS, zero behind/review blockers, expected-head merge; next source lane fresh audit.",
+      "terminal_result": "PASS_RB0098_POST_MERGE_SHARED_TRUTH_RECONCILIATION",
+      "terminal_evidence": {
+        "issue": 1337,
+        "pr": 1338,
+        "merge_sha": "10c493cc970473187dd0b9b1a1a94bfe34cb43d3",
+        "checks_passed": 2,
+        "authorized_paths": 5,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1077,
+      "slot_id": "dashboard-multisite-subsite-preset-override-v1",
+      "title": "Dashboard Multisite scoped subsite preset override read-only V1",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1",
+      "source": "Issue #1339 / RB-0099",
+      "dependencies": [
+        "RB-0097/0098 terminal PASS",
+        "PR #1338 merged 10c493cc970473187dd0b9b1a1a94bfe34cb43d3"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1339 exact 15-file module source/unit tests/README/AI state/queue/benchmark allowlist"
+      ],
+      "forbidden_scope": [
+        "Native WordPress Dashboard order/hide/collapse or preferences mutation",
+        "Surface38 placement changes",
+        "Shared Platform source, dependencies, migration",
+        "Provider/cache/scheduler/deployment/release"
+      ],
+      "claim_branch": "agent/dashboard-multisite-subsite-override-v1",
+      "close_condition": "Only PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1 after exact 15-file allowlist, applicable exact-head CI PASS, 0 behind/reviews and expected-head merge."
     }
   ],
   "historical_closeout": {

@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "78b1bfbd0426e922b514159feebebfbf51f7f667",
+  "anchor_main_sha": "10c493cc970473187dd0b9b1a1a94bfe34cb43d3",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3225,9 +3225,33 @@
         "PR #1336 exact head 098054362615e12e3e5f7617bc03512ec06db487 13/13 applicable CI PASS including real two-site WordPress Dashboard Multisite isolation, exact 7 files, zero behind/review blockers; squash merge 78b1bfbd0426e922b514159feebebfbf51f7f667"
       ],
       "note": "Terminal PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1; no automatic native preset application, full Surface 10 runtime certification, production or GA."
+    },
+    {
+      "id": "RB-0099",
+      "source": "Issue #1339 / implementation PR pending",
+      "category": "DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head; Browser E2E applicability by path filters",
+      "environment": "agent/dashboard-multisite-subsite-override-v1 on main 10c493cc970473187dd0b9b1a1a94bfe34cb43d3",
+      "dependencies": [
+        "RB-0097/0098 terminal PASS",
+        "PR #1338 reconciliation merged 10c493cc970473187dd0b9b1a1a94bfe34cb43d3"
+      ],
+      "authorization": "Issue #1339 exact 15-file source/unit/shared-truth allowlist; typed site/network override, read-only effective preset; no native layout preference mutation",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|scoped-subsite-preset-override-read|issue1339|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Source + unit/module coverage staged from exact main 10c493cc970473187dd0b9b1a1a94bfe34cb43d3",
+        "15-file issue-owned allowlist required; no product release/native WordPress mutation"
+      ],
+      "note": "Do not promote PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1 before exact-head CI and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1337",
+  "last_reconciled_issue": "#1339",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
