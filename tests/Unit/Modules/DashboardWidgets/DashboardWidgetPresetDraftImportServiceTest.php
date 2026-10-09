@@ -100,6 +100,110 @@ final class DashboardWidgetPresetDraftImportServiceTest extends TestCase
         self::assertNull($repo->get(self::PRESET_ID));
     }
 
+    public function testCreateReturnWithoutPersistedRecordNeverClaimsSuccess(): void
+    {
+        $fixtures = $this->repository();
+        $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+        $repo->method('get')->willReturnCallback(
+            static fn (string $id): ?Definition => $fixtures->get($id),
+        );
+        $repo->expects(self::once())->method('create');
+
+        self::assertSame(
+            ['status' => 'write_failed'],
+            $this->service($repo)->importDraft($this->context(), $this->snapshot(), 'imported-safe-preset'),
+        );
+        self::assertNull($fixtures->get(self::PRESET_ID));
+    }
+
+    public function testChangedPersistedDraftAndFailedReadbackNeverClaimSuccess(): void
+    {
+        foreach (['slug', 'payload', 'status', 'revision', 'read_exception'] as $mode) {
+            $fixtures = $this->repository();
+            $created = null;
+            $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+            $repo->expects(self::once())->method('create')->willReturnCallback(
+                static function (Definition $value) use (&$created): void {
+                    $created = $value;
+                },
+            );
+            $repo->method('get')->willReturnCallback(
+                static function (string $id) use ($fixtures, $mode, &$created): ?Definition {
+                    if ($id !== self::PRESET_ID || !$created instanceof Definition) {
+                        return $fixtures->get($id);
+                    }
+                    if ($mode === 'read_exception') {
+                        throw new RuntimeException('Readback unavailable');
+                    }
+                    $payload = $created->payload;
+                    if ($mode === 'payload') {
+                        $payload['preset']['label'] = 'Silently altered';
+                    }
+                    return new Definition(
+                        id: $created->id,
+                        slug: $mode === 'slug' ? 'changed-slug' : $created->slug,
+                        type: $created->type,
+                        schemaVersion: $created->schemaVersion,
+                        ownerSurfaceId: $created->ownerSurfaceId,
+                        status: $mode === 'status' ? DefinitionStatus::Published : $created->status,
+                        payload: $payload,
+                        revision: $mode === 'revision' ? 2 : $created->revision,
+                        dependencies: $created->dependencies,
+                    );
+                },
+            );
+
+            self::assertSame(
+                ['status' => 'write_failed'],
+                $this->service($repo)->importDraft($this->context(), $this->snapshot(), 'imported-safe-preset'),
+                $mode,
+            );
+            self::assertNull($fixtures->get(self::PRESET_ID), $mode);
+        }
+    }
+
+    public function testEquivalentRehydratedPayloadWithReorderedMapKeysPassesCanonicalReadback(): void
+    {
+        $fixtures = $this->repository();
+        $created = null;
+        $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+        $repo->expects(self::once())->method('create')->willReturnCallback(
+            static function (Definition $draft) use (&$created): void {
+                $created = $draft;
+            },
+        );
+        $repo->method('get')->willReturnCallback(
+            static function (string $id) use ($fixtures, &$created): ?Definition {
+                if ($id !== self::PRESET_ID || !$created instanceof Definition) {
+                    return $fixtures->get($id);
+                }
+                $preset = $created->payload['preset'];
+                return new Definition(
+                    id: $created->id,
+                    slug: $created->slug,
+                    type: $created->type,
+                    schemaVersion: $created->schemaVersion,
+                    ownerSurfaceId: $created->ownerSurfaceId,
+                    status: $created->status,
+                    payload: ['preset' => [
+                        'assignment' => [
+                            'network_default' => $preset['assignment']['network_default'],
+                            'roles' => $preset['assignment']['roles'],
+                        ],
+                        'widget_definition_ids' => $preset['widget_definition_ids'],
+                        'label' => $preset['label'],
+                    ]],
+                    revision: $created->revision,
+                );
+            },
+        );
+
+        self::assertSame(
+            ['status' => 'created_draft', 'definition_id' => self::PRESET_ID],
+            $this->service($repo)->importDraft($this->context(), $this->snapshot(), 'imported-safe-preset'),
+        );
+    }
+
     private const WIDGET_A = '11111111-1111-4111-8111-111111111111';
     private const WIDGET_B = '22222222-2222-4222-8222-222222222222';
     private const PRESET_ID = '33333333-3333-4333-8333-333333333333';

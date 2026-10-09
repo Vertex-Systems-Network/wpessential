@@ -6,6 +6,7 @@ namespace WPEssential\Tests\Unit\Modules\DashboardWidgets;
 
 use PHPUnit\Framework\TestCase;
 use WPEssential\Contracts\CapabilityCheckerInterface;
+use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDefinition;
@@ -148,6 +149,27 @@ final class DashboardWidgetPresetMappedDraftImportServiceTest extends TestCase
         self::assertNull($repo->get(self::TARGET_PRESET));
     }
 
+    public function testMappedImporterDoesNotClaimCreatedWhenAtomicAdapterAcknowledgesButDoesNotPersist(): void
+    {
+        $fixtures = $this->repository();
+        $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+        $repo->method('get')->willReturnCallback(
+            static fn (string $id): ?Definition => $fixtures->get($id),
+        );
+        $repo->expects(self::once())->method('create');
+        self::assertSame(
+            ['status' => 'write_failed'],
+            $this->service($repo)->importMappedDraft(
+                $this->context(),
+                $this->source(),
+                self::TARGET_PRESET,
+                $this->mapping(),
+                'mapped-preset',
+            ),
+        );
+        self::assertNull($fixtures->get(self::TARGET_PRESET));
+    }
+
     private function repository(): InMemoryDefinitionRepository
     {
         $repo = new InMemoryDefinitionRepository();
@@ -201,7 +223,7 @@ final class DashboardWidgetPresetMappedDraftImportServiceTest extends TestCase
         return new ExecutionContext(new Principal($userId, $actor), 1, $channel);
     }
 
-    private function service(InMemoryDefinitionRepository $repo, bool $allowed = true): DashboardWidgetPresetMappedDraftImportService
+    private function service(DefinitionCreateOnlyRepositoryInterface $repo, bool $allowed = true): DashboardWidgetPresetMappedDraftImportService
     {
         $checker = new class($allowed) implements CapabilityCheckerInterface {
             public function __construct(private bool $allowed) {}
