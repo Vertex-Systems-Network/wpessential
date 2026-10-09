@@ -1,11 +1,11 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0111 guarded internal Draft-only import staged
+## 2026-10-09 — RB-0111 PASS, RB-0112 real WordPress Draft import fixture staged
 
-- Current verified main `aa69cc1770297a8454fb37442d415d8c386f2d31`: Issue #1371 / PR #1372 real MySQL atomic Definition create-only isolation 12/12 exact-head CI PASS, protected merged, issue closed; RB-0107–0110 accepted on main.
-- RB-0111 Issue #1373 branch `agent/dashboard-preset-draft-import-create-only-v1` uses opt-in `DefinitionCreateOnlyRepositoryInterface::create` exactly once to persist only `DefinitionStatus::Draft`, revision=1, full canonical label/widget order/assignment. Requires authenticated human `Internal` caller, current WordPress site/user identity and `manage_options`, rejects network-default without distinct grant, preflight V1 integrity and Published refs required.
-- No public Ability/REST/UI/AJAX, no native Dashboard preferences or Published preset mutation; checksum non-authenticating; insert conflicts fail closed without write replay.
-- Unit service, collision and module wiring tests staged in Issue #1373 exact 10-file scope; PHP Quality, Governance, Distributable, Architecture, 10-cell Platform checks and protected merge **PENDING**. Production/provider/GA and #858/#1102/#947 parked.
+- RB-0111 Issue #1373 / PR #1374 exact head `4dd819b6be82d13a2e80a8849cf2f7c8179c0bb6` passed **14/14** exact-head PHP Quality/Governance/Architecture/Distributable/10-cell Platform CI, 10 authorized files, 0 behind/reviews, protected merged `2b6043804c4d13dd5ff523925d2305c161649dc9`, issue closed.
+- Accepted only bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1`: human Internal + current site/user + `manage_options`, opt-in atomic `create()` of Draft only, dest revision 1, no overwrite/publishing/network default/public REST/UI/production.
+- RB-0112 Issue #1375 `agent/dashboard-preset-draft-import-real-wordpress-v1` exercises current real WP admin identity/capability on both disposable sites, wrong channel/guest/spoofed user/blog/network, invalid content digest, denied network defaults, actual Draft create-once, native preferences and Published records preserved.
+- Exact six-file fixture/README/AI state/queue/benchmark scope, pinned real WP Multisite CI and protected merge **PENDING**. External #858/#1102/#947 parked; full parity/GA not promoted.
 
 
 ## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY

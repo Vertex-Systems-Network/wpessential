@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: aa69cc1770297a8454fb37442d415d8c386f2d31
-observed_main_source: "RB-0110 Issue #1371 / PR #1372 pinned real MySQL Definition create-only collision/scope isolation 12/12 exact-head CI PASS, 6 allowed paths, 0 behind/reviews, protected merged aa69cc1770297a8454fb37442d415d8c386f2d31; Issue closed."
-active_issue: "#1373"
+observed_main_sha: 2b6043804c4d13dd5ff523925d2305c161649dc9
+observed_main_source: "RB-0111 Issue #1373 / PR #1374 exact head 4dd819b6be82d13a2e80a8849cf2f7c8179c0bb6 passed 14/14 PHP Quality/Governance/Architecture/Distributable/10-cell Platform CI, 10 files, zero behind/reviews, protected merged 2b6043804c4d13dd5ff523925d2305c161649dc9; Issue closed."
+active_issue: "#1375"
 active_pr: null
-active_branch: agent/dashboard-preset-draft-import-create-only-v1
-current_milestone: "RB-0111 / Issue #1373 internal Draft-only preset import atomic create-only V1; source/tests staged, exact-head CI PENDING"
+active_branch: agent/dashboard-preset-draft-import-real-wordpress-v1
+current_milestone: "RB-0112 / Issue #1375 disposable real WordPress two-site internal Draft-only import identity/permission/no-native-prefs fixture staged, exact-head CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0110 Issue #1371 / PR #1372 12/12 exact-head CI PASS incl. real MySQL create-only, zero behind/reviews, merged aa69cc1770297a8454fb37442d415d8c386f2d31; storage-only evidence."
-next_safe_action: "Open Issue #1373 exact ten-file Draft-only import PR, require all path-applicable exact-head CI; diagnose/repair failures autonomously, verify zero behind/threads and protected expected-head merge. No public import or production side effects."
+last_completed_milestone: "RB-0111 Issue #1373 / PR #1374 14/14 CI PASS, 10 authorized files, 0 behind/reviews, merged 2b6043804c4d13dd5ff523925d2305c161649dc9; internal Draft-only atomic import, no public Ability."
+next_safe_action: "Open Issue #1375 exact six-file pinned real WordPress Multisite Draft-only import fixture PR, require actual isolation and all exact-head CI PASS, zero behind/reviews and protected expected-head merge; no public import or production mutation."
 waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
 next_planned_slot:
-  issue: "#1373"
-  slot_id: dashboard-preset-draft-import-create-only-v1
-  claim_branch: "agent/dashboard-preset-draft-import-create-only-v1"
-  claim_rule: "Issue #1373 exact 10-file source, two service/collision tests, module test, README and AI state/queue/benchmark only; no public importer/provider/release."
+  issue: "#1375"
+  slot_id: dashboard-preset-draft-import-real-wordpress-v1
+  claim_branch: "agent/dashboard-preset-draft-import-real-wordpress-v1"
+  claim_rule: "Issue #1375 exact six-file pinned real WP fixture/README/AI state/queue/benchmark only; no product runtime/workflow/public import/deploy."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0111
+    - RB-0112
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -95,6 +95,7 @@ runner_benchmark:
     - RB-0108
     - RB-0109
     - RB-0110
+    - RB-0111
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -182,4 +183,6 @@ notes:
   - "RB-0110 Issue #1371 real disposable MySQL create-only collision and site/network scope evidence staged, CI pending."
   - "RB-0110 Issue #1371 / PR #1372 real MySQL Definition create-only 12/12 CI PASS merged aa69cc1770297a8454fb37442d415d8c386f2d31."
   - "RB-0111 internal Draft-only preset import via atomic create-only test/source staged, exact-head CI PENDING."
+  - "RB-0111 Issue #1373 / PR #1374 protected merge 2b6043804c4d13dd5ff523925d2305c161649dc9 after 14/14 CI PASS, 10 authorized files; internal Draft-only create-only importer, no public Ability."
+  - "RB-0112 Issue #1375 pinned real WordPress Draft import identity/capability/no-native-prefs integration fixture staged, CI pending."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
