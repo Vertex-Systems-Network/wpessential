@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "90317c710cb6e3c095a93943fe0b6fdde2187f25",
+  "anchor_main_sha": "f5083db963b6fa443be6d728d678feae4ce3d3d0",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3454,7 +3454,7 @@
     },
     {
       "id": "RB-0108",
-      "source": "Issue #1365 / pinned WP integration PR pending",
+      "source": "Issue #1365 / merged PR #1366",
       "category": "DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation plus Governance/Architecture/10-cell Platform Compatibility",
@@ -3469,15 +3469,16 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|mapping-real-wordpress|issue1365|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Pinned two-site real WP fixture validates deterministic mapped candidate, bad mapping/integrity/conflict and no WordPress preferences or Definition mutation",
-        "Exact-head real WP CI and protected merge pending"
+        "Exact-head real WP CI and protected merge pending",
+        "Exact head 16f4db02c01cf2129029c3e72245d932635d9ebf passed 13/13 checks incl. pinned WP two-site Multisite, Platform 10/10, Governance/Architecture, six paths, zero behind/reviews; protected merged f5083db963b6fa443be6d728d678feae4ce3d3d0"
       ],
-      "note": "Only bounded PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1 after all path-applicable CI and protected merge."
+      "note": "Bounded PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1 only; no importer, provider, full parity or GA."
     }
   ],
-  "last_reconciled_issue": "#1365",
+  "last_reconciled_issue": "#1367",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
