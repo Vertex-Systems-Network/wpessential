@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0098 real WordPress Multisite isolation staged
+
+- Verified source-start main `b02a51c9ec7477f448c197b5796e4004881418d9`; Issue #1333 / PR #1334 terminal post-RB-0097 shared truth reconciled, 2/2 applicable CI PASS.
+- Issue #1335 / RB-0098 claim branch `agent/dashboard-multisite-policy-real-wordpress-isolation-v1` implements disposable two-site WordPress 7.1/PHP8.2/MySQL8.4 read-only Multisite policy verification via existing Multisite Runtime Isolation workflow, with fixture preference-preservation assertions.
+- Exact Issue #1335 seven-file maximum scope; only new fixture and existing CI workflow are executable changes. Runtime test and exact-head required CI **not yet verified**. Do not promote until PASS and protected merge.
+- #858 admin, #1102 privilege and #947 independent Worker stay parked. No product Dashboard/runtime native preference mutation, production or GA promotion.
+
+
 ## 2026-10-09 — RB-0097 PASS; real post-merge shared truth reconciled
 
 - Issue #1327 auto-closed on accepted PR #1332; merge `adb7cfa042e733ec59e530601c9cb6152ba1e526`.

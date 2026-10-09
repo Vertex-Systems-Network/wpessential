@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "adb7cfa042e733ec59e530601c9cb6152ba1e526",
+  "anchor_main_sha": "b02a51c9ec7477f448c197b5796e4004881418d9",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3199,9 +3199,34 @@
         "PR #1332 exact head f5844b210e17646ed60e57fa5ddbc0f2a228f18a passed 14/14 checks; Platform Compatibility Matrix 10/10; 18 allowed paths, 0 behind, 0 unresolved review threads; squash merged adb7cfa042e733ec59e530601c9cb6152ba1e526"
       ],
       "note": "Terminal PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1 only; no native WordPress layout mutation, full Surface 10 runtime parity or GA."
+    },
+    {
+      "id": "RB-0098",
+      "source": "Issue #1335 / real WordPress Multisite policy integration PR pending",
+      "category": "DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Multisite Runtime Isolation (WP 7.1/PHP 8.2/MySQL 8.4) + Governance + Architecture + other path-applicable checks",
+      "environment": "agent/dashboard-multisite-policy-real-wordpress-isolation-v1 on exact main b02a51c9ec7477f448c197b5796e4004881418d9",
+      "dependencies": [
+        "RB-0097 terminal PASS",
+        "PR #1334 reconciliation merged b02a51c9ec7477f448c197b5796e4004881418d9"
+      ],
+      "authorization": "Exact Issue #1335 seven-file fixture/workflow/README/state/queue/benchmark allowlist, disposable real two-site WordPress fixture, read-only policy only",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|real-wordpress-multisite-policy-isolation|issue1335|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "RB-0097/PR #1332 14/14 CI PASS prerequisite",
+        "Existing pinned real WordPress Multisite workflow extended with isolated Dashboard policy fixture",
+        "No production/native usermeta writes; exact-head CI not yet verified"
+      ],
+      "note": "Terminal claim restricted to PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1 after real two-site test and other exact-head checks; no full Surface 10 parity/GA."
     }
   ],
-  "last_reconciled_issue": "#1333",
+  "last_reconciled_issue": "#1335",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: adb7cfa042e733ec59e530601c9cb6152ba1e526
-observed_main_source: "RB-0097 Issue #1327 / PR #1332 merged to adb7cfa042e733ec59e530601c9cb6152ba1e526, verified 14/14 checks PASS, 18/18 path allowlist, zero behind/unresolved threads; Issue #1327 closed."
-active_issue: "#1333"
+observed_main_sha: b02a51c9ec7477f448c197b5796e4004881418d9
+observed_main_source: "PR #1334 post-RB-0097 shared-truth reconciliation merged b02a51c9ec7477f448c197b5796e4004881418d9 after Governance + Architecture 2/2 PASS, 5 exact paths; Issue #1333 closed."
+active_issue: "#1335"
 active_pr: null
-active_branch: agent/rb0097-terminal-truth-reconcile-v1
-current_milestone: "RB-0097 terminal PASS / Issue #1333 bounded real post-merge README/AI state reconciliation; next dependency-ready source selection after integration"
-milestone_status: READY
+active_branch: agent/dashboard-multisite-policy-real-wordpress-isolation-v1
+current_milestone: "RB-0098 / Issue #1335 real WordPress Multisite read-only policy isolation; integration fixture staged, CI pending"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0097 / Issue #1327 / PR #1332: 14/14 GitHub exact-head CI PASS, exact 18-file allowlist, zero behind/review blockers, merged adb7cfa042e733ec59e530601c9cb6152ba1e526; bounded Dashboard Multisite read-only policy foundation PASS. Product parity/GA still unpromoted."
-next_safe_action: "Merge Issue #1333 exact 5-file reconciliation only after required exact-head checks PASS; verify resulting main then select the next safe scoped source milestone from live roadmap. Park #858/#1102/#947 independently."
-waiting_external: "Issue #858 external admin; #1102 separately authorization-gated; #947 independent Worker lane. No blocker to Issue #1333 governance-truth reconciliation."
+next_safe_action: "Open Issue #1335 / RB-0098 implementation PR on exact claimed branch and verify real Multisite Runtime Isolation plus applicable Governance/Architecture/PHP checks; repair tests autonomously, then expected-head merge when all passed and select next safe lane."
+waiting_external: "Issue #858 external admin; #1102 separately authorization-gated; #947 independent Worker-only. They do not block RB-0098 scoped read-only fixture integration."
 next_planned_slot:
-  issue: "#1333"
-  slot_id: rb0097-post-merge-truth-reconciliation-v1
-  claim_branch: "agent/rb0097-terminal-truth-reconcile-v1"
-  claim_rule: "Real divergence exception: update only README, AI state, queue and benchmark from verified RB-0097 post-merge facts; protected PR CI gates."
+  issue: "#1335"
+  slot_id: dashboard-multisite-policy-real-wordpress-isolation-v1
+  claim_branch: "agent/dashboard-multisite-policy-real-wordpress-isolation-v1"
+  claim_rule: "Issue #1335 exact 7-file fixture/workflow/AI-truth scope and real WordPress Multisite CI; no product runtime/native preferences or provider operations."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0098
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -131,4 +132,6 @@ notes:
   - "WAITING_EXTERNAL, authorization-gated, dependency-gated, or otherwise non-actionable lanes are parked; independent safe authorized work continues."
   - "README Current AI-Native Development Progress remains mandatory alongside meaningful Supervisor repository truth changes."
   - "Issue #1327 / RB-0097 merged PR #1332 as adb7cfa042e733ec59e530601c9cb6152ba1e526 after 14/14 checks PASS; 18 authorized changed paths, 0 behind, 0 review blockers. Issue closed; bounded foundation only."
+  - "Issue #1333 / PR #1334 real post-merge reconciliation merged as b02a51c9ec7477f448c197b5796e4004881418d9 after Governance + Architecture 2/2 PASS; scope 5 shared-truth files."
+  - "Issue #1335 / RB-0098 real WordPress two-site integration staged; CI and merge not yet verified."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
