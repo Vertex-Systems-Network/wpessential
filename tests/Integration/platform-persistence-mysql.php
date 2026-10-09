@@ -647,6 +647,118 @@ platformPersistenceExpect(
     'fake readback failures must not leak across real MySQL site/network scopes',
 );
 
+// RB-0123: prove RB-0122's Published widget fingerprint race guard using
+// *real disposable MySQL persistence*, not only an in-memory/mock database.
+// The synthetic Internal caller is scoped evidence, NOT a live WP identity
+// or native Dashboard preference write authorization.
+$otherSiteWidgetBeforeDrift = $otherSite->get($draftWidgetId);
+$networkWidgetBeforeDrift = $networkStore->get($draftWidgetId);
+foreach ([
+    ['mode' => 'revision_only', 'id' => '6e6e6e6e-6e6e-4e6e-8e6e-6e6e6e6e6e6e'],
+    ['mode' => 'payload_slug', 'id' => '7e7e7e7e-7e7e-4e7e-8e7e-7e7e7e7e7e7e'],
+] as $driftCase) {
+    $candidate = $draftSnapshot;
+    $candidate['payload']['definition_id'] = $driftCase['id'];
+    $candidate['sha256'] = hash('sha256', json_encode(
+        $candidate['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    $originalPublished = $repository->get($draftWidgetId);
+    platformPersistenceExpect(
+        $originalPublished instanceof Definition && $originalPublished->status === DefinitionStatus::Published,
+        'real MySQL precondition: referenced target widget must still be Published',
+    );
+
+    $raceRepo = new class($repository, $driftCase['mode'], $draftWidgetId) implements DefinitionCreateOnlyRepositoryInterface {
+        public int $createCalls = 0;
+
+        public function __construct(
+            private readonly PersistentDefinitionRepository $actual,
+            private readonly string $mode,
+            private readonly string $widgetId,
+        ) {}
+
+        public function create(Definition $draft): void
+        {
+            ++$this->createCalls;
+            $this->actual->create($draft);
+
+            // A distinct writer updates a real MySQL Published widget AFTER
+            // the atomic Draft insert. Same id/type/status, advanced revision.
+            $widget = $this->actual->get($this->widgetId);
+            if (!$widget instanceof Definition) {
+                throw new RuntimeException('Missing race fixture widget');
+            }
+            $this->actual->save(new Definition(
+                id: $widget->id,
+                slug: $this->mode === 'payload_slug' ? 'race-renamed-widget' : $widget->slug,
+                type: $widget->type,
+                schemaVersion: $widget->schemaVersion,
+                ownerSurfaceId: $widget->ownerSurfaceId,
+                status: DefinitionStatus::Published,
+                payload: $this->mode === 'payload_slug' ? ['race' => 'changed'] : $widget->payload,
+                revision: $widget->revision + 1,
+                dependencies: $widget->dependencies,
+            ));
+        }
+
+        public function save(Definition $definition): void
+        {
+            throw new RuntimeException('Draft importer may not update, retry or rollback');
+        }
+
+        public function get(string $id): ?Definition { return $this->actual->get($id); }
+        public function byType(string $type): array { return $this->actual->byType($type); }
+        public function dependentsOf(string $id): array { return $this->actual->dependentsOf($id); }
+    };
+
+    $raceImporter = new DashboardWidgetPresetDraftImportService(
+        $raceRepo,
+        new DashboardWidgetPresetImportPreflightService(
+            $raceRepo, new DashboardWidgetPresetCompiler($raceRepo),
+        ),
+        $draftChecker,
+    );
+    platformPersistenceExpect(
+        $raceImporter->importDraft(
+            $draftContext, $candidate, 'mysql-fingerprint-race-' . $driftCase['mode'],
+        ) === ['status' => 'write_failed'],
+        'concurrent Published widget fingerprint drift must fail closed on real MySQL: ' . $driftCase['mode'],
+    );
+    platformPersistenceExpect(
+        $raceRepo->createCalls === 1,
+        'real MySQL race guard must not retry atomic Draft create',
+    );
+    $stored = $repository->get($driftCase['id']);
+    $currentWidget = $repository->get($draftWidgetId);
+    platformPersistenceExpect(
+        $stored instanceof Definition && $stored->status === DefinitionStatus::Draft
+            && $stored->revision === 1,
+        'race-detected import leaves its one inserted MySQL Draft intact; never claims rollback',
+    );
+    platformPersistenceExpect(
+        $currentWidget instanceof Definition
+            && $currentWidget->status === DefinitionStatus::Published
+            && $currentWidget->id === $originalPublished->id
+            && $currentWidget->revision === $originalPublished->revision + 1,
+        'concurrent actual MySQL Published widget edit retains ID/status but advances revision',
+    );
+    platformPersistenceExpect(
+        $currentWidget->computedChecksum()
+            !== $originalPublished->computedChecksum() || $currentWidget->revision !== $originalPublished->revision,
+        'race fixture must observably change fingerprint',
+    );
+    platformPersistenceExpect(
+        $otherSite->get($driftCase['id']) === null && $networkStore->get($driftCase['id']) === null,
+        'failed-but-persisted Draft cannot write to other site/network scope',
+    );
+}
+platformPersistenceExpect(
+    $otherSite->get($draftWidgetId) == $otherSiteWidgetBeforeDrift
+        && $networkStore->get($draftWidgetId) == $networkWidgetBeforeDrift,
+    'real MySQL Published widget concurrency probe must not change other site/network scope',
+);
+
 $context = new ExecutionContext(
     principal: new Principal(42),
     siteId: 701,
