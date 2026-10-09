@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "2b6043804c4d13dd5ff523925d2305c161649dc9",
+  "anchor_main_sha": "6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3554,7 +3554,7 @@
     },
     {
       "id": "RB-0112",
-      "source": "Issue #1375 / real WordPress integration PR pending",
+      "source": "Issue #1375 / merged PR #1376",
       "category": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Pinned WordPress 7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation plus all applicable Governance, Architecture, Platform CI",
@@ -3569,15 +3569,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|internal-draft-import-real-wp|issue1375|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Pinned real two-site WP fixture adds authenticated admin/capability, site/user/network impersonation and Draft create-once/no-native-pref mutation assertions",
-        "CI PENDING, no real-WordPress PASS claim"
+        "CI PENDING, no real-WordPress PASS claim",
+        "PR #1376 exact head 871419af2bdb7edf2e230ce2e5f234d0321db56d 13/13 applicable CI PASS incl. pinned real WP two-site, Governance/Architecture/10-cell Platform; six files, 0 behind/reviews; protected merged 6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313"
       ],
-      "note": "Only PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1 after exact-head pinned WP CI and protected merge."
+      "note": "Terminal bounded PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1 only, not public importer/GA."
+    },
+    {
+      "id": "RB-0113",
+      "source": "Issue #1377 / disposable MySQL E2E integration PR pending",
+      "category": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Disposable real MySQL platform persistence fixture plus all applicable exact-head Governance/Architecture/Platform Compatibility",
+      "environment": "agent/dashboard-draft-import-real-mysql-v1 on main 6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313",
+      "dependencies": [
+        "RB-0111/0112 terminal PASS",
+        "main 6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313"
+      ],
+      "authorization": "Issue #1377 exact six-file MySQL integration test and five shared truth only, no public runtime/production changes",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|draft-import-real-mysql|issue1377|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Real MySQL fixture adds internal Draft create-only through persistent repository, duplicate ID/slug, role/order, scope isolation and denied caller/integrity assertions",
+        "Exact-head actual MySQL CI and protected merge PENDING"
+      ],
+      "note": "No terminal PASS/full parity/GA until real MySQL exact-head checks pass and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1375",
+  "last_reconciled_issue": "#1377",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
