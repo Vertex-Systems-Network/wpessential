@@ -1,9 +1,9 @@
 {
-  "schema_version": 204,
+  "schema_version": 205,
   "snapshot_date": "2026-10-10",
-  "queue_anchor_main_sha": "517a04f0e8806f092f62947368f293d6005025ad",
-  "mode": "DASHBOARD_DRAFT_FINGERPRINT_REAL_MYSQL_V1",
-  "source_issue": "#1405",
+  "queue_anchor_main_sha": "49c089329ed1f4f632958ca4c17c57c0f4466b3e",
+  "mode": "DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1",
+  "source_issue": "#1407",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -247,7 +247,8 @@
     "1399": "CLOSED_COMPLETED_RB0121_PR1400_14_OF_14_PASS",
     "1401": "CLOSED_COMPLETED_RB0121_POSTMERGE_PR1402_2_OF_2_PASS",
     "1403": "CLOSED_COMPLETED_RB0122_PR1404_14_OF_14_PASS",
-    "1405": "IN_PROGRESS_RB0123_REAL_MYSQL_PUBLISHED_FINGERPRINT_DRIFT_CI_PENDING"
+    "1405": "CLOSED_COMPLETED_RB0123_PR1406_REAL_MYSQL_12_OF_12_PASS",
+    "1407": "IN_PROGRESS_RB0124_POSTCREATE_WP_AUTH_RECHECK_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -277,7 +278,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1405 6-file actual disposable MySQL persistence fixture PR, path-applicable exact-head CI including MySQL, repair failures, 0 behind/reviews and protected merge; no docs-only recursive slot.",
+    "next_safe_action": "Open RB-0124 Issue #1407 exact eight-file source/unit/pinned real WP fixture PR, run all applicable exact-head PHP Quality/Multisite/Governance/Distributable/Architecture/Platform CI, fix failures autonomously, 0 behind/reviews, protected merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8417,7 +8418,7 @@
       "slot_id": "dashboard-draft-fingerprint-real-mysql-v1",
       "title": "Disposable real MySQL Draft importer concurrent Published widget fingerprint verification",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_DRAFT_FINGERPRINT_REAL_MYSQL_V1",
       "source": "Issue #1405 / RB-0123",
       "dependencies": [
@@ -8436,7 +8437,46 @@
         "Production/real customer data, product source/workflows, public import/Ability/REST, publishing, WP native preference mutation, provider/GA"
       ],
       "claim_branch": "agent/dashboard-draft-fingerprint-real-mysql-v1",
-      "close_condition": "Require actual disposable MySQL Definition/Audit persistence CI PASS and all applicable exact-head checks, 6 files, 0 behind/reviews, protected expected-head merge; bounded RB-0123 only."
+      "close_condition": "Require actual disposable MySQL Definition/Audit persistence CI PASS and all applicable exact-head checks, 6 files, 0 behind/reviews, protected expected-head merge; bounded RB-0123 only.",
+      "terminal_result": "PASS_DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_REAL_MYSQL_V1",
+      "terminal_evidence": {
+        "issue": 1405,
+        "pr": 1406,
+        "head": "bf6eb7ecac80a8877fb66f17b4ca02e37931de0a",
+        "merge_sha": "49c089329ed1f4f632958ca4c17c57c0f4466b3e",
+        "checks_passed": 12,
+        "real_mysql_fixture": "PASS_AFTER_SCOPED_FIX",
+        "platform_cells_passed": 10,
+        "authorized_paths": 6,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1105,
+      "slot_id": "dashboard-draft-postcreate-authorization-recheck-v1",
+      "title": "Internal Draft import postcreate WordPress caller capability/identity recheck",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1",
+      "source": "Issue #1407 / RB-0124",
+      "dependencies": [
+        "RB-0123 terminal real MySQL PASS",
+        "main 49c089329ed1f4f632958ca4c17c57c0f4466b3e"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1407 exact eight files: Draft importer source, unit test, pinned real two-site WP fixture, README/four AI shared records"
+      ],
+      "forbidden_scope": [
+        "Public import/REST/Ability/AJAX, publish, external provider, native WordPress Dashboard preferences, production/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-postcreate-authorization-recheck-v1",
+      "close_condition": "RB-0124 bounded PASS only after all exact-head PHP Quality, real pinned WP Multisite, Governance, Distributable, Architecture, Platform CI PASS, 8 allowed files, zero behind/reviews and protected expected-head merge."
     }
   ],
   "historical_closeout": {

@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 517a04f0e8806f092f62947368f293d6005025ad
-observed_main_source: "RB-0122 Issue #1403 / PR #1404 exact head c3ad12b3db465dcfdf826197f9764c14364caff6 passed 14/14 CI incl. PHP Quality/Governance/Architecture/Distributable and Platform 10 cells; 7 authorized files, 0 behind/reviews, protected merged 517a04f0e8806f092f62947368f293d6005025ad."
-active_issue: "#1405"
+observed_main_sha: 49c089329ed1f4f632958ca4c17c57c0f4466b3e
+observed_main_source: "RB-0123 Issue #1405 / PR #1406 corrected exact head bf6eb7ecac80a8877fb66f17b4ca02e37931de0a passed 12/12 CI incl. real disposable MySQL, Governance, Architecture, Platform 10/10, six files, 0 behind/reviews, protected merged 49c089329ed1f4f632958ca4c17c57c0f4466b3e."
+active_issue: "#1407"
 active_pr: null
-active_branch: agent/dashboard-draft-fingerprint-real-mysql-v1
-current_milestone: "RB-0123 / Issue #1405 disposable real MySQL Draft importer post-create Published widget fingerprint drift fixture staged, CI PENDING"
+active_branch: agent/dashboard-draft-postcreate-authorization-recheck-v1
+current_milestone: "RB-0124 / Issue #1407 internal Draft postcreate authorization recheck source/unit/real WordPress fixture staged, CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0122 Issue #1403 / PR #1404 14/14 exact-head CI PASS, 7 authorized files, zero behind/reviews, merged 517a04f0e8806f092f62947368f293d6005025ad; internal Draft-only fingerprint hardening, not publishing."
-next_safe_action: "Open Issue #1405 6-file real MySQL fixture PR, verify actual disposable MySQL execution and all path-applicable exact-head CI, repair failures, protected expected-head merge after zero behind/reviews."
+last_completed_milestone: "RB-0123 Issue #1405 / PR #1406 12/12 exact-head CI PASS incl. real disposable MySQL, 6 allowed files, 0 behind/reviews, merged 49c089329ed1f4f632958ca4c17c57c0f4466b3e; no publish/GA."
+next_safe_action: "Open RB-0124 Issue #1407 exact 8-file PR, run PHP Quality, real pinned Multisite Runtime Isolation, Governance/Architecture/Distributable/10-cell Platform; repair technical failures, require 0 behind/reviews and protected expected-head merge."
 waiting_external: "#858 admin, #1102 gated P-006, #947 independent Worker parked; safe internal Draft development continues."
 next_planned_slot:
-  issue: "#1405"
-  slot_id: dashboard-draft-fingerprint-real-mysql-v1
-  claim_branch: agent/dashboard-draft-fingerprint-real-mysql-v1
-  claim_rule: "Issue #1405 six exact paths: disposable platform-persistence-mysql.php fixture and five README/AI shared truth files; no production/runtime source/workflow mutation."
+  issue: "#1407"
+  slot_id: dashboard-draft-postcreate-authorization-recheck-v1
+  claim_branch: agent/dashboard-draft-postcreate-authorization-recheck-v1
+  claim_rule: "Issue #1407 exact 8-file Draft importer, PHPUnit, pinned real WP fixture, README and four AI state/queue/benchmark; no public routes, publish, provider, native prefs, production."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0123
+    - RB-0124
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -107,6 +107,7 @@ runner_benchmark:
     - RB-0120
     - RB-0121
     - RB-0122
+    - RB-0123
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -160,6 +161,8 @@ notes:
   - "RB-0122 / Issue #1403 current Published widget revision/content fingerprint protection staged; exact-head CI pending."
   - "RB-0122 Issue #1403 / PR #1404 accepted 14/14 exact-head CI, merged 517a04f0e8806f092f62947368f293d6005025ad; bounded internal Draft-only fingerprint drift hardening."
   - "RB-0123 Issue #1405 actual disposable MySQL Published drift fixture staged; CI PENDING, no production/GA."
+  - "RB-0123 Issue #1405 / PR #1406 actual disposable MySQL concurrency evidence passed 12/12 exact-head CI and merged 49c089329ed1f4f632958ca4c17c57c0f4466b3e."
+  - "RB-0124 Issue #1407 post-create WordPress auth recheck source and pinned real WP fixture staged; CI PENDING."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
   - "RB-0119 PR #1396 corrected-head PASS 14/14, merged cfb327af1ae0ad49b46c4114787b14bf40a45f25; internal read-only only."
   - "RB-0120 Issue #1397 pinned real WordPress two-site Draft review isolation fixture CI pending."
