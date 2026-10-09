@@ -145,6 +145,14 @@ final readonly class DashboardWidgetPresetDraftImportService
                     return ['status' => 'write_failed'];
                 }
             }
+
+            // A caller can lose capability or switch WordPress user/site/
+            // network context while create() is in flight. A precreate allow
+            // does not certify the *response* as authorized after insertion.
+            // An inserted Draft may already exist: never retry or roll back.
+            if (!$this->isAuthorizedContext($context)) {
+                return ['status' => 'write_failed'];
+            }
         } catch (Throwable) {
             // Do not leak stored data or report created_draft on a failed read.
             return ['status' => 'write_failed'];

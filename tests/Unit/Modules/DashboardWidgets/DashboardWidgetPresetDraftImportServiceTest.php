@@ -194,6 +194,52 @@ final class DashboardWidgetPresetDraftImportServiceTest extends TestCase
         }
     }
 
+    public function testRevokedCapabilityAfterOneAtomicCreateNeverClaimsDraftSuccess(): void
+    {
+        $fixtures = $this->repository();
+        $authority = (object) ['granted' => true, 'checks' => 0];
+        $checker = new class($authority) implements CapabilityCheckerInterface {
+            public function __construct(private object $state) {}
+            public function can(ExecutionContext $context, string $capability): bool
+            {
+                ++$this->state->checks;
+                return $this->state->granted && $capability === 'manage_options';
+            }
+        };
+        $createCalls = 0;
+        $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+        $repo->expects(self::once())->method('create')->willReturnCallback(
+            static function (Definition $draft) use ($fixtures, $authority, &$createCalls): void {
+                ++$createCalls;
+                $fixtures->create($draft);
+                // Privilege is revoked *after* the real insert, while widget
+                // references remain unchanged and Published.
+                $authority->granted = false;
+            },
+        );
+        $repo->method('get')->willReturnCallback(
+            static fn (string $id): ?Definition => $fixtures->get($id),
+        );
+        $repo->expects(self::never())->method('save');
+        $importer = new DashboardWidgetPresetDraftImportService(
+            $repo,
+            new DashboardWidgetPresetImportPreflightService(
+                $repo, new DashboardWidgetPresetCompiler($repo),
+            ),
+            $checker,
+        );
+
+        self::assertSame(
+            ['status' => 'write_failed'],
+            $importer->importDraft($this->context(), $this->snapshot(), 'revoked-draft'),
+        );
+        self::assertSame(1, $createCalls);
+        self::assertGreaterThanOrEqual(2, $authority->checks);
+        self::assertSame(DefinitionStatus::Draft, $fixtures->get(self::PRESET_ID)?->status);
+        self::assertSame(1, $fixtures->get(self::PRESET_ID)?->revision);
+        self::assertSame(DefinitionStatus::Published, $fixtures->get(self::WIDGET_B)?->status);
+    }
+
     public function testMissingWidgetAfterPreflightBeforeCreateFailsWithoutWriting(): void
     {
         $fixtures = $this->repository();

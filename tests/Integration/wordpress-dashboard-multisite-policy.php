@@ -54,6 +54,7 @@ use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\Definition;
 use WPEssential\Platform\Definitions\DefinitionStatus;
+use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
 use WPEssential\Platform\Definitions\InMemoryDefinitionRepository;
 use WPEssential\Platform\WordPress\Abilities\NativeWordPressAbilityEnvironment;
 use WPEssential\Platform\WordPress\Abilities\WordPressCapabilityChecker;
@@ -1005,6 +1006,86 @@ dashboardMultisiteExpect(
 );
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'native WP dashboard settings still unchanged');
 
+// RB-0124: real pinned two-site WP identity drift *after* one atomic
+// internal Draft insert. This is a disposable fixture and never publishes.
+switch_to_blog($siteA);
+wp_set_current_user($adminId);
+$authRaceBeforeNative = $preferences($adminId);
+$authRaceBeforeWidgets = [$repo->get($widgetId), $repo->get($localWidgetId)];
+foreach ([
+    ['mode' => 'user', 'id' => '8f8f8f8f-8f8f-4f8f-8f8f-8f8f8f8f8f8f'],
+    ['mode' => 'site', 'id' => '9f9f9f9f-9f9f-4f9f-8f9f-9f9f9f9f9f9f'],
+] as $authRaceCase) {
+    $snapshot = $draftImportSnapshot($orderSnapshot, $authRaceCase['id']);
+    $wrapper = new class($repo, $authRaceCase['mode'], $siteB) implements DefinitionCreateOnlyRepositoryInterface {
+        public int $createCalls = 0;
+
+        public function __construct(
+            private readonly InMemoryDefinitionRepository $inner,
+            private readonly string $mode,
+            private readonly int $otherBlog,
+        ) {}
+
+        public function create(Definition $draft): void
+        {
+            ++$this->createCalls;
+            $this->inner->create($draft);
+            if ($this->mode === 'user') {
+                wp_set_current_user(0);
+            } else {
+                switch_to_blog($this->otherBlog);
+            }
+        }
+
+        public function save(Definition $definition): void
+        {
+            throw new RuntimeException('No retries, rollback or second writes allowed');
+        }
+
+        public function get(string $id): ?Definition { return $this->inner->get($id); }
+        public function byType(string $type): array { return $this->inner->byType($type); }
+        public function dependentsOf(string $id): array { return $this->inner->dependentsOf($id); }
+    };
+    $importer = new DashboardWidgetPresetDraftImportService(
+        $wrapper,
+        new DashboardWidgetPresetImportPreflightService(
+            $wrapper, new DashboardWidgetPresetCompiler($wrapper),
+        ),
+        new WordPressCapabilityChecker(new NativeWordPressAbilityEnvironment()),
+    );
+    $result = $importer->importDraft(
+        new ExecutionContext(new Principal($adminId), $siteA, networkId: $networkId),
+        $snapshot, 'auth-race-' . $authRaceCase['mode'],
+    );
+
+    // Restore the disposable WP test session regardless of whether the guard
+    // reported the expected generic failure.
+    if ($authRaceCase['mode'] === 'user') {
+        wp_set_current_user($adminId);
+    } else {
+        restore_current_blog();
+    }
+    dashboardMultisiteExpect(
+        $result === ['status' => 'write_failed'],
+        'post-insert WordPress user/blog drift cannot return created_draft: ' . $authRaceCase['mode'],
+    );
+    dashboardMultisiteExpect($wrapper->createCalls === 1, 'postcreate WP drift must not retry Draft insert');
+    $saved = $repo->get($authRaceCase['id']);
+    dashboardMultisiteExpect(
+        $saved instanceof Definition && $saved->status === DefinitionStatus::Draft && $saved->revision === 1,
+        'postcreate identity drift may leave only its one Draft, never a Published preset',
+    );
+    dashboardMultisiteExpect(get_current_blog_id() === $siteA, 'real WP test blog must be restored');
+    dashboardMultisiteExpect(get_current_user_id() === $adminId, 'real WP test user must be restored');
+    dashboardMultisiteExpect((int) get_current_network_id() === $networkId, 'postcreate check may not change network');
+    dashboardMultisiteExpect($preferences($adminId) === $authRaceBeforeNative, 'postcreate auth drift may not mutate native Dashboard preferences');
+}
+dashboardMultisiteExpect(
+    [$repo->get($widgetId), $repo->get($localWidgetId)] === $authRaceBeforeWidgets,
+    'postcreate auth drift may not mutate referenced Published widget Definitions',
+);
+restore_current_blog();
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -1040,6 +1121,8 @@ $summary = [
     'rb0120_draft_review_read_only_and_no_publication' => true,
     'rb0120_draft_review_real_wordpress_identity_isolation' => true,
     'rb0120_draft_review_native_dashboard_preferences_unchanged' => true,
+    'rb0124_postcreate_identity_drift_fails_closed' => true,
+    'rb0124_draft_insert_once_no_native_preferences' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {

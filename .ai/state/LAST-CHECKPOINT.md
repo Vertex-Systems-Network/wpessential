@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-10 — RB-0122 terminal PASS; RB-0123 real MySQL drift evidence staged
+## 2026-10-10 — RB-0123 real MySQL PASS; RB-0124 postcreate WP authorization recheck staged
 
-- RB-0122 Issue #1403 / PR #1404 exact head `c3ad12b3db465dcfdf826197f9764c14364caff6`, **14/14** CI PASS incl. PHP Quality, Governance, Distributable, Architecture and 10-cell Platform, exactly 7 files, zero behind/reviews, protected merged `517a04f0e8806f092f62947368f293d6005025ad`. Bounded internal Draft importer now snapshots Published widget identity/revision/slug/schema/dependencies and canonical payload fingerprint around atomic create to reject stale success.
-- RB-0123 Issue #1405 branch `agent/dashboard-draft-fingerprint-real-mysql-v1`: real disposable MySQL persistence fixture simulates a separate writer revising Published widget after actual Draft insert; verifies generic `write_failed`, one create, persisted Draft unchanged, other site/network untouched; no claim of rollback/publication.
-- Six allowed fixture and README/AI state/queue/benchmark files, real MySQL CI and protected merge PENDING. Park #858 admin, #1102 gated P-006 and #947 independent Worker; full parity/provider/GA unpromoted.
+- RB-0123 Issue #1405 / PR #1406 corrected exact head `bf6eb7ecac80a8877fb66f17b4ca02e37931de0a`, **12/12** exact-head CI PASS incl. real disposable MySQL concurrency, Governance, Architecture, Platform 10/10; six paths, 0 behind/reviews; protected merged `49c089329ed1f4f632958ca4c17c57c0f4466b3e`. Initial fixture failed due invalid underscore slug, self-repaired and completely rerun.
+- RB-0124 Issue #1407 branch `agent/dashboard-draft-postcreate-authorization-recheck-v1`: internal-only Draft importer now checks caller `manage_options` and current WP identity after persisted Draft/widget fingerprint verification; loss of authorization cannot claim `created_draft`. Existing created Draft remains, no retry/rollback/publish.
+- PHPUnit capability revocation and real pinned WP two-site user/blog context drift fixtures staged in eight approved paths. All path-applicable CI and protected merge PENDING. External #858/#1102/#947 parked; full parity/provider/GA unpromoted.
 
 
 ## 2026-10-09 — RB-0121 terminal PASS; ready next safe source

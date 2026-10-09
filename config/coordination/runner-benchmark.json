@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "517a04f0e8806f092f62947368f293d6005025ad",
+  "anchor_main_sha": "49c089329ed1f4f632958ca4c17c57c0f4466b3e",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3829,7 +3829,7 @@
     },
     {
       "id": "RB-0123",
-      "source": "Issue #1405 / fixture PR pending",
+      "source": "Issue #1405 / merged PR #1406",
       "category": "DASHBOARD_DRAFT_FINGERPRINT_REAL_MYSQL_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Actual disposable MySQL Definition/Audit persistence integration, Governance, Architecture, Platform 10-cell and all path-applicable checks",
@@ -3844,15 +3844,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|published-fingerprint-real-mysql|issue1405|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Real MySQL wrapper simulates Published widget revision/payload drift after actual Draft create, verifies fail-closed with one create and site/network isolation",
-        "Exact-head real disposable MySQL CI pending"
+        "Exact-head real disposable MySQL CI pending",
+        "Corrected exact head bf6eb7ecac80a8877fb66f17b4ca02e37931de0a 12/12 CI PASS incl. actual disposable MySQL persistence, 10-cell Platform, Governance, Architecture, 6 authorized files, 0 behind/reviews, merged 49c089329ed1f4f632958ca4c17c57c0f4466b3e"
       ],
-      "note": "No terminal PASS/full parity/GA until real MySQL and applicable exact-head CI accepted."
+      "note": "PASS_DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_REAL_MYSQL_V1 only, no publish/provider/GA."
+    },
+    {
+      "id": "RB-0124",
+      "source": "Issue #1407 / source+real WP fixture PR pending",
+      "category": "DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality; Governance; Distributable; Architecture; pinned two-site WordPress 7.1/PHP8.2/MySQL8.4 Multisite Runtime Isolation; 10-cell Platform Compatibility",
+      "environment": "agent/dashboard-draft-postcreate-authorization-recheck-v1 from main 49c089329ed1f4f632958ca4c17c57c0f4466b3e",
+      "dependencies": [
+        "RB-0123 terminal PASS",
+        "main 49c089329ed1f4f632958ca4c17c57c0f4466b3e"
+      ],
+      "authorization": "Issue #1407 exactly eight source/unit/real WP test/README/AI files, no public routes/publish/provider/deploy",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|draft-postcreate-authorization-recheck|issue1407|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Internal Draft importer rechecks WordPress current user/site/network/manage_options after persisted Draft and fingerprint guard",
+        "Unit capability revocation and pinned real WordPress user/site drift test staged, all exact-head CI pending"
+      ],
+      "note": "No bounded PASS or full parity/GA until pinned real WP and all applicable CI PASS and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1405",
+  "last_reconciled_issue": "#1407",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
