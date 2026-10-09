@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0107 PASS; RB-0108 real WordPress mapping fixture staged
+## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
 
-- RB-0107 Issue #1363 / PR #1364 exact head `d1d8f24051e6a563c671c61f5552df608f1874bd`, 14/14 exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture and Platform 10/10; 11 authorized files, zero behind/reviews; protected merged `90317c710cb6e3c095a93943fe0b6fdde2187f25`.
-- Bounded `PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_PREVIEW_READ_V1` only: non-authenticating source digest, complete one-to-one source UUID mapping, current target Published widgets, conditional advisory mapped envelope, every output `applicable=false`; no imported Definition or WordPress layout edits.
-- RB-0108 Issue #1365 `agent/dashboard-preset-mapping-real-wordpress-v1` extends disposable pinned WP7.1/PHP8.2/MySQL8.4 real two-site fixture for valid cross-site mapping, invalid/conflicting target mapping, native preference/user/blog/network isolation. Exact six-file scope staged; real WP CI and protected merge PENDING. #858 admin, #1102 P-006, #947 Worker parked.
+- RB-0108 Issue #1365 / PR #1366 exact head `16f4db02c01cf2129029c3e72245d932635d9ebf`: **13/13** path-applicable CI PASS including pinned real two-site WP7.1/PHP8.2/MySQL8.4 Multisite Isolation, Governance, Architecture and Platform 10/10; exactly 6 authorized files, zero behind/reviews, protected merged `f5083db963b6fa443be6d728d678feae4ce3d3d0`, issue closed.
+- Bounded `PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1` only. Deterministic cross-site candidate mapping validates Published target widget refs with non-authenticating content SHA256; `applicable=false`, no actual import, native WordPress preferences writes, cache/provider/deployment or GA.
+- Issue #1367 five-file README/AI state/queue/benchmark closeout deliberately records no new `IN_PROGRESS` admin slot after merge. Next safe source lane needs fresh audit. Park unrelated #858 admin, #1102 privileged P-006 and #947 independent Worker.
 
 
 ## 2026-10-09 — RB-0106 read-only import preflight real WordPress PASS
