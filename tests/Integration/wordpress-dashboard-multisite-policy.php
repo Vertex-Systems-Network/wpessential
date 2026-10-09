@@ -37,6 +37,9 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetSubsitePresetOverrideDef
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDefinition;
 use WPEssential\Modules\DashboardWidgets\WordPressDashboardWidgetRoleMembershipProvider;
@@ -319,6 +322,97 @@ dashboardMultisiteExpect($resolver->resolve($contextA)->status === 'invalid_cata
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'all read-only policy decisions must preserve WordPress preferences');
 restore_current_blog();
 
+// RB-0102: Verify deterministic bounded Published preset snapshot reads using
+// actual WordPress two-site contexts. No WordPress preference or Definition writes
+// are performed by the export service; fixture-only revisions below are explicit.
+$portablePresetCompiler = new DashboardWidgetPresetCompiler($repo);
+$portablePresetReader = new DashboardWidgetPresetReadService(
+    $repo,
+    $portablePresetCompiler,
+    new DashboardWidgetPresetResolver(
+        $repo,
+        $portablePresetCompiler,
+        new WordPressDashboardWidgetRoleMembershipProvider(),
+    ),
+);
+$portableSnapshotReader = new DashboardWidgetPresetPortabilityReadService($portablePresetReader);
+$networkBefore = $repo->get($presetId);
+$siteBefore = $repo->get($localPresetId);
+$networkSnapshot = $portableSnapshotReader->snapshot($presetId);
+$siteSnapshot = $portableSnapshotReader->snapshot($localPresetId);
+dashboardMultisiteExpect(is_array($networkSnapshot) && is_array($siteSnapshot), 'Published network and local presets must export');
+dashboardMultisiteExpect($networkSnapshot['format'] === 'wpessential-dashboard-preset', 'portable snapshot format V1 must be explicit');
+dashboardMultisiteExpect($networkSnapshot['version'] === 1, 'portable snapshot version must be exactly one');
+dashboardMultisiteExpect($siteSnapshot['payload']['widget_definition_ids'] === [$localWidgetId, $widgetId], 'local snapshot retains Published widget order');
+dashboardMultisiteExpect($siteSnapshot['payload']['assignment']['roles'] === [], 'unassigned local preset must have no role injection');
+dashboardMultisiteExpect($networkSnapshot['payload']['assignment']['network_default'] === true, 'network preset exports validated network assignment');
+dashboardMultisiteExpect($siteSnapshot['payload']['assignment']['network_default'] === false, 'local preset is not implicitly network-default');
+
+foreach ([$siteA, $siteB] as $fixtureSiteId) {
+    switch_to_blog($fixtureSiteId);
+    wp_set_current_user($adminId);
+    $preferencesBeforeSnapshot = $preferences($adminId);
+    $activeBefore = get_current_blog_id();
+    $userBefore = get_current_user_id();
+    $contextBefore = new ExecutionContext(new Principal($adminId), $fixtureSiteId, networkId: $networkId);
+    dashboardMultisiteExpect($contextBefore->siteId === $activeBefore, 'real site context must be bound');
+    dashboardMultisiteExpect($portableSnapshotReader->snapshot($presetId) === $networkSnapshot, 'network snapshot must be deterministic per real WP site');
+    dashboardMultisiteExpect($portableSnapshotReader->snapshot($localPresetId) === $siteSnapshot, 'local snapshot must remain deterministic per real WP site');
+    dashboardMultisiteExpect($preferences($adminId) === $preferencesBeforeSnapshot, 'snapshot reads must not change WordPress dashboard preferences');
+    dashboardMultisiteExpect(get_current_blog_id() === $activeBefore, 'snapshot must not switch WordPress site context');
+    dashboardMultisiteExpect(get_current_user_id() === $userBefore, 'snapshot must not switch current WordPress user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $networkId, 'snapshot must not switch network');
+    restore_current_blog();
+}
+dashboardMultisiteExpect($repo->get($presetId) === $networkBefore, 'network Definition remains unchanged by reads');
+dashboardMultisiteExpect($repo->get($localPresetId) === $siteBefore, 'local Definition remains unchanged by reads');
+dashboardMultisiteExpect(
+    $siteSnapshot['sha256'] === hash('sha256', json_encode(
+        $siteSnapshot['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    )),
+    'portable SHA-256 fingerprint must match deterministic payload JSON',
+);
+
+$draftPresetId = '12121212-1212-4212-8212-121212121212';
+$wrongOwnerPresetId = '13131313-1313-4313-8313-131313131313';
+$portableDefinition = static function (
+    string $id, DefinitionStatus $status, int $owner, int $revision, array $widgets
+): Definition {
+    return new Definition(
+        id: $id,
+        slug: 'portable-fixture-' . $id,
+        type: DashboardWidgetPresetDefinition::TYPE,
+        schemaVersion: 1,
+        ownerSurfaceId: $owner,
+        status: $status,
+        payload: ['preset' => [
+            'label' => 'Portable Fixture',
+            'widget_definition_ids' => $widgets,
+            'assignment' => ['roles' => [], 'network_default' => false],
+        ]],
+        revision: $revision,
+    );
+};
+$repo->save($portableDefinition($draftPresetId, DefinitionStatus::Draft, 10, 1, [$widgetId]));
+$repo->save($portableDefinition($wrongOwnerPresetId, DefinitionStatus::Published, 11, 1, [$widgetId]));
+dashboardMultisiteExpect($portableSnapshotReader->snapshot($draftPresetId) === null, 'Draft preset must never export');
+dashboardMultisiteExpect($portableSnapshotReader->snapshot($wrongOwnerPresetId) === null, 'foreign-owner preset must not export');
+dashboardMultisiteExpect($portableSnapshotReader->snapshot($widgetId) === null, 'widget Definition cannot be exported as preset');
+dashboardMultisiteExpect($portableSnapshotReader->snapshot('14141414-1414-4414-8414-141414141414') === null, 'unknown preset must not export');
+
+// Only test-fixture in-memory records change to prove revision/order checksum
+// sensitivity; the portability service itself never writes any Definition.
+$repo->save($portableDefinition($localPresetId, DefinitionStatus::Published, 10, 3, [$localWidgetId, $widgetId]));
+$revisionSnapshot = $portableSnapshotReader->snapshot($localPresetId);
+dashboardMultisiteExpect($revisionSnapshot['sha256'] !== $siteSnapshot['sha256'], 'revision change must affect fingerprint');
+dashboardMultisiteExpect($revisionSnapshot['payload']['revision'] === 3, 'portable snapshot must expose current canonical revision');
+$repo->save($portableDefinition($localPresetId, DefinitionStatus::Published, 10, 4, [$widgetId, $localWidgetId]));
+$orderSnapshot = $portableSnapshotReader->snapshot($localPresetId);
+dashboardMultisiteExpect($orderSnapshot['sha256'] !== $revisionSnapshot['sha256'], 'widget order change must affect fingerprint');
+dashboardMultisiteExpect($orderSnapshot['payload']['widget_definition_ids'] === [$widgetId, $localWidgetId], 'current ordered Published widget IDs preserved');
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'network admin native preferences unchanged after snapshot verification');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -333,6 +427,9 @@ $summary = [
     'rb0100_subsite_override_precedence' => true,
     'rb0100_cross_site_network_isolation' => true,
     'rb0100_no_native_preference_mutation' => true,
+    'rb0102_published_portability_snapshot' => true,
+    'rb0102_cross_site_deterministic_fingerprint' => true,
+    'rb0102_native_preferences_unchanged' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
