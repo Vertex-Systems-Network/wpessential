@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "f8c3c0c48fc84757f520318242196e973e150c4e",
+  "anchor_main_sha": "90317c710cb6e3c095a93943fe0b6fdde2187f25",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3429,7 +3429,7 @@
     },
     {
       "id": "RB-0107",
-      "source": "Issue #1363 / PR pending",
+      "source": "Issue #1363 / merged PR #1364",
       "category": "DASHBOARD_PRESET_PORTABILITY_MAPPING_PREVIEW_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit, Governance, Architecture, Distributable, 10-cell Platform Compatibility, all applicable exact-head CI",
@@ -3444,15 +3444,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|mapping-preview|issue1363|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Non-mutating cross-site widget UUID remap validation and typed mapped export candidate, only if Published target widget preflight passes; unit and module tests staged",
-        "Exact-head CI and protected merge PENDING"
+        "Exact-head CI and protected merge PENDING",
+        "Exact head d1d8f24051e6a563c671c61f5552df608f1874bd passed 14/14 CI incl. 10-cell Platform/Quality/Governance/Distributable/Architecture; 11 paths, zero behind/reviews, protected merged 90317c710cb6e3c095a93943fe0b6fdde2187f25"
       ],
-      "note": "Bounded PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_PREVIEW_READ_V1 only after all path-applicable CI and protected merge."
+      "note": "Terminal PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_PREVIEW_READ_V1 only, no importer or full Surface10 parity."
+    },
+    {
+      "id": "RB-0108",
+      "source": "Issue #1365 / pinned WP integration PR pending",
+      "category": "DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation plus Governance/Architecture/10-cell Platform Compatibility",
+      "environment": "agent/dashboard-preset-mapping-real-wordpress-v1 on main 90317c710cb6e3c095a93943fe0b6fdde2187f25",
+      "dependencies": [
+        "RB-0107 terminal PASS",
+        "main 90317c710cb6e3c095a93943fe0b6fdde2187f25"
+      ],
+      "authorization": "Issue #1365 exact six-file real WP mapping fixture and five shared truth files; no product/workflow/import writes",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|mapping-real-wordpress|issue1365|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Pinned two-site real WP fixture validates deterministic mapped candidate, bad mapping/integrity/conflict and no WordPress preferences or Definition mutation",
+        "Exact-head real WP CI and protected merge pending"
+      ],
+      "note": "Only bounded PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1 after all path-applicable CI and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1363",
+  "last_reconciled_issue": "#1365",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

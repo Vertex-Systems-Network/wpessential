@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0107 cross-site Dashboard preset mapping preview staged
+## 2026-10-09 — RB-0107 PASS; RB-0108 real WordPress mapping fixture staged
 
-- Current audited main `f8c3c0c48fc84757f520318242196e973e150c4e`: Issue #1361 / PR #1362 RB-0106 terminal README/benchmark reconciliation passed exact-head Governance/Architecture 2/2, five files, zero behind/reviews; issue closed.
-- RB-0107 Issue #1363 branch `agent/dashboard-preset-portability-mapping-preview-v1` stages pure read-only V1 cross-site widget UUID translation; validates original SHA-256 content integrity, complete one-to-one typed mapping, Published target widget catalog, target preset id collision; computes deterministic mapped candidate fingerprint. Source content SHA-256 is **not** a signature or authorization; every result `applicable=false`. No Definition writes or native WordPress Dashboard preference changes.
-- Source/Ability/module regression tests, README and shared AI state/queue/benchmark staged; 11 authorized files; path-applicable CI and protected merge PENDING. Full import, provider/cache, production/GA remain unpromoted; #858/#1102/#947 parked.
+- RB-0107 Issue #1363 / PR #1364 exact head `d1d8f24051e6a563c671c61f5552df608f1874bd`, 14/14 exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture and Platform 10/10; 11 authorized files, zero behind/reviews; protected merged `90317c710cb6e3c095a93943fe0b6fdde2187f25`.
+- Bounded `PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_PREVIEW_READ_V1` only: non-authenticating source digest, complete one-to-one source UUID mapping, current target Published widgets, conditional advisory mapped envelope, every output `applicable=false`; no imported Definition or WordPress layout edits.
+- RB-0108 Issue #1365 `agent/dashboard-preset-mapping-real-wordpress-v1` extends disposable pinned WP7.1/PHP8.2/MySQL8.4 real two-site fixture for valid cross-site mapping, invalid/conflicting target mapping, native preference/user/blog/network isolation. Exact six-file scope staged; real WP CI and protected merge PENDING. #858 admin, #1102 P-006, #947 Worker parked.
 
 
 ## 2026-10-09 — RB-0106 read-only import preflight real WordPress PASS
