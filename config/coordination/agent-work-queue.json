@@ -1,9 +1,9 @@
 {
-  "schema_version": 203,
+  "schema_version": 204,
   "snapshot_date": "2026-10-10",
-  "queue_anchor_main_sha": "c3c05cfe32682754562d46c5b223a8405fce80d8",
-  "mode": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_V1",
-  "source_issue": "#1403",
+  "queue_anchor_main_sha": "517a04f0e8806f092f62947368f293d6005025ad",
+  "mode": "DASHBOARD_DRAFT_FINGERPRINT_REAL_MYSQL_V1",
+  "source_issue": "#1405",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -246,7 +246,8 @@
     "1397": "CLOSED_COMPLETED_RB0120_PR1398_REAL_WORDPRESS_13_OF_13_PASS",
     "1399": "CLOSED_COMPLETED_RB0121_PR1400_14_OF_14_PASS",
     "1401": "CLOSED_COMPLETED_RB0121_POSTMERGE_PR1402_2_OF_2_PASS",
-    "1403": "IN_PROGRESS_RB0122_PUBLISHED_WIDGET_FINGERPRINT_DRIFT_CI_PENDING"
+    "1403": "CLOSED_COMPLETED_RB0122_PR1404_14_OF_14_PASS",
+    "1405": "IN_PROGRESS_RB0123_REAL_MYSQL_PUBLISHED_FINGERPRINT_DRIFT_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -276,7 +277,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Issue #1403 exact 7-file PR, all applicable exact-head PHP Quality/Governance/Distributable/Architecture/Platform CI, fix technical failures autonomously, 0 behind/reviews and protected expected-head merge.",
+    "next_safe_action": "Issue #1405 6-file actual disposable MySQL persistence fixture PR, path-applicable exact-head CI including MySQL, repair failures, 0 behind/reviews and protected merge; no docs-only recursive slot.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8377,7 +8378,7 @@
       "slot_id": "dashboard-draft-postcreate-widget-fingerprint-v1",
       "title": "Draft importer Published widget identity and content drift verification",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_V1",
       "source": "Issue #1403 / RB-0122",
       "dependencies": [
@@ -8397,7 +8398,45 @@
         "Retry/rollback/second write, publishing, provider, production/GA"
       ],
       "claim_branch": "agent/dashboard-draft-postcreate-widget-fingerprint-v1",
-      "close_condition": "Exact seven authorized files, path-applicable CI all PASS, 0 behind/unresolved reviews, protected expected-head merge; bounded RB-0122 PASS only."
+      "close_condition": "Exact seven authorized files, path-applicable CI all PASS, 0 behind/unresolved reviews, protected expected-head merge; bounded RB-0122 PASS only.",
+      "terminal_result": "PASS_DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_DRIFT_V1",
+      "terminal_evidence": {
+        "issue": 1403,
+        "pr": 1404,
+        "head": "c3ad12b3db465dcfdf826197f9764c14364caff6",
+        "merge_sha": "517a04f0e8806f092f62947368f293d6005025ad",
+        "checks_passed": 14,
+        "platform_cells_passed": 10,
+        "authorized_paths": 7,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1104,
+      "slot_id": "dashboard-draft-fingerprint-real-mysql-v1",
+      "title": "Disposable real MySQL Draft importer concurrent Published widget fingerprint verification",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_FINGERPRINT_REAL_MYSQL_V1",
+      "source": "Issue #1405 / RB-0123",
+      "dependencies": [
+        "RB-0122 terminal PASS",
+        "main 517a04f0e8806f092f62947368f293d6005025ad"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1405 six files: platform-persistence-mysql fixture and README/AI shared truth"
+      ],
+      "forbidden_scope": [
+        "Production/real customer data, product source/workflows, public import/Ability/REST, publishing, WP native preference mutation, provider/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-fingerprint-real-mysql-v1",
+      "close_condition": "Require actual disposable MySQL Definition/Audit persistence CI PASS and all applicable exact-head checks, 6 files, 0 behind/reviews, protected expected-head merge; bounded RB-0123 only."
     }
   ],
   "historical_closeout": {
