@@ -38,6 +38,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
@@ -413,6 +414,77 @@ dashboardMultisiteExpect($orderSnapshot['sha256'] !== $revisionSnapshot['sha256'
 dashboardMultisiteExpect($orderSnapshot['payload']['widget_definition_ids'] === [$widgetId, $localWidgetId], 'current ordered Published widget IDs preserved');
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'network admin native preferences unchanged after snapshot verification');
 
+// RB-0104: exercise fingerprint *freshness*, not authenticity/import,
+// across real two-site WordPress contexts with unchanged native preferences.
+$freshnessReader = new DashboardWidgetPresetPortabilityFreshnessService($portableSnapshotReader);
+$networkDefinitionBeforeFreshness = $repo->get($presetId);
+$localDefinitionBeforeFreshness = $repo->get($localPresetId);
+foreach ([$siteA, $siteB] as $fixtureSiteId) {
+    switch_to_blog($fixtureSiteId);
+    wp_set_current_user($adminId);
+    $beforeSite = get_current_blog_id();
+    $beforeUser = get_current_user_id();
+    $beforeNativePreferences = $preferences($adminId);
+    dashboardMultisiteExpect(
+        $freshnessReader->check($presetId, $networkSnapshot['sha256']) === ['status' => 'match', 'current' => true],
+        'Published network preset fingerprint must match in real site context',
+    );
+    dashboardMultisiteExpect(
+        $freshnessReader->check($localPresetId, $siteSnapshot['sha256']) === ['status' => 'stale', 'current' => false],
+        'Prior local preset digest must be stale after fixture revision/order changes',
+    );
+    dashboardMultisiteExpect(
+        $freshnessReader->check($localPresetId, $orderSnapshot['sha256']) === ['status' => 'match', 'current' => true],
+        'New local snapshot fingerprint must match exactly',
+    );
+    dashboardMultisiteExpect($preferences($adminId) === $beforeNativePreferences, 'freshness reads may not write native dashboard prefs');
+    dashboardMultisiteExpect(get_current_blog_id() === $beforeSite, 'freshness check may not change current blog');
+    dashboardMultisiteExpect(get_current_user_id() === $beforeUser, 'freshness check may not change current WP user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $networkId, 'freshness check may not switch WP network');
+    restore_current_blog();
+}
+dashboardMultisiteExpect($repo->get($presetId) === $networkDefinitionBeforeFreshness, 'network preset Definition untouched by freshness');
+dashboardMultisiteExpect($repo->get($localPresetId) === $localDefinitionBeforeFreshness, 'local preset Definition untouched by freshness');
+dashboardMultisiteExpect(
+    $freshnessReader->check($draftPresetId, $siteSnapshot['sha256']) === ['status' => 'unavailable', 'current' => false],
+    'Draft preset may not satisfy freshness',
+);
+dashboardMultisiteExpect(
+    $freshnessReader->check($wrongOwnerPresetId, $siteSnapshot['sha256']) === ['status' => 'unavailable', 'current' => false],
+    'Foreign owner preset may not satisfy freshness',
+);
+dashboardMultisiteExpect(
+    $freshnessReader->check($widgetId, $siteSnapshot['sha256']) === ['status' => 'unavailable', 'current' => false],
+    'Widget type cannot be treated as a preset',
+);
+dashboardMultisiteExpect(
+    $freshnessReader->check('15151515-1515-4515-8515-151515151515', $siteSnapshot['sha256']) === ['status' => 'unavailable', 'current' => false],
+    'Unknown preset must remain unavailable',
+);
+foreach ([
+    ['not-a-uuid', $siteSnapshot['sha256']],
+    [$localPresetId, strtoupper($siteSnapshot['sha256'])],
+    [$localPresetId, 'invalid'],
+    [strtoupper($localPresetId), $siteSnapshot['sha256']],
+] as [$id, $fingerprint]) {
+    try {
+        $freshnessReader->check($id, $fingerprint);
+        dashboardMultisiteExpect(false, 'Invalid fingerprint input must not be accepted');
+    } catch (InvalidArgumentException) {
+        // Expected typed boundary rejection; no native WordPress state changed.
+    }
+}
+$invalidFreshnessPresetId = '16161616-1616-4616-8616-161616161616';
+$repo->save($portableDefinition(
+    $invalidFreshnessPresetId, DefinitionStatus::Published, 10, 1,
+    ['17171717-1717-4717-8717-171717171717'],
+));
+dashboardMultisiteExpect(
+    $freshnessReader->check($invalidFreshnessPresetId, $siteSnapshot['sha256']) === ['status' => 'invalid_catalog', 'current' => false],
+    'Malformed Published widget references must fail closed, without digest disclosure',
+);
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'native preferences unchanged after real WP freshness validation');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -430,6 +502,9 @@ $summary = [
     'rb0102_published_portability_snapshot' => true,
     'rb0102_cross_site_deterministic_fingerprint' => true,
     'rb0102_native_preferences_unchanged' => true,
+    'rb0104_read_only_freshness_match_stale' => true,
+    'rb0104_invalid_catalog_rejected' => true,
+    'rb0104_wordpress_preferences_unchanged' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
