@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "f5083db963b6fa443be6d728d678feae4ce3d3d0",
+  "anchor_main_sha": "b37518cc693b071309cc74c588164243619fe1c8",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3476,9 +3476,33 @@
         "Exact head 16f4db02c01cf2129029c3e72245d932635d9ebf passed 13/13 checks incl. pinned WP two-site Multisite, Platform 10/10, Governance/Architecture, six paths, zero behind/reviews; protected merged f5083db963b6fa443be6d728d678feae4ce3d3d0"
       ],
       "note": "Bounded PASS_DASHBOARD_PRESET_PORTABILITY_MAPPING_REAL_WORDPRESS_V1 only; no importer, provider, full parity or GA."
+    },
+    {
+      "id": "RB-0109",
+      "source": "Issue #1369 / implementation PR pending",
+      "category": "ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHPCS/PHPStan/PHPUnit; Governance; Architecture; Distributable; 10-cell Platform Compatibility all path-applicable exact-head CI",
+      "environment": "agent/definition-create-only-atomic-v1 on main b37518cc693b071309cc74c588164243619fe1c8",
+      "dependencies": [
+        "RB-0108 terminal PASS",
+        "main b37518cc693b071309cc74c588164243619fe1c8"
+      ],
+      "authorization": "Issue #1369 exact 11-file atomic opt-in Definition create-only repository contract/testing scope, no importer/public Ability/prod writes",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "platform|atomic-definition-create-only|issue1369|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Atomic revision-one insert-only repository API and direct gateway insert, InMemory slug/ID uniqueness, regression suite staged",
+        "All exact-head CI and merge PENDING"
+      ],
+      "note": "No terminal PASS before full exact-head CI and protected merge; actual preset importer/full parity/GA not promoted."
     }
   ],
-  "last_reconciled_issue": "#1367",
+  "last_reconciled_issue": "#1369",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
