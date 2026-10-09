@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY
+
+- Issue #1391 / PR #1392 exact head `9916b4ca8559c7ac20ed64c366104338b60c83c5`, **12/12** applicable CI PASS incl. actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `574d1f89cb8a1455079182256b4739140a00214c`; issue closed.
+- Bounded `PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1`. Silent write acknowledgement, altered stored record and read exception produce generic `write_failed`; neither automatic import/retry/rollback nor public Ability, publishing, native layout/provider/production/GA.
+- Issue #1393 terminal shared-truth correction sets queue `READY_NEXT_SAFE_SOURCE` **without** recursive admin IN_PROGRESS slot; next work chosen by fresh issue-first main audit. #858/#947/#1102 parked.
+
+
 ## 2026-10-09 — RB-0117 source PASS, RB-0118 disposable real MySQL readback fixture staged
 
 - RB-0117 Issue #1389 / PR #1390 exact head `f99c2689c0cd098335d361aa2772827df743f387`, 14/14 applicable CI PASS incl. PHP Quality, Governance, Distributable, Architecture and 10-cell Platform; 8 authorized files, zero behind/reviews, protected merged `03e86ed08edaeb9e48d1ca22a932897768f7e0f5`.
