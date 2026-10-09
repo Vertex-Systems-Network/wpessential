@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 1b6fd40f6f920120dca0352364ec9d23c16a2a1f
-observed_main_source: "Issue #1355 / PR #1356 RB-0104 terminal shared-truth reconciliation exact head ae5220997170755ed4b27cf2b2c3660dbfabf6ae passed Governance/Architecture 2/2, five authorized files, 0 behind/reviews, merged 1b6fd40f6f920120dca0352364ec9d23c16a2a1f; issue closed."
-active_issue: "#1357"
+observed_main_sha: 6e6e9811eaf7f27411400474b4bb794ac18bec12
+observed_main_source: "RB-0105 Issue #1357 / PR #1358 exact head 51763aa8c97a69d7c738c2af344b758ae5026700 passed 14/14 CI incl. PHP Quality, Governance, Architecture, Distributable, 10-cell Platform; 11 files, zero behind/reviews; merged 6e6e9811eaf7f27411400474b4bb794ac18bec12."
+active_issue: "#1359"
 active_pr: null
-active_branch: agent/dashboard-preset-import-preflight-read-v1
-current_milestone: "RB-0105 / Issue #1357 Dashboard preset read-only import compatibility preflight V1; source/handler/module regression tests staged, exact-head CI PENDING"
+active_branch: agent/dashboard-import-preflight-real-wordpress-v1
+current_milestone: "RB-0106 / Issue #1359 pinned real WordPress Multisite Dashboard preset read-only import preflight integration fixture staged; exact-head CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0104 Issue #1353 / PR #1354 13/13 corrected exact-head CI PASS incl. pinned two-site real WordPress, six allowed paths, zero behind/reviews, merged 595f6114e0954736e343255e1cb5766f336d6473; bounded freshness evidence only."
-next_safe_action: "Open RB-0105 Issue #1357 exact 11-file PR, run all path-applicable exact-head CI and autonomously repair failures, require zero behind/reviews and protected expected-head merge; actual import/cache/provider remain deferred."
+last_completed_milestone: "RB-0105 Issue #1357 / PR #1358 14/14 exact-head CI PASS, 11 allowed files, 0 behind/reviews, merged 6e6e9811eaf7f27411400474b4bb794ac18bec12; bounded read-only preflight only, not importer."
+next_safe_action: "Open Issue #1359 exact 6-file real WP PR, check pinned Multisite Runtime Isolation and all applicable exact-head CI, repair failures within scope, verify zero behind/reviews, expected-head protected merge."
 waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked; no approval required for safe read-only preset preflight."
 next_planned_slot:
-  issue: "#1357"
-  slot_id: dashboard-preset-import-preflight-read-v1
-  claim_branch: "agent/dashboard-preset-import-preflight-read-v1"
-  claim_rule: "Issue #1357 exact 11-file code/test/README/AI state/queue/benchmark scope; read-only compatibility preflight only; no import writes, usermeta, provider or GA."
+  issue: "#1359"
+  slot_id: dashboard-import-preflight-real-wordpress-v1
+  claim_branch: "agent/dashboard-import-preflight-real-wordpress-v1"
+  claim_rule: "Issue #1359 exact 6-file real WordPress Multisite fixture plus README/AI shared-truth only; no product source/import, preferences or workflow edits."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0105
+    - RB-0106
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -89,6 +89,7 @@ runner_benchmark:
     - RB-0102
     - RB-0103
     - RB-0104
+    - RB-0105
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -161,4 +162,6 @@ notes:
   - "Issue #1355 exact five-file postmerge shared-truth status reconciliation for RB-0104 verified PASS."
   - "RB-0104 Issue #1355 / PR #1356 terminal reconciliation merged 1b6fd40f6f920120dca0352364ec9d23c16a2a1f, corrected compact LAST-CHECKPOINT size, Governance/Architecture 2/2 PASS."
   - "RB-0105 Issue #1357 read-only preset import preflight source and tests staged, exact-head CI pending, no mutation."
+  - "RB-0105 Issue #1357 / PR #1358 exact-head 14/14 CI PASS, bounded read-only preset import preflight merged 6e6e9811eaf7f27411400474b4bb794ac18bec12."
+  - "RB-0106 Issue #1359 pinned two-site WordPress Multisite preflight/no-mutation fixture staged, CI pending."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
