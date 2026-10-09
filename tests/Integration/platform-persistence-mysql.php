@@ -22,6 +22,12 @@ spl_autoload_register(static function (string $class) use ($root): void {
     if (is_file($path)) require $path;
 });
 
+use WPEssential\Contracts\CapabilityCheckerInterface;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDefinition;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDraftImportService;
 use WPEssential\Platform\Audit\AuditOutcome;
 use WPEssential\Platform\Audit\AuditRecord;
 use WPEssential\Platform\Audit\AuditRowCodec;
@@ -279,6 +285,129 @@ $networkStore->create($importCandidate);
 platformPersistenceExpect($otherSite->get($importId)?->payload === $importCandidate->payload, 'new subsite scope must independently create own preset ID');
 platformPersistenceExpect($networkStore->get($importId)?->payload === $importCandidate->payload, 'network scope must independently create own preset ID');
 platformPersistenceExpect($repository->get($importId)?->revision === 1, 'isolated inserts may not change original site row');
+
+// RB-0113: prove that the *existing* RB-0111 internal Draft-only import
+// service uses real disposable MySQL insert-once persistence. No actual
+// WordPress current-user or site identity is asserted here; RB-0112 covered
+// those gates against pinned real WordPress. This fixture uses a synthetic
+// scoped test capability checker and never touches production credentials.
+$draftWidgetId = '66666666-6666-4666-8666-666666666666';
+$draftTargetId = '77777777-7777-4777-8777-777777777777';
+$draftSecondId = '88888888-8888-4888-8888-888888888888';
+$draftWidget = new Definition(
+    id: $draftWidgetId, slug: 'draft-import-ref-widget', type: DashboardWidgetDefinition::TYPE,
+    schemaVersion: 1, ownerSurfaceId: 10, status: DefinitionStatus::Published, payload: [],
+);
+$repository->create($draftWidget);
+$otherSite->create($draftWidget);
+$draftPayload = [
+    'definition_id' => $draftTargetId,
+    'revision' => 5,
+    'label' => 'MySQL Draft Import',
+    'widget_definition_ids' => [$draftWidgetId],
+    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+];
+$draftSnapshot = [
+    'format' => 'wpessential-dashboard-preset',
+    'version' => 1,
+    'payload' => $draftPayload,
+    'sha256' => hash('sha256', json_encode(
+        $draftPayload,
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    )),
+];
+$draftChecker = new class implements CapabilityCheckerInterface {
+    public function can(ExecutionContext $context, string $capability): bool
+    {
+        return $capability === 'manage_options'
+            && $context->principal->userId === 42
+            && $context->siteId > 0;
+    }
+};
+$draftService = static fn (PersistentDefinitionRepository $store): DashboardWidgetPresetDraftImportService =>
+    new DashboardWidgetPresetDraftImportService(
+        $store,
+        new DashboardWidgetPresetImportPreflightService($store, new DashboardWidgetPresetCompiler($store)),
+        $draftChecker,
+    );
+$draftContext = new ExecutionContext(new Principal(42), 701, ExecutionChannel::Internal, 7);
+$draftOtherContext = new ExecutionContext(new Principal(42), 702, ExecutionChannel::Internal, 7);
+$originalPublishedPreset = $repository->get($importId);
+$originalPublishedWidget = $repository->get($draftWidgetId);
+$draftImporter = $draftService($repository);
+$otherImporter = $draftService($otherSite);
+
+platformPersistenceExpect(
+    $draftImporter->importDraft(
+        new ExecutionContext(new Principal(42), 701, ExecutionChannel::Rest, 7),
+        $draftSnapshot, 'mysql-draft-import',
+    ) === ['status' => 'forbidden'],
+    'REST channel may not call internal-only MySQL Draft importer',
+);
+platformPersistenceExpect(
+    $draftImporter->importDraft(
+        new ExecutionContext(new Principal(null), 701, ExecutionChannel::Internal, 7),
+        $draftSnapshot, 'mysql-draft-import',
+    ) === ['status' => 'forbidden'],
+    'guest may not call internal MySQL Draft importer',
+);
+$badDraft = $draftSnapshot;
+$badDraft['sha256'] = str_repeat('0', 64);
+platformPersistenceExpect(
+    $draftImporter->importDraft($draftContext, $badDraft, 'mysql-draft-import') === ['status' => 'invalid_snapshot'],
+    'invalid snapshot digest may not create MySQL Draft',
+);
+$networkDraft = $draftSnapshot;
+$networkDraft['payload']['assignment'] = ['roles' => [], 'network_default' => true];
+$networkDraft['sha256'] = hash('sha256', json_encode(
+    $networkDraft['payload'], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+));
+platformPersistenceExpect(
+    $draftImporter->importDraft($draftContext, $networkDraft, 'mysql-draft-import') === ['status' => 'forbidden'],
+    'site administrator may not create network-default Draft through internal importer',
+);
+platformPersistenceExpect($repository->get($draftTargetId) === null, 'all denied MySQL Draft imports must leave no row');
+platformPersistenceExpect(
+    $draftImporter->importDraft($draftContext, $draftSnapshot, 'mysql-draft-import')
+        === ['status' => 'created_draft', 'definition_id' => $draftTargetId],
+    'authorized internal human test context must create one real MySQL Draft row',
+);
+$persistedDraft = $repository->get($draftTargetId);
+platformPersistenceExpect($persistedDraft instanceof Definition, 'created Draft must persist in actual MySQL');
+platformPersistenceExpect($persistedDraft->status === DefinitionStatus::Draft, 'MySQL importer must persist only Draft');
+platformPersistenceExpect($persistedDraft->revision === 1, 'imported Draft must start at destination revision one');
+platformPersistenceExpect($persistedDraft->slug === 'mysql-draft-import', 'imported Draft must preserve supplied bounded slug');
+platformPersistenceExpect($persistedDraft->payload === ['preset' => [
+    'label' => 'MySQL Draft Import',
+    'widget_definition_ids' => [$draftWidgetId],
+    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+]], 'MySQL Draft must preserve canonical preset label/order/role assignment');
+platformPersistenceExpect(
+    $draftImporter->importDraft($draftContext, $draftSnapshot, 'changed-slug') === ['status' => 'id_conflict'],
+    'same preset UUID must not update existing committed MySQL Draft',
+);
+$duplicateSlugSnapshot = $draftSnapshot;
+$duplicateSlugSnapshot['payload']['definition_id'] = $draftSecondId;
+$duplicateSlugSnapshot['sha256'] = hash('sha256', json_encode(
+    $duplicateSlugSnapshot['payload'],
+    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+));
+platformPersistenceExpect(
+    $draftImporter->importDraft($draftContext, $duplicateSlugSnapshot, 'mysql-draft-import') === ['status' => 'write_failed'],
+    'different UUID with existing type and slug must fail insert-only unique index',
+);
+platformPersistenceExpect($repository->get($draftSecondId) === null, 'type+slug collision cannot leave MySQL candidate row');
+platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'rejected MySQL imports may not update committed Draft');
+platformPersistenceExpect($repository->get($importId) == $originalPublishedPreset, 'existing Published preset must remain unchanged');
+platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedWidget, 'Published target widget must remain unchanged');
+platformPersistenceExpect($networkStore->get($draftTargetId) === null, 'site Draft import must not write to network scope');
+platformPersistenceExpect(
+    $otherImporter->importDraft($draftOtherContext, $draftSnapshot, 'mysql-draft-import')
+        === ['status' => 'created_draft', 'definition_id' => $draftTargetId],
+    'independent subsite MySQL scope may create the same Draft id once without modifying original site',
+);
+platformPersistenceExpect($otherSite->get($draftTargetId)?->status === DefinitionStatus::Draft, 'second site import must also stay Draft');
+platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'second subsite create may not modify first site');
 
 $context = new ExecutionContext(
     principal: new Principal(42),
