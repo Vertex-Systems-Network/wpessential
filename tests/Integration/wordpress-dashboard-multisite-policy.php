@@ -41,6 +41,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadSer
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDraftImportService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDraftPublishReviewService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetMappedDraftImportService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityMappingPreviewService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
@@ -914,6 +915,96 @@ dashboardMultisiteExpect(
 );
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'all native WP preferences unchanged by real mapped Draft tests');
 
+// RB-0120: no-route, internal-only Draft *review* in actual pinned two-site
+// WordPress identity/capability contexts. Inspect NEVER publishes or writes.
+$draftPublishReview = new DashboardWidgetPresetDraftPublishReviewService(
+    $repo,
+    $portablePresetCompiler,
+    $draftImporter,
+);
+$draftsBeforeReview = [];
+foreach ([$siteA, $siteB] as $siteForDraftReview) {
+    $draftsBeforeReview[$siteForDraftReview] = [
+        $repo->get($draftCandidateIds[$siteForDraftReview]),
+        $repo->get($mappedDraftCandidates[$siteForDraftReview]),
+    ];
+}
+$publishedBeforeReview = [$repo->get($localPresetId), $repo->get($presetId)];
+$widgetsBeforeReview = [$repo->get($widgetId), $repo->get($localWidgetId)];
+$siteReviewStatus = ['status' => 'review_candidate', 'publish_authorized' => false];
+$reviewForbidden = ['status' => 'forbidden', 'publish_authorized' => false];
+foreach ([$siteA, $siteB] as $siteForDraftReview) {
+    switch_to_blog($siteForDraftReview);
+    wp_set_current_user($adminId);
+    $beforeBlog = (int) get_current_blog_id();
+    $beforeUser = (int) get_current_user_id();
+    $beforeNetwork = (int) get_current_network_id();
+    $beforePrefs = $preferences($adminId);
+    $ctx = new ExecutionContext(new Principal($adminId), $siteForDraftReview, networkId: $networkId);
+    foreach ([$draftCandidateIds[$siteForDraftReview], $mappedDraftCandidates[$siteForDraftReview]] as $candidate) {
+        $draft = $repo->get($candidate);
+        dashboardMultisiteExpect($draft instanceof Definition, 'real WP Draft review fixture requires persisted disposable Draft');
+        dashboardMultisiteExpect($draft->status === DefinitionStatus::Draft, 'Draft review requires existing Draft state');
+        $checksum = $draft->computedChecksum();
+        dashboardMultisiteExpect(
+            $draftPublishReview->inspect($ctx, $candidate, $checksum) === $siteReviewStatus,
+            'same-site authorized WP admin may inspect a Draft as review candidate but never authorize publication',
+        );
+        dashboardMultisiteExpect(
+            $draftPublishReview->inspect($ctx, $candidate, $checksum) === $siteReviewStatus,
+            'review read must be deterministic and idempotent without writes',
+        );
+        dashboardMultisiteExpect(
+            $draftPublishReview->inspect($ctx, $candidate, str_repeat('0', 64)) ===
+            ['status' => 'stale_draft', 'publish_authorized' => false],
+            'stale Draft content checksum must reject review',
+        );
+        foreach ([
+            new ExecutionContext(new Principal($adminId), $siteForDraftReview, ExecutionChannel::Rest, $networkId),
+            new ExecutionContext(new Principal($adminId), $siteForDraftReview, ExecutionChannel::Ui, $networkId),
+            new ExecutionContext(new Principal($adminId), $siteForDraftReview, ExecutionChannel::Ai, $networkId),
+            new ExecutionContext(new Principal(null), $siteForDraftReview, networkId: $networkId),
+            new ExecutionContext(new Principal($adminId + 100), $siteForDraftReview, networkId: $networkId),
+            new ExecutionContext(new Principal($adminId), $siteForDraftReview === $siteA ? $siteB : $siteA, networkId: $networkId),
+            new ExecutionContext(new Principal($adminId), $siteForDraftReview, networkId: $networkId + 1),
+        ] as $badContext) {
+            dashboardMultisiteExpect(
+                $draftPublishReview->inspect($badContext, 'invalid-uuid', 'invalid-hash') === $reviewForbidden,
+                'unauthorized channel, user, blog and network must be rejected BEFORE input processing',
+            );
+        }
+        dashboardMultisiteExpect(
+            $draftPublishReview->inspect($ctx, $candidate, 'bad-hash') ===
+            ['status' => 'invalid_input', 'publish_authorized' => false],
+            'invalid expected content hash must not approve Draft review',
+        );
+        dashboardMultisiteExpect($repo->get($candidate) === $draft, 'Draft review cannot change existing stored Draft');
+    }
+    dashboardMultisiteExpect(
+        $draftPublishReview->inspect($ctx, $localPresetId, str_repeat('a', 64)) ===
+        ['status' => 'unavailable', 'publish_authorized' => false],
+        'Published preset cannot be reviewed as an imported Draft',
+    );
+    dashboardMultisiteExpect($preferences($adminId) === $beforePrefs, 'Draft review never changes native Dashboard user preferences');
+    dashboardMultisiteExpect((int) get_current_blog_id() === $beforeBlog, 'Draft review must never switch blog');
+    dashboardMultisiteExpect((int) get_current_user_id() === $beforeUser, 'Draft review must never switch user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $beforeNetwork, 'Draft review must never switch network');
+    restore_current_blog();
+}
+foreach ($draftsBeforeReview as $siteId => [$directDraft, $mappedDraft]) {
+    dashboardMultisiteExpect($repo->get($draftCandidateIds[$siteId]) === $directDraft, 'direct imported Draft unchanged by review');
+    dashboardMultisiteExpect($repo->get($mappedDraftCandidates[$siteId]) === $mappedDraft, 'mapped imported Draft unchanged by review');
+}
+dashboardMultisiteExpect(
+    [$repo->get($localPresetId), $repo->get($presetId)] === $publishedBeforeReview,
+    'review cannot alter existing Published presets',
+);
+dashboardMultisiteExpect(
+    [$repo->get($widgetId), $repo->get($localWidgetId)] === $widgetsBeforeReview,
+    'review cannot alter existing Published widgets',
+);
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'native WP dashboard settings still unchanged');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -946,6 +1037,9 @@ $summary = [
     'rb0115_internal_mapped_draft_real_wordpress_permission_gate' => true,
     'rb0115_mapped_order_and_draft_only_atomic_create' => true,
     'rb0115_network_isolation_and_native_preferences_unchanged' => true,
+    'rb0120_draft_review_read_only_and_no_publication' => true,
+    'rb0120_draft_review_real_wordpress_identity_isolation' => true,
+    'rb0120_draft_review_native_dashboard_preferences_unchanged' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
