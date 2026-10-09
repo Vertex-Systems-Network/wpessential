@@ -121,7 +121,7 @@ final class DashboardWidgetPresetDraftPublishReviewServiceTest extends TestCase
             $this->service($another)->inspect($this->context(), self::DRAFT_ID, $bad->computedChecksum()),
         );
         $third = $this->repo();
-        $badRoles = $this->draft(roles: ['editor', 'administrator']);
+        $badRoles = $this->draft(roles: ['editor', 'editor']);
         $third->save($badRoles);
         self::assertSame(
             ['status' => 'invalid_catalog', 'publish_authorized' => false],

@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 574d1f89cb8a1455079182256b4739140a00214c
-observed_main_source: "RB-0118 Issue #1391 / PR #1392 exact head 9916b4ca8559c7ac20ed64c366104338b60c83c5 12/12 CI PASS incl. real MySQL, six files, 0 behind/reviews, merged 574d1f89cb8a1455079182256b4739140a00214c."
-active_issue: null
+observed_main_sha: 2125a9188ec65d3397beb8a0cd36943b2d22238b
+observed_main_source: "Issue #1393 / PR #1394 terminal RB-0118 shared-truth reconciliation merged 2125a9188ec65d3397beb8a0cd36943b2d22238b, while RB-0118 underlying PR #1392 12/12 real-MySQL CI PASS. Issue #1395 newly claimed safe Draft review source."
+active_issue: "#1395"
 active_pr: null
-active_branch: null
-current_milestone: "RB-0118 actual disposable MySQL Draft persisted readback terminal PASS; next safe source READY"
-milestone_status: READY
+active_branch: agent/dashboard-draft-publish-review-read-v1
+current_milestone: "RB-0119 / Issue #1395 internal-only read-only Draft publish-review eligibility preflight source/tests staged; CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0118 Issue #1391 / PR #1392 12/12 exact-head CI PASS incl. real disposable MySQL, 6 authorized files, 0 behind/reviews, merged 574d1f89cb8a1455079182256b4739140a00214c; internal-only no GA."
-next_safe_action: "Fresh issue-first current-main/open-PR/queue audit; claim next safe reversible source, park #858/#1102/#947."
+next_safe_action: "Create RB-0119 Issue #1395 exact 9-file source/test/README shared-truth PR, validate PHP Quality/Governance/Architecture/Distributable/Platform exact-head CI, fix within scope, merge protected if 0 behind/reviews."
 waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
 next_planned_slot:
-  issue: null
-  slot_id: null
-  claim_branch: null
-  claim_rule: "No administrative IN_PROGRESS slot; issue-first select next safe source."
+  issue: "#1395"
+  slot_id: dashboard-draft-publish-review-read-v1
+  claim_branch: "agent/dashboard-draft-publish-review-read-v1"
+  claim_rule: "Issue #1395 exactly 9 authorized source/unit/module/README/AI-state/queue/benchmark files, internal-only read-only Draft review, no publish/provider/production."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0119
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -187,4 +188,6 @@ notes:
   - "RB-0117 Issue #1389 direct + mapped internal Draft import persisted readback hardening staged; CI pending."
   - "RB-0117 Issue #1389 / PR #1390 internal persisted Draft post-create readback 14/14 CI PASS, merged 03e86ed08edaeb9e48d1ca22a932897768f7e0f5."
   - "RB-0118 Issue #1391 / PR #1392 real MySQL 12/12 CI PASS merged 574d1f89cb8a1455079182256b4739140a00214c; next safe source READY."
+  - "RB-0118 Issue #1391 / PR #1392 real-MySQL persisted readback PASS and PR #1394 terminal reconciliation accepted main 2125a9188ec65d3397beb8a0cd36943b2d22238b."
+  - "RB-0119 Issue #1395 safe internal Draft publish-review source/tests staged, exact-head CI pending, no publishing."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

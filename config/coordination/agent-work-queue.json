@@ -1,9 +1,9 @@
 {
-  "schema_version": 198,
+  "schema_version": 199,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "574d1f89cb8a1455079182256b4739140a00214c",
-  "mode": "READY_NEXT_SAFE_SOURCE",
-  "source_issue": null,
+  "queue_anchor_main_sha": "2125a9188ec65d3397beb8a0cd36943b2d22238b",
+  "mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1",
+  "source_issue": "#1395",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -241,7 +241,8 @@
     "1387": "CLOSED_COMPLETED_RB0116_POSTMERGE_PR1388_2_OF_2_PASS",
     "1389": "CLOSED_COMPLETED_RB0117_PR1390_14_OF_14_PASS",
     "1391": "CLOSED_COMPLETED_RB0118_PR1392_REAL_MYSQL_12_OF_12_PASS",
-    "1393": "CLOSED_BY_TERMINAL_SHARED_TRUTH_RECONCILIATION_ON_MERGE"
+    "1393": "CLOSED_BY_TERMINAL_SHARED_TRUTH_RECONCILIATION_ON_MERGE",
+    "1395": "IN_PROGRESS_RB0119_INTERNAL_DRAFT_PUBLISH_REVIEW_READ_ONLY_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -271,7 +272,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Fresh issue-first main/open PR/queue audit; next meaningful source lane within active grant; no recursive administrative IN_PROGRESS slot.",
+    "next_safe_action": "Open exact 9-file Issue #1395 PR; path-applicable exact-head CI, repair errors, 0 behind/reviews, protected merge; no publishing.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8246,6 +8247,34 @@
         "behind_main": 0,
         "unresolved_review_threads": 0
       }
+    },
+    {
+      "priority": 1100,
+      "slot_id": "dashboard-draft-publish-review-read-v1",
+      "title": "Internal-only Dashboard Draft site-local publish-review read-only eligibility preflight",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1",
+      "source": "Issue #1395 / RB-0119",
+      "dependencies": [
+        "RB-0118 terminal PASS",
+        "main 2125a9188ec65d3397beb8a0cd36943b2d22238b"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1395 exact 9 files: internal service, module, service/module tests, README and four shared-truth files"
+      ],
+      "forbidden_scope": [
+        "Draft publication/promotion/write/Ability REST UI AJAX",
+        "Native WordPress layout/user options mutation",
+        "External provider/network, production deploy/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-publish-review-read-v1",
+      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1 only after 9 exact authorized paths, all applicable CI PASS, zero behind/reviews, protected merge."
     }
   ],
   "historical_closeout": {

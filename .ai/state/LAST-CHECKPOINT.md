@@ -1,17 +1,17 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0119 internal Draft publish-review read-only preflight staged
+
+- Verified latest main `2125a9188ec65d3397beb8a0cd36943b2d22238b`, 0 open PRs, existing RB-0107..0118 completed and terminal 0118 checkpoint reconciled by accepted PR #1394. Park #858 admin, #1102 separately privileged P-006, #947 independent Worker.
+- Issue #1395 / `agent/dashboard-draft-publish-review-read-v1` adds internal-only read-only eligibility check against stored Draft with caller's current authenticated WordPress user/site/network, `manage_options`, canonical Draft UUID, payload checksum freshness, current Published target widgets and no network-default promotion. Every outcome `publish_authorized=false`. No Ability, REST/AJAX/UI, provider or persistence mutation.
+- Dedicated PHPUnit tests and module service registration within atomic create-only adapter; 9-file exact allowlist; PHP Quality, Architecture, Governance, Distributable, Platform 10-cell exact-head CI and merge **PENDING**, not PASS.
+
+
 ## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY
 
 - Issue #1391 / PR #1392 exact head `9916b4ca8559c7ac20ed64c366104338b60c83c5`, **12/12** applicable CI PASS incl. actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `574d1f89cb8a1455079182256b4739140a00214c`; issue closed.
 - Bounded `PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1`. Silent write acknowledgement, altered stored record and read exception produce generic `write_failed`; neither automatic import/retry/rollback nor public Ability, publishing, native layout/provider/production/GA.
 - Issue #1393 terminal shared-truth correction sets queue `READY_NEXT_SAFE_SOURCE` **without** recursive admin IN_PROGRESS slot; next work chosen by fresh issue-first main audit. #858/#947/#1102 parked.
-
-
-## 2026-10-09 — RB-0117 source PASS, RB-0118 disposable real MySQL readback fixture staged
-
-- RB-0117 Issue #1389 / PR #1390 exact head `f99c2689c0cd098335d361aa2772827df743f387`, 14/14 applicable CI PASS incl. PHP Quality, Governance, Distributable, Architecture and 10-cell Platform; 8 authorized files, zero behind/reviews, protected merged `03e86ed08edaeb9e48d1ca22a932897768f7e0f5`.
-- Internal-only Draft importer and mapped counterpart now require exact typed/canonical persisted Draft readback before `created_draft`; missing/changed/error returns generic `write_failed`, no retry/rollback, no public route/provider/GA.
-- RB-0118 Issue #1391 branch `agent/dashboard-draft-readback-real-mysql-v1` extends actual disposable MySQL8.4 Definition/Audit integration with stored Draft canonical checksum and fake ack-only/changed/read-error readback failures. Exactly six files, CI PENDING. #858 admin, #1102 privileged P-006, #947 Worker remain parked.
 
 
 ## 2026-10-09 — RB-0116 real MySQL mapped Draft terminal PASS, next safe source READY
@@ -82,14 +82,6 @@
 - Promoted only `PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1`; no automatic native preset application, no full Surface 10 parity/certification and no production/GA.
 - Issue #1337 is real post-merge README/state/queue/benchmark divergence reconciliation, five-file scope, no runtime source.
 - Next safe source lane must be freshly evaluated after merging Issue #1337; admin #858, privileged P-006 #1102 and independent Worker #947 remain parked.
-
-
-## 2026-10-09 — RB-0098 real WordPress Multisite isolation staged
-
-- Verified source-start main `b02a51c9ec7477f448c197b5796e4004881418d9`; Issue #1333 / PR #1334 terminal post-RB-0097 shared truth reconciled, 2/2 applicable CI PASS.
-- Issue #1335 / RB-0098 claim branch `agent/dashboard-multisite-policy-real-wordpress-isolation-v1` implements disposable two-site WordPress 7.1/PHP8.2/MySQL8.4 read-only Multisite policy verification via existing Multisite Runtime Isolation workflow, with fixture preference-preservation assertions.
-- Exact Issue #1335 seven-file maximum scope; only new fixture and existing CI workflow are executable changes. Runtime test and exact-head required CI **not yet verified**. Do not promote until PASS and protected merge.
-- #858 admin, #1102 privilege and #947 independent Worker stay parked. No product Dashboard/runtime native preference mutation, production or GA promotion.
 
 
 ## 2026-10-09 — RB-0097 PASS; real post-merge shared truth reconciled
