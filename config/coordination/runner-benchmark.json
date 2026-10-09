@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "9f3d5922aa5d801aad40d553b6acd0db558865c8",
+  "anchor_main_sha": "9cbc28bda205c10d503dceb767e56364116b3985",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3164,17 +3164,43 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|preset-assignment-foundation|issue1325|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Issue #1325 freezes exact 18-file RB-0096 scope",
         "canonical ownership assigns preset assignment to Surface10 and generic placement/personalization to Surface38",
         "implementation resolves current-user role-default before network-default without mutating WordPress layout",
-        "PR #1326 opened from exact main 9f3d5922aa5d801aad40d553b6acd0db558865c8"
+        "PR #1326 opened from exact main 9f3d5922aa5d801aad40d553b6acd0db558865c8",
+        "Accepted PR #1326 merged as 31724a373e7ad6c278c0a0072f32230dd036e309 after exact-head Governance/PHP/Distributable/Platform 10/10/Architecture PASS"
       ],
-      "note": "Merge only after applicable exact-head gates PASS, exact allowlist, zero behind and zero unresolved review blockers."
+      "note": "Terminal PASS_DASHBOARD_PRESET_ASSIGNMENT_FOUNDATION_V1; not full Dashboard parity or GA."
+    },
+    {
+      "id": "RB-0097",
+      "source": "Issue #1327 / Multisite policy implementation PR to be opened",
+      "category": "DASHBOARD_WIDGETS_MULTISITE_PRESET_POLICY_FOUNDATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Governance + PHP Quality + Distributable + Platform Compatibility + Architecture exact-head CI; Browser E2E applicability by changed paths",
+      "environment": "agent/dashboard-multisite-preset-policy-foundation-v1 from audited main 9cbc28bda205c10d503dceb767e56364116b3985",
+      "dependencies": [
+        "RB-0096 terminal PASS",
+        "exact current main 9cbc28bda205c10d503dceb767e56364116b3985"
+      ],
+      "authorization": "Exact Issue #1327 18-file source/test/shared-truth allowlist; read-only Multisite policy, no native layout/preference mutation, no Surface38 fork, deploy or release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|multisite-policy-foundation|issue1327|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Existing two-file claim branch preserved and merged with 9cbc28bda205c10d503dceb767e56364116b3985",
+        "typed policy compiler, resolver, read service/abilities and focused unit tests staged",
+        "README/queue/AI checkpoint reconciled with in-progress state; not certified"
+      ],
+      "note": "Do not promote PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1 until exact-head CI, scope, review, behind-main and expected-head merge gates PASS."
     }
   ],
-  "last_reconciled_issue": "#1325",
+  "last_reconciled_issue": "#1327",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

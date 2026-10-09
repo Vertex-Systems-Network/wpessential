@@ -26,6 +26,9 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetDynamicBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDiagnosticsAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceAbilityHandler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPersonalPreferenceStore;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyReadService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
@@ -179,6 +182,9 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetPresetCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_COMPILER));
         self::assertInstanceOf(DashboardWidgetPresetResolver::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_RESOLVER));
         self::assertInstanceOf(DashboardWidgetPresetReadService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_READ));
+        self::assertInstanceOf(DashboardWidgetMultisitePolicyCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_COMPILER));
+        self::assertInstanceOf(DashboardWidgetMultisitePolicyResolver::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_RESOLVER));
+        self::assertInstanceOf(DashboardWidgetMultisitePolicyReadService::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_READ));
         self::assertInstanceOf(DashboardWidgetContentClassCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_CONTENT_CLASS_COMPILER));
         self::assertInstanceOf(DashboardWidgetRenderSourceCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_RENDER_SOURCE_COMPILER));
         self::assertInstanceOf(DashboardWidgetQueryBindingExecutor::class, $services->get(DashboardWidgetsModule::SERVICE_QUERY_BINDING_EXECUTOR));
@@ -351,6 +357,9 @@ final class DashboardWidgetsModuleTest extends TestCase
             DashboardWidgetsModule::ABILITY_PRESET_GET,
             DashboardWidgetsModule::ABILITY_PRESET_CATALOG,
             DashboardWidgetsModule::ABILITY_EFFECTIVE_PRESET,
+            DashboardWidgetsModule::ABILITY_MULTISITE_POLICY_GET,
+            DashboardWidgetsModule::ABILITY_MULTISITE_POLICY_CATALOG,
+            DashboardWidgetsModule::ABILITY_EFFECTIVE_MULTISITE_POLICY,
         ] as $name) {
             $descriptor = $abilities->descriptor($name);
             self::assertNotNull($descriptor);
@@ -373,7 +382,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertFalse($descriptor->allows(ExecutionChannel::Rest));
         }
 
-        self::assertCount(8, $bridge->registerAbilities());
+        self::assertCount(11, $bridge->registerAbilities());
     }
 
     public function testFormActionRoutesRejectGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
