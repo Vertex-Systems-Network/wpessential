@@ -1,5 +1,14 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0101 read-only preset portability snapshot staged
+
+- Verified exact source main `3978342d3f9b98cc7c62bab8de83a312a2f04810`, Issue #1343 / PR #1344 terminal RB-0100 README progress/queue reconciliation accepted after 2/2 Governance and Architecture CI PASS; zero open PRs before RB-0101.
+- Issue #1345 / RB-0101 deterministic branch `agent/dashboard-preset-portability-read-v1` implements one bounded read-only Published Surface10 preset portability envelope and canonical Policy `manage_options` read ability.
+- Envelope V1 includes only validated preset id/revision/label, ordered Published widget references and canonical role/network assignment. SHA-256 is expressly a **non-authenticating fingerprint** over deterministic payload JSON; neither import, signature, token, trust migration nor native WordPress layout mutation.
+- Focused deterministic, invalid/draft/foreign type, fingerprint and ability-input tests staged; exact 11-file authorized scope; CI and protected expected-head merge PENDING, not certified.
+- #858 admin, #1102 privileged P-006 and #947 independent Worker remain parked, not source blockers. Full Surface10 parity, import, cache and provider remain separate.
+
+
 ## 2026-10-09 — RB-0100 PASS; post-merge README/shared truth closeout
 
 - RB-0100 Issue #1341 / PR #1342 exact head `d978030f7aca15fd6193307de840248ceed74398`: **13/13 exact-head CI PASS**, including real pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite isolation, Governance, Architecture and Platform Compatibility 10/10.

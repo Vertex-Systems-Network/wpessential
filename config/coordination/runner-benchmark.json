@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "c171acebf90ef90def07363ad26c9af52b3f3973",
+  "anchor_main_sha": "3978342d3f9b98cc7c62bab8de83a312a2f04810",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3275,9 +3275,33 @@
         "PR #1342 exact head d978030f7aca15fd6193307de840248ceed74398 passed 13/13 applicable CI including real WP two-site isolation, Platform Compatibility 10/10, exact 6 files, zero behind/reviews; merged c171acebf90ef90def07363ad26c9af52b3f3973"
       ],
       "note": "Terminal PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1; read-only test, no product full-parity or GA."
+    },
+    {
+      "id": "RB-0101",
+      "source": "Issue #1345 / PR pending",
+      "category": "DASHBOARD_PRESET_PORTABILITY_READ_ONLY_SNAPSHOT_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit, Governance, Architecture, Distributable, Platform Compatibility matrix, Browser E2E applicability by paths",
+      "environment": "agent/dashboard-preset-portability-read-v1 on main 3978342d3f9b98cc7c62bab8de83a312a2f04810",
+      "dependencies": [
+        "RB-0100 terminal PASS",
+        "PR #1344 reconciliation merged 3978342d3f9b98cc7c62bab8de83a312a2f04810"
+      ],
+      "authorization": "Issue #1345 exact 11-file bounded Published preset snapshot read-only service, ability and tests; no layout or other mutations",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|preset-portability-read-only|issue1345|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "New V1 immutable validated Published preset portability envelope and SHA-256 fingerprint, no signatures, import or native mutations",
+        "Unit/handler/module regression tests staged, exact-head CI pending"
+      ],
+      "note": "Not terminal PASS until exact-head CI and accepted merge. No full portability/GA."
     }
   ],
-  "last_reconciled_issue": "#1343",
+  "last_reconciled_issue": "#1345",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
