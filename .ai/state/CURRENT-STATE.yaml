@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 60406b0ba3111d91fd815e4ba3730f8bb4835e70
-observed_main_source: "Issue #1387 / PR #1388 exact head 13b3ca8755297449229aee1f1efb720440f9e6de 2/2 Governance/Architecture PASS, five files, zero behind/reviews, merged 60406b0ba3111d91fd815e4ba3730f8bb4835e70; RB-0116 terminal PASS."
-active_issue: "#1389"
+observed_main_sha: 03e86ed08edaeb9e48d1ca22a932897768f7e0f5
+observed_main_source: "RB-0117 Issue #1389 / PR #1390 exact head f99c2689c0cd098335d361aa2772827df743f387 passed 14/14 CI incl. PHP Quality and 10 Platform cells; 8 files, zero behind/reviews, merged 03e86ed08edaeb9e48d1ca22a932897768f7e0f5."
+active_issue: "#1391"
 active_pr: null
-active_branch: agent/dashboard-draft-import-persisted-readback-v1
-current_milestone: "RB-0117 / Issue #1389 persisted Draft readback before success; source and regression tests staged, CI PENDING"
+active_branch: agent/dashboard-draft-readback-real-mysql-v1
+current_milestone: "RB-0118 / Issue #1391 real disposable MySQL Draft persisted readback integration fixture staged; exact-head CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0116 Issue #1385 / PR #1386 12/12 exact-head CI PASS including real MySQL, 6 files, 0 behind/reviews, merged dbeece1c1fd81f2aefac9d2ae6820942446acdad; no public importer."
-next_safe_action: "Issue #1389 eight-file PR; all applicable exact-head CI PASS and protected merge, repair failures autonomously; do not broaden to public import or production."
+last_completed_milestone: "RB-0117 Issue #1389 / PR #1390 14/14 CI PASS incl. PHP Quality, 8 allowed files, zero behind/reviews, merged 03e86ed08edaeb9e48d1ca22a932897768f7e0f5; internal-only Draft readback."
+next_safe_action: "Open Issue #1391 six-file actual disposable MySQL fixture PR, require all path-applicable exact-head CI PASS and 0 behind/reviews, protected expected-head merge."
 waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
 next_planned_slot:
-  issue: "#1389"
-  slot_id: dashboard-draft-import-persisted-readback-v1
-  claim_branch: "agent/dashboard-draft-import-persisted-readback-v1"
-  claim_rule: "Issue #1389 exactly eight code/tests/README/shared-truth files; no public import, publish, provider or production."
+  issue: "#1391"
+  slot_id: dashboard-draft-readback-real-mysql-v1
+  claim_branch: "agent/dashboard-draft-readback-real-mysql-v1"
+  claim_rule: "Issue #1391 exactly six-file real MySQL integration fixture plus README/AI shared truth only, no product source or production."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0117
+    - RB-0118
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -101,6 +101,7 @@ runner_benchmark:
     - RB-0114
     - RB-0115
     - RB-0116
+    - RB-0117
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -184,4 +185,6 @@ notes:
   - "RB-0115 Issue #1383 / PR #1384 real pinned two-site WP mapped Draft-only isolation 13/13 CI PASS, merged 96bc0d7992fe787a3234c9e6084e6e0d75504f7a."
   - "RB-0116 / PR #1386 real disposable MySQL 12/12 exact-head CI PASS merged dbeece1c1fd81f2aefac9d2ae6820942446acdad; next safe source READY."
   - "RB-0117 Issue #1389 direct + mapped internal Draft import persisted readback hardening staged; CI pending."
+  - "RB-0117 Issue #1389 / PR #1390 internal persisted Draft post-create readback 14/14 CI PASS, merged 03e86ed08edaeb9e48d1ca22a932897768f7e0f5."
+  - "RB-0118 Issue #1391 disposable MySQL readback fixture staged; real MySQL CI pending."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
