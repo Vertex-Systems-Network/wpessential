@@ -47,6 +47,17 @@ final class DashboardWidgetPresetDraftImportServiceTest extends TestCase
         self::assertSame($draft, $repo->get(self::PRESET_ID));
     }
 
+    public function testSharedInternalAuthorizationGateMatchesDraftImporterDenyBeforeParsing(): void
+    {
+        $repo = $this->repository();
+        $authorized = $this->service($repo);
+        self::assertTrue($authorized->isAuthorizedContext($this->context()));
+        self::assertFalse($authorized->isAuthorizedContext($this->context(ExecutionChannel::Rest)));
+        self::assertFalse($authorized->isAuthorizedContext($this->context(ExecutionChannel::Internal, null)));
+        self::assertFalse($this->service($repo, false)->isAuthorizedContext($this->context()));
+        self::assertNull($repo->get(self::PRESET_ID));
+    }
+
     public function testForbiddenCallersNeverWriteIncludingGuestsAndImpersonatedPrincipal(): void
     {
         $repo = $this->repository();
