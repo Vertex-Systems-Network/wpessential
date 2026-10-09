@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 10c493cc970473187dd0b9b1a1a94bfe34cb43d3
-observed_main_source: "Issue #1337 / PR #1338 post-RB-0098 README progress reconciliation merged 10c493cc970473187dd0b9b1a1a94bfe34cb43d3 after 2/2 Governance/Architecture checks PASS, exact 5 files; RB-0099 development claimed on that main."
-active_issue: "#1339"
+observed_main_sha: 685cd5986761f995c33f9d01e41ec41141d187eb
+observed_main_source: "RB-0099 Issue #1339 / PR #1340 exact head ed464c5377fd3d35b947219723c7c48e7aec3d2c passed 14/14 CI, 15/15 paths, 0 behind/reviews, merged 685cd5986761f995c33f9d01e41ec41141d187eb; Issue closed."
+active_issue: "#1341"
 active_pr: null
-active_branch: agent/dashboard-multisite-subsite-override-v1
-current_milestone: "RB-0099 / Issue #1339 explicit scoped Multisite subsite preset override read-only resolution, source/test staged, CI PENDING"
+active_branch: agent/dashboard-subsite-override-real-wordpress-v1
+current_milestone: "RB-0100 / Issue #1341 real WordPress subsite override inheritance/isolation V1; integration test staged, CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0098 / Issue #1335 / PR #1336: 13/13 GitHub exact-head checks PASS (real WordPress two-site isolation, Governance, Architecture, Platform 10/10), exact 7-file scope, zero behind/review blockers, merged 78b1bfbd0426e922b514159feebebfbf51f7f667; only bounded policy isolation, not full parity/GA."
-next_safe_action: "Open RB-0099 Issue #1339 implementation PR from deterministic claimed branch, run all path-applicable exact-head CI, repair any failure autonomously within 15-file allowlist, then verify reviews/zero behind and expected-head merge."
+last_completed_milestone: "RB-0099 / Issue #1339 / PR #1340: exact-head 14/14 CI PASS, 15/15 authorized file scope, zero behind/review blockers, merged 685cd5986761f995c33f9d01e41ec41141d187eb; explicit read-only subsite preset assignment PASS, full Surface 10 product parity/GA not certified."
+next_safe_action: "Open RB-0100 Issue #1341 PR for real WordPress subsite override integration; verify exact 6-file scope, pinned WP Multisite Runtime Isolation and applicable CI; autonomously repair tests within grant, then protected expected-head merge."
 waiting_external: "Issue #858 external admin; #1102 separately authorization-gated; #947 independent Worker-only. They do not block RB-0098 scoped read-only fixture integration."
 next_planned_slot:
-  issue: "#1339"
-  slot_id: dashboard-multisite-subsite-preset-override-v1
-  claim_branch: "agent/dashboard-multisite-subsite-override-v1"
-  claim_rule: "Issue #1339 exact 15-file source/test/shared-truth scope; read-only network/site/policy-scoped override semantics, protected exact-head CI, no native WordPress layout mutation."
+  issue: "#1341"
+  slot_id: dashboard-subsite-override-real-wordpress-v1
+  claim_branch: "agent/dashboard-subsite-override-real-wordpress-v1"
+  claim_rule: "Issue #1341 exact 6-file existing real WordPress Multisite fixture + 5 README/shared-truth paths; no source runtime or workflow changes, no native preferences mutation."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0099
+    - RB-0100
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -83,6 +83,7 @@ runner_benchmark:
     - RB-0096
     - RB-0097
     - RB-0098
+    - RB-0099
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -137,4 +138,6 @@ notes:
   - "Issue #1335 / RB-0098 real WordPress two-site integration PASS: PR #1336 head 098054362615e12e3e5f7617bc03512ec06db487 13/13 checks PASS, merged 78b1bfbd0426e922b514159feebebfbf51f7f667; native dashboard preferences unchanged in pinned fixture."
   - "Issue #1337 / PR #1338 source-truth closeout merged 10c493cc970473187dd0b9b1a1a94bfe34cb43d3, applicable 2/2 Governance/Architecture PASS. README RB-0098 bounded result confirmed."
   - "RB-0099 / Issue #1339 new read-only subsite preset precedence lane claimed, CI pending and full Surface 10 parity not promoted."
+  - "RB-0099 / Issue #1339 / PR #1340 terminal bounded PASS: exact head ed464c5377fd3d35b947219723c7c48e7aec3d2c 14/14 CI PASS, 15/15 files; merge 685cd5986761f995c33f9d01e41ec41141d187eb. No automatic WordPress preferences mutation or GA."
+  - "RB-0100 / Issue #1341 disposable real WordPress Multisite site-override integration staged; do not promote before CI/merge."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
