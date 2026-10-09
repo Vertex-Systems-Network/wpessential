@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15",
+  "anchor_main_sha": "32bc86a613c9c6667aa622f4f04c827436803174",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3604,7 +3604,7 @@
     },
     {
       "id": "RB-0114",
-      "source": "Issue #1381 / implementation PR pending",
+      "source": "Issue #1381 / merged PR #1382",
       "category": "DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_CREATE_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit, Governance, Distributable, Architecture, Platform 10-cell compatibility plus path-applicable checks",
@@ -3619,15 +3619,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|internal-mapped-draft-create|issue1381|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Internal only importMappedDraft maps full source UUIDs into verified target catalog; checks WP user/blog/network capability before untrusted mapping and again at Draft create",
-        "Unit tests for mapped ordering, revision-one, id/slug collisions, unauthorized/invalid inputs staged; exact-head CI PENDING"
+        "Unit tests for mapped ordering, revision-one, id/slug collisions, unauthorized/invalid inputs staged; exact-head CI PENDING",
+        "Exact head 6960e139c0edd787951e8f0683047f8522dc92de 14/14 CI PASS incl PHP Quality/10-cell Platform/Governance/Distributable/Architecture; exact 11 files, zero behind/reviews; protected merged 32bc86a613c9c6667aa622f4f04c827436803174"
       ],
-      "note": "No bounded PASS or full import/GA until all applicable exact-head CI and protected merge."
+      "note": "Terminal bounded PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_CREATE_V1, no public importer/publish, no full parity/GA."
+    },
+    {
+      "id": "RB-0115",
+      "source": "Issue #1383 / real WP integration PR pending",
+      "category": "DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_REAL_WORDPRESS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation plus Governance/Architecture/Platform Compatibility",
+      "environment": "agent/dashboard-mapped-draft-real-wordpress-v1 on main 32bc86a613c9c6667aa622f4f04c827436803174",
+      "dependencies": [
+        "RB-0114 terminal PASS",
+        "main 32bc86a613c9c6667aa622f4f04c827436803174"
+      ],
+      "authorization": "Issue #1383 exact six-file real WP fixture/README/AI state/queue/benchmark, no product code/workflow/native preference mutation",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|mapped-draft-real-wordpress|issue1383|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Real pinned WP two-site fixture for Internal mapped Draft import capability, user/site/network identity, Draft-only atomic create/ID collision and unchanged native Dashboard preferences staged",
+        "All exact-head CI and protected merge pending"
+      ],
+      "note": "No real-WP PASS before actual pinned Multisite CI and protected merge; no public importer/full parity/GA."
     }
   ],
-  "last_reconciled_issue": "#1381",
+  "last_reconciled_issue": "#1383",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

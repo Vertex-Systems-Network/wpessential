@@ -41,6 +41,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadSer
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDraftImportService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetMappedDraftImportService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityMappingPreviewService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
@@ -787,6 +788,132 @@ dashboardMultisiteExpect($repo->get($localPresetId) === $existingPresetBeforeDra
 dashboardMultisiteExpect($repo->get($presetId) === $existingNetworkBeforeDraftImport, 'Published network preset cannot be overwritten by Draft import');
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'native Dashboard preferences unchanged across both Draft operations');
 
+// RB-0115: exercise the mapped Draft-only *composition* against actual pinned
+// two-site WordPress identity, permissions and dashboard usermeta. The source
+// UUIDs refer to another site's export and are never persisted directly.
+$mappedDraftImporter = new DashboardWidgetPresetMappedDraftImportService($mappingReader, $draftImporter);
+$mappedDraftCandidates = [
+    $siteA => '31313131-3131-4313-8313-313131313131',
+    $siteB => '32323232-3232-4323-8323-323232323232',
+];
+$publishedPresetBeforeMappedImport = $repo->get($localPresetId);
+$networkPresetBeforeMappedImport = $repo->get($presetId);
+$targetWidgetBeforeMappedImport = [$repo->get($widgetId), $repo->get($localWidgetId)];
+foreach ([$siteA, $siteB] as $siteForMappedDraft) {
+    switch_to_blog($siteForMappedDraft);
+    wp_set_current_user($adminId);
+    $savedBlog = (int) get_current_blog_id();
+    $savedUser = (int) get_current_user_id();
+    $savedNetwork = (int) get_current_network_id();
+    $savedPrefs = $preferences($adminId);
+    $mappedDraftId = $mappedDraftCandidates[$siteForMappedDraft];
+    $mappedDraftSlug = 'mapped-draft-site-' . $siteForMappedDraft;
+    $ctx = new ExecutionContext(new Principal($adminId), $siteForMappedDraft, networkId: $networkId);
+
+    foreach ([
+        new ExecutionContext(new Principal($adminId), $siteForMappedDraft, ExecutionChannel::Rest, $networkId),
+        new ExecutionContext(new Principal($adminId), $siteForMappedDraft, ExecutionChannel::Ui, $networkId),
+        new ExecutionContext(new Principal($adminId), $siteForMappedDraft, ExecutionChannel::Ai, $networkId),
+        new ExecutionContext(new Principal(null), $siteForMappedDraft, networkId: $networkId),
+        new ExecutionContext(new Principal($adminId + 100), $siteForMappedDraft, networkId: $networkId),
+        new ExecutionContext(new Principal($adminId), $siteForMappedDraft === $siteA ? $siteB : $siteA, networkId: $networkId),
+        new ExecutionContext(new Principal($adminId), $siteForMappedDraft, networkId: $networkId + 1),
+    ] as $unauthorizedContext) {
+        dashboardMultisiteExpect(
+            $mappedDraftImporter->importMappedDraft(
+                $unauthorizedContext, ['untrusted' => true], 'not-a-uuid', ['untrusted' => []], 'invalid',
+            ) === ['status' => 'forbidden'],
+            'mapped Draft must deny non-Internal, guest, forged or wrong-site/network callers BEFORE reading source inputs',
+        );
+    }
+
+    $badSource = $portableSourceSnapshot;
+    $badSource['sha256'] = str_repeat('0', 64);
+    dashboardMultisiteExpect(
+        $mappedDraftImporter->importMappedDraft(
+            $ctx, $badSource, $mappedDraftId, $widgetIdMapping, $mappedDraftSlug,
+        ) === ['status' => 'invalid_snapshot'],
+        'untrusted source checksum cannot create mapped Draft',
+    );
+    foreach ([
+        ['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $widgetId,
+        ],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $draftPresetId,
+        ],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $wrongOwnerPresetId,
+        ],
+    ] as $badMap) {
+        dashboardMultisiteExpect(
+            $mappedDraftImporter->importMappedDraft($ctx, $portableSourceSnapshot, $mappedDraftId, $badMap, $mappedDraftSlug) ===
+            ['status' => 'invalid_snapshot'],
+            'incomplete, duplicate, Draft or wrong-owner mapped refs fail closed',
+        );
+    }
+    $networkDefaultSource = $portableSourceSnapshot;
+    $networkDefaultSource['payload']['assignment'] = ['roles' => [], 'network_default' => true];
+    $networkDefaultSource['sha256'] = hash('sha256', json_encode(
+        $networkDefaultSource['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    dashboardMultisiteExpect(
+        $mappedDraftImporter->importMappedDraft(
+            $ctx, $networkDefaultSource, $mappedDraftId, $widgetIdMapping, $mappedDraftSlug,
+        ) === ['status' => 'forbidden'],
+        'site manage_options cannot import network-default via mapped Draft',
+    );
+    dashboardMultisiteExpect($repo->get($mappedDraftId) === null, 'all denied mapped Draft calls must not write');
+
+    dashboardMultisiteExpect(
+        $mappedDraftImporter->importMappedDraft(
+            $ctx, $portableSourceSnapshot, $mappedDraftId, $widgetIdMapping, $mappedDraftSlug,
+        ) === ['status' => 'created_draft', 'definition_id' => $mappedDraftId],
+        'real WordPress administrator must create only one mapped Draft under local target id',
+    );
+    $mappedDraft = $repo->get($mappedDraftId);
+    dashboardMultisiteExpect($mappedDraft instanceof Definition, 'mapped Draft must exist in disposable store');
+    dashboardMultisiteExpect($mappedDraft->status === DefinitionStatus::Draft, 'mapped import never publishes');
+    dashboardMultisiteExpect($mappedDraft->revision === 1, 'destination revision resets to one');
+    dashboardMultisiteExpect($mappedDraft->slug === $mappedDraftSlug, 'destination slug preserved');
+    dashboardMultisiteExpect(
+        $mappedDraft->payload['preset']['widget_definition_ids'] === $mappingExpected,
+        'mapped Draft must preserve ordered Published target widget IDs',
+    );
+    dashboardMultisiteExpect(
+        $mappedDraft->payload['preset']['label'] === $portableSourceSnapshot['payload']['label'],
+        'mapped Draft must preserve validated source label',
+    );
+    dashboardMultisiteExpect(
+        $mappedDraft->payload['preset']['assignment'] === $portableSourceSnapshot['payload']['assignment'],
+        'mapped Draft must preserve site-safe roles and assignment',
+    );
+    dashboardMultisiteExpect(
+        $mappedDraftImporter->importMappedDraft(
+            $ctx, $portableSourceSnapshot, $mappedDraftId, $widgetIdMapping, 'must-not-overwrite',
+        ) === ['status' => 'id_conflict'],
+        'repeat mapped Draft creation must not overwrite',
+    );
+    dashboardMultisiteExpect($repo->get($mappedDraftId) === $mappedDraft, 'repeated source mapping cannot mutate saved Draft');
+    dashboardMultisiteExpect($preferences($adminId) === $savedPrefs, 'mapped Draft must not update native preferences');
+    dashboardMultisiteExpect((int) get_current_blog_id() === $savedBlog, 'mapped Draft must not switch blog');
+    dashboardMultisiteExpect((int) get_current_user_id() === $savedUser, 'mapped Draft must not switch user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $savedNetwork, 'mapped Draft must not switch network');
+    restore_current_blog();
+}
+dashboardMultisiteExpect($repo->get($localPresetId) === $publishedPresetBeforeMappedImport, 'Published local preset unchanged by mapped Draft');
+dashboardMultisiteExpect($repo->get($presetId) === $networkPresetBeforeMappedImport, 'Published network preset unchanged by mapped Draft');
+dashboardMultisiteExpect(
+    [$repo->get($widgetId), $repo->get($localWidgetId)] === $targetWidgetBeforeMappedImport,
+    'Published target widgets unchanged by mapped Draft',
+);
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'all native WP preferences unchanged by real mapped Draft tests');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -816,6 +943,9 @@ $summary = [
     'rb0112_draft_import_auth_context_isolation' => true,
     'rb0112_draft_only_create_once' => true,
     'rb0112_native_preferences_unchanged' => true,
+    'rb0115_internal_mapped_draft_real_wordpress_permission_gate' => true,
+    'rb0115_mapped_order_and_draft_only_atomic_create' => true,
+    'rb0115_network_isolation_and_native_preferences_unchanged' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
