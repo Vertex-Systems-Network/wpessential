@@ -1,11 +1,11 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0111 PASS, RB-0112 real WordPress Draft import fixture staged
+## 2026-10-09 — RB-0112 real WP PASS; RB-0113 real MySQL Draft import staged
 
-- RB-0111 Issue #1373 / PR #1374 exact head `4dd819b6be82d13a2e80a8849cf2f7c8179c0bb6` passed **14/14** exact-head PHP Quality/Governance/Architecture/Distributable/10-cell Platform CI, 10 authorized files, 0 behind/reviews, protected merged `2b6043804c4d13dd5ff523925d2305c161649dc9`, issue closed.
-- Accepted only bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1`: human Internal + current site/user + `manage_options`, opt-in atomic `create()` of Draft only, dest revision 1, no overwrite/publishing/network default/public REST/UI/production.
-- RB-0112 Issue #1375 `agent/dashboard-preset-draft-import-real-wordpress-v1` exercises current real WP admin identity/capability on both disposable sites, wrong channel/guest/spoofed user/blog/network, invalid content digest, denied network defaults, actual Draft create-once, native preferences and Published records preserved.
-- Exact six-file fixture/README/AI state/queue/benchmark scope, pinned real WP Multisite CI and protected merge **PENDING**. External #858/#1102/#947 parked; full parity/GA not promoted.
+- RB-0112 Issue #1375 / PR #1376 exact head `871419af2bdb7edf2e230ce2e5f234d0321db56d`: 13/13 exact-head CI PASS including pinned real WordPress Multisite, Governance, Architecture and 10-cell Platform; six authorized files, zero behind/reviews, protected merged `6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313`, issue closed.
+- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1`; authenticated real WP current user/blog/network capability, internal-only Draft create-once with unchanged native Dashboard usermeta and Published presets; no public importer.
+- RB-0113 Issue #1377 branch `agent/dashboard-draft-import-real-mysql-v1`: disposable real MySQL `PersistentDefinitionRepository` fixture now invokes accepted internal Draft-only importer with synthetic test capability checker, verifying revision one, insert-once, conflicts/no overwrites, invalid checksum, role/order, subsite/network isolation. Synthetic checker is not equivalent to WP auth (separately proven by RB-0112).
+- Exact six-file fixture/README/shared state scope; all applicable CI including actual MySQL run and protected merge **PENDING**. No product source, live DB/provider/GA.
 
 
 ## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY
