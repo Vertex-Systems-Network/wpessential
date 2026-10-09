@@ -189,6 +189,97 @@ $staleRow = (new DefinitionRowCodec())->encode($staleCandidate);
 platformPersistenceExpect(!$gateway->updateIfCurrentRevision($childId, 1, $staleRow, []), 'Definition gateway CAS must reject a stale expected revision');
 platformPersistenceExpect($repository->get($childId)?->revision === 2, 'stale Definition CAS must not mutate the committed revision');
 
+// RB-0110: exercise opt-in atomic create-only on the real disposable
+// MySQL schema, including scoped primary/unique keys and no upsert fallback.
+$importId = '44444444-4444-4444-8444-444444444444';
+$conflictingSlugId = '55555555-5555-4555-8555-555555555555';
+$importCandidate = new Definition(
+    id: $importId,
+    slug: 'portable-preset-import-target',
+    type: 'dashboard-widget-preset',
+    schemaVersion: 1,
+    ownerSurfaceId: 10,
+    status: DefinitionStatus::Published,
+    payload: ['preset' => ['label' => 'Create-only candidate']],
+);
+$repository->create($importCandidate);
+platformPersistenceExpect($repository->get($importId)?->payload === $importCandidate->payload, 'create-only MySQL insert must persist the initial payload');
+platformPersistenceExpect($repository->get($importId)?->revision === 1, 'created MySQL row must begin at revision one');
+
+$expectCreateConflict = static function (Definition $attempt, string $assertion) use ($repository): void {
+    $rejected = false;
+    try {
+        $repository->create($attempt);
+    } catch (RuntimeException) {
+        $rejected = true;
+    }
+    platformPersistenceExpect($rejected, $assertion);
+};
+
+$expectCreateConflict(new Definition(
+    id: $importId,
+    slug: 'portable-preset-import-target',
+    type: 'dashboard-widget-preset',
+    schemaVersion: 1,
+    ownerSurfaceId: 10,
+    status: DefinitionStatus::Published,
+    payload: ['preset' => ['label' => 'OVERWRITE ATTEMPT']],
+    revision: 1,
+), 'create-only real MySQL PK must reject occupied ID even with a different payload');
+$expectCreateConflict(new Definition(
+    id: $importId,
+    slug: 'portable-preset-import-target',
+    type: 'dashboard-widget-preset',
+    schemaVersion: 1,
+    ownerSurfaceId: 10,
+    status: DefinitionStatus::Published,
+    payload: ['preset' => ['label' => 'ILLEGAL REVISION']],
+    revision: 2,
+), 'create-only real MySQL must reject even a higher revision instead of updating');
+$expectCreateConflict(new Definition(
+    id: $conflictingSlugId,
+    slug: 'portable-preset-import-target',
+    type: 'dashboard-widget-preset',
+    schemaVersion: 1,
+    ownerSurfaceId: 10,
+    status: DefinitionStatus::Published,
+    payload: ['preset' => ['label' => 'DUPLICATE SLUG']],
+), 'real MySQL scoped type/slug UNIQUE KEY must reject separate IDs');
+$expectCreateConflict(new Definition(
+    id: $conflictingSlugId,
+    slug: 'invalid-checksum',
+    type: 'dashboard-widget-preset',
+    schemaVersion: 1,
+    ownerSurfaceId: 10,
+    status: DefinitionStatus::Published,
+    payload: ['preset' => ['label' => 'WRONG CHECKSUM']],
+    checksum: str_repeat('0', 64),
+), 'create-only checksum check must fail without inserting into real MySQL');
+platformPersistenceExpect(
+    $repository->get($importId)?->payload === $importCandidate->payload
+    && $repository->get($importId)?->revision === 1,
+    'rejected real MySQL create-only collisions must leave existing committed record unchanged',
+);
+platformPersistenceExpect($repository->get($conflictingSlugId) === null, 'duplicate-slug and wrong-checksum attempts may not leave inserted rows');
+platformPersistenceExpect(
+    count($repository->byType('dashboard-widget-preset')) === 1,
+    'create-only MySQL collisions may not increase the persisted preset count',
+);
+
+// Scoped Definition tables intentionally allow the same ID/type/slug on a
+// different subsite or network. Never reuse a production DB in this fixture.
+$otherSite = new PersistentDefinitionRepository(new WpdbDefinitionTableGateway(
+    $database, DefinitionScope::site(7, 702),
+));
+$networkStore = new PersistentDefinitionRepository(new WpdbDefinitionTableGateway(
+    $database, DefinitionScope::network(7),
+));
+$otherSite->create($importCandidate);
+$networkStore->create($importCandidate);
+platformPersistenceExpect($otherSite->get($importId)?->payload === $importCandidate->payload, 'new subsite scope must independently create own preset ID');
+platformPersistenceExpect($networkStore->get($importId)?->payload === $importCandidate->payload, 'network scope must independently create own preset ID');
+platformPersistenceExpect($repository->get($importId)?->revision === 1, 'isolated inserts may not change original site row');
+
 $context = new ExecutionContext(
     principal: new Principal(42),
     siteId: 701,
