@@ -1,5 +1,13 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0104 real WordPress fingerprint freshness PASS, terminal reconciliation
+
+- Issue #1353 / PR #1354 original candidate failed an invalid test fixture assumption: uppercase of an all-numeric UUID did not change the UUID. Autonomous scoped fix committed a letter-bearing uppercase test UUID; all applicable exact-head CI restarted and passed.
+- Corrected PR exact head `9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e`: **13/13** path-applicable CI PASS incl. pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation, Governance, Architecture, Platform Compatibility 10/10; exactly 6 allowed paths, 0 behind/reviews; protected merged `595f6114e0954736e343255e1cb5766f336d6473`. Issue #1353 closed.
+- Promote only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1`; no import, signature trust, native WordPress dashboard preferences, provider, cache, full Surface10 product parity, production or GA.
+- Issue #1355 is real 5-file post-merge README/queue/benchmark PENDING-to-PASS evidence reconciliation. Fresh audit after protected merge; #858 admin, #1102 privileged P-006 and #947 independent Worker parked.
+
+
 ## 2026-10-09 — RB-0103 PASS; RB-0104 real WordPress freshness fixture staged
 
 - RB-0103 Issue #1351 / PR #1352 exact head `1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee` passed **14/14** exact-head CI incl. Governance, PHP Quality, Distributable, Architecture and Platform 10/10; 11/11 authorized files, no behind/review blockers; protected squash merged `6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7`, issue closed.

@@ -2,29 +2,28 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7
-observed_main_source: "RB-0103 Issue #1351 / PR #1352 exact head 1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee passed 14/14 path-applicable CI, 11 authorized paths, 0 behind/reviews, merged 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7; Issue closed."
-active_issue: "#1353"
+observed_main_sha: 595f6114e0954736e343255e1cb5766f336d6473
+observed_main_source: "RB-0104 Issue #1353 / PR #1354 corrected exact head 9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e 13/13 CI PASS incl. real WP, 6 files, zero behind/threads, merged 595f6114e0954736e343255e1cb5766f336d6473; issue closed."
+active_issue: "#1355"
 active_pr: null
-active_branch: agent/dashboard-portability-freshness-real-wordpress-v1
-current_milestone: "RB-0104 / Issue #1353 pinned real WordPress Multisite Published preset SHA256 fingerprint freshness isolation V1; integration fixture staged, CI PENDING"
-milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0103 / Issue #1351 / PR #1352 14/14 exact-head CI PASS (Governance, PHP Quality, Distributable, Architecture, 10-cell Platform), 11/11 authorized files, zero behind/reviews, merged 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7; bounded read-only freshness only."
-next_safe_action: "Open RB-0104 Issue #1353 six-file integration PR, verify pinned real WP Multisite Runtime Isolation and all path-applicable exact-head CI, repair issues autonomously, require zero behind/reviews and expected-head protected merge."
+active_branch: agent/rb0104-portability-freshness-terminal-truth-v1
+current_milestone: "RB-0104 terminal bounded PASS / Issue #1355 post-merge README/AI state/queue/benchmark reconciliation, next safe source fresh audit"
+milestone_status: READY
+last_completed_milestone: "RB-0104 Issue #1353 / PR #1354 13/13 corrected exact-head CI PASS incl. pinned two-site real WordPress, six allowed paths, zero behind/reviews, merged 595f6114e0954736e343255e1cb5766f336d6473; bounded freshness evidence only."
+next_safe_action: "Merge Issue #1355 exact five-file real post-merge README/benchmark reconciliation after applicable Governance/Architecture checks, zero behind/reviews and protected expected-head merge; fresh-audit next safe source development while parking #858/#1102/#947."
 waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked, not blockers for read-only preset snapshot freshness source development."
 next_planned_slot:
-  issue: "#1353"
-  slot_id: dashboard-portability-freshness-real-wordpress-v1
-  claim_branch: "agent/dashboard-portability-freshness-real-wordpress-v1"
-  claim_rule: "Issue #1353 exact 6-file real WordPress fixture plus 5 shared-truth files only; no product source/WordPress preference/provider/import changes."
+  issue: "#1355"
+  slot_id: rb0104-portability-freshness-terminal-truth-v1
+  claim_branch: "agent/rb0104-portability-freshness-terminal-truth-v1"
+  claim_rule: "Issue #1355 exact five documentation/AI state/queue/benchmark paths only; reconcile verified RB-0104 terminal evidence; no product code/test/workflow changes."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending:
-    - RB-0104
+  immediate_pending: []
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -88,6 +87,7 @@ runner_benchmark:
     - RB-0101
     - RB-0102
     - RB-0103
+    - RB-0104
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -156,4 +156,6 @@ notes:
   - "Issue #1351 / RB-0103 bounded Published preset portability freshness source and tests staged, exact-head CI PENDING."
   - "RB-0103 / Issue #1351 / PR #1352 real protected merge 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7, exact head 1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee 14/14 CI PASS, no full portability/import/GA."
   - "RB-0104 / Issue #1353 disposable pinned two-site real WordPress freshness fixture staged; CI pending."
+  - "RB-0104 Issue #1353 / PR #1354 protected corrected-head merge 595f6114e0954736e343255e1cb5766f336d6473, 13/13 real WP / Platform / Governance / Architecture CI PASS, six authorized paths."
+  - "Issue #1355 exact five-file postmerge shared-truth status reconciliation for RB-0104 verified PASS."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
