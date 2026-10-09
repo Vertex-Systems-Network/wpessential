@@ -61,6 +61,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_PRESET_PORTABILITY_FRESHNESS = 'module.dashboard-widgets.preset-portability-freshness';
     public const SERVICE_PRESET_IMPORT_PREFLIGHT = 'module.dashboard-widgets.preset-import-preflight';
     public const SERVICE_PRESET_DRAFT_IMPORT = 'module.dashboard-widgets.preset-draft-import';
+    public const SERVICE_PRESET_MAPPED_DRAFT_IMPORT = 'module.dashboard-widgets.preset-mapped-draft-import';
     public const SERVICE_PRESET_MAPPING_PREVIEW = 'module.dashboard-widgets.preset-mapping-preview';
     public const SERVICE_MULTISITE_POLICY_COMPILER = 'module.dashboard-widgets.multisite-policy-compiler';
     public const SERVICE_MULTISITE_POLICY_RESOLVER = 'module.dashboard-widgets.multisite-policy-resolver';
@@ -429,12 +430,18 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $presetPortabilityFreshness);
         $services->set(self::SERVICE_PRESET_IMPORT_PREFLIGHT, $presetImportPreflight);
         if ($definitions instanceof DefinitionCreateOnlyRepositoryInterface) {
+            $draftImporter = new DashboardWidgetPresetDraftImportService(
+                $definitions,
+                $presetImportPreflight,
+                $capabilityChecker,
+            );
+            $services->set(self::SERVICE_PRESET_DRAFT_IMPORT, $draftImporter);
+            // Service-only. No REST/UI/CLI/AI/WordPress Ability registration.
             $services->set(
-                self::SERVICE_PRESET_DRAFT_IMPORT,
-                new DashboardWidgetPresetDraftImportService(
-                    $definitions,
-                    $presetImportPreflight,
-                    $capabilityChecker,
+                self::SERVICE_PRESET_MAPPED_DRAFT_IMPORT,
+                new DashboardWidgetPresetMappedDraftImportService(
+                    $presetMappingPreview,
+                    $draftImporter,
                 ),
             );
         }

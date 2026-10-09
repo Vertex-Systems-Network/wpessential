@@ -35,13 +35,7 @@ final readonly class DashboardWidgetPresetDraftImportService
      */
     public function importDraft(ExecutionContext $context, array $snapshot, string $slug): array
     {
-        if (
-            $context->channel !== ExecutionChannel::Internal
-            || !$context->principal->isAuthenticated()
-            || $context->principal->actorType !== 'user'
-            || !$this->isCurrentWordPressContext($context)
-            || !$this->capabilities->can($context, 'manage_options')
-        ) {
+        if (!$this->isAuthorizedContext($context)) {
             return ['status' => 'forbidden'];
         }
 
@@ -99,6 +93,20 @@ final readonly class DashboardWidgetPresetDraftImportService
         }
 
         return ['status' => 'created_draft', 'definition_id' => $draft->id];
+    }
+
+    /**
+     * Pure internal caller gate reusable by mapped import BEFORE processing
+     * untrusted external snapshot contents. The atomic importer also enforces
+     * this same gate, never relying on a preview as authorization.
+     */
+    public function isAuthorizedContext(ExecutionContext $context): bool
+    {
+        return $context->channel === ExecutionChannel::Internal
+            && $context->principal->isAuthenticated()
+            && $context->principal->actorType === 'user'
+            && $this->isCurrentWordPressContext($context)
+            && $this->capabilities->can($context, 'manage_options');
     }
 
     private function isCurrentWordPressContext(ExecutionContext $context): bool
