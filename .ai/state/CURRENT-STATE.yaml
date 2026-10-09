@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: d3f2f130643d0f373724c123afd1769891016499
-observed_main_source: "RB-0109 Issue #1369 / PR #1370 exact head de35551c8f6a1bad57ec12b6227d5ff9b203153f passed 36/36 path-applicable CI, 11 files, zero behind/reviews, protected merged d3f2f130643d0f373724c123afd1769891016499."
-active_issue: "#1371"
+observed_main_sha: aa69cc1770297a8454fb37442d415d8c386f2d31
+observed_main_source: "RB-0110 Issue #1371 / PR #1372 pinned real MySQL Definition create-only collision/scope isolation 12/12 exact-head CI PASS, 6 allowed paths, 0 behind/reviews, protected merged aa69cc1770297a8454fb37442d415d8c386f2d31; Issue closed."
+active_issue: "#1373"
 active_pr: null
-active_branch: agent/definition-create-only-real-mysql-v1
-current_milestone: "RB-0110 / Issue #1371 disposable MySQL Definition create-only atomic collision and scope isolation fixture staged, exact-head CI PENDING"
+active_branch: agent/dashboard-preset-draft-import-create-only-v1
+current_milestone: "RB-0111 / Issue #1373 internal Draft-only preset import atomic create-only V1; source/tests staged, exact-head CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0109 / Issue #1369 / PR #1370 36/36 exact-head CI PASS, 11 authorized files, zero behind/reviews, merged d3f2f130643d0f373724c123afd1769891016499; create-only repository foundation only, no importer."
-next_safe_action: "Open Issue #1371 exact six-file real MySQL integration PR; verify genuine disposable MySQL persistence fixture and all path-applicable exact-head CI; repair failures inside scope and protected expected-head merge."
-waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked; no approval required for safe read-only preset preflight."
+last_completed_milestone: "RB-0110 Issue #1371 / PR #1372 12/12 exact-head CI PASS incl. real MySQL create-only, zero behind/reviews, merged aa69cc1770297a8454fb37442d415d8c386f2d31; storage-only evidence."
+next_safe_action: "Open Issue #1373 exact ten-file Draft-only import PR, require all path-applicable exact-head CI; diagnose/repair failures autonomously, verify zero behind/threads and protected expected-head merge. No public import or production side effects."
+waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
 next_planned_slot:
-  issue: "#1371"
-  slot_id: definition-create-only-real-mysql-v1
-  claim_branch: "agent/definition-create-only-real-mysql-v1"
-  claim_rule: "Issue #1371 exact six-file real MySQL integration fixture plus README/AI state/queue/benchmark only; no source/runtime/import/production."
+  issue: "#1373"
+  slot_id: dashboard-preset-draft-import-create-only-v1
+  claim_branch: "agent/dashboard-preset-draft-import-create-only-v1"
+  claim_rule: "Issue #1373 exact 10-file source, two service/collision tests, module test, README and AI state/queue/benchmark only; no public importer/provider/release."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0110
+    - RB-0111
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -94,6 +94,7 @@ runner_benchmark:
     - RB-0107
     - RB-0108
     - RB-0109
+    - RB-0110
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -179,4 +180,6 @@ notes:
   - "Issue #1369 / RB-0109 atomic create-only persistence contract and scoped unit tests staged, exact-head CI PENDING; no actual importer."
   - "RB-0109 Issue #1369 / PR #1370 exact-head 36/36 CI PASS, atomic create-only source foundation merged d3f2f130643d0f373724c123afd1769891016499."
   - "RB-0110 Issue #1371 real disposable MySQL create-only collision and site/network scope evidence staged, CI pending."
+  - "RB-0110 Issue #1371 / PR #1372 real MySQL Definition create-only 12/12 CI PASS merged aa69cc1770297a8454fb37442d415d8c386f2d31."
+  - "RB-0111 internal Draft-only preset import via atomic create-only test/source staged, exact-head CI PENDING."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

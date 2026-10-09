@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "d3f2f130643d0f373724c123afd1769891016499",
+  "anchor_main_sha": "aa69cc1770297a8454fb37442d415d8c386f2d31",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3504,7 +3504,7 @@
     },
     {
       "id": "RB-0110",
-      "source": "Issue #1371 / real MySQL PR pending",
+      "source": "Issue #1371 / merged PR #1372",
       "category": "ATOMIC_DEFINITION_CREATE_ONLY_REAL_MYSQL_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Disposable real MySQL 8.4 Definition/Audit persistence integration fixture plus Governance/Architecture/Platform and all applicable exact-head CI",
@@ -3519,15 +3519,40 @@
       "expected_minutes": 20,
       "dedup_key": "platform|definition-create-only-real-mysql|issue1371|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Real disposable MySQL integration fixture staged with duplicate id/slug, revision/checksum rejection, unchanged original records, independent site/network insert isolation",
-        "CI and protected merge pending"
+        "CI and protected merge pending",
+        "PR #1372 12/12 exact-head CI incl. pinned real MySQL create-only collision/isolation, 6 allowed files, zero behind/reviews, protected merged aa69cc1770297a8454fb37442d415d8c386f2d31"
       ],
-      "note": "Only bounded real MySQL persistence integration PASS when exact-head fixture and all applicable CI accepted."
+      "note": "Terminal bounded real-MySQL create-only persistence evidence; no exposed importer/production."
+    },
+    {
+      "id": "RB-0111",
+      "source": "Issue #1373 / implementation PR pending",
+      "category": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit; Governance; Distributable; Architecture; 10-cell Platform Compatibility and applicable CI",
+      "environment": "agent/dashboard-preset-draft-import-create-only-v1 on main aa69cc1770297a8454fb37442d415d8c386f2d31",
+      "dependencies": [
+        "RB-0109/0110 terminal PASS",
+        "main aa69cc1770297a8454fb37442d415d8c386f2d31"
+      ],
+      "authorization": "Issue #1373 exact ten-file internal Draft-only import create-only code/tests/README shared state scope",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|internal-draft-import-create-only|issue1373|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Internal-only service guarded by user/channel/capability and canonical Published snapshot preflight",
+        "No public Ability/REST/Ui/CLI import; create-only Draft revision-one, collision/no-update tests staged"
+      ],
+      "note": "No terminal PASS/public import/GA before all exact-head CI and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1371",
+  "last_reconciled_issue": "#1373",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
