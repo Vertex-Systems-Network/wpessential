@@ -11,15 +11,30 @@ if (!defined('ABSPATH')) {
 
 use JsonException;
 use RuntimeException;
-use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
 use WPEssential\Contracts\DefinitionTableGatewayInterface;
 
-final class PersistentDefinitionRepository implements DefinitionRepositoryInterface
+final class PersistentDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface
 {
     public function __construct(
         private readonly DefinitionTableGatewayInterface $gateway,
         private readonly DefinitionRowCodec $codec = new DefinitionRowCodec(),
     ) {
+    }
+
+    /**
+     * Atomic create-only: delegate directly to the transactional gateway
+     * INSERT and its physical (scope,id) / (scope,type,slug) unique keys.
+     * Never read then save, upsert or convert an insertion conflict to update.
+     */
+    public function create(Definition $definition): void
+    {
+        if ($definition->revision !== 1) {
+            throw new RuntimeException('Created persisted definitions must begin at revision 1.');
+        }
+
+        $row = $this->codec->encode($definition);
+        $this->gateway->insert($row, $definition->dependencies);
     }
 
     public function save(Definition $definition): void

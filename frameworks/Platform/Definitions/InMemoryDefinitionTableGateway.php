@@ -36,6 +36,18 @@ final class InMemoryDefinitionTableGateway implements DefinitionTableGatewayInte
         if ($id === '' || isset($this->rows[$id])) {
             throw new RuntimeException('Definition row already exists or has invalid id.');
         }
+
+        // Mirror the physical scope_type_slug UNIQUE KEY enforced in MySQL.
+        // This disposable gateway instance represents one scoped table view.
+        foreach ($this->rows as $existing) {
+            if (
+                ($existing['type'] ?? null) === ($row['type'] ?? null)
+                && ($existing['slug'] ?? null) === ($row['slug'] ?? null)
+            ) {
+                throw new RuntimeException('Definition type and slug already exist.');
+            }
+        }
+
         $this->rows[$id] = $row;
         $this->dependencies[$id] = array_values($dependencies);
     }

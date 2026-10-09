@@ -10,12 +10,39 @@ if (!defined('ABSPATH')) {
 }
 
 use RuntimeException;
-use WPEssential\Contracts\DefinitionRepositoryInterface;
+use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
 
-final class InMemoryDefinitionRepository implements DefinitionRepositoryInterface
+final class InMemoryDefinitionRepository implements DefinitionCreateOnlyRepositoryInterface
 {
     /** @var array<string, Definition> */
     private array $definitions = [];
+
+    /**
+     * Create only: no existing Definition update and no check-then-save path.
+     */
+    public function create(Definition $definition): void
+    {
+        if ($definition->revision !== 1) {
+            throw new RuntimeException('Created definitions must start at revision 1.');
+        }
+        if (
+            $definition->checksum !== null
+            && !hash_equals($definition->checksum, $definition->computedChecksum())
+        ) {
+            throw new RuntimeException('Definition checksum does not match canonical payload.');
+        }
+        if (isset($this->definitions[$definition->id])) {
+            throw new RuntimeException('Definition already exists; create-only cannot overwrite.');
+        }
+
+        foreach ($this->definitions as $existing) {
+            if ($existing->type === $definition->type && $existing->slug === $definition->slug) {
+                throw new RuntimeException('Definition type and slug already exist; create-only cannot overwrite.');
+            }
+        }
+
+        $this->definitions[$definition->id] = $definition;
+    }
 
     public function save(Definition $definition): void
     {
