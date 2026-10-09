@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 78b1bfbd0426e922b514159feebebfbf51f7f667
-observed_main_source: "RB-0098 Issue #1335 / PR #1336 real WordPress Multisite integration merged 78b1bfbd0426e922b514159feebebfbf51f7f667, exact head 098054362615e12e3e5f7617bc03512ec06db487 13/13 checks PASS incl. real WP fixture, 7/7 paths, zero behind and unresolved threads; issue closed."
-active_issue: "#1337"
+observed_main_sha: 10c493cc970473187dd0b9b1a1a94bfe34cb43d3
+observed_main_source: "Issue #1337 / PR #1338 post-RB-0098 README progress reconciliation merged 10c493cc970473187dd0b9b1a1a94bfe34cb43d3 after 2/2 Governance/Architecture checks PASS, exact 5 files; RB-0099 development claimed on that main."
+active_issue: "#1339"
 active_pr: null
-active_branch: agent/rb0098-post-merge-terminal-truth-v1
-current_milestone: "RB-0098 terminal PASS / Issue #1337 post-merge README/AI state reconciliation, next safe source lane audit"
-milestone_status: READY
+active_branch: agent/dashboard-multisite-subsite-override-v1
+current_milestone: "RB-0099 / Issue #1339 explicit scoped Multisite subsite preset override read-only resolution, source/test staged, CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0098 / Issue #1335 / PR #1336: 13/13 GitHub exact-head checks PASS (real WordPress two-site isolation, Governance, Architecture, Platform 10/10), exact 7-file scope, zero behind/review blockers, merged 78b1bfbd0426e922b514159feebebfbf51f7f667; only bounded policy isolation, not full parity/GA."
-next_safe_action: "Merge Issue #1337 exact five-file terminal reconciliation after applicable checks; verify actual main and next unblocked safe source task (new scoped Issue if none), preserving #858/#1102/#947 parked boundaries."
+next_safe_action: "Open RB-0099 Issue #1339 implementation PR from deterministic claimed branch, run all path-applicable exact-head CI, repair any failure autonomously within 15-file allowlist, then verify reviews/zero behind and expected-head merge."
 waiting_external: "Issue #858 external admin; #1102 separately authorization-gated; #947 independent Worker-only. They do not block RB-0098 scoped read-only fixture integration."
 next_planned_slot:
-  issue: "#1337"
-  slot_id: rb0098-post-merge-terminal-truth-v1
-  claim_branch: "agent/rb0098-post-merge-terminal-truth-v1"
-  claim_rule: "Real shared-truth divergence exception: reconcile RB-0098 terminal evidence in exact five README/state/queue/benchmark paths without product runtime changes."
+  issue: "#1339"
+  slot_id: dashboard-multisite-subsite-preset-override-v1
+  claim_branch: "agent/dashboard-multisite-subsite-override-v1"
+  claim_rule: "Issue #1339 exact 15-file source/test/shared-truth scope; read-only network/site/policy-scoped override semantics, protected exact-head CI, no native WordPress layout mutation."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0099
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -134,4 +135,6 @@ notes:
   - "Issue #1327 / RB-0097 merged PR #1332 as adb7cfa042e733ec59e530601c9cb6152ba1e526 after 14/14 checks PASS; 18 authorized changed paths, 0 behind, 0 review blockers. Issue closed; bounded foundation only."
   - "Issue #1333 / PR #1334 real post-merge reconciliation merged as b02a51c9ec7477f448c197b5796e4004881418d9 after Governance + Architecture 2/2 PASS; scope 5 shared-truth files."
   - "Issue #1335 / RB-0098 real WordPress two-site integration PASS: PR #1336 head 098054362615e12e3e5f7617bc03512ec06db487 13/13 checks PASS, merged 78b1bfbd0426e922b514159feebebfbf51f7f667; native dashboard preferences unchanged in pinned fixture."
+  - "Issue #1337 / PR #1338 source-truth closeout merged 10c493cc970473187dd0b9b1a1a94bfe34cb43d3, applicable 2/2 Governance/Architecture PASS. README RB-0098 bounded result confirmed."
+  - "RB-0099 / Issue #1339 new read-only subsite preset precedence lane claimed, CI pending and full Surface 10 parity not promoted."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."

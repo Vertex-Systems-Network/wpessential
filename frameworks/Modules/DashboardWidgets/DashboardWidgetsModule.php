@@ -59,6 +59,8 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_MULTISITE_POLICY_COMPILER = 'module.dashboard-widgets.multisite-policy-compiler';
     public const SERVICE_MULTISITE_POLICY_RESOLVER = 'module.dashboard-widgets.multisite-policy-resolver';
     public const SERVICE_MULTISITE_POLICY_READ = 'module.dashboard-widgets.multisite-policy-read';
+    public const SERVICE_SUBSITE_PRESET_OVERRIDE_COMPILER = 'module.dashboard-widgets.subsite-preset-override-compiler';
+    public const SERVICE_EFFECTIVE_MULTISITE_PRESET = 'module.dashboard-widgets.effective-multisite-preset';
     public const SERVICE_REGISTRATION_COMPILER = 'module.dashboard-widgets.registration-compiler';
     public const SERVICE_CONTENT_CLASS_COMPILER = 'module.dashboard-widgets.content-class-compiler';
     public const SERVICE_RENDER_SOURCE_COMPILER = 'module.dashboard-widgets.render-source-compiler';
@@ -89,6 +91,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const ABILITY_MULTISITE_POLICY_GET = 'wpessential/dashboard-widgets/multisite-policy-get';
     public const ABILITY_MULTISITE_POLICY_CATALOG = 'wpessential/dashboard-widgets/multisite-policy-catalog';
     public const ABILITY_EFFECTIVE_MULTISITE_POLICY = 'wpessential/dashboard-widgets/effective-multisite-policy';
+    public const ABILITY_EFFECTIVE_MULTISITE_PRESET = 'wpessential/dashboard-widgets/effective-multisite-preset';
     public const ABILITY_DISMISS = DashboardWidgetPersonalPreferenceAbilityHandler::ABILITY_DISMISS;
     public const ABILITY_RESET_LAYOUT = DashboardWidgetPersonalPreferenceAbilityHandler::ABILITY_RESET;
     public const CAPABILITY = 'manage_options';
@@ -263,6 +266,12 @@ final class DashboardWidgetsModule implements ModuleInterface
             $multisitePolicyCompiler,
             $multisitePolicyResolver,
         );
+        $subsiteOverrideCompiler = new DashboardWidgetSubsitePresetOverrideCompiler($definitions, $presetCompiler);
+        $effectiveMultisitePreset = new DashboardWidgetMultisiteEffectivePresetResolver(
+            $multisitePolicyResolver,
+            $definitions,
+            $subsiteOverrideCompiler,
+        );
         $actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator($abilities);
         $abilityResolver = static function (string $name) use ($abilities): ?array {
             $descriptor = $abilities->descriptor($name);
@@ -405,6 +414,8 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_MULTISITE_POLICY_COMPILER, $multisitePolicyCompiler);
         $services->set(self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisitePolicyResolver);
         $services->set(self::SERVICE_MULTISITE_POLICY_READ, $multisitePolicyRead);
+        $services->set(self::SERVICE_SUBSITE_PRESET_OVERRIDE_COMPILER, $subsiteOverrideCompiler);
+        $services->set(self::SERVICE_EFFECTIVE_MULTISITE_PRESET, $effectiveMultisitePreset);
         $services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
         $services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
         $services->set(self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor);
@@ -561,6 +572,23 @@ final class DashboardWidgetsModule implements ModuleInterface
                 'Reads bounded Surface-10 Multisite policy evidence without mutating WordPress Dashboard preferences.',
             );
         }
+
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_EFFECTIVE_MULTISITE_PRESET,
+                ownerSurfaceId: DashboardWidgetSubsitePresetOverrideDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: ['type' => 'object', 'additionalProperties' => false],
+                outputSchema: ['type' => 'object'],
+            ),
+            new DashboardWidgetMultisiteEffectivePresetAbilityHandler($effectiveMultisitePreset),
+            'Read effective Dashboard Multisite inherited preset',
+            'Resolves read-only network inherited versus explicitly scoped subsite preset; does not mutate WordPress layout.',
+        );
 
         $this->registerAbility(
             $abilities,
