@@ -36,6 +36,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityMappingPreviewService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetQueryBindingExecutor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
@@ -190,6 +191,7 @@ final class DashboardWidgetsModuleTest extends TestCase
         self::assertInstanceOf(DashboardWidgetPresetPortabilityReadService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_PORTABILITY));
         self::assertInstanceOf(DashboardWidgetPresetPortabilityFreshnessService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_PORTABILITY_FRESHNESS));
         self::assertInstanceOf(DashboardWidgetPresetImportPreflightService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_IMPORT_PREFLIGHT));
+        self::assertInstanceOf(DashboardWidgetPresetPortabilityMappingPreviewService::class, $services->get(DashboardWidgetsModule::SERVICE_PRESET_MAPPING_PREVIEW));
         self::assertInstanceOf(DashboardWidgetMultisitePolicyCompiler::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_COMPILER));
         self::assertInstanceOf(DashboardWidgetMultisitePolicyResolver::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_RESOLVER));
         self::assertInstanceOf(DashboardWidgetMultisitePolicyReadService::class, $services->get(DashboardWidgetsModule::SERVICE_MULTISITE_POLICY_READ));
@@ -368,6 +370,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             DashboardWidgetsModule::ABILITY_PRESET_PORTABILITY,
             DashboardWidgetsModule::ABILITY_PRESET_PORTABILITY_FRESHNESS,
             DashboardWidgetsModule::ABILITY_PRESET_IMPORT_PREFLIGHT,
+            DashboardWidgetsModule::ABILITY_PRESET_MAPPING_PREVIEW,
             DashboardWidgetsModule::ABILITY_PRESET_CATALOG,
             DashboardWidgetsModule::ABILITY_EFFECTIVE_PRESET,
             DashboardWidgetsModule::ABILITY_MULTISITE_POLICY_GET,
@@ -396,7 +399,7 @@ final class DashboardWidgetsModuleTest extends TestCase
             self::assertFalse($descriptor->allows(ExecutionChannel::Rest));
         }
 
-        self::assertCount(15, $bridge->registerAbilities());
+        self::assertCount(16, $bridge->registerAbilities());
     }
 
     public function testFormActionRoutesRejectGuestsAndInvalidNonceThroughCanonicalDispatcher(): void
