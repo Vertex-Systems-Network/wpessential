@@ -1,19 +1,19 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0105 read-only preset import preflight V1 staged
+
+- Verified current main `1b6fd40f6f920120dca0352364ec9d23c16a2a1f`; Issue #1355 / PR #1356 RB-0104 postmerge terminal README/benchmark reconciliation passed 2/2 Governance/Architecture checks, exact 5 files, zero behind/reviews and merged; issue closed.
+- RB-0105 Issue #1357 source branch `agent/dashboard-preset-import-preflight-read-v1`: bounded deterministic V1 Published Dashboard preset snapshot preflight validates format/version/canonical payload/revision, published widget references, SHA-256 non-authenticating integrity, id conflict, typed role assignment and no mutation.
+- Returns `valid_candidate`, `id_conflict`, `integrity_mismatch` or `invalid_snapshot`, always `applicable=false`; no importer, native WordPress dashboard/user preferences, trust, provider/cache/deployment or GA.
+- Dedicated PHPUnit source/handler/module regressions staged, 11 authorized files, exact-head CI PENDING. Park external #858 admin, #1102 P-006 and #947 independent Worker.
+
+
 ## 2026-10-09 — RB-0104 real WordPress fingerprint freshness PASS, terminal reconciliation
 
 - Issue #1353 / PR #1354 original candidate failed an invalid test fixture assumption: uppercase of an all-numeric UUID did not change the UUID. Autonomous scoped fix committed a letter-bearing uppercase test UUID; all applicable exact-head CI restarted and passed.
 - Corrected PR exact head `9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e`: **13/13** path-applicable CI PASS incl. pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Isolation, Governance, Architecture, Platform Compatibility 10/10; exactly 6 allowed paths, 0 behind/reviews; protected merged `595f6114e0954736e343255e1cb5766f336d6473`. Issue #1353 closed.
 - Promote only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1`; no import, signature trust, native WordPress dashboard preferences, provider, cache, full Surface10 product parity, production or GA.
 - Issue #1355 is real 5-file post-merge README/queue/benchmark PENDING-to-PASS evidence reconciliation. Fresh audit after protected merge; #858 admin, #1102 privileged P-006 and #947 independent Worker parked.
-
-
-## 2026-10-09 — RB-0103 PASS; RB-0104 real WordPress freshness fixture staged
-
-- RB-0103 Issue #1351 / PR #1352 exact head `1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee` passed **14/14** exact-head CI incl. Governance, PHP Quality, Distributable, Architecture and Platform 10/10; 11/11 authorized files, no behind/review blockers; protected squash merged `6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7`, issue closed.
-- Promoted only `PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1` (non-authenticating digest vs current Published preset snapshot, no import/user WordPress preference writes/provider/cache/deployment/GA).
-- RB-0104 Issue #1353 branch `agent/dashboard-portability-freshness-real-wordpress-v1` extends pinned WP 7.1/PHP8.2/MySQL8.4 real two-site Multisite test with match/stale, invalid catalog and native user/blog/network/preferences unchanged checks.
-- Exactly 6 allowed paths; integration CI and protected expected-head merge **PENDING**, not terminal PASS. #858 admin, #1102 P-006 privilege, #947 independent Worker remain parked.
 
 
 ## 2026-10-09 — RB-0103 Published preset fingerprint freshness V1 staged

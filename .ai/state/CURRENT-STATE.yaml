@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: 595f6114e0954736e343255e1cb5766f336d6473
-observed_main_source: "RB-0104 Issue #1353 / PR #1354 corrected exact head 9696f3f4ea0e720f656de58ac6e8bd2ccb1ac05e 13/13 CI PASS incl. real WP, 6 files, zero behind/threads, merged 595f6114e0954736e343255e1cb5766f336d6473; issue closed."
-active_issue: "#1355"
+observed_main_sha: 1b6fd40f6f920120dca0352364ec9d23c16a2a1f
+observed_main_source: "Issue #1355 / PR #1356 RB-0104 terminal shared-truth reconciliation exact head ae5220997170755ed4b27cf2b2c3660dbfabf6ae passed Governance/Architecture 2/2, five authorized files, 0 behind/reviews, merged 1b6fd40f6f920120dca0352364ec9d23c16a2a1f; issue closed."
+active_issue: "#1357"
 active_pr: null
-active_branch: agent/rb0104-portability-freshness-terminal-truth-v1
-current_milestone: "RB-0104 terminal bounded PASS / Issue #1355 post-merge README/AI state/queue/benchmark reconciliation, next safe source fresh audit"
-milestone_status: READY
+active_branch: agent/dashboard-preset-import-preflight-read-v1
+current_milestone: "RB-0105 / Issue #1357 Dashboard preset read-only import compatibility preflight V1; source/handler/module regression tests staged, exact-head CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0104 Issue #1353 / PR #1354 13/13 corrected exact-head CI PASS incl. pinned two-site real WordPress, six allowed paths, zero behind/reviews, merged 595f6114e0954736e343255e1cb5766f336d6473; bounded freshness evidence only."
-next_safe_action: "Merge Issue #1355 exact five-file real post-merge README/benchmark reconciliation after applicable Governance/Architecture checks, zero behind/reviews and protected expected-head merge; fresh-audit next safe source development while parking #858/#1102/#947."
-waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked, not blockers for read-only preset snapshot freshness source development."
+next_safe_action: "Open RB-0105 Issue #1357 exact 11-file PR, run all path-applicable exact-head CI and autonomously repair failures, require zero behind/reviews and protected expected-head merge; actual import/cache/provider remain deferred."
+waiting_external: "Issue #858 admin, #1102 separately-authorized P-006 and #947 independent Worker remain parked; no approval required for safe read-only preset preflight."
 next_planned_slot:
-  issue: "#1355"
-  slot_id: rb0104-portability-freshness-terminal-truth-v1
-  claim_branch: "agent/rb0104-portability-freshness-terminal-truth-v1"
-  claim_rule: "Issue #1355 exact five documentation/AI state/queue/benchmark paths only; reconcile verified RB-0104 terminal evidence; no product code/test/workflow changes."
+  issue: "#1357"
+  slot_id: dashboard-preset-import-preflight-read-v1
+  claim_branch: "agent/dashboard-preset-import-preflight-read-v1"
+  claim_rule: "Issue #1357 exact 11-file code/test/README/AI state/queue/benchmark scope; read-only compatibility preflight only; no import writes, usermeta, provider or GA."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0105
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -158,4 +159,6 @@ notes:
   - "RB-0104 / Issue #1353 disposable pinned two-site real WordPress freshness fixture staged; CI pending."
   - "RB-0104 Issue #1353 / PR #1354 protected corrected-head merge 595f6114e0954736e343255e1cb5766f336d6473, 13/13 real WP / Platform / Governance / Architecture CI PASS, six authorized paths."
   - "Issue #1355 exact five-file postmerge shared-truth status reconciliation for RB-0104 verified PASS."
+  - "RB-0104 Issue #1355 / PR #1356 terminal reconciliation merged 1b6fd40f6f920120dca0352364ec9d23c16a2a1f, corrected compact LAST-CHECKPOINT size, Governance/Architecture 2/2 PASS."
+  - "RB-0105 Issue #1357 read-only preset import preflight source and tests staged, exact-head CI pending, no mutation."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
