@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0114 PASS; RB-0115 real WordPress mapped Draft staged
+## 2026-10-09 — RB-0115 real WordPress mapped Draft PASS, RB-0116 MySQL staged
 
-- RB-0114 Issue #1381 / PR #1382 exact head `6960e139c0edd787951e8f0683047f8522dc92de`, **14/14** path-applicable exact-head CI PASS incl. PHP Quality, Governance, Architecture, Distributable, Platform 10/10; 11 authorized files, zero behind/reviews, protected merged `32bc86a613c9c6667aa622f4f04c827436803174`.
-- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_CREATE_V1`: authorize Internal current WP user/blog/network before untrusted mapping and independently reauthorize at atomic Draft-only create; no public importer/publish/native preferences/provider/GA.
-- RB-0115 Issue #1383 `agent/dashboard-mapped-draft-real-wordpress-v1`: real pinned two-site WordPress test for mapped Draft create-once, status, integrity, duplicate, context forgery/cross-site/network-denial and no native preferences mutation. Exact six files, real WP CI and protected merge PENDING.
+- RB-0115 Issue #1383 / PR #1384 exact head `232d6be73013b3faa2d62a1602211ebc54c35da6`: **13/13** path-applicable CI PASS including actual pinned two-site WordPress identity/permission checks, Governance, Architecture and 10-cell Platform; 6 authorized files, zero behind/reviews, protected merged `96bc0d7992fe787a3234c9e6084e6e0d75504f7a`.
+- Promoted only `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_REAL_WORDPRESS_V1`, no public importer/auto-publish/native preferences/provider/GA.
+- RB-0116 Issue #1385 `agent/dashboard-mapped-draft-real-mysql-v1` extends disposable MySQL Definition/Audit fixture with synthetic test-only capability-gated internal mapped Draft create, source UUID→target Published widget order, id/slug conflicts, two-site scope isolation. Real WP authentication already established separately; exactly six files. Actual MySQL CI and protected merge **PENDING**.
 
 
 ## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY

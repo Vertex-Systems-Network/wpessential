@@ -28,6 +28,8 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDraftImportService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetMappedDraftImportService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityMappingPreviewService;
 use WPEssential\Platform\Audit\AuditOutcome;
 use WPEssential\Platform\Audit\AuditRecord;
 use WPEssential\Platform\Audit\AuditRowCodec;
@@ -408,6 +410,135 @@ platformPersistenceExpect(
 );
 platformPersistenceExpect($otherSite->get($draftTargetId)?->status === DefinitionStatus::Draft, 'second site import must also stay Draft');
 platformPersistenceExpect($repository->get($draftTargetId) == $persistedDraft, 'second subsite create may not modify first site');
+
+// RB-0116: use actual disposable MySQL persistence for the accepted
+// internal-only cross-site mapped Draft flow. Synthetic capability assertions
+// here are NOT real WP identity evidence (RB-0115 proves that separately).
+$mappedMysqlWidgetB = '99999999-9999-4999-8999-999999999999';
+$mappedMysqlTarget = '3d3d3d3d-3d3d-4d3d-8d3d-3d3d3d3d3d3d';
+$mappedMysqlSecondTarget = '4d4d4d4d-4d4d-4d4d-8d4d-4d4d4d4d4d4d';
+$mappedPublishedB = new Definition(
+    id: $mappedMysqlWidgetB, slug: 'mapped-draft-destination-widget-b',
+    type: DashboardWidgetDefinition::TYPE, schemaVersion: 1,
+    ownerSurfaceId: 10, status: DefinitionStatus::Published, payload: [],
+);
+$repository->create($mappedPublishedB);
+$otherSite->create($mappedPublishedB);
+$sourceIdA = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+$sourceIdB = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+$mappedSourcePayload = [
+    'definition_id' => '5d5d5d5d-5d5d-4d5d-8d5d-5d5d5d5d5d5d',
+    'revision' => 8,
+    'label' => 'MySQL Cross-site Mapping',
+    'widget_definition_ids' => [$sourceIdB, $sourceIdA],
+    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+];
+$mappedMysqlSnapshot = [
+    'format' => 'wpessential-dashboard-preset',
+    'version' => 1,
+    'payload' => $mappedSourcePayload,
+    'sha256' => hash('sha256', json_encode(
+        $mappedSourcePayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    )),
+];
+$mappingToPublished = [$sourceIdA => $draftWidgetId, $sourceIdB => $mappedMysqlWidgetB];
+$mappedImporterFor = static function (PersistentDefinitionRepository $store) use ($draftChecker): DashboardWidgetPresetMappedDraftImportService {
+    $preflight = new DashboardWidgetPresetImportPreflightService($store, new DashboardWidgetPresetCompiler($store));
+    return new DashboardWidgetPresetMappedDraftImportService(
+        new DashboardWidgetPresetPortabilityMappingPreviewService($preflight),
+        new DashboardWidgetPresetDraftImportService($store, $preflight, $draftChecker),
+    );
+};
+$mappedMysqlImporter = $mappedImporterFor($repository);
+$site702MappedImporter = $mappedImporterFor($otherSite);
+$originalPublishedMappedWidget = $repository->get($draftWidgetId);
+$originalNewPublishedWidget = $repository->get($mappedMysqlWidgetB);
+
+foreach ([
+    new ExecutionContext(new Principal(null), 701, ExecutionChannel::Internal, 7),
+    new ExecutionContext(new Principal(42), 701, ExecutionChannel::Rest, 7),
+    new ExecutionContext(new Principal(43), 701, ExecutionChannel::Internal, 7),
+] as $deniedContext) {
+    platformPersistenceExpect(
+        $mappedMysqlImporter->importMappedDraft(
+            $deniedContext, ['untrusted' => true], 'bad-id', ['unsafe' => []], 'invalid',
+        ) === ['status' => 'forbidden'],
+        'synthetic fixture caller gate must reject BEFORE mapping malformed external payload',
+    );
+}
+$badMappedSha = $mappedMysqlSnapshot;
+$badMappedSha['sha256'] = str_repeat('0', 64);
+platformPersistenceExpect(
+    $mappedMysqlImporter->importMappedDraft(
+        $draftContext, $badMappedSha, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+    ) === ['status' => 'invalid_snapshot'],
+    'modified source checksum fails before MySQL mapped Draft insert',
+);
+foreach ([
+    [$sourceIdA => $draftWidgetId],
+    [$sourceIdA => $draftWidgetId, $sourceIdB => $draftWidgetId],
+    [$sourceIdA => $draftWidgetId, $sourceIdB => 'cccccccc-cccc-4ccc-8ccc-cccccccccccc'],
+] as $badMapping) {
+    platformPersistenceExpect(
+        $mappedMysqlImporter->importMappedDraft(
+            $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $badMapping, 'mysql-mapped-draft',
+        ) === ['status' => 'invalid_snapshot'],
+        'incomplete/duplicate/unpublished target refs cannot write MySQL mapped Draft',
+    );
+}
+$networkMappedSource = $mappedMysqlSnapshot;
+$networkMappedSource['payload']['assignment'] = ['roles' => [], 'network_default' => true];
+$networkMappedSource['sha256'] = hash('sha256', json_encode(
+    $networkMappedSource['payload'], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+));
+platformPersistenceExpect(
+    $mappedMysqlImporter->importMappedDraft(
+        $draftContext, $networkMappedSource, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+    ) === ['status' => 'forbidden'],
+    'site capability cannot authorize mapped network-default preset import',
+);
+platformPersistenceExpect($repository->get($mappedMysqlTarget) === null, 'rejected mapped preflight must leave MySQL target empty');
+platformPersistenceExpect(
+    $mappedMysqlImporter->importMappedDraft(
+        $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+    ) === ['status' => 'created_draft', 'definition_id' => $mappedMysqlTarget],
+    'accepted synthetic Internal caller creates mapped Draft using atomic MySQL insert',
+);
+$mappedDraftMySQL = $repository->get($mappedMysqlTarget);
+platformPersistenceExpect($mappedDraftMySQL instanceof Definition, 'mapped Draft exists in actual disposable MySQL');
+platformPersistenceExpect($mappedDraftMySQL->status === DefinitionStatus::Draft, 'mapped MySQL preset cannot be Published');
+platformPersistenceExpect($mappedDraftMySQL->revision === 1, 'mapped Draft revision must reset to one');
+platformPersistenceExpect($mappedDraftMySQL->slug === 'mysql-mapped-draft', 'mapped Draft stored slug must be destination slug');
+platformPersistenceExpect($mappedDraftMySQL->payload === ['preset' => [
+    'label' => 'MySQL Cross-site Mapping',
+    'widget_definition_ids' => [$mappedMysqlWidgetB, $draftWidgetId],
+    'assignment' => ['roles' => ['administrator', 'editor'], 'network_default' => false],
+]], 'mapped real MySQL Draft must preserve original widget order through target mapping, roles and label');
+platformPersistenceExpect(
+    $mappedMysqlImporter->importMappedDraft(
+        $draftContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'cannot-overwrite',
+    ) === ['status' => 'id_conflict'],
+    'mapped MySQL UUID uniqueness blocks second create from overwriting',
+);
+platformPersistenceExpect(
+    $mappedMysqlImporter->importMappedDraft(
+        $draftContext, $mappedMysqlSnapshot, $mappedMysqlSecondTarget, $mappingToPublished, 'mysql-mapped-draft',
+    ) === ['status' => 'write_failed'],
+    'distinct target UUID with duplicate type/slug fails atomic MySQL uniqueness',
+);
+platformPersistenceExpect($repository->get($mappedMysqlSecondTarget) === null, 'slug collision must leave no second mapped MySQL row');
+platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'conflicts cannot alter committed MySQL Draft');
+platformPersistenceExpect($networkStore->get($mappedMysqlTarget) === null, 'site mapped Draft cannot touch network-scope MySQL rows');
+platformPersistenceExpect(
+    $site702MappedImporter->importMappedDraft(
+        $draftOtherContext, $mappedMysqlSnapshot, $mappedMysqlTarget, $mappingToPublished, 'mysql-mapped-draft',
+    ) === ['status' => 'created_draft', 'definition_id' => $mappedMysqlTarget],
+    'another subsite may independently insert same mapped Draft id without cross-site overwrite',
+);
+platformPersistenceExpect($otherSite->get($mappedMysqlTarget)?->status === DefinitionStatus::Draft, 'other site mapped import remains Draft');
+platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'second site mapped create cannot change first site row');
+platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedMappedWidget, 'existing Published MySQL target widget unchanged');
+platformPersistenceExpect($repository->get($mappedMysqlWidgetB) == $originalNewPublishedWidget, 'second Published MySQL target widget unchanged');
 
 $context = new ExecutionContext(
     principal: new Principal(42),
