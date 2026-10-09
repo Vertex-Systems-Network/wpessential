@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0119 internal Draft publish-review read-only preflight staged
+## 2026-10-09 — RB-0119 PASS; RB-0120 real WordPress Draft review fixture staged
 
-- Verified latest main `2125a9188ec65d3397beb8a0cd36943b2d22238b`, 0 open PRs, existing RB-0107..0118 completed and terminal 0118 checkpoint reconciled by accepted PR #1394. Park #858 admin, #1102 separately privileged P-006, #947 independent Worker.
-- Issue #1395 / `agent/dashboard-draft-publish-review-read-v1` adds internal-only read-only eligibility check against stored Draft with caller's current authenticated WordPress user/site/network, `manage_options`, canonical Draft UUID, payload checksum freshness, current Published target widgets and no network-default promotion. Every outcome `publish_authorized=false`. No Ability, REST/AJAX/UI, provider or persistence mutation.
-- Dedicated PHPUnit tests and module service registration within atomic create-only adapter; 9-file exact allowlist; PHP Quality, Architecture, Governance, Distributable, Platform 10-cell exact-head CI and merge **PENDING**, not PASS.
+- RB-0119 Issue #1395 / PR #1396 corrected exact head `36b0d9b4781ea1377d1d258fab36645fe2abc074` passed **14/14** exact-head CI incl. PHP Quality, Distributable, Governance, Architecture and 10-cell Platform. Original Architecture smoke failure `CURRENT-STATE.yaml 12292 > 12288 bytes` autonomously fixed, fresh CI PASS; exact 9 paths, zero behind/reviews, protected merged `cfb327af1ae0ad49b46c4114787b14bf40a45f25`.
+- Internal-only read-only Draft publish-review checks current authenticated WordPress user/blog/network `manage_options`, Draft payload checksum freshness, current Published widgets and denies network-default. Every result `publish_authorized=false`; no live WordPress preferences, mutation, public route or GA.
+- RB-0120 Issue #1397 / branch `agent/dashboard-draft-publish-review-real-wordpress-v1`: disposable real WP7.1/PHP8.2/MySQL8.4 two-site Draft review fixture, authorized and forbidden identity contexts, unchanged imported Draft/Published records and native WP options. Exactly 6 paths; real pinned Multisite / exact-head CI and protected merge **PENDING**.
 
 
 ## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY

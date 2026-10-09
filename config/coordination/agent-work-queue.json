@@ -1,9 +1,9 @@
 {
-  "schema_version": 199,
+  "schema_version": 200,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "2125a9188ec65d3397beb8a0cd36943b2d22238b",
-  "mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1",
-  "source_issue": "#1395",
+  "queue_anchor_main_sha": "cfb327af1ae0ad49b46c4114787b14bf40a45f25",
+  "mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1",
+  "source_issue": "#1397",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -242,7 +242,8 @@
     "1389": "CLOSED_COMPLETED_RB0117_PR1390_14_OF_14_PASS",
     "1391": "CLOSED_COMPLETED_RB0118_PR1392_REAL_MYSQL_12_OF_12_PASS",
     "1393": "CLOSED_BY_TERMINAL_SHARED_TRUTH_RECONCILIATION_ON_MERGE",
-    "1395": "IN_PROGRESS_RB0119_INTERNAL_DRAFT_PUBLISH_REVIEW_READ_ONLY_CI_PENDING"
+    "1395": "CLOSED_COMPLETED_RB0119_PR1396_CORRECTED_14_OF_14_PASS",
+    "1397": "IN_PROGRESS_RB0120_REAL_WORDPRESS_DRAFT_REVIEW_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -272,7 +273,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open exact 9-file Issue #1395 PR; path-applicable exact-head CI, repair errors, 0 behind/reviews, protected merge; no publishing.",
+    "next_safe_action": "Open #1397 real pinned WordPress 6-file fixture PR, verify Multisite Runtime Isolation and applicable CI, 0 behind/reviews, expected-head protected merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8253,7 +8254,7 @@
       "slot_id": "dashboard-draft-publish-review-read-v1",
       "title": "Internal-only Dashboard Draft site-local publish-review read-only eligibility preflight",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1",
       "source": "Issue #1395 / RB-0119",
       "dependencies": [
@@ -8274,7 +8275,47 @@
         "External provider/network, production deploy/GA"
       ],
       "claim_branch": "agent/dashboard-draft-publish-review-read-v1",
-      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1 only after 9 exact authorized paths, all applicable CI PASS, zero behind/reviews, protected merge."
+      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1 only after 9 exact authorized paths, all applicable CI PASS, zero behind/reviews, protected merge.",
+      "terminal_result": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_READ_ONLY_V1",
+      "terminal_evidence": {
+        "issue": 1395,
+        "pr": 1396,
+        "head": "36b0d9b4781ea1377d1d258fab36645fe2abc074",
+        "merge_sha": "cfb327af1ae0ad49b46c4114787b14bf40a45f25",
+        "checks_passed": 14,
+        "platform_cells_passed": 10,
+        "authorized_paths": 9,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1101,
+      "slot_id": "dashboard-draft-publish-review-real-wordpress-v1",
+      "title": "Real pinned two-site WordPress internal Draft publish-review isolation",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1",
+      "source": "Issue #1397 / RB-0120",
+      "dependencies": [
+        "RB-0119 terminal PASS",
+        "main cfb327af1ae0ad49b46c4114787b14bf40a45f25"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1397 exactly 6 paths: pinned multisite fixture and five README/AI shared-truth files"
+      ],
+      "forbidden_scope": [
+        "Product source/new Ability/REST/AJAX/publish",
+        "Native WP dashboard usermeta mutation",
+        "External provider/production/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-publish-review-real-wordpress-v1",
+      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1 only after real pinned Multisite and all exact-head CI PASS, 6 files, 0 behind/reviews, protected merge."
     }
   ],
   "historical_closeout": {
