@@ -7,6 +7,8 @@ on:
       - 'frameworks/Platform/WordPress/Security/**'
       - 'frameworks/Platform/Jobs/**'
       - 'frameworks/Platform/Database/**'
+      - 'frameworks/Modules/DashboardWidgets/DashboardWidgetMultisitePolicy*.php'
+      - 'tests/Integration/wordpress-dashboard-multisite-policy.php'
       - 'tests/Integration/wordpress-multisite-isolation.php'
       - '.github/workflows/multisite-runtime.yml'
   push:
@@ -17,6 +19,8 @@ on:
       - 'frameworks/Platform/WordPress/Security/**'
       - 'frameworks/Platform/Jobs/**'
       - 'frameworks/Platform/Database/**'
+      - 'frameworks/Modules/DashboardWidgets/DashboardWidgetMultisitePolicy*.php'
+      - 'tests/Integration/wordpress-dashboard-multisite-policy.php'
       - 'tests/Integration/wordpress-multisite-isolation.php'
       - '.github/workflows/multisite-runtime.yml'
   workflow_dispatch:
@@ -81,6 +85,7 @@ jobs:
           php -l frameworks/Platform/WordPress/Ajax/AjaxNonceScope.php
           php -l frameworks/Platform/WordPress/Ajax/AjaxDispatcher.php
           php -l tests/Integration/wordpress-multisite-isolation.php
+          php -l tests/Integration/wordpress-dashboard-multisite-policy.php
 
       - name: Prepare exact WordPress 7.1 fixture
         shell: bash
@@ -175,6 +180,19 @@ jobs:
           php tests/Integration/wordpress-multisite-isolation.php | tee artifacts/multisite/runtime.log
           test -s artifacts/multisite/evidence.json
           cat artifacts/multisite/evidence.json
+
+      - name: Run real Dashboard Widgets Multisite policy isolation
+        shell: bash
+        env:
+          WPE_TEST_WORDPRESS_DIR: /tmp/wordpress
+          WPE_TEST_WP_HOST: wpessential.test
+          WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH: ${{ github.workspace }}/artifacts/multisite/dashboard-policy-evidence.json
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/multisite
+          php tests/Integration/wordpress-dashboard-multisite-policy.php | tee artifacts/multisite/dashboard-policy.log
+          test -s artifacts/multisite/dashboard-policy-evidence.json
+          cat artifacts/multisite/dashboard-policy-evidence.json
 
       - name: Upload Multisite runtime evidence
         if: always() && hashFiles('artifacts/multisite/**') != ''
