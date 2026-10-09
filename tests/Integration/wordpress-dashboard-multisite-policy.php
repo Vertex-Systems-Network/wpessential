@@ -40,12 +40,14 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDraftImportService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityMappingPreviewService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDefinition;
 use WPEssential\Modules\DashboardWidgets\WordPressDashboardWidgetRoleMembershipProvider;
+use WPEssential\Platform\Auth\ExecutionChannel;
 use WPEssential\Platform\Auth\ExecutionContext;
 use WPEssential\Platform\Auth\Principal;
 use WPEssential\Platform\Definitions\Definition;
@@ -670,6 +672,121 @@ dashboardMultisiteExpect($repo->get($widgetId) === $mappingRepoWidgetBefore, 'ma
 dashboardMultisiteExpect($repo->get($localWidgetId) === $mappingRepoLocalWidgetBefore, 'mapping must not modify local widget');
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'mapping must not touch network admin native preferences');
 
+// RB-0112 — internal-only Draft import, exercised against real pinned
+// two-site WordPress identity/capability state and disposable Definition
+// storage. Never publishes, exposes REST/UI or changes native preferences.
+$draftImporter = new DashboardWidgetPresetDraftImportService(
+    $repo,
+    $preflight,
+    new WordPressCapabilityChecker(new NativeWordPressAbilityEnvironment()),
+);
+$existingPresetBeforeDraftImport = $repo->get($localPresetId);
+$existingNetworkBeforeDraftImport = $repo->get($presetId);
+$draftCandidateIds = [
+    $siteA => '21212121-2121-4212-8212-212121212121',
+    $siteB => '23232323-2323-4232-8232-232323232323',
+];
+$draftImportSnapshot = static function (array $original, string $target): array {
+    $copy = $original;
+    $copy['payload']['definition_id'] = $target;
+    $copy['sha256'] = hash('sha256', json_encode(
+        $copy['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    return $copy;
+};
+foreach ([$siteA, $siteB] as $importSiteId) {
+    switch_to_blog($importSiteId);
+    wp_set_current_user($adminId);
+    $beforeBlog = (int) get_current_blog_id();
+    $beforeUser = (int) get_current_user_id();
+    $beforeNetwork = (int) get_current_network_id();
+    $beforeNative = $preferences($adminId);
+    $candidateId = $draftCandidateIds[$importSiteId];
+    $snapshotToImport = $draftImportSnapshot($orderSnapshot, $candidateId);
+    $ctx = new ExecutionContext(new Principal($adminId), $importSiteId, networkId: $networkId);
+    $slug = 'draft-multisite-import-' . $importSiteId;
+
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal($adminId), $importSiteId, ExecutionChannel::Rest, $networkId),
+            $snapshotToImport, $slug,
+        ) === ['status' => 'forbidden'],
+        'REST callers cannot invoke internal-only Draft importer',
+    );
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal($adminId + 100), $importSiteId, networkId: $networkId),
+            $snapshotToImport, $slug,
+        ) === ['status' => 'forbidden'],
+        'forged WordPress principal cannot import',
+    );
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal($adminId), $importSiteId === $siteA ? $siteB : $siteA, networkId: $networkId),
+            $snapshotToImport, $slug,
+        ) === ['status' => 'forbidden'],
+        'cross-site identity mismatch cannot import',
+    );
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal($adminId), $importSiteId, networkId: $networkId + 1),
+            $snapshotToImport, $slug,
+        ) === ['status' => 'forbidden'],
+        'cross-network identity mismatch cannot import',
+    );
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft(
+            new ExecutionContext(new Principal(null), $importSiteId, networkId: $networkId),
+            $snapshotToImport, $slug,
+        ) === ['status' => 'forbidden'],
+        'guest cannot import Draft',
+    );
+    $badDigest = $snapshotToImport;
+    $badDigest['sha256'] = str_repeat('0', 64);
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft($ctx, $badDigest, $slug) === ['status' => 'invalid_snapshot'],
+        'failed portability integrity cannot create Draft',
+    );
+    $networkDefault = $snapshotToImport;
+    $networkDefault['payload']['assignment'] = ['roles' => [], 'network_default' => true];
+    $networkDefault['sha256'] = hash('sha256', json_encode(
+        $networkDefault['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft($ctx, $networkDefault, $slug) === ['status' => 'forbidden'],
+        'site manage_options cannot authorize network-default import',
+    );
+    dashboardMultisiteExpect($repo->get($candidateId) === null, 'denied Draft operations must not save a Definition');
+
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft($ctx, $snapshotToImport, $slug) ===
+        ['status' => 'created_draft', 'definition_id' => $candidateId],
+        'actual WordPress admin must create exactly one scoped Draft',
+    );
+    $savedDraft = $repo->get($candidateId);
+    dashboardMultisiteExpect($savedDraft instanceof Definition, 'created Draft must exist in disposable repository');
+    dashboardMultisiteExpect($savedDraft->status === DefinitionStatus::Draft, 'created imported preset must never be Published');
+    dashboardMultisiteExpect($savedDraft->revision === 1, 'import revision starts at destination revision one');
+    dashboardMultisiteExpect($savedDraft->payload['preset']['label'] === $snapshotToImport['payload']['label'], 'Draft label must be preserved');
+    dashboardMultisiteExpect($savedDraft->payload['preset']['widget_definition_ids'] === $snapshotToImport['payload']['widget_definition_ids'], 'Draft widget order preserved');
+    dashboardMultisiteExpect($savedDraft->payload['preset']['assignment'] === $snapshotToImport['payload']['assignment'], 'Draft assignment preserved');
+    dashboardMultisiteExpect(
+        $draftImporter->importDraft($ctx, $snapshotToImport, 'should-never-overwrite') === ['status' => 'id_conflict'],
+        'same UUID must remain insert-only and cannot overwrite',
+    );
+    dashboardMultisiteExpect($repo->get($candidateId) === $savedDraft, 'id collision cannot update Draft');
+    dashboardMultisiteExpect($preferences($adminId) === $beforeNative, 'Draft import must not alter native dashboard preferences');
+    dashboardMultisiteExpect((int) get_current_blog_id() === $beforeBlog, 'Draft import must not switch WordPress blog');
+    dashboardMultisiteExpect((int) get_current_user_id() === $beforeUser, 'Draft import must not switch WordPress user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $beforeNetwork, 'Draft import must not switch WordPress network');
+    restore_current_blog();
+}
+dashboardMultisiteExpect($repo->get($localPresetId) === $existingPresetBeforeDraftImport, 'Published local preset cannot be overwritten by Draft import');
+dashboardMultisiteExpect($repo->get($presetId) === $existingNetworkBeforeDraftImport, 'Published network preset cannot be overwritten by Draft import');
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'native Dashboard preferences unchanged across both Draft operations');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -696,6 +813,9 @@ $summary = [
     'rb0108_cross_site_mapping_candidate_verified' => true,
     'rb0108_mapping_invalid_and_conflict_rejected' => true,
     'rb0108_mapping_preserves_wordpress_state' => true,
+    'rb0112_draft_import_auth_context_isolation' => true,
+    'rb0112_draft_only_create_once' => true,
+    'rb0112_native_preferences_unchanged' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
