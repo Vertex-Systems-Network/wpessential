@@ -1,9 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0120 real WordPress PASS; RB-0121 post-create catalog revalidation staged
+## 2026-10-09 — RB-0121 terminal PASS; ready next safe source
 
-- RB-0120 Issue #1397 / PR #1398 pinned WP7.1/PHP8.2/MySQL8.4 two-site Draft review isolation exact head `38aa29e131bfc766ea9a85c3e2aa7eb640714d01`: 13/13 applicable CI PASS incl. real Multisite, Architecture, Governance and 10-cell Platform; six allowed files, 0 behind/reviews, protected merged `6e27b9dd7d0b7dc91c469c2d957dfd47a847b449`. No publication route.
-- RB-0121 Issue #1399 / `agent/dashboard-draft-postcreate-widget-revalidation-v1` hardens internal Draft import: after atomic create & persisted checksum readback, recompile current Published Surface10 target widget refs. A reference that changed post-preflight now returns `write_failed` rather than false `created_draft`; already-inserted Draft may remain, no rollback/second write. Focused race test staged; seven files, exact-head CI PENDING. P-006 #1102/admin #858/Worker #947 parked.
+- RB-0121 Issue #1399 / PR #1400 exact head `f48132cc007b201ecf3f701a827d08d41c5c6aef`: **14/14** path-applicable CI PASS incl. PHP Quality, Distributable, Governance, Architecture and 10-cell Platform; exactly 7 authorized paths, zero behind/reviews, protected merged `5f17579908d15db504ac495565cfd3b297fa63be`; issue closed.
+- Internal-only Draft importer now rechecks CURRENT Published widget references after persisted Draft readback; if target changes after initial preflight, generic `write_failed` replaces false success, without additional write/rollback or publication.
+- Issue #1401 terminal 5-file README/AI state/queue/benchmark reconciliation. No recursive docs-only IN_PROGRESS slot; next safe reversible source fresh audit. Park #858 admin, #1102 privileged P-006, #947 independent Worker; no production/GA/full parity.
 
 
 ## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY
