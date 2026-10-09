@@ -39,6 +39,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyDefinitio
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
@@ -485,6 +486,88 @@ dashboardMultisiteExpect(
 );
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'native preferences unchanged after real WP freshness validation');
 
+// RB-0106: a read-only compatibility preflight in the real pinned two-site
+// WordPress fixture. Neither a 'valid_candidate' nor any other result permits
+// importing, altering native preferences, or creating a Definition.
+$preflight = new DashboardWidgetPresetImportPreflightService($repo, $portablePresetCompiler);
+$candidateId = '18181818-1818-4818-8818-181818181818';
+$candidateSnapshot = $orderSnapshot;
+$candidateSnapshot['payload']['definition_id'] = $candidateId;
+$candidateSnapshot['sha256'] = hash('sha256', json_encode(
+    $candidateSnapshot['payload'],
+    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+));
+$preflightExistingBefore = $repo->get($localPresetId);
+$preflightWidgetBefore = $repo->get($widgetId);
+$preflightLocalWidgetBefore = $repo->get($localWidgetId);
+foreach ([$siteA, $siteB] as $siteForPreflight) {
+    switch_to_blog($siteForPreflight);
+    wp_set_current_user($adminId);
+    $beforeBlog = get_current_blog_id();
+    $beforeUser = get_current_user_id();
+    $beforeNative = $preferences($adminId);
+    dashboardMultisiteExpect(
+        $preflight->preflight($candidateSnapshot) === ['status' => 'valid_candidate', 'applicable' => false],
+        'valid snapshot with a new id is an advisory candidate only, never auto-applicable',
+    );
+    dashboardMultisiteExpect(
+        $preflight->preflight($orderSnapshot) === ['status' => 'id_conflict', 'applicable' => false],
+        'already-owned preset id must be advisory conflict, never overwritable',
+    );
+    $tampered = $candidateSnapshot;
+    $tampered['sha256'] = str_repeat('0', 64);
+    dashboardMultisiteExpect(
+        $preflight->preflight($tampered) === ['status' => 'integrity_mismatch', 'applicable' => false],
+        'modified fingerprint must not pass content-integrity assessment',
+    );
+    $unknownReference = $candidateSnapshot;
+    $unknownReference['payload']['widget_definition_ids'] = ['19191919-1919-4919-8919-191919191919'];
+    $unknownReference['sha256'] = hash('sha256', json_encode(
+        $unknownReference['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    dashboardMultisiteExpect(
+        $preflight->preflight($unknownReference) === ['status' => 'invalid_snapshot', 'applicable' => false],
+        'missing Published widget reference must fail compatibility assessment',
+    );
+    $wrongTypeReference = $candidateSnapshot;
+    $wrongTypeReference['payload']['widget_definition_ids'] = [$draftPresetId];
+    $wrongTypeReference['sha256'] = hash('sha256', json_encode(
+        $wrongTypeReference['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    ));
+    dashboardMultisiteExpect(
+        $preflight->preflight($wrongTypeReference) === ['status' => 'invalid_snapshot', 'applicable' => false],
+        'Draft preset cannot be used as a Published widget reference',
+    );
+    $injected = $candidateSnapshot;
+    $injected['payload']['source_url'] = 'https://untrusted.example';
+    dashboardMultisiteExpect(
+        $preflight->preflight($injected) === ['status' => 'invalid_snapshot', 'applicable' => false],
+        'unrecognized portability payload fields must be rejected before use',
+    );
+    $wrongOrder = [
+        'payload' => $candidateSnapshot['payload'],
+        'format' => $candidateSnapshot['format'],
+        'version' => $candidateSnapshot['version'],
+        'sha256' => $candidateSnapshot['sha256'],
+    ];
+    dashboardMultisiteExpect(
+        $preflight->preflight($wrongOrder) === ['status' => 'invalid_snapshot', 'applicable' => false],
+        'non-canonical envelope ordering cannot be silently accepted',
+    );
+    dashboardMultisiteExpect($preferences($adminId) === $beforeNative, 'preflight must preserve native Dashboard preferences');
+    dashboardMultisiteExpect(get_current_blog_id() === $beforeBlog, 'preflight must preserve current WordPress blog identity');
+    dashboardMultisiteExpect(get_current_user_id() === $beforeUser, 'preflight must preserve WordPress current user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $networkId, 'preflight must preserve real WordPress network');
+    dashboardMultisiteExpect($repo->get($candidateId) === null, 'preflight must never save candidate Definition');
+    restore_current_blog();
+}
+dashboardMultisiteExpect($repo->get($localPresetId) === $preflightExistingBefore, 'existing preset untouched by preflight');
+dashboardMultisiteExpect($repo->get($widgetId) === $preflightWidgetBefore, 'network widget untouched by preflight');
+dashboardMultisiteExpect($repo->get($localWidgetId) === $preflightLocalWidgetBefore, 'local widget untouched by preflight');
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'preflight must preserve network admin native layout');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -505,6 +588,9 @@ $summary = [
     'rb0104_read_only_freshness_match_stale' => true,
     'rb0104_invalid_catalog_rejected' => true,
     'rb0104_wordpress_preferences_unchanged' => true,
+    'rb0106_import_preflight_candidate_no_apply' => true,
+    'rb0106_import_preflight_conflict_integrity_invalid' => true,
+    'rb0106_import_preflight_no_native_mutation' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
