@@ -465,7 +465,7 @@ foreach ([
     ['not-a-uuid', $siteSnapshot['sha256']],
     [$localPresetId, strtoupper($siteSnapshot['sha256'])],
     [$localPresetId, 'invalid'],
-    [strtoupper($localPresetId), $siteSnapshot['sha256']],
+    [strtoupper('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'), $siteSnapshot['sha256']],
 ] as [$id, $fingerprint]) {
     try {
         $freshnessReader->check($id, $fingerprint);
