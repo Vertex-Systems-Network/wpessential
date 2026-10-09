@@ -719,11 +719,15 @@ foreach ([
         ),
         $draftChecker,
     );
+    $raceResult = $raceImporter->importDraft(
+        $draftContext, $candidate, 'mysql-fingerprint-race-' . $driftCase['mode'],
+    );
     platformPersistenceExpect(
-        $raceImporter->importDraft(
-            $draftContext, $candidate, 'mysql-fingerprint-race-' . $driftCase['mode'],
-        ) === ['status' => 'write_failed'],
-        'concurrent Published widget fingerprint drift must fail closed on real MySQL: ' . $driftCase['mode'],
+        $raceResult === ['status' => 'write_failed'],
+        'concurrent Published widget fingerprint drift must fail closed on real MySQL: '
+            . $driftCase['mode'] . ', returned ' . json_encode($raceResult)
+            . ', draft_status=' . ($repository->get($driftCase['id'])?->status->value ?? 'missing')
+            . ', widget_revision=' . ($repository->get($draftWidgetId)?->revision ?? 'missing'),
     );
     platformPersistenceExpect(
         $raceRepo->createCalls === 1,
