@@ -40,6 +40,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetMultisitePolicyResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityFreshnessService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetImportPreflightService;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetPortabilityMappingPreviewService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetReadService;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetResolver;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
@@ -568,6 +569,107 @@ dashboardMultisiteExpect($repo->get($widgetId) === $preflightWidgetBefore, 'netw
 dashboardMultisiteExpect($repo->get($localWidgetId) === $preflightLocalWidgetBefore, 'local widget untouched by preflight');
 dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'preflight must preserve network admin native layout');
 
+// RB-0108: read-only cross-site UUID translation on pinned real WordPress.
+// A different source site's widget IDs map to existing Published target widgets;
+// no importer, WordPress preference update, or Definition write is permitted.
+$mappingReader = new DashboardWidgetPresetPortabilityMappingPreviewService($preflight);
+$portableSourceSnapshot = $orderSnapshot;
+$portableSourceSnapshot['payload']['definition_id'] = 'abababab-abab-4bab-8bab-abababababab';
+$portableSourceSnapshot['payload']['widget_definition_ids'] = [
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+];
+$portableSourceSnapshot['sha256'] = hash('sha256', json_encode(
+    $portableSourceSnapshot['payload'],
+    JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+));
+$mappedCandidateId = 'cdcdcdcd-cdcd-4dcd-8dcd-cdcdcdcdcdcd';
+$widgetIdMapping = [
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+    'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $localWidgetId,
+];
+$mappingExpected = [$widgetId, $localWidgetId];
+$mappingRepoPresetBefore = $repo->get($localPresetId);
+$mappingRepoWidgetBefore = $repo->get($widgetId);
+$mappingRepoLocalWidgetBefore = $repo->get($localWidgetId);
+foreach ([$siteA, $siteB] as $mappingSiteId) {
+    switch_to_blog($mappingSiteId);
+    wp_set_current_user($adminId);
+    $mappingBlogBefore = get_current_blog_id();
+    $mappingUserBefore = get_current_user_id();
+    $mappingPrefsBefore = $preferences($adminId);
+
+    $mappingResult = $mappingReader->preview($portableSourceSnapshot, $mappedCandidateId, $widgetIdMapping);
+    dashboardMultisiteExpect(
+        $mappingResult['status'] === 'valid_candidate' && $mappingResult['applicable'] === false,
+        'cross-site mapped snapshot is an advisory non-applicable candidate only',
+    );
+    $candidate = $mappingResult['candidate_snapshot'];
+    dashboardMultisiteExpect(is_array($candidate), 'only validated mapping may expose its candidate envelope');
+    dashboardMultisiteExpect($candidate['payload']['definition_id'] === $mappedCandidateId, 'mapped candidate ID must be exact');
+    dashboardMultisiteExpect($candidate['payload']['widget_definition_ids'] === $mappingExpected, 'mapped references must preserve source order');
+    dashboardMultisiteExpect($candidate['sha256'] === hash('sha256', json_encode(
+        $candidate['payload'],
+        JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    )), 'mapped canonical candidate fingerprint must match deterministic JSON');
+    dashboardMultisiteExpect(
+        $mappingReader->preview($portableSourceSnapshot, $mappedCandidateId, $widgetIdMapping) === $mappingResult,
+        'cross-site mapping preview must remain deterministic across reads',
+    );
+    dashboardMultisiteExpect(
+        $preflight->preflight($candidate) === ['status' => 'valid_candidate', 'applicable' => false],
+        'mapped envelope must pass canonical Published target-site preflight',
+    );
+
+    $badDigest = $portableSourceSnapshot;
+    $badDigest['sha256'] = str_repeat('0', 64);
+    dashboardMultisiteExpect(
+        $mappingReader->preview($badDigest, $mappedCandidateId, $widgetIdMapping) ===
+        ['status' => 'integrity_mismatch', 'applicable' => false, 'candidate_snapshot' => null],
+        'modified source fingerprint must fail closed with no candidate',
+    );
+    foreach ([
+        ['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $widgetId,
+        ],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+        ],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $draftPresetId,
+        ],
+        [
+            'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' => $widgetId,
+            'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb' => $wrongOwnerPresetId,
+        ],
+    ] as $badMap) {
+        dashboardMultisiteExpect(
+            $mappingReader->preview($portableSourceSnapshot, $mappedCandidateId, $badMap) ===
+            ['status' => 'invalid_snapshot', 'applicable' => false, 'candidate_snapshot' => null],
+            'incomplete, duplicate, unknown, foreign or wrong-type target mapping must fail closed',
+        );
+    }
+    dashboardMultisiteExpect(
+        $mappingReader->preview($portableSourceSnapshot, $localPresetId, $widgetIdMapping) ===
+        ['status' => 'id_conflict', 'applicable' => false, 'candidate_snapshot' => null],
+        'existing target preset cannot be overwritten through mapping preview',
+    );
+    dashboardMultisiteExpect($preferences($adminId) === $mappingPrefsBefore, 'mapping cannot mutate native Dashboard preferences');
+    dashboardMultisiteExpect(get_current_blog_id() === $mappingBlogBefore, 'mapping cannot switch current WP blog');
+    dashboardMultisiteExpect(get_current_user_id() === $mappingUserBefore, 'mapping cannot alter current WP user');
+    dashboardMultisiteExpect((int) get_current_network_id() === $networkId, 'mapping cannot switch current WP network');
+    dashboardMultisiteExpect($repo->get($mappedCandidateId) === null, 'mapping cannot persist mapped preset');
+    restore_current_blog();
+}
+dashboardMultisiteExpect($repo->get($localPresetId) === $mappingRepoPresetBefore, 'mapping must not modify existing preset');
+dashboardMultisiteExpect($repo->get($widgetId) === $mappingRepoWidgetBefore, 'mapping must not modify network widget');
+dashboardMultisiteExpect($repo->get($localWidgetId) === $mappingRepoLocalWidgetBefore, 'mapping must not modify local widget');
+dashboardMultisiteExpect($preferences($adminId) === $fixtureBefore[$siteA], 'mapping must not touch network admin native preferences');
+
 $summary = [
     'contract' => 'RB-0098-real-wordpress-multisite-policy-isolation-v1',
     'wordpress' => get_bloginfo('version'),
@@ -591,6 +693,9 @@ $summary = [
     'rb0106_import_preflight_candidate_no_apply' => true,
     'rb0106_import_preflight_conflict_integrity_invalid' => true,
     'rb0106_import_preflight_no_native_mutation' => true,
+    'rb0108_cross_site_mapping_candidate_verified' => true,
+    'rb0108_mapping_invalid_and_conflict_rejected' => true,
+    'rb0108_mapping_preserves_wordpress_state' => true,
 ];
 $evidencePath = trim((string) getenv('WPE_DASHBOARD_MULTISITE_EVIDENCE_PATH'));
 if ($evidencePath !== '') {
