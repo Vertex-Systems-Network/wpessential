@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "cb35543f49037c78eccd1de37e7c5199f2d3fad6",
+  "anchor_main_sha": "6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3328,7 +3328,7 @@
     },
     {
       "id": "RB-0103",
-      "source": "Issue #1351 / implementation PR pending",
+      "source": "Issue #1351 / merged PR #1352",
       "category": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit; Governance; Distributable; Architecture; 10-cell Platform Compatibility; Browser applicability by path",
@@ -3343,15 +3343,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|preset-portability-freshness-read|issue1351|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "New strict UUID and lowercase SHA256 canonical Published snapshot freshness match/stale/unavailable/invalid_catalog read-only ability staged",
-        "PHP unit, handler and module tests staged; exact-head CI pending"
+        "PHP unit, handler and module tests staged; exact-head CI pending",
+        "PR #1352 exact head 1ff3a18a09abf23ca2a0df17b7b25aeb7192a5ee passed 14/14 CI including 10-cell Platform matrix, Governance, PHP Quality, Architecture and Distributable; 11 files, 0 behind/reviews; protected merge 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7"
       ],
-      "note": "No terminal PASS or full portability/GA claim before protected merge."
+      "note": "Terminal PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_READ_V1 only; not import/trust/full parity/GA."
+    },
+    {
+      "id": "RB-0104",
+      "source": "Issue #1353 / integration PR pending",
+      "category": "DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Pinned real WordPress 7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation + applicable Governance, Architecture, Platform Compatibility",
+      "environment": "agent/dashboard-portability-freshness-real-wordpress-v1 on main 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7",
+      "dependencies": [
+        "RB-0103 terminal PASS",
+        "main 6bfe6e40c56243d9ae7c7eb6d77c8aa37a1038f7"
+      ],
+      "authorization": "Issue #1353 exact 6-file fixture/README/AI state/queue/benchmark scope; no product runtime/preferences mutation",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|freshness-real-wordpress|issue1353|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Pinned real WP two-site fixture extended with match/stale/unavailable/invalid catalog and no WordPress preferences mutation",
+        "Exact-head CI not yet verified"
+      ],
+      "note": "Do not promote PASS_DASHBOARD_PRESET_PORTABILITY_FRESHNESS_REAL_WORDPRESS_V1 until accepted CI+merge."
     }
   ],
-  "last_reconciled_issue": "#1351",
+  "last_reconciled_issue": "#1353",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
