@@ -23,6 +23,7 @@ spl_autoload_register(static function (string $class) use ($root): void {
 });
 
 use WPEssential\Contracts\CapabilityCheckerInterface;
+use WPEssential\Contracts\DefinitionCreateOnlyRepositoryInterface;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetPresetCompiler;
@@ -539,6 +540,112 @@ platformPersistenceExpect($otherSite->get($mappedMysqlTarget)?->status === Defin
 platformPersistenceExpect($repository->get($mappedMysqlTarget) == $mappedDraftMySQL, 'second site mapped create cannot change first site row');
 platformPersistenceExpect($repository->get($draftWidgetId) == $originalPublishedMappedWidget, 'existing Published MySQL target widget unchanged');
 platformPersistenceExpect($repository->get($mappedMysqlWidgetB) == $originalNewPublishedWidget, 'second Published MySQL target widget unchanged');
+
+// RB-0118: verify the accepted persisted readback guard on actual disposable
+// MySQL plus fake adapters that *acknowledge* a write without a matching row.
+// Synthetic capability checker: real WP user authorization remains RB-0112/15.
+platformPersistenceExpect(
+    $mappedDraftMySQL->computedChecksum() === (new Definition(
+        id: $mappedMysqlTarget,
+        slug: 'mysql-mapped-draft',
+        type: DashboardWidgetPresetDefinition::TYPE,
+        schemaVersion: 1,
+        ownerSurfaceId: 10,
+        status: DefinitionStatus::Draft,
+        payload: $mappedDraftMySQL->payload,
+        revision: 1,
+    ))->computedChecksum(),
+    'real mapped MySQL Draft readback must preserve canonical payload digest',
+);
+$uncommittedReadbackId = '5e5e5e5e-5e5e-4e5e-8e5e-5e5e5e5e5e5e';
+$uncommittedPayload = $draftSnapshot['payload'];
+$uncommittedPayload['definition_id'] = $uncommittedReadbackId;
+$uncommittedSnapshot = [
+    'format' => 'wpessential-dashboard-preset',
+    'version' => 1,
+    'payload' => $uncommittedPayload,
+    'sha256' => hash('sha256', json_encode(
+        $uncommittedPayload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    )),
+];
+foreach (['ack_only', 'changed_row', 'read_error'] as $mode) {
+    $ackAdapter = new class($repository, $mode) implements DefinitionCreateOnlyRepositoryInterface {
+        private ?Definition $acknowledged = null;
+
+        public function __construct(
+            private readonly PersistentDefinitionRepository $actual,
+            private readonly string $mode,
+        ) {}
+
+        public function create(Definition $definition): void
+        {
+            // Deliberately do NOT persist; this is a fake only for failure
+            // verification, not a database adapter or production mutation.
+            $this->acknowledged = $definition;
+        }
+
+        public function get(string $id): ?Definition
+        {
+            if ($this->acknowledged?->id === $id) {
+                if ($this->mode === 'read_error') {
+                    throw new RuntimeException('simulated post-create read error');
+                }
+                if ($this->mode === 'ack_only') {
+                    return null;
+                }
+                $draft = $this->acknowledged;
+                return new Definition(
+                    id: $draft->id,
+                    slug: 'wrong-stored-slug',
+                    type: $draft->type,
+                    schemaVersion: $draft->schemaVersion,
+                    ownerSurfaceId: $draft->ownerSurfaceId,
+                    status: $draft->status,
+                    payload: $draft->payload,
+                    revision: $draft->revision,
+                );
+            }
+            return $this->actual->get($id);
+        }
+
+        public function save(Definition $definition): void
+        {
+            throw new RuntimeException('Fake adapter must never call save');
+        }
+
+        public function byType(string $type): array
+        {
+            return $this->actual->byType($type);
+        }
+
+        public function dependentsOf(string $id): array
+        {
+            return $this->actual->dependentsOf($id);
+        }
+    };
+    $checkService = new DashboardWidgetPresetDraftImportService(
+        $ackAdapter,
+        new DashboardWidgetPresetImportPreflightService(
+            $ackAdapter, new DashboardWidgetPresetCompiler($ackAdapter),
+        ),
+        $draftChecker,
+    );
+    platformPersistenceExpect(
+        $checkService->importDraft(
+            $draftContext, $uncommittedSnapshot, 'mysql-readback-probe',
+        ) === ['status' => 'write_failed'],
+        'adapter ' . $mode . ' cannot claim created_draft without persisted equivalent Draft',
+    );
+    platformPersistenceExpect(
+        $repository->get($uncommittedReadbackId) === null,
+        'failed fake acknowledgment must not create real disposable MySQL rows',
+    );
+}
+platformPersistenceExpect(
+    $otherSite->get($uncommittedReadbackId) === null
+        && $networkStore->get($uncommittedReadbackId) === null,
+    'fake readback failures must not leak across real MySQL site/network scopes',
+);
 
 $context = new ExecutionContext(
     principal: new Principal(42),
