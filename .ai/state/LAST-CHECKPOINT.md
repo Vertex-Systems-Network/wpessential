@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0114 internal mapped Draft-only import staged
+## 2026-10-09 — RB-0114 PASS; RB-0115 real WordPress mapped Draft staged
 
-- Verified `main` `b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15`; Issue #1379 / PR #1380 RB-0113 terminal README/AI truth 2/2 Governance/Architecture PASS, exact five paths, zero behind/reviews, protected merged; no recursive documentation-only queue slot.
-- RB-0114 Issue #1381 internal-only `agent/dashboard-preset-internal-mapped-draft-create-v1`: source snapshot integrity and exact one-to-one target Published Surface-10 UUID mapping -> candidate preview -> *independent repeated* authenticated current WordPress user/blog/network `manage_options` and Internal channel -> atomic `Draft` revision-one create-once. Deny unauthorized before mapping any untrusted snapshot.
-- No public Ability/REST/AJAX/CLI, no automatic publishing, WordPress native Dashboard preference changes, remote provider, production release or GA. Unit tests for mapping/collisions/network defaults/denied callers staged; **exact-head CI PENDING**.
+- RB-0114 Issue #1381 / PR #1382 exact head `6960e139c0edd787951e8f0683047f8522dc92de`, **14/14** path-applicable exact-head CI PASS incl. PHP Quality, Governance, Architecture, Distributable, Platform 10/10; 11 authorized files, zero behind/reviews, protected merged `32bc86a613c9c6667aa622f4f04c827436803174`.
+- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_MAPPED_DRAFT_CREATE_V1`: authorize Internal current WP user/blog/network before untrusted mapping and independently reauthorize at atomic Draft-only create; no public importer/publish/native preferences/provider/GA.
+- RB-0115 Issue #1383 `agent/dashboard-mapped-draft-real-wordpress-v1`: real pinned two-site WordPress test for mapped Draft create-once, status, integrity, duplicate, context forgery/cross-site/network-denial and no native preferences mutation. Exact six files, real WP CI and protected merge PENDING.
 
 
 ## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY
