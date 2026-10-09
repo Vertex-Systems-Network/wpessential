@@ -1,8 +1,9 @@
 # WPEssential — Development Consent Gate
 
-Status: **ACTIVE / MANDATORY**  
-Owner instruction recorded: **2026-08-27**  
+Status: **ACTIVE / MANDATORY**
+Owner instruction recorded: **2026-08-27**
 Explicit development grant recorded: **2026-08-29**
+Continuous autonomous execution instruction recorded: **2026-10-08 / Issue #1328**
 
 ## Rule
 
@@ -26,11 +27,22 @@ Do not repeatedly ask approval for ordinary reversible decisions inside an ACTIV
 
 ## Current consent state
 
-Project development approval: **GRANTED / ACTIVE**  
-Approval record: **`GOV-OWNER-CONSENT-001`** in `docs/APPROVAL-LEDGER.md`  
-Current canonical scope: **56 module/platform surfaces**  
-Source implementation authorization: **56/56 module/platform surfaces**, executed milestone-by-milestone under accepted architecture and quality gates.  
+Project development approval: **GRANTED / ACTIVE**
+Approval record: **`GOV-OWNER-CONSENT-001`** in `docs/APPROVAL-LEDGER.md`
+Current canonical scope: **56 module/platform surfaces**
+Source implementation authorization: **56/56 module/platform surfaces**, executed milestone-by-milestone under accepted architecture and quality gates.
 Current execution stage: **IMPLEMENTATION BASELINE / ADOPTION GATE**.
+
+## Continuous autonomous execution under active consent
+
+While `GOV-OWNER-CONSENT-001` (or a narrower active milestone grant) covers the work, the owner does **not** need to repeat `continue`, reconfirm ordinary reversible changes, choose the next module, approve routine error repair, or answer technical blocker questions that repository evidence/tests/research can resolve.
+
+One explicit development instruction may drive successive bounded milestones continuously in the same workspace/session. Each milestone still obeys its own scope, tests, security, data, merge and recovery gates.
+
+If one lane reaches a credential, legal, destructive, production, deployment/release, chargeable-provider, or other separately privileged boundary, record and park that lane. Do not reinterpret the missing authority as approval, but also do not halt unrelated safe work that is already authorized. Ask the owner only when the privileged decision itself is necessary and no other safe authorized work can continue.
+
+Issue #1328 defines execution cadence only; it does not broaden `GOV-OWNER-CONSENT-001` privileges.
+
 
 The explicit owner instruction authorizes the sequence:
 

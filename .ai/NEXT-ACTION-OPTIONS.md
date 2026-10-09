@@ -2,9 +2,22 @@
 
 This repository adopts the Vertex Systems Network interactive AI-development handoff standard.
 
-## User-facing handoff
+## Autonomous execution mode
 
-After every repository-development response, expose 1 to 3 currently valid next actions derived from live repository evidence.
+When the user has explicitly instructed this repository to start/continue/resume development, autonomous mode is active for the current workspace/session.
+
+In autonomous mode:
+- do **not** interrupt execution with numbered next-action choices;
+- do **not** require a numeric selection or another `continue` message;
+- automatically select the canonical highest-priority safe authorized next action from live repository evidence;
+- checkpoint after each logical milestone, park waiting/authorization-gated lanes, and continue conflict-safe work;
+- surface options only if the user explicitly asks for choices, or when autonomous execution has ended because no safe authorized work remains.
+
+URL-only repository entry remains read-only and continues to use the option flow below.
+
+## Interactive user-facing handoff
+
+When autonomous mode is not active, expose 1 to 3 currently valid next actions derived from live repository evidence.
 
 - Always include the canonical/recommended next action, but do not bind it permanently to option 1.
 - When two or more valid options exist, reshuffle the visible 1/2/3 numbering on every handoff.
@@ -26,4 +39,4 @@ When the user's message contains only this repository's canonical GitHub URL (op
 
 ## Safety and local authority
 
-Repository-specific governance, security, exact-head CI, approval, migration, production/provider, release, and one-turn/one-milestone rules remain authoritative and may be stricter than this interaction contract. This file never grants execution authority and never permits bypassing an accepted actionable Issue/PR or deferred work boundary.
+Repository-specific governance, security, exact-head CI, approval, migration, production/provider, release, and continuous milestone-checkpoint rules remain authoritative and may be stricter than this interaction contract. This file never grants execution authority and never permits bypassing an accepted actionable Issue/PR or deferred work boundary.
