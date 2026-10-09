@@ -2,28 +2,29 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: dbeece1c1fd81f2aefac9d2ae6820942446acdad
-observed_main_source: "Issue #1385 / PR #1386 exact head a8248878d00f1b13f2afd99b1bfd4fbbb319603e 12/12 CI PASS incl. real MySQL; 6 paths, 0 behind/reviews, merged dbeece1c1fd81f2aefac9d2ae6820942446acdad."
-active_issue: null
+observed_main_sha: 60406b0ba3111d91fd815e4ba3730f8bb4835e70
+observed_main_source: "Issue #1387 / PR #1388 exact head 13b3ca8755297449229aee1f1efb720440f9e6de 2/2 Governance/Architecture PASS, five files, zero behind/reviews, merged 60406b0ba3111d91fd815e4ba3730f8bb4835e70; RB-0116 terminal PASS."
+active_issue: "#1389"
 active_pr: null
-active_branch: null
-current_milestone: "RB-0116 internal mapped Draft real MySQL terminal PASS; next safe source READY"
-milestone_status: READY
+active_branch: agent/dashboard-draft-import-persisted-readback-v1
+current_milestone: "RB-0117 / Issue #1389 persisted Draft readback before success; source and regression tests staged, CI PENDING"
+milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0116 Issue #1385 / PR #1386 12/12 exact-head CI PASS including real MySQL, 6 files, 0 behind/reviews, merged dbeece1c1fd81f2aefac9d2ae6820942446acdad; no public importer."
-next_safe_action: "Issue-first audit current main/open PR/queue; claim next reversible internal-only Draft source tranche; park #858/#1102/#947."
+next_safe_action: "Issue #1389 eight-file PR; all applicable exact-head CI PASS and protected merge, repair failures autonomously; do not broaden to public import or production."
 waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
 next_planned_slot:
-  issue: null
-  slot_id: null
-  claim_branch: null
-  claim_rule: "No administrative IN_PROGRESS work package; issue-first next safe source audit."
+  issue: "#1389"
+  slot_id: dashboard-draft-import-persisted-readback-v1
+  claim_branch: "agent/dashboard-draft-import-persisted-readback-v1"
+  claim_rule: "Issue #1389 exactly eight code/tests/README/shared-truth files; no public import, publish, provider or production."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
   final_report_requires_required_readme_reconciliation: true
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
-  immediate_pending: []
+  immediate_pending:
+    - RB-0117
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -182,4 +183,5 @@ notes:
   - "RB-0115 Issue #1383 pinned real WP mapped Draft-only integration staged, CI pending."
   - "RB-0115 Issue #1383 / PR #1384 real pinned two-site WP mapped Draft-only isolation 13/13 CI PASS, merged 96bc0d7992fe787a3234c9e6084e6e0d75504f7a."
   - "RB-0116 / PR #1386 real disposable MySQL 12/12 exact-head CI PASS merged dbeece1c1fd81f2aefac9d2ae6820942446acdad; next safe source READY."
+  - "RB-0117 Issue #1389 direct + mapped internal Draft import persisted readback hardening staged; CI pending."
   - "Repository/runtime evidence and LAST-CHECKPOINT history outrank compact CURRENT-STATE notes."
