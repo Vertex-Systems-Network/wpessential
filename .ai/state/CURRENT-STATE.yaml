@@ -11,7 +11,7 @@ current_milestone: "RB-0119 / Issue #1395 internal-only read-only Draft publish-
 milestone_status: IN_PROGRESS
 last_completed_milestone: "RB-0118 Issue #1391 / PR #1392 12/12 exact-head CI PASS incl. real disposable MySQL, 6 authorized files, 0 behind/reviews, merged 574d1f89cb8a1455079182256b4739140a00214c; internal-only no GA."
 next_safe_action: "Create RB-0119 Issue #1395 exact 9-file source/test/README shared-truth PR, validate PHP Quality/Governance/Architecture/Distributable/Platform exact-head CI, fix within scope, merge protected if 0 behind/reviews."
-waiting_external: "Issue #858 admin, #1102 separately authorized P-006 and #947 independent Worker parked; not blockers for internal Draft-only reversible source development."
+waiting_external: "#858 admin, #1102 gated P-006, #947 independent Worker parked; safe internal Draft development continues."
 next_planned_slot:
   issue: "#1395"
   slot_id: dashboard-draft-publish-review-read-v1
