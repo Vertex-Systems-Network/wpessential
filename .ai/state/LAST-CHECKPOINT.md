@@ -1,11 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0112 real WP PASS; RB-0113 real MySQL Draft import staged
+## 2026-10-09 — RB-0113 real disposable MySQL Draft-only import PASS; next safe source READY
 
-- RB-0112 Issue #1375 / PR #1376 exact head `871419af2bdb7edf2e230ce2e5f234d0321db56d`: 13/13 exact-head CI PASS including pinned real WordPress Multisite, Governance, Architecture and 10-cell Platform; six authorized files, zero behind/reviews, protected merged `6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313`, issue closed.
-- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1`; authenticated real WP current user/blog/network capability, internal-only Draft create-once with unchanged native Dashboard usermeta and Published presets; no public importer.
-- RB-0113 Issue #1377 branch `agent/dashboard-draft-import-real-mysql-v1`: disposable real MySQL `PersistentDefinitionRepository` fixture now invokes accepted internal Draft-only importer with synthetic test capability checker, verifying revision one, insert-once, conflicts/no overwrites, invalid checksum, role/order, subsite/network isolation. Synthetic checker is not equivalent to WP auth (separately proven by RB-0112).
-- Exact six-file fixture/README/shared state scope; all applicable CI including actual MySQL run and protected merge **PENDING**. No product source, live DB/provider/GA.
+- RB-0113 Issue #1377 / PR #1378 exact head `e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c`: **12/12** path-applicable exact-head CI PASS including actual disposable MySQL Definition/Audit persistence, Governance, Architecture, Platform 10/10; six files, zero behind/reviews, protected merged `482c935e1da311737d545736881d2cc35384d2d4`, issue closed.
+- Bounded `PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1`: internal-only Draft/revision-one insert-once, typed collision/fingerprint/capability denial, site isolation. No public importer, automatic publishing, native WordPress dashboard usermeta, provider/remote, production release or full GA.
+- Issue #1379 terminal shared-truth reconciliation resets queue to `READY_NEXT_SAFE_SOURCE` **without** creating an administrative IN_PROGRESS queue slot; next cycle picks a meaningful authorized source milestone after fresh issue-first audit.
 
 
 ## 2026-10-09 — RB-0108 pinned WordPress mapping preview terminal PASS; next safe source READY

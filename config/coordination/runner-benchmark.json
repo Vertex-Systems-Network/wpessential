@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "6bf3450d61f6c6ccdea12b04def3b5ff0a9ae313",
+  "anchor_main_sha": "482c935e1da311737d545736881d2cc35384d2d4",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3579,7 +3579,7 @@
     },
     {
       "id": "RB-0113",
-      "source": "Issue #1377 / disposable MySQL E2E integration PR pending",
+      "source": "Issue #1377 / merged PR #1378",
       "category": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Disposable real MySQL platform persistence fixture plus all applicable exact-head Governance/Architecture/Platform Compatibility",
@@ -3594,12 +3594,13 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|draft-import-real-mysql|issue1377|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Real MySQL fixture adds internal Draft create-only through persistent repository, duplicate ID/slug, role/order, scope isolation and denied caller/integrity assertions",
-        "Exact-head actual MySQL CI and protected merge PENDING"
+        "Exact-head actual MySQL CI and protected merge PENDING",
+        "PR #1378 exact head e0505a4d9b5215c73c5b55ec3b865e4cb7605e8c passed 12/12 exact-head CI incl. actual disposable MySQL Definition/Audit persistence + Governance/Architecture/10-cell Platform, 6 files, 0 behind/reviews, protected merged 482c935e1da311737d545736881d2cc35384d2d4"
       ],
-      "note": "No terminal PASS/full parity/GA until real MySQL exact-head checks pass and protected merge."
+      "note": "Terminal bounded PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_MYSQL_V1, no public import/publish/provider/production/full parity/GA."
     }
   ],
   "last_reconciled_issue": "#1377",
