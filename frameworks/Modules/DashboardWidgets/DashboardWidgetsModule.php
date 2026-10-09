@@ -57,6 +57,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const SERVICE_PRESET_RESOLVER = 'module.dashboard-widgets.preset-resolver';
     public const SERVICE_PRESET_READ = 'module.dashboard-widgets.preset-read';
     public const SERVICE_PRESET_PORTABILITY = 'module.dashboard-widgets.preset-portability';
+    public const SERVICE_PRESET_PORTABILITY_FRESHNESS = 'module.dashboard-widgets.preset-portability-freshness';
     public const SERVICE_MULTISITE_POLICY_COMPILER = 'module.dashboard-widgets.multisite-policy-compiler';
     public const SERVICE_MULTISITE_POLICY_RESOLVER = 'module.dashboard-widgets.multisite-policy-resolver';
     public const SERVICE_MULTISITE_POLICY_READ = 'module.dashboard-widgets.multisite-policy-read';
@@ -88,6 +89,7 @@ final class DashboardWidgetsModule implements ModuleInterface
     public const ABILITY_DIAGNOSTICS = 'wpessential/dashboard-widgets/diagnostics';
     public const ABILITY_PRESET_GET = 'wpessential/dashboard-widgets/preset-get';
     public const ABILITY_PRESET_PORTABILITY = 'wpessential/dashboard-widgets/preset-portability-snapshot';
+    public const ABILITY_PRESET_PORTABILITY_FRESHNESS = 'wpessential/dashboard-widgets/preset-portability-freshness';
     public const ABILITY_PRESET_CATALOG = 'wpessential/dashboard-widgets/preset-catalog';
     public const ABILITY_EFFECTIVE_PRESET = 'wpessential/dashboard-widgets/effective-preset';
     public const ABILITY_MULTISITE_POLICY_GET = 'wpessential/dashboard-widgets/multisite-policy-get';
@@ -257,6 +259,7 @@ final class DashboardWidgetsModule implements ModuleInterface
             $presetResolver,
         );
         $presetPortability = new DashboardWidgetPresetPortabilityReadService($presetRead);
+        $presetPortabilityFreshness = new DashboardWidgetPresetPortabilityFreshnessService($presetPortability);
         $multisitePolicyCompiler = new DashboardWidgetMultisitePolicyCompiler($definitions, $presetCompiler);
         $multisitePolicyResolver = new DashboardWidgetMultisitePolicyResolver(
             $definitions,
@@ -415,6 +418,7 @@ final class DashboardWidgetsModule implements ModuleInterface
         $services->set(self::SERVICE_PRESET_RESOLVER, $presetResolver);
         $services->set(self::SERVICE_PRESET_READ, $presetRead);
         $services->set(self::SERVICE_PRESET_PORTABILITY, $presetPortability);
+        $services->set(self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $presetPortabilityFreshness);
         $services->set(self::SERVICE_MULTISITE_POLICY_COMPILER, $multisitePolicyCompiler);
         $services->set(self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisitePolicyResolver);
         $services->set(self::SERVICE_MULTISITE_POLICY_READ, $multisitePolicyRead);
@@ -528,6 +532,30 @@ final class DashboardWidgetsModule implements ModuleInterface
             new DashboardWidgetPresetPortabilityAbilityHandler($presetPortability),
             'Read Dashboard preset portability snapshot',
             'Exports only validated Published Dashboard preset fields with a non-authenticating SHA-256 fingerprint.',
+        );
+        $this->registerAbility(
+            $abilities,
+            $bridge,
+            new AbilityDescriptor(
+                name: self::ABILITY_PRESET_PORTABILITY_FRESHNESS,
+                ownerSurfaceId: DashboardWidgetPresetDefinition::OWNER_SURFACE_ID,
+                capability: self::CAPABILITY,
+                mutates: false,
+                channels: $channels,
+                inputSchema: [
+                    'type' => 'object',
+                    'required' => ['id', 'sha256'],
+                    'properties' => [
+                        'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+                        'sha256' => ['type' => 'string', 'minLength' => 64, 'maxLength' => 64],
+                    ],
+                    'additionalProperties' => false,
+                ],
+                outputSchema: ['type' => 'object'],
+            ),
+            new DashboardWidgetPresetPortabilityFreshnessAbilityHandler($presetPortabilityFreshness),
+            'Read Dashboard preset fingerprint freshness',
+            'Compares a non-authenticating fingerprint to a canonical current Published preset without returning raw payload or changing layout.',
         );
         $this->registerAbility(
             $abilities,
