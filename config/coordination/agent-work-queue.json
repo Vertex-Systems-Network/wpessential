@@ -1,9 +1,9 @@
 {
-  "schema_version": 196,
+  "schema_version": 197,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "60406b0ba3111d91fd815e4ba3730f8bb4835e70",
-  "mode": "DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1",
-  "source_issue": "#1389",
+  "queue_anchor_main_sha": "03e86ed08edaeb9e48d1ca22a932897768f7e0f5",
+  "mode": "DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1",
+  "source_issue": "#1391",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -239,7 +239,8 @@
     "1383": "CLOSED_COMPLETED_RB0115_PR1384_REAL_WORDPRESS_13_OF_13_PASS",
     "1385": "CLOSED_COMPLETED_RB0116_PR1386_REAL_MYSQL_12_OF_12_PASS",
     "1387": "CLOSED_COMPLETED_RB0116_POSTMERGE_PR1388_2_OF_2_PASS",
-    "1389": "IN_PROGRESS_RB0117_DRAFT_READBACK_CI_PENDING"
+    "1389": "CLOSED_COMPLETED_RB0117_PR1390_14_OF_14_PASS",
+    "1391": "IN_PROGRESS_RB0118_REAL_MYSQL_READBACK_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -269,7 +270,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open Issue #1389 eight-file source+unit+shared truth PR; exact-head PHP Quality/Governance/Architecture/Distributable/Platform CI; repair within scope, zero behind/reviews and protected merge.",
+    "next_safe_action": "Open Issue #1391 six-file real disposable MySQL Draft readback PR; require actual MySQL CI, Governance/Architecture/10-cell Platform, exact-head pass, zero behind/reviews, protected expected-head merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8171,7 +8172,7 @@
       "slot_id": "dashboard-draft-import-persisted-readback-v1",
       "title": "Internal Draft importer fail-closed persisted readback verification",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1",
       "source": "Issue #1389 / RB-0117",
       "dependencies": [
@@ -8191,7 +8192,46 @@
         "Native WordPress preferences, live data/provider, external charges, deployment/GA"
       ],
       "claim_branch": "agent/dashboard-draft-import-persisted-readback-v1",
-      "close_condition": "Only PASS_DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1 after exact eight-file path scope, all applicable exact-head CI PASS, zero behind/reviews, protected expected-head merge."
+      "close_condition": "Only PASS_DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1 after exact eight-file path scope, all applicable exact-head CI PASS, zero behind/reviews, protected expected-head merge.",
+      "terminal_result": "PASS_DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1",
+      "terminal_evidence": {
+        "issue": 1389,
+        "pr": 1390,
+        "head": "f99c2689c0cd098335d361aa2772827df743f387",
+        "merge_sha": "03e86ed08edaeb9e48d1ca22a932897768f7e0f5",
+        "checks_passed": 14,
+        "platform_cells_passed": 10,
+        "authorized_paths": 8,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1098,
+      "slot_id": "dashboard-draft-readback-real-mysql-v1",
+      "title": "Internal Draft persisted readback verification in real disposable MySQL",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1",
+      "source": "Issue #1391 / RB-0118",
+      "dependencies": [
+        "RB-0117 source terminal PASS",
+        "main 03e86ed08edaeb9e48d1ca22a932897768f7e0f5"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": true,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1391 exactly six paths, existing actual MySQL Definition/Audit fixture and five shared-truth files"
+      ],
+      "forbidden_scope": [
+        "Product runtime source/workflows/public importer",
+        "Live/customer data, native WordPress preferences, provider, production/release/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-readback-real-mysql-v1",
+      "close_condition": "Actual disposable MySQL and all path-applicable exact-head CI PASS, exactly six files, zero behind/reviews, protected expected-head merge."
     }
   ],
   "historical_closeout": {

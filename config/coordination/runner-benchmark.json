@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "60406b0ba3111d91fd815e4ba3730f8bb4835e70",
+  "anchor_main_sha": "03e86ed08edaeb9e48d1ca22a932897768f7e0f5",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3679,7 +3679,7 @@
     },
     {
       "id": "RB-0117",
-      "source": "Issue #1389 / implementation PR pending",
+      "source": "Issue #1389 / merged PR #1390",
       "category": "DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit; Governance; Distributable; Architecture; Platform 10-cell compatibility and applicable CI",
@@ -3694,15 +3694,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|draft-import-persisted-readback|issue1389|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Post-create typed canonical persisted Draft readback now required before created_draft result; no rollback/retry or public import",
-        "Direct and mapped import silent acknowledge, altered record, missing/exception and canonical map-order unit tests staged"
+        "Direct and mapped import silent acknowledge, altered record, missing/exception and canonical map-order unit tests staged",
+        "Exact head f99c2689c0cd098335d361aa2772827df743f387 14/14 CI PASS incl. PHP Quality/Governance/Architecture/Distributable/10-cell Platform; 8 files, 0 behind/reviews, protected merged 03e86ed08edaeb9e48d1ca22a932897768f7e0f5"
       ],
-      "note": "No terminal PASS before all applicable exact-head CI and protected merge; full parity/GA not promoted."
+      "note": "Terminal PASS_DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1; no public importer/full parity/GA."
+    },
+    {
+      "id": "RB-0118",
+      "source": "Issue #1391 / real MySQL integration PR pending",
+      "category": "DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Actual disposable MySQL Definition/Audit Persistence + applicable Governance/Architecture/Platform Compatibility checks",
+      "environment": "agent/dashboard-draft-readback-real-mysql-v1 on main 03e86ed08edaeb9e48d1ca22a932897768f7e0f5",
+      "dependencies": [
+        "RB-0117 terminal PASS",
+        "main 03e86ed08edaeb9e48d1ca22a932897768f7e0f5"
+      ],
+      "authorization": "Issue #1391 exact six-file existing disposable MySQL fixture/README/AI state/queue/benchmark only",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|draft-readback-real-mysql|issue1391|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Real MySQL Draft equivalent readback + synthetic adapter silent ack/tampered/read exception fail closed fixture staged",
+        "Actual exact-head MySQL CI and merge not yet verified"
+      ],
+      "note": "Do not promote PASS_DASHBOARD_PRESET_DRAFT_READBACK_REAL_MYSQL_V1 before exact-head actual MySQL CI PASS and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1389",
+  "last_reconciled_issue": "#1391",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

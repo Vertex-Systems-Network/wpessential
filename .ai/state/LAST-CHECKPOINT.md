@@ -1,10 +1,10 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0117 internal Draft persisted readback hardening staged
+## 2026-10-09 — RB-0117 source PASS, RB-0118 disposable real MySQL readback fixture staged
 
-- Issue #1387 / PR #1388 reconciled RB-0116 actual disposable MySQL 12/12 exact-head PASS, five-file queue `READY_NEXT_SAFE_SOURCE`, 2/2 Governance/Architecture checks, protected merged `60406b0ba3111d91fd815e4ba3730f8bb4835e70`.
-- Issue #1389 branch `agent/dashboard-draft-import-persisted-readback-v1`: internal-only atomic Draft import success now requires re-reading typed, canonical-payload-equivalent Draft from repository; mismatch/missing/read exception = generic `write_failed`, never false `created_draft`. Does not retry/rollback a possibly persisted partial insert.
-- Direct and mapped import unit regressions staged; 8 allowed files, exact-head PHP/Architecture/Platform/Governance/Distributable CI PENDING. No public Ability/REST/UI importer, auto-publish, WordPress layout/provider, production or GA. #858/#947/#1102 remain parked.
+- RB-0117 Issue #1389 / PR #1390 exact head `f99c2689c0cd098335d361aa2772827df743f387`, 14/14 applicable CI PASS incl. PHP Quality, Governance, Distributable, Architecture and 10-cell Platform; 8 authorized files, zero behind/reviews, protected merged `03e86ed08edaeb9e48d1ca22a932897768f7e0f5`.
+- Internal-only Draft importer and mapped counterpart now require exact typed/canonical persisted Draft readback before `created_draft`; missing/changed/error returns generic `write_failed`, no retry/rollback, no public route/provider/GA.
+- RB-0118 Issue #1391 branch `agent/dashboard-draft-readback-real-mysql-v1` extends actual disposable MySQL8.4 Definition/Audit integration with stored Draft canonical checksum and fake ack-only/changed/read-error readback failures. Exactly six files, CI PENDING. #858 admin, #1102 privileged P-006, #947 Worker remain parked.
 
 
 ## 2026-10-09 — RB-0116 real MySQL mapped Draft terminal PASS, next safe source READY
@@ -57,14 +57,6 @@
 - Protected squash merge `c171acebf90ef90def07363ad26c9af52b3f3973`; exact 6-file authorized scope; zero behind and unresolved review threads; Issue #1341 closed.
 - Promote only `PASS_DASHBOARD_MULTISITE_SUBSITE_OVERRIDE_REAL_WORDPRESS_V1`. No native WordPress order/hide/collapse mutation, auto-preset application, full Surface 10 parity, production or GA.
 - Issue #1343 post-merge shared-truth discrepancy reconciliation has five documentation/coordination files only. After protected merge, use fresh main/Issues/PR/queue to select next authorized product work. Park #858/#1102/#947.
-
-
-## 2026-10-09 — RB-0099 terminal; RB-0100 real WP fixture staged
-
-- RB-0099 Issue #1339 / PR #1340 exact head `ed464c5377fd3d35b947219723c7c48e7aec3d2c`: 14/14 path-applicable CI PASS, 15 authorized paths, 0 behind and unresolved review blockers, merged `685cd5986761f995c33f9d01e41ec41141d187eb`; Issue #1339 auto-closed.
-- Promoted bounded `PASS_DASHBOARD_MULTISITE_SUBSITE_PRESET_OVERRIDE_READ_V1` only: typed network/site/policy-bound unassigned preset, read-only selection and Policy-gated ability. No WordPress native preference layout application or full parity/GA.
-- RB-0100 Issue #1341 deterministic claim `agent/dashboard-subsite-override-real-wordpress-v1`; extends disposable pinned real WordPress two-site Multisite fixture with local precedence, isolation, disabled override, fail-closed conflict/invalid and preference preservation, without product source or workflow changes.
-- Exact 6-file scope; test staged, CI/merge **not yet verified**. Autonomous troubleshooting inside scoped tests, preserve #858 admin, #1102 authorization and #947 independent Worker gates.
 
 
 ## 2026-10-09 — RB-0099 scoped subsite preset override V1 in progress
