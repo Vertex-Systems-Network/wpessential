@@ -1,5 +1,14 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0098 PASS; post-merge evidence terminal
+
+- Issue #1335 / PR #1336 merged `78b1bfbd0426e922b514159feebebfbf51f7f667`, exact PR head `098054362615e12e3e5f7617bc03512ec06db487`.
+- 13/13 applicable exact-head CI PASS, including real WP 7.1 / PHP 8.2 / MySQL 8.4 two-site Multisite Isolation step, Governance, Architecture and Platform Compatibility 10/10. Exact seven-file allowlist, zero behind and review blockers; Issue #1335 closed.
+- Promoted only `PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1`; no automatic native preset application, no full Surface 10 parity/certification and no production/GA.
+- Issue #1337 is real post-merge README/state/queue/benchmark divergence reconciliation, five-file scope, no runtime source.
+- Next safe source lane must be freshly evaluated after merging Issue #1337; admin #858, privileged P-006 #1102 and independent Worker #947 remain parked.
+
+
 ## 2026-10-09 — RB-0098 real WordPress Multisite isolation staged
 
 - Verified source-start main `b02a51c9ec7477f448c197b5796e4004881418d9`; Issue #1333 / PR #1334 terminal post-RB-0097 shared truth reconciled, 2/2 applicable CI PASS.

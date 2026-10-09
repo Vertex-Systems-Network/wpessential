@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "b02a51c9ec7477f448c197b5796e4004881418d9",
+  "anchor_main_sha": "78b1bfbd0426e922b514159feebebfbf51f7f667",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3202,7 +3202,7 @@
     },
     {
       "id": "RB-0098",
-      "source": "Issue #1335 / real WordPress Multisite policy integration PR pending",
+      "source": "Issue #1335 / merged PR #1336",
       "category": "DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Multisite Runtime Isolation (WP 7.1/PHP 8.2/MySQL 8.4) + Governance + Architecture + other path-applicable checks",
@@ -3217,16 +3217,17 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|real-wordpress-multisite-policy-isolation|issue1335|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "RB-0097/PR #1332 14/14 CI PASS prerequisite",
         "Existing pinned real WordPress Multisite workflow extended with isolated Dashboard policy fixture",
-        "No production/native usermeta writes; exact-head CI not yet verified"
+        "No production/native usermeta writes; exact-head CI not yet verified",
+        "PR #1336 exact head 098054362615e12e3e5f7617bc03512ec06db487 13/13 applicable CI PASS including real two-site WordPress Dashboard Multisite isolation, exact 7 files, zero behind/review blockers; squash merge 78b1bfbd0426e922b514159feebebfbf51f7f667"
       ],
-      "note": "Terminal claim restricted to PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1 after real two-site test and other exact-head checks; no full Surface 10 parity/GA."
+      "note": "Terminal PASS_DASHBOARD_MULTISITE_POLICY_REAL_WORDPRESS_ISOLATION_V1; no automatic native preset application, full Surface 10 runtime certification, production or GA."
     }
   ],
-  "last_reconciled_issue": "#1335",
+  "last_reconciled_issue": "#1337",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
