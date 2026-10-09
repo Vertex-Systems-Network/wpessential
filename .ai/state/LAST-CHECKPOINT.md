@@ -1,10 +1,9 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-09 — RB-0119 PASS; RB-0120 real WordPress Draft review fixture staged
+## 2026-10-09 — RB-0120 real WordPress PASS; RB-0121 post-create catalog revalidation staged
 
-- RB-0119 Issue #1395 / PR #1396 corrected exact head `36b0d9b4781ea1377d1d258fab36645fe2abc074` passed **14/14** exact-head CI incl. PHP Quality, Distributable, Governance, Architecture and 10-cell Platform. Original Architecture smoke failure `CURRENT-STATE.yaml 12292 > 12288 bytes` autonomously fixed, fresh CI PASS; exact 9 paths, zero behind/reviews, protected merged `cfb327af1ae0ad49b46c4114787b14bf40a45f25`.
-- Internal-only read-only Draft publish-review checks current authenticated WordPress user/blog/network `manage_options`, Draft payload checksum freshness, current Published widgets and denies network-default. Every result `publish_authorized=false`; no live WordPress preferences, mutation, public route or GA.
-- RB-0120 Issue #1397 / branch `agent/dashboard-draft-publish-review-real-wordpress-v1`: disposable real WP7.1/PHP8.2/MySQL8.4 two-site Draft review fixture, authorized and forbidden identity contexts, unchanged imported Draft/Published records and native WP options. Exactly 6 paths; real pinned Multisite / exact-head CI and protected merge **PENDING**.
+- RB-0120 Issue #1397 / PR #1398 pinned WP7.1/PHP8.2/MySQL8.4 two-site Draft review isolation exact head `38aa29e131bfc766ea9a85c3e2aa7eb640714d01`: 13/13 applicable CI PASS incl. real Multisite, Architecture, Governance and 10-cell Platform; six allowed files, 0 behind/reviews, protected merged `6e27b9dd7d0b7dc91c469c2d957dfd47a847b449`. No publication route.
+- RB-0121 Issue #1399 / `agent/dashboard-draft-postcreate-widget-revalidation-v1` hardens internal Draft import: after atomic create & persisted checksum readback, recompile current Published Surface10 target widget refs. A reference that changed post-preflight now returns `write_failed` rather than false `created_draft`; already-inserted Draft may remain, no rollback/second write. Focused race test staged; seven files, exact-head CI PENDING. P-006 #1102/admin #858/Worker #947 parked.
 
 
 ## 2026-10-09 — RB-0118 real MySQL Draft persisted readback PASS; next safe source READY

@@ -1,9 +1,9 @@
 {
-  "schema_version": 200,
+  "schema_version": 201,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "cfb327af1ae0ad49b46c4114787b14bf40a45f25",
-  "mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1",
-  "source_issue": "#1397",
+  "queue_anchor_main_sha": "6e27b9dd7d0b7dc91c469c2d957dfd47a847b449",
+  "mode": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_REVALIDATION_V1",
+  "source_issue": "#1399",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -243,7 +243,8 @@
     "1391": "CLOSED_COMPLETED_RB0118_PR1392_REAL_MYSQL_12_OF_12_PASS",
     "1393": "CLOSED_BY_TERMINAL_SHARED_TRUTH_RECONCILIATION_ON_MERGE",
     "1395": "CLOSED_COMPLETED_RB0119_PR1396_CORRECTED_14_OF_14_PASS",
-    "1397": "IN_PROGRESS_RB0120_REAL_WORDPRESS_DRAFT_REVIEW_CI_PENDING"
+    "1397": "CLOSED_COMPLETED_RB0120_PR1398_REAL_WORDPRESS_13_OF_13_PASS",
+    "1399": "IN_PROGRESS_RB0121_POSTCREATE_WIDGET_REVALIDATION_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -273,7 +274,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open #1397 real pinned WordPress 6-file fixture PR, verify Multisite Runtime Isolation and applicable CI, 0 behind/reviews, expected-head protected merge.",
+    "next_safe_action": "Open RB-0121 Issue #1399 exact 7-file PR, verify all exact-head CI, repair failures, 0 behind/reviews, protected merge; no publish or extra writes.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8294,7 +8295,7 @@
       "slot_id": "dashboard-draft-publish-review-real-wordpress-v1",
       "title": "Real pinned two-site WordPress internal Draft publish-review isolation",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1",
       "source": "Issue #1397 / RB-0120",
       "dependencies": [
@@ -8315,7 +8316,47 @@
         "External provider/production/GA"
       ],
       "claim_branch": "agent/dashboard-draft-publish-review-real-wordpress-v1",
-      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1 only after real pinned Multisite and all exact-head CI PASS, 6 files, 0 behind/reviews, protected merge."
+      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1 only after real pinned Multisite and all exact-head CI PASS, 6 files, 0 behind/reviews, protected merge.",
+      "terminal_result": "PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1",
+      "terminal_evidence": {
+        "issue": 1397,
+        "pr": 1398,
+        "head": "38aa29e131bfc766ea9a85c3e2aa7eb640714d01",
+        "merge_sha": "6e27b9dd7d0b7dc91c469c2d957dfd47a847b449",
+        "checks_passed": 13,
+        "real_multisite_fixture": "PASS",
+        "platform_cells_passed": 10,
+        "authorized_paths": 6,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1102,
+      "slot_id": "dashboard-draft-postcreate-widget-revalidation-v1",
+      "title": "Internal Draft import post-create current Published widget ref revalidation",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_REVALIDATION_V1",
+      "source": "Issue #1399 / RB-0121",
+      "dependencies": [
+        "RB-0120 terminal PASS",
+        "main 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1399 exact 7 files: Draft importer, unit test, README and four shared-truth records"
+      ],
+      "forbidden_scope": [
+        "Publication/new Ability/REST/UI/WordPress user preferences",
+        "Retry create, compensating delete, external providers, production/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-postcreate-widget-revalidation-v1",
+      "close_condition": "PASS_DASHBOARD_PRESET_DRAFT_POSTCREATE_WIDGET_REVALIDATION_V1 only after exact 7 files, all applicable exact-head CI PASS, 0 behind/review threads and protected merge."
     }
   ],
   "historical_closeout": {

@@ -111,6 +111,13 @@ final readonly class DashboardWidgetPresetDraftImportService
             ) {
                 return ['status' => 'write_failed'];
             }
+
+            // Recheck current Published Surface-10 widget references AFTER
+            // atomic insertion, not only during preflight. A widget may have
+            // changed between validation and create(). Do not report success
+            // for a persisted Draft whose target catalog is now invalid.
+            // This is read-only; never rollback or retry an uncertain insert.
+            (new DashboardWidgetPresetCompiler($this->definitions))->compile($persisted);
         } catch (Throwable) {
             // Do not leak stored data or report created_draft on a failed read.
             return ['status' => 'write_failed'];

@@ -100,6 +100,64 @@ final class DashboardWidgetPresetDraftImportServiceTest extends TestCase
         self::assertNull($repo->get(self::PRESET_ID));
     }
 
+    public function testPublishedWidgetChangingAfterAtomicCreateNeverClaimsAcceptedDraft(): void
+    {
+        $fixtures = $this->repository();
+        $repo = new class($fixtures) implements DefinitionCreateOnlyRepositoryInterface {
+            public int $createCalls = 0;
+
+            public function __construct(private InMemoryDefinitionRepository $inner) {}
+
+            public function create(Definition $definition): void
+            {
+                ++$this->createCalls;
+                $this->inner->create($definition);
+
+                // Simulate a separate actor changing a target widget between
+                // the successful preflight and post-create readback.
+                $this->inner->save(new Definition(
+                    id: DashboardWidgetPresetDraftImportServiceTest::widgetB(),
+                    slug: 'widget-1',
+                    type: DashboardWidgetDefinition::TYPE,
+                    schemaVersion: 1,
+                    ownerSurfaceId: 10,
+                    status: DefinitionStatus::Draft,
+                    payload: [],
+                    revision: 2,
+                ));
+            }
+
+            public function save(Definition $definition): void
+            {
+                throw new RuntimeException('No fallback write/rollback is allowed.');
+            }
+
+            public function get(string $id): ?Definition { return $this->inner->get($id); }
+
+            public function byType(string $type): array { return $this->inner->byType($type); }
+
+            public function dependentsOf(string $id): array { return $this->inner->dependentsOf($id); }
+        };
+
+        self::assertSame(
+            ['status' => 'write_failed'],
+            $this->service($repo)->importDraft($this->context(), $this->snapshot(), 'imported-safe-preset'),
+        );
+        self::assertSame(1, $repo->createCalls, 'Do not retry uncertain atomic creation.');
+
+        // The insert already happened. Never claim rollback or publication.
+        $inserted = $fixtures->get(self::PRESET_ID);
+        self::assertInstanceOf(Definition::class, $inserted);
+        self::assertSame(DefinitionStatus::Draft, $inserted->status);
+        self::assertSame(1, $inserted->revision);
+        self::assertSame(DefinitionStatus::Draft, $fixtures->get(self::WIDGET_B)?->status);
+    }
+
+    public static function widgetB(): string
+    {
+        return self::WIDGET_B;
+    }
+
     public function testCreateReturnWithoutPersistedRecordNeverClaimsSuccess(): void
     {
         $fixtures = $this->repository();
