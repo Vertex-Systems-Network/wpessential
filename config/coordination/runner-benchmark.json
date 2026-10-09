@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "aa69cc1770297a8454fb37442d415d8c386f2d31",
+  "anchor_main_sha": "2b6043804c4d13dd5ff523925d2305c161649dc9",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3529,7 +3529,7 @@
     },
     {
       "id": "RB-0111",
-      "source": "Issue #1373 / implementation PR pending",
+      "source": "Issue #1373 / merged PR #1374",
       "category": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit; Governance; Distributable; Architecture; 10-cell Platform Compatibility and applicable CI",
@@ -3544,15 +3544,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|internal-draft-import-create-only|issue1373|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Internal-only service guarded by user/channel/capability and canonical Published snapshot preflight",
-        "No public Ability/REST/Ui/CLI import; create-only Draft revision-one, collision/no-update tests staged"
+        "No public Ability/REST/Ui/CLI import; create-only Draft revision-one, collision/no-update tests staged",
+        "PR #1374 exact head 4dd819b6be82d13a2e80a8849cf2f7c8179c0bb6 14/14 applicable CI PASS incl. PHP Quality/Governance/Distributable/Architecture/10-cell Platform; 10 files, 0 behind/reviews, protected merged 2b6043804c4d13dd5ff523925d2305c161649dc9"
       ],
-      "note": "No terminal PASS/public import/GA before all exact-head CI and protected merge."
+      "note": "Terminal bounded PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1; internal Draft only, no public importer/GA."
+    },
+    {
+      "id": "RB-0112",
+      "source": "Issue #1375 / real WordPress integration PR pending",
+      "category": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Pinned WordPress 7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation plus all applicable Governance, Architecture, Platform CI",
+      "environment": "agent/dashboard-preset-draft-import-real-wordpress-v1 on main 2b6043804c4d13dd5ff523925d2305c161649dc9",
+      "dependencies": [
+        "RB-0111 terminal 14/14 PASS",
+        "main 2b6043804c4d13dd5ff523925d2305c161649dc9"
+      ],
+      "authorization": "Issue #1375 exact six-file real WP disposable fixture plus shared README/AI state/queue/benchmark, no public runtime code or live mutations",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|internal-draft-import-real-wp|issue1375|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Pinned real two-site WP fixture adds authenticated admin/capability, site/user/network impersonation and Draft create-once/no-native-pref mutation assertions",
+        "CI PENDING, no real-WordPress PASS claim"
+      ],
+      "note": "Only PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1 after exact-head pinned WP CI and protected merge."
     }
   ],
-  "last_reconciled_issue": "#1373",
+  "last_reconciled_issue": "#1375",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",

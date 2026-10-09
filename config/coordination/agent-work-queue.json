@@ -1,9 +1,9 @@
 {
-  "schema_version": 188,
+  "schema_version": 189,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "aa69cc1770297a8454fb37442d415d8c386f2d31",
-  "mode": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1",
-  "source_issue": "#1373",
+  "queue_anchor_main_sha": "2b6043804c4d13dd5ff523925d2305c161649dc9",
+  "mode": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1",
+  "source_issue": "#1375",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -231,7 +231,8 @@
     "1367": "CLOSEOUT_READY_NO_ONGOING_ADMIN_SLOT",
     "1369": "CLOSED_COMPLETED_RB0109_PR1370_36_OF_36_PASS",
     "1371": "CLOSED_COMPLETED_RB0110_PR1372_REAL_MYSQL_12_OF_12_PASS",
-    "1373": "IN_PROGRESS_RB0111_INTERNAL_DRAFT_ONLY_CI_PENDING"
+    "1373": "CLOSED_COMPLETED_RB0111_PR1374_14_OF_14_PASS",
+    "1375": "IN_PROGRESS_RB0112_REAL_WORDPRESS_DRAFT_IMPORT_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -261,7 +262,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open Issue #1373 ten-file internal Draft-only create-only import PR; verify applicable exact-head CI, repair failures and merge protected after zero behind/unresolved reviews.",
+    "next_safe_action": "Open Issue #1375 real pinned WP Multisite internal Draft import evidence PR, run all applicable exact-head CI, repair failures within 6-file scope, zero behind/reviews and protected merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7923,7 +7924,7 @@
       "slot_id": "dashboard-preset-draft-import-create-only-v1",
       "title": "Dashboard preset internal Draft-only atomic create-only import",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1",
       "source": "Issue #1373 / RB-0111",
       "dependencies": [
@@ -7944,7 +7945,46 @@
         "provider, production/deployment/release/GA"
       ],
       "claim_branch": "agent/dashboard-preset-draft-import-create-only-v1",
-      "close_condition": "Only PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1 after 10 files, all exact-head CI PASS, 0 behind/review threads, protected merge."
+      "close_condition": "Only PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1 after 10 files, all exact-head CI PASS, 0 behind/review threads, protected merge.",
+      "terminal_result": "PASS_DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_CREATE_ONLY_V1",
+      "terminal_evidence": {
+        "issue": 1373,
+        "pr": 1374,
+        "head": "4dd819b6be82d13a2e80a8849cf2f7c8179c0bb6",
+        "merge_sha": "2b6043804c4d13dd5ff523925d2305c161649dc9",
+        "checks_passed": 14,
+        "platform_cells_passed": 10,
+        "authorized_paths": 10,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1092,
+      "slot_id": "dashboard-preset-draft-import-real-wordpress-v1",
+      "title": "Internal Draft-only create-once preset import real WordPress Multisite isolation",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_PRESET_INTERNAL_DRAFT_IMPORT_REAL_WORDPRESS_V1",
+      "source": "Issue #1375 / RB-0112",
+      "dependencies": [
+        "RB-0111 14/14 terminal PASS",
+        "main 2b6043804c4d13dd5ff523925d2305c161649dc9"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": true,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1375 six pinned WP fixture/README/AI state/queue/benchmark files"
+      ],
+      "forbidden_scope": [
+        "Product runtime source/workflows",
+        "Public import/WordPress native preference mutation/provider/deployment/GA"
+      ],
+      "claim_branch": "agent/dashboard-preset-draft-import-real-wordpress-v1",
+      "close_condition": "Pinned real two-site WordPress Multisite Runtime Isolation plus applicable exact-head CI PASS, six files, zero behind/review threads and protected expected-head merge."
     }
   ],
   "historical_closeout": {
