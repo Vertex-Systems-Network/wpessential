@@ -153,6 +153,74 @@ final class DashboardWidgetPresetDraftImportServiceTest extends TestCase
         self::assertSame(DefinitionStatus::Draft, $fixtures->get(self::WIDGET_B)?->status);
     }
 
+    public function testPublishedWidgetRevisionOrContentDriftAfterCreateNeverClaimsSuccess(): void
+    {
+        foreach (['revision', 'payload', 'slug'] as $mode) {
+            $fixtures = $this->repository();
+            $createCalls = 0;
+            $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+            $repo->expects(self::once())->method('create')->willReturnCallback(
+                static function (Definition $draft) use ($fixtures, $mode, &$createCalls): void {
+                    ++$createCalls;
+                    $fixtures->create($draft);
+
+                    // Concurrent edit leaves target Published and the
+                    // exact same widget UUID, unlike RB-0121 Draft status
+                    // transition. An importer must not claim stale success.
+                    $fixtures->save(new Definition(
+                        id: self::WIDGET_B,
+                        slug: $mode === 'slug' ? 'renamed-widget' : 'widget-1',
+                        type: DashboardWidgetDefinition::TYPE,
+                        schemaVersion: 1,
+                        ownerSurfaceId: 10,
+                        status: DefinitionStatus::Published,
+                        payload: $mode === 'payload' ? ['new-data' => 'changed'] : [],
+                        revision: 2,
+                    ));
+                },
+            );
+            $repo->method('get')->willReturnCallback(
+                static fn (string $id): ?Definition => $fixtures->get($id),
+            );
+            $repo->expects(self::never())->method('save');
+            $result = $this->service($repo)->importDraft(
+                $this->context(), $this->snapshot(), 'imported-safe-preset',
+            );
+            self::assertSame(['status' => 'write_failed'], $result, $mode);
+            self::assertSame(1, $createCalls, $mode);
+            self::assertSame(DefinitionStatus::Draft, $fixtures->get(self::PRESET_ID)?->status, $mode);
+            self::assertSame(DefinitionStatus::Published, $fixtures->get(self::WIDGET_B)?->status, $mode);
+            self::assertSame(2, $fixtures->get(self::WIDGET_B)?->revision, $mode);
+        }
+    }
+
+    public function testMissingWidgetAfterPreflightBeforeCreateFailsWithoutWriting(): void
+    {
+        $fixtures = $this->repository();
+        $reads = 0;
+        $repo = $this->createMock(DefinitionCreateOnlyRepositoryInterface::class);
+        $repo->method('get')->willReturnCallback(
+            static function (string $id) use ($fixtures, &$reads): ?Definition {
+                if ($id === self::WIDGET_B) {
+                    ++$reads;
+                    if ($reads >= 2) {
+                        return null;
+                    }
+                }
+                return $fixtures->get($id);
+            },
+        );
+        $repo->expects(self::never())->method('create');
+        $repo->expects(self::never())->method('save');
+
+        self::assertSame(
+            ['status' => 'invalid_snapshot'],
+            $this->service($repo)->importDraft($this->context(), $this->snapshot(), 'safe-import'),
+        );
+        self::assertGreaterThanOrEqual(2, $reads);
+        self::assertNull($fixtures->get(self::PRESET_ID));
+    }
+
     public static function widgetB(): string
     {
         return self::WIDGET_B;

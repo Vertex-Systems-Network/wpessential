@@ -1,9 +1,9 @@
 {
-  "schema_version": 202,
-  "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "5f17579908d15db504ac495565cfd3b297fa63be",
-  "mode": "READY_NEXT_SAFE_SOURCE",
-  "source_issue": null,
+  "schema_version": 203,
+  "snapshot_date": "2026-10-10",
+  "queue_anchor_main_sha": "c3c05cfe32682754562d46c5b223a8405fce80d8",
+  "mode": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_V1",
+  "source_issue": "#1403",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -245,7 +245,8 @@
     "1395": "CLOSED_COMPLETED_RB0119_PR1396_CORRECTED_14_OF_14_PASS",
     "1397": "CLOSED_COMPLETED_RB0120_PR1398_REAL_WORDPRESS_13_OF_13_PASS",
     "1399": "CLOSED_COMPLETED_RB0121_PR1400_14_OF_14_PASS",
-    "1401": "IN_PROGRESS_FIVE_FILE_TERMINAL_TRUTH_NO_SLOT"
+    "1401": "CLOSED_COMPLETED_RB0121_POSTMERGE_PR1402_2_OF_2_PASS",
+    "1403": "IN_PROGRESS_RB0122_PUBLISHED_WIDGET_FINGERPRINT_DRIFT_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -275,7 +276,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Fresh issue-first current-main/open PR/queue audit then next meaningful safe source lane, no recursive administrative IN_PROGRESS slot.",
+    "next_safe_action": "Issue #1403 exact 7-file PR, all applicable exact-head PHP Quality/Governance/Distributable/Architecture/Platform CI, fix technical failures autonomously, 0 behind/reviews and protected expected-head merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8370,6 +8371,33 @@
         "behind_main": 0,
         "unresolved_review_threads": 0
       }
+    },
+    {
+      "priority": 1103,
+      "slot_id": "dashboard-draft-postcreate-widget-fingerprint-v1",
+      "title": "Draft importer Published widget identity and content drift verification",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_FINGERPRINT_V1",
+      "source": "Issue #1403 / RB-0122",
+      "dependencies": [
+        "RB-0121 terminal PASS",
+        "PR #1402 merged c3c05cfe32682754562d46c5b223a8405fce80d8"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1403 exact 7 files: Draft import service/unit tests and five README/AI shared-truth files"
+      ],
+      "forbidden_scope": [
+        "Public import/Ability/REST/AJAX/UI, WordPress Dashboard native preferences",
+        "Retry/rollback/second write, publishing, provider, production/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-postcreate-widget-fingerprint-v1",
+      "close_condition": "Exact seven authorized files, path-applicable CI all PASS, 0 behind/unresolved reviews, protected expected-head merge; bounded RB-0122 PASS only."
     }
   ],
   "historical_closeout": {

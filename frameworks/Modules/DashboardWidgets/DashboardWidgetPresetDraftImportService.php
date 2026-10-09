@@ -76,6 +76,24 @@ final readonly class DashboardWidgetPresetDraftImportService
             return ['status' => 'invalid_snapshot'];
         }
 
+        // A Published widget may change while the Draft is being inserted.
+        // Snapshot every bounded reference independently AFTER preflight and
+        // BEFORE the one atomic create, without trusting its source checksum
+        // as authorization or touching any WordPress native preferences.
+        try {
+            $widgetFingerprints = [];
+            foreach ($payload['widget_definition_ids'] as $widgetId) {
+                $fingerprint = $this->publishedWidgetFingerprint($widgetId);
+                if ($fingerprint === null) {
+                    return ['status' => 'invalid_snapshot'];
+                }
+                $widgetFingerprints[$widgetId] = $fingerprint;
+            }
+        } catch (Throwable) {
+            // A failed precreate read must not issue even the first write.
+            return ['status' => 'invalid_snapshot'];
+        }
+
         try {
             // The opt-in implementation enforces id + type/slug collision
             // checks atomically. Never emulate create() with get() + save().
@@ -118,12 +136,60 @@ final readonly class DashboardWidgetPresetDraftImportService
             // for a persisted Draft whose target catalog is now invalid.
             // This is read-only; never rollback or retry an uncertain insert.
             (new DashboardWidgetPresetCompiler($this->definitions))->compile($persisted);
+
+            // Published is not sufficient if a concurrent actor silently
+            // revised the referenced widget. An existing inserted Draft may
+            // remain; report generic failure, NEVER retry or claim rollback.
+            foreach ($widgetFingerprints as $widgetId => $priorFingerprint) {
+                if ($this->publishedWidgetFingerprint($widgetId) !== $priorFingerprint) {
+                    return ['status' => 'write_failed'];
+                }
+            }
         } catch (Throwable) {
             // Do not leak stored data or report created_draft on a failed read.
             return ['status' => 'write_failed'];
         }
 
         return ['status' => 'created_draft', 'definition_id' => $draft->id];
+    }
+
+    /**
+     * A bounded value fingerprint of a currently Published Surface-10 widget.
+     * Rehydrated Definition objects compare by data, not object identity.
+     * No signing/trust/authorization is inferred from the computed checksum.
+     *
+     * @return array<string,mixed>|null
+     */
+    private function publishedWidgetFingerprint(string $widgetId): ?array
+    {
+        $widget = $this->definitions->get($widgetId);
+        if (
+            !$widget instanceof Definition
+            || $widget->id !== $widgetId
+            || $widget->type !== DashboardWidgetDefinition::TYPE
+            || $widget->ownerSurfaceId !== DashboardWidgetDefinition::OWNER_SURFACE_ID
+            || $widget->status !== DefinitionStatus::Published
+        ) {
+            return null;
+        }
+
+        $payloadChecksum = $widget->computedChecksum();
+        if ($widget->checksum !== null && !hash_equals($widget->checksum, $payloadChecksum)) {
+            return null;
+        }
+
+        return [
+            'id' => $widget->id,
+            'slug' => $widget->slug,
+            'type' => $widget->type,
+            'owner_surface_id' => $widget->ownerSurfaceId,
+            'schema_version' => $widget->schemaVersion,
+            'status' => $widget->status->value,
+            'revision' => $widget->revision,
+            'dependencies' => $widget->dependencies,
+            'declared_checksum' => $widget->checksum,
+            'computed_checksum' => $payloadChecksum,
+        ];
     }
 
     /**
