@@ -1,9 +1,9 @@
 {
-  "schema_version": 186,
+  "schema_version": 187,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "b37518cc693b071309cc74c588164243619fe1c8",
-  "mode": "ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1",
-  "source_issue": "#1369",
+  "queue_anchor_main_sha": "d3f2f130643d0f373724c123afd1769891016499",
+  "mode": "ATOMIC_DEFINITION_CREATE_ONLY_REAL_MYSQL_V1",
+  "source_issue": "#1371",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -229,7 +229,8 @@
     "1363": "CLOSED_COMPLETED_RB0107_PR1364_14_OF_14_PASS",
     "1365": "CLOSED_COMPLETED_RB0108_PR1366_REAL_WORDPRESS_13_OF_13_PASS",
     "1367": "CLOSEOUT_READY_NO_ONGOING_ADMIN_SLOT",
-    "1369": "IN_PROGRESS_ATOMIC_CREATE_ONLY_FOUNDATION_CI_PENDING"
+    "1369": "CLOSED_COMPLETED_RB0109_PR1370_36_OF_36_PASS",
+    "1371": "IN_PROGRESS_RB0110_REAL_MYSQL_CREATE_ONLY_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -259,7 +260,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Open Issue #1369 11-file create-only repository contract and tests PR; run PHP Quality, Governance, Architecture, Distributable, Platform Compatibility; fix failures without owner prompt, protected merge after green.",
+    "next_safe_action": "Open Issue #1371 real MySQL create-only integration PR; require actual MySQL fixture and every path-applicable exact-head CI PASS, zero behind/reviews, protected merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -7845,7 +7846,7 @@
       "slot_id": "definition-create-only-atomic-v1",
       "title": "Atomic create-only Definition repository capability for safe future imports",
       "role": "AGENT_IMPLEMENTATION",
-      "status": "IN_PROGRESS",
+      "status": "COMPLETED",
       "work_mode": "ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1",
       "source": "Issue #1369 / RB-0109",
       "dependencies": [
@@ -7865,7 +7866,45 @@
         "WordPress native preferences, provider, cache, deployment, GA"
       ],
       "claim_branch": "agent/definition-create-only-atomic-v1",
-      "close_condition": "Only bounded PASS_ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1 after all applicable exact-head CI PASS, 11 files, zero behind/reviews, protected expected-head merge."
+      "close_condition": "Only bounded PASS_ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1 after all applicable exact-head CI PASS, 11 files, zero behind/reviews, protected expected-head merge.",
+      "terminal_result": "PASS_ATOMIC_DEFINITION_CREATE_ONLY_FOUNDATION_V1",
+      "terminal_evidence": {
+        "issue": 1369,
+        "pr": 1370,
+        "head": "de35551c8f6a1bad57ec12b6227d5ff9b203153f",
+        "merge_sha": "d3f2f130643d0f373724c123afd1769891016499",
+        "checks_passed": 36,
+        "authorized_paths": 11,
+        "behind_main": 0,
+        "unresolved_review_threads": 0
+      }
+    },
+    {
+      "priority": 1092,
+      "slot_id": "definition-create-only-real-mysql-v1",
+      "title": "Real disposable MySQL atomic create-only Definition collision and scope isolation",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "ATOMIC_DEFINITION_CREATE_ONLY_REAL_MYSQL_V1",
+      "source": "Issue #1371 / RB-0110",
+      "dependencies": [
+        "RB-0109 terminal PASS",
+        "main d3f2f130643d0f373724c123afd1769891016499"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1371 exactly 6-file real MySQL Definition persistence fixture and README/AI state/queue/benchmark"
+      ],
+      "forbidden_scope": [
+        "Production customer data, actual preset importer/Ability, native WordPress layout/preferences writes",
+        "Provider/cache, deployment, GA"
+      ],
+      "claim_branch": "agent/definition-create-only-real-mysql-v1",
+      "close_condition": "Only PASS_ATOMIC_DEFINITION_CREATE_ONLY_REAL_MYSQL_V1 after real MySQL fixture and all applicable exact-head CI PASS, six allowed files, zero behind/reviews, protected merge."
     }
   ],
   "historical_closeout": {
