@@ -720,7 +720,7 @@ foreach ([
         $draftChecker,
     );
     $raceResult = $raceImporter->importDraft(
-        $draftContext, $candidate, 'mysql-fingerprint-race-' . $driftCase['mode'],
+        $draftContext, $candidate, 'mysql-fingerprint-race-' . str_replace('_', '-', $driftCase['mode']),
     );
     platformPersistenceExpect(
         $raceResult === ['status' => 'write_failed'],
