@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0097 PASS; real post-merge shared truth reconciled
+
+- Issue #1327 auto-closed on accepted PR #1332; merge `adb7cfa042e733ec59e530601c9cb6152ba1e526`.
+- Exact implementation PR head `f5844b210e17646ed60e57fa5ddbc0f2a228f18a`; 14/14 checks PASS (Governance, PHP, Distributable, Architecture, Platform Compatibility 10/10); 18 accepted paths, zero behind, zero unresolved review threads.
+- Terminal evidence only: `PASS_DASHBOARD_MULTISITE_PRESET_POLICY_FOUNDATION_V1`. No full Surface 10 runtime parity, native layout preference application, deployment or GA.
+- Issue #1333 records material README/state/queue/benchmark divergence after the merge. This narrow reconciliation does not introduce runtime source changes. Future safe source milestone must be freshly selected and scoped; #858/#1102/#947 remain parked.
+
 ## 2026-10-09 — RB-0097 claimed; implementation staged for CI
 
 - Current pre-implementation main: `9cbc28bda205c10d503dceb767e56364116b3985`, latest PR #1331; RB-0097 deterministic claim branch previously held two unmerged policy files on a three-commits-behind base.
