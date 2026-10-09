@@ -1,5 +1,12 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-09 — RB-0117 internal Draft persisted readback hardening staged
+
+- Issue #1387 / PR #1388 reconciled RB-0116 actual disposable MySQL 12/12 exact-head PASS, five-file queue `READY_NEXT_SAFE_SOURCE`, 2/2 Governance/Architecture checks, protected merged `60406b0ba3111d91fd815e4ba3730f8bb4835e70`.
+- Issue #1389 branch `agent/dashboard-draft-import-persisted-readback-v1`: internal-only atomic Draft import success now requires re-reading typed, canonical-payload-equivalent Draft from repository; mismatch/missing/read exception = generic `write_failed`, never false `created_draft`. Does not retry/rollback a possibly persisted partial insert.
+- Direct and mapped import unit regressions staged; 8 allowed files, exact-head PHP/Architecture/Platform/Governance/Distributable CI PENDING. No public Ability/REST/UI importer, auto-publish, WordPress layout/provider, production or GA. #858/#947/#1102 remain parked.
+
+
 ## 2026-10-09 — RB-0116 real MySQL mapped Draft terminal PASS, next safe source READY
 
 - Issue #1385 / PR #1386 exact head `a8248878d00f1b13f2afd99b1bfd4fbbb319603e`: 12/12 applicable exact-head CI PASS including actual disposable MySQL Definition/Audit, Governance, Architecture, Platform Compatibility 10/10; 6 authorized files, zero behind/unresolved reviews, protected merge `dbeece1c1fd81f2aefac9d2ae6820942446acdad`; issue closed.

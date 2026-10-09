@@ -1,9 +1,9 @@
 {
-  "schema_version": 195,
+  "schema_version": 196,
   "snapshot_date": "2026-10-09",
-  "queue_anchor_main_sha": "dbeece1c1fd81f2aefac9d2ae6820942446acdad",
-  "mode": "READY_NEXT_SAFE_SOURCE",
-  "source_issue": null,
+  "queue_anchor_main_sha": "60406b0ba3111d91fd815e4ba3730f8bb4835e70",
+  "mode": "DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1",
+  "source_issue": "#1389",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -238,7 +238,8 @@
     "1381": "CLOSED_COMPLETED_RB0114_PR1382_14_OF_14_PASS",
     "1383": "CLOSED_COMPLETED_RB0115_PR1384_REAL_WORDPRESS_13_OF_13_PASS",
     "1385": "CLOSED_COMPLETED_RB0116_PR1386_REAL_MYSQL_12_OF_12_PASS",
-    "1387": "CLOSED_BY_TERMINAL_SHARED_TRUTH_RECONCILIATION_ON_MERGE"
+    "1387": "CLOSED_COMPLETED_RB0116_POSTMERGE_PR1388_2_OF_2_PASS",
+    "1389": "IN_PROGRESS_RB0117_DRAFT_READBACK_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -268,7 +269,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "Fresh issue-first exact main/open PR audit, then claim next authorized meaningful internal-only source tranche; do not create a recursive administrative IN_PROGRESS slot.",
+    "next_safe_action": "Open Issue #1389 eight-file source+unit+shared truth PR; exact-head PHP Quality/Governance/Architecture/Distributable/Platform CI; repair within scope, zero behind/reviews and protected merge.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8164,6 +8165,33 @@
         "behind_main": 0,
         "unresolved_review_threads": 0
       }
+    },
+    {
+      "priority": 1097,
+      "slot_id": "dashboard-draft-import-persisted-readback-v1",
+      "title": "Internal Draft importer fail-closed persisted readback verification",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1",
+      "source": "Issue #1389 / RB-0117",
+      "dependencies": [
+        "RB-0116 terminal real MySQL PASS",
+        "PR #1388 terminal reconciliation merged 60406b0ba3111d91fd815e4ba3730f8bb4835e70"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": true,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1389 exact eight paths: DraftImport service, direct and mapped unit tests, README and four AI/shared coordination files"
+      ],
+      "forbidden_scope": [
+        "Public Ability/REST/UI/AJAX/CLI import or publishing",
+        "Native WordPress preferences, live data/provider, external charges, deployment/GA"
+      ],
+      "claim_branch": "agent/dashboard-draft-import-persisted-readback-v1",
+      "close_condition": "Only PASS_DASHBOARD_PRESET_DRAFT_IMPORT_PERSISTED_READBACK_V1 after exact eight-file path scope, all applicable exact-head CI PASS, zero behind/reviews, protected expected-head merge."
     }
   ],
   "historical_closeout": {

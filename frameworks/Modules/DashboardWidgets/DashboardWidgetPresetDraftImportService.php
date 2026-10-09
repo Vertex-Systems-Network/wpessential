@@ -92,6 +92,30 @@ final readonly class DashboardWidgetPresetDraftImportService
             return ['status' => 'write_failed'];
         }
 
+        // A successful adapter return alone is not persistence evidence.
+        // Verify the stored Draft once, without issuing a second write or
+        // claiming rollback if a partial insert already occurred.
+        try {
+            $persisted = $this->definitions->get($draft->id);
+            if (
+                !$persisted instanceof Definition
+                || $persisted->id !== $draft->id
+                || $persisted->slug !== $draft->slug
+                || $persisted->type !== $draft->type
+                || $persisted->schemaVersion !== $draft->schemaVersion
+                || $persisted->ownerSurfaceId !== $draft->ownerSurfaceId
+                || $persisted->status !== DefinitionStatus::Draft
+                || $persisted->revision !== 1
+                || $persisted->dependencies !== []
+                || !hash_equals($draft->computedChecksum(), $persisted->computedChecksum())
+            ) {
+                return ['status' => 'write_failed'];
+            }
+        } catch (Throwable) {
+            // Do not leak stored data or report created_draft on a failed read.
+            return ['status' => 'write_failed'];
+        }
+
         return ['status' => 'created_draft', 'definition_id' => $draft->id];
     }
 
