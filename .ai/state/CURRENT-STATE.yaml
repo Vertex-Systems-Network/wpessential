@@ -2,21 +2,21 @@ schema_version: 1
 repository: Vertex-Systems-Network/wpessential
 state_policy: GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001
 state_status: FEATURE_ACTIVE
-observed_main_sha: cfb327af1ae0ad49b46c4114787b14bf40a45f25
-observed_main_source: "RB-0119 Issue #1395 / PR #1396 corrected exact head 36b0d9b4781ea1377d1d258fab36645fe2abc074 passed 14/14 CI incl. 10-cell Platform, 9 paths, zero behind/reviews; merged cfb327af1ae0ad49b46c4114787b14bf40a45f25."
-active_issue: "#1397"
+observed_main_sha: 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449
+observed_main_source: "RB-0120 Issue #1397 / PR #1398 exact head 38aa29e131bfc766ea9a85c3e2aa7eb640714d01 passed 13/13 incl. real pinned WordPress Multisite, 6 files, zero behind/reviews; merged 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449."
+active_issue: "#1399"
 active_pr: null
-active_branch: agent/dashboard-draft-publish-review-real-wordpress-v1
-current_milestone: "RB-0120 / Issue #1397 real WP two-site Draft publish-review isolation fixture staged, exact-head CI PENDING"
+active_branch: agent/dashboard-draft-postcreate-widget-revalidation-v1
+current_milestone: "RB-0121 / Issue #1399 internal Draft importer post-create Published widget revalidation; source/unit staged CI PENDING"
 milestone_status: IN_PROGRESS
-last_completed_milestone: "RB-0119 Issue #1395 / PR #1396 corrected-head 14/14 CI PASS, 9 authorized files, 0 behind/reviews, merged cfb327af1ae0ad49b46c4114787b14bf40a45f25; internal read-only prepublish review only."
-next_safe_action: "Open Issue #1397 exact 6-file real WP Multisite fixture PR; run pinned real WP and all applicable exact-head CI, repair failures, protected merge on 0 behind/reviews."
+last_completed_milestone: "RB-0120 Issue #1397 / PR #1398 real WP 13/13 exact-head CI PASS, 6 files, 0 behind/reviews, merged 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449; no publish/GA."
+next_safe_action: "Open RB-0121 Issue #1399 exact seven-file source/test/README shared-truth PR, run PHP Quality/Governance/Distributable/Architecture/Platform exact-head CI, fix errors, protected merge."
 waiting_external: "#858 admin, #1102 gated P-006, #947 independent Worker parked; safe internal Draft development continues."
 next_planned_slot:
-  issue: "#1397"
-  slot_id: dashboard-draft-publish-review-real-wordpress-v1
-  claim_branch: "agent/dashboard-draft-publish-review-real-wordpress-v1"
-  claim_rule: "Issue #1397 exact 6 fixture/README/AI shared-truth paths, real disposable WP only; no product runtime/source/publishing."
+  issue: "#1399"
+  slot_id: dashboard-draft-postcreate-widget-revalidation-v1
+  claim_branch: "agent/dashboard-draft-postcreate-widget-revalidation-v1"
+  claim_rule: "Issue #1399 seven exact source/test/README/AI files only; after insert Draft readback independently verifies current Published widget refs, no publish."
 readme_progress_contract:
   live_summary_every_repository_changing_supervisor_milestone: true
   full_56_dashboard_when_module_delivery_truth_changes_or_terminal_product_closeout: true
@@ -24,7 +24,7 @@ readme_progress_contract:
 runner_benchmark:
   policy_id: GOV-AI-NATIVE-RUNNER-BENCHMARK-001
   immediate_pending:
-    - RB-0120
+    - RB-0121
   terminal_pass:
     - RB-0041
     - RB-0042
@@ -104,6 +104,7 @@ runner_benchmark:
     - RB-0117
     - RB-0118
     - RB-0119
+    - RB-0120
   terminal_fail:
     - RB-0073
   blocked_authorization:
@@ -149,10 +150,6 @@ recovery_order:
   - "config/coordination/runner-benchmark.json"
   - "CHECKPOINT.md only when historical evidence is needed"
 notes:
-  - "RB-0113 Issue #1379 / PR #1380 2/2 Governance/Architecture PASS terminal reconciliation merged b1caf9a8a3ef5ca0b7f9b210739e2b62e1530d15, queue READY_NEXT_SAFE_SOURCE."
-  - "RB-0114 Issue #1381 internal authorized source-to-target mapped Draft-only create-once module and unit tests staged; CI PENDING."
-  - "RB-0114 Issue #1381 / PR #1382 14/14 exact-head CI PASS, bounded internal mapped Draft source merged 32bc86a613c9c6667aa622f4f04c827436803174."
-  - "RB-0115 Issue #1383 pinned real WP mapped Draft-only integration staged, CI pending."
   - "RB-0115 Issue #1383 / PR #1384 real pinned two-site WP mapped Draft-only isolation 13/13 CI PASS, merged 96bc0d7992fe787a3234c9e6084e6e0d75504f7a."
   - "RB-0116 / PR #1386 real disposable MySQL 12/12 exact-head CI PASS merged dbeece1c1fd81f2aefac9d2ae6820942446acdad; next safe source READY."
   - "RB-0117 Issue #1389 direct + mapped internal Draft import persisted readback hardening staged; CI pending."
@@ -164,3 +161,5 @@ notes:
   - "RB-0119 PR #1396 corrected-head PASS 14/14, merged cfb327af1ae0ad49b46c4114787b14bf40a45f25; internal read-only only."
   - "RB-0120 Issue #1397 pinned real WordPress two-site Draft review isolation fixture CI pending."
   - "Historical milestones remain in README, LAST-CHECKPOINT and Git commits; this compact index retains recent notes."
+  - "RB-0120 Issue #1397 / PR #1398 real WP 13/13 CI PASS protected merge 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449; no publication."
+  - "RB-0121 Issue #1399 post-create Published widget revalidation staged; CI pending, no second write."

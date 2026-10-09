@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "cfb327af1ae0ad49b46c4114787b14bf40a45f25",
+  "anchor_main_sha": "6e27b9dd7d0b7dc91c469c2d957dfd47a847b449",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3754,7 +3754,7 @@
     },
     {
       "id": "RB-0120",
-      "source": "Issue #1397 / pinned real WP integration PR pending",
+      "source": "Issue #1397 / merged PR #1398",
       "category": "DASHBOARD_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Pinned real WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation, Governance, Architecture, Platform 10/10",
@@ -3769,15 +3769,40 @@
       "expected_minutes": 20,
       "dedup_key": "dashboard-widgets|draft-publish-review-real-wp|issue1397|exact-head",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "PASS",
       "evidence": [
         "Disposable real two-site WP fixture verifies authorized Draft read-only review, forged cross-blog/network/user denial, stale hashes and immutable native preferences",
-        "Exact-head real WP CI pending"
+        "Exact-head real WP CI pending",
+        "Exact head 38aa29e131bfc766ea9a85c3e2aa7eb640714d01 13/13 exact-head CI PASS incl. real WP Multisite, 10-cell Platform, Governance/Architecture; 6 files, 0 behind/reviews, protected merged 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449"
       ],
-      "note": "PASS only after exact-head CI and protected merge; no live publish or GA."
+      "note": "Terminal PASS_DASHBOARD_PRESET_DRAFT_PUBLISH_REVIEW_REAL_WORDPRESS_V1; no publication/full parity/GA."
+    },
+    {
+      "id": "RB-0121",
+      "source": "Issue #1399 / implementation PR pending",
+      "category": "DASHBOARD_DRAFT_POSTCREATE_WIDGET_REVALIDATION_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit, Distributable, Governance, Architecture, Platform 10-cell matrix",
+      "environment": "agent/dashboard-draft-postcreate-widget-revalidation-v1 on main 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449",
+      "dependencies": [
+        "RB-0120 terminal PASS",
+        "main 6e27b9dd7d0b7dc91c469c2d957dfd47a847b449"
+      ],
+      "authorization": "Issue #1399 exact 7-file post-create catalog revalidation and unit test, no additional writes/provider/deploy",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|draft-postcreate-widget-revalidation|issue1399|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Post-create Draft readback now re-compiles against CURRENT Published Surface10 widget references",
+        "Race fixture simulates widget published->draft within atomic create, refuses false success without extra write; CI pending"
+      ],
+      "note": "No PASS until exact-head CI and protected merge. No public import/publish/full parity/GA."
     }
   ],
-  "last_reconciled_issue": "#1397",
+  "last_reconciled_issue": "#1399",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
