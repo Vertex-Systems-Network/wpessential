@@ -67,7 +67,7 @@ final readonly class QueryRelationPredicateResolver
             throw $this->unsupported('$.filter', 'Relation predicate resolution did not find a direct relation predicate.');
         }
         if ($anchorIds === null || !is_int($anchorIndex) || $anchorIds === []) {
-            throw $this->unsupported('$.filter', 'Relation predicate V1 requires an explicit non-empty post.id eq/in anchor set.');
+            throw $this->unsupported('$.filter', 'Relation predicate V1 requires an explicit non-empty post.id eq/in anchor set (finite post-id anchor).');
         }
         if (count($anchorIds) > RelationQueryConsumerInterface::MAX_BATCH_SIZE) {
             throw new QueryPlanningException(

@@ -187,6 +187,11 @@ final readonly class RelationDefinitionAbilityHandler implements AbilityHandlerI
         }
 
         $existingDirection = $existing['direction'] ?? null;
+        // Basic editors omit the direction object entirely. Do not silently
+        // discard an authored parent relation or traversal policy on update.
+        if (!array_key_exists('direction', $payload) && is_array($existingDirection)) {
+            $payload['direction'] = $existingDirection;
+        }
         $payloadDirection = $payload['direction'] ?? null;
         if (is_array($existingDirection)
             && array_key_exists('parent_relation', $existingDirection)

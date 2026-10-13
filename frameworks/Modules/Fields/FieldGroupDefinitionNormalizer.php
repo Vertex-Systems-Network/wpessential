@@ -168,7 +168,7 @@ final readonly class FieldGroupDefinitionNormalizer
     /** @return array{panel_style:string,label_placement:string,instruction_placement:string,collapsible:bool,collapsed:bool} */
     private function presentation(mixed $value): array
     {
-        if (!is_array($value) || array_is_list($value)) {
+        if (!is_array($value) || ($value !== [] && array_is_list($value))) {
             throw new InvalidArgumentException('Field Group presentation must be an object/map.');
         }
         foreach (array_keys($value) as $key) {
@@ -210,7 +210,7 @@ final readonly class FieldGroupDefinitionNormalizer
     /** @return array{mode:string} */
     private function storage(mixed $value): array
     {
-        if (!is_array($value) || array_is_list($value)) {
+        if (!is_array($value) || ($value !== [] && array_is_list($value))) {
             throw new InvalidArgumentException('Field Group storage must be an object/map.');
         }
         foreach (array_keys($value) as $key) {

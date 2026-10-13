@@ -193,7 +193,7 @@ final readonly class PostMetaRegistrationCompiler
                 throw new InvalidArgumentException(sprintf('Normalized Field is missing "%s".', $required));
             }
         }
-        if (!is_array($field['settings']) || array_is_list($field['settings'])) {
+        if (!is_array($field['settings']) || ($field['settings'] !== [] && array_is_list($field['settings']))) {
             throw new InvalidArgumentException('Normalized Field settings must be a named map.');
         }
     }
