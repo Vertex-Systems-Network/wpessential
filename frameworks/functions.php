@@ -3,10 +3,14 @@
 declare(strict_types=1);
 
 
-if (!defined('ABSPATH')) {
-    // Composer loads this file for CLI tools before PHPUnit can set ABSPATH.
-    // Refuse to register WordPress functions without terminating the caller.
+if (!defined('ABSPATH') && PHP_SAPI === 'cli') {
+    // Composer loads this file outside WordPress for CLI quality and test tools.
+    // Do not register WordPress wrappers during CLI tool bootstrap.
     return;
+}
+
+if (!defined('ABSPATH')) {
+    exit;
 }
 
 use WPEssential\Bootstrap\Plugin;
