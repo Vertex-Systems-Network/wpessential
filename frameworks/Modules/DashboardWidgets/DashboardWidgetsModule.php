@@ -125,16 +125,18 @@ final class DashboardWidgetsModule implements ModuleInterface
 
     public function register(ServiceRegistryInterface $services): void
     {
-        // Fail closed before constructing or publishing any widget services.
-        foreach ([
-            RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES,
-            RenderingServiceRegistrar::SERVICE_BLUEPRINTS,
-            RenderingServiceRegistrar::SERVICE_RENDERER,
-        ] as $requiredRenderingService) {
-            if (!$services->has($requiredRenderingService)) {
-                throw new LogicException('Dashboard Widgets requires the canonical shared rendering services.');
-            }
-        }
+		// Fail closed before constructing or publishing any widget services.
+		foreach (
+			array(
+				RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES,
+				RenderingServiceRegistrar::SERVICE_BLUEPRINTS,
+				RenderingServiceRegistrar::SERVICE_RENDERER,
+			) as $required_rendering_service
+		) {
+			if ( ! $services->has( $required_rendering_service ) ) {
+				throw new LogicException( 'Dashboard Widgets requires the canonical shared rendering services.' );
+			}
+		}
 
         $definitions = $services->get('platform.definitions');
         $abilities = $services->get('platform.abilities');

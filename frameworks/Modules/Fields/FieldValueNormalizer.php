@@ -440,7 +440,8 @@ final class FieldValueNormalizer
             }
         }
         if (!is_string($field['key']) || !is_string($field['type']) || !is_bool($field['stores_value'])
-            || !is_array($field['settings']) || ($field['settings'] !== [] && array_is_list($field['settings']))
+			|| ! is_array( $field['settings'] )
+			|| ( array() !== $field['settings'] && array_is_list( $field['settings'] ) )
             || !is_array($field['repeatability']) || array_is_list($field['repeatability'])
             || !is_array($field['subfields']) || !array_is_list($field['subfields'])
         ) {

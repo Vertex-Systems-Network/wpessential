@@ -69,11 +69,19 @@ final class AdminColumnsModule implements ModuleInterface
 
     public function register(ServiceRegistryInterface $services): void
     {
-        foreach (['platform.definitions', self::QUERY_READ_SERVICE, self::ABILITY_SERVICE, self::ABILITY_CONTEXT_SERVICE, self::AJAX_ROUTE_SERVICE] as $required) {
-            if (!$services->has($required)) {
-                throw new LogicException(sprintf('Admin Columns requires canonical shared service "%s".', $required));
-            }
-        }
+		foreach (
+			array(
+				'platform.definitions',
+				self::QUERY_READ_SERVICE,
+				self::ABILITY_SERVICE,
+				self::ABILITY_CONTEXT_SERVICE,
+				self::AJAX_ROUTE_SERVICE,
+			) as $required
+		) {
+			if ( ! $services->has( $required ) ) {
+				throw new LogicException( 'Admin Columns requires canonical shared services.' );
+			}
+		}
 
         $definitions = $services->get('platform.definitions');
         $query = $services->get(self::QUERY_READ_SERVICE);
@@ -291,9 +299,9 @@ final class AdminColumnsModule implements ModuleInterface
 
     public function boot(ServiceRegistryInterface $services): void
     {
-        if (!$services->has(self::ADMIN_ASSET_SERVICE) || !$services->has(self::DATA_SOURCE_SERVICE)) {
-            throw new LogicException('Admin Columns admin requires canonical shared admin assets and Data Source Registry.');
-        }
+		if ( ! $services->has( self::ADMIN_ASSET_SERVICE ) || ! $services->has( self::DATA_SOURCE_SERVICE ) ) {
+			throw new LogicException( 'Admin Columns requires shared admin assets and data sources.' );
+		}
 
         $assets = $services->get(self::ADMIN_ASSET_SERVICE);
         $dataSources = $services->get(self::DATA_SOURCE_SERVICE);
@@ -313,8 +321,13 @@ final class AdminColumnsModule implements ModuleInterface
             $ownerSources = $candidate;
         }
 
-        $ajax = $services->has(self::AJAX_DISPATCHER_SERVICE) ? $services->get(self::AJAX_DISPATCHER_SERVICE) : null;
-        $gateway = $services->has(self::AJAX_GATEWAY_SERVICE) ? $services->get(self::AJAX_GATEWAY_SERVICE) : null;
+		$ajax = $services->has( self::AJAX_DISPATCHER_SERVICE )
+			? $services->get( self::AJAX_DISPATCHER_SERVICE )
+			: null;
+		$gateway = $services->has( self::AJAX_GATEWAY_SERVICE )
+			? $services->get( self::AJAX_GATEWAY_SERVICE )
+			: null;
+
         $admin = new AdminColumnsAdminController(
             new AdminColumnsAdminBootstrapProjector(
                 $dataSources,
