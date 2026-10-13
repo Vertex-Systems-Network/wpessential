@@ -1,4 +1,9 @@
 <?php
+/**
+ * Bound and validate dashboard action confirmation labels.
+ *
+ * @package WPEssential\Modules\DashboardWidgets
+ */
 
 declare(strict_types=1);
 
@@ -10,6 +15,7 @@ if (!defined('ABSPATH')) {
 
 use InvalidArgumentException;
 
+/** Immutable action confirmation descriptor with strict input bounds. */
 final readonly class DashboardWidgetActionConfirmationDescriptor
 {
     public const MAX_TITLE_BYTES = 120;
@@ -22,6 +28,15 @@ final readonly class DashboardWidgetActionConfirmationDescriptor
     public string $confirmLabel;
     public string $cancelLabel;
 
+	/**
+	 * Validate confirmation title, message and action labels.
+	 *
+	 * @param string $title Confirmation title.
+	 * @param string $message Confirmation message.
+	 * @param string $confirmLabel Positive action label.
+	 * @param string $cancelLabel Negative action label.
+	 * @throws InvalidArgumentException If input or encoded metadata exceeds bounds.
+	 */
     public function __construct(
         string $title,
         string $message,
@@ -45,6 +60,15 @@ final readonly class DashboardWidgetActionConfirmationDescriptor
         }
     }
 
+	/**
+	 * Normalize a bounded plain-text action label.
+	 *
+	 * @param string $value Original label text.
+	 * @param string $field Label field key.
+	 * @param int    $maxBytes Maximum bytes permitted.
+	 * @return string
+	 * @throws InvalidArgumentException If label text is invalid.
+	 */
     private static function normalizeText(string $value, string $field, int $maxBytes): string
     {
         $value = trim($value);
