@@ -248,7 +248,7 @@ final class AbilityInputValidatorTest extends TestCase
             'items' => [0 => 'a', 2 => 'b'],
         ]);
         self::assertFalse($sparseResult->valid);
-        self::assertSame('input_type_mismatch', $sparseResult->code);
+        self::assertSame('unsupported_runtime_value', $sparseResult->code);
         self::assertSame('$.items', $sparseResult->path);
     }
 

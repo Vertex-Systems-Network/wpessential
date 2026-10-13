@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Tests\Unit\Modules\Status;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use WPEssential\Modules\Status\Definition\StatusDefinitionCompiler;
 use WPEssential\Platform\Definitions\Definition;
@@ -61,7 +62,7 @@ final class StatusDefinitionCompilerTest extends TestCase
         self::assertNotSame($baseline->compatibilityFingerprint, $changed->compatibilityFingerprint);
     }
 
-    /** @dataProvider invalidKeys */
+    #[DataProvider('invalidKeys')]
     public function testRejectsNonCanonicalReservedOrOverlongKeys(string $key): void
     {
         $payload = $this->payload();
