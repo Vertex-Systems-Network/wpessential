@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    define('ABSPATH', dirname(__DIR__, 2) . '/');
+}
+
 $script = dirname(__DIR__, 2) . '/tools/quality/compare-phpcs-reports.php';
 $tmp = sys_get_temp_dir() . '/wpe-phpcs-contract-' . bin2hex(random_bytes(8));
 if (!mkdir($tmp, 0700) && !is_dir($tmp)) {
