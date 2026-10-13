@@ -99,7 +99,7 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             $this->definition(type: 'listing'),
             $this->definition(schemaVersion: 2),
             $this->definition(status: DefinitionStatus::Draft),
-            $this->definition(contentType: 'iframe'),
+            $this->definition(contentType: 'iframe', renderSource: $this->renderSource('rich_text')),
         ] as $definition) {
             try {
                 $compiler->compile($definition);
@@ -126,7 +126,7 @@ final class DashboardWidgetRenderSourceCompilerTest extends TestCase
             [],
             $valid + ['provider' => 'unsafe'],
             array_replace($valid, ['kind' => 'provider']),
-            array_replace($valid, ['blueprint_id' => strtoupper((string) $valid['blueprint_id'])]),
+            array_replace($valid, ['blueprint_id' => strtoupper('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa')]),
             array_replace($valid, ['blueprint_revision' => 0]),
             array_replace($valid, ['blueprint_revision' => '1']),
             array_replace($valid, ['bindings' => ['not-an-envelope']]),
