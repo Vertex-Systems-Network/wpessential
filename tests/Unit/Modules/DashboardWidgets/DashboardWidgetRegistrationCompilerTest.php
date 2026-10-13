@@ -10,6 +10,7 @@ use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionConfirmationDescri
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetActionInputDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetComponentBlueprintCatalog;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassCompiler;
+use WPEssential\Modules\DashboardWidgets\DashboardWidgetContentClassDescriptor;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetDefinition;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationCompiler;
 use WPEssential\Modules\DashboardWidgets\DashboardWidgetRegistrationDescriptor;

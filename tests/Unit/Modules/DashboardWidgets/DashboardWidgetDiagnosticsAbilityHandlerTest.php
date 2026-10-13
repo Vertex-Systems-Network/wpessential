@@ -192,7 +192,7 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
     public function testReportsPublishedRegistrationFailureAndChecksumMismatchWithoutLeakingPayload(): void
     {
         $definitions = new InMemoryDefinitionRepository();
-        $definitions->save($this->definition(
+        $corrupt = $this->definition(
             self::BLOCKED_ID,
             'blocked-widget',
             DefinitionStatus::Published,
@@ -205,7 +205,11 @@ final class DashboardWidgetDiagnosticsAbilityHandlerTest extends TestCase
                 'network_dashboard' => false,
             ],
             checksum: str_repeat('0', 64),
-        ));
+        );
+        // Inject an externally corrupted read fixture without bypassing or
+        // weakening the production repository's checked-write boundary.
+        (new \ReflectionProperty(InMemoryDefinitionRepository::class, 'definitions'))
+            ->setValue($definitions, [$corrupt->id => $corrupt]);
 
         $result = $this->handler($definitions)->handle(
             ['definition_id' => self::BLOCKED_ID],

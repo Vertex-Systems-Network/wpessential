@@ -17,7 +17,7 @@ final class MigrationRunTransitionServiceTest extends TestCase
     public function testTransitionUsesRepositoryCasAndPersistsNextStateInReferenceRepository(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = self::run();
+        $run = self::fixtureRun();
         $repository->create($run);
 
         $next = (new MigrationRunTransitionService($repository))->transition(
@@ -34,7 +34,7 @@ final class MigrationRunTransitionServiceTest extends TestCase
     public function testStaleRevisionFailsClosedWithoutChangingStoredRun(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = self::run();
+        $run = self::fixtureRun();
         $repository->create($run);
 
         $this->expectException(RuntimeException::class);
@@ -72,7 +72,7 @@ final class MigrationRunTransitionServiceTest extends TestCase
     public function testIllegalTransitionFailsWithoutChangingStoredRun(): void
     {
         $repository = new InMemoryMigrationRunRepository();
-        $run = self::run();
+        $run = self::fixtureRun();
         $repository->create($run);
 
         $this->expectException(InvalidArgumentException::class);
@@ -88,7 +88,7 @@ final class MigrationRunTransitionServiceTest extends TestCase
         }
     }
 
-    private static function run(): MigrationRun
+    private static function fixtureRun(): MigrationRun
     {
         return new MigrationRun(
             id: '11111111-1111-4111-8111-111111111111',
