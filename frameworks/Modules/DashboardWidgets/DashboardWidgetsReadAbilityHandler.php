@@ -49,11 +49,14 @@ final readonly class DashboardWidgetsReadAbilityHandler implements AbilityHandle
 	 * @throws RuntimeException If an unsupported action is invoked.
 	 */
 	public function handle( array $input, ExecutionContext $context ): mixed {
-		return match ( $this->action ) {
-			self::GET => $this->get( $input ),
-			self::CATALOG => $this->catalog( $input ),
-			default => throw new RuntimeException( 'Unsupported Dashboard Widgets read ability action.' ),
-		};
+		switch ( $this->action ) {
+			case self::GET:
+				return $this->get( $input );
+			case self::CATALOG:
+				return $this->catalog( $input );
+			default:
+				throw new RuntimeException( 'Unsupported Dashboard Widgets read ability action.' );
+		}
 	}
 
 	/**

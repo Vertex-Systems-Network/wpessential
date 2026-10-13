@@ -50,12 +50,16 @@ final readonly class DashboardWidgetPresetReadAbilityHandler implements AbilityH
 	 * @throws RuntimeException When the action is not supported.
 	 */
 	public function handle( array $input, ExecutionContext $context ): mixed {
-		return match ( $this->action ) {
-			self::GET => $this->get( $input ),
-			self::CATALOG => $this->catalog( $input ),
-			self::EFFECTIVE => $this->effective( $input, $context ),
-			default => throw new RuntimeException( 'Unsupported Dashboard Widget preset read action.' ),
-		};
+		switch ( $this->action ) {
+			case self::GET:
+				return $this->get( $input );
+			case self::CATALOG:
+				return $this->catalog( $input );
+			case self::EFFECTIVE:
+				return $this->effective( $input, $context );
+			default:
+				throw new RuntimeException( 'Unsupported Dashboard Widget preset read action.' );
+		}
 	}
 
 	/**
