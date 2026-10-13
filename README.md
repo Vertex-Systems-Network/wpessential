@@ -39,6 +39,8 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
+**Issue #1417 — PHPCS changed-line evidence (bounded diagnostic helper): `██████████ 100%` local smoke and real-report audit PASS.** The existing report comparator now flags violations on edited source lines while retaining its original signature-delta mode. At PR #1416 head `863b9e4`, measured **0 signature-count increases, 0 edited-line violations, and 211 resolved messages** versus pinned source `7a42187`; however **129,695 PHPCS errors / 5,207 warnings remain**, so whole-tree WPCS is **still FAIL**. Diagnostic-only progress does **not** increase the 50% terminal milestone count or authorize any CI bypass, PR #1416 merge, deployment, publication or GA. See [PHPCS triage evidence](docs/QUALITY/PHPCS-BASELINE-DELTA-TRIAGE-2026-10-13.md).
+
 **Autonomous execution operating rule:** Within the recorded source-development grant, AI resolves routine technical errors and proceeds to the next independent safe milestone without asking the owner to debug or reapprove. Privileged/production gates remain enforced. At each meaningful Supervisor integration, refresh the verified milestone progress bars below and the active evidence/next gate; no percentage is promoted without an audited denominator. See [AGENTS.md](AGENTS.md#autonomous-continuity-and-no-repeat-question-policy).
 
 
