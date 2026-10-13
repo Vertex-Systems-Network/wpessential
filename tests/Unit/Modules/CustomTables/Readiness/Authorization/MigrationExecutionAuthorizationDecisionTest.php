@@ -30,7 +30,7 @@ final class MigrationExecutionAuthorizationDecisionTest extends TestCase
 {
     public function testReadyLowRiskConfirmedCapableUserCanBeAuthorized(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $request = new MigrationExecutionAuthorizationRequest(
             runId: $run->id,
             readinessStateRevision: $run->stateRevision,
@@ -50,7 +50,7 @@ final class MigrationExecutionAuthorizationDecisionTest extends TestCase
 
     public function testUnsafeFactsFailClosedWithDeterministicReasons(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $request = new MigrationExecutionAuthorizationRequest(
             runId: '33333333-3333-4333-8333-333333333333',
             readinessStateRevision: $run->stateRevision + 1,
@@ -80,7 +80,7 @@ final class MigrationExecutionAuthorizationDecisionTest extends TestCase
 
     public function testHighImpactR3RemainsUnsupportedEvenWhenOtherFactsPass(): void
     {
-        $run = self::run();
+        $run = self::fixtureRun();
         $request = new MigrationExecutionAuthorizationRequest(
             runId: $run->id,
             readinessStateRevision: $run->stateRevision,
@@ -126,7 +126,7 @@ final class MigrationExecutionAuthorizationDecisionTest extends TestCase
         );
     }
 
-    private static function run(): MigrationRun
+    private static function fixtureRun(): MigrationRun
     {
         return new MigrationRun(
             id: '11111111-1111-4111-8111-111111111111',

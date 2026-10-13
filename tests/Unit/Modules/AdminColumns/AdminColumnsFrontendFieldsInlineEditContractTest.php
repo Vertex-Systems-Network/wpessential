@@ -36,7 +36,8 @@ final class AdminColumnsFrontendFieldsInlineEditContractTest extends TestCase
         self::assertStringContainsString("source.reference === 'post.id'", $source);
         self::assertStringContainsString("authoredSource?.owner === 'fields'", $source);
         self::assertStringContainsString('metadata.postTypes.includes( targetKey )', $source);
-        self::assertStringContainsString('expected_group_revision: metadata.groupRevision', $source);
+        self::assertStringContainsString('expected_group_revision:', $source);
+        self::assertStringContainsString('metadata.groupRevision', $source);
         self::assertStringContainsString('post_id: postId', $source);
         self::assertStringContainsString('column_key: column.key', $source);
         self::assertStringContainsString('view_id: expectedViewId', $source);

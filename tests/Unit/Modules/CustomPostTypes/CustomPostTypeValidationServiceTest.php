@@ -42,7 +42,7 @@ final class CustomPostTypeValidationServiceTest extends TestCase
     {
         $repository = new InMemoryDefinitionRepository();
         $created = $this->save($repository, $this->payload());
-        $this->status($repository, $created['id'], 1, 'archived');
+        $this->transitionStatus($repository, $created['id'], 1, 'archived');
 
         $report = $this->validation($repository)->validate(['payload' => $this->payload()]);
 
@@ -92,7 +92,7 @@ final class CustomPostTypeValidationServiceTest extends TestCase
             ->handle(['payload' => $payload], $this->context())['definition'];
     }
 
-    private function status(
+    private function transitionStatus(
         InMemoryDefinitionRepository $repository,
         string $id,
         int $revision,

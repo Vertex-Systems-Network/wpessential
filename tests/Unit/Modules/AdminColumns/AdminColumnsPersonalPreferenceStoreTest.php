@@ -130,7 +130,9 @@ final class AdminColumnsPersonalPreferenceStoreTest extends TestCase
     {
         return new AdminColumnsPersonalPreferenceStore(
             new AdminColumnsPersonalPreferenceResolver(),
-            static fn (int $userId, string $key): mixed => $meta[$userId][$key] ?? '',
+            static function (int $userId, string $key) use (&$meta): mixed {
+                return $meta[$userId][$key] ?? '';
+            },
             static function (int $userId, string $key, array $value) use (&$meta): void {
                 $meta[$userId][$key] = $value;
             },
