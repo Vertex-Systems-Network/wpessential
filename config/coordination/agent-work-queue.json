@@ -1,9 +1,9 @@
 {
-  "schema_version": 205,
+  "schema_version": 206,
   "snapshot_date": "2026-10-13",
-  "queue_anchor_main_sha": "2d884d549b60fb4354149337b079556b407db6c2",
-  "mode": "READY_NEXT_SAFE_SOURCE",
-  "source_issue": "#1409",
+  "queue_anchor_main_sha": "eec9fa7e1835a6cbdf830da7b873e10e8243d653",
+  "mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_POSTREAD_AUTH_V1",
+  "source_issue": "#1411",
   "approval": {
     "project_source_authority": "GOV-OWNER-CONSENT-001 ACTIVE",
     "rc1_milestone_record": "GOV-OWNER-CONSENT-RC1-001 via Issue #1016",
@@ -248,7 +248,8 @@
     "1401": "CLOSED_COMPLETED_RB0121_POSTMERGE_PR1402_2_OF_2_PASS",
     "1403": "CLOSED_COMPLETED_RB0122_PR1404_14_OF_14_PASS",
     "1405": "CLOSED_COMPLETED_RB0123_PR1406_REAL_MYSQL_12_OF_12_PASS",
-    "1407": "CLOSED_COMPLETED_RB0124_PR1408_PINNED_WP_15_OF_15_PASS"
+    "1407": "CLOSED_COMPLETED_RB0124_PR1408_PINNED_WP_15_OF_15_PASS",
+    "1411": "IN_PROGRESS_RB0125_DRAFT_REVIEW_POSTREAD_AUTH_CI_PENDING"
   },
   "auto_assignment": {
     "enabled": true,
@@ -278,7 +279,7 @@
       "runner_benchmark_rule": "Capture every material runner task as RB-####; default DEFER_FINAL_BATCH; security/merge/migration-auth-secrets-data/current-integration/incident exceptions run immediately; authorization-gated work remains blocked",
       "feature_freeze_rule": "No new product scope outside the exact authorized evidence fixture tranche."
     },
-    "next_safe_action": "RB-0124 source terminal PASS on PR #1408. Fresh-main, OPEN Issue/PR and readiness audit selects next authorized independent source milestone; #858 admin, #947 Worker-only and #1102 P-006 authorization stay parked. No active Draft RB-0124 claim or recursive admin slot.",
+    "next_safe_action": "Open Issue #1411 RB-0125 exact 7-file read-only Draft review postread auth source/unit/README/AI PR; full applicable exact-head CI, zero behind/reviews, protected expected-head merge; no publish/GA.",
     "fast_delivery_rule": "Prefer a meaningful feature tranche over administrative micro-slots. Do not create contract/reconciliation slots unless the high-risk or exception rules require them.",
     "continuous_authorized_milestones": true,
     "technical_confirmation_required": false,
@@ -8489,6 +8490,32 @@
         "authorized_paths": 8,
         "unresolved_review_threads": 0
       }
+    },
+    {
+      "priority": 1106,
+      "slot_id": "dashboard-draft-publish-review-postread-auth-v1",
+      "title": "Internal read-only Draft review final WordPress caller capability recheck",
+      "role": "AGENT_IMPLEMENTATION",
+      "status": "IN_PROGRESS",
+      "work_mode": "DASHBOARD_DRAFT_PUBLISH_REVIEW_POSTREAD_AUTH_V1",
+      "source": "Issue #1411 / RB-0125",
+      "dependencies": [
+        "RB-0124 terminal PASS",
+        "shared-truth PR #1410 merged eec9fa7e1835a6cbdf830da7b873e10e8243d653"
+      ],
+      "runtime_allowed": true,
+      "mutation_allowed": false,
+      "provider_execution_allowed": false,
+      "renderer_execution_allowed": false,
+      "shared_platform_mutation_allowed": false,
+      "allowed_scope": [
+        "Issue #1411 seven files: Draft read-only review service, PHPUnit test, README and four AI state/queue/benchmark records"
+      ],
+      "forbidden_scope": [
+        "Publishing, public routes/UI/Ability/AJAX, WP native Dashboard prefs, provider, production/GA, formal P-006"
+      ],
+      "claim_branch": "agent/rb0125-draft-review-postread-authorization-v1",
+      "close_condition": "PHP Quality, Governance, Architecture, Distributable, Platform matrix and all exact-head path-applicable CI PASS; seven files, zero behind/reviews, protected merge. Bounded read-only PASS only; no runtime certification."
     }
   ],
   "historical_closeout": {

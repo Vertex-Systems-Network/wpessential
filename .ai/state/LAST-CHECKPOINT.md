@@ -1,5 +1,11 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-13 — RB-0125 Draft review postread authorization source staged
+
+- Fresh main after RB-0124 terminal reconciliation: Issue #1409 / PR #1410, Governance and Architecture exact-head 2/2 PASS, protected merge `eec9fa7e1835a6cbdf830da7b873e10e8243d653`. No open PR at RB-0125 issue claim.
+- Source audit: read-only internal `DashboardWidgetPresetDraftPublishReviewService::inspect` preauthorizes initial read but formerly returned `review_candidate` without verifying caller privileges/current WordPress identity again after Draft and Published widget compilation. A capability revoked between those events could still receive a false positive review hint.
+- Issue #1411 / RB-0125 adds final canonical `isAuthorizedContext` recheck and PHPUnit deterministic pass-then-revoke test; no product write/publish. Seven authorized paths, exact-head CI/protected merge **PENDING**; no bounded PASS, runtime certification, provider, production or GA asserted. Park #858 admin, #947 independent review and #1102 formal P-006 authorization.
+
 ## 2026-10-13 — RB-0124 terminal verified; next safe source READY
 
 - Issue #1407 / PR #1408 exact implementation head `add1a6de5f4edcbf094797ac05934d6b4a2f2513` completed **15/15** GitHub exact-head checks: PHP Quality, Governance, Distributable, Architecture, pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation and 10-cell Platform Compatibility; 8 allowed files, zero unresolved reviews; protected merge `2d884d549b60fb4354149337b079556b407db6c2`. Issue #1407 closed.
