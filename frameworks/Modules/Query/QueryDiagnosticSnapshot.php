@@ -1,11 +1,16 @@
 <?php
+/**
+ * Query diagnostic redacted snapshot.
+ *
+ * @package WPEssential\Modules\Query
+ */
 
 declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 /**
@@ -15,9 +20,22 @@ if (!defined('ABSPATH')) {
  * credentials, raw parameters, metadata payloads, cache values and wall-clock
  * timing. It is a pure value projection and is not exposed by any runtime API.
  */
-final readonly class QueryDiagnosticSnapshot
-{
-    public function __construct(
+final readonly class QueryDiagnosticSnapshot {
+
+	/**
+	 * Store a sanitized, bounded Query diagnostics snapshot.
+	 *
+	 * @param string $queryKey Query identifier.
+	 * @param int    $queryRevision Query revision.
+	 * @param string $sourceRef Source reference.
+	 * @param int    $sourceCapabilityVersion Source capability version.
+	 * @param int    $pageSize Pagination size.
+	 * @param int    $offset Pagination offset.
+	 * @param bool   $principalScoped Whether the cache key is principal-scoped.
+	 * @param bool   $cacheEligible Whether this Query can be cached.
+	 * @param string $cacheReason Cache eligibility reason.
+	 */
+	public function __construct(
         public string $queryKey,
         public int $queryRevision,
         public string $sourceRef,
@@ -27,14 +45,21 @@ final readonly class QueryDiagnosticSnapshot
         public bool $principalScoped,
         public bool $cacheEligible,
         public string $cacheReason,
-    ) {
-    }
+	) {
+	}
 
+	/**
+	 * Project a Query decision to a redacted diagnostic snapshot.
+	 *
+	 * @param QueryDefinition    $definition Source Query definition.
+	 * @param QueryCacheDecision $decision Resulting Query cache decision.
+	 * @return self
+	 */
     public static function fromDecision(
-        QueryDefinition $definition,
-        QueryCacheDecision $decision,
-    ): self {
-        return new self(
+		QueryDefinition $definition,
+		QueryCacheDecision $decision,
+	): self {
+		return new self(
             queryKey: $definition->identity['key'],
             queryRevision: $definition->identity['revision'],
             sourceRef: $definition->source->sourceRef,
@@ -44,10 +69,14 @@ final readonly class QueryDiagnosticSnapshot
             principalScoped: $decision->key?->principalId !== null,
             cacheEligible: $decision->eligible,
             cacheReason: $decision->reason,
-        );
-    }
+		);
+	}
 
-    /** @return array<string,int|string|bool> */
+	/**
+	 * Return the redacted diagnostic snapshot as plain values.
+	 *
+	 * @return array<string,int|string|bool>
+	 */
     public function toArray(): array
     {
         return [
