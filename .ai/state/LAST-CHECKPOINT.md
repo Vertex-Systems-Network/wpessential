@@ -1,5 +1,11 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-13 — RB-0124 terminal verified; next safe source READY
+
+- Issue #1407 / PR #1408 exact implementation head `add1a6de5f4edcbf094797ac05934d6b4a2f2513` completed **15/15** GitHub exact-head checks: PHP Quality, Governance, Distributable, Architecture, pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation and 10-cell Platform Compatibility; 8 allowed files, zero unresolved reviews; protected merge `2d884d549b60fb4354149337b079556b407db6c2`. Issue #1407 closed.
+- Bounded `PASS_DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1`: postcreate privilege/current WP user+site+network drift denies a false `created_draft` success with generic `write_failed`; exactly one Draft may persist; no automatic retry, rollback, publication, public import, provider, production or GA.
+- Discrepancy detected on merged main: README, compact AI state/queue/checkpoint and Runner Benchmark still marked RB-0124 PENDING. Issue #1409 covers exactly these five documentation/AI reconciliation files, leaving no recursive implementation slot. After protected merge, fresh main/issues/PRs select a new safe source milestone. #858 admin, #947 independent Worker and #1102 separate authorization remain parked.
+
 ## 2026-10-10 — RB-0123 real MySQL PASS; RB-0124 postcreate WP authorization recheck staged
 
 - RB-0123 Issue #1405 / PR #1406 corrected exact head `bf6eb7ecac80a8877fb66f17b4ca02e37931de0a`, **12/12** exact-head CI PASS incl. real disposable MySQL concurrency, Governance, Architecture, Platform 10/10; six paths, 0 behind/reviews; protected merged `49c089329ed1f4f632958ca4c17c57c0f4466b3e`. Initial fixture failed due invalid underscore slug, self-repaired and completely rerun.
