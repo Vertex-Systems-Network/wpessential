@@ -3,54 +3,50 @@
 declare(strict_types=1);
 
 
-if (!defined('ABSPATH') && PHP_SAPI === 'cli') {
-    // Composer loads this file outside WordPress for CLI quality and test tools.
-    // Do not register WordPress wrappers during CLI tool bootstrap.
-    return;
+if ( ! defined( 'ABSPATH' ) && PHP_SAPI === 'cli' ) {
+	// Composer loads this file outside WordPress for CLI quality and test tools.
+	// Do not register WordPress wrappers during CLI tool bootstrap.
+	return;
 }
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 use WPEssential\Bootstrap\Plugin;
 use WPEssential\Platform\WordPress\Hooks\HookNames;
 
-if (!function_exists('wpessential_kernel')) {
-    function wpessential_kernel(): ?\WPEssential\Kernel\Kernel
-    {
-        return Plugin::kernel();
-    }
+if ( ! function_exists( 'wpessential_kernel' ) ) {
+	function wpessential_kernel(): ?\WPEssential\Kernel\Kernel {
+		return Plugin::kernel();
+	}
 }
 
-if (!function_exists('wpessential_service')) {
-    function wpessential_service(string $id): ?object
-    {
-        $kernel = wpessential_kernel();
-        if ($kernel === null || !$kernel->services()->has($id)) {
-            return null;
-        }
+if ( ! function_exists( 'wpessential_service' ) ) {
+	function wpessential_service( string $id ): ?object {
+		$kernel = wpessential_kernel();
+		if ( $kernel === null || ! $kernel->services()->has( $id ) ) {
+			return null;
+		}
 
-        return $kernel->services()->get($id);
-    }
+		return $kernel->services()->get( $id );
+	}
 }
 
-if (!function_exists('wpessential_apply_filter')) {
-    function wpessential_apply_filter(string $name, mixed $value, mixed ...$args): mixed
-    {
-        if (!function_exists('apply_filters')) {
-            return $value;
-        }
+if ( ! function_exists( 'wpessential_apply_filter' ) ) {
+	function wpessential_apply_filter( string $name, mixed $value, mixed ...$args ): mixed {
+		if ( ! function_exists( 'apply_filters' ) ) {
+			return $value;
+		}
 
-        return apply_filters(HookNames::filter($name), $value, ...$args);
-    }
+		return apply_filters( HookNames::filter( $name ), $value, ...$args );
+	}
 }
 
-if (!function_exists('wpessential_do_action')) {
-    function wpessential_do_action(string $name, mixed ...$args): void
-    {
-        if (function_exists('do_action')) {
-            do_action(HookNames::action($name), ...$args);
-        }
-    }
+if ( ! function_exists( 'wpessential_do_action' ) ) {
+	function wpessential_do_action( string $name, mixed ...$args ): void {
+		if ( function_exists( 'do_action' ) ) {
+			do_action( HookNames::action( $name ), ...$args );
+		}
+	}
 }
