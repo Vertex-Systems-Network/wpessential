@@ -1,9 +1,9 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-13 — RB-0125 read-only review authorization staged
+## 2026-10-13 — RB-0125 terminal read-only review PASS
 
-- Fresh main after #1410: `eec9fa7e1835a6cbdf830da7b873e10e8243d653`. Issue #1411 / RB-0125 audits `inspect()` returning `review_candidate` without postread WordPress caller reauthorization.
-- Add canonical `isAuthorizedContext` guard before positive hint and deterministic PHPUnit pass-then-revoke check. Seven scoped paths; exact-head CI/merge **PENDING**. No publishing, public import, provider, production, GA or P-006 grant. Park #858/#947/#1102.
+- Issue #1411 / PR #1412 corrected exact head `c24c97eed560f206cd1ab8ad177882ba78fd0f0b`: **14/14** exact-head CI PASS incl. PHP Quality, Governance, Distributable, Architecture, Platform 10/10; 7 scoped files, zero behind/review threads; protected merge `d85f3183e2684a94c0f654fd191d7185dbda1929`. Initial Architecture failure was compact checkpoint >16KiB; repaired and reran green.
+- Final WordPress identity/capability check denies a positive read-only `review_candidate` after privilege loss; PHPUnit pass-then-revoke verifies. No publish/public routes/provider/production/full parity. Issue #1413 reconciles stale README/AI PENDING truth. Next source READY; park #858/#947/#1102.
 
 ## 2026-10-13 — RB-0124 terminal verified; next safe source READY
 
