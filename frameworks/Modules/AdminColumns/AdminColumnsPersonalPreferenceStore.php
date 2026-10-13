@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Modules\AdminColumns;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use Closure;
@@ -19,34 +19,34 @@ use RuntimeException;
  */
 final readonly class AdminColumnsPersonalPreferenceStore
 {
-    public const CONTRACT_VERSION = 1;
+	public const CONTRACT_VERSION = 1;
 
-    private const META_PREFIX = '_wpessential_admin_columns_view_pref_';
+	private const META_PREFIX = '_wpessential_admin_columns_view_pref_';
     private const STORED_KEYS = [
-        'contract_version',
-        'view_id',
-        'view_revision',
-        'preference',
-    ];
+		'contract_version',
+		'view_id',
+		'view_revision',
+		'preference',
+	];
 
     private Closure $reader;
     private Closure $writer;
     private Closure $deleter;
 
     public function __construct(
-        private AdminColumnsPersonalPreferenceResolver $resolver,
-        ?Closure $reader = null,
-        ?Closure $writer = null,
-        ?Closure $deleter = null,
-    ) {
+		private AdminColumnsPersonalPreferenceResolver $resolver,
+		?Closure $reader = null,
+		?Closure $writer = null,
+		?Closure $deleter = null,
+	) {
         $this->reader = $reader ?? static fn (int $userId, string $key): mixed => \get_user_meta($userId, $key, true);
         $this->writer = $writer ?? static function (int $userId, string $key, array $value): void {
             \update_user_meta($userId, $key, $value);
-        };
+		};
         $this->deleter = $deleter ?? static function (int $userId, string $key): void {
             \delete_user_meta($userId, $key);
-        };
-    }
+		};
+	}
 
     /**
      * @param list<array{key:string,enabled?:bool}> $columns
@@ -68,41 +68,41 @@ final readonly class AdminColumnsPersonalPreferenceStore
         $raw = ($this->reader)($userId, $this->metaKey($viewId));
 
         if ($raw === '' || $raw === null) {
-            return $this->result(
+			return $this->result(
                 $userId,
                 $viewId,
                 $viewRevision,
-                null,
-                false,
-                'not_found',
+				null,
+				false,
+				'not_found',
                 $defaultState,
-            );
-        }
+			);
+		}
 
         $stored = $this->storedEnvelope($raw, $viewId);
         $storedRevision = $stored['view_revision'];
         if ($storedRevision !== $viewRevision) {
-            return $this->result(
+			return $this->result(
                 $userId,
                 $viewId,
                 $viewRevision,
                 $storedRevision,
-                false,
-                'view_revision_changed',
+				false,
+				'view_revision_changed',
                 $defaultState,
-            );
-        }
+			);
+		}
 
-        return $this->result(
+		return $this->result(
             $userId,
             $viewId,
             $viewRevision,
             $storedRevision,
-            true,
-            'applied',
+			true,
+			'applied',
             $this->resolver->resolve($viewId, $viewRevision, $columns, $stored['preference']),
-        );
-    }
+		);
+	}
 
     /**
      * @param list<array{key:string,enabled?:bool}> $columns
@@ -122,26 +122,26 @@ final readonly class AdminColumnsPersonalPreferenceStore
         int $userId,
         string $viewId,
         int $viewRevision,
-        array $columns,
-        array $preference,
-    ): array {
+		array $columns,
+		array $preference,
+	): array {
         $this->assertUserId($userId);
         $resolved = $this->resolver->resolve($viewId, $viewRevision, $columns, $preference);
         $stored = [
-            'contract_version' => self::CONTRACT_VERSION,
+			'contract_version' => self::CONTRACT_VERSION,
             'view_id' => $viewId,
             'view_revision' => $viewRevision,
             'preference' => $this->preferencePayload($resolved),
-        ];
+		];
         $key = $this->metaKey($viewId);
 
         ($this->writer)($userId, $key, $stored);
         if (($this->reader)($userId, $key) !== $stored) {
             throw new RuntimeException('Admin Columns personal preference write-back verification failed.');
-        }
+		}
 
         return $this->load($userId, $viewId, $viewRevision, $columns);
-    }
+	}
 
     public function reset(int $userId, string $viewId): void
     {
@@ -152,8 +152,8 @@ final readonly class AdminColumnsPersonalPreferenceStore
         $remaining = ($this->reader)($userId, $key);
         if ($remaining !== '' && $remaining !== null) {
             throw new RuntimeException('Admin Columns personal preference reset verification failed.');
-        }
-    }
+		}
+	}
 
     /**
      * @return array{contract_version:int,view_id:string,view_revision:int,preference:array<string,mixed>}
@@ -162,23 +162,23 @@ final readonly class AdminColumnsPersonalPreferenceStore
     {
         if (!is_array($raw) || array_is_list($raw)) {
             throw new RuntimeException('Stored Admin Columns personal preference envelope is malformed.');
-        }
+		}
         if (array_keys($raw) !== self::STORED_KEYS) {
             throw new RuntimeException('Stored Admin Columns personal preference envelope has unsupported keys.');
-        }
+		}
         if (($raw['contract_version'] ?? null) !== self::CONTRACT_VERSION
             || ($raw['view_id'] ?? null) !== $viewId
             || !is_int($raw['view_revision'] ?? null)
-            || $raw['view_revision'] < 1
+			|| $raw['view_revision'] < 1
             || !is_array($raw['preference'] ?? null)
             || array_is_list($raw['preference'])
-        ) {
+		) {
             throw new RuntimeException('Stored Admin Columns personal preference envelope is invalid.');
-        }
+		}
 
         /** @var array{contract_version:int,view_id:string,view_revision:int,preference:array<string,mixed>} $raw */
-        return $raw;
-    }
+		return $raw;
+	}
 
     /** @param array<string,mixed> $resolved @return array<string,mixed> */
     private function preferencePayload(array $resolved): array
@@ -189,9 +189,9 @@ final readonly class AdminColumnsPersonalPreferenceStore
             'temporary_filters' => $resolved['temporary_filters'],
             'hidden_columns' => $resolved['hidden_columns'],
             'density' => $resolved['density'],
-            'saved_filter_state' => $resolved['saved_filter_state'],
-        ];
-    }
+			'saved_filter_state' => $resolved['saved_filter_state'],
+		];
+	}
 
     /**
      * @param array<string,mixed> $state
@@ -211,10 +211,10 @@ final readonly class AdminColumnsPersonalPreferenceStore
         string $viewId,
         int $viewRevision,
         ?int $storedViewRevision,
-        bool $applied,
-        string $reason,
-        array $state,
-    ): array {
+		bool $applied,
+		string $reason,
+		array $state,
+	): array {
         return [
             'contract_version' => self::CONTRACT_VERSION,
             'user_id' => $userId,
@@ -224,22 +224,22 @@ final readonly class AdminColumnsPersonalPreferenceStore
             'applied' => $applied,
             'reason' => $reason,
             'state' => $state,
-        ];
-    }
+		];
+	}
 
     private function assertUserId(int $userId): void
     {
         if ($userId < 1) {
             throw new InvalidArgumentException('Admin Columns personal preference user id must be positive.');
-        }
-    }
+		}
+	}
 
     private function metaKey(string $viewId): string
     {
         if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $viewId) !== 1) {
             throw new InvalidArgumentException('Admin Columns personal preference View id must be a lowercase RFC 4122 UUID.');
-        }
+		}
 
         return self::META_PREFIX . str_replace('-', '', $viewId);
-    }
+	}
 }
