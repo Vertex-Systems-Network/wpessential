@@ -58,9 +58,11 @@ final class AdminColumnsPersonalPreferenceAbilityWiringTest extends TestCase
         );
         self::assertIsString($handler);
 
-        self::assertStringContainsString("public const ABILITY_LOAD = 'wpessential/admin-columns/personal-preference-load'", $handler);
-        self::assertStringContainsString("public const ABILITY_SAVE = 'wpessential/admin-columns/personal-preference-save'", $handler);
-        self::assertStringContainsString("public const ABILITY_RESET = 'wpessential/admin-columns/personal-preference-reset'", $handler);
+        $normalizedDeclarations = preg_replace('/\\s+/', ' ', $handler);
+        self::assertIsString($normalizedDeclarations);
+        self::assertStringContainsString("public const ABILITY_LOAD = 'wpessential/admin-columns/personal-preference-load'", $normalizedDeclarations);
+        self::assertStringContainsString("public const ABILITY_SAVE = 'wpessential/admin-columns/personal-preference-save'", $normalizedDeclarations);
+        self::assertStringContainsString("public const ABILITY_RESET = 'wpessential/admin-columns/personal-preference-reset'", $normalizedDeclarations);
         self::assertStringContainsString('private string $action', $handler);
         self::assertStringContainsString('$context->principal->userId', $handler);
         self::assertStringContainsString("actorType !== 'user'", $handler);

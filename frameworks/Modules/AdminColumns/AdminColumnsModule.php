@@ -321,7 +321,7 @@ final class AdminColumnsModule implements ModuleInterface
             $ownerSources = $candidate;
         }
 
-		$ajax = $services->has( self::AJAX_DISPATCHER_SERVICE )
+		$ajax    = $services->has( self::AJAX_DISPATCHER_SERVICE )
 			? $services->get( self::AJAX_DISPATCHER_SERVICE )
 			: null;
 		$gateway = $services->has( self::AJAX_GATEWAY_SERVICE )
