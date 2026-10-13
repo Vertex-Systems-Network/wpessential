@@ -12,7 +12,7 @@
 `tools/quality/compare-phpcs-reports.php` takes two PHPCS `--report=json` results and optionally their distinct absolute workspace roots:
 
 ```bash
-composer quality:phpcs -- --report=json > baseline-phpcs.json || true
+vendor/bin/phpcs --standard=phpcs.xml.dist --report=json > baseline-phpcs.json || true
 # Repeat at the candidate ref, in its own checkout, using the same locked dependencies/configuration.
 php tools/quality/compare-phpcs-reports.php baseline-phpcs.json candidate-phpcs.json /absolute/baseline/checkout /absolute/candidate/checkout
 ```
