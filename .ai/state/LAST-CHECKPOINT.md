@@ -1,10 +1,9 @@
 # AI Durable Last Checkpoint
 
-## 2026-10-13 — RB-0125 Draft review postread authorization source staged
+## 2026-10-13 — RB-0125 read-only review authorization staged
 
-- Fresh main after RB-0124 terminal reconciliation: Issue #1409 / PR #1410, Governance and Architecture exact-head 2/2 PASS, protected merge `eec9fa7e1835a6cbdf830da7b873e10e8243d653`. No open PR at RB-0125 issue claim.
-- Source audit: read-only internal `DashboardWidgetPresetDraftPublishReviewService::inspect` preauthorizes initial read but formerly returned `review_candidate` without verifying caller privileges/current WordPress identity again after Draft and Published widget compilation. A capability revoked between those events could still receive a false positive review hint.
-- Issue #1411 / RB-0125 adds final canonical `isAuthorizedContext` recheck and PHPUnit deterministic pass-then-revoke test; no product write/publish. Seven authorized paths, exact-head CI/protected merge **PENDING**; no bounded PASS, runtime certification, provider, production or GA asserted. Park #858 admin, #947 independent review and #1102 formal P-006 authorization.
+- Fresh main after #1410: `eec9fa7e1835a6cbdf830da7b873e10e8243d653`. Issue #1411 / RB-0125 audits `inspect()` returning `review_candidate` without postread WordPress caller reauthorization.
+- Add canonical `isAuthorizedContext` guard before positive hint and deterministic PHPUnit pass-then-revoke check. Seven scoped paths; exact-head CI/merge **PENDING**. No publishing, public import, provider, production, GA or P-006 grant. Park #858/#947/#1102.
 
 ## 2026-10-13 — RB-0124 terminal verified; next safe source READY
 
