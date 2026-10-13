@@ -78,12 +78,149 @@ function reportSignatures(string $filename, ?string $root): array
     return $counts;
 }
 
-if (!in_array(count($argv), [3, 5], true)) {
-    fail('Usage: php compare-phpcs-reports.php BASELINE.json CANDIDATE.json [BASELINE_ROOT CANDIDATE_ROOT]');
+
+/**
+ * Inspect an exact Git diff without changing either checkout.
+ * @return array<string,array<int,bool>>
+ */
+function modifiedLines(string $baseSha, string $headSha): array
+{
+    foreach ([$baseSha, $headSha] as $sha) {
+        if (!preg_match('/^[a-f0-9]{40}$/D', $sha)) {
+            fail('Changed-line mode requires two immutable full commit SHAs.');
+        }
+    }
+    // Resolve the explicitly selected checkout, never assume the script resides in it.
+    // This also permits disposable Git repositories in the independent smoke tests.
+    $repository = getcwd();
+    if (!is_string($repository) || !file_exists($repository . '/.git')) {
+        fail('Run changed-line evidence from the selected Git checkout root.');
+    }
+    foreach ([$baseSha, $headSha] as $sha) {
+        $verify = proc_open(
+            ['git', '-C', $repository, 'cat-file', '-t', $sha],
+            [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
+            $verifyPipes
+        );
+        if (!is_resource($verify)) {
+            fail('Unable to verify Git commit identity.');
+        }
+        $kind = stream_get_contents($verifyPipes[1]);
+        stream_get_contents($verifyPipes[2]);
+        fclose($verifyPipes[1]);
+        fclose($verifyPipes[2]);
+        if (proc_close($verify) !== 0 || trim((string) $kind) !== 'commit') {
+            fail('Changed-line evidence requires existing commit objects, not blobs or missing refs.');
+        }
+    }
+    $command = [
+        'git', '-C', $repository, '-c', 'core.quotePath=false',
+        'diff', '--no-ext-diff', '--no-textconv', '--unified=0',
+        '--find-renames', $baseSha, $headSha, '--', 'wpessential.php', 'frameworks',
+    ];
+    $process = proc_open($command, [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+    if (!is_resource($process)) {
+        fail('Unable to launch read-only Git diff.');
+    }
+    $output = stream_get_contents($pipes[1]);
+    $error = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    if (proc_close($process) !== 0 || !is_string($output)) {
+        fail('Git diff failed; refusing unverified line evidence: ' . trim((string) $error));
+    }
+    $changed = [];
+    $currentPath = null;
+    $inHunk = false;
+    foreach (explode("\n", $output) as $line) {
+        if (str_starts_with($line, 'diff --git ')) {
+            $currentPath = null;
+            $inHunk = false;
+            continue;
+        }
+        if (!$inHunk && str_starts_with($line, '+++ ')) {
+            $currentPath = str_starts_with($line, '+++ b/') ? substr($line, 6) : null;
+            if ($currentPath !== null) {
+                $currentPath = relativePath($currentPath, null);
+            }
+            continue;
+        }
+        if (str_starts_with($line, '@@ ')) {
+            if (!preg_match('/^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+)(?:,([0-9]+))? @@/', $line, $parts)) {
+                fail('Unrecognized Git hunk; cannot verify modified lines.');
+            }
+            $inHunk = true;
+            if ($currentPath === null) {
+                continue;
+            }
+            $start = (int) $parts[1];
+            $count = isset($parts[2]) ? (int) $parts[2] : 1;
+            for ($n = $start; $n < $start + $count; ++$n) {
+                $changed[$currentPath][$n] = true;
+            }
+        }
+    }
+    return $changed;
 }
 
-$baseline = reportSignatures($argv[1], $argv[3] ?? null);
-$candidate = reportSignatures($argv[2], $argv[4] ?? null);
+/**
+ * Flag candidate PHPCS diagnostics on added/modified source lines.
+ * @param array<string,array<int,bool>> $changed
+ * @return list<array{path:string,line:int,type:string,source:string,message:string}>
+ */
+function changedLineDiagnostics(string $filename, ?string $root, array $changed): array
+{
+    try {
+        $data = json_decode((string) file_get_contents($filename), true, 512, JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        fail('Invalid changed-line PHPCS JSON: ' . $e->getMessage());
+    }
+    if (!is_array($data) || !isset($data['files']) || !is_array($data['files'])) {
+        fail('Changed-line PHPCS report files are missing.');
+    }
+    $findings = [];
+    foreach ($data['files'] as $file => $entry) {
+        $path = relativePath((string) $file, $root);
+        foreach ($entry['messages'] as $diagnostic) {
+            $line = $diagnostic['line'] ?? null;
+            if (!is_int($line) || $line < 1) {
+                fail('Candidate PHPCS message is missing a valid line number: ' . $path);
+            }
+            if (isset($changed[$path][$line])) {
+                $findings[] = [
+                    'path' => $path,
+                    'line' => $line,
+                    'type' => $diagnostic['type'],
+                    'source' => $diagnostic['source'],
+                    'message' => $diagnostic['message'],
+                ];
+            }
+        }
+    }
+    usort($findings, static fn (array $a, array $b): int =>
+        [$a['path'], $a['line'], $a['type'], $a['source'], $a['message']]
+        <=> [$b['path'], $b['line'], $b['type'], $b['source'], $b['message']]
+    );
+    return $findings;
+}
+
+$arguments = array_slice($argv, 1);
+$changedLineMode = false;
+if (count($arguments) >= 5 && $arguments[count($arguments) - 3] === '--changed-lines') {
+    $changedLineMode = true;
+    $baseSha = $arguments[count($arguments) - 2];
+    $headSha = $arguments[count($arguments) - 1];
+    $arguments = array_slice($arguments, 0, -3);
+}
+if (!in_array(count($arguments), [2, 4], true)) {
+    fail('Usage: php compare-phpcs-reports.php BASELINE.json CANDIDATE.json [BASELINE_ROOT CANDIDATE_ROOT] [--changed-lines BASE_SHA HEAD_SHA]');
+}
+
+$baseline = reportSignatures($arguments[0], $arguments[2] ?? null);
+$candidate = reportSignatures($arguments[1], $arguments[3] ?? null);
+$changedLineFindings = $changedLineMode
+    ? changedLineDiagnostics($arguments[1], $arguments[3] ?? null, modifiedLines($baseSha, $headSha))
+    : [];
 $regressions = [];
 $resolutions = [];
 foreach (array_unique(array_merge(array_keys($baseline), array_keys($candidate))) as $key) {
@@ -97,14 +234,21 @@ foreach (array_unique(array_merge(array_keys($baseline), array_keys($candidate))
 }
 
 $result = [
-    'classification' => $regressions === [] ? 'NO_SIGNATURE_COUNT_INCREASE' : 'REGRESSIONS_DETECTED',
+    'classification' => $regressions !== [] ? 'REGRESSIONS_DETECTED'
+        : ($changedLineFindings !== [] ? 'CHANGED_LINE_VIOLATIONS' : 'NO_SIGNATURE_COUNT_INCREASE'),
     'baseline_messages' => array_sum(array_column($baseline, 'count')),
     'candidate_messages' => array_sum(array_column($candidate, 'count')),
     'added_count' => array_sum(array_column($regressions, 'added')),
     'removed_count' => array_sum(array_column($resolutions, 'removed')),
     'regressions' => $regressions,
     'resolutions' => $resolutions,
-    'note' => 'Diagnostic-only signature counts, not line-level/new-code proof; full-tree PHPCS remains mandatory.',
+    'note' => 'Diagnostic-only evidence; full-tree PHPCS remains mandatory. Input reports and their provenance are not authenticated.',
 ];
+if ($changedLineMode) {
+    $result['changed_line_violations_count'] = count($changedLineFindings);
+    $result['changed_line_violations'] = $changedLineFindings;
+    $result['base_sha'] = $baseSha;
+    $result['head_sha'] = $headSha;
+}
 echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . PHP_EOL;
-exit($regressions === [] ? 0 : 1);
+exit($regressions === [] && $changedLineFindings === [] ? 0 : 1);
