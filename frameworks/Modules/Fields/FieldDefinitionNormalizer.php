@@ -46,7 +46,7 @@ final class FieldDefinitionNormalizer
         $descriptor = $this->types->get($type);
 
         $settings = $field['settings'] ?? [];
-        if (!is_array($settings) || array_is_list($settings)) {
+        if (!is_array($settings) || ($settings !== [] && array_is_list($settings))) {
             throw new InvalidArgumentException('Field settings must be a named map.');
         }
         if ($preset instanceof FieldPresetDescriptor) {
