@@ -1,5 +1,10 @@
 # AI Durable Last Checkpoint
 
+## 2026-10-13 — RB-0125 read-only review authorization staged
+
+- Fresh main after #1410: `eec9fa7e1835a6cbdf830da7b873e10e8243d653`. Issue #1411 / RB-0125 audits `inspect()` returning `review_candidate` without postread WordPress caller reauthorization.
+- Add canonical `isAuthorizedContext` guard before positive hint and deterministic PHPUnit pass-then-revoke check. Seven scoped paths; exact-head CI/merge **PENDING**. No publishing, public import, provider, production, GA or P-006 grant. Park #858/#947/#1102.
+
 ## 2026-10-13 — RB-0124 terminal verified; next safe source READY
 
 - Issue #1407 / PR #1408 exact implementation head `add1a6de5f4edcbf094797ac05934d6b4a2f2513` completed **15/15** GitHub exact-head checks: PHP Quality, Governance, Distributable, Architecture, pinned WP7.1/PHP8.2/MySQL8.4 two-site Multisite Runtime Isolation and 10-cell Platform Compatibility; 8 allowed files, zero unresolved reviews; protected merge `2d884d549b60fb4354149337b079556b407db6c2`. Issue #1407 closed.

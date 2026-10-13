@@ -41,6 +41,28 @@ final class DashboardWidgetPresetDraftPublishReviewServiceTest extends TestCase
         self::assertSame(DefinitionStatus::Draft, $repo->get(self::DRAFT_ID)?->status);
     }
 
+    public function testPrivilegeRevokedBetweenInitialReadAndReviewResponseNeverReturnsCandidate(): void
+    {
+        $repo = $this->repo();
+        $draft = $this->draft();
+        $repo->save($draft);
+        $beforeWidget = $repo->get(self::WIDGET_ID);
+
+        // First check succeeds, then the canonical capability checker revokes
+        // manage_options during the read-only review. Never emit a positive
+        // review hint after the caller loses authority.
+        self::assertSame(
+            ['status' => 'forbidden', 'publish_authorized' => false],
+            $this->service($repo, true, true)->inspect(
+                $this->context(),
+                self::DRAFT_ID,
+                $draft->computedChecksum(),
+            ),
+        );
+        self::assertSame($draft, $repo->get(self::DRAFT_ID));
+        self::assertSame($beforeWidget, $repo->get(self::WIDGET_ID));
+    }
+
     public function testStaleOrInvalidChecksumNeverApprovesReview(): void
     {
         $repo = $this->repo();
@@ -219,12 +241,22 @@ final class DashboardWidgetPresetDraftPublishReviewServiceTest extends TestCase
     private function service(
         InMemoryDefinitionRepository $repo,
         bool $allowed = true,
+        bool $revokeAfterFirstCheck = false,
     ): DashboardWidgetPresetDraftPublishReviewService {
-        $capability = new class($allowed) implements CapabilityCheckerInterface {
-            public function __construct(private bool $allowed) {}
+        $capability = new class($allowed, $revokeAfterFirstCheck) implements CapabilityCheckerInterface {
+            private int $checks = 0;
+
+            public function __construct(
+                private bool $allowed,
+                private bool $revokeAfterFirstCheck,
+            ) {}
+
             public function can(ExecutionContext $context, string $capability): bool
             {
+                ++$this->checks;
+
                 return $this->allowed
+                    && (!$this->revokeAfterFirstCheck || $this->checks === 1)
                     && $capability === 'manage_options'
                     && $context->principal->userId === 9;
             }

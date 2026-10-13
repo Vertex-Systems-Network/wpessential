@@ -77,6 +77,14 @@ final readonly class DashboardWidgetPresetDraftPublishReviewService
             return self::result('invalid_catalog');
         }
 
+        // Authorization can change while Draft and Published widget state is
+        // read/compiled. A pre-read capability check cannot justify a positive
+        // review hint after the WordPress user/site/network or privilege drifts.
+        // Reuse the exact internal-only caller gate; never publish or write.
+        if (!$this->draftImporter->isAuthorizedContext($context)) {
+            return self::result('forbidden');
+        }
+
         // A transient eligibility finding is NOT a grant or mutation token.
         return self::result('review_candidate');
     }

@@ -3,7 +3,7 @@
   "policy_id": "GOV-AI-NATIVE-RUNNER-BENCHMARK-001",
   "status": "ACTIVE",
   "source_issue": "#1325",
-  "anchor_main_sha": "2d884d549b60fb4354149337b079556b407db6c2",
+  "anchor_main_sha": "eec9fa7e1835a6cbdf830da7b873e10e8243d653",
   "purpose": "Central registry for material runner-dependent tasks. Default eligible work is accumulated and deduplicated for one final consolidated runner batch instead of being repeatedly executed during normal development.",
   "default_disposition": "DEFER_FINAL_BATCH",
   "runner_task_definition": [
@@ -3876,9 +3876,33 @@
         "Verified exact head add1a6de5f4edcbf094797ac05934d6b4a2f2513 15/15 GitHub check-runs success: PHP Quality, Governance, Architecture, Distributable, pinned real WordPress two-site Multisite Isolation and 10-cell Platform Compatibility; 8 authorized files, zero unresolved review threads, protected merge 2d884d549b60fb4354149337b079556b407db6c2."
       ],
       "note": "PASS_DASHBOARD_DRAFT_POSTCREATE_AUTH_RECHECK_V1 bounded source/real WP verification only; one Draft can persist after drift but no false success, public import, publishing, provider, production, full parity or GA."
+    },
+    {
+      "id": "RB-0125",
+      "source": "Issue #1411 / PR pending",
+      "category": "DASHBOARD_DRAFT_REVIEW_POSTREAD_AUTH_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "PHP Quality PHPCS/PHPStan/PHPUnit; Governance Gate; Architecture Guards; Distributable Package; 10-cell Platform Compatibility and path-applicable security tests",
+      "environment": "agent/rb0125-draft-review-postread-authorization-v1 from main eec9fa7e1835a6cbdf830da7b873e10e8243d653",
+      "dependencies": [
+        "RB-0124 terminal PASS",
+        "PR #1410 terminal shared truth"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001, Issue #1411 exact seven-file read-only source/unit/AI scope; no provider/live/production/release",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "dashboard-widgets|draft-review-postread-authorization|issue1411|exact-head",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Final canonical WordPress caller capability/identity recheck added before review_candidate",
+        "Deterministic pass-then-revoke PHPUnit test staged, full exact-head CI pending"
+      ],
+      "note": "No PASS until exact-head required checks and protected merge; read-only review hint only, not publishing/GA."
     }
   ],
-  "last_reconciled_issue": "#1409",
+  "last_reconciled_issue": "#1411",
   "last_reconciled_policy": "GOV-AI-NATIVE-TIMEOUT-RESILIENCE-001 + mandatory README progress reconciliation",
   "workflow_policy": {
     "id": "GOV-AI-NATIVE-FAST-DELIVERY-001",
