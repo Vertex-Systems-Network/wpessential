@@ -37,6 +37,14 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 ## Current AI-Native Development Progress
 
+### Local PHPUnit and WPCS quality recovery — 2026-10-13
+
+- **[PR #1416](https://github.com/Vertex-Systems-Network/wpessential/pull/1416) / [Issue #1417](https://github.com/Vertex-Systems-Network/wpessential/issues/1417)** — **ACTIVE / NOT MERGE-READY**; no production, publication or GA. Tested source commit `bc330aa104b60a300133409af21162b055312643` preceded this documentation update.
+- **Local PHPUnit recovery (PHP 8.5): `██████████ 100% — 1,421 / 1,421 tests PASS, 7,489 assertions`**. This metric refers to the recovered local test suite, *not* completion of all 56 product surfaces.
+- **New WPCS regression reduction: `███████░░░ 74.1% — 100 / 135 excess PHPCS errors remediated`**. Same PHPCS version/config: pristine main `129,898 errors / 5,215 warnings`; tested branch `129,933 errors / 5,215 warnings`, still **+35 errors**. Legacy baseline remains unresolved. The `frameworks/functions.php` scoped auto-fix reduced its errors from 106 to 6, with PHP lint and PHPUnit passing.
+- **Whole-tree PHPStan PHP 8.5:** 458 diagnostics on pristine main and 458 on repaired branch, with identical diagnostic content. Both FAIL; PHP 8.2 required-path verification remains gated by strict WPCS.
+- **Latest tested-source CI (before this README-only commit): 7/11 PASS, 4/11 FAIL**, specifically PHP Quality, Architecture, CPT, Taxonomy. Maintain required rulesets and full quality evidence; no bypass or protected merge. All checks must be re-evaluated for the eventual exact PR head.
+
 **Autonomous execution operating rule:** Within the recorded source-development grant, AI resolves routine technical errors and proceeds to the next independent safe milestone without asking the owner to debug or reapprove. Privileged/production gates remain enforced. At each meaningful Supervisor integration, refresh the verified milestone progress bars below and the active evidence/next gate; no percentage is promoted without an audited denominator. See [AGENTS.md](AGENTS.md#autonomous-continuity-and-no-repeat-question-policy).
 
 
