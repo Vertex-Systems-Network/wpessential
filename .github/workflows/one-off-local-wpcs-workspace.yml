@@ -1,0 +1,46 @@
+name: One-off local WPCS workspace export
+on:
+  push:
+    branches: [agent/wpcs-offline-local-remediation-20261015]
+permissions:
+  contents: read
+jobs:
+  export-source-toolchain:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+      - name: Install locked WPCS toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer install --no-interaction --prefer-dist --no-progress
+          test -x vendor/bin/phpcs
+          test -x vendor/bin/phpcbf
+          vendor/bin/phpcs --version
+          vendor/bin/phpcbf --version
+          test -d .git
+      - name: Pack exact source, tooling and Git metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "$(git rev-parse HEAD)" > SOURCE_SHA.txt
+          tar -czf /tmp/wpessential-source-wpcs-toolchain.tar.gz \
+            --exclude='./.git/hooks' --exclude='./.git/logs' \
+            --exclude='./node_modules' --exclude='./.wpcs-remediation' .
+          ls -lh /tmp/wpessential-source-wpcs-toolchain.tar.gz
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wpessential-source-and-wpcs-toolchain
+          path: /tmp/wpessential-source-wpcs-toolchain.tar.gz
+          if-no-files-found: error
+          retention-days: 2
