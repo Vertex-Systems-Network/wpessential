@@ -6,7 +6,7 @@ namespace WPEssential\Platform\Abilities;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use RuntimeException;
@@ -19,76 +19,76 @@ use WPEssential\Platform\Auth\PolicyEngine;
 
 final class AbilityRegistry
 {
-    /** @var array<string, array{descriptor: AbilityDescriptor, handler: AbilityHandlerInterface}> */
-    private array $abilities = [];
+	/** @var array<string, array{descriptor: AbilityDescriptor, handler: AbilityHandlerInterface}> */
+	private array $abilities = [];
 
-    public function __construct(private readonly PolicyEngine $policy) {}
+	public function __construct(private readonly PolicyEngine $policy) {}
 
-    public function register(AbilityDescriptor $descriptor, AbilityHandlerInterface $handler): void
-    {
-        if (isset($this->abilities[$descriptor->name])) {
-            throw new RuntimeException(sprintf('Ability "%s" is already registered.', $descriptor->name));
-        }
-        $this->abilities[$descriptor->name] = ['descriptor' => $descriptor, 'handler' => $handler];
-    }
+	public function register(AbilityDescriptor $descriptor, AbilityHandlerInterface $handler): void
+	{
+		if (isset($this->abilities[$descriptor->name])) {
+			throw new RuntimeException(sprintf('Ability "%s" is already registered.', $descriptor->name));
+		}
+		$this->abilities[$descriptor->name] = ['descriptor' => $descriptor, 'handler' => $handler];
+	}
 
-    public function descriptor(string $name): ?AbilityDescriptor
-    {
-        return $this->abilities[$name]['descriptor'] ?? null;
-    }
+	public function descriptor(string $name): ?AbilityDescriptor
+	{
+		return $this->abilities[$name]['descriptor'] ?? null;
+	}
 
-    /** @return list<AbilityDescriptor> */
-    public function descriptors(): array
-    {
-        return array_values(array_map(
-            static fn (array $entry): AbilityDescriptor => $entry['descriptor'],
-            $this->abilities,
-        ));
-    }
+	/** @return list<AbilityDescriptor> */
+	public function descriptors(): array
+	{
+		return array_values(array_map(
+			static fn (array $entry): AbilityDescriptor => $entry['descriptor'],
+			$this->abilities,
+		));
+	}
 
-    /** @param array<string,mixed> $input */
-    public function authorize(string $name, ExecutionContext $context, array $input = []): PolicyDecision
-    {
-        $entry = $this->abilities[$name] ?? null;
-        if ($entry === null) {
-            return PolicyDecision::deny('ability_not_registered');
-        }
+	/** @param array<string,mixed> $input */
+	public function authorize(string $name, ExecutionContext $context, array $input = []): PolicyDecision
+	{
+		$entry = $this->abilities[$name] ?? null;
+		if ($entry === null) {
+			return PolicyDecision::deny('ability_not_registered');
+		}
 
-        $descriptor = $entry['descriptor'];
-        if (!$descriptor->allows($context->channel)) {
-            return PolicyDecision::deny('channel_not_exposed');
-        }
+		$descriptor = $entry['descriptor'];
+		if (!$descriptor->allows($context->channel)) {
+			return PolicyDecision::deny('channel_not_exposed');
+		}
 
-        $decision = $this->policy->authorize(new AuthorizationRequest(
-            context: $context,
-            ability: $descriptor->name,
-            capability: $descriptor->capability,
-        ));
-        if (!$decision->allowed) {
-            return $decision;
-        }
+		$decision = $this->policy->authorize(new AuthorizationRequest(
+			context: $context,
+			ability: $descriptor->name,
+			capability: $descriptor->capability,
+		));
+		if (!$decision->allowed) {
+			return $decision;
+		}
 
-        $handler = $entry['handler'];
-        if ($handler instanceof InputAuthorizingAbilityHandlerInterface) {
-            return $handler->authorizeInput($input, $context);
-        }
+		$handler = $entry['handler'];
+		if ($handler instanceof InputAuthorizingAbilityHandlerInterface) {
+			return $handler->authorizeInput($input, $context);
+		}
 
-        return $decision;
-    }
+		return $decision;
+	}
 
-    /** @param array<string, mixed> $input */
-    public function execute(string $name, array $input, ExecutionContext $context): mixed
-    {
-        $entry = $this->abilities[$name] ?? null;
-        if ($entry === null) {
-            throw new RuntimeException(sprintf('Ability "%s" is not registered.', $name));
-        }
+	/** @param array<string, mixed> $input */
+	public function execute(string $name, array $input, ExecutionContext $context): mixed
+	{
+		$entry = $this->abilities[$name] ?? null;
+		if ($entry === null) {
+			throw new RuntimeException(sprintf('Ability "%s" is not registered.', $name));
+		}
 
-        $decision = $this->authorize($name, $context, $input);
-        if (!$decision->allowed) {
-            throw new RuntimeException(sprintf('Ability "%s" denied: %s.', $name, $decision->reason));
-        }
+		$decision = $this->authorize($name, $context, $input);
+		if (!$decision->allowed) {
+			throw new RuntimeException(sprintf('Ability "%s" denied: %s.', $name, $decision->reason));
+		}
 
-        return $entry['handler']->handle($input, $context);
-    }
+		return $entry['handler']->handle($input, $context);
+	}
 }
