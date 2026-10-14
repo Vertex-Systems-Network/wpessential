@@ -5,113 +5,113 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Registrations;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use Throwable;
 
 final class TaxonomyRuntimeRegistrar
 {
-    private bool $processed = false;
+	private bool $processed = false;
 
-    /** @var list<string> */
-    private array $registered = [];
+	/** @var list<string> */
+	private array $registered = [];
 
-    /** @var list<string> */
-    private array $conflicts = [];
+	/** @var list<string> */
+	private array $conflicts = [];
 
-    /** @var array<string, string> */
-    private array $errors = [];
+	/** @var array<string, string> */
+	private array $errors = [];
 
-    private readonly TaxonomyRuntimeProviderRegistry $providerRegistry;
+	private readonly TaxonomyRuntimeProviderRegistry $providerRegistry;
 
-    public function __construct(
-        private readonly RegistrationRuntimeLoader $runtime,
-        ?TaxonomyRuntimeProviderRegistry $providers = null,
-    ) {
-        $this->providerRegistry = $providers ?? new TaxonomyRuntimeProviderRegistry();
-    }
+	public function __construct(
+		private readonly RegistrationRuntimeLoader $runtime,
+		?TaxonomyRuntimeProviderRegistry $providers = null,
+	) {
+		$this->providerRegistry = $providers ?? new TaxonomyRuntimeProviderRegistry();
+	}
 
-    public function providers(): TaxonomyRuntimeProviderRegistry
-    {
-        return $this->providerRegistry;
-    }
+	public function providers(): TaxonomyRuntimeProviderRegistry
+	{
+		return $this->providerRegistry;
+	}
 
-    public function register(): void
-    {
-        if (function_exists('add_action')) {
-            add_action('init', [$this, 'registerActive'], 21);
-        }
-    }
+	public function register(): void
+	{
+		if (function_exists('add_action')) {
+			add_action('init', [$this, 'registerActive'], 21);
+		}
+	}
 
-    public function registerActive(): void
-    {
-        if ($this->processed) {
-            return;
-        }
-        $this->processed = true;
+	public function registerActive(): void
+	{
+		if ($this->processed) {
+			return;
+		}
+		$this->processed = true;
 
-        if (!function_exists('taxonomy_exists') || !function_exists('register_taxonomy')) {
-            $this->errors['runtime'] = 'WordPress taxonomy APIs are unavailable.';
-            return;
-        }
+		if (!function_exists('taxonomy_exists') || !function_exists('register_taxonomy')) {
+			$this->errors['runtime'] = 'WordPress taxonomy APIs are unavailable.';
+			return;
+		}
 
-        foreach ($this->runtime->forKind(RegistrationKind::Taxonomy) as $key => $entry) {
-            $payload = $entry['payload'] ?? null;
-            if (!is_array($payload)) {
-                $this->errors[$key] = 'Compiled taxonomy payload is invalid.';
-                continue;
-            }
+		foreach ($this->runtime->forKind(RegistrationKind::Taxonomy) as $key => $entry) {
+			$payload = $entry['payload'] ?? null;
+			if (!is_array($payload)) {
+				$this->errors[$key] = 'Compiled taxonomy payload is invalid.';
+				continue;
+			}
 
-            $objectTypes = $payload['object_types'] ?? null;
-            $args = $payload['args'] ?? null;
-            $providerIds = $payload['provider_ids'] ?? [];
-            if (!is_array($objectTypes)
-                || !array_is_list($objectTypes)
-                || $objectTypes === []
-                || !is_array($args)
-                || !is_array($providerIds)
-                || ($providerIds !== [] && array_is_list($providerIds))
-            ) {
-                $this->errors[$key] = 'Compiled taxonomy registration contract is invalid.';
-                continue;
-            }
-            if (taxonomy_exists($key)) {
-                $this->conflicts[] = $key;
-                continue;
-            }
+			$objectTypes = $payload['object_types'] ?? null;
+			$args = $payload['args'] ?? null;
+			$providerIds = $payload['provider_ids'] ?? [];
+			if (!is_array($objectTypes)
+				|| !array_is_list($objectTypes)
+				|| $objectTypes === []
+				|| !is_array($args)
+				|| !is_array($providerIds)
+				|| ($providerIds !== [] && array_is_list($providerIds))
+			) {
+				$this->errors[$key] = 'Compiled taxonomy registration contract is invalid.';
+				continue;
+			}
+			if (taxonomy_exists($key)) {
+				$this->conflicts[] = $key;
+				continue;
+			}
 
-            try {
-                $args = $this->providerRegistry->apply($args, $providerIds);
-            } catch (Throwable $exception) {
-                $this->errors[$key] = $exception->getMessage();
-                continue;
-            }
+			try {
+				$args = $this->providerRegistry->apply($args, $providerIds);
+			} catch (Throwable $exception) {
+				$this->errors[$key] = $exception->getMessage();
+				continue;
+			}
 
-            $result = register_taxonomy($key, $objectTypes, $args);
-            if (function_exists('is_wp_error') && is_wp_error($result)) {
-                $this->errors[$key] = $result->get_error_message();
-                continue;
-            }
-            $this->registered[] = $key;
-        }
-    }
+			$result = register_taxonomy($key, $objectTypes, $args);
+			if (function_exists('is_wp_error') && is_wp_error($result)) {
+				$this->errors[$key] = $result->get_error_message();
+				continue;
+			}
+			$this->registered[] = $key;
+		}
+	}
 
-    /** @return list<string> */
-    public function registered(): array
-    {
-        return $this->registered;
-    }
+	/** @return list<string> */
+	public function registered(): array
+	{
+		return $this->registered;
+	}
 
-    /** @return list<string> */
-    public function conflicts(): array
-    {
-        return $this->conflicts;
-    }
+	/** @return list<string> */
+	public function conflicts(): array
+	{
+		return $this->conflicts;
+	}
 
-    /** @return array<string, string> */
-    public function errors(): array
-    {
-        return $this->errors;
-    }
+	/** @return array<string, string> */
+	public function errors(): array
+	{
+		return $this->errors;
+	}
 }
