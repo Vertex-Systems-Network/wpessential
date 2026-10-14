@@ -59,7 +59,7 @@ final readonly class DashboardWidgetPresetResolver {
 				if ( $preset->isRoleDefault() && $this->roles->hasAnyRole( $context, $preset->roles ) ) {
 					$role_matches[] = $preset;
 				}
-                if ($preset->networkDefault) {
+				if ($preset->networkDefault) {
 					$network_defaults[] = $preset;
 				}
 			}
