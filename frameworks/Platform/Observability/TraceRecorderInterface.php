@@ -6,12 +6,12 @@ namespace WPEssential\Platform\Observability;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface TraceRecorderInterface
 {
-    public function start(string $correlationId): FlowTrace;
+	public function start(string $correlationId): FlowTrace;
 
-    public function commit(FlowTrace $trace): void;
+	public function commit(FlowTrace $trace): void;
 }
