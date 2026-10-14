@@ -33,8 +33,8 @@ final class CustomPostTypeModule implements ModuleInterface
 {
 	private const CAPABILITY = 'manage_options';
 
-    public function manifest(): ModuleManifest
-    {
+	public function manifest(): ModuleManifest
+	{
 		return new ModuleManifest(
 			id: 'custom-post-types',
 			name: 'Custom Post Types Builder',
@@ -43,60 +43,60 @@ final class CustomPostTypeModule implements ModuleInterface
 		);
 	}
 
-    public function register(ServiceRegistryInterface $services): void
-    {
-        $definitions = $services->get('platform.definitions');
-        $providers = $services->get('platform.registrations.providers');
-        $abilities = $services->get('platform.abilities');
-        $abilityBridge = $services->get('platform.abilities.wordpress');
-        $abilityContexts = $services->get('platform.abilities.contexts');
-        $ajaxRoutes = $services->get('platform.ajax.routes');
-        if (!$definitions instanceof DefinitionRepositoryInterface) {
-            throw new LogicException('Custom Post Types requires the shared Definition Repository.');
+	public function register(ServiceRegistryInterface $services): void
+	{
+		$definitions = $services->get('platform.definitions');
+		$providers = $services->get('platform.registrations.providers');
+		$abilities = $services->get('platform.abilities');
+		$abilityBridge = $services->get('platform.abilities.wordpress');
+		$abilityContexts = $services->get('platform.abilities.contexts');
+		$ajaxRoutes = $services->get('platform.ajax.routes');
+		if (!$definitions instanceof DefinitionRepositoryInterface) {
+			throw new LogicException('Custom Post Types requires the shared Definition Repository.');
 		}
-        if (!$providers instanceof RegistrationDefinitionProviderRegistry) {
-            throw new LogicException('Custom Post Types requires the shared registration provider registry.');
+		if (!$providers instanceof RegistrationDefinitionProviderRegistry) {
+			throw new LogicException('Custom Post Types requires the shared registration provider registry.');
 		}
-        if (!$abilities instanceof AbilityRegistry) {
-            throw new LogicException('Custom Post Types requires the shared Ability Registry.');
+		if (!$abilities instanceof AbilityRegistry) {
+			throw new LogicException('Custom Post Types requires the shared Ability Registry.');
 		}
-        if (!$abilityBridge instanceof WordPressAbilityBridge) {
-            throw new LogicException('Custom Post Types requires the shared WordPress Ability bridge.');
+		if (!$abilityBridge instanceof WordPressAbilityBridge) {
+			throw new LogicException('Custom Post Types requires the shared WordPress Ability bridge.');
 		}
-        if (!$abilityContexts instanceof WordPressExecutionContextFactory) {
-            throw new LogicException('Custom Post Types requires the shared WordPress execution context factory.');
+		if (!$abilityContexts instanceof WordPressExecutionContextFactory) {
+			throw new LogicException('Custom Post Types requires the shared WordPress execution context factory.');
 		}
-        if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
-            throw new LogicException('Custom Post Types requires the shared AJAX route registry.');
+		if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
+			throw new LogicException('Custom Post Types requires the shared AJAX route registry.');
 		}
 
-        $projector = new CustomPostTypeDefinitionProjector();
-        $provider = new CustomPostTypeRegistrationProvider($definitions, $projector);
-        $validation = new CustomPostTypeValidationService($definitions, $projector);
-        $providers->register($provider);
-        $services->set('module.custom-post-types.projector', $projector);
-        $services->set('module.custom-post-types.registration-provider', $provider);
-        $services->set('module.custom-post-types.validation', $validation);
+		$projector = new CustomPostTypeDefinitionProjector();
+		$provider = new CustomPostTypeRegistrationProvider($definitions, $projector);
+		$validation = new CustomPostTypeValidationService($definitions, $projector);
+		$providers->register($provider);
+		$services->set('module.custom-post-types.projector', $projector);
+		$services->set('module.custom-post-types.registration-provider', $provider);
+		$services->set('module.custom-post-types.validation', $validation);
 
-        $this->registerAbilities($abilities, $abilityBridge, $definitions, $projector, $validation);
-        $this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
+		$this->registerAbilities($abilities, $abilityBridge, $definitions, $projector, $validation);
+		$this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
 	}
 
-    public function boot(ServiceRegistryInterface $services): void
-    {
-        $abilities = $services->get('platform.abilities');
-        $contexts = $services->get('platform.abilities.contexts');
-        $ajax = $services->get('platform.ajax.dispatcher');
-        $gateway = $services->get('platform.ajax.gateway');
-        $assets = $services->get('platform.admin.assets');
+	public function boot(ServiceRegistryInterface $services): void
+	{
+		$abilities = $services->get('platform.abilities');
+		$contexts = $services->get('platform.abilities.contexts');
+		$ajax = $services->get('platform.ajax.dispatcher');
+		$gateway = $services->get('platform.ajax.gateway');
+		$assets = $services->get('platform.admin.assets');
 
-        if (!$abilities instanceof AbilityRegistry
-            || !$contexts instanceof WordPressExecutionContextFactory
-            || !$ajax instanceof AjaxDispatcher
-            || !$gateway instanceof WordPressAjaxGateway
-            || !$assets instanceof AdminAssetManifest
+		if (!$abilities instanceof AbilityRegistry
+			|| !$contexts instanceof WordPressExecutionContextFactory
+			|| !$ajax instanceof AjaxDispatcher
+			|| !$gateway instanceof WordPressAjaxGateway
+			|| !$assets instanceof AdminAssetManifest
 		) {
-            throw new LogicException('Custom Post Types admin requires the shared admin, Ability, and AJAX services.');
+			throw new LogicException('Custom Post Types admin requires the shared admin, Ability, and AJAX services.');
 		}
 
 		$admin = new CustomPostTypeAdminController(
@@ -106,19 +106,19 @@ final class CustomPostTypeModule implements ModuleInterface
 			assets: $assets,
 			ajaxAction: $gateway->action(),
 		);
-        $services->set('module.custom-post-types.admin', $admin);
+		$services->set('module.custom-post-types.admin', $admin);
 		$admin->register();
 	}
 
-    private function registerAbilities(
+	private function registerAbilities(
 		AbilityRegistry $abilities,
 		WordPressAbilityBridge $bridge,
 		DefinitionRepositoryInterface $definitions,
 		CustomPostTypeDefinitionProjector $projector,
 		CustomPostTypeValidationService $validation,
 	): void {
-        $channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
-        $outputSchema = ['type' => 'object'];
+		$channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
+		$outputSchema = ['type' => 'object'];
 
 		$this->registerAbility(
 			$abilities,
@@ -129,8 +129,8 @@ final class CustomPostTypeModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-                inputSchema: ['type' => 'object'],
-                outputSchema: $outputSchema,
+				inputSchema: ['type' => 'object'],
+				outputSchema: $outputSchema,
 			),
 			new CustomPostTypeAbilityHandler(
 				$definitions,
@@ -151,12 +151,12 @@ final class CustomPostTypeModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['id'],
-                    'properties' => ['id' => ['type' => 'string']],
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['id'],
+					'properties' => ['id' => ['type' => 'string']],
 				],
-                outputSchema: $outputSchema,
+				outputSchema: $outputSchema,
 			),
 			new CustomPostTypeAbilityHandler(
 				$definitions,
@@ -177,17 +177,17 @@ final class CustomPostTypeModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['payload'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'payload' => ['type' => 'object'],
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['payload'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'payload' => ['type' => 'object'],
 					],
 				],
-                outputSchema: $outputSchema,
+				outputSchema: $outputSchema,
 			),
-            new CustomPostTypeValidationAbilityHandler($validation),
+			new CustomPostTypeValidationAbilityHandler($validation),
 			'Validate custom post type',
 			'Preflights a Custom Post Type candidate without mutating canonical definitions or runtime registration.',
 		);
@@ -201,17 +201,17 @@ final class CustomPostTypeModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: true,
 				channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['payload'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-                        'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
-                        'payload' => ['type' => 'object'],
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['payload'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+						'payload' => ['type' => 'object'],
 					],
 				],
-                outputSchema: $outputSchema,
+				outputSchema: $outputSchema,
 			),
 			new CustomPostTypeAbilityHandler(
 				$definitions,
@@ -232,16 +232,16 @@ final class CustomPostTypeModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: true,
 				channels: $channels,
-                inputSchema: [
-                    'type' => 'object',
-                    'required' => ['id', 'expected_revision', 'status'],
-                    'properties' => [
-                        'id' => ['type' => 'string'],
-                        'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-                        'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+				inputSchema: [
+					'type' => 'object',
+					'required' => ['id', 'expected_revision', 'status'],
+					'properties' => [
+						'id' => ['type' => 'string'],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
 					],
 				],
-                outputSchema: $outputSchema,
+				outputSchema: $outputSchema,
 			),
 			new CustomPostTypeAbilityHandler(
 				$definitions,
@@ -254,7 +254,7 @@ final class CustomPostTypeModule implements ModuleInterface
 		);
 	}
 
-    private function registerAbility(
+	private function registerAbility(
 		AbilityRegistry $abilities,
 		WordPressAbilityBridge $bridge,
 		AbilityDescriptor $descriptor,
@@ -262,16 +262,16 @@ final class CustomPostTypeModule implements ModuleInterface
 		string $label,
 		string $description,
 	): void {
-        $abilities->register($descriptor, $handler);
-        $bridge->expose(new WordPressAbilityExposure(
+		$abilities->register($descriptor, $handler);
+		$bridge->expose(new WordPressAbilityExposure(
 			internalName: $descriptor->name,
 			label: $label,
 			description: $description,
 			showInRest: true,
-        ));
+		));
 	}
 
-    private function registerAjaxRoutes(
+	private function registerAjaxRoutes(
 		AjaxRouteRegistry $routes,
 		AbilityRegistry $abilities,
 		WordPressExecutionContextFactory $contexts,
@@ -318,21 +318,21 @@ final class CustomPostTypeModule implements ModuleInterface
 		);
 	}
 
-    private function registerAjaxRoute(
+	private function registerAjaxRoute(
 		AjaxRouteRegistry $routes,
 		AbilityRegistry $abilities,
 		WordPressExecutionContextFactory $contexts,
 		string $type,
-        string $abilityName,
+		string $abilityName,
 		NonceOperation $operation,
 	): void {
-        $routes->register(new AjaxRoute(
+		$routes->register(new AjaxRoute(
 			type: $type,
-            handler: new AbilityAjaxHandler($abilities, $abilityName, $contexts),
+			handler: new AbilityAjaxHandler($abilities, $abilityName, $contexts),
 			operation: $operation,
 			capability: self::CAPABILITY,
 			allowGuests: false,
 			requiresNonce: true,
-        ));
+		));
 	}
 }
