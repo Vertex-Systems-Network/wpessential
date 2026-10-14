@@ -7,7 +7,6 @@
 
 declare(strict_types=1);
 
-
 if ( ! defined( 'ABSPATH' ) && PHP_SAPI === 'cli' ) {
 	// Composer loads this file outside WordPress for CLI quality and test tools.
 	// Do not register WordPress wrappers during CLI tool bootstrap.
@@ -22,7 +21,11 @@ use WPEssential\Bootstrap\Plugin;
 use WPEssential\Platform\WordPress\Hooks\HookNames;
 
 if ( ! function_exists( 'wpessential_kernel' ) ) {
-	/** Return the active WPEssential kernel, if available. */
+	/**
+	 * Return the active WPEssential kernel, if available.
+	 *
+	 * @return \WPEssential\Kernel\Kernel|null Active kernel when available.
+	 */
 	function wpessential_kernel(): ?\WPEssential\Kernel\Kernel {
 		return Plugin::kernel();
 	}
