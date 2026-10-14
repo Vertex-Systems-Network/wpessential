@@ -1,0 +1,28 @@
+name: One-off Offline WordPress Runtime Dependencies
+on:
+  push:
+    branches:
+      - agent/offline-wp-runtime-dependencies-20261015
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Download Debian 13 PHP 8.4 and MariaDB packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          apt-get update
+          mkdir -p /tmp/wp-runtime-debs/partial
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --download-only             -o Dir::Cache::archives=/tmp/wp-runtime-debs             php8.4-cli php8.4-common php8.4-mysql php8.4-mbstring php8.4-xml             php8.4-curl php8.4-zip mariadb-server
+          find /tmp/wp-runtime-debs -maxdepth 1 -name '*.deb' -printf '%f %s bytes\n' | sort
+          test "$(find /tmp/wp-runtime-debs -maxdepth 1 -name '*.deb' | wc -l)" -ge 10
+      - name: Export offline packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-trixie-wordpress-offline-dependencies
+          path: /tmp/wp-runtime-debs/*.deb
+          if-no-files-found: error
+          retention-days: 1
