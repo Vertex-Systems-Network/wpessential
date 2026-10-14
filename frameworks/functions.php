@@ -1,4 +1,9 @@
 <?php
+/**
+ * Shared WordPress integration helper functions.
+ *
+ * @package WPEssential
+ */
 
 declare(strict_types=1);
 
