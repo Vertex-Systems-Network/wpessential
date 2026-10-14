@@ -10,6 +10,8 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 **Overall terminal milestone completion (equal-weight): `5 / 10 = 50%`.** Active/partial milestones: **3 / 10** (M6-M8). Full-parity/release milestones not promoted: **2 / 10** (M9-M10).
 
+**WPCS cleanup evidence (PR #1416):** Last completed full-tree PHPCS at `acb3482`: **102,648 errors / 5,133 warnings** versus original pinned pristine-main **129,898 / 5,215**: **27,250 errors removed, 20.98% of inherited WPCS error backlog cleared** (`██░░░░░░░░ 20.98%`). A further **11-source-file / 2,292 leading-indentation-line** batch awaits exact-head CI; these edits are **not counted as resolved diagnostics before verification**. WPCS remains a required failing gate; PHPStan/PHPUnit on the new head are not certified. Milestone bars remain unchanged; no merge, release, deployment, or governance bypass.
+
 **Quality recovery checkpoint (outside the 10-milestone completion score):** PHPUnit local repair PR [#1416](https://github.com/Vertex-Systems-Network/wpessential/pull/1416) remains **unmerged** while repository-wide WordPress Coding Standards fails; existing violations and source regressions are tracked by [#1417](https://github.com/Vertex-Systems-Network/wpessential/issues/1417). Diagnostic-only PHPCS report comparison is scoped in [#1418](https://github.com/Vertex-Systems-Network/wpessential/pull/1418); it neither replaces required checks nor promotes full parity, production deployment or GA. Milestone progress bars remain unchanged.
 
 | Milestone | Scope | Evidence-based progress | State | Current gate |
