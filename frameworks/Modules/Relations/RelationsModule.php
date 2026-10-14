@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Modules\Relations;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use LogicException;
@@ -31,17 +31,17 @@ use WPEssential\Platform\WordPress\Security\NonceOperation;
 
 final class RelationsModule implements ModuleInterface
 {
-    private const CAPABILITY = 'manage_options';
+	private const CAPABILITY = 'manage_options';
 
     public function manifest(): ModuleManifest
     {
-        return new ModuleManifest(
-            id: 'relations',
-            name: 'Relations',
-            version: '0.1.0',
-            edition: 'pro',
-        );
-    }
+		return new ModuleManifest(
+			id: 'relations',
+			name: 'Relations',
+			version: '0.1.0',
+			edition: 'pro',
+		);
+	}
 
     public function register(ServiceRegistryInterface $services): void
     {
@@ -55,9 +55,9 @@ final class RelationsModule implements ModuleInterface
             || !$bridge instanceof WordPressAbilityBridge
             || !$contexts instanceof WordPressExecutionContextFactory
             || !$ajaxRoutes instanceof AjaxRouteRegistry
-        ) {
+		) {
             throw new LogicException('Relations requires shared Definition, Ability, execution-context, and AJAX services.');
-        }
+		}
 
         $normalizer = new RelationDefinitionNormalizer();
         $endpointSupport = new RelationEndpointSupport();
@@ -69,108 +69,108 @@ final class RelationsModule implements ModuleInterface
         $services->set('module.relations.portability', $portability);
         $this->registerEdgePersistence($services);
 
-        $gateway = null;
+		$gateway = null;
         if ($services->has('module.relations.edge-gateway')) {
             $candidateGateway = $services->get('module.relations.edge-gateway');
             if (!$candidateGateway instanceof WpdbRelationEdgeGateway) {
                 throw new LogicException('Relations edge persistence service must use the canonical edge gateway.');
-            }
+			}
             $gateway = $candidateGateway;
-        }
+		}
 
         $definitionWrites = $definitions;
         if ($gateway instanceof WpdbRelationEdgeGateway) {
             $database = $services->get('platform.database');
             $scope = $services->get('module.relations.edge-scope');
             if (!$database instanceof DatabaseAdapterInterface || !$scope instanceof RelationEdgeScope) {
-                throw new LogicException(
-                    'Relations definition mutations require canonical edge database and scope services.',
-                );
-            }
+				throw new LogicException(
+					'Relations definition mutations require canonical edge database and scope services.',
+				);
+			}
             $definitionWrites = new RelationDefinitionMutationRepository(
-                $definitions,
-                $gateway,
-                $database,
-                $scope,
-            );
+				$definitions,
+				$gateway,
+				$database,
+				$scope,
+			);
             $services->set('module.relations.definition-writes', $definitionWrites);
-            $services->set(
-                'module.relations.query-consumer',
-                new RelationQueryConsumer(
-                    $definitions,
-                    $normalizer,
+			$services->set(
+				'module.relations.query-consumer',
+				new RelationQueryConsumer(
+					$definitions,
+					$normalizer,
                     new RelationQueryReadGateway($database, $scope),
-                    $scope,
-                ),
-            );
-        }
+					$scope,
+				),
+			);
+		}
 
         $handlers = [
             'list-definitions' => new RelationDefinitionAbilityHandler(
-                $definitions,
-                $normalizer,
-                $validation,
-                RelationDefinitionAbilityHandler::LIST,
-            ),
+				$definitions,
+				$normalizer,
+				$validation,
+				RelationDefinitionAbilityHandler::LIST,
+			),
             'get-definition' => new RelationDefinitionAbilityHandler(
-                $definitions,
-                $normalizer,
-                $validation,
-                RelationDefinitionAbilityHandler::GET,
-            ),
-            'validate-definition' => new RelationDefinitionAbilityHandler(
-                $definitions,
-                $normalizer,
-                $validation,
-                RelationDefinitionAbilityHandler::VALIDATE,
-            ),
+				$definitions,
+				$normalizer,
+				$validation,
+				RelationDefinitionAbilityHandler::GET,
+			),
+			'validate-definition' => new RelationDefinitionAbilityHandler(
+				$definitions,
+				$normalizer,
+				$validation,
+				RelationDefinitionAbilityHandler::VALIDATE,
+			),
             'save-definition' => new RelationDefinitionAbilityHandler(
                 $definitionWrites,
-                $normalizer,
-                $validation,
-                RelationDefinitionAbilityHandler::SAVE,
-            ),
+				$normalizer,
+				$validation,
+				RelationDefinitionAbilityHandler::SAVE,
+			),
             'status-definition' => new RelationDefinitionAbilityHandler(
-                $definitions,
-                $normalizer,
-                $validation,
-                RelationDefinitionAbilityHandler::STATUS,
-            ),
+				$definitions,
+				$normalizer,
+				$validation,
+				RelationDefinitionAbilityHandler::STATUS,
+			),
             'export-definitions' => new RelationPortabilityAbilityHandler(
-                $portability,
-                RelationPortabilityAbilityHandler::EXPORT,
-            ),
+				$portability,
+				RelationPortabilityAbilityHandler::EXPORT,
+			),
             'import-definitions' => new RelationPortabilityAbilityHandler(
-                $portability,
-                RelationPortabilityAbilityHandler::IMPORT,
-            ),
+				$portability,
+				RelationPortabilityAbilityHandler::IMPORT,
+			),
             'diagnostics' => new RelationDiagnosticsAbilityHandler(
-                $definitions,
-                $normalizer,
-                $validation,
+				$definitions,
+				$normalizer,
+				$validation,
                 $endpointSupport,
-                $gateway,
-            ),
-        ];
+				$gateway,
+			),
+		];
 
         if ($gateway instanceof WpdbRelationEdgeGateway) {
-            $mutations = new RelationEdgeMutationService(
-                $definitions,
-                $normalizer,
-                $gateway,
-                new RelationEndpointObjectAuthorizer(),
-                supportsNonUniqueTuples: true,
-            );
+			$mutations = new RelationEdgeMutationService(
+				$definitions,
+				$normalizer,
+				$gateway,
+				new RelationEndpointObjectAuthorizer(),
+				supportsNonUniqueTuples: true,
+			);
             $services->set('module.relations.edge-mutations', $mutations);
             $handlers['connect'] = new RelationEdgeMutationAbilityHandler(
-                $mutations,
-                RelationEdgeMutationAbilityHandler::CONNECT,
-            );
-            $handlers['disconnect'] = new RelationEdgeMutationAbilityHandler(
-                $mutations,
-                RelationEdgeMutationAbilityHandler::DISCONNECT,
-            );
-        }
+				$mutations,
+				RelationEdgeMutationAbilityHandler::CONNECT,
+			);
+			$handlers['disconnect'] = new RelationEdgeMutationAbilityHandler(
+				$mutations,
+				RelationEdgeMutationAbilityHandler::DISCONNECT,
+			);
+		}
 
         foreach ($handlers as $action => $handler) {
             $this->registerAbility($abilities, $bridge, $handler, $action);
@@ -179,8 +179,8 @@ final class RelationsModule implements ModuleInterface
                 handler: new AbilityAjaxHandler($abilities, 'wpessential/relations/' . $action, $contexts),
                 operation: $this->isMutationAction($action) ? NonceOperation::Update : NonceOperation::Apply,
             ));
-        }
-    }
+		}
+	}
 
     public function boot(ServiceRegistryInterface $services): void
     {
@@ -188,9 +188,9 @@ final class RelationsModule implements ModuleInterface
             $migrations = $services->get('platform.database.migrations');
             if (!$migrations instanceof MigrationCoordinator) {
                 throw new LogicException('Relations migration service must use the shared MigrationCoordinator.');
-            }
-            $migrations->runPending();
-        }
+			}
+			$migrations->runPending();
+		}
 
 		// A second boot may recheck idempotent migrations; it must not
 		// register the canonical admin controller twice. Reject foreign seams.
@@ -205,29 +205,29 @@ final class RelationsModule implements ModuleInterface
         $contexts = $services->get('platform.abilities.contexts');
         if (!$abilities instanceof AbilityRegistry || !$contexts instanceof WordPressExecutionContextFactory) {
             throw new LogicException('Relations admin requires shared Ability and execution-context services.');
-        }
+		}
 
         $admin = new RelationAdminController($abilities, $contexts);
         $services->set('module.relations.admin', $admin);
-        $admin->register();
-    }
+		$admin->register();
+	}
 
     private function registerEdgePersistence(ServiceRegistryInterface $services): void
     {
         $hasDatabase = $services->has('platform.database');
         $hasMigrations = $services->has('platform.database.migrations');
         if (!$hasDatabase && !$hasMigrations) {
-            return;
-        }
+			return;
+		}
         if (!$hasDatabase || !$hasMigrations) {
             throw new LogicException('Relations native persistence requires database and migration services together.');
-        }
+		}
 
         $database = $services->get('platform.database');
         $migrations = $services->get('platform.database.migrations');
         if (!$database instanceof DatabaseAdapterInterface || !$migrations instanceof MigrationCoordinator) {
             throw new LogicException('Relations native persistence requires canonical database and migration services.');
-        }
+		}
 
         $migrations->register(new CreateRelationEdgeTablesMigration($database));
         $migrations->register(new AllowNonUniqueRelationEdgeTuplesMigration($database));
@@ -236,53 +236,53 @@ final class RelationsModule implements ModuleInterface
         $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
         $scope = RelationEdgeScope::site($networkId, $siteId);
         $services->set('module.relations.edge-scope', $scope);
-        $services->set(
-            'module.relations.edge-gateway',
+		$services->set(
+			'module.relations.edge-gateway',
             new WpdbRelationEdgeGateway($database, $scope),
-        );
-    }
+		);
+	}
 
     private function registerAbility(
-        AbilityRegistry $abilities,
-        WordPressAbilityBridge $bridge,
-        AbilityHandlerInterface $handler,
-        string $action,
-    ): void {
-        $descriptor = new AbilityDescriptor(
-            name: 'wpessential/relations/' . $action,
-            ownerSurfaceId: RelationDefinitionNormalizer::OWNER_SURFACE_ID,
-            capability: self::CAPABILITY,
+		AbilityRegistry $abilities,
+		WordPressAbilityBridge $bridge,
+		AbilityHandlerInterface $handler,
+		string $action,
+	): void {
+		$descriptor = new AbilityDescriptor(
+			name: 'wpessential/relations/' . $action,
+			ownerSurfaceId: RelationDefinitionNormalizer::OWNER_SURFACE_ID,
+			capability: self::CAPABILITY,
             mutates: $this->isMutationAction($action),
             channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
             inputSchema: $this->inputSchema($action),
             outputSchema: $this->outputSchema($action),
-        );
+		);
         $abilities->register($descriptor, $handler);
         $bridge->expose(new WordPressAbilityExposure(
-            internalName: $descriptor->name,
+			internalName: $descriptor->name,
             label: 'Relations: ' . str_replace('-', ' ', $action),
             description: in_array($action, ['connect', 'disconnect'], true)
-                ? 'Surface 4 transactional Relation edge mutation operation.'
-                : 'Surface 4 Relation definition lifecycle, portability, or diagnostics operation.',
-            showInRest: true,
+				? 'Surface 4 transactional Relation edge mutation operation.'
+				: 'Surface 4 Relation definition lifecycle, portability, or diagnostics operation.',
+			showInRest: true,
         ));
-    }
+	}
 
     private function isMutationAction(string $action): bool
     {
-        return in_array(
-            $action,
+		return in_array(
+			$action,
             ['save-definition', 'status-definition', 'import-definitions', 'connect', 'disconnect'],
-            true,
-        );
-    }
+			true,
+		);
+	}
 
     /** @return array<string,mixed> */
     private function inputSchema(string $action): array
     {
         if (!in_array($action, ['connect', 'disconnect'], true)) {
             return ['type' => 'object'];
-        }
+		}
 
         return [
             'type' => 'object',
@@ -290,21 +290,21 @@ final class RelationsModule implements ModuleInterface
             'properties' => [
                 'relation_definition_id' => [
                     'type' => 'string',
-                    'pattern' => '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
-                ],
+					'pattern' => '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+				],
                 'from_object_id' => ['type' => 'integer', 'minimum' => 1],
                 'to_object_id' => ['type' => 'integer', 'minimum' => 1],
-            ],
-            'additionalProperties' => false,
-        ];
-    }
+			],
+			'additionalProperties' => false,
+		];
+	}
 
     /** @return array<string,mixed> */
     private function outputSchema(string $action): array
     {
         if (!in_array($action, ['connect', 'disconnect'], true)) {
             return ['type' => 'object'];
-        }
+		}
 
         return [
             'type' => 'object',
@@ -313,13 +313,13 @@ final class RelationsModule implements ModuleInterface
                 'mutation' => [
                     'type' => 'object',
                     'required' => [
-                        'changed',
-                        'relation_definition_id',
-                        'edge_id',
-                        'from_object_id',
-                        'to_object_id',
-                        'revision',
-                    ],
+						'changed',
+						'relation_definition_id',
+						'edge_id',
+						'from_object_id',
+						'to_object_id',
+						'revision',
+					],
                     'properties' => [
                         'changed' => ['type' => 'boolean'],
                         'relation_definition_id' => ['type' => 'string'],
@@ -327,11 +327,11 @@ final class RelationsModule implements ModuleInterface
                         'from_object_id' => ['type' => 'integer'],
                         'to_object_id' => ['type' => 'integer'],
                         'revision' => ['type' => 'integer', 'minimum' => 0],
-                    ],
-                    'additionalProperties' => false,
-                ],
-            ],
-            'additionalProperties' => false,
-        ];
-    }
+					],
+					'additionalProperties' => false,
+				],
+			],
+			'additionalProperties' => false,
+		];
+	}
 }

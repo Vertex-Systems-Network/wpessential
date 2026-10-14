@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Modules\Fields;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use LogicException;
@@ -32,17 +32,17 @@ final class FieldsModule implements ModuleInterface
 {
     private const CAPABILITY = 'manage_options';
     private const UUID_PATTERN = '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
-    private const FIELD_KEY_PATTERN = '^[a-z0-9][a-z0-9_-]{0,63}$';
+	private const FIELD_KEY_PATTERN = '^[a-z0-9][a-z0-9_-]{0,63}$';
 
     public function manifest(): ModuleManifest
     {
-        return new ModuleManifest(
-            id: 'custom-fields',
-            name: 'Custom Fields Builder',
-            version: '0.1.0',
-            edition: 'pro',
-        );
-    }
+		return new ModuleManifest(
+			id: 'custom-fields',
+			name: 'Custom Fields Builder',
+			version: '0.1.0',
+			edition: 'pro',
+		);
+	}
 
     public function register(ServiceRegistryInterface $services): void
     {
@@ -56,9 +56,9 @@ final class FieldsModule implements ModuleInterface
             || !$bridge instanceof WordPressAbilityBridge
             || !$contexts instanceof WordPressExecutionContextFactory
             || !$ajaxRoutes instanceof AjaxRouteRegistry
-        ) {
+		) {
             throw new LogicException('Custom Fields requires shared Definition, Ability, execution-context, and AJAX services.');
-        }
+		}
 
         $types = new FieldTypeRegistry();
         $presets = new FieldPresetRegistry($types);
@@ -74,54 +74,54 @@ final class FieldsModule implements ModuleInterface
         $postMetaCompiler = new PostMetaRegistrationCompiler($values, $persistence);
         $postMetaRegistrar = new WordPressPostMetaRegistrar();
         $postMetaBinder = new FieldGroupPostMetaBinder(
-            $groups,
+			$groups,
             $groupStorage,
             $groupPostTypes,
             $postMetaCompiler,
             $postMetaRegistrar,
-        );
+		);
         $runtimeRegistrar = new FieldGroupRuntimeRegistrar($definitions, $postMetaBinder);
         $postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
         $postMetaMigrations = new FieldStorageKeyMigrationService(
-            $definitions,
-            $groups,
+			$definitions,
+			$groups,
             $groupStorage,
             $groupPostTypes,
             $postMetaCompiler,
             $postMetaRegistrar,
             $postMetaValues,
-        );
+		);
         $valueTargets = new FieldValueTargetResolver($definitions, $groups);
         $valueAuthorization = new WordPressPostResourceAuthorizer();
         $queryConsumer = new FieldQueryConsumer(
-            $definitions,
-            $groups,
+			$definitions,
+			$groups,
             $groupStorage,
             $valueTargets,
             $postMetaCompiler,
             $postMetaValues,
-            $values,
+			$values,
             $valueAuthorization,
-        );
+		);
         $valueReadConsumer = new FieldValueReadConsumer(
             $queryConsumer,
             $valueTargets,
             $postMetaValues,
             $valueAuthorization,
-        );
+		);
         $valueWriteConsumer = new FieldValueWriteConsumer(
             $queryConsumer,
             $valueTargets,
             $postMetaValues,
             $valueAuthorization,
-        );
+		);
         $adminColumnSources = new FieldAdminColumnsSourceCatalog(
-            $definitions,
-            $groups,
+			$definitions,
+			$groups,
             $groupStorage,
             $groupPostTypes,
             $postMetaCompiler,
-        );
+		);
 
         $services->set('module.custom-fields.types', $types);
         $services->set('module.custom-fields.presets', $presets);
@@ -155,7 +155,7 @@ final class FieldsModule implements ModuleInterface
             'status-group' => new FieldGroupAbilityHandler($definitions, $groups, $validation, FieldGroupAbilityHandler::STATUS),
             'export-groups' => new FieldGroupPortabilityAbilityHandler($portability, FieldGroupPortabilityAbilityHandler::EXPORT),
             'import-groups' => new FieldGroupPortabilityAbilityHandler($portability, FieldGroupPortabilityAbilityHandler::IMPORT),
-        ];
+		];
 
         foreach ($handlers as $action => $handler) {
             $this->registerAbility($abilities, $bridge, $handler, $action);
@@ -164,69 +164,69 @@ final class FieldsModule implements ModuleInterface
                 handler: new AbilityAjaxHandler($abilities, 'wpessential/fields/' . $action, $contexts),
                 operation: in_array($action, ['save-group', 'status-group', 'import-groups'], true) ? NonceOperation::Update : NonceOperation::Apply,
             ));
-        }
+		}
 
         $valueHandlers = [
             'read-value' => new FieldValueAbilityHandler(
                 $valueTargets,
                 $postMetaValues,
                 $valueAuthorization,
-                FieldValueAbilityHandler::READ,
-            ),
-            'write-value' => new FieldValueAbilityHandler(
+				FieldValueAbilityHandler::READ,
+			),
+			'write-value' => new FieldValueAbilityHandler(
                 $valueTargets,
                 $postMetaValues,
                 $valueAuthorization,
-                FieldValueAbilityHandler::WRITE,
-            ),
-        ];
+				FieldValueAbilityHandler::WRITE,
+			),
+		];
         foreach ($valueHandlers as $action => $handler) {
             $mutates = $action === 'write-value';
-            $descriptor = new AbilityDescriptor(
-                name: 'wpessential/fields/' . $action,
-                ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
-                capability: 'read',
-                mutates: $mutates,
+			$descriptor = new AbilityDescriptor(
+				name: 'wpessential/fields/' . $action,
+				ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+				capability: 'read',
+				mutates: $mutates,
                 channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
                 inputSchema: $this->valueInputSchema($mutates),
-                outputSchema: $this->valueOutputSchema(),
-            );
+				outputSchema: $this->valueOutputSchema(),
+			);
             $abilities->register($descriptor, $handler);
             $bridge->expose(new WordPressAbilityExposure(
-                internalName: $descriptor->name,
+				internalName: $descriptor->name,
                 label: 'Custom Fields: ' . str_replace('-', ' ', $action),
                 description: 'Surface 3 Field value operation through certified target resolution and post resource authorization.',
-                showInRest: true,
+				showInRest: true,
             ));
             $ajaxRoutes->register(new AjaxRoute(
                 type: 'fields.' . str_replace('-', '.', $action),
                 handler: new AbilityAjaxHandler($abilities, $descriptor->name, $contexts),
-                operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
+				operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
             ));
-        }
+		}
 
         $migrationDescriptor = new AbilityDescriptor(
-            name: 'wpessential/fields/migrate-storage-key',
-            ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
-            capability: self::CAPABILITY,
-            mutates: true,
+			name: 'wpessential/fields/migrate-storage-key',
+			ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+			capability: self::CAPABILITY,
+			mutates: true,
             channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
-            inputSchema: $this->storageKeyMigrationInputSchema(),
-            outputSchema: $this->storageKeyMigrationOutputSchema(),
-        );
+			inputSchema: $this->storageKeyMigrationInputSchema(),
+			outputSchema: $this->storageKeyMigrationOutputSchema(),
+		);
         $abilities->register($migrationDescriptor, new FieldStorageKeyMigrationAbilityHandler($postMetaMigrations));
         $bridge->expose(new WordPressAbilityExposure(
             internalName: $migrationDescriptor->name,
-            label: 'Custom Fields: migrate storage key',
-            description: 'Explicit Surface 3 native post-meta storage-key migration with verified rollback.',
-            showInRest: true,
+			label: 'Custom Fields: migrate storage key',
+			description: 'Explicit Surface 3 native post-meta storage-key migration with verified rollback.',
+			showInRest: true,
         ));
         $ajaxRoutes->register(new AjaxRoute(
-            type: 'fields.migrate.storage.key',
+			type: 'fields.migrate.storage.key',
             handler: new AbilityAjaxHandler($abilities, $migrationDescriptor->name, $contexts),
-            operation: NonceOperation::Update,
+			operation: NonceOperation::Update,
         ));
-    }
+	}
 
     public function boot(ServiceRegistryInterface $services): void
     {
@@ -243,47 +243,47 @@ final class FieldsModule implements ModuleInterface
             || !$gateway instanceof WordPressAjaxGateway
             || !$assets instanceof AdminAssetManifest
             || !$runtimeRegistrar instanceof FieldGroupRuntimeRegistrar
-        ) {
+		) {
             throw new LogicException('Custom Fields runtime/admin requires the shared admin, Ability, AJAX, and Field runtime services.');
-        }
+		}
 
-        $admin = new FieldAdminController(
-            abilities: $abilities,
-            contexts: $contexts,
-            ajax: $ajax,
-            assets: $assets,
-            catalogProjector: new FieldAdminCatalogProjector(),
-            ajaxAction: $gateway->action(),
-        );
+		$admin = new FieldAdminController(
+			abilities: $abilities,
+			contexts: $contexts,
+			ajax: $ajax,
+			assets: $assets,
+			catalogProjector: new FieldAdminCatalogProjector(),
+			ajaxAction: $gateway->action(),
+		);
         $services->set('module.custom-fields.admin', $admin);
-        $admin->register();
+		$admin->register();
         $runtimeRegistrar->register();
-    }
+	}
 
     private function registerAbility(
-        AbilityRegistry $abilities,
-        WordPressAbilityBridge $bridge,
-        AbilityHandlerInterface $handler,
-        string $action,
-    ): void {
+		AbilityRegistry $abilities,
+		WordPressAbilityBridge $bridge,
+		AbilityHandlerInterface $handler,
+		string $action,
+	): void {
         $mutates = in_array($action, ['save-group', 'status-group', 'import-groups'], true);
-        $descriptor = new AbilityDescriptor(
-            name: 'wpessential/fields/' . $action,
-            ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
-            capability: self::CAPABILITY,
-            mutates: $mutates,
+		$descriptor = new AbilityDescriptor(
+			name: 'wpessential/fields/' . $action,
+			ownerSurfaceId: FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+			capability: self::CAPABILITY,
+			mutates: $mutates,
             channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
             inputSchema: ['type' => 'object'],
             outputSchema: ['type' => 'object'],
-        );
+		);
         $abilities->register($descriptor, $handler);
         $bridge->expose(new WordPressAbilityExposure(
-            internalName: $descriptor->name,
+			internalName: $descriptor->name,
             label: 'Custom Fields: ' . str_replace('-', ' ', $action),
-            description: 'Surface 3 Custom Fields / Field Groups operation.',
-            showInRest: true,
+			description: 'Surface 3 Custom Fields / Field Groups operation.',
+			showInRest: true,
         ));
-    }
+	}
 
     /** @return array<string,mixed> */
     private function valueInputSchema(bool $write): array
@@ -292,34 +292,34 @@ final class FieldsModule implements ModuleInterface
             'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
             'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
             'post_id' => ['type' => 'integer', 'minimum' => 1],
-        ];
+		];
         $required = ['group_id', 'field_uuid', 'post_id'];
         if ($write) {
             $properties['expected_group_revision'] = ['type' => 'integer', 'minimum' => 1];
             $properties['value'] = [
                 'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
                 'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
-            ];
+			];
             $required[] = 'expected_group_revision';
             $required[] = 'value';
-        }
+		}
 
         return [
             'type' => 'object',
             'required' => $required,
             'properties' => $properties,
-            'additionalProperties' => false,
-        ];
-    }
+			'additionalProperties' => false,
+		];
+	}
 
     /** @return array<string,mixed> */
-    private function valueOutputSchema(): array
+	private function valueOutputSchema(): array
     {
         return [
             'type' => 'object',
             'required' => [
                 'group_id', 'group_revision', 'field_uuid', 'field_key', 'post_id', 'post_type', 'status', 'changed', 'value',
-            ],
+			],
             'properties' => [
                 'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
                 'group_revision' => ['type' => 'integer', 'minimum' => 1],
@@ -332,14 +332,14 @@ final class FieldsModule implements ModuleInterface
                 'value' => [
                     'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
                     'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
-                ],
-            ],
-            'additionalProperties' => false,
-        ];
-    }
+				],
+			],
+			'additionalProperties' => false,
+		];
+	}
 
     /** @return array<string,mixed> */
-    private function storageKeyMigrationInputSchema(): array
+	private function storageKeyMigrationInputSchema(): array
     {
         return [
             'type' => 'object',
@@ -349,27 +349,27 @@ final class FieldsModule implements ModuleInterface
                 'expected_group_revision' => ['type' => 'integer', 'minimum' => 1],
                 'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
                 'destination_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
-            ],
-            'additionalProperties' => false,
-        ];
-    }
+			],
+			'additionalProperties' => false,
+		];
+	}
 
     /** @return array<string,mixed> */
-    private function storageKeyMigrationOutputSchema(): array
+	private function storageKeyMigrationOutputSchema(): array
     {
         return [
             'type' => 'object',
             'required' => [
-                'group_id',
-                'group_revision',
-                'field_uuid',
-                'source_key',
-                'destination_key',
-                'post_types',
-                'migrated_objects',
-                'changed',
-                'definition',
-            ],
+				'group_id',
+				'group_revision',
+				'field_uuid',
+				'source_key',
+				'destination_key',
+				'post_types',
+				'migrated_objects',
+				'changed',
+				'definition',
+			],
             'properties' => [
                 'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
                 'group_revision' => ['type' => 'integer', 'minimum' => 1],
@@ -380,8 +380,8 @@ final class FieldsModule implements ModuleInterface
                 'migrated_objects' => ['type' => 'integer', 'minimum' => 0],
                 'changed' => ['type' => 'boolean'],
                 'definition' => ['type' => 'object'],
-            ],
-            'additionalProperties' => false,
-        ];
-    }
+			],
+			'additionalProperties' => false,
+		];
+	}
 }
