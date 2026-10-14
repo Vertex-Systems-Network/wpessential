@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Bootstrap;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use LogicException;
@@ -82,302 +82,302 @@ use WPEssential\Platform\WordPress\Security\NonceManager;
 
 final class Plugin
 {
-    public const VERSION = '0.1.0-dev';
-    public const MINIMUM_WORDPRESS = '6.9';
-    public const MINIMUM_PHP = '8.2';
+	public const VERSION = '0.1.0-dev';
+	public const MINIMUM_WORDPRESS = '6.9';
+	public const MINIMUM_PHP = '8.2';
 
-    private static ?Kernel $kernel = null;
-    private static ?ModuleActivationPolicyInterface $moduleActivationPolicy = null;
+	private static ?Kernel $kernel = null;
+	private static ?ModuleActivationPolicyInterface $moduleActivationPolicy = null;
 
-    /** @var list<ModuleInterface> */
-    private static array $contributedModules = [];
+	/** @var list<ModuleInterface> */
+	private static array $contributedModules = [];
 
-    public static function setModuleActivationPolicy(ModuleActivationPolicyInterface $policy): void
-    {
-        self::assertPreBootConfigurationOpen();
-        self::$moduleActivationPolicy = $policy;
-    }
+	public static function setModuleActivationPolicy(ModuleActivationPolicyInterface $policy): void
+	{
+		self::assertPreBootConfigurationOpen();
+		self::$moduleActivationPolicy = $policy;
+	}
 
-    public static function registerModule(ModuleInterface $module): void
-    {
-        self::assertPreBootConfigurationOpen();
-        self::$contributedModules[] = $module;
-    }
+	public static function registerModule(ModuleInterface $module): void
+	{
+		self::assertPreBootConfigurationOpen();
+		self::$contributedModules[] = $module;
+	}
 
-    public static function boot(): ?Kernel
-    {
-        if (self::$kernel instanceof Kernel) {
-            return self::$kernel;
-        }
-        if (!self::environmentSupported()) {
-            return null;
-        }
+	public static function boot(): ?Kernel
+	{
+		if (self::$kernel instanceof Kernel) {
+			return self::$kernel;
+		}
+		if (!self::environmentSupported()) {
+			return null;
+		}
 
-        self::$kernel = new Kernel(
-            moduleActivationPolicy: self::$moduleActivationPolicy ?? new DefaultModuleActivationPolicy(),
-        );
-        $services = self::$kernel->services();
+		self::$kernel = new Kernel(
+			moduleActivationPolicy: self::$moduleActivationPolicy ?? new DefaultModuleActivationPolicy(),
+		);
+		$services = self::$kernel->services();
 
-        $nonceAction = defined('WPE_NONCE_ACTION') ? (string) WPE_NONCE_ACTION : 'wpessential_request';
-        $ajaxAction = defined('WPE_AJAX_ACTION') ? (string) WPE_AJAX_ACTION : 'wpessential_dispatch';
-        $debug = defined('WPE_DEBUG') && WPE_DEBUG === true;
+		$nonceAction = defined('WPE_NONCE_ACTION') ? (string) WPE_NONCE_ACTION : 'wpessential_request';
+		$ajaxAction = defined('WPE_AJAX_ACTION') ? (string) WPE_AJAX_ACTION : 'wpessential_dispatch';
+		$debug = defined('WPE_DEBUG') && WPE_DEBUG === true;
 
-        $nonceManager = new NonceManager(new NativeWordPressNonceEnvironment(), $nonceAction);
-        $ajaxEnvironment = new NativeWordPressAjaxEnvironment();
-        $ajaxRoutes = new AjaxRouteRegistry();
-        $ajaxDispatcher = new AjaxDispatcher($ajaxRoutes, $nonceManager, [$ajaxEnvironment, 'currentUserCan']);
-        $ajaxGateway = new WordPressAjaxGateway($ajaxAction, $ajaxDispatcher, $ajaxEnvironment);
+		$nonceManager = new NonceManager(new NativeWordPressNonceEnvironment(), $nonceAction);
+		$ajaxEnvironment = new NativeWordPressAjaxEnvironment();
+		$ajaxRoutes = new AjaxRouteRegistry();
+		$ajaxDispatcher = new AjaxDispatcher($ajaxRoutes, $nonceManager, [$ajaxEnvironment, 'currentUserCan']);
+		$ajaxGateway = new WordPressAjaxGateway($ajaxAction, $ajaxDispatcher, $ajaxEnvironment);
 
-        $abilityEnvironment = new NativeWordPressAbilityEnvironment();
-        $abilityContexts = new WordPressExecutionContextFactory($abilityEnvironment);
-        $capabilityChecker = new WordPressCapabilityChecker($abilityEnvironment);
-        $postResourceAuthorizer = new WordPressPostResourceAuthorizer();
-        $abilityPolicy = new PolicyEngine($capabilityChecker);
-        $abilities = new AbilityRegistry($abilityPolicy);
-        $abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
-        $dataSources = new DataSourceRegistry();
-        $cache = new RequestLocalCache();
+		$abilityEnvironment = new NativeWordPressAbilityEnvironment();
+		$abilityContexts = new WordPressExecutionContextFactory($abilityEnvironment);
+		$capabilityChecker = new WordPressCapabilityChecker($abilityEnvironment);
+		$postResourceAuthorizer = new WordPressPostResourceAuthorizer();
+		$abilityPolicy = new PolicyEngine($capabilityChecker);
+		$abilities = new AbilityRegistry($abilityPolicy);
+		$abilityBridge = new WordPressAbilityBridge($abilities, $abilityEnvironment, $abilityContexts);
+		$dataSources = new DataSourceRegistry();
+		$cache = new RequestLocalCache();
 
-        [$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
-        $events = new EventBus();
-        $audit = $database instanceof NativeWpdbAdapter
-            ? new PersistentAuditLogger($database)
-            : new InMemoryAuditLogger();
-        $registrationProviders = new RegistrationDefinitionProviderRegistry();
-        $registrationCompiler = new RegistrationCompiler($registrationStore);
-        $registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
-        $registrationStatus = new RegistrationCompilationStatus();
-        $postTypeRegistrar = new PostTypeRuntimeRegistrar($registrationRuntime);
-        $taxonomyRegistrar = new TaxonomyRuntimeRegistrar($registrationRuntime);
-        $traces = $debug ? new BoundedInMemoryTraceRecorder() : new NullTraceRecorder();
+		[$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
+		$events = new EventBus();
+		$audit = $database instanceof NativeWpdbAdapter
+			? new PersistentAuditLogger($database)
+			: new InMemoryAuditLogger();
+		$registrationProviders = new RegistrationDefinitionProviderRegistry();
+		$registrationCompiler = new RegistrationCompiler($registrationStore);
+		$registrationRuntime = new RegistrationRuntimeLoader($registrationStore);
+		$registrationStatus = new RegistrationCompilationStatus();
+		$postTypeRegistrar = new PostTypeRuntimeRegistrar($registrationRuntime);
+		$taxonomyRegistrar = new TaxonomyRuntimeRegistrar($registrationRuntime);
+		$traces = $debug ? new BoundedInMemoryTraceRecorder() : new NullTraceRecorder();
 
-        $pluginRoot = dirname(__DIR__, 2);
-        $pluginFile = $pluginRoot . '/wpessential.php';
-        $pluginUrl = function_exists('plugin_dir_url') ? (string) plugin_dir_url($pluginFile) : '';
-        $runtimeDiagnostics = new RuntimeDiagnosticsSnapshot(self::$kernel, $traces, $debug);
-        $adminAssets = new AdminAssetManifest($pluginRoot, $pluginUrl);
-        $adminController = new PlatformAdminController($runtimeDiagnostics, $adminAssets);
+		$pluginRoot = dirname(__DIR__, 2);
+		$pluginFile = $pluginRoot . '/wpessential.php';
+		$pluginUrl = function_exists('plugin_dir_url') ? (string) plugin_dir_url($pluginFile) : '';
+		$runtimeDiagnostics = new RuntimeDiagnosticsSnapshot(self::$kernel, $traces, $debug);
+		$adminAssets = new AdminAssetManifest($pluginRoot, $pluginUrl);
+		$adminController = new PlatformAdminController($runtimeDiagnostics, $adminAssets);
 
-        $services->set('platform.nonce', $nonceManager);
-        $services->set('platform.ajax.routes', $ajaxRoutes);
-        $services->set('platform.ajax.dispatcher', $ajaxDispatcher);
-        $services->set('platform.ajax.gateway', $ajaxGateway);
-        $services->set('platform.abilities', $abilities);
-        $services->set('platform.abilities.policy', $abilityPolicy);
-        $services->set('platform.abilities.contexts', $abilityContexts);
-        $services->set('platform.abilities.wordpress', $abilityBridge);
-        $services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
-        $services->set(WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer);
-        $services->set(EventServices::BUS, $events);
-        $services->set(AuditServices::LOGGER, $audit);
-        $services->set('platform.data-sources', $dataSources);
-        $services->set('platform.cache', $cache);
-        (new RenderingServiceRegistrar())->register($services);
+		$services->set('platform.nonce', $nonceManager);
+		$services->set('platform.ajax.routes', $ajaxRoutes);
+		$services->set('platform.ajax.dispatcher', $ajaxDispatcher);
+		$services->set('platform.ajax.gateway', $ajaxGateway);
+		$services->set('platform.abilities', $abilities);
+		$services->set('platform.abilities.policy', $abilityPolicy);
+		$services->set('platform.abilities.contexts', $abilityContexts);
+		$services->set('platform.abilities.wordpress', $abilityBridge);
+		$services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+		$services->set(WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer);
+		$services->set(EventServices::BUS, $events);
+		$services->set(AuditServices::LOGGER, $audit);
+		$services->set('platform.data-sources', $dataSources);
+		$services->set('platform.cache', $cache);
+		(new RenderingServiceRegistrar())->register($services);
 
-        $assetRegistry = $services->get(AssetServices::REGISTRY);
-        if (!$assetRegistry instanceof AssetRegistry) {
-            throw new LogicException('Canonical platform.assets service must be an AssetRegistry.');
-        }
-        $assetBuildEntries = new TrustedAssetBuildEntryRegistry($assetRegistry);
-        $assetLoader = new WordPressAssetLoader(
-            $assetRegistry,
-            $assetBuildEntries,
-            $adminAssets,
-            new NativeWordPressAssetEnvironment(),
-        );
-        $services->set(AssetServices::BUILD_ENTRIES, $assetBuildEntries);
-        $services->set(AssetServices::MANIFEST, $adminAssets);
-        $services->set(AssetServices::WORDPRESS, $assetLoader);
-        if ($database instanceof NativeWpdbAdapter) {
-            $services->set('platform.database', $database);
-            $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
-            $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
-            $wpdb = $GLOBALS['wpdb'] ?? null;
-            if (is_object($wpdb) && self::proCustomTablesRuntimeAvailable()) {
-                $metadataFacts = new WordPressMetadataPreconditionFactsProvider(
-                    new WordPressCt1SchemaIntrospector($wpdb),
-                );
-                $confirmations = new WpdbMigrationExecutionConfirmationProvider($database, $siteId);
-                $services->set(
-                    'custom-tables.runtime-composition.factory',
-                    CustomTablesRuntimeCompositionFactory::production(
-                        database: $database,
-                        policy: $abilityPolicy,
-                        metadataFacts: $metadataFacts,
-                        recoveryVerification: new FailClosedRecoveryVerificationProvider(),
-                        confirmations: $confirmations,
-                        networkId: $networkId,
-                        siteId: $siteId,
-                    ),
-                );
-            }
-        }
-        if ($migrationCoordinator instanceof MigrationCoordinator) {
-            $services->set('platform.database.migrations', $migrationCoordinator);
-        }
-        $services->set('platform.definitions', $definitionRepository);
-        $services->set('platform.registrations.store', $registrationStore);
-        $services->set('platform.registrations.providers', $registrationProviders);
-        $services->set('platform.registrations.compiler', $registrationCompiler);
-        $services->set('platform.registrations.runtime', $registrationRuntime);
-        $services->set('platform.registrations.compilation-status', $registrationStatus);
-        $services->set('platform.registrations.post-types', $postTypeRegistrar);
-        $services->set('platform.registrations.taxonomies', $taxonomyRegistrar);
-        $services->set('platform.traces', $traces);
-        $services->set('platform.admin.diagnostics', $runtimeDiagnostics);
-        $services->set('platform.admin.assets', $adminAssets);
-        $services->set('platform.admin.controller', $adminController);
+		$assetRegistry = $services->get(AssetServices::REGISTRY);
+		if (!$assetRegistry instanceof AssetRegistry) {
+			throw new LogicException('Canonical platform.assets service must be an AssetRegistry.');
+		}
+		$assetBuildEntries = new TrustedAssetBuildEntryRegistry($assetRegistry);
+		$assetLoader = new WordPressAssetLoader(
+			$assetRegistry,
+			$assetBuildEntries,
+			$adminAssets,
+			new NativeWordPressAssetEnvironment(),
+		);
+		$services->set(AssetServices::BUILD_ENTRIES, $assetBuildEntries);
+		$services->set(AssetServices::MANIFEST, $adminAssets);
+		$services->set(AssetServices::WORDPRESS, $assetLoader);
+		if ($database instanceof NativeWpdbAdapter) {
+			$services->set('platform.database', $database);
+			$networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
+			$siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
+			$wpdb = $GLOBALS['wpdb'] ?? null;
+			if (is_object($wpdb) && self::proCustomTablesRuntimeAvailable()) {
+				$metadataFacts = new WordPressMetadataPreconditionFactsProvider(
+					new WordPressCt1SchemaIntrospector($wpdb),
+				);
+				$confirmations = new WpdbMigrationExecutionConfirmationProvider($database, $siteId);
+				$services->set(
+					'custom-tables.runtime-composition.factory',
+					CustomTablesRuntimeCompositionFactory::production(
+						database: $database,
+						policy: $abilityPolicy,
+						metadataFacts: $metadataFacts,
+						recoveryVerification: new FailClosedRecoveryVerificationProvider(),
+						confirmations: $confirmations,
+						networkId: $networkId,
+						siteId: $siteId,
+					),
+				);
+			}
+		}
+		if ($migrationCoordinator instanceof MigrationCoordinator) {
+			$services->set('platform.database.migrations', $migrationCoordinator);
+		}
+		$services->set('platform.definitions', $definitionRepository);
+		$services->set('platform.registrations.store', $registrationStore);
+		$services->set('platform.registrations.providers', $registrationProviders);
+		$services->set('platform.registrations.compiler', $registrationCompiler);
+		$services->set('platform.registrations.runtime', $registrationRuntime);
+		$services->set('platform.registrations.compilation-status', $registrationStatus);
+		$services->set('platform.registrations.post-types', $postTypeRegistrar);
+		$services->set('platform.registrations.taxonomies', $taxonomyRegistrar);
+		$services->set('platform.traces', $traces);
+		$services->set('platform.admin.diagnostics', $runtimeDiagnostics);
+		$services->set('platform.admin.assets', $adminAssets);
+		$services->set('platform.admin.controller', $adminController);
 
-        self::$kernel->registerModule(new CustomPostTypeModule());
-        self::$kernel->registerModule(new TaxonomyModule());
-        foreach (self::$contributedModules as $module) {
-            self::$kernel->registerModule($module);
-        }
+		self::$kernel->registerModule(new CustomPostTypeModule());
+		self::$kernel->registerModule(new TaxonomyModule());
+		foreach (self::$contributedModules as $module) {
+			self::$kernel->registerModule($module);
+		}
 
-        if (function_exists('add_action')) {
-            $ajaxGateway->register();
-            $assetLoader->register();
-            $adminController->register();
-            add_action('wp_abilities_api_categories_init', [$abilityBridge, 'registerCategory']);
-            add_action('wp_abilities_api_init', [$abilityBridge, 'registerAbilities']);
-        }
+		if (function_exists('add_action')) {
+			$ajaxGateway->register();
+			$assetLoader->register();
+			$adminController->register();
+			add_action('wp_abilities_api_categories_init', [$abilityBridge, 'registerCategory']);
+			add_action('wp_abilities_api_init', [$abilityBridge, 'registerAbilities']);
+		}
 
-        self::$kernel->boot();
+		self::$kernel->boot();
 
-        try {
-            $manifest = $registrationCompiler->compileAndPublishIfChanged($registrationProviders->definitions());
-            $registrationStatus->markSuccess($manifest);
-        } catch (Throwable $exception) {
-            $registrationStatus->markFailure($exception);
-        }
-        $postTypeRegistrar->register();
-        $taxonomyRegistrar->register();
+		try {
+			$manifest = $registrationCompiler->compileAndPublishIfChanged($registrationProviders->definitions());
+			$registrationStatus->markSuccess($manifest);
+		} catch (Throwable $exception) {
+			$registrationStatus->markFailure($exception);
+		}
+		$postTypeRegistrar->register();
+		$taxonomyRegistrar->register();
 
-        return self::$kernel;
-    }
+		return self::$kernel;
+	}
 
-    public static function kernel(): ?Kernel
-    {
-        return self::$kernel;
-    }
+	public static function kernel(): ?Kernel
+	{
+		return self::$kernel;
+	}
 
-    /**
-     * @return array{
-     *   DefinitionRepositoryInterface,
-     *   CompiledRegistrationStoreInterface,
-     *   NativeWpdbAdapter|null,
-     *   MigrationCoordinator|null
-     * }
-     */
-    private static function createPersistenceServices(): array
-    {
-        $wpdb = $GLOBALS['wpdb'] ?? null;
-        if (!is_object($wpdb) || !self::supportsMysqlPersistence($wpdb)) {
-            return [new InMemoryDefinitionRepository(), new InMemoryCompiledRegistrationStore(), null, null];
-        }
+	/**
+	 * @return array{
+	 *   DefinitionRepositoryInterface,
+	 *   CompiledRegistrationStoreInterface,
+	 *   NativeWpdbAdapter|null,
+	 *   MigrationCoordinator|null
+	 * }
+	 */
+	private static function createPersistenceServices(): array
+	{
+		$wpdb = $GLOBALS['wpdb'] ?? null;
+		if (!is_object($wpdb) || !self::supportsMysqlPersistence($wpdb)) {
+			return [new InMemoryDefinitionRepository(), new InMemoryCompiledRegistrationStore(), null, null];
+		}
 
-        $database = new NativeWpdbAdapter($wpdb);
-        $migrationRegistry = new MigrationRegistry();
-        $migrationRunner = new MigrationRunner($migrationRegistry, new WpdbMigrationStateStore($database));
-        $migrationCoordinator = new MigrationCoordinator($migrationRegistry, $migrationRunner);
-        $migrationCoordinator->register(new CreateCompiledRegistrationTablesMigration($database));
-        $migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
-        $migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
-        if (self::proCustomTablesMigrationsAllowed()) {
-            $migrationCoordinator->register(new CreateMigrationRunStoreMigration($database));
-            $migrationCoordinator->register(new CreateMigrationExecutionConfirmationStoreMigration($database));
-        }
-        $migrationCoordinator->runPending();
+		$database = new NativeWpdbAdapter($wpdb);
+		$migrationRegistry = new MigrationRegistry();
+		$migrationRunner = new MigrationRunner($migrationRegistry, new WpdbMigrationStateStore($database));
+		$migrationCoordinator = new MigrationCoordinator($migrationRegistry, $migrationRunner);
+		$migrationCoordinator->register(new CreateCompiledRegistrationTablesMigration($database));
+		$migrationCoordinator->register(new CreateDefinitionTablesMigration($database));
+		$migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
+		if (self::proCustomTablesMigrationsAllowed()) {
+			$migrationCoordinator->register(new CreateMigrationRunStoreMigration($database));
+			$migrationCoordinator->register(new CreateMigrationExecutionConfirmationStoreMigration($database));
+		}
+		$migrationCoordinator->runPending();
 
-        $networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
-        $siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
-        $definitionScope = DefinitionScope::site($networkId, $siteId);
-        $registrationScope = CompiledRegistrationScope::site($networkId, $siteId);
+		$networkId = function_exists('get_current_network_id') ? max(1, (int) get_current_network_id()) : 1;
+		$siteId = function_exists('get_current_blog_id') ? max(1, (int) get_current_blog_id()) : 1;
+		$definitionScope = DefinitionScope::site($networkId, $siteId);
+		$registrationScope = CompiledRegistrationScope::site($networkId, $siteId);
 
-        $definitions = new PersistentDefinitionRepository(new WpdbDefinitionTableGateway($database, $definitionScope));
-        $registrations = new AtomicCompiledRegistrationStore(
-            new WpdbCompiledRegistrationPersistenceGateway($database),
-            $registrationScope,
-        );
-        return [$definitions, $registrations, $database, $migrationCoordinator];
-    }
+		$definitions = new PersistentDefinitionRepository(new WpdbDefinitionTableGateway($database, $definitionScope));
+		$registrations = new AtomicCompiledRegistrationStore(
+			new WpdbCompiledRegistrationPersistenceGateway($database),
+			$registrationScope,
+		);
+		return [$definitions, $registrations, $database, $migrationCoordinator];
+	}
 
-    private static function proCustomTablesRuntimeAvailable(): bool
-    {
-        $compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
-        if (
-            !defined('WPE_PRO_PACKAGE_ACTIVE')
-            || WPE_PRO_PACKAGE_ACTIVE !== true
-            || !is_array($compatibility)
-            || ($compatibility['state'] ?? '') !== 'compatible'
-            || ($compatibility['premium_boot_allowed'] ?? false) !== true
-        ) {
-            return false;
-        }
+	private static function proCustomTablesRuntimeAvailable(): bool
+	{
+		$compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
+		if (
+			!defined('WPE_PRO_PACKAGE_ACTIVE')
+			|| WPE_PRO_PACKAGE_ACTIVE !== true
+			|| !is_array($compatibility)
+			|| ($compatibility['state'] ?? '') !== 'compatible'
+			|| ($compatibility['premium_boot_allowed'] ?? false) !== true
+		) {
+			return false;
+		}
 
-        foreach ([
-            WordPressMetadataPreconditionFactsProvider::class,
-            CustomTablesRuntimeCompositionFactory::class,
-            CreateMigrationExecutionConfirmationStoreMigration::class,
-            WpdbMigrationExecutionConfirmationProvider::class,
-            FailClosedRecoveryVerificationProvider::class,
-            CreateMigrationRunStoreMigration::class,
-            WordPressCt1SchemaIntrospector::class,
-        ] as $class) {
-            if (!class_exists($class)) {
-                return false;
-            }
-        }
+		foreach ([
+			WordPressMetadataPreconditionFactsProvider::class,
+			CustomTablesRuntimeCompositionFactory::class,
+			CreateMigrationExecutionConfirmationStoreMigration::class,
+			WpdbMigrationExecutionConfirmationProvider::class,
+			FailClosedRecoveryVerificationProvider::class,
+			CreateMigrationRunStoreMigration::class,
+			WordPressCt1SchemaIntrospector::class,
+		] as $class) {
+			if (!class_exists($class)) {
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    private static function proCustomTablesMigrationsAllowed(): bool
-    {
-        $compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
+	private static function proCustomTablesMigrationsAllowed(): bool
+	{
+		$compatibility = $GLOBALS['wpe_pro_compatibility_result'] ?? null;
 
-        return self::proCustomTablesRuntimeAvailable()
-            && is_array($compatibility)
-            && ($compatibility['premium_migrations_allowed'] ?? false) === true;
-    }
+		return self::proCustomTablesRuntimeAvailable()
+			&& is_array($compatibility)
+			&& ($compatibility['premium_migrations_allowed'] ?? false) === true;
+	}
 
-    private static function supportsMysqlPersistence(object $wpdb): bool
-    {
-        $class = strtolower($wpdb::class);
-        if (str_contains($class, 'sqlite')) {
-            return false;
-        }
-        foreach (['SQLITE_DB_DROPIN_VERSION', 'WP_SQLITE_AST_DRIVER_VERSION'] as $constant) {
-            if (defined($constant)) {
-                return false;
-            }
-        }
-        foreach (['prepare', 'get_row', 'get_results', 'get_var', 'query', 'insert'] as $method) {
-            if (!method_exists($wpdb, $method)) {
-                return false;
-            }
-        }
-        return true;
-    }
+	private static function supportsMysqlPersistence(object $wpdb): bool
+	{
+		$class = strtolower($wpdb::class);
+		if (str_contains($class, 'sqlite')) {
+			return false;
+		}
+		foreach (['SQLITE_DB_DROPIN_VERSION', 'WP_SQLITE_AST_DRIVER_VERSION'] as $constant) {
+			if (defined($constant)) {
+				return false;
+			}
+		}
+		foreach (['prepare', 'get_row', 'get_results', 'get_var', 'query', 'insert'] as $method) {
+			if (!method_exists($wpdb, $method)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    private static function environmentSupported(): bool
-    {
-        if (PHP_VERSION_ID < 80200) {
-            return false;
-        }
-        if (function_exists('get_bloginfo')) {
-            $version = (string) get_bloginfo('version');
-            if ($version !== '' && version_compare($version, self::MINIMUM_WORDPRESS, '<')) {
-                return false;
-            }
-        }
-        return true;
-    }
+	private static function environmentSupported(): bool
+	{
+		if (PHP_VERSION_ID < 80200) {
+			return false;
+		}
+		if (function_exists('get_bloginfo')) {
+			$version = (string) get_bloginfo('version');
+			if ($version !== '' && version_compare($version, self::MINIMUM_WORDPRESS, '<')) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    private static function assertPreBootConfigurationOpen(): void
-    {
-        if (self::$kernel instanceof Kernel) {
-            throw new LogicException('Module activation policy and module contributions must be configured before WPEssential boot begins.');
-        }
-    }
+	private static function assertPreBootConfigurationOpen(): void
+	{
+		if (self::$kernel instanceof Kernel) {
+			throw new LogicException('Module activation policy and module contributions must be configured before WPEssential boot begins.');
+		}
+	}
 }
