@@ -54,7 +54,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          vendor/bin/phpcs --standard=phpcs.xml.dist --extensions=php --report=json frameworks > /tmp/wpcs-before.json || test "$?" -eq 2
+          vendor/bin/phpcs -q --standard=phpcs.xml.dist --extensions=php --report=json --report-file=/tmp/wpcs-before.json frameworks > /tmp/wpcs-report-before.log 2>&1 || true
+          test -s /tmp/wpcs-before.json || { cat /tmp/wpcs-report-before.log; exit 1; }
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -92,14 +93,16 @@ jobs:
             test -n "$phpfile" || continue
             echo "::group::PHPCBF $phpfile"
             git show "$GITHUB_SHA:$phpfile" > /tmp/wpcs-original.php
-            vendor/bin/phpcs --standard=phpcs.xml.dist --report=json "$phpfile" > /tmp/wpcs-file-before.json || test "$?" -eq 2
+            vendor/bin/phpcs -q --standard=phpcs.xml.dist --report=json --report-file=/tmp/wpcs-file-before.json "$phpfile" > /tmp/wpcs-file-before.log 2>&1 || true
+            test -s /tmp/wpcs-file-before.json || { cat /tmp/wpcs-file-before.log; exit 1; }
             vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=PEAR.Functions.FunctionCallSignature,WordPress.WhiteSpace.ControlStructureSpacing,WordPress.WhiteSpace.OperatorSpacing "$phpfile" > /tmp/wpcs-fixer.log 2>&1 || true
             if git diff --quiet -- "$phpfile"; then
               echo "No fixable changes"
               echo "::endgroup::"
               continue
             fi
-            vendor/bin/phpcs --standard=phpcs.xml.dist --report=json "$phpfile" > /tmp/wpcs-file-after.json || test "$?" -eq 2
+            vendor/bin/phpcs -q --standard=phpcs.xml.dist --report=json --report-file=/tmp/wpcs-file-after.json "$phpfile" > /tmp/wpcs-file-after.log 2>&1 || true
+            test -s /tmp/wpcs-file-after.json || { cat /tmp/wpcs-file-after.log; exit 1; }
             if php -r '
               $old = token_get_all(file_get_contents($argv[1]));
               $new = token_get_all(file_get_contents($argv[2]));
@@ -161,7 +164,8 @@ jobs:
           composer architecture:validate
           composer engineering:validate
           git diff --check
-          vendor/bin/phpcs --standard=phpcs.xml.dist --extensions=php --report=json frameworks > /tmp/wpcs-after.json || test "$?" -eq 2
+          vendor/bin/phpcs -q --standard=phpcs.xml.dist --extensions=php --report=json --report-file=/tmp/wpcs-after.json frameworks > /tmp/wpcs-report-after.log 2>&1 || true
+          test -s /tmp/wpcs-after.json || { cat /tmp/wpcs-report-after.log; exit 1; }
           python3 - <<'PY'
           import collections
           import json
