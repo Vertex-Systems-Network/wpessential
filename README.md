@@ -4,6 +4,9 @@ WPEssential is a modular WordPress application platform for structured data, aut
 
 Project website: **https://wpessential.org**
 
+**2026-10-16 exact-head CI provenance recovery (PR #1416):** Bot-authored source commit `0e313be607edda3f9b3cc1381d2b4ab6c6d081d0` follows user-authored `0dec4d8ea1becb6d5dbe52ca879ac6ec6ea8362a` and contains guarded PHP whitespace remediation. GitHub's 14 `pull_request` workflow runs for `0e313be` are `action_required` with **no execution jobs** (example [Governance](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/38817290897)), rather than successful test evidence. The preceding user-authored source head's [PHP Quality](https://github.com/Vertex-Systems-Network/wpessential/actions/runs/38816474630) executed and **failed** the repository-wide WordPress Coding Standards step, leaving PHPUnit/PHPStan downstream **skipped**. This documentation-only, authenticated-user synchronization is intended to obtain newly executable exact-head CI without changing runtime, PHPCS rules, branch protection or product milestones. **PR remains OPEN and not merge-ready until all required checks and reviews pass; product milestone completion remains `5/10 = 50%` (not full 56-module parity or GA), with no production/release/deploy authority.**
+
+
 ## Milestone Table of Contents & Overall Progress
 
 This roadmap is derived from repository evidence. **Progress is milestone-scoped and does not imply full product parity, production deployment or GA.**
