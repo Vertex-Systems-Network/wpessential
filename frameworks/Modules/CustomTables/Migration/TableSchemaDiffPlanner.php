@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -21,30 +21,30 @@ final readonly class TableSchemaDiffPlanner
 	/** @throws JsonException */
 	public function plan(TableSchemaDescriptor $desired, ObservedTableSchema $observed): MigrationPlan
 	{
-		if ($desired->tableKey !== $observed->tableKey) {
-			throw new InvalidArgumentException('Custom Tables desired and observed logical table keys must match.');
+		if ( $desired->tableKey !== $observed->tableKey ) {
+			throw new InvalidArgumentException( 'Custom Tables desired and observed logical table keys must match.' );
 		}
 
 		$operations = [];
 		$findings = [];
-		foreach ($observed->findings as $finding) {
-			$findings[] = $this->observationFinding($finding);
+		foreach ( $observed->findings as $finding ) {
+			$findings[] = $this->observationFinding( $finding );
 		}
 
-		if ($observed->findings === [] && !$observed->exists) {
+		if ( $observed->findings === [] && ! $observed->exists ) {
 			$operations[] = new MigrationOperation(
 				type: 'create_table',
 				target: $desired->tableKey,
 				risk: MigrationRisk::R1,
 			);
-		} elseif ($observed->findings === []) {
-			$this->planExistingTable($desired, $observed, $operations, $findings);
+		} elseif ( $observed->findings === [] ) {
+			$this->planExistingTable( $desired, $observed, $operations, $findings );
 		}
 
-		$this->sortOperations($operations);
-		$this->sortFindings($findings);
+		$this->sortOperations( $operations );
+		$this->sortFindings( $findings );
 
-		[$risk, $blocked, $recoveryRequired] = $this->aggregatePlanState($operations, $findings);
+		[$risk, $blocked, $recoveryRequired] = $this->aggregatePlanState( $operations, $findings );
 
 		$semantic = [
 			'table_key' => $desired->tableKey,
@@ -67,11 +67,11 @@ final readonly class TableSchemaDiffPlanner
 		];
 		$fingerprint = hash(
 			'sha256',
-			json_encode($semantic, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+			json_encode( $semantic, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ),
 		);
 
 		return new MigrationPlan(
-			id: $this->uuidFromHash($fingerprint),
+			id: $this->uuidFromHash( $fingerprint ),
 			tableKey: $desired->tableKey,
 			sourceObservedFingerprint: $observed->fingerprint,
 			targetDefinitionId: $desired->definitionId,
@@ -97,21 +97,21 @@ final readonly class TableSchemaDiffPlanner
 		array &$operations,
 		array &$findings,
 	): void {
-		$desiredColumns = $this->columnMap($desired->columns);
-		$observedColumns = $this->columnMap($observed->columns);
-		$columnKeys = array_unique(array_merge(array_keys($desiredColumns), array_keys($observedColumns)));
-		sort($columnKeys, SORT_STRING);
+		$desiredColumns = $this->columnMap( $desired->columns );
+		$observedColumns = $this->columnMap( $observed->columns );
+		$columnKeys = array_unique( array_merge( array_keys( $desiredColumns ), array_keys( $observedColumns ) ) );
+		sort( $columnKeys, SORT_STRING );
 
-		foreach ($columnKeys as $key) {
+		foreach ( $columnKeys as $key ) {
 			$target = $desiredColumns[$key] ?? null;
 			$source = $observedColumns[$key] ?? null;
 
-			if ($target instanceof TableColumnDescriptor && !$source instanceof TableColumnDescriptor) {
-				$operations[] = $this->addColumnOperation($target);
+			if ( $target instanceof TableColumnDescriptor && ! $source instanceof TableColumnDescriptor ) {
+				$operations[] = $this->addColumnOperation( $target );
 				continue;
 			}
 
-			if ($source instanceof TableColumnDescriptor && !$target instanceof TableColumnDescriptor) {
+			if ( $source instanceof TableColumnDescriptor && ! $target instanceof TableColumnDescriptor ) {
 				$operations[] = new MigrationOperation(
 					type: 'drop_column',
 					target: 'columns.' . $key,
@@ -123,12 +123,12 @@ final readonly class TableSchemaDiffPlanner
 				continue;
 			}
 
-			if ($source instanceof TableColumnDescriptor && $target instanceof TableColumnDescriptor) {
-				$this->planColumnChange($source, $target, $operations, $findings);
+			if ( $source instanceof TableColumnDescriptor && $target instanceof TableColumnDescriptor ) {
+				$this->planColumnChange( $source, $target, $operations, $findings );
 			}
 		}
 
-		if ($desired->primaryKey !== $observed->primaryKey) {
+		if ( $desired->primaryKey !== $observed->primaryKey ) {
 			$operations[] = new MigrationOperation(
 				type: 'replace_primary_key',
 				target: 'primary_key',
@@ -144,7 +144,7 @@ final readonly class TableSchemaDiffPlanner
 			);
 		}
 
-		$this->planIndexes($desired->indexes, $observed->indexes, $operations, $findings);
+		$this->planIndexes( $desired->indexes, $observed->indexes, $operations, $findings );
 	}
 
 	/**
@@ -157,7 +157,7 @@ final readonly class TableSchemaDiffPlanner
 		array &$operations,
 		array &$findings,
 	): void {
-		if ($source->autoIncrement !== $target->autoIncrement) {
+		if ( $source->autoIncrement !== $target->autoIncrement ) {
 			$findings[] = new MigrationFinding(
 				code: 'auto_increment_change_deferred',
 				path: 'columns.' . $target->key . '.auto_increment',
@@ -168,11 +168,11 @@ final readonly class TableSchemaDiffPlanner
 			return;
 		}
 
-		if (!$this->sameTypeShape($source, $target)) {
-			$operations[] = $this->typeChangeOperation($source, $target);
+		if ( ! $this->sameTypeShape( $source, $target ) ) {
+			$operations[] = $this->typeChangeOperation( $source, $target );
 		}
 
-		if ($source->nullable !== $target->nullable) {
+		if ( $source->nullable !== $target->nullable ) {
 			$operations[] = new MigrationOperation(
 				type: 'alter_column_nullability',
 				target: 'columns.' . $target->key,
@@ -181,7 +181,7 @@ final readonly class TableSchemaDiffPlanner
 			);
 		}
 
-		if ($source->hasDefault !== $target->hasDefault || $source->defaultValue !== $target->defaultValue) {
+		if ( $source->hasDefault !== $target->hasDefault || $source->defaultValue !== $target->defaultValue ) {
 			$operations[] = new MigrationOperation(
 				type: 'alter_column_default',
 				target: 'columns.' . $target->key,
@@ -199,7 +199,7 @@ final readonly class TableSchemaDiffPlanner
 			target: 'columns.' . $column->key,
 			risk: $safeAdditive ? MigrationRisk::R1 : MigrationRisk::R2,
 			preconditions: $safeAdditive ? [] : ['table_empty_or_backfill_required'],
-			blocked: !$safeAdditive,
+			blocked: ! $safeAdditive,
 		);
 	}
 
@@ -209,18 +209,18 @@ final readonly class TableSchemaDiffPlanner
 	): MigrationOperation {
 		$path = 'columns.' . $target->key;
 
-		if ($source->type !== $target->type) {
+		if ( $source->type !== $target->type ) {
 			return $this->blockedTypeChange(
 				$path,
 				['conversion_strategy_required', 'verified_restore_point_required'],
 			);
 		}
 
-		if ($target->type === 'varchar') {
+		if ( $target->type === 'varchar' ) {
 			$sourceLength = (int) $source->length;
 			$targetLength = (int) $target->length;
 
-			if ($targetLength >= $sourceLength) {
+			if ( $targetLength >= $sourceLength ) {
 				return new MigrationOperation(
 					type: 'alter_column_type',
 					target: $path,
@@ -235,8 +235,8 @@ final readonly class TableSchemaDiffPlanner
 			);
 		}
 
-		if ($target->type === 'decimal') {
-			return $this->decimalTypeChangeOperation($source, $target, $path);
+		if ( $target->type === 'decimal' ) {
+			return $this->decimalTypeChangeOperation( $source, $target, $path );
 		}
 
 		return $this->blockedTypeChange(
@@ -260,7 +260,7 @@ final readonly class TableSchemaDiffPlanner
 		$preservesIntegerCapacity = $targetIntegerDigits >= $sourceIntegerDigits;
 		$preservesFractionalCapacity = $targetScale >= $sourceScale;
 
-		if ($preservesIntegerCapacity && $preservesFractionalCapacity) {
+		if ( $preservesIntegerCapacity && $preservesFractionalCapacity ) {
 			return new MigrationOperation(
 				type: 'alter_column_type',
 				target: $path,
@@ -300,16 +300,16 @@ final readonly class TableSchemaDiffPlanner
 		array &$operations,
 		array &$findings,
 	): void {
-		$targetIndexes = $this->indexMap($desired);
-		$sourceIndexes = $this->indexMap($observed);
-		$keys = array_unique(array_merge(array_keys($targetIndexes), array_keys($sourceIndexes)));
-		sort($keys, SORT_STRING);
+		$targetIndexes = $this->indexMap( $desired );
+		$sourceIndexes = $this->indexMap( $observed );
+		$keys = array_unique( array_merge( array_keys( $targetIndexes ), array_keys( $sourceIndexes ) ) );
+		sort( $keys, SORT_STRING );
 
-		foreach ($keys as $key) {
+		foreach ( $keys as $key ) {
 			$target = $targetIndexes[$key] ?? null;
 			$source = $sourceIndexes[$key] ?? null;
 
-			if ($target instanceof TableIndexDescriptor && !$source instanceof TableIndexDescriptor) {
+			if ( $target instanceof TableIndexDescriptor && ! $source instanceof TableIndexDescriptor ) {
 				$operations[] = new MigrationOperation(
 					type: $target->unique ? 'add_unique_constraint' : 'add_index',
 					target: 'indexes.' . $key,
@@ -319,7 +319,7 @@ final readonly class TableSchemaDiffPlanner
 				continue;
 			}
 
-			if ($source instanceof TableIndexDescriptor && !$target instanceof TableIndexDescriptor) {
+			if ( $source instanceof TableIndexDescriptor && ! $target instanceof TableIndexDescriptor ) {
 				$operations[] = new MigrationOperation(
 					type: $source->unique ? 'drop_unique_constraint' : 'drop_index',
 					target: 'indexes.' . $key,
@@ -331,7 +331,7 @@ final readonly class TableSchemaDiffPlanner
 				continue;
 			}
 
-			if ($source instanceof TableIndexDescriptor
+			if ( $source instanceof TableIndexDescriptor
 				&& $target instanceof TableIndexDescriptor
 				&& $source->canonical() !== $target->canonical()
 			) {
@@ -358,7 +358,7 @@ final readonly class TableSchemaDiffPlanner
 	private function columnMap(array $columns): array
 	{
 		$map = [];
-		foreach ($columns as $column) {
+		foreach ( $columns as $column ) {
 			$map[$column->key] = $column;
 		}
 
@@ -369,7 +369,7 @@ final readonly class TableSchemaDiffPlanner
 	private function indexMap(array $indexes): array
 	{
 		$map = [];
-		foreach ($indexes as $index) {
+		foreach ( $indexes as $index ) {
 			$map[$index->key] = $index;
 		}
 
@@ -398,14 +398,14 @@ final readonly class TableSchemaDiffPlanner
 		$blocked = false;
 		$recoveryRequired = false;
 
-		foreach ($operations as $operation) {
-			$risk = MigrationRisk::max($risk, $operation->risk);
+		foreach ( $operations as $operation ) {
+			$risk = MigrationRisk::max( $risk, $operation->risk );
 			$blocked = $blocked || $operation->blocked;
 			$recoveryRequired = $recoveryRequired || $operation->recoveryRequired;
 		}
 
-		foreach ($findings as $finding) {
-			$risk = MigrationRisk::max($risk, $finding->risk);
+		foreach ( $findings as $finding ) {
+			$risk = MigrationRisk::max( $risk, $finding->risk );
 			$blocked = $blocked || $finding->blocking;
 			$recoveryRequired = $recoveryRequired || $finding->risk->value >= MigrationRisk::R3->value;
 		}
@@ -449,18 +449,18 @@ final readonly class TableSchemaDiffPlanner
 
 	private function uuidFromHash(string $hash): string
 	{
-		$hex = substr($hash, 0, 32);
+		$hex = substr( $hash, 0, 32 );
 		$hex[12] = '5';
-		$variant = hexdec($hex[16]);
-		$hex[16] = dechex(($variant & 0x3) | 0x8);
+		$variant = hexdec( $hex[16] );
+		$hex[16] = dechex( ($variant & 0x3) | 0x8 );
 
 		return sprintf(
 			'%s-%s-%s-%s-%s',
-			substr($hex, 0, 8),
-			substr($hex, 8, 4),
-			substr($hex, 12, 4),
-			substr($hex, 16, 4),
-			substr($hex, 20, 12),
+			substr( $hex, 0, 8 ),
+			substr( $hex, 8, 4 ),
+			substr( $hex, 12, 4 ),
+			substr( $hex, 16, 4 ),
+			substr( $hex, 20, 12 ),
 		);
 	}
 }

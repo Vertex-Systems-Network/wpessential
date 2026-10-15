@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,13 +25,13 @@ final readonly class QueryRelationPredicateResolver
 
 	public function resolve(QueryDefinition $definition, ExecutionContext $context): QueryRelationResolution
 	{
-		if ($definition->filter === null || !$this->containsRelation($definition->filter)) {
-			return new QueryRelationResolution($definition, false);
+		if ( $definition->filter === null || ! $this->containsRelation( $definition->filter ) ) {
+			return new QueryRelationResolution( $definition, false );
 		}
 
 		$root = $definition->filter;
-		if ($root->type !== QueryPredicateType::Group || ($root->payload['boolean'] ?? null) !== 'and') {
-			throw $this->unsupported('$.filter', 'Relation predicate V1 requires a root AND group with a finite post-id anchor set.');
+		if ( $root->type !== QueryPredicateType::Group || ($root->payload['boolean'] ?? null) !== 'and' ) {
+			throw $this->unsupported( '$.filter', 'Relation predicate V1 requires a root AND group with a finite post-id anchor set.' );
 		}
 
 		$anchorIndex = null;
@@ -39,40 +39,40 @@ final readonly class QueryRelationPredicateResolver
 		$relationIndex = null;
 		$relation = null;
 
-		foreach ($root->children as $index => $child) {
-			if ($child->type === QueryPredicateType::Relation) {
-				if ($relation !== null) {
-					throw $this->unsupported('$.filter', 'Relation predicate V1 supports exactly one relation predicate per query.');
+		foreach ( $root->children as $index => $child ) {
+			if ( $child->type === QueryPredicateType::Relation ) {
+				if ( $relation !== null ) {
+					throw $this->unsupported( '$.filter', 'Relation predicate V1 supports exactly one relation predicate per query.' );
 				}
 				$relation = $child;
 				$relationIndex = $index;
 				continue;
 			}
 
-			if ($this->containsRelation($child)) {
-				throw $this->unsupported('$.filter.children[' . $index . ']', 'Nested relation predicates are not supported by Query relation execution V1.');
+			if ( $this->containsRelation( $child ) ) {
+				throw $this->unsupported( '$.filter.children[' . $index . ']', 'Nested relation predicates are not supported by Query relation execution V1.' );
 			}
 
-			$candidate = $this->finiteAnchorIds($child);
-			if ($candidate !== null) {
-				if ($anchorIds !== null) {
-					throw $this->unsupported('$.filter', 'Relation predicate V1 requires exactly one finite post-id anchor predicate.');
+			$candidate = $this->finiteAnchorIds( $child );
+			if ( $candidate !== null ) {
+				if ( $anchorIds !== null ) {
+					throw $this->unsupported( '$.filter', 'Relation predicate V1 requires exactly one finite post-id anchor predicate.' );
 				}
 				$anchorIds = $candidate;
 				$anchorIndex = $index;
 			}
 		}
 
-		if (!$relation instanceof QueryPredicate || !is_int($relationIndex)) {
-			throw $this->unsupported('$.filter', 'Relation predicate resolution did not find a direct relation predicate.');
+		if ( ! $relation instanceof QueryPredicate || ! is_int( $relationIndex ) ) {
+			throw $this->unsupported( '$.filter', 'Relation predicate resolution did not find a direct relation predicate.' );
 		}
-		if ($anchorIds === null || !is_int($anchorIndex) || $anchorIds === []) {
+		if ( $anchorIds === null || ! is_int( $anchorIndex ) || $anchorIds === [] ) {
 			throw $this->unsupported(
 				'$.filter',
 				'Relation predicate V1 requires an explicit non-empty post.id eq/in anchor set (finite post-id anchor).'
 			);
 		}
-		if (count($anchorIds) > RelationQueryConsumerInterface::MAX_BATCH_SIZE) {
+		if ( count( $anchorIds ) > RelationQueryConsumerInterface::MAX_BATCH_SIZE ) {
 			throw new QueryPlanningException(
 				'wpe_query_cost_blocked',
 				'$.filter',
@@ -85,13 +85,13 @@ final readonly class QueryRelationPredicateResolver
 		$mode = $relation->payload['mode'] ?? null;
 		$relatedIds = $relation->payload['related_ids'] ?? null;
 
-		if (!is_string($relationRef) || $relationRef === '') {
-			throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.relation_ref', 'Relation reference is malformed.');
+		if ( ! is_string( $relationRef ) || $relationRef === '' ) {
+			throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter.relation_ref', 'Relation reference is malformed.' );
 		}
-		if (!in_array($direction, [RelationQueryConsumerInterface::DIRECTION_FROM, RelationQueryConsumerInterface::DIRECTION_TO], true)) {
-			throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter.direction', 'Relation direction is unsupported.');
+		if ( ! in_array( $direction, [RelationQueryConsumerInterface::DIRECTION_FROM, RelationQueryConsumerInterface::DIRECTION_TO], true ) ) {
+			throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter.direction', 'Relation direction is unsupported.' );
 		}
-		if ($mode !== 'exists' || $relatedIds !== null || $relation->children !== []) {
+		if ( $mode !== 'exists' || $relatedIds !== null || $relation->children !== [] ) {
 			throw $this->unsupported(
 				'$.filter',
 				'Relation execution V1 supports only direct exists predicates without related_ids or nested filters.',
@@ -99,8 +99,8 @@ final readonly class QueryRelationPredicateResolver
 		}
 
 		try {
-			$description = $this->relations->describe($relationRef, $context);
-		} catch (Throwable) {
+			$description = $this->relations->describe( $relationRef, $context );
+		} catch ( Throwable ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -108,7 +108,7 @@ final readonly class QueryRelationPredicateResolver
 			);
 		}
 
-		if (($description['contract_version'] ?? null) !== RelationQueryConsumerInterface::CONTRACT_VERSION) {
+		if ( ($description['contract_version'] ?? null) !== RelationQueryConsumerInterface::CONTRACT_VERSION ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -117,7 +117,7 @@ final readonly class QueryRelationPredicateResolver
 		}
 
 		$capabilities = $description['capabilities'] ?? null;
-		if (!is_array($capabilities)) {
+		if ( ! is_array( $capabilities ) ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -129,11 +129,11 @@ final readonly class QueryRelationPredicateResolver
 		$maxResult = $capabilities['max_result_limit'] ?? null;
 		$maxDepth = $capabilities['max_traversal_depth'] ?? null;
 		if (
-			!is_int($maxBatch)
-			|| !is_int($maxResult)
-			|| !is_int($maxDepth)
-			|| $maxBatch < count($anchorIds)
-			|| $maxResult < count($anchorIds)
+			! is_int( $maxBatch )
+			|| ! is_int( $maxResult )
+			|| ! is_int( $maxDepth )
+			|| $maxBatch < count( $anchorIds )
+			|| $maxResult < count( $anchorIds )
 			|| $maxBatch > RelationQueryConsumerInterface::MAX_BATCH_SIZE
 			|| $maxResult > RelationQueryConsumerInterface::MAX_RESULT_LIMIT
 			|| $maxDepth < 1
@@ -147,7 +147,7 @@ final readonly class QueryRelationPredicateResolver
 
 		$endpointKey = $direction === RelationQueryConsumerInterface::DIRECTION_FROM ? 'from' : 'to';
 		$endpoint = $description[$endpointKey] ?? null;
-		if (!is_array($endpoint)) {
+		if ( ! is_array( $endpoint ) ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -157,7 +157,7 @@ final readonly class QueryRelationPredicateResolver
 
 		$objectType = $endpoint['object_type'] ?? null;
 		$objectSubtype = $endpoint['object_subtype'] ?? null;
-		if (!is_string($objectType) || ($objectSubtype !== null && !is_string($objectSubtype))) {
+		if ( ! is_string( $objectType ) || ($objectSubtype !== null && ! is_string( $objectSubtype )) ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -177,10 +177,10 @@ final readonly class QueryRelationPredicateResolver
 				$direction,
 				$anchorIds,
 				null,
-				count($anchorIds),
+				count( $anchorIds ),
 				$context,
 			);
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -188,7 +188,7 @@ final readonly class QueryRelationPredicateResolver
 			);
 		}
 
-		if (!is_array($matched) || !array_is_list($matched) || count($matched) > count($anchorIds)) {
+		if ( ! is_array( $matched ) || ! array_is_list( $matched ) || count( $matched ) > count( $anchorIds ) ) {
 			throw new QueryPlanningException(
 				'wpe_query_provider_failed',
 				'$.filter.relation_ref',
@@ -196,10 +196,10 @@ final readonly class QueryRelationPredicateResolver
 			);
 		}
 
-		$anchorSet = array_fill_keys($anchorIds, true);
+		$anchorSet = array_fill_keys( $anchorIds, true );
 		$matchedSet = [];
-		foreach ($matched as $matchedId) {
-			if (!is_int($matchedId) || $matchedId < 1 || !isset($anchorSet[$matchedId])) {
+		foreach ( $matched as $matchedId ) {
+			if ( ! is_int( $matchedId ) || $matchedId < 1 || ! isset( $anchorSet[$matchedId] ) ) {
 				throw new QueryPlanningException(
 					'wpe_query_provider_failed',
 					'$.filter.relation_ref',
@@ -210,20 +210,20 @@ final readonly class QueryRelationPredicateResolver
 		}
 
 		$orderedMatches = [];
-		foreach ($anchorIds as $anchorId) {
-			if (isset($matchedSet[$anchorId])) {
+		foreach ( $anchorIds as $anchorId ) {
+			if ( isset( $matchedSet[$anchorId] ) ) {
 				$orderedMatches[] = $anchorId;
 			}
 		}
 
 		$children = $root->children;
-		array_splice($children, $relationIndex, 1);
-		if ($relationIndex < $anchorIndex) {
+		array_splice( $children, $relationIndex, 1 );
+		if ( $relationIndex < $anchorIndex ) {
 			--$anchorIndex;
 		}
 
 		$shortCircuit = $orderedMatches === [];
-		if (!$shortCircuit) {
+		if ( ! $shortCircuit ) {
 			$children[$anchorIndex] = new QueryPredicate(
 				QueryPredicateType::SetMembership,
 				[
@@ -237,7 +237,7 @@ final readonly class QueryRelationPredicateResolver
 		return new QueryRelationResolution(
 			$this->withFilter(
 				$definition,
-				new QueryPredicate(QueryPredicateType::Group, $root->payload, array_values($children)),
+				new QueryPredicate( QueryPredicateType::Group, $root->payload, array_values( $children ) ),
 			),
 			$shortCircuit,
 		);
@@ -252,8 +252,8 @@ final readonly class QueryRelationPredicateResolver
 			&& ($predicate->payload['operator'] ?? null) === 'eq'
 		) {
 			$value = $predicate->payload['value'] ?? null;
-			if (!is_int($value) || $value < 1) {
-				throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor is invalid.');
+			if ( ! is_int( $value ) || $value < 1 ) {
+				throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor is invalid.' );
 			}
 			return [$value];
 		}
@@ -264,18 +264,18 @@ final readonly class QueryRelationPredicateResolver
 			&& ($predicate->payload['operator'] ?? null) === 'in'
 		) {
 			$values = $predicate->payload['values'] ?? null;
-			if (!is_array($values) || !array_is_list($values) || $values === []) {
-				throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor list is invalid.');
+			if ( ! is_array( $values ) || ! array_is_list( $values ) || $values === [] ) {
+				throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor list is invalid.' );
 			}
 
 			$ids = [];
-			foreach ($values as $value) {
-				if (!is_int($value) || $value < 1) {
-					throw new QueryPlanningException('wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor list must contain positive integers.');
+			foreach ( $values as $value ) {
+				if ( ! is_int( $value ) || $value < 1 ) {
+					throw new QueryPlanningException( 'wpe_query_invalid_ast', '$.filter', 'Finite post.id anchor list must contain positive integers.' );
 				}
 				$ids[$value] = $value;
 			}
-			return array_values($ids);
+			return array_values( $ids );
 		}
 
 		return null;
@@ -283,11 +283,11 @@ final readonly class QueryRelationPredicateResolver
 
 	private function containsRelation(QueryPredicate $predicate): bool
 	{
-		if ($predicate->type === QueryPredicateType::Relation) {
+		if ( $predicate->type === QueryPredicateType::Relation ) {
 			return true;
 		}
-		foreach ($predicate->children as $child) {
-			if ($this->containsRelation($child)) {
+		foreach ( $predicate->children as $child ) {
+			if ( $this->containsRelation( $child ) ) {
 				return true;
 			}
 		}
@@ -315,6 +315,6 @@ final readonly class QueryRelationPredicateResolver
 
 	private function unsupported(string $path, string $message): QueryPlanningException
 	{
-		return new QueryPlanningException('wpe_query_unsupported_operator', $path, $message);
+		return new QueryPlanningException( 'wpe_query_unsupported_operator', $path, $message );
 	}
 }

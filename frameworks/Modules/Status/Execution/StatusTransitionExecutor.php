@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Status\Execution;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -67,40 +67,40 @@ final class StatusTransitionExecutor
 		private readonly ?StatusTransitionEvidencePublisher $evidence = null,
 	) {
 		$this->readPostStatus = $readPostStatus !== null
-			? Closure::fromCallable($readPostStatus)
+			? Closure::fromCallable( $readPostStatus )
 			: static function (int $postId): string|false {
-				if (!function_exists('get_post_status')) {
-					throw new LogicException('WordPress post-status API is unavailable.');
+				if ( ! function_exists( 'get_post_status' ) ) {
+					throw new LogicException( 'WordPress post-status API is unavailable.' );
 				}
 
-				return get_post_status($postId);
+				return get_post_status( $postId );
 			};
 
 		$this->readPostType = $readPostType !== null
-			? Closure::fromCallable($readPostType)
+			? Closure::fromCallable( $readPostType )
 			: static function (int $postId): string|false {
-				if (!function_exists('get_post_type')) {
-					throw new LogicException('WordPress post-type API is unavailable.');
+				if ( ! function_exists( 'get_post_type' ) ) {
+					throw new LogicException( 'WordPress post-type API is unavailable.' );
 				}
 
-				return get_post_type($postId);
+				return get_post_type( $postId );
 			};
 
 		$this->statusRegistered = $statusRegistered !== null
-			? Closure::fromCallable($statusRegistered)
+			? Closure::fromCallable( $statusRegistered )
 			: static function (string $status): bool {
-				if (!function_exists('get_post_status_object')) {
-					throw new LogicException('WordPress registered-status API is unavailable.');
+				if ( ! function_exists( 'get_post_status_object' ) ) {
+					throw new LogicException( 'WordPress registered-status API is unavailable.' );
 				}
 
-				return get_post_status_object($status) !== null;
+				return get_post_status_object( $status ) !== null;
 			};
 
 		$this->updatePostStatus = $updatePostStatus !== null
-			? Closure::fromCallable($updatePostStatus)
+			? Closure::fromCallable( $updatePostStatus )
 			: static function (int $postId, string $targetStatus): mixed {
-				if (!function_exists('wp_update_post')) {
-					throw new LogicException('WordPress post mutation API is unavailable.');
+				if ( ! function_exists( 'wp_update_post' ) ) {
+					throw new LogicException( 'WordPress post mutation API is unavailable.' );
 				}
 
 				return wp_update_post(
@@ -118,75 +118,75 @@ final class StatusTransitionExecutor
 		?string $reason = null,
 		bool $programmatic = false,
 	): StatusTransitionExecutionResult {
-		$this->assertStatusKey($expectedFromStatus, 'expected current');
-		$this->assertStatusKey($targetStatus, 'target');
-		$this->assertNotReservedLifecycle($expectedFromStatus);
-		$this->assertNotReservedLifecycle($targetStatus);
+		$this->assertStatusKey( $expectedFromStatus, 'expected current' );
+		$this->assertStatusKey( $targetStatus, 'target' );
+		$this->assertNotReservedLifecycle( $expectedFromStatus );
+		$this->assertNotReservedLifecycle( $targetStatus );
 
 		// Object authorization precedes server-state-specific errors so denied callers cannot
 		// probe current status/post-type details through transition error differences.
-		$this->resources->assertCanEdit($context, $postId);
+		$this->resources->assertCanEdit( $context, $postId );
 
-		[$currentStatus, $postType] = $this->serverState($postId);
-		if ($currentStatus !== $expectedFromStatus) {
-			throw new RuntimeException('Status transition rejected because the current status is stale.');
+		[$currentStatus, $postType] = $this->serverState( $postId );
+		if ( $currentStatus !== $expectedFromStatus ) {
+			throw new RuntimeException( 'Status transition rejected because the current status is stale.' );
 		}
-		if ($currentStatus === $targetStatus) {
-			throw new RuntimeException('Same-status updates are not Status transitions.');
+		if ( $currentStatus === $targetStatus ) {
+			throw new RuntimeException( 'Same-status updates are not Status transitions.' );
 		}
-		$this->assertNotReservedLifecycle($currentStatus);
+		$this->assertNotReservedLifecycle( $currentStatus );
 
-		$rule = $this->policy->ruleFor($currentStatus, $targetStatus);
-		if ($rule === null || !$this->policy->allows($currentStatus, $targetStatus, programmatic: $programmatic)) {
-			throw new RuntimeException('Status transition edge is not allowed by the bounded policy.');
+		$rule = $this->policy->ruleFor( $currentStatus, $targetStatus );
+		if ( $rule === null || ! $this->policy->allows( $currentStatus, $targetStatus, programmatic: $programmatic ) ) {
+			throw new RuntimeException( 'Status transition edge is not allowed by the bounded policy.' );
 		}
-		if (!$this->policy->acceptsReason($currentStatus, $targetStatus, $reason)) {
-			throw new RuntimeException('Status transition reason does not satisfy the bounded policy.');
+		if ( ! $this->policy->acceptsReason( $currentStatus, $targetStatus, $reason ) ) {
+			throw new RuntimeException( 'Status transition reason does not satisfy the bounded policy.' );
 		}
 
-		$this->assertRegistered($currentStatus);
-		$this->assertRegistered($targetStatus);
+		$this->assertRegistered( $currentStatus );
+		$this->assertRegistered( $targetStatus );
 		$descriptors = $this->publishedDescriptors();
-		$this->assertApplicable($descriptors[$currentStatus] ?? null, $postType, 'current');
-		$this->assertApplicable($descriptors[$targetStatus] ?? null, $postType, 'target');
+		$this->assertApplicable( $descriptors[$currentStatus] ?? null, $postType, 'current' );
+		$this->assertApplicable( $descriptors[$targetStatus] ?? null, $postType, 'target' );
 
-		if ($rule->capability !== null) {
+		if ( $rule->capability !== null ) {
 			try {
-				$allowed = $this->capabilities->can($context, $rule->capability);
-			} catch (Throwable $exception) {
-				throw new RuntimeException('Status transition capability evaluation failed.', 0, $exception);
+				$allowed = $this->capabilities->can( $context, $rule->capability );
+			} catch ( Throwable $exception ) {
+				throw new RuntimeException( 'Status transition capability evaluation failed.', 0, $exception );
 			}
-			if (!$allowed) {
-				throw new RuntimeException('Status transition additional capability is denied.');
+			if ( ! $allowed ) {
+				throw new RuntimeException( 'Status transition additional capability is denied.' );
 			}
 		}
 
 		// Re-read immediately before mutation. WordPress does not offer a status CAS primitive,
 		// so this bounded V1 guard rejects drift observed during authorization/policy evaluation.
-		[$revalidatedStatus, $revalidatedPostType] = $this->serverState($postId);
-		if ($revalidatedStatus !== $currentStatus || $revalidatedPostType !== $postType) {
-			throw new RuntimeException('Status transition rejected because server state changed before mutation.');
+		[$revalidatedStatus, $revalidatedPostType] = $this->serverState( $postId );
+		if ( $revalidatedStatus !== $currentStatus || $revalidatedPostType !== $postType ) {
+			throw new RuntimeException( 'Status transition rejected because server state changed before mutation.' );
 		}
 
 		try {
-			$updatedPostId = ($this->updatePostStatus)($postId, $targetStatus);
-		} catch (Throwable $exception) {
-			throw new RuntimeException('WordPress Status transition mutation failed.', 0, $exception);
+			$updatedPostId = ($this->updatePostStatus)( $postId, $targetStatus );
+		} catch ( Throwable $exception ) {
+			throw new RuntimeException( 'WordPress Status transition mutation failed.', 0, $exception );
 		}
-		if (!is_int($updatedPostId) || $updatedPostId !== $postId) {
-			throw new RuntimeException('WordPress Status transition returned an invalid mutation result.');
+		if ( ! is_int( $updatedPostId ) || $updatedPostId !== $postId ) {
+			throw new RuntimeException( 'WordPress Status transition returned an invalid mutation result.' );
 		}
 
 		try {
-			$verifiedStatus = ($this->readPostStatus)($postId);
-		} catch (Throwable $exception) {
-			throw new RuntimeException('WordPress Status transition verification failed.', 0, $exception);
+			$verifiedStatus = ($this->readPostStatus)( $postId );
+		} catch ( Throwable $exception ) {
+			throw new RuntimeException( 'WordPress Status transition verification failed.', 0, $exception );
 		}
-		if ($verifiedStatus !== $targetStatus) {
-			throw new RuntimeException('WordPress Status transition could not be verified.');
+		if ( $verifiedStatus !== $targetStatus ) {
+			throw new RuntimeException( 'WordPress Status transition could not be verified.' );
 		}
 
-		$normalizedReason = $reason === null ? null : trim($reason);
+		$normalizedReason = $reason === null ? null : trim( $reason );
 		$result = new StatusTransitionExecutionResult(
 			postId: $postId,
 			fromStatus: $currentStatus,
@@ -196,7 +196,7 @@ final class StatusTransitionExecutor
 			programmatic: $programmatic,
 		);
 
-		$this->evidence?->publish($context, $result);
+		$this->evidence?->publish( $context, $result );
 
 		return $result;
 	}
@@ -204,22 +204,22 @@ final class StatusTransitionExecutor
 	/** @return array{string,string} */
 	private function serverState(int $postId): array
 	{
-		if ($postId < 1) {
-			throw new RuntimeException('Status transition post id must be positive.');
+		if ( $postId < 1 ) {
+			throw new RuntimeException( 'Status transition post id must be positive.' );
 		}
 
 		try {
-			$status = ($this->readPostStatus)($postId);
-			$postType = ($this->readPostType)($postId);
-		} catch (Throwable $exception) {
-			throw new RuntimeException('WordPress post state could not be read.', 0, $exception);
+			$status = ($this->readPostStatus)( $postId );
+			$postType = ($this->readPostType)( $postId );
+		} catch ( Throwable $exception ) {
+			throw new RuntimeException( 'WordPress post state could not be read.', 0, $exception );
 		}
 
-		if (!is_string($status) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $status)) {
-			throw new RuntimeException('WordPress post has no bounded registered current status.');
+		if ( ! is_string( $status ) || ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,19}$/', $status ) ) {
+			throw new RuntimeException( 'WordPress post has no bounded registered current status.' );
 		}
-		if (!is_string($postType) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $postType)) {
-			throw new RuntimeException('WordPress post has no bounded current post type.');
+		if ( ! is_string( $postType ) || ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,19}$/', $postType ) ) {
+			throw new RuntimeException( 'WordPress post has no bounded current post type.' );
 		}
 
 		return [$status, $postType];
@@ -230,22 +230,22 @@ final class StatusTransitionExecutor
 	{
 		$descriptors = [];
 		try {
-			$definitions = $this->definitions->byType(StatusDefinitionCompiler::TYPE);
-			foreach ($definitions as $definition) {
-				if ($definition->status !== DefinitionStatus::Published) {
+			$definitions = $this->definitions->byType( StatusDefinitionCompiler::TYPE );
+			foreach ( $definitions as $definition ) {
+				if ( $definition->status !== DefinitionStatus::Published ) {
 					continue;
 				}
-				$descriptor = $this->compiler->compile($definition);
-				if (isset($descriptors[$descriptor->key])) {
-					throw new RuntimeException('Duplicate Published Status definition key.');
+				$descriptor = $this->compiler->compile( $definition );
+				if ( isset( $descriptors[$descriptor->key] ) ) {
+					throw new RuntimeException( 'Duplicate Published Status definition key.' );
 				}
 				$descriptors[$descriptor->key] = $descriptor;
 			}
-		} catch (Throwable $exception) {
-			if ($exception instanceof RuntimeException) {
+		} catch ( Throwable $exception ) {
+			if ( $exception instanceof RuntimeException ) {
 				throw $exception;
 			}
-			throw new RuntimeException('Published Status definitions could not be resolved.', 0, $exception);
+			throw new RuntimeException( 'Published Status definitions could not be resolved.', 0, $exception );
 		}
 
 		return $descriptors;
@@ -254,12 +254,12 @@ final class StatusTransitionExecutor
 	private function assertRegistered(string $status): void
 	{
 		try {
-			$registered = ($this->statusRegistered)($status);
-		} catch (Throwable $exception) {
-			throw new RuntimeException('WordPress registered Status lookup failed.', 0, $exception);
+			$registered = ($this->statusRegistered)( $status );
+		} catch ( Throwable $exception ) {
+			throw new RuntimeException( 'WordPress registered Status lookup failed.', 0, $exception );
 		}
-		if (!$registered) {
-			throw new RuntimeException('Status transition references an unregistered WordPress status.');
+		if ( ! $registered ) {
+			throw new RuntimeException( 'Status transition references an unregistered WordPress status.' );
 		}
 	}
 
@@ -268,22 +268,22 @@ final class StatusTransitionExecutor
 		string $postType,
 		string $side,
 	): void {
-		if ($descriptor !== null && !in_array($postType, $descriptor->postTypes, true)) {
-			throw new RuntimeException('WPEssential ' . $side . ' Status is not applicable to the server-read post type.');
+		if ( $descriptor !== null && ! in_array( $postType, $descriptor->postTypes, true ) ) {
+			throw new RuntimeException( 'WPEssential ' . $side . ' Status is not applicable to the server-read post type.' );
 		}
 	}
 
 	private function assertStatusKey(string $status, string $label): void
 	{
-		if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $status)) {
-			throw new RuntimeException('Status transition ' . $label . ' status key is invalid.');
+		if ( ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,19}$/', $status ) ) {
+			throw new RuntimeException( 'Status transition ' . $label . ' status key is invalid.' );
 		}
 	}
 
 	private function assertNotReservedLifecycle(string $status): void
 	{
-		if (in_array($status, self::CORE_LIFECYCLE_RESERVED, true)) {
-			throw new RuntimeException('Core lifecycle Status must use its documented owner path.');
+		if ( in_array( $status, self::CORE_LIFECYCLE_RESERVED, true ) ) {
+			throw new RuntimeException( 'Core lifecycle Status must use its documented owner path.' );
 		}
 	}
 }
