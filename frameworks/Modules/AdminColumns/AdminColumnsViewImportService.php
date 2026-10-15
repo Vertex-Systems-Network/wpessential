@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\AdminColumns;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -38,7 +38,7 @@ final readonly class AdminColumnsViewImportService
 		array $remaps,
 		DefinitionStatus $status = DefinitionStatus::Draft,
 	): array {
-		$decoded = $this->codec->decode($document, $remaps);
+		$decoded = $this->codec->decode( $document, $remaps );
 		$definition = $this->views->importCreate(
 			$decoded['payload'],
 			$decoded['view_id'],

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\AdminColumns;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -34,7 +34,7 @@ final readonly class AdminColumnsViewDependencyManifest
 	 */
 	public function project(array $payload): array
 	{
-		$normalized = $this->normalizer->normalize($payload);
+		$normalized = $this->normalizer->normalize( $payload );
 
 		/** @var string $viewKey */
 		$viewKey = $normalized['view_key'];
@@ -45,13 +45,13 @@ final readonly class AdminColumnsViewDependencyManifest
 
 		$sources = [];
 		$sourceIndexes = [];
-		foreach ($columns as $column) {
+		foreach ( $columns as $column ) {
 			$owner = $column['source']['owner'];
 			$reference = $column['source']['reference'];
 			$identity = $owner . "\x1f" . $reference;
 
-			if (!array_key_exists($identity, $sourceIndexes)) {
-				$sourceIndexes[$identity] = count($sources);
+			if ( ! array_key_exists( $identity, $sourceIndexes ) ) {
+				$sourceIndexes[$identity] = count( $sources );
 				$sources[] = [
 					'owner' => $owner,
 					'reference' => $reference,

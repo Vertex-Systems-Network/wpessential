@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Assets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,40 +25,40 @@ final class WordPressAssetLoader
 
 	public function register(): void
 	{
-		if ($this->registered) {
+		if ( $this->registered ) {
 			return;
 		}
 
-		$this->environment->registerAdminEnqueue([$this, 'enqueueForAdminHook']);
+		$this->environment->registerAdminEnqueue( [$this, 'enqueueForAdminHook'] );
 		$this->registered = true;
 	}
 
 	public function enqueueForAdminHook(string $hookSuffix): void
 	{
 		try {
-			$route = $this->environment->routeForAdminHook($hookSuffix);
-			if ($route === null) {
+			$route = $this->environment->routeForAdminHook( $hookSuffix );
+			if ( $route === null ) {
 				return;
 			}
 
-			$descriptors = $this->assets->forAdminRoute($route);
+			$descriptors = $this->assets->forAdminRoute( $route );
 			$plan = [];
 
-			foreach ($descriptors as $descriptor) {
-				if (!$descriptor->scope->includes(AssetScope::Admin)) {
+			foreach ( $descriptors as $descriptor ) {
+				if ( ! $descriptor->scope->includes( AssetScope::Admin ) ) {
 					return;
 				}
 
-				$mapping = $this->buildEntries->get($descriptor->handle);
-				$script = $this->manifest->script($mapping->scriptEntry);
-				if ($script === null) {
+				$mapping = $this->buildEntries->get( $descriptor->handle );
+				$script = $this->manifest->script( $mapping->scriptEntry );
+				if ( $script === null ) {
 					return;
 				}
 
 				$style = null;
-				if ($mapping->styleEntry !== null) {
-					$style = $this->manifest->style($mapping->styleEntry);
-					if ($style === null) {
+				if ( $mapping->styleEntry !== null ) {
+					$style = $this->manifest->style( $mapping->styleEntry );
+					if ( $style === null ) {
 						return;
 					}
 				}
@@ -70,7 +70,7 @@ final class WordPressAssetLoader
 				];
 			}
 
-			foreach ($plan as $item) {
+			foreach ( $plan as $item ) {
 				$descriptor = $item['descriptor'];
 				$script = $item['script'];
 				$version = $script['version'] ?? $descriptor->version;
@@ -86,7 +86,7 @@ final class WordPressAssetLoader
 					'defer',
 				);
 
-				if (is_string($item['style'])) {
+				if ( is_string( $item['style'] ) ) {
 					$this->environment->enqueueStyle(
 						$descriptor->handle . '-style',
 						$item['style'],
@@ -94,7 +94,7 @@ final class WordPressAssetLoader
 					);
 				}
 			}
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			// Fail closed: never fall back to remote/inline/untrusted asset loading.
 		}
 	}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Precondition\Plan;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 

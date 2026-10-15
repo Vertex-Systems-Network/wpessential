@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Auth;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,14 +17,14 @@ final readonly class PolicyEngine
 
 	public function authorize(AuthorizationRequest $request): PolicyDecision
 	{
-		if (!$request->context->principal->isAuthenticated()) {
-			return PolicyDecision::deny('unauthenticated');
+		if ( ! $request->context->principal->isAuthenticated() ) {
+			return PolicyDecision::deny( 'unauthenticated' );
 		}
 
-		if (!$this->capabilities->can($request->context, $request->capability)) {
-			return PolicyDecision::deny('capability_denied');
+		if ( ! $this->capabilities->can( $request->context, $request->capability ) ) {
+			return PolicyDecision::deny( 'capability_denied' );
 		}
 
-		return PolicyDecision::allow('capability_allowed');
+		return PolicyDecision::allow( 'capability_allowed' );
 	}
 }

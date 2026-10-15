@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Recovery\Binding;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,32 +25,32 @@ final readonly class RecoveryEvidenceBindingDecision
 		?BoundRecoveryEvidence $boundEvidence,
 		int $maxEvidenceAgeHours,
 	): self {
-		if ($maxEvidenceAgeHours < 0) {
-			throw new InvalidArgumentException('Custom Tables recovery evidence maximum age cannot be negative.');
+		if ( $maxEvidenceAgeHours < 0 ) {
+			throw new InvalidArgumentException( 'Custom Tables recovery evidence maximum age cannot be negative.' );
 		}
 
-		if ($boundEvidence === null) {
-			return new self(false, ['missing_evidence']);
+		if ( $boundEvidence === null ) {
+			return new self( false, ['missing_evidence'] );
 		}
 
 		$reasons = [];
 
-		if ($boundEvidence->evidence->planFingerprint !== $reviewed->planFingerprint) {
+		if ( $boundEvidence->evidence->planFingerprint !== $reviewed->planFingerprint ) {
 			$reasons[] = 'plan_fingerprint_mismatch';
 		}
-		if ($boundEvidence->provider !== $reviewed->provider) {
+		if ( $boundEvidence->provider !== $reviewed->provider ) {
 			$reasons[] = 'provider_mismatch';
 		}
-		if ($boundEvidence->providerVersion !== $reviewed->providerVersion) {
+		if ( $boundEvidence->providerVersion !== $reviewed->providerVersion ) {
 			$reasons[] = 'provider_version_mismatch';
 		}
-		if ($boundEvidence->observedAgeHours > $maxEvidenceAgeHours) {
+		if ( $boundEvidence->observedAgeHours > $maxEvidenceAgeHours ) {
 			$reasons[] = 'evidence_stale';
 		}
 
-		sort($reasons);
+		sort( $reasons );
 
-		return new self($reasons === [], $reasons);
+		return new self( $reasons === [], $reasons );
 	}
 
 	/** @return array{valid:bool,reasons:list<string>} */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Precondition;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,12 +17,12 @@ final readonly class PreconditionReport
 	public function __construct(public array $evaluations)
 	{
 		$ids = [];
-		foreach ($this->evaluations as $evaluation) {
-			if (!$evaluation instanceof PreconditionEvaluation) {
-				throw new InvalidArgumentException('Custom Tables precondition report requires typed evaluations.');
+		foreach ( $this->evaluations as $evaluation ) {
+			if ( ! $evaluation instanceof PreconditionEvaluation ) {
+				throw new InvalidArgumentException( 'Custom Tables precondition report requires typed evaluations.' );
 			}
-			if (isset($ids[$evaluation->requirementId])) {
-				throw new InvalidArgumentException('Custom Tables precondition report contains duplicate requirement ids.');
+			if ( isset( $ids[$evaluation->requirementId] ) ) {
+				throw new InvalidArgumentException( 'Custom Tables precondition report contains duplicate requirement ids.' );
 			}
 			$ids[$evaluation->requirementId] = true;
 		}
@@ -30,13 +30,13 @@ final readonly class PreconditionReport
 
 	public function outcome(): PreconditionOutcome
 	{
-		foreach ($this->evaluations as $evaluation) {
-			if ($evaluation->outcome === PreconditionOutcome::Blocked) {
+		foreach ( $this->evaluations as $evaluation ) {
+			if ( $evaluation->outcome === PreconditionOutcome::Blocked ) {
 				return PreconditionOutcome::Blocked;
 			}
 		}
-		foreach ($this->evaluations as $evaluation) {
-			if ($evaluation->outcome === PreconditionOutcome::Unsupported) {
+		foreach ( $this->evaluations as $evaluation ) {
+			if ( $evaluation->outcome === PreconditionOutcome::Unsupported ) {
 				return PreconditionOutcome::Unsupported;
 			}
 		}
@@ -65,6 +65,6 @@ final readonly class PreconditionReport
 	/** @throws JsonException */
 	public function fingerprint(): string
 	{
-		return hash('sha256', json_encode($this->canonical(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
+		return hash( 'sha256', json_encode( $this->canonical(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES ) );
 	}
 }

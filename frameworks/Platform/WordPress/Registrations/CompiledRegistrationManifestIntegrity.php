@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Registrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -15,17 +15,17 @@ final class CompiledRegistrationManifestIntegrity
 	public static function checksum(int $generation, array $entries): string
 	{
 		$json = json_encode(
-			['generation' => $generation, 'entries' => self::canonicalEntries($entries)],
+			['generation' => $generation, 'entries' => self::canonicalEntries( $entries )],
 			JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
 		);
-		return hash('sha256', $json);
+		return hash( 'sha256', $json );
 	}
 
 	public static function verify(CompiledRegistrationManifest $manifest): bool
 	{
 		return hash_equals(
 			$manifest->checksum,
-			self::checksum($manifest->generation, $manifest->entries),
+			self::checksum( $manifest->generation, $manifest->entries ),
 		);
 	}
 
@@ -36,21 +36,21 @@ final class CompiledRegistrationManifestIntegrity
 	public static function canonicalEntries(array $entries): array
 	{
 		/** @var array<string,array<string,array<string,mixed>>> $canonical */
-		$canonical = self::canonicalize($entries);
+		$canonical = self::canonicalize( $entries );
 		return $canonical;
 	}
 
 	private static function canonicalize(mixed $value): mixed
 	{
-		if (!is_array($value)) {
+		if ( ! is_array( $value ) ) {
 			return $value;
 		}
-		if (array_is_list($value)) {
-			return array_map(self::canonicalize(...), $value);
+		if ( array_is_list( $value ) ) {
+			return array_map( self::canonicalize( ... ), $value );
 		}
-		ksort($value, SORT_STRING);
-		foreach ($value as $key => $item) {
-			$value[$key] = self::canonicalize($item);
+		ksort( $value, SORT_STRING );
+		foreach ( $value as $key => $item ) {
+			$value[$key] = self::canonicalize( $item );
 		}
 		return $value;
 	}

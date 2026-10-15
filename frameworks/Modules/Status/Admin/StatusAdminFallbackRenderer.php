@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Status\Admin;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -31,20 +31,20 @@ final class StatusAdminFallbackRenderer
 	public function render(array $errors = []): string
 	{
 		$errorHtml = '';
-		if ($errors !== []) {
+		if ( $errors !== [] ) {
 			$items = '';
-			foreach ($errors as $error) {
-				if (is_string($error) && $error !== '') {
-					$items .= '<li>' . $this->escape($error) . '</li>';
+			foreach ( $errors as $error ) {
+				if ( is_string( $error ) && $error !== '' ) {
+					$items .= '<li>' . $this->escape( $error ) . '</li>';
 				}
 			}
-			if ($items !== '') {
+			if ( $items !== '' ) {
 				$errorHtml = '<div role="alert" tabindex="-1" aria-labelledby="wpe-status-errors-title">'
 					. '<h2 id="wpe-status-errors-title">Status authoring errors</h2><ul>' . $items . '</ul></div>';
 			}
 		}
 
-		$reserved = implode(', ', self::RESERVED_CORE_LIFECYCLE);
+		$reserved = implode( ', ', self::RESERVED_CORE_LIFECYCLE );
 
 		return '<main id="wpe-status-admin" aria-labelledby="wpe-status-title">'
 			. '<h1 id="wpe-status-title">Status Manager</h1>'
@@ -63,7 +63,7 @@ final class StatusAdminFallbackRenderer
 			. '<label for="wpe-status-from">From status</label><input id="wpe-status-from" name="from_status" maxlength="20">'
 			. '<label for="wpe-status-to">To status</label><input id="wpe-status-to" name="to_status" maxlength="20">'
 			. '<p id="wpe-status-guidance">Core lifecycle statuses are not authorable as generic transition edges: '
-			. $this->escape($reserved) . '.</p>'
+			. $this->escape( $reserved ) . '.</p>'
 			. '</fieldset>'
 			. '<button type="submit">Validate and save</button>'
 			. '</form></main>';
@@ -77,6 +77,6 @@ final class StatusAdminFallbackRenderer
 
 	private function escape(string $value): string
 	{
-		return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+		return htmlspecialchars( $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8' );
 	}
 }

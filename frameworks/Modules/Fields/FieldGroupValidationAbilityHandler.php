@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,6 +17,6 @@ final readonly class FieldGroupValidationAbilityHandler implements AbilityHandle
 
 	public function handle(array $input, ExecutionContext $context): mixed
 	{
-		return $this->validation->validate($input);
+		return $this->validation->validate( $input );
 	}
 }

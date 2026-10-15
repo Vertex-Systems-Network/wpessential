@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -28,8 +28,8 @@ final readonly class QueryAuthorizedPlanner
 
 	public function plan(QueryDefinition $definition, ExecutionContext $context): AuthorizedQueryPlan
 	{
-		$descriptor = $this->dataSources->find($definition->source->sourceRef);
-		if ($descriptor === null) {
+		$descriptor = $this->dataSources->find( $definition->source->sourceRef );
+		if ( $descriptor === null ) {
 			throw new QueryPlanningException(
 				'wpe_query_unknown_source',
 				'$.source.source_ref',
@@ -48,7 +48,7 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-		if (!$descriptor->isAvailable()) {
+		if ( ! $descriptor->isAvailable() ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.source',
@@ -58,7 +58,7 @@ final readonly class QueryAuthorizedPlanner
 
 		try {
 			$authorization = $descriptor->requireAuthorizationMapping();
-		} catch (RuntimeException) {
+		} catch ( RuntimeException ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.source',
@@ -74,8 +74,8 @@ final readonly class QueryAuthorizedPlanner
 		);
 
 		try {
-			$decision = $this->policy->authorize($request);
-		} catch (Throwable) {
+			$decision = $this->policy->authorize( $request );
+		} catch ( Throwable ) {
 			throw new QueryPlanningException(
 				'wpe_query_policy_denied',
 				'$.source',
@@ -83,7 +83,7 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-		if (!$decision->allowed) {
+		if ( ! $decision->allowed ) {
 			throw new QueryPlanningException(
 				'wpe_query_policy_denied',
 				'$.source',
@@ -93,12 +93,12 @@ final readonly class QueryAuthorizedPlanner
 
 		$effectiveDefinition = $definition;
 		$shortCircuitEmpty = false;
-		if ($this->relationResolver !== null) {
-			$relationResolution = $this->relationResolver->resolve($effectiveDefinition, $context);
+		if ( $this->relationResolver !== null ) {
+			$relationResolution = $this->relationResolver->resolve( $effectiveDefinition, $context );
 			$effectiveDefinition = $relationResolution->definition;
 			$shortCircuitEmpty = $relationResolution->shortCircuitEmpty;
 		}
-		if ($this->fieldResolver !== null) {
+		if ( $this->fieldResolver !== null ) {
 			$fieldResolution = $this->fieldResolver->resolve(
 				$effectiveDefinition,
 				$context,
@@ -108,7 +108,7 @@ final readonly class QueryAuthorizedPlanner
 			$shortCircuitEmpty = $shortCircuitEmpty || $fieldResolution->shortCircuitEmpty;
 		}
 
-		if (!$this->compiler->supports($effectiveDefinition)) {
+		if ( ! $this->compiler->supports( $effectiveDefinition ) ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.source',
@@ -117,10 +117,10 @@ final readonly class QueryAuthorizedPlanner
 		}
 
 		try {
-			$providerPlan = $this->compiler->compile($effectiveDefinition);
-		} catch (QueryProviderCompilationException $exception) {
+			$providerPlan = $this->compiler->compile( $effectiveDefinition );
+		} catch ( QueryProviderCompilationException $exception ) {
 			throw $exception;
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			throw new QueryPlanningException(
 				'wpe_query_provider_failed',
 				'$.source',
@@ -128,7 +128,7 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-		if ($providerPlan->sourceRef !== $definition->source->sourceRef) {
+		if ( $providerPlan->sourceRef !== $definition->source->sourceRef ) {
 			throw new QueryPlanningException(
 				'wpe_query_provider_failed',
 				'$.source.source_ref',

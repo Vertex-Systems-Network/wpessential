@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Jobs;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,6 +25,6 @@ enum JobState: string
 
 	public function isTerminal(): bool
 	{
-		return in_array($this, [self::Cancelled, self::Succeeded, self::FailedFinal, self::Expired], true);
+		return in_array( $this, [self::Cancelled, self::Succeeded, self::FailedFinal, self::Expired], true );
 	}
 }

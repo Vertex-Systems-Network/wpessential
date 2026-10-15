@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Rendering;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -26,34 +26,34 @@ final class BlueprintRendererDispatcher implements RendererInterface
 
 	public function register(string $componentType, RendererInterface $renderer): void
 	{
-		if (!preg_match('/^[a-z][a-z0-9_.-]{0,127}$/', $componentType)) {
-			throw new InvalidArgumentException('Renderer component type must be a bounded semantic identifier.');
+		if ( ! preg_match( '/^[a-z][a-z0-9_.-]{0,127}$/', $componentType ) ) {
+			throw new InvalidArgumentException( 'Renderer component type must be a bounded semantic identifier.' );
 		}
-		if ($renderer instanceof self) {
-			throw new InvalidArgumentException('Blueprint Renderer dispatchers cannot be chained as component renderers.');
+		if ( $renderer instanceof self ) {
+			throw new InvalidArgumentException( 'Blueprint Renderer dispatchers cannot be chained as component renderers.' );
 		}
-		if (isset($this->renderers[$componentType])) {
-			throw new RuntimeException('Renderer component type is already registered.');
+		if ( isset( $this->renderers[$componentType] ) ) {
+			throw new RuntimeException( 'Renderer component type is already registered.' );
 		}
 		$this->renderers[$componentType] = $renderer;
 	}
 
 	public function render(RenderInput $input, ExecutionContext $context): RenderOutput
 	{
-		$blueprint = $this->blueprints->get($input->blueprintId, $input->blueprintRevision);
-		if ($blueprint === null) {
-			return new RenderOutput(false, '', [], RenderFailureCode::MissingBlueprint);
+		$blueprint = $this->blueprints->get( $input->blueprintId, $input->blueprintRevision );
+		if ( $blueprint === null ) {
+			return new RenderOutput( false, '', [], RenderFailureCode::MissingBlueprint );
 		}
 
 		$renderer = $this->renderers[$blueprint->componentType] ?? null;
-		if ($renderer === null) {
-			return new RenderOutput(false, '', [], RenderFailureCode::DependencyMismatch);
+		if ( $renderer === null ) {
+			return new RenderOutput( false, '', [], RenderFailureCode::DependencyMismatch );
 		}
 
 		try {
-			return $renderer->render($input, $context);
-		} catch (Throwable) {
-			return new RenderOutput(false, '', [], RenderFailureCode::DependencyMismatch);
+			return $renderer->render( $input, $context );
+		} catch ( Throwable ) {
+			return new RenderOutput( false, '', [], RenderFailureCode::DependencyMismatch );
 		}
 	}
 }

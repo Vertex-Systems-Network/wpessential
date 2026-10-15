@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Readiness\Authorization;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -28,28 +28,28 @@ final readonly class MigrationExecutionAuthorizationDecision
 	): self {
 		$reasons = [];
 
-		if (strtolower($request->runId) !== strtolower($run->id)) {
+		if ( strtolower( $request->runId ) !== strtolower( $run->id ) ) {
 			$reasons[] = 'run_id_mismatch';
 		}
-		if ($request->readinessStateRevision !== $run->stateRevision) {
+		if ( $request->readinessStateRevision !== $run->stateRevision ) {
 			$reasons[] = 'readiness_stale';
 		}
-		if (!$readiness->ready) {
+		if ( ! $readiness->ready ) {
 			$reasons[] = 'readiness_not_ready';
 		}
-		if (!$request->capabilityAllowed) {
+		if ( ! $request->capabilityAllowed ) {
 			$reasons[] = 'capability_denied';
 		}
-		if (!$request->confirmationProvided) {
+		if ( ! $request->confirmationProvided ) {
 			$reasons[] = 'confirmation_missing';
 		}
-		if (in_array($request->risk, [MigrationRisk::R3, MigrationRisk::R4], true)) {
+		if ( in_array( $request->risk, [MigrationRisk::R3, MigrationRisk::R4], true ) ) {
 			$reasons[] = 'unsupported_risk';
 		}
 
-		sort($reasons);
+		sort( $reasons );
 
-		return new self($reasons === [], $reasons);
+		return new self( $reasons === [], $reasons );
 	}
 
 	/** @return array{authorized:bool,reasons:list<string>} */

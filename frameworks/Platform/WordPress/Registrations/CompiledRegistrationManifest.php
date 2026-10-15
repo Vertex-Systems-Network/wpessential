@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Registrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -19,8 +19,8 @@ final readonly class CompiledRegistrationManifest
 		public array $entries,
 		public string $checksum,
 	) {
-		if ($this->generation < 1 || preg_match('/^[a-f0-9]{64}$/', $this->checksum) !== 1) {
-			throw new InvalidArgumentException('Compiled registration manifest is invalid.');
+		if ( $this->generation < 1 || preg_match( '/^[a-f0-9]{64}$/', $this->checksum ) !== 1 ) {
+			throw new InvalidArgumentException( 'Compiled registration manifest is invalid.' );
 		}
 	}
 }

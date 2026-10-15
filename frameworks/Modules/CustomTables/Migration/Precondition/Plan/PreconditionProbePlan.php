@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Precondition\Plan;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -23,7 +23,7 @@ final readonly class PreconditionProbePlan
 	public function canonical(): array
 	{
 		$parameters = $this->parameters;
-		ksort($parameters);
+		ksort( $parameters );
 
 		return [
 			'requirement_id' => $this->requirementId,

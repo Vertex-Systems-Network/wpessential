@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Chat;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,18 +18,18 @@ final class ConversationDefinition
 
 	public static function assertOwned(Definition $definition): void
 	{
-		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
-			throw new InvalidArgumentException('Conversation definition owner surface is invalid.');
+		if ( $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID ) {
+			throw new InvalidArgumentException( 'Conversation definition owner surface is invalid.' );
 		}
-		if ($definition->type !== self::TYPE) {
-			throw new InvalidArgumentException('Conversation definition type is invalid.');
+		if ( $definition->type !== self::TYPE ) {
+			throw new InvalidArgumentException( 'Conversation definition type is invalid.' );
 		}
 	}
 
 	/** @return array<string,mixed> */
 	public static function view(Definition $definition): array
 	{
-		self::assertOwned($definition);
+		self::assertOwned( $definition );
 		return [
 			'id' => $definition->id,
 			'slug' => $definition->slug,

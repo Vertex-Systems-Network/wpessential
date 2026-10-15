@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Registrations\Migrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,7 +20,7 @@ final class CreateCompiledRegistrationTablesMigration implements MigrationInterf
 
 	public function __construct(private readonly DatabaseAdapterInterface $database)
 	{
-		$this->tables = new CompiledRegistrationTableNames($database);
+		$this->tables = new CompiledRegistrationTableNames( $database );
 	}
 
 	public function id(): string
@@ -45,7 +45,7 @@ final class CreateCompiledRegistrationTablesMigration implements MigrationInterf
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
 		$generationSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->generations}` (
@@ -70,9 +70,9 @@ final class CreateCompiledRegistrationTablesMigration implements MigrationInterf
             PRIMARY KEY (network_id, site_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		foreach ([$generationSql, $stateSql] as $sql) {
-			if ($this->database->query($sql) === false) {
-				throw new RuntimeException('Failed to create compiled registration persistence tables: ' . $this->database->lastError());
+		foreach ( [$generationSql, $stateSql] as $sql ) {
+			if ( $this->database->query( $sql ) === false ) {
+				throw new RuntimeException( 'Failed to create compiled registration persistence tables: ' . $this->database->lastError() );
 			}
 		}
 	}

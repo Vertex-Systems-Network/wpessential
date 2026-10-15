@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Run\Persistence;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,8 +22,8 @@ final readonly class CreateMigrationRunStoreMigration implements MigrationInterf
 	public function __construct(private DatabaseAdapterInterface $database)
 	{
 		$prefix = $database->networkTablePrefix();
-		if (preg_match('/^[A-Za-z0-9_]+$/', $prefix) !== 1) {
-			throw new RuntimeException('Custom Tables Migration Run store prefix is invalid.');
+		if ( preg_match( '/^[A-Za-z0-9_]+$/', $prefix ) !== 1 ) {
+			throw new RuntimeException( 'Custom Tables Migration Run store prefix is invalid.' );
 		}
 		$this->table = $prefix . 'wpe_custom_table_migration_runs';
 	}
@@ -50,7 +50,7 @@ final readonly class CreateMigrationRunStoreMigration implements MigrationInterf
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 		$sql = "CREATE TABLE IF NOT EXISTS `{$this->table}` (
             site_id BIGINT UNSIGNED NOT NULL,
@@ -70,8 +70,8 @@ final readonly class CreateMigrationRunStoreMigration implements MigrationInterf
             KEY table_key (site_id, table_key)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		if ($this->database->query($sql) === false) {
-			throw new RuntimeException('Unable to initialize Custom Tables Migration Run store.');
+		if ( $this->database->query( $sql ) === false ) {
+			throw new RuntimeException( 'Unable to initialize Custom Tables Migration Run store.' );
 		}
 	}
 }

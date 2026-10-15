@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Registrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,8 +22,8 @@ final class InMemoryCompiledRegistrationStore implements CompiledRegistrationSto
 
 	public function publish(CompiledRegistrationManifest $manifest): void
 	{
-		if ($this->active !== null && $manifest->generation <= $this->active->generation) {
-			throw new RuntimeException('Compiled registration generation must increase monotonically.');
+		if ( $this->active !== null && $manifest->generation <= $this->active->generation ) {
+			throw new RuntimeException( 'Compiled registration generation must increase monotonically.' );
 		}
 		$this->active = $manifest;
 	}

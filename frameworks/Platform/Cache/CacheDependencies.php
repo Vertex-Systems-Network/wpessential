@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Cache;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -21,18 +21,18 @@ final readonly class CacheDependencies
 	public function __construct(array $generationKeys = [])
 	{
 		$seen = [];
-		foreach ($generationKeys as $generationKey) {
-			if (!is_string($generationKey) || preg_match(self::GENERATION_PATTERN, $generationKey) !== 1) {
-				throw new InvalidArgumentException('Cache generation keys must be stable lowercase semantic identifiers.');
+		foreach ( $generationKeys as $generationKey ) {
+			if ( ! is_string( $generationKey ) || preg_match( self::GENERATION_PATTERN, $generationKey ) !== 1 ) {
+				throw new InvalidArgumentException( 'Cache generation keys must be stable lowercase semantic identifiers.' );
 			}
-			if (isset($seen[$generationKey])) {
-				throw new InvalidArgumentException('Cache generation keys must be unique.');
+			if ( isset( $seen[$generationKey] ) ) {
+				throw new InvalidArgumentException( 'Cache generation keys must be unique.' );
 			}
 			$seen[$generationKey] = true;
 		}
 
-		$normalized = array_keys($seen);
-		sort($normalized, SORT_STRING);
+		$normalized = array_keys( $seen );
+		sort( $normalized, SORT_STRING );
 		$this->generationKeys = $normalized;
 	}
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Kernel;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -24,7 +24,7 @@ final class Kernel
 		private readonly ModuleRegistry $modules = new ModuleRegistry(),
 		private readonly ModuleActivationPolicyInterface $moduleActivationPolicy = new DefaultModuleActivationPolicy(),
 	) {
-		$this->services->set('platform.modules', $this->modules);
+		$this->services->set( 'platform.modules', $this->modules );
 	}
 
 	public function services(): ServiceRegistry
@@ -44,36 +44,36 @@ final class Kernel
 
 	public function registerModule(ModuleInterface $module): void
 	{
-		if ($this->booted) {
-			throw new LogicException('Modules cannot be registered after the kernel has booted.');
+		if ( $this->booted ) {
+			throw new LogicException( 'Modules cannot be registered after the kernel has booted.' );
 		}
 
-		if (!$this->moduleActivationPolicy->allows($module->manifest())) {
+		if ( ! $this->moduleActivationPolicy->allows( $module->manifest() ) ) {
 			return;
 		}
 
-		$this->modules->register($module);
+		$this->modules->register( $module );
 	}
 
 	public function boot(): void
 	{
-		if ($this->booted) {
+		if ( $this->booted ) {
 			return;
 		}
 
-		foreach ($this->modules->bootOrder() as $module) {
-			if ($this->modules->state($module->manifest()->id) === ModuleState::Degraded) {
+		foreach ( $this->modules->bootOrder() as $module ) {
+			if ( $this->modules->state( $module->manifest()->id ) === ModuleState::Degraded ) {
 				continue;
 			}
-			$module->register($this->services);
+			$module->register( $this->services );
 		}
 
-		foreach ($this->modules->bootOrder() as $module) {
-			if ($this->modules->state($module->manifest()->id) === ModuleState::Degraded) {
+		foreach ( $this->modules->bootOrder() as $module ) {
+			if ( $this->modules->state( $module->manifest()->id ) === ModuleState::Degraded ) {
 				continue;
 			}
-			$module->boot($this->services);
-			$this->modules->markBooted($module->manifest()->id);
+			$module->boot( $this->services );
+			$this->modules->markBooted( $module->manifest()->id );
 		}
 
 		$this->booted = true;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Precondition\Probe;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,7 +22,7 @@ final readonly class MetadataPreconditionProbe implements PreconditionProbeInter
 
 	public function evaluate(PreconditionRequirement $requirement): PreconditionEvaluation
 	{
-		return match ($requirement->kind) {
+		return match ( $requirement->kind ) {
 			PreconditionKind::TableExists => new PreconditionEvaluation(
 				$requirement->id,
 				$this->facts->tableExists ? PreconditionOutcome::Satisfied : PreconditionOutcome::Blocked,
@@ -31,9 +31,9 @@ final readonly class MetadataPreconditionProbe implements PreconditionProbeInter
 				$requirement->id,
 				$this->facts->tableExists ? PreconditionOutcome::Blocked : PreconditionOutcome::Satisfied,
 			),
-			PreconditionKind::ColumnMatchesFingerprint => $this->columnFingerprint($requirement),
-			PreconditionKind::DatabaseFeatureAvailable => $this->feature($requirement),
-			default => new PreconditionEvaluation($requirement->id, PreconditionOutcome::Unsupported),
+			PreconditionKind::ColumnMatchesFingerprint => $this->columnFingerprint( $requirement ),
+			PreconditionKind::DatabaseFeatureAvailable => $this->feature( $requirement ),
+			default => new PreconditionEvaluation( $requirement->id, PreconditionOutcome::Unsupported ),
 		};
 	}
 
@@ -41,13 +41,13 @@ final readonly class MetadataPreconditionProbe implements PreconditionProbeInter
 	{
 		$expected = $requirement->parameters['fingerprint'] ?? null;
 		$observed = $this->facts->columnFingerprints[$requirement->target] ?? null;
-		if (!is_string($expected) || !is_string($observed)) {
-			return new PreconditionEvaluation($requirement->id, PreconditionOutcome::Blocked);
+		if ( ! is_string( $expected ) || ! is_string( $observed ) ) {
+			return new PreconditionEvaluation( $requirement->id, PreconditionOutcome::Blocked );
 		}
 
 		return new PreconditionEvaluation(
 			$requirement->id,
-			hash_equals($expected, $observed) ? PreconditionOutcome::Satisfied : PreconditionOutcome::Blocked,
+			hash_equals( $expected, $observed ) ? PreconditionOutcome::Satisfied : PreconditionOutcome::Blocked,
 			['fingerprint' => $observed],
 		);
 	}
@@ -55,8 +55,8 @@ final readonly class MetadataPreconditionProbe implements PreconditionProbeInter
 	private function feature(PreconditionRequirement $requirement): PreconditionEvaluation
 	{
 		$feature = $requirement->parameters['feature'] ?? null;
-		if (!is_string($feature) || !array_key_exists($feature, $this->facts->features)) {
-			return new PreconditionEvaluation($requirement->id, PreconditionOutcome::Blocked);
+		if ( ! is_string( $feature ) || ! array_key_exists( $feature, $this->facts->features ) ) {
+			return new PreconditionEvaluation( $requirement->id, PreconditionOutcome::Blocked );
 		}
 
 		return new PreconditionEvaluation(

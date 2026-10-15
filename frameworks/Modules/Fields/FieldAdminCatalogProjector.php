@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -28,7 +28,7 @@ final class FieldAdminCatalogProjector
 	public function project(array $catalog): array
 	{
 		$types = $catalog['types'] ?? [];
-		if (!is_array($types) || !array_is_list($types)) {
+		if ( ! is_array( $types ) || ! array_is_list( $types ) ) {
 			return [
 				...$catalog,
 				'types' => [],
@@ -37,17 +37,17 @@ final class FieldAdminCatalogProjector
 		}
 
 		$projected = [];
-		foreach ($types as $type) {
-			if (!is_array($type) || array_is_list($type)) {
+		foreach ( $types as $type ) {
+			if ( ! is_array( $type ) || array_is_list( $type ) ) {
 				continue;
 			}
 
 			$key = $type['key'] ?? null;
-			if (!is_string($key) || $key === '') {
+			if ( ! is_string( $key ) || $key === '' ) {
 				continue;
 			}
 
-			$available = in_array($key, self::SUPPORTED_V1_TYPES, true);
+			$available = in_array( $key, self::SUPPORTED_V1_TYPES, true );
 			$projected[] = [
 				...$type,
 				'admin_available' => $available,

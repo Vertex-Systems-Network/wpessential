@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomPostTypes;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,6 +17,6 @@ final readonly class CustomPostTypeValidationAbilityHandler implements AbilityHa
 
 	public function handle(array $input, ExecutionContext $context): mixed
 	{
-		return $this->validation->validate($input);
+		return $this->validation->validate( $input );
 	}
 }

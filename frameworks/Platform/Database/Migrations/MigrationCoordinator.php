@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Database\Migrations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -19,7 +19,7 @@ final readonly class MigrationCoordinator
 
 	public function register(MigrationInterface $migration): void
 	{
-		$this->registry->register($migration);
+		$this->registry->register( $migration );
 	}
 
 	/** @return list<string> applied migration ids */

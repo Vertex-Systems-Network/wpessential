@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Auth;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,8 +20,8 @@ final readonly class AuthorizationRequest
 		public ?string $resourceType = null,
 		public string|int|null $resourceId = null,
 	) {
-		if ($this->ability === '' || $this->capability === '') {
-			throw new InvalidArgumentException('Authorization ability and capability cannot be empty.');
+		if ( $this->ability === '' || $this->capability === '' ) {
+			throw new InvalidArgumentException( 'Authorization ability and capability cannot be empty.' );
 		}
 	}
 }

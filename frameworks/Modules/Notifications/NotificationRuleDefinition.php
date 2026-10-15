@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Notifications;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,18 +18,18 @@ final class NotificationRuleDefinition
 
 	public static function assertOwned(Definition $definition): void
 	{
-		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
-			throw new InvalidArgumentException('Notification Rule definition owner surface is invalid.');
+		if ( $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID ) {
+			throw new InvalidArgumentException( 'Notification Rule definition owner surface is invalid.' );
 		}
-		if ($definition->type !== self::TYPE) {
-			throw new InvalidArgumentException('Notification Rule definition type is invalid.');
+		if ( $definition->type !== self::TYPE ) {
+			throw new InvalidArgumentException( 'Notification Rule definition type is invalid.' );
 		}
 	}
 
 	/** @return array<string,mixed> */
 	public static function view(Definition $definition): array
 	{
-		self::assertOwned($definition);
+		self::assertOwned( $definition );
 		return [
 			'id' => $definition->id,
 			'slug' => $definition->slug,

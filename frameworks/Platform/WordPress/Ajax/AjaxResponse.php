@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Ajax;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -23,13 +23,13 @@ final readonly class AjaxResponse
 
 	public static function success(mixed $data = null, int $status = 200): self
 	{
-		return new self(true, $data, null, '', $status);
+		return new self( true, $data, null, '', $status );
 	}
 
 	/** @param array<string,mixed> $meta */
 	public static function error(string $code, string $message, int $status = 400, array $meta = []): self
 	{
-		return new self(false, null, $code, $message, $status, $meta);
+		return new self( false, null, $code, $message, $status, $meta );
 	}
 
 	/** @return array<string,mixed> */

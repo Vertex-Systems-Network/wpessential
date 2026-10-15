@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Settings;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,12 +18,12 @@ final class SettingsDefinition
 
 	public static function assertOwned(Definition $definition): void
 	{
-		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
-			throw new InvalidArgumentException('Settings definition owner surface is invalid.');
+		if ( $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID ) {
+			throw new InvalidArgumentException( 'Settings definition owner surface is invalid.' );
 		}
 
-		if ($definition->type !== self::TYPE) {
-			throw new InvalidArgumentException('Settings definition type is invalid.');
+		if ( $definition->type !== self::TYPE ) {
+			throw new InvalidArgumentException( 'Settings definition type is invalid.' );
 		}
 	}
 
@@ -42,7 +42,7 @@ final class SettingsDefinition
 	 */
 	public static function view(Definition $definition): array
 	{
-		self::assertOwned($definition);
+		self::assertOwned( $definition );
 
 		return [
 			'id' => $definition->id,

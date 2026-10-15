@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -26,16 +26,16 @@ final readonly class PostMetaValueWriteResult
 		public string $metaKey,
 		public mixed $value,
 	) {
-		if (!in_array($status, self::STATUSES, true)) {
-			throw new InvalidArgumentException(sprintf('Unknown post-meta write status "%s".', $status));
+		if ( ! in_array( $status, self::STATUSES, true ) ) {
+			throw new InvalidArgumentException( sprintf( 'Unknown post-meta write status "%s".', $status ) );
 		}
-		if ($fieldUuid === '' || $metaKey === '') {
-			throw new InvalidArgumentException('Post-meta write result requires Field UUID and meta key provenance.');
+		if ( $fieldUuid === '' || $metaKey === '' ) {
+			throw new InvalidArgumentException( 'Post-meta write result requires Field UUID and meta key provenance.' );
 		}
 	}
 
 	public function changed(): bool
 	{
-		return in_array($this->status, [self::WRITTEN, self::DELETED], true);
+		return in_array( $this->status, [self::WRITTEN, self::DELETED], true );
 	}
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Events;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -23,8 +23,8 @@ final readonly class DomainEvent
 		public ?string $correlationId = null,
 		?DateTimeImmutable $occurredAt = null,
 	) {
-		if (!preg_match('/^[a-z0-9][a-z0-9._-]*$/', $this->name)) {
-			throw new InvalidArgumentException('Event name must be a stable lowercase identifier.');
+		if ( ! preg_match( '/^[a-z0-9][a-z0-9._-]*$/', $this->name ) ) {
+			throw new InvalidArgumentException( 'Event name must be a stable lowercase identifier.' );
 		}
 		$this->occurredAt = $occurredAt ?? new DateTimeImmutable();
 	}

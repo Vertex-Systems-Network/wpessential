@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Audit\Migrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,7 +20,7 @@ final class CreateAuditEventsTableMigration implements MigrationInterface
 
 	public function __construct(private readonly DatabaseAdapterInterface $database)
 	{
-		$this->tables = new AuditTableNames($database);
+		$this->tables = new AuditTableNames( $database );
 	}
 
 	public function id(): string
@@ -45,7 +45,7 @@ final class CreateAuditEventsTableMigration implements MigrationInterface
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
 		$sql = "CREATE TABLE IF NOT EXISTS `{$this->tables->events}` (
@@ -81,8 +81,8 @@ final class CreateAuditEventsTableMigration implements MigrationInterface
             KEY retention_occurred (retention_class, occurred_at)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		if ($this->database->query($sql) === false) {
-			throw new RuntimeException('Failed to create audit persistence table: ' . $this->database->lastError());
+		if ( $this->database->query( $sql ) === false ) {
+			throw new RuntimeException( 'Failed to create audit persistence table: ' . $this->database->lastError() );
 		}
 	}
 }

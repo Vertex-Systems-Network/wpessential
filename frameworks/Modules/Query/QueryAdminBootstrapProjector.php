@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -21,9 +21,9 @@ final readonly class QueryAdminBootstrapProjector
 	public function project(): array
 	{
 		$sources = [];
-		$descriptor = $this->dataSources->find(WordPressPostsQueryCompiler::SOURCE_REF);
-		if ($descriptor instanceof DataSourceDescriptor && $descriptor->isAvailable()) {
-			$sources[] = $this->projectSource($descriptor);
+		$descriptor = $this->dataSources->find( WordPressPostsQueryCompiler::SOURCE_REF );
+		if ( $descriptor instanceof DataSourceDescriptor && $descriptor->isAvailable() ) {
+			$sources[] = $this->projectSource( $descriptor );
 		}
 
 		return [
@@ -43,12 +43,12 @@ final readonly class QueryAdminBootstrapProjector
 	private function projectSource(DataSourceDescriptor $descriptor): array
 	{
 		$schema = $descriptor->fieldSchema;
-		ksort($schema, SORT_STRING);
+		ksort( $schema, SORT_STRING );
 		$fields = [];
-		foreach ($schema as $reference => $logicalType) {
+		foreach ( $schema as $reference => $logicalType ) {
 			$fields[] = [
 				'ref' => $reference,
-				'label' => $this->label($reference),
+				'label' => $this->label( $reference ),
 				'logicalType' => $logicalType,
 			];
 		}
@@ -57,9 +57,9 @@ final readonly class QueryAdminBootstrapProjector
 			'sourceRef' => $descriptor->id,
 			'sourceType' => $descriptor->sourceType,
 			'capabilityVersion' => $descriptor->capabilityVersion,
-			'label' => $this->label($descriptor->id),
+			'label' => $this->label( $descriptor->id ),
 			'fields' => $fields,
-			'predicates' => array_values($descriptor->predicates),
+			'predicates' => array_values( $descriptor->predicates ),
 			'maxPageSize' => $descriptor->maxPageSize,
 			'supportsRelations' => $descriptor->supportsRelations,
 		];
@@ -67,6 +67,6 @@ final readonly class QueryAdminBootstrapProjector
 
 	private function label(string $reference): string
 	{
-		return ucwords(str_replace(['.', '_', '-'], ' ', $reference));
+		return ucwords( str_replace( ['.', '_', '-'], ' ', $reference ) );
 	}
 }

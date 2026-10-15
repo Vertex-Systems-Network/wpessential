@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Jobs;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -16,11 +16,11 @@ final readonly class JobScope
 		public int $networkId,
 		public int $siteId,
 	) {
-		if ($this->networkId < 1) {
-			throw new InvalidArgumentException('Job network id must be positive.');
+		if ( $this->networkId < 1 ) {
+			throw new InvalidArgumentException( 'Job network id must be positive.' );
 		}
-		if ($this->siteId < 1) {
-			throw new InvalidArgumentException('Job site id must be positive.');
+		if ( $this->siteId < 1 ) {
+			throw new InvalidArgumentException( 'Job site id must be positive.' );
 		}
 	}
 }

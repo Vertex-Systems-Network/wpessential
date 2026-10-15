@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\DynamicValues;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,14 +22,14 @@ final class DynamicValueRouter implements DynamicValueResolverInterface
 
 	public function register(string $sourceRef, DynamicValueResolverInterface $resolver): void
 	{
-		if ($sourceRef === '' || strlen($sourceRef) > 160 || !preg_match('/^[a-zA-Z0-9_.:-]+$/', $sourceRef)) {
-			throw new InvalidArgumentException('Dynamic Value source reference is invalid.');
+		if ( $sourceRef === '' || strlen( $sourceRef ) > 160 || ! preg_match( '/^[a-zA-Z0-9_.:-]+$/', $sourceRef ) ) {
+			throw new InvalidArgumentException( 'Dynamic Value source reference is invalid.' );
 		}
-		if ($resolver instanceof self) {
-			throw new InvalidArgumentException('Dynamic Value routers cannot be chained as source resolvers.');
+		if ( $resolver instanceof self ) {
+			throw new InvalidArgumentException( 'Dynamic Value routers cannot be chained as source resolvers.' );
 		}
-		if (isset($this->resolvers[$sourceRef])) {
-			throw new RuntimeException('Dynamic Value source resolver is already registered.');
+		if ( isset( $this->resolvers[$sourceRef] ) ) {
+			throw new RuntimeException( 'Dynamic Value source resolver is already registered.' );
 		}
 		$this->resolvers[$sourceRef] = $resolver;
 	}
@@ -37,14 +37,14 @@ final class DynamicValueRouter implements DynamicValueResolverInterface
 	public function resolve(DynamicValueRequest $request, ExecutionContext $context): DynamicValueResult
 	{
 		$resolver = $this->resolvers[$request->sourceRef] ?? null;
-		if ($resolver === null) {
-			return new DynamicValueResult(false, null, RenderFailureCode::UnsupportedValueSource);
+		if ( $resolver === null ) {
+			return new DynamicValueResult( false, null, RenderFailureCode::UnsupportedValueSource );
 		}
 
 		try {
-			return $resolver->resolve($request, $context);
-		} catch (Throwable) {
-			return new DynamicValueResult(false, null, RenderFailureCode::DependencyMismatch);
+			return $resolver->resolve( $request, $context );
+		} catch ( Throwable ) {
+			return new DynamicValueResult( false, null, RenderFailureCode::DependencyMismatch );
 		}
 	}
 }

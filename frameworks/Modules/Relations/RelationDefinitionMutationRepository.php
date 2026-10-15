@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Relations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -31,33 +31,33 @@ final readonly class RelationDefinitionMutationRepository implements DefinitionR
 		private DatabaseAdapterInterface $database,
 		private RelationEdgeScope $scope,
 	) {
-		$this->tables = new RelationEdgeTableNames($database);
+		$this->tables = new RelationEdgeTableNames( $database );
 	}
 
 	public function save(Definition $definition): void
 	{
-		$existing = $this->definitions->get($definition->id);
-		if (!$existing instanceof Definition || !$this->strengthensUniqueEdge($existing, $definition)) {
-			$this->definitions->save($definition);
+		$existing = $this->definitions->get( $definition->id );
+		if ( ! $existing instanceof Definition || ! $this->strengthensUniqueEdge( $existing, $definition ) ) {
+			$this->definitions->save( $definition );
 			return;
 		}
 
-		$revision = $this->edges->beginRelationMutation($definition->id);
+		$revision = $this->edges->beginRelationMutation( $definition->id );
 
 		try {
-			if ($this->hasDuplicateTuples($definition->id)) {
+			if ( $this->hasDuplicateTuples( $definition->id ) ) {
 				throw new InvalidArgumentException(
 					'Relation unique_edge cannot be enabled while persisted duplicate source/target tuples exist.',
 				);
 			}
 
-			$this->definitions->save($definition);
+			$this->definitions->save( $definition );
 
 			// A uniqueness-policy transition changes edge mutation semantics. Advancing
 			// the mutation revision invalidates stale edge observers/writers together
 			// with releasing the per-Relation serialization lock.
-			$this->edges->completeRelationMutation($definition->id, $revision);
-		} catch (Throwable $error) {
+			$this->edges->completeRelationMutation( $definition->id, $revision );
+		} catch ( Throwable $error ) {
 			$this->edges->rollbackRelationMutation();
 			throw $error;
 		}
@@ -65,22 +65,22 @@ final readonly class RelationDefinitionMutationRepository implements DefinitionR
 
 	public function get(string $id): ?Definition
 	{
-		return $this->definitions->get($id);
+		return $this->definitions->get( $id );
 	}
 
 	public function byType(string $type): array
 	{
-		return $this->definitions->byType($type);
+		return $this->definitions->byType( $type );
 	}
 
 	public function dependentsOf(string $id): array
 	{
-		return $this->definitions->dependentsOf($id);
+		return $this->definitions->dependentsOf( $id );
 	}
 
 	private function strengthensUniqueEdge(Definition $existing, Definition $candidate): bool
 	{
-		if ($existing->type !== RelationDefinitionNormalizer::DEFINITION_TYPE
+		if ( $existing->type !== RelationDefinitionNormalizer::DEFINITION_TYPE
 			|| $candidate->type !== RelationDefinitionNormalizer::DEFINITION_TYPE
 			|| $existing->ownerSurfaceId !== RelationDefinitionNormalizer::OWNER_SURFACE_ID
 			|| $candidate->ownerSurfaceId !== RelationDefinitionNormalizer::OWNER_SURFACE_ID
@@ -106,6 +106,6 @@ final readonly class RelationDefinitionMutationRepository implements DefinitionR
 			$relationDefinitionId,
 		);
 
-		return $this->database->getRow($sql) !== null;
+		return $this->database->getRow( $sql ) !== null;
 	}
 }

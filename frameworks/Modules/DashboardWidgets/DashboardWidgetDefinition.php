@@ -31,12 +31,12 @@ final class DashboardWidgetDefinition {
 	 */
 	public static function assertOwned(Definition $definition): void
 	{
-		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
-			throw new InvalidArgumentException('Dashboard Widget definition owner surface is invalid.');
+		if ( $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID ) {
+			throw new InvalidArgumentException( 'Dashboard Widget definition owner surface is invalid.' );
 		}
 
-		if ($definition->type !== self::TYPE) {
-			throw new InvalidArgumentException('Dashboard Widget definition type is invalid.');
+		if ( $definition->type !== self::TYPE ) {
+			throw new InvalidArgumentException( 'Dashboard Widget definition type is invalid.' );
 		}
 	}
 

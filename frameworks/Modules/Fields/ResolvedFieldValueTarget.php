@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,11 +22,11 @@ final readonly class ResolvedFieldValueTarget
 		public string $postType,
 		public array $field,
 	) {
-		if ($this->groupId === '' || $this->fieldUuid === '' || $this->fieldKey === '' || $this->postType === '') {
-			throw new InvalidArgumentException('Resolved Field value target identity must be non-empty.');
+		if ( $this->groupId === '' || $this->fieldUuid === '' || $this->fieldKey === '' || $this->postType === '' ) {
+			throw new InvalidArgumentException( 'Resolved Field value target identity must be non-empty.' );
 		}
-		if ($this->groupRevision < 1 || $this->postId < 1) {
-			throw new InvalidArgumentException('Resolved Field value target requires positive group revision and post ID.');
+		if ( $this->groupRevision < 1 || $this->postId < 1 ) {
+			throw new InvalidArgumentException( 'Resolved Field value target requires positive group revision and post ID.' );
 		}
 	}
 }

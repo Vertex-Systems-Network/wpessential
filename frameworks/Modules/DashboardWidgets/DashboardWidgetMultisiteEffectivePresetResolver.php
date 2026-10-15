@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,22 +25,22 @@ final readonly class DashboardWidgetMultisiteEffectivePresetResolver
 	/** @return array<string,mixed> */
 	public function resolve(ExecutionContext $context): array
 	{
-		$policyResolution = $this->policies->resolve($context);
-		if ($policyResolution->status !== DashboardWidgetMultisitePolicyResolution::RESOLVED
+		$policyResolution = $this->policies->resolve( $context );
+		if ( $policyResolution->status !== DashboardWidgetMultisitePolicyResolution::RESOLVED
 			|| $policyResolution->policy === null
 		) {
-			return $this->unresolved($policyResolution->status);
+			return $this->unresolved( $policyResolution->status );
 		}
 
 		$policy = $policyResolution->policy;
 		$selected = null;
-		if ($policy->subsiteOverride && $context->siteId !== $policy->blueprintSiteId) {
+		if ( $policy->subsiteOverride && $context->siteId !== $policy->blueprintSiteId ) {
 			try {
-				foreach ($this->definitions->byType(DashboardWidgetSubsitePresetOverrideDefinition::TYPE) as $definition) {
-					if (!$definition instanceof Definition || $definition->status !== DefinitionStatus::Published) {
+				foreach ( $this->definitions->byType( DashboardWidgetSubsitePresetOverrideDefinition::TYPE ) as $definition ) {
+					if ( ! $definition instanceof Definition || $definition->status !== DefinitionStatus::Published ) {
 						continue;
 					}
-					$candidate = $this->overrides->compile($definition);
+					$candidate = $this->overrides->compile( $definition );
 					if (
 						$candidate->networkId !== $context->networkId
 						|| $candidate->siteId !== $context->siteId
@@ -48,13 +48,13 @@ final readonly class DashboardWidgetMultisiteEffectivePresetResolver
 					) {
 						continue;
 					}
-					if ($selected !== null) {
-						return $this->unresolved(DashboardWidgetMultisitePolicyResolution::CONFLICT);
+					if ( $selected !== null ) {
+						return $this->unresolved( DashboardWidgetMultisitePolicyResolution::CONFLICT );
 					}
 					$selected = $candidate;
 				}
-			} catch (Throwable) {
-				return $this->unresolved(DashboardWidgetMultisitePolicyResolution::INVALID_CATALOG);
+			} catch ( Throwable ) {
+				return $this->unresolved( DashboardWidgetMultisitePolicyResolution::INVALID_CATALOG );
 			}
 		}
 

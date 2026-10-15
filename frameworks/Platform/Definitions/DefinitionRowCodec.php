@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Definitions;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,8 +18,8 @@ final class DefinitionRowCodec
 	public function encode(Definition $definition): array
 	{
 		$checksum = $definition->checksum ?? $definition->computedChecksum();
-		if (!hash_equals($checksum, $definition->computedChecksum())) {
-			throw new RuntimeException('Definition checksum does not match canonical payload.');
+		if ( ! hash_equals( $checksum, $definition->computedChecksum() ) ) {
+			throw new RuntimeException( 'Definition checksum does not match canonical payload.' );
 		}
 
 		return [
@@ -29,7 +29,7 @@ final class DefinitionRowCodec
 			'schema_version' => $definition->schemaVersion,
 			'owner_surface_id' => $definition->ownerSurfaceId,
 			'status' => $definition->status->value,
-			'payload_json' => json_encode($definition->payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+			'payload_json' => json_encode( $definition->payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ),
 			'revision' => $definition->revision,
 			'checksum' => $checksum,
 		];
@@ -43,12 +43,12 @@ final class DefinitionRowCodec
 	public function decode(array $row, array $dependencies = []): Definition
 	{
 		$payloadJson = $row['payload_json'] ?? null;
-		if (!is_string($payloadJson)) {
-			throw new RuntimeException('Persisted definition payload_json is missing.');
+		if ( ! is_string( $payloadJson ) ) {
+			throw new RuntimeException( 'Persisted definition payload_json is missing.' );
 		}
-		$payload = json_decode($payloadJson, true, flags: JSON_THROW_ON_ERROR);
-		if (!is_array($payload)) {
-			throw new RuntimeException('Persisted definition payload must decode to an object/array.');
+		$payload = json_decode( $payloadJson, true, flags: JSON_THROW_ON_ERROR );
+		if ( ! is_array( $payload ) ) {
+			throw new RuntimeException( 'Persisted definition payload must decode to an object/array.' );
 		}
 
 		$definition = new Definition(
@@ -57,15 +57,15 @@ final class DefinitionRowCodec
 			type: (string) ($row['type'] ?? ''),
 			schemaVersion: (int) ($row['schema_version'] ?? 0),
 			ownerSurfaceId: (int) ($row['owner_surface_id'] ?? 0),
-			status: DefinitionStatus::from((string) ($row['status'] ?? '')),
+			status: DefinitionStatus::from( (string) ($row['status'] ?? '') ),
 			payload: $payload,
 			revision: (int) ($row['revision'] ?? 0),
 			dependencies: $dependencies,
 			checksum: (string) ($row['checksum'] ?? ''),
 		);
 
-		if (!hash_equals($definition->checksum ?? '', $definition->computedChecksum())) {
-			throw new RuntimeException('Persisted definition checksum verification failed.');
+		if ( ! hash_equals( $definition->checksum ?? '', $definition->computedChecksum() ) ) {
+			throw new RuntimeException( 'Persisted definition checksum verification failed.' );
 		}
 
 		return $definition;

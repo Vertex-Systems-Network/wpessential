@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Readiness;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -34,28 +34,28 @@ final readonly class MigrationExecutionReadinessDecision
 	): self {
 		$reasons = [];
 
-		if ($run->state !== MigrationRunState::Revalidating) {
+		if ( $run->state !== MigrationRunState::Revalidating ) {
 			$reasons[] = 'run_not_revalidating';
 		}
-		if ($preconditions->outcome() !== PreconditionOutcome::Satisfied) {
+		if ( $preconditions->outcome() !== PreconditionOutcome::Satisfied ) {
 			$reasons[] = 'preconditions_not_satisfied';
 		}
-		if (!$revalidation->allowed) {
+		if ( ! $revalidation->allowed ) {
 			$reasons[] = 'revalidation_failed';
 		}
-		if (!$recovery->ready) {
+		if ( ! $recovery->ready ) {
 			$reasons[] = 'recovery_not_ready';
 		}
-		if ($preview->planFingerprint !== $run->planFingerprint) {
+		if ( $preview->planFingerprint !== $run->planFingerprint ) {
 			$reasons[] = 'preview_plan_fingerprint_mismatch';
 		}
-		if ($preview->isNoOp()) {
+		if ( $preview->isNoOp() ) {
 			$reasons[] = 'preview_has_no_statements';
 		}
 
-		sort($reasons);
+		sort( $reasons );
 
-		return new self($reasons === [], $reasons);
+		return new self( $reasons === [], $reasons );
 	}
 
 	/** @return array{ready:bool,reasons:list<string>} */

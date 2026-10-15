@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\DataSources;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,8 +18,8 @@ final class DataSourceRegistry implements DataSourceRegistryInterface
 
 	public function register(DataSourceDescriptor $descriptor): void
 	{
-		if (isset($this->descriptors[$descriptor->id])) {
-			throw new RuntimeException(sprintf('Data Source "%s" is already registered.', $descriptor->id));
+		if ( isset( $this->descriptors[$descriptor->id] ) ) {
+			throw new RuntimeException( sprintf( 'Data Source "%s" is already registered.', $descriptor->id ) );
 		}
 
 		$this->descriptors[$descriptor->id] = $descriptor;
@@ -27,7 +27,7 @@ final class DataSourceRegistry implements DataSourceRegistryInterface
 
 	public function has(string $id): bool
 	{
-		return isset($this->descriptors[$id]);
+		return isset( $this->descriptors[$id] );
 	}
 
 	public function find(string $id): ?DataSourceDescriptor
@@ -37,14 +37,14 @@ final class DataSourceRegistry implements DataSourceRegistryInterface
 
 	public function require(string $id): DataSourceDescriptor
 	{
-		return $this->find($id) ?? throw new RuntimeException(sprintf('Unknown Data Source "%s".', $id));
+		return $this->find( $id ) ?? throw new RuntimeException( sprintf( 'Unknown Data Source "%s".', $id ) );
 	}
 
 	public function all(): array
 	{
 		$descriptors = $this->descriptors;
-		ksort($descriptors, SORT_STRING);
+		ksort( $descriptors, SORT_STRING );
 
-		return array_values($descriptors);
+		return array_values( $descriptors );
 	}
 }

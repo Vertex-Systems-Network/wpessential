@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Precondition\Probe;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,11 +25,11 @@ final readonly class WordPressMetadataPreconditionFactsProvider implements Metad
 		TableSchemaDescriptor $descriptor,
 		ProviderCapabilityProfile $capabilities,
 	): MetadataPreconditionFacts {
-		$observed = $this->introspector->observe($descriptor);
+		$observed = $this->introspector->observe( $descriptor );
 		$fingerprints = [];
 
-		foreach ($observed->columns as $column) {
-			$fingerprints[$this->columnTarget($descriptor, $column)] = hash(
+		foreach ( $observed->columns as $column ) {
+			$fingerprints[$this->columnTarget( $descriptor, $column )] = hash(
 				'sha256',
 				json_encode(
 					$column->canonical(),
@@ -51,6 +51,6 @@ final readonly class WordPressMetadataPreconditionFactsProvider implements Metad
 
 	private function columnTarget(TableSchemaDescriptor $descriptor, TableColumnDescriptor $column): string
 	{
-		return sprintf('column.%s.%s', $descriptor->tableKey, $column->key);
+		return sprintf( 'column.%s.%s', $descriptor->tableKey, $column->key );
 	}
 }

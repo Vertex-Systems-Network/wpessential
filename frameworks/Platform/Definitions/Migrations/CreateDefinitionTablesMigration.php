@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Definitions\Migrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,7 +20,7 @@ final class CreateDefinitionTablesMigration implements MigrationInterface
 
 	public function __construct(private readonly DatabaseAdapterInterface $database)
 	{
-		$this->tables = new DefinitionTableNames($database);
+		$this->tables = new DefinitionTableNames( $database );
 	}
 
 	public function id(): string
@@ -45,7 +45,7 @@ final class CreateDefinitionTablesMigration implements MigrationInterface
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
 		$definitionsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->definitions}` (
@@ -78,9 +78,9 @@ final class CreateDefinitionTablesMigration implements MigrationInterface
             KEY dependency_lookup (network_id, site_id, dependency_id, definition_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		foreach ([$definitionsSql, $dependenciesSql] as $sql) {
-			if ($this->database->query($sql) === false) {
-				throw new RuntimeException('Failed to create definition persistence tables: ' . $this->database->lastError());
+		foreach ( [$definitionsSql, $dependenciesSql] as $sql ) {
+			if ( $this->database->query( $sql ) === false ) {
+				throw new RuntimeException( 'Failed to create definition persistence tables: ' . $this->database->lastError() );
 			}
 		}
 	}

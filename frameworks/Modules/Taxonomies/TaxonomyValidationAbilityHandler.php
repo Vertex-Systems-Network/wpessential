@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,16 +20,16 @@ final readonly class TaxonomyValidationAbilityHandler implements AbilityHandlerI
 
 	public function handle(array $input, ExecutionContext $context): mixed
 	{
-		$report = $this->validation->validate($input);
+		$report = $this->validation->validate( $input );
 		$diagnostics = $report['diagnostics'] ?? null;
 		$payload = $input['payload'] ?? null;
-		if (!is_array($diagnostics) || !is_array($payload) || array_is_list($payload)) {
+		if ( ! is_array( $diagnostics ) || ! is_array( $payload ) || array_is_list( $payload ) ) {
 			return $report;
 		}
 
 		$roleImpact = $this->roleImpact ?? new TaxonomyRoleImpactReadModel();
 		$diagnostics['role_impact'] = $roleImpact->forCapabilities(
-			$roleImpact->effectiveCapabilities($payload),
+			$roleImpact->effectiveCapabilities( $payload ),
 			$context,
 		);
 		$report['diagnostics'] = $diagnostics;

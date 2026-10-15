@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -35,38 +35,38 @@ final readonly class QueryCacheContract
 			|| $descriptor->sourceType !== $definition->source->sourceType
 			|| $descriptor->capabilityVersion !== $definition->source->capabilityVersion
 		) {
-			return QueryCacheDecision::disabled('source_mismatch');
+			return QueryCacheDecision::disabled( 'source_mismatch' );
 		}
 
-		if (!$descriptor->cacheable) {
-			return QueryCacheDecision::disabled('source_not_cacheable');
+		if ( ! $descriptor->cacheable ) {
+			return QueryCacheDecision::disabled( 'source_not_cacheable' );
 		}
-		if ($descriptor->cacheGenerationKeys === []) {
-			return QueryCacheDecision::disabled('missing_generation_keys');
+		if ( $descriptor->cacheGenerationKeys === [] ) {
+			return QueryCacheDecision::disabled( 'missing_generation_keys' );
 		}
-		if (!$context->principal->isAuthenticated()) {
-			return QueryCacheDecision::disabled('principal_unavailable');
+		if ( ! $context->principal->isAuthenticated() ) {
+			return QueryCacheDecision::disabled( 'principal_unavailable' );
 		}
-		if ($context->networkId === null) {
-			return QueryCacheDecision::disabled('network_scope_unavailable');
+		if ( $context->networkId === null ) {
+			return QueryCacheDecision::disabled( 'network_scope_unavailable' );
 		}
-		if ($ttlSeconds < 1) {
-			return QueryCacheDecision::disabled('invalid_ttl');
+		if ( $ttlSeconds < 1 ) {
+			return QueryCacheDecision::disabled( 'invalid_ttl' );
 		}
 
 		try {
 			$serialized = json_encode(
-				$this->canonicalDefinition($definition),
+				$this->canonicalDefinition( $definition ),
 				JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES,
 			);
-		} catch (JsonException) {
-			return QueryCacheDecision::disabled('definition_not_serializable');
+		} catch ( JsonException ) {
+			return QueryCacheDecision::disabled( 'definition_not_serializable' );
 		}
 
 		return QueryCacheDecision::eligible(
 			new CacheKey(
 				namespace: 'query.result',
-				key: hash('sha256', $serialized),
+				key: hash( 'sha256', $serialized ),
 				networkId: $context->networkId,
 				siteId: $context->siteId,
 				principalId: $context->principal->userId,
@@ -76,8 +76,8 @@ final readonly class QueryCacheContract
 					$definition->source->capabilityVersion,
 				),
 			),
-			CachePolicy::ttl($ttlSeconds),
-			new CacheDependencies($descriptor->cacheGenerationKeys),
+			CachePolicy::ttl( $ttlSeconds ),
+			new CacheDependencies( $descriptor->cacheGenerationKeys ),
 		);
 	}
 
@@ -100,7 +100,7 @@ final readonly class QueryCacheContract
 			'operation' => $definition->operation,
 			'projection' => $definition->projection,
 			'parameters' => $definition->parameters,
-			'filter' => $this->predicate($definition->filter),
+			'filter' => $this->predicate( $definition->filter ),
 			'order_by' => array_map(
 				static fn (QueryOrderClause $clause): array => [
 					'field_ref' => $clause->fieldRef,
@@ -123,7 +123,7 @@ final readonly class QueryCacheContract
 	/** @return array<string,mixed>|null */
 	private function predicate(?QueryPredicate $predicate): ?array
 	{
-		if ($predicate === null) {
+		if ( $predicate === null ) {
 			return null;
 		}
 
@@ -131,7 +131,7 @@ final readonly class QueryCacheContract
 			'type' => $predicate->type->value,
 			'payload' => $predicate->payload,
 			'children' => array_map(
-				fn (QueryPredicate $child): array => $this->predicate($child) ?? [],
+				fn (QueryPredicate $child): array => $this->predicate( $child ) ?? [],
 				$predicate->children,
 			),
 		];

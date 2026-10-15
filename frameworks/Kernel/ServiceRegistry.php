@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Kernel;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,18 +20,18 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
 	public function has(string $id): bool
 	{
-		return isset($this->services[$id]);
+		return isset( $this->services[$id] );
 	}
 
 	public function set(string $id, object $service): void
 	{
-		$id = trim($id);
-		if ($id === '') {
-			throw new InvalidArgumentException('Service id cannot be empty.');
+		$id = trim( $id );
+		if ( $id === '' ) {
+			throw new InvalidArgumentException( 'Service id cannot be empty.' );
 		}
 
-		if ($this->has($id)) {
-			throw new RuntimeException(sprintf('Service "%s" is already registered.', $id));
+		if ( $this->has( $id ) ) {
+			throw new RuntimeException( sprintf( 'Service "%s" is already registered.', $id ) );
 		}
 
 		$this->services[$id] = $service;
@@ -39,8 +39,8 @@ final class ServiceRegistry implements ServiceRegistryInterface
 
 	public function get(string $id): object
 	{
-		if (!$this->has($id)) {
-			throw new RuntimeException(sprintf('Service "%s" is not registered.', $id));
+		if ( ! $this->has( $id ) ) {
+			throw new RuntimeException( sprintf( 'Service "%s" is not registered.', $id ) );
 		}
 
 		return $this->services[$id];

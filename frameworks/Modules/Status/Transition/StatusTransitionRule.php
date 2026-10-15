@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Status\Transition;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -32,16 +32,16 @@ final readonly class StatusTransitionRule
 		public bool $bulkAllowed = false,
 		public bool $programmaticAllowed = false,
 	) {
-		$this->assertStatusKey($this->from, 'source');
-		$this->assertStatusKey($this->to, 'target');
-		if ($this->from === $this->to) {
-			throw new InvalidArgumentException('Same-status updates are not transition edges.');
+		$this->assertStatusKey( $this->from, 'source' );
+		$this->assertStatusKey( $this->to, 'target' );
+		if ( $this->from === $this->to ) {
+			throw new InvalidArgumentException( 'Same-status updates are not transition edges.' );
 		}
-		if (in_array($this->from, self::CORE_LIFECYCLE_RESERVED, true) || in_array($this->to, self::CORE_LIFECYCLE_RESERVED, true)) {
-			throw new InvalidArgumentException('Core lifecycle Status edges are reserved from the bounded generic transition policy.');
+		if ( in_array( $this->from, self::CORE_LIFECYCLE_RESERVED, true ) || in_array( $this->to, self::CORE_LIFECYCLE_RESERVED, true ) ) {
+			throw new InvalidArgumentException( 'Core lifecycle Status edges are reserved from the bounded generic transition policy.' );
 		}
-		if ($this->capability !== null && !preg_match('/^[a-z][a-z0-9_-]{0,127}$/', $this->capability)) {
-			throw new InvalidArgumentException('Status transition capability must be a bounded WordPress capability identifier.');
+		if ( $this->capability !== null && ! preg_match( '/^[a-z][a-z0-9_-]{0,127}$/', $this->capability ) ) {
+			throw new InvalidArgumentException( 'Status transition capability must be a bounded WordPress capability identifier.' );
 		}
 	}
 
@@ -65,8 +65,8 @@ final readonly class StatusTransitionRule
 
 	private function assertStatusKey(string $value, string $label): void
 	{
-		if (!preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $value)) {
-			throw new InvalidArgumentException('Status transition ' . $label . ' key must be canonical and fit the WordPress 20-character storage bound.');
+		if ( ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,19}$/', $value ) ) {
+			throw new InvalidArgumentException( 'Status transition ' . $label . ' key must be canonical and fit the WordPress 20-character storage bound.' );
 		}
 	}
 }

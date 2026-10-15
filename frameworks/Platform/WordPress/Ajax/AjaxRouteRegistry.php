@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Ajax;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,8 +18,8 @@ final class AjaxRouteRegistry
 
 	public function register(AjaxRoute $route): void
 	{
-		if (isset($this->routes[$route->type])) {
-			throw new RuntimeException(sprintf('AJAX request type "%s" is already registered.', $route->type));
+		if ( isset( $this->routes[$route->type] ) ) {
+			throw new RuntimeException( sprintf( 'AJAX request type "%s" is already registered.', $route->type ) );
 		}
 		$this->routes[$route->type] = $route;
 	}
@@ -31,8 +31,8 @@ final class AjaxRouteRegistry
 
 	public function hasGuestRoutes(): bool
 	{
-		foreach ($this->routes as $route) {
-			if ($route->allowGuests) {
+		foreach ( $this->routes as $route ) {
+			if ( $route->allowGuests ) {
 				return true;
 			}
 		}
@@ -43,8 +43,8 @@ final class AjaxRouteRegistry
 	/** @return list<string> */
 	public function types(): array
 	{
-		$types = array_keys($this->routes);
-		sort($types);
+		$types = array_keys( $this->routes );
+		sort( $types );
 		return $types;
 	}
 }

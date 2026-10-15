@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Recovery\Binding;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -19,14 +19,14 @@ final readonly class BoundRecoveryEvidence
 		public string $providerVersion,
 		public int $observedAgeHours,
 	) {
-		if (!in_array($this->provider, ['mysql', 'mariadb'], true)) {
-			throw new InvalidArgumentException('Custom Tables bound recovery evidence provider is unsupported.');
+		if ( ! in_array( $this->provider, ['mysql', 'mariadb'], true ) ) {
+			throw new InvalidArgumentException( 'Custom Tables bound recovery evidence provider is unsupported.' );
 		}
-		if (preg_match('/^\d+\.\d+\.\d+$/', $this->providerVersion) !== 1) {
-			throw new InvalidArgumentException('Custom Tables bound recovery evidence provider version is invalid.');
+		if ( preg_match( '/^\d+\.\d+\.\d+$/', $this->providerVersion ) !== 1 ) {
+			throw new InvalidArgumentException( 'Custom Tables bound recovery evidence provider version is invalid.' );
 		}
-		if ($this->observedAgeHours < 0) {
-			throw new InvalidArgumentException('Custom Tables bound recovery evidence age cannot be negative.');
+		if ( $this->observedAgeHours < 0 ) {
+			throw new InvalidArgumentException( 'Custom Tables bound recovery evidence age cannot be negative.' );
 		}
 	}
 

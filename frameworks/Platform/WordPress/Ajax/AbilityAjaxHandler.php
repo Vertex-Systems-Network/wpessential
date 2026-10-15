@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Ajax;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -21,8 +21,8 @@ final readonly class AbilityAjaxHandler implements AjaxHandlerInterface
 		private string $abilityName,
 		private WordPressExecutionContextFactory $contexts,
 	) {
-		if (!preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $this->abilityName)) {
-			throw new InvalidArgumentException('AJAX ability name must use wpessential/<domain>/<action>.');
+		if ( ! preg_match( '#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $this->abilityName ) ) {
+			throw new InvalidArgumentException( 'AJAX ability name must use wpessential/<domain>/<action>.' );
 		}
 	}
 
@@ -37,11 +37,11 @@ final readonly class AbilityAjaxHandler implements AjaxHandlerInterface
 			correlationId: $current->correlationId,
 		);
 
-		$decision = $this->abilities->authorize($this->abilityName, $context, $payload);
-		if (!$decision->allowed) {
-			throw new AjaxAuthorizationException($decision->reason);
+		$decision = $this->abilities->authorize( $this->abilityName, $context, $payload );
+		if ( ! $decision->allowed ) {
+			throw new AjaxAuthorizationException( $decision->reason );
 		}
 
-		return $this->abilities->execute($this->abilityName, $payload, $context);
+		return $this->abilities->execute( $this->abilityName, $payload, $context );
 	}
 }

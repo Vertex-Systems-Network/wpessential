@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -19,14 +19,14 @@ final readonly class MigrationFinding
 		public bool $blocking,
 		public string $detail,
 	) {
-		if (!preg_match('/^[a-z][a-z0-9_]{0,63}$/', $this->code)) {
-			throw new InvalidArgumentException('Custom Tables Migration Plan finding code is invalid.');
+		if ( ! preg_match( '/^[a-z][a-z0-9_]{0,63}$/', $this->code ) ) {
+			throw new InvalidArgumentException( 'Custom Tables Migration Plan finding code is invalid.' );
 		}
-		if ($this->path === '' || strlen($this->path) > 191) {
-			throw new InvalidArgumentException('Custom Tables Migration Plan finding path is invalid.');
+		if ( $this->path === '' || strlen( $this->path ) > 191 ) {
+			throw new InvalidArgumentException( 'Custom Tables Migration Plan finding path is invalid.' );
 		}
-		if (strlen($this->detail) > 255) {
-			throw new InvalidArgumentException('Custom Tables Migration Plan finding detail exceeds the bounded evidence limit.');
+		if ( strlen( $this->detail ) > 255 ) {
+			throw new InvalidArgumentException( 'Custom Tables Migration Plan finding detail exceeds the bounded evidence limit.' );
 		}
 	}
 

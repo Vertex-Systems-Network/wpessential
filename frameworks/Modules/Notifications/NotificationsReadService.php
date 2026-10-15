@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Notifications;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,18 +18,18 @@ final readonly class NotificationsReadService
 	/** @return array<string,mixed>|null */
 	public function get(string $id): ?array
 	{
-		$definition = $this->definitions->get($id);
-		return $definition instanceof Definition ? NotificationRuleDefinition::view($definition) : null;
+		$definition = $this->definitions->get( $id );
+		return $definition instanceof Definition ? NotificationRuleDefinition::view( $definition ) : null;
 	}
 
 	/** @return list<array<string,mixed>> */
 	public function catalog(): array
 	{
-		$definitions = $this->definitions->byType(NotificationRuleDefinition::TYPE);
-		usort($definitions, static fn (Definition $left, Definition $right): int => ($left->slug <=> $right->slug) ?: ($left->id <=> $right->id));
+		$definitions = $this->definitions->byType( NotificationRuleDefinition::TYPE );
+		usort( $definitions, static fn (Definition $left, Definition $right): int => ($left->slug <=> $right->slug) ?: ($left->id <=> $right->id) );
 		$catalog = [];
-		foreach ($definitions as $definition) {
-			$catalog[] = NotificationRuleDefinition::view($definition);
+		foreach ( $definitions as $definition ) {
+			$catalog[] = NotificationRuleDefinition::view( $definition );
 		}
 		return $catalog;
 	}

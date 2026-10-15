@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Relations\Migrations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -19,7 +19,7 @@ final class CreateRelationEdgeTablesMigration implements MigrationInterface
 
 	public function __construct(private readonly DatabaseAdapterInterface $database)
 	{
-		$this->tables = new RelationEdgeTableNames($database);
+		$this->tables = new RelationEdgeTableNames( $database );
 	}
 
 	public function id(): string
@@ -44,7 +44,7 @@ final class CreateRelationEdgeTablesMigration implements MigrationInterface
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
 		$edgesSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->edges}` (
@@ -71,9 +71,9 @@ final class CreateRelationEdgeTablesMigration implements MigrationInterface
             PRIMARY KEY (network_id, site_id, relation_definition_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		foreach ([$edgesSql, $stateSql] as $sql) {
-			if ($this->database->query($sql) === false) {
-				throw new RuntimeException('Failed to create Relation edge persistence tables: ' . $this->database->lastError());
+		foreach ( [$edgesSql, $stateSql] as $sql ) {
+			if ( $this->database->query( $sql ) === false ) {
+				throw new RuntimeException( 'Failed to create Relation edge persistence tables: ' . $this->database->lastError() );
 			}
 		}
 	}

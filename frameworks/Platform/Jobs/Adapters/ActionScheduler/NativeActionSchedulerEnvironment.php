@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Jobs\Adapters\ActionScheduler;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -13,16 +13,16 @@ final class NativeActionSchedulerEnvironment implements ActionSchedulerEnvironme
 {
 	public function hasFunction(string $function): bool
 	{
-		return function_exists($function);
+		return function_exists( $function );
 	}
 
 	public function isInitialized(): bool
 	{
-		if (class_exists('Action_Scheduler') && method_exists('Action_Scheduler', 'is_initialized')) {
+		if ( class_exists( 'Action_Scheduler' ) && method_exists( 'Action_Scheduler', 'is_initialized' ) ) {
 			return (bool) \Action_Scheduler::is_initialized();
 		}
-		if (function_exists('did_action')) {
-			return did_action('action_scheduler_init') > 0;
+		if ( function_exists( 'did_action' ) ) {
+			return did_action( 'action_scheduler_init' ) > 0;
 		}
 
 		return false;
@@ -30,10 +30,10 @@ final class NativeActionSchedulerEnvironment implements ActionSchedulerEnvironme
 
 	public function supports(string $feature): ?bool
 	{
-		if (!function_exists('as_supports')) {
+		if ( ! function_exists( 'as_supports' ) ) {
 			return null;
 		}
 
-		return (bool) as_supports($feature);
+		return (bool) as_supports( $feature );
 	}
 }

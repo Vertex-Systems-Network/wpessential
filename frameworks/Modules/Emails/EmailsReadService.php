@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Emails;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,18 +18,18 @@ final readonly class EmailsReadService
 	/** @return array<string,mixed>|null */
 	public function get(string $id): ?array
 	{
-		$definition = $this->definitions->get($id);
-		return $definition instanceof Definition ? EmailTemplateDefinition::view($definition) : null;
+		$definition = $this->definitions->get( $id );
+		return $definition instanceof Definition ? EmailTemplateDefinition::view( $definition ) : null;
 	}
 
 	/** @return list<array<string,mixed>> */
 	public function catalog(): array
 	{
-		$definitions = $this->definitions->byType(EmailTemplateDefinition::TYPE);
-		usort($definitions, static fn (Definition $left, Definition $right): int => ($left->slug <=> $right->slug) ?: ($left->id <=> $right->id));
+		$definitions = $this->definitions->byType( EmailTemplateDefinition::TYPE );
+		usort( $definitions, static fn (Definition $left, Definition $right): int => ($left->slug <=> $right->slug) ?: ($left->id <=> $right->id) );
 		$catalog = [];
-		foreach ($definitions as $definition) {
-			$catalog[] = EmailTemplateDefinition::view($definition);
+		foreach ( $definitions as $definition ) {
+			$catalog[] = EmailTemplateDefinition::view( $definition );
 		}
 		return $catalog;
 	}

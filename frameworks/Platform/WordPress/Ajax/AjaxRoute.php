@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Ajax;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,11 +22,11 @@ final readonly class AjaxRoute
 		public bool $allowGuests = false,
 		public bool $requiresNonce = true,
 	) {
-		if (preg_match('/^[a-z0-9][a-z0-9._-]*$/', $this->type) !== 1) {
-			throw new InvalidArgumentException('AJAX request type is invalid.');
+		if ( preg_match( '/^[a-z0-9][a-z0-9._-]*$/', $this->type ) !== 1 ) {
+			throw new InvalidArgumentException( 'AJAX request type is invalid.' );
 		}
-		if ($this->capability !== null && trim($this->capability) === '') {
-			throw new InvalidArgumentException('AJAX capability cannot be blank.');
+		if ( $this->capability !== null && trim( $this->capability ) === '' ) {
+			throw new InvalidArgumentException( 'AJAX capability cannot be blank.' );
 		}
 	}
 }

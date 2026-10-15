@@ -32,12 +32,12 @@ final readonly class DashboardWidgetContentClassCompiler {
 	public function compile( Definition $definition ): DashboardWidgetContentClassDescriptor {
 		DashboardWidgetDefinition::assertOwned( $definition );
 
-		if ($definition->schemaVersion !== self::SCHEMA_VERSION) {
+		if ( $definition->schemaVersion !== self::SCHEMA_VERSION ) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget definition schema version is unsupported for content-class compilation.'
 			);
 		}
-		if ($definition->status !== DefinitionStatus::Published) {
+		if ( $definition->status !== DefinitionStatus::Published ) {
 			throw new InvalidArgumentException(
 				'Only Published Dashboard Widget definitions may compile trusted content classes.'
 			);
@@ -57,13 +57,13 @@ final readonly class DashboardWidgetContentClassCompiler {
 
 		$contentType = $widget['type'] ?? null;
 		if (
-			!is_string($contentType)
-			|| preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $contentType) !== 1
+			! is_string( $contentType )
+			|| preg_match( '/^[a-z0-9][a-z0-9_-]{0,63}$/', $contentType ) !== 1
 		) {
 			throw new InvalidArgumentException( 'Dashboard Widget type must be bounded canonical machine text.' );
 		}
 
-		if (!in_array($contentType, DashboardWidgetContentClassDescriptor::TRUSTED_TYPES, true)) {
+		if ( ! in_array( $contentType, DashboardWidgetContentClassDescriptor::TRUSTED_TYPES, true ) ) {
 			throw new InvalidArgumentException( 'Dashboard Widget type is not trusted for content-class V1.' );
 		}
 

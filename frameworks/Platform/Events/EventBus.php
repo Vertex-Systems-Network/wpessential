@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Events;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -21,8 +21,8 @@ final class EventBus
 
 	public function dispatch(DomainEvent $event): void
 	{
-		foreach ($this->listeners[$event->name] ?? [] as $listener) {
-			$listener($event);
+		foreach ( $this->listeners[$event->name] ?? [] as $listener ) {
+			$listener( $event );
 		}
 	}
 }

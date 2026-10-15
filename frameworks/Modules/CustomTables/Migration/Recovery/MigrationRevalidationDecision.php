@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Recovery;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -23,36 +23,36 @@ final readonly class MigrationRevalidationDecision
 	): self {
 		$reasons = [];
 
-		if ($reviewed->planFingerprint !== $current->planFingerprint) {
+		if ( $reviewed->planFingerprint !== $current->planFingerprint ) {
 			$reasons[] = 'plan_fingerprint_changed';
 		}
-		if ($reviewed->sourceObservedFingerprint !== $current->sourceObservedFingerprint) {
+		if ( $reviewed->sourceObservedFingerprint !== $current->sourceObservedFingerprint ) {
 			$reasons[] = 'source_observed_fingerprint_changed';
 		}
-		if ($reviewed->targetDefinitionId !== $current->targetDefinitionId) {
+		if ( $reviewed->targetDefinitionId !== $current->targetDefinitionId ) {
 			$reasons[] = 'target_definition_changed';
 		}
-		if ($reviewed->targetRevision !== $current->targetRevision) {
+		if ( $reviewed->targetRevision !== $current->targetRevision ) {
 			$reasons[] = 'target_revision_changed';
 		}
-		if ($reviewed->targetSchemaVersion !== $current->targetSchemaVersion) {
+		if ( $reviewed->targetSchemaVersion !== $current->targetSchemaVersion ) {
 			$reasons[] = 'target_schema_version_changed';
 		}
-		if ($reviewed->provider !== $current->provider) {
+		if ( $reviewed->provider !== $current->provider ) {
 			$reasons[] = 'provider_changed';
 		}
-		if ($reviewed->providerVersion !== $current->providerVersion) {
+		if ( $reviewed->providerVersion !== $current->providerVersion ) {
 			$reasons[] = 'provider_version_changed';
 		}
 
-		return new self($reasons === [], $reasons);
+		return new self( $reasons === [], $reasons );
 	}
 
 	/** @return array{allowed:bool,reasons:list<string>} */
 	public function canonical(): array
 	{
 		$reasons = $this->reasons;
-		sort($reasons);
+		sort( $reasons );
 
 		return [
 			'allowed' => $this->allowed,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\AdminMenu;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -32,12 +32,12 @@ final readonly class AdminMenuReadService
      */
 	public function get(string $id): ?array
 	{
-		$definition = $this->definitions->get($id);
-		if (!$definition instanceof Definition) {
+		$definition = $this->definitions->get( $id );
+		if ( ! $definition instanceof Definition ) {
 			return null;
 		}
 
-		return AdminMenuDefinition::view($definition);
+		return AdminMenuDefinition::view( $definition );
 	}
 
 	/**
@@ -55,7 +55,7 @@ final readonly class AdminMenuReadService
      */
 	public function catalog(): array
 	{
-		$definitions = $this->definitions->byType(AdminMenuDefinition::TYPE);
+		$definitions = $this->definitions->byType( AdminMenuDefinition::TYPE );
 		usort(
 			$definitions,
 			static fn (Definition $left, Definition $right): int =>
@@ -63,8 +63,8 @@ final readonly class AdminMenuReadService
 		);
 
 		$catalog = [];
-		foreach ($definitions as $definition) {
-			$catalog[] = AdminMenuDefinition::view($definition);
+		foreach ( $definitions as $definition ) {
+			$catalog[] = AdminMenuDefinition::view( $definition );
 		}
 
 		return $catalog;

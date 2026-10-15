@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -52,15 +52,15 @@ final readonly class DashboardWidgetPresetMappedDraftImportService
 		// Before processing any untrusted source contents, reject callers
 		// outside the existing current WordPress user/site/network capability
 		// and internal execution channel gate. The atomic importer rechecks.
-		if (!$this->draftImporter->isAuthorizedContext($context)) {
+		if ( ! $this->draftImporter->isAuthorizedContext( $context ) ) {
 			return ['status' => 'forbidden'];
 		}
 
-		$assessment = $this->mapping->preview($sourceSnapshot, $targetPresetId, $widgetIdMap);
-		if ($assessment['status'] === 'id_conflict') {
+		$assessment = $this->mapping->preview( $sourceSnapshot, $targetPresetId, $widgetIdMap );
+		if ( $assessment['status'] === 'id_conflict' ) {
 			return ['status' => 'id_conflict'];
 		}
-		if ($assessment['status'] !== 'valid_candidate' || !is_array($assessment['candidate_snapshot'])) {
+		if ( $assessment['status'] !== 'valid_candidate' || ! is_array( $assessment['candidate_snapshot'] ) ) {
 			return ['status' => 'invalid_snapshot'];
 		}
 

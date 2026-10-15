@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Registrations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -27,8 +27,8 @@ final class RegistrationCompilationStatus
 	{
 		$this->attempted = true;
 		$this->generation = null;
-		$message = trim($exception->getMessage());
-		$this->error = substr($message === '' ? $exception::class : $message, 0, 500);
+		$message = trim( $exception->getMessage() );
+		$this->error = substr( $message === '' ? $exception::class : $message, 0, 500 );
 	}
 
 	public function attempted(): bool

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,6 +17,6 @@ final class QueryProviderCompilationException extends RuntimeException
 		public readonly string $path,
 		string $message,
 	) {
-		parent::__construct($message);
+		parent::__construct( $message );
 	}
 }

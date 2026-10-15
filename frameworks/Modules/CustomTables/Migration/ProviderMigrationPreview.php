@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,22 +22,22 @@ final readonly class ProviderMigrationPreview
 		public string $fingerprint,
 		public bool $executionAllowed = false,
 	) {
-		if ($this->executionAllowed) {
-			throw new InvalidArgumentException('Custom Tables provider migration previews are never executable in bounded V1.');
+		if ( $this->executionAllowed ) {
+			throw new InvalidArgumentException( 'Custom Tables provider migration previews are never executable in bounded V1.' );
 		}
-		if (preg_match('/^[0-9a-f]{64}$/', $this->planFingerprint) !== 1
-			|| preg_match('/^[0-9a-f]{64}$/', $this->fingerprint) !== 1
+		if ( preg_match( '/^[0-9a-f]{64}$/', $this->planFingerprint ) !== 1
+			|| preg_match( '/^[0-9a-f]{64}$/', $this->fingerprint ) !== 1
 		) {
-			throw new InvalidArgumentException('Custom Tables provider preview fingerprints must be SHA-256 hex.');
+			throw new InvalidArgumentException( 'Custom Tables provider preview fingerprints must be SHA-256 hex.' );
 		}
-		if ($this->physicalTableName === ''
-			|| strlen($this->physicalTableName) > 64
-			|| preg_match('/^[A-Za-z0-9_]+$/', $this->physicalTableName) !== 1
+		if ( $this->physicalTableName === ''
+			|| strlen( $this->physicalTableName ) > 64
+			|| preg_match( '/^[A-Za-z0-9_]+$/', $this->physicalTableName ) !== 1
 		) {
-			throw new InvalidArgumentException('Custom Tables provider preview physical table identity is invalid.');
+			throw new InvalidArgumentException( 'Custom Tables provider preview physical table identity is invalid.' );
 		}
-		if (count($this->statements) > 256) {
-			throw new InvalidArgumentException('Custom Tables provider preview exceeds bounded statement limits.');
+		if ( count( $this->statements ) > 256 ) {
+			throw new InvalidArgumentException( 'Custom Tables provider preview exceeds bounded statement limits.' );
 		}
 	}
 
@@ -87,7 +87,7 @@ final readonly class ProviderMigrationPreview
 			statements: $statements,
 			fingerprint: hash(
 				'sha256',
-				json_encode($semantic, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+				json_encode( $semantic, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ),
 			),
 		);
 	}

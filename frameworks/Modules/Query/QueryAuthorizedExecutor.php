@@ -58,11 +58,11 @@ final readonly class QueryAuthorizedExecutor {
 			);
 		}
 
-		if ($authorized->shortCircuitResult !== null) {
+		if ( $authorized->shortCircuitResult !== null ) {
 			return $authorized->shortCircuitResult;
 		}
 
-		if (!$this->providerExecutor->supports($authorized->providerPlan)) {
+		if ( ! $this->providerExecutor->supports( $authorized->providerPlan ) ) {
 			return new QueryExecutionError(
 				errorCode: 'wpe_query_dependency_unavailable',
 				path: '$.source',
@@ -71,7 +71,7 @@ final readonly class QueryAuthorizedExecutor {
 		}
 
 		try {
-			return $this->providerExecutor->execute($authorized->providerPlan);
+			return $this->providerExecutor->execute( $authorized->providerPlan );
 		} catch ( Throwable ) {
 			return new QueryExecutionError(
 				errorCode: 'wpe_query_provider_failed',

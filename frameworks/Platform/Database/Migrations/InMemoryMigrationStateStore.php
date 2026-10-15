@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Database\Migrations;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,7 +18,7 @@ final class InMemoryMigrationStateStore implements MigrationStateStoreInterface
 
 	public function appliedIds(): array
 	{
-		return array_keys($this->applied);
+		return array_keys( $this->applied );
 	}
 
 	public function markApplied(string $id): void

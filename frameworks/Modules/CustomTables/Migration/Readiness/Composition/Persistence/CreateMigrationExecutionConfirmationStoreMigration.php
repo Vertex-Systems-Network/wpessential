@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Readiness\Composition\Persistence;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,8 +22,8 @@ final readonly class CreateMigrationExecutionConfirmationStoreMigration implemen
 	public function __construct(private DatabaseAdapterInterface $database)
 	{
 		$prefix = $database->networkTablePrefix();
-		if (preg_match('/^[A-Za-z0-9_]+$/', $prefix) !== 1) {
-			throw new RuntimeException('Custom Tables execution confirmation store prefix is invalid.');
+		if ( preg_match( '/^[A-Za-z0-9_]+$/', $prefix ) !== 1 ) {
+			throw new RuntimeException( 'Custom Tables execution confirmation store prefix is invalid.' );
 		}
 
 		$this->table = $prefix . 'wpe_custom_table_migration_confirmations';
@@ -51,7 +51,7 @@ final readonly class CreateMigrationExecutionConfirmationStoreMigration implemen
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 		$sql = "CREATE TABLE IF NOT EXISTS `{$this->table}` (
             site_id BIGINT UNSIGNED NOT NULL,
@@ -66,8 +66,8 @@ final readonly class CreateMigrationExecutionConfirmationStoreMigration implemen
             KEY readiness_revision (site_id, readiness_state_revision)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		if ($this->database->query($sql) === false) {
-			throw new RuntimeException('Unable to initialize Custom Tables execution confirmation store.');
+		if ( $this->database->query( $sql ) === false ) {
+			throw new RuntimeException( 'Unable to initialize Custom Tables execution confirmation store.' );
 		}
 	}
 }

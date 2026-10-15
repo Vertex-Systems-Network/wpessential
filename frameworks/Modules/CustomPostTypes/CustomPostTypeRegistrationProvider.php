@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomPostTypes;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -26,11 +26,11 @@ final class CustomPostTypeRegistrationProvider implements RegistrationDefinition
 
 	public function definitions(): iterable
 	{
-		foreach ($this->definitions->byType(CustomPostTypeDefinitionProjector::DEFINITION_TYPE) as $definition) {
-			if ($definition->status !== DefinitionStatus::Published) {
+		foreach ( $this->definitions->byType( CustomPostTypeDefinitionProjector::DEFINITION_TYPE ) as $definition ) {
+			if ( $definition->status !== DefinitionStatus::Published ) {
 				continue;
 			}
-			yield $this->projector->project($definition);
+			yield $this->projector->project( $definition );
 		}
 	}
 }

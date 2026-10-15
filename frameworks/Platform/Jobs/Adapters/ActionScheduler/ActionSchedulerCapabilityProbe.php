@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Jobs\Adapters\ActionScheduler;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -25,28 +25,28 @@ final readonly class ActionSchedulerCapabilityProbe
 	public function probe(): ActionSchedulerProbeReport
 	{
 		$missing = [];
-		foreach (self::REQUIRED_FUNCTIONS as $function) {
-			if (!$this->environment->hasFunction($function)) {
+		foreach ( self::REQUIRED_FUNCTIONS as $function ) {
+			if ( ! $this->environment->hasFunction( $function ) ) {
 				$missing[] = $function;
 			}
 		}
 
 		$features = [
-			'ensure_recurring_actions_hook' => $this->environment->supports('ensure_recurring_actions_hook'),
+			'ensure_recurring_actions_hook' => $this->environment->supports( 'ensure_recurring_actions_hook' ),
 		];
 
-		if (count($missing) === count(self::REQUIRED_FUNCTIONS)) {
-			return new ActionSchedulerProbeReport(ActionSchedulerProbeState::Absent, $missing, $features);
+		if ( count( $missing ) === count( self::REQUIRED_FUNCTIONS ) ) {
+			return new ActionSchedulerProbeReport( ActionSchedulerProbeState::Absent, $missing, $features );
 		}
 
-		if ($missing !== []) {
-			return new ActionSchedulerProbeReport(ActionSchedulerProbeState::Incompatible, $missing, $features);
+		if ( $missing !== [] ) {
+			return new ActionSchedulerProbeReport( ActionSchedulerProbeState::Incompatible, $missing, $features );
 		}
 
-		if (!$this->environment->isInitialized()) {
-			return new ActionSchedulerProbeReport(ActionSchedulerProbeState::NotInitialized, [], $features);
+		if ( ! $this->environment->isInitialized() ) {
+			return new ActionSchedulerProbeReport( ActionSchedulerProbeState::NotInitialized, [], $features );
 		}
 
-		return new ActionSchedulerProbeReport(ActionSchedulerProbeState::Ready, [], $features);
+		return new ActionSchedulerProbeReport( ActionSchedulerProbeState::Ready, [], $features );
 	}
 }

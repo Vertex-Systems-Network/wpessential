@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Settings;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,18 +20,18 @@ final readonly class SettingsReadService
 	/** @return array<string,mixed>|null */
 	public function get(string $id): ?array
 	{
-		$definition = $this->definitions->get($id);
-		if (!$definition instanceof Definition) {
+		$definition = $this->definitions->get( $id );
+		if ( ! $definition instanceof Definition ) {
 			return null;
 		}
 
-		return SettingsDefinition::view($definition);
+		return SettingsDefinition::view( $definition );
 	}
 
 	/** @return list<array<string,mixed>> */
 	public function catalog(): array
 	{
-		$definitions = $this->definitions->byType(SettingsDefinition::TYPE);
+		$definitions = $this->definitions->byType( SettingsDefinition::TYPE );
 		usort(
 			$definitions,
 			static fn (Definition $left, Definition $right): int =>
@@ -39,8 +39,8 @@ final readonly class SettingsReadService
 		);
 
 		$catalog = [];
-		foreach ($definitions as $definition) {
-			$catalog[] = SettingsDefinition::view($definition);
+		foreach ( $definitions as $definition ) {
+			$catalog[] = SettingsDefinition::view( $definition );
 		}
 
 		return $catalog;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,8 +18,8 @@ final class DashboardWidgetSubsitePresetOverrideDefinition
 
 	public static function assertOwned(Definition $definition): void
 	{
-		if ($definition->type !== self::TYPE || $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
-			throw new InvalidArgumentException('Dashboard subsite preset override type or owner surface is invalid.');
+		if ( $definition->type !== self::TYPE || $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID ) {
+			throw new InvalidArgumentException( 'Dashboard subsite preset override type or owner surface is invalid.' );
 		}
 	}
 }

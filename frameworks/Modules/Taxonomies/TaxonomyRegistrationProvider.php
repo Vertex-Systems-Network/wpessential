@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -26,11 +26,11 @@ final class TaxonomyRegistrationProvider implements RegistrationDefinitionProvid
 
 	public function definitions(): iterable
 	{
-		foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $definition) {
-			if ($definition->status !== DefinitionStatus::Published) {
+		foreach ( $this->definitions->byType( TaxonomyDefinitionProjector::DEFINITION_TYPE ) as $definition ) {
+			if ( $definition->status !== DefinitionStatus::Published ) {
 				continue;
 			}
-			yield $this->projector->project($definition);
+			yield $this->projector->project( $definition );
 		}
 	}
 }

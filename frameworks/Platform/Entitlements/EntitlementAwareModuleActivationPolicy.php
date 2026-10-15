@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Entitlements;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -20,7 +20,7 @@ final readonly class EntitlementAwareModuleActivationPolicy implements ModuleAct
 
 	public function allows(ModuleManifest $manifest): bool
 	{
-		if ($manifest->edition === 'free') {
+		if ( $manifest->edition === 'free' ) {
 			return true;
 		}
 

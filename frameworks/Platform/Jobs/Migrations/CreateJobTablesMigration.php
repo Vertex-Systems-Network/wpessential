@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Jobs\Migrations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -19,7 +19,7 @@ final class CreateJobTablesMigration implements MigrationInterface
 
 	public function __construct(private readonly DatabaseAdapterInterface $database)
 	{
-		$this->tables = new JobTableNames($database);
+		$this->tables = new JobTableNames( $database );
 	}
 
 	public function id(): string
@@ -44,7 +44,7 @@ final class CreateJobTablesMigration implements MigrationInterface
 
 	public function apply(): void
 	{
-		$charset = trim($this->database->charsetCollate());
+		$charset = trim( $this->database->charsetCollate() );
 		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
 		$jobsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->jobs}` (
@@ -91,9 +91,9 @@ final class CreateJobTablesMigration implements MigrationInterface
             KEY job_attempt_lookup (network_id, site_id, job_id, attempt_no)
         ) ENGINE=InnoDB{$charsetSql}";
 
-		foreach ([$jobsSql, $attemptsSql] as $sql) {
-			if ($this->database->query($sql) === false) {
-				throw new RuntimeException('Failed to create durable JobService tables: ' . $this->database->lastError());
+		foreach ( [$jobsSql, $attemptsSql] as $sql ) {
+			if ( $this->database->query( $sql ) === false ) {
+				throw new RuntimeException( 'Failed to create durable JobService tables: ' . $this->database->lastError() );
 			}
 		}
 	}

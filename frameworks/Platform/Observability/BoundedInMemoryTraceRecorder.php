@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Observability;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,14 +17,14 @@ final class BoundedInMemoryTraceRecorder implements TraceRecorderInterface, Trac
 
 	public function start(string $correlationId): FlowTrace
 	{
-		return new FlowTrace($correlationId, maxEvents: $this->maxEvents);
+		return new FlowTrace( $correlationId, maxEvents: $this->maxEvents );
 	}
 
 	public function commit(FlowTrace $trace): void
 	{
 		$this->traces[] = $trace->snapshot();
-		if (count($this->traces) > $this->maxTraces) {
-			array_shift($this->traces);
+		if ( count( $this->traces ) > $this->maxTraces ) {
+			array_shift( $this->traces );
 		}
 	}
 

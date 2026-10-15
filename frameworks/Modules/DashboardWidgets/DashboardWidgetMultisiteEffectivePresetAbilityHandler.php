@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,9 +18,9 @@ final readonly class DashboardWidgetMultisiteEffectivePresetAbilityHandler imple
 
 	public function handle(array $input, ExecutionContext $context): mixed
 	{
-		if ($input !== []) {
-			throw new InvalidArgumentException('Effective Multisite preset read accepts no input.');
+		if ( $input !== [] ) {
+			throw new InvalidArgumentException( 'Effective Multisite preset read accepts no input.' );
 		}
-		return $this->resolver->resolve($context);
+		return $this->resolver->resolve( $context );
 	}
 }

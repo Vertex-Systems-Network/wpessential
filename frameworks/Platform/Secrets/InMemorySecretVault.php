@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Secrets;
 
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -28,14 +28,14 @@ final class InMemorySecretVault implements SecretVaultInterface
 
 	public function store(string $name, int $ownerSurfaceId, string $plaintext, array $metadata = []): SecretReference
 	{
-		if ($plaintext === '') {
-			throw new RuntimeException('Secret plaintext cannot be empty.');
+		if ( $plaintext === '' ) {
+			throw new RuntimeException( 'Secret plaintext cannot be empty.' );
 		}
 
-		$this->metadataValidator->validate($metadata);
+		$this->metadataValidator->validate( $metadata );
 
 		$reference = new SecretReference(
-			id: bin2hex(random_bytes(16)),
+			id: bin2hex( random_bytes( 16 ) ),
 			name: $name,
 			ownerSurfaceId: $ownerSurfaceId,
 			version: 1,
@@ -54,28 +54,28 @@ final class InMemorySecretVault implements SecretVaultInterface
 	public function resolve(SecretReference $reference): SensitiveValue
 	{
 		$record = $this->records[$reference->id] ?? null;
-		if ($record === null || $record['revoked']) {
-			throw new RuntimeException('Secret reference is unavailable or revoked.');
+		if ( $record === null || $record['revoked'] ) {
+			throw new RuntimeException( 'Secret reference is unavailable or revoked.' );
 		}
-		if ($record['reference']->version !== $reference->version) {
-			throw new RuntimeException('Secret reference version is stale.');
+		if ( $record['reference']->version !== $reference->version ) {
+			throw new RuntimeException( 'Secret reference version is stale.' );
 		}
 
-		return new SensitiveValue($record['plaintext']);
+		return new SensitiveValue( $record['plaintext'] );
 	}
 
 	public function rotate(SecretReference $reference, string $plaintext): SecretReference
 	{
-		if ($plaintext === '') {
-			throw new RuntimeException('Secret plaintext cannot be empty.');
+		if ( $plaintext === '' ) {
+			throw new RuntimeException( 'Secret plaintext cannot be empty.' );
 		}
 
 		$record = $this->records[$reference->id] ?? null;
-		if ($record === null || $record['revoked']) {
-			throw new RuntimeException('Secret reference is unavailable or revoked.');
+		if ( $record === null || $record['revoked'] ) {
+			throw new RuntimeException( 'Secret reference is unavailable or revoked.' );
 		}
-		if ($record['reference']->version !== $reference->version) {
-			throw new RuntimeException('Secret reference version is stale.');
+		if ( $record['reference']->version !== $reference->version ) {
+			throw new RuntimeException( 'Secret reference version is stale.' );
 		}
 
 		$rotated = new SecretReference(
@@ -98,11 +98,11 @@ final class InMemorySecretVault implements SecretVaultInterface
 	public function revoke(SecretReference $reference): void
 	{
 		$record = $this->records[$reference->id] ?? null;
-		if ($record === null) {
+		if ( $record === null ) {
 			return;
 		}
-		if ($record['reference']->version !== $reference->version) {
-			throw new RuntimeException('Secret reference version is stale.');
+		if ( $record['reference']->version !== $reference->version ) {
+			throw new RuntimeException( 'Secret reference version is stale.' );
 		}
 
 		$record['plaintext'] = '';

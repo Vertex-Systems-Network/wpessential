@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -27,7 +27,7 @@ final readonly class FieldCatalogService
 	{
 		$types = [];
 		$categories = [];
-		foreach ($this->types->all() as $type) {
+		foreach ( $this->types->all() as $type ) {
 			$categories[$type->category] = ($categories[$type->category] ?? 0) + 1;
 			$types[] = [
 				'key' => $type->key,
@@ -49,7 +49,7 @@ final readonly class FieldCatalogService
 		}
 
 		$presets = [];
-		foreach ($this->presets->all() as $preset) {
+		foreach ( $this->presets->all() as $preset ) {
 			$presets[] = [
 				'key' => $preset->key,
 				'label' => $preset->label,
@@ -58,7 +58,7 @@ final readonly class FieldCatalogService
 			];
 		}
 
-		ksort($categories, SORT_STRING);
+		ksort( $categories, SORT_STRING );
 
 		return [
 			'types' => $types,
