@@ -46,14 +46,14 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
 	) {}
 
 	/**
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
-     *   roles:list<array{key:string,name:string,provenance:'unknown',capabilities:array<string,bool>}>,
-     *   capability_registry:list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>,
-     *   caveats:list<string>
-     * }
-     */
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
+	 *   roles:list<array{key:string,name:string,provenance:'unknown',capabilities:array<string,bool>}>,
+	 *   capability_registry:list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>,
+	 *   caveats:list<string>
+	 * }
+	 */
 	public function roleCatalog(ExecutionContext $context): array
 	{
 		$this->authorize($context, self::ABILITY_CATALOG);
@@ -61,20 +61,20 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
 	}
 
 	/**
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   capability:string,
-     *   classification:string,
-     *   meta_capability:bool,
-     *   context_required:bool,
-     *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
-     *   explicit_allow_roles:list<string>,
-     *   explicit_deny_roles:list<string>,
-     *   absent_roles:list<string>,
-     *   unknown_or_external_roles:list<string>,
-     *   caveats:list<string>
-     * }
-     */
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   capability:string,
+	 *   classification:string,
+	 *   meta_capability:bool,
+	 *   context_required:bool,
+	 *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
+	 *   explicit_allow_roles:list<string>,
+	 *   explicit_deny_roles:list<string>,
+	 *   absent_roles:list<string>,
+	 *   unknown_or_external_roles:list<string>,
+	 *   caveats:list<string>
+	 * }
+	 */
 	public function capabilityImpact(string $capability, ExecutionContext $context): array
 	{
 		$this->authorize($context, self::ABILITY_IMPACT);
@@ -129,14 +129,14 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
 	}
 
 	/**
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
-     *   roles:list<array{key:string,name:string,provenance:'unknown',capabilities:array<string,bool>}>,
-     *   capability_registry:list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>,
-     *   caveats:list<string>
-     * }
-     */
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
+	 *   roles:list<array{key:string,name:string,provenance:'unknown',capabilities:array<string,bool>}>,
+	 *   capability_registry:list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>,
+	 *   caveats:list<string>
+	 * }
+	 */
 	private function catalogSnapshot(ExecutionContext $context): array
 	{
 		$multisite = $this->environment->isMultisite();
@@ -190,9 +190,9 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
 	}
 
 	/**
-     * @param array<string,array{name:string,capabilities:array<string,bool>}> $roles
-     * @return list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>
-     */
+	 * @param array<string,array{name:string,capabilities:array<string,bool>}> $roles
+	 * @return list<array{key:string,classification:string,provenance:'unknown',explicit_allow_role_count:int,explicit_deny_role_count:int}>
+	 */
 	private function capabilityRegistry(array $roles): array
 	{
 		/** @var array<string,array{allow:int,deny:int}> $counts */
@@ -225,16 +225,16 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
 	}
 
 	/**
-     * @param array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool} $scope
-     * @param list<string> $caveats
-     * @return array{
-     *   state:'degraded'|'unavailable',
-     *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
-     *   roles:list<never>,
-     *   capability_registry:list<never>,
-     *   caveats:list<string>
-     * }
-     */
+	 * @param array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool} $scope
+	 * @param list<string> $caveats
+	 * @return array{
+	 *   state:'degraded'|'unavailable',
+	 *   scope_context:array{site_id:int,network_id:?int,multisite:bool,super_admin_special_authority:bool},
+	 *   roles:list<never>,
+	 *   capability_registry:list<never>,
+	 *   caveats:list<string>
+	 * }
+	 */
 	private function emptyCatalog(string $state, array $scope, array $caveats): array
 	{
 		return [

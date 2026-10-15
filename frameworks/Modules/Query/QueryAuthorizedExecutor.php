@@ -27,7 +27,7 @@ final readonly class QueryAuthorizedExecutor {
 	 */
 	public function __construct(
 		private QueryAuthorizedPlanner $planner,
-        private QueryProviderExecutorInterface $providerExecutor,
+		private QueryProviderExecutorInterface $providerExecutor,
 	) {
 	}
 
@@ -46,7 +46,7 @@ final readonly class QueryAuthorizedExecutor {
 			$authorized = $this->planner->plan( $definition, $context );
 		} catch ( QueryPlanningException | QueryProviderCompilationException $exception ) {
 			return new QueryExecutionError(
-                errorCode: $exception->errorCode,
+				errorCode: $exception->errorCode,
 				path: $exception->path,
 				message: $exception->getMessage(),
 			);
@@ -58,11 +58,11 @@ final readonly class QueryAuthorizedExecutor {
 			);
 		}
 
-        if ($authorized->shortCircuitResult !== null) {
-            return $authorized->shortCircuitResult;
+		if ($authorized->shortCircuitResult !== null) {
+			return $authorized->shortCircuitResult;
 		}
 
-        if (!$this->providerExecutor->supports($authorized->providerPlan)) {
+		if (!$this->providerExecutor->supports($authorized->providerPlan)) {
 			return new QueryExecutionError(
 				errorCode: 'wpe_query_dependency_unavailable',
 				path: '$.source',
@@ -71,7 +71,7 @@ final readonly class QueryAuthorizedExecutor {
 		}
 
 		try {
-            return $this->providerExecutor->execute($authorized->providerPlan);
+			return $this->providerExecutor->execute($authorized->providerPlan);
 		} catch ( Throwable ) {
 			return new QueryExecutionError(
 				errorCode: 'wpe_query_provider_failed',
