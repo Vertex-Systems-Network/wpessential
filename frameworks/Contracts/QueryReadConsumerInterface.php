@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Contracts;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Auth\ExecutionContext;
@@ -20,17 +20,17 @@ use WPEssential\Platform\Auth\ExecutionContext;
  */
 interface QueryReadConsumerInterface
 {
-    public const CONTRACT_VERSION = 1;
-    public const MAX_REQUEST_BYTES = 16384;
-    public const MAX_PROJECTION_FIELDS = 32;
-    public const MAX_FILTERS = 16;
-    public const MAX_FILTER_VALUES = 50;
-    public const MAX_ORDER_FIELDS = 4;
-    public const MAX_PAGE_SIZE = 100;
-    public const MAX_OFFSET = 10000;
-    public const MAX_SEARCH_LENGTH = 200;
+	public const CONTRACT_VERSION = 1;
+	public const MAX_REQUEST_BYTES = 16384;
+	public const MAX_PROJECTION_FIELDS = 32;
+	public const MAX_FILTERS = 16;
+	public const MAX_FILTER_VALUES = 50;
+	public const MAX_ORDER_FIELDS = 4;
+	public const MAX_PAGE_SIZE = 100;
+	public const MAX_OFFSET = 10000;
+	public const MAX_SEARCH_LENGTH = 200;
 
-    /**
+	/**
      * @return array{
      *   contract_version:int,
      *   source_ref:string,
@@ -44,9 +44,9 @@ interface QueryReadConsumerInterface
      *   max_page_size:int
      * }
      */
-    public function describe(string $sourceRef, ExecutionContext $context): array;
+	public function describe(string $sourceRef, ExecutionContext $context): array;
 
-    /**
+	/**
      * Execute one bounded read request through the canonical Query runtime.
      *
      * V1 request keys are strictly limited to contract_version, source_ref,
@@ -55,5 +55,5 @@ interface QueryReadConsumerInterface
      * @param array<string,mixed> $request
      * @return array<string,mixed>
      */
-    public function read(array $request, ExecutionContext $context): array;
+	public function read(array $request, ExecutionContext $context): array;
 }
