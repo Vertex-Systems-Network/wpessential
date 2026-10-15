@@ -67,7 +67,7 @@ final class AdminColumnsModule implements ModuleInterface
 		);
 	}
 
-	public function register(ServiceRegistryInterface $services): void
+	public function register( ServiceRegistryInterface $services ): void
 	{
 		foreach (
 			array(
@@ -84,11 +84,11 @@ final class AdminColumnsModule implements ModuleInterface
 		}
 
 		$definitions = $services->get('platform.definitions');
-		$query = $services->get(self::QUERY_READ_SERVICE);
-		$abilities = $services->get(self::ABILITY_SERVICE);
-		$contexts = $services->get(self::ABILITY_CONTEXT_SERVICE);
-		$ajaxRoutes = $services->get(self::AJAX_ROUTE_SERVICE);
-		if (!$definitions instanceof DefinitionRepositoryInterface
+		$query = $services->get( self::QUERY_READ_SERVICE );
+		$abilities = $services->get( self::ABILITY_SERVICE );
+		$contexts = $services->get( self::ABILITY_CONTEXT_SERVICE );
+		$ajaxRoutes = $services->get( self::AJAX_ROUTE_SERVICE );
+		if ( !$definitions instanceof DefinitionRepositoryInterface
 			|| !$query instanceof QueryReadConsumerInterface
 			|| !$abilities instanceof AbilityRegistry
 			|| !$contexts instanceof WordPressExecutionContextFactory
@@ -98,24 +98,24 @@ final class AdminColumnsModule implements ModuleInterface
 		}
 
 		$fields = null;
-		if ($services->has(self::FIELD_VALUE_READ_SERVICE)) {
-			$candidate = $services->get(self::FIELD_VALUE_READ_SERVICE);
-			if (!$candidate instanceof FieldValueReadConsumerInterface) {
+		if ( $services->has( self::FIELD_VALUE_READ_SERVICE ) ) {
+			$candidate = $services->get( self::FIELD_VALUE_READ_SERVICE );
+			if ( !$candidate instanceof FieldValueReadConsumerInterface ) {
 				throw new LogicException('Admin Columns optional Fields value read service must implement the certified contract.');
 			}
 			$fields = $candidate;
 		}
 
 		$fieldWrites = null;
-		if ($services->has(self::FIELD_VALUE_WRITE_SERVICE)) {
-			$candidate = $services->get(self::FIELD_VALUE_WRITE_SERVICE);
-			if (!$candidate instanceof FieldValueWriteConsumerInterface) {
+		if ( $services->has( self::FIELD_VALUE_WRITE_SERVICE ) ) {
+			$candidate = $services->get( self::FIELD_VALUE_WRITE_SERVICE );
+			if ( !$candidate instanceof FieldValueWriteConsumerInterface ) {
 				throw new LogicException('Admin Columns optional Fields value write service must implement the certified contract.');
 			}
 			$fieldWrites = $candidate;
 		}
 
-		foreach ([
+		foreach ( [
 			self::SERVICE_NORMALIZER,
 			self::SERVICE_VIEWS,
 			self::SERVICE_READ_ADAPTER,
@@ -123,15 +123,15 @@ final class AdminColumnsModule implements ModuleInterface
 			self::SERVICE_CSV_EXPORT,
 			self::SERVICE_PERSONAL_PREFERENCES,
 			self::SERVICE_VIEW_IMPORT,
-		] as $serviceId) {
-			if ($services->has($serviceId)) {
+		] as $serviceId ) {
+			if ( $services->has( $serviceId ) ) {
 				throw new LogicException(sprintf('Admin Columns service "%s" is already registered.', $serviceId));
 			}
 		}
 
 		$normalizer = new AdminColumnsViewDefinitionNormalizer();
-		$views = new AdminColumnsViewDefinitionService($definitions, $normalizer);
-		$readAdapter = new AdminColumnsReadAdapter($views, $query, $fields);
+		$views = new AdminColumnsViewDefinitionService( $definitions, $normalizer );
+		$readAdapter = new AdminColumnsReadAdapter( $views, $query, $fields );
 		$csvExport = new AdminColumnsCsvExportService(
 			$readAdapter,
 			new AdminColumnsCsvExportEncoder(),
@@ -142,20 +142,20 @@ final class AdminColumnsModule implements ModuleInterface
 			new AdminColumnsPersonalPreferenceResolver(),
 		);
 		$viewImport = new AdminColumnsViewImportService(
-			new AdminColumnsViewPortabilityCodec($normalizer),
+			new AdminColumnsViewPortabilityCodec( $normalizer ),
 			$views,
 		);
-		$services->set(self::SERVICE_NORMALIZER, $normalizer);
-		$services->set(self::SERVICE_VIEWS, $views);
-		$services->set(self::SERVICE_READ_ADAPTER, $readAdapter);
-		$services->set(self::SERVICE_CSV_EXPORT, $csvExport);
-		$services->set(self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences);
-		$services->set(self::SERVICE_VIEW_IMPORT, $viewImport);
+		$services->set( self::SERVICE_NORMALIZER, $normalizer );
+		$services->set( self::SERVICE_VIEWS, $views );
+		$services->set( self::SERVICE_READ_ADAPTER, $readAdapter );
+		$services->set( self::SERVICE_CSV_EXPORT, $csvExport );
+		$services->set( self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences );
+		$services->set( self::SERVICE_VIEW_IMPORT, $viewImport );
 
 		$fieldWriteAdapter = null;
-		if ($fieldWrites instanceof FieldValueWriteConsumerInterface) {
-			$fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter($views, $query, $fieldWrites);
-			$services->set(self::SERVICE_FIELD_WRITE_ADAPTER, $fieldWriteAdapter);
+		if ( $fieldWrites instanceof FieldValueWriteConsumerInterface ) {
+			$fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter( $views, $query, $fieldWrites );
+			$services->set( self::SERVICE_FIELD_WRITE_ADAPTER, $fieldWriteAdapter );
 		}
 
 		$actions = [
@@ -164,20 +164,20 @@ final class AdminColumnsModule implements ModuleInterface
 			'save-view' => [AdminColumnsViewAbilityHandler::SAVE, true],
 			'status-view' => [AdminColumnsViewAbilityHandler::STATUS, true],
 		];
-		foreach ($actions as $action => [$handlerAction, $mutates]) {
+		foreach ( $actions as $action => [$handlerAction, $mutates] ) {
 			$descriptor = new AbilityDescriptor(
 				name: 'wpessential/admin-columns/' . $action,
 				ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: $mutates,
 				channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
-				inputSchema: $this->abilityInputSchema($handlerAction),
+				inputSchema: $this->abilityInputSchema( $handlerAction ),
 				outputSchema: ['type' => 'object'],
 			);
-			$abilities->register($descriptor, new AdminColumnsViewAbilityHandler($views, $handlerAction));
+			$abilities->register( $descriptor, new AdminColumnsViewAbilityHandler( $views, $handlerAction ) );
 			$ajaxRoutes->register(new AjaxRoute(
 				type: 'admin-columns.' . str_replace('-', '.', $action),
-				handler: new AbilityAjaxHandler($abilities, $descriptor->name, $contexts),
+				handler: new AbilityAjaxHandler( $abilities, $descriptor->name, $contexts ),
 				operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
 			));
 		}
@@ -191,10 +191,10 @@ final class AdminColumnsModule implements ModuleInterface
 			inputSchema: $this->readAbilityInputSchema(),
 			outputSchema: ['type' => 'object'],
 		);
-		$abilities->register($readDescriptor, new AdminColumnsReadAbilityHandler($readAdapter));
+		$abilities->register( $readDescriptor, new AdminColumnsReadAbilityHandler( $readAdapter ) );
 		$ajaxRoutes->register(new AjaxRoute(
 			type: 'admin-columns.read.rows',
-			handler: new AbilityAjaxHandler($abilities, $readDescriptor->name, $contexts),
+			handler: new AbilityAjaxHandler( $abilities, $readDescriptor->name, $contexts ),
 			operation: NonceOperation::Apply,
 		));
 
@@ -207,10 +207,10 @@ final class AdminColumnsModule implements ModuleInterface
 			inputSchema: $this->exportAbilityInputSchema(),
 			outputSchema: $this->exportAbilityOutputSchema(),
 		);
-		$abilities->register($exportDescriptor, new AdminColumnsCsvExportAbilityHandler($csvExport));
+		$abilities->register( $exportDescriptor, new AdminColumnsCsvExportAbilityHandler( $csvExport ) );
 		$ajaxRoutes->register(new AjaxRoute(
 			type: AdminColumnsCsvExportAbilityHandler::AJAX_TYPE,
-			handler: new AbilityAjaxHandler($abilities, $exportDescriptor->name, $contexts),
+			handler: new AbilityAjaxHandler( $abilities, $exportDescriptor->name, $contexts ),
 			operation: NonceOperation::Apply,
 		));
 
@@ -234,14 +234,14 @@ final class AdminColumnsModule implements ModuleInterface
 				NonceOperation::Update,
 			],
 		];
-		foreach ($preferenceActions as $preferenceAction => [$abilityName, $ajaxType, $mutates, $operation]) {
+		foreach ( $preferenceActions as $preferenceAction => [$abilityName, $ajaxType, $mutates, $operation] ) {
 			$preferenceDescriptor = new AbilityDescriptor(
 				name: $abilityName,
 				ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
 				capability: self::CAPABILITY,
 				mutates: $mutates,
 				channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
-				inputSchema: $this->personalPreferenceAbilityInputSchema($preferenceAction),
+				inputSchema: $this->personalPreferenceAbilityInputSchema( $preferenceAction ),
 				outputSchema: ['type' => 'object'],
 			);
 			$abilities->register(
@@ -254,7 +254,7 @@ final class AdminColumnsModule implements ModuleInterface
 			);
 			$ajaxRoutes->register(new AjaxRoute(
 				type: $ajaxType,
-				handler: new AbilityAjaxHandler($abilities, $preferenceDescriptor->name, $contexts),
+				handler: new AbilityAjaxHandler( $abilities, $preferenceDescriptor->name, $contexts ),
 				operation: $operation,
 			));
 		}
@@ -268,14 +268,14 @@ final class AdminColumnsModule implements ModuleInterface
 			inputSchema: $this->viewImportAbilityInputSchema(),
 			outputSchema: ['type' => 'object'],
 		);
-		$abilities->register($importDescriptor, new AdminColumnsViewImportAbilityHandler($viewImport));
+		$abilities->register( $importDescriptor, new AdminColumnsViewImportAbilityHandler( $viewImport ) );
 		$ajaxRoutes->register(new AjaxRoute(
 			type: AdminColumnsViewImportAbilityHandler::AJAX_TYPE,
-			handler: new AbilityAjaxHandler($abilities, $importDescriptor->name, $contexts),
+			handler: new AbilityAjaxHandler( $abilities, $importDescriptor->name, $contexts ),
 			operation: NonceOperation::Update,
 		));
 
-		if ($fieldWriteAdapter instanceof AdminColumnsFieldValueWriteAdapter) {
+		if ( $fieldWriteAdapter instanceof AdminColumnsFieldValueWriteAdapter ) {
 			$writeDescriptor = new AbilityDescriptor(
 				name: AdminColumnsFieldValueWriteAbilityHandler::ABILITY,
 				ownerSurfaceId: AdminColumnsViewDefinitionNormalizer::OWNER_SURFACE_ID,
@@ -287,35 +287,35 @@ final class AdminColumnsModule implements ModuleInterface
 			);
 			$abilities->register(
 				$writeDescriptor,
-				new AdminColumnsFieldValueWriteAbilityHandler($fieldWriteAdapter),
+				new AdminColumnsFieldValueWriteAbilityHandler( $fieldWriteAdapter ),
 			);
 			$ajaxRoutes->register(new AjaxRoute(
 				type: AdminColumnsFieldValueWriteAbilityHandler::AJAX_TYPE,
-				handler: new AbilityAjaxHandler($abilities, $writeDescriptor->name, $contexts),
+				handler: new AbilityAjaxHandler( $abilities, $writeDescriptor->name, $contexts ),
 				operation: NonceOperation::Update,
 			));
 		}
 	}
 
-	public function boot(ServiceRegistryInterface $services): void
+	public function boot( ServiceRegistryInterface $services ): void
 	{
 		if ( ! $services->has( self::ADMIN_ASSET_SERVICE ) || ! $services->has( self::DATA_SOURCE_SERVICE ) ) {
 			throw new LogicException( 'Admin Columns requires shared admin assets and data sources.' );
 		}
 
-		$assets = $services->get(self::ADMIN_ASSET_SERVICE);
-		$dataSources = $services->get(self::DATA_SOURCE_SERVICE);
-		if (!$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface) {
+		$assets = $services->get( self::ADMIN_ASSET_SERVICE );
+		$dataSources = $services->get( self::DATA_SOURCE_SERVICE );
+		if ( !$assets instanceof AdminAssetManifest || !$dataSources instanceof DataSourceRegistryInterface ) {
 			throw new LogicException('Admin Columns admin requires canonical shared admin assets and Data Source Registry.');
 		}
-		if ($services->has(self::SERVICE_ADMIN)) {
+		if ( $services->has( self::SERVICE_ADMIN ) ) {
 			throw new LogicException('Admin Columns admin service is already registered.');
 		}
 
 		$ownerSources = null;
-		if ($services->has(self::FIELD_SOURCE_CATALOG_SERVICE)) {
-			$candidate = $services->get(self::FIELD_SOURCE_CATALOG_SERVICE);
-			if (!$candidate instanceof AdminColumnsSourceCatalogInterface) {
+		if ( $services->has( self::FIELD_SOURCE_CATALOG_SERVICE ) ) {
+			$candidate = $services->get( self::FIELD_SOURCE_CATALOG_SERVICE );
+			if ( !$candidate instanceof AdminColumnsSourceCatalogInterface ) {
 				throw new LogicException('Admin Columns optional owner source catalog must implement the certified discovery contract.');
 			}
 			$ownerSources = $candidate;
@@ -337,7 +337,7 @@ final class AdminColumnsModule implements ModuleInterface
 			$ajax instanceof AjaxDispatcher ? $ajax : null,
 			$gateway instanceof WordPressAjaxGateway ? $gateway->action() : null,
 		);
-		$services->set(self::SERVICE_ADMIN, $admin);
+		$services->set( self::SERVICE_ADMIN, $admin );
 		$admin->register();
 		// View-definition, bounded row-read, CSV export, personal preference,
 		// create-only View import, and optional owner-routed Fields mutation AJAX
@@ -346,25 +346,25 @@ final class AdminColumnsModule implements ModuleInterface
 	}
 
 	/** @return array<string,mixed> */
-	private function abilityInputSchema(string $action): array
+	private function abilityInputSchema( string $action ): array
 	{
 		$properties = [];
 		$required = [];
 
-		if ($action === AdminColumnsViewAbilityHandler::GET
+		if ( $action === AdminColumnsViewAbilityHandler::GET
 			|| $action === AdminColumnsViewAbilityHandler::STATUS
 		) {
 			$properties['id'] = ['type' => 'string', 'pattern' => self::UUID_PATTERN];
 			$required[] = 'id';
 		}
-		if ($action === AdminColumnsViewAbilityHandler::SAVE) {
+		if ( $action === AdminColumnsViewAbilityHandler::SAVE ) {
 			$properties['id'] = ['type' => ['string', 'null'], 'pattern' => self::UUID_PATTERN];
 			$properties['payload'] = ['type' => 'object'];
 			$properties['expected_revision'] = ['type' => ['integer', 'null'], 'minimum' => 1];
 			$properties['status'] = ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']];
 			$required[] = 'payload';
 		}
-		if ($action === AdminColumnsViewAbilityHandler::STATUS) {
+		if ( $action === AdminColumnsViewAbilityHandler::STATUS ) {
 			$properties['expected_revision'] = ['type' => 'integer', 'minimum' => 1];
 			$properties['status'] = ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']];
 			$required[] = 'expected_revision';
@@ -458,13 +458,13 @@ final class AdminColumnsModule implements ModuleInterface
 	}
 
 	/** @return array<string,mixed> */
-	private function personalPreferenceAbilityInputSchema(string $action): array
+	private function personalPreferenceAbilityInputSchema( string $action ): array
 	{
-		if (!in_array($action, [
+		if ( !in_array( $action, [
 			AdminColumnsPersonalPreferenceAbilityHandler::LOAD,
 			AdminColumnsPersonalPreferenceAbilityHandler::SAVE,
 			AdminColumnsPersonalPreferenceAbilityHandler::RESET,
-		], true)) {
+		], true ) ) {
 			throw new LogicException('Admin Columns personal preference schema action is unsupported.');
 		}
 
@@ -474,7 +474,7 @@ final class AdminColumnsModule implements ModuleInterface
 		];
 		$required = ['view_id', 'expected_view_revision'];
 
-		if ($action === AdminColumnsPersonalPreferenceAbilityHandler::SAVE) {
+		if ( $action === AdminColumnsPersonalPreferenceAbilityHandler::SAVE ) {
 			$properties['preference'] = [
 				'type' => 'object',
 				'properties' => [

@@ -60,20 +60,20 @@ final class DashboardWidgetWordPressAdapter
 
 	public function registerHooks(): void
 	{
-		if ($this->hooksRegistered) {
+		if ( $this->hooksRegistered ) {
 			return;
 		}
 		$this->hooksRegistered = true;
 
 		try {
 			$this->environment->registerAction('wp_dashboard_setup', [$this, 'registerSiteDashboard']);
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			// Fail closed without leaking WordPress hook-registration details.
 		}
 
 		try {
 			$this->environment->registerAction('wp_network_dashboard_setup', [$this, 'registerNetworkDashboard']);
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			// Fail closed independently so one unavailable hook cannot break the other.
 		}
 
@@ -83,39 +83,39 @@ final class DashboardWidgetWordPressAdapter
 				[$this, 'filterDefaultHiddenMetaBoxes'],
 				2,
 			);
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			// Default-hidden projection is optional and must not break registration.
 		}
 	}
 
 	public function registerSiteDashboard(): void
 	{
-		if ($this->siteRegistered) {
+		if ( $this->siteRegistered ) {
 			return;
 		}
 		$this->siteRegistered = true;
-		$this->registerTarget(false);
+		$this->registerTarget( false );
 	}
 
 	public function registerNetworkDashboard(): void
 	{
-		if ($this->networkRegistered) {
+		if ( $this->networkRegistered ) {
 			return;
 		}
 		$this->networkRegistered = true;
-		$this->registerTarget(true);
+		$this->registerTarget( true );
 	}
 
 	/**
 	 * @return list<array{id:string,context:string,priority:string}>
 	 */
-	public function discoverRegisteredDashboardWidgets(bool $networkDashboard = false): array
+	public function discoverRegisteredDashboardWidgets( bool $networkDashboard = false ): array
 	{
 		$screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
 
 		try {
-			$inventory = $this->environment->discoverRegisteredDashboardWidgets($screenId);
-		} catch (Throwable) {
+			$inventory = $this->environment->discoverRegisteredDashboardWidgets( $screenId );
+		} catch ( Throwable ) {
 			return [];
 		}
 
@@ -126,7 +126,7 @@ final class DashboardWidgetWordPressAdapter
 		/** @var array<string,true> $seen */
 		$seen = [];
 
-		foreach ($inventory as $entry) {
+		foreach ( $inventory as $entry ) {
 			if (!is_array($entry) || array_keys($entry) !== ['id', 'context', 'priority']) {
 				return [];
 			}
@@ -135,18 +135,18 @@ final class DashboardWidgetWordPressAdapter
 			$context = $entry['context'];
 			$priority = $entry['priority'];
 			if (
-				!is_string($id)
+				!is_string( $id )
 				|| preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1
-				|| !is_string($context)
-				|| !array_key_exists($context, $contextOrder)
-				|| !is_string($priority)
-				|| !array_key_exists($priority, $priorityOrder)
+				|| !is_string( $context )
+				|| !array_key_exists( $context, $contextOrder )
+				|| !is_string( $priority )
+				|| !array_key_exists( $priority, $priorityOrder )
 			) {
 				return [];
 			}
 
 			$dedupKey = $context . "\0" . $priority . "\0" . $id;
-			if (isset($seen[$dedupKey])) {
+			if ( isset( $seen[$dedupKey] ) ) {
 				continue;
 			}
 			$seen[$dedupKey] = true;
@@ -159,7 +159,7 @@ final class DashboardWidgetWordPressAdapter
 
 		usort(
 			$safe,
-			static fn (array $left, array $right): int =>
+			static fn ( array $left, array $right ): int =>
 				($contextOrder[$left['context']] <=> $contextOrder[$right['context']])
 				?: ($priorityOrder[$left['priority']] <=> $priorityOrder[$right['priority']])
 				?: ($left['id'] <=> $right['id']),
@@ -175,14 +175,14 @@ final class DashboardWidgetWordPressAdapter
 	 *
 	 * @return list<array{id:string,context:string,priority:string}>
 	 */
-	public function discoverCoreDashboardWidgets(bool $networkDashboard = false): array
+	public function discoverCoreDashboardWidgets( bool $networkDashboard = false ): array
 	{
 		$coreIds = $networkDashboard
 			? self::NETWORK_CORE_WIDGET_IDS
 			: self::SITE_CORE_WIDGET_IDS;
 
 		return array_values(array_filter(
-			$this->discoverRegisteredDashboardWidgets($networkDashboard),
+			$this->discoverRegisteredDashboardWidgets( $networkDashboard ),
 			static fn (array $entry): bool => in_array($entry['id'], $coreIds, true),
 		));
 	}
@@ -195,14 +195,14 @@ final class DashboardWidgetWordPressAdapter
 	 *
 	 * @return list<array{id:string,context:string,priority:string}>
 	 */
-	public function discoverNonCoreDashboardWidgets(bool $networkDashboard = false): array
+	public function discoverNonCoreDashboardWidgets( bool $networkDashboard = false ): array
 	{
 		$coreIds = $networkDashboard
 			? self::NETWORK_CORE_WIDGET_IDS
 			: self::SITE_CORE_WIDGET_IDS;
 
 		return array_values(array_filter(
-			$this->discoverRegisteredDashboardWidgets($networkDashboard),
+			$this->discoverRegisteredDashboardWidgets( $networkDashboard ),
 			static fn (array $entry): bool => !in_array($entry['id'], $coreIds, true),
 		));
 	}
@@ -224,22 +224,22 @@ final class DashboardWidgetWordPressAdapter
 			return false;
 		}
 
-		$registered = $this->discoverRegisteredDashboardWidgets($networkDashboard);
+		$registered = $this->discoverRegisteredDashboardWidgets( $networkDashboard );
 		$targetExists = false;
-		foreach ($registered as $entry) {
+		foreach ( $registered as $entry ) {
 			if ($entry['id'] === $id && $entry['context'] === $context) {
 				$targetExists = true;
 				break;
 			}
 		}
-		if (!$targetExists) {
+		if ( !$targetExists ) {
 			return false;
 		}
 
 		$screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
 		try {
-			$this->environment->removeDashboardWidget($id, $screenId, $context);
-		} catch (Throwable) {
+			$this->environment->removeDashboardWidget( $id, $screenId, $context );
+		} catch ( Throwable ) {
 			return false;
 		}
 
@@ -253,26 +253,26 @@ final class DashboardWidgetWordPressAdapter
 	 *
 	 * @return list<string>
 	 */
-	public function currentUserHiddenDashboardWidgetIds(bool $networkDashboard = false): array
+	public function currentUserHiddenDashboardWidgetIds( bool $networkDashboard = false ): array
 	{
 		$screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
 
 		try {
-			$ids = $this->environment->currentUserHiddenDashboardWidgetIds($screenId);
-		} catch (Throwable) {
+			$ids = $this->environment->currentUserHiddenDashboardWidgetIds( $screenId );
+		} catch ( Throwable ) {
 			return [];
 		}
 
 		$safe = [];
-		foreach ($ids as $id) {
+		foreach ( $ids as $id ) {
 			if (!is_string($id) || preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
 				return [];
 			}
 			$safe[$id] = true;
 		}
 
-		$result = array_keys($safe);
-		sort($result, SORT_STRING);
+		$result = array_keys( $safe );
+		sort( $result, SORT_STRING );
 		return $result;
 	}
 
@@ -283,26 +283,26 @@ final class DashboardWidgetWordPressAdapter
 	 *
 	 * @return list<string>
 	 */
-	public function currentUserCollapsedDashboardWidgetIds(bool $networkDashboard = false): array
+	public function currentUserCollapsedDashboardWidgetIds( bool $networkDashboard = false ): array
 	{
 		$screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
 
 		try {
-			$ids = $this->environment->currentUserCollapsedDashboardWidgetIds($screenId);
-		} catch (Throwable) {
+			$ids = $this->environment->currentUserCollapsedDashboardWidgetIds( $screenId );
+		} catch ( Throwable ) {
 			return [];
 		}
 
 		$safe = [];
-		foreach ($ids as $id) {
+		foreach ( $ids as $id ) {
 			if (!is_string($id) || preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
 				return [];
 			}
 			$safe[$id] = true;
 		}
 
-		$result = array_keys($safe);
-		sort($result, SORT_STRING);
+		$result = array_keys( $safe );
+		sort( $result, SORT_STRING );
 		return $result;
 	}
 
@@ -313,30 +313,30 @@ final class DashboardWidgetWordPressAdapter
 	 *
 	 * @return list<array{context:string,ids:list<string>}>
 	 */
-	public function currentUserDashboardWidgetOrder(bool $networkDashboard = false): array
+	public function currentUserDashboardWidgetOrder( bool $networkDashboard = false ): array
 	{
 		$screenId = $networkDashboard ? 'dashboard-network' : 'dashboard';
 
 		try {
-			$order = $this->environment->currentUserDashboardWidgetOrder($screenId);
-		} catch (Throwable) {
+			$order = $this->environment->currentUserDashboardWidgetOrder( $screenId );
+		} catch ( Throwable ) {
 			return [];
 		}
 
 		$contexts = ['normal', 'side', 'column3', 'column4'];
-		foreach ($order as $context => $csv) {
+		foreach ( $order as $context => $csv ) {
 			if (
-				!is_string($context)
-				|| !in_array($context, $contexts, true)
-				|| !is_string($csv)
+				!is_string( $context )
+				|| !in_array( $context, $contexts, true )
+				|| !is_string( $csv )
 			) {
 				return [];
 			}
 		}
 
 		$result = [];
-		foreach ($contexts as $context) {
-			if (!array_key_exists($context, $order)) {
+		foreach ( $contexts as $context ) {
+			if ( !array_key_exists( $context, $order ) ) {
 				continue;
 			}
 
@@ -349,14 +349,14 @@ final class DashboardWidgetWordPressAdapter
 				if (preg_match('/^[A-Za-z0-9._:-]+$/D', $id) !== 1) {
 					return [];
 				}
-				if (isset($seen[$id])) {
+				if ( isset( $seen[$id] ) ) {
 					continue;
 				}
 				$seen[$id] = true;
 				$ids[] = $id;
 			}
 
-			if ($ids !== []) {
+			if ( $ids !== [] ) {
 				$result[] = [
 					'context' => $context,
 					'ids' => $ids,
@@ -367,31 +367,31 @@ final class DashboardWidgetWordPressAdapter
 		return $result;
 	}
 
-	private function registerTarget(bool $networkDashboard): void
+	private function registerTarget( bool $networkDashboard ): void
 	{
 		$screenId = $networkDashboard
 			? DashboardWidgetPersonalPreferenceStore::SCREEN_NETWORK
 			: DashboardWidgetPersonalPreferenceStore::SCREEN_SITE;
 		$dismissed = [];
-		if ($this->personalPreferences !== null) {
+		if ( $this->personalPreferences !== null ) {
 			try {
 				$userId = $this->environment->currentUserId();
-				if (is_int($userId) && $userId > 0) {
-					$dismissed = $this->personalPreferences->dismissed($userId, $screenId);
+				if ( is_int( $userId ) && $userId > 0 ) {
+					$dismissed = $this->personalPreferences->dismissed( $userId, $screenId );
 				}
-			} catch (Throwable) {
+			} catch ( Throwable ) {
 				$dismissed = [];
 			}
 		}
 
-		foreach ($this->planTarget($networkDashboard) as $entry) {
+		foreach ( $this->planTarget( $networkDashboard ) as $entry ) {
 			$descriptor = $entry['descriptor'];
 			if ($descriptor->dismissible && in_array($entry['id'], $dismissed, true)) {
 				continue;
 			}
 			$definitionId = $descriptor->definitionId;
-			$callback = function () use ($definitionId): void {
-				$this->renderDefinition($definitionId);
+			$callback = function () use ( $definitionId ): void {
+				$this->renderDefinition( $definitionId );
 			};
 
 			try {
@@ -402,12 +402,12 @@ final class DashboardWidgetWordPressAdapter
 					$descriptor->context,
 					$descriptor->priority,
 				);
-			} catch (Throwable) {
+			} catch ( Throwable ) {
 				// Registration failure for one safe planned entry is isolated.
 				continue;
 			}
 
-			if (!$descriptor->defaultCollapsed) {
+			if ( !$descriptor->defaultCollapsed ) {
 				continue;
 			}
 
@@ -416,12 +416,12 @@ final class DashboardWidgetWordPressAdapter
 			try {
 				$this->environment->registerFilter(
 					$hook,
-					function (array $classes) use ($screenId): array {
+					function ( array $classes ) use ( $screenId ): array {
 						try {
-							if ($this->environment->hasClosedPostboxPreference($screenId)) {
+							if ( $this->environment->hasClosedPostboxPreference( $screenId ) ) {
 								return $classes;
 							}
-						} catch (Throwable) {
+						} catch ( Throwable ) {
 							return $classes;
 						}
 
@@ -432,7 +432,7 @@ final class DashboardWidgetWordPressAdapter
 						return $classes;
 					},
 				);
-			} catch (Throwable) {
+			} catch ( Throwable ) {
 				// Default-collapsed projection is optional and must not break registration.
 			}
 		}
@@ -442,24 +442,24 @@ final class DashboardWidgetWordPressAdapter
 	 * @param array<int,mixed> $hidden
 	 * @return array<int,mixed>
 	 */
-	public function filterDefaultHiddenMetaBoxes(array $hidden, mixed $screen): array
+	public function filterDefaultHiddenMetaBoxes( array $hidden, mixed $screen ): array
 	{
 		try {
-			$screenId = $this->environment->screenId($screen);
-		} catch (Throwable) {
+			$screenId = $this->environment->screenId( $screen );
+		} catch ( Throwable ) {
 			return $hidden;
 		}
 
-		$networkDashboard = match ($screenId) {
+		$networkDashboard = match ( $screenId ) {
 			'dashboard' => false,
 			'dashboard-network' => true,
 			default => null,
 		};
-		if ($networkDashboard === null) {
+		if ( $networkDashboard === null ) {
 			return $hidden;
 		}
 
-		foreach ($this->planTarget($networkDashboard) as $entry) {
+		foreach ( $this->planTarget( $networkDashboard ) as $entry ) {
 			if (!$entry['descriptor']->defaultHidden) {
 				continue;
 			}
@@ -474,45 +474,45 @@ final class DashboardWidgetWordPressAdapter
 	/**
 	 * @return list<array{id:string,descriptor:DashboardWidgetRegistrationDescriptor}>
 	 */
-	private function planTarget(bool $networkDashboard): array
+	private function planTarget( bool $networkDashboard ): array
 	{
 		$currentSiteId = null;
-		if (!$networkDashboard) {
+		if ( !$networkDashboard ) {
 			try {
 				$currentSiteId = $this->environment->currentSiteId();
-			} catch (Throwable) {
+			} catch ( Throwable ) {
 				return [];
 			}
-			if ($currentSiteId < 1) {
+			if ( $currentSiteId < 1 ) {
 				return [];
 			}
 		}
 
 		try {
 			$now = $this->clock->now();
-			$definitions = $this->definitions->byType(DashboardWidgetDefinition::TYPE);
+			$definitions = $this->definitions->byType( DashboardWidgetDefinition::TYPE );
 			usort(
 				$definitions,
-				static fn (Definition $left, Definition $right): int =>
+				static fn ( Definition $left, Definition $right ): int =>
 					($left->slug <=> $right->slug) ?: ($left->id <=> $right->id),
 			);
 
 			/** @var list<array{id:string,descriptor:DashboardWidgetRegistrationDescriptor}> $plan */
 			$plan = [];
-			foreach ($definitions as $definition) {
+			foreach ( $definitions as $definition ) {
 				try {
-					$descriptor = $this->registrationCompiler->compile($definition);
-				} catch (InvalidArgumentException) {
+					$descriptor = $this->registrationCompiler->compile( $definition );
+				} catch ( InvalidArgumentException ) {
 					continue;
 				}
 
-				if ($descriptor->networkDashboard !== $networkDashboard) {
+				if ( $descriptor->networkDashboard !== $networkDashboard ) {
 					continue;
 				}
-				if (!$networkDashboard && ($currentSiteId === null || !$descriptor->isEligibleForSite($currentSiteId))) {
+				if ( !$networkDashboard && ( $currentSiteId === null || !$descriptor->isEligibleForSite( $currentSiteId ) ) ) {
 					continue;
 				}
-				if (!$descriptor->isActiveAt($now)) {
+				if ( !$descriptor->isActiveAt( $now ) ) {
 					continue;
 				}
 
@@ -521,13 +521,13 @@ final class DashboardWidgetWordPressAdapter
 					'descriptor' => $descriptor,
 				];
 			}
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return [];
 		}
 
 		/** @var array<string,int> $counts */
 		$counts = [];
-		foreach ($plan as $entry) {
+		foreach ( $plan as $entry ) {
 			$counts[$entry['id']] = ($counts[$entry['id']] ?? 0) + 1;
 		}
 
@@ -537,7 +537,7 @@ final class DashboardWidgetWordPressAdapter
 		));
 	}
 
-	private function renderDefinition(string $definitionId): void
+	private function renderDefinition( string $definitionId ): void
 	{
 		try {
 			$context = new ExecutionContext(
@@ -547,48 +547,48 @@ final class DashboardWidgetWordPressAdapter
 				networkId: $this->environment->currentNetworkId(),
 			);
 
-			if ($this->contentClassCompiler !== null && $this->formActionPresenter !== null) {
-				$definition = $this->definitions->get($definitionId);
-				if ($definition === null) {
+			if ( $this->contentClassCompiler !== null && $this->formActionPresenter !== null ) {
+				$definition = $this->definitions->get( $definitionId );
+				if ( $definition === null ) {
 					return;
 				}
 
-				$contentClass = $this->contentClassCompiler->compile($definition);
-				if ($contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION) {
-					$descriptor = $this->registrationCompiler->compile($definition);
-					if (!$descriptor->isActiveAt($this->clock->now())) {
+				$contentClass = $this->contentClassCompiler->compile( $definition );
+				if ( $contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION ) {
+					$descriptor = $this->registrationCompiler->compile( $definition );
+					if ( !$descriptor->isActiveAt( $this->clock->now() ) ) {
 						return;
 					}
 					$html = $this->formActionPresenter->render(
 						$descriptor,
 						$this->environment->ajaxUrl(),
 					);
-					$this->environment->outputTrustedHtml($html);
+					$this->environment->outputTrustedHtml( $html );
 					return;
 				}
 			}
 
-			$result = $this->runtimeRenderExecutor->render($definitionId, $context);
+			$result = $this->runtimeRenderExecutor->render( $definitionId, $context );
 
-			if (!in_array(
+			if ( !in_array(
 				$result->status,
 				[
 					DashboardWidgetRuntimeRenderResult::STATUS_RENDERED,
 					DashboardWidgetRuntimeRenderResult::STATUS_RENDERED_ERROR,
 				],
 				true,
-			)) {
+			) ) {
 				return;
 			}
 
-			if ($this->manualRefreshPresenter !== null) {
-				$definition = $this->definitions->get($definitionId);
-				if ($definition === null) {
+			if ( $this->manualRefreshPresenter !== null ) {
+				$definition = $this->definitions->get( $definitionId );
+				if ( $definition === null ) {
 					return;
 				}
-				$descriptor = $this->registrationCompiler->compile($definition);
-				if ($descriptor->manualRefresh) {
-					$loading = $this->runtimeRenderExecutor->renderLoadingState($definitionId, $context);
+				$descriptor = $this->registrationCompiler->compile( $definition );
+				if ( $descriptor->manualRefresh ) {
+					$loading = $this->runtimeRenderExecutor->renderLoadingState( $definitionId, $context );
 					if (
 						$loading->status !== DashboardWidgetRuntimeRenderResult::STATUS_RENDERED
 						|| $result->assetHandles !== []
@@ -604,13 +604,13 @@ final class DashboardWidgetWordPressAdapter
 						$loading->html,
 						$descriptor->networkDashboard ? 'network' : 'site',
 					);
-					$this->environment->outputTrustedHtml($html);
+					$this->environment->outputTrustedHtml( $html );
 					return;
 				}
 			}
 
-			$this->environment->outputTrustedHtml($result->html);
-		} catch (Throwable) {
+			$this->environment->outputTrustedHtml( $result->html );
+		} catch ( Throwable ) {
 			// Fail closed without leaking environment/runtime/output details into wp-admin.
 		}
 	}

@@ -21,22 +21,22 @@ final class WordPressCt1SchemaIntrospector
 	private readonly Ct1ManagedTableIdentityResolver $identityResolver;
 	private readonly ObservedTableSchemaNormalizer $normalizer;
 
-	public function __construct(private readonly object $wpdb)
+	public function __construct( private readonly object $wpdb )
 	{
 		foreach (['prepare', 'get_results'] as $method) {
-			if (!method_exists($this->wpdb, $method)) {
+			if ( !method_exists( $this->wpdb, $method ) ) {
 				throw new InvalidArgumentException('CT1 schema introspector requires wpdb metadata-read methods.');
 			}
 		}
 
-		$this->identityResolver = new Ct1ManagedTableIdentityResolver($this->wpdb);
+		$this->identityResolver = new Ct1ManagedTableIdentityResolver( $this->wpdb );
 		$this->normalizer = new ObservedTableSchemaNormalizer();
 	}
 
 	/** @throws JsonException */
-	public function observe(TableSchemaDescriptor $descriptor): ObservedTableSchema
+	public function observe( TableSchemaDescriptor $descriptor ): ObservedTableSchema
 	{
-		$identity = $this->identityResolver->resolve($descriptor);
+		$identity = $this->identityResolver->resolve( $descriptor );
 		$tableRows = $this->readRows(
 			'SELECT TABLE_NAME AS table_name, TABLE_COLLATION AS table_collation '
 			. 'FROM INFORMATION_SCHEMA.TABLES '
@@ -44,15 +44,15 @@ final class WordPressCt1SchemaIntrospector
 			$identity->physicalName,
 		);
 
-		if ($tableRows === []) {
+		if ( $tableRows === [] ) {
 			return $this->normalizer->normalize($identity->tableKey, ['exists' => false]);
 		}
-		if (count($tableRows) !== 1) {
+		if ( count( $tableRows ) !== 1 ) {
 			throw new RuntimeException('CT1 schema observation resolved an ambiguous physical table identity.');
 		}
 
 		$tableName = $this->requiredString($tableRows[0], 'table_name');
-		if (!hash_equals($identity->physicalName, $tableName)) {
+		if ( !hash_equals( $identity->physicalName, $tableName ) ) {
 			throw new RuntimeException('CT1 schema observation returned a different physical table identity.');
 		}
 
@@ -66,7 +66,7 @@ final class WordPressCt1SchemaIntrospector
 			. 'WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s ORDER BY ORDINAL_POSITION',
 			$identity->physicalName,
 		);
-		if ($columnRows === [] || count($columnRows) > 128) {
+		if ( $columnRows === [] || count( $columnRows ) > 128 ) {
 			throw new RuntimeException('CT1 schema observation returned an invalid column metadata count.');
 		}
 
@@ -78,7 +78,7 @@ final class WordPressCt1SchemaIntrospector
 			$identity->physicalName,
 		);
 
-		[$primaryKey, $indexes] = $this->indexes($indexRows);
+		[$primaryKey, $indexes] = $this->indexes( $indexRows );
 		$tableCollation = $this->requiredString($tableRows[0], 'table_collation');
 		$expectedCollation = $this->expectedCollation();
 
@@ -87,7 +87,7 @@ final class WordPressCt1SchemaIntrospector
 			[
 				'exists' => true,
 				'columns' => array_map(
-					fn (array $row): array => $this->column($row, $serverFlavor),
+					fn ( array $row ): array => $this->column( $row, $serverFlavor ),
 					$columnRows,
 				),
 				'primary_key' => $primaryKey,
@@ -100,7 +100,7 @@ final class WordPressCt1SchemaIntrospector
 	}
 
 	/** @return array<string,mixed> */
-	private function column(array $row, string $serverFlavor): array
+	private function column( array $row, string $serverFlavor ): array
 	{
 		$key = $this->requiredString($row, 'column_name');
 		$dataType = strtolower($this->requiredString($row, 'data_type'));
@@ -113,7 +113,7 @@ final class WordPressCt1SchemaIntrospector
 		$nullable = $isNullable === 'YES';
 		$autoIncrement = $extra === 'auto_increment';
 
-		$type = $this->boundedType($dataType, $columnType, $extra);
+		$type = $this->boundedType( $dataType, $columnType, $extra );
 		$column = [
 			'key' => $key,
 			'type' => $type,
@@ -128,9 +128,9 @@ final class WordPressCt1SchemaIntrospector
 			$column['scale'] = $this->nullableNonNegativeInt($row, 'numeric_scale') ?? 0;
 		}
 
-		if (!$autoIncrement) {
+		if ( !$autoIncrement ) {
 			$rawDefault = $row['column_default'] ?? null;
-			if ($rawDefault !== null || $nullable) {
+			if ( $rawDefault !== null || $nullable ) {
 				$column['has_default'] = true;
 				$column['default'] = $this->defaultValue($type, $rawDefault, $serverFlavor);
 			}
@@ -139,7 +139,7 @@ final class WordPressCt1SchemaIntrospector
 		return $column;
 	}
 
-	private function boundedType(string $dataType, string $columnType, string $extra): string
+	private function boundedType( string $dataType, string $columnType, string $extra ): string
 	{
 		$safeType = preg_replace('/[^a-z0-9_]/', '_', $dataType);
 		if (!is_string($safeType) || $safeType === '') {
@@ -153,7 +153,7 @@ final class WordPressCt1SchemaIntrospector
 			return 'unsupported_unsigned_' . $safeType;
 		}
 
-		return match ($dataType) {
+		return match ( $dataType ) {
 			'bigint' => 'bigint',
 			'int', 'integer' => 'integer',
 			'tinyint' => preg_match('/^tinyint\(1\)$/', $columnType) === 1
@@ -170,23 +170,23 @@ final class WordPressCt1SchemaIntrospector
 		};
 	}
 
-	private function defaultValue(string $type, mixed $value, string $serverFlavor): mixed
+	private function defaultValue( string $type, mixed $value, string $serverFlavor ): mixed
 	{
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
-		if (!is_scalar($value)) {
+		if ( !is_scalar( $value ) ) {
 			return $value;
 		}
 
 		$string = (string) $value;
-		if ($serverFlavor === self::SERVER_MARIADB) {
+		if ( $serverFlavor === self::SERVER_MARIADB ) {
 			if ($string === 'NULL') {
 				return null;
 			}
 
-			$literal = $this->mariaDbLiteral($string);
-			if ($literal !== null) {
+			$literal = $this->mariaDbLiteral( $string );
+			if ( $literal !== null ) {
 				$string = $literal;
 			} elseif (in_array($type, ['varchar', 'datetime'], true)) {
 				return ['unsupported_default_expression' => substr($string, 0, 191)];
@@ -201,7 +201,7 @@ final class WordPressCt1SchemaIntrospector
 			return (string) $integer === $string ? $integer : $string;
 		}
 		if ($type === 'boolean') {
-			return match ($string) {
+			return match ( $string ) {
 				'0' => false,
 				'1' => true,
 				default => $string,
@@ -211,17 +211,17 @@ final class WordPressCt1SchemaIntrospector
 		return $string;
 	}
 
-	private function mariaDbLiteral(string $value): ?string
+	private function mariaDbLiteral( string $value ): ?string
 	{
-		$length = strlen($value);
+		$length = strlen( $value );
 		if ($length < 2 || $value[0] !== "'" || $value[$length - 1] !== "'") {
 			return null;
 		}
 
-		$body = substr($value, 1, -1);
+		$body = substr( $value, 1, -1 );
 		$decoded = '';
-		$bodyLength = strlen($body);
-		for ($offset = 0; $offset < $bodyLength; ++$offset) {
+		$bodyLength = strlen( $body );
+		for ( $offset = 0; $offset < $bodyLength; ++$offset ) {
 			$character = $body[$offset];
 			if ($character === '\\') {
 				return null;
@@ -244,15 +244,15 @@ final class WordPressCt1SchemaIntrospector
      * @param list<array<string,mixed>> $rows
      * @return array{list<string>,list<array{key:string,columns:list<string>,unique:bool}>}
      */
-	private function indexes(array $rows): array
+	private function indexes( array $rows ): array
 	{
-		if (count($rows) > 256) {
+		if ( count( $rows ) > 256 ) {
 			throw new RuntimeException('CT1 schema observation returned too many index metadata rows.');
 		}
 
 		/** @var array<string,array{columns:array<int,string>,unique:bool}> $groups */
 		$groups = [];
-		foreach ($rows as $row) {
+		foreach ( $rows as $row ) {
 			$indexName = $this->requiredString($row, 'index_name');
 			$columnName = $this->requiredString($row, 'column_name');
 			$sequence = $this->requiredPositiveInt($row, 'seq_in_index');
@@ -265,15 +265,15 @@ final class WordPressCt1SchemaIntrospector
 			if (($row['sub_part'] ?? null) !== null) {
 				throw new RuntimeException('CT1 schema observation encountered an unsupported prefix index.');
 			}
-			if ($nonUnique !== 0 && $nonUnique !== 1) {
+			if ( $nonUnique !== 0 && $nonUnique !== 1 ) {
 				throw new RuntimeException('CT1 schema observation returned invalid uniqueness metadata.');
 			}
-			if ($sequence > 8) {
+			if ( $sequence > 8 ) {
 				throw new RuntimeException('CT1 schema observation encountered an index wider than bounded V1.');
 			}
 
 			$key = $indexName === 'PRIMARY' ? 'PRIMARY' : $indexName;
-			if (!isset($groups[$key])) {
+			if ( !isset( $groups[$key] ) ) {
 				$groups[$key] = ['columns' => [], 'unique' => $nonUnique === 0];
 			}
 			if ($groups[$key]['unique'] !== ($nonUnique === 0) || isset($groups[$key]['columns'][$sequence])) {
@@ -284,12 +284,12 @@ final class WordPressCt1SchemaIntrospector
 
 		$primaryKey = [];
 		$indexes = [];
-		ksort($groups, SORT_STRING);
-		foreach ($groups as $key => $group) {
+		ksort( $groups, SORT_STRING );
+		foreach ( $groups as $key => $group ) {
 			ksort($group['columns'], SORT_NUMERIC);
 			$expectedSequence = 1;
 			foreach (array_keys($group['columns']) as $sequence) {
-				if ($sequence !== $expectedSequence) {
+				if ( $sequence !== $expectedSequence ) {
 					throw new RuntimeException('CT1 schema observation returned non-contiguous index sequence metadata.');
 				}
 				++$expectedSequence;
@@ -343,20 +343,20 @@ final class WordPressCt1SchemaIntrospector
 			'SELECT DEFAULT_COLLATION_NAME AS default_collation '
 			. 'FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = DATABASE() LIMIT 2',
 		);
-		if (count($rows) !== 1) {
+		if ( count( $rows ) !== 1 ) {
 			throw new RuntimeException('CT1 schema observation could not resolve the current database collation.');
 		}
 		return $this->requiredString($rows[0], 'default_collation');
 	}
 
 	/** @return list<array<string,mixed>> */
-	private function readRows(string $query, mixed ...$args): array
+	private function readRows( string $query, mixed ...$args ): array
 	{
 		if (preg_match('/^\s*SELECT\b/i', $query) !== 1) {
 			throw new RuntimeException('CT1 schema introspection permits metadata SELECT statements only.');
 		}
 
-		$prepared = $args === [] ? $query : $this->wpdb->prepare($query, ...$args);
+		$prepared = $args === [] ? $query : $this->wpdb->prepare( $query, ...$args );
 		if (!is_string($prepared) || $prepared === '') {
 			throw new RuntimeException('wpdb failed to prepare a CT1 metadata query.');
 		}
@@ -366,16 +366,16 @@ final class WordPressCt1SchemaIntrospector
 		if ($lastError !== '') {
 			throw new RuntimeException('wpdb failed to read CT1 schema metadata: ' . $lastError);
 		}
-		if (!is_array($rows)) {
+		if ( !is_array( $rows ) ) {
 			throw new RuntimeException('wpdb returned an invalid CT1 schema metadata result set.');
 		}
 
 		$result = [];
-		foreach ($rows as $row) {
-			if (is_object($row)) {
+		foreach ( $rows as $row ) {
+			if ( is_object( $row ) ) {
 				$row = (array) $row;
 			}
-			if (!is_array($row)) {
+			if ( !is_array( $row ) ) {
 				throw new RuntimeException('wpdb returned an invalid CT1 schema metadata row.');
 			}
 			$result[] = $row;
@@ -385,7 +385,7 @@ final class WordPressCt1SchemaIntrospector
 	}
 
 	/** @param array<string,mixed> $row */
-	private function requiredString(array $row, string $key): string
+	private function requiredString( array $row, string $key ): string
 	{
 		$value = $row[$key] ?? null;
 		if (!is_string($value) || $value === '') {
@@ -395,50 +395,50 @@ final class WordPressCt1SchemaIntrospector
 	}
 
 	/** @param array<string,mixed> $row */
-	private function nullableString(array $row, string $key): ?string
+	private function nullableString( array $row, string $key ): ?string
 	{
 		$value = $row[$key] ?? null;
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
-		if (!is_string($value)) {
+		if ( !is_string( $value ) ) {
 			throw new RuntimeException('CT1 schema observation returned invalid string metadata.');
 		}
 		return $value;
 	}
 
 	/** @param array<string,mixed> $row */
-	private function requiredPositiveInt(array $row, string $key): int
+	private function requiredPositiveInt( array $row, string $key ): int
 	{
-		$value = $this->integerMetadata($row[$key] ?? null);
-		if ($value < 1) {
+		$value = $this->integerMetadata( $row[$key] ?? null );
+		if ( $value < 1 ) {
 			throw new RuntimeException('CT1 schema observation requires positive integer metadata.');
 		}
 		return $value;
 	}
 
 	/** @param array<string,mixed> $row */
-	private function requiredNonNegativeInt(array $row, string $key): int
+	private function requiredNonNegativeInt( array $row, string $key ): int
 	{
-		$value = $this->integerMetadata($row[$key] ?? null);
-		if ($value < 0) {
+		$value = $this->integerMetadata( $row[$key] ?? null );
+		if ( $value < 0 ) {
 			throw new RuntimeException('CT1 schema observation requires non-negative integer metadata.');
 		}
 		return $value;
 	}
 
 	/** @param array<string,mixed> $row */
-	private function nullableNonNegativeInt(array $row, string $key): ?int
+	private function nullableNonNegativeInt( array $row, string $key ): ?int
 	{
-		if (!array_key_exists($key, $row) || $row[$key] === null) {
+		if ( !array_key_exists( $key, $row ) || $row[$key] === null ) {
 			return null;
 		}
-		return $this->requiredNonNegativeInt($row, $key);
+		return $this->requiredNonNegativeInt( $row, $key );
 	}
 
-	private function integerMetadata(mixed $value): int
+	private function integerMetadata( mixed $value ): int
 	{
-		if (is_int($value)) {
+		if ( is_int( $value ) ) {
 			return $value;
 		}
 		if (!is_string($value) || preg_match('/^\d+$/', $value) !== 1) {

@@ -68,58 +68,58 @@ final readonly class DashboardWidgetRegistrationCompiler
 		$this->visibilityCompiler = $visibilityCompiler ?? new DashboardWidgetVisibilityCompiler();
 		$this->contentClassCompiler = $contentClassCompiler ?? new DashboardWidgetContentClassCompiler();
 		$this->backgroundJobResolver = $backgroundJobResolver !== null
-			? Closure::fromCallable($backgroundJobResolver)
+			? Closure::fromCallable( $backgroundJobResolver )
 			: null;
 		$this->formActionAbilityResolver = $formActionAbilityResolver !== null
-			? Closure::fromCallable($formActionAbilityResolver)
+			? Closure::fromCallable( $formActionAbilityResolver )
 			: null;
 		$this->actionInputCompiler = $formActionAbilityResolver !== null
-			? new DashboardWidgetActionInputCompiler(new AbilityInputValidator(), $formActionAbilityResolver)
+			? new DashboardWidgetActionInputCompiler( new AbilityInputValidator(), $formActionAbilityResolver )
 			: null;
 	}
 
-	public function compile(Definition $definition): DashboardWidgetRegistrationDescriptor
+	public function compile( Definition $definition ): DashboardWidgetRegistrationDescriptor
 	{
-		DashboardWidgetDefinition::assertOwned($definition);
+		DashboardWidgetDefinition::assertOwned( $definition );
 
-		if ($definition->schemaVersion !== self::SCHEMA_VERSION) {
+		if ( $definition->schemaVersion !== self::SCHEMA_VERSION ) {
 			throw new InvalidArgumentException('Dashboard Widget definition schema version is unsupported.');
 		}
-		if ($definition->status !== DefinitionStatus::Published) {
+		if ( $definition->status !== DefinitionStatus::Published ) {
 			throw new InvalidArgumentException('Only Published Dashboard Widget definitions may compile for registration.');
 		}
 
 		$payload = $definition->payload;
-		if (array_is_list($payload)) {
+		if ( array_is_list( $payload ) ) {
 			throw new InvalidArgumentException('Dashboard Widget definition payload must be an object/map.');
 		}
 		$this->assertKnownKeys($payload, self::PAYLOAD_KEYS, 'Dashboard Widget definition payload');
 
 		$widget = $payload['widget'] ?? null;
-		if (!is_array($widget) || array_is_list($widget)) {
+		if ( !is_array( $widget ) || array_is_list( $widget ) ) {
 			throw new InvalidArgumentException('Dashboard Widget registration metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($widget, self::WIDGET_KEYS, 'Dashboard Widget registration metadata');
 
-		$contentClass = $this->contentClassCompiler->compile($definition);
-		$this->visibilityCompiler->compile($definition);
-		$manualRefresh = $this->compileManualRefresh($widget);
-		if ($contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION) {
-			if ($manualRefresh) {
+		$contentClass = $this->contentClassCompiler->compile( $definition );
+		$this->visibilityCompiler->compile( $definition );
+		$manualRefresh = $this->compileManualRefresh( $widget );
+		if ( $contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION ) {
+			if ( $manualRefresh ) {
 				throw new InvalidArgumentException('Dashboard Widget form_action does not support manual refresh V1.');
 			}
 			if (array_key_exists('render_source', $widget)) {
 				throw new InvalidArgumentException('Dashboard Widget form_action must use the dedicated trusted action presenter, not render_source.');
 			}
 		} else {
-			if ($this->renderSourceCompiler === null) {
+			if ( $this->renderSourceCompiler === null ) {
 				throw new InvalidArgumentException('Dashboard Widget trusted render-source compiler is required for registration compilation.');
 			}
-			$compiledRenderSource = $this->renderSourceCompiler->compile($definition);
-			if ($manualRefresh && $compiledRenderSource->loadingState === null) {
+			$compiledRenderSource = $this->renderSourceCompiler->compile( $definition );
+			if ( $manualRefresh && $compiledRenderSource->loadingState === null ) {
 				throw new InvalidArgumentException('Dashboard Widget manual refresh requires a trusted loading_state.');
 			}
-			if (!$manualRefresh && $compiledRenderSource->loadingState !== null) {
+			if ( !$manualRefresh && $compiledRenderSource->loadingState !== null ) {
 				throw new InvalidArgumentException('Dashboard Widget loading_state requires refresh.manual=true in bounded V1.');
 			}
 		}
@@ -131,9 +131,9 @@ final readonly class DashboardWidgetRegistrationCompiler
 
 		$title = $widget['title'] ?? null;
 		if (
-			!is_string($title)
+			!is_string( $title )
 			|| $title === ''
-			|| strlen($title) > 160
+			|| strlen( $title ) > 160
 			|| str_contains($title, '<')
 			|| str_contains($title, '>')
 			|| preg_match('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $title)
@@ -142,25 +142,25 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		$context = $widget['context'] ?? null;
-		if (!is_string($context) || !in_array($context, DashboardWidgetRegistrationDescriptor::CONTEXTS, true)) {
+		if ( !is_string( $context ) || !in_array( $context, DashboardWidgetRegistrationDescriptor::CONTEXTS, true ) ) {
 			throw new InvalidArgumentException('Dashboard Widget context is unsupported.');
 		}
 
 		$priority = $widget['priority'] ?? null;
-		if (!is_string($priority) || !in_array($priority, DashboardWidgetRegistrationDescriptor::PRIORITIES, true)) {
+		if ( !is_string( $priority ) || !in_array( $priority, DashboardWidgetRegistrationDescriptor::PRIORITIES, true ) ) {
 			throw new InvalidArgumentException('Dashboard Widget priority is unsupported.');
 		}
 
-		[$networkDashboard, $siteScope, $siteIds] = $this->compileTarget($widget);
-		$defaultHidden = $this->compileDefaultHidden($widget);
-		$this->assertNativeCollapsibleCapability($widget);
-		$defaultCollapsed = $this->compileDefaultCollapsed($widget);
-		$dismissible = $this->compileDismissible($widget);
-		[$scheduleStartAt, $scheduleEndAt] = $this->compileLifecycle($widget);
-		$backgroundJobId = $this->compileBackgroundJobReference($widget);
-		$actionAbilityId = $this->compileFormsActionAbilityReference($widget);
-		$actionConfirmation = $this->compileActionConfirmation($widget);
-		$actionInput = $this->compileActionInput($definition, $widget);
+		[$networkDashboard, $siteScope, $siteIds] = $this->compileTarget( $widget );
+		$defaultHidden = $this->compileDefaultHidden( $widget );
+		$this->assertNativeCollapsibleCapability( $widget );
+		$defaultCollapsed = $this->compileDefaultCollapsed( $widget );
+		$dismissible = $this->compileDismissible( $widget );
+		[$scheduleStartAt, $scheduleEndAt] = $this->compileLifecycle( $widget );
+		$backgroundJobId = $this->compileBackgroundJobReference( $widget );
+		$actionAbilityId = $this->compileFormsActionAbilityReference( $widget );
+		$actionConfirmation = $this->compileActionConfirmation( $widget );
+		$actionInput = $this->compileActionInput( $definition, $widget );
 
 		if (
 			$contentClass->contentType === DashboardWidgetContentClassDescriptor::TYPE_FORM_ACTION
@@ -210,24 +210,24 @@ final readonly class DashboardWidgetRegistrationCompiler
 			return null;
 		}
 
-		if ($this->actionInputCompiler === null) {
+		if ( $this->actionInputCompiler === null ) {
 			throw new InvalidArgumentException('Dashboard Widget action.input requires the canonical Ability Registry.');
 		}
 
-		return $this->actionInputCompiler->compile($definition, $widget);
+		return $this->actionInputCompiler->compile( $definition, $widget );
 	}
 
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function compileActionConfirmation(array $widget): ?DashboardWidgetActionConfirmationDescriptor
+	private function compileActionConfirmation( array $widget ): ?DashboardWidgetActionConfirmationDescriptor
 	{
 		if (!array_key_exists('action', $widget)) {
 			return null;
 		}
 
 		$action = $widget['action'];
-		if (!is_array($action) || ($action !== [] && array_is_list($action))) {
+		if ( !is_array( $action ) || ( $action !== [] && array_is_list( $action ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget action metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($action, self::ACTION_KEYS, 'Dashboard Widget action metadata');
@@ -237,15 +237,15 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		$confirmation = $action['confirmation'];
-		if (!is_array($confirmation) || array_is_list($confirmation)) {
+		if ( !is_array( $confirmation ) || array_is_list( $confirmation ) ) {
 			throw new InvalidArgumentException('Dashboard Widget action.confirmation must be an object/map.');
 		}
 
 		$keys = ['title', 'message', 'confirm_label', 'cancel_label'];
 		$this->assertKnownKeys($confirmation, $keys, 'Dashboard Widget action.confirmation');
 
-		foreach ($keys as $key) {
-			if (!array_key_exists($key, $confirmation) || !is_string($confirmation[$key])) {
+		foreach ( $keys as $key ) {
+			if ( !array_key_exists( $key, $confirmation ) || !is_string( $confirmation[$key] ) ) {
 				throw new InvalidArgumentException(
 					'Dashboard Widget action.confirmation requires bounded string title, message, confirm_label and cancel_label fields.',
 				);
@@ -263,14 +263,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function compileFormsActionAbilityReference(array $widget): ?string
+	private function compileFormsActionAbilityReference( array $widget ): ?string
 	{
 		if (!array_key_exists('action', $widget)) {
 			return null;
 		}
 
 		$action = $widget['action'];
-		if (!is_array($action) || ($action !== [] && array_is_list($action))) {
+		if ( !is_array( $action ) || ( $action !== [] && array_is_list( $action ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget action metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($action, self::ACTION_KEYS, 'Dashboard Widget action metadata');
@@ -281,35 +281,35 @@ final readonly class DashboardWidgetRegistrationCompiler
 
 		$abilityId = $action['ability_id'];
 		if (
-			!is_string($abilityId)
+			!is_string( $abilityId )
 			|| preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId) !== 1
 		) {
 			throw new InvalidArgumentException('Dashboard Widget action.ability_id must use the canonical ability name shape.');
 		}
-		if ($this->formActionAbilityResolver === null) {
+		if ( $this->formActionAbilityResolver === null ) {
 			throw new InvalidArgumentException('Dashboard Widget action.ability_id requires the canonical Ability Registry.');
 		}
 
 		try {
-			$record = ($this->formActionAbilityResolver)($abilityId);
-		} catch (Throwable) {
+			$record = ( $this->formActionAbilityResolver )( $abilityId );
+		} catch ( Throwable ) {
 			throw new InvalidArgumentException('Dashboard Widget action ability reference could not be resolved.');
 		}
 
 		$inputSchema = is_array($record) ? ($record['input_schema'] ?? null) : null;
 		if (
-			!is_array($record)
+			!is_array( $record )
 			|| ($record['name'] ?? null) !== $abilityId
 			|| ($record['owner_surface_id'] ?? null) !== FormWorkflowDefinition::OWNER_SURFACE_ID
 			|| ($record['mutates'] ?? null) !== true
 			|| ($record['ui_allowed'] ?? null) !== true
-			|| !is_array($inputSchema)
+			|| !is_array( $inputSchema )
 		) {
 			throw new InvalidArgumentException('Dashboard Widget action ability must be a mutating Forms & Workflows UI ability.');
 		}
 
 		$hasAuthoredInput = array_key_exists('input', $action) && $action['input'] !== [];
-		if (($hasAuthoredInput && $inputSchema === []) || (!$hasAuthoredInput && $inputSchema !== [])) {
+		if ( ( $hasAuthoredInput && $inputSchema === [] ) || ( !$hasAuthoredInput && $inputSchema !== [] ) ) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget action Ability input schema must match whether bounded action.input is authored.',
 			);
@@ -321,14 +321,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function compileManualRefresh(array $widget): bool
+	private function compileManualRefresh( array $widget ): bool
 	{
 		if (!array_key_exists('refresh', $widget)) {
 			return false;
 		}
 
 		$refresh = $widget['refresh'];
-		if (!is_array($refresh) || ($refresh !== [] && array_is_list($refresh))) {
+		if ( !is_array( $refresh ) || ( $refresh !== [] && array_is_list( $refresh ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget refresh metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($refresh, self::REFRESH_KEYS, 'Dashboard Widget refresh metadata');
@@ -346,14 +346,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function compileBackgroundJobReference(array $widget): ?string
+	private function compileBackgroundJobReference( array $widget ): ?string
 	{
 		if (!array_key_exists('refresh', $widget)) {
 			return null;
 		}
 
 		$refresh = $widget['refresh'];
-		if (!is_array($refresh) || ($refresh !== [] && array_is_list($refresh))) {
+		if ( !is_array( $refresh ) || ( $refresh !== [] && array_is_list( $refresh ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget refresh metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($refresh, self::REFRESH_KEYS, 'Dashboard Widget refresh metadata');
@@ -364,23 +364,23 @@ final readonly class DashboardWidgetRegistrationCompiler
 
 		$backgroundJobId = $refresh['background_job'];
 		if (
-			!is_string($backgroundJobId)
+			!is_string( $backgroundJobId )
 			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $backgroundJobId) !== 1
 		) {
 			throw new InvalidArgumentException('Dashboard Widget refresh.background_job must be a lowercase RFC 4122 UUID.');
 		}
-		if ($this->backgroundJobResolver === null) {
+		if ( $this->backgroundJobResolver === null ) {
 			throw new InvalidArgumentException('Dashboard Widget refresh.background_job requires the canonical Cron read service.');
 		}
 
 		try {
-			$record = ($this->backgroundJobResolver)($backgroundJobId);
-		} catch (Throwable) {
+			$record = ( $this->backgroundJobResolver )( $backgroundJobId );
+		} catch ( Throwable ) {
 			throw new InvalidArgumentException('Dashboard Widget background job reference could not be resolved.');
 		}
 
 		if (
-			!is_array($record)
+			!is_array( $record )
 			|| ($record['id'] ?? null) !== $backgroundJobId
 			|| ($record['type'] ?? null) !== CronDefinition::TYPE
 			|| ($record['owner_surface_id'] ?? null) !== CronDefinition::OWNER_SURFACE_ID
@@ -396,14 +396,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	 * @param array<string,mixed> $widget
 	 * @return array{0:?int,1:?int}
 	 */
-	private function compileLifecycle(array $widget): array
+	private function compileLifecycle( array $widget ): array
 	{
 		if (!array_key_exists('lifecycle', $widget)) {
 			return [null, null];
 		}
 
 		$lifecycle = $widget['lifecycle'];
-		if (!is_array($lifecycle) || ($lifecycle !== [] && array_is_list($lifecycle))) {
+		if ( !is_array( $lifecycle ) || ( $lifecycle !== [] && array_is_list( $lifecycle ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget lifecycle metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($lifecycle, self::LIFECYCLE_KEYS, 'Dashboard Widget lifecycle metadata');
@@ -415,14 +415,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 			? $this->canonicalUtcTimestamp($lifecycle['schedule_end'], 'schedule_end')
 			: null;
 
-		if ($start !== null && $end !== null && $start >= $end) {
+		if ( $start !== null && $end !== null && $start >= $end ) {
 			throw new InvalidArgumentException('Dashboard Widget lifecycle schedule_start must be earlier than schedule_end.');
 		}
 
 		return [$start, $end];
 	}
 
-	private function canonicalUtcTimestamp(mixed $value, string $label): int
+	private function canonicalUtcTimestamp( mixed $value, string $label ): int
 	{
 		if (!is_string($value) || preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/D', $value) !== 1) {
 			throw new InvalidArgumentException(sprintf(
@@ -454,14 +454,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function assertNativeCollapsibleCapability(array $widget): void
+	private function assertNativeCollapsibleCapability( array $widget ): void
 	{
 		if (!array_key_exists('presentation', $widget)) {
 			return;
 		}
 
 		$presentation = $widget['presentation'];
-		if (!is_array($presentation) || ($presentation !== [] && array_is_list($presentation))) {
+		if ( !is_array( $presentation ) || ( $presentation !== [] && array_is_list( $presentation ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget presentation metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Dashboard Widget presentation metadata');
@@ -480,14 +480,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function compileDismissible(array $widget): bool
+	private function compileDismissible( array $widget ): bool
 	{
 		if (!array_key_exists('presentation', $widget)) {
 			return false;
 		}
 
 		$presentation = $widget['presentation'];
-		if (!is_array($presentation) || ($presentation !== [] && array_is_list($presentation))) {
+		if ( !is_array( $presentation ) || ( $presentation !== [] && array_is_list( $presentation ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget presentation metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Dashboard Widget presentation metadata');
@@ -502,14 +502,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 		return $presentation['dismissible'];
 	}
 
-	private function compileDefaultCollapsed(array $widget): bool
+	private function compileDefaultCollapsed( array $widget ): bool
 	{
 		if (!array_key_exists('presentation', $widget)) {
 			return false;
 		}
 
 		$presentation = $widget['presentation'];
-		if (!is_array($presentation) || ($presentation !== [] && array_is_list($presentation))) {
+		if ( !is_array( $presentation ) || ( $presentation !== [] && array_is_list( $presentation ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget presentation metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($presentation, self::PRESENTATION_KEYS, 'Dashboard Widget presentation metadata');
@@ -527,14 +527,14 @@ final readonly class DashboardWidgetRegistrationCompiler
 	/**
 	 * @param array<string,mixed> $widget
 	 */
-	private function compileDefaultHidden(array $widget): bool
+	private function compileDefaultHidden( array $widget ): bool
 	{
 		if (!array_key_exists('inventory', $widget)) {
 			return false;
 		}
 
 		$inventory = $widget['inventory'];
-		if (!is_array($inventory) || ($inventory !== [] && array_is_list($inventory))) {
+		if ( !is_array( $inventory ) || ( $inventory !== [] && array_is_list( $inventory ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget inventory metadata must be an object/map.');
 		}
 		$this->assertKnownKeys($inventory, self::INVENTORY_KEYS, 'Dashboard Widget inventory metadata');
@@ -553,11 +553,11 @@ final readonly class DashboardWidgetRegistrationCompiler
 	 * @param array<string,mixed> $widget
 	 * @return array{0:bool,1:?string,2:list<int>}
 	 */
-	private function compileTarget(array $widget): array
+	private function compileTarget( array $widget ): array
 	{
 		$legacyNetworkPresent = array_key_exists('network_dashboard', $widget);
 		$legacyNetworkDashboard = $legacyNetworkPresent ? $widget['network_dashboard'] : false;
-		if (!is_bool($legacyNetworkDashboard)) {
+		if ( !is_bool( $legacyNetworkDashboard ) ) {
 			throw new InvalidArgumentException('Dashboard Widget network_dashboard target must be boolean.');
 		}
 
@@ -566,40 +566,40 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		$target = $widget['target'];
-		if (!is_array($target) || ($target !== [] && array_is_list($target))) {
+		if ( !is_array( $target ) || ( $target !== [] && array_is_list( $target ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget target must be an object/map.');
 		}
 		$this->assertKnownKeys($target, self::TARGET_KEYS, 'Dashboard Widget target');
 
 		$targetNetworkPresent = array_key_exists('network_dashboard', $target);
 		$targetNetworkDashboard = $targetNetworkPresent ? $target['network_dashboard'] : $legacyNetworkDashboard;
-		if (!is_bool($targetNetworkDashboard)) {
+		if ( !is_bool( $targetNetworkDashboard ) ) {
 			throw new InvalidArgumentException('Dashboard Widget target.network_dashboard must be boolean.');
 		}
-		if ($legacyNetworkPresent && $targetNetworkPresent && $legacyNetworkDashboard !== $targetNetworkDashboard) {
+		if ( $legacyNetworkPresent && $targetNetworkPresent && $legacyNetworkDashboard !== $targetNetworkDashboard ) {
 			throw new InvalidArgumentException('Dashboard Widget network target declarations conflict.');
 		}
 
 		$scopePresent = array_key_exists('scope', $target);
 		$scope = $scopePresent ? $target['scope'] : null;
-		if ($scopePresent && (!is_string($scope) || !in_array($scope, DashboardWidgetRegistrationDescriptor::SITE_SCOPES, true))) {
+		if ( $scopePresent && ( !is_string( $scope ) || !in_array( $scope, DashboardWidgetRegistrationDescriptor::SITE_SCOPES, true ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget target.scope is unsupported.');
 		}
 
 		$siteIdsPresent = array_key_exists('site_ids', $target);
 		$authoredSiteIds = $siteIdsPresent ? $target['site_ids'] : [];
-		if ($siteIdsPresent && (!is_array($authoredSiteIds) || !array_is_list($authoredSiteIds))) {
+		if ( $siteIdsPresent && ( !is_array( $authoredSiteIds ) || !array_is_list( $authoredSiteIds ) ) ) {
 			throw new InvalidArgumentException('Dashboard Widget target.site_ids must be a list.');
 		}
-		if ($siteIdsPresent && count($authoredSiteIds) > DashboardWidgetRegistrationDescriptor::MAX_SITE_IDS) {
+		if ( $siteIdsPresent && count( $authoredSiteIds ) > DashboardWidgetRegistrationDescriptor::MAX_SITE_IDS ) {
 			throw new InvalidArgumentException('Dashboard Widget target.site_ids exceeds the bounded maximum.');
 		}
 
 		/** @var array<int,true> $siteIdSet */
 		$siteIdSet = [];
-		if ($siteIdsPresent) {
-			foreach ($authoredSiteIds as $siteId) {
-				if (!is_int($siteId) || $siteId < 1) {
+		if ( $siteIdsPresent ) {
+			foreach ( $authoredSiteIds as $siteId ) {
+				if ( !is_int( $siteId ) || $siteId < 1 ) {
 					throw new InvalidArgumentException('Dashboard Widget target.site_ids must contain positive integers only.');
 				}
 				$siteIdSet[$siteId] = true;
@@ -607,19 +607,19 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		/** @var list<int> $siteIds */
-		$siteIds = array_keys($siteIdSet);
-		sort($siteIds, SORT_NUMERIC);
+		$siteIds = array_keys( $siteIdSet );
+		sort( $siteIds, SORT_NUMERIC );
 
-		if ($siteIdsPresent && $scope !== DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS) {
+		if ( $siteIdsPresent && $scope !== DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS ) {
 			throw new InvalidArgumentException('Dashboard Widget target.site_ids requires scope=site_ids.');
 		}
-		if ($scope === DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS && $siteIds === []) {
+		if ( $scope === DashboardWidgetRegistrationDescriptor::SITE_SCOPE_SITE_IDS && $siteIds === [] ) {
 			throw new InvalidArgumentException('Dashboard Widget target.scope=site_ids requires a non-empty site_ids list.');
 		}
-		if ($scope === DashboardWidgetRegistrationDescriptor::SITE_SCOPE_ALL_SITES && $siteIdsPresent) {
+		if ( $scope === DashboardWidgetRegistrationDescriptor::SITE_SCOPE_ALL_SITES && $siteIdsPresent ) {
 			throw new InvalidArgumentException('Dashboard Widget target.scope=all_sites forbids site_ids.');
 		}
-		if ($targetNetworkDashboard && ($scopePresent || $siteIds !== [])) {
+		if ( $targetNetworkDashboard && ( $scopePresent || $siteIds !== [] ) ) {
 			throw new InvalidArgumentException('Dashboard Widget network target cannot include site targeting intent.');
 		}
 
@@ -630,10 +630,10 @@ final readonly class DashboardWidgetRegistrationCompiler
 	 * @param array<string,mixed> $value
 	 * @param list<string> $allowed
 	 */
-	private function assertKnownKeys(array $value, array $allowed, string $label): void
+	private function assertKnownKeys( array $value, array $allowed, string $label ): void
 	{
-		foreach (array_keys($value) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException($label . ' contains an unsupported key.');
 			}
 		}

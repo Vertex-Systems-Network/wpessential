@@ -33,16 +33,16 @@ final readonly class FieldGroupPortabilityService
 		private FieldGroupValidationService $validation,
 		?FieldIdentityAssigner $identities = null,
 	) {
-		$this->identities = $identities ?? new FieldIdentityAssigner($definitions);
+		$this->identities = $identities ?? new FieldIdentityAssigner( $definitions );
 	}
 
 	/**
 	 * @param list<string> $definitionIds
 	 * @return array{format:string,version:int,definitions:list<array<string,mixed>>}
 	 */
-	public function export(array $definitionIds = []): array
+	public function export( array $definitionIds = [] ): array
 	{
-		$selected = $this->selectDefinitions($definitionIds);
+		$selected = $this->selectDefinitions( $definitionIds );
 
 		return [
 			'format' => self::FORMAT,
@@ -55,23 +55,23 @@ final readonly class FieldGroupPortabilityService
 	 * @param array<string,mixed> $envelope
 	 * @return array{created:list<string>,unchanged:list<string>}
 	 */
-	public function import(array $envelope): array
+	public function import( array $envelope ): array
 	{
-		$records = $this->validateEnvelope($envelope);
+		$records = $this->validateEnvelope( $envelope );
 		$prepared = [];
 		$bundleIds = [];
 		$bundleSlugs = [];
 		$bundleKeys = [];
 		$bundleFieldUuids = [];
 
-		foreach ($records as $record) {
-			$candidate = $this->prepareImport($record);
-			if (isset($bundleIds[$candidate->id])) {
+		foreach ( $records as $record ) {
+			$candidate = $this->prepareImport( $record );
+			if ( isset( $bundleIds[$candidate->id] ) ) {
 				throw new InvalidArgumentException(sprintf('Portable Field Group id "%s" is duplicated in the import bundle.', $candidate->id));
 			}
 			$bundleIds[$candidate->id] = true;
 
-			if (isset($bundleSlugs[$candidate->slug])) {
+			if ( isset( $bundleSlugs[$candidate->slug] ) ) {
 				throw new InvalidArgumentException(sprintf('Portable Field Group slug "%s" is duplicated in the import bundle.', $candidate->slug));
 			}
 			$bundleSlugs[$candidate->slug] = true;
@@ -80,13 +80,13 @@ final readonly class FieldGroupPortabilityService
 			if (!is_string($groupKey) || $groupKey === '') {
 				throw new InvalidArgumentException('Portable Field Group payload is missing a canonical group_key.');
 			}
-			if (isset($bundleKeys[$groupKey])) {
+			if ( isset( $bundleKeys[$groupKey] ) ) {
 				throw new InvalidArgumentException(sprintf('Portable Field Group key "%s" is duplicated in the import bundle.', $groupKey));
 			}
 			$bundleKeys[$groupKey] = true;
 
 			foreach ($this->collectFieldUuids($candidate->payload['fields'] ?? []) as $fieldUuid) {
-				if (isset($bundleFieldUuids[$fieldUuid])) {
+				if ( isset( $bundleFieldUuids[$fieldUuid] ) ) {
 					throw new InvalidArgumentException(sprintf('Portable Field uuid "%s" is duplicated across the import bundle.', $fieldUuid));
 				}
 				$bundleFieldUuids[$fieldUuid] = true;
@@ -96,22 +96,22 @@ final readonly class FieldGroupPortabilityService
 		}
 
 		$persistedBySlug = [];
-		foreach ($this->definitions->byType(FieldGroupDefinitionNormalizer::DEFINITION_TYPE) as $definition) {
+		foreach ( $this->definitions->byType( FieldGroupDefinitionNormalizer::DEFINITION_TYPE ) as $definition ) {
 			$persistedBySlug[$definition->slug] = $definition;
 		}
 
 		$created = [];
 		$unchanged = [];
-		foreach ($prepared as $candidate) {
-			$existing = $this->definitions->get($candidate->id);
-			if ($existing instanceof Definition) {
-				$this->assertIdenticalExisting($candidate, $existing);
+		foreach ( $prepared as $candidate ) {
+			$existing = $this->definitions->get( $candidate->id );
+			if ( $existing instanceof Definition ) {
+				$this->assertIdenticalExisting( $candidate, $existing );
 				$unchanged[] = $candidate->id;
 				continue;
 			}
 
 			$slugOwner = $persistedBySlug[$candidate->slug] ?? null;
-			if ($slugOwner instanceof Definition && $slugOwner->id !== $candidate->id) {
+			if ( $slugOwner instanceof Definition && $slugOwner->id !== $candidate->id ) {
 				throw new InvalidArgumentException(sprintf(
 					'Portable Field Group slug "%s" is already owned by definition "%s"; create-only import will not remap it.',
 					$candidate->slug,
@@ -119,20 +119,20 @@ final readonly class FieldGroupPortabilityService
 				));
 			}
 
-			$this->assertCanCreate($candidate);
+			$this->assertCanCreate( $candidate );
 		}
 
-		foreach ($prepared as $candidate) {
-			$existing = $this->definitions->get($candidate->id);
-			if ($existing instanceof Definition) {
-				$this->assertIdenticalExisting($candidate, $existing);
-				if (!in_array($candidate->id, $unchanged, true)) {
+		foreach ( $prepared as $candidate ) {
+			$existing = $this->definitions->get( $candidate->id );
+			if ( $existing instanceof Definition ) {
+				$this->assertIdenticalExisting( $candidate, $existing );
+				if ( !in_array( $candidate->id, $unchanged, true ) ) {
 					$unchanged[] = $candidate->id;
 				}
 				continue;
 			}
 
-			$this->definitions->save($candidate);
+			$this->definitions->save( $candidate );
 			$created[] = $candidate->id;
 		}
 
@@ -140,44 +140,44 @@ final readonly class FieldGroupPortabilityService
 	}
 
 	/** @param list<string> $definitionIds @return list<Definition> */
-	private function selectDefinitions(array $definitionIds): array
+	private function selectDefinitions( array $definitionIds ): array
 	{
 		$owned = array_values(array_filter(
-			$this->definitions->byType(FieldGroupDefinitionNormalizer::DEFINITION_TYPE),
-			static fn (Definition $definition): bool => $definition->ownerSurfaceId === FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
+			$this->definitions->byType( FieldGroupDefinitionNormalizer::DEFINITION_TYPE ),
+			static fn ( Definition $definition ): bool => $definition->ownerSurfaceId === FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID,
 		));
 
-		if ($definitionIds !== []) {
+		if ( $definitionIds !== [] ) {
 			$requested = [];
-			foreach ($definitionIds as $id) {
-				if (!is_string($id) || !$this->isUuid($id)) {
+			foreach ( $definitionIds as $id ) {
+				if ( !is_string( $id ) || !$this->isUuid( $id ) ) {
 					throw new InvalidArgumentException('Portable export definition_ids must contain lowercase RFC 4122 UUIDs.');
 				}
-				if (isset($requested[$id])) {
+				if ( isset( $requested[$id] ) ) {
 					throw new InvalidArgumentException(sprintf('Portable export definition id "%s" is duplicated.', $id));
 				}
 				$requested[$id] = true;
 			}
 			$owned = array_values(array_filter(
 				$owned,
-				static fn (Definition $definition): bool => isset($requested[$definition->id]),
+				static fn ( Definition $definition ): bool => isset( $requested[$definition->id] ),
 			));
-			if (count($owned) !== count($requested)) {
+			if ( count( $owned ) !== count( $requested ) ) {
 				throw new RuntimeException('One or more requested Field Group definitions are not owned by canonical Surface 3.');
 			}
 		}
 
-		usort($owned, static fn (Definition $left, Definition $right): int => [$left->slug, $left->id] <=> [$right->slug, $right->id]);
+		usort( $owned, static fn ( Definition $left, Definition $right ): int => [$left->slug, $left->id] <=> [$right->slug, $right->id] );
 		return $owned;
 	}
 
 	/** @return array<string,mixed> */
-	private function exportDefinition(Definition $definition): array
+	private function exportDefinition( Definition $definition ): array
 	{
-		if ($definition->schemaVersion !== 1) {
+		if ( $definition->schemaVersion !== 1 ) {
 			throw new RuntimeException('Portable Field Group V1 cannot export a definition schema without an explicit compatibility adapter.');
 		}
-		if ($definition->dependencies !== []) {
+		if ( $definition->dependencies !== [] ) {
 			throw new RuntimeException('Portable Field Group V1 cannot export definitions with unresolved cross-definition dependencies.');
 		}
 
@@ -197,7 +197,7 @@ final readonly class FieldGroupPortabilityService
 			dependencies: [],
 		);
 		$checksum = $portable->computedChecksum();
-		if ($definition->checksum !== null && $definition->checksum !== $checksum) {
+		if ( $definition->checksum !== null && $definition->checksum !== $checksum ) {
 			throw new RuntimeException(sprintf('Field Group "%s" checksum does not match its canonical payload.', $definition->id));
 		}
 
@@ -218,7 +218,7 @@ final readonly class FieldGroupPortabilityService
 	}
 
 	/** @param array<string,mixed> $envelope @return list<array<string,mixed>> */
-	private function validateEnvelope(array $envelope): array
+	private function validateEnvelope( array $envelope ): array
 	{
 		$this->assertKnownKeys($envelope, self::ENVELOPE_KEYS, 'portability envelope');
 		if (($envelope['format'] ?? null) !== self::FORMAT) {
@@ -228,11 +228,11 @@ final readonly class FieldGroupPortabilityService
 			throw new InvalidArgumentException('Unsupported Custom Fields portability format version; an explicit compatibility adapter is required.');
 		}
 		$records = $envelope['definitions'] ?? null;
-		if (!is_array($records) || !array_is_list($records)) {
+		if ( !is_array( $records ) || !array_is_list( $records ) ) {
 			throw new InvalidArgumentException('Portable Field Group definitions must be a list.');
 		}
-		foreach ($records as $record) {
-			if (!is_array($record) || array_is_list($record)) {
+		foreach ( $records as $record ) {
+			if ( !is_array( $record ) || array_is_list( $record ) ) {
 				throw new InvalidArgumentException('Every portable Field Group definition must be an object/map.');
 			}
 		}
@@ -241,7 +241,7 @@ final readonly class FieldGroupPortabilityService
 	}
 
 	/** @param array<string,mixed> $record */
-	private function prepareImport(array $record): Definition
+	private function prepareImport( array $record ): Definition
 	{
 		$this->assertKnownKeys($record, self::RECORD_KEYS, 'portable Field Group definition');
 
@@ -256,35 +256,35 @@ final readonly class FieldGroupPortabilityService
 		$dependencies = $record['dependencies'] ?? null;
 		$checksum = $record['checksum'] ?? null;
 
-		if (!is_string($id) || !$this->isUuid($id)) {
+		if ( !is_string( $id ) || !$this->isUuid( $id ) ) {
 			throw new InvalidArgumentException('Portable Field Group id must be a lowercase RFC 4122 UUID.');
 		}
 		if (!is_string($slug) || $slug === '') {
 			throw new InvalidArgumentException('Portable Field Group slug must be a string.');
 		}
-		if ($type !== FieldGroupDefinitionNormalizer::DEFINITION_TYPE) {
+		if ( $type !== FieldGroupDefinitionNormalizer::DEFINITION_TYPE ) {
 			throw new InvalidArgumentException('Portable definition type is not the canonical Surface 3 Field Group type.');
 		}
-		if ($ownerSurfaceId !== FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID) {
+		if ( $ownerSurfaceId !== FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID ) {
 			throw new InvalidArgumentException('Portable definition owner is not canonical Surface 3.');
 		}
-		if ($schemaVersion !== 1) {
+		if ( $schemaVersion !== 1 ) {
 			throw new InvalidArgumentException('Unsupported Field Group definition schema version; an explicit compatibility adapter is required.');
 		}
-		if (!is_string($statusValue)) {
+		if ( !is_string( $statusValue ) ) {
 			throw new InvalidArgumentException('Portable Field Group status is invalid.');
 		}
-		$status = DefinitionStatus::tryFrom($statusValue);
-		if (!$status instanceof DefinitionStatus) {
+		$status = DefinitionStatus::tryFrom( $statusValue );
+		if ( !$status instanceof DefinitionStatus ) {
 			throw new InvalidArgumentException('Portable Field Group status is invalid.');
 		}
-		if (!is_array($payload) || array_is_list($payload)) {
+		if ( !is_array( $payload ) || array_is_list( $payload ) ) {
 			throw new InvalidArgumentException('Portable Field Group payload must be an object/map.');
 		}
-		if (!is_int($sourceRevision) || $sourceRevision < 1) {
+		if ( !is_int( $sourceRevision ) || $sourceRevision < 1 ) {
 			throw new InvalidArgumentException('Portable Field Group source_revision must be a positive integer.');
 		}
-		if ($dependencies !== []) {
+		if ( $dependencies !== [] ) {
 			throw new InvalidArgumentException('Portable Field Group V1 does not import unresolved cross-definition dependencies.');
 		}
 		if (!is_string($checksum) || preg_match('/^[0-9a-f]{64}$/', $checksum) !== 1) {
@@ -292,7 +292,7 @@ final readonly class FieldGroupPortabilityService
 		}
 
 		$this->assertPortableFieldIdentities($payload['fields'] ?? []);
-		$normalized = $this->normalizer->normalize($payload, $status === DefinitionStatus::Published);
+		$normalized = $this->normalizer->normalize( $payload, $status === DefinitionStatus::Published );
 		$candidate = new Definition(
 			id: $id,
 			slug: $slug,
@@ -304,7 +304,7 @@ final readonly class FieldGroupPortabilityService
 			revision: 1,
 			dependencies: [],
 		);
-		if ($candidate->computedChecksum() !== $checksum) {
+		if ( $candidate->computedChecksum() !== $checksum ) {
 			throw new InvalidArgumentException(sprintf('Portable Field Group "%s" checksum verification failed.', $id));
 		}
 
@@ -322,9 +322,9 @@ final readonly class FieldGroupPortabilityService
 		);
 	}
 
-	private function assertCanCreate(Definition $candidate): void
+	private function assertCanCreate( Definition $candidate ): void
 	{
-		$payload = $this->identities->assign($candidate->payload, null, $candidate->id);
+		$payload = $this->identities->assign( $candidate->payload, null, $candidate->id );
 		$report = $this->validation->validate([
 			'payload' => $payload,
 			'status' => $candidate->status->value,
@@ -339,7 +339,7 @@ final readonly class FieldGroupPortabilityService
 		}
 	}
 
-	private function assertIdenticalExisting(Definition $candidate, Definition $existing): void
+	private function assertIdenticalExisting( Definition $candidate, Definition $existing ): void
 	{
 		$identical = $existing->id === $candidate->id
 			&& $existing->slug === $candidate->slug
@@ -349,7 +349,7 @@ final readonly class FieldGroupPortabilityService
 			&& $existing->status === $candidate->status
 			&& $existing->dependencies === []
 			&& $existing->computedChecksum() === $candidate->computedChecksum();
-		if (!$identical) {
+		if ( !$identical ) {
 			throw new InvalidArgumentException(sprintf(
 				'Portable Field Group "%s" collides with an existing non-identical definition; create-only import will not overwrite it.',
 				$candidate->id,
@@ -361,23 +361,23 @@ final readonly class FieldGroupPortabilityService
 	 * @param array<string,mixed> $value
 	 * @param list<string> $allowed
 	 */
-	private function assertKnownKeys(array $value, array $allowed, string $label): void
+	private function assertKnownKeys( array $value, array $allowed, string $label ): void
 	{
-		foreach (array_keys($value) as $key) {
-			if (!in_array($key, $allowed, true)) {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException(sprintf('Unsupported %s option "%s".', $label, (string) $key));
 			}
 		}
 	}
 
-	private function assertPortableFieldIdentities(mixed $rows): void
+	private function assertPortableFieldIdentities( mixed $rows ): void
 	{
-		if (!is_array($rows) || !array_is_list($rows)) {
+		if ( !is_array( $rows ) || !array_is_list( $rows ) ) {
 			throw new InvalidArgumentException('Portable Field Group fields must be a list.');
 		}
 		$seen = [];
-		foreach ($this->collectFieldUuids($rows) as $uuid) {
-			if (isset($seen[$uuid])) {
+		foreach ( $this->collectFieldUuids( $rows ) as $uuid ) {
+			if ( isset( $seen[$uuid] ) ) {
 				throw new InvalidArgumentException(sprintf('Portable Field uuid "%s" is duplicated inside a Field Group.', $uuid));
 			}
 			$seen[$uuid] = true;
@@ -385,33 +385,33 @@ final readonly class FieldGroupPortabilityService
 	}
 
 	/** @return list<string> */
-	private function collectFieldUuids(mixed $rows): array
+	private function collectFieldUuids( mixed $rows ): array
 	{
-		if (!is_array($rows) || !array_is_list($rows)) {
+		if ( !is_array( $rows ) || !array_is_list( $rows ) ) {
 			throw new InvalidArgumentException('Portable Field Group fields must be a list.');
 		}
 		$uuids = [];
-		foreach ($rows as $row) {
-			if (!is_array($row) || array_is_list($row)) {
+		foreach ( $rows as $row ) {
+			if ( !is_array( $row ) || array_is_list( $row ) ) {
 				throw new InvalidArgumentException('Every portable Field must be an object/map.');
 			}
 			$uuid = $row['uuid'] ?? null;
-			if (!is_string($uuid) || !$this->isUuid($uuid)) {
+			if ( !is_string( $uuid ) || !$this->isUuid( $uuid ) ) {
 				throw new InvalidArgumentException('Every portable Field requires an existing stable lowercase RFC 4122 UUID.');
 			}
 			$uuids[] = $uuid;
 			$subfields = $row['subfields'] ?? [];
-			if (!is_array($subfields) || !array_is_list($subfields)) {
+			if ( !is_array( $subfields ) || !array_is_list( $subfields ) ) {
 				throw new InvalidArgumentException('Portable Field subfields must be a list.');
 			}
-			foreach ($this->collectFieldUuids($subfields) as $nested) {
+			foreach ( $this->collectFieldUuids( $subfields ) as $nested ) {
 				$uuids[] = $nested;
 			}
 		}
 		return $uuids;
 	}
 
-	private function isUuid(string $value): bool
+	private function isUuid( string $value ): bool
 	{
 		return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) === 1;
 	}

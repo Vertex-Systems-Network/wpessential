@@ -46,7 +46,7 @@ final readonly class AdminColumnsViewDefinitionNormalizer
      * @param array<string,mixed> $payload
      * @return array<string,mixed>
      */
-	public function normalize(array $payload): array
+	public function normalize( array $payload ): array
 	{
 		$this->assertKnownKeys($payload, self::TOP_LEVEL_KEYS, 'Admin Columns View');
 
@@ -78,13 +78,13 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return array{type:string,key:string} */
-	private function target(mixed $value): array
+	private function target( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'View target');
 		$this->assertKnownKeys($value, ['type', 'key'], 'View target');
 
 		$type = $value['type'] ?? null;
-		if (!is_string($type) || !in_array($type, self::TARGET_TYPES, true)) {
+		if ( !is_string( $type ) || !in_array( $type, self::TARGET_TYPES, true ) ) {
 			throw new InvalidArgumentException('View target type is not supported by the bounded V1 foundation.');
 		}
 
@@ -93,12 +93,12 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return list<array<string,mixed>> */
-	private function columns(mixed $value): array
+	private function columns( mixed $value ): array
 	{
-		if (!is_array($value) || !array_is_list($value) || $value === []) {
+		if ( !is_array( $value ) || !array_is_list( $value ) || $value === [] ) {
 			throw new InvalidArgumentException('View columns must be a non-empty list.');
 		}
-		if (count($value) > 100) {
+		if ( count( $value ) > 100 ) {
 			throw new InvalidArgumentException('View columns exceed the bounded V1 maximum of 100.');
 		}
 
@@ -106,24 +106,24 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		$uuids = [];
 		$keys = [];
 		$primaryCount = 0;
-		foreach ($value as $index => $column) {
-			if (!is_array($column) || array_is_list($column)) {
+		foreach ( $value as $index => $column ) {
+			if ( !is_array( $column ) || array_is_list( $column ) ) {
 				throw new InvalidArgumentException(sprintf('Column %d must be an object/map.', $index));
 			}
-			$candidate = $this->column($column, $index);
+			$candidate = $this->column( $column, $index );
 			$uuid = $candidate['uuid'];
 			$key = $candidate['key'];
-			if (isset($uuids[$uuid])) {
+			if ( isset( $uuids[$uuid] ) ) {
 				throw new InvalidArgumentException(sprintf('Duplicate Column UUID "%s".', $uuid));
 			}
-			if (isset($keys[$key])) {
+			if ( isset( $keys[$key] ) ) {
 				throw new InvalidArgumentException(sprintf('Duplicate Column key "%s".', $key));
 			}
 			$uuids[$uuid] = true;
 			$keys[$key] = true;
 			if ($candidate['primary']) {
 				++$primaryCount;
-				if ($primaryCount > 1) {
+				if ( $primaryCount > 1 ) {
 					throw new InvalidArgumentException('A View may declare at most one primary Column.');
 				}
 			}
@@ -134,7 +134,7 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @param array<string,mixed> $column @return array<string,mixed> */
-	private function column(array $column, int $index): array
+	private function column( array $column, int $index ): array
 	{
 		$this->assertKnownKeys(
 			$column,
@@ -164,13 +164,13 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return array{owner:string,reference:string} */
-	private function source(mixed $value, int $index): array
+	private function source( mixed $value, int $index ): array
 	{
 		$value = $this->objectMap($value, sprintf('Column %d source', $index));
 		$this->assertKnownKeys($value, ['owner', 'reference'], sprintf('Column %d source', $index));
 
 		$owner = $value['owner'] ?? null;
-		if (!is_string($owner) || !in_array($owner, self::SOURCE_OWNERS, true)) {
+		if ( !is_string( $owner ) || !in_array( $owner, self::SOURCE_OWNERS, true ) ) {
 			throw new InvalidArgumentException(sprintf('Column %d source owner is not supported.', $index));
 		}
 
@@ -180,16 +180,16 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		];
 	}
 
-	private function format(mixed $value, int $index): string
+	private function format( mixed $value, int $index ): string
 	{
-		if (!is_string($value) || !in_array($value, self::FORMATS, true)) {
+		if ( !is_string( $value ) || !in_array( $value, self::FORMATS, true ) ) {
 			throw new InvalidArgumentException(sprintf('Column %d format is not supported.', $index));
 		}
 		return $value;
 	}
 
 	/** @return array{width:?int,min_width:?int,max_width:?int,alignment:string,responsive_priority:int,sticky:bool} */
-	private function columnLayout(mixed $value, int $index): array
+	private function columnLayout( mixed $value, int $index ): array
 	{
 		$value = $this->objectMap($value, sprintf('Column %d layout', $index));
 		$this->assertKnownKeys(
@@ -201,19 +201,19 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		$width = $this->nullableBoundedInt($value['width'] ?? null, 40, 2000, sprintf('Column %d width', $index));
 		$min = $this->nullableBoundedInt($value['min_width'] ?? null, 40, 2000, sprintf('Column %d min_width', $index));
 		$max = $this->nullableBoundedInt($value['max_width'] ?? null, 40, 2000, sprintf('Column %d max_width', $index));
-		if ($min !== null && $max !== null && $min > $max) {
+		if ( $min !== null && $max !== null && $min > $max ) {
 			throw new InvalidArgumentException(sprintf('Column %d min_width cannot exceed max_width.', $index));
 		}
-		if ($width !== null && (($min !== null && $width < $min) || ($max !== null && $width > $max))) {
+		if ( $width !== null && ( ( $min !== null && $width < $min ) || ( $max !== null && $width > $max ) ) ) {
 			throw new InvalidArgumentException(sprintf('Column %d width must remain within min/max bounds.', $index));
 		}
 
 		$alignment = $value['alignment'] ?? 'left';
-		if (!is_string($alignment) || !in_array($alignment, self::ALIGNMENTS, true)) {
+		if ( !is_string( $alignment ) || !in_array( $alignment, self::ALIGNMENTS, true ) ) {
 			throw new InvalidArgumentException(sprintf('Column %d alignment is not supported.', $index));
 		}
 		$priority = $value['responsive_priority'] ?? 50;
-		if (!is_int($priority) || $priority < 0 || $priority > 100) {
+		if ( !is_int( $priority ) || $priority < 0 || $priority > 100 ) {
 			throw new InvalidArgumentException(sprintf('Column %d responsive_priority must be 0..100.', $index));
 		}
 
@@ -228,7 +228,7 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return array{roles:list<string>,users:list<int>,capabilities:list<string>} */
-	private function assignment(mixed $value): array
+	private function assignment( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'View assignment');
 		$this->assertKnownKeys($value, ['roles', 'users', 'capabilities'], 'View assignment');
@@ -241,7 +241,7 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return array{density:string,sticky_header:bool,horizontal_scroll:bool} */
-	private function viewLayout(mixed $value): array
+	private function viewLayout( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'View layout');
 		$this->assertKnownKeys($value, ['density', 'sticky_header', 'horizontal_scroll'], 'View layout');
@@ -258,12 +258,12 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return array{mode:string,reason:?string} */
-	private function visibility(mixed $value): array
+	private function visibility( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'View visibility');
 		$this->assertKnownKeys($value, ['mode', 'reason'], 'View visibility');
 		$mode = $value['mode'] ?? 'visible';
-		if (!is_string($mode) || !in_array($mode, self::VISIBILITY_MODES, true)) {
+		if ( !is_string( $mode ) || !in_array( $mode, self::VISIBILITY_MODES, true ) ) {
 			throw new InvalidArgumentException('View visibility mode is not supported.');
 		}
 		$reason = $value['reason'] ?? null;
@@ -275,25 +275,25 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @param array<string,mixed> $map @param list<string> $allowed */
-	private function assertKnownKeys(array $map, array $allowed, string $label): void
+	private function assertKnownKeys( array $map, array $allowed, string $label ): void
 	{
-		foreach (array_keys($map) as $key) {
-			if (!in_array($key, $allowed, true)) {
+		foreach ( array_keys( $map ) as $key ) {
+			if ( !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException(sprintf('%s contains unsupported option "%s".', $label, (string) $key));
 			}
 		}
 	}
 
 	/** @return array<string,mixed> */
-	private function objectMap(mixed $value, string $label): array
+	private function objectMap( mixed $value, string $label ): array
 	{
-		if (!is_array($value) || array_is_list($value)) {
+		if ( !is_array( $value ) || array_is_list( $value ) ) {
 			throw new InvalidArgumentException($label . ' must be an object/map.');
 		}
 		return $value;
 	}
 
-	private function machineKey(mixed $value, string $label): string
+	private function machineKey( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $value) !== 1) {
 			throw new InvalidArgumentException($label . ' must be a stable lowercase machine key.');
@@ -301,7 +301,7 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		return $value;
 	}
 
-	private function reference(mixed $value, string $label): string
+	private function reference( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || preg_match('/^[a-z0-9][a-z0-9._:-]{0,191}$/', $value) !== 1) {
 			throw new InvalidArgumentException($label . ' must be a bounded typed reference.');
@@ -309,7 +309,7 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		return $value;
 	}
 
-	private function uuid(mixed $value, string $label): string
+	private function uuid( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) !== 1) {
 			throw new InvalidArgumentException($label . ' must be a lowercase RFC 4122 UUID.');
@@ -317,44 +317,44 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		return $value;
 	}
 
-	private function nonEmptyString(mixed $value, string $label): string
+	private function nonEmptyString( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || trim($value) === '' || mb_strlen(trim($value)) > 191) {
 			throw new InvalidArgumentException($label . ' must be a non-empty bounded string.');
 		}
-		return trim($value);
+		return trim( $value );
 	}
 
-	private function boolean(mixed $value, string $label): bool
+	private function boolean( mixed $value, string $label ): bool
 	{
-		if (!is_bool($value)) {
+		if ( !is_bool( $value ) ) {
 			throw new InvalidArgumentException($label . ' must be boolean.');
 		}
 		return $value;
 	}
 
-	private function nullableBoundedInt(mixed $value, int $min, int $max, string $label): ?int
+	private function nullableBoundedInt( mixed $value, int $min, int $max, string $label ): ?int
 	{
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
-		if (!is_int($value) || $value < $min || $value > $max) {
+		if ( !is_int( $value ) || $value < $min || $value > $max ) {
 			throw new InvalidArgumentException(sprintf('%s must be null or %d..%d.', $label, $min, $max));
 		}
 		return $value;
 	}
 
 	/** @return list<string> */
-	private function uniqueMachineList(mixed $value, string $label): array
+	private function uniqueMachineList( mixed $value, string $label ): array
 	{
-		if (!is_array($value) || !array_is_list($value) || count($value) > 100) {
+		if ( !is_array( $value ) || !array_is_list( $value ) || count( $value ) > 100 ) {
 			throw new InvalidArgumentException($label . ' must be a bounded list.');
 		}
 		$result = [];
 		$seen = [];
-		foreach ($value as $item) {
+		foreach ( $value as $item ) {
 			$key = $this->machineKey($item, $label . ' item');
-			if (isset($seen[$key])) {
+			if ( isset( $seen[$key] ) ) {
 				throw new InvalidArgumentException($label . ' must contain unique values.');
 			}
 			$seen[$key] = true;
@@ -364,15 +364,15 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 	}
 
 	/** @return list<int> */
-	private function uniquePositiveIntList(mixed $value, string $label): array
+	private function uniquePositiveIntList( mixed $value, string $label ): array
 	{
-		if (!is_array($value) || !array_is_list($value) || count($value) > 100) {
+		if ( !is_array( $value ) || !array_is_list( $value ) || count( $value ) > 100 ) {
 			throw new InvalidArgumentException($label . ' must be a bounded list.');
 		}
 		$result = [];
 		$seen = [];
-		foreach ($value as $item) {
-			if (!is_int($item) || $item < 1 || isset($seen[$item])) {
+		foreach ( $value as $item ) {
+			if ( !is_int( $item ) || $item < 1 || isset( $seen[$item] ) ) {
 				throw new InvalidArgumentException($label . ' must contain unique positive integers.');
 			}
 			$seen[$item] = true;
