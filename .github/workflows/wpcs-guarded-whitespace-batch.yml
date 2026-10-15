@@ -78,8 +78,8 @@ jobs:
               if score:
                   candidates.append((score, path.relative_to(root).as_posix()))
           candidates.sort(key=lambda row: (-row[0], row[1]))
-          Path('/tmp/wpcs-candidates').write_text(''.join(path + '\n' for _, path in candidates[:100]))
-          print('Candidate source files:', len(candidates), 'selected:', len(candidates[:100]))
+          Path('/tmp/wpcs-candidates').write_text(''.join(path + '\n' for _, path in candidates[:200]))
+          print('Candidate source files:', len(candidates), 'selected:', len(candidates[:200]))
           print('Highest candidate scores:', candidates[:5])
           PY
 
