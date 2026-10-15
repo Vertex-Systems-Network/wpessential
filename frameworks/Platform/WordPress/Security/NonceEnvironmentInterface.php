@@ -6,12 +6,12 @@ namespace WPEssential\Platform\WordPress\Security;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface NonceEnvironmentInterface
 {
-    public function create(string $action): string;
+	public function create(string $action): string;
 
-    public function verify(string $nonce, string $action): bool;
+	public function verify(string $nonce, string $action): bool;
 }

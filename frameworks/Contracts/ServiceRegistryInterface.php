@@ -6,14 +6,14 @@ namespace WPEssential\Contracts;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface ServiceRegistryInterface
 {
-    public function has(string $id): bool;
+	public function has(string $id): bool;
 
-    public function set(string $id, object $service): void;
+	public function set(string $id, object $service): void;
 
-    public function get(string $id): object;
+	public function get(string $id): object;
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Contracts;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
@@ -13,7 +13,7 @@ use WPEssential\Platform\Components\ComponentBlueprintDescriptor;
 /** Shared lookup boundary for canonical component blueprints. */
 interface ComponentBlueprintRegistryInterface
 {
-    public const CONTRACT_VERSION = 1;
+	public const CONTRACT_VERSION = 1;
 
-    public function get(string $blueprintId, int $revision): ?ComponentBlueprintDescriptor;
+	public function get(string $blueprintId, int $revision): ?ComponentBlueprintDescriptor;
 }

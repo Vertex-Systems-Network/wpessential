@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace WPEssential\Platform\Cache;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface CacheClockInterface
 {
-    public function now(): int;
+	public function now(): int;
 }

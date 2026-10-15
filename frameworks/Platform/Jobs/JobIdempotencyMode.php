@@ -6,13 +6,13 @@ namespace WPEssential\Platform\Jobs;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 enum JobIdempotencyMode: string
 {
-    case Natural = 'natural';
-    case StableKey = 'stable_key';
-    case Checkpoint = 'checkpoint';
-    case Reconciliation = 'reconciliation';
+	case Natural = 'natural';
+	case StableKey = 'stable_key';
+	case Checkpoint = 'checkpoint';
+	case Reconciliation = 'reconciliation';
 }

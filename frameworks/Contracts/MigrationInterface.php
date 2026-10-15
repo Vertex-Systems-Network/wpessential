@@ -6,18 +6,18 @@ namespace WPEssential\Contracts;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface MigrationInterface
 {
-    public function id(): string;
+	public function id(): string;
 
-    public function sequence(): int;
+	public function sequence(): int;
 
-    public function isDestructive(): bool;
+	public function isDestructive(): bool;
 
-    public function recoveryPlan(): ?string;
+	public function recoveryPlan(): ?string;
 
-    public function apply(): void;
+	public function apply(): void;
 }

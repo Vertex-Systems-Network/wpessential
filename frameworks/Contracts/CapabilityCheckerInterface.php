@@ -6,12 +6,12 @@ namespace WPEssential\Contracts;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Auth\ExecutionContext;
 
 interface CapabilityCheckerInterface
 {
-    public function can(ExecutionContext $context, string $capability): bool;
+	public function can(ExecutionContext $context, string $capability): bool;
 }

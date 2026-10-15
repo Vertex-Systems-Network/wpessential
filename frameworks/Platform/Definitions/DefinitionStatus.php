@@ -6,13 +6,13 @@ namespace WPEssential\Platform\Definitions;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 enum DefinitionStatus: string
 {
-    case Draft = 'draft';
-    case Published = 'published';
-    case Disabled = 'disabled';
-    case Archived = 'archived';
+	case Draft = 'draft';
+	case Published = 'published';
+	case Disabled = 'disabled';
+	case Archived = 'archived';
 }

@@ -6,12 +6,12 @@ namespace WPEssential\Platform\Assets;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 enum AssetLoadStrategy: string
 {
-    case OnDemand = 'on_demand';
-    case AdminRoute = 'admin_route';
-    case RenderDiscovery = 'render_discovery';
+	case OnDemand = 'on_demand';
+	case AdminRoute = 'admin_route';
+	case RenderDiscovery = 'render_discovery';
 }

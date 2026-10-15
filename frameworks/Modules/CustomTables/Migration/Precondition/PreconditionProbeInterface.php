@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace WPEssential\Modules\CustomTables\Migration\Precondition;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface PreconditionProbeInterface
 {
-    public function evaluate(PreconditionRequirement $requirement): PreconditionEvaluation;
+	public function evaluate(PreconditionRequirement $requirement): PreconditionEvaluation;
 }

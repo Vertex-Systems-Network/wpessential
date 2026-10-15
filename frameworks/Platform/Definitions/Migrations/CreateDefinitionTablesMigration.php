@@ -6,7 +6,7 @@ namespace WPEssential\Platform\Definitions\Migrations;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use RuntimeException;
@@ -16,39 +16,39 @@ use WPEssential\Platform\Definitions\DefinitionTableNames;
 
 final class CreateDefinitionTablesMigration implements MigrationInterface
 {
-    private readonly DefinitionTableNames $tables;
+	private readonly DefinitionTableNames $tables;
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new DefinitionTableNames($database);
-    }
+	public function __construct(private readonly DatabaseAdapterInterface $database)
+	{
+		$this->tables = new DefinitionTableNames($database);
+	}
 
-    public function id(): string
-    {
-        return '007.create-definition-persistence';
-    }
+	public function id(): string
+	{
+		return '007.create-definition-persistence';
+	}
 
-    public function sequence(): int
-    {
-        return 70;
-    }
+	public function sequence(): int
+	{
+		return 70;
+	}
 
-    public function isDestructive(): bool
-    {
-        return false;
-    }
+	public function isDestructive(): bool
+	{
+		return false;
+	}
 
-    public function recoveryPlan(): ?string
-    {
-        return null;
-    }
+	public function recoveryPlan(): ?string
+	{
+		return null;
+	}
 
-    public function apply(): void
-    {
-        $charset = trim($this->database->charsetCollate());
-        $charsetSql = $charset === '' ? '' : ' ' . $charset;
+	public function apply(): void
+	{
+		$charset = trim($this->database->charsetCollate());
+		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
-        $definitionsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->definitions}` (
+		$definitionsSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->definitions}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             id CHAR(36) NOT NULL,
@@ -68,7 +68,7 @@ final class CreateDefinitionTablesMigration implements MigrationInterface
             KEY scope_updated (network_id, site_id, updated_at)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        $dependenciesSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->dependencies}` (
+		$dependenciesSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->dependencies}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             definition_id CHAR(36) NOT NULL,
@@ -78,10 +78,10 @@ final class CreateDefinitionTablesMigration implements MigrationInterface
             KEY dependency_lookup (network_id, site_id, dependency_id, definition_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        foreach ([$definitionsSql, $dependenciesSql] as $sql) {
-            if ($this->database->query($sql) === false) {
-                throw new RuntimeException('Failed to create definition persistence tables: ' . $this->database->lastError());
-            }
-        }
-    }
+		foreach ([$definitionsSql, $dependenciesSql] as $sql) {
+			if ($this->database->query($sql) === false) {
+				throw new RuntimeException('Failed to create definition persistence tables: ' . $this->database->lastError());
+			}
+		}
+	}
 }

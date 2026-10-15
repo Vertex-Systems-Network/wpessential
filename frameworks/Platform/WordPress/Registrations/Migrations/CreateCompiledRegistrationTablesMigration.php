@@ -6,7 +6,7 @@ namespace WPEssential\Platform\WordPress\Registrations\Migrations;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use RuntimeException;
@@ -16,39 +16,39 @@ use WPEssential\Platform\WordPress\Registrations\CompiledRegistrationTableNames;
 
 final class CreateCompiledRegistrationTablesMigration implements MigrationInterface
 {
-    private readonly CompiledRegistrationTableNames $tables;
+	private readonly CompiledRegistrationTableNames $tables;
 
-    public function __construct(private readonly DatabaseAdapterInterface $database)
-    {
-        $this->tables = new CompiledRegistrationTableNames($database);
-    }
+	public function __construct(private readonly DatabaseAdapterInterface $database)
+	{
+		$this->tables = new CompiledRegistrationTableNames($database);
+	}
 
-    public function id(): string
-    {
-        return '006.create-compiled-registration-atomic-store';
-    }
+	public function id(): string
+	{
+		return '006.create-compiled-registration-atomic-store';
+	}
 
-    public function sequence(): int
-    {
-        return 60;
-    }
+	public function sequence(): int
+	{
+		return 60;
+	}
 
-    public function isDestructive(): bool
-    {
-        return false;
-    }
+	public function isDestructive(): bool
+	{
+		return false;
+	}
 
-    public function recoveryPlan(): ?string
-    {
-        return null;
-    }
+	public function recoveryPlan(): ?string
+	{
+		return null;
+	}
 
-    public function apply(): void
-    {
-        $charset = trim($this->database->charsetCollate());
-        $charsetSql = $charset === '' ? '' : ' ' . $charset;
+	public function apply(): void
+	{
+		$charset = trim($this->database->charsetCollate());
+		$charsetSql = $charset === '' ? '' : ' ' . $charset;
 
-        $generationSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->generations}` (
+		$generationSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->generations}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             generation BIGINT UNSIGNED NOT NULL,
@@ -61,7 +61,7 @@ final class CreateCompiledRegistrationTablesMigration implements MigrationInterf
             KEY scope_corrupt_generation (network_id, site_id, corrupt_at, generation)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        $stateSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->state}` (
+		$stateSql = "CREATE TABLE IF NOT EXISTS `{$this->tables->state}` (
             network_id BIGINT UNSIGNED NOT NULL,
             site_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
             active_generation BIGINT UNSIGNED NULL DEFAULT NULL,
@@ -70,10 +70,10 @@ final class CreateCompiledRegistrationTablesMigration implements MigrationInterf
             PRIMARY KEY (network_id, site_id)
         ) ENGINE=InnoDB{$charsetSql}";
 
-        foreach ([$generationSql, $stateSql] as $sql) {
-            if ($this->database->query($sql) === false) {
-                throw new RuntimeException('Failed to create compiled registration persistence tables: ' . $this->database->lastError());
-            }
-        }
-    }
+		foreach ([$generationSql, $stateSql] as $sql) {
+			if ($this->database->query($sql) === false) {
+				throw new RuntimeException('Failed to create compiled registration persistence tables: ' . $this->database->lastError());
+			}
+		}
+	}
 }

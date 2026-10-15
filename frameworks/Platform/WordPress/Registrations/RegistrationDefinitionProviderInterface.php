@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace WPEssential\Platform\WordPress\Registrations;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 interface RegistrationDefinitionProviderInterface
 {
-    public function id(): string;
+	public function id(): string;
 
-    /** @return iterable<RegistrationDefinition> */
-    public function definitions(): iterable;
+	/** @return iterable<RegistrationDefinition> */
+	public function definitions(): iterable;
 }

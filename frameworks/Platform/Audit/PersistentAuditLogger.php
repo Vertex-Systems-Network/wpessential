@@ -6,7 +6,7 @@ namespace WPEssential\Platform\Audit;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use RuntimeException;
@@ -16,25 +16,25 @@ use WPEssential\Platform\Database\DatabaseAdapterInterface;
 
 final class PersistentAuditLogger implements AuditLoggerInterface
 {
-    private readonly AuditTableNames $tables;
+	private readonly AuditTableNames $tables;
 
-    public function __construct(
-        private readonly DatabaseAdapterInterface $database,
-        private readonly AuditRowCodec $codec = new AuditRowCodec(),
-    ) {
-        $this->tables = new AuditTableNames($database);
-    }
+	public function __construct(
+		private readonly DatabaseAdapterInterface $database,
+		private readonly AuditRowCodec $codec = new AuditRowCodec(),
+	) {
+		$this->tables = new AuditTableNames($database);
+	}
 
-    public function record(AuditRecord $record): void
-    {
-        try {
-            $row = $this->codec->encode($record);
-            $this->database->insert($this->tables->events, $row, [
-                '%s', '%d', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%s',
-                '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s',
-            ]);
-        } catch (Throwable $exception) {
-            throw new RuntimeException('Persistent audit append failed.', 0, $exception);
-        }
-    }
+	public function record(AuditRecord $record): void
+	{
+		try {
+			$row = $this->codec->encode($record);
+			$this->database->insert($this->tables->events, $row, [
+				'%s', '%d', '%d', '%s', '%s', '%d', '%s', '%s', '%d', '%s',
+				'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s',
+			]);
+		} catch (Throwable $exception) {
+			throw new RuntimeException('Persistent audit append failed.', 0, $exception);
+		}
+	}
 }

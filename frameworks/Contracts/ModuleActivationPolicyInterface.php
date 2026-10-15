@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace WPEssential\Contracts;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Modules\ModuleManifest;
 
 interface ModuleActivationPolicyInterface
 {
-    public function allows(ModuleManifest $manifest): bool;
+	public function allows(ModuleManifest $manifest): bool;
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace WPEssential\Contracts;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Definitions\Definition;
@@ -19,5 +19,5 @@ use WPEssential\Platform\Definitions\Definition;
  */
 interface DefinitionCreateOnlyRepositoryInterface extends DefinitionRepositoryInterface
 {
-    public function create(Definition $definition): void;
+	public function create(Definition $definition): void;
 }

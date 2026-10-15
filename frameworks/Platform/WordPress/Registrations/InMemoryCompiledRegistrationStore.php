@@ -6,25 +6,25 @@ namespace WPEssential\Platform\WordPress\Registrations;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use RuntimeException;
 
 final class InMemoryCompiledRegistrationStore implements CompiledRegistrationStoreInterface
 {
-    private ?CompiledRegistrationManifest $active = null;
+	private ?CompiledRegistrationManifest $active = null;
 
-    public function active(): ?CompiledRegistrationManifest
-    {
-        return $this->active;
-    }
+	public function active(): ?CompiledRegistrationManifest
+	{
+		return $this->active;
+	}
 
-    public function publish(CompiledRegistrationManifest $manifest): void
-    {
-        if ($this->active !== null && $manifest->generation <= $this->active->generation) {
-            throw new RuntimeException('Compiled registration generation must increase monotonically.');
-        }
-        $this->active = $manifest;
-    }
+	public function publish(CompiledRegistrationManifest $manifest): void
+	{
+		if ($this->active !== null && $manifest->generation <= $this->active->generation) {
+			throw new RuntimeException('Compiled registration generation must increase monotonically.');
+		}
+		$this->active = $manifest;
+	}
 }

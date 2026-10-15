@@ -6,12 +6,12 @@ namespace WPEssential\Contracts;
 
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Audit\AuditRecord;
 
 interface AuditLoggerInterface
 {
-    public function record(AuditRecord $record): void;
+	public function record(AuditRecord $record): void;
 }
