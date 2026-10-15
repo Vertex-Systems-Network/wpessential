@@ -23,7 +23,7 @@ final readonly class StatusPortabilityService
 	private const MAX_DEFINITIONS = 256;
 	private const MAX_PACKAGE_BYTES = 262144;
 
-	public function __construct(private DefinitionRepositoryInterface $definitions)
+	public function __construct( private DefinitionRepositoryInterface $definitions )
 	{
 	}
 
@@ -32,24 +32,24 @@ final readonly class StatusPortabilityService
 	 * @return array<string,mixed>
 	 * @throws JsonException
 	 */
-	public function export(array $definitions): array
+	public function export( array $definitions ): array
 	{
-		if ($definitions === [] || count($definitions) > self::MAX_DEFINITIONS) {
+		if ( $definitions === [] || count( $definitions ) > self::MAX_DEFINITIONS ) {
 			throw new InvalidArgumentException('Status portability requires a bounded non-empty Definition list.');
 		}
 
 		$items = [];
 		$seen = [];
-		foreach ($definitions as $definition) {
-			if (!$definition instanceof Definition) {
+		foreach ( $definitions as $definition ) {
+			if ( !$definition instanceof Definition ) {
 				throw new InvalidArgumentException('Status portability exports typed Definitions only.');
 			}
-			$this->assertCanonicalDefinition($definition);
-			if (isset($seen[$definition->id])) {
+			$this->assertCanonicalDefinition( $definition );
+			if ( isset( $seen[$definition->id] ) ) {
 				throw new InvalidArgumentException('Status portability Definition ids must be unique.');
 			}
 			$seen[$definition->id] = true;
-			$items[] = $this->definitionToArray($definition);
+			$items[] = $this->definitionToArray( $definition );
 		}
 
 		usort(
@@ -63,7 +63,7 @@ final readonly class StatusPortabilityService
 			'definitions' => $items,
 		];
 		$package = $body + ['checksum' => $this->checksum($body)];
-		$this->assertPackageSize($package);
+		$this->assertPackageSize( $package );
 		return $package;
 	}
 
@@ -75,7 +75,7 @@ final readonly class StatusPortabilityService
 	 * @return list<Definition>
 	 * @throws JsonException
 	 */
-	public function import(array $package): array
+	public function import( array $package ): array
 	{
 		$this->assertKnownKeys($package, ['package_version', 'surface_id', 'definitions', 'checksum'], 'Status package');
 		if (($package['package_version'] ?? null) !== self::PACKAGE_VERSION || ($package['surface_id'] ?? null) !== self::OWNER_SURFACE_ID) {
@@ -83,7 +83,7 @@ final readonly class StatusPortabilityService
 		}
 		$items = $package['definitions'] ?? null;
 		$checksum = $package['checksum'] ?? null;
-		if (!is_array($items) || !array_is_list($items) || $items === [] || count($items) > self::MAX_DEFINITIONS) {
+		if ( !is_array( $items ) || !array_is_list( $items ) || $items === [] || count( $items ) > self::MAX_DEFINITIONS ) {
 			throw new InvalidArgumentException('Status portability definitions must be a bounded non-empty list.');
 		}
 		if (!is_string($checksum) || !preg_match('/^[0-9a-f]{64}$/', $checksum)) {
@@ -94,89 +94,89 @@ final readonly class StatusPortabilityService
 			'surface_id' => self::OWNER_SURFACE_ID,
 			'definitions' => $items,
 		];
-		if (!hash_equals($this->checksum($body), $checksum)) {
+		if ( !hash_equals( $this->checksum( $body ), $checksum ) ) {
 			throw new InvalidArgumentException('Status portability package checksum mismatch.');
 		}
-		$this->assertPackageSize($package);
+		$this->assertPackageSize( $package );
 
 		$incoming = [];
 		$seenIds = [];
-		foreach ($items as $item) {
-			if (!is_array($item) || array_is_list($item)) {
+		foreach ( $items as $item ) {
+			if ( !is_array( $item ) || array_is_list( $item ) ) {
 				throw new InvalidArgumentException('Status portability Definition entry must be an object/map.');
 			}
-			$definition = $this->definitionFromArray($item);
-			$this->assertCanonicalDefinition($definition);
-			if (isset($seenIds[$definition->id])) {
+			$definition = $this->definitionFromArray( $item );
+			$this->assertCanonicalDefinition( $definition );
+			if ( isset( $seenIds[$definition->id] ) ) {
 				throw new InvalidArgumentException('Status portability package contains a duplicate Definition id.');
 			}
 			$seenIds[$definition->id] = true;
 			$incoming[] = $definition;
 		}
 
-		$this->assertNoIdentityOrSemanticConflicts($incoming);
+		$this->assertNoIdentityOrSemanticConflicts( $incoming );
 
 		$result = [];
-		foreach ($incoming as $definition) {
-			$existing = $this->definitions->get($definition->id);
-			if ($existing instanceof Definition) {
+		foreach ( $incoming as $definition ) {
+			$existing = $this->definitions->get( $definition->id );
+			if ( $existing instanceof Definition ) {
 				$result[] = $existing;
 				continue;
 			}
-			$this->definitions->save($definition);
+			$this->definitions->save( $definition );
 			$result[] = $definition;
 		}
 		return $result;
 	}
 
 	/** @param list<Definition> $incoming */
-	private function assertNoIdentityOrSemanticConflicts(array $incoming): void
+	private function assertNoIdentityOrSemanticConflicts( array $incoming ): void
 	{
 		$incomingById = [];
-		foreach ($incoming as $definition) {
+		foreach ( $incoming as $definition ) {
 			$incomingById[$definition->id] = $definition;
-			$existing = $this->definitions->get($definition->id);
-			if ($existing instanceof Definition && !$this->equivalent($existing, $definition)) {
+			$existing = $this->definitions->get( $definition->id );
+			if ( $existing instanceof Definition && !$this->equivalent( $existing, $definition ) ) {
 				throw new InvalidArgumentException('Status portability Definition id conflicts with divergent local content.');
 			}
 		}
 
 		$statusKeys = [];
-		foreach ($this->definitions->byType(StatusDefinitionCompiler::TYPE) as $existing) {
+		foreach ( $this->definitions->byType( StatusDefinitionCompiler::TYPE ) as $existing ) {
 			$key = $existing->payload['key'] ?? null;
-			if (is_string($key)) {
+			if ( is_string( $key ) ) {
 				$statusKeys[$key] = $existing->id;
 			}
 		}
-		foreach ($incoming as $definition) {
-			if ($definition->type !== StatusDefinitionCompiler::TYPE) {
+		foreach ( $incoming as $definition ) {
+			if ( $definition->type !== StatusDefinitionCompiler::TYPE ) {
 				continue;
 			}
 			$key = $definition->payload['key'] ?? null;
-			if (!is_string($key)) {
+			if ( !is_string( $key ) ) {
 				throw new InvalidArgumentException('Status portability Status definition key is invalid.');
 			}
-			if (isset($statusKeys[$key]) && $statusKeys[$key] !== $definition->id) {
+			if ( isset( $statusKeys[$key] ) && $statusKeys[$key] !== $definition->id ) {
 				throw new InvalidArgumentException('Status portability status key conflicts with another Definition.');
 			}
 			$statusKeys[$key] = $definition->id;
 		}
 
 		$edgeOwners = [];
-		foreach ($this->definitions->byType(StatusTransitionPolicyDefinitionCompiler::TYPE) as $existing) {
-			if (isset($incomingById[$existing->id])) {
+		foreach ( $this->definitions->byType( StatusTransitionPolicyDefinitionCompiler::TYPE ) as $existing ) {
+			if ( isset( $incomingById[$existing->id] ) ) {
 				continue;
 			}
-			foreach ($this->edgeKeys($existing) as $edge) {
+			foreach ( $this->edgeKeys( $existing ) as $edge ) {
 				$edgeOwners[$edge] = $existing->id;
 			}
 		}
-		foreach ($incoming as $definition) {
-			if ($definition->type !== StatusTransitionPolicyDefinitionCompiler::TYPE) {
+		foreach ( $incoming as $definition ) {
+			if ( $definition->type !== StatusTransitionPolicyDefinitionCompiler::TYPE ) {
 				continue;
 			}
-			foreach ($this->edgeKeys($definition) as $edge) {
-				if (isset($edgeOwners[$edge]) && $edgeOwners[$edge] !== $definition->id) {
+			foreach ( $this->edgeKeys( $definition ) as $edge ) {
+				if ( isset( $edgeOwners[$edge] ) && $edgeOwners[$edge] !== $definition->id ) {
 					throw new InvalidArgumentException('Status portability transition edge conflicts with another Definition.');
 				}
 				$edgeOwners[$edge] = $definition->id;
@@ -185,38 +185,38 @@ final readonly class StatusPortabilityService
 	}
 
 	/** @return list<string> */
-	private function edgeKeys(Definition $definition): array
+	private function edgeKeys( Definition $definition ): array
 	{
 		$edges = $definition->payload['edges'] ?? [];
-		if (!is_array($edges) || !array_is_list($edges)) {
+		if ( !is_array( $edges ) || !array_is_list( $edges ) ) {
 			return [];
 		}
 		$keys = [];
-		foreach ($edges as $edge) {
-			if (!is_array($edge)) {
+		foreach ( $edges as $edge ) {
+			if ( !is_array( $edge ) ) {
 				continue;
 			}
 			$from = $edge['from'] ?? null;
 			$to = $edge['to'] ?? null;
-			if (is_string($from) && is_string($to)) {
+			if ( is_string( $from ) && is_string( $to ) ) {
 				$keys[] = $from . '->' . $to;
 			}
 		}
 		return $keys;
 	}
 
-	private function assertCanonicalDefinition(Definition $definition): void
+	private function assertCanonicalDefinition( Definition $definition ): void
 	{
-		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
+		if ( $definition->ownerSurfaceId !== self::OWNER_SURFACE_ID ) {
 			throw new InvalidArgumentException('Status portability accepts only Surface 5 Definitions.');
 		}
-		if (!in_array($definition->type, [StatusDefinitionCompiler::TYPE, StatusTransitionPolicyDefinitionCompiler::TYPE], true)) {
+		if ( !in_array( $definition->type, [StatusDefinitionCompiler::TYPE, StatusTransitionPolicyDefinitionCompiler::TYPE], true ) ) {
 			throw new InvalidArgumentException('Status portability Definition type is unsupported.');
 		}
-		if ($definition->dependencies !== []) {
+		if ( $definition->dependencies !== [] ) {
 			throw new InvalidArgumentException('Status portability bounded V1 does not accept Definition dependencies.');
 		}
-		$this->assertSafeValue($definition->payload);
+		$this->assertSafeValue( $definition->payload );
 
 		$published = $definition->status === DefinitionStatus::Published
 			? $definition
@@ -232,15 +232,15 @@ final readonly class StatusPortabilityService
 				dependencies: [],
 			);
 
-		if ($definition->type === StatusDefinitionCompiler::TYPE) {
-			(new StatusDefinitionCompiler())->compile($published);
+		if ( $definition->type === StatusDefinitionCompiler::TYPE ) {
+			( new StatusDefinitionCompiler() )->compile( $published );
 			return;
 		}
-		(new StatusTransitionPolicyDefinitionCompiler())->compile($published);
+		( new StatusTransitionPolicyDefinitionCompiler() )->compile( $published );
 	}
 
 	/** @return array<string,mixed> */
-	private function definitionToArray(Definition $definition): array
+	private function definitionToArray( Definition $definition ): array
 	{
 		return [
 			'id' => $definition->id,
@@ -256,7 +256,7 @@ final readonly class StatusPortabilityService
 	}
 
 	/** @param array<string,mixed> $item */
-	private function definitionFromArray(array $item): Definition
+	private function definitionFromArray( array $item ): Definition
 	{
 		$this->assertKnownKeys(
 			$item,
@@ -267,11 +267,11 @@ final readonly class StatusPortabilityService
 		$dependencies = $item['dependencies'] ?? null;
 		$statusValue = $item['status'] ?? null;
 		$sourceRevision = $item['source_revision'] ?? null;
-		if (!is_array($payload) || array_is_list($payload) || $dependencies !== [] || !is_string($statusValue) || !is_int($sourceRevision) || $sourceRevision < 1) {
+		if ( !is_array( $payload ) || array_is_list( $payload ) || $dependencies !== [] || !is_string( $statusValue ) || !is_int( $sourceRevision ) || $sourceRevision < 1 ) {
 			throw new InvalidArgumentException('Status portability Definition metadata is invalid.');
 		}
-		$status = DefinitionStatus::tryFrom($statusValue);
-		if (!$status instanceof DefinitionStatus) {
+		$status = DefinitionStatus::tryFrom( $statusValue );
+		if ( !$status instanceof DefinitionStatus ) {
 			throw new InvalidArgumentException('Status portability Definition lifecycle status is invalid.');
 		}
 
@@ -287,13 +287,13 @@ final readonly class StatusPortabilityService
 			dependencies: [],
 		);
 		$payloadChecksum = $item['payload_checksum'] ?? null;
-		if (!is_string($payloadChecksum) || !hash_equals($definition->computedChecksum(), $payloadChecksum)) {
+		if ( !is_string( $payloadChecksum ) || !hash_equals( $definition->computedChecksum(), $payloadChecksum ) ) {
 			throw new InvalidArgumentException('Status portability Definition payload checksum mismatch.');
 		}
 		return $definition;
 	}
 
-	private function equivalent(Definition $existing, Definition $incoming): bool
+	private function equivalent( Definition $existing, Definition $incoming ): bool
 	{
 		return $existing->id === $incoming->id
 			&& $existing->slug === $incoming->slug
@@ -302,19 +302,19 @@ final readonly class StatusPortabilityService
 			&& $existing->ownerSurfaceId === $incoming->ownerSurfaceId
 			&& $existing->status === $incoming->status
 			&& $existing->dependencies === $incoming->dependencies
-			&& hash_equals($existing->computedChecksum(), $incoming->computedChecksum());
+			&& hash_equals( $existing->computedChecksum(), $incoming->computedChecksum() );
 	}
 
-	private function assertSafeValue(mixed $value): void
+	private function assertSafeValue( mixed $value ): void
 	{
 		if (is_string($value) && preg_match('/<\?(?:php|=)|<script\b|javascript:/i', $value)) {
 			throw new InvalidArgumentException('Executable channels are forbidden in Status portability payloads.');
 		}
-		if (!is_array($value)) {
+		if ( !is_array( $value ) ) {
 			return;
 		}
-		foreach ($value as $item) {
-			$this->assertSafeValue($item);
+		foreach ( $value as $item ) {
+			$this->assertSafeValue( $item );
 		}
 	}
 
@@ -322,41 +322,41 @@ final readonly class StatusPortabilityService
 	 * @param array<string,mixed> $value
 	 * @param list<string> $allowed
 	 */
-	private function assertKnownKeys(array $value, array $allowed, string $label): void
+	private function assertKnownKeys( array $value, array $allowed, string $label ): void
 	{
-		foreach (array_keys($value) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException($label . ' contains an unsupported key.');
 			}
 		}
 	}
 
 	/** @param array<string,mixed> $value */
-	private function checksum(array $value): string
+	private function checksum( array $value ): string
 	{
 		return hash('sha256', json_encode($this->canonicalize($value), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 	}
 
-	private function canonicalize(mixed $value): mixed
+	private function canonicalize( mixed $value ): mixed
 	{
-		if (!is_array($value)) {
+		if ( !is_array( $value ) ) {
 			return $value;
 		}
-		if (array_is_list($value)) {
-			return array_map($this->canonicalize(...), $value);
+		if ( array_is_list( $value ) ) {
+			return array_map( $this->canonicalize( ... ), $value );
 		}
-		ksort($value, SORT_STRING);
-		foreach ($value as $key => $item) {
-			$value[$key] = $this->canonicalize($item);
+		ksort( $value, SORT_STRING );
+		foreach ( $value as $key => $item ) {
+			$value[$key] = $this->canonicalize( $item );
 		}
 		return $value;
 	}
 
 	/** @param array<string,mixed> $package */
-	private function assertPackageSize(array $package): void
+	private function assertPackageSize( array $package ): void
 	{
-		$encoded = json_encode($package, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-		if (strlen($encoded) > self::MAX_PACKAGE_BYTES) {
+		$encoded = json_encode( $package, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		if ( strlen( $encoded ) > self::MAX_PACKAGE_BYTES ) {
 			throw new InvalidArgumentException('Status portability package exceeds the bounded V1 size limit.');
 		}
 	}

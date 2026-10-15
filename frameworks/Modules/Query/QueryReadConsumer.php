@@ -45,10 +45,10 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	) {
 	}
 
-	public function describe(string $sourceRef, ExecutionContext $context): array
+	public function describe( string $sourceRef, ExecutionContext $context ): array
 	{
-		$descriptor = $this->dataSources->find($sourceRef);
-		if ($descriptor === null) {
+		$descriptor = $this->dataSources->find( $sourceRef );
+		if ( $descriptor === null ) {
 			throw new InvalidArgumentException('Unknown Query Data Source.');
 		}
 
@@ -70,13 +70,13 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		];
 	}
 
-	public function read(array $request, ExecutionContext $context): array
+	public function read( array $request, ExecutionContext $context ): array
 	{
 		$sourceRef = is_string($request['source_ref'] ?? null) ? $request['source_ref'] : '';
 
 		try {
-			$normalized = $this->normalizeRequest($request);
-		} catch (InvalidArgumentException|JsonException $exception) {
+			$normalized = $this->normalizeRequest( $request );
+		} catch ( InvalidArgumentException|JsonException $exception ) {
 			return $this->failure(
 				$sourceRef,
 				'wpe_query_invalid_consumer_request',
@@ -86,8 +86,8 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		}
 
 		$sourceRef = $normalized['source_ref'];
-		$descriptor = $this->dataSources->find($sourceRef);
-		if ($descriptor === null) {
+		$descriptor = $this->dataSources->find( $sourceRef );
+		if ( $descriptor === null ) {
 			return $this->failure(
 				$sourceRef,
 				'wpe_query_unknown_source',
@@ -106,8 +106,8 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		}
 
 		try {
-			$ast = $this->buildAst($normalized, $descriptor);
-		} catch (JsonException) {
+			$ast = $this->buildAst( $normalized, $descriptor );
+		} catch ( JsonException ) {
 			return $this->failure(
 				$sourceRef,
 				'wpe_query_invalid_consumer_request',
@@ -129,7 +129,7 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 			$context,
 		);
 
-		if (!$validation->isValid() || $validation->definition === null) {
+		if ( !$validation->isValid() || $validation->definition === null ) {
 			$issue = $validation->issues[0] ?? null;
 			return $this->failure(
 				$sourceRef,
@@ -139,8 +139,8 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 			);
 		}
 
-		$result = $this->executor->execute($validation->definition, $context);
-		if ($result instanceof QueryExecutionError) {
+		$result = $this->executor->execute( $validation->definition, $context );
+		if ( $result instanceof QueryExecutionError ) {
 			return $this->failure(
 				$sourceRef,
 				$result->errorCode,
@@ -152,7 +152,7 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		if (
 			$result->sourceRef !== $sourceRef
 			|| $result->projection !== $normalized['projection']
-			|| $result->returned !== count($result->rows)
+			|| $result->returned !== count( $result->rows )
 			|| $result->returned > $normalized['page_size']
 		) {
 			return $this->failure(
@@ -188,20 +188,20 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	 * }
 	 * @throws JsonException
 	 */
-	private function normalizeRequest(array $request): array
+	private function normalizeRequest( array $request ): array
 	{
-		if (array_is_list($request)) {
+		if ( array_is_list( $request ) ) {
 			throw new InvalidArgumentException('Query consumer request must be an object/map.');
 		}
 		$this->assertKnownKeys($request, self::REQUEST_KEYS, 'Query consumer request');
 
-		$encoded = json_encode($request, JSON_THROW_ON_ERROR);
-		if (strlen($encoded) > self::MAX_REQUEST_BYTES) {
+		$encoded = json_encode( $request, JSON_THROW_ON_ERROR );
+		if ( strlen( $encoded ) > self::MAX_REQUEST_BYTES ) {
 			throw new InvalidArgumentException('Query consumer request exceeds the bounded byte limit.');
 		}
 
 		$contractVersion = $request['contract_version'] ?? null;
-		if ($contractVersion !== self::CONTRACT_VERSION) {
+		if ( $contractVersion !== self::CONTRACT_VERSION ) {
 			throw new InvalidArgumentException('Query consumer contract version is unsupported.');
 		}
 
@@ -212,12 +212,12 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		$orderBy = $this->orderBy($request['order_by'] ?? []);
 
 		$pageSize = $request['page_size'] ?? 20;
-		if (!is_int($pageSize) || $pageSize < 1 || $pageSize > self::MAX_PAGE_SIZE) {
+		if ( !is_int( $pageSize ) || $pageSize < 1 || $pageSize > self::MAX_PAGE_SIZE ) {
 			throw new InvalidArgumentException('Query page_size must be within the bounded V1 limit.');
 		}
 
 		$offset = $request['offset'] ?? 0;
-		if (!is_int($offset) || $offset < 0 || $offset > self::MAX_OFFSET) {
+		if ( !is_int( $offset ) || $offset < 0 || $offset > self::MAX_OFFSET ) {
 			throw new InvalidArgumentException('Query offset exceeds the bounded V1 limit.');
 		}
 
@@ -234,20 +234,20 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	}
 
 	/** @return list<string> */
-	private function projection(mixed $value): array
+	private function projection( mixed $value ): array
 	{
-		if (!is_array($value) || !array_is_list($value) || $value === []) {
+		if ( !is_array( $value ) || !array_is_list( $value ) || $value === [] ) {
 			throw new InvalidArgumentException('Query projection must be a non-empty list.');
 		}
-		if (count($value) > self::MAX_PROJECTION_FIELDS) {
+		if ( count( $value ) > self::MAX_PROJECTION_FIELDS ) {
 			throw new InvalidArgumentException('Query projection exceeds the bounded V1 field limit.');
 		}
 
 		$projection = [];
 		$seen = [];
-		foreach ($value as $fieldRef) {
+		foreach ( $value as $fieldRef ) {
 			$fieldRef = $this->semanticReference($fieldRef, 'Query projection field');
-			if (isset($seen[$fieldRef])) {
+			if ( isset( $seen[$fieldRef] ) ) {
 				throw new InvalidArgumentException('Query projection fields must be unique.');
 			}
 			$seen[$fieldRef] = true;
@@ -258,18 +258,18 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	}
 
 	/** @return list<array{field_ref:string,operator:string,value:mixed}> */
-	private function filters(mixed $value): array
+	private function filters( mixed $value ): array
 	{
-		if (!is_array($value) || !array_is_list($value)) {
+		if ( !is_array( $value ) || !array_is_list( $value ) ) {
 			throw new InvalidArgumentException('Query filters must be a list.');
 		}
-		if (count($value) > self::MAX_FILTERS) {
+		if ( count( $value ) > self::MAX_FILTERS ) {
 			throw new InvalidArgumentException('Query filters exceed the bounded V1 limit.');
 		}
 
 		$filters = [];
-		foreach ($value as $index => $filter) {
-			if (!is_array($filter) || array_is_list($filter)) {
+		foreach ( $value as $index => $filter ) {
+			if ( !is_array( $filter ) || array_is_list( $filter ) ) {
 				throw new InvalidArgumentException(sprintf('Query filter %d must be an object/map.', $index));
 			}
 			$this->assertKnownKeys($filter, self::FILTER_KEYS, sprintf('Query filter %d', $index));
@@ -279,19 +279,19 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 
 			$fieldRef = $this->semanticReference($filter['field_ref'] ?? null, sprintf('Query filter %d field', $index));
 			$operator = $filter['operator'] ?? null;
-			if (!is_string($operator) || !in_array($operator, self::FILTER_OPERATORS, true)) {
+			if ( !is_string( $operator ) || !in_array( $operator, self::FILTER_OPERATORS, true ) ) {
 				throw new InvalidArgumentException(sprintf('Query filter %d operator is not supported by consumer V1.', $index));
 			}
 
 			$filterValue = $filter['value'];
 			if (in_array($operator, ['in', 'not_in'], true)) {
-				if (!is_array($filterValue) || !array_is_list($filterValue) || $filterValue === []) {
+				if ( !is_array( $filterValue ) || !array_is_list( $filterValue ) || $filterValue === [] ) {
 					throw new InvalidArgumentException(sprintf('Query filter %d set value must be a non-empty list.', $index));
 				}
-				if (count($filterValue) > self::MAX_FILTER_VALUES) {
+				if ( count( $filterValue ) > self::MAX_FILTER_VALUES ) {
 					throw new InvalidArgumentException(sprintf('Query filter %d exceeds the bounded value-list limit.', $index));
 				}
-			} elseif (is_array($filterValue) || is_object($filterValue) || is_resource($filterValue)) {
+			} elseif ( is_array( $filterValue ) || is_object( $filterValue ) || is_resource( $filterValue ) ) {
 				throw new InvalidArgumentException(sprintf('Query filter %d comparison value must be scalar or null.', $index));
 			}
 
@@ -305,15 +305,15 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		return $filters;
 	}
 
-	private function search(mixed $value): ?string
+	private function search( mixed $value ): ?string
 	{
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
-		if (!is_string($value)) {
+		if ( !is_string( $value ) ) {
 			throw new InvalidArgumentException('Query search must be a string when provided.');
 		}
-		$value = trim($value);
+		$value = trim( $value );
 		if ($value === '' || strlen($value) > self::MAX_SEARCH_LENGTH) {
 			throw new InvalidArgumentException('Query search must be non-empty and within the bounded V1 length.');
 		}
@@ -322,19 +322,19 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	}
 
 	/** @return list<array{field_ref:string,direction:string}> */
-	private function orderBy(mixed $value): array
+	private function orderBy( mixed $value ): array
 	{
-		if (!is_array($value) || !array_is_list($value)) {
+		if ( !is_array( $value ) || !array_is_list( $value ) ) {
 			throw new InvalidArgumentException('Query order_by must be a list.');
 		}
-		if (count($value) > self::MAX_ORDER_FIELDS) {
+		if ( count( $value ) > self::MAX_ORDER_FIELDS ) {
 			throw new InvalidArgumentException('Query order_by exceeds the bounded V1 field limit.');
 		}
 
 		$orderBy = [];
 		$seen = [];
-		foreach ($value as $index => $order) {
-			if (!is_array($order) || array_is_list($order)) {
+		foreach ( $value as $index => $order ) {
+			if ( !is_array( $order ) || array_is_list( $order ) ) {
 				throw new InvalidArgumentException(sprintf('Query order %d must be an object/map.', $index));
 			}
 			$this->assertKnownKeys($order, self::ORDER_KEYS, sprintf('Query order %d', $index));
@@ -343,7 +343,7 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 			if (!is_string($direction) || !in_array($direction, ['asc', 'desc'], true)) {
 				throw new InvalidArgumentException(sprintf('Query order %d direction must be asc or desc.', $index));
 			}
-			if (isset($seen[$fieldRef])) {
+			if ( isset( $seen[$fieldRef] ) ) {
 				throw new InvalidArgumentException('Query order fields must be unique.');
 			}
 			$seen[$fieldRef] = true;
@@ -367,7 +367,7 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	 * @return array<string,mixed>
 	 * @throws JsonException
 	 */
-	private function buildAst(array $request, DataSourceDescriptor $descriptor): array
+	private function buildAst( array $request, DataSourceDescriptor $descriptor ): array
 	{
 		$predicates = [];
 		foreach ($request['filters'] as $filter) {
@@ -398,9 +398,9 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 		}
 
 		$filter = null;
-		if (count($predicates) === 1) {
+		if ( count( $predicates ) === 1 ) {
 			$filter = $predicates[0];
-		} elseif ($predicates !== []) {
+		} elseif ( $predicates !== [] ) {
 			$filter = [
 				'type' => 'group',
 				'boolean' => 'and',
@@ -446,7 +446,7 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	 * @param array<string,mixed> $request
 	 * @throws JsonException
 	 */
-	private function requestUuid(array $request): string
+	private function requestUuid( array $request ): string
 	{
 		$hash = substr(hash('sha256', json_encode($request, JSON_THROW_ON_ERROR)), 0, 32);
 		$hash[12] = '5';
@@ -454,15 +454,15 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 
 		return sprintf(
 			'%s-%s-%s-%s-%s',
-			substr($hash, 0, 8),
-			substr($hash, 8, 4),
-			substr($hash, 12, 4),
-			substr($hash, 16, 4),
-			substr($hash, 20, 12),
+			substr( $hash, 0, 8 ),
+			substr( $hash, 8, 4 ),
+			substr( $hash, 12, 4 ),
+			substr( $hash, 16, 4 ),
+			substr( $hash, 20, 12 ),
 		);
 	}
 
-	private function semanticReference(mixed $value, string $label): string
+	private function semanticReference( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || preg_match('/^[a-z][a-z0-9._-]{0,127}$/', $value) !== 1) {
 			throw new InvalidArgumentException($label . ' must be a stable semantic reference.');
@@ -472,17 +472,17 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 	}
 
 	/** @param array<mixed> $value @param list<string> $allowed */
-	private function assertKnownKeys(array $value, array $allowed, string $label): void
+	private function assertKnownKeys( array $value, array $allowed, string $label ): void
 	{
-		foreach (array_keys($value) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException($label . ' contains an unsupported property.');
 			}
 		}
 	}
 
 	/** @return array<string,mixed> */
-	private function failure(string $sourceRef, string $code, string $path, string $message): array
+	private function failure( string $sourceRef, string $code, string $path, string $message ): array
 	{
 		return [
 			'contract_version' => self::CONTRACT_VERSION,

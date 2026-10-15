@@ -43,39 +43,39 @@ final class WordPressPostMetaRegistrar
 		?callable $unregisterMetaKey = null,
 	) {
 		$this->registerPostMeta = $registerPostMeta !== null
-			? Closure::fromCallable($registerPostMeta)
-			: static function (string $postType, string $metaKey, array $args): bool {
+			? Closure::fromCallable( $registerPostMeta )
+			: static function ( string $postType, string $metaKey, array $args ): bool {
 				if (!function_exists('register_post_meta')) {
 					throw new LogicException('WordPress register_post_meta() is unavailable.');
 				}
-				return register_post_meta($postType, $metaKey, $args);
+				return register_post_meta( $postType, $metaKey, $args );
 			};
 
 		$this->postTypeSupports = $postTypeSupports !== null
-			? Closure::fromCallable($postTypeSupports)
-			: static function (string $postType, string $feature): bool {
+			? Closure::fromCallable( $postTypeSupports )
+			: static function ( string $postType, string $feature ): bool {
 				if (!function_exists('post_type_supports')) {
 					throw new LogicException('WordPress post_type_supports() is unavailable.');
 				}
-				return post_type_supports($postType, $feature);
+				return post_type_supports( $postType, $feature );
 			};
 
 		$this->getRegisteredMetaKeys = $getRegisteredMetaKeys !== null
-			? Closure::fromCallable($getRegisteredMetaKeys)
-			: static function (string $objectType, string $objectSubtype): array {
+			? Closure::fromCallable( $getRegisteredMetaKeys )
+			: static function ( string $objectType, string $objectSubtype ): array {
 				if (!function_exists('get_registered_meta_keys')) {
 					throw new LogicException('WordPress get_registered_meta_keys() is unavailable.');
 				}
-				return get_registered_meta_keys($objectType, $objectSubtype);
+				return get_registered_meta_keys( $objectType, $objectSubtype );
 			};
 
 		$this->unregisterMetaKey = $unregisterMetaKey !== null
-			? Closure::fromCallable($unregisterMetaKey)
-			: static function (string $objectType, string $metaKey, string $objectSubtype): bool {
+			? Closure::fromCallable( $unregisterMetaKey )
+			: static function ( string $objectType, string $metaKey, string $objectSubtype ): bool {
 				if (!function_exists('unregister_meta_key')) {
 					throw new LogicException('WordPress unregister_meta_key() is unavailable.');
 				}
-				return unregister_meta_key($objectType, $metaKey, $objectSubtype);
+				return unregister_meta_key( $objectType, $metaKey, $objectSubtype );
 			};
 
 		$this->ownership = $ownership ?? new PostMetaRegistrationOwnershipGuard();
@@ -91,14 +91,14 @@ final class WordPressPostMetaRegistrar
 	 *     args:array<string,mixed>
 	 * } $registration
 	 */
-	public function preflight(array $registration): bool
+	public function preflight( array $registration ): bool
 	{
-		[$postType, $metaKey, $args] = $this->contract($registration);
+		[$postType, $metaKey, $args] = $this->contract( $registration );
 
-		$this->assertRequiredSupports($postType, $metaKey, $args);
-		[$globalExisting, $subtypeExisting] = $this->ownershipState($postType, $metaKey);
+		$this->assertRequiredSupports( $postType, $metaKey, $args );
+		[$globalExisting, $subtypeExisting] = $this->ownershipState( $postType, $metaKey );
 
-		return $this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting);
+		return $this->ownership->shouldRegister( $registration, $globalExisting, $subtypeExisting );
 	}
 
 	/**
@@ -117,25 +117,25 @@ final class WordPressPostMetaRegistrar
 	 *     args:array<string,mixed>
 	 * }> $registrations
 	 */
-	public function registerBatch(array $registrations): void
+	public function registerBatch( array $registrations ): void
 	{
-		if (!array_is_list($registrations)) {
+		if ( !array_is_list( $registrations ) ) {
 			throw new InvalidArgumentException('Post-meta registration batch must be a list.');
 		}
-		if ($registrations === []) {
+		if ( $registrations === [] ) {
 			return;
 		}
 
 		$prepared = [];
 		$seen = [];
-		foreach ($registrations as $registration) {
-			if (!is_array($registration) || array_is_list($registration)) {
+		foreach ( $registrations as $registration ) {
+			if ( !is_array( $registration ) || array_is_list( $registration ) ) {
 				throw new InvalidArgumentException('Post-meta registration batch entries must be object/maps.');
 			}
 
-			[$postType, $metaKey, $args] = $this->contract($registration);
+			[$postType, $metaKey, $args] = $this->contract( $registration );
 			$identity = $postType . "\0" . $metaKey;
-			if (isset($seen[$identity])) {
+			if ( isset( $seen[$identity] ) ) {
 				throw new InvalidArgumentException(sprintf(
 					'Post-meta registration batch contains duplicate key "%s" for post type "%s".',
 					$metaKey,
@@ -155,15 +155,15 @@ final class WordPressPostMetaRegistrar
 		$subtypeKeys = [];
 		$supportCache = [];
 
-		foreach ($prepared as $entry) {
+		foreach ( $prepared as $entry ) {
 			$postType = $entry['post_type'];
 			$metaKey = $entry['meta_key'];
 			$args = $entry['args'];
 			$registration = $entry['registration'];
 
-			$this->assertRequiredSupports($postType, $metaKey, $args, $supportCache);
+			$this->assertRequiredSupports( $postType, $metaKey, $args, $supportCache );
 
-			if (!array_key_exists($postType, $subtypeKeys)) {
+			if ( !array_key_exists( $postType, $subtypeKeys ) ) {
 				$subtypeKeys[$postType] = ($this->getRegisteredMetaKeys)('post', $postType);
 			}
 
@@ -173,12 +173,12 @@ final class WordPressPostMetaRegistrar
 				$metaKey,
 				sprintf('post type "%s"', $postType),
 			);
-			$this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting);
+			$this->ownership->shouldRegister( $registration, $globalExisting, $subtypeExisting );
 		}
 
-		foreach ($prepared as $entry) {
+		foreach ( $prepared as $entry ) {
 			$registration = $entry['registration'];
-			if (!$this->preflight($registration)) {
+			if ( !$this->preflight( $registration ) ) {
 				continue;
 			}
 
@@ -200,14 +200,14 @@ final class WordPressPostMetaRegistrar
 	 *     args:array<string,mixed>
 	 * } $registration
 	 */
-	public function assertOwned(array $registration): void
+	public function assertOwned( array $registration ): void
 	{
-		[$postType, $metaKey] = $this->contract($registration);
-		[$globalExisting, $subtypeExisting] = $this->ownershipState($postType, $metaKey);
+		[$postType, $metaKey] = $this->contract( $registration );
+		[$globalExisting, $subtypeExisting] = $this->ownershipState( $postType, $metaKey );
 
-		if ($subtypeExisting === null) {
-			if ($globalExisting !== null) {
-				$this->ownership->shouldRegister($registration, $globalExisting, null);
+		if ( $subtypeExisting === null ) {
+			if ( $globalExisting !== null ) {
+				$this->ownership->shouldRegister( $registration, $globalExisting, null );
 			}
 
 			throw new RuntimeException(sprintf(
@@ -217,7 +217,7 @@ final class WordPressPostMetaRegistrar
 			));
 		}
 
-		if ($this->ownership->shouldRegister($registration, $globalExisting, $subtypeExisting) !== false) {
+		if ( $this->ownership->shouldRegister( $registration, $globalExisting, $subtypeExisting ) !== false ) {
 			throw new RuntimeException(sprintf(
 				'Post-meta key "%s" on post type "%s" ownership could not be proven.',
 				$metaKey,
@@ -234,9 +234,9 @@ final class WordPressPostMetaRegistrar
 	 *     args:array<string,mixed>
 	 * } $registration
 	 */
-	public function register(array $registration): void
+	public function register( array $registration ): void
 	{
-		$this->registerBatch([$registration]);
+		$this->registerBatch( [$registration] );
 	}
 
 	/**
@@ -249,13 +249,13 @@ final class WordPressPostMetaRegistrar
 	 *     args:array<string,mixed>
 	 * } $registration
 	 */
-	public function retire(array $registration): void
+	public function retire( array $registration ): void
 	{
-		$this->assertOwned($registration);
-		[$postType, $metaKey] = $this->contract($registration);
+		$this->assertOwned( $registration );
+		[$postType, $metaKey] = $this->contract( $registration );
 		$nativeResult = ($this->unregisterMetaKey)('post', $metaKey, $postType);
-		[$globalExisting, $subtypeExisting] = $this->ownershipState($postType, $metaKey);
-		if ($subtypeExisting !== null || $globalExisting !== null) {
+		[$globalExisting, $subtypeExisting] = $this->ownershipState( $postType, $metaKey );
+		if ( $subtypeExisting !== null || $globalExisting !== null ) {
 			throw new RuntimeException(sprintf(
 				'WordPress %s unregistering post-meta key "%s" on post type "%s", but registration still exists.',
 				$nativeResult ? 'reported success' : 'reported failure',
@@ -269,7 +269,7 @@ final class WordPressPostMetaRegistrar
 	 * @param array<string,mixed> $registration
 	 * @return array{0:string,1:string,2:array<string,mixed>}
 	 */
-	private function contract(array $registration): array
+	private function contract( array $registration ): array
 	{
 		$postType = $registration['post_type'] ?? null;
 		$metaKey = $registration['meta_key'] ?? null;
@@ -312,15 +312,15 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/** @param array<string,bool>|null $cache */
-	private function supports(string $postType, string $feature, ?array &$cache): bool
+	private function supports( string $postType, string $feature, ?array &$cache ): bool
 	{
-		if ($cache === null) {
-			return ($this->postTypeSupports)($postType, $feature);
+		if ( $cache === null ) {
+			return ( $this->postTypeSupports )( $postType, $feature );
 		}
 
 		$key = $postType . "\0" . $feature;
-		if (!array_key_exists($key, $cache)) {
-			$cache[$key] = ($this->postTypeSupports)($postType, $feature);
+		if ( !array_key_exists( $key, $cache ) ) {
+			$cache[$key] = ( $this->postTypeSupports )( $postType, $feature );
 		}
 		return $cache[$key];
 	}
@@ -328,7 +328,7 @@ final class WordPressPostMetaRegistrar
 	/**
 	 * @return array{0:null|array<string,mixed>,1:null|array<string,mixed>}
 	 */
-	private function ownershipState(string $postType, string $metaKey): array
+	private function ownershipState( string $postType, string $metaKey ): array
 	{
 		$globalKeys = ($this->getRegisteredMetaKeys)('post', '');
 		$subtypeKeys = ($this->getRegisteredMetaKeys)('post', $postType);
@@ -343,14 +343,14 @@ final class WordPressPostMetaRegistrar
 	 * @param array<string,array<string,mixed>> $registered
 	 * @return null|array<string,mixed>
 	 */
-	private function existingRegistration(array $registered, string $metaKey, string $scope): ?array
+	private function existingRegistration( array $registered, string $metaKey, string $scope ): ?array
 	{
-		if (!array_key_exists($metaKey, $registered)) {
+		if ( !array_key_exists( $metaKey, $registered ) ) {
 			return null;
 		}
 
 		$existing = $registered[$metaKey];
-		if (!is_array($existing)) {
+		if ( !is_array( $existing ) ) {
 			throw new RuntimeException(sprintf(
 				'Existing registration for post-meta key "%s" at %s is malformed; refusing to overwrite it.',
 				$metaKey,
