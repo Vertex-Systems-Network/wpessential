@@ -22,6 +22,8 @@ This roadmap is derived from repository evidence. **Progress is milestone-scoped
 
 **2026-10-16 WPCS continuation batch 2 (CI pending):** 11 additional files / 615 exact PHPCS-marked indentation lines normalized without changing non-indentation bytes or line count. Builds upon the preceding batch at `b79791873ecbd2a41c47d4a3d4dce9fefa56c687`; exact-head PHPCS/PHPStan/PHPUnit remains required. No policy bypass or merge.
 
+**2026-10-16 WPCS continuation batch 3 (CI pending):** 11 PHP files, 534 PHPCS-diagnostic lines updated only in indentation; no nonindentation bytes or line counts changed, heredoc/inline HTML and open-string contexts avoided. Quality checks are required on exact new source SHA; PR not merge-ready until green.
+
 **Quality recovery checkpoint (outside the 10-milestone completion score):** PHPUnit local repair PR [#1416](https://github.com/Vertex-Systems-Network/wpessential/pull/1416) remains **unmerged** while repository-wide WordPress Coding Standards fails; existing violations and source regressions are tracked by [#1417](https://github.com/Vertex-Systems-Network/wpessential/issues/1417). Diagnostic-only PHPCS report comparison is scoped in [#1418](https://github.com/Vertex-Systems-Network/wpessential/pull/1418); it neither replaces required checks nor promotes full parity, production deployment or GA. Milestone progress bars remain unchanged.
 
 | Milestone | Scope | Evidence-based progress | State | Current gate |
