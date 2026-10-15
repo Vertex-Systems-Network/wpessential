@@ -147,7 +147,7 @@ final readonly class DashboardWidgetRegistrationCompiler
 		}
 
 		$priority = $widget['priority'] ?? null;
-		if ( !is_string( $priority ) || !in_array( $priority, DashboardWidgetRegistrationDescriptor::PRIORITIES, true ) ) {
+		if (!is_string($priority) || !in_array($priority, DashboardWidgetRegistrationDescriptor::PRIORITIES, true)) {
 			throw new InvalidArgumentException('Dashboard Widget priority is unsupported.');
 		}
 

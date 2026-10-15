@@ -839,7 +839,7 @@ final class QueryAstValidator
 			$this->issue($issues, 'wpe_query_cursor_invalid', $path . '.cursor', 'Cursor pagination requires a non-empty cursor token.');
 		}
 
-		if ( !is_string( $mode ) || !is_int( $pageSize ) || !is_int( $offset ) || ( $cursor !== null && !is_string( $cursor ) ) ) {
+		if (!is_string($mode) || !is_int($pageSize) || !is_int($offset) || ($cursor !== null && !is_string($cursor))) {
 			return null;
 		}
 

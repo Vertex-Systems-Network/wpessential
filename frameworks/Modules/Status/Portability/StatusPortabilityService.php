@@ -83,7 +83,7 @@ final readonly class StatusPortabilityService
 		}
 		$items = $package['definitions'] ?? null;
 		$checksum = $package['checksum'] ?? null;
-		if ( !is_array( $items ) || !array_is_list( $items ) || $items === [] || count( $items ) > self::MAX_DEFINITIONS ) {
+		if (!is_array($items) || !array_is_list($items) || $items === [] || count($items) > self::MAX_DEFINITIONS) {
 			throw new InvalidArgumentException('Status portability definitions must be a bounded non-empty list.');
 		}
 		if (!is_string($checksum) || !preg_match('/^[0-9a-f]{64}$/', $checksum)) {

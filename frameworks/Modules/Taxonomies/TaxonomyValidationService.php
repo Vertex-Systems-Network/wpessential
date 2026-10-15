@@ -117,7 +117,7 @@ final readonly class TaxonomyValidationService
 
 		$existingKey = $definition->payload['taxonomy_key'] ?? null;
 		$requestedKey = $input['payload']['taxonomy_key'] ?? null;
-		if ( is_string( $existingKey ) && is_string( $requestedKey ) && trim( $existingKey ) !== trim( $requestedKey ) ) {
+		if (is_string($existingKey) && is_string($requestedKey) && trim($existingKey) !== trim($requestedKey)) {
 			$issues[] = $this->issue(
 				'runtime_key_immutable',
 				'blocked',

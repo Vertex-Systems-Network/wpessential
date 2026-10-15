@@ -374,7 +374,7 @@ final class FieldStorageKeyMigrationService
 				return true;
 			}
 			$subfields = $field['subfields'] ?? [];
-			if ( is_array( $subfields ) && array_is_list( $subfields ) && $this->containsUuid( $subfields, $fieldUuid ) ) {
+			if (is_array($subfields) && array_is_list($subfields) && $this->containsUuid($subfields, $fieldUuid)) {
 				return true;
 			}
 		}

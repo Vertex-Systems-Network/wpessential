@@ -168,7 +168,7 @@ final class PostMetaValueStore
 		}
 
 		if ( $exists && $this->sameValue( $current, $canonical ) ) {
-			return new PostMetaValueWriteResult( PostMetaValueWriteResult::UNCHANGED, $fieldUuid, $metaKey, $canonical );
+			return new PostMetaValueWriteResult(PostMetaValueWriteResult::UNCHANGED, $fieldUuid, $metaKey, $canonical);
 		}
 
 		$nativeResult = ($this->updatePostMeta)(
@@ -229,7 +229,7 @@ final class PostMetaValueStore
 			return new PostMetaValueWriteResult( PostMetaValueWriteResult::ABSENT, $fieldUuid, $metaKey, null );
 		}
 		if ( $this->sameValue( $snapshot, $canonical ) ) {
-			return new PostMetaValueWriteResult( PostMetaValueWriteResult::UNCHANGED, $fieldUuid, $metaKey, $canonical );
+			return new PostMetaValueWriteResult(PostMetaValueWriteResult::UNCHANGED, $fieldUuid, $metaKey, $canonical);
 		}
 
 		try {
