@@ -131,7 +131,7 @@ final class AdminColumnsModule implements ModuleInterface
 
 		$normalizer = new AdminColumnsViewDefinitionNormalizer();
 		$views = new AdminColumnsViewDefinitionService( $definitions, $normalizer );
-		$readAdapter = new AdminColumnsReadAdapter( $views, $query, $fields );
+		$readAdapter = new AdminColumnsReadAdapter($views, $query, $fields);
 		$csvExport = new AdminColumnsCsvExportService(
 			$readAdapter,
 			new AdminColumnsCsvExportEncoder(),
@@ -154,7 +154,7 @@ final class AdminColumnsModule implements ModuleInterface
 
 		$fieldWriteAdapter = null;
 		if ( $fieldWrites instanceof FieldValueWriteConsumerInterface ) {
-			$fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter( $views, $query, $fieldWrites );
+			$fieldWriteAdapter = new AdminColumnsFieldValueWriteAdapter($views, $query, $fieldWrites);
 			$services->set( self::SERVICE_FIELD_WRITE_ADAPTER, $fieldWriteAdapter );
 		}
 
@@ -241,7 +241,7 @@ final class AdminColumnsModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: $mutates,
 				channels: [ExecutionChannel::Internal, ExecutionChannel::Ui],
-				inputSchema: $this->personalPreferenceAbilityInputSchema( $preferenceAction ),
+				inputSchema: $this->personalPreferenceAbilityInputSchema($preferenceAction),
 				outputSchema: ['type' => 'object'],
 			);
 			$abilities->register(

@@ -130,9 +130,9 @@ final class Plugin
 
 		$abilityEnvironment = new NativeWordPressAbilityEnvironment();
 		$abilityContexts = new WordPressExecutionContextFactory( $abilityEnvironment );
-		$capabilityChecker = new WordPressCapabilityChecker( $abilityEnvironment );
+		$capabilityChecker = new WordPressCapabilityChecker($abilityEnvironment);
 		$postResourceAuthorizer = new WordPressPostResourceAuthorizer();
-		$abilityPolicy = new PolicyEngine( $capabilityChecker );
+		$abilityPolicy = new PolicyEngine($capabilityChecker);
 		$abilities = new AbilityRegistry( $abilityPolicy );
 		$abilityBridge = new WordPressAbilityBridge( $abilities, $abilityEnvironment, $abilityContexts );
 		$dataSources = new DataSourceRegistry();
@@ -141,7 +141,7 @@ final class Plugin
 		[$definitionRepository, $registrationStore, $database, $migrationCoordinator] = self::createPersistenceServices();
 		$events = new EventBus();
 		$audit = $database instanceof NativeWpdbAdapter
-			? new PersistentAuditLogger( $database )
+			? new PersistentAuditLogger($database)
 			: new InMemoryAuditLogger();
 		$registrationProviders = new RegistrationDefinitionProviderRegistry();
 		$registrationCompiler = new RegistrationCompiler( $registrationStore );
@@ -166,10 +166,10 @@ final class Plugin
 		$services->set('platform.abilities.policy', $abilityPolicy);
 		$services->set('platform.abilities.contexts', $abilityContexts);
 		$services->set('platform.abilities.wordpress', $abilityBridge);
-		$services->set( WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker );
-		$services->set( WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer );
-		$services->set( EventServices::BUS, $events );
-		$services->set( AuditServices::LOGGER, $audit );
+		$services->set(WordPressAuthorizationServices::CAPABILITY_CHECKER, $capabilityChecker);
+		$services->set(WordPressAuthorizationServices::POST_RESOURCES, $postResourceAuthorizer);
+		$services->set(EventServices::BUS, $events);
+		$services->set(AuditServices::LOGGER, $audit);
 		$services->set('platform.data-sources', $dataSources);
 		$services->set('platform.cache', $cache);
 		( new RenderingServiceRegistrar() )->register( $services );
@@ -228,7 +228,7 @@ final class Plugin
 		$services->set('platform.admin.assets', $adminAssets);
 		$services->set('platform.admin.controller', $adminController);
 
-		self::$kernel->registerModule( new CustomPostTypeModule() );
+		self::$kernel->registerModule(new CustomPostTypeModule());
 		self::$kernel->registerModule( new TaxonomyModule() );
 		foreach ( self::$contributedModules as $module ) {
 			self::$kernel->registerModule( $module );
@@ -282,8 +282,8 @@ final class Plugin
 		$migrationCoordinator = new MigrationCoordinator( $migrationRegistry, $migrationRunner );
 		$migrationCoordinator->register( new CreateCompiledRegistrationTablesMigration( $database ) );
 		$migrationCoordinator->register( new CreateDefinitionTablesMigration( $database ) );
-		$migrationCoordinator->register( new CreateAuditEventsTableMigration( $database ) );
-		if ( self::proCustomTablesMigrationsAllowed() ) {
+		$migrationCoordinator->register(new CreateAuditEventsTableMigration($database));
+		if (self::proCustomTablesMigrationsAllowed()) {
 			$migrationCoordinator->register( new CreateMigrationRunStoreMigration( $database ) );
 			$migrationCoordinator->register( new CreateMigrationExecutionConfirmationStoreMigration( $database ) );
 		}

@@ -100,7 +100,7 @@ final readonly class AdminColumnsReadAdapter
 			$request['search'] = $input['search'];
 		}
 
-		$result = $this->query->read( $request, $context );
+		$result = $this->query->read($request, $context);
 		if (($result['ok'] ?? false) !== true) {
 			return [
 				'contract_version' => self::CONTRACT_VERSION,
@@ -307,7 +307,7 @@ final readonly class AdminColumnsReadAdapter
 
 		$values = [];
 		foreach ( $fieldFieldByColumn as $fieldReference ) {
-			$result = $this->fields->readValues( $fieldReference, $postIds, $context );
+			$result = $this->fields->readValues($fieldReference, $postIds, $context);
 			if (($result['contract_version'] ?? null) !== FieldValueReadConsumerInterface::CONTRACT_VERSION
 				|| ($result['field_ref'] ?? null) !== $fieldReference
 				|| !is_array($result['rows'] ?? null)
