@@ -60,7 +60,7 @@ final class RelationAdminController
 
 	public function render(): void
 	{
-		if (!$this->canManage()) {
+		if ( !$this->canManage() ) {
 			$this->deny();
 			return;
 		}
@@ -68,7 +68,7 @@ final class RelationAdminController
 		[$definitions, $diagnostics, $readError] = $this->snapshot();
 		$editingId = $this->requestString(INPUT_GET, 'relation_id');
 		$editing = null;
-		foreach ($definitions as $definition) {
+		foreach ( $definitions as $definition ) {
 			if (($definition['id'] ?? null) === $editingId) {
 				$editing = $definition;
 				break;
@@ -78,23 +78,23 @@ final class RelationAdminController
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__('Relations', 'wpessential') . '</h1>';
 		echo '<p>' . esc_html__('Create canonical Surface 4 relation definitions and manage individual edges through the shared Ability and Policy layer.', 'wpessential') . '</p>';
-		$this->renderNotice($readError);
-		$this->renderEditor($editing);
-		$this->renderConnectionEditor($definitions);
-		$this->renderDefinitions($definitions, $diagnostics);
+		$this->renderNotice( $readError );
+		$this->renderEditor( $editing );
+		$this->renderConnectionEditor( $definitions );
+		$this->renderDefinitions( $definitions, $diagnostics );
 		echo '</div>';
 	}
 
 	public function handleSave(): void
 	{
-		if (!$this->canManage()) {
+		if ( !$this->canManage() ) {
 			$this->deny();
 			return;
 		}
 		if (!function_exists('check_admin_referer')) {
 			throw new RuntimeException('WordPress nonce verification is unavailable.');
 		}
-		check_admin_referer(self::SAVE_ACTION);
+		check_admin_referer( self::SAVE_ACTION );
 
 		try {
 			$values = $this->saveValues();
@@ -113,21 +113,21 @@ final class RelationAdminController
 
 			$this->abilities->execute('wpessential/relations/save-definition', $input, $this->uiContext());
 			$this->redirect('saved', __('Relation saved.', 'wpessential'));
-		} catch (Throwable $error) {
+		} catch ( Throwable $error ) {
 			$this->redirect('error', $error->getMessage());
 		}
 	}
 
 	public function handleStatus(): void
 	{
-		if (!$this->canManage()) {
+		if ( !$this->canManage() ) {
 			$this->deny();
 			return;
 		}
 		if (!function_exists('check_admin_referer')) {
 			throw new RuntimeException('WordPress nonce verification is unavailable.');
 		}
-		check_admin_referer(self::STATUS_ACTION);
+		check_admin_referer( self::STATUS_ACTION );
 
 		try {
 			$id = $this->requestString(INPUT_POST, 'id');
@@ -142,21 +142,21 @@ final class RelationAdminController
 				'expected_revision' => $revision,
 			], $this->uiContext());
 			$this->redirect('saved', __('Relation lifecycle status updated.', 'wpessential'));
-		} catch (Throwable $error) {
+		} catch ( Throwable $error ) {
 			$this->redirect('error', $error->getMessage());
 		}
 	}
 
 	public function handleEdge(): void
 	{
-		if (!$this->canManage()) {
+		if ( !$this->canManage() ) {
 			$this->deny();
 			return;
 		}
 		if (!function_exists('check_admin_referer')) {
 			throw new RuntimeException('WordPress nonce verification is unavailable.');
 		}
-		check_admin_referer(self::EDGE_ACTION);
+		check_admin_referer( self::EDGE_ACTION );
 
 		try {
 			$operation = $this->requestString(INPUT_POST, 'operation');
@@ -182,7 +182,7 @@ final class RelationAdminController
 				],
 				$this->uiContext(),
 			);
-			$changed = is_array($result)
+			$changed = is_array( $result )
 				&& is_array($result['mutation'] ?? null)
 				&& ($result['mutation']['changed'] ?? null) === true;
 			$this->redirect(
@@ -191,13 +191,13 @@ final class RelationAdminController
 					? __('Relation edge updated.', 'wpessential')
 					: __('Relation edge was already in the requested state.', 'wpessential'),
 			);
-		} catch (Throwable $error) {
+		} catch ( Throwable $error ) {
 			$this->redirect('error', $error->getMessage());
 		}
 	}
 
 	/** @param null|array<string,mixed> $definition */
-	private function renderEditor(?array $definition): void
+	private function renderEditor( ?array $definition ): void
 	{
 		$payload = is_array($definition['payload'] ?? null) ? $definition['payload'] : [];
 		$direction = is_array($payload['direction'] ?? null) ? $payload['direction'] : [];
@@ -211,7 +211,7 @@ final class RelationAdminController
 		echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
 		echo '<input type="hidden" name="action" value="' . esc_attr(self::SAVE_ACTION) . '">';
 		if (function_exists('wp_nonce_field')) {
-			wp_nonce_field(self::SAVE_ACTION);
+			wp_nonce_field( self::SAVE_ACTION );
 		}
 		echo '<input type="hidden" name="id" value="' . esc_attr((string) ($definition['id'] ?? '')) . '">';
 		echo '<input type="hidden" name="expected_revision" value="' . esc_attr((string) ($definition['revision'] ?? '')) . '">';
@@ -244,19 +244,19 @@ final class RelationAdminController
 		echo '</tbody></table>';
 		echo '<p class="description">' . esc_html__('Native post, taxonomy, user, comment, and media endpoints are supported. Custom-table and registered-entity endpoints remain unavailable until their owner adapters are certified.', 'wpessential') . '</p>';
 		echo '<p class="submit"><button type="submit" class="button button-primary">' . esc_html__('Save relation', 'wpessential') . '</button>';
-		if ($editing) {
+		if ( $editing ) {
 			echo ' <a class="button" href="' . esc_url($this->pageUrl()) . '">' . esc_html__('Cancel edit', 'wpessential') . '</a>';
 		}
 		echo '</p></form></section>';
 	}
 
 	/** @param list<array<string,mixed>> $definitions */
-	private function renderConnectionEditor(array $definitions): void
+	private function renderConnectionEditor( array $definitions ): void
 	{
 		echo '<section aria-labelledby="wpessential-relations-edge-title">';
 		echo '<h2 id="wpessential-relations-edge-title">' . esc_html__('Manage connection', 'wpessential') . '</h2>';
 		echo '<p>' . esc_html__('Connect or disconnect one source/target pair. Endpoint existence, resource authorization, cardinality and transactional integrity are rechecked server-side.', 'wpessential') . '</p>';
-		if ($definitions === []) {
+		if ( $definitions === [] ) {
 			echo '<p><em>' . esc_html__('Create a relation definition first.', 'wpessential') . '</em></p></section>';
 			return;
 		}
@@ -264,12 +264,12 @@ final class RelationAdminController
 		echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
 		echo '<input type="hidden" name="action" value="' . esc_attr(self::EDGE_ACTION) . '">';
 		if (function_exists('wp_nonce_field')) {
-			wp_nonce_field(self::EDGE_ACTION);
+			wp_nonce_field( self::EDGE_ACTION );
 		}
 		echo '<table class="form-table" role="presentation"><tbody>';
 		echo '<tr><th scope="row"><label for="wpe-rel-edge-definition">' . esc_html__('Relation', 'wpessential') . '</label></th><td>';
 		echo '<select id="wpe-rel-edge-definition" name="relation_definition_id" required>';
-		foreach ($definitions as $definition) {
+		foreach ( $definitions as $definition ) {
 			if (($definition['status'] ?? null) !== 'published') {
 				continue;
 			}
@@ -290,7 +290,7 @@ final class RelationAdminController
 	}
 
 	/** @param list<array<string,mixed>> $definitions @param array<string,array<string,mixed>> $diagnostics */
-	private function renderDefinitions(array $definitions, array $diagnostics): void
+	private function renderDefinitions( array $definitions, array $diagnostics ): void
 	{
 		echo '<section aria-labelledby="wpessential-relations-list-title">';
 		echo '<h2 id="wpessential-relations-list-title">' . esc_html__('Saved relations', 'wpessential') . '</h2>';
@@ -300,7 +300,7 @@ final class RelationAdminController
 		}
 		echo '</tr></thead><tbody>';
 
-		foreach ($definitions as $definition) {
+		foreach ( $definitions as $definition ) {
 			$payload = is_array($definition['payload'] ?? null) ? $definition['payload'] : [];
 			$id = is_string($definition['id'] ?? null) ? $definition['id'] : '';
 			$revision = is_int($definition['revision'] ?? null) ? $definition['revision'] : 0;
@@ -329,13 +329,13 @@ final class RelationAdminController
 			echo '</td></tr>';
 		}
 
-		if ($definitions === []) {
+		if ( $definitions === [] ) {
 			echo '<tr><td colspan="7">' . esc_html__('No Relation definitions have been created yet.', 'wpessential') . '</td></tr>';
 		}
 		echo '</tbody></table></section>';
 	}
 
-	private function statusButton(string $id, int $revision, string $status, string $label): void
+	private function statusButton( string $id, int $revision, string $status, string $label ): void
 	{
 		echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="display:inline">';
 		echo '<input type="hidden" name="action" value="' . esc_attr(self::STATUS_ACTION) . '">';
@@ -343,13 +343,13 @@ final class RelationAdminController
 		echo '<input type="hidden" name="expected_revision" value="' . esc_attr((string) $revision) . '">';
 		echo '<input type="hidden" name="status" value="' . esc_attr($status) . '">';
 		if (function_exists('wp_nonce_field')) {
-			wp_nonce_field(self::STATUS_ACTION);
+			wp_nonce_field( self::STATUS_ACTION );
 		}
 		echo '<button type="submit" class="button button-small">' . esc_html($label) . '</button></form>';
 	}
 
 	/** @param array<string,mixed> $endpoint */
-	private function endpointRows(string $side, string $label, array $endpoint): void
+	private function endpointRows( string $side, string $label, array $endpoint ): void
 	{
 		$this->selectRow($side . '_type', $label . ' ' . __('type', 'wpessential'), (string) ($endpoint['object_type'] ?? ($side === 'from' ? 'post' : 'user')), [
 			'post' => __('Post', 'wpessential'),
@@ -362,7 +362,7 @@ final class RelationAdminController
 		$this->textRow($side . '_label', $label . ' ' . __('label', 'wpessential'), (string) ($endpoint['label'] ?? $label), true);
 	}
 
-	private function textRow(string $name, string $label, string $value, bool $required, bool $readonly = false): void
+	private function textRow( string $name, string $label, string $value, bool $required, bool $readonly = false ): void
 	{
 		echo '<tr><th scope="row"><label for="' . esc_attr('wpe-rel-' . $name) . '">' . esc_html($label) . '</label></th><td>';
 		echo '<input class="regular-text" id="' . esc_attr('wpe-rel-' . $name) . '" name="' . esc_attr($name) . '" type="text" value="' . esc_attr($value) . '"';
@@ -371,24 +371,24 @@ final class RelationAdminController
 		echo '></td></tr>';
 	}
 
-	private function textareaRow(string $name, string $label, string $value): void
+	private function textareaRow( string $name, string $label, string $value ): void
 	{
 		echo '<tr><th scope="row"><label for="' . esc_attr('wpe-rel-' . $name) . '">' . esc_html($label) . '</label></th><td>';
 		echo '<textarea class="large-text" rows="3" id="' . esc_attr('wpe-rel-' . $name) . '" name="' . esc_attr($name) . '">' . esc_textarea($value) . '</textarea></td></tr>';
 	}
 
 	/** @param array<string,string> $options */
-	private function selectRow(string $name, string $label, string $value, array $options): void
+	private function selectRow( string $name, string $label, string $value, array $options ): void
 	{
 		echo '<tr><th scope="row"><label for="' . esc_attr('wpe-rel-' . $name) . '">' . esc_html($label) . '</label></th><td>';
 		echo '<select id="' . esc_attr('wpe-rel-' . $name) . '" name="' . esc_attr($name) . '">';
-		foreach ($options as $optionValue => $optionLabel) {
+		foreach ( $options as $optionValue => $optionLabel ) {
 			echo '<option value="' . esc_attr($optionValue) . '"' . ($optionValue === $value ? ' selected' : '') . '>' . esc_html($optionLabel) . '</option>';
 		}
 		echo '</select></td></tr>';
 	}
 
-	private function numberRow(string $name, string $label, mixed $value, int $minimum, bool $blankAllowed = false): void
+	private function numberRow( string $name, string $label, mixed $value, int $minimum, bool $blankAllowed = false ): void
 	{
 		$display = is_int($value) ? (string) $value : '';
 		echo '<tr><th scope="row"><label for="' . esc_attr('wpe-rel-' . $name) . '">' . esc_html($label) . '</label></th><td>';
@@ -397,7 +397,7 @@ final class RelationAdminController
 		echo '></td></tr>';
 	}
 
-	private function checkboxRow(string $name, string $label, bool $checked): void
+	private function checkboxRow( string $name, string $label, bool $checked ): void
 	{
 		echo '<tr><th scope="row">' . esc_html($label) . '</th><td><label>';
 		echo '<input type="hidden" name="' . esc_attr($name) . '" value="0">';
@@ -420,7 +420,7 @@ final class RelationAdminController
 
 			$definitions = [];
 			foreach ($listed['definitions'] as $definition) {
-				if (!is_array($definition)) {
+				if ( !is_array( $definition ) ) {
 					throw new RuntimeException('Relations list returned an invalid definition.');
 				}
 				$definitions[] = $definition;
@@ -435,16 +435,16 @@ final class RelationAdminController
 			}
 
 			return [$definitions, $diagnostics, null];
-		} catch (Throwable $error) {
+		} catch ( Throwable $error ) {
 			return [[], [], $error->getMessage()];
 		}
 	}
 
-	private function renderNotice(?string $readError): void
+	private function renderNotice( ?string $readError ): void
 	{
 		$notice = $this->requestString(INPUT_GET, 'notice');
 		$message = $this->requestString(INPUT_GET, 'message');
-		if ($readError !== null) {
+		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html($readError) . '</p></div>';
 		}
 		if ($notice === '' || $message === '') {
@@ -464,26 +464,26 @@ final class RelationAdminController
 			'unique_edge', 'status',
 		];
 		$values = [];
-		foreach ($keys as $key) {
+		foreach ( $keys as $key ) {
 			$values[$key] = $this->requestString(INPUT_POST, $key, $key === 'description');
 		}
 		return $values;
 	}
 
-	private function requestString(int $inputType, string $key, bool $textarea = false): string
+	private function requestString( int $inputType, string $key, bool $textarea = false ): string
 	{
-		$value = filter_input($inputType, $key, FILTER_UNSAFE_RAW);
-		if (!is_string($value)) {
+		$value = filter_input( $inputType, $key, FILTER_UNSAFE_RAW );
+		if ( !is_string( $value ) ) {
 			return '';
 		}
 		$value = function_exists('wp_unslash') ? wp_unslash($value) : $value;
 		if ($textarea && function_exists('sanitize_textarea_field')) {
-			return sanitize_textarea_field($value);
+			return sanitize_textarea_field( $value );
 		}
 		return function_exists('sanitize_text_field') ? sanitize_text_field($value) : trim(strip_tags($value));
 	}
 
-	private function positiveInteger(string $value, string $label): int
+	private function positiveInteger( string $value, string $label ): int
 	{
 		if (preg_match('/^[1-9]\d*$/', $value) !== 1) {
 			throw new RuntimeException($label . ' must be a positive integer.');
@@ -507,17 +507,17 @@ final class RelationAdminController
 		}
 	}
 
-	private function redirect(string $notice, string $message): never
+	private function redirect( string $notice, string $message ): never
 	{
 		$url = $this->pageUrl(['notice' => $notice, 'message' => $message]);
 		if (function_exists('wp_safe_redirect')) {
-			wp_safe_redirect($url);
+			wp_safe_redirect( $url );
 		}
 		exit;
 	}
 
 	/** @param array<string,string> $args */
-	private function pageUrl(array $args = []): string
+	private function pageUrl( array $args = [] ): string
 	{
 		$base = function_exists('admin_url') ? admin_url('admin.php') : 'admin.php';
 		$query = array_merge(['page' => self::PAGE_SLUG], $args);

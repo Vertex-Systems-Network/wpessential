@@ -44,7 +44,7 @@ final readonly class AdminColumnsCsvExportService
 		private ?AdminColumnsViewDefinitionService $views = null,
 		private ?AdminColumnsCsvExportScopePolicy $scopePolicy = null,
 	) {
-		if ($this->maxRows < 1 || $this->maxRows > self::MAX_ROWS) {
+		if ( $this->maxRows < 1 || $this->maxRows > self::MAX_ROWS ) {
 			throw new InvalidArgumentException(sprintf(
 				'Admin Columns CSV export maxRows must be between 1 and %d.',
 				self::MAX_ROWS,
@@ -57,12 +57,12 @@ final readonly class AdminColumnsCsvExportService
 	 *
 	 * @param array<string,mixed> $controls
 	 */
-	public function export(string $viewId, array $controls, ExecutionContext $context): string
+	public function export( string $viewId, array $controls, ExecutionContext $context ): string
 	{
-		$this->assertControls($controls);
-		[$columns, $rows] = $this->collectAllMatching($viewId, $controls, $context, null);
+		$this->assertControls( $controls );
+		[$columns, $rows] = $this->collectAllMatching( $viewId, $controls, $context, null );
 
-		return $this->encoder->encode($columns, $rows);
+		return $this->encoder->encode( $columns, $rows );
 	}
 
 	/**
@@ -80,19 +80,19 @@ final readonly class AdminColumnsCsvExportService
 		array $runtime,
 		ExecutionContext $context,
 	): string {
-		if ($expectedViewRevision < 1) {
+		if ( $expectedViewRevision < 1 ) {
 			throw new InvalidArgumentException('Admin Columns scoped export requires a positive expected View revision.');
 		}
-		$this->assertControls($controls);
+		$this->assertControls( $controls );
 
 		$views = $this->requiredViews();
 		$scopePolicy = $this->requiredScopePolicy();
-		$view = $views->get($viewId);
-		$this->assertViewRevision($view->revision, $expectedViewRevision);
+		$view = $views->get( $viewId );
+		$this->assertViewRevision( $view->revision, $expectedViewRevision );
 
-		$enabledColumnKeys = $this->enabledViewColumnKeys($view);
-		$scope = $scopePolicy->normalize($scopeRequest, $enabledColumnKeys, self::SUPPORTED_SCOPES);
-		$effectiveControls = $this->effectiveControls($controls, $scope);
+		$enabledColumnKeys = $this->enabledViewColumnKeys( $view );
+		$scope = $scopePolicy->normalize( $scopeRequest, $enabledColumnKeys, self::SUPPORTED_SCOPES );
+		$effectiveControls = $this->effectiveControls( $controls, $scope );
 
 		return match ($scope['scope']) {
 			'current_page' => $this->exportCurrentPage(
@@ -138,8 +138,8 @@ final readonly class AdminColumnsCsvExportService
 		array $runtime,
 		ExecutionContext $context,
 	): string {
-		[$pageSize, $offset] = $this->currentPageRuntime($runtime);
-		$page = $this->readPage($viewId, $controls, $pageSize, $offset, $context);
+		[$pageSize, $offset] = $this->currentPageRuntime( $runtime );
+		$page = $this->readPage( $viewId, $controls, $pageSize, $offset, $context );
 		[$revision, , $columns] = $this->assertStablePage(
 			$page,
 			$viewId,
@@ -148,13 +148,13 @@ final readonly class AdminColumnsCsvExportService
 			null,
 			null,
 		);
-		$this->assertViewRevision($revision, $expectedViewRevision);
+		$this->assertViewRevision( $revision, $expectedViewRevision );
 
 		/** @var list<array<string,scalar|null>> $rows */
 		$rows = $page['rows'];
-		[$selectedMetadata, $selectedRows] = $this->selectColumns($columns, $rows, $selectedColumns);
+		[$selectedMetadata, $selectedRows] = $this->selectColumns( $columns, $rows, $selectedColumns );
 
-		return $this->encoder->encode($selectedMetadata, $selectedRows);
+		return $this->encoder->encode( $selectedMetadata, $selectedRows );
 	}
 
 	/**
@@ -174,10 +174,10 @@ final readonly class AdminColumnsCsvExportService
 		ExecutionContext $context,
 	): string {
 		$this->assertNoRuntime($runtime, 'selected_rows');
-		$idColumnKey = $this->postIdColumnKey($view);
-		$controls = $this->withSelectedRowFilter($controls, $idColumnKey, $selectedRowIds);
-		$pageSize = count($selectedRowIds);
-		$page = $this->readPage($view->id, $controls, $pageSize, 0, $context);
+		$idColumnKey = $this->postIdColumnKey( $view );
+		$controls = $this->withSelectedRowFilter( $controls, $idColumnKey, $selectedRowIds );
+		$pageSize = count( $selectedRowIds );
+		$page = $this->readPage( $view->id, $controls, $pageSize, 0, $context );
 		[$revision, , $columns] = $this->assertStablePage(
 			$page,
 			$view->id,
@@ -186,14 +186,14 @@ final readonly class AdminColumnsCsvExportService
 			null,
 			null,
 		);
-		$this->assertViewRevision($revision, $expectedViewRevision);
+		$this->assertViewRevision( $revision, $expectedViewRevision );
 
 		/** @var list<array<string,scalar|null>> $rows */
 		$rows = $page['rows'];
-		$rows = $this->exactSelectedRows($rows, $idColumnKey, $selectedRowIds, $respectSort);
-		[$selectedMetadata, $selectedRows] = $this->selectColumns($columns, $rows, $selectedColumns);
+		$rows = $this->exactSelectedRows( $rows, $idColumnKey, $selectedRowIds, $respectSort );
+		[$selectedMetadata, $selectedRows] = $this->selectColumns( $columns, $rows, $selectedColumns );
 
-		return $this->encoder->encode($selectedMetadata, $selectedRows);
+		return $this->encoder->encode( $selectedMetadata, $selectedRows );
 	}
 
 	/**
@@ -216,9 +216,9 @@ final readonly class AdminColumnsCsvExportService
 			$context,
 			$expectedViewRevision,
 		);
-		[$selectedMetadata, $selectedRows] = $this->selectColumns($columns, $rows, $selectedColumns);
+		[$selectedMetadata, $selectedRows] = $this->selectColumns( $columns, $rows, $selectedColumns );
 
-		return $this->encoder->encode($selectedMetadata, $selectedRows);
+		return $this->encoder->encode( $selectedMetadata, $selectedRows );
 	}
 
 	/**
@@ -237,9 +237,9 @@ final readonly class AdminColumnsCsvExportService
 		$baselineColumns = null;
 		$encoderColumns = null;
 
-		while ($offset < $this->maxRows) {
-			$pageSize = min(self::PAGE_SIZE, $this->maxRows - $offset);
-			$page = $this->readPage($viewId, $controls, $pageSize, $offset, $context);
+		while ( $offset < $this->maxRows ) {
+			$pageSize = min( self::PAGE_SIZE, $this->maxRows - $offset );
+			$page = $this->readPage( $viewId, $controls, $pageSize, $offset, $context );
 
 			[$baselineRevision, $baselineColumns, $encoderColumns] = $this->assertStablePage(
 				$page,
@@ -249,25 +249,25 @@ final readonly class AdminColumnsCsvExportService
 				$baselineColumns,
 				$encoderColumns,
 			);
-			if ($expectedViewRevision !== null) {
-				$this->assertViewRevision($baselineRevision, $expectedViewRevision);
+			if ( $expectedViewRevision !== null ) {
+				$this->assertViewRevision( $baselineRevision, $expectedViewRevision );
 			}
 
 			/** @var list<array<string,scalar|null>> $pageRows */
 			$pageRows = $page['rows'];
-			foreach ($pageRows as $row) {
+			foreach ( $pageRows as $row ) {
 				$rows[] = $row;
 			}
 
 			$returned = $page['returned'];
 			$offset += $returned;
-			if ($returned < $pageSize) {
+			if ( $returned < $pageSize ) {
 				break;
 			}
 		}
 
-		if ($offset === $this->maxRows) {
-			$probe = $this->readPage($viewId, $controls, 1, $offset, $context);
+		if ( $offset === $this->maxRows ) {
+			$probe = $this->readPage( $viewId, $controls, 1, $offset, $context );
 			[$probeRevision] = $this->assertStablePage(
 				$probe,
 				$viewId,
@@ -276,8 +276,8 @@ final readonly class AdminColumnsCsvExportService
 				$baselineColumns,
 				$encoderColumns,
 			);
-			if ($expectedViewRevision !== null) {
-				$this->assertViewRevision($probeRevision, $expectedViewRevision);
+			if ( $expectedViewRevision !== null ) {
+				$this->assertViewRevision( $probeRevision, $expectedViewRevision );
 			}
 			if (($probe['returned'] ?? null) !== 0) {
 				throw new LengthException(sprintf(
@@ -287,7 +287,7 @@ final readonly class AdminColumnsCsvExportService
 			}
 		}
 
-		if (!is_array($encoderColumns) || $encoderColumns === []) {
+		if ( !is_array( $encoderColumns ) || $encoderColumns === [] ) {
 			throw new RuntimeException('Admin Columns CSV export did not establish a stable column contract.');
 		}
 
@@ -309,7 +309,7 @@ final readonly class AdminColumnsCsvExportService
 		$input['page_size'] = $pageSize;
 		$input['offset'] = $offset;
 
-		$page = $this->reads->read($viewId, $input, $context);
+		$page = $this->reads->read( $viewId, $input, $context );
 		if (($page['ok'] ?? null) !== true) {
 			$code = is_array($page['error'] ?? null) && is_string($page['error']['code'] ?? null)
 				? $page['error']['code']
@@ -342,39 +342,39 @@ final readonly class AdminColumnsCsvExportService
 		}
 
 		$revision = $page['view_revision'] ?? null;
-		if (!is_int($revision) || $revision < 1) {
+		if ( !is_int( $revision ) || $revision < 1 ) {
 			throw new RuntimeException('Admin Columns CSV export received malformed View revision evidence.');
 		}
 
 		$columns = $page['columns'] ?? null;
-		if (!is_array($columns) || !array_is_list($columns) || $columns === []) {
+		if ( !is_array( $columns ) || !array_is_list( $columns ) || $columns === [] ) {
 			throw new RuntimeException('Admin Columns CSV export received malformed column metadata.');
 		}
 
 		$pageRows = $page['rows'] ?? null;
 		$returned = $page['returned'] ?? null;
-		if (!is_array($pageRows)
-			|| !array_is_list($pageRows)
-			|| !is_int($returned)
+		if ( !is_array( $pageRows )
+			|| !array_is_list( $pageRows )
+			|| !is_int( $returned )
 			|| $returned < 0
 			|| $returned > $requestedPageSize
-			|| $returned !== count($pageRows)
+			|| $returned !== count( $pageRows )
 		) {
 			throw new RuntimeException('Admin Columns CSV export received malformed bounded row evidence.');
 		}
 
-		if ($baselineRevision !== null && $revision !== $baselineRevision) {
+		if ( $baselineRevision !== null && $revision !== $baselineRevision ) {
 			throw new RuntimeException('Admin Columns CSV export View revision changed between pages.');
 		}
-		if ($baselineColumns !== null && $columns !== $baselineColumns) {
+		if ( $baselineColumns !== null && $columns !== $baselineColumns ) {
 			throw new RuntimeException('Admin Columns CSV export column contract changed between pages.');
 		}
 
-		if ($encoderColumns === null) {
+		if ( $encoderColumns === null ) {
 			$encoderColumns = [];
 			$seen = [];
-			foreach ($columns as $column) {
-				if (!is_array($column)) {
+			foreach ( $columns as $column ) {
+				if ( !is_array( $column ) ) {
 					throw new RuntimeException('Admin Columns CSV export column metadata is malformed.');
 				}
 				$key = $column['key'] ?? null;
@@ -399,7 +399,7 @@ final readonly class AdminColumnsCsvExportService
 	 * @param array{respect_filters:bool,respect_sort:bool} $scope
 	 * @return array<string,mixed>
 	 */
-	private function effectiveControls(array $controls, array $scope): array
+	private function effectiveControls( array $controls, array $scope ): array
 	{
 		if (!$scope['respect_filters']) {
 			unset($controls['filters'], $controls['search']);
@@ -416,10 +416,10 @@ final readonly class AdminColumnsCsvExportService
 	 * @param list<int> $selectedRowIds
 	 * @return array<string,mixed>
 	 */
-	private function withSelectedRowFilter(array $controls, string $idColumnKey, array $selectedRowIds): array
+	private function withSelectedRowFilter( array $controls, string $idColumnKey, array $selectedRowIds ): array
 	{
 		$filters = $controls['filters'] ?? [];
-		if (!is_array($filters) || !array_is_list($filters)) {
+		if ( !is_array( $filters ) || !array_is_list( $filters ) ) {
 			throw new InvalidArgumentException('Admin Columns CSV export filters must be a list.');
 		}
 		$filters[] = [
@@ -443,24 +443,24 @@ final readonly class AdminColumnsCsvExportService
 		array $selectedRowIds,
 		bool $respectSort,
 	): array {
-		$requested = array_fill_keys($selectedRowIds, true);
+		$requested = array_fill_keys( $selectedRowIds, true );
 		$byId = [];
-		foreach ($rows as $row) {
+		foreach ( $rows as $row ) {
 			$rowId = $row[$idColumnKey] ?? null;
-			if (!is_int($rowId) || $rowId < 1 || !isset($requested[$rowId]) || isset($byId[$rowId])) {
+			if ( !is_int( $rowId ) || $rowId < 1 || !isset( $requested[$rowId] ) || isset( $byId[$rowId] ) ) {
 				throw new RuntimeException('Admin Columns selected-row export returned invalid authoritative row identity.');
 			}
 			$byId[$rowId] = $row;
 		}
-		if (count($byId) !== count($selectedRowIds)) {
+		if ( count( $byId ) !== count( $selectedRowIds ) ) {
 			throw new RuntimeException('Admin Columns selected-row export did not return the exact requested row membership.');
 		}
-		if ($respectSort) {
+		if ( $respectSort ) {
 			return $rows;
 		}
 
 		$ordered = [];
-		foreach ($selectedRowIds as $rowId) {
+		foreach ( $selectedRowIds as $rowId ) {
 			$ordered[] = $byId[$rowId];
 		}
 
@@ -473,26 +473,26 @@ final readonly class AdminColumnsCsvExportService
 	 * @param list<string> $selectedColumnKeys
 	 * @return array{0:list<array{key:string,label:string}>,1:list<array<string,scalar|null>>}
 	 */
-	private function selectColumns(array $columns, array $rows, array $selectedColumnKeys): array
+	private function selectColumns( array $columns, array $rows, array $selectedColumnKeys ): array
 	{
 		$metadataByKey = [];
-		foreach ($columns as $column) {
+		foreach ( $columns as $column ) {
 			$metadataByKey[$column['key']] = $column;
 		}
 
 		$selectedMetadata = [];
-		foreach ($selectedColumnKeys as $columnKey) {
-			if (!isset($metadataByKey[$columnKey])) {
+		foreach ( $selectedColumnKeys as $columnKey ) {
+			if ( !isset( $metadataByKey[$columnKey] ) ) {
 				throw new RuntimeException('Admin Columns CSV export selected Column is absent from the authoritative read contract.');
 			}
 			$selectedMetadata[] = $metadataByKey[$columnKey];
 		}
 
 		$selectedRows = [];
-		foreach ($rows as $row) {
+		foreach ( $rows as $row ) {
 			$selectedRow = [];
-			foreach ($selectedColumnKeys as $columnKey) {
-				if (!array_key_exists($columnKey, $row)) {
+			foreach ( $selectedColumnKeys as $columnKey ) {
+				if ( !array_key_exists( $columnKey, $row ) ) {
 					throw new RuntimeException('Admin Columns CSV export row is missing a selected Column value.');
 				}
 				$selectedRow[$columnKey] = $row[$columnKey];
@@ -504,30 +504,30 @@ final readonly class AdminColumnsCsvExportService
 	}
 
 	/** @return array{0:int,1:int} */
-	private function currentPageRuntime(array $runtime): array
+	private function currentPageRuntime( array $runtime ): array
 	{
 		$this->assertKnownKeys($runtime, self::CURRENT_PAGE_KEYS, 'Admin Columns current-page export runtime');
-		foreach (self::CURRENT_PAGE_KEYS as $key) {
-			if (!array_key_exists($key, $runtime)) {
+		foreach ( self::CURRENT_PAGE_KEYS as $key ) {
+			if ( !array_key_exists( $key, $runtime ) ) {
 				throw new InvalidArgumentException('Admin Columns current-page export requires explicit page_size and offset.');
 			}
 		}
 
 		$pageSize = $runtime['page_size'];
 		$offset = $runtime['offset'];
-		if (!is_int($pageSize) || $pageSize < 1 || $pageSize > self::MAX_CURRENT_PAGE_SIZE) {
+		if ( !is_int( $pageSize ) || $pageSize < 1 || $pageSize > self::MAX_CURRENT_PAGE_SIZE ) {
 			throw new InvalidArgumentException('Admin Columns current-page export page_size is outside the bounded V1 range.');
 		}
-		if (!is_int($offset) || $offset < 0 || $offset > self::MAX_OFFSET) {
+		if ( !is_int( $offset ) || $offset < 0 || $offset > self::MAX_OFFSET ) {
 			throw new InvalidArgumentException('Admin Columns current-page export offset is outside the bounded V1 range.');
 		}
 
 		return [$pageSize, $offset];
 	}
 
-	private function assertNoRuntime(array $runtime, string $scope): void
+	private function assertNoRuntime( array $runtime, string $scope ): void
 	{
-		if ($runtime !== []) {
+		if ( $runtime !== [] ) {
 			throw new InvalidArgumentException(sprintf(
 				'Admin Columns %s export scope does not accept current-page runtime coordinates.',
 				$scope,
@@ -536,16 +536,16 @@ final readonly class AdminColumnsCsvExportService
 	}
 
 	/** @return list<string> */
-	private function enabledViewColumnKeys(Definition $view): array
+	private function enabledViewColumnKeys( Definition $view ): array
 	{
 		$columns = $view->payload['columns'] ?? null;
-		if (!is_array($columns) || !array_is_list($columns) || $columns === []) {
+		if ( !is_array( $columns ) || !array_is_list( $columns ) || $columns === [] ) {
 			throw new RuntimeException('Admin Columns scoped export View has no bounded Column definition.');
 		}
 
 		$keys = [];
 		$seen = [];
-		foreach ($columns as $column) {
+		foreach ( $columns as $column ) {
 			if (!is_array($column) || ($column['enabled'] ?? true) !== true) {
 				continue;
 			}
@@ -556,28 +556,28 @@ final readonly class AdminColumnsCsvExportService
 			$seen[$key] = true;
 			$keys[] = $key;
 		}
-		if ($keys === []) {
+		if ( $keys === [] ) {
 			throw new RuntimeException('Admin Columns scoped export View has no enabled Columns.');
 		}
 
 		return $keys;
 	}
 
-	private function postIdColumnKey(Definition $view): string
+	private function postIdColumnKey( Definition $view ): string
 	{
 		$columns = $view->payload['columns'] ?? null;
-		if (!is_array($columns) || !array_is_list($columns)) {
+		if ( !is_array( $columns ) || !array_is_list( $columns ) ) {
 			throw new RuntimeException('Admin Columns selected-row export View columns are malformed.');
 		}
 
 		$matches = [];
-		foreach ($columns as $column) {
+		foreach ( $columns as $column ) {
 			if (!is_array($column) || ($column['enabled'] ?? true) !== true) {
 				continue;
 			}
 			$source = $column['source'] ?? null;
 			$key = $column['key'] ?? null;
-			if (!is_array($source) || !is_string($key)) {
+			if ( !is_array( $source ) || !is_string( $key ) ) {
 				continue;
 			}
 			if (in_array($source['owner'] ?? null, ['native', 'query'], true)
@@ -587,7 +587,7 @@ final readonly class AdminColumnsCsvExportService
 			}
 		}
 
-		if (count($matches) !== 1) {
+		if ( count( $matches ) !== 1 ) {
 			throw new InvalidArgumentException(
 				'Admin Columns selected-row export requires exactly one enabled native/query post.id Column.',
 			);
@@ -596,9 +596,9 @@ final readonly class AdminColumnsCsvExportService
 		return $matches[0];
 	}
 
-	private function assertViewRevision(int $actualRevision, int $expectedRevision): void
+	private function assertViewRevision( int $actualRevision, int $expectedRevision ): void
 	{
-		if ($actualRevision !== $expectedRevision) {
+		if ( $actualRevision !== $expectedRevision ) {
 			throw new RuntimeException(sprintf(
 				'Admin Columns CSV export View revision changed: expected %d, current revision is %d.',
 				$expectedRevision,
@@ -609,7 +609,7 @@ final readonly class AdminColumnsCsvExportService
 
 	private function requiredViews(): AdminColumnsViewDefinitionService
 	{
-		if (!$this->views instanceof AdminColumnsViewDefinitionService) {
+		if ( !$this->views instanceof AdminColumnsViewDefinitionService ) {
 			throw new RuntimeException('Admin Columns scoped CSV export requires the canonical View service.');
 		}
 
@@ -618,7 +618,7 @@ final readonly class AdminColumnsCsvExportService
 
 	private function requiredScopePolicy(): AdminColumnsCsvExportScopePolicy
 	{
-		if (!$this->scopePolicy instanceof AdminColumnsCsvExportScopePolicy) {
+		if ( !$this->scopePolicy instanceof AdminColumnsCsvExportScopePolicy ) {
 			throw new RuntimeException('Admin Columns scoped CSV export requires the canonical scope policy.');
 		}
 
@@ -626,9 +626,9 @@ final readonly class AdminColumnsCsvExportService
 	}
 
 	/** @param array<string,mixed> $controls */
-	private function assertControls(array $controls): void
+	private function assertControls( array $controls ): void
 	{
-		if (array_is_list($controls) && $controls !== []) {
+		if ( array_is_list( $controls ) && $controls !== [] ) {
 			throw new InvalidArgumentException('Admin Columns CSV export controls must be an object/map.');
 		}
 
@@ -636,10 +636,10 @@ final readonly class AdminColumnsCsvExportService
 	}
 
 	/** @param array<string,mixed> $map @param list<string> $allowed */
-	private function assertKnownKeys(array $map, array $allowed, string $label): void
+	private function assertKnownKeys( array $map, array $allowed, string $label ): void
 	{
-		foreach (array_keys($map) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $map ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException(sprintf(
 					'%s contains unsupported input "%s".',
 					$label,

@@ -65,13 +65,13 @@ final class TaxonomyAdminController
 		$this->hookSuffix = is_string($hook) && $hook !== '' ? $hook : null;
 	}
 
-	public function enqueueAssets(string $hookSuffix): void
+	public function enqueueAssets( string $hookSuffix ): void
 	{
-		if ($this->hookSuffix === null || $hookSuffix !== $this->hookSuffix) {
+		if ( $this->hookSuffix === null || $hookSuffix !== $this->hookSuffix ) {
 			return;
 		}
 		$entry = $this->assets->entry('taxonomy', 'taxonomy-admin');
-		if ($entry === null) {
+		if ( $entry === null ) {
 			return;
 		}
 		$version = $entry['version'] ?? (defined('WPE_VERSION') ? (string) WPE_VERSION : null);
@@ -119,20 +119,20 @@ final class TaxonomyAdminController
 			'objectTypes' => $objectTypes,
 		];
 		$json = function_exists('wp_json_encode')
-			? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
-			: json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+			? wp_json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )
+			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json = is_string($json) ? $json : '{}';
 
 		echo '<div class="wrap wpessential-admin-wrap">';
 		echo '<section id="wpessential-taxonomy-root" data-wpessential-surface="taxonomies" aria-labelledby="wpessential-taxonomy-title">';
 		echo '<h1 id="wpessential-taxonomy-title">' . esc_html__('Taxonomies', 'wpessential') . '</h1>';
 		echo '<p>' . esc_html__('Create and manage canonical WPEssential taxonomy definitions. Taxonomy object-type associations are written only through the Taxonomy definition to preserve one source of truth.', 'wpessential') . '</p>';
-		if ($readError !== null) {
+		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html($readError) . '</p></div>';
 		}
 		echo '<div id="wpessential-taxonomy-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
-		$this->renderEditor($objectTypes);
-		$this->renderDefinitions($definitions);
+		$this->renderEditor( $objectTypes );
+		$this->renderDefinitions( $definitions );
 		echo '<noscript><p class="notice notice-warning inline">' . esc_html__('JavaScript is required to create or change Taxonomy definitions. Existing definitions remain readable in the table.', 'wpessential') . '</p></noscript>';
 		echo '</section>';
 		echo '<script id="wpessential-taxonomy-bootstrap" type="application/json">' . $json . '</script>';
@@ -140,7 +140,7 @@ final class TaxonomyAdminController
 	}
 
 	/** @param list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $objectTypes */
-	private function renderEditor(array $objectTypes): void
+	private function renderEditor( array $objectTypes ): void
 	{
 		echo '<section class="wpessential-cpt-panel" aria-labelledby="wpessential-taxonomy-editor-title">';
 		echo '<h2 id="wpessential-taxonomy-editor-title">' . esc_html__('Add taxonomy', 'wpessential') . '</h2>';
@@ -157,7 +157,7 @@ final class TaxonomyAdminController
 		$this->renderTextField('wpessential-taxonomy-description', __('Description', 'wpessential'), 'description', '', false);
 		echo '</div>';
 
-		$this->renderObjectTypeSelector($objectTypes);
+		$this->renderObjectTypeSelector( $objectTypes );
 
 		echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__('Essential behavior', 'wpessential') . '</legend>';
 		$this->renderCheckbox('wpessential-taxonomy-public', __('Public', 'wpessential'), true);
@@ -178,12 +178,12 @@ final class TaxonomyAdminController
 
 		echo '<p><label for="wpessential-taxonomy-status"><strong>' . esc_html__('Lifecycle status', 'wpessential') . '</strong></label><br>';
 		echo '<select id="wpessential-taxonomy-status">';
-		foreach ([
+		foreach ( [
 			'draft' => __('Draft', 'wpessential'),
 			'published' => __('Published', 'wpessential'),
 			'disabled' => __('Disabled', 'wpessential'),
 			'archived' => __('Archived', 'wpessential'),
-		] as $value => $label) {
+		] as $value => $label ) {
 			echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
 		}
 		echo '</select></p>';
@@ -204,11 +204,11 @@ final class TaxonomyAdminController
 	private function renderTierNavigation(): void
 	{
 		echo '<div class="wpessential-taxonomy-tier-navigation" role="group" aria-label="' . esc_attr__('Editor level', 'wpessential') . '">';
-		foreach ([
+		foreach ( [
 			'essential' => __('Essential', 'wpessential'),
 			'advanced' => __('Advanced', 'wpessential'),
 			'expert' => __('Expert', 'wpessential'),
-		] as $tier => $label) {
+		] as $tier => $label ) {
 			$active = $tier === 'essential';
 			echo '<button type="button" class="button' . ($active ? ' button-primary' : '') . '" data-wpessential-taxonomy-tier="' . esc_attr($tier) . '" aria-pressed="' . ($active ? 'true' : 'false') . '">' . esc_html($label) . '</button> ';
 		}
@@ -254,14 +254,14 @@ final class TaxonomyAdminController
 		echo '<h4 id="wpessential-taxonomy-runtime-providers-title">' . esc_html__('Controlled runtime providers', 'wpessential') . '</h4>';
 		echo '<p class="description">' . esc_html__('Only trusted provider IDs registered by PHP modules are shown. Implementation classes and callbacks are never exposed. Unavailable providers remain visible for health diagnostics but cannot be newly selected.', 'wpessential') . '</p>';
 
-		foreach ($slots as $slot => $label) {
+		foreach ( $slots as $slot => $label ) {
 			$id = 'wpessential-taxonomy-provider-' . str_replace('_', '-', $slot);
 			$stateId = $id . '-state';
-			$entries = is_array($catalog[$slot] ?? null) ? $catalog[$slot] : [];
+			$entries = is_array( $catalog[$slot] ?? null ) ? $catalog[$slot] : [];
 			echo '<p><label for="' . esc_attr($id) . '"><strong>' . esc_html($label) . '</strong></label><br>';
 			echo '<select id="' . esc_attr($id) . '" data-wpessential-taxonomy-runtime-provider="' . esc_attr($slot) . '" aria-describedby="' . esc_attr($stateId) . '">';
 			echo '<option value="">' . esc_html__('WordPress default', 'wpessential') . '</option>';
-			foreach ($entries as $entry) {
+			foreach ( $entries as $entry ) {
 				$providerId = is_string($entry['id'] ?? null) ? $entry['id'] : '';
 				if ($providerId === '') {
 					continue;
@@ -305,10 +305,10 @@ final class TaxonomyAdminController
 		echo ' <span class="description" data-wpessential-taxonomy-label-generation-state aria-live="polite"></span>';
 		echo '</fieldset>';
 		echo '<div class="wpessential-cpt-grid" data-wpessential-taxonomy-label-fields>';
-		foreach ($this->labelFields() as $key => $label) {
+		foreach ( $this->labelFields() as $key => $label ) {
 			$id = 'wpessential-taxonomy-label-' . str_replace('_', '-', $key);
 			$stateId = $id . '-state';
-			$generationMode = TaxonomyLabelPolicy::generationMode($key);
+			$generationMode = TaxonomyLabelPolicy::generationMode( $key );
 			$resetLabel = sprintf(__('Reset %s', 'wpessential'), $label);
 			echo '<p data-wpessential-taxonomy-label-row="' . esc_attr($key) . '">';
 			echo '<label for="' . esc_attr($id) . '"><strong>' . esc_html($label) . '</strong> <code>' . esc_html($key) . '</code></label><br>';
@@ -357,24 +357,24 @@ final class TaxonomyAdminController
 		];
 
 		$ordered = [];
-		foreach (TaxonomyLabelPolicy::overrideKeys() as $key) {
+		foreach ( TaxonomyLabelPolicy::overrideKeys() as $key ) {
 			$ordered[$key] = $labels[$key] ?? ucwords(str_replace('_', ' ', $key));
 		}
 		return $ordered;
 	}
 
 	/** @param list<array{key:string,label:string,source:string,status:string,runtime_registered:bool}> $objectTypes */
-	private function renderObjectTypeSelector(array $objectTypes): void
+	private function renderObjectTypeSelector( array $objectTypes ): void
 	{
 		echo '<fieldset class="wpessential-cpt-options" id="wpessential-taxonomy-object-types">';
 		echo '<legend>' . esc_html__('Linked post types', 'wpessential') . '</legend>';
 		echo '<p class="description">' . esc_html__('Select known WordPress or WPEssential post types. Additional external keys are preserved separately and are never removed just because they are not currently registered.', 'wpessential') . '</p>';
 
-		if ($objectTypes === []) {
+		if ( $objectTypes === [] ) {
 			echo '<p data-wpessential-taxonomy-object-types-empty>' . esc_html__('No runtime or WPEssential post types were discovered. You can still enter an external key below.', 'wpessential') . '</p>';
 		} else {
 			echo '<div data-wpessential-taxonomy-object-type-options>';
-			foreach ($objectTypes as $objectType) {
+			foreach ( $objectTypes as $objectType ) {
 				$key = $objectType['key'];
 				$label = $objectType['label'];
 				$source = $objectType['source'] === 'wpessential' ? __('WPEssential', 'wpessential') : __('WordPress/runtime', 'wpessential');
@@ -398,7 +398,7 @@ final class TaxonomyAdminController
 	}
 
 	/** @param list<array<string,mixed>> $definitions */
-	private function renderDefinitions(array $definitions): void
+	private function renderDefinitions( array $definitions ): void
 	{
 		echo '<section class="wpessential-cpt-panel" aria-labelledby="wpessential-taxonomy-list-title">';
 		echo '<div class="wpessential-cpt-list-heading"><h2 id="wpessential-taxonomy-list-title">' . esc_html__('Saved taxonomies', 'wpessential') . '</h2>';
@@ -406,17 +406,17 @@ final class TaxonomyAdminController
 		echo '<table class="widefat striped" id="wpessential-taxonomy-table" aria-label="' . esc_attr__('Saved taxonomies', 'wpessential') . '">';
 		echo '<thead><tr><th scope="col">' . esc_html__('Name', 'wpessential') . '</th><th scope="col">' . esc_html__('Key', 'wpessential') . '</th><th scope="col">' . esc_html__('Object types', 'wpessential') . '</th><th scope="col">' . esc_html__('Status', 'wpessential') . '</th><th scope="col">' . esc_html__('Revision', 'wpessential') . '</th><th scope="col">' . esc_html__('Runtime health', 'wpessential') . '</th><th scope="col">' . esc_html__('Dependencies', 'wpessential') . '</th><th scope="col">' . esc_html__('Actions', 'wpessential') . '</th></tr></thead>';
 		echo '<tbody id="wpessential-taxonomy-rows">';
-		foreach ($definitions as $definition) {
-			$this->renderDefinitionRow($definition);
+		foreach ( $definitions as $definition ) {
+			$this->renderDefinitionRow( $definition );
 		}
-		if ($definitions === []) {
+		if ( $definitions === [] ) {
 			echo '<tr data-wpessential-taxonomy-empty><td colspan="8">' . esc_html__('No taxonomies have been created yet.', 'wpessential') . '</td></tr>';
 		}
 		echo '</tbody></table></section>';
 	}
 
 	/** @param array<string,mixed> $definition */
-	private function renderDefinitionRow(array $definition): void
+	private function renderDefinitionRow( array $definition ): void
 	{
 		$payload = is_array($definition['payload'] ?? null) ? $definition['payload'] : [];
 		$id = is_string($definition['id'] ?? null) ? $definition['id'] : '';
@@ -467,7 +467,7 @@ final class TaxonomyAdminController
 		echo '</p>';
 	}
 
-	private function renderCheckbox(string $id, string $label, bool $checkedByDefault): void
+	private function renderCheckbox( string $id, string $label, bool $checkedByDefault ): void
 	{
 		echo '<label for="' . esc_attr($id) . '"><input type="checkbox" id="' . esc_attr($id) . '"' . checked($checkedByDefault, true, false) . '> ' . esc_html($label) . '</label>';
 	}
@@ -490,13 +490,13 @@ final class TaxonomyAdminController
 			}
 			$definitions = [];
 			foreach ($result['definitions'] as $definition) {
-				if (!is_array($definition)) {
+				if ( !is_array( $definition ) ) {
 					return [[], __('The Taxonomy list returned an invalid response.', 'wpessential')];
 				}
 				$definitions[] = $definition;
 			}
 			return [$definitions, null];
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return [[], __('Taxonomy definitions could not be loaded.', 'wpessential')];
 		}
 	}
