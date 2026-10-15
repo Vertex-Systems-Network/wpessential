@@ -71,43 +71,43 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 	private readonly Closure $queryFactory;
 
 	/** @param null|Closure(array<string,mixed>):object $queryFactory */
-	public function __construct(?Closure $queryFactory = null)
+	public function __construct( ?Closure $queryFactory = null )
 	{
-		$this->queryFactory = $queryFactory ?? static function (array $arguments): object {
+		$this->queryFactory = $queryFactory ?? static function ( array $arguments ): object {
 			if (!class_exists('WP_Query')) {
 				throw new RuntimeException('WordPress WP_Query is unavailable.');
 			}
 
-			return new \WP_Query($arguments);
+			return new \WP_Query( $arguments );
 		};
 	}
 
-	public function supports(QueryProviderPlan $plan): bool
+	public function supports( QueryProviderPlan $plan ): bool
 	{
 		return $plan->provider === WordPressPostsQueryCompiler::PROVIDER
 			&& $plan->sourceRef === WordPressPostsQueryCompiler::SOURCE_REF;
 	}
 
-	public function execute(QueryProviderPlan $plan): QueryExecutionResult|QueryExecutionError
+	public function execute( QueryProviderPlan $plan ): QueryExecutionResult|QueryExecutionError
 	{
-		$validationError = $this->validatePlan($plan);
-		if ($validationError !== null) {
+		$validationError = $this->validatePlan( $plan );
+		if ( $validationError !== null ) {
 			return $validationError;
 		}
 
 		try {
-			$query = ($this->queryFactory)($plan->arguments);
-		} catch (Throwable) {
+			$query = ( $this->queryFactory )( $plan->arguments );
+		} catch ( Throwable ) {
 			return $this->providerFailure(
 				'$.source',
 				'Native WordPress posts provider execution failed.',
 			);
 		}
 
-		$native = get_object_vars($query);
+		$native = get_object_vars( $query );
 		$posts = $native['posts'] ?? null;
 
-		if (!is_array($posts) || !array_is_list($posts)) {
+		if ( !is_array( $posts ) || !array_is_list( $posts ) ) {
 			return $this->providerFailure(
 				'$.execution',
 				'Native WordPress posts provider returned an invalid result shape.',
@@ -115,9 +115,9 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		}
 
 		$rows = [];
-		foreach ($posts as $index => $post) {
+		foreach ( $posts as $index => $post ) {
 			$row = $this->normalizeRow($post, $plan->projection, '$.execution.posts[' . $index . ']');
-			if ($row instanceof QueryExecutionError) {
+			if ( $row instanceof QueryExecutionError ) {
 				return $row;
 			}
 			$rows[] = $row;
@@ -128,13 +128,13 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 			sourceRef: $plan->sourceRef,
 			projection: $plan->projection,
 			rows: $rows,
-			returned: count($rows),
+			returned: count( $rows ),
 		);
 	}
 
-	private function validatePlan(QueryProviderPlan $plan): ?QueryExecutionError
+	private function validatePlan( QueryProviderPlan $plan ): ?QueryExecutionError
 	{
-		if (!$this->supports($plan)) {
+		if ( !$this->supports( $plan ) ) {
 			return new QueryExecutionError(
 				errorCode: 'wpe_query_dependency_unavailable',
 				path: '$.source',
@@ -142,12 +142,12 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 			);
 		}
 
-		if ($plan->projection === []) {
+		if ( $plan->projection === [] ) {
 			return $this->providerFailure('$.projection', 'Provider plan projection is empty.');
 		}
 
-		foreach ($plan->projection as $index => $fieldRef) {
-			if (!in_array($fieldRef, self::PROJECTION_FIELDS, true)) {
+		foreach ( $plan->projection as $index => $fieldRef ) {
+			if ( !in_array( $fieldRef, self::PROJECTION_FIELDS, true ) ) {
 				return $this->providerFailure(
 					'$.projection[' . $index . ']',
 					'Provider plan contains an unsupported posts projection field.',
@@ -155,8 +155,8 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 			}
 		}
 
-		foreach ($plan->arguments as $key => $_value) {
-			if (!is_string($key) || !in_array($key, self::ALLOWED_ARGUMENTS, true)) {
+		foreach ( $plan->arguments as $key => $_value ) {
+			if ( !is_string( $key ) || !in_array( $key, self::ALLOWED_ARGUMENTS, true ) ) {
 				return $this->providerFailure(
 					'$.execution.arguments',
 					'Provider plan contains a non-certified WP_Query argument.',
@@ -178,7 +178,7 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		}
 
 		$pageSize = $plan->arguments['posts_per_page'] ?? null;
-		if (!is_int($pageSize) || $pageSize < 1 || $pageSize > self::MAX_PAGE_SIZE) {
+		if ( !is_int( $pageSize ) || $pageSize < 1 || $pageSize > self::MAX_PAGE_SIZE ) {
 			return $this->providerFailure(
 				'$.execution.arguments.posts_per_page',
 				'Provider plan page size is outside the certified native bound.',
@@ -186,7 +186,7 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		}
 
 		$offset = $plan->arguments['offset'] ?? null;
-		if (!is_int($offset) || $offset < 0) {
+		if ( !is_int( $offset ) || $offset < 0 ) {
 			return $this->providerFailure(
 				'$.execution.arguments.offset',
 				'Provider plan offset must be a non-negative integer.',
@@ -229,16 +229,16 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 
 		foreach (['post__in', 'post__not_in', 'author__in', 'author__not_in'] as $key) {
 			if (
-				array_key_exists($key, $plan->arguments)
-				&& !$this->isIntegerList($plan->arguments[$key], false)
+				array_key_exists( $key, $plan->arguments )
+				&& !$this->isIntegerList( $plan->arguments[$key], false )
 			) {
 				return $this->providerFailure('$.execution.arguments.' . $key, 'Provider id list argument is invalid.');
 			}
 		}
 		foreach (['post_parent__in', 'post_parent__not_in'] as $key) {
 			if (
-				array_key_exists($key, $plan->arguments)
-				&& !$this->isIntegerList($plan->arguments[$key], true)
+				array_key_exists( $key, $plan->arguments )
+				&& !$this->isIntegerList( $plan->arguments[$key], true )
 			) {
 				return $this->providerFailure('$.execution.arguments.' . $key, 'Provider parent id list argument is invalid.');
 			}
@@ -246,8 +246,8 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 
 		foreach (['post_status', 'post_type'] as $key) {
 			if (
-				array_key_exists($key, $plan->arguments)
-				&& !$this->isSlugOrSlugList($plan->arguments[$key])
+				array_key_exists( $key, $plan->arguments )
+				&& !$this->isSlugOrSlugList( $plan->arguments[$key] )
 			) {
 				return $this->providerFailure('$.execution.arguments.' . $key, 'Provider slug argument is invalid.');
 			}
@@ -261,8 +261,8 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		}
 		foreach (['s', 'title'] as $key) {
 			if (
-				array_key_exists($key, $plan->arguments)
-				&& !$this->isNonEmptyString($plan->arguments[$key])
+				array_key_exists( $key, $plan->arguments )
+				&& !$this->isNonEmptyString( $plan->arguments[$key] )
 			) {
 				return $this->providerFailure('$.execution.arguments.' . $key, 'Provider text argument is invalid.');
 			}
@@ -282,26 +282,26 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 	 * @param list<string> $projection
 	 * @return array<string,mixed>|QueryExecutionError
 	 */
-	private function normalizeRow(mixed $nativePost, array $projection, string $path): array|QueryExecutionError
+	private function normalizeRow( mixed $nativePost, array $projection, string $path ): array|QueryExecutionError
 	{
 		if ($projection === ['post.id']) {
-			$id = $this->positiveIntLike($nativePost);
-			if ($id === null) {
+			$id = $this->positiveIntLike( $nativePost );
+			if ( $id === null ) {
 				return $this->providerFailure($path, 'Native ID projection returned a non-positive post id.');
 			}
 
 			return ['post.id' => $id];
 		}
 
-		if (!is_object($nativePost)) {
+		if ( !is_object( $nativePost ) ) {
 			return $this->providerFailure($path, 'Native posts provider returned a non-object post row.');
 		}
 
-		$values = get_object_vars($nativePost);
+		$values = get_object_vars( $nativePost );
 		$row = [];
-		foreach ($projection as $fieldRef) {
-			$normalized = $this->normalizeProjectedField($fieldRef, $values, $path);
-			if ($normalized instanceof QueryExecutionError) {
+		foreach ( $projection as $fieldRef ) {
+			$normalized = $this->normalizeProjectedField( $fieldRef, $values, $path );
+			if ( $normalized instanceof QueryExecutionError ) {
 				return $normalized;
 			}
 			$row[$fieldRef] = $normalized;
@@ -316,7 +316,7 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		array $values,
 		string $path,
 	): int|string|QueryExecutionError {
-		$property = match ($fieldRef) {
+		$property = match ( $fieldRef ) {
 			'post.id' => 'ID',
 			'post.title' => 'post_title',
 			'post.slug' => 'post_name',
@@ -331,44 +331,44 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 			default => null,
 		};
 
-		if ($property === null || !array_key_exists($property, $values)) {
+		if ( $property === null || !array_key_exists( $property, $values ) ) {
 			return $this->providerFailure($path . '.' . $fieldRef, 'Native post row is missing a projected field.');
 		}
 
 		$value = $values[$property];
 		if ($fieldRef === 'post.id') {
-			$normalizedId = $this->positiveIntLike($value);
+			$normalizedId = $this->positiveIntLike( $value );
 			return $normalizedId ?? $this->providerFailure($path . '.' . $fieldRef, 'Projected post id is invalid.');
 		}
 		if ($fieldRef === 'post.author_id' || $fieldRef === 'post.parent_id') {
-			$normalizedId = $this->nonNegativeIntLike($value);
+			$normalizedId = $this->nonNegativeIntLike( $value );
 			return $normalizedId ?? $this->providerFailure($path . '.' . $fieldRef, 'Projected post reference id is invalid.');
 		}
-		if (!is_string($value)) {
+		if ( !is_string( $value ) ) {
 			return $this->providerFailure($path . '.' . $fieldRef, 'Projected post scalar is not a string.');
 		}
 
 		return $value;
 	}
 
-	private function isPositiveInt(mixed $value): bool
+	private function isPositiveInt( mixed $value ): bool
 	{
-		return is_int($value) && $value > 0;
+		return is_int( $value ) && $value > 0;
 	}
 
-	private function isNonNegativeInt(mixed $value): bool
+	private function isNonNegativeInt( mixed $value ): bool
 	{
-		return is_int($value) && $value >= 0;
+		return is_int( $value ) && $value >= 0;
 	}
 
-	private function isIntegerList(mixed $value, bool $allowZero): bool
+	private function isIntegerList( mixed $value, bool $allowZero ): bool
 	{
-		if (!is_array($value) || !array_is_list($value) || $value === []) {
+		if ( !is_array( $value ) || !array_is_list( $value ) || $value === [] ) {
 			return false;
 		}
 
-		foreach ($value as $item) {
-			if (!is_int($item) || ($allowZero ? $item < 0 : $item < 1)) {
+		foreach ( $value as $item ) {
+			if ( !is_int( $item ) || ( $allowZero ? $item < 0 : $item < 1 ) ) {
 				return false;
 			}
 		}
@@ -376,17 +376,17 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		return true;
 	}
 
-	private function isSlugOrSlugList(mixed $value): bool
+	private function isSlugOrSlugList( mixed $value ): bool
 	{
-		if (is_string($value)) {
-			return $this->isSlug($value);
+		if ( is_string( $value ) ) {
+			return $this->isSlug( $value );
 		}
-		if (!is_array($value) || !array_is_list($value) || $value === []) {
+		if ( !is_array( $value ) || !array_is_list( $value ) || $value === [] ) {
 			return false;
 		}
 
-		foreach ($value as $item) {
-			if (!$this->isSlug($item)) {
+		foreach ( $value as $item ) {
+			if ( !$this->isSlug( $item ) ) {
 				return false;
 			}
 		}
@@ -394,27 +394,27 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		return true;
 	}
 
-	private function isSlug(mixed $value): bool
+	private function isSlug( mixed $value ): bool
 	{
-		return is_string($value)
+		return is_string( $value )
 			&& preg_match('/^[a-z0-9][a-z0-9_-]{0,199}$/', $value) === 1;
 	}
 
-	private function isNonEmptyString(mixed $value): bool
+	private function isNonEmptyString( mixed $value ): bool
 	{
 		return is_string($value) && trim($value) !== '';
 	}
 
-	private function isOrdering(mixed $value): bool
+	private function isOrdering( mixed $value ): bool
 	{
-		if (!is_array($value) || $value === [] || array_is_list($value)) {
+		if ( !is_array( $value ) || $value === [] || array_is_list( $value ) ) {
 			return false;
 		}
 
-		foreach ($value as $field => $direction) {
+		foreach ( $value as $field => $direction ) {
 			if (
-				!is_string($field)
-				|| !in_array($field, self::ORDER_FIELDS, true)
+				!is_string( $field )
+				|| !in_array( $field, self::ORDER_FIELDS, true )
 				|| ($direction !== 'ASC' && $direction !== 'DESC')
 			) {
 				return false;
@@ -424,15 +424,15 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		return true;
 	}
 
-	private function positiveIntLike(mixed $value): ?int
+	private function positiveIntLike( mixed $value ): ?int
 	{
-		$normalized = $this->nonNegativeIntLike($value);
+		$normalized = $this->nonNegativeIntLike( $value );
 		return $normalized !== null && $normalized > 0 ? $normalized : null;
 	}
 
-	private function nonNegativeIntLike(mixed $value): ?int
+	private function nonNegativeIntLike( mixed $value ): ?int
 	{
-		if (is_int($value)) {
+		if ( is_int( $value ) ) {
 			return $value >= 0 ? $value : null;
 		}
 		if (is_string($value) && preg_match('/^(0|[1-9][0-9]*)$/', $value) === 1) {
@@ -443,7 +443,7 @@ final class WordPressPostsQueryExecutor implements QueryProviderExecutorInterfac
 		return null;
 	}
 
-	private function providerFailure(string $path, string $message): QueryExecutionError
+	private function providerFailure( string $path, string $message ): QueryExecutionError
 	{
 		return new QueryExecutionError(
 			errorCode: 'wpe_query_provider_failed',

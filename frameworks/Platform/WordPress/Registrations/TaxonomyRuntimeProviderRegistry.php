@@ -36,63 +36,63 @@ final class TaxonomyRuntimeProviderRegistry
 	}
 
 	/** @param class-string $className */
-	public function registerRestController(string $id, string $className): void
+	public function registerRestController( string $id, string $className ): void
 	{
-		$id = $this->providerId($id);
-		if (!$this->className($className) || isset($this->restControllers[$id])) {
+		$id = $this->providerId( $id );
+		if ( !$this->className( $className ) || isset( $this->restControllers[$id] ) ) {
 			throw new InvalidArgumentException('Taxonomy REST controller provider must use a unique provider id and valid class name.');
 		}
 		$this->restControllers[$id] = $className;
 	}
 
-	public function registerMetaBoxProvider(string $id, mixed $callback): void
+	public function registerMetaBoxProvider( string $id, mixed $callback ): void
 	{
-		$id = $this->providerId($id);
-		if (array_key_exists($id, $this->metaBoxCallbacks)) {
+		$id = $this->providerId( $id );
+		if ( array_key_exists( $id, $this->metaBoxCallbacks ) ) {
 			throw new InvalidArgumentException('Taxonomy meta-box provider id is already registered.');
 		}
 		$this->assertTrustedCallbackDescriptor($callback, true, 'Taxonomy meta-box provider');
 		$this->metaBoxCallbacks[$id] = $callback;
 	}
 
-	public function registerMetaBoxSanitizeProvider(string $id, mixed $callback): void
+	public function registerMetaBoxSanitizeProvider( string $id, mixed $callback ): void
 	{
-		$id = $this->providerId($id);
-		if (array_key_exists($id, $this->metaBoxSanitizeCallbacks)) {
+		$id = $this->providerId( $id );
+		if ( array_key_exists( $id, $this->metaBoxSanitizeCallbacks ) ) {
 			throw new InvalidArgumentException('Taxonomy meta-box sanitizer provider id is already registered.');
 		}
 		$this->assertTrustedCallbackDescriptor($callback, false, 'Taxonomy meta-box sanitizer provider');
 		$this->metaBoxSanitizeCallbacks[$id] = $callback;
 	}
 
-	public function registerTermCountProvider(string $id, mixed $callback): void
+	public function registerTermCountProvider( string $id, mixed $callback ): void
 	{
-		$id = $this->providerId($id);
-		if (array_key_exists($id, $this->termCountCallbacks)) {
+		$id = $this->providerId( $id );
+		if ( array_key_exists( $id, $this->termCountCallbacks ) ) {
 			throw new InvalidArgumentException('Taxonomy term-count provider id is already registered.');
 		}
 		$this->assertTrustedCallbackDescriptor($callback, false, 'Taxonomy term-count provider');
 		$this->termCountCallbacks[$id] = $callback;
 	}
 
-	public function hasRestController(string $id): bool
+	public function hasRestController( string $id ): bool
 	{
-		return isset($this->restControllers[$id]);
+		return isset( $this->restControllers[$id] );
 	}
 
-	public function hasMetaBoxProvider(string $id): bool
+	public function hasMetaBoxProvider( string $id ): bool
 	{
-		return array_key_exists($id, $this->metaBoxCallbacks);
+		return array_key_exists( $id, $this->metaBoxCallbacks );
 	}
 
-	public function hasMetaBoxSanitizeProvider(string $id): bool
+	public function hasMetaBoxSanitizeProvider( string $id ): bool
 	{
-		return array_key_exists($id, $this->metaBoxSanitizeCallbacks);
+		return array_key_exists( $id, $this->metaBoxSanitizeCallbacks );
 	}
 
-	public function hasTermCountProvider(string $id): bool
+	public function hasTermCountProvider( string $id ): bool
 	{
-		return array_key_exists($id, $this->termCountCallbacks);
+		return array_key_exists( $id, $this->termCountCallbacks );
 	}
 
 	/**
@@ -125,11 +125,11 @@ final class TaxonomyRuntimeProviderRegistry
      * @param array<string,mixed> $providerIds
      * @return array<string,mixed>
      */
-	public function apply(array $args, array $providerIds): array
+	public function apply( array $args, array $providerIds ): array
 	{
 		$allowed = ['rest_controller', 'meta_box', 'meta_box_sanitize', 'term_count'];
-		foreach (array_keys($providerIds) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $providerIds ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException(sprintf('Unknown Taxonomy runtime provider slot "%s".', (string) $key));
 			}
 		}
@@ -137,7 +137,7 @@ final class TaxonomyRuntimeProviderRegistry
 		if (array_key_exists('rest_controller', $providerIds)) {
 			$id = $this->requiredPersistedId($providerIds['rest_controller'], 'rest_controller');
 			$className = $this->restControllers[$id] ?? null;
-			if (!is_string($className) || !class_exists($className)) {
+			if ( !is_string( $className ) || !class_exists( $className ) ) {
 				throw new RuntimeException(sprintf('Taxonomy REST controller provider "%s" is unavailable at runtime.', $id));
 			}
 			$args['rest_controller_class'] = $className;
@@ -145,11 +145,11 @@ final class TaxonomyRuntimeProviderRegistry
 
 		if (array_key_exists('meta_box', $providerIds)) {
 			$id = $this->requiredPersistedId($providerIds['meta_box'], 'meta_box');
-			if (!array_key_exists($id, $this->metaBoxCallbacks)) {
+			if ( !array_key_exists( $id, $this->metaBoxCallbacks ) ) {
 				throw new RuntimeException(sprintf('Taxonomy meta-box provider "%s" is unavailable at runtime.', $id));
 			}
 			$callback = $this->metaBoxCallbacks[$id];
-			if ($callback !== false && !is_callable($callback)) {
+			if ( $callback !== false && !is_callable( $callback ) ) {
 				throw new RuntimeException(sprintf('Taxonomy meta-box provider "%s" is not callable at runtime.', $id));
 			}
 			$args['meta_box_cb'] = $callback;
@@ -158,7 +158,7 @@ final class TaxonomyRuntimeProviderRegistry
 		if (array_key_exists('meta_box_sanitize', $providerIds)) {
 			$id = $this->requiredPersistedId($providerIds['meta_box_sanitize'], 'meta_box_sanitize');
 			$callback = $this->metaBoxSanitizeCallbacks[$id] ?? null;
-			if (!is_callable($callback)) {
+			if ( !is_callable( $callback ) ) {
 				throw new RuntimeException(sprintf('Taxonomy meta-box sanitizer provider "%s" is unavailable at runtime.', $id));
 			}
 			$args['meta_box_sanitize_cb'] = $callback;
@@ -167,7 +167,7 @@ final class TaxonomyRuntimeProviderRegistry
 		if (array_key_exists('term_count', $providerIds)) {
 			$id = $this->requiredPersistedId($providerIds['term_count'], 'term_count');
 			$callback = $this->termCountCallbacks[$id] ?? null;
-			if (!is_callable($callback)) {
+			if ( !is_callable( $callback ) ) {
 				throw new RuntimeException(sprintf('Taxonomy term-count provider "%s" is unavailable at runtime.', $id));
 			}
 			$args['update_count_callback'] = $callback;
@@ -180,11 +180,11 @@ final class TaxonomyRuntimeProviderRegistry
      * @param array<string,mixed> $providers
      * @return list<array{id:string,available:bool}>
      */
-	private function catalogEntries(string $slot, array $providers): array
+	private function catalogEntries( string $slot, array $providers ): array
 	{
-		ksort($providers, SORT_STRING);
+		ksort( $providers, SORT_STRING );
 		$entries = [];
-		foreach ($providers as $id => $descriptor) {
+		foreach ( $providers as $id => $descriptor ) {
 			$entries[] = [
 				'id' => $id,
 				'available' => $this->descriptorAvailable($slot, $descriptor),
@@ -193,40 +193,40 @@ final class TaxonomyRuntimeProviderRegistry
 		return $entries;
 	}
 
-	private function descriptorAvailable(string $slot, mixed $descriptor): bool
+	private function descriptorAvailable( string $slot, mixed $descriptor ): bool
 	{
 		if ($slot === 'rest_controller') {
-			return is_string($descriptor) && class_exists($descriptor);
+			return is_string( $descriptor ) && class_exists( $descriptor );
 		}
 		if ($slot === 'meta_box') {
-			return $descriptor === false || is_callable($descriptor);
+			return $descriptor === false || is_callable( $descriptor );
 		}
-		return is_callable($descriptor);
+		return is_callable( $descriptor );
 	}
 
-	private function providerId(string $id): string
+	private function providerId( string $id ): string
 	{
-		$id = trim($id);
+		$id = trim( $id );
 		if (preg_match('/^[a-z0-9][a-z0-9._-]{0,127}$/', $id) !== 1) {
 			throw new InvalidArgumentException('Taxonomy runtime provider id has an invalid shape.');
 		}
 		return $id;
 	}
 
-	private function requiredPersistedId(mixed $value, string $slot): string
+	private function requiredPersistedId( mixed $value, string $slot ): string
 	{
-		if (!is_string($value)) {
+		if ( !is_string( $value ) ) {
 			throw new InvalidArgumentException(sprintf('Taxonomy runtime provider slot "%s" must contain a provider id string.', $slot));
 		}
-		return $this->providerId($value);
+		return $this->providerId( $value );
 	}
 
-	private function className(string $className): bool
+	private function className( string $className ): bool
 	{
-		return $this->qualifiedName($className);
+		return $this->qualifiedName( $className );
 	}
 
-	private function qualifiedName(string $name): bool
+	private function qualifiedName( string $name ): bool
 	{
 		$name = ltrim($name, '\\');
 		if ($name === '') {
@@ -242,44 +242,44 @@ final class TaxonomyRuntimeProviderRegistry
 		return true;
 	}
 
-	private function methodName(string $method): bool
+	private function methodName( string $method ): bool
 	{
 		return preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $method) === 1;
 	}
 
-	private function assertTrustedCallbackDescriptor(mixed $callback, bool $allowFalse, string $label): void
+	private function assertTrustedCallbackDescriptor( mixed $callback, bool $allowFalse, string $label ): void
 	{
-		if ($callback === false) {
-			if ($allowFalse) {
+		if ( $callback === false ) {
+			if ( $allowFalse ) {
 				return;
 			}
 			throw new InvalidArgumentException($label . ' cannot be disabled with false.');
 		}
 
-		if ($callback instanceof Closure || is_object($callback) && is_callable($callback)) {
+		if ( $callback instanceof Closure || is_object( $callback ) && is_callable( $callback ) ) {
 			return;
 		}
 
-		if (is_string($callback)) {
+		if ( is_string( $callback ) ) {
 			$parts = explode('::', $callback);
-			if (count($parts) === 1 && $this->qualifiedName($parts[0])) {
+			if ( count( $parts ) === 1 && $this->qualifiedName( $parts[0] ) ) {
 				return;
 			}
-			if (count($parts) === 2 && $this->className($parts[0]) && $this->methodName($parts[1])) {
+			if ( count( $parts ) === 2 && $this->className( $parts[0] ) && $this->methodName( $parts[1] ) ) {
 				return;
 			}
 			throw new InvalidArgumentException($label . ' string has an invalid callable identifier shape.');
 		}
 
-		if (is_array($callback) && array_is_list($callback) && count($callback) === 2 && is_string($callback[1])) {
+		if ( is_array( $callback ) && array_is_list( $callback ) && count( $callback ) === 2 && is_string( $callback[1] ) ) {
 			[$target, $method] = $callback;
-			if (!$this->methodName($method)) {
+			if ( !$this->methodName( $method ) ) {
 				throw new InvalidArgumentException($label . ' method name has an invalid shape.');
 			}
-			if (is_object($target)) {
+			if ( is_object( $target ) ) {
 				return;
 			}
-			if (is_string($target) && $this->className($target)) {
+			if ( is_string( $target ) && $this->className( $target ) ) {
 				return;
 			}
 		}

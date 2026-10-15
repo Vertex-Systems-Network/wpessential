@@ -18,39 +18,39 @@ final class FieldDefinitionNormalizer
 		private readonly FieldTypeRegistry $types = new FieldTypeRegistry(),
 		?FieldPresetRegistry $presets = null,
 	) {
-		$this->presets = $presets ?? new FieldPresetRegistry($this->types);
+		$this->presets = $presets ?? new FieldPresetRegistry( $this->types );
 	}
 
 	/**
 	 * @param array<string,mixed> $field
 	 * @return array<string,mixed>
 	 */
-	public function normalize(array $field): array
+	public function normalize( array $field ): array
 	{
 		$uuid = $this->optionalUuid($field['uuid'] ?? null);
 		$submittedType = $this->requiredMachineKey($field['type'] ?? null, 'Field type');
 		$requestedType = $this->requestedType($submittedType, $field['preset'] ?? null);
 		$key = $this->requiredMachineKey($field['key'] ?? null, 'Field key');
 		$label = $field['label'] ?? '';
-		if (!is_string($label)) {
+		if ( !is_string( $label ) ) {
 			throw new InvalidArgumentException('Field label must be a string.');
 		}
 
 		$preset = null;
-		if ($this->presets->has($requestedType)) {
-			$preset = $this->presets->get($requestedType);
+		if ( $this->presets->has( $requestedType ) ) {
+			$preset = $this->presets->get( $requestedType );
 			$type = $preset->canonicalType;
 		} else {
 			$type = $requestedType;
 		}
-		$descriptor = $this->types->get($type);
+		$descriptor = $this->types->get( $type );
 
 		$settings = $field['settings'] ?? [];
 		if ( ! is_array( $settings ) || ( array() !== $settings && array_is_list( $settings ) ) ) {
 			throw new InvalidArgumentException('Field settings must be a named map.');
 		}
-		if ($preset instanceof FieldPresetDescriptor) {
-			$settings = array_replace($preset->defaults, $settings);
+		if ( $preset instanceof FieldPresetDescriptor ) {
+			$settings = array_replace( $preset->defaults, $settings );
 		}
 
 		if ($descriptor->key === 'code_editor' && (($settings['execute'] ?? false) === true || ($settings['eval'] ?? false) === true)) {
@@ -58,7 +58,7 @@ final class FieldDefinitionNormalizer
 		}
 
 		$showInRest = $field['show_in_rest'] ?? false;
-		if (!is_bool($showInRest)) {
+		if ( !is_bool( $showInRest ) ) {
 			throw new InvalidArgumentException('Field show_in_rest must be boolean.');
 		}
 
@@ -67,8 +67,8 @@ final class FieldDefinitionNormalizer
 			throw new InvalidArgumentException('Field rest_schema V1 must be "auto" so the certified compiler derives the native schema.');
 		}
 
-		$repeat = $this->repeatability($field, $descriptor);
-		$subfields = $this->subfields($field, $descriptor);
+		$repeat = $this->repeatability( $field, $descriptor );
+		$subfields = $this->subfields( $field, $descriptor );
 
 		return [
 			'uuid' => $uuid,
@@ -89,16 +89,16 @@ final class FieldDefinitionNormalizer
 		];
 	}
 
-	private function requestedType(string $submittedType, mixed $submittedPreset): string
+	private function requestedType( string $submittedType, mixed $submittedPreset ): string
 	{
-		if ($submittedPreset === null) {
+		if ( $submittedPreset === null ) {
 			return $submittedType;
 		}
-		if (!is_string($submittedPreset) || !$this->presets->has($submittedPreset)) {
+		if ( !is_string( $submittedPreset ) || !$this->presets->has( $submittedPreset ) ) {
 			throw new InvalidArgumentException('Field preset must reference a registered preset or be null.');
 		}
-		$preset = $this->presets->get($submittedPreset);
-		if ($preset->canonicalType !== $submittedType) {
+		$preset = $this->presets->get( $submittedPreset );
+		if ( $preset->canonicalType !== $submittedType ) {
 			throw new InvalidArgumentException(sprintf(
 				'Field preset "%s" does not compile to submitted canonical type "%s".',
 				$submittedPreset,
@@ -112,10 +112,10 @@ final class FieldDefinitionNormalizer
 	 * @param array<string,mixed> $field
 	 * @return array<string,mixed>
 	 */
-	private function repeatability(array $field, FieldTypeDescriptor $descriptor): array
+	private function repeatability( array $field, FieldTypeDescriptor $descriptor ): array
 	{
 		$canonical = $field['repeatability'] ?? null;
-		if ($canonical !== null && (!is_array($canonical) || array_is_list($canonical))) {
+		if ( $canonical !== null && ( !is_array( $canonical ) || array_is_list( $canonical ) ) ) {
 			throw new InvalidArgumentException('Canonical repeatability must be a named map when supplied.');
 		}
 		if (is_array($canonical) && isset($canonical['mode'])
@@ -124,7 +124,7 @@ final class FieldDefinitionNormalizer
 			throw new InvalidArgumentException('Canonical repeatability mode does not match the field type.');
 		}
 
-		if ($descriptor->managesItsOwnRows()) {
+		if ( $descriptor->managesItsOwnRows() ) {
 			if (($field['cloneable'] ?? false) === true || ($field['repeatable'] ?? false) === true) {
 				throw new InvalidArgumentException(sprintf(
 					'Field type "%s" manages row repeatability internally; use its row settings instead of common cloneable.',
@@ -141,21 +141,21 @@ final class FieldDefinitionNormalizer
 		$enabled = array_key_exists('cloneable', $field)
 			? $field['cloneable']
 			: (array_key_exists('repeatable', $field) ? $field['repeatable'] : ($canonical['enabled'] ?? false));
-		if (!is_bool($enabled)) {
+		if ( !is_bool( $enabled ) ) {
 			throw new InvalidArgumentException('cloneable/repeatable must be boolean.');
 		}
 		$sortable = array_key_exists('sortable', $field) ? $field['sortable'] : ($canonical['sortable'] ?? false);
-		if (!is_bool($sortable)) {
+		if ( !is_bool( $sortable ) ) {
 			throw new InvalidArgumentException('sortable must be boolean.');
 		}
 
-		if ($enabled && !$descriptor->supportsCloneableValues()) {
+		if ( $enabled && !$descriptor->supportsCloneableValues() ) {
 			throw new InvalidArgumentException(sprintf('Field type "%s" does not store repeatable values.', $descriptor->key));
 		}
-		if ($sortable && !$enabled) {
+		if ( $sortable && !$enabled ) {
 			throw new InvalidArgumentException('Sortable clones require cloneable/repeatable to be enabled first.');
 		}
-		if ($sortable && !$descriptor->sortableClones) {
+		if ( $sortable && !$descriptor->sortableClones ) {
 			throw new InvalidArgumentException(sprintf('Field type "%s" does not support sortable clones.', $descriptor->key));
 		}
 
@@ -163,9 +163,9 @@ final class FieldDefinitionNormalizer
 		$min = $this->nonNegativeInt($minSource, 'min_clones');
 		$maxSource = array_key_exists('max_clones', $field) ? $field['max_clones'] : ($canonical['max'] ?? null);
 		$max = $maxSource;
-		if ($max !== null) {
+		if ( $max !== null ) {
 			$max = $this->positiveInt($max, 'max_clones');
-			if ($max < $min) {
+			if ( $max < $min ) {
 				throw new InvalidArgumentException('max_clones cannot be lower than min_clones.');
 			}
 		}
@@ -192,26 +192,26 @@ final class FieldDefinitionNormalizer
 	 * @param array<string,mixed> $field
 	 * @return list<array<string,mixed>>
 	 */
-	private function subfields(array $field, FieldTypeDescriptor $descriptor): array
+	private function subfields( array $field, FieldTypeDescriptor $descriptor ): array
 	{
 		$value = $field['subfields'] ?? [];
-		if (!is_array($value) || !array_is_list($value)) {
+		if ( !is_array( $value ) || !array_is_list( $value ) ) {
 			throw new InvalidArgumentException('subfields must be a list.');
 		}
 		$supportsSubfields = in_array($descriptor->key, ['group', 'repeater'], true);
-		if (!$supportsSubfields && $value !== []) {
+		if ( !$supportsSubfields && $value !== [] ) {
 			throw new InvalidArgumentException(sprintf('Field type "%s" cannot contain subfields.', $descriptor->key));
 		}
 
 		$normalized = [];
 		$keys = [];
-		foreach ($value as $subfield) {
-			if (!is_array($subfield)) {
+		foreach ( $value as $subfield ) {
+			if ( !is_array( $subfield ) ) {
 				throw new InvalidArgumentException('Each subfield must be an object/map.');
 			}
-			$item = $this->normalize($subfield);
+			$item = $this->normalize( $subfield );
 			$subKey = $item['key'];
-			if (!is_string($subKey) || isset($keys[$subKey])) {
+			if ( !is_string( $subKey ) || isset( $keys[$subKey] ) ) {
 				throw new InvalidArgumentException('Subfield keys must be unique within their container.');
 			}
 			$keys[$subKey] = true;
@@ -220,9 +220,9 @@ final class FieldDefinitionNormalizer
 		return $normalized;
 	}
 
-	private function optionalUuid(mixed $value): ?string
+	private function optionalUuid( mixed $value ): ?string
 	{
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
 		if (!is_string($value) || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) !== 1) {
@@ -231,7 +231,7 @@ final class FieldDefinitionNormalizer
 		return $value;
 	}
 
-	private function requiredMachineKey(mixed $value, string $label): string
+	private function requiredMachineKey( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $value) !== 1) {
 			throw new InvalidArgumentException(sprintf('%s must be a lowercase machine key up to 64 characters.', $label));
@@ -239,39 +239,39 @@ final class FieldDefinitionNormalizer
 		return $value;
 	}
 
-	private function boolValue(mixed $value, string $label): bool
+	private function boolValue( mixed $value, string $label ): bool
 	{
-		if (!is_bool($value)) {
+		if ( !is_bool( $value ) ) {
 			throw new InvalidArgumentException(sprintf('%s must be boolean.', $label));
 		}
 		return $value;
 	}
 
-	private function nonNegativeInt(mixed $value, string $label): int
+	private function nonNegativeInt( mixed $value, string $label ): int
 	{
-		if (!is_int($value) || $value < 0) {
+		if ( !is_int( $value ) || $value < 0 ) {
 			throw new InvalidArgumentException(sprintf('%s must be a non-negative integer.', $label));
 		}
 		return $value;
 	}
 
-	private function positiveInt(mixed $value, string $label): int
+	private function positiveInt( mixed $value, string $label ): int
 	{
-		if (!is_int($value) || $value < 1) {
+		if ( !is_int( $value ) || $value < 1 ) {
 			throw new InvalidArgumentException(sprintf('%s must be a positive integer.', $label));
 		}
 		return $value;
 	}
 
-	private function optionalString(mixed $value): ?string
+	private function optionalString( mixed $value ): ?string
 	{
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
-		if (!is_string($value)) {
+		if ( !is_string( $value ) ) {
 			throw new InvalidArgumentException('add_button_label must be a string or null.');
 		}
-		$value = trim($value);
+		$value = trim( $value );
 		return $value === '' ? null : $value;
 	}
 }

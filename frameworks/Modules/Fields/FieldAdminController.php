@@ -66,14 +66,14 @@ final class FieldAdminController
 		$this->hookSuffix = is_string($hook) && $hook !== '' ? $hook : null;
 	}
 
-	public function enqueueAssets(string $hookSuffix): void
+	public function enqueueAssets( string $hookSuffix ): void
 	{
-		if ($this->hookSuffix === null || $hookSuffix !== $this->hookSuffix) {
+		if ( $this->hookSuffix === null || $hookSuffix !== $this->hookSuffix ) {
 			return;
 		}
 
 		$entry = $this->assets->entry('fields');
-		if ($entry === null) {
+		if ( $entry === null ) {
 			return;
 		}
 
@@ -122,20 +122,20 @@ final class FieldAdminController
 			'catalog' => $catalog,
 		];
 		$json = function_exists('wp_json_encode')
-			? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
-			: json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+			? wp_json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )
+			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json = is_string($json) ? $json : '{}';
 
 		echo '<div class="wrap wpessential-fields-wrap">';
 		echo '<section id="wpessential-fields-root" aria-labelledby="wpessential-fields-title">';
 		echo '<h1 id="wpessential-fields-title">' . esc_html__('Custom Fields', 'wpessential') . '</h1>';
 		echo '<p>' . esc_html__('Build canonical Field Groups through the shared Ability layer. Existing field UUIDs and storage keys remain immutable in ordinary editing.', 'wpessential') . '</p>';
-		if ($readError !== null) {
+		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html($readError) . '</p></div>';
 		}
 		echo '<div id="wpessential-fields-notice" class="notice inline" role="status" aria-live="polite" hidden><p></p></div>';
-		$this->renderEditor($catalog);
-		$this->renderDefinitions($definitions);
+		$this->renderEditor( $catalog );
+		$this->renderDefinitions( $definitions );
 		echo '<noscript><p class="notice notice-warning inline">' . esc_html__('JavaScript is required to create or edit Field Groups. Saved groups remain readable below.', 'wpessential') . '</p></noscript>';
 		echo '</section>';
 		echo '<script id="wpessential-fields-bootstrap" type="application/json">' . $json . '</script>';
@@ -143,7 +143,7 @@ final class FieldAdminController
 	}
 
 	/** @param array<string,mixed> $catalog */
-	private function renderEditor(array $catalog): void
+	private function renderEditor( array $catalog ): void
 	{
 		echo '<section class="wpessential-fields-panel" aria-labelledby="wpessential-fields-editor-title">';
 		echo '<h2 id="wpessential-fields-editor-title">' . esc_html__('Add field group', 'wpessential') . '</h2>';
@@ -161,7 +161,7 @@ final class FieldAdminController
 		echo '<div><label for="wpessential-fields-add-type" class="screen-reader-text">' . esc_html__('Field type', 'wpessential') . '</label>';
 		echo '<select id="wpessential-fields-add-type"><option value="">' . esc_html__('Select field type…', 'wpessential') . '</option>';
 		foreach (($catalog['types'] ?? []) as $type) {
-			if (!is_array($type)) {
+			if ( !is_array( $type ) ) {
 				continue;
 			}
 			$key = is_string($type['key'] ?? null) ? $type['key'] : '';
@@ -190,7 +190,7 @@ final class FieldAdminController
 	}
 
 	/** @param list<array<string,mixed>> $definitions */
-	private function renderDefinitions(array $definitions): void
+	private function renderDefinitions( array $definitions ): void
 	{
 		echo '<section class="wpessential-fields-panel" aria-labelledby="wpessential-fields-list-title">';
 		echo '<div class="wpessential-fields-list-heading"><h2 id="wpessential-fields-list-title">' . esc_html__('Saved field groups', 'wpessential') . '</h2>';
@@ -198,17 +198,17 @@ final class FieldAdminController
 		echo '<table class="widefat striped" aria-label="' . esc_attr__('Saved Field Groups', 'wpessential') . '"><thead><tr>';
 		echo '<th scope="col">' . esc_html__('Title', 'wpessential') . '</th><th scope="col">' . esc_html__('Key', 'wpessential') . '</th><th scope="col">' . esc_html__('Fields', 'wpessential') . '</th><th scope="col">' . esc_html__('Status', 'wpessential') . '</th><th scope="col">' . esc_html__('Revision', 'wpessential') . '</th><th scope="col">' . esc_html__('Actions', 'wpessential') . '</th></tr></thead>';
 		echo '<tbody id="wpessential-fields-definitions">';
-		foreach ($definitions as $definition) {
-			$this->renderDefinitionRow($definition);
+		foreach ( $definitions as $definition ) {
+			$this->renderDefinitionRow( $definition );
 		}
-		if ($definitions === []) {
+		if ( $definitions === [] ) {
 			echo '<tr><td colspan="6">' . esc_html__('No Field Groups have been created yet.', 'wpessential') . '</td></tr>';
 		}
 		echo '</tbody></table></section>';
 	}
 
 	/** @param array<string,mixed> $definition */
-	private function renderDefinitionRow(array $definition): void
+	private function renderDefinitionRow( array $definition ): void
 	{
 		$payload = is_array($definition['payload'] ?? null) ? $definition['payload'] : [];
 		$id = is_string($definition['id'] ?? null) ? $definition['id'] : '';
@@ -255,14 +255,14 @@ final class FieldAdminController
 
 			$definitions = [];
 			foreach ($groupResult['definitions'] as $definition) {
-				if (!is_array($definition)) {
+				if ( !is_array( $definition ) ) {
 					return [[], $this->catalogProjector->project($catalogResult), __('Field Group list returned an invalid record.', 'wpessential')];
 				}
 				$definitions[] = $definition;
 			}
 
-			return [$definitions, $this->catalogProjector->project($catalogResult), null];
-		} catch (Throwable) {
+			return [$definitions, $this->catalogProjector->project( $catalogResult ), null];
+		} catch ( Throwable ) {
 			return [[], $this->catalogProjector->project([]), __('Custom Fields admin data could not be loaded.', 'wpessential')];
 		}
 	}
