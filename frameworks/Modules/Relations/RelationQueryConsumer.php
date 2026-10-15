@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Relations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -27,22 +27,22 @@ final readonly class RelationQueryConsumer implements RelationQueryConsumerInter
 
 	public function describe(string $relationDefinitionId, ExecutionContext $context): array
 	{
-		$payload = $this->publishedPayload($relationDefinitionId, $context);
-		$definition = $this->definition($relationDefinitionId);
+		$payload = $this->publishedPayload( $relationDefinitionId, $context );
+		$definition = $this->definition( $relationDefinitionId );
 
 		return [
 			'contract_version' => self::CONTRACT_VERSION,
 			'relation_definition_id' => $definition->id,
 			'relation_key' => $payload['relation_key'],
 			'definition_revision' => $definition->revision,
-			'mutation_revision' => $this->reads->revision($definition->id),
+			'mutation_revision' => $this->reads->revision( $definition->id ),
 			'cardinality' => $payload['cardinality'],
 			'direction' => [
 				'reciprocal' => $payload['direction']['reciprocal'],
 				'bidirectional_traversal' => $payload['direction']['bidirectional_traversal'],
 			],
-			'from' => $this->endpointDescriptor($payload['from']),
-			'to' => $this->endpointDescriptor($payload['to']),
+			'from' => $this->endpointDescriptor( $payload['from'] ),
+			'to' => $this->endpointDescriptor( $payload['to'] ),
 			'capabilities' => [
 				'exists' => true,
 				'related_ids' => true,
@@ -62,8 +62,8 @@ final readonly class RelationQueryConsumer implements RelationQueryConsumerInter
 		int $limit,
 		ExecutionContext $context,
 	): array {
-		$payload = $this->publishedPayload($relationDefinitionId, $context);
-		$this->assertTraversalAllowed($payload, $direction);
+		$payload = $this->publishedPayload( $relationDefinitionId, $context );
+		$this->assertTraversalAllowed( $payload, $direction );
 
 		return $this->reads->relatedObjectIds(
 			$relationDefinitionId,
@@ -81,8 +81,8 @@ final readonly class RelationQueryConsumer implements RelationQueryConsumerInter
 		int $limit,
 		ExecutionContext $context,
 	): array {
-		$payload = $this->publishedPayload($relationDefinitionId, $context);
-		$this->assertTraversalAllowed($payload, $direction);
+		$payload = $this->publishedPayload( $relationDefinitionId, $context );
+		$this->assertTraversalAllowed( $payload, $direction );
 
 		return $this->reads->matchingAnchorObjectIds(
 			$relationDefinitionId,
@@ -99,8 +99,8 @@ final readonly class RelationQueryConsumer implements RelationQueryConsumerInter
 		int $anchorObjectId,
 		ExecutionContext $context,
 	): int {
-		$payload = $this->publishedPayload($relationDefinitionId, $context);
-		$this->assertTraversalAllowed($payload, $direction);
+		$payload = $this->publishedPayload( $relationDefinitionId, $context );
+		$this->assertTraversalAllowed( $payload, $direction );
 
 		return $this->reads->countRelatedObjects(
 			$relationDefinitionId,
@@ -112,22 +112,22 @@ final readonly class RelationQueryConsumer implements RelationQueryConsumerInter
 	/** @return array<string,mixed> */
 	private function publishedPayload(string $relationDefinitionId, ExecutionContext $context): array
 	{
-		$this->assertScope($context);
-		$definition = $this->definition($relationDefinitionId);
-		if ($definition->status !== DefinitionStatus::Published) {
-			throw new RuntimeException('Relation Query consumer requires a published Relation definition.');
+		$this->assertScope( $context );
+		$definition = $this->definition( $relationDefinitionId );
+		if ( $definition->status !== DefinitionStatus::Published ) {
+			throw new RuntimeException( 'Relation Query consumer requires a published Relation definition.' );
 		}
-		return $this->normalizer->normalize($definition->payload, true);
+		return $this->normalizer->normalize( $definition->payload, true );
 	}
 
 	private function definition(string $relationDefinitionId): Definition
 	{
-		$definition = $this->definitions->get($relationDefinitionId);
-		if (!$definition instanceof Definition
+		$definition = $this->definitions->get( $relationDefinitionId );
+		if ( ! $definition instanceof Definition
 			|| $definition->type !== RelationDefinitionNormalizer::DEFINITION_TYPE
 			|| $definition->ownerSurfaceId !== RelationDefinitionNormalizer::OWNER_SURFACE_ID
 		) {
-			throw new RuntimeException('Relation Query consumer definition was not found in canonical Surface 4.');
+			throw new RuntimeException( 'Relation Query consumer definition was not found in canonical Surface 4.' );
 		}
 		return $definition;
 	}
@@ -135,23 +135,23 @@ final readonly class RelationQueryConsumer implements RelationQueryConsumerInter
 	/** @param array<string,mixed> $payload */
 	private function assertTraversalAllowed(array $payload, string $direction): void
 	{
-		if (!in_array($direction, [self::DIRECTION_FROM, self::DIRECTION_TO], true)) {
-			throw new InvalidArgumentException('Relation Query traversal direction is not supported.');
+		if ( ! in_array( $direction, [self::DIRECTION_FROM, self::DIRECTION_TO], true ) ) {
+			throw new InvalidArgumentException( 'Relation Query traversal direction is not supported.' );
 		}
-		if ($direction === self::DIRECTION_TO
+		if ( $direction === self::DIRECTION_TO
 			&& ($payload['direction']['bidirectional_traversal'] ?? false) !== true
 		) {
-			throw new RuntimeException('Relation Query reverse traversal is disabled by the Relation definition.');
+			throw new RuntimeException( 'Relation Query reverse traversal is disabled by the Relation definition.' );
 		}
 	}
 
 	private function assertScope(ExecutionContext $context): void
 	{
-		if ($this->scope->siteId > 0 && $context->siteId !== $this->scope->siteId) {
-			throw new RuntimeException('Relation Query consumer execution context does not match the registered site scope.');
+		if ( $this->scope->siteId > 0 && $context->siteId !== $this->scope->siteId ) {
+			throw new RuntimeException( 'Relation Query consumer execution context does not match the registered site scope.' );
 		}
-		if ($context->networkId !== null && $context->networkId !== $this->scope->networkId) {
-			throw new RuntimeException('Relation Query consumer execution context does not match the registered network scope.');
+		if ( $context->networkId !== null && $context->networkId !== $this->scope->networkId ) {
+			throw new RuntimeException( 'Relation Query consumer execution context does not match the registered network scope.' );
 		}
 	}
 

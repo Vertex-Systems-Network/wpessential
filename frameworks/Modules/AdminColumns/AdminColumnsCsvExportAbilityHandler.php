@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\AdminColumns;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -36,30 +36,30 @@ final readonly class AdminColumnsCsvExportAbilityHandler implements AbilityHandl
 
 	public function handle(array $input, ExecutionContext $context): mixed
 	{
-		foreach (array_keys($input) as $key) {
-			if (!is_string($key) || !in_array($key, self::INPUT_KEYS, true)) {
-				throw new InvalidArgumentException('Admin Columns CSV export input contains unsupported top-level input.');
+		foreach ( array_keys( $input ) as $key ) {
+			if ( ! is_string( $key ) || ! in_array( $key, self::INPUT_KEYS, true ) ) {
+				throw new InvalidArgumentException( 'Admin Columns CSV export input contains unsupported top-level input.' );
 			}
 		}
-		foreach (self::INPUT_KEYS as $key) {
-			if (!array_key_exists($key, $input)) {
-				throw new InvalidArgumentException(sprintf('Admin Columns CSV export input requires "%s".', $key));
+		foreach ( self::INPUT_KEYS as $key ) {
+			if ( ! array_key_exists( $key, $input ) ) {
+				throw new InvalidArgumentException( sprintf( 'Admin Columns CSV export input requires "%s".', $key ) );
 			}
 		}
 
 		$viewId = $input['view_id'];
-		if (!is_string($viewId) || preg_match(self::UUID_PATTERN, $viewId) !== 1) {
-			throw new InvalidArgumentException('view_id must be a lowercase RFC 4122 UUID.');
+		if ( ! is_string( $viewId ) || preg_match( self::UUID_PATTERN, $viewId ) !== 1 ) {
+			throw new InvalidArgumentException( 'view_id must be a lowercase RFC 4122 UUID.' );
 		}
 
 		$expectedViewRevision = $input['expected_view_revision'];
-		if (!is_int($expectedViewRevision) || $expectedViewRevision < 1) {
-			throw new InvalidArgumentException('expected_view_revision must be a positive integer.');
+		if ( ! is_int( $expectedViewRevision ) || $expectedViewRevision < 1 ) {
+			throw new InvalidArgumentException( 'expected_view_revision must be a positive integer.' );
 		}
 
-		$scopeRequest = $this->objectMap($input['scope_request'], 'scope_request');
-		$controls = $this->objectMap($input['controls'], 'controls');
-		$runtime = $this->objectMap($input['runtime'], 'runtime');
+		$scopeRequest = $this->objectMap( $input['scope_request'], 'scope_request' );
+		$controls = $this->objectMap( $input['controls'], 'controls' );
+		$runtime = $this->objectMap( $input['runtime'], 'runtime' );
 
 		$csv = $this->exports->exportScoped(
 			$viewId,
@@ -69,9 +69,9 @@ final readonly class AdminColumnsCsvExportAbilityHandler implements AbilityHandl
 			$runtime,
 			$context,
 		);
-		$bytes = strlen($csv);
-		if ($bytes > self::MAX_OUTPUT_BYTES) {
-			throw new InvalidArgumentException('Admin Columns CSV export output exceeds the bounded transport envelope.');
+		$bytes = strlen( $csv );
+		if ( $bytes > self::MAX_OUTPUT_BYTES ) {
+			throw new InvalidArgumentException( 'Admin Columns CSV export output exceeds the bounded transport envelope.' );
 		}
 
 		return [
@@ -86,8 +86,8 @@ final readonly class AdminColumnsCsvExportAbilityHandler implements AbilityHandl
 	/** @return array<string,mixed> */
 	private function objectMap(mixed $value, string $label): array
 	{
-		if (!is_array($value) || ($value !== [] && array_is_list($value))) {
-			throw new InvalidArgumentException(sprintf('%s must be an object/map.', $label));
+		if ( ! is_array( $value ) || ($value !== [] && array_is_list( $value )) ) {
+			throw new InvalidArgumentException( sprintf( '%s must be an object/map.', $label ) );
 		}
 
 		return $value;

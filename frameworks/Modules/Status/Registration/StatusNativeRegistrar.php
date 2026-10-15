@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Status\Registration;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -56,110 +56,110 @@ final class StatusNativeRegistrar
 		?callable $addAction = null,
 	) {
 		$this->statusExists = $statusExists !== null
-			? Closure::fromCallable($statusExists)
+			? Closure::fromCallable( $statusExists )
 			: static function (string $key): bool {
-				if (!function_exists('get_post_status_object')) {
-					throw new LogicException('WordPress status lookup API is unavailable.');
+				if ( ! function_exists( 'get_post_status_object' ) ) {
+					throw new LogicException( 'WordPress status lookup API is unavailable.' );
 				}
 
-				return get_post_status_object($key) !== null;
+				return get_post_status_object( $key ) !== null;
 			};
 
 		$this->registerStatus = $registerStatus !== null
-			? Closure::fromCallable($registerStatus)
+			? Closure::fromCallable( $registerStatus )
 			: static function (string $key, array $arguments): mixed {
-				if (!function_exists('register_post_status')) {
-					throw new LogicException('WordPress status registration API is unavailable.');
+				if ( ! function_exists( 'register_post_status' ) ) {
+					throw new LogicException( 'WordPress status registration API is unavailable.' );
 				}
 
-				return register_post_status($key, $arguments);
+				return register_post_status( $key, $arguments );
 			};
 
 		$this->labelCountFactory = $labelCountFactory !== null
-			? Closure::fromCallable($labelCountFactory)
+			? Closure::fromCallable( $labelCountFactory )
 			: static function (string $singular, string $plural): mixed {
-				if (!function_exists('_n_noop')) {
-					throw new LogicException('WordPress translation API is unavailable.');
+				if ( ! function_exists( '_n_noop' ) ) {
+					throw new LogicException( 'WordPress translation API is unavailable.' );
 				}
 
-				return _n_noop($singular, $plural);
+				return _n_noop( $singular, $plural );
 			};
 
 		$this->addAction = $addAction !== null
-			? Closure::fromCallable($addAction)
+			? Closure::fromCallable( $addAction )
 			: static function (string $hook, callable $callback, int $priority): void {
-				if (!function_exists('add_action')) {
-					throw new LogicException('WordPress hook API is unavailable.');
+				if ( ! function_exists( 'add_action' ) ) {
+					throw new LogicException( 'WordPress hook API is unavailable.' );
 				}
 
-				add_action($hook, $callback, $priority);
+				add_action( $hook, $callback, $priority );
 			};
 	}
 
 	public function register(): void
 	{
 		try {
-			($this->addAction)('init', [$this, 'registerActive'], 20);
-		} catch (Throwable) {
+			($this->addAction)( 'init', [$this, 'registerActive'], 20 );
+		} catch ( Throwable ) {
 			$this->errors['runtime'] = 'WordPress hook API is unavailable.';
 		}
 	}
 
 	public function registerActive(): void
 	{
-		if ($this->processed) {
+		if ( $this->processed ) {
 			return;
 		}
 		$this->processed = true;
 
 		$descriptors = [];
-		foreach ($this->definitions->byType(StatusDefinitionCompiler::TYPE) as $definition) {
-			if ($definition->status !== DefinitionStatus::Published) {
+		foreach ( $this->definitions->byType( StatusDefinitionCompiler::TYPE ) as $definition ) {
+			if ( $definition->status !== DefinitionStatus::Published ) {
 				continue;
 			}
 
 			try {
-				$descriptor = $this->compiler->compile($definition);
-			} catch (Throwable) {
+				$descriptor = $this->compiler->compile( $definition );
+			} catch ( Throwable ) {
 				$this->errors[$definition->id] = 'Published Status definition failed compilation.';
 				return;
 			}
 
-			if (isset($descriptors[$descriptor->key])) {
+			if ( isset( $descriptors[$descriptor->key] ) ) {
 				$this->errors[$descriptor->key] = 'Duplicate Published Status registration key.';
 				return;
 			}
 			$descriptors[$descriptor->key] = $descriptor;
 		}
-		ksort($descriptors, SORT_STRING);
+		ksort( $descriptors, SORT_STRING );
 
 		$plans = [];
 		try {
-			foreach ($descriptors as $key => $descriptor) {
-				if (($this->statusExists)($key)) {
+			foreach ( $descriptors as $key => $descriptor ) {
+				if ( ($this->statusExists)( $key ) ) {
 					$this->conflicts[] = $key;
 					continue;
 				}
-				$plans[$key] = $this->arguments($descriptor);
+				$plans[$key] = $this->arguments( $descriptor );
 			}
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			$this->errors['runtime'] = 'WordPress Status runtime APIs are unavailable.';
 			return;
 		}
 
-		if ($this->conflicts !== []) {
-			sort($this->conflicts, SORT_STRING);
+		if ( $this->conflicts !== [] ) {
+			sort( $this->conflicts, SORT_STRING );
 			return;
 		}
 
-		foreach ($plans as $key => $arguments) {
+		foreach ( $plans as $key => $arguments ) {
 			try {
-				$result = ($this->registerStatus)($key, $arguments);
-			} catch (Throwable) {
+				$result = ($this->registerStatus)( $key, $arguments );
+			} catch ( Throwable ) {
 				$this->errors[$key] = 'WordPress Status registration failed.';
 				return;
 			}
-			if (!is_object($result)) {
+			if ( ! is_object( $result ) ) {
 				$this->errors[$key] = 'WordPress Status registration returned an invalid result.';
 				return;
 			}
@@ -190,7 +190,7 @@ final class StatusNativeRegistrar
 	{
 		return [
 			'label' => $descriptor->label,
-			'label_count' => ($this->labelCountFactory)($descriptor->countSingular, $descriptor->countPlural),
+			'label_count' => ($this->labelCountFactory)( $descriptor->countSingular, $descriptor->countPlural ),
 			'public' => $descriptor->public,
 			'internal' => $descriptor->internal,
 			'protected' => $descriptor->protected,

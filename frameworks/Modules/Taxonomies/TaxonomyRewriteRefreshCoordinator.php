@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -35,32 +35,32 @@ final class TaxonomyRewriteRefreshCoordinator
 		?Closure $flushRewriteRules = null,
 	) {
 		$this->readPending = $readPending ?? static function (string $key): mixed {
-			if (!function_exists('get_option')) {
+			if ( ! function_exists( 'get_option' ) ) {
 				return false;
 			}
 
-			return get_option($key, false);
+			return get_option( $key, false );
 		};
 		$this->writePending = $writePending ?? static function (string $key): bool {
-			if (!function_exists('update_option')) {
+			if ( ! function_exists( 'update_option' ) ) {
 				return false;
 			}
 
-			return update_option($key, 1, false);
+			return update_option( $key, 1, false );
 		};
 		$this->deletePending = $deletePending ?? static function (string $key): bool {
-			if (!function_exists('delete_option')) {
+			if ( ! function_exists( 'delete_option' ) ) {
 				return false;
 			}
 
-			return delete_option($key);
+			return delete_option( $key );
 		};
 		$this->flushRewriteRules = $flushRewriteRules ?? static function (bool $hard): bool {
-			if (!function_exists('flush_rewrite_rules')) {
+			if ( ! function_exists( 'flush_rewrite_rules' ) ) {
 				return false;
 			}
 
-			flush_rewrite_rules($hard);
+			flush_rewrite_rules( $hard );
 
 			return true;
 		};
@@ -68,34 +68,34 @@ final class TaxonomyRewriteRefreshCoordinator
 
 	public function scheduleForMutation(?Definition $before, Definition $after): bool
 	{
-		if ($this->routingSignature($before) === $this->routingSignature($after)) {
+		if ( $this->routingSignature( $before ) === $this->routingSignature( $after ) ) {
 			return false;
 		}
-		if ($this->isPending()) {
+		if ( $this->isPending() ) {
 			return true;
 		}
 
-		return ($this->writePending)(self::OPTION_KEY);
+		return ($this->writePending)( self::OPTION_KEY );
 	}
 
 	public function flushPending(): bool
 	{
-		if (!$this->isPending()) {
+		if ( ! $this->isPending() ) {
 			return false;
 		}
-		if (!(($this->flushRewriteRules)(false))) {
+		if ( ! (($this->flushRewriteRules)( false )) ) {
 			return false;
 		}
-		if (!(($this->deletePending)(self::OPTION_KEY))) {
+		if ( ! (($this->deletePending)( self::OPTION_KEY )) ) {
 			return false;
 		}
 
-		return !$this->isPending();
+		return ! $this->isPending();
 	}
 
 	private function isPending(): bool
 	{
-		return in_array(($this->readPending)(self::OPTION_KEY), [1, '1', true], true);
+		return in_array( ($this->readPending)( self::OPTION_KEY ), [1, '1', true], true );
 	}
 
 	/**
@@ -106,47 +106,47 @@ final class TaxonomyRewriteRefreshCoordinator
      */
 	private function routingSignature(?Definition $definition): ?array
 	{
-		if (!$definition instanceof Definition || $definition->status !== DefinitionStatus::Published) {
+		if ( ! $definition instanceof Definition || $definition->status !== DefinitionStatus::Published ) {
 			return null;
 		}
 
 		$payload = $definition->payload;
-		$key = is_string($payload['taxonomy_key'] ?? null) ? trim($payload['taxonomy_key']) : '';
+		$key = is_string( $payload['taxonomy_key'] ?? null ) ? trim( $payload['taxonomy_key'] ) : '';
 		$rewrite = $payload['rewrite'] ?? true;
-		if ($rewrite === false) {
+		if ( $rewrite === false ) {
 			return null;
 		}
 
-		$rewriteMap = is_array($rewrite) && !array_is_list($rewrite) ? $rewrite : [];
-		$public = is_bool($payload['public'] ?? null) ? $payload['public'] : true;
-		$publiclyQueryable = is_bool($payload['publicly_queryable'] ?? null)
+		$rewriteMap = is_array( $rewrite ) && ! array_is_list( $rewrite ) ? $rewrite : [];
+		$public = is_bool( $payload['public'] ?? null ) ? $payload['public'] : true;
+		$publiclyQueryable = is_bool( $payload['publicly_queryable'] ?? null )
 			? $payload['publicly_queryable']
 			: $public;
 		$queryVar = $payload['query_var'] ?? true;
-		if (!$publiclyQueryable || $queryVar === false) {
+		if ( ! $publiclyQueryable || $queryVar === false ) {
 			$effectiveQueryVar = false;
-		} elseif ($queryVar === true) {
+		} elseif ( $queryVar === true ) {
 			$effectiveQueryVar = $key;
 		} else {
-			$effectiveQueryVar = is_string($queryVar) ? trim($queryVar) : $key;
+			$effectiveQueryVar = is_string( $queryVar ) ? trim( $queryVar ) : $key;
 		}
 
-		$taxonomyHierarchical = is_bool($payload['hierarchical'] ?? null)
+		$taxonomyHierarchical = is_bool( $payload['hierarchical'] ?? null )
 			? $payload['hierarchical']
 			: false;
-		$rewriteHierarchical = is_bool($rewriteMap['hierarchical'] ?? null)
+		$rewriteHierarchical = is_bool( $rewriteMap['hierarchical'] ?? null )
 			? $rewriteMap['hierarchical']
 			: false;
 
 		return [
-			'slug' => is_string($rewriteMap['slug'] ?? null)
-				? trim($rewriteMap['slug'], '/')
+			'slug' => is_string( $rewriteMap['slug'] ?? null )
+				? trim( $rewriteMap['slug'], '/' )
 				: $key,
-			'with_front' => is_bool($rewriteMap['with_front'] ?? null)
+			'with_front' => is_bool( $rewriteMap['with_front'] ?? null )
 				? $rewriteMap['with_front']
 				: true,
 			'hierarchical_tag' => $taxonomyHierarchical && $rewriteHierarchical,
-			'ep_mask' => is_int($rewriteMap['ep_mask'] ?? null)
+			'ep_mask' => is_int( $rewriteMap['ep_mask'] ?? null )
 				? $rewriteMap['ep_mask']
 				: 0,
 			'query_var' => $effectiveQueryVar,

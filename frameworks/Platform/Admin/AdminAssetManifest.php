@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\Admin;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -18,17 +18,17 @@ final readonly class AdminAssetManifest
 	/** @return array{script:string,styles:list<string>,dependencies:list<string>,version:?string}|null */
 	public function entry(string $entry = 'main', ?string $styleEntry = null): ?array
 	{
-		$script = $this->script($entry);
-		if ($script === null) {
+		$script = $this->script( $entry );
+		if ( $script === null ) {
 			return null;
 		}
 
-		$styleName = $styleEntry !== null && $this->validEntryName($styleEntry)
+		$styleName = $styleEntry !== null && $this->validEntryName( $styleEntry )
 			? $styleEntry
 			: $entry;
-		$style = $this->style($styleName);
-		if ($style === null && $styleName !== $entry) {
-			$style = $this->style($entry);
+		$style = $this->style( $styleName );
+		if ( $style === null && $styleName !== $entry ) {
+			$style = $this->style( $entry );
 		}
 
 		return [
@@ -42,7 +42,7 @@ final readonly class AdminAssetManifest
 	/** @return array{script:string,dependencies:list<string>,version:?string}|null */
 	public function script(string $entry = 'main'): ?array
 	{
-		if (!$this->validEntryName($entry)) {
+		if ( ! $this->validEntryName( $entry ) ) {
 			return null;
 		}
 
@@ -50,31 +50,31 @@ final readonly class AdminAssetManifest
 		$scriptPath = $assetRoot . '/' . $entry . '.js';
 		$metadataPath = $assetRoot . '/' . $entry . '.asset.php';
 
-		if (!is_readable($scriptPath) || !is_readable($metadataPath)) {
+		if ( ! is_readable( $scriptPath ) || ! is_readable( $metadataPath ) ) {
 			return null;
 		}
 
 		$metadata = require $metadataPath;
-		if (!is_array($metadata)) {
+		if ( ! is_array( $metadata ) ) {
 			return null;
 		}
 
 		$dependencies = [];
-		foreach (($metadata['dependencies'] ?? []) as $dependency) {
+		foreach ( ($metadata['dependencies'] ?? []) as $dependency ) {
 			if (
-				is_string($dependency)
-				&& preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]{0,190}$/', $dependency) === 1
+				is_string( $dependency )
+				&& preg_match( '/^[A-Za-z0-9][A-Za-z0-9._-]{0,190}$/', $dependency ) === 1
 			) {
 				$dependencies[] = $dependency;
 			}
 		}
 
-		$version = isset($metadata['version']) && is_string($metadata['version']) && $metadata['version'] !== ''
+		$version = isset( $metadata['version'] ) && is_string( $metadata['version'] ) && $metadata['version'] !== ''
 			? $metadata['version']
 			: null;
 
 		return [
-			'script' => $this->assetUrl($entry . '.js'),
+			'script' => $this->assetUrl( $entry . '.js' ),
 			'dependencies' => $dependencies,
 			'version' => $version,
 		];
@@ -82,31 +82,31 @@ final readonly class AdminAssetManifest
 
 	public function style(string $entry): ?string
 	{
-		if (!$this->validEntryName($entry)) {
+		if ( ! $this->validEntryName( $entry ) ) {
 			return null;
 		}
 
 		$stylePath = $this->assetRoot() . '/' . $entry . '.css';
-		if (!is_readable($stylePath)) {
+		if ( ! is_readable( $stylePath ) ) {
 			return null;
 		}
 
-		return $this->assetUrl($entry . '.css');
+		return $this->assetUrl( $entry . '.css' );
 	}
 
 	private function assetRoot(): string
 	{
-		return rtrim($this->pluginRoot, '/\\') . '/assets/admin';
+		return rtrim( $this->pluginRoot, '/\\' ) . '/assets/admin';
 	}
 
 	private function assetUrl(string $file): string
 	{
-		return rtrim($this->pluginUrl, '/') . '/assets/admin/' . $file;
+		return rtrim( $this->pluginUrl, '/' ) . '/assets/admin/' . $file;
 	}
 
 	private function validEntryName(string $entry): bool
 	{
-		return preg_match('/^[A-Za-z0-9][A-Za-z0-9._-]*$/', $entry) === 1
-			&& !str_contains($entry, '..');
+		return preg_match( '/^[A-Za-z0-9][A-Za-z0-9._-]*$/', $entry ) === 1
+			&& ! str_contains( $entry, '..' );
 	}
 }

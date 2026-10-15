@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -36,8 +36,8 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 
 	public function handle(array $payload): mixed
 	{
-		$request = $this->validRequest($payload);
-		if ($request === null) {
+		$request = $this->validRequest( $payload );
+		if ( $request === null ) {
 			return $this->response(
 				self::STATE_INVALID_DEFINITION,
 				'The widget refresh request is invalid. Reload the dashboard and try again.',
@@ -53,14 +53,14 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 				networkId: $current->networkId,
 				correlationId: $current->correlationId,
 			);
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return $this->response(
 				self::STATE_RUNTIME_FAILURE,
 				'The widget could not be refreshed. Reload the dashboard and try again.',
 			);
 		}
 
-		if (!$context->principal->isAuthenticated() || $context->principal->actorType !== 'user') {
+		if ( ! $context->principal->isAuthenticated() || $context->principal->actorType !== 'user' ) {
 			return $this->response(
 				self::STATE_UNAVAILABLE,
 				'This widget is not currently available for refresh.',
@@ -68,15 +68,15 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 		}
 
 		try {
-			$definition = $this->definitions->get($request['definition_id']);
-		} catch (Throwable) {
+			$definition = $this->definitions->get( $request['definition_id'] );
+		} catch ( Throwable ) {
 			return $this->response(
 				self::STATE_RUNTIME_FAILURE,
 				'The widget could not be refreshed. Reload the dashboard and try again.',
 			);
 		}
 
-		if ($definition === null || $definition->revision !== $request['definition_revision']) {
+		if ( $definition === null || $definition->revision !== $request['definition_revision'] ) {
 			return $this->response(
 				self::STATE_STALE_DEFINITION,
 				'This widget changed. Reload the dashboard before refreshing it.',
@@ -84,51 +84,51 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 		}
 
 		try {
-			$descriptor = $this->registrations->compile($definition);
-		} catch (InvalidArgumentException) {
+			$descriptor = $this->registrations->compile( $definition );
+		} catch ( InvalidArgumentException ) {
 			return $this->response(
 				self::STATE_INVALID_DEFINITION,
 				'This widget is not valid for manual refresh.',
 			);
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return $this->response(
 				self::STATE_RUNTIME_FAILURE,
 				'The widget could not be refreshed. Reload the dashboard and try again.',
 			);
 		}
 
-		if (!$descriptor->manualRefresh || !$this->targetMatches($descriptor, $request['screen'], $context)) {
+		if ( ! $descriptor->manualRefresh || ! $this->targetMatches( $descriptor, $request['screen'], $context ) ) {
 			return $this->response(
 				self::STATE_UNAVAILABLE,
 				'This widget is not currently available for refresh.',
 			);
 		}
 
-		$result = $this->renderer->render($definition->id, $context);
+		$result = $this->renderer->render( $definition->id, $context );
 
 		try {
-			$currentDefinition = $this->definitions->get($request['definition_id']);
-		} catch (Throwable) {
+			$currentDefinition = $this->definitions->get( $request['definition_id'] );
+		} catch ( Throwable ) {
 			return $this->response(
 				self::STATE_RUNTIME_FAILURE,
 				'The widget could not be refreshed. Reload the dashboard and try again.',
 			);
 		}
-		if ($currentDefinition === null || $currentDefinition->revision !== $request['definition_revision']) {
+		if ( $currentDefinition === null || $currentDefinition->revision !== $request['definition_revision'] ) {
 			return $this->response(
 				self::STATE_STALE_DEFINITION,
 				'This widget changed. Reload the dashboard before refreshing it.',
 			);
 		}
 
-		if ($result->assetHandles !== []) {
+		if ( $result->assetHandles !== [] ) {
 			return $this->response(
 				self::STATE_RUNTIME_FAILURE,
 				'The widget refresh requires unavailable assets. Reload the dashboard and try again.',
 			);
 		}
 
-		return match ($result->status) {
+		return match ( $result->status ) {
 			DashboardWidgetRuntimeRenderResult::STATUS_RENDERED => $this->response(
 				self::STATE_RENDERED,
 				'Widget refreshed.',
@@ -161,9 +161,9 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 	 */
 	private function validRequest(array $payload): ?array
 	{
-		$keys = array_keys($payload);
-		sort($keys, SORT_STRING);
-		if ($keys !== ['definition_id', 'definition_revision', 'screen']) {
+		$keys = array_keys( $payload );
+		sort( $keys, SORT_STRING );
+		if ( $keys !== ['definition_id', 'definition_revision', 'screen'] ) {
 			return null;
 		}
 
@@ -171,12 +171,12 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 		$revision = $payload['definition_revision'] ?? null;
 		$screen = $payload['screen'] ?? null;
 		if (
-			!is_string($definitionId)
-			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $definitionId) !== 1
-			|| !is_int($revision)
+			! is_string( $definitionId )
+			|| preg_match( '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $definitionId ) !== 1
+			|| ! is_int( $revision )
 			|| $revision < 1
-			|| !is_string($screen)
-			|| !in_array($screen, ['site', 'network'], true)
+			|| ! is_string( $screen )
+			|| ! in_array( $screen, ['site', 'network'], true )
 		) {
 			return null;
 		}
@@ -193,11 +193,11 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 		string $screen,
 		ExecutionContext $context,
 	): bool {
-		if ($screen === 'network') {
+		if ( $screen === 'network' ) {
 			return $descriptor->networkDashboard && $context->networkId !== null;
 		}
 
-		return !$descriptor->networkDashboard && $descriptor->isEligibleForSite($context->siteId);
+		return ! $descriptor->networkDashboard && $descriptor->isEligibleForSite( $context->siteId );
 	}
 
 	/** @return array{state:string,notice:string,html?:string} */
@@ -207,7 +207,7 @@ final readonly class DashboardWidgetManualRefreshAjaxHandler implements AjaxHand
 			'state' => $state,
 			'notice' => $notice,
 		];
-		if ($html !== null) {
+		if ( $html !== null ) {
 			$result['html'] = $html;
 		}
 

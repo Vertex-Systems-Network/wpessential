@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,11 +22,11 @@ final readonly class DashboardWidgetManualRefreshPresenter
 		private string $ajaxAction,
 		callable $nonceFactory,
 	) {
-		if (preg_match('/^[a-z0-9][a-z0-9_-]{0,127}$/', $this->ajaxAction) !== 1) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh AJAX action is invalid.');
+		if ( preg_match( '/^[a-z0-9][a-z0-9_-]{0,127}$/', $this->ajaxAction ) !== 1 ) {
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh AJAX action is invalid.' );
 		}
 
-		$this->nonceFactory = Closure::fromCallable($nonceFactory);
+		$this->nonceFactory = Closure::fromCallable( $nonceFactory );
 	}
 
 	public function render(
@@ -36,38 +36,38 @@ final readonly class DashboardWidgetManualRefreshPresenter
 		string $loadingHtml,
 		string $screen,
 	): string {
-		if (!$descriptor->manualRefresh) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh presenter requires manualRefresh=true.');
+		if ( ! $descriptor->manualRefresh ) {
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh presenter requires manualRefresh=true.' );
 		}
-		if (!in_array($screen, ['site', 'network'], true)) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh screen is unsupported.');
+		if ( ! in_array( $screen, ['site', 'network'], true ) ) {
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh screen is unsupported.' );
 		}
 
-		$ajaxUrl = trim($ajaxUrl);
+		$ajaxUrl = trim( $ajaxUrl );
 		if (
 			$ajaxUrl === ''
-			|| strlen($ajaxUrl) > 2048
-			|| preg_match('/[\x00-\x1F\x7F]/', $ajaxUrl) === 1
+			|| strlen( $ajaxUrl ) > 2048
+			|| preg_match( '/[\x00-\x1F\x7F]/', $ajaxUrl ) === 1
 		) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh AJAX URL is invalid.');
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh AJAX URL is invalid.' );
 		}
 
-		if ($initialHtml === '' || strlen($initialHtml) > 65536 || $loadingHtml === '' || strlen($loadingHtml) > 16384) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh trusted HTML exceeds bounded V1 limits.');
+		if ( $initialHtml === '' || strlen( $initialHtml ) > 65536 || $loadingHtml === '' || strlen( $loadingHtml ) > 16384 ) {
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh trusted HTML exceeds bounded V1 limits.' );
 		}
 
 		try {
 			$nonce = ($this->nonceFactory)();
-		} catch (Throwable) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh nonce could not be created.');
+		} catch ( Throwable ) {
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh nonce could not be created.' );
 		}
 		if (
-			!is_string($nonce)
+			! is_string( $nonce )
 			|| $nonce === ''
-			|| strlen($nonce) > 512
-			|| preg_match('/[\x00-\x1F\x7F]/', $nonce) === 1
+			|| strlen( $nonce ) > 512
+			|| preg_match( '/[\x00-\x1F\x7F]/', $nonce ) === 1
 		) {
-			throw new InvalidArgumentException('Dashboard Widget manual-refresh nonce is invalid.');
+			throw new InvalidArgumentException( 'Dashboard Widget manual-refresh nonce is invalid.' );
 		}
 
 		return sprintf(
@@ -77,13 +77,13 @@ final readonly class DashboardWidgetManualRefreshPresenter
 			. '<template data-wpessential-dashboard-refresh-loading="1">%s</template>'
 			. '<p role="status" aria-live="polite" data-wpessential-dashboard-refresh-status="1"></p>'
 			. '</div>',
-			self::escape($ajaxUrl),
-			self::escape($this->ajaxAction),
-			self::escape(DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE),
-			self::escape($nonce),
-			self::escape($descriptor->definitionId),
+			self::escape( $ajaxUrl ),
+			self::escape( $this->ajaxAction ),
+			self::escape( DashboardWidgetManualRefreshAjaxHandler::ROUTE_TYPE ),
+			self::escape( $nonce ),
+			self::escape( $descriptor->definitionId ),
 			$descriptor->revision,
-			self::escape($screen),
+			self::escape( $screen ),
 			$initialHtml,
 			$loadingHtml,
 		);

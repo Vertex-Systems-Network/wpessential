@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -21,13 +21,13 @@ final readonly class DashboardWidgetFormActionExecutionResultAdapter
      */
 	public function adapt(mixed $result, array $input): ?array
 	{
-		if (!$this->validInput($input) || !is_array($result)) {
+		if ( ! $this->validInput( $input ) || ! is_array( $result ) ) {
 			return null;
 		}
 
-		$keys = array_keys($result);
-		sort($keys, SORT_STRING);
-		if ($keys !== [
+		$keys = array_keys( $result );
+		sort( $keys, SORT_STRING );
+		if ( $keys !== [
 			'changed',
 			'definition_id',
 			'enabled',
@@ -35,7 +35,7 @@ final readonly class DashboardWidgetFormActionExecutionResultAdapter
 			'result_code',
 			'revision',
 			'status',
-		]) {
+		] ) {
 			return null;
 		}
 
@@ -52,13 +52,13 @@ final readonly class DashboardWidgetFormActionExecutionResultAdapter
 			: DefinitionStatus::Disabled->value;
 
 		if (
-			!is_string($definitionId)
-			|| !is_int($previousRevision)
-			|| !is_int($revision)
-			|| !is_string($status)
-			|| !is_bool($enabled)
-			|| !is_bool($changed)
-			|| !is_string($resultCode)
+			! is_string( $definitionId )
+			|| ! is_int( $previousRevision )
+			|| ! is_int( $revision )
+			|| ! is_string( $status )
+			|| ! is_bool( $enabled )
+			|| ! is_bool( $changed )
+			|| ! is_string( $resultCode )
 			|| $definitionId !== $input['definition_id']
 			|| $previousRevision !== $input['expected_revision']
 			|| $enabled !== $input['enabled']
@@ -95,16 +95,16 @@ final readonly class DashboardWidgetFormActionExecutionResultAdapter
 	/** @param array<string,mixed> $input */
 	private function validInput(array $input): bool
 	{
-		$keys = array_keys($input);
-		sort($keys, SORT_STRING);
-		if ($keys !== ['definition_id', 'enabled', 'expected_revision']) {
+		$keys = array_keys( $input );
+		sort( $keys, SORT_STRING );
+		if ( $keys !== ['definition_id', 'enabled', 'expected_revision'] ) {
 			return false;
 		}
 
-		return is_string($input['definition_id'])
-			&& preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $input['definition_id']) === 1
-			&& is_int($input['expected_revision'])
+		return is_string( $input['definition_id'] )
+			&& preg_match( '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $input['definition_id'] ) === 1
+			&& is_int( $input['expected_revision'] )
 			&& $input['expected_revision'] >= 1
-			&& is_bool($input['enabled']);
+			&& is_bool( $input['enabled'] );
 	}
 }

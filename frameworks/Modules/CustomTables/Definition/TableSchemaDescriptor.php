@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Definition;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -32,41 +32,41 @@ final readonly class TableSchemaDescriptor
 		public string $dataClassification,
 		public string $compatibilityFingerprint,
 	) {
-		if ($this->revision < 1) {
-			throw new InvalidArgumentException('Custom Tables descriptor revision must be positive.');
+		if ( $this->revision < 1 ) {
+			throw new InvalidArgumentException( 'Custom Tables descriptor revision must be positive.' );
 		}
-		if (!preg_match('/^[a-z][a-z0-9_]{0,47}$/', $this->tableKey)) {
-			throw new InvalidArgumentException('Custom Tables logical table key must be a canonical lowercase identifier within 48 characters.');
+		if ( ! preg_match( '/^[a-z][a-z0-9_]{0,47}$/', $this->tableKey ) ) {
+			throw new InvalidArgumentException( 'Custom Tables logical table key must be a canonical lowercase identifier within 48 characters.' );
 		}
-		if ($this->label === '' || strlen($this->label) > 160) {
-			throw new InvalidArgumentException('Custom Tables label must be a bounded non-empty string.');
+		if ( $this->label === '' || strlen( $this->label ) > 160 ) {
+			throw new InvalidArgumentException( 'Custom Tables label must be a bounded non-empty string.' );
 		}
-		if ($this->storageMode !== 'managed') {
-			throw new InvalidArgumentException('Custom Tables V1 storage mode must be managed.');
+		if ( $this->storageMode !== 'managed' ) {
+			throw new InvalidArgumentException( 'Custom Tables V1 storage mode must be managed.' );
 		}
-		if ($this->scope !== 'site') {
-			throw new InvalidArgumentException('Custom Tables V1 scope must be site-owned.');
+		if ( $this->scope !== 'site' ) {
+			throw new InvalidArgumentException( 'Custom Tables V1 scope must be site-owned.' );
 		}
-		if ($this->desiredSchemaVersion < 1) {
-			throw new InvalidArgumentException('Custom Tables desired schema version must be positive.');
+		if ( $this->desiredSchemaVersion < 1 ) {
+			throw new InvalidArgumentException( 'Custom Tables desired schema version must be positive.' );
 		}
-		if ($this->columns === [] || count($this->columns) > 128) {
-			throw new InvalidArgumentException('Custom Tables descriptor requires between one and 128 columns.');
+		if ( $this->columns === [] || count( $this->columns ) > 128 ) {
+			throw new InvalidArgumentException( 'Custom Tables descriptor requires between one and 128 columns.' );
 		}
-		if ($this->primaryKey === [] || count($this->primaryKey) > 8) {
-			throw new InvalidArgumentException('Custom Tables descriptor requires a bounded primary key.');
+		if ( $this->primaryKey === [] || count( $this->primaryKey ) > 8 ) {
+			throw new InvalidArgumentException( 'Custom Tables descriptor requires a bounded primary key.' );
 		}
-		if (count($this->indexes) > 32) {
-			throw new InvalidArgumentException('Custom Tables descriptor supports at most 32 secondary indexes.');
+		if ( count( $this->indexes ) > 32 ) {
+			throw new InvalidArgumentException( 'Custom Tables descriptor supports at most 32 secondary indexes.' );
 		}
-		if ($this->charsetCollation !== 'inherit') {
-			throw new InvalidArgumentException('Custom Tables V1 charset/collation policy must inherit from the canonical database environment.');
+		if ( $this->charsetCollation !== 'inherit' ) {
+			throw new InvalidArgumentException( 'Custom Tables V1 charset/collation policy must inherit from the canonical database environment.' );
 		}
-		if (!in_array($this->dataClassification, ['public', 'internal', 'confidential', 'restricted'], true)) {
-			throw new InvalidArgumentException('Custom Tables data classification is unsupported.');
+		if ( ! in_array( $this->dataClassification, ['public', 'internal', 'confidential', 'restricted'], true ) ) {
+			throw new InvalidArgumentException( 'Custom Tables data classification is unsupported.' );
 		}
-		if (!preg_match('/^[0-9a-f]{64}$/', $this->compatibilityFingerprint)) {
-			throw new InvalidArgumentException('Custom Tables compatibility fingerprint must be SHA-256 hex.');
+		if ( ! preg_match( '/^[0-9a-f]{64}$/', $this->compatibilityFingerprint ) ) {
+			throw new InvalidArgumentException( 'Custom Tables compatibility fingerprint must be SHA-256 hex.' );
 		}
 	}
 

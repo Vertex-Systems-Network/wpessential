@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\FormsWorkflows;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -98,49 +98,49 @@ final readonly class FormsWorkflowsSetEnabledAbilityHandler implements InputAuth
 
 	public function authorizeInput(array $input, ExecutionContext $context): PolicyDecision
 	{
-		$validated = $this->validatedInput($input);
-		if ($validated === null) {
-			return PolicyDecision::deny(self::DENY_INVALID_INPUT);
+		$validated = $this->validatedInput( $input );
+		if ( $validated === null ) {
+			return PolicyDecision::deny( self::DENY_INVALID_INPUT );
 		}
 
 		try {
-			$definition = $this->definitions->get($validated['definition_id']);
-		} catch (Throwable) {
-			return PolicyDecision::deny(self::DENY_RESOURCE_UNAVAILABLE);
+			$definition = $this->definitions->get( $validated['definition_id'] );
+		} catch ( Throwable ) {
+			return PolicyDecision::deny( self::DENY_RESOURCE_UNAVAILABLE );
 		}
 
-		if (!$definition instanceof Definition) {
-			return PolicyDecision::deny(self::DENY_NOT_FOUND);
+		if ( ! $definition instanceof Definition ) {
+			return PolicyDecision::deny( self::DENY_NOT_FOUND );
 		}
 
 		try {
-			FormWorkflowDefinition::assertOwned($definition);
-		} catch (InvalidArgumentException) {
-			return PolicyDecision::deny(self::DENY_WRONG_OWNER);
+			FormWorkflowDefinition::assertOwned( $definition );
+		} catch ( InvalidArgumentException ) {
+			return PolicyDecision::deny( self::DENY_WRONG_OWNER );
 		}
 
-		if (!$this->isMutableLifecycleState($definition->status)) {
-			return PolicyDecision::deny(self::DENY_INVALID_STATE);
+		if ( ! $this->isMutableLifecycleState( $definition->status ) ) {
+			return PolicyDecision::deny( self::DENY_INVALID_STATE );
 		}
 
-		if ($definition->revision !== $validated['expected_revision']) {
-			return PolicyDecision::deny(self::DENY_REVISION_CONFLICT);
+		if ( $definition->revision !== $validated['expected_revision'] ) {
+			return PolicyDecision::deny( self::DENY_REVISION_CONFLICT );
 		}
 
-		return PolicyDecision::allow('forms_workflows_set_enabled_authorized');
+		return PolicyDecision::allow( 'forms_workflows_set_enabled_authorized' );
 	}
 
 	/** @return array<string,mixed> */
 	public function handle(array $input, ExecutionContext $context): array
 	{
-		$validated = $this->validatedInput($input);
-		if ($validated === null) {
-			throw new InvalidArgumentException('Forms & Workflows set-enabled input is invalid.');
+		$validated = $this->validatedInput( $input );
+		if ( $validated === null ) {
+			throw new InvalidArgumentException( 'Forms & Workflows set-enabled input is invalid.' );
 		}
 
 		try {
-			$definition = $this->definitions->get($validated['definition_id']);
-		} catch (Throwable $exception) {
+			$definition = $this->definitions->get( $validated['definition_id'] );
+		} catch ( Throwable $exception ) {
 			throw new RuntimeException(
 				'Forms & Workflows set-enabled resource is unavailable.',
 				0,
@@ -148,13 +148,13 @@ final readonly class FormsWorkflowsSetEnabledAbilityHandler implements InputAuth
 			);
 		}
 
-		if (!$definition instanceof Definition) {
-			throw new RuntimeException('Forms & Workflows set-enabled definition was not found.');
+		if ( ! $definition instanceof Definition ) {
+			throw new RuntimeException( 'Forms & Workflows set-enabled definition was not found.' );
 		}
 
 		try {
-			FormWorkflowDefinition::assertOwned($definition);
-		} catch (InvalidArgumentException $exception) {
+			FormWorkflowDefinition::assertOwned( $definition );
+		} catch ( InvalidArgumentException $exception ) {
 			throw new RuntimeException(
 				'Forms & Workflows set-enabled definition ownership is invalid.',
 				0,
@@ -162,19 +162,19 @@ final readonly class FormsWorkflowsSetEnabledAbilityHandler implements InputAuth
 			);
 		}
 
-		if (!$this->isMutableLifecycleState($definition->status)) {
-			throw new RuntimeException('Forms & Workflows set-enabled lifecycle state is not mutable.');
+		if ( ! $this->isMutableLifecycleState( $definition->status ) ) {
+			throw new RuntimeException( 'Forms & Workflows set-enabled lifecycle state is not mutable.' );
 		}
 
-		if ($definition->revision !== $validated['expected_revision']) {
-			throw new RuntimeException('Forms & Workflows set-enabled revision conflict.');
+		if ( $definition->revision !== $validated['expected_revision'] ) {
+			throw new RuntimeException( 'Forms & Workflows set-enabled revision conflict.' );
 		}
 
 		$target = $validated['enabled']
 			? DefinitionStatus::Published
 			: DefinitionStatus::Disabled;
 
-		if ($definition->status === $target) {
+		if ( $definition->status === $target ) {
 			return $this->result(
 				definition: $definition,
 				previousRevision: $definition->revision,
@@ -197,8 +197,8 @@ final readonly class FormsWorkflowsSetEnabledAbilityHandler implements InputAuth
 		);
 
 		try {
-			$this->definitions->save($next);
-		} catch (Throwable $exception) {
+			$this->definitions->save( $next );
+		} catch ( Throwable $exception ) {
 			throw new RuntimeException(
 				'Forms & Workflows set-enabled persistence failed.',
 				0,
@@ -220,8 +220,8 @@ final readonly class FormsWorkflowsSetEnabledAbilityHandler implements InputAuth
 	 */
 	private function validatedInput(array $input): ?array
 	{
-		$result = $this->validator->validateInput(self::inputSchema(), $input);
-		if (!$result->valid) {
+		$result = $this->validator->validateInput( self::inputSchema(), $input );
+		if ( ! $result->valid ) {
 			return null;
 		}
 
@@ -230,11 +230,11 @@ final readonly class FormsWorkflowsSetEnabledAbilityHandler implements InputAuth
 		$enabled = $input['enabled'] ?? null;
 
 		if (
-			!is_string($definitionId)
-			|| preg_match(self::UUID_PATTERN, $definitionId) !== 1
-			|| !is_int($expectedRevision)
+			! is_string( $definitionId )
+			|| preg_match( self::UUID_PATTERN, $definitionId ) !== 1
+			|| ! is_int( $expectedRevision )
 			|| $expectedRevision < 1
-			|| !is_bool($enabled)
+			|| ! is_bool( $enabled )
 		) {
 			return null;
 		}

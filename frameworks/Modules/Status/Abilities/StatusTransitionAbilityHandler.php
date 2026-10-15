@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Status\Abilities;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -29,7 +29,7 @@ final readonly class StatusTransitionAbilityHandler implements AbilityHandlerInt
 	/** @param array<string,mixed> $input */
 	public function handle(array $input, ExecutionContext $context): array
 	{
-		$this->assertKnownKeys($input);
+		$this->assertKnownKeys( $input );
 
 		$postId = $input['post_id'] ?? null;
 		$expected = $input['expected_current_status'] ?? null;
@@ -37,20 +37,20 @@ final readonly class StatusTransitionAbilityHandler implements AbilityHandlerInt
 		$reason = $input['reason'] ?? null;
 		$programmatic = $input['programmatic'] ?? false;
 
-		if (!is_int($postId) || $postId < 1) {
-			throw new InvalidArgumentException('Status transition Ability post_id must be a positive integer.');
+		if ( ! is_int( $postId ) || $postId < 1 ) {
+			throw new InvalidArgumentException( 'Status transition Ability post_id must be a positive integer.' );
 		}
-		if (!is_string($expected) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $expected)) {
-			throw new InvalidArgumentException('Status transition Ability expected_current_status is invalid.');
+		if ( ! is_string( $expected ) || ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,19}$/', $expected ) ) {
+			throw new InvalidArgumentException( 'Status transition Ability expected_current_status is invalid.' );
 		}
-		if (!is_string($target) || !preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $target)) {
-			throw new InvalidArgumentException('Status transition Ability target_status is invalid.');
+		if ( ! is_string( $target ) || ! preg_match( '/^[a-z0-9][a-z0-9_-]{0,19}$/', $target ) ) {
+			throw new InvalidArgumentException( 'Status transition Ability target_status is invalid.' );
 		}
-		if ($reason !== null && !is_string($reason)) {
-			throw new InvalidArgumentException('Status transition Ability reason must be null or string.');
+		if ( $reason !== null && ! is_string( $reason ) ) {
+			throw new InvalidArgumentException( 'Status transition Ability reason must be null or string.' );
 		}
-		if (!is_bool($programmatic)) {
-			throw new InvalidArgumentException('Status transition Ability programmatic must be boolean.');
+		if ( ! is_bool( $programmatic ) ) {
+			throw new InvalidArgumentException( 'Status transition Ability programmatic must be boolean.' );
 		}
 
 		$result = $this->executor->execute(
@@ -75,9 +75,9 @@ final readonly class StatusTransitionAbilityHandler implements AbilityHandlerInt
 	/** @param array<string,mixed> $input */
 	private function assertKnownKeys(array $input): void
 	{
-		foreach (array_keys($input) as $key) {
-			if (!is_string($key) || !in_array($key, self::INPUT_KEYS, true)) {
-				throw new InvalidArgumentException('Status transition Ability contains an unsupported input key.');
+		foreach ( array_keys( $input ) as $key ) {
+			if ( ! is_string( $key ) || ! in_array( $key, self::INPUT_KEYS, true ) ) {
+				throw new InvalidArgumentException( 'Status transition Ability contains an unsupported input key.' );
 			}
 		}
 	}

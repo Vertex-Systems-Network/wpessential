@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Taxonomies;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -37,7 +37,7 @@ final readonly class TaxonomyRoleImpactReadModel
      */
 	public function forDefinition(Definition $definition, ?ExecutionContext $context = null): array
 	{
-		return $this->forCapabilities($this->effectiveCapabilities($definition->payload), $context);
+		return $this->forCapabilities( $this->effectiveCapabilities( $definition->payload ), $context );
 	}
 
 	/**
@@ -51,7 +51,7 @@ final readonly class TaxonomyRoleImpactReadModel
 	public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
 	{
 		$service = $this->roles ?? $this->rolesFromRegistry();
-		if (!$service instanceof RoleImpactReadServiceInterface || !$context instanceof ExecutionContext) {
+		if ( ! $service instanceof RoleImpactReadServiceInterface || ! $context instanceof ExecutionContext ) {
 			return [
 				'state' => 'unavailable',
 				'operations' => array_map(
@@ -67,8 +67,8 @@ final readonly class TaxonomyRoleImpactReadModel
 							'caveats' => ['Canonical Surface 30 role-impact service or execution context is unavailable.'],
 						],
 					],
-					array_keys($capabilities),
-					array_values($capabilities),
+					array_keys( $capabilities ),
+					array_values( $capabilities ),
 				),
 				'caveats' => [
 					'Canonical Surface 30 role-impact service or execution context is unavailable; Taxonomy does not fall back to direct WordPress role-store inspection.',
@@ -78,9 +78,9 @@ final readonly class TaxonomyRoleImpactReadModel
 
 		/** @var array<string,array<string,mixed>> $byCapability */
 		$byCapability = [];
-		foreach ($capabilities as $capability) {
-			if (!isset($byCapability[$capability])) {
-				$byCapability[$capability] = $service->capabilityImpact($capability, $context);
+		foreach ( $capabilities as $capability ) {
+			if ( ! isset( $byCapability[$capability] ) ) {
+				$byCapability[$capability] = $service->capabilityImpact( $capability, $context );
 			}
 		}
 
@@ -89,19 +89,19 @@ final readonly class TaxonomyRoleImpactReadModel
 		$caveats = [
 			'Role impact is diagnostic role-entry truth from canonical Surface 30, not final user authorization.',
 		];
-		foreach ($capabilities as $operation => $capability) {
+		foreach ( $capabilities as $operation => $capability ) {
 			$impact = $byCapability[$capability];
 			$impactState = $impact['state'] ?? 'unavailable';
-			if ($impactState === 'unavailable') {
+			if ( $impactState === 'unavailable' ) {
 				$state = 'unavailable';
-			} elseif ($impactState === 'degraded' && $state === 'healthy') {
+			} elseif ( $impactState === 'degraded' && $state === 'healthy' ) {
 				$state = 'degraded';
 			}
 
 			$impactCaveats = $impact['caveats'] ?? [];
-			if (is_array($impactCaveats)) {
-				foreach ($impactCaveats as $caveat) {
-					if (is_string($caveat) && $caveat !== '') {
+			if ( is_array( $impactCaveats ) ) {
+				foreach ( $impactCaveats as $caveat ) {
+					if ( is_string( $caveat ) && $caveat !== '' ) {
 						$caveats[] = $caveat;
 					}
 				}
@@ -117,7 +117,7 @@ final readonly class TaxonomyRoleImpactReadModel
 		return [
 			'state' => $state,
 			'operations' => $operations,
-			'caveats' => array_values(array_unique($caveats)),
+			'caveats' => array_values( array_unique( $caveats ) ),
 		];
 	}
 
@@ -129,14 +129,14 @@ final readonly class TaxonomyRoleImpactReadModel
 	{
 		$effective = self::DEFAULT_CAPABILITIES;
 		$authored = $payload['capabilities'] ?? null;
-		if (!is_array($authored) || array_is_list($authored)) {
+		if ( ! is_array( $authored ) || array_is_list( $authored ) ) {
 			return $effective;
 		}
 
-		foreach (array_keys(self::DEFAULT_CAPABILITIES) as $operation) {
+		foreach ( array_keys( self::DEFAULT_CAPABILITIES ) as $operation ) {
 			$value = $authored[$operation] ?? null;
-			if (is_string($value) && trim($value) !== '') {
-				$effective[$operation] = trim($value);
+			if ( is_string( $value ) && trim( $value ) !== '' ) {
+				$effective[$operation] = trim( $value );
 			}
 		}
 
@@ -145,13 +145,13 @@ final readonly class TaxonomyRoleImpactReadModel
 
 	private function rolesFromRegistry(): ?RoleImpactReadServiceInterface
 	{
-		if (!$this->services instanceof ServiceRegistryInterface
-			|| !$this->services->has(RoleImpactReadServiceInterface::SERVICE_ID)
+		if ( ! $this->services instanceof ServiceRegistryInterface
+			|| ! $this->services->has( RoleImpactReadServiceInterface::SERVICE_ID )
 		) {
 			return null;
 		}
 
-		$service = $this->services->get(RoleImpactReadServiceInterface::SERVICE_ID);
+		$service = $this->services->get( RoleImpactReadServiceInterface::SERVICE_ID );
 		return $service instanceof RoleImpactReadServiceInterface ? $service : null;
 	}
 }

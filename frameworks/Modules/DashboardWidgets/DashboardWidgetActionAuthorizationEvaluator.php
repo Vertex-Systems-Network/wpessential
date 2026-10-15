@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -40,14 +40,14 @@ final readonly class DashboardWidgetActionAuthorizationEvaluator
 		array $input,
 		ExecutionContext $context,
 	): PolicyDecision {
-		if (preg_match('#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId) !== 1) {
-			return PolicyDecision::deny(self::REASON_INVALID_ABILITY);
+		if ( preg_match( '#^wpessential/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*$#', $abilityId ) !== 1 ) {
+			return PolicyDecision::deny( self::REASON_INVALID_ABILITY );
 		}
 
 		try {
-			$descriptor = $this->abilities->descriptor($abilityId);
-		} catch (Throwable) {
-			return PolicyDecision::deny(self::REASON_AUTHORIZATION_FAILURE);
+			$descriptor = $this->abilities->descriptor( $abilityId );
+		} catch ( Throwable ) {
+			return PolicyDecision::deny( self::REASON_AUTHORIZATION_FAILURE );
 		}
 
 		if (
@@ -55,42 +55,42 @@ final readonly class DashboardWidgetActionAuthorizationEvaluator
 			|| $descriptor->name !== $abilityId
 			|| $descriptor->ownerSurfaceId !== FormWorkflowDefinition::OWNER_SURFACE_ID
 			|| $descriptor->mutates !== true
-			|| !$descriptor->allows(ExecutionChannel::Ui)
+			|| ! $descriptor->allows( ExecutionChannel::Ui )
 		) {
-			return PolicyDecision::deny(self::REASON_INVALID_ABILITY);
+			return PolicyDecision::deny( self::REASON_INVALID_ABILITY );
 		}
 
 		if (
-			!$context->principal->isAuthenticated()
+			! $context->principal->isAuthenticated()
 			|| $context->principal->actorType !== 'user'
 			|| $context->channel !== ExecutionChannel::Ui
 		) {
-			return PolicyDecision::deny(self::REASON_INVALID_CONTEXT);
+			return PolicyDecision::deny( self::REASON_INVALID_CONTEXT );
 		}
 
 		try {
-			if ($descriptor->inputSchema === []) {
-				if ($input !== []) {
-					return PolicyDecision::deny(self::REASON_INVALID_INPUT);
+			if ( $descriptor->inputSchema === [] ) {
+				if ( $input !== [] ) {
+					return PolicyDecision::deny( self::REASON_INVALID_INPUT );
 				}
 			} else {
-				$schemaResult = $this->inputValidator->validateSchema($descriptor->inputSchema);
-				if (!$schemaResult->valid) {
-					return PolicyDecision::deny(self::REASON_INVALID_INPUT);
+				$schemaResult = $this->inputValidator->validateSchema( $descriptor->inputSchema );
+				if ( ! $schemaResult->valid ) {
+					return PolicyDecision::deny( self::REASON_INVALID_INPUT );
 				}
 
 				$inputResult = $this->inputValidator->validateInput(
 					$descriptor->inputSchema,
 					$input,
 				);
-				if (!$inputResult->valid) {
-					return PolicyDecision::deny(self::REASON_INVALID_INPUT);
+				if ( ! $inputResult->valid ) {
+					return PolicyDecision::deny( self::REASON_INVALID_INPUT );
 				}
 			}
 
-			return $this->abilities->authorize($abilityId, $context, $input);
-		} catch (Throwable) {
-			return PolicyDecision::deny(self::REASON_AUTHORIZATION_FAILURE);
+			return $this->abilities->authorize( $abilityId, $context, $input );
+		} catch ( Throwable ) {
+			return PolicyDecision::deny( self::REASON_AUTHORIZATION_FAILURE );
 		}
 	}
 }

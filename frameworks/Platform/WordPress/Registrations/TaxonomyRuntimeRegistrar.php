@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Platform\WordPress\Registrations;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -39,26 +39,26 @@ final class TaxonomyRuntimeRegistrar
 
 	public function register(): void
 	{
-		if (function_exists('add_action')) {
-			add_action('init', [$this, 'registerActive'], 21);
+		if ( function_exists( 'add_action' ) ) {
+			add_action( 'init', [$this, 'registerActive'], 21 );
 		}
 	}
 
 	public function registerActive(): void
 	{
-		if ($this->processed) {
+		if ( $this->processed ) {
 			return;
 		}
 		$this->processed = true;
 
-		if (!function_exists('taxonomy_exists') || !function_exists('register_taxonomy')) {
+		if ( ! function_exists( 'taxonomy_exists' ) || ! function_exists( 'register_taxonomy' ) ) {
 			$this->errors['runtime'] = 'WordPress taxonomy APIs are unavailable.';
 			return;
 		}
 
-		foreach ($this->runtime->forKind(RegistrationKind::Taxonomy) as $key => $entry) {
+		foreach ( $this->runtime->forKind( RegistrationKind::Taxonomy ) as $key => $entry ) {
 			$payload = $entry['payload'] ?? null;
-			if (!is_array($payload)) {
+			if ( ! is_array( $payload ) ) {
 				$this->errors[$key] = 'Compiled taxonomy payload is invalid.';
 				continue;
 			}
@@ -66,30 +66,30 @@ final class TaxonomyRuntimeRegistrar
 			$objectTypes = $payload['object_types'] ?? null;
 			$args = $payload['args'] ?? null;
 			$providerIds = $payload['provider_ids'] ?? [];
-			if (!is_array($objectTypes)
-				|| !array_is_list($objectTypes)
+			if ( ! is_array( $objectTypes )
+				|| ! array_is_list( $objectTypes )
 				|| $objectTypes === []
-				|| !is_array($args)
-				|| !is_array($providerIds)
-				|| ($providerIds !== [] && array_is_list($providerIds))
+				|| ! is_array( $args )
+				|| ! is_array( $providerIds )
+				|| ($providerIds !== [] && array_is_list( $providerIds ))
 			) {
 				$this->errors[$key] = 'Compiled taxonomy registration contract is invalid.';
 				continue;
 			}
-			if (taxonomy_exists($key)) {
+			if ( taxonomy_exists( $key ) ) {
 				$this->conflicts[] = $key;
 				continue;
 			}
 
 			try {
-				$args = $this->providerRegistry->apply($args, $providerIds);
-			} catch (Throwable $exception) {
+				$args = $this->providerRegistry->apply( $args, $providerIds );
+			} catch ( Throwable $exception ) {
 				$this->errors[$key] = $exception->getMessage();
 				continue;
 			}
 
-			$result = register_taxonomy($key, $objectTypes, $args);
-			if (function_exists('is_wp_error') && is_wp_error($result)) {
+			$result = register_taxonomy( $key, $objectTypes, $args );
+			if ( function_exists( 'is_wp_error' ) && is_wp_error( $result ) ) {
 				$this->errors[$key] = $result->get_error_message();
 				continue;
 			}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -24,27 +24,27 @@ final readonly class FieldGroupPostMetaBinder
 
 	public function bind(Definition $definition): void
 	{
-		$this->bindAll([$definition]);
+		$this->bindAll( [$definition] );
 	}
 
 	/** @param list<Definition> $definitions */
 	public function bindAll(array $definitions): void
 	{
-		if (!array_is_list($definitions)) {
-			throw new InvalidArgumentException('Field Group runtime binding definitions must be a list.');
+		if ( ! array_is_list( $definitions ) ) {
+			throw new InvalidArgumentException( 'Field Group runtime binding definitions must be a list.' );
 		}
 
 		$registrations = [];
-		foreach ($definitions as $definition) {
-			if (!$definition instanceof Definition) {
-				throw new InvalidArgumentException('Field Group runtime binding definitions must contain Definition objects.');
+		foreach ( $definitions as $definition ) {
+			if ( ! $definition instanceof Definition ) {
+				throw new InvalidArgumentException( 'Field Group runtime binding definitions must contain Definition objects.' );
 			}
-			foreach ($this->plan($definition) as $registration) {
+			foreach ( $this->plan( $definition ) as $registration ) {
 				$registrations[] = $registration;
 			}
 		}
 
-		$this->registrar->registerBatch($registrations);
+		$this->registrar->registerBatch( $registrations );
 	}
 
 	/**
@@ -57,23 +57,23 @@ final readonly class FieldGroupPostMetaBinder
 	 */
 	private function plan(Definition $definition): array
 	{
-		$this->assertPublishedFieldGroup($definition);
+		$this->assertPublishedFieldGroup( $definition );
 
-		$group = $this->groups->normalize($definition->payload, true);
-		$groupRuntime = $this->storage->projectGroup($group);
-		$postTypes = $this->targets->compile($group);
+		$group = $this->groups->normalize( $definition->payload, true );
+		$groupRuntime = $this->storage->projectGroup( $group );
+		$postTypes = $this->targets->compile( $group );
 
 		$registrations = [];
-		foreach ($postTypes as $postType) {
-			foreach ($group['fields'] as $field) {
-				if (!is_array($field)) {
-					throw new InvalidArgumentException('Normalized Field Group fields must contain field maps.');
+		foreach ( $postTypes as $postType ) {
+			foreach ( $group['fields'] as $field ) {
+				if ( ! is_array( $field ) ) {
+					throw new InvalidArgumentException( 'Normalized Field Group fields must contain field maps.' );
 				}
-				if (($field['stores_value'] ?? null) !== true) {
+				if ( ($field['stores_value'] ?? null) !== true ) {
 					continue;
 				}
 
-				$fieldRuntime = $this->storage->projectField($field, $groupRuntime['show_in_rest']);
+				$fieldRuntime = $this->storage->projectField( $field, $groupRuntime['show_in_rest'] );
 				$registrations[] = $this->compiler->compile(
 					$field,
 					$postType,
@@ -88,14 +88,14 @@ final readonly class FieldGroupPostMetaBinder
 
 	private function assertPublishedFieldGroup(Definition $definition): void
 	{
-		if ($definition->type !== FieldGroupDefinitionNormalizer::DEFINITION_TYPE) {
-			throw new InvalidArgumentException('Post-meta binding requires a canonical field_group Definition.');
+		if ( $definition->type !== FieldGroupDefinitionNormalizer::DEFINITION_TYPE ) {
+			throw new InvalidArgumentException( 'Post-meta binding requires a canonical field_group Definition.' );
 		}
-		if ($definition->ownerSurfaceId !== FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID) {
-			throw new InvalidArgumentException('Post-meta binding requires canonical Surface 3 ownership.');
+		if ( $definition->ownerSurfaceId !== FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID ) {
+			throw new InvalidArgumentException( 'Post-meta binding requires canonical Surface 3 ownership.' );
 		}
-		if ($definition->status !== DefinitionStatus::Published) {
-			throw new InvalidArgumentException('Only Published Field Group Definitions may bind runtime post meta.');
+		if ( $definition->status !== DefinitionStatus::Published ) {
+			throw new InvalidArgumentException( 'Only Published Field Group Definitions may bind runtime post meta.' );
 		}
 	}
 }

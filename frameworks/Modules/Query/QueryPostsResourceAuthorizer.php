@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Query;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -28,17 +28,17 @@ final readonly class QueryPostsResourceAuthorizer
 	public function __construct(?Closure $loadPost = null, ?Closure $canRead = null)
 	{
 		$this->loadPost = $loadPost ?? static function (int $postId): ?object {
-			if (!function_exists('get_post')) {
-				throw new RuntimeException('WordPress post API is unavailable.');
+			if ( ! function_exists( 'get_post' ) ) {
+				throw new RuntimeException( 'WordPress post API is unavailable.' );
 			}
-			$post = get_post($postId);
-			return is_object($post) ? $post : null;
+			$post = get_post( $postId );
+			return is_object( $post ) ? $post : null;
 		};
 		$this->canRead = $canRead ?? static function (int $actorId, int $postId): bool {
-			if (!function_exists('user_can')) {
-				throw new RuntimeException('WordPress capability API is unavailable.');
+			if ( ! function_exists( 'user_can' ) ) {
+				throw new RuntimeException( 'WordPress capability API is unavailable.' );
 			}
-			return user_can($actorId, 'read_post', $postId);
+			return user_can( $actorId, 'read_post', $postId );
 		};
 	}
 
@@ -48,7 +48,7 @@ final readonly class QueryPostsResourceAuthorizer
 	 */
 	public function assertCanRead(array $endpoint, array $postIds, ExecutionContext $context): void
 	{
-		if (($endpoint['object_type'] ?? null) !== 'post') {
+		if ( ($endpoint['object_type'] ?? null) !== 'post' ) {
 			throw new QueryPlanningException(
 				'wpe_query_unsupported_operator',
 				'$.filter.relation_ref',
@@ -57,7 +57,7 @@ final readonly class QueryPostsResourceAuthorizer
 		}
 
 		$subtype = $endpoint['object_subtype'] ?? null;
-		if ($subtype !== null && (!is_string($subtype) || $subtype === '')) {
+		if ( $subtype !== null && ( ! is_string( $subtype ) || $subtype === '') ) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.filter.relation_ref',
@@ -66,7 +66,7 @@ final readonly class QueryPostsResourceAuthorizer
 		}
 
 		$actorId = $context->principal->userId;
-		if (!is_int($actorId) || $actorId < 1) {
+		if ( ! is_int( $actorId ) || $actorId < 1 ) {
 			throw new QueryPlanningException(
 				'wpe_query_policy_denied',
 				'$.source',
@@ -74,8 +74,8 @@ final readonly class QueryPostsResourceAuthorizer
 			);
 		}
 
-		foreach ($postIds as $postId) {
-			if (!is_int($postId) || $postId < 1) {
+		foreach ( $postIds as $postId ) {
+			if ( ! is_int( $postId ) || $postId < 1 ) {
 				throw new QueryPlanningException(
 					'wpe_query_invalid_ast',
 					'$.filter',
@@ -84,9 +84,9 @@ final readonly class QueryPostsResourceAuthorizer
 			}
 
 			try {
-				$post = ($this->loadPost)($postId);
-				$allowed = ($this->canRead)($actorId, $postId);
-			} catch (Throwable) {
+				$post = ($this->loadPost)( $postId );
+				$allowed = ($this->canRead)( $actorId, $postId );
+			} catch ( Throwable ) {
 				throw new QueryPlanningException(
 					'wpe_query_dependency_unavailable',
 					'$.source',
@@ -94,10 +94,10 @@ final readonly class QueryPostsResourceAuthorizer
 				);
 			}
 
-			$postType = is_object($post) && isset($post->post_type) && is_string($post->post_type)
+			$postType = is_object( $post ) && isset( $post->post_type ) && is_string( $post->post_type )
 				? $post->post_type
 				: null;
-			if ($post === null || ($subtype !== null && $postType !== $subtype) || !$allowed) {
+			if ( $post === null || ($subtype !== null && $postType !== $subtype) || ! $allowed ) {
 				throw new QueryPlanningException(
 					'wpe_query_policy_denied',
 					'$.source',

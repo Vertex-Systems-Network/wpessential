@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Listings;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -40,18 +40,18 @@ final class ListingsModule implements ModuleInterface
 
 	public function register(ServiceRegistryInterface $services): void
 	{
-		$this->assertOutputServiceIdsAvailable($services);
-		$this->requireSharedRuntime($services);
+		$this->assertOutputServiceIdsAvailable( $services );
+		$this->requireSharedRuntime( $services );
 	}
 
 	public function boot(ServiceRegistryInterface $services): void
 	{
-		$this->assertOutputServiceIdsAvailable($services);
-		[$query, $blueprints, $renderer, $dynamicValues] = $this->requireSharedRuntime($services);
+		$this->assertOutputServiceIdsAvailable( $services );
+		[$query, $blueprints, $renderer, $dynamicValues] = $this->requireSharedRuntime( $services );
 
 		try {
 			$blueprints->validateGraph();
-		} catch (Throwable $exception) {
+		} catch ( Throwable $exception ) {
 			throw new LogicException(
 				'Listings requires a valid shared Component Blueprint dependency graph.',
 				0,
@@ -59,7 +59,7 @@ final class ListingsModule implements ModuleInterface
 			);
 		}
 
-		$queryReader = new ListingQueryReader($query);
+		$queryReader = new ListingQueryReader( $query );
 		$serverRenderer = new ListingServerRenderer(
 			$queryReader,
 			$blueprints,
@@ -67,15 +67,15 @@ final class ListingsModule implements ModuleInterface
 			$dynamicValues,
 		);
 
-		$services->set(self::SERVICE_QUERY_READER, $queryReader);
-		$services->set(self::SERVICE_SERVER_RENDERER, $serverRenderer);
+		$services->set( self::SERVICE_QUERY_READER, $queryReader );
+		$services->set( self::SERVICE_SERVER_RENDERER, $serverRenderer );
 	}
 
 	private function assertOutputServiceIdsAvailable(ServiceRegistryInterface $services): void
 	{
-		foreach ([self::SERVICE_QUERY_READER, self::SERVICE_SERVER_RENDERER] as $serviceId) {
-			if ($services->has($serviceId)) {
-				throw new LogicException(sprintf('Listings service "%s" is already registered.', $serviceId));
+		foreach ( [self::SERVICE_QUERY_READER, self::SERVICE_SERVER_RENDERER] as $serviceId ) {
+			if ( $services->has( $serviceId ) ) {
+				throw new LogicException( sprintf( 'Listings service "%s" is already registered.', $serviceId ) );
 			}
 		}
 	}
@@ -98,27 +98,27 @@ final class ListingsModule implements ModuleInterface
 				RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES,
 			] as $serviceId
 		) {
-			if (!$services->has($serviceId)) {
-				throw new LogicException(sprintf('Listings requires canonical shared service "%s".', $serviceId));
+			if ( ! $services->has( $serviceId ) ) {
+				throw new LogicException( sprintf( 'Listings requires canonical shared service "%s".', $serviceId ) );
 			}
 		}
 
-		$query = $services->get(QueryModule::SERVICE_READ_CONSUMER);
-		$blueprints = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
-		$renderer = $services->get(RenderingServiceRegistrar::SERVICE_RENDERER);
-		$dynamicValues = $services->get(RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES);
+		$query = $services->get( QueryModule::SERVICE_READ_CONSUMER );
+		$blueprints = $services->get( RenderingServiceRegistrar::SERVICE_BLUEPRINTS );
+		$renderer = $services->get( RenderingServiceRegistrar::SERVICE_RENDERER );
+		$dynamicValues = $services->get( RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES );
 
-		if (!$query instanceof QueryReadConsumerInterface) {
-			throw new LogicException('Listings requires the canonical Query read-consumer contract.');
+		if ( ! $query instanceof QueryReadConsumerInterface ) {
+			throw new LogicException( 'Listings requires the canonical Query read-consumer contract.' );
 		}
-		if (!$blueprints instanceof ComponentBlueprintRegistry) {
-			throw new LogicException('Listings requires the production shared Component Blueprint Registry.');
+		if ( ! $blueprints instanceof ComponentBlueprintRegistry ) {
+			throw new LogicException( 'Listings requires the production shared Component Blueprint Registry.' );
 		}
-		if (!$renderer instanceof BlueprintRendererDispatcher) {
-			throw new LogicException('Listings requires the production shared Blueprint Renderer Dispatcher.');
+		if ( ! $renderer instanceof BlueprintRendererDispatcher ) {
+			throw new LogicException( 'Listings requires the production shared Blueprint Renderer Dispatcher.' );
 		}
-		if (!$dynamicValues instanceof DynamicValueRouter) {
-			throw new LogicException('Listings requires the production shared Dynamic Value Router.');
+		if ( ! $dynamicValues instanceof DynamicValueRouter ) {
+			throw new LogicException( 'Listings requires the production shared Dynamic Value Router.' );
 		}
 
 		return [$query, $blueprints, $renderer, $dynamicValues];

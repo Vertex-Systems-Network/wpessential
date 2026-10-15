@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\Fields;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -22,17 +22,17 @@ final readonly class FieldGroupPortabilityAbilityHandler implements AbilityHandl
 		private FieldGroupPortabilityService $portability,
 		private string $action,
 	) {
-		if (!in_array($this->action, [self::EXPORT, self::IMPORT], true)) {
-			throw new InvalidArgumentException('Unsupported Field Group portability action.');
+		if ( ! in_array( $this->action, [self::EXPORT, self::IMPORT], true ) ) {
+			throw new InvalidArgumentException( 'Unsupported Field Group portability action.' );
 		}
 	}
 
 	public function handle(array $input, ExecutionContext $context): mixed
 	{
-		return match ($this->action) {
-			self::EXPORT => $this->export($input),
-			self::IMPORT => $this->import($input),
-			default => throw new RuntimeException('Unsupported Field Group portability action.'),
+		return match ( $this->action ) {
+			self::EXPORT => $this->export( $input ),
+			self::IMPORT => $this->import( $input ),
+			default => throw new RuntimeException( 'Unsupported Field Group portability action.' ),
 		};
 	}
 
@@ -40,27 +40,27 @@ final readonly class FieldGroupPortabilityAbilityHandler implements AbilityHandl
 	private function export(array $input): array
 	{
 		$ids = $input['definition_ids'] ?? [];
-		if (!is_array($ids) || !array_is_list($ids)) {
-			throw new InvalidArgumentException('Field Group portability definition_ids must be a list.');
+		if ( ! is_array( $ids ) || ! array_is_list( $ids ) ) {
+			throw new InvalidArgumentException( 'Field Group portability definition_ids must be a list.' );
 		}
-		foreach ($ids as $id) {
-			if (!is_string($id)) {
-				throw new InvalidArgumentException('Field Group portability definition_ids must contain strings.');
+		foreach ( $ids as $id ) {
+			if ( ! is_string( $id ) ) {
+				throw new InvalidArgumentException( 'Field Group portability definition_ids must contain strings.' );
 			}
 		}
 
 		/** @var list<string> $ids */
-		return $this->portability->export($ids);
+		return $this->portability->export( $ids );
 	}
 
 	/** @param array<string,mixed> $input */
 	private function import(array $input): array
 	{
 		$envelope = $input['envelope'] ?? null;
-		if (!is_array($envelope) || array_is_list($envelope)) {
-			throw new InvalidArgumentException('Field Group portability envelope must be an object/map.');
+		if ( ! is_array( $envelope ) || array_is_list( $envelope ) ) {
+			throw new InvalidArgumentException( 'Field Group portability envelope must be an object/map.' );
 		}
 
-		return $this->portability->import($envelope);
+		return $this->portability->import( $envelope );
 	}
 }

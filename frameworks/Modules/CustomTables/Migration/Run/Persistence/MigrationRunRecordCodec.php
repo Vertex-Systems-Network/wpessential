@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\CustomTables\Migration\Run\Persistence;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -33,10 +33,10 @@ final class MigrationRunRecordCodec
 	{
 		return [
 			'storage_version' => self::STORAGE_VERSION,
-			'id' => strtolower($run->id),
+			'id' => strtolower( $run->id ),
 			'plan_fingerprint' => $run->planFingerprint,
 			'table_key' => $run->tableKey,
-			'target_definition_id' => strtolower($run->targetDefinitionId),
+			'target_definition_id' => strtolower( $run->targetDefinitionId ),
 			'target_revision' => $run->targetRevision,
 			'target_schema_version' => $run->targetSchemaVersion,
 			'state' => $run->state->value,
@@ -47,32 +47,32 @@ final class MigrationRunRecordCodec
 	/** @param array<string,mixed> $record */
 	public function decode(array $record): MigrationRun
 	{
-		$keys = array_keys($record);
-		sort($keys);
+		$keys = array_keys( $record );
+		sort( $keys );
 		$expected = self::KEYS;
-		sort($expected);
+		sort( $expected );
 
-		if ($keys !== $expected) {
-			throw new InvalidArgumentException('Custom Tables migration run storage record shape is invalid.');
+		if ( $keys !== $expected ) {
+			throw new InvalidArgumentException( 'Custom Tables migration run storage record shape is invalid.' );
 		}
-		if (!is_int($record['storage_version']) || $record['storage_version'] !== self::STORAGE_VERSION) {
-			throw new InvalidArgumentException('Custom Tables migration run storage record version is unsupported.');
+		if ( ! is_int( $record['storage_version'] ) || $record['storage_version'] !== self::STORAGE_VERSION ) {
+			throw new InvalidArgumentException( 'Custom Tables migration run storage record version is unsupported.' );
 		}
 
-		foreach (['id', 'plan_fingerprint', 'table_key', 'target_definition_id', 'state'] as $key) {
-			if (!is_string($record[$key])) {
-				throw new InvalidArgumentException('Custom Tables migration run storage record string field is invalid.');
+		foreach ( ['id', 'plan_fingerprint', 'table_key', 'target_definition_id', 'state'] as $key ) {
+			if ( ! is_string( $record[$key] ) ) {
+				throw new InvalidArgumentException( 'Custom Tables migration run storage record string field is invalid.' );
 			}
 		}
-		foreach (['target_revision', 'target_schema_version', 'state_revision'] as $key) {
-			if (!is_int($record[$key])) {
-				throw new InvalidArgumentException('Custom Tables migration run storage record revision field is invalid.');
+		foreach ( ['target_revision', 'target_schema_version', 'state_revision'] as $key ) {
+			if ( ! is_int( $record[$key] ) ) {
+				throw new InvalidArgumentException( 'Custom Tables migration run storage record revision field is invalid.' );
 			}
 		}
 
-		$state = MigrationRunState::tryFrom($record['state']);
-		if ($state === null) {
-			throw new InvalidArgumentException('Custom Tables migration run storage record state is unsupported.');
+		$state = MigrationRunState::tryFrom( $record['state'] );
+		if ( $state === null ) {
+			throw new InvalidArgumentException( 'Custom Tables migration run storage record state is unsupported.' );
 		}
 
 		return new MigrationRun(

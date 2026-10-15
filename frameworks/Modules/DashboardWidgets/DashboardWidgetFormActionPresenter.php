@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -31,12 +31,12 @@ final readonly class DashboardWidgetFormActionPresenter
 		callable $preflightNonceFactory,
 		callable $executionNonceFactory,
 	) {
-		if (preg_match('/^[a-z0-9][a-z0-9_-]{0,127}$/', $this->ajaxAction) !== 1) {
-			throw new InvalidArgumentException('Dashboard Widget form-action AJAX action is invalid.');
+		if ( preg_match( '/^[a-z0-9][a-z0-9_-]{0,127}$/', $this->ajaxAction ) !== 1 ) {
+			throw new InvalidArgumentException( 'Dashboard Widget form-action AJAX action is invalid.' );
 		}
 
-		$this->preflightNonceFactory = Closure::fromCallable($preflightNonceFactory);
-		$this->executionNonceFactory = Closure::fromCallable($executionNonceFactory);
+		$this->preflightNonceFactory = Closure::fromCallable( $preflightNonceFactory );
+		$this->executionNonceFactory = Closure::fromCallable( $executionNonceFactory );
 	}
 
 	public function render(
@@ -53,30 +53,30 @@ final readonly class DashboardWidgetFormActionPresenter
 			);
 		}
 
-		$ajaxUrl = trim($ajaxUrl);
+		$ajaxUrl = trim( $ajaxUrl );
 		if (
 			$ajaxUrl === ''
-			|| strlen($ajaxUrl) > 2048
-			|| preg_match('/[\x00-\x1F\x7F]/', $ajaxUrl) === 1
+			|| strlen( $ajaxUrl ) > 2048
+			|| preg_match( '/[\x00-\x1F\x7F]/', $ajaxUrl ) === 1
 		) {
-			throw new InvalidArgumentException('Dashboard Widget form-action AJAX URL is invalid.');
+			throw new InvalidArgumentException( 'Dashboard Widget form-action AJAX URL is invalid.' );
 		}
 
 		try {
 			$nonce = ($this->preflightNonceFactory)();
 			$executionNonce = ($this->executionNonceFactory)();
-		} catch (Throwable) {
-			throw new InvalidArgumentException('Dashboard Widget form-action nonce could not be created.');
+		} catch ( Throwable ) {
+			throw new InvalidArgumentException( 'Dashboard Widget form-action nonce could not be created.' );
 		}
 
-		foreach ([$nonce, $executionNonce] as $candidateNonce) {
+		foreach ( [$nonce, $executionNonce] as $candidateNonce ) {
 			if (
-				!is_string($candidateNonce)
+				! is_string( $candidateNonce )
 				|| $candidateNonce === ''
-				|| strlen($candidateNonce) > 512
-				|| preg_match('/[\x00-\x1F\x7F]/', $candidateNonce) === 1
+				|| strlen( $candidateNonce ) > 512
+				|| preg_match( '/[\x00-\x1F\x7F]/', $candidateNonce ) === 1
 			) {
-				throw new InvalidArgumentException('Dashboard Widget form-action nonce is invalid.');
+				throw new InvalidArgumentException( 'Dashboard Widget form-action nonce is invalid.' );
 			}
 		}
 
@@ -95,19 +95,19 @@ final readonly class DashboardWidgetFormActionPresenter
 			. '</div>'
 			. '<p role="status" aria-live="polite" data-wpessential-form-action-status="1"></p>'
 			. '</div>',
-			self::escape($ajaxUrl),
-			self::escape($this->ajaxAction),
-			self::escape(self::ROUTE_TYPE),
-			self::escape($nonce),
-			self::escape(DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE),
-			self::escape($executionNonce),
-			self::escape($descriptor->definitionId),
+			self::escape( $ajaxUrl ),
+			self::escape( $this->ajaxAction ),
+			self::escape( self::ROUTE_TYPE ),
+			self::escape( $nonce ),
+			self::escape( DashboardWidgetFormActionExecutionAjaxHandler::ROUTE_TYPE ),
+			self::escape( $executionNonce ),
+			self::escape( $descriptor->definitionId ),
 			$descriptor->revision,
-			self::escape($confirmation->confirmLabel),
-			self::escape($confirmation->title),
-			self::escape($confirmation->message),
-			self::escape($confirmation->confirmLabel),
-			self::escape($confirmation->cancelLabel),
+			self::escape( $confirmation->confirmLabel ),
+			self::escape( $confirmation->title ),
+			self::escape( $confirmation->message ),
+			self::escape( $confirmation->confirmLabel ),
+			self::escape( $confirmation->cancelLabel ),
 		);
 	}
 

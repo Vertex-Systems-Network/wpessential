@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WPEssential\Modules\DashboardWidgets;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -35,10 +35,10 @@ final class WordPressDashboardWidgetRoleMembershipProvider implements DashboardW
 		?callable $currentUserRoles = null,
 	) {
 		$this->currentUserId = $currentUserId !== null
-			? Closure::fromCallable($currentUserId)
+			? Closure::fromCallable( $currentUserId )
 			: static function (): ?int {
-				if (!function_exists('get_current_user_id')) {
-					throw new LogicException('WordPress current-user API is unavailable.');
+				if ( ! function_exists( 'get_current_user_id' ) ) {
+					throw new LogicException( 'WordPress current-user API is unavailable.' );
 				}
 
 				$userId = (int) get_current_user_id();
@@ -46,34 +46,34 @@ final class WordPressDashboardWidgetRoleMembershipProvider implements DashboardW
 			};
 
 		$this->currentSiteId = $currentSiteId !== null
-			? Closure::fromCallable($currentSiteId)
+			? Closure::fromCallable( $currentSiteId )
 			: static function (): int {
-				if (!function_exists('get_current_blog_id')) {
-					throw new LogicException('WordPress current-site API is unavailable.');
+				if ( ! function_exists( 'get_current_blog_id' ) ) {
+					throw new LogicException( 'WordPress current-site API is unavailable.' );
 				}
 
 				return (int) get_current_blog_id();
 			};
 
 		$this->currentUserRoles = $currentUserRoles !== null
-			? Closure::fromCallable($currentUserRoles)
+			? Closure::fromCallable( $currentUserRoles )
 			: static function (): array {
-				if (!function_exists('wp_get_current_user')) {
-					throw new LogicException('WordPress current-user role API is unavailable.');
+				if ( ! function_exists( 'wp_get_current_user' ) ) {
+					throw new LogicException( 'WordPress current-user role API is unavailable.' );
 				}
 
 				$user = wp_get_current_user();
-				$roles = is_object($user) ? ($user->roles ?? null) : null;
-				if (!is_array($roles)) {
+				$roles = is_object( $user ) ? ($user->roles ?? null) : null;
+				if ( ! is_array( $roles ) ) {
 					return [];
 				}
 
 				$result = [];
-				foreach ($roles as $role) {
+				foreach ( $roles as $role ) {
 					if (
-						is_string($role)
-						&& preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $role) === 1
-						&& !in_array($role, $result, true)
+						is_string( $role )
+						&& preg_match( '/^[a-z0-9][a-z0-9_-]{0,63}$/', $role ) === 1
+						&& ! in_array( $role, $result, true )
 					) {
 						$result[] = $role;
 					}
@@ -85,14 +85,14 @@ final class WordPressDashboardWidgetRoleMembershipProvider implements DashboardW
 
 	public function isCurrentUserContext(ExecutionContext $context): bool
 	{
-		if (!$context->principal->isAuthenticated() || $context->principal->actorType !== 'user') {
+		if ( ! $context->principal->isAuthenticated() || $context->principal->actorType !== 'user' ) {
 			return false;
 		}
 
 		try {
 			$currentUserId = ($this->currentUserId)();
 			$currentSiteId = ($this->currentSiteId)();
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return false;
 		}
 
@@ -105,33 +105,33 @@ final class WordPressDashboardWidgetRoleMembershipProvider implements DashboardW
 
 	public function hasAnyRole(ExecutionContext $context, array $roles): bool
 	{
-		if (!$this->isCurrentUserContext($context) || $roles === []) {
+		if ( ! $this->isCurrentUserContext( $context ) || $roles === [] ) {
 			return false;
 		}
 
-		foreach ($roles as $role) {
-			if (!is_string($role) || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $role) !== 1) {
+		foreach ( $roles as $role ) {
+			if ( ! is_string( $role ) || preg_match( '/^[a-z0-9][a-z0-9_-]{0,63}$/', $role ) !== 1 ) {
 				return false;
 			}
 		}
 
 		try {
 			$currentRoles = ($this->currentUserRoles)();
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return false;
 		}
 
-		foreach ($currentRoles as $currentRole) {
+		foreach ( $currentRoles as $currentRole ) {
 			if (
-				!is_string($currentRole)
-				|| preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $currentRole) !== 1
+				! is_string( $currentRole )
+				|| preg_match( '/^[a-z0-9][a-z0-9_-]{0,63}$/', $currentRole ) !== 1
 			) {
 				return false;
 			}
 		}
 
-		foreach ($roles as $role) {
-			if (in_array($role, $currentRoles, true)) {
+		foreach ( $roles as $role ) {
+			if ( in_array( $role, $currentRoles, true ) ) {
 				return true;
 			}
 		}
