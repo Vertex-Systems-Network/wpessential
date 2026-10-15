@@ -65,9 +65,9 @@ final readonly class DashboardWidgetMultisitePolicyReadAbilityHandler implements
 	private function get( array $input ): ?array {
 		if ( array( 'id' ) !== array_keys( $input )
 			|| ! is_string( $input['id'] )
-            || preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $input['id']) !== 1
+			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $input['id']) !== 1
 		) {
-            throw new InvalidArgumentException('Dashboard Multisite policy get requires one lowercase RFC 4122 UUID.');
+			throw new InvalidArgumentException('Dashboard Multisite policy get requires one lowercase RFC 4122 UUID.');
 		}
 		return $this->service->get( $input['id'] );
 	}

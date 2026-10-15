@@ -29,9 +29,9 @@ final class DashboardWidgetMultisitePolicyDefinition {
 	 * @return void
 	 * @throws InvalidArgumentException If owner or type is wrong.
 	 */
-    public static function assertOwned(Definition $definition): void
-    {
-        if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
+	public static function assertOwned(Definition $definition): void
+	{
+		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
 			throw new InvalidArgumentException( 'Dashboard Widget Multisite policy owner surface is invalid.' );
 		}
 		if ( self::TYPE !== $definition->type ) {

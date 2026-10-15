@@ -44,7 +44,7 @@ final readonly class DashboardWidgetMultisitePolicyReadService {
 		$definition = $this->definitions->get( $id );
 		if (
 			! $definition instanceof Definition
-            || $definition->ownerSurfaceId !== DashboardWidgetMultisitePolicyDefinition::OWNER_SURFACE_ID
+			|| $definition->ownerSurfaceId !== DashboardWidgetMultisitePolicyDefinition::OWNER_SURFACE_ID
 			|| DashboardWidgetMultisitePolicyDefinition::TYPE !== $definition->type
 			|| DefinitionStatus::Published !== $definition->status
 		) {

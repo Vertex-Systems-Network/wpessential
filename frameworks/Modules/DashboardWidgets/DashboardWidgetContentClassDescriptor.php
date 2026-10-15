@@ -52,19 +52,19 @@ final readonly class DashboardWidgetContentClassDescriptor {
 	 * @throws InvalidArgumentException If the descriptor is invalid.
 	 */
 	public function __construct(
-        public string $definitionId,
+		public string $definitionId,
 		public int $revision,
-        public string $contentType,
+		public string $contentType,
 	) {
-        if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
+		if (!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $this->definitionId)) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget content-class descriptor definition id must be a lowercase RFC 4122 UUID.'
 			);
 		}
 		if ( $this->revision < 1 ) {
-            throw new InvalidArgumentException('Dashboard Widget content-class descriptor revision must be positive.');
+			throw new InvalidArgumentException('Dashboard Widget content-class descriptor revision must be positive.');
 		}
-        if (!in_array($this->contentType, self::TRUSTED_TYPES, true)) {
+		if (!in_array($this->contentType, self::TRUSTED_TYPES, true)) {
 			throw new InvalidArgumentException(
 				'Dashboard Widget content-class descriptor type is not trusted for V1.'
 			);

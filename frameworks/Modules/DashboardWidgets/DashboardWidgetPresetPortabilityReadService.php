@@ -33,9 +33,9 @@ final readonly class DashboardWidgetPresetPortabilityReadService {
 	 * @param string $presetId Canonical Published preset identifier.
 	 * @return array<string,mixed>|null
 	 */
-    public function snapshot(string $presetId): ?array
-    {
-        $preset = $this->presets->get($presetId);
+	public function snapshot(string $presetId): ?array
+	{
+		$preset = $this->presets->get($presetId);
 		if ( null === $preset ) {
 			return null;
 		}
@@ -54,7 +54,7 @@ final readonly class DashboardWidgetPresetPortabilityReadService {
 				'network_default' => $preset['assignment']['network_default'],
 			),
 		);
-        $canonicalJson = json_encode(
+		$canonicalJson = json_encode(
 			$payload,
 			JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
 		);
@@ -63,7 +63,7 @@ final readonly class DashboardWidgetPresetPortabilityReadService {
 			'format'  => self::FORMAT,
 			'version' => self::VERSION,
 			'payload' => $payload,
-            'sha256' => hash('sha256', $canonicalJson),
+			'sha256' => hash('sha256', $canonicalJson),
 		);
 	}
 }

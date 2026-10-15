@@ -45,7 +45,7 @@ final readonly class DashboardWidgetPresetReadService {
 		if (
 			! $definition instanceof Definition
 			|| DashboardWidgetPresetDefinition::TYPE !== $definition->type
-            || $definition->ownerSurfaceId !== DashboardWidgetPresetDefinition::OWNER_SURFACE_ID
+			|| $definition->ownerSurfaceId !== DashboardWidgetPresetDefinition::OWNER_SURFACE_ID
 			|| DefinitionStatus::Published !== $definition->status
 		) {
 			return null;

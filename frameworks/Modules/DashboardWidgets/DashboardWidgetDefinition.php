@@ -29,16 +29,16 @@ final class DashboardWidgetDefinition {
 	 * @return void
 	 * @throws InvalidArgumentException If owner or definition type is wrong.
 	 */
-    public static function assertOwned(Definition $definition): void
-    {
-        if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
-            throw new InvalidArgumentException('Dashboard Widget definition owner surface is invalid.');
-        }
+	public static function assertOwned(Definition $definition): void
+	{
+		if ($definition->ownerSurfaceId !== self::OWNER_SURFACE_ID) {
+			throw new InvalidArgumentException('Dashboard Widget definition owner surface is invalid.');
+		}
 
-        if ($definition->type !== self::TYPE) {
-            throw new InvalidArgumentException('Dashboard Widget definition type is invalid.');
-        }
-    }
+		if ($definition->type !== self::TYPE) {
+			throw new InvalidArgumentException('Dashboard Widget definition type is invalid.');
+		}
+	}
 
 	/**
 	 * Project a canonical Dashboard widget definition for public reads.
@@ -63,8 +63,8 @@ final class DashboardWidgetDefinition {
 			'id'               => $definition->id,
 			'slug'             => $definition->slug,
 			'type'             => $definition->type,
-            'schema_version' => $definition->schemaVersion,
-            'owner_surface_id' => $definition->ownerSurfaceId,
+			'schema_version' => $definition->schemaVersion,
+			'owner_surface_id' => $definition->ownerSurfaceId,
 			'status'           => $definition->status->value,
 			'revision'         => $definition->revision,
 			'dependencies'     => $definition->dependencies,

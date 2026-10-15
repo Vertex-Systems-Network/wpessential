@@ -48,7 +48,7 @@ final readonly class DashboardWidgetVisibilityEvaluator {
 			);
 		}
 
-        if ($context->principal->actorType !== 'user') {
+		if ($context->principal->actorType !== 'user') {
 			return DashboardWidgetVisibilityDecision::deny(
 				DashboardWidgetVisibilityDecision::REASON_NON_USER_ACTOR,
 			);
@@ -75,8 +75,8 @@ final readonly class DashboardWidgetVisibilityEvaluator {
 			);
 		}
 
-        $userId = $context->principal->userId;
-        if ($visibility->users !== [] && (!is_int($userId) || !in_array($userId, $visibility->users, true))) {
+		$userId = $context->principal->userId;
+		if ($visibility->users !== [] && (!is_int($userId) || !in_array($userId, $visibility->users, true))) {
 			return DashboardWidgetVisibilityDecision::deny(
 				DashboardWidgetVisibilityDecision::REASON_USER_MISMATCH,
 			);
@@ -92,8 +92,8 @@ final readonly class DashboardWidgetVisibilityEvaluator {
 	 * @param array            $capabilities Capability names to check.
 	 * @return bool
 	 */
-    private function hasAnyCapability(ExecutionContext $context, array $capabilities): bool
-    {
+	private function hasAnyCapability(ExecutionContext $context, array $capabilities): bool
+	{
 		try {
 			foreach ( $capabilities as $capability ) {
 				if ( $this->capabilities->can( $context, $capability ) ) {

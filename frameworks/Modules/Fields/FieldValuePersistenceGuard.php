@@ -25,8 +25,8 @@ final class FieldValuePersistenceGuard {
 	 * @return mixed The unchanged, validated value.
 	 * @throws InvalidArgumentException If value is not persistence-safe.
 	 */
-    public function assertSafe(mixed $value): mixed
-    {
+	public function assertSafe(mixed $value): mixed
+	{
 		if ( null === $value || is_string( $value ) || is_int( $value ) || is_bool( $value ) ) {
 			return $value;
 		}

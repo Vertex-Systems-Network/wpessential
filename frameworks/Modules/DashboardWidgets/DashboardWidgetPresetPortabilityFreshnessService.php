@@ -35,10 +35,10 @@ final readonly class DashboardWidgetPresetPortabilityFreshnessService {
 	 * @return array{status:string,current:bool}
 	 * @throws InvalidArgumentException If the fingerprint input is malformed.
 	 */
-    public function check(string $presetId, string $sha256): array
-    {
+	public function check(string $presetId, string $sha256): array
+	{
 		if (
-            preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $presetId) !== 1
+			preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $presetId) !== 1
 			|| preg_match( '/^[0-9a-f]{64}$/', $sha256 ) !== 1
 		) {
 			throw new InvalidArgumentException(
@@ -47,7 +47,7 @@ final readonly class DashboardWidgetPresetPortabilityFreshnessService {
 		}
 
 		try {
-            $snapshot = $this->snapshots->snapshot($presetId);
+			$snapshot = $this->snapshots->snapshot($presetId);
 		} catch ( Throwable ) {
 			// Malformed current Published definitions must never be interpreted
 			// as an accepted/stale snapshot or reveal their untrusted content.

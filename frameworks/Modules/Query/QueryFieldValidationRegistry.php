@@ -30,7 +30,7 @@ final readonly class QueryFieldValidationRegistry implements DataSourceRegistryI
 	 */
 	public function __construct(
 		private DataSourceRegistryInterface $inner,
-        private string $sourceRef,
+		private string $sourceRef,
 		private DataSourceDescriptor $projected,
 	) {
 	}
@@ -52,7 +52,7 @@ final readonly class QueryFieldValidationRegistry implements DataSourceRegistryI
 	 * @return bool
 	 */
 	public function has( string $id ): bool {
-        return $id === $this->sourceRef || $this->inner->has($id);
+		return $id === $this->sourceRef || $this->inner->has($id);
 	}
 
 	/**
@@ -62,7 +62,7 @@ final readonly class QueryFieldValidationRegistry implements DataSourceRegistryI
 	 * @return DataSourceDescriptor|null
 	 */
 	public function find( string $id ): ?DataSourceDescriptor {
-        return $id === $this->sourceRef ? $this->projected : $this->inner->find($id);
+		return $id === $this->sourceRef ? $this->projected : $this->inner->find($id);
 	}
 
 	/**
@@ -73,7 +73,7 @@ final readonly class QueryFieldValidationRegistry implements DataSourceRegistryI
 	 * @throws RuntimeException When no descriptor is registered for the source.
 	 */
 	public function require( string $id ): DataSourceDescriptor {
-        return $this->find($id) ?? throw new RuntimeException(sprintf('Data Source "%s" is not registered.', $id));
+		return $this->find($id) ?? throw new RuntimeException(sprintf('Data Source "%s" is not registered.', $id));
 	}
 
 	/**
@@ -85,7 +85,7 @@ final readonly class QueryFieldValidationRegistry implements DataSourceRegistryI
 		$all   = $this->inner->all();
 		$found = false;
 		foreach ( $all as $index => $descriptor ) {
-            if ($descriptor->id === $this->sourceRef) {
+			if ($descriptor->id === $this->sourceRef) {
 				$all[ $index ] = $this->projected;
 				$found         = true;
 			}
