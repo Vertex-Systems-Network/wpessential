@@ -152,10 +152,7 @@ final readonly class AdminColumnsPersonalPreferenceResolver
 				throw new InvalidArgumentException(sprintf('%s item %d direction is unsupported.', $label, $index));
 			}
 			$seen[$columnKey] = true;
-			$resolved[] = [
-'column_key' => $columnKey,
-'direction' => $direction
-];
+			$resolved[] = ['column_key' => $columnKey, 'direction' => $direction];
 		}
 
 		return $resolved;

@@ -37,11 +37,7 @@ final readonly class DashboardWidgetPresetImportPreflightService
 			|| $snapshot['version'] !== DashboardWidgetPresetPortabilityReadService::VERSION
 			|| !is_array($snapshot['payload'])
 			|| array_keys($snapshot['payload']) !== [
-				'definition_id',
-'revision',
-'label',
-'widget_definition_ids',
-'assignment',
+				'definition_id', 'revision', 'label', 'widget_definition_ids', 'assignment',
 			]
 			|| !is_string($snapshot['sha256'])
 			|| preg_match('/^[0-9a-f]{64}$/', $snapshot['sha256']) !== 1
@@ -90,8 +86,7 @@ final readonly class DashboardWidgetPresetImportPreflightService
 				schemaVersion: 1,
 				ownerSurfaceId: DashboardWidgetPresetDefinition::OWNER_SURFACE_ID,
 				status: DefinitionStatus::Published,
-				payload: [
-'preset' => [
+				payload: ['preset' => [
 					'label' => $payload['label'],
 					'widget_definition_ids' => $payload['widget_definition_ids'],
 					'assignment' => $assignment,
@@ -128,9 +123,6 @@ final readonly class DashboardWidgetPresetImportPreflightService
 	/** @return array{status:string,applicable:false} */
 	private static function status(string $status): array
 	{
-		return [
-'status' => $status,
-'applicable' => false
-];
+		return ['status' => $status, 'applicable' => false];
 	}
 }

@@ -30,51 +30,32 @@ final class DashboardWidgetComponentBlueprintCatalog
 		'kpi' => [
 			'id' => '31000000-0000-4000-8000-000000000002',
 			'component_type' => 'dashboard-widgets.kpi',
-			'binding_schema' => [
-'label' => 'string',
-'value' => 'string'
-],
+			'binding_schema' => ['label' => 'string', 'value' => 'string'],
 		],
 		'chart' => [
 			'id' => '31000000-0000-4000-8000-000000000003',
 			'component_type' => 'dashboard-widgets.chart',
-			'binding_schema' => [
-'labels' => 'string_list',
-'values' => 'int_list'
-],
+			'binding_schema' => ['labels' => 'string_list', 'values' => 'int_list'],
 		],
 		'quick_links' => [
 			'id' => '31000000-0000-4000-8000-000000000004',
 			'component_type' => 'dashboard-widgets.quick-links',
-			'binding_schema' => [
-'labels' => 'string_list',
-'urls' => 'string_list'
-],
+			'binding_schema' => ['labels' => 'string_list', 'urls' => 'string_list'],
 		],
 		'announcement' => [
 			'id' => '31000000-0000-4000-8000-000000000005',
 			'component_type' => 'dashboard-widgets.announcement',
-			'binding_schema' => [
-'title' => 'string',
-'text' => 'string'
-],
+			'binding_schema' => ['title' => 'string', 'text' => 'string'],
 		],
 		'support_onboarding' => [
 			'id' => '31000000-0000-4000-8000-000000000006',
 			'component_type' => 'dashboard-widgets.support-onboarding',
-			'binding_schema' => [
-'title' => 'string',
-'text' => 'string'
-],
+			'binding_schema' => ['title' => 'string', 'text' => 'string'],
 		],
 		'icon_link' => [
 			'id' => '31000000-0000-4000-8000-000000000007',
 			'component_type' => 'dashboard-widgets.icon-link',
-			'binding_schema' => [
-'icon' => 'string',
-'label' => 'string',
-'url' => 'string'
-],
+			'binding_schema' => ['icon' => 'string', 'label' => 'string', 'url' => 'string'],
 		],
 	];
 

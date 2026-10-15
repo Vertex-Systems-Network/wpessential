@@ -199,10 +199,7 @@ final readonly class RolesReadService implements RoleImpactReadServiceInterface
 		$counts = [];
 		foreach ($roles as $role) {
 			foreach ($role['capabilities'] as $capability => $granted) {
-				$counts[$capability] ??= [
-'allow' => 0,
-'deny' => 0
-];
+				$counts[$capability] ??= ['allow' => 0, 'deny' => 0];
 				if ($granted) {
 					$counts[$capability]['allow']++;
 				} else {

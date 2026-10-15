@@ -158,10 +158,7 @@ final readonly class DashboardWidgetPresetDraftImportService
 			return ['status' => 'write_failed'];
 		}
 
-		return [
-'status' => 'created_draft',
-'definition_id' => $draft->id
-];
+		return ['status' => 'created_draft', 'definition_id' => $draft->id];
 	}
 
 	/**

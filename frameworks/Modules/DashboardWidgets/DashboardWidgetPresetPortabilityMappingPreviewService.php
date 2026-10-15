@@ -31,11 +31,7 @@ final readonly class DashboardWidgetPresetPortabilityMappingPreviewService
 			|| $snapshot['version'] !== DashboardWidgetPresetPortabilityReadService::VERSION
 			|| !is_array($snapshot['payload'])
 			|| array_keys($snapshot['payload']) !== [
-				'definition_id',
-'revision',
-'label',
-'widget_definition_ids',
-'assignment',
+				'definition_id', 'revision', 'label', 'widget_definition_ids', 'assignment',
 			]
 			|| !is_string($snapshot['sha256'])
 			|| preg_match('/^[0-9a-f]{64}$/', $snapshot['sha256']) !== 1
@@ -149,10 +145,6 @@ final readonly class DashboardWidgetPresetPortabilityMappingPreviewService
 	/** @return array{status:string,applicable:false,candidate_snapshot:null} */
 	private static function result(string $status): array
 	{
-		return [
-'status' => $status,
-'applicable' => false,
-'candidate_snapshot' => null
-];
+		return ['status' => $status, 'applicable' => false, 'candidate_snapshot' => null];
 	}
 }

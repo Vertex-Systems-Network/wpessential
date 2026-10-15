@@ -319,15 +319,9 @@ final class TaxonomyKeyMigrationPreviewService
 			$this->definitions->dependentsOf($definitionId),
 		);
 		usort($items, static fn (array $left, array $right): int => [
-			$left['owner_surface_id'],
-$left['type'],
-$left['slug'],
-$left['id'],
+			$left['owner_surface_id'], $left['type'], $left['slug'], $left['id'],
 		] <=> [
-			$right['owner_surface_id'],
-$right['type'],
-$right['slug'],
-$right['id'],
+			$right['owner_surface_id'], $right['type'], $right['slug'], $right['id'],
 		]);
 		return $items;
 	}

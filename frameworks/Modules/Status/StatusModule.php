@@ -112,22 +112,10 @@ final class StatusModule implements ModuleInterface
 				'additionalProperties' => false,
 				'required' => ['post_id', 'expected_current_status', 'target_status'],
 				'properties' => [
-					'post_id' => [
-'type' => 'integer',
-'minimum' => 1
-],
-					'expected_current_status' => [
-'type' => 'string',
-'maxLength' => 20
-],
-					'target_status' => [
-'type' => 'string',
-'maxLength' => 20
-],
-					'reason' => [
-'type' => ['string', 'null'],
-'maxLength' => 500
-],
+					'post_id' => ['type' => 'integer', 'minimum' => 1],
+					'expected_current_status' => ['type' => 'string', 'maxLength' => 20],
+					'target_status' => ['type' => 'string', 'maxLength' => 20],
+					'reason' => ['type' => ['string', 'null'], 'maxLength' => 500],
 					'programmatic' => ['type' => 'boolean'],
 				],
 			],
@@ -216,19 +204,13 @@ final class StatusModule implements ModuleInterface
 	/** @return array<string,mixed> */
 	private function adminInputSchema(string $action): array
 	{
-		$uuid = [
-'type' => 'string',
-'pattern' => self::UUID_PATTERN
-];
+		$uuid = ['type' => 'string', 'pattern' => self::UUID_PATTERN];
 		return match ($action) {
 			StatusAdminAuthoringHandler::LIST => [
 				'type' => 'object',
 				'additionalProperties' => false,
 				'properties' => [
-					'definition_type' => [
-'type' => 'string',
-'enum' => ['status', 'status-transition-policy']
-],
+					'definition_type' => ['type' => 'string', 'enum' => ['status', 'status-transition-policy']],
 				],
 			],
 			StatusAdminAuthoringHandler::GET => [
@@ -242,23 +224,11 @@ final class StatusModule implements ModuleInterface
 				'additionalProperties' => false,
 				'required' => ['definition_type', 'payload'],
 				'properties' => [
-					'definition_type' => [
-'type' => 'string',
-'enum' => ['status', 'status-transition-policy']
-],
+					'definition_type' => ['type' => 'string', 'enum' => ['status', 'status-transition-policy']],
 					'id' => $uuid,
-					'expected_revision' => [
-'type' => 'integer',
-'minimum' => 1
-],
-					'status' => [
-'type' => 'string',
-'enum' => ['draft', 'published', 'disabled', 'archived']
-],
-					'slug' => [
-'type' => 'string',
-'pattern' => '^[a-z0-9][a-z0-9_-]{0,63}$'
-],
+					'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+					'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+					'slug' => ['type' => 'string', 'pattern' => '^[a-z0-9][a-z0-9_-]{0,63}$'],
 					'payload' => ['type' => 'object'],
 				],
 			],
@@ -268,14 +238,8 @@ final class StatusModule implements ModuleInterface
 				'required' => ['id', 'expected_revision', 'status'],
 				'properties' => [
 					'id' => $uuid,
-					'expected_revision' => [
-'type' => 'integer',
-'minimum' => 1
-],
-					'status' => [
-'type' => 'string',
-'enum' => ['draft', 'published', 'disabled', 'archived']
-],
+					'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+					'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
 				],
 			],
 			default => throw new LogicException('Unsupported Status admin schema action.'),

@@ -38,21 +38,8 @@ final class DashboardModule implements ModuleInterface
 		$read = new DashboardReadService($definitions);
 		$services->set(self::SERVICE_READ, $read);
 		$channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
-		$this->registerAbility($abilities, $bridge, new AbilityDescriptor(name: self::ABILITY_GET, ownerSurfaceId: DashboardDefinition::OWNER_SURFACE_ID, capability: self::CAPABILITY, mutates: false, channels: $channels, inputSchema: [
-'type'=>'object',
-'required'=>['id'],
-'properties'=>[
-'id'=>[
-'type'=>'string',
-'minLength'=>1,
-'maxLength'=>191
-]],
-'additionalProperties'=>false
-], outputSchema: ['type'=>['object','null']]), new DashboardReadAbilityHandler($read, DashboardReadAbilityHandler::GET), 'Read Frontend Dashboard definition', 'Reads one canonical Frontend Dashboard definition without mutating dashboard endpoint/user/provider state.');
-		$this->registerAbility($abilities, $bridge, new AbilityDescriptor(name: self::ABILITY_CATALOG, ownerSurfaceId: DashboardDefinition::OWNER_SURFACE_ID, capability: self::CAPABILITY, mutates: false, channels: $channels, inputSchema: [
-'type'=>'object',
-'additionalProperties'=>false
-], outputSchema: ['type'=>'array']), new DashboardReadAbilityHandler($read, DashboardReadAbilityHandler::CATALOG), 'Read Frontend Dashboard catalog', 'Reads the deterministic canonical Frontend Dashboard definition catalog without mutation.');
+		$this->registerAbility($abilities, $bridge, new AbilityDescriptor(name: self::ABILITY_GET, ownerSurfaceId: DashboardDefinition::OWNER_SURFACE_ID, capability: self::CAPABILITY, mutates: false, channels: $channels, inputSchema: ['type'=>'object','required'=>['id'],'properties'=>['id'=>['type'=>'string','minLength'=>1,'maxLength'=>191]],'additionalProperties'=>false], outputSchema: ['type'=>['object','null']]), new DashboardReadAbilityHandler($read, DashboardReadAbilityHandler::GET), 'Read Frontend Dashboard definition', 'Reads one canonical Frontend Dashboard definition without mutating dashboard endpoint/user/provider state.');
+		$this->registerAbility($abilities, $bridge, new AbilityDescriptor(name: self::ABILITY_CATALOG, ownerSurfaceId: DashboardDefinition::OWNER_SURFACE_ID, capability: self::CAPABILITY, mutates: false, channels: $channels, inputSchema: ['type'=>'object','additionalProperties'=>false], outputSchema: ['type'=>'array']), new DashboardReadAbilityHandler($read, DashboardReadAbilityHandler::CATALOG), 'Read Frontend Dashboard catalog', 'Reads the deterministic canonical Frontend Dashboard definition catalog without mutation.');
 	}
 
 	public function boot(ServiceRegistryInterface $services): void {}

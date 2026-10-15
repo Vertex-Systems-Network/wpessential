@@ -18,11 +18,7 @@ final readonly class DynamicValueRequest
 		public string $resourceType,
 		public string|int $resourceId,
 	) {
-		foreach ([
-'sourceRef' => $this->sourceRef,
-'valueRef' => $this->valueRef,
-'resourceType' => $this->resourceType
-] as $name => $value) {
+		foreach (['sourceRef' => $this->sourceRef, 'valueRef' => $this->valueRef, 'resourceType' => $this->resourceType] as $name => $value) {
 			if ($value === '' || strlen($value) > 160 || !preg_match('/^[a-zA-Z0-9_.:-]+$/', $value)) {
 				throw new InvalidArgumentException($name . ' must be a bounded semantic reference.');
 			}

@@ -92,9 +92,6 @@ final readonly class DashboardWidgetPresetDraftPublishReviewService
 	/** @return array{status:string,publish_authorized:false} */
 	private static function result(string $status): array
 	{
-		return [
-'status' => $status,
-'publish_authorized' => false
-];
+		return ['status' => $status, 'publish_authorized' => false];
 	}
 }

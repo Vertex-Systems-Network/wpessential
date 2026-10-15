@@ -69,12 +69,7 @@ final class AdminMenuModule implements ModuleInterface
 				inputSchema: [
 					'type' => 'object',
 					'required' => ['id'],
-					'properties' => [
-'id' => [
-'type' => 'string',
-'minLength' => 1,
-'maxLength' => 191
-]],
+					'properties' => ['id' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 191]],
 					'additionalProperties' => false,
 				],
 				outputSchema: ['type' => ['object', 'null']],
@@ -92,10 +87,7 @@ final class AdminMenuModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-				inputSchema: [
-'type' => 'object',
-'additionalProperties' => false
-],
+				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'array'],
 			),
 			new AdminMenuReadAbilityHandler($read, AdminMenuReadAbilityHandler::CATALOG),

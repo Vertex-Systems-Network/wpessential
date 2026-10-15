@@ -15,10 +15,7 @@ final class CompiledRegistrationManifestIntegrity
 	public static function checksum(int $generation, array $entries): string
 	{
 		$json = json_encode(
-			[
-'generation' => $generation,
-'entries' => self::canonicalEntries($entries)
-],
+			['generation' => $generation, 'entries' => self::canonicalEntries($entries)],
 			JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION,
 		);
 		return hash('sha256', $json);

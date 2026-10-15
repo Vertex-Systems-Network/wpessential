@@ -510,12 +510,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				inputSchema: [
 					'type' => 'object',
 					'required' => ['id'],
-					'properties' => [
-'id' => [
-'type' => 'string',
-'minLength' => 1,
-'maxLength' => 191
-]],
+					'properties' => ['id' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 191]],
 					'additionalProperties' => false,
 				],
 				outputSchema: ['type' => ['object', 'null']],
@@ -533,10 +528,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-				inputSchema: [
-'type' => 'object',
-'additionalProperties' => false
-],
+				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'array'],
 			),
 			new DashboardWidgetsReadAbilityHandler($read, DashboardWidgetsReadAbilityHandler::CATALOG),
@@ -556,11 +548,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 					'type' => 'object',
 					'required' => ['id'],
 					'properties' => [
-						'id' => [
-'type' => 'string',
-'minLength' => 36,
-'maxLength' => 36
-],
+						'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
 					],
 					'additionalProperties' => false,
 				],
@@ -586,11 +574,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 					'type' => 'object',
 					'required' => ['id'],
 					'properties' => [
-						'id' => [
-'type' => 'string',
-'minLength' => 36,
-'maxLength' => 36
-],
+						'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
 					],
 					'additionalProperties' => false,
 				],
@@ -613,16 +597,8 @@ final class DashboardWidgetsModule implements ModuleInterface
 					'type' => 'object',
 					'required' => ['id', 'sha256'],
 					'properties' => [
-						'id' => [
-'type' => 'string',
-'minLength' => 36,
-'maxLength' => 36
-],
-						'sha256' => [
-'type' => 'string',
-'minLength' => 64,
-'maxLength' => 64
-],
+						'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+						'sha256' => ['type' => 'string', 'minLength' => 64, 'maxLength' => 64],
 					],
 					'additionalProperties' => false,
 				],
@@ -669,11 +645,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 					'required' => ['snapshot', 'target_id', 'widget_id_map'],
 					'properties' => [
 						'snapshot' => ['type' => 'object'],
-						'target_id' => [
-'type' => 'string',
-'minLength' => 36,
-'maxLength' => 36
-],
+						'target_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
 						'widget_id_map' => ['type' => 'object'],
 					],
 					'additionalProperties' => false,
@@ -693,10 +665,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-				inputSchema: [
-'type' => 'object',
-'additionalProperties' => false
-],
+				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'array'],
 			),
 			new DashboardWidgetPresetReadAbilityHandler(
@@ -715,10 +684,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-				inputSchema: [
-'type' => 'object',
-'additionalProperties' => false
-],
+				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'object'],
 			),
 			new DashboardWidgetPresetReadAbilityHandler(
@@ -730,40 +696,17 @@ final class DashboardWidgetsModule implements ModuleInterface
 		);
 
 		$policyAbilities = [
-			[
-self::ABILITY_MULTISITE_POLICY_GET,
-DashboardWidgetMultisitePolicyReadAbilityHandler::GET,
-				[
-'type' => 'object',
-'required' => ['id'],
-'properties' => [
-					'id' => [
-'type' => 'string',
-'minLength' => 36,
-'maxLength' => 36
-],
-				],
-'additionalProperties' => false],
-				['type' => ['object', 'null']],
-'Read Dashboard Multisite policy'],
-			[
-self::ABILITY_MULTISITE_POLICY_CATALOG,
-DashboardWidgetMultisitePolicyReadAbilityHandler::CATALOG,
-				[
-'type' => 'object',
-'additionalProperties' => false
-],
-				['type' => 'array'],
-'Read Dashboard Multisite policy catalog'],
-			[
-self::ABILITY_EFFECTIVE_MULTISITE_POLICY,
-DashboardWidgetMultisitePolicyReadAbilityHandler::EFFECTIVE,
-				[
-'type' => 'object',
-'additionalProperties' => false
-],
-				['type' => 'object'],
-'Read effective Dashboard Multisite policy'],
+			[self::ABILITY_MULTISITE_POLICY_GET, DashboardWidgetMultisitePolicyReadAbilityHandler::GET,
+				['type' => 'object', 'required' => ['id'], 'properties' => [
+					'id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+				], 'additionalProperties' => false],
+				['type' => ['object', 'null']], 'Read Dashboard Multisite policy'],
+			[self::ABILITY_MULTISITE_POLICY_CATALOG, DashboardWidgetMultisitePolicyReadAbilityHandler::CATALOG,
+				['type' => 'object', 'additionalProperties' => false],
+				['type' => 'array'], 'Read Dashboard Multisite policy catalog'],
+			[self::ABILITY_EFFECTIVE_MULTISITE_POLICY, DashboardWidgetMultisitePolicyReadAbilityHandler::EFFECTIVE,
+				['type' => 'object', 'additionalProperties' => false],
+				['type' => 'object'], 'Read effective Dashboard Multisite policy'],
 		];
 		foreach ($policyAbilities as [$name, $action, $inputSchema, $outputSchema, $label]) {
 			$this->registerAbility(
@@ -793,10 +736,7 @@ DashboardWidgetMultisitePolicyReadAbilityHandler::EFFECTIVE,
 				capability: self::CAPABILITY,
 				mutates: false,
 				channels: $channels,
-				inputSchema: [
-'type' => 'object',
-'additionalProperties' => false
-],
+				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'object'],
 			),
 			new DashboardWidgetMultisiteEffectivePresetAbilityHandler($effectiveMultisitePreset),
@@ -839,19 +779,9 @@ DashboardWidgetMultisitePolicyReadAbilityHandler::EFFECTIVE,
 					'type' => 'object',
 					'required' => ['definition_id', 'expected_revision', 'screen'],
 					'properties' => [
-						'definition_id' => [
-'type' => 'string',
-'minLength' => 36,
-'maxLength' => 36
-],
-						'expected_revision' => [
-'type' => 'integer',
-'minimum' => 1
-],
-						'screen' => [
-'type' => 'string',
-'enum' => ['site', 'network']
-],
+						'definition_id' => ['type' => 'string', 'minLength' => 36, 'maxLength' => 36],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'screen' => ['type' => 'string', 'enum' => ['site', 'network']],
 					],
 					'additionalProperties' => false,
 				],
@@ -863,10 +793,7 @@ DashboardWidgetMultisitePolicyReadAbilityHandler::EFFECTIVE,
 					'type' => 'object',
 					'required' => ['screen'],
 					'properties' => [
-						'screen' => [
-'type' => 'string',
-'enum' => ['site', 'network']
-],
+						'screen' => ['type' => 'string', 'enum' => ['site', 'network']],
 					],
 					'additionalProperties' => false,
 				],

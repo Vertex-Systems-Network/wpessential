@@ -184,10 +184,7 @@ final readonly class ListingDefinitionCompiler
 			throw new InvalidArgumentException('Listing blueprint revision must be positive.');
 		}
 
-		return [
-'id' => $id,
-'revision' => $revision
-];
+		return ['id' => $id, 'revision' => $revision];
 	}
 
 	/** @return array{mode:string,columns:int} */
@@ -210,10 +207,7 @@ final readonly class ListingDefinitionCompiler
 			throw new InvalidArgumentException('List layout must use exactly one column.');
 		}
 
-		return [
-'mode' => $mode,
-'columns' => $columns
-];
+		return ['mode' => $mode, 'columns' => $columns];
 	}
 
 	/** @param array{mode:string,columns:int} $layout */
@@ -227,10 +221,7 @@ final readonly class ListingDefinitionCompiler
 
 		$label = $presentation['label'] ?? ucwords(str_replace('-', ' ', $definition->slug));
 		$responsiveColumns = $presentation['responsive_columns'] ?? (
-			$layout['mode'] === 'grid' ? [
-'base' => 1,
-'lg' => $layout['columns']
-] : ['base' => 1]
+			$layout['mode'] === 'grid' ? ['base' => 1, 'lg' => $layout['columns']] : ['base' => 1]
 		);
 		$emptyMessage = $presentation['empty_message'] ?? 'No results.';
 		$errorMessage = $presentation['error_message'] ?? 'Results are temporarily unavailable.';

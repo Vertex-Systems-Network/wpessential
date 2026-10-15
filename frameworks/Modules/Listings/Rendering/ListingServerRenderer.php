@@ -161,34 +161,18 @@ final readonly class ListingServerRenderer
 		if ($binding->kind === 'query_field') {
 			$fieldRef = $binding->queryFieldRef;
 			if ($fieldRef === null || !array_key_exists($fieldRef, $row)) {
-				return [
-'ok' => false,
-'value' => null,
-'failure' => 'missing_query_binding_value'
-];
+				return ['ok' => false, 'value' => null, 'failure' => 'missing_query_binding_value'];
 			}
-			return [
-'ok' => true,
-'value' => $row[$fieldRef],
-'failure' => ''
-];
+			return ['ok' => true, 'value' => $row[$fieldRef], 'failure' => ''];
 		}
 
 		$resourceIdField = $binding->resourceIdFieldRef;
 		if ($resourceIdField === null || !array_key_exists($resourceIdField, $row)) {
-			return [
-'ok' => false,
-'value' => null,
-'failure' => 'missing_dynamic_resource_id'
-];
+			return ['ok' => false, 'value' => null, 'failure' => 'missing_dynamic_resource_id'];
 		}
 		$resourceId = $row[$resourceIdField];
 		if (!is_string($resourceId) && !is_int($resourceId)) {
-			return [
-'ok' => false,
-'value' => null,
-'failure' => 'invalid_dynamic_resource_id'
-];
+			return ['ok' => false, 'value' => null, 'failure' => 'invalid_dynamic_resource_id'];
 		}
 
 		try {
@@ -202,11 +186,7 @@ final readonly class ListingServerRenderer
 				$context,
 			);
 		} catch (Throwable) {
-			return [
-'ok' => false,
-'value' => null,
-'failure' => 'dynamic_value_failure'
-];
+			return ['ok' => false, 'value' => null, 'failure' => 'dynamic_value_failure'];
 		}
 
 		if (!$result->resolved) {
@@ -217,11 +197,7 @@ final readonly class ListingServerRenderer
 			];
 		}
 
-		return [
-'ok' => true,
-'value' => $result->value,
-'failure' => ''
-];
+		return ['ok' => true, 'value' => $result->value, 'failure' => ''];
 	}
 
 	private function matchesBindingType(mixed $value, string $type): bool

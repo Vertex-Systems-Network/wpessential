@@ -206,14 +206,8 @@ final class CustomPostTypeModule implements ModuleInterface
 					'required' => ['payload'],
 					'properties' => [
 						'id' => ['type' => 'string'],
-						'expected_revision' => [
-'type' => 'integer',
-'minimum' => 1
-],
-						'status' => [
-'type' => 'string',
-'enum' => ['draft', 'published', 'disabled', 'archived']
-],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
 						'payload' => ['type' => 'object'],
 					],
 				],
@@ -243,14 +237,8 @@ final class CustomPostTypeModule implements ModuleInterface
 					'required' => ['id', 'expected_revision', 'status'],
 					'properties' => [
 						'id' => ['type' => 'string'],
-						'expected_revision' => [
-'type' => 'integer',
-'minimum' => 1
-],
-						'status' => [
-'type' => 'string',
-'enum' => ['draft', 'published', 'disabled', 'archived']
-],
+						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
 					],
 				],
 				outputSchema: $outputSchema,

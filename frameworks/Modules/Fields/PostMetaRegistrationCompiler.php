@@ -13,15 +13,7 @@ use InvalidArgumentException;
 final readonly class PostMetaRegistrationCompiler
 {
 	private const STRING_TYPES = [
-		'text',
-'textarea',
-'email',
-'url',
-'date',
-'time',
-'datetime',
-'color',
-'phone',
+		'text', 'textarea', 'email', 'url', 'date', 'time', 'datetime', 'color', 'phone',
 	];
 
 	private const BOOLEAN_TYPES = ['true_false', 'switcher', 'checkbox'];
@@ -124,12 +116,7 @@ final readonly class PostMetaRegistrationCompiler
 		}
 
 		if (in_array($type, self::INTEGER_LIST_TYPES, true)) {
-			return [
-'type' => 'array',
-'single' => true,
-'item_type' => 'integer',
-'multi_row' => false
-];
+			return ['type' => 'array', 'single' => true, 'item_type' => 'integer', 'multi_row' => false];
 		}
 
 		$scalarType = match (true) {
@@ -153,29 +140,14 @@ final readonly class PostMetaRegistrationCompiler
 		}
 
 		if (($repeatability['enabled'] ?? false) !== true) {
-			return [
-'type' => $scalarType,
-'single' => true,
-'item_type' => null,
-'multi_row' => false
-];
+			return ['type' => $scalarType, 'single' => true, 'item_type' => null, 'multi_row' => false];
 		}
 
 		if (($repeatability['store_as_multiple'] ?? false) === true) {
-			return [
-'type' => $scalarType,
-'single' => false,
-'item_type' => null,
-'multi_row' => true
-];
+			return ['type' => $scalarType, 'single' => false, 'item_type' => null, 'multi_row' => true];
 		}
 
-		return [
-'type' => 'array',
-'single' => true,
-'item_type' => $scalarType,
-'multi_row' => false
-];
+		return ['type' => 'array', 'single' => true, 'item_type' => $scalarType, 'multi_row' => false];
 	}
 
 	/**

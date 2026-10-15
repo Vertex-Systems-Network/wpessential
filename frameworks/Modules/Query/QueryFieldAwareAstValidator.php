@@ -40,8 +40,7 @@ final readonly class QueryFieldAwareAstValidator
 		}
 
 		if ($context === null) {
-			return new QueryValidationResult(null, [
-new QueryValidationIssue(
+			return new QueryValidationResult(null, [new QueryValidationIssue(
 				'wpe_query_dependency_unavailable',
 				'$.filter',
 				'Field predicate validation requires an authenticated execution context for the owner contract.',
@@ -153,8 +152,7 @@ new QueryValidationIssue(
 		try {
 			$projectedDescriptor = $this->withFieldSchema($descriptor, $fieldSchema);
 		} catch (Throwable) {
-			return new QueryValidationResult(null, [
-new QueryValidationIssue(
+			return new QueryValidationResult(null, [new QueryValidationIssue(
 				'wpe_query_dependency_unavailable',
 				'$.filter',
 				'Fields owner metadata could not be projected into the bounded validation view.',

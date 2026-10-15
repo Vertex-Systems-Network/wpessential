@@ -166,10 +166,7 @@ final readonly class QueryRelationPredicateResolver
 		}
 
 		$this->posts->assertCanRead(
-			[
-'object_type' => $objectType,
-'object_subtype' => $objectSubtype
-],
+			['object_type' => $objectType, 'object_subtype' => $objectSubtype],
 			$anchorIds,
 			$context,
 		);

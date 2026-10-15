@@ -292,14 +292,8 @@ final class RelationsModule implements ModuleInterface
 					'type' => 'string',
 					'pattern' => '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
 				],
-				'from_object_id' => [
-'type' => 'integer',
-'minimum' => 1
-],
-				'to_object_id' => [
-'type' => 'integer',
-'minimum' => 1
-],
+				'from_object_id' => ['type' => 'integer', 'minimum' => 1],
+				'to_object_id' => ['type' => 'integer', 'minimum' => 1],
 			],
 			'additionalProperties' => false,
 		];
@@ -332,10 +326,7 @@ final class RelationsModule implements ModuleInterface
 						'edge_id' => ['type' => ['string', 'null']],
 						'from_object_id' => ['type' => 'integer'],
 						'to_object_id' => ['type' => 'integer'],
-						'revision' => [
-'type' => 'integer',
-'minimum' => 0
-],
+						'revision' => ['type' => 'integer', 'minimum' => 0],
 					],
 					'additionalProperties' => false,
 				],

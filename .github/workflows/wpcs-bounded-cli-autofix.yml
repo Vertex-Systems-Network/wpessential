@@ -63,24 +63,26 @@ jobs:
           set -euo pipefail
           composer test:unit
 
-      - name: Apply token-preserving array-spacing PHPCBF across the framework
+      - name: Apply indentation-only PHPCBF across the framework
         shell: bash
         run: |
           set -euo pipefail
           target_paths=(frameworks)
           set +e
-          vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=WordPress.Arrays.ArrayDeclarationSpacing --extensions=php --report=summary "${target_paths[@]}" > /tmp/wpcs-autofix.log 2>&1
+          vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Generic.WhiteSpace.DisallowSpaceIndent --extensions=php --report=summary "${target_paths[@]}" > /tmp/wpcs-autofix.log 2>&1
           formatter_exit=$?
           set -e
           tail -n 120 /tmp/wpcs-autofix.log
-          echo "Array-spacing PHPCBF exit code: $formatter_exit"
+          echo "Indentation-only PHPCBF exit code: $formatter_exit"
           git diff --check
 
-      - name: Reject unexpected paths and unsafe PHP token changes
+      - name: Reject non-indentation and unsafe PHP token changes
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
+          import os
+          import pathlib
           import subprocess
           import sys
 
@@ -89,6 +91,15 @@ jobs:
           for path in paths:
               if not path.startswith(allowed) or not path.endswith(".php"):
                   sys.exit("Unexpected PHPCBF path: " + path)
+              previous = subprocess.check_output(["git", "show", os.environ["GITHUB_SHA"] + ":" + path])
+              current = pathlib.Path(path).read_bytes()
+              old_lines = previous.splitlines(keepends=True)
+              new_lines = current.splitlines(keepends=True)
+              if len(old_lines) != len(new_lines) or any(
+                  old.lstrip(b" \t") != new.lstrip(b" \t")
+                  for old, new in zip(old_lines, new_lines)
+              ):
+                  sys.exit("Refusing non-indentation edit in " + path)
           print("Bounded PHP-path validation passed:", len(paths), "PHP files")
           PY
           while IFS= read -r phpfile; do
@@ -118,7 +129,7 @@ jobs:
               git restore --source="$GITHUB_SHA" -- "$phpfile"
             fi
           done < <(git diff --name-only --diff-filter=AM -- '*.php')
-          echo "Safe token-equivalent changed PHP files: $(git diff --name-only -- '*.php' | wc -l)"
+          echo "Safe indentation-only changed PHP files: $(git diff --name-only -- '*.php' | wc -l)"
           git diff --check
 
       - name: Lint all changed PHP files

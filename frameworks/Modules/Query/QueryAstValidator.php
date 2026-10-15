@@ -506,10 +506,7 @@ final class QueryAstValidator
 			$this->validateOperator($operator, $path . '.operator', $descriptor, $issues);
 		}
 
-		return new QueryPredicate(QueryPredicateType::Existence, [
-'field_ref' => $fieldRef,
-'operator' => $operator
-]);
+		return new QueryPredicate(QueryPredicateType::Existence, ['field_ref' => $fieldRef, 'operator' => $operator]);
 	}
 
 	/** @param list<QueryValidationIssue> $issues */
@@ -635,10 +632,7 @@ final class QueryAstValidator
 			$constraint = [];
 		}
 
-		return new QueryPredicate(QueryPredicateType::DateTime, [
-'field_ref' => $fieldRef,
-'constraint' => $constraint
-]);
+		return new QueryPredicate(QueryPredicateType::DateTime, ['field_ref' => $fieldRef, 'constraint' => $constraint]);
 	}
 
 	/** @param list<QueryValidationIssue> $issues */

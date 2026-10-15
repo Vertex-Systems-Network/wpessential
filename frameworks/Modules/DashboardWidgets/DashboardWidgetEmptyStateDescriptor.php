@@ -67,10 +67,7 @@ final readonly class DashboardWidgetEmptyStateDescriptor
 					'Executable authored channels are not accepted as Dashboard Widget empty-state bindings.',
 				);
 			}
-			$normalizedBindings[$key] = [
-'source' => 'literal',
-'value' => $value
-];
+			$normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
 		}
 		ksort($normalizedBindings, SORT_STRING);
 

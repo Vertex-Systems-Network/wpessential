@@ -21,16 +21,8 @@ final readonly class FieldGroupPortabilityService
 
 	private const ENVELOPE_KEYS = ['format', 'version', 'definitions'];
 	private const RECORD_KEYS = [
-		'id',
-'slug',
-'type',
-'schema_version',
-'owner_surface_id',
-'status',
-'payload',
-		'source_revision',
-'dependencies',
-'checksum',
+		'id', 'slug', 'type', 'schema_version', 'owner_surface_id', 'status', 'payload',
+		'source_revision', 'dependencies', 'checksum',
 	];
 
 	private FieldIdentityAssigner $identities;
@@ -144,10 +136,7 @@ final readonly class FieldGroupPortabilityService
 			$created[] = $candidate->id;
 		}
 
-		return [
-'created' => $created,
-'unchanged' => $unchanged
-];
+		return ['created' => $created, 'unchanged' => $unchanged];
 	}
 
 	/** @param list<string> $definitionIds @return list<Definition> */

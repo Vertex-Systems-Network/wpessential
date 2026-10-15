@@ -112,10 +112,7 @@ final readonly class AdminColumnsRowActionPolicy
 					throw new InvalidArgumentException('Row-action policy cannot resolve duplicate primary columns.');
 				}
 			}
-			$result[$columnKey] = [
-'enabled' => $enabled,
-'primary' => $primary
-];
+			$result[$columnKey] = ['enabled' => $enabled, 'primary' => $primary];
 		}
 
 		return $result;

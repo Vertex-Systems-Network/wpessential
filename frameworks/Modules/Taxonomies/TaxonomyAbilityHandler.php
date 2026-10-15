@@ -59,8 +59,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
 		usort($definitions, static fn (Definition $left, Definition $right): int => [$left->slug, $left->id] <=> [$right->slug, $right->id]);
 		$readModel = new TaxonomyDefinitionReadModel($this->definitions, $this->roleImpact);
 
-		return [
-'definitions' => array_map(
+		return ['definitions' => array_map(
 			fn (Definition $definition): array => $this->serialize($definition, $readModel, $context),
 			$definitions,
 		)];
@@ -69,8 +68,7 @@ final readonly class TaxonomyAbilityHandler implements AbilityHandlerInterface
 	/** @param array<string,mixed> $input @return array{definition:array<string,mixed>} */
 	private function get(array $input, ExecutionContext $context): array
 	{
-		return [
-'definition' => $this->serialize(
+		return ['definition' => $this->serialize(
 			$this->owned($this->requiredUuid($input, 'id')),
 			context: $context,
 		)];

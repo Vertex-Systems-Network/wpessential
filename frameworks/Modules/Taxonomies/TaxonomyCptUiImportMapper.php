@@ -35,35 +35,12 @@ final class TaxonomyCptUiImportMapper
 
 	/** @var list<string> */
 	private const KNOWN_FIELDS = [
-		'name',
-'label',
-'singular_label',
-'description',
-'object_types',
-'labels',
-		'public',
-'publicly_queryable',
-'hierarchical',
-'show_ui',
-'show_in_menu',
-		'show_in_nav_menus',
-'show_tagcloud',
-'show_admin_column',
-'show_in_rest',
-		'show_in_quick_edit',
-'sort',
-'rewrite',
-'rewrite_slug',
-'rewrite_withfront',
-		'query_var',
-'query_var_slug',
-'rest_base',
-'rest_namespace',
-'default_term',
-		'rest_controller_class',
-'meta_box_cb',
-'meta_box_sanitize_cb',
-'update_count_callback',
+		'name', 'label', 'singular_label', 'description', 'object_types', 'labels',
+		'public', 'publicly_queryable', 'hierarchical', 'show_ui', 'show_in_menu',
+		'show_in_nav_menus', 'show_tagcloud', 'show_admin_column', 'show_in_rest',
+		'show_in_quick_edit', 'sort', 'rewrite', 'rewrite_slug', 'rewrite_withfront',
+		'query_var', 'query_var_slug', 'rest_base', 'rest_namespace', 'default_term',
+		'rest_controller_class', 'meta_box_cb', 'meta_box_sanitize_cb', 'update_count_callback',
 	];
 
 	/**
@@ -245,10 +222,7 @@ final class TaxonomyCptUiImportMapper
 	private function labels(mixed $value): array
 	{
 		if (!is_array($value) || array_is_list($value)) {
-			return [
-'values' => [],
-'unsupported' => []
-];
+			return ['values' => [], 'unsupported' => []];
 		}
 
 		$allowed = TaxonomyLabelPolicy::overrideKeys();
@@ -270,10 +244,7 @@ final class TaxonomyCptUiImportMapper
 		}
 		ksort($labels, SORT_STRING);
 		sort($unsupported, SORT_STRING);
-		return [
-'values' => $labels,
-'unsupported' => $unsupported
-];
+		return ['values' => $labels, 'unsupported' => $unsupported];
 	}
 
 	/**

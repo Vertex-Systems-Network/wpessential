@@ -149,10 +149,7 @@ final readonly class RelationPortabilityService
 			$created[] = $candidate->id;
 		}
 
-		return [
-'created' => $created,
-'unchanged' => $unchanged
-];
+		return ['created' => $created, 'unchanged' => $unchanged];
 	}
 
 	/** @param list<string> $definitionIds @return list<Definition> */

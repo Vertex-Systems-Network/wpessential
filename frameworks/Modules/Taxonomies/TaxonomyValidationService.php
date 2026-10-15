@@ -505,25 +505,10 @@ final readonly class TaxonomyValidationService
 		}
 
 		foreach ([
-			'description',
-'public',
-'publicly_queryable',
-'hierarchical',
-'show_ui',
-'show_in_menu',
-			'show_in_nav_menus',
-'show_tagcloud',
-'show_in_quick_edit',
-'show_admin_column',
-			'show_in_rest',
-'rest_base',
-'rest_namespace',
-'query_var',
-'rewrite',
-'sort',
-			'capabilities',
-'default_term',
-'args',
+			'description', 'public', 'publicly_queryable', 'hierarchical', 'show_ui', 'show_in_menu',
+			'show_in_nav_menus', 'show_tagcloud', 'show_in_quick_edit', 'show_admin_column',
+			'show_in_rest', 'rest_base', 'rest_namespace', 'query_var', 'rewrite', 'sort',
+			'capabilities', 'default_term', 'args',
 		] as $key) {
 			if (array_key_exists($key, $payload) && array_key_exists($key, $args)) {
 				$overrides[$key] = $args[$key];
@@ -541,10 +526,7 @@ final readonly class TaxonomyValidationService
 	private function restPreview(string $taxonomyKey, array $args): array
 	{
 		if (($args['show_in_rest'] ?? false) !== true) {
-			return [
-'enabled' => false,
-'route' => null
-];
+			return ['enabled' => false, 'route' => null];
 		}
 
 		$namespace = is_string($args['rest_namespace'] ?? null) ? trim($args['rest_namespace'], '/') : 'wp/v2';
@@ -562,10 +544,7 @@ final readonly class TaxonomyValidationService
 	{
 		$rewrite = $args['rewrite'] ?? true;
 		if ($rewrite === false) {
-			return [
-'enabled' => false,
-'path_pattern' => null
-];
+			return ['enabled' => false, 'path_pattern' => null];
 		}
 
 		$slug = $taxonomyKey;

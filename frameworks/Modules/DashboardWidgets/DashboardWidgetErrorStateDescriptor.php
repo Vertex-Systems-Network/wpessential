@@ -67,10 +67,7 @@ final readonly class DashboardWidgetErrorStateDescriptor
 					'Executable authored channels are not accepted as Dashboard Widget error-state bindings.',
 				);
 			}
-			$normalizedBindings[$key] = [
-'source' => 'literal',
-'value' => $value
-];
+			$normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
 		}
 		ksort($normalizedBindings, SORT_STRING);
 

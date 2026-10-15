@@ -78,8 +78,7 @@ final readonly class AdminColumnsReadAdapter
 			}
 		}
 
-		$filters = [
-[
+		$filters = [[
 			'field_ref' => 'post.type',
 			'operator' => 'eq',
 			'value' => $targetKey,
@@ -248,10 +247,7 @@ final readonly class AdminColumnsReadAdapter
 				));
 			}
 
-			$sourceByColumn[$columnKey] = [
-'owner' => $owner,
-'reference' => $fieldRef
-];
+			$sourceByColumn[$columnKey] = ['owner' => $owner, 'reference' => $fieldRef];
 			$columns[] = [
 				'key' => $columnKey,
 				'label' => $label,

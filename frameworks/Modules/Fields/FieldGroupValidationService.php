@@ -127,21 +127,13 @@ final readonly class FieldGroupValidationService
 		return [
 			'valid' => $valid,
 			'issues' => $issues,
-			'candidate' => [
-'group_key' => $key,
-'field_count' => $fieldCount
-],
+			'candidate' => ['group_key' => $key, 'field_count' => $fieldCount],
 		];
 	}
 
 	/** @return array{id:string,severity:string,field:string,message:string} */
 	private function issue(string $id, string $severity, string $field, string $message): array
 	{
-		return [
-'id' => $id,
-'severity' => $severity,
-'field' => $field,
-'message' => $message
-];
+		return ['id' => $id, 'severity' => $severity, 'field' => $field, 'message' => $message];
 	}
 }

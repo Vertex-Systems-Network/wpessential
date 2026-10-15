@@ -135,12 +135,7 @@ final readonly class DashboardWidgetPersonalPreferenceStore
 	{
 		$raw = ($this->optionReader)($userId, $key);
 		if ($raw === '' || $raw === null || $raw === false) {
-			return [
-'key' => $key,
-'changed' => false,
-'value' => $raw,
-'removed' => 0
-];
+			return ['key' => $key, 'changed' => false, 'value' => $raw, 'removed' => 0];
 		}
 		if (!is_array($raw) || !array_is_list($raw)) {
 			throw new RuntimeException('Stored Dashboard Widget list preference is malformed.');
@@ -159,12 +154,7 @@ final readonly class DashboardWidgetPersonalPreferenceStore
 			$kept[] = $id;
 		}
 
-		return [
-'key' => $key,
-'changed' => $removed > 0,
-'value' => $kept,
-'removed' => $removed
-];
+		return ['key' => $key, 'changed' => $removed > 0, 'value' => $kept, 'removed' => $removed];
 	}
 
 	/**
@@ -174,12 +164,7 @@ final readonly class DashboardWidgetPersonalPreferenceStore
 	{
 		$raw = ($this->optionReader)($userId, $key);
 		if ($raw === '' || $raw === null || $raw === false) {
-			return [
-'key' => $key,
-'changed' => false,
-'value' => $raw,
-'removed' => 0
-];
+			return ['key' => $key, 'changed' => false, 'value' => $raw, 'removed' => 0];
 		}
 		if (!is_array($raw) || array_is_list($raw)) {
 			throw new RuntimeException('Stored Dashboard Widget order preference is malformed.');
@@ -210,12 +195,7 @@ final readonly class DashboardWidgetPersonalPreferenceStore
 			$next[$context] = implode(',', $kept);
 		}
 
-		return [
-'key' => $key,
-'changed' => $removed > 0,
-'value' => $next,
-'removed' => $removed
-];
+		return ['key' => $key, 'changed' => $removed > 0, 'value' => $next, 'removed' => $removed];
 	}
 
 	/**
