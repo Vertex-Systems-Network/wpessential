@@ -28,17 +28,20 @@ final class AdminColumnsPersonalPreferenceAbilityWiringTest extends TestCase
         self::assertStringContainsString('AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_RESET', $module);
         self::assertStringContainsString('AdminColumnsPersonalPreferenceAbilityHandler::AJAX_RESET', $module);
 
+        // Check operation-to-ability/nonce wiring without relying on tabs vs spaces.
+        $normalizedModule = preg_replace('/\\s+/', ' ', $module);
+        self::assertIsString($normalizedModule);
         self::assertStringContainsString(
-            "AdminColumnsPersonalPreferenceAbilityHandler::LOAD => [\n                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_LOAD,\n                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_LOAD,\n                false,\n                NonceOperation::Apply,",
-            $module,
+            'AdminColumnsPersonalPreferenceAbilityHandler::LOAD => [ AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_LOAD, AdminColumnsPersonalPreferenceAbilityHandler::AJAX_LOAD, false, NonceOperation::Apply,',
+            $normalizedModule,
         );
         self::assertStringContainsString(
-            "AdminColumnsPersonalPreferenceAbilityHandler::SAVE => [\n                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_SAVE,\n                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_SAVE,\n                true,\n                NonceOperation::Update,",
-            $module,
+            'AdminColumnsPersonalPreferenceAbilityHandler::SAVE => [ AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_SAVE, AdminColumnsPersonalPreferenceAbilityHandler::AJAX_SAVE, true, NonceOperation::Update,',
+            $normalizedModule,
         );
         self::assertStringContainsString(
-            "AdminColumnsPersonalPreferenceAbilityHandler::RESET => [\n                AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_RESET,\n                AdminColumnsPersonalPreferenceAbilityHandler::AJAX_RESET,\n                true,\n                NonceOperation::Update,",
-            $module,
+            'AdminColumnsPersonalPreferenceAbilityHandler::RESET => [ AdminColumnsPersonalPreferenceAbilityHandler::ABILITY_RESET, AdminColumnsPersonalPreferenceAbilityHandler::AJAX_RESET, true, NonceOperation::Update,',
+            $normalizedModule,
         );
 
         self::assertStringContainsString('personalPreferenceAbilityInputSchema($preferenceAction)', $module);
