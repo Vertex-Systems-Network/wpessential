@@ -87,7 +87,11 @@ final class RolesModule implements ModuleInterface
 					'type' => 'object',
 					'required' => ['capability'],
 					'properties' => [
-						'capability' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 191],
+						'capability' => [
+'type' => 'string',
+'minLength' => 1,
+'maxLength' => 191
+],
 					],
 				],
 				outputSchema: ['type' => 'object'],

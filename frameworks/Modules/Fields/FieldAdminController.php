@@ -112,11 +112,26 @@ final class FieldAdminController
 			'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
 			'ajaxAction' => $this->ajaxAction,
 			'routes' => [
-				'list' => ['type' => 'fields.list.groups', 'nonce' => $this->ajax->createNonce('fields.list.groups')],
-				'catalog' => ['type' => 'fields.catalog', 'nonce' => $this->ajax->createNonce('fields.catalog')],
-				'validate' => ['type' => 'fields.validate.group', 'nonce' => $this->ajax->createNonce('fields.validate.group')],
-				'save' => ['type' => 'fields.save.group', 'nonce' => $this->ajax->createNonce('fields.save.group')],
-				'status' => ['type' => 'fields.status.group', 'nonce' => $this->ajax->createNonce('fields.status.group')],
+				'list' => [
+'type' => 'fields.list.groups',
+'nonce' => $this->ajax->createNonce('fields.list.groups')
+],
+				'catalog' => [
+'type' => 'fields.catalog',
+'nonce' => $this->ajax->createNonce('fields.catalog')
+],
+				'validate' => [
+'type' => 'fields.validate.group',
+'nonce' => $this->ajax->createNonce('fields.validate.group')
+],
+				'save' => [
+'type' => 'fields.save.group',
+'nonce' => $this->ajax->createNonce('fields.save.group')
+],
+				'status' => [
+'type' => 'fields.status.group',
+'nonce' => $this->ajax->createNonce('fields.status.group')
+],
 			],
 			'definitions' => $definitions,
 			'catalog' => $catalog,
@@ -177,7 +192,12 @@ final class FieldAdminController
 		echo '<p class="description">' . esc_html__('Provider-owned and complex/container field types are shown by the canonical catalog but remain read-only until their admin owner contracts are certified.', 'wpessential') . '</p>';
 
 		echo '<p><label for="wpessential-fields-status"><strong>' . esc_html__('Lifecycle status', 'wpessential') . '</strong></label><br><select id="wpessential-fields-status">';
-		foreach (['draft' => __('Draft', 'wpessential'), 'published' => __('Published', 'wpessential'), 'disabled' => __('Disabled', 'wpessential'), 'archived' => __('Archived', 'wpessential')] as $value => $label) {
+		foreach ([
+'draft' => __('Draft', 'wpessential'),
+'published' => __('Published', 'wpessential'),
+'disabled' => __('Disabled', 'wpessential'),
+'archived' => __('Archived', 'wpessential')
+] as $value => $label) {
 			echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
 		}
 		echo '</select></p>';

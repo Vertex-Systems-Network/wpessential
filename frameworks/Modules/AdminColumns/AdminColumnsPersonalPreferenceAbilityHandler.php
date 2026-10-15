@@ -117,7 +117,10 @@ final readonly class AdminColumnsPersonalPreferenceAbilityHandler implements Abi
 			if (!is_string($key) || !is_bool($enabled)) {
 				throw new RuntimeException(sprintf('Admin Columns personal preference Column %d is invalid.', $index));
 			}
-			$result[] = ['key' => $key, 'enabled' => $enabled];
+			$result[] = [
+'key' => $key,
+'enabled' => $enabled
+];
 		}
 
 		return $result;

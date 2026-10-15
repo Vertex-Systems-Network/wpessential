@@ -120,7 +120,10 @@ final readonly class StatusAdminAuthoringHandler implements AbilityHandlerInterf
 		$candidate = $this->withChecksum($candidate);
 		$this->definitions->save($candidate);
 
-		return ['definition' => $this->serialize($candidate), 'preview' => $preview];
+		return [
+'definition' => $this->serialize($candidate),
+'preview' => $preview
+];
 	}
 
 	/** @param array<string,mixed> $input @return array{definition:array<string,mixed>,preview:array<string,mixed>} */
@@ -144,7 +147,10 @@ final readonly class StatusAdminAuthoringHandler implements AbilityHandlerInterf
 		$candidate = $this->withChecksum($candidate);
 		$this->definitions->save($candidate);
 
-		return ['definition' => $this->serialize($candidate), 'preview' => $preview];
+		return [
+'definition' => $this->serialize($candidate),
+'preview' => $preview
+];
 	}
 
 	/** @return array<string,mixed> */

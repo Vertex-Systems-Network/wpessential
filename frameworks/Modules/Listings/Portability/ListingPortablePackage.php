@@ -55,7 +55,10 @@ final readonly class ListingPortablePackage
 			'payload' => $this->payload,
 			'dependencies' => [
 				'query_source_ref' => $this->querySourceRef,
-				'blueprint' => ['id' => $this->blueprintId, 'revision' => $this->blueprintRevision],
+				'blueprint' => [
+'id' => $this->blueprintId,
+'revision' => $this->blueprintRevision
+],
 			],
 			'source_scope' => [
 				'site_id' => $this->sourceSiteId,

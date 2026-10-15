@@ -337,7 +337,10 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			}
 
 			$literalBindings[$key] = $value;
-			$normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
+			$normalizedBindings[$key] = [
+'source' => 'literal',
+'value' => $value
+];
 		}
 		ksort($literalBindings, SORT_STRING);
 		ksort($normalizedBindings, SORT_STRING);
@@ -448,7 +451,10 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			}
 
 			$literalBindings[$key] = $value;
-			$normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
+			$normalizedBindings[$key] = [
+'source' => 'literal',
+'value' => $value
+];
 		}
 		ksort($literalBindings, SORT_STRING);
 		ksort($normalizedBindings, SORT_STRING);
@@ -559,7 +565,10 @@ final readonly class DashboardWidgetRenderSourceCompiler
 			}
 
 			$literalBindings[$key] = $value;
-			$normalizedBindings[$key] = ['source' => 'literal', 'value' => $value];
+			$normalizedBindings[$key] = [
+'source' => 'literal',
+'value' => $value
+];
 		}
 		ksort($literalBindings, SORT_STRING);
 		ksort($normalizedBindings, SORT_STRING);
@@ -672,7 +681,11 @@ final readonly class DashboardWidgetRenderSourceCompiler
 				throw new InvalidArgumentException(sprintf('Dashboard Widget Query filter %d comparison value must be scalar or null.', $index));
 			}
 
-			$filters[] = ['field_ref' => $fieldRef, 'operator' => $operator, 'value' => $filterValue];
+			$filters[] = [
+'field_ref' => $fieldRef,
+'operator' => $operator,
+'value' => $filterValue
+];
 		}
 
 		return $filters;
@@ -705,7 +718,10 @@ final readonly class DashboardWidgetRenderSourceCompiler
 				throw new InvalidArgumentException('Dashboard Widget Query order fields must be unique.');
 			}
 			$seen[$fieldRef] = true;
-			$orders[] = ['field_ref' => $fieldRef, 'direction' => $direction];
+			$orders[] = [
+'field_ref' => $fieldRef,
+'direction' => $direction
+];
 		}
 
 		return $orders;

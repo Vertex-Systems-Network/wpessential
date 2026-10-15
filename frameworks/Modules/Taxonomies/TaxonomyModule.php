@@ -307,7 +307,10 @@ final class TaxonomyModule implements ModuleInterface
 					'properties' => [
 						'source' => ['type' => 'object'],
 						'id' => ['type' => 'string'],
-						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'expected_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
 					],
 				],
 				outputSchema: $outputSchema,
@@ -331,8 +334,14 @@ final class TaxonomyModule implements ModuleInterface
 					'required' => ['definition'],
 					'properties' => [
 						'definition' => ['type' => 'object'],
-						'strategy' => ['type' => 'string', 'enum' => ['create_only', 'update_existing']],
-						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
+						'strategy' => [
+'type' => 'string',
+'enum' => ['create_only', 'update_existing']
+],
+						'expected_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
 					],
 				],
 				outputSchema: $outputSchema,
@@ -363,8 +372,14 @@ final class TaxonomyModule implements ModuleInterface
 					'required' => ['payload'],
 					'properties' => [
 						'id' => ['type' => 'string'],
-						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+						'expected_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
+						'status' => [
+'type' => 'string',
+'enum' => ['draft', 'published', 'disabled', 'archived']
+],
 						'payload' => ['type' => 'object'],
 					],
 				],
@@ -389,8 +404,14 @@ final class TaxonomyModule implements ModuleInterface
 					'required' => ['id', 'expected_revision', 'status'],
 					'properties' => [
 						'id' => ['type' => 'string'],
-						'expected_revision' => ['type' => 'integer', 'minimum' => 1],
-						'status' => ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']],
+						'expected_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
+						'status' => [
+'type' => 'string',
+'enum' => ['draft', 'published', 'disabled', 'archived']
+],
 					],
 				],
 				outputSchema: $outputSchema,

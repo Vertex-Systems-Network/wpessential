@@ -86,7 +86,10 @@ final readonly class FieldGroupAbilityHandler implements AbilityHandlerInterface
 
 		$status = $this->statusFromInput($input, $existing?->status ?? DefinitionStatus::Draft);
 		$payload = $this->identities->assign($payload, $existing?->payload, $existing?->id);
-		$validationInput = ['payload' => $payload, 'status' => $status->value];
+		$validationInput = [
+'payload' => $payload,
+'status' => $status->value
+];
 		if ($existing instanceof Definition) {
 			$validationInput['id'] = $existing->id;
 		}

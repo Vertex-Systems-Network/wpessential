@@ -16,14 +16,31 @@ final readonly class FieldGroupDefinitionNormalizer
 	public const OWNER_SURFACE_ID = 3;
 
 	private const TOP_LEVEL_KEYS = [
-		'group_key', 'title', 'description', 'fields', 'locations', 'presentation',
-		'storage', 'show_in_rest', 'revision_policy',
+		'group_key',
+'title',
+'description',
+'fields',
+'locations',
+'presentation',
+		'storage',
+'show_in_rest',
+'revision_policy',
 	];
 
 	private const LOCATION_SOURCES = [
-		'post_type', 'post_status', 'page_template', 'entity_id', 'taxonomy', 'term',
-		'user_role', 'user', 'media_mime', 'comment_context', 'settings_page',
-		'custom_table', 'frontend_context',
+		'post_type',
+'post_status',
+'page_template',
+'entity_id',
+'taxonomy',
+'term',
+		'user_role',
+'user',
+'media_mime',
+'comment_context',
+'settings_page',
+		'custom_table',
+'frontend_context',
 	];
 
 	private const LOCATION_OPERATORS = ['equals', 'not_equals', 'in', 'not_in'];

@@ -289,13 +289,25 @@ final class FieldsModule implements ModuleInterface
 	private function valueInputSchema(bool $write): array
 	{
 		$properties = [
-			'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-			'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-			'post_id' => ['type' => 'integer', 'minimum' => 1],
+			'group_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+			'field_uuid' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+			'post_id' => [
+'type' => 'integer',
+'minimum' => 1
+],
 		];
 		$required = ['group_id', 'field_uuid', 'post_id'];
 		if ($write) {
-			$properties['expected_group_revision'] = ['type' => 'integer', 'minimum' => 1];
+			$properties['expected_group_revision'] = [
+'type' => 'integer',
+'minimum' => 1
+];
 			$properties['value'] = [
 				'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],
 				'items' => ['type' => ['string', 'number', 'integer', 'boolean', 'null']],
@@ -318,14 +330,34 @@ final class FieldsModule implements ModuleInterface
 		return [
 			'type' => 'object',
 			'required' => [
-				'group_id', 'group_revision', 'field_uuid', 'field_key', 'post_id', 'post_type', 'status', 'changed', 'value',
+				'group_id',
+'group_revision',
+'field_uuid',
+'field_key',
+'post_id',
+'post_type',
+'status',
+'changed',
+'value',
 			],
 			'properties' => [
-				'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'group_revision' => ['type' => 'integer', 'minimum' => 1],
-				'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
+				'group_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'group_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
+				'field_uuid' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
 				'field_key' => ['type' => 'string'],
-				'post_id' => ['type' => 'integer', 'minimum' => 1],
+				'post_id' => [
+'type' => 'integer',
+'minimum' => 1
+],
 				'post_type' => ['type' => 'string'],
 				'status' => ['type' => 'string'],
 				'changed' => ['type' => 'boolean'],
@@ -345,10 +377,22 @@ final class FieldsModule implements ModuleInterface
 			'type' => 'object',
 			'required' => ['group_id', 'expected_group_revision', 'field_uuid', 'destination_key'],
 			'properties' => [
-				'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'expected_group_revision' => ['type' => 'integer', 'minimum' => 1],
-				'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'destination_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
+				'group_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'expected_group_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
+				'field_uuid' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'destination_key' => [
+'type' => 'string',
+'pattern' => self::FIELD_KEY_PATTERN
+],
 			],
 			'additionalProperties' => false,
 		];
@@ -371,13 +415,34 @@ final class FieldsModule implements ModuleInterface
 				'definition',
 			],
 			'properties' => [
-				'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'group_revision' => ['type' => 'integer', 'minimum' => 1],
-				'field_uuid' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'source_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
-				'destination_key' => ['type' => 'string', 'pattern' => self::FIELD_KEY_PATTERN],
-				'post_types' => ['type' => 'array', 'items' => ['type' => 'string']],
-				'migrated_objects' => ['type' => 'integer', 'minimum' => 0],
+				'group_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'group_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
+				'field_uuid' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'source_key' => [
+'type' => 'string',
+'pattern' => self::FIELD_KEY_PATTERN
+],
+				'destination_key' => [
+'type' => 'string',
+'pattern' => self::FIELD_KEY_PATTERN
+],
+				'post_types' => [
+'type' => 'array',
+'items' => ['type' => 'string']
+],
+				'migrated_objects' => [
+'type' => 'integer',
+'minimum' => 0
+],
 				'changed' => ['type' => 'boolean'],
 				'definition' => ['type' => 'object'],
 			],

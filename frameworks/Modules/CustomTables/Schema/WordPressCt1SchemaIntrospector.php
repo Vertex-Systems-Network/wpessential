@@ -274,7 +274,10 @@ final class WordPressCt1SchemaIntrospector
 
 			$key = $indexName === 'PRIMARY' ? 'PRIMARY' : $indexName;
 			if (!isset($groups[$key])) {
-				$groups[$key] = ['columns' => [], 'unique' => $nonUnique === 0];
+				$groups[$key] = [
+'columns' => [],
+'unique' => $nonUnique === 0
+];
 			}
 			if ($groups[$key]['unique'] !== ($nonUnique === 0) || isset($groups[$key]['columns'][$sequence])) {
 				throw new RuntimeException('CT1 schema observation returned inconsistent index metadata.');

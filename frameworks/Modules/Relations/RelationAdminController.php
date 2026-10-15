@@ -458,10 +458,26 @@ final class RelationAdminController
 	private function saveValues(): array
 	{
 		$keys = [
-			'id', 'expected_revision', 'relation_key', 'title', 'description', 'cardinality',
-			'from_type', 'from_subtype', 'from_label', 'to_type', 'to_subtype', 'to_label',
-			'from_min', 'from_max', 'to_min', 'to_max', 'reciprocal', 'bidirectional_traversal',
-			'unique_edge', 'status',
+			'id',
+'expected_revision',
+'relation_key',
+'title',
+'description',
+'cardinality',
+			'from_type',
+'from_subtype',
+'from_label',
+'to_type',
+'to_subtype',
+'to_label',
+			'from_min',
+'from_max',
+'to_min',
+'to_max',
+'reciprocal',
+'bidirectional_traversal',
+			'unique_edge',
+'status',
 		];
 		$values = [];
 		foreach ($keys as $key) {
@@ -509,7 +525,10 @@ final class RelationAdminController
 
 	private function redirect(string $notice, string $message): never
 	{
-		$url = $this->pageUrl(['notice' => $notice, 'message' => $message]);
+		$url = $this->pageUrl([
+'notice' => $notice,
+'message' => $message
+]);
 		if (function_exists('wp_safe_redirect')) {
 			wp_safe_redirect($url);
 		}

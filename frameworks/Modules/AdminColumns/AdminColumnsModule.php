@@ -354,19 +354,37 @@ final class AdminColumnsModule implements ModuleInterface
 		if ($action === AdminColumnsViewAbilityHandler::GET
 			|| $action === AdminColumnsViewAbilityHandler::STATUS
 		) {
-			$properties['id'] = ['type' => 'string', 'pattern' => self::UUID_PATTERN];
+			$properties['id'] = [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+];
 			$required[] = 'id';
 		}
 		if ($action === AdminColumnsViewAbilityHandler::SAVE) {
-			$properties['id'] = ['type' => ['string', 'null'], 'pattern' => self::UUID_PATTERN];
+			$properties['id'] = [
+'type' => ['string', 'null'],
+'pattern' => self::UUID_PATTERN
+];
 			$properties['payload'] = ['type' => 'object'];
-			$properties['expected_revision'] = ['type' => ['integer', 'null'], 'minimum' => 1];
-			$properties['status'] = ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']];
+			$properties['expected_revision'] = [
+'type' => ['integer', 'null'],
+'minimum' => 1
+];
+			$properties['status'] = [
+'type' => 'string',
+'enum' => ['draft', 'published', 'disabled', 'archived']
+];
 			$required[] = 'payload';
 		}
 		if ($action === AdminColumnsViewAbilityHandler::STATUS) {
-			$properties['expected_revision'] = ['type' => 'integer', 'minimum' => 1];
-			$properties['status'] = ['type' => 'string', 'enum' => ['draft', 'published', 'disabled', 'archived']];
+			$properties['expected_revision'] = [
+'type' => 'integer',
+'minimum' => 1
+];
+			$properties['status'] = [
+'type' => 'string',
+'enum' => ['draft', 'published', 'disabled', 'archived']
+];
 			$required[] = 'expected_revision';
 			$required[] = 'status';
 		}
@@ -386,12 +404,32 @@ final class AdminColumnsModule implements ModuleInterface
 			'type' => 'object',
 			'required' => ['view_id'],
 			'properties' => [
-				'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'filters' => ['type' => 'array', 'maxItems' => 16],
-				'search' => ['type' => 'string', 'maxLength' => 200],
-				'order_by' => ['type' => 'array', 'maxItems' => 4],
-				'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
-				'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+				'view_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'filters' => [
+'type' => 'array',
+'maxItems' => 16
+],
+				'search' => [
+'type' => 'string',
+'maxLength' => 200
+],
+				'order_by' => [
+'type' => 'array',
+'maxItems' => 4
+],
+				'page_size' => [
+'type' => 'integer',
+'minimum' => 1,
+'maximum' => 100
+],
+				'offset' => [
+'type' => 'integer',
+'minimum' => 0,
+'maximum' => 10000
+],
 			],
 			'additionalProperties' => false,
 		];
@@ -404,15 +442,39 @@ final class AdminColumnsModule implements ModuleInterface
 			'type' => 'object',
 			'required' => ['view_id', 'expected_view_revision', 'scope_request', 'controls', 'runtime'],
 			'properties' => [
-				'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
+				'view_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'expected_view_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
 				'scope_request' => [
 					'type' => 'object',
 					'required' => ['scope', 'selected_row_ids', 'selected_columns', 'respect_filters', 'respect_sort'],
 					'properties' => [
-						'scope' => ['type' => 'string', 'enum' => ['current_page', 'selected_rows', 'all_matching']],
-						'selected_row_ids' => ['type' => 'array', 'maxItems' => 100, 'items' => ['type' => 'integer', 'minimum' => 1]],
-						'selected_columns' => ['type' => 'array', 'minItems' => 1, 'maxItems' => 100, 'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN]],
+						'scope' => [
+'type' => 'string',
+'enum' => ['current_page', 'selected_rows', 'all_matching']
+],
+						'selected_row_ids' => [
+'type' => 'array',
+'maxItems' => 100,
+'items' => [
+'type' => 'integer',
+'minimum' => 1
+]
+],
+						'selected_columns' => [
+'type' => 'array',
+'minItems' => 1,
+'maxItems' => 100,
+'items' => [
+'type' => 'string',
+'pattern' => self::COLUMN_KEY_PATTERN
+]
+],
 						'respect_filters' => ['type' => 'boolean'],
 						'respect_sort' => ['type' => 'boolean'],
 					],
@@ -421,17 +483,34 @@ final class AdminColumnsModule implements ModuleInterface
 				'controls' => [
 					'type' => 'object',
 					'properties' => [
-						'filters' => ['type' => 'array', 'maxItems' => 16],
-						'search' => ['type' => 'string', 'maxLength' => 200],
-						'order_by' => ['type' => 'array', 'maxItems' => 4],
+						'filters' => [
+'type' => 'array',
+'maxItems' => 16
+],
+						'search' => [
+'type' => 'string',
+'maxLength' => 200
+],
+						'order_by' => [
+'type' => 'array',
+'maxItems' => 4
+],
 					],
 					'additionalProperties' => false,
 				],
 				'runtime' => [
 					'type' => 'object',
 					'properties' => [
-						'page_size' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 100],
-						'offset' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 10000],
+						'page_size' => [
+'type' => 'integer',
+'minimum' => 1,
+'maximum' => 100
+],
+						'offset' => [
+'type' => 'integer',
+'minimum' => 0,
+'maximum' => 10000
+],
 					],
 					'additionalProperties' => false,
 				],
@@ -447,11 +526,27 @@ final class AdminColumnsModule implements ModuleInterface
 			'type' => 'object',
 			'required' => ['contract_version', 'content_type', 'filename', 'bytes', 'csv'],
 			'properties' => [
-				'contract_version' => ['type' => 'integer', 'enum' => [1]],
-				'content_type' => ['type' => 'string', 'enum' => [AdminColumnsCsvExportAbilityHandler::CONTENT_TYPE]],
-				'filename' => ['type' => 'string', 'enum' => [AdminColumnsCsvExportAbilityHandler::FILENAME]],
-				'bytes' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 8388608],
-				'csv' => ['type' => 'string', 'maxLength' => 8388608],
+				'contract_version' => [
+'type' => 'integer',
+'enum' => [1]
+],
+				'content_type' => [
+'type' => 'string',
+'enum' => [AdminColumnsCsvExportAbilityHandler::CONTENT_TYPE]
+],
+				'filename' => [
+'type' => 'string',
+'enum' => [AdminColumnsCsvExportAbilityHandler::FILENAME]
+],
+				'bytes' => [
+'type' => 'integer',
+'minimum' => 0,
+'maximum' => 8388608
+],
+				'csv' => [
+'type' => 'string',
+'maxLength' => 8388608
+],
 			],
 			'additionalProperties' => false,
 		];
@@ -469,8 +564,14 @@ final class AdminColumnsModule implements ModuleInterface
 		}
 
 		$properties = [
-			'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-			'expected_view_revision' => ['type' => 'integer', 'minimum' => 1],
+			'view_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+			'expected_view_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
 		];
 		$required = ['view_id', 'expected_view_revision'];
 
@@ -478,11 +579,30 @@ final class AdminColumnsModule implements ModuleInterface
 			$properties['preference'] = [
 				'type' => 'object',
 				'properties' => [
-					'chosen_view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-					'temporary_sort' => ['type' => 'array', 'maxItems' => 5],
-					'temporary_filters' => ['type' => 'array', 'maxItems' => 20],
-					'hidden_columns' => ['type' => 'array', 'maxItems' => 100, 'items' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN]],
-					'density' => ['type' => 'string', 'enum' => ['compact', 'comfortable']],
+					'chosen_view_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+					'temporary_sort' => [
+'type' => 'array',
+'maxItems' => 5
+],
+					'temporary_filters' => [
+'type' => 'array',
+'maxItems' => 20
+],
+					'hidden_columns' => [
+'type' => 'array',
+'maxItems' => 100,
+'items' => [
+'type' => 'string',
+'pattern' => self::COLUMN_KEY_PATTERN
+]
+],
+					'density' => [
+'type' => 'string',
+'enum' => ['compact', 'comfortable']
+],
 					'saved_filter_state' => ['type' => ['object', 'null']],
 				],
 				'additionalProperties' => false,
@@ -505,15 +625,34 @@ final class AdminColumnsModule implements ModuleInterface
 			'type' => 'object',
 			'required' => ['document', 'remaps'],
 			'properties' => [
-				'document' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 262144],
+				'document' => [
+'type' => 'string',
+'minLength' => 1,
+'maxLength' => 262144
+],
 				'remaps' => [
 					'type' => 'object',
 					'properties' => [
-						'target_keys' => ['type' => 'object', 'maxProperties' => 200],
-						'source_references' => ['type' => 'object', 'maxProperties' => 200],
-						'assignment_roles' => ['type' => 'object', 'maxProperties' => 200],
-						'assignment_users' => ['type' => 'object', 'maxProperties' => 200],
-						'assignment_capabilities' => ['type' => 'object', 'maxProperties' => 200],
+						'target_keys' => [
+'type' => 'object',
+'maxProperties' => 200
+],
+						'source_references' => [
+'type' => 'object',
+'maxProperties' => 200
+],
+						'assignment_roles' => [
+'type' => 'object',
+'maxProperties' => 200
+],
+						'assignment_users' => [
+'type' => 'object',
+'maxProperties' => 200
+],
+						'assignment_capabilities' => [
+'type' => 'object',
+'maxProperties' => 200
+],
 					],
 					'additionalProperties' => false,
 				],
@@ -529,10 +668,22 @@ final class AdminColumnsModule implements ModuleInterface
 			'type' => 'object',
 			'required' => ['view_id', 'column_key', 'post_id', 'expected_group_revision', 'value'],
 			'properties' => [
-				'view_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
-				'column_key' => ['type' => 'string', 'pattern' => self::COLUMN_KEY_PATTERN],
-				'post_id' => ['type' => 'integer', 'minimum' => 1],
-				'expected_group_revision' => ['type' => 'integer', 'minimum' => 1],
+				'view_id' => [
+'type' => 'string',
+'pattern' => self::UUID_PATTERN
+],
+				'column_key' => [
+'type' => 'string',
+'pattern' => self::COLUMN_KEY_PATTERN
+],
+				'post_id' => [
+'type' => 'integer',
+'minimum' => 1
+],
+				'expected_group_revision' => [
+'type' => 'integer',
+'minimum' => 1
+],
 				'value' => [],
 			],
 			'additionalProperties' => false,

@@ -383,7 +383,10 @@ final readonly class AdminColumnsCsvExportService
 					throw new RuntimeException('Admin Columns CSV export column identity is malformed.');
 				}
 				$seen[$key] = true;
-				$encoderColumns[] = ['key' => $key, 'label' => $label];
+				$encoderColumns[] = [
+'key' => $key,
+'label' => $label
+];
 			}
 		}
 

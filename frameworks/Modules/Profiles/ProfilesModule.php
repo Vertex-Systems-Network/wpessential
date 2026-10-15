@@ -32,8 +32,21 @@ final class ProfilesModule implements ModuleInterface
 		if (!$abilities instanceof AbilityRegistry) { throw new LogicException('User Profiles requires the shared Ability Registry.'); }
 		if (!$bridge instanceof WordPressAbilityBridge) { throw new LogicException('User Profiles requires the shared WordPress Ability bridge.'); }
 		$read=new ProfileReadService($definitions); $services->set(self::SERVICE_READ,$read); $channels=[ExecutionChannel::Internal,ExecutionChannel::Ui,ExecutionChannel::Rest];
-		$this->registerAbility($abilities,$bridge,new AbilityDescriptor(name:self::ABILITY_GET,ownerSurfaceId:ProfileDefinition::OWNER_SURFACE_ID,capability:self::CAPABILITY,mutates:false,channels:$channels,inputSchema:['type'=>'object','required'=>['id'],'properties'=>['id'=>['type'=>'string','minLength'=>1,'maxLength'=>191]],'additionalProperties'=>false],outputSchema:['type'=>['object','null']]),new ProfilesReadAbilityHandler($read,ProfilesReadAbilityHandler::GET),'Read User Profiles definition','Reads one canonical User Profiles definition without mutating user/auth/role/credential state.');
-		$this->registerAbility($abilities,$bridge,new AbilityDescriptor(name:self::ABILITY_CATALOG,ownerSurfaceId:ProfileDefinition::OWNER_SURFACE_ID,capability:self::CAPABILITY,mutates:false,channels:$channels,inputSchema:['type'=>'object','additionalProperties'=>false],outputSchema:['type'=>'array']),new ProfilesReadAbilityHandler($read,ProfilesReadAbilityHandler::CATALOG),'Read User Profiles catalog','Reads the deterministic canonical User Profiles definition catalog without mutation.');
+		$this->registerAbility($abilities,$bridge,new AbilityDescriptor(name:self::ABILITY_GET,ownerSurfaceId:ProfileDefinition::OWNER_SURFACE_ID,capability:self::CAPABILITY,mutates:false,channels:$channels,inputSchema:[
+'type'=>'object',
+'required'=>['id'],
+'properties'=>[
+'id'=>[
+'type'=>'string',
+'minLength'=>1,
+'maxLength'=>191
+]],
+'additionalProperties'=>false
+],outputSchema:['type'=>['object','null']]),new ProfilesReadAbilityHandler($read,ProfilesReadAbilityHandler::GET),'Read User Profiles definition','Reads one canonical User Profiles definition without mutating user/auth/role/credential state.');
+		$this->registerAbility($abilities,$bridge,new AbilityDescriptor(name:self::ABILITY_CATALOG,ownerSurfaceId:ProfileDefinition::OWNER_SURFACE_ID,capability:self::CAPABILITY,mutates:false,channels:$channels,inputSchema:[
+'type'=>'object',
+'additionalProperties'=>false
+],outputSchema:['type'=>'array']),new ProfilesReadAbilityHandler($read,ProfilesReadAbilityHandler::CATALOG),'Read User Profiles catalog','Reads the deterministic canonical User Profiles definition catalog without mutation.');
 	}
 	public function boot(ServiceRegistryInterface $services): void {}
 	private function registerAbility(AbilityRegistry $abilities,WordPressAbilityBridge $bridge,AbilityDescriptor $descriptor,AbilityHandlerInterface $handler,string $label,string $description): void { $abilities->register($descriptor,$handler); $bridge->expose(new WordPressAbilityExposure(internalName:$descriptor->name,label:$label,description:$description,showInRest:true)); }

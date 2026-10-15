@@ -36,7 +36,17 @@ final readonly class AjaxResponse
 	public function payload(): array
 	{
 		return $this->success
-			? ['success' => true, 'data' => $this->data]
-			: ['success' => false, 'error' => ['code' => $this->errorCode, 'message' => $this->message], 'meta' => $this->meta];
+			? [
+'success' => true,
+'data' => $this->data
+]
+			: [
+'success' => false,
+'error' => [
+'code' => $this->errorCode,
+'message' => $this->message
+],
+'meta' => $this->meta
+];
 	}
 }

@@ -156,8 +156,16 @@ final readonly class AdminColumnsFieldValueWriteAdapter
 			'source_ref' => self::QUERY_SOURCE,
 			'projection' => ['post.id', 'post.type'],
 			'filters' => [
-				['field_ref' => 'post.id', 'operator' => 'eq', 'value' => $postId],
-				['field_ref' => 'post.type', 'operator' => 'eq', 'value' => $targetKey],
+				[
+'field_ref' => 'post.id',
+'operator' => 'eq',
+'value' => $postId
+],
+				[
+'field_ref' => 'post.type',
+'operator' => 'eq',
+'value' => $targetKey
+],
 			],
 			'order_by' => [],
 			'page_size' => 1,

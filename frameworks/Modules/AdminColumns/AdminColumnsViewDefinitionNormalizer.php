@@ -89,7 +89,10 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 		}
 
 		$key = $this->reference($value['key'] ?? null, 'View target key');
-		return ['type' => $type, 'key' => $key];
+		return [
+'type' => $type,
+'key' => $key
+];
 	}
 
 	/** @return list<array<string,mixed>> */
@@ -271,7 +274,10 @@ final readonly class AdminColumnsViewDefinitionNormalizer
 			throw new InvalidArgumentException('View visibility reason must be null or a non-empty string.');
 		}
 
-		return ['mode' => $mode, 'reason' => is_string($reason) ? trim($reason) : null];
+		return [
+'mode' => $mode,
+'reason' => is_string($reason) ? trim($reason) : null
+];
 	}
 
 	/** @param array<string,mixed> $map @param list<string> $allowed */

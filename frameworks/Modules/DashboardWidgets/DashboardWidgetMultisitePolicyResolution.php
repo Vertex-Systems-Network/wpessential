@@ -25,7 +25,12 @@ final readonly class DashboardWidgetMultisitePolicyResolution
 		public bool $canManageOverride = false,
 	) {
 		if (!in_array($status, [
-			self::RESOLVED, self::NONE, self::CONFLICT, self::INVALID_CATALOG, self::UNAVAILABLE, self::EXCLUDED,
+			self::RESOLVED,
+self::NONE,
+self::CONFLICT,
+self::INVALID_CATALOG,
+self::UNAVAILABLE,
+self::EXCLUDED,
 		], true)) {
 			throw new InvalidArgumentException('Invalid Dashboard Multisite policy resolution status.');
 		}

@@ -22,17 +22,44 @@ final class TaxonomyDefinitionProjector
 
 	/** @var list<string> */
 	private const TOP_LEVEL_KEYS = [
-		'taxonomy_key', 'object_types', 'name', 'singular_name', 'description', 'automatic_labels', 'labels',
-		'public', 'publicly_queryable', 'hierarchical', 'show_ui', 'show_in_menu',
-		'show_in_nav_menus', 'show_tagcloud', 'show_in_quick_edit', 'show_admin_column',
-		'show_in_rest', 'rest_base', 'rest_namespace', 'query_var', 'rewrite', 'sort',
-		'capabilities', 'default_term', 'args', 'runtime_providers',
+		'taxonomy_key',
+'object_types',
+'name',
+'singular_name',
+'description',
+'automatic_labels',
+'labels',
+		'public',
+'publicly_queryable',
+'hierarchical',
+'show_ui',
+'show_in_menu',
+		'show_in_nav_menus',
+'show_tagcloud',
+'show_in_quick_edit',
+'show_admin_column',
+		'show_in_rest',
+'rest_base',
+'rest_namespace',
+'query_var',
+'rewrite',
+'sort',
+		'capabilities',
+'default_term',
+'args',
+'runtime_providers',
 	];
 
 	/** @var list<string> */
 	private const RESERVED_TAXONOMIES = [
-		'category', 'post_tag', 'nav_menu', 'link_category', 'post_format', 'wp_theme',
-		'wp_template_part_area', 'wp_pattern_category',
+		'category',
+'post_tag',
+'nav_menu',
+'link_category',
+'post_format',
+'wp_theme',
+		'wp_template_part_area',
+'wp_pattern_category',
 	];
 
 	/** @var list<string> */
@@ -40,13 +67,27 @@ final class TaxonomyDefinitionProjector
 
 	/** @var list<string> */
 	private const OBJECT_TERM_ORDERBY_VALUES = [
-		'name', 'slug', 'term_group', 'term_id', 'id', 'description', 'parent', 'term_order',
-		'count', 'include', 'none',
+		'name',
+'slug',
+'term_group',
+'term_id',
+'id',
+'description',
+'parent',
+'term_order',
+		'count',
+'include',
+'none',
 	];
 
 	/** @var list<string> */
 	private const OBJECT_TERM_FIELDS_VALUES = [
-		'all', 'all_with_object_id', 'ids', 'tt_ids', 'names', 'slugs',
+		'all',
+'all_with_object_id',
+'ids',
+'tt_ids',
+'names',
+'slugs',
 	];
 
 	private readonly TaxonomyRuntimeProviderRegistry $runtimeProviders;
@@ -96,8 +137,13 @@ final class TaxonomyDefinitionProjector
 		}
 
 		foreach ([
-			'publicly_queryable', 'show_ui', 'show_in_menu', 'show_in_nav_menus',
-			'show_tagcloud', 'show_in_quick_edit', 'show_admin_column',
+			'publicly_queryable',
+'show_ui',
+'show_in_menu',
+'show_in_nav_menus',
+			'show_tagcloud',
+'show_in_quick_edit',
+'show_admin_column',
 		] as $field) {
 			$this->copyOptionalBool($payload, $args, $field);
 		}

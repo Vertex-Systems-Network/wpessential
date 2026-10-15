@@ -347,7 +347,10 @@ final readonly class QueryReadConsumer implements QueryReadConsumerInterface
 				throw new InvalidArgumentException('Query order fields must be unique.');
 			}
 			$seen[$fieldRef] = true;
-			$orderBy[] = ['field_ref' => $fieldRef, 'direction' => $direction];
+			$orderBy[] = [
+'field_ref' => $fieldRef,
+'direction' => $direction
+];
 		}
 
 		return $orderBy;

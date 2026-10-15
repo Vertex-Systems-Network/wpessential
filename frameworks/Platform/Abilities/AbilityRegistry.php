@@ -29,7 +29,10 @@ final class AbilityRegistry
 		if (isset($this->abilities[$descriptor->name])) {
 			throw new RuntimeException(sprintf('Ability "%s" is already registered.', $descriptor->name));
 		}
-		$this->abilities[$descriptor->name] = ['descriptor' => $descriptor, 'handler' => $handler];
+		$this->abilities[$descriptor->name] = [
+'descriptor' => $descriptor,
+'handler' => $handler
+];
 	}
 
 	public function descriptor(string $name): ?AbilityDescriptor

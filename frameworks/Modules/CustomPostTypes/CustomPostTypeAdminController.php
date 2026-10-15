@@ -112,10 +112,22 @@ final class CustomPostTypeAdminController
 			'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
 			'ajaxAction' => $this->ajaxAction,
 			'routes' => [
-				'list' => ['type' => 'cpt.list', 'nonce' => $this->ajax->createNonce('cpt.list')],
-				'validate' => ['type' => 'cpt.validate', 'nonce' => $this->ajax->createNonce('cpt.validate')],
-				'save' => ['type' => 'cpt.save', 'nonce' => $this->ajax->createNonce('cpt.save')],
-				'status' => ['type' => 'cpt.status', 'nonce' => $this->ajax->createNonce('cpt.status')],
+				'list' => [
+'type' => 'cpt.list',
+'nonce' => $this->ajax->createNonce('cpt.list')
+],
+				'validate' => [
+'type' => 'cpt.validate',
+'nonce' => $this->ajax->createNonce('cpt.validate')
+],
+				'save' => [
+'type' => 'cpt.save',
+'nonce' => $this->ajax->createNonce('cpt.save')
+],
+				'status' => [
+'type' => 'cpt.status',
+'nonce' => $this->ajax->createNonce('cpt.status')
+],
 			],
 			'definitions' => $definitions,
 		];

@@ -104,7 +104,10 @@ final class StatusTransitionExecutor
 				}
 
 				return wp_update_post(
-					['ID' => $postId, 'post_status' => $targetStatus],
+					[
+'ID' => $postId,
+'post_status' => $targetStatus
+],
 					true,
 				);
 			};

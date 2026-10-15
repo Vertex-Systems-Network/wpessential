@@ -35,13 +35,21 @@ final class FlowTrace
 	/** @param array<string,mixed> $metadata */
 	public function node(string $id, string $component, array $metadata = []): void
 	{
-		$this->nodes[$id] = ['component' => $component, 'metadata' => $this->sanitizer->sanitize($metadata)];
+		$this->nodes[$id] = [
+'component' => $component,
+'metadata' => $this->sanitizer->sanitize($metadata)
+];
 	}
 
 	/** @param array<string,mixed> $metadata */
 	public function edge(string $from, string $to, string $operation, array $metadata = []): void
 	{
-		$this->edges[] = ['from' => $from, 'to' => $to, 'operation' => $operation, 'metadata' => $this->sanitizer->sanitize($metadata)];
+		$this->edges[] = [
+'from' => $from,
+'to' => $to,
+'operation' => $operation,
+'metadata' => $this->sanitizer->sanitize($metadata)
+];
 	}
 
 	/** @param array<string,mixed> $metadata */
@@ -74,7 +82,10 @@ final class FlowTrace
 		if (count($this->events) < $this->maxEvents) {
 			$this->events[] = $failed;
 		}
-		$this->failureBoundary = ['last_successful' => $last, 'failed' => $failed];
+		$this->failureBoundary = [
+'last_successful' => $last,
+'failed' => $failed
+];
 	}
 
 	/** @return array<string,mixed> */

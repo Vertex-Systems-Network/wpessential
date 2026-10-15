@@ -21,36 +21,109 @@ final class CustomPostTypeDefinitionProjector
 
 	/** @var list<string> */
 	private const TOP_LEVEL_KEYS = [
-		'post_type_key', 'name', 'singular_name', 'description', 'automatic_labels', 'labels',
-		'public', 'hierarchical', 'exclude_from_search', 'publicly_queryable', 'show_ui',
-		'show_in_menu', 'show_in_nav_menus', 'show_in_admin_bar', 'show_in_rest', 'rest_base',
-		'rest_namespace', 'supports', 'menu_position', 'menu_icon', 'capability_type', 'capabilities',
-		'map_meta_cap', 'taxonomies', 'has_archive', 'rewrite', 'query_var', 'can_export',
+		'post_type_key',
+'name',
+'singular_name',
+'description',
+'automatic_labels',
+'labels',
+		'public',
+'hierarchical',
+'exclude_from_search',
+'publicly_queryable',
+'show_ui',
+		'show_in_menu',
+'show_in_nav_menus',
+'show_in_admin_bar',
+'show_in_rest',
+'rest_base',
+		'rest_namespace',
+'supports',
+'menu_position',
+'menu_icon',
+'capability_type',
+'capabilities',
+		'map_meta_cap',
+'taxonomies',
+'has_archive',
+'rewrite',
+'query_var',
+'can_export',
 		'delete_with_user',
 	];
 
 	/** @var list<string> */
 	private const SUPPORT_KEYS = [
-		'title', 'editor', 'author', 'thumbnail', 'excerpt', 'trackbacks', 'custom-fields',
-		'comments', 'revisions', 'page-attributes', 'post-formats', 'autosave',
+		'title',
+'editor',
+'author',
+'thumbnail',
+'excerpt',
+'trackbacks',
+'custom-fields',
+		'comments',
+'revisions',
+'page-attributes',
+'post-formats',
+'autosave',
 	];
 
 	/** @var list<string> */
 	private const LABEL_KEYS = [
-		'add_new', 'add_new_item', 'edit_item', 'new_item', 'view_item', 'view_items', 'search_items',
-		'not_found', 'not_found_in_trash', 'parent_item_colon', 'all_items', 'archives', 'attributes',
-		'insert_into_item', 'uploaded_to_this_item', 'featured_image', 'set_featured_image',
-		'remove_featured_image', 'use_featured_image', 'menu_name', 'name_admin_bar', 'filter_items_list',
-		'filter_by_date', 'items_list_navigation', 'items_list', 'item_published',
-		'item_published_privately', 'item_reverted_to_draft', 'item_trashed', 'item_scheduled',
-		'item_updated', 'item_link', 'item_link_description', 'template_name',
+		'add_new',
+'add_new_item',
+'edit_item',
+'new_item',
+'view_item',
+'view_items',
+'search_items',
+		'not_found',
+'not_found_in_trash',
+'parent_item_colon',
+'all_items',
+'archives',
+'attributes',
+		'insert_into_item',
+'uploaded_to_this_item',
+'featured_image',
+'set_featured_image',
+		'remove_featured_image',
+'use_featured_image',
+'menu_name',
+'name_admin_bar',
+'filter_items_list',
+		'filter_by_date',
+'items_list_navigation',
+'items_list',
+'item_published',
+		'item_published_privately',
+'item_reverted_to_draft',
+'item_trashed',
+'item_scheduled',
+		'item_updated',
+'item_link',
+'item_link_description',
+'template_name',
 	];
 
 	/** @var list<string> */
 	private const RESERVED_POST_TYPES = [
-		'post', 'page', 'attachment', 'revision', 'nav_menu_item', 'custom_css',
-		'customize_changeset', 'oembed_cache', 'user_request', 'wp_block', 'wp_template',
-		'wp_template_part', 'wp_global_styles', 'wp_navigation', 'wp_font_family', 'wp_font_face',
+		'post',
+'page',
+'attachment',
+'revision',
+'nav_menu_item',
+'custom_css',
+		'customize_changeset',
+'oembed_cache',
+'user_request',
+'wp_block',
+'wp_template',
+		'wp_template_part',
+'wp_global_styles',
+'wp_navigation',
+'wp_font_family',
+'wp_font_face',
 	];
 
 	public function project(Definition $definition): RegistrationDefinition
@@ -201,7 +274,10 @@ final class CustomPostTypeDefinitionProjector
 		if (!is_array($overrides)) {
 			throw new InvalidArgumentException('CPT labels must be an object/map.');
 		}
-		$labels = ['name' => $name, 'singular_name' => $singularName];
+		$labels = [
+'name' => $name,
+'singular_name' => $singularName
+];
 		foreach ($overrides as $key => $value) {
 			if (!is_string($key) || !in_array($key, self::LABEL_KEYS, true)) {
 				throw new InvalidArgumentException(sprintf('Unsupported CPT label "%s".', (string) $key));

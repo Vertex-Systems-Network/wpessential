@@ -34,8 +34,14 @@ final readonly class JobType
 		}
 
 		$validResources = [
-			'db_read', 'db_write', 'cpu', 'filesystem_io', 'network_io',
-			'provider_rate_limited', 'memory_heavy', 'destructive_exclusive',
+			'db_read',
+'db_write',
+'cpu',
+'filesystem_io',
+'network_io',
+			'provider_rate_limited',
+'memory_heavy',
+'destructive_exclusive',
 		];
 		foreach ($this->resourceClasses as $resourceClass) {
 			if (!is_string($resourceClass) || !in_array($resourceClass, $validResources, true)) {

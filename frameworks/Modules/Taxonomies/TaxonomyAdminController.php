@@ -110,10 +110,22 @@ final class TaxonomyAdminController
 			'ajaxUrl' => function_exists('admin_url') ? admin_url('admin-ajax.php') : '',
 			'ajaxAction' => $this->ajaxAction,
 			'routes' => [
-				'list' => ['type' => 'taxonomy.list', 'nonce' => $this->ajax->createNonce('taxonomy.list')],
-				'validate' => ['type' => 'taxonomy.validate', 'nonce' => $this->ajax->createNonce('taxonomy.validate')],
-				'save' => ['type' => 'taxonomy.save', 'nonce' => $this->ajax->createNonce('taxonomy.save')],
-				'status' => ['type' => 'taxonomy.status', 'nonce' => $this->ajax->createNonce('taxonomy.status')],
+				'list' => [
+'type' => 'taxonomy.list',
+'nonce' => $this->ajax->createNonce('taxonomy.list')
+],
+				'validate' => [
+'type' => 'taxonomy.validate',
+'nonce' => $this->ajax->createNonce('taxonomy.validate')
+],
+				'save' => [
+'type' => 'taxonomy.save',
+'nonce' => $this->ajax->createNonce('taxonomy.save')
+],
+				'status' => [
+'type' => 'taxonomy.status',
+'nonce' => $this->ajax->createNonce('taxonomy.status')
+],
 			],
 			'definitions' => $definitions,
 			'objectTypes' => $objectTypes,

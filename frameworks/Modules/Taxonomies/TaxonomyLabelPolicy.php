@@ -19,19 +19,53 @@ final class TaxonomyLabelPolicy
 
 	/** @var list<string> */
 	private const OVERRIDE_KEYS = [
-		'menu_name', 'search_items', 'popular_items', 'all_items', 'parent_item', 'parent_item_colon',
-		'name_field_description', 'slug_field_description', 'parent_field_description',
-		'desc_field_description', 'edit_item', 'view_item', 'update_item', 'add_new_item',
-		'new_item_name', 'template_name', 'separate_items_with_commas', 'add_or_remove_items',
-		'choose_from_most_used', 'not_found', 'no_terms', 'filter_by_item', 'items_list_navigation',
-		'items_list', 'most_used', 'back_to_items', 'item_link', 'item_link_description',
+		'menu_name',
+'search_items',
+'popular_items',
+'all_items',
+'parent_item',
+'parent_item_colon',
+		'name_field_description',
+'slug_field_description',
+'parent_field_description',
+		'desc_field_description',
+'edit_item',
+'view_item',
+'update_item',
+'add_new_item',
+		'new_item_name',
+'template_name',
+'separate_items_with_commas',
+'add_or_remove_items',
+		'choose_from_most_used',
+'not_found',
+'no_terms',
+'filter_by_item',
+'items_list_navigation',
+		'items_list',
+'most_used',
+'back_to_items',
+'item_link',
+'item_link_description',
 	];
 
 	/** @var list<string> */
 	private const COMMON_GENERATED_KEYS = [
-		'menu_name', 'search_items', 'all_items', 'edit_item', 'view_item', 'update_item',
-		'add_new_item', 'new_item_name', 'not_found', 'no_terms', 'items_list_navigation',
-		'items_list', 'back_to_items', 'item_link', 'item_link_description',
+		'menu_name',
+'search_items',
+'all_items',
+'edit_item',
+'view_item',
+'update_item',
+		'add_new_item',
+'new_item_name',
+'not_found',
+'no_terms',
+'items_list_navigation',
+		'items_list',
+'back_to_items',
+'item_link',
+'item_link_description',
 	];
 
 	/** @var list<string> */
@@ -39,7 +73,10 @@ final class TaxonomyLabelPolicy
 
 	/** @var list<string> */
 	private const FLAT_GENERATED_KEYS = [
-		'popular_items', 'separate_items_with_commas', 'add_or_remove_items', 'choose_from_most_used',
+		'popular_items',
+'separate_items_with_commas',
+'add_or_remove_items',
+'choose_from_most_used',
 	];
 
 	/** @return list<string> */
@@ -76,7 +113,10 @@ final class TaxonomyLabelPolicy
 
 		$labels = $automaticLabels
 			? self::generated($name, $singularName, $hierarchical)
-			: ['name' => $name, 'singular_name' => $singularName];
+			: [
+'name' => $name,
+'singular_name' => $singularName
+];
 
 		foreach ($overrides as $key => $value) {
 			if (!is_string($key) || !in_array($key, self::OVERRIDE_KEYS, true)) {

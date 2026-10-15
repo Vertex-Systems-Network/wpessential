@@ -149,7 +149,11 @@ final readonly class StatusDefinitionCompiler
 			}
 		}
 
-		return ['label' => $label, 'count_singular' => $singular, 'count_plural' => $plural];
+		return [
+'label' => $label,
+'count_singular' => $singular,
+'count_plural' => $plural
+];
 	}
 
 	/**
