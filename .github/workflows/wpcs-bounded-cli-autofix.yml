@@ -6,6 +6,7 @@ on:
       - agent/local-phpunit-bootstrap-repair-v1
     paths:
       - .github/workflows/wpcs-bounded-cli-autofix.yml
+      - tests/Unit/Modules/AdminColumns/AdminColumnsPersonalPreferenceAbilityWiringTest.php
 
 permissions:
   contents: write
