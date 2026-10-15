@@ -63,11 +63,11 @@ jobs:
           set -euo pipefail
           composer test:unit
 
-      - name: Apply indentation-only PHPCBF to source modules
+      - name: Apply indentation-only PHPCBF across the framework
         shell: bash
         run: |
           set -euo pipefail
-          target_paths=(frameworks/Modules/Fields frameworks/Modules/Query frameworks/Modules/DashboardWidgets)
+          target_paths=(frameworks)
           set +e
           vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Generic.WhiteSpace.DisallowSpaceIndent --extensions=php --report=summary "${target_paths[@]}" > /tmp/wpcs-autofix.log 2>&1
           formatter_exit=$?
@@ -86,11 +86,7 @@ jobs:
           import subprocess
           import sys
 
-          allowed = (
-              "frameworks/Modules/Fields/",
-              "frameworks/Modules/Query/",
-              "frameworks/Modules/DashboardWidgets/",
-          )
+          allowed = ("frameworks/",)
           paths = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=AM"], text=True).splitlines()
           for path in paths:
               if not path.startswith(allowed) or not path.endswith(".php"):
@@ -162,7 +158,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -u -- frameworks/Modules/Fields frameworks/Modules/Query frameworks/Modules/DashboardWidgets
+          git add -u -- frameworks
           if git diff --cached --quiet; then
             echo "No changes to push."
             exit 0
