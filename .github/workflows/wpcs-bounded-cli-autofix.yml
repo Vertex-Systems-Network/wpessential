@@ -99,7 +99,7 @@ jobs:
               old_lines = previous.splitlines(keepends=True)
               new_lines = current.splitlines(keepends=True)
               if len(old_lines) != len(new_lines) or any(
-                  old.lstrip(b" \\t") != new.lstrip(b" \\t")
+                  old.lstrip(b" \t") != new.lstrip(b" \t")
                   for old, new in zip(old_lines, new_lines)
               ):
                   sys.exit("Refusing non-indentation edit in " + path)
