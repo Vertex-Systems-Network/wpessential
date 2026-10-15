@@ -56,22 +56,78 @@ jobs:
           composer validate --strict
           composer audit --locked --no-interaction
 
-      - name: Apply bounded PHPCBF to source modules
+      - name: Confirm unmodified source PHPUnit baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer test:unit
+
+      - name: Apply indentation-only PHPCBF to source modules
         shell: bash
         run: |
           set -euo pipefail
           target_paths=(frameworks/Modules/Fields frameworks/Modules/Query frameworks/Modules/DashboardWidgets)
           set +e
-          vendor/bin/phpcbf --standard=phpcs.xml.dist --extensions=php --report=summary "${target_paths[@]}" > /tmp/wpcs-autofix.log 2>&1
+          vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Generic.WhiteSpace.DisallowSpaceIndent --extensions=php --report=summary "${target_paths[@]}" > /tmp/wpcs-autofix.log 2>&1
           formatter_exit=$?
           set -e
           tail -n 120 /tmp/wpcs-autofix.log
-          echo "PHPCBF exit code: $formatter_exit"
+          echo "Indentation-only PHPCBF exit code: $formatter_exit"
           git diff --check
-          if test -z "$(git diff --name-only -- ${target_paths[*]})"; then
-            echo "No production source edits made."
-            exit 0
-          fi
+
+      - name: Reject non-indentation or PHP token changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          allowed = (
+              "frameworks/Modules/Fields/",
+              "frameworks/Modules/Query/",
+              "frameworks/Modules/DashboardWidgets/",
+          )
+          paths = subprocess.check_output(["git", "diff", "--name-only", "--diff-filter=AM"], text=True).splitlines()
+          for path in paths:
+              if not path.startswith(allowed) or not path.endswith(".php"):
+                  sys.exit("Unexpected PHPCBF path: " + path)
+              previous = subprocess.check_output(["git", "show", os.environ["GITHUB_SHA"] + ":" + path])
+              current = pathlib.Path(path).read_bytes()
+              old_lines = previous.splitlines(keepends=True)
+              new_lines = current.splitlines(keepends=True)
+              if len(old_lines) != len(new_lines) or any(
+                  old.lstrip(b" \\t") != new.lstrip(b" \\t")
+                  for old, new in zip(old_lines, new_lines)
+              ):
+                  sys.exit("Refusing non-indentation edit in " + path)
+          print("Indentation-only byte-line validation passed:", len(paths), "PHP files")
+          PY
+          while IFS= read -r phpfile; do
+            test -n "$phpfile" || continue
+            git show "$GITHUB_SHA:$phpfile" | php -r '
+              $old = stream_get_contents(STDIN);
+              $new = file_get_contents($argv[1]);
+              $normalized = static function (string $source): array {
+                $tokens = token_get_all($source);
+                $clean = [];
+                foreach ($tokens as $token) {
+                  if (is_array($token) && $token[0] === T_WHITESPACE) {
+                    continue;
+                  }
+                  $clean[] = is_array($token) ? [$token[0], $token[1]] : $token;
+                }
+                return $clean;
+              };
+              if ($normalized($old) !== $normalized($new)) {
+                fwrite(STDERR, "PHP token change forbidden: " . $argv[1] . PHP_EOL);
+                exit(1);
+              }
+            ' "$phpfile"
+          done < <(git diff --name-only --diff-filter=AM -- '*.php')
+          git diff --check
 
       - name: Lint all changed PHP files
         shell: bash
