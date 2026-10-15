@@ -44,14 +44,14 @@ final class FieldsModule implements ModuleInterface
 		);
 	}
 
-	public function register(ServiceRegistryInterface $services): void
+	public function register( ServiceRegistryInterface $services ): void
 	{
 		$definitions = $services->get('platform.definitions');
 		$abilities = $services->get('platform.abilities');
 		$bridge = $services->get('platform.abilities.wordpress');
 		$contexts = $services->get('platform.abilities.contexts');
 		$ajaxRoutes = $services->get('platform.ajax.routes');
-		if (!$definitions instanceof DefinitionRepositoryInterface
+		if ( !$definitions instanceof DefinitionRepositoryInterface
 			|| !$abilities instanceof AbilityRegistry
 			|| !$bridge instanceof WordPressAbilityBridge
 			|| !$contexts instanceof WordPressExecutionContextFactory
@@ -61,17 +61,17 @@ final class FieldsModule implements ModuleInterface
 		}
 
 		$types = new FieldTypeRegistry();
-		$presets = new FieldPresetRegistry($types);
-		$catalog = new FieldCatalogService($types, $presets);
-		$fields = new FieldDefinitionNormalizer($types, $presets);
+		$presets = new FieldPresetRegistry( $types );
+		$catalog = new FieldCatalogService( $types, $presets );
+		$fields = new FieldDefinitionNormalizer( $types, $presets );
 		$values = new FieldValueNormalizer();
 		$persistence = new FieldValuePersistenceGuard();
-		$groups = new FieldGroupDefinitionNormalizer($fields);
-		$validation = new FieldGroupValidationService($definitions, $groups);
-		$portability = new FieldGroupPortabilityService($definitions, $groups, $validation);
+		$groups = new FieldGroupDefinitionNormalizer( $fields );
+		$validation = new FieldGroupValidationService( $definitions, $groups );
+		$portability = new FieldGroupPortabilityService( $definitions, $groups, $validation );
 		$groupStorage = new FieldGroupRuntimeStorageProjection();
 		$groupPostTypes = new FieldGroupPostTypeTargetCompiler();
-		$postMetaCompiler = new PostMetaRegistrationCompiler($values, $persistence);
+		$postMetaCompiler = new PostMetaRegistrationCompiler( $values, $persistence );
 		$postMetaRegistrar = new WordPressPostMetaRegistrar();
 		$postMetaBinder = new FieldGroupPostMetaBinder(
 			$groups,
@@ -80,8 +80,8 @@ final class FieldsModule implements ModuleInterface
 			$postMetaCompiler,
 			$postMetaRegistrar,
 		);
-		$runtimeRegistrar = new FieldGroupRuntimeRegistrar($definitions, $postMetaBinder);
-		$postMetaValues = new PostMetaValueStore($postMetaCompiler, $values, $persistence);
+		$runtimeRegistrar = new FieldGroupRuntimeRegistrar( $definitions, $postMetaBinder );
+		$postMetaValues = new PostMetaValueStore( $postMetaCompiler, $values, $persistence );
 		$postMetaMigrations = new FieldStorageKeyMigrationService(
 			$definitions,
 			$groups,
@@ -91,7 +91,7 @@ final class FieldsModule implements ModuleInterface
 			$postMetaRegistrar,
 			$postMetaValues,
 		);
-		$valueTargets = new FieldValueTargetResolver($definitions, $groups);
+		$valueTargets = new FieldValueTargetResolver( $definitions, $groups );
 		$valueAuthorization = new WordPressPostResourceAuthorizer();
 		$queryConsumer = new FieldQueryConsumer(
 			$definitions,
@@ -157,8 +157,8 @@ final class FieldsModule implements ModuleInterface
 			'import-groups' => new FieldGroupPortabilityAbilityHandler($portability, FieldGroupPortabilityAbilityHandler::IMPORT),
 		];
 
-		foreach ($handlers as $action => $handler) {
-			$this->registerAbility($abilities, $bridge, $handler, $action);
+		foreach ( $handlers as $action => $handler ) {
+			$this->registerAbility( $abilities, $bridge, $handler, $action );
 			$ajaxRoutes->register(new AjaxRoute(
 				type: 'fields.' . str_replace('-', '.', $action),
 				handler: new AbilityAjaxHandler($abilities, 'wpessential/fields/' . $action, $contexts),
@@ -180,7 +180,7 @@ final class FieldsModule implements ModuleInterface
 				FieldValueAbilityHandler::WRITE,
 			),
 		];
-		foreach ($valueHandlers as $action => $handler) {
+		foreach ( $valueHandlers as $action => $handler ) {
 			$mutates = $action === 'write-value';
 			$descriptor = new AbilityDescriptor(
 				name: 'wpessential/fields/' . $action,
@@ -188,10 +188,10 @@ final class FieldsModule implements ModuleInterface
 				capability: 'read',
 				mutates: $mutates,
 				channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
-				inputSchema: $this->valueInputSchema($mutates),
+				inputSchema: $this->valueInputSchema( $mutates ),
 				outputSchema: $this->valueOutputSchema(),
 			);
-			$abilities->register($descriptor, $handler);
+			$abilities->register( $descriptor, $handler );
 			$bridge->expose(new WordPressAbilityExposure(
 				internalName: $descriptor->name,
 				label: 'Custom Fields: ' . str_replace('-', ' ', $action),
@@ -200,7 +200,7 @@ final class FieldsModule implements ModuleInterface
 			));
 			$ajaxRoutes->register(new AjaxRoute(
 				type: 'fields.' . str_replace('-', '.', $action),
-				handler: new AbilityAjaxHandler($abilities, $descriptor->name, $contexts),
+				handler: new AbilityAjaxHandler( $abilities, $descriptor->name, $contexts ),
 				operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
 			));
 		}
@@ -214,7 +214,7 @@ final class FieldsModule implements ModuleInterface
 			inputSchema: $this->storageKeyMigrationInputSchema(),
 			outputSchema: $this->storageKeyMigrationOutputSchema(),
 		);
-		$abilities->register($migrationDescriptor, new FieldStorageKeyMigrationAbilityHandler($postMetaMigrations));
+		$abilities->register( $migrationDescriptor, new FieldStorageKeyMigrationAbilityHandler( $postMetaMigrations ) );
 		$bridge->expose(new WordPressAbilityExposure(
 			internalName: $migrationDescriptor->name,
 			label: 'Custom Fields: migrate storage key',
@@ -223,12 +223,12 @@ final class FieldsModule implements ModuleInterface
 		));
 		$ajaxRoutes->register(new AjaxRoute(
 			type: 'fields.migrate.storage.key',
-			handler: new AbilityAjaxHandler($abilities, $migrationDescriptor->name, $contexts),
+			handler: new AbilityAjaxHandler( $abilities, $migrationDescriptor->name, $contexts ),
 			operation: NonceOperation::Update,
 		));
 	}
 
-	public function boot(ServiceRegistryInterface $services): void
+	public function boot( ServiceRegistryInterface $services ): void
 	{
 		$abilities = $services->get('platform.abilities');
 		$contexts = $services->get('platform.abilities.contexts');
@@ -237,7 +237,7 @@ final class FieldsModule implements ModuleInterface
 		$assets = $services->get('platform.admin.assets');
 		$runtimeRegistrar = $services->get('module.custom-fields.runtime.post-meta');
 
-		if (!$abilities instanceof AbilityRegistry
+		if ( !$abilities instanceof AbilityRegistry
 			|| !$contexts instanceof WordPressExecutionContextFactory
 			|| !$ajax instanceof AjaxDispatcher
 			|| !$gateway instanceof WordPressAjaxGateway
@@ -276,7 +276,7 @@ final class FieldsModule implements ModuleInterface
 			inputSchema: ['type' => 'object'],
 			outputSchema: ['type' => 'object'],
 		);
-		$abilities->register($descriptor, $handler);
+		$abilities->register( $descriptor, $handler );
 		$bridge->expose(new WordPressAbilityExposure(
 			internalName: $descriptor->name,
 			label: 'Custom Fields: ' . str_replace('-', ' ', $action),
@@ -286,7 +286,7 @@ final class FieldsModule implements ModuleInterface
 	}
 
 	/** @return array<string,mixed> */
-	private function valueInputSchema(bool $write): array
+	private function valueInputSchema( bool $write ): array
 	{
 		$properties = [
 			'group_id' => ['type' => 'string', 'pattern' => self::UUID_PATTERN],
@@ -294,7 +294,7 @@ final class FieldsModule implements ModuleInterface
 			'post_id' => ['type' => 'integer', 'minimum' => 1],
 		];
 		$required = ['group_id', 'field_uuid', 'post_id'];
-		if ($write) {
+		if ( $write ) {
 			$properties['expected_group_revision'] = ['type' => 'integer', 'minimum' => 1];
 			$properties['value'] = [
 				'type' => ['string', 'number', 'integer', 'boolean', 'array', 'null'],

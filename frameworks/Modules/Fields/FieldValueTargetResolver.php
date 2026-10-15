@@ -37,33 +37,33 @@ final class FieldValueTargetResolver
 		?callable $getPostStatus = null,
 	) {
 		$this->getPostType = $getPostType !== null
-			? Closure::fromCallable($getPostType)
-			: static function (int $postId): string|false {
+			? Closure::fromCallable( $getPostType )
+			: static function ( int $postId ): string|false {
 				if (!function_exists('get_post_type')) {
 					throw new LogicException('WordPress get_post_type() is unavailable.');
 				}
-				return get_post_type($postId);
+				return get_post_type( $postId );
 			};
 		$this->getPostStatus = $getPostStatus !== null
-			? Closure::fromCallable($getPostStatus)
-			: static function (int $postId): string|false {
+			? Closure::fromCallable( $getPostStatus )
+			: static function ( int $postId ): string|false {
 				if (!function_exists('get_post_status')) {
 					throw new LogicException('WordPress get_post_status() is unavailable.');
 				}
-				return get_post_status($postId);
+				return get_post_status( $postId );
 			};
 	}
 
-	public function resolve(string $groupId, string $fieldUuid, int $postId): ResolvedFieldValueTarget
+	public function resolve( string $groupId, string $fieldUuid, int $postId ): ResolvedFieldValueTarget
 	{
 		$this->assertUuid($groupId, 'Field Group id');
 		$this->assertUuid($fieldUuid, 'Field uuid');
-		if ($postId < 1) {
+		if ( $postId < 1 ) {
 			throw new InvalidArgumentException('Field value target post_id must be a positive integer.');
 		}
 
-		$definition = $this->definitions->get($groupId);
-		if (!$definition instanceof Definition
+		$definition = $this->definitions->get( $groupId );
+		if ( !$definition instanceof Definition
 			|| $definition->type !== FieldGroupDefinitionNormalizer::DEFINITION_TYPE
 			|| $definition->ownerSurfaceId !== FieldGroupDefinitionNormalizer::OWNER_SURFACE_ID
 			|| $definition->status !== DefinitionStatus::Published
@@ -72,13 +72,13 @@ final class FieldValueTargetResolver
 		}
 
 		try {
-			$payload = $this->normalizer->normalize($definition->payload, true);
-		} catch (InvalidArgumentException $error) {
+			$payload = $this->normalizer->normalize( $definition->payload, true );
+		} catch ( InvalidArgumentException $error ) {
 			throw new RuntimeException('Published Field Group payload is outside the canonical Surface 3 contract.', 0, $error);
 		}
 
-		$postType = ($this->getPostType)($postId);
-		$postStatus = ($this->getPostStatus)($postId);
+		$postType = ( $this->getPostType )( $postId );
+		$postStatus = ( $this->getPostStatus )( $postId );
 		if (!is_string($postType) || $postType === '' || !is_string($postStatus) || $postStatus === '') {
 			throw new RuntimeException('Field value target post is not available.');
 		}
@@ -89,11 +89,11 @@ final class FieldValueTargetResolver
 		}
 
 		$fields = $payload['fields'] ?? null;
-		if (!is_array($fields) || !array_is_list($fields)) {
+		if ( !is_array( $fields ) || !array_is_list( $fields ) ) {
 			throw new RuntimeException('Published Field Group fields are malformed.');
 		}
 
-		foreach ($fields as $field) {
+		foreach ( $fields as $field ) {
 			if (!is_array($field) || ($field['uuid'] ?? null) !== $fieldUuid) {
 				continue;
 			}
@@ -115,18 +115,18 @@ final class FieldValueTargetResolver
 		throw new RuntimeException('Top-level Field value target is not available in the published Field Group.');
 	}
 
-	private function assertLocationSupported(mixed $locations): void
+	private function assertLocationSupported( mixed $locations ): void
 	{
-		if (!is_array($locations) || !array_is_list($locations) || $locations === []) {
+		if ( !is_array( $locations ) || !array_is_list( $locations ) || $locations === [] ) {
 			throw new RuntimeException('Published Field Group has no certified post target location.');
 		}
-		foreach ($locations as $group) {
-			if (!is_array($group) || !array_is_list($group) || $group === []) {
+		foreach ( $locations as $group ) {
+			if ( !is_array( $group ) || !array_is_list( $group ) || $group === [] ) {
 				throw new RuntimeException('Published Field Group location contract is malformed.');
 			}
-			foreach ($group as $rule) {
+			foreach ( $group as $rule ) {
 				$source = is_array($rule) ? ($rule['source'] ?? null) : null;
-				if (!is_string($source) || !in_array($source, self::SUPPORTED_LOCATION_SOURCES, true)) {
+				if ( !is_string( $source ) || !in_array( $source, self::SUPPORTED_LOCATION_SOURCES, true ) ) {
 					throw new LogicException(sprintf(
 						'Field value Ability V1 does not certify location source "%s".',
 						is_string($source) ? $source : 'unknown',
@@ -136,17 +136,17 @@ final class FieldValueTargetResolver
 		}
 	}
 
-	private function matchesLocation(mixed $locations, int $postId, string $postType, string $postStatus): bool
+	private function matchesLocation( mixed $locations, int $postId, string $postType, string $postStatus ): bool
 	{
-		foreach ($locations as $group) {
+		foreach ( $locations as $group ) {
 			$matched = true;
-			foreach ($group as $rule) {
-				if (!$this->matchesRule($rule, $postId, $postType, $postStatus)) {
+			foreach ( $group as $rule ) {
+				if ( !$this->matchesRule( $rule, $postId, $postType, $postStatus ) ) {
 					$matched = false;
 					break;
 				}
 			}
-			if ($matched) {
+			if ( $matched ) {
 				return true;
 			}
 		}
@@ -154,7 +154,7 @@ final class FieldValueTargetResolver
 	}
 
 	/** @param array<string,mixed> $rule */
-	private function matchesRule(array $rule, int $postId, string $postType, string $postStatus): bool
+	private function matchesRule( array $rule, int $postId, string $postType, string $postStatus ): bool
 	{
 		$source = $rule['source'] ?? null;
 		$operator = $rule['operator'] ?? null;
@@ -163,7 +163,7 @@ final class FieldValueTargetResolver
 			throw new RuntimeException('Published Field Group location rule is malformed.');
 		}
 
-		$actual = match ($source) {
+		$actual = match ( $source ) {
 			'post_type' => $postType,
 			'post_status' => $postStatus,
 			'entity_id' => $postId,
@@ -171,7 +171,7 @@ final class FieldValueTargetResolver
 		};
 		$expected = $this->normalizeExpected($source, $rule['value']);
 
-		$match = match ($operator) {
+		$match = match ( $operator ) {
 			'equals' => $this->equals($actual, $expected),
 			'not_equals' => !$this->equals($actual, $expected),
 			'in' => $this->contains($actual, $expected),
@@ -182,26 +182,26 @@ final class FieldValueTargetResolver
 		return $negate ? !$match : $match;
 	}
 
-	private function normalizeExpected(string $source, mixed $value): mixed
+	private function normalizeExpected( string $source, mixed $value ): mixed
 	{
-		if (is_array($value)) {
-			if (!array_is_list($value)) {
+		if ( is_array( $value ) ) {
+			if ( !array_is_list( $value ) ) {
 				throw new RuntimeException('Field Group location list value must be a list.');
 			}
-			return array_map(fn (mixed $item): mixed => $this->normalizeExpectedScalar($source, $item), $value);
+			return array_map( fn ( mixed $item ): mixed => $this->normalizeExpectedScalar( $source, $item ), $value );
 		}
-		return $this->normalizeExpectedScalar($source, $value);
+		return $this->normalizeExpectedScalar( $source, $value );
 	}
 
-	private function normalizeExpectedScalar(string $source, mixed $value): int|string
+	private function normalizeExpectedScalar( string $source, mixed $value ): int|string
 	{
 		if ($source === 'entity_id') {
-			if (is_int($value) && $value > 0) {
+			if ( is_int( $value ) && $value > 0 ) {
 				return $value;
 			}
-			if (is_string($value)) {
+			if ( is_string( $value ) ) {
 				$normalized = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-				if ($normalized !== false) {
+				if ( $normalized !== false ) {
 					return $normalized;
 				}
 			}
@@ -213,20 +213,20 @@ final class FieldValueTargetResolver
 		return $value;
 	}
 
-	private function equals(int|string $actual, mixed $expected): bool
+	private function equals( int|string $actual, mixed $expected ): bool
 	{
-		return !is_array($expected) && $actual === $expected;
+		return !is_array( $expected ) && $actual === $expected;
 	}
 
-	private function contains(int|string $actual, mixed $expected): bool
+	private function contains( int|string $actual, mixed $expected ): bool
 	{
-		if (!is_array($expected) || !array_is_list($expected)) {
+		if ( !is_array( $expected ) || !array_is_list( $expected ) ) {
 			throw new RuntimeException('Field Group in/not_in location operator requires a list value.');
 		}
-		return in_array($actual, $expected, true);
+		return in_array( $actual, $expected, true );
 	}
 
-	private function assertUuid(string $value, string $label): void
+	private function assertUuid( string $value, string $label ): void
 	{
 		if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) !== 1) {
 			throw new InvalidArgumentException(sprintf('%s must be a lowercase RFC 4122 UUID.', $label));

@@ -94,7 +94,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 	) {
 		$this->registerAction = $registerAction !== null
 			? Closure::fromCallable( $registerAction )
-			: static function (string $hook, callable $callback): void {
+			: static function ( string $hook, callable $callback ): void {
 				if ( ! function_exists( 'add_action' ) ) {
 					throw new LogicException( 'WordPress action API is unavailable.' );
 				}
@@ -103,7 +103,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->registerFilter = $registerFilter !== null
 			? Closure::fromCallable( $registerFilter )
-			: static function (string $hook, callable $callback, int $acceptedArgs): void {
+			: static function ( string $hook, callable $callback, int $acceptedArgs ): void {
 				if ( ! function_exists( 'add_filter' ) ) {
 					throw new LogicException( 'WordPress filter API is unavailable.' );
 				}
@@ -169,7 +169,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->screenId = $screenId !== null
 			? Closure::fromCallable( $screenId )
-			: static function (mixed $screen): ?string {
+			: static function ( mixed $screen ): ?string {
 				if ( ! is_object( $screen ) || ! isset( $screen->id ) || ! is_string( $screen->id ) ) {
 					return null;
 				}
@@ -178,7 +178,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->hasClosedPostboxPreference = $hasClosedPostboxPreference !== null
 			? Closure::fromCallable( $hasClosedPostboxPreference )
-			: static function (string $screenId): bool {
+			: static function ( string $screenId ): bool {
 				if ( ! in_array( $screenId, ['dashboard', 'dashboard-network'], true ) ) {
 					throw new LogicException( 'Dashboard Widget closed-postbox preference screen is unsupported.' );
 				}
@@ -195,7 +195,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->currentUserHiddenDashboardWidgetIds = $currentUserHiddenDashboardWidgetIds !== null
 			? Closure::fromCallable( $currentUserHiddenDashboardWidgetIds )
-			: static function (string $screenId): array {
+			: static function ( string $screenId ): array {
 				if ( ! in_array( $screenId, ['dashboard', 'dashboard-network'], true ) ) {
 					throw new LogicException( 'Dashboard Widget hidden preference screen is unsupported.' );
 				}
@@ -226,7 +226,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->currentUserCollapsedDashboardWidgetIds = $currentUserCollapsedDashboardWidgetIds !== null
 			? Closure::fromCallable( $currentUserCollapsedDashboardWidgetIds )
-			: static function (string $screenId): array {
+			: static function ( string $screenId ): array {
 				if ( ! in_array( $screenId, ['dashboard', 'dashboard-network'], true ) ) {
 					throw new LogicException( 'Dashboard Widget collapsed preference screen is unsupported.' );
 				}
@@ -257,7 +257,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->currentUserDashboardWidgetOrder = $currentUserDashboardWidgetOrder !== null
 			? Closure::fromCallable( $currentUserDashboardWidgetOrder )
-			: static function (string $screenId): array {
+			: static function ( string $screenId ): array {
 				if ( ! in_array( $screenId, ['dashboard', 'dashboard-network'], true ) ) {
 					throw new LogicException( 'Dashboard Widget order preference screen is unsupported.' );
 				}
@@ -284,7 +284,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->removeDashboardWidget = $removeDashboardWidget !== null
 			? Closure::fromCallable( $removeDashboardWidget )
-			: static function (string $id, string $screenId, string $context): void {
+			: static function ( string $id, string $screenId, string $context ): void {
 				if ( ! in_array( $screenId, ['dashboard', 'dashboard-network'], true ) ) {
 					throw new LogicException( 'Dashboard Widget removal screen is unsupported.' );
 				}
@@ -303,7 +303,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->discoverRegisteredDashboardWidgets = $discoverRegisteredDashboardWidgets !== null
 			? Closure::fromCallable( $discoverRegisteredDashboardWidgets )
-			: static function (string $screenId): array {
+			: static function ( string $screenId ): array {
 				if ( ! in_array( $screenId, ['dashboard', 'dashboard-network'], true ) ) {
 					throw new LogicException( 'Dashboard Widget inventory screen is unsupported.' );
 				}
@@ -380,18 +380,18 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 
 		$this->outputTrustedHtml = $outputTrustedHtml !== null
 			? Closure::fromCallable( $outputTrustedHtml )
-			: static function (string $html): void {
+			: static function ( string $html ): void {
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is emitted only after the trusted renderer succeeds.
 				echo $html;
 			};
 	}
 
-	public function registerAction(string $hook, callable $callback): void
+	public function registerAction( string $hook, callable $callback ): void
 	{
 		($this->registerAction)( $hook, $callback );
 	}
 
-	public function registerFilter(string $hook, callable $callback, int $acceptedArgs = 1): void
+	public function registerFilter( string $hook, callable $callback, int $acceptedArgs = 1 ): void
 	{
 		($this->registerFilter)( $hook, $callback, $acceptedArgs );
 	}
@@ -421,37 +421,37 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 		return ($this->currentNetworkId)();
 	}
 
-	public function screenId(mixed $screen): ?string
+	public function screenId( mixed $screen ): ?string
 	{
 		return ($this->screenId)( $screen );
 	}
 
-	public function hasClosedPostboxPreference(string $screenId): bool
+	public function hasClosedPostboxPreference( string $screenId ): bool
 	{
 		return ($this->hasClosedPostboxPreference)( $screenId );
 	}
 
-	public function currentUserHiddenDashboardWidgetIds(string $screenId): array
+	public function currentUserHiddenDashboardWidgetIds( string $screenId ): array
 	{
 		return ($this->currentUserHiddenDashboardWidgetIds)( $screenId );
 	}
 
-	public function currentUserCollapsedDashboardWidgetIds(string $screenId): array
+	public function currentUserCollapsedDashboardWidgetIds( string $screenId ): array
 	{
 		return ($this->currentUserCollapsedDashboardWidgetIds)( $screenId );
 	}
 
-	public function currentUserDashboardWidgetOrder(string $screenId): array
+	public function currentUserDashboardWidgetOrder( string $screenId ): array
 	{
 		return ($this->currentUserDashboardWidgetOrder)( $screenId );
 	}
 
-	public function removeDashboardWidget(string $id, string $screenId, string $context): void
+	public function removeDashboardWidget( string $id, string $screenId, string $context ): void
 	{
 		($this->removeDashboardWidget)( $id, $screenId, $context );
 	}
 
-	public function discoverRegisteredDashboardWidgets(string $screenId): array
+	public function discoverRegisteredDashboardWidgets( string $screenId ): array
 	{
 		return ($this->discoverRegisteredDashboardWidgets)( $screenId );
 	}
@@ -461,7 +461,7 @@ final class NativeWordPressDashboardWidgetEnvironment implements DashboardWidget
 		return ($this->ajaxUrl)();
 	}
 
-	public function outputTrustedHtml(string $html): void
+	public function outputTrustedHtml( string $html ): void
 	{
 		($this->outputTrustedHtml)( $html );
 	}

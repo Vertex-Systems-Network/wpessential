@@ -55,21 +55,21 @@ final readonly class AdminColumnsEffectiveStateProjector
 	 *   diagnostics:array<string,int|string>
 	 * }
 	 */
-	public function project(array $targetEvidence, array $sourceEvidence, array $diagnostics): array
+	public function project( array $targetEvidence, array $sourceEvidence, array $diagnostics ): array
 	{
 		$this->assertNoForbiddenKeys($targetEvidence, 'Target evidence');
 		$this->assertNoForbiddenKeys($sourceEvidence, 'Source evidence');
 		$this->assertNoForbiddenKeys($diagnostics, 'Diagnostic evidence');
 
 		$target = $this->node($targetEvidence, 'Target evidence');
-		if (!array_is_list($sourceEvidence) || count($sourceEvidence) > self::MAX_SOURCES) {
+		if ( !array_is_list( $sourceEvidence ) || count( $sourceEvidence ) > self::MAX_SOURCES ) {
 			throw new InvalidArgumentException('Source evidence must be a bounded ordered list.');
 		}
 
 		$sources = [];
 		$seenReferences = [];
-		foreach ($sourceEvidence as $index => $candidate) {
-			if (!is_array($candidate) || array_is_list($candidate)) {
+		foreach ( $sourceEvidence as $index => $candidate ) {
+			if ( !is_array( $candidate ) || array_is_list( $candidate ) ) {
 				throw new InvalidArgumentException(sprintf('Source evidence %d must be an object/map.', $index));
 			}
 			$this->assertKnownKeys(
@@ -82,7 +82,7 @@ final readonly class AdminColumnsEffectiveStateProjector
 			if (!is_string($reference) || preg_match('/^[a-z0-9][a-z0-9._:-]{0,191}$/', $reference) !== 1) {
 				throw new InvalidArgumentException(sprintf('Source evidence %d reference is malformed.', $index));
 			}
-			if (isset($seenReferences[$reference])) {
+			if ( isset( $seenReferences[$reference] ) ) {
 				throw new InvalidArgumentException('Source evidence references must be unique.');
 			}
 			$seenReferences[$reference] = true;
@@ -100,12 +100,12 @@ final readonly class AdminColumnsEffectiveStateProjector
 	}
 
 	/** @param array<string,mixed> $evidence @return array<string,mixed> */
-	private function node(array $evidence, string $label): array
+	private function node( array $evidence, string $label ): array
 	{
-		$this->assertKnownKeys($evidence, self::NODE_KEYS, $label);
+		$this->assertKnownKeys( $evidence, self::NODE_KEYS, $label );
 
 		$state = $evidence['state'] ?? null;
-		if (!is_string($state) || !in_array($state, self::STATES, true)) {
+		if ( !is_string( $state ) || !in_array( $state, self::STATES, true ) ) {
 			throw new InvalidArgumentException($label . ' state is unsupported.');
 		}
 
@@ -115,12 +115,12 @@ final readonly class AdminColumnsEffectiveStateProjector
 		}
 
 		$capabilities = $evidence['capabilities'] ?? null;
-		if (!is_array($capabilities) || array_is_list($capabilities)) {
+		if ( !is_array( $capabilities ) || array_is_list( $capabilities ) ) {
 			throw new InvalidArgumentException($label . ' capabilities must be an object/map.');
 		}
 		$this->assertKnownKeys($capabilities, self::CAPABILITY_KEYS, $label . ' capabilities');
-		foreach (self::CAPABILITY_KEYS as $key) {
-			if (!array_key_exists($key, $capabilities) || !is_bool($capabilities[$key])) {
+		foreach ( self::CAPABILITY_KEYS as $key ) {
+			if ( !array_key_exists( $key, $capabilities ) || !is_bool( $capabilities[$key] ) ) {
 				throw new InvalidArgumentException($label . ' capabilities must explicitly declare sort/filter/edit booleans.');
 			}
 		}
@@ -128,32 +128,32 @@ final readonly class AdminColumnsEffectiveStateProjector
 		$batchable = $evidence['batchable'] ?? null;
 		$providerCompatible = $evidence['provider_compatible'] ?? null;
 		$storageCompatible = $evidence['storage_compatible'] ?? null;
-		if (!is_bool($batchable) || !is_bool($providerCompatible) || !is_bool($storageCompatible)) {
+		if ( !is_bool( $batchable ) || !is_bool( $providerCompatible ) || !is_bool( $storageCompatible ) ) {
 			throw new InvalidArgumentException($label . ' compatibility and batchability evidence must be boolean.');
 		}
 
-		$hasCapability = in_array(true, $capabilities, true);
+		$hasCapability = in_array( true, $capabilities, true );
 		if ($state === 'available') {
-			if ($reason !== null || !$providerCompatible || !$storageCompatible) {
+			if ( $reason !== null || !$providerCompatible || !$storageCompatible ) {
 				throw new InvalidArgumentException($label . ' available state contradicts its reason/provider/storage evidence.');
 			}
 		} elseif ($state === 'expensive') {
-			if ($reason === null || !$providerCompatible || !$storageCompatible || !$hasCapability) {
+			if ( $reason === null || !$providerCompatible || !$storageCompatible || !$hasCapability ) {
 				throw new InvalidArgumentException($label . ' expensive state requires a reason, compatible provider/storage and at least one available capability.');
 			}
 		} elseif ($state === 'unavailable') {
-			if ($reason === null || $hasCapability || $batchable) {
+			if ( $reason === null || $hasCapability || $batchable ) {
 				throw new InvalidArgumentException($label . ' unavailable state cannot advertise capabilities or batchability and requires a reason.');
 			}
 		} elseif ($state === 'provider_required') {
-			if ($reason === null || $providerCompatible || $hasCapability || $batchable) {
+			if ( $reason === null || $providerCompatible || $hasCapability || $batchable ) {
 				throw new InvalidArgumentException($label . ' provider_required state requires an incompatible/missing provider and cannot advertise capabilities or batchability.');
 			}
 		} elseif ($state === 'degraded') {
-			if ($reason === null) {
+			if ( $reason === null ) {
 				throw new InvalidArgumentException($label . ' degraded state requires a reason.');
 			}
-			if ($providerCompatible && $storageCompatible && $batchable && count(array_filter($capabilities)) === count(self::CAPABILITY_KEYS)) {
+			if ( $providerCompatible && $storageCompatible && $batchable && count( array_filter( $capabilities ) ) === count( self::CAPABILITY_KEYS ) ) {
 				throw new InvalidArgumentException($label . ' degraded state contradicts fully healthy supplied evidence.');
 			}
 		}
@@ -173,11 +173,11 @@ final readonly class AdminColumnsEffectiveStateProjector
 	}
 
 	/** @param array<string,mixed> $diagnostics @return array<string,int|string> */
-	private function diagnostics(array $diagnostics): array
+	private function diagnostics( array $diagnostics ): array
 	{
 		$this->assertKnownKeys($diagnostics, self::DIAGNOSTIC_KEYS, 'Diagnostic evidence');
-		foreach (self::DIAGNOSTIC_KEYS as $key) {
-			if (!array_key_exists($key, $diagnostics)) {
+		foreach ( self::DIAGNOSTIC_KEYS as $key ) {
+			if ( !array_key_exists( $key, $diagnostics ) ) {
 				throw new InvalidArgumentException('Diagnostic evidence must explicitly declare every V1 diagnostic field.');
 			}
 		}
@@ -192,7 +192,7 @@ final readonly class AdminColumnsEffectiveStateProjector
 			'Diagnostic remote_call_count',
 		);
 		$cacheState = $diagnostics['cache_state'];
-		if (!is_string($cacheState) || !in_array($cacheState, self::CACHE_STATES, true)) {
+		if ( !is_string( $cacheState ) || !in_array( $cacheState, self::CACHE_STATES, true ) ) {
 			throw new InvalidArgumentException('Diagnostic cache_state is unsupported.');
 		}
 
@@ -205,38 +205,38 @@ final readonly class AdminColumnsEffectiveStateProjector
 		];
 	}
 
-	private function boundedInt(mixed $value, int $minimum, int $maximum, string $label): int
+	private function boundedInt( mixed $value, int $minimum, int $maximum, string $label ): int
 	{
-		if (!is_int($value) || $value < $minimum || $value > $maximum) {
+		if ( !is_int( $value ) || $value < $minimum || $value > $maximum ) {
 			throw new InvalidArgumentException(sprintf('%s must be %d..%d.', $label, $minimum, $maximum));
 		}
 		return $value;
 	}
 
 	/** @param array<string,mixed> $map @param list<string> $allowed */
-	private function assertKnownKeys(array $map, array $allowed, string $label): void
+	private function assertKnownKeys( array $map, array $allowed, string $label ): void
 	{
-		foreach (array_keys($map) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $map ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException($label . ' contains unsupported evidence.');
 			}
 		}
 	}
 
-	private function assertNoForbiddenKeys(mixed $value, string $label, int $depth = 0): void
+	private function assertNoForbiddenKeys( mixed $value, string $label, int $depth = 0 ): void
 	{
-		if ($depth > 16) {
+		if ( $depth > 16 ) {
 			throw new InvalidArgumentException($label . ' exceeds the bounded evidence depth.');
 		}
-		if (!is_array($value)) {
+		if ( !is_array( $value ) ) {
 			return;
 		}
-		foreach ($value as $key => $child) {
-			if (is_string($key) && preg_match(self::FORBIDDEN_KEY_PATTERN, $key) === 1) {
+		foreach ( $value as $key => $child ) {
+			if ( is_string( $key ) && preg_match( self::FORBIDDEN_KEY_PATTERN, $key ) === 1 ) {
 				throw new InvalidArgumentException($label . ' contains secret/private diagnostic evidence.');
 			}
-			if (is_array($child)) {
-				$this->assertNoForbiddenKeys($child, $label, $depth + 1);
+			if ( is_array( $child ) ) {
+				$this->assertNoForbiddenKeys( $child, $label, $depth + 1 );
 			}
 		}
 	}

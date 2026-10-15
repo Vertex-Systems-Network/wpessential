@@ -54,11 +54,11 @@ final class StatusModule implements ModuleInterface
 	private Closure $registrarFactory;
 
 	/** @param null|callable(DefinitionRepositoryInterface):StatusNativeRegistrar $registrarFactory */
-	public function __construct(?callable $registrarFactory = null)
+	public function __construct( ?callable $registrarFactory = null )
 	{
 		$this->registrarFactory = $registrarFactory !== null
-			? Closure::fromCallable($registrarFactory)
-			: static fn (DefinitionRepositoryInterface $definitions): StatusNativeRegistrar => new StatusNativeRegistrar($definitions);
+			? Closure::fromCallable( $registrarFactory )
+			: static fn ( DefinitionRepositoryInterface $definitions ): StatusNativeRegistrar => new StatusNativeRegistrar( $definitions );
 	}
 
 	public function manifest(): ModuleManifest
@@ -71,36 +71,36 @@ final class StatusModule implements ModuleInterface
 		);
 	}
 
-	public function register(ServiceRegistryInterface $services): void
+	public function register( ServiceRegistryInterface $services ): void
 	{
-		$this->assertOutputAvailable($services);
-		[$definitions, $abilities] = $this->requireSharedServices($services);
-		$this->registerAdminAbilities($services, $definitions, $abilities);
+		$this->assertOutputAvailable( $services );
+		[$definitions, $abilities] = $this->requireSharedServices( $services );
+		$this->registerAdminAbilities( $services, $definitions, $abilities );
 	}
 
-	public function boot(ServiceRegistryInterface $services): void
+	public function boot( ServiceRegistryInterface $services ): void
 	{
-		$this->assertOutputAvailable($services);
-		[$definitions, $abilities, $capabilities, $resources] = $this->requireSharedServices($services);
-		[$events, $audit] = $this->requireObservationServices($services);
+		$this->assertOutputAvailable( $services );
+		[$definitions, $abilities, $capabilities, $resources] = $this->requireSharedServices( $services );
+		[$events, $audit] = $this->requireObservationServices( $services );
 
-		if ($abilities->descriptor(self::ABILITY_TRANSITION) !== null) {
+		if ( $abilities->descriptor( self::ABILITY_TRANSITION ) !== null ) {
 			throw new LogicException('Status transition Ability is already registered.');
 		}
 
-		$policy = (new PublishedStatusTransitionPolicyResolver($definitions))->resolve();
+		$policy = ( new PublishedStatusTransitionPolicyResolver( $definitions ) )->resolve();
 		$executor = new StatusTransitionExecutor(
 			definitions: $definitions,
 			policy: $policy,
 			resources: $resources,
 			capabilities: $capabilities,
-			evidence: new StatusTransitionEvidencePublisher($events, $audit),
+			evidence: new StatusTransitionEvidencePublisher( $events, $audit ),
 		);
-		$registrar = ($this->registrarFactory)($definitions);
-		if (!$registrar instanceof StatusNativeRegistrar) {
+		$registrar = ( $this->registrarFactory )( $definitions );
+		if ( !$registrar instanceof StatusNativeRegistrar ) {
 			throw new LogicException('Status registrar factory must return the canonical native registrar.');
 		}
-		$handler = new StatusTransitionAbilityHandler($executor);
+		$handler = new StatusTransitionAbilityHandler( $executor );
 		$descriptor = new AbilityDescriptor(
 			name: self::ABILITY_TRANSITION,
 			ownerSurfaceId: 5,
@@ -127,12 +127,12 @@ final class StatusModule implements ModuleInterface
 		);
 
 		$registrar->register();
-		if ($registrar->errors() !== []) {
+		if ( $registrar->errors() !== [] ) {
 			throw new LogicException('Status native registration hook could not be installed.');
 		}
 
-		$abilities->register($descriptor, $handler);
-		$services->set(self::SERVICE_TRANSITION_EXECUTOR, $executor);
+		$abilities->register( $descriptor, $handler );
+		$services->set( self::SERVICE_TRANSITION_EXECUTOR, $executor );
 	}
 
 	private function registerAdminAbilities(
@@ -141,14 +141,14 @@ final class StatusModule implements ModuleInterface
 		AbilityRegistry $abilities,
 	): void {
 		foreach (['platform.abilities.wordpress', 'platform.abilities.contexts', 'platform.ajax.routes'] as $serviceId) {
-			if (!$services->has($serviceId)) {
+			if ( !$services->has( $serviceId ) ) {
 				throw new LogicException(sprintf('Status admin requires canonical shared service "%s".', $serviceId));
 			}
 		}
 		$bridge = $services->get('platform.abilities.wordpress');
 		$contexts = $services->get('platform.abilities.contexts');
 		$ajaxRoutes = $services->get('platform.ajax.routes');
-		if (!$bridge instanceof WordPressAbilityBridge
+		if ( !$bridge instanceof WordPressAbilityBridge
 			|| !$contexts instanceof WordPressExecutionContextFactory
 			|| !$ajaxRoutes instanceof AjaxRouteRegistry
 		) {
@@ -163,24 +163,24 @@ final class StatusModule implements ModuleInterface
 			StatusAdminAuthoringHandler::SAVE,
 			StatusAdminAuthoringHandler::STATUS,
 		];
-		foreach ($actions as $action) {
+		foreach ( $actions as $action ) {
 			$name = 'wpessential/status/admin-' . $action;
-			if ($abilities->descriptor($name) !== null) {
+			if ( $abilities->descriptor( $name ) !== null ) {
 				throw new LogicException('Status admin Ability is already registered.');
 			}
-			$mutates = in_array($action, [StatusAdminAuthoringHandler::SAVE, StatusAdminAuthoringHandler::STATUS], true);
+			$mutates = in_array( $action, [StatusAdminAuthoringHandler::SAVE, StatusAdminAuthoringHandler::STATUS], true );
 			$descriptor = new AbilityDescriptor(
 				name: $name,
 				ownerSurfaceId: 5,
 				capability: self::ADMIN_CAPABILITY,
 				mutates: $mutates,
 				channels: [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest],
-				inputSchema: $this->adminInputSchema($action),
+				inputSchema: $this->adminInputSchema( $action ),
 				outputSchema: ['type' => 'object'],
 			);
 			$abilities->register(
 				$descriptor,
-				new StatusAdminAuthoringHandler($definitions, $statusCompiler, $policyCompiler, $action),
+				new StatusAdminAuthoringHandler( $definitions, $statusCompiler, $policyCompiler, $action ),
 			);
 			$bridge->expose(new WordPressAbilityExposure(
 				internalName: $name,
@@ -190,22 +190,22 @@ final class StatusModule implements ModuleInterface
 			));
 			$ajaxRoutes->register(new AjaxRoute(
 				type: 'status.admin.' . $action,
-				handler: new AbilityAjaxHandler($abilities, $name, $contexts),
+				handler: new AbilityAjaxHandler( $abilities, $name, $contexts ),
 				operation: $mutates ? NonceOperation::Update : NonceOperation::Apply,
 			));
 		}
 
-		if ($services->has(self::SERVICE_ADMIN_FALLBACK)) {
+		if ( $services->has( self::SERVICE_ADMIN_FALLBACK ) ) {
 			throw new LogicException('Status admin fallback renderer is already registered.');
 		}
-		$services->set(self::SERVICE_ADMIN_FALLBACK, new StatusAdminFallbackRenderer());
+		$services->set( self::SERVICE_ADMIN_FALLBACK, new StatusAdminFallbackRenderer() );
 	}
 
 	/** @return array<string,mixed> */
-	private function adminInputSchema(string $action): array
+	private function adminInputSchema( string $action ): array
 	{
 		$uuid = ['type' => 'string', 'pattern' => self::UUID_PATTERN];
-		return match ($action) {
+		return match ( $action ) {
 			StatusAdminAuthoringHandler::LIST => [
 				'type' => 'object',
 				'additionalProperties' => false,
@@ -247,29 +247,29 @@ final class StatusModule implements ModuleInterface
 	}
 
 	/** @return array{EventBus,AuditLoggerInterface} */
-	private function requireObservationServices(ServiceRegistryInterface $services): array
+	private function requireObservationServices( ServiceRegistryInterface $services ): array
 	{
-		foreach ([EventServices::BUS, AuditServices::LOGGER] as $serviceId) {
-			if (!$services->has($serviceId)) {
+		foreach ( [EventServices::BUS, AuditServices::LOGGER] as $serviceId ) {
+			if ( !$services->has( $serviceId ) ) {
 				throw new LogicException(sprintf('Status transitions require canonical shared service "%s".', $serviceId));
 			}
 		}
 
-		$events = $services->get(EventServices::BUS);
-		$audit = $services->get(AuditServices::LOGGER);
-		if (!$events instanceof EventBus) {
+		$events = $services->get( EventServices::BUS );
+		$audit = $services->get( AuditServices::LOGGER );
+		if ( !$events instanceof EventBus ) {
 			throw new LogicException('Status transitions require the canonical Platform EventBus.');
 		}
-		if (!$audit instanceof AuditLoggerInterface) {
+		if ( !$audit instanceof AuditLoggerInterface ) {
 			throw new LogicException('Status transitions require the canonical Platform Audit logger contract.');
 		}
 
 		return [$events, $audit];
 	}
 
-	private function assertOutputAvailable(ServiceRegistryInterface $services): void
+	private function assertOutputAvailable( ServiceRegistryInterface $services ): void
 	{
-		if ($services->has(self::SERVICE_TRANSITION_EXECUTOR)) {
+		if ( $services->has( self::SERVICE_TRANSITION_EXECUTOR ) ) {
 			throw new LogicException('Status transition-executor service is already registered.');
 		}
 	}
@@ -282,7 +282,7 @@ final class StatusModule implements ModuleInterface
 	 *   WordPressPostResourceAuthorizer
 	 * }
 	 */
-	private function requireSharedServices(ServiceRegistryInterface $services): array
+	private function requireSharedServices( ServiceRegistryInterface $services ): array
 	{
 		foreach (
 			[
@@ -292,26 +292,26 @@ final class StatusModule implements ModuleInterface
 				WordPressAuthorizationServices::POST_RESOURCES,
 			] as $serviceId
 		) {
-			if (!$services->has($serviceId)) {
+			if ( !$services->has( $serviceId ) ) {
 				throw new LogicException(sprintf('Status requires canonical shared service "%s".', $serviceId));
 			}
 		}
 
 		$definitions = $services->get('platform.definitions');
 		$abilities = $services->get('platform.abilities');
-		$capabilities = $services->get(WordPressAuthorizationServices::CAPABILITY_CHECKER);
-		$resources = $services->get(WordPressAuthorizationServices::POST_RESOURCES);
+		$capabilities = $services->get( WordPressAuthorizationServices::CAPABILITY_CHECKER );
+		$resources = $services->get( WordPressAuthorizationServices::POST_RESOURCES );
 
-		if (!$definitions instanceof DefinitionRepositoryInterface) {
+		if ( !$definitions instanceof DefinitionRepositoryInterface ) {
 			throw new LogicException('Status requires the canonical Definition repository contract.');
 		}
-		if (!$abilities instanceof AbilityRegistry) {
+		if ( !$abilities instanceof AbilityRegistry ) {
 			throw new LogicException('Status requires the canonical Ability registry.');
 		}
-		if (!$capabilities instanceof CapabilityCheckerInterface) {
+		if ( !$capabilities instanceof CapabilityCheckerInterface ) {
 			throw new LogicException('Status requires the canonical WordPress capability checker contract.');
 		}
-		if (!$resources instanceof WordPressPostResourceAuthorizer) {
+		if ( !$resources instanceof WordPressPostResourceAuthorizer ) {
 			throw new LogicException('Status requires the canonical WordPress post-resource authorizer.');
 		}
 

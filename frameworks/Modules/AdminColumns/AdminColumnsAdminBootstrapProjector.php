@@ -35,8 +35,8 @@ final readonly class AdminColumnsAdminBootstrapProjector
 	/** @return array<string,mixed> */
 	public function project(): array
 	{
-		$descriptor = $this->dataSources->find(WordPressPostsQueryCompiler::SOURCE_REF);
-		if (!$descriptor instanceof DataSourceDescriptor || !$descriptor->isAvailable()) {
+		$descriptor = $this->dataSources->find( WordPressPostsQueryCompiler::SOURCE_REF );
+		if ( !$descriptor instanceof DataSourceDescriptor || !$descriptor->isAvailable() ) {
 			return [
 				'surface' => 'columns',
 				'contractVersion' => self::CONTRACT_VERSION,
@@ -57,20 +57,20 @@ final readonly class AdminColumnsAdminBootstrapProjector
 	private function targets(): array
 	{
 		$targets = [];
-		foreach ($this->postTypes() as $key => $postType) {
+		foreach ( $this->postTypes() as $key => $postType ) {
 			$name = null;
 			$label = null;
-			if (is_object($postType)) {
+			if ( is_object( $postType ) ) {
 				$candidate = $postType->name ?? $key;
-				$name = is_string($candidate) ? $candidate : null;
+				$name = is_string( $candidate ) ? $candidate : null;
 				$labels = $postType->labels ?? null;
-				if (is_object($labels) && is_string($labels->name ?? null)) {
+				if ( is_object( $labels ) && is_string( $labels->name ?? null ) ) {
 					$label = $labels->name;
-				} elseif (is_string($postType->label ?? null)) {
+				} elseif ( is_string( $postType->label ?? null ) ) {
 					$label = $postType->label;
 				}
-			} elseif (is_string($postType)) {
-				$name = is_string($key) ? $key : $postType;
+			} elseif ( is_string( $postType ) ) {
+				$name = is_string( $key ) ? $key : $postType;
 				$label = $postType;
 			}
 
@@ -86,18 +86,18 @@ final readonly class AdminColumnsAdminBootstrapProjector
 			];
 		}
 
-		ksort($targets, SORT_STRING);
-		return array_slice(array_values($targets), 0, self::MAX_TARGETS);
+		ksort( $targets, SORT_STRING );
+		return array_slice( array_values( $targets ), 0, self::MAX_TARGETS );
 	}
 
 	/** @return list<array<string,mixed>> */
-	private function sources(DataSourceDescriptor $descriptor): array
+	private function sources( DataSourceDescriptor $descriptor ): array
 	{
 		$schema = $descriptor->fieldSchema;
-		ksort($schema, SORT_STRING);
+		ksort( $schema, SORT_STRING );
 		$sources = [];
-		foreach ($schema as $reference => $logicalType) {
-			if (!$this->identifier($reference) || !is_string($logicalType)) {
+		foreach ( $schema as $reference => $logicalType ) {
+			if ( !$this->identifier( $reference ) || !is_string( $logicalType ) ) {
 				continue;
 			}
 			$sources[] = [
@@ -107,7 +107,7 @@ final readonly class AdminColumnsAdminBootstrapProjector
 				'formats' => $this->formats($logicalType),
 				'capabilities' => $this->readOnlyCapabilities(),
 			];
-			if (count($sources) >= self::MAX_SOURCES) {
+			if ( count( $sources ) >= self::MAX_SOURCES ) {
 				break;
 			}
 		}
@@ -117,33 +117,33 @@ final readonly class AdminColumnsAdminBootstrapProjector
 	/** @return list<array<string,mixed>> */
 	private function optionalOwnerSources(): array
 	{
-		if (!$this->ownerSources instanceof AdminColumnsSourceCatalogInterface) {
+		if ( !$this->ownerSources instanceof AdminColumnsSourceCatalogInterface ) {
 			return [];
 		}
 
 		try {
 			$candidateSources = $this->ownerSources->adminColumnSources();
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return [];
 		}
 
 		$sources = [];
-		foreach ($candidateSources as $candidate) {
-			$source = $this->ownerSource($candidate);
-			if ($source === null) {
+		foreach ( $candidateSources as $candidate ) {
+			$source = $this->ownerSource( $candidate );
+			if ( $source === null ) {
 				continue;
 			}
 			$sources[$source['reference']] = $source;
-			if (count($sources) >= self::MAX_OWNER_SOURCES) {
+			if ( count( $sources ) >= self::MAX_OWNER_SOURCES ) {
 				break;
 			}
 		}
-		ksort($sources, SORT_STRING);
-		return array_values($sources);
+		ksort( $sources, SORT_STRING );
+		return array_values( $sources );
 	}
 
 	/** @param array<string,mixed> $candidate */
-	private function ownerSource(array $candidate): ?array
+	private function ownerSource( array $candidate ): ?array
 	{
 		$owner = $candidate['owner'] ?? null;
 		$reference = $candidate['reference'] ?? null;
@@ -151,30 +151,30 @@ final readonly class AdminColumnsAdminBootstrapProjector
 		$formats = $candidate['formats'] ?? null;
 		$capabilities = $candidate['capabilities'] ?? null;
 
-		if (!is_string($owner)
-			|| !in_array($owner, self::SAFE_OWNERS, true)
-			|| !$this->identifier($reference)
-			|| !is_string($label)
+		if ( !is_string( $owner )
+			|| !in_array( $owner, self::SAFE_OWNERS, true )
+			|| !$this->identifier( $reference )
+			|| !is_string( $label )
 			|| trim($label) === ''
-			|| !is_array($formats)
-			|| !array_is_list($formats)
+			|| !is_array( $formats )
+			|| !array_is_list( $formats )
 			|| $formats === []
-			|| !is_array($capabilities)
-			|| array_is_list($capabilities)
+			|| !is_array( $capabilities )
+			|| array_is_list( $capabilities )
 		) {
 			return null;
 		}
 
 		$safeFormats = [];
-		foreach ($formats as $format) {
-			if (!is_string($format) || !in_array($format, self::SAFE_FORMATS, true)) {
+		foreach ( $formats as $format ) {
+			if ( !is_string( $format ) || !in_array( $format, self::SAFE_FORMATS, true ) ) {
 				return null;
 			}
 			$safeFormats[$format] = true;
 		}
 
 		foreach (['sort', 'filter', 'edit', 'export'] as $capability) {
-			if (($capabilities[$capability] ?? null) !== false) {
+			if ( ( $capabilities[$capability] ?? null ) !== false ) {
 				return null;
 			}
 		}
@@ -191,7 +191,7 @@ final readonly class AdminColumnsAdminBootstrapProjector
 			'formats' => array_keys($safeFormats),
 			'capabilities' => $this->readOnlyCapabilities(),
 		];
-		if ($ownerMetadata !== null) {
+		if ( $ownerMetadata !== null ) {
 			$source['ownerMetadata'] = $ownerMetadata;
 		}
 
@@ -199,15 +199,15 @@ final readonly class AdminColumnsAdminBootstrapProjector
 	}
 
 	/** @return array<string,mixed>|null */
-	private function ownerMetadata(string $owner, string $reference, mixed $value): ?array
+	private function ownerMetadata( string $owner, string $reference, mixed $value ): ?array
 	{
 		if ($owner !== 'fields') {
 			return null;
 		}
-		if (!is_array($value) || array_is_list($value)) {
+		if ( !is_array( $value ) || array_is_list( $value ) ) {
 			return null;
 		}
-		foreach (array_keys($value) as $key) {
+		foreach ( array_keys( $value ) as $key ) {
 			if (!in_array($key, ['groupRevision', 'fieldUuid', 'logicalType', 'storageOwner', 'postTypes'], true)) {
 				return null;
 			}
@@ -219,32 +219,32 @@ final readonly class AdminColumnsAdminBootstrapProjector
 		$storageOwner = $value['storageOwner'] ?? null;
 		$postTypes = $value['postTypes'] ?? null;
 
-		if (!is_int($groupRevision)
+		if ( !is_int( $groupRevision )
 			|| $groupRevision < 1
-			|| !is_string($fieldUuid)
-			|| preg_match(self::UUID_PATTERN, $fieldUuid) !== 1
-			|| !is_string($logicalType)
+			|| !is_string( $fieldUuid )
+			|| preg_match( self::UUID_PATTERN, $fieldUuid ) !== 1
+			|| !is_string( $logicalType )
 			|| preg_match('/^[a-z0-9][a-z0-9_|<>.-]{0,63}$/', $logicalType) !== 1
 			|| $storageOwner !== 'native_post_meta'
-			|| !is_array($postTypes)
-			|| !array_is_list($postTypes)
+			|| !is_array( $postTypes )
+			|| !array_is_list( $postTypes )
 			|| $postTypes === []
-			|| count($postTypes) > self::MAX_TARGETS
-			|| !$this->fieldsReference($reference, $fieldUuid)
+			|| count( $postTypes ) > self::MAX_TARGETS
+			|| !$this->fieldsReference( $reference, $fieldUuid )
 		) {
 			return null;
 		}
 
 		$safePostTypes = [];
-		foreach ($postTypes as $postType) {
-			if (!is_string($postType)
+		foreach ( $postTypes as $postType ) {
+			if ( !is_string( $postType )
 				|| preg_match('/^[a-z0-9][a-z0-9_-]{0,19}$/', $postType) !== 1
 			) {
 				return null;
 			}
 			$safePostTypes[$postType] = true;
 		}
-		ksort($safePostTypes, SORT_STRING);
+		ksort( $safePostTypes, SORT_STRING );
 
 		return [
 			'groupRevision' => $groupRevision,
@@ -255,7 +255,7 @@ final readonly class AdminColumnsAdminBootstrapProjector
 		];
 	}
 
-	private function fieldsReference(string $reference, string $fieldUuid): bool
+	private function fieldsReference( string $reference, string $fieldUuid ): bool
 	{
 		return preg_match(
 			'/^fields\.[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.'
@@ -279,9 +279,9 @@ final readonly class AdminColumnsAdminBootstrapProjector
 	}
 
 	/** @return list<string> */
-	private function formats(string $logicalType): array
+	private function formats( string $logicalType ): array
 	{
-		return match ($logicalType) {
+		return match ( $logicalType ) {
 			'integer', 'number', 'float' => ['number', 'text'],
 			'datetime', 'date' => ['date', 'text'],
 			'boolean', 'bool' => ['boolean', 'text'],
@@ -292,30 +292,30 @@ final readonly class AdminColumnsAdminBootstrapProjector
 	/** @return array<mixed> */
 	private function postTypes(): array
 	{
-		if ($this->postTypeProvider instanceof Closure) {
+		if ( $this->postTypeProvider instanceof Closure ) {
 			$value = ($this->postTypeProvider)();
-			return is_array($value) ? $value : [];
+			return is_array( $value ) ? $value : [];
 		}
 		if (!function_exists('get_post_types')) {
 			return [];
 		}
 		$value = get_post_types(['show_ui' => true], 'objects');
-		return is_array($value) ? $value : [];
+		return is_array( $value ) ? $value : [];
 	}
 
-	private function identifier(mixed $value): bool
+	private function identifier( mixed $value ): bool
 	{
-		return is_string($value)
+		return is_string( $value )
 			&& preg_match('/^[a-z0-9][a-z0-9._:-]{0,191}$/', $value) === 1;
 	}
 
-	private function label(string $reference): string
+	private function label( string $reference ): string
 	{
 		return $this->boundedLabel(ucwords(str_replace(['.', '_', '-'], ' ', $reference)));
 	}
 
-	private function boundedLabel(string $label): string
+	private function boundedLabel( string $label ): string
 	{
-		return substr($label, 0, self::MAX_LABEL_BYTES);
+		return substr( $label, 0, self::MAX_LABEL_BYTES );
 	}
 }

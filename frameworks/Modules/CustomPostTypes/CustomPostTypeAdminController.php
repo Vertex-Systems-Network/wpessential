@@ -65,14 +65,14 @@ final class CustomPostTypeAdminController
 		$this->hookSuffix = is_string($hook) && $hook !== '' ? $hook : null;
 	}
 
-	public function enqueueAssets(string $hookSuffix): void
+	public function enqueueAssets( string $hookSuffix ): void
 	{
-		if ($this->hookSuffix === null || $hookSuffix !== $this->hookSuffix) {
+		if ( $this->hookSuffix === null || $hookSuffix !== $this->hookSuffix ) {
 			return;
 		}
 
 		$entry = $this->assets->entry();
-		if ($entry === null) {
+		if ( $entry === null ) {
 			return;
 		}
 
@@ -120,8 +120,8 @@ final class CustomPostTypeAdminController
 			'definitions' => $definitions,
 		];
 		$json = function_exists('wp_json_encode')
-			? wp_json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
-			: json_encode($bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+			? wp_json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT )
+			: json_encode( $bootstrap, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
 		$json = is_string($json) ? $json : '{}';
 
 		echo '<div class="wrap wpessential-admin-wrap">';
@@ -129,13 +129,13 @@ final class CustomPostTypeAdminController
 		echo '<h1 id="wpessential-cpt-title">' . esc_html__('Custom Post Types', 'wpessential') . '</h1>';
 		echo '<p>' . esc_html__('Create and manage canonical WPEssential post type definitions. Changes are revision-safe and pass through the shared Policy and Ability layer.', 'wpessential') . '</p>';
 
-		if ($readError !== null) {
+		if ( $readError !== null ) {
 			echo '<div class="notice notice-error inline" role="alert"><p>' . esc_html($readError) . '</p></div>';
 		}
 
 		echo '<div id="wpessential-cpt-notice" class="notice inline wpessential-cpt-notice" role="status" aria-live="polite" hidden><p></p></div>';
 		$this->renderEditor();
-		$this->renderDefinitions($definitions);
+		$this->renderDefinitions( $definitions );
 		echo '<noscript><p class="notice notice-warning inline">' . esc_html__('JavaScript is required to create or change Custom Post Type definitions. Existing definitions remain readable in the table.', 'wpessential') . '</p></noscript>';
 		echo '</section>';
 		echo '<script id="wpessential-admin-bootstrap" type="application/json">' . $json . '</script>';
@@ -164,7 +164,7 @@ final class CustomPostTypeAdminController
 		echo '</fieldset>';
 
 		echo '<fieldset class="wpessential-cpt-options"><legend>' . esc_html__('Editor supports', 'wpessential') . '</legend>';
-		foreach ([
+		foreach ( [
 			'title' => __('Title', 'wpessential'),
 			'editor' => __('Editor', 'wpessential'),
 			'thumbnail' => __('Featured image', 'wpessential'),
@@ -173,7 +173,7 @@ final class CustomPostTypeAdminController
 			'comments' => __('Comments', 'wpessential'),
 			'revisions' => __('Revisions', 'wpessential'),
 			'page-attributes' => __('Page attributes', 'wpessential'),
-		] as $support => $label) {
+		] as $support => $label ) {
 			$checked = in_array($support, ['title', 'editor'], true);
 			echo '<label><input type="checkbox" data-wpessential-cpt-support="' . esc_attr($support) . '"' . checked($checked, true, false) . '> ' . esc_html($label) . '</label>';
 		}
@@ -181,12 +181,12 @@ final class CustomPostTypeAdminController
 
 		echo '<p><label for="wpessential-cpt-status"><strong>' . esc_html__('Lifecycle status', 'wpessential') . '</strong></label><br>';
 		echo '<select id="wpessential-cpt-status">';
-		foreach ([
+		foreach ( [
 			'draft' => __('Draft', 'wpessential'),
 			'published' => __('Published', 'wpessential'),
 			'disabled' => __('Disabled', 'wpessential'),
 			'archived' => __('Archived', 'wpessential'),
-		] as $value => $label) {
+		] as $value => $label ) {
 			echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
 		}
 		echo '</select></p>';
@@ -207,7 +207,7 @@ final class CustomPostTypeAdminController
 	}
 
 	/** @param list<array<string,mixed>> $definitions */
-	private function renderDefinitions(array $definitions): void
+	private function renderDefinitions( array $definitions ): void
 	{
 		echo '<section class="wpessential-cpt-panel" aria-labelledby="wpessential-cpt-list-title">';
 		echo '<div class="wpessential-cpt-list-heading"><h2 id="wpessential-cpt-list-title">' . esc_html__('Saved custom post types', 'wpessential') . '</h2>';
@@ -215,10 +215,10 @@ final class CustomPostTypeAdminController
 		echo '<table class="widefat striped" id="wpessential-cpt-table" aria-label="' . esc_attr__('Saved custom post types', 'wpessential') . '">';
 		echo '<thead><tr><th scope="col">' . esc_html__('Name', 'wpessential') . '</th><th scope="col">' . esc_html__('Key', 'wpessential') . '</th><th scope="col">' . esc_html__('Status', 'wpessential') . '</th><th scope="col">' . esc_html__('Revision', 'wpessential') . '</th><th scope="col">' . esc_html__('Actions', 'wpessential') . '</th></tr></thead>';
 		echo '<tbody id="wpessential-cpt-rows">';
-		foreach ($definitions as $definition) {
-			$this->renderDefinitionRow($definition);
+		foreach ( $definitions as $definition ) {
+			$this->renderDefinitionRow( $definition );
 		}
-		if ($definitions === []) {
+		if ( $definitions === [] ) {
 			echo '<tr data-wpessential-cpt-empty><td colspan="5">' . esc_html__('No custom post types have been created yet.', 'wpessential') . '</td></tr>';
 		}
 		echo '</tbody></table>';
@@ -226,7 +226,7 @@ final class CustomPostTypeAdminController
 	}
 
 	/** @param array<string,mixed> $definition */
-	private function renderDefinitionRow(array $definition): void
+	private function renderDefinitionRow( array $definition ): void
 	{
 		$payload = is_array($definition['payload'] ?? null) ? $definition['payload'] : [];
 		$id = is_string($definition['id'] ?? null) ? $definition['id'] : '';
@@ -269,7 +269,7 @@ final class CustomPostTypeAdminController
 		echo '</p>';
 	}
 
-	private function renderCheckbox(string $id, string $label, bool $checkedByDefault): void
+	private function renderCheckbox( string $id, string $label, bool $checkedByDefault ): void
 	{
 		echo '<label for="' . esc_attr($id) . '"><input type="checkbox" id="' . esc_attr($id) . '"' . checked($checkedByDefault, true, false) . '> ' . esc_html($label) . '</label>';
 	}
@@ -293,14 +293,14 @@ final class CustomPostTypeAdminController
 
 			$definitions = [];
 			foreach ($result['definitions'] as $definition) {
-				if (!is_array($definition)) {
+				if ( !is_array( $definition ) ) {
 					return [[], __('The Custom Post Type list returned an invalid response.', 'wpessential')];
 				}
 				$definitions[] = $definition;
 			}
 
 			return [$definitions, null];
-		} catch (Throwable) {
+		} catch ( Throwable ) {
 			return [[], __('Custom Post Type definitions could not be loaded.', 'wpessential')];
 		}
 	}

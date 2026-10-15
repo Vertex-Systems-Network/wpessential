@@ -35,11 +35,11 @@ final readonly class QueryFieldAwareAstValidator
 	): QueryValidationResult {
 		$fieldNodes = [];
 		$this->collectFieldNodes($ast['filter'] ?? null, '$.filter', $fieldNodes);
-		if ($fieldNodes === []) {
-			return $this->canonical($this->dataSources)->validate($ast, $budget, $context);
+		if ( $fieldNodes === [] ) {
+			return $this->canonical( $this->dataSources )->validate( $ast, $budget, $context );
 		}
 
-		if ($context === null) {
+		if ( $context === null ) {
 			return new QueryValidationResult(null, [new QueryValidationIssue(
 				'wpe_query_dependency_unavailable',
 				'$.filter',
@@ -49,19 +49,19 @@ final readonly class QueryFieldAwareAstValidator
 
 		$source = $ast['source'] ?? null;
 		$sourceRef = is_array($source) ? ($source['source_ref'] ?? null) : null;
-		if (!is_string($sourceRef)) {
-			return $this->canonical($this->dataSources)->validate($ast, $budget, $context);
+		if ( !is_string( $sourceRef ) ) {
+			return $this->canonical( $this->dataSources )->validate( $ast, $budget, $context );
 		}
 
-		$descriptor = $this->dataSources->find($sourceRef);
-		if (!$descriptor instanceof DataSourceDescriptor) {
-			return $this->canonical($this->dataSources)->validate($ast, $budget, $context);
+		$descriptor = $this->dataSources->find( $sourceRef );
+		if ( !$descriptor instanceof DataSourceDescriptor ) {
+			return $this->canonical( $this->dataSources )->validate( $ast, $budget, $context );
 		}
 
 		$fieldSchema = $descriptor->fieldSchema;
 		$ownerRefs = [];
 		$issues = [];
-		foreach ($fieldNodes as $node) {
+		foreach ( $fieldNodes as $node ) {
 			$fieldRef = $node['field_ref'];
 			$operator = $node['operator'];
 			if (!is_string($fieldRef) || preg_match('/^[a-z][a-z0-9._-]{0,127}$/', $fieldRef) !== 1) {
@@ -69,8 +69,8 @@ final readonly class QueryFieldAwareAstValidator
 			}
 
 			try {
-				$description = $this->fields->describe($fieldRef, $context);
-			} catch (Throwable) {
+				$description = $this->fields->describe( $fieldRef, $context );
+			} catch ( Throwable ) {
 				$issues[] = new QueryValidationIssue(
 					'wpe_query_dependency_unavailable',
 					$node['path'] . '.field_ref',
@@ -96,12 +96,12 @@ final readonly class QueryFieldAwareAstValidator
 			$maxResultIds = $description['max_result_ids'] ?? null;
 			$storageOwner = $description['storage_owner'] ?? null;
 			if (
-				!is_string($logicalType)
-				|| !in_array($logicalType, self::CERTIFIED_LOGICAL_TYPES, true)
-				|| !is_array($operators)
-				|| !array_is_list($operators)
-				|| !is_int($maxCandidateIds)
-				|| !is_int($maxResultIds)
+				!is_string( $logicalType )
+				|| !in_array( $logicalType, self::CERTIFIED_LOGICAL_TYPES, true )
+				|| !is_array( $operators )
+				|| !array_is_list( $operators )
+				|| !is_int( $maxCandidateIds )
+				|| !is_int( $maxResultIds )
 				|| $maxCandidateIds < 1
 				|| $maxResultIds < 1
 				|| $maxCandidateIds > FieldQueryConsumerInterface::MAX_CANDIDATE_IDS
@@ -116,7 +116,7 @@ final readonly class QueryFieldAwareAstValidator
 				continue;
 			}
 
-			foreach ($operators as $supportedOperator) {
+			foreach ( $operators as $supportedOperator ) {
 				if (!is_string($supportedOperator) || $supportedOperator === '') {
 					$issues[] = new QueryValidationIssue(
 						'wpe_query_dependency_unavailable',
@@ -127,7 +127,7 @@ final readonly class QueryFieldAwareAstValidator
 				}
 			}
 
-			if (is_string($operator) && !in_array($operator, $operators, true)) {
+			if ( is_string( $operator ) && !in_array( $operator, $operators, true ) ) {
 				$issues[] = new QueryValidationIssue(
 					'wpe_query_unsupported_operator',
 					$node['path'] . '.operator',
@@ -140,18 +140,18 @@ final readonly class QueryFieldAwareAstValidator
 			$ownerRefs[$fieldRef] = true;
 		}
 
-		if ($issues !== []) {
-			return new QueryValidationResult(null, $issues);
+		if ( $issues !== [] ) {
+			return new QueryValidationResult( null, $issues );
 		}
 
-		$escapeIssues = $this->ownerReferenceEscapeIssues($ast, $ownerRefs);
-		if ($escapeIssues !== []) {
-			return new QueryValidationResult(null, $escapeIssues);
+		$escapeIssues = $this->ownerReferenceEscapeIssues( $ast, $ownerRefs );
+		if ( $escapeIssues !== [] ) {
+			return new QueryValidationResult( null, $escapeIssues );
 		}
 
 		try {
-			$projectedDescriptor = $this->withFieldSchema($descriptor, $fieldSchema);
-		} catch (Throwable) {
+			$projectedDescriptor = $this->withFieldSchema( $descriptor, $fieldSchema );
+		} catch ( Throwable ) {
 			return new QueryValidationResult(null, [new QueryValidationIssue(
 				'wpe_query_dependency_unavailable',
 				'$.filter',
@@ -159,17 +159,17 @@ final readonly class QueryFieldAwareAstValidator
 			)]);
 		}
 
-		$registry = new QueryFieldValidationRegistry($this->dataSources, $sourceRef, $projectedDescriptor);
-		return $this->canonical($registry)->validate($ast, $budget, $context);
+		$registry = new QueryFieldValidationRegistry( $this->dataSources, $sourceRef, $projectedDescriptor );
+		return $this->canonical( $registry )->validate( $ast, $budget, $context );
 	}
 
 	/**
      * @param mixed $node
      * @param list<array{path:string,field_ref:mixed,operator:mixed}> $fieldNodes
      */
-	private function collectFieldNodes(mixed $node, string $path, array &$fieldNodes): void
+	private function collectFieldNodes( mixed $node, string $path, array &$fieldNodes ): void
 	{
-		if (!is_array($node)) {
+		if ( !is_array( $node ) ) {
 			return;
 		}
 
@@ -182,10 +182,10 @@ final readonly class QueryFieldAwareAstValidator
 		}
 
 		$children = $node['children'] ?? null;
-		if (!is_array($children) || !array_is_list($children)) {
+		if ( !is_array( $children ) || !array_is_list( $children ) ) {
 			return;
 		}
-		foreach ($children as $index => $child) {
+		foreach ( $children as $index => $child ) {
 			$this->collectFieldNodes($child, $path . '.children[' . $index . ']', $fieldNodes);
 		}
 	}
@@ -195,17 +195,17 @@ final readonly class QueryFieldAwareAstValidator
      * @param array<string,bool> $ownerRefs
      * @return list<QueryValidationIssue>
      */
-	private function ownerReferenceEscapeIssues(array $ast, array $ownerRefs): array
+	private function ownerReferenceEscapeIssues( array $ast, array $ownerRefs ): array
 	{
-		if ($ownerRefs === []) {
+		if ( $ownerRefs === [] ) {
 			return [];
 		}
 
 		$issues = [];
 		$projection = $ast['projection'] ?? null;
-		if (is_array($projection) && array_is_list($projection)) {
-			foreach ($projection as $index => $fieldRef) {
-				if (is_string($fieldRef) && isset($ownerRefs[$fieldRef])) {
+		if ( is_array( $projection ) && array_is_list( $projection ) ) {
+			foreach ( $projection as $index => $fieldRef ) {
+				if ( is_string( $fieldRef ) && isset( $ownerRefs[$fieldRef] ) ) {
 					$issues[] = new QueryValidationIssue(
 						'wpe_query_unsupported_operator',
 						'$.projection[' . $index . ']',
@@ -216,10 +216,10 @@ final readonly class QueryFieldAwareAstValidator
 		}
 
 		$orderBy = $ast['order_by'] ?? null;
-		if (is_array($orderBy) && array_is_list($orderBy)) {
-			foreach ($orderBy as $index => $clause) {
+		if ( is_array( $orderBy ) && array_is_list( $orderBy ) ) {
+			foreach ( $orderBy as $index => $clause ) {
 				$fieldRef = is_array($clause) ? ($clause['field_ref'] ?? null) : null;
-				if (is_string($fieldRef) && isset($ownerRefs[$fieldRef])) {
+				if ( is_string( $fieldRef ) && isset( $ownerRefs[$fieldRef] ) ) {
 					$issues[] = new QueryValidationIssue(
 						'wpe_query_unsupported_operator',
 						'$.order_by[' . $index . '].field_ref',
@@ -238,9 +238,9 @@ final readonly class QueryFieldAwareAstValidator
      * @param array<string,bool> $ownerRefs
      * @param list<QueryValidationIssue> $issues
      */
-	private function scanFilterForEscapes(mixed $node, string $path, array $ownerRefs, array &$issues): void
+	private function scanFilterForEscapes( mixed $node, string $path, array $ownerRefs, array &$issues ): void
 	{
-		if (!is_array($node)) {
+		if ( !is_array( $node ) ) {
 			return;
 		}
 
@@ -255,16 +255,16 @@ final readonly class QueryFieldAwareAstValidator
 		}
 
 		$children = $node['children'] ?? null;
-		if (!is_array($children) || !array_is_list($children)) {
+		if ( !is_array( $children ) || !array_is_list( $children ) ) {
 			return;
 		}
-		foreach ($children as $index => $child) {
+		foreach ( $children as $index => $child ) {
 			$this->scanFilterForEscapes($child, $path . '.children[' . $index . ']', $ownerRefs, $issues);
 		}
 	}
 
 	/** @param array<string,string> $fieldSchema */
-	private function withFieldSchema(DataSourceDescriptor $descriptor, array $fieldSchema): DataSourceDescriptor
+	private function withFieldSchema( DataSourceDescriptor $descriptor, array $fieldSchema ): DataSourceDescriptor
 	{
 		return new DataSourceDescriptor(
 			id: $descriptor->id,
@@ -289,8 +289,8 @@ final readonly class QueryFieldAwareAstValidator
 		);
 	}
 
-	private function canonical(DataSourceRegistryInterface $registry): QueryAstValidator
+	private function canonical( DataSourceRegistryInterface $registry ): QueryAstValidator
 	{
-		return new QueryAstValidator($registry, $this->relations);
+		return new QueryAstValidator( $registry, $this->relations );
 	}
 }

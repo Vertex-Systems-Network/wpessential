@@ -44,7 +44,7 @@ final class TaxonomyModule implements ModuleInterface
 		);
 	}
 
-	public function register(ServiceRegistryInterface $services): void
+	public function register( ServiceRegistryInterface $services ): void
 	{
 		$definitions = $services->get('platform.definitions');
 		$providers = $services->get('platform.registrations.providers');
@@ -53,37 +53,37 @@ final class TaxonomyModule implements ModuleInterface
 		$abilityBridge = $services->get('platform.abilities.wordpress');
 		$abilityContexts = $services->get('platform.abilities.contexts');
 		$ajaxRoutes = $services->get('platform.ajax.routes');
-		if (!$definitions instanceof DefinitionRepositoryInterface) {
+		if ( !$definitions instanceof DefinitionRepositoryInterface ) {
 			throw new LogicException('Taxonomies requires the shared Definition Repository.');
 		}
-		if (!$providers instanceof RegistrationDefinitionProviderRegistry) {
+		if ( !$providers instanceof RegistrationDefinitionProviderRegistry ) {
 			throw new LogicException('Taxonomies requires the shared registration provider registry.');
 		}
-		if (!$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar) {
+		if ( !$taxonomyRegistrar instanceof TaxonomyRuntimeRegistrar ) {
 			throw new LogicException('Taxonomies requires the shared Taxonomy runtime registrar.');
 		}
-		if (!$abilities instanceof AbilityRegistry) {
+		if ( !$abilities instanceof AbilityRegistry ) {
 			throw new LogicException('Taxonomies requires the shared Ability Registry.');
 		}
-		if (!$abilityBridge instanceof WordPressAbilityBridge) {
+		if ( !$abilityBridge instanceof WordPressAbilityBridge ) {
 			throw new LogicException('Taxonomies requires the shared WordPress Ability bridge.');
 		}
-		if (!$abilityContexts instanceof WordPressExecutionContextFactory) {
+		if ( !$abilityContexts instanceof WordPressExecutionContextFactory ) {
 			throw new LogicException('Taxonomies requires the shared WordPress execution context factory.');
 		}
-		if (!$ajaxRoutes instanceof AjaxRouteRegistry) {
+		if ( !$ajaxRoutes instanceof AjaxRouteRegistry ) {
 			throw new LogicException('Taxonomies requires the shared AJAX route registry.');
 		}
 
-		$projector = new TaxonomyDefinitionProjector($taxonomyRegistrar->providers());
-		$provider = new TaxonomyRegistrationProvider($definitions, $projector);
-		$validation = new TaxonomyValidationService($definitions, $projector);
-		$roleImpact = new TaxonomyRoleImpactReadModel(services: $services);
+		$projector = new TaxonomyDefinitionProjector( $taxonomyRegistrar->providers() );
+		$provider = new TaxonomyRegistrationProvider( $definitions, $projector );
+		$validation = new TaxonomyValidationService( $definitions, $projector );
+		$roleImpact = new TaxonomyRoleImpactReadModel( services: $services );
 		$cptUiMapper = new TaxonomyCptUiImportMapper();
-		$cptUiPreview = new TaxonomyCptUiImportPreviewService($cptUiMapper, $validation);
-		$keyMigrationPreview = new TaxonomyKeyMigrationPreviewService($definitions, $projector);
+		$cptUiPreview = new TaxonomyCptUiImportPreviewService( $cptUiMapper, $validation );
+		$keyMigrationPreview = new TaxonomyKeyMigrationPreviewService( $definitions, $projector );
 		$rewriteRefresh = new TaxonomyRewriteRefreshCoordinator();
-		$providers->register($provider);
+		$providers->register( $provider );
 		$services->set('module.taxonomies.projector', $projector);
 		$services->set('module.taxonomies.registration-provider', $provider);
 		$services->set('module.taxonomies.validation', $validation);
@@ -104,10 +104,10 @@ final class TaxonomyModule implements ModuleInterface
 			$keyMigrationPreview,
 			$rewriteRefresh,
 		);
-		$this->registerAjaxRoutes($ajaxRoutes, $abilities, $abilityContexts);
+		$this->registerAjaxRoutes( $ajaxRoutes, $abilities, $abilityContexts );
 	}
 
-	public function boot(ServiceRegistryInterface $services): void
+	public function boot( ServiceRegistryInterface $services ): void
 	{
 		$abilities = $services->get('platform.abilities');
 		$contexts = $services->get('platform.abilities.contexts');
@@ -117,7 +117,7 @@ final class TaxonomyModule implements ModuleInterface
 		$taxonomyRegistrar = $services->get('platform.registrations.taxonomies');
 		$rewriteRefresh = $services->get('module.taxonomies.rewrite-refresh');
 
-		if (!$abilities instanceof AbilityRegistry
+		if ( !$abilities instanceof AbilityRegistry
 			|| !$contexts instanceof WordPressExecutionContextFactory
 			|| !$ajax instanceof AjaxDispatcher
 			|| !$gateway instanceof WordPressAjaxGateway
@@ -130,7 +130,7 @@ final class TaxonomyModule implements ModuleInterface
 
 		add_action('wp_loaded', $rewriteRefresh->flushPending(...), 99);
 
-		$objectTypes = new TaxonomyObjectTypeCatalog($abilities, $contexts);
+		$objectTypes = new TaxonomyObjectTypeCatalog( $abilities, $contexts );
 		$services->set('module.taxonomies.object-types', $objectTypes);
 
 		$admin = new TaxonomyAdminController(
@@ -142,7 +142,7 @@ final class TaxonomyModule implements ModuleInterface
 			runtimeProviders: $taxonomyRegistrar->providers(),
 			ajaxAction: $gateway->action(),
 		);
-		$previewBridge = new TaxonomyCptUiImportPreviewAdminBridge($ajax);
+		$previewBridge = new TaxonomyCptUiImportPreviewAdminBridge( $ajax );
 		$services->set('module.taxonomies.admin', $admin);
 		$services->set('module.taxonomies.cptui-preview-admin', $previewBridge);
 		$admin->register();
@@ -240,7 +240,7 @@ final class TaxonomyModule implements ModuleInterface
 				],
 				outputSchema: $outputSchema,
 			),
-			new TaxonomyValidationAbilityHandler($validation, $roleImpact),
+			new TaxonomyValidationAbilityHandler( $validation, $roleImpact ),
 			'Validate taxonomy',
 			'Preflights a Taxonomy candidate without mutating canonical definitions or runtime registration.',
 		);
@@ -264,7 +264,7 @@ final class TaxonomyModule implements ModuleInterface
 				],
 				outputSchema: $outputSchema,
 			),
-			new TaxonomyKeyMigrationPreviewAbilityHandler($keyMigrationPreview),
+			new TaxonomyKeyMigrationPreviewAbilityHandler( $keyMigrationPreview ),
 			'Preview taxonomy-key migration',
 			'Builds a read-only taxonomy-key migration impact and recovery plan without changing Definitions, terms, relationships, or rewrite rules.',
 		);
@@ -287,7 +287,7 @@ final class TaxonomyModule implements ModuleInterface
 				],
 				outputSchema: $outputSchema,
 			),
-			new TaxonomyCptUiImportPreviewAbilityHandler($cptUiPreview),
+			new TaxonomyCptUiImportPreviewAbilityHandler( $cptUiPreview ),
 			'Preview CPT UI taxonomy import',
 			'Maps one CPT UI taxonomy record into a canonical Taxonomy payload and validates it without persisting a Definition.',
 		);
@@ -312,7 +312,7 @@ final class TaxonomyModule implements ModuleInterface
 				],
 				outputSchema: $outputSchema,
 			),
-			new TaxonomyCptUiImportCommitAbilityHandler($cptUiPreview, $saveHandler),
+			new TaxonomyCptUiImportCommitAbilityHandler( $cptUiPreview, $saveHandler ),
 			'Commit CPT UI taxonomy import',
 			'Remaps and validates one CPT UI taxonomy record before delegating create or revision-safe update to the canonical Surface 2 save path.',
 		);
@@ -416,7 +416,7 @@ final class TaxonomyModule implements ModuleInterface
 		string $label,
 		string $description,
 	): void {
-		$abilities->register($descriptor, $handler);
+		$abilities->register( $descriptor, $handler );
 		$bridge->expose(new WordPressAbilityExposure(
 			internalName: $descriptor->name,
 			label: $label,
@@ -450,7 +450,7 @@ final class TaxonomyModule implements ModuleInterface
 	): void {
 		$routes->register(new AjaxRoute(
 			type: $type,
-			handler: new AbilityAjaxHandler($abilities, $abilityName, $contexts),
+			handler: new AbilityAjaxHandler( $abilities, $abilityName, $contexts ),
 			operation: $operation,
 			capability: self::CAPABILITY,
 			allowGuests: false,
