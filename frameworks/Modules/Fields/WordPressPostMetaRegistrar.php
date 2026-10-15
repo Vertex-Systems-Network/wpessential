@@ -30,11 +30,11 @@ final class WordPressPostMetaRegistrar
 	private PostMetaRegistrationOwnershipGuard $ownership;
 
 	/**
-     * @param null|callable(string,string,array<string,mixed>):bool $registerPostMeta
-     * @param null|callable(string,string):bool $postTypeSupports
-     * @param null|callable(string,string):array<string,array<string,mixed>> $getRegisteredMetaKeys
-     * @param null|callable(string,string,string):bool $unregisterMetaKey
-     */
+	 * @param null|callable(string,string,array<string,mixed>):bool $registerPostMeta
+	 * @param null|callable(string,string):bool $postTypeSupports
+	 * @param null|callable(string,string):array<string,array<string,mixed>> $getRegisteredMetaKeys
+	 * @param null|callable(string,string,string):bool $unregisterMetaKey
+	 */
 	public function __construct(
 		?callable $registerPostMeta = null,
 		?callable $postTypeSupports = null,
@@ -82,15 +82,15 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * Validate one registration contract and its current WordPress ownership state without mutating registration state.
-     *
-     * @param array{
-     *     post_type:string,
-     *     field_uuid:string,
-     *     meta_key:string,
-     *     args:array<string,mixed>
-     * } $registration
-     */
+	 * Validate one registration contract and its current WordPress ownership state without mutating registration state.
+	 *
+	 * @param array{
+	 *     post_type:string,
+	 *     field_uuid:string,
+	 *     meta_key:string,
+	 *     args:array<string,mixed>
+	 * } $registration
+	 */
 	public function preflight(array $registration): bool
 	{
 		[$postType, $metaKey, $args] = $this->contract($registration);
@@ -102,21 +102,21 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * Register a complete plan after one fail-closed batch preflight phase.
-     *
-     * The batch preflight snapshots global post scope once, each targeted subtype once, and caches
-     * required post-type feature checks per pair. Every tuple is then revalidated against live
-     * request-local WordPress registry/support state immediately before its possible mutation.
-     * This preserves the legacy fail-closed behavior when an earlier register_post_meta() callback
-     * changes a later tuple while still removing the previous full-plan per-registration snapshots.
-     *
-     * @param list<array{
-     *     post_type:string,
-     *     field_uuid:string,
-     *     meta_key:string,
-     *     args:array<string,mixed>
-     * }> $registrations
-     */
+	 * Register a complete plan after one fail-closed batch preflight phase.
+	 *
+	 * The batch preflight snapshots global post scope once, each targeted subtype once, and caches
+	 * required post-type feature checks per pair. Every tuple is then revalidated against live
+	 * request-local WordPress registry/support state immediately before its possible mutation.
+	 * This preserves the legacy fail-closed behavior when an earlier register_post_meta() callback
+	 * changes a later tuple while still removing the previous full-plan per-registration snapshots.
+	 *
+	 * @param list<array{
+	 *     post_type:string,
+	 *     field_uuid:string,
+	 *     meta_key:string,
+	 *     args:array<string,mixed>
+	 * }> $registrations
+	 */
 	public function registerBatch(array $registrations): void
 	{
 		if (!array_is_list($registrations)) {
@@ -193,13 +193,13 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * @param array{
-     *     post_type:string,
-     *     field_uuid:string,
-     *     meta_key:string,
-     *     args:array<string,mixed>
-     * } $registration
-     */
+	 * @param array{
+	 *     post_type:string,
+	 *     field_uuid:string,
+	 *     meta_key:string,
+	 *     args:array<string,mixed>
+	 * } $registration
+	 */
 	public function assertOwned(array $registration): void
 	{
 		[$postType, $metaKey] = $this->contract($registration);
@@ -227,28 +227,28 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * @param array{
-     *     post_type:string,
-     *     field_uuid:string,
-     *     meta_key:string,
-     *     args:array<string,mixed>
-     * } $registration
-     */
+	 * @param array{
+	 *     post_type:string,
+	 *     field_uuid:string,
+	 *     meta_key:string,
+	 *     args:array<string,mixed>
+	 * } $registration
+	 */
 	public function register(array $registration): void
 	{
 		$this->registerBatch([$registration]);
 	}
 
 	/**
-     * Retire only a subtype registration whose immutable Field owner and structural shape are still provably WPE-owned.
-     *
-     * @param array{
-     *     post_type:string,
-     *     field_uuid:string,
-     *     meta_key:string,
-     *     args:array<string,mixed>
-     * } $registration
-     */
+	 * Retire only a subtype registration whose immutable Field owner and structural shape are still provably WPE-owned.
+	 *
+	 * @param array{
+	 *     post_type:string,
+	 *     field_uuid:string,
+	 *     meta_key:string,
+	 *     args:array<string,mixed>
+	 * } $registration
+	 */
 	public function retire(array $registration): void
 	{
 		$this->assertOwned($registration);
@@ -266,9 +266,9 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * @param array<string,mixed> $registration
-     * @return array{0:string,1:string,2:array<string,mixed>}
-     */
+	 * @param array<string,mixed> $registration
+	 * @return array{0:string,1:string,2:array<string,mixed>}
+	 */
 	private function contract(array $registration): array
 	{
 		$postType = $registration['post_type'] ?? null;
@@ -282,8 +282,8 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * @param array<string,bool>|null $supportCache
-     */
+	 * @param array<string,bool>|null $supportCache
+	 */
 	private function assertRequiredSupports(
 		string $postType,
 		string $metaKey,
@@ -326,8 +326,8 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * @return array{0:null|array<string,mixed>,1:null|array<string,mixed>}
-     */
+	 * @return array{0:null|array<string,mixed>,1:null|array<string,mixed>}
+	 */
 	private function ownershipState(string $postType, string $metaKey): array
 	{
 		$globalKeys = ($this->getRegisteredMetaKeys)('post', '');
@@ -340,9 +340,9 @@ final class WordPressPostMetaRegistrar
 	}
 
 	/**
-     * @param array<string,array<string,mixed>> $registered
-     * @return null|array<string,mixed>
-     */
+	 * @param array<string,array<string,mixed>> $registered
+	 * @return null|array<string,mixed>
+	 */
 	private function existingRegistration(array $registered, string $metaKey, string $scope): ?array
 	{
 		if (!array_key_exists($metaKey, $registered)) {
