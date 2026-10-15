@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace WPEssential\Contracts;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 use WPEssential\Platform\Auth\ExecutionContext;
 
 interface FieldQueryConsumerInterface
 {
-    public const CONTRACT_VERSION = 1;
-    public const MAX_CANDIDATE_IDS = 100;
-    public const MAX_RESULT_IDS = 100;
+	public const CONTRACT_VERSION = 1;
+	public const MAX_CANDIDATE_IDS = 100;
+	public const MAX_RESULT_IDS = 100;
 
-    /**
+	/**
      * @return array{
      *     contract_version:int,
      *     field_ref:string,
@@ -29,18 +29,18 @@ interface FieldQueryConsumerInterface
      *     storage_owner:string
      * }
      */
-    public function describe(string $fieldReference, ExecutionContext $context): array;
+	public function describe(string $fieldReference, ExecutionContext $context): array;
 
-    /**
+	/**
      * @param list<int> $candidatePostIds
      * @return list<int>
      */
-    public function matchingPostIds(
-        string $fieldReference,
-        string $operator,
-        mixed $value,
-        array $candidatePostIds,
-        int $limit,
-        ExecutionContext $context,
-    ): array;
+	public function matchingPostIds(
+		string $fieldReference,
+		string $operator,
+		mixed $value,
+		array $candidatePostIds,
+		int $limit,
+		ExecutionContext $context,
+	): array;
 }

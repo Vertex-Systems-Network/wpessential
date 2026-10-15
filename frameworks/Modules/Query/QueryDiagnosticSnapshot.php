@@ -36,15 +36,15 @@ final readonly class QueryDiagnosticSnapshot {
 	 * @param string $cacheReason Cache eligibility reason.
 	 */
 	public function __construct(
-        public string $queryKey,
-        public int $queryRevision,
-        public string $sourceRef,
-        public int $sourceCapabilityVersion,
-        public int $pageSize,
-        public int $offset,
-        public bool $principalScoped,
-        public bool $cacheEligible,
-        public string $cacheReason,
+		public string $queryKey,
+		public int $queryRevision,
+		public string $sourceRef,
+		public int $sourceCapabilityVersion,
+		public int $pageSize,
+		public int $offset,
+		public bool $principalScoped,
+		public bool $cacheEligible,
+		public string $cacheReason,
 	) {
 	}
 
@@ -55,20 +55,20 @@ final readonly class QueryDiagnosticSnapshot {
 	 * @param QueryCacheDecision $decision Resulting Query cache decision.
 	 * @return self
 	 */
-    public static function fromDecision(
+	public static function fromDecision(
 		QueryDefinition $definition,
 		QueryCacheDecision $decision,
 	): self {
 		return new self(
-            queryKey: $definition->identity['key'],
-            queryRevision: $definition->identity['revision'],
-            sourceRef: $definition->source->sourceRef,
-            sourceCapabilityVersion: $definition->source->capabilityVersion,
-            pageSize: $definition->pagination->pageSize,
-            offset: $definition->pagination->offset,
-            principalScoped: $decision->key?->principalId !== null,
-            cacheEligible: $decision->eligible,
-            cacheReason: $decision->reason,
+			queryKey: $definition->identity['key'],
+			queryRevision: $definition->identity['revision'],
+			sourceRef: $definition->source->sourceRef,
+			sourceCapabilityVersion: $definition->source->capabilityVersion,
+			pageSize: $definition->pagination->pageSize,
+			offset: $definition->pagination->offset,
+			principalScoped: $decision->key?->principalId !== null,
+			cacheEligible: $decision->eligible,
+			cacheReason: $decision->reason,
 		);
 	}
 
@@ -77,18 +77,18 @@ final readonly class QueryDiagnosticSnapshot {
 	 *
 	 * @return array<string,int|string|bool>
 	 */
-    public function toArray(): array
-    {
-        return [
-            'query_key' => $this->queryKey,
-            'query_revision' => $this->queryRevision,
-            'source_ref' => $this->sourceRef,
-            'source_capability_version' => $this->sourceCapabilityVersion,
-            'page_size' => $this->pageSize,
-            'offset' => $this->offset,
-            'principal_scoped' => $this->principalScoped,
-            'cache_eligible' => $this->cacheEligible,
-            'cache_reason' => $this->cacheReason,
-        ];
-    }
+	public function toArray(): array
+	{
+		return [
+			'query_key' => $this->queryKey,
+			'query_revision' => $this->queryRevision,
+			'source_ref' => $this->sourceRef,
+			'source_capability_version' => $this->sourceCapabilityVersion,
+			'page_size' => $this->pageSize,
+			'offset' => $this->offset,
+			'principal_scoped' => $this->principalScoped,
+			'cache_eligible' => $this->cacheEligible,
+			'cache_reason' => $this->cacheReason,
+		];
+	}
 }
