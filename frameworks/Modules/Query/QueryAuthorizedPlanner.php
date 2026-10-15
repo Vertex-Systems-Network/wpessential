@@ -17,19 +17,19 @@ use WPEssential\Platform\Auth\PolicyEngine;
 
 final readonly class QueryAuthorizedPlanner
 {
-    public function __construct(
-        private DataSourceRegistryInterface $dataSources,
+	public function __construct(
+		private DataSourceRegistryInterface $dataSources,
 		private PolicyEngine $policy,
 		private QueryProviderCompilerInterface $compiler,
-        private ?QueryRelationPredicateResolver $relationResolver = null,
-        private ?QueryFieldPredicateResolver $fieldResolver = null,
+		private ?QueryRelationPredicateResolver $relationResolver = null,
+		private ?QueryFieldPredicateResolver $fieldResolver = null,
 	) {
 	}
 
-    public function plan(QueryDefinition $definition, ExecutionContext $context): AuthorizedQueryPlan
-    {
-        $descriptor = $this->dataSources->find($definition->source->sourceRef);
-        if ($descriptor === null) {
+	public function plan(QueryDefinition $definition, ExecutionContext $context): AuthorizedQueryPlan
+	{
+		$descriptor = $this->dataSources->find($definition->source->sourceRef);
+		if ($descriptor === null) {
 			throw new QueryPlanningException(
 				'wpe_query_unknown_source',
 				'$.source.source_ref',
@@ -38,8 +38,8 @@ final readonly class QueryAuthorizedPlanner
 		}
 
 		if (
-            $descriptor->sourceType !== $definition->source->sourceType
-            || $descriptor->capabilityVersion !== $definition->source->capabilityVersion
+			$descriptor->sourceType !== $definition->source->sourceType
+			|| $descriptor->capabilityVersion !== $definition->source->capabilityVersion
 		) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
@@ -48,7 +48,7 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-        if (!$descriptor->isAvailable()) {
+		if (!$descriptor->isAvailable()) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.source',
@@ -58,7 +58,7 @@ final readonly class QueryAuthorizedPlanner
 
 		try {
 			$authorization = $descriptor->requireAuthorizationMapping();
-        } catch (RuntimeException) {
+		} catch (RuntimeException) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.source',
@@ -70,12 +70,12 @@ final readonly class QueryAuthorizedPlanner
 			context: $context,
 			ability: $authorization->ability,
 			capability: $authorization->capability,
-            resourceType: $authorization->resourceType,
+			resourceType: $authorization->resourceType,
 		);
 
 		try {
-            $decision = $this->policy->authorize($request);
-        } catch (Throwable) {
+			$decision = $this->policy->authorize($request);
+		} catch (Throwable) {
 			throw new QueryPlanningException(
 				'wpe_query_policy_denied',
 				'$.source',
@@ -83,7 +83,7 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-        if (!$decision->allowed) {
+		if (!$decision->allowed) {
 			throw new QueryPlanningException(
 				'wpe_query_policy_denied',
 				'$.source',
@@ -91,24 +91,24 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-        $effectiveDefinition = $definition;
-        $shortCircuitEmpty = false;
-        if ($this->relationResolver !== null) {
-            $relationResolution = $this->relationResolver->resolve($effectiveDefinition, $context);
-            $effectiveDefinition = $relationResolution->definition;
-            $shortCircuitEmpty = $relationResolution->shortCircuitEmpty;
+		$effectiveDefinition = $definition;
+		$shortCircuitEmpty = false;
+		if ($this->relationResolver !== null) {
+			$relationResolution = $this->relationResolver->resolve($effectiveDefinition, $context);
+			$effectiveDefinition = $relationResolution->definition;
+			$shortCircuitEmpty = $relationResolution->shortCircuitEmpty;
 		}
-        if ($this->fieldResolver !== null) {
-            $fieldResolution = $this->fieldResolver->resolve(
-                $effectiveDefinition,
+		if ($this->fieldResolver !== null) {
+			$fieldResolution = $this->fieldResolver->resolve(
+				$effectiveDefinition,
 				$context,
-                $shortCircuitEmpty,
+				$shortCircuitEmpty,
 			);
-            $effectiveDefinition = $fieldResolution->definition;
-            $shortCircuitEmpty = $shortCircuitEmpty || $fieldResolution->shortCircuitEmpty;
+			$effectiveDefinition = $fieldResolution->definition;
+			$shortCircuitEmpty = $shortCircuitEmpty || $fieldResolution->shortCircuitEmpty;
 		}
 
-        if (!$this->compiler->supports($effectiveDefinition)) {
+		if (!$this->compiler->supports($effectiveDefinition)) {
 			throw new QueryPlanningException(
 				'wpe_query_dependency_unavailable',
 				'$.source',
@@ -117,10 +117,10 @@ final readonly class QueryAuthorizedPlanner
 		}
 
 		try {
-            $providerPlan = $this->compiler->compile($effectiveDefinition);
-        } catch (QueryProviderCompilationException $exception) {
+			$providerPlan = $this->compiler->compile($effectiveDefinition);
+		} catch (QueryProviderCompilationException $exception) {
 			throw $exception;
-        } catch (Throwable) {
+		} catch (Throwable) {
 			throw new QueryPlanningException(
 				'wpe_query_provider_failed',
 				'$.source',
@@ -128,7 +128,7 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-        if ($providerPlan->sourceRef !== $definition->source->sourceRef) {
+		if ($providerPlan->sourceRef !== $definition->source->sourceRef) {
 			throw new QueryPlanningException(
 				'wpe_query_provider_failed',
 				'$.source.source_ref',
@@ -136,23 +136,23 @@ final readonly class QueryAuthorizedPlanner
 			);
 		}
 
-        $shortCircuitResult = $shortCircuitEmpty
+		$shortCircuitResult = $shortCircuitEmpty
 			? new QueryExecutionResult(
-                provider: $providerPlan->provider,
-                sourceRef: $providerPlan->sourceRef,
-                projection: $providerPlan->projection,
-                rows: [],
+				provider: $providerPlan->provider,
+				sourceRef: $providerPlan->sourceRef,
+				projection: $providerPlan->projection,
+				rows: [],
 				returned: 0,
 			)
 			: null;
 
 		return new AuthorizedQueryPlan(
-            providerPlan: $providerPlan,
+			providerPlan: $providerPlan,
 			ability: $authorization->ability,
 			capability: $authorization->capability,
-            resourceType: $authorization->resourceType,
+			resourceType: $authorization->resourceType,
 			policyReason: $decision->reason,
-            shortCircuitResult: $shortCircuitResult,
+			shortCircuitResult: $shortCircuitResult,
 		);
 	}
 }
