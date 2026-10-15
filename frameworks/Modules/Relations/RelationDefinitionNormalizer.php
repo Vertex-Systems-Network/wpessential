@@ -70,9 +70,9 @@ final readonly class RelationDefinitionNormalizer
 	 * @param array<string,mixed> $payload
 	 * @return array<string,mixed>
 	 */
-	public function normalize(array $payload, bool $publishing = false): array
+	public function normalize( array $payload, bool $publishing = false ): array
 	{
-		$this->assertKnownKeys($payload);
+		$this->assertKnownKeys( $payload );
 
 		$relationKey = $this->machineKey($payload['relation_key'] ?? null, 'Relation key');
 		$title = $payload['title'] ?? null;
@@ -81,12 +81,12 @@ final readonly class RelationDefinitionNormalizer
 		}
 
 		$description = $payload['description'] ?? '';
-		if (!is_string($description)) {
+		if ( !is_string( $description ) ) {
 			throw new InvalidArgumentException('Relation description must be a string.');
 		}
 
 		$cardinality = $payload['cardinality'] ?? 'many_to_many';
-		if (!is_string($cardinality) || !in_array($cardinality, self::CARDINALITIES, true)) {
+		if ( !is_string( $cardinality ) || !in_array( $cardinality, self::CARDINALITIES, true ) ) {
 			throw new InvalidArgumentException('Relation cardinality is not supported.');
 		}
 
@@ -102,7 +102,7 @@ final readonly class RelationDefinitionNormalizer
 			'unique_edge' => $this->boolean($payload['unique_edge'] ?? true, 'Relation unique_edge'),
 		];
 
-		$this->normalizeOptionalPolicies($payload, $normalized);
+		$this->normalizeOptionalPolicies( $payload, $normalized );
 
 		if ($publishing && $normalized['from'] === $normalized['to']) {
 			// Self-relations are valid, but identical endpoints are intentionally allowed.
@@ -119,7 +119,7 @@ final readonly class RelationDefinitionNormalizer
 	 * @param array<string,mixed> $payload
 	 * @param array<string,mixed> $normalized
 	 */
-	private function normalizeOptionalPolicies(array $payload, array &$normalized): void
+	private function normalizeOptionalPolicies( array $payload, array &$normalized ): void
 	{
 		if (array_key_exists('edge_ordering', $payload)) {
 			$normalized['edge_ordering'] = $this->edgeOrdering($payload['edge_ordering']);
@@ -165,17 +165,17 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @param array<string,mixed> $payload */
-	private function assertKnownKeys(array $payload): void
+	private function assertKnownKeys( array $payload ): void
 	{
-		foreach (array_keys($payload) as $key) {
-			if (!in_array($key, self::TOP_LEVEL_KEYS, true)) {
+		foreach ( array_keys( $payload ) as $key ) {
+			if ( !in_array( $key, self::TOP_LEVEL_KEYS, true ) ) {
 				throw new InvalidArgumentException(sprintf('Unsupported Relation option "%s".', (string) $key));
 			}
 		}
 	}
 
 	/** @return array<string,mixed> */
-	private function direction(mixed $value): array
+	private function direction( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation direction');
 		$this->assertObjectKeys($value, ['reciprocal', 'bidirectional_traversal', 'parent_relation'], 'Relation direction');
@@ -197,19 +197,19 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{object_type:string,object_subtype:?string,label:string} */
-	private function endpoint(mixed $value, string $side): array
+	private function endpoint( mixed $value, string $side ): array
 	{
 		$value = $this->objectMap($value, sprintf('Relation %s endpoint', $side));
 		$this->assertObjectKeys($value, ['object_type', 'object_subtype', 'label'], sprintf('Relation %s endpoint', $side));
 
 		$objectType = $value['object_type'] ?? null;
-		if (!is_string($objectType) || !in_array($objectType, self::ENDPOINT_TYPES, true)) {
+		if ( !is_string( $objectType ) || !in_array( $objectType, self::ENDPOINT_TYPES, true ) ) {
 			throw new InvalidArgumentException(sprintf('Relation %s endpoint object_type is not supported.', $side));
 		}
 
 		$subtype = $value['object_subtype'] ?? null;
 		$requiresSubtype = in_array($objectType, ['post', 'term', 'custom_table', 'registered_entity'], true);
-		if ($requiresSubtype) {
+		if ( $requiresSubtype ) {
 			$subtype = $this->machineKey($subtype, sprintf('Relation %s endpoint object_subtype', $side));
 		} elseif ($subtype !== null && $subtype !== '') {
 			throw new InvalidArgumentException(sprintf(
@@ -234,12 +234,12 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{from_min:int,from_max:?int,to_min:int,to_max:?int} */
-	private function bounds(mixed $value, string $cardinality): array
+	private function bounds( mixed $value, string $cardinality ): array
 	{
 		$value = $this->objectMap($value, 'Relation bounds');
 		$this->assertObjectKeys($value, ['from_min', 'from_max', 'to_min', 'to_max'], 'Relation bounds');
 
-		[$defaultFromMax, $defaultToMax] = match ($cardinality) {
+		[$defaultFromMax, $defaultToMax] = match ( $cardinality ) {
 			'one_to_one' => [1, 1],
 			'one_to_many' => [null, 1],
 			'many_to_one' => [1, null],
@@ -254,10 +254,10 @@ final readonly class RelationDefinitionNormalizer
 
 		$this->assertRange($fromMin, $fromMax, 'from');
 		$this->assertRange($toMin, $toMax, 'to');
-		if ($defaultFromMax === 1 && $fromMax !== 1) {
+		if ( $defaultFromMax === 1 && $fromMax !== 1 ) {
 			throw new InvalidArgumentException('Relation cardinality requires from_max to equal 1.');
 		}
-		if ($defaultToMax === 1 && $toMax !== 1) {
+		if ( $defaultToMax === 1 && $toMax !== 1 ) {
 			throw new InvalidArgumentException('Relation cardinality requires to_max to equal 1.');
 		}
 
@@ -270,7 +270,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{ordered_from:bool,ordered_to:bool,order_mode:?string} */
-	private function edgeOrdering(mixed $value): array
+	private function edgeOrdering( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation edge_ordering');
 		$this->assertObjectKeys($value, ['ordered_from', 'ordered_to', 'order_mode'], 'Relation edge_ordering');
@@ -283,7 +283,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{separate_table:bool,table_name:?string,index_strategy:?string,foreign_keys:bool} */
-	private function storageConfig(mixed $value): array
+	private function storageConfig( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation storage_config');
 		$this->assertObjectKeys(
@@ -304,7 +304,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{required_validation:bool,queryable:bool,index_policy:?string} */
-	private function pivotPolicy(mixed $value): array
+	private function pivotPolicy( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation pivot_policy');
 		$this->assertObjectKeys($value, ['required_validation', 'queryable', 'index_policy'], 'Relation pivot_policy');
@@ -323,7 +323,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{delete_edges:bool,from_object:string,to_object:string} */
-	private function deletionPolicy(mixed $value): array
+	private function deletionPolicy( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation deletion_policy');
 		$this->assertObjectKeys($value, ['delete_edges', 'from_object', 'to_object'], 'Relation deletion_policy');
@@ -344,7 +344,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array<string,mixed> */
-	private function editorPolicy(mixed $value): array
+	private function editorPolicy( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation editor_policy');
 		$this->assertObjectKeys(
@@ -367,7 +367,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{enabled:bool,context:?string,position:?string,collapsed:bool} */
-	private function editorSide(mixed $value, string $side): array
+	private function editorSide( mixed $value, string $side ): array
 	{
 		$value = $this->objectMap($value, sprintf('Relation editor_policy %s', $side));
 		$this->assertObjectKeys(
@@ -394,7 +394,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array<string,?string> */
-	private function permissionsPolicy(mixed $value): array
+	private function permissionsPolicy( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation permissions_policy');
 		$keys = [
@@ -409,7 +409,7 @@ final readonly class RelationDefinitionNormalizer
 		$this->assertObjectKeys($value, $keys, 'Relation permissions_policy');
 
 		$normalized = [];
-		foreach ($keys as $key) {
+		foreach ( $keys as $key ) {
 			$normalized[$key] = $this->nullableCapability(
 				$value[$key] ?? null,
 				sprintf('Relation permissions_policy %s', $key),
@@ -419,7 +419,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{expose:bool,namespace:?string} */
-	private function restPolicy(mixed $value): array
+	private function restPolicy( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation rest_policy');
 		$this->assertObjectKeys($value, ['expose', 'namespace'], 'Relation rest_policy');
@@ -431,7 +431,7 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @return array{definition:bool,edges:bool,pivot:bool} */
-	private function portability(mixed $value): array
+	private function portability( mixed $value ): array
 	{
 		$value = $this->objectMap($value, 'Relation portability');
 		$this->assertObjectKeys($value, ['definition', 'edges', 'pivot'], 'Relation portability');
@@ -444,16 +444,16 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @param list<string> $allowed */
-	private function enum(mixed $value, array $allowed, string $label): string
+	private function enum( mixed $value, array $allowed, string $label ): string
 	{
-		if (!is_string($value) || !in_array($value, $allowed, true)) {
+		if ( !is_string( $value ) || !in_array( $value, $allowed, true ) ) {
 			throw new InvalidArgumentException(sprintf('%s is not supported.', $label));
 		}
 		return $value;
 	}
 
 	/** @return array<string,mixed> */
-	private function objectMap(mixed $value, string $label): array
+	private function objectMap( mixed $value, string $label ): array
 	{
 		if ( ! is_array( $value ) || ( array() !== $value && array_is_list( $value ) ) ) {
 			throw new InvalidArgumentException(sprintf('%s must be an object/map.', $label));
@@ -462,50 +462,50 @@ final readonly class RelationDefinitionNormalizer
 	}
 
 	/** @param array<string,mixed> $value @param list<string> $allowed */
-	private function assertObjectKeys(array $value, array $allowed, string $label): void
+	private function assertObjectKeys( array $value, array $allowed, string $label ): void
 	{
-		foreach (array_keys($value) as $key) {
-			if (!in_array($key, $allowed, true)) {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException(sprintf('Unsupported %s option "%s".', $label, (string) $key));
 			}
 		}
 	}
 
-	private function assertRange(int $minimum, ?int $maximum, string $side): void
+	private function assertRange( int $minimum, ?int $maximum, string $side ): void
 	{
-		if ($maximum !== null && $minimum > $maximum) {
+		if ( $maximum !== null && $minimum > $maximum ) {
 			throw new InvalidArgumentException(sprintf('Relation %s minimum cannot exceed maximum.', $side));
 		}
 	}
 
-	private function nonNegativeInteger(mixed $value, string $label): int
+	private function nonNegativeInteger( mixed $value, string $label ): int
 	{
-		if (!is_int($value) || $value < 0) {
+		if ( !is_int( $value ) || $value < 0 ) {
 			throw new InvalidArgumentException(sprintf('%s must be a non-negative integer.', $label));
 		}
 		return $value;
 	}
 
-	private function nullablePositiveInteger(mixed $value, string $label): ?int
+	private function nullablePositiveInteger( mixed $value, string $label ): ?int
 	{
-		if ($value === null) {
+		if ( $value === null ) {
 			return null;
 		}
-		if (!is_int($value) || $value < 1) {
+		if ( !is_int( $value ) || $value < 1 ) {
 			throw new InvalidArgumentException(sprintf('%s must be null or a positive integer.', $label));
 		}
 		return $value;
 	}
 
-	private function boolean(mixed $value, string $label): bool
+	private function boolean( mixed $value, string $label ): bool
 	{
-		if (!is_bool($value)) {
+		if ( !is_bool( $value ) ) {
 			throw new InvalidArgumentException(sprintf('%s must be boolean.', $label));
 		}
 		return $value;
 	}
 
-	private function machineKey(mixed $value, string $label): string
+	private function machineKey( mixed $value, string $label ): string
 	{
 		if (!is_string($value) || preg_match('/^[a-z0-9][a-z0-9_-]{0,63}$/', $value) !== 1) {
 			throw new InvalidArgumentException(sprintf('%s must be a lowercase machine key up to 64 characters.', $label));
@@ -513,20 +513,20 @@ final readonly class RelationDefinitionNormalizer
 		return $value;
 	}
 
-	private function nullableMachineKey(mixed $value, string $label): ?string
+	private function nullableMachineKey( mixed $value, string $label ): ?string
 	{
 		if ($value === null || $value === '') {
 			return null;
 		}
-		return $this->machineKey($value, $label);
+		return $this->machineKey( $value, $label );
 	}
 
-	private function nullableUuid(mixed $value, string $label): ?string
+	private function nullableUuid( mixed $value, string $label ): ?string
 	{
 		if ($value === null || $value === '') {
 			return null;
 		}
-		if (!is_string($value)
+		if ( !is_string( $value )
 			|| preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $value) !== 1
 		) {
 			throw new InvalidArgumentException(sprintf('%s must be null or a lowercase RFC 4122 UUID.', $label));
@@ -534,7 +534,7 @@ final readonly class RelationDefinitionNormalizer
 		return $value;
 	}
 
-	private function nullableCapability(mixed $value, string $label): ?string
+	private function nullableCapability( mixed $value, string $label ): ?string
 	{
 		if ($value === null || $value === '') {
 			return null;
@@ -545,7 +545,7 @@ final readonly class RelationDefinitionNormalizer
 		return $value;
 	}
 
-	private function nullableNamespace(mixed $value): ?string
+	private function nullableNamespace( mixed $value ): ?string
 	{
 		if ($value === null || $value === '') {
 			return null;

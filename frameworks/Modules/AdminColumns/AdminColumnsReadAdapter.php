@@ -44,11 +44,11 @@ final readonly class AdminColumnsReadAdapter
      * @param array<string,mixed> $input
      * @return array<string,mixed>
      */
-	public function read(string $viewId, array $input, ExecutionContext $context): array
+	public function read( string $viewId, array $input, ExecutionContext $context ): array
 	{
 		$this->assertKnownKeys($input, self::INPUT_KEYS, 'Admin Columns read input');
-		$view = $this->views->get($viewId);
-		$this->assertReadableView($view);
+		$view = $this->views->get( $viewId );
+		$this->assertReadableView( $view );
 
 		$target = $view->payload['target'] ?? null;
 		if (!is_array($target) || ($target['type'] ?? null) !== 'post_type') {
@@ -59,9 +59,9 @@ final readonly class AdminColumnsReadAdapter
 			throw new InvalidArgumentException('Admin Columns post_type target key is malformed.');
 		}
 
-		$description = $this->query->describe(self::QUERY_SOURCE, $context);
+		$description = $this->query->describe( self::QUERY_SOURCE, $context );
 		$fieldSchema = $description['field_schema'] ?? null;
-		if (!is_array($fieldSchema)) {
+		if ( !is_array( $fieldSchema ) ) {
 			throw new RuntimeException('Query read consumer returned malformed source metadata.');
 		}
 
@@ -69,8 +69,8 @@ final readonly class AdminColumnsReadAdapter
 			$view,
 			$fieldSchema,
 		);
-		if ($fieldFieldByColumn !== []) {
-			if (!$this->fields instanceof FieldValueReadConsumerInterface) {
+		if ( $fieldFieldByColumn !== [] ) {
+			if ( !$this->fields instanceof FieldValueReadConsumerInterface ) {
 				throw new RuntimeException('Admin Columns Fields source requires the certified Field value read consumer.');
 			}
 			if (!in_array('post.id', $projection, true)) {
@@ -100,7 +100,7 @@ final readonly class AdminColumnsReadAdapter
 			$request['search'] = $input['search'];
 		}
 
-		$result = $this->query->read($request, $context);
+		$result = $this->query->read( $request, $context );
 		if (($result['ok'] ?? false) !== true) {
 			return [
 				'contract_version' => self::CONTRACT_VERSION,
@@ -119,22 +119,22 @@ final readonly class AdminColumnsReadAdapter
 		}
 
 		$rows = $result['rows'] ?? null;
-		if (!is_array($rows) || !array_is_list($rows)) {
+		if ( !is_array( $rows ) || !array_is_list( $rows ) ) {
 			throw new RuntimeException('Query read consumer returned malformed rows.');
 		}
 
 		[$postIds, $postIdByRow] = $fieldFieldByColumn === []
 			? [[], []]
-			: $this->postIds($rows);
-		$fieldValues = $this->fieldValues($fieldFieldByColumn, $postIds, $context);
+			: $this->postIds( $rows );
+		$fieldValues = $this->fieldValues( $fieldFieldByColumn, $postIds, $context );
 
 		$renderRows = [];
-		foreach ($rows as $index => $row) {
-			if (!is_array($row)) {
+		foreach ( $rows as $index => $row ) {
+			if ( !is_array( $row ) ) {
 				throw new RuntimeException('Query read consumer returned a malformed row.');
 			}
 			$renderRow = [];
-			foreach ($sourceByColumn as $columnKey => $source) {
+			foreach ( $sourceByColumn as $columnKey => $source ) {
 				if ($source['owner'] === 'fields') {
 					$postId = $postIdByRow[$index] ?? null;
 					if (!is_int($postId) || !array_key_exists($postId, $fieldValues[$source['reference']] ?? [])) {
@@ -160,9 +160,9 @@ final readonly class AdminColumnsReadAdapter
 		];
 	}
 
-	private function assertReadableView(Definition $view): void
+	private function assertReadableView( Definition $view ): void
 	{
-		if ($view->status !== DefinitionStatus::Published) {
+		if ( $view->status !== DefinitionStatus::Published ) {
 			throw new InvalidArgumentException('Admin Columns runtime reads require a published View.');
 		}
 		if (($view->payload['enabled'] ?? false) !== true) {
@@ -180,10 +180,10 @@ final readonly class AdminColumnsReadAdapter
      *     4:list<string>
      * }
      */
-	private function readableColumns(Definition $view, array $fieldSchema): array
+	private function readableColumns( Definition $view, array $fieldSchema ): array
 	{
 		$rawColumns = $view->payload['columns'] ?? null;
-		if (!is_array($rawColumns) || !array_is_list($rawColumns) || $rawColumns === []) {
+		if ( !is_array( $rawColumns ) || !array_is_list( $rawColumns ) || $rawColumns === [] ) {
 			throw new RuntimeException('Published Admin Columns View has no bounded columns.');
 		}
 
@@ -193,7 +193,7 @@ final readonly class AdminColumnsReadAdapter
 		$sourceByColumn = [];
 		$projection = [];
 		$fieldReferences = [];
-		foreach ($rawColumns as $column) {
+		foreach ( $rawColumns as $column ) {
 			if (!is_array($column) || ($column['enabled'] ?? true) !== true) {
 				continue;
 			}
@@ -201,38 +201,38 @@ final readonly class AdminColumnsReadAdapter
 			$label = $column['label'] ?? null;
 			$format = $column['format'] ?? null;
 			$source = $column['source'] ?? null;
-			if (!is_string($columnKey) || !is_string($label) || !is_string($format) || !is_array($source)) {
+			if ( !is_string( $columnKey ) || !is_string( $label ) || !is_string( $format ) || !is_array( $source ) ) {
 				throw new RuntimeException('Published Admin Columns View contains malformed column metadata.');
 			}
 
 			$owner = $source['owner'] ?? null;
 			$fieldRef = $source['reference'] ?? null;
-			if (!is_string($owner) || !is_string($fieldRef)) {
+			if ( !is_string( $owner ) || !is_string( $fieldRef ) ) {
 				throw new RuntimeException('Published Admin Columns View contains malformed source ownership metadata.');
 			}
 
 			if (in_array($owner, ['native', 'query'], true)) {
-				if (!array_key_exists($fieldRef, $fieldSchema)) {
+				if ( !array_key_exists( $fieldRef, $fieldSchema ) ) {
 					throw new InvalidArgumentException(sprintf(
 						'Admin Columns column "%s" source is not declared by the Query Data Source.',
 						$columnKey,
 					));
 				}
 				$queryFieldByColumn[$columnKey] = $fieldRef;
-				if (!in_array($fieldRef, $projection, true)) {
+				if ( !in_array( $fieldRef, $projection, true ) ) {
 					$projection[] = $fieldRef;
 				}
 			} elseif ($owner === 'fields') {
-				if (preg_match(self::FIELD_REFERENCE_PATTERN, $fieldRef) !== 1) {
+				if ( preg_match( self::FIELD_REFERENCE_PATTERN, $fieldRef ) !== 1 ) {
 					throw new InvalidArgumentException(sprintf(
 						'Admin Columns column "%s" Fields reference is malformed.',
 						$columnKey,
 					));
 				}
-				if (isset($fieldReferences[$fieldRef])) {
+				if ( isset( $fieldReferences[$fieldRef] ) ) {
 					throw new InvalidArgumentException('Admin Columns Fields references must be unique within one bounded View.');
 				}
-				if (count($fieldReferences) >= self::MAX_FIELD_COLUMNS) {
+				if ( count( $fieldReferences ) >= self::MAX_FIELD_COLUMNS ) {
 					throw new InvalidArgumentException(sprintf(
 						'Admin Columns View exceeds the V1 maximum of %d enabled Fields columns.',
 						self::MAX_FIELD_COLUMNS,
@@ -257,10 +257,10 @@ final readonly class AdminColumnsReadAdapter
 			];
 		}
 
-		if ($columns === []) {
+		if ( $columns === [] ) {
 			throw new InvalidArgumentException('Admin Columns View has no readable enabled columns.');
 		}
-		if ($projection === [] && $fieldFieldByColumn === []) {
+		if ( $projection === [] && $fieldFieldByColumn === [] ) {
 			throw new InvalidArgumentException('Admin Columns View has no bounded readable projection.');
 		}
 
@@ -271,17 +271,17 @@ final readonly class AdminColumnsReadAdapter
      * @param list<array<mixed>> $rows
      * @return array{0:list<int>,1:array<int,int>}
      */
-	private function postIds(array $rows): array
+	private function postIds( array $rows ): array
 	{
 		$postIds = [];
 		$postIdByRow = [];
 		$seen = [];
-		foreach ($rows as $index => $row) {
-			if (!is_array($row)) {
+		foreach ( $rows as $index => $row ) {
+			if ( !is_array( $row ) ) {
 				throw new RuntimeException('Query read consumer returned a malformed row.');
 			}
 			$postId = $row['post.id'] ?? null;
-			if (!is_int($postId) || $postId < 1 || isset($seen[$postId])) {
+			if ( !is_int( $postId ) || $postId < 1 || isset( $seen[$postId] ) ) {
 				throw new RuntimeException('Admin Columns Fields composition requires unique positive Query post ids.');
 			}
 			$seen[$postId] = true;
@@ -296,18 +296,18 @@ final readonly class AdminColumnsReadAdapter
      * @param list<int> $postIds
      * @return array<string,array<int,mixed>>
      */
-	private function fieldValues(array $fieldFieldByColumn, array $postIds, ExecutionContext $context): array
+	private function fieldValues( array $fieldFieldByColumn, array $postIds, ExecutionContext $context ): array
 	{
-		if ($fieldFieldByColumn === [] || $postIds === []) {
+		if ( $fieldFieldByColumn === [] || $postIds === [] ) {
 			return [];
 		}
-		if (!$this->fields instanceof FieldValueReadConsumerInterface) {
+		if ( !$this->fields instanceof FieldValueReadConsumerInterface ) {
 			throw new RuntimeException('Admin Columns Fields source requires the certified Field value read consumer.');
 		}
 
 		$values = [];
-		foreach ($fieldFieldByColumn as $fieldReference) {
-			$result = $this->fields->readValues($fieldReference, $postIds, $context);
+		foreach ( $fieldFieldByColumn as $fieldReference ) {
+			$result = $this->fields->readValues( $fieldReference, $postIds, $context );
 			if (($result['contract_version'] ?? null) !== FieldValueReadConsumerInterface::CONTRACT_VERSION
 				|| ($result['field_ref'] ?? null) !== $fieldReference
 				|| !is_array($result['rows'] ?? null)
@@ -319,7 +319,7 @@ final readonly class AdminColumnsReadAdapter
 
 			$byPostId = [];
 			foreach ($result['rows'] as $index => $row) {
-				if (!is_array($row)
+				if ( !is_array( $row )
 					|| ($row['post_id'] ?? null) !== $postIds[$index]
 					|| !array_key_exists('value', $row)
 				) {
@@ -338,20 +338,20 @@ final readonly class AdminColumnsReadAdapter
      * @param array<string,string> $fieldByColumn
      * @return list<array{field_ref:string,operator:string,value:mixed}>
      */
-	private function filters(mixed $value, array $fieldByColumn): array
+	private function filters( mixed $value, array $fieldByColumn ): array
 	{
-		if (!is_array($value) || !array_is_list($value)) {
+		if ( !is_array( $value ) || !array_is_list( $value ) ) {
 			throw new InvalidArgumentException('Admin Columns filters must be a list.');
 		}
 
 		$filters = [];
-		foreach ($value as $index => $filter) {
-			if (!is_array($filter) || array_is_list($filter)) {
+		foreach ( $value as $index => $filter ) {
+			if ( !is_array( $filter ) || array_is_list( $filter ) ) {
 				throw new InvalidArgumentException(sprintf('Admin Columns filter %d must be an object/map.', $index));
 			}
 			$this->assertKnownKeys($filter, self::FILTER_KEYS, sprintf('Admin Columns filter %d', $index));
 			$columnKey = $filter['column_key'] ?? null;
-			if (!is_string($columnKey) || !isset($fieldByColumn[$columnKey])) {
+			if ( !is_string( $columnKey ) || !isset( $fieldByColumn[$columnKey] ) ) {
 				throw new InvalidArgumentException(sprintf(
 					'Admin Columns filter %d references a column without Query-owned V1 filtering.',
 					$index,
@@ -375,20 +375,20 @@ final readonly class AdminColumnsReadAdapter
      * @param array<string,string> $fieldByColumn
      * @return list<array{field_ref:string,direction:string}>
      */
-	private function orderBy(mixed $value, array $fieldByColumn): array
+	private function orderBy( mixed $value, array $fieldByColumn ): array
 	{
-		if (!is_array($value) || !array_is_list($value)) {
+		if ( !is_array( $value ) || !array_is_list( $value ) ) {
 			throw new InvalidArgumentException('Admin Columns order_by must be a list.');
 		}
 
 		$orderBy = [];
-		foreach ($value as $index => $order) {
-			if (!is_array($order) || array_is_list($order)) {
+		foreach ( $value as $index => $order ) {
+			if ( !is_array( $order ) || array_is_list( $order ) ) {
 				throw new InvalidArgumentException(sprintf('Admin Columns order %d must be an object/map.', $index));
 			}
 			$this->assertKnownKeys($order, self::ORDER_KEYS, sprintf('Admin Columns order %d', $index));
 			$columnKey = $order['column_key'] ?? null;
-			if (!is_string($columnKey) || !isset($fieldByColumn[$columnKey])) {
+			if ( !is_string( $columnKey ) || !isset( $fieldByColumn[$columnKey] ) ) {
 				throw new InvalidArgumentException(sprintf(
 					'Admin Columns order %d references a column without Query-owned V1 ordering.',
 					$index,
@@ -408,10 +408,10 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/** @param array<mixed> $value @param list<string> $allowed */
-	private function assertKnownKeys(array $value, array $allowed, string $label): void
+	private function assertKnownKeys( array $value, array $allowed, string $label ): void
 	{
-		foreach (array_keys($value) as $key) {
-			if (!is_string($key) || !in_array($key, $allowed, true)) {
+		foreach ( array_keys( $value ) as $key ) {
+			if ( !is_string( $key ) || !in_array( $key, $allowed, true ) ) {
 				throw new InvalidArgumentException($label . ' contains an unsupported property.');
 			}
 		}

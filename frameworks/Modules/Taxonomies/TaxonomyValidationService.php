@@ -40,18 +40,18 @@ final readonly class TaxonomyValidationService
 	 *   diagnostics:?array<string,mixed>
 	 * }
 	 */
-	public function validate(array $input): array
+	public function validate( array $input ): array
 	{
 		$issues = [];
 		$payload = $input['payload'] ?? null;
-		if (!is_array($payload) || array_is_list($payload)) {
+		if ( !is_array( $payload ) || array_is_list( $payload ) ) {
 			$issues[] = $this->issue('payload_invalid', 'blocked', 'payload', 'Taxonomy payload must be an object/map.');
-			return $this->report(null, $issues, null);
+			return $this->report( null, $issues, null );
 		}
 
-		$current = $this->currentDefinition($input, $issues);
+		$current = $this->currentDefinition( $input, $issues );
 		$keyValue = $payload['taxonomy_key'] ?? null;
-		$key = is_string($keyValue) ? trim($keyValue) : null;
+		$key = is_string( $keyValue ) ? trim( $keyValue ) : null;
 
 		$candidate = new Definition(
 			id: $current?->id ?? self::PREVIEW_ID,
@@ -67,27 +67,27 @@ final readonly class TaxonomyValidationService
 
 		$registration = null;
 		try {
-			$registration = $this->projector->project($candidate);
-		} catch (InvalidArgumentException $exception) {
+			$registration = $this->projector->project( $candidate );
+		} catch ( InvalidArgumentException $exception ) {
 			$issues[] = $this->issue('registration_schema_invalid', 'blocked', 'payload', $exception->getMessage());
 		}
 
 		if ($key !== null && $key !== '') {
-			$this->validateCanonicalOwnership($key, $current?->id, $issues);
-			$this->validateRuntimeOwnership($key, $current, $issues);
+			$this->validateCanonicalOwnership( $key, $current?->id, $issues );
+			$this->validateRuntimeOwnership( $key, $current, $issues );
 		}
-		$this->validateObjectTypeDependencies($payload, $issues);
-		if ($registration instanceof RegistrationDefinition) {
-			$this->validateDormantPolicyCompatibility($candidate, $registration, $issues);
-			$this->validateRoutingCollisions($candidate, $registration, $issues);
-			$this->validateBlockEditorCompatibility($registration, $issues);
-			$this->validateCapabilityLockoutRisk($registration, $issues);
+		$this->validateObjectTypeDependencies( $payload, $issues );
+		if ( $registration instanceof RegistrationDefinition ) {
+			$this->validateDormantPolicyCompatibility( $candidate, $registration, $issues );
+			$this->validateRoutingCollisions( $candidate, $registration, $issues );
+			$this->validateBlockEditorCompatibility( $registration, $issues );
+			$this->validateCapabilityLockoutRisk( $registration, $issues );
 		}
 
 		return $this->report(
 			$key,
 			$issues,
-			$registration instanceof RegistrationDefinition ? $this->diagnostics($candidate, $registration) : null,
+			$registration instanceof RegistrationDefinition ? $this->diagnostics( $candidate, $registration ) : null,
 		);
 	}
 
@@ -95,19 +95,19 @@ final readonly class TaxonomyValidationService
 	 * @param array<string,mixed> $input
 	 * @param list<array{id:string,severity:string,field:string,message:string}> $issues
 	 */
-	private function currentDefinition(array $input, array &$issues): ?Definition
+	private function currentDefinition( array $input, array &$issues ): ?Definition
 	{
 		$id = $input['id'] ?? null;
 		if ($id === null || $id === '') {
 			return null;
 		}
-		if (!is_string($id)) {
+		if ( !is_string( $id ) ) {
 			$issues[] = $this->issue('definition_id_invalid', 'blocked', 'id', 'Taxonomy id must be a string.');
 			return null;
 		}
 
-		$definition = $this->definitions->get($id);
-		if (!$definition instanceof Definition
+		$definition = $this->definitions->get( $id );
+		if ( !$definition instanceof Definition
 			|| $definition->type !== TaxonomyDefinitionProjector::DEFINITION_TYPE
 			|| $definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
 		) {
@@ -117,7 +117,7 @@ final readonly class TaxonomyValidationService
 
 		$existingKey = $definition->payload['taxonomy_key'] ?? null;
 		$requestedKey = $input['payload']['taxonomy_key'] ?? null;
-		if (is_string($existingKey) && is_string($requestedKey) && trim($existingKey) !== trim($requestedKey)) {
+		if ( is_string( $existingKey ) && is_string( $requestedKey ) && trim( $existingKey ) !== trim( $requestedKey ) ) {
 			$issues[] = $this->issue(
 				'runtime_key_immutable',
 				'blocked',
@@ -130,17 +130,17 @@ final readonly class TaxonomyValidationService
 	}
 
 	/** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
-	private function validateCanonicalOwnership(string $key, ?string $currentDefinitionId, array &$issues): void
+	private function validateCanonicalOwnership( string $key, ?string $currentDefinitionId, array &$issues ): void
 	{
-		foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $definition) {
-			if ($definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+		foreach ( $this->definitions->byType( TaxonomyDefinitionProjector::DEFINITION_TYPE ) as $definition ) {
+			if ( $definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
 				|| $definition->id === $currentDefinitionId
 			) {
 				continue;
 			}
 
 			$existingKey = $definition->payload['taxonomy_key'] ?? null;
-			if (is_string($existingKey) && trim($existingKey) === $key) {
+			if ( is_string( $existingKey ) && trim( $existingKey ) === $key ) {
 				$issues[] = $this->issue(
 					'duplicate_definition',
 					'blocked',
@@ -153,7 +153,7 @@ final readonly class TaxonomyValidationService
 	}
 
 	/** @param list<array{id:string,severity:string,field:string,message:string}> $issues */
-	private function validateRuntimeOwnership(string $key, ?Definition $current, array &$issues): void
+	private function validateRuntimeOwnership( string $key, ?Definition $current, array &$issues ): void
 	{
 		if (!function_exists('taxonomy_exists') || !taxonomy_exists($key)) {
 			return;
@@ -162,9 +162,9 @@ final readonly class TaxonomyValidationService
 		$currentKey = $current?->payload['taxonomy_key'] ?? null;
 		$isCurrentPublishedRegistration = $current instanceof Definition
 			&& $current->status === DefinitionStatus::Published
-			&& is_string($currentKey)
-			&& trim($currentKey) === $key;
-		if ($isCurrentPublishedRegistration) {
+			&& is_string( $currentKey )
+			&& trim( $currentKey ) === $key;
+		if ( $isCurrentPublishedRegistration ) {
 			$issues[] = $this->issue(
 				'runtime_registration_present',
 				'info',
@@ -186,19 +186,19 @@ final readonly class TaxonomyValidationService
 	 * @param array<string,mixed> $payload
 	 * @param list<array{id:string,severity:string,field:string,message:string}> $issues
 	 */
-	private function validateObjectTypeDependencies(array $payload, array &$issues): void
+	private function validateObjectTypeDependencies( array $payload, array &$issues ): void
 	{
 		$objectTypes = $payload['object_types'] ?? null;
 		if (!is_array($objectTypes) || !array_is_list($objectTypes) || !function_exists('post_type_exists')) {
 			return;
 		}
 
-		foreach ($objectTypes as $objectType) {
+		foreach ( $objectTypes as $objectType ) {
 			if (!is_string($objectType) || trim($objectType) === '') {
 				continue;
 			}
-			$objectType = trim($objectType);
-			if (!post_type_exists($objectType)) {
+			$objectType = trim( $objectType );
+			if ( !post_type_exists( $objectType ) ) {
 				$issues[] = $this->issue(
 					'missing_object_type',
 					'compatibility_warning',
@@ -250,12 +250,12 @@ final readonly class TaxonomyValidationService
 		RegistrationDefinition $candidateRegistration,
 		array &$issues,
 	): void {
-		$candidateRestRoute = $this->effectiveRestRoute($candidateRegistration);
-		$candidateRewriteBase = $this->effectiveRewriteBase($candidateRegistration);
-		$candidateQueryVar = $this->effectiveQueryVar($candidateRegistration);
+		$candidateRestRoute = $this->effectiveRestRoute( $candidateRegistration );
+		$candidateRewriteBase = $this->effectiveRewriteBase( $candidateRegistration );
+		$candidateQueryVar = $this->effectiveQueryVar( $candidateRegistration );
 
-		foreach ($this->definitions->byType(TaxonomyDefinitionProjector::DEFINITION_TYPE) as $definition) {
-			if ($definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
+		foreach ( $this->definitions->byType( TaxonomyDefinitionProjector::DEFINITION_TYPE ) as $definition ) {
+			if ( $definition->ownerSurfaceId !== TaxonomyDefinitionProjector::OWNER_SURFACE_ID
 				|| $definition->id === $candidate->id
 				|| $definition->status !== DefinitionStatus::Published
 			) {
@@ -263,13 +263,13 @@ final readonly class TaxonomyValidationService
 			}
 
 			try {
-				$registration = $this->projector->project($definition);
-			} catch (InvalidArgumentException) {
+				$registration = $this->projector->project( $definition );
+			} catch ( InvalidArgumentException ) {
 				continue;
 			}
 
-			if ($candidateRestRoute !== null
-				&& $candidateRestRoute === $this->effectiveRestRoute($registration)
+			if ( $candidateRestRoute !== null
+				&& $candidateRestRoute === $this->effectiveRestRoute( $registration )
 			) {
 				$issues[] = $this->issue(
 					'rest_route_collision',
@@ -283,8 +283,8 @@ final readonly class TaxonomyValidationService
 				);
 			}
 
-			if ($candidateRewriteBase !== null
-				&& $candidateRewriteBase === $this->effectiveRewriteBase($registration)
+			if ( $candidateRewriteBase !== null
+				&& $candidateRewriteBase === $this->effectiveRewriteBase( $registration )
 			) {
 				$issues[] = $this->issue(
 					'rewrite_route_collision',
@@ -298,8 +298,8 @@ final readonly class TaxonomyValidationService
 				);
 			}
 
-			if ($candidateQueryVar !== null
-				&& $candidateQueryVar === $this->effectiveQueryVar($registration)
+			if ( $candidateQueryVar !== null
+				&& $candidateQueryVar === $this->effectiveQueryVar( $registration )
 			) {
 				$issues[] = $this->issue(
 					'query_var_collision',
@@ -329,15 +329,15 @@ final readonly class TaxonomyValidationService
 			? array_values(array_filter($registration->payload['object_types'], 'is_string'))
 			: [];
 		$blockEditorTypes = [];
-		foreach ($objectTypes as $objectType) {
+		foreach ( $objectTypes as $objectType ) {
 			if (function_exists('post_type_exists') && !post_type_exists($objectType)) {
 				continue;
 			}
-			if (use_block_editor_for_post_type($objectType)) {
+			if ( use_block_editor_for_post_type( $objectType ) ) {
 				$blockEditorTypes[] = $objectType;
 			}
 		}
-		if ($blockEditorTypes === []) {
+		if ( $blockEditorTypes === [] ) {
 			return;
 		}
 
@@ -362,12 +362,12 @@ final readonly class TaxonomyValidationService
 		}
 
 		$missing = [];
-		foreach ($this->effectiveCapabilities($registration) as $operation => $capability) {
-			if (!current_user_can($capability)) {
+		foreach ( $this->effectiveCapabilities( $registration ) as $operation => $capability ) {
+			if ( !current_user_can( $capability ) ) {
 				$missing[] = $operation . '=' . $capability;
 			}
 		}
-		if ($missing === []) {
+		if ( $missing === [] ) {
 			return;
 		}
 
@@ -382,7 +382,7 @@ final readonly class TaxonomyValidationService
 		);
 	}
 
-	private function effectiveRestRoute(RegistrationDefinition $registration): ?string
+	private function effectiveRestRoute( RegistrationDefinition $registration ): ?string
 	{
 		$args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
 		if (($args['show_in_rest'] ?? false) !== true) {
@@ -394,11 +394,11 @@ final readonly class TaxonomyValidationService
 		return '/' . $namespace . '/' . $base;
 	}
 
-	private function effectiveRewriteBase(RegistrationDefinition $registration): ?string
+	private function effectiveRewriteBase( RegistrationDefinition $registration ): ?string
 	{
 		$args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
 		$rewrite = $args['rewrite'] ?? true;
-		if ($rewrite === false) {
+		if ( $rewrite === false ) {
 			return null;
 		}
 		if (is_array($rewrite) && is_string($rewrite['slug'] ?? null) && trim($rewrite['slug']) !== '') {
@@ -407,14 +407,14 @@ final readonly class TaxonomyValidationService
 		return $registration->key;
 	}
 
-	private function effectiveQueryVar(RegistrationDefinition $registration): ?string
+	private function effectiveQueryVar( RegistrationDefinition $registration ): ?string
 	{
 		$args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
 		$public = ($args['public'] ?? true) === true;
 		$publiclyQueryable = is_bool($args['publicly_queryable'] ?? null)
 			? $args['publicly_queryable']
 			: $public;
-		if (!$publiclyQueryable) {
+		if ( !$publiclyQueryable ) {
 			return null;
 		}
 		if (!array_key_exists('query_var', $args)) {
@@ -422,22 +422,22 @@ final readonly class TaxonomyValidationService
 		}
 
 		$queryVar = $args['query_var'];
-		if ($queryVar === false) {
+		if ( $queryVar === false ) {
 			return null;
 		}
-		if ($queryVar === true) {
+		if ( $queryVar === true ) {
 			return $registration->key;
 		}
 		return is_string($queryVar) && $queryVar !== '' ? $queryVar : null;
 	}
 
 	/** @return array<string,string> */
-	private function effectiveCapabilities(RegistrationDefinition $registration): array
+	private function effectiveCapabilities( RegistrationDefinition $registration ): array
 	{
 		$args = is_array($registration->payload['args'] ?? null) ? $registration->payload['args'] : [];
 		$effective = self::DEFAULT_CAPABILITIES;
 		$authored = is_array($args['capabilities'] ?? null) ? $args['capabilities'] : [];
-		foreach (array_keys(self::DEFAULT_CAPABILITIES) as $key) {
+		foreach ( array_keys( self::DEFAULT_CAPABILITIES ) as $key ) {
 			$capability = $authored[$key] ?? null;
 			if (is_string($capability) && $capability !== '') {
 				$effective[$key] = $capability;
@@ -447,7 +447,7 @@ final readonly class TaxonomyValidationService
 	}
 
 	/** @return array<string,mixed> */
-	private function diagnostics(Definition $candidate, RegistrationDefinition $registration): array
+	private function diagnostics( Definition $candidate, RegistrationDefinition $registration ): array
 	{
 		$registrationPayload = $registration->payload;
 		$args = is_array($registrationPayload['args'] ?? null) ? $registrationPayload['args'] : [];
@@ -459,7 +459,7 @@ final readonly class TaxonomyValidationService
 		$providerIds = is_array($registrationPayload['provider_ids'] ?? null)
 			? $registrationPayload['provider_ids']
 			: [];
-		$readModel = new TaxonomyDefinitionReadModel($this->definitions);
+		$readModel = new TaxonomyDefinitionReadModel( $this->definitions );
 
 		return [
 			'effective_args' => $effectiveArgs,
@@ -483,47 +483,47 @@ final readonly class TaxonomyValidationService
 	 * @param array<string,mixed> $providerIds
 	 * @return array<string,mixed>
 	 */
-	private function explicitOverrides(array $payload, array $args, array $providerIds): array
+	private function explicitOverrides( array $payload, array $args, array $providerIds ): array
 	{
 		$overrides = [];
 		$effectiveLabels = is_array($args['labels'] ?? null) ? $args['labels'] : [];
 		$labelOverrides = [];
 		foreach (['name', 'singular_name'] as $key) {
-			if (array_key_exists($key, $effectiveLabels)) {
+			if ( array_key_exists( $key, $effectiveLabels ) ) {
 				$labelOverrides[$key] = $effectiveLabels[$key];
 			}
 		}
 		$authoredLabels = is_array($payload['labels'] ?? null) ? $payload['labels'] : [];
-		foreach (array_keys($authoredLabels) as $key) {
-			if (is_string($key) && array_key_exists($key, $effectiveLabels)) {
+		foreach ( array_keys( $authoredLabels ) as $key ) {
+			if ( is_string( $key ) && array_key_exists( $key, $effectiveLabels ) ) {
 				$labelOverrides[$key] = $effectiveLabels[$key];
 			}
 		}
-		if ($labelOverrides !== []) {
-			ksort($labelOverrides, SORT_STRING);
+		if ( $labelOverrides !== [] ) {
+			ksort( $labelOverrides, SORT_STRING );
 			$overrides['labels'] = $labelOverrides;
 		}
 
-		foreach ([
+		foreach ( [
 			'description', 'public', 'publicly_queryable', 'hierarchical', 'show_ui', 'show_in_menu',
 			'show_in_nav_menus', 'show_tagcloud', 'show_in_quick_edit', 'show_admin_column',
 			'show_in_rest', 'rest_base', 'rest_namespace', 'query_var', 'rewrite', 'sort',
 			'capabilities', 'default_term', 'args',
-		] as $key) {
-			if (array_key_exists($key, $payload) && array_key_exists($key, $args)) {
+		] as $key ) {
+			if ( array_key_exists( $key, $payload ) && array_key_exists( $key, $args ) ) {
 				$overrides[$key] = $args[$key];
 			}
 		}
 
-		if ($providerIds !== []) {
+		if ( $providerIds !== [] ) {
 			$overrides['provider_ids'] = $providerIds;
 		}
-		ksort($overrides, SORT_STRING);
+		ksort( $overrides, SORT_STRING );
 		return $overrides;
 	}
 
 	/** @param array<string,mixed> $args @return array<string,mixed> */
-	private function restPreview(string $taxonomyKey, array $args): array
+	private function restPreview( string $taxonomyKey, array $args ): array
 	{
 		if (($args['show_in_rest'] ?? false) !== true) {
 			return ['enabled' => false, 'route' => null];
@@ -540,16 +540,16 @@ final readonly class TaxonomyValidationService
 	}
 
 	/** @param array<string,mixed> $args @return array<string,mixed> */
-	private function rewritePreview(string $taxonomyKey, array $args): array
+	private function rewritePreview( string $taxonomyKey, array $args ): array
 	{
 		$rewrite = $args['rewrite'] ?? true;
-		if ($rewrite === false) {
+		if ( $rewrite === false ) {
 			return ['enabled' => false, 'path_pattern' => null];
 		}
 
 		$slug = $taxonomyKey;
 		$hierarchical = false;
-		if (is_array($rewrite)) {
+		if ( is_array( $rewrite ) ) {
 			if (is_string($rewrite['slug'] ?? null) && $rewrite['slug'] !== '') {
 				$slug = $rewrite['slug'];
 			}
@@ -574,10 +574,10 @@ final readonly class TaxonomyValidationService
 	 *   diagnostics:?array<string,mixed>
 	 * }
 	 */
-	private function report(?string $key, array $issues, ?array $diagnostics): array
+	private function report( ?string $key, array $issues, ?array $diagnostics ): array
 	{
 		$valid = true;
-		foreach ($issues as $issue) {
+		foreach ( $issues as $issue ) {
 			if ($issue['severity'] === 'blocked') {
 				$valid = false;
 				break;
@@ -593,7 +593,7 @@ final readonly class TaxonomyValidationService
 	}
 
 	/** @return array{id:string,severity:string,field:string,message:string} */
-	private function issue(string $id, string $severity, string $field, string $message): array
+	private function issue( string $id, string $severity, string $field, string $message ): array
 	{
 		return [
 			'id' => $id,

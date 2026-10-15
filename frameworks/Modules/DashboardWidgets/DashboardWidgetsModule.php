@@ -123,7 +123,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 		);
 	}
 
-	public function register(ServiceRegistryInterface $services): void
+	public function register( ServiceRegistryInterface $services ): void
 	{
 		// Fail closed before constructing or publishing any widget services.
 		foreach (
@@ -141,12 +141,12 @@ final class DashboardWidgetsModule implements ModuleInterface
 		$definitions = $services->get('platform.definitions');
 		$abilities = $services->get('platform.abilities');
 		$bridge = $services->get('platform.abilities.wordpress');
-		$capabilityChecker = $services->get(WordPressAuthorizationServices::CAPABILITY_CHECKER);
+		$capabilityChecker = $services->get( WordPressAuthorizationServices::CAPABILITY_CHECKER );
 		$dataSources = $services->get('platform.data-sources');
-		$queryReadConsumer = $services->get(QueryModule::SERVICE_READ_CONSUMER);
-		$dynamicValues = $services->get(RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES);
+		$queryReadConsumer = $services->get( QueryModule::SERVICE_READ_CONSUMER );
+		$dynamicValues = $services->get( RenderingServiceRegistrar::SERVICE_DYNAMIC_VALUES );
 
-		foreach ([
+		foreach ( [
 			'platform.abilities.contexts',
 			'platform.ajax.routes',
 			'platform.ajax.dispatcher',
@@ -154,8 +154,8 @@ final class DashboardWidgetsModule implements ModuleInterface
 			AssetServices::REGISTRY,
 			AssetServices::BUILD_ENTRIES,
 			AuditServices::LOGGER,
-		] as $serviceId) {
-			if (!$services->has($serviceId)) {
+		] as $serviceId ) {
+			if ( !$services->has( $serviceId ) ) {
 				throw new LogicException(sprintf(
 					'Dashboard Widgets form-action preflight requires canonical shared service "%s".',
 					$serviceId,
@@ -166,9 +166,9 @@ final class DashboardWidgetsModule implements ModuleInterface
 		$ajaxRoutes = $services->get('platform.ajax.routes');
 		$ajaxDispatcher = $services->get('platform.ajax.dispatcher');
 		$ajaxGateway = $services->get('platform.ajax.gateway');
-		$assetRegistry = $services->get(AssetServices::REGISTRY);
-		$assetBuildEntries = $services->get(AssetServices::BUILD_ENTRIES);
-		$audit = $services->get(AuditServices::LOGGER);
+		$assetRegistry = $services->get( AssetServices::REGISTRY );
+		$assetBuildEntries = $services->get( AssetServices::BUILD_ENTRIES );
+		$audit = $services->get( AuditServices::LOGGER );
 
 		if (
 			!$contexts instanceof WordPressExecutionContextFactory
@@ -185,48 +185,48 @@ final class DashboardWidgetsModule implements ModuleInterface
 		}
 
 		$cronRead = null;
-		if ($services->has(CronModule::SERVICE_READ)) {
-			$candidateCronRead = $services->get(CronModule::SERVICE_READ);
-			if (!$candidateCronRead instanceof CronReadService) {
+		if ( $services->has( CronModule::SERVICE_READ ) ) {
+			$candidateCronRead = $services->get( CronModule::SERVICE_READ );
+			if ( !$candidateCronRead instanceof CronReadService ) {
 				throw new LogicException('Dashboard Widgets optional Cron integration requires the canonical Cron read service.');
 			}
 			$cronRead = $candidateCronRead;
 		}
 
 		if (
-			!$services->has(RenderingServiceRegistrar::SERVICE_BLUEPRINTS)
-			|| !$services->has(RenderingServiceRegistrar::SERVICE_RENDERER)
+			!$services->has( RenderingServiceRegistrar::SERVICE_BLUEPRINTS )
+			|| !$services->has( RenderingServiceRegistrar::SERVICE_RENDERER )
 		) {
 			throw new LogicException('Dashboard Widgets requires the canonical shared rendering services.');
 		}
-		$blueprints = $services->get(RenderingServiceRegistrar::SERVICE_BLUEPRINTS);
-		$dispatcher = $services->get(RenderingServiceRegistrar::SERVICE_RENDERER);
+		$blueprints = $services->get( RenderingServiceRegistrar::SERVICE_BLUEPRINTS );
+		$dispatcher = $services->get( RenderingServiceRegistrar::SERVICE_RENDERER );
 
-		if (!$definitions instanceof DefinitionRepositoryInterface) {
+		if ( !$definitions instanceof DefinitionRepositoryInterface ) {
 			throw new LogicException('Dashboard Widgets requires the shared Definition Repository.');
 		}
-		if (!$abilities instanceof AbilityRegistry) {
+		if ( !$abilities instanceof AbilityRegistry ) {
 			throw new LogicException('Dashboard Widgets requires the shared Ability Registry.');
 		}
-		if (!$bridge instanceof WordPressAbilityBridge) {
+		if ( !$bridge instanceof WordPressAbilityBridge ) {
 			throw new LogicException('Dashboard Widgets requires the shared WordPress Ability bridge.');
 		}
-		if (!$capabilityChecker instanceof CapabilityCheckerInterface) {
+		if ( !$capabilityChecker instanceof CapabilityCheckerInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical WordPress capability checker.');
 		}
-		if (!$blueprints instanceof ComponentBlueprintRegistry) {
+		if ( !$blueprints instanceof ComponentBlueprintRegistry ) {
 			throw new LogicException('Dashboard Widgets requires the canonical concrete Component Blueprint registry.');
 		}
-		if (!$dispatcher instanceof BlueprintRendererDispatcher) {
+		if ( !$dispatcher instanceof BlueprintRendererDispatcher ) {
 			throw new LogicException('Dashboard Widgets requires the canonical Blueprint Renderer dispatcher.');
 		}
-		if (!$dataSources instanceof DataSourceRegistryInterface) {
+		if ( !$dataSources instanceof DataSourceRegistryInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical Data Source Registry.');
 		}
-		if (!$queryReadConsumer instanceof QueryReadConsumerInterface) {
+		if ( !$queryReadConsumer instanceof QueryReadConsumerInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical Query read-consumer service.');
 		}
-		if (!$dynamicValues instanceof DynamicValueResolverInterface) {
+		if ( !$dynamicValues instanceof DynamicValueResolverInterface ) {
 			throw new LogicException('Dashboard Widgets requires the canonical shared Dynamic Value resolver.');
 		}
 
@@ -245,7 +245,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 			scriptEntry: 'main',
 		));
 
-		$read = new DashboardWidgetsReadService($definitions);
+		$read = new DashboardWidgetsReadService( $definitions );
 		$contentClassCompiler = new DashboardWidgetContentClassCompiler();
 		$componentCatalog = new DashboardWidgetComponentBlueprintCatalog();
 		$renderSourceCompiler = new DashboardWidgetRenderSourceCompiler(
@@ -253,9 +253,9 @@ final class DashboardWidgetsModule implements ModuleInterface
 			$contentClassCompiler,
 			$componentCatalog,
 		);
-		$queryBindingExecutor = new DashboardWidgetQueryBindingExecutor($dataSources, $queryReadConsumer);
-		$dynamicBindingExecutor = new DashboardWidgetDynamicBindingExecutor($dynamicValues);
-		$trustedComponentRenderer = new DashboardWidgetTrustedComponentRenderer($componentCatalog);
+		$queryBindingExecutor = new DashboardWidgetQueryBindingExecutor( $dataSources, $queryReadConsumer );
+		$dynamicBindingExecutor = new DashboardWidgetDynamicBindingExecutor( $dynamicValues );
+		$trustedComponentRenderer = new DashboardWidgetTrustedComponentRenderer( $componentCatalog );
 		$componentRegistrar = new DashboardWidgetComponentRegistrar(
 			$blueprints,
 			$dispatcher,
@@ -268,7 +268,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 			$capabilityChecker,
 			$roleMemberships,
 		);
-		$presetCompiler = new DashboardWidgetPresetCompiler($definitions);
+		$presetCompiler = new DashboardWidgetPresetCompiler( $definitions );
 		$presetResolver = new DashboardWidgetPresetResolver(
 			$definitions,
 			$presetCompiler,
@@ -279,11 +279,11 @@ final class DashboardWidgetsModule implements ModuleInterface
 			$presetCompiler,
 			$presetResolver,
 		);
-		$presetPortability = new DashboardWidgetPresetPortabilityReadService($presetRead);
-		$presetPortabilityFreshness = new DashboardWidgetPresetPortabilityFreshnessService($presetPortability);
-		$presetImportPreflight = new DashboardWidgetPresetImportPreflightService($definitions, $presetCompiler);
-		$presetMappingPreview = new DashboardWidgetPresetPortabilityMappingPreviewService($presetImportPreflight);
-		$multisitePolicyCompiler = new DashboardWidgetMultisitePolicyCompiler($definitions, $presetCompiler);
+		$presetPortability = new DashboardWidgetPresetPortabilityReadService( $presetRead );
+		$presetPortabilityFreshness = new DashboardWidgetPresetPortabilityFreshnessService( $presetPortability );
+		$presetImportPreflight = new DashboardWidgetPresetImportPreflightService( $definitions, $presetCompiler );
+		$presetMappingPreview = new DashboardWidgetPresetPortabilityMappingPreviewService( $presetImportPreflight );
+		$multisitePolicyCompiler = new DashboardWidgetMultisitePolicyCompiler( $definitions, $presetCompiler );
 		$multisitePolicyResolver = new DashboardWidgetMultisitePolicyResolver(
 			$definitions,
 			$multisitePolicyCompiler,
@@ -295,16 +295,16 @@ final class DashboardWidgetsModule implements ModuleInterface
 			$multisitePolicyCompiler,
 			$multisitePolicyResolver,
 		);
-		$subsiteOverrideCompiler = new DashboardWidgetSubsitePresetOverrideCompiler($definitions, $presetCompiler);
+		$subsiteOverrideCompiler = new DashboardWidgetSubsitePresetOverrideCompiler( $definitions, $presetCompiler );
 		$effectiveMultisitePreset = new DashboardWidgetMultisiteEffectivePresetResolver(
 			$multisitePolicyResolver,
 			$definitions,
 			$subsiteOverrideCompiler,
 		);
-		$actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator($abilities);
-		$abilityResolver = static function (string $name) use ($abilities): ?array {
-			$descriptor = $abilities->descriptor($name);
-			if (!$descriptor instanceof AbilityDescriptor) {
+		$actionAuthorizationEvaluator = new DashboardWidgetActionAuthorizationEvaluator( $abilities );
+		$abilityResolver = static function ( string $name ) use ( $abilities ): ?array {
+			$descriptor = $abilities->descriptor( $name );
+			if ( !$descriptor instanceof AbilityDescriptor ) {
 				return null;
 			}
 
@@ -321,7 +321,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 			$contentClassCompiler,
 			$renderSourceCompiler,
 			$cronRead !== null
-				? static fn (string $id): ?array => $cronRead->get($id)
+				? static fn ( string $id ): ?array => $cronRead->get( $id )
 				: null,
 			$abilityResolver,
 		);
@@ -434,22 +434,22 @@ final class DashboardWidgetsModule implements ModuleInterface
 
 		$componentRegistrar->register();
 
-		$services->set(self::SERVICE_READ, $read);
-		$services->set(self::SERVICE_DIAGNOSTICS, $diagnostics);
-		$services->set(self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences);
-		$services->set(self::SERVICE_PRESET_COMPILER, $presetCompiler);
-		$services->set(self::SERVICE_PRESET_RESOLVER, $presetResolver);
-		$services->set(self::SERVICE_PRESET_READ, $presetRead);
-		$services->set(self::SERVICE_PRESET_PORTABILITY, $presetPortability);
-		$services->set(self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $presetPortabilityFreshness);
-		$services->set(self::SERVICE_PRESET_IMPORT_PREFLIGHT, $presetImportPreflight);
-		if ($definitions instanceof DefinitionCreateOnlyRepositoryInterface) {
+		$services->set( self::SERVICE_READ, $read );
+		$services->set( self::SERVICE_DIAGNOSTICS, $diagnostics );
+		$services->set( self::SERVICE_PERSONAL_PREFERENCES, $personalPreferences );
+		$services->set( self::SERVICE_PRESET_COMPILER, $presetCompiler );
+		$services->set( self::SERVICE_PRESET_RESOLVER, $presetResolver );
+		$services->set( self::SERVICE_PRESET_READ, $presetRead );
+		$services->set( self::SERVICE_PRESET_PORTABILITY, $presetPortability );
+		$services->set( self::SERVICE_PRESET_PORTABILITY_FRESHNESS, $presetPortabilityFreshness );
+		$services->set( self::SERVICE_PRESET_IMPORT_PREFLIGHT, $presetImportPreflight );
+		if ( $definitions instanceof DefinitionCreateOnlyRepositoryInterface ) {
 			$draftImporter = new DashboardWidgetPresetDraftImportService(
 				$definitions,
 				$presetImportPreflight,
 				$capabilityChecker,
 			);
-			$services->set(self::SERVICE_PRESET_DRAFT_IMPORT, $draftImporter);
+			$services->set( self::SERVICE_PRESET_DRAFT_IMPORT, $draftImporter );
 			// Internal-only Draft eligibility assessment. Never grant publish
 			// permissions or register an Ability/UI/REST/AJAX route.
 			$services->set(
@@ -469,33 +469,33 @@ final class DashboardWidgetsModule implements ModuleInterface
 				),
 			);
 		}
-		$services->set(self::SERVICE_PRESET_MAPPING_PREVIEW, $presetMappingPreview);
-		$services->set(self::SERVICE_MULTISITE_POLICY_COMPILER, $multisitePolicyCompiler);
-		$services->set(self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisitePolicyResolver);
-		$services->set(self::SERVICE_MULTISITE_POLICY_READ, $multisitePolicyRead);
-		$services->set(self::SERVICE_SUBSITE_PRESET_OVERRIDE_COMPILER, $subsiteOverrideCompiler);
-		$services->set(self::SERVICE_EFFECTIVE_MULTISITE_PRESET, $effectiveMultisitePreset);
-		$services->set(self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler);
-		$services->set(self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler);
-		$services->set(self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor);
-		$services->set(self::SERVICE_DYNAMIC_BINDING_EXECUTOR, $dynamicBindingExecutor);
-		$services->set(self::SERVICE_COMPONENT_CATALOG, $componentCatalog);
-		$services->set(self::SERVICE_TRUSTED_COMPONENT_RENDERER, $trustedComponentRenderer);
-		$services->set(self::SERVICE_COMPONENT_REGISTRAR, $componentRegistrar);
-		$services->set(self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler);
-		$services->set(self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler);
-		$services->set(self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator);
-		$services->set(self::SERVICE_ACTION_AUTHORIZATION_EVALUATOR, $actionAuthorizationEvaluator);
-		$services->set(self::SERVICE_ACTION_INPUT_BINDER, $actionInputBinder);
-		$services->set(self::SERVICE_FORM_ACTION_PRESENTER, $formActionPresenter);
-		$services->set(self::SERVICE_FORM_ACTION_PREFLIGHT, $preflightHandler);
-		$services->set(self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $executionResultAdapter);
-		$services->set(self::SERVICE_FORM_ACTION_EXECUTION, $executionHandler);
-		$services->set(self::SERVICE_MANUAL_REFRESH_PRESENTER, $manualRefreshPresenter);
-		$services->set(self::SERVICE_MANUAL_REFRESH_HANDLER, $manualRefreshHandler);
-		$services->set(self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor);
-		$services->set(self::SERVICE_RUNTIME_CLOCK, $runtimeClock);
-		$services->set(self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter);
+		$services->set( self::SERVICE_PRESET_MAPPING_PREVIEW, $presetMappingPreview );
+		$services->set( self::SERVICE_MULTISITE_POLICY_COMPILER, $multisitePolicyCompiler );
+		$services->set( self::SERVICE_MULTISITE_POLICY_RESOLVER, $multisitePolicyResolver );
+		$services->set( self::SERVICE_MULTISITE_POLICY_READ, $multisitePolicyRead );
+		$services->set( self::SERVICE_SUBSITE_PRESET_OVERRIDE_COMPILER, $subsiteOverrideCompiler );
+		$services->set( self::SERVICE_EFFECTIVE_MULTISITE_PRESET, $effectiveMultisitePreset );
+		$services->set( self::SERVICE_CONTENT_CLASS_COMPILER, $contentClassCompiler );
+		$services->set( self::SERVICE_RENDER_SOURCE_COMPILER, $renderSourceCompiler );
+		$services->set( self::SERVICE_QUERY_BINDING_EXECUTOR, $queryBindingExecutor );
+		$services->set( self::SERVICE_DYNAMIC_BINDING_EXECUTOR, $dynamicBindingExecutor );
+		$services->set( self::SERVICE_COMPONENT_CATALOG, $componentCatalog );
+		$services->set( self::SERVICE_TRUSTED_COMPONENT_RENDERER, $trustedComponentRenderer );
+		$services->set( self::SERVICE_COMPONENT_REGISTRAR, $componentRegistrar );
+		$services->set( self::SERVICE_VISIBILITY_COMPILER, $visibilityCompiler );
+		$services->set( self::SERVICE_REGISTRATION_COMPILER, $registrationCompiler );
+		$services->set( self::SERVICE_VISIBILITY_EVALUATOR, $visibilityEvaluator );
+		$services->set( self::SERVICE_ACTION_AUTHORIZATION_EVALUATOR, $actionAuthorizationEvaluator );
+		$services->set( self::SERVICE_ACTION_INPUT_BINDER, $actionInputBinder );
+		$services->set( self::SERVICE_FORM_ACTION_PRESENTER, $formActionPresenter );
+		$services->set( self::SERVICE_FORM_ACTION_PREFLIGHT, $preflightHandler );
+		$services->set( self::SERVICE_FORM_ACTION_RESULT_ADAPTER, $executionResultAdapter );
+		$services->set( self::SERVICE_FORM_ACTION_EXECUTION, $executionHandler );
+		$services->set( self::SERVICE_MANUAL_REFRESH_PRESENTER, $manualRefreshPresenter );
+		$services->set( self::SERVICE_MANUAL_REFRESH_HANDLER, $manualRefreshHandler );
+		$services->set( self::SERVICE_RUNTIME_RENDER_EXECUTOR, $runtimeRenderExecutor );
+		$services->set( self::SERVICE_RUNTIME_CLOCK, $runtimeClock );
+		$services->set( self::SERVICE_WORDPRESS_ADAPTER, $wordpressAdapter );
 
 		$channels = [ExecutionChannel::Internal, ExecutionChannel::Ui, ExecutionChannel::Rest];
 		$this->registerAbility(
@@ -515,7 +515,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => ['object', 'null']],
 			),
-			new DashboardWidgetsReadAbilityHandler($read, DashboardWidgetsReadAbilityHandler::GET),
+			new DashboardWidgetsReadAbilityHandler( $read, DashboardWidgetsReadAbilityHandler::GET ),
 			'Read Dashboard Widget definition',
 			'Reads one canonical Dashboard Widget definition without mutating dashboard widget or authorization state.',
 		);
@@ -531,7 +531,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'array'],
 			),
-			new DashboardWidgetsReadAbilityHandler($read, DashboardWidgetsReadAbilityHandler::CATALOG),
+			new DashboardWidgetsReadAbilityHandler( $read, DashboardWidgetsReadAbilityHandler::CATALOG ),
 			'Read Dashboard Widgets catalog',
 			'Reads the deterministic canonical Dashboard Widgets definition catalog without mutation.',
 		);
@@ -580,7 +580,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => ['object', 'null']],
 			),
-			new DashboardWidgetPresetPortabilityAbilityHandler($presetPortability),
+			new DashboardWidgetPresetPortabilityAbilityHandler( $presetPortability ),
 			'Read Dashboard preset portability snapshot',
 			'Exports only validated Published Dashboard preset fields with a non-authenticating SHA-256 fingerprint.',
 		);
@@ -604,7 +604,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetPresetPortabilityFreshnessAbilityHandler($presetPortabilityFreshness),
+			new DashboardWidgetPresetPortabilityFreshnessAbilityHandler( $presetPortabilityFreshness ),
 			'Read Dashboard preset fingerprint freshness',
 			'Compares a non-authenticating fingerprint to a canonical current Published preset without returning raw payload or changing layout.',
 		);
@@ -627,7 +627,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetPresetImportPreflightAbilityHandler($presetImportPreflight),
+			new DashboardWidgetPresetImportPreflightAbilityHandler( $presetImportPreflight ),
 			'Read Dashboard preset import compatibility preflight',
 			'Checks a bounded portability envelope and Published widget references without importing, writing, signing or applying a preset.',
 		);
@@ -652,7 +652,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetPresetPortabilityMappingPreviewAbilityHandler($presetMappingPreview),
+			new DashboardWidgetPresetPortabilityMappingPreviewAbilityHandler( $presetMappingPreview ),
 			'Preview Dashboard preset cross-site widget UUID mapping',
 			'Maps validated export UUIDs into a destination candidate and rechecks its Published widgets without importing, trusting, or writing WordPress preferences.',
 		);
@@ -708,7 +708,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				['type' => 'object', 'additionalProperties' => false],
 				['type' => 'object'], 'Read effective Dashboard Multisite policy'],
 		];
-		foreach ($policyAbilities as [$name, $action, $inputSchema, $outputSchema, $label]) {
+		foreach ( $policyAbilities as [$name, $action, $inputSchema, $outputSchema, $label] ) {
 			$this->registerAbility(
 				$abilities,
 				$bridge,
@@ -721,7 +721,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 					inputSchema: $inputSchema,
 					outputSchema: $outputSchema,
 				),
-				new DashboardWidgetMultisitePolicyReadAbilityHandler($multisitePolicyRead, $action),
+				new DashboardWidgetMultisitePolicyReadAbilityHandler( $multisitePolicyRead, $action ),
 				$label,
 				'Reads bounded Surface-10 Multisite policy evidence without mutating WordPress Dashboard preferences.',
 			);
@@ -739,7 +739,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				inputSchema: ['type' => 'object', 'additionalProperties' => false],
 				outputSchema: ['type' => 'object'],
 			),
-			new DashboardWidgetMultisiteEffectivePresetAbilityHandler($effectiveMultisitePreset),
+			new DashboardWidgetMultisiteEffectivePresetAbilityHandler( $effectiveMultisitePreset ),
 			'Read effective Dashboard Multisite inherited preset',
 			'Resolves read-only network inherited versus explicitly scoped subsite preset; does not mutate WordPress layout.',
 		);
@@ -799,7 +799,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 				],
 			],
 		];
-		foreach ($preferenceActions as $action => [$abilityName, $ajaxType, $inputSchema]) {
+		foreach ( $preferenceActions as $action => [$abilityName, $ajaxType, $inputSchema] ) {
 			$descriptor = new AbilityDescriptor(
 				name: $abilityName,
 				ownerSurfaceId: DashboardWidgetDefinition::OWNER_SURFACE_ID,
@@ -830,16 +830,16 @@ final class DashboardWidgetsModule implements ModuleInterface
 			);
 			$ajaxRoutes->register(new AjaxRoute(
 				type: $ajaxType,
-				handler: new AbilityAjaxHandler($abilities, $descriptor->name, $contexts),
+				handler: new AbilityAjaxHandler( $abilities, $descriptor->name, $contexts ),
 				operation: NonceOperation::Update,
 			));
 		}
 	}
 
-	public function boot(ServiceRegistryInterface $services): void
+	public function boot( ServiceRegistryInterface $services ): void
 	{
-		$adapter = $services->get(self::SERVICE_WORDPRESS_ADAPTER);
-		if (!$adapter instanceof DashboardWidgetWordPressAdapter) {
+		$adapter = $services->get( self::SERVICE_WORDPRESS_ADAPTER );
+		if ( !$adapter instanceof DashboardWidgetWordPressAdapter ) {
 			throw new LogicException('Dashboard Widgets requires its WordPress Dashboard adapter service.');
 		}
 		$adapter->registerHooks();
@@ -854,7 +854,7 @@ final class DashboardWidgetsModule implements ModuleInterface
 		string $description,
 		bool $showInRest = true,
 	): void {
-		$abilities->register($descriptor, $handler);
+		$abilities->register( $descriptor, $handler );
 		$bridge->expose(new WordPressAbilityExposure(
 			internalName: $descriptor->name,
 			label: $label,
