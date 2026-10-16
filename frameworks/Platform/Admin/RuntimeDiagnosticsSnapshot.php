@@ -76,17 +76,17 @@ final readonly class RuntimeDiagnosticsSnapshot
 	}
 
 	/**
-     * @return list<array{
-     *   id:string,
-     *   module:string,
-     *   edition:string,
-     *   package:string,
-     *   compatibility:string,
-     *   entitlement:string,
-     *   runtime_state:string,
-     *   reason:string
-     * }>
-     */
+	 * @return list<array{
+	 *   id:string,
+	 *   module:string,
+	 *   edition:string,
+	 *   package:string,
+	 *   compatibility:string,
+	 *   entitlement:string,
+	 *   runtime_state:string,
+	 *   reason:string
+	 * }>
+	 */
 	private function moduleInventory(): array
 	{
 		$registry = $this->kernel->modules();
@@ -185,20 +185,20 @@ final readonly class RuntimeDiagnosticsSnapshot
 	}
 
 	/**
-     * @return array{
-     *   state:string,
-     *   dimension:string,
-     *   reason:string,
-     *   remediation:string,
-     *   free_version:string,
-     *   platform_api:string,
-     *   platform_schema:int|string,
-     *   pro_schema:int|string,
-     *   premium_boot_allowed:bool,
-     *   premium_migrations_allowed:bool,
-     *   certification:string
-     * }
-     */
+	 * @return array{
+	 *   state:string,
+	 *   dimension:string,
+	 *   reason:string,
+	 *   remediation:string,
+	 *   free_version:string,
+	 *   platform_api:string,
+	 *   platform_schema:int|string,
+	 *   pro_schema:int|string,
+	 *   premium_boot_allowed:bool,
+	 *   premium_migrations_allowed:bool,
+	 *   certification:string
+	 * }
+	 */
 	private function proCompatibility(): array
 	{
 		$result = $GLOBALS['wpe_pro_compatibility_result'] ?? null;

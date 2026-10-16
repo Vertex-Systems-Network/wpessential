@@ -26,24 +26,24 @@ final readonly class AdminColumnsCsvExportScopePolicy
 	];
 
 	/**
-     * Normalize explicit export-scope intent against canonical enabled Columns and
-     * scopes explicitly advertised by the target integration.
-     *
-     * This policy performs no authorization, Query execution, row resolution,
-     * CSV serialization or transport work.
-     *
-     * @param array<string,mixed> $request
-     * @param list<string> $enabledColumnKeys
-     * @param list<string> $supportedScopes
-     * @return array{
-     *   contract_version:int,
-     *   scope:string,
-     *   selected_row_ids:list<int>,
-     *   selected_columns:list<string>,
-     *   respect_filters:bool,
-     *   respect_sort:bool
-     * }
-     */
+	 * Normalize explicit export-scope intent against canonical enabled Columns and
+	 * scopes explicitly advertised by the target integration.
+	 *
+	 * This policy performs no authorization, Query execution, row resolution,
+	 * CSV serialization or transport work.
+	 *
+	 * @param array<string,mixed> $request
+	 * @param list<string> $enabledColumnKeys
+	 * @param list<string> $supportedScopes
+	 * @return array{
+	 *   contract_version:int,
+	 *   scope:string,
+	 *   selected_row_ids:list<int>,
+	 *   selected_columns:list<string>,
+	 *   respect_filters:bool,
+	 *   respect_sort:bool
+	 * }
+	 */
 	public function normalize(array $request, array $enabledColumnKeys, array $supportedScopes): array
 	{
 		$this->assertKnownKeys($request, self::REQUEST_KEYS, 'CSV export scope request');

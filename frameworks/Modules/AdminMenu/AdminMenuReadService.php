@@ -18,18 +18,18 @@ final readonly class AdminMenuReadService
 	}
 
 	/**
-     * @return array{
-     *   id:string,
-     *   slug:string,
-     *   type:string,
-     *   schema_version:int,
-     *   owner_surface_id:int,
-     *   status:string,
-     *   revision:int,
-     *   dependencies:list<string>,
-     *   payload:array<string,mixed>
-     * }|null
-     */
+	 * @return array{
+	 *   id:string,
+	 *   slug:string,
+	 *   type:string,
+	 *   schema_version:int,
+	 *   owner_surface_id:int,
+	 *   status:string,
+	 *   revision:int,
+	 *   dependencies:list<string>,
+	 *   payload:array<string,mixed>
+	 * }|null
+	 */
 	public function get(string $id): ?array
 	{
 		$definition = $this->definitions->get( $id );
@@ -41,18 +41,18 @@ final readonly class AdminMenuReadService
 	}
 
 	/**
-     * @return list<array{
-     *   id:string,
-     *   slug:string,
-     *   type:string,
-     *   schema_version:int,
-     *   owner_surface_id:int,
-     *   status:string,
-     *   revision:int,
-     *   dependencies:list<string>,
-     *   payload:array<string,mixed>
-     * }>
-     */
+	 * @return list<array{
+	 *   id:string,
+	 *   slug:string,
+	 *   type:string,
+	 *   schema_version:int,
+	 *   owner_surface_id:int,
+	 *   status:string,
+	 *   revision:int,
+	 *   dependencies:list<string>,
+	 *   payload:array<string,mixed>
+	 * }>
+	 */
 	public function catalog(): array
 	{
 		$definitions = $this->definitions->byType( AdminMenuDefinition::TYPE );

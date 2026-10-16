@@ -101,9 +101,9 @@ final class WordPressPostsQueryCompiler implements QueryProviderCompilerInterfac
 	}
 
 	/**
-     * @param list<string> $projection
-     * @return list<string>
-     */
+	 * @param list<string> $projection
+	 * @return list<string>
+	 */
 	private function compileProjection( array $projection ): array
 	{
 		if ( $projection === [] ) {
@@ -249,9 +249,9 @@ final class WordPressPostsQueryCompiler implements QueryProviderCompilerInterfac
 	}
 
 	/**
-     * @param list<QueryOrderClause> $orderBy
-     * @return array<string,mixed>
-     */
+	 * @param list<QueryOrderClause> $orderBy
+	 * @return array<string,mixed>
+	 */
 	private function compileOrdering( array $orderBy ): array
 	{
 		if ( $orderBy === [] ) {
@@ -310,10 +310,10 @@ final class WordPressPostsQueryCompiler implements QueryProviderCompilerInterfac
 	}
 
 	/**
-     * @param array<string,mixed> $current
-     * @param array<string,mixed> $next
-     * @return array<string,mixed>
-     */
+	 * @param array<string,mixed> $current
+	 * @param array<string,mixed> $next
+	 * @return array<string,mixed>
+	 */
 	private function mergeArguments( array $current, array $next, string $path ): array
 	{
 		foreach ( $next as $key => $value ) {
@@ -366,9 +366,9 @@ final class WordPressPostsQueryCompiler implements QueryProviderCompilerInterfac
 	}
 
 	/**
-     * @param list<mixed> $values
-     * @return list<int>
-     */
+	 * @param list<mixed> $values
+	 * @return list<int>
+	 */
 	private function positiveIntList( array $values, string $path ): array
 	{
 		$normalized = [];
@@ -380,9 +380,9 @@ final class WordPressPostsQueryCompiler implements QueryProviderCompilerInterfac
 	}
 
 	/**
-     * @param list<mixed> $values
-     * @return list<int>
-     */
+	 * @param list<mixed> $values
+	 * @return list<int>
+	 */
 	private function nonNegativeIntList( array $values, string $path ): array
 	{
 		$normalized = [];
@@ -394,9 +394,9 @@ final class WordPressPostsQueryCompiler implements QueryProviderCompilerInterfac
 	}
 
 	/**
-     * @param list<mixed> $values
-     * @return list<string>
-     */
+	 * @param list<mixed> $values
+	 * @return list<string>
+	 */
 	private function slugList( array $values, string $path ): array
 	{
 		$normalized = [];
