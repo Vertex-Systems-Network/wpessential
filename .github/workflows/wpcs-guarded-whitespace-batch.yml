@@ -1,4 +1,4 @@
-name: WPCS Guarded Comma-Spacing Batch
+name: WPCS Guarded Statement-Line Batch
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   guarded-whitespace:
-    name: Per-file token-safe WPCS comma-spacing reduction
+    name: Per-file token-safe WPCS statement-line reduction
     if: github.repository == 'Vertex-Systems-Network/wpessential'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
@@ -62,7 +62,7 @@ jobs:
           from pathlib import Path
           data = json.loads(Path('/tmp/wpcs-before.json').read_text())
           root = Path.cwd().resolve()
-          prefixes = ('Universal.WhiteSpace.CommaSpacing.NoSpaceAfter',)
+          prefixes = ('Generic.Formatting.DisallowMultipleStatements.SameLine',)
           candidates = []
           for name, record in data['files'].items():
               path = Path(name).resolve()
@@ -93,7 +93,7 @@ jobs:
             git show "$GITHUB_SHA:$phpfile" > /tmp/wpcs-original.php
             vendor/bin/phpcs -q --standard=phpcs.xml.dist --report=json --report-file=/tmp/wpcs-file-before.json "$phpfile" > /tmp/wpcs-file-before.log 2>&1 || true
             test -s /tmp/wpcs-file-before.json || { cat /tmp/wpcs-file-before.log; exit 1; }
-            vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Universal.WhiteSpace.CommaSpacing.NoSpaceAfter "$phpfile" > /tmp/wpcs-fixer.log 2>&1 || true
+            vendor/bin/phpcbf --standard=phpcs.xml.dist --sniffs=Generic.Formatting.DisallowMultipleStatements.SameLine "$phpfile" > /tmp/wpcs-fixer.log 2>&1 || true
             if git diff --quiet -- "$phpfile"; then
               echo "No fixable changes"
               echo "::endgroup::"
@@ -212,6 +212,6 @@ jobs:
           test "$(git rev-parse "origin/$GITHUB_REF_NAME")" = "$GITHUB_SHA"
           git config user.name 'WPEssential CI Formatting'
           git config user.email 'wordpress.essential@gmail.com'
-          git commit -m 'style(wpcs): token-safe bounded comma spacing'
+          git commit -m 'style(wpcs): token-safe bounded statement lines'
           git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
-          echo "Published PHPUnit-green, lexer-equivalent comma-spacing WPCS reduction. Full-tree WPCS/PHPStan remain mandatory." >> "$GITHUB_STEP_SUMMARY"
+          echo "Published PHPUnit-green, lexer-equivalent statement-line WPCS reduction. Full-tree WPCS/PHPStan remain mandatory." >> "$GITHUB_STEP_SUMMARY"
