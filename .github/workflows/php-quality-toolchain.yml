@@ -99,10 +99,14 @@ jobs:
         run: composer quality:phpcs
 
       - name: WordPress-aware PHPStan
+        id: phpstan
+        continue-on-error: true
         shell: bash
         run: composer quality:phpstan
 
       - name: PHPUnit unit suite
+        id: phpunit
+        continue-on-error: true
         shell: bash
         run: composer test:unit
 
@@ -115,6 +119,10 @@ jobs:
         shell: bash
         env:
           PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+          PHPSTAN_OUTCOME: ${{ steps.phpstan.outcome }}
+          PHPUNIT_OUTCOME: ${{ steps.phpunit.outcome }}
         run: |
           set -euo pipefail
           test "${PHPCS_OUTCOME}" = success
+          test "${PHPSTAN_OUTCOME}" = success
+          test "${PHPUNIT_OUTCOME}" = success
