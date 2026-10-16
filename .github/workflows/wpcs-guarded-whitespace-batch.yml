@@ -191,6 +191,19 @@ jobs:
           print('Whole-framework WPCS after:', after['errors'], 'errors;', after['warnings'], 'warnings')
           PY
 
+      - name: Upload guarded WPCS diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wpcs-guarded-diagnostics-${{ github.sha }}
+          if-no-files-found: warn
+          path: |
+            /tmp/wpcs-before.json
+            /tmp/wpcs-after.json
+            /tmp/wpcs-report-before.log
+            /tmp/wpcs-report-after.log
+            /tmp/wpcs-candidates
+
       - name: Publish safe changes only if source head is unchanged
         shell: bash
         run: |
