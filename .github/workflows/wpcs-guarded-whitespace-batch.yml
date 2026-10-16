@@ -1,12 +1,7 @@
-name: WPCS Guarded Brace-Newline Batch
+name: WPCS Guarded Single-Sniff Batch
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - agent/local-phpunit-bootstrap-repair-v1
-    paths:
-      - .github/workflows/wpcs-guarded-whitespace-batch.yml
 
 permissions:
   contents: write
@@ -17,7 +12,7 @@ concurrency:
 
 jobs:
   guarded-whitespace:
-    name: Per-file token-safe WPCS brace-newline reduction
+    name: Per-file token-safe WPCS single-sniff reduction
     if: github.repository == 'Vertex-Systems-Network/wpessential'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
