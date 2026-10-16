@@ -1,0 +1,152 @@
+name: WPCS Naming ABI Audit
+
+on:
+  push:
+    branches:
+      - agent/local-phpunit-bootstrap-repair-v1
+    paths:
+      - .github/workflows/wpcs-naming-abi-audit.yml
+      - docs/QUALITY/WPCS-NAMING-PSR4-ABI-AUDIT-2026-10-17.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wpessential-wpcs-naming-abi-audit
+  cancel-in-progress: false
+
+jobs:
+  naming-abi-audit:
+    name: Classify WPCS naming findings without source writes
+    if: github.repository == 'Vertex-Systems-Network/wpessential'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact source head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source head and branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF_NAME" = 'agent/local-phpunit-bootstrap-repair-v1'
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.2'
+          extensions: dom, filter, libxml, mbstring, tokenizer, xml, xmlreader, xmlwriter
+          coverage: none
+          tools: composer:v2
+
+      - name: Install locked quality graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          composer install --no-interaction --prefer-dist --no-progress
+          composer validate --strict
+          composer audit --locked --no-interaction
+          composer architecture:validate
+          composer engineering:validate
+          composer test:unit
+
+      - name: Capture naming findings without changing source
+        shell: bash
+        run: |
+          set -euo pipefail
+          vendor/bin/phpcs -q --standard=phpcs.xml.dist --extensions=php --report=json --report-file=/tmp/wpcs-naming-before.json frameworks > /tmp/wpcs-naming-before.log 2>&1 || true
+          test -s /tmp/wpcs-naming-before.json || { cat /tmp/wpcs-naming-before.log; exit 1; }
+          python3 - <<'PY'
+          import json
+          import os
+          from collections import Counter
+          from pathlib import Path
+
+          report = json.loads(Path('/tmp/wpcs-naming-before.json').read_text())
+          prefixes = ('WordPress.NamingConventions.',)
+          findings = []
+          by_sniff = Counter()
+          by_file = Counter()
+          for filename, record in report.get('files', {}).items():
+              for message in record.get('messages', []):
+                  source = str(message.get('source', ''))
+                  if not source.startswith(prefixes):
+                      continue
+                  item = {
+                      'file': filename,
+                      'line': message.get('line'),
+                      'column': message.get('column'),
+                      'type': message.get('type'),
+                      'source': source,
+                      'message': message.get('message'),
+                      'fixable': bool(message.get('fixable')),
+                  }
+                  findings.append(item)
+                  by_sniff[source] += 1
+                  by_file[filename] += 1
+
+          findings.sort(key=lambda item: (item['file'], item['line'] or 0, item['column'] or 0, item['source']))
+          source_head = os.environ.get('GITHUB_SHA', 'unknown')
+          summary = {
+              'source_head': source_head,
+              'scope': 'frameworks',
+              'total_naming_findings': len(findings),
+              'by_sniff': by_sniff,
+              'top_files': by_file.most_common(50),
+              'findings': findings,
+          }
+          Path('/tmp/wpcs-naming-findings.json').write_text(json.dumps(summary, indent=2) + '\n')
+
+          lines = [
+              '# WPCS naming ABI audit',
+              '',
+              f'Source head: `{source_head}`',
+              '',
+              f"Naming findings: **{len(findings)}**",
+              '',
+              '## Findings by sniff',
+              '',
+              '| Count | Sniff |',
+              '|---:|---|',
+          ]
+          for source, count in by_sniff.most_common():
+              lines.append(f'| {count} | `{source}` |')
+          lines += ['', '## Highest-density files', '', '| Count | File |', '|---:|---|']
+          for filename, count in by_file.most_common(50):
+              lines.append(f'| {count} | `{filename}` |')
+          lines += [
+              '',
+              'This is a read-only diagnostic. It does not rename symbols, change the WPCS ruleset, or authorize a merge.',
+          ]
+          Path('/tmp/wpcs-naming-summary.md').write_text('\n'.join(lines) + '\n')
+          print('Naming findings:', len(findings))
+          print('By sniff:', dict(by_sniff))
+          print('Top files:', by_file.most_common(10))
+          PY
+
+      - name: Verify source remained clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+          git diff --check
+
+      - name: Upload naming audit evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: wpcs-naming-abi-audit-${{ github.sha }}
+          if-no-files-found: warn
+          path: |
+            /tmp/wpcs-naming-before.json
+            /tmp/wpcs-naming-before.log
+            /tmp/wpcs-naming-findings.json
+            /tmp/wpcs-naming-summary.md
+635b85197f9924f5437d0c2d03ea7c2abdc1b30a
