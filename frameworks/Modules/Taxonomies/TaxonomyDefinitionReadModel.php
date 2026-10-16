@@ -34,13 +34,13 @@ final readonly class TaxonomyDefinitionReadModel
 	}
 
 	/**
-     * @return array{
-     *   count:int,
-     *   declared:list<array{id:string,resolved:bool,slug:?string,type:?string,owner_surface_id:?int,status:?string}>,
-     *   dependents:list<array{id:string,resolved:bool,slug:?string,type:?string,owner_surface_id:?int,status:?string}>,
-     *   object_types:list<array{key:string,state:string,canonical:bool,canonical_definition_id:?string,canonical_status:?string,runtime_registered:?bool}>
-     * }
-     */
+	 * @return array{
+	 *   count:int,
+	 *   declared:list<array{id:string,resolved:bool,slug:?string,type:?string,owner_surface_id:?int,status:?string}>,
+	 *   dependents:list<array{id:string,resolved:bool,slug:?string,type:?string,owner_surface_id:?int,status:?string}>,
+	 *   object_types:list<array{key:string,state:string,canonical:bool,canonical_definition_id:?string,canonical_status:?string,runtime_registered:?bool}>
+	 * }
+	 */
 	public function dependencyUsage(Definition $definition): array
 	{
 		$declared = [];
@@ -88,9 +88,9 @@ final readonly class TaxonomyDefinitionReadModel
 	}
 
 	/**
-     * @param list<string> $objectTypes
-     * @return list<array{key:string,state:string,canonical:bool,canonical_definition_id:?string,canonical_status:?string,runtime_registered:?bool}>
-     */
+	 * @param list<string> $objectTypes
+	 * @return list<array{key:string,state:string,canonical:bool,canonical_definition_id:?string,canonical_status:?string,runtime_registered:?bool}>
+	 */
 	public function associationHealth(array $objectTypes): array
 	{
 		return $this->objectTypeImpact( $objectTypes );
@@ -123,9 +123,9 @@ final readonly class TaxonomyDefinitionReadModel
 	}
 
 	/**
-     * @param mixed $value
-     * @return list<array{key:string,state:string,canonical:bool,canonical_definition_id:?string,canonical_status:?string,runtime_registered:?bool}>
-     */
+	 * @param mixed $value
+	 * @return list<array{key:string,state:string,canonical:bool,canonical_definition_id:?string,canonical_status:?string,runtime_registered:?bool}>
+	 */
 	private function objectTypeImpact(mixed $value): array
 	{
 		if ( ! is_array( $value ) || ! array_is_list( $value ) ) {

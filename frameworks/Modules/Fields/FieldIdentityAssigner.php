@@ -17,18 +17,18 @@ final readonly class FieldIdentityAssigner
 	public function __construct( private ?DefinitionRepositoryInterface $definitions = null ) {}
 
 	/**
-     * Adds/preserves stable UUIDs for every field and nested subfield in a Field Group payload.
-     *
-     * Existing identity is matched by submitted UUID first and machine key second. A UUID already
-     * attached to the same existing machine key cannot be silently replaced. Once a stable UUID is
-     * persisted, its machine/storage key is immutable until an explicit migration workflow exists.
-     * Missing identities are generated only in this save-time boundary, never during pure definition
-     * normalization.
-     *
-     * @param array<string,mixed> $payload
-     * @param array<string,mixed>|null $existingPayload
-     * @return array<string,mixed>
-     */
+	 * Adds/preserves stable UUIDs for every field and nested subfield in a Field Group payload.
+	 *
+	 * Existing identity is matched by submitted UUID first and machine key second. A UUID already
+	 * attached to the same existing machine key cannot be silently replaced. Once a stable UUID is
+	 * persisted, its machine/storage key is immutable until an explicit migration workflow exists.
+	 * Missing identities are generated only in this save-time boundary, never during pure definition
+	 * normalization.
+	 *
+	 * @param array<string,mixed> $payload
+	 * @param array<string,mixed>|null $existingPayload
+	 * @return array<string,mixed>
+	 */
 	public function assign( array $payload, ?array $existingPayload = null, ?string $currentDefinitionId = null ): array
 	{
 		$rows = $payload['fields'] ?? [];
@@ -49,11 +49,11 @@ final readonly class FieldIdentityAssigner
 	}
 
 	/**
-     * @param list<mixed> $rows
-     * @param list<mixed> $existingRows
-     * @param array<string,bool> $seen
-     * @return list<array<string,mixed>>
-     */
+	 * @param list<mixed> $rows
+	 * @param list<mixed> $existingRows
+	 * @param array<string,bool> $seen
+	 * @return list<array<string,mixed>>
+	 */
 	private function assignRows( array $rows, array $existingRows, array &$seen ): array
 	{
 		$existingByKey = [];

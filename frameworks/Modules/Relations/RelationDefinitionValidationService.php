@@ -20,13 +20,13 @@ final readonly class RelationDefinitionValidationService
 	) {}
 
 	/**
-     * @param array<string,mixed> $input
-     * @return array{
-     *   valid:bool,
-     *   issues:list<array{id:string,severity:string,field:string,message:string}>,
-     *   candidate:array{relation_key:?string,cardinality:?string,from_type:?string,to_type:?string}
-     * }
-     */
+	 * @param array<string,mixed> $input
+	 * @return array{
+	 *   valid:bool,
+	 *   issues:list<array{id:string,severity:string,field:string,message:string}>,
+	 *   candidate:array{relation_key:?string,cardinality:?string,from_type:?string,to_type:?string}
+	 * }
+	 */
 	public function validate(array $input): array
 	{
 		$issues = [];
@@ -106,13 +106,13 @@ final readonly class RelationDefinitionValidationService
 	}
 
 	/**
-     * @param list<array{id:string,severity:string,field:string,message:string}> $issues
-     * @return array{
-     *   valid:bool,
-     *   issues:list<array{id:string,severity:string,field:string,message:string}>,
-     *   candidate:array{relation_key:?string,cardinality:?string,from_type:?string,to_type:?string}
-     * }
-     */
+	 * @param list<array{id:string,severity:string,field:string,message:string}> $issues
+	 * @return array{
+	 *   valid:bool,
+	 *   issues:list<array{id:string,severity:string,field:string,message:string}>,
+	 *   candidate:array{relation_key:?string,cardinality:?string,from_type:?string,to_type:?string}
+	 * }
+	 */
 	private function report(array $issues): array
 	{
 		return [

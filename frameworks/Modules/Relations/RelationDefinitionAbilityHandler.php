@@ -170,14 +170,14 @@ final readonly class RelationDefinitionAbilityHandler implements AbilityHandlerI
 	}
 
 	/**
-     * Basic editors may submit only currently executable fields. Preserve explicitly authored
-     * advanced policy when omitted, while allowing callers to replace or clear a policy by
-     * sending the corresponding key explicitly.
-     *
-     * @param array<string,mixed> $payload
-     * @param array<string,mixed> $existing
-     * @return array<string,mixed>
-     */
+	 * Basic editors may submit only currently executable fields. Preserve explicitly authored
+	 * advanced policy when omitted, while allowing callers to replace or clear a policy by
+	 * sending the corresponding key explicitly.
+	 *
+	 * @param array<string,mixed> $payload
+	 * @param array<string,mixed> $existing
+	 * @return array<string,mixed>
+	 */
 	private function preserveOmittedAdvancedPolicies( array $payload, array $existing ): array
 	{
 		foreach ( self::ADVANCED_POLICY_KEYS as $key ) {
@@ -224,12 +224,12 @@ final readonly class RelationDefinitionAbilityHandler implements AbilityHandlerI
 	}
 
 	/**
-     * @param array{
-     *   valid:bool,
-     *   issues:list<array{id:string,severity:string,field:string,message:string}>,
-     *   candidate:array{relation_key:?string,cardinality:?string,from_type:?string,to_type:?string}
-     * } $report
-     */
+	 * @param array{
+	 *   valid:bool,
+	 *   issues:list<array{id:string,severity:string,field:string,message:string}>,
+	 *   candidate:array{relation_key:?string,cardinality:?string,from_type:?string,to_type:?string}
+	 * } $report
+	 */
 	private function assertValidationAllowsMutation( array $report ): void
 	{
 		if ($report['valid']) {

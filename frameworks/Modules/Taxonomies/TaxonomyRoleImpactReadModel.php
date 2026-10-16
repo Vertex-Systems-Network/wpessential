@@ -29,25 +29,25 @@ final readonly class TaxonomyRoleImpactReadModel
 	) {}
 
 	/**
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
-     *   caveats:list<string>
-     * }
-     */
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
+	 *   caveats:list<string>
+	 * }
+	 */
 	public function forDefinition(Definition $definition, ?ExecutionContext $context = null): array
 	{
 		return $this->forCapabilities( $this->effectiveCapabilities( $definition->payload ), $context );
 	}
 
 	/**
-     * @param array<string,string> $capabilities
-     * @return array{
-     *   state:'healthy'|'degraded'|'unavailable',
-     *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
-     *   caveats:list<string>
-     * }
-     */
+	 * @param array<string,string> $capabilities
+	 * @return array{
+	 *   state:'healthy'|'degraded'|'unavailable',
+	 *   operations:list<array{operation:string,capability:string,impact:array<string,mixed>}>,
+	 *   caveats:list<string>
+	 * }
+	 */
 	public function forCapabilities(array $capabilities, ?ExecutionContext $context = null): array
 	{
 		$service = $this->roles ?? $this->rolesFromRegistry();
@@ -122,9 +122,9 @@ final readonly class TaxonomyRoleImpactReadModel
 	}
 
 	/**
-     * @param array<string,mixed> $payload
-     * @return array<string,string>
-     */
+	 * @param array<string,mixed> $payload
+	 * @return array<string,string>
+	 */
 	public function effectiveCapabilities(array $payload): array
 	{
 		$effective = self::DEFAULT_CAPABILITIES;
