@@ -7,7 +7,6 @@ on:
       - agent/local-phpunit-bootstrap-repair-v1
     paths:
       - .github/workflows/wpcs-guarded-whitespace-batch.yml
-      - README.md
 
 permissions:
   contents: write
