@@ -93,6 +93,8 @@ jobs:
         run: composer audit --locked --no-interaction
 
       - name: WordPress Coding Standards
+        id: phpcs
+        continue-on-error: true
         shell: bash
         run: composer quality:phpcs
 
@@ -107,3 +109,12 @@ jobs:
       - name: Verify tracked source remains clean
         shell: bash
         run: test -z "$(git status --porcelain=v1 --untracked-files=no)"
+
+      - name: Enforce PHP quality outcomes
+        if: always()
+        shell: bash
+        env:
+          PHPCS_OUTCOME: ${{ steps.phpcs.outcome }}
+        run: |
+          set -euo pipefail
+          test "${PHPCS_OUTCOME}" = success
