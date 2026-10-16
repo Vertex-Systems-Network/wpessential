@@ -7,6 +7,12 @@ on:
     paths:
       - .github/workflows/wpcs-naming-abi-audit.yml
       - docs/QUALITY/WPCS-NAMING-PSR4-ABI-AUDIT-2026-10-17.md
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/wpcs-naming-abi-audit.yml
+      - docs/QUALITY/WPCS-NAMING-PSR4-ABI-AUDIT-2026-10-17.md
   workflow_dispatch:
 
 permissions:
@@ -20,13 +26,15 @@ jobs:
   naming-abi-audit:
     name: Classify WPCS naming findings without source writes
     if: github.repository == 'Vertex-Systems-Network/wpessential'
+    env:
+      SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - name: Checkout exact source head
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -34,8 +42,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          test "$GITHUB_REF_NAME" = 'agent/local-phpunit-bootstrap-repair-v1'
+          test "$(git rev-parse HEAD)" = "$SOURCE_HEAD"
+          test "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" = 'agent/local-phpunit-bootstrap-repair-v1'
           test -z "$(git status --porcelain=v1 --untracked-files=no)"
 
       - name: Setup PHP 8.2
@@ -93,7 +101,7 @@ jobs:
                   by_file[filename] += 1
 
           findings.sort(key=lambda item: (item['file'], item['line'] or 0, item['column'] or 0, item['source']))
-          source_head = os.environ.get('GITHUB_SHA', 'unknown')
+          source_head = os.environ.get('SOURCE_HEAD', 'unknown')
           summary = {
               'source_head': source_head,
               'scope': 'frameworks',
@@ -142,7 +150,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: wpcs-naming-abi-audit-${{ github.sha }}
+          name: wpcs-naming-abi-audit-${{ github.event.pull_request.head.sha || github.sha }}
           if-no-files-found: warn
           path: |
             /tmp/wpcs-naming-before.json
