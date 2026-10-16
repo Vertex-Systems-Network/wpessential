@@ -31,29 +31,29 @@ interface QueryReadConsumerInterface
 	public const MAX_SEARCH_LENGTH = 200;
 
 	/**
-     * @return array{
-     *   contract_version:int,
-     *   source_ref:string,
-     *   source_type:string,
-     *   capability_version:int,
-     *   available:bool,
-     *   field_schema:array<string,string>,
-     *   predicates:list<string>,
-     *   sort_modes:list<string>,
-     *   pagination_modes:list<string>,
-     *   max_page_size:int
-     * }
-     */
+	 * @return array{
+	 *   contract_version:int,
+	 *   source_ref:string,
+	 *   source_type:string,
+	 *   capability_version:int,
+	 *   available:bool,
+	 *   field_schema:array<string,string>,
+	 *   predicates:list<string>,
+	 *   sort_modes:list<string>,
+	 *   pagination_modes:list<string>,
+	 *   max_page_size:int
+	 * }
+	 */
 	public function describe(string $sourceRef, ExecutionContext $context): array;
 
 	/**
-     * Execute one bounded read request through the canonical Query runtime.
-     *
-     * V1 request keys are strictly limited to contract_version, source_ref,
-     * projection, filters, search, order_by, page_size and offset.
-     *
-     * @param array<string,mixed> $request
-     * @return array<string,mixed>
-     */
+	 * Execute one bounded read request through the canonical Query runtime.
+	 *
+	 * V1 request keys are strictly limited to contract_version, source_ref,
+	 * projection, filters, search, order_by, page_size and offset.
+	 *
+	 * @param array<string,mixed> $request
+	 * @return array<string,mixed>
+	 */
 	public function read(array $request, ExecutionContext $context): array;
 }

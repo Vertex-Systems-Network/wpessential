@@ -17,24 +17,24 @@ interface FieldQueryConsumerInterface
 	public const MAX_RESULT_IDS = 100;
 
 	/**
-     * @return array{
-     *     contract_version:int,
-     *     field_ref:string,
-     *     group_revision:int,
-     *     field_uuid:string,
-     *     logical_type:string,
-     *     operators:list<string>,
-     *     max_candidate_ids:int,
-     *     max_result_ids:int,
-     *     storage_owner:string
-     * }
-     */
+	 * @return array{
+	 *     contract_version:int,
+	 *     field_ref:string,
+	 *     group_revision:int,
+	 *     field_uuid:string,
+	 *     logical_type:string,
+	 *     operators:list<string>,
+	 *     max_candidate_ids:int,
+	 *     max_result_ids:int,
+	 *     storage_owner:string
+	 * }
+	 */
 	public function describe(string $fieldReference, ExecutionContext $context): array;
 
 	/**
-     * @param list<int> $candidatePostIds
-     * @return list<int>
-     */
+	 * @param list<int> $candidatePostIds
+	 * @return list<int>
+	 */
 	public function matchingPostIds(
 		string $fieldReference,
 		string $operator,
