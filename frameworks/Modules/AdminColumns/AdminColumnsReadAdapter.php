@@ -41,9 +41,9 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/**
-     * @param array<string,mixed> $input
-     * @return array<string,mixed>
-     */
+	 * @param array<string,mixed> $input
+	 * @return array<string,mixed>
+	 */
 	public function read( string $viewId, array $input, ExecutionContext $context ): array
 	{
 		$this->assertKnownKeys($input, self::INPUT_KEYS, 'Admin Columns read input');
@@ -171,15 +171,15 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/**
-     * @param array<mixed> $fieldSchema
-     * @return array{
-     *     0:list<array<string,mixed>>,
-     *     1:array<string,string>,
-     *     2:array<string,string>,
-     *     3:array<string,array{owner:string,reference:string}>,
-     *     4:list<string>
-     * }
-     */
+	 * @param array<mixed> $fieldSchema
+	 * @return array{
+	 *     0:list<array<string,mixed>>,
+	 *     1:array<string,string>,
+	 *     2:array<string,string>,
+	 *     3:array<string,array{owner:string,reference:string}>,
+	 *     4:list<string>
+	 * }
+	 */
 	private function readableColumns( Definition $view, array $fieldSchema ): array
 	{
 		$rawColumns = $view->payload['columns'] ?? null;
@@ -268,9 +268,9 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/**
-     * @param list<array<mixed>> $rows
-     * @return array{0:list<int>,1:array<int,int>}
-     */
+	 * @param list<array<mixed>> $rows
+	 * @return array{0:list<int>,1:array<int,int>}
+	 */
 	private function postIds( array $rows ): array
 	{
 		$postIds = [];
@@ -292,10 +292,10 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/**
-     * @param array<string,string> $fieldFieldByColumn
-     * @param list<int> $postIds
-     * @return array<string,array<int,mixed>>
-     */
+	 * @param array<string,string> $fieldFieldByColumn
+	 * @param list<int> $postIds
+	 * @return array<string,array<int,mixed>>
+	 */
 	private function fieldValues( array $fieldFieldByColumn, array $postIds, ExecutionContext $context ): array
 	{
 		if ( $fieldFieldByColumn === [] || $postIds === [] ) {
@@ -334,10 +334,10 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/**
-     * @param mixed $value
-     * @param array<string,string> $fieldByColumn
-     * @return list<array{field_ref:string,operator:string,value:mixed}>
-     */
+	 * @param mixed $value
+	 * @param array<string,string> $fieldByColumn
+	 * @return list<array{field_ref:string,operator:string,value:mixed}>
+	 */
 	private function filters( mixed $value, array $fieldByColumn ): array
 	{
 		if ( !is_array( $value ) || !array_is_list( $value ) ) {
@@ -371,10 +371,10 @@ final readonly class AdminColumnsReadAdapter
 	}
 
 	/**
-     * @param mixed $value
-     * @param array<string,string> $fieldByColumn
-     * @return list<array{field_ref:string,direction:string}>
-     */
+	 * @param mixed $value
+	 * @param array<string,string> $fieldByColumn
+	 * @return list<array{field_ref:string,direction:string}>
+	 */
 	private function orderBy( mixed $value, array $fieldByColumn ): array
 	{
 		if ( !is_array( $value ) || !array_is_list( $value ) ) {

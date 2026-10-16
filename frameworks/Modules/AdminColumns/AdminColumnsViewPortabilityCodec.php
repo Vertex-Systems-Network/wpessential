@@ -73,9 +73,9 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param array<string,mixed> $remaps
-     * @return array{contract_version:int,view_id:string,source_revision:int,payload:array<string,mixed>}
-     */
+	 * @param array<string,mixed> $remaps
+	 * @return array{contract_version:int,view_id:string,source_revision:int,payload:array<string,mixed>}
+	 */
 	public function decode( string $document, array $remaps ): array
 	{
 		if ($document === '' || strlen($document) > self::MAX_DOCUMENT_BYTES) {
@@ -134,11 +134,11 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param array<string,mixed> $payload
-     * @param array<string,array<string,string|int>> $remaps
-     * @param array<string,array<string,true>> $consumed
-     * @return array<string,mixed>
-     */
+	 * @param array<string,mixed> $payload
+	 * @param array<string,array<string,string|int>> $remaps
+	 * @param array<string,array<string,true>> $consumed
+	 * @return array<string,mixed>
+	 */
 	private function remapPayload( array $payload, array $remaps, array &$consumed ): array
 	{
 		$target = $payload['target'];
@@ -212,9 +212,9 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param array<string,mixed> $remaps
-     * @return array<string,array<string,string|int>>
-     */
+	 * @param array<string,mixed> $remaps
+	 * @return array<string,array<string,string|int>>
+	 */
 	private function remapSets( array $remaps ): array
 	{
 		$this->assertKnownKeys($remaps, self::REMAP_KEYS, 'Portable View remaps');
@@ -256,9 +256,9 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param array<string,string|int> $map
-     * @param array<string,true> $consumed
-     */
+	 * @param array<string,string|int> $map
+	 * @param array<string,true> $consumed
+	 */
 	private function requiredStringRemap( string $from, array $map, array &$consumed, string $label ): string
 	{
 		if ( !array_key_exists( $from, $map ) || !is_string( $map[$from] ) ) {
@@ -269,11 +269,11 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param mixed $value
-     * @param array<string,string|int> $map
-     * @param array<string,true> $consumed
-     * @return list<string>
-     */
+	 * @param mixed $value
+	 * @param array<string,string|int> $map
+	 * @param array<string,true> $consumed
+	 * @return list<string>
+	 */
 	private function remapStringList( mixed $value, array $map, array &$consumed, string $label ): array
 	{
 		if ( !is_array( $value ) || !array_is_list( $value ) ) {
@@ -290,11 +290,11 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param mixed $value
-     * @param array<string,string|int> $map
-     * @param array<string,true> $consumed
-     * @return list<int>
-     */
+	 * @param mixed $value
+	 * @param array<string,string|int> $map
+	 * @param array<string,true> $consumed
+	 * @return list<int>
+	 */
 	private function remapUserList( mixed $value, array $map, array &$consumed ): array
 	{
 		if ( !is_array( $value ) || !array_is_list( $value ) ) {
@@ -316,9 +316,9 @@ final readonly class AdminColumnsViewPortabilityCodec
 	}
 
 	/**
-     * @param array<string,array<string,string|int>> $remaps
-     * @param array<string,array<string,true>> $consumed
-     */
+	 * @param array<string,array<string,string|int>> $remaps
+	 * @param array<string,array<string,true>> $consumed
+	 */
 	private function assertNoUnusedRemaps( array $remaps, array $consumed ): void
 	{
 		foreach ( $remaps as $set => $map ) {

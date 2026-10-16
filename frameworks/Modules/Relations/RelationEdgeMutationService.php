@@ -23,9 +23,9 @@ final readonly class RelationEdgeMutationService
 	private Closure $clock;
 
 	/**
-     * @param null|Closure():string $uuid
-     * @param null|Closure():string $clock
-     */
+	 * @param null|Closure():string $uuid
+	 * @param null|Closure():string $clock
+	 */
 	public function __construct(
 		private DefinitionRepositoryInterface $definitions,
 		private RelationDefinitionNormalizer $normalizer,
@@ -161,18 +161,18 @@ final readonly class RelationEdgeMutationService
 	}
 
 	/**
-     * @return array{
-     *   relation_key:string,
-     *   title:string,
-     *   description:string,
-     *   cardinality:string,
-     *   direction:array{reciprocal:bool,bidirectional_traversal:bool},
-     *   from:array{object_type:string,object_subtype:?string,label:string},
-     *   to:array{object_type:string,object_subtype:?string,label:string},
-     *   bounds:array{from_min:int,from_max:?int,to_min:int,to_max:?int},
-     *   unique_edge:bool
-     * }
-     */
+	 * @return array{
+	 *   relation_key:string,
+	 *   title:string,
+	 *   description:string,
+	 *   cardinality:string,
+	 *   direction:array{reciprocal:bool,bidirectional_traversal:bool},
+	 *   from:array{object_type:string,object_subtype:?string,label:string},
+	 *   to:array{object_type:string,object_subtype:?string,label:string},
+	 *   bounds:array{from_min:int,from_max:?int,to_min:int,to_max:?int},
+	 *   unique_edge:bool
+	 * }
+	 */
 	private function mutationPayload( string $relationDefinitionId ): array
 	{
 		if ( !$this->isUuid( $relationDefinitionId ) ) {
@@ -191,14 +191,14 @@ final readonly class RelationEdgeMutationService
 
 		$payload = $this->normalizer->normalize( $definition->payload, true );
 		/** @var array{
-         *   relation_key:string,title:string,description:string,cardinality:string,
-         *   direction:array{reciprocal:bool,bidirectional_traversal:bool},
-         *   from:array{object_type:string,object_subtype:?string,label:string},
-         *   to:array{object_type:string,object_subtype:?string,label:string},
-         *   bounds:array{from_min:int,from_max:?int,to_min:int,to_max:?int},
-         *   unique_edge:bool
-         * } $payload
-         */
+		 *   relation_key:string,title:string,description:string,cardinality:string,
+		 *   direction:array{reciprocal:bool,bidirectional_traversal:bool},
+		 *   from:array{object_type:string,object_subtype:?string,label:string},
+		 *   to:array{object_type:string,object_subtype:?string,label:string},
+		 *   bounds:array{from_min:int,from_max:?int,to_min:int,to_max:?int},
+		 *   unique_edge:bool
+		 * } $payload
+		 */
 		return $payload;
 	}
 
@@ -213,11 +213,11 @@ final readonly class RelationEdgeMutationService
 	}
 
 	/**
-     * @param array{
-     *   from:array{object_type:string,object_subtype:?string,label:string},
-     *   to:array{object_type:string,object_subtype:?string,label:string}
-     * } $payload
-     */
+	 * @param array{
+	 *   from:array{object_type:string,object_subtype:?string,label:string},
+	 *   to:array{object_type:string,object_subtype:?string,label:string}
+	 * } $payload
+	 */
 	private function assertObjectAccess(
 		array $payload,
 		int $fromObjectId,

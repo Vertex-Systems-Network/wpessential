@@ -28,28 +28,28 @@ final readonly class PostMetaRegistrationCompiler
 	) {}
 
 	/**
-     * Compile one normalized Field definition into a WordPress post-meta registration contract.
-     *
-     * This compiler intentionally supports only the first certified scalar/list tranche. Complex,
-     * provider-owned, Relations-owned, secret, mixed and structured values remain fail-closed.
-     *
-     * @param array<string,mixed> $field
-     * @return array{
-     *     post_type:string,
-     *     field_uuid:string,
-     *     meta_key:string,
-     *     args:array{
-     *         type:string,
-     *         label:string,
-     *         description:string,
-     *         single:bool,
-     *         sanitize_callback:callable,
-     *         auth_callback:callable,
-     *         show_in_rest:bool|array<string,mixed>,
-     *         revisions_enabled:bool
-     *     }
-     * }
-     */
+	 * Compile one normalized Field definition into a WordPress post-meta registration contract.
+	 *
+	 * This compiler intentionally supports only the first certified scalar/list tranche. Complex,
+	 * provider-owned, Relations-owned, secret, mixed and structured values remain fail-closed.
+	 *
+	 * @param array<string,mixed> $field
+	 * @return array{
+	 *     post_type:string,
+	 *     field_uuid:string,
+	 *     meta_key:string,
+	 *     args:array{
+	 *         type:string,
+	 *         label:string,
+	 *         description:string,
+	 *         single:bool,
+	 *         sanitize_callback:callable,
+	 *         auth_callback:callable,
+	 *         show_in_rest:bool|array<string,mixed>,
+	 *         revisions_enabled:bool
+	 *     }
+	 * }
+	 */
 	public function compile(
 		array $field,
 		string $postType,
@@ -105,9 +105,9 @@ final readonly class PostMetaRegistrationCompiler
 	}
 
 	/**
-     * @param array<string,mixed> $field
-     * @return array{type:string,single:bool,item_type:?string,multi_row:bool}
-     */
+	 * @param array<string,mixed> $field
+	 * @return array{type:string,single:bool,item_type:?string,multi_row:bool}
+	 */
 	private function storageShape(array $field): array
 	{
 		$type = $field['type'];
@@ -151,9 +151,9 @@ final readonly class PostMetaRegistrationCompiler
 	}
 
 	/**
-     * @param array{type:string,single:bool,item_type:?string,multi_row:bool} $shape
-     * @return bool|array<string,mixed>
-     */
+	 * @param array{type:string,single:bool,item_type:?string,multi_row:bool} $shape
+	 * @return bool|array<string,mixed>
+	 */
 	private function restExposure(bool $showInRest, array $shape): bool|array
 	{
 		if (!$showInRest) {
