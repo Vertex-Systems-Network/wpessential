@@ -38,4 +38,3 @@ The final guarded checks passed:
 This result shows that the comma-spacing findings are reported as fixable by PHPCS JSON, but the pinned PHPCBF invocation cannot safely materialize a source change under the current ruleset. The lane is therefore closed without a formatter-generated patch.
 
 The next remediation must use a manually reviewed, narrowly scoped diff or a separately justified ruleset/baseline decision. No broad PHPCBF family should be enabled on this evidence alone. Full-tree WPCS remains required and failing; PHPStan, PHPUnit, protected checks and review requirements remain unchanged.
-8e4fc45e20cf36b8c31332511c5c48cb8d88177d
