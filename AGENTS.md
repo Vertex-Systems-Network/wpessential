@@ -666,3 +666,14 @@ Read and follow `.ai/NEXT-ACTION-OPTIONS.md` before user-facing development hand
 When an explicit autonomous development instruction is active, do **not** interrupt execution with numbered next-action choices or require another `continue`. Select the canonical next safe action automatically and keep working until the continuous execution boundary is reached.
 
 If the user sends only this repository's GitHub URL, perform the policy's read-only bootstrap and return shuffled numbered next-action options. A URL-only message never authorizes a repository mutation. A later numeric selection must revalidate live repository state before acting.
+
+## Non-stop enforcement for every AI agent
+
+Applies identically to Claude, ChatGPT/Codex, Gemini and any other agent working under `GOV-OWNER-CONSENT-001`.
+
+1. **One turn = full cycle.** Audit main → issue → implementation → tests → PR → CI repair → expected-head merge → next safe milestone, all in the same turn. Opening a PR, pending CI, a merge, a status update or a finished milestone is never a turn boundary.
+2. **Empty queue is not a stop.** When `config/coordination/agent-work-queue.json` has no dependency-ready OPEN slot, the Supervisor selects the next work itself: the lowest-numbered surface in the README 56-surface dashboard (canonical order from `docs/MODULES/CANONICAL-OPTION-OWNERSHIP-INDEX-56-SURFACES.md`) whose next gate is source/test work and is not parked, creates its Issue and slot, and continues. This is roadmap execution, not invented work.
+3. **"Requires separate authorization" scope.** In README "Next gate" text this applies only to privileged actions: production/live data, chargeable or remote providers, destructive execution, credentials, deployment/release/GA. Source implementation and tests for any of the 56 surfaces are already covered by `GOV-OWNER-CONSENT-001` (see `DEVELOPMENT-CONSENT.md`).
+4. **No micro-hardening loops.** After 3 consecutive bounded tranches on the same surface, move to the next surface by rule 2 unless a security or CI failure requires otherwise.
+5. **Stop modes.** The agent may end autonomous execution only after recording one of `NO_SAFE_AUTHORIZED_WORK`, `OWNER_AUTHORITY_REQUIRED` or `PAUSED_BY_OWNER` as the queue `mode`, with the exact missing authority. Before ending any turn, run `python3 tools/ai/ai_continue.py`; exit `0` means keep working.
+6. **Never ask** "continue?", "merge?", "which module?", or for routine fix approval.
