@@ -38,19 +38,19 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 			}
 		}
 
-		$definitionId = null;
+		$definition_id = null;
 		if (array_key_exists('definition_id', $input)) {
-			$definitionId = $input['definition_id'];
-			if (!is_string($definitionId) || !$this->isUuid($definitionId)) {
+			$definition_id = $input['definition_id'];
+			if (!is_string($definition_id) || !$this->isUuid($definition_id)) {
 				throw new InvalidArgumentException(
 					'Dashboard Widget diagnostics definition_id must be a lowercase RFC 4122 UUID.',
 				);
 			}
 		}
 
-		$definitions = $definitionId === null
+		$definitions = $definition_id === null
 			? $this->ownedDefinitions()
-			: [$this->owned($definitionId)];
+			: [$this->owned($definition_id)];
 
 		$diagnostics = array_map($this->diagnose(...), $definitions);
 		$published = count(array_filter(
@@ -108,7 +108,7 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 	private function diagnose(Definition $definition): array
 	{
 		$issues = [];
-		$checksumStatus = 'missing';
+		$checksum_status = 'missing';
 
 		try {
 			if ($definition->checksum === null) {
@@ -118,9 +118,9 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 					'Stored Dashboard Widget definition does not have a canonical checksum.',
 				);
 			} elseif (hash_equals($definition->checksum, $definition->computedChecksum())) {
-				$checksumStatus = 'valid';
+				$checksum_status = 'valid';
 			} else {
-				$checksumStatus = 'mismatch';
+				$checksum_status = 'mismatch';
 				$issues[] = $this->issue(
 					'dashboard-widget.diagnostics.checksum-mismatch',
 					'checksum',
@@ -128,7 +128,7 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 				);
 			}
 		} catch (Throwable) {
-			$checksumStatus = 'error';
+			$checksum_status = 'error';
 			$issues[] = $this->issue(
 				'dashboard-widget.diagnostics.checksum-error',
 				'checksum',
@@ -136,8 +136,8 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 			);
 		}
 
-		$runtimeState = 'inactive';
-		$contentType = null;
+		$runtime_state = 'inactive';
+		$content_type = null;
 		$target = null;
 		$references = [
 			'background_job_id' => null,
@@ -147,11 +147,11 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 		$lifecycle = null;
 
 		if ($definition->status === DefinitionStatus::Published) {
-			$runtimeState = 'blocked';
+			$runtime_state = 'blocked';
 
 			try {
-				$contentClass = $this->contentClassCompiler->compile($definition);
-				$contentType = $contentClass->contentType;
+				$content_class = $this->contentClassCompiler->compile($definition);
+				$content_type = $content_class->contentType;
 			} catch (Throwable) {
 				$issues[] = $this->issue(
 					'dashboard-widget.diagnostics.content-invalid',
@@ -160,10 +160,10 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 				);
 			}
 
-			if ($contentType !== null) {
+			if ($content_type !== null) {
 				try {
 					$descriptor = $this->registrationCompiler->compile($definition);
-					$runtimeState = 'ready';
+					$runtime_state = 'ready';
 					$target = [
 						'context' => $descriptor->context,
 						'priority' => $descriptor->priority,
@@ -191,7 +191,7 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 					try {
 						$lifecycle['state'] = $descriptor->lifecycleStateAt($this->clock->now());
 					} catch (Throwable) {
-						$runtimeState = 'blocked';
+						$runtime_state = 'blocked';
 						$issues[] = $this->issue(
 							'dashboard-widget.diagnostics.lifecycle-clock-unavailable',
 							'widget.lifecycle',
@@ -214,9 +214,9 @@ final readonly class DashboardWidgetDiagnosticsAbilityHandler implements Ability
 			'status' => $definition->status->value,
 			'schema_version' => $definition->schemaVersion,
 			'definition_revision' => $definition->revision,
-			'checksum_status' => $checksumStatus,
-			'runtime_state' => $runtimeState,
-			'content_type' => $contentType,
+			'checksum_status' => $checksum_status,
+			'runtime_state' => $runtime_state,
+			'content_type' => $content_type,
 			'target' => $target,
 			'lifecycle' => $lifecycle,
 			'references' => $references,

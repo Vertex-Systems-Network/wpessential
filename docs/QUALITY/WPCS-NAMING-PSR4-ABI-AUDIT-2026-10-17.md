@@ -4,6 +4,8 @@ The previous retained naming report is from source head `21fa582724250c6d3fd40aa
 
 Runner `RB-0127` was triggered at exact head `423fde866f963d9f5ca21b39f0efb3f0388fdfb1`, but run `39026004530` failed before creating a job or artifact. Therefore it supplies no new finding inventory. The subsequent `$slug_order` → `$slugOrder` comparator edits were in the wrong direction for the recorded `VariableNotSnakeCase` WPCS sniff. They are restored at the next source head. The new candidate changes three constructor-only camelCase locals in `DashboardWidgetEmptyStateDescriptor.php` to snake_case. Public/promoted properties, interfaces, APIs, serialized keys, WordPress identifiers and WPCS rules are preserved.
 
+The next separate source batch changes five method-local names in `DashboardWidgetDiagnosticsAbilityHandler.php` to snake_case. It leaves the response keys `checksum_status`, `runtime_state` and `content_type`, the input key `definition_id`, and constructor properties unchanged. Existing diagnostics unit tests exercise those output fields and the blocked/error states. The batch requires its own exact PR checks; it is not a fresh full-tree WPCS count.
+
 # WPCS naming, PSR-4 and public-ABI audit — 2026-10-17
 
 ## Purpose and boundary

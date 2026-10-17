@@ -3986,7 +3986,7 @@
       "category": "WPCS_LOCAL_ONLY_VARIABLE_CORRECTION_MERGE_GATE_V1",
       "runner": "GitHub Actions",
       "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and applicable contract checks after corrected local-only snake_case changes",
-      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source after 8bd51fcf162d46548cb005fb3e066c213692038e; main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30; PHP 8.2 CI",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; exact PR source 702ab7a39c74e462ad41182ce153467ff5bfdea5; main 6fd97dc2f8fc1c2a8abe7d1cb0be080f34803c30; PHP 8.2 CI",
       "dependencies": [
         "RB-0128 terminal failed at the required full-tree quality gate",
         "Issue #1417 WPCS naming classification and protected PR #1416"
@@ -3997,13 +3997,39 @@
       "expected_minutes": 20,
       "dedup_key": "quality|wpcs-snake-case-corrected|pr1416|rb0129",
       "disposition": "IMMEDIATE_REQUIRED",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "evidence": [
         "Restore two pre-existing comparator locals to $slug_order; no behavior change.",
         "Normalize only $expectedKeys, $actualKeys and $normalizedBindings inside DashboardWidgetEmptyStateDescriptor::__construct to snake_case. Public promoted fields and serialized binding keys remain unchanged.",
-        "Local PHP/Composer unavailable; git diff --check passes, exact-head CI needed."
+        "Local PHP/Composer unavailable; git diff --check passes, exact-head CI needed.",
+        "At last read, exact head 702ab7a39c74e462ad41182ce153467ff5bfdea5 had 50 success, 4 failures at the required PHP quality/Architecture/CPT/Taxonomy enforcement steps, and browser E2E in progress."
       ],
       "note": "Required quality outcome and downstream contracts must be evaluated on the new exact PR head. No full-tree PHPCS pass or current count is inferred from historical evidence."
+    },
+    {
+      "id": "RB-0130",
+      "source": "Issue #1417 / PR #1416 WPCS-first continuation",
+      "category": "WPCS_DASHBOARD_DIAGNOSTICS_LOCAL_NAMING_MERGE_GATE_V1",
+      "runner": "GitHub Actions",
+      "command_or_workflow": "Exact-head PHP Quality, Architecture, CPT, Taxonomy and applicable contract checks for Dashboard Widget diagnostics local naming",
+      "environment": "agent/local-phpunit-bootstrap-repair-v1; proposed source after 702ab7a39c74e462ad41182ce153467ff5bfdea5; PHP 8.2 CI",
+      "dependencies": [
+        "RB-0129 current head validation completed or safely parked",
+        "Issue #1417 WPCS-first source remediation in open PR #1416"
+      ],
+      "authorization": "GOV-OWNER-CONSENT-001 and Issue #1417; local-only names, no public ABI or ruleset change, provider, production, release or deployment",
+      "merge_blocking": true,
+      "security_critical": true,
+      "expected_minutes": 20,
+      "dedup_key": "quality|wpcs-dashboard-diagnostics-locals|pr1416|rb0130",
+      "disposition": "IMMEDIATE_REQUIRED",
+      "status": "PENDING",
+      "evidence": [
+        "Five method-local camelCase variables in DashboardWidgetDiagnosticsAbilityHandler are changed to snake_case; response keys, public properties and constructor arguments remain stable.",
+        "Existing DashboardWidgetDiagnosticsAbilityHandlerTest exercises checksum and runtime response statuses, including error cases.",
+        "Local PHP/Composer unavailable; exact-head CI must validate this source batch."
+      ],
+      "note": "No new full-tree WPCS count or green gate is inferred until exact-head required checks finish."
     }
   ],
   "last_reconciled_issue": "#1417",
